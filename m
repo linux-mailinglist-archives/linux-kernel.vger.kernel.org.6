@@ -1,212 +1,115 @@
-Return-Path: <linux-kernel+bounces-390300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7599B7819
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:57:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2589B781B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0DC01C24025
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:57:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEBB61C2414F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0291C1990C7;
-	Thu, 31 Oct 2024 09:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00990199236;
+	Thu, 31 Oct 2024 09:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bz0nSmUf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G58e/nrB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6519D881E
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B74198E8C;
+	Thu, 31 Oct 2024 09:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730368651; cv=none; b=sFfTpNTWgLfmHRNCRPI3+4l5OKP9As4eJ8ZqHGRIgdKEGfGENtf9c1a0VM72aXTdTUWMpYDuB2IIjWMEHrNV0UN2p6xB9d04Q0GP1F1uDGRcp/8Eptm6C02M0JA10uH3/VzkrYF+PMwxjCtc1rmgNbU38rDcBUkAkIEci1verDQ=
+	t=1730368654; cv=none; b=rfy9WxsO0Mcb8QVikvR2PCKyS/APcxGZ0ADc09Xud2/vFjAjdchnPY25YSikYtYdGInhXSMY5739SqVAAf6YH63G2ZatNctBSL5f2dkthFJ+OUvw+7MhSIDTW+g95L1zq6uU5dqshVdYGGSxbHDCnFjhVdcRocjAtMu8IXFPAVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730368651; c=relaxed/simple;
-	bh=13eghfT8yLaHx96wZhWKC7DsHhPBihpYadIGFzJ2Nwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eVQR9GE8lCXk1AiZ/ASuEi4JCSw4ar4bJ1GcA2UTqSzs9bd/ylzjS2MDMbQlpbNLCroyPTf+hwXD7vhr8KwUo08yABANE0pDpWq1eFSmSHcAPqxYCalVKTw/ymgPBJc58g/6DsT2U8e270wfuyHRTnwt8tJ3+f8jr1WaY5536ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bz0nSmUf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730368648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=B7rUylMoiJ32y2mf0MmXQsKypLnMwGBu8KDma38hXgg=;
-	b=Bz0nSmUfq1oMBC3Xa4TqRo6rwgeNyAtbSEdFeJGnSFDP5skF1Q7xe4ckbp+jbQhXfabqgJ
-	F+gdqA/1qGq7EO7CG1o1nxUB7nt0KEMNE8HCFkRDI0gtf9csoLjo6SiWZbnxI1OXjdbBnN
-	+djvY75Q+iGHw/wAlVhkbgcYDiaovGc=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-75-7vakqsgePv-zeKXEet0moA-1; Thu, 31 Oct 2024 05:57:26 -0400
-X-MC-Unique: 7vakqsgePv-zeKXEet0moA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d5ca5bfc8so389325f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:57:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730368645; x=1730973445;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=B7rUylMoiJ32y2mf0MmXQsKypLnMwGBu8KDma38hXgg=;
-        b=N/RV+TdqZxBBtmAtOjG3yoHs80+KYC7ZZLuTRtwHPxu7YFU3IizDoDq8icH+7uSwdB
-         C/kN7AqcpqkrRsG1L/saP+UsZINjuA1df5wXHMxnlrKNudwDcK0HBhHmlofu75GN3cXL
-         p8rM/YLr21APbAs2JWB53K0sNywBPBO1iX/ffJQOhbiulng0I0g3GFVUgWUK3mK73VUO
-         Ls5BeJElENytF9R2lIfvilIfx2AjEZeO7kpmUNGBM6FFsbdKs4LQkDG4NypphMJqGGP2
-         uu8W2hVVWcfySaH+XOlLPktl/hRh4mGrIWifOIInJU/utI8bwqFTmTgb8TYRtaPfv5UZ
-         HOsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwP01PUp0l+cfu6U5B3vkgaROaakqS3oykeL0yrqVaUXMARyvpyH4S65bkCPZ2dIvC45Jk+g+i34qSfqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/U6YB3YIQtw1R/0BTfKCtFi537lbAH+51kQoYHpQVXWjKOryS
-	YluCuuP1Ei/vtBPGeDKhaXpJ4O6nU0hPHxpeFkwJVHKGGbuip4GamCYcamUfJj22UPnDo7T4VHj
-	tMkos06KiHAQotRNJ9uvDwecfHL6VpLyVXaXsFw7XYs2otBEyrewfMOCROMw6Wg==
-X-Received: by 2002:a5d:6d8b:0:b0:374:c31e:9721 with SMTP id ffacd0b85a97d-381be906fb1mr1924019f8f.42.1730368644910;
-        Thu, 31 Oct 2024 02:57:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGB5YibDMb1v+9lfgYV8B9TgwSctIaUJV5dcpKC4opd7SH8qkWAYMYCwwnkwClMNCW9rRk/3g==
-X-Received: by 2002:a5d:6d8b:0:b0:374:c31e:9721 with SMTP id ffacd0b85a97d-381be906fb1mr1923969f8f.42.1730368644438;
-        Thu, 31 Oct 2024 02:57:24 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c70a:ed00:7ddf:1ea9:4f7a:91fe? (p200300cbc70aed007ddf1ea94f7a91fe.dip0.t-ipconnect.de. [2003:cb:c70a:ed00:7ddf:1ea9:4f7a:91fe])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116a781sm1611441f8f.96.2024.10.31.02.57.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 02:57:24 -0700 (PDT)
-Message-ID: <a774e13e-0616-4d96-bb51-bac0fcb2cb9b@redhat.com>
-Date: Thu, 31 Oct 2024 10:57:21 +0100
+	s=arc-20240116; t=1730368654; c=relaxed/simple;
+	bh=Y/ZKdGs9HB+eMN46LQEMN2crILjud+xOTPZjCMfvnbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qdt98j/rZw4M/DKfOgplzJp+T7AKGrQq9cRXg1iBFFZ79H60Y+y/tqMdYuiw4CCIVYvsn0lZwc6daDio1PhcAa2bDYxBesvf9AFdGUiL0a/JK+Ut3drVYUkHp2p9K6G6kxVKx5YDL7pxYNUsy1Tu2KTq+WRRM/DhpnRDndXp9Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G58e/nrB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 983B5C4CED5;
+	Thu, 31 Oct 2024 09:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730368653;
+	bh=Y/ZKdGs9HB+eMN46LQEMN2crILjud+xOTPZjCMfvnbc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G58e/nrB469sgVmF0ZG3dxQLcv+W1uDFu/FILhXfCLoJCoj/5k4VoyFTbNpZaA6uf
+	 i+B4YT0rcIjWmzT/+f1HVjm+iwSZNelh/bgrflRm4IBECGl9hN2odDSmu792hsR7Z8
+	 bY7jzfHc3H6ZhAlNdXLEimDrPw86vil0VEndvwRCPVvnygr7DN6Mq9+9KD8rSk+Zir
+	 0c7TnXcYAX3tKBKOqlJJGuoAYYu9GC075Ki4VpLu4BRSGf4Ua0VjatKXc8ldILkPF1
+	 5OSIdvCI9y6kbLKpZE6XIMron+uMCYRUWz0GkX5st4dnKSgs3SOWVeTndhpslO+/de
+	 3Z8LVQ3W2uU1w==
+Date: Thu, 31 Oct 2024 10:57:31 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	rcu <rcu@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Mark Brown <broonie@kernel.org>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Aishwarya TCV <aishwarya.tcv@arm.com>
+Subject: Re: next-20241031: kernel/time/clockevents.c:455
+ clockevents_register_device
+Message-ID: <ZyNUi/DmVi8P21TA@lothringen>
+References: <CA+G9fYtb5vAnEiHupwsnaeZ7uzdko_WAcjw9ZAFkHNXBVhi1EA@mail.gmail.com>
+ <87zfmkwqui.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 1/6] arch: introduce set_direct_map_valid_noflush()
-To: Patrick Roy <roypat@amazon.co.uk>, tabba@google.com,
- quic_eberman@quicinc.com, seanjc@google.com, pbonzini@redhat.com,
- jthoughton@google.com, ackerleytng@google.com, vannapurve@google.com,
- rppt@kernel.org
-Cc: graf@amazon.com, jgowans@amazon.com, derekmn@amazon.com,
- kalyazin@amazon.com, xmarcalx@amazon.com, linux-mm@kvack.org,
- corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org,
- chenhuacai@kernel.org, kernel@xen0n.name, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
- gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
- svens@linux.ibm.com, gerald.schaefer@linux.ibm.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, luto@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, shuah@kernel.org,
- kvm@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20241030134912.515725-1-roypat@amazon.co.uk>
- <20241030134912.515725-2-roypat@amazon.co.uk>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241030134912.515725-2-roypat@amazon.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zfmkwqui.ffs@tglx>
 
-On 30.10.24 14:49, Patrick Roy wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Thu, Oct 31, 2024 at 10:42:45AM +0100, Thomas Gleixner wrote:
+> On Thu, Oct 31 2024 at 14:10, Naresh Kamboju wrote:
+> > The QEMU-ARM64 boot has failed with the Linux next-20241031 tag.
+> > The boot log shows warnings at clockevents_register_device and followed
+> > by rcu_preempt detected stalls.
+> >
+> > However, the system did not proceed far enough to reach the login prompt.
+> > The fvp-aemva, Qemu-arm64, Qemu-armv7 and Qemu-riscv64 boot failed.
+> >
+> > Please find the incomplete boot log links below for your reference.
+> > The Qemu version is 9.0.2.
+> > <4>[ 0.220657] WARNING: CPU: 1 PID: 0 at kernel/time/clockevents.c:455
+> > clockevents_register_device (kernel/time/clockevents.c:455
+> > <4>[ 0.225218] clockevents_register_device+0x170/0x188 P
+> > <4>[ 0.225367] clockevents_config_and_register+0x34/0x50 L
+> > <4>[ 0.225487] clockevents_config_and_register (kernel/time/clockevents.c:523)
+> > <4>[ 0.225553] arch_timer_starting_cpu
+> > (drivers/clocksource/arm_arch_timer.c:1034)
+> > <4>[ 0.225602] cpuhp_invoke_callback (kernel/cpu.c:194)
+> > <4>[ 0.225649] __cpuhp_invoke_callback_range (kernel/cpu.c:965)
+> > <4>[ 0.225691] notify_cpu_starting (kernel/cpu.c:1604)
 > 
-> From: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> That's obvious what happens here. notify_cpu_starting() is invoked
+> before the CPU is marked online, which triggers the new check in
+> clockevents_register_device().
 > 
-> Add an API that will allow updates of the direct/linear map for a set of
-> physically contiguous pages.
+> I removed the warning and force pushed the fixed up branch, so that
+> should be gone by tomorrow.
+
+Ah, phew!
+
+Thanks.
+
 > 
-> It will be used in the following patches.
+> Thanks,
 > 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
-
-
-[...]
-
->   #ifdef CONFIG_DEBUG_PAGEALLOC
->   void __kernel_map_pages(struct page *page, int numpages, int enable)
->   {
-> diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
-> index e7aec20fb44f1..3030d9245f5ac 100644
-> --- a/include/linux/set_memory.h
-> +++ b/include/linux/set_memory.h
-> @@ -34,6 +34,12 @@ static inline int set_direct_map_default_noflush(struct page *page)
->   	return 0;
->   }
->   
-> +static inline int set_direct_map_valid_noflush(struct page *page,
-> +					       unsigned nr, bool valid)
-
-I recall that "unsigned" is frowned upon; "unsigned int".
-
-> +{
-> +	return 0;
-> +}
-
-Can we add some kernel doc for this?
-
-In particular
-
-(a) What does it mean when we return 0? That it worked? Then, this
-     dummy function looks wrong. Or this it return the
-     number of processed entries? Then we'd have a possible "int" vs.
-     "unsigned int" inconsistency.
-
-(b) What are the semantics when we fail halfway through the operation
-     when processing nr > 1? Is it "all or nothing"?
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+>         tglx
+> 
 
