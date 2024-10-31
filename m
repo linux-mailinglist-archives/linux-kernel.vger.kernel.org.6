@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-390398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDA79B795F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:08:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9A39B7960
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6D91C20CD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3C1A284C41
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CD519AA56;
-	Thu, 31 Oct 2024 11:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF53199FD7;
+	Thu, 31 Oct 2024 11:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXzZXaAX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bm1lAtPk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C893345025;
-	Thu, 31 Oct 2024 11:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B323845025
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730372912; cv=none; b=aqJv9FUr6Sxi7XR0XpuEXGAUOU4gXv4IRjUP8vfmNr8HrfUU9jMppaA9jk6IAjnH0zVKVSw39fDvsa9hBGo2IrNhH57I1D7zqKUrWIa6iFv86RQo5MZP6uTAEPKnjzWBrwnqs9FJw/lEamtJETf7LMeEQpiBb2sLePbuup7xb9E=
+	t=1730372994; cv=none; b=gu1nGrPdPj4WtdOSDa/MeAA6KkcoqLH4P5yKcxcGUnTD2oo5kOowNHjHKMVXIqMGmGivdsNGgbSHCOKaaIJMGXn/JiKz0DM4zkj4wH7K7XlhtIagNvGc1KrDS3BZjl68Xo4lLvJToMjYpGv4Ztjd9jRKKLlDMG/xuN476Hd5LLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730372912; c=relaxed/simple;
-	bh=FyM88rIx4eovE9oqQw0C4ws8wamIPhEuT4g/7ui8Pyg=;
+	s=arc-20240116; t=1730372994; c=relaxed/simple;
+	bh=htmamb+34JNuKpZgGjZLv+VCzrh4mCh2NpkI9cd1cFg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vd15VjPdSDb/HjZYJCUiAbGwZk7oAuk8285K2jX9jUynLR2kvioJ/SjIwhak2uGHsvQwjRmXQaOk1ahTSd0U8PmQC+xszhR1YJ1Xex05cK/F8aO6OW5TTlT5D8S1ifxwEpFE2WDq/0JiYgKI5gu/g84Xgd8ON93BF9YambuiLw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXzZXaAX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7A4C4AF18;
-	Thu, 31 Oct 2024 11:08:28 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=cb97o0YXB0fNd42k1RjPHQLcF1TUCLojBLLggbFnbTmkLb+2lzN0cD/RDuOFXr3l+XImQP6GPJmZAOttnJBrkQnwGDKsIzjhtTWmNod03nURGKZafA3+UhhPG+L7bE/aoRrJ0RHsQIpcebMsEwovtlyyWjOvwx+hYyYKfqRdnu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bm1lAtPk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82AB7C4AF19;
+	Thu, 31 Oct 2024 11:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730372911;
-	bh=FyM88rIx4eovE9oqQw0C4ws8wamIPhEuT4g/7ui8Pyg=;
+	s=k20201202; t=1730372994;
+	bh=htmamb+34JNuKpZgGjZLv+VCzrh4mCh2NpkI9cd1cFg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DXzZXaAXxSWYePvnYx0i2Wsq9cie8W0dt4u1M/d/5ZMzH5s8rF0tG6IHv78qqAWYm
-	 MEUsyMJCKlJ8CrRoATMZhOHdOJB9aiaS4Ds4IsT6QxoHIB2cfB/Z4KCvdlZEc4t14h
-	 cGZ74WCNH6X0hiRPCV638pBoLOg9ywRc2zKD7Lx7rJZN+l0PZpE7MHjwHei2Eeaen3
-	 YjWnZ6dhlVPn5qkQVU7/hmdF9o4soWzzzUalVIg+c27MaFr6Amy7QpoS7SITObntuE
-	 Rt00Y8FMVP5B2g/QHpkQze5aZ7n0tM8vmK7mdJLjOmHRyveus92cwOWl7FSOfKxuma
-	 aqD+oPg6BgG2A==
-Message-ID: <aab34ae4-0f6b-4720-b14e-69add0355daa@kernel.org>
-Date: Thu, 31 Oct 2024 12:08:25 +0100
+	b=bm1lAtPk5Sy+7M4vdz6eeZ9kpNzsMRyylCOzPcvVzQ4E42P0WFkMUIHZ6BXafGe59
+	 r38IY89Zq373R/meRuB/yxkVz/6+3HHfJWMYFx/389GQVp+9aQId7KL7Y8JtYJdaNN
+	 sZRnKc3pLLIncT/NfAfjE5hJP3pDqaR+q3+wxKVNAPKk6fUQ+2vNwiyvlOPg1wXG2m
+	 HivDPQ0SCaZOA7uiNIBbCJD277GBHiX/c5g3YowuAr1KeKI+gvx0VGeJjC76YMrM1v
+	 j3WRSsw/pNr31+IFYSjo/Um+BCvGn0TZUW16qXh35TGtyDkeqUVqRJNZNSSrjiIFPf
+	 GbbKZoQXF/cnQ==
+Message-ID: <05ffb173-1a1b-48ea-997f-2f4816dd3f61@kernel.org>
+Date: Thu, 31 Oct 2024 12:09:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Bluetooth: btbcm: automate node cleanup in
- btbcm_get_board_name()
+Subject: Re: [PATCH v2 2/2] clocksource/drivers/timer-ti-dm: automate
+ device_node cleanup in dmtimer_percpu_quirk_init()
 To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241030-bluetooth-btbcm-node-cleanup-v1-0-fdc4b9df9fe3@gmail.com>
- <20241030-bluetooth-btbcm-node-cleanup-v1-2-fdc4b9df9fe3@gmail.com>
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Tony Lindgren <tony@atomide.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20241028-timer-ti-dm-systimer-of_node_put-v2-0-e6b9a1b3fe67@gmail.com>
+ <20241028-timer-ti-dm-systimer-of_node_put-v2-2-e6b9a1b3fe67@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,44 +102,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241030-bluetooth-btbcm-node-cleanup-v1-2-fdc4b9df9fe3@gmail.com>
+In-Reply-To: <20241028-timer-ti-dm-systimer-of_node_put-v2-2-e6b9a1b3fe67@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/10/2024 16:46, Javier Carrasco wrote:
-> Switch to a more robust approach by automating the node release when it
-> goes out of scope, removing the need for explicit calls to
-> of_node_put().
+On 28/10/2024 18:06, Javier Carrasco wrote:
+> Simplify the code and make it more robust by automating the node release
+> when it goes out of scope.
 > 
 > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 > ---
->  drivers/bluetooth/btbcm.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
+>  drivers/clocksource/timer-ti-dm-systimer.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
-> index 400c2663d6b0..a1153ada74d2 100644
-> --- a/drivers/bluetooth/btbcm.c
-> +++ b/drivers/bluetooth/btbcm.c
-> @@ -541,23 +541,19 @@ static const struct bcm_subver_table bcm_usb_subver_table[] = {
->  static const char *btbcm_get_board_name(struct device *dev)
+> diff --git a/drivers/clocksource/timer-ti-dm-systimer.c b/drivers/clocksource/timer-ti-dm-systimer.c
+> index 23be1d21ce21..d1c144d6f328 100644
+> --- a/drivers/clocksource/timer-ti-dm-systimer.c
+> +++ b/drivers/clocksource/timer-ti-dm-systimer.c
+> @@ -686,15 +686,13 @@ subsys_initcall(dmtimer_percpu_timer_startup);
+>  
+>  static int __init dmtimer_percpu_quirk_init(struct device_node *np, u32 pa)
 >  {
->  #ifdef CONFIG_OF
-> -	struct device_node *root;
-> +	struct device_node *root __free(device_node) = of_find_node_by_path("/");
->  	char *board_type;
->  	const char *tmp;
+> -	struct device_node *arm_timer;
+> +	struct device_node *arm_timer __free(device_node) =
+> +		of_find_compatible_node(NULL, NULL, "arm,armv7-timer");
 >  
-> -	root = of_find_node_by_path("/");
->  	if (!root)
->  		return NULL;
->  
-> -	if (of_property_read_string_index(root, "compatible", 0, &tmp)) {
-> -		of_node_put(root);
+> -	arm_timer = of_find_compatible_node(NULL, NULL, "arm,armv7-timer");
+>  	if (of_device_is_available(arm_timer)) {
+>  		pr_warn_once("ARM architected timer wrap issue i940 detected\n");
+> -		of_node_put(arm_timer);
+
 
 You just added this. Don't add code which is immediately removed. It's a
 noop or wrong code.
-
-
 
 Best regards,
 Krzysztof
