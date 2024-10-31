@@ -1,101 +1,350 @@
-Return-Path: <linux-kernel+bounces-391037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EE19B8190
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:50:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26EBB9B819D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:52:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3368F1F22422
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98502830C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BBF1C2443;
-	Thu, 31 Oct 2024 17:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F461C57A0;
+	Thu, 31 Oct 2024 17:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqbme28b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xY12C7iy"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D5012D1EA;
-	Thu, 31 Oct 2024 17:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B6412D1EA
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730397030; cv=none; b=rS1t8EQhBYAKS/EaC7EBBvCCbX06neKdKnIPZPwzFdkg403VaGeeOoc1yGoD90vt9eMEdLKOa8dXJS695+xNxyjXATQ+Oisv2jzjGspdFZeXoEG5Jyfc5PF+5VjEGP42BhiCqjZ4aZ4yuBwWg43Yb3fx6vQGH3cX0w3bZiyO/wc=
+	t=1730397110; cv=none; b=kHF4bmHshi/dwQhosvAMVPmplpFYna7iCzAstJF9LBv3MthizXy8HKLHR/c9A0ZCZBCcF9wfRf6GeFrefT0++dNigPHa+FrDdRtKzcaQ9HPNTUjQE6WYu7vtPJtNagVccQ07NIp+oOMBGXt9W2Br8iLaWOpl84+60m6GV6fzEQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730397030; c=relaxed/simple;
-	bh=uJZCR6UeY+j8Umg8Zowzf2L3YgWJ4oZESKAwkNGi0NY=;
+	s=arc-20240116; t=1730397110; c=relaxed/simple;
+	bh=ptABP0e0Wvw/Wxu6DGoLRdJtE1/VDzmIlCbvifsdmNc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mj0NDJ7LiKsC8jLxiGPWgQkcBcZdbZoJy59EHfGnWODxc8W5iibsjmrTx+xNc42d+99zZOd6V0m89b0tmI7O6y5nUf3lwl8dCnf5yOyOBOhPbZz83J1chM1wrKfF+b6+IDG9/TQgVVD0LEtPqSi7c5MYDR3bUhnlc3bFl3z0PbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqbme28b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EF0FC4CED2;
-	Thu, 31 Oct 2024 17:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730397030;
-	bh=uJZCR6UeY+j8Umg8Zowzf2L3YgWJ4oZESKAwkNGi0NY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=bqbme28bjkSAIQ2CfLqbSX9OYD3Su7rgYFQrZczDPaT9BOkB3aQ0w70jgc76rjFOQ
-	 ZrUZGENmGuxSNur/pNaDmTIlD8qSTJJ671w17xpt06Wy7i6N7FO/f2+hClfo33IqoQ
-	 iAL37ZIHgb4y6nBkMkB7A5KuDGUUQ+7QZinEKw78yAkItpg8pmrd2WAhZYHhdo5jHo
-	 2Sy8P3K7p+xGCOYplGg3YB3ZBeWyRMjDO/zOVp/81Zc5aqQq2WgW/WJ+81fVPYptOm
-	 kxRdmLtBStEIh98hMNHouqhG1MS2g1U+WeGm6rPcon3Y6oIPgGIovQ8GCdhlShcOy2
-	 kvPmpeT/otW2w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9393ACE0924; Thu, 31 Oct 2024 10:50:29 -0700 (PDT)
-Date: Thu, 31 Oct 2024 10:50:29 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	sfr@canb.auug.org.au, longman@redhat.com, boqun.feng@gmail.com,
-	cl@linux.com, penberg@kernel.org, rientjes@google.com,
-	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org
-Subject: Re: [BUG] -next lockdep invalid wait context
-Message-ID: <186804c5-0ebd-4d38-b9ad-bfb74e39b353@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
- <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
- <ZyK0YPgtWExT4deh@elver.google.com>
- <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
- <20241031072136.JxDEfP5V@linutronix.de>
- <cca52eaa-28c2-4ed5-9870-b2531ec8b2bc@suse.cz>
- <20241031075509.hCS9Amov@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VnHMoWcllLOxuvif1RosK7Vncwdp9gRyRBPKHWp1xk5FiNI6wOuUWJXikNqg6AMjvX4mHbcU01pZgIyQQ4je+iyCXckZ7khR2ZCOP1hj6uk9LMvwKvDLo+39Mb+qnaZWkfYsFsSxnS+H9UoBRPEUu7pZzpCtXF6oGiRQExctbr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xY12C7iy; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so19524501fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:51:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730397105; x=1731001905; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=a5aLVrj4WXvI6hFfIdLjXLV7yfXI0anIP6OvfltaNKs=;
+        b=xY12C7iykaAfgdOQsqvBcBMR/+cMd/fZRXBnj4CmcOrUh+fedG5BWQoG2liG2NBw0i
+         3MuPHIB00D2i0DOGqdlwM2mao9MngKpmf9HlLtts6ioYGJ7+Xu3NKFyXtOibooUD2H3t
+         nWcya2ubr8Lmsd6vn4rl6kCMcHKNTIqhj7htnyoMYgQC4Ns8rOl7DzvXSlBH59wmYGuh
+         mvu14y9+q2Pt+1Td1vCChoUC2mZTV36LmSnvbBSluE98wEZaU2j5m3OsgbpnhESuiVjf
+         EnEtrTvXaQH3sqRoygLo7lmmJ6MeVbFR7OpmvsbJhMlvL4oJKL8tqnmcCXWq3ZRcO5IG
+         hH2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730397105; x=1731001905;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5aLVrj4WXvI6hFfIdLjXLV7yfXI0anIP6OvfltaNKs=;
+        b=l7CrCnDgX/aGt1TsBR8age/yM3odpkos+7IDpTbgMlOZ6CeL//IUs4mvDHqd4UFxsT
+         ii7o3URoXPaAMv0xgQXQKsjQcleOzWSfJO8W+oX67uipTtBSiYDK1MKToeCD0a0gNFEP
+         kt+y8+XMg0XW6LDgER8ra3cpQL7BSwX3+N4PVxXMmJk/gGNztfL+N1pcI1h/anLymSGR
+         bQkoEHHlTQJtcTjGcvVekS/deK/b8gL21qUzE6zceqWF0z2E3T9lUB+yyyalm0ol2pkB
+         DVz50fjobQU0GU1y0CX8pzk5jrI0fnJWJKCyRf04SD2fDKsBZWwlwBYqLI4uoP1W6jZM
+         ghuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLPLnAG7H+B+XGooIVFJRVvxYimPqcN+dRkSLitgt1mZ3Fe82P8escIDFuYumTIQgmVw+VYHcCKFeuH4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym5G+yE62BPS6G3oil1gosDkX9EBUmSVQeEgsuGAvA05xogzjj
+	HkWHuv5jg+HcfxYm9RRTnX3ZP1f2OW8h5VIMy8RuOT1YNZ1nBti+K3zZRIMEO6w=
+X-Google-Smtp-Source: AGHT+IFYZPEOV6p06lZ93i4ANb9YYXufF8mZJ+V3JCP434PwIAQE/gzVU9Bib5FDd+kuDnX8fzi+rw==
+X-Received: by 2002:a05:651c:506:b0:2fc:9869:2e0b with SMTP id 38308e7fff4ca-2fedb7c7dc2mr8110841fa.20.1730397105416;
+        Thu, 31 Oct 2024 10:51:45 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef5d62acsm2887161fa.33.2024.10.31.10.51.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 10:51:43 -0700 (PDT)
+Date: Thu, 31 Oct 2024 19:51:42 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+	Dang Huynh <danct12@riseup.net>
+Subject: Re: [PATCH v2 05/15] arm64: dts: qcom: Add PM8937 PMIC
+Message-ID: <vynqe5gqhval4enmnbmamshnu7o5bkpp3fnr7bnyfbgxfm7muc@tn4afxxht7vq>
+References: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org>
+ <20241031-msm8917-v2-5-8a075faa89b1@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241031075509.hCS9Amov@linutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241031-msm8917-v2-5-8a075faa89b1@mainlining.org>
 
-On Thu, Oct 31, 2024 at 08:55:09AM +0100, Sebastian Andrzej Siewior wrote:
-> On 2024-10-31 08:35:45 [+0100], Vlastimil Babka wrote:
-> > On 10/31/24 08:21, Sebastian Andrzej Siewior wrote:
-> > > On 2024-10-30 16:10:58 [-0700], Paul E. McKenney wrote:
-> > >> 
-> > >> So I need to avoid calling kfree() within an smp_call_function() handler?
-> > > 
-> > > Yes. No kmalloc()/ kfree() in IRQ context.
-> > 
-> > However, isn't this the case that the rule is actually about hardirq context
-> > on RT, and most of these operations that are in IRQ context on !RT become
-> > the threaded interrupt context on RT, so they are actually fine? Or is smp
-> > call callback a hardirq context on RT and thus it really can't do those
-> > operations?
+On Thu, Oct 31, 2024 at 02:19:46AM +0100, Barnabás Czémán wrote:
+> From: Dang Huynh <danct12@riseup.net>
 > 
-> interrupt handlers as of request_irq() are forced-threaded on RT so you
-> can do kmalloc()/ kfree() there. smp_call_function.*() on the other hand
-> are not threaded and invoked directly within the IRQ context.
+> The PM8937 features integrated peripherals like ADC, GPIO controller,
+> MPPs, PON keys and others.
+> 
+> Add the device tree so that any boards with this PMIC can use it.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Dang Huynh <danct12@riseup.net>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
+>  arch/arm64/boot/dts/qcom/pm8937.dtsi | 216 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 216 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/pm8937.dtsi b/arch/arm64/boot/dts/qcom/pm8937.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..34e2b4cd0d5f4f92c16bb20f53e4520544a644bc
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/pm8937.dtsi
+> @@ -0,0 +1,216 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2023, Dang Huynh <danct12@riseup.net>
+> + */
+> +
+> +#include <dt-bindings/iio/qcom,spmi-vadc.h>
+> +#include <dt-bindings/input/linux-event-codes.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/pinctrl/qcom,pmic-mpp.h>
+> +#include <dt-bindings/spmi/spmi.h>
+> +
+> +/ {
+> +	thermal-zones {
+> +		pm8937-thermal {
+> +			polling-delay-passive = <0>;
+> +			polling-delay = <0>;
+> +			thermal-sensors = <&pm8937_temp>;
+> +
+> +			trips {
+> +				trip0 {
+> +					temperature = <105000>;
+> +					hysteresis = <0>;
+> +					type = "passive";
+> +				};
+> +
+> +				trip1 {
+> +					temperature = <125000>;
+> +					hysteresis = <0>;
+> +					type = "hot";
+> +				};
+> +
+> +				trip2 {
+> +					temperature = <145000>;
+> +					hysteresis = <0>;
+> +					type = "critical";
+> +				};
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&spmi_bus {
+> +	pmic@0 {
+> +		compatible = "qcom,pm8937", "qcom,spmi-pmic";
+> +		reg = <0x0 SPMI_USID>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		pon@800 {
+> +			compatible = "qcom,pm8916-pon";
+> +			reg = <0x800>;
+> +			mode-bootloader = <0x2>;
+> +			mode-recovery = <0x1>;
+> +
+> +			pm8937_pwrkey: pwrkey {
+> +				compatible = "qcom,pm8941-pwrkey";
+> +				interrupts = <0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
+> +				debounce = <15625>;
+> +				bias-pull-up;
+> +				linux,code = <KEY_POWER>;
+> +			};
+> +
+> +			pm8937_resin: resin {
+> +				compatible = "qcom,pm8941-resin";
+> +				interrupts = <0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
+> +				debounce = <15625>;
+> +				bias-pull-up;
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+> +		pm8937_gpios: gpio@c000 {
+> +			compatible = "qcom,pm8937-gpio", "qcom,spmi-gpio";
+> +			reg = <0xc000>;
+> +			gpio-controller;
+> +			gpio-ranges = <&pm8937_gpios 0 0 8>;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +
+> +		pm8937_mpps: mpps@a000 {
+> +			compatible = "qcom,pm8937-mpp", "qcom,spmi-mpp";
+> +			reg = <0xa000>;
+> +			gpio-controller;
+> +			gpio-ranges = <&pm8937_mpps 0 0 4>;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +
+> +		pm8937_temp: temp-alarm@2400 {
+> +			compatible = "qcom,spmi-temp-alarm";
+> +			reg = <0x2400>;
+> +			interrupts = <0 0x24 0 IRQ_TYPE_EDGE_RISING>;
+> +			io-channels = <&pm8937_vadc VADC_DIE_TEMP>;
+> +			io-channel-names = "thermal";
+> +			#thermal-sensor-cells = <0>;
+> +		};
+> +
+> +		pm8937_vadc: adc@3100 {
+> +			compatible = "qcom,spmi-vadc";
+> +			reg = <0x3100>;
+> +			interrupts = <0 0x31 0 IRQ_TYPE_EDGE_RISING>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			#io-channel-cells = <1>;
+> +
+> +			channel@5 {
+> +				reg = <VADC_VCOIN>;
+> +				qcom,pre-scaling = <1 1>;
+> +				label = "vcoin";
 
-OK, thank you all for the explanation!  I will fix using Boqun's
-suggestion of irq work, but avoiding the issue Boqun raises by invoking
-the irq-work handler from the smp_call_function() handler.
+Are all the channels available and usable on all the boards?
 
-It will be a few days before I get to this, so if there is a better way,
-please do not keep it a secret!
+> +			};
+> +
+> +			channel@7 {
+> +				reg = <VADC_VSYS>;
+> +				qcom,pre-scaling = <1 1>;
+> +				label = "vph_pwr";
+> +			};
+> +
+> +			channel@8 {
+> +				reg = <VADC_DIE_TEMP>;
+> +				qcom,pre-scaling = <1 1>;
+> +				label = "die_temp";
+> +			};
+> +
+> +			channel@9 {
+> +				reg = <VADC_REF_625MV>;
+> +				qcom,pre-scaling = <1 1>;
+> +				label = "ref_625mv";
+> +			};
+> +
+> +			channel@a {
+> +				reg = <VADC_REF_1250MV>;
+> +				qcom,pre-scaling = <1 1>;
+> +				label = "ref_1250mv";
+> +			};
+> +
+> +			channel@c {
+> +				reg = <VADC_SPARE1>;
+> +				qcom,pre-scaling = <1 1>;
+> +				label = "ref_buf_625mv";
+> +			};
+> +
+> +			channel@e {
+> +				reg = <VADC_GND_REF>;
+> +				qcom,pre-scaling = <1 1>;
+> +				label = "ref_gnd";
+> +			};
+> +
+> +			channel@f {
+> +				reg = <VADC_VDD_VADC>;
+> +				qcom,pre-scaling = <1 1>;
+> +				label = "ref_vdd";
+> +			};
+> +
+> +			channel@11 {
+> +				reg = <VADC_P_MUX2_1_1>;
+> +				qcom,pre-scaling = <1 1>;
+> +				qcom,ratiometric;
+> +				qcom,hw-settle-time = <200>;
+> +				label = "pa_therm1";
+> +			};
+> +
+> +			channel@13 {
+> +				reg = <VADC_P_MUX4_1_1>;
+> +				qcom,pre-scaling = <1 1>;
+> +				qcom,ratiometric;
+> +				qcom,hw-settle-time = <200>;
+> +				label = "case_therm";
 
-							Thanx, Paul
+This one looks particularly board-specific. Please move device-specific
+channels to the board.dtsi.
+
+> +			};
+> +
+> +			channel@32 {
+> +				reg = <VADC_LR_MUX3_XO_THERM>;
+> +				qcom,pre-scaling = <1 1>;
+> +				qcom,ratiometric;
+> +				qcom,hw-settle-time = <200>;
+> +				label = "xo_therm";
+> +			};
+> +
+> +			channel@36 {
+> +				reg = <VADC_LR_MUX7_HW_ID>;
+> +				qcom,pre-scaling = <1 1>;
+> +				qcom,ratiometric;
+> +				qcom,hw-settle-time = <200>;
+> +				label = "pa_therm0";
+> +			};
+> +
+> +			channel@3c {
+> +				reg = <VADC_LR_MUX3_BUF_XO_THERM>;
+> +				qcom,pre-scaling = <1 1>;
+> +				qcom,ratiometric;
+> +				qcom,hw-settle-time = <200>;
+> +				label = "xo_therm_buf";
+> +			};
+> +		};
+> +
+> +		rtc@6000 {
+> +			compatible = "qcom,pm8941-rtc";
+> +			reg = <0x6000>, <0x6100>;
+> +			reg-names = "rtc", "alarm";
+> +			interrupts = <0x0 0x61 0x1 IRQ_TYPE_EDGE_RISING>;
+> +		};
+> +	};
+> +
+> +	pmic@1 {
+> +		compatible = "qcom,pm8937", "qcom,spmi-pmic";
+> +		reg = <0x1 SPMI_USID>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		pm8937_spmi_regulators: regulators {
+> +			compatible = "qcom,pm8937-regulators";
+> +		};
+> +	};
+> +};
+> 
+> -- 
+> 2.47.0
+> 
+
+-- 
+With best wishes
+Dmitry
 
