@@ -1,216 +1,384 @@
-Return-Path: <linux-kernel+bounces-389907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E893B9B72B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:06:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31BB9B72BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 04:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7C6C285D2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:06:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1AECB240D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 03:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AD612D20D;
-	Thu, 31 Oct 2024 03:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C33113698B;
+	Thu, 31 Oct 2024 03:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewt8W3Zt"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GDFpnY9l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343951BD9EA;
-	Thu, 31 Oct 2024 03:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768CC34CDE;
+	Thu, 31 Oct 2024 03:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730344005; cv=none; b=SYmQBi8seQj75lEQxLwoJ337oA7zzCNFfjxCdQ1QJEu5+v/kQ3y4ssTLOY0sQa49b+tiX3Skgl1kwQJfIHzqQ68aIL8zwAgR9ja037iQjR6gsB3QWo65hOkbRZd66/AxeugkRkkTZKV8QwrHFJjKJG9hjp8xq8IbBPi183vSbFo=
+	t=1730344311; cv=none; b=kdKVsvYaN53+MCbTb7oxQAN7K0VzD2MZRPcusdA9NoXd2/iR2L5Ik8yaRNcolyCH0lrOFc/rbuLf19marJVWFN4BpAHmLAcmovGTIvXwh4+SS7ZQPXk9EfZGsOCcGeJoGFpaQCUORi//5/kFDO1Sgw53faohCH5HT87QXDy5Z3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730344005; c=relaxed/simple;
-	bh=0+87QNyXrcq66+VpqxO5RqGtaTNR33vzlhv46UBphfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZcaVM+FutdRCAaiNexJhrJIN9St6WiSOBHsz9kHdwj11l9YANLkcpOYB76J3CE1MmWIeKiwszYePdd3xww0SE4wTLb6uI6UcJ0pMzAAeXRnouD4Xq0Esti5q4FEY9L3yLH0AU4IvHnceUeMzjcIU4vrrRNzPo3VEvOs93nY6yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ewt8W3Zt; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so382477b3a.3;
-        Wed, 30 Oct 2024 20:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730344002; x=1730948802; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sallBo0D525QcqP1/P+ZmxEdEXJWaysONmrq+mBGLLU=;
-        b=ewt8W3ZtO4l0g59NC/7GkXFgGIL1N7StqqNuD/LEUsZxOvsf/RRm4Zg2CW36T6pW2R
-         EPtIbRDrhZiVN6XA/olFIHLJWy0pdA5Y3kQOY/A80QZZSMrp4hPwrk9gjrWz8GUGr8RG
-         Cv5wOodqyN5/pE63htjXgZ+EKT2lq3vM0v/xCID3yY1lfx2/kO1I8Y7+digCLbBOAx1d
-         EONWWTlXERQdIlI5ooepftYEA+TnE/7RYXzihaseeEZlOEejxs9pLiBf+VaUAc5zMcnX
-         RBQUZ3p7Wf/Zshjssu543LNNIpHl/Pm+PXaiJoQe72A9OjDCIwNBtiDobxuI/wiZBbtf
-         HPvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730344002; x=1730948802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sallBo0D525QcqP1/P+ZmxEdEXJWaysONmrq+mBGLLU=;
-        b=Tl2OeFSMRFcAS4xN1YxhKAZ9lvG0t653uuMtEHAa5908YkOi/YwxwtpqUz4DVt22Kc
-         0jgwHW5VPlzm4l7YZfWa4yl3RICrCEngfNnieqfU8Ayw8GgWXbTVBNO7kblr/B1yBWXO
-         FMPcB1SDyIzzpxRTMP1oUUX3FSROrw12jf30W4v4Bw8XnBvgzAl50woVMJtc/v83XZjN
-         bAkIz7TeHWwJAWvxJdycyQ41VdhuuDnR0XYnLu+OO8rzhg7tLsfhaPO5CpRpE6cJfwXz
-         iHl1ERBauhpH7bBRGKJWuNrlkgQuwJnXrhSRyL8fz8igt258selUZcd0S7IgMHcLBiSU
-         +XdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXeghqWyjfDiW2cfsO4KJ1aGelKwj2pJU5Pxfk2CMmuGSSEX8xHHUyuDYWsWY4MrT2/fHSWyolwfmBfYJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXfLnB0E+wqjvszTCsMt8SiwrylMIjW2z2be+/yhaBTLJP0zzc
-	5KU27K79PD4InbTd33qzIAWTnZyqMvtG3kumnxaT/oZGEfHNo9nl
-X-Google-Smtp-Source: AGHT+IHAZCV8L/qW1aocav+j2pJ9KrlW7U/wjfcBMI690bSifTI5pCqIPcCZTJXA1TLu6F/0beGwTA==
-X-Received: by 2002:a05:6a20:d487:b0:1d9:2705:699e with SMTP id adf61e73a8af0-1db91d43efemr2039869637.7.1730344002313;
-        Wed, 30 Oct 2024 20:06:42 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c47fcsm359755b3a.126.2024.10.30.20.06.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 20:06:41 -0700 (PDT)
-Date: Thu, 31 Oct 2024 03:06:34 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Jay Vosburgh <jv@jvosburgh.net>
-Cc: netdev@vger.kernel.org, Andy Gospodarek <andy@greyhouse.net>,
+	s=arc-20240116; t=1730344311; c=relaxed/simple;
+	bh=HdR1SdELFEUYnCWa+nbdeZVogDmDr0xybRKwrbkH7aU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gQNb7fqmhiXcIE1f4snuULXgu7VhFncD6ikBfuAg/2sydTWErHjuQOUwE/u6Qu8LvhOX1LLsKgTX8/BDlL9hmw7qgh0byPcmFMlaV+8OBN8ZR6CdukXlKljf33ggAfuxlh0AbsgF/7Mz1Ji+jhwcpLtFzV3qN59FErbNrRLvAF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GDFpnY9l; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730344309; x=1761880309;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HdR1SdELFEUYnCWa+nbdeZVogDmDr0xybRKwrbkH7aU=;
+  b=GDFpnY9logo8HaYMQ4zP3p1YcFMofOrV0D9O6yfEe/jYKIQbG4df6QCY
+   KU6kq9t805FrtQFqqQ2ExLsh9xWr6oqczjrRiJGTogeeVxG8pEfuqpOHw
+   jxsRgXtV4lajfa7P76MbnLS5q0aZJr35AqziOLu5w5XArVsbhUk+wu4m7
+   cEoI0J02bM9S0/EvN4IjekVCwsUZsEJlzwkGYWV07F0pi8rRSh4QdFTWK
+   ErbZrvYLdamzRue4CsBIOw6SirU7WR8k0ArzIsBS1/Zyxo/WZoX2/lPWN
+   lj1aPxsF8L+jsm3ROUS5iD/B8j8egbi/WuqYNeIWGiRU4EmNsJJufww5D
+   A==;
+X-CSE-ConnectionGUID: i8mTFIvkQUC2PBTA+PTuDQ==
+X-CSE-MsgGUID: JhbTqFzmReuqEZw2LhKanA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="41438970"
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="41438970"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 20:11:46 -0700
+X-CSE-ConnectionGUID: fRc3ztTNTz6LwTDLmkOHmA==
+X-CSE-MsgGUID: E557BKf9Tka+vq7/ghKHuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,246,1725346800"; 
+   d="scan'208";a="113302027"
+Received: from qz-dev1.sh.intel.com (HELO localhost) ([10.239.147.28])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 20:11:38 -0700
+From: qiang4.zhang@linux.intel.com
+To: "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Amit Shah <amit@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Gonglei <arei.gonglei@huawei.com>,
 	"David S. Miller" <davem@davemloft.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Chen, Jian Jun" <jian.jun.chen@intel.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
 	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 net] bonding: add ns target multicast address to slave
- device
-Message-ID: <ZyL0OgXVAEUxthbq@fedora>
-References: <20241023123215.5875-1-liuhangbin@gmail.com>
- <213367.1730305265@vermin>
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Qiang Zhang <qiang4.zhang@intel.com>,
+	virtualization@lists.linux.dev,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH] virtio: only reset device and restore status if needed in device resume
+Date: Thu, 31 Oct 2024 11:08:44 +0800
+Message-ID: <20241031030847.3253873-1-qiang4.zhang@linux.intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <213367.1730305265@vermin>
+Content-Transfer-Encoding: 8bit
 
-Hi Jay,
-On Wed, Oct 30, 2024 at 05:21:05PM +0100, Jay Vosburgh wrote:
-> 	I suspect the set of multicast addresses involved is likely to
-> be small in the usual case, so the question then is whether the
-> presumably small amount of traffic that inadvertently passes the filter
-> (and is then thrown away by the kernel RX logic) is worth the complexity
-> added here.
+From: Qiang Zhang <qiang4.zhang@intel.com>
 
-Yes, while the code and logic may be complex, the "small amount of
-traffic", specifically, the IPv6 NS messages, plays a crucial role in
-determining whether backup slaves are up or not. Without these messages,
-it would be akin to dropping ARP traffic for IPv4, which could lead to
-connectivity issues.
+Virtio core unconditionally reset and restore status for all virtio
+devices before calling restore method. This breaks some virtio drivers
+which don't need to do anything in suspend and resume because they
+just want to keep device state retained.
 
-> 
-> 	That said, I have a few questions below.
-> 
-> >    arp_validate doesn't support 3ad, tlb, alb. So let's only do it on ab mode.
-> >---
-> > drivers/net/bonding/bond_main.c    | 18 +++++-
-> > drivers/net/bonding/bond_options.c | 95 +++++++++++++++++++++++++++++-
-> > include/net/bond_options.h         |  1 +
-> > 3 files changed, 112 insertions(+), 2 deletions(-)
-> >
-> >diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> >index b1bffd8e9a95..d7c1016619f9 100644
-> >--- a/drivers/net/bonding/bond_main.c
-> >+++ b/drivers/net/bonding/bond_main.c
-> >@@ -1008,6 +1008,9 @@ static void bond_hw_addr_swap(struct bonding *bond, struct slave *new_active,
-> > 
-> > 		if (bond->dev->flags & IFF_UP)
-> > 			bond_hw_addr_flush(bond->dev, old_active->dev);
-> >+
-> >+		/* add target NS maddrs for backup slave */
-> >+		slave_set_ns_maddrs(bond, old_active, true);
-> > 	}
-> > 
-> > 	if (new_active) {
-> >@@ -1024,6 +1027,9 @@ static void bond_hw_addr_swap(struct bonding *bond, struct slave *new_active,
-> > 			dev_mc_sync(new_active->dev, bond->dev);
-> > 			netif_addr_unlock_bh(bond->dev);
-> > 		}
-> >+
-> >+		/* clear target NS maddrs for active slave */
-> >+		slave_set_ns_maddrs(bond, new_active, false);
-> > 	}
-> > }
-> > 
-> >@@ -2341,6 +2347,12 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev,
-> > 	bond_compute_features(bond);
-> > 	bond_set_carrier(bond);
-> > 
-> >+	/* set target NS maddrs for new slave, need to be called before
-> >+	 * bond_select_active_slave(), which will remove the maddr if
-> >+	 * the slave is selected as active slave
-> >+	 */
-> >+	slave_set_ns_maddrs(bond, new_slave, true);
-> >+
-> > 	if (bond_uses_primary(bond)) {
-> > 		block_netpoll_tx();
-> > 		bond_select_active_slave(bond);
-> >@@ -2350,7 +2362,6 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev,
-> > 	if (bond_mode_can_use_xmit_hash(bond))
-> > 		bond_update_slave_arr(bond, NULL);
-> > 
-> >-
-> > 	if (!slave_dev->netdev_ops->ndo_bpf ||
-> > 	    !slave_dev->netdev_ops->ndo_xdp_xmit) {
-> > 		if (bond->xdp_prog) {
-> >@@ -2548,6 +2559,11 @@ static int __bond_release_one(struct net_device *bond_dev,
-> > 	if (oldcurrent == slave)
-> > 		bond_change_active_slave(bond, NULL);
-> > 
-> >+	/* clear target NS maddrs, must after bond_change_active_slave()
-> >+	 * as we need to clear the maddrs on backup slave
-> >+	 */
-> >+	slave_set_ns_maddrs(bond, slave, false);
-> >+
-> > 	if (bond_is_lb(bond)) {
-> > 		/* Must be called only after the slave has been
-> > 		 * detached from the list and the curr_active_slave
-> >diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
-> >index 95d59a18c022..2554ba70f092 100644
-> >--- a/drivers/net/bonding/bond_options.c
-> >+++ b/drivers/net/bonding/bond_options.c
-> >@@ -1234,6 +1234,75 @@ static int bond_option_arp_ip_targets_set(struct bonding *bond,
-> > }
-> > 
-> > #if IS_ENABLED(CONFIG_IPV6)
-> >+/* convert IPv6 address to link-local solicited-node multicast mac address */
-> >+static void ipv6_addr_to_solicited_mac(const struct in6_addr *addr,
-> >+				       unsigned char mac[ETH_ALEN])
-> >+{
-> >+	mac[0] = 0x33;
-> >+	mac[1] = 0x33;
-> >+	mac[2] = 0xFF;
-> >+	mac[3] = addr->s6_addr[13];
-> >+	mac[4] = addr->s6_addr[14];
-> >+	mac[5] = addr->s6_addr[15];
-> >+}
-> 
-> 	Can we make use of ndisc_mc_map() / ipv6_eth_mc_map() to perform
-> this step, instead of creating a new function that's almost the same?
+Virtio GPIO is a typical example. GPIO states should be kept unchanged
+after suspend and resume (e.g. output pins keep driving the output) and
+Virtio GPIO driver does nothing in freeze and restore methods. But the
+reset operation in virtio_device_restore breaks this.
 
-Ah, yes, I think so. Thanks for this tips.
+Since some devices need reset in suspend and resume while some needn't,
+create a new helper function for the original reset and status restore
+logic so that virtio drivers can invoke it in their restore method
+if necessary.
 
+Signed-off-by: Qiang Zhang <qiang4.zhang@intel.com>
+---
+ drivers/block/virtio_blk.c                 |  4 +++
+ drivers/char/hw_random/virtio-rng.c        |  4 +++
+ drivers/char/virtio_console.c              |  4 +++
+ drivers/crypto/virtio/virtio_crypto_core.c |  4 +++
+ drivers/i2c/busses/i2c-virtio.c            |  6 ++++
+ drivers/net/virtio_net.c                   |  4 +++
+ drivers/scsi/virtio_scsi.c                 |  4 +++
+ drivers/virtio/virtio.c                    | 35 ++++++++++++++--------
+ drivers/virtio/virtio_balloon.c            |  4 +++
+ drivers/virtio/virtio_input.c              |  4 +++
+ drivers/virtio/virtio_mem.c                |  4 +++
+ include/linux/virtio.h                     |  1 +
+ sound/virtio/virtio_card.c                 |  4 +++
+ 13 files changed, 70 insertions(+), 12 deletions(-)
 
-> >+void slave_set_ns_maddrs(struct bonding *bond, struct slave *slave, bool add)
-> >+{
-> >+	if (!bond->params.arp_validate)
-> >+		return;
-> >+
-> >+	_slave_set_ns_maddrs(bond, slave, add);
-> >+}
-> 
-> 	Why does this need a wrapper function vs. having the
-> arp_validate test be first in the larger function?
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 194417abc105..bba7148bd219 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -1612,6 +1612,10 @@ static int virtblk_restore(struct virtio_device *vdev)
+ 	struct virtio_blk *vblk = vdev->priv;
+ 	int ret;
+ 
++	ret = virtio_device_reset_and_restore_status(vdev);
++	if (ret)
++		return ret;
++
+ 	ret = init_vq(vdev->priv);
+ 	if (ret)
+ 		return ret;
+diff --git a/drivers/char/hw_random/virtio-rng.c b/drivers/char/hw_random/virtio-rng.c
+index dd998f4fe4f2..954280514f5a 100644
+--- a/drivers/char/hw_random/virtio-rng.c
++++ b/drivers/char/hw_random/virtio-rng.c
+@@ -218,6 +218,10 @@ static int virtrng_restore(struct virtio_device *vdev)
+ {
+ 	int err;
+ 
++	err = virtio_device_reset_and_restore_status(vdev);
++	if (err)
++		return err;
++
+ 	err = probe_common(vdev);
+ 	if (!err) {
+ 		struct virtrng_info *vi = vdev->priv;
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index c62b208b42f1..c431e4d5cd29 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -2132,6 +2132,10 @@ static int virtcons_restore(struct virtio_device *vdev)
+ 
+ 	portdev = vdev->priv;
+ 
++	ret = virtio_device_reset_and_restore_status(vdev);
++	if (ret)
++		return ret;
++
+ 	ret = init_vqs(portdev);
+ 	if (ret)
+ 		return ret;
+diff --git a/drivers/crypto/virtio/virtio_crypto_core.c b/drivers/crypto/virtio/virtio_crypto_core.c
+index d0278eb568b9..b3363dd80448 100644
+--- a/drivers/crypto/virtio/virtio_crypto_core.c
++++ b/drivers/crypto/virtio/virtio_crypto_core.c
+@@ -536,6 +536,10 @@ static int virtcrypto_restore(struct virtio_device *vdev)
+ 	struct virtio_crypto *vcrypto = vdev->priv;
+ 	int err;
+ 
++	err = virtio_device_reset_and_restore_status(vdev);
++	if (err)
++		return err;
++
+ 	err = virtcrypto_init_vqs(vcrypto);
+ 	if (err)
+ 		return err;
+diff --git a/drivers/i2c/busses/i2c-virtio.c b/drivers/i2c/busses/i2c-virtio.c
+index 2a351f961b89..ce6493d6fe8e 100644
+--- a/drivers/i2c/busses/i2c-virtio.c
++++ b/drivers/i2c/busses/i2c-virtio.c
+@@ -251,6 +251,12 @@ static int virtio_i2c_freeze(struct virtio_device *vdev)
+ 
+ static int virtio_i2c_restore(struct virtio_device *vdev)
+ {
++	int ret;
++
++	ret = virtio_device_reset_and_restore_status(vdev);
++	if (ret)
++		return ret;
++
+ 	return virtio_i2c_setup_vqs(vdev->priv);
+ }
+ 
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 792e9eadbfc3..5be2a5f68f68 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -6693,6 +6693,10 @@ static __maybe_unused int virtnet_restore(struct virtio_device *vdev)
+ 	struct virtnet_info *vi = vdev->priv;
+ 	int err;
+ 
++	err = virtio_device_reset_and_restore_status(vdev);
++	if (err)
++		return err;
++
+ 	err = virtnet_restore_up(vdev);
+ 	if (err)
+ 		return err;
+diff --git a/drivers/scsi/virtio_scsi.c b/drivers/scsi/virtio_scsi.c
+index 8471f38b730e..3aeddf6331d3 100644
+--- a/drivers/scsi/virtio_scsi.c
++++ b/drivers/scsi/virtio_scsi.c
+@@ -1016,6 +1016,10 @@ static int virtscsi_restore(struct virtio_device *vdev)
+ 	struct virtio_scsi *vscsi = shost_priv(sh);
+ 	int err;
+ 
++	err = virtio_device_reset_and_restore_status(vdev);
++	if (err)
++		return err;
++
+ 	err = virtscsi_init(vdev, vscsi);
+ 	if (err)
+ 		return err;
+diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+index b9095751e43b..0446b30c83d6 100644
+--- a/drivers/virtio/virtio.c
++++ b/drivers/virtio/virtio.c
+@@ -549,7 +549,7 @@ int virtio_device_freeze(struct virtio_device *dev)
+ }
+ EXPORT_SYMBOL_GPL(virtio_device_freeze);
+ 
+-int virtio_device_restore(struct virtio_device *dev)
++int virtio_device_reset_and_restore_status(struct virtio_device *dev)
+ {
+ 	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
+ 	int ret;
+@@ -574,23 +574,34 @@ int virtio_device_restore(struct virtio_device *dev)
+ 
+ 	ret = dev->config->finalize_features(dev);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = virtio_features_ok(dev);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+-	if (drv->restore) {
+-		ret = drv->restore(dev);
+-		if (ret)
+-			goto err;
+-	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(virtio_device_reset_and_restore_status);
+ 
+-	/* If restore didn't do it, mark device DRIVER_OK ourselves. */
+-	if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER_OK))
+-		virtio_device_ready(dev);
++int virtio_device_restore(struct virtio_device *dev)
++{
++	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
++	int ret;
+ 
+-	virtio_config_core_enable(dev);
++	if (drv) {
++		if (drv->restore) {
++			ret = drv->restore(dev);
++			if (ret)
++				goto err;
++		}
++
++		/* If restore didn't do it, mark device DRIVER_OK ourselves. */
++		if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER_OK))
++			virtio_device_ready(dev);
++
++		virtio_config_core_enable(dev);
++	}
+ 
+ 	return 0;
+ 
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index b36d2803674e..ba92b3e56391 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -1163,6 +1163,10 @@ static int virtballoon_restore(struct virtio_device *vdev)
+ 	struct virtio_balloon *vb = vdev->priv;
+ 	int ret;
+ 
++	ret = virtio_device_reset_and_restore_status(vdev);
++	if (ret)
++		return ret;
++
+ 	ret = init_vqs(vdev->priv);
+ 	if (ret)
+ 		return ret;
+diff --git a/drivers/virtio/virtio_input.c b/drivers/virtio/virtio_input.c
+index a5d63269f20b..81c2ffd0e76e 100644
+--- a/drivers/virtio/virtio_input.c
++++ b/drivers/virtio/virtio_input.c
+@@ -374,6 +374,10 @@ static int virtinput_restore(struct virtio_device *vdev)
+ 	struct virtio_input *vi = vdev->priv;
+ 	int err;
+ 
++	err = virtio_device_reset_and_restore_status(vdev);
++	if (err)
++		return err;
++
+ 	err = virtinput_init_vqs(vi);
+ 	if (err)
+ 		return err;
+diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
+index b0b871441578..47c23aa43c20 100644
+--- a/drivers/virtio/virtio_mem.c
++++ b/drivers/virtio/virtio_mem.c
+@@ -3018,6 +3018,10 @@ static int virtio_mem_restore(struct virtio_device *vdev)
+ 	struct virtio_mem *vm = vdev->priv;
+ 	int ret;
+ 
++	ret = virtio_device_reset_and_restore_status(vdev);
++	if (ret)
++		return ret;
++
+ 	ret = virtio_mem_init_vq(vm);
+ 	if (ret)
+ 		return ret;
+diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+index 306137a15d07..ab850146f0a8 100644
+--- a/include/linux/virtio.h
++++ b/include/linux/virtio.h
+@@ -175,6 +175,7 @@ void virtio_config_driver_enable(struct virtio_device *dev);
+ 
+ #ifdef CONFIG_PM_SLEEP
+ int virtio_device_freeze(struct virtio_device *dev);
++int virtio_device_reset_and_restore_status(struct virtio_device *dev);
+ int virtio_device_restore(struct virtio_device *dev);
+ #endif
+ void virtio_reset_device(struct virtio_device *dev);
+diff --git a/sound/virtio/virtio_card.c b/sound/virtio/virtio_card.c
+index 965209e1d872..3c7a6d76c46c 100644
+--- a/sound/virtio/virtio_card.c
++++ b/sound/virtio/virtio_card.c
+@@ -412,6 +412,10 @@ static int virtsnd_restore(struct virtio_device *vdev)
+ 	struct virtio_snd *snd = vdev->priv;
+ 	int rc;
+ 
++	rc = virtio_device_reset_and_restore_status(vdev);
++	if (rc)
++		return rc;
++
+ 	rc = virtsnd_find_vqs(snd);
+ 	if (rc)
+ 		return rc;
+-- 
+2.45.2
 
-We have 4 places call slave_set_ns_maddrs(). I think with this wrapper could
-save some codes. I'm fine to remove this wrapper if you think the code
-would be simpler.
-
-Thanks
-Hangbin
 
