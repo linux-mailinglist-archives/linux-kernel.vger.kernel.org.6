@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-391153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AFC9B8343
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:22:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B005F9B8345
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 20:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3CA1F213C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:22:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18E41C20895
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12851CB508;
-	Thu, 31 Oct 2024 19:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562EB1CBE84;
+	Thu, 31 Oct 2024 19:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0reAsTC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/rEIjVU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6DD1CB316;
-	Thu, 31 Oct 2024 19:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2861CB339;
+	Thu, 31 Oct 2024 19:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730402517; cv=none; b=Ng3qPAzNz7DznJKTWE/jZJTwx12wYrysQ5eeTuyfjExu74MiO0CSBBwTPkjA197AE318TmjVtAfwa2oaXswFksl1pUJwkh/D/yrbPoJ3IxsQqWKf008IpnRs8t7RxBVpVQQQZ2n/O4gHr1dYvzlm4libbBrxAEVV6GCBpNAZhGY=
+	t=1730402527; cv=none; b=jdq8cWXjvRs9gARb/Os3YjqE+v3kH7/woXF85abtoLfqBSrxV2pnOkbWcFD4j1Jbhg5vawlAQowX7XWjV7v3rEZd0w2QjoZC0VwCfu2Bo9mQ8fNUsGLeDwRJOO+Hkge5KU5gcV0WcI9wOt1iI3D5dlj1TrMoKZKY5YtKeZRzOM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730402517; c=relaxed/simple;
-	bh=W6kgg88zrHCrf22nJfw8tbSKKqNxH1rsErpXBmKqqIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AX6/IYPTZCq8UV6e+QU6/fjvzuDQ85JEXu32gE7LHZGfQeWGwMlWI7KgVOL/fE5BZK2h2GwSZ+vr6u3oQGYHR4mdfhZ/in8b3xUUa4SgkrQtqZ8ksMdE+TetFGgtl+r8Fri1uqP6s6lIxdAsjfkwu7tsFBBwyCQ3RUo3nXXdKTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0reAsTC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37482C4CEC3;
-	Thu, 31 Oct 2024 19:21:56 +0000 (UTC)
+	s=arc-20240116; t=1730402527; c=relaxed/simple;
+	bh=NQExuNwmSmnXRwubYNqVJYHcQFwZjkDDNWdIBUCeMCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AngPJzhFsSeC+lYHhQEAD/YIpU9h577ZfxuY3aLSgNVEPbhbJU1h9VuYdCKI0IJVwTeN+BGUMF2Wicbo0ZSI5wbOkkgn0DPG+KBRaXNWw537dnkcOKe1XHkVecJp51zkru1do/bRlAu1sd6QKwS4mzHXGtg1W2tIMKP80un+Qp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/rEIjVU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E470CC4CEC3;
+	Thu, 31 Oct 2024 19:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730402517;
-	bh=W6kgg88zrHCrf22nJfw8tbSKKqNxH1rsErpXBmKqqIc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p0reAsTCzI9m/gsCnevKqHdMu7DPT/h1LRQbt/l7flSGB0zevYA49tibPDwtnK61Q
-	 sGgb3eGX4bMhIepY2+I7nwWEOaEQF6ljMqFk7ySH998BW9EVN6fq5pNBOUK96UNm3S
-	 UWo25kaCAYCIVRLZJuVuZ4hExMsYegZwNGso5URcjLmwJMdArn3GfJyBxKcWy47aW7
-	 N6zLuuwYXM7zVUeGokhnUrdhVM5pIOWgiwE5EAzxNDtAAzbGjVzBdtXBLBSrdd3Kwf
-	 qoEdIdMrRAQeiLEZieo0zVk/j3OyincbEp3F3hrJZplNSxNm9fGjifSOQ9MJtb5NQr
-	 xCkYg08fRzwHA==
-Date: Thu, 31 Oct 2024 16:21:52 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 17/21] perf build: Remove test library from python
- shared object
-Message-ID: <ZyPY0JGMOp25FWm6@x1>
-References: <20241031014252.753588-1-irogers@google.com>
- <20241031014252.753588-18-irogers@google.com>
+	s=k20201202; t=1730402527;
+	bh=NQExuNwmSmnXRwubYNqVJYHcQFwZjkDDNWdIBUCeMCA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=F/rEIjVUGk4yDusxok4rBAzll+GAHu1NW97ceZQmsC2p/XP9sr71iBcwY4OIlxWSb
+	 4PYx+BFRntiOpNKLjinj5i/tz84ZNp6EYV4dM0MdrolulKkFhG0+8JLnuYZMX041IJ
+	 ewVlmv4dl+v7cpnBQqRDgf7uBiixX35ClkJU1zfjNO/2OGSKdGMUQeXLu4ACZMBI6w
+	 x3MkNgXpztahPSTeJwssquBK6ZGPfRBJlKR5apeRUftPtvrHIlUkSR+SmXfckjA7ee
+	 qqKrQz/azcyMKfi14o/Y3L7FCPUkU4vdp+HKyiAKW2XIcxLNHTAQ01TMp2AuibLir8
+	 dR9hlLVMJuGpg==
+Date: Thu, 31 Oct 2024 19:22:00 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: dan.carpenter@linaro.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] iio: chemical: bme680: use s16 variable for temp
+ value to avoid casting
+Message-ID: <20241031192200.649a0ea1@jic23-huawei>
+In-Reply-To: <20241030235424.214935-2-vassilisamir@gmail.com>
+References: <20241030235424.214935-1-vassilisamir@gmail.com>
+	<20241030235424.214935-2-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031014252.753588-18-irogers@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 30, 2024 at 06:42:48PM -0700, Ian Rogers wrote:
-> With the attr.c code moved to a shell test, there is no need to link
-> the test code into the python dso to avoid a missing reference to
-> test_attr__open. Drop the test code from the python library.
+On Thu, 31 Oct 2024 00:54:24 +0100
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+
+> Use local s16 variable for the temperature channel to avoid casting it
+> later before passing it to the bme680_read_temp() function. This way,
+> possible endianness and initialization issues are avoided.
 > 
-> With the bench and test code removed from the python library on my x86
-> debian derived laptop the python library is reduced in size by 508,712
-> bytes or nearly 5%.
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
 
-Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
- 
-> Signed-off-by: Ian Rogers <irogers@google.com>
+Applied.
+
 > ---
->  tools/perf/Makefile.perf | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/iio/chemical/bme680_core.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> index ef1b39b5042d..2059f1c4b78d 100644
-> --- a/tools/perf/Makefile.perf
-> +++ b/tools/perf/Makefile.perf
-> @@ -487,7 +487,7 @@ endif
->  EXTLIBS := $(call filter-out,$(EXCLUDE_EXTLIBS),$(EXTLIBS))
->  LIBS = -Wl,--whole-archive $(PERFLIBS) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive -Wl,--start-group $(EXTLIBS) -Wl,--end-group
+> diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+> index 871921d81e70..6d11f9188367 100644
+> --- a/drivers/iio/chemical/bme680_core.c
+> +++ b/drivers/iio/chemical/bme680_core.c
+> @@ -741,6 +741,7 @@ static int bme680_read_raw(struct iio_dev *indio_dev,
+>  {
+>  	struct bme680_data *data = iio_priv(indio_dev);
+>  	int chan_val, ret;
+> +	s16 temp_chan_val;
 >  
-> -PERFLIBS_PY := $(call filter-out,$(LIBPERF_BENCH),$(PERFLIBS))
-> +PERFLIBS_PY := $(call filter-out,$(LIBPERF_BENCH) $(LIBPERF_TEST),$(PERFLIBS))
->  LIBS_PY = -Wl,--whole-archive $(PERFLIBS_PY) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive -Wl,--start-group $(EXTLIBS) -Wl,--end-group
+>  	guard(mutex)(&data->lock);
 >  
->  export INSTALL SHELL_PATH
-> -- 
-> 2.47.0.163.g1226f6d8fa-goog
+> @@ -757,11 +758,11 @@ static int bme680_read_raw(struct iio_dev *indio_dev,
+>  	case IIO_CHAN_INFO_PROCESSED:
+>  		switch (chan->type) {
+>  		case IIO_TEMP:
+> -			ret = bme680_read_temp(data, (s16 *)&chan_val);
+> +			ret = bme680_read_temp(data, &temp_chan_val);
+>  			if (ret)
+>  				return ret;
+>  
+> -			*val = chan_val * 10;
+> +			*val = temp_chan_val * 10;
+>  			return IIO_VAL_INT;
+>  		case IIO_PRESSURE:
+>  			ret = bme680_read_press(data, &chan_val);
+
 
