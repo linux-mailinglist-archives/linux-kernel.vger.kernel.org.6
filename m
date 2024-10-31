@@ -1,173 +1,109 @@
-Return-Path: <linux-kernel+bounces-390699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45789B7D7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:00:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5F09B7DA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:03:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34F0BB21CFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA43E1C21892
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8D91A38C4;
-	Thu, 31 Oct 2024 15:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8CD1C9B6D;
+	Thu, 31 Oct 2024 15:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QnzReAcv"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="SS/Cc20K"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC1E19D88D
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4315E1BE251;
+	Thu, 31 Oct 2024 15:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730386841; cv=none; b=JK3HtXwQkSBCJhK4l0tJC8rIs89vn+wsyI0YHrr2TXBXSjgLn/aBeOvZKm3B1r+C5MGmwPFtjqrAfKKGNZNVXm5jNoMAO/DK2GIhIwbZNYJHcw/azz3udfXledmDzuZyobs8Hp3rAh8X7nxVhuYwd9sjRFaHN0DkgYYGO7ykG9g=
+	t=1730386855; cv=none; b=uo+oSkEeXXnTniWTb3IOuWB4LLnprl0WaTPrvtLNLxC2IIU9kpOyYAujDj6CdS8Xg6oAWKHXHEeF6gH1IxKh97a92Nr9n+G0vj9QEqXstIwcZ1XPflfRdP9vKcR7NvnnTyWPkXXmx6CbX5w6RO9Ew+VkhCyXMvNXnx8/X1UQEs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730386841; c=relaxed/simple;
-	bh=R14f0vSyUxSrXBZKBLtQzco/Z6fxcSPip85uSlqjDW8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PAofb8NKNOUmDmqsw0x69uZh6rpUslklCgz952qpxLTvxutHoKgyVeGeQcKtMt5M5uNbT22BqQeHandebz7HiUoVlu9oQJYNatcYfBVY1yyqXyz9MIF5vT7mQiPNOUQkt3LSOmjjYvFtsJpx+TB2L4ZDtvrxcIlJZa6Ys8s6wsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QnzReAcv; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43158625112so8522705e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730386837; x=1730991637; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iCEaeDborMpChWpG+09oPpilTDmpwNme21uFJErGw+s=;
-        b=QnzReAcvLo+bqJUydzUTVM4Udr5mznlj3Rb2rZP+R3qMRPzYpgdfOuPqN/czBXzT9Y
-         1+X5hnR2Pn4h99xCLqrJyknMUNuDoudE9yPlGQiKGmylRaHorqhTgwR9Ec9QDPFOf5lL
-         SwKbtmKnoVxtD1YAOQA/BfW8G8biar+92CyuRt8f7DDg3+NsJ5UgAXTqQBXp+ve2pKMc
-         yxcDXhe9czFTllOFwayOyaOcljQv04atlA7Cg0BtdvRVJ4viIjSMVvTfo2ttCEdffHF+
-         fGL/1VVJMCMPk+FqrYgvBXGRyqugDVnXx/saJGDaN7h6fG3IR7HUbZr1oNzZ+1V11r3k
-         RWJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730386837; x=1730991637;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iCEaeDborMpChWpG+09oPpilTDmpwNme21uFJErGw+s=;
-        b=r1L6ndNT0kl6mVr6KWE2HUjID6jmIfuEQAQ8qICVCCYuSocVEnvXxGX6BfHASVCuc+
-         NXoGYXGrCfGLs822r6jSwmuivlHfu2573BqAtuIqFJMAjxVBbhvsGyh6wEUhD4yudAvF
-         PQMu0373GJXQewdClaSl9n2rc/b6SEfO1dFsWj9ZsC13QpkbQe0DxZt+e+I+NHZS2WcK
-         acPghUEBQNP+2cVC5Iw0kBJ5huoZQ8IgzX73DyDsM9SSK+oL9izHdxQ/5GZQ4MnUiF01
-         BXHNUs5x9nmsWYJl4pnD8enIm7ooIB3dpjcsxSFN5A0KqYM5RXosTh9HUECDK4iGypHU
-         qtzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpE9TLtK/P2bOfYldFLNMq2kureeeq9/KeRsWcHPRD/kN5lSf9sLE51nUW2PaAB21MRWO7TRcPCAqsFLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw17i/wmGd9wv8/ocuHcFh3v68hBMMVjIB92z/xSGiPNkQ1eNac
-	SdzvLhxVlCe8aq4T6QrmB4n1HFM/GHVYBGulogw60Hg1PZR48hJbgIPwFQtgHb0=
-X-Google-Smtp-Source: AGHT+IH+HfNSNGik5mKCBBG/5S6M1R2AxyBfXCc47oa7MI7ol35//vP5TNbBTsLrmHg9i1EHWx9Okw==
-X-Received: by 2002:a05:600c:4f14:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-4328327ec52mr1208565e9.25.1730386836669;
-        Thu, 31 Oct 2024 08:00:36 -0700 (PDT)
-Received: from gpeter-l.lan ([145.224.65.232])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8524sm59163225e9.5.2024.10.31.08.00.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 08:00:36 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: alim.akhtar@samsung.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	avri.altman@wdc.com,
-	bvanassche@acm.org,
-	krzk@kernel.org
-Cc: tudor.ambarus@linaro.org,
-	ebiggers@kernel.org,
-	andre.draszik@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	linux-scsi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v3 00/14] UFS cleanups and enhancements to ufs-exynos for gs101
-Date: Thu, 31 Oct 2024 15:00:19 +0000
-Message-ID: <20241031150033.3440894-1-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+	s=arc-20240116; t=1730386855; c=relaxed/simple;
+	bh=+tmv06LQkli0snw8KI+ayhOvS0fqopLEcR1UVstfZx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hvv1yzG7q1wPQ8VSgYM50PPWM3QOdR1q3WV3JQ+loFYKvf28HUWcy9wEDRmqYll3qtQzMkizBOrYwVl8MthwIspBgRaEL+1VgYj21yRn+NW0DWpQpt8smcWiP1aQgv52xy1ZWfZWYmmfVno/sJkCjA0PzrfiCjPsrvOJPeYkKzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=SS/Cc20K; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vH9IxEylnimSrP4rDt0pvOOOUMyhyk1CV6pRJ7l0cZ0=; b=SS/Cc20KOgLFEXcrxgamK0HYgr
+	rMQxmIJBUVUd0lAhatW4oGY7oQuQOKyRgExfLLdXNr8GRtstsKpYGjRJMx4snhB1W/lbVWKnN46LF
+	mpBd9u18hiTHO7ELPxr5iJdVKBG8Q+lTvphgJgWIBSC6W5tMlq8VqpdBSJvi3oh+oq0E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t6Weq-00BnNn-Mu; Thu, 31 Oct 2024 16:00:20 +0100
+Date: Thu, 31 Oct 2024 16:00:20 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jan Petrous <jan.petrous@oss.nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v4 13/16] dt-bindings: net: Add DT bindings for DWMAC on
+ NXP S32G/R SoCs
+Message-ID: <a938f3cd-9c9c-43a6-8f06-760eec69e1d1@lunn.ch>
+References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
+ <20241028-upstream_s32cc_gmac-v4-13-03618f10e3e2@oss.nxp.com>
+ <erg5zzxgy45ucqv2nq3fkcv4sr7cxqzxz6ejdikafwfpgkkmse@7eigsyq245lu>
+ <ZyOUSgMo0chsGnCa@lsv051416.swis.nl-cdc01.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyOUSgMo0chsGnCa@lsv051416.swis.nl-cdc01.nxp.com>
 
-Hi folks,
+> They are compatible on current stage of driver implementation, the
+> RGMII interface has no any difference. But later there shall be
+> added SGMII and this provides some level of difference, at least
+> from max-speed POV.
+> 
+> The S32R allows higher speed (2G5) on SGMII, but S32G2/S32G3 has
+> 1G as maximum.
 
-This series provides a few cleanups, bug fixes and feature enhancements for
-the ufs-exynos driver, particularly for gs101 SoC.
+Please be careful with your naming. SGMII is defined by CISCO to only
+support 10/100/1000Mbps. If you support more than 1G, it is not SGMII,
+it is likely to be 2500BaseX, etc.
 
-Regarding cleanup we remove some unused phy attribute data that isn't
-required when EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR is not set.
-
-Regarding bug fixes the check for EXYNOS_UFS_OPT_UFSPR_SECURE is moved
-inside exynos_ufs_config_smu() which fixes a Serror in the resume path
-for gs101.
-
-Regarding feature enhancements:
-* Gear 4 is enabled which has higher speeds and better power management.
-* WriteBooster capability is enabled for gs101 which increases write
-  performance.
-* Clock gating and hibern8 capabilities are enabled for gs101. This leads
-  to a significantly cooler phone when running the upstream kernel on
-  Pixel 6. Approximately 10 degrees cooler after 20 minutes at a shell
-  prompt.
-* AXI bus on gs101 is correctly configured for write line unique transactions
-* ACG is set to be controlled by UFS_ACG_DISABLE for gs101
-
-Additionally in v3 I've added 2 minor cleanup patches from Tudor and also
-an update to MAINTAINERS to add myself as a reviewer and the linux-samsung-soc
-list.
-
-Note: In v1 I mentioned the phy hibern8 series in [1] that is still under
-discussion however further testing reveals hibern8 feature still works without
-the additional UFS phy register writes done in [1]. So this series can be merged
-as is and has no runtime dependencies on [1] to be functional.
-
-[1] https://lore.kernel.org/linux-arm-kernel/20241002201555.3332138-3-peter.griffin@linaro.org/T/
-
-regards,
-
-Peter
-
-Changes since v1:
- - Remove superfluous struct device parameter to exynos_ufs_shareability() (Peter)
- - Add patches 8-11 (hibern8 fixes, WLU support etc)
-
-Changes since v2:
- - Add 2 cleanup patches from Tudor to the series and rebase (Tudor)
- - Fixup various commit messages as per Tudors review feedback (Tudor)
- - Collect up reviewed-by tags, and CC stable where appropriate (Peter)
- - Add myself as a reviewer in MAINTAINERS for ufs-exynos driver
-   and add linux-samsung-soc list. (Peter)
- - Added blank line and split hs_tx_gear/hs_rx_gear into separate lines (Tudor)
-
-Peter Griffin (12):
-  scsi: ufs: exynos: Allow UFS Gear 4
-  scsi: ufs: exynos: add check inside exynos_ufs_config_smu()
-  scsi: ufs: exynos: gs101: remove EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL
-  scsi: ufs: exynos: Add EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR check
-  scsi: ufs: exynos: gs101: remove unused phy attribute fields
-  scsi: ufs: exynos: remove tx_dif_p_nsec from exynosauto_ufs_drv_init()
-  scsi: ufs: exynos: add gs101_ufs_drv_init() hook and enable
-    WriteBooster
-  scsi: ufs: exynos: enable write line unique transactions on gs101
-  scsi: ufs: exynos: set ACG to be controlled by UFS_ACG_DISABLE
-  scsi: ufs: exynos: fix hibern8 notify callbacks
-  scsi: ufs: exynos: gs101: enable clock gating with hibern8
-  MAINTAINERS: Update UFS Exynos entry
-
-Tudor Ambarus (2):
-  scsi: ufs: exynos: remove empty drv_init method
-  scsi: ufs: exynos: remove superfluous function parameter
-
- MAINTAINERS                   |   2 +
- drivers/ufs/host/ufs-exynos.c | 136 ++++++++++++++++++----------------
- drivers/ufs/host/ufs-exynos.h |   2 +-
- 3 files changed, 76 insertions(+), 64 deletions(-)
-
--- 
-2.47.0.163.g1226f6d8fa-goog
+	Andrew
 
 
