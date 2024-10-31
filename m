@@ -1,129 +1,98 @@
-Return-Path: <linux-kernel+bounces-391371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4979B85BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:52:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C689B85C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 22:54:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3B51C215BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:52:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2774AB2126A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 21:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405FB1CCEFE;
-	Thu, 31 Oct 2024 21:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEC31CCB59;
+	Thu, 31 Oct 2024 21:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7c2PhMQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4p+2YOoo"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9266A1C8FD2;
-	Thu, 31 Oct 2024 21:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A165193402;
+	Thu, 31 Oct 2024 21:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730411565; cv=none; b=Jd5hXapXwi8ESGIF+kiN/WetUV03NxEdg+xHC/ddyRpilPq2BuRpaYaqPzrX92nDATt6bUoxjorRQ2Ct3VqOrwgX9hZcEJvOIBENKeyuIwGkUHZCP1tbhMKgEjOH3A609hb2xScfKaAA6dr5X0qXXI5IE+sgr7vkXOrEOEnhi5k=
+	t=1730411653; cv=none; b=qv4XJYcy39QBhKATUr8FwiyzwbTYqB0Jhk26iuhUbgrW9jwJmQTdwQOFHZTGizy2y2gvVtHEZW+b5uaITvzQs3FFx6FbOgoeQX8vQQfaX4Q6k8RVCg2WqImjZ/yC/BrPjMxLEiL7M/8H4lQgVhU4nZsVEXdVFXnIbcW3SoCny74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730411565; c=relaxed/simple;
-	bh=S04zhds+KgkztO9Go6G1Kn6KUaaJUECBrILEMcartx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r5eQjk1L8OGWm8AJp3hEm04cxCY7/KLx2prHiy6fvKrplIz5CSm/FUbmwcdFrVkdzgIeSGjw2xNG1vGj2pw7X/5jQk8EVwC+BeIV60/TbA/4rnnsfijTBBATonwM4dKtnM4pAAfhWHR+w16SeqUivGaqbdGBqGHz5WOZMlcZ+y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O7c2PhMQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D85E7C4CEC3;
-	Thu, 31 Oct 2024 21:52:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730411565;
-	bh=S04zhds+KgkztO9Go6G1Kn6KUaaJUECBrILEMcartx4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=O7c2PhMQcitNS0m812whJN1n1SkO4Fo5eIdjOho7r41AloxjupiqJhk+1gX7EzAP1
-	 ep5x69pBZXAUVVRlmPm60s7Wq8NY2vk/McaVMxC41M9cXCj9xens3uIuAeM8UXNTdk
-	 eHJ3kiqqyezzO/XY9NCEg5bmUiJ4Gk9FonFbg5vIq/T8hTQ2qUCo6v2faznk/qUPqI
-	 S+WXI+TaWFVyn1Pmk7oQQKUrcSviKzn+Xku/NvAuw7fLL/hWvgbHjrDrmfrVWMPrqW
-	 2ZBHPlFxOUW0ArrpWcco3BEwXXwdLgqNgqmrz7rodv7gVn4ZUZTV4TegXSJ9kyxP/A
-	 XHGA4l1upfhUQ==
-Date: Thu, 31 Oct 2024 21:52:38 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] iio: light: veml6070: add integration time
-Message-ID: <20241031215238.6ba6b98b@jic23-huawei>
-In-Reply-To: <20241031-veml6070-integration-time-v4-0-c66da6788256@gmail.com>
-References: <20241031-veml6070-integration-time-v4-0-c66da6788256@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730411653; c=relaxed/simple;
+	bh=KdoeNpiS/p+rm8Qelj5rACdK1Lf1Zz8RIgV4JeX9MUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MD9AaGLd+lkjnUCSO1crLmm2OM/ZyyLaWN/+cP1TmllF9VhokmEoQDxzrnMsi8R72uzyZCdSYZzz7RShlVZKLJyYhSA+LYLkCz0s7obgVGnHoTchIpgqaOdQ27qSwCssLSkGrBguDoU2o3+0wloXEWT5MNUMUIbR4bz/tiJnNpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4p+2YOoo; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Md7xndCkD5h/1Ch/BvzvPhebt5YH0GB26ZGICP1J8EE=; b=4p+2YOoorOOUn81RfZBszqpd02
+	3As8Zzp1BVYReRCL4m63N+KP7tSEKUD+78tkLXYIOnUxqpjpHRwftpR9h3wrqOY3TFyc0acwoq9Vz
+	KvtlxzqP2sTWj30TIhxZG9GLjjyAhiuyt11D6WAe4BGDVohWOeCLV1Uln0q4b10plMVw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t6d7A-00Bp5Y-Up; Thu, 31 Oct 2024 22:54:00 +0100
+Date: Thu, 31 Oct 2024 22:54:00 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH RFC net-next v2 08/18] net: pse-pd: Add support for
+ reporting events
+Message-ID: <ede82d07-6adc-486a-b715-e6e783655333@lunn.ch>
+References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
+ <20241030-feature_poe_port_prio-v2-8-9559622ee47a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030-feature_poe_port_prio-v2-8-9559622ee47a@bootlin.com>
 
-On Thu, 31 Oct 2024 00:09:56 +0100
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> +static struct phy_device *
+> +pse_control_find_phy_by_id(struct pse_controller_dev *pcdev, int id)
+> +{
+> +	struct pse_control *psec;
+> +
+> +	mutex_lock(&pse_list_mutex);
+> +	list_for_each_entry(psec, &pcdev->pse_control_head, list) {
+> +		if (psec->id == id)
+> +			return psec->attached_phydev;
 
-> This series adds a missing feature in the veml6070 driver to select the
-> integration time, which also depends on an external restistor that has
-> been added to the corresponding bindings.
-> 
-> The datasheet provides a Refresh time vs Rset graph (figure 7), which
-> does not clearly specify the minimum and maximum values for Rset. The
-> manufacuter has confirmed that no values under 75 kohms should be used
-> to keep linearity, and the graph does not go beyond 1200 kohms, which is
-> also the biggest Rset used in the application note. The default value of
-> 270 kohms is the one currently used in the driver to calculate the UVI.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Applied and initially pushed out as testing for 0-day to take a look.
+The mutex is still locked. I'm surprised your testing did not
+deadlock, and that none of the automated tools have reported this.
 
-Thanks,
 
-Jonathan
+    Andrew
 
-> ---
-> Changes in v4:
-> - Add vendor prefix to rset-ohms property (bindings and driver).
-> - Drop default values for out-of-range rset and fail the probe instead.
-> - Link to v3: https://lore.kernel.org/r/20241028-veml6070-integration-time-v3-0-dd7ace62f480@gmail.com
-> 
-> Changes in v3:
-> - veml6075.yaml: simplify property handling (describe it completely at
->   the top and add block for the devices that do not support it).
-> - veml6070.c: use int instead of u32 for the integration times.
-> - veml6070.c: refactor default rset value assignment.
-> - veml6070.c: drop comment about default Rset and IT.
-> - veml6070.c: use units from units.h
-> - Link to v2: https://lore.kernel.org/r/20241024-veml6070-integration-time-v2-0-d53272ec0feb@gmail.com
-> 
-> Changes in v2:
-> - Rebase onto iio/testing and drop applied patches.
-> - veml6075.yaml: use documented -ohms, top-level definition and
->   per-device restriction.
-> - veml6075.yaml: add default value.
-> - veml6075.yaml: fix typo in commit message.
-> - veml6070.c: adjust rset property name and convert from ohms to kohms
->   to avoid overflows and work with the same units as in the datasheet.
-> - veml6070.c: change default to 270 kohms (already used as default
->   value to calculate UVI).
-> - veml6070.c: calculate UVI according to the current integration time.
-> - veml6070.c: re-calculate measurement time (i.e. msleep()) with the
->   current integration time.
-> - Link to v1: https://lore.kernel.org/r/20241017-veml6070-integration-time-v1-0-3507d17d562a@gmail.com
-> 
-> ---
-> Javier Carrasco (2):
->       dt-bindings: iio: light: veml6075: document vishay,rset-ohms
->       iio: light: veml6070: add support for integration time
-> 
->  .../bindings/iio/light/vishay,veml6075.yaml        |  18 +++
->  drivers/iio/light/veml6070.c                       | 131 +++++++++++++++++++--
->  2 files changed, 141 insertions(+), 8 deletions(-)
-> ---
-> base-commit: e2687d0723257db5025a4cf8cefbd80bed1e2681
-> change-id: 20241014-veml6070-integration-time-78daf4eaad2f
-> 
-> Best regards,
-
+---
+pw-bot: cr
 
