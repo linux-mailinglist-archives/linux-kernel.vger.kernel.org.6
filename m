@@ -1,142 +1,178 @@
-Return-Path: <linux-kernel+bounces-390293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A489B7804
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:53:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7659B7807
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:53:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04EF7288DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:53:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9E331C2088D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89CF19C556;
-	Thu, 31 Oct 2024 09:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CCC198E65;
+	Thu, 31 Oct 2024 09:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="se2Khv+X";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9k+60SCN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EnNvSPtc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347AA199FCC;
-	Thu, 31 Oct 2024 09:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0CD19885F
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730368283; cv=none; b=g9HaB/95/uLb5DU4JEOT9eQpOU9p8f8A5SSrdkUTnJzhNue5jm8/xTT44egkrex/CUcvq5Il+hBWXeT6U8iRQ1Iz6j1BrS+gwqDXFIaRcg8O1S3dJLyUMWv4GysHUHX5tHFCsvzKoYB9GewB+0VEhJVx6dvBGuLUtzq+b1mk4Nw=
+	t=1730368345; cv=none; b=E9KSVLeriGSEjSCV5fEsNvnsO5j0xvIGJFmKmcZRTBDjtN/uHxbOcaQA9kd0gMyUKux/rM77iVPcnBGjFBS8V7KQrmuFylN8mxhxmfHY5R7KKmrlAZbDhedn6zWhvUmPWyOvAq7rRFT/ZBGYeAXuoRYDHDhqlobbj9PZz1gAZDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730368283; c=relaxed/simple;
-	bh=q4umpjQpr0ENy1hPq8EiCPEfWJQeRyeW+Mvgj8LmPFQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=UBIrTP9aujNPRDhBXP//o/4CEr6g3oulwMNEGJfjeNSLH1myBUN8zTbfE9w9avmkXtKnNl+uxpnSFQm23xJ+Vd+AU29ZdT/E9GP0sxb1hyq5HdBRyMbf9rFAn2jplRozEKNzcCRIzF8eWTgFTscDUY0K69YF8QFKwMvoLFZgrOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=se2Khv+X; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9k+60SCN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 31 Oct 2024 09:51:19 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730368279;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TKSvaX5ifwZYCtvZYrP1upl15hMrNvetvRxeRHh0qyw=;
-	b=se2Khv+XI1XdB6suvjBaQMWdkIt+qLyix+VqlgRBj1psaV559aPJgediszv+AAQQkbjIZf
-	L5ZJvWs7V/C/GnkrxLwXNQ12xgR6lI8I2Aq+VvPZ7k7BvMm3qNLr2ZnY+RhnKhlHyQOavO
-	Py0AOLe5oVVK0PQhZI7NJfHdVu/jrTOcC6KNPnS0Jw+mcXv1lHwUePHkFzdpT2l42OpXcj
-	0v/5rB4Jc+fxj+FkXJ8G86g2RrgQKyyb+ZmF01KtZOIbf/5ichX3GgI5ctTRn/K0XvumIl
-	pig/wpb0i2TJOW6IPwcgyvqhL1g8nOyY66pbonDz0Hu8xeeOev634edNQASKSg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730368279;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TKSvaX5ifwZYCtvZYrP1upl15hMrNvetvRxeRHh0qyw=;
-	b=9k+60SCNBFZiSgNeeVJ3NxoUypdmjg3KsUXJMaTUNP13fJW6MrlW2aYbbfHlR95Jr6e2MM
-	CJF0+RxHr+LWWhAQ==
-From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/core] clockevents: Improve clockevents_notify_released() comment
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241029125451.54574-2-frederic@kernel.org>
-References: <20241029125451.54574-2-frederic@kernel.org>
+	s=arc-20240116; t=1730368345; c=relaxed/simple;
+	bh=sXhqVqcxxb74TbLCt/1k7rR1bz1IQfU6AYxlmBPwA6g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IovQ6H3/nDi838GbByaSgCiqBgFGUAxBL0Npid+UudbWYYjokR5BwsMU6z3EBqQsChMPCHpHrWNQUTSmqiVi/kNUDs54zlyWQIcw0ZSCTtDjjb4UFCzX1JUuUHfVjmGCXNxFeYZQfiuzvMW2z0ub6ILoegdSg36eWk1TPbc9/BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EnNvSPtc; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730368342; x=1761904342;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=sXhqVqcxxb74TbLCt/1k7rR1bz1IQfU6AYxlmBPwA6g=;
+  b=EnNvSPtcNDL4Jpo50eMdfDnImyxZ0E4r+YtQjHKxjxPCH/q5aCvb7Z2K
+   nH78c+ICii/qH059RqQViRTiqR5AinK0yNU4h9LZjD8WnWpPfpY1ZfX1r
+   xLMiXhokrKwalCpqBsB04bW+Lj1gfVAPDhBEHA/R8+/J0Kxshnu9eRFEm
+   HlrWRswXQXZo312CuhID9dXFs/QNcpmoLuZXDk7QEA2k5kL4rDZlgaOJy
+   asrRxUnr2/+F0dBOuWIWlL/jaRiRKZNHwkhEUkGdngHynZtdCrnGBbs4+
+   OftfISqyJDhNb7GM6ArA9YQQKDzbs9l+4j9XbPXMQqQ0qtRbh5bhmk9Gf
+   Q==;
+X-CSE-ConnectionGUID: X4R0xm4OStigI8IpvgdrnA==
+X-CSE-MsgGUID: nfbPrdvpSDuYD9UgP/U5YA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40645305"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40645305"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 02:52:21 -0700
+X-CSE-ConnectionGUID: THWkJZG7RwOEpVYIc1IJdA==
+X-CSE-MsgGUID: ljdJC5DjT4ucx/aEa89wXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="82702567"
+Received: from allen-sbox.sh.intel.com ([10.239.159.30])
+  by fmviesa008.fm.intel.com with ESMTP; 31 Oct 2024 02:52:19 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: iommu@lists.linux.dev
+Cc: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Yi Liu <yi.l.liu@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] iommu/vt-d: Drain PRQs when domain removed from RID
+Date: Thu, 31 Oct 2024 17:51:39 +0800
+Message-ID: <20241031095139.44220-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173036827906.3137.8887881617356953747.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the timers/core branch of tip:
+As this iommu driver now supports page faults for requests without
+PASID, page requests should be drained when a domain is removed from
+the RID2PASID entry.
 
-Commit-ID:     17a8945f369ce2de2532ba8abdb93bb5b2d1c118
-Gitweb:        https://git.kernel.org/tip/17a8945f369ce2de2532ba8abdb93bb5b2d1c118
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Tue, 29 Oct 2024 13:54:42 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 31 Oct 2024 10:41:42 +01:00
+This results in the intel_iommu_drain_pasid_prq() call being moved to
+intel_pasid_tear_down_entry(). This indicates that when a translation
+is removed from any PASID entry and the PRI has been enabled on the
+device, page requests are flushed in the domain detachment path.
 
-clockevents: Improve clockevents_notify_released() comment
+The intel_iommu_drain_pasid_prq() helper has been modified to support
+sending device TLB invalidation requests for both PASID and non-PASID
+cases.
 
-When a new clockevent device is added and replaces a previous device,
-the latter is put into the released list. Then the released list is
-added back.
-
-This may look counter-intuitive but the reason is that released device
-might be suitable for other uses. For example a released CPU regular
-clockevent can be a better replacement for the current broadcast event.
-Similarly a released broadcast clockevent can be a better replacement
-for the current regular clockevent of a given CPU.
-
-Improve comments stating about these subtleties.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241029125451.54574-2-frederic@kernel.org
-
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- kernel/time/clockevents.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/iommu/intel/iommu.c |  1 -
+ drivers/iommu/intel/pasid.c |  1 +
+ drivers/iommu/intel/prq.c   | 22 +++++++---------------
+ 3 files changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
-index 78c7bd6..4af2799 100644
---- a/kernel/time/clockevents.c
-+++ b/kernel/time/clockevents.c
-@@ -337,13 +337,21 @@ int clockevents_program_event(struct clock_event_device *dev, ktime_t expires,
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 87a3563dfe54..3878f35be09d 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -4069,7 +4069,6 @@ static void intel_iommu_remove_dev_pasid(struct device *dev, ioasid_t pasid,
+ 	intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
+ 	kfree(dev_pasid);
+ 	intel_pasid_tear_down_entry(iommu, dev, pasid, false);
+-	intel_iommu_drain_pasid_prq(dev, pasid);
+ }
+ 
+ static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
+diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+index 7e76062a7ad2..31665fb62e1c 100644
+--- a/drivers/iommu/intel/pasid.c
++++ b/drivers/iommu/intel/pasid.c
+@@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct intel_iommu *iommu, struct device *dev,
+ 		iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
+ 
+ 	devtlb_invalidation_with_pasid(iommu, dev, pasid);
++	intel_iommu_drain_pasid_prq(dev, pasid);
  }
  
  /*
-- * Called after a notify add to make devices available which were
-- * released from the notifier call.
-+ * Called after a clockevent has been added which might
-+ * have replaced a current regular or broadcast device. A
-+ * released normal device might be a suitable replacement
-+ * for the current broadcast device. Similarly a released
-+ * broadcast device might be a suitable replacement for a
-+ * normal device.
-  */
- static void clockevents_notify_released(void)
- {
- 	struct clock_event_device *dev;
+diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
+index 3c50c848893f..ae7f6f34462f 100644
+--- a/drivers/iommu/intel/prq.c
++++ b/drivers/iommu/intel/prq.c
+@@ -66,12 +66,8 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
+ 	struct pci_dev *pdev;
+ 	int head, tail;
+ 	u16 sid, did;
+-	int qdep;
  
-+	/*
-+	 * Keep iterating as long as tick_check_new_device()
-+	 * replaces a device.
-+	 */
- 	while (!list_empty(&clockevents_released)) {
- 		dev = list_entry(clockevents_released.next,
- 				 struct clock_event_device, list);
+ 	info = dev_iommu_priv_get(dev);
+-	if (WARN_ON(!info || !dev_is_pci(dev)))
+-		return;
+-
+ 	if (!info->pri_enabled)
+ 		return;
+ 
+@@ -81,8 +77,6 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
+ 	sid = PCI_DEVID(info->bus, info->devfn);
+ 	did = domain ? domain_id_iommu(domain, iommu) : FLPT_DEFAULT_DID;
+ 
+-	qdep = pci_ats_queue_depth(pdev);
+-
+ 	/*
+ 	 * Check and wait until all pending page requests in the queue are
+ 	 * handled by the prq handling thread.
+@@ -114,15 +108,13 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
+ 	desc[0].qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
+ 			QI_IWD_FENCE |
+ 			QI_IWD_TYPE;
+-	desc[1].qw0 = QI_EIOTLB_PASID(pasid) |
+-			QI_EIOTLB_DID(did) |
+-			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
+-			QI_EIOTLB_TYPE;
+-	desc[2].qw0 = QI_DEV_EIOTLB_PASID(pasid) |
+-			QI_DEV_EIOTLB_SID(sid) |
+-			QI_DEV_EIOTLB_QDEP(qdep) |
+-			QI_DEIOTLB_TYPE |
+-			QI_DEV_IOTLB_PFSID(info->pfsid);
++	qi_desc_piotlb(did, pasid, 0, -1, 0, &desc[1]);
++	if (pasid == IOMMU_NO_PASID)
++		qi_desc_dev_iotlb(sid, info->pfsid, info->ats_qdep, 0,
++				  MAX_AGAW_PFN_WIDTH, &desc[2]);
++	else
++		qi_desc_dev_iotlb_pasid(sid, info->pfsid, pasid, info->ats_qdep,
++					0, MAX_AGAW_PFN_WIDTH, &desc[2]);
+ qi_retry:
+ 	reinit_completion(&iommu->prq_complete);
+ 	qi_submit_sync(iommu, desc, 3, QI_OPT_WAIT_DRAIN);
+-- 
+2.43.0
+
 
