@@ -1,131 +1,108 @@
-Return-Path: <linux-kernel+bounces-390266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC02B9B77B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:39:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB339B77B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:39:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47E5DB2168A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:39:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 062F6B23C89
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF6B195FEC;
-	Thu, 31 Oct 2024 09:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BBA198E6F;
+	Thu, 31 Oct 2024 09:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ESlbbYyo"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rBGZSJi6"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25E42AE9A;
-	Thu, 31 Oct 2024 09:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E13198853
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 09:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730367550; cv=none; b=KNMgyPfYgtz1BxQsqzUqkV6dxk9LKPucbyqNPYTo335UuwtfRrp2IV7BiD3hcs95cRn8ZYfjgUf73zqRb84J6xZlNfwr5Az8+lFHT8GxOsXgA8k8GgFr0xw7UiW/qWk477ffG79z9+WoFd6gUjY6Mtu+dhX6WnKjPY7J1k0dryc=
+	t=1730367557; cv=none; b=qqd9/F4F7wdfPGWIUr3GZJ878WYt53rnxxSL6a0ArU4UpasVcDSOD47NBL96j0xSXyiRsl7DnD5bAkCWFSNtClWW5PqnZTzk9p0rULdj5zguz49J7g7M61vkC+LXMRoaQWPx8Tlj2IC+Jk8wOMVs6d3BNPgYgcOhTSDqXVGZbyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730367550; c=relaxed/simple;
-	bh=LRz1h79bJN4EYNQ1JU/SY7GS2AoN+ilnUVUKkNbp1+s=;
+	s=arc-20240116; t=1730367557; c=relaxed/simple;
+	bh=/o4MggE+AzcXkavFkmQNZ85Um2Lx9dIx/mjXbk/xSWQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oC/XemZiXqe0bBtL1cpQ8p4wqoTl2Fno+9u7kCvIh2nmfJDQuXaT+yDCjF5hnuIsvnz3//gL+nNtWvCc7ptzCTvMF5+MB2fX/HiNpkZHNlBoAtDNGAM3PUHElS5Ec0N+CY/KQ63WHXtxzN5zqbPHHgYCdszaeiB/Mb2K4DpaaF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ESlbbYyo; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D7AE29EC;
-	Thu, 31 Oct 2024 10:39:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730367543;
-	bh=LRz1h79bJN4EYNQ1JU/SY7GS2AoN+ilnUVUKkNbp1+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ESlbbYyoYhKGDZUFCQhHxFQx28YfAGaDtvJf0E5BG6Us8nDoBVE1sLhzB/C0wt8jH
-	 X8PVJ5860rPxXXg0u7kb5c8zxnMJzvogtvmhE6iGXC68+/MFjy1QJe3RzaIdJdYU3V
-	 wqFm3OheKqq96zZZCjGxny3uErcw6VWWdsj321mE=
-Date: Thu, 31 Oct 2024 11:38:59 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Stefan Klug <stefan.klug@ideasonboard.com>
-Cc: Umang Jain <umang.jain@ideasonboard.com>,
-	libcamera-devel@lists.libcamera.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH] media: imx283: Report correct V4L2_SEL_TGT_CROP
-Message-ID: <20241031093859.GB2473@pendragon.ideasonboard.com>
-References: <20241030163439.245035-1-stefan.klug@ideasonboard.com>
- <04ae3f0b-c2f8-4553-9b49-302cc638c0c7@ideasonboard.com>
- <nr7wzo7smtq2mbtorhw4slgtvmj6nyk3witjcymwzk7efrftlc@obgey7ky5hpp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a65Sy+52rPRCB9kZZ0g7lrCVn97zNYsCe/u+wmxtXx0b8EcpB/yRMSIq4T05ydfhF4HvwIkK1jafE473scme5+Ce1/VEcJGZ/GUn1JfI5dFNw2R6VYy+w5UV4pHUkP7/bj46gJZHd5NTuA7wuDRnAnwxgYelP8lkBHvVincj+/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rBGZSJi6; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d5689eea8so465076f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 02:39:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730367554; x=1730972354; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i42WZwPkLvBRfNlQLAxPTVFJmRSkrVUk9wWE2BSDhqk=;
+        b=rBGZSJi6YwyQmBItYrXzf+ClrldPGHHPdOlQjwfPmzBsg347PhHi33xepCNJgTxRze
+         fxJAW1O865AZNUsbqu++RWjvRYVwLnkZpi/ijLai3HFKJCd10NBpoGvGLHHEao+QkHyw
+         9Naxwi9r/Z1gGhQCcrpPY3+W6b0nju6D1XBvPr+IT4sH7EWXj+bQHCCJztMymZM/4HaK
+         xTsIoDtVA+1W48VEcHJ6P3VOnAKQCTD7GcIPJXjqY/Ib7+l6nvcAHXUvQNENXHUB5+Fh
+         k1/jZGycbX0PnlKnjqAVxq3QjOOtAAjcwHRQPnQYmOmtcRwwhyACPtMt1PC6WLpCYa++
+         0djA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730367554; x=1730972354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i42WZwPkLvBRfNlQLAxPTVFJmRSkrVUk9wWE2BSDhqk=;
+        b=V/aqmOtipN+tm0+JQ11GqRDbuXWW9gKkoiL815KRvTl6475iejm4nfK40EXG650TK4
+         lcmPRU1MHIN0CJK9Kz5xk4qDurNgju66CLWAeyVBFDYS7mHDPM5VIMljo60gQFbI0zQN
+         /XojoCMDJbXjhddz9ee5euo/5rU2HaKSUkgaw5h3OebMff85O8ih82J3X3t/xBoSVXSf
+         61q7iEO9yVO3KBJ3xuQZcxhK1j+oMjbSz37UafYPrV4f2k57XFENRaMOBCJJcobj/d+4
+         rj34eGuTfkjfJ+1ZeTGlbsAhwc6oaVyliT1xwLxo37PIHy1cEgd0I9ybPjftxc9D7uCa
+         FI0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWTFabV/X9ddE3Ol3aWK0k0RWcH0Vap6w9FK9NN5nFG8HAfclhWodxixiyCim/TNBKtdDByM1nnGFiKgxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyK0IbjY7ekq5Y0xR29krV4oMXWjmHTjisacp8eyJrlf6BfcWY
+	1SEep+4TIN0jtiS1P8g7ThHek83Lvq7LYtq//F5zMsfZmpkgOFmb4rbP3yG8NxM=
+X-Google-Smtp-Source: AGHT+IHVBYXZHIeFVSzJKMyjPPRTI538bYROcADmMmloUIXdIkyVOxBgB4ul/54dATOWsHi6/eAB+g==
+X-Received: by 2002:adf:fd4f:0:b0:37d:5130:b384 with SMTP id ffacd0b85a97d-3806119cdd9mr12579318f8f.35.1730367553824;
+        Thu, 31 Oct 2024 02:39:13 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7c08sm1561130f8f.17.2024.10.31.02.39.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 02:39:13 -0700 (PDT)
+Date: Thu, 31 Oct 2024 12:39:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: Fix use after free in debug printk
+Message-ID: <490dc872-fc62-49da-89ff-4eba067df8c0@stanley.mountain>
+References: <7d0481da-5852-4566-9adb-3a8bb74cb159@stanley.mountain>
+ <ZyNI3rQw6q4pkqpD@hovoldconsulting.com>
+ <8bad985d-4655-45d2-b448-2b3377a8438c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <nr7wzo7smtq2mbtorhw4slgtvmj6nyk3witjcymwzk7efrftlc@obgey7ky5hpp>
+In-Reply-To: <8bad985d-4655-45d2-b448-2b3377a8438c@stanley.mountain>
 
-Hello,
-
-On Thu, Oct 31, 2024 at 10:13:13AM +0100, Stefan Klug wrote:
-> On Thu, Oct 31, 2024 at 11:07:00AM +0530, Umang Jain wrote:
-> > On 30/10/24 10:04 pm, Stefan Klug wrote:
-> > > The target crop rectangle is initialized with the crop of the default
-> > > sensor mode. This is incorrect when a different sensor mode gets
-> > > selected. Fix that by updating the crop rectangle when changing the
-> > > sensor mode.
-> > > 
-> > > Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
-> > > ---
-> > >   drivers/media/i2c/imx283.c | 4 ++++
-> > >   1 file changed, 4 insertions(+)
-> > > 
-> > > diff --git a/drivers/media/i2c/imx283.c b/drivers/media/i2c/imx283.c
-> > > index 3174d5ffd2d7..c8863c9e0ccf 100644
-> > > --- a/drivers/media/i2c/imx283.c
-> > > +++ b/drivers/media/i2c/imx283.c
-> > > @@ -1123,6 +1123,7 @@ static int imx283_set_pad_format(struct v4l2_subdev *sd,
-> > >   				 struct v4l2_subdev_state *sd_state,
-> > >   				 struct v4l2_subdev_format *fmt)
-> > >   {
-> > > +	struct v4l2_rect *crop;
-> > >   	struct v4l2_mbus_framefmt *format;
-> > >   	const struct imx283_mode *mode;
-> > >   	struct imx283 *imx283 = to_imx283(sd);
-> > > @@ -1149,6 +1150,9 @@ static int imx283_set_pad_format(struct v4l2_subdev *sd,
-> > >   	*format = fmt->format;
-> > > +	crop = v4l2_subdev_state_get_crop(sd_state, IMAGE_PAD);
-> > > +	*crop = mode->crop;
-> > > +
+On Thu, Oct 31, 2024 at 12:35:31PM +0300, Dan Carpenter wrote:
+> On Thu, Oct 31, 2024 at 10:07:42AM +0100, Johan Hovold wrote:
+> > On Thu, Oct 31, 2024 at 09:59:10AM +0300, Dan Carpenter wrote:
+> > > The dev_dbg() call dereferences "urb" but it was already freed on the
+> > > previous line.  Move the debug output earlier in the function.
 > > 
-> > One thing to note, is the crop for binning modes.
+> > Thanks for catching this, but please use a temporary variable for the
+> > struct device pointer instead of changing the flow.
 > > 
-> > Do you need to report
-> > 
-> >     mode->crop.width / mode->hbin_ratio
-> >     mode->crop.height / mode->vbin_ratio
-> > 
-> > for those modes?
 > 
-> Good point. I was naively assuming that it has the same semantics as we
-> use for ScalerCrop in libcamera where it is explicitly stated that the
-> coordinates are in sensor pixels without binning. That has the added
-> advantage that we can deduce the binning factor from TGT_CROP and the
-> actual output size. However I couldn't find a precise specification for
-> that in the linux docs. 
+> Why?  The output is the same either way and this way is cleaner code.
 > 
-> Maybe Sakari or Laurent have a definiteve answer there?
 
-This is not standardized in V4L2, and different drivers implement
-different semantics. There's an ongoing effort to fix this, see
-https://lore.kernel.org/r/20241011075535.588140-1-sakari.ailus@linux.intel.com.
-Reviews are appreciated :-)
+Nah, you're right.  A temporary variable is nicer.  It avoids having two if
+statements.
 
-> > >   	return 0;
-> > >   }
+regards,
+dan carpenter
 
--- 
-Regards,
-
-Laurent Pinchart
 
