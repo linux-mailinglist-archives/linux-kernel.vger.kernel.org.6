@@ -1,129 +1,106 @@
-Return-Path: <linux-kernel+bounces-390208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D4F9B7709
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:05:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527839B770E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D05D1C22013
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:05:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98A5282050
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 09:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45BF192D6D;
-	Thu, 31 Oct 2024 09:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEAE61946A4;
+	Thu, 31 Oct 2024 09:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M2OTRXgN"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmlWshUd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3AD1BD9ED;
-	Thu, 31 Oct 2024 09:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3BE1BD9ED;
+	Thu, 31 Oct 2024 09:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730365492; cv=none; b=PDQd75xBIctby2TSd6ti/BD41RwJ4j+Avg9SGT73FB3io359BaqswtvfcGPizIuVNXOEhtix2DyAxdSCcIevUMd0pMcj6pGp4L+Wd3N0rbPLwa5O8EdHdDCAEnRRSEUzbC65mFbR3UKGpoDo+GbGAVk0d7mB4z1I8gfDYryXb40=
+	t=1730365536; cv=none; b=jRLFUHaDhawOOosw6jwRBzwt5fS8zFezPukS0atGK0S42PyfSRRdJQh11Nfiy/YiLnpuZ+l2Ho3dy6KrwOfC8BwEiw2iYK1HEn9yPixKjAEWTrkCmnDTxWJ8j14+jbkH1kKDs9bW0G4KNkjvoLoCkFsGmKuFJiNfzc90Q6GS5M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730365492; c=relaxed/simple;
-	bh=Ey3Nir80ipbi6aEqJTmKEXKmtI3cKgTNpdgc0Wv4xOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZB1XURBEMpgm+JFgfOxKIRdCs75PE74LrHTs3BNUYXULWZS9MfZDGZyQA0X4EU6gCLv2xtr5Vclg9d+1TfB0/sw9LWuQ3uAFHNo8Btb88vzrePe2jFVNBdomJ1A1JuHFH302mN8zt6e2VtPKO9Hs6sRMFp+y9qXGPo7pD83XXoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M2OTRXgN; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e30cf3ef571so107732276.3;
-        Thu, 31 Oct 2024 02:04:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730365489; x=1730970289; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ey3Nir80ipbi6aEqJTmKEXKmtI3cKgTNpdgc0Wv4xOA=;
-        b=M2OTRXgNJSGHzumM2Ekw9o2jBOVUIpKTsiZmJitPGQ6nF6B+KunElzh0sPwTfmvsCe
-         4TEsASc3naTSsYeqcNWsPvGIw9hWqW+MbuKIfIZfMP1BYS9JjF1AoYSXXuRu44sSLJX5
-         dJBWTYqjwQiMWj/mnCjnkky0s3h1q3vKHOF8i4UCs5JDkJPCbQdvsx2YQFMrqhR4WIau
-         gwWiY1pvgdLPgMttWyD6yrwwCcB96uegK/4BJ4VoDHUxxK6hYV+ycSVKAiMtHgbAlOv4
-         bvnsQkpRAyjFn3HnTrHja7y7XwLYRNVA7vyg7I0/Dg0N8/dccy3gzVkbtkNksnbKYecx
-         q7SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730365489; x=1730970289;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ey3Nir80ipbi6aEqJTmKEXKmtI3cKgTNpdgc0Wv4xOA=;
-        b=JMZZyuoEhfmKhHqlNjBFBEC4zBBYiINMhFRktPrYUl/wIIKNjD/neX7HtJSrSPJnKX
-         FckXn3JPXOrQEMg+aWCEtvnepxWHQEt4B0ggEf6gzROuBtFx7VboQ04o3BBLCWg/T1sV
-         UiBHLyTtp+gaQgZBZ7IifXeIzYQPhWqm9O6sRVS1Tlc0z4iFJRfP5N6qHwoS5udPivg5
-         4LVCsDSWRHtOATf1AZjPiYHW68iFHKxzYBv7LJFX1io6XZPB1fM+t+J7qu+eE/scKsO7
-         acBdwIvds7D6emR8O64O/llN+WbO9pWOXt0SGNJ7qANFlsGTcZfjQ2FsmGpYx5jbcNsb
-         TdaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiY9oGwWg81J8V9MZSxrOrUOKS7SQvYcmRjP/NiztkpRwgkS4i3pNp+t9erCPMnekH7lyClxrIOnCM@vger.kernel.org, AJvYcCWYSe6mp0IAsR2NbS2v/W3PWBVnJV8TMHsb3ZeQgnn8MqVTxbhzOGPHtdNxg7vdbrm/fFaxjcrj8fePVumU@vger.kernel.org, AJvYcCXcy2CD7DTiODJgL+Wz01bv8+P7vudIH/7LppEGOy36EE6uR2UUa+PRPkCGyrgsfMNz2mHeaoPQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRGsRajzX+0P2VmGAIsYbAFGJmLDz95+W6QuMHYEfQt4ll1/SR
-	ZeNFAqkGS69EFIodgocNrr0ujJkZy7OqHMVPlOM5iRvv0cVEUQj1Lu27jP1iz8eaj8CBI/PTY7J
-	d7722leYpTy3lSJOKznoeL6xGd2Y=
-X-Google-Smtp-Source: AGHT+IHZguKS/F1V9AJj+A9lEBmF80qUzVmVIz8k06olAGMVP1Gm5twS6Ahy8M35orW4qXtccoTRMk9rczRRsmL94jQ=
-X-Received: by 2002:a05:690c:ed4:b0:627:a25d:6e76 with SMTP id
- 00721157ae682-6e9d88e7719mr79156307b3.2.1730365489324; Thu, 31 Oct 2024
- 02:04:49 -0700 (PDT)
+	s=arc-20240116; t=1730365536; c=relaxed/simple;
+	bh=GG1JVJs4dR1AOjE1AJ7ilFPgtAWW0eecmwqTp/vt+xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JL4tYAR5kRcDvdtnAsHyh0rE+tlwPiEGJmicXcf1WZbwYu19Wuo6qD54KAXfllD83qohOO84Y3TImntX5oYPtHLMqoCRyYw9Ghduf33ADU9ivkGJQ0JlE4J9BWHYTid3RblvUAGNLjMdQvMeNxVLEBjOA9nvesucvGgkw6/C5kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmlWshUd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E46ACC4CEC3;
+	Thu, 31 Oct 2024 09:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730365535;
+	bh=GG1JVJs4dR1AOjE1AJ7ilFPgtAWW0eecmwqTp/vt+xo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QmlWshUdBNcB1FWxXRPNndrpzxX3aAqhzeAeIGagnyn4fy5f45tGBkaDIMtVIOMSH
+	 f2449uvXl29R43CYnG1NWyJNJFs8AcYS+J3/4AoaP+t4DGqAhmFlaAi0DonSP1IJXs
+	 nqTFKGmBX62BU7Kq02whoNjJqhZNJXu4xTMAUf5TA9MsBWXeKgqU/7OfPHX4JQdM6Q
+	 cYeO/+jCF2CQ7VRPVWNfb4dd0leBLAU/Wm+kzEVcI2myW0Ik/rO07OwQb1Z9w7wpM9
+	 cbflE1vTPSMudvnmxNiKBwpQsf9zOOlAijHfeIWAa1xqN0InkTRlZPm0qFA7PRteHE
+	 VKaKdM1Y44eGA==
+Date: Thu, 31 Oct 2024 11:05:30 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1 00/17] Provide a new two step DMA mapping API
+Message-ID: <20241031090530.GC7473@unreal>
+References: <cover.1730298502.git.leon@kernel.org>
+ <3144b6e7-5c80-46d2-8ddc-a71af3c23072@kernel.dk>
+ <20241031083450.GA30625@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029202349.69442-1-l.rubusch@gmail.com> <173030774932.1269076.14582772234717243392.robh@kernel.org>
-In-Reply-To: <173030774932.1269076.14582772234717243392.robh@kernel.org>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Thu, 31 Oct 2024 10:04:12 +0100
-Message-ID: <CAFXKEHaUO=Xo9iGYfUbadQPbi1Sepv=GODoRabQ9qP5PC-MRpw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/23] Add Enclustra Arria10 and Cyclone5 SoMs
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: s.trumtrar@pengutronix.de, joabreu@synopsys.com, conor+dt@kernel.org, 
-	linux-kernel@vger.kernel.org, marex@denx.de, krzk+dt@kernel.org, 
-	pabeni@redhat.com, edumazet@google.com, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	alexandre.torgue@foss.st.com, davem@davemloft.net, mcoquelin.stm32@gmail.com, 
-	kuba@kernel.org, netdev@vger.kernel.org, a.fatoum@pengutronix.de, 
-	dinguyen@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031083450.GA30625@lst.de>
 
-On Wed, Oct 30, 2024 at 6:04=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
->
-> On Tue, 29 Oct 2024 20:23:26 +0000, Lothar Rubusch wrote:
-> > Add device-tree support for the following SoMs:
-> >
-> > - Mercury SA1 (cyclone5)
-> > - Mercury+ SA2 (cyclone5)
-> > - Mercury+ AA1 (arria10)
-> >
-[...]
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
+On Thu, Oct 31, 2024 at 09:34:50AM +0100, Christoph Hellwig wrote:
+> On Wed, Oct 30, 2024 at 07:44:13PM -0600, Jens Axboe wrote:
+> > On Christoph's request, I tested this series last week and saw some
+> > pretty significant performance regressions on my box. I don't know what
+> > the status is in terms of that, just want to make sure something like
+> > this doesn't get merged until that is both fully understood and sorted
+> > out.
 
-[answering to this bot]
-None of the "platform maintainers" gave me feedback so far. My
-intention is just to upstream the mentioned .dts and .dtsi files. I
-checked my files and fixed my obvious bindings mistakes.
+This series is a subset of the series you tested and doesn't include the
+block layer changes which most likely were the cause of the performance
+regression.
 
-But, bindings for platform socfpga are still described in (old) TXT
-files, not in YAML. So, do you want me to write the .yaml files, too?
-Or, are my files acceptable by "the platform maintainer"? What is
-missing here? Should I try to fix every error of Rob's bot? Are the
-boards / is the platform too old and you don't want them anymore? I'm
-not complaining here, I may try, but I would like to know what's
-missing.
+This is why I separated the block layer changes from the rest of the series
+and marked them as RFC.
 
-Please, - Rob, Connor or Krzysztof - can you give me feedback and tell
-me what you guys expect me to do now here? Thanks in advance!
+The current patch set is viable for HMM and VFIO. Can you please retest
+only this series and leave the block layer changes for later till Christoph
+finds the answer for the performance regression?
 
-> If you already ran DT checks and didn't see these error(s), then
-[...]
+Thanks
+
+> 
+> Working on it, but I have way too many things going on at once.  Note
+> that the weird thing about your setup was that we apparently dropped into
+> the slow path, which still puzzles me.  But I should probably also look
+> into making that path a little less slow.
+> 
+> 
 
