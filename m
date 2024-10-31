@@ -1,201 +1,199 @@
-Return-Path: <linux-kernel+bounces-390786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF1B9B7E79
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:30:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101989B7E7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 16:31:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8769F1F21ED8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:30:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53F92845F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 15:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BC21AF4E9;
-	Thu, 31 Oct 2024 15:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E791B14FA;
+	Thu, 31 Oct 2024 15:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="mfATYHeA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WNkWd6CZ"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YchfAtoF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A9D1AA78A;
-	Thu, 31 Oct 2024 15:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC161A2630
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 15:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730388481; cv=none; b=N+1vtredhwYOZFM5v99aQkLT9iQhcL0FyfDoLQ0doIW+Xr9hFnEKWrTPqCwPtj46w4bFWxHrIrS4eyd8RxoHKl33kiC5F51QkK3zVsX/ipewe3iUkgoAXA46GfJA7/d/630dBA4xHftFl3mbtr7vt+L/UM6Jd0IMKb39Fstc6xY=
+	t=1730388523; cv=none; b=dCPqSZdbyRISVohrRNhfEWhbXEfruTKNixcbTzJJNspneVjSrwtzwVLVPSWMbAGGzNm89RTLIZLRRJAWDHucyXCdSg5IzB4VNzuoANL34yjI+YANdhmQJds2impmg6owJXOnCeQxjOkAwfiqytWKXFFpDWb+5Xm8yMBBYbJC61U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730388481; c=relaxed/simple;
-	bh=FFnkpUkeYDOwZzYiHo/XaNcW7ZzaQbeq1qc6E1nWVfI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=JocUsnu0a9ikf9vnO7dKLjzPCzuGHDg3n60vJii0Bxmu9aKzXm51H1ooeT8PypWsebHl6lOY2eHIkPqCL+0iDIiVqVQUCmQPOtUsdB/cRRQHw5/fx+gwFKpgu0iooPe7Mfi8ZjkI1rUnCYI5cyifOesYIwIZq3wa68huDTFQKmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=mfATYHeA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WNkWd6CZ; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id 5E99A1140150;
-	Thu, 31 Oct 2024 11:27:57 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Thu, 31 Oct 2024 11:27:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1730388477;
-	 x=1730474877; bh=8NT/zeipVJAQ1j6Mvgvp7SYDePxtzffTJM/cWBWgyy0=; b=
-	mfATYHeAH8Fo6MMm7bXXyA5YCG9TP7FSRrbYQu/qTgzzivGbJ10Q5ImrDcas2RsW
-	AgD1YqrdhxpDWj0DjUOXNr4MKLaY1ZSJfdBYUm2AZMg+GuTEH5LYFg4m3efBJCqG
-	V+T8N/RbENutbkOZ2Dveqy64iWlVYY9kAZGGNtD/RnQEQYAarcc+zfoltUZHcaxh
-	IN80gQgEr3vszx54wkK1IQYiiNQVqP4aC/5JLodkGAM/MNb8WLInTVpUfM+jHAWH
-	KitdflPXQlWw7lhQ87Ab0k1C4WJg7NNnEBqHUoWDTm9VQ7RGlmvVUpoyZq6CqyEQ
-	ybo1qydAx9Qnm6XT9HTV7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730388477; x=
-	1730474877; bh=8NT/zeipVJAQ1j6Mvgvp7SYDePxtzffTJM/cWBWgyy0=; b=W
-	NkWd6CZ/EuJsOhIBNnJY8uDfsAFsUciijS20SsuML1TaCFdg/uYZPZdmUeXq37QD
-	ooTRNhRFLVNSQxOu+k3Bx/B9Q35TP7H3NY9oKmfTyYnLQ8Hf9/YMVg9h4SN4/WLr
-	Q988WvNA1copXWeB/MW+COABp7k5G4P7RWDTFUbeRT2tYzUU/9XfYGyk0VeC/i+L
-	hEQN9dYCTNrHP1gsPoj0pp/UY3nS4+L9Qrf0f7jVyWEUJgqeOqzA3RI4/SmTRKoN
-	9+r2dlsBCwConlk7ThwW5QwSy3pUalDS6uVCPagw8q9UW759ZavDMdsZT8xyYiie
-	hDgfEjkK9+yVTlWEEW2Cg==
-X-ME-Sender: <xms:_KEjZ1cnbEdWQVKLaAEU1elqmh-pibWTiFSgHpVCjcFeQhHZlnIQEg>
-    <xme:_KEjZzMGj5JKLYpCdB0Hh-cQuwBxETYtP7d3VJ6mwpeMtik73gXAoaP0-773CDAfk
-    bemQAO1JIG5JIaHVLA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekiedgudehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepffekveettdeuveefhfekhfdu
-    gfegteejffejudeuheeujefgleduveekuddtueehnecuffhomhgrihhnpehkvghrnhgvlh
-    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhope
-    dvgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhssghoghgvnhgusegrlhhp
-    hhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpd
-    hrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdp
-    rhgtphhtthhopehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhrtghpth
-    htoheprghrihhkrghlohesghhmrghilhdrtghomhdprhgtphhtthhopehfrghntggvrhdr
-    lhgrnhgtvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepihhlhigrrdhlihhpnhhith
-    hskhhihiesghhmrghilhdrtghomhdprhgtphhtthhopehhrghukhgvsehhrghukhgvqdhm
-    rdguvgdprhgtphhtthhopegujhhorhgujhgvrdhtohguohhrohhvihgtsehhthgvtghgrh
-    houhhprdgtohhm
-X-ME-Proxy: <xmx:_KEjZ-jN287K8_mGWNFYobwgKKjENA0HK-zzQjV9PRwgE5brak6ISA>
-    <xmx:_KEjZ--HWNVs5tgbG2sJS5F9jw448ySHEHjzqhcRNEtH0u19xc7cJA>
-    <xmx:_KEjZxtfai82L7U_DXNBS3zOOjGbpa1_RM1Nx-K2OfShd4IpXWvI9w>
-    <xmx:_KEjZ9Fch1nR_iDKExnzJ34o97HTsuAiOGZi0Npjb6SQfmeEp_3yjA>
-    <xmx:_aEjZ6sLigazsfbiNRfRwCWpm2sO7OR_nY6fcQtc0NnWQpTVB55Fdbvp>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 475381C20066; Thu, 31 Oct 2024 11:27:56 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730388523; c=relaxed/simple;
+	bh=XFRU4IqcSdgxVnw/JlvfzuG2Sl6A2N+nJCZq4YVo/3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2eihoWW4wbL9CBqbu1tY+c7AdSKxYHv2KbgnaoROcBALA6l9mRcv97AoU0NyjekOF8cgVDjPNMToEy5Dq/ZFYnwRkOMeE6ZVWz48e6bc/7AC/6QGzWmpRkLW4n+4RkP8pPIs29dhqXtwd8Wq+AC+SijgscQQUvUvMTOxNjVwHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YchfAtoF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730388520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I7G1+Hqna3UU+Rn8kUUMeQiUy3fKER/ZEakrNHvj/D8=;
+	b=YchfAtoFE1ZlVGgJxpcajFyspyoO3sWG+7m3fOkIdrueakvXMyErPF0oymzYVGIVmdBM2W
+	L6Kmeg649yrFopNnYKlql9TkvbBJl9JQ1g/UcGmJ7mpEgDzfNfh6w9OQfGG6Q8eoQnV/aY
+	ycLMnBG1b/eOdnPBQzPKAGUji4RzY1o=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-471-OflI8D7FP2udoloAwYS5EA-1; Thu, 31 Oct 2024 11:28:38 -0400
+X-MC-Unique: OflI8D7FP2udoloAwYS5EA-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbd2cb2f78so24719666d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 08:28:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730388517; x=1730993317;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I7G1+Hqna3UU+Rn8kUUMeQiUy3fKER/ZEakrNHvj/D8=;
+        b=aWaK0pamF4cC2/rE2hGFXUrsOXbZJJZj6zg7BL9pGgIfyjMRTLlkDThvyImoCYHWta
+         KVbsLse+SaLqUVHmr3Vg0baWxAJhR+CCNeiqhp52pMSKHkKvl5vv3mV3vLJSmyinimR+
+         AvHZDO2GtMCcawoflfnNEFBosM0CzS/5giZGQ/lH/JzTp8xzE+6uvdExZZmD5o4BAsEw
+         14Xf4sWRsX26/+sz6FA3GHKCYOVLZ/3S9YuTzYL26Radi9Uz2d7JiH6eDUGL0UjYthNW
+         N1fArZaIPfUHR1Lj1LfXixwtjxuuh9YN591s555DNJQ20aMj4p6rBUGAyQDVzD1b8mXF
+         js+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXwIXW5CBG1OxWaOxzSJDEES9da3yl8FhZHrWfcmC6bEnCYs7YkjocDcsT40i99+m9l+b6WfXh8U0YWM+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjsssdSbNjn7Zp1nCYxAidSvaXjL/KBjPlO1c42f8kcbpyr02Q
+	7LeqjOIryayPiKNcmmuVjc1ypO+6+1Cu6Ojh8jzKpCni2a+A4u35Rre09sne8hgM7dIRPzpDrPh
+	oPEJtpBub8URkNV5ydpnzB0AykQdHYFI4y2YJL8OQxEsuLtfUyW/IyaFUfZeb6Q==
+X-Received: by 2002:a05:6214:1c0c:b0:6cb:e6f4:dc47 with SMTP id 6a1803df08f44-6d35b95111bmr6240266d6.16.1730388517344;
+        Thu, 31 Oct 2024 08:28:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwOyhMftW7RcXuyK/YB23Xw24ly/AHcdk0qbn0+7j29lc+1ZoFz4KsukugEwbZiSbmu6km2Q==
+X-Received: by 2002:a05:6214:1c0c:b0:6cb:e6f4:dc47 with SMTP id 6a1803df08f44-6d35b95111bmr6239986d6.16.1730388516994;
+        Thu, 31 Oct 2024 08:28:36 -0700 (PDT)
+Received: from localhost (ip98-179-76-110.ph.ph.cox.net. [98.179.76.110])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3541782desm8836856d6.112.2024.10.31.08.28.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 08:28:36 -0700 (PDT)
+Date: Thu, 31 Oct 2024 08:28:35 -0700
+From: Jerry Snitselaar <jsnitsel@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	stable@vger.kernel.org, Mike Seo <mikeseohyungjin@gmail.com>, 
+	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: set TPM_CHIP_FLAG_SUSPENDED early
+Message-ID: <cspzjpjurwlpgd7n45mt224saf5p3dq3nrhkmhbyhmnq7iky4q@ahc66xqfnnab>
+References: <20241029223647.35209-1-jarkko@kernel.org>
+ <z4ggs22bzp76ire4yecy5cehlurlcll7hrf2bx4mksebtdmcmr@hpjardr6gwib>
+ <D59JAI6RR2CD.G5E5T4ZCZ49W@kernel.org>
+ <iq5qsrnu4v5hvndg5hxmsplyuqqgypgzqqyfa5kzsblkvr6mua@u572yggxguez>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 31 Oct 2024 15:27:36 +0000
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Gregory CLEMENT" <gregory.clement@bootlin.com>
-Cc: "Aleksandar Rikalo" <arikalo@gmail.com>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- "Theo Lebrun" <theo.lebrun@bootlin.com>, "Arnd Bergmann" <arnd@arndb.de>,
- devicetree@vger.kernel.org,
- "Djordje Todorovic" <djordje.todorovic@htecgroup.com>,
- "Chao-ying Fu" <cfu@wavecomp.com>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Greg Ungerer" <gerg@kernel.org>, "Hauke Mehrtens" <hauke@hauke-m.de>,
- "Ilya Lipnitskiy" <ilya.lipnitskiy@gmail.com>, linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- "Marc Zyngier" <maz@kernel.org>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Serge Semin" <fancer.lancer@gmail.com>,
- "Tiezhu Yang" <yangtiezhu@loongson.cn>
-Message-Id: <edd455ae-a5f5-4898-ba42-23526a27ec62@app.fastmail.com>
-In-Reply-To: <ZyOXcrS/7txCQU3B@alpha.franken.de>
-References: <20241028175935.51250-1-arikalo@gmail.com>
- <20241028175935.51250-11-arikalo@gmail.com>
- <avz4crm2yrk3fg7r4qxkgkt3ka5hmk54v2wtcms453tsnewu5w@jzjxmyd4b7yg>
- <CAGQJe6p6QgSQKByVQ8G+HpWbdEHnfNb8vRureOrS2VZa6Lk74A@mail.gmail.com>
- <29d7688e-5fac-4821-8764-bdc760112370@app.fastmail.com>
- <378f8b70-12d9-4ec3-a1e5-35bd992bfc90@app.fastmail.com>
- <87jzdoadve.fsf@BLaptop.bootlin.com> <ZyOXcrS/7txCQU3B@alpha.franken.de>
-Subject: Re: [PATCH v8 10/13] dt-bindings: mips: cpu: Add property for broken HCI
- information
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <iq5qsrnu4v5hvndg5hxmsplyuqqgypgzqqyfa5kzsblkvr6mua@u572yggxguez>
 
+On Thu, Oct 31, 2024 at 08:02:37AM -0700, Jerry Snitselaar wrote:
+> On Thu, Oct 31, 2024 at 01:36:46AM +0200, Jarkko Sakkinen wrote:
+> > On Wed Oct 30, 2024 at 10:09 PM EET, Jerry Snitselaar wrote:
+> > > On Wed, Oct 30, 2024 at 12:36:47AM +0200, Jarkko Sakkinen wrote:
+> > > > Setting TPM_CHIP_FLAG_SUSPENDED in the end of tpm_pm_suspend() can be racy
+> > > > according to the bug report, as this leaves window for tpm_hwrng_read() to
+> > > > be called while the operation is in progress. Move setting of the flag
+> > > > into the beginning.
+> > > > 
+> > > > Cc: stable@vger.kernel.org # v6.4+
+> > > > Fixes: 99d464506255 ("tpm: Prevent hwrng from activating during resume")
+> > > > Reported-by: Mike Seo <mikeseohyungjin@gmail.com>
+> > > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219383
+> > > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > > > ---
+> > > >  drivers/char/tpm/tpm-interface.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> > > > index 8134f002b121..3f96bc8b95df 100644
+> > > > --- a/drivers/char/tpm/tpm-interface.c
+> > > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > > @@ -370,6 +370,8 @@ int tpm_pm_suspend(struct device *dev)
+> > > >  	if (!chip)
+> > > >  		return -ENODEV;
+> > > >  
+> > > > +	chip->flags |= TPM_CHIP_FLAG_SUSPENDED;
+> > > > +
+> > > >  	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
+> > > >  		goto suspended;
+> > > >  
+> > > > @@ -390,8 +392,6 @@ int tpm_pm_suspend(struct device *dev)
+> > > >  	}
+> > > >  
+> > > >  suspended:
+> > > > -	chip->flags |= TPM_CHIP_FLAG_SUSPENDED;
+> > > > -
+> > > >  	if (rc)
+> > > >  		dev_err(dev, "Ignoring error %d while suspending\n", rc);
+> > > >  	return 0;
+> > > > -- 
+> > > > 2.47.0
+> > > > 
+> > >
+> > > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > 
+> > Thanks but I actually started to look at the function:
+> > 
+> > https://elixir.bootlin.com/linux/v6.11.5/source/drivers/char/tpm/tpm-interface.c#L365
+> > 
+> > The absolutely safe-play way considering concurrency would be
+> > to do tpm_try_get_ops() before checking any flags. That way
+> > tpm_hwrng_read() is guaranteed not conflict.
+> > 
+> > So the way I would fix this instead would be to (untested
+> > wrote inline here):
+> > 
+> > int tpm_pm_suspend(struct device *dev)
+> > {
+> > 	struct tpm_chip *chip = dev_get_drvdata(dev);
+> > 	int rc = 0;
+> > 
+> > 	if (!chip)
+> > 		return -ENODEV;
+> > 
+> > 	rc = tpm_try_get_ops(chip);
+> > 	if (rc) {
+> > 		chip->flags = |= TPM_CHIP_FLAG_SUSPENDED;
+> > 		return rc;
+> > 	}
+> > 
+> > 	/* ... */
+> > 
+> > suspended:
+> > 	chip->flags |= TPM_CHIP_FLAG_SUSPENDED;
+> > 	tpm_put_ops(chip);
+> > 
+> > It does not really affect performance but guarantees that
+> > tpm_hwrng_read() is guaranteed either fully finish or
+> > never happens given that both sides take chip->lock.
+> > 
+> > So I'll put one more round of this and then this should be
+> > stable and fully fixed.
+> > 
+> > BR, Jarkko
+> 
+> Ah, yeah better to set it while it has the mutex. That should still be
+> 'if (!rc)' after the tpm_try_get_ops() right? (I'm assuming that is just
+> a transcription error).
+> 
+> Regards,
+> Jerry
+> 
 
+It has been a while since I've looked at TPM code. Since
+tpm_hwrng_read doesn't check the flag with the mutex held is there a
+point later where it will bail out if the suspend has occurred? I'm
+wondering if the check for the suspend flag in tpm_hwrng_read should
+be after the tpm_find_get_ops in tpm_get_random.
 
-=E5=9C=A82024=E5=B9=B410=E6=9C=8831=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
-=E5=8D=882:42=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
-> On Thu, Oct 31, 2024 at 09:13:57AM +0100, Gregory CLEMENT wrote:
->> Hi Jiaxun,
->>=20
->> > =E5=9C=A82024=E5=B9=B410=E6=9C=8829=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=
-=8B=E5=8D=884:11=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
->> >> =E5=9C=A82024=E5=B9=B410=E6=9C=8829=E6=97=A5=E5=8D=81=E6=9C=88 =E4=
-=B8=8B=E5=8D=8812:21=EF=BC=8CAleksandar Rikalo=E5=86=99=E9=81=93=EF=BC=9A
->> >> [...]
->> >>>
->> >>>> Is this property applicable for all MIPS vendors? There is no ve=
-ndor
->> >>>> prefix here, so this is generic for this architecture, right?
->> >>
->> >> I'd say the best vendor prefix is mti in this case.
->> >>
->> >> CM3 IP block is supplied by MIPS Technology, it is not a part of M=
-IPS
->> >> architecture spec.
->> >
->> > I just tried to revise this problem and I think a better approach w=
-ould
->> > be picking my CM binding [1] patch and add this as a property to CM=
- binding.
->> >
->> > You don't need to pick rest of that series, this binding alone is s=
-ufficient,
->> > and it's already being reviewed.
->> >
->> > Thanks
->> > [1]:
->> > https://lore.kernel.org/all/20240612-cm_probe-v2-5-a5b55440563c@fly=
-goat.com/
->>=20
->> I had a look at your series and it seems that all the issues raised w=
-ere
->> solved, so why wasn't it merged?
->
-> https://lore.kernel.org/all/2xkut5pyzk4b4ugl4ku72y4rfqrfsoxj4aww2jwlgk=
-c3lmd464@zwf773fr7fpq/
+Regards,
+Jerry
 
-Yes this is still pending.
-
-My FPGA boards are constantly breaking down so I=E2=80=99m on radio sile=
-nce recently.
-
-Sorry for the confusion.
-
-Thanks
-
->
-> so it's still unclear to me, whether there is something to fix or not.
->
-> Thomas.
->
-> --=20
-> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
-rily a
-> good idea.                                                [ RFC1925, 2=
-.3 ]
-
---=20
-- Jiaxun
 
