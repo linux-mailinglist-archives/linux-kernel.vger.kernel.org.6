@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-390407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF8A19B7974
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:14:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1699B7975
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:15:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F2062857F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:14:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A631C2087C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E504F19ABB4;
-	Thu, 31 Oct 2024 11:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F9219AA43;
+	Thu, 31 Oct 2024 11:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XG2zhTgd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4zTwhbo"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39923199936;
-	Thu, 31 Oct 2024 11:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6745C199936
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 11:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730373282; cv=none; b=YSI+WvLxaHPKAIy70Y2MEozmawESLulE+uRCEaLI+ZDfPoA397JrpoLNVzD1Kd7Irx93qboYFrH/MkuqY2IAWmk8F7eADA/dSyyofofmhV587MAzfIGDGuFIGG8s/bdpo1Qcby6Fc2BSme5dARiVEfYe8gWDjFk14vwckWLoeSo=
+	t=1730373292; cv=none; b=ZgkGw499WlFhfAYCo6JTPsO8mxDO159JVaHpyny09iZqnz3Prr+MJ9hFZPG1DdCH2eZpAsKmufeJpfCwIRDXDYO9tyJn100X9vOfDkuhdLqSY/hAYDfmoFOaiDnaGzXXbdv7NW6k0FcGsVoVo7hVIgKg1I6otxklziKm8d/pGf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730373282; c=relaxed/simple;
-	bh=1zC79HQqn6pv4mqxVz2l0m+V0rAuC8x1311W3mnc0vY=;
+	s=arc-20240116; t=1730373292; c=relaxed/simple;
+	bh=i5KsGLfkIQ1st1XLL8Kk1hexPW/9WP4R/osKjHtqkKg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A2ujBwqjHI3u6YlfDCrl1mT1d1RQ5DGeML1Tv34TCfo0b47TrvUYfv/7ysZctxZra/jrvXJXEDuhxHbDY5pha9raOHi2Y/KwfJJ3gVm0QI0naMjFayxDyYepTBonLgLNFIrO/ZJLtAi00hPIhlHgLhCggcU7ketDQCko5X9CsFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XG2zhTgd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3844C4CEE4;
-	Thu, 31 Oct 2024 11:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730373280;
-	bh=1zC79HQqn6pv4mqxVz2l0m+V0rAuC8x1311W3mnc0vY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XG2zhTgd9JabMze2jXcMRiQl4/3g/Iu8OnH6eW/sJDLuZi+3NWGgcnzt782HGQEva
-	 KkFW1VuCInNGOsnENBV3fV+C7f3tVNSkNHZKQlypP5BeIjhkCN/fDvs5U8ClDUqEAP
-	 8o5h+mLYGUbVtDIUcIVOC8H/GtMcNZUbKwiue8tVV6mBv94TAprLoWuyis0fUwo/cu
-	 12TTEigSAsDGujWdYc6ApwFGD33QcRh2vUmDSYnsD6ktCZ6Zi6nIaBsI4ah1N5/43G
-	 O+swCNHruovP9fzmMEObfGKXyk4WM0fshLhEDYGCeNLxtD2F7p2iNOfNUbONW0Cyhn
-	 5KtkwLKRHZ/DQ==
-Message-ID: <79c00d2c-8062-4c65-9bdf-1a87e7624e8b@kernel.org>
-Date: Thu, 31 Oct 2024 12:14:36 +0100
+	 In-Reply-To:Content-Type; b=m2Mhy1J7J1l7awc/zm5blx2+9LN3gPyhMZ23PHAKdLRZrAEIJTycfdtW9hpnTE6kPsftpL0/Wm67pLEovmU9wbafVTJvrrm2mdh2S9Lyg/PKiaOiRw4K2HYmCbXethng+4EvSCdM2ImrJHgqMyM3Ydb2ZH4j1l3zmCdVcfUlLwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4zTwhbo; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4319399a411so6962885e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 04:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730373289; x=1730978089; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PozbzDh8fynP/sDrQGC3kD4ausHypQY0l1L7spYdSv4=;
+        b=D4zTwhbozES3+5qr34DOatjSlZZoeIm/C1f7zbSAo3GX4e/xMp8feK6aeo90/LaPTK
+         VXuhFX74is2chVall5PU1gdAmL1Ac90hIonC9jZJgTlpZfPVFE+zRM/i0cTEPECDSWBb
+         rxoypLKU9yGJeIQoJ7X++TQF5YT33/ADGYY+72QOWI1/iNNFPfen07YOAzyTwynCkYPd
+         S4+kEfrfFeT5xT86nWVYPd3xMluTiZIn00b5QgtrGZRknw8GU5gZnwiUM+9jD1BjCeCs
+         xvt8/lGmZpIyOHjCl+ZcaSga36kOu+m5ATAdH2lcfqT/PU5XlabGN6tYAeEIvy/DYAod
+         ISaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730373289; x=1730978089;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PozbzDh8fynP/sDrQGC3kD4ausHypQY0l1L7spYdSv4=;
+        b=Xiqb6CpqqnklS1s713pOF1BDdHCxvNVh6nkPyQh5C7CvtTLwLBX3OYjXTjRuZKE4/9
+         pBbRWN3FE8wqA9tN975E9PSZwvyqFPniRM/Q4t7bFe69Ap3Yr/6kEY4HMd5Z747GnyLU
+         V2fhpRMd5rX5ynEwedYpCueWWYsbV07fKCoyyHF3cgF1NQ9Vb0vVg6zimAErjNyLCmqp
+         wzVy10dAbwdkAdDCwuwhp8vlgDC7ib4CPspaKohluhG9XflpPA+GleQN9hZI9q0Nw0fn
+         bK/ao+JlmSKUKPzga/ZlywRL1YokzJSdj6AD3EJrzLGWNecSIXjsRK7G3A8IqwTk6/1j
+         dgdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMiAsKXnV93DYFFXmyAR3ZWu4FtMXoBNmt5WDT/mYhqfVDLRz0pOXq77qy88/6FLQ86yMJkUUGPbv/0tY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDWBxpHqpWT1BD656mfHeZwIYHEq7otAx6ahTM6UCt/GWcVU6b
+	giTj3ycHZXkN9yk6HVbNA/wvqSq4YvKuND3sw/JfCUKs2dTKZ3f7
+X-Google-Smtp-Source: AGHT+IGfEhgylwo9HDbgpkO/tkKXN2QtV74TWAjukaY+u8rp50OfYjIiD1MnYUAdd0nzH218OKjcjg==
+X-Received: by 2002:a05:600c:3b9c:b0:42c:bb10:7292 with SMTP id 5b1f17b1804b1-4319ac70754mr181762525e9.1.1730373288597;
+        Thu, 31 Oct 2024 04:14:48 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:d7b9:afdb:c541:d023? (2a02-8389-41cf-e200-d7b9-afdb-c541-d023.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d7b9:afdb:c541:d023])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca8eesm52772575e9.43.2024.10.31.04.14.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 04:14:48 -0700 (PDT)
+Message-ID: <99b12dee-43c3-4007-9c55-e2a884fc662b@gmail.com>
+Date: Thu, 31 Oct 2024 12:14:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,127 +75,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Bluetooth: btbcm: automate node cleanup in
- btbcm_get_board_name()
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241030-bluetooth-btbcm-node-cleanup-v1-0-fdc4b9df9fe3@gmail.com>
- <20241030-bluetooth-btbcm-node-cleanup-v1-2-fdc4b9df9fe3@gmail.com>
- <aab34ae4-0f6b-4720-b14e-69add0355daa@kernel.org>
- <07eef877-622a-4651-8a15-9e507146642c@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <07eef877-622a-4651-8a15-9e507146642c@gmail.com>
+Subject: Re: [PATCH 2/2] drivers: soc: atmel: use automatic cleanup for
+ device_node in atmel_soc_device_init()
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241030-soc-atmel-soc-cleanup-v1-0-32b9e0773b14@gmail.com>
+ <20241030-soc-atmel-soc-cleanup-v1-2-32b9e0773b14@gmail.com>
+ <dfa83464-4632-45cf-a257-b9d9739d37e2@kernel.org>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <dfa83464-4632-45cf-a257-b9d9739d37e2@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/10/2024 12:10, Javier Carrasco wrote:
-> On 31/10/2024 12:08, Krzysztof Kozlowski wrote:
->> On 30/10/2024 16:46, Javier Carrasco wrote:
->>> Switch to a more robust approach by automating the node release when it
->>> goes out of scope, removing the need for explicit calls to
->>> of_node_put().
->>>
->>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->>> ---
->>>  drivers/bluetooth/btbcm.c | 8 ++------
->>>  1 file changed, 2 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
->>> index 400c2663d6b0..a1153ada74d2 100644
->>> --- a/drivers/bluetooth/btbcm.c
->>> +++ b/drivers/bluetooth/btbcm.c
->>> @@ -541,23 +541,19 @@ static const struct bcm_subver_table bcm_usb_subver_table[] = {
->>>  static const char *btbcm_get_board_name(struct device *dev)
->>>  {
->>>  #ifdef CONFIG_OF
->>> -	struct device_node *root;
->>> +	struct device_node *root __free(device_node) = of_find_node_by_path("/");
->>>  	char *board_type;
->>>  	const char *tmp;
->>>  
->>> -	root = of_find_node_by_path("/");
->>>  	if (!root)
->>>  		return NULL;
->>>  
->>> -	if (of_property_read_string_index(root, "compatible", 0, &tmp)) {
->>> -		of_node_put(root);
->>
->> You just added this. Don't add code which is immediately removed. It's a
->> noop or wrong code.
->>
->>
->>
->> Best regards,
->> Krzysztof
->>
+On 31/10/2024 12:07, Krzysztof Kozlowski wrote:
+> On 30/10/2024 18:10, Javier Carrasco wrote:
+>> Switch to a more robust approach to automatically release the node when
+>> it goes out of scope, dropping the need for explicit calls to
+>> of_node_put().
 > 
-> Exactly, I added that code to fix the issue in stable kernels that don't
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+> your patch is touching. For bindings, the preferred subjects are
+> explained here:
+> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+> 
+> There is never a "drivers" prefix. Especially not first (because as
+> middle appears for FEW subsystems, not for SoC though).
+> 
 
-Then send backport for stable.
+Thanks, I added that by mistake. I will fix that for v2.
 
-> support the __free() macro, and then I removed it to use a safer
-> approach from now on.
+>>
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>>  drivers/soc/atmel/soc.c | 7 ++-----
+>>  1 file changed, 2 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/soc/atmel/soc.c b/drivers/soc/atmel/soc.c
+>> index 64b1ad063073..298b542dd1c0 100644
+>> --- a/drivers/soc/atmel/soc.c
+>> +++ b/drivers/soc/atmel/soc.c
+>> @@ -399,15 +399,12 @@ static const struct of_device_id at91_soc_allowed_list[] __initconst = {
+>>  
+>>  static int __init atmel_soc_device_init(void)
+>>  {
+>> -	struct device_node *np = of_find_node_by_path("/");
+>> +	struct device_node *np __free(device_node) = of_find_node_by_path("/");
+>>  
+>> -	if (!of_match_node(at91_soc_allowed_list, np)) {
+>> -		of_node_put(np);
+> 
+> You just added this code. Don't add code which immediately you remove.
+> Squash two patches.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-This is not correct approach. We work here on mainline and in mainline
-this is one logical change: fixing issue. Whether you fix issue with
-of_node_put or cleanup or by removing of_find_node_by_path() call, it
-does not matter. All of these are fixing the same, one issue.
 
-If you think about stable kernels, then work on backports, not inflate
-mainline kernel with multiple commits doing the same, creating
-artificial history.
-
-
-
+As I said in another thread, I split the solution into a first one to be
+applied to stable kernels, and a second one that uses a more robust
+approach that is not supported by all stable kernels.
 
 Best regards,
-Krzysztof
-
+Javier Carrasco
 
