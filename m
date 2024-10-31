@@ -1,89 +1,166 @@
-Return-Path: <linux-kernel+bounces-390329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D9E9B7878
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:14:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6449B787B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50D50B218AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:14:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A890B23152
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C241990D8;
-	Thu, 31 Oct 2024 10:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40E01991AB;
+	Thu, 31 Oct 2024 10:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ob2QxMwe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NwOOnEz7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624FB12B169;
-	Thu, 31 Oct 2024 10:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504B813A25F;
+	Thu, 31 Oct 2024 10:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730369688; cv=none; b=Top7Yp9EAr8NL6bAn6Z2L3+08AZ+dFD71PYwS+uogEuNM6YWG1L1wjnT16WN/QzcwJnkYkZDwBiKoX2ivnFQAlxPY8t06D0P1pegwEVU1Yj3tGw01U07co8CtbbvWM+03JEYUtPomQaeJ7H16RRYuUwtKNakU4uRV9EhwIvYyfQ=
+	t=1730369750; cv=none; b=d6L3Vq8LNHXxGelvuiC9FzhkUsBN57JSCb2Rl2f5YxWO2ipaNLZii56LfQ15q1dj9ZAPzWH56NOa4toU0zNM7Ruxd0KD2nxww8Bl7C4JgOYNa8R3VOI1sSSvffmpAdQ5zS0JWHaeiuesyRZRqGWo7S/Rx5jxDdAnfc7yescxx3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730369688; c=relaxed/simple;
-	bh=KUIrzRY/qSqo8rjn0vcLHeEKyxN6+0+rnc3xTHbrGAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ul+WEL4+Dv+EarOkLSYMifGBNDMd+p/jpv7ddEIKmREutW2ChQLi7w1BnSm/PVQXsZ5kKNiH2T+G7IZ8Ev0wqwS4Mj++MvRBjcEKZs9KITSalWXIJT5CL2uz3f5hyOWW8ulhOHUYkUapbQKEWqvyeGrSxPtAEuOnmIui3lJVyzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ob2QxMwe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B9B9C4CED0;
-	Thu, 31 Oct 2024 10:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730369687;
-	bh=KUIrzRY/qSqo8rjn0vcLHeEKyxN6+0+rnc3xTHbrGAI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ob2QxMwe3IvoWcQ4t+zyauZ0mNJqd552FzClpZAPIEjaPc4SSIAwXiXbcJxtBXEGA
-	 I7QM4RvPoCe+15GK5tplmZ1Z9vjIHwtm5WwTnv19274vkQpkYTZdYeMnAMD4k3tAau
-	 m0cegLVgXxTY3ajkgeWptdnTU7+gZKGcsFW2G3YPd8AGZoU7cKiNZconW7282DK3b8
-	 qGrIag7uuEPkio7MzhzDBEiwIL4DotfQDMMDfUS68tnlYJ4CNLIb9dzD6+CvPVTXoe
-	 Oxyfqe+OtUp4Zwa9mEMTUIgkFe9uU2c6HS81J4on6Gv+9OUZashTSNNuX/SSxcd/SW
-	 L7g2DMyww+xHA==
-Date: Thu, 31 Oct 2024 11:14:42 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, "Ma, Yu" <yu.ma@intel.com>, 
-	jack@suse.cz, edumazet@google.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v5 1/3] fs/file.c: remove sanity_check and add
- likely/unlikely in alloc_fd()
-Message-ID: <20241031-anraten-dorthin-4e01a39b46bf@brauner>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240717145018.3972922-1-yu.ma@intel.com>
- <20240717145018.3972922-2-yu.ma@intel.com>
- <20240814213835.GU13701@ZenIV>
- <d5c8edc6-68fc-44fd-90c6-5deb7c027566@intel.com>
- <20240815034517.GV13701@ZenIV>
- <CAGudoHEu07q72u_XFH61kGXyKr+vAqGFhn_tSSu6U2uMDABLdw@mail.gmail.com>
+	s=arc-20240116; t=1730369750; c=relaxed/simple;
+	bh=XCXgN4lPnIAPqejxYbv7v0HSBCur4c0ci9vAjAXjYSo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Zveg86DjDjIDcts0b8mzsLXn0ZGbskKoG6KS2pzEKWFViPo67ubvu4kBfNjYjMJlDzR2q7jUN5y+/n4Um4Iks0m9a4vN6ikU5tmqJIwWNY8abZFuqrloGIHwn94tff+/Q2dwVQkJaQu6MP8xabMMOU0WpKuYn8Y7d6BI7QPpmgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NwOOnEz7; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730369748; x=1761905748;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=XCXgN4lPnIAPqejxYbv7v0HSBCur4c0ci9vAjAXjYSo=;
+  b=NwOOnEz7qO+HT01IxotFTKH7TN2Holx+9SbJOb1O80qPkXFtz8OTPFUZ
+   3X+syTHENhXXtznm5iGuG/MT9jYTsLW6P7nHj5oDcXDBUhfZVHyFqSijl
+   pla/xX0MlSYm4SAQcGt24YmifPNNSRNzxflBObhjJlbS0N3u7nrNdrYjh
+   QK/1zgTIPS//lD/EpI79Bx1Rl9ljrQ/z1F/PA/yrt3iR+p9fTvpif6b+P
+   0MQEvAoguIlK1t2vWZUiHL1fYknnAL+3gz97NKa3vXgfIPkPW1pGo/4uz
+   1V728KzCayqirJxSiSaRNGgZVEIou/D4NAcKgQPZ15X+dDaZotRc8Nba7
+   A==;
+X-CSE-ConnectionGUID: +Zt7EsOgQ8aFhdSxvHyidg==
+X-CSE-MsgGUID: 0BwvzwlQQx+YCFV8tGZQOw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30265468"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30265468"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:15:47 -0700
+X-CSE-ConnectionGUID: O5pELUPfSdeP+n0yEBPT+w==
+X-CSE-MsgGUID: se/5rftLQm+9b55fu3U2eg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,247,1725346800"; 
+   d="scan'208";a="87184783"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.160])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 03:15:42 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 31 Oct 2024 12:15:38 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>
+Subject: Re: [PATCH v3 10/22] ACPI: platform_profile: Use `scoped_cond_guard`
+ for platform_profile_show()
+In-Reply-To: <20241031040952.109057-11-mario.limonciello@amd.com>
+Message-ID: <64f0b33b-3345-d9a6-d174-2a823adee216@linux.intel.com>
+References: <20241031040952.109057-1-mario.limonciello@amd.com> <20241031040952.109057-11-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHEu07q72u_XFH61kGXyKr+vAqGFhn_tSSu6U2uMDABLdw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Oct 31, 2024 at 08:42:18AM +0100, Mateusz Guzik wrote:
-> On Thu, Aug 15, 2024 at 5:45 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Thu, Aug 15, 2024 at 10:49:40AM +0800, Ma, Yu wrote:
-> >
-> > > Yes, thanks Al, fully agree with you. The if (error) could be removed here
-> > > as the above unlikely would make sure no 0 return here. Should I submit
-> > > another version of patch set to update it, or you may help to update it
-> > > directly during merge? I'm not very familiar with the rules, please let me
-> > > know if I'd update and I'll take action soon. Thanks again for your careful
-> > > check here.
-> >
-> > See the current work.fdtable...
+On Wed, 30 Oct 2024, Mario Limonciello wrote:
+
+> Migrate away from using an interruptible mutex to scoped_cond_guard.
+> Also move the sysfs string match out of the mutex as it's not needed.
 > 
-> this patchset seems to have fallen through the cracks. anything
-> holding up the merge?
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-It's in next for this merge window.
+I'd have expected all the mutex_lock_interruptible() -> 
+scoped_cond_guard() changes in the same patch. Although this also moves 
+the sysfs stuff out which in this smaller form is kind of okay but if it's 
+part of larger patch merging all scoped guard conversions, it should be 
+in a different change.
+
+-- 
+ i.
+
+> ---
+>  drivers/acpi/platform_profile.c | 36 ++++++++++++---------------------
+>  1 file changed, 13 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+> index b48dd34301f13..63a5f5ac33898 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -75,35 +75,25 @@ static ssize_t platform_profile_store(struct device *dev,
+>  {
+>  	int err, i;
+>  
+> -	err = mutex_lock_interruptible(&profile_lock);
+> -	if (err)
+> -		return err;
+> -
+> -	if (!cur_profile) {
+> -		mutex_unlock(&profile_lock);
+> -		return -ENODEV;
+> -	}
+> -
+>  	/* Scan for a matching profile */
+>  	i = sysfs_match_string(profile_names, buf);
+> -	if (i < 0) {
+> -		mutex_unlock(&profile_lock);
+> +	if (i < 0)
+>  		return -EINVAL;
+> -	}
+>  
+> -	/* Check that platform supports this profile choice */
+> -	if (!test_bit(i, cur_profile->choices)) {
+> -		mutex_unlock(&profile_lock);
+> -		return -EOPNOTSUPP;
+> -	}
+> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> +		if (!cur_profile)
+> +			return -ENODEV;
+>  
+> -	err = cur_profile->profile_set(cur_profile, i);
+> -	if (!err)
+> -		sysfs_notify(acpi_kobj, NULL, "platform_profile");
+> +		/* Check that platform supports this profile choice */
+> +		if (!test_bit(i, cur_profile->choices))
+> +			return -EOPNOTSUPP;
+>  
+> -	mutex_unlock(&profile_lock);
+> -	if (err)
+> -		return err;
+> +		err = cur_profile->profile_set(cur_profile, i);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>  	return count;
+>  }
+>  
+> 
 
