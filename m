@@ -1,140 +1,109 @@
-Return-Path: <linux-kernel+bounces-390009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312CA9B746C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:19:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E909B7467
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 07:19:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C004C2848D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:19:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92A3CB21A5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 06:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFAC146A6C;
-	Thu, 31 Oct 2024 06:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JsHf0WBF"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43578142E67;
+	Thu, 31 Oct 2024 06:18:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676B213D8A3;
-	Thu, 31 Oct 2024 06:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E401B80BF8
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 06:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730355548; cv=none; b=TOyTFLLxRHF/dFKpa//RPCNI4+ZwSRcw2RUj6oYCAbRj3Tfb6Np/ej45XblB1OWjrJDBfZ5pxAc/GzKLG0ktbGXw2+MOV5wwzYcXVDIW+x59AobHcVaPQEcL9uscYxHcPGwcr+nn+We1DwnUTPWE0XsEPqlDMVr21bd1dOx1l4w=
+	t=1730355534; cv=none; b=MaIUEsOOAevXKJxawRFct9J1YyIG29dGpJJivWogzKHrYvNREQ7yRxSMFNXT1+REyr653hHahroyXTV+PKdF8g7v6y/9pIlSg/XvM35ahS6+aDbQ1Eze8wgXcmFZeRQswafOsF/WYVz7eyPEa1muZK5615lmPrp84ApJgnmbyMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730355548; c=relaxed/simple;
-	bh=FgqlLLAyzeN6qKHTbENOOOMEU83x4D0XmiB1bxocEr8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GQqUGEbu+XTMzqeusmrEbfOJZa3s7A+4sL4VEeyulKo6LP/vVcrh5ZXF7K2+n8mi8KWt2eOK3rw6cM8r3zm+P2TZYrsm1hnMvUVyNoMvgHq+oGqWPgwvk/ppC1PD2+4EDXDNU7DjPI3iPAnSW72k6B9R6ztWIbRmdXVGpB4vq3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JsHf0WBF; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so8203841fa.0;
-        Wed, 30 Oct 2024 23:19:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730355544; x=1730960344; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FgqlLLAyzeN6qKHTbENOOOMEU83x4D0XmiB1bxocEr8=;
-        b=JsHf0WBFyzYThua4mNHDC2cKLxpHqJhUdXxSEoypUuRYKeEZlfgoOKkmeDgCGflJbI
-         WePNOgHi1Pz4M9/lvb9j1tBVDjbmOKYoDJ/H1/xJy9ghdQ7phDcKQ7eIlLZDyvIrqDMj
-         JN67r4mpt7UiL+iRn31pGStAFvvqKI8Xs1KdpzI8qusQEknSKkBmbSMIFUAixH6G9ngb
-         ugew2aB9A/jVp+n0wFdcQBu35nPMQZyJyVuLtzYDDUeEaFBvzLwipILuepWaDcfm3Rkl
-         9qNvtF25zCWiq+R3bGeL1p8Pev1KC+k5hIx03e2BQi0lHXwEp5qeHzoYxIL6dBHv/QKN
-         KE/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730355544; x=1730960344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FgqlLLAyzeN6qKHTbENOOOMEU83x4D0XmiB1bxocEr8=;
-        b=jzUZbWpGDTi1Kn4pa49GuGJFDJ2eBAMUGTx5mq17DaP8O2e5PiV/4dPu7xkUqP8JKc
-         SPR+vIHQPBpheomhOc0ORUgHt/CkLH4PCFf7WNJOYTXbzYCL1iD2NFot1KICODnaAZCZ
-         V4EXliKjBIP+RS/T797aisqR7Nb5w56lj/cUgn5YWe5RcJPuSaUi24uEwNbKiKms06Ux
-         V10QDEBu3n4D5ef4jK6DvAhpfsWApxdb5aAVMgVFGO/jXV2BRCg+h4IP6xd/VM54hEIi
-         A6wGHcMst61G5P2AqVGQAO6xg60yf9VOumbpltW6BnMriyPCVddMjJghpxKDSsl0Z8L9
-         QZPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDzFH0kw7CH9hDJ1HPyGaTHD9zwYiTh2XTK0+OrudsVXGJvt34pvZpiwOIe1qvOR8VebbRSm/E7A2op/Fo@vger.kernel.org, AJvYcCVdqlINt4OeOVWnP6UVGej70L+3JZ/MbSoeypFh5TE24Ta48oAuB+zYlkkefkPMswS3x1wKNhTAm8pVFHlEWds=@vger.kernel.org, AJvYcCVvHs3tl8bukZOnFS1ExhQ7pmvQvV7GxH4QqpD/rhswvsr2hPrN0Gsiy1nn6NvZ5ULaKbLWBB7MtYNkTu0=@vger.kernel.org, AJvYcCWqogwy6HYMLbe7Nsok0JvedugyNx66B5Vm2DDiCNiufN4v8FytN4R6vRwK9tHnjgHosL4bWklJ1R9HTu1QGw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpWboV2DTTucniDM7uIaEsaRYUdEh3iqXjKpdMT1F8Qq5VapQ+
-	BG1om9BYtQiBJH0x84Tc9m08rmuJ1vsJelq0TRnBYzroRoSwv/9zzHrbk0R1nW2tFi8IEcL3xKj
-	7AxUHT20IgM8MZP1i6hvGQoDNcb4=
-X-Google-Smtp-Source: AGHT+IFHxxJrlKSrgAAFWAELVctspErXwBbZUkqdQIAVIWmjs2xYQmxqsiV/CAi8amXUPGmri9GG+BeSf/deG9l51jo=
-X-Received: by 2002:a2e:bc15:0:b0:2fa:c5d9:105b with SMTP id
- 38308e7fff4ca-2fcbdf61167mr145428871fa.2.1730355544208; Wed, 30 Oct 2024
- 23:19:04 -0700 (PDT)
+	s=arc-20240116; t=1730355534; c=relaxed/simple;
+	bh=RDCtHX+TEpBrpKXWUjkNi8VEpT+KCOZN+o2Yf1/biPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oizWydz7YhXMRXFNvq4uHRRnE0obkBVEdBkguPsdCtW+gAUQ4vRbokEie/1kqOdULfEbeFSeN1p3K82Mg3ypO4jLgqQgTmU3Y/bokgK+/ffis7/reuZyFVDBDYXcDjpyuyu2/8c8RxHX9hJ0+Ffy157/rFtawnMV2LOa3T1NZP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t6OVt-0003MA-Ml; Thu, 31 Oct 2024 07:18:33 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t6OVq-001JfG-0o;
+	Thu, 31 Oct 2024 07:18:30 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t6OVq-0069Ol-0P;
+	Thu, 31 Oct 2024 07:18:30 +0100
+Date: Thu, 31 Oct 2024 07:18:30 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH RFC net-next v2 03/18] net: pse-pd: tps23881: Use helpers
+ to calculate bit offset for a channel
+Message-ID: <ZyMhNqRaalfbP_f2@pengutronix.de>
+References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
+ <20241030-feature_poe_port_prio-v2-3-9559622ee47a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com>
- <CA+icZUWTdgM7HQrnR_NzgZZQE3aXXk+tAqD3srNd1Eyjr5d7EA@mail.gmail.com>
- <CABCJKuepGSFcQa0F5iO4aa4V2UbhuKO+tyfhB3_ODaTGs3sM5Q@mail.gmail.com> <CA+icZUXdMGk5uTZ_as0UOw-zmZuxTXc6J3U2_He00UOca86Gig@mail.gmail.com>
-In-Reply-To: <CA+icZUXdMGk5uTZ_as0UOw-zmZuxTXc6J3U2_He00UOca86Gig@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Thu, 31 Oct 2024 07:18:28 +0100
-Message-ID: <CA+icZUWRqBgqS0TpJsUumZRJMc=XRQJ=NMUj=O_WS9o2dCiBsw@mail.gmail.com>
-Subject: Re: [PATCH v5 00/19] Implement DWARF modversions
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241030-feature_poe_port_prio-v2-3-9559622ee47a@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31, 2024 at 2:56=E2=80=AFAM Sedat Dilek <sedat.dilek@gmail.com>=
- wrote:
->
-> On Wed, Oct 30, 2024 at 10:14=E2=80=AFPM Sami Tolvanen <samitolvanen@goog=
-le.com> wrote:
-> >
-> > Hi Sedat,
-> >
-> > On Wed, Oct 30, 2024 at 2:00=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.=
-com> wrote:
-> > >
-> > > Hi Sami,
-> > >
-> > > perfect timing: Nathan uploaded SLIM LLVM toolchain v19.1.3
-> > >
-> > > KBUILD_GENDWARFKSYMS_STABLE is to be set manually?
-> > > What value is recommended?
-> >
-> > The usage is similar to KBUILD_SYMTYPES, you can just set
-> > KBUILD_GENDWARFKSYMS_STABLE=3D1 to use --stable when calculating
-> > versions. However, it's not normally necessary to set this flag at all
-> > when building your own kernel, it's mostly for distributions.
-> >
-> > Sami
->
-> OK, thanks.
->
-> # cat /proc/version
-> Linux version 6.12.0-rc5-1-amd64-clang19-kcfi
-> (sedat.dilek@gmail.com@iniza) (ClangBuiltLinux clang version 19.1.3
-> (https://github.com/llvm/llvm-project.git
-> ab51eccf88f5321e7c60591c5546b254b6afab99), ClangBuiltLinux LLD 19.1.3
-> (https://github.com/llvm/llvm-project.git
-> ab51eccf88f5321e7c60591c5546b254b6afab99)) #1~trixie+dileks SMP
-> PREEMPT_DYNAMIC 2024-10-30
->
-> Tested-by: Sedat Dilek <sedat,dilek@gmail.com> # LLVM/Clang v19.1.3 on x8=
-6-64
->
+On Wed, Oct 30, 2024 at 05:53:05PM +0100, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> 
+> This driver frequently follows a pattern where two registers are read or
+> written in a single operation, followed by calculating the bit offset for
+> a specific channel.
+> 
+> Introduce helpers to streamline this process and reduce code redundancy,
+> making the codebase cleaner and more maintainable.
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> ---
 
-Fix email-address in credit tag:
+Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com> # LLVM/Clang v19.1.3 on x86-=
-64
-
--sed@-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
