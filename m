@@ -1,60 +1,57 @@
-Return-Path: <linux-kernel+bounces-390480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23BD09B7A73
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:24:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C4E9B7A76
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 13:25:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5215C1C21F29
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:24:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5214F1F24E24
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 12:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D6219CD19;
-	Thu, 31 Oct 2024 12:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FC219CC26;
+	Thu, 31 Oct 2024 12:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="agU3snlv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=peff.net header.i=@peff.net header.b="Bq2d1mL5"
+Received: from cloud.peff.net (cloud.peff.net [104.130.231.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBEE19CC08;
-	Thu, 31 Oct 2024 12:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9E119ADA4
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 12:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.130.231.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730377431; cv=none; b=BoOrCVJqWZIKeG/mU6ajXb/ZRnwMdX1PTM3I3KkowkNCZpgYx8q2NNpVon1gQFJ//EYENiOyQX1RDFgIWd4maINZ8v2n03VZm9GAjLKMlgWmqhOjDwNtbk9NpvSN+Y1wHl9kziPPBfQLM7gw7138ExD7kByWcnW9LhHxMp7TZA0=
+	t=1730377500; cv=none; b=ops/S14ihTwZZzYObWiVgXldl4vYZ58coEKvwJDqZcJGEmoshesTKWfpHo+drZ2fV/OcskY8xrWWQ9RyyJzihK7E+iMk1/80U1OX8hCCqX34T3oqrl3dLPQLdGwTJWrDJdzxgU1Q23AnUS+fqmdan1pKby3lNR5RCDgM5XCL8LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730377431; c=relaxed/simple;
-	bh=dADoK+rRwsBwxgt5AIiHceJswYu86JTOLxIc0/c0PvU=;
+	s=arc-20240116; t=1730377500; c=relaxed/simple;
+	bh=uuDgNKO6THZE3AKJ2QqsvwkGs+0CTZ9ihmdonQAshIA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Omdu/GZmbnVOOduZIY1K4vJUaLwUazPlKXdYkPnTYUlzPgCvR1iBQKogY3giZ8D/lN7ten3///XXigZpz7WSyYxFjEQ/+ikUaIVM3lJ97RN8IXSSSMKl2vpt29XnBrbBnrPuHuwQD/kPEnV6MHpZfjTdGLBZDzJF7zB2koxHwZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=agU3snlv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FB3FC4E690;
-	Thu, 31 Oct 2024 12:23:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730377431;
-	bh=dADoK+rRwsBwxgt5AIiHceJswYu86JTOLxIc0/c0PvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=agU3snlv+qwGyOip3i1LoYpsf9DE7GWMD6JxwsADinyv4FIDj+y6zC5dhAXWTbk9c
-	 4ekVdggT4vRdbS8x4bawN/gBDxhpZbPY9wFYlkr3ZfUtPkamKtIk3i+8PdTpws06Jf
-	 +WOBXaYhp1SvaPwtiKi6n/flznsmgDGCwycBtCgIj05+VHXOMeoMU59tDSWNFyEIRt
-	 rHUi6KsDsWKD97lGalkZSbcwx0wvh1SZpCKgZeKAdr71hxV3POpcM6/CRDlr33GWM2
-	 kLcTbJ4B1UBs64VprCfE05hR+K8PwDs3sIUg52Fxmj6fG1yESHiS7LhBcOzd7QIoaY
-	 ZNHPt4lMBtrng==
-Date: Thu, 31 Oct 2024 13:23:46 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, 
-	loic.poulain@linaro.org, rfoss@kernel.org, linux-i2c@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH v2 -next] i2c: qcom-cci: Remove the unused variable
- cci_clk_rate
-Message-ID: <auvqypvayvlhzi6n6jp3r6swq4sik3jvcxxafvu67i2y3r337m@uy33er3gujk2>
-References: <20241029020931.42311-1-jiapeng.chong@linux.alibaba.com>
- <rql2u5k3esavdmpdzgo4l4up4ir7yjpdzc3qlmsvjvqalqzvjc@xspprcohlout>
- <f06dea2e-893b-4de5-89a3-e25af56afb31@linaro.org>
- <7f5amyf7ljvtfjyksfe7cad25wu7qdg4e45mdite6bdxx63ge5@ov37ohc7qtai>
- <e1c55403-55ee-4742-b7e6-8f0a4387ce9e@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHQ6v2APP2e4HtsYtrO2MQmFkAYwpYW0sL9vKj07yJqJ/IluhTsJ0U/3JeA6ZI0mHaF76i+YX4QN7ErCPc3qmJZPew5uzf3sshcJZxcjlIiUHfFk8TlOsji+5jPHCdr84EpHKKNH3NsgHzHUrsPJeu8XVC8jJmhStOwKsphbQg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peff.net; spf=pass smtp.mailfrom=peff.net; dkim=pass (2048-bit key) header.d=peff.net header.i=@peff.net header.b=Bq2d1mL5; arc=none smtp.client-ip=104.130.231.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peff.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peff.net
+Received: (qmail 18813 invoked by uid 109); 31 Oct 2024 12:24:57 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=peff.net; h=date:from:to:cc:subject:message-id:references:mime-version:content-type:in-reply-to; s=20240930; bh=uuDgNKO6THZE3AKJ2QqsvwkGs+0CTZ9ihmdonQAshIA=; b=Bq2d1mL5U95zbc9uyy9e3vXwjPW91GdgtNC4UhYA7aRFxR4O5lBpccEJIGZf8RqpNllue1uzYNoX6HjLEvTvnBnAlNZoxOZVID6kdPFlBUPL/cMHgBe9div6SnWIFyAFu3t+9KcjVdVRbaXMFLGdR28tYsVc1l/koAGOMD8GMiOQIDumS1fFVLCzmVXRI3akk2f+Kwo49KAFw3BHwEExQvVhGnjN477oxgCtQYZ+ZE4Y/rMTPfq7GJc9BaymptvyC4EaPPQLXWnP4+kOqOLeMpikRxZuTBjjX4L4SJNkQB1EOw9LtzTWSWllFU3aEQwqJwh7hx15zDBLTVWfAqWZNg==
+Received: from Unknown (HELO peff.net) (10.0.1.2)
+ by cloud.peff.net (qpsmtpd/0.94) with ESMTP; Thu, 31 Oct 2024 12:24:57 +0000
+Authentication-Results: cloud.peff.net; auth=none
+Received: (qmail 32452 invoked by uid 111); 31 Oct 2024 12:24:56 -0000
+Received: from coredump.intra.peff.net (HELO coredump.intra.peff.net) (10.0.0.2)
+ by peff.net (qpsmtpd/0.94) with (TLS_AES_256_GCM_SHA384 encrypted) ESMTPS; Thu, 31 Oct 2024 08:24:56 -0400
+Authentication-Results: peff.net; auth=none
+Date: Thu, 31 Oct 2024 08:24:56 -0400
+From: Jeff King <peff@peff.net>
+To: Rasmus Villemoes <ravi@prevas.dk>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	git@vger.kernel.org
+Subject: Re: [PATCH] setlocalversion: Add workaround for "git describe"
+ performance issue
+Message-ID: <20241031122456.GB593548@coredump.intra.peff.net>
+References: <309549cafdcfe50c4fceac3263220cc3d8b109b2.1730337435.git.jpoimboe@kernel.org>
+ <87bjz0k17c.fsf@prevas.dk>
+ <20241031114210.GA593548@coredump.intra.peff.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,46 +60,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e1c55403-55ee-4742-b7e6-8f0a4387ce9e@linaro.org>
+In-Reply-To: <20241031114210.GA593548@coredump.intra.peff.net>
 
-Hi Vladimir,
+On Thu, Oct 31, 2024 at 07:42:10AM -0400, Jeff King wrote:
 
-On Thu, Oct 31, 2024 at 01:59:45PM +0200, Vladimir Zapolskiy wrote:
-> On 10/31/24 13:41, Andi Shyti wrote:
-> > On Thu, Oct 31, 2024 at 01:13:24PM +0200, Vladimir Zapolskiy wrote:
-> > > On 10/31/24 12:44, Andi Shyti wrote:
-> > > > On Tue, Oct 29, 2024 at 10:09:31AM +0800, Jiapeng Chong wrote:
-> > > > > Variable ret is not effectively used, so delete it.
-> > > > > 
-> > > > > drivers/i2c/busses/i2c-qcom-cci.c:526:16: warning: variable ‘cci_clk_rate’ set but not used.
-> > > > > 
-> > > > > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> > > > > Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11532
-> > > > > Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> > > > 
-> > > > thanks for your patch! Applied to i2c/i2c-host
-> > > > 
-> > > > Thanks,
-> > > > Andi
-> > > > 
-> > > 
-> > > FWIW I've noticed that my Reviewed-by tag was added to the accepted change,
-> > > while it was the conditional one... Actually I don't know how to be aware
-> > > of such nuances, if only b4 tool is used, likely there is no way for it.
-> > 
-> > I thought the change that made your r-b conditional was the
-> > Fixes tag, right? That is added. Have I missed anything?
-> 
-> ah, no, it was about the copy-pasted commit message, which mentions a much
-> more popular 'ret' local variable.
+> That works, but I have a feeling that figured out what the heck is going
+> on with gave_up_on might produce a more elegant solution.
 
-oh yes, the new commit message says:
+OK, I think I might have made some sense of this.
 
-"Variable cci_clk_rate is not effectively used, so delete it."
+In finish_depth_computation(), we traverse down "list" forever, passing
+flags up to our parents, until we find a commit that is marked with the
+same "within" flag as our candidate. And then if everything left has
+that same "within" flag set, we can bail.
 
-I'm sorry, I will fix it.
+So I _think_ the point is to basically count up what we'd get from this
+traversal:
 
-Thanks,
-Andi
+  $tag..$commit
+
+where "$tag" is the candidate tag we found, and "$commit" is what we're
+trying to describe (so imagine "git describe --match=$tag $commit").
+
+We can't just use the depth we found while traversing down to $tag,
+because there might be side branches we need to count up, too. And we
+don't start a new traversal, because we'd be repeating the bits we
+already went over when finding $tag in the first place.
+
+And we feed that "list" from the original traversal state. So if we
+break out of the traversal early but don't set gave_up_on, then we have
+nothing in that state that holds the "within" flag. So we just walk all
+of the commits down to the root, because nobody is propagating the flag
+to them.
+
+We have to feed at least one commit with the "within" flag into the
+traversal so that it can let us end things. But I don't think it really
+matters if that commit is the one we found, or if it's a parent of one
+that we happened to pass "within" bits down to.
+
+So I think we can just set "gave_up_on" to the final element we found
+(whether from max_candidates or from finding every possible name). I.e.,
+what I showed earlier, or what you were proposing.
+
+
+I was also a bit puzzled how this works when there are multiple tags.
+We feed only one "best" candidate to finish_depth_computation(), but
+gave_up_on does not necessarily have its flag set. But I think that case
+the point is that _some_ commit in the list does, and we literally add
+every commit to that list.
+
+I'm actually a bit skeptical that any of this is faster than simply
+starting over a new traversal of $tag..$commit to find the depth, since
+we are considering each commit anew. And there's a bunch of accidentally
+quadratic bits of finish_depth_computation(). But frankly I'm somewhat
+afraid to touch any of this more than necessary.
+
+-Peff
 
