@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-390324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E519B786D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:10:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE959B7872
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 11:12:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A2CA28664E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:10:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 600BE1C2340C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 10:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419A41990BD;
-	Thu, 31 Oct 2024 10:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7A912B169;
+	Thu, 31 Oct 2024 10:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="CzSwJbhb"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uLsI4n1a"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B6D12C478;
-	Thu, 31 Oct 2024 10:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765BE1953A2
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 10:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730369448; cv=none; b=Ll+aN1rnntzSPk9HTmAIHn8zgbECR25QdzdHn8/NA8f75LFmtl9QLFJIwA6f9dZ7I5sPha/RqlaUz89tLm285mSwCrLxknKvS3ITL1RkAXe3wWHOQwFZZDvzKh6Kr4SF0P3T5PMK6rTwpJpuWj04/0OggKQTfdt17axOWgDsp88=
+	t=1730369552; cv=none; b=ddMj4d5QZByZHEnB0M/ZrxYSqI0C+4owskUKonHWTMdjdkEZP9iaIAuV1i9EKT8y6xRuTt88NDijw7EaVFIDu5BkEUNNKvORl6Bovyhx3CB/oooXvRpyIfGtv+5xduNJU3va9UypLhOQf4sgW4daGYodjHca5wVAf5Oz77rQlOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730369448; c=relaxed/simple;
-	bh=e9qljVv/v/70A9Mysdnq2rQ1mH8s1pckMtTYq3j3VGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GntXmNg1QlgAowEceiWa4Qu7degODiID5mB2c1ZcgTY4yFEpkIlkXeNANUE19U546xdmOQ2oBSCOUm9Grauv/gWAFmmRkP8v4DMjLRQzieePpNT4xGfukZrSTJhF5josoA9hBjdU8qaK/vMwTvUscKjgQ6nyNLU+q+mv5veQFAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=CzSwJbhb; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1730369434; x=1730974234; i=wahrenst@gmx.net;
-	bh=z0oImfNfVmZoteRNxCIZNWQOK53yZgiZtROA1arGm3w=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=CzSwJbhbUJVO20CApIMrpcKE+PAzhIB0VMvp00EMi9no73XVyfqh8tyjiSr09cEY
-	 1OZ1+LNz6hBUHC/PH6HIH2RJg6SRQR3IjACJif51wW9PwXZQcfSfqRrqy656qRU+R
-	 cIC49AYpC/Z5dOy/Mr5vxI5JlsJ+k4DI0ttgR+dCI3Ofkvq5p3LKuhm/oMdzpw8AK
-	 1Cw0C9jVFHrmxQtYEboteN2ANCVS2UynZTRXzdHpzjqdy6CXhn8N5co9wu5DWnKxw
-	 v1esURQMjBomI+tXpSzeK3iruAB8olqF5QBXw3UkP4eJdCa6XLRK/FD42xKT8QbVh
-	 o2tHv4j+EHHgR2wHyg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.105] ([37.4.248.43]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M2f5T-1t8vdm3cMx-00H934; Thu, 31
- Oct 2024 11:10:33 +0100
-Message-ID: <806770fc-3830-4e89-a3ee-487b662685ed@gmx.net>
-Date: Thu, 31 Oct 2024 11:10:32 +0100
+	s=arc-20240116; t=1730369552; c=relaxed/simple;
+	bh=T35wMVs1MNW3myHz/mrvwXNZ7HSH/Zu34Y04Hh5lKAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cvld9pFqXM2vd00izBFfLvlotyaZY4GVqvO7mMbMT1/P3Xy9EyTjGwN7sFQ6kYfatAUHcvUkFCC4Cp0P7klmI7ulk0MgjEDNO9Y2SBJNYbFuke/wSBkmfHJOTh4SrYu33gwZaZfZMNCWrOxP19mZf4BsRxa74JFmbYfYNzRBT9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uLsI4n1a; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e3a97a6010so7876647b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 03:12:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730369549; x=1730974349; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=T35wMVs1MNW3myHz/mrvwXNZ7HSH/Zu34Y04Hh5lKAk=;
+        b=uLsI4n1a5fllndcUeZW6rxJGQcwDJIbID5YPjcLyH+X5hKDiGu513j/2dCm9N/407S
+         SpwA/vN/p33kpGh6Cpq5eXZWWxs8oPId0614pz57/JZNJsLaqsNcgSY57Ta/RbcBQXne
+         vhlrz9K48Z5aoX7yn3P922/7504Yn9Taqe6OFJXeNG18S5M8GCPaKCHg3LwI0YtcdF/f
+         g4EXn89mka2dSyHzKimCtycGldyhYyTx4ddCpdNMffXk7S0eVvj4/BbaKj/Q7xVMaE65
+         CTLxZ8KSQynJdV/Zzcqfoftf42cVxlZJPEUca7u8AhzkEkHQwvy5Ac9rzhRlC6S21QMj
+         12Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730369549; x=1730974349;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T35wMVs1MNW3myHz/mrvwXNZ7HSH/Zu34Y04Hh5lKAk=;
+        b=p9AH9MQEZaLCHfInh8PYmaLHTtgJlPi4WMh3FQ2x6epy/Qlhrt8QZivbEEj5RFmJ+b
+         KxUZOndd2ebRAWGS5d0IM2kMC/Z7QcuFYkaVHrHCRwUwwzVishE1r8ABcTWRUundauzi
+         3UiTM4J3nlUnXHGx5KFoFv9lIGvnqW4VyFINAWKZ+CXR6+hE9tYuIo9Waovwrd2ghmEr
+         M9lyhhpn6C1/cuA/T/+6t0hE3als6hT2TFyH//VTruvIQQoib9HTfsHVVS/e+8YuiQej
+         b3u+XJcY3K7OOAdlybBc455StlJH+eqjiNuNJUAGrHMcWnr9mZKblE7EqMH2Blmlz75U
+         fMiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZp7yqVCod3A6gXDT6lsSUHdJhoMEYMALKPJWxPenNpQINXXbyZTfbEFwNAqAiKH15rUQ+s26LorreQhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9bKJHGWI1NuiLq7rNAzdZ+/qiolMBGTrgwpDXbc/zcaCjPsko
+	yDfPy/0iCJYn2W6INfM5MVofdV7PcS/iSKzuzVtYD7J6Aeha5Em/fxBE+QiFi8gCt6TSSlckz0b
+	3ovC8bTQ4ap4emxWwcdAUgjE6p4LHJqkNiZVRpQ==
+X-Google-Smtp-Source: AGHT+IFa7GpMRcZBsCmM7CXrwXH4F/9S0bZVX2rOTwZ8gwWPISz40Itv+XpN30B/P4QqbSfNO35YnVdPLxOpi1AIrVk=
+X-Received: by 2002:a05:690c:ecf:b0:6db:9b55:80df with SMTP id
+ 00721157ae682-6e9d8acaffcmr188192657b3.33.1730369549381; Thu, 31 Oct 2024
+ 03:12:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 4/4] ARM: dts: mxs: Add descriptions for imx287 based
- btt3-[012] devices
-To: Lukasz Majewski <lukma@denx.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241022133040.686562-1-lukma@denx.de>
- <20241022133040.686562-4-lukma@denx.de> <20241031094236.17ed927d@wsk>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20241031094236.17ed927d@wsk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:/JF7aP6oveKYqWVpv51ETs6jF1SqwpNJgJey5jBS3GprKpxoAGB
- QZzUMikSxTkmXRw3seBIAnG+JtwvRUxDJ9JjnZ4c+j5U8UlvLCiLsYMrxKm/bIWKh7lu5e3
- kIl/+pvWqbJA8X/LRvoP7YduRU56bKSGIjoS63y+ZaPCRnBcQgxrQdbpCGyszzqdHqf7J4g
- RdYYL187aU2HHUTr9jYQA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vb4YxoBPEBI=;zNksRCNWuHDaCAZKbxrTCxStcmi
- BbuU6kfayn4Och4nccHxZGRwdJtwpIYC5dSXcXAveTIxMiVi2IzcUXKHbk0KL+UIHVXZTHOIk
- OhUBbl6/AsP9ze0M8FubZYcGdYYeQGc+6BFibzdDkRcf9HJ0G3K1d6cPDd4U0HPSUeGMTNJXz
- 53E4YAUCGp5TzuMPCiogEhso1uxG9gfIFSB0gN9oKokLYT2j6Fq1WbGUZ1a5X4FEBdEbkHPmt
- peeE+aa/Kk95EqE4lryFtmqL8nB81C/D2VPJc3OTwKEKlck6m4d+ZIvjdBVSusKugd1V4Hm4Z
- 4sweQpyC7Nu4/tihjXCNJX5vQCxij8c2rh4s9DjGzATulSbjoSDWf+iOQc81AcHcNb/1LuDz8
- SCnPAxv319VvsMRjGCoa45JeHAx9G2uVe8/usLeylpSDdN1FBNzMjEweGqxzj8jJQbQJfp/7O
- 05dNCuimZK63H6wFjUdY75zzdzLifcXVMeWtjAp6ypNp7TuSYhZe4xGGpY62X7qe1ezefKk9k
- GmTAAjY5SiAob1SSsPP8+39NmNCCHTQF0DN7UlpNamil5AJyOrDTWcog0Qms82jEpTuoH487Y
- cNq7tFue/qGFfp3Z7idDaXOwq9mRilSbUnDI4av1i3hmE6wIPlujTuzuAaxMbsM2ulXRa26k9
- Z/fA/OJQ2pnp5Dk/WT261jVTAVpdaRYsYB9Clsw4BdIJ3/zTu0c+isa0Ck6Tf4LCaqP6uT9Dy
- iar2qAwprClDvv4Jv4YIefVx/j363WBZporn4GuwoFZ/YwEV4W3i9PRP/IkLs5n48QsGyrW3E
- /tb1m6VshS4C9dniZAwPeoYw==
+References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
+ <173029317079.2440963.17313738472826934777.b4-ty@ti.com> <CAPDyKFptHq6xkKSAmeHsEuhBoEhzvudcMf2+nG08MFPwnMi+ew@mail.gmail.com>
+ <7hv7x9qsvt.fsf@baylibre.com>
+In-Reply-To: <7hv7x9qsvt.fsf@baylibre.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 31 Oct 2024 11:11:52 +0100
+Message-ID: <CAPDyKFpdgg+kM_Ot5GPTpMUtjmBF-pUhCeRpVb=j852_7qm=3A@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] pmdomain: ti_sci: collect and send low-power mode constraints
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Nishanth Menon <nm@ti.com>, linux-pm@vger.kernel.org, Vibhore Vardhan <vibhore@ti.com>, 
+	Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
+	Markus Schneider-Pargmann <msp@baylibre.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Am 31.10.24 um 09:42 schrieb Lukasz Majewski:
-> Dear Community,
+On Wed, 30 Oct 2024 at 20:43, Kevin Hilman <khilman@baylibre.com> wrote:
 >
->> The btt3 device' HW revisions from 0 to 2 use imx287 SoC and are to
->> some extend similar to already upstreamed XEA devices, hence are
->> using common imx28-lwe.dtsi file.
->>
->> New, imx28-btt3.dtsi has been added to embrace common DTS
->> properties for different HW revisions for this device.
->>
->> As a result - changes introduced in imx28-btt3-[012].dts are
->> minimal.
->>
->> Signed-off-by: Lukasz Majewski <lukma@denx.de>
->>
->> ---
->> Changes for v2:
->> - Rename dts file from btt3-[012] to imx28-btt3-[012] to match current
->>    linux kernel naming convention
->> - Remove 'wlf,wm8974' from compatible for codec@1a
->>
->> Changes for v3:
->> - Keep alphabethical order for Makefile entries
->>
->> Changes for v4:
->> - Change compatible for btt3 board (to 'lwn,imx28-btt3')
->>
->> Changes for v5:
->> - Combine patch, which adds btt3-[012] with one adding board entry to
->>    fsl.yaml
->>
->> Changes for v6:
->> - Make the patch series for adding entry in fsl.yaml and btt3
->>
->> Changes for v7:
->> - Use "panel" property as suggested by the community
->> - Use panel-timing to specify the display parameters
->> - Update subject line with correct tags
->>
->> Changes for v8:
->> - Use GPIO_ACTIVE_HIGH instead of '0'
->> - Add the comment regarding mac address specification
->> - Remove superfluous comment
->> - Change wifi-en-pin node name
->>
->> Changes for v9:
->> - Remove not used 'pm-ignore-notify'
->> - Add display names for 'panel-dpi' compatible to avoid Schema
->> warnings
->>
->> Changes for v10:
->> - Drop new line with panel-timing definitions
->> - Add new lines with 'sound' node
->> - Change 'codec' to 'audio-codec'
->> - Change order of properties for saif1 node
-> Are there any more comments regarding this patch?
-Sorry, i wasn't aware that you are waiting for reviews after Rob's request.
+> Ulf Hansson <ulf.hansson@linaro.org> writes:
+>
+> > On Wed, 30 Oct 2024 at 14:01, Nishanth Menon <nm@ti.com> wrote:
+> >>
+> >> Hi Kevin Hilman,
+> >>
+> >> On Fri, 06 Sep 2024 09:14:48 -0700, Kevin Hilman wrote:
+> >> > The latest (10.x) version of the firmware for the PM co-processor (aka
+> >> > device manager, or DM) adds support for a "managed" mode, where the DM
+> >> > firmware will select the specific low power state which is entered
+> >> > when Linux requests a system-wide suspend.
+> >> >
+> >> > In this mode, the DM will always attempt the deepest low-power state
+> >> > available for the SoC.
+> >> >
+> >> > [...]
+> >>
+> >> I have applied the following to branch ti-drivers-soc-next on [1].
+> >> Thank you!
+> >>
+> >> Ulf, based on your ack[2], I have assumed that you want me to pick
+> >> this series up. Let me know if that is not the case and I can drop the
+> >> series.
+> >
+> > Well, that was a while ago. The reason was because there was a
+> > dependency to another series [2], when this was posted.
+> >
+> > If that's not the case anymore, I think it's better to funnel this via
+> > my pmdomain tree. Please let me know how to proceed.
+>
+> The build-time dependency on [2] still exists, and since that was just
+> queued up by Nishanth, I think this series should (still) go along with
+> it to keep things simple.
+>
+> Kevin
+
+Right, that makes perfect sense to me too. If we discover conflicts,
+let's deal with them then.
+
+[...]
+
+Kind regards
+Uffe
 
