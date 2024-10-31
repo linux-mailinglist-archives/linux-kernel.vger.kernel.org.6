@@ -1,101 +1,149 @@
-Return-Path: <linux-kernel+bounces-389763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFEC9B70E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:10:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB269B70E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 01:12:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DD64B213DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:10:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74AB4B21319
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B771322A;
-	Thu, 31 Oct 2024 00:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FED256D;
+	Thu, 31 Oct 2024 00:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZsDbNY3"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="tZusAJI3"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3C1256D;
-	Thu, 31 Oct 2024 00:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B4F10E0;
+	Thu, 31 Oct 2024 00:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730333438; cv=none; b=u8/xVJR+c/LbDwApmRDHXvVPbOg3NL1A6I2+BGDx/loKk/lEXiV7FT6jd880KxaIxPU29PjUOi1ntfgZ36zvesGcgLQP7RSjodQ4dhLaXVHgdLMEBAREfdqkvHhHfj/MY0X/E8MjkA4vn06RV/LzHcSXNyJIauUIFQTCTPhnLjE=
+	t=1730333513; cv=none; b=NpVIrkxbnb+lmTQBnT3g4J/povkm3+6Q0ez8hTvo2El1DSSPmmqS9xucqLpGCafE2j8I0G5UCdw3xPvaSfHH11hq/dP7zVuV9O2W9LZnoXEiG1Lj/Hb8b9VbO07cRF+BRPIc+AlDQJSqsAJ3CrJuN4iIr+x1SkD9Pu+pcWLdang=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730333438; c=relaxed/simple;
-	bh=YKX3zhBBU73yHk5ja88AV/5BL8bsP8RZQSJ4nv2FJdA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iY5sqoI8g+Vx+WbLP1Y3idweoDZ2FIBSXf8IGCpFVH6y7pRA1RlQCr/E7s2uMxv3iK7KekZ/ZeQvt3ZOo6On96P4Z4r/P+onM5Y0ZvfuUw6PPGewLc6DxF69i3tLJm17ao06U3tp5R7PydcWAycf6LVogQUQkFTMKt4be2vI91M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZsDbNY3; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e390d9ad1dso3035917b3.3;
-        Wed, 30 Oct 2024 17:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730333435; x=1730938235; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YKX3zhBBU73yHk5ja88AV/5BL8bsP8RZQSJ4nv2FJdA=;
-        b=ZZsDbNY3q9PysemmQyY2djrEobT0Aw2TUDPnEl7HtCqr+lX5rUybtDbiLZA1MO+KdU
-         04miHaKw3YVCZkG+KOwx6TBIuv53ngTlJpoJff3d/51qIT+MvPcMWPYjSbkoqLViGDxG
-         vxRrPR4mlw0fWiLQ68jt0PBmJYaHqgWt7ZRcfUuJBFK+NjvAsEnmwUV4luQVltlCF/4Q
-         vLSwtXR3zDPNy1hidR0UzQg9lt5dLXeTmhOJXkquhMSMPNB9sFZxVlvzpCZlw2iAZ9bW
-         5NSMkmUb5IuOsqO7OxwWkkeBNNc+39CWxHBWHgz4AT5AtZ9fUkzIzEnu+skJIz3mf00x
-         cGpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730333435; x=1730938235;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YKX3zhBBU73yHk5ja88AV/5BL8bsP8RZQSJ4nv2FJdA=;
-        b=rgOMePpBfJHnVww/dA9BA6/8ZFvAkGCK2UQ5ZG8rBw0y5Ep+jxWTEoa3Qnmui22gsM
-         sxwu/81HzK+uLi6B4W64KaVA0UfqzmXEW2DAEKx+m0Sk1KmkH8sftrqYJeyvdUFNVDSf
-         oaeUPHRQXIuQGgzbL6QdUQy8fuFrUQVO+DbjZlP3x7JBQhUaFTEAX7OVBmjw0MNn/X64
-         hu1BJDJSLtfPcWh2Kji9+wtopJhTGoLFVOBPPbgh2zEIB2vzqFL715KBWGRAKwW2X0OF
-         a44M2UXj/fTrUX198cnztfStHEkVxXpLzS6VKOIzoURAsIchzzAR8yEhOz6/eGIN+YXm
-         wnjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKhv/KBgLjJBkBqXNBaX7dT7021OdLA/8cJrmhLb3J8NBv/1PN47ifq5O5ITIDIUXst+cufzUBr5seKjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8eADm9+pL2VVtRa087arQuf2kfUfL1z06i29GOOALiUBJ0QCp
-	5pR9uwgmP/+lemszz4ZDei1+XvvGOb8t9DUY674ghQ1GpjwevD/Ydu4AWH7PvOXN9hDDe7L8dkV
-	CiPaSqVq8EZgkpmHQP9eKnyq9FrQeoLaa248=
-X-Google-Smtp-Source: AGHT+IGyA35r2L12BOIjYwbZ1SXMmVEf2xOo2igBIoj6gOnybla138Fdo/ngnRmyiAiAAyBizAzOBmAQbdDGAwvLbBU=
-X-Received: by 2002:a05:690c:3807:b0:6e3:d97e:848 with SMTP id
- 00721157ae682-6ea52374741mr16537907b3.10.1730333435574; Wed, 30 Oct 2024
- 17:10:35 -0700 (PDT)
+	s=arc-20240116; t=1730333513; c=relaxed/simple;
+	bh=Ceq1779UGAl8iOYIzrR6U8YByCcRrYMnJdZdGnLER50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KbJDq4HZqlzusvl10MxsPgSKEhTXLGIt/ZVtwgpP3aGe4vLSPIRvvNf1tgN3ItQWac9ZwCuDXcEQ5v1sxOuvdb6HzhMNVQ9OUH0xjoRiRMoI/lhbwO9YHhx0A+uia8QOMox8B/8yjDGNPr+Pg0HPUmukSK/B+cQXUYriMB9fddE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=tZusAJI3; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ADnOlDvSfcc2o2XTsLbJuVcsj8qk7QSX8jkP5KkZ5Mw=; b=tZusAJI37JDe16l2CZBpAGOoEF
+	bwhxtvPkUCgV07xUfbic6dfNujjddnRpFUT28MncKLe8Cf9RmQNEQ2CluZau/8U5ySVsGog8VqShd
+	EFBOOAGnSgY3OCnoxcZfxON8e5KQ8V09Hh3+bH6dtqWaa2OqpYH3DbGXF1WaZX9l4oNY7VJdjWvz0
+	JulQkHoTGHzdnWrphAeFjrxUXwPucq8lnQH/pm3sH0UdPtqKBgsjh0uQgnAxpdSyzr/dvps0alFUp
+	2XKigXu9odZbDzMnWUvymb2OR8E4jOpAAD3qyv2n9sn0Wx4BlrHq0O5BRCP3jFtjBx92Vj2eWcf9S
+	Ynf3jZjA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38846)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1t6ImG-0000qB-0h;
+	Thu, 31 Oct 2024 00:11:06 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1t6Im2-0002OR-10;
+	Thu, 31 Oct 2024 00:10:50 +0000
+Date: Thu, 31 Oct 2024 00:10:50 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-riscv@lists.infradead.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev,
+	Palmer Dabbelt <palmer@rivosinc.com>
+Subject: Re: [PATCH v12 4/5] jump_label: adjust inline asm to be consistent
+Message-ID: <ZyLLCmq9-9BX7GBd@shell.armlinux.org.uk>
+References: <20241030-tracepoint-v12-0-eec7f0f8ad22@google.com>
+ <20241030-tracepoint-v12-4-eec7f0f8ad22@google.com>
+ <20241030191316.2a27ff1b@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030205824.9061-1-rosenp@gmail.com> <20241030165204.1c803b60@kernel.org>
-In-Reply-To: <20241030165204.1c803b60@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Wed, 30 Oct 2024 17:10:23 -0700
-Message-ID: <CAKxU2N-=-oAkSKcPOZ-dHuZ6Wa3mw=0vfSO5zyF=gSLEoD0BmA@mail.gmail.com>
-Subject: Re: [PATCHv2 net-next] net: mellanox: use ethtool string helpers
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Ido Schimmel <idosch@nvidia.com>, 
-	Petr Machata <petrm@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030191316.2a27ff1b@rorschach.local.home>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Oct 30, 2024 at 4:52=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Wed, 30 Oct 2024 13:58:24 -0700 Rosen Penev wrote:
-> > These are the preferred way to copy ethtool strings.
-> >
-> > Avoids incrementing pointers all over the place.
->
-> 24h between postings, please:
-> https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
-ah yeah. 4:54=E2=80=AFPM vs 1:58 PM
-> --
-> pv-bot: 24h
+On Wed, Oct 30, 2024 at 07:13:16PM -0400, Steven Rostedt wrote:
+> On Wed, 30 Oct 2024 16:04:27 +0000
+> Alice Ryhl <aliceryhl@google.com> wrote:
+> 
+> > To avoid duplication of inline asm between C and Rust, we need to
+> > import the inline asm from the relevant `jump_label.h` header into Rust.
+> > To make that easier, this patch updates the header files to expose the
+> > inline asm via a new ARCH_STATIC_BRANCH_ASM macro.
+> > 
+> > The header files are all updated to define a ARCH_STATIC_BRANCH_ASM that
+> > takes the same arguments in a consistent order so that Rust can use the
+> > same logic for every architecture.
+> > 
+> > Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
+> > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> > Acked-by: Palmer Dabbelt <palmer@rivosinc.com> # RISC-V
+> 
+> Still missing an ack from the ARM maintainer (32 bit, just added) and loongarch.
+> 
+> I'll wait till Monday, if I don't hear anything against these patches
+> I'll pull them in.
+
+As of what has recently happened, I am not participating in technical
+activities until such time that I'm told what is now acceptable. So
+far, that has not been forthcoming, and thus I believe it is unwise to
+engage in technical discussion.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
