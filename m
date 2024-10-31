@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-391082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C9C9B826F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:17:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C20E9B8278
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 19:19:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F67B282079
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:17:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6483E1C2140E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307C41C9B78;
-	Thu, 31 Oct 2024 18:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434701C9B7B;
+	Thu, 31 Oct 2024 18:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxPbeWLz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWH65IpZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818DF1EA90;
-	Thu, 31 Oct 2024 18:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA1E1EA90;
+	Thu, 31 Oct 2024 18:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730398671; cv=none; b=W/rAJY6Zf4CKUrmigbrHpsGKSHwOMG2iYlmnQWAv5/WZxAn2CPWWyjK6RUjHdcmVQEDJdR9vvQkUxczYjuiLLS75pCIATHfgNTNia1xyrMhABqrVdRmQgimu4Ehj8TSWLotnN2s46DMQjjX4Uejs1eKPZnSDAwURPQOu9zP7dVA=
+	t=1730398772; cv=none; b=B1MDx9Pc6FX3Ojj+69jFJN4NSS4J9BiO4u7A7AizH8CpONDQ7MrNT7sc4fM5ExmLt0vepGrWLJbYTTVEcZabJP4EeHHIhdG/pMsMTM3ztBGSpvglQlB0rRS6LEPWRrNifyH8rUWfMJfTwjYcjeqasdIFUVKoPjNR7Q+LaWmyrNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730398671; c=relaxed/simple;
-	bh=jvJJQy15udztSTe+99Lr2COkQGC4eOLwJnRCW9vATlo=;
+	s=arc-20240116; t=1730398772; c=relaxed/simple;
+	bh=zosPQdd9uTHjio/Nkmdyosvas90deIefUXBnmDug2Ec=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZU6Uqjy001w91r7HZ4c0946sv5xNkpW15I8K/+UJnIleHdggwANZn5Ql/B++cD8tX3qY07fexkwt5GdJHnktrKiqJLsuH2Px9ijGRNgMYOGmqQftnTwcwRf8nPkGwaebIaeOpLGgMWHOEmleShDwhWTUEFBq9U1O+kusT6hiO4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxPbeWLz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA272C4CEC3;
-	Thu, 31 Oct 2024 18:17:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctXLV/ESWE86bIZj8rQFuPHxbbdAV664GoVnNqBcH2bwZWpQQEdBEU5HX3Bgh9NU2gFfDCwqixaHV9OmQEBPa1pkfvY/9knbUlTRuys5jmmZv43akZ6vBy2St9RUeTkKUfGMlHE1dzF55pJCjmGhjBfYk51f5mG3bLaXK/VQ9A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWH65IpZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA444C4CEC3;
+	Thu, 31 Oct 2024 18:19:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730398671;
-	bh=jvJJQy15udztSTe+99Lr2COkQGC4eOLwJnRCW9vATlo=;
+	s=k20201202; t=1730398772;
+	bh=zosPQdd9uTHjio/Nkmdyosvas90deIefUXBnmDug2Ec=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BxPbeWLzN8gyS/+5v78ZHxhq1BwhPcdXIdT4Zh5A5OZv6ls+g6zM4mR4On+uD+uu4
-	 9XPOu/aAqFS1Uuk8AVpPQ9nAOhOjxWx7I0sDwciNmFELDhT7Lao/VWdDNT+DAc+L1O
-	 JSxHBHu0f7Cmk4kBAsZJUnZDAge1+hi+gUIg5ikZ44p3i6DJ/OV30uwnsMZPClNlyJ
-	 h+doGxdIEZ5kMZKDFMUOC16cY3J2NfYZutofNqo45IKZDL2ke9Lm3FTLqEDQBso6gs
-	 z2lYxXJI4d5msee6FirCMB7hZUtQYMFcRBoz6LVps4NRym3XvqMUNMsjGyxrz0qjwO
-	 m6B0zuKX4ZL3w==
-Date: Thu, 31 Oct 2024 13:17:49 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>
-Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>,
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Subject: Re: [PATCH v4 03/10] dt-bindings: dmaengine: Add Allwinner suniv
- F1C100s DMA
-Message-ID: <20241031181749.GA1260045-robh@kernel.org>
-References: <20241031123538.2582675-1-csokas.bence@prolan.hu>
- <20241031123538.2582675-3-csokas.bence@prolan.hu>
+	b=oWH65IpZT3Do0lgQPg6PuUMI+6u4yC94Bi+Ld3ZJFzQa+FAslp9HD+bCmOu7MmP1H
+	 MYSWNJymG/XwwgewEVuR2zatp0QZZKhDU30wPrH1uYjITFflZWqIY5XPAip2Is+1Tt
+	 HHt0zdmQljJMPY6cghtCxCWdtewMhxYkVlF3pRgmJZzIh/qIZMRyXQ6PE1Wq4dNFz7
+	 2hiW3fvT+Aap8Iin1gfqy4QD/nulRuVfzxMeJHeDvKLbfpAyT+EsxCbMjUQBfNbSNS
+	 LGNf7cIGdNFCqrRaSouSNbbuuTfjRSD+tne7acTh4B+SB7X3RUaW9kduh+7Yo+GXJ7
+	 KU6uHNFjK4ypg==
+Received: by pali.im (Postfix)
+	id 2D4DE83D; Thu, 31 Oct 2024 19:19:24 +0100 (CET)
+Date: Thu, 31 Oct 2024 19:19:24 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Kurt Borja <kuurtb@gmail.com>
+Cc: Dell.Client.Kernel@dell.com, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, w_armin@gmx.de
+Subject: Re: [PATCH v2 2/2] dell-wmi-base: Handle META key Lock/Unlock events
+Message-ID: <20241031181924.zlx5d6lh5bv2v2le@pali>
+References: <20241031154023.6149-2-kuurtb@gmail.com>
+ <20241031154441.6663-2-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241031123538.2582675-3-csokas.bence@prolan.hu>
+In-Reply-To: <20241031154441.6663-2-kuurtb@gmail.com>
+User-Agent: NeoMutt/20180716
 
-On Thu, Oct 31, 2024 at 01:35:29PM +0100, Csókás, Bence wrote:
-> Add compatible string for Allwinner suniv F1C100s DMA.
+On Thursday 31 October 2024 12:44:42 Kurt Borja wrote:
+> Some Alienware devices have a key that locks/unlocks the Meta key. This
+> key triggers a WMI event that should be ignored by the kernel, as it's
+> handled by internally the firmware.
 > 
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Link: https://lore.kernel.org/linux-kernel/20241024-recycler-borrowing-5d4296fd4a56@spud/
+> There is no known way of changing this default behavior. The firmware
+> would lock/unlock the Meta key, regardless of how the event is handled.
+> 
+> Tested on an Alienware x15 R1.
+> 
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 
-You don't need a link to Conor's ack.
+Acked-by: Pali RohÃ¡r <pali@kernel.org>
 
-> [ csokas.bence: Reimplemented Mesih Kilinc's binding in YAML ]
-> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
 > ---
->  .../devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml      | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> v2:
+>  - Fixed entry style
+>  - Commit message clarifies firmware behavior
+>  - Commit message now has "Tested on"
+> ---
+>  drivers/platform/x86/dell/dell-wmi-base.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml b/Documentation/devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml
-> index 02d5bd035409..9b5180c0a7c4 100644
-> --- a/Documentation/devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml
-> +++ b/Documentation/devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml
-> @@ -22,7 +22,9 @@ properties:
->        number.
+> diff --git a/drivers/platform/x86/dell/dell-wmi-base.c b/drivers/platform/x86/dell/dell-wmi-base.c
+> index 502783a7a..ce421e51b 100644
+> --- a/drivers/platform/x86/dell/dell-wmi-base.c
+> +++ b/drivers/platform/x86/dell/dell-wmi-base.c
+> @@ -80,6 +80,12 @@ static const struct dmi_system_id dell_wmi_smbios_list[] __initconst = {
+>  static const struct key_entry dell_wmi_keymap_type_0000[] = {
+>  	{ KE_IGNORE, 0x003a, { KEY_CAPSLOCK } },
 >  
->    compatible:
-> -    const: allwinner,sun4i-a10-dma
-> +    enum:
-> +      - allwinner,sun4i-a10-dma
-> +      - allwinner,suniv-f1c100s-dma
->  
->    reg:
->      maxItems: 1
+> +	/* Meta key lock */
+> +	{ KE_IGNORE, 0xe000, { KEY_RIGHTMETA } },
+> +
+> +	/* Meta key unlock */
+> +	{ KE_IGNORE, 0xe001, { KEY_RIGHTMETA } },
+> +
+>  	/* Key code is followed by brightness level */
+>  	{ KE_KEY,    0xe005, { KEY_BRIGHTNESSDOWN } },
+>  	{ KE_KEY,    0xe006, { KEY_BRIGHTNESSUP } },
 > -- 
-> 2.34.1
-> 
+> 2.47.0
 > 
 
