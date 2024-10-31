@@ -1,86 +1,89 @@
-Return-Path: <linux-kernel+bounces-391024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3410C9B8153
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:34:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DC29B8150
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B25ADB20D1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:34:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9739D1F2571F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C59B1BE87C;
-	Thu, 31 Oct 2024 17:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEB31C3F3B;
+	Thu, 31 Oct 2024 17:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eDcuvM5F"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mv95/J2U"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BAB1B6539;
-	Thu, 31 Oct 2024 17:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2961BE852;
+	Thu, 31 Oct 2024 17:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730396029; cv=none; b=BpDJWCdsq45IRE6HQvCZes1G+YCCkbke5KOXqzxyDo9gBt3WKMOd7RsBdAEsv0YqPknBRzXqMGh6oEa8Jl+2/r8o/3hAORiiqPvn/cPDFtiSGpX5wrve951kFj0fysYsdUZozTD4nd8wapnqnTd5pdQ6aOTZB5aX30EqDQ6fFZg=
+	t=1730396021; cv=none; b=CzGUp+LVFMOrC03Jsktfa36EdmrN1GjrjTqrlpGnlNRnARK2egaUSFM1YIsyUP+Tx33QYLDGXfg+w4DIZd8fo47ybjZQCBDtOr15SS7sZmSTYwsbRpY8fsnvXzT8qcAU4ieBTjssv+BntjT5MvV5IY3fiPNttCqmu2Zlaz5mHnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730396029; c=relaxed/simple;
-	bh=IGVolImcMlNftMI/RGRi+8yI+0ZXlL9lnQIjOFSHlak=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ojcVkLLTtP/yaMjfU4ScTXNOdfojUB/X/qYGJE1mKthaMUBz3/B5sbPR/C3BBOWK9u+49HUpMLS4ziuKfPeBdJU8Qmn1rWJzZtevohqFFBuplS67eRpe1k1/1xSZEFrf11hBHaFRpYhnAuMSYRssLYP8BdfDXfJfTkIiXU6+g2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eDcuvM5F; arc=none smtp.client-ip=209.85.167.53
+	s=arc-20240116; t=1730396021; c=relaxed/simple;
+	bh=Vbdsc32eBqxITXVogf5U5CY/g1QXmPCoJar1KLiagic=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h4STJMe30+zELjV3ZwAr7RwHti40rYBXdP2+QZ5iz/uM+TGB4/6s7mSrSfHfKui50ar1l+tyoG1ZgYzO0M7H9ar7+vj0lv8rxseB8kMgS1A4RHB4AtdIfWhwEG17aBG2voC2NV1e3EZF7Vm8psA+eLuhJImFGD6yaa6eY9nJCns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mv95/J2U; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e4908837so153923e87.0;
-        Thu, 31 Oct 2024 10:33:47 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso11478605ad.2;
+        Thu, 31 Oct 2024 10:33:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730396026; x=1731000826; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730396018; x=1731000818; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LIXbyaTfssNAyjGRH62B+/Wf9jW1JYzFaYHYfgpeAWA=;
-        b=eDcuvM5FP2d/k4iRAcPtJ6I6xXZV8GAQraisbzy6Puqiyks0MzgKf157BWmmYser6x
-         2RBXyojhSlkd62W1+slDIHki4DfRSxnkccmQDRgJCYX0NtVl9XbZByO6kEScN1APQe17
-         qedbu80uOnkeXHr5KBVDEpdiQoZv9aHE4RoCsUIKsWiQp1J/f9bP75ZrX0zZKlS/Ajnf
-         MCVgRMSlRK7V4YBADMEG0+/vYTLXO08EAmeDqmhk5u9qrOQ4CO1GiHzSlO4BAuZF6bhc
-         Rjg6cYfIQpl16KV5XWjARaaFEg5XlFcmBkDEO8yGb9sWx6YquDK0khc2WVb+NgXZJCiV
-         rCxg==
+        bh=dooei+hGMSIXrRTRlmIrE2a4OrlveyYhxXQpGK2hesE=;
+        b=mv95/J2Uu8QuD/WwXtnzJmuRAeBh1nL0lHHaiTsMnVQe3QtCl5NdEYVW/mgZeL2v1F
+         vSTodQ7iYIst5DrH2YMeOF8zjfij4HPvIJwWK/Z4XHAXfe/HnyCkKEJZws9B+I9semoD
+         ++3IodbY5T+i4qBi5iWtIxr1izNRoT2K+AF7b51/b59j10VUY/Te3vStRNW2gapnTyvb
+         0zWsnH1sFX9hTpGjaL4+BOlxws8a/8fqxXDv1TtfO4dIfmHVUp7/YZO5Fj101hI/ywm0
+         8IUQkgbNj0ryEVz4fXyf/rHXPjPdfsQotIA9Ens6E3KAjrLuVCKC6p54LSGktjoigZC0
+         X6Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730396026; x=1731000826;
+        d=1e100.net; s=20230601; t=1730396018; x=1731000818;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LIXbyaTfssNAyjGRH62B+/Wf9jW1JYzFaYHYfgpeAWA=;
-        b=EAjj8eJcNufVHXTYYkP6LoeXPCI//jx2lVlY9kujdnb8m3RJxiAo4pqYzw9oB5uBHQ
-         7ygTOZvfZrpj4CPR2+c6YK2BMWz56R0t0FLouTX8AmHywroIf0m/bLpb7DiJzoH0/qZE
-         FWhNF8uK8dtPCglWWjLI+z/vHbKihrU8px2Jdwj0p4iPaXdtW3vwIpPzMdxXLWHqf7Fr
-         m2XRYyTt0QO++a7eWLpBOiizHZ2EoDsczguUu1rlh5p75WOeIkPkiGrkz/6DHi8uB8i1
-         RiI1lhzBwfoIcKc3dgR18Z+/GQqgepXJqjr2M05tmT0k6b302LDp6H8pK61lonBJEapu
-         au5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUVJKLQp52ZEqgKtcK8VAJMVy96wA45hkINZZcEHnv9NRSBv+oWkocgYNk4wYf2gT/s3NdZbq3B@vger.kernel.org, AJvYcCWmNTTRo9Wy+uzmNfbn0n7xx/lvYyvIIlzZyJS8O+ah0qZXSQ7qwdyipWnQ+STSQxm3qyEzXZoWnHM1cYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL9m6o0uDk6DiT8n9uqqQe/BPkf7s3vzGmiNO+2Ar3YuiF+txv
-	u/A1n+4h7KOgbuJzgqASSRMoPjBN3QDLofIlaaJRoZ1CqApK6pu3
-X-Google-Smtp-Source: AGHT+IHuM9wLydex6CXCJYt8RpMld+KpUmO1ocY+CUO2ZVzT1y6Hymj5lWWus0GILDLZ60xO3FUJdQ==
-X-Received: by 2002:ac2:4c52:0:b0:52f:287:a083 with SMTP id 2adb3069b0e04-53b34728fd9mr3123365e87.0.1730396025338;
-        Thu, 31 Oct 2024 10:33:45 -0700 (PDT)
-Received: from localhost.localdomain (109-252-121-216.nat.spd-mgts.ru. [109.252.121.216])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bde09adsm272401e87.263.2024.10.31.10.33.44
+        bh=dooei+hGMSIXrRTRlmIrE2a4OrlveyYhxXQpGK2hesE=;
+        b=EqVRIC9DvrIRIULPwrjoNFyHrLB7tfc719pm8Mr1kybHqjdYCxDzjdgv49RhL1+U5r
+         UyKe3as+xBBfLHUfZmmVnWLawrmO7r7uHqRtTwZQAG1cY3m7RMACHYkKL7wZ2MiXDwHV
+         +qQcLPQt8IAJ2fgQYrh3xATTKbqr4nW0prepTOiKDcmIaicy3Laru69x2FrERZqlLLg2
+         8JuliTDvVsklow4R9PZvcHYokoBSaXOLTOp5/ubaFmVYBCpNhfXkd9kXVxg6OfkthyBY
+         rmidRz2idQe/o1YrFXYtgpz98SQS5SQlqPR4WWO9LqEs1NmURHpuk9fyrPOn2E2PSqdj
+         Gh6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWWnctZgdY3G/myLC034ppJgkeQu6TG+0qN9jXPmSuKZDBoxA4MzWyhVDctcPBt1Lvzquofim6S+M26XI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYWQCOA1MZcMSehkyTCB5efeDtXvOWbOls9l5rcwV0u1WHHrWQ
+	LR10aM+tBWFhRYoBrGnglqdXJqqfQkcIw927IzcievMQ8FZzQEUMHIVimw==
+X-Google-Smtp-Source: AGHT+IHY2s86obO7paaXBVSJ3UsVQxUlMW+Tw2cHQxG/WIGb2eBSJGgB2phmWjClRUA7DK6j8AAQ6g==
+X-Received: by 2002:a17:903:2a90:b0:20c:79f1:feba with SMTP id d9443c01a7336-210c68784femr249600915ad.2.1730396017971;
+        Thu, 31 Oct 2024 10:33:37 -0700 (PDT)
+Received: from eldorado.. (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a7522sm10987315ad.156.2024.10.31.10.33.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 10:33:44 -0700 (PDT)
-From: George Rurikov <grurikov@gmail.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: MrRurikov <grurikov@gmal.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Israel Rukshin <israelr@mellanox.com>,
-	Max Gurtovoy <maxg@mellanox.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	George Rurikov <g.ryurikov@securitycode.ru>
-Subject: [PATCH] nvme: rdma: Add check for queue in nvmet_rdma_cm_handler()
-Date: Thu, 31 Oct 2024 20:33:27 +0300
-Message-Id: <20241031173327.663-1-grurikov@gmail.com>
-X-Mailer: git-send-email 2.31.1.windows.1
+        Thu, 31 Oct 2024 10:33:37 -0700 (PDT)
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	olteanv@gmail.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net v2] MAINTAINERS: Remove self from DSA entry
+Date: Thu, 31 Oct 2024 10:33:29 -0700
+Message-ID: <20241031173332.3858162-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,74 +92,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: MrRurikov <grurikov@gmal.com>
-
-After having been assigned to a NULL value at rdma.c:1758, pointer 'queue'
-is passed as 1st parameter in call to function
-'nvmet_rdma_queue_established' at rdma.c:1773, as 1st parameter in call
-to function 'nvmet_rdma_queue_disconnect' at rdma.c:1787 and as 2nd
-parameter in call to function 'nvmet_rdma_queue_connect_fail' at
-rdma.c:1800, where it is dereferenced.
-
-I understand, that driver is confident that the
-RDMA_CM_EVENT_CONNECT_REQUEST event will occur first and perform
-initialization, but maliciously prepared hardware could send events in
-violation of the protocol. Nothing guarantees that the sequence of events 
-will start with RDMA_CM_EVENT_CONNECT_REQUEST.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE
-
-Fixes: e1a2ee249b19 ("nvmet-rdma: Fix use after free in nvmet_rdma_cm_handler()")
-Cc: stable@vger.kernel.org
-Signed-off-by: George Rurikov <g.ryurikov@securitycode.ru>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/nvme/target/rdma.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+Changes in v2:
 
-diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
-index 1b6264fa5803..becebc95f349 100644
---- a/drivers/nvme/target/rdma.c
-+++ b/drivers/nvme/target/rdma.c
-@@ -1770,8 +1770,10 @@ static int nvmet_rdma_cm_handler(struct rdma_cm_id *cm_id,
- 		ret = nvmet_rdma_queue_connect(cm_id, event);
- 		break;
- 	case RDMA_CM_EVENT_ESTABLISHED:
--		nvmet_rdma_queue_established(queue);
--		break;
-+		if (!queue) {
-+			nvmet_rdma_queue_established(queue);
-+			break;
-+		}
- 	case RDMA_CM_EVENT_ADDR_CHANGE:
- 		if (!queue) {
- 			struct nvmet_rdma_port *port = cm_id->context;
-@@ -1782,8 +1784,10 @@ static int nvmet_rdma_cm_handler(struct rdma_cm_id *cm_id,
- 		fallthrough;
- 	case RDMA_CM_EVENT_DISCONNECTED:
- 	case RDMA_CM_EVENT_TIMEWAIT_EXIT:
--		nvmet_rdma_queue_disconnect(queue);
--		break;
-+		if (!queue) {
-+			nvmet_rdma_queue_disconnect(queue);
-+			break;
-+		}
- 	case RDMA_CM_EVENT_DEVICE_REMOVAL:
- 		ret = nvmet_rdma_device_removal(cm_id, queue);
- 		break;
-@@ -1793,8 +1797,10 @@ static int nvmet_rdma_cm_handler(struct rdma_cm_id *cm_id,
- 		fallthrough;
- 	case RDMA_CM_EVENT_UNREACHABLE:
- 	case RDMA_CM_EVENT_CONNECT_ERROR:
--		nvmet_rdma_queue_connect_fail(cm_id, queue);
--		break;
-+		if (!queue) {
-+			nvmet_rdma_queue_connect_fail(cm_id, queue);
-+			break;
-+		}
- 	default:
- 		pr_err("received unrecognized RDMA CM event %d\n",
- 			event->event);
+- add self to CREDITS
+
+ CREDITS     | 4 ++++
+ MAINTAINERS | 1 -
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/CREDITS b/CREDITS
+index 63f53feefa0a..96660c63f5b9 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -1204,6 +1204,10 @@ S: Dreisbachstrasse 24
+ S: D-57250 Netphen
+ S: Germany
+ 
++N: Florian Fainelli
++E: f.fainelli@gmail.com
++D: DSA
++
+ N: Rik Faith
+ E: faith@acm.org
+ D: Future Domain TMC-16x0 SCSI driver (author)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6880a8fac74c..b59ee664f6d2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16024,7 +16024,6 @@ F:	drivers/net/wireless/
+ 
+ NETWORKING [DSA]
+ M:	Andrew Lunn <andrew@lunn.ch>
+-M:	Florian Fainelli <f.fainelli@gmail.com>
+ M:	Vladimir Oltean <olteanv@gmail.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/net/dsa/
 -- 
-2.34.1
+2.43.0
 
 
