@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-390988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-390989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18F49B80E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:08:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC549B80E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 18:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D329A1C21A1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:08:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD3FFB223E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 17:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F1D1C57AA;
-	Thu, 31 Oct 2024 17:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A29B1BD020;
+	Thu, 31 Oct 2024 17:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mt44Bp8S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MewKg2wu"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D3E1BD4E5;
-	Thu, 31 Oct 2024 17:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ACB1BD027;
+	Thu, 31 Oct 2024 17:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730394477; cv=none; b=TsYLw7bm88KfchRDC8x/jUwmRe8IZUFRBAmNVHVCO41mc1VJqmkOynDVE3vEQwjnLxE4mv8Nr4K861OFTI6+1ZwhK7nAF81y+C4bsEWoo4wFBouBEyBgEOf8Tfs1h3Qej8UZnoCMw67LtVvS4eqrtevEdqad4VWkl7Ztx9fP8B0=
+	t=1730394541; cv=none; b=FCUHLBVMdrvvUiqcpSi4lPIKzknT04AzaYwGqNcSN9XsgcZtfqqwq1Sex2qPqeWeWOdcBKUsyyflPnR5aTalFDx1w4iAqhK7wm1cGLQ66P4JnEJk7stl/NI/H98/BKecOOLCAEbfCE24IBzMBdG68/u68tj4fwNlkDihjw6LaEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730394477; c=relaxed/simple;
-	bh=b58Q8LPqCMknW6TVeH8ostYyFsH+RiBUsC302ewOwxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Af5jwveRy5L6LrE6btf1ovz2xhYgSa2knkpWeFhI4uLBrqF+vvwbHdvkX3BYyEOeftcZuCywYTBmCdmKfzCM6gNlx3av57jnSQONP9oPMUNY0HtlisMjgJ9dkGPiuoTW9DiY4bhGME2x6Cr1d0anCxiA3Cd8FByHeQ77yXAz+X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mt44Bp8S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BCDDC4CEC3;
-	Thu, 31 Oct 2024 17:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730394477;
-	bh=b58Q8LPqCMknW6TVeH8ostYyFsH+RiBUsC302ewOwxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mt44Bp8SUtkUMRBYDbk4vB5xY1wmx2LJrOpsNF9PUPmXfFtxW6KYpDVBIWw8pUer5
-	 sZihVUTXgiKn+aXPRIsPF7g7zDedlTkcWU5E0isv3yVI4tSHUQ/8N7rtrZlTMB1ayu
-	 ufmSWXvAlj599o9NEWO8iiK5brAqO80cvfuUDjRHuL9vSOH1Nzuuj79/2qltyH+1Q7
-	 opf3r4xemqxPF9aCoeu7gdEK1H0WR4xPt6SriKqTn9qpLQRNrFJ1xV3DAYONmaH+GS
-	 tsEmMcvc/yU3yOPMlHqVvpW097jC/IlgT5MiInd0At4YjFWpHYCvFlJMu0IltTcXlj
-	 Pp5lrR/FD8eyw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t6YeJ-000000007ya-249B;
-	Thu, 31 Oct 2024 18:07:55 +0100
-Date: Thu, 31 Oct 2024 18:07:55 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 2/3] gpiolib: fix debugfs dangling chip separator
-Message-ID: <ZyO5a85wq1fKD-ln@hovoldconsulting.com>
-References: <20241028125000.24051-1-johan+linaro@kernel.org>
- <20241028125000.24051-3-johan+linaro@kernel.org>
- <CAMRc=Mf6yaZMsF5x=vPet=y9fa5ZTuWSAA=oi+Qw07TF8GEFbA@mail.gmail.com>
+	s=arc-20240116; t=1730394541; c=relaxed/simple;
+	bh=KEfJVaU2vKKs59rSj84s5z2k64209Avi9d7VZOcfglY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A34wdJc3DjWjiGk1hiU7Fvwbzfq/ISTpp7EbCB65OhKW8aCUHhw9pMUOiu7p113WmfrWuAYf5VWiV96B1/jMo2B1FGO/PKWkLcrGYy8tjsQZvFjgSLFuwlWGkz7WXpJkgyq1avEK0XkE+Wb0idymPzDsJWxaN0vtqs8CKm/WsP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MewKg2wu; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=W5h6trhGhExF9MOboKem+7LHZquHhoyqfmnTScAyrLI=; b=MewKg2wulCfzTIKrRFCIVr5gCL
+	e/egJE8/Dc8+nGTXY2SvFMb2cbFmxrMODa6k2Ie9i8m1aZKby6ty6thYVNV13GqXkcsvHDErjYQsE
+	eBMDxfUq5gfzrfDNgb/Axb3BzCIaKe2qicHvMDcZorBvCmDPxympe1XgW0LUsJFmUTiwPlLxQpEg7
+	c8cC/0hcJumyFcntPigjvxIh8XHuFREuwS662SmSmSgV56l4Xxojtm7zmyPmAOsoDVBFs2tHLhA09
+	svYuv+yZ8JgaG0JF+3gAdoNWcX+QLGy/QzgC3rCfJBShMaiDgysv8IbQKwkojqOBSea1iAl2eysbA
+	XqoxlXqg==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6YfA-0000000AVse-3jn4;
+	Thu, 31 Oct 2024 17:08:50 +0000
+Message-ID: <b4854dab-b5e5-4e72-97ff-4d7cdb5723c1@infradead.org>
+Date: Thu, 31 Oct 2024 10:08:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=Mf6yaZMsF5x=vPet=y9fa5ZTuWSAA=oi+Qw07TF8GEFbA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [V2 1/4] drivers pps: add PPS generators support
+To: Rodolfo Giometti <giometti@enneenne.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>,
+ corbet@lwn.net, Hall Christopher S <christopher.s.hall@intel.com>,
+ Mohan Subramanian <subramanian.mohan@intel.com>, tglx@linutronix.de,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Dong Eddie <eddie.dong@intel.com>, N Pandith <pandith.n@intel.com>,
+ T R Thejesh Reddy <thejesh.reddy.t.r@intel.com>,
+ Zage David <david.zage@intel.com>,
+ Chinnadurai Srinivasan <srinivasan.chinnadurai@intel.com>
+References: <20241031163508.259522-1-giometti@enneenne.com>
+ <20241031163508.259522-2-giometti@enneenne.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241031163508.259522-2-giometti@enneenne.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024 at 06:02:43PM +0100, Bartosz Golaszewski wrote:
 
-> But with this change we go from an incorrect:
+
+On 10/31/24 9:35 AM, Rodolfo Giometti wrote:
+> Sometimes one needs to be able not only to catch PPS signals but to
+> produce them also. For example, running a distributed simulation,
+> which requires computers' clock to be synchronized very tightly.
 > 
-> # cat /sys/kernel/debug/gpio
-> gpiochip0: (dangling chip)
-> gpiochip1: (dangling chip)
-> gpiochip2: (dangling chip)root@qemux86-64:~#
+> This patch adds PPS generators class in order to have a well-defined
+> interface for these devices.
 > 
-> to still incorrect:
+> Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
+> ---
+>  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+>  MAINTAINERS                                   |   1 +
+>  drivers/pps/Makefile                          |   3 +-
+>  drivers/pps/generators/Kconfig                |  13 +-
+>  drivers/pps/generators/Makefile               |   3 +
+>  drivers/pps/generators/pps_gen.c              | 344 ++++++++++++++++++
+>  drivers/pps/generators/sysfs.c                |  75 ++++
+>  include/linux/pps_gen_kernel.h                |  78 ++++
+>  include/uapi/linux/pps_gen.h                  |  37 ++
+>  9 files changed, 553 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/pps/generators/pps_gen.c
+>  create mode 100644 drivers/pps/generators/sysfs.c
+>  create mode 100644 include/linux/pps_gen_kernel.h
+>  create mode 100644 include/uapi/linux/pps_gen.h
 > 
-> # cat /sys/kernel/debug/gpio
-> gpiochip0: (dangling chip)
-> 
-> gpiochip1: (dangling chip)
-> 
-> gpiochip2: (dangling chip)
 
-Why do you think this is incorrect? Every chip section is separated by
-an empty line, just as it should be:
+> diff --git a/drivers/pps/generators/Kconfig b/drivers/pps/generators/Kconfig
+> index d615e640fcad..5edbfdb8bd92 100644
+> --- a/drivers/pps/generators/Kconfig
+> +++ b/drivers/pps/generators/Kconfig
+> @@ -3,7 +3,16 @@
+>  # PPS generators configuration
+>  #
+>  
+> -comment "PPS generators support"
+> +menuconfig PPS_GENERATOR
+> +	tristate "PPS generators support"
+> +	help
+> +	  PPS generators are special hardware which are able to produce PPS
+> +	  (Pulse Per Second) signals.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called pps_gen_core.ko.
 
-gpiochip0: GPIOs 512-517, parent: platform/c42d000.spmi:pmic@0:gpio@8800, c42d000.spmi:pmic@0:gpio@8800:
- gpio1 : in   low  normal  vin-0 no pull                     push-pull  low     atest-1 dtest-0
- gpio2 : in   low  normal  vin-0 no pull                     push-pull  low     atest-1 dtest-0
- gpio3 : out  low  func1   vin-0 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio4 : in   low  normal  vin-0 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio5 : ---
- gpio6 : in   high normal  vin-0 pull-up 30uA                push-pull  low     atest-1 dtest-0
+Drop the ".ko" suffix as you did for the dummy module and most of the kernel does.
 
-gpiochip1: GPIOs 518-529, parent: platform/c42d000.spmi:pmic@1:gpio@8800, c42d000.spmi:pmic@1:gpio@8800:
- gpio1 : in   low  normal  vin-0 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio2 : in   low  normal  vin-0 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio3 : ---
- gpio4 : ---
- gpio5 : in   high normal  vin-0 pull-up 30uA                push-pull  low     atest-1 dtest-0
- gpio6 : in   high normal  vin-1 pull-up 30uA                push-pull  low     atest-1 dtest-0
- gpio7 : out  high func1   vin-1 no pull                     push-pull  low     atest-1 dtest-0
- gpio8 : in   low  normal  vin-0 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio9 : in   low  normal  vin-0 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio10: out  high normal  vin-1 no pull                     push-pull  low     atest-1 dtest-0
- gpio11: out  high normal  vin-1 no pull                     push-pull  low     atest-1 dtest-0
- gpio12: in   low  normal  vin-1 pull-down 10uA              push-pull  low     atest-1 dtest-0
+> +
+> +if PPS_GENERATOR
+>  
+>  config PPS_GENERATOR_PARPORT
+>  	tristate "Parallel port PPS signal generator"
+> @@ -12,3 +21,5 @@ config PPS_GENERATOR_PARPORT
+>  	  If you say yes here you get support for a PPS signal generator which
+>  	  utilizes STROBE pin of a parallel port to send PPS signals. It uses
+>  	  parport abstraction layer and hrtimers to precisely control the signal.
+> +
+> +endif # PPS_GENERATOR
 
-gpiochip2: GPIOs 530-537, parent: platform/c42d000.spmi:pmic@2:gpio@8800, c42d000.spmi:pmic@2:gpio@8800:
- gpio1 : in   low  normal  vin-0 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio2 : in   low  normal  vin-0 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio3 : in   low  normal  vin-0 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio4 : out  high normal  vin-1 pull-down 10uA              push-pull  medium  atest-1 dtest-0
- gpio5 : in   low  normal  vin-1 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio6 : out  high normal  vin-1 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio7 : in   low  normal  vin-0 pull-down 10uA              push-pull  low     atest-1 dtest-0
- gpio8 : out  low  normal  vin-1 pull-down 10uA              push-pull  low     atest-1 dtest-0
 
-Johan
+-- 
+~Randy
+
 
