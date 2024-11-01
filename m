@@ -1,112 +1,76 @@
-Return-Path: <linux-kernel+bounces-392379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9299B9361
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:36:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C56E9B9365
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:37:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D33A1C20979
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7CE1F20F47
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68751A727F;
-	Fri,  1 Nov 2024 14:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859B81A727D;
+	Fri,  1 Nov 2024 14:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IozSL3aH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ju0iIx6e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149A5179A7;
-	Fri,  1 Nov 2024 14:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE290179A7;
+	Fri,  1 Nov 2024 14:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730471789; cv=none; b=JYOPb11GTDpZRrRHHJCtMtDir9sRKC1WRAV56jN7PU2qfLU0b3r+ivrrX7iXGgz9ABTJYZ14edd644Xbs1jsfAIRxNQU0ZVFxLzLphXTEkhKSCSHTl/oVI4DZGbxC0R7nR5B0njQpr0k/VvIQnSe8O2hTK82ytbOkz7bqGbX7os=
+	t=1730471802; cv=none; b=Ax3dYIY/J9hlreeqJ1gLTe9AgB+5oRyam6PyyC5g8TSrTAXlnPTwa0hVLObe61HDu6yL11WaRWyokEORBpTt9I5+rWBAx2m8Hm8svx2aEiaAXBtidd5i/CqdUHWgKfThfwjiprWiWB8kbZYZtMXFN7R6Yf/sF3evZva8vXrUqfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730471789; c=relaxed/simple;
-	bh=1/pEX8FwTIxhnmeQL7MPiXImEyaF6EpOWIFGrZOswRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XY8f4WaZxaURpl2VK8NPSdvtFg2q9sYT5u+cgiz3YqBSfJBUgeN18aoH5uAikIAA/2l40q9jAlIy1ihP/Y9eqYPVkBvJhUrD966MtdIiOaFAvmu1f+w5fbSjTUdbdo+YABollgBf/XggdiCRIDgSyWRdeHxdl6P1XY3XKb6bBmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IozSL3aH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2C52C4CECD;
-	Fri,  1 Nov 2024 14:36:25 +0000 (UTC)
+	s=arc-20240116; t=1730471802; c=relaxed/simple;
+	bh=B6Ps9zB4aV1W72dCiyO9auVDDGd8HQ3S8xycLVYl608=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=NKFShiYmQum2oOORaUJU4OlL95yHJJ+6/xTcDKK67UYz0E0ggKbKzH33T2ImqNQc0giLxUC2Tj4SzCVqO6HC96goFpJT2+rYRUNOX/BdsahN3vYYCQooJy5zGf5tTWfF5ZlzL76lwSiQHRzTs35jQ9nAiEdNGPeCqt94qAcpYlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ju0iIx6e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C8DDC4CECD;
+	Fri,  1 Nov 2024 14:36:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730471788;
-	bh=1/pEX8FwTIxhnmeQL7MPiXImEyaF6EpOWIFGrZOswRE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IozSL3aHhqRaKcYyfa0WD79Vlz5T/vSYxNmn9MoG7K1OTynCHVgxQouuTJk7Hn/NX
-	 +6S2d2z+2BLqv7PPk5GPxImCyRetd1Y6VGrh5c11f/7IF4f4CMUYab72VMzy81/jcj
-	 fxbDRRdflJQCfSyQPQ6X5uJfQojTLPhvYnWaQbE8NI0j1iQJG9NAY+9zSv2voegFLE
-	 ekEhV1L2au2w3wdhBW1umq3H7eGKTemgkMw05QaOfcm56+uDwA9qgBEOW4z9v/JzrL
-	 RGC2BWNMWR7RwhyKG+/8sj66Tv3P+7Ci3/UCXnBn8OkGIJbThzppT5ViglBh3ALpPv
-	 D8kqAp62xAGsQ==
-Date: Fri, 1 Nov 2024 14:36:22 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	=?iso-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v3 0/7] Fix RK3588 GPU domain
-Message-ID: <9b4c9b61-a2be-465e-a4d9-034951fc862f@sirena.org.uk>
-References: <20241022154508.63563-1-sebastian.reichel@collabora.com>
- <CAPDyKFoAv1jeQitHmTMhvwG9vGzN-vLby0fPzkX1E6+-Qe2dog@mail.gmail.com>
- <CAPDyKFp=sRLVBhW2aK87pYHVGi_6gNw=e3j3AGMnEWP2SVYFpw@mail.gmail.com>
+	s=k20201202; t=1730471801;
+	bh=B6Ps9zB4aV1W72dCiyO9auVDDGd8HQ3S8xycLVYl608=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=ju0iIx6e28tbAb8YNXSOdV9wSUsLWdTXEkiZNLU6TC5b8QcOp8gv2YI/6cQm352bX
+	 PBsA2g7qarmW1ovw7KVfuGXMywlnOzOdyNJNE45bjL7aG16v8UAqYlXF8O015F6SV/
+	 LfMIOsOtlaXKg3XLUAUi2uYB+Y8zj5Cfv4hUKlHCFfjSGeogjl9VFX4X4KTmp08j7e
+	 nZb0R87IeKTsuLP+QC0FGJqGq3h+XPKb5zfuib8no0FbpwmExHLp+AxGPEjIHRusvv
+	 PciKpGi+FiHfEhdKy+vdU96c1O2TeytHaB5TnXo3iw5B3rOHt8mOYbF8W9BOyRGDzK
+	 TL5C0KlRa/kig==
+From: Kalle Valo <kvalo@kernel.org>
+To: Gan Jie <ganjie182@gmail.com>
+Cc: linux-wireless@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  trivial@kernel.org,  ganjie163@hust.edu.cn
+Subject: Re: [PATCH] wifi: iwlwifi: fw: fix typo 'adderss'
+References: <20241101143052.1531-1-ganjie182@gmail.com>
+Date: Fri, 01 Nov 2024 16:36:38 +0200
+In-Reply-To: <20241101143052.1531-1-ganjie182@gmail.com> (Gan Jie's message of
+	"Fri, 1 Nov 2024 22:30:51 +0800")
+Message-ID: <8734kb6mx5.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4w9LUYh3rdPapJlN"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFp=sRLVBhW2aK87pYHVGi_6gNw=e3j3AGMnEWP2SVYFpw@mail.gmail.com>
-X-Cookie: We read to say that we have read.
+Content-Type: text/plain
 
+Gan Jie <ganjie182@gmail.com> writes:
 
---4w9LUYh3rdPapJlN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Fix typo 'adderss' to 'address'.
+>
+> Signed-off-by: Gan Jie <ganjie182@gmail.com>
 
-On Fri, Nov 01, 2024 at 12:56:16PM +0100, Ulf Hansson wrote:
-> On Wed, 23 Oct 2024 at 12:05, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+Please read the documentation again and _very_ carefully this time. If
+you submit a new version you need to mark it as v2 and include a list of
+changes from v1.
 
-> > The merge strategy seems reasonable to me. But I am fine with that
-> > whatever works for Mark.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-> Mark, any update on this?
-
-> If easier, you could also just ack the regulator patch (patch1), and
-> can just take it all via my tree.
-
-I'm still deciding what I think about the regulator patch, I can see why
-it's wanted in this situation but it's also an invitation to misuse by
-drivers just blindly requesting all supplies and not caring if things
-work.
-
---4w9LUYh3rdPapJlN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmck52UACgkQJNaLcl1U
-h9BIswgAhREhv5NFPElfnCbYT9C0D0ymldrMFWI9cF7UtXTg4cj/PeIv+sadGlLm
-92+6J3FUI+r5Bal2AYXMPhBGlZ0wTAsJsNbvBgIjRbs5mhGH6LnaOBmzzUNimJEp
-ICNHbRcmSuZny/YRTXJVh2jwn8VPYrY/NIbfs/mU6ytjVJalP467Oc4fra5aDKZ9
-SIDqVqs7+QkkxECmjW0Nnu2CAJhR6+YnPmJrsyGBAyUGd6VwkxLoljbtIaNtwZlm
-eB56mDdZOIpNNdipAtqbI3mLlGVz4H/4bCmETaEfMqPumYJVg1t5+9q7Jy1hCJFS
-pbkoMBBZH9l1pkAekDvSGcTZkw0q7g==
-=Gi4j
------END PGP SIGNATURE-----
-
---4w9LUYh3rdPapJlN--
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
