@@ -1,104 +1,90 @@
-Return-Path: <linux-kernel+bounces-392136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086269B9023
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:18:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B1F9B902A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:22:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC1FC28137B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:18:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C63328282E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03EB19AA43;
-	Fri,  1 Nov 2024 11:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D46199238;
+	Fri,  1 Nov 2024 11:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="feicTscu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vVkXrLSV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZIGdCRj4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TvSPqzBX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D0+H3b1C"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D445E17C222;
-	Fri,  1 Nov 2024 11:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6BC19923A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730459872; cv=none; b=n1Orf6eOuGsuYNvZoCzCTIy0A2QTfUzbtS1+mIS3yuzjfMjeDg3AviAwJXTVmUTn7I0tmp8zJIbFS1HiXhDbxBJ/RKcxIbABr+gpT9yP9xvx1JQAcxmcTCj9hhP+ASEuL38h+puOKw+h+G1oDu/SAqEp49FWbKbmy1NOjR8mpsU=
+	t=1730460118; cv=none; b=GTzjvcrZUyIg8old6sTuqZEc28Xdm0A4rA7KPVathgceuaETV3ZfIXLJ02TXknjjwZHLrZpNGSWKZXw98TnQulyUwsN/+TRhyGQDzseJpzN89iD1foFUTrC0NrrPoQV1KOljAvu/+KG/p5NkwcUd/dROZtUyq8a5L5Me2DDuheM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730459872; c=relaxed/simple;
-	bh=drAABlD3F2WfMZcB5fy38tONmnd3QjfRCR/f80uzqU4=;
+	s=arc-20240116; t=1730460118; c=relaxed/simple;
+	bh=KoTvzO8VKEqtuA3KrJa8XxyQcDEmRjc9CaAtz8YICLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N6tvFV8cnYz/jGQ/cAtYL6wlbD3JvyZME7lKDMUl7DZTEM6129MMgmgvQgYXJt7rrOTcVvdAbvFwJZB4ZJ6rmS0l7UE2yfJuh1UQBbhDBjulX2kqJSQMtYb28ezjJdmWkf16NZ4eAQy9AuQTbLrKXUWwvyGi4eUrIWa5r89W6xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=feicTscu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vVkXrLSV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZIGdCRj4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TvSPqzBX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D27F221BD3;
-	Fri,  1 Nov 2024 11:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730459868; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwB1kDOyJmQDs6UUGingIm2Zh6PHwAW5AGSktCdS67U=;
-	b=feicTscupTT6aPk7yK/zYdjJKH5hWSZmAL4AE30/CBLZBC/1datPrV11txttHTqass3B2j
-	nMMHJbFnZKwjRyC1wSDWeI4xsMq95I1eoa7FKWOEziRfpDb4ex1cmtsSaq4zNN4pGqS0sX
-	t6WC1YpPSOgzQ6csrXldNpacWQbA4VQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730459868;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwB1kDOyJmQDs6UUGingIm2Zh6PHwAW5AGSktCdS67U=;
-	b=vVkXrLSV7NcBqRUBGgKBlA3AH4gn0UH7osdQZtnub1nbuTFtQMkvnF14jdFYPv+f+1vKwq
-	luQI0f6BEf0XJCAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730459867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwB1kDOyJmQDs6UUGingIm2Zh6PHwAW5AGSktCdS67U=;
-	b=ZIGdCRj4GDHLV1TJ9X/QUpXJwxw6Ua8hPEau3uuhk29A2YTUwU9xasFqEC+lc8r1tVzxl2
-	OKs61q7FmRFzkcSKPiG4ros5c503fgyZdqj7ljbqW+HJIIgl0GhkgZLKrc409pKjkW7iC8
-	kGYKcraQB7NqtKPnMhp+Uy2YdepH7xM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730459867;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwB1kDOyJmQDs6UUGingIm2Zh6PHwAW5AGSktCdS67U=;
-	b=TvSPqzBXVkFdo+eDbVBo7qv0IWyMqQ4WVj3TERMl7JteSkPgsRfEfxphr39D4nR9Ygd7XF
-	t4XmN2NdX3ob5BBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C82A8136D9;
-	Fri,  1 Nov 2024 11:17:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +B3aMNu4JGdlWAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 01 Nov 2024 11:17:47 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 72F39A0AF4; Fri,  1 Nov 2024 12:17:32 +0100 (CET)
-Date: Fri, 1 Nov 2024 12:17:32 +0100
-From: Jan Kara <jack@suse.cz>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] ext4: Add statx support for atomic writes
-Message-ID: <20241101111732.wgv4x3q7umkz3sox@quack3>
-References: <cover.1730437365.git.ritesh.list@gmail.com>
- <0517cef1682fc1f344343c494ac769b963f94199.1730437365.git.ritesh.list@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cv5nq1eARAZApq8F4yIk3KVkZq/9UPCh9NEzkML6tXycFKgTFSbs4Ykkt429lMyCHcuLP+2rCemM3JLeEkkW4VNsGwDp77HrGH5Z20XesyL8kWDW3SwmFPPmHDdTsobKzLVNhPbRJ/9Q+xBKXXgBuq8bG0wkqw59wldCCVvxE10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D0+H3b1C; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so1502347f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730460114; x=1731064914; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eXKsOWR/wJ8s/vomPLhl+IstAtu8+B4WWYmjYIcAfF8=;
+        b=D0+H3b1CJsHsW37MQ9JBJ/6HJLHuK1ZM8h2nikhAD8L8bG8AqhMBJ/rvNlKvvOG+bL
+         6b0PSWwpp1Zx2qFi+p301nVQAd9H5/9W8Crdi5yBiWEfMz7ppIIRzDI3iCgCxiBHqTgc
+         20D0trc1YBuF/zNdp7TGWFPqbffhk7rDm+PUdEIAny07XC5HvoawO/0Tk242VBQQ7I4y
+         lSpQ1rTUtbeEjQ/SpSnwwURJuPaEhg1c1DnExTPnpXQm0s39OWBSWA6b3TZrqKtmxDhX
+         gWqYa3+6ByhQKu9mtWJWJu85StsKS2kq6MG6oeiQcnlh+jD0bCGvILDQSyDaiD1VwcA9
+         nzwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730460114; x=1731064914;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eXKsOWR/wJ8s/vomPLhl+IstAtu8+B4WWYmjYIcAfF8=;
+        b=vtDPiwj4wwviZOsxx7LmJo0IXVvgWNTtDADGNZ5lpltK2ThcvVq4WM1Cdd8kYxII6G
+         1L2a8wHQkKB8tVDyn5NuIQHE1DlrLh4FG1RRKozlIRZ5LQeBUwX9p+hELlWv/rYfiX5j
+         myDTE0/IKsNOH1rfoInOST15TlfM7E0HINKA2Bz+zAcaqta2oOiydV6n5sj11YQGwPhZ
+         7MVeEy4HkWiYzMy+4d4RuoBI912et4Xja8UZRUt9zkOnMD0XorZjeJc3khv5SlM3d1b1
+         G1n6P+plVkJPLboSpgPqdueBTKHURGIhOKLkziJl6o3OcTpsYs7ek5JU2TMnjVaGNagJ
+         cufQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxomThgdUN9ys4Y9OAAbahIxOdD1Ib08/V6vKksm+ajO3euu5nysLdeeZy8mEF8NUS6B33nJxy+U6hd7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyebeeIOkOVU8IPvZ+DEjl+QOBzIaeQFiBLQsdDHh35xCVFOd18
+	jhZpoZaEcVzZkoV32CaDWJvWqZ1PCxE2bPtMvt1FYKyfUhgrfZyWWXdr9VM8kx4=
+X-Google-Smtp-Source: AGHT+IF1Hi3RvwWs7DSq+spdpzYUhwOwwmzTbkypHgqr1nBe6xd71RG+VXm6t9yCvd53dDUoi1AkKw==
+X-Received: by 2002:a5d:5a13:0:b0:37c:fbf8:fc4 with SMTP id ffacd0b85a97d-381c7af3be3mr3201528f8f.59.1730460114103;
+        Fri, 01 Nov 2024 04:21:54 -0700 (PDT)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e89csm4808765f8f.74.2024.11.01.04.21.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 04:21:53 -0700 (PDT)
+Date: Fri, 1 Nov 2024 13:21:52 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: x1e80100: Describe TLMM pins
+ for SDC2
+Message-ID: <ZyS50DFLhHVlnRtd@linaro.org>
+References: <20241022-x1e80100-qcp-sdhc-v3-0-46c401e32cbf@linaro.org>
+ <20241022-x1e80100-qcp-sdhc-v3-2-46c401e32cbf@linaro.org>
+ <a282021f-5e61-480c-84c4-272049e28244@oss.qualcomm.com>
+ <Zx9P+HQMOkJsJGcj@linaro.org>
+ <327507d8-2dc7-4645-ac3d-d68ff31a84dd@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,161 +93,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0517cef1682fc1f344343c494ac769b963f94199.1730437365.git.ritesh.list@gmail.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <327507d8-2dc7-4645-ac3d-d68ff31a84dd@oss.qualcomm.com>
 
-On Fri 01-11-24 12:20:51, Ritesh Harjani (IBM) wrote:
-> This patch adds base support for atomic writes via statx getattr.
-> On bs < ps systems, we can create FS with say bs of 16k. That means
-> both atomic write min and max unit can be set to 16k for supporting
-> atomic writes.
+On 24-10-28 14:10:54, Konrad Dybcio wrote:
+> On 28.10.2024 9:48 AM, Abel Vesa wrote:
+> > On 24-10-25 20:34:19, Konrad Dybcio wrote:
+> >> On 22.10.2024 12:46 PM, Abel Vesa wrote:
+> >>> Describe the SDC2 default and sleep state pins configuration
+> >>> in TLMM. Do this in SoC dtsi file since they will be shared
+> >>> across multiple boards.
+> >>>
+> >>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> >>> ---
+> >>
+> >> Not very useful on its own but okay..
+> > 
+> > Fair enough. For some reason, I'm not able to get sdc4 pinconf
+> > to work.
 > 
-> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Any chance you tried to define 'sdc4_cmd' etc.? This one seems to have
+> sdc4 pins on gpio127..=132
 
-I guess this is a good start. Feel free to add:
+Yes.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+But since the sdc4 pins can have other functions and since there is no
+device that uses them (yet). Shouldn't we just skip describing the sdc4
+pinconf entirely as that should be done on a per-board basis?
 
-								Honza
-
-> ---
->  fs/ext4/ext4.h  | 10 ++++++++++
->  fs/ext4/inode.c | 12 ++++++++++++
->  fs/ext4/super.c | 31 +++++++++++++++++++++++++++++++
->  3 files changed, 53 insertions(+)
 > 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 44b0d418143c..494d443e9fc9 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
->  	 */
->  	struct work_struct s_sb_upd_work;
->  
-> +	/* Atomic write unit values in bytes */
-> +	unsigned int s_awu_min;
-> +	unsigned int s_awu_max;
-> +
->  	/* Ext4 fast commit sub transaction ID */
->  	atomic_t s_fc_subtid;
->  
-> @@ -3855,6 +3859,12 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
->  	return buffer_uptodate(bh);
->  }
->  
-> +static inline bool ext4_inode_can_atomic_write(struct inode *inode)
-> +{
-> +
-> +	return S_ISREG(inode->i_mode) && EXT4_SB(inode->i_sb)->s_awu_min > 0;
-> +}
-> +
->  extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->  				  loff_t pos, unsigned len,
->  				  get_block_t *get_block);
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 54bdd4884fe6..3e827cfa762e 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -5578,6 +5578,18 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
->  		}
->  	}
->  
-> +	if ((request_mask & STATX_WRITE_ATOMIC) && S_ISREG(inode->i_mode)) {
-> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
-> +		unsigned int awu_min = 0, awu_max = 0;
-> +
-> +		if (ext4_inode_can_atomic_write(inode)) {
-> +			awu_min = sbi->s_awu_min;
-> +			awu_max = sbi->s_awu_max;
-> +		}
-> +
-> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
-> +	}
-> +
->  	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
->  	if (flags & EXT4_APPEND_FL)
->  		stat->attributes |= STATX_ATTR_APPEND;
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 16a4ce704460..ebe1660bd840 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -4425,6 +4425,36 @@ static int ext4_handle_clustersize(struct super_block *sb)
->  	return 0;
->  }
->  
-> +/*
-> + * ext4_atomic_write_init: Initializes filesystem min & max atomic write units.
-> + * @sb: super block
-> + * TODO: Later add support for bigalloc
-> + */
-> +static void ext4_atomic_write_init(struct super_block *sb)
-> +{
-> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
-> +	struct block_device *bdev = sb->s_bdev;
-> +
-> +	if (!bdev_can_atomic_write(bdev))
-> +		return;
-> +
-> +	if (!ext4_has_feature_extents(sb))
-> +		return;
-> +
-> +	sbi->s_awu_min = max(sb->s_blocksize,
-> +			      bdev_atomic_write_unit_min_bytes(bdev));
-> +	sbi->s_awu_max = min(sb->s_blocksize,
-> +			      bdev_atomic_write_unit_max_bytes(bdev));
-> +	if (sbi->s_awu_min && sbi->s_awu_max &&
-> +	    sbi->s_awu_min <= sbi->s_awu_max) {
-> +		ext4_msg(sb, KERN_NOTICE, "Supports (experimental) DIO atomic writes awu_min: %u, awu_max: %u",
-> +			 sbi->s_awu_min, sbi->s_awu_max);
-> +	} else {
-> +		sbi->s_awu_min = 0;
-> +		sbi->s_awu_max = 0;
-> +	}
-> +}
-> +
->  static void ext4_fast_commit_init(struct super_block *sb)
->  {
->  	struct ext4_sb_info *sbi = EXT4_SB(sb);
-> @@ -5336,6 +5366,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
->  
->  	spin_lock_init(&sbi->s_bdev_wb_lock);
->  
-> +	ext4_atomic_write_init(sb);
->  	ext4_fast_commit_init(sb);
->  
->  	sb->s_root = NULL;
-> -- 
-> 2.46.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Konrad
 
