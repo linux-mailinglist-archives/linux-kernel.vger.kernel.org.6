@@ -1,102 +1,192 @@
-Return-Path: <linux-kernel+bounces-391910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF9589B8D3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:42:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE2C9B8D42
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:45:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0772E1C20DBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624BF1C213AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78CF156F55;
-	Fri,  1 Nov 2024 08:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082C3157476;
+	Fri,  1 Nov 2024 08:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D7IvMgaz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwkLVXvY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E11156676;
-	Fri,  1 Nov 2024 08:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C8C156C76;
+	Fri,  1 Nov 2024 08:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730450539; cv=none; b=qzBIpCwUCJrlmEiMnW5TJRb/bPINqI8VRW0L0m5wtuuryYDTXt9wM+aMWgYoqyFKrI7clfHb+4Id3L309ClK+6aYCNm4eWcRY7spq/Oslm9hTthQ2sMQ7aBdMD74TTs0kscQ2JVMkyIk3ocVHGDbM0+C9ywQRq8LR1qTyj0zto0=
+	t=1730450691; cv=none; b=ujZM3KI+o5PBlRpiNoKIEsx/fvtVKmHjtyTc3L7SfrOxW9g9NM2G/GgPXcrGi7HXb4FR7Q3YGMzMBp2J+4Jdpp3Q/7WYAyC80U8XrUXFLhquClE0qaVVd/mMwkTETOXhfNqyTGsq2f5g4GiBM0g6cY9drCfsPxZ1re4/RF07cgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730450539; c=relaxed/simple;
-	bh=8p9zbFmVzSUJD32wGjAkv5U6GsUndhIha66dcsovZZo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qes4DxXOVBOQ/irQ+kzRZtOVyw0gOrmgjCXOzlNTZ3tkMjRI34HVnufACnfUtEJMYBvT8Yn6diNAzb37gKeqANRZ+FPOnxu0MkUCjz/nrzfrWLWHzQSI5q9CXohGF0sQiHTQAem1fWdKkEDw4JmSQeZUSLZ/dyaHRbNGgJMm0LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D7IvMgaz; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730450537; x=1761986537;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=8p9zbFmVzSUJD32wGjAkv5U6GsUndhIha66dcsovZZo=;
-  b=D7IvMgazyyaP9cYCVB0bn/IPoqNVeHZS3zn7I+vp1URfVIF7z+do2dKv
-   res+ex9f27Y34DRZBiyJmVGxoEkk5DBDOGh/l0pbcIdOi8tPISslfPte+
-   c3VPSeatnyavukoq6uo6mdwQH/1pWVWCo9WTS8r5TPqfnoN4B8g5oOk2f
-   BWNcLzZa0+TbwoYnKSAcRpO81FizQe7Kvsi9u8E+iVyK94wMbcMHXZHRM
-   xA+nREuh0dcETBLNorZbnrUECjWP9sjGZaU1BSX7RqYE2rUHdw2ZhQr4H
-   Mn3Ih/nbl08LMxh52Kj1gXrH/7GKTsLsoWYV0azLt598C+336SsNOy+cy
-   Q==;
-X-CSE-ConnectionGUID: wfOPZgaHS6Ov44jzWd/vNQ==
-X-CSE-MsgGUID: kyqFGlUPQ3uTYcb2dhMEVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="29643613"
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="29643613"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:42:16 -0700
-X-CSE-ConnectionGUID: rrzUIwwHQ5GLq5cixmpckw==
-X-CSE-MsgGUID: ee/DLwKEScieBrtL84uZBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="87681534"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 01 Nov 2024 01:42:15 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id EA6CD1AC; Fri, 01 Nov 2024 10:42:13 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH net-next v1 1/1] nfc: st21nfca: Remove unused of_gpio.h
-Date: Fri,  1 Nov 2024 10:42:12 +0200
-Message-ID: <20241101084212.3363129-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1730450691; c=relaxed/simple;
+	bh=hFP28qqDVRgB/iKvSSyW9TfPZ4Jslyo2VBj6dqTndBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k45HdHPvEpfcxK98KX9CW6LvPSEdlwQclV3yRpv1DxnVRSWkh1maeRTkke4+sQnBJ/Kl/rR600abp3eOecqWYRxnOUbZYS0KvEuBpZlogk+B2+DL5G7njn3GO++V+S7WQedIb3p1KqZn0R3hlVAENIpC5gJBWM2slgXoLz4Rer8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwkLVXvY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC674C4CED2;
+	Fri,  1 Nov 2024 08:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730450690;
+	bh=hFP28qqDVRgB/iKvSSyW9TfPZ4Jslyo2VBj6dqTndBw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TwkLVXvYCaMFI97mmnq+k/ItgLFJxcTPn/fzrGWmJa1SoeboCyI1Ao6PQH6QLXX2B
+	 jOkZo6/PyL55sgwUMdVkCwA0yl0e3K/JCeHlvjIpBhXCQdSiC+F2QfFx7tzDAARsv4
+	 QKKtkOQgkbtZbu3N6rs45kHw1hx2hjX25tVNTJ6PfsDLthB/2bI8Zd9uJVSwUhUZWE
+	 wKzW0YQ3riXz37ATM0fGtug+ZZoVA4Zu6Ty2VxBDnxO3l/KDgMi7dVigGD0o8I3pXm
+	 dGVZQb+DYV9CGpAF9MmyyCKxYiTIRnpq6RhEqJUd9xUqOohcSW4/Fiv3m1LGNvBjYh
+	 Z8hLoZByb8sJw==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso263260866b.1;
+        Fri, 01 Nov 2024 01:44:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBld1314Xf4P4vqo4Cb4DJ0+GdvA/GY8v8rm1w4RPaRnbW3MeiyrNle9BY8Q7KNZc+0yWLx0geFhayLw==@vger.kernel.org, AJvYcCWTY8gwhRqcLBzVaRrGBOzByyWzhrOLBi1mEC9Sw3bAMk/6QDMiYnHxjY+C/3qdKOaFMQOmzNcHkwgURvdu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys22alv+JUcyZ7Z9d7WQzek5sDKBU+hGv5dIeEQZ5yyDIJgIDO
+	AKKKf/s+/pPsVmbc6s9gW8m12gDGr2MJs4le1F7eseh6hWXv/Cngrs4qmQdXjUuSStKWy3vnXOC
+	BwurNjOAHH+APxvosNqddFZ7SIAU=
+X-Google-Smtp-Source: AGHT+IEVwtRe7s10AaJwV9WO4s8T9YvjzGOIPTgdCfRvbONjS/QQ4GuOliA1z4AHKzar52jyc8l6KPnXbjODHg7sZtU=
+X-Received: by 2002:a17:907:6e86:b0:a99:5234:c56c with SMTP id
+ a640c23a62f3a-a9e3a6210bdmr902147266b.33.1730450689405; Fri, 01 Nov 2024
+ 01:44:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241101035133.925251-1-zhenghaoran@buaa.edu.cn>
+In-Reply-To: <20241101035133.925251-1-zhenghaoran@buaa.edu.cn>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Fri, 1 Nov 2024 08:44:12 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H5SAEs75APMgRLNGZD+Mg6ic04+78M_rseabtidf1w05w@mail.gmail.com>
+Message-ID: <CAL3q7H5SAEs75APMgRLNGZD+Mg6ic04+78M_rseabtidf1w05w@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: Fix data race in log_conflicting_inodes
+To: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-of_gpio.h is deprecated and subject to remove. The drivers in question
-don't use it, simply remove the unused header.
+On Fri, Nov 1, 2024 at 3:52=E2=80=AFAM Hao-ran Zheng <zhenghaoran@buaa.edu.=
+cn> wrote:
+>
+> The Data Race occurs when the `log_conflicting_inodes()` function is
+> executed in different threads at the same time. When one thread assigns
+> a value to `ctx->logging_conflict_inodes` while another thread performs
+> an `if(ctx->logging_conflict_inodes)` judgment or modifies it at the
+> same time, a data contention problem may arise.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/nfc/st21nfca/i2c.c | 1 -
- 1 file changed, 1 deletion(-)
+No, there's no problem at all.
+A log context is thread local, it's never shared between threads.
 
-diff --git a/drivers/nfc/st21nfca/i2c.c b/drivers/nfc/st21nfca/i2c.c
-index 02c3d11a19c4..6d7861383806 100644
---- a/drivers/nfc/st21nfca/i2c.c
-+++ b/drivers/nfc/st21nfca/i2c.c
-@@ -11,7 +11,6 @@
- #include <linux/i2c.h>
- #include <linux/gpio/consumer.h>
- #include <linux/of_irq.h>
--#include <linux/of_gpio.h>
- #include <linux/acpi.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+>
+> Further, an atomicity violation may also occur here. Consider the
+> following case, when a thread A `if(ctx->logging_conflict_inodes)`
+> passes the judgment, the execution switches to another thread B, at
+> which time the value of `ctx->logging_conflict_inodes` has not yet
+> been assigned true, which would result in multiple threads executing
+> `log_conflicting_inodes()`.
 
+No. When you make such claims, please provide a sequence diagram that
+shows how the tasks interact, what their call stacks are, so that we
+can see where the race happens.
+
+But again, this is completely wrong because a log context (struct
+btrfs_log_ctx) is never shared between threads.
+
+Thanks.
+
+>
+> To address this issue, it is recommended to add locks to protect
+> `logging_conflict_inodes` in the `btrfs_log_ctx` structure, and lock
+> protection during assignment and judgment. This modification ensures
+> that the value of `ctx->logging_conflict_inodes` does not change during
+> the validation process, thereby maintaining its integrity.
+>
+> Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+> ---
+>  fs/btrfs/tree-log.c | 7 +++++++
+>  fs/btrfs/tree-log.h | 1 +
+>  2 files changed, 8 insertions(+)
+>
+> diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+> index 9637c7cdc0cf..9cdbf280ca9a 100644
+> --- a/fs/btrfs/tree-log.c
+> +++ b/fs/btrfs/tree-log.c
+> @@ -2854,6 +2854,7 @@ void btrfs_init_log_ctx(struct btrfs_log_ctx *ctx, =
+struct btrfs_inode *inode)
+>         INIT_LIST_HEAD(&ctx->conflict_inodes);
+>         ctx->num_conflict_inodes =3D 0;
+>         ctx->logging_conflict_inodes =3D false;
+> +       spin_lock_init(&ctx->logging_conflict_inodes_lock);
+>         ctx->scratch_eb =3D NULL;
+>  }
+>
+> @@ -5779,16 +5780,20 @@ static int log_conflicting_inodes(struct btrfs_tr=
+ans_handle *trans,
+>                                   struct btrfs_log_ctx *ctx)
+>  {
+>         int ret =3D 0;
+> +       unsigned long logging_conflict_inodes_flags;
+>
+>         /*
+>          * Conflicting inodes are logged by the first call to btrfs_log_i=
+node(),
+>          * otherwise we could have unbounded recursion of btrfs_log_inode=
+()
+>          * calls. This check guarantees we can have only 1 level of recur=
+sion.
+>          */
+> +       spin_lock_irqsave(&ctx->conflict_inodes_lock, logging_conflict_in=
+odes_flags);
+
+Even if this was remotely correct, why the irqsave? The fsync code is
+never called under irq context.
+
+>         if (ctx->logging_conflict_inodes)
+> +               spin_unlock_irqrestore(&ctx->conflict_inodes_lock, loggin=
+g_conflict_inodes_flags);
+>                 return 0;
+>
+>         ctx->logging_conflict_inodes =3D true;
+> +       spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_confli=
+ct_inodes_flags);
+>
+>         /*
+>          * New conflicting inodes may be found and added to the list whil=
+e we
+> @@ -5869,7 +5874,9 @@ static int log_conflicting_inodes(struct btrfs_tran=
+s_handle *trans,
+>                         break;
+>         }
+>
+> +       spin_lock_irqsave(&ctx->conflict_inodes_lock, logging_conflict_in=
+odes_flags);
+>         ctx->logging_conflict_inodes =3D false;
+> +       spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_confli=
+ct_inodes_flags);
+>         if (ret)
+>                 free_conflicting_inodes(ctx);
+>
+> diff --git a/fs/btrfs/tree-log.h b/fs/btrfs/tree-log.h
+> index dc313e6bb2fa..0f862d0c80f2 100644
+> --- a/fs/btrfs/tree-log.h
+> +++ b/fs/btrfs/tree-log.h
+> @@ -44,6 +44,7 @@ struct btrfs_log_ctx {
+>         struct list_head conflict_inodes;
+>         int num_conflict_inodes;
+>         bool logging_conflict_inodes;
+> +       spinlock_t logging_conflict_inodes_lock;
+>         /*
+>          * Used for fsyncs that need to copy items from the subvolume tre=
+e to
+>          * the log tree (full sync flag set or copy everything flag set) =
+to
+> --
+> 2.34.1
+>
+>
 
