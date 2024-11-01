@@ -1,207 +1,117 @@
-Return-Path: <linux-kernel+bounces-391922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B409B8D63
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:01:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7B39B8D66
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:01:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B85C1C21799
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:01:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85D621F23255
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E662C157A46;
-	Fri,  1 Nov 2024 09:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E552E157E78;
+	Fri,  1 Nov 2024 09:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SBSi1bVc"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="xIoTN7oF"
+Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2101A3FF1
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 09:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479103FF1;
+	Fri,  1 Nov 2024 09:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730451693; cv=none; b=gcy9Ho21GIFROy559nd9GZm0TnXfdGscrkkqNtqpkFYPhMB8ZbibQmqW4O0EZoe7jMI257kRry4c2BO+4D3h0SFS8h26NI8nDl1Ie31f8SzPOlkY4wLQgHLru0knYXsV4VvyW70ASk9u8e0Ab3iXTF6bGGyR72Nv/wXIrtfIFsk=
+	t=1730451708; cv=none; b=TkEmxad+dfp00e9aReFf4aKcR1Je0gdFBoOyiWAgVuUnZ+pjdBqHqPlU/OSYAhgK/OLJVDLIHjfSJwNL0Y+vuvbpOvy4RzXquWxCvxpWraw5hfoUtUCKtoatGfzJvI38TDFz6RM2rwvM+TVhgVo1u1xtxTp2UinOSETqE7/tPMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730451693; c=relaxed/simple;
-	bh=NwXYkU476LZtGluB4lV1HIV7sAeNYigHhuApbCJpgyI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=k/IISFhYGsNo665y17VtNYdhBtGBc7+/wvOz0RYsUtrwQXAyJleq4i8yOyfS6Zpw26A62OtWo7YaS/ZVfhrE7ZbaZCHkFHLea//y1ZLp44WuRLCzjOsU+K5rTU+YJQH3I3W4ud0JQE2Vmcky3lTqzoCpDtKwbXASzAmgIMIQrpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SBSi1bVc; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e607556c83so1005192b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 02:01:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730451689; x=1731056489; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7hAIS5ePVJ+LyF/EPZq+6vW+8bpoW4OU+Q4L+IGQdhM=;
-        b=SBSi1bVc7QryXZs8t2G/sARAbbQ9L2vsLBD+N1vb+57eOcMGtMbgSrq36ElfUkm/xB
-         XZIpHWU4XmSb2jKAK8gqUOqlKnPEwaWiDLaYlf+xgdiuZYja1TziugX9OFxVKw13N4HN
-         gD4xsGgEw36iPvg8yd68jwC8PtzKE8Bm3J3Z08seOvMcj3kKSi+Ge7zWgP+alFHaprRM
-         rV+eCUW2ChffBkZCF7wxIkIa0/nBN9dYrYUMx2OueBxGc1yBYoBqyWEplkUJcXNig5OT
-         A3osPpKVdgDWF92rZqO6UqqgjsINPAXLNszwKGjLf7RzqpLclfq1NoSI7Vu4qWBt9NGj
-         TQBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730451689; x=1731056489;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7hAIS5ePVJ+LyF/EPZq+6vW+8bpoW4OU+Q4L+IGQdhM=;
-        b=Z4GuZMjy4SrHywCRnv/EudsP3eXeyVTdEWiCEaWUxhWaTKWwTFGDIBGWx6DfpLfLwG
-         oZ1c9v7swIE6G3Y5vgAtfvWpnYTWFFK3D9Jyu2y8IloW5hTMlnG4g79CcskHbbMzTe3t
-         XtHZf3v7i5rcLbqfo01DJNvC4YcudzRgAa0+qjqZABvPgDEq60bYe+VZUDkJJ66SM0Dl
-         y712qA6sOLl/jArOQZZu5T2f6SPI80cSBaO2vTBPnboP7CVrHEqGZV07JHvTHu29lqoQ
-         yDIlR20VGPLiFOiSFOUoGq7pal7MDmRVKc3ljy0yR22W/t41k1UiOKYQOJ0uCZQKudPM
-         rJDg==
-X-Gm-Message-State: AOJu0Yx4K8Gx6MaF9Pp41iZ+2YxtvlIS6IZkKiw03Fwi5MUbwuh65h7B
-	7sCzI8IxN2SlTjwBu8XDM/dtafHn2FTRvRdRKUzHO9FFFQKSWPrUXdLnfRte2KPTYRO2M/s5cYg
-	W4PJIBCaHIQBsCutx7lE8KZIKUPjQdNbIbsNxDSbzlUenCv29cbw=
-X-Google-Smtp-Source: AGHT+IGaH57iqzcu6+LLy0GxLcoHNVWRsTAHclSdPzMpgspZ7/pcrULQzVzWxa4HnMZnY5zXwOjo7nllXmEuskDaKpw=
-X-Received: by 2002:a05:6808:338b:b0:3e6:3867:b630 with SMTP id
- 5614622812f47-3e63867b653mr18725783b6e.6.1730451689515; Fri, 01 Nov 2024
- 02:01:29 -0700 (PDT)
+	s=arc-20240116; t=1730451708; c=relaxed/simple;
+	bh=J5++sjtFZWeNI50vrtuCNlQDzXvi1836X4y4WE7UGPE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rVDguX3LmPEotLca6jgpTtUgVcbeOL4APrUmVxGM4vMSYlnRDPUS3nkU91TdcfFGvCnuZUGG85xzQ0KMKUlGMtlO/cpXfKhBgA+HSq9sfMzRYW9WW53tc8zTqKyFWjDIVLjw2YnI6GJnx40pCq2L4MUL70NoJSLcO4Ync2Q5CL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=xIoTN7oF; arc=none smtp.client-ip=185.70.43.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1730451697; x=1730710897;
+	bh=Go4mtHQykmlWp4vclsuDHc2ni+VMGXx/GypLE6dY+gs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=xIoTN7oF6JOMzCKFMU0XKqfiac9rzToMym+yjvSYUQM75UiJgCZqKOqE4QzMtePz5
+	 70Hu4RB4RuOxuFtLZ70VJsMXPuEqQ4miNSXevbpwS3INa5kdj3UTLlhBVD1WwNCMZL
+	 o2OTU5OgrjZOSnFPj1YHGrkhNzecnRlmtIXoqPRVvVZgUTZR/RJE8Lyyhj7Ur7AJ3l
+	 ogN0G87pGd/XuZhplZJmQiT3pAV2Ye7+3ZzlyrVyezj4p2nys5brfeB13eLWnBd+Hg
+	 Hz1ZnINuN16H0aNF95dQX8sc8LpfG+zMuy/rbdscl4hoTjcDL3sxgUOmAmerQZu/+1
+	 0TgF839GXHZBQ==
+Date: Fri, 01 Nov 2024 09:01:32 +0000
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+From: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: mediatek: mt6735-apmixedsys: Fix an error handling path in clk_mt6735_apmixed_probe()
+Message-ID: <882779be-6d8f-441d-89ea-f8be79ffd3ba@protonmail.com>
+In-Reply-To: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
+References: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
+Feedback-ID: 6882736:user:proton
+X-Pm-Message-ID: e77f34d9023207e3b609739a38960c2a439f5ca0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 1 Nov 2024 14:31:18 +0530
-Message-ID: <CA+G9fYv_Y2tzs+uYhMGtfUK9dSYV2mFr6WyKEzJazDsdk9o5zw@mail.gmail.com>
-Subject: next-20241101: rust/kernel/security.rs - error[E0061]: this function
- takes 2 arguments but 3 arguments were supplied
-To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	rust-for-linux@vger.kernel.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: Arnd Bergmann <arnd@arndb.de>, aliceryhl@google.com, Miguel Ojeda <ojeda@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, kees@kernel.org, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The rustclang-lkftconfig-kselftest builds failed with rust clang on the
-Linux next-20241101 tag.
+On 25/10/2024 6:46 pm, Christophe JAILLET wrote:
+> If an error occurs after a successful mtk_alloc_clk_data(),
+> mtk_free_clk_data() should be called, as already done in the .remove()
+> function.
+>=20
+> Switch to mtk_devm_alloc_clk_data() in order to fix the memory leak in th=
+e
+> probe function, and simplify the remove function.
+>=20
+> Fixes: 43c04ed79189 ("clk: mediatek: Add drivers for MediaTek MT6735 main=
+ clock and reset drivers")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only
+> ---
+>   drivers/clk/mediatek/clk-mt6735-apmixedsys.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/mediatek/clk-mt6735-apmixedsys.c b/drivers/clk/m=
+ediatek/clk-mt6735-apmixedsys.c
+> index 104722a61dfd..e0949911e8f7 100644
+> --- a/drivers/clk/mediatek/clk-mt6735-apmixedsys.c
+> +++ b/drivers/clk/mediatek/clk-mt6735-apmixedsys.c
+> @@ -88,7 +88,7 @@ static int clk_mt6735_apmixed_probe(struct platform_dev=
+ice *pdev)
+>   =09if (IS_ERR(base))
+>   =09=09return PTR_ERR(base);
+>=20
+> -=09clk_data =3D mtk_alloc_clk_data(ARRAY_SIZE(apmixedsys_plls));
+> +=09clk_data =3D mtk_devm_alloc_clk_data(&pdev->dev, ARRAY_SIZE(apmixedsy=
+s_plls));
+>   =09if (!clk_data)
+>   =09=09return -ENOMEM;
+>   =09platform_set_drvdata(pdev, clk_data);
+> @@ -114,7 +114,6 @@ static void clk_mt6735_apmixed_remove(struct platform=
+_device *pdev)
+>   =09struct clk_hw_onecell_data *clk_data =3D platform_get_drvdata(pdev);
+>=20
+>   =09mtk_clk_unregister_plls(apmixedsys_plls, ARRAY_SIZE(apmixedsys_plls)=
+, clk_data);
+> -=09mtk_free_clk_data(clk_data);
+>   }
+>=20
+>   static const struct of_device_id of_match_mt6735_apmixedsys[] =3D {
+> --
+> 2.47.0
+>=20
 
-First seen on Linux next-20241101 tag.
-  Good: next-20241031
-  Bad:  next-20241101
+Thanks for the fix!
 
-arm64:
-  build:
-    * rustclang-lkftconfig-kselftest
+Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Build log:
----------
-error[E0061]: this function takes 2 arguments but 3 arguments were supplied
-     --> rust/kernel/security.rs:32:28
-      |
-32    |         to_result(unsafe {
-bindings::security_secid_to_secctx(secid, &mut secdata, &mut seclen)
-})?;
-      |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                    ----------- unexpected argument #3 of type `&mut
-u32`
-      |
-note: expected `*mut lsm_context`, found `&mut *mut _`
-     --> rust/kernel/security.rs:32:70
-      |
-32    |         to_result(unsafe {
-bindings::security_secid_to_secctx(secid, &mut secdata, &mut seclen)
-})?;
-      |
-      ^^^^^^^^^^^^
-      = note:    expected raw pointer `*mut bindings::lsm_context`
-              found mutable reference `&mut *mut _`
-note: function defined here
-     --> /home/tuxbuild/.cache/tuxmake/builds/1/build/rust/bindings/bindings_generated.rs:76185:12
-      |
-76185 |     pub fn security_secid_to_secctx(secid: u32_, cp: *mut
-lsm_context) -> core::ffi::c_int;
-      |            ^^^^^^^^^^^^^^^^^^^^^^^^
-help: consider removing the borrow
-      |
-32    -         to_result(unsafe {
-bindings::security_secid_to_secctx(secid, &mut secdata, &mut seclen)
-})?;
-32    +         to_result(unsafe {
-bindings::security_secid_to_secctx(secid, secdata, &mut seclen) })?;
-      |
-help: remove the extra argument
-      |
-32    -         to_result(unsafe {
-bindings::security_secid_to_secctx(secid, &mut secdata, &mut seclen)
-})?;
-32    +         to_result(unsafe {
-bindings::security_secid_to_secctx(secid, /* *mut
-bindings::lsm_context */) })?;
-      |
-
-error[E0061]: this function takes 1 argument but 2 arguments were supplied
-     --> rust/kernel/security.rs:72:18
-      |
-72    |         unsafe {
-bindings::security_release_secctx(self.secdata, self.seclen as u32) };
-      |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  ------------------ unexpected argument #2 of type `u32`
-      |
-note: expected `*mut lsm_context`, found `*mut i8`
-     --> rust/kernel/security.rs:72:52
-      |
-72    |         unsafe {
-bindings::security_release_secctx(self.secdata, self.seclen as u32) };
-      |                                                    ^^^^^^^^^^^^
-      = note: expected raw pointer `*mut bindings::lsm_context`
-                 found raw pointer `*mut i8`
-note: function defined here
-     --> /home/tuxbuild/.cache/tuxmake/builds/1/build/rust/bindings/bindings_generated.rs:76201:12
-      |
-76201 |     pub fn security_release_secctx(cp: *mut lsm_context);
-      |            ^^^^^^^^^^^^^^^^^^^^^^^
-help: remove the extra argument
-      |
-72    -         unsafe {
-bindings::security_release_secctx(self.secdata, self.seclen as u32) };
-72    +         unsafe { bindings::security_release_secctx(/* *mut
-bindings::lsm_context */) };
-      |
-
-error: aborting due to 2 previous errors
-
-For more information about this error, try `rustc --explain E0061`.
-make[3]: *** [rust/Makefile:405: rust/kernel.o] Error 1
-
-Build image:
------------
-- https://storage.tuxsuite.com/public/linaro/lkft/builds/2oEm06IqsdrtzGl1UIGSDghznWx/
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241101/testrun/25629042/suite/build/test/rustclang-lkftconfig-kselftest/log
-
-Steps to reproduce:
-------------
- - # tuxmake --runtime podman --target-arch arm64 --toolchain rustclang \
-             --kconfig defconfig \
-             --kconfig-add
-https://gitlab.com/Linaro/lkft/kernel-fragments/-/raw/main/systemd.config
-\
-             --kconfig-add tools/testing/selftests/rust/config \
-             LLVM=1 LLVM_IAS=1 TARGETS=rust \
-             debugkernel dtbs dtbs-legacy headers kernel kselftest modules
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2oEm06IqsdrtzGl1UIGSDghznWx/tuxmake_reproducer.sh
-
-metadata:
-----
-  git describe: next-20241101
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-  git sha: c88416ba074a8913cf6d61b789dd834bbca6681c
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2oEm06IqsdrtzGl1UIGSDghznWx/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2oEm06IqsdrtzGl1UIGSDghznWx/
-  toolchain: rustclang
-  config: defconfig
-  arch: arm64
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
