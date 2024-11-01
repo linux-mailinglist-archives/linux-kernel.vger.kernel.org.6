@@ -1,226 +1,185 @@
-Return-Path: <linux-kernel+bounces-392049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E1D9B8F1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:23:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86EBC9B8F1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1A91F22F57
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:23:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46FB6287BE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE33165F1D;
-	Fri,  1 Nov 2024 10:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b="dOdiFv6I"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2054.outbound.protection.outlook.com [40.107.241.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B9816A959;
+	Fri,  1 Nov 2024 10:23:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56AA15A864;
-	Fri,  1 Nov 2024 10:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730456588; cv=fail; b=TU79Tbuhre/pJkW8ltqsLeFZ8VcTz+ZE/+ApnHPCQHI2awGp2ovhKcIscRWCT56TRTIViwi+YZXJNBBf89s8X1B8Hgws5P5uyqpPTOReJJXP3YydwwRwfcT4jvH+/MZqWgTEUCDaJQqxjmQ3OyqlMBNXWyvE3ECMQBTT6AX0t2o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730456588; c=relaxed/simple;
-	bh=LjKkHpHSY52pjtoBc/nUwjF5ABdLAfkqMZdE2K78ZLw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=VZiLnT8vK+uwVT5g/5JkBSzfj3G5SBa0mk0pjyTWOpANI5dc/HsuP1QIWOYVa3DPYG/3fq+68GeMpXE5Y29TmFVdpTAWr4A1oFryhOzT4C0EHKkDouOF5enWEBePTaeKW88RuJplZF89ZXQf71R0LDC62VewcAWE5mKzqH7qkCM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk; spf=pass smtp.mailfrom=prevas.dk; dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b=dOdiFv6I; arc=fail smtp.client-ip=40.107.241.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prevas.dk
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a6UVQsb31AR+xq6IwAeeRB1ZxBtOA0KlVdIwiUKe2UaTp7S7h/9kGw32p0Oqp1J2wEx3IlyAFsEALkvQCeR+rLhuRjHnKtedTd79+ZuL9ex+RggqDnQc2MeCGlcA9U2qWupUrYt/VPidRbpLFEvFPYjDSfR7btde8i0pSQalGPiw/92hfJhEUlYeeZJy9t31n/pCRtsgssJI/4VPqwoovbbprxdCwc4i6X8vmNbC/WYX7ITLPFwXbTjyTP/Y5QNJxLpn8J6ZaAJ+sZzNLqAuVtvi6+/HTHNVoZI8/9UW9cDE9YV9GgPnFTHZUwMSM6NBGK9XKajYt+HEgWncE9DVvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cCAedM2cUW/uWOSWokfoEARL5Py5bnXvQM+PqSHYdf0=;
- b=NjqjaeNAOZsRl7qBnWJ2nox/tVxwIEQU5dXwpSa09kJh7eBP4CfuRQyXnTyeO1RaN93VVWO/dnrUzod4pB7c/riCsG+bZv04jUcj+GTOgG64v3qmDOdDY24gk2SosLFIfwVT2MA1LBd538AQnjFz8fHZusGup8waeClY46rumuplIR2DdP4iDb3F3hBIYq+b28C0qO8GwqwSlxPr5ZbHDEQL1bF2bLYqeBumvOVYgq/CHdLU2jEvcZZCHhIg3xT8HIx98ZQDdIpEUYVI5Kr78nUWITbj3ZFfXSXxqOGbOq/KZOZkLG+M9feMFYzxJlq6pvJpyceiwPnzHdOgYPhWUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
- dkim=pass header.d=prevas.dk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cCAedM2cUW/uWOSWokfoEARL5Py5bnXvQM+PqSHYdf0=;
- b=dOdiFv6IocCpwa046j2eonkyQIxMRxz9Y06c2Erto/Lw0OgVps32jUABu+azwVPK261fTqwHUrXuilu/76OKAAQOqZxOdMrd7lO+U2XxAODwWrVfanK5fKiG0q+jWlIXK+hql5Fxsnv67WwcMgwztUSfZl49rFgUh8NnlvtZ2yw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=prevas.dk;
-Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:45a::14)
- by DU4PR10MB8321.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:56b::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Fri, 1 Nov
- 2024 10:23:00 +0000
-Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9fcc:5df3:197:6691]) by DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9fcc:5df3:197:6691%5]) with mapi id 15.20.8114.015; Fri, 1 Nov 2024
- 10:23:00 +0000
-From: Rasmus Villemoes <ravi@prevas.dk>
-To: Jeff King <peff@peff.net>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,  Masahiro Yamada
- <masahiroy@kernel.org>,  linux-kernel@vger.kernel.org,
-  linux-kbuild@vger.kernel.org,  git@vger.kernel.org
-Subject: Re: [PATCH] setlocalversion: Add workaround for "git describe"
- performance issue
-In-Reply-To: <20241031122456.GB593548@coredump.intra.peff.net> (Jeff King's
-	message of "Thu, 31 Oct 2024 08:24:56 -0400")
-References: <309549cafdcfe50c4fceac3263220cc3d8b109b2.1730337435.git.jpoimboe@kernel.org>
-	<87bjz0k17c.fsf@prevas.dk>
-	<20241031114210.GA593548@coredump.intra.peff.net>
-	<20241031122456.GB593548@coredump.intra.peff.net>
-Date: Fri, 01 Nov 2024 11:23:05 +0100
-Message-ID: <8734kbjlrq.fsf@prevas.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Content-Type: text/plain
-X-ClientProxiedBy: MM0P280CA0020.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:a::15) To DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:45a::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EA015A864
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730456609; cv=none; b=piAxBmpc5pRZSOLKjGi1HVZ8zIFU6ve9ybe5ulY+Hk41gwh7WhcZMFJ7Q8P0XRcvucZvVqafCpJoKUQRT+XtiSXzSun+mY77Uy16EYJdO+wYOQEvBU++3pnns/dHNda6zRNTd+6PCs0QGE/3et7l7IyjrMFMElW79AneahaCScI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730456609; c=relaxed/simple;
+	bh=8b9a53kp/jr0dPpeCii/tX8yWaa+/nuB5CkfS4qxa7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BIYs664hQtenvDoO3iO00JneT0lob1Nw8EGU/wXUtFt2kpmDmUMD7LzT2sYCUc6s/kgivXOpNDR9umhlGBz6CPYAn9mXdHJO64KGeCxtR3xl1wRGsrJv/s8+0oWON7dP5EqeNoE3ZvXouh1GSZXUeducJisoiUyoD4LczXUzlsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t6oo8-0000H7-S1; Fri, 01 Nov 2024 11:23:08 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t6oo6-001Ur2-2x;
+	Fri, 01 Nov 2024 11:23:06 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t6oo6-007zJb-2X;
+	Fri, 01 Nov 2024 11:23:06 +0100
+Date: Fri, 1 Nov 2024 11:23:06 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH RFC net-next v2 15/18] net: pse-pd: Add support for
+ getting and setting port priority
+Message-ID: <ZySsCuOvSnVZnIwq@pengutronix.de>
+References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
+ <20241030-feature_poe_port_prio-v2-15-9559622ee47a@bootlin.com>
+ <ZyMpkJRHZWYsszh2@pengutronix.de>
+ <20241031121104.6f7d669c@kmaincent-XPS-13-7390>
+ <ZySR75i3BEzNbjnv@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR10MB7100:EE_|DU4PR10MB8321:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1fc7ad2d-ad65-46aa-a976-08dcfa5f2918
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZCPAcNAXnxf1+neoEGjXUehyCWFypqXXkPnWvxINXncjSNtLByQhkGf0ZCLh?=
- =?us-ascii?Q?7Zu0uIu1bD6cxAnyjELrJSjQ7mPDvDXsssmV3gkX2oNkj6srPwUKMdKiHTzQ?=
- =?us-ascii?Q?7BpqbklK6foBgYF5Kj7ju8e64DDAsNMLt9wOAEEyZ6KdpXjnrSrT2VEL14Q5?=
- =?us-ascii?Q?ko59yanEuheYxp6hjbI4aWQYrRLTJgnSzHDOj1HO2/p+vI3W6/ny+NgOAgbj?=
- =?us-ascii?Q?lTACwHX40XkYU+48afbpFHlyZqJ99edKbLkH1N+RovDLYYEzeqLsCxg+3Rnj?=
- =?us-ascii?Q?UYyzMnwpfMp3TgbIhPCymzi5b2CoX4RetZPDADyMccx6CkHOFmxoC2RJGTpC?=
- =?us-ascii?Q?miS2+tk3CTWV1mfCIYlk93kTKs0n39VJAm+/g6uascJybDLp/vVJecttYov2?=
- =?us-ascii?Q?GWAsSvfDdTib8+WcSB8B0jMWr0E+s8+djyJpMgNLi6B8sLfmRvoPxG+w5Anf?=
- =?us-ascii?Q?EWd1R7f0drqr1/1D6TXph7zg3Pxpotxy2lJA1+0Ez6qQ5OS6gGiPMfSKN0Pq?=
- =?us-ascii?Q?l8AH11Iz7cDV56PuQQvbz+lg4lmUveoy7+j5zuX1STvGc0onQEGHVM73r+gg?=
- =?us-ascii?Q?EIIf6g6nCpN0vOK77P7U9gP2gD+k5r0wXsx9RoZdnxFU/i+z9QF0y1RdTpeu?=
- =?us-ascii?Q?XsHBFUmkUSnIyp+xfJlh21QpN753Co3799gxA9GSwBmprQbYrnne6OwizenB?=
- =?us-ascii?Q?UYnfU90O4n4R3KRJ6s3Ngs3hMGlSpAAxX4VcrsaSLHLCbEXzJpqmFwQB/qaA?=
- =?us-ascii?Q?bbS7Rr9U61MaV4vtf/wI0dDytkllEObjEo3Ye2aLgtvKdiyKCJNXFrBnJhGz?=
- =?us-ascii?Q?WLXFxZ1Qsb0JRPcvPkKiQnLGeV6iHCu6luMJ+AKV1KqhcDLTDbsCG8Mdsl5L?=
- =?us-ascii?Q?oW4WodUE1AkC3o4cgt9cx60RdfG02irjUGmVlk7kqoZi8Qn+33uY3KlUG1ru?=
- =?us-ascii?Q?ebcSJUd5wsOYpFSxIvYjA+FOOBGAbzu2FdhqV3VyYguYgAgWydUYSENbxReM?=
- =?us-ascii?Q?PbsVA2GPYewtJ7MpGgx4ZCAAcYjSA6WRBNy3PIZfV0VA1ZsWZpDT9V/r7OD3?=
- =?us-ascii?Q?kBHKCm/8Xbp2mc7a40XXtDJNwotoZQWyx3m2GxymE50qyb8X0ZhdiJmom0II?=
- =?us-ascii?Q?+wQDvOcLLme2CDddSvX/Sj43clsNR++DvcKESZTR1jso2YI8OxFpQm2Aw3Ei?=
- =?us-ascii?Q?bz9e5JBc38gbHZeWdblSkXU390fLknXg8x8uxi13iQw4/3fSGvlPMGZiu6uJ?=
- =?us-ascii?Q?u8h7cZjbvX1fpOcEr7qeqcwrV5gW6cUc3Rif6FSWrW/KQ9sk85K19MEIu8fH?=
- =?us-ascii?Q?c1arnUHOWfQ7qvg1G5tSbi4UlWb7/0axXclFUQFW54JTnjGF1Y8Qeg0QFyiE?=
- =?us-ascii?Q?jxNrkgY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3zKRgTBnn3txwBLV5El48nFSK8OqyRE+cr4jJzIQZH49V5EQKtHbjUEY7ppR?=
- =?us-ascii?Q?f59UEiHkzMjxc5E/eHtgLqatH0tg/XhmHUsuMKMbkNuSzZ1j5DTh3IWPeQ+i?=
- =?us-ascii?Q?vR49ShXCFTLUSSZrRdEqFnpFwQu1oC45bbOGlM1YUMoU02C9MmJzIGfE68AL?=
- =?us-ascii?Q?NEeiy5KA1UnGk30xAHh6w06dDWmqYa3DMdqVnh40chO7IchgmSbVhF7zwDrF?=
- =?us-ascii?Q?a/7TjpykC9esZNH2MUnYMHsgW8WnLhwOVV9y/dRregNT0YRCqmMdDsphNeda?=
- =?us-ascii?Q?20ttkEH33dITsPuvQFjZl+x23DsXdpyIJixCI+dXVFuMEnjClwT7+V4ujOfu?=
- =?us-ascii?Q?FTnX9XZJCtlUnsZ5xenRLex068IoZsweG2k+DqMs3uGX7iU8eG10BFYro2mS?=
- =?us-ascii?Q?LwU4cq/uaeL7aL212LjfBsYoeG+1VomwUEfLP6K2kIP8UYaLZMLCZRGzD4zo?=
- =?us-ascii?Q?TVshG8XQ/j3Zm+dTu/lUwDP08adl5wPNKce0U9uGwoc4s7kK4CUF2qhEcGYC?=
- =?us-ascii?Q?HmwfmRtixu6lVyTFQXg/P+1E8WRsTz0f5DK2afqh6amdhb5xeHVeiwp3nVMV?=
- =?us-ascii?Q?CKgWFOuMStGQHvlTP6a3qOJLVAz3bImsmwIWk6d1XQFY6KpvwCp5v7rgh5v9?=
- =?us-ascii?Q?klTSJ6jBNxj2PvUSXbelxEu3ZfRwZoX6cKt9rokjzUdpr3ld9GAGDMjPNKV/?=
- =?us-ascii?Q?j0YxU47+PIvku8eCuNjGax3TLOqa6nIL18o1Ue9JmOg04y3Jv42UHxCg0EOs?=
- =?us-ascii?Q?INv/kBlksVuf6uonZFUT9Mxpk9MNXTYC8vTdZlTYPC5wvrxxBJ8a5WUm0nDn?=
- =?us-ascii?Q?ylpkx7obNq6JkSKI1EsnBkQhKoLQrPYdSk5ibPOr8avAN5fUSrkNQQh2UEk+?=
- =?us-ascii?Q?+8NoydztwGre75KU/Ydlll1gap/TOWYIKlPWt8nu2iz3GGjnjjdLW/uA9inu?=
- =?us-ascii?Q?bKdTNtM5yhIbWp//OrxzjtH3CulO6dtBm6kY9CzyFOKRpbSZTHJgXvYeHSe/?=
- =?us-ascii?Q?6VAVHbUo8VxKXObfzUyi1eSdb1zsn1IhpE8n8APSAaQGeQ5bNE0lGePBVq3/?=
- =?us-ascii?Q?hZe3y/3u0mr929nG1N00zGqlrlAC1oRD16QUhRIu3nVJAvNsk5+sYKJfVCCh?=
- =?us-ascii?Q?gya6Prb+dvFDv+TTIomzSoBV74ZWTUISlGlPIqeWiBvGb5+ICl3/YT3P/9w+?=
- =?us-ascii?Q?bRjIKKweHqy0L+EL5T6jWbsk2EqVjXkargDPQDrgR9bjfDd/k/UYNjPjUg7s?=
- =?us-ascii?Q?NiltVyOTqc1WF2iDFX7YaAAatj1jYvswCfwAgh81dampA3QtM81RS9nds0gX?=
- =?us-ascii?Q?5Lq3V4fA6jq3D6o1UAbZwC1RTPn3oGov4wQk/FpWOLQl8wwRn94X4NidsIV5?=
- =?us-ascii?Q?pzzFgd+M120khX+TFKYhZN4BG0Y7p0BQRQz4h9xfHcD9yh7s93VwbqNdxpyw?=
- =?us-ascii?Q?8JDgMFcmOhkEDZU3IJDsA154+qky7yMwgaS0TEIC612GanuslyEdLs7sfN18?=
- =?us-ascii?Q?GbgDhmXPkyCiElvtWSM2NXCxw83RVtciGryHYQux5otv2N7QonjjIV2fS0Ag?=
- =?us-ascii?Q?e4FZ6nuHhhwp+eb1EMOFQZqIV8Y49yU6PIDQuJnRGLFxWPncXNJp06SNbAZ0?=
- =?us-ascii?Q?qQ=3D=3D?=
-X-OriginatorOrg: prevas.dk
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fc7ad2d-ad65-46aa-a976-08dcfa5f2918
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2024 10:22:59.9632
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wGaDzTQP8iDbqBenMiWk1lc5gdJidD5pfhmwSfAXG75R+hc765+cCshS3SCodnCMAntdu2pBRjmmlJDomP33QL350qbMMq3KnFxhRmyVxVM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB8321
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZySR75i3BEzNbjnv@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Oct 31 2024, Jeff King <peff@peff.net> wrote:
+On Fri, Nov 01, 2024 at 09:31:43AM +0100, Oleksij Rempel wrote:
+> On Thu, Oct 31, 2024 at 12:11:04PM +0100, Kory Maincent wrote:
+> > On Thu, 31 Oct 2024 07:54:08 +0100
+> > Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> > 
+> > > > diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
+> > > > index a1ad257b1ec1..22664b1ea4a2 100644
+> > > > --- a/include/uapi/linux/ethtool.h
+> > > > +++ b/include/uapi/linux/ethtool.h
+> > > > @@ -1002,11 +1002,35 @@ enum ethtool_c33_pse_pw_d_status {
+> > > >   * enum ethtool_c33_pse_events - event list of the C33 PSE controller.
+> > > >   * @ETHTOOL_C33_PSE_EVENT_OVER_CURRENT: PSE output current is too high.
+> > > >   * @ETHTOOL_C33_PSE_EVENT_OVER_TEMP: PSE in over temperature state.
+> > > > + * @ETHTOOL_C33_PSE_EVENT_CONNECTED: PD detected on the PSE.
+> > > > + * @ETHTOOL_C33_PSE_EVENT_DISCONNECTED: PD has been disconnected on the
+> > > > PSE.
+> > > > + * @ETHTOOL_C33_PSE_EVENT_PORT_PRIO_STATIC_ERROR: PSE faced an error in
+> > > > static
+> > > > + *	port priority management mode.
+> > > >   */
+> > > >  
+> > > >  enum ethtool_c33_pse_events {
+> > > > -	ETHTOOL_C33_PSE_EVENT_OVER_CURRENT =	1 << 0,
+> > > > -	ETHTOOL_C33_PSE_EVENT_OVER_TEMP =	1 << 1,
+> > > > +	ETHTOOL_C33_PSE_EVENT_OVER_CURRENT =		1 << 0,
+> > > > +	ETHTOOL_C33_PSE_EVENT_OVER_TEMP =		1 << 1,
+> > > > +	ETHTOOL_C33_PSE_EVENT_CONNECTED =		1 << 2,
+> > > > +	ETHTOOL_C33_PSE_EVENT_DISCONNECTED =		1 << 3,
+> > > > +	ETHTOOL_C33_PSE_EVENT_PORT_PRIO_STATIC_ERROR =	1 << 4,
+> > > > +};  
+> > > 
+> > > Same here, priority concept is not part of the spec, so the C33 prefix
+> > > should be removed.
+> > 
+> > Ack. So we assume PoDL could have the same interruption events.
+> > 
+> > > > +/**
+> > > > + * enum pse_port_prio_modes - PSE port priority modes.
+> > > > + * @ETHTOOL_PSE_PORT_PRIO_DISABLED: Port priority disabled.
+> > > > + * @ETHTOOL_PSE_PORT_PRIO_STATIC: PSE static port priority. Port priority
+> > > > + *	based on the power requested during PD classification. This mode
+> > > > + *	is managed by the PSE core.
+> > > > + * @ETHTOOL_PSE_PORT_PRIO_DYNAMIC: PSE dynamic port priority. Port priority
+> > > > + *	based on the current consumption per ports compared to the total
+> > > > + *	power budget. This mode is managed by the PSE controller.
+> > > > + */  
+> 
+> After thinking about it more overnight, I wanted to revisit the idea of having
+> a priority strategy per port. Right now, if one port is set to static or
+> dynamic mode, all disabled ports seem to have to follow it somehow too. This
+> makes it feel like we should have a strategy for the whole power domain, not
+> just for each port.
+> 
+> I'm having trouble imagining how a per-port priority strategy would work in
+> this setup.
+> 
+> Another point that came to mind is that we might have two different components
+> here, and we need to keep these two parts separate in follow-up discussions:
+> 
+> - **Budget Evaluation Strategy**: The static approach seems straightforward—if
+> a class requests more than available, appropriate actions are taken. However,
+> the dynamic approach has more complexity, such as determining the threshold,
+> how long violations can be tolerated, and whether a safety margin should be
+> maintained before exceeding maximum load.
+> 
+> - **Disconnection Policy**: Once a budget violation is detected, this decides
+> how to react, like which ports should be disconnected and in what order.
+> 
+> Would it make more sense to have a unified strategy for power domains, where we
+> apply the same budget evaluation mode (static or dynamic) and disconnection
+> policy to all ports in that domain? This could make the configuration simpler
+> and the power management more predictable.
 
-> On Thu, Oct 31, 2024 at 07:42:10AM -0400, Jeff King wrote:
->
->> That works, but I have a feeling that figured out what the heck is going
->> on with gave_up_on might produce a more elegant solution.
->
-> OK, I think I might have made some sense of this.
->
-> In finish_depth_computation(), we traverse down "list" forever, passing
-> flags up to our parents, until we find a commit that is marked with the
-> same "within" flag as our candidate. And then if everything left has
-> that same "within" flag set, we can bail.
->
-> So I _think_ the point is to basically count up what we'd get from this
-> traversal:
->
->   $tag..$commit
->
-> where "$tag" is the candidate tag we found, and "$commit" is what we're
-> trying to describe (so imagine "git describe --match=$tag $commit").
+Except of user reports, do we have documented confirmation about dynamic
+Budget Evaluation Strategy in PD692x0 firmware?
 
-Yeah, so this is really just what the setlocalversion script wants to
-know. For a few diffent possible values of $tag (in most cases just 1),
-we ask: Is $tag an annotated tag? Is it an ancestor of HEAD? And if so,
-how many commits are in $tag..HEAD.
+Do this configuration bits are what I called Budget Evaluation Strategy?
+Version 3.55:
+Bits [3..0]—BT port PM mode
+0x0: The port power that is used for power management purposes is
+     dynamic (Iport x Vmain).
+0x1: The port power that is used for power management purposes is port
+     TPPL_BT.
+0x2: The port power that is used for power management purposes is
+     dynamic for non LLDP/CDP/Autoclass ports and TPPL_BT for
+     LLDP/CDP/Autoclass ports.
 
-Perhaps we could on the kernel side replace the "git describe --match"
-calls with a helper, something like this (needs a lot of polishing):
-
-===
-# Produce output similar to what "git describe --match=$tag 2>
-# /dev/null" would.  It doesn't have to match exactly as the caller is
-# only interested in whether $tag == HEAD, and if not, the number
-# between the tag and the short sha1.
-describe()
-{
-    # Is $tag an annotated tag? Could/should probably be written using
-    # some plumbing instead of git describe, but with --exact-match,
-    # we avoid the walk-to-the-start-of-history behaviour, so fine for
-    # this demo.
-    git describe --exact-match --match=$tag $tag >/dev/null 2>/dev/null || return 1
-
-    # Can it be used to describe HEAD, i.e. is it an ancestor of HEAD?
-    git merge-base --is-ancestor $tag HEAD || return 1
-
-    # Find the number that "git describe" would append.
-    count=$(git rev-list --count $tag..HEAD)
-    if [ $count -eq 0 ] ; then
-        echo "$tag"
-    else
-        echo "$tag-$count-$head"
-    fi
-}
-===
-
-But if we go this route, we should probably rework the logic
-somewhat. There's no point getting the count ourselves, stuffing that
-into a string, and then splitting that string with awk to %05d format
-the count.
-
-I also don't know if either the --is-ancestor or the rev-list count
-could end up doing the same walk-all-commits we're trying to avoid.
-
-Rasmus
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
