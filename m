@@ -1,189 +1,177 @@
-Return-Path: <linux-kernel+bounces-392490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4439B94CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:59:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0B39B94D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:00:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C6328300F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:59:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1FF4B21F42
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A6B1C9B75;
-	Fri,  1 Nov 2024 15:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95371C761F;
+	Fri,  1 Nov 2024 16:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kt0RV8G7"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="iPUnZ8bs"
+Received: from msa.smtpout.orange.fr (out-72.smtpout.orange.fr [193.252.22.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6733225634
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 15:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C926B1DA53;
+	Fri,  1 Nov 2024 16:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730476760; cv=none; b=b7g0L2HWGGyEkyyTMSKatBtFgQXcP2SxE2HUTYbt1dHYar6YewgsCUWkLuf28VsXXtLfLC4zro4T0KcdI69agsPWX5B8R1yo/O9RLRhinoVBNKmh62LWzqRzOucSM19+stJU4vrD/Q/1oCtUUH3XnvSJ1qzsMZBYpWi6N4REEAc=
+	t=1730476845; cv=none; b=uimo72vJj8DNmXhAPWJW7MBb9EXBZvoMOSrvftyFqr8KH/Rw7B1HXsveul5fAJhAY78H+LSW8xk/bD5reZ7uv7d+m19BD2b2ASGiZwynHPIhortzBSPDYmrjGqw14uj1iCt/apFlpnIi1LJMy8Gb+9vOKKmIUq8HFuIjsmKXDOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730476760; c=relaxed/simple;
-	bh=oUD7RnhWQWlMRs16xW0PhkgQoTIgz9ocJOKfciQcXtk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mAbK2bGSKhdhx+A8iq9h7gd+A10OA1NDNzEjrA3/l9tBlvXCCyl4Okrr5xt+c7wMscsiVOxV8gyczezH6ctIM7ymsybBXHTU1izH+D/L1LW2QnNWrl0UPLhDAFhD4PC8XLAn+TH0COlmpTX5cEzP00y8AauDKvTwfiCxZCwg1rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kt0RV8G7; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7eb07db7812so1715100a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 08:59:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730476758; x=1731081558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G7C7udYDSGtBe+UDNEgx3LKkpcEb5Jn+SrINvorUJ5I=;
-        b=Kt0RV8G7b3Qd4Y/oFoB9taPX4OU3QJoXTYcRxSeF+4Nkguif7YVX707ADXwJZxtSTv
-         Kp9196S/XH4olDmZQqlbN2BZxrAHSbuGra64Eu22QEIC3grekPJlia4St2Tqf34oBC/U
-         F1ECdCHGCfwdZSnxdUYXIhHOLpwdEVbaro6vzFAIqTkV27UkQFzqSlbuwRsYMwjptPrB
-         wKfB4wTo1hze/f1yQFSfDdNjrLPPd07Nor8cu6N+D4yOj5Vb8eS4eDvVxXcS7/uTSfP/
-         DQkfH95OcTeQpR1bvV6cTYcA+zUIuHKK/0GOSYaQ2m+FwnNmhijR5td5XS5XkAGc3Xem
-         GgZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730476758; x=1731081558;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=G7C7udYDSGtBe+UDNEgx3LKkpcEb5Jn+SrINvorUJ5I=;
-        b=hADinR29BVuRMQFVdmPo6WZ7NUpkJZ3mG6/zIQISHJjYMQ8eitvmQyAIV6ZxcsXwLM
-         v6AoDjSPpOpWv4yIpCOv6j+a3sjYwW0j5eOPMdP2YRDL1RPLB4qgbyP20SVhqPWx3veP
-         mDHdHEiTR1pr0Kru8jPjF2MJ+vY15dNTwcJ0Z8zAJv9pAbexOxJVUkcpetklqJc4M98+
-         FA+MrapSBQ7yUli8HTh96ktJB1V/bozKf3PP/7hUJ91U/LOMNvtX+LlCsZBIRDMKTN2d
-         N8RhXzu1mP1X4eZAigmZ/4Qp49UouM84zFIlzxrork/gNE7uZXYX5Uvdj6tyYqU0AVoe
-         ksMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPdi2nR6Qqiz/sSgkvVnUU3jKwiqsi4c4VQRukIQZusKq20D/DgWKQTbqVUkMJb7kAVihHLlOZj/YoFDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx96WLigTTcKfHkcucK1FHb1r5f2kS4IfBtSWHeJWFdwTHgJ5Ik
-	RF3D27k0cAGui0M5C44A6rhO87D7fG9m42xvjLz/vdNuc8Zyl1vq6So4XD5pS8uM66Q8Z1HdZt+
-	fPg==
-X-Google-Smtp-Source: AGHT+IHdP6G2fJCdE/LEn9b4GNy3yTcluEwmDEOjmuidoXhD2Yg5GyJmi1fYyuRyUM0NRBeCXSVah99A4Vc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a63:5658:0:b0:7ea:d01a:e37a with SMTP id
- 41be03b00d2f7-7ee44becc77mr9923a12.4.1730476757639; Fri, 01 Nov 2024 08:59:17
- -0700 (PDT)
-Date: Fri, 1 Nov 2024 08:59:16 -0700
-In-Reply-To: <ZyT2CB6zodtbWEI9@linux.dev>
+	s=arc-20240116; t=1730476845; c=relaxed/simple;
+	bh=tgUcafWIcyw/Xw6WtWftC4IV18qq2lbN+XPC1DDYwpA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rACojyvNkRbdc8RPgiqaAs845DY+pGNpXBx4XKMuo2epZNYGBgNz1wOCKHw2srzinCoHps93+SJO5iFb3gQBCs1r74zyJ3DlTl3exWiCPaigCu27Af6H6wn9PR8FIUhuLfitxVy9ayBttlAVA3pvvDdoanRoakUXZbA2YSbTyCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=iPUnZ8bs; arc=none smtp.client-ip=193.252.22.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 6u3ZtHqXNH3SU6u3ZtLSD5; Fri, 01 Nov 2024 16:59:28 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1730476768;
+	bh=OPHPOhW9HUBF4EAgD2hHEl89Ml4qq1QzyjIJ4lZA8VU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=iPUnZ8bsHVrouKOtqJuIaZT9mlO0HzGTPoMPj1s2yuM7ms6mOg1moCSuWZku7Ndwd
+	 jVvaMAENZvOrBkCGLorHATLAAPE6NlDfdntZ/qDdho1yOfACdoBrRqASevzKgLALSM
+	 BwHgW4OJGsJTjXJhY9j/3yFgXkQy2JwkIa5/YVqIy6++dEH7a/qKYfrrjuPoVl5cXj
+	 j4BXOjPqvwWLbR1y81ZcWdy9Uac4kiVk6xFgVLeEmzzp7W1aJAWjSi5alIw/pc53tW
+	 m4RJNOq5bexSI9JFbWxfbVKaIa40QZ76aXuFzifXUTnSDZI95RWCdQmZ+N3+ol/neF
+	 kxZXn8wK1zuEA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 01 Nov 2024 16:59:28 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <9bf24861-f792-4315-9492-e71f7d9c457f@wanadoo.fr>
+Date: Fri, 1 Nov 2024 16:59:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241009154953.1073471-1-seanjc@google.com> <20241009154953.1073471-4-seanjc@google.com>
- <39ea24d8-9dae-447a-ae37-e65878c3806f@sirena.org.uk> <ZyTpwwm0s89iU9Pk@google.com>
- <ZyT2CB6zodtbWEI9@linux.dev>
-Message-ID: <ZyT61FF0-g8gKZfc@google.com>
-Subject: Re: [PATCH v3 03/14] KVM: selftests: Return a value from
- vcpu_get_reg() instead of using an out-param
-From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Andrew Jones <ajones@ventanamicro.com>, James Houghton <jthoughton@google.com>, 
-	David Woodhouse <dwmw@amazon.co.uk>, linux-next@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] spi: apple: Add driver for Apple SPI controller
+To: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Janne Grunau <j@jannau.net>,
+ Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+References: <20241101-asahi-spi-v2-0-763a8a84d834@jannau.net>
+ <20241101-asahi-spi-v2-2-763a8a84d834@jannau.net>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241101-asahi-spi-v2-2-763a8a84d834@jannau.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 01, 2024, Oliver Upton wrote:
-> Hey,
->=20
-> On Fri, Nov 01, 2024 at 07:48:00AM -0700, Sean Christopherson wrote:
-> > On Fri, Nov 01, 2024, Mark Brown wrote:
-> > > On Wed, Oct 09, 2024 at 08:49:42AM -0700, Sean Christopherson wrote:
-> > > > Return a uint64_t from vcpu_get_reg() instead of having the caller =
-provide
-> > > > a pointer to storage, as none of the vcpu_get_reg() usage in KVM se=
-lftests
-> > > > accesses a register larger than 64 bits, and vcpu_set_reg() only ac=
-cepts a
-> > > > 64-bit value.  If a use case comes along that needs to get a regist=
-er that
-> > > > is larger than 64 bits, then a utility can be added to assert succe=
-ss and
-> > > > take a void pointer, but until then, forcing an out param yields ug=
-ly code
-> > > > and prevents feeding the output of vcpu_get_reg() into vcpu_set_reg=
-().
-> > >=20
-> > > This commit, which is in today's -next as 5c6c7b71a45c9c, breaks the
-> > > build on arm64:
-> > >=20
-> > > aarch64/psci_test.c: In function =E2=80=98host_test_system_off2=E2=80=
-=99:
-> > > aarch64/psci_test.c:247:9: error: too many arguments to function =E2=
-=80=98vcpu_get_reg=E2=80=99
-> > >   247 |         vcpu_get_reg(target, KVM_REG_ARM_PSCI_VERSION, &psci_=
-version);
-> > >       |         ^~~~~~~~~~~~
-> > > In file included from aarch64/psci_test.c:18:
-> > > include/kvm_util.h:705:24: note: declared here
-> > >   705 | static inline uint64_t vcpu_get_reg(struct kvm_vcpu *vcpu, ui=
-nt64_t id)
-> > >       |                        ^~~~~~~~~~~~
-> > > At top level:
-> > > cc1: note: unrecognized command-line option =E2=80=98-Wno-gnu-variabl=
-e-sized-type-not-at
-> > > -end=E2=80=99 may have been intended to silence earlier diagnostics
-> > >=20
-> > > since the updates done to that file did not take account of 72be5aa6b=
-e4
-> > > ("KVM: selftests: Add test for PSCI SYSTEM_OFF2") which has been merg=
-ed
-> > > in the kvm-arm64 tree.
-> >=20
-> > Bugger.  In hindsight, it's obvious that of course arch selftests would=
- add usage
-> > of vcpu_get_reg().
-> >=20
-> > Unless someone has a better idea, I'll drop the series from kvm-x86, po=
-st a new
-> > version that applies on linux-next, and then re-apply the series just b=
-efore the
-> > v6.13 merge window (rinse and repeat as needed if more vcpu_get_reg() u=
-sers come
-> > along).
->=20
-> Can you instead just push out a topic branch and let the affected
-> maintainers deal with it? This is the usual way we handle conflicts
-> between trees...
+Le 01/11/2024 à 15:25, Janne Grunau via B4 Relay a écrit :
+> From: Hector Martin <marcan-WKacp4m3WJJeoWH0uzbU5w@public.gmane.org>
+> 
+> This SPI controller is present in Apple SoCs such as the M1 (t8103) and
+> M1 Pro/Max (t600x). It is a relatively straightforward design with two
+> 16-entry FIFOs, arbitrary transfer sizes (up to 2**32 - 1) and fully
+> configurable word size up to 32 bits. It supports one hardware CS line
+> which can also be driven via the pinctrl/GPIO driver instead, if
+> desired. TX and RX can be independently enabled.
+> 
+> There are a surprising number of knobs for tweaking details of the
+> transfer, most of which we do not use right now. Hardware CS control
+> is available, but we haven't found a way to make it stay low across
+> multiple logical transfers, so we just use software CS control for now.
+> 
+> There is also a shared DMA offload coprocessor that can be used to handle
+> larger transfers without requiring an IRQ every 8-16 words, but that
+> feature depends on a bunch of scaffolding that isn't ready to be
+> upstreamed yet, so leave it for later.
+> 
+> The hardware shares some register bit definitions with spi-s3c24xx which
+> suggests it has a shared legacy with Samsung SoCs, but it is too
+> different to warrant sharing a driver.
+> 
+> Signed-off-by: Hector Martin <marcan-WKacp4m3WJJeoWH0uzbU5w@public.gmane.org>
+> Signed-off-by: Janne Grunau <j@jannau.net>
 
-That'd work too, but as you note below, doing that now throws a wrench in t=
-hings
-because essentially all arch maintainers would need merge that topic branch=
-,
-otherwise linux-next would end up in the same state.
+Hi,
 
-> > That would be a good oppurtunity to do the $(ARCH) directory switch[*] =
-too, e.g.
-> > have a "selftests_late" or whatever topic branch.
->=20
-> The right time to do KVM-wide changes (even selftests) is *early* in the
-> development cycle, not last minute. It gives us plenty of time to iron ou=
-t
-> the wrinkles.
+a few nitpicks, if they make sense to you or in case of v3.
 
-Yeah, that was the original plan, then the stupid strict aliasing bug happe=
-ned,
-and I honestly forgot the vcpu_get_reg() changes would need to be consumed =
-by
-other architectures.
 
-Other than letting me forget about this mess a few weeks earlier, there's n=
-o
-good reason to force this into 6.13.  So, I'll drop the series from 6.13, p=
-ost
-new versions of the this and the $(ARCH) series just before the merge windo=
-w,
-and then either send a pull request to Paolo for 6.14 as soon as the 6.13 m=
-erge
-window closes, or ask/bribe Paolo to apply everything directly.
+> +static int apple_spi_probe(struct platform_device *pdev)
+> +{
+> +	struct apple_spi *spi;
+> +	int ret, irq;
+> +	struct spi_controller *ctlr;
+> +
+> +	ctlr = devm_spi_alloc_master(&pdev->dev, sizeof(struct apple_spi));
+> +	if (!ctlr)
+> +		return dev_err_probe(&pdev->dev, -ENOMEM, "out of memory\n");
+
+Usually, no message is needed, because kmalloc like functions are 
+already verbose.
+
+> +
+> +	spi = spi_controller_get_devdata(ctlr);
+> +	init_completion(&spi->done);
+> +	platform_set_drvdata(pdev, ctlr);
+> +
+> +	spi->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(spi->regs))
+> +		return PTR_ERR(spi->regs);
+> +
+> +	spi->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+> +	if (IS_ERR(spi->clk))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(spi->clk),
+> +				     "Unable to find or enable bus clock\n");
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	ret = devm_request_irq(&pdev->dev, irq, apple_spi_irq, 0,
+> +			       dev_name(&pdev->dev), spi);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "Unable to bind to interrupt\n");
+> +
+> +	ctlr->dev.of_node = pdev->dev.of_node;
+> +	ctlr->bus_num = pdev->id;
+> +	ctlr->num_chipselect = 1;
+> +	ctlr->mode_bits = SPI_CPHA | SPI_CPOL | SPI_LSB_FIRST;
+> +	ctlr->bits_per_word_mask = SPI_BPW_RANGE_MASK(1, 32);
+> +	ctlr->flags = 0;
+
+Nitpick: not needed, the memory if already zeroed.
+
+> +	ctlr->prepare_message = apple_spi_prepare_message;
+> +	ctlr->set_cs = apple_spi_set_cs;
+> +	ctlr->transfer_one = apple_spi_transfer_one;
+> +	ctlr->auto_runtime_pm = true;
+> +
+> +	pm_runtime_set_active(&pdev->dev);
+> +	devm_pm_runtime_enable(&pdev->dev);
+
+There could be an error handling, or if intentional, maybe a (void) or a 
+comment to show the intent.
+
+> +
+> +	apple_spi_init(spi);
+> +
+> +	ret = devm_spi_register_controller(&pdev->dev, ctlr);
+> +	if (ret < 0)
+> +		return dev_err_probe(&pdev->dev, ret, "devm_spi_register_controller failed\n");
+> +
+> +	return 0;
+> +}
+
+...
+
+CJ
 
