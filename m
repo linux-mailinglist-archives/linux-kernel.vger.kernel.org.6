@@ -1,192 +1,108 @@
-Return-Path: <linux-kernel+bounces-391912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE2C9B8D42
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:45:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0681F9B8D41
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:44:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624BF1C213AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:45:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95CEBB22AF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082C3157476;
-	Fri,  1 Nov 2024 08:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95555156F55;
+	Fri,  1 Nov 2024 08:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwkLVXvY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GoVkqtji"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C8C156C76;
-	Fri,  1 Nov 2024 08:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F76156C70;
+	Fri,  1 Nov 2024 08:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730450691; cv=none; b=ujZM3KI+o5PBlRpiNoKIEsx/fvtVKmHjtyTc3L7SfrOxW9g9NM2G/GgPXcrGi7HXb4FR7Q3YGMzMBp2J+4Jdpp3Q/7WYAyC80U8XrUXFLhquClE0qaVVd/mMwkTETOXhfNqyTGsq2f5g4GiBM0g6cY9drCfsPxZ1re4/RF07cgY=
+	t=1730450677; cv=none; b=DQLjr/y3KYbBEoqQs/ku1BB/Y6v6PB4P4vTrJau7y42mv1BJCdqu5RsHhp4XOx/K03a2eQn/D5T9mO+byK9PeXMMD1iCGX2DRmn1eNuKBy0OQDUsL4lsVkyl1UHaicsoXukw3yVLjDhHIBo70q9KLQjpLXC5bqtEGgIJU4pM5Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730450691; c=relaxed/simple;
-	bh=hFP28qqDVRgB/iKvSSyW9TfPZ4Jslyo2VBj6dqTndBw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k45HdHPvEpfcxK98KX9CW6LvPSEdlwQclV3yRpv1DxnVRSWkh1maeRTkke4+sQnBJ/Kl/rR600abp3eOecqWYRxnOUbZYS0KvEuBpZlogk+B2+DL5G7njn3GO++V+S7WQedIb3p1KqZn0R3hlVAENIpC5gJBWM2slgXoLz4Rer8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwkLVXvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC674C4CED2;
-	Fri,  1 Nov 2024 08:44:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730450690;
-	bh=hFP28qqDVRgB/iKvSSyW9TfPZ4Jslyo2VBj6dqTndBw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TwkLVXvYCaMFI97mmnq+k/ItgLFJxcTPn/fzrGWmJa1SoeboCyI1Ao6PQH6QLXX2B
-	 jOkZo6/PyL55sgwUMdVkCwA0yl0e3K/JCeHlvjIpBhXCQdSiC+F2QfFx7tzDAARsv4
-	 QKKtkOQgkbtZbu3N6rs45kHw1hx2hjX25tVNTJ6PfsDLthB/2bI8Zd9uJVSwUhUZWE
-	 wKzW0YQ3riXz37ATM0fGtug+ZZoVA4Zu6Ty2VxBDnxO3l/KDgMi7dVigGD0o8I3pXm
-	 dGVZQb+DYV9CGpAF9MmyyCKxYiTIRnpq6RhEqJUd9xUqOohcSW4/Fiv3m1LGNvBjYh
-	 Z8hLoZByb8sJw==
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso263260866b.1;
-        Fri, 01 Nov 2024 01:44:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVBld1314Xf4P4vqo4Cb4DJ0+GdvA/GY8v8rm1w4RPaRnbW3MeiyrNle9BY8Q7KNZc+0yWLx0geFhayLw==@vger.kernel.org, AJvYcCWTY8gwhRqcLBzVaRrGBOzByyWzhrOLBi1mEC9Sw3bAMk/6QDMiYnHxjY+C/3qdKOaFMQOmzNcHkwgURvdu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys22alv+JUcyZ7Z9d7WQzek5sDKBU+hGv5dIeEQZ5yyDIJgIDO
-	AKKKf/s+/pPsVmbc6s9gW8m12gDGr2MJs4le1F7eseh6hWXv/Cngrs4qmQdXjUuSStKWy3vnXOC
-	BwurNjOAHH+APxvosNqddFZ7SIAU=
-X-Google-Smtp-Source: AGHT+IEVwtRe7s10AaJwV9WO4s8T9YvjzGOIPTgdCfRvbONjS/QQ4GuOliA1z4AHKzar52jyc8l6KPnXbjODHg7sZtU=
-X-Received: by 2002:a17:907:6e86:b0:a99:5234:c56c with SMTP id
- a640c23a62f3a-a9e3a6210bdmr902147266b.33.1730450689405; Fri, 01 Nov 2024
- 01:44:49 -0700 (PDT)
+	s=arc-20240116; t=1730450677; c=relaxed/simple;
+	bh=GCMhYqA/YfCTsWWthvHXpoRveTvB5rQZPcmzM6duX/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WRiYJbIF3V9p/BPGX3jsQh1x9E6TvvG1GzEpMx1EDEJhngnqTmmEWcgY2dYsdMIgDwqGaLR/L/XZYWW1zSeaP83+KA4bSCPzIqZ4yRpmgvoWPCuUiJHBmWMSDDoX8whslgo10uBNCT9LNWeDonrUfh77DtOWUfs/dSgCPwmSZM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GoVkqtji; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730450676; x=1761986676;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GCMhYqA/YfCTsWWthvHXpoRveTvB5rQZPcmzM6duX/c=;
+  b=GoVkqtjiacXdAEaNrBXuikxezAwEXxY7k+LEKRfEg5KYOozFqJByzPpj
+   whoWaPDB9XGVRvs/qo1QjFeSy4GOnbrliQIrcdWloWPubUhv+gVwwQ+lL
+   9FDSyHhTKCJnbGhi7CEWOzq+UHVeUGDEGJpc2gBy9iY3By1aTJI4jSmjL
+   Op1PlrYsoRZp1gj3SJT3r/WDi178wv/M9HNpF8bkWaKRw7TWCMhbz3PkI
+   /pZqWYQ/PsuHIxfF/JfkgEe5FsMD7o0r/uzXzExcvEs1nGwc+Y4HjUU94
+   qiuIA/mqyLm//76J4CfKAhmi5fYlREy/7pOnS4SaLWABhR6eNfJa6Fcz2
+   w==;
+X-CSE-ConnectionGUID: eLiz2XhgQU+Gr9lwSWJ3lA==
+X-CSE-MsgGUID: b30//yZ5SEiYWQSZD9W9dQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="41610084"
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="41610084"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:44:35 -0700
+X-CSE-ConnectionGUID: 9gYS7nxMRvSrRD3BNX6YFg==
+X-CSE-MsgGUID: z0zU6Yh4Q32ZGvfo5g4uFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="82425556"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:44:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t6nGf-00000009y3g-4Bei;
+	Fri, 01 Nov 2024 10:44:30 +0200
+Date: Fri, 1 Nov 2024 10:44:29 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Liu Peibao <loven.liu@jaguarmicro.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	"xiaowu . ding" <xiaowu.ding@jaguarmicro.com>,
+	Angus Chen <angus.chen@jaguarmicro.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND TO CC MAILLIST] i2c: designware: fix master
+ holding SCL low when I2C_DYNAMIC_TAR_UPDATE not set
+Message-ID: <ZySU7bEvct4_FbBX@smile.fi.intel.com>
+References: <20241101081243.1230797-1-loven.liu@jaguarmicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101035133.925251-1-zhenghaoran@buaa.edu.cn>
-In-Reply-To: <20241101035133.925251-1-zhenghaoran@buaa.edu.cn>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 1 Nov 2024 08:44:12 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H5SAEs75APMgRLNGZD+Mg6ic04+78M_rseabtidf1w05w@mail.gmail.com>
-Message-ID: <CAL3q7H5SAEs75APMgRLNGZD+Mg6ic04+78M_rseabtidf1w05w@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: Fix data race in log_conflicting_inodes
-To: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101081243.1230797-1-loven.liu@jaguarmicro.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Nov 1, 2024 at 3:52=E2=80=AFAM Hao-ran Zheng <zhenghaoran@buaa.edu.=
-cn> wrote:
->
-> The Data Race occurs when the `log_conflicting_inodes()` function is
-> executed in different threads at the same time. When one thread assigns
-> a value to `ctx->logging_conflict_inodes` while another thread performs
-> an `if(ctx->logging_conflict_inodes)` judgment or modifies it at the
-> same time, a data contention problem may arise.
+On Fri, Nov 01, 2024 at 04:12:43PM +0800, Liu Peibao wrote:
+> When Tx FIFO empty and last command with no STOP bit set, the master
+> holds SCL low. If I2C_DYNAMIC_TAR_UPDATE is not set, BIT(13) MST_ON_HOLD
+> of IC_RAW_INTR_STAT is not Enabled, causing the __i2c_dw_disable()
+> timeout. This is quiet similar as commit 2409205acd3c ("i2c: designware:
+> fix __i2c_dw_disable() in case master is holding SCL low") mentioned.
+> Check BIT(7) MST_HOLD_TX_FIFO_EMPTY in IC_STATUS also which is available
+> when IC_STAT_FOR_CLK_STRETCH is set.
 
-No, there's no problem at all.
-A log context is thread local, it's never shared between threads.
+Who are those people? Why Angus Chen is not a committer of the change?
+Please, consult with the Submitting Patches documentation to clarify on these
+tags.
 
->
-> Further, an atomicity violation may also occur here. Consider the
-> following case, when a thread A `if(ctx->logging_conflict_inodes)`
-> passes the judgment, the execution switches to another thread B, at
-> which time the value of `ctx->logging_conflict_inodes` has not yet
-> been assigned true, which would result in multiple threads executing
-> `log_conflicting_inodes()`.
+Also, sounds to me that Fixes tag is needed.
 
-No. When you make such claims, please provide a sequence diagram that
-shows how the tasks interact, what their call stacks are, so that we
-can see where the race happens.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-But again, this is completely wrong because a log context (struct
-btrfs_log_ctx) is never shared between threads.
 
-Thanks.
-
->
-> To address this issue, it is recommended to add locks to protect
-> `logging_conflict_inodes` in the `btrfs_log_ctx` structure, and lock
-> protection during assignment and judgment. This modification ensures
-> that the value of `ctx->logging_conflict_inodes` does not change during
-> the validation process, thereby maintaining its integrity.
->
-> Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-> ---
->  fs/btrfs/tree-log.c | 7 +++++++
->  fs/btrfs/tree-log.h | 1 +
->  2 files changed, 8 insertions(+)
->
-> diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-> index 9637c7cdc0cf..9cdbf280ca9a 100644
-> --- a/fs/btrfs/tree-log.c
-> +++ b/fs/btrfs/tree-log.c
-> @@ -2854,6 +2854,7 @@ void btrfs_init_log_ctx(struct btrfs_log_ctx *ctx, =
-struct btrfs_inode *inode)
->         INIT_LIST_HEAD(&ctx->conflict_inodes);
->         ctx->num_conflict_inodes =3D 0;
->         ctx->logging_conflict_inodes =3D false;
-> +       spin_lock_init(&ctx->logging_conflict_inodes_lock);
->         ctx->scratch_eb =3D NULL;
->  }
->
-> @@ -5779,16 +5780,20 @@ static int log_conflicting_inodes(struct btrfs_tr=
-ans_handle *trans,
->                                   struct btrfs_log_ctx *ctx)
->  {
->         int ret =3D 0;
-> +       unsigned long logging_conflict_inodes_flags;
->
->         /*
->          * Conflicting inodes are logged by the first call to btrfs_log_i=
-node(),
->          * otherwise we could have unbounded recursion of btrfs_log_inode=
-()
->          * calls. This check guarantees we can have only 1 level of recur=
-sion.
->          */
-> +       spin_lock_irqsave(&ctx->conflict_inodes_lock, logging_conflict_in=
-odes_flags);
-
-Even if this was remotely correct, why the irqsave? The fsync code is
-never called under irq context.
-
->         if (ctx->logging_conflict_inodes)
-> +               spin_unlock_irqrestore(&ctx->conflict_inodes_lock, loggin=
-g_conflict_inodes_flags);
->                 return 0;
->
->         ctx->logging_conflict_inodes =3D true;
-> +       spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_confli=
-ct_inodes_flags);
->
->         /*
->          * New conflicting inodes may be found and added to the list whil=
-e we
-> @@ -5869,7 +5874,9 @@ static int log_conflicting_inodes(struct btrfs_tran=
-s_handle *trans,
->                         break;
->         }
->
-> +       spin_lock_irqsave(&ctx->conflict_inodes_lock, logging_conflict_in=
-odes_flags);
->         ctx->logging_conflict_inodes =3D false;
-> +       spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_confli=
-ct_inodes_flags);
->         if (ret)
->                 free_conflicting_inodes(ctx);
->
-> diff --git a/fs/btrfs/tree-log.h b/fs/btrfs/tree-log.h
-> index dc313e6bb2fa..0f862d0c80f2 100644
-> --- a/fs/btrfs/tree-log.h
-> +++ b/fs/btrfs/tree-log.h
-> @@ -44,6 +44,7 @@ struct btrfs_log_ctx {
->         struct list_head conflict_inodes;
->         int num_conflict_inodes;
->         bool logging_conflict_inodes;
-> +       spinlock_t logging_conflict_inodes_lock;
->         /*
->          * Used for fsyncs that need to copy items from the subvolume tre=
-e to
->          * the log tree (full sync flag set or copy everything flag set) =
-to
-> --
-> 2.34.1
->
->
 
