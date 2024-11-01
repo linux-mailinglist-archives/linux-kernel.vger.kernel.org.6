@@ -1,269 +1,125 @@
-Return-Path: <linux-kernel+bounces-392253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD0B9B918B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:10:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A219B9193
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8AA1F23172
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82B521C21DE5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5CA19F423;
-	Fri,  1 Nov 2024 13:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B7D1A0726;
+	Fri,  1 Nov 2024 13:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V/BD6Q7K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wa9R8oC3"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C0B487A7
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D95819E982
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730466608; cv=none; b=KMlgs9tCLz/vtk+1QJVfGT2W0on15Cc5qsgBmqHUtpqUhlNowT2WQHpJLEvboWPi2QzwjMhJ+sPDBKx0KLnURVemXzG9IArc3Sic5x24d+ddfQQ2F1FqlDMd29bnOKnQW7Wb8ZBQjx88ZkoMSd+skhK2vdIxzlSkD7mI3rLBLMI=
+	t=1730466671; cv=none; b=lJojxFLGO0onugu0/JyPBw2qa4iINCWk8bxvVA6pX/HFP9QyD1oPKQvOXEaWMH7Imv2WY6oxGi+PhXMYj+fPC8W9qJx5C1/saaHn4GUtNajnCE76ITVvhzPGuDn8jHNs0VQXhVvNfX5CjQbGNhaJRw8y6xQQs/2Y50CNG1Y3SxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730466608; c=relaxed/simple;
-	bh=l9cjlou6mpETLrQVOj1LeWVrg+4r4bM75qya6s4Z8dY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Qm0k3lc/pk4d/V49zkuFAAU/UrQ9yPVn8bjgzlhhsiQf0UEzIFLas97m5R7OrLNQXT46aeJ6SJFJwdZ/vCt9o4uc6/vkdDJik6C3Di/ukZ+YVn9NdKlr7c8Im2XoWfuTMfvqoh1u7bdxwQBppwCiHP89WEvDkJ9/YETkE9zDfwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V/BD6Q7K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730466604;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HlrLEHSrIjMehLpiiUtAbg0zaECkOh0tWzc6F/xoVzU=;
-	b=V/BD6Q7KBL7TPon4HxQwcIt43rcfveZWkucd1dsh0f3oHR6to9I9kwdyr6R58Ye3CT5JSe
-	WdqzWoG5R9QQ9PUpLkPJXdh/rDXAjtLMIBho9ZGLmy16Gob+8kDiZh/ZG+DjS29pMmXUco
-	BB/JTAByse4+oix4zXgpW+hV2BCpAOQ=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-495-SB_ncT_TMweJfqQEmamlZw-1; Fri, 01 Nov 2024 09:10:03 -0400
-X-MC-Unique: SB_ncT_TMweJfqQEmamlZw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4315afcae6cso10964995e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:10:03 -0700 (PDT)
+	s=arc-20240116; t=1730466671; c=relaxed/simple;
+	bh=rBKvdBkDgEnZ8/2t7qkPf2PV6TUL/0RusHurefk/Ut4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EX/lQKx8J7ZrlUDbQLB+//TwnzVAnGIfldIAGlPJMHrQCyXw66cn1cuIKvAMrigolxjKZUNfMAl3L3KA0wux8C9hHE+EV+9kkCX0xtUlKLzHN1IHWkmNHR1xjwOGvENKT3HY0TDOIuVFVpQgEb/aKUX9Xm9IGg+85I5aQOsz3lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wa9R8oC3; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a4e4776f79so236015ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730466668; x=1731071468; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rBKvdBkDgEnZ8/2t7qkPf2PV6TUL/0RusHurefk/Ut4=;
+        b=Wa9R8oC30ojESYlGBaJN5FHhWFWGwcEABhXi/mNfOP60y6BuCHFir7o3TzMbmilvVq
+         PT53JJ2yG/EGDClXQFIeNxVtIC2d0T0nNCq9OTngcuJ26YVOkTcrXA5zBeGQFnu7FDc1
+         ObBB8rUPsHn/jS4Lh/EzOA2W68h+2befr+FLrxBasY/CbKW2LQdNQNIgAgaA1gvHvjvP
+         VfsOKzT7C3RS3ftszzU4IOCrXkMnbjCTYk/nM97H//8sYv0oAWHO/v0ZxlQnHNBOdFFY
+         dP4iZVsQ5acussnrc5cwIgYs72l8Q4sffYeIy5R8EKEDAMr9ELOUhxowAmR3bapuRcEA
+         SyYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730466602; x=1731071402;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HlrLEHSrIjMehLpiiUtAbg0zaECkOh0tWzc6F/xoVzU=;
-        b=L90E3h9pqekg0t4ohCBCLXu/UVeoadLOP7mN5zubPG+aaW6Ez002PpH9Bc80c1HOJx
-         j5p7EtPLlyOEHxkNdUEYAZPKVyl8FxHeIsrYUDRwFoIYjXQighMNapy78pc55wg5AXsz
-         426Hpx3Z6c0yDApsGHB7SG8CBC+OdpkeLvm5CSrZE9vgt4PWHzQEV/cQiAZPeiBh1f+E
-         zwn5wcEaLH8B/LUH9mH2MBCH6w69f6iQ9Tfy6DeQrATItegWRfI0Y8N+0xNz+UswIh8J
-         t7USztYx92X8L01DyFQMBTxo9wRNM9D86KtV20HnA9r+HdkWdaBUflxLmWtw08CZGcyZ
-         BahA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9pnEaMTMTM1tnguGj2NOy9hJwFT4hS0+1rQdQqevLchqsOLTmmg2WHhkRzP/iAe7fkKC4QB40wS5bZ1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxifwKz8UKSwuNFEB1UPVFqXbBWRw5K6n6pg6zRp5xG14O4PLCi
-	+dubetFhKADL7iaLizF2CPI7oRTpdT7MFzy0JszYIL0HFXfRjzb2ss9L1Ui0+Boii3r2qmRn+ug
-	XB0ZgRC/lkB4JJYV9fRbBlKvCzsCToEZrhaTQV8qGg8KC3HJYB885RqiUbjZDCg==
-X-Received: by 2002:a05:600c:46c5:b0:431:7c25:8600 with SMTP id 5b1f17b1804b1-43282fcfa63mr29332755e9.2.1730466602221;
-        Fri, 01 Nov 2024 06:10:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFsgHEsuAvFxkuf8HOXBXlUTTWg1Ksu26Xw7Mg7bz9nTOc2oVpqJ4spztSOBYj/kRFgbQ0gkQ==
-X-Received: by 2002:a05:600c:46c5:b0:431:7c25:8600 with SMTP id 5b1f17b1804b1-43282fcfa63mr29332465e9.2.1730466601768;
-        Fri, 01 Nov 2024 06:10:01 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9a99d3sm92048415e9.38.2024.11.01.06.10.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 06:10:01 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 47E02164B963; Fri, 01 Nov 2024 14:09:59 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Maciej
- Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev
- <sdf@fomichev.me>, Magnus Karlsson <magnus.karlsson@intel.com>,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 09/18] page_pool: allow mixing PPs within
- one bulk
-In-Reply-To: <20241030165201.442301-10-aleksander.lobakin@intel.com>
-References: <20241030165201.442301-1-aleksander.lobakin@intel.com>
- <20241030165201.442301-10-aleksander.lobakin@intel.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 01 Nov 2024 14:09:59 +0100
-Message-ID: <87ldy39k2g.fsf@toke.dk>
+        d=1e100.net; s=20230601; t=1730466668; x=1731071468;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rBKvdBkDgEnZ8/2t7qkPf2PV6TUL/0RusHurefk/Ut4=;
+        b=BRBt5ZB99Otg+iCP84CmvWjSJtUaqXmWEcdoBO4QVC9j8O5y3gRxADfKlwZv6Zx5fI
+         x0phmDaqq1EtPkoZm2pAXjmqSkezoyQbbj5rKIyo0SUeapXHoOrgQoU6iF/Q23LgUJdQ
+         zCxSdmrpJcNe1aBCQ7Hs1OXABSnW8xa5OeRIu7Hn5aTmRJig8T5zTDjys0FVEIz4LGo2
+         h6iuilcMUT+4mHd/LZe14ZxuMADjwOfaUuMDQFEygbkYZ9jxAHASz/OVt66No6rElo4q
+         lx24nkGVczAAjfz3slmwxvDf+No8X4nYH5rmq6VF0hTfxgZeUVtpQ90FYtaTEt1ysvaN
+         bUqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXuWlEiHm2wskLEcDfseRFG6O2x/xXx/ZXK1z3mPEtQqEqFlXw1hUutdCBYUXZbnF2b1GdWME3LJptLi7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytJ+kODRA4isJ520P/UDHwJZDt2bOnPEduRUtF4t8Joq50BdeG
+	CJAHCs6okvf6JtP2dCExTSLYm8iNTHsFwFFcQunEBT+Tz0m6b8ZzQ4tQQ5tn7CYqc5fQ7CSh0hz
+	MZZTUPdgN9ZabpZUviyoSyno24+cWctgYJVJ1
+X-Gm-Gg: ASbGncuz7N2zAnfCu6ulhld0U/TA2AiTJXznZ05WueMFi60k6WCoaKmMdFT5bB8N1cp
+	eQpak6xk2H2wCKeyxZzKIUsFfY9Qm/9o=
+X-Google-Smtp-Source: AGHT+IGy5jtPAQs70nZmSVQRpEpNW+aE/1kV6A2Lr9FjnVTsOCY2FVzGfSbPMwj3G1YUCRVN/VYED/7JXkuD6qBixIQ=
+X-Received: by 2002:a05:6e02:1a08:b0:3a3:dab0:2399 with SMTP id
+ e9e14a558f8ab-3a6a9414a07mr7484945ab.27.1730466668433; Fri, 01 Nov 2024
+ 06:11:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241029204541.1301203-1-almasrymina@google.com>
+ <20241029204541.1301203-3-almasrymina@google.com> <763d9630-3064-4d88-8e99-549a07328ec8@huawei.com>
+In-Reply-To: <763d9630-3064-4d88-8e99-549a07328ec8@huawei.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 1 Nov 2024 06:10:56 -0700
+Message-ID: <CAHS8izMgF8nx87D9pWPmq1pfDm1v8x5Z6gc_eMHcYo8zKX-Lrw@mail.gmail.com>
+Subject: Re: [PATCH net-next v1 2/7] net: page_pool: create page_pool_alloc_netmem
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Alexander Lobakin <aleksander.lobakin@intel.com> writes:
-
-> The main reason for this change was to allow mixing pages from different
-> &page_pools within one &xdp_buff/&xdp_frame. Why not?
-> Adjust xdp_return_frame_bulk() and page_pool_put_page_bulk(), so that
-> they won't be tied to a particular pool. Let the latter create a
-> separate bulk of pages which's PP is different and flush it recursively.
-> This greatly optimizes xdp_return_frame_bulk(): no more hashtable
-> lookups. Also make xdp_flush_frame_bulk() inline, as it's just one if +
-> function call + one u32 read, not worth extending the call ladder.
+On Fri, Nov 1, 2024 at 4:14=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
+> wrote:
 >
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> On 2024/10/30 4:45, Mina Almasry wrote:
+> > Create page_pool_alloc_netmem to be the mirror of page_pool_alloc.
+> >
+> > This enables drivers that want currently use page_pool_alloc to
+> > transition to netmem by converting the call sites to
+> > page_pool_alloc_netmem.
+>
+> For old API, page_pool_alloc_pages() always return a whole page, and
+> page_pool_alloc() returns a whole page or a page fragment based on the
+> requested size.
+>
+> For new netmem API, page_pool_alloc_netmems() always return a whole
+> netmem, and page_pool_alloc_netmem() returns a whole netmem or a netmem
+> fragment based on the requested size.
+>
+> Isn't it a little odd that old and new are not following the same
+> pattern?
 
-Neat idea, but one comment, see below:
+Hi Yunsheng,
 
-[...]
+The intention is that page_pool_alloc_pages is mirrored by
+page_pool_alloc_netmems.
 
->  /**
->   * page_pool_put_page_bulk() - release references on multiple pages
-> - * @pool:	pool from which pages were allocated
->   * @data:	array holding page pointers
->   * @count:	number of pages in @data
-> + * @rec:	whether it's called recursively by itself
->   *
->   * Tries to refill a number of pages into the ptr_ring cache holding ptr_ring
->   * producer lock. If the ptr_ring is full, page_pool_put_page_bulk()
-> @@ -854,21 +865,43 @@ EXPORT_SYMBOL(page_pool_put_unrefed_page);
->   * Please note the caller must not use data area after running
->   * page_pool_put_page_bulk(), as this function overwrites it.
->   */
-> -void page_pool_put_page_bulk(struct page_pool *pool, struct page **data,
-> -			     u32 count)
-> +void page_pool_put_page_bulk(struct page **data, u32 count, bool rec)
->  {
-> +	struct page_pool *pool = NULL;
-> +	struct xdp_frame_bulk sub;
->  	int i, bulk_len = 0;
->  	bool allow_direct;
->  	bool in_softirq;
->  
-> -	allow_direct = page_pool_napi_local(pool);
-> +	xdp_frame_bulk_init(&sub);
->  
->  	for (i = 0; i < count; i++) {
-> -		netmem_ref netmem = page_to_netmem(compound_head(data[i]));
-> +		struct page *page;
-> +		netmem_ref netmem;
-> +
-> +		if (!rec) {
-> +			page = compound_head(data[i]);
-> +			netmem = page_to_netmem(page);
->  
-> -		/* It is not the last user for the page frag case */
-> -		if (!page_pool_is_last_ref(netmem))
-> +			/* It is not the last user for the page frag case */
-> +			if (!page_pool_is_last_ref(netmem))
-> +				continue;
-> +		} else {
-> +			page = data[i];
-> +			netmem = page_to_netmem(page);
-> +		}
-> +
-> +		if (unlikely(!pool)) {
-> +			pool = page->pp;
-> +			allow_direct = page_pool_napi_local(pool);
-> +		} else if (page->pp != pool) {
-> +			/*
-> +			 * If the page belongs to a different page_pool, save
-> +			 * it to handle recursively after the main loop.
-> +			 */
-> +			page_pool_bulk_rec_add(&sub, page);
->  			continue;
-> +		}
->  
->  		netmem = __page_pool_put_page(pool, netmem, -1, allow_direct);
->  		/* Approved for bulk recycling in ptr_ring cache */
-> @@ -876,6 +909,9 @@ void page_pool_put_page_bulk(struct page_pool *pool, struct page **data,
->  			data[bulk_len++] = (__force void *)netmem;
->  	}
->  
-> +	if (sub.count)
-> +		page_pool_put_page_bulk(sub.q, sub.count, true);
-> +
+And page_pool_alloc is mirrored by page_pool_alloc_netmem.
 
-In the worst case here, this function can recursively call itself
-XDP_BULK_QUEUE_SIZE (=16) times. Which will blow ~2.5k of stack size,
-and lots of function call overhead. I'm not saying this level of
-recursion is likely to happen today, but who knows about future uses? So
-why not make it iterative instead of recursive (same basic idea, but
-some kind of 'goto begin', or loop, instead of the recursive call)?
+From your description, the behavior is the same for each function and
+its mirror. What is the gap in the pattern that you see?
 
-Something like:
-
-
-void page_pool_put_page_bulk(void **data, int count)
-{
-	struct page *bulk_prod[XDP_BULK_QUEUE_SIZE];
-	int page_count = 0, pages_left, bulk_len, i;
-	bool allow_direct;
-	bool in_softirq;
-
-	for (i = 0; i < count; i++) {
-		struct page *p = compound_head(data[i]));
-                
-		if (page_pool_is_last_ref(page_to_netmem(p)))
-			data[page_count++] = p;
-	}
-
-begin:
-	pool = data[0]->pp;
-	allow_direct = page_pool_napi_local(pool);
-	pages_left = 0;
-	bulk_len = 0;
-
-	for (i = 0; i < page_count; i++) {
-                struct page *p = data[i];
-		netmem_ref netmem;
-                
-		if (unlikely(p->pp != pool)) {
-			data[pages_left++] = p;
-			continue;
-		}
-
-		netmem = __page_pool_put_page(pool, page_to_netmem(p), -1, allow_direct);
-		/* Approved for bulk recycling in ptr_ring cache */
-		if (netmem)
-			bulk_prod[bulk_len++] = (__force void *)netmem;
-	}
-
-	if (!bulk_len)
-		goto out;
-
-	/* Bulk producer into ptr_ring page_pool cache */
-	in_softirq = page_pool_producer_lock(pool);
-	for (i = 0; i < bulk_len; i++) {
-		if (__ptr_ring_produce(&pool->ring, bulk_prod[i])) {
-			/* ring full */
-			recycle_stat_inc(pool, ring_full);
-			break;
-		}
-	}
-	recycle_stat_add(pool, ring, i);
-	page_pool_producer_unlock(pool, in_softirq);
-
-	/* Hopefully all pages was return into ptr_ring */
-	if (likely(i == bulk_len))
-		goto out;
-
-	/* ptr_ring cache full, free remaining pages outside producer lock
-	 * since put_page() with refcnt == 1 can be an expensive operation
-	 */
-	for (; i < bulk_len; i++)
-		page_pool_return_page(pool, (__force netmem_ref)bulk_prod[i]);
-
-out:
-	if (pages_left) {
-		page_count = pages_left;
-		goto begin;
-	}        
-}
-    
-  
-Personally I also think this is easier to read, and it gets rid of the
-'rec' function parameter wart... :)
-
--Toke
-
+--=20
+Thanks,
+Mina
 
