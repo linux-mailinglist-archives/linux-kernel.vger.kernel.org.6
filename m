@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-392481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F069B94B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:46:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C9269B94BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B02EB2177D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:46:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003DD1F22149
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C9A1C830B;
-	Fri,  1 Nov 2024 15:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6E31C830B;
+	Fri,  1 Nov 2024 15:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Jj7AcoFU"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="esQxyEFG"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B8F15B0E2;
-	Fri,  1 Nov 2024 15:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CA72CAB;
+	Fri,  1 Nov 2024 15:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475979; cv=none; b=us+fQbxXTO9+OluWHUgacUg8G9I67tRsPv3aA4IDfgv7t3blsa7HTUwoOGqcurPJdNzN1C7gIwQNgB8SOfzgs1qAqaTO4E42uU6Xx0S0q8nDf3ckQhlgxcrwzE2CsVwq/3iixu89GpP1McEwxRh4e8/nO0qYQn+QCjMLrypEyac=
+	t=1730476136; cv=none; b=gLCjUcfmDr18LFXXJoymxGJ60WDLgPOMhO5+apLCfL61OVzCzH2/n1Dk8h+M1Gh1sFYQThQl+YDmhz12I9hsxPgasWNhEbQQZIrDiuCrQLEhwndInG7ubmo7nkxMoz+Hckix8jlqLej+mjo1ocSLA7riU7mf0txyxgyANhqF0hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475979; c=relaxed/simple;
-	bh=OpvRx1WWE+WS+DgWenvK+IRNQ2xdgICCz6OcvfsAeVw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=capuxWShof+vRqe9fGLvTnOP2EbgPNimUmvYt93bblFMYeTxy2sXt9b/OiFesVPCXjSzA9FkA1DVqwthBX9rnw+Ov63GxVcT3VNj6KVc3o6J7fYO0eLUI+lOv3OotCY3mVs/pHkxCa+5y0JNh8ua8rqQDg9B6lDRfBWQoqIjUCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Jj7AcoFU; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730475951; x=1731080751; i=markus.elfring@web.de;
-	bh=7UB3ac7LBmeqyiSNaZiojKaC72aMNlvAd36yyxNrsRA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Jj7AcoFUcvb5OAlwS4Q6kVYWcKmEuY8+5zpeJ5WTD0pcI7n7grUNKyWlocW9GQra
-	 dDwRH3FUXlYsG5Uj85tI3OfDYJZclmbk6kdetDpayUb25hwaXFWbJp5Cqccls30yq
-	 4Bow5fsTgQGxApmTaWuC3/FFN8SF+LlPt/kTwzR2tgGWorSev9MEPyRQwVWETEH3/
-	 GtpoZuEbKYY6InQcl1dUIGM2lruXn43IX+I0PZJiWlY2Ad18OZQqEAUvwMH3+XdE1
-	 x40pyyr5brAHCXQGc9wBmsDNpAetIDAek2pYN9VycXLswWY0AUtMaqBvkbKWMKoEJ
-	 2z8PuOlENTEo1CMU0Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M6pUK-1tCvzN1kh4-00BxAE; Fri, 01
- Nov 2024 16:45:51 +0100
-Message-ID: <fdf5702a-b739-4643-8288-86e6cfb8403d@web.de>
-Date: Fri, 1 Nov 2024 16:45:47 +0100
+	s=arc-20240116; t=1730476136; c=relaxed/simple;
+	bh=VAX0+82+Fngu708Lh3AZW1e6Egd2QTv/qONgohR6bRA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gWyiY4auXqwmukQc7AKtdEs5+7hAgyMUQR2Y6Pkvtp0atEW6/NT4WEyBbOStyv+AJLPX9lRIbvhb2Pwz9x1gvmR4hS5RfRFyHMJkuC4QiR67VcBF590dixc564NlzJHgelSPB8kDm1ZvEVGjweP6bcmj9Kk1jHG9NIZJJFxxg+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=esQxyEFG; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 459A5120019;
+	Fri,  1 Nov 2024 18:48:52 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 459A5120019
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1730476132;
+	bh=y6nAAzzkMDWuNh//5mJoh4cSqksisQKY3QkAgnMbq5E=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=esQxyEFGffJ8kEkICowqUGUXgUM/WcUBdrQbsjZTaS2vPYHTPnLpv/DhfJD9MKp3/
+	 Upv8h9OLhqoSGETHHFRJSRi7aWVrkEMk4LEbl1HQvOYK0tf+B4m1VpBDftcQ6zHZ08
+	 +4P4eaR7ObOMjGxoB2aNMy+KiB6czbzV2P5BWigFTeXhmhIKsm32JZxxnov+SDr4gT
+	 v9qscAYIttF1V0aXee7eyoya/fVlCbpjJyUgKZnfmUvh2ITmq+dkw8tALm9o8xDjlL
+	 B85teiedzJDVQS8l6bKeqo5DsUPDvniVYLtzlNmJX9hXrYi3AmWzSiCLXhIi+y7mGO
+	 WBi3P/MquOpFA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Fri,  1 Nov 2024 18:48:52 +0300 (MSK)
+From: George Stark <gnstark@salutedevices.com>
+To: <pavel@ucw.cz>, <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>, George Stark
+	<gnstark@salutedevices.com>
+Subject: [PATCH v2 0/2] leds: pwm: Add default-brightness property
+Date: Fri, 1 Nov 2024 18:48:42 +0300
+Message-ID: <20241101154844.1175860-1-gnstark@salutedevices.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, s32@nxp.com,
- Bartosz Golaszewski <brgl@bgdev.pl>, Chester Lin <chester62515@gmail.com>,
- Conor Dooley <conor+dt@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>,
- Fabio Estevam <festevam@gmail.com>,
- Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jacky Bai
- <ping.bai@nxp.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Larisa Grigore <larisa.grigore@nxp.com>, Lee Jones <lee@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Matthias Brugger <mbrugger@suse.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
- Alberto Ruiz <aruizrui@redhat.com>, Christophe Lizzi <clizzi@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>
-References: <20241101080614.1070819-7-andrei.stefanescu@oss.nxp.com>
-Subject: Re: [PATCH v5 6/7] pinctrl: s32cc: add driver for GPIO functionality
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241101080614.1070819-7-andrei.stefanescu@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jj8tV1/5lvgDluPBwBwySefJgimRcKB6UJMv3JG+Rfhob34M4SF
- zpfZMhDKktYmP84RHCvTGMRiSo8eD0NXIcKYi0iJuMLPMKMkNEDgbDQ00Tu3zLt3yIR5swC
- e48XqFieUY4xPJkF6ksXNHRlO8FG5Rj1fT66cz39pU/OTQDchlM7fOVh76RvLj2jwuEjjfl
- jRgl7k75s3JcQFOrs36LA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7o16wLigwNM=;QX09HEZ8+jEi7umwCR8bn+fcqGK
- iwIJYJcfDDaFsY8IuY+91YTn1TGo54jj9+n48mICBQcofmxdKYke0JIQqJZ5RTaT0m1TOIYVs
- 0WYcQY13IvGmPayFCgdk9f98I4hbgbbzdVm60fmcjajvWqCELsqFzIisOKey4dj5AInvLdnPm
- JPnk0whD1ihkVamcU8WuO7BleTB1K2bLnpOJX+rhxeSCy0/hxb0lpZRF0S1DENcbi2czN+vgf
- kMYO0d1heXCAZDam18SRyaGX8UN5b1vxAxvdBZEXRl4IafyjddgXOWU6NSRvarmQul/bmK2E0
- pjv+09sdadnPZSU1M7MxBKDdgxmj0hWRzbSuRsPvY/e4RO8RrvrfEZAyM1DM9/qsuMc6uBl9a
- t9yWvQyXO7qrXhlZSDJ4a6VE8NzakgBTN0Wk2Ob3kKo2DbfvbssS9NaJKjFgNzNkF/u7EiiYt
- VCvtOzcxM0bIERiOFQdAlJESvtnyzqM4fxSq5dFgFrwqPDrmWB3C6z06xziKlr/grIk5r1Jvq
- +3IUGIqsr/+rU04AkX/bBebF/prO1QCGUBZWcBFVMTguLeqRTsBfBvrEAoXBXMByRysar3VxC
- H34HcNDvP0KJ4/AL3Honk9AjXEvhd3wCjnMmY6uc3ExX1zIhmd6WMKX1iy9bNRgBf6khllb/h
- ozXTFFObKmhIzHTnZbMOcqCOjxYGUkOhIZy0hdbhdcD85kEj+KfgoZRcNNDl/uvUf7Kl6zdu/
- BD1t2+GFK9EYQH1oIoBlBxahx2DbN5Rf+K4777Aceclv50hSGqbYrTyBV0TkB4xg57/HQ0QMz
- Ig2svqAtWJFQZJUAp40Pab1A==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188910 [Nov 01 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;lore.kernel.org:7.1.1;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/11/01 15:17:00
+X-KSMG-LinksScanning: Clean, bases: 2024/11/01 15:16:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/01 12:35:00 #26800049
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-> Add basic GPIO functionality (request, free, get, set) for the existing
-> pinctrl SIUL2 driver since the hardware for pinctrl&GPIO is tightly
-> coupled.
-=E2=80=A6
-> +++ b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-=E2=80=A6
-> +static int s32_gpio_request(struct gpio_chip *gc, unsigned int gpio)
-> +{
-=E2=80=A6
-> +	spin_lock_irqsave(&ipctl->gpio_configs_lock, flags);
-> +	list_add(&gpio_pin->list, &ipctl->gpio_configs);
-> +	spin_unlock_irqrestore(&ipctl->gpio_configs_lock, flags);
-=E2=80=A6
+led-pwm driver supports default-state DT property and if that state is on then
+the driver during initialization turns on the LED setting maximum brightness.
+Sometimes it's desirable to use lower initial brightness.
+This patch series adds support for DT property default-brightness.
 
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(spinlock_irqsave)(&ipctl->gpio_configs_lock);=E2=80=9D=
-?
-https://elixir.bootlin.com/linux/v6.12-rc5/source/include/linux/spinlock.h=
-#L551
+Things to discuss:
+If such a property is acceptable it could be moved to leds/common.yaml due to
+several drivers support multiple brightness levels and could support the property
+too.
 
-Regards,
-Markus
+Changes in v2:
+  leds: pwm: Add optional DT property default-brightness
+    - refactor patch to make it more accurate
+  link to v1: [1]
+
+[1] https://lore.kernel.org/lkml/20241015151410.2158102-3-gnstark@salutedevices.com/T/
+
+George Stark (2):
+  dt-bindings: leds: pwm: Add default-brightness property
+  leds: pwm: Add optional DT property default-brightness
+
+ .../devicetree/bindings/leds/leds-pwm.yaml      |  6 ++++++
+ drivers/leds/leds-pwm.c                         | 17 ++++++++++++++++-
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+
+--
+2.25.1
+
 
