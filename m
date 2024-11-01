@@ -1,384 +1,168 @@
-Return-Path: <linux-kernel+bounces-392680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323569B96FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:00:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CC99B96FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:01:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFDC51F22239
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:00:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39241B2119D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1166B1CDFA3;
-	Fri,  1 Nov 2024 18:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495761CDFA3;
+	Fri,  1 Nov 2024 18:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQckOwKd"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MP97v8rK"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5799970827;
-	Fri,  1 Nov 2024 18:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF3E1C8785
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730484021; cv=none; b=fzF4rQZJOwpIIrDZA0vo1bvMNyQV7/8fqoT/Er4pOsEiObUEgSmVgv5Ht1QfmmQUUK2nrDLknYGV1z8ICQtAuTE/l81b87yTBQqO1MNDa/IBG+2N5WWM4FYColefFh1M7P1TpZuSl+SFb6eoQm85QG7F0xTNWVNzWynx7X0FEmU=
+	t=1730484048; cv=none; b=aCFBalluMBzKbdthUN9gwWkl/y4G+huIavUR7SIJ2XgmCpMgfEZDv2TbDoCzRa4WctZNHh/7fgMjqQjpfq09EiCleIIulfkm94xYyALsH1CtQGkUb+HCW6Kqbrns1NvyXAzF/JNgVqF/gxnqPOYyPPADSGTdP96prA8Zqi4h2eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730484021; c=relaxed/simple;
-	bh=IgMxiTAaUeJdEf/LeyHO8UujIxGJJ3BpoTSZ2DuLlyc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uLopgLaFq+JSKr4yS7PObP/74G4mmuCbjodF9Y411SYCT3RV0VEoyUs+TpBCISU2tfM0j35iPSo1zuGbZUKEI18srStAn1btnzb0Scz5BmNRA1gU9GgizTerL8UvoaDZ+vYk/VeEL5Zv2wDmUsS9EZfZEWv+gOqeE/TfMPM8PRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQckOwKd; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e983487a1so1849340b3a.2;
-        Fri, 01 Nov 2024 11:00:19 -0700 (PDT)
+	s=arc-20240116; t=1730484048; c=relaxed/simple;
+	bh=0LAuoOHr5an1GDNiRzFl/O0AOfpEZV/kRGGyIuzHvuU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=AbDKc0KfnLZdLaOstBT2AIokqPAsWQVa3rTsAb9Je9V5go19GsM65CfDr0s7AnwGi/ux91lJr3XbpqQt4BxMcgoFIrQQaHRCdHdx34UzSa650vJSLyjaiirau23MX9iAvxsyp6dkn7nb3ye9S5iJRoHTgrP5Tl/PzaqugbvHsVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MP97v8rK; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso1696798a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:00:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730484018; x=1731088818; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ho20PkVrnbRCak35ywDE4CKQxL2Y+KHHf3gwNYey8HI=;
-        b=YQckOwKdn5B/8D9lddXvmX+XMDOuq22Fs+/VzzJZFLfyMQUbUYPp34jGJNQd02FHpW
-         T0h2QN5DYjHA4HMDaHhaKCkGmyVyUM4Kkaue/H6thaMvUhZNuCLmnTJq+7DzOxvFdFY4
-         1KtFiJbU1FZOjrWxv5NVeiVYYdsAkLkAOH7+TUGZsC4lElyMDt17E4YwU5kTTN8grXxU
-         iBJVO1X41kn/tn/rg+q+Z2o3rIlpQvAMt2XoTL1YRimrmzDwLPMaZgAOrNi6nYGrMH2+
-         0p+tD5tOmi5kNjjwfRXmKGeEC9xRCQ5LctCFDe+akKIor6zGfXZFzDvJXL5SuApjjF8G
-         oTpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730484018; x=1731088818;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730484046; x=1731088846; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ho20PkVrnbRCak35ywDE4CKQxL2Y+KHHf3gwNYey8HI=;
-        b=FOYoRxvJCuIhYkW3ftjUBGK63mVvI9DdnVc0yo7ASKRgDKk4E2+VMOK50AZOwiyP8D
-         /UWqKyFSHfnPwm57T+kZPOX6RhshixU+LZAh0VZVA2a8m5RiWKdcQ5eUunQqSjEG61nO
-         uSaGxO/ryolbuNHUEhXgWzR0KL7vB9jgvqPglK0nk3qLth0F2RSd9ZzE4U3iIoVOr21v
-         KNojv45pqK0ZEoJ5Te45k0vNia2bG4PVdkwCqVCMMOoJU1uKaOXK5ZTdLyQk260DKbLg
-         xQSBgj/5bJ8u2mnXiz/cU18RYrKeK050Qyn9daib+l0yj6oM3CsQ4+L99PH7mTDAnL04
-         5vUw==
-X-Forwarded-Encrypted: i=1; AJvYcCURcDLBBTKtri+JPZN8hULRFwnN6BAtMsianNXQ5smsrEanpQSR7+Zy4rL3N8a0uRGHZ218glltKv4=@vger.kernel.org, AJvYcCVQlagF0Fjx8MU5AqbwAjO4LmNGYUsygDaL11ceToyhZlWxSIq8GyfQC0PPCuvOQ04MjfPIYa1yW3/bQft0@vger.kernel.org, AJvYcCVc2iV+4TGEkNlNGPwjJMxmtI4G1MJjPzF819hygo9lUej3TnTEFwWZ4qzvhldPn4GuIO+zgHfhBFCO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/smRLz6wAeSlOBlIxdHpdQ9DEnLsaz2X/jtxS7qeRfTdoxmt+
-	/ehzGnumRKQIG4aN/xfp6an8ZVfrScXxzSjmuVC5A04IdX/XDMJ4
-X-Google-Smtp-Source: AGHT+IFmuMH1YKyaYipqlM1ZZKiVDiBwvHFFkdmQQdDKlFYsEUbZUiYfkOTnZecGa5YUypc/9Kahpw==
-X-Received: by 2002:a05:6a21:168e:b0:1d9:215c:c641 with SMTP id adf61e73a8af0-1db91e82758mr8478349637.48.1730484018228;
-        Fri, 01 Nov 2024 11:00:18 -0700 (PDT)
-Received: from fan ([2601:646:8f03:9fee:eba7:38e1:4f3b:331c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee452a7f5bsm2739006a12.24.2024.11.01.11.00.15
+        bh=WnCjo3Pk+KGDDa91giSui6Tdjp/Aet5EBKdYoNfkxxs=;
+        b=MP97v8rKMLcAb1TIPa89kd8ipFvamrafuwUNz64/F5Bsk8Jfle5igUtrmdUyyxo/Ql
+         /DJh+icf0wuYMyh2J9TpGs6TbK8LRBKiFGqCHvr7GiXYPlC1CQRZIJQNt16+jWaAODeC
+         9JG0gXA3AXax66ywkmS9gLE+3QPh8HuYMLq3kzq+B4IEWTnsURCH+jR8d8h74Lvt7Mwl
+         Orvj2Dw0ECBHqnfKb6kncjdmzIcyB834j/lDUoxLiHeGjlH/v2vJL0midcATmsSM/9Yy
+         2ec/mWxvZd7WRyACZhF6x6F7vqn+gfNcTDoxSSY9BUoR9w7lqTb4CJR0yjJ4RaKXK+US
+         odoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730484046; x=1731088846;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WnCjo3Pk+KGDDa91giSui6Tdjp/Aet5EBKdYoNfkxxs=;
+        b=ZAJaIASgjN48O3t5VRwWJenDQKCDewuAsi8LfIvttxR8XZFcEzAW0D/7ba/ua+oDjT
+         MpEjtscv7KiolGZwJgQRldYgBzKK/S7D6dHRkRtawSpjp6iiiVfN/D8Mh04OFdnBfAfm
+         dNy74f89VybC8k6kzFBdIsyUw/zcmyANLth7lMIPthRpCxX0GXU1uOBIvoDacviZNWMX
+         G/GQ9DHkwM0tDExc+Ebr4xFyC1jx4Zx+s4BzvlVzhwYTJ33JkU6rLFq73oby/bjCoE4p
+         oWjOM4CwoVjwxPofWFtR0+UCwHvXTbjAIODD2eRnugDIHfzy0Spzkjv/4Y8tMU1rYbT8
+         0a8g==
+X-Gm-Message-State: AOJu0YwUJa3hAk0rYnNTDXqXw8SYAOOIF9Q9sEU2bkrlwtYUPUBTHgm7
+	0jz8yfQTuJqGI0SKyCABv8uI3EXsz1WLwQnl7a/8f8I6AoskPiH+fsm0+HHebdw=
+X-Google-Smtp-Source: AGHT+IG8hUXTCtU3xJuFVYPPTCe5p5BTYDzV9RMwfkcACj/35sbMQwqwbLVMetaIIlhgVTbZwy8W4A==
+X-Received: by 2002:a17:90a:604b:b0:2e2:bb17:a322 with SMTP id 98e67ed59e1d1-2e8f11da738mr24775386a91.35.1730484045597;
+        Fri, 01 Nov 2024 11:00:45 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa2576dsm5064348a91.16.2024.11.01.11.00.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 11:00:17 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Fri, 1 Nov 2024 11:00:14 -0700
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	dave@stgolabs.net, jonathan.cameron@huawei.com,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
-	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
-	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
-Subject: Re: [PATCH v2 0/14] Enable CXL PCIe port protocol error handling and
- logging
-Message-ID: <ZyUXLpQBBgTl733z@fan>
-References: <20241025210305.27499-1-terry.bowman@amd.com>
+        Fri, 01 Nov 2024 11:00:44 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>, 
+ Eric Dumazet <edumazet@google.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+ "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <eric.dumazet@gmail.com>, 
+ syzbot+71abe7ab2b70bca770fd@syzkaller.appspotmail.com
+In-Reply-To: <20241101174755.1557172-1-edumazet@google.com>
+References: <20241101174755.1557172-1-edumazet@google.com>
+Subject: Re: [PATCH] iov-iter: do not return more bytes than requested in
+ iov_iter_extract_bvec_pages()
+Message-Id: <173048404421.574892.685420045440934367.b4-ty@kernel.dk>
+Date: Fri, 01 Nov 2024 12:00:44 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025210305.27499-1-terry.bowman@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Fri, Oct 25, 2024 at 04:02:51PM -0500, Terry Bowman wrote:
-> This is a continuation of the CXL port error handling RFC from earlier.[1]
-> The RFC resulted in the decision to add CXL PCIe port error handling to
-> the existing RCH downstream port handling in the AER service driver. This
-> patchset adds the CXL PCIe port protocol error handling and logging.
+
+On Fri, 01 Nov 2024 17:47:55 +0000, Eric Dumazet wrote:
+> syzbot found a way to crash UDP sendpage.
 > 
-> The first 7 patches update the existing AER service driver to support CXL
-> PCIe port protocol error handling and reporting. This includes AER service
-> driver changes for adding correctable and uncorrectable error support, CXL
-> specific recovery handling, and addition of CXL driver callback handlers.
+> Root cause is that iov_iter_extract_bvec_pages() is returning more bytes than
+> requested by ip_append_data().
 > 
-> The following 7 patches address CXL driver support for CXL PCIe port
-> protocol errors. This includes the following changes to the CXL drivers:
-> mapping CXL port and downstream port RAS registers, interface updates for
-> common restricted CXL host mode (RCH) and virtual hierarchy mode (VH),
-> adding port specific error handlers, and protocol error logging.
+> Oops: general protection fault, probably for non-canonical address 0xed2e87ee8f0cadc6: 0000 [#1] PREEMPT SMP KASAN PTI
+> KASAN: maybe wild-memory-access in range [0x69745f7478656e30-0x69745f7478656e37]
+> CPU: 1 UID: 0 PID: 5869 Comm: syz-executor171 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+>  RIP: 0010:_compound_head include/linux/page-flags.h:242 [inline]
+>  RIP: 0010:put_page+0x23/0x260 include/linux/mm.h:1552
+> Code: 90 90 90 90 90 90 90 55 41 57 41 56 53 49 89 fe 48 bd 00 00 00 00 00 fc ff df e8 d8 ae 0d f8 49 8d 5e 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 5f e5 77 f8 48 8b 1b 48 89 de 48 83
+> RSP: 0018:ffffc90003f970a8 EFLAGS: 00010207
+> RAX: 0d2e8bee8f0cadc6 RBX: 69745f7478656e36 RCX: ffff8880306d3c00
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 69745f7478656e2e
+> RBP: dffffc0000000000 R08: ffffffff898706fd R09: 1ffffffff203a076
+> R10: dffffc0000000000 R11: fffffbfff203a077 R12: 0000000000000000
+> R13: ffff88807fd7a842 R14: 69745f7478656e2e R15: 69745f7478656e2e
+> FS:  0000555590726380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000000045ad50 CR3: 0000000025350000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>   skb_page_unref include/linux/skbuff_ref.h:43 [inline]
+>   __skb_frag_unref include/linux/skbuff_ref.h:56 [inline]
+>   skb_release_data+0x483/0x8a0 net/core/skbuff.c:1119
+>   skb_release_all net/core/skbuff.c:1190 [inline]
+>   __kfree_skb net/core/skbuff.c:1204 [inline]
+>   sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
+>   kfree_skb_reason include/linux/skbuff.h:1262 [inline]
+>   kfree_skb include/linux/skbuff.h:1271 [inline]
+>   __ip_flush_pending_frames net/ipv4/ip_output.c:1538 [inline]
+>   ip_flush_pending_frames+0x12d/0x260 net/ipv4/ip_output.c:1545
+>   udp_flush_pending_frames net/ipv4/udp.c:829 [inline]
+>   udp_sendmsg+0x5d2/0x2a50 net/ipv4/udp.c:1302
+>   sock_sendmsg_nosec net/socket.c:729 [inline]
+>   __sock_sendmsg+0x1a6/0x270 net/socket.c:744
+>   sock_sendmsg+0x134/0x200 net/socket.c:767
+>   splice_to_socket+0xa10/0x10b0 fs/splice.c:889
+>   do_splice_from fs/splice.c:941 [inline]
+>   direct_splice_actor+0x11b/0x220 fs/splice.c:1164
+>   splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
+>   do_splice_direct_actor fs/splice.c:1207 [inline]
+>   do_splice_direct+0x289/0x3e0 fs/splice.c:1233
+>   do_sendfile+0x561/0xe10 fs/read_write.c:1388
+>   __do_sys_sendfile64 fs/read_write.c:1455 [inline]
+>   __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1441
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f17eb533ab9
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffdeb190c28 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f17eb533ab9
+> RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000004
+> RBP: 00007f17eb5a65f0 R08: 0000000000000006 R09: 0000000000000006
+> R10: 0000020000023893 R11: 0000000000000246 R12: 0000000000000001
+> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
 > 
-> [1] - https://lore.kernel.org/linux-cxl/20240617200411.1426554-1-terry.bowman@amd.com/
-> 
-> Testing:
+> [...]
 
-Hi Terry,
-I tried to test the patchset with aer_inject tool (with the patch you shared
-in the last version), and hit some issues.
-Could you help check and give some insights? Thanks.
+Applied, thanks!
 
-Below are some test setup info and results.
+[1/1] iov-iter: do not return more bytes than requested in iov_iter_extract_bvec_pages()
+      commit: 7bc802acf193010c5b2afb88523a57766b836bc1
 
-I tested two topology,
-  a. one memdev directly attaced to a HB with only one RP;
-  b. a topology with cxl switch:
-         HB
-        /  \
-      RP0   RP1
-       |
-     switch
-       |
- ----------------
- |    |    |    |
-mem0 mem1 mem2 mem3
-
-For both topologies, I cannot reproduce the system panic shown in your cover
-letter.  
-
-btw, I tried both compile cxl as modules and in the kernel.
-
-Below, I will use the direct-attached topology (a) as an example to show what I
-tried, hope can get some clarity about the test and what I missed or did wrong.
-
--------------------------------------
-pci device info on the test VM 
-root@fan:~# lspci
-00:00.0 Host bridge: Intel Corporation 82G33/G31/P35/P31 Express DRAM Controller
-00:01.0 VGA compatible controller: Device 1234:1111 (rev 02)
-00:02.0 Ethernet controller: Intel Corporation 82540EM Gigabit Ethernet Controller (rev 03)
-00:03.0 Unclassified device [0002]: Red Hat, Inc. Virtio filesystem
-00:04.0 Unclassified device [0002]: Red Hat, Inc. Virtio filesystem
-00:05.0 Host bridge: Red Hat, Inc. QEMU PCIe Expander bridge
-00:1f.0 ISA bridge: Intel Corporation 82801IB (ICH9) LPC Interface Controller (rev 02)
-00:1f.2 SATA controller: Intel Corporation 82801IR/IO/IH (ICH9R/DO/DH) 6 port SATA Controller [AHCI mode] (rev 02)
-00:1f.3 SMBus: Intel Corporation 82801I (ICH9 Family) SMBus Controller (rev 02)
-0c:00.0 PCI bridge: Intel Corporation Device 7075
-0d:00.0 CXL: Intel Corporation Device 0d93 (rev 01)
-root@fan:~# 
--------------------------------------
-
-The aer injection input file looks like below,
-
--------------------------------------
-fan:~/cxl/cxl-test-tool$ cat /tmp/internal 
-AER
-PCI_ID 0000:0c:00.0
-UNCOR_STATUS INTERNAL
-HEADER_LOG 0 1 2 3
-------------------------------------
-
-dmesg after aer injection 
-
-ssh root@localhost -p 2024 "dmesg"
-[  613.195352] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
-[  613.195830] pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
-[  613.196253] pcieport 0000:0c:00.0: CXL Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
-[  613.198199] pcieport 0000:0c:00.0: AER: No uncorrectable error found. Continuing.
---------------------------------------
-
-The problem seems to be related to the cxl_error_handler not been assigned for
-cxlmem device. 
-
-in
-cxl_do_recover() {
-...
-    327     cxl_walk_bridge(bridge, cxl_report_error_detected, &status);                         
-    328     if (status)                                                                 
-    329         panic("CXL cachemem error. Invoking panic");                   
-...
-}
-The status returned is false, so no panic().
-
-I tried to add some dev_dbg info to the code to debug.
-Below are the debug info and kernel code changes for debugging. 
---------------------------------------
-fan:~/cxl/cxl-test-tool$ cxl-tool.py --cmd dmesg | grep XXX
-[    1.738909] cxl_mem:cxl_mem_probe:205: cxl_mem mem0: XXX: add endpoint
-[    1.739188] cxl_mem:devm_cxl_add_endpoint:85: cxl_port port1: XXX: add endpoint
-[    1.739509] cxl_mem:devm_cxl_add_endpoint:92: cxl_mem mem0: XXX: init ep port aer
-[    1.739876] cxl_core:cxl_dport_init_ras_reporting:907: pcieport 0000:0c:00.0: XXX: assign port error handlers for dport 1
-[    1.740338] cxl_core:cxl_dport_init_ras_reporting:913: pcieport 0000:0c:00.0: XXX: assign port error handlers for dport 2
-[    1.740812] cxl_core:cxl_dport_init_ras_reporting:927: pcieport 0000:0c:00.0: XXX: assign port error handlers for dport 3
-[    1.741273] cxl_core:cxl_assign_port_error_handlers:851: pcieport 0000:0c:00.0: XXX: cxl_err_handler: (____ptrval____)
-[    1.741812] cxl_core:cxl_assign_port_error_handlers:855: pcieport 0000:0c:00.0: XXX: cxl_err_handler: (____ptrval____)
-[    1.742263] cxl_core:cxl_assign_port_error_handlers:857: pcieport 0000:0c:00.0: XXX: cxl_err_handler: (____ptrval____) (____ptrval____)
-fan:~/cxl/cxl-test-tool$ 
---------------------------------------
-
-dmesg after error injection:
---------------------------------------
-ssh root@localhost -p 2024 "dmesg"
-[  228.544439] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
-[  228.544977] pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
-[  228.545381] pcieport 0000:0c:00.0: CXL Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
-[  228.545879] pcieport 0000:0c:00.0:   device [8086:7075] error status/mask=00400000/00000000
-[  228.546360] pcieport 0000:0c:00.0:    [22] UncorrIntErr          
-[  228.546698] pcieport 0000:0c:00.0: AER: XXX: call cxl_err_handler: 00000000a268bfcb 000000009e0da039
-[  228.547103] cxl_pci 0000:0d:00.0: AER: XXX: call cxl_err_handler: 00000000b9f08b93 0000000000000000
-[  228.547515] pcieport 0000:0c:00.0: AER: No uncorrectable error found. Continuing.
-fan:~/cxl/cxl-test-tool$ 
---------------------------------------
-
-
-Kernel changes:
---------------------------------------
-diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-index 5f7570c6173c..bcecd1283fc6 100644
---- a/drivers/cxl/core/pci.c
-+++ b/drivers/cxl/core/pci.c
-@@ -848,10 +848,13 @@ static void cxl_assign_port_error_handlers(struct pci_dev *pdev)
- {
- 	struct pci_driver *pdrv = pdev->driver;
- 
-+    dev_dbg(&pdev->dev, "XXX: cxl_err_handler: %p\n enter", pdev);
- 	if (!pdrv)
- 		return;
- 
-+    dev_dbg(&pdev->dev, "XXX: cxl_err_handler: %p\n", pdrv);
- 	pdrv->cxl_err_handler = &cxl_port_error_handlers;
-+    dev_dbg(&pdev->dev, "XXX: cxl_err_handler: %p %p\n", pdrv, pdrv->cxl_err_handler);
- }
- 
- static void cxl_clear_port_error_handlers(void *data)
-@@ -869,12 +872,14 @@ void cxl_uport_init_ras_reporting(struct cxl_port *port)
- {
- 	struct pci_dev *pdev = to_pci_dev(port->uport_dev);
- 
-+    dev_dbg(&port->dev, "XXX: assign port error handlers for uport 1\n");
- 	/* uport may have more than 1 downstream EP. Check if already mapped. */
- 	if (port->uport_regs.ras) {
- 		dev_warn(&port->dev, "RAS is already mapped\n");
- 		return;
- 	}
- 
-+    dev_dbg(&port->dev, "XXX: assign port error handlers for uport 2\n");
- 	port->reg_map.host = &port->dev;
- 	if (cxl_map_component_regs(&port->reg_map, &port->uport_regs,
- 				   BIT(CXL_CM_CAP_CAP_ID_RAS))) {
-@@ -882,6 +887,7 @@ void cxl_uport_init_ras_reporting(struct cxl_port *port)
- 		return;
- 	}
- 
-+    dev_dbg(&port->dev, "XXX: assign port error handlers for uport 3\n");
- 	cxl_assign_port_error_handlers(pdev);
- 	devm_add_action_or_reset(port->uport_dev, cxl_clear_port_error_handlers, pdev);
- }
-@@ -898,11 +904,13 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
- 	struct pci_host_bridge *host_bridge = to_pci_host_bridge(dport_dev);
- 	struct pci_dev *pdev = to_pci_dev(dport_dev);
- 
-+    dev_dbg(dport_dev, "XXX: assign port error handlers for dport 1\n");
- 	if (dport->rch && host_bridge->native_aer) {
- 		cxl_dport_map_rch_aer(dport);
- 		cxl_disable_rch_root_ints(dport);
- 	}
- 
-+    dev_dbg(dport_dev, "XXX: assign port error handlers for dport 2\n");
- 	/* dport may have more than 1 downstream EP. Check if already mapped. */
- 	if (dport->regs.ras) {
- 		dev_warn(dport_dev, "RAS is already mapped\n");
-@@ -916,6 +924,7 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
- 		return;
- 	}
- 
-+    dev_dbg(dport_dev, "XXX: assign port error handlers for dport 3\n");
- 	cxl_assign_port_error_handlers(pdev);
- 	devm_add_action_or_reset(dport_dev, cxl_clear_port_error_handlers, pdev);
- }
-diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
-index 067fd6389562..aa824584f8dd 100644
---- a/drivers/cxl/mem.c
-+++ b/drivers/cxl/mem.c
-@@ -82,13 +82,15 @@ static int devm_cxl_add_endpoint(struct device *host, struct cxl_memdev *cxlmd,
- 	 * Now that the path to the root is established record all the
- 	 * intervening ports in the chain.
- 	 */
-+    dev_dbg(host, "XXX: add endpoint\n");
- 	for (iter = parent_port, down = NULL; !is_cxl_root(iter);
- 	     down = iter, iter = to_cxl_port(iter->dev.parent)) {
- 		struct cxl_ep *ep;
- 
- 		ep = cxl_ep_load(iter, cxlmd);
- 		ep->next = down;
--		cxl_init_ep_ports_aer(ep);
-+        dev_dbg(ep->ep, "XXX: init ep port aer\n");
-+        cxl_init_ep_ports_aer(ep);
- 	}
- 
- 	/* Note: endpoint port component registers are derived from @cxlds */
-@@ -200,6 +202,7 @@ static int cxl_mem_probe(struct device *dev)
- 			return -ENXIO;
- 		}
- 
-+        dev_dbg(dev, "XXX: add endpoint\n");
- 		rc = devm_cxl_add_endpoint(endpoint_parent, cxlmd, dport);
- 		if (rc)
- 			return rc;
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index 3785f4ca5103..8285f14994e8 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -294,6 +294,11 @@ static int cxl_report_error_detected(struct pci_dev *dev, void *data)
- 	bool *status = data;
- 
- 	device_lock(&dev->dev);
-+    if (pdrv) {
-+        dev_dbg(&dev->dev, "XXX: call cxl_err_handler: %p %p\n", pdrv, pdrv->cxl_err_handler);
-+    } else {
-+        dev_dbg(&dev->dev, "XXX: call cxl_err_handler: %p no handler\n", pdrv);
-+    }
- 	if (pdrv && pdrv->cxl_err_handler &&
- 	    pdrv->cxl_err_handler->error_detected) {
- 		const struct cxl_error_handlers *cxl_err_handler =
---------------------------------------
-
-Fan
-> 
-> Below are test results for this patchset using Qemu with CXL root
-> port(0c:00.0), CXL upstream switchport(0d:00.0), CXL downstream
-> switchport(0e:00.0). A CXL endpoint(0f:00.0) CE and UCE logs are
-> also added to show the existing PCIe endpoint handling is not changed.
-> 
-> This was tested using aer-inject updated to support CE and UCE internal
-> error injection. CXL RAS was set using a test patch (not upstreamed but can
-> provide if needed).
-> 
->  - Root port UCE:
->  root@tbowman-cxl:~/aer-inject# ./root-uce-inject.sh
->  pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
->  pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
->  pcieport 0000:0c:00.0: CXL Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
->  pcieport 0000:0c:00.0:   device [8086:7075] error status/mask=00400000/02000000
->  pcieport 0000:0c:00.0:    [22] UncorrIntErr
->  aer_event: 0000:0c:00.0 CXL Bus Error: severity=Fatal, Uncorrectable Internal Error, TLP Header=Not available
->  cxl_port_aer_uncorrectable_error: device=0000:0c:00.0 host=pci0000:0c status: 'Memory Address Parity Error' first_error: 'Memory Address Parity Error'
->  Kernel panic - not syncing: CXL cachemem error. Invoking panic
->  CPU: 1 UID: 0 PID: 146 Comm: irq/24-aerdrv Tainted: G            E      6.12.0-rc2-cxl-port-err-g2beab06a67d1 #4414
->  Tainted: [E]=UNSIGNED_MODULE
->  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
->  Call Trace:
->   <TASK>
->   dump_stack_lvl+0x27/0x90
->   dump_stack+0x10/0x20
->   panic+0x33e/0x380
->   cxl_do_recovery+0x116/0x120
->   ? srso_return_thunk+0x5/0x5f
->   aer_isr+0x3e0/0x710
->   irq_thread_fn+0x28/0x70
->   irq_thread+0x179/0x240
->   ? srso_return_thunk+0x5/0x5f
->   ? __pfx_irq_thread_fn+0x10/0x10
->   ? __pfx_irq_thread_dtor+0x10/0x10
->   ? __pfx_irq_thread+0x10/0x10
->   kthread+0xf5/0x130
->   ? __pfx_kthread+0x10/0x10
->   ret_from_fork+0x3c/0x60
->   ? __pfx_kthread+0x10/0x10
->   ret_from_fork_asm+0x1a/0x30
->   </TASK>
->  Kernel Offset: 0x29000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
->  ---[ end Kernel panic - not syncing: CXL cachemem error. Invoking panic ]---
-...
+Best regards,
 -- 
-Fan Ni
+Jens Axboe
+
+
+
 
