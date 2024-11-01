@@ -1,84 +1,57 @@
-Return-Path: <linux-kernel+bounces-392803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C5F9B984C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:20:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE019B984F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:20:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D13781F21C5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:20:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01B2B28252C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC61B1CF281;
-	Fri,  1 Nov 2024 19:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA351CF5C3;
+	Fri,  1 Nov 2024 19:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="teYo66oq"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tITwQKZq"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A393037B;
-	Fri,  1 Nov 2024 19:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CF537B
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730488795; cv=none; b=u4xVgFz4/BiehTcaGvcgZe0A00W9SaOnTARJOm/dg5/YyLKFHi26ib0olZY9w1GmDjEAbcWheiyVl/4Aag9T0F7TSAYkBK8CQbdC0q2asSscO39nX/+FahA3HPQP6Yjf316RwNHasuLAKH9pFLtohtSrLtB2aIIrUaI+7BuXM5E=
+	t=1730488800; cv=none; b=djnfnXC9HK23urAVQlcpnnswKk/vncJdkEGd8FRI+IfpicPje2kaEfhBaLXsmLQU0KWgmfSTTMIgFJM9i5AFizEaXEyiznofD7Alg7hoCFg/P7gSBXNBRuwzopiD2LoUFykM3WRV/yLnhXSEQsuuco7WKApDbNKXuq6coLAbGSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730488795; c=relaxed/simple;
-	bh=UY/cRm6t+njMXvBeHOuXALc357K58tlFDEAhv93bi0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fMtAW7EuQ1OkkIsEeXlZTlV7Wf6rZ5afbeq20bqjNEqZQXIBwTi7M2sT+pWgAfGAT8WYSfxbW3LsLxXxysmgkCnmz12BmYzS9Pz5TkMQ9LLYoEHDqUfrvUkZuktdZI66GJHItipXVjV3omLRT49HY4ak0F61P8PkE/HVAo/TRpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=teYo66oq; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1EV3gs030005;
-	Fri, 1 Nov 2024 19:19:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=emW3DFFX5xSkwqDqwd8s1ekemaINDrTWI4ZEJ8ZVy
-	Aw=; b=teYo66oqPhhDpjT+aLf/cOSKeRh4CcLqJ9KaxnMcKIU2kokmDFNDxYaLw
-	X89hmZMbee8206Q0hs4F886QijpA069F+n86u4IngxwCzYaN9PkVV9BnzdvvKAMn
-	PED3Cc6MCRdwlz/1+uKOI2tWhWhkTsabh5WvCEvlZttQWgpu7zbNsFxOhL5KsKv/
-	gnA5SpO9r36mD7NTQdk4FQ0Qwr75SqxwjX++StD/0tKF5fl3Y2qSB5C//4kZMqI8
-	fO3EuMWYdH1Qq9xifarIy6ibS1AXUO+/Z2qu9w5OB0OhQkZEGv7rdpm06dzmCa/u
-	/AAEJFapVpjWoj0L4d7acY7d0NDyg==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42n0trs4d2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 19:19:31 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1J0GrG017410;
-	Fri, 1 Nov 2024 19:19:30 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42harsubgu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 19:19:30 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A1JJSj319202362
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 1 Nov 2024 19:19:29 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CF63A20043;
-	Fri,  1 Nov 2024 19:19:28 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6C1C820040;
-	Fri,  1 Nov 2024 19:19:26 +0000 (GMT)
-Received: from li-bd3f974c-2712-11b2-a85c-df1cec4d728e.ibm.com.com (unknown [9.43.10.84])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  1 Nov 2024 19:19:26 +0000 (GMT)
-From: Hari Bathini <hbathini@linux.ibm.com>
-To: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        "Naveen N. Rao" <naveen@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-trace-kernel@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: [PATCH] selftests/ftrace: update kprobe syntax error test for ppc64le
-Date: Sat,  2 Nov 2024 00:49:25 +0530
-Message-ID: <20241101191925.1550493-1-hbathini@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730488800; c=relaxed/simple;
+	bh=sIXvOD3OZG6iRjOMU+KtarI1UnUvVaJqVcaWBqHgXqs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PbeMTlcbakNkxknKXWw+fwXftp4OnYSTlsAxZ2B/HfUKxm7nt+peQXOSLQH7ZfFKzVNYBL4yCbvalniMVvOEEpzpt19PEzxiOY3FL9zKQb9h30ueV//gnBR4WwMidpKLNfzbHWt5zIFkf5n5bgLK2srzfqqQokziNXhxgbidI0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tITwQKZq; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730488796;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qfMRzJmRTtk2n3vrWnRLlS39WI0LbCfZDKFxpKqV/OY=;
+	b=tITwQKZq3zSE+tEoz6oT7fXGkLs6SfFvec9LSklENAU0B4vTbCNON855CpTmb4ocnhukMs
+	GKeISR/YRDqyjwrbOCtCYacSn1cDM0CF6PGPuWuPA7H5MPkb1yTBKYitsVXtsYG26xuW+p
+	P9DFu1gYoKXFWK3HQYHymBGpnrJWkA0=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andrei Vagin <avagin@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Alexey Gladkov <legion@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] ucounts: fix counter leak in inc_rlimit_get_ucounts()
+Date: Fri,  1 Nov 2024 19:19:40 +0000
+Message-ID: <20241101191940.3211128-1-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,44 +59,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: R0NuKKSeMdoH9DKz0bqcplnnRXR7wh1C
-X-Proofpoint-GUID: R0NuKKSeMdoH9DKz0bqcplnnRXR7wh1C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- spamscore=0 mlxscore=0 clxscore=1011 impostorscore=0 mlxlogscore=999
- suspectscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411010138
+X-Migadu-Flow: FLOW_OUT
 
-For ppc64le, depending on the kernel configuration used, offset 16
-from function start address can also be considered function entry.
-Update the test case to accommodate such configurations.
+From: Andrei Vagin <avagin@google.com>
 
-Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
+The inc_rlimit_get_ucounts() increments the specified rlimit counter and
+then checks its limit. If the value exceeds the limit, the function
+returns an error without decrementing the counter.
+
+v2: changed the goto label name [Roman]
+
+Fixes: 15bc01effefe ("ucounts: Fix signal ucount refcounting")
+Signed-off-by: Andrei Vagin <avagin@google.com>
+Co-developed-by: Roman Gushchin <roman.gushchin@linux.dev>
+Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+Tested-by: Roman Gushchin <roman.gushchin@linux.dev>
+Acked-by: Alexey Gladkov <legion@kernel.org>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Alexey Gladkov <legion@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: <stable@vger.kernel.org>
 ---
- .../selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc    | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/ucount.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-index a16c6a6f6055..c03b94cc5784 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-@@ -111,7 +111,11 @@ check_error 'p vfs_read $arg* ^$arg*'		# DOUBLE_ARGS
- if !grep -q 'kernel return probes support:' README; then
- check_error 'r vfs_read ^$arg*'			# NOFENTRY_ARGS
- fi
-+if [ "$(uname -m)" = "ppc64le" ]; then
-+check_error 'p vfs_read+20 ^$arg*'		# NOFENTRY_ARGS
-+else
- check_error 'p vfs_read+8 ^$arg*'		# NOFENTRY_ARGS
-+fi
- check_error 'p vfs_read ^hoge'			# NO_BTFARG
- check_error 'p kfree ^$arg10'			# NO_BTFARG (exceed the number of parameters)
- check_error 'r kfree ^$retval'			# NO_RETVAL
+diff --git a/kernel/ucount.c b/kernel/ucount.c
+index 8c07714ff27d..9469102c5ac0 100644
+--- a/kernel/ucount.c
++++ b/kernel/ucount.c
+@@ -317,7 +317,7 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
+ 	for (iter = ucounts; iter; iter = iter->ns->ucounts) {
+ 		long new = atomic_long_add_return(1, &iter->rlimit[type]);
+ 		if (new < 0 || new > max)
+-			goto unwind;
++			goto dec_unwind;
+ 		if (iter == ucounts)
+ 			ret = new;
+ 		max = get_userns_rlimit_max(iter->ns, type);
+@@ -334,7 +334,6 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
+ dec_unwind:
+ 	dec = atomic_long_sub_return(1, &iter->rlimit[type]);
+ 	WARN_ON_ONCE(dec < 0);
+-unwind:
+ 	do_dec_rlimit_put_ucounts(ucounts, iter, type);
+ 	return 0;
+ }
 -- 
-2.47.0
+2.47.0.163.g1226f6d8fa-goog
 
 
