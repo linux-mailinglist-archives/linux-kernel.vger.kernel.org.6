@@ -1,447 +1,198 @@
-Return-Path: <linux-kernel+bounces-392019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD6C9B8ECC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:10:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C23A9B8E7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:01:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA1A81F231B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:10:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFA541C20F75
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D124175D2D;
-	Fri,  1 Nov 2024 10:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60487185E53;
+	Fri,  1 Nov 2024 10:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvMcxGt8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Aj2xsSmz"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2079.outbound.protection.outlook.com [40.107.20.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7982E1607B7;
-	Fri,  1 Nov 2024 10:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730455791; cv=none; b=WcryAFoTTFzWXJVYLPB+M/lxtJdSZgltcXD/pFF5dlJ5mGB+VKNT/c6W46RGvgiVfvNbdyaLg/MjapTg+qTPVZXGJcGDw6abEXDXZck93ugrwlHYh20ShU+jMzKvggBWpXYzwsOLY0/fHBCywhpu01150P0f5TYMQOiw0OhmcXg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730455791; c=relaxed/simple;
-	bh=AcSL/03ZzuL0s3iV7KdXkVv5V8VGcWt1LULfaJMxedM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tpiRjcCDB4KQbVze++1osbr0S5JYeEXQOe/3WZNcCiK44BcqX1YtlDHbMcLAavgHt3G3A7JtXJc3z3wLKmDRo9XYdkxArakTLgIPE9Hzvi0ZWIyjvwZhknH9P2vwJJjPGYSj9kAGWVhC7bwz+hf50vj+9CVzT/mWjXgtA/pmQX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvMcxGt8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D06A3C4CECD;
-	Fri,  1 Nov 2024 10:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730455790;
-	bh=AcSL/03ZzuL0s3iV7KdXkVv5V8VGcWt1LULfaJMxedM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dvMcxGt8WyMZWVGe6OmimdOISYd5UDWzxUlZHwEy6YrAUfW+nJFM8p943QaFXqT5s
-	 TwHajPLInX7jEYzELyVVymEUq1ohLad0hs1kZ6EOkmr/8t7PkYXL1AIV0k6NkvGO/R
-	 RPzwwglICV6qieLjgkvA2f8RXPhqmWJcYZ4C8CkIb45shDw/KmsnUtj0AjV4JJYqij
-	 aCJ9S99nbUdj1kmG43V1Q7GBGhrMywykfVf4U30c8Jk7MMixz/mTEcfTwbxNQPsk1u
-	 qyAX0lkdwbrbO4ClX9ovmcGj8idpm0ekRGcwK1kei0rjB9xhvICKeM6/7uIQfMulQn
-	 l+Yg5C7p35NaQ==
-Message-ID: <8604b8d8-ba1d-4373-ac2d-86e3ede22c3d@kernel.org>
-Date: Fri, 1 Nov 2024 11:09:38 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9D615A85A;
+	Fri,  1 Nov 2024 10:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730455238; cv=fail; b=CNyL1+1bAR76Fy8j7o3zKq/Y079SWh0LmnFZnCYCOTIj5GzniqfExArCF2te8kL9TDWeWTj5NY9sUvHpymq0aWLZqYxC/dHtojsP/feOtoA8mxuJwmc+mK7Sv0UAljkVO+MiNZHMYUL8mF42T4oHo5UzDmSxC9p/c3m4ElmsFCI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730455238; c=relaxed/simple;
+	bh=SURh2ClaqPA9bturxEbvXCTp54YVoVR/tYUjYSwui6s=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=DEAMj0EZYcG2e8PseQQHn5LTsYoqsez2Mw+wPgkmKlSRHimODr5Z4C+n72QloC+w4Yj8WJYqfiDm79osY3hQFBxOIRY1aItswxk3BAEVXE5xUFVqWM0lZZSFMsNR6modMb6FaaarjLUR36sg9TGRgHNxKIzTVZbMtj6x0zpXMcE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Aj2xsSmz; arc=fail smtp.client-ip=40.107.20.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U9ArM6YZmYZ5r35goi7L+ZxtHssU7ZjMu1lnpnqQI8CRoFPCSd1G6hmWUpupD+mmvKNPBpm8BXOyOW6OEWZmjL8kLkR5HAggC0EHWtmBpqg44rrhqKXAbcrjmfWvHpdB/ruPKxnqr+/XyzJC1PqgQclbHdZpYhMnvoUDKMHZnuQdxgW8tos1FW/ZBd9Sg1OTtTrWwGE4ZQO9+FQPeug7VakKcw0rQZMEv3JzkTXEiWiZAfF2Aa55jQKDwd7NvD7CGZ6x6LhABmwQB/qpma3Wfr0nKcTgD/XL3Yaq9KnKcIJdNPpi1zifoVRuOqIT717T03XJt3ba45SlEkFMyHJxvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kOGkNa2NodZXglslbSG/vK4ntaxJ8cbMGZ+qAk4Bvgg=;
+ b=IwpkIs76eWDae5tFmiESRTvSfll8EJySOX+yWquPJUQ7/RcBZuubn08gR7L36k0ZHMEY8Se1WflREkvHeKdwAYXtC1vKXYOipJKdYAWZwwemt7LZyctvYoMCYbqxb7o/IRyoQEnMN9hozbZO5eZfmdODfluhJnZm/wlY96ip4UrMjIPdcTKPPmiT1PTHPbP+x+uXo/8f1OXvYZiEFibrAgISKv2pw2dNh4py+V1imzHsfUvOpeuUzmUIJZYxCJ8rOqLm+3PAf+Z+5BDIFzHBsSIyKx27uFyg6W6qAB75jYf10IKnhfu9fVeNIt1SYCNTJPOMm4w06K3+qPsogh5emA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kOGkNa2NodZXglslbSG/vK4ntaxJ8cbMGZ+qAk4Bvgg=;
+ b=Aj2xsSmzmJRbZgOBCRVjCJSlxody4/QW9F0w8pyMPhpZUrOUWGE4Yw4BNrEkQqvz05+I4HrGvRrfta82I6CW3W9lERDZ3Sjk/iD74avxdsTuWfjTtge0q8y+JT+sAYRd7v+1vcARTRi5k7dByP+uU8FWSLNPoruEiVQWEunj+TlIbxMYt6TPvydlXYiGnPeTXEm74RV9D3v3B0K+OyqeQzU9Q0kDNwVd8GMEMXQJ7CM/Z3ImnG1srPBBX4fGCi4Ypx5G+jyYSppoRsw+X+jZjE4uwYpXI4gvoFAjpFn4Barjzet9peSdRzr9f9s80Ngsj4ivWAc+ca8cB+JislZybA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by PA4PR04MB7693.eurprd04.prod.outlook.com (2603:10a6:102:e0::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Fri, 1 Nov
+ 2024 10:00:30 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8114.015; Fri, 1 Nov 2024
+ 10:00:30 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	linux-rtc@vger.kernel.org (open list:REAL TIME CLOCK (RTC) SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] rtc: bbnsm: add remove hook
+Date: Fri,  1 Nov 2024 18:10:32 +0800
+Message-Id: <20241101101032.1446992-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0026.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::18) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] media: dt-bindings: media: camss: Add
- qcom,sc7280-camss binding
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org,
- konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241030105347.2117034-1-quic_vikramsa@quicinc.com>
- <20241030105347.2117034-2-quic_vikramsa@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241030105347.2117034-2-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PA4PR04MB7693:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59f07efd-8a56-43fe-28b8-08dcfa5c03f8
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|1800799024|366016|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?K1sYJ9AX1DjBrj95r8IpW9E44tdCV/mx/5Yt0nWpg83bi7Y7AS/6YI9Xy/Ow?=
+ =?us-ascii?Q?fHARV/0Vo1tHcUrk8c0/5mQxUe0OTDmVlh2cE6txbsiictvMvRc6JtD4/8OC?=
+ =?us-ascii?Q?f6ZajhMEiOuVSBIFdedu9E6syfpdXXAX0YdNvzla2KqOnU9rBk3Dz5HIEXIa?=
+ =?us-ascii?Q?MhV3r5zqqWNlUROfz5seVOhCFTrO0KWisGck9QxrV/bj2/+tc/05A50Nzx2t?=
+ =?us-ascii?Q?rLs5WURcucIOtEMSJ0GEqcFwxZRR/t4781I1n/HTf4PX8t1wDQHb+m7SZZDN?=
+ =?us-ascii?Q?JbvGSGDk/RyTnBSFr30H0z+LkIyS/MZUNLZJG87wtK3nKX5XIF0xq4ee26Mt?=
+ =?us-ascii?Q?fIo1UvXjCNypihp/YacQhMP91DnfsnRWN66Uz+CFFJB7REX5f/HHvr9XozM5?=
+ =?us-ascii?Q?fUiPKUbObG34VSVc/tX00HAcYLUqY8tjvwc5BY2rWfR3wBcKtbC4FkuOXN3w?=
+ =?us-ascii?Q?gp6VkZTQYTo1nc4oKYY0Arzn45AGf9c99LGoc/4yEkgttA5p5dCzRd8CYItk?=
+ =?us-ascii?Q?EfE/OjwANm7NQ4xQlpazeJszrgQpDMAZDWLiMep4KOidob9ys0eFWVyrJESg?=
+ =?us-ascii?Q?7nEaZIET0eCpQUOoh9Au88sWOfYQsHK6i2KlDaLySPHJZo4Wz35jk2JH87UE?=
+ =?us-ascii?Q?BHlWzscSwjyMCHu4mgO80Q5dlInS5xwIybTQF66GSGdNQpMow3oLKzzS0ttP?=
+ =?us-ascii?Q?TqZH48bJXWBHavMrFHgXpiSiMtwzZhCWS5G/Vixc/d5NKsPgwS96lsjgeQ5g?=
+ =?us-ascii?Q?A/xnf5hNQSLB3rfUxG5aHQfiOZdyglFtmlfMxfvr4YVI9nSVZ0rKsZnqlbgR?=
+ =?us-ascii?Q?u6gTe3BnM/dNAAyVzlZmJ1OGzS5tRI8V2VuSxil6BOezhPSOjJajdIDoBNMm?=
+ =?us-ascii?Q?yNq7h3xVLvVShXUhK74B0HR4AOR9P46FH7c6WEl436amkwEmTxEENGg1k/KH?=
+ =?us-ascii?Q?CxBbf5Jkug1QOVPWxGYCFf9NpLAt18sMkK+HJeC3F6dsMMQE7emVOSLJgW3i?=
+ =?us-ascii?Q?4EQeddg1Ta7zunyAs9TDTUP86JeKTMpC19QgQv5sf7l8eBiiNUK4jtN+i1qy?=
+ =?us-ascii?Q?tIZQ4JBnXZtn7HI5WTYy0TiBW8KlR5Y2hVLNOY7HRIR9yKb4c6Rr2UkQ+buH?=
+ =?us-ascii?Q?tfsXS0cOcCz9sCooOWgijEI2SzAA7PNHM8KnvwDUjXzEz0WYy8bKPxAEmbmC?=
+ =?us-ascii?Q?XPhE4Ok6uDbY8VqiBuTfypaKa/IHFiV/8BDDcIlersbb7uMk9J6VbEFrP0UY?=
+ =?us-ascii?Q?nqy3cu+i4JcuNEbesYPaNHEmqmJKrBeGBeAyTSOA434rkmoZePdQRuA092Ud?=
+ =?us-ascii?Q?DZl3B8dSi1SdXi/F65kNNCQ0OS7Bpmxq7Z8Q+LLcHf1gye3xy6qxs0KIUf7i?=
+ =?us-ascii?Q?qx6jk3o=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GtAGST4iaDdlVEW2nYWzElDz8RLNXR1XjC2KIou94z6WLamkfrQy3nKqclLP?=
+ =?us-ascii?Q?2mE0wlPHXX8JWrv8YwF94fRTXJ7jSz6e13wGNtKXiutoQBL2tEbDZahZbqLe?=
+ =?us-ascii?Q?LxTqYvdfI73eeZpnbXxsTCkbvfnawvCnHJwOfNbB0e+u2T4m66W6GEqu4cB8?=
+ =?us-ascii?Q?0hJhphlTM+EWp1D5D5F2hKE3zx9E3BFABbi7F0q9jlLD8tnoa0EMzG9+j+dA?=
+ =?us-ascii?Q?oH4oTZlAWnDxJX1U7Cusf2arSKUEiU5TcELVHCswolHkPnQvTrkS/qZKiao1?=
+ =?us-ascii?Q?RwQucj8u/a1T+wPPoRidzENxgxSyC3oUWGlQHV9RFfGMW0S++OSgT7kUXwKv?=
+ =?us-ascii?Q?SsHhkcL9VMBHbYEJArPGAbls9KU+5bHgNAbCdJa5BvUM4flxbANXXBoMkpVV?=
+ =?us-ascii?Q?yBHmls5F/5F44ZsL5mDAMCDHbzr1MU6gf6f4j3D4Sr0nM1x0Im2mbL2/xkaY?=
+ =?us-ascii?Q?Yb1WaA2qFTTLWjD705ZYOhsrdgWx0jBQIAUhoAXp7JNZ5ja/j6XyrFGKZd35?=
+ =?us-ascii?Q?V/Lqrrtbd6+GCBsOmgdJ9y8KMow9Z3gQQS3Y7fKixfhcoTcMRz3t/ggPYvqG?=
+ =?us-ascii?Q?66SDcsdLoB7u2SFn0dblmEmQORVwMWgkuCVsjYYukxNqK4FO7JWbzcIG+MGh?=
+ =?us-ascii?Q?EUHIVHh19VZwlh5EQd3dzmeCyczg5HDH7+9qR7T9H5BHT9v8RNMPaQo9Go4+?=
+ =?us-ascii?Q?a7Bd+diMa5rFaLv2mO6gZ3+CJ/owxCotlFpuUbt/xDsk1xtkmrOegJqjjHcZ?=
+ =?us-ascii?Q?/fG58KbT3qOR/j1uiIqF30EfFyjpfz5ZzE75pqPVeys7ooDzywcDNwHwvfxH?=
+ =?us-ascii?Q?s8uluhCVyqsXURjlBU0tqiCZCm5T3mihn1QkPwCQC1xFxLY6HswrVai+BIt8?=
+ =?us-ascii?Q?6keDV4kaM8ly9kiDR7YUnHlyEt7jhF5/LZGR2SJ1kIWMI4lpaKCq3FHPEjbF?=
+ =?us-ascii?Q?R7HEa49a2qB/cmOLx1BwEV/o6TRNMIhcV2VARKLqOxVjssIExmpyWOsTTDKP?=
+ =?us-ascii?Q?KAe2mrrjVQKbS4p2dFWARoCp0FexTqHkgL95lTsuHztujfVwkrWmpWyOvwc5?=
+ =?us-ascii?Q?nMsXpUS2a5S07Vbtafk2xkG9wLDOi14hoKAvp1LiWzPrKwgj2XkxWNgvmIXm?=
+ =?us-ascii?Q?ATVEugKUYp8GeWLo0f0MN3qQceKXNZRJ0sdl3QC1uF7U08L5gKHGCIufJCFE?=
+ =?us-ascii?Q?tZ2gQjTMlre2WpOGhg9AsBegUhHyp7FZ4XzM5tt1IXFGVM55738PyA+vqqSm?=
+ =?us-ascii?Q?sJK1CjMBUrHCpK+pUknTRPS35t2Nr9T/AiP8PU396hQ/Vbfsdp3dbAh5Da/A?=
+ =?us-ascii?Q?89pM1WyId1Q0dbcO06hBe4a04EpeHQCshBgkOsA0w1Gtt4sOloIL1a6Sspvm?=
+ =?us-ascii?Q?zj7MCg9U5Qn6Bby2rGmxf94mogcAr40jDiVYuqFbwSj0VwkyFA2vmwANd529?=
+ =?us-ascii?Q?P+YFiJoSvWYVwqvKlFA85CTc8qTtsz2L4J8mOSBLtG0P0uKbA0B5oWrQL/es?=
+ =?us-ascii?Q?4CPkGy27WQddOUqZN6FKz1rjWJKzl4HzcVtKvEsATzBXduW45H1pVbf1Syw+?=
+ =?us-ascii?Q?bq+tSl4dsi3VYZU51uTF88guTAi9VwhQpblMUYxx?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59f07efd-8a56-43fe-28b8-08dcfa5c03f8
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2024 10:00:30.4695
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9l9qejUsLrpOHxVQrQVSWIOjvtsBORmOCaIy5igGiOg84mN+4l11BIb2YIKLsjbiVSJwdMbU3CmGm5A2voUK9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7693
 
-On 30/10/2024 11:53, Vikram Sharma wrote:
-> Add bindings for qcom,sc7280-camss to support the camera subsystem
-> on the SC7280 platform.
-> 
-> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+From: Peng Fan <peng.fan@nxp.com>
 
-Feedback given to one patch, applies to everything. Respond or implement
-the feedback from 2 months ago:
+Without remove hook to clear wake irq, there will be kernel dump when
+doing module test.
+"bbnsm_rtc 44440000.bbnsm:rtc: wake irq already initialized"
 
-https://lore.kernel.org/linux-arm-msm/b17ad6e0-a99b-46c9-89e6-df72773a0bd4@kernel.org/
+Add remove hook to clear wake irq and set wakeup to false.
 
-> ---
->  .../bindings/media/qcom,sc7280-camss.yaml     | 439 ++++++++++++++++++
->  1 file changed, 439 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
-> new file mode 100644
-> index 000000000000..783a5366e32b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
-> @@ -0,0 +1,439 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/qcom,sc7280-camss.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SC7280 CAMSS ISP
-> +
-> +maintainers:
-> +  - Azam Sadiq Pasha Kapatrala Syed <akapatra@quicinc.com>
-> +  - Hariram Purushothaman <hariramp@quicinc.com>
-> +
-> +description:
-> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sc7280-camss
-> +
-> +  clocks:
-> +    maxItems: 32
-> +
-> +  clock-names:
-> +    items:
-> +      - const: camnoc_axi
-> +      - const: csi0
-> +      - const: csi1
-> +      - const: csi2
-> +      - const: csi3
-> +      - const: csi4
-> +      - const: csiphy0
-> +      - const: csiphy0_timer
-> +      - const: csiphy1
-> +      - const: csiphy1_timer
-> +      - const: csiphy2
-> +      - const: csiphy2_timer
-> +      - const: csiphy3
-> +      - const: csiphy3_timer
-> +      - const: csiphy4
-> +      - const: csiphy4_timer
-> +      - const: gcc_camera_ahb
-> +      - const: gcc_camera_axi
-> +      - const: soc_ahb
-> +      - const: vfe0_axi
-> +      - const: vfe0
-> +      - const: vfe0_cphy_rx
-> +      - const: vfe1_axi
-> +      - const: vfe1
-> +      - const: vfe1_cphy_rx
-> +      - const: vfe2_axi
-> +      - const: vfe2
-> +      - const: vfe2_cphy_rx
-> +      - const: vfe0_lite
-> +      - const: vfe0_lite_cphy_rx
-> +      - const: vfe1_lite
-> +      - const: vfe1_lite_cphy_rx
-> +
-> +  interconnects:
-> +    maxItems: 2
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: ahb
-> +      - const: hf_0
-> +
-> +  interrupts:
-> +    maxItems: 15
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid2
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: csiphy3
-> +      - const: csiphy4
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe2
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    items:
-> +      - description: IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
-> +      - description: IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
-> +      - description: IFE2 GDSC - Image Front End, Global Distributed Switch Controller.
-> +      - description: Titan GDSC - Titan ISP Block, Global Distributed Switch Controller.
-> +
-> +  power-domains-names:
-> +    items:
-> +      - const: ife0
-> +      - const: ife1
-> +      - const: ife2
-> +      - const: top
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    description:
-> +      CSI input ports.
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port for receiving CSI data.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port for receiving CSI data.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +      port@2:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port for receiving CSI data.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +      port@3:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port for receiving CSI data.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +      port@4:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port for receiving CSI data.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +      port@5:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port for receiving CSI data.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +  reg:
-> +    maxItems: 15
-> +
-> +  reg-names:
-> +    items:
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid2
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: csiphy3
-> +      - const: csiphy4
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe2
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-> +
-> +  vdda-phy-supply:
-> +    description:
-> +      Phandle to a regulator supply to PHY core block.
-> +
-> +  vdda-pll-supply:
-> +    description:
-> +      Phandle to 1.8V regulator supply to PHY refclk pll block.
-> +
-> +required:
-> +  - clock-names
-> +  - clocks
-> +  - compatible
-> +  - interconnects
-> +  - interconnect-names
-> +  - interrupts
-> +  - interrupt-names
-> +  - iommus
-> +  - power-domains
-> +  - power-domains-names
-> +  - reg
-> +  - reg-names
-> +  - vdda-phy-supply
-> +  - vdda-pll-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,camcc-sc7280.h>
-> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-> +    #include <dt-bindings/interconnect/qcom,sc7280.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/power/qcom-rpmpd.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        camss: camss@acaf000 {
+Fixes: eb7b85853c38 ("rtc: bbnsm: Add the bbnsm rtc support")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/rtc/rtc-nxp-bbnsm.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Drop unused label.
-
-> +            compatible = "qcom,sc7280-camss";
-> +
-> +            clocks = <&clock_camcc CAM_CC_CAMNOC_AXI_CLK>,
-
-Last time feedback was:
-"Please carefully read DTS coding style."
-
-Before that, I asked to fix the order:
-https://lore.kernel.org/all/2m4dmdsivqwo45bxvuhashrlfki3akzzc3qp2vp32nrhvairyq@uibybei3fsco/
-
-I don't think this improved. I think you just skimmed through DTS coding
-style without really double-checking your code.
-
-Sorry, repeating both feedbacks two or three times is not acceptable to me.
-
-NAK
-
-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/rtc/rtc-nxp-bbnsm.c b/drivers/rtc/rtc-nxp-bbnsm.c
+index acbfbeb8b070..fa88fd8ffadf 100644
+--- a/drivers/rtc/rtc-nxp-bbnsm.c
++++ b/drivers/rtc/rtc-nxp-bbnsm.c
+@@ -206,6 +206,12 @@ static int bbnsm_rtc_probe(struct platform_device *pdev)
+ 	return devm_rtc_register_device(bbnsm->rtc);
+ }
+ 
++static void bbnsm_rtc_remove(struct platform_device *pdev)
++{
++	dev_pm_clear_wake_irq(&pdev->dev);
++	device_init_wakeup(&pdev->dev, false);
++}
++
+ static const struct of_device_id bbnsm_dt_ids[] = {
+ 	{ .compatible = "nxp,imx93-bbnsm-rtc" },
+ 	{ /* sentinel */ },
+@@ -218,6 +224,7 @@ static struct platform_driver bbnsm_rtc_driver = {
+ 		.of_match_table = bbnsm_dt_ids,
+ 	},
+ 	.probe = bbnsm_rtc_probe,
++	.remove_new = bbnsm_rtc_remove,
+ };
+ module_platform_driver(bbnsm_rtc_driver);
+ 
+-- 
+2.37.1
 
 
