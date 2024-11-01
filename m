@@ -1,135 +1,130 @@
-Return-Path: <linux-kernel+bounces-392187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7F89B90CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:57:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E559B90CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:57:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF5891C20D4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:57:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E083281BEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D53819CC02;
-	Fri,  1 Nov 2024 11:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE3B19E7F3;
+	Fri,  1 Nov 2024 11:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kIaRloLB"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W+wvP0iR"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE90219C54A
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E4619D08F
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730462215; cv=none; b=hoe1EyMk9iuRGNUoItG0Vx8U98sCc/EMxS3VT8oozpO1aS6AdzYiz6zU/dRslxaZJ5UxyeZ+CipfEFmliq6j8HVbnaOQPkmlLompH/AoL+uVDOXBNBqAX+py3w0/7xqYAhPYcDq/H61LkeuEHU7REdF53dxFtLhoilhGa6ZIWWs=
+	t=1730462236; cv=none; b=TmqSPgZrkqWU7lbGMR6GsoLvW0YIUo771+YunKsqGZTTCNKeRUVTt9pMJjc6K/0TB5NC1RBDxKboAfBMvKHDY01CssJvTykjgHeIxbaaya8kTtRTtdx0/h0u7HOxNuHGGinDUJ6zztt6u3L/qDwW8p+85ByK1vih9QLM1fgLF3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730462215; c=relaxed/simple;
-	bh=bEjXnXMl7Ay4KShECfnw+okEgY3Haneebjk5FbB0/Hs=;
+	s=arc-20240116; t=1730462236; c=relaxed/simple;
+	bh=jcU/orumlgsJbKSrF/Nm/W+DgTU2zdH6jx1nkml6CZE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G1S49qQ0RqEuWe950eAqA9shzMen/cMPqDJOd389mSK2GaDPr5wS6QLDF5fTUUDL4yVdCH7B6lY6svtSzJIec1FBWsI8Vw/D0m3IJpPRhVtVFymw7hCC0Ct8XEq1ORYJyCqZggdvI7qKxI/FercJAQQ29E/SDSh6XhrTn/246F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kIaRloLB; arc=none smtp.client-ip=209.85.128.173
+	 To:Cc:Content-Type; b=HSsl8K4lOaqejnEDqNxfGoqgxXBm/H4+izHOES68LrNnWB+/z+LYEdicwl+iZfd41U4z6rsJTcJXayOR4c2LqbkPVAVeV7l537gA0mIjgbVJ4/Sz9QoQr7o3Kl1yfYdVzTNxRSI1lKhf5ZsX0RhzKYBrGuxOsUdKkwy1bbo2kMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W+wvP0iR; arc=none smtp.client-ip=209.85.128.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e3a97a6010so20931777b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:56:53 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ea5b97e31cso12561567b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:57:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730462213; x=1731067013; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1730462232; x=1731067032; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bEjXnXMl7Ay4KShECfnw+okEgY3Haneebjk5FbB0/Hs=;
-        b=kIaRloLBKIzN1mFarxzEwoV6g9qkmQTid2cJCNcfVvJxYKj34d1kez5rgjO934Su8E
-         BfoAQblT+mDSveJZGEemCgonnuROJQtYVbCy4Xj5tXwwIUTrK74sCLt5US0w4yQZtG3P
-         ir63ovRXSLVzXsDFLMIDH9285fLWIcvF0dUPF2aS25H7i01V4kihkctdbxx5KjEchqMl
-         rOVjIw3Ju4wR4vrOSyc5AKVYyOYjHdhqHqpbNBA1WviwiETZ4RfT+GywYEBHiQ29hFnO
-         j85T80fbbQi0Ek7CwQ8TwAGqNTXwdv8LMGvU0DCRRhjTKQoLfJKYPTgsctL3EWvOm/R7
-         2ghg==
+        bh=AyPmo8da7gVQeFsoekZ63qpPCKXE92H2RSDUtfff7nM=;
+        b=W+wvP0iRisWC95frYnQDDKVpK1IMLAGryk7hBidywJfu6dWqh0qTrBWd/1yDWwbLqk
+         FMTluEtPIuhOm/59QHNsaZToDcamu4m26DFzmgbWTer720MD65X5T1zwxtbiP9BqV+9d
+         GAEcBXjl30mKOP3rKVyBaKqAqCbx1YDxyRGpB3Ax0pFpHpqVqDKXsDiQ3ZAy7ProAkRP
+         hTNML4k1KyrvhmaBOWB6Frp+Jg2PTzmApvRlJlJVIHxJemh0zvtjyWGGR7f5eHzEg3yi
+         w7iiJE6JIOLTRKgQvHUbEBlW82eYtoHWD0Hv3Yu2xsmvn3cY1qiwjXo0S+G6Rb+QcSEH
+         L3yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730462213; x=1731067013;
+        d=1e100.net; s=20230601; t=1730462232; x=1731067032;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bEjXnXMl7Ay4KShECfnw+okEgY3Haneebjk5FbB0/Hs=;
-        b=LxLTtlXcBIg0og5rxJSNiglsrClLCDSMckZCGS9nbcV7j0XmVAZqM59OtAq7G17bz2
-         Z/FHEY/snz2oofAGrpEndZBl2cdFNig69kC71aFmPnizAtSwiemAso4GcBgdHDGlBB/v
-         3oqzdZkaludFYExm8MH7V5ErCDQdr8GcWeto4ntpfEpSPy38IDHBqIzlqn4BDQPyv5J1
-         PdndxAE8GfxkRoE4JUpR3G5SexuEnwwgG60FpLhvDjmN1365C/t7o21+GXJkyCWX5Fts
-         gklQ4ASQ7Uzo2Wfi14MeYiYg/3YYtIU5gxTwsRt82SkDCPrOGyiy845chVhOSz+oT9ZH
-         tg5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWhSnE9WgPiZKDBDq3aawMV3inPdjiEVvfnnKvjz5oW2oNtPbF4vOe7vLr6YbeQQpeNrPq3UUo4vtfGwXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTjjsd3Mq+jJsnLrMWtWMxqEuQEmn0ug3e2Oxtkp7i/2Y6xmRJ
-	T/yc3dXvPSGviC96n0Z2DLj3g0a6iLIkMd+B+3m8MF/iyZFOg9aZwcA1S1eAatqdmNEui1cj+TC
-	8MfQJU4NeUc32rlU8aKQCZ26Xiu/+8oHOxP2PTg==
-X-Google-Smtp-Source: AGHT+IGEoqkUdkWxi7vuinWA4jtAEJie/21Db5kfRuMM/lRk+uKXHoSQVZnW3JPpiWrncmcO/tvCnkg7EHY1ZRQ4gvM=
-X-Received: by 2002:a05:690c:f15:b0:6e2:aceb:fb34 with SMTP id
- 00721157ae682-6e9d88ea2b9mr230633227b3.1.1730462212665; Fri, 01 Nov 2024
- 04:56:52 -0700 (PDT)
+        bh=AyPmo8da7gVQeFsoekZ63qpPCKXE92H2RSDUtfff7nM=;
+        b=VYZ8ev2In3afhivZEXF1UfPpFFWjsetB1UsQNOKB0+u/HB9U7fBdv8vS6QMxtp+vHW
+         fInnu01BUJxwVqWipZ5FE2yPTsNiOLU+Sc/doxrIdtRLNn+ooWCyk8dnGrQYNOfQiOfZ
+         PeiJ4K+Dy18D2COF0x+7d1A1H8KMPMGCZFxN9ogdkk6f4Z7ZNXXjBGXGp4heLckqxUZl
+         wMBgSJA5Pz0vtVHQTi+0cN3GpyOzcgNdR87bzb52OyI4i0pXSt3pyCGaaoI2BxQAktgu
+         MnwBL99vLYHzEFniTSvhYetPuIsj66NVjeQpf5n4ZP5mqbBtfMd5ZPcCe+usSTNm6NXj
+         aDCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxyQ36KuzQ6Wc+FrHkGcHna5TaiaKm+Pz36lMnhq3loMnVnEzoFYROqSghs3c1b492W2Ny9caXywu0pf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaGMZ/FuzAKXSKcuX5307T8kJ+PsfsLxv/eGkq9Qs+PnpvCMmR
+	M4Mpw8kqDzKcBfA+rmGI7YmicG5sEJ7HKBTyFS5H6eCC7dtZ0XSyfRZAOrrwdJ7CEBsPnIxGP/L
+	MZhl5fcIVvnKniZvcgz5veatDT50EXHnsSbdnfw==
+X-Google-Smtp-Source: AGHT+IGjFViHhhsIEjWSeBRVVF02vu14Au/x1uufAjiQ0eyy+Lk2WKoLfjrFanaJSgIrSL/w8V1/5Fi83AtDrIju8t8=
+X-Received: by 2002:a05:690c:d18:b0:6db:d02f:b2c4 with SMTP id
+ 00721157ae682-6ea64308628mr27197277b3.7.1730462231906; Fri, 01 Nov 2024
+ 04:57:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022154508.63563-1-sebastian.reichel@collabora.com> <CAPDyKFoAv1jeQitHmTMhvwG9vGzN-vLby0fPzkX1E6+-Qe2dog@mail.gmail.com>
-In-Reply-To: <CAPDyKFoAv1jeQitHmTMhvwG9vGzN-vLby0fPzkX1E6+-Qe2dog@mail.gmail.com>
+References: <20241101101252.1448466-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20241101101252.1448466-1-peng.fan@oss.nxp.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 1 Nov 2024 12:56:16 +0100
-Message-ID: <CAPDyKFp=sRLVBhW2aK87pYHVGi_6gNw=e3j3AGMnEWP2SVYFpw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] Fix RK3588 GPU domain
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, 
-	=?UTF-8?Q?Adri=C3=A1n_Mart=C3=ADnez_Larumbe?= <adrian.larumbe@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Chen-Yu Tsai <wens@csie.org>, 
-	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kernel@collabora.com
+Date: Fri, 1 Nov 2024 12:56:36 +0100
+Message-ID: <CAPDyKFqmeCCkv5Yr0K9P9eToYTYsQmQUYmbbJvoOJ0O5t5tsjQ@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: imx93-blk-ctrl: correct remove path
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	"open list:GENERIC PM DOMAINS" <linux-pm@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 23 Oct 2024 at 12:05, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+On Fri, 1 Nov 2024 at 11:02, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
 >
-> On Tue, 22 Oct 2024 at 17:45, Sebastian Reichel
-> <sebastian.reichel@collabora.com> wrote:
-> >
-> > Hi,
-> >
-> > I got a report, that the Linux kernel crashes on Rock 5B when the panthor
-> > driver is loaded late after booting. The crash starts with the following
-> > shortened error print:
-> >
-> > rockchip-pm-domain fd8d8000.power-management:power-controller: failed to set domain 'gpu', val=0
-> > rockchip-pm-domain fd8d8000.power-management:power-controller: failed to get ack on domain 'gpu', val=0xa9fff
-> > SError Interrupt on CPU4, code 0x00000000be000411 -- SError
-> >
-> > This series first does some cleanups in the Rockchip power domain
-> > driver and changes the driver, so that it no longer tries to continue
-> > when it fails to enable a domain. This gets rid of the SError interrupt
-> > and long backtraces. But the kernel still hangs when it fails to enable
-> > a power domain. I have not done further analysis to check if that can
-> > be avoided.
-> >
-> > Last but not least this provides a fix for the GPU power domain failing
-> > to get enabled - after some testing from my side it seems to require the
-> > GPU voltage supply to be enabled.
-> >
-> > This series is now based on the pull request from Mark Brown:
-> > https://lore.kernel.org/linux-pm/ZvsVfQ1fuSVZpF6A@finisterre.sirena.org.uk/
-> >
-> > I added one more patch, which adds devm_of_regulator_get without the
-> > _optional suffix, since that is more sensible for the Rockchip usecase.
-> > Longer explanation can be seen in patch 6, which adds the handling to
-> > the Rockchip driver. My merge suggestion would be that Mark adds the
-> > regulator patch on top of the immutable branch and creates a new pull
-> > request.
+> From: Peng Fan <peng.fan@nxp.com>
 >
-> The merge strategy seems reasonable to me. But I am fine with that
-> whatever works for Mark.
+> The check condition should be 'i < bc->onecell_data.num_domains', not
+> 'bc->onecell_data.num_domains' which will make the look never finish
+> and cause kernel panic.
+>
+> Also disable runtime to address
+> "imx93-blk-ctrl 4ac10000.system-controller: Unbalanced pm_runtime_enable!"
+>
+> Fixes: e9aa77d413c9 ("soc: imx: add i.MX93 media blk ctrl driver")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Mark, any update on this?
-
-If easier, you could also just ack the regulator patch (patch1), and
-can just take it all via my tree.
+Applied for fixes and by adding a stable tag, thanks!
 
 Kind regards
 Uffe
+
+
+> ---
+>  drivers/pmdomain/imx/imx93-blk-ctrl.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pmdomain/imx/imx93-blk-ctrl.c b/drivers/pmdomain/imx/imx93-blk-ctrl.c
+> index 904ffa55b8f4..b10348ac10f0 100644
+> --- a/drivers/pmdomain/imx/imx93-blk-ctrl.c
+> +++ b/drivers/pmdomain/imx/imx93-blk-ctrl.c
+> @@ -313,7 +313,9 @@ static void imx93_blk_ctrl_remove(struct platform_device *pdev)
+>
+>         of_genpd_del_provider(pdev->dev.of_node);
+>
+> -       for (i = 0; bc->onecell_data.num_domains; i++) {
+> +       pm_runtime_disable(&pdev->dev);
+> +
+> +       for (i = 0; i < bc->onecell_data.num_domains; i++) {
+>                 struct imx93_blk_ctrl_domain *domain = &bc->domains[i];
+>
+>                 pm_genpd_remove(&domain->genpd);
+> --
+> 2.37.1
+>
 
