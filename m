@@ -1,188 +1,132 @@
-Return-Path: <linux-kernel+bounces-392496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BF89B94DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:02:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27009B94EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 742481C213C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:02:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD2DE1C21D66
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCD51C761F;
-	Fri,  1 Nov 2024 16:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5F981ACA;
+	Fri,  1 Nov 2024 16:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YZbqLSuQ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="peaNE9x+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585B181ACA
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C301BB6B3;
+	Fri,  1 Nov 2024 16:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730476960; cv=none; b=DBMty1A2tKgZZaxmIm8B2ks/4AP6a52oUGEQRcYTEiJ+Bs+MVw54HidWhhfY1f6oUbW4aEtl+yZLja7eADnNoVi0Er26kTZcdrT6/itqwbbbf/GHzpLytfkFRL3bNcd3x31nAE/32SUouwAmN8vEQDeNmZcO9URqXQKlzPz6liU=
+	t=1730477198; cv=none; b=Wr+qWn41v7s0Cm4cuYZ5F9stOJg5gY0OC8YOkhjAV0n3eY5GUVx2c88FkA9n/GH4epyzPNcjVy9dsiCua110ZyhLohzE/CgQ3JUFcByom4ghMsEf64aZNscZD/ncikKhrr2Vac9f6ioL5r5k1GPeoxHMdmzLL+AYcVx8BSYQJ78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730476960; c=relaxed/simple;
-	bh=3GKBrVny2p2TifcSB3WctuIjIC7hYHaEm5aSo9o2juE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QbEZxMDaYHXjPPMzI3NpKpfTHfduEvhmDPmrYu8DqRR+YUFeQpYTwv3s8KUiscf3LAz/6ABxnTKiw9c2gCvnCNlztwPoJT8G44KVJFqaG/BQWCA6CNUAsuozHn0Z7JRWIwRjxeAv2hz8L9Xx6+O7f4Hhh+zM2VN9FM/30+GyjVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YZbqLSuQ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ca4877690so115475ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 09:02:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730476957; x=1731081757; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w2rpfAEpsLtKNOAU374yYtxAN0UepXKdz1kTy844WGM=;
-        b=YZbqLSuQ7VL2dYVVVC026T5yLpQq9P5/whM6gIX5UBhY4A82hnZbpXyZ+JwVj3Icjs
-         YmUNTAlOz9f2Dg1ZGEstJJURRAlx1gmJziqsQ0UuKkHd7L64BS/1Utdt6BEX2cfS/Fcz
-         Oz+uQO+GW2kr7kwS0otaIVWiS+Un6zO6Z/+lpP7IzjDp+qTAw+HW3KAVCuVL8Crb1gpg
-         NhuAKleIEVYmncJ8qARyKdb/aZX9IlhSbVtQfpLNlF1vliNc/AA7o1lCmaCOr6mFYND5
-         VzRzOcrzSgS99a78WEpe0/qo27y9t/7wYvwwtB9nAqA8XVPoOLKL2jyy1YD7G/i0nJX5
-         bv7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730476957; x=1731081757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w2rpfAEpsLtKNOAU374yYtxAN0UepXKdz1kTy844WGM=;
-        b=BJ4HkVIJMFzWGDYg/+4giaWEQMBynTy7C7sJ/H+bRahtRzJ7xKW5DuzVXjXmBntdt5
-         GTTnOGTy6xE05hbGiIYc1QOYJxPQxDrAPIp8Fd4lQGKskeEwmD+UcUuBVmRRRWSqN7kB
-         kXg2APaopS9rTgvWXN2rPvscsHZforxntFfH0O2DPhYUeGmV3l6k7xKlgWC0+PS99tfP
-         Kco3L14QEhOqgVFtMhIu9b6KdIpsxpUv5Jz9evLjlDCMq4s+XjU+lwPLX/rBsHAemviA
-         /C+I0CnR8MdiuFdK0iHojQMFXIJhqrceqeitzXkSWCUJFbmqvOEFi3122AoY7fNcFYXA
-         7Jpw==
-X-Gm-Message-State: AOJu0YyzJbZ+8Z+se0v8j5oocKmdt878qqux5JkkZ6BZIPCyXMt0hwum
-	V8VeUi15W/u/nQRnVP8QjEM1JcMlI84Qg/adlkCp4FJkuyPccZwsQ7uf0U6/l55Jh2ASlJJFBTZ
-	oGec32zY7Zd4ns5Flf3faE8jWnD/TUZzI3/PK
-X-Gm-Gg: ASbGncvC5Y6/E80b0H1f0RKpnNJ2RLaESHwX19STy1FAyHfOEDnTYtSusUn9gX4LUzG
-	5CZYtfkoXMauMxv2HaSlVgqZ+Fk8ziiIl
-X-Google-Smtp-Source: AGHT+IGM2L33nn/G3uhGQLPmrXLjceVs08q5vkjwS9HQF1fX7xGb7+zd7WkPYP+bgCq5nmPeNJB3l50fp+eNvrgmDb0=
-X-Received: by 2002:a17:903:246:b0:20c:568f:37c7 with SMTP id
- d9443c01a7336-211055b58femr4605115ad.17.1730476957085; Fri, 01 Nov 2024
- 09:02:37 -0700 (PDT)
+	s=arc-20240116; t=1730477198; c=relaxed/simple;
+	bh=YdyDW2gcScZ/BdqJfnTtYadsfL8y75bS0poEUfdXiUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VfRC4WrkzOXwSBXB7fabGsJn0NoGkG/xNZwhi7gai6+UxD2/PbsuaQh5rddpd0g71ecQZlWHRWqUZ/CtED4fhtdO+VtYMJXAKEkx2KygGsSvm4bK+Qr5VgLUXYENGdlwLTNP6WXv+mPL8woeJZGQVp/qY+Armm0+NzYk/6V6OGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=peaNE9x+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B135C4CECD;
+	Fri,  1 Nov 2024 16:06:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730477197;
+	bh=YdyDW2gcScZ/BdqJfnTtYadsfL8y75bS0poEUfdXiUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=peaNE9x+uUJuwo6gX2ZdWtag2VzEWukSKKq6/Q6bJa4yKYnZXKotkurQAfcW8FEmT
+	 m65zJDr/cHp4Bfc3L5cbJgBEj8x3vIISQyvRQ8VEPw7U8WqKOykKzvg3bT/0rfc+iy
+	 oFcEKy2T12/LpWThDDEYlcMIdt4uDmFLFy/quQntzXAB8aD2yA7nW/i4GSrDhe3yAV
+	 OBm5HE58IbELIOvshb7bOguI8YMLLl6Juyq2tb+9HweY3rH1gRHrsEaDQLgwgPDzLD
+	 5CZrKERAhofgk+shQAZW1BxLwoJvwWesV/0wnTK3DqPO3fwFG6du+q39UMOv3DVP1n
+	 +DkHfA4PAFBuQ==
+Date: Fri, 1 Nov 2024 18:02:32 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Gregory Price <gourry@gourry.net>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
+	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
+	dave.jiang@intel.com, ira.weiny@intel.com,
+	alison.schofield@intel.com, dave.hansen@linux.intel.com,
+	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, rafael@kernel.org,
+	lenb@kernel.org, david@redhat.com, osalvador@suse.de,
+	gregkh@linuxfoundation.org, akpm@linux-foundation.org
+Subject: Re: [PATCH v5 2/3] x86: probe memory block size advisement value
+ during mm init
+Message-ID: <ZyT7mPPP1rxVJtxC@kernel.org>
+References: <20241101134706.1185-1-gourry@gourry.net>
+ <20241101134706.1185-3-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031223948.4179222-1-ctshao@google.com> <20241031223948.4179222-2-ctshao@google.com>
-In-Reply-To: <20241031223948.4179222-2-ctshao@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 1 Nov 2024 09:02:22 -0700
-Message-ID: <CAP-5=fVaD8GLhMmM=d4DqHnT24ZDHPAWU56mzSF5OXY=pTO3UA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] perf: Reveal PMU type in fdinfo
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, Kan <kan.liang@linux.intel.com>, 
-	Ze Gao <zegao2021@gmail.com>, Yang Jihong <yangjihong1@huawei.com>, 
-	Weilin Wang <weilin.wang@intel.com>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101134706.1185-3-gourry@gourry.net>
 
-On Thu, Oct 31, 2024 at 3:39=E2=80=AFPM Chun-Tse Shao <ctshao@google.com> w=
-rote:
->
-> It gives useful info on knowing which PMUs are reserved by this process.
-> Also add extra attributes which would be useful.
->
-> ```
-> Testing cycles
-> $ ./perf stat -e cycles &
-> $ cat /proc/`pidof perf`/fdinfo/3
-> pos:    0
-> flags:  02000002
-> mnt_id: 16
-> ino:    3081
-> perf_event-orig_type:   0
+On Fri, Nov 01, 2024 at 09:47:04AM -0400, Gregory Price wrote:
+> Systems with hotplug may provide an advisement value on what the
+> memblock size should be.  Probe this value when the rest of the
+> configuration values are considered.
+> 
+> The new heuristic is as follows
+> 
+> 1) set_memory_block_size_order value if already set (cmdline param)
+> 2) minimum block size if memory is less than large block limit
+> 3) if no hotplug advice: Max block size if system is bare-metal,
+>    otherwise use end of memory alignment.
+> 4) if hotplug advice: lesser of advice and end of memory alignment.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-nit: I think this should be:
-perf_event-type:   0
-this output was from an earlier version.
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-> perf_event-attr.config1:        0
-> perf_event-attr.config2:        0
-> perf_event-attr.config3:        0
->
-> Testing L1-dcache-load-misses//
-> $ ./perf stat -e L1-dcache-load-misses &
-> $ cat /proc/`pidof perf`/fdinfo/3
-> pos:    0
-> flags:  02000002
-> mnt_id: 16
-> ino:    1072
-> perf_event-attr.type:   3
-> perf_event-attr.config: 65536
-> perf_event-attr.config1:        0
-> perf_event-attr.config2:        0
-> perf_event-attr.config3:        0
-> ```
->
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
 > ---
->  kernel/events/core.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index cdd09769e6c56..e0891c376fd9d 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -8,6 +8,7 @@
->   *  Copyright  =C2=A9  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.co=
-m>
->   */
->
-> +#include "linux/seq_file.h"
+>  arch/x86/mm/init_64.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index ff253648706f..f1a495e998ce 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -1452,16 +1452,21 @@ static unsigned long probe_memory_block_size(void)
+>  	}
+>  
+>  	/*
+> -	 * Use max block size to minimize overhead on bare metal, where
+> -	 * alignment for memory hotplug isn't a concern.
+> +	 * When hotplug alignment is not a concern, maximize blocksize
+> +	 * to minimize overhead. Otherwise, align to the lesser of advice
+> +	 * alignment and end of memory alignment.
+>  	 */
+> -	if (!boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
+> +	bz = memory_block_advised_max_size();
+> +	if (!bz) {
+>  		bz = MAX_BLOCK_SIZE;
+> -		goto done;
+> +		if (!boot_cpu_has(X86_FEATURE_HYPERVISOR))
+> +			goto done;
+> +	} else {
+> +		bz = max(min(bz, MAX_BLOCK_SIZE), MIN_MEMORY_BLOCK_SIZE);
+>  	}
+>  
+>  	/* Find the largest allowed block size that aligns to memory end */
+> -	for (bz = MAX_BLOCK_SIZE; bz > MIN_MEMORY_BLOCK_SIZE; bz >>= 1) {
+> +	for (; bz > MIN_MEMORY_BLOCK_SIZE; bz >>= 1) {
+>  		if (IS_ALIGNED(boot_mem_end, bz))
+>  			break;
+>  	}
+> -- 
+> 2.43.0
+> 
 
-nit: I think you should use angle < > rather than quotes on the
-include for consistency.
-
-Thanks,
-Ian
-
->  #include <linux/fs.h>
->  #include <linux/mm.h>
->  #include <linux/cpu.h>
-> @@ -6820,6 +6821,17 @@ static int perf_fasync(int fd, struct file *filp, =
-int on)
->         return 0;
->  }
->
-> +static void perf_show_fdinfo(struct seq_file *m, struct file *f)
-> +{
-> +       struct perf_event *event =3D f->private_data;
-> +
-> +       seq_printf(m, "perf_event-attr.type:\t%u\n", event->orig_type);
-> +       seq_printf(m, "perf_event-attr.config:\t%llu\n", event->attr.conf=
-ig);
-> +       seq_printf(m, "perf_event-attr.config1:\t%llu\n", event->attr.con=
-fig1);
-> +       seq_printf(m, "perf_event-attr.config2:\t%llu\n", event->attr.con=
-fig2);
-> +       seq_printf(m, "perf_event-attr.config3:\t%llu\n", event->attr.con=
-fig3);
-> +}
-> +
->  static const struct file_operations perf_fops =3D {
->         .release                =3D perf_release,
->         .read                   =3D perf_read,
-> @@ -6828,6 +6840,7 @@ static const struct file_operations perf_fops =3D {
->         .compat_ioctl           =3D perf_compat_ioctl,
->         .mmap                   =3D perf_mmap,
->         .fasync                 =3D perf_fasync,
-> +       .show_fdinfo            =3D perf_show_fdinfo,
->  };
->
->  /*
-> --
-> 2.47.0.163.g1226f6d8fa-goog
->
+-- 
+Sincerely yours,
+Mike.
 
