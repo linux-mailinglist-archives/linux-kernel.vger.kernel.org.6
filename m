@@ -1,1088 +1,234 @@
-Return-Path: <linux-kernel+bounces-392200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE88C9B90EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:09:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70069B90EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:09:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737211F21BD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBA361C20FF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F7C19D081;
-	Fri,  1 Nov 2024 12:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A978619E7F3;
+	Fri,  1 Nov 2024 12:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c98+OrkP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xJS3QTa0"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38043175D2D;
-	Fri,  1 Nov 2024 12:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDBE19D8A8
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730462948; cv=none; b=k5FBUZ1HtmJjHrR9IOsAC3JhcS5Bn0HfgK3PnPzXnI+qTaOmk+XJHy/lFi7jUKWGcdTCCpyUzAfPzeLbz/TlpaqkquD4fd5g3qoyU6/ywkclN4NUHLkld9ukLDbWJBr7FNOflapGH5aeowDmuorovIl5XJrm46k0CnfDSNpuuRA=
+	t=1730462951; cv=none; b=YhDGpQQX4RipemhHzWD0Wk8RjauSezBK9FVxjuEp37Lks/PBnpMyzJEWU8IDVdSPL8BVP8uHq+biBZNXfx5QJo9t+3D9N2vaz4WUD6rcSHyGqtbw+BSg99DE8G014KOXuRolff0nsmLOsoAclY/OopIftjweh0amDOzXGHiP8zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730462948; c=relaxed/simple;
-	bh=gMMg8DFvO36V4MVbzA+pbzAjYShvPXzEHLyAS9/Xe9E=;
+	s=arc-20240116; t=1730462951; c=relaxed/simple;
+	bh=qtcPJL9JZ3Qlo8jAoWPIV55eqSOR2oLeq5CJfNjra3w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nV9Xg4DQlwzty6yf51GVWpnPggE3sIp9F+Cdj2CBxCWhAr7obJ3BOQfWTmJNMNfhi/f8gMGNoQeUFGu6B+8wCg6uqJQ7Ja7d2qBpbMOgLjrtWiEQCgZTnskkn/WmlcK//pOBPe3I6G3FexbZzp+WjQdud+lDMUSQvfgYCu6QJys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c98+OrkP; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730462944; x=1761998944;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=gMMg8DFvO36V4MVbzA+pbzAjYShvPXzEHLyAS9/Xe9E=;
-  b=c98+OrkP08FCAl5a3kW4QZYbIm9E+XujVRUM7OpYxRGXWCWsrUpotV6L
-   fJ9SODZlTWH8DxrwWwoODnyZQSEvvKJMNJp8BNMxDcEH7DnMNKBvPvMrY
-   qvsl901dAS4X21FWpC446sG+Nr4kTQPjkn+p1P1wSjCcNq0GyVPtDZZLd
-   0hS5DxENc2TlMI65NHvwyT1pns8LgZeKKlIsq8XuGK5KkOppvkZMAdxVR
-   dAHzswY01L88u1hhVr4CVpqcbrpXhpY8wx+BeGjYGdgLhFGkmsE2gHgMh
-   REv/RPUv6BbqhkTaTSvrjvR/K7NH3rtWpw+jXGFmvMOjrujtD9Zsu4esa
-   A==;
-X-CSE-ConnectionGUID: kVCoHtffRL+RhU6ne1OxIA==
-X-CSE-MsgGUID: MbIyndtHQeCwMf7f4SoPuA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="34025281"
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="34025281"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 05:08:56 -0700
-X-CSE-ConnectionGUID: zJSrroGAQIWHkU8cYIkO4g==
-X-CSE-MsgGUID: SZd4DVJFToehjon12+7OvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="83282290"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 05:08:52 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id B0D3C11FA28;
-	Fri,  1 Nov 2024 14:08:49 +0200 (EET)
-Date: Fri, 1 Nov 2024 12:08:49 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mirela Rabulea <mirela.rabulea@nxp.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	laurent.pinchart+renesas@ideasonboard.com, laurentiu.palcu@nxp.com,
-	robert.chiras@nxp.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, LnxRevLi@nxp.com,
-	kieran.bingham@ideasonboard.com, hdegoede@redhat.com,
-	dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com,
-	alain.volmat@foss.st.com, julien.vuillaumier@nxp.com,
-	alice.yuan@nxp.com
-Subject: Re: [PATCH 5/5] media: ox05b1s: Add support for Omnivision OS08A20
- raw sensor
-Message-ID: <ZyTE0X70SI7Wdqvs@kekkonen.localdomain>
-References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
- <20241028190628.257249-6-mirela.rabulea@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KnOHvgDryAU6kclAC0FXvTh0Wm6jbQDuUZrufiylXjBVPJKm2JYqncTAyH5mDUB+ApIzgmClQjJfIPQzy/4VtHDYw953V0mRHKIw6e6HqWtgC+Gz94Tj4Xh9duqbjzpaFL/M5OFpxgUUWPOltMz30bI2MNoZBoCDI0pWAQ8MPn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xJS3QTa0; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e6c754bdso1772971e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 05:09:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730462947; x=1731067747; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wAhQCRcMiUmuMbWiOCOKS1oH6Z8vsXpQznKWvE4jlME=;
+        b=xJS3QTa0j1k1mDsbN24Ng0E03o1G0FK0L3PW2E4uoz+spkEaU/gUUUjmL92cnO3X26
+         HH1ZIQi1FOWI8Z/jdIwsEnmtc04WaBndkS5TeNK5Ch4ZkRTAmtnOHvR1WA4NshuAwSBD
+         JZ8z4EFclCIy3nD9LIvwqh8oD+bs5ppRXgZhV8x947HIbMS+9HNLJzdx0pxsChJjNniy
+         Q/hLAGZF8hcx5ot0tfe9xTlHasy3vHCcQ47+fIWGad+cfR/fB096GTCX7USJxHB3nvDg
+         /1Yj/66mnn/e5ngQFdijGHEAeIxZ7sm4L6bpypfaKYqA9XJRvSwSwuuqwDtr3+uB1AI6
+         zZ/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730462947; x=1731067747;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wAhQCRcMiUmuMbWiOCOKS1oH6Z8vsXpQznKWvE4jlME=;
+        b=Qiijkr6mSunsmfuMPSECtJL6xiNF0kImzG/5HAegz4kx2iHk618eVPnaCqbetG9HIL
+         E6daRGKUoIAnHm8wbhnMQFPbOoEeYKMntLSciiHxLsKDwBBHzGxRnBohKmBgTLKGwiT/
+         6skCRlMnUDPS45r8AzJ3ZLRyCd0TTpOxQwjPmfpL/CWMEQ9BvYEWAXbvPBnCuVOKyQCK
+         U6lJz2wUB4qxiwEWjZyE4/ijtq6LBOwwfyKI9+Pr0oS7VB4jq/sX4yKOfL6k/u+lcOYF
+         pWoyAO0V3d8TeVGzynkNAxr2pg9EYcLum/LUfPmh9Ko5s1pClfZ05vGEH6JmkXkKaOt4
+         TUfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJgHJT9Gnk52YFOXIK4XeIVxRfsi68dTgfW4OsctMN9LIhR2vo/tQTYkMijS94gPfnnk1fo5ttzwIl+XM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbCsaP4Vwfdcedasq7RvD/svHDxYYqaJr8pWfG94kbmC2FGxyX
+	Zz6kDkQ8Sr87cMVy3lM2PMbZzyBk3zzXNYARAyxgr/9fBfXahZEuK2xSDsAAbD0=
+X-Google-Smtp-Source: AGHT+IHyAbSEgE4oV7BsWrSuBbwGPbBwncS1nrZBHG68qMqQ1XtsqRRKKfWPtVih1dkSCYyDRwz/RA==
+X-Received: by 2002:a05:6512:ac3:b0:536:56d8:24b4 with SMTP id 2adb3069b0e04-53c79e15746mr3712339e87.5.1730462947418;
+        Fri, 01 Nov 2024 05:09:07 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc959casm536926e87.49.2024.11.01.05.09.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 05:09:05 -0700 (PDT)
+Date: Fri, 1 Nov 2024 14:09:03 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH RFC v2 6/7] drm/display/hdmi: implement connector update
+ functions
+Message-ID: <26rhzrhn2vjq26foxifsuytby52q5ggxwvhpnozuaschm3iq2g@rimrszg6s526>
+References: <20241101-drm-bridge-hdmi-connector-v2-0-739ef9addf9e@linaro.org>
+ <20241101-drm-bridge-hdmi-connector-v2-6-739ef9addf9e@linaro.org>
+ <871pzvjk2t.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241028190628.257249-6-mirela.rabulea@nxp.com>
+In-Reply-To: <871pzvjk2t.fsf@intel.com>
 
-Hi Mirela,
-
-Thanks set the set.
-
-On Mon, Oct 28, 2024 at 09:06:28PM +0200, Mirela Rabulea wrote:
-> This is an 8 megapixel raw10/raw12 sensor with HDR capabilities.
-> HDR mode control is supported, with one hdr mode: staggered HDR with
-> 2 exposures on separate virtual channels.
-
-The patch still declares just one via get_frame_desc (as there are no
-changes). I think we need more documentation on this, including sensor
-specific documentation on the HDR mode as the interfaces don't provide it
-all. There's Documentation/userspace-api/media/drivers/st-vgxy61.rst that
-describes the existing usage of the control. We need more than this,
-however, as staggered HDR is more complicated, requiring processing on
-receiver side.
-
-Neither I'm sure the control is enough as an interface to configure this.
-
-> Supported resolutions:
->    - 1920 x 1080 @ 60fps (SBGGR10, no HDR)
->    - 1920 x 1080 @ 30fps (SBGGR10, HDR)
->    - 3840 x 2160 @ 30fps (SBGGR12, no HDR)
->    - 3840 x 2160 @ 15fps (SBGGR10, HDR)
->    - 3840 x 2160 @ 15fps (SBGGR12, HDR)
->    - 3840 x 2160 @ 30fps (SBGGR12, no HDR)
->    - 3840 x 2160 @ 30fps (SBGGR10, no HDR)
+On Fri, Nov 01, 2024 at 12:59:38PM +0200, Jani Nikula wrote:
+> On Fri, 01 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> > The HDMI Connectors need to perform a variety of tasks when the HDMI
+> > connector state changes. Such tasks include setting or invalidating CEC
+> > address, notifying HDMI codec driver, updating scrambler data, etc.
+> >
+> > Implementing such tasks in a driver-specific callbacks is error prone.
+> > Start implementing the generic helper function (currently handling only
+> > the HDMI Codec framework) to be used by driver utilizing HDMI Connector
+> > framework.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 56 +++++++++++++++++++++++++
+> >  include/drm/display/drm_hdmi_state_helper.h     |  4 ++
+> >  2 files changed, 60 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> > index feb7a3a759811aed70c679be8704072093e2a79b..dc9d0cc162b2197dcbadda26686a9c5652e74107 100644
+> > --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> > +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> > @@ -748,3 +748,59 @@ drm_atomic_helper_connector_hdmi_clear_audio_infoframe(struct drm_connector *con
+> >  	return ret;
+> >  }
+> >  EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_clear_audio_infoframe);
+> > +
+> > +/**
+> > + * __drm_atomic_helper_connector_hdmi_update_edid - Update the HDMI Connector basing on passed EDID
+> > + * @connector: A pointer to the HDMI connector
+> > + * @drm_edid: EDID to process
+> > + *
+> > + * This function should be called as a part of the .detect() / .detect_ctx()
+> > + * and .force() callbacks, updating the HDMI-specific connector's data. The
+> > + * function consumes passed EDID, there is no need to free it afterwards. Most
+> > + * of the drivers should be able to use
+> > + * @drm_atomic_helper_connector_hdmi_update() instead.
+> > + *
+> > + * Returns:
+> > + * Zero on success, error code on failure.
+> > + */
+> > +int
+> > +__drm_atomic_helper_connector_hdmi_update_edid(struct drm_connector *connector,
+> > +					       const struct drm_edid *drm_edid)
+> > +{
+> > +	drm_edid_connector_update(connector, drm_edid);
+> > +	drm_edid_free(drm_edid);
 > 
-> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
-> ---
->  .../media/i2c/ox05b1s/os08a20_regs_1080p.h    | 201 +++++++++++++++++
->  drivers/media/i2c/ox05b1s/os08a20_regs_4k.h   | 209 ++++++++++++++++++
->  .../media/i2c/ox05b1s/os08a20_regs_4k_hdr.h   | 199 +++++++++++++++++
->  drivers/media/i2c/ox05b1s/ox05b1s_mipi.c      | 189 ++++++++++++++++
->  4 files changed, 798 insertions(+)
->  create mode 100644 drivers/media/i2c/ox05b1s/os08a20_regs_1080p.h
->  create mode 100644 drivers/media/i2c/ox05b1s/os08a20_regs_4k.h
->  create mode 100644 drivers/media/i2c/ox05b1s/os08a20_regs_4k_hdr.h
+> Not fond of splitting resource management responsibilities
+> asymmetrically like this.
+
+Ack, I can remove drm_edid_free() call.
+
 > 
-> diff --git a/drivers/media/i2c/ox05b1s/os08a20_regs_1080p.h b/drivers/media/i2c/ox05b1s/os08a20_regs_1080p.h
-> new file mode 100644
-> index 000000000000..ab9977c56a10
-> --- /dev/null
-> +++ b/drivers/media/i2c/ox05b1s/os08a20_regs_1080p.h
-> @@ -0,0 +1,201 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * A register configuration for Omnivision OS08A20 raw camera, 1920 x 1080 @60fps BGGR10
+> > +
+> > +	if (!drm_edid) {
+> > +		drm_connector_hdmi_codec_plugged_notify(connector, false);
+> 
+> Is it a good idea to tie connection status to EDID presence at the
+> helper level? Nearly the same, but still orthogonal.
 
-Over 80, please wrap.
+Yes. We have been discussing this in v1 review. Basically, CEC, HDMI
+codec and some other features should be pinged without any userspace
+interaction. This means that get_modes / fill_modes is mostly out of
+question. The final agreement was that the .detect is the best place to
+handle them (BTW: this matches the i915 driver, see
+intel_hdmi_detect()).
 
-> + * Copyright (C) 2024, NXP
-> + * Copyright (C) 2024, Omnivision
-> + * Copyright (C) 2024, Verisilicon
-> + *
-> + */
-> +#ifndef _OS08A20_REGS_1080P_H_
-> +#define _OS08A20_REGS_1080P_H_
-> +
-> +static struct ox05b1s_reg os08a20_init_setting_1080p[] = {
-> +	{0x0100, 0x00},
+> 
+> > +
+> > +		// TODO: also handle CEC and scramber, HDMI sink disconnected.
+> > +
+> > +		return 0;
+> > +	}
+> > +
+> > +	drm_connector_hdmi_codec_plugged_notify(connector, true);
+> > +
+> > +	// TODO: also handle CEC and scramber, HDMI sink is now connected.
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL(__drm_atomic_helper_connector_hdmi_update_edid);
+> 
+> Feels wrong to export and document double underscored functions to
+> actually be used.
 
-Spaces inside braces.
+We have enough examples of EXPORT_SYMBOL(__drm_foo) in DRM helpers. But
+I can drop double-underscore if that's the issue.
 
-Quite few of the register settings here are also shared with the other
-modes. Wouldn't it make sense to refactor these into a single common list
-and then mode related lists?
-
-> +	{0x0103, 0x01},
-> +	{0x0303, 0x01},
-> +	{0x0304, 0x00}, /* PLL_CTRL_04 (default 0x00) */
-> +	{0x0305, 0x2d}, /* PLL_CTRL_05 (default 0x3c) */
-> +	{0x0306, 0x00},
-> +	{0x0308, 0x03},
-> +	{0x0309, 0x04},
-> +	{0x0325, 0x45}, /* PLL_CTRL_25 (default 0x3c) */
-> +	{0x0327, 0x05}, /* PLL_CTRL_27 (default 0x07) */
-> +	{0x0328, 0x02}, /* PLL_CTRL_28 (default 0x07) */
-> +	{0x032a, 0x02}, /* PLL_CTRL_2a (default 0x00) */
-> +	{0x300f, 0x11},
-> +	{0x3010, 0x01},
-> +	{0x3011, 0x04},
-> +	{0x3012, 0x41},
-> +	{0x3016, 0xf0},
-> +	{0x301e, 0x98},
-> +	{0x3031, 0xa9},
-> +	{0x3103, 0x92},
-> +	{0x3104, 0x01},
-> +	{0x3106, 0x10},
-> +	{0x3400, 0x04}, /* PSV CTRL (default 0x00) bit[2]=r_psv_mode_en */
-> +	{0x3025, 0x03}, /* PSV MODE OPT (default 0x02) not used */
-> +	{0x3425, 0x01}, /* R ASP PD SEL bit[1:0]=stream blanking */
-> +	{0x3428, 0x01}, /* R ASP PD SEL bit[1:0]=bpg1 N-pump1 bypass to AGND */
-> +	{0x3408, 0x03}, /* CTRL08 (default 0x01) bit[3:0]=r_clk_winp_off */
-> +	{0x340c, 0xff},
-> +	{0x340d, 0xff},
-> +	{0x031e, 0x09},
-> +	{0x3501, 0x04}, /* Long exposure */
-> +	{0x3502, 0x62}, /* Long exposure */
-> +	{0x3505, 0x83},
-> +	{0x3508, 0x00}, /* Long gain */
-> +	{0x3509, 0x80}, /* Long gain */
-> +	{0x350a, 0x04},
-> +	{0x350b, 0x00},
-> +	{0x350c, 0x00},
-> +	{0x350d, 0x80},
-> +	{0x350e, 0x04},
-> +	{0x350f, 0x00},
-> +	{0x3600, 0x09}, /* CORE0 bit[0]=stg_hdr_align_en, bit[3]=new_stgr_hdr_en */
-> +	{0x3603, 0x2c},
-> +	{0x3605, 0x50},
-> +	{0x3609, 0xb5},
-> +	{0x3610, 0x39},
-> +	{0x360c, 0x01},
-> +	{0x3628, 0xa4},
-> +	{0x362d, 0x10},
-> +	{0x3660, 0x43}, /* CORE0 bit[0]=rip_sof_vifo_en, bit[1]=stg_hdr_long_en debug mode */
-> +	{0x3662, 0x00},
-> +	{0x3663, 0x28},
-> +	{0x3664, 0x0d},
-> +	{0x366a, 0x38},
-> +	{0x366b, 0xa0},
-> +	{0x366d, 0x00},
-> +	{0x366e, 0x00},
-> +	{0x3680, 0x00},
-> +	{0x36c0, 0x00},
-> +	{0x3701, 0x02}, /* Sensor timing control registers 0x3700-0x37ff */
-> +	{0x373b, 0x02},
-> +	{0x373c, 0x02},
-> +	{0x3736, 0x02},
-> +	{0x3737, 0x02},
-> +	{0x3705, 0x00},
-> +	{0x3706, 0x39},
-> +	{0x370a, 0x00},
-> +	{0x370b, 0x98},
-> +	{0x3709, 0x49},
-> +	{0x3714, 0x22},  /* Sensor timing control registers 0x3700-0x37ff */
-> +	{0x371c, 0x00},
-> +	{0x371d, 0x08},
-> +	{0x3740, 0x1b},
-> +	{0x3741, 0x04},
-> +	{0x375e, 0x0b},
-> +	{0x3760, 0x10},
-> +	{0x3776, 0x10},
-> +	{0x3781, 0x02},
-> +	{0x3782, 0x04},
-> +	{0x3783, 0x02},
-> +	{0x3784, 0x08},
-> +	{0x3785, 0x08},
-> +	{0x3788, 0x01},
-> +	{0x3789, 0x01},
-> +	{0x3797, 0x04},
-> +	{0x3762, 0x11},  /* Sensor timing control registers 0x3700-0x37ff */
-> +	{0x3800, 0x00},
-> +	{0x3801, 0x00},
-> +	{0x3802, 0x00},
-> +	{0x3803, 0x0c},
-> +	{0x3804, 0x0e},
-> +	{0x3805, 0xff},
-> +	{0x3806, 0x08},
-> +	{0x3807, 0x6f},
-> +	{0x3808, 0x07}, /* X output size (default 0x07) */
-> +	{0x3809, 0x80}, /* X output size (default 0x80) */
-> +	{0x380a, 0x04}, /* Y output size (default 0x04) */
-> +	{0x380b, 0x38}, /* Y output size (default 0x38) */
-> +	{0x380c, 0x07}, /* HTS[15:8], total horizontal timing size */
-> +	{0x380d, 0x90}, /* HTS[7:0],  total horizontal timing size */
-> +	{0x380e, 0x04}, /* VTS[15:8], total vertical timing (default 0x04) */
-> +	{0x380f, 0xa4}, /* VTS[7:0],  total vertical timing (default 0xA0) */
-> +	{0x3813, 0x08}, /* ISP_Y_WIN ISP vertical windowing offset */
-> +	{0x3814, 0x03}, /* X INC ODD (default 0x01) */
-> +	{0x3815, 0x01}, /* X INC EVEN (default 0x01) */
-> +	{0x3816, 0x03}, /* Y INC ODD (default 0x01) */
-> +	{0x3817, 0x01}, /* Y INC EVEN (default 0x01) */
-> +	{0x381c, 0x00}, /* BLC_NUM_OPTION (default 0x0e) */
-> +	{0x3820, 0x01}, /* FORMAT1 (default 0x80) bit[0]=vertical bining */
-> +	{0x3821, 0x05}, /* FORMAT2 bit[2]=mirror, bit[0]=horizontal bining */
-> +	{0x3823, 0x08},
-> +	{0x3826, 0x00},
-> +	{0x3827, 0x08},
-> +	{0x382d, 0x08},
-> +	{0x3832, 0x02},
-> +	{0x3833, 0x00}, /* REG33 (bit[0]=r_stg_hdr_grp_wr_opt, bit[2]=r_stg_grphold_nomask) */
-> +	{0x383c, 0x48},
-> +	{0x383d, 0xff},
-> +	{0x3d85, 0x0b},
-> +	{0x3d84, 0x40},
-> +	{0x3d8c, 0x63},
-> +	{0x3d8d, 0xd7},
-> +	{0x4000, 0xf8},
-> +	{0x4001, 0x2b},
-> +	{0x4004, 0x00},
-> +	{0x4005, 0x40},
-> +	{0x400a, 0x01},
-> +	{0x400f, 0xa0},
-> +	{0x4010, 0x12},
-> +	{0x4018, 0x00},
-> +	{0x4008, 0x02},
-> +	{0x4009, 0x05}, /* BLC CTRL09 (default 0x0f) bl_end */
-> +	{0x401a, 0x58},
-> +	{0x4050, 0x00},
-> +	{0x4051, 0x01},
-> +	{0x4028, 0x2f},
-> +	{0x4052, 0x00},
-> +	{0x4053, 0x80},
-> +	{0x4054, 0x00},
-> +	{0x4055, 0x80},
-> +	{0x4056, 0x00},
-> +	{0x4057, 0x80},
-> +	{0x4058, 0x00},
-> +	{0x4059, 0x80},
-> +	{0x430b, 0xff},
-> +	{0x430c, 0xff},
-> +	{0x430d, 0x00},
-> +	{0x430e, 0x00},
-> +	{0x4501, 0x98}, /* R1 (default 0x18) bit[4:2]=not used */
-> +	{0x4502, 0x00},
-> +	{0x4643, 0x00},
-> +	{0x4640, 0x01},
-> +	{0x4641, 0x04},
-> +	{0x4800, 0x64},
-> +	{0x4809, 0x2b},
-> +	{0x4813, 0x90}, /* MIPI CTRL 13 (bit[5:4]=VC1=1, bit[7:6]=VC2=2) */
-> +	{0x4817, 0x04},
-> +	{0x4833, 0x18},
-> +	{0x4837, 0x16}, /* PCLK PERIOD (default 0x08) */
-> +	{0x483b, 0x00},
-> +	{0x484b, 0x03},
-> +	{0x4850, 0x7c},
-> +	{0x4852, 0x06},
-> +	{0x4856, 0x58},
-> +	{0x4857, 0xaa},
-> +	{0x4862, 0x0a},
-> +	{0x4869, 0x18},
-> +	{0x486a, 0xaa},
-> +	{0x486e, 0x03}, /* MIPI CTRL 6E (default 0x03) */
-> +	{0x486f, 0x55},
-> +	{0x4875, 0xf0},
-> +	{0x5000, 0x89},
-> +	{0x5001, 0x42},
-> +	{0x5004, 0x40},
-> +	{0x5005, 0x00},
-> +	{0x5180, 0x00},
-> +	{0x5181, 0x10},
-> +	{0x580b, 0x03},
-> +	{0x4d00, 0x03},
-> +	{0x4d01, 0xc9},
-> +	{0x4d02, 0xbc},
-> +	{0x4d03, 0xc6},
-> +	{0x4d04, 0x4a},
-> +	{0x4d05, 0x25},
-> +	{0x4700, 0x2b},
-> +	{0x4e00, 0x2b},
-> +};
-> +
-> +#endif
-> diff --git a/drivers/media/i2c/ox05b1s/os08a20_regs_4k.h b/drivers/media/i2c/ox05b1s/os08a20_regs_4k.h
-> new file mode 100644
-> index 000000000000..f3d5f0fe1b61
-> --- /dev/null
-> +++ b/drivers/media/i2c/ox05b1s/os08a20_regs_4k.h
-> @@ -0,0 +1,209 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * A register configuration for Omnivision OS08A20 raw camera, 3840 x 2160 @30fps BGGR12
-
-Ditto.
-
-> + * Copyright (C) 2024, NXP
-> + * Copyright (C) 2024, Omnivision
-> + * Copyright (C) 2024, Verisilicon
-> + *
-> + */
-> +
-> +#ifndef _OS08A20_REGS_4K_H_
-> +#define _OS08A20_REGS_4K_H_
-> +
-> +static struct ox05b1s_reg os08a20_init_setting_4k[] = {
-> +	{0x0100, 0x00},
-> +	{0x0103, 0x01},
-> +	{0x0303, 0x01},
-> +	{0x0305, 0x3c}, /* PLL_CTRL_05 (default 0x3c) */
-> +	{0x0306, 0x00},
-> +	{0x0308, 0x03},
-> +	{0x0309, 0x04},
-> +	{0x0325, 0x47}, /* PLL_CTRL_25 (default 0x3c) */
-> +	{0x032a, 0x00}, /* PLL_CTRL_2a (default 0x00) */
-> +	{0x300f, 0x11},
-> +	{0x3010, 0x01},
-> +	{0x3011, 0x04},
-> +	{0x3012, 0x41},
-> +	{0x3016, 0xf0},
-> +	{0x301e, 0x98},
-> +	{0x3031, 0xa9},
-> +	{0x3103, 0x92},
-> +	{0x3104, 0x01},
-> +	{0x3106, 0x10},
-> +	{0x3400, 0x04}, /* PSV CTRL (default 0x00) bit[2]=r_psv_mode_en */
-> +	{0x3025, 0x03}, /* PSV MODE OPT (default 0x02) not used */
-> +	{0x3425, 0x01}, /* R ASP PD SEL bit[1:0]=stream blanking */
-> +	{0x3428, 0x01}, /* R ASP PD SEL bit[1:0]=bpg1 N-pump1 bypass to AGND */
-> +	{0x3408, 0x03}, /* CTRL08 (default 0x01) bit[3:0]=r_clk_winp_off */
-> +	{0x340c, 0xff},
-> +	{0x340d, 0xff},
-> +	{0x031e, 0x0a},
-> +	{0x3501, 0x08}, /* Long exposure */
-> +	{0x3502, 0xe5}, /* Long exposure */
-> +	{0x3505, 0x83},
-> +	{0x3508, 0x00}, /* Long gain */
-> +	{0x3509, 0x80}, /* Long gain */
-> +	{0x350a, 0x04},
-> +	{0x350b, 0x00},
-> +	{0x350c, 0x00},
-> +	{0x350d, 0x80},
-> +	{0x350e, 0x04},
-> +	{0x350f, 0x00},
-> +	{0x3600, 0x00}, /* CORE0 bit[0]=stg_hdr_align_en, bit[3]=new_stgr_hdr_en */
-> +	{0x3603, 0x2c},
-> +	{0x3605, 0x50},
-> +	{0x3609, 0xdb},
-> +	{0x3610, 0x39},
-> +	{0x360c, 0x01},
-> +	{0x3628, 0xa4},
-> +	{0x362d, 0x10},
-> +	{0x3660, 0xd3}, /* CORE0 bit[0]=rip_sof_vifo_en, bit[1]=stg_hdr_long_en debug mode */
-> +	{0x3662, 0x00},
-> +	{0x3663, 0x28},
-> +	{0x3664, 0x0d},
-> +	{0x366a, 0x38},
-> +	{0x366b, 0xa0},
-> +	{0x366d, 0x00},
-> +	{0x366e, 0x00},
-> +	{0x3680, 0x00},
-> +	{0x36c0, 0x00},
-> +	{0x3701, 0x02}, /* Sensor timing control registers 0x3700-0x37ff */
-> +	{0x373b, 0x02},
-> +	{0x373c, 0x02},
-> +	{0x3736, 0x02},
-> +	{0x3737, 0x02},
-> +	{0x3705, 0x00},
-> +	{0x3706, 0x72},
-> +	{0x370a, 0x01},
-> +	{0x370b, 0x30},
-> +	{0x3709, 0x48},
-> +	{0x3714, 0x21}, /* Sensor timing control registers 0x3700-0x37ff */
-> +	{0x371c, 0x00},
-> +	{0x371d, 0x08},
-> +	{0x3740, 0x1b},
-> +	{0x3741, 0x04},
-> +	{0x375e, 0x0b},
-> +	{0x3760, 0x10},
-> +	{0x3776, 0x10},
-> +	{0x3781, 0x02},
-> +	{0x3782, 0x04},
-> +	{0x3783, 0x02},
-> +	{0x3784, 0x08},
-> +	{0x3785, 0x08},
-> +	{0x3788, 0x01},
-> +	{0x3789, 0x01},
-> +	{0x3797, 0x04},
-> +	{0x3762, 0x11},  /* Sensor timing control registers 0x3700-0x37ff */
-> +	{0x3800, 0x00},
-> +	{0x3801, 0x00},
-> +	{0x3802, 0x00},
-> +	{0x3803, 0x0c},
-> +	{0x3804, 0x0e},
-> +	{0x3805, 0xff},
-> +	{0x3806, 0x08},
-> +	{0x3807, 0x6f},
-> +	{0x3808, 0x0f}, /* X output size (default 0x07) */
-> +	{0x3809, 0x00}, /* X output size (default 0x80) */
-> +	{0x380a, 0x08}, /* Y output size (default 0x04) */
-> +	{0x380b, 0x70}, /* Y output size (default 0x38) */
-> +	{0x380c, 0x08}, /* HTS[15:8], total horizontal timing size */
-> +	{0x380d, 0x14}, /* HTS[7:0],  total horizontal timing size */
-> +	{0x380e, 0x08}, /* VTS[15:8], total vertical timing (default 0x04) */
-> +	{0x380f, 0xf0}, /* VTS[7:0],  total vertical timing (default 0xA0) */
-> +	{0x3813, 0x10}, /* ISP_Y_WIN ISP vertical windowing offset */
-> +	{0x3814, 0x01}, /* X INC ODD (default 0x01) */
-> +	{0x3815, 0x01}, /* X INC EVEN (default 0x01) */
-> +	{0x3816, 0x01}, /* Y INC ODD (default 0x01) */
-> +	{0x3817, 0x01}, /* Y INC EVEN (default 0x01) */
-> +	{0x381c, 0x00}, /* BLC_NUM_OPTION (default 0x0e) */
-> +	{0x3820, 0x00}, /* FORMAT1 (default 0x80) bit[0]=vertical bining */
-> +	{0x3821, 0x04}, /* FORMAT2 bit[2]=mirror, bit[0]=horizontal bining */
-> +	{0x3823, 0x08},
-> +	{0x3826, 0x00},
-> +	{0x3827, 0x08},
-> +	{0x382d, 0x08},
-> +	{0x3832, 0x02},
-> +	{0x3833, 0x00}, /* REG33 (bit[0]=r_stg_hdr_grp_wr_opt, bit[2]=r_stg_grphold_nomask) */
-> +	{0x383c, 0x48},
-> +	{0x383d, 0xff},
-> +	{0x3d85, 0x0b},
-> +	{0x3d84, 0x40},
-> +	{0x3d8c, 0x63},
-> +	{0x3d8d, 0xd7},
-> +	{0x4000, 0xf8},
-> +	{0x4001, 0x2b},
-> +	{0x4004, 0x00},
-> +	{0x4005, 0x40},
-> +	{0x400a, 0x01},
-> +	{0x400f, 0xa0},
-> +	{0x4010, 0x12},
-> +	{0x4018, 0x00},
-> +	{0x4008, 0x02},
-> +	{0x4009, 0x0d}, /* BLC CTRL09 (default 0x0f) bl_end */
-> +	{0x401a, 0x58},
-> +	{0x4050, 0x00},
-> +	{0x4051, 0x01},
-> +	{0x4028, 0x2f},
-> +	{0x4052, 0x00},
-> +	{0x4053, 0x80},
-> +	{0x4054, 0x00},
-> +	{0x4055, 0x80},
-> +	{0x4056, 0x00},
-> +	{0x4057, 0x80},
-> +	{0x4058, 0x00},
-> +	{0x4059, 0x80},
-> +	{0x430b, 0xff},
-> +	{0x430c, 0xff},
-> +	{0x430d, 0x00},
-> +	{0x430e, 0x00},
-> +	{0x4501, 0x18}, /* R1 (default 0x18) bit[4:2]=not used */
-> +	{0x4502, 0x00},
-> +	{0x4600, 0x00},
-> +	{0x4601, 0x20},
-> +	{0x4603, 0x01},
-> +	{0x4643, 0x00},
-> +	{0x4640, 0x01},
-> +	{0x4641, 0x04},
-> +	{0x4800, 0x64},
-> +	{0x4809, 0x2b},
-> +	{0x4813, 0x90}, /* MIPI CTRL 13 (bit[5:4]=VC1=1, bit[7:6]=VC2=2) */
-> +	{0x4817, 0x04},
-> +	{0x4833, 0x18},
-> +	{0x4837, 0x10}, /* PCLK PERIOD (default 0x08) */
-> +	{0x483b, 0x00},
-> +	{0x484b, 0x03},
-> +	{0x4850, 0x7c},
-> +	{0x4852, 0x06},
-> +	{0x4856, 0x58},
-> +	{0x4857, 0xaa},
-> +	{0x4862, 0x0a},
-> +	{0x4869, 0x18},
-> +	{0x486a, 0xaa},
-> +	{0x486e, 0x03}, /* MIPI CTRL 6E (default 0x03) */
-> +	{0x486f, 0x55},
-> +	{0x4875, 0xf0},
-> +	{0x5000, 0x89},
-> +	{0x5001, 0x42},
-> +	{0x5004, 0x40},
-> +	{0x5005, 0x00},
-> +	{0x5180, 0x00},
-> +	{0x5181, 0x10},
-> +	{0x580b, 0x03},
-> +	{0x4d00, 0x03},
-> +	{0x4d01, 0xc9},
-> +	{0x4d02, 0xbc},
-> +	{0x4d03, 0xc6},
-> +	{0x4d04, 0x4a},
-> +	{0x4d05, 0x25},
-> +	{0x4700, 0x2b},
-> +	{0x4e00, 0x2b},
-> +	{0x3501, 0x09}, /* Long exposure */
-> +	{0x3502, 0x01}, /* Long exposure */
-> +	{0x4028, 0x4f},
-> +	{0x4029, 0x1f},
-> +	{0x402a, 0x7f},
-> +	{0x402b, 0x01},
-> +	{0x0100, 0x01},
-> +};
-> +
-> +#endif
-> diff --git a/drivers/media/i2c/ox05b1s/os08a20_regs_4k_hdr.h b/drivers/media/i2c/ox05b1s/os08a20_regs_4k_hdr.h
-> new file mode 100644
-> index 000000000000..2ae79ebae436
-> --- /dev/null
-> +++ b/drivers/media/i2c/ox05b1s/os08a20_regs_4k_hdr.h
-> @@ -0,0 +1,199 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * A register configuration for Omnivision OS08A20 raw camera, 3840 x 2160 @30fps BGGR10 HDR
-
-Ditto.
-
-> + * Copyright (C) 2024, NXP
-> + * Copyright (C) 2024, Omnivision
-> + * Copyright (C) 2024, Verisilicon
-> + *
-> + */
-> +
-> +#ifndef _OS08A20_REGS_4K_HDR_H_
-> +#define _OS08A20_REGS_4K_HDR_H_
-> +
-> +static struct ox05b1s_reg os08a20_init_setting_4k_hdr[] = {
-> +	{0x0100, 0x00},
-> +	{0x0103, 0x01},
-> +	{0x0303, 0x01},
-> +	{0x0305, 0x3c}, /* PLL_CTRL_05 (default 0x3c) */
-> +	{0x0306, 0x00},
-> +	{0x0308, 0x03},
-> +	{0x0309, 0x04},
-> +	{0x032a, 0x00}, /* PLL_CTRL_2a (default 0x00) */
-> +	{0x300f, 0x11},
-> +	{0x3010, 0x01},
-> +	{0x3011, 0x04},
-> +	{0x3012, 0x41},
-> +	{0x3016, 0xf0},
-> +	{0x301e, 0x98},
-> +	{0x3031, 0xa9},
-> +	{0x3103, 0x92},
-> +	{0x3104, 0x01},
-> +	{0x3106, 0x10},
-> +	{0x340c, 0xff},
-> +	{0x340d, 0xff},
-> +	{0x031e, 0x09},
-> +	{0x3501, 0x08}, /* Long exposure */
-> +	{0x3502, 0xe5}, /* Long exposure */
-> +	{0x3505, 0x83},
-> +	{0x3508, 0x00}, /* Long gain */
-> +	{0x3509, 0x80}, /* Long gain */
-> +	{0x350a, 0x04},
-> +	{0x350b, 0x00},
-> +	{0x350c, 0x00},
-> +	{0x350d, 0x80},
-> +	{0x350e, 0x04},
-> +	{0x350f, 0x00},
-> +	{0x3600, 0x00}, /* CORE0 bit[0]=stg_hdr_align_en, bit[3]=new_stgr_hdr_en */
-> +	{0x3603, 0x2c},
-> +	{0x3605, 0x50},
-> +	{0x3609, 0xb5},
-> +	{0x3610, 0x39},
-> +	{0x360c, 0x01},
-> +	{0x3628, 0xa4},
-> +	{0x362d, 0x10},
-> +	{0x3660, 0x42}, /* CORE0 bit[0]=rip_sof_vifo_en, bit[1]=stg_hdr_long_en debug mode */
-> +	{0x3661, 0x07}, /* CORE1 (default 0x06) bit[0]=stg_hdr_align_en */
-> +	{0x3662, 0x00},
-> +	{0x3663, 0x28},
-> +	{0x3664, 0x0d},
-> +	{0x366a, 0x38},
-> +	{0x366b, 0xa0},
-> +	{0x366d, 0x00},
-> +	{0x366e, 0x00},
-> +	{0x3680, 0x00},
-> +	{0x36c0, 0x00},
-> +	{0x3701, 0x02}, /* Sensor timing control registers 0x3700-0x37ff */
-> +	{0x373b, 0x02},
-> +	{0x373c, 0x02},
-> +	{0x3736, 0x02},
-> +	{0x3737, 0x02},
-> +	{0x3705, 0x00},
-> +	{0x3706, 0x39},
-> +	{0x370a, 0x00},
-> +	{0x370b, 0x98},
-> +	{0x3709, 0x49},
-> +	{0x3714, 0x21}, /* Sensor timing control registers 0x3700-0x37ff */
-> +	{0x371c, 0x00},
-> +	{0x371d, 0x08},
-> +	{0x3740, 0x1b},
-> +	{0x3741, 0x04},
-> +	{0x375e, 0x0b},
-> +	{0x3760, 0x10},
-> +	{0x3776, 0x10},
-> +	{0x3781, 0x02},
-> +	{0x3782, 0x04},
-> +	{0x3783, 0x02},
-> +	{0x3784, 0x08},
-> +	{0x3785, 0x08},
-> +	{0x3788, 0x01},
-> +	{0x3789, 0x01},
-> +	{0x3797, 0x04},
-> +	{0x3762, 0x11}, /* Sensor timing control registers 0x3700-0x37ff */
-> +	{0x3800, 0x00},
-> +	{0x3801, 0x00},
-> +	{0x3802, 0x00},
-> +	{0x3803, 0x0c},
-> +	{0x3804, 0x0e},
-> +	{0x3805, 0xff},
-> +	{0x3806, 0x08},
-> +	{0x3807, 0x6f},
-> +	{0x3808, 0x0f}, /* X output size (default 0x07) */
-> +	{0x3809, 0x00}, /* X output size (default 0x80) */
-> +	{0x380a, 0x08}, /* Y output size (default 0x04) */
-> +	{0x380b, 0x70}, /* Y output size (default 0x38) */
-> +	{0x380c, 0x08}, /* HTS[15:8], total horizontal timing size */
-> +	{0x380d, 0x18}, /* HTS[7:0],  total horizontal timing size */
-> +	{0x380e, 0x09}, /* VTS[15:8], total vertical timing (default 0x04) */
-> +	{0x380f, 0x0a}, /* VTS[7:0],  total vertical timing (default 0xA0) */
-> +	{0x3813, 0x10}, /* ISP_Y_WIN ISP vertical windowing offset */
-> +	{0x3814, 0x01}, /* X INC ODD (default 0x01) */
-> +	{0x3815, 0x01}, /* X INC EVEN (default 0x01) */
-> +	{0x3816, 0x01}, /* Y INC ODD (default 0x01) */
-> +	{0x3817, 0x01}, /* Y INC EVEN (default 0x01) */
-> +	{0x381c, 0x08}, /* BLC_NUM_OPTION (default 0x0e) */
-> +	{0x3820, 0x00}, /* FORMAT1 (default 0x80) bit[0]=vertical bining */
-> +	{0x3821, 0x24}, /* FORMAT2 bit[5]=stagger hdr en, bit[2]=mirror */
-> +	{0x3823, 0x08},
-> +	{0x3826, 0x00},
-> +	{0x3827, 0x08},
-> +	{0x382d, 0x08},
-> +	{0x3832, 0x02},
-> +	{0x3833, 0x01}, /* REG33 (bit[0]=r_stg_hdr_grp_wr_opt, bit[2]=r_stg_grphold_nomask) */
-> +	{0x383c, 0x48},
-> +	{0x383d, 0xff},
-> +	{0x3d85, 0x0b},
-> +	{0x3d84, 0x40},
-> +	{0x3d8c, 0x63},
-> +	{0x3d8d, 0xd7},
-> +	{0x4000, 0xf8},
-> +	{0x4001, 0x2b},
-> +	{0x4004, 0x00},
-> +	{0x4005, 0x40},
-> +	{0x400a, 0x01},
-> +	{0x400f, 0xa0},
-> +	{0x4010, 0x12},
-> +	{0x4018, 0x00},
-> +	{0x4008, 0x02},
-> +	{0x4009, 0x0d}, /* BLC CTRL09 (default 0x0f) bl_end */
-> +	{0x401a, 0x58},
-> +	{0x4050, 0x00},
-> +	{0x4051, 0x01},
-> +	{0x4028, 0x2f},
-> +	{0x4052, 0x00},
-> +	{0x4053, 0x80},
-> +	{0x4054, 0x00},
-> +	{0x4055, 0x80},
-> +	{0x4056, 0x00},
-> +	{0x4057, 0x80},
-> +	{0x4058, 0x00},
-> +	{0x4059, 0x80},
-> +	{0x430b, 0xff},
-> +	{0x430c, 0xff},
-> +	{0x430d, 0x00},
-> +	{0x430e, 0x00},
-> +	{0x4501, 0x18}, /* R1 (default 0x18) bit[4:2]=not used */
-> +	{0x4502, 0x00},
-> +	{0x4643, 0x00},
-> +	{0x4640, 0x01},
-> +	{0x4641, 0x04},
-> +	{0x4800, 0x64},
-> +	{0x4809, 0x2b},
-> +	{0x4813, 0x98}, /* MIPI CTRL 13 (bit[5:4]=VC1=1, bit[7:6]=VC2=2) */
-> +	{0x4817, 0x04},
-> +	{0x4833, 0x18},
-> +	{0x4837, 0x10}, /* PCLK PERIOD (default 0x08) */
-> +	{0x483b, 0x00},
-> +	{0x484b, 0x03},
-> +	{0x4850, 0x7c},
-> +	{0x4852, 0x06},
-> +	{0x4856, 0x58},
-> +	{0x4857, 0xaa},
-> +	{0x4862, 0x0a},
-> +	{0x4869, 0x18},
-> +	{0x486a, 0xaa},
-> +	{0x486e, 0x07}, /* MIPI CTRL 6E (default 0x03) */
-> +	{0x486f, 0x55},
-> +	{0x4875, 0xf0},
-> +	{0x5000, 0x89},
-> +	{0x5001, 0x42},
-> +	{0x5004, 0x40},
-> +	{0x5005, 0x00},
-> +	{0x5180, 0x00},
-> +	{0x5181, 0x10},
-> +	{0x580b, 0x03},
-> +	{0x4d00, 0x03},
-> +	{0x4d01, 0xc9},
-> +	{0x4d02, 0xbc},
-> +	{0x4d03, 0xc6},
-> +	{0x4d04, 0x4a},
-> +	{0x4d05, 0x25},
-> +	{0x4700, 0x2b},
-> +	{0x4e00, 0x2b},
-> +	{0x3501, 0x08}, /* Long exposure */
-> +	{0x3502, 0xe1}, /* Long exposure */
-> +	{0x3511, 0x00}, /* Short exposure */
-> +	{0x3512, 0x20}, /* Short exposure */
-> +	{0x3833, 0x01},
-> +};
-> +
-> +#endif
-> diff --git a/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c b/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
-> index 5b9c069af19b..15559265d8f0 100644
-> --- a/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
-> +++ b/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
-> @@ -42,6 +42,7 @@ struct ox05b1s_sizes {
->  	u32	sizes[OX05B1S_MAX_SIZES][2];
->  };
->  
-> +struct ox05b1s;
->  struct ox05b1s_plat_data {
->  	char				name[20];
->  	u32				chip_id;
-> @@ -56,6 +57,9 @@ struct ox05b1s_plat_data {
->  	u32				default_mode_index;
->  	const struct ox05b1s_sizes	*supported_codes;
->  	u32				supported_codes_count;
-> +	const char * const		*hdr_modes;
-> +	u32				hdr_modes_count;
-> +	int (*set_hdr_mode)(struct ox05b1s *sensor, u32 hdr_mode);
->  };
->  
->  struct ox05b1s_ctrls {
-> @@ -66,6 +70,7 @@ struct ox05b1s_ctrls {
->  	struct v4l2_ctrl *vblank;
->  	struct v4l2_ctrl *gain;
->  	struct v4l2_ctrl *exposure;
-> +	struct v4l2_ctrl *hdr_mode;
->  };
->  
->  struct ox05b1s_reg {
-> @@ -73,6 +78,9 @@ struct ox05b1s_reg {
->  	u32 data;
->  };
->  
-> +#include "os08a20_regs_1080p.h"
-> +#include "os08a20_regs_4k.h"
-> +#include "os08a20_regs_4k_hdr.h"
->  #include "ox05b1s_regs_5mp.h"
->  
->  struct ox05b1s_mode {
-> @@ -104,6 +112,68 @@ struct ox05b1s {
->  	struct ox05b1s_ctrls ctrls;
->  };
->  
-> +static struct ox05b1s_mode os08a20_supported_modes[] = {
-> +	{
-> +		/* 1080p BGGR10, no hdr, 60fps */
-> +		.index		= 0,
-> +		.width		= 1920,
-> +		.height		= 1080,
-> +		.code		= MEDIA_BUS_FMT_SBGGR10_1X10,
-> +		.bpp		= 10,
-> +		.vts		= 0x4a4,
-> +		.hts		= 0x790,
-> +		.exp		= 0x4a4 - 8,
-> +		.h_bin		= true,
-> +		.fps		= 60,
-> +		.reg_data	= os08a20_init_setting_1080p,
-> +		.reg_data_count	= ARRAY_SIZE(os08a20_init_setting_1080p),
-> +	},
-> +	{
-
-These fit on the same line.
-
-> +		/* 4k BGGR10, staggered hdr VC0/VC1, 15fps */
-> +		.index		= 1,
-> +		.width		= 3840,
-> +		.height		= 2160,
-> +		.code		= MEDIA_BUS_FMT_SBGGR10_1X10,
-> +		.bpp		= 10,
-> +		.vts		= 0x90a,
-> +		.hts		= 0x818,
-> +		.exp		= 0x90a - 8,
-> +		.h_bin		= false,
-> +		.fps		= 15,
-> +		.reg_data	= os08a20_init_setting_4k_hdr,
-> +		.reg_data_count	= ARRAY_SIZE(os08a20_init_setting_4k_hdr),
-> +	},
-> +	{
-> +		/* 4k BGGR12, no hdr, 30fps */
-> +		.index		= 2,
-> +		.width		= 3840,
-> +		.height		= 2160,
-> +		.code		= MEDIA_BUS_FMT_SBGGR12_1X12,
-> +		.bpp		= 12,
-> +		.vts		= 0x8f0,
-> +		.hts		= 0x814,
-> +		.exp		= 0x8f0 - 8,
-> +		.h_bin		= false,
-> +		.fps		= 30,
-> +		.reg_data	= os08a20_init_setting_4k,
-> +		.reg_data_count	= ARRAY_SIZE(os08a20_init_setting_4k),
-> +	},
-> +};
-> +
-> +/* keep in sync with os08a20_supported_modes*/
-> +static const struct ox05b1s_sizes os08a20_supported_codes[] = {
-> +	{
-> +		.code = MEDIA_BUS_FMT_SBGGR10_1X10,
-> +		.sizes_count = 2,
-
-This doesn't seem like very nice to maintain. :-(
-
-Could you make sizes a pointer instead?
-
-> +		.sizes = { {1920, 1080}, {3840, 2160} }
-
-Spaces inside braces, please.
-
-> +	},
-> +	{
-> +		.code = MEDIA_BUS_FMT_SBGGR12_1X12,
-> +		.sizes_count = 1,
-> +		.sizes = { {3840, 2160} }
-> +	},
-> +};
-> +
->  static struct ox05b1s_mode ox05b1s_supported_modes[] = {
->  	{
->  		.index		= 0,
-> @@ -210,6 +280,18 @@ static int ox05b1s_read_reg(struct ox05b1s *sensor, u16 reg, u8 *val)
->  	return ret;
->  }
->  
-> +static int ox05b1s_update_bits(struct ox05b1s *sensor, u16 reg, unsigned int mask, u8 val)
-> +{
-> +	struct device *dev = &sensor->i2c_client->dev;
-> +	int ret = 0;
-
-The initialisation is redundant.
-
-> +
-> +	ret = regmap_update_bits(sensor->regmap, reg, mask, val);
-> +	if (ret < 0)
-> +		dev_err(dev, "Failed to update reg addr 0x%04x with 0x%02x\n", reg, val);
-> +
-> +	return ret;
-> +}
-> +
->  #define OX05B1S_MAX_REG_BULK 16
->  static int ox05b1s_write_reg_array(struct ox05b1s *sensor,
->  				   struct ox05b1s_reg *reg_array,
-> @@ -239,6 +321,67 @@ static int ox05b1s_write_reg_array(struct ox05b1s *sensor,
->  	return 0;
->  }
->  
-> +static const char * const os08a20_hdr_modes[] = {
-> +	"NO HDR",		/* No HDR, single exposure */
-> +	"HDR Staggered",	/* Staggered HDR mode, 2 exposures on separate virtual channels */
-> +};
-> +
-> +#define OS08A20_REG_CORE1		0x3661
-> +#define OS08A20_STG_HDR_ALIGN_EN	BIT(0)
-> +
-> +#define OS08A20_REG_FORMAT2		0x3821
-> +#define OS08A20_STG_HDR_EN		BIT(5)
-> +
-> +#define OS08A20_REG_MIPI_CTRL_13	0x4813
-> +#define OS08A20_MISTERY_BIT3		BIT(3)
-> +
-> +#define OS08A20_REG_MIPI_CTRL_6E	0x486e
-> +#define OS08A20_MIPI_VC_ENABLE		BIT(2)
-> +
-> +static int os08a20_enable_staggered_hdr(struct ox05b1s *sensor)
-> +{
-> +	int ret = 0;
-> +
-> +	ret |= ox05b1s_update_bits(sensor, OS08A20_REG_CORE1, OS08A20_STG_HDR_ALIGN_EN,
-> +				   OS08A20_STG_HDR_ALIGN_EN);
-
-How about returning the actual error code to the caller?
-
-Also this requires reading the registers over I²C that is slow. If it's not
-during streaming it should be fine though.
-
-I'd probably make this a loop.
-
-> +	ret |= ox05b1s_update_bits(sensor, OS08A20_REG_FORMAT2, OS08A20_STG_HDR_EN,
-> +				   OS08A20_STG_HDR_EN);
-> +	ret |= ox05b1s_update_bits(sensor, OS08A20_REG_MIPI_CTRL_13, OS08A20_MISTERY_BIT3,
-> +				   OS08A20_MISTERY_BIT3);
-> +	ret |= ox05b1s_update_bits(sensor, OS08A20_REG_MIPI_CTRL_6E, OS08A20_MIPI_VC_ENABLE,
-> +				   OS08A20_MIPI_VC_ENABLE);
-> +	if (ret)
-> +		ret = -EIO;
-> +
-> +	return ret;
-> +}
-> +
-> +static int os08a20_disable_staggered_hdr(struct ox05b1s *sensor)
-> +{
-> +	int ret = 0;
-> +
-> +	ret |= ox05b1s_update_bits(sensor, OS08A20_REG_CORE1, OS08A20_STG_HDR_ALIGN_EN, 0);
-> +	ret |= ox05b1s_update_bits(sensor, OS08A20_REG_FORMAT2, OS08A20_STG_HDR_EN, 0);
-> +	ret |= ox05b1s_update_bits(sensor, OS08A20_REG_MIPI_CTRL_13, OS08A20_MISTERY_BIT3, 0);
-> +	ret |= ox05b1s_update_bits(sensor, OS08A20_REG_MIPI_CTRL_6E, OS08A20_MIPI_VC_ENABLE, 0);
-> +	if (ret)
-> +		ret = -EIO;
-> +
-> +	return ret;
-> +}
-> +
-> +static int os08a20_set_hdr_mode(struct ox05b1s *sensor, u32 hdr_mode)
-> +{
-> +	switch (hdr_mode) {
-> +	case 0:
-> +		return os08a20_disable_staggered_hdr(sensor);
-> +	case 1:
-> +		return os08a20_enable_staggered_hdr(sensor);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->  static int ox05b1s_set_hts(struct ox05b1s *sensor, u32 hts)
->  {
->  	u8 values[2] = { (u8)(hts >> 8) & 0xff, (u8)(hts & 0xff) };
-> @@ -307,6 +450,12 @@ static int ox05b1s_s_ctrl(struct v4l2_ctrl *ctrl)
->  	case V4L2_CID_EXPOSURE:
->  		ret = ox05b1s_set_exp(sensor, ctrl->val);
->  		break;
-> +	case V4L2_CID_HDR_SENSOR_MODE:
-> +		if (sensor->model->set_hdr_mode)
-> +			ret = sensor->model->set_hdr_mode(sensor, ctrl->val);
-> +		else
-> +			ret = -EINVAL;
-> +		break;
->  	default:
->  		ret = -EINVAL;
->  		break;
-> @@ -369,6 +518,13 @@ static int ox05b1s_init_controls(struct ox05b1s *sensor)
->  	ctrls->gain = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_ANALOGUE_GAIN,
->  					0, 0xFFFF, 1, 0x80);
->  
-> +	if (sensor->model->hdr_modes)
-> +		ctrls->hdr_mode = v4l2_ctrl_new_std_menu_items(hdl, ops, V4L2_CID_HDR_SENSOR_MODE,
-> +							       sensor->model->hdr_modes_count - 1,
-> +								0, 0, sensor->model->hdr_modes);
-> +	else
-> +		ctrls->hdr_mode = NULL;
-> +
->  	if (hdl->error) {
->  		ret = hdl->error;
->  		goto free_ctrls;
-> @@ -670,7 +826,10 @@ static u8 ox05b1s_code2dt(const u32 code)
->  {
->  	switch (code) {
->  	case MEDIA_BUS_FMT_SGRBG10_1X10:
-> +	case MEDIA_BUS_FMT_SBGGR10_1X10:
->  		return MIPI_CSI2_DT_RAW10;
-> +	case MEDIA_BUS_FMT_SBGGR12_1X12:
-> +		return MIPI_CSI2_DT_RAW12;
->  	default:
->  		return MIPI_CSI2_DT_RAW10;
->  	}
-> @@ -775,6 +934,9 @@ static int ox05b1s_read_chip_id(struct ox05b1s *sensor)
->  	}
->  
->  	switch (chip_id) {
-> +	case 0x530841:
-> +		camera_name = "os08a20";
-> +		break;
->  	case 0x580542:
->  		camera_name = "ox05b1s";
->  		break;
-> @@ -915,6 +1077,26 @@ static void ox05b1s_remove(struct i2c_client *client)
->  static DEFINE_RUNTIME_DEV_PM_OPS(ox05b1s_pm_ops, ox05b1s_runtime_suspend,
->  				 ox05b1s_runtime_resume, NULL);
->  
-> +static const struct ox05b1s_plat_data os08a20_data = {
-> +	.name			= "os08a20",
-> +	.chip_id		= 0x530841,
-> +	.native_width		= 3872, /* 16 dummy + 3840 active pixels + 16 dummy */
-> +	.native_height		= 2192, /* 16 dummy + 2160 active lines + 16 dummy */
-> +	.active_top		= 16,
-> +	.active_left		= 16,
-> +	.active_width		= 3840,
-> +	.active_height		= 2160,
-> +	.supported_modes	= os08a20_supported_modes,
-> +	.supported_modes_count	= ARRAY_SIZE(os08a20_supported_modes),
-> +	.default_mode_index	= 0,
-> +	.supported_codes	= os08a20_supported_codes,
-> +	.supported_codes_count	= ARRAY_SIZE(os08a20_supported_codes),
-> +	.hdr_modes		= os08a20_hdr_modes,
-> +	.hdr_modes_count	= ARRAY_SIZE(os08a20_hdr_modes),
-> +	.set_hdr_mode		= os08a20_set_hdr_mode,
-> +
-> +};
-> +
->  static const struct ox05b1s_plat_data ox05b1s_data = {
->  	.name			= "ox05b1s",
->  	.chip_id		= 0x580542,
-> @@ -929,9 +1111,16 @@ static const struct ox05b1s_plat_data ox05b1s_data = {
->  	.default_mode_index	= 0,
->  	.supported_codes	= ox05b1s_supported_codes,
->  	.supported_codes_count	= ARRAY_SIZE(ox05b1s_supported_codes),
-> +	.hdr_modes		= NULL,
-> +	.hdr_modes_count	= 0,
-> +	.set_hdr_mode		= NULL,
->  };
->  
->  static const struct of_device_id ox05b1s_of_match[] = {
-> +	{
-> +		.compatible = "ovti,os08a20",
-> +		.data = &os08a20_data,
-> +	},
->  	{
->  		.compatible = "ovti,ox05b1s",
->  		.data = &ox05b1s_data,
+> 
+> > +
+> > +/**
+> > + * drm_atomic_helper_connector_hdmi_update - Update the HDMI Connector after reading the EDID
+> > + * @connector: A pointer to the HDMI connector
+> > + *
+> > + * This function should be called as a part of the .detect() / .detect_ctx()
+> > + * and .force() callbacks, updating the HDMI-specific connector's data.
+> > + *
+> > + * Returns:
+> > + * Zero on success, error code on failure.
+> > + */
+> > +int
+> > +drm_atomic_helper_connector_hdmi_update(struct drm_connector *connector)
+> > +{
+> > +	const struct drm_edid *drm_edid = drm_edid_read(connector);
+> > +
+> > +	return __drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
+> > +}
+> > +EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_update);
+> > diff --git a/include/drm/display/drm_hdmi_state_helper.h b/include/drm/display/drm_hdmi_state_helper.h
+> > index 2d45fcfa461985065a5e5ad67eddc0b1c556d526..ea0980aa25cbbfdd36f44201888c139b0ee943da 100644
+> > --- a/include/drm/display/drm_hdmi_state_helper.h
+> > +++ b/include/drm/display/drm_hdmi_state_helper.h
+> > @@ -20,4 +20,8 @@ int drm_atomic_helper_connector_hdmi_clear_audio_infoframe(struct drm_connector
+> >  int drm_atomic_helper_connector_hdmi_update_infoframes(struct drm_connector *connector,
+> >  						       struct drm_atomic_state *state);
+> >  
+> > +int __drm_atomic_helper_connector_hdmi_update_edid(struct drm_connector *connector,
+> > +						   const struct drm_edid *drm_edid);
+> > +int drm_atomic_helper_connector_hdmi_update(struct drm_connector *connector);
+> > +
+> >  #endif // DRM_HDMI_STATE_HELPER_H_
+> 
+> -- 
+> Jani Nikula, Intel
 
 -- 
-Kind regards,
-
-Sakari Ailus
+With best wishes
+Dmitry
 
