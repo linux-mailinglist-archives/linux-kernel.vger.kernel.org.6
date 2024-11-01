@@ -1,169 +1,202 @@
-Return-Path: <linux-kernel+bounces-392960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 063DA9B9A25
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:24:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E749B9A24
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:24:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7F0281FC3
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F38C281994
 	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9EC1E32D9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B04C1E32CC;
 	Fri,  1 Nov 2024 21:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="QHcwywjX"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YzUub9pI"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F141547DC
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29F61D271A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730496255; cv=none; b=uFjkaLxQmsHpQoAMZErWpXdlxk7rirlZV72bI6dY8luYs/9GZIh0ehkcIR1wC5ff9KhpDDqWf4MlT+0sqTQHa2cffhHAcMhuZbOAOy1OVHScIAoYRu7QwJvGc/ArdSloUD74n0V4hXb4PVLAQcRFJNcLBOMCuSY4TfiP6ZGV4+s=
+	t=1730496256; cv=none; b=FBWXCsnm3NZ1r4eMjFXaQY53Za1MLfsyM2kqF94O8pcrNJkNlFWZNnK25z9+QmZMhbPlRH4Gd9g7s0qSoAyHkp8sFVA7ASSbrC+PuJUhvqAyv5dG8CnXi42tW17gGZiWfmlFDQYUbzrvxao9bJrNJqG0Ak7j22Mwlp0Qg8U2upw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730496255; c=relaxed/simple;
-	bh=RHL+xF3CVZPqVUcgRw4y78BDHoiWWtviuypjCBEvddo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDFNiO25BZRfgYV+7nfSWpI2ixM3ttnfV/047ClvkYIxf2mPG7RmkvJe+ezwNQ+tZq+uz/IFT7lqRCFTfmNWhp64KKYnM9E+pN+rmN1hbkvnxTAJanar/YThVcrbhW6aAW4MWpyksI9YIwZaFUzCgH8zqPtmtrKIbw1RSbt1Hh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=QHcwywjX; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1730496239;
-	bh=RHL+xF3CVZPqVUcgRw4y78BDHoiWWtviuypjCBEvddo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QHcwywjXb0FycugFwzEM5a7hUoX1wzrKCgSCDw8/lyZ8p1WFU6A7B4mExpD1jf4QH
-	 9LDrmiwxlzRzNPmxHPMVGehKKXg6HZaKpt9Nl8vX+S+c9VF9BT9zAC/fYWuB2QTmOE
-	 2gT/MeD+tXSYqdy7epX7Lf1GwlSI3uZCvNpGXGk8=
-Date: Fri, 1 Nov 2024 21:23:48 +0000
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] nolibc changes for v6.13
-Message-ID: <ce65b110-259a-4edf-a84b-4015c6160f52@t-8ch.de>
-References: <ba23217d-5eaf-4146-8ed7-27289cece364@t-8ch.de>
- <7bac1319-fe1c-454d-b96d-8344bdce3961@t-8ch.de>
- <f9d51d6b-f38e-48bb-be5a-97217fb503c1@paulmck-laptop>
+	s=arc-20240116; t=1730496256; c=relaxed/simple;
+	bh=1xIA+BlfuPXS5MNT2eekQt6nrdzAAQ8mMRTUpRP5tjM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rTRcIHN4btIvOvnK6A9zhBDLsGQZUKjIvRztWYnv/Psyw1U4s32oLO1QVsOTQt9dy2TBeFoQYatB7SyrxwDWRg0kFwHF1xpYju0u4ptPifozkSsukLzzOUhzCozrX09QIAu84EfkHr3UreEGy4n/sqx1fGoJwUC99nftl9yEChQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YzUub9pI; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so1802204f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 14:24:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730496252; x=1731101052; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XGNhWT/+3jcQzIMLrDioD/wPUZ00FjT48riH/ahhZjc=;
+        b=YzUub9pIlf4omjO4Dhb61A0wiiiVJ1Hgyw2sdKPlJxv5TG739pmcskXQYNLwcH1EKq
+         85jhHdpHTuxPmW7U4Yvobq8/cAl7LuDT5KQplMjjOnTdxS3GLBhi/nA0PfoIlrhTWVuq
+         l6L/UIbndugYuy93VLIhZ42G6wMvyUC5Hqu1JiWFaCNJsJICitWHnG2PYK/VRHPolesO
+         XhHA0BNYJFte8uzyGgCZl0XtTm0DIdbfow9WHKeuY+rMDr7ENwjBF9k7woGxeGGcZXaJ
+         76J0QeZwPB4fB3MAOBj+O1Jct5rg0YmzBhECfnjYksI4Yhtms0gTMejeN+4IIPuM5H0S
+         GciQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730496252; x=1731101052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XGNhWT/+3jcQzIMLrDioD/wPUZ00FjT48riH/ahhZjc=;
+        b=c3ebCuB4PrNhzYaa//3nDQfkkrVma/kaE4fInq/P6LSfcp79vSSCIkxFJctgd5BHjm
+         EgesheqdqUdxhHroUwAJPKuM1hSofKOV3PA43CKcvZkw++RRUAbTKKfv7wD4o1r6rXeb
+         tlJJJkjJcY+D+926MruLpERpTk4lBvGx4UaWwP+mrvs6j1OmvBr4Sa0dpXL2rvZ5Senx
+         y4RWPjmBwIeOz0yyOta/gVwXcef/eCInCAlxjJxzV0SGVo6yg0eXxAEJJa5OtpvscACi
+         VB3RgD4wulAHWcRIwFTuM8MH3vfJnyGNhdWcUnbl8Ieb4BEWrHRqMtfNQAN8gZubsWHb
+         PPZw==
+X-Gm-Message-State: AOJu0YzkGYPmJGyGrXW+JB85i2HenDhJj/lQkymZfAJEzirz9Ay5jNeX
+	NRnEN83Ts3CascsyFkXdzlz+T5KLwrhgdZTllBFzz560Ms4+RUhrqkMCpIgRYmSQzBKbZGuj8Vx
+	9TrjiSbFe4gb1cS7WAB8EU5XEi5oL4gtcgKof
+X-Google-Smtp-Source: AGHT+IEnx1Glirk4swuvBjeKq5AcoRfj7PZEF2jLHYe380MDSfmIfvkIOxb3aj4c5MAOHxwK/ltfektbCrRcmVHOfkk=
+X-Received: by 2002:a5d:64a7:0:b0:37c:cfdc:19ba with SMTP id
+ ffacd0b85a97d-381c7a6bc70mr4115646f8f.28.1730496252214; Fri, 01 Nov 2024
+ 14:24:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f9d51d6b-f38e-48bb-be5a-97217fb503c1@paulmck-laptop>
+References: <20241031223948.4179222-1-ctshao@google.com> <20241031223948.4179222-2-ctshao@google.com>
+ <CAP-5=fVaD8GLhMmM=d4DqHnT24ZDHPAWU56mzSF5OXY=pTO3UA@mail.gmail.com>
+In-Reply-To: <CAP-5=fVaD8GLhMmM=d4DqHnT24ZDHPAWU56mzSF5OXY=pTO3UA@mail.gmail.com>
+From: Chun-Tse Shao <ctshao@google.com>
+Date: Fri, 1 Nov 2024 14:24:00 -0700
+Message-ID: <CAJpZYjULGa80tC6LBGZyXfUNk3yG5tyieegvheMg6N13QhoHCQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] perf: Reveal PMU type in fdinfo
+To: Ian Rogers <irogers@google.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Ze Gao <zegao2021@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, linux-perf-users@vger.kernel.org, 
+	kan.liang@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Thank you for your review! Here is the link to the v2 patch with
+fixes: https://lore.kernel.org/all/20241101211757.824743-2-ctshao@google.co=
+m/
 
-On 2024-11-01 13:22:17-0700, Paul E. McKenney wrote:
-> On Fri, Nov 01, 2024 at 02:22:13PM +0000, Thomas Weißschuh wrote:
-> > (resend to add missing Cc: LKML)
-> > 
-> > 
-> > Hi Paul,
-> > 
-> > The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-> > 
-> >   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git tags/nolibc-20241101-for-6.13-1
-> > 
-> > for you to fetch changes up to ad0558f3883130954ca724697f2d19aef93967b3:
-> > 
-> >   selftests/nolibc: start qemu with 1 GiB of memory (2024-10-07 21:57:45 +0200)
-> 
-> Thank you!  I have pulled this into -rcu at signed tag nolibc.2024.11.01a,
-> which copies from your signed tag.
+On Fri, Nov 1, 2024 at 9:02=E2=80=AFAM Ian Rogers <irogers@google.com> wrot=
+e:
+>
+> On Thu, Oct 31, 2024 at 3:39=E2=80=AFPM Chun-Tse Shao <ctshao@google.com>=
+ wrote:
+> >
+> > It gives useful info on knowing which PMUs are reserved by this process=
+.
+> > Also add extra attributes which would be useful.
+> >
+> > ```
+> > Testing cycles
+> > $ ./perf stat -e cycles &
+> > $ cat /proc/`pidof perf`/fdinfo/3
+> > pos:    0
+> > flags:  02000002
+> > mnt_id: 16
+> > ino:    3081
+> > perf_event-orig_type:   0
+>
+> nit: I think this should be:
+> perf_event-type:   0
+> this output was from an earlier version.
 
-Thanks!
+Thank you for the correction!
 
-> The usual "make run" and "make user" worked fine, but "make libc-test"
-> gave me the build errors shown below.  Is there some setup step that
-> I omitted?  Or is this not really a necessary test?
+>
+> > perf_event-attr.config1:        0
+> > perf_event-attr.config2:        0
+> > perf_event-attr.config3:        0
+> >
+> > Testing L1-dcache-load-misses//
+> > $ ./perf stat -e L1-dcache-load-misses &
+> > $ cat /proc/`pidof perf`/fdinfo/3
+> > pos:    0
+> > flags:  02000002
+> > mnt_id: 16
+> > ino:    1072
+> > perf_event-attr.type:   3
+> > perf_event-attr.config: 65536
+> > perf_event-attr.config1:        0
+> > perf_event-attr.config2:        0
+> > perf_event-attr.config3:        0
+> > ```
+> >
+> > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+> > ---
+> >  kernel/events/core.c | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index cdd09769e6c56..e0891c376fd9d 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -8,6 +8,7 @@
+> >   *  Copyright  =C2=A9  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.=
+com>
+> >   */
+> >
+> > +#include "linux/seq_file.h"
+>
+> nit: I think you should use angle < > rather than quotes on the
+> include for consistency.
 
-That test does not actually test nolibc but the nolibc test suite.
-It uses your system libc and makes sure that the nolibc test
-expectations match the behaviour of a "real" libc.
-The missing strlcat() function was added to glibc only in 2.38, so I
-guess you have an older version.
-On my glibc 2.40 "make libc-test" works and the test itself succeeds.
+Fixed.
 
-I'll see if there is a reasonable to make libc-test work on older glibc.
-But it shouldn't impact this cycle.
-
-For better architecture coverage I would recommend ./run-tests.sh over
-"make run/user". Speaking about this I remember the discussion from the
-6.12 PR where Willy proposed an improved run-tests.sh error message.
-It seems he didn't push it as a commit, so let's add keep it in mind for
-next cycle.
-
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
->   CC      libc-test
-> nolibc-test.c: In function ‘run_syscall’:
-> nolibc-test.c:1083:63: warning: argument 1 null where non-null expected [-Wnonnull]
->  1083 |                 CASE_TEST(stat_fault);        EXPECT_SYSER(1, stat(NULL, &stat_buf), -1, EFAULT); break;
->       |                                                               ^~~~
-> nolibc-test.c:358:77: note: in definition of macro ‘EXPECT_SYSER2’
->   358 |         do { if (!(cond)) result(llen, SKIPPED); else ret += expect_syserr2(expr, expret, experr1, experr2, llen); } while (0)
->       |                                                                             ^~~~
-> nolibc-test.c:1083:47: note: in expansion of macro ‘EXPECT_SYSER’
->  1083 |                 CASE_TEST(stat_fault);        EXPECT_SYSER(1, stat(NULL, &stat_buf), -1, EFAULT); break;
->       |                                               ^~~~~~~~~~~~
-> In file included from nolibc-test.c:26:
-> /usr/include/x86_64-linux-gnu/sys/stat.h:205:12: note: in a call to function ‘stat’ declared ‘nonnull’
->   205 | extern int stat (const char *__restrict __file,
->       |            ^~~~
-> nolibc-test.c: In function ‘run_stdlib’:
-> nolibc-test.c:1137:75: warning: implicit declaration of function ‘strlcat’; did you mean ‘strncat’? [-Wimplicit-function-declaration]
->  1137 |                 CASE_TEST(strlcat_0);          EXPECT_STRBUFEQ(is_nolibc, strlcat(buf, "bar", 0), buf, 3, "test"); break;
->       |                                                                           ^~~~~~~
-> nolibc-test.c:613:80: note: in definition of macro ‘EXPECT_STRBUFEQ’
->   613 |         do { if (!(cond)) result(llen, SKIPPED); else ret += expect_str_buf_eq(expr, buf, val, llen, cmp); } while (0)
->       |                                                                                ^~~~
-> nolibc-test.c:1143:75: warning: implicit declaration of function ‘strlcpy’; did you mean ‘strncpy’? [-Wimplicit-function-declaration]
->  1143 |                 CASE_TEST(strlcpy_0);          EXPECT_STRBUFEQ(is_nolibc, strlcpy(buf, "bar", 0), buf, 3, "test"); break;
->       |                                                                           ^~~~~~~
-> nolibc-test.c:613:80: note: in definition of macro ‘EXPECT_STRBUFEQ’
->   613 |         do { if (!(cond)) result(llen, SKIPPED); else ret += expect_str_buf_eq(expr, buf, val, llen, cmp); } while (0)
->       |                                                                                ^~~~
-> nolibc-test.c: In function ‘run_syscall’:
-> nolibc-test.c:358:62: warning: argument 1 is null but the corresponding size argument 2 value is 1 [-Wnonnull]
->   358 |         do { if (!(cond)) result(llen, SKIPPED); else ret += expect_syserr2(expr, expret, experr1, experr2, llen); } while (0)
->       |                                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> nolibc-test.c:361:9: note: in expansion of macro ‘EXPECT_SYSER2’
->   361 |         EXPECT_SYSER2(cond, expr, expret, experr, 0)
->       |         ^~~~~~~~~~~~~
-> nolibc-test.c:1073:47: note: in expansion of macro ‘EXPECT_SYSER’
->  1073 |                 CASE_TEST(poll_fault);        EXPECT_SYSER(1, poll(NULL, 1, 0), -1, EFAULT); break;
->       |                                               ^~~~~~~~~~~~
-> In file included from /usr/include/poll.h:1,
->                  from nolibc-test.c:35:
-> /usr/include/x86_64-linux-gnu/sys/poll.h:54:12: note: in a call to function ‘poll’ declared with attribute ‘access (write_only, 1, 2)’
->    54 | extern int poll (struct pollfd *__fds, nfds_t __nfds, int __timeout)
->       |            ^~~~
-> /usr/bin/ld: /tmp/ccvUtmw4.o: in function `run_stdlib':
-> nolibc-test.c:(.text+0x44f9): undefined reference to `strlcat'
-> /usr/bin/ld: nolibc-test.c:(.text+0x4580): undefined reference to `strlcat'
-> /usr/bin/ld: nolibc-test.c:(.text+0x4607): undefined reference to `strlcat'
-> /usr/bin/ld: nolibc-test.c:(.text+0x468e): undefined reference to `strlcat'
-> /usr/bin/ld: nolibc-test.c:(.text+0x4715): undefined reference to `strlcat'
-> /usr/bin/ld: /tmp/ccvUtmw4.o:nolibc-test.c:(.text+0x479c): more undefined references to `strlcat' follow
-> /usr/bin/ld: /tmp/ccvUtmw4.o: in function `run_stdlib':
-> nolibc-test.c:(.text+0x4823): undefined reference to `strlcpy'
-> /usr/bin/ld: nolibc-test.c:(.text+0x48aa): undefined reference to `strlcpy'
-> /usr/bin/ld: nolibc-test.c:(.text+0x4931): undefined reference to `strlcpy'
-> /usr/bin/ld: nolibc-test.c:(.text+0x49b8): undefined reference to `strlcpy'
-> /usr/bin/ld: nolibc-test.c:(.text+0x4a3f): undefined reference to `strlcpy'
-> collect2: error: ld returned 1 exit status
-> make: *** [Makefile:230: libc-test] Error 1
+>
+> Thanks,
+> Ian
+>
+> >  #include <linux/fs.h>
+> >  #include <linux/mm.h>
+> >  #include <linux/cpu.h>
+> > @@ -6820,6 +6821,17 @@ static int perf_fasync(int fd, struct file *filp=
+, int on)
+> >         return 0;
+> >  }
+> >
+> > +static void perf_show_fdinfo(struct seq_file *m, struct file *f)
+> > +{
+> > +       struct perf_event *event =3D f->private_data;
+> > +
+> > +       seq_printf(m, "perf_event-attr.type:\t%u\n", event->orig_type);
+> > +       seq_printf(m, "perf_event-attr.config:\t%llu\n", event->attr.co=
+nfig);
+> > +       seq_printf(m, "perf_event-attr.config1:\t%llu\n", event->attr.c=
+onfig1);
+> > +       seq_printf(m, "perf_event-attr.config2:\t%llu\n", event->attr.c=
+onfig2);
+> > +       seq_printf(m, "perf_event-attr.config3:\t%llu\n", event->attr.c=
+onfig3);
+> > +}
+> > +
+> >  static const struct file_operations perf_fops =3D {
+> >         .release                =3D perf_release,
+> >         .read                   =3D perf_read,
+> > @@ -6828,6 +6840,7 @@ static const struct file_operations perf_fops =3D=
+ {
+> >         .compat_ioctl           =3D perf_compat_ioctl,
+> >         .mmap                   =3D perf_mmap,
+> >         .fasync                 =3D perf_fasync,
+> > +       .show_fdinfo            =3D perf_show_fdinfo,
+> >  };
+> >
+> >  /*
+> > --
+> > 2.47.0.163.g1226f6d8fa-goog
+> >
 
