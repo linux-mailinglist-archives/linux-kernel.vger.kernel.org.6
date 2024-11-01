@@ -1,102 +1,127 @@
-Return-Path: <linux-kernel+bounces-392030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7489C9B8EE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:16:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796FF9B8EE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:17:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A70861C22B7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA542833A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF64186E40;
-	Fri,  1 Nov 2024 10:16:11 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E82F15C15F;
+	Fri,  1 Nov 2024 10:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Vmz8C9rt"
+Received: from msa.smtpout.orange.fr (msa-218.smtpout.orange.fr [193.252.23.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A47815CD60;
-	Fri,  1 Nov 2024 10:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14965156F28;
+	Fri,  1 Nov 2024 10:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730456170; cv=none; b=s375tnkKCFCegxqln66rojhv2Q/0RQiDUdiHhnFQnVvLAqQXK0TO9Bee5sDfXmxbJ73htc6L4vSr5NLa2hUy0RTWHYEnr/LT/96crs1P7nH1vTunqXsu/3DFi/Sw4kRunuD3GrLJVe/GyHWldW8XoAxl/DW5+cVwSdnu2y/uAXo=
+	t=1730456265; cv=none; b=pp8dQWWIi2wZZv3iyb7tdtCCUO43YXiRt3nGmTKOnIe/MSLdtoTAQ5EZ4FMk3J9l0hI47+hAYFulY0pNGemFanLZCpzM8Reg8sbCB361Q27jYexni1CtFllZms7yTZH5SLkk/j9RobanrX8ZZxFsS0epU2YTO2zbMfttKVj3EWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730456170; c=relaxed/simple;
-	bh=xa2mx5V90u4dXLNz44nm9bRWG5DZnoGaELqD6fUk+F8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMnEgqq4zNid+ruYja8O2SQPDstkOfgjvkypLyllzQ75MHBnbO1lddxzG1u1YM2CiTnLe4DQpL0rvZ3+htcmcFn4w1y6r0KQ+rfovItR2tdy8w12KbuOUaNQ/F6ID2RNHUw7foB9v0U6g8n6dfbRbhRyx/4pR1AlQKh/Qf4RLJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 9B3YuDfHSeqJIvkXtncV7Q==
-X-CSE-MsgGUID: eaBG5H8pTZ6RKOEtUt7TTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="34019792"
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="34019792"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 03:16:08 -0700
-X-CSE-ConnectionGUID: 6V6F1O1LSRuEc8fQEV00Nw==
-X-CSE-MsgGUID: tdVZufXXR4G/6M6SzZcAoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="82838350"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 03:16:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1t6ohH-00000009zYn-2seL;
-	Fri, 01 Nov 2024 12:16:03 +0200
-Date: Fri, 1 Nov 2024 12:16:03 +0200
-From: Andy Shevchenko <andy@kernel.org>
-To: Li Huafei <lihuafei1@huawei.com>
-Cc: mchehab@kernel.org, hdegoede@redhat.com, sakari.ailus@linux.intel.com,
-	gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: atomisp: Add check for rgby_data memory
- allocation failure
-Message-ID: <ZySqY9YX0ke64Lf-@smile.fi.intel.com>
-References: <20241101154823.3067891-1-lihuafei1@huawei.com>
- <ZySRjyrxI9jrcY1q@smile.fi.intel.com>
- <d2590a9f-7786-ca08-a705-a5b287e74ba3@huawei.com>
+	s=arc-20240116; t=1730456265; c=relaxed/simple;
+	bh=/kpNeAZ5W7kfgLzBK3bZ9/+VoPRaZE0HpJHhDpbcJqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tJGDkslTSOkeRjTBgp/s/x0YtXJ5rp138mBE7wdfLl++zyKMdexpQIPZUGtNHSrx/apA1hAp3s11/qGpkuh38v2Y6H2KJ2Igod5Dr2QyVnsYOJUr/DqYVrae7T91mCbTzisuyC8+jRqgYt9asZPF9TgxfTepR3ReTknYdFqMdjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Vmz8C9rt; arc=none smtp.client-ip=193.252.23.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 6oiitPoJqlUew6oiitfNq9; Fri, 01 Nov 2024 11:17:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1730456252;
+	bh=TJm0FTTapjfsTGHQas8+XIvgu/RJ1IZnH5FHoN9D0qQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Vmz8C9rt2n48leYSOdBgKlNf7m7wEV4yE8zpBHfBwTwOMR9LL2ARDs1BYM+hPvXWn
+	 fQivIGZLGNgPGm32a/EjGSN2kMCXrEpSVhvk31PQyjp1NAJQtvx2FjyW6nxjzDItRP
+	 jaos0rZEmbY3q98zEj5ExK/l697wMChcBXjQzYnm6eI8UuTrMwpkN+TZgICSp4hgIc
+	 wp3LgffU103yKZmrnBthmEqFc2WuEc5I2AyCvXVovgL3QDUphE/z+PnKG8oJ8miQFf
+	 2M+5np8pV5avdndIwpB6+3fhhc8P3egk/jIQkfOTpUyW2YUuDY3OKZ1Gg/+aHiJYJV
+	 qGPGM9waDlXDg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 01 Nov 2024 11:17:32 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <4fada863-b125-454d-97d0-efbf44ec3bc8@wanadoo.fr>
+Date: Fri, 1 Nov 2024 11:17:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d2590a9f-7786-ca08-a705-a5b287e74ba3@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Input: bbnsm_pwrkey - add remove hook
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, dmitry.torokhov@gmail.com
+Cc: Frank.Li@nxp.com, ping.bai@nxp.com, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+References: <20241101101222.1448210-1-peng.fan@oss.nxp.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241101101222.1448210-1-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 01, 2024 at 05:57:36PM +0800, Li Huafei wrote:
-> On 2024/11/1 16:30, Andy Shevchenko wrote:
-> > On Fri, Nov 01, 2024 at 11:48:23PM +0800, Li Huafei wrote:
-> >> In ia_css_3a_statistics_allocate(), there is no check on the allocation
-> >> result of the rgby_data memory. If rgby_data is not successfully
-> >> allocated, it may trigger the assert(host_stats->rgby_data) assertion in
-> >> ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
-> > 
-> > Not sure if this code even run on currently supported hardware / firmware,
-> > but fix looks okay.
-> > 
-> >> Fixes: ad85094b293e ("Revert "media: staging: atomisp: Remove driver"")
-> > 
-> > No, this is an intermediate commit, you should find the original, which is
-> > earlier in the history.
+Le 01/11/2024 à 11:12, Peng Fan (OSS) a écrit :
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Apologies, the correct fix tag should be:
+> Without remove hook to clear wake irq, there will be kernel dump when
+> doing module test.
+> "bbnsm_pwrkey 44440000.bbnsm:pwrkey: wake irq already initialized"
 > 
-> Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
+> Add remove hook to clear wake irq and set wakeup to false.
 > 
-> If this fix can be applied, do I need to send a v2, or can you help add the Fix tag?
+> Fixes: 40e40fdfec3f ("Input: bbnsm_pwrkey - add bbnsm power key support")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>   drivers/input/misc/nxp-bbnsm-pwrkey.c | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/input/misc/nxp-bbnsm-pwrkey.c b/drivers/input/misc/nxp-bbnsm-pwrkey.c
+> index eb4173f9c820..847964f7ebdd 100644
+> --- a/drivers/input/misc/nxp-bbnsm-pwrkey.c
+> +++ b/drivers/input/misc/nxp-bbnsm-pwrkey.c
+> @@ -187,6 +187,17 @@ static int bbnsm_pwrkey_probe(struct platform_device *pdev)
+>   	return 0;
+>   }
+>   
+> +static void bbnsm_pwrkey_remove(struct platform_device *pdev)
+> +{
+> +	struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
+> +
+> +	dev_pm_clear_wake_irq(&pdev->dev);
+> +	device_init_wakeup(&pdev->dev, false);
+> +
+> +	if (bbnsm)
 
-Up to Hans, but there is another question left unanswered about SoB chain.
-Can you clarify that?
+IIUC, no need to test, if the remove function is called, this can't be NULL.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +		input_unregister_device(bbnsm->input);
+> +}
+> +
+>   static int __maybe_unused bbnsm_pwrkey_suspend(struct device *dev)
+>   {
+>   	struct platform_device *pdev = to_platform_device(dev);
+> @@ -223,6 +234,8 @@ static struct platform_driver bbnsm_pwrkey_driver = {
+>   		.of_match_table = bbnsm_pwrkey_ids,
+>   	},
+>   	.probe = bbnsm_pwrkey_probe,
+> +	.remove_new = bbnsm_pwrkey_remove,
+
+I think that .remove should be used here instead.
+(see 
+https://elixir.bootlin.com/linux/v6.12-rc5/source/include/linux/platform_device.h#L240) 
 
 
+> +
+>   };
+>   module_platform_driver(bbnsm_pwrkey_driver);
+>   
+
+CJ
 
