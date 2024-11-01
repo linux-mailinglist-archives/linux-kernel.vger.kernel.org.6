@@ -1,133 +1,281 @@
-Return-Path: <linux-kernel+bounces-392844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5C59B98C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:36:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5B29B98C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:37:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 369A6B2171E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DDD728060B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A1E1DE4CE;
-	Fri,  1 Nov 2024 19:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAA81D0E14;
+	Fri,  1 Nov 2024 19:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vGut7Hxo"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P4Lod8Yt"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673FF1D9667
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582DC156880;
+	Fri,  1 Nov 2024 19:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489738; cv=none; b=WZhO3GMGhoN7uZffA/rl/yDy82cGD9DTiaSu98RPs58ZEuIVogp38BFicAcxM2wekROoA4//mR5X3/p+gv/YfcrzEaID4dH6iZcDJ6BZk2U5lrYhIU0aunPwUjpVFh6PNwaESRO6Q2dzTYQ8fjcxf2z1Z6+d3/7Vd/AhXQRjpRQ=
+	t=1730489839; cv=none; b=TxC6YyV7lGh23fvs/qSfsTh+/AMFco7oqoaUCaT8oqpYnZs12zBCnq6im9hbQtKtCyv3S2kqbo6PG8mHav40W2J4RmC1+cY3XIxvlU1LangbR6VjSnZSb61HsGbnRWnkX6wDgTT9ANZ1qKYBUglEH29iBSMFIXi2rQOJF2SmYdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489738; c=relaxed/simple;
-	bh=S/oFiR+vJC2zXaL2rYvJPNfkmusIpPM2DSCGWXv6Dyg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nn+8KTc4W/ZB7d6RxkO626eHNndpu1XVM2vLLB5Jsfqo7CLdAPrFPOH5vFnm1Ll+ZFszPISXG4B5VsvYp5iIGIVbmwcFHhSWekUTUb0ZEbl4k5kvVP0CKvHK/t0t/1z/qqp4h+hTDdktpPUI0PxgQ6PjCOTz9kmBoqiL/PR3BgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vGut7Hxo; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30daaf5928so4795363276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:35:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730489734; x=1731094534; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uUy5ZopjlqJWDufwe8vqXw7HsEJ5VFkUPkkuX0f959Y=;
-        b=vGut7Hxopl41L+yUzFGVqMubOhmTLpO80wzvhWrh/hyOvdnPfTwzzZJwTKIy3ByjrK
-         4J+1NsJaj0HFQDQS5fDbQd0vWZicPua8iZxzEY6fuazCW5x530kfwE0XTwrg9J7tNrH6
-         UkmewPNcIaYjTGJLxCQHO6rYh90P2/XUM3QPv3OzbWL66fHID2cglW6gSkj5TMNgbK11
-         nM1RYyCz9V6EdpyAywtTpRgty1hOHXW/XFbhuL+Z/6qVFVQ45K+Fa7UUKQ8lzk3BbYvx
-         QH4Ms/jgAgPAXWJJpYLYhFOCInVDig3zAsfC58/Syvp98RlyRAa3cN+JS82sWqEmF9CL
-         fN5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730489734; x=1731094534;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uUy5ZopjlqJWDufwe8vqXw7HsEJ5VFkUPkkuX0f959Y=;
-        b=rXu3b1i4ums+ccr7s4opfLfK156T1/HIx0Uu2Em/+esTn8mE1EDBlqKig8N9NSD5Tz
-         rJOjesbIlKBkG+DLpTEuNrkvOuTiPmL02irciO0qqQHGU4ygTqP8Ud3H3W9vR1jejTma
-         +Q1vhl2ZtdqRP+tYGb7VR1Ov7VWEHeDRZjgyhgz8uw1dY+8S6vNgPPb4qqpf7ujOky2v
-         yfbCvJShNjJ4MKGOyg/yQrU1ks2YmhhvjhrLsc2NP1JMiiL32BDs7Me8z571U6efXSrM
-         tWWSqXUVL3UehXU1czklTKnWYf48+S2zqhGCdi4v06FOVfz81tycG+e+E6cAjavrE3vT
-         FrqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUz1wQaUIzsEW0URo8aG2rMr5cjV21mfSvbqtFxeHx+zCROnmQpeukjs3+ZPXkSKibzzFeAe8S64dmwqiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7B9zkfPiy9h59jFD730A46g+vjupEusrEoTGCBYpn3EGuUMZT
-	miYSyL1cY1x15oOJq9bP21fYgNJ5YpFUo0HD3ZY3bJPE7WLuPPZtA1IQlc0gwkZGYE2N/faYmHu
-	kgA==
-X-Google-Smtp-Source: AGHT+IFL5eQqn+yUkx/nmKef/J3UAoZeVywmBetLKzDmO6D7CBi8heV8pn93AUnwAMp0MBljsLb1ED8hw20=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a5b:f0f:0:b0:e2e:2cba:ac1f with SMTP id
- 3f1490d57ef6-e3087bd5414mr136150276.6.1730489734464; Fri, 01 Nov 2024
- 12:35:34 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  1 Nov 2024 12:35:32 -0700
+	s=arc-20240116; t=1730489839; c=relaxed/simple;
+	bh=OoWxJf4iBVjyTXJT/wfor5l782OhFK0RcLD9B0iQNFk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=su4lfEQ5yqj47oW05+gM7b+drQiybWdI7zTdypkt6i2fzAVQY+afUVINIpDaYSvqmPLiHk6eTQ2YChDkbiYa9f8nW0V9JxrZxEmVf+fXQikTcnbW+efdEo3Xy33Qq2KGVcFfvdOolnCst5WGwFo7F8GObxL3QbhO1BZjM037+DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P4Lod8Yt; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1EV4qN030018;
+	Fri, 1 Nov 2024 19:37:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=i2l4/Hj/mhka24zQg0cu1LYa/T2592hz+kjCUgTjJ
+	Ek=; b=P4Lod8YtCK3/AYqk+nTvGgqgQ1bSwfovsVBtwS0+xDwnkxgKdGQdZ0YWF
+	vchaI5plG2mnxi+UzocYn42Wf6tweHY+sTSUJ5g+EjMS3+MsRtIBPQMRCwgk7UlN
+	tN/qMM/fAIZ+WkQgJKK7oTkHBuTFDp0tezKi8m75Dj3t+cwm+6uepOz3WDBSe3BX
+	QjzbbOnt5TqfJsR6Cn0QXX5XOLA0/+bXHBbj7boLCRBNeThsKfulhTavrLF4IGTY
+	otMVbM6AjDTKwqpk98Pb/+KQOcs7EauKgfJDHZnFkEljIO4Ftt7pc7q1NdUw9EPo
+	tQKhfQlRXfpCqSzQ5t08cGNUwduzQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42n0trs5ss-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 19:37:08 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A1Jb7vs004278;
+	Fri, 1 Nov 2024 19:37:07 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42n0trs5sp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 19:37:07 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1FYwKd028181;
+	Fri, 1 Nov 2024 19:37:06 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hb4yb91f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 19:37:06 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A1Jb50n53018924
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 1 Nov 2024 19:37:05 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7A83E58060;
+	Fri,  1 Nov 2024 19:37:05 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E4E1F5803F;
+	Fri,  1 Nov 2024 19:37:04 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  1 Nov 2024 19:37:04 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Stefan Berger <stefanb@linux.ibm.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: Simplify getattr interface function checking AT_GETATTR_NOSEC flag
+Date: Fri,  1 Nov 2024 15:37:03 -0400
+Message-ID: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.47.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: yG6F-hGE31ukWHgEfDQCKAvMFaRmBF7w
+X-Proofpoint-GUID: JeiN5rPZehDvztK6czFOzCyPW_j7Pa1Q
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241101193532.1817004-1-seanjc@google.com>
-Subject: [PATCH] KVM: x86: Update irr_pending when setting APIC state with
- APICv disabled
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yong He <zhuangel570@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 mlxscore=0 clxscore=1011 impostorscore=0 mlxlogscore=999
+ suspectscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411010138
 
-Explicitly set apic->irr_pending after stuffing the vIRR when userspace
-sets APIC state and APICv is disabled, otherwise KVM will skip scanning
-the vIRR in subsequent calls to apic_find_highest_irr(), and ultimately
-fail to inject the interrupt until another interrupt happens to be added
-to the vIRR.
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-Only the APICv-disabled case is flawed, as KVM forces apic->irr_pending to
-be true if APICv is enabled, because not all vIRR updates will be visible
-to KVM.
+Commit 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface
+function")' introduced the AT_GETATTR_NOSEC flag to ensure that the
+call paths only call vfs_getattr_nosec if it is set instead of vfs_getattr.
+Now, simplify the getattr interface functions of filesystems where the flag
+AT_GETATTR_NOSEC is checked.
 
-Note, irr_pending is intentionally not updated in kvm_apic_update_apicv(),
-because when APICv is being inhibited/disabled, KVM needs to keep the flag
-set until the next emulated EOI so that KVM will correctly handle any
-in-flight updates to the vIRR from hardware.  But when setting APIC state,
-neither the VM nor the VMM can assume specific ordering between an update
-from hardware and overwriting all state in kvm_apic_set_state(), thus KVM
-can safely clear irr_pending if the vIRR is empty.
+There is only a single caller of inode_operations getattr function and it
+is located in fs/stat.c in vfs_getattr_nosec. The caller there is the only
+one from which the AT_GETATTR_NOSEC flag is passed from.
 
-Reported-by: Yong He <zhuangel570@gmail.com>
-Closes: https://lkml.kernel.org/r/20241023124527.1092810-1-alexyonghe%40tencent.com
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+Two filesystems are checking this flag in .getattr and the flag is always
+passed to them unconditionally from only vfs_getattr_nosec:
+
+- ecryptfs:  Simplify by always calling vfs_getattr_nosec in
+             ecryptfs_getattr. From there the flag is passed to no other
+             function and this function is not called otherwise.
+
+- overlayfs: Simplify by always calling vfs_getattr_nosec in
+             ovl_getattr. From there the flag is passed to no other
+             function and this function is not called otherwise.
+
+The query_flags in vfs_getattr_nosec will mask-out AT_GETATTR_NOSEC from
+any caller using AT_STATX_SYNC_TYPE as mask so that the flag is not
+important inside this function. Also, since no filesystem is checking the
+flag anymore, remove the flag entirely now, including the BUG_ON check that
+never triggered.
+
+The net change of the changes here combined with the originan commit is
+that ecryptfs and overlayfs do not call vfs_getattr but only
+vfs_getattr_nosec.
+
+Fixes: 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface function")
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Closes: https://lore.kernel.org/linux-fsdevel/20241101011724.GN1350452@ZenIV/T/#u
+Cc: Tyler Hicks <code@tyhicks.com>
+Cc: ecryptfs@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-unionfs@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- arch/x86/kvm/lapic.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/ecryptfs/inode.c        | 12 ++----------
+ fs/overlayfs/inode.c       | 10 +++++-----
+ fs/overlayfs/overlayfs.h   |  8 --------
+ fs/stat.c                  |  5 +----
+ include/uapi/linux/fcntl.h |  4 ----
+ 5 files changed, 8 insertions(+), 31 deletions(-)
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 65412640cfc7..deb73aea2c06 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -3086,6 +3086,15 @@ int kvm_apic_set_state(struct kvm_vcpu *vcpu, struct kvm_lapic_state *s)
- 		kvm_x86_call(hwapic_irr_update)(vcpu,
- 						apic_find_highest_irr(apic));
- 		kvm_x86_call(hwapic_isr_update)(apic_find_highest_isr(apic));
-+	} else {
-+		/*
-+		 * Note, kvm_apic_update_apicv() is responsible for updating
-+		 * isr_count and highest_isr_cache.  irr_pending is somewhat
-+		 * special because it mustn't be cleared when APICv is disabled
-+		 * at runtime, and only state restore can cause an IRR bit to
-+		 * be set without also refreshing irr_pending.
-+		 */
-+		apic->irr_pending = apic_search_irr(apic) != -1;
- 	}
- 	kvm_make_request(KVM_REQ_EVENT, vcpu);
- 	if (ioapic_in_kernel(vcpu->kvm))
-
-base-commit: 5cb1659f412041e4780f2e8ee49b2e03728a2ba6
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index cbdf82f0183f..a9819ddb1ab8 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -1008,14 +1008,6 @@ static int ecryptfs_getattr_link(struct mnt_idmap *idmap,
+ 	return rc;
+ }
+ 
+-static int ecryptfs_do_getattr(const struct path *path, struct kstat *stat,
+-			       u32 request_mask, unsigned int flags)
+-{
+-	if (flags & AT_GETATTR_NOSEC)
+-		return vfs_getattr_nosec(path, stat, request_mask, flags);
+-	return vfs_getattr(path, stat, request_mask, flags);
+-}
+-
+ static int ecryptfs_getattr(struct mnt_idmap *idmap,
+ 			    const struct path *path, struct kstat *stat,
+ 			    u32 request_mask, unsigned int flags)
+@@ -1024,8 +1016,8 @@ static int ecryptfs_getattr(struct mnt_idmap *idmap,
+ 	struct kstat lower_stat;
+ 	int rc;
+ 
+-	rc = ecryptfs_do_getattr(ecryptfs_dentry_to_lower_path(dentry),
+-				 &lower_stat, request_mask, flags);
++	rc = vfs_getattr_nosec(ecryptfs_dentry_to_lower_path(dentry),
++			       &lower_stat, request_mask, flags);
+ 	if (!rc) {
+ 		fsstack_copy_attr_all(d_inode(dentry),
+ 				      ecryptfs_inode_to_lower(d_inode(dentry)));
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index 35fd3e3e1778..8b31f44c12cd 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -170,7 +170,7 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 
+ 	type = ovl_path_real(dentry, &realpath);
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+-	err = ovl_do_getattr(&realpath, stat, request_mask, flags);
++	err = vfs_getattr_nosec(&realpath, stat, request_mask, flags);
+ 	if (err)
+ 		goto out;
+ 
+@@ -195,8 +195,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 					(!is_dir ? STATX_NLINK : 0);
+ 
+ 			ovl_path_lower(dentry, &realpath);
+-			err = ovl_do_getattr(&realpath, &lowerstat, lowermask,
+-					     flags);
++			err = vfs_getattr_nosec(&realpath, &lowerstat, lowermask,
++						flags);
+ 			if (err)
+ 				goto out;
+ 
+@@ -248,8 +248,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 
+ 			ovl_path_lowerdata(dentry, &realpath);
+ 			if (realpath.dentry) {
+-				err = ovl_do_getattr(&realpath, &lowerdatastat,
+-						     lowermask, flags);
++				err = vfs_getattr_nosec(&realpath, &lowerdatastat,
++							lowermask, flags);
+ 				if (err)
+ 					goto out;
+ 			} else {
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 0bfe35da4b7b..910dbbb2bb7b 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -412,14 +412,6 @@ static inline bool ovl_open_flags_need_copy_up(int flags)
+ 	return ((OPEN_FMODE(flags) & FMODE_WRITE) || (flags & O_TRUNC));
+ }
+ 
+-static inline int ovl_do_getattr(const struct path *path, struct kstat *stat,
+-				 u32 request_mask, unsigned int flags)
+-{
+-	if (flags & AT_GETATTR_NOSEC)
+-		return vfs_getattr_nosec(path, stat, request_mask, flags);
+-	return vfs_getattr(path, stat, request_mask, flags);
+-}
+-
+ /* util.c */
+ int ovl_get_write_access(struct dentry *dentry);
+ void ovl_put_write_access(struct dentry *dentry);
+diff --git a/fs/stat.c b/fs/stat.c
+index 41e598376d7e..cbc0fcd4fba3 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -165,7 +165,7 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+ 	if (inode->i_op->getattr)
+ 		return inode->i_op->getattr(idmap, path, stat,
+ 					    request_mask,
+-					    query_flags | AT_GETATTR_NOSEC);
++					    query_flags);
+ 
+ 	generic_fillattr(idmap, request_mask, inode, stat);
+ 	return 0;
+@@ -198,9 +198,6 @@ int vfs_getattr(const struct path *path, struct kstat *stat,
+ {
+ 	int retval;
+ 
+-	if (WARN_ON_ONCE(query_flags & AT_GETATTR_NOSEC))
+-		return -EPERM;
+-
+ 	retval = security_inode_getattr(path);
+ 	if (retval)
+ 		return retval;
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 87e2dec79fea..a40833bf2855 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -154,8 +154,4 @@
+ 					   usable with open_by_handle_at(2). */
+ #define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
+ 
+-#if defined(__KERNEL__)
+-#define AT_GETATTR_NOSEC	0x80000000
+-#endif
+-
+ #endif /* _UAPI_LINUX_FCNTL_H */
 -- 
-2.47.0.163.g1226f6d8fa-goog
+2.47.0
 
 
