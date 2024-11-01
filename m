@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-392580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F6C9B95CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:45:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE9C9B95D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACC828413E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:45:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833A5284157
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC701CDA1E;
-	Fri,  1 Nov 2024 16:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC421C75F3;
+	Fri,  1 Nov 2024 16:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUwoG//T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G5e3v06M"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1B11CDA02;
-	Fri,  1 Nov 2024 16:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3671CA81;
+	Fri,  1 Nov 2024 16:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730479468; cv=none; b=MWEs7I89E0TuSFuMh0wB1SCHRpahf767n4sRZCgf9SzrIKOllG7tWBeUvmln6UuFKtyqTbSx2ECydCOWGedj2z6AkMqUiZrTwa1W8QaQiNk02vtpEt2UOTFt1UP5xw3rBV2YM48K9lg9Mv0EcVtrlnMZva+upqsO0KT+cwUr70k=
+	t=1730479566; cv=none; b=MbiUBHS5+uCtw0kgnnLC/X0TxmMYeDkzg3IQXcmZ2W9dzK3K8cVGcLam/eCmm8u9PeNmQMy1/qgKSilma3C24OHb2TknyDdo0IKfVGqE3Anwrd6UhV1dJea0pXXVB89UnkYN3rpM5wKFJVoDYIb6nAkKMIzOWm/TmM2PxHhPYZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730479468; c=relaxed/simple;
-	bh=1CfY2+o4mRhy02U7CFSYwo0qVuQU+kj4WkP+HlKqRn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TPJCfb+o81Ks5tEgAPd9EPaCModKB1emBk+2qPbN9S6Nf+ROfCWikB1LZVzmNTlwvOQttfSXVe+JzkXTo0Vgx0wqXJwF5pfXMQtz/xriePIdDEOPNxedwEPLlWihgEsHjUJnHdzYQAg0+emWwyY6dBOvAQXqub/XuKRCxxHv1JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUwoG//T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1145FC4CED3;
-	Fri,  1 Nov 2024 16:44:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730479468;
-	bh=1CfY2+o4mRhy02U7CFSYwo0qVuQU+kj4WkP+HlKqRn0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RUwoG//TVOvFq/Z1QHtZYQirIJMBlS/ZHXo9vBPUi0Cy17F9j38/a/zHCwtOEm+A+
-	 jdAI7FoQWJ3E7573lT0saQ+1WwkRsUr30AomYt07P6Jm+HAD55oXdbAlh5JgFHBBcg
-	 /TivdakH0u8CYOnH1xagXujZ4e7+vg4FIIUfiQC9/kUkDKREYlEuTHucOjUyKDNV43
-	 16tmfjxwvKsDTI1rAC/Y7BUc/mC+Me2Nl1FXZcv/bTXZocBCLFYBI0Pu2XZyW91u7I
-	 ZuYJZdvuiJJ9W/q5PRmAmH9rXDbLOLxB4bwEnwBWVn+TDgr9N6e/CSZG/uMhTF5l0s
-	 2FGA5tFv/zEXA==
-Date: Fri, 1 Nov 2024 16:44:14 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Ramona Gradinariu
- <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Anand Ashok Dumbre
- <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
- Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
- <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
- Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
- Linus Walleij <linus.walleij@linaro.org>, Benson Leung
- <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v2 15/15] iio: light: apds9960: remove useless return
-Message-ID: <20241101164414.4f14c75f@jic23-huawei>
-In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-15-2bcacbb517a2@baylibre.com>
-References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
-	<20241031-iio-fix-write-event-config-signature-v2-15-2bcacbb517a2@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730479566; c=relaxed/simple;
+	bh=lCjxAOo03fX0mkrZ3oqu3YDGLatu8BTDboScTkmZjzs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=W9GXembqBCV9pzJjkMOzJozeo6ouqFjpm9JU31hFCgKsBQizzVMtye4jw8GSg6/EdJK4f+ox8VcN80Ekkxzy+Q71GBvH4r1roXK3JvtJhrEpAfoIhtvGjaBCjHMBhuwAP9arX0OBBA3J6dY8vPWuiTqrN7Z8enbhPL3wE99FSJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=G5e3v06M; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1730479543; x=1731084343; i=markus.elfring@web.de;
+	bh=kaksipcSDTEyCM1cENFazHTVtUsnXvmooZxjFwZ0RTw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=G5e3v06MXoSEEffCbyCq5GZaI7MAstyFWkvwVx5ejxj2jZpZ6muPcvTaBjtNVPel
+	 Zox6ls6TUrixsyhLqkFHLYc5NXBKrnJmQGX9ClxSkVz1UTKRy3PgqXV8g9VpWAC2J
+	 prKuviMHz+McJS2ugBVKjZQDJINuQluYj2L5m3xc0BUYtGByhI6d0o/Sb7gFginSM
+	 G8uMTejHAO6TV5SCBgC88ZSAHDJlZtBRwUUfz4UvHbuoOwjS3/Khv92DOOvvlwoHZ
+	 xnmDx6eZ7nPn/k8pbXX8YmVQGbVSU+V0FRa/oNRJ45vRdkNDPCLFVrLrssb/gi9rI
+	 slMjKqBfAULH+gbqUQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MKM5t-1tPxlY1vxf-00Vp7J; Fri, 01
+ Nov 2024 17:45:43 +0100
+Message-ID: <feac7231-5563-4f68-8554-483c7030b50a@web.de>
+Date: Fri, 1 Nov 2024 17:45:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: Yi Zou <03zouyi09.25@gmail.com>, netdev@vger.kernel.org,
+ David Ahern <dsahern@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, 21210240012@m.fudan.edu.cn,
+ 21302010073@m.fudan.edu.cn
+References: <20241101044828.55960-1-03zouyi09.25@gmail.com>
+Subject: Re: [PATCH] ipv6: ip6_fib: fix possible null-pointer-dereference in
+ ipv6_route_native_seq_show
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241101044828.55960-1-03zouyi09.25@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:C9/LMvIwitMk/ebqIfgkNZc/L0ZpXW58f6+5H0KPxfIRXBO+vfr
+ pH+rBhgLdova9QKuiN5BvBhfC38jdTEo4ep8DOBTAScSriuiCfKr7bNi48NU8Lj22Mhs1iP
+ QjZuxIl3K5OftAIb3IwQP3tOdp8vu/ysxsgCApTHhSBhO0Mm4VwSJl8Tu3AcoThp9zfmE+B
+ VmU6vLyYbRLlXSFl/cLjw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mjV2+RYPTW4=;B/tnfHDIeaFoFj2EFrirLXlv6Yc
+ /QxDUrF5db78mKyMZjnuEfctfzTGTbGFdzTC3dMZPF/V9XVj9p/AunjusnCh+sdI+dSfN9q6s
+ FOK05WD8VtBQQpWVG4N7BfMgLkDxNcpQ1WJoDgjkzv0AkyslCrD4HoZJsGWaBiNA0X7EP3rdz
+ 4FVsbxnIHEhoI/LALQz4DboKYl6+DCjhlv0mYQjPDKzlcMJrwf9uj44NzsZp/+zR31KB1ihy9
+ wrniXF/e2mFcLdRgZlwoveWTrwKOFWGuS8tyPWbflKw5WTpPlBs5QUIkvLf3LSg4XDFKdfFgY
+ QrKxaDWneO3p06601doiBL/604/ViPTrhOQzVJmKwu3Kx5XgPhnXqh2sQk8h6iuK3R85aPLQE
+ Rse7h9oejJUHGGurc2RCuI40na7BNvLWjW4uA6ElrlvSwNkySrCTKlvvvzd9preWcbFKXgOJ6
+ NwY3nFUTapJrkSZ2xQl+2fSKj44X6q8PRwz9iZwDz6JCH6Xk2lzo1zSPtkCl4UiWCwRag+RAY
+ 4Z8bqy20CBUrESsT25iDKVxsngQ4wm3zhzoqZzyzvu2Rs1XTP8yo3WNStYdKjvSpq2a6ou707
+ vvehGoM29o+t068kqqJkqH9qhFlmG2LGrnQ7AihojjI6MGF0LuikY5sOM9JlUQBt47HgnZJie
+ O2QIq+NUUY/MILo0mhlrxUT37A0O0Zq36c+N0hPeV6wz7m7QqUmG6+oL1u3fqMYkfN2AtwNXl
+ YJHh5yCrOg4MvS2sW4u2eaNqqy/I128y8D6jV5OFvlkTr0pztVSNdLN1xJu99UYwfEBdB6CA4
+ BFTkggYNpjQP7EuQvfc/QyeQ==
 
-On Thu, 31 Oct 2024 16:27:10 +0100
-Julien Stephan <jstephan@baylibre.com> wrote:
+> In the ipv6_route_native_seq_show function, the fib6_nh variable
+> is assigned the value from nexthop_fib6_nh(rt->nh), which could
+> return NULL. This creates a risk of a null-pointer-dereference
+> when accessing fib6_nh->fib_nh_gw_family. This can be resolved by
+> checking if fib6_nh is non-NULL before accessing fib6_nh->fib_nh_gw_fami=
+ly
+> and assign dev using dev =3D fib6_nh ? fib6_nh->fib_nh_dev : NULL;
+> to prevent null-pointer dereference errors.
+=E2=80=A6
 
-> return 0 statement at the end of apds9960_read_event_config is useless.
-> Remove it.
-Strange that never triggered a build warning that I noticed.
+* Please choose an imperative wording for an improved change description.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.12-rc5#n94
 
-Anyhow applied.  
+* Would you like to append parentheses to function names?
 
-So I did end up more or less (i.e. with tweaks) applying the whole series.
-If you have time to follow up on the few cases I spotted where passing the
-bool value into functions instead of an int may make for better
-readability.
+* I suggest to omit the word =E2=80=9Cpossible=E2=80=9D from the summary p=
+hrase.
 
-> 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> ---
->  drivers/iio/light/apds9960.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
-> index 7b3da88885693c488807da459ceaa1cbb3881bcd..d30441d3370309fce9d6c717d42b829ff1db3174 100644
-> --- a/drivers/iio/light/apds9960.c
-> +++ b/drivers/iio/light/apds9960.c
-> @@ -749,8 +749,6 @@ static int apds9960_read_event_config(struct iio_dev *indio_dev,
->  	default:
->  		return -EINVAL;
->  	}
-> -
-> -	return 0;
->  }
->  
->  static int apds9960_write_event_config(struct iio_dev *indio_dev,
-> 
+* How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and=
+ =E2=80=9CCc=E2=80=9D) accordingly?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.12-rc5#n145
 
+
+Regards,
+Markus
 
