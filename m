@@ -1,121 +1,161 @@
-Return-Path: <linux-kernel+bounces-391673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257389B8A1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:49:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEEF49B8A1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5BC41F22BD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:49:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623251F22688
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E610B1465BA;
-	Fri,  1 Nov 2024 03:49:23 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C4781ACA;
-	Fri,  1 Nov 2024 03:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B9F145B39;
+	Fri,  1 Nov 2024 03:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="ol2xBmPp"
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D544C79;
+	Fri,  1 Nov 2024 03:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730432963; cv=none; b=d+Q4mDZlOr81lGXCH6ATPdXhybCW6vxEwlqEQ9EAIxv2kf/NRYnYV/szPy5kabK50ypINhZPPeB+y/26xahWp3uZ+2rcPHFDobnKuAlw145+4iVQAU/bX++csP4q+4iMDy2KVUvFeelaAtEXasKlBJFS/kS63eINL57V1ExaStM=
+	t=1730433135; cv=none; b=ODUryCqbT3aUmfYv59FGuGKCxtLU5y1kzlOo6z/YIHM0+ogN6pNFYiiE7CxcNRvrFh8G7cvZIcE6TnhaHzBKjpeoqazB4uBccreLH6WAhvqoN5JFXYfPGb4zGsHRwiDksxR33qXWkriHL0Bc/yKA3OMQjvS9LWmQ3EmalOB0gtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730432963; c=relaxed/simple;
-	bh=Dz75ZST8dWVDzo/Q/bFdydwcpqxQ44P49x8eC5sWkbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=F/ARxi7HV8NqDfGbLpe5a7LQjywcFIc5WdOM9QNSUdkOTAL7Fm+ANSiOUCa1PrYkqVX4R4KTh2nFMBwVaD+jZTrDrNEXcMdi3Lx/sghNUNzP4b7VSYPOOHUuwXDosQwVkzLB8NlXJ4rimGVEqegLuNHDoU5W52jnXcdDiFy80Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Xfn0v5h19z1ynfx;
-	Fri,  1 Nov 2024 11:49:19 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id BC0AA1A016C;
-	Fri,  1 Nov 2024 11:49:10 +0800 (CST)
-Received: from [10.67.109.114] (10.67.109.114) by
- kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 1 Nov 2024 11:49:10 +0800
-Message-ID: <d2997f40-a328-4c86-be2f-982e72b06401@huawei.com>
-Date: Fri, 1 Nov 2024 11:49:09 +0800
+	s=arc-20240116; t=1730433135; c=relaxed/simple;
+	bh=JpflwicX9fBsBZhasywynZ/y0TYwmbhCSocnbcuYT8o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KFexS0hsVpJ+dJemQAilK025CfnNTzdz3rC6PUqCptXsLoFoVfiOwu5o2+EuLkoiiqoF/e1ImFX6rbtd83jOuNuBXTjHgaz6nWVXgP64AVKgrHDCHRF1NqEcIDbLynus11htqe57PO/wzwF9ojOu7RZY8zdTKEqtHtieRNGvZQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=ol2xBmPp reason="key not found in DNS"; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
+	Message-Id:MIME-Version:Content-Transfer-Encoding; bh=VL6U2qeALI
+	oeBGhO9KbfQQvXF5+xanMkAj0oSY2OYdA=; b=ol2xBmPpdecje3+hFbWxb6Y3WY
+	6L38i1wKhX2g21+OxTFlcccVbmUP65XZaTYlGaEOT9aTHL+xs1RBc9RYItAFbUp0
+	m4rodrEDiNVgWOt4w8/+ursDO2t56PUqrDuMfGGb+7dDSrUVtjN5SJtM2akADtZn
+	UjLf4WF8rpj2irtCk=
+Received: from s1eepy-QiTianM540-A739.. (unknown [10.130.146.61])
+	by coremail-app2 (Coremail) with SMTP id Nyz+CgAX2AFHUCRn5Ya_AA--.11076S2;
+	Fri, 01 Nov 2024 11:51:48 +0800 (CST)
+From: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: baijiaju1990@gmail.com,
+	zhenghaoran@buaa.edu.cn,
+	21371365@buaa.edu.cn
+Subject: [PATCH] btrfs: Fix data race in log_conflicting_inodes
+Date: Fri,  1 Nov 2024 11:51:33 +0800
+Message-Id: <20241101035133.925251-1-zhenghaoran@buaa.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: fix memory leak for
- iio_gts_build_avail_scale_table()
-To: Matti Vaittinen <mazziesaccount@gmail.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>
-References: <20241031014743.2313121-1-quzicheng@huawei.com>
- <9ee46109-8503-4b5d-bfd4-45b7ac03029a@gmail.com>
-From: Zicheng Qu <quzicheng@huawei.com>
-In-Reply-To: <9ee46109-8503-4b5d-bfd4-45b7ac03029a@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpeml500008.china.huawei.com (7.185.36.147) To
- kwepemd200012.china.huawei.com (7.221.188.145)
+X-CM-TRANSID:Nyz+CgAX2AFHUCRn5Ya_AA--.11076S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF4DKFy5JFW8CF13tryDtrb_yoW5tFy7pF
+	4xWFyUG3y5X34rKF92yw4kWr1agFZxGF4UCry5Cr4xArWUXrnrtrnYvwnrCF15K34xCw1Y
+	grWrAF17u3WfArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkF1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kE
+	wVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x
+	0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF
+	7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F4
+	0Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC
+	6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIec
+	xEwVCm-wCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26F1DJr1UJwCFx2IqxVCF
+	s4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI
+	8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41l
+	IxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIx
+	AIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
+	jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZa9-UUUUU=
+X-CM-SenderInfo: 1v1sjjazstiqpexdthxhgxhubq/
 
-Hi Matti,
+The Data Race occurs when the `log_conflicting_inodes()` function is
+executed in different threads at the same time. When one thread assigns
+a value to `ctx->logging_conflict_inodes` while another thread performs
+an `if(ctx->logging_conflict_inodes)` judgment or modifies it at the
+same time, a data contention problem may arise.
 
-Thank you for your concern! I haven't used it in my projects yet. I came 
-across this issue while using smatch for code analysis. After reviewing 
-the code, I noticed a few minor issues. However, I did not realize that 
-the patch for the memory leak has already been submitted couple of days 
-ago. Apologies for not checking the patches thoroughly and submitting a 
-duplicate.
+Further, an atomicity violation may also occur here. Consider the
+following case, when a thread A `if(ctx->logging_conflict_inodes)`
+passes the judgment, the execution switches to another thread B, at
+which time the value of `ctx->logging_conflict_inodes` has not yet
+been assigned true, which would result in multiple threads executing
+`log_conflicting_inodes()`.
 
-Yours,
+To address this issue, it is recommended to add locks to protect
+`logging_conflict_inodes` in the `btrfs_log_ctx` structure, and lock
+protection during assignment and judgment. This modification ensures
+that the value of `ctx->logging_conflict_inodes` does not change during
+the validation process, thereby maintaining its integrity.
 
--- Zicheng
+Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+---
+ fs/btrfs/tree-log.c | 7 +++++++
+ fs/btrfs/tree-log.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-On 2024/10/31 15:32, Matti Vaittinen wrote:
-> Hi Zicheng
->
-> On 31/10/2024 03:47, Zicheng Qu wrote:
->> In iio_gts_build_avail_scale_table(), the memory allocated for
->> per_time_gains is freed using kfree(per_time_gains) before return 0.
->> However, the type per_time_gains is 'int **', and the memory allocated
->> for its inner elements is not being freed, leading to a memory leak.
->>
->> Cc: stable@vger.kernel.org # v6.6+
->> Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
->> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
->> ---
->>   drivers/iio/industrialio-gts-helper.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/iio/industrialio-gts-helper.c 
->> b/drivers/iio/industrialio-gts-helper.c
->> index 59d7615c0f56..f2450b2e740d 100644
->> --- a/drivers/iio/industrialio-gts-helper.c
->> +++ b/drivers/iio/industrialio-gts-helper.c
->> @@ -307,6 +307,8 @@ static int iio_gts_build_avail_scale_table(struct 
->> iio_gts *gts)
->>       if (ret)
->>           goto err_free_out;
->>   +    for (j = 0; j < gts->num_itime; j++)
->> +        kfree(per_time_gains[i]);
->>       kfree(per_time_gains);
->>       gts->per_time_avail_scale_tables = per_time_scales;
->
-> You're right, thanks!
-> This, however, was already fixed by:
-> https://lore.kernel.org/all/20241011095512.3667549-1-ruanjinjie@huawei.com/ 
->
->
-> Out of the curiosity (and no need to respond if you don't feel like) - 
-> are you using the gts helpers in some of your project(s)? I am glad 
-> seeing these fixes coming in and just wondered if all these bugs are 
-> found because these helpers are being used outside the ROHM drivers :)
->
-> Yours,
->     -- Matti
->
+diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+index 9637c7cdc0cf..9cdbf280ca9a 100644
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -2854,6 +2854,7 @@ void btrfs_init_log_ctx(struct btrfs_log_ctx *ctx, struct btrfs_inode *inode)
+ 	INIT_LIST_HEAD(&ctx->conflict_inodes);
+ 	ctx->num_conflict_inodes = 0;
+ 	ctx->logging_conflict_inodes = false;
++	spin_lock_init(&ctx->logging_conflict_inodes_lock);
+ 	ctx->scratch_eb = NULL;
+ }
+ 
+@@ -5779,16 +5780,20 @@ static int log_conflicting_inodes(struct btrfs_trans_handle *trans,
+ 				  struct btrfs_log_ctx *ctx)
+ {
+ 	int ret = 0;
++	unsigned long logging_conflict_inodes_flags;
+ 
+ 	/*
+ 	 * Conflicting inodes are logged by the first call to btrfs_log_inode(),
+ 	 * otherwise we could have unbounded recursion of btrfs_log_inode()
+ 	 * calls. This check guarantees we can have only 1 level of recursion.
+ 	 */
++	spin_lock_irqsave(&ctx->conflict_inodes_lock, logging_conflict_inodes_flags);
+ 	if (ctx->logging_conflict_inodes)
++		spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_conflict_inodes_flags);
+ 		return 0;
+ 
+ 	ctx->logging_conflict_inodes = true;
++	spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_conflict_inodes_flags);
+ 
+ 	/*
+ 	 * New conflicting inodes may be found and added to the list while we
+@@ -5869,7 +5874,9 @@ static int log_conflicting_inodes(struct btrfs_trans_handle *trans,
+ 			break;
+ 	}
+ 
++	spin_lock_irqsave(&ctx->conflict_inodes_lock, logging_conflict_inodes_flags);
+ 	ctx->logging_conflict_inodes = false;
++	spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_conflict_inodes_flags);
+ 	if (ret)
+ 		free_conflicting_inodes(ctx);
+ 
+diff --git a/fs/btrfs/tree-log.h b/fs/btrfs/tree-log.h
+index dc313e6bb2fa..0f862d0c80f2 100644
+--- a/fs/btrfs/tree-log.h
++++ b/fs/btrfs/tree-log.h
+@@ -44,6 +44,7 @@ struct btrfs_log_ctx {
+ 	struct list_head conflict_inodes;
+ 	int num_conflict_inodes;
+ 	bool logging_conflict_inodes;
++	spinlock_t logging_conflict_inodes_lock;
+ 	/*
+ 	 * Used for fsyncs that need to copy items from the subvolume tree to
+ 	 * the log tree (full sync flag set or copy everything flag set) to
+-- 
+2.34.1
+
 
