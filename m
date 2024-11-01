@@ -1,84 +1,99 @@
-Return-Path: <linux-kernel+bounces-392635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5689B9687
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:29:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EEC09B9689
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F2631C2085D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801A71C214C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E86C1CC170;
-	Fri,  1 Nov 2024 17:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666091CC16B;
+	Fri,  1 Nov 2024 17:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7gPRhqW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMVzLLq+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8ED1CB51D;
-	Fri,  1 Nov 2024 17:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD461CB51D;
+	Fri,  1 Nov 2024 17:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730482142; cv=none; b=m2Kgitbc7Vqy4rA9KdRM2u+lViEKTQ0cUyAS5bSeXyotBA6U21EqbwhOt5mboSk4TQsDuWxR9zK6Y6qIijlonlYdKW2X117CjczPHzGX2wF2ZqX8qbIDN1BDAhsXMNK98weNI6U1j/+uzyNr8GieGEpy+JqzbH01ujZqMpYngJc=
+	t=1730482175; cv=none; b=KBxF2tlqshjAkhT/IFqQ00cKYXZ8V0tP+ACSqK0MwMGwoEEHqp/NpY2TmAU95M1nSHmmgMKVm0DldlxwXxOxapwVkLbCcRaTpE7aiQfRx0j6RRUE9/vFiVdmQQLaEpwibApXMh/1fL4y0iBaVW/PBXrcUaLYFO2DQu7YvB1G6ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730482142; c=relaxed/simple;
-	bh=4ObdLgIjzj23wYw/sQg++/AHprXOYE8wFgZIRNOb5Jc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EN8d+ZQiI+kXYDENpDcki8SNuhJ5tc2g+KySs+y+zcuTBXh4NMjxFcaeanu+gq4aKRr3cnbnzvTUD7E88ccgYJODAaTOwRJjYOav9eahX4ZDaoNBy6NPcEzCRSYQlSjtH+3eMzScGIV5OpzKvPOaM71ryVuBoxUODeG35iC8ihA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7gPRhqW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A642DC4CECD;
-	Fri,  1 Nov 2024 17:28:58 +0000 (UTC)
+	s=arc-20240116; t=1730482175; c=relaxed/simple;
+	bh=1mHaFtM2LMEKH9W0OjPOy/ovE4mnUoO/9wQfrj54upo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f8nNrzyKndbVMJ3XnfX1K1wgRjsAXvAJ5d0cUpxVemreiRVNDi+m+K9Yoe8pe8M4Kb77oShfudjQm+5EqnGvG+l3ffB0exyLMnP2iCnSYd1qBUaqpQvxnC4vHPfzrTVlU7UeB7im4TfQRCu5didfwHPj7heMl6ZXFplWRovjLFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMVzLLq+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA72DC4CECD;
+	Fri,  1 Nov 2024 17:29:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730482142;
-	bh=4ObdLgIjzj23wYw/sQg++/AHprXOYE8wFgZIRNOb5Jc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=l7gPRhqWjbYVYSPjCgRwwzRWWxYgbU74Jz6gZdmPV3Kfj4Kxghh1ixMc0KpBG1kXS
-	 qvPUxdOr9CgEDg8ez8lngHMzm8ThaCVoJL9uL+532rjXLlq68oPnBbR1EqSqy8Z1Gg
-	 KNnyK4RYLZk+1OPWst2GXptGeUpG8ts1rDl27c5dv5DA5+OLj4qyq1IAfW8EWInN1v
-	 mpwvv1XRzdvhXV9r88dktTQt5mabcls3HPNLESqelfewnQRvZaT/nNbhSaiUgztJ2K
-	 DRnylYabWMdNQhSbQ2a/YZ6YXloY+5L+lpyIADVl7gyqvnoukzFbZPzAoqTpZeuzAx
-	 wrG/zZrCRay8A==
-From: Lee Jones <lee@kernel.org>
-To: konstantin@linuxfoundation.org, baocheng.su@siemens.com, 
- tobias.schaffner@siemens.com, pavel@ucw.cz, lee@kernel.org, 
- hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, wim@linux-watchdog.org, 
- linux@roeck-us.net, Benedikt Niedermayr <benedikt.niedermayr@siemens.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- platform-driver-x86@vger.kernel.org, linux-watchdog@vger.kernel.org, 
- felix.moessbauer@siemens.com, christian.storm@siemens.com, 
- quirin.gylstorff@siemens.com, chao.zeng@siemens.com
-In-Reply-To: <20241028112359.3333152-2-benedikt.niedermayr@siemens.com>
-References: <20241028112359.3333152-1-benedikt.niedermayr@siemens.com>
- <20241028112359.3333152-2-benedikt.niedermayr@siemens.com>
-Subject: Re: (subset) [PATCH 1/1] MAINTAINERS: replace bouncing maintainers
-Message-Id: <173048213838.1966999.11456105703949125929.b4-ty@kernel.org>
-Date: Fri, 01 Nov 2024 17:28:58 +0000
+	s=k20201202; t=1730482173;
+	bh=1mHaFtM2LMEKH9W0OjPOy/ovE4mnUoO/9wQfrj54upo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gMVzLLq+X+h+Tx1VGB0GTmAwuanvippLgvx6g8+e1JIezuowN+1rlAfBX4vLHPoWQ
+	 EroCE10P0ofg/0812y36oFsu3lVmS52yXz2GEjFsnKwaFH8OuH9rQIe0PvU5yUcqVg
+	 Ks7+Ai6szMmjj4c3m9EFR+coAxB7uFve0WwhrYkotVsUjG0z2lQrEIqSGzAptWJ6/1
+	 SAAsxCeahMqpE3T2NPlfRwBH0MQKY6g9j9mu2p+B+MQy2DHUPGADLljdbiLLYKcmg4
+	 DUJ+U0c5Dpo+FD/bqSQSqpEgioCovjBNWcslskikcSvmwQntK5sj93FH8uVwhZg+Tb
+	 cFMO6WMACwqHA==
+Date: Fri, 1 Nov 2024 17:29:26 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Pei Xiao <xiaopei01@kylinos.cn>
+Cc: liambeguin@gmail.com, lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xiaopeitux@foxmail.com
+Subject: Re: [PATCH] iio: test : check null return of kunit_kmalloc in
+ iio_rescale_test_scale
+Message-ID: <20241101172926.4e8e3f43@jic23-huawei>
+In-Reply-To: <ecd56a85e54a96c2f0313c114075a21a76071ea2.1730259869.git.xiaopei01@kylinos.cn>
+References: <ecd56a85e54a96c2f0313c114075a21a76071ea2.1730259869.git.xiaopei01@kylinos.cn>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 28 Oct 2024 12:23:59 +0100, Benedikt Niedermayr wrote:
-> Since complaints about bouncing maintainers raised [1] we have now a
-> replacement for maintainers that stepped away from their duties.
+On Wed, 30 Oct 2024 11:48:54 +0800
+Pei Xiao <xiaopei01@kylinos.cn> wrote:
+
+> kunit_kmalloc may fail, return value might be NULL and will cause
+> NULL pointer dereference.Add KUNIT_ASSERT_NOT_ERR_OR_NULL fix it.
+Can it be an error?  If not why not use KUNIT_ASSERT_NOT_NULL?
 > 
-> [1] https://www.spinics.net/lists/platform-driver-x86/msg47105.html
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> Fixes: 8e74a48d17d5 ("iio: test: add basic tests for the iio-rescale driver")
+> ---
+>  drivers/iio/test/iio-test-rescale.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> 
-
-Applied, thanks!
-
-[1/1] MAINTAINERS: replace bouncing maintainers
-      commit: 64dd44a658065ab5595bbfe2cb4d8fd30c9e34a2
-
---
-Lee Jones [李琼斯]
+> diff --git a/drivers/iio/test/iio-test-rescale.c b/drivers/iio/test/iio-test-rescale.c
+> index 31ee55a6faed..11bfff6636a3 100644
+> --- a/drivers/iio/test/iio-test-rescale.c
+> +++ b/drivers/iio/test/iio-test-rescale.c
+> @@ -652,6 +652,8 @@ static void iio_rescale_test_scale(struct kunit *test)
+>  	int rel_ppm;
+>  	int ret;
+>  
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buff);
+> +
+>  	rescale.numerator = t->numerator;
+>  	rescale.denominator = t->denominator;
+>  	rescale.offset = t->offset;
+> @@ -681,6 +683,8 @@ static void iio_rescale_test_offset(struct kunit *test)
+>  	int values[2];
+>  	int ret;
+>  
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buff_off);
+> +
+>  	rescale.numerator = t->numerator;
+>  	rescale.denominator = t->denominator;
+>  	rescale.offset = t->offset;
 
 
