@@ -1,363 +1,336 @@
-Return-Path: <linux-kernel+bounces-393004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9AC9B9AB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:14:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505039B9AB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:16:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AD43281EBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:14:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D552C1F21D99
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50BD1E6DD5;
-	Fri,  1 Nov 2024 22:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AB31AAE06;
+	Fri,  1 Nov 2024 22:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="op0ajXu/"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEWFwShA"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B72D1AAE06
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 22:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D371BDC3;
+	Fri,  1 Nov 2024 22:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730499270; cv=none; b=ug32xMzqAeVwFxcF8juLwDwDHEpD5qJLBNhQIsECmSvUxme+deDYf94AtbAc52smO2tMsSXMmjwifnkkPn39WIaQGHke2nmZn/d4O03AqMfHg5HxwNoIbE70pUEQ52A7CbAYiyLvHNmNukbNEodfclT4sPG4kHZuljAg3rfD5ZA=
+	t=1730499405; cv=none; b=Ahjn4OISdi7D0cIhuccA7yH2A2ia0L4APf8cLTKI6caV8wWc1C3rbPE51f+6fg4xptjIOb3RDCxoLDPykWOD/NKhBUUOeZA2MTMdLQznitspOUwi6JdnNbZVxplI9wOZxGX8I/xbgKcrpneXdfjX/mcxsdgqOu7TrDyVxK5lJy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730499270; c=relaxed/simple;
-	bh=wLtASQMHq4sgKLG7ICINv/hxvFRTofV3JDrpku5EzC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WCEkT/9XdlCetJapJPj3hkMChSoaqWtprYJ0aZ1w+VD4Tk2X6myUdcBP4f6ZgWAql677g7rM8Xji/0Fhv7Ij3v+jBWydytug0KQ+DZ5r/lgivfl6F3cven60M6qQcWVsqnTQ/g2uJDzbNQi8+6MpJUPrt3YMhyyara+ZoaP1RLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=op0ajXu/; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e681ba70so3744e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 15:14:28 -0700 (PDT)
+	s=arc-20240116; t=1730499405; c=relaxed/simple;
+	bh=uZ5dPDGpE0eiP8j9ElLlKmGq5FqeHBMo5AS3riI6HLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M6jmJFi1c159KQNA21yv7a9eS2ooDvcbe6K5dqPknRWRIlLmE0nDqbfCl619fgo2+PHc4NGS5n+eFuIwRsbr9OGcWuZF2aRNQWRuQcvh8ENP1IkOADbeYK1SOqbCQEXEbHoRdn7dMyzzWHrzeTpxcIromhUrkA+Z5VUENlDv5no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEWFwShA; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c803787abso19523945ad.0;
+        Fri, 01 Nov 2024 15:16:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730499267; x=1731104067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=++IjMUbwkrGj/mHG9oyoX/blJaf9PFISzgC1CVaEouo=;
-        b=op0ajXu/qHv6hXElgj5BjVCU15fJEo24aLthgpT4uFaYt53LdsUhaBaqv2FC02GHrf
-         iNs9dL2vTI6Hn8YFOPwJMJ1VUWwOGaa7wGywMGHNlIdjASX/mIElxckb/rNnB+OKQu+j
-         bv43l6oDJD9KkP1bbcR7nVg5fOSW+pF7KQmNxR3oRzwEgUR3i0vKPlCXunwBbMc3oBXE
-         KqfcUmb7pvyidmcVWZG+A3EYyfwskDWvDlxn+lF6zTZT1SZjzar1HRuzTCHj13Grx//Y
-         /f1j+mYIacCX+RyQN4Q7sIOoiHHUpSYQwm9Kv/BIFAbITmPLxZnd7OcRX4AyR2I/9X4N
-         qhWQ==
+        d=gmail.com; s=20230601; t=1730499402; x=1731104202; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=oVssyuWMC9NgATc0QPLGb+0NJAZIL3+HDWYCveIr8Uk=;
+        b=aEWFwShALAEWcWFfQr+VWDNAbkxkBrTeB89oirMNZbpp9BbaloRf5l8llwRjjlSddD
+         JApCvQmTD/kzIvrXoc3gQQH19ctdrIJSWnS8Bw8XzY9bg5X/f8Jz45p/ntmH4MtSB7IO
+         Tn18kKk4A1GtqvcbNEjygr3W0YOhFKjfnEpnHLqZJ9zeamavpCief+60hQi4Anhetzhi
+         bNHbmgvKtcEYimPAuPcNR+DxMy4UmrzPGls8PCV3NVd11zhM+aME4QBH+R9oAQjANSt8
+         DChh5h6yLP8u/LTf709tWct/N46ciel2ci/U+MMMc6MsC9SjWGP/SIzOUiCWXzwmfT09
+         bdiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730499267; x=1731104067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=++IjMUbwkrGj/mHG9oyoX/blJaf9PFISzgC1CVaEouo=;
-        b=pQUXqcGE+BzIkhIfm3WFGzPVN66DHu6v1XF9Dqem8HWMPQKmWegWF038aiBkAFZgL+
-         E9UOd3EAIAV8R2CqWOCHSX5WYoh1afE+xuN+tfNbrKGJHeD9cliEZo5JxjuUilBKzrFI
-         Q/8cqJWCLXnMOwANGqlym0juRGjgYEypBjOaQS1aY5iebYd9KBhb7WWQCNiIpAETO4Yj
-         h5eGJ0iTYek6dDcHl9hGdzOZqDKbWIZ0nbBu3OR6+MJaYe+upwdK928pC5t8gTRHgYd1
-         gaSOM4Gmi8XE4TAUGsgjPCsXMzdOaTahq7yGrPWLJyMv2a4iNoTWitBU0SyAf+oQpXst
-         MI3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWe8xNcgGQzNV4EvvYfDWNvscpYnrzK+VYflPSQBa8y0qPzfD9T95DTBsoqhV7mBpKPQxYvkgxR9UKLHbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB7KcIV3bwRhjXbAkYz9y3W0OELrd9z9jb3eYzfRP89p8nM8mt
-	mC1I0CR0IW13DsP6s1p5GDJF6wj/ktnzOFmxNHKr1lF85oDUIaAP0nAx2UxwFcOZPkGxPesrzxY
-	67tBYF2uSuAWbst+dCVttGF46MJztahjvKBUA
-X-Gm-Gg: ASbGncs58ZJjtIN5IQdmsSKXLndQdc7OqfKjNji9h2sl++FOIBA+YA5VuxbjzKxKJo6
-	T7G8EWC9mtE+XR6waswTNjr6Obxf9JaUTrhW0QvFeCFVUy+pNJFnTdK2y1Kkl
-X-Google-Smtp-Source: AGHT+IH2BcX/vmuG7YSwKV0+HLH1Y2RSr4a5KE0L+pbR96qsVezQH73VuaXsrlKiCpYFZijNULMRFs0zTF+aMIiqk0U=
-X-Received: by 2002:a05:6512:31c4:b0:53b:5ae5:a9c8 with SMTP id
- 2adb3069b0e04-53d6b1b3334mr53844e87.7.1730499266896; Fri, 01 Nov 2024
- 15:14:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730499402; x=1731104202;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oVssyuWMC9NgATc0QPLGb+0NJAZIL3+HDWYCveIr8Uk=;
+        b=Yn6quMwFe992CY/wECcRO+65/oPHiybx8nvQjKnIBbfMt2Zz75pIJ9Ju1rFFrTMvMw
+         bHUc30TZKz/CC1hiem5POGWwNdg95CB4dpVR/vQ9UxPa0wzTiQnnded9FG6yO99gzq/V
+         dijEF+1Y+/2ixKPYuG+KAHJGICUq+QBFtWuk8hZoH43vXTRXwEyb2W7m1zCf/5EsQXPS
+         ijgQ8KOmWrku+pmwigy8s6Rjit9nUVfC3ls5nIghIy9tfOHoi+39xxgz/4eC2GqOHFcS
+         gpks/yeRrg9VkedgXjgd2nwhSrynW8TzegLOMBgZ1YVAkouMparyTgXaZXRBTqTrrqZ4
+         SE/g==
+X-Forwarded-Encrypted: i=1; AJvYcCW4Vd3Kk+WlzdYcRaWY+4DfnyRQVsCw3RTR1NShB2qkxgzQZ2uiBt7mOKco3gEpYT/TxHHZSnilmf2DclW4IAg=@vger.kernel.org, AJvYcCWUiSvoOuZdcgT/EiHAeMsqs24OWZ1+T2IvtBDpZ6mSp0F+4XictQqru0a3beTVtaIGKamaBADnKfh112A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKuESVnn0EBs/G2mvZ8CiSA6SBx8BugjTDX3Tvf0lmEDgVL9y+
+	zNamU4NI8Gwwf2kZREhIWsyBj/YNW07XOZIEsNiFU8jl/4DQdqJG
+X-Google-Smtp-Source: AGHT+IGGxzxBg3TMMhNZ6zH3wiG+bSdfe1EX9LN1h70yeyUfvlvrjw3I/QyBdD//3HGtM/YIKK7dew==
+X-Received: by 2002:a17:902:e74e:b0:20c:76a1:604b with SMTP id d9443c01a7336-211056ee4a3mr122555475ad.12.1730499402353;
+        Fri, 01 Nov 2024 15:16:42 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d9750sm25573205ad.280.2024.11.01.15.16.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 15:16:41 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <787d7a81-0f53-4dbb-b8d6-f7b00e9cf837@roeck-us.net>
+Date: Fri, 1 Nov 2024 15:16:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821223012.3757828-1-vipinsh@google.com> <CAHVum0eSxCTAme8=oV9a=cVaJ9Jzu3-W-3vgbubVZ2qAWVjfJA@mail.gmail.com>
-In-Reply-To: <CAHVum0eSxCTAme8=oV9a=cVaJ9Jzu3-W-3vgbubVZ2qAWVjfJA@mail.gmail.com>
-From: Vipin Sharma <vipinsh@google.com>
-Date: Fri, 1 Nov 2024 15:13:49 -0700
-Message-ID: <CAHVum0fWJW7V5ijtPcXQAtPSdoQSKjzYwMJ-XCRH2_sKs=Kg7g@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/1] KVM selftests runner for running more than just default
-To: kvm@vger.kernel.org, kvmarm@lists.linux.dev, kvm-riscv@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Anup Patel <anup@brainfault.org>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus handling
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, patrick@stwcx.xyz,
+ joel@jms.id.au, andrew@codeconstruct.com.au, wim@linux-watchdog.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Cc: Peter.Yin@quantatw.com, Patrick_NC_Lin@wiwynn.com, Bonnie_Lo@wiwynn.com,
+ DELPHINE_CHIU@wiwynn.com, bmc-sw@aspeedtech.com, chnguyen@amperecomputing.com
+References: <20241101121201.2464091-1-chin-ting_kuo@aspeedtech.com>
+ <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 22, 2024 at 1:55=E2=80=AFPM Vipin Sharma <vipinsh@google.com> w=
-rote:
->
-> Oops! Adding archs mailing list and maintainers which have arch folder
-> in tool/testing/selftests/kvm
->
-> On Wed, Aug 21, 2024 at 3:30=E2=80=AFPM Vipin Sharma <vipinsh@google.com>=
- wrote:
-> >
-> > This series is introducing a KVM selftests runner to make it easier to
-> > run selftests with some interesting configurations and provide some
-> > enhancement over existing kselftests runner.
-> >
-> > I would like to get an early feedback from the community and see if thi=
-s
-> > is something which can be useful for improving KVM selftests coverage
-> > and worthwhile investing time in it. Some specific questions:
-> >
-> > 1. Should this be done?
-> > 2. What features are must?
-> > 3. Any other way to write test configuration compared to what is done h=
-ere?
-> >
-> > Note, python code written for runner is not optimized but shows how thi=
-s
-> > runner can be useful.
-> >
-> > What are the goals?
-> > - Run tests with more than just the default settings of KVM module
-> >   parameters and test itself.
-> > - Capture issues which only show when certain combination of module
-> >   parameter and tests options are used.
-> > - Provide minimum testing which can be standardised for KVM patches.
-> > - Run tests parallely.
-> > - Dump output in a hierarchical folder structure for easier tracking of
-> >   failures/success output
-> > - Feel free to add yours :)
-> >
-> > Why not use/extend kselftests?
-> > - Other submodules goal might not align and its gonna be difficult to
-> >   capture broader set of requirements.
-> > - Instead of test configuration we will need separate shell scripts
-> >   which will act as tests for each test arg and module parameter
-> >   combination. This will easily pollute the KVM selftests directory.
-> > - Easier to enhance features using Python packages than shell scripts.
-> >
-> > What this runner do?
-> > - Reads a test configuration file (tests.json in patch 1).
-> >   Configuration in json are written in hierarchy where multiple suites
-> >   exist and each suite contains multiple tests.
-> > - Provides a way to execute tests inside a suite parallelly.
-> > - Provides a way to dump output to a folder in a hierarchical manner.
-> > - Allows to run selected suites, or tests in a specific suite.
-> > - Allows to do some setup and teardown for test suites and tests.
-> > - Timeout can be provided to limit test execution duration.
-> > - Allows to run test suites or tests on specific architecture only.
-> >
-> > Runner is written in python and goal is to only use standard library
-> > constructs. This runner will work on Python 3.6 and up
-> >
-> > What does a test configuration file looks like?
-> > Test configuration are written in json as it is easier to read and has
-> > inbuilt package support in Python. Root level is a json array denoting
-> > suites and each suite can multiple tests in it using json array.
-> >
-> > [
-> >   {
-> >     "suite": "dirty_log_perf_tests",
-> >     "timeout_s": 300,
-> >     "arch": "x86_64",
-> >     "setup": "echo Setting up suite",
-> >     "teardown": "echo tearing down suite",
-> >     "tests": [
-> >       {
-> >         "name": "dirty_log_perf_test_max_vcpu_no_manual_protect",
-> >         "command": "./dirty_log_perf_test -v $(grep -c ^processor /proc=
-/cpuinfo) -g",
-> >         "arch": "x86_64",
-> >         "setup": "echo Setting up test",
-> >         "teardown": "echo tearing down test",
-> >         "timeout_s": 5
-> >       }
-> >     ]
-> >   }
-> > ]
-> >
-> > Usage:
-> > Runner "runner.py" and test configuration "tests.json" lives in
-> > tool/testing/selftests/kvm directory.
-> >
-> > To run serially:
-> > ./runner.py tests.json
-> >
-> > To run specific test suites:
-> > ./runner.py tests.json dirty_log_perf_tests x86_sanity_tests
-> >
-> > To run specific test in a suite:
-> > ./runner.py tests.json x86_sanity_tests/vmx_msrs_test
-> >
-> > To run everything parallely (runs tests inside a suite parallely):
-> > ./runner.py -j 10 tests.json
-> >
-> > To dump output to disk:
-> > ./runner.py -j 10 tests.json -o sample_run
-> >
-> > Sample output (after removing timestamp, process ID, and logging
-> > level columns):
-> >
-> >   ./runner.py tests.json  -j 10 -o sample_run
-> >   PASSED: dirty_log_perf_tests/dirty_log_perf_test_max_vcpu_no_manual_p=
-rotect
-> >   PASSED: dirty_log_perf_tests/dirty_log_perf_test_max_vcpu_manual_prot=
-ect
-> >   PASSED: dirty_log_perf_tests/dirty_log_perf_test_max_vcpu_manual_prot=
-ect_random_access
-> >   PASSED: dirty_log_perf_tests/dirty_log_perf_test_max_10_vcpu_hugetlb
-> >   PASSED: x86_sanity_tests/vmx_msrs_test
-> >   SKIPPED: x86_sanity_tests/private_mem_conversions_test
-> >   FAILED: x86_sanity_tests/apic_bus_clock_test
-> >   PASSED: x86_sanity_tests/dirty_log_page_splitting_test
-> >   ---------------------------------------------------------------------=
------
-> >   Test runner result:
-> >   1) dirty_log_perf_tests:
-> >      1) PASSED: dirty_log_perf_test_max_vcpu_no_manual_protect
-> >      2) PASSED: dirty_log_perf_test_max_vcpu_manual_protect
-> >      3) PASSED: dirty_log_perf_test_max_vcpu_manual_protect_random_acce=
-ss
-> >      4) PASSED: dirty_log_perf_test_max_10_vcpu_hugetlb
-> >   2) x86_sanity_tests:
-> >      1) PASSED: vmx_msrs_test
-> >      2) SKIPPED: private_mem_conversions_test
-> >      3) FAILED: apic_bus_clock_test
-> >      4) PASSED: dirty_log_page_splitting_test
-> >   ---------------------------------------------------------------------=
------
-> >
-> > Directory structure created:
-> >
-> > sample_run/
-> > |-- dirty_log_perf_tests
-> > |   |-- dirty_log_perf_test_max_10_vcpu_hugetlb
-> > |   |   |-- command.stderr
-> > |   |   |-- command.stdout
-> > |   |   |-- setup.stderr
-> > |   |   |-- setup.stdout
-> > |   |   |-- teardown.stderr
-> > |   |   `-- teardown.stdout
-> > |   |-- dirty_log_perf_test_max_vcpu_manual_protect
-> > |   |   |-- command.stderr
-> > |   |   `-- command.stdout
-> > |   |-- dirty_log_perf_test_max_vcpu_manual_protect_random_access
-> > |   |   |-- command.stderr
-> > |   |   `-- command.stdout
-> > |   `-- dirty_log_perf_test_max_vcpu_no_manual_protect
-> > |       |-- command.stderr
-> > |       `-- command.stdout
-> > `-- x86_sanity_tests
-> >     |-- apic_bus_clock_test
-> >     |   |-- command.stderr
-> >     |   `-- command.stdout
-> >     |-- dirty_log_page_splitting_test
-> >     |   |-- command.stderr
-> >     |   |-- command.stdout
-> >     |   |-- setup.stderr
-> >     |   |-- setup.stdout
-> >     |   |-- teardown.stderr
-> >     |   `-- teardown.stdout
-> >     |-- private_mem_conversions_test
-> >     |   |-- command.stderr
-> >     |   `-- command.stdout
-> >     `-- vmx_msrs_test
-> >         |-- command.stderr
-> >         `-- command.stdout
-> >
-> >
-> > Some other features for future:
-> > - Provide "precheck" command option in json, which can filter/skip test=
-s if
-> >   certain conditions are not met.
-> > - Iteration option in the runner. This will allow the same test suites =
-to
-> >   run again.
-> >
-> > Vipin Sharma (1):
-> >   KVM: selftestsi: Create KVM selftests runnner to run interesting test=
-s
-> >
-> >  tools/testing/selftests/kvm/runner.py  | 282 +++++++++++++++++++++++++
-> >  tools/testing/selftests/kvm/tests.json |  60 ++++++
-> >  2 files changed, 342 insertions(+)
-> >  create mode 100755 tools/testing/selftests/kvm/runner.py
-> >  create mode 100644 tools/testing/selftests/kvm/tests.json
-> >
-> >
-> > base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
-> > --
-> > 2.46.0.184.g6999bdac58-goog
-> >
+On 11/1/24 05:11, Chin-Ting Kuo wrote:
+> The boot status in the watchdog device struct is updated during
+> controller probe stage. Application layer can get the boot status
+> through the command, cat /sys/class/watchdog/watchdogX/bootstatus.
+> 
+> The boot status mapping rule follows the latest design guide from
+> the OpenBMC shown as below.
+> https://github.com/openbmc/docs/blob/master/designs/bmc-reboot-cause-update.md#proposed-design
+> - WDIOF_EXTERN1   => system is reset by Software
+> - WDIOF_CARDRESET => system is reset by WDT SoC reset
+> - Others          => other reset events, e.g., power on reset.
+> 
+> On ASPEED platform, the boot status is recorded in the SCU registers.
+> - AST2400: Only a bit represents for any WDT reset.
+> - AST2500: The reset triggered by different WDT controllers can be
+>             distinguished by different SCU bits. But, WDIOF_EXTERN1 or
+>             WDIOF_CARDRESET still cannot be identified due to
+>             HW limitation.
+> - AST2600: Different from AST2500, additional HW bits are added for
+>             distinguishing WDIOF_EXTERN1 and WDIOF_CARDRESET.
+> 
+> Besides, since alternating boot event is triggered by WDT SoC reset,
+> it is classified as WDIOF_CARDRESET.
+> 
+> Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+> ---
+>   drivers/watchdog/aspeed_wdt.c | 83 ++++++++++++++++++++++++++++++++++-
+>   1 file changed, 81 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+> index b4773a6aaf8c..4ad6335ff25b 100644
+> --- a/drivers/watchdog/aspeed_wdt.c
+> +++ b/drivers/watchdog/aspeed_wdt.c
+> @@ -11,21 +11,31 @@
+>   #include <linux/io.h>
+>   #include <linux/kernel.h>
+>   #include <linux/kstrtox.h>
+> +#include <linux/mfd/syscon.h>
+>   #include <linux/module.h>
+>   #include <linux/of.h>
+>   #include <linux/of_irq.h>
+>   #include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+>   #include <linux/watchdog.h>
+>   
+>   static bool nowayout = WATCHDOG_NOWAYOUT;
+>   module_param(nowayout, bool, 0);
+>   MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+>   				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+> +struct aspeed_wdt_scu {
+> +	const char *compatible;
+> +	u32 reset_status_reg;
+> +	u32 wdt_reset_mask;
+> +	u32 wdt_sw_reset_mask;
+> +	u32 wdt_reset_mask_shift;
+> +};
+>   
+>   struct aspeed_wdt_config {
+>   	u32 ext_pulse_width_mask;
+>   	u32 irq_shift;
+>   	u32 irq_mask;
+> +	struct aspeed_wdt_scu scu;
+>   };
+>   
+>   struct aspeed_wdt {
+> @@ -39,18 +49,39 @@ static const struct aspeed_wdt_config ast2400_config = {
+>   	.ext_pulse_width_mask = 0xff,
+>   	.irq_shift = 0,
+>   	.irq_mask = 0,
+> +	.scu = {
+> +		.compatible = "aspeed,ast2400-scu",
+> +		.reset_status_reg = 0x3c,
+> +		.wdt_reset_mask = 0x1,
+> +		.wdt_sw_reset_mask = 0,
+> +		.wdt_reset_mask_shift = 1,
+> +	},
+>   };
+>   
+>   static const struct aspeed_wdt_config ast2500_config = {
+>   	.ext_pulse_width_mask = 0xfffff,
+>   	.irq_shift = 12,
+>   	.irq_mask = GENMASK(31, 12),
+> +	.scu = {
+> +		.compatible = "aspeed,ast2500-scu",
+> +		.reset_status_reg = 0x3c,
+> +		.wdt_reset_mask = 0x1,
+> +		.wdt_sw_reset_mask = 0,
+> +		.wdt_reset_mask_shift = 2,
+> +	},
+>   };
+>   
+>   static const struct aspeed_wdt_config ast2600_config = {
+>   	.ext_pulse_width_mask = 0xfffff,
+>   	.irq_shift = 0,
+>   	.irq_mask = GENMASK(31, 10),
+> +	.scu = {
+> +		.compatible = "aspeed,ast2600-scu",
+> +		.reset_status_reg = 0x74,
+> +		.wdt_reset_mask = 0xf,
+> +		.wdt_sw_reset_mask = 0x8,
+> +		.wdt_reset_mask_shift = 16,
+> +	},
+>   };
+>   
+>   static const struct of_device_id aspeed_wdt_of_table[] = {
+> @@ -213,6 +244,52 @@ static int aspeed_wdt_restart(struct watchdog_device *wdd,
+>   	return 0;
+>   }
+>   
+> +static int aspeed_wdt_update_bootstatus(struct platform_device *pdev,
+> +					struct aspeed_wdt *wdt)
+> +{
+> +	struct resource *res;
+> +	struct aspeed_wdt_scu scu = wdt->cfg->scu;
+> +	struct regmap *scu_base;
+> +	u32 reset_mask_width;
+> +	u32 reset_mask_shift;
+> +	u32 reg_size = 0;
 
-Had an offline discussion with Sean, providing a summary on what we
-discussed (Sean, correct me if something is not aligned from our
-discussion):
+Please no unnecesary initializations.
 
-We need to have a roadmap for the runner in terms of features we support.
+> +	u32 idx = 0;
+> +	u32 status;
+> +	int ret;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	reg_size = res->end - res->start;
+> +
+> +	if (reg_size != 0)
+> +		idx = ((intptr_t)wdt->base & 0x00000fff) / reg_size;
+> +
+> +	/* On ast2400, only a bit is used to represent WDT reset */
+> +	if (of_device_is_compatible(pdev->dev.of_node, "aspeed,ast2400-wdt"))
+> +		idx = 0;
+> +
 
+There is some redundancy in the above code, and platform_get_resource()
+can return NULL. If idx==0 for aspeed,ast2400-wdt anyway, the code can be
+rewritten as
 
-Phase 1: Having a basic selftest runner is useful which can:
+	if (!of_device_is_compatible(pdev->dev.of_node, "aspeed,ast2400-wdt")) {
+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+		if (res) {
+			reg_size = res->end - res->start;
+			if (reg_size)
+				idx = ((intptr_t)wdt->base & 0x00000fff) / reg_size;
+		}
+	}
 
-- Run tests parallely
-- Provide a summary of what passed and failed, or only in case of failure.
-- Dump output which can be easily accessed and parsed.
-- Allow to run with different command line parameters.
+> +	scu_base = syscon_regmap_lookup_by_compatible(scu.compatible);
+> +	if (IS_ERR(scu_base))
+> +		return PTR_ERR(scu_base);
+> +
+> +	ret = regmap_read(scu_base, scu.reset_status_reg, &status);
+> +	if (ret)
+> +		return ret;
 
-Current patch does more than this and can be simplified.
+The above only affects bootstatus. Why fail to load the driver just because
+bootstatus can not be read ?
 
+> +
+> +	reset_mask_width = hweight32(scu.wdt_reset_mask);
+> +	reset_mask_shift = scu.wdt_reset_mask_shift +
+> +			   reset_mask_width * idx;
+> +
+> +	if (status & (scu.wdt_sw_reset_mask << reset_mask_shift))
+> +		wdt->wdd.bootstatus = WDIOF_EXTERN1;
+> +	else if (status & (scu.wdt_reset_mask << reset_mask_shift))
+> +		wdt->wdd.bootstatus = WDIOF_CARDRESET;
+> +	else
+> +		wdt->wdd.bootstatus = 0;
 
-Phase 2: Environment setup via runner
+That is already 0.
 
-Current patch, allows to write "setup" commands at test suite and test
-level in the json config file to setup the environment needed by a
-test to run. This might not be ideal as some settings are exposed
-differently on different platforms.
+> +
+> +	return regmap_write(scu_base, scu.reset_status_reg,
+> +			    scu.wdt_reset_mask << reset_mask_shift);
+> +}
+> +
+>   /* access_cs0 shows if cs0 is accessible, hence the reverted bit */
+>   static ssize_t access_cs0_show(struct device *dev,
+>   			       struct device_attribute *attr, char *buf)
+> @@ -458,10 +535,12 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+>   		writel(duration - 1, wdt->base + WDT_RESET_WIDTH);
+>   	}
+>   
+> +	ret = aspeed_wdt_update_bootstatus(pdev, wdt);
+> +	if (ret)
+> +		return ret;
+> +
+>   	status = readl(wdt->base + WDT_TIMEOUT_STATUS);
+>   	if (status & WDT_TIMEOUT_STATUS_BOOT_SECONDARY) {
+> -		wdt->wdd.bootstatus = WDIOF_CARDRESET;
+> -
+>   		if (of_device_is_compatible(np, "aspeed,ast2400-wdt") ||
+>   		    of_device_is_compatible(np, "aspeed,ast2500-wdt"))
+>   			wdt->wdd.groups = bswitch_groups;
 
-For example,
-To enable TDP:
-- Intel needs npt=3DY
-- AMD needs ept=3DY
-- ARM always on.
-
-To enable APIC virtualization
-- Intel needs enable_apicv=3DY
-- AMD needs avic=3DY
-
-To enable/disable nested, they both have the same file name "nested"
-in their module params directory which should be changed.
-
-These kinds of settings become more verbose and unnecessary on other
-platforms. Instead, runners should have some programming constructs
-(API, command line options, default) to enable these options in a
-generic way. For example, enable/disable nested can be exposed as a
-command line --enable_nested, then based on the platform, runner can
-update corresponding module param or ignore.
-
-This will easily extend to providing sane configuration on the
-corresponding platforms without lots of hardcoding in JSON. These
-individual constructs will provide a generic view/option to run a KVM
-feature, and under the hood will do things differently based on the
-platform it is running on like arm, x86-intel, x86-amd, s390, etc.
-
-
-Phase 3: Provide collection of interesting configurations
-
-Specific individual constructs can be combined in a meaningful way to
-provide interesting configurations to run on a platform. For example,
-user doesn't need to specify each individual configuration instead,
-some prebuilt configurations can be exposed like
---stress_test_shadow_mmu, --test_basic_nested
-
-Tests need to handle the environment in which they are running
-gracefully, which many tests already do but not exhaustively. If some
-setting is not provided or set up properly for their execution then
-they should fail/skip accordingly.
-
-Runner will not be responsible to precheck things on tests behalf.
-
-
-Next steps:
-1. Consensus on above phases and features.
-2. Start development.
-
-Thanks,
-Vipin
 
