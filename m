@@ -1,97 +1,118 @@
-Return-Path: <linux-kernel+bounces-392473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10CB9B949B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:41:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C8B59B9495
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DAB01C20DB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:41:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C10081F221C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B931C82F0;
-	Fri,  1 Nov 2024 15:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233701C760A;
+	Fri,  1 Nov 2024 15:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LgLRdBuU"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mi8W/ra5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4ED425634;
-	Fri,  1 Nov 2024 15:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753D925634;
+	Fri,  1 Nov 2024 15:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475683; cv=none; b=ndck7yUjTy0dkjUjZjmVwFUdKH36Z1T6XrmCmJ+d/Qd7SISKyqhhOiEvRPsbkTlDZ29I+9k9yUExTpiWP1t6E/oNtJDKUzty7Hz3NdcOjGPigbjl4JhqiIXwhoBHv7zuJibyjTDAsxWwJw+hkI0c8LsvSTF02dtHqTRYPMpAZaU=
+	t=1730475658; cv=none; b=EhhHc30XTBDBnlhECpC+2LfxRVi7V4xKIsmgotkO5aCEqu4UgdBb6DLLMFq9s1Lge0J5qmvK2BQhdJHrIVsOQR2rOqf6pHwWnBfZNloND0Q11bvwBP97L/JzBWXR48N3bRaMHL9DjjUTufTsZmMQHqIEDXbG9KsI7a+eovfuWos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475683; c=relaxed/simple;
-	bh=cGmqoPAClduOyOt6XXt32hAdlqVHl7u7myhZia60Ugs=;
+	s=arc-20240116; t=1730475658; c=relaxed/simple;
+	bh=m8SoMgj4KsgMb1emwUZ5BfDfuQXD0LaYOxvM+lAsKmU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bpK0tIEtzNEc1Xwx9EOVBa8JnWIqYvU6tZ+YRyZpUYxuX/AM+JM8QUZ5/xSbsmTYNGXtD0NtkeFboGhurqy6QOXxfQ44GYiwA6O0rYAxsQlPtSJ9tI+ayQk8lJVcmaR96P2Fka4a+YeLQch502/kEpIhnhdTVfRtGHBVovaxebk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LgLRdBuU; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C161240E0219;
-	Fri,  1 Nov 2024 15:41:11 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id oFcti8NUH9nU; Fri,  1 Nov 2024 15:41:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730475666; bh=2WQgbUYhsxZ+e+B0X/oet6pigceEqqN6jbulC7IX3jw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=QxNNOBESp+nA1iPocNCUyasKJnTIvfJvGN9q1iA4qza/fjSlqi4uAhM0+qOFeLbeAYuSzNBf0rX1kOX7fG71xHeRUUF0US9xuQKM1lA/X2kfKqHDRSspKmghm3z+JB+UBoBoHI+7Iba/1It4OzC3/kmq6AzsllOafpflpmJypvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mi8W/ra5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D7F9C4CED3;
+	Fri,  1 Nov 2024 15:40:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730475658;
+	bh=m8SoMgj4KsgMb1emwUZ5BfDfuQXD0LaYOxvM+lAsKmU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LgLRdBuU00QFUL5OUFiav9RxkYTc4r1N/GUtn/dy3eEubIYz1dzPFqfLtERNlrQQT
-	 ombbZqBKAUiwrieogPIRiMRqDptPe1DBw1c9E+/PZ571gYY9yVPFqE9yAOrpM66Z3s
-	 lhsLVvRWcMP3C5odi0ja+do3IZk1Lr9242aKCqzPWKrtGV5yTFLmkF7RR9W1QKL+Dp
-	 o5aNr4JmBrLgU9+U9GWNEt/hUU2fwUOmVLh9+54YlYq7SbZVZCd0IM+qh4vEiwS6AF
-	 CIhB5ONLTjcGqDAq6VhiBKQoNIihFGEilxJeDXjQ+l73at/CA1ul/WyoKW5T2ikjPb
-	 RQFdqRHmVgCo+nbGu+R/KmJ//C4XYXqWqmhi3+QpEHBQtTwpcsoi2hRafkfemYLx0z
-	 Yd8RycqAVdppVHV9KtlesRene4pmChgA+Gp7giOEROKy3tjjHSDDw4aVLpS2lDtJ02
-	 73Nfm+Kcj2Xt71nXGNdrbFm19UW+bfzvES6CzEBTIFZ/pxnijYT5+LradCpESturvM
-	 WeoaeJMnJ6CTyFwapQL9lNmIjuilu1hlp7oDPiNjnVNu+JQbHwW2O3lX28ynp/ANJ2
-	 BFwk2AyBpNb09mz6dHEe3iS6fwF9WZuC7euNunangNTchn8fbIuWmVsFlddSLNghlH
-	 /8iqJRLE4m8b0N6yYEr/x/O8=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5D44340E015F;
-	Fri,  1 Nov 2024 15:40:52 +0000 (UTC)
-Date: Fri, 1 Nov 2024 16:40:51 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-	dave.hansen@linux.intel.com, hpa@zytor.com, jpoimboe@kernel.org,
-	kai.huang@intel.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
-	pawan.kumar.gupta@linux.intel.com, pbonzini@redhat.com,
-	sandipan.das@amd.com, tglx@linutronix.de, x86@kernel.org
-Subject: Re: [PATCH v5 0/4] Distinguish between variants of IBPB
-Message-ID: <20241101153857.GAZyT2EdLXKs7ZmDFx@fat_crate.local>
-References: <20241011214353.1625057-1-jmattson@google.com>
- <173039500211.1507616.16831780895322741303.b4-ty@google.com>
+	b=Mi8W/ra5yJuo9SxXMvyPVCzdotcOHhLcP10yCuQerj/nnvEE9QcFjjYUO5zpv9Ziy
+	 GyzUKD9fDZS9TPeClZUzUUPl/kb9QA4ZcINGdlpKpgzM/+eeD2xMUnEqqX0Z/+kmhE
+	 7jNzVZYi/HP6aIGQyfskB1mKqiAu3dOEQl3GR6kvu8rGzc3TbD7D1WKP7w/60dAXqo
+	 iQLek9LyPSF4vFH75PgF3Na0rKUxywFewDCMwAumbo+sQbaVADP0SVp5woKTuqlk6I
+	 gjwXrJj1Kch8fD+hmjAP9VaEkAgV628vRJ8WpDPgEWY4LnuWYlHIjgzElvH3Tq3qg2
+	 HOHIurhPVtuPw==
+Date: Fri, 1 Nov 2024 10:40:55 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, quic_mrana@quicinc.com, quic_vbadigan@quicinc.com
+Subject: Re: [PATCH v3 3/3] PCI: qcom: Update ICC and OPP values during link
+ up event
+Message-ID: <bsxaq6zilwaavcwi25dbz2wgrgqrqxfme6a5lfdg6jqfl4kspj@xahygne3tqg4>
+References: <20241101-remove_wait-v3-0-7accf27f7202@quicinc.com>
+ <20241101-remove_wait-v3-3-7accf27f7202@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <173039500211.1507616.16831780895322741303.b4-ty@google.com>
+In-Reply-To: <20241101-remove_wait-v3-3-7accf27f7202@quicinc.com>
 
-On Thu, Oct 31, 2024 at 12:51:33PM -0700, Sean Christopherson wrote:
-> [1/4] x86/cpufeatures: Clarify semantics of X86_FEATURE_IBPB
->       https://github.com/kvm-x86/linux/commit/43801a0dbb38
-> [2/4] x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
->       https://github.com/kvm-x86/linux/commit/99d252e3ae3e
+On Fri, Nov 01, 2024 at 05:04:14PM GMT, Krishna chaitanya chundru wrote:
+> As part of the PCIe link up event, update ICC and OPP values
+> as at this point only driver can know the link speed and
+> width of the PCIe link.
+> 
 
-ff898623af2e ("x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET")
+It would be nice if you were to write your commit messages in the style
+documented at https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+I.e. start with a clear problem description, then move into describing
+the solution.
 
--- 
-Regards/Gruss,
-    Boris.
+Your commit message is stating that this is the only place the driver
+can know the link speed, but wouldn't that imply that there's some
+actual problem with the code currently?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
+I'm guessing (because that's what your commit message is forcing me to
+do) that in the case that we don't detect anything connected at probe
+time and then we get a "hotplug" interrupt, we will have completely
+incorrect bus votes?
+
+If so, it would seem that this patch should have a:
+Fixes: 4581403f6792 ("PCI: qcom: Enumerate endpoints based on Link up event in 'global_irq' interrupt")
+
+And of course, a proper description of that problem.
+
+Regards,
+Bjorn
+
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 474b7525442d..5826c0e7ca0b 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1558,6 +1558,8 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+>  		pci_lock_rescan_remove();
+>  		pci_rescan_bus(pp->bridge->bus);
+>  		pci_unlock_rescan_remove();
+> +
+> +		qcom_pcie_icc_opp_update(pcie);
+>  	} else {
+>  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+>  			      status);
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
