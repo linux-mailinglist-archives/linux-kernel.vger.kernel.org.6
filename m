@@ -1,140 +1,122 @@
-Return-Path: <linux-kernel+bounces-392371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EDE9B933B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:30:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449719B9338
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:30:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 871CE281B60
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEFC31F23315
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFCD1AA7A6;
-	Fri,  1 Nov 2024 14:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F201A727F;
+	Fri,  1 Nov 2024 14:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jw9uAyNf"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clV2wVvV"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6AC60DCF;
-	Fri,  1 Nov 2024 14:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398E4136347;
+	Fri,  1 Nov 2024 14:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730471423; cv=none; b=JJv5khvRyoKIO1JU8K3vtDM14Dk+SplyHTBJ+sTSXBFm+u3RA1Z7EVN9PtkEu5oN6at2zA72jmtpEk0HMFYl5mljFuA6KedmOgbBJrGf6mv4HNEguKpqqh5ACze3Rg5yhmAoFynu3LwBSh/p3VfkDnJ/XU83H2+HvSrqq1M/lbg=
+	t=1730471416; cv=none; b=Xu+SgMz6JaGunDGMu2Fq9AODMmPrFttoWivmL8jxk86Fr6BQm0h7D1kAE5pKATSlhkgzjJcETevsgZ1255zmbF+BfhG4rmWVjIvqiRxK+Y7KUHtOVL7RTlKOgMxB5y/NOCD5Jfo3axWpA5beUNJn8qoKRQdXwEa6QqKkQyImVhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730471423; c=relaxed/simple;
-	bh=GELZeM7SL+vX4J10M+PYFvjC1VtfZpBaaZsWDEcTe1o=;
+	s=arc-20240116; t=1730471416; c=relaxed/simple;
+	bh=TKAtd4Xz8cLFFFmnHPins+tJ+Mfne7qr3bvUedak18U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BihAFZUwNnAj/2XlxZQT2G/8jl/HLD9jHZ1vInrS6Z9NcHB7z45ZoUdm3r9PLk9RhnR+1At44FC3jtXo6BiUz2wSlv0KzmpXVoR+PzfGdgqVXcgC/7ZC9xVL2RDzl2WdpYcBeEozzZFF1ZdYq2hQLPXRb0n3EHwuN0F0FisyCNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jw9uAyNf; arc=none smtp.client-ip=209.85.216.49
+	 To:Cc:Content-Type; b=j6wmE/oqM9AwxvXH8nR8oJgRZ1XVDz7CLXIhNJ6n7Cmgis6bd98yN3rBn5s5mpwexO0KkVshvPcpl53RbechQlAXtYmTDYEkGufCG66tlDIaan7AUXLx5lb5AoHXm5/eOc4ua3iJjQ+paPaXU56MSF6UO7Cm/+4KdIloIJqWxvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clV2wVvV; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so1526579a91.1;
-        Fri, 01 Nov 2024 07:30:21 -0700 (PDT)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea64af4bbbso270847a12.1;
+        Fri, 01 Nov 2024 07:30:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730471421; x=1731076221; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730471414; x=1731076214; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GELZeM7SL+vX4J10M+PYFvjC1VtfZpBaaZsWDEcTe1o=;
-        b=jw9uAyNfBZ2rj29cAQUnj9vn4Kl/6VKxeoej0ohChZIWLACoFKgOrrFjnkkTtLtjXP
-         t45ByGYR4yEsF0GUp+MSaaPOtuyMu20349ldxhbcRzHbe5S54rxJW/h0fCz/FgHgcC1a
-         LUqdodc4HXi8T12SDmG9KFjgHjTPInr0anjFmhHOBSYPp8AyE8blXsgkkS0SJZ0/br0t
-         rc1Gxpp8F9zrozL+Lna7FLAdJlVi6yLzsM/iss3wyilO28pPnBAtJHSem09/fS85GKQk
-         2nWMDB+IZkWR0j2WIcrwMV+IF4E8LwwoD4KO8jHWKBK5TKQU0tVmRaGhEyyf013bdx9w
-         rJHg==
+        bh=TKAtd4Xz8cLFFFmnHPins+tJ+Mfne7qr3bvUedak18U=;
+        b=clV2wVvVpvtg73poXDClHokmVTSuMI+Fz7X8wserVsovSY/SBHAduC3FMs7xF2EzMo
+         J7MoqPO90lgbhyOCFiRhe+CUurxGxwrZBB/AjpbCvM7EQYTm8jVjIbLwUE+mRigT04Ui
+         FNfMp0t63MjMY3/0xPiC0lf0yBuIZ+BEPTrriV7x9MsDJ4DbcPXxhzptDSdX8xMKPgsd
+         JcP4SFXzzFW1IhWBaGafFUEGxCR1zB41f78L8esOaOdxX+Rwd8X0UJtJC2S7tmTHWkoF
+         eHgzm1FYmYPIl6uaDUqe0GWZSq3D8a3GnkFbdXzJnRE8zgU1QduTCURKo1K9atvS0H2/
+         ShNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730471421; x=1731076221;
+        d=1e100.net; s=20230601; t=1730471414; x=1731076214;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GELZeM7SL+vX4J10M+PYFvjC1VtfZpBaaZsWDEcTe1o=;
-        b=J6R2W6JAJl2QCLywzSstfhx5ddEPA4HzVhiMXm8SUzW5Hc0h6dKm2er7HGGv09LSH+
-         0RgAmTESUise5DWWan3Lfk326gZstvqxver577+oE0sJEJHxwxeysY2DxxGuEHkfokfE
-         6B0MDMTEOh05ONdZyuLAzqodbcewnS/VpX4aLU+l0rlctPLEeDqtLTlII97uCs05Eypp
-         Cbp3Y8arpOpRVTnRFqC89BcpprfkFL1hcK3mWBXYv6z2r8s/MYvWCo4QOZTzrb7nBm1+
-         mi66Rn7fWEoooS4mGyPLH1Umx/+ty5owFNyE0wqzuq/683ivxRCQvEQDNq6RRX1472ZO
-         uPPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULtoc0nqB05G7tRj9fBtUqZtr9igcwpsVnEgb3RMvo6ppRDcckPAzHqKmBqBdBrgTNxUaEBYpIVdc5@vger.kernel.org, AJvYcCWMWJDXzn4R3pem4JB4Ks5dDYrr1/tJXkeMlNPWToL/KFoO3I1wWowvQ7vW8OXNl/bolStIj2v4yPq+@vger.kernel.org, AJvYcCXbfgVw3uFfUBy5A32bRzFAVnOcTkC7hKw3Cqms69LYggxzIF4BSSwzsHRr2vgsqCkzsRCAF6mqfRPF25nZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwJnMDl8kB94Acto0Y8d92ipCSWGCYwx4BOcaOABONAW8tfwTI
-	q+9jQ1ipi6JjlSkCXEExhNuqf5RJKQUQbslkxEKHi4q13qH70FSciabj0FnWjByAKNrAb8p6LQt
-	/H8gj5mlRvo341ID/sw8GtnOejEY=
-X-Google-Smtp-Source: AGHT+IGdeX3stWgFTyf6spjEjN99PHriOnBxS+A509LgHsURAUxqmYxlKZ3iqTfB/zTj/U4sDz+/1hbT7XtnP492ocs=
-X-Received: by 2002:a17:90b:4d06:b0:2e2:a2f0:e199 with SMTP id
- 98e67ed59e1d1-2e94c29ec6fmr4741654a91.8.1730471421289; Fri, 01 Nov 2024
- 07:30:21 -0700 (PDT)
+        bh=TKAtd4Xz8cLFFFmnHPins+tJ+Mfne7qr3bvUedak18U=;
+        b=reMdGsOJNS3fZey1MPu4eBzWV9N5DBt65fzufp2TKDSUPj5grOXt630EohOxbz4PZ8
+         6psCDrP4aWzGIvREos6hLEVAouteOAjf/H1LdCCA7EprgpqhWgqOwc0LwY5ecm0WDZp4
+         aX7mgGuqPUXIL4k76SEySmsdzDUX7j5iNVAfP1Jju8XKmY50mWn6Dp+vEJcI4t25zu36
+         juLNujfc4pMZpj6zx8sf2t1alr3tOcLlUBP6OnQaQQ00Q8Vp3fbdHu79miLLnl4Xvc36
+         9Pr8k53thK9c3hv0iWIiu3HxsB8niiUuKaxbeJLlVT23A8ozeuyWueVTD0kecBXSQDNV
+         YdgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcddTIFhAUva6E5m4fxOb8nt4UIPOxfdXgU8wI57ZcNJRdfqeZhg6tbyN49RbIM1jZHBDBJme4OlNk@vger.kernel.org, AJvYcCUe3POq1CKgdLDMz2qn3xbpuLOLoSsK/fl8duCYWjEs7l/wSnwKZhUbvjf4F4JsgTHviP7x@vger.kernel.org, AJvYcCW7KYjj/XP8jOjd80nepQYw5wHuokjARoOMr5Vh2TzM71baJx52ZVYCxXp12zmT9sTzTUlSihPKlMTEF5VupA==@vger.kernel.org, AJvYcCWrA/gIKCcGyaQx5vpm3q4Og4KhwKLVz+LCd+2n1tRcNXKzL/YvgTqdfmqaaPII85tiyBSx1iU0eM71ilrO@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMAIo/qasMDLO6pQZELkxNxXHnLXTQGTEwCEIl7IwDDjqIkZCZ
+	42F/dGLW/ZJH/dFvpluA70bgmKWcstTjINT737cHaAoBoWFWqqqdO6HjCDCd7Yay+70EslMIpTK
+	7TC5LglDHoBK6OFmm/sZ+os4p2RU=
+X-Google-Smtp-Source: AGHT+IGOQhefEp7FLZkdniAIiiIsTLBIszMwpP4/Ctt+MCmEaSNoKLq4eMcSMtSjAgS5QbXUeuU5N7LkDLjPkosOQVw=
+X-Received: by 2002:a17:902:d50c:b0:20c:5da8:47b8 with SMTP id
+ d9443c01a7336-210c689759amr141323595ad.5.1730471414470; Fri, 01 Nov 2024
+ 07:30:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
- <20241028053220.346283-2-TroyMitchell988@gmail.com> <6zx3tqdc5bma2vutexwigzlir6nr6adp7arg4qwl5ieyd3avbu@5yyhv57ttwcl>
- <dbeea869-54cd-43fe-9021-783d641f1278@gmail.com> <ariqiukhztgziwwgaauqy6q3pghflnoeuwtag4izwkfmtvi2kh@gnlq4d7jsaw4>
-In-Reply-To: <ariqiukhztgziwwgaauqy6q3pghflnoeuwtag4izwkfmtvi2kh@gnlq4d7jsaw4>
-From: Jesse T <mr.bossman075@gmail.com>
-Date: Fri, 1 Nov 2024 10:29:44 -0400
-Message-ID: <CAJFTR8T60Azb3refwAB9LALJthKxQz8E1ixZyEA0K=hXfNcUyg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
+References: <20241101060237.1185533-1-boqun.feng@gmail.com>
+In-Reply-To: <20241101060237.1185533-1-boqun.feng@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 1 Nov 2024 15:30:01 +0100
+Message-ID: <CANiq72ndWJtzSQSFYuVkRPhdan_PvNpvGEhQXKAZKESnt7JVAA@mail.gmail.com>
+Subject: Re: [RFC v2 00/13] LKMM *generic* atomics in Rust
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	llvm@lists.linux.dev, lkmm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
+	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
+	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, 
+	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, 
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
+	Trevor Gross <tmgross@umich.edu>, dakr@redhat.com, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 1, 2024 at 10:24=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+On Fri, Nov 1, 2024 at 7:03=E2=80=AFAM Boqun Feng <boqun.feng@gmail.com> wr=
+ote:
 >
-> On Tue, Oct 29, 2024 at 04:36:00PM +0800, Troy Mitchell wrote:
-> > On 2024/10/28 15:38, Krzysztof Kozlowski wrote:
-> > > On Mon, Oct 28, 2024 at 01:32:19PM +0800, Troy Mitchell wrote:
-> > >> The I2C of K1 supports fast-speed-mode and high-speed-mode,
-> > >> and supports FIFO transmission.
-> > >>
-> > >> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-> > >> ---
+> This time, I try implementing a generic atomic type `Atomic<T>`, since
+> Benno and Gary suggested last time, and also Rust standard library is
+> also going to that direction [1].
 
-Change in v2:
-- drop fifo-disable property
-- unevaluatedProperties goes after required: block
-- drop alias
+I would like to thank Boqun for trying out this approach, even when he
+wasn't (and maybe still isn't) convinced.
 
-> > >
-> > > Where is the changelog? Nothing here, nothing in cover letter.
-It seems like it was accidentally dropped seeing there are the dashes.
-
-> > >
-> > > I asked for several changes, so now I don't know if you implemented
-> > > them.
-> >
-> > I deleted the FIFO property because I believe your suggestion is correc=
-t.
-> > this should be decided by the driver, even though the FIFO is provided
-> > by the hardware.
-> >
-> > Apologies for missing the changelog. To correct this, should I send a v=
-3
-> > version with the changelog or resend v2?
->
-> Reply now with changelog. Your binding has some other unrelated and
-> incorrect changes, which I do not understand.
-
-...
-
-Thanks,
-Jesse Taube
-
->
-> Best regards,
-> Krzysztof
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Cheers,
+Miguel
 
