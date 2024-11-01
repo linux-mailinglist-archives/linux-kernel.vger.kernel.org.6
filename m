@@ -1,351 +1,141 @@
-Return-Path: <linux-kernel+bounces-391665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19809B8A07
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:40:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC32B9B8A0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:43:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F01D2826AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:40:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91E09B21C0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA63613E028;
-	Fri,  1 Nov 2024 03:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JaOs22Zt"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E9114265F;
+	Fri,  1 Nov 2024 03:43:31 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CCF3FF1
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 03:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CAE3FF1;
+	Fri,  1 Nov 2024 03:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730432432; cv=none; b=Bi5odYkQBG3DyeAjOhYZ8OVMIJth07Os7liSAd89z87Ff5l4hGKbCYpdOJaqII+BhqxqaDWWvJugXBXuK3+DtU0tP1lMoe2SY+v2J9c29rFEeIltoQR6WsO15PqbgA1tq2QBSaihyDKYfYY1eywL/n+hhLSJzIKbYX5AYcnCGZU=
+	t=1730432611; cv=none; b=JZfbtnuWRwWoI6dNJMD63kV2HiBQn21Ov0dKKZ2BJNyR1NTc/9Pbl3RuLOfrWz1wY/t3+TnNjlRQJuziA48bxDJIlgoyDxvyndUuDLdJoxWWNxBGaqy5zXOQhOWNoJtyXgWis+5K135b4dmGcr4hRSnjGLqLKCyDZdPxPvmUn/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730432432; c=relaxed/simple;
-	bh=2rR2dDWxd0eaekDApvS7IyWN+fsu/WtYCDfuZIf1Izg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aieFQ3PK7AETaqTEGjVUE0AWS0noyghoReH8W2hCFO4DNereh8LuSQdBrxxNkwEFQeIWDOc/3fhQtqC9H5AlBbCpjhQEtMtZLcpVhvn/KD40kua7LzXda83M3BwBa6H/4HgaK/jy+XbxFA0OWsoZLmu5KPEiX5yxuwqyVHTDa70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JaOs22Zt; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb561f273eso13826051fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 20:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730432428; x=1731037228; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sjP5noAEjvh49PYu7apfAl5L6lvVGL9qp8DQoKZSGuM=;
-        b=JaOs22ZtLKqTUtwaG8V9V0Ztol2fBw5wg19XRshwpaC8yqPOppt7rvM5vNFLINIeO5
-         8tDh24veT5XXbiZ9201ltkECQ1fmDlrOcAG2rLhDvVmSKm1+50l6Cwrw/MFVm1BRbJ2P
-         5uL3eNabVjYJ0lHa9tmlM5yrWHTp5wKqVtnEunHvtFgL+q3yvyVKAWmZ10tB4cWuA+Ce
-         vrHL14VdGpOJtL+4LfzpGeA+qhHn2zHOwwTLeH2aP3O++y/vqcMmV4NQAWSxIBnGRETl
-         omDiD/BBxwMkAjZzHnKZwEXL4V+/OgIt/yE+0Y4inOGgyJQSQ0OcUjxgEJHHFO2GpSHl
-         ibJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730432428; x=1731037228;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sjP5noAEjvh49PYu7apfAl5L6lvVGL9qp8DQoKZSGuM=;
-        b=KVVjJH2w5D6Qn6igiEe2lapTS8+8lfpFvY/VbVa6224FVdneh4QTbHT/qfulgBRMer
-         VApxzRgeo3ZlsDiNkaiD6SCHUn0PveJtfI9vXAGyZnZFQre6s5A1EII8oH3twWLGEDwi
-         MW/4CDNXeANu4ez0uCHVafMkIIAvpTnawSgpb7q/E7l0fXKopMALTtdRLpxZPkDLmJSv
-         pE4D2925s4AhIDNr/eZCKJ1Q0xA4h5SlyG/csqk/DCKieC0ji3gzkRxQt4YFWbGbdcKN
-         RPcwz4ZxA4dqMcROQGLKR1QS029nfxPYzyW632nA8otnaaTv7TDtG6IgorFjexSbnQvP
-         OWxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyUwp9XQkEcIpcerEmaijPbtrc6hnxOuVhqS9fNMf1e+0DtyKvLCBSENZ1Lg47unkFOCUJ8aoMAV6zsbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKp7bJYDCHvvWr+h/SwDWc6BhO+uw+o0qy1mH4OHAtpIECDh/8
-	Cyd9k+Vt2WdgKnTGkdwXG+uDmPe4wY/Uh0MbXCjFp2sWXnCOLDywQy//V92tp1+Uua64OueWEOp
-	ptu8oCHFgCUIA8uYjHj3jy44JVRA=
-X-Google-Smtp-Source: AGHT+IGkTqq3CbIBYVliNiAvSfnYWEfQCTsfLvdQxe+IQdlr1FOBZ2/rC1dTSK0luVPuuYpHs1FEspEm0uMOwHXeupk=
-X-Received: by 2002:a05:651c:b20:b0:2fa:c0fc:e3d8 with SMTP id
- 38308e7fff4ca-2fd059ea07cmr53410801fa.38.1730432427926; Thu, 31 Oct 2024
- 20:40:27 -0700 (PDT)
+	s=arc-20240116; t=1730432611; c=relaxed/simple;
+	bh=pRMfJhGuoGdcGTTVVjevgwIk+6vs3s7GylTeKPL117A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YGvyYBsvBTImWqyTfIAAW++D0HedLqUZQdv+u4MprDoFNyFiAbUMM928eqmqKOQ6AehrtsJgddFOcVBxZU2R62F43sBQkc/20ITXCEzj2ai+UeAfUa7J4TauotiXkf0lbDemg+6cwjBnepNLanfXIEPa82ExUlOWztkIeIoIpOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XfmrH5Nr1z1jwFG;
+	Fri,  1 Nov 2024 11:41:51 +0800 (CST)
+Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
+	by mail.maildlp.com (Postfix) with ESMTPS id D808B1400D3;
+	Fri,  1 Nov 2024 11:43:25 +0800 (CST)
+Received: from [10.67.109.114] (10.67.109.114) by
+ kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 1 Nov 2024 11:43:25 +0800
+Message-ID: <1a004693-5dd5-458c-b8ff-b9a978298122@huawei.com>
+Date: Fri, 1 Nov 2024 11:43:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030103136.2874140-1-yi.sun@unisoc.com> <20241030103136.2874140-5-yi.sun@unisoc.com>
- <CACOAw_zn0ov0b2h9+zHn2gYVCDVGYPkXFNcx-j7OkhU0Y=i94g@mail.gmail.com>
-In-Reply-To: <CACOAw_zn0ov0b2h9+zHn2gYVCDVGYPkXFNcx-j7OkhU0Y=i94g@mail.gmail.com>
-From: yi sun <sunyibuaa@gmail.com>
-Date: Fri, 1 Nov 2024 11:39:51 +0800
-Message-ID: <CALpufv0U1FKSXCZJzLD5dhWpNeWqjzg3nf74NX=zXfb+O5Y0qg@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v2 4/5] f2fs: add parameter @len to f2fs_invalidate_blocks()
-To: Daeho Jeong <daeho43@gmail.com>
-Cc: Yi Sun <yi.sun@unisoc.com>, chao@kernel.org, jaegeuk@kernel.org, 
-	ke.wang@unisoc.com, linux-kernel@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, hao_hao.wang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: Fix uninitialized symbol 'ret'
+To: Matti Vaittinen <mazziesaccount@gmail.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
+	<judy.chenhui@huawei.com>
+References: <20241031014505.2313035-1-quzicheng@huawei.com>
+ <5f80c1a2-118a-4685-ac1b-81b3479f5064@gmail.com>
+From: Zicheng Qu <quzicheng@huawei.com>
+In-Reply-To: <5f80c1a2-118a-4685-ac1b-81b3479f5064@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpeml500008.china.huawei.com (7.185.36.147) To
+ kwepemd200012.china.huawei.com (7.221.188.145)
 
-On Thu, Oct 31, 2024 at 1:00=E2=80=AFAM Daeho Jeong <daeho43@gmail.com> wro=
-te:
->
-> On Wed, Oct 30, 2024 at 3:35=E2=80=AFAM Yi Sun <yi.sun@unisoc.com> wrote:
-> >
-> > New function can process some consecutive blocks at a time.
-> >
-> > Function f2fs_invalidate_blocks()->down_write() and up_write()
-> > are very time-consuming, so if f2fs_invalidate_blocks() can
-> > process consecutive blocks at one time, it will save a lot of time.
-> >
-> > Signed-off-by: Yi Sun <yi.sun@unisoc.com>
-> > ---
-> >  fs/f2fs/compress.c |  4 +--
-> >  fs/f2fs/f2fs.h     |  3 +-
-> >  fs/f2fs/file.c     |  8 +++---
-> >  fs/f2fs/node.c     |  4 +--
-> >  fs/f2fs/segment.c  | 69 ++++++++++++++++++++++++++++++++++++++--------
-> >  5 files changed, 68 insertions(+), 20 deletions(-)
-> >
-> > diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> > index e607a7885b57..02ad0ff29cf2 100644
-> > --- a/fs/f2fs/compress.c
-> > +++ b/fs/f2fs/compress.c
-> > @@ -1374,7 +1374,7 @@ static int f2fs_write_compressed_pages(struct com=
-press_ctx *cc,
-> >                         if (blkaddr =3D=3D COMPRESS_ADDR)
-> >                                 fio.compr_blocks++;
-> >                         if (__is_valid_data_blkaddr(blkaddr))
-> > -                               f2fs_invalidate_blocks(sbi, blkaddr);
-> > +                               f2fs_invalidate_blocks(sbi, blkaddr, 1)=
-;
-> >                         f2fs_update_data_blkaddr(&dn, COMPRESS_ADDR);
-> >                         goto unlock_continue;
-> >                 }
-> > @@ -1384,7 +1384,7 @@ static int f2fs_write_compressed_pages(struct com=
-press_ctx *cc,
-> >
-> >                 if (i > cc->valid_nr_cpages) {
-> >                         if (__is_valid_data_blkaddr(blkaddr)) {
-> > -                               f2fs_invalidate_blocks(sbi, blkaddr);
-> > +                               f2fs_invalidate_blocks(sbi, blkaddr, 1)=
-;
-> >                                 f2fs_update_data_blkaddr(&dn, NEW_ADDR)=
-;
-> >                         }
-> >                         goto unlock_continue;
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index addd49af57ec..4bb459157adf 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -3716,7 +3716,8 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi, ni=
-d_t ino);
-> >  int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi);
-> >  int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
-> >  void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool fre=
-e);
-> > -void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
-> > +void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr,
-> > +                                               unsigned int len);
-> >  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkad=
-dr);
-> >  int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
-> >  void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index 75a8b22da664..13594bb502d1 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -652,7 +652,7 @@ void f2fs_truncate_data_blocks_range(struct dnode_o=
-f_data *dn, int count)
-> >                                 valid_blocks++;
-> >                 }
-> >
-> > -               f2fs_invalidate_blocks(sbi, blkaddr);
-> > +               f2fs_invalidate_blocks(sbi, blkaddr, 1);
-> >
-> >                 if (!released || blkaddr !=3D COMPRESS_ADDR)
-> >                         nr_free++;
-> > @@ -750,7 +750,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u6=
-4 from, bool lock)
-> >                 unsigned int i;
-> >
-> >                 for (i =3D 0; i < ei.len; i++)
-> > -                       f2fs_invalidate_blocks(sbi, ei.blk + i);
-> > +                       f2fs_invalidate_blocks(sbi, ei.blk + i, 1);
-> >
-> >                 dec_valid_block_count(sbi, inode, ei.len);
-> >                 f2fs_update_time(sbi, REQ_TIME);
-> > @@ -1319,7 +1319,7 @@ static int __roll_back_blkaddrs(struct inode *ino=
-de, block_t *blkaddr,
-> >                 ret =3D f2fs_get_dnode_of_data(&dn, off + i, LOOKUP_NOD=
-E_RA);
-> >                 if (ret) {
-> >                         dec_valid_block_count(sbi, inode, 1);
-> > -                       f2fs_invalidate_blocks(sbi, *blkaddr);
-> > +                       f2fs_invalidate_blocks(sbi, *blkaddr, 1);
-> >                 } else {
-> >                         f2fs_update_data_blkaddr(&dn, *blkaddr);
-> >                 }
-> > @@ -1571,7 +1571,7 @@ static int f2fs_do_zero_range(struct dnode_of_dat=
-a *dn, pgoff_t start,
-> >                         break;
-> >                 }
-> >
-> > -               f2fs_invalidate_blocks(sbi, dn->data_blkaddr);
-> > +               f2fs_invalidate_blocks(sbi, dn->data_blkaddr, 1);
-> >                 f2fs_set_data_blkaddr(dn, NEW_ADDR);
-> >         }
-> >
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index af36c6d6542b..db15d6a90f67 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -916,7 +916,7 @@ static int truncate_node(struct dnode_of_data *dn)
-> >         }
-> >
-> >         /* Deallocate node address */
-> > -       f2fs_invalidate_blocks(sbi, ni.blk_addr);
-> > +       f2fs_invalidate_blocks(sbi, ni.blk_addr, 1);
-> >         dec_valid_node_count(sbi, dn->inode, dn->nid =3D=3D dn->inode->=
-i_ino);
-> >         set_node_addr(sbi, &ni, NULL_ADDR, false);
-> >
-> > @@ -2761,7 +2761,7 @@ int f2fs_recover_xattr_data(struct inode *inode, =
-struct page *page)
-> >         if (err)
-> >                 return err;
-> >
-> > -       f2fs_invalidate_blocks(sbi, ni.blk_addr);
-> > +       f2fs_invalidate_blocks(sbi, ni.blk_addr, 1);
-> >         dec_valid_node_count(sbi, inode, false);
-> >         set_node_addr(sbi, &ni, NULL_ADDR, false);
-> >
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 92ddff285a65..67f2bfdeb6ec 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -245,7 +245,7 @@ static int __replace_atomic_write_block(struct inod=
-e *inode, pgoff_t index,
-> >                 if (!__is_valid_data_blkaddr(new_addr)) {
-> >                         if (new_addr =3D=3D NULL_ADDR)
-> >                                 dec_valid_block_count(sbi, inode, 1);
-> > -                       f2fs_invalidate_blocks(sbi, dn.data_blkaddr);
-> > +                       f2fs_invalidate_blocks(sbi, dn.data_blkaddr, 1)=
-;
-> >                         f2fs_update_data_blkaddr(&dn, new_addr);
-> >                 } else {
-> >                         f2fs_replace_block(sbi, &dn, dn.data_blkaddr,
-> > @@ -2558,29 +2558,76 @@ static void update_sit_entry(struct f2fs_sb_inf=
-o *sbi, block_t blkaddr, int del)
-> >                 get_sec_entry(sbi, segno)->valid_blocks +=3D del;
-> >  }
-> >
-> > -void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
-> > +static void __f2fs_invalidate_blocks(struct f2fs_sb_info *sbi,
-> > +                                       block_t addr, block_t end)
-> >  {
-> >         unsigned int segno =3D GET_SEGNO(sbi, addr);
-> >         struct sit_info *sit_i =3D SIT_I(sbi);
-> > +       unsigned int seg_num =3D GET_SEGNO(sbi, end) - segno + 1;
-> > +       unsigned int i =3D 1, max_blocks =3D sbi->blocks_per_seg, len;
-> > +       block_t addr_start =3D addr;
-> >
-> > -       f2fs_bug_on(sbi, addr =3D=3D NULL_ADDR);
-> > -       if (addr =3D=3D NEW_ADDR || addr =3D=3D COMPRESS_ADDR)
-> > -               return;
-> > -
-> > -       f2fs_invalidate_internal_cache(sbi, addr, 1);
-> > +       f2fs_invalidate_internal_cache(sbi, addr, end - addr + 1);
-> >
-> >         /* add it into sit main buffer */
-> >         down_write(&sit_i->sentry_lock);
-> >
-> > -       update_segment_mtime(sbi, addr, 0);
-> > -       update_sit_entry(sbi, addr, -1);
-> > +       if (seg_num =3D=3D 1)
-> > +               len =3D end - addr + 1;
-> > +       else
-> > +               len =3D max_blocks - GET_BLKOFF_FROM_SEG0(sbi, addr);
-> >
-> > -       /* add it into dirty seglist */
-> > -       locate_dirty_segment(sbi, segno);
-> > +       do {
-> > +               update_segment_mtime(sbi, addr_start, 0);
-> > +               update_sit_entry(sbi, addr_start, -len);
-> > +
-> > +               /* add it into dirty seglist */
-> > +               locate_dirty_segment(sbi, segno);
-> > +
-> > +               /* update @addr_start and @len and @segno */
-> > +               addr_start =3D START_BLOCK(sbi, ++segno);
-> > +               if (++i =3D=3D seg_num)
-> > +                       len =3D GET_BLKOFF_FROM_SEG0(sbi, end) + 1;
-> > +               else
-> > +                       len =3D max_blocks;
-> > +       } while (i <=3D seg_num);
-> >
-> >         up_write(&sit_i->sentry_lock);
-> >  }
-> >
-> > +void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi,
-> > +                               block_t addr, unsigned int len)
-> > +{
-> > +       unsigned int i;
-> > +       /* Temporary record location */
-> > +       block_t addr_start =3D addr, addr_end;
-> > +
-> > +       if (len =3D=3D 0)
-> > +               return;
-> > +
-> > +       for (i =3D 0; i < len; i++) {
-> > +               addr_end =3D addr + i;
-> > +
-> > +               f2fs_bug_on(sbi, addr_end =3D=3D NULL_ADDR);
->
-> Looks like this line should be out of this loop, right?
->
-> > +
-> > +               if (addr_end =3D=3D NEW_ADDR || addr_end =3D=3D COMPRES=
-S_ADDR) {
->
-> ditto?
-> Could you help with enhancing the readability here? a little bit
-> confused with using addr_start, addr_end and NEW_ADDR, COMPRESS_ADDR,
-> here.
->
+Hi Matti,
 
-Hi Daeho,
-Thanks for your feedback, I think you are right. I will correct this proble=
-m.
+It might be better but I am not pretty sure whether have to have both 
+gains and times, so I modified 'ret' in places where issues might arise, 
+rather than adding a restriction in iio_gts_sanity_check().
 
+In the corner case, there is a restriction that both num_hwgain and 
+num_itime cannot be 0 simultaneously in the iio_gts_sanity_check(). 
+However, in the gain_to_scaletables() , if num_itime is 1 and num_hwgain 
+is 0, the 'gain_bytes' becomes 0 and 'all_gains' is not null after the 
+'for' loop, which causes the subsequent 'while' or 'for' to become 
+ineffective, leading to an undefined 'ret' being returned in the 'free_out'.
 
-> > +                       if (addr_start =3D=3D addr_end) {
-> > +                               addr_end =3D addr_start =3D addr_end + =
-1;
-> > +                               continue;
-> > +                       }
-> > +
-> > +                       __f2fs_invalidate_blocks(sbi, addr_start, addr_=
-end - 1);
-> > +                       addr_end =3D addr_start =3D addr_end + 1;
-> > +               }
-> > +       }
-> > +
-> > +       if (addr_end >=3D (addr + len))
-> > +               return;
-> > +
-> > +       __f2fs_invalidate_blocks(sbi, addr_start, addr_end);
-> > +
-> > +}
-> > +
-> >  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkad=
-dr)
-> >  {
-> >         struct sit_info *sit_i =3D SIT_I(sbi);
-> > --
-> > 2.25.1
-> >
-> >
-> >
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Yours,
+
+-- Zicheng
+
+On 2024/10/31 15:13, Matti Vaittinen wrote:
+> Hi Zicheng,
+>
+> Thanks for the patch.
+>
+> On 31/10/2024 03:45, Zicheng Qu wrote:
+>> Initialize the variable ret at the time of declaration to prevent it 
+>> from
+>> being returned without a defined value. Fixes smatch warning:
+>> drivers/iio/industrialio-gts-helper.c:256 gain_to_scaletables() error:
+>> uninitialized symbol 'ret'.
+>>
+>> Cc: stable@vger.kernel.org # v6.6+
+>> Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
+>> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+>> ---
+>>   drivers/iio/industrialio-gts-helper.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/iio/industrialio-gts-helper.c 
+>> b/drivers/iio/industrialio-gts-helper.c
+>> index 59d7615c0f56..c5dc5b51693d 100644
+>> --- a/drivers/iio/industrialio-gts-helper.c
+>> +++ b/drivers/iio/industrialio-gts-helper.c
+>> @@ -167,7 +167,7 @@ static int iio_gts_gain_cmp(const void *a, const 
+>> void *b)
+>>     static int gain_to_scaletables(struct iio_gts *gts, int **gains, 
+>> int **scales)
+>>   {
+>> -    int ret, i, j, new_idx, time_idx;
+>> +    int i, j, new_idx, time_idx, ret = 0;
+>>       int *all_gains;
+>>       size_t gain_bytes;
+>
+> So, if I read it right, this handles a (corner) case where there is no 
+> times given. I am not sure how well such use has been considered 
+> because the point of GTS is helping out with cases where the gain and 
+> integration time both impact to scale.
+>
+> How do you see the benefits of the gts if there is no such shared 
+> impact to scale? Sure the gts could still provide the 'standard table 
+> format' to present the gains (or times), and conversions from the 
+> register values to gains (or times), and perhaps the available scale 
+> table(s) - but I suppose it also brings a lot of unused code and some 
+> initialization overhead. (I have a vague feeling this was discussed 
+> with Jonathan during the reviews).
+>
+> Reason I am asking these questions is that I wonder if the usage 
+> should be limited to cases where we have both gains and times? We 
+> could check this in the iio_gts_sanity_check(). (And, I am actually a 
+> bit surprized this check was not implemented).
+>
+> Well, initialization fixes a potential bug here and does not really 
+> cost much - so big thanks to you :)
+>
+> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>
+> Yours,
+>  -- Matti Vaittinen
+>
 
