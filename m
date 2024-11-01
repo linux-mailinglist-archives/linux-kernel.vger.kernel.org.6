@@ -1,158 +1,105 @@
-Return-Path: <linux-kernel+bounces-393009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2287C9B9ABF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:18:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2419B9AC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:18:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBFB628207B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:17:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6609E1F21FD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E751EB9F9;
-	Fri,  1 Nov 2024 22:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F541E6DFE;
+	Fri,  1 Nov 2024 22:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MmQKJi8n"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8B5Fbih"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCFC1E7C37
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 22:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD4F1BDC3;
+	Fri,  1 Nov 2024 22:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730499445; cv=none; b=GGLlZRghaSIlbmyFkmw0Rj6VUQ5xNGTa8wv/kOWAltEd3Neo899L/fYqZGNb4cjS7fB85Yr5c+fsxfY96qcv5lDK0RUqG/9wgVYMdSzTo+lR9vBfft/aZMsPgY4eQWGGO0Gbc9Z+13K3GXKJXHaJSnBZSkF3GN1CUnQUSw3C3Xo=
+	t=1730499524; cv=none; b=Xm88zyOtTxggdAmEmwJX6CS4MJEK87I1dc+nGZomr/0y5RMpk8Ama2M94FRLC+qyErWFfvczndiZwxPS3j52epFhdyx+F0rOTgy3yTyJHD8U2viEdCkSjeU/UoWvZKmYy2hN1uvZSfsMeV2dTLr9z30lORcYre6cIGS9aMGazs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730499445; c=relaxed/simple;
-	bh=howDg03PUqT5uHKdURne7uP61TjoAOHxS8hGuGevvVI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S2EYj0LtIRkFTB8WaxsjgPdpnvrsCNxxk9vuwPYSiNXvFv0J7nGte+QsE50FgzBfi/qH2AQejSQXi7E0KId/Rrd8/1KuJwgviZ+niDgPy/32s26soRhLarrNFg1VhBuRyc2LQHHezekhSw3NyVIOPFmArgmD+gpWCHrTI0PLbVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MmQKJi8n; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7181285c7c4so1236100a34.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 15:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730499443; x=1731104243; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p5Y1tvObaqLtYvvCPOD8mS69Ek9mYQwEF5EMFUWXabY=;
-        b=MmQKJi8nIJpLcpBz+K6jwSaeBBtOIw/xPY5q/R6ClpR9Cws5eSGT5o4qyxTrCyZJEd
-         +YmYst5qZd4MetlcQu+332IXj3dTfIs31oXx403HwmfJYJkAm1c8Conn65MHHX7JVQ83
-         3c4mj/f4T+RMgaitEum7Sdp/mS5Pa9eWtgZxrbxTyMVUMI5P5gVgZNOSt1ZUZN5I0eUy
-         hfG97IhQZF/i6fV9H6JI4aIBBuGM3CwJKw/bb7G/ymqBHewbNANjh8TdEFMpvdzvRmUG
-         YaYs69+m7efsKPQYvJMCmbirCSFFzYriKX3zLRuCJK+BOU82fypGX2Ynw60fclpJ3vS1
-         3lcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730499443; x=1731104243;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p5Y1tvObaqLtYvvCPOD8mS69Ek9mYQwEF5EMFUWXabY=;
-        b=mHWEt63uPWTK1FR81LILPxKgkLAollcHNn7unolbn3fr3B59lPaRmQEjjjY9eB97P8
-         TLIKN4KX9RGkZrqhGKMwUNQJP7QOlyayMyZlRioEdUIyXFhLF5RYZcBlcG4X2wB5f0XI
-         A10QEx9+Ir653FHOvpXmJZGmHhyG2UsUkPqn1Jt1UAaWtzbyDjHdKCd408iUSWvXszLk
-         LzMocaD5VE+YAXfjvEixiy74Cu22JJuRSO802wucVgomFQCsn44tWvbe/AjxwMJ1CyU8
-         oMQUsHi2MayQ8k/Pagedd5UHVi7sWkJsl6IkQJFRD3hYvO1GBFxNT9PfpIntHrV2chDW
-         9zRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbF7ZiXsRONTPCem4BEXRidV4fyB27mTnIHuAbYlQxe2rcl1cEgWA7T9HFdsUtewfvkSiQIE/5eNk7+zE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1R9hYbYxCdW8zt5lXJIPGhlXfJ7sYwX7r783lUvk9rfWq8OGj
-	zlUQfq73MRE5GpvkWJ/lrrlYIRxxMLh1aSilpgvY9at+2BcEVE4jp8TnhxYvTaA=
-X-Google-Smtp-Source: AGHT+IFwkbWKQ4IGA+r9HW9czIJ7AoQH9s1W0J0JftvMv3EZw3NwVqMe4Cj+MED97B4IZFL9AP8xkQ==
-X-Received: by 2002:a05:6830:3748:b0:718:9c7c:2b33 with SMTP id 46e09a7af769-719ca2472b6mr5863742a34.23.1730499443202;
-        Fri, 01 Nov 2024 15:17:23 -0700 (PDT)
-Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec70698049sm789817eaf.48.2024.11.01.15.17.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 15:17:21 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 01 Nov 2024 17:17:10 -0500
-Subject: [PATCH 3/3] iio: events: make IIO_EVENT_CODE macro private
+	s=arc-20240116; t=1730499524; c=relaxed/simple;
+	bh=SfvWv72ZbUeIjpMhK1H+Di14U2NJnni6MvQ7OWwTfDo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=Tgk8V7UiG9fDuH1MkAMx4AGoUCWqxpr/uJi/XTGgSN4+PBJ3hK1QAUijCdkJLiUNvADPAxT6wSMk5oN46NF+adxRBABufqz0tJWNYqph9rtdWIFZddGiLOnLy4bWtEK5yW1e6715795CnekstnYP3yw9Ii3CojTjBDm/sYQxeTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8B5Fbih; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E707C4CECD;
+	Fri,  1 Nov 2024 22:18:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730499523;
+	bh=SfvWv72ZbUeIjpMhK1H+Di14U2NJnni6MvQ7OWwTfDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G8B5FbihtNvVjmiGncdZkw/5g49VXEDLWU6dCd6f7AgBZV7b3MDz4Mio9teMOIupZ
+	 ARqPuoMHB79uUnWfl+rqF4KTcZ/gObfhf3oVmSS9eCRk0qutPaqPxfYhbHSu3Vq/je
+	 HAnbzuzI/c9euOqXkGM4iUaORjvXEUct9BNxVVJk/Pbc72JYcDPtDceTthEVk9fecj
+	 /Eb+mS/2aEEzZIyWFJQYVe4M7FITlC7FUxUCj5mBCz6yf4dfV6rgbJW7pxdd+uGM6c
+	 HQnGDrwoQ/wXmcgGWjGK7qycALq7sacle8cuCNP5D38T9ddXyPOhWhHpmJw1iV1I20
+	 ayJ6MSw0pdYXA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241101-iio-fix-event-macro-use-v1-3-0000c5d09f6d@baylibre.com>
-References: <20241101-iio-fix-event-macro-use-v1-0-0000c5d09f6d@baylibre.com>
-In-Reply-To: <20241101-iio-fix-event-macro-use-v1-0-0000c5d09f6d@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.1
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 02 Nov 2024 00:18:39 +0200
+Message-Id: <D5B6VSE24UFU.3IMXJC23PCNFW@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Thomas Gleixner" <tglx@linutronix.de>, "Ross Philipson"
+ <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
+ <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>
+Cc: <dpsmith@apertussolutions.com>, <mingo@redhat.com>, <bp@alien8.de>,
+ <hpa@zytor.com>, <dave.hansen@linux.intel.com>, <ardb@kernel.org>,
+ <mjg59@srcf.ucam.org>, <James.Bottomley@hansenpartnership.com>,
+ <peterhuewe@gmx.de>, <jgg@ziepe.ca>, <luto@amacapital.net>,
+ <nivedita@alum.mit.edu>, <herbert@gondor.apana.org.au>,
+ <davem@davemloft.net>, <corbet@lwn.net>, <ebiederm@xmission.com>,
+ <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
+ kernel support
+X-Mailer: aerc 0.18.2
+References: <20240913200517.3085794-1-ross.philipson@oracle.com>
+ <D5ARS5Y7EATS.2GVNSARKXKIDI@kernel.org> <87a5eivgku.ffs@tglx>
+ <D5B5I0WUU8F0.30JMZ6QHPOFRK@kernel.org>
+ <D5B5MLX1C8TS.2U6YPCYBWBTYT@kernel.org> <87msiitxto.ffs@tglx>
+In-Reply-To: <87msiitxto.ffs@tglx>
 
-Make IIO_EVENT_CODE "private" by adding a leading underscore.
+On Sat Nov 2, 2024 at 12:04 AM EET, Thomas Gleixner wrote:
+> On Fri, Nov 01 2024 at 23:19, Jarkko Sakkinen wrote:
+> > On Fri Nov 1, 2024 at 11:13 PM EET, Jarkko Sakkinen wrote:
+> >> I think we can sort them out independently as long as we find a
+> >> conclusion how to address locality change.
+> >
+> > And to be fair: there was no reaction from anyone. It is mostly x86
+> > patch set, meaning that I was waiting for some reaction first from that
+> > side.  And I did respond to that when it came.
+>
+> The x86 side is mostly self contained, so the damage there is minimal,
+> but the TPM parts are changing the generic operations and the x86 parts
+> depend on them.
+>
+> So let's not create a chicken and egg problem and solve the TPM parts,
+> which at my cursory glance are partially legitimate fixes, independent
+> of the actual trenchboot x86 functionality.
 
-There are no more users of this macro in the kernel so we can make it
-"private" and encourage developers to use the specialized versions of
-the macro instead.
+Yeah, I'm already writing a (draft/RFC) patch to demonstrate my
+proposal that I sent so all good.
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- include/linux/iio/events.h | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> Thanks,
+>
+>         tglx
 
-diff --git a/include/linux/iio/events.h b/include/linux/iio/events.h
-index eeaba5e1525e..72062a0c7c87 100644
---- a/include/linux/iio/events.h
-+++ b/include/linux/iio/events.h
-@@ -10,7 +10,7 @@
- #include <uapi/linux/iio/events.h>
- 
- /**
-- * IIO_EVENT_CODE() - create event identifier
-+ * _IIO_EVENT_CODE() - create event identifier
-  * @chan_type:	Type of the channel. Should be one of enum iio_chan_type.
-  * @diff:	Whether the event is for an differential channel or not.
-  * @modifier:	Modifier for the channel. Should be one of enum iio_modifier.
-@@ -19,10 +19,13 @@
-  * @chan:	Channel number for non-differential channels.
-  * @chan1:	First channel number for differential channels.
-  * @chan2:	Second channel number for differential channels.
-+ *
-+ * Drivers should use the specialized macros below instead of using this one
-+ * directly.
-  */
- 
--#define IIO_EVENT_CODE(chan_type, diff, modifier, direction,		\
--		       type, chan, chan1, chan2)			\
-+#define _IIO_EVENT_CODE(chan_type, diff, modifier, direction,		\
-+			type, chan, chan1, chan2)			\
- 	(((u64)type << 56) | ((u64)diff << 55) |			\
- 	 ((u64)direction << 48) | ((u64)modifier << 40) |		\
- 	 ((u64)chan_type << 32) | (((u16)chan2) << 16) | ((u16)chan1) | \
-@@ -41,7 +44,7 @@
- 
- #define IIO_MOD_EVENT_CODE(chan_type, number, modifier,		\
- 			   type, direction)				\
--	IIO_EVENT_CODE(chan_type, 0, modifier, direction, type, number, 0, 0)
-+	_IIO_EVENT_CODE(chan_type, 0, modifier, direction, type, number, 0, 0)
- 
- /**
-  * IIO_UNMOD_EVENT_CODE() - create event identifier for unmodified (non
-@@ -53,7 +56,7 @@
-  */
- 
- #define IIO_UNMOD_EVENT_CODE(chan_type, number, type, direction)	\
--	IIO_EVENT_CODE(chan_type, 0, 0, direction, type, number, 0, 0)
-+	_IIO_EVENT_CODE(chan_type, 0, 0, direction, type, number, 0, 0)
- 
- /**
-  * IIO_DIFF_EVENT_CODE() - create event identifier for differential channels
-@@ -65,6 +68,6 @@
-  */
- 
- #define IIO_DIFF_EVENT_CODE(chan_type, chan1, chan2, type, direction)	\
--	IIO_EVENT_CODE(chan_type, 1, 0, direction, type, 0, chan1, chan2)
-+	_IIO_EVENT_CODE(chan_type, 1, 0, direction, type, 0, chan1, chan2)
- 
- #endif
-
--- 
-2.43.0
-
+BR, Jarkko
 
