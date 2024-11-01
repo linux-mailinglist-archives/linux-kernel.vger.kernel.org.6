@@ -1,153 +1,133 @@
-Return-Path: <linux-kernel+bounces-391530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E449B884A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:22:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CAC9B884E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:23:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 321D71C21193
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:22:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8501282A37
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1674E1CA;
-	Fri,  1 Nov 2024 01:22:45 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3AD5C603;
+	Fri,  1 Nov 2024 01:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BbF74Irk"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202FF4C3D0;
-	Fri,  1 Nov 2024 01:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0402837A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 01:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730424164; cv=none; b=tFJZQZg1fDGB+Ca+AHVeyZQI6/GjyIE4I5sd8jgcne8r3mBB4Mu4kXAuzW3EVc+bR2xlHp4zf8MdT5ukNnwJLLDB3aRlDOYXDx5UxCts5EUeoHx3o8ojWRcW1Gsa7tlT2BfAVZcdIS5DXFh7wTiGBzEZpjhp0r3ROmyOinLcQzI=
+	t=1730424178; cv=none; b=CqavebiXU3agKN0QwU35y5tnxu2+02T3R254TgwvEMLzrsOVobLfmrf89yBIHBX+fzPshhiMeT1qe+h4pr0XeaZoxvpB8gLTNrbuhzz5uJkdgboFIScd/BqQA28hAhRzaMhRbGloOb3nQIumGKvGo65sUWpmd9t5HkzI1F5W5YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730424164; c=relaxed/simple;
-	bh=hhcXo6WMirpD7byS/jflVeBGqT2L3zbnR7j7Z6Wr0K4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qPnbsYUPF45TM2cplCZ4ly0ZgRPfGjmEyBnC645kQnIE7Cl/sEP5YWBTCpNOgN82pk3CLaaFUCM9f/iJqQudjtTH9w9PfbksQSofSLdckynsy+4opIThIJK7Z00ygIFlYNc0R5ihT929eLc7C/LUijTBPpkdY2exDfw3kcvjKfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XfjkP20Hpz20rDY;
-	Fri,  1 Nov 2024 09:21:33 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5AECD1A016C;
-	Fri,  1 Nov 2024 09:22:34 +0800 (CST)
-Received: from [10.67.109.114] (10.67.109.114) by
- kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 1 Nov 2024 09:22:33 +0800
-Message-ID: <c1f538d2-718f-4606-9039-5bfaed653076@huawei.com>
-Date: Fri, 1 Nov 2024 09:22:33 +0800
+	s=arc-20240116; t=1730424178; c=relaxed/simple;
+	bh=y3W0QlF0pHUhgxWrrr5HTFUY6Bau3zJlqfQaSdHHzJU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SeHy6Gtz0Kh8tNsXOBgpIcKgQrklU2fEAaydeLWm1Up1skylobjqbXrofDt4MXKlVx0S93AQnmWn4vIdFbYjall3kFfThhBbp7/v8ICnrus3qVu3ZSlRr5+wO5XtQRMI+ruAmtE2ZMs0FsTE4I/yHZccaeT80lIfbDxKY/fcDtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BbF74Irk; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so16314535e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:22:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730424169; x=1731028969; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rn4kry6m/4mklH5IfU4CmPkq9g/NGwiE8SJ27fMIJ2k=;
+        b=BbF74IrkReJAHDw/0zZBwj8V17ANBg4V7puDhrKw7i3LaTQ0zasANVfFYNPvqyY7Dm
+         86qmFC3qn6Z0NPKE+wsELDnvz+Cip3HzhT/9XXIYoXJ1cxEOf6Kluq0a+vW/oHCYS9Pj
+         j1WwobR664sztxNx2uhKxfczJ1csVKyEx3/afYCxX0PQ1HLuIz7rhuOabwtNcpRMfDD2
+         F6zbP5YvQ0pLgoRbMrWrGeACmkm13ENrfi2Uvd9HbWnfPg90a6pqZKSkvH/MOdl3akRW
+         JLLXvWM70bU8Lumz9LqmQdLXsIh7YWF6dyAXkAJqd2V0ZmJTA/LjzAdOqnt5E095maJc
+         IzsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730424169; x=1731028969;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rn4kry6m/4mklH5IfU4CmPkq9g/NGwiE8SJ27fMIJ2k=;
+        b=rRLt/Fmzdz4IEjdWsL/ZVdEukXNlbjQb+WHJOTplBL3dFuejRl6n4xiHQWPq7cQpr5
+         wAA9IjcIFheQIQxacx1UQlPmLJIVyRcJeflmic5uBzaGc+7qBYQPWbPcOWPS2pGRmQR0
+         uHibmYk52WKu9lxLZdt0INbMj+PHr7aEdNLc6Zg2fzteyKfnsXgaic8+Ddty3kUYjZgH
+         07i0D8GVCItrfEN1QeRN3hlN1YT3CNtVFdslCPbiajwRdCVJbTjguSffMEcQzKUntSJh
+         cJhp5pVxmf6Rxj/21ydm0pzrFlB4g22IYsurj8ly0a8mj6xpGYr9Cy9TYcD0kSi1A/r+
+         RWtg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOmWt7y4vcI7Tke5vWuJMwtps1F+umXedF8+o1gJidxO6tQDBtXfxlP8YOEf8Xhcwn/sjj3NUw6vhxX/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy89JOjAGe0TQaxCHKKIH1k7EqeIxbJRlH3O2lFb06GUcqRUimd
+	f/YLo53GBQb/46VhkfyE+nNwMftjf1Vcy2VNggFER9XaUEHDde498h1QRH9zdKU=
+X-Google-Smtp-Source: AGHT+IEd3p8ING9n6nUBlO8Ke9VQAg3GlSiKlwo36+DVc7pK/fktIh4uuK1JDCaWsyMf+QwtDc/8UA==
+X-Received: by 2002:a05:600c:5121:b0:431:4f29:9539 with SMTP id 5b1f17b1804b1-43283295905mr16252715e9.32.1730424169610;
+        Thu, 31 Oct 2024 18:22:49 -0700 (PDT)
+Received: from localhost.localdomain ([2.222.231.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116ad3fsm3501622f8f.95.2024.10.31.18.22.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 18:22:48 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: konradybcio@kernel.org,
+	konrad.dybcio@oss.qualcomm.com,
+	andersson@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	krzk+dt@kernel.org
+Cc: robh@kernel.org,
+	conor+dt@kernel.org,
+	srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dmitry.baryshkov@linaro.org
+Subject: [PATCH v2 0/2] Qualcomm sm6115 LPASS clock controller
+Date: Fri,  1 Nov 2024 01:22:45 +0000
+Message-ID: <20241101012247.216825-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iio: adc: ad7923: Fix buffer overflow for tx_buf and
- ring_xfer
-To: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
-	<noname.nuno@gmail.com>, <nuno.sa@analog.com>
-CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <djunho@gmail.com>,
-	<alexandru.ardelean@analog.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <tanghui20@huawei.com>,
-	<zhangqiao22@huawei.com>, <judy.chenhui@huawei.com>
-References: <20241028142357.1032380-1-quzicheng@huawei.com>
- <20241029134637.2261336-1-quzicheng@huawei.com>
- <4760ad42ae34ea53ffb98995d65c5f1d6a6b3f9e.camel@gmail.com>
- <20241031210501.3da82113@jic23-huawei>
-From: Zicheng Qu <quzicheng@huawei.com>
-In-Reply-To: <20241031210501.3da82113@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpeml100013.china.huawei.com (7.185.36.238) To
- kwepemd200012.china.huawei.com (7.221.188.145)
 
-Hi Jonathan and Nuno,
+This is one of the required dependencies for audio support on sm6115 and
+its derivatives SoCs. This was written by Konrad Dybcio, however his linaro
+email is already invalid. Konrad suggested sending it as-is and keeping
+him in c/c. Some updates may be still required, for instance the
+maintainers line in DT bindings file.
 
-Thank you for pointing that out. I included Nuno's name because I think 
-the final correct solution came from Nuno, and I wanted to acknowledge 
-the contribution. However, I didn't realize I needed to confirm with 
-Nuno before adding the sign-off.
+This was tested on QRB4210 (Qualcomm RB2 board). The only changes from my
+side were fixing compilation errors and small changes in commit messages.
 
-In the future, I will ensure to discuss with Nuno or anyone else 
-involved to avoid similar issues, or use "suggested by" instead. I 
-apologize to Nuno for any confusion this may have caused.
+This is second attempt and v2 as suggested.
 
-Thanks for the guidance and apologize again.
+Changes in v2:
+ -- added Reviewed-by tag to first patch;
+ -- removed the second example as suggested by Krzysztof in the first patch;
+ -- dropped patch "clk: qcom: reset: Increase max reset delay", the change
+ already landed.
 
-Best regards,
-Zicheng Qu
+URL to initial series by Konrad:
+https://lore.kernel.org/linux-clk/20230825-topic-6115_lpasscc-v1-0-d4857be298e3@linaro.org/
+URL to failed attempt to send it recently:
+https://lore.kernel.org/linux-clk/20241017005800.1175419-1-alexey.klimov@linaro.org/
 
+Konrad Dybcio (2):
+  dt-bindings: clock: Add Qualcomm SM6115 LPASS clock controller
+  clk: qcom: Add SM6115 LPASSCC
 
-On 2024/11/1 5:05, Jonathan Cameron wrote:
-> On Thu, 31 Oct 2024 15:20:24 +0100
-> Nuno Sá <noname.nuno@gmail.com> wrote:
->
->> On Tue, 2024-10-29 at 13:46 +0000, Zicheng Qu wrote:
->>> The AD7923 was updated to support devices with 8 channels, but the size
->>> of tx_buf and ring_xfer was not increased accordingly, leading to a
->>> potential buffer overflow in ad7923_update_scan_mode().
->>>
->>> Fixes: 851644a60d20 ("iio: adc: ad7923: Add support for the ad7908/ad7918/ad7928")
->>> Cc: <stable@vger.kernel.org>
->>> Signed-off-by: Nuno Sá <noname.nuno@gmail.com>
->>> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
->>> ---
->> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
->>
-> Confusing one. I'll fix the authorship up for your analog address
->
-> Zicheng, usually a Suggested-by after checking with the author if it's
-> a patch in a review thread.
->
-> You can't really give someone elses' SoB without them explicitly sending it.
-> If Nuno let you know that was fine off the list, then just mention that under
-> ---
->
-> This time I'm going to take Nuno's RB as fine to indicate no objection
-> to the SoB. Nuno, feel free to shout if you want to handle this differently.
->
-> Applied.
->
-> Jonathan
->
->
->>> v2:
->>> - Fixed: Addressed buffer overflow in ad7923_update_scan_mode() due to
->>> insufficient tx_buf and ring_xfer size for 8-channel devices.
->>> - Issue: Original patch attempted to fix the overflow by limiting the
->>> length, but did not address the root cause of buffer size mismatch.
->>> - Solution: Increased tx_buf and ring_xfer sizes recommended by Nuno to
->>> support all 8 channels, ensuring adequate buffer capacity.
->>> - Previous patch link:
->>> https://lore.kernel.org/linux-iio/20241028142357.1032380-1-quzicheng@huawei.com/T/#u
->>>   drivers/iio/adc/ad7923.c | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
->>> index 09680015a7ab..acc44cb34f82 100644
->>> --- a/drivers/iio/adc/ad7923.c
->>> +++ b/drivers/iio/adc/ad7923.c
->>> @@ -48,7 +48,7 @@
->>>   
->>>   struct ad7923_state {
->>>   	struct spi_device		*spi;
->>> -	struct spi_transfer		ring_xfer[5];
->>> +	struct spi_transfer		ring_xfer[9];
->>>   	struct spi_transfer		scan_single_xfer[2];
->>>   	struct spi_message		ring_msg;
->>>   	struct spi_message		scan_single_msg;
->>> @@ -64,7 +64,7 @@ struct ad7923_state {
->>>   	 * Length = 8 channels + 4 extra for 8 byte timestamp
->>>   	 */
->>>   	__be16				rx_buf[12] __aligned(IIO_DMA_MINALIGN);
->>> -	__be16				tx_buf[4];
->>> +	__be16				tx_buf[8];
->>>   };
->>>   
->>>   struct ad7923_chip_info {
+ .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 46 ++++++++++
+ drivers/clk/qcom/Kconfig                      |  9 ++
+ drivers/clk/qcom/Makefile                     |  1 +
+ drivers/clk/qcom/lpasscc-sm6115.c             | 85 +++++++++++++++++++
+ .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++
+ 5 files changed, 156 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
+ create mode 100644 drivers/clk/qcom/lpasscc-sm6115.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
+
+-- 
+2.45.2
+
 
