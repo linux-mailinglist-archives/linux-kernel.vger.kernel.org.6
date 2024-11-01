@@ -1,153 +1,161 @@
-Return-Path: <linux-kernel+bounces-391929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3179B8D79
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:15:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F079B8E59
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A2F2833A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:15:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19DA8B20D39
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94145158853;
-	Fri,  1 Nov 2024 09:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Ns2PAmM3"
-Received: from mail-m19731120.qiye.163.com (mail-m19731120.qiye.163.com [220.197.31.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7540619ABC5;
+	Fri,  1 Nov 2024 09:57:51 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2096.outbound.protection.partner.outlook.cn [139.219.146.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A553FF1;
-	Fri,  1 Nov 2024 09:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.120
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730452501; cv=none; b=M7SxnrPpvLF5Iec8XP5Fys2pu/g0IfrfUB+456y4gai1wPcJxk/hzIvgyJaaB2QdpsZDmgpauqK0ftj5lKUFZLwXgbOi5lYjp5veSTncvct1vq9JMwQcuXoQn9msrqUyX+g120lWlMT4SUzSfLCPT5EUy1Uy/CDf+zhhI47OZ8c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730452501; c=relaxed/simple;
-	bh=QeWofm20AbRL0tUJ6h2EObOvluRG9xxAampMZD1MHaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ayjTVO63Sh7C/XjhouiizLFFJzQx8Aq0L7dwCMMvW6fbh/n4RRwMwVb6G4z8TmD7KIwBzF+uzTelD9YTHc5RKjDrzF7eSoeil0+aTPi8PGgqER/O4YpLEo7bncstTucad0648WknAO2URTNukv/VrnvsmLMCi0iS60dyThNlpZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Ns2PAmM3; arc=none smtp.client-ip=220.197.31.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.67] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 183987c6;
-	Fri, 1 Nov 2024 15:59:18 +0800 (GMT+08:00)
-Message-ID: <eb96b240-f3ee-4057-b016-c746d48cc1b4@rock-chips.com>
-Date: Fri, 1 Nov 2024 15:59:18 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C7515B14B;
+	Fri,  1 Nov 2024 09:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730455070; cv=fail; b=oXHKFZTWZ6PICzslHdYpcxG6NR9LPTcSfPF2DhAFp4VE/CKtu2FjyPKstdTJ44n0l39WT+9oOuIV3r+rRU6ouiK3H49nqLapyjeOIRaMrt4Ir1HghY+qFMgw8lUEpPuuI6heNl3DR2n+tsysuN2pMLloWpFdY+NxigvvVdrv/cg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730455070; c=relaxed/simple;
+	bh=cl21HXob9nXo2mGH5DM6P2Gk3R7PpVnGTas6NvwJI+U=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=E29/whF9HKKuQ1xqIwRWd1/0xVvBRdMkSlRxXK1X/S0UC+hTu7Kgqa8Sf6EbFeTi+MGgzUsUvGCnYmJtCDAWUakb9JrPdWqP5dfY2xyWRKACl/bhT5kGv2P8C3lBaaS32FPUmygrGzLcf9XwLCzlKng/JR0iz/yDlR5tulf1YC0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mSg1KlbU6JNhqJiIPFNX94il/AJpx2uSHdMAbJfCJvLAaPoV460buo9rS8d5ML0/GOxCbyhoMms8ofCqxsjFTa9240xaSeyr7DYYLkdyw05D4H8+JLJ9QuwJbc+CMmVffazz1mPlGf9wrzEBolbbsCtGmVTWWLEu0WutqbBiMAUx1AKmzmPUtUi4zsJn8yqE5Mn9TLK6IWOFZ8Oc5HB80xeBNMRRhHCJGvTn2XfqsYMXTKHgz/JmxwiqXZJ7jE/Aur4JE1bjcjiWwzhItBk8ru3teInO1vKUELDebVD9snbuKTh7qK/rv/tcIIajmSCJj+Cw8RVss6WpeO+g8km9+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+gL2odibtg5TQTIw8whdtYpTzsJn0jKKORT08sIewQc=;
+ b=mGnLjk4Q4A88RRLoYtZxYFzxxhnsvPzcG+6wRuYuwlpUWqJjokdS5dU2/E/BXoi1zUPoNgw2/7e/jDf1B1sfw5l17XA4Rg9TTJBKmtjLoXgsDhzrwtUe1uUONndoEeiXtNUqFa1JPTVDD/ekyYpfFF4kBlk5quMIstMqjlSuuP5D6+xxqu7VigUm6rQbuRVjHH/7G40yHj+ewFkGOMurXd7ikpMVWX4DigNSVzTb21vRAjGa8FfZI9F7la2teraUNdgVM6kWPlPk/rcauc0AoxznXtH0Ds7XodXltblT71jKyLDEqSSpGzINOSF6KMc037q9jsffdzTQBRkrIn35tw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:f::12) by ZQZPR01MB1107.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:f::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.27; Fri, 1 Nov
+ 2024 08:24:01 +0000
+Received: from ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+ ([fe80::617c:34a2:c5bf:8095]) by
+ ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn ([fe80::617c:34a2:c5bf:8095%4])
+ with mapi id 15.20.8069.016; Fri, 1 Nov 2024 08:24:01 +0000
+From: Ley Foon Tan <leyfoon.tan@starfivetech.com>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lftan.linux@gmail.com,
+	leyfoon.tan@starfivetech.com
+Subject: code From d0f446931dfee7afa9f6ce5b1ac032e4dfa98460 Mon Sep 17 00:00:00 2001
+Date: Fri,  1 Nov 2024 16:23:33 +0800
+Message-ID: <20241101082336.1552084-1-leyfoon.tan@starfivetech.com>
+X-Mailer: git-send-email 2.46.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ZQ0PR01CA0015.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:5::9) To ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:f::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: dw_mmc: rockchip: Keep controller working for card
- detect
-To: Ulf Hansson <ulf.hansson@linaro.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- linux-rockchip@lists.infradead.org, Jaehoon Chung <jh80.chung@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <20240912152538.1.I858c2a0bf83606c8b59ba1ab6944978a398d2ac5@changeid>
- <4920950.GXAFRqVoOG@diego>
- <CAPDyKFosf_+m9j8YgHa-PsC2SV8+Aou2O6bTbMfzGBpQ2sY8YA@mail.gmail.com>
- <69d06c04-cc8c-4435-a622-33d5dcd1fa24@arm.com>
- <CAPDyKFoU=AoQqXov_-qFo8xjEbiDAk9mtTtCR9HAYz_gg-bnzQ@mail.gmail.com>
-Content-Language: en-US
-From: Kever Yang <kever.yang@rock-chips.com>
-In-Reply-To: <CAPDyKFoU=AoQqXov_-qFo8xjEbiDAk9mtTtCR9HAYz_gg-bnzQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkwaQlYfQk8YQklLSh5PTUhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a92e6bc62c103afkunm183987c6
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MRQ6Hzo5LjIjTE9KSUhIFxRW
-	GkNPCz5VSlVKTEhLT09MQk5CTE5JVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFITkJMNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=Ns2PAmM3r3IVo0z1BD9bWzhY49ezgnto/lCiZiqHcWvBOHPb/A16zDxfwiJa5XmD9Kq+7evbQpnVKcBtIO8uqQFV6WquR4xpX94n/2J949wt9rM7N+BKjxsdqrHzVtftHH5tHj1nP850u2tkMsiaKiyObzVPr06Dc1mNbEPFe5Y=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=UUxatgIjseNyDqt3FqqOob4pJSJxFWPR3CwFmtzwsvQ=;
-	h=date:mime-version:subject:message-id:from;
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ZQZPR01MB0979:EE_|ZQZPR01MB1107:EE_
+X-MS-Office365-Filtering-Correlation-Id: 46112631-fdb0-4f59-40bd-08dcfa4e8a3b
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|41320700013|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	yqvjCA+SPrKIr7x6aPxjgSCF0iLT9IlRj71p9JuIeVrX64p2gUzT8rMdZ6EMw9lKqLdxm4yZBROZjDWV8DGpeAVO/WaXFoSi3NghVNwwL0w8tFlvYi1o+fVDZ59a03RcV7IR2yvgIRvP7H2vpWQAjTCtwIYmA937KOZTfHS4UeHU8Z8YxBm5okOymOqvKCDKV0ur2qHbFXVIuNbURf10rsZLjjs2rQbI7lHXQJE/y1h+Tfp2bkOjT2DQTCGyE5i76mYA7zussacjVI406+1vzZxYoq/RuSs3gVXACRo84ZITCjOIrpREFONstKA7Sp8gTWSiANz/DMCIiOK/mJCW0bsg+IiTBntZyDtR2KKsZjl6g0NMbBT7J/Z+l3SGhBRzJ9ySKYNP/ctrs7+igf56nH3SLwjcTSU2j3Ws7AKiP03Zg5f67l1CcPnwvzsdyfV/BAKVMuUF9iqZQdRIgLorUkRQNHKD1sqj6fMfmOf174pH22sKOEFXx24wBc13aqpaph0n9fq9DnkUfLMIitegSw/Bd55vtC3jgQla4k6w1YyKMz49j7N2QTkvb1ADSVQlCA9klvJ184kBNBSr2WGwCT5O/aoF+rWkAVhUQ3vF8xYXmz4lyAqbk2krkeM7N6in
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(41320700013)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lCVDj+RFAJlIoj0n1Qe9zKj3O3Y0FBW1i6yCcU4RsQ1APxCxoZWyLvbs6Qb5?=
+ =?us-ascii?Q?qcLIemMyxsuexd9z3rGhCdCmF7BVwe86D0R1r7nNEodhk+ZDpzA7Dn8oIxz6?=
+ =?us-ascii?Q?f2zqS7sVlp/JvuOw1oJrBuHyRGJ/F37l2AS3oqruxCHsvfSs9puSBtHvwfrV?=
+ =?us-ascii?Q?U9JsUAvGdPKfYGWdieGcT7kHKym/vU5wMXSYXTHaThDzGg0olMbV8wm9dKM8?=
+ =?us-ascii?Q?tsfR7wZt7Ylws2QhQmtE+rQ2QtfTs4m2hKLE22Xd9uw6lbfHZTLxTja753x/?=
+ =?us-ascii?Q?O97W4olRo8YrS1ri14B5M8Itjo6XlCt7CONrahBq9EsC2WG8PztXMNFwKsGd?=
+ =?us-ascii?Q?qqDSTUmGdVzR0OHiRpdG1wkPl9bLg65peilAe//VOKBbR4joX3ukH/ssd9NE?=
+ =?us-ascii?Q?omVcynH1BLEHCqTO4ldXwFVdzblEPLW+hDWb9nILI/T8q4+n5R+ahA4ocFdu?=
+ =?us-ascii?Q?1J/cEC2NRxzhlNZYw52iKH/Zb2w678mchObuf9QOXEJGnwvRF9pI1SD4iywD?=
+ =?us-ascii?Q?B9yyEwMpdaY5+3QhCIcvrOER68sCFEZCjDIfdz6eIbB7bwciJN99vz8hrMcy?=
+ =?us-ascii?Q?eijJN1GS8S5bO/iHlMqY+rA/k2QM0FSVkyJ6IQigoq9CSGZ73rJvkPoz2hae?=
+ =?us-ascii?Q?vOMEHqgst808u4CmIcVQ7MmUmTTKR1YmLIX56qcA3Weo+qG9LxxuD9IkspZe?=
+ =?us-ascii?Q?JOOQ1kNFz84tX3Vm9xF5vZ8R45r2HkGTpE7gdT60M+5udK5rDOAN5jYJCbRX?=
+ =?us-ascii?Q?U1tnJnSr2CaxYyap50LxYSnLDCbql037Rlo8+XB5YoXTmkyZYk5LnApFB2Lc?=
+ =?us-ascii?Q?KRTlhAU1MxZapEo+fQHNW4OfB8qsNs6cVoxd+MJQXIH+/6Bnk0bFzCvRQQ8F?=
+ =?us-ascii?Q?l1Etoh6uUA4A9kDxPeQBEMddI7YcZhTe24HuoNFHcHMGVRW5hKx5jaLG31h+?=
+ =?us-ascii?Q?YrfIYxag8PXnlgWJ67yJDE8HoimPOiybOUQmVyzdsVpnXvyZy9WfsusJVEoc?=
+ =?us-ascii?Q?pbiaemkcPt3UGifyU5GNZcp5cjECov1OPdFSEWOFXKk8s0pqmqMnMaxuo2I3?=
+ =?us-ascii?Q?zhyMVcSkGgxRhuKWHGMNm5dT1nhTi1Niq1ZeBWYido3ouzwao+HK31dRFXZz?=
+ =?us-ascii?Q?nU/9pbgUVcE/sPnmTcVQ6QoVI+Pztd+2G5eklQWRMU3eN+aoO8SHjOJBsx+i?=
+ =?us-ascii?Q?Sf19cH7+I+28AJw0Brs3MUd9/IyM8i0EwFcZf9a/dVtI6u0GFtnpNIVVYnoM?=
+ =?us-ascii?Q?0AgUZtXgZFbae2BgSwRnan7Zy0nZL9MqWDWg8136GitIOzyxKwHgV3zFR/3Q?=
+ =?us-ascii?Q?+8r0t/VGhYxm/oFn5a8+fRBS5anvte6iLDzeES/7OkHzZ/GYYZzAaBLIaBPx?=
+ =?us-ascii?Q?znFWeSsqhYzPgxINeSpwTb/5SSA5689yID3bzZUSDRKnjnLpG8ng5pSFSZT0?=
+ =?us-ascii?Q?ESvFZdtn63McbV89S5UZrSbEQSSrpKYLjF5RIrjRzGJ0dxDwd0hMSdNdfD38?=
+ =?us-ascii?Q?YbeRSgCowFT8u+bLFQsF+QwCcwMkAp3S3rh2B9Jp0UBunLE3xgjTI65mMXgv?=
+ =?us-ascii?Q?rP1+xp90GuqJMaUWEo0sQRLZ9Pl253U6hDiPRYCbUunFgrYmhpCsgTXzUhX6?=
+ =?us-ascii?Q?eQ=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46112631-fdb0-4f59-40bd-08dcfa4e8a3b
+X-MS-Exchange-CrossTenant-AuthSource: ZQZPR01MB0979.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2024 08:24:01.5689
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jcQnoqYJVHZat72CDyIEVmEaJn1E8MI7gf97J/M3iO2GS4aBJgWyolSA6d6rDWpgV488H4hLTWUHbxktPQ4Dv7z509QWSOl8NLdG/DGuGqQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQZPR01MB1107
 
-Hi Ulf, Robin, Heiko,
+This patch series fixes the bugs in the dwmac4 drivers:
 
-On 2024/10/7 17:49, Ulf Hansson wrote:
-> On Fri, 4 Oct 2024 at 19:34, Robin Murphy <robin.murphy@arm.com> wrote:
->> On 02/10/2024 10:55 pm, Ulf Hansson wrote:
->>> On Sat, 14 Sept 2024 at 13:52, Heiko Stübner <heiko@sntech.de> wrote:
->>>> Am Donnerstag, 12. September 2024, 09:26:14 CEST schrieb Kever Yang:
->>>>> In order to make the SD card hotplug working we need the card detect
->>>>> function logic inside the controller always working. The runtime PM will
->>>>> gate the clock and the power domain, which stops controller working when
->>>>> no data transfer happen.
->>>>>
->>>>> So lets skip enable runtime PM when the card needs to detected by the
->>>>> controller and the card is removable.
->>>>>
->>>>> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
->>>> So for the change itself this looks good, i.e. it fixes an issue for baords relying
->>>> on the on-chip-card-detect.
->>>>
->>>>
->>>> But for boards doing that, the controller will be running _all the time_
->>>> even if there is never any card inserted.
->>>>
->>>> So relying on the on-soc card-detect will effectively increase the power-
->>>> consumption of the board - even it it'll never use any sd-card?
-Yes, this is how the controller works, the controller needs the clock to 
-make the detect logic work.
-If we use gpio to implement this card-detect, it works because the GPIO 
-controller/clock keeps working.
-For the dw_mmc driver support, we should support both kind of implement 
-due to the controller has this function,
-so this patch is for the card-detect implement by the dwmmc controller, 
-the controller need to keep working
-- only for sd-card (so not include the "non-removable " device)
-- also not disable rpm when "cd-gpios" is used.
+Patch #1: Fix incorrect _SHIFT and _MASK for MTL_OP_MODE_RTC_* macros.
+Patch #2: Fix bit mask off operation for MTL_OP_MODE_*_MASK.
+Patch #3: Fix Receive Watchdog Timeout (RWT) interrupt handling.
 
-For the power consumption, I believe it will increase, but very very 
-small, we can't even monitor the change
-if we use the normal equipment. The driver should make function works 
-first, and then consider the power.
+Changes since v1:
+- Updated CC list from get_maintainers.pl.
+- Removed Fixes tag.
+- Add more description in cover letter.
 
-This patch is to make the dwmmc function works without gpio's help in 
-dwmmc driver,
-  and has no affect to the gpio option, people still able to use gpio to 
-do the cd.
+History:
+v1: https://lore.kernel.org/linux-arm-kernel/20241023112005.GN402847@kernel.org/T/
 
+Ley Foon Tan (3):
+  net: stmmac: dwmac4: Fix MTL_OP_MODE_RTC mask and shift macros
+  net: stmmac: dwmac4: Fix the MTL_OP_MODE_*_MASK operation
+  net: stmmac: dwmac4: Receive Watchdog Timeout is not in abnormal
+    interrupt summary
 
-Thanks,
-- Kever
->>> Good point! A better option is to use a polling based mechanism - and
->>> we have MMC_CAP_NEEDS_POLL for exactly that.
->>>
->>> Moreover, on DT based platforms one can even use the "broken-cd"
->>> property to indicate this.
->> Except that goes further than is needed here, since it would fall back
->> entirely to software-based polling for card presence. In this case the
->> CD function is not broken in terms of actually detecting a card, it just
->> doesn't work to wake the controller up from suspend because it can't
->> fire its own interrupt while powered off. In principle all we should
->> require here is to periodically resume/suspend the device, to provide a
->> window for the interrupt to work and normal operation to take over if
->> appropriate.
-> Well, I would not object if "broken-cd" would be used for this case
-> too. I believe it already is.
->
-> Another option would be to look at a compatible string and set
-> MMC_CAP_NEEDS_POLL based on that.
->
->> Of course the really clever way would be for suspend to switch the pin
->> into GPIO mode, and set the GPIO interrupt as a wakeup to trigger resume
->> and switch it back again, but perhaps that's a bit tricky without
->> explicit pinctrl states in the DT :/
-> Right. A dedicated GPIO pin for the card detect is certainly the
-> preferred method, if you care about not wasting power.
->
-> Kind regards
-> Uffe
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h     | 4 ++--
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c | 4 ++--
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c | 6 ++++--
+ 3 files changed, 8 insertions(+), 6 deletions(-)
+
+-- 
+2.34.1
+
 
