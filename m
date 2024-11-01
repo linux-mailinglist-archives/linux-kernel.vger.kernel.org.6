@@ -1,138 +1,158 @@
-Return-Path: <linux-kernel+bounces-391553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D3E9B888E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:34:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E50FC9B8897
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:37:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BE3D1F22C47
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:34:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A43432827A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7DA61FF2;
-	Fri,  1 Nov 2024 01:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1D874BF5;
+	Fri,  1 Nov 2024 01:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GpuWICIL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MrzzFBns"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB9C1A28C;
-	Fri,  1 Nov 2024 01:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D6622318;
+	Fri,  1 Nov 2024 01:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730424855; cv=none; b=AxmfDEbrnmKOrgZJFNFyDBQ3cXkXSyodznN8rr2MtuEFDI6U7WWQmfoN1/KVOJzStVRTCDIeTUK99QzTIX8nyasRecnZhVOZwcPtP53HmNukBoZh9+f8ZcoKTZj9pyWzy+nV3hQpNCnj90AuvK23CXIPbPM+RhzY0WW05Menmpc=
+	t=1730425050; cv=none; b=ctP+Tw8tuCKOZBTbMtC9Jsg0jhjdrSUphLUpniZhM0mSkuxtnbl6a0zGD1huNdqzMf+mL7KFfFhR0WmU/uEtEgxR3MOmndbI16NER5nEqyxuZ3MjhaMvBLcirAaa7V2A7U+bJJc2CYp4W/PJABRZLEGPxsvyRXuO96JHK+uu4XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730424855; c=relaxed/simple;
-	bh=iuRrKWaA7cQTIyPCJ6yJTE+QtMeoAL4LZfUWuyrYEsE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OAThwe9Xkm5i0GNVG9rMlXB+o0B/DydIa8u8Ouk5OklsAx7271Y6U3twtpP7ml2MhkpBXQBJ82WQ+CETUxwRt/GpzAJq5EWzJl8e7bJE6y4y8LBndQIT+13HRw/dF+teSqy3HsvsTmFXgcK5vvoHB/h9ln0QHpM5OAv6B6ek+rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GpuWICIL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C871DC4CEC3;
-	Fri,  1 Nov 2024 01:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730424854;
-	bh=iuRrKWaA7cQTIyPCJ6yJTE+QtMeoAL4LZfUWuyrYEsE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GpuWICIL+Q/CLeMoNRVbEARwd89pPGZ7xUCRu3cWVupQ6FST+77g34uuO/ZGFt77C
-	 3L7u8bU287h7xhes3x2bSVREFmPHuxmutMmV7rv9SW+Nn5KAdMGUuxEmWCgoc9BymO
-	 MCnKk23Hfox75P0Hb1QKLPrAn3/CdIJpqPqBAgc8=
-Date: Thu, 31 Oct 2024 18:34:13 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
- nphamcs@gmail.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
- muchun.song@linux.dev, tj@kernel.org, lizefan.x@bytedance.com,
- mkoutny@suse.com, corbet@lwn.net, lnyng@meta.com, cgroups@vger.kernel.org,
- linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
-Message-Id: <20241031183413.bb0bc34e8354cc14cdfc3c29@linux-foundation.org>
-In-Reply-To: <CAN+CAwMioguv6itTSYVUO9__kQVv6HZO2-i0NWt10-x7f6JVSQ@mail.gmail.com>
-References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
-	<ZyIZ_Sq9D_v5v43l@tiehlicka>
-	<20241030150102.GA706616@cmpxchg.org>
-	<ZyJQaXAZSMKkFVQ2@tiehlicka>
-	<20241030183044.GA706387@cmpxchg.org>
-	<CAN+CAwM1FJCaGrdBMarD2YthX8jcBEKx9Sd07yj-ZcpDxinURQ@mail.gmail.com>
-	<ZyM7_i1HFnFfUmIR@tiehlicka>
-	<CAN+CAwMioguv6itTSYVUO9__kQVv6HZO2-i0NWt10-x7f6JVSQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730425050; c=relaxed/simple;
+	bh=D8MiN/KZJADEV5fUFXo9y71ewtg1mf1HWR/NiNxIxwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fbB02SEeZimxOwXdh/8Yl8SeHnd8F56l4JnluRB4cQ3T7ZbnywTHEK85XxlyU4A+8AarN0vT8djF8u+5wpq7Xi4zli5JhyPykOxB+h5Rx2HjkPl3Q6aNXXWezNiSXm+SsetxpZFNHvDkBqq6Nye7dD9utAq4HGFmMES26iJNTNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MrzzFBns; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71ec997ad06so1240336b3a.3;
+        Thu, 31 Oct 2024 18:37:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730425044; x=1731029844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9FFHCorsd27i7xjZdZ8bkwsKx5GCCI+P4Z2Pee224OM=;
+        b=MrzzFBnsq40i+uXd3eOAq6iWk3jd04goWyMJ8covEYsB5XkkJCyMKM4l1Mbm+lgatE
+         fjkF7NdyrVl+8sIq4rfcVMBsuG2JzFrsPfViSMGJ58yxgsAKlF3xlNUzRdHVGTSFwj9M
+         nC/YOXNIMqwdIrTxLrpmgXJkxZjNEqfH0PsfWivy9omBmRP7TMVhnp8/wWA9CjF99ihO
+         EfVICIbZJVSZZjvJSN/5inG3qhMft1knxTXd3ouM10EIZZ5bnFxcpqH6n2ONPpn89NaY
+         CCc26s7hX/awLJ693g9MgPNipEty2eBROODpcRRkhONNtb7PcQQAgalJYl5ec8mHAPk7
+         9hrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730425044; x=1731029844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9FFHCorsd27i7xjZdZ8bkwsKx5GCCI+P4Z2Pee224OM=;
+        b=rodo14pOSaSW+tW4R3ez9ghwm+gNRsoEdBMjdFnv6GYSXKbxITXSyxd3ersouNm6iC
+         j1IqVZdwpfomjq/7/+7FKD1NcEw+m4hcgN+/VXpQ2R1NnaNrhRJzzQYe8A8dC6eePAAg
+         1ZYmULDHCj5y8pycYcaxTwq+Flpmg1YFbgAVr37I/YWgKl8amMMVrUtpwJCKcHsXjsLP
+         w61RADW4BmvTTyT17Jv6TXUdp0x6UwvMMZE1nL5576Hq+mrHvPqG/s0+X+Y6Pkv0GEIn
+         VZF2hcZeYNSVOU0QFixwrEE3OBm8uZU7s6ZcEuij5yD7QL4fyNs3uIlEKcEJZ+8WqYSM
+         mgkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUj/atGl6JxsG/K5ZdP6y41fvmwQuUfFMk+zuCh9BKVauAIZ+i2P9XTSpCd/3DO4R7193tqmvFCWahxV8LN@vger.kernel.org, AJvYcCVAjH+4sxajJJD1MZo0JkCL+9pUe27XAV4JxxKxQE/3uBKEA0wtZLJezfWQg1B/SR2ADpdl6Id05/FZc5vM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe9r8iVFLiDvGIuks50ez9aYdTSu9AeBcsnxrnzsd8xdY4/RBj
+	tMZyTkw0Xr2LLAQJUN5WtSbUCZNbUQJrFm6ax2RHA7WrzSb9z/tg
+X-Google-Smtp-Source: AGHT+IFZSrvUeoYN7irqFVuvD9v+lKuJUO5HFu6A3eE/DCPlL+EcSeHgU9zylt7Aesl5HOcmD2QL1A==
+X-Received: by 2002:a05:6a00:2d95:b0:720:2eda:dfd1 with SMTP id d2e1a72fcca58-720ab492841mr11781853b3a.18.1730425044377;
+        Thu, 31 Oct 2024 18:37:24 -0700 (PDT)
+Received: from xqjcool.lan (d209-121-228-72.bchsia.telus.net. [209.121.228.72])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c3897sm1772048b3a.127.2024.10.31.18.37.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 18:37:23 -0700 (PDT)
+From: Qingjie Xing <xqjcool@gmail.com>
+To: christophe.jaillet@wanadoo.fr,
+	willy@infradead.org,
+	brauner@kernel.org,
+	adobriyan@gmail.com,
+	akpm@linux-foundation.org,
+	xqjcool@gmail.com
+Cc: viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: Add a way to make proc files writable
+Date: Thu, 31 Oct 2024 18:34:44 -0700
+Message-ID: <20241101013444.28356-1-xqjcool@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 31 Oct 2024 15:03:34 -0400 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+Provide an extra function, proc_create_single_write_data() that
+act like its non-write version but also set a write method in
+the proc_dir_entry struct. Alse provide a macro
+proc_create_single_write to reduces the boilerplate code in the callers.
 
-> Andrew -- I am sorry to ask again, but do you think you can replace
-> the 3rd section in the patch (3. Implementation Details) with the
-> following paragraphs?
+Signed-off-by: Qingjie Xing <xqjcool@gmail.com>
+---
+ fs/proc/generic.c       | 18 ++++++++++++++++++
+ include/linux/proc_fs.h |  8 +++++++-
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
-No problem.
-
-: This patch introduces a new counter to memory.stat that tracks hugeTLB
-: usage, only if hugeTLB accounting is done to memory.current.  This feature
-: is enabled the same way hugeTLB accounting is enabled, via the
-: memory_hugetlb_accounting mount flag for cgroupsv2.
-: 
-: 1. Why is this patch necessary?
-: Currently, memcg hugeTLB accounting is an opt-in feature [1] that adds
-: hugeTLB usage to memory.current.  However, the metric is not reported in
-: memory.stat.  Given that users often interpret memory.stat as a breakdown
-: of the value reported in memory.current, the disparity between the two
-: reports can be confusing.  This patch solves this problem by including the
-: metric in memory.stat as well, but only if it is also reported in
-: memory.current (it would also be confusing if the value was reported in
-: memory.stat, but not in memory.current)
-: 
-: Aside from the consistency between the two files, we also see benefits in
-: observability.  Userspace might be interested in the hugeTLB footprint of
-: cgroups for many reasons.  For instance, system admins might want to
-: verify that hugeTLB usage is distributed as expected across tasks: i.e. 
-: memory-intensive tasks are using more hugeTLB pages than tasks that don't
-: consume a lot of memory, or are seen to fault frequently.  Note that this
-: is separate from wanting to inspect the distribution for limiting purposes
-: (in which case, hugeTLB controller makes more sense).
-: 
-: 2.  We already have a hugeTLB controller.  Why not use that?  It is true
-: that hugeTLB tracks the exact value that we want.  In fact, by enabling
-: the hugeTLB controller, we get all of the observability benefits that I
-: mentioned above, and users can check the total hugeTLB usage, verify if it
-: is distributed as expected, etc.
-: 
-: 3.  Implementation Details:
-: In the alloc / free hugetlb functions, we call lruvec_stat_mod_folio
-: regardless of whether memcg accounts hugetlb.  mem_cgroup_commit_charge
-: which is called from alloc_hugetlb_folio will set memcg for the folio
-: only if the CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING cgroup mount option is
-: used, so lruvec_stat_mod_folio accounts per-memcg hugetlb counters only
-: if the feature is enabled.  Regardless of whether memcg accounts for
-: hugetlb, the newly added global counter is updated and shown in
-: /proc/vmstat.
-: 
-: The global counter is added because vmstats is the preferred framework
-: for cgroup stats.  It makes stat items consistent between global and
-: cgroups.  It also provides a per-node breakdown, which is useful. 
-: Because it does not use cgroup-specific hooks, we also keep generic MM
-: code separate from memcg code.
-: 
-: With this said, there are 2 problems:
-: (a) They are still not reported in memory.stat, which means the
-:     disparity between the memcg reports are still there.
-: (b) We cannot reasonably expect users to enable the hugeTLB controller
-:     just for the sake of hugeTLB usage reporting, especially since
-:     they don't have any use for hugeTLB usage enforcing [2].
-: 
-: [1] https://lore.kernel.org/all/20231006184629.155543-1-nphamcs@gmail.com/
-: [2] Of course, we can't make a new patch for every feature that can be
-:     duplicated. However, since the existing solution of enabling the
-:     hugeTLB controller is an imperfect solution that still leaves a
-:     discrepancy between memory.stat and memory.curent, I think that it
-:     is reasonable to isolate the feature in this case.
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index dbe82cf23ee4..0f32a92195fc 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -641,6 +641,7 @@ static const struct proc_ops proc_single_ops = {
+ 	.proc_read_iter = seq_read_iter,
+ 	.proc_lseek	= seq_lseek,
+ 	.proc_release	= single_release,
++	.proc_write	= proc_simple_write,
+ };
+ 
+ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
+@@ -658,6 +659,23 @@ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
+ }
+ EXPORT_SYMBOL(proc_create_single_data);
+ 
++struct proc_dir_entry *proc_create_single_write_data(const char *name,
++		umode_t mode, struct proc_dir_entry *parent,
++		int (*show)(struct seq_file *, void *), proc_write_t write,
++		void *data)
++{
++	struct proc_dir_entry *p;
++
++	p = proc_create_reg(name, mode, &parent, data);
++	if (!p)
++		return NULL;
++	p->proc_ops = &proc_single_ops;
++	p->single_show = show;
++	p->write = write;
++	return proc_register(parent, p);
++}
++EXPORT_SYMBOL(proc_create_single_write_data);
++
+ void proc_set_size(struct proc_dir_entry *de, loff_t size)
+ {
+ 	de->size = size;
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 0b2a89854440..488d0b76a06f 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -102,7 +102,13 @@ struct proc_dir_entry *proc_create_single_data(const char *name, umode_t mode,
+ 		int (*show)(struct seq_file *, void *), void *data);
+ #define proc_create_single(name, mode, parent, show) \
+ 	proc_create_single_data(name, mode, parent, show, NULL)
+- 
++struct proc_dir_entry *proc_create_single_write_data(const char *name,
++		umode_t mode, struct proc_dir_entry *parent,
++		int (*show)(struct seq_file *, void *), proc_write_t write,
++		void *data);
++#define proc_create_single_write(name, mode, parent, show, write) \
++	proc_create_single_write_data(name, mode, parent, show, write, NULL)
++
+ extern struct proc_dir_entry *proc_create_data(const char *, umode_t,
+ 					       struct proc_dir_entry *,
+ 					       const struct proc_ops *,
+-- 
+2.43.0
 
 
