@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-392905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E689B9980
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:34:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14C89B9988
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:36:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA3AD1C21B53
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:34:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 966D4281202
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5AA1E0DD1;
-	Fri,  1 Nov 2024 20:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D2F1DC19E;
+	Fri,  1 Nov 2024 20:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JeAOcNd9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="veMIp8Hu"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mB4rVme4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270001CC8A7;
-	Fri,  1 Nov 2024 20:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3261BF24;
+	Fri,  1 Nov 2024 20:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730493269; cv=none; b=FKtJML3pmQ3K4iPHcWeVnCHnQ3gzOA6NOFpc2tPuTyZBuo4HJfe3soT0VL4MR8JDsmKIUDG+8kkihijpUe35NmBqw1gOJUeMZ0QC+5Ad2+xiI+h9s9Etx0gN1guzVkPq9uEXuB3HRKw7FIdtK/M2/l3EfdMLY8Ueq04qKOXZDws=
+	t=1730493367; cv=none; b=bO0Hw0S8uwmE7WnOlZ6uDSOhUvnWzrRkgQCgy+RcZbwUaqASvtq6Hp9qpi46WSI+AZCru7z3LzAGD19+vDxu8rB53dtqU7WN4Ofd9dBD9Ug1Xyw3XUJDMOqaTP8YvKiPvWNPkTiC0unQYnkVjbDYpJN7mPgT8Ioxh1MWWkx1R3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730493269; c=relaxed/simple;
-	bh=y5wYIh4mE+JQUP17Jx8UhGwMOPLcQWAMz4GHTnF7p18=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=g5YBQbgpfpnUAzoeOSZkdth5BN1Dw+ERXZFZZFWWo1EYxqtDRtTm4+v1GhvcGlaNIpDk6/Hlc70D6aodfYfsXDt53s58Wc7PH9l9AqUXeI/MqdvO0ushCEPLFTjAWcKxQGd351cso4w5oMgGnPJQN+PMO8xs8y4hFAT2n6rNAdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JeAOcNd9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=veMIp8Hu; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730493266;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=59h/4FnoLZZk0MjKW721si8AWaLkimLKPstUwXjURkM=;
-	b=JeAOcNd9zrq7bXVafXOI2+VYSzyPRw9xhEyPY0SVc0xT2OTXiKahuugI6qbZlJXLpmgXdz
-	S/DifpCHtGqRY77d4wpWjRyJY7j2tylDedWjt65ZEhiNjiZSeEOtRH21gcq9Hk0ZyMrP7G
-	LOIMQhkAxoAsPe8PnwY42kXvpcPVqAZIYgCfLSh6SJfsTQQr/5RAqfl3q2oKQyk4Ltxa7+
-	OIHZdyKZJnhBvKZQKt2IHL6yOoa9mnTcLfdL4qDvhLoRv6D8u7IaiccpXqnsEbT4G8diNJ
-	n1wYxp5K/qPOc7dJvFwjgG/24Zuj2pRmN+72r0Z/SLTwxo0yreEGuOo062oJ0g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730493266;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=59h/4FnoLZZk0MjKW721si8AWaLkimLKPstUwXjURkM=;
-	b=veMIp8Hu1Fbb53XXy+Sfvp5sOohtY6hRYmZZOUX8zQcskFrKrTVCheUAX3OX4Z0hp6Iatx
-	V3AWbIBcUUOY/lBA==
-To: Jarkko Sakkinen <jarkko@kernel.org>, Ross Philipson
- <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org, x86@kernel.org,
- linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: dpsmith@apertussolutions.com, mingo@redhat.com, bp@alien8.de,
- hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org,
- mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
- peterhuewe@gmx.de, jgg@ziepe.ca, luto@amacapital.net,
- nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
- corbet@lwn.net, ebiederm@xmission.com, dwmw2@infradead.org,
- baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
- andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
-Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
- kernel support
-In-Reply-To: <D5ARS5Y7EATS.2GVNSARKXKIDI@kernel.org>
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
- <D5ARS5Y7EATS.2GVNSARKXKIDI@kernel.org>
-Date: Fri, 01 Nov 2024 21:34:25 +0100
-Message-ID: <87a5eivgku.ffs@tglx>
+	s=arc-20240116; t=1730493367; c=relaxed/simple;
+	bh=5eCO9XS/xoBgNMLEP9m5A4VZhTdwofU1+RzbBV9rDzU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oWBoQLRGv0oSJFk6kZY+WUJo0OkBZEC9auUlAWpKWNhLFgnHci1OikRIYY7JoooId4gKnmoDPs5Hf2PPMBZZvypI1CtPWd2JJmsgSbgCKZIh3jctnBwXwWbgWp72Cwvouitpun/MkxoMAgChikOBCztgV8GIa+mAIPpjVsuN0l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mB4rVme4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC6D6C4CECD;
+	Fri,  1 Nov 2024 20:36:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730493366;
+	bh=5eCO9XS/xoBgNMLEP9m5A4VZhTdwofU1+RzbBV9rDzU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mB4rVme4NVIzqUX0zc5vgayzuN2RoAVbIDHFRDCwMTk4zcBbIljZkcUUd99IcfBtA
+	 bsJJaJfUIDoLDTH6O6UnF90q/a2MQ+3cbock2WUcX70D5ilui4iED7N7tV8mFu012X
+	 0JXKUVjdIH4Mas2HzfedPnNXnMAFjWbzMzLOnJ+kxlH0LP+6ct8NMw23jm9aywAvZb
+	 ojXUzTGBxmpWE9sxvEhiAgdlNan2C+OA1mwZNkiZ8bM35eTVGvOvvJZ0nsI1euV6Bp
+	 4fnwHD9I6SiTNpbJUuLEAxqDYk8nmsb96as8D4FxAYkeODDHVM/VhmPypDYTHIlayB
+	 7z/Y1ZBJfSAUQ==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [PATCH] Docs/mm/damon: recommend academic papers to read and/or cite
+Date: Fri,  1 Nov 2024 13:35:57 -0700
+Message-Id: <20241101203557.55210-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 01 2024 at 12:28, Jarkko Sakkinen wrote:
-> On Fri Sep 13, 2024 at 11:04 PM EEST, Ross Philipson wrote:
->> A quick note on terminology. The larger open source project itself is called
->> TrenchBoot, which is hosted on Github (links below). The kernel feature enabling
->> the use of Dynamic Launch technology is referred to as "Secure Launch" within
->> the kernel code. As such the prefixes sl_/SL_ or slaunch/SLAUNCH will be seen
->> in the code. The stub code discussed above is referred to as the SL stub.
->
-> 1. I don't see any tags in most of the patches so don't get the rush. This
->    includes also patches for x86. Why I would care to review TPM patches
->    when there is over a dozen unreviewed and untested patches before it?
-> 2. TPM patches have been in circulation in and out of the patch set
->    for some time now with little or no improvement.
->
-> Why the sudden buzz? I have not heard much about this since last early
-> summer.  Have to spend some time recalling what this is about anyway. I
-> cannot trust that my tags make any sense before more reviewed/tested-by
-> tags before the TPM patches.
+Kernel documentation is the most up-to-date and recommended resource for
+DAMON.  It doesn't cover non-kernel part of the entire project[1],
+though.  Also it is not optimum for formal long-term citations.
+Depending on cases, DAMON academic papers[2,3] could be better to be
+read and cited.  However, there is no clear guidance for those.  Add a
+paragraph for DAMON academic papers on the kernel documentation for
+DAMON.
 
-If I intend to merge the patches then I surely have looked at them
-deeply. I don't have to send a reviewed-by just to apply them
-afterwards.
+[1] https://damonitor.github.io
+[2] https://dl.acm.org/doi/abs/10.1145/3366626.3368125
+[3] https://dl.acm.org/doi/abs/10.1145/3502181.353146
 
-There was enough motion on these patches and this posting is in your
-inbox for 6 weeks now without any reaction from you.
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+ Documentation/mm/damon/index.rst | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-The TPM changes are very much independent from the x86 specific ones, so
-why do you want x86 review tags in order to look at the ones which are
-specific to your subsystem especially as some of them seem to address
-real short comings there independent of trenchboot.
+diff --git a/Documentation/mm/damon/index.rst b/Documentation/mm/damon/index.rst
+index dafd6d028924..5a3359704cce 100644
+--- a/Documentation/mm/damon/index.rst
++++ b/Documentation/mm/damon/index.rst
+@@ -37,3 +37,9 @@ with no code but simple configurations.
+ 
+ To utilize and control DAMON from the user-space, please refer to the
+ administration :doc:`guide </admin-guide/mm/damon/index>`.
++
++If you prefer academic papers for reading and citations, please use the papers
++from `HPDC'22 <https://dl.acm.org/doi/abs/10.1145/3502181.3531466>`_ and
++`Middleware19 Industry <https://dl.acm.org/doi/abs/10.1145/3366626.3368125>`_ .
++Note that those cover DAMON implementations in Linux v5.16 and v5.15,
++respectively.
+-- 
+2.39.5
 
-Thanks,
-
-        tglx
 
