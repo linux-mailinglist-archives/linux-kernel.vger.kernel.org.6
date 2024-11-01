@@ -1,125 +1,190 @@
-Return-Path: <linux-kernel+bounces-392088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13C69B8F89
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:43:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4EC9B8FA8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62667B24F02
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:43:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17E01F21204
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C421A0AFE;
-	Fri,  1 Nov 2024 10:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316F71AB6FB;
+	Fri,  1 Nov 2024 10:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CSsNuvOC"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xv3zmiqt"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8271A0724
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6801AB6EF;
+	Fri,  1 Nov 2024 10:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730457582; cv=none; b=rbyLYVf00MzjyxotSzqMybB1oL3oO/3V+L0lVtkqOdu31jPSRAAz71gQjHMgjfJlWum6NU3TKvd1BRD2NTMhO1NTpNWGHUd859fsst7evqgvyZF6pD4+WcS2Zzkx1QJFacl7AbhiYA+Ci5L5bfn2RRapCVaAxczRJCrdaHXDG1I=
+	t=1730457612; cv=none; b=O8qiC2XdnXzw6gIdH6mdM7vmvjohZI8Dj3bWl4dI00qRiHP6++1hiLmLMgcFHnUXCL7KzmC6BHcoV1RfbynsG60uTdRObv97mkZDYv7ho2MgUoEai3dOKmwBzBO7Z+jvSDOdgz3UHeAcmm71Pxyud1NNi/1JOuQ/+/+4F8RMJO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730457582; c=relaxed/simple;
-	bh=nIWiBwHnkqzLYf7olD7gqFwtSd6ENgt+tj/vqI3johw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ShjZFK32XaaiwDYVw7518//UF21Me2eEqELlk8dkoygtIfzdJ+Cq4x5wymUX5034s4jC3a++w2Qrjul3e+XjrySTcNvB9Nx9qbk4BudY4CA+ALwMUVcn99aEEWBL3VR6iB+bvRsXAbdX3isOrVqFB0CfcVF3KvmHyLJ4jDCeOsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CSsNuvOC; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43152b79d25so16418535e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 03:39:38 -0700 (PDT)
+	s=arc-20240116; t=1730457612; c=relaxed/simple;
+	bh=v+qxwvGY1m0dlY7yDb24hPEIzmLjNV/bOx2C3HqmrjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N5EisBhnrD/Sn8CPF6pGefsyGMhUE5qC9bxgnNZ3BmJwZN5C9EPMneNzfbvJJEsYjXWd7rL7Vx4qFTuWTYjMMDHnNc4S7CfjFRpDzZyyLq0VpacZPSUHx/kvbiY3OlOW7c9cHdCQJCws0Q2VHmDpvGzo2J0kjlvVBP3rXENCp6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xv3zmiqt; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-84fe06fbdc6so590531241.0;
+        Fri, 01 Nov 2024 03:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730457577; x=1731062377; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UpA6oZQuCmloruRIu239MJgRSbmWeTtcRHZ1zdEpTxc=;
-        b=CSsNuvOCZphaHsCblUXB52RgpMZi9QtIGqkIAw3dtKWBpk/mSu5RQXaBGn1SbCCMof
-         JVR47iAiQg8xMtHs38rpZ9pffcmH6V+G3tbZ21cBnRo8vZnYBB6ayfCGRHKBqSCjdwuV
-         kAavmya0nZ5l/BkMOQnzRcB4Ev+wvDWFkW0QvvdxRPl8QJcVfz19ME8oLFI9jG+n848X
-         b1TXClTSyAtM1neeqfchTGYtsqt6M/TaaIAQ5G3XV2wG2FNZ/sMdPLbkJ31RqtdVmRuX
-         uBC4HQDEU3Xp4ht/PdbDiCbl2a/h4yEeRMg/jlp/prRLiGdFii6DVHiN1qu7Zw/JNUOI
-         se/A==
+        d=gmail.com; s=20230601; t=1730457609; x=1731062409; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3xGyDEYNWfKOFJLpEkm/4qBVP0ZMK9b+NBJIWM6trnI=;
+        b=Xv3zmiqtmj56skaXxFNGzhFG05139QBMq02kI9vYpobyXNCodBrZFryELnoCOLfK3b
+         ediAgxxQOv56JOd34UNsEKLQiAeQfFSF0VuUXXbkAWXF4S0PaFMvOtPnQjJPs6Hpoy0l
+         /5iOjE4Lf63lCNWwYj6Q6U25dAHKbClyJfBI1YyL/LGW9r7GflCpwSF/7teav52UycEH
+         NM3kXdJdQgjkUaYEAIjVzR+KbOUU4nUgwmOhkVUS50vC2eQ3HF5sL7Js+9MZxjCwOU4d
+         8v5aCevSeG6SCthbyXdRp9ccSW9ha+VjcEJrNOaEXNhosBgjPimulLQKPbNQyKd+3bKS
+         mfag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730457577; x=1731062377;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UpA6oZQuCmloruRIu239MJgRSbmWeTtcRHZ1zdEpTxc=;
-        b=qYw5SsaHtRB93vvGqZSktP4yq5IxZaaealQBY6dol2AdjDmULopI61MegxG256uc/P
-         lgAzG513OAHhwh7KXY/i55S6tfAIpucbzaX4nmlJu+lFrX8Ywrx+hV8z705q7zCtBo4+
-         2cCC422nVYRYxNhPCOgNWxWfPEeSYa2o00/Mpbp5ZpiwshP9SWJ+sYYTPlbHxUyAa+XV
-         KH+ypvG8IrV/37s1W9fTRl9+6FJglXo2V/ZUt9iOX/sxdHG0YSWwV3Q+FDlT8g0kdnV1
-         FpLXHytvR2jhdY3X5CGbjIvIr4274uwDk0r40uh60M0tjbTpNJiM/sO7Dyg6IGctTLIK
-         Icxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNiHUgJ1OV87nyVY/EERzS4gg/Cz5OKH2AfHqmTNQVmVz4+mQIKwXau8APcEfw4VAeuN9FrFqsf10uiRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1EAG4GYs1J4ey95LqlD+QsFW2M4/jerl6Nb7x4/2NeXgJFnxh
-	0dhBD8vI6ow4YQBKObehcbPOJK80z9heBFcFQ7ALl8TwPt7sv7rAjQfw7LB1uI8=
-X-Google-Smtp-Source: AGHT+IGUUeraI2AHPHyOxMnlI92HlBbXuqTgbdxId0qtgQfqlUmT1WHhFGv8dsxR7gHrSyAPOAzU8Q==
-X-Received: by 2002:a05:600c:3c8d:b0:431:508a:1a7b with SMTP id 5b1f17b1804b1-4327b801250mr57559765e9.34.1730457577384;
-        Fri, 01 Nov 2024 03:39:37 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ab305sm55854545e9.7.2024.11.01.03.39.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 03:39:37 -0700 (PDT)
-Message-ID: <a2c7d55b-bdaf-4cc1-a653-b398952219f2@linaro.org>
-Date: Fri, 1 Nov 2024 10:39:35 +0000
+        d=1e100.net; s=20230601; t=1730457609; x=1731062409;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3xGyDEYNWfKOFJLpEkm/4qBVP0ZMK9b+NBJIWM6trnI=;
+        b=vO9GCHkD0fqcU+GK+uqhr3PJzO0uTmYqAXyMg8XBRnZPlziutlzsU8PxebeuYrowE+
+         Zd2TgFB7aa14YCG6nfCyRODLCHy/oD9Byih85SDQlT0o9jzRGPJqKGczmdtbcviyOroF
+         vYqM5OIGmjymH8Cn0HGUrQAFvNOYYBMI+gjdK475rlcPSPeAifZNfem522H3ibuqFx96
+         TQF/QBPDAbTfud8lQRshwazVR1sIojBImMGVK9RkEEK9ei2ioU9gMHJTUAqO7vI19HWC
+         T+zWkpeSEQFUDLh4ANAXuwZyG0AoYLmio3Xq4eq/XV3OGa3qA7A+o/tnSTJ975LuwV1t
+         kd9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUD6XDElJOOuFsxkQx5rb5k+VwiXWg0GDdFWXKdfqPLpnTc+wp0qZoc1m2QK2LPzwm515OswcsvkteN@vger.kernel.org, AJvYcCWX0WHtg7rP4vJjJGrYZwkVpYrPxoDNX2XXc14FwPTYFrSVg1S+nn2dwsKOipxPvmceKFAWZ7BBJD2H01Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziBIQqY7ri4a8P+F7VS/mglFUuLrwPRfKPCdnfxrlDzGQNN/A0
+	Uw3t3v8n+AKfrKUnkH9u9IlzXuaFLqMMTU7RDK/spvA8vf37i03PCsuKE2PxMxE3hs+8PO9q+q2
+	x3HxG8D6EImUFCSeI+yLbqx+xPDQ=
+X-Google-Smtp-Source: AGHT+IELxio5Fp4CUQ+VZXCAxZlg5M8PwN/Sj96D+5cfX+mjsg9Cac1Dy2zxi8TLd1qqdkZNY0fF9eMI8oqq6k8ie/k=
+X-Received: by 2002:a05:6102:3753:b0:4a7:487d:88e4 with SMTP id
+ ada2fe7eead31-4a9542630e2mr8288542137.4.1730457609208; Fri, 01 Nov 2024
+ 03:40:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] media: amphion: Fix pm_runtime_set_suspended()
- with runtime pm enabled
-To: Jinjie Ruan <ruanjinjie@huawei.com>, sakari.ailus@linux.intel.com,
- mchehab@kernel.org, ming.qian@nxp.com, eagle.zhou@nxp.com,
- stanimir.k.varbanov@gmail.com, quic_vgarodia@quicinc.com,
- shijie.qin@nxp.com, hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: chenridong@huawei.com
-References: <20241101094050.2421038-1-ruanjinjie@huawei.com>
- <20241101094050.2421038-3-ruanjinjie@huawei.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241101094050.2421038-3-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241018105333.4569-1-victorshihgli@gmail.com>
+ <20241018105333.4569-4-victorshihgli@gmail.com> <CAMuHMdWQWxSsSC=LhG7wcF=gaQhr45A_bE_RneCAG85WQU+2mA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWQWxSsSC=LhG7wcF=gaQhr45A_bE_RneCAG85WQU+2mA@mail.gmail.com>
+From: Victor Shih <victorshihgli@gmail.com>
+Date: Fri, 1 Nov 2024 18:39:57 +0800
+Message-ID: <CAK00qKDxbdOoYx9UJEdEBb6uggof5fZV3JNar7s_cGP6ERSdzg@mail.gmail.com>
+Subject: Re: [PATCH V23 03/16] mmc: sdhci: add UHS-II module and add a kernel configuration
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: ulf.hansson@linaro.org, adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
+	Lucas.Lai@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
+	Greg.tu@genesyslogic.com.tw, dlunev@chromium.org, 
+	Ben Chuang <ben.chuang@genesyslogic.com.tw>, 
+	AKASHI Takahiro <takahiro.akashi@linaro.org>, Victor Shih <victor.shih@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/11/2024 09:40, Jinjie Ruan wrote:
-> It is not valid to call pm_runtime_set_suspended() for devices
-> with runtime PM enabled because it returns -EAGAIN if it is enabled
-> already and working. So, call pm_runtime_disable() before to fix it.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: b50a64fc54af ("media: amphion: add amphion vpu device driver")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
-> v2:
-> - Add fix tag.
-> - Add Cc stable.
-> ---
->   drivers/media/platform/amphion/vpu_drv.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/amphion/vpu_drv.c b/drivers/media/platform/amphion/vpu_drv.c
-> index 2bf70aafd2ba..51d5234869f5 100644
-> --- a/drivers/media/platform/amphion/vpu_drv.c
-> +++ b/drivers/media/platform/amphion/vpu_drv.c
-> @@ -151,8 +151,8 @@ static int vpu_probe(struct platform_device *pdev)
->   	media_device_cleanup(&vpu->mdev);
->   	v4l2_device_unregister(&vpu->v4l2_dev);
->   err_vpu_deinit:
-> -	pm_runtime_set_suspended(dev);
->   	pm_runtime_disable(dev);
-> +	pm_runtime_set_suspended(dev);
->   
->   	return ret;
->   }
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On Tue, Oct 29, 2024 at 9:56=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Victor,
+>
+> On Fri, Oct 18, 2024 at 1:14=E2=80=AFPM Victor Shih <victorshihgli@gmail.=
+com> wrote:
+> > From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> >
+> > This patch adds sdhci-uhs2.c as a module for UHS-II support.
+> > This is a skeleton for further development in this patch series.
+> >
+> > This kernel configuration, CONFIG_MMC_SDHCI_UHS2, will be used
+> > in the following commits to indicate UHS-II specific code in sdhci
+> > controllers.
+> >
+> > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+>
+> Thanks for your patch, which is now commit 2af7dd8b64f2fd6a ("mmc:
+> sdhci: add UHS-II module and add a kernel configuration") in
+> linux-next/master mmc/next next-20241025 next-20241028 next-20241029
+>
+> > --- /dev/null
+> > +++ b/drivers/mmc/host/sdhci-uhs2.c
+> > @@ -0,0 +1,41 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + *  linux/drivers/mmc/host/sdhci_uhs2.c - Secure Digital Host Controll=
+er
+> > + *  Interface driver
+> > + *
+> > + *  Copyright (C) 2014 Intel Corp, All Rights Reserved.
+> > + *  Copyright (C) 2020 Genesys Logic, Inc.
+> > + *  Authors: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> > + *  Copyright (C) 2020 Linaro Limited
+> > + *  Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
+>
+> That is a very extensive copyright header, for just a small piece of
+> boilerplate code?
+>
+
+Hi, Geert
+
+As I know, the copyright is for the complete sdhci-uhs2.c file
+and subsequent patches added the code into the sdhci-uhs2.c file.
+
+Thanks, Victor Shih
+
+> > + */
+> > +
+> > +#include <linux/module.h>
+> > +
+> > +#include "sdhci.h"
+> > +#include "sdhci-uhs2.h"
+> > +
+> > +#define DRIVER_NAME "sdhci_uhs2"
+> > +#define DBG(f, x...) \
+> > +       pr_debug(DRIVER_NAME " [%s()]: " f, __func__, ## x)
+> > +
+> > +/*********************************************************************=
+********\
+> > + *                                                                    =
+       *
+> > + * Driver init/exit                                                   =
+       *
+> > + *                                                                    =
+       *
+> > +\*********************************************************************=
+********/
+> > +
+> > +static int __init sdhci_uhs2_mod_init(void)
+> > +{
+> > +       return 0;
+> > +}
+> > +module_init(sdhci_uhs2_mod_init);
+> > +
+> > +static void __exit sdhci_uhs2_mod_exit(void)
+> > +{
+> > +}
+> > +module_exit(sdhci_uhs2_mod_exit);
+> > +
+> > +MODULE_AUTHOR("Intel, Genesys Logic, Linaro");
+> > +MODULE_DESCRIPTION("MMC UHS-II Support");
+> > +MODULE_LICENSE("GPL");
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
