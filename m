@@ -1,106 +1,159 @@
-Return-Path: <linux-kernel+bounces-392816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD87C9B9873
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:26:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F069B9889
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14B528240E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:26:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 490B51C21362
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DD31D0411;
-	Fri,  1 Nov 2024 19:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F42D1D4177;
+	Fri,  1 Nov 2024 19:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p+aV4Vki"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjWMp/O9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C869B1D0157
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE051D14EA;
+	Fri,  1 Nov 2024 19:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489160; cv=none; b=l9hGC0cVGkENO/qPQOua3vSkTPy61lbD4a9sXzRPhqkLk/naoFJpjP8ILdpXtLfwKV0JSi2CXbSWbz30p5DEa4qzTGuz10PIOMQ97uSPbIe3LaVKZLEx4Jl2MP35vdSGI/tcjh9L4mhBZ0fXJ6R6nJ9lLKxmRMoN61YiSI30iAE=
+	t=1730489208; cv=none; b=j4CiphonQuYRt41oEUqiAZkwXCEzv4km8kPyHziO6hHwVPZKkUMOX1JwtsyGgpgpypVcKhJctnSEa58ygq0XMyUvfH+LX2piJLEKa/HxbHDmHZ5Eywi+0L+Vg9C/0rzvmfGaE7/4Xwv5qbmaRAKLOaawztEMWtNRLnEAREab5Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489160; c=relaxed/simple;
-	bh=9RRq5zRiBjsuhIo93/YhYxFqpppBvG12vd+urRDzQ/Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LGMH+j4nEKYVuUm/ptbwdw000wQVuKliyUqLfvyv7RrKwAzTMdaBH78a8p+Y3WAfqt4HH+C95iGsFwLactLwMpeUWZ3DFYTMKmgYnTbU2TN0+dZOe4FOXzj8VqeS1/neZXI0duWI+vv6OvmJUX9ag+rdetNY+8lJih9xvvT0GQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p+aV4Vki; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02fff66a83so3957918276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:25:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730489158; x=1731093958; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zb5W4dbPYNTmLxwSEfSFJhO7P2tgHOLrBg1KR1NKswI=;
-        b=p+aV4Vkij4sA/kOS5Yqaoy4wOuExwtpEg6UmRTcOYtDN8UJdfVDTtz8hpjzFwk3DXS
-         8p+zz2k51QjbDXqEvNcrE0VabjNM9flGstJpixwdEGAyCLSwAE9cJReYkBIZbr96FSeb
-         wahZiEkQDZNsluOxCfjgqGp6lxRtLXeepH3vvFon4zkKUMphWdjSJESgCLRqJruaMJRw
-         lDBZiSvyQLzN5LWUtdou2aG9nday3JIYR7MaROXSH/4SPpd0Vnybsqht1rg0Bvp7tha9
-         VqEURmGbU7Egv6FPW5KaIf8xb6Gxgq4ThARTMiREYmkidjT04khFL8CwPYF2a8qXu09P
-         mk3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730489158; x=1731093958;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zb5W4dbPYNTmLxwSEfSFJhO7P2tgHOLrBg1KR1NKswI=;
-        b=h7xboebEjqna2mhUeFlP8HvRz0P3eukZfiCI3lh3+KGEGxo2p+eOHMrP7Ou3zVN04S
-         lp6ZKuMlN/eEZWUqovYd/lqgHnpvZTNu7K/OwRvp7ATWCLVOLsBVjK+V+0EM33IjgTp0
-         S2F5F3IIiRv6uECo71RLdB/1oPYc6gKbFoNoEBT9FoiZLs1fHin901EQSNDS6nHTrzgJ
-         GucEuA59ko5TTfLR8v03BFUVdVCsD1/t4d4i8eCTYUJ30mfP6B/IMM1FRNolqOH3vV7Z
-         ZkZc329ZUW/pLT20ivOl9wkffcGXxLdd+v8tggNK/czh/cxHCdTsR884F3ZNZobL5f8U
-         w5Uw==
-X-Gm-Message-State: AOJu0YzYCrYSSiq1L29bfdKSyZ4CxaiKLVg4YInr+Tp0WvAsOaALzenk
-	YEDJ8Rw9vafvKvUlZuBZ8csCtUdqMiTS4pML34ZYxOKvBFbWp2DcMWdlH6+09TuNQUR+lwRpill
-	clA==
-X-Google-Smtp-Source: AGHT+IGq3Dv2BlhxAMEm7nGR+GKdNpvGCeVpzNihoKgFHssrlWuGZbWQottjzjM2Z+tz/Qhv2Gdqobf8r38=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:3054:0:b0:e30:d445:a7c with SMTP id
- 3f1490d57ef6-e30e5a03f4bmr4516276.1.1730489157852; Fri, 01 Nov 2024 12:25:57
- -0700 (PDT)
-Date: Fri, 1 Nov 2024 12:25:56 -0700
-In-Reply-To: <173039499504.1507535.6500285672510733682.b4-ty@google.com>
+	s=arc-20240116; t=1730489208; c=relaxed/simple;
+	bh=bNz1oB7QECkZuE3P038Od4nszwKOfKz7QoIkKxCF1j0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VXGKUoECK5dhA3gaWL2b/HZKX4Y0OaIusDTXQm8LJm9QQ+yUYqUPRUkv5x6wabTGLlzhYNbttEa1Ua+RHj6iHUmMxZQjWeJAmMUgMtx+Cd/D+6lu58IXMrBwBvdQE/7F9Vd9+/VKQFVeCym9nfPTUUrw2ToVc8fdHsziGqv/UPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjWMp/O9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3351EC4CED9;
+	Fri,  1 Nov 2024 19:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730489208;
+	bh=bNz1oB7QECkZuE3P038Od4nszwKOfKz7QoIkKxCF1j0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=EjWMp/O978Wxf8uoB/+4FFLHVIsS0Q2BkZ7oE4NNABpEEr1dX094GH6XixQ97TbJ7
+	 ImczDXNBhJa6WXNQGu+PonBxvci8ov6YNQIr1bsZz8radQLypCwwazGr2g9gjJ7Gc+
+	 mFJ5SXfTsg4HKTNJ/2yLvTD4LSdrQvXHCwUmatjn/HNPo728Rp8InDr59husPigVq+
+	 hskxFSljgqxbcGv8iYAURCLPCd94qM4qghl7vwgqbtX2U2G1wuwb2afZb0QAnSGbgO
+	 4NuEoyLN9UAJkg8CkLvrU/Esk4BXeuhAAlVyT0qNRg6pS/nEyjEBaXr82H7okGpr1K
+	 G04itdfSJHFXw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BE7E6F07F;
+	Fri,  1 Nov 2024 19:26:48 +0000 (UTC)
+From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
+Subject: [PATCH v3 0/3] Apple SPI controller driver
+Date: Fri, 01 Nov 2024 20:26:11 +0100
+Message-Id: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1728383775.git.kai.huang@intel.com> <173039499504.1507535.6500285672510733682.b4-ty@google.com>
-Message-ID: <ZyUrRP7sa3IqsVwP@google.com>
-Subject: Re: [PATCH 0/2] Fixup two comments
-From: Sean Christopherson <seanjc@google.com>
-To: pbonzini@redhat.com, kvm@vger.kernel.org, Kai Huang <kai.huang@intel.com>
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFMrJWcC/03MSw7CIBSF4a00dyyGVwQddR+mg6tQuQ5oA5VoG
+ vYuMnL4n5x8O2SfyGe4DDskXyjTEluowwD3gPHhGbnWILnU3ArBMGMglldiszWa39CcjTPQ/mv
+ yM727dZ1aB8rbkj6dLvK3dkUI/q8UyTgzJ4UWrXZW6fGJMeLrGP0GU631CwOaUVajAAAA
+X-Change-ID: 20240811-asahi-spi-f8740ba797d7
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Janne Grunau <j@jannau.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3003; i=j@jannau.net;
+ s=yk2024; h=from:subject:message-id;
+ bh=bNz1oB7QECkZuE3P038Od4nszwKOfKz7QoIkKxCF1j0=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhnRV7TK207MXz2E6r9ZtqfBvlmvcjEXOFb84t0Xrqa6ZW
+ 7LeNCyro5SFQYyLQVZMkSVJ+2UHw+oaxZjaB2Ewc1iZQIYwcHEKwERCLzAynObT2NL/SyPOZkXS
+ PUWrG+/bQ2cd+v9yToa21WPWFZ8Z8xj+Z8RWCZuG/uK8/1fJnWNiVca3Eyu5WwtLL5clLDq3QuE
+ uDwA=
+X-Developer-Key: i=j@jannau.net; a=openpgp;
+ fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+X-Endpoint-Received: by B4 Relay for j@jannau.net/yk2024 with auth_id=264
+X-Original-From: Janne Grunau <j@jannau.net>
+Reply-To: j@jannau.net
 
-On Thu, Oct 31, 2024, Sean Christopherson wrote:
-> On Tue, 08 Oct 2024 23:45:12 +1300, Kai Huang wrote:
-> > Spotted two nit issues in two comments of the apicv code (if I got it
-> > right) which probably are worth fixing.
-> > 
-> > Kai Huang (2):
-> >   KVM: x86: Fix a comment inside kvm_vcpu_update_apicv()
-> >   KVM: x86: Fix a comment inside __kvm_set_or_clear_apicv_inhibit()
-> > 
-> > [...]
-> 
-> Applied to kvm-x86 misc, thanks!
-> 
-> [1/2] KVM: x86: Fix a comment inside kvm_vcpu_update_apicv()
->       https://github.com/kvm-x86/linux/commit/e9e1cb4d5502
-> [2/2] KVM: x86: Fix a comment inside __kvm_set_or_clear_apicv_inhibit()
->       https://github.com/kvm-x86/linux/commit/8eada24a8e83
+Hi all,
 
-FYI, I rebased misc to v6.12-rc5, as patches in another series had already been
-taken through the tip tree.  New hashes:
+This updated series address the review comments from the original
+submission in 2021 [1]. It adds a new SPI controller driver for Apple
+SoCs and is based on spi-sifive. It has been tested with the generic
+jedec,spi-nor support and with a downstream driver for an Apple specific
+HID over SPI transport.
 
-[1/2] KVM: x86: Fix a comment inside kvm_vcpu_update_apicv()
-      https://github.com/kvm-x86/linux/commit/ef86fe036d0a
-[2/2] KVM: x86: Fix a comment inside __kvm_set_or_clear_apicv_inhibit()
-      https://github.com/kvm-x86/linux/commit/6e44d2427b70
+As usual, I'm splitting off the MAINTAINERS and DT binding changes.
+We would rather merge the MAINTAINERS change through the Asahi-SoC
+tree to avoid merge conflicts as things trickle upstream, since
+we have other submissions touching that section of the file.
+
+The DT binding change can go via the SPI tree or via ours, but it's
+easier if we merge it, as then we can make the DT changes to
+instantiate it without worrying about DT validation failures depending
+on merge order.
+
+This is mostly Hector's work with a few minor changes to address review
+comments from me.
+
+[1] https://lore.kernel.org/linux-spi/20211212034726.26306-1-marcan@marcan.st/
+
+v2:
+- removed '#address-cells' and '#size-cells' from the bindings and added
+  Rob's Rb:
+- fixed (new) checkpatch warnings
+- added t8112 (M2) SoC
+- shorted long and complex source code lines
+- switch to devm_clk_prepare_enable() and devm_pm_runtime_enable()
+- switch to dev_err_probe() in probe function
+- removed "pdev->dev.dma_mask = NULL;"
+- got rid of apple_spi_remove()
+
+Signed-off-by: Janne Grunau <j@jannau.net>
+---
+Changes in v3:
+- fixed bindings_check warning
+- converted top file comment to C++ style comments
+- dropped verbose dev_err_probe after failed devm_* function
+- stopped setting field in zero initialized struct to 0
+- added error handling for devm_pm_runtime_enable()
+- Link to v2: https://lore.kernel.org/r/20241101-asahi-spi-v2-0-763a8a84d834@jannau.net
+
+Changes in v2:
+- removed '#address-cells' and '#size-cells' from the bindings and added
+  Rob's Rb:
+- fixed (new) checkpatch warnings
+- added t8112 (M2) SoC
+- shorted long and complex source code lines
+- switch to devm_clk_prepare_enable() and devm_pm_runtime_enable()
+- switch to dev_err_probe() in probe function
+- removed "pdev->dev.dma_mask = NULL;"
+- got rid of apple_spi_remove()
+- Link to v1: https://lore.kernel.org/linux-spi/20211212034726.26306-1-marcan@marcan.st/
+
+---
+Hector Martin (3):
+      dt-bindings: spi: apple,spi: Add binding for Apple SPI controllers
+      spi: apple: Add driver for Apple SPI controller
+      MAINTAINERS: Add apple-spi driver & binding files
+
+ .../devicetree/bindings/spi/apple,spi.yaml         |  62 +++
+ MAINTAINERS                                        |   2 +
+ drivers/spi/Kconfig                                |  11 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-apple.c                            | 531 +++++++++++++++++++++
+ 5 files changed, 607 insertions(+)
+---
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+change-id: 20240811-asahi-spi-f8740ba797d7
+
+Best regards,
+-- 
+Janne Grunau <j@jannau.net>
+
+
 
