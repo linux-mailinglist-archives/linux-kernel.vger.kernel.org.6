@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-391676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538C39B8A24
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:59:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6B39B8A25
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D181C217E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC3A1C21634
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFD8146000;
-	Fri,  1 Nov 2024 03:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368551422B8;
+	Fri,  1 Nov 2024 04:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VFyqusHe"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOABM2wQ"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76ACC4C79;
-	Fri,  1 Nov 2024 03:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E89211C
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 04:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730433538; cv=none; b=egVTDHXAGpZWlj6gyy58jr9Xe9t35sm+FK0gIis5x+fhDtR5LpdvnzURMu9UNbjDdae0qTnRX9IjH9HlHTSXi5CvnbwK88Xmfl+ESwACerzStrgUks596oUKf2gPBW/h1NTHt5hhTCWgFO33tsvgC9J9Tb98g4jzY0b2gsGraCk=
+	t=1730434004; cv=none; b=s3SjoVgVmZKHNzDK5uAY5Ezk9PMYiSWMJCoEEN9q/cCAbA4Wg1aGdyzazmgKgeS9j3NwOfjUGTHA7ny1zpUwRjevnirwqxTvUj0pehS5oEcoh3cyVMe/t2/osB0+LHHW2hC2RVbSFTwIkwUnokaPKrrrvVrD7yFSNzRDLQ0DIyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730433538; c=relaxed/simple;
-	bh=aat2SRLBzqfpOO0tUw+f+240+XOG0Y2UqKNqUXsRKzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qg/UQZQFoEy6eknsN8U78irbGjqnwHo6gkm+AGV6ncdzfMJHPn8ycPvRgvhzZQyJJ6xf171o6YeuLi3t5lz3cO2EM/MVFXqj4o6tPcwUz0NqlksxAusfuh/hiFyrt7F/Q3n6WxMM0nYBvJwrLeOac9wqDNZIzm80CSGTRvLBqUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VFyqusHe; arc=none smtp.client-ip=209.85.216.44
+	s=arc-20240116; t=1730434004; c=relaxed/simple;
+	bh=wg+7EhxTHp/RU3B2qd+RlvJRvoI7xgJzuhBj4xZgTQw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=NejRZOkCSPyKH/TFRyIH/CdqXvXlOeGJpwv3VwU0LJv2nXpBMRvQRH977wOBJvcAaHMIdYbVY0QJUHxZq7er5WozHkX28cl/0fcI6ealjriO0icHaL3DMbRoH+wtFMyy/fDjLDfbwfEsn3mtBmsH5G7aZu/CKJmh1jFQIHzF0Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HOABM2wQ; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e30db524c2so1238556a91.1;
-        Thu, 31 Oct 2024 20:58:56 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-720aa3dbda5so1172072b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:06:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730433536; x=1731038336; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sFSmtqGbfIT/4iT0z5PLJ7AcPQYB66rGXOxJKiMBTHE=;
-        b=VFyqusHe5D7wHAonxzHvfSAkB1EKSSblWWGBY1iy191+xPdQGpn6ZjZZeMAITshw5b
-         6VE1R1bDVS1/pq0NkpbtB/KEDTRPNTRwiLtJ3DTCU8/sJu4SaKORdIwLh1G4+u5RnmUI
-         b8xhdbm4OTfUWGXasxKbkP+1PCLyuNj3C9NPyDwlomZvYrjINm8dq/vitvYOkdeO2kDM
-         zmlIjI5eBrBX0fo7M3MEkYm2951/frdLX4R6yTual+yJNgiNoWRkzYH5z2SvtsTjEZZi
-         0L4YDceXivjKvjoC9bGwKnsRLQ/js/9atHYZbvgSSedzCjw+M8QkhJT3W+ZFc5TWCuPW
-         A4iA==
+        d=gmail.com; s=20230601; t=1730434002; x=1731038802; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z6fNV9cqBbjiDhmOMg+ZfjCE9jQFN6pT8SjAyM1Cm5I=;
+        b=HOABM2wQzBveHZH7xjzG9/yGzPolsTiHqs1O3cqml1YTI2rqoPxJAIjXo6SJarQ9N7
+         QFsJOOaf/iCmv3vWppZyPaTOE0KGyJwnp2EcOC7FkH+wuJl/d3mFYosXbxV1YkEMa9Ac
+         HNqrwIlzBh4l3UTq8gYSDxNyECjOgpjl77I2I4A6wBQga2vDPiaX4/HHlXVksxhBN1rH
+         /nHyGz/uphZCbOo+6vDzQ2zdE1Re+FRia3gt3JeMUEyt27JxTOGHHlRJIirtXXODcSXk
+         +agrjJf9bOhwNqsI4YrY1dzfOVvl+noFjOp27eW3+NWx1hcaRaL6F/VIHRHUClX1pJ7w
+         Sixw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730433536; x=1731038336;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sFSmtqGbfIT/4iT0z5PLJ7AcPQYB66rGXOxJKiMBTHE=;
-        b=I5eUw7+S8mCO/C0ILPq7tZpVYV8a9cNLRtlWWJLnClbgvhbdEQ1fiYUdGW94P0hGq4
-         jqp8M26OnjQxF9SIqDoBpSlNyp80nnUl8g8BRrRT60u2buq9nzbMLBJKReHTiL30+uAV
-         VMnD4NyllKdp178kBVduwnPKYnB8vTrzCe88eotEeLYWZ0OX1uLDPp76Wn9yxHGmEHsH
-         JkGKpeKNp2/Y65x8kv38lfdspQ6n6ehFI40zY1jjB/Jkh1YY6baZK4mkHpZnjLURYXJN
-         OXSu7pXOrDY/+bmQ5+Ycq32xTAFSh3uXosP1q0/Vm86iYQz+4MShxSPe2PT6gIZWohX3
-         SPsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrF1IMuD1N3PRkAk75NudJ0gHwRcg2jx7SZiVQ5IligTng/X11XwttbkQFrJjBdUM/CpmXSanjuUphhvc=@vger.kernel.org, AJvYcCX+04Uj5TiZ0eixdtYyhOp1yLFa5USH1pO30zQihMbdP9AtK37x10rxyqL9BY4Q12bzy5ZlewQP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjg2na/mznxGo3UPc97y+iRCW5yeFDEHsNlZHaSALq/waXVFOz
-	RqYYaCIDVeuLwDuaCdqgIDqh6yumS/6oNZNin2knAgt3UatkHie5
-X-Google-Smtp-Source: AGHT+IGkBJL8wRX4GxtDQsr/iacArADSVmyqrSK0Dwd0q8ln8OL6ByY2OLyV5Z2zg2+SpXa9fsi5AQ==
-X-Received: by 2002:a17:90b:2e43:b0:2e0:a77e:8305 with SMTP id 98e67ed59e1d1-2e94c533088mr2887836a91.39.1730433535731;
-        Thu, 31 Oct 2024 20:58:55 -0700 (PDT)
-Received: from localhost.localdomain ([101.94.129.40])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa2603fsm4146844a91.17.2024.10.31.20.58.52
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 31 Oct 2024 20:58:55 -0700 (PDT)
-From: Yi Zou <03zouyi09.25@gmail.com>
-To: davem@davemloft.net
-Cc: 21210240012@m.fudan.edu.cn,
-	21302010073@m.fudan.edu.cn,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	kuba@kernel.org,
-	netdev@vger.kernel.org,
+        d=1e100.net; s=20230601; t=1730434002; x=1731038802;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z6fNV9cqBbjiDhmOMg+ZfjCE9jQFN6pT8SjAyM1Cm5I=;
+        b=pjLJc2tVxgBzVU5zNN3n88hcFu9eKs60H2Vr5/F2y4EKaKwLwXqqk7iMmtO7fHXI1Q
+         dabrN7/MuJXo2HVFx60jLZXaarn0HToECW/KdARCtGJ8EBXG9uZ4+kGvKD/IC2sp2j/3
+         n1rPkbAejnMF/pPczQSAjoJqpGT4nyavkd7Yscmqs2VWJppMZImzTnMSacoBGzoZzBfg
+         KWZQD/+3lQorE+CHyaYQhkj2ZSZIb8RXijW2lSnLD81w2Jhc76DXBl/2ZFf9aBrvGfQH
+         nBPsY6tTesCisFOhidVEpAM6sjXCymAf4Yj1OYongjTBId6cdI0CToL7XMd4/bs00CDP
+         cImQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCAV5WV/bYgZBrmjxP9v2p44ekVm0GcxN7Y60SWKZMJii535JMu4svmDf9gWn7dYLaqknKV+rdgKNZQs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQlxzB+aN5wuZ/Xrktoxf4v0MS6nWxXVTXoGmoZlvlU7JwpPMc
+	8MdNKmmogntm+hQgtWm7J7+a1sfvlepT6aIaCEFIaTXJPfnDxfN5
+X-Google-Smtp-Source: AGHT+IFRZttj0xlmw4OmFxhi0fckSwFgrA7Yr/3PVKMpe0/4OOitM0lPDhLUY1wXX/iIP6DL31PNxA==
+X-Received: by 2002:a05:6a21:8cc9:b0:1d9:83cd:3d88 with SMTP id adf61e73a8af0-1d9eeb95defmr14112699637.14.1730434001670;
+        Thu, 31 Oct 2024 21:06:41 -0700 (PDT)
+Received: from localhost.localdomain ([43.153.70.29])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93daac954sm1958373a91.23.2024.10.31.21.06.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Oct 2024 21:06:41 -0700 (PDT)
+From: mengensun88@gmail.com
+X-Google-Original-From: mengensun@tencent.com
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	Yi Zou <03zouyi09.25@gmail.com>
-Subject: [PATCH] ipv6: route: fix possible null-pointer-dereference in ip6_route_info_create
-Date: Fri,  1 Nov 2024 11:58:43 +0800
-Message-ID: <20241101035843.52230-1-03zouyi09.25@gmail.com>
-X-Mailer: git-send-email 2.44.0
+	alexjlzheng@tencent.com,
+	MengEn Sun <mengensun@tencent.com>
+Subject: [PATCH v2] vmstat: call fold_vm_zone_numa_events() before show per zone NUMA event
+Date: Fri,  1 Nov 2024 12:06:38 +0800
+Message-Id: <1730433998-10461-1-git-send-email-mengensun@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-In the ip6_route_info_create function, the variable fib6_nh is
-assigned the return value of nexthop_fib6_nh(rt->nh), which could
-result in fib6_nh being NULL. Immediately after this assignment,
-there is a potential dereference of fib6_nh in the following code:
-if (!ipv6_addr_any(&cfg->fc_prefsrc)) {
- struct net_device *dev = fib6_nh->fib_nh_dev;
-This lead to a null pointer dereference (NPD) risk if fib6_nh is
-NULL. The issue can be resolved by adding a NULL check before the
-deference line.
+From: MengEn Sun <mengensun@tencent.com>
 
-Signed-off-by: Yi Zou <03zouyi09.25@gmail.com>
+Since 5.14-rc1, NUMA events will only be folded from per-CPU
+statistics to per zone and global statistics when the user
+actually needs it.
+
+Currently, the kernel has performs the fold operation when reading
+/proc/vmstat, but does not perform the fold operation in
+/proc/zoneinfo. This can lead to inaccuracies in the following
+statistics in zoneinfo:
+- numa_hit
+- numa_miss
+- numa_foreign
+- numa_interleave
+- numa_local
+- numa_other
+
+Therefore, before printing per-zone vm_numa_event when reading
+/proc/zoneinfo, we should also perform the fold operation.
+
+Fixes: f19298b9516c ("mm/vmstat: convert NUMA statistics to basic NUMA counters")
+Reviewed-by: JinLiang Zheng <alexjlzheng@tencent.com>
+Signed-off-by: MengEn Sun <mengensun@tencent.com>
 ---
- net/ipv6/route.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+changelog:
+v1: https://lore.kernel.org/linux-mm/20241030163527.cc9075a4aeb60448873aea73@linux-foundation.org/
+v2: made some modifications to the commit message: 
+    - Made the commit information more detailed
+    - Added the range of versions that need to be fixed.
+---
+ mm/vmstat.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index b4251915585f..919592fa4e64 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -3821,7 +3821,7 @@ static struct fib6_info *ip6_route_info_create(struct fib6_config *cfg,
- 			rt->fib6_flags = RTF_REJECT | RTF_NONEXTHOP;
- 	}
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index b5a4cea..2770800 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1778,6 +1778,7 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
+ 			   zone_page_state(zone, i));
  
--	if (!ipv6_addr_any(&cfg->fc_prefsrc)) {
-+	if (!ipv6_addr_any(&cfg->fc_prefsrc) && fib6_nh) {
- 		struct net_device *dev = fib6_nh->fib_nh_dev;
- 
- 		if (!ipv6_chk_addr(net, &cfg->fc_prefsrc, dev, 0)) {
+ #ifdef CONFIG_NUMA
++	fold_vm_zone_numa_events(zone);
+ 	for (i = 0; i < NR_VM_NUMA_EVENT_ITEMS; i++)
+ 		seq_printf(m, "\n      %-12s %lu", numa_stat_name(i),
+ 			   zone_numa_event_state(zone, i));
 -- 
-2.44.0
+1.8.3.1
 
 
