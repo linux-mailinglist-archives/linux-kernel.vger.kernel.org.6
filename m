@@ -1,212 +1,188 @@
-Return-Path: <linux-kernel+bounces-392374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9E49B9347
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:32:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729DB9B934A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40AF61F23159
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:32:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0331D1F236E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9695F1A7275;
-	Fri,  1 Nov 2024 14:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3671A4E98;
+	Fri,  1 Nov 2024 14:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="QMUjBLIZ"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwY1Ij/a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFF2179A7
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4CC49620;
+	Fri,  1 Nov 2024 14:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730471548; cv=none; b=mSmMs2BxG944zTM6Nf5mMQQ4wNWqJchIid/0B13mLSlzDA/TfB08Gk01wKtuukLaTU5G/NXJIHVCPmDiwtKS+b1Sezi8UuEZbXErVQvraYnnAiMWXtTjEDwGZjZ3JUqrXQl06hyMeLJF3jiatYqvSbX/HMGBoXefWvW9ElhUw3I=
+	t=1730471585; cv=none; b=nlUiVVHIY3YlF8uXKt0oV+Er4VX8V7TzrllDScuvhzS7FVswEDQvKMiFI4nRrDBnn+DBzyMyFwk3FtGBfmPqaIB9NLVfo2lPxS6YjjuZX87AIADG0MQDPsE2hIyq+LncC662xkMKODT7/Ylraf/k/WQIr+504Dp9xs9Bdiw0qKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730471548; c=relaxed/simple;
-	bh=zRufYQTM2AyaUG/3MkZBNIjcR4kJ1MSCKM92Jc2SsTk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DcOAyIunz8fGrOx8NK5ZhKwLtbXDhWTUcB8FJFvWB2NfYpD9XdLdRcJudaQhU0tinhqJdZmyIVkugAt7WeOfOG7QX03Fjt0UFRxOpvnF9bnCGGPRkQI5GONP03eJ8n4IqQ1aL3WfrsUZcAoE+/Q/hH8E3IKlviyRfzB16YFJ6fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=QMUjBLIZ; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cbcd71012so23930305ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1730471544; x=1731076344; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gruszeIpxYM6GpwIDsKD9euVO3Z3vPd1Uc086E1jl5g=;
-        b=QMUjBLIZ6Aked778FkpRgf5IglINFkqxiEqYAKA7OaT4lV4oUPFjNEV3zTYYXmZ7J+
-         Mz33RM69FHIifQp8weOOVrlwC4OCmbUL9y9WbzJxZBCX1OgYuP2wpIEJICNmYgsG0Ia4
-         oWFqycOJkHS9j9GdA7Purhtm9YtARMmufLf9vxiMYkcmqlPtvGxEI5YU5RvdzWv63q0y
-         xPJ49F0Za2TDS/nSvt5ty3v1ANQECt3yjt1vivAE1QhUs+SUs0FHCCV3BAact9PbihAy
-         7PVSROpyL2u+Cy2oNml3pyiWP0DjNZAb54YExu/VbNh/c4tRmT7yxFsAuDI9viGqiL94
-         nvtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730471544; x=1731076344;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gruszeIpxYM6GpwIDsKD9euVO3Z3vPd1Uc086E1jl5g=;
-        b=nVKwZNYGpwJjC3ZQss6xhV7GJze3FIFkg3dfnhcz7GrprXj+kXCff9RcjDzkBu8Oxv
-         pHaT5GWsH24THziBo45F7MSmcecdXC2rFjMmgQDXXgy8OjyAS45Y8/AK7Uis4OvBNz6Z
-         TPQ7W6ZzsSkvASUZtXYMqE97/uLKSNRoa54By6XZmjROjtl/L6n18jTgwGJVW+29rh42
-         HMfiJTumv2jyZE2AxlH+zRjasOZMq+GhuKbX1rsrkpAnL4ZkbziiZq859qR1oXY+vYfw
-         tHsY5w2ylaBuyScukYieJ0zSWnicpBrYAL2z+DDV0b7K+Hg+Ekk15bzsx82is1Rtzp56
-         nC2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUiM/bVSf6UR/FMucWHsqZnRty5V5m+DVXh4qca3DNbP8qarhmAd4VH4ufbCvnl3DY3OZmHl5+JBy+hDqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4Z0QNMePD6lY+OsYjsZnNe6t1MkZMKHH11QgYi59E9E+xwfFo
-	vLJAWrnaMVqDeAsFWeYRDBP7w1vLRlDAoF6+O/gfSRW0SezL1AV2sY8Hx5dskTfDUb0OhC4q9Me
-	4Ug==
-X-Google-Smtp-Source: AGHT+IEJf1H/GvLhyEhHmZm/gVhBTi+P/f977a9UB1J2PxbHQ1I2inYwcwuyo3yIHhvEk7trWKFpUw==
-X-Received: by 2002:a17:902:d481:b0:20b:6918:30b5 with SMTP id d9443c01a7336-2111af5a6bcmr42574355ad.41.1730471544449;
-        Fri, 01 Nov 2024 07:32:24 -0700 (PDT)
-Received: from rogue-one.tail33bf8.ts.net ([179.218.14.134])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2110570bfe6sm21926665ad.109.2024.11.01.07.32.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 07:32:24 -0700 (PDT)
-From: Pedro Tammela <pctammela@mojatatu.com>
-To: netdev@vger.kernel.org
-Cc: jhs@mojatatu.com,
-	xiyou.wangcong@gmail.com,
-	jiri@resnulli.us,
-	shuah@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Pedro Tammela <pctammela@mojatatu.com>
-Subject: [PATCH net-next] selftests/tc-testing: add tests for qdisc_tree_reduce_backlog
-Date: Fri,  1 Nov 2024 11:31:48 -0300
-Message-ID: <20241101143148.1218890-1-pctammela@mojatatu.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730471585; c=relaxed/simple;
+	bh=x1MFIlrq983aA1zhdDdyRFlFPXuG4uelI91cf+CH7U0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kMnHGzILsG5IoETQxCB6RpnIeaKAnr4Tb+GF+knFJaQS6uEn03bcxoz4/1UeDyVO5CgMufkjTmJyna3RGvc+zqY7qxGPeH/XD79HX8ZaMwaeE8TjXEBglQtm8G1Bm1w1NWdGm9sbzSpXOnMHqveT9N6L/S4EImiZHuzQ+ZqGXqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwY1Ij/a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5650CC4CECD;
+	Fri,  1 Nov 2024 14:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730471585;
+	bh=x1MFIlrq983aA1zhdDdyRFlFPXuG4uelI91cf+CH7U0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BwY1Ij/atUpmiedAf63d4Qkz5Rw2KILs3e85eW5X1ZiKa6RCgFLx2Rvdk9nQro9UZ
+	 lxvVIPDczvHWjVsjI0AttYyroeHBxgqL/6pwIjIPXiby1XfLuHEMnXJEmV7J/v3sT1
+	 WJ6GdFHrMB8fCFxyL8dCpdiNVbAGOpMfFjt3mu7S0Lzu0M4QuzKmNz3gqsQ0pu16Gi
+	 9DRNk6oSw8D9dpVp9AgVBqH1DFuyd9LRtl+ilAYYeKWhyWbcFPaBm2FZEf59hsZOJX
+	 OLup2EqnTqk1yPMhniPkD/Stpoi1YA2eu+ijiB1NHX90teMeMIvUcYrGI5AWbSiAE3
+	 iU9hx3JhTnZtQ==
+Date: Fri, 1 Nov 2024 16:33:00 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI/sysfs: Fix read permissions for VPD attributes
+Message-ID: <20241101143300.GA339254@unreal>
+References: <20241030000450.GA1180398@bhelgaas>
+ <20241031232252.GA1268406@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031232252.GA1268406@bhelgaas>
 
-Add 3 tests to check for the expected behaviour of
-qdisc_tree_reduce_backlog in special scenarios.
+On Thu, Oct 31, 2024 at 06:22:52PM -0500, Bjorn Helgaas wrote:
+> [+cc LKML etc, should PCI VPD be readable by non-root?]
+> 
+> On Tue, Oct 29, 2024 at 07:04:50PM -0500, Bjorn Helgaas wrote:
+> > On Mon, Oct 28, 2024 at 10:05:33AM +0200, Leon Romanovsky wrote:
+> > > From: Leon Romanovsky <leonro@nvidia.com>
+> > > 
+> > > The Virtual Product Data (VPD) attribute is not readable by regular
+> 
+> ("Vital Product Data" is the term in the spec)
 
-- The first test checks if the qdisc class is notified of deletion for
-major handle 'ffff:'.
-- The second test checks the same as the first test but with 'ffff:' as the root
-qdisc.
-- The third test checks if everything works if ingress is active.
+Ohh, sorry for the confusion. I relied to much on auto-completion.
 
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: Pedro Tammela <pctammela@mojatatu.com>
----
- .../tc-testing/tc-tests/infra/qdiscs.json     | 98 +++++++++++++++++++
- 1 file changed, 98 insertions(+)
- create mode 100644 tools/testing/selftests/tc-testing/tc-tests/infra/qdiscs.json
+> 
+> > > user without root permissions. Such restriction is not really needed,
+> > > as data presented in that VPD is not sensitive at all.
+> > > 
+> > > This change aligns the permissions of the VPD attribute to be accessible
+> > > for read by all users, while write being restricted to root only.
+> > > 
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: d93f8399053d ("PCI/sysfs: Convert "vpd" to static attribute")
+> > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > Applied to pci/vpd for v6.13, thanks!
+> 
+> I think this deserves a little more consideration than I gave it
+> initially.
+> 
+> Obviously somebody is interested in using this; can we include some
+> examples so we know there's an actual user?
 
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/infra/qdiscs.json b/tools/testing/selftests/tc-testing/tc-tests/infra/qdiscs.json
-new file mode 100644
-index 000000000000..d3dd65b05b5f
---- /dev/null
-+++ b/tools/testing/selftests/tc-testing/tc-tests/infra/qdiscs.json
-@@ -0,0 +1,98 @@
-+[
-+    {
-+        "id": "ca5e",
-+        "name": "Check class delete notification for ffff:",
-+        "category": [
-+            "qdisc"
-+        ],
-+        "plugins": {
-+            "requires": "nsPlugin"
-+        },
-+        "setup": [
-+            "$IP link set dev $DUMMY up || true",
-+            "$IP addr add 10.10.10.10/24 dev $DUMMY || true",
-+            "$TC qdisc add dev $DUMMY root handle 1: drr",
-+            "$TC filter add dev $DUMMY parent 1: basic classid 1:1",
-+            "$TC class add dev $DUMMY parent 1: classid 1:1 drr",
-+            "$TC qdisc add dev $DUMMY parent 1:1 handle ffff: drr",
-+            "$TC filter add dev $DUMMY parent ffff: basic classid ffff:1",
-+            "$TC class add dev $DUMMY parent ffff: classid ffff:1 drr",
-+            "$TC qdisc add dev $DUMMY parent ffff:1 netem delay 1s",
-+            "ping -c1 -W0.01 -I $DUMMY 10.10.10.1 || true",
-+            "$TC class del dev $DUMMY classid ffff:1",
-+            "$TC class add dev $DUMMY parent ffff: classid ffff:1 drr"
-+        ],
-+        "cmdUnderTest": "ping -c1 -W0.01 -I $DUMMY 10.10.10.1",
-+        "expExitCode": "1",
-+        "verifyCmd": "$TC -s qdisc ls dev $DUMMY",
-+        "matchPattern": "drr 1: root",
-+        "matchCount": "1",
-+        "teardown": [
-+            "$TC qdisc del dev $DUMMY root handle 1: drr",
-+            "$IP addr del 10.10.10.10/24 dev $DUMMY"
-+        ]
-+    },
-+    {
-+        "id": "e4b7",
-+        "name": "Check class delete notification for root ffff:",
-+        "category": [
-+            "qdisc"
-+        ],
-+        "plugins": {
-+            "requires": "nsPlugin"
-+        },
-+        "setup": [
-+            "$IP link set dev $DUMMY up || true",
-+            "$IP addr add 10.10.10.10/24 dev $DUMMY || true",
-+            "$TC qdisc add dev $DUMMY root handle ffff: drr",
-+            "$TC filter add dev $DUMMY parent ffff: basic classid ffff:1",
-+            "$TC class add dev $DUMMY parent ffff: classid ffff:1 drr",
-+            "$TC qdisc add dev $DUMMY parent ffff:1 netem delay 1s",
-+            "ping -c1 -W0.01 -I $DUMMY 10.10.10.1 || true",
-+            "$TC class del dev $DUMMY classid ffff:1",
-+            "$TC class add dev $DUMMY parent ffff: classid ffff:1 drr"
-+        ],
-+        "cmdUnderTest": "ping -c1 -W0.01 -I $DUMMY 10.10.10.1",
-+        "expExitCode": "1",
-+        "verifyCmd": "$TC qdisc ls dev $DUMMY",
-+        "matchPattern": "drr ffff: root",
-+        "matchCount": "1",
-+        "teardown": [
-+            "$TC qdisc del dev $DUMMY root handle ffff: drr",
-+            "$IP addr del 10.10.10.10/24 dev $DUMMY"
-+        ]
-+    },
-+    {
-+        "id": "33a9",
-+        "name": "Check ingress is not searchable on backlog update",
-+        "category": [
-+            "qdisc"
-+        ],
-+        "plugins": {
-+            "requires": "nsPlugin"
-+        },
-+        "setup": [
-+            "$IP link set dev $DUMMY up || true",
-+            "$IP addr add 10.10.10.10/24 dev $DUMMY || true",
-+            "$TC qdisc add dev $DUMMY ingress",
-+            "$TC qdisc add dev $DUMMY root handle 1: drr",
-+            "$TC filter add dev $DUMMY parent 1: basic classid 1:1",
-+            "$TC class add dev $DUMMY parent 1: classid 1:1 drr",
-+            "$TC qdisc add dev $DUMMY parent 1:1 handle 2: drr",
-+            "$TC filter add dev $DUMMY parent 2: basic classid 2:1",
-+            "$TC class add dev $DUMMY parent 2: classid 2:1 drr",
-+            "$TC qdisc add dev $DUMMY parent 2:1 netem delay 1s",
-+            "ping -c1 -W0.01 -I $DUMMY 10.10.10.1 || true"
-+        ],
-+        "cmdUnderTest": "$TC class del dev $DUMMY classid 2:1",
-+        "expExitCode": "0",
-+        "verifyCmd": "$TC qdisc ls dev $DUMMY",
-+        "matchPattern": "drr 1: root",
-+        "matchCount": "1",
-+        "teardown": [
-+            "$TC qdisc del dev $DUMMY root handle 1: drr",
-+            "$TC qdisc del dev $DUMMY ingress",
-+            "$IP addr del 10.10.10.10/24 dev $DUMMY"
-+        ]
-+    }
-+]
--- 
-2.43.0
+I'll provide it after the weekend.
 
+> 
+> Are we confident that VPD never contains anything sensitive?  It may
+> contain arbitrary vendor-specific information, so we can't know what
+> might be in that part.
+
+It depends on the vendor, but I'm pretty confident that any sane vendor who
+read the PCI spec will not put sensitive information in the VPD. The
+spec is very clear that this open to everyone.
+
+> 
+> Reading VPD is fairly complicated and we've had problems in the past
+> (we have quirk_blacklist_vpd() for devices that behave
+> "unpredictably"), so it's worth considering whether allowing non-root
+> to do this could be exploited or could allow DOS attacks.
+
+It is not different from any other PCI field. If you are afraid of DOS,
+you should limit to read all other fields too.
+
+> 
+> For reference, here are the fields defined in PCIe r6.0, sec 6.27.2
+> (although VPD can contain anything a manufacturer wants to put there):
+> 
+>   PN Add-in Card Part Number
+>   EC Engineering Change Level of the Add-in Card
+>   FG Fabric Geography
+>   LC Location
+>   MN Manufacture ID
+>   PG PCI Geography
+>   SN Serial Number
+>   TR Thermal Reporting
+>   Vx Vendor Specific
+>   CP Extended Capability
+>   RV Checksum and Reserved
+>   FF Form Factor
+>   Yx System Specific
+>   YA Asset Tag Identifier
+>   RW Remaining Read/Write Area
+> 
+> The Conventional PCI spec, r3.0, sec 6.4, says:
+> 
+>   Vital Product Data (VPD) is the information that uniquely defines
+>   items such as the hardware, software, and microcode elements of a
+>   system. The VPD provides the system with information on various FRUs
+>   (Field Replaceable Unit) including Part Number, Serial Number, and
+>   other detailed information. VPD also provides a mechanism for
+>   storing information such as performance and failure data on the
+>   device being monitored. The objective, from a system point of view,
+>   is to collect this information by reading it from the hardware,
+>   software, and microcode components.
+> 
+> Some of that, e.g., performance and failure data, might be considered
+> sensitive in some environments.
+
+I'm enabling it for modern device which is compliant to PCI spec v6.0.
+Do you want me to add quirk_allow_vpd() to allow only specific devices to
+read that field?a It is doable but not scalable.
+
+> 
+> > > ---
+> > > I added stable@ as it was discovered during our hardware ennoblement
+> > > and it is important to be picked by distributions too.
+> > > ---
+> > >  drivers/pci/vpd.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
+> > > index e4300f5f304f..2537685cac90 100644
+> > > --- a/drivers/pci/vpd.c
+> > > +++ b/drivers/pci/vpd.c
+> > > @@ -317,7 +317,7 @@ static ssize_t vpd_write(struct file *filp, struct kobject *kobj,
+> > >  
+> > >  	return ret;
+> > >  }
+> > > -static BIN_ATTR(vpd, 0600, vpd_read, vpd_write, 0);
+> > > +static BIN_ATTR_RW(vpd, 0);
+> > >  
+> > >  static struct bin_attribute *vpd_attrs[] = {
+> > >  	&bin_attr_vpd,
+> > > -- 
+> > > 2.46.2
+> > > 
 
