@@ -1,161 +1,123 @@
-Return-Path: <linux-kernel+bounces-391879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC31F9B8CBD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:14:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E9B9B8CBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D004A1C2237C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:14:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC7F285C58
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A722115687C;
-	Fri,  1 Nov 2024 08:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D90156678;
+	Fri,  1 Nov 2024 08:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZhHuI21"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Umu2T/Dd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0152484A5E;
-	Fri,  1 Nov 2024 08:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4421684A5E;
+	Fri,  1 Nov 2024 08:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730448869; cv=none; b=d6t6Y1F6kX1iaym8JeJjkuGHtm47Yz/tzGXZPUHtsUXubVQkqeVzDYWYFEu3vOGvYxs4iatSzUFXNowZPstXrmORR2NvfR25J4mP4vHRXtaielgnojX8FN6bmCZp3PVteagaT/SbIcg7TezZgVBboq5d2clWubUcSiAICb6uQ8A=
+	t=1730448893; cv=none; b=sx6hyuR9axzrKWnnO3FiRXtOkrW7ueW2tYvpnOm0/G7Yc/s6R9KnxxNRLD58fer+NHlz+sUOpxps+8EpyXsmGOZj1PKvHjWnd4BtgZDbwEd8WH+0g7p0yOpJF+8yd6ernNS7QKx9gtA+vbfZYvLx8Gsge0eIj3JPvO8b+wuCmK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730448869; c=relaxed/simple;
-	bh=TeFuD4EkGsPleD8hJkslZxcZRg6USTXrl/FwyS9Z094=;
+	s=arc-20240116; t=1730448893; c=relaxed/simple;
+	bh=frMBq+2pGCfTjE+s9bnLUtG+16nweQfByWAnfaMoVYQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S0LCYwYCXw45K7f0Xa2LEiiwIG8qJiqI6iR02xa29u9c05gqzD7qD8dOyZDzkwA9ZNzKOZFEq94E3u4L/XG/yIrgQ2eZPPiCjCB2IHVrll4E4DlN082IQ6XSbHfq7dLKE0XgKMjbVY1NqvscIq4hfDASga9Nr0EhBJG9c01mD2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qZhHuI21; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D065EC4CECD;
-	Fri,  1 Nov 2024 08:14:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730448868;
-	bh=TeFuD4EkGsPleD8hJkslZxcZRg6USTXrl/FwyS9Z094=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qZhHuI21iH4oJd813Z85XkXHycBQp2Xq2VhC/lNZGgnpenHtSFz650GpAePajxRpQ
-	 1g07p3wA0RuaFoN+Tle9Llbm36p5HZRCkd2n2QGnGJK3Il9mHs8zLkwsa81b7pbJar
-	 u1xn4yNwhjS1OPS+NR5eZ6jWzZdB1GzRQSnRjkORuBNYkgrmlKlNdaTV/iA8PU0fJa
-	 uSOZmCOvlFTsRIddmsOhUdJwik+6dxxPQWNwW3wHd71SSjnDfUrW1g+CDFogtAv7q+
-	 zidsq/eNMaU9U9U6qo4cFA6VbqIOOuOb30Hi2/fxoCZcs9yuCFLyYYeSe9Bysn5RXF
-	 fLpxFraW49y4Q==
-Date: Fri, 1 Nov 2024 09:14:24 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: broonie@kernel.org, konradybcio@kernel.org, 
-	konrad.dybcio@oss.qualcomm.com, andersson@kernel.org, srinivas.kandagatla@linaro.org, 
-	tiwai@suse.com, lgirdwood@gmail.com, perex@perex.cz, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, dmitry.baryshkov@linaro.org, 
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 08/10] arm64: dts: qcom: qrb4210-rb2: enable wsa881x
- amplifier
-Message-ID: <5zkslmf7m5vphs2wjcdg3536eo7tuh3stjthh3ulkr7oic5i25@qtnsog5ladsb>
-References: <20241101053154.497550-1-alexey.klimov@linaro.org>
- <20241101053154.497550-9-alexey.klimov@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0Lr8+Gaf0fFSx2iLMWa6GV346yAp19GagN8DJcEOXO2yE7JH2bqKH/a7FBoRzSWhz+lcJs3/yauXeoDgPkFs1gMTePLIOqHhSvzL0KdJQbPgOWOJP2Gx8SZw46KFARUNk5U6SgAo6bx1e4MIds9SGtCOaJdjJP4FP7mU62948A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Umu2T/Dd; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730448891; x=1761984891;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=frMBq+2pGCfTjE+s9bnLUtG+16nweQfByWAnfaMoVYQ=;
+  b=Umu2T/DdYx9iZVGj8SWsHm3ghoI61L/uFzXxWGKSpyvrp7MZZUQSTpSG
+   1MekaRRrOZuUKToJkRRPgDswJpPvHgBNItzeezc3SkM1ZhgqqNxmfxgNX
+   iVn0Nvo+wW7VPXJmYy+zq4ePM9O2uPKk3MDI8d/VcxL2HpXd5aWMD2+yQ
+   bTCtQPmWO1uWGKPnzwoFYahEzHyh6tqE2HAKtInHxVS4KKvJPD67UCTu/
+   79bmrA373u4U+EqZCFcDHoUTChsHz52E+VacyEP1RdiVW3Qhg+n+pDoo1
+   gRcMMJvMRmRWNWyoZZ6QKPIPDrpZLYA86sdc01ygbQT7LaKrY5yNea/dg
+   Q==;
+X-CSE-ConnectionGUID: /fgjaE1pRSWXCO1lk3usVw==
+X-CSE-MsgGUID: 4ZYNTsKkQ2GXbMs5oVJWyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="41579085"
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="41579085"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:14:50 -0700
+X-CSE-ConnectionGUID: crDuP7F+RkmFvMMWZMOrpw==
+X-CSE-MsgGUID: soI9w6vVQ/+h/82JVO5plg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="88023626"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:14:49 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t6mnt-00000009xWB-2yGL;
+	Fri, 01 Nov 2024 10:14:45 +0200
+Date: Fri, 1 Nov 2024 10:14:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH v1 1/4] iio: acpi: Fill data with NULL when
+ iio_get_acpi_device_name_and_data() fails
+Message-ID: <ZySN9b9PsRmNlvAu@smile.fi.intel.com>
+References: <20241030160756.2099326-1-andriy.shevchenko@linux.intel.com>
+ <20241030160756.2099326-2-andriy.shevchenko@linux.intel.com>
+ <20241031191717.1a521f03@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241101053154.497550-9-alexey.klimov@linaro.org>
+In-Reply-To: <20241031191717.1a521f03@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Nov 01, 2024 at 05:31:52AM +0000, Alexey Klimov wrote:
-> One WSA881X amplifier is connected on QRB4210 RB2 board
-> hence only mono speaker is supported. This amplifier is set
-> to work in analog mode only. Also add required powerdown
-> pins/gpios.
+On Thu, Oct 31, 2024 at 07:17:17PM +0000, Jonathan Cameron wrote:
+> On Wed, 30 Oct 2024 18:02:17 +0200
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 > 
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 45 ++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
+> > Fill data with NULL, if provided, when returning NULL from
+> > iio_get_acpi_device_name_and_data(). Note, the current users check
+> > for name to be valid, except one case which was initially doing
+> > like that and has to be fixed separately.
+> > 
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/r/54fac4a7-b601-40ce-8c00-d94807f5e214@stanley.mountain
+> > Fixes: dc60de4eb0a4 ("iio: acpi: Add iio_get_acpi_device_name_and_data() helper function")
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-> index fc71f5930688..76b9ae1b0ebc 100644
-> --- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-> @@ -63,6 +63,16 @@ hdmi_con: endpoint {
->  		};
->  	};
->  
-> +	i2c0_gpio: i2c0 {
+> This is counter intuitive as usual expectation would be no side effects on an
+> error return.  How hard to fix all the users to initialize to NULL if they
+> care about that?
 
-Is 0 name on the schematics or datasheet? If yes, then i2c-0. If not,
-then i2c-1
+v2 just has been sent, indeed the result looks much better, thanks for the review!
 
+> There is still a chance we set it to NULL in here anyway, but that should only happen
+> if we know the return is good in the sense of no error (missing ACPI etc)
+> but not necessarily that dev_name() won't return NULL.
+> 
+> Don't think dev_name() can currently return NULL but 'maybe' it could...
 
-> +		compatible = "i2c-gpio";
-> +
-> +		sda-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
-> +		scl-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "disabled";
-> +	};
-> +
->  	i2c2_gpio: i2c {
+dev_name() can't return NULL on the properly initialised device (either with
+device_add(), or via dev_set_name() call). I do not think we can ever get to
+the ->probe() without the above. Tell me, if I'm wrong.
 
-i2c-(x+1)
+-- 
+With Best Regards,
+Andy Shevchenko
 
-
->  		compatible = "i2c-gpio";
->  
-> @@ -272,6 +282,25 @@ zap-shader {
->  	};
->  };
->  
-> +&i2c0_gpio {
-> +	clock-frequency = <400000>;
-> +	status = "okay";
-> +
-> +	wsa881x: codec@f {
-> +		compatible = "qcom,qrb4210-wsa881x-i2c-codec";
-> +		reg = <0x0f>;
-> +		pinctrl-0 = <&wsa_en_active>;
-> +		pinctrl-1 = <&wsa_en_sleep>;
-> +		pinctrl-names = "default", "sleep";
-> +		clocks = <&q6afecc LPASS_CLK_ID_MCLK_2 LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-> +		clock-names = "wsa_mclk";
-> +		powerdown-gpios = <&lpass_tlmm 16 GPIO_ACTIVE_LOW>;
-> +		mclk-gpios = <&lpass_tlmm 18 GPIO_ACTIVE_HIGH>;
-> +		sound-name-prefix = "SpkrMono";
-> +		#sound-dai-cells = <0>;
-> +	};
-> +};
-> +
->  &i2c2_gpio {
->  	clock-frequency = <400000>;
->  	status = "okay";
-> @@ -746,6 +775,22 @@ wcd_reset_n_sleep: wcd-reset-n-sleep-state {
->  		bias-disable;
->  		output-low;
->  	};
-> +
-> +	wsa_en_active: wsa-en-active-state {
-> +		pins = "gpio106";
-> +		function = "gpio";
-> +		drive-strength = <16>;
-> +		bias-disable;
-> +		output-high;
-> +	};
-> +
-> +	wsa_en_sleep: wsa-en-sleep-state {
-> +		pins = "gpio106";
-> +		function = "gpio";
-> +		drive-strength = <2>;
-> +		bias-pull-down;
-> +		input-enable;
-
-Are you sure this passes dtbs_check? I think this was not allowed since
-1.5 years.
-
-Best regards,
-Krzysztof
 
 
