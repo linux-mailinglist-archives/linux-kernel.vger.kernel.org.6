@@ -1,194 +1,191 @@
-Return-Path: <linux-kernel+bounces-392333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351039B92BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:00:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A789B92C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:03:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB88B230C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:00:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E40141F239CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759931A254F;
-	Fri,  1 Nov 2024 13:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056D51A2C27;
+	Fri,  1 Nov 2024 14:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKvS+R4Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GFKblxF1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AA717C7BD;
-	Fri,  1 Nov 2024 13:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A66B19D8A9;
+	Fri,  1 Nov 2024 14:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730469593; cv=none; b=Ddr4Chn/EXsXrgHVZLBn4do8VR/pJAXpOaQSgxb5sTTNMISmzXInAveOevuWHoX633IBFFrCd5Fxcdv6dnYwy9PMsEzYanV/54JfQkEP6sZ7QVmpUtYCRdz080URaLERBHWkgIHbyktYVXSZG/7EVL3v59NZu7hjmEZIRiAHlUo=
+	t=1730469770; cv=none; b=rzaHJx6bLhEHrZ3OtzsjHWYK26o7l1pgvmeiD+5PtJobfn3XWJ5iHqwxNwC3tcRhwMj5NlYD4VbQkd4kv67jGItrSQD92c+zGJrVDnIOmkRBn+1Wa7tus8U/rSTzlJjT7V1HwMu/3aDjoSxrQ010dSj9kNVkpHWcCtHsa0L1YkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730469593; c=relaxed/simple;
-	bh=mg+5hEwdTdV8IE0oBNIsJ8IUYJo6J5Xk7iZ8CG8OSk0=;
+	s=arc-20240116; t=1730469770; c=relaxed/simple;
+	bh=o/BerWlG15TZeIiVvxiFPW0yeKnoj9S/2SLCMGpF7es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GwtLKjvtTKVBLP0ucT1HcPmvZD8PlYvMQWQczWBo+Atu7m5KSY8WlSDKZCHNoBaP2F8eYaNMH0FCi+B9902SutDlpkGhJbiriWg8dQu5YC1f7QUG1VD63L7t4U1/dLV1GYkocMohXzv6fnmy8GZCW6dbdfcbF/xP1sZJuxa4hZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKvS+R4Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB2DC4CECD;
-	Fri,  1 Nov 2024 13:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730469593;
-	bh=mg+5hEwdTdV8IE0oBNIsJ8IUYJo6J5Xk7iZ8CG8OSk0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=eKvS+R4QxwXg6vd4UmQqo0vBwdnnAoeSzqE0HSxSnN/xvFbJ6VlBnKe4pySxPOHdW
-	 utKm9PX+Zlqsj9OpbL/CPcYuFYfqgOugQ5uIkjY0bsQmdVNt+yNK3NPegxX6lP645n
-	 gGSwhd2mjgt0rXu4eOaqiRkNjm1bUIq2iPOlgwCKEhG61yYDAiiZOwDPrhF+1LU/ex
-	 bsTY2yOAggEDQ1MvyCtxIBPPx48v6IahrTrD0Oi12dpy1iCgAwPdNZJPZSWO+ldIdt
-	 8OFHxn99xU4Rr8qMOmfdXQwytDSNLbSHrURHOklMChcGvFy+CXHp9YS3pgY/EtxwjY
-	 LalejN7FSnBdQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C78A9CE0995; Fri,  1 Nov 2024 06:59:52 -0700 (PDT)
-Date: Fri, 1 Nov 2024 06:59:52 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Cheng-Jui Wang =?utf-8?B?KOeOi+ato+edvyk=?= <Cheng-Jui.Wang@mediatek.com>
-Cc: "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dianders@chromium.org" <dianders@chromium.org>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"frederic@kernel.org" <frederic@kernel.org>,
-	wsd_upstream <wsd_upstream@mediatek.com>,
-	Bobule Chang =?utf-8?B?KOW8teW8mOe+qSk=?= <bobule.chang@mediatek.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"kernel-team@meta.com" <kernel-team@meta.com>,
-	"joel@joelfernandes.org" <joel@joelfernandes.org>,
-	"rcu@vger.kernel.org" <rcu@vger.kernel.org>
-Subject: Re: [PATCH v3 rcu 3/3] rcu: Finer-grained grace-period-end checks in
- rcu_dump_cpu_stacks()
-Message-ID: <c3635aaf-1fb5-4464-bd58-07f686536d9a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <92193018-8624-495e-a685-320119f78db1@paulmck-laptop>
- <20241016161931.478592-3-paulmck@kernel.org>
- <c3218fbe-7bb1-4fd6-8b00-beee244ffeae@paulmck-laptop>
- <b2b0bceacbd080e13b3aa7ad05569a787df4646d.camel@mediatek.com>
- <adb044e2-8f62-4367-9a22-30515f5647b1@paulmck-laptop>
- <d0adc7d14da0f21909eef68acf19fc5706a4b1af.camel@mediatek.com>
- <9e90d04e-081b-4730-890b-295ed52747de@paulmck-laptop>
- <00ace254f9085aad12684185b77504bd911aed63.camel@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gNjdbY/5qgh8WbfZ+3oCEsKK4SiZt1cMaZtbk2NYPgaJ5ts9856ONKia95wwKmYHdNGBp5TrwlwQkm+YIoEy2ya1GK8oSkian20We5CB+olcvFbUB6E8Uvjjyt0Bx4KMU8ceeCkVftmvOcGJSmdNuZs94ZVfb1iINtUIHI7D3mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GFKblxF1; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730469768; x=1762005768;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=o/BerWlG15TZeIiVvxiFPW0yeKnoj9S/2SLCMGpF7es=;
+  b=GFKblxF18TozMDu+Q6daK4Im/NuCiefMJoofcUeoKut3iZABmcz48M9y
+   tgiqgKEP/VLlbnMsPiXyEg5vb3hkLNJVPLWyyvRAO7JSmyKQHf9vxYEj8
+   /plBZwVQVfXh/LzYZK53ZG/6MgY3sU87aTyoJPhMJ5JpYo6vvnZQMcstY
+   AFeZOLs7REeQbrPkt/NFh6sNOpb4K08p4tU5Wc23kG9nDpVKxUMHhzTY4
+   QQIEdhVyoPxNIoIBEbffcUt6DvCZIp3atdzWMbZKnOSa0+hq5IS5CI5bt
+   H2tA5iazTaTZQ3PFAYJ4vHy7EiHvH5bqwFSCeUQx/blUvvLAgYKYTDWx4
+   Q==;
+X-CSE-ConnectionGUID: wCOjVoiiT724Yf3/0B2B6A==
+X-CSE-MsgGUID: HqqDdtbrTcWum6MwB5SBpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="29654136"
+X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
+   d="scan'208";a="29654136"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 07:02:44 -0700
+X-CSE-ConnectionGUID: rAjQ2NzoRoOWf8nQDxqZLg==
+X-CSE-MsgGUID: +vYyrcdsRN6cV+5MXDr6SA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="87767853"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 01 Nov 2024 07:02:41 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6sEX-000hcJ-2m;
+	Fri, 01 Nov 2024 14:02:37 +0000
+Date: Fri, 1 Nov 2024 22:02:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: mrpre <mrpre@163.com>, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, martin.lau@kernel.org,
+	edumazet@google.com, jakub@cloudflare.com, davem@davemloft.net,
+	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, mrpre <mrpre@163.com>
+Subject: Re: [PATCH 1/2] bpf: Introduce cpu affinity for sockmap
+Message-ID: <202411012135.447KNHZK-lkp@intel.com>
+References: <20241101023832.32404-1-mrpre@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <00ace254f9085aad12684185b77504bd911aed63.camel@mediatek.com>
+In-Reply-To: <20241101023832.32404-1-mrpre@163.com>
 
-On Fri, Nov 01, 2024 at 07:41:27AM +0000, Cheng-Jui Wang (王正睿) wrote:
-> On Wed, 2024-10-30 at 06:54 -0700, Paul E. McKenney wrote:
-> > > > Alternatively, arm64 could continue using nmi_trigger_cpumask_backtrace()
-> > > > with normal interrupts (for example, on SoCs not implementing true NMIs),
-> > > > but have a short timeout (maybe a few jiffies?) after which its returns
-> > > > false (and presumably also cancels the backtrace request so that when
-> > > > the non-NMI interrupt eventually does happen, its handler simply returns
-> > > > without backtracing).  This should be implemented using atomics to avoid
-> > > > deadlock issues.  This alternative approach would provide accurate arm64
-> > > > backtraces in the common case where interrupts are enabled, but allow
-> > > > a graceful fallback to remote tracing otherwise.
-> > > > 
-> > > > Would you be interested in working this issue, whatever solution the
-> > > > arm64 maintainers end up preferring?
-> > > 
-> > > The 10-second timeout is hard-coded in nmi_trigger_cpumask_backtrace().
-> > > It is shared code and not architecture-specific. Currently, I haven't
-> > > thought of a feasible solution. I have also CC'd the authors of the
-> > > aforementioned patch to see if they have any other ideas.
-> > 
-> > It should be possible for arm64 to have an architecture-specific hook
-> > that enables them to use a much shorter timeout.  Or, to eventually
-> > switch to real NMIs.
-> 
-> There is already another thread discussing the timeout issue, but I
-> still have some questions about RCU. To avoid mixing the discussions, I
-> start this separate thread to discuss RCU.
-> 
-> > > Regarding the rcu stall warning, I think the purpose of acquiring `rnp-
-> > > > lock` is to protect the rnp->qsmask variable rather than to protect
-> > > 
-> > > the `dump_cpu_task()` operation, right?
-> > 
-> > As noted below, it is also to prevent false-positive stack dumps.
-> > 
-> > > Therefore, there is no need to call dump_cpu_task() while holding the
-> > > lock.
-> > > When holding the spinlock, we can store the CPUs that need to be dumped
-> > > into a cpumask, and then dump them all at once after releasing the
-> > > lock.
-> > > Here is my temporary solution used locally based on kernel-6.11.
-> > > 
-> > > +     cpumask_var_t mask;
-> > > +     bool mask_ok;
-> > > 
-> > > +     mask_ok = zalloc_cpumask_var(&mask, GFP_ATOMIC);
-> > >       rcu_for_each_leaf_node(rnp) {
-> > >               raw_spin_lock_irqsave_rcu_node(rnp, flags);
-> > >               for_each_leaf_node_possible_cpu(rnp, cpu)
-> > >                       if (rnp->qsmask & leaf_node_cpu_bit(rnp, cpu))
-> > > {
-> > >                               if (cpu_is_offline(cpu))
-> > >                                       pr_err("Offline CPU %d blocking
-> > > current GP.\n", cpu);
-> > > +                             else if (mask_ok)
-> > > +                                     cpumask_set_cpu(cpu, mask);
-> > >                               else
-> > >                                       dump_cpu_task(cpu);
-> > >                       }
-> > >               raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-> > >       }
-> > > +     if (mask_ok) {
-> > > +             if (!trigger_cpumask_backtrace(mask)) {
-> > > +                     for_each_cpu(cpu, mask)
-> > > +                             dump_cpu_task(cpu);
-> > > +             }
-> > > +             free_cpumask_var(mask);
-> > > +     }
-> > > 
-> > > After applying this, I haven't encountered the lockup issue for five
-> > > days, whereas it used to occur about once a day.
-> > 
-> > We used to do it this way, and the reason that we changed was to avoid
-> > false-positive (and very confusing) stack dumps in the surprisingly
-> > common case where the act of dumping the first stack caused the stalled
-> > grace period to end.
-> > 
-> > So sorry, but we really cannot go back to doing it that way.
-> > 
-> >                                                         Thanx, Paul
-> 
-> Let me clarify, the reason for the issue mentioned above is that it
-> pre-determines all the CPUs to be dumped before starting the dump
-> process. Then, dumping the first stack caused the stalled grace period
-> to end. Subsequently, many CPUs that do not need to be dumped (false
-> positives) are dumped.
-> 
-> So,to prevent false positives, it should be about excluding those CPUs
-> that do not to be dumped, right? Therefore, the action that trully help
-> is actually "releasing the lock after each dump (allowing other CPUs to
-> update qsmask) and rechecking (gp_seq and qsmask) to confirm whether to
-> continue dumping".
-> 
-> I think holding the lock while dumping CPUs does not help prevent false
-> positives; it only blocks those CPUs waiting for the lock (e.g., CPUs
-> aboult to report qs). For CPUs that do not interact with this lock,
-> holding it should not have any impact. Did I miss anything?
+Hi mrpre,
 
-Yes.
+kernel test robot noticed the following build errors:
 
-The stalled CPU could unstall itself just after the lock was released,
-so that the stack dump would be from some random irrelevant and confusing
-point in the code.  This would not be a good thing.  In contrast, with the
-lock held, the stalled CPU cannot fully exit its RCU read-side critical
-section, so that the dump has at least some relevance.
+[auto build test ERROR on bpf-next/master]
+[also build test ERROR on bpf/master net-next/main net/main linus/master v6.12-rc5 next-20241101]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Let's please instead confine the change to architecture-specific code
-that chooses to use interrupts instead of NMIs, as suggested in my
-previous email.  If there is more than one such architecture (arm64 and
-arm32?), they can of course share code, if appropriate.
+url:    https://github.com/intel-lab-lkp/linux/commits/mrpre/bpf-implement-libbpf-sockmap-cpu-affinity/20241101-104144
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20241101023832.32404-1-mrpre%40163.com
+patch subject: [PATCH 1/2] bpf: Introduce cpu affinity for sockmap
+config: arc-randconfig-001-20241101 (https://download.01.org/0day-ci/archive/20241101/202411012135.447KNHZK-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241101/202411012135.447KNHZK-lkp@intel.com/reproduce)
 
-							Thanx, Paul
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411012135.447KNHZK-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   kernel/bpf/syscall.c: In function 'bpf_map_update_value':
+>> kernel/bpf/syscall.c:254:24: error: too many arguments to function 'sock_map_update_elem_sys'
+     254 |                 return sock_map_update_elem_sys(map, key, value, flags, target_cpu);
+         |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from kernel/bpf/syscall.c:4:
+   include/linux/bpf.h:3175:19: note: declared here
+    3175 | static inline int sock_map_update_elem_sys(struct bpf_map *map, void *key, void *value,
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +/sock_map_update_elem_sys +254 kernel/bpf/syscall.c
+
+   240	
+   241	static int bpf_map_update_value(struct bpf_map *map, struct file *map_file,
+   242					void *key, void *value, __u64 flags, s32 target_cpu)
+   243	{
+   244		int err;
+   245		/* Need to create a kthread, thus must support schedule */
+   246		if (bpf_map_is_offloaded(map)) {
+   247			return bpf_map_offload_update_elem(map, key, value, flags);
+   248		} else if (map->map_type == BPF_MAP_TYPE_CPUMAP ||
+   249			   map->map_type == BPF_MAP_TYPE_ARENA ||
+   250			   map->map_type == BPF_MAP_TYPE_STRUCT_OPS) {
+   251			return map->ops->map_update_elem(map, key, value, flags);
+   252		} else if (map->map_type == BPF_MAP_TYPE_SOCKHASH ||
+   253			   map->map_type == BPF_MAP_TYPE_SOCKMAP) {
+ > 254			return sock_map_update_elem_sys(map, key, value, flags, target_cpu);
+   255		} else if (IS_FD_PROG_ARRAY(map)) {
+   256			return bpf_fd_array_map_update_elem(map, map_file, key, value,
+   257							    flags);
+   258		}
+   259	
+   260		bpf_disable_instrumentation();
+   261		if (map->map_type == BPF_MAP_TYPE_PERCPU_HASH ||
+   262		    map->map_type == BPF_MAP_TYPE_LRU_PERCPU_HASH) {
+   263			err = bpf_percpu_hash_update(map, key, value, flags);
+   264		} else if (map->map_type == BPF_MAP_TYPE_PERCPU_ARRAY) {
+   265			err = bpf_percpu_array_update(map, key, value, flags);
+   266		} else if (map->map_type == BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE) {
+   267			err = bpf_percpu_cgroup_storage_update(map, key, value,
+   268							       flags);
+   269		} else if (IS_FD_ARRAY(map)) {
+   270			err = bpf_fd_array_map_update_elem(map, map_file, key, value,
+   271							   flags);
+   272		} else if (map->map_type == BPF_MAP_TYPE_HASH_OF_MAPS) {
+   273			err = bpf_fd_htab_map_update_elem(map, map_file, key, value,
+   274							  flags);
+   275		} else if (map->map_type == BPF_MAP_TYPE_REUSEPORT_SOCKARRAY) {
+   276			/* rcu_read_lock() is not needed */
+   277			err = bpf_fd_reuseport_array_update_elem(map, key, value,
+   278								 flags);
+   279		} else if (map->map_type == BPF_MAP_TYPE_QUEUE ||
+   280			   map->map_type == BPF_MAP_TYPE_STACK ||
+   281			   map->map_type == BPF_MAP_TYPE_BLOOM_FILTER) {
+   282			err = map->ops->map_push_elem(map, value, flags);
+   283		} else {
+   284			err = bpf_obj_pin_uptrs(map->record, value);
+   285			if (!err) {
+   286				rcu_read_lock();
+   287				err = map->ops->map_update_elem(map, key, value, flags);
+   288				rcu_read_unlock();
+   289				if (err)
+   290					bpf_obj_unpin_uptrs(map->record, value);
+   291			}
+   292		}
+   293		bpf_enable_instrumentation();
+   294	
+   295		return err;
+   296	}
+   297	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
