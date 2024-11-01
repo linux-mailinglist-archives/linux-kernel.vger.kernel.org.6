@@ -1,221 +1,101 @@
-Return-Path: <linux-kernel+bounces-392871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD409B9915
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:56:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EDFB9B990F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C336B1F222FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:56:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A39FCB22002
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A9C1D279D;
-	Fri,  1 Nov 2024 19:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C021D1F44;
+	Fri,  1 Nov 2024 19:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9SE3XB7"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V/aRegKB"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EBA1CEE94;
-	Fri,  1 Nov 2024 19:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D841D0E14
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730490961; cv=none; b=BWG86V+QlPGBPli8zuvT5r4454hBRVdFKAdyN/0PumLoWSpd6WAyNoAAdjKXe4lCRVYdAgpk+1us7p6h9C69dsQ8DmPWHalDgypgpu0QaUMnKaWWPwzordMvs4nXPDrEFpo6ViZumWc8m9Q7WSGZYB6DinlGj+jQg2ilb29iH/Q=
+	t=1730490924; cv=none; b=CwQQpltrBtkohwSmce7RIY2XIlTsqZm8Mrs9RrfP8bputBu7UbsNoeZCiQTjgyeJU3eEOm4SQvg6zKhaNck9lNLRKqxW6wrWGfbyzOuuF5obsWL7XfrsyJLDccTafV9/jLfSOEUhLBo3O/jSdD51npuG3ZihGWp0+b9KJxYSDEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730490961; c=relaxed/simple;
-	bh=s3X/5yNWdJSlQ3eMp8Fi41yVK46pfVs/1C/AskeKJM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nLe74Gx74BvkdPZU4+FyPBzbtbFDIUUX8INS8K5+3ogLR8qsrGcBT3eSMOJTY7NETROWRAbivDh2CO4PDf2tNigzm1BZAhKl9NOvoHrPV1QORfUuCeGSuCXuHsLHFjNoeZc7n2H/vLYX2i4/h4fLML3nROdA1u7WHfvh452Z5wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9SE3XB7; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cbcd8ce5f9so15814526d6.2;
-        Fri, 01 Nov 2024 12:55:59 -0700 (PDT)
+	s=arc-20240116; t=1730490924; c=relaxed/simple;
+	bh=kiXT218rgaa/i6xragvSEs2O7A/U/zKhIUlWSZvWPy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdUbdvpSH4TyIFo8vgDAMdHoG67S6JTDemvJ6lvbyZ5VFbwPhB07lrAIvhguptspWsIMlPyncbq1fBI3VzFOIpAq3c0nPdO/AfeqH/jjQWetSefDBEqV1c+dKq/81rXpwCNNK9v4BUvyouxOXCK9yuqRtyPuSkHyPlLdEPTERyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V/aRegKB; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-431481433bdso20205565e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:55:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730490959; x=1731095759; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=V/wo6tn5xum2AVMECmALlIc/sY7DW4M/ZUa/SRoull4=;
-        b=E9SE3XB7pMlEyjGJtfRaG4w2ae7PqcuL9a455YvPBCmRs44vtMBTXMYbXomGtl/b6V
-         aeMrb7vepzhuN4S9SFC7ye/ngDFQDAs1HmHQoNIW8ujc89UNkXbN1o0vl0FB5Okvb7gB
-         9MqEnraV3+yb7VthdkNcVgeCjzM5VQ2Q8DDYyz6UdrMXmmBrZKAoemtVc6eT+rf0lO96
-         Yita4IfLf+A8A4KIH1tBC42DpmQYaHjRJdL/0dkNKISUh+fEoWLy16YB3mrTpEKPyLLu
-         2spjz+arFRC6Ieqo2qBpFurZLjWGWeNc8rGwvAUBDhx5aEOG2BeR/YTeHmHoR4OKliQT
-         VFVw==
+        d=linaro.org; s=google; t=1730490921; x=1731095721; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2KfVmPf7yDTyzuQV5+HlYzS4nyXc918Np3+MFMf2YBE=;
+        b=V/aRegKBVZv6wjKtHJv4cJ0PZVSj+Hq47JFZLCnLr4hI92X4PZ6pSsnNgziba2xPEs
+         cCivp+6ZvS76IBBQgczpMhaAqNvQjhglyEYzURBExa4PvzdiILaFJeSvvQOab8qkHmL3
+         66DcQpaletEh7/P1/gsKR0sPiMQ+qu3b/XQB5SkQrgx/O//Us20QfX3gC4XWcl1EBomZ
+         ibiOXHl77Znxp4UI5I5cZeDNbBN/SMWv1QU/WqKm/TXQrc/fAWe4E5f96+7UF1eXx9fL
+         W6uwbU59uxWrjmDplORepWXn6gEMUdrPWpMtEUI6iJJJz/mMM27FQHt0EMgC3mq7LhZ6
+         FtuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730490959; x=1731095759;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V/wo6tn5xum2AVMECmALlIc/sY7DW4M/ZUa/SRoull4=;
-        b=RQMgip5cZAHCpbKm6fKntrpMChUfCahF1uBfmPhWwdj87j24Io27YvoMMuKv9AwafF
-         R8fR2IJR4apZzC+8dAsM60Y5Y3ZU8MwPW4aXzqlmcDGLygDziUtOymzzDSOFIq3GoqjX
-         Np3P+RVg1YNG9r74w5Ln/39ZxwmFL+//45PQBRvWI5ZJ7UGyR5egQi3hbM9tBzbIRVAc
-         R3JzgpZSfH4MbToGZZabR0nGW0OvoS2jHv8t6giYVC2UsbGmOtCtjOuU+DHgB+sRoMq3
-         reCMllk7IfUC3xdn7fmCpE6nfaEQeBBUeghoP0wOBSGW+pAnGW1Y6ATJcsrKxIY+M3Yz
-         qhPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZNMQPtFBIzSQGeEqU7n5PV4Rf4x3j+e1+moFv4N5gX6V7jHjoKwmq45UFgLxWIVgIO9jJU+ZV8vml8eE=@vger.kernel.org, AJvYcCWbE903h5L34eB/96r4kznpKxL5q5uEdgITHj5YEbogpxis2bQ0znxUqliglvYwYD+R5PT+eQxCfJVffg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0frs4818wd2tDkQma1D8684N7feOtNbCvw9aaIRwGmowoQEm5
-	E2RyHpG5CUqpTGtzyEtxqFu6MtIP59CsvbpMc+oViZ0b9Sv6il6y
-X-Google-Smtp-Source: AGHT+IFPagyvh5cj1suOH5cWI+VLHf+AeDKM7KQP+P4BRYdYB9fU3T/yM3NaTN4fYGjak0m3mhjnvQ==
-X-Received: by 2002:a05:6214:5d86:b0:6cb:e52c:c8dd with SMTP id 6a1803df08f44-6d35c1aeed4mr49651226d6.53.1730490958752;
-        Fri, 01 Nov 2024 12:55:58 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353f9e057sm22585066d6.1.2024.11.01.12.55.57
+        d=1e100.net; s=20230601; t=1730490921; x=1731095721;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2KfVmPf7yDTyzuQV5+HlYzS4nyXc918Np3+MFMf2YBE=;
+        b=BwQmxO+g/2AHRKad/l3GC5l/CYIOv3dKhbAxARTdv9tqAPsT8shiN+tp8feQyB/5b0
+         jbMwS8NrnFdcA6Ck3PKo6JLTVAa5BaOZWpTViyOdmZMLvy2Fb9LK/FeNlkPooyiAIxmH
+         3hZIFLWlsW9HNjjBnypanqzSBKkrzZDRwTPm6zR78xyMN8V42DRjf7bbJ7HwOJz6bEmc
+         6W3ca3SUvF3aMdrGEAgjJNeXgJPPWo1DjcYjH3nM2aJzCxOepv3ZWygiBeakAECGnmN6
+         3UgTt0SYtnGepGpyK3cB0J3abqmoLgwMMu71tEbBQ/mPeFDES3o9zbR5y8aJRfBUT7my
+         UKfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmV3efCnFv37c2HCAkDd2pIEQlNyp+fkmMqnCAVyN2ZutVqhNZjhwCV7aVw1FyACAy9aFNTYR5wQYWNHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/tA1gl5nG5FmOodI6vRgnlaAq1/jCkCEwlBYbmKqmEB1349NO
+	r8TR/RzS9hwYAg13AlQfDWo9DijWJejyRly4acu+sYxk7IKk2lMi5ZU+kA1lTQDAafmhIIk3AHK
+	i
+X-Google-Smtp-Source: AGHT+IHt3uDFbfzDcf71B+rvAWS1uwMPRAkznrr0HHExtuL8F7pBTpvZ0BozP1TN+HDS/qiK/kLfcA==
+X-Received: by 2002:a5d:64a1:0:b0:37d:4fe9:b6a7 with SMTP id ffacd0b85a97d-381bea1c1f4mr6976997f8f.36.1730490920787;
+        Fri, 01 Nov 2024 12:55:20 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5c65b8sm71002735e9.18.2024.11.01.12.55.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 12:55:58 -0700 (PDT)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id BFA231200043;
-	Fri,  1 Nov 2024 15:55:57 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Fri, 01 Nov 2024 15:55:57 -0400
-X-ME-Sender: <xms:TTIlZ8lfSP9MlcD2F7JoHfhkb8lAwhsYzyVpORFeF-VXmzm1x6_U3g>
-    <xme:TTIlZ716IZvAJDG00a88vUMfuZO1KixMaUrh67zEOouvT9PPu68CGYHnE1GlnrCXi
-    D2Cr6mmD9yQvuSetw>
-X-ME-Received: <xmr:TTIlZ6poIyW29YzSYk9Mg8DgHN0SekWjuh3OyvaprNHa2cG_2lZTCKVkxNGH7Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledguddvlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepgffhffevhffhvdfgjefgkedvlefgkeegveeu
-    heelhfeivdegffejgfetuefgheeinecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
-    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
-    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
-    rghmvgdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopehprghulhhmtghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsihhgvggrshih
-    sehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtg
-    iipdhrtghpthhtohepvghlvhgvrhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhi
-    nhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgr
-    shgrnhdquggvvhesghhoohhglhgvghhrohhuphhsrdgtohhmpdhrtghpthhtoheplhhinh
-    hugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhu
-    ghdrohhrghdrrghu
-X-ME-Proxy: <xmx:TTIlZ4m4t81ppoFkr1cmCCtO-kX1jMBtvxUNA1VDPYPtlSe12f4gAg>
-    <xmx:TTIlZ61slM-2eqUFtvsYX2nqG5HU9amq-00y81a_5kHjGQBtpZ5hkw>
-    <xmx:TTIlZ_tPOHLdbUAWQtUfJZs685NaXBieXXS2vAS5OjSLUN7ldnRMEQ>
-    <xmx:TTIlZ2Uh1xEeem0Q2YRoJ5ZmWADRB6auQXBl0vGA0ksX75uUNSRoXw>
-    <xmx:TTIlZ93CZkjDu_5S3-pgsYBzXqo-5C55WchluOkC13vjJYGwm494Wx2L>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Nov 2024 15:55:57 -0400 (EDT)
-From: Boqun Feng <boqun.feng@gmail.com>
-To: paulmck@kernel.org
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Marco Elver <elver@google.com>,
-	linux-next@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	linux-mm@kvack.org,
-	sfr@canb.auug.org.au,
-	longman@redhat.com,
-	cl@linux.com,
-	penberg@kernel.org,
-	rientjes@google.com,
-	iamjoonsoo.kim@lge.com,
-	akpm@linux-foundation.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>
-Subject: [PATCH] scftorture: Use workqueue to free scf_check
-Date: Fri,  1 Nov 2024 12:54:38 -0700
-Message-ID: <20241101195438.1658633-1-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <ZyUxBr5Umbc9odcH@boqun-archlinux>
-References: <ZyUxBr5Umbc9odcH@boqun-archlinux>
+        Fri, 01 Nov 2024 12:55:20 -0700 (PDT)
+Date: Fri, 1 Nov 2024 22:55:17 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dave Penkler <dpenkler@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	arnd@arndb.de
+Subject: Re: [PATCH 8/9] Rationalize lookup tables
+Message-ID: <42c115a0-9611-42ca-b326-e28b13988c5a@stanley.mountain>
+References: <20241101174705.12682-1-dpenkler@gmail.com>
+ <20241101174705.12682-9-dpenkler@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101174705.12682-9-dpenkler@gmail.com>
 
-Paul reported an invalid wait context issue in scftorture catched by
-lockdep, and the cause of the issue is because scf_handler() may call
-kfree() to free the struct scf_check:
+On Fri, Nov 01, 2024 at 06:47:04PM +0100, Dave Penkler wrote:
+>    Remove bcm2837 table as the only difference is GPIO14 and GPIO15
+>    which are not used with the current pin maps.
+>    Remove GPIO14 and GPIO15 lines from the two other tables.
+>    Re-order the tables so that the bcm27xx table is used first
+>    as these devices are more popular and numerous than the older ones.
 
-	static void scf_handler(void *scfc_in)
-        {
-        [...]
-                } else {
-                        kfree(scfcp);
-                }
-        }
+This feels like the patch needs to be split into three separate patches.
 
-(call chain anlysis from Marco Elver)
-
-This is problematic because smp_call_function() uses non-threaded
-interrupt and kfree() may acquire a local_lock which is a sleepable lock
-on RT.
-
-The general rule is: do not alloc or free memory in non-threaded
-interrupt conntexts.
-
-A quick fix is to use workqueue to defer the kfree(). However, this is
-OK only because scftorture is test code. In general the users of
-interrupts should avoid giving interrupt handlers the ownership of
-objects, that is, users should handle the lifetime of objects outside
-and interrupt handlers should only hold references to objects.
-
-Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-Link: https://lore.kernel.org/lkml/41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop/
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
----
- kernel/scftorture.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/scftorture.c b/kernel/scftorture.c
-index 44e83a646264..ab6dcc7c0116 100644
---- a/kernel/scftorture.c
-+++ b/kernel/scftorture.c
-@@ -127,6 +127,7 @@ static unsigned long scf_sel_totweight;
- 
- // Communicate between caller and handler.
- struct scf_check {
-+	struct work_struct work;
- 	bool scfc_in;
- 	bool scfc_out;
- 	int scfc_cpu; // -1 for not _single().
-@@ -252,6 +253,13 @@ static struct scf_selector *scf_sel_rand(struct torture_random_state *trsp)
- 	return &scf_sel_array[0];
- }
- 
-+static void kfree_scf_check_work(struct work_struct *w)
-+{
-+	struct scf_check *scfcp = container_of(w, struct scf_check, work);
-+
-+	kfree(scfcp);
-+}
-+
- // Update statistics and occasionally burn up mass quantities of CPU time,
- // if told to do so via scftorture.longwait.  Otherwise, occasionally burn
- // a little bit.
-@@ -296,7 +304,10 @@ static void scf_handler(void *scfc_in)
- 		if (scfcp->scfc_rpc)
- 			complete(&scfcp->scfc_completion);
- 	} else {
--		kfree(scfcp);
-+		// Cannot call kfree() directly, pass it to workqueue. It's OK
-+		// only because this is test code, avoid this in real world
-+		// usage.
-+		queue_work(system_wq, &scfcp->work);
- 	}
- }
- 
-@@ -335,6 +346,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
- 			scfcp->scfc_wait = scfsp->scfs_wait;
- 			scfcp->scfc_out = false;
- 			scfcp->scfc_rpc = false;
-+			INIT_WORK(&scfcp->work, kfree_scf_check_work);
- 		}
- 	}
- 	switch (scfsp->scfs_prim) {
--- 
-2.45.2
+regards,
+dan carpenter
 
 
