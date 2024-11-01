@@ -1,93 +1,107 @@
-Return-Path: <linux-kernel+bounces-391463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7D19B877E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:04:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C1F9B8780
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98E1A1F2240A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:04:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C271F22715
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486813FF1;
-	Fri,  1 Nov 2024 00:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9352914;
+	Fri,  1 Nov 2024 00:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwIN34ml"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n27pFNrf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955AD3224;
-	Fri,  1 Nov 2024 00:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4DC10F4;
+	Fri,  1 Nov 2024 00:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730419470; cv=none; b=eIUu+NHSJ1qVuqOlCA3W0XXpUwpd/zybiHd/i1eVA6YAsPFflja7J9e8OuhcWcZu4C+ZXEwdBQzj7PzOdQIJJkaveQUccQzwjR2FrQV1UjES5n/1bYV9maIsJQwBkp8vaSstUh/AbDPc2T9qY5PAvc1lh/lKM0HZiHRUHwhaokw=
+	t=1730419618; cv=none; b=DJFGVi4bFK9VS3k2dkeT1mknK+mfuSiHoW8fPRWmypnNaN5g9wawPq6BqHtR4eYAyIqnWKeAMf1QoKVN78aeeBrEs/ek3vXRm/wRnqtQkdzhURXFkcT0CijDT6aTUF+nUgMrgw7ZVuAJ+AgrUoURqcvM9r+CrqQXB1Pfit+ulk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730419470; c=relaxed/simple;
-	bh=5EIuy6X4D4fkJiwOgPsn6cbZt+cCjkpuJdNK+pbCoWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HC3ZWI291J5p+94RT11rIBB47Gceq8cP0k+lCwIIg6Tf1jOlV07Fh3Vz2Rd4RUQm91dpfyrVjQBMiZAEcH/+ix1ggmIIp3oLKQ4ywUqDGome3wPqCGFMYB0pwj65+83a5o4BinOs/f5GSZd/9GuxNujQjTY3O2fy8ab/sTrnvbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwIN34ml; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA8AC4CEC3;
-	Fri,  1 Nov 2024 00:04:29 +0000 (UTC)
+	s=arc-20240116; t=1730419618; c=relaxed/simple;
+	bh=wpvGBmUGMH8GauYxH+rCYO2265hJO9DTbiWd6kguyvk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=di12u1ZpcQ49GxtQ8sButLMFaeCiSB/FWOdRqCdJ+dkYy8Y/HDWI6IlmEubSQhTz5FkWqISfMR5AAUJGnwCMFOAWFeoebRFBPPyJWwo8StNuhV4maCUNSvWIJwAwlL7t3yZeu/A7OZJys/Zcgv6jqE6zzt5xIk1CMrsMDVEEj2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n27pFNrf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66FA9C4CECF;
+	Fri,  1 Nov 2024 00:06:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730419470;
-	bh=5EIuy6X4D4fkJiwOgPsn6cbZt+cCjkpuJdNK+pbCoWU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dwIN34ml1q4mjRNWon0RI01TNb0vikJmaeuNbl9uB3bj4ABqYcNx3fJmxhG5zN+Xq
-	 WqmPirnAPprHdjM50pkY5HKEj667cU07SjiltpHMxaYy/kTxNxd1goTnQNd+pH0ijb
-	 WFARvv/KQvwhB+gdv3t6BQyr4spgRYk9l1XMfxZtqpsb7J1vVnAVuBATf5CDmn32Le
-	 bY8x6D92LU8iIVdNdDbY8K+u+tATl3OZCclsTKEaZ7yQq+tuotybytQ3NZh5sM4kN/
-	 4qPprUclXSzv1M/63sv/zYv6LKDFXHj6R6OEzMqb6iqZqauiSOqGklnZ2gkWRFRq4S
-	 AhwHI8SUzf+hA==
-Date: Thu, 31 Oct 2024 17:04:28 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Akinobu Mita <akinobu.mita@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andrew Morton
- <akpm@linux-foundation.org>, kernel-team@meta.com, Thomas Huth
- <thuth@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Borislav
- Petkov (AMD)" <bp@alien8.de>, Steven Rostedt <rostedt@goodmis.org>,
- Xiongwei Song <xiongwei.song@windriver.com>, Mina Almasry
- <almasrymina@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, Alexander
- Lobakin <aleksander.lobakin@intel.com>, Oleksij Rempel
- <o.rempel@pengutronix.de>, "open list:DOCUMENTATION"
- <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next v4] net: Implement fault injection forcing skb
- reallocation
-Message-ID: <20241031170428.27c1f26a@kernel.org>
-In-Reply-To: <20241031-hallowed-bizarre-curassow-ea16cc@leitao>
-References: <20241023113819.3395078-1-leitao@debian.org>
-	<20241030173152.0349b466@kernel.org>
-	<20241031-hallowed-bizarre-curassow-ea16cc@leitao>
+	s=k20201202; t=1730419617;
+	bh=wpvGBmUGMH8GauYxH+rCYO2265hJO9DTbiWd6kguyvk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=n27pFNrfxM/xBmxXbEo8IzsjQ7hk1pNwvBcOdFRCRUuVo2DL2Ri3TDmJA96sk4S72
+	 x+lw/qbNmWTcjKGPduFz50om2Uf+2GIf94f3wpcpk5zFRBHPmp3kzMaTRq4ks5VvH+
+	 CP9Bdrl15WqJaZe4WVrkkVLBp+/d0fius5ZKz0aq5xdeLRuAL2Q1rfC30yzSdI5UuD
+	 ekDK0wEUcfYwJDgd8Z3ZDy6xuZqYAg6Wy+CE6jyQKdPmeE1Ksl0vUwD9koKNh4tO5B
+	 yJ6t1gb+HU+kkNVHTOHHrcwdY7JPlUF/46sex1MP6qtrsqSJOc/obbakkoLVHrGgDc
+	 zOWasF8NEvJQw==
+From: SeongJae Park <sj@kernel.org>
+To: damon@lists.linux.dev
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: DAMON Beer/Coffee/Tea chat reminder for the week of 2024-11-04
+Date: Thu, 31 Oct 2024 17:06:41 -0700
+Message-Id: <20241101000641.52019-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 31 Oct 2024 02:41:18 -0700 Breno Leitao wrote:
-> > Should we mention here that KASAN or some such is needed to catch 
-> > the bugs? Chances are the resulting UAF will not crash and go unnoticed
-> > without KASAN.  
-> 
-> What about adding something like this in the fail_skb_realloc section in
-> the fault-injection.rst file:
+Hello,
 
-SG
 
-> > the buffer needs to be null terminated, like:
-> > 
-> > skb_realloc.devname[IFNAMSIZ - 1] = '\0';
-> > 
-> > no?  
-> 
-> Yes, but isn't it what the next line do, with strim()?
+This is yet another reminder of upcoming DAMON Beer/Coffee/Tea chats
+(https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing)
+for the week of 2024-11-04.  Please note that US Daylight saving time will be
+finished on 2024-11-03.  The shared calendar mentioned at te bottom of this
+mail could be helpful to set your reminder regardless of the change.
 
-I could be wrong, but looks like first thing strim does is call strlen()
+Dedicated-topic discussions
+---------------------------
+
+Next three time slots that I reserved in advance for possible future dedicated
+topic discussions are as below.
+
+- 2024-11-04 (Mon) 18:00 PT (not yet reserved)
+- 2024-11-20 (Wed) 09:30 PT (not yet reserved)
+- 2024-12-02 (Mon) 18:00 PT (not yet reserved)
+
+Please reach out to me (sj@kernel.org or whatever) to reserve the
+not-yet-reserved time slots for your topics.  The reservation is made in a
+First-Come First-Served way, and I will send a Google Meet link to
+reservation-confirmed attendees.
+
+Please note that other time slots are also available based on the demands.
+
+Any-topic discussions
+---------------------
+
+Next three time slots for any topic (no reservation is required) are scheduled
+as below:
+
+- 2024-11-06 (Wed) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2024-11-18 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2024-12-04 (Wed) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
+
+Shared Calendar
+---------------
+
+You can get the schedule via this shared Google Calendar:
+https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
+
+You can also get the past and upcoming schedules via
+https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
+
+
+Thanks,
+SJ
 
