@@ -1,148 +1,102 @@
-Return-Path: <linux-kernel+bounces-391967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF249B8DFD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:37:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 711249B8E02
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:38:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 486B1B22C14
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:37:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27462283A4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5A815AAB6;
-	Fri,  1 Nov 2024 09:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E909E15A86A;
+	Fri,  1 Nov 2024 09:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uf3qRIjn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="WYKhduho";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="IpSDNkeo"
+Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C78C1B95B;
-	Fri,  1 Nov 2024 09:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E017115AAB6;
+	Fri,  1 Nov 2024 09:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730453844; cv=none; b=aB43nx3UWPdpK9oU1b7QRjvY3S6pYh4H+qrtljbNJw+IL1GOa/0xuiNJclzHEKJGK4t5tyravQnsU9KMt3U9UO0TJ8ym5CPV+LUumICmrgcdHFry79gV++crGSXwN2gjlno5d9P7P+hlYgdsWkdlwzUw062ZLW1ugJxCcKbgw5E=
+	t=1730453917; cv=none; b=Euz30xZ1AQNV2JLw5Ms4HMEKiAHiFEZIcoIwnbSBOPyK29CwrIyxeVlGuDk2PhGPkk8e8ngJJm4AW/nxrwvZd7NChJVH+QcpayokvKIawjT+AFCbQbTCNSBhtKAQcrwyqI7Th41xGpx5yJCT+44+QgJnH8P/haPQnPyC/8NmtGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730453844; c=relaxed/simple;
-	bh=eAP8wfaTPD3Rk5TZK/GAd2plZiwGTqBnBqW26aAhRSg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=maYhdEE/UNrIDJzGk6eYoRC5zdSSBFdMP9qa684rSU4FuzWQTR2zAsA5HvbtP6CIW+XjaByY6dKpDsp3vpE7+NP4S+Og91YmGmNp7jo9+tTu2EyL1g+diSMQ0uIKpazuIABoVMDKcAU1H5hGaTd/lzpKQj3Kl3FRLr07ia0X3NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uf3qRIjn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED49AC4CECD;
-	Fri,  1 Nov 2024 09:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730453843;
-	bh=eAP8wfaTPD3Rk5TZK/GAd2plZiwGTqBnBqW26aAhRSg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=uf3qRIjn3V1T8PXWduVCQE6hlQS1iRMagcqQGVbwyG93uUa2Qz1tTCJyJsE53dPhm
-	 OxZbE+hbi7H7sQcYewIqWYLBqxQXU/ClegGR0jqE5tsneJBZ549xr5k0AYVyqZoOLg
-	 8+yRUmKhhLpKtGCjIeretJxyYeEbM10s+yV/ayLJE2oZZXAK2PjwO4LUR5vWKdSveh
-	 GXD3Cu4oTEfL+gaCXdeEZFbSBIM0Uqyjnvoo2Bdy3R6hhQJVmRiWWUZzMbixf5fLKp
-	 wj35hKbn7eSoj7Rk5Rfx/Kqkju0xa+0vOTBVfZB9GY2diYC9JiDlmDJur0Ps+qTw3D
-	 zAVnXwgz6pQBQ==
+	s=arc-20240116; t=1730453917; c=relaxed/simple;
+	bh=5UH5ZYO1q7g1Z8k4/mlpRUHrS+F7qL+lbeCgu/TgPZk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jQmVBLzs3eE3AKBvoCK2gAVOBFa7Pnbd+yxFaMveGJnb9VH5koZ1T9Om7IKAYMSgXYicSuZE096U2uyMiTKke0ahE6+QTKT0BERLUekP2QujbKUmCf0ZkhBnT9DTyQYY/kLiNmT1TkkVcPQnDbTyM+tOxnaKyTOwy3eJsF0VYDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=WYKhduho; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=IpSDNkeo; arc=none smtp.client-ip=89.207.88.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com 6DD92E0002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
+	t=1730453901; bh=5UH5ZYO1q7g1Z8k4/mlpRUHrS+F7qL+lbeCgu/TgPZk=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
+	b=WYKhduho3ag/SWd4IKqjFmP5Xen8eB8RGepp0pcrL7H+utEIRZQ74ly2LF5KeJ+sW
+	 880P9mLuBRoSI9ztW4JmJMYf+fR4lB/BgdAVpHJig2Ta3ud2lZSnnuBWRhS/+0YCWg
+	 c83/hlB2gpUtYuUdZe/LWQKs52G2nlavKo1YlCV/zBMpH7gzXvc7yqqAei++YW3CzM
+	 pQLVSLXS5Bf6r+ZiB7PleOmPsYunG008VBbcVVd0+DBd+tcF7uR/qUnzQMbaGmRKfN
+	 f8QkePiesdZt3MSRWJanzrrDMAkrzxS3jJ69yMfNQpGN0zXnJR6TdysjyqVdSAqT+u
+	 M6ho4E5NdmBHA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
+	t=1730453901; bh=5UH5ZYO1q7g1Z8k4/mlpRUHrS+F7qL+lbeCgu/TgPZk=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
+	b=IpSDNkeoeYK2uEMJgfoSj8SIdfXHu5fi4gZP/j5YGdb1JNVTWj6zD2WmnJJu2Py6x
+	 tRnENn7aFHf2is4k5DYD501J74gtXaM1ktiTKYsEYbKUw4DYWrl9dMfJpxA7nrOfIx
+	 86+GnH8Eg5Y+EatVExHqYdUYC9H2vlog02D6LiThtZKgVZNvU4b26nAv1tYSyULSJ+
+	 RLWShKWl7ZKkwes1hZEgkM/nri9rJ40EXCKljvbVhNsA5dTWwMwMAgjjHE8LMJIXpu
+	 YRWBJ691MipvR80kgcpyeaO7le7VhRM/A6ytjBkH67qQk0OSrzrRD9ELLHWSTSeYdH
+	 pB52pYI+dHhkA==
+From: Anastasia Kovaleva <a.kovaleva@yadro.com>
+To: "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>
+CC: "njavali@marvell.com" <njavali@marvell.com>,
+	"GR-QLogic-Storage-Upstream@marvell.com"
+	<GR-QLogic-Storage-Upstream@marvell.com>,
+	"James.Bottomley@HansenPartnership.com"
+	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>, "bvanassche@acm.org" <bvanassche@acm.org>,
+	"quinn.tran@cavium.com" <quinn.tran@cavium.com>,
+	"himanshu.madhani@oracle.com" <himanshu.madhani@oracle.com>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux@yadro.com" <linux@yadro.com>, "hare@suse.de" <hare@suse.de>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v3 0/3] Fix bugs in qla2xxx driver
+Thread-Topic: [PATCH v3 0/3] Fix bugs in qla2xxx driver
+Thread-Index: AQHbGzIvZMV/oTAyUkWQTinjaU2zibKiTS4A
+Date: Fri, 1 Nov 2024 09:38:20 +0000
+Message-ID: <93FA6AD1-9959-4E4C-A447-9CF694A6A024@yadro.com>
+References: <20241010163236.27969-1-a.kovaleva@yadro.com>
+In-Reply-To: <20241010163236.27969-1-a.kovaleva@yadro.com>
+Accept-Language: ru-RU, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <90F19368F5ECAC4B88EE53A71DD7A831@yadro.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 01 Nov 2024 11:37:19 +0200
-Message-Id: <D5AQOVB2XBF4.3A3CO7K6O8JKF@kernel.org>
-Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
- <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
- <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
- <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
- <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
- <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
- <trenchboot-devel@googlegroups.com>
-Subject: Re: [PATCH v11 15/20] tpm: Ensure tpm is in known state at startup
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Ross Philipson" <ross.philipson@oracle.com>,
- <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
- <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>
-X-Mailer: aerc 0.18.2
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
- <20240913200517.3085794-16-ross.philipson@oracle.com>
-In-Reply-To: <20240913200517.3085794-16-ross.philipson@oracle.com>
+MIME-Version: 1.0
 
-On Fri Sep 13, 2024 at 11:05 PM EEST, Ross Philipson wrote:
-> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
->
-> When tis_tis_core initializes, it assumes all localities are closed. Ther=
-e
-> are cases when this may not be the case. This commit addresses this by
-
-The second sentence is just a claim. Please explain.
-
-> ensuring all localities are closed before initializing begins.
->
-> Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
-> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-> ---
->  drivers/char/tpm/tpm_tis_core.c | 11 ++++++++++-
->  include/linux/tpm.h             |  6 ++++++
->  2 files changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_c=
-ore.c
-> index a6967f312837..22ebf679ea69 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -1107,7 +1107,7 @@ int tpm_tis_core_init(struct device *dev, struct tp=
-m_tis_data *priv, int irq,
->  	u32 intmask;
->  	u32 clkrun_val;
->  	u8 rid;
-> -	int rc, probe;
-> +	int rc, probe, i;
->  	struct tpm_chip *chip;
-> =20
->  	chip =3D tpmm_chip_alloc(dev, &tpm_tis);
-> @@ -1169,6 +1169,15 @@ int tpm_tis_core_init(struct device *dev, struct t=
-pm_tis_data *priv, int irq,
->  		goto out_err;
->  	}
-> =20
-> +	/*
-> +	 * There are environments, for example, those that comply with the TCG =
-D-RTM
-> +	 * specification that requires the TPM to be left in Locality 2.
-> +	 */
-
-I don't understand this comment. What is "environment"?
-
-> +	for (i =3D 0; i <=3D TPM_MAX_LOCALITY; i++) {
-> +		if (check_locality(chip, i))
-> +			tpm_tis_relinquish_locality(chip, i);
-> +	}
-> +
->  	/* Take control of the TPM's interrupt hardware and shut it off */
->  	rc =3D tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask);
->  	if (rc < 0)
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index e93ee8d936a9..98f2c7c1c52e 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -147,6 +147,12 @@ struct tpm_chip_seqops {
->   */
->  #define TPM2_MAX_CONTEXT_SIZE 4096
-> =20
-> +/*
-> + * The maximum locality (0 - 4) for a TPM, as defined in section 3.2 of =
-the
-> + * Client Platform Profile Specification.
-> + */
-> +#define TPM_MAX_LOCALITY		4
-> +
->  struct tpm_chip {
->  	struct device dev;
->  	struct device devs;
-
-BR, Jarkko
+T24gVGh1LCAxMCBPY3QgMjAyNCAxOTozMjozMyArMDMwMCwgQW5hc3Rhc2lhIEtvdmFsZXZhIHdy
+b3RlOg0KPiBUaGlzIHNlcmllcyBvZiBwYXRjaGVzIGNvbnRhaW5zIDMgc2VwYXJhdGUgY2hhbmdl
+cyB0aGF0IGZpeCBzb21lIGJ1Z3MgaW4NCj4gdGhlIHFsYTJ4eHggZHJpdmVyLg0KPiAtLS0NCj4g
+djM6DQo+IC0gRml4IGJ1aWxkIGlzc3VlIGluIHBhdGNoIDENCj4gdjI6DQo+IC0gQ2hhbmdlIGEg
+c3BpbmxvY2sgd3JhcCB0byBhIFdSSVRFX09OQ0UoKSBpbiBwYXRjaCAxDQo+IC0gQWRkIFJldmll
+d2VkLWJ5IHRhZ3Mgb24gcGF0Y2hlcyAyIGFuZCAzDQo+IC0tLQ0KPiBBbmFzdGFzaWEgS292YWxl
+dmEgKDMpOg0KPiAgICBzY3NpOiBxbGEyeHh4OiBEcm9wIHN0YXJ2YXRpb24gY291bnRlciBvbiBz
+dWNjZXNzDQo+ICAgIHNjc2k6IHFsYTJ4eHg6IE1ha2UgdGFyZ2V0IHNlbmQgY29ycmVjdCBMT0dP
+DQo+ICAgIHNjc2k6IHFsYTJ4eHg6IFJlbW92ZSBpbmNvcnJlY3QgdHJhcA0KPg0KPiAgIGRyaXZl
+cnMvc2NzaS9xbGEyeHh4L3FsYV9pb2NiLmMgICB8IDExICsrKysrKysrKysrDQo+ICAgZHJpdmVy
+cy9zY3NpL3FsYTJ4eHgvcWxhX2lzci5jICAgIHwgIDQgKysrKw0KPiAgIGRyaXZlcnMvc2NzaS9x
+bGEyeHh4L3FsYV90YXJnZXQuYyB8IDE2ICsrKysrKystLS0tLS0tLS0NCj4gICAzIGZpbGVzIGNo
+YW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pDQo+DQoNCkdlbnRsZSBwaW5n
+DQoNCg==
 
