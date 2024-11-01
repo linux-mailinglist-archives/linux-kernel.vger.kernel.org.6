@@ -1,172 +1,134 @@
-Return-Path: <linux-kernel+bounces-392324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460BC9B9293
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:52:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9BF9B9298
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D141C2135A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:52:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9416DB20D66
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8E31A08DB;
-	Fri,  1 Nov 2024 13:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD011A0BE1;
+	Fri,  1 Nov 2024 13:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b="J/1qwaVP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WD4Sy3tW"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSYVP66z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C14158DD0;
-	Fri,  1 Nov 2024 13:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D02158DD0;
+	Fri,  1 Nov 2024 13:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730469169; cv=none; b=BbjZzMWCAO813W0yIcjW5A87l/yW6LxXL/LF7n/51lN8Ov2JZ0FaAdiNIvm2+LYdaaZ8nQ9BKYO6aTILjQod0fUW0WLgocMSfIthg1zwgwrKs9HyxFRoqR8WaF6bYYIbSC2Y86r6uKOxh6rekBdnAWeWHisdPXPqLr/MEzZsVOU=
+	t=1730469209; cv=none; b=DH21keG/+xovYze6C9gDmnYrtakmWAlovV0nnXOxQzJttHDAZuMSgUiIgP7xRlwPuC0/JiW3jfqu1kkwGt+CaB/Lrl7UKXW7n4Cs4oInBQGOtrv1KmA6MtHhijxvSf23tu3h5JgjKiPo5Ukn5tR2f5XQljNlWjXze9gKify+Yns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730469169; c=relaxed/simple;
-	bh=naw23hsmsf6GRAwCdWA77TY/jiszs6qesqCKe7WNEDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJy+K8/KmdsOkGWmwW+8neIqskL7MBau/XoZhXCZys/BZbNOUkt2GagISvFkMaetzeAAPQ8mNCR43KAkVW0B9HbWXcDfH40MXaBe7capRuhLhy0rbsxfORqxfsNb195ZGQu3yYdhWpeae96wtEdDx6x16FRwJg30irEND23cOLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is; spf=pass smtp.mailfrom=alyssa.is; dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b=J/1qwaVP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WD4Sy3tW; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alyssa.is
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id 14A8911400F7;
-	Fri,  1 Nov 2024 09:52:42 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Fri, 01 Nov 2024 09:52:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1730469161; x=1730555561; bh=OM4a9KmiKy
-	BYymvUt/3Ss+GNBym2SjdQJLLohwjJ+bo=; b=J/1qwaVPoY/CP3CWiMVOQ4zh/9
-	xHWItsbIbKTvINImd8nAjP3dhcsjUI6rp7jMHlGeGAx4Tt1fhvJzDe+briiACM3M
-	6TXY7L+OXAF8r3g95jS+WbqmVZZqhkLJ8yXTo6Rb9DziyfGwYD85Pdaxft1RBExI
-	POTVb2ynsA1g5ZmJDD/SruWn+vD3bM+CDa6oTxrE/4BMLyB8Fn+vTVNGCEjsJpbK
-	bvoji4QcxieO93sTZUxztnkFtyOCbMVB4fJztrNEzngY4r5MDKaIJpK9Lnzyi0fQ
-	laJOVC3+KH3AEnomEEGZ0omdxkpaUQemCUBpjymFcIwfxLyUNL4xVl3cUi9Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730469161; x=1730555561; bh=OM4a9KmiKyBYymvUt/3Ss+GNBym2SjdQJLL
-	ohwjJ+bo=; b=WD4Sy3tW1u5Wc7jnHI/lUlfuItn6PTNPneLNtw1EOIN3RxBK5CY
-	Wa014ELgAy6rxuA4Rwg19SC/7MxA8dSioyxi5hUaZubLhRXM6qoN/kNYhMvAqgCu
-	zBMQIybjF3b4LljZCZfAtSB5Ky/AsysXY7/bGLSDw9j++I1hNm0YqvgBUKrBPrju
-	kV79UUKlPTRXAY/FaveOXu5oupjOiyAcmj7fJWb8O8cHO3Iys7WykwnUKSklv0CF
-	/wp2R323CL+8UC68V9o+UO8R4t4TSl44c4FJcYL4v1MJov8KFUD4W69ZOzwzKtTo
-	hQg1KstbG7fDpyVUQSI64tAojkzFA4NsZuQ==
-X-ME-Sender: <xms:Kd0kZ4r1TXm3h3fsDELlcIm9VJFWC0QSikt4C6vi1iFp2Bd92N2WIw>
-    <xme:Kd0kZ-qj-f8oumc10ND6ehhQpVaoaOnGiBpnz-nwVSfBT5aHyMc8APHsFn3mvuFv1
-    4aTa4FRve1G0vem0g>
-X-ME-Received: <xmr:Kd0kZ9Nep0UT1SJRFM0TxApcCetfjETsVkuzpD0Gx24Ow7hW_JBnARK5g-W7VXW_4OMldH1S6IS6kQ5w1FQ-qyGwEEo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtvden
-    ucfhrhhomheptehlhihsshgrucftohhsshcuoehhihesrghlhihsshgrrdhisheqnecugg
-    ftrfgrthhtvghrnheptdejueetkeehfeeuleeugfevieffkefhteefiedvfeehuefhjeeg
-    vdeiffeihfeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhephhhisegrlhihshhsrgdrihhspdhnsggprhgtphhtthhopeejpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehtrghmihhrugesghhmrghilhdrtghomhdprhgtphhtth
-    hopegurghvihgughhofiesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprhhmohgrrhes
-    ghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhunhhithdquggvvhesghhoohhglhgvgh
-    hrohhuphhsrdgtohhmpdhrtghpthhtohepsghrvghnuggrnhdrhhhighhgihhnsheslhhi
-    nhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Kd0kZ_5d3LDLh1DekeT9AwgpKb3K3LEt2rH5_8b5VVkBofwhBOCNMw>
-    <xmx:Kd0kZ379sXAOM_dQgTdOjQQt3gsPVQCaFLaD-VWVZrz4d9ROio3T_A>
-    <xmx:Kd0kZ_i-llo3F56A_mcGNlURkBAej3eiHke5eGkODjH_XqytylXGwQ>
-    <xmx:Kd0kZx6x_5A2QAd5kXrXGN1txawY5U3pxRMBRlpwkfhPrU9CTRo5Pw>
-    <xmx:Kd0kZ6b8G-q6L1C_peNDYwxmMN0fIFxoi8yj9Ab28GI69MWSlBPgbTp->
-Feedback-ID: i12284293:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Nov 2024 09:52:41 -0400 (EDT)
-Received: by sf.qyliss.net (Postfix, from userid 1000)
-	id 5AE2289888E9; Fri, 01 Nov 2024 14:52:39 +0100 (CET)
-Date: Fri, 1 Nov 2024 14:52:39 +0100
-From: Alyssa Ross <hi@alyssa.is>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] kunit: enable hardware acceleration when available
-Message-ID: <jhmonkl53vrgz3pjhbbopvrx6infgbezlsvba3luccrpwtnmtb@ptobfcxrr4ud>
-References: <20241025-kunit-qemu-accel-macos-v1-0-2f30c26192d4@gmail.com>
- <20241025-kunit-qemu-accel-macos-v1-2-2f30c26192d4@gmail.com>
+	s=arc-20240116; t=1730469209; c=relaxed/simple;
+	bh=tnrpLf27rZDuipPAxNn32FJvY/7H9k3bJCHNnUs4aMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EN9Z/CqgvoieAXUMmG9gbNXjrZDSQCBBXpaxE6H9V/JfR/rHQjTUMVa3QK6ek99TKdp+q2gaYpw0MhjMBeFsS9ftALpRHfMH+67x1AjN5rJmuX+2if5dd8qLPAh0jDAnYUGrYrnDDZrKX8nGKNxl/rE1USkLuchDFXroA7t0baM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSYVP66z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93B00C4CECD;
+	Fri,  1 Nov 2024 13:53:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730469207;
+	bh=tnrpLf27rZDuipPAxNn32FJvY/7H9k3bJCHNnUs4aMQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jSYVP66zxCGwjRt/Qheg0PfwspwmPkYzA0YpOTXkoo7TAZqsu83tlmAjASdn1dA5y
+	 IsGpezhLsC0CT5yLW+4nb0zFwAnj0IuiIWUuhbbWnO6FEDaHuf4tIas/Ja1CLssnfv
+	 gEDqB4jmiN0+98xAMfB0Ts4fKZiPO9vz1W0epU87dF/auEAUrFcLLlJ7EU1scrhk4P
+	 lgoTdebdVMF5hVp5x2NvC4/79U9RphWMlwr7qmWzkh3ebQWD8TTgrkuOeZ8raA7E0b
+	 AQS+X6IuYnYxK4tjykdV8LLc6MAi+s9PGaTEYIRP5VSysNeTNXfGsZ96FQ7TTO8Uwf
+	 K7rSI0eDQdHMQ==
+Message-ID: <c6588be0-08ba-44b6-bcef-4f50e8bcb083@kernel.org>
+Date: Fri, 1 Nov 2024 14:53:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="z4djprvhauy3hwsd"
-Content-Disposition: inline
-In-Reply-To: <20241025-kunit-qemu-accel-macos-v1-2-2f30c26192d4@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 07/10] ASoC: codecs: add wsa881x-i2c amplifier codec
+ driver
+To: Mark Brown <broonie@kernel.org>
+Cc: Alexey Klimov <alexey.klimov@linaro.org>, konradybcio@kernel.org,
+ konrad.dybcio@oss.qualcomm.com, andersson@kernel.org,
+ srinivas.kandagatla@linaro.org, tiwai@suse.com, lgirdwood@gmail.com,
+ perex@perex.cz, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dmitry.baryshkov@linaro.org, linux-sound@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241101053154.497550-1-alexey.klimov@linaro.org>
+ <20241101053154.497550-8-alexey.klimov@linaro.org>
+ <jqsa7lsypf62uqjydqbyspvtnt7iuwxclfwuyatgee2zgduwvd@4wwagvovam4k>
+ <1b5a24ac-e4be-4cb9-8546-6e2c39b6f9ed@sirena.org.uk>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <1b5a24ac-e4be-4cb9-8546-6e2c39b6f9ed@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 01/11/2024 14:12, Mark Brown wrote:
+> On Fri, Nov 01, 2024 at 09:12:56AM +0100, Krzysztof Kozlowski wrote:
+>> On Fri, Nov 01, 2024 at 05:31:51AM +0000, Alexey Klimov wrote:
+>>> Add support to analog mode of WSA8810/WSA8815 Class-D Smart Speaker
+>>> family of amplifiers. Such amplifiers is primarily interfaced with
+>>> SoundWire but they also support analog mode which is configurable
+>>> by setting one of the pins to high/low. In such case the WSA881X
+>>> amplifier is configurable only using i2c.
+> 
+> Please delete unneeded context from mails when replying.  Doing this
+> makes it much easier to find your reply in the message, helping ensure
+> it won't be missed by people scrolling through the irrelevant quoted
+> material.
 
---z4djprvhauy3hwsd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 2/2] kunit: enable hardware acceleration when available
-MIME-Version: 1.0
+Just like usual, I deleted quite a lot, trimming unnecessary context.
 
-On Fri, Oct 25, 2024 at 05:03:54PM -0400, Tamir Duberstein wrote:
-> @@ -124,6 +125,29 @@ class LinuxSourceTreeOperationsQemu(LinuxSourceTreeOperations):
->  				'-no-reboot',
->  				'-nographic',
->  				'-serial', self._serial] + self._extra_qemu_params
-> +		accelerators = {
-> +			line.strip()
-> +			for line in subprocess.check_output([qemu_binary, "-accel", "help"], text=True).splitlines()
-> +			if line and line.islower()
-> +		}
-> +		if 'kvm' in accelerators:
-> +			try:
-> +				with open('/dev/kvm', 'rb+'):
-> +					qemu_command.extend(['-accel', 'kvm'])
-> +			except OSError as e:
-> +				print(e)
-> +		elif 'hvf' in accelerators:
-> +			try:
-> +				for line in subprocess.check_output(['sysctl', 'kern.hv_support'], text=True).splitlines():
-> +					if not line:
-> +						continue
-> +					key, value = line.split(':')
-> +					if key == 'kern.hv_support' and bool(value):
-> +						qemu_command.extend(['-accel', 'hvf'])
-> +						break
-> +			except subprocess.CalledProcessError as e:
-> +				print(e)
-> +
+Best regards,
+Krzysztof
 
-QEMU supports falling back if one accelerator is not available, if you
-specify multiple like -accel kvm:tcg.  Couldn't you rely on that rather
-than re-implementing the availability checks here?
-
---z4djprvhauy3hwsd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEH9wgcxqlHM/ARR3h+dvtSFmyccAFAmck3R8ACgkQ+dvtSFmy
-ccDsHBAAonD29UCU+Ic/GmKgoVj3InBFyhVA3AlAE7jqh2rO8nzwjmHY7t9mGXIV
-36XHtgv5f7HK5b3pixZbULMDnWRhreT7TMYSQ/7T5GGXvlDYyXQsuwjyNhehdJQF
-PlGpIhyM33pjI6TEEKs579h771hrSGwtrDfzKToMEDKYYbM36fPP/YWOnCMSeJeA
-2FhyoW8pd5FgQDbDVgsHZQFDk9m9g3R3sTKwl8zyUDdG8PCh5go4k7WTLRlCGzAd
-uJxdEG7IjLs3xiaTILDpFBWPcnPDlvqrd9IYCQvNQbVpFAJo7zfoZyeodIiczBAf
-ydNjaC4vB43TebBepQQDw2dWOKssbzEnxlDIHDuATVcWGRqOX35p71bjPrK+2ge+
-RJ6x4qabr+BYUw62YiFz/JxYMqtf2xfovYhJFyvUfVQBlg9eN159V+7fSd6MS4tW
-gBO54874n8Lt2GftkqvFIqZu9hbDby6j1Kece+sVjmKvHntf9g+JQYbh6ZqpdzLr
-ms4zvSwasn4i+dSBemTeORjcsSqOSplA882gTV/uwEpbh3+Ss+7TJnWcIB2G6ppD
-4whU8T+yURQCP2Kll+/JUp2w5MGXFb4XiLEomwivL4fBoQwGwXIe8rZ/1sfg9YZk
-rBPdywmjODmm/axrAekXdU15EcCYLonX7gzhy7OxEM55V17o+7Q=
-=N5Ic
------END PGP SIGNATURE-----
-
---z4djprvhauy3hwsd--
 
