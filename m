@@ -1,197 +1,123 @@
-Return-Path: <linux-kernel+bounces-392478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BED59B94A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:45:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AAF9B94AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:45:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB051C20159
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:45:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896F028208F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03981C761F;
-	Fri,  1 Nov 2024 15:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F57A1C9B7A;
+	Fri,  1 Nov 2024 15:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVs0UfvS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rticl3aU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C8B2CAB;
-	Fri,  1 Nov 2024 15:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FEB24B34;
+	Fri,  1 Nov 2024 15:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475905; cv=none; b=OAn+tYqslvWiI2deUUkmXgRM8IlHLBuiUCshsNB19SwQiQhCGf0H9RnyNesBOSq3QQ0wm1d7J18ouE53PvHtIips8M/KAQUjE0GKuqXbPatOrvO8Cf9bzyR6YSccboIaONReNpZBddoLt0be4ybejp5ctwp/hNdVyXet3hxhwAQ=
+	t=1730475915; cv=none; b=Tpx3jMtWNZZrqlUwr3XyY8gQccPDmIi0mS50fH5NzaEEXXbSybQEdh33mUNBHbY2/ZY1Ed+0XJdWm6t1yjC/Zg2YhehxbjtHlPwlS+6Rla9pNOvvqHPiYJEhwDUY5qsoAEE+3N21CsA5OEerK9JcwsQTJMlV/dAbm0gZhQmQ7mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475905; c=relaxed/simple;
-	bh=t1pJkvv5ArO95EBUpDZbdsLDepiY0M1etPEVdzcYgMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZuTpVe0gHuiW9bAKxx+aqJGGjFtbOLyUJEG+mp02mb/svoPhoPjuMaJv10/0f+XIhchqbu4f5bFHrOfDKOqBhPn76mA07A5cFuONakg/ZSrrmpFIFQHwf2sXZ3MDgvhgIjGMtUC+xc55Fe5nCOSmL0t7qhzp8moogFIOk57o4mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVs0UfvS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA75C4CECD;
-	Fri,  1 Nov 2024 15:44:54 +0000 (UTC)
+	s=arc-20240116; t=1730475915; c=relaxed/simple;
+	bh=3vulanNLtTjI+wiz2l4SFzXx/jfbPRTrULNZ2xQqFK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tP/JCfEq9jhc09W+6Pmk9uhsu5nggBHorTZe4/DJ0jbJexNySTzPojTTnSWiBiT5hMdhv2MDhKN/EQjpbDfRHWUSkTgPuu2uQpj4Jrzf3rZxJRK1JnFhQXWkHGwXghNUy2B+c4QMPOHG3ScoSFjFd6U0OXMylkOLV146Z5tYsqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rticl3aU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DEECC4CECD;
+	Fri,  1 Nov 2024 15:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730475904;
-	bh=t1pJkvv5ArO95EBUpDZbdsLDepiY0M1etPEVdzcYgMM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SVs0UfvSjddoObL1YP4TcTpN6+JMKTAlMOtHqoNu/N5W++S8ZoFPFicaoCsigBZWY
-	 tzsC/HX9IzAFBDK7yJ0jUUgykge+QshPJphUaXyfeUUF+JuEpS/o/COytqjHhw6bfk
-	 Puqx0C4Dn8D1jyyOrR697msu4an59gWO287LimKF2sfZWd8QG8Johu2Ruz2CxZ96Mr
-	 96oWxW1+Q0h3FQJIq3Euy8DNRcTjyRLRpuV3HXN/mRruETfNZ8TVV/wuABpuviyGn+
-	 5gMXDGfb2eU9CbNsoC5MxD6+lYem2NKv3+WKaecfvPJz1LBb1ZEvgNrUSeIb6LtuMV
-	 +upizTDVi/RKg==
-Date: Fri, 1 Nov 2024 15:44:51 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Julien Stephan <jstephan@baylibre.com>, Mudit Sharma
- <muditsharma.info@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Anshul
- Dalal <anshulusr@gmail.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Ramona Gradinariu
- <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Anand Ashok Dumbre
- <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
- Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
- <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
- Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
- Linus Walleij <linus.walleij@linaro.org>, Benson Leung
- <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v2 06/15] iio: light: adux1020: write_event_config: use
- local variable for interrupt value
-Message-ID: <20241101154451.227defba@jic23-huawei>
-In-Reply-To: <ef4fe230-b7fb-4f7e-9173-ae85d305e9ae@baylibre.com>
-References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
-	<20241031-iio-fix-write-event-config-signature-v2-6-2bcacbb517a2@baylibre.com>
-	<ef4fe230-b7fb-4f7e-9173-ae85d305e9ae@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1730475915;
+	bh=3vulanNLtTjI+wiz2l4SFzXx/jfbPRTrULNZ2xQqFK4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rticl3aUoGUST6XxG+48LKqrFksdNO96HR0AOdHnQeeU6J9IyeI/Eq9UrxCXd/PN7
+	 Jtiv5onuq9eCgsel7erep/lKdXVt4Ob0W3vtGhkP8Fge+EdM34+tOs0xf3xt87fGEi
+	 GqCzg3JX861IkOsBTt/MEZORG67m0VVCxj03hex/xgzrlHcgl/HffSrp26XvPoPWci
+	 rgUshTB2Ow3DrQwjwFn6lcanDaiFZgP8PwniYMRG3ptTGAqyyqA+b1ZcZ1o6FaOSGA
+	 JkBABXwdqLTp27HGTKHLKdZyCKLH0Exj6h4WfuFgVZ21ZT1H5xIPG1EX1SE5e+8z2i
+	 fSFJBKRqBU61Q==
+Date: Fri, 1 Nov 2024 10:45:12 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Rex Nie <rex.nie@jaguarmicro.com>
+Cc: bryan.odonoghue@linaro.org, heikki.krogerus@linux.intel.com, 
+	gregkh@linuxfoundation.org, linux@roeck-us.net, caleb.connolly@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	angus.chen@jaguarmicro.com, stable@vger.kernel.org
+Subject: Re: [PATCH v4] usb: typec: qcom-pmic: init value of
+ hdr_len/txbuf_len earlier
+Message-ID: <cmudnqum4qaec6hjoxj7wxfkdui65nkij4q2fziihf7tsmg7ry@qa3lkf4g7npw>
+References: <20241030022753.2045-1-rex.nie@jaguarmicro.com>
+ <20241030133632.2116-1-rex.nie@jaguarmicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030133632.2116-1-rex.nie@jaguarmicro.com>
 
-On Thu, 31 Oct 2024 11:27:45 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Wed, Oct 30, 2024 at 09:36:32PM GMT, Rex Nie wrote:
+> If the read of USB_PDPHY_RX_ACKNOWLEDGE_REG failed, then hdr_len and
+> txbuf_len are uninitialized. This commit stops to print uninitialized
+> value and misleading/false data.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: a4422ff22142 (" usb: typec: qcom: Add Qualcomm PMIC Type-C driver")
+> Signed-off-by: Rex Nie <rex.nie@jaguarmicro.com>
 
-> On 10/31/24 10:27 AM, Julien Stephan wrote:
-> > state parameter is currently an int, but it is actually a boolean.
-> > iio_ev_state_store is actually using kstrtobool to check user input,
-> > then gives the converted boolean value to write_event_config.  The code
-> > in adux1020_write_event_config re-uses state parameter to store an
-> > integer value. To prepare for updating the write_event_config signature
-> > to use a boolean for state, introduce a new local int variable.
-> >=20
-> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > ---
-> >  drivers/iio/light/adux1020.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/light/adux1020.c b/drivers/iio/light/adux1020.c
-> > index 2e0170be077aef9aa194fab51afbb33aec02e513..db57d84da616b91add8c5d1=
-aba08a73ce18c367e 100644
-> > --- a/drivers/iio/light/adux1020.c
-> > +++ b/drivers/iio/light/adux1020.c
-> > @@ -505,7 +505,7 @@ static int adux1020_write_event_config(struct iio_d=
-ev *indio_dev,
-> >  				       enum iio_event_direction dir, int state)
-> >  {
-> >  	struct adux1020_data *data =3D iio_priv(indio_dev);
-> > -	int ret, mask;
-> > +	int ret, mask, val;
-> > =20
-> >  	mutex_lock(&data->lock);
-> > =20
-> > @@ -526,12 +526,12 @@ static int adux1020_write_event_config(struct iio=
-_dev *indio_dev,
-> >  			mask =3D ADUX1020_PROX_OFF1_INT;
-> > =20
-> >  		if (state)
-> > -			state =3D 0;
-> > +			val =3D 0;
-> >  		else
-> > -			state =3D mask;
-> > +			val =3D mask;
-> > =20
-> >  		ret =3D regmap_update_bits(data->regmap, ADUX1020_REG_INT_MASK,
-> > -					 mask, state);
-> > +					 mask, val);
-> >  		if (ret < 0)
-> >  			goto fail;
-> > =20
-> >  =20
->=20
-> Instead of introducing `val`, I would rewrite this as:
->=20
-> 	if (state)
-> 		ret =3D regmap_clear_bits(...);
-> 	else
-> 		ret =3D regmap_set_bits(...);
->=20
-Good idea.  Rather than go around again and potentially stall the end of th=
-is series.
-I made that change whilst applying.  Shout if either of you doesn't
-like the result. Diff doesn't do a perfect job on readability (it does
-if I add a line break but then the code looks worse in the end!)
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-=46rom 06a1ca816450d1b5524f6010581a83ab9935d51b Mon Sep 17 00:00:00 2001
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Thu, 31 Oct 2024 16:27:01 +0100
-Subject: [PATCH] iio: light: adux1020: write_event_config: use local variab=
-le
- for interrupt value
+Nice job. Next time, please don't use In-Reply-To between patch
+versions.
 
-state parameter is currently an int, but it is actually a boolean.
-iio_ev_state_store is actually using kstrtobool to check user input,
-then gives the converted boolean value to write_event_config.  The code
-in adux1020_write_event_config re-uses state parameter to store an
-integer value. To prepare for updating the write_event_config signature
-to use a boolean for state, introduce a new local int variable.
+Regards,
+Bjorn
 
-Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-Link: https://patch.msgid.link/20241031-iio-fix-write-event-config-signatur=
-e-v2-6-2bcacbb517a2@baylibre.com
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- drivers/iio/light/adux1020.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/iio/light/adux1020.c b/drivers/iio/light/adux1020.c
-index 2e0170be077a..06d5bc1d246c 100644
---- a/drivers/iio/light/adux1020.c
-+++ b/drivers/iio/light/adux1020.c
-@@ -526,12 +526,11 @@ static int adux1020_write_event_config(struct iio_dev=
- *indio_dev,
- 			mask =3D ADUX1020_PROX_OFF1_INT;
-=20
- 		if (state)
--			state =3D 0;
-+			ret =3D regmap_clear_bits(data->regmap,
-+						ADUX1020_REG_INT_MASK, mask);
- 		else
--			state =3D mask;
--
--		ret =3D regmap_update_bits(data->regmap, ADUX1020_REG_INT_MASK,
--					 mask, state);
-+			ret =3D regmap_set_bits(data->regmap,
-+					      ADUX1020_REG_INT_MASK, mask);
- 		if (ret < 0)
- 			goto fail;
-=20
---=20
-2.46.2
-
-
-
->=20
->=20
-
+> ---
+> V2 -> V3:
+> - add changelog, add Fixes tag, add Cc stable ml. Thanks heikki
+> - Link to v2: https://lore.kernel.org/all/20241030022753.2045-1-rex.nie@jaguarmicro.com/
+> V1 -> V2:
+> - keep printout when data didn't transmit, thanks Bjorn, bod, greg k-h
+> - Links: https://lore.kernel.org/all/b177e736-e640-47ed-9f1e-ee65971dfc9c@linaro.org/
+> ---
+>  drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c
+> index 5b7f52b74a40..726423684bae 100644
+> --- a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c
+> +++ b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c
+> @@ -227,6 +227,10 @@ qcom_pmic_typec_pdphy_pd_transmit_payload(struct pmic_typec_pdphy *pmic_typec_pd
+>  
+>  	spin_lock_irqsave(&pmic_typec_pdphy->lock, flags);
+>  
+> +	hdr_len = sizeof(msg->header);
+> +	txbuf_len = pd_header_cnt_le(msg->header) * 4;
+> +	txsize_len = hdr_len + txbuf_len - 1;
+> +
+>  	ret = regmap_read(pmic_typec_pdphy->regmap,
+>  			  pmic_typec_pdphy->base + USB_PDPHY_RX_ACKNOWLEDGE_REG,
+>  			  &val);
+> @@ -244,10 +248,6 @@ qcom_pmic_typec_pdphy_pd_transmit_payload(struct pmic_typec_pdphy *pmic_typec_pd
+>  	if (ret)
+>  		goto done;
+>  
+> -	hdr_len = sizeof(msg->header);
+> -	txbuf_len = pd_header_cnt_le(msg->header) * 4;
+> -	txsize_len = hdr_len + txbuf_len - 1;
+> -
+>  	/* Write message header sizeof(u16) to USB_PDPHY_TX_BUFFER_HDR_REG */
+>  	ret = regmap_bulk_write(pmic_typec_pdphy->regmap,
+>  				pmic_typec_pdphy->base + USB_PDPHY_TX_BUFFER_HDR_REG,
+> -- 
+> 2.17.1
+> 
+> 
 
