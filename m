@@ -1,114 +1,166 @@
-Return-Path: <linux-kernel+bounces-392010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5F99B8E8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:04:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CE29B8E92
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:05:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 116BA1F22512
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:04:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D8E1B22185
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B1E15990C;
-	Fri,  1 Nov 2024 10:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C636165EFA;
+	Fri,  1 Nov 2024 10:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="jJpaPK5J"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOMg2SZJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A7514F9F8
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A371715886C;
+	Fri,  1 Nov 2024 10:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730455485; cv=none; b=RZvGjAMQOZ/NBWpenVIROH06zSf+/fbg3l8fmXBkwtggUm7i0R/wzCWGueYM95cPm56tn2i5hz1pInlFXocbH4roR0YU/09pWc8o6tDovqKAO2OaAW1w/bLU8iZ/wMpBsZ7dWLxIIDb6rrjiTLhMekA4gOZc79pJwCX9b3zjK0Q=
+	t=1730455485; cv=none; b=VRuqlAALfUb3j1UHKNAe8Em95jevnq2tWgTuRODcZbtuTY1+c0vjiFoMZh+Gj3m2pAl7Y6p/mjRT1TeKdLccC/2Nvp2WFpamaBmNjVOOwbQ1nLneCPTKul7XOCrIQWoiGY2lKXOO8gtn2w/DGh8KCXkhkykOryLqJxG8NDIZHH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730455485; c=relaxed/simple;
-	bh=+dtoM/M7ODfRLxAyRHALc+6Mx8PUbS19MuVnin/OCkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HYxy0lJGkPj4o+swYldKSFtINL93eA51f0YSyYwa0debW8ipoXvIw4vq60D2GcLW6Zwh3lS4TKslnlcOI9pJXSqGXYNYBdV9EM9pLb1/I6YmcWJUgkyHE+s2OMHo1M/VVkR1loqf6FcszliBzrTUOYOW7kF4TRcLYR99ykjAmFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=jJpaPK5J; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KcBKVA3P3us9yCSAuJYdZ3kBwWfL0seMrbogM04O8Bg=; b=jJpaPK5JS4X/e2ThD4y/L/sODr
-	vTK/YJ6Q1MnGr1zzKEfLRdtfmxXSYeEzJOFj0andOXWnxjJ7SoUvFA7RwOCIxOpYvB5Pkj6ZZyd0Z
-	vOg95kwf0Rf0vzAJekmpddSQbSpmd5idyLqhWMFURUzXmkYcMJ/TiZwLfymk0yauU8HAll0MsOC+k
-	HbvsyQ6NJt/+vQp+Kr+exmMwZIFopGky8Bd8itb8oMrIF4T01Um56TrRzH5QAZ3HiXfcZE+FwLh4I
-	nvH2ePTExByl3kMY9z7VOPzvnfCjQpHwyM0Ve4jOlVs8S435Lpfk1aH/l548xy2RD1K7cDSVcFEKJ
-	qZBaWsIQ==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t6oVy-000O9S-3P; Fri, 01 Nov 2024 11:04:22 +0100
-Message-ID: <3a433ba3-2c61-45ac-9204-62216677c23d@igalia.com>
-Date: Fri, 1 Nov 2024 07:04:13 -0300
+	bh=ItQI00nS8tC10ZV8l2jyRO6gDNvw+VRojMmh7RUgXnI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=O9rVOXWydgqhEhMBP66sNELAZQfe1EmkughdleQ/FTMs4SfuzRYAlpj3UFLYTCGZFNiDcLJ5hEBpdcmrNiog+CFHUhe57Ve0jVV3qG5K0x7PnbUqjz7YqL+9HnuBvk2fwfdeNFZ0JaCJoTQvpXTLWLCExFCc6J82NBBOcRefAOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOMg2SZJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E6CDC4CED1;
+	Fri,  1 Nov 2024 10:04:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730455485;
+	bh=ItQI00nS8tC10ZV8l2jyRO6gDNvw+VRojMmh7RUgXnI=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=fOMg2SZJB9VVqSZQ39KHQMlL2y8sJbkrgDhxf7Z8ZlTa/VEnVFFfhaaRPrtwP8/yh
+	 POWHBMEO8mFRPnTFzrzEAvAEa7YdtvJVaxBM49PI/q8ZQvP3Ym8s220U+NYbs9OsdS
+	 +vuoKWKCLZUorjlnKqZZaysZwEpw/R1tDdJNbIBLC8DK5NT7+pO7AolUM2yicAOYd9
+	 mhheEhTsmnGjUz9/4jZki/KtKYunba+0jUH54/79vbCL8pbHJ+pCAz4ugGM27D+IUj
+	 rJ4UiSjiCb3r6TDI0JUpPfI/DvTRhUCObpYTAuV8sPwA4fh1Mkuv/pfrUbjsKVyDRn
+	 VRPZSZJ8prfFA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/vkms: Drop unnecessary call to drm_crtc_cleanup()
-To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>,
- louis.chauvet@bootlin.com
-Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241031183835.3633-1-jose.exposito89@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20241031183835.3633-1-jose.exposito89@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Nov 2024 12:04:41 +0200
+Message-Id: <D5AR9TGFZL14.AZMGA2G8GTDA@kernel.org>
+Subject: Re: [PATCH v11 16/20] tpm: Make locality requests return consistent
+ values
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Ross Philipson" <ross.philipson@oracle.com>,
+ <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
+ <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>
+Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+X-Mailer: aerc 0.18.2
+References: <20240913200517.3085794-1-ross.philipson@oracle.com>
+ <20240913200517.3085794-17-ross.philipson@oracle.com>
+In-Reply-To: <20240913200517.3085794-17-ross.philipson@oracle.com>
 
-Hi José,
-
-On 31/10/24 15:38, José Expósito wrote:
-> CRTC creation uses drmm_crtc_init_with_planes(), which automatically
-> handles cleanup. However, an unnecessary call to drm_crtc_cleanup() is
-> still present in the vkms_output_init() error path.
-> 
-> Fixes: 99cc528ebe92 ("drm/vkms: Use drmm_crtc_init_with_planes()")
-> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
-
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
-
-Best Regards,
-- Maíra
-
+On Fri Sep 13, 2024 at 11:05 PM EEST, Ross Philipson wrote:
+> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+>
+> The function tpm_tis_request_locality() is expected to return the localit=
+y
+> value that was requested, or a negative error code upon failure. If it is=
+ called
+> while locality_count of struct tis_data is non-zero, no actual locality r=
+equest
+> will be sent. Because the ret variable is initially set to 0, the
+> locality_count will still get increased, and the function will return 0. =
+For a
+> caller, this would indicate that locality 0 was successfully requested an=
+d not
+> the state changes just mentioned.
+>
+> Additionally, the function __tpm_tis_request_locality() provides inconsis=
+tent
+> error codes. It will provide either a failed IO write or a -1 should it h=
+ave
+> timed out waiting for locality request to succeed.
+>
+> This commit changes __tpm_tis_request_locality() to return valid negative=
+ error
+> codes to reflect the reason it fails. It then adjusts the return value ch=
+eck in
+> tpm_tis_request_locality() to check for a non-negative return value befor=
+e
+> incrementing locality_cout. In addition, the initial value of the ret val=
+ue is
+> set to a negative error to ensure the check does not pass if
+> __tpm_tis_request_locality() is not called.
+>
+> Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
 > ---
->   drivers/gpu/drm/vkms/vkms_output.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> index 0a5a185aa0b0..25a99fde126c 100644
-> --- a/drivers/gpu/drm/vkms/vkms_output.c
-> +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> @@ -92,7 +92,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
->   				 DRM_MODE_CONNECTOR_VIRTUAL);
->   	if (ret) {
->   		DRM_ERROR("Failed to init connector\n");
-> -		goto err_connector;
-> +		return ret;
->   	}
->   
->   	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
-> @@ -131,8 +131,5 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
->   err_encoder:
->   	drm_connector_cleanup(connector);
->   
-> -err_connector:
-> -	drm_crtc_cleanup(crtc);
-> -
->   	return ret;
->   }
+>  drivers/char/tpm/tpm_tis_core.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_c=
+ore.c
+> index 22ebf679ea69..20a8b341be0d 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -210,7 +210,7 @@ static int __tpm_tis_request_locality(struct tpm_chip=
+ *chip, int l)
+>  again:
+>  		timeout =3D stop - jiffies;
+>  		if ((long)timeout <=3D 0)
+> -			return -1;
+> +			return -EBUSY;
+>  		rc =3D wait_event_interruptible_timeout(priv->int_queue,
+>  						      (check_locality
+>  						       (chip, l)),
+> @@ -229,18 +229,21 @@ static int __tpm_tis_request_locality(struct tpm_ch=
+ip *chip, int l)
+>  			tpm_msleep(TPM_TIMEOUT);
+>  		} while (time_before(jiffies, stop));
+>  	}
+> -	return -1;
+> +	return -EBUSY;
+>  }
+> =20
+>  static int tpm_tis_request_locality(struct tpm_chip *chip, int l)
+>  {
+>  	struct tpm_tis_data *priv =3D dev_get_drvdata(&chip->dev);
+> -	int ret =3D 0;
+> +	int ret =3D -EBUSY;
+> +
+> +	if (l < 0 || l > TPM_MAX_LOCALITY)
+> +		return -EINVAL;
+> =20
+>  	mutex_lock(&priv->locality_count_mutex);
+>  	if (priv->locality_count =3D=3D 0)
+>  		ret =3D __tpm_tis_request_locality(chip, l);
+> -	if (!ret)
+> +	if (ret >=3D 0)
+>  		priv->locality_count++;
+>  	mutex_unlock(&priv->locality_count_mutex);
+>  	return ret;
 
+First of all, -1 is as consistent value as a value can be.
+
+Secondly:
+
+	if (tpm_tis_request_locality(chip, 0) !=3D 0)
+		return -EBUSY;
+
+What am I missing here?
+
+BR, Jarkko
 
