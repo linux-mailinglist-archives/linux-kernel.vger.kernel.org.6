@@ -1,58 +1,80 @@
-Return-Path: <linux-kernel+bounces-391886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628769B8CDE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:19:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8941D9B8CE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1AD6B21F30
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17CA31F22A60
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60107156661;
-	Fri,  1 Nov 2024 08:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB79115665E;
+	Fri,  1 Nov 2024 08:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="F3kdZrwR"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D082D15B0EC;
-	Fri,  1 Nov 2024 08:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XOgM7I6n"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ECF4087C;
+	Fri,  1 Nov 2024 08:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730449111; cv=none; b=eGzNocGXKahSlL6jBBj/6NTN1iW3AHm+eWyW0Tw0Que/8P0e9td7K08N7ey5eA1lOIBPOQoD5LB72mujZvVPWrFpPwheTI2IRvn74imrE4x/gfNqSdMvNp29shGCuaXFURj555EMFNtiS8y9Hzakoz40z07OHXmeu1ZJCeB+M5M=
+	t=1730449219; cv=none; b=PHGtqdqaycUH5UZQukoVP4thP35VDpaURQW2NCDkTdhljyIFxRksawaUvrbdkBPQPqSTiyWF2sxX3LCFSZQYx4YslGtEl5odZldPOyw3wnxWgAiiQIrSIlBTPvTZMCRCCxWiTHyhsx4kHi6MjfaVNj9l3EhvRi0SQM/PeBo/Asc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730449111; c=relaxed/simple;
-	bh=5RcrjjO7qeoHBIrv/8qBQTZB/q9clujvw1CFFoAQEC8=;
+	s=arc-20240116; t=1730449219; c=relaxed/simple;
+	bh=HLnoqyTmhS73S+2+YnvXMBDQn5UW8hoXcGdTMQHnBjM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b30tOSXN+BhS1ItqzZXeDNBMJTV7r3fWk33Jc5iqsjtC15wiedVQ+Hm8HdvwV+tSSE9kkyv4oqj9YTTuA9QURA+0PLtAPT0xzcoER/hsl0y7x8KXX2TFt6b8pGKikUkG8ZnpwUukKKI/VulvEZZuXfB2FwfkfhZNvnEPMQKe0b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=F3kdZrwR; arc=none smtp.client-ip=220.197.32.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=W//kf/xYk90pfIs56Ch6ErGwbP2X2r0D6G2dOa75D2A=;
-	b=F3kdZrwRbH5+cXqtnibhtwd//eQBKihnrDo6se+FoTwKJNQIs0t3AynIjszhNQ
-	Fa3oqazt6r2iuWNm+p9U63uTu80vSchr/rK9arzpD6anjLD4xARQRwU/njzpjl0G
-	GDJgQ3JRC0rvJ2GJym6Xc9U9LR3F04sldt9lxRRdE+UKs=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgBXXhO2jiRnB35nAQ--.13924S3;
-	Fri, 01 Nov 2024 16:17:59 +0800 (CST)
-Date: Fri, 1 Nov 2024 16:17:57 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] arm64: dts: imx8mm-venice-gw73xx: remove compatible
- in overlay file
-Message-ID: <ZySOtUd9jExZdFt6@dragon>
-References: <20241018182824.740133-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k9lbt3k1+2udK5diTrHNywNUmDC4scwpbz2TFvaRVg60b+cPK5dHg7iOnH0/nTp06orXfHoAtRGv/3+c2PY/EKI1xwa80110S2Yz506zvoHR7CxQue6HQjoq7MwnDH99iqIUynONWdf16AajtJHh8wUKhN0XVMshLiHht0XbaUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XOgM7I6n; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730449218; x=1761985218;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HLnoqyTmhS73S+2+YnvXMBDQn5UW8hoXcGdTMQHnBjM=;
+  b=XOgM7I6nbd63V67sYC75KYIDJ7GL6FhVljBvlfbuVF6V0H1p7OM+2bjk
+   eDV+pqdIH64VqBjQeBv0y3WzHdKLyXCdC3RLCaIOOP2iUtFkQHQH3Gtca
+   Tvfmd9KXuLzfqRbwkZ8InGtOKBmUIIjnk7+HqDLa/4NHEcVrS3aR5k9NA
+   IYqqaeKvpr4AiMHbBzcn/cHlYAmQQpA9wrzVCHGJut+r2tEd49/2XVjX3
+   haGbpY0gIAiMKf2ttJFJHM4AVtHBgqw5NT+OgNy6/xIg8Wb113ord6Ybl
+   njUW0hrcWcVOYR1IHCJxRpKi3ODyVtu2ZqqKoXqtLX6w2m0rgwHtz8kCD
+   Q==;
+X-CSE-ConnectionGUID: cLwqVywUSmewHCoo6g1nJQ==
+X-CSE-MsgGUID: LKKhpuUcR8G62uLP7n1xow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="17846337"
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="17846337"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:20:17 -0700
+X-CSE-ConnectionGUID: d4wCS3EqRMeAwQtKfdiSPw==
+X-CSE-MsgGUID: R/9oY3BgQv2Trvh7UoNJPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="83005667"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.229])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:20:11 -0700
+Date: Fri, 1 Nov 2024 10:19:55 +0200
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Binbin Wu <binbin.wu@linux.intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
+	seanjc@google.com, yan.y.zhao@intel.com, isaku.yamahata@gmail.com,
+	kai.huang@intel.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, reinette.chatre@intel.com,
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Subject: Re: [PATCH v2 16/25] KVM: TDX: Get system-wide info about TDX module
+ on initialization
+Message-ID: <ZySPK71RlFqPfkmU@tlindgre-MOBL1>
+References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
+ <20241030190039.77971-17-rick.p.edgecombe@intel.com>
+ <88ea52ea-df9f-45d6-9022-db4313c324e2@linux.intel.com>
+ <bb60b05d-5ccc-49ab-9a0c-a7f87b0c827c@intel.com>
+ <ZyNP82ApuQQeNGJ3@tlindgre-MOBL1>
+ <b47e8622-ea5d-47b2-97b5-02216bf6989a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,18 +83,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018182824.740133-1-Frank.Li@nxp.com>
-X-CM-TRANSID:Ms8vCgBXXhO2jiRnB35nAQ--.13924S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUIXTmUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxyKZWckPo77kgAAsi
+In-Reply-To: <b47e8622-ea5d-47b2-97b5-02216bf6989a@intel.com>
 
-On Fri, Oct 18, 2024 at 02:28:23PM -0400, Frank Li wrote:
-> Remove compatible string in overlay file to fix below warning:
-> 'gw,imx8mm-gw73xx-0x' is not one of ['fsl,ls1043a-rdb', 'fsl,ls1043a-qds']
+On Thu, Oct 31, 2024 at 10:27:11PM +0800, Xiaoyao Li wrote:
+> On 10/31/2024 5:37 PM, Tony Lindgren wrote:
+> > On Thu, Oct 31, 2024 at 05:23:57PM +0800, Xiaoyao Li wrote:
+> > > here it is to initialize the configurable CPUID bits that get reported to
+> > > userspace. Though TDX module doesn't allow them to be set in TD_PARAM for
+> > > KVM_TDX_INIT_VM, they get set to 0xff because KVM reuse these bits
+> > > EBX[23:16] as the interface for userspace to configure GPAW of TD guest
+> > > (implemented in setup_tdparams_eptp_controls() in patch 19). That's why they
+> > > need to be set as all-1 to allow userspace to configure.
+> > > 
+> > > And the comment above it is wrong and vague. we need to change it to
+> > > something like
+> > > 
+> > > 	/*
+> > >           * Though TDX module doesn't allow the configuration of guest
+> > >           * phys addr bits (EBX[23:16]), KVM uses it as the interface for
+> > >           * userspace to configure the GPAW. So need to report these bits
+> > >           * as configurable to userspace.
+> > >           */
+> > 
+> > That sounds good to me.
+> > 
+> > Hmm so care to check if we can also just leave out another "old module"
+> > comment in tdx_read_cpuid()?
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> That one did relate to old module, the module that without
+> TDX_CONFIG_FLAGS_MAXGPA_VIRT reported in tdx_feature0.
 
-Applied, thanks!
+OK thanks for checking.
 
+> I will sent an follow up patch to complement the handling if TDX module
+> supports TDX_CONFIG_FLAGS_MAXGPA_VIRT.
+
+OK
+
+Regards,
+
+Tony
 
