@@ -1,130 +1,149 @@
-Return-Path: <linux-kernel+bounces-392391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3F79B9389
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:44:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509119B9387
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:44:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B04461C21BEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:44:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066A31F250ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755A91AAE00;
-	Fri,  1 Nov 2024 14:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4065D1A7ADD;
+	Fri,  1 Nov 2024 14:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RaPi+jJa"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5Gg10zn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC23B1AA7B7;
-	Fri,  1 Nov 2024 14:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACA41A7271;
+	Fri,  1 Nov 2024 14:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472246; cv=none; b=CVtW6kOxuGMoJ9wsmn2faHNh4CNuJoAYlyoSXwIRYm3KE48aeqFOTu1tOyP4yrej6mTs8E7uYotjU2VfwIyJWOm6QLwTSN7m+JbZDbv4o4IspLf9J5SAa0qdllpnu85hfMrO9JqA6jvfqNGUqlsX2eB+4vyOUddJBP5w3coHWeQ=
+	t=1730472240; cv=none; b=NhSm5bdxKm+BSD3sgRS2masxfP/azslVXYSmRi2IJupz/x1ZDyyyDp2Ramz3zNWTO6xIEoEXyN96oRco+QzurRdbGWarJaB6itrLJW0SAK6lXZ+iTpe92wk1qysNmAEkN2ZXXzKoxzcZQGY/07/YnsDhW+fzPZ2uIi5qUY7bGhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472246; c=relaxed/simple;
-	bh=5jmLTb9ENaug2prc9ptsTi47NjUTFLbqUFjz5SHhbL0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iaEElMg7b/Q0nbKDzDaovTr9UzJxRT3tm70kiXNXIZDMHUd14OKtvomVnWbP+FS42rTBl97MDH7ex8+6ldmVrlF6hMM+wcMsYyMega8OJYDH21GBiWNmVpZLAhSZNx8D9Y0Mu+9S6DlvJwOznTBwdM7smg3xp0C2jL4iV9ml3GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RaPi+jJa; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A1EhsUA117875;
-	Fri, 1 Nov 2024 09:43:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730472234;
-	bh=NN3EbY+BhNgctFk5eHdO+ZGYdUHr5D4XdWKmahmrTGQ=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=RaPi+jJaTzaO35ZGP48j4vFXctjbVfgGLmybKtZ26CM+iITAF+u3BIwfA6lyrpJvK
-	 1olOJdhIHK/RjCTsnb1Yh6TPF3qryN7OtJ37SL2qMTZgpqpKBxfPq9lpiIAID9qCfW
-	 H65FeRnFo33rkdpXl9Tr21jGxvX2srunINJeXQho=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A1EhsS1012901
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 1 Nov 2024 09:43:54 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 1
- Nov 2024 09:43:53 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 1 Nov 2024 09:43:53 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A1Ehrwq005744;
-	Fri, 1 Nov 2024 09:43:53 -0500
-Date: Fri, 1 Nov 2024 09:43:53 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Kevin Hilman <khilman@baylibre.com>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, <linux-pm@vger.kernel.org>,
-        Vibhore
- Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
-        Akashdeep Kaur
-	<a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>,
-        Markus
- Schneider-Pargmann <msp@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] pmdomain: ti_sci: collect and send low-power mode
- constraints
-Message-ID: <20241101144353.zdwrykik37rrzmrt@bagful>
-References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
- <173029317079.2440963.17313738472826934777.b4-ty@ti.com>
- <CAPDyKFptHq6xkKSAmeHsEuhBoEhzvudcMf2+nG08MFPwnMi+ew@mail.gmail.com>
- <7hv7x9qsvt.fsf@baylibre.com>
+	s=arc-20240116; t=1730472240; c=relaxed/simple;
+	bh=BfZ54nZXYSx9DrFFTqsNvZ3Z94SLwnCC+hmY5NYFoEQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T6vf541ZBSUq/RtXG9Lc/3XxN4SBgm8s0Msacg2ScabViBkIcFiYLE59xie4hKjFpWrWhHPw8UJKEDub/AiBh3G20yP1Fai2kvNdqeEF7ollwFjYpLAky54EbYoKsH2jUuHRU8bA86dkVWF3+hIaQVr09/oXHz6orTZdY1J/mGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5Gg10zn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2364CC4CECD;
+	Fri,  1 Nov 2024 14:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730472240;
+	bh=BfZ54nZXYSx9DrFFTqsNvZ3Z94SLwnCC+hmY5NYFoEQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=S5Gg10znQkc4t6BRhjJm5KMFVD02TVC7qI8GcJcHtkPvK3f/D/sWnZkwMJPycfn4E
+	 mivURJeiQQWQnJ+I9xHVBqxl38sMNgaxf1Np1C4m20yhXz7cMqZ5GjzMDPHXpgSfMj
+	 X4Lgqoz4utwswUS7m/3vJMcsfOabxY2bIOmLjdkCdxrl5kjpVFMyIasqLzVIpa4Cu5
+	 yIFSHS0xsZmMcB1DROaQAsrvLcZbdSGdHLnnvLyXeH+WGkXFHU37lQqPLRysOs2h0A
+	 7J8fT1RrqvYOmT0Napogb/WtBi6nOezeu+mde8RE3T3HauLCbQGV8MgDSGeDRD9tWJ
+	 fgVw+pwbWBrug==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t6ssX-008thx-Uj;
+	Fri, 01 Nov 2024 14:43:58 +0000
+Date: Fri, 01 Nov 2024 14:43:57 +0000
+Message-ID: <86o72z10b6.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>,
+	sudeep.holla@arm.com,
+	cristian.marussi@arm.com,
+	andersson@kernel.org,
+	konrad.dybcio@linaro.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	dmitry.baryshkov@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	quic_rgottimu@quicinc.com,
+	quic_kshivnan@quicinc.com,
+	conor+dt@kernel.org,
+	quic_nkela@quicinc.com,
+	quic_psodagud@quicinc.com,
+	abel.vesa@linaro.org
+Subject: Re: [PATCH V7 0/2] qcom: x1e80100: Enable CPUFreq
+In-Reply-To: <ZyTjiiGc2ApoID9Y@hovoldconsulting.com>
+References: <20241030130840.2890904-1-quic_sibis@quicinc.com>
+	<ZyTQ9QD1tEkhQ9eu@hovoldconsulting.com>
+	<86plnf11yf.wl-maz@kernel.org>
+	<ZyTjiiGc2ApoID9Y@hovoldconsulting.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <7hv7x9qsvt.fsf@baylibre.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: johan@kernel.org, quic_sibis@quicinc.com, sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org, quic_nkela@quicinc.com, quic_psodagud@quicinc.com, abel.vesa@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 12:43-20241030, Kevin Hilman wrote:
-> Ulf Hansson <ulf.hansson@linaro.org> writes:
+On Fri, 01 Nov 2024 14:19:54 +0000,
+Johan Hovold <johan@kernel.org> wrote:
 > 
-> > On Wed, 30 Oct 2024 at 14:01, Nishanth Menon <nm@ti.com> wrote:
-> >>
-> >> Hi Kevin Hilman,
-> >>
-> >> On Fri, 06 Sep 2024 09:14:48 -0700, Kevin Hilman wrote:
-> >> > The latest (10.x) version of the firmware for the PM co-processor (aka
-> >> > device manager, or DM) adds support for a "managed" mode, where the DM
-> >> > firmware will select the specific low power state which is entered
-> >> > when Linux requests a system-wide suspend.
-> >> >
-> >> > In this mode, the DM will always attempt the deepest low-power state
-> >> > available for the SoC.
-> >> >
-> >> > [...]
-> >>
-> >> I have applied the following to branch ti-drivers-soc-next on [1].
-> >> Thank you!
-> >>
-> >> Ulf, based on your ack[2], I have assumed that you want me to pick
-> >> this series up. Let me know if that is not the case and I can drop the
-> >> series.
-> >
-> > Well, that was a while ago. The reason was because there was a
-> > dependency to another series [2], when this was posted.
-> >
-> > If that's not the case anymore, I think it's better to funnel this via
-> > my pmdomain tree. Please let me know how to proceed.
+> On Fri, Nov 01, 2024 at 02:08:24PM +0000, Marc Zyngier wrote:
 > 
-> The build-time dependency on [2] still exists, and since that was just
-> queued up by Nishanth, I think this series should (still) go along with
-> it to keep things simple.
+> > I'm seeing similar things indeed. Randomly grepping in cpufreq/policy*
+> > results in hard resets, although I don't get much on the serial
+> > console when that happens. Interestingly, I also see some errors in
+> > dmesg at boot time:
+> > 
+> > maz@semi-fraudulent:~$ dmesg| grep -i scmi
+> > [    0.966175] scmi_core: SCMI protocol bus registered
+> > [    7.929710] arm-scmi arm-scmi.2.auto: Using scmi_mailbox_transport
+> > [    7.939059] arm-scmi arm-scmi.2.auto: SCMI max-rx-timeout: 30ms
+> > [    7.945567] arm-scmi arm-scmi.2.auto: SCMI RAW Mode initialized for instance 0
+> > [    7.958348] arm-scmi arm-scmi.2.auto: SCMI RAW Mode COEX enabled !
+> > [    7.978303] arm-scmi arm-scmi.2.auto: SCMI Notifications - Core Enabled.
+> > [    7.985351] arm-scmi arm-scmi.2.auto: SCMI Protocol v2.0 'Qualcomm:' Firmware version 0x20000
+> > [    8.033774] arm-scmi arm-scmi.2.auto: Failed to add opps_by_lvl at 3801600 for NCC - ret:-16
+> > [    8.033902] arm-scmi arm-scmi.2.auto: Failed to add opps_by_lvl at 3801600 for NCC - ret:-16
+> > [    8.036528] arm-scmi arm-scmi.2.auto: Failed to add opps_by_lvl at 3801600 for NCC - ret:-16
+> > [    8.036744] arm-scmi arm-scmi.2.auto: Failed to add opps_by_lvl at 3801600 for NCC - ret:-16
+> > [    8.171232] scmi-perf-domain scmi_dev.4: Initialized 3 performance domains
+> > 
+> > All these "Failed" are a bit worrying. Happy to put any theory to the
+> > test.
+> 
+> Yes, those warnings indeed look troubling. Fortunately they appear to be
+> mostly benign and only indicate that the firmware is reporting duplicate
+> OPPs, which the kernel is now ignoring without any other side effects
+> than the warnings.
 
-Ulf, are you OK with this? If not, I will drop this series from my tree
-(we will have to skip this cycle) and do the regular merge via your tree
-once the dependency hits master on rc1.
+Right. Not something that would explain the hard reset behaviour then.
+
+> 
+> The side-effects and these remaining warnings are addressed by this
+> series:
+> 
+> 	https://lore.kernel.org/all/20241030125512.2884761-1-quic_sibis@quicinc.com/
+> 
+> but I think we should try to make the warnings a bit more informative
+> (and less scary) by printing something along the lines of:
+> 
+> 	arm-scmi arm-scmi.0.auto: [Firmware Bug]: Ignoring duplicate OPP 3417600 for NCC
+> 
+> instead.
+
+Indeed. Seeing [Firmware Bug] has a comforting feeling of
+familiarity... :)
+
+I wonder whether the same sort of reset happen on more "commercial"
+systems (such as some of the laptops). You expect that people look at
+the cpufreq stuff closely, and don't see things exploding like we are.
+
+	M.
 
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Without deviation from the norm, progress is not possible.
 
