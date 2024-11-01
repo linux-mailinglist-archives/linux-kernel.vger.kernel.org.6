@@ -1,96 +1,119 @@
-Return-Path: <linux-kernel+bounces-391490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E156B9B87CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:46:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160D69B87CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:48:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9669F28428A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:46:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479371C21546
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502BA17C77;
-	Fri,  1 Nov 2024 00:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4027517C77;
+	Fri,  1 Nov 2024 00:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="2BQupkX/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V2qeaTsn"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3BB8825
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306F61B813;
+	Fri,  1 Nov 2024 00:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730421959; cv=none; b=ZgJroHu9xbVIx2SNt+6ASY3o91iaCi+Af1IkzDQz1OvSJYfDz/rA04SoJbvLlEbzR/pKBkS/qd0i6gIAkMMAs+oRjgZ/qhNdbAuUxq3Hbs5mZjpOVkPfzRh2UpBfktE5hht48JDL1kqYqLLleNzVbyqwHD/lxpwZz9W1z0wD3kg=
+	t=1730422100; cv=none; b=COa1WGu5r96/ze3aIIeyZ9CltmBIFXrrl0nRWOQk/3zai67po8+o2ZodiVO83LJkmFLGtT9pgZY2a43/F4biLUqB0wVscHE4/o0IKciHmpAoKTZXh4wdXCPF7/ZmsL26cUtkNldDlpKwzcSNKBZvQMzDCWSqrSB6EHDvmB5+IWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730421959; c=relaxed/simple;
-	bh=Yl0Nq/X2C+orEWo5hcJOW21CSwUj1o3v/S2ZVXjvMew=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Gcwgpa6e7s1aRD0u9btODR06FZ/Uc2093BMxMNYWtbFQx9ZXV0pZVlH1QfVmVEbNxaX82Z+8UzCXbnLGlJiYNjAvf1lqjqNvKSzeb+QpFHhq97GQBw+N8WqEzSSd6N3SDIfZV5yeh57GPQVbj+2RkvdTYDyXRXSFHRV7tFQKX/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=2BQupkX/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95EA3C4CEC3;
-	Fri,  1 Nov 2024 00:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730421959;
-	bh=Yl0Nq/X2C+orEWo5hcJOW21CSwUj1o3v/S2ZVXjvMew=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=2BQupkX/pYNAp73p4KB9XxE/1ZiGGuZx5jx5Lgftm78Y1wsf8m6JRUOI7aG+xK0JY
-	 Q+sBukFekSbNwi1kId03qRE94o97FmiuXkFMczMVJluENlvu0vznILaI+ofEdu1s7f
-	 NOps3W1+og/Wn7nD8aH2rgVx7GMUAuiAkt9kx2NQ=
-Date: Thu, 31 Oct 2024 17:45:57 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: kent.overstreet@linux.dev, dan.carpenter@linaro.org, rppt@kernel.org,
- mcgrof@kernel.org, petr.pavlu@suse.com, samitolvanen@google.com,
- da.gomez@samsung.com, yuzhao@google.com, souravpanda@google.com,
- pasha.tatashin@soleen.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] alloc_tag: fix empty codetag module section
- handling
-Message-Id: <20241031174557.18b8f408a6b810b3fe7468c6@linux-foundation.org>
-In-Reply-To: <CAJuCfpGiFDPArB-3_oTvuMSy3=MVQWFW2K8f-k+M9G2EA0L+Mw@mail.gmail.com>
-References: <20241101000017.3856204-1-surenb@google.com>
-	<CAJuCfpGiFDPArB-3_oTvuMSy3=MVQWFW2K8f-k+M9G2EA0L+Mw@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730422100; c=relaxed/simple;
+	bh=8r2GJ2lt9PC4IzAjLV2nvkRGPSkQOCr/0+3MQuIHq3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vBszwLWSkSc5Pnc/E60e0PUiAINxSAkUcwulCCgBo1K4QWkBItN6qDL4dWleC6buokCx7dFj1YRKx0CdOqvqvY4cxWJWE38TLnnY8azlt8/1YbgKbWtjmbOuh7iv61xQj6J6XX8h0sIt0RgSABrQm++HARdKw4ilfbhLq0ygFj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V2qeaTsn; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-720d14c8dbfso35417b3a.0;
+        Thu, 31 Oct 2024 17:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730422094; x=1731026894; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xO62p9JjUPdIXEaZ/OrFcLPy6DM8AFQJ00802xDY3n0=;
+        b=V2qeaTsnw/HXim9S8AKfaMOCeYmR8NzC4l81CxokvlBZEGwhjbgAzt+ciNljoGE0nn
+         3uFg/ngNG+fN6KAVRWHnOf2GUV1KUALWeb2Y6S/LxneGThe9zpFLgmzLmR57Q7muzLlV
+         C4ZiZTImR/AVHN2NXePXLYpuitZObTGte13TTjGPYf8MokiM0hKCnUyc3W/RBdBzuxFK
+         u9tKtc+UEFZpNy/ru1pKkAts88CM3qyaCD2gMALkzwOa2gIW0ct4OHoJeam5cr3HyXs1
+         oHkJAl7YYKVeZrzskX4UswJRW72K5mfmphaTFQSRYUldFPw6EHLUytGMz9wwZwIurKVS
+         6F4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730422094; x=1731026894;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xO62p9JjUPdIXEaZ/OrFcLPy6DM8AFQJ00802xDY3n0=;
+        b=S1lc9+d4VeUdAIUjb9kV3KAA7PEpuFzurf6OcjcFtu5k0Avjr0VUQ0pw1Kq9B3/swP
+         cnIk9pUJaXr+O44160/n3772/YHX10Gd0X1LgwKLXuDe65iw+/dSzw9hN4oOrNmmdfqI
+         vCxnnjkyst0jqRpeWtX+Ehfi5tV9FPGcQn4mDYCwlILBuXikHRoTxdfBMabGjJtcGc9I
+         ysiJ7SoNpa/ZAVZA71wa89WTr3FvQq+8Sfv+E/UhAGrplax1v3GWYmdYKIb3FmuWEWQE
+         vf7UASNaJmXqk3RhYhGiWaU+pEK7wsVhEm3vloJk/ndGrTtwhyxUuf79MNgHyiAv34wS
+         nqog==
+X-Forwarded-Encrypted: i=1; AJvYcCVwZhVrgKfQqeltAPkszgJVSIIfn8KNUK6hYYaty183KxlZsDQMwE1hq5pb9oebw+4wMgLgyg8VrvHK@vger.kernel.org, AJvYcCWRVJ5nchdGUb+jY9yI7wipLUXAu3D/BW7q5uAbyvdJw2reY/9T25xoZsiyOc5YgDFIqyhIsV1IqU05OHEC@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWym18HywwKN5NsRFGAA59wXW2fH8zZQktGabwUas8tUWufUrF
+	1ukWeUtMuagsR4NDLbf3RjE63N+nYqBzlYMhiP237mHJBb8QbmW1vX04MA==
+X-Google-Smtp-Source: AGHT+IGbxJvcEwZ1vWn7X6t2Qwqk230AEbG5xxzxMm4gt7z2CKiSk9D5bRbgayh4yKbnUL5OWlZXYw==
+X-Received: by 2002:a05:6a00:2e2a:b0:71e:51ae:d765 with SMTP id d2e1a72fcca58-720b9de6610mr6359928b3a.27.1730422094225;
+        Thu, 31 Oct 2024 17:48:14 -0700 (PDT)
+Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2ecbfdsm1784005b3a.174.2024.10.31.17.48.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 17:48:13 -0700 (PDT)
+Date: Fri, 1 Nov 2024 08:48:09 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] gpio: cdev: don't report GPIOs requested as interrupts
+ as used
+Message-ID: <20241101004809.GA10513@rigel>
+References: <20241031200842.22712-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031200842.22712-1-brgl@bgdev.pl>
 
-On Thu, 31 Oct 2024 17:13:58 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+On Thu, Oct 31, 2024 at 09:08:41PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> GPIOs used as shared irqs can still be requested by user-space (or
+> kernel drivers for that matter) yet we report them as used over the
+> chardev ABI. Drop the test for FLAG_USED_AS_IRQ from
+> gpio_desc_to_lineinfo().
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> On Thu, Oct 31, 2024 at 5:00 PM Suren Baghdasaryan <surenb@google.com> wrote:
-> >
-> > When a module does not have any allocations, it's allocation tag section
-> > is empty and codetag_alloc_module_section() returns NULL. However this
-> > condition should never happen because codetag_needs_module_section() will
-> > detect an empty section and avoid calling codetag_alloc_module_section().
-> > Change codetag_alloc_module_section() to never return NULL, which should
-> > prevent static checker warnings. Add a WARN_ON() and a proper error
-> > reporting in case codetag_alloc_module_section() returns NULL, to prevent
-> > future codetag type implementations from returning NULL from their
-> > cttype->desc.alloc_section_mem() operation.
-> >
-> > Fixes: 61c9e58f3a10 ("alloc_tag: load module tags into separate contiguous memory")
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes: https://lore.kernel.org/all/50f12fa1-17c1-4940-a6bf-beaf61f6b17a@stanley.mountain/
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> 
-> Andrew, I was going to respin v5 of my patchset and include all these
-> small fixes in it but it's a bit tricky because I would have to revert
-> another unrelated patch [1] from mm-unstable which refactors relevant
-> code. So far the fixes are rather small, so I think you should not
-> have much trouble folding them into the original patchset when the
-> time comes, but if that becomes a problem I can prepare a new version.
-> 
+Reviewed-by: Kent Gibson <warthog618@gmail.com>
 
-No probs, thanks, I figured it out.  The descriptions of
-where-it-fits-and-why are helpful.
-
-Of course we could just pile everything onto mm-unstable HEAD and live
-with a messier commit history, but I think things are manageable at
-present.
+> ---
+>  drivers/gpio/gpiolib-cdev.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> index 0ec162b0ea04..629e9372fd57 100644
+> --- a/drivers/gpio/gpiolib-cdev.c
+> +++ b/drivers/gpio/gpiolib-cdev.c
+> @@ -2275,7 +2275,6 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
+>  	 */
+>  	if (test_bit(FLAG_REQUESTED, &dflags) ||
+>  	    test_bit(FLAG_IS_HOGGED, &dflags) ||
+> -	    test_bit(FLAG_USED_AS_IRQ, &dflags) ||
+>  	    test_bit(FLAG_EXPORT, &dflags) ||
+>  	    test_bit(FLAG_SYSFS, &dflags) ||
+>  	    !gpiochip_line_is_valid(guard.gc, info->offset)) {
+> --
+> 2.45.2
+>
 
