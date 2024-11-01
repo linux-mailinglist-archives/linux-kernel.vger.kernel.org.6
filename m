@@ -1,161 +1,247 @@
-Return-Path: <linux-kernel+bounces-391939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499689B8D9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:20:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02D59B8DEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:33:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00D041F21821
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:20:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE5EEB2443F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE8219B3F6;
-	Fri,  1 Nov 2024 09:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D6915B54A;
+	Fri,  1 Nov 2024 09:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5qz6zlA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="W2HGURR4"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD9F19AD48;
-	Fri,  1 Nov 2024 09:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966E9156C6F
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 09:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730452695; cv=none; b=GOcKe2WoO6cMIQgWbTgU83+4PlmKo8zq1v2Y8t9bLngQiBkmfLQHEdWDQzd5GA2CQiQx7hHK5SLt/Dji6ySXCJ7fo4WtlQyHRvHHrlj+F6SYfWG99fxWEfgrD3Z+tcfXC4pCMskKFGufIJMpUYmiaTsHNnsw+alFrZKfp96eGlA=
+	t=1730453562; cv=none; b=qGgJWZp/nRvNUjdRFQe2J1KgPNVlMTxjVQgZfQv1z+d0WKGDqe5qFCbxHTmWWWr7b6ZFS6xT4ZlVxwpDXQ3Qw1l9vbmeN2yC3YDYplGdxyHt+Kh2g/11W/kzjj52eB5vw89eUt5mV+7ibGNxvL3BTESH1Na5ZtD4Tj5vaZJ7ECo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730452695; c=relaxed/simple;
-	bh=VwuvobxN/JIIGvwQbzSNttNtS7UwYf45TGMjGF3SOJ0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=u7fDZ/qqlv9gdCpnwl63h5SmJB09dH1YhTb2rt7RozXwME75WsQ9lJovFf4JHKeNj7CyKSAM/LVAbElVWzA7iGd4Iulayn6tupV7VB1vCc4d9b4x015EfH5Xy7ieZkJ6j+SgH1uOCW2JYu4pHYT+4DMR6hmb2gmJ2p/Oa9v6rjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5qz6zlA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E3E0C4CECD;
-	Fri,  1 Nov 2024 09:18:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730452694;
-	bh=VwuvobxN/JIIGvwQbzSNttNtS7UwYf45TGMjGF3SOJ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d5qz6zlAZ/yf0UDelwHeivmWA7K7ngw7ePGaEXVLDbXRY77Sl87i9xABFv/CsbuR9
-	 YQhJ9a2XQQEHXI+3qcl61MWwwXk3L3kIdwhGCjhl7n+fSXXaZ7GfTUDdNpXxQF/9TC
-	 wuvJkC7JPSrp9kZzDxhd9hT8DRVdjqs9Ifu9znfFyMHnswqPqhtNfQAxnU6qP+BtT1
-	 1vlWWJdq11vYvvl+IhSSra8zkwWYV91Dx9pZ1/FvUvDK5sOp3dvnPWKNpqVUteIiaB
-	 DQ8E3XX+wB5GLYMdlvYmd4wFFbH/jW6QmaKUHoA3C8/RSFWU9xgKuZnkgoNU9sCYdZ
-	 QvFTh6pue4bQw==
+	s=arc-20240116; t=1730453562; c=relaxed/simple;
+	bh=8JT1KSGbwIIi9U6Y6JINeq/j0V9Eu+cGVsjZAzNNP5o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=QTbcsWdTEL0FaqFZoypfrOvid+qGzyCgFenzVl0fQgL5xjcV2AoItzSC9Gp9DzzN8LbAkjS6TZyVCbt0YrYg8QwIfYCpSseh/gSrbc5OWjDJsjmdd8AJCoAbdRmGVucX36a5OD//+OKqYnL4YyUw7jDZx/Y2kprZanoPdJqMcd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=W2HGURR4; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241101093231epoutp0379fa71035d058e373399a4751d0d642e~DzlZLYn651891918919epoutp037
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 09:32:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241101093231epoutp0379fa71035d058e373399a4751d0d642e~DzlZLYn651891918919epoutp037
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1730453551;
+	bh=RBIeRi6DvPfok+pEnL5Q3tutpIPNPK4K5trjCZx3AIw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=W2HGURR4HXXkcMQ82WvgrPCidN+pD1h0ie2/v6ORV41JIlS27HHcAhCkGtyVRm9R/
+	 /l0l9xFbYsWqwKs4MkNhXPjZJWykvg86+cVifUFrbd5nDziZhyhEVzeU3HWnDwVl0H
+	 DBSXGuz03tyld/kJ5O+kvdWEn14YcrYXHgzWsEGc=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20241101093231epcas5p37429a0d3ceecac28544e3cf736904a10~DzlYyOqxi0632306323epcas5p3M;
+	Fri,  1 Nov 2024 09:32:31 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Xfwcs21f9z4x9Px; Fri,  1 Nov
+	2024 09:32:29 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E7.CD.08574.D20A4276; Fri,  1 Nov 2024 18:32:29 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241101092007epcas5p29e0c6a6c7a732642cba600bb1c1faff0~DzajrPZQR0809008090epcas5p2D;
+	Fri,  1 Nov 2024 09:20:07 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241101092007epsmtrp2a16eb8016917b757decdacbbe84312e9~DzajqkDkq2461124611epsmtrp2A;
+	Fri,  1 Nov 2024 09:20:07 +0000 (GMT)
+X-AuditID: b6c32a44-6dbff7000000217e-40-6724a02dd81b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	04.8E.18937.74D94276; Fri,  1 Nov 2024 18:20:07 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241101092006epsmtip2a8781b955a069bf49645f6b99fb8f500~DzaitT17m0073700737epsmtip2k;
+	Fri,  1 Nov 2024 09:20:06 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
+	<xue01.he@samsung.com>
+Subject: [PATCH v9 0/1] io_uring: releasing CPU resources when polling
+Date: Fri,  1 Nov 2024 17:19:56 +0800
+Message-Id: <20241101091957.564220-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 01 Nov 2024 11:18:10 +0200
-Message-Id: <D5AQA7LCE0KW.1QHQJLG2D2WQK@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Ard Biesheuvel" <ardb@kernel.org>
-Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ross Philipson"
- <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
- <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
- <iommu@lists.linux-foundation.org>, <dpsmith@apertussolutions.com>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <dave.hansen@linux.intel.com>, <mjg59@srcf.ucam.org>,
- <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
- <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
- <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
- <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
- <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
- <trenchboot-devel@googlegroups.com>
-Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
- kernel support
-X-Mailer: aerc 0.18.2
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
- <87wmhoulb9.ffs@tglx> <D5ACNMVX5LXB.1L0S9P2J3UDJH@kernel.org>
- <87ldy3vpjh.ffs@tglx> <D5AF4HY1I6AA.27WRBDDGLYH39@kernel.org>
- <D5AF9K79H8WO.PVW93P31GHMH@kernel.org>
- <CAMj1kXHFDMKEH46MG3731FS043XyxHchoTJtDOst6kvfMezUuQ@mail.gmail.com>
-In-Reply-To: <CAMj1kXHFDMKEH46MG3731FS043XyxHchoTJtDOst6kvfMezUuQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNKsWRmVeSWpSXmKPExsWy7bCmpq7uApV0g3vfOSzmrNrGaLH6bj+b
+	xbvWcywWv7rvMlpc3jWHzeLshA+sFl0XTrE5sHvsnHWX3ePy2VKPvi2rGD0+b5ILYInKtslI
+	TUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOkBJoSwxpxQo
+	FJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BSoFecmFtcmpeul5daYmVoYGBkClSYkJ3x80Av
+	Y8F5+YoXq48yNzDelOhi5OSQEDCRaNz9lAnEFhLYzSjRtVS2i5ELyP7EKPFp9nxWOGfyq90s
+	MB3fDm9jg0jsZJT4t+ojlPODUeL8k1NgVWwCShL7t3xgBLFFBLQlXj+eChTn4GAWiJJ4sZYb
+	JCws4CZx88Z2sHIWAVWJjtX72EBsXgEribXXzzNDLJOXuNm1nxkiLihxcuYTsHpmoHjz1tnM
+	IHslBA6xS7w5fACqwUVi2rd2KFtY4tXxLewQtpTE53d72SDsfInJ39czQtg1Eus2v4P6zFri
+	35U9UHdqSqzfpQ8RlpWYemodE8RePone30+YIOK8EjvmwdhKEkuOrIAaKSHxe8IiVgjbQ+LK
+	5yXMICOFBGIlTi5JnMAoPwvJN7OQfDMLYfECRuZVjJKpBcW56anJpgWGeanl8GhNzs/dxAhO
+	hVouOxhvzP+nd4iRiYPxEKMEB7OSCO+HAuV0Id6UxMqq1KL8+KLSnNTiQ4ymwCCeyCwlmpwP
+	TMZ5JfGGJpYGJmZmZiaWxmaGSuK8r1vnpggJpCeWpGanphakFsH0MXFwSjUwLTh2cleN0iPr
+	gx8zHWc527itCAz+VnU69VHc/YKmn6GdCRNvV0vXpM7MFRUojr5vGVmvLrDPg2lv9Nuny2Tm
+	lOSe6dTmW3r+H6NByguxlR2zYy18Itf9nDnvxseNEcvYPAIjVswy+Po7sGHx5k16DFPypRg4
+	KziXqNX5T5rv6CQi7RtlZeH6cNHL11dXFzQa6M878Gq5hNCN0LzotdezJim5/l2/bYb8lAcv
+	AnsmKE3qMjv+8KtZzhfRrLNXlt08GG/ttuHFixNz2J57HF/9QmDKhnmPS6+/yfj1Ir/UtuSL
+	vQ/zrH8FZmnVtc/T3BZ2ZkX9CqqbeYb3a3CAp0CGx3WWff3XmBMVGI50Vs0SV2Ipzkg01GIu
+	Kk4EABtXVdkOBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCLMWRmVeSWpSXmKPExsWy7bCSvK77XJV0g95OTos5q7YxWqy+289m
+	8a71HIvFr+67jBaXd81hszg74QOrRdeFU2wO7B47Z91l97h8ttSjb8sqRo/Pm+QCWKK4bFJS
+	czLLUov07RK4Mn4e6GUsOC9f8WL1UeYGxpsSXYycHBICJhLfDm9j62Lk4hAS2M4osf/1JSaI
+	hITEjkd/WCFsYYmV/56zQxR9Y5T4f7SVHSTBJqAksX/LB8YuRg4OEQFdica7CiBhZoEYiQ97
+	JoCVCAu4Sdy8sZ0FxGYRUJXoWL2PDcTmFbCSWHv9PDPEfHmJm137mSHighInZz5hgZgjL9G8
+	dTbzBEa+WUhSs5CkFjAyrWIUTS0ozk3PTS4w1CtOzC0uzUvXS87P3cQIDkitoB2My9b/1TvE
+	yMTBeIhRgoNZSYT3Q4FyuhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe5ZzOFCGB9MSS1OzU1ILU
+	IpgsEwenVANTmuONyhUbsj8tKuKIt2R4eSdcpOik7UHHrjd/PvlM49M+6Wila6Qglz7rgmSC
+	5KM7/c9frDm+9Pvn39sl2kzET9ast3SW/m2SknZKTfXgtJqkfudtX/ZG177RvMpzsclpDp+8
+	xbVfAt4l0vOzlisnet3gmXFDTcrtYA3rleuectNXzHZQuSUU8+24SduXq7Vqkzwbdwqe5cpe
+	x8R4Kdxh67PicJ87zo9SXeTmyf1d9U3NQydXdNkjH5Vt/XuZ3pSErD035Zef3iGd84tDk0Ok
+	I6/ycs2Ibuswa1u+8fYPWduj+5qWLv6gc25qQUMs4yLBO5/S7ZoEp9gLLi/xvffn9k42g+xH
+	T9bJfOW9VFGqxFKckWioxVxUnAgAdddriLcCAAA=
+X-CMS-MailID: 20241101092007epcas5p29e0c6a6c7a732642cba600bb1c1faff0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241101092007epcas5p29e0c6a6c7a732642cba600bb1c1faff0
+References: <CGME20241101092007epcas5p29e0c6a6c7a732642cba600bb1c1faff0@epcas5p2.samsung.com>
 
-On Fri Nov 1, 2024 at 10:50 AM EET, Ard Biesheuvel wrote:
-> On Fri, 1 Nov 2024 at 01:40, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> >
-> > On Fri Nov 1, 2024 at 2:33 AM EET, Jarkko Sakkinen wrote:
-> > > On Fri Nov 1, 2024 at 1:08 AM EET, Thomas Gleixner wrote:
-> > > > On Fri, Nov 01 2024 at 00:37, Jarkko Sakkinen wrote:
-> > > > > On Thu Oct 31, 2024 at 9:25 PM EET, Thomas Gleixner wrote:
-> > > > >> So this looks pretty reasonable to me by now and I'm inclined to=
- take it
-> > > > >> through the tip x86 tree, but that needs reviewed/acked-by's fro=
-m the
-> > > > >> crypto and TPM folks. EFI has been reviewed already.
-> > > > >>
-> > > > >> Can we make progress on this please?
-> > > > >
-> > > > > So TPM patches do have bunch of glitches:
-> > > > >
-> > > > > - 15/20: I don't get this. There is nothing to report unless tree
-> > > > >   is falling. The reported-by tag literally meaningless. Maybe th=
-is
-> > > > >   is something that makes sense with this feature. Explain from t=
-hat
-> > > > >   angle.
-> > > > > - 16/20: Is this actually a bug fix? If it is should be before 15=
-/20.
-> > > > > - 17/20: the commit message could do a better job explaining how =
-the
-> > > > >   locality can vary. I'm not sure how this will be used by rest o=
-f
-> > > > >   the patch set.
-> > > > > - 18/20: I'm not confident we want to give privilege to set local=
-ity
-> > > > >   to the user space. The commit message neither makes a case of t=
-his.
-> > > > >   Has this been tested to together with bus encryption (just chec=
-king)?
-> > > >
-> > > > Can you please explicitely voice your detailed technical concerns i=
-n
-> > > > replies to the actual patches?
-> > >
-> > > - 15/20 looks like a rigged patch. I don't really know why it is done
-> > >   so it is hard to either suggest how "resolve it".
-> > > - 16/20 probably makes sense but if it is a bug fix or part of it is,
-> > >   the bug fix should have relevant fixes etc tags so that it can be
-> > >   picked up to stable kernels.
-> > > - 17-18/20: I'd speak about this as the "one whole" i.e. here the
-> > >   privilege to be able change locality during run-time is really
-> > >   concerning. Could the locality be figured out for the kernel
-> > >   command-line instead? The sysfs attribute can exist as read-only.
-> > >
-> > > So yeah, the way I see it 15-16 are the more trivial issue to sort
-> > > out (probably) but with 17-18 we have an actual architectural concern
-> > > for kernel overall.
-> >
-> > Further:
-> >
-> > 15/20: I can accept this without reported-by tag (or changed as
-> > suggested-by). It does not harm.
-> > 16/20: I'll re-review this with time. I'll try to get this done
-> > latest next week.
-> >
-> > So let's put focus only on 17 and 18. Can this problem be sorted out
-> > by kernel command-line parameter? In the case of locality we want to
-> > keep regular "chain of trust" i.e. boot-loader makes the decision,
-> > *even* in the case of DRTM. I would call this almost as constraint
-> > that would be wise to set.
-> >
->
-> Please don't add a kernel command line parameter for this - the code
-> running in the decompressor will be the one setting it and there are
-> better ways to pass information between these components (and the
-> slaunch stack is already doing that in any case)
+This patch add a new hybrid poll at io_uring level, it also set a signal
+"IORING_SETUP_HYBRID_IOPOLL" to application, aim to provide a interface for
+users to enable hybrid polling.
 
-Not sure if I follow this (I don't know what "decompressor" is).
+Hybrid poll may appropriate for some performance bottlenecks due to CPU
+resource constraints, such as some database applications. In a
+high-concurrency state, not only polling takes up a lot of CPU time, but
+also operations like calculation and processing also need to compete for
+CPU time.
 
-> Also, let's have this discussion in the appropriate place, i.e., on
-> the thread for each respective patch.
+The MultiRead interface of Rocksdb has been adapted to io_uring. Here used
+db_bench to construct a situation with high CPU pressure and compared the
+performance. The test configuration is as follows,
 
-Sure, I just did not have a lot of time to download the patch.
+-------------------------------------------------------------------
+CPU Model       Intel(R) Xeon(R) Gold 6152 CPU @ 2.10GHz
+CPU Cores       8
+Memory          16G
+SSD             Samsung PM9A3
+-------------------------------------------------------------------
 
-BR, Jarkko
+Test case:
+./db_bench --benchmarks=multireadrandom,stats
+--duration=60
+--threads=4/8/16
+--use_direct_reads=true
+--db=/mnt/rocks/test_db
+--wal_dir=/mnt/rocks/test_db
+--key_size=4
+--value_size=4096
+-cache_size=0
+-use_existing_db=1
+-batch_size=256
+-multiread_batched=true
+-multiread_stride=0
+---------------------------------------------------------------
+Test result:
+          National        Optimization
+thread    sops/sec        ops/sec        CPU Utilization
+16        121953          160233         100%*8
+8         120198          116087         90%*8
+4         61302           59105          90%*8
+---------------------------------------------------------------
+
+The 9th version patch makes following changes:
+
+1. change some member and function name
+
+2. Avoid the expansion of io_kiocb structure. After checking, the hash_node
+structure is used in asynchronous poll, while the iopoll only supports the
+dirict io for disk, these two path are different and they will not be used
+simultaneously, it also confirmed in the code. So I shared this space with
+iopoll_start.
+
+ union {
+	/*
+	 * for polled requests, i.e. IORING_OP_POLL_ADD and async armed
+	 * poll
+	 */
+	struct hlist_node   hash_node;
+	/* For IOPOLL setup queues, with hybrid polling */
+	u64                     iopoll_start;
+ };
+
+3. Avoid the expansion of io_ring_ctx structure. Although there is an
+8-byte hole in the first structure, the structure is basically constants
+and some read-only hot data that will not be changed, that means this cache
+does not need to be brushed down frequently, but the hybrid_poll_time of
+the recorded run time had a chance to be modified several times. So I put
+it in the second structure (submission data), which is still 24 bytes of
+space, and some of its own variables also need to be modified.
+
+4. Add the poll_state identity to the flags of req.
+
+/* every req only blocks once in hybrid poll */
+REQ_F_IOPOLL_STATE = IO_REQ_FLAG(REQ_F_HYBRID_IOPOLL_STATE_BIT)
+
+--
+changes since v7:
+- rebase code on for-6.12/io_uring
+- remove unused varibales
+
+changes since v6:
+- Modified IO path, distinct iopoll and uring_cmd_iopoll
+- update test results
+
+changes since v5:
+- Remove cstime recorder
+- Use minimize sleep time in different drivers
+- Use the half of whole runtime to do schedule
+- Consider as a suboptimal solution between
+  regular poll and IRQ
+
+changes since v4:
+- Rewrote the commit
+- Update the test results
+- Reorganized the code basd on 6.11
+
+changes since v3:
+- Simplified the commit
+- Add some comments on code
+
+changes since v2:
+- Modified some formatting errors
+- Move judgement to poll path
+
+changes since v1:
+- Extend hybrid poll to async polled io
+
+hexue (1):
+  io_uring: releasing CPU resources when polling
+
+ include/linux/io_uring_types.h | 19 ++++++-
+ include/uapi/linux/io_uring.h  |  3 ++
+ io_uring/io_uring.c            |  8 ++-
+ io_uring/rw.c                  | 92 ++++++++++++++++++++++++++++++----
+ 4 files changed, 108 insertions(+), 14 deletions(-)
+
+-- 
+2.40.1
+
 
