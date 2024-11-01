@@ -1,196 +1,172 @@
-Return-Path: <linux-kernel+bounces-391926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4449B8D70
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:07:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9D89B8D73
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:10:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D37291C20DC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:07:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E0CCB22614
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A911581F2;
-	Fri,  1 Nov 2024 09:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64D0158558;
+	Fri,  1 Nov 2024 09:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Cldo86Uk"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="brpp5Ntm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B749914F121
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 09:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D989F3FF1;
+	Fri,  1 Nov 2024 09:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730452040; cv=none; b=BHjTj1yOYtxRGn1c0pbWfyjXk3n2679wQVZ3iN0eY1/mGxYFCQ//TCYA4iNCFe0KgpwyVNT7h6WYzdbYMK187W/0+u7DUisuLDq9Zmu55hx7fxGRja/WByaoH4ljt6JAs5l3mSGr+asWmum+45T+2Ke/2yXj28g36azfIVlMgs4=
+	t=1730452203; cv=none; b=VK37Ukw5aTZWZ+TC/ddmnVEsu4DRuSHxIqjQZXnJeLnb9Nk4jxczNySiqog6B0VjB7rpxJHnCEsMIGVQLiAhUdGqpWiasRHoay+/UqpeGFL49RsM5c5XWkfXCHqipy2uwXjwFiHYQCU07MmVnTc1K2J+U0NuSVCl4dwyUzjb7SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730452040; c=relaxed/simple;
-	bh=ACJJRQ1tSBj/PagPfjyn5Mt3OZak1fC/XApix33RgaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OYUE2unqWttQrDQqiks31UqRmLRBP2ytRDEHQ/io7dbNhnMetV7BCiH2BMdnKHrHRBh66AE7odCve7RyT/bk3wsrbH4qa2YU9/4puwAyYhvqU5LpeEMxM94qS5DndjBAccfBttgBtiZZfDJbFSI++jbMJarUAXvl+09Ir1IIGqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Cldo86Uk; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-50d4797098dso623160e0c.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 02:07:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730452036; x=1731056836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uT8ZiELAo/qpmpYFHSS+6cqtNCiLfewPD+HuZPIlUX0=;
-        b=Cldo86UkTTuooYDPXta1bCIHopGTTmID6Sx9A9h4OuItPbQJRF9a57Uk9+dTs9dZm0
-         dNbhI5kOJRErDq9+9V68UTwyRN7lJ7iXm35/zkvEJjRaMrXr2bTctbLi+aITtdAxpb4Z
-         XQ1b0MVgoSzPVDqkI7Z3RBO/Wok6mQxLaM2i2/niwEzSrKlZmmuV4ILP5oTz/hIhlbil
-         pKRFzE1Ixwrd6IwRLjVJdn1W/LH7cs0cBhNqcoQrR+kmHQG8KmrrrnKDmpVk+L9jrt2a
-         vjf0YfDKtYqaccFBKfjR7NOIk8tb9tf2r9zvTowGuA92xm0eZjcJA5pJxZpIiNCYxxse
-         GMBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730452036; x=1731056836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uT8ZiELAo/qpmpYFHSS+6cqtNCiLfewPD+HuZPIlUX0=;
-        b=CBRaFywlIyp/cVJ4Ddpq1cIgz5hn8Ht06iGlkgTiiY+yDN6BKvysgBebkJWYbKByvb
-         t7Snmd43p0b8DtTo8hCAUwD2RgaAT9ufWCTHgODWhqnW8TVwU6rYZsTYdusqfLXo0i42
-         I2kRuayhii9n9wyraR/rJVYSMMleqKeEShSQjvrKLnsSWamDBcFNi97r5HChzjeWgCWy
-         ScXI63DBt3lFATag5yEn+LwubIeGEZju2Decbtb5GWQALBP0CHUCterbiWLaZaSHCutQ
-         WbrBP3JhWjh+eJFQptQWw6bMFQoaDhg0pixwZePXOSAjQqt0YLKnXWDba9VaqL/yx4Rx
-         dZRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIdjv1ouHJ82qULRZZ6LA/+BhPeB0kePsh//5d3of92HUj+5wh5jq578XGsrrrmoP0QBmNNstv2rmqhOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQxo2QuOq5eTwgDIOn3PTr4npiDfdbp+sxbP/dc3zLHEQ6eCcH
-	vKj5ds2CViKJsM48LzJGe7buxIolyZVtdKWVGSUQP8ekrHSMYdStPccuAXNE2QWRLl3vbAZ7z3j
-	umjKuHnGZI7yjy992tzmEa/oNnhaKJChkdBCxcA==
-X-Google-Smtp-Source: AGHT+IGbUTRRz86eEDv3TIajVVkB0mtwcL9oiYycvg5A/+hrXFVSa6n6WIyuzJR7bvvTXgt/PVGnRh7rp3aBoxGndZI=
-X-Received: by 2002:a05:6122:20a2:b0:50d:5095:f02b with SMTP id
- 71dfb90a1353d-51014e9a3d7mr20928028e0c.0.1730452035618; Fri, 01 Nov 2024
- 02:07:15 -0700 (PDT)
+	s=arc-20240116; t=1730452203; c=relaxed/simple;
+	bh=Hw2bsGqYFkX3pVT7OM445mjV0EuJxqxC/fYe9DfHaXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJqM0rV7v2hoK/hppMqLZXjr/IQ/21GZXdK2nNV+TeRY1NTHOAUp1dz4DAxwd81rVuy0Mr6FI4jusJrpyOIvuuJJzy/UUAwmxJKBIHi2Zj2qI0igfAe8cN96AnFMKfuxOb2/zH/nzNL3vKKU5K+yIkP/TNxWHN4l88RuYOPOifQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=brpp5Ntm; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730452201; x=1761988201;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Hw2bsGqYFkX3pVT7OM445mjV0EuJxqxC/fYe9DfHaXE=;
+  b=brpp5NtmJNusxq2p8ue2ARmrZ2r+9sF5nnpKv9YWjya4vSYKEEzAlito
+   VrIEYU4amtbHOKlcB4ruT9XLjAfJctzKgkYPLQCCzwdpN2NneUtRxs076
+   pRcjv0578AiRRxxJkbcFphlIA/DuT3cJmf2G9IrJ8b56sdnEvZoiugR/R
+   UuGO4JnyukgR1c6EwPbApZd/GB+7irfNQAgKByodgQjyTU/d438tfEGKM
+   mMvNZId+DUr2GmnlCMOQd/zUw5rLLXPaa80Yc1MFSnBJ+V/PyejPtWowG
+   AE8GtEwjCSeUCweJPlI8sR7Fv9J+2kzRb9vkunBjJg9aoXsmy0QdgRrZs
+   A==;
+X-CSE-ConnectionGUID: Co0QrgqRQf+DMYJY3yD7pQ==
+X-CSE-MsgGUID: nrY1L/EUSyOSd+S/MCp9IQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30171408"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30171408"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 02:09:59 -0700
+X-CSE-ConnectionGUID: YUd8flrVTKKWi6gQVv6b5g==
+X-CSE-MsgGUID: MLNdPsS4RgOEr0m9sMJhmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="83248006"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 02:09:57 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 7ADE211FA28;
+	Fri,  1 Nov 2024 11:09:54 +0200 (EET)
+Date: Fri, 1 Nov 2024 09:09:54 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Cc: git@apitzsch.eu, Mauro Carvalho Chehab <mchehab@kernel.org>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v2 01/13] media: i2c: imx214: Fix link frequency
+Message-ID: <ZySa4gBDjJS7q-yI@kekkonen.localdomain>
+References: <20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu>
+ <20241021-imx214-v2-1-fbd23e99541e@apitzsch.eu>
+ <CAPybu_0o+csbkyS7bbMUjB+VSUwj2DK_STy=wubCT_frH0DzgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031063707.795842-1-aardelean@baylibre.com> <20241031185906.064d733825c176addd48a733@linux-foundation.org>
-In-Reply-To: <20241031185906.064d733825c176addd48a733@linux-foundation.org>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Fri, 1 Nov 2024 11:07:04 +0200
-Message-ID: <CA+GgBR_tCVVo75+eOxtxEtFdCMkAWFiHjm8eAfPYt+sLBGjBFw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] util_macros.h: fix/rework find_closest() macros
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, jic23@kernel.org, 
-	bartosz.golaszewski@linaro.org, gregkh@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPybu_0o+csbkyS7bbMUjB+VSUwj2DK_STy=wubCT_frH0DzgA@mail.gmail.com>
 
-On Fri, Nov 1, 2024 at 3:59=E2=80=AFAM Andrew Morton <akpm@linux-foundation=
-.org> wrote:
->
-> On Thu, 31 Oct 2024 08:37:06 +0200 Alexandru Ardelean <aardelean@baylibre=
-.com> wrote:
->
-> > A bug was found in the find_closest() (find_closest_descending() is als=
-o
-> > affected after some testing), where for certain values with small
-> > progressions, the rounding (done by averaging 2 values) causes an incor=
-rect
-> > index to be returned.
->
-> Please help us understand the userspace-visible effects of this bug.
->
-> Do you believe the bug is sufficiently serious to justify backporting
-> these fixes into earlier kernel versions?  If so, are you able to help
-> us identify a suitable Fixes: target?
+Hi Ricardo, André,
 
-Oh right. Apologies.
-I keep forgetting the Fixes tag.
-Added below.
-I can also do a V2.
-Please advise on what's preferred.
-I'll also admit that my attempt at explaining the bug (in a general
-way) looks a bit wonky.
-I'll try to re-formulate the bug description for a V2.
+On Wed, Oct 30, 2024 at 12:25:25PM +0100, Ricardo Ribalda Delgado wrote:
+> Hi Andre
+> 
+> On Mon, Oct 21, 2024 at 12:14 AM André Apitzsch via B4 Relay
+> <devnull+git.apitzsch.eu@kernel.org> wrote:
+> >
+> > From: André Apitzsch <git@apitzsch.eu>
+> >
+> > The driver defines IMX214_DEFAULT_LINK_FREQ 480000000, and then
+> > IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10),
+> > which works out as 384MPix/s. (The 8 is 4 lanes and DDR.)
+> >
+> > Parsing the PLL registers with the defined 24MHz input. We're in single
+> > PLL mode, so MIPI frequency is directly linked to pixel rate.  VTCK ends
+> > up being 1200MHz, and VTPXCK and OPPXCK both are 120MHz.  Section 5.3
+> > "Frame rate calculation formula" says "Pixel rate
+> > [pixels/s] = VTPXCK [MHz] * 4", so 120 * 4 = 480MPix/s, which basically
+> > agrees with my number above.
+> >
+> > 3.1.4. MIPI global timing setting says "Output bitrate = OPPXCK * reg
+> > 0x113[7:0]", so 120MHz * 10, or 1200Mbit/s. That would be a link
+> > frequency of 600MHz due to DDR.
+> > That also matches to 480MPix/s * 10bpp / 4 lanes / 2 for DDR.
+> >
+> I think your calculations are correct and the value should be 600M...
+> but if we land this change, there will be boards that will stop
+> working until they update their dts.
+> Not sure if we allow that.
+> 
+> Can we move this change to the last one of the series and add something like:
+> 
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> index 2aca3d88a0a7..8b4ded4cb5ce 100644
+> --- a/drivers/media/i2c/imx214.c
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -1281,13 +1281,9 @@ static int imx214_parse_fwnode(struct device
+> *dev, struct imx214 *imx214)
+>                 if (bus_cfg.link_frequencies[i] == IMX214_DEFAULT_LINK_FREQ)
+>                         break;
+> 
+> -       if (i == bus_cfg.nr_of_link_frequencies) {
+> -               dev_err_probe(dev, -EINVAL,
+> -                             "link-frequencies %d not supported,
+> Please review your DT\n",
+> +       if (i == bus_cfg.nr_of_link_frequencies)
+> +               dev_warn(dev, "link-frequencies %d not supported,
+> Please review your DT. Continuing anyway\n",
+>                               IMX214_DEFAULT_LINK_FREQ);
 
----------------------------------------------------------------------------=
-----------------
-For this reply, maybe I'll try a more "timeline" approach (for
-explaining the bug).
-I'll apologize for the amount of text I posted here, but this bug is
-one-of-those-LOTR-anthologies-trying-to-explain
+I'd also add a check it's the frequency supported by the driver previously,
+not any frequency. There will be problems if 480 MHz will be actually
+supported in the future.
 
-The bug was found while testing the 'drivers/iio/adc/ad7606.c' driver;
-particularly the oversampling setting (of the driver).
-Taking as reference the oversampling table (from the driver):
+> -               ret = -EINVAL;
+> -               goto done;
+> -       }
+> 
+> 
+> 
+> > Signed-off-by: André Apitzsch <git@apitzsch.eu>
+> > ---
+> >  drivers/media/i2c/imx214.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> > index 4962cfe7c83d62425aeccb46a400fa93146f14ea..5d411452d342fdb177619cd1c9fd9650d31089bb 100644
+> > --- a/drivers/media/i2c/imx214.c
+> > +++ b/drivers/media/i2c/imx214.c
+> > @@ -24,7 +24,7 @@
+> >  #define IMX214_MODE_STREAMING          0x01
+> >
+> >  #define IMX214_DEFAULT_CLK_FREQ        24000000
+> > -#define IMX214_DEFAULT_LINK_FREQ 480000000
+> > +#define IMX214_DEFAULT_LINK_FREQ 600000000
+> >  #define IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10)
+> >  #define IMX214_FPS 30
+> >  #define IMX214_MBUS_CODE MEDIA_BUS_FMT_SRGGB10_1X10
+> >
 
-static const unsigned int ad7606_oversampling_avail[7] =3D {
-        1, 2, 4, 8, 16, 32, 64,
-};
+-- 
+Kind regards,
 
-When doing:
-$ echo 1 > /sys/bus/iio/devices/iio\:device0/oversampling_ratio
-$ cat /sys/bus/iio/devices/iio\:device0/oversampling_ratio
-1  # this is fine
-
-[1]
-$ echo 2 > /sys/bus/iio/devices/iio\:device0/oversampling_ratio
-$ cat /sys/bus/iio/devices/iio\:device0/oversampling_ratio
-1  # this is wrong; 2 should be returned here
-
-$ echo 3 > /sys/bus/iio/devices/iio\:device0/oversampling_ratio
-$ cat /sys/bus/iio/devices/iio\:device0/oversampling_ratio
-2  # this is fine
-
-$ echo 4 > /sys/bus/iio/devices/iio\:device0/oversampling_ratio
-$ cat /sys/bus/iio/devices/iio\:device0/oversampling_ratio
-4  # this is fine
-
-$ echo 5 > /sys/bus/iio/devices/iio\:device0/oversampling_ratio
-$ cat /sys/bus/iio/devices/iio\:device0/oversampling_ratio
-4  # this is fine
-
-And from here-on, the bug goes away. i.e. one gets the values as one
-would expect.
-The bug no longer happens as in the case of [1], as the difference
-between 2 values (in the array) increases enough, such that the
-averaging (of 2 values) no longer causes issues.
-
-Initially, the assumption was that this bug happens only for searching
-exact values when an array is monotonic with a progression of 1.
-(One could argue that find_closest() is not intended for arrays of
-1,2,3,4,...N).
-While trying to create a fix for this issue, I started writing a kunit test=
-.
-That produced some other quirks, but not as bad as [1].
-
-For example, this array from 'drivers/hwmon/ina2xx.c' &
-'drivers/iio/adc/ina2xx-adc.c' drivers.
-
-const int ina226_avg_tab[] =3D { 1, 4, 16, 64, 128, 256, 512, 1024 };
-
-While running the kunit test (for 'ina226_avg_tab'):
-*  idx =3D find_closest([-1 to 2], ina226_avg_tab, ARRAY_SIZE(ina226_avg_ta=
-b));
-   This returns idx =3D=3D 0, so value 1
-* idx =3D find_closest(3, ina226_avg_tab, ARRAY_SIZE(ina226_avg_tab));
-   This returns idx =3D=3D 0, value 1; and now one could argue whether 3
-is closer to 4 or to 1.
-   This quirk only appears for value '3' in this array.
-   And from here-on the current find_closest() works fine (one gets
-what one would expect).
-
----------------------------------------------------------------------------=
-----------------
-
-The above is one way of trying to explain the bug.
-The other way I am trying to explain this bug is through the kunit in
-the 2nd patch of this series.
-
-But to answer one question above: this bug exists since the first
-introduction of "find_closest()".
-Circa kernel version 4.1
-And it only affects several corner cases (of arrays).
-
-Fixes: 95d119528b0b ("util_macros.h: add find_closest() macro")
-
->
-> Thanks.
+Sakari Ailus
 
