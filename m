@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-392502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27009B94EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:06:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAEAD9B94DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD2DE1C21D66
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:06:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE2628323D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5F981ACA;
-	Fri,  1 Nov 2024 16:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5221C82E2;
+	Fri,  1 Nov 2024 16:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="peaNE9x+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ozuLuz9U"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C301BB6B3;
-	Fri,  1 Nov 2024 16:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C3B1DA53;
+	Fri,  1 Nov 2024 16:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730477198; cv=none; b=Wr+qWn41v7s0Cm4cuYZ5F9stOJg5gY0OC8YOkhjAV0n3eY5GUVx2c88FkA9n/GH4epyzPNcjVy9dsiCua110ZyhLohzE/CgQ3JUFcByom4ghMsEf64aZNscZD/ncikKhrr2Vac9f6ioL5r5k1GPeoxHMdmzLL+AYcVx8BSYQJ78=
+	t=1730476975; cv=none; b=N5PiKm731E3YGBL33vbPHcvr/iAfWhjecgpOwAXtg0WpwtPNV+zS7Wne3gZ6yiBi8vg0/OWSdrvRKAAgj8CUwiYFB+yGtOiP1KG3H5v3+lSLjS/eCyHpkHDetUwPx4flONHHXfm9VBnrSI7gf9YvLU1u2mhwCyiNcJS17gcht/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730477198; c=relaxed/simple;
-	bh=YdyDW2gcScZ/BdqJfnTtYadsfL8y75bS0poEUfdXiUY=;
+	s=arc-20240116; t=1730476975; c=relaxed/simple;
+	bh=RP8uuQxxz+diREH7RaCpYN2LCPYmDcWWIYKVOO9nU+U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VfRC4WrkzOXwSBXB7fabGsJn0NoGkG/xNZwhi7gai6+UxD2/PbsuaQh5rddpd0g71ecQZlWHRWqUZ/CtED4fhtdO+VtYMJXAKEkx2KygGsSvm4bK+Qr5VgLUXYENGdlwLTNP6WXv+mPL8woeJZGQVp/qY+Armm0+NzYk/6V6OGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=peaNE9x+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B135C4CECD;
-	Fri,  1 Nov 2024 16:06:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730477197;
-	bh=YdyDW2gcScZ/BdqJfnTtYadsfL8y75bS0poEUfdXiUY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=peaNE9x+uUJuwo6gX2ZdWtag2VzEWukSKKq6/Q6bJa4yKYnZXKotkurQAfcW8FEmT
-	 m65zJDr/cHp4Bfc3L5cbJgBEj8x3vIISQyvRQ8VEPw7U8WqKOykKzvg3bT/0rfc+iy
-	 oFcEKy2T12/LpWThDDEYlcMIdt4uDmFLFy/quQntzXAB8aD2yA7nW/i4GSrDhe3yAV
-	 OBm5HE58IbELIOvshb7bOguI8YMLLl6Juyq2tb+9HweY3rH1gRHrsEaDQLgwgPDzLD
-	 5CZrKERAhofgk+shQAZW1BxLwoJvwWesV/0wnTK3DqPO3fwFG6du+q39UMOv3DVP1n
-	 +DkHfA4PAFBuQ==
-Date: Fri, 1 Nov 2024 18:02:32 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Gregory Price <gourry@gourry.net>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
-	dave.jiang@intel.com, ira.weiny@intel.com,
-	alison.schofield@intel.com, dave.hansen@linux.intel.com,
-	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, rafael@kernel.org,
-	lenb@kernel.org, david@redhat.com, osalvador@suse.de,
-	gregkh@linuxfoundation.org, akpm@linux-foundation.org
-Subject: Re: [PATCH v5 2/3] x86: probe memory block size advisement value
- during mm init
-Message-ID: <ZyT7mPPP1rxVJtxC@kernel.org>
-References: <20241101134706.1185-1-gourry@gourry.net>
- <20241101134706.1185-3-gourry@gourry.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6rgeIZp2RdgKfOIxwKmdXBsohYbVH/KnKJI+EWy22c2+r/2jNTE4lwZb0Ut3Te+IGYpf+lTHX+SfcP+MZCRhDAD3B/geT0CkimUXyiHXf7TplnaRGmH4YAOr56WINdL2Hz1sQNTGyU4OEJmGh1XQncA7lht84gJSdVSMoFCZh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ozuLuz9U; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GD62pfQjRrsZlDEczFo93jALZqsvhobxeSA9hEQIen0=; b=ozuLuz9UdvmQPT1bNuge8+sBqe
+	GUZ116LCrEU41ysC74jaRIuvvicsrtWR4JhKKia/aFCKMbjWnKt+IRfuuwHMQf4KJgTOWI9iqHpwU
+	WpS2+nmlsyaSbcHYsmJxq+RsCpJWmJDld/koEo0n2iQo3AVzMPrJtOkPSNQojruQvxwRd/E5wIH66
+	M1t5/hx55D9XkigFPqH9OK3wyKsD+NCgTHiq5WK3KeT1m1DLpOT0CbKG7FAnt/IPJqteC2ymFFn7s
+	6NQD26V0bBZzvWJEQtYyM7jDMSROijkWTQPzGbCgazdlN21hpcZRtcmB6F4m8JKdENneM6ULKVIc2
+	KPYaeFMw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6u6s-0000000G0Tx-063T;
+	Fri, 01 Nov 2024 16:02:50 +0000
+Date: Fri, 1 Nov 2024 16:02:49 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/6] Xarray: skip unneeded xas_store() and
+ xas_clear_mark() in __xa_alloc()
+Message-ID: <ZyT7qRhtqGDe_AuO@casper.infradead.org>
+References: <20241101155028.11702-1-shikemeng@huaweicloud.com>
+ <20241101155028.11702-5-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,67 +61,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241101134706.1185-3-gourry@gourry.net>
+In-Reply-To: <20241101155028.11702-5-shikemeng@huaweicloud.com>
 
-On Fri, Nov 01, 2024 at 09:47:04AM -0400, Gregory Price wrote:
-> Systems with hotplug may provide an advisement value on what the
-> memblock size should be.  Probe this value when the rest of the
-> configuration values are considered.
-> 
-> The new heuristic is as follows
-> 
-> 1) set_memory_block_size_order value if already set (cmdline param)
-> 2) minimum block size if memory is less than large block limit
-> 3) if no hotplug advice: Max block size if system is bare-metal,
->    otherwise use end of memory alignment.
-> 4) if hotplug advice: lesser of advice and end of memory alignment.
-> 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> Acked-by: David Hildenbrand <david@redhat.com>
+On Fri, Nov 01, 2024 at 11:50:26PM +0800, Kemeng Shi wrote:
+> If xas_find_marked() failed, there is no need to call xas_store() and
+> xas_clear_mark(). Just call xas_store() and xas_clear_mark() if
+> xas_find_marked() succeed.
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+No.  The point of the xas interfaces is that they turn into no-ops once
+an error has occurred.
 
-> ---
->  arch/x86/mm/init_64.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index ff253648706f..f1a495e998ce 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1452,16 +1452,21 @@ static unsigned long probe_memory_block_size(void)
->  	}
+> -		else
+> +		else {
+>  			*id = xas.xa_index;
+> -		xas_store(&xas, entry);
+> -		xas_clear_mark(&xas, XA_FREE_MARK);
+> +			xas_store(&xas, entry);
+> +			xas_clear_mark(&xas, XA_FREE_MARK);
+> +		}
+>  	} while (__xas_nomem(&xas, gfp));
 >  
->  	/*
-> -	 * Use max block size to minimize overhead on bare metal, where
-> -	 * alignment for memory hotplug isn't a concern.
-> +	 * When hotplug alignment is not a concern, maximize blocksize
-> +	 * to minimize overhead. Otherwise, align to the lesser of advice
-> +	 * alignment and end of memory alignment.
->  	 */
-> -	if (!boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
-> +	bz = memory_block_advised_max_size();
-> +	if (!bz) {
->  		bz = MAX_BLOCK_SIZE;
-> -		goto done;
-> +		if (!boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> +			goto done;
-> +	} else {
-> +		bz = max(min(bz, MAX_BLOCK_SIZE), MIN_MEMORY_BLOCK_SIZE);
->  	}
->  
->  	/* Find the largest allowed block size that aligns to memory end */
-> -	for (bz = MAX_BLOCK_SIZE; bz > MIN_MEMORY_BLOCK_SIZE; bz >>= 1) {
-> +	for (; bz > MIN_MEMORY_BLOCK_SIZE; bz >>= 1) {
->  		if (IS_ALIGNED(boot_mem_end, bz))
->  			break;
->  	}
+>  	return xas_error(&xas);
 > -- 
-> 2.43.0
+> 2.30.0
 > 
-
--- 
-Sincerely yours,
-Mike.
 
