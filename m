@@ -1,470 +1,172 @@
-Return-Path: <linux-kernel+bounces-392112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80DB9B8FD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:56:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E23D9B8FBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173CD1C21AF1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:56:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15C641F217AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC9B15854A;
-	Fri,  1 Nov 2024 10:55:59 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5DE17625C;
+	Fri,  1 Nov 2024 10:52:06 +0000 (UTC)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA96A15B971
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196131D555;
+	Fri,  1 Nov 2024 10:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730458559; cv=none; b=CBfsQJW0EW0tDawf7BunaBBD5klFWvFO96RaYLbtN2eXYn966kMXiRG3co0gHuRJzW+3FuCuJMsE7TRay77Txuomw6fsEkS9rr+Xa/6NBA+KCoI2OzrgAyO7S7SftETc478dkmW7OOeGZhO6zX++oGctlOJEfLWA2heeQZ27eWk=
+	t=1730458326; cv=none; b=mdiR9vjN//c0HX1o8SPotglqUXuXKO0DI8g5vX1FLibQvqUu0voKPm3nP91J/hgqmMiSVaas8FMgVL6N2yL44kMpeA8LV4qRwSvIkoWb5KBeVGCvbQR5MKr6u8O/Pdhju/j6rSWO3NZy5p6r96dqbtGJuRLq1EeM4dvRwzpKrmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730458559; c=relaxed/simple;
-	bh=AX/StOmD1Iti36lrdMJ2swxHMy6Bexr96hq0eqDwK04=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D0kLMVlZFtL2QH8tRtpWOuDWZpLiOw5FXoaSD3GqJLYLDE4rnllpr9zbE87J/zF4RELmCgQi00TfmNoYBJ+hijwxgDhw/CvypvL9guOuz0Z67k5GZgszF7KMqvN7bjz5o3ugrUWvwH12CHWg+xMR+9kY4UtbsUoL7AuleHWPwJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XfyQ64rGQzdkdZ;
-	Fri,  1 Nov 2024 18:53:18 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 372D91800F2;
-	Fri,  1 Nov 2024 18:55:53 +0800 (CST)
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 1 Nov 2024 18:55:51 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH V3 drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
-Date: Fri, 1 Nov 2024 18:50:28 +0800
-Message-ID: <20241101105028.2177274-5-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20241101105028.2177274-1-shiyongbang@huawei.com>
-References: <20241101105028.2177274-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1730458326; c=relaxed/simple;
+	bh=TU8dGZ1eNu3Hk2l7gdb8rvSsxYs/ZIyWZjXgy6rwpOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SeZvFws/UJ8Nr8a06N0kOq8ORrqthjoDGBx+cUs/1ednZmifTlyxEAf5Mp4dZ3kx+WqfOhMF5XCENFVrVBxq3d6LisExxR2ex6pXFk5CnfdtviJ5at3y6najuDtE1AEvQhU38X02L0OdO23p8PMdbz+dtfUE5WZ5eLWWoGa3Brw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c94c4ad9d8so2504043a12.2;
+        Fri, 01 Nov 2024 03:52:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730458322; x=1731063122;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nKSTmHmFuYCAOmRQkPVmNmsckzHyWUaKkCyqHZXPrGs=;
+        b=ddL6+9z5Al3UGD43DbudjthX8UqHq8eS9hQ3KnIhmdfAgxxMyGVBI1RatYQSD2XRdY
+         Z836NuRZMZBxMiB20nXHFGPOk+TYjdu1G5NyYU3oLVxtX2hBDIBhhgKpMd9c7Up7MUYp
+         8T8bbo2S/5eyss3woUBo1AJYq6iqp8cRYBMajIRafNKmSgG27VdAlr8nYsvAtF83trsH
+         +A1Wl/TzGByMTk/icghlKtQKJ7xfXzAykRsFfTi984PV76ODdZudOGQkIGeXSFO8h54m
+         EGctRucCPUBhRMnlQ+zOhsrGwbsVspNC3GmytHVs31gGPmy5RTAfQB9RbfkYBqhBC99V
+         +bqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/nLH1dRsGYI9Yl7Hsc8BKeuwRnb13P38dOViapKr2qlWjh2sQSQDMFFnMBI5qOVE7Zoo9xUtx@vger.kernel.org, AJvYcCVWUbB2jwg6HS9XwQ0J5RD35+OB4gpGF2C3Fw8kQXRVzhc61mlnT9r5nlLqfA1bF/sFdXcnlf45AjTLeUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvG+Ud8PrKrt2KoN13bMPIme8JLApIuBvHuKfS+z0FZV9JM/ja
+	mDYBqwloaui8ZELNG3zj6x0AWX1L4Y+o/0IelPKyICiAaXlyRT1E
+X-Google-Smtp-Source: AGHT+IFubAKraTfHDTY8/bsTKvjr2pLAaf81VaTF4emfdFHq5lkd6fNtjX4Nf6nK6nHQNB7C3rtr0Q==
+X-Received: by 2002:a17:907:7dac:b0:a9a:81a3:59bf with SMTP id a640c23a62f3a-a9e5093f631mr543618266b.35.1730458322095;
+        Fri, 01 Nov 2024 03:52:02 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56643823sm167683066b.167.2024.11.01.03.52.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 03:52:01 -0700 (PDT)
+Date: Fri, 1 Nov 2024 03:51:59 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: horms@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, thepacketgeek@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, davej@codemonkey.org.uk,
+	vlad.wing@gmail.com, max@kutsevol.com, kernel-team@meta.com,
+	jiri@resnulli.us, jv@jvosburgh.net, andy@greyhouse.net,
+	aehkn@xenhub.one, Rik van Riel <riel@surriel.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH net-next 1/3] net: netpoll: Defer skb_pool population
+ until setup success
+Message-ID: <20241101-cheerful-pretty-wapiti-d5f69e@leitao>
+References: <20241025142025.3558051-1-leitao@debian.org>
+ <20241025142025.3558051-2-leitao@debian.org>
+ <20241031182647.3fbb2ac4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031182647.3fbb2ac4@kernel.org>
 
-From: baihan li <libaihan@huawei.com>
+Hello Jakub,
 
-To support DP interface displaying in hibmc driver. Add
-a encoder and connector for DP modual.
+On Thu, Oct 31, 2024 at 06:26:47PM -0700, Jakub Kicinski wrote:
+> On Fri, 25 Oct 2024 07:20:18 -0700 Breno Leitao wrote:
+> > The current implementation has a flaw where it populates the skb_pool
+> > with 32 SKBs before calling __netpoll_setup(). If the setup fails, the
+> > skb_pool buffer will persist indefinitely and never be cleaned up.
+> > 
+> > This change moves the skb_pool population to after the successful
+> > completion of __netpoll_setup(), ensuring that the buffers are not
+> > unnecessarily retained. Additionally, this modification alleviates rtnl
+> > lock pressure by allowing the buffer filling to occur outside of the
+> > lock.
+> 
+> arguably if the setup succeeds there would now be a window of time
+> where np is active but pool is empty.
 
-Signed-off-by: baihan li <libaihan@huawei.com>
-Signed-off-by: yongbang shi <shiyongbang@huawei.com>
----
-ChangeLog:
-v2 -> v3:
-  - fix build errors reported by kernel test robot <lkp@intel.com>
-    Closes: https://lore.kernel.org/oe-kbuild-all/202410251136.1m7BlR68-lkp@intel.com/
-v1 -> v2:
-  - deleting struct dp_mode and dp_mode_cfg function, suggested by Dmitry Baryshkov.
-  - modifying drm_simple_encoder_init function, suggested by Dmitry Baryshkov.
-  - refactoring struct hibmc_connector, suggested by Dmitry Baryshkov.
-  - withdrawing the modification in hibmc_kms_init, suggested by Dmitry Baryshkov.
-  v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
----
- drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 128 ++++++++++++++++++
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  16 +++
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  21 +--
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c   |  41 +++---
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  |  20 +--
- 6 files changed, 188 insertions(+), 40 deletions(-)
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+I am not convinced this is a problem. Given that netpoll_setup() is only
+called from netconsole.
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-index 214228052ccf..95a4ed599d98 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
-+++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
- hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
--	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o
-+	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o hibmc_drm_dp.o
- 
- obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-new file mode 100644
-index 000000000000..1e0f2ef39ba6
---- /dev/null
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-@@ -0,0 +1,128 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// Copyright (c) 2024 Hisilicon Limited.
-+
-+#include <linux/io.h>
-+
-+#include <drm/drm_probe_helper.h>
-+#include <drm/drm_simple_kms_helper.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_drv.h>
-+#include <drm/drm_edid.h>
-+
-+#include "hibmc_drm_drv.h"
-+#include "dp/dp_hw.h"
-+
-+static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
-+{
-+	int count;
-+
-+	count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
-+				     connector->dev->mode_config.max_height);
-+	drm_set_preferred_mode(connector, 1024, 768); // temporary implementation
-+
-+	return count;
-+}
-+
-+static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
-+	.get_modes = hibmc_dp_connector_get_modes,
-+};
-+
-+static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
-+	.reset = drm_atomic_helper_connector_reset,
-+	.fill_modes = drm_helper_probe_single_connector_modes,
-+	.destroy = drm_connector_cleanup,
-+	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-+};
-+
-+static int hibmc_dp_prepare(struct hibmc_dp *dp, struct drm_display_mode *mode)
-+{
-+	int ret;
-+
-+	hibmc_dp_display_en(dp, false);
-+
-+	ret = hibmc_dp_mode_set(dp, mode);
-+	if (ret)
-+		drm_err(dp->drm_dev, "hibmc dp mode set failed: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static void hibmc_dp_encoder_enable(struct drm_encoder *drm_encoder,
-+				    struct drm_atomic_state *state)
-+{
-+	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
-+	struct drm_display_mode *mode = &drm_encoder->crtc->state->mode;
-+
-+	if (hibmc_dp_prepare(dp, mode))
-+		return;
-+
-+	hibmc_dp_display_en(dp, true);
-+}
-+
-+static void hibmc_dp_encoder_disable(struct drm_encoder *drm_encoder,
-+				     struct drm_atomic_state *state)
-+{
-+	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
-+
-+	hibmc_dp_display_en(dp, false);
-+}
-+
-+static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
-+	.atomic_enable = hibmc_dp_encoder_enable,
-+	.atomic_disable = hibmc_dp_encoder_disable,
-+};
-+
-+void hibmc_dp_uninit(struct hibmc_drm_private *priv)
-+{
-+	hibmc_dp_hw_uninit(&priv->dp);
-+}
-+
-+int hibmc_dp_init(struct hibmc_drm_private *priv)
-+{
-+	struct drm_device *dev = &priv->dev;
-+	struct drm_crtc *crtc = &priv->crtc;
-+	struct hibmc_dp *dp = &priv->dp;
-+	struct drm_connector *connector = &dp->connector;
-+	struct drm_encoder *encoder = &dp->encoder;
-+	int ret;
-+
-+	dp->mmio = priv->mmio;
-+	dp->drm_dev = dev;
-+
-+	ret = hibmc_dp_hw_init(&priv->dp);
-+	if (ret) {
-+		drm_err(dev, "hibmc dp hw init failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	hibmc_dp_display_en(&priv->dp, false);
-+
-+	encoder->possible_crtcs = drm_crtc_mask(crtc);
-+	ret = drmm_encoder_init(dev, encoder, NULL, DRM_MODE_ENCODER_TMDS, NULL);
-+	if (ret) {
-+		drm_err(dev, "init dp encoder failed: %d\n", ret);
-+		goto err_init;
-+	}
-+
-+	drm_encoder_helper_add(encoder, &hibmc_dp_encoder_helper_funcs);
-+
-+	ret = drm_connector_init(dev, connector, &hibmc_dp_conn_funcs,
-+				 DRM_MODE_CONNECTOR_DisplayPort);
-+	if (ret) {
-+		drm_err(dev, "init dp connector failed: %d\n", ret);
-+		goto err_init;
-+	}
-+
-+	drm_connector_helper_add(connector, &hibmc_dp_conn_helper_funcs);
-+
-+	drm_connector_attach_encoder(connector, encoder);
-+
-+	return 0;
-+
-+err_init:
-+	hibmc_dp_hw_uninit(&priv->dp);
-+
-+	return ret;
-+}
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-index 9f9b19ea0587..f98ac94a18b9 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-@@ -27,6 +27,10 @@
- #include "hibmc_drm_drv.h"
- #include "hibmc_drm_regs.h"
- 
-+#define DP_HOST_SERDES_CTRL		0x1f001c
-+#define DP_HOST_SERDES_CTRL_VAL		0x8A00
-+#define DP_HOST_SERDES_CTRL_MASK	0x7FFFE
-+
- DEFINE_DRM_GEM_FOPS(hibmc_fops);
- 
- static irqreturn_t hibmc_interrupt(int irq, void *arg)
-@@ -116,6 +120,14 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
- 		return ret;
- 	}
- 
-+	/* if DP existed, init DP */
-+	if ((readl(priv->mmio + DP_HOST_SERDES_CTRL) &
-+	     DP_HOST_SERDES_CTRL_MASK) == DP_HOST_SERDES_CTRL_VAL) {
-+		ret = hibmc_dp_init(priv);
-+		if (ret)
-+			drm_err(dev, "failed to init dp: %d\n", ret);
-+	}
-+
- 	ret = hibmc_vdac_init(priv);
- 	if (ret) {
- 		drm_err(dev, "failed to init vdac: %d\n", ret);
-@@ -239,6 +251,7 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
- 
- static int hibmc_unload(struct drm_device *dev)
- {
-+	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
- 
- 	drm_atomic_helper_shutdown(dev);
-@@ -247,6 +260,9 @@ static int hibmc_unload(struct drm_device *dev)
- 
- 	pci_disable_msi(to_pci_dev(dev->dev));
- 
-+	if (priv->dp.encoder.possible_crtcs)
-+		hibmc_dp_uninit(priv);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-index 6b566f3aeecb..1b78d313a6c2 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-@@ -19,10 +19,12 @@
- #include <linux/i2c.h>
- 
- #include <drm/drm_framebuffer.h>
-+#include "dp/dp_hw.h"
- 
--struct hibmc_connector {
--	struct drm_connector base;
--
-+struct hibmc_vdac {
-+	struct drm_device *dev;
-+	struct drm_encoder encoder;
-+	struct drm_connector connector;
- 	struct i2c_adapter adapter;
- 	struct i2c_algo_bit_data bit_data;
- };
-@@ -35,13 +37,13 @@ struct hibmc_drm_private {
- 	struct drm_device dev;
- 	struct drm_plane primary_plane;
- 	struct drm_crtc crtc;
--	struct drm_encoder encoder;
--	struct hibmc_connector connector;
-+	struct hibmc_dp dp;
-+	struct hibmc_vdac vdac;
- };
- 
--static inline struct hibmc_connector *to_hibmc_connector(struct drm_connector *connector)
-+static inline struct hibmc_vdac *to_hibmc_vdac(struct drm_connector *connector)
- {
--	return container_of(connector, struct hibmc_connector, base);
-+	return container_of(connector, struct hibmc_vdac, connector);
- }
- 
- static inline struct hibmc_drm_private *to_hibmc_drm_private(struct drm_device *dev)
-@@ -57,6 +59,9 @@ void hibmc_set_current_gate(struct hibmc_drm_private *priv,
- int hibmc_de_init(struct hibmc_drm_private *priv);
- int hibmc_vdac_init(struct hibmc_drm_private *priv);
- 
--int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_connector *connector);
-+int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_vdac *connector);
-+
-+int hibmc_dp_init(struct hibmc_drm_private *priv);
-+void hibmc_dp_uninit(struct hibmc_drm_private *priv);
- 
- #endif
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c
-index e6e48651c15c..99b3b77b5445 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c
-@@ -25,8 +25,8 @@
- 
- static void hibmc_set_i2c_signal(void *data, u32 mask, int value)
- {
--	struct hibmc_connector *hibmc_connector = data;
--	struct hibmc_drm_private *priv = to_hibmc_drm_private(hibmc_connector->base.dev);
-+	struct hibmc_vdac *vdac = data;
-+	struct hibmc_drm_private *priv = to_hibmc_drm_private(vdac->connector.dev);
- 	u32 tmp_dir = readl(priv->mmio + GPIO_DATA_DIRECTION);
- 
- 	if (value) {
-@@ -45,8 +45,8 @@ static void hibmc_set_i2c_signal(void *data, u32 mask, int value)
- 
- static int hibmc_get_i2c_signal(void *data, u32 mask)
- {
--	struct hibmc_connector *hibmc_connector = data;
--	struct hibmc_drm_private *priv = to_hibmc_drm_private(hibmc_connector->base.dev);
-+	struct hibmc_vdac *vdac = data;
-+	struct hibmc_drm_private *priv = to_hibmc_drm_private(vdac->connector.dev);
- 	u32 tmp_dir = readl(priv->mmio + GPIO_DATA_DIRECTION);
- 
- 	if ((tmp_dir & mask) != mask) {
-@@ -77,22 +77,21 @@ static int hibmc_ddc_getscl(void *data)
- 	return hibmc_get_i2c_signal(data, I2C_SCL_MASK);
- }
- 
--int hibmc_ddc_create(struct drm_device *drm_dev,
--		     struct hibmc_connector *connector)
-+int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_vdac *vdac)
- {
--	connector->adapter.owner = THIS_MODULE;
--	snprintf(connector->adapter.name, I2C_NAME_SIZE, "HIS i2c bit bus");
--	connector->adapter.dev.parent = drm_dev->dev;
--	i2c_set_adapdata(&connector->adapter, connector);
--	connector->adapter.algo_data = &connector->bit_data;
--
--	connector->bit_data.udelay = 20;
--	connector->bit_data.timeout = usecs_to_jiffies(2000);
--	connector->bit_data.data = connector;
--	connector->bit_data.setsda = hibmc_ddc_setsda;
--	connector->bit_data.setscl = hibmc_ddc_setscl;
--	connector->bit_data.getsda = hibmc_ddc_getsda;
--	connector->bit_data.getscl = hibmc_ddc_getscl;
--
--	return i2c_bit_add_bus(&connector->adapter);
-+	vdac->adapter.owner = THIS_MODULE;
-+	snprintf(vdac->adapter.name, I2C_NAME_SIZE, "HIS i2c bit bus");
-+	vdac->adapter.dev.parent = drm_dev->dev;
-+	i2c_set_adapdata(&vdac->adapter, vdac);
-+	vdac->adapter.algo_data = &vdac->bit_data;
-+
-+	vdac->bit_data.udelay = 20;
-+	vdac->bit_data.timeout = usecs_to_jiffies(2000);
-+	vdac->bit_data.data = vdac;
-+	vdac->bit_data.setsda = hibmc_ddc_setsda;
-+	vdac->bit_data.setscl = hibmc_ddc_setscl;
-+	vdac->bit_data.getsda = hibmc_ddc_getsda;
-+	vdac->bit_data.getscl = hibmc_ddc_getscl;
-+
-+	return i2c_bit_add_bus(&vdac->adapter);
- }
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-index 409c551c92af..05e19ea4c9f9 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-@@ -24,11 +24,11 @@
- 
- static int hibmc_connector_get_modes(struct drm_connector *connector)
- {
--	struct hibmc_connector *hibmc_connector = to_hibmc_connector(connector);
-+	struct hibmc_vdac *vdac = to_hibmc_vdac(connector);
- 	const struct drm_edid *drm_edid;
- 	int count;
- 
--	drm_edid = drm_edid_read_ddc(connector, &hibmc_connector->adapter);
-+	drm_edid = drm_edid_read_ddc(connector, &vdac->adapter);
- 
- 	drm_edid_connector_update(connector, drm_edid);
- 
-@@ -51,9 +51,9 @@ static int hibmc_connector_get_modes(struct drm_connector *connector)
- 
- static void hibmc_connector_destroy(struct drm_connector *connector)
- {
--	struct hibmc_connector *hibmc_connector = to_hibmc_connector(connector);
-+	struct hibmc_vdac *vdac = to_hibmc_vdac(connector);
- 
--	i2c_del_adapter(&hibmc_connector->adapter);
-+	i2c_del_adapter(&vdac->adapter);
- 	drm_connector_cleanup(connector);
- }
- 
-@@ -93,20 +93,20 @@ static const struct drm_encoder_helper_funcs hibmc_encoder_helper_funcs = {
- int hibmc_vdac_init(struct hibmc_drm_private *priv)
- {
- 	struct drm_device *dev = &priv->dev;
--	struct hibmc_connector *hibmc_connector = &priv->connector;
--	struct drm_encoder *encoder = &priv->encoder;
-+	struct hibmc_vdac *vdac = &priv->vdac;
-+	struct drm_encoder *encoder = &vdac->encoder;
- 	struct drm_crtc *crtc = &priv->crtc;
--	struct drm_connector *connector = &hibmc_connector->base;
-+	struct drm_connector *connector = &vdac->connector;
- 	int ret;
- 
--	ret = hibmc_ddc_create(dev, hibmc_connector);
-+	ret = hibmc_ddc_create(dev, vdac);
- 	if (ret) {
- 		drm_err(dev, "failed to create ddc: %d\n", ret);
- 		return ret;
- 	}
- 
- 	encoder->possible_crtcs = drm_crtc_mask(crtc);
--	ret = drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_DAC);
-+	ret = drmm_encoder_init(dev, encoder, NULL, DRM_MODE_ENCODER_DAC, NULL);
- 	if (ret) {
- 		drm_err(dev, "failed to init encoder: %d\n", ret);
- 		return ret;
-@@ -117,7 +117,7 @@ int hibmc_vdac_init(struct hibmc_drm_private *priv)
- 	ret = drm_connector_init_with_ddc(dev, connector,
- 					  &hibmc_connector_funcs,
- 					  DRM_MODE_CONNECTOR_VGA,
--					  &hibmc_connector->adapter);
-+					  &vdac->adapter);
- 	if (ret) {
- 		drm_err(dev, "failed to init connector: %d\n", ret);
- 		return ret;
--- 
-2.33.0
+In netconsole, a target is not enabled (as in sending packets) until the
+netconsole target is, in fact, enabled. (nt->enabled = true). Enabling
+the target(nt) only happen after netpoll_setup() returns successfully.
 
+Example:
+
+	static void write_ext_msg(struct console *con, const char *msg,
+				  unsigned int len)
+	{
+		...
+		list_for_each_entry(nt, &target_list, list)
+			if (nt->extended && nt->enabled && netif_running(nt->np.dev))
+				send_ext_msg_udp(nt, msg, len);
+
+So, back to your point, the netpoll interface will be up, but, not used
+at all.
+
+On top of that, two other considerations:
+
+ * If the netpoll target is used without the buffer, it is not a big
+deal, since refill_skbs() is called, independently if the pool is full
+or not. (Which is not ideal and I eventually want to improve it).
+
+Anyway, this is how the code works today:
+
+
+	void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
+	{
+		...
+		skb = find_skb(np, total_len + np->dev->needed_tailroom,...
+		// transmit the skb
+		
+
+	static struct sk_buff *find_skb(struct netpoll *np, int len, int reserve)
+	{
+		...
+		refill_skbs(np);
+		skb = alloc_skb(len, GFP_ATOMIC);
+		if (!skb)
+			skb = skb_dequeue(&np->skb_pool);
+		...
+		// return the skb
+
+So, even in there is a transmission in-between enabling the netpoll
+target and not populating the pool (which is NOT the case in the code
+today), it would not be a problem, given that netpoll_send_udp() will
+call refill_skbs() anyway.
+
+I have an in-development patch to improve it, by deferring this to a
+workthread, mainly because this whole allocation dance is done with a
+bunch of locks held, including printk/console lock.
+
+I think that a best mechanism might be something like:
+
+ * If find_skb() needs to consume from the pool (which is rare, only
+when alloc_skb() fails), raise workthread that tries to repopulate the
+pool in the background. 
+
+ * Eventually avoid alloc_skb() first, and getting directly from the
+   pool first, if the pool is depleted, try to alloc_skb(GPF_ATOMIC).
+   This might make the code faster, but, I don't have data yet.
+
+   This might also required a netpool reconfigurable of pool size. Today
+   it is hardcoded (#define MAX_SKBS 32). This current patchset is the
+   first step to individualize the pool, then, we can have a field in
+   struct netpoll that specify what is the pool size (32 by default),
+   but user configuration.
+
+   On netconsole, we can do it using the configfs fields.
+
+Anyway, are these ideas too crazy?
 
