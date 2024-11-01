@@ -1,114 +1,97 @@
-Return-Path: <linux-kernel+bounces-392571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D22D9B95B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:43:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0292B9B95B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:43:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14BFA1F21612
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:43:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 347F31C219B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3451CC173;
-	Fri,  1 Nov 2024 16:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8051C9DD3;
+	Fri,  1 Nov 2024 16:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eQPUnopE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UbaFMRZc"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6602A1CBE98;
-	Fri,  1 Nov 2024 16:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283AF1487E3;
+	Fri,  1 Nov 2024 16:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730479369; cv=none; b=IRd0wUAuMP3P8kawgea0jRku8hyONFQBCfQh2t9GJGzQwCu4nRPMnnBxjLY33FEZw98fJ9kGgnInpdFolLysEQafTCvY/PRPm4ogjIMxmWLgXilugA4BhYV69dH6rKgeUnxSZhr/xgUI3gkPUq4f5q35zd2NjqbamumsJJQeKUk=
+	t=1730479410; cv=none; b=S6Nqjyy37gfRoykq7vp4An5Y6NeUzua4V3ZYh1zAaAyx1Bj1nRU8qDWwvDx/Kn091lCIWoqgh884BRHkI8Wh2oU7nQDVLQpJAuNYEgCbkZtgveXXCxf7AQSvkRh8gC4Ds4B2rGbMpYltBjp4a4mS9YwEgH13LrysIxsHFQsBByo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730479369; c=relaxed/simple;
-	bh=cVy0S1byr07G00hHlUDVxRSACJrhKuqzww/9nKHjnlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8OHNb0h32N37IiJB8VAjHCD6cSQWXuJfaACSsSmFzx+ElrfqzHgQXLrolT9BsSFeCYFQTmJMBLMUNi9OlJ8mpe7UTmzlJt3DZTQh3+R1uvHcmkccVwmBFnx4zSA/mxAJi1DVobCpUN+HJRQq58sswLZhq5H3goMyUgwgmJoml8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eQPUnopE; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730479367; x=1762015367;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cVy0S1byr07G00hHlUDVxRSACJrhKuqzww/9nKHjnlI=;
-  b=eQPUnopEl05tp86t8eWaIIVXpfDpIbxAJb6ML41biRHXl22R2JsODHkD
-   +PhaJfrCxFABZBBsDRJXWPNT996HbQOwFZ5W0OWk/sBPOWqPTCUUVS+bx
-   f9zEinYgpEXFZPAKOg5XRpHRJuh+6o7s6fvE0Z6C/TMPmHKCJrP3v0m84
-   qO+wKt8IuDCS2RpZcxjOHP+w/ghRZi7niM2AAsLEi7PYLgw1RZte4ZoF7
-   6JygrMymvbuvEQE/pPiJeJp1zNlx7Xc5xr7RvUweSZtXo+RSUUGj9d7ML
-   MUeJJzry6i55pby5xXE/4ahq8gIVaKlNMIoSFXeeAprRxsaw0oOkfPT9Y
-   w==;
-X-CSE-ConnectionGUID: 0VYW/7+zT6+CMk+43pC6Zg==
-X-CSE-MsgGUID: vFQr+hxgSxSEGMJ0BBwa+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="33087464"
-X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
-   d="scan'208";a="33087464"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 09:42:46 -0700
-X-CSE-ConnectionGUID: dQQxg3LgSLeUCe0xuaVMOw==
-X-CSE-MsgGUID: +ixHzwP1QWO9HdqyfJOB9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
-   d="scan'208";a="113785863"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 09:42:45 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t6ujS-0000000A6GR-1aW5;
-	Fri, 01 Nov 2024 18:42:42 +0200
-Date: Fri, 1 Nov 2024 18:42:42 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v3 0/4] iio: initialise ddata for
- iio_get_acpi_device_name_and_data()
-Message-ID: <ZyUFAjwjAWcJH8ag@smile.fi.intel.com>
-References: <20241101131705.3697913-1-andriy.shevchenko@linux.intel.com>
- <20241101145938.304fd98b@jic23-huawei>
+	s=arc-20240116; t=1730479410; c=relaxed/simple;
+	bh=HpK1o9AVJPjL2XnjX21gGBHaJq0A2t72vXagbHLbC9g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JixfjJXcN7rk/L11O6cKF3fIBOTsNrSkwZmOQuxWkP1reNLGKB2K+eEBnQ6FaByGl3eXzVTjPLVq3GW5SN2HLeM5aLUDmWZo/zwFHMTDw2R26+xYYPns+G6rXFXCNANcVORJiAD+wYVXXNTZrqrjlXCtaNRmk27snKJyWagHvys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UbaFMRZc; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=oYAANeUfChayQjZoNc7TQiQKCEOVpsJxqghz8y/Jtcc=; b=UbaFMRZcDD89BDu78ngPT1o5AT
+	hBqHDujzhaLa4DGlptiNSpjxhS0L6O4HmpPnFdpMk1pXjhHV8DY2da6l+xf4SWMgNtwSORDgpn+YT
+	M4wwqbYC4qlSxY+uTgqkO/D9OWtCnbvkqxQjxUnD4DrkC9odQl3CF+yK9+X+5h2lCAwNfkGRRvJ12
+	xwTj7/0P7+9/W0F2UqTE2Jm897HjjD2rselDsxbp8pElfeqe+12q9Iy1THd2ofelYT3F7NPZ4l4wR
+	bQZaNWtY1ALx3YRFPaoLIV5uBpPYfw6PdWdivHumQyvf54ASKjnttaQPWPpkYII5GVPbgqsj6z17h
+	EsqgbDRw==;
+Received: from [189.78.222.89] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1t6ujy-000V2F-IW; Fri, 01 Nov 2024 17:43:15 +0100
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	krisman@kernel.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Nathan Chancellor <nathan@kernel.org>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Theodore Ts'o <tytso@mit.edu>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v2 0/3] tmpfs: Casefold fixes
+Date: Fri,  1 Nov 2024 13:42:48 -0300
+Message-ID: <20241101164251.327884-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101145938.304fd98b@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 01, 2024 at 02:59:38PM +0000, Jonathan Cameron wrote:
-> On Fri,  1 Nov 2024 15:16:00 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > Dan reported that ddata might be used uninitialised in some cases.
-> > Let's initialise it to NULL (patches 1 - 3). With that, update one driver
-> > to drop an unneeded anymore check (included in patch 3).
-> > 
-> > While at it, one more cleanup to kxcjk-1013 (patch 4) is added.
-> > 
-> > Jonathan, dunno if you want to rebase at this stage (probably not),
-> > but if you do, feel free to fold the patches 1-3 to the initial code.
-> Ah. I've just picked v2, but given I squashed anyway the commit message
-> changes don't matter.
+After casefold support for tmpfs was merged into vfs tree, two warnings
+were reported and I also found a small fix in the code.
 
-Thanks, I have looked into the resulting changes and it all LGTM!
+Thanks Nathan Chancellor and Stephen Rothwell!
 
-> I was curious what Assing meant but not need to
-> ask given I wasn't going to keep it.
+Changelog:
+- Fixed ifdef guard for tmpfs_sysfs_init()
+v1: https://lore.kernel.org/lkml/20241101013741.295792-1-andrealmeid@igalia.com/
 
-He-he :-)
+André Almeida (3):
+  libfs: Fix kernel-doc warning in generic_ci_validate_strict_name
+  tmpfs: Fix type for sysfs' casefold attribute
+  tmpfs: Initialize sysfs during tmpfs init
 
+ include/linux/fs.h |  10 ++---
+ mm/shmem.c         | 105 +++++++++++++++++++++++++++++----------------
+ 2 files changed, 73 insertions(+), 42 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.0
 
 
