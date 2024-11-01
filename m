@@ -1,142 +1,112 @@
-Return-Path: <linux-kernel+bounces-392405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6513E9B93BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEC09B93C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:52:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9623A1C213A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:50:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 404141C21F97
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCD61A76D2;
-	Fri,  1 Nov 2024 14:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516731AB507;
+	Fri,  1 Nov 2024 14:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="guPzqbm+"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLhfBdhQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED76919DF53;
-	Fri,  1 Nov 2024 14:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4341AAE09;
+	Fri,  1 Nov 2024 14:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472617; cv=none; b=iclsVVIW1XPdTP+GjZuzpW1mZ3CoW+7xEKXDJzkY42sbWwDrZMZMpCuk59m2RBsc006Tqx2/e6nubAdq3qBAANoxG+6Z7bKoTdbYB9+dfMr9e1+PEAXK12qS/vDsUEapuWUA6dz4WdhSboNPvhob/UsUWKkPEkcYZaJ9mOmK9qQ=
+	t=1730472715; cv=none; b=gW+at5VYsaRD25bs5mzvLjUzgG1R/HgnU17Zy0QkZSuS/fVTGpvjtrmUBghQqLFa3FkHggFAdzrgdjuUQ7VQUCgMA88TbDYJmNaePhunLYn9T3py8t/1oWbk18bk953PNVAV+zfD/TsZeuQ+a/042qBhDLv17sAn/x9iRdSt+Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472617; c=relaxed/simple;
-	bh=ljeC521u4evp5cZBupSeKdyQnELeagQB8AYdKxuvGF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tKy5x/aIsbg8dg3mtzvyadjpPqIAjFd7PcYGkrUDzRbg2XkqGY6nBRJhKuTvzgTJ1Lv6YXYR69ESbpBwA+XKiD7jk/WYqYuU0yWPb6Z+JR8UeKAtVRZ1aZQZrOfcUy5ToHSvnAJoa96H9N/cKnNBPSMsI5IVKsaHr5uagXSMJHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=guPzqbm+; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb498a92f6so18609901fa.1;
-        Fri, 01 Nov 2024 07:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730472613; x=1731077413; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9hJYuNrDZmqlVcyIK/zA2RvDFZ2InchFcFx47BVpnR4=;
-        b=guPzqbm+lxMdsuKq2joiUhlDDcDkj0YnZcT7Znk7KR/EQgwdL8fUsvbY4TqQWNRLDv
-         stp0BKhTk8EJM+Z4muy9J+5fmR0X8hKctiso735yCY+FACYK7RRUbwViENmtwzNgBhNS
-         T29XgjGGFIL62Lg2HaRKdQVzvn0ylSbqjBW3Hgb7YRr7H9FXafl7IJhaQav10Y92SVoJ
-         f8YJGQI0OeZLvaw9PpEhWLxD/Zyazxf0S3/Ly3duWs06VDQFX8FsfUcLysAb1IipsTAN
-         65PQTRvX9JQoyNmDB1Iw8pde619ndzb3WrS6OoHIUgLDz/fGTL8DQuSOHNugJpXy0Fnm
-         WLyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730472613; x=1731077413;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9hJYuNrDZmqlVcyIK/zA2RvDFZ2InchFcFx47BVpnR4=;
-        b=evtSVbx6h5nw73Lgjq70KHNXMD0XaUbHFFYQ7WliQ0teUHzz7qP7IM8efbOsYUw9fY
-         MI+hoPzYqohiqN6hChaRriR0UTRF5xVveIYuDWEorjNjEM41CNdnSszw5+EiWHJV9+j5
-         /zAOYsxRxgx7JiO3EUgkj5gzLJY1Y8KEW+VgbJ6ATI6L1zTQQRRMi0wv0VqDHYIjUOki
-         /zxESzNiAg3LIA9j9JuCj5qu9VrDv8jT8ERXvWoHeZz44JSeD/4kp/qMDzCxbe3ZB1Yi
-         oT4+PrZGgYIghu19XxhklJz3OWEpB9MjpteT5eh5yUnuhpDbgPwhURD3bsIosxnsqmLN
-         /lLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQqPXLUDslEANeQQ++8Ic+R27LN8p7CflV/p1bJ1Ae34KBz7TTa0EJMIUy47uP6doinYeXHd4PAVhkpr6TfHZ4@vger.kernel.org, AJvYcCXt61HRPyprUO+MCijEatVqgj1Gdg0niiFgqRusGNQqojYr/lJOCrKMNpixboAQ0/R9U0UD8mVkd7CWNsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybdGrFtB7hzWwcfXJT6varknJv+2EDvcDSZ+1eOTB49/EORXZ+
-	n3ul0d5FseyYPaXXy5nJgha/zSbuM5mcs/jmcXHDdy73XVCAra8xAYQVYj9ErpBWyzDzKziRrQY
-	EgNIqovC05m59dCjrwAu5NSCb8HNjSRCVvSk=
-X-Google-Smtp-Source: AGHT+IGFLZSNiICgjAOj5BzvClatyHo1q6xPc2fzZwASomksDcKDY4rt0uQqp7EtXlR/7Pb2l3QGV5JanPMBEzDMOVM=
-X-Received: by 2002:a2e:be20:0:b0:2fb:3a12:a582 with SMTP id
- 38308e7fff4ca-2fcbe004c83mr117643281fa.23.1730472612781; Fri, 01 Nov 2024
- 07:50:12 -0700 (PDT)
+	s=arc-20240116; t=1730472715; c=relaxed/simple;
+	bh=fBmciF+8K11L8eGrwOJGRPAF0tISY2XVqBxqg8Opu4U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=t/HB5PL1RHcKNrh62wG7cfBq5xoaG3Ba5AAW9PMvw6G/7VKEIoc7QH7qbTCLpo/troB6DiQiudYM82uSq3FGNYTocKqn5ALeiLx3P2L9XWQIEC45Cq2FwhWPpua3fKgb1NjzaVADHYaoXdHqdnCDyx5cEsnJqemlqxPwFy0vI0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLhfBdhQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A7E1C4CECD;
+	Fri,  1 Nov 2024 14:51:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730472715;
+	bh=fBmciF+8K11L8eGrwOJGRPAF0tISY2XVqBxqg8Opu4U=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=pLhfBdhQcDWy1mnIlIpI0fOGxQXBqk3WkdTqtzWxYa3Xu2vgoWazyk+oRO4J8V1pe
+	 J12+zyrD3bpt/2XYSTT9A+rLfKfpZnQooZfbr3hXIKGNmAf/0/fZ5VzYidOSm8s1CB
+	 qXRqoncGrKqJsKcpb8FbDwj9ybgRiGjtyguDdA5nxy7drXN+PGO2YFvp5itn7JLMXV
+	 fbJNJrTcnGTDVhmMNfF4tuazJXCfSvg/G5WTcKQmKUR7fse/fqr9sdbG+0bKpjMcgv
+	 ZOhOnn3yPdMWS3GtiT3Ts0h2JZJl95ikhDcsovwWxxpvK21esgAM8w8igj4MQDpyZm
+	 AiQeBW27/ymrA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241025-kunit-qemu-accel-macos-v1-0-2f30c26192d4@gmail.com>
- <20241025-kunit-qemu-accel-macos-v1-2-2f30c26192d4@gmail.com> <jhmonkl53vrgz3pjhbbopvrx6infgbezlsvba3luccrpwtnmtb@ptobfcxrr4ud>
-In-Reply-To: <jhmonkl53vrgz3pjhbbopvrx6infgbezlsvba3luccrpwtnmtb@ptobfcxrr4ud>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 1 Nov 2024 10:49:36 -0400
-Message-ID: <CAJ-ks9m8AD2fon4Nxvc_S-DwY4TkRPHpq0icT0jPwCiCxy6Tqw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kunit: enable hardware acceleration when available
-To: Alyssa Ross <hi@alyssa.is>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Nov 2024 16:51:50 +0200
+Message-Id: <D5AXDOQWNMIY.3RD4A8I5H6OOJ@kernel.org>
+Cc: <dpsmith@apertussolutions.com>, <mingo@redhat.com>, <bp@alien8.de>,
+ <hpa@zytor.com>, <dave.hansen@linux.intel.com>, <ardb@kernel.org>,
+ <mjg59@srcf.ucam.org>, <James.Bottomley@hansenpartnership.com>,
+ <peterhuewe@gmx.de>, <jgg@ziepe.ca>, <luto@amacapital.net>,
+ <nivedita@alum.mit.edu>, <herbert@gondor.apana.org.au>,
+ <davem@davemloft.net>, <corbet@lwn.net>, <ebiederm@xmission.com>,
+ <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
+ kernel support
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Thomas Gleixner" <tglx@linutronix.de>, "Ross Philipson"
+ <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
+ <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>
+X-Mailer: aerc 0.18.2
+References: <20240913200517.3085794-1-ross.philipson@oracle.com>
+ <87wmhoulb9.ffs@tglx> <D5ACNMVX5LXB.1L0S9P2J3UDJH@kernel.org>
+ <87ldy3vpjh.ffs@tglx>
+In-Reply-To: <87ldy3vpjh.ffs@tglx>
 
-On Fri, Nov 1, 2024, 09:52 Alyssa Ross <hi@alyssa.is> wrote:
+On Fri Nov 1, 2024 at 1:08 AM EET, Thomas Gleixner wrote:
+> On Fri, Nov 01 2024 at 00:37, Jarkko Sakkinen wrote:
+> > On Thu Oct 31, 2024 at 9:25 PM EET, Thomas Gleixner wrote:
+> >> So this looks pretty reasonable to me by now and I'm inclined to take =
+it
+> >> through the tip x86 tree, but that needs reviewed/acked-by's from the
+> >> crypto and TPM folks. EFI has been reviewed already.
+> >>
+> >> Can we make progress on this please?
+> >
+> > So TPM patches do have bunch of glitches:
+> >
+> > - 15/20: I don't get this. There is nothing to report unless tree
+> >   is falling. The reported-by tag literally meaningless. Maybe this
+> >   is something that makes sense with this feature. Explain from that
+> >   angle.
+> > - 16/20: Is this actually a bug fix? If it is should be before 15/20.
+> > - 17/20: the commit message could do a better job explaining how the
+> >   locality can vary. I'm not sure how this will be used by rest of
+> >   the patch set.
+> > - 18/20: I'm not confident we want to give privilege to set locality
+> >   to the user space. The commit message neither makes a case of this.
+> >   Has this been tested to together with bus encryption (just checking)?
 >
-> On Fri, Oct 25, 2024 at 05:03:54PM -0400, Tamir Duberstein wrote:
-> > @@ -124,6 +125,29 @@ class LinuxSourceTreeOperationsQemu(LinuxSourceTreeOperations):
-> >                               '-no-reboot',
-> >                               '-nographic',
-> >                               '-serial', self._serial] + self._extra_qemu_params
-> > +             accelerators = {
-> > +                     line.strip()
-> > +                     for line in subprocess.check_output([qemu_binary, "-accel", "help"], text=True).splitlines()
-> > +                     if line and line.islower()
-> > +             }
-> > +             if 'kvm' in accelerators:
-> > +                     try:
-> > +                             with open('/dev/kvm', 'rb+'):
-> > +                                     qemu_command.extend(['-accel', 'kvm'])
-> > +                     except OSError as e:
-> > +                             print(e)
-> > +             elif 'hvf' in accelerators:
-> > +                     try:
-> > +                             for line in subprocess.check_output(['sysctl', 'kern.hv_support'], text=True).splitlines():
-> > +                                     if not line:
-> > +                                             continue
-> > +                                     key, value = line.split(':')
-> > +                                     if key == 'kern.hv_support' and bool(value):
-> > +                                             qemu_command.extend(['-accel', 'hvf'])
-> > +                                             break
-> > +                     except subprocess.CalledProcessError as e:
-> > +                             print(e)
-> > +
+> Can you please explicitely voice your detailed technical concerns in
+> replies to the actual patches?
+
+Yes, I did that.
+
 >
-> QEMU supports falling back if one accelerator is not available, if you
-> specify multiple like -accel kvm:tcg.  Couldn't you rely on that rather
-> than re-implementing the availability checks here?
+> Thanks,
+>
+>         tglx
 
-Have you ever used that? Here's what I get when I try:
-
-tamird@Tamirs-MacBook-Pro linux % tools/testing/kunit/kunit.py run
---arch arm64 --make_options LLVM=1 --raw_output=all
-[10:45:03] Configuring KUnit Kernel ...
-[10:45:03] Building KUnit Kernel ...
-Populating config with:
-$ make ARCH=arm64 O=.kunit olddefconfig LLVM=1
-Building with:
-$ make all compile_commands.json ARCH=arm64 O=.kunit --jobs=12 LLVM=1
-[10:45:07] Starting KUnit Kernel (1/1)...
-Running tests with:
-$ qemu-system-aarch64 -nodefaults -m 1024 -kernel
-.kunit/arch/arm64/boot/Image.gz -append 'kunit.enable=1
-console=ttyAMA0 kunit_shutdown=reboot' -no-reboot -nographic -serial
-stdio -accel kvm:tcg -machine virt -cpu max
-qemu-system-aarch64: -accel kvm:tcg: invalid accelerator kvm:tcg
-
-The same thing happens with hvf:kvm:tcg or just hvf:tcg.
-
-I also can't find this in the documentation.
-Tamir
+BR, Jarkko
 
