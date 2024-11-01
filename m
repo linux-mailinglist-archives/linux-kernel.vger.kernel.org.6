@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-392270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C2A9B91B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:16:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBE09B91B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3800D1C233DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64EF3282861
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A743B1A2574;
-	Fri,  1 Nov 2024 13:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522241A4B69;
+	Fri,  1 Nov 2024 13:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O/YitEh/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRVHzdQZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B4619BBC
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BA11A3AB1
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730466951; cv=none; b=J39WPDj7sY5J3aNuD7JwVHxNB99Do0ocaRFcNiBoIxGJafFVuypOG89/ELKILiJv/efHbHhwuz3Ikq7lHhNJMHKtA5vYWnHqK8NuodPCfcortieVWt0Ad3o1Ipk22f1RkgWZJwxLxagY17lwKOVAOUz5pv4ZTg6U92OWPsfFAU4=
+	t=1730466952; cv=none; b=odjVet5MBcO8jmHF0i2jKKuFwXkgB4MEkbFTmelkE6MZ6sa1XSEyFzW2jpHCkHozfh1kU03jjD1x2GzgpMKu8qIvkWRyBN6kVVun/NwVFgWOrWD2ns53izCfCD/eJ78WiGceyd6o1CXaxSLIpCJ2YFmOdVVEmp7I0QsSOBto3Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730466951; c=relaxed/simple;
-	bh=GxFCQoPT6SBfv+qJ1/AwwrFy3aW8c94SJ4DDxVc0Kk4=;
+	s=arc-20240116; t=1730466952; c=relaxed/simple;
+	bh=CbliUjxHWzid1HaEjMD52FwgfpHebZBaQqZhjnsFu+I=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=d8ZncR9mjb4dJHFMXJzYAfupYpcMt6STbNABMbkbdgWqUou8PxpKGzTdTM01XSkBVpGQkBkwRQ0WLrigxBi94MLAZCA4owcQQqRNqk2/RwT2dncT0SzV9xkSe/0byESS1Kb/YHzCT9av5XOpH3KCTieqBdtgEqHqcrgtP2dhJhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O/YitEh/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 395F2C4CECD;
-	Fri,  1 Nov 2024 13:15:49 +0000 (UTC)
+	 MIME-Version:Content-Type; b=sJd70ECLB9wlXIvxeQ1vjnnFBRC0Dm1Mh/vFfdDW7zkLMT2KUqrA8XUFOtARI/CuB2p7fI7LCrMFirUMFao5q5F+fDsOkqdE3Kf9odg4G7qB13rW51qpbTxdXPotSX5O26CgKibI5kW144eTdR9/xOtIHhLQsxG5+HKDo6tB8bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRVHzdQZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1751CC4CECE;
+	Fri,  1 Nov 2024 13:15:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730466950;
-	bh=GxFCQoPT6SBfv+qJ1/AwwrFy3aW8c94SJ4DDxVc0Kk4=;
+	s=k20201202; t=1730466952;
+	bh=CbliUjxHWzid1HaEjMD52FwgfpHebZBaQqZhjnsFu+I=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=O/YitEh/mRTQcygIAXXOmx4qrwLCkrgTZ4sOp2wnjUwl9VWjC3Tt2oMXhGMMBYgdH
-	 KXnOdK31eykQtVrIkZrRC7XmUR+jVM7jx0WcN27IWw9Zw/mTca4g26v28PDpXLM/jP
-	 DhenGrx6DtTbWlq2naJEEPFqQp+ztqma6ZvIfkAfYok3KUt7iLphxGypd6HyF9EG2o
-	 XtLJu/2qAadPSQ72CRshpdzuXSKzcTJRaYSgR0Dm2v2PR0MA38GJJLOy/+lYfZYSSf
-	 FmaMlYmWqQWaOwAupAO9zj7dfHXPfwRp6p2HoxAJ/7r3CKXVC/rL1krCXL/55ibfev
-	 9mPlU98IXDuwQ==
+	b=XRVHzdQZOWVsUswjczYlgJ+hGF0sDVSCrZk8lyv3lQgwMvnUPYs4OHd9JAQT6RvdT
+	 CdE/9UuYRqhuEC4TyGp5WOlJqP9xSWu/TZHHhl44fl7VlMpxmVL4MqE9tsCylM+DXt
+	 pPjKzNXsP0VvS1PHWj1PkCKybDxxcsolkM3JcCiafRnn5fyRSwYexIoISCIBDNHgf5
+	 vwQwd/wzKozgQDDD7ZJD3OGUNzuPgHN9MLJM2Gmv8RYQCpnZejdCvBVS+fWNFZiDDJ
+	 J1TjCvT1zcIU/F2hQMzVrhzhXkM3I61dFVxEZMwDSqhHLufTwnH+veEdp+JaMLSf5B
+	 DH7vcUDSXcSxw==
 From: Mark Brown <broonie@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
  "Rafael J. Wysocki" <rafael@kernel.org>, 
  Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 Cc: Heiko Stuebner <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
  kernel@collabora.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20241029-regmap-maple-lockdep-fix-v1-1-7589e57390bd@collabora.com>
-References: <20241029-regmap-maple-lockdep-fix-v1-1-7589e57390bd@collabora.com>
-Subject: Re: [PATCH RFC] regmap: maple: Provide lockdep (sub)class for
+In-Reply-To: <20241031-regmap-maple-lockdep-fix-v2-1-06a3710f3623@collabora.com>
+References: <20241031-regmap-maple-lockdep-fix-v2-1-06a3710f3623@collabora.com>
+Subject: Re: [PATCH RFC v2] regmap: maple: Provide lockdep (sub)class for
  maple tree's internal lock
-Message-Id: <173046694894.38539.7909211961224919690.b4-ty@kernel.org>
-Date: Fri, 01 Nov 2024 13:15:48 +0000
+Message-Id: <173046695082.38539.16119866726852880979.b4-ty@kernel.org>
+Date: Fri, 01 Nov 2024 13:15:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,7 +62,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Tue, 29 Oct 2024 23:50:12 +0200, Cristian Ciocaltea wrote:
+On Thu, 31 Oct 2024 18:37:04 +0200, Cristian Ciocaltea wrote:
 > In some cases when using the maple tree register cache, the lockdep
 > validator might complain about invalid deadlocks:
 > 
