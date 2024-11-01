@@ -1,128 +1,113 @@
-Return-Path: <linux-kernel+bounces-392919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC499B99A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:47:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B019B99A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 905941F22350
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:47:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59A32282A27
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9281E2007;
-	Fri,  1 Nov 2024 20:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A6D1E2610;
+	Fri,  1 Nov 2024 20:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="deZjujUr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5qKfZ6iw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eVXAmFWR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8F11D0F77
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D7F1E0DE9
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730494039; cv=none; b=nSgutkqFSlTyM5LQjzf7uo8n8CGnk+Zgpb6fBoiWFggWovfTyi/TiDxSv1S3/9hY9ZjCedfejQf0JVurZOUJXQL7LxbeLiBXEEyTixFUySbXt412NGrb6UfKUt8iKpZyw9ZyDg1u3s8YRggC6RNPPcpMUEEZIKz74rGfub8FE50=
+	t=1730494065; cv=none; b=WMZgxyFRF8WlgxQQYVcK5todOBQyltsK6+So0AgUf9eZnAsaI69Nktqz5Gyk2dz+m9Uc/hVVHZOkKBart9WZveLgKg4w6SG2dSj8oFsmjIQRFoHQY+VYataV4kBHExJrr6AYRIszQlVCRm0s+5oDALrc36sjrkwAPbLP6it0zDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730494039; c=relaxed/simple;
-	bh=0tnK6nEbmuYG541l5Lx8ax5b3m2A7/Mv34Ahf+Bc64E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=e/cUzC1ZZgSOQVRgeCR12mnuXnECnqzYbWbKNqBq9Li8SC5WaFtkh6gfjShqiG8J6Yt9Qw0bftHeNBnBFGbqTcadW6hXXDc7TX0761cQg7ZzsejqIR0jj0/ITtoCXkRue3VqFRpeOjkhCB1h6/Yt1fqE6FsVbAbwWhkaBbFDUMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=deZjujUr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5qKfZ6iw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730494035;
+	s=arc-20240116; t=1730494065; c=relaxed/simple;
+	bh=+ACGm2X5bUfV1u+PCezkp/95pbZzsXWMR5I9lLuWjvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T0jXXhnTFfH6Ztqk6/WPjgIiSqfxOgDvK/1qQJ3qffirFeWXXuCWqckuawYkZnEStPRENRn5pz2DkP5l+lBApsu8VvUyn+GSp6iB4ZY5/77BFP4BQmSJIRBZQy/3ifaPu8oTib7XE77a9ZdUzu6QVKmQTVa/We/6RcD4x/uYXJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eVXAmFWR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730494062;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d7EQLbcFgM5NFHnvUBAmrYEoDMdjisGi8IXkoXIatbQ=;
-	b=deZjujUr+KIMEUtrcOkgIHhIK60NbgLHSQ+HXu3wBQoWFpgsMaQdXeOWxGgIRXZUjBdaGk
-	aCzRx29613lWi7BplwkOpuKSl84hm7qAzIq5ivF24+4QHYubUC0qd17ZZQ403cZK5cgV+A
-	sC910I4eqZ+vaC8xvi+LThdOsTanqm8yPzGpACFVGq662NnX+7F1B47RgYB9AuGIn9uehG
-	DojaY+YPxwXNMeeG+SdhRkR4QZJjXC4Le3xmyEwNsSGEHkczi4Dsv5hunh+BumnnKKvamQ
-	RYqr/JVCMysT9EPzD/61Rv2y4kq3Us2PyMX6Wcmm2Zxipxy3rdaaFAGy+fnHgw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730494035;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d7EQLbcFgM5NFHnvUBAmrYEoDMdjisGi8IXkoXIatbQ=;
-	b=5qKfZ6iwIaifC+kaqmQEeUc/sVer7ce/83EAUxIxXhiD+y9VIPDKpTtWf7CIELi4C/19PK
-	BsptZBLStP6e4LDA==
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Stephen
- Boyd <sboyd@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Oleg
- Nesterov <oleg@redhat.com>
-Subject: Re: [patch v6 17/20] signal: Queue ignored posixtimers on ignore list
-In-Reply-To: <ZyTj2W8Jndv0nzga@localhost.localdomain>
-References: <20241031151625.361697424@linutronix.de>
- <20241031154425.624061922@linutronix.de>
- <ZyTj2W8Jndv0nzga@localhost.localdomain>
-Date: Fri, 01 Nov 2024 21:47:15 +0100
-Message-ID: <871pzuvfzg.ffs@tglx>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5YsdMdfOSE2dnJUvKdNseEnsfpuXrSxxUdmFCTsEsdI=;
+	b=eVXAmFWRSqJmG5Fv2iVHuIW82u9h9dhLNfuzLfkZcvkbqsz5nlN3AfdyuUUl6cHSfieAXe
+	x7obLY5koAlENtDhDSVUb/Q/Ow+ypA9lJmaZpqotdMEmXDHOqDd5mHtQedUpksDq83n4s4
+	dqQD+YOBo8drp8uOHnDFr1hcvWNfSJE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-648-eqHijaepOpaQSVKpPLhjjg-1; Fri,
+ 01 Nov 2024 16:47:39 -0400
+X-MC-Unique: eqHijaepOpaQSVKpPLhjjg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA1E2195608C;
+	Fri,  1 Nov 2024 20:47:36 +0000 (UTC)
+Received: from RHTRH0061144.redhat.com (unknown [10.22.66.84])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5A508195605A;
+	Fri,  1 Nov 2024 20:47:33 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: netdev@vger.kernel.org
+Cc: Pravin B Shelar <pshelar@ovn.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	dev@openvswitch.org,
+	linux-kernel@vger.kernel.org,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Hangbin Liu <liuhangbin@gmail.com>
+Subject: [PATCH net-next] openvswitch: Pass on secpath details for internal port rx.
+Date: Fri,  1 Nov 2024 16:47:32 -0400
+Message-ID: <20241101204732.183840-1-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Nov 01 2024 at 15:21, Frederic Weisbecker wrote:
-> Le Thu, Oct 31, 2024 at 04:46:43PM +0100, Thomas Gleixner a =C3=A9crit :
->> +static void sigqueue_free_ignored(struct task_struct *tsk, struct sigqu=
-eue *q)
->> +{
->> +	if (likely(!(q->flags & SIGQUEUE_PREALLOC) || q->info.si_code !=3D SI_=
-TIMER))
->> +		__sigqueue_free(q);
->> +	else
->> +		posixtimer_sig_ignore(tsk, q);
->
-> So this happens when the signal is ignored and delays it to when it will =
-be
-> unignored. But the comment on do_sigaction() says:
->
-> 		/*
-> 		 * POSIX 3.3.1.3:
-> 		 *  "Setting a signal action to SIG_IGN for a signal that is
-> 		 *   pending shall cause the pending signal to be discarded,
-> 		 *   whether or not it is blocked."
-> 		 *
-> 		 */
->
-> Are posix timers an exception to that rule?
->
-> Also I see flush_sigqueue_mask() called on other occasions, for example
-> when a STOP signal happens to remove pending CONT, not sure if posix
-> timers can set SIGCONT...
+Clearing the secpath for internal ports will cause packet drops when
+ipsec offload or early SW ipsec decrypt are used.  Systems that rely
+on these will not be able to actually pass traffic via openvswitch.
 
-No. The problem with posix timers is that they are magically different
-from regular signals in the case of periodic timers.
+There is still an open issue for a flow miss packet - this is because
+we drop the extensions during upcall and there is no facility to
+restore such data (and it is non-trivial to add such functionality
+to the upcall interface).  That means that when a flow miss occurs,
+there will still be packet drops.  With this patch, when a flow is
+found then traffic which has an associated xfrm extension will
+properly flow.
 
-When the signal is ignored at expiry, then the signal is not delivered
-and is 'dropped'. But when SIG_IGN is removed then the following period
-expiry has to deliver the signal.
+Signed-off-by: Aaron Conole <aconole@redhat.com>
+---
+ net/openvswitch/vport-internal_dev.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Right now the kernel ensures that by keeping the timer self rearming and
-rate limiting it for obvious reasons. That's a completely pointless
-exercise up to the point where SIG_IGN is removed.
-
-The only way to avoid the self rearming is to actually stop the timer
-when the signal is ignored and rearm it when SIG_IGN for the specific
-signal is removed.
-
-That's what this magic does...
-
-Thanks,
-
-        tglx
+diff --git a/net/openvswitch/vport-internal_dev.c b/net/openvswitch/vport-internal_dev.c
+index 5858d65ea1a9..2412d7813d24 100644
+--- a/net/openvswitch/vport-internal_dev.c
++++ b/net/openvswitch/vport-internal_dev.c
+@@ -195,7 +195,6 @@ static int internal_dev_recv(struct sk_buff *skb)
+ 
+ 	skb_dst_drop(skb);
+ 	nf_reset_ct(skb);
+-	secpath_reset(skb);
+ 
+ 	skb->pkt_type = PACKET_HOST;
+ 	skb->protocol = eth_type_trans(skb, netdev);
+-- 
+2.46.2
 
 
