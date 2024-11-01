@@ -1,234 +1,364 @@
-Return-Path: <linux-kernel+bounces-392705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AD79B9745
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:19:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3FE9B9749
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:19:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CFB21C21D9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:19:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA8B28197A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF4014F132;
-	Fri,  1 Nov 2024 18:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1A01CDFD3;
+	Fri,  1 Nov 2024 18:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bYobjbXF"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RI6YeC0F"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6C11CB51D
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6091CB51D
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730485152; cv=none; b=PAVVznfW7wf2vrRBL7xuRlxEuipkMRbS938NVq+3eS1g9oC0anNoSXlQGEZ3/fl8WA3IvAPmIpF4XNONBo7A+A84Bw1ZvFMt+YBpsvUNVENVtJ6Vd0S1xngfN7hceiE8mkzGVdPFLVrD2R/InahV3iOOqVMZHOLJJc+uNhg90nE=
+	t=1730485173; cv=none; b=E3XS1IqJwM8h6edZ/st5uk4B9IKmxCEKpUpK9HgHSyTzxp3/NpomXqp4P/PebaBrQc4DIJdWLsP8I45uAV6Wiu0lFJGx0kROjOPaiD/GhzFOKwac6PHvruh4LLJT9gVgeK9cS2MFc/cT1Ixz8cBekpripmJROzjzhdR1LhNSfy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730485152; c=relaxed/simple;
-	bh=jOGNatYKO7LyfoMaEY3D4pl3e46xv0D7qv7HJZZbDO8=;
+	s=arc-20240116; t=1730485173; c=relaxed/simple;
+	bh=e/JuFjLxAkY9/2840JwIFVwiYSAtqEb7V4148Hvo2as=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B26eVn6O4C40eRBgNI7dHTimcRmz7aHD5gqSjUHr0EtB2ZEC1MwK6A5zHn6Thzzx8/+THvU+bGbCtzCKL0uy+Mt/43rdLuLv1w8GZ3PfFFJXx0SPuj03lHdekm5n4kuu/nlJFeU/JGjnRpuP6e/YGZkY2Bn4+ibcEa2ohGB/CVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bYobjbXF; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cb6b2b7127so2902071a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:19:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=BZwCkzWS9wJ5vEuBS1HOGa3OzfNzBbdnPmlYZlAPJZYvnr4+xP2LUtlBDgDCK0pJj6Na1bISqK3aOMVadAdTtxNunbf8cLTWUgOsDsHMBgmJ9x+KNvDs4aarKOkw7NotTK4FJ2SyoX4ACpWcHsoaI8uczYBPR1QxBfbqfA5X4Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RI6YeC0F; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-460a8d1a9b7so40441cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:19:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730485148; x=1731089948; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730485170; x=1731089970; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WCb0avfMfhqFRdPMe3Ycp6E7ngzUGoHw4RlfxTUvmP4=;
-        b=bYobjbXFwsQvoB3St4LwIgP9ERXydeonQ6dEvnTxleS6OWEuTfvRor852qw8VtPaCH
-         mNLNLTBzWcFDKDi3x/hoBwOBNEjtY3cUFTIAw2guRK9lBcKNVC9EvYTkafTzO4SBdhCa
-         8vibo8mpkA8gwriFlBAy3NJAsYl/XOtXAYHYHsTWi+9aI644HUG+V+iZZrxqd2VJxLI7
-         4O8akD6EwIaTUGaD7a0vIQYriM2s5/z6xnBx1hsraK+X9DtdDM6apIvr5PRihnTZJO9l
-         SLlGrna6DUCHOVEqVGqofy7Fbm8O/DMRcef1wAx9rD8JzimEOlASyMrJqURobYS/V98/
-         aKtg==
+        bh=qgLXiMi+J/NggzUVpUpWAWf65WUGcPu7JpIAGtH2HNQ=;
+        b=RI6YeC0F4iMm6UearPpmK5yftZr0jZfE+cP0k45ImLIRf9/LDr4Mqj/GnXQV0myLqN
+         nfCUmc8h7QdewGO6Zl5badmKbWgs/CvvWa0vb2m1fnZ8lz5BNHVTRBxI+xrpjT2yxCdC
+         Sa+PtgXz7fM3UQlBuoG1XnMBsdaiUAHR67LiSnEws2K/90HtnytV8zqwMhzDVa/HdMdi
+         XO4+yo/IFIlj8KEjU5bI9cOO1k/RrR6LGDWvwrodNFHvRB/6Kg/MiDZPo9Bj5rg1Bkv4
+         /HN23XggNhWxhi8b8XC6j+AN03M/GjBtL1ilhuSxDU94Ne1BwAFKYgCcQkeBXPIJUVfa
+         W1Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730485148; x=1731089948;
+        d=1e100.net; s=20230601; t=1730485170; x=1731089970;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WCb0avfMfhqFRdPMe3Ycp6E7ngzUGoHw4RlfxTUvmP4=;
-        b=ayAyBxh1mzAZIkbazgPUHjk+hlIXdvvA6r1m5Ao95mPzP6fOx7knoxIO0a/+azQ0rl
-         kTUwfRGo0OjIrFTGzC8noGwCDf1+afwjqEMtsdnGaGCj+RZZZG8JPfIc1G3hymIuNnUU
-         e9B8QdPAvo75brLW1QDMqfa0Hfsqx+2Xuq9wwQuUsP7Iy7wsFq7489HzRxweVoX+U1I1
-         /s6PWjvVQKS7vPSo5GzNWeTNg6hJjxg3RKTjxQ7ht0m4/qfwstjmv1B2GFzSAR3v/EYb
-         4i+mfKsdI2GpkoF6QxllNpeeFPZhRvk/MEOYtU8brNqpHKCNtb2ZjGVmYqGQOoDfcwNM
-         sYxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUKslhpJikD8EEzJwUkIj6tCf+UghPiyksCgwNk1qGOjGi+0Vi1rxkSeqhQGjziICz7y+CQWS+x3CeVyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQjqvuSoC2ZgCNzeiollA1N/X3TnJJeA8Hmi9thRTbd0Q9UIkb
-	UYo6VH7V7zFxOJ1KAXNhaza+SL4UseMip9JZB5gXRhTognNM/hn1+3BhgTeXUN2qHyZHFDgt8mP
-	ViEB4j4LJXTeWM9lrnX/RPolYCThFXHdn4vSWQA==
-X-Google-Smtp-Source: AGHT+IFcq0AMZn+pZ24DpM6HGZ4OavdIPRNi8d8rMXlbIsaq2gBK6JoQrQewB37SFhHsyDDEtF8jHre0Mg6mo5VxsRA=
-X-Received: by 2002:a17:907:3da9:b0:a99:e98f:e73d with SMTP id
- a640c23a62f3a-a9e5097d255mr759902366b.37.1730485148179; Fri, 01 Nov 2024
- 11:19:08 -0700 (PDT)
+        bh=qgLXiMi+J/NggzUVpUpWAWf65WUGcPu7JpIAGtH2HNQ=;
+        b=Ipx7roxR55lnB6Ts60Cmub87/jXPIXHmMBrwF0i6rRrk8rAHVGZWhvpDUrFa6u043k
+         BiPZmZz7MIECKZYkNkGeQ0ddXC7tyhdFc3SMHPFNbkYBSwiVTgyD2xRUuNyL/XCVErey
+         EcWyI2Z9QiEhnh8OSVL13wDy6yidOzoPEvYE2bVm/r8rq76tInp7DTm0S5PtToED6+0D
+         NvLK7eHXhtPC+25PfnAqO2ZqLFRVwVDon6wXWeo6BrFS7dGsxY9zw56o0BjfiQVZ4QJg
+         lndDLqr3WhgWSS/h8XuNRo3I0u4Hc02P8N4FK2qcj7947Yo+bbbdPMEj3tIMASQWwtnQ
+         y8gA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ0Cz8gPh4ihL55riCNglJOeC+luFzP0xoPj2mxWOUW/I3SdPQIn0mYGi8JYT7MLLcPP3dfB0c2Ym0Ia8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAgHqzKGY43P+T8XNvh3r8UGVcfo/N2M61I3Bzt23r/540UeQr
+	Sz7cjlPgbuVoRtCYC3ddzYX9UJUE7VlxCtssY4MX/VpsolXAnNmk9NG51WXuLYA6WX5fAqSRQSO
+	mwJPoIykq52sH+RSzqnL5Q8T51Ywz7GZGmYm3
+X-Gm-Gg: ASbGncuRSVvk6UgOqUiiwAWsWfPR72iojCH3+Jj8z+v4706OQxf4sf1Unk7UUWpzN39
+	cLZbH933fwzFCQ5mwJKJvDdY5gCFk6zAw
+X-Google-Smtp-Source: AGHT+IG0Gl6acjuLtCR71sVFFcnhFR0iLK3dlvBmCqJ96g8N7a0fo0kc0B9rcLPxt1c8RC8oB6pYjnPbwvn9UeWu/NA=
+X-Received: by 2002:a05:622a:1ba4:b0:461:4150:b833 with SMTP id
+ d75a77b69052e-462c5fe1ce9mr232521cf.22.1730485169937; Fri, 01 Nov 2024
+ 11:19:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
- <20241031-iio-fix-write-event-config-signature-v2-6-2bcacbb517a2@baylibre.com>
- <ef4fe230-b7fb-4f7e-9173-ae85d305e9ae@baylibre.com> <20241101154451.227defba@jic23-huawei>
-In-Reply-To: <20241101154451.227defba@jic23-huawei>
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Fri, 1 Nov 2024 19:18:48 +0100
-Message-ID: <CAEHHSvZxgREMpA-kC7zarRZAp=bU6dcc2-3qjZU8o01BP3bSzA@mail.gmail.com>
-Subject: Re: [PATCH v2 06/15] iio: light: adux1020: write_event_config: use
- local variable for interrupt value
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Mudit Sharma <muditsharma.info@gmail.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
-	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Cosmin Tanislav <cosmin.tanislav@analog.com>, 
-	Ramona Gradinariu <ramona.gradinariu@analog.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
-	Dan Robertson <dan@dlrobertson.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
-	Matteo Martelli <matteomartelli3@gmail.com>, 
-	Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>, 
-	Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J <jagathjog1996@gmail.com>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
-	Kevin Tsai <ktsai@capellamicro.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	chrome-platform@lists.linux.dev
+References: <20241015211719.1152862-1-irogers@google.com> <20241101132437.ahn7xdgvmqamatce@devuan>
+In-Reply-To: <20241101132437.ahn7xdgvmqamatce@devuan>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 1 Nov 2024 11:19:18 -0700
+Message-ID: <CAP-5=fXo5XjxUXshm9eRX-hCcC5VWOv0C5LBZ3Z0_wQb+rdnsw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] proc_pid_fdinfo.5: Reduce indent for most of the page
+To: Alejandro Colomar <alx@kernel.org>
+Cc: "G . Branden Robinson" <g.branden.robinson@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-man@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Le ven. 1 nov. 2024 =C3=A0 16:45, Jonathan Cameron <jic23@kernel.org> a =C3=
-=A9crit :
+On Fri, Nov 1, 2024 at 6:24=E2=80=AFAM Alejandro Colomar <alx@kernel.org> w=
+rote:
 >
-> On Thu, 31 Oct 2024 11:27:45 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
->
-> > On 10/31/24 10:27 AM, Julien Stephan wrote:
-> > > state parameter is currently an int, but it is actually a boolean.
-> > > iio_ev_state_store is actually using kstrtobool to check user input,
-> > > then gives the converted boolean value to write_event_config.  The co=
-de
-> > > in adux1020_write_event_config re-uses state parameter to store an
-> > > integer value. To prepare for updating the write_event_config signatu=
-re
-> > > to use a boolean for state, introduce a new local int variable.
-> > >
-> > > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > > ---
-> > >  drivers/iio/light/adux1020.c | 8 ++++----
-> > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/iio/light/adux1020.c b/drivers/iio/light/adux102=
-0.c
-> > > index 2e0170be077aef9aa194fab51afbb33aec02e513..db57d84da616b91add8c5=
-d1aba08a73ce18c367e 100644
-> > > --- a/drivers/iio/light/adux1020.c
-> > > +++ b/drivers/iio/light/adux1020.c
-> > > @@ -505,7 +505,7 @@ static int adux1020_write_event_config(struct iio=
-_dev *indio_dev,
-> > >                                    enum iio_event_direction dir, int =
-state)
-> > >  {
-> > >     struct adux1020_data *data =3D iio_priv(indio_dev);
-> > > -   int ret, mask;
-> > > +   int ret, mask, val;
-> > >
-> > >     mutex_lock(&data->lock);
-> > >
-> > > @@ -526,12 +526,12 @@ static int adux1020_write_event_config(struct i=
-io_dev *indio_dev,
-> > >                     mask =3D ADUX1020_PROX_OFF1_INT;
-> > >
-> > >             if (state)
-> > > -                   state =3D 0;
-> > > +                   val =3D 0;
-> > >             else
-> > > -                   state =3D mask;
-> > > +                   val =3D mask;
-> > >
-> > >             ret =3D regmap_update_bits(data->regmap, ADUX1020_REG_INT=
-_MASK,
-> > > -                                    mask, state);
-> > > +                                    mask, val);
-> > >             if (ret < 0)
-> > >                     goto fail;
-> > >
-> > >
+> On Tue, Oct 15, 2024 at 02:17:17PM -0700, Ian Rogers wrote:
+> > When /proc/pid/fdinfo was part of proc.5 man page the indentation made
+> > sense. As a standalone man page the indentation doesn't need to be so
+> > far over to the right. Remove the initial tagged pragraph and move the
+> > styling to the initial summary description.
 > >
-> > Instead of introducing `val`, I would rewrite this as:
+> > Suggested-by: G. Branden Robinson <g.branden.robinson@gmail.com>
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  man/man5/proc_pid_fdinfo.5 | 66 ++++++++++++++++++--------------------
+> >  1 file changed, 32 insertions(+), 34 deletions(-)
 > >
-> >       if (state)
-> >               ret =3D regmap_clear_bits(...);
-> >       else
-> >               ret =3D regmap_set_bits(...);
+> > diff --git a/man/man5/proc_pid_fdinfo.5 b/man/man5/proc_pid_fdinfo.5
+> > index 1e23bbe02..8678caf4a 100644
+> > --- a/man/man5/proc_pid_fdinfo.5
+> > +++ b/man/man5/proc_pid_fdinfo.5
+> > @@ -6,20 +6,19 @@
+> >  .\"
+> >  .TH proc_pid_fdinfo 5 (date) "Linux man-pages (unreleased)"
+> >  .SH NAME
+> > -/proc/pid/fdinfo/ \- information about file descriptors
+> > +.IR /proc/ pid /fdinfo " \- information about file descriptors"
+>
+> I wouldn't add formatting here for now.  That's something I prefer to be
+> cautious about, and if we do it, we should do it in a separate commit.
+
+I'll move it to a separate patch. Is the caution due to a lack of test
+infrastructure? That could be something to get resolved, perhaps
+through Google summer-of-code and the like.
+
+> >  .SH DESCRIPTION
+> > -.TP
+> > -.IR /proc/ pid /fdinfo/ " (since Linux 2.6.22)"
+> > -This is a subdirectory containing one entry for each file which the
+> > -process has open, named by its file descriptor.
+> > -The files in this directory are readable only by the owner of the proc=
+ess.
+> > -The contents of each file can be read to obtain information
+> > -about the corresponding file descriptor.
+> > -The content depends on the type of file referred to by the
+> > -corresponding file descriptor.
+> > -.IP
+> > +Since Linux 2.6.22,
+>
+> You could move this information to a HISTORY section.
+
+Sure, tbh I'm not sure anybody cares about this information and it
+could be as well to delete it. Sorry people running 17 year old
+kernels. For now I'll try to leave it unchanged.
+
+> > +this subdirectory contains one entry for each file that process
+> > +.I pid
+> > +has open, named by its file descriptor.  The files in this directory
+>
+> Please don't reflow existing text.  Please read about semantic newlines
+> in man-pages(7):
+>
+> $ MANWIDTH=3D72 man man-pages | sed -n '/Use semantic newlines/,/^$/p'
+>    Use semantic newlines
+>      In  the  source of a manual page, new sentences should be started
+>      on new lines, long sentences should be split into lines at clause
+>      breaks (commas, semicolons, colons, and so on), and long  clauses
+>      should be split at phrase boundaries.  This convention, sometimes
+>      known  as  "semantic newlines", makes it easier to see the effect
+>      of patches, which often operate at the level of  individual  sen=E2=
+=80=90
+>      tences, clauses, or phrases.
+
+I'll update for v3 but I'm reminded of `git diff --word-diff=3Dcolor` so
+perhaps this recommendation is outdated.
+
+Thanks,
+Ian
+
+> Have a lovely day!
+> Alex
+>
+> > +are readable only by the owner of the process.  The contents of each
+> > +file can be read to obtain information about the corresponding file
+> > +descriptor.  The content depends on the type of file referred to by
+> > +the corresponding file descriptor.
+> > +.P
+> >  For regular files and directories, we see something like:
+> > -.IP
+> > +.P
+> >  .in +4n
+> >  .EX
+> >  .RB "$" " cat /proc/12015/fdinfo/4"
+> > @@ -28,7 +27,7 @@ flags:  01002002
+> >  mnt_id: 21
+> >  .EE
+> >  .in
+> > -.IP
+> > +.P
+> >  The fields are as follows:
+> >  .RS
+> >  .TP
+> > @@ -51,7 +50,6 @@ this field incorrectly displayed the setting of
+> >  at the time the file was opened,
+> >  rather than the current setting of the close-on-exec flag.
+> >  .TP
+> > -.I
+> >  .I mnt_id
+> >  This field, present since Linux 3.15,
+> >  .\" commit 49d063cb353265c3af701bab215ac438ca7df36d
+> > @@ -59,13 +57,13 @@ is the ID of the mount containing this file.
+> >  See the description of
+> >  .IR /proc/ pid /mountinfo .
+> >  .RE
+> > -.IP
+> > +.P
+> >  For eventfd file descriptors (see
+> >  .BR eventfd (2)),
+> >  we see (since Linux 3.8)
+> >  .\" commit cbac5542d48127b546a23d816380a7926eee1c25
+> >  the following fields:
+> > -.IP
+> > +.P
+> >  .in +4n
+> >  .EX
+> >  pos: 0
+> > @@ -74,16 +72,16 @@ mnt_id:   10
+> >  eventfd\-count:               40
+> >  .EE
+> >  .in
+> > -.IP
+> > +.P
+> >  .I eventfd\-count
+> >  is the current value of the eventfd counter, in hexadecimal.
+> > -.IP
+> > +.P
+> >  For epoll file descriptors (see
+> >  .BR epoll (7)),
+> >  we see (since Linux 3.8)
+> >  .\" commit 138d22b58696c506799f8de759804083ff9effae
+> >  the following fields:
+> > -.IP
+> > +.P
+> >  .in +4n
+> >  .EX
+> >  pos: 0
+> > @@ -93,7 +91,7 @@ tfd:        9 events:       19 data: 74253d2500000009
+> >  tfd:        7 events:       19 data: 74253d2500000007
+> >  .EE
+> >  .in
+> > -.IP
+> > +.P
+> >  Each of the lines beginning
+> >  .I tfd
+> >  describes one of the file descriptors being monitored via
+> > @@ -110,13 +108,13 @@ descriptor.
+> >  The
+> >  .I data
+> >  field is the data value associated with this file descriptor.
+> > -.IP
+> > +.P
+> >  For signalfd file descriptors (see
+> >  .BR signalfd (2)),
+> >  we see (since Linux 3.8)
+> >  .\" commit 138d22b58696c506799f8de759804083ff9effae
+> >  the following fields:
+> > -.IP
+> > +.P
+> >  .in +4n
+> >  .EX
+> >  pos: 0
+> > @@ -125,7 +123,7 @@ mnt_id:   10
+> >  sigmask:     0000000000000006
+> >  .EE
+> >  .in
+> > -.IP
+> > +.P
+> >  .I sigmask
+> >  is the hexadecimal mask of signals that are accepted via this
+> >  signalfd file descriptor.
+> > @@ -135,12 +133,12 @@ and
+> >  .BR SIGQUIT ;
+> >  see
+> >  .BR signal (7).)
+> > -.IP
+> > +.P
+> >  For inotify file descriptors (see
+> >  .BR inotify (7)),
+> >  we see (since Linux 3.8)
+> >  the following fields:
+> > -.IP
+> > +.P
+> >  .in +4n
+> >  .EX
+> >  pos: 0
+> > @@ -150,7 +148,7 @@ inotify wd:2 ino:7ef82a sdev:800001 mask:800afff ig=
+nored_mask:0 fhandle\-bytes:8
+> >  inotify wd:1 ino:192627 sdev:800001 mask:800afff ignored_mask:0 fhandl=
+e\-bytes:8 fhandle\-type:1 f_handle:27261900802dfd73
+> >  .EE
+> >  .in
+> > -.IP
+> > +.P
+> >  Each of the lines beginning with "inotify" displays information about
+> >  one file or directory that is being monitored.
+> >  The fields in this line are as follows:
+> > @@ -168,19 +166,19 @@ The ID of the device where the target file reside=
+s (in hexadecimal).
+> >  .I mask
+> >  The mask of events being monitored for the target file (in hexadecimal=
+).
+> >  .RE
+> > -.IP
+> > +.P
+> >  If the kernel was built with exportfs support, the path to the target
+> >  file is exposed as a file handle, via three hexadecimal fields:
+> >  .IR fhandle\-bytes ,
+> >  .IR fhandle\-type ,
+> >  and
+> >  .IR f_handle .
+> > -.IP
+> > +.P
+> >  For fanotify file descriptors (see
+> >  .BR fanotify (7)),
+> >  we see (since Linux 3.8)
+> >  the following fields:
+> > -.IP
+> > +.P
+> >  .in +4n
+> >  .EX
+> >  pos: 0
+> > @@ -190,7 +188,7 @@ fanotify flags:0 event\-flags:88002
+> >  fanotify ino:19264f sdev:800001 mflags:0 mask:1 ignored_mask:0 fhandle=
+\-bytes:8 fhandle\-type:1 f_handle:4f261900a82dfd73
+> >  .EE
+> >  .in
+> > -.IP
+> > +.P
+> >  The fourth line displays information defined when the fanotify group
+> >  was created via
+> >  .BR fanotify_init (2):
+> > @@ -210,7 +208,7 @@ argument given to
+> >  .BR fanotify_init (2)
+> >  (expressed in hexadecimal).
+> >  .RE
+> > -.IP
+> > +.P
+> >  Each additional line shown in the file contains information
+> >  about one of the marks in the fanotify group.
+> >  Most of these fields are as for inotify, except:
+> > @@ -228,16 +226,16 @@ The events mask for this mark
+> >  The mask of events that are ignored for this mark
+> >  (expressed in hexadecimal).
+> >  .RE
+> > -.IP
+> > +.P
+> >  For details on these fields, see
+> >  .BR fanotify_mark (2).
+> > -.IP
+> > +.P
+> >  For timerfd file descriptors (see
+> >  .BR timerfd (2)),
+> >  we see (since Linux 3.17)
+> >  .\" commit af9c4957cf212ad9cf0bee34c95cb11de5426e85
+> >  the following fields:
+> > -.IP
+> > +.P
+> >  .in +4n
+> >  .EX
+> >  pos:    0
+> > --
+> > 2.47.0.rc1.288.g06298d1525-goog
 > >
-> Good idea.  Rather than go around again and potentially stall the end of =
-this series.
-> I made that change whilst applying.  Shout if either of you doesn't
-> like the result. Diff doesn't do a perfect job on readability (it does
-> if I add a line break but then the code looks worse in the end!)
->
-
-Hello Jonathan,
-
-Looks fine to me. Thank you for doing the change yourself.
-
-Cheers
-Julien
-> From 06a1ca816450d1b5524f6010581a83ab9935d51b Mon Sep 17 00:00:00 2001
-> From: Julien Stephan <jstephan@baylibre.com>
-> Date: Thu, 31 Oct 2024 16:27:01 +0100
-> Subject: [PATCH] iio: light: adux1020: write_event_config: use local vari=
-able
->  for interrupt value
->
-> state parameter is currently an int, but it is actually a boolean.
-> iio_ev_state_store is actually using kstrtobool to check user input,
-> then gives the converted boolean value to write_event_config.  The code
-> in adux1020_write_event_config re-uses state parameter to store an
-> integer value. To prepare for updating the write_event_config signature
-> to use a boolean for state, introduce a new local int variable.
->
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> Link: https://patch.msgid.link/20241031-iio-fix-write-event-config-signat=
-ure-v2-6-2bcacbb517a2@baylibre.com
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  drivers/iio/light/adux1020.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/iio/light/adux1020.c b/drivers/iio/light/adux1020.c
-> index 2e0170be077a..06d5bc1d246c 100644
-> --- a/drivers/iio/light/adux1020.c
-> +++ b/drivers/iio/light/adux1020.c
-> @@ -526,12 +526,11 @@ static int adux1020_write_event_config(struct iio_d=
-ev *indio_dev,
->                         mask =3D ADUX1020_PROX_OFF1_INT;
->
->                 if (state)
-> -                       state =3D 0;
-> +                       ret =3D regmap_clear_bits(data->regmap,
-> +                                               ADUX1020_REG_INT_MASK, ma=
-sk);
->                 else
-> -                       state =3D mask;
-> -
-> -               ret =3D regmap_update_bits(data->regmap, ADUX1020_REG_INT=
-_MASK,
-> -                                        mask, state);
-> +                       ret =3D regmap_set_bits(data->regmap,
-> +                                             ADUX1020_REG_INT_MASK, mask=
-);
->                 if (ret < 0)
->                         goto fail;
 >
 > --
-> 2.46.2
->
->
->
-> >
-> >
->
+> <https://www.alejandro-colomar.es/>
 
