@@ -1,213 +1,192 @@
-Return-Path: <linux-kernel+bounces-391632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AEA9B8991
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:05:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 373239B89A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:09:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBBEB1C20C1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 455A2283252
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3C513E028;
-	Fri,  1 Nov 2024 03:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B05914658F;
+	Fri,  1 Nov 2024 03:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTK3caCy"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y7CPeVHT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCE813D62B;
-	Fri,  1 Nov 2024 03:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F254C79;
+	Fri,  1 Nov 2024 03:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730430336; cv=none; b=s67G1AWs9xR6Zmap4xAJMv1wA35MfKQIfcm5bdfQN10A6Yq9DBlVYVzv2JHGvGbCIA0gAW8uSDVC4M4qBtrkVkg0rDsYaprWUrdVKngOlr5agSj/6iJpd6VT4BQLJuAglooGsJ3UBQxDe9QQa2M1mZrjiL5tNPy3agED5IMlIHQ=
+	t=1730430562; cv=none; b=S58VgQGQF0ShSyKha6ib9bW2gcmq5xE2y44hsaJx4hcR+Wg66njniw0BZUfAqHMAgJ6y5Kzi3srwSdJgrI5ug9nTtgFSRRLRSw3n/PdWWQGZSDR7/YN7jr7EK27fAwVJaLY92EOnHQeIfM8TONHsz1mFV4cS1fc5hJjKSj/yE5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730430336; c=relaxed/simple;
-	bh=UMAjIFTxb038mRY/DOqBjPt1qf2e7jUa6X6VeHt6sPM=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G//sxyFrUCHy77V4pFyTBnLQEw8hOMaiVmkN5XZsu48Z87Ekz1JMW+vCesvxGNQGgXNB0A/Q7xaFYkwztwBVGUKUqPYy9wXK9jMxn7XbidPIpv1A+C4a0wCPlDSg7iFSysVfPqfd/SxXJGTDXSirE6oMiQ5DhDiihjGuGqG1VTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTK3caCy; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-720be27db27so1069304b3a.2;
-        Thu, 31 Oct 2024 20:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730430333; x=1731035133; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UMAjIFTxb038mRY/DOqBjPt1qf2e7jUa6X6VeHt6sPM=;
-        b=VTK3caCycAttP1VNvf731UWf6CBEZL6WCOM+ig73VDKxSekwuO5AHiuGmcW7y/Wa/r
-         uL5Ihg/22pub62tpffNAm9Dwz/tT94yeoMzJljpbrG4DhqXQJoPvSOkzndUSDQlAb406
-         oGmTFC7CTbpM+OQ4ds4h3b7qAmS/XTtyKiVi7VxB4PVc8bCFxpQ32uizG1nkwv54h/St
-         ZrpOl8lKuUhllCOD76ym14DDneAEkRCc0ep6gOFea3Rl6MByx8Qsex3LnN0D0dCydkmx
-         KkMqTgxGUiHFTSe5fxRzoLIr5b832Kz5Akqn4YvmsvvUVoIs6hX8oUYpLUJ2nd+uU2x1
-         xAxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730430333; x=1731035133;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UMAjIFTxb038mRY/DOqBjPt1qf2e7jUa6X6VeHt6sPM=;
-        b=D83geIsRZrKl3XKLclhf9LOF0OXjgUOX3jjKjKL+0VtG+0aJDU5Qkz3eFqbbYnLsfp
-         x14nI7P0t1zRzO2Oowp15Afu91jZvbqlsNovcf1Ro9XzRBjQj7tyIXYN7WeqVDweExHZ
-         fi0Y1fh0AjiD4GbwuBk8ib3F7NRy9ZunZdFMjXsBqSwiJPMSjRmxeM01Q9E7kL34ljT7
-         6+2I76D73BnwpLkvWJPjhdo3qxsycR8p898wQ3pWKh9Jz6/8vOsc4AahdtwU0t6e9uPp
-         tirhER4AmiwZnv4HyYr/EF4iKzpgWGCFpX0prdcDl+NqKXnp5JhMMv2g4ljTYJFZCLZ0
-         JCEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKpazSRCSADMWytE5beEQ2B8+VFX9SsniZnLqe9zeFzFAElSaKgKrU6rKxSiVjERaIIgTF6j7bUuhcXw==@vger.kernel.org, AJvYcCUfYAIfHQtd75LHt/KwfQjjHLoUacDRfiv6w6K/KyMX04LJHAxjPqNAUYwJnjnv1K3p/N2FLCn8DgGpd6sD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz49uW++3Ldul0z2sbQvGSJbb2UnGiPHoqGI2Z4pGyprKF+TO9X
-	VrcivyS3IYcSpUVQqQmXsiC9bJlud+NhmoXoAWJeV4E4m0vqV98N
-X-Google-Smtp-Source: AGHT+IFGf6NYKVxemBxfuuMetCcyT8rki2cc+r2rMYoUQlJBeAPgLKLH7yEdLxXuciXLDjEtwEZIBw==
-X-Received: by 2002:a05:6a21:1643:b0:1d9:18b7:48c with SMTP id adf61e73a8af0-1d9eeb06596mr11826772637.6.1730430333264;
-        Thu, 31 Oct 2024 20:05:33 -0700 (PDT)
-Received: from [10.172.23.36] ([38.207.141.200])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee45299f00sm1408292a12.8.2024.10.31.20.05.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 20:05:32 -0700 (PDT)
-Message-ID: <dc7a742f3b2a4162f5f0a1f45a20c1fb76ce8eaa.camel@gmail.com>
-Subject: Re: [syzbot] kernel BUG in close_ctree
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: syzbot <syzbot+2665d678fffcc4608e18@syzkaller.appspotmail.com>, 
- clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
- linux-btrfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-Date: Fri, 01 Nov 2024 11:05:29 +0800
-In-Reply-To: <000000000000aeaf5a05ee4e96d7@google.com>
-References: <000000000000aeaf5a05ee4e96d7@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1730430562; c=relaxed/simple;
+	bh=Jt3ci2BG6wCeTi9u1JvKT8sz76i5YQW3mooxIrCeEHM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WheI/cxsXtKnvX+qSUO7090AE5/b8e1fZEtx5+auSog1/GxMyyjl3zjTnDPV0oPuE8YFPkkuJ+Nwl+ZhWd50WpnftffJMz+wJuwuG7CSP34g5EWc5SBHxd7hqiWOzlkmFYFbgqPSXYfkXIw4YMxXdKHuY/haARxSqvz95AyD58c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y7CPeVHT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A11h0ZV009582;
+	Fri, 1 Nov 2024 03:09:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=1t5Vw4D11RFv2UJphxxylQgWXk9PBbdkbH+
+	Ov4onbvw=; b=Y7CPeVHTJ8VU/qq7T3ePU/e6Jbp+dcnBMNHUhxPL0A8LDGMmYyW
+	aGmmQn9UJbSpONSV0+b3gskI3zgSuTU1APr018oVAJCdwbzFrI/6jFsXBhqOM+ZS
+	O+IldNeyWCBkiWMSzKcIp1DiUgRzj69ZO5V/1jxTmOCysC/n+7M+saTOe90wX8VC
+	UN4w4lbnRZ66sKIPuPU5COBY5kvypV8kcAvUHpMx2rmsaaM+YuyfpAV43paB6kX3
+	rO62p37TrFz2TRXkiFYe+h2P6JkIqHBFMvnkhrswBit9QaXfkPSS2GVMKuh07AQZ
+	4AA8TmDkiAUIC6wD3vejo0818WRARacZ9bw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kjm1dyqx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 03:09:07 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA05.qualcomm.com [127.0.0.1])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A13967d007979;
+	Fri, 1 Nov 2024 03:09:06 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 42khwpyumj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 03:09:06 +0000
+Received: from NALASPPMTA05.qualcomm.com (NALASPPMTA05.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4A137UOe005970;
+	Fri, 1 Nov 2024 03:09:05 GMT
+Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
+	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 4A1395r5007961
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 03:09:05 +0000
+Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
+	id 1633765D; Thu, 31 Oct 2024 20:09:05 -0700 (PDT)
+From: Qiang Yu <quic_qianyu@quicinc.com>
+To: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
+        robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+        quic_devipriy@quicinc.com
+Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
+        neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, johan+linaro@kernel.org,
+        Qiang Yu <quic_qianyu@quicinc.com>
+Subject: [PATCH v8 0/5] Add support for PCIe3 on x1e80100
+Date: Thu, 31 Oct 2024 20:08:57 -0700
+Message-Id: <20241101030902.579789-1-quic_qianyu@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9mRq5dBWInlCED2qd9g3EoKZVPRIRGhH
+X-Proofpoint-ORIG-GUID: 9mRq5dBWInlCED2qd9g3EoKZVPRIRGhH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 adultscore=0
+ mlxscore=0 mlxlogscore=999 spamscore=0 suspectscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411010021
 
-On Fri, 2022-11-25 at 09:09 -0800, syzbot wrote:
-> > syzbot has found a reproducer for the following issue on:
-> >=20
-> > HEAD commit:=C2=A0=C2=A0=C2=A0 c3eb11fbb826 Merge tag 'pci-v6.1-fixes-3=
-' of
-> > git://git.ker..
-> > git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
-> > console+strace:
-> > https://syzkaller.appspot.com/x/log.txt?x=3D115013c5880000
-> > kernel config:=C2=A0=20
-> > https://syzkaller.appspot.com/x/.config?x=3D8d01b6e3197974dd
-> > dashboard link:=20
-> > https://syzkaller.appspot.com/bug?extid=3D2665d678fffcc4608e18
-> > compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Debian clang version
-> > 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld
-> > (GNU Binutils for Debian) 2.35.2
-> > syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
-> > https://syzkaller.appspot.com/x/repro.syz?x=3D1360d8e3880000
-> > C reproducer:=C2=A0=C2=A0
-> > https://syzkaller.appspot.com/x/repro.c?x=3D175f0d53880000
-> >=20
-> > Downloadable assets:
-> > disk image:=20
-> > https://storage.googleapis.com/syzbot-assets/d81ac029767f/disk-c3eb11fb=
-.raw.xz
-> > vmlinux:=20
-> > https://storage.googleapis.com/syzbot-assets/b68346b5b73c/vmlinux-c3eb1=
-1fb.xz
-> > kernel image:=20
-> > https://storage.googleapis.com/syzbot-assets/410a61724587/bzImage-c3eb1=
-1fb.xz
-> > mounted in repro:=20
-> > https://storage.googleapis.com/syzbot-assets/f5bd1887114f/mount_0.gz
-> >=20
-> > IMPORTANT: if you fix the issue, please add the following tag to the
-> > commit:
-> > Reported-by: syzbot+2665d678fffcc4608e18@syzkaller.appspotmail.com
-> >=20
-> > assertion failed: list_empty(&fs_info->delayed_iputs), in
-> > fs/btrfs/disk-io.c:4664
-> > ------------[ cut here ]------------
-> > kernel BUG at fs/btrfs/ctree.h:3713!
-> > invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> > CPU: 1 PID: 3632 Comm: syz-executor235 Not tainted
-> > 6.1.0-rc6-syzkaller-00015-gc3eb11fbb826 #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 10/26/2022
-> > RIP: 0010:assertfail+0x1a/0x1c fs/btrfs/ctree.h:3713
-> > Code: 48 c7 c2 80 aa 38 8b 31 c0 e8 ef e3 ff ff 0f 0b 89 f1 48 89 fe 48
-> > c7 c7 60 d9 38 8b 48 c7 c2 50 0a 39 8b 31 c0 e8 d3 e3 ff ff <0f> 0b 55
-> > 48
-> > 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 e0 48 81 ec
-> > RSP: 0018:ffffc90003d7fa58 EFLAGS: 00010246
-> > RAX: 0000000000000051 RBX: ffff88807c960d58 RCX: 83509907ab950400
-> > RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-> > RBP: ffffc90003d7fbe8 R08: ffffffff816e568d R09: fffff520007aff05
-> > R10: fffff520007aff05 R11: 1ffff920007aff04 R12: 0000000000000000
-> > R13: ffff88807c960000 R14: dffffc0000000000 R15: dffffc0000000000
-> > FS:=C2=A0 00005555573a6300(0000) GS:ffff8880b9900000(0000)
-> > knlGS:0000000000000000
-> > CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007ffcab996e28 CR3: 0000000078318000 CR4: 00000000003506e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> > =C2=A0<TASK>
-> > =C2=A0close_ctree+0x818/0xbde fs/btrfs/disk-io.c:4664
-> > =C2=A0generic_shutdown_super+0x130/0x310 fs/super.c:492
-> > =C2=A0kill_anon_super+0x36/0x60 fs/super.c:1086
-> > =C2=A0btrfs_kill_super+0x3d/0x50 fs/btrfs/super.c:2441
-> > =C2=A0deactivate_locked_super+0xa7/0xf0 fs/super.c:332
-> > =C2=A0cleanup_mnt+0x494/0x520 fs/namespace.c:1186
-> > =C2=A0task_work_run+0x243/0x300 kernel/task_work.c:179
-> > =C2=A0ptrace_notify+0x29a/0x340 kernel/signal.c:2354
-> > =C2=A0ptrace_report_syscall include/linux/ptrace.h:420 [inline]
-> > =C2=A0ptrace_report_syscall_exit include/linux/ptrace.h:482 [inline]
-> > =C2=A0syscall_exit_work+0x8c/0xe0 kernel/entry/common.c:251
-> > =C2=A0syscall_exit_to_user_mode_prepare+0x63/0xc0 kernel/entry/common.c=
-:278
-> > =C2=A0__syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inlin=
-e]
-> > =C2=A0syscall_exit_to_user_mode+0xa/0x60 kernel/entry/common.c:296
-> > =C2=A0do_syscall_64+0x49/0xb0 arch/x86/entry/common.c:86
-> > =C2=A0entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> > RIP: 0033:0x7fd3e400af67
-> > Code: ff d0 48 89 c7 b8 3c 00 00 00 0f 05 48 c7 c1 b8 ff ff ff f7 d8 64
-> > 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01
-> > f0
-> > ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007ffcab997568 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007fd3e400af67
-> > RDX: 00007ffcab99762a RSI: 000000000000000a RDI: 00007ffcab997620
-> > RBP: 00007ffcab997620 R08: 00000000ffffffff R09: 00007ffcab997400
-> > R10: 00005555573a7653 R11: 0000000000000202 R12: 00007ffcab9986e0
-> > R13: 00005555573a75f0 R14: 00007ffcab997590 R15: 00007ffcab998700
-> > =C2=A0</TASK>
-> > Modules linked in:
-> > ---[ end trace 0000000000000000 ]---
-> > RIP: 0010:assertfail+0x1a/0x1c fs/btrfs/ctree.h:3713
-> > Code: 48 c7 c2 80 aa 38 8b 31 c0 e8 ef e3 ff ff 0f 0b 89 f1 48 89 fe 48
-> > c7 c7 60 d9 38 8b 48 c7 c2 50 0a 39 8b 31 c0 e8 d3 e3 ff ff <0f> 0b 55
-> > 48
-> > 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 e0 48 81 ec
-> > RSP: 0018:ffffc90003d7fa58 EFLAGS: 00010246
-> > RAX: 0000000000000051 RBX: ffff88807c960d58 RCX: 83509907ab950400
-> > RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-> > RBP: ffffc90003d7fbe8 R08: ffffffff816e568d R09: fffff520007aff05
-> > R10: fffff520007aff05 R11: 1ffff920007aff04 R12: 0000000000000000
-> > R13: ffff88807c960000 R14: dffffc0000000000 R15: dffffc0000000000
-> > FS:=C2=A0 00005555573a6300(0000) GS:ffff8880b9800000(0000)
-> > knlGS:0000000000000000
-> > CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007fd3e405ad48 CR3: 0000000078318000 CR4: 00000000003506f0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >=20
+This series add support for PCIe3 on x1e80100.
 
-#syz test: upstream
+PCIe3 needs additional set of clocks, regulators and new set of PCIe QMP
+PHY configuration compare other PCIe instances on x1e80100. Hence add
+required resource configuration and usage for PCIe3.
 
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+v7->v8:
+1. Add Reviewed-by tags
+2. Rephrase commit message and remove Fix tags
+3. Add Synopsis IP revision and put ops_1_21_0 after ops_1_9_0.
+4. Remove  [PATCH v7 1/7] and [PATCH v7 4/7] as they were applied
+5. Link to v7: https://lore.kernel.org/all/20241017030412.265000-1-quic_qianyu@quicinc.com/
 
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+v6->v7:
+1. Add Acked-by and Reviewed-by tags
+2. Use 70574511f3f ("PCI: qcom: Add support for SC8280XP") in Fixes tag
+3. Keep minItem of interrupt as 8 in buindings
+4. Reword commit msg 
+5. Remove [PATCH v6 5/8] clk: qcom: gcc-x1e80100: Fix halt_check for
+   pipediv2 clocks as it was applied
+6. Link to v6: https://lore.kernel.org/linux-pci/20241011104142.1181773-1-quic_qianyu@quicinc.com/
+
+v5->v6:
+1. Add Fixes tag
+2. Split [PATCH v5 6/7] into two patches
+3. Reword commit msg
+4. Link to v5: https://lore.kernel.org/linux-pci/20241009091540.1446-1-quic_qianyu@quicinc.com/
+
+v4->v5:
+1. Add Reviewed-by tag
+2. Expand and clarify usage of txz/rxz in commit message
+3. Add comments that txz/rxz must be programmed before tx/rx
+4. Change the sort order for phy register tbls
+5. Use the order defined in struct qmp_phy_cfg_tbls for phy register tbls
+   presented in x1e80100_qmp_gen4x8_pciephy_cfg
+6. Add Fixes and CC stable tag
+7. Fix ops for SC8280X and X1E80100
+8. Document global interrupt in bindings
+9. Link to v4: https://lore.kernel.org/all/20240924101444.3933828-1-quic_qianyu@quicinc.com/
+
+v3->v4:
+1. Reword commit msg of [PATCH v3 5/6]
+2. Drop opp-table property from qcom,pcie-sm8450.yaml
+3. Add Reviewed-by tag
+4. Link to v3: https://lore.kernel.org/all/20240923125713.3411487-1-quic_qianyu@quicinc.com/
+
+v2->v3:
+1. Use 'Gen 4 x8' in commit msg
+2. Move opp-table property to qcom,pcie-common.yaml
+3. Add Reviewed-by tag
+4. Add global interrupt and use GIC_SPI for the parent interrupt specifier
+5. Use 0x0 in reg property and use pcie@ for pcie3 device node
+6. Show different IP version v6.30 in commit msg
+7. Add logic in controller driver to have new ops for x1e80100
+8. Link to v2: https://lore.kernel.org/all/20240913083724.1217691-1-quic_qianyu@quicinc.com/
+
+v2->v1:
+1. Squash [PATCH 1/8], [PATCH 2/8],[PATCH 3/8] into one patch and make the
+   indentation consistent.
+2. Put dts patch at the end of the patchset.
+3. Put dt-binding patch at the first of the patchset.
+4. Add a new patch where opp-table is added in dt-binding to avoid dtbs
+   checking error.
+5. Remove GCC_PCIE_3_AUX_CLK, RPMH_CXO_CLK, put in TCSR_PCIE_8L_CLKREF_EN
+   as ref.
+6. Remove lane_broadcasting.
+7. Add 64 bit bar, Remove GCC_PCIE_3_PIPE_CLK_SRC, 
+   GCC_CFG_NOC_PCIE_ANOC_SOUTH_AHB_CLK is changed to
+   GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK.
+8. Add Reviewed-by tag.
+9. Remove [PATCH 7/8], [PATCH 8/8].
+10. Link to v1: https://lore.kernel.org/all/20240827063631.3932971-1-quic_qianyu@quicinc.com/ 
+
+Qiang Yu (5):
+  dt-bindings: PCI: qcom: Move OPP table to qcom,pcie-common.yaml
+  dt-bindings: PCI: qcom,pcie-x1e80100: Add 'global' interrupt
+  PCI: qcom: Remove BDF2SID mapping config for SC8280X family SoC
+  PCI: qcom: Disable ASPM L0s for X1E80100
+  arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
+
+ .../bindings/pci/qcom,pcie-common.yaml        |   4 +
+ .../bindings/pci/qcom,pcie-sm8450.yaml        |   4 -
+ .../bindings/pci/qcom,pcie-x1e80100.yaml      |   9 +-
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 204 +++++++++++++++++-
+ drivers/pci/controller/dwc/pcie-qcom.c        |  14 +-
+ 5 files changed, 225 insertions(+), 10 deletions(-)
+
+-- 
+2.34.1
+
 
