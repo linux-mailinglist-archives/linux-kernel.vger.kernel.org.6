@@ -1,131 +1,87 @@
-Return-Path: <linux-kernel+bounces-392234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF5CB9B9150
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:52:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03B39B9151
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:52:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C8EE28368A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:52:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E243D1C21112
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA9C199E94;
-	Fri,  1 Nov 2024 12:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XEty/j6+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F3419F436;
+	Fri,  1 Nov 2024 12:52:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082ECF9D9
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B01F9D9
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730465521; cv=none; b=j+0idILYtsb9H1s+BrrfHzk/nxYilJ4YNJElezGQtUbuZcdMHcapEh2ENYy5jOuT4X1LZQK1Djjblx7+9s/zf18zEuk4wk2/rrOf/QnLTXYg7D+evV+8gGuqx5HGXvG52qrXmTsJ5xUfWQe6oFGJQgLHu1oEXFgd94NscDtqwiE=
+	t=1730465526; cv=none; b=ItJB6Jkntd9Uh6NGlQJqH9YFg33NRQ2nFUXQe8el5ZvAx/ArlB/Boc3jsaV9HANvJGBM2swgBN8WO5ugSa0n3OKgnjTv5x5ycGSck5Jlu5nRrlJBF/MrFjmmUvT/pksQVac4fNZBcJLViHnv3hps6R5bGsCGmp9PT1jU1t3fc6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730465521; c=relaxed/simple;
-	bh=H+aNtEBwueduLsW4XnWQR+rrmk/1O7+5DwZemAt3L6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P/DeU3K6mYjSim82b1V/v6+jjUsBujat2DK8V2fAZxcgNa8Ed9gsqwntnCN1ILUgfTiJpPHkFlmw/QSWCNY8nNPsf5Ls9qW8q2KUUbnfK6kdRnBr9rgqkaNN8a/4g4dRXYzSkX4DiUAssbCXDrLo95JbUdLxJKkFtVoi449f6VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XEty/j6+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80ACEC4CECD;
-	Fri,  1 Nov 2024 12:52:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730465520;
-	bh=H+aNtEBwueduLsW4XnWQR+rrmk/1O7+5DwZemAt3L6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XEty/j6+RyqFJniOH+Wz6hWSabi8QYHGAxuSDRzOiqDfHWfUB4VVtLG5StG8qJVfN
-	 aXxeCoW1PVu7A4B3HuQueyqXgmdIzSspcktcdnSvjHOABFWFd1/McQ/EeLAz9iTpeT
-	 DYhMigJtWlJDOXxmpPxttZkb5AHsCvEUDc9oO0JBmoWqUm1a8vuL0oAPm4IGOC2zgj
-	 6hzVwFSdECDTCSKKLYSunqHJEgiTBxY4pu26gl79IdNZfaUrJIYtaFvGB/UTk8UWlW
-	 G6Sf/gBRQX4NLnew0lAfZe2tS1o5NFzgTXrCj4Ty5tyNkV1Lf1OqA9FbH2mU8dLoZn
-	 ejPJwnhmIBlOQ==
-Date: Fri, 1 Nov 2024 13:51:58 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch v6 02/20] posix-timers: Make signal overrun accounting
- sensible
-Message-ID: <ZyTO7mFZWRZf7sNv@localhost.localdomain>
-References: <20241031151625.361697424@linutronix.de>
- <20241031154424.677253735@linutronix.de>
+	s=arc-20240116; t=1730465526; c=relaxed/simple;
+	bh=MY1JuwzLIkP5t5Cr55MZm4xU3jbAwFV0dXz3R97RVlc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SZjpU1AGfgDWoHOC8K/7QLXGzEWkTk8gArLG/FqNIm0Gn0YxjuNljpW7caEcXnUDaM9ZjQqOL7LR+K3IONG4tIEP8MnABfietWyKYC85M5HqrgZPL+XS4RQHV8RPjpCFTp34NDzT1mUJB8CR16i6rwLf11oY1YMc734Y2Dk2V5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c5a6c5e1so23836415ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 05:52:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730465523; x=1731070323;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=azporNFTFIO2k+0mEq99MaN59MOSliWpjC6OvmTPJFc=;
+        b=bC/eB8fJ/sjvlwTAgojctILzwL3NTniPC4Xay0qIbnLoQqHHzFhkgZxp5T0vyT+Ai8
+         YfZkvyLiD1nNPVgfy7cvuEBcjpHGZPRFCqVRqbiorQtt07TBW0oX78FUBKeYBcZl/G+f
+         5wC7K/f0rVFVnxDaJg4vhSalcovpgYYsh0C2zEDQagQYM5wqiKN9BTqpqNq84ahCM4Kb
+         yJL+Kfy/iUNalkqRfLMqisGqmRAuiE+s/Z3lQxnLnMzL3C5VBxZukvnNNiFTkvC0l3P3
+         tRIKDkmCZxtlQXw/0ahIYACCaAtDpXSilPGPeO9CB2fUAk91f7lCOZXSeQQDZDLsoJ+h
+         FrBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCqKcr0j4kjot40jKneZ+Uxjj5ZJoaXCU7+xVf1ZAPdESeQ28uQ9q1bSxSzsmAAnxbgYLMWj6FRy2qB0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN86UYUkVgmaLOWUDTAF5PvpHQKGiMBgPjF1f3731ndt3W1UFF
+	Gje9izs2G8xFgMkQRZ9lAGluJA2a+xuXBalo4K52I0PH8i+gaDjwXxJbewU5aNJrLsbjdvLtGSt
+	AX8sswGIL8H/3DppJqgG8Dkwt7cuXy6pwuZP6fevtggT78Jab/ZBmyTU=
+X-Google-Smtp-Source: AGHT+IFCEINjrruxUOVhTdJlSxsMu6nE0QStDgfxd3vBsaNqtmWxt92TNL4EQZRENplnpiOweIwQ0Sn8kubgFvurP8ZgsTc3V1mn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241031154424.677253735@linutronix.de>
+X-Received: by 2002:a05:6e02:180f:b0:3a0:8c68:7705 with SMTP id
+ e9e14a558f8ab-3a5e262e863mr120760515ab.21.1730465523694; Fri, 01 Nov 2024
+ 05:52:03 -0700 (PDT)
+Date: Fri, 01 Nov 2024 05:52:03 -0700
+In-Reply-To: <20241101115926.vYGxC%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6724cef3.050a0220.3c8d68.08a0.GAE@google.com>
+Subject: Re: [syzbot] [pm?] KASAN: use-after-free Read in netdev_unregister_kobject
+From: syzbot <syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Le Thu, Oct 31, 2024 at 04:46:25PM +0100, Thomas Gleixner a écrit :
-> The handling of the timer overrun in the signal code is inconsistent as it
-> takes previous overruns into account. This is just wrong as after the
-> reprogramming of a timer the overrun count starts over from a clean state,
-> i.e. 0.
-> 
-> Don't touch info::si_overrun in send_sigqueue() and only store the overrun
-> value at signal delivery time, which is computed from the timer itself
-> relative to the expiry time.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
-> V6: Fold the timer_overrun_to_int() cleanup from Frederic and remove all
->     overrun fiddling from the signal path.
-> ---
->  kernel/signal.c            |    6 ------
->  kernel/time/posix-timers.c |   11 ++++++-----
->  2 files changed, 6 insertions(+), 11 deletions(-)
-> ---
-> 
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -1968,15 +1968,9 @@ int send_sigqueue(struct sigqueue *q, st
->  
->  	ret = 0;
->  	if (unlikely(!list_empty(&q->list))) {
-> -		/*
-> -		 * If an SI_TIMER entry is already queue just increment
-> -		 * the overrun count.
-> -		 */
-> -		q->info.si_overrun++;
->  		result = TRACE_SIGNAL_ALREADY_PENDING;
->  		goto out;
->  	}
-> -	q->info.si_overrun = 0;
+Hello,
 
-So it's not cleared anymore on signal queue?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Not sure if it's a big problem but if an interval timer gets a signal with
-overruns and then the timer is reset later as non interval, the resulting
-upcoming signals will still carry the previous non-zero overruns?
+Reported-by: syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com
+Tested-by: syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com
 
-However it's better to keep the overrun update on a single place so
-perhaps this?
+Tested on:
 
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index 66ed49efc02f..f06c52731d65 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -282,6 +282,8 @@ bool posixtimer_deliver_signal(struct kernel_siginfo *info)
- 		++timr->it_signal_seq;
- 
- 		info->si_overrun = timer_overrun_to_int(timr);
-+	} else {
-+		info->si_overrun = 0;
- 	}
- 	ret = true;
- 
-Other than that:
+commit:         dff8a642 Bluetooth: btrtl: Decrease HCI_OP_RESET timeo..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=144816f7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=36917d9184c65129
+dashboard link: https://syzkaller.appspot.com/bug?extid=6cf5652d3df49fae2e3f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=161c955f980000
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Note: testing is done by a robot and is best-effort only.
 
