@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-392566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786DF9B95A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:41:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C059B95A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9CD31C21F72
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:41:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44F73B21507
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8901C8785;
-	Fri,  1 Nov 2024 16:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811C51C9DD3;
+	Fri,  1 Nov 2024 16:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GCUtdnxy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FH1q8YKC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031361798C;
-	Fri,  1 Nov 2024 16:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60E61AC88B;
+	Fri,  1 Nov 2024 16:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730479280; cv=none; b=UZJjxcPZNs1eMRnEQHpRh1lpsu/KDkzkNkqp9U5OgJD7Qz5dCKcgu/DEydJGMJHKtjkDNcYEo1mYq5xRHsK5wthZnIpQ/W9ec7RKy/dAN2AxEui9ev9KOa3h0cOTNCYvmhflF/RGATZBoxOK1iFoRe9HARftq/jA3yultctqUuM=
+	t=1730479293; cv=none; b=VVuyX7aGNXkPcqODtuEf+wdW+lUd9wjpy6yzyrW3WTtkTTY/BjnuYwbEofJiHj4kXdx1jlVEGXwKmC2HidMUe4RicyNe3+hYHERr0RIOoHKwL5TrQgNnz+7FlpRcVkssSfbk2DyhCPLgMphHAQl4QX/BIkgrz+ScJC0ZD683haA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730479280; c=relaxed/simple;
-	bh=lQWAHQP49L9EPI83ci/P6pNn65ds+hzTCghHwBXbPEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W76QoO1ZOIwmJQZ5z04ksxXHQgbYiMhlON7nK9m65ATdXDWL6uL135c9PQ546x8PbIpivAEKpeXZoImuSf2lDYm7HQOjFK8fkMg+XnoyUNPmCT63ylOgwPoRKVWn2ji+tH1lUC0tcEN/VHVTy+3jRKr7XhXKFoj4e7rHPApMxLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GCUtdnxy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AA1D040E0220;
-	Fri,  1 Nov 2024 16:41:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id IxkFdDt0bs4B; Fri,  1 Nov 2024 16:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730479270; bh=fzSSkxQVzzE+tCcSW0ZG2KSSM/Nhtusb1t/k+DswM4A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GCUtdnxykynOPbX9wjDcCmIsrGBc1gdfiD+WRUDn2QQ8afrcdRosRyQ0S2EyFHUxD
-	 DGwcsGt1BM1NojWvy60niSio2K8U1vEbplwvqITDFNBrNIxZz4TrqQ/96dq3q3sl+c
-	 gGV6FimbcBYVzcrI51J9AiBqCVl/ri5sl43jbs26cc0nwmickSRVxmQYDf4/CwSmnI
-	 CQQqdCW/9U3pZStwpfPHhIZ/LfiKiMb5HCdq5mB+vUnbkjkmDDvpfzIr1L+pitaQnC
-	 hgfsvJsrIJlitqoDbwYBOF74GJj4qSXpTRyjJKTENEqv7hocSjMacsBb6hxkn21+ed
-	 UyVzgnc3f5yDnbalYx9B1KbALTWX5RPuK1BH8WzJVZIORNADtdCtPwQDjuT5KbryZ/
-	 FsWOcJNSRZDelO8EnWeHK6VdfZIXGe78OXgZOj7gd4CL/dUT8cKhgYMBmYuf0uKhEz
-	 EH55iRXrppeh3LicIChtmhs2kUXNXfKk5LDJnnyd82ObH44ZegAPK9pPXYiMi2a4FQ
-	 KFNFh4ju9+C0eAtU8rswg7C9IvWFoOd8pWLuBiP1iLG2ruiSbWceChQQBJVL6IQNaB
-	 B+YcqZvKljKrNIcpHGMcvfRm5LY+hsxujcigG4LT/7sqMq0elRD9ZRzQPj5gf+2z8S
-	 oUUP0yBrQhUOi88Mfra0/nRg=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2CA7840E019C;
-	Fri,  1 Nov 2024 16:40:59 +0000 (UTC)
-Date: Fri, 1 Nov 2024 17:40:53 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Nikunj A Dadhania <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v14 04/13] x86/sev: Change TSC MSR behavior for Secure
- TSC enabled guests
-Message-ID: <20241101164053.GLZyUElVm8I22ZZjor@fat_crate.local>
-References: <20241028053431.3439593-1-nikunj@amd.com>
- <20241028053431.3439593-5-nikunj@amd.com>
+	s=arc-20240116; t=1730479293; c=relaxed/simple;
+	bh=RnVmu4KMn0cYcEtJmqOHewUj8MapyZAuXdZ2ik2BBwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JuEuyIM5PfQo9LoMjNo+qUV/FwEvXLrLFydVS/2wyuUN8lqwEHMXr3+XfEKYOr9bz/nlqDsrlb0C6es1tVjRLqStiE4nxEbCEU+zc5br9cwxbG1uwABpEzl7V3g64LuZ5ESXrN8KTTV6MvHQtICoIcBSAN7YTmStqzheS0VPYHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FH1q8YKC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F3B2C4CECD;
+	Fri,  1 Nov 2024 16:41:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730479292;
+	bh=RnVmu4KMn0cYcEtJmqOHewUj8MapyZAuXdZ2ik2BBwk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FH1q8YKCIGY6guripygnr5/X3GiZsfOtWqz7B5YyRdEvi8alczpqthsNyfSEUf0QE
+	 YzPta1HyOjTt0iwV6ZiaRFc/LWdu+oebKdb7Vf/HU8ceebCZDvSdPhdIZgmVHJWpNF
+	 CLNuIm9LO+SzfRdv3Xe+9ZNj2teoce5Dhx4e93vAu8wKuVO/obJOETKj2wOz6jWNN7
+	 tz79KaeMKPC9QDSpUeIegKhgfvMTg6DX1VpOvI+6O0gec03aeih35q3Ke76Vhbv7dy
+	 ptiYxEM0cX485g/gkeSLwRNLiMVLcHppe+BF3g0GWoz69Mpcp7c+yMzBrdctpinnxu
+	 GDm7jaLHfT9hA==
+Date: Fri, 1 Nov 2024 16:41:18 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Cosmin Tanislav
+ <cosmin.tanislav@analog.com>, Ramona Gradinariu
+ <ramona.gradinariu@analog.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
+ Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Anand Ashok Dumbre
+ <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
+ <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
+ Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Benson Leung
+ <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v2 13/15] iio: light: apds9306: simplifies if branch in
+ apds9306_write_event_config
+Message-ID: <20241101164118.687be624@jic23-huawei>
+In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-13-2bcacbb517a2@baylibre.com>
+References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
+	<20241031-iio-fix-write-event-config-signature-v2-13-2bcacbb517a2@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241028053431.3439593-5-nikunj@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 28, 2024 at 11:04:22AM +0530, Nikunj A Dadhania wrote:
-> +	/*
-> +	 * TSC related accesses should not exit to the hypervisor when a
-> +	 * guest is executing with SecureTSC enabled, so special handling
-> +	 * is required for accesses of MSR_IA32_TSC:
-> +	 *
-> +	 * Writes: Writing to MSR_IA32_TSC can cause subsequent reads
-> +	 *         of the TSC to return undefined values, so ignore all
-> +	 *         writes.
-> +	 * Reads:  Reads of MSR_IA32_TSC should return the current TSC
-> +	 *         value, use the value returned by RDTSC.
-> +	 */
-> +	if (regs->cx == MSR_IA32_TSC && (sev_status & MSR_AMD64_SNP_SECURE_TSC)) {
-> +		u64 tsc;
-> +
-> +		if (exit_info_1)
-> +			return ES_OK;
-> +
-> +		tsc = rdtsc();
+On Thu, 31 Oct 2024 16:27:08 +0100
+Julien Stephan <jstephan@baylibre.com> wrote:
 
-rdtsc_ordered() I guess.
+> Simplifies the regmap_wite if branch in apds9306_write_event_config.
+Applied.
+> 
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> ---
+>  drivers/iio/light/apds9306.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/light/apds9306.c b/drivers/iio/light/apds9306.c
+> index 8adc74040db2bddf93fbb773e3519abcc726b9a6..9c08e7c3ad0c17519689a630d42fe9b90438dfe8 100644
+> --- a/drivers/iio/light/apds9306.c
+> +++ b/drivers/iio/light/apds9306.c
+> @@ -1125,10 +1125,7 @@ static int apds9306_write_event_config(struct iio_dev *indio_dev,
+>  		}
+>  	}
+>  	case IIO_EV_TYPE_THRESH_ADAPTIVE:
+> -		if (state)
+> -			return regmap_field_write(rf->int_thresh_var_en, 1);
+> -		else
+> -			return regmap_field_write(rf->int_thresh_var_en, 0);
+> +		return regmap_field_write(rf->int_thresh_var_en, state);
+>  	default:
+>  		return -EINVAL;
+>  	}
+> 
 
-> +		regs->ax = UINT_MAX & tsc;
-> +		regs->dx = UINT_MAX & (tsc >> 32);
-> +
-> +		return ES_OK;
-> +	}
-> +
-
-All that you're adding - put that in a __vc_handle_msr_tsc() helper so that it
-doesn't distract from the function's flow.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
