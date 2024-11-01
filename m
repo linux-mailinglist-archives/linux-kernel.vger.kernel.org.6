@@ -1,229 +1,127 @@
-Return-Path: <linux-kernel+bounces-392650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19ECA9B96B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:44:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D4C9B96BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:47:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 596EEB216F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6403D1F224F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455731CCEE4;
-	Fri,  1 Nov 2024 17:44:27 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5913D1CC17C;
+	Fri,  1 Nov 2024 17:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PbUbj4Iv"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137751CB321
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 17:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FE51AA7BF
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 17:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730483066; cv=none; b=kpgmNRr94cnNZkD1quMDGQiHOJbX2z0eCqGuplfHX6rfqZ4/AJHc5DPXcWsYyCaTY6m2jPuQ6XwfZdnt/dmyJe7UIGrt7b6EPQkbm8Lr7f8X8CXpZ/S8QbGFXGNXB3v4f2+897E3XYJ3uH4ajm8yHLZklvN49Dv7XYn4+/8w8Yw=
+	t=1730483263; cv=none; b=bcj+YEOFh8d4hXvV2IvlDsTD+4F0Y8S8vDk4xnRtyTNCR0iP5B4ngWQ6p5qT/6lIoEfdiJi7NIvVkBRsbGpgLkGkGqWFoM6t7wqOCUcq9PlYzqiyc4/uxcJZHGrXwwDoPYmwl9+UwzzRqXiNHsJAAYrHkx0FX6TgzWQc93fm/Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730483066; c=relaxed/simple;
-	bh=XFgOzZU3vf3rVwV55k5ue676e5+F82mmlt+SInaASco=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BdY3iYzCZshypl+vo/47nifmVL47rn1dAygDMWoYls7F2XagHU2CI6Njh7gcNnZPmhwWra/2PLAkYxmJo8+o5oSyWH60LJ5D4IbNs9spF3FwC/cnCgSnYYWCt9qhFC+UoD5okD4evNLGnBj0KbXrS3zct3e+J/raTKgWedB2+QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c27c72d5so22382915ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 10:44:24 -0700 (PDT)
+	s=arc-20240116; t=1730483263; c=relaxed/simple;
+	bh=ogpYD5K8PsKO5i6G7GPGCXK3XdYDIzkpQox1GZRQeIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oME4qJZfF6x2Wb5JOA0AOUQ6a5XHn4O99oPrZCe1qKIVX7Sn5fWHfdc0Mhs83OpKEQEmNCIMb0tNTSsSZuYqGL9FVYViz+ffi6GC5c018DzeXHqjJ7KuzK+/qvOXHw/SSlqocmZ1dnRd8XyRioKuUQmNu8gQKlw3Ks0Qcg7p58k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PbUbj4Iv; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d5aedd177so1426557f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 10:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730483260; x=1731088060; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nqpqdAAsMY6Ea0B+Ms2g/Gdx1auCnnxqq5QczXj8Kic=;
+        b=PbUbj4IvIAbAyG2ZtGCg07pwRIgO0fkyWbDX0jOQ1CkA6DM3gFI4P6INH9MGSRCuJZ
+         WelngRzhH+wLyP2vwY6Wz6ihFfAfWV7T6zwWa2g9RBojZ1e8Tvl8jc0gLAUpHAhdneTG
+         ijgbWZGLS+9IJv0zIAJGzpBH5PKUqwhBCbMHCsoZ5uZg/7/93MW0MXFWQRd4tVUYfAYS
+         rcfSogd4tr7PMtpB/w8/sWPhLfwz1ocR9xhdufLBw+x9oBRy+ZNWqzLV2H2vi4fEixs6
+         TwUmjuEDV1FSQnxlsu/5G2l0FTC0nRH/aTTJgtxbfCuRwx4mZ+3yt2FP9a6z0BSbVwdg
+         xyqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730483064; x=1731087864;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KZamgeEAq8LX/a7SW/p7J0rGhjfQLFTJ6EjCGeTjuEY=;
-        b=kWirllC8Qs3Am3rSdyU01hNBbxldyHehvzUYUQJoY+V9f2pKv+9g9AlyfMlEf5ex4o
-         s+4zvl4m7/n2DVEZQA0jDSmqhQEIK8ZERFD7DmogwYGJwOzk0kafuhM3fALth3+PaDkg
-         xBaAm8ouA2eZnDCkwBk9J02EBKi9sz8xYQvMNdZGT/ha62RDP9RvGj7ge0XpcaoSUMBx
-         XaiLsacZGxJDD+o462vUuOyzozOgEjIXR6/hkvtOE4+V7ekZ5gObkbwM8gyL9LzrNna2
-         PuUw9tEr2XTUQz32S1BCDLzi8VfdUu0ul3APy+v+SmIpqGXOhU1bVjmDIs1O8IJg7+oL
-         87GA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaYJdJ1Wa0aeJuhM/LmT5Y6phSC40FUuf44pJf3QbKPmh1U2LjuXZ5m7vknnbdPGM4DlUCsiBUaZiltIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkWgvASlZDYEqMyo7Mzsasawzh2nOXajPOVT+SkWNhmjF5kFHm
-	PgXW1MAnufKtx0/5kt/ltZwJmOEuQUGWh9jnRxkoFXrH4QPW+apeTiUVqvaAviTzxdDs3WOiWH9
-	/Qg7OzoEcepJhUAzRdBxmE/HGFfggldoqwXsOIHCBeM4EfkTEFf1eTwk=
-X-Google-Smtp-Source: AGHT+IFpQvM59ysMYop4UuShmqCEPokzs3FQ05DgVwej655ZYFGThHsNrBgohRjEF6+U5nvkOHvpbNy6GdFZLj0Vmymv3PPNAdtt
+        d=1e100.net; s=20230601; t=1730483260; x=1731088060;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nqpqdAAsMY6Ea0B+Ms2g/Gdx1auCnnxqq5QczXj8Kic=;
+        b=IVB9daJL4OGQxp1OKYj1tpUCBXDQTtZ35ECvETaiIRrB+oe0OaEsO3Kfhsod3QanDA
+         /NxEiBOa67rrQ+RsIhuJLccv+N0z+/y0H+qmI75Rw+grkY3tFtVc15ux+O49UqentrTN
+         dB6ck4tIfLLqirX05r8m4BP4JTYfcesPwwdbd0vchHrwSHQZpClUS6Cn6yPs23yLoUsS
+         uNP6NbdJGCPYDjhQTewhhrfGWIpW2z4XrTswDBKFf54GB1uVn5v5Nt2AbzT35lM+a4A7
+         RXWHEklPtUKyqBZNfO4jKXjukLHcVMvJzHr4tc0+Rev8z3VSSHXaCWdXJMx6EMiisHcZ
+         rezQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0OYT0q/LFX3ZA9tzOOgJLhH8wW7UCxsvnRN3JC8bna+oRIz6g/ID4UhM/QAYwwQgcrIvRkhb3c+fDr/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ7mBel/cLU4LP7NKNXq7Qs0NAc9+gDWBO9xsVg7962aqykGO3
+	Ya7dktAFHSmI4vpEG8XzIxx3yICNW9/Qtw4P2vhyR/XBu2ElF96/
+X-Google-Smtp-Source: AGHT+IGp6X2WRuG/2IzNPwJBQ5Vh8dtKSjI+JhJj/VcI7oAH6vhoDk+vbcGcTGmMYJC72h25Bs9yAA==
+X-Received: by 2002:a05:6000:1863:b0:37d:43e5:a013 with SMTP id ffacd0b85a97d-381be765147mr6422778f8f.8.1730483260238;
+        Fri, 01 Nov 2024 10:47:40 -0700 (PDT)
+Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c1185b4bsm5732933f8f.112.2024.11.01.10.47.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 10:47:39 -0700 (PDT)
+From: Dave Penkler <dpenkler@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	arnd@arndb.de,
+	Dave Penkler <dpenkler@gmail.com>
+Subject: [PATCH 0/9] Patch set for gpib staging drivers
+Date: Fri,  1 Nov 2024 18:46:56 +0100
+Message-ID: <20241101174705.12682-1-dpenkler@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8b:b0:3a0:90c7:f1b with SMTP id
- e9e14a558f8ab-3a6b031cfc9mr48470885ab.12.1730483064043; Fri, 01 Nov 2024
- 10:44:24 -0700 (PDT)
-Date: Fri, 01 Nov 2024 10:44:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67251378.050a0220.3c8d68.08cb.GAE@google.com>
-Subject: [syzbot] [net?] general protection fault in put_page (3)
-From: syzbot <syzbot+71abe7ab2b70bca770fd@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, davem@davemloft.net, dsahern@kernel.org, 
-	edumazet@google.com, hch@lst.de, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, ming.lei@redhat.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Patch 1 is a bug fix
+Patches 2-6 replace custom debug with dev_dbg as well as
+            using dev_xxx for pr_xxx where feasible.
+Patch 7 Corrects some errors in Kconfig
+Patch 8 is a code cleanup
+Patch 9 corrects GPIB behaviour
 
-syzbot found the following issue on:
+Dave Penkler (9):
+  Fix buffer overflow in ni_usb_init
+  Replace custom debug with dev_dbg
+  Update messaging and usb_device refs in ni_usb
+  Update messaging and usb_device refs in agilent_usb
+  Remove GPIB_DEBUG reference and update messaging
+  Use dev_xxx for messaging
+  Fix Kconfig
+  Rationalize lookup tables
+  Correct check for max secondary address
 
-HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=131f2630580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
-dashboard link: https://syzkaller.appspot.com/bug?extid=71abe7ab2b70bca770fd
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1110d2a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153e5540580000
+ drivers/staging/gpib/Kconfig                  |  14 +-
+ drivers/staging/gpib/Makefile                 |   1 -
+ .../gpib/agilent_82350b/agilent_82350b.c      |  70 ++--
+ .../gpib/agilent_82357a/agilent_82357a.c      | 266 +++++++-----
+ drivers/staging/gpib/cb7210/cb7210.c          |   2 +-
+ drivers/staging/gpib/common/gpib_os.c         | 139 ++++---
+ drivers/staging/gpib/common/iblib.c           |  20 +-
+ drivers/staging/gpib/common/ibsys.h           |   4 +-
+ drivers/staging/gpib/eastwood/fluke_gpib.c    |   2 +-
+ drivers/staging/gpib/fmh_gpib/fmh_gpib.c      |   4 +-
+ drivers/staging/gpib/gpio/gpib_bitbang.c      |  85 ++--
+ drivers/staging/gpib/include/gpibP.h          |   8 +-
+ drivers/staging/gpib/ines/ines_gpib.c         |   2 +-
+ .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        |  69 ++--
+ drivers/staging/gpib/nec7210/nec7210.c        |  34 +-
+ drivers/staging/gpib/ni_usb/ni_usb_gpib.c     | 379 ++++++++++--------
+ drivers/staging/gpib/tms9914/tms9914.c        |   8 +-
+ drivers/staging/gpib/tnt4882/tnt4882_gpib.c   |   7 +-
+ 18 files changed, 579 insertions(+), 535 deletions(-)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+-- 
+2.46.2
 
-The issue was bisected to:
-
-commit e4e535bff2bc82bb49a633775f9834beeaa527db
-Author: Ming Lei <ming.lei@redhat.com>
-Date:   Thu Oct 24 05:00:15 2024 +0000
-
-    iov_iter: don't require contiguous pages in iov_iter_extract_bvec_pages
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1539b2a7980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1339b2a7980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+71abe7ab2b70bca770fd@syzkaller.appspotmail.com
-Fixes: e4e535bff2bc ("iov_iter: don't require contiguous pages in iov_iter_extract_bvec_pages")
-
-Oops: general protection fault, probably for non-canonical address 0xed2e87ee8f0cadc6: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: maybe wild-memory-access in range [0x69745f7478656e30-0x69745f7478656e37]
-CPU: 1 UID: 0 PID: 5869 Comm: syz-executor171 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:_compound_head include/linux/page-flags.h:242 [inline]
-RIP: 0010:put_page+0x23/0x260 include/linux/mm.h:1552
-Code: 90 90 90 90 90 90 90 55 41 57 41 56 53 49 89 fe 48 bd 00 00 00 00 00 fc ff df e8 d8 ae 0d f8 49 8d 5e 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 5f e5 77 f8 48 8b 1b 48 89 de 48 83
-RSP: 0018:ffffc90003f970a8 EFLAGS: 00010207
-RAX: 0d2e8bee8f0cadc6 RBX: 69745f7478656e36 RCX: ffff8880306d3c00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 69745f7478656e2e
-RBP: dffffc0000000000 R08: ffffffff898706fd R09: 1ffffffff203a076
-R10: dffffc0000000000 R11: fffffbfff203a077 R12: 0000000000000000
-R13: ffff88807fd7a842 R14: 69745f7478656e2e R15: 69745f7478656e2e
-FS:  0000555590726380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000045ad50 CR3: 0000000025350000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- skb_page_unref include/linux/skbuff_ref.h:43 [inline]
- __skb_frag_unref include/linux/skbuff_ref.h:56 [inline]
- skb_release_data+0x483/0x8a0 net/core/skbuff.c:1119
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- kfree_skb include/linux/skbuff.h:1271 [inline]
- __ip_flush_pending_frames net/ipv4/ip_output.c:1538 [inline]
- ip_flush_pending_frames+0x12d/0x260 net/ipv4/ip_output.c:1545
- udp_flush_pending_frames net/ipv4/udp.c:829 [inline]
- udp_sendmsg+0x5d2/0x2a50 net/ipv4/udp.c:1302
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x1a6/0x270 net/socket.c:744
- sock_sendmsg+0x134/0x200 net/socket.c:767
- splice_to_socket+0xa10/0x10b0 fs/splice.c:889
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x11b/0x220 fs/splice.c:1164
- splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x289/0x3e0 fs/splice.c:1233
- do_sendfile+0x561/0xe10 fs/read_write.c:1388
- __do_sys_sendfile64 fs/read_write.c:1455 [inline]
- __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f17eb533ab9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdeb190c28 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f17eb533ab9
-RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000004
-RBP: 00007f17eb5a65f0 R08: 0000000000000006 R09: 0000000000000006
-R10: 0000020000023893 R11: 0000000000000246 R12: 0000000000000001
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:_compound_head include/linux/page-flags.h:242 [inline]
-RIP: 0010:put_page+0x23/0x260 include/linux/mm.h:1552
-Code: 90 90 90 90 90 90 90 55 41 57 41 56 53 49 89 fe 48 bd 00 00 00 00 00 fc ff df e8 d8 ae 0d f8 49 8d 5e 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 5f e5 77 f8 48 8b 1b 48 89 de 48 83
-RSP: 0018:ffffc90003f970a8 EFLAGS: 00010207
-RAX: 0d2e8bee8f0cadc6 RBX: 69745f7478656e36 RCX: ffff8880306d3c00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 69745f7478656e2e
-RBP: dffffc0000000000 R08: ffffffff898706fd R09: 1ffffffff203a076
-R10: dffffc0000000000 R11: fffffbfff203a077 R12: 0000000000000000
-R13: ffff88807fd7a842 R14: 69745f7478656e2e R15: 69745f7478656e2e
-FS:  0000555590726380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000045ad50 CR3: 0000000025350000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	90                   	nop
-   1:	90                   	nop
-   2:	90                   	nop
-   3:	90                   	nop
-   4:	90                   	nop
-   5:	90                   	nop
-   6:	90                   	nop
-   7:	55                   	push   %rbp
-   8:	41 57                	push   %r15
-   a:	41 56                	push   %r14
-   c:	53                   	push   %rbx
-   d:	49 89 fe             	mov    %rdi,%r14
-  10:	48 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbp
-  17:	fc ff df
-  1a:	e8 d8 ae 0d f8       	call   0xf80daef7
-  1f:	49 8d 5e 08          	lea    0x8(%r14),%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	48 89 df             	mov    %rbx,%rdi
-  33:	e8 5f e5 77 f8       	call   0xf877e597
-  38:	48 8b 1b             	mov    (%rbx),%rbx
-  3b:	48 89 de             	mov    %rbx,%rsi
-  3e:	48                   	rex.W
-  3f:	83                   	.byte 0x83
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
