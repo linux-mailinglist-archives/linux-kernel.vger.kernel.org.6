@@ -1,141 +1,126 @@
-Return-Path: <linux-kernel+bounces-393024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBE09B9AF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:57:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0F49B9B10
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:01:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D471F21DBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:57:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 706D21C210FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD71C1E5027;
-	Fri,  1 Nov 2024 22:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136E71E260F;
+	Fri,  1 Nov 2024 23:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T+xl5H+B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bSzep9K3"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB681CB317;
-	Fri,  1 Nov 2024 22:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42BC156C72
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 23:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730501840; cv=none; b=sCRAGNxcXgfefgfH1qta3pMAqnB2J9FukxH3qyKap1ZnMOqCENpb5iOEZR1NnCRe1YS2D+xDiNpArEzz8ASrOW6izlJaWx+MEH1oP2QfR4Vf1Yw1AMzG5LQPnzC9/dX2P4V1D5MEbf+YJHKPGWkb6dvNkJ5Bi+3fWZfqQVgc068=
+	t=1730502076; cv=none; b=Gxfx1D5dcEXOBXhg5FAuy9PVIn0anGnGadrTBNOxR7Qhmrg3tmndlzqSdm9WFEk50Ja4cmNbwyy/UicppzOkmDt+Sf9TKEcgd8GLzURNu7EcxS3XlYYWXWROkdG2NscIT4ia7W5UDlgttN4wXRExhN2t7xThRQbVDGCiJmkxM1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730501840; c=relaxed/simple;
-	bh=vmT7+CCFd/QZK9Eg99Oxk4g7E1EEhZ7GyXf1q1Wh8Fo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lu4rqcN1900LrXCOOhalBT7ykTm3DZgPhg+k/dUsKJn5Aixwr+XSdaWbosVZAbpflzMc4vetzTY5UHiQAJ3SWpEuCWtM4TwFL/xu/SThuzz1wWfeS+E/y9/iI9cj4VNaUX7WKQYu6pEe8Td3UzyU8mNeujaJ+vwKbnEO8YhSZ1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T+xl5H+B; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730501838; x=1762037838;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vmT7+CCFd/QZK9Eg99Oxk4g7E1EEhZ7GyXf1q1Wh8Fo=;
-  b=T+xl5H+Bz0+4UWy7OjVC1fCmMmNTXs8u6wkDiE2PW1GYn6JB2RFB1lgo
-   pDNJ+nXG2NSL2+JmKFvuy17/dO6JlkLKWnkUMSDPy8mPq6kVNpF63X4V4
-   1LsfSG+ZcpuXEjzdJxJk7e0Vnvt9KVFXQkmjDna3uZyFH3i4h1XNCG06N
-   3wT6hoFkJVj5bKQwLVnnDRuxkExkrfOCkrFUUslu8xSQ1BL8U9wruLXfd
-   7DjCvNhghosrYRNny1k4dDgiybLwLvFk8fiE9cx9uPlztEVSpr79dhe1n
-   yg0cUgpAFFrrRhjtFKw/bqGkaGk1t/WrHJUYRjMBncnL8PVhXupKaf+ZS
-   g==;
-X-CSE-ConnectionGUID: rm2RCM4CSCSgwMoY7aQ9vg==
-X-CSE-MsgGUID: D7rPigckTlywGLnN53OkzQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="17903895"
-X-IronPort-AV: E=Sophos;i="6.11,251,1725346800"; 
-   d="scan'208";a="17903895"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 15:57:18 -0700
-X-CSE-ConnectionGUID: QGEVpm9pRQ22GCOLu70Gvg==
-X-CSE-MsgGUID: PX4AfcU+QOW4DzsD+Yyw9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,251,1725346800"; 
-   d="scan'208";a="83919244"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 15:57:17 -0700
-Date: Fri, 1 Nov 2024 15:57:15 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>, x86@kernel.org,
-	James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v8 3/7] x86/resctrl: Refactor mbm_update()
-Message-ID: <ZyVcy-7BkqO6Vcr6@agluck-desk3>
-References: <20241029172832.93963-1-tony.luck@intel.com>
- <20241029172832.93963-4-tony.luck@intel.com>
- <2ed76893-ac65-d9a2-aeea-c927ebd2a1e8@intel.com>
+	s=arc-20240116; t=1730502076; c=relaxed/simple;
+	bh=/VzRJaN+NnnqiUSxsGtBb31nGUad7BtmeUsMPMIuqsY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vE3PMlWxavXnngZwrWxUAYQtN3pXLv/0LmcF3qEb5/EyjIT8Z43s5GYSgMgcCJdRruDrH9K4jEoqUAcXoeERGp7zJDw7xxhQ66abFjY5DIRdYwn6iWiRNTSNNK9mQGIz2DnsjRkw77+59g8nUyz7rKo4KEOC+BLRNP8JQpfa27A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bSzep9K3; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so23911411fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 16:01:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730502073; x=1731106873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/VzRJaN+NnnqiUSxsGtBb31nGUad7BtmeUsMPMIuqsY=;
+        b=bSzep9K3nR7zvzXDAEfBUieJUSTUCRyuBHn6iI6ED7evXTdywfVJIpzKlORHQlABk7
+         1nDyfFV8J1PRG3QzkaWfTs5AfX78/HBa4wTbgWOPnwty54QeHL6cSD53cr2co5v1VCcb
+         Ye2z2nV0jExn07aq4cMd5OTg5jqN9t6SI+jA29tTaBz7QM9+5ev9iKuU2bmDDSMV0PRQ
+         KQsPM/AyCIRVjFd29Oayxvd27hbQjkC2B07O88Qyfmfikm6HfastThmSD5FSNAY1NFxc
+         PtlCcj7NtSnThf8HlNXeAlC6Tr0NkngCPTsYtetSakr7ieSr77Nsw691BPmBmjCNXbtC
+         Wnog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730502073; x=1731106873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/VzRJaN+NnnqiUSxsGtBb31nGUad7BtmeUsMPMIuqsY=;
+        b=QmQItBv10UEyOVAD/cTu15VQTAw8qDO9dEH61rjOD3qp6BVA2ArBDx/Uok4DHjejBw
+         04kGJ0Ua2Hkfx1i+A80wOpuZP5cUjDPJXG/VPU1+JECjozcM/m0w2q+04R6a9Uj2ney1
+         xWvNE9hXfNb8GMrdVpuPd6ToYuZzyeDueHWZXIGbabPT8mF06phRBChTEZM31PauwPWG
+         qjjgaYdUO5Ud5V/gfr0I/SMrwe0b2bH7RnFHmoKELm3Clnjq4kyjceVn7JaBDWoD6q8s
+         a+ia7m53oAmflnHjWWltdknZEpXJzBLKNJF3eUcN824/o7pkd6wRmk8JpQo0WCHbzZ1u
+         FB1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXTQym8+QVo1zMaHYbzQXRyEmEll1yU2M1YqxEWfJGHWlBWNOGsOSf2OB+EF2J9ZeLwCKgmrvotU8aqxmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUKedqWvSfkiT4OHCroqGNurCU54OzeacOd9b827LbbjtPFGN4
+	cfAHyPkxjzlJNG6h6CKAUFGf7eR85Yw+s+A8uACfUgGm0wQDDBDgfiVXVO261TKUwrZK7fbSfjS
+	Ooi9On4Ef1zhwqYqY/uc7lZAY7jfR0mTDt9DPOA==
+X-Google-Smtp-Source: AGHT+IHUrFtSs2KoJie/ag5U8LaXZwywnsQh7l2YsRqtTFXJcYBaKb8KFr8549S9dDV3k+hWD/NftGFkeCKXktgctEU=
+X-Received: by 2002:a2e:6112:0:b0:2fb:599a:a900 with SMTP id
+ 38308e7fff4ca-2fcbdfb978emr106638791fa.15.1730502072547; Fri, 01 Nov 2024
+ 16:01:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2ed76893-ac65-d9a2-aeea-c927ebd2a1e8@intel.com>
+References: <20240629085601.470241-1-ruanjinjie@huawei.com>
+ <ZxEsZBvsirXJz2dT@J2N7QTR9R3.cambridge.arm.com> <Zxevfe-PZgB_Z8hi@shell.armlinux.org.uk>
+In-Reply-To: <Zxevfe-PZgB_Z8hi@shell.armlinux.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 2 Nov 2024 00:01:00 +0100
+Message-ID: <CACRpkdZjRpcA92FARSXLNHdSBLxaNwvG6N2ZJPg8NK8cprh7UQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] arm64: entry: Convert to generic entry
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Mark Rutland <mark.rutland@arm.com>, Jinjie Ruan <ruanjinjie@huawei.com>, catalin.marinas@arm.com, 
+	will@kernel.org, oleg@redhat.com, tglx@linutronix.de, peterz@infradead.org, 
+	luto@kernel.org, kees@kernel.org, wad@chromium.org, rostedt@goodmis.org, 
+	arnd@arndb.de, ardb@kernel.org, broonie@kernel.org, 
+	rick.p.edgecombe@intel.com, leobras@redhat.com, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 01, 2024 at 03:08:27PM -0700, Fenghua Yu wrote:
-> > -		/*
-> > -		 * Call the MBA software controller only for the
-> > -		 * control groups and when user has enabled
-> > -		 * the software controller explicitly.
-> > -		 */
-> 
-> Same comment was added in patch 2 but is removed in the helper. Maybe it's
-> better to add back the comment in the helper.
-> 
-> > -		if (is_mba_sc(NULL))
-> > -			mbm_bw_count(closid, rmid, &rr);
+On Tue, Oct 22, 2024 at 3:59=E2=80=AFPM Russell King (Oracle)
+<linux@armlinux.org.uk> wrote:
 
-In patch 2 I cut & pasted the comment along with the code from
-the if (is_mbm_local()) {...}  clause into the if (is_mbm_total()) { ... }
-clause. Maybe to make it more obvious that the code was duplicated.
+> So, I think it's important to always quantify what the impact is of
+> any major change to the kernel entry/exit paths - it's all part of
+> properly evaluating whether the change makes sense.
+>
+> If switching to generic code causes a significant degredation in
+> performance, then that needs to be investigated and fixed - not
+> waited for until someone pops up and eventually says "hey, that
+> change to use the generic code resulted in our systems becoming
+> much less performant!" six or twelve months down the road.
 
-But I had doubts about the usefulness/accuracy when making the
-helper function.
+I agree, I did some measurements for the ARM32 patch which is
+in RFC v2. I ran:
 
-Breaking the comment into pieces:
+perf bench syscall all
 
-    "Call the MBA software controller"
+This issues 10 million getppid calls and measures how much time
+that takes (on a system with some background IRQ noise). I issued
+this three times (which takes some time to execute) before and
+after the patch set, then compared the best performance before the
+patch with the worst performance after the patch.
 
-This code isn't calling the "controller". To me that's the
-update_mba_bw() function that adjusts the MBA values. The
-call to mbm_bw_count() is simply computing the bandwidth.
+On ARM32 generic entry costs some 3-4% of performance overhead
+(increased execution time).
 
-    "only for the control groups"
+By chance I discovered that PAN (privileged access never,
+CPU_SW_DOMAIN_PAN) costs around 400% increased syscall
+execution time overhead (two orders of magnitude more than generic
+entry) Debian apparently turns PAN off, maybe by mistake, maybe
+for this reason. I was a bit surprised by it, I don't know if I made
+some error in the measurement.
 
-while this is true, the test in the code here "if (is_mba_sc(NULL))"
-isn't making any checks about control groups.
-
-    "and when user has enabled the software controller"
-
-Accurate.
-
-    "explicitly"
-
-Redundant (or confusing, there is no "implicit" way to enable
-the s/w controller).
-
-
-If a comment is needed (and I'm not convinced that it is)
-maybe something like:
-
-	/*
-	 * If the software controller controller is enabled, compute the
-	 * bandwidth for this event id.
-	 */
-
--Tony
+Yours,
+Linus Walleij
 
