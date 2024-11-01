@@ -1,123 +1,61 @@
-Return-Path: <linux-kernel+bounces-392966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4ED9B9A3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:29:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83589B9A40
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2B1B1F230CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:29:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CF131C213CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBF01E32D9;
-	Fri,  1 Nov 2024 21:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927B61E32C0;
+	Fri,  1 Nov 2024 21:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exGovcmf"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aQKtWboz"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE84F1547DC;
-	Fri,  1 Nov 2024 21:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F532487BE;
+	Fri,  1 Nov 2024 21:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730496585; cv=none; b=PsWN39mixXy6s/KebXlrD8lZOhNgcIo9+mdJo47FGE9zlcR2fFk7/pwh8+ymq6nJR5b2QCS+cg019D3BRlqlGXKIYvH2kdEkfC0nndBxC1fkGFI6D3HPzINQlWZmIK1kMxw7VcYKYKYg2nRNZIvDBA/51RSWB4X4BtIYt1/p1ug=
+	t=1730496632; cv=none; b=n6G8v7qn0WWDDVf9V4sk4gasUOcVMjyglsF4Fzyk4+J1ksv/y2kvELwWbazSh0Y+hpOFUXyeecrIDOj5CibvpfVxDHYCrJjJLwYY3Lw/JtYYj7PzVNjosAemWsvMdZQGuJIfaOGHLxSgme9hcULWmCn/+01tEqvmKBTkZQhJDYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730496585; c=relaxed/simple;
-	bh=wUv4Mmyden8QXixNRuHywr5j0xg1h8babFVNw+OZ6Ak=;
+	s=arc-20240116; t=1730496632; c=relaxed/simple;
+	bh=4XXEqFe+awDGK6MZZOMvzpJ1Ocl5W/M0aI/NI1Ytm4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aOiuYzH/htkrk3Gvu4f5Hls7FcN8oOYK7Tl9WkvXOBlLVUfDwXwODIeqj2OVyJSS78I8NrxY93ynlXb3fP9m12tZMI3AAuzdJz1Q7ebuVs7VjGcIhlBvcVAAleMRWbntFmCHZxCqnuI5XaKgwADMxDmALl1eOJ0SPZJ+kdJiRUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=exGovcmf; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cbe90c7c95so15643886d6.1;
-        Fri, 01 Nov 2024 14:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730496583; x=1731101383; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q6RqVmSnLlS+aTA+4ijNGjm2L+S42vaFccd3PBdWHCU=;
-        b=exGovcmf5Eedqh81c752ZYWnxBTaZM23VoY41OeObVD5NNHIA52DwsGddEyzFyGUQE
-         Dnx/ZSOsdFh6tFu/fKAenx0aSVeYanN436BISEc+9e/1goua+KiaWsbNnvyyp8cMY+Fy
-         5cDGC0D4LUedAWDZwZhgmobDN5tYZTUtGR4pbmcSBmnQhUuWuvmCQUyp+3vPMK5ICGFb
-         ni/Ofqu0C5HRZpJlyGiHxCFITR3MkQwJ6sHe44KX6oKbpyNHB8Rv2M+shjMZ1eVJ21sB
-         Pc1UaGSWTM3dwNfTD2X4SmUKYF0neTQHVfwpSuqLaBcW59S+Lb9bUw3rp1vuX5mcuXuY
-         2uKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730496583; x=1731101383;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q6RqVmSnLlS+aTA+4ijNGjm2L+S42vaFccd3PBdWHCU=;
-        b=EO7NeQW/hHzTbOm6QOTJOmyiEAwejBT91C/RkY5UjGKOKT4X9rgEOJPqO+PljUzvki
-         CnyZo0oXY/kiMO/KCOA9nPD195XgORmLF9AUYK85Vx/l21+8c9I5UcaQPpXwph3owzzA
-         VbCH11zvs1qu878BrSypeQxCakwV659Ll98s1A/9a3SwUPKXm/WMqywiFGTuLh30JX3l
-         d8MJ6llovN+fUZJuXerpOIHFGtEr5BPw85ZGtlMZW2k1iEXO/9OAK7YDqkQTRpluPnle
-         boYl99jwUNTIWQnK06LEmWpkIyNamvwggNmfLE5CHMXHT+kUDY96yht3aZ6jLQbS+thx
-         x8HA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQSjo7tBNFbAMNVbO6XRahMwbKIWtFgupvE7zyFbpjVmOM+LY/q41qLLrukmt7qJiNg3KQg2iEcg72GGhtkFI=@vger.kernel.org, AJvYcCVk/s/FZ4VoaQ4LBJ234QcdZHid/UzGDuZG2WSUNQVnL6SlS2nY76y3P06r8xidElj1oVlOZig7sU5BYP4D2nRc@vger.kernel.org, AJvYcCWF/MzM+evfEycg0ADy/YoTGoezIOerN4J4fqUxrt3LphES7LZAIP5YoN17JQ6dbRQZiUFDieGhUCTGxNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL38zj2AzTYoAKTxBG/J8/6Vh8bsmlEFW30do78pXfckl6+2U3
-	Tv2p4VkYVHkJIFFHG7gSWUVSC+JYhydymyx+D3kTNcqfRn1dDMpz
-X-Google-Smtp-Source: AGHT+IHg6WfvVjXsdZ9cmM2dc/TNrHtqK2fwwM81+rrqESxKCi4tQDqTMFY8TEdHmsS0quOjMnzWHQ==
-X-Received: by 2002:a05:6214:2e47:b0:6cc:41cb:4c6c with SMTP id 6a1803df08f44-6d35c1aeedfmr58433476d6.48.1730496582679;
-        Fri, 01 Nov 2024 14:29:42 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d35c73440esm13139686d6.63.2024.11.01.14.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 14:29:42 -0700 (PDT)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 784FD1200043;
-	Fri,  1 Nov 2024 17:29:41 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Fri, 01 Nov 2024 17:29:41 -0400
-X-ME-Sender: <xms:RUglZ7TbCS-pn0w_fjxb_XLpfMkQxnOy9lWXgvBx0EqB8D8yXWbMbQ>
-    <xme:RUglZ8xffMw00fieXW7voXJBA3hS_hM2rzl-Y9d-anZ5qMCcnKJ3Cyj51wmjhkJTr
-    -zWYTqW7uNdgMsGPA>
-X-ME-Received: <xmr:RUglZw1qdv4kMgMHUwxZWYeGHZf6DXwzEPdYbwV--LCQV3woV9P9MwhhRww>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledgudegkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduiedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiughgohifsehgohhoghhlvgdrtg
-    homhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehj
-    ohhsvgdrvgigphhoshhithhokeelsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrvg
-    hnuggrnhdrhhhighhgihhnsheslhhinhhugidruggvvhdprhgtphhtthhopehrmhhorghr
-    sehgohhoghhlvgdrtghomhdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrih
-    hlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthht
-    ohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtohepsghjoh
-    hrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:RUglZ7BBkgqbyQJwGHJeTooJomjJ0EQGII8nPsf3Hk2odjYjKFXP5A>
-    <xmx:RUglZ0jczVGMkeOXnFilCk6aFdH9OzhKSxqX8ojTUe_kYgb1WBMlVA>
-    <xmx:RUglZ_oW1stnW4619jlhvPzMznM-o_AL31N4JKWn4ZtEhJEtO7I-rw>
-    <xmx:RUglZ_j14Y86mgdQnXUIOeoN3Zx9jXIQH2cHoQxdxYaQWPiiYPwWcg>
-    <xmx:RUglZ3RXgx9whNMXvTdasYdZaONS9nfEgNB6BJ3PTqJ4jCP4DqjTlghX>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Nov 2024 17:29:40 -0400 (EDT)
-Date: Fri, 1 Nov 2024 14:29:39 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: David Gow <davidgow@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	=?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Rae Moar <rmoar@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Matt Gilbride <mattgilbride@google.com>, kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] rust: kunit: allow to know if we are in a test
-Message-ID: <ZyVIQxTf1qkts1d_@Boquns-Mac-mini.local>
-References: <20241101064505.3820737-1-davidgow@google.com>
- <20241101064505.3820737-4-davidgow@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f19zWit4ABwSLy28522Txomy6z7Bdowby2Ijhmko4ZezN3MhLEDwu5Qb11e9vEruHgTiuo4YJxB4yKZYVxtAjLGzqlMJcuaHGLy7T0JYvs5kfhpK+QLrsKw8tPCJAAvCWZyhceupY3xx6UTGq4UxYkP2ocmAwf4lAY1Z7VTcDmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aQKtWboz; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BJ69mwcrQjbCZcBQ06k2f/aDMOK4/+BOGc+i+AZ1IYs=; b=aQKtWbozKSreyZatoPTL3p2d9i
+	gBKBCBGDDwyUq40yVubShCS0zvQa2LWY6K8fZkkQ5/z/nc/qapbWevnSPQK25oDgn5GeB9dfMX113
+	FDiKSQPhFLWvjZvynHTdvWe8D7nN7YXUdkHzpfhGKLh4nyq5dOpBJEOLkH+XxqVkri07tHaxG6DSp
+	eJFiaRrvC3V5Y388sx+5TlRo1Kau66bpCsb3w5diMzdIi6f8WgA2vZt9VvWUBX+HqEOjZMgrH4oUp
+	Olkq1ecq810NA0U0yi02DIpvrusoIewxyrAInYUcaKqAOAL8aAsJpCnRaGd7SWFlmhMdbOOFl3FQB
+	e9SRsFAQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6zDt-0000000ADGo-14KH;
+	Fri, 01 Nov 2024 21:30:25 +0000
+Date: Fri, 1 Nov 2024 21:30:25 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>,
+	Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: Simplify getattr interface function checking
+ AT_GETATTR_NOSEC flag
+Message-ID: <20241101213025.GP1350452@ZenIV>
+References: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -126,78 +64,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241101064505.3820737-4-davidgow@google.com>
+In-Reply-To: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Nov 01, 2024 at 02:45:02PM +0800, David Gow wrote:
-[...]
-> +/// ```
-> +/// // Import our mock naming it as the real module.
-> +/// #[cfg(CONFIG_KUNIT)]
-> +/// use bindings_mock_example as bindings;
-> +///
-> +/// // This module mocks `bindings`.
-> +/// mod bindings_mock_example {
-> +///     use kernel::kunit::in_kunit_test;
-> +///     use kernel::bindings::u64_;
-> +///
-> +///     // Make the other binding functions available.
-> +///     pub(crate) use kernel::bindings::*;
-> +///
-> +///     // Mock `ktime_get_boot_fast_ns` to return a well-known value when running a KUnit test.
-> +///     pub(crate) unsafe fn ktime_get_boot_fast_ns() -> u64_ {
-
-Clippy complains this `unsafe` pub function doesn't have a "# Safety"
-section. Actually this function is not necessarily to be `unsafe`.
-
-> +///         if in_kunit_test() {
-> +///             1234
-> +///         } else {
-> +///             unsafe { kernel::bindings::ktime_get_boot_fast_ns() }
-
-Need safety comments here,
-
-> +///         }
-> +///     }
-> +/// }
-> +///
-> +/// // This is the function we want to test. Since `bindings` has been mocked, we can use its
-> +/// // functions seamlessly.
-> +/// fn get_boot_ns() -> u64 {
-> +///     unsafe { bindings::ktime_get_boot_fast_ns() }
-
-and here. If you make ktime_get_boot_fast_ns() safe, then no unsafe
-block is needed here.
-
-Regards,
-Boqun
-
-> +/// }
-> +///
-> +/// let time = get_boot_ns();
-> +/// assert_eq!(time, 1234);
-> +/// ```
-> +pub fn in_kunit_test() -> bool {
-> +    // SAFETY: kunit_get_current_test() is always safe to call from C (it has fallbacks for
-> +    // when KUnit is not enabled), and we're only comparing the result to NULL.
-> +    unsafe { !bindings::kunit_get_current_test().is_null() }
-> +}
-> +
->  #[kunit_tests(rust_kernel_kunit)]
->  mod tests {
-> +    use super::*;
-> +
->      #[test]
->      fn rust_test_kunit_example_test() {
->          assert_eq!(1 + 1, 2);
->      }
-> +
-> +    #[test]
-> +    fn rust_test_kunit_in_kunit_test() {
-> +        let in_kunit = in_kunit_test();
-> +        assert!(in_kunit);
-> +    }
->  }
-> -- 
-> 2.47.0.199.ga7371fff76-goog
+On Fri, Nov 01, 2024 at 03:37:03PM -0400, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
 > 
+> Commit 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface
+> function")' introduced the AT_GETATTR_NOSEC flag to ensure that the
+> call paths only call vfs_getattr_nosec if it is set instead of vfs_getattr.
+> Now, simplify the getattr interface functions of filesystems where the flag
+> AT_GETATTR_NOSEC is checked.
+> 
+> There is only a single caller of inode_operations getattr function and it
+> is located in fs/stat.c in vfs_getattr_nosec. The caller there is the only
+> one from which the AT_GETATTR_NOSEC flag is passed from.
+> 
+> Two filesystems are checking this flag in .getattr and the flag is always
+> passed to them unconditionally from only vfs_getattr_nosec:
+> 
+> - ecryptfs:  Simplify by always calling vfs_getattr_nosec in
+>              ecryptfs_getattr. From there the flag is passed to no other
+>              function and this function is not called otherwise.
+> 
+> - overlayfs: Simplify by always calling vfs_getattr_nosec in
+>              ovl_getattr. From there the flag is passed to no other
+>              function and this function is not called otherwise.
+> 
+> The query_flags in vfs_getattr_nosec will mask-out AT_GETATTR_NOSEC from
+> any caller using AT_STATX_SYNC_TYPE as mask so that the flag is not
+> important inside this function. Also, since no filesystem is checking the
+> flag anymore, remove the flag entirely now, including the BUG_ON check that
+> never triggered.
+> 
+> The net change of the changes here combined with the originan commit is
+> that ecryptfs and overlayfs do not call vfs_getattr but only
+> vfs_getattr_nosec.
+> 
+> Fixes: 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface function")
+> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> Closes: https://lore.kernel.org/linux-fsdevel/20241101011724.GN1350452@ZenIV/T/#u
+> Cc: Tyler Hicks <code@tyhicks.com>
+> Cc: ecryptfs@vger.kernel.org
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: linux-unionfs@vger.kernel.org
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+
+Applied (viro/vfs.git#work.statx2)
 
