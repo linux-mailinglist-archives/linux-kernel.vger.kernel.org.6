@@ -1,127 +1,170 @@
-Return-Path: <linux-kernel+bounces-392667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7859B96D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:51:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 775B29B96D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2AD1283355
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:51:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7DD91F226BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A431CEE82;
-	Fri,  1 Nov 2024 17:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1214E1CDA3C;
+	Fri,  1 Nov 2024 17:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjtBASiJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MdxOnaeY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KU6NmAKk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89201CDA1E;
-	Fri,  1 Nov 2024 17:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61051CDA14;
+	Fri,  1 Nov 2024 17:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730483343; cv=none; b=tZY3HUMapFdNO77K7KQYxXlnU9j/FnKICgpCqKybG39nOh8Nx4HtjqsS5ugcPYmJ2dk7qq1y8gzfHuobZrf9pyq7SfFGZ2tqSe+gQTiCpL1oRwcGIml4fSCCUId4FSQnbpigAq3p+UdNtDzPnKxHlJEkoZYvy1j1DYnFOMaCr1o=
+	t=1730483411; cv=none; b=QMTBTFt2QFIKYUBctKIKkTmmqJy1fhPWWlPD0VPDtjTF9l9MDGOq+FpwefjMVW9P8fMWEXUxxkIYryB3GFpwdDEP3t/vG4X0ZGDm8VjD+IP1YZYTEXQ1m+gRlrqLyesLuezvMUPGaV1XEPf67nb0fPNoNfI7q6yY8Czo5CASunE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730483343; c=relaxed/simple;
-	bh=/b91CoH0L4+ZOxrMGr0zsD4PKr5FuOWyhTBccBHPH7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pY862RUOU+qViJAjj52Nv2gVmc4W5gp2DCC8UZV54Gn3TF9TcjTxI2PEQg0+W8cXl6wPIt+I7AwA/3Z3ZAqS1azIiIGimxWA5gPFVOPHu423TM7ciklJfpNEhRC1A7Aqnyt0dkrzDYv+u9FdaZeWR1sB1QEpPm8Bd5/80yVondc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjtBASiJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01E5DC4CECD;
-	Fri,  1 Nov 2024 17:48:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730483343;
-	bh=/b91CoH0L4+ZOxrMGr0zsD4PKr5FuOWyhTBccBHPH7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LjtBASiJpj3wSWJdTJkZgQD3yarqRwCy6apE0QFm4Yo6QoTSPUahEDoXH/eZR5Wd6
-	 loXUanal2E/JmK4aF1aCq61B4EkINhFbMdzBp21IbCNAnSVmM7wQEdroXQVurZg9Dl
-	 WdjtXYLh3YN+FlE7SojVKHollfTiMWZ3WUSCE/Vnl5hbcudFjg+YsV6bwC5VhD2hdW
-	 rwHsJ3S7bKIes/RzbFtfxPjx4qZDEoueK/xypG9lfrEjtOe5CpRmzRrkkS/a6RqPht
-	 so5a9ymD7x0VWkisb6FJTR0pGEnM+OYO8duhU05uFutMCvjJPGgA6Rl7Jdg6rGQ/lB
-	 ukMPsfwBG2mTg==
-Date: Fri, 1 Nov 2024 18:48:55 +0100
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>, sami.mujawar@arm.com,
-	ardb@kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-	Shuah Khan <shuah@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>,
-	kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-pm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Francesco Lavra <francescolavra.fl@gmail.com>,
-	Miguel Luis <miguel.luis@oracle.com>
-Subject: Re: [PATCH v6 6/6] arm64: Use SYSTEM_OFF2 PSCI call to power off for
- hibernate
-Message-ID: <ZyUUh6KawapLkj0z@lpieralisi>
-References: <20241019172459.2241939-1-dwmw2@infradead.org>
- <20241019172459.2241939-7-dwmw2@infradead.org>
- <ZyPEn4qhaYyYqrzk@lpieralisi>
+	s=arc-20240116; t=1730483411; c=relaxed/simple;
+	bh=1ZNHizq8Z6nKtubj+fm3UVJG60y/zHcADcUMQ6Qtbtc=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=J1QpejQBHfH+jsboKeM0hU//0p4cN4Mfm5Lg13aGM513YUTL/POVrO6saM71P9JeKRJ55fuz98JfvHZUiLdctQq5/8a8eKapwGwiu0zkn1JBX3Qq6jTzuwYh+TylgPNpP8VIuKLH+YLboBFAzaZReQYCeW7azEY/oymTxON6QH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MdxOnaeY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KU6NmAKk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 01 Nov 2024 17:50:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730483406;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=c0c/5i96tQ/c7nEr/331iCf76t8qZk6T94EaAHkxVBc=;
+	b=MdxOnaeY9zyyYtzRoB6fKmKhIxkreupnFcaCKvgyXMC5ear1YtMDw/FWzt8XiGCfgexRzm
+	Gm2UXByphFyDoSZfU5I9I6xpxGO8kBRtosdaj8zpIS5wBM1pOblpwTCmN/Cv4BliGUirVS
+	hnn8RcJ4BPQKp0yDFubni2Tq2SKkl8AaonRM/i5XeSYpakN6xh4tkNBB3p/PKQTorYSrNi
+	ZIRIhs8DwJHhlqgw6mGXKdPX0W8Q2CPRYmWxxVUQ7W+Hfw8JNn5JPueE0VsbaZlTAn8MVR
+	HDHUR/OEwPr8GyN5IEqNqfRwVMxH2w4ZmoyoTAX8tvW713bdy8/jc+1xoGC4Zw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730483406;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=c0c/5i96tQ/c7nEr/331iCf76t8qZk6T94EaAHkxVBc=;
+	b=KU6NmAKkHeTGL/nEgIDHF9/ZbnyZHYo5zaLWJ2I+t7n+hPdJEAa58MfcVlnlzxtXmPMAKW
+	20d85pzn1uqqwqAA==
+From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/mm] x86/mm/doc: Add missing details in virtual memory layout
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyPEn4qhaYyYqrzk@lpieralisi>
+Message-ID: <173048340553.3137.14329430184400702450.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-[+Ard, Sami, for EFI]
+The following commit has been merged into the x86/mm branch of tip:
 
-On Thu, Oct 31, 2024 at 06:55:43PM +0100, Lorenzo Pieralisi wrote:
-> On Sat, Oct 19, 2024 at 06:15:47PM +0100, David Woodhouse wrote:
-> 
-> [...]
-> 
-> > +#ifdef CONFIG_HIBERNATION
-> > +static int psci_sys_hibernate(struct sys_off_data *data)
-> > +{
-> > +	/*
-> > +	 * Zero is an acceptable alternative to PSCI_1_3_OFF_TYPE_HIBERNATE_OFF
-> > +	 * and is supported by hypervisors implementing an earlier version
-> > +	 * of the pSCI v1.3 spec.
-> > +	 */
-> 
-> It is obvious but with this patch applied a host kernel would start executing
-> SYSTEM_OFF2 too if supported in firmware to hibernate, it is not a hypervisor
-> only code path.
-> 
-> Related to that: is it now always safe to override
-> 
-> commit 60c0d45a7f7a ("efi/arm64: use UEFI for system reset and poweroff")
-> 
-> for hibernation ? It is not very clear to me why overriding PSCI for
-> poweroff was the right thing to do - tried to follow that patch history but
-> the question remains (it is related to UpdateCapsule() but I don't know
-> how that applies to the hibernation use case).
+Commit-ID:     035c5e2143f3edceeede1e99ff9cf8979c548dd5
+Gitweb:        https://git.kernel.org/tip/035c5e2143f3edceeede1e99ff9cf8979c548dd5
+Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate:    Thu, 31 Oct 2024 10:49:46 +02:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Fri, 01 Nov 2024 10:38:06 -07:00
 
-RFC: It is unclear to me what happens in current mainline if we try to
-hibernate with EFI runtime services enabled and a capsule update pending (we
-issue EFI ResetSystem(EFI_RESET_SHUTDOWN,..) which might not be compatible
-with the reset required by the pending capsule update request) what happens
-in this case I don't know but at least the choice is all contained in
-EFI firmware.
+x86/mm/doc: Add missing details in virtual memory layout
 
-Then if in the same scenario now we are switching to PSCI SYSTEM_OFF2 for the
-hibernate reset I suspect that what happens to the in-flight capsule
-update requests strictly depends on what "reset" PSCI SYSTEM_OFF2 will
-end up doing ?
+Improve memory layout documentation:
 
-I think this is just a corner case and it is unlikely it has been ever
-tested (is it even possible ? Looking at EFI folks) - it would be good
-to clarify it at least to make sure we understand this code path.
+ - Document 4kB guard hole at the end of userspace.
+   See TASK_SIZE_MAX definition.
 
-Thanks,
-Lorenzo
+ - Divide the description of the non-canonical hole into two parts:
+   userspace and kernel sides.
+
+ - Mention the effect of LAM on the non-canonical range.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lore.kernel.org/all/20241031084946.2243440-1-kirill.shutemov%40linux.intel.com
+---
+ Documentation/arch/x86/x86_64/mm.rst | 35 ++++++++++++++++++++++-----
+ 1 file changed, 29 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/arch/x86/x86_64/mm.rst b/Documentation/arch/x86/x86_64/mm.rst
+index 35e5e18..f2db178 100644
+--- a/Documentation/arch/x86/x86_64/mm.rst
++++ b/Documentation/arch/x86/x86_64/mm.rst
+@@ -29,15 +29,27 @@ Complete virtual memory map with 4-level page tables
+       Start addr    |   Offset   |     End addr     |  Size   | VM area description
+   ========================================================================================================================
+                     |            |                  |         |
+-   0000000000000000 |    0       | 00007fffffffffff |  128 TB | user-space virtual memory, different per mm
++   0000000000000000 |    0       | 00007fffffffefff | ~128 TB | user-space virtual memory, different per mm
++   00007ffffffff000 | ~128    TB | 00007fffffffffff |    4 kB | ... guard hole
+   __________________|____________|__________________|_________|___________________________________________________________
+                     |            |                  |         |
+-   0000800000000000 | +128    TB | ffff7fffffffffff | ~16M TB | ... huge, almost 64 bits wide hole of non-canonical
+-                    |            |                  |         |     virtual memory addresses up to the -128 TB
++   0000800000000000 | +128    TB | 7fffffffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
++                    |            |                  |         |     virtual memory addresses up to the -8 EB
+                     |            |                  |         |     starting offset of kernel mappings.
++                    |            |                  |         |
++                    |            |                  |         | LAM relaxes canonicallity check allowing to create aliases
++                    |            |                  |         | for userspace memory here.
+   __________________|____________|__________________|_________|___________________________________________________________
+                                                               |
+                                                               | Kernel-space virtual memory, shared between all processes:
++  __________________|____________|__________________|_________|___________________________________________________________
++                    |            |                  |         |
++   8000000000000000 |   -8    EB | ffff7fffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
++                    |            |                  |         |     virtual memory addresses up to the -128 TB
++                    |            |                  |         |     starting offset of kernel mappings.
++                    |            |                  |         |
++                    |            |                  |         | LAM_SUP relaxes canonicallity check allowing to create
++                    |            |                  |         | aliases for kernel memory here.
+   ____________________________________________________________|___________________________________________________________
+                     |            |                  |         |
+    ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor
+@@ -88,16 +100,27 @@ Complete virtual memory map with 5-level page tables
+       Start addr    |   Offset   |     End addr     |  Size   | VM area description
+   ========================================================================================================================
+                     |            |                  |         |
+-   0000000000000000 |    0       | 00ffffffffffffff |   64 PB | user-space virtual memory, different per mm
++   0000000000000000 |    0       | 00fffffffffff000 |  ~64 PB | user-space virtual memory, different per mm
++   00fffffffffff000 |  ~64    PB | 00ffffffffffffff |    4 kB | ... guard hole
+   __________________|____________|__________________|_________|___________________________________________________________
+                     |            |                  |         |
+-   0100000000000000 |  +64    PB | feffffffffffffff | ~16K PB | ... huge, still almost 64 bits wide hole of non-canonical
+-                    |            |                  |         |     virtual memory addresses up to the -64 PB
++   0100000000000000 |  +64    PB | 7fffffffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
++                    |            |                  |         |     virtual memory addresses up to the -8EB TB
+                     |            |                  |         |     starting offset of kernel mappings.
++                    |            |                  |         |
++                    |            |                  |         | LAM relaxes canonicallity check allowing to create aliases
++                    |            |                  |         | for userspace memory here.
+   __________________|____________|__________________|_________|___________________________________________________________
+                                                               |
+                                                               | Kernel-space virtual memory, shared between all processes:
+   ____________________________________________________________|___________________________________________________________
++   8000000000000000 |   -8    EB | feffffffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
++                    |            |                  |         |     virtual memory addresses up to the -64 PB
++                    |            |                  |         |     starting offset of kernel mappings.
++                    |            |                  |         |
++                    |            |                  |         | LAM_SUP relaxes canonicallity check allowing to create
++                    |            |                  |         | aliases for kernel memory here.
++  ____________________________________________________________|___________________________________________________________
+                     |            |                  |         |
+    ff00000000000000 |  -64    PB | ff0fffffffffffff |    4 PB | ... guard hole, also reserved for hypervisor
+    ff10000000000000 |  -60    PB | ff10ffffffffffff | 0.25 PB | LDT remap for PTI
 
