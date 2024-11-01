@@ -1,234 +1,207 @@
-Return-Path: <linux-kernel+bounces-392201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70069B90EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:09:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884C79B90F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:09:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBA361C20FF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:09:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C35283428
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A978619E7F3;
-	Fri,  1 Nov 2024 12:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCC219D8BE;
+	Fri,  1 Nov 2024 12:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xJS3QTa0"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rYS1Ra6q"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDBE19D8A8
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1F019CC27
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730462951; cv=none; b=YhDGpQQX4RipemhHzWD0Wk8RjauSezBK9FVxjuEp37Lks/PBnpMyzJEWU8IDVdSPL8BVP8uHq+biBZNXfx5QJo9t+3D9N2vaz4WUD6rcSHyGqtbw+BSg99DE8G014KOXuRolff0nsmLOsoAclY/OopIftjweh0amDOzXGHiP8zs=
+	t=1730462982; cv=none; b=Ku8oznGDPvblRVAtodjHehyZAi6TRa730nx0HfLNcBbB9yXr+1vS1iuEqCWFmqNJBIuRXaIrADSVtOrTTRATabb5SFh5h+pSgotkXXhljNFkz8OeqvVBZVgqBttl/kOetySQDUYjs9XEjNEL+2/zf2DTThjHZFOMdLWbx/kkjy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730462951; c=relaxed/simple;
-	bh=qtcPJL9JZ3Qlo8jAoWPIV55eqSOR2oLeq5CJfNjra3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KnOHvgDryAU6kclAC0FXvTh0Wm6jbQDuUZrufiylXjBVPJKm2JYqncTAyH5mDUB+ApIzgmClQjJfIPQzy/4VtHDYw953V0mRHKIw6e6HqWtgC+Gz94Tj4Xh9duqbjzpaFL/M5OFpxgUUWPOltMz30bI2MNoZBoCDI0pWAQ8MPn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xJS3QTa0; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e6c754bdso1772971e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 05:09:09 -0700 (PDT)
+	s=arc-20240116; t=1730462982; c=relaxed/simple;
+	bh=l1Tx/Mqp1DVL84/pLx+PjPiMjamTKbGhAoU3aGACmdA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=daGmsZ19zTlYOUmcfRHRDXF6bbr3yPelpNkx2zkmfm6A+zUt/KSwKbNybIMNEscgI130rv6kM2TAd3+ZUw1zGZN9Kdi9SE5iz25HM/Ca0FXY7CzNVl2BwDLjTHDjmZkLsbGkduU0gtXZkLiTji+aRoH6Bl3QIM2yT6ZK2HFUAs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rYS1Ra6q; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso1578010a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 05:09:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730462947; x=1731067747; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wAhQCRcMiUmuMbWiOCOKS1oH6Z8vsXpQznKWvE4jlME=;
-        b=xJS3QTa0j1k1mDsbN24Ng0E03o1G0FK0L3PW2E4uoz+spkEaU/gUUUjmL92cnO3X26
-         HH1ZIQi1FOWI8Z/jdIwsEnmtc04WaBndkS5TeNK5Ch4ZkRTAmtnOHvR1WA4NshuAwSBD
-         JZ8z4EFclCIy3nD9LIvwqh8oD+bs5ppRXgZhV8x947HIbMS+9HNLJzdx0pxsChJjNniy
-         Q/hLAGZF8hcx5ot0tfe9xTlHasy3vHCcQ47+fIWGad+cfR/fB096GTCX7USJxHB3nvDg
-         /1Yj/66mnn/e5ngQFdijGHEAeIxZ7sm4L6bpypfaKYqA9XJRvSwSwuuqwDtr3+uB1AI6
-         zZ/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730462947; x=1731067747;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1730462979; x=1731067779; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wAhQCRcMiUmuMbWiOCOKS1oH6Z8vsXpQznKWvE4jlME=;
-        b=Qiijkr6mSunsmfuMPSECtJL6xiNF0kImzG/5HAegz4kx2iHk618eVPnaCqbetG9HIL
-         E6daRGKUoIAnHm8wbhnMQFPbOoEeYKMntLSciiHxLsKDwBBHzGxRnBohKmBgTLKGwiT/
-         6skCRlMnUDPS45r8AzJ3ZLRyCd0TTpOxQwjPmfpL/CWMEQ9BvYEWAXbvPBnCuVOKyQCK
-         U6lJz2wUB4qxiwEWjZyE4/ijtq6LBOwwfyKI9+Pr0oS7VB4jq/sX4yKOfL6k/u+lcOYF
-         pWoyAO0V3d8TeVGzynkNAxr2pg9EYcLum/LUfPmh9Ko5s1pClfZ05vGEH6JmkXkKaOt4
-         TUfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJgHJT9Gnk52YFOXIK4XeIVxRfsi68dTgfW4OsctMN9LIhR2vo/tQTYkMijS94gPfnnk1fo5ttzwIl+XM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbCsaP4Vwfdcedasq7RvD/svHDxYYqaJr8pWfG94kbmC2FGxyX
-	Zz6kDkQ8Sr87cMVy3lM2PMbZzyBk3zzXNYARAyxgr/9fBfXahZEuK2xSDsAAbD0=
-X-Google-Smtp-Source: AGHT+IHyAbSEgE4oV7BsWrSuBbwGPbBwncS1nrZBHG68qMqQ1XtsqRRKKfWPtVih1dkSCYyDRwz/RA==
-X-Received: by 2002:a05:6512:ac3:b0:536:56d8:24b4 with SMTP id 2adb3069b0e04-53c79e15746mr3712339e87.5.1730462947418;
-        Fri, 01 Nov 2024 05:09:07 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc959casm536926e87.49.2024.11.01.05.09.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 05:09:05 -0700 (PDT)
-Date: Fri, 1 Nov 2024 14:09:03 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH RFC v2 6/7] drm/display/hdmi: implement connector update
- functions
-Message-ID: <26rhzrhn2vjq26foxifsuytby52q5ggxwvhpnozuaschm3iq2g@rimrszg6s526>
-References: <20241101-drm-bridge-hdmi-connector-v2-0-739ef9addf9e@linaro.org>
- <20241101-drm-bridge-hdmi-connector-v2-6-739ef9addf9e@linaro.org>
- <871pzvjk2t.fsf@intel.com>
+        bh=+Hw06b8/XBSAITLf2piQYNBwQQ0z9h7/JKyFJjuUl/c=;
+        b=rYS1Ra6qLcWy8HlgezBz/IzF/W872EW+td12irG9Nz9NpMuCSnNBYkM8THoRqdZ8Wt
+         3wlKtquHaoYZzezYvrbtDt5IubVOnYeZngj3JL+GEu0nCVbLjCSqxxPDdO+zDZQcUDI/
+         EhfMw6YaJAm8WzeYj7Sq9F0/V+rkC818WkN35pAipXnlC9XF0dixmexsvElWj5OIs9lT
+         Pm2/x50KiU6r6tpVzyOrq6T5HxjK+KrgFYu7kEb4kAVj1uXN11mrefL9ew4G4L1EPJNS
+         zwgOxz6R8bLx9MW3EYrOxLaKNWesw1abyXJ5s8uZBfzS9r0KumH2q8dbrO6LMD1YAg7n
+         mABw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730462979; x=1731067779;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Hw06b8/XBSAITLf2piQYNBwQQ0z9h7/JKyFJjuUl/c=;
+        b=SvUAjNrKtelIPyyzjPWd2Og3IKhDEa/Gd04xrdiibi7n0YBNUJXmt2r8MVE1/zakxo
+         UtoF0qZz7LrV2LII4/4kh2l8p7xMv8bNPOFONqhU9T1gQMj7/IhCZz9EOQMKObC6+H+f
+         c+koZKYugpokGGi+B4ot64S9XKlDSujP2iZlgIIlq7L9D19YrH8LxiwZd8759bCI/C9F
+         k8YpqfxHpkiIEsriZPW60B7T/NdyQPA6URN/0woYIXM6MayCdGRpVpMDDjot2rvoMJr6
+         9azZ+1E2TnnhFm2lQ/OUfJA3VdOGogUeJxHY7U3dDOivi51S/KLY7azvRp/w8P/OpAPX
+         8i0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXRatbBLDJ+bicqNUbNmc5VbbJXAGyQCYf50yY8k2DAtuhM1OjBujTh62GyWHMidzEwnG/fyUmxLmaLVPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+K6CwQd4AQMDPn4oBR/1zWr4mIkkLTuAF5+ZgGnqTZ54N5Jku
+	Hf9YQTqeAVHey2V5Ia2/E+GE3Ye539c3WVHHKo+v5pE78JR2fnu8xtwGsyc/hI2f7dUZn8EkiFu
+	T6N2tz89kFqh8ZcJMMmu5bEclZYNoFGXw3d4x
+X-Google-Smtp-Source: AGHT+IF5RsxrkU7RnBDrWCERFHp/phaVhnDnjzEPKD1Zfn0ZTcAn+P8iVv9SsYXnTvR1ARVmNpRkdcYvTanyF6RTtt8=
+X-Received: by 2002:a17:90b:2f03:b0:2e2:8995:dd1b with SMTP id
+ 98e67ed59e1d1-2e93c1591e5mr8521696a91.3.1730462979114; Fri, 01 Nov 2024
+ 05:09:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871pzvjk2t.fsf@intel.com>
+References: <c6b63e97-6839-4beb-bb94-e5914837a041@lucifer.local>
+ <6723b31e.050a0220.35b515.0165.GAE@google.com> <2928b6e8-3928-411d-82b8-6b17be266deb@lucifer.local>
+ <CANp29Y6OdSOrP4q+1QL9bZU7SnDkMvmSAkFAGM0VqX9gwnZghg@mail.gmail.com> <2023ed50-9aa4-4bc9-8283-82a84c55bc36@lucifer.local>
+In-Reply-To: <2023ed50-9aa4-4bc9-8283-82a84c55bc36@lucifer.local>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Fri, 1 Nov 2024 13:09:24 +0100
+Message-ID: <CANp29Y58o0O8jTSP_SpBLVp7VK0bM4Svo7jBNZgDpv=s1DWJqQ@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] [input?] [usb?] INFO: rcu detected stall in brk (2)
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: syzbot <syzbot+7402e6c8042635c93ead@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, jannh@google.com, liam.howlett@oracle.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
+	Alan Stern <stern@rowland.harvard.edu>, Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 01, 2024 at 12:59:38PM +0200, Jani Nikula wrote:
-> On Fri, 01 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> > The HDMI Connectors need to perform a variety of tasks when the HDMI
-> > connector state changes. Such tasks include setting or invalidating CEC
-> > address, notifying HDMI codec driver, updating scrambler data, etc.
+On Fri, Nov 1, 2024 at 12:11=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Fri, Nov 01, 2024 at 12:02:25PM +0100, Aleksandr Nogikh wrote:
+> > Hi Lorenzo,
 > >
-> > Implementing such tasks in a driver-specific callbacks is error prone.
-> > Start implementing the generic helper function (currently handling only
-> > the HDMI Codec framework) to be used by driver utilizing HDMI Connector
-> > framework.
+> > On Thu, Oct 31, 2024 at 5:59=E2=80=AFPM 'Lorenzo Stoakes' via syzkaller=
+-bugs
+> > <syzkaller-bugs@googlegroups.com> wrote:
+> > >
+> > > +Alan re: USB stalls
+> > >
+> > > On Thu, Oct 31, 2024 at 09:41:02AM -0700, syzbot wrote:
+> > > > Hello,
+> > > >
+> > > > syzbot has tested the proposed patch and the reproducer did not tri=
+gger any issue:
+> > > >
+> > > > Reported-by: syzbot+7402e6c8042635c93ead@syzkaller.appspotmail.com
+> > > > Tested-by: syzbot+7402e6c8042635c93ead@syzkaller.appspotmail.com
+> > > >
+> > > > Tested on:
+> > > >
+> > > > commit:         cffcc47b mm/mlock: set the correct prev on failure
+> > > > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/akpm/=
+mm.git/ mm-hotfixes-unstable
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1304a63=
+0580000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6648774=
+f7c39d413
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D7402e6c80=
+42635c93ead
+> > > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils=
+ for Debian) 2.40
+> > > >
+> > > > Note: no patches were applied.
+> > > > Note: testing is done by a robot and is best-effort only.
+> > >
+> > > OK this seems likely to be intermittant (and unrelated to what's in
+> > > mm-unstable-fixes honestly) and does make me wonder if the fix refere=
+nced
+> > > in [0] really has sorted things out? Or whether it has perhaps help
+> > > mitigate the issue but not sufficiently in conjunction with debug thi=
+ngs
+> > > that slow things down.
+> > >
+> > > Because we keep getting these reports, that mysteriously don't occur =
+if we
+> > > re-run (or hit other code paths), they seem to hit somewhat arbitrary=
+ parts
+> > > of mm, and because CONFIG_DEBUG_VM_MAPLE_TREE is set we spend a _long=
+_ time
+> > > in mm validating trees (this config option is REALLY REALLY heavy-han=
+ded).
+> > >
+> > > I note we also set CONFIG_KCOV and CONFIG_KCOV_INSTRUMENT_ALL which i=
+sn't
+> > > going to make anything quicker if the USB gets laggy.
 > >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 56 +++++++++++++++++++++++++
-> >  include/drm/display/drm_hdmi_state_helper.h     |  4 ++
-> >  2 files changed, 60 insertions(+)
+> > These are necessary for coverage-guided fuzzing. Though when we find
+> > and run reproducers, we don't actually set up /dev/kcov, so I guess
+> > the impact of coverage callbacks here is not that significant here.
+> > CONFIG_KASAN is likely slowing down things much more.
 > >
-> > diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> > index feb7a3a759811aed70c679be8704072093e2a79b..dc9d0cc162b2197dcbadda26686a9c5652e74107 100644
-> > --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> > +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> > @@ -748,3 +748,59 @@ drm_atomic_helper_connector_hdmi_clear_audio_infoframe(struct drm_connector *con
-> >  	return ret;
-> >  }
-> >  EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_clear_audio_infoframe);
-> > +
-> > +/**
-> > + * __drm_atomic_helper_connector_hdmi_update_edid - Update the HDMI Connector basing on passed EDID
-> > + * @connector: A pointer to the HDMI connector
-> > + * @drm_edid: EDID to process
-> > + *
-> > + * This function should be called as a part of the .detect() / .detect_ctx()
-> > + * and .force() callbacks, updating the HDMI-specific connector's data. The
-> > + * function consumes passed EDID, there is no need to free it afterwards. Most
-> > + * of the drivers should be able to use
-> > + * @drm_atomic_helper_connector_hdmi_update() instead.
-> > + *
-> > + * Returns:
-> > + * Zero on success, error code on failure.
-> > + */
-> > +int
-> > +__drm_atomic_helper_connector_hdmi_update_edid(struct drm_connector *connector,
-> > +					       const struct drm_edid *drm_edid)
-> > +{
-> > +	drm_edid_connector_update(connector, drm_edid);
-> > +	drm_edid_free(drm_edid);
-> 
-> Not fond of splitting resource management responsibilities
-> asymmetrically like this.
+> > >
+> > > I'm not sure if there's a human who can help tweak the config for the=
+se
+> > > hardware-centric tests at Google? At least tweaking the RCU stall tim=
+e
+> > > anyway?
+> >
+> > We currently set:
+> >
+> > CONFIG_RCU_CPU_STALL_TIMEOUT=3D100
+> > CONFIG_RCU_EXP_CPU_STALL_TIMEOUT=3D21000
+> >
+> > The expedited RCU timeout was limited to 21 seconds up to some time
+> > ago, but I guess now we can safely increase this number as well. I'll
+> > send a PR with syzbot config updates.
+>
+> Ah thanks, just sent a reply immediately prior to receiving this :)
+>
+> Maybe worth setting CONFIG_RCU_EXP_CPU_STALL_TIMEOUT to 0 so it matches t=
+he CPU
+> stall timeout? At least for builds that also set heavy debug options like
+> CONFIG_DEBUG_VM_MAPLE_TREE?
 
-Ack, I can remove drm_edid_free() call.
+Oh, that's even simpler than I thought it would be, thank you!
+I've sent https://github.com/google/syzkaller/pull/5455, it will come
+into effect in a few days.
 
-> 
-> > +
-> > +	if (!drm_edid) {
-> > +		drm_connector_hdmi_codec_plugged_notify(connector, false);
-> 
-> Is it a good idea to tie connection status to EDID presence at the
-> helper level? Nearly the same, but still orthogonal.
+--=20
+Aleksandr
 
-Yes. We have been discussing this in v1 review. Basically, CEC, HDMI
-codec and some other features should be pinged without any userspace
-interaction. This means that get_modes / fill_modes is mostly out of
-question. The final agreement was that the .detect is the best place to
-handle them (BTW: this matches the i915 driver, see
-intel_hdmi_detect()).
-
-> 
-> > +
-> > +		// TODO: also handle CEC and scramber, HDMI sink disconnected.
-> > +
-> > +		return 0;
-> > +	}
-> > +
-> > +	drm_connector_hdmi_codec_plugged_notify(connector, true);
-> > +
-> > +	// TODO: also handle CEC and scramber, HDMI sink is now connected.
-> > +
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL(__drm_atomic_helper_connector_hdmi_update_edid);
-> 
-> Feels wrong to export and document double underscored functions to
-> actually be used.
-
-We have enough examples of EXPORT_SYMBOL(__drm_foo) in DRM helpers. But
-I can drop double-underscore if that's the issue.
-
-> 
-> > +
-> > +/**
-> > + * drm_atomic_helper_connector_hdmi_update - Update the HDMI Connector after reading the EDID
-> > + * @connector: A pointer to the HDMI connector
-> > + *
-> > + * This function should be called as a part of the .detect() / .detect_ctx()
-> > + * and .force() callbacks, updating the HDMI-specific connector's data.
-> > + *
-> > + * Returns:
-> > + * Zero on success, error code on failure.
-> > + */
-> > +int
-> > +drm_atomic_helper_connector_hdmi_update(struct drm_connector *connector)
-> > +{
-> > +	const struct drm_edid *drm_edid = drm_edid_read(connector);
-> > +
-> > +	return __drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
-> > +}
-> > +EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_update);
-> > diff --git a/include/drm/display/drm_hdmi_state_helper.h b/include/drm/display/drm_hdmi_state_helper.h
-> > index 2d45fcfa461985065a5e5ad67eddc0b1c556d526..ea0980aa25cbbfdd36f44201888c139b0ee943da 100644
-> > --- a/include/drm/display/drm_hdmi_state_helper.h
-> > +++ b/include/drm/display/drm_hdmi_state_helper.h
-> > @@ -20,4 +20,8 @@ int drm_atomic_helper_connector_hdmi_clear_audio_infoframe(struct drm_connector
-> >  int drm_atomic_helper_connector_hdmi_update_infoframes(struct drm_connector *connector,
-> >  						       struct drm_atomic_state *state);
-> >  
-> > +int __drm_atomic_helper_connector_hdmi_update_edid(struct drm_connector *connector,
-> > +						   const struct drm_edid *drm_edid);
-> > +int drm_atomic_helper_connector_hdmi_update(struct drm_connector *connector);
-> > +
-> >  #endif // DRM_HDMI_STATE_HELPER_H_
-> 
-> -- 
-> Jani Nikula, Intel
-
--- 
-With best wishes
-Dmitry
+>
+> Cheers, Lorenzo
+>
+> >
+> > --
+> > Aleksandr
+> >
+> > >
+> > > In any case this continues not to look likely to be an actual mm issu=
+e as
+> > > far as I can see.
+> > >
+> > > In [0] we were stalled in a validate call which would align with the =
+idea
+> > > that perhaps we were just dealing with a very very big tree and getti=
+ng
+> > > slow down that way.
+> > >
+> > > Cheers, Lorenzo
+> > >
+> > > [0]:https://lore.kernel.org/all/967f3aa0-447a-4121-b80b-299c926a33f5@=
+rowland.harvard.edu/
+> > >
 
