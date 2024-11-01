@@ -1,92 +1,106 @@
-Return-Path: <linux-kernel+bounces-391715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73259B8AC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:59:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1569E9B8ACA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:59:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DF961C2152E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9ADD283337
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6F914A60F;
-	Fri,  1 Nov 2024 05:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8182E14A4F7;
+	Fri,  1 Nov 2024 05:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVh7VB2e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+yPTUCT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E088F36B;
-	Fri,  1 Nov 2024 05:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF8136B;
+	Fri,  1 Nov 2024 05:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730440765; cv=none; b=CIjM47FwZQEuC5l3miRqtySz2132VNm5KiaXRsShdDBexWSKsOymXqW52RubnV/ZEJiWdYA+oSPj28uzSBUT5vdDd55poFGirgRAzQUiwPC5onNytuH66imC5KPxK2L65P5wJkBPamKjWHRVkYdIe7YMOWmTnzwRuOfJ+mtsfhM=
+	t=1730440771; cv=none; b=EpKy5ktVTXfD6JJ9g6X4dRL6EPMTRVLBKwPxQzvPRHc6q4cCIrnFkqSmYCJaAGwK1R5q2z5X/kMzLX0NHwfQHWccve6UApJSJGd86zBIDPVr925JPHo/LOKpQztO8l+LzJE+0j26xSxXpTpaoIX8QE9H8kp0iRO1xzHy3rl9LDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730440765; c=relaxed/simple;
-	bh=bsORacs+XRwGPNAegb+drBs5u+8UfBOTbC/pTO7y+6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BVm/Hyc1ZWBOGRKMZ/tPAj8ogg7bma9fKPIKkYqVLIA0gKDsT9DOyuBMbbP3a+bJv+ssxLr+JdQ/0sZG8cdKA2Y3cw7HpMkYiWTFV35GNBXHOeLKiY7tBesxke985o3ns+NLVH5OVre/1e8woRh71F15+FkNY9qG/NbXWKAS2zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVh7VB2e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5FBCC4CECD;
-	Fri,  1 Nov 2024 05:59:22 +0000 (UTC)
+	s=arc-20240116; t=1730440771; c=relaxed/simple;
+	bh=w8CJk0Lj+OggVkEl3e7Y2Zhv00G5Vs+rcrgZnjXssew=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=VtMxc0pq5AR9ge3O284Q5EvFMsXyRWyFK+QEY1sZNhrh27OoREN2E1m+w/W39B7FTnN4u/XOpnLqa6pM1+DBh/ogQX3PF5vfaTX+vS+7wJIBEHWdxXT2OONulXtUZTASFJDU2q4nQhCyDwTVuFfojQQFn9DlGYruxhS2OWTjXSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+yPTUCT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C1BFC4CECD;
+	Fri,  1 Nov 2024 05:59:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730440764;
-	bh=bsORacs+XRwGPNAegb+drBs5u+8UfBOTbC/pTO7y+6M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nVh7VB2enHZJz2ft2TzPQ6heULNsJCk/uXeTpmnaSnRpCSLN3C+NK1iX/bEEpFt6h
-	 2W87GxwcpSE6QV0JhzJLL4ZPyLIxWmPUk7IrZ91GhE+SvdErRpmR/bKPeYJBzVWBSF
-	 5nmnuQ13mIjRxAt+KZj4/QkjkcQmspvZyLu7/XXJPbnJHrzicUmDx00kFnWxVUVJj4
-	 LSTrz3fUPlaveJozHNHqe0b/UlpNOBQKepLyfu944Z3dH6lAnjZYmBry1ulIq0rRON
-	 sLVHcMBAgmPa9jd5wnj5e9StQtSQNO+qIdFGgclPRPr1SvHWBeC6itjriO85bJDkOQ
-	 tbuAf+2fGkghw==
-From: William Breathitt Gray <wbg@kernel.org>
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	William Breathitt Gray <william.gray@linaro.org>,
-	linux-iio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] counter: stm32-timer-cnt: fix device_node handling in probe_encoder()
-Date: Fri,  1 Nov 2024 14:59:18 +0900
-Message-ID: <173044055547.648361.10787383264184720457.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241027-stm32-timer-cnt-of_node_put-v1-1-ebd903cdf7ac@gmail.com>
-References: <20241027-stm32-timer-cnt-of_node_put-v1-1-ebd903cdf7ac@gmail.com>
+	s=k20201202; t=1730440771;
+	bh=w8CJk0Lj+OggVkEl3e7Y2Zhv00G5Vs+rcrgZnjXssew=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=O+yPTUCTFB2BIFXBIu9ehOvcCY8X/sdl2BrhReB8zNlZBpPI1UUeQ5y8/bQNMmF/a
+	 McwwnUwK4XkM6DJpsJvGnJfveubU3CjU0IOIxMjyf7rE2MY30quHqwK3V2g9iZENIl
+	 mKVybqkBmNw+aaaxDmTfctspvSw7jKyWLlOvyTBSMu5mLcLqmnSmhKNc+qaQaG2N8y
+	 B623zJxANjqLwo2v3Uuu5wzmuGQrYCqmGzn8mXPFSVk9fye2htMzXpA7C73V10jAgX
+	 4en1jBzCi7wTLgZzJ2L3yDM26oNpPNqI25N2qZpuJLjNHFkyg4I5Dw3BOtAmZfh2+i
+	 Nv2ptH0IotK5g==
+From: Kalle Valo <kvalo@kernel.org>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: stas.yakovlev@gmail.com,  linux-wireless@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH v2 -next] wifi: ipw2x00: fix bad alignments
+References: <20241101022215.6667-1-jiapeng.chong@linux.alibaba.com>
+Date: Fri, 01 Nov 2024 07:59:28 +0200
+In-Reply-To: <20241101022215.6667-1-jiapeng.chong@linux.alibaba.com> (Jiapeng
+	Chong's message of "Fri, 1 Nov 2024 10:22:15 +0800")
+Message-ID: <87cyjfze7z.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=663; i=wbg@kernel.org; h=from:subject:message-id; bh=MbN8O+C+5FEujeJNUwaWgYqQSEexIAnJ9ZIqUSvRh8g=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDOkquc+e8rirfDxrXaT1uHa6lYSF0KIjb/autf6fMKMth bvYJflDRykLgxgXg6yYIkuv+dm7Dy6pavx4MX8bzBxWJpAhDFycAjCRdxMYGTamMhRzCfX8PB7v sq/R65r1lmq3+ZazZ4n3fSt9cnDGV1tGhpurmXXXnq+9fmCXyx7J5mUT/63wM+6aqJei7HLGaEV JIAsA
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Jiapeng Chong <jiapeng.chong@linux.alibaba.com> writes:
 
-On Sun, 27 Oct 2024 13:26:49 +0100, Javier Carrasco wrote:
-> Device nodes accessed via of_get_compatible_child() require
-> of_node_put() to be called when the node is no longer required to avoid
-> leaving a reference to the node behind, leaking the resource.
-> 
-> In this case, the usage of 'tnode' is straightforward and there are no
-> error paths, allowing for a single of_node_put() when 'tnode' is no
-> longer required.
-> 
-> [...]
+> This patch fixes incorrect code alignment.
+>
+> ./drivers/net/wireless/intel/ipw2x00/libipw_rx.c:871:2-3: code aligned with following code on line 882.
+> ./drivers/net/wireless/intel/ipw2x00/libipw_rx.c:886:2-3: code aligned with following code on line 900.
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11381
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+> Changes in v2:
+>   -Replace the & in the if statement with &&. Add 'wifi: ' to subject.
+>
+>  .../net/wireless/intel/ipw2x00/libipw_rx.c    | 44 +++++++++----------
+>  1 file changed, 22 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/net/wireless/intel/ipw2x00/libipw_rx.c b/drivers/net/wireless/intel/ipw2x00/libipw_rx.c
+> index 7e41cb7bbfe0..38731f67cb54 100644
+> --- a/drivers/net/wireless/intel/ipw2x00/libipw_rx.c
+> +++ b/drivers/net/wireless/intel/ipw2x00/libipw_rx.c
+> @@ -868,34 +868,34 @@ void libipw_rx_any(struct libipw_device *ieee,
+>  	case IW_MODE_ADHOC:
+>  		/* our BSS and not from/to DS */
+>  		if (ether_addr_equal(hdr->addr3, ieee->bssid))
+> -		if ((fc & (IEEE80211_FCTL_TODS+IEEE80211_FCTL_FROMDS)) == 0) {
+> -			/* promisc: get all */
+> -			if (ieee->dev->flags & IFF_PROMISC)
+> -				is_packet_for_us = 1;
+> -			/* to us */
+> -			else if (ether_addr_equal(hdr->addr1, ieee->dev->dev_addr))
+> -				is_packet_for_us = 1;
+> -			/* mcast */
+> -			else if (is_multicast_ether_addr(hdr->addr1))
+> -				is_packet_for_us = 1;
+> +			if ((fc && (IEEE80211_FCTL_TODS + IEEE80211_FCTL_FROMDS)) == 0) {
 
-Applied, thanks!
+I meant instead of using two nested if statements you can use only one
+if statement with '&&' operator.
 
-[1/1] counter: stm32-timer-cnt: fix device_node handling in probe_encoder()
-      commit: 147359e23e5c9652ff8c5a98a51a7323bd51c94a
-
-Best regards,
 -- 
-William Breathitt Gray <wbg@kernel.org>
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
