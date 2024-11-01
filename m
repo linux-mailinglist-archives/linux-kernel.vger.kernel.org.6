@@ -1,113 +1,86 @@
-Return-Path: <linux-kernel+bounces-392920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B019B99A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:47:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA369B99AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59A32282A27
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:47:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BED11C21A0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A6D1E2610;
-	Fri,  1 Nov 2024 20:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333FE1E2315;
+	Fri,  1 Nov 2024 20:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eVXAmFWR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHcneHkE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D7F1E0DE9
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E612168DA;
+	Fri,  1 Nov 2024 20:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730494065; cv=none; b=WMZgxyFRF8WlgxQQYVcK5todOBQyltsK6+So0AgUf9eZnAsaI69Nktqz5Gyk2dz+m9Uc/hVVHZOkKBart9WZveLgKg4w6SG2dSj8oFsmjIQRFoHQY+VYataV4kBHExJrr6AYRIszQlVCRm0s+5oDALrc36sjrkwAPbLP6it0zDw=
+	t=1730494271; cv=none; b=pnPKOZd7PKDpm+U9HNTR6Wsq7ruvI8qsGcnb9CCxkdcN+2+/80/fqcLK5CvJ7QT6ssynMc42kffzdAojf1098nA6orhT4BC6a8YG21keAwZcGZkdnKmUd4UF2h/UDa2nl4WzpYWdVCC0KN/OZJmutFhSVgCIX/yro2ZvYM9bq7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730494065; c=relaxed/simple;
-	bh=+ACGm2X5bUfV1u+PCezkp/95pbZzsXWMR5I9lLuWjvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T0jXXhnTFfH6Ztqk6/WPjgIiSqfxOgDvK/1qQJ3qffirFeWXXuCWqckuawYkZnEStPRENRn5pz2DkP5l+lBApsu8VvUyn+GSp6iB4ZY5/77BFP4BQmSJIRBZQy/3ifaPu8oTib7XE77a9ZdUzu6QVKmQTVa/We/6RcD4x/uYXJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eVXAmFWR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730494062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=5YsdMdfOSE2dnJUvKdNseEnsfpuXrSxxUdmFCTsEsdI=;
-	b=eVXAmFWRSqJmG5Fv2iVHuIW82u9h9dhLNfuzLfkZcvkbqsz5nlN3AfdyuUUl6cHSfieAXe
-	x7obLY5koAlENtDhDSVUb/Q/Ow+ypA9lJmaZpqotdMEmXDHOqDd5mHtQedUpksDq83n4s4
-	dqQD+YOBo8drp8uOHnDFr1hcvWNfSJE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-648-eqHijaepOpaQSVKpPLhjjg-1; Fri,
- 01 Nov 2024 16:47:39 -0400
-X-MC-Unique: eqHijaepOpaQSVKpPLhjjg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA1E2195608C;
-	Fri,  1 Nov 2024 20:47:36 +0000 (UTC)
-Received: from RHTRH0061144.redhat.com (unknown [10.22.66.84])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5A508195605A;
-	Fri,  1 Nov 2024 20:47:33 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	dev@openvswitch.org,
-	linux-kernel@vger.kernel.org,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Hangbin Liu <liuhangbin@gmail.com>
-Subject: [PATCH net-next] openvswitch: Pass on secpath details for internal port rx.
-Date: Fri,  1 Nov 2024 16:47:32 -0400
-Message-ID: <20241101204732.183840-1-aconole@redhat.com>
+	s=arc-20240116; t=1730494271; c=relaxed/simple;
+	bh=TvKepAswi9Hdn59MG5Gfa3pLNihGNOShTZ99K+cI+Kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=im8pziFX+4cNTL1zJlhZS6OsPa3IjsJRGoxam3PhcGmhUMSG4JxeudYq3kJ8KerQ4alZXReRQrjio/CuGzSfzxpMSjGvi64fJmBIk/G7I/1C3hdioXDS9zTI4kN9Gpx62GiqnB05+Uhw91pk0Iis7EILniv8O0glM+wfzhgOl4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHcneHkE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F65C4CED1;
+	Fri,  1 Nov 2024 20:51:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730494270;
+	bh=TvKepAswi9Hdn59MG5Gfa3pLNihGNOShTZ99K+cI+Kc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cHcneHkEMlHGdS5uisEScGR573ACppM1dCtq98TO+p9EhcR5jjcj1pu0IPSSoZW+i
+	 omV/pxhXFxvqlY5B2OmUjutzk1xmImNj2JFx3T8AEHyAKPmdWs7Kz+T6kWu0vSahOE
+	 aDD2NoJghjG4l5H0gmBZYOxhLcySOQQBaLerJpQ8GIT8KXj+Mds0tt8rvcEhdwk6t0
+	 4O7ZoR9RtpvernPBiBGSd+COPqdkXM0Z3Qbr1l5ZTyHS1JSCeQa2ADSXVhUgewZ0tN
+	 ZO9HWFmFoOEVCKb0Nsgbm6ofUfQl/eKJDwBIzWKyZyii3KobrdJgJ67EmfsSzjfbTE
+	 iuzgVXvPI410A==
+Date: Fri, 1 Nov 2024 15:51:09 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, Jiri Slaby <jirislaby@kernel.org>,
+	Steffen Dirkwinkel <me@steffen.cc>
+Subject: [GIT PULL] PCI fixes for v6.12
+Message-ID: <20241101205109.GA1320603@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Clearing the secpath for internal ports will cause packet drops when
-ipsec offload or early SW ipsec decrypt are used.  Systems that rely
-on these will not be able to actually pass traffic via openvswitch.
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-There is still an open issue for a flow miss packet - this is because
-we drop the extensions during upcall and there is no facility to
-restore such data (and it is non-trivial to add such functionality
-to the upcall interface).  That means that when a flow miss occurs,
-there will still be packet drops.  With this patch, when a flow is
-found then traffic which has an associated xfrm extension will
-properly flow.
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-Signed-off-by: Aaron Conole <aconole@redhat.com>
----
- net/openvswitch/vport-internal_dev.c | 1 -
- 1 file changed, 1 deletion(-)
+are available in the Git repository at:
 
-diff --git a/net/openvswitch/vport-internal_dev.c b/net/openvswitch/vport-internal_dev.c
-index 5858d65ea1a9..2412d7813d24 100644
---- a/net/openvswitch/vport-internal_dev.c
-+++ b/net/openvswitch/vport-internal_dev.c
-@@ -195,7 +195,6 @@ static int internal_dev_recv(struct sk_buff *skb)
- 
- 	skb_dst_drop(skb);
- 	nf_reset_ct(skb);
--	secpath_reset(skb);
- 
- 	skb->pkt_type = PACKET_HOST;
- 	skb->protocol = eth_type_trans(skb, netdev);
--- 
-2.46.2
+  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.12-fixes-2
 
+for you to fetch changes up to f3c3ccc4fe49dbc560b01d16bebd1b116c46c2b4:
+
+  PCI: Fix pci_enable_acs() support for the ACS quirks (2024-10-29 11:35:52 -0500)
+
+----------------------------------------------------------------
+- Enable device-specific ACS-like functionality even if the device doesn't
+  advertise an ACS capability, which got broken when adding fancy ACS
+  kernel parameter (Jason Gunthorpe)
+
+----------------------------------------------------------------
+Jason Gunthorpe (1):
+      PCI: Fix pci_enable_acs() support for the ACS quirks
+
+ drivers/pci/pci.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
