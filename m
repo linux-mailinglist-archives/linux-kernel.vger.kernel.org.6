@@ -1,302 +1,189 @@
-Return-Path: <linux-kernel+bounces-392880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CE39B9931
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:09:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A649B993B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:12:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8351C20F56
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:09:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A951C2138F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2070C1D9667;
-	Fri,  1 Nov 2024 20:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46ABB1CB526;
+	Fri,  1 Nov 2024 20:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zXNwz71D"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="niM06EDN"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AF91D0F49
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05951D0F49
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730491735; cv=none; b=efK434Ty2pZdV3grhScPuJO3JrXK4pnJR3JD//SigjCzaq0IUaHgkWzPbfPWF3X0PXYqyaKd1HeciI6JTd2b+JoPt7SiTAYNng1U0SEwwL3BFtyTRrXt0yh+pxsPiG8fUsxT8ilefFY/UfbnL2z5wIo/C+v9OTKq1sdicK1ZAEo=
+	t=1730491942; cv=none; b=iji0BGrppn1ex9aib7ThQD+65P0tr0RrZffUbKgxLY+/m94ILTcHe68Bv89EZiEJJw6U2V1HLSf0xNPwNux1zOJgAlH33YTljZhoiQyqd0+EBN6WfYTYGWbjWaRjgautCTCIkAeZrHBsujSZaRjDUjogbcV65DvEJrXH25XCSEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730491735; c=relaxed/simple;
-	bh=C3bK9lq2Iat+ytyW1C1WkA7TwIFFMRn5QKSxbvhI+cU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nde5qJSHYe7GGW5rcyk0EIjgqGgdtOeneeDsla++M9f2TZKEpitUN3wCD+VTYdq471kTzbtrUd7ygga5G4BXt82L8zUjOkiEKbGk/SkwroKU1ntLTmQjMSATrQCdGhQPwxwWORYm2qY5HZK/k0589hphrmDBldcazxNY82IY+5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zXNwz71D; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4608dddaa35so74741cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:08:53 -0700 (PDT)
+	s=arc-20240116; t=1730491942; c=relaxed/simple;
+	bh=MHj4DImzV/7znfvEEKeMnBjLODeAePJxKUUMhQEC3ZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RT9W7burjJTjqqAvs/XGwIbSIsFf4Ihe8qnMj3pX9Z6txweg6qoedkalf6/G0awOA3K5wm8JNc+scYbHs8UWsE3kxHmeEFelJKXZpL/l40s/LDQ1M8EoIwLm8iAuffEk7OU3NbphMEiNqRjOUiumK8pdzVi4H5d+Jr87RmbL0aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=niM06EDN; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso2489618e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:12:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730491732; x=1731096532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JBhvgsyP68AaFdlci9462ArR+t5qoTnQQ8nehGqn+cY=;
-        b=zXNwz71DBFYPz1sP5tfi2wFU+rcqCxWNhXVt2i2142V47hg70xrU6vguW7SsouXX7r
-         Zyqc37ECf0g/6Ws31Gy/T9wCErubS/LXrbzp2jJUgp3CR0i6mZfArpC6O1rjG8q3FJxW
-         d1TFY/HsqQF5DHQL1bLEMwC3ex1Al6xI2tqEKITA14oGphNGm90PA9JyNHHzv4VFc7Tz
-         SCgcrLj0pGdRigYvgQJ5q0Pbo8vfGPkKmTxrXf68CypkgzJ40jRgbkudCemnIRzbGlSZ
-         a6hVjNGCACYFOVkQXGWoD7rxzdpDHAwBtLf6l5KrVSXaoWx5WrEClQqgorYlL/SmrsUG
-         d2QA==
+        d=linaro.org; s=google; t=1730491939; x=1731096739; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XRuudTPNmMwLHY1n1kU3xhjTGMpQc0UfbLasNRVgYtU=;
+        b=niM06EDNM4K1vx9bSOrabn254eQc5wVp+kPDEBIUUZIvKuyhi38UMwexSOo2+l9Q54
+         G96sI3TLtl5Gf4aEpfzS7Bc7RvvnYnra5DJ5FqoYpoGvErnoIS8fz4FrGBM/cAU3OfKn
+         GCq06ETu9FFo+7hS7NXZ/s04MzsTDV2QJ/COo0s6o+HADgCl+9zowBJs385buMVMS1fY
+         GIFPf2kvkEv6WL6MC46fCE3o40eQBzVTtTc02t/8mmYtrQ1zdx2/Y4BP51MVgqDtbQsG
+         tys0MXC5a2h1SJURyg8xajsHScW2H8SLTS8hPCP+qUz+PmGwyXyy7yH6UZNXXeEz5lWq
+         Ctsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730491732; x=1731096532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JBhvgsyP68AaFdlci9462ArR+t5qoTnQQ8nehGqn+cY=;
-        b=S1Q2F7E7wnZaJTXNoQEzH4qMQ2w6nvhutyrTkxplgOAgR5YLrnWPT8osSY3tb6PquQ
-         8Pas7NAelw/ZF3EDV8aAw/AdDRXUvxGXeTZwTB/jHqJN8i/IVp8ihTMa1F/fH/LvHEOE
-         eI9UGYPI1f2dH6RIJs3Y7VckYkMEUYkIHKiexDBertCc/Vek8NXKVaeYrXmR2t1+Evxh
-         8NQvfya/Z+0a/KXTtfBwt7tI0vuKy7A2Pd+0zaN1TIAYLsdIv2ykSjFXrQhtIUnvdCpO
-         L8lXVfEQj3cdST0aUDZybQ1Jq6atpE8so2XavKVPyXBVrTSbMMVvVvknsFaV23UrN5ue
-         e0Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwPswgOGOjYTuPfjLcCtLBfML+/Qs/tmkmT2fzDJrmPaYWsIH3guugGcFKM0U/5HkQN6Ha+7yBXtkFDmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzcy0H7T1J+X8Olqoo8Tdk67g2nG/ECdtYBmsr/Q2uVi1rW3cki
-	rJ6fy8vAecRQvbhVUhADIh142k/iqF3JGAtGD/9GM4XpJmWvtWnPcFCIcpECoSTbhNP+i9ulxFM
-	f55ffzyrKY9LKC3RDKlHGNzYS0LGlqWUu7uTu
-X-Gm-Gg: ASbGncupwsV6mtDekUVZKQEoE9HX20RFrkpj45C8fAJ1PCOTLN9g8AQRYAs6TnN3LrI
-	5KC7psk05w4U+hCXqmaEeDh3Ba2r/NhFwOT2fedGeb1wd+xmNy2gZD3X0oBCF
-X-Google-Smtp-Source: AGHT+IHLzbr5jZfQL/RFF11+CfvITxPQwh4PBiAl7YBrfB0o/NYh07B9/QUFW2fV1iv3quuB+T2eISwzjxXYEChmiRQ=
-X-Received: by 2002:a05:622a:5289:b0:460:77ac:8773 with SMTP id
- d75a77b69052e-462c60000d5mr609401cf.26.1730491732027; Fri, 01 Nov 2024
- 13:08:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730491939; x=1731096739;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XRuudTPNmMwLHY1n1kU3xhjTGMpQc0UfbLasNRVgYtU=;
+        b=iUCgtY4QJeR9tITOv7w7ZVuSAP3kFPi6BkM+gkWQ0hkjafendvinOp+Ogk18WeuDRw
+         R6hG+P6A3wmQLl41911OngkeDR24uEvsQ8E+qpJDynF+vwhtsarZ4efeZQ80RY4r/ho0
+         kPlo7/HIDMDpK2ZybIvk8LBk73ugAsb8VmoeK1D4HUYB54nTlNQBy9XVmsSOEY4uLSdC
+         E/Zanc4cOJrk7pb2fbJpKPuzM5pKDfhbYj5Dv46tqNum+ymRaynmA/KDN5/JWL5w+hJm
+         P8NePTl6qmYyk4flxXSsJmU3Lr5c8RinSX1U2EwFwJJKVXSuBMxtK6MPTC0cteYtfLmG
+         39dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPsN27BD9otvn7/rmJQuhYEvAY1lXhDbjLL/7q8fpYmV7Gc0xBkgDNdAFmvXWH8eG92pHQJvB8IdXJlBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9mdOZjGOSUzPKFUY3+VjUKiCrmpsDqG8I/OhB1GBIpd4ce7Rc
+	ljfvdOE94sPAkqtCg1Ydvc1DF2odj+aZmJYregug9maV816iXO/DY4/j8ECS5AE=
+X-Google-Smtp-Source: AGHT+IGIvW5ByRLM9GHWvfJdsh1B2I5joze+CQnZ10eSEsQVXQNXZharaJdv+roZF+ZF+jW9UKOllQ==
+X-Received: by 2002:a05:6512:3d21:b0:53c:7363:90c with SMTP id 2adb3069b0e04-53d65df7d34mr2770112e87.35.1730491938782;
+        Fri, 01 Nov 2024 13:12:18 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bcce3d9sm656782e87.161.2024.11.01.13.12.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 13:12:18 -0700 (PDT)
+Date: Fri, 1 Nov 2024 22:12:16 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Imre Deak <imre.deak@intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
+	Abel Vesa <abel.vesa@linaro.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+	Danilo Krummrich <dakr@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH RFC 1/4] drm/dp: Add helper to set LTTPRs in transparent
+ mode
+Message-ID: <skyowhfl2qoaaoa4gyj5mf4j3nlznmtc6l5b3oicopmc5u5nxb@f3i2iif3r6ya>
+References: <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-0-cafbb9855f40@linaro.org>
+ <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-1-cafbb9855f40@linaro.org>
+ <ZyPxLpykHkO9Xx_R@ideak-desk.fi.intel.com>
+ <87msijjol6.fsf@intel.com>
+ <ZyTbDELVW5vqFoMS@ideak-desk.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023224409.201771-1-xur@google.com> <20241023224409.201771-2-xur@google.com>
- <CAK7LNARiEhNBPikEv--YpdKTPt5B5tFF_J0T8+xbi1CS6WJBFQ@mail.gmail.com>
-In-Reply-To: <CAK7LNARiEhNBPikEv--YpdKTPt5B5tFF_J0T8+xbi1CS6WJBFQ@mail.gmail.com>
-From: Rong Xu <xur@google.com>
-Date: Fri, 1 Nov 2024 13:08:38 -0700
-Message-ID: <CAF1bQ=QvQ=NRCOky3-k_9eoo4BVgW+_C7g6TBmSw=qNurPW9uA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/7] Add AutoFDO support for Clang build
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
-	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
-	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>, 
-	Krzysztof Pszeniczny <kpszeniczny@google.com>, Sriraman Tallam <tmsriram@google.com>, 
-	Stephane Eranian <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyTbDELVW5vqFoMS@ideak-desk.fi.intel.com>
 
-On Fri, Nov 1, 2024 at 11:02=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Thu, Oct 24, 2024 at 7:44=E2=80=AFAM Rong Xu <xur@google.com> wrote:
-> >
-> > Add the build support for using Clang's AutoFDO. Building the kernel
-> > with AutoFDO does not reduce the optimization level from the
-> > compiler. AutoFDO uses hardware sampling to gather information about
-> > the frequency of execution of different code paths within a binary.
-> > This information is then used to guide the compiler's optimization
-> > decisions, resulting in a more efficient binary. Experiments
-> > showed that the kernel can improve up to 10% in latency.
-> >
-> > The support requires a Clang compiler after LLVM 17. This submission
-> > is limited to x86 platforms that support PMU features like LBR on
-> > Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
-> >  and BRBE on ARM 1 is part of planned future work.
-> >
-> > Here is an example workflow for AutoFDO kernel:
-> >
-> > 1) Build the kernel on the host machine with LLVM enabled, for example,
-> >        $ make menuconfig LLVM=3D1
-> >     Turn on AutoFDO build config:
-> >       CONFIG_AUTOFDO_CLANG=3Dy
-> >     With a configuration that has LLVM enabled, use the following
-> >     command:
-> >        scripts/config -e AUTOFDO_CLANG
-> >     After getting the config, build with
-> >       $ make LLVM=3D1
-> >
-> > 2) Install the kernel on the test machine.
-> >
-> > 3) Run the load tests. The '-c' option in perf specifies the sample
-> >    event period. We suggest     using a suitable prime number,
-> >    like 500009, for this purpose.
-> >    For Intel platforms:
-> >       $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count>=
- \
-> >         -o <perf_file> -- <loadtest>
-> >    For AMD platforms:
-> >       The supported system are: Zen3 with BRS, or Zen4 with amd_lbr_v2
-> >      For Zen3:
-> >       $ cat proc/cpuinfo | grep " brs"
-> >       For Zen4:
-> >       $ cat proc/cpuinfo | grep amd_lbr_v2
-> >       $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a=
- \
-> >         -N -b -c <count> -o <perf_file> -- <loadtest>
-> >
-> > 4) (Optional) Download the raw perf file to the host machine.
-> >
-> > 5) To generate an AutoFDO profile, two offline tools are available:
-> >    create_llvm_prof and llvm_profgen. The create_llvm_prof tool is part
-> >    of the AutoFDO project and can be found on GitHub
-> >    (https://github.com/google/autofdo), version v0.30.1 or later. The
-> >    llvm_profgen tool is included in the LLVM compiler itself. It's
-> >    important to note that the version of llvm_profgen doesn't need to
-> >    match the version of Clang. It needs to be the LLVM 19 release or
-> >    later, or from the LLVM trunk.
-> >       $ llvm-profgen --kernel --binary=3D<vmlinux> --perfdata=3D<perf_f=
-ile> \
-> >         -o <profile_file>
-> >    or
-> >       $ create_llvm_prof --binary=3D<vmlinux> --profile=3D<perf_file> \
-> >         --format=3Dextbinary --out=3D<profile_file>
-> >
-> >    Note that multiple AutoFDO profile files can be merged into one via:
-> >       $ llvm-profdata merge -o <profile_file>  <profile_1> ... <profile=
-_n>
-> >
-> > 6) Rebuild the kernel using the AutoFDO profile file with the same conf=
-ig
-> >    as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
-> >       $ make LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D<profile_file>
-> >
-> > Co-developed-by: Han Shen <shenhan@google.com>
-> > Signed-off-by: Han Shen <shenhan@google.com>
-> > Signed-off-by: Rong Xu <xur@google.com>
-> > Suggested-by: Sriraman Tallam <tmsriram@google.com>
-> > Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
-> > Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Suggested-by: Stephane Eranian <eranian@google.com>
-> > Tested-by: Yonghong Song <yonghong.song@linux.dev>
->
->
->
->
-> > +Workflow
-> > +=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +Here is an example workflow for AutoFDO kernel:
-> > +
-> > +1)  Build the kernel on the host machine with LLVM enabled,
-> > +    for example, ::
-> > +
-> > +      $ make menuconfig LLVM=3D1
-> > +
-> > +    Turn on AutoFDO build config::
-> > +
-> > +      CONFIG_AUTOFDO_CLANG=3Dy
-> > +
-> > +    With a configuration that with LLVM enabled, use the following com=
-mand::
-> > +
-> > +      $ scripts/config -e AUTOFDO_CLANG
-> > +
-> > +    After getting the config, build with ::
-> > +
-> > +      $ make LLVM=3D1
-> > +
-> > +2) Install the kernel on the test machine.
-> > +
-> > +3) Run the load tests. The '-c' option in perf specifies the sample
-> > +   event period. We suggest using a suitable prime number, like 500009=
-,
-> > +   for this purpose.
-> > +
-> > +   - For Intel platforms::
-> > +
-> > +      $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count=
-> -o <perf_file> -- <loadtest>
-> > +
-> > +   - For AMD platforms::
->
-> I am not sure if this double-colon is needed
-> when the next line is not code.
+On Fri, Nov 01, 2024 at 03:43:40PM +0200, Imre Deak wrote:
+> On Fri, Nov 01, 2024 at 11:22:13AM +0200, Jani Nikula wrote:
+> > On Thu, 31 Oct 2024, Imre Deak <imre.deak@intel.com> wrote:
+> > > On Thu, Oct 31, 2024 at 05:12:45PM +0200, Abel Vesa wrote:
+> > >> According to the DisplayPort standard, LTTPRs have two operating
+> > >> modes:
+> > >>  - non-transparent - it replies to DPCD LTTPR field specific AUX
+> > >>    requests, while passes through all other AUX requests
+> > >>  - transparent - it passes through all AUX requests.
+> > >> 
+> > >> Switching between this two modes is done by the DPTX by issuing
+> > >> an AUX write to the DPCD PHY_REPEATER_MODE register.
+> > >> 
+> > >> Add a generic helper that allows switching between these modes.
+> > >> 
+> > >> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > >> ---
+> > >>  drivers/gpu/drm/display/drm_dp_helper.c | 17 +++++++++++++++++
+> > >>  include/drm/display/drm_dp_helper.h     |  1 +
+> > >>  2 files changed, 18 insertions(+)
+> > >> 
+> > >> diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
+> > >> index 6ee51003de3ce616c3a52653c2f1979ad7658e21..38d612345986ad54b42228902ea718a089d169c4 100644
+> > >> --- a/drivers/gpu/drm/display/drm_dp_helper.c
+> > >> +++ b/drivers/gpu/drm/display/drm_dp_helper.c
+> > >> @@ -2694,6 +2694,23 @@ int drm_dp_lttpr_max_link_rate(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE])
+> > >>  }
+> > >>  EXPORT_SYMBOL(drm_dp_lttpr_max_link_rate);
+> > >>  
+> > >> +/**
+> > >> + * drm_dp_lttpr_set_transparent_mode - set the LTTPR in transparent mode
+> > >> + * @aux: DisplayPort AUX channel
+> > >> + * @enable: Enable or disable transparent mode
+> > >> + *
+> > >> + * Returns 0 on success or a negative error code on failure.
+> > >
+> > > Should be "Returns 1 on success".
+> > 
+> > But is that a sensible return value?
+> 
+> It matches what the function returns, but yes, would make more sense to
+> fix the return value instead to be 0 in case of success.
 
-Thanks for catching this. We don't mean to use "::" here. It should be
-":" and there is supposed to be a blank line after this.
-Also a blank line before "For Zen3::". I will fix this in the patch.
+I think returning 0 is better in case of this function.
 
->
->
->
-> > +     The supported systems are: Zen3 with BRS, or Zen4 with amd_lbr_v2=
-. To check,
-> > +     For Zen3::
-> > +
-> > +      $ cat proc/cpuinfo | grep " brs"
-> > +
-> > +     For Zen4::
-> > +
-> > +      $ cat proc/cpuinfo | grep amd_lbr_v2
-> > +
-> > +     The following command generated the perf data file::
-> > +
-> > +      $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -=
-a -N -b -c <count> -o <perf_file> -- <loadtest>
-> > +
-> > +4) (Optional) Download the raw perf file to the host machine.
-> > +
-> > +5) To generate an AutoFDO profile, two offline tools are available:
-> > +   create_llvm_prof and llvm_profgen. The create_llvm_prof tool is par=
-t
-> > +   of the AutoFDO project and can be found on GitHub
-> > +   (https://github.com/google/autofdo), version v0.30.1 or later.
-> > +   The llvm_profgen tool is included in the LLVM compiler itself. It's
-> > +   important to note that the version of llvm_profgen doesn't need to =
-match
-> > +   the version of Clang. It needs to be the LLVM 19 release of Clang
-> > +   or later, or just from the LLVM trunk. ::
-> > +
-> > +      $ llvm-profgen --kernel --binary=3D<vmlinux> --perfdata=3D<perf_=
-file> -o <profile_file>
-> > +
-> > +   or ::
-> > +
-> > +      $ create_llvm_prof --binary=3D<vmlinux> --profile=3D<perf_file> =
---format=3Dextbinary --out=3D<profile_file>
-> > +
-> > +   Note that multiple AutoFDO profile files can be merged into one via=
-::
-> > +
-> > +      $ llvm-profdata merge -o <profile_file> <profile_1> <profile_2> =
-... <profile_n>
-> > +
-> > +6) Rebuild the kernel using the AutoFDO profile file with the same con=
-fig as step 1,
-> > +   (Note CONFIG_AUTOFDO_CLANG needs to be enabled)::
-> > +
-> > +      $ make LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D<profile_file>
-> > +
->
-> Trailing blank line.
->
-> .git/rebase-apply/patch:187: new blank line at EOF.
+> 
+> > >
+> > >> + */
+> > >> +
+> > 
+> > Superfluous newline.
+> > 
+> > >> +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable)
+> > >> +{
+> > >> +	u8 val = enable ? DP_PHY_REPEATER_MODE_TRANSPARENT :
+> > >> +			  DP_PHY_REPEATER_MODE_NON_TRANSPARENT;
+> > >> +
+> > >> +	return drm_dp_dpcd_writeb(aux, DP_PHY_REPEATER_MODE, val);
+> > >> +}
+> > >> +EXPORT_SYMBOL(drm_dp_lttpr_set_transparent_mode);
+> > >> +
+> > >>  /**
+> > >>   * drm_dp_lttpr_max_lane_count - get the maximum lane count supported by all LTTPRs
+> > >>   * @caps: LTTPR common capabilities
+> > >> diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
+> > >> index 279624833ea9259809428162f4e845654359f8c9..8821ab2d36b0e04d38ccbdddcb703b34de7ed680 100644
+> > >> --- a/include/drm/display/drm_dp_helper.h
+> > >> +++ b/include/drm/display/drm_dp_helper.h
+> > >> @@ -625,6 +625,7 @@ int drm_dp_read_lttpr_phy_caps(struct drm_dp_aux *aux,
+> > >>  			       u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
+> > >>  int drm_dp_lttpr_count(const u8 cap[DP_LTTPR_COMMON_CAP_SIZE]);
+> > >>  int drm_dp_lttpr_max_link_rate(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE]);
+> > >> +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable);
+> > >>  int drm_dp_lttpr_max_lane_count(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE]);
+> > >>  bool drm_dp_lttpr_voltage_swing_level_3_supported(const u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
+> > >>  bool drm_dp_lttpr_pre_emphasis_level_3_supported(const u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
+> > >> 
+> > >> -- 
+> > >> 2.34.1
+> > >> 
+> > 
+> > -- 
+> > Jani Nikula, Intel
 
-Will remote the blank line.
-
->
->
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+-- 
+With best wishes
+Dmitry
 
