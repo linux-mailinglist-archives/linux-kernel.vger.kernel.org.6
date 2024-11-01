@@ -1,105 +1,124 @@
-Return-Path: <linux-kernel+bounces-392814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15A39B986C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:24:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F299B9871
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:25:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FAE71C21CC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0810A28172B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C121D016A;
-	Fri,  1 Nov 2024 19:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EC81D014F;
+	Fri,  1 Nov 2024 19:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0s/+TF/+"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n0XiUp7W"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE711CF7AD
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D613C1CC8A1
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489056; cv=none; b=Qr5XitA8erwVgqtZWvtyHo7m+ZHngse3vJsL6KhsXHYg1mlLtPFuwbEwBRLevzx7L0dXfjmVR294v4NDt4AofTJcPDlxpHIRuJpIpv2z4rcSPDEycBqeGh4L8p25kQQ8HUuo0JG9aWf5Iv4039PlkNDr9OijR4m3np1ovcD6rNo=
+	t=1730489121; cv=none; b=IelrHtGf+OtAMo6RUEGq1Bn2QPN2eGoV6ZCqe1HBKbpV4MFfumZIgWLecJVzRkH5TsaT03DyQRunBLWfrOq4VMRMnGMD/DtwmAiY+MFZM3Q93upuxHFokDjj+IaT3pltwmYALrtYjtLZJabAI6HcTcPdFBK3Ruc8xHPl8FBF0Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489056; c=relaxed/simple;
-	bh=waFA7JUjYk8261SzvR3E9TcY2sF/GY6yjtVVhhKVNYY=;
+	s=arc-20240116; t=1730489121; c=relaxed/simple;
+	bh=9CFPeGa1vUV3oMQ5Y+5FYL5Vl4au98XgJ2pT8cDYqGc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kQqiCWeYZc5PWFtaLOQptC+hX0ii1iVRvQxG1q8xe7V8Aq5blNXDp1tYTLMkEXtpyXVia3CEeWHkTKBHjC1zVPRpFKh7b89LgilpL8VqWBFlY/Tq1PAj7aUWil+BvtQXgUxVq2T8YqMnCSMhO0J3jPSEc/4ySgA3aoip+xB83tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0s/+TF/+; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=nMg8NLmE50N2WjOj/AOD2nuQvMKXDrpPUHVOqWzQtgFkPEWKf2DahIgoPRaL+Iu3ohvQNLnR72qwkYNBNGBKsIlfJ3URxbzdesLT3dTd8rCFvkaUAdNh0+TG9RCeMCtyzV7y0vCRUX5HB1E87Plr9tsiKqApcKySARJMN9190Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n0XiUp7W; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-210d5ea3cf5so20929505ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:24:15 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e35bdb6a31so44724047b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:25:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730489055; x=1731093855; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730489119; x=1731093919; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lo0BRhTxoGsYmyZdsoLkO5ZYMsC/PbiC0MlmUUL6eN8=;
-        b=0s/+TF/+p6LmLMpzats4iHFYn87s/gNrsZgf6jyD4IuUzcKMAw0gh1JyYS+gNzKqgV
-         HhMVFPrUaJOXQncmVUHDXEw8PVTujqXfHoAkq99tzNYzwz0/bsN2BKN9TibjCSiOxdPQ
-         6y9D2LU0WjH5YEmLkYACG0Xu5V084ev+k6lcyL4E6eJN2poDWWMPu+tWNS+53dE5LkuI
-         dnvbvOQwYFcP0W0ixMVH0Wow2JrG+Hj3f04bdGGvUf+prBkYOI4VF8idJlmcDfOg8bg8
-         hoFOe4VPYyE2aM7wDx9DXQ6EV63u4GgMFY9F2sX09DQPN59eM3/u6/mZNioRvZvFlw/b
-         Uplg==
+        bh=yBs2yPm5xuCjMgG0MW8KtsBliivZ46s1J0i4m3siP5A=;
+        b=n0XiUp7WxaJIO1zbWGSVO5wZB/5w0yhjq8RQZeURUzleSCk6cf5M2HezD4fIxIAFRL
+         G5bo8UifJyHnOeIS9y9H7EJ4Dhyp1YYSqKVGlYzBBgfXdhwsi8HxEqcKVKxbIsQzwvsR
+         UC5brzhH+Bq4EAqxDKxYo0Nb9pXsXv4SMoxbmqI1MEoNek2p7q0WrkIwBpEbPKxCr3+b
+         caJbQgL/0QrfjYc+kLWvKQvYmZwklq+fxg6unoT3qApc6OEYFEyDHlRUshW3coQdD94z
+         3ekeYPxug53gaJ43OKs/ZlpKtBLn4Xgnqp+qBrHt+nl4NTejdyTzoARgqTRSzzHSm8zK
+         0/5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730489055; x=1731093855;
+        d=1e100.net; s=20230601; t=1730489119; x=1731093919;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lo0BRhTxoGsYmyZdsoLkO5ZYMsC/PbiC0MlmUUL6eN8=;
-        b=Xm5xvA2Ww67XKnH4i3GxOgaG21UVUvZeKhTUyZ+22iO6LPYFIJXdOmMFEa3iCiyWdD
-         hc1Jf+XFKaC3WufPacIri1EHlZsw9q9NyVLTE4wgpEcz97d1Q9Sau5qVd64lwZ9hOZIh
-         2j/NwHhUmQlpyp7ERRLpw5JVMN7FScXrGY3PjjqccKNMvahnsbQ7ARpBM29uNkCjRARP
-         EEmcdgEIdnTtTzlqVZE6wbtND/WQigZAJkGRgLO/W4FhtI7WvEXmsNGuypERyoV1Yj/6
-         ex3jxKs9aWyburcBDhoibSJMvhFYpe56ynL6uSpW8Qf4ago5S3AYsQqz7dxltbIfHS/t
-         m+iA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdmN6/YHcnTuf2ki122THrzlCPkwkIgDSDzdT9tTvtBZSyWjYMgD85C0bwAtg5Qu2SWwd6hqHqDy513A4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxErQjWRs0kCcM5B8tfLYFkbJLUReblIWqrzq/ir50W1gQEXkvu
-	x82A9Bi8lJm4V5I4Y7CrHwxqxpPAmZybBoai6kaDdGITvnFelldaqau2EhgTDZw+sFrsdxYzONp
-	orA==
-X-Google-Smtp-Source: AGHT+IGQz5HIbvcdsklFk1U8K2pzyCVbD5kE125GcZgrfggCexOE1wDsiWZKG56vgwLAlQPq0UheS6J/bk4=
+        bh=yBs2yPm5xuCjMgG0MW8KtsBliivZ46s1J0i4m3siP5A=;
+        b=YMWFjfl8VTJ1m16x1+coUSqRW8H1a8Zw7dEQsOcgJ8dA9ZUZrFPinAo4F/DP44RH6o
+         LIrEhPzj45k8Ry4A//9lcY6SeqrUdu9DW9KyBeHsoUm24pZmxZwNZOZ0u266qM50qVzp
+         u7dS4LHeyJFoKkxybEgcNV6Nb5R36AnUaDb0sKNNXlJR+mlK+d2AaKPiuK8a5GmDuZQE
+         lU6rrYL/GyFZGTxyFIpMECr3pj+H/aRWYCpdIDWx4nUq7DPvB4qQIRTykfb6TRpqWqlO
+         xDJEVBV6x93gieiaqUAw8pK9vseWFzG2pVCd50zu4w5GPlmSmPAQF8KDGwUL0hcyVTVc
+         QVcg==
+X-Forwarded-Encrypted: i=1; AJvYcCW39AT6iu2kgOgtTaGAYexz5qa+DQyDbE0Fe5mIvnxolKE4ISf7Glp5har0AIrouWY3SWhWyulQdZV7AmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxLu6pxFoO0uF/i2IW3d00dQgyrKUOBhE+Nu1P9cL1EMyaDoQe
+	8kQxdLg03jzFqQHR2TaWdea3tFhbnzDfPTVRztHD9KS+evLBlP30z0pX/DxUx0W7+FdpwEjlwUb
+	6tA==
+X-Google-Smtp-Source: AGHT+IGV5cmGDE6cx4EDHk/BqPbUmHUlFxHVw+QXwMJWG4c7kN9q+v1lLQBJI0JElinbAbVUG3dVbLPEsfI=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:902:aa0c:b0:20c:5beb:9c6a with SMTP id
- d9443c01a7336-2111946702emr76735ad.4.1730489054915; Fri, 01 Nov 2024 12:24:14
+ (user=seanjc job=sendgmr) by 2002:a25:83c3:0:b0:e2b:cd96:67a6 with SMTP id
+ 3f1490d57ef6-e30e5a904d0mr4456276.5.1730489118808; Fri, 01 Nov 2024 12:25:18
  -0700 (PDT)
-Date: Fri, 1 Nov 2024 12:24:13 -0700
-In-Reply-To: <173039507056.1509043.12101873900724716741.b4-ty@google.com>
+Date: Fri, 1 Nov 2024 12:25:17 -0700
+In-Reply-To: <173039506428.1508883.15289868954923615228.b4-ty@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240802200420.330769-1-seanjc@google.com> <173039507056.1509043.12101873900724716741.b4-ty@google.com>
-Message-ID: <ZyUq3WSLbKkoiExF@google.com>
-Subject: Re: [PATCH] KVM: x86: Document an erratum in KVM_SET_VCPU_EVENTS on
- Intel CPUs
+References: <20240906221824.491834-1-mlevitsk@redhat.com> <173039506428.1508883.15289868954923615228.b4-ty@google.com>
+Message-ID: <ZyUrHej3jcZFPXrd@google.com>
+Subject: Re: [PATCH v4 0/4] Relax canonical checks on some arch msrs
 From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kvm@vger.kernel.org, Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Ingo Molnar <mingo@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, linux-kernel@vger.kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
 Content-Type: text/plain; charset="us-ascii"
 
 On Thu, Oct 31, 2024, Sean Christopherson wrote:
-> On Fri, 02 Aug 2024 13:04:20 -0700, Sean Christopherson wrote:
-> > Document a flaw in KVM's ABI which lets userspace attempt to inject a
-> > "bad" hardware exception event, and thus induce VM-Fail on Intel CPUs.
-> > Fixing the flaw is a fool's errand, as AMD doesn't sanity check the
-> > validity of the error code, Intel CPUs that support CET relax the check
-> > for Protected Mode, userspace can change the mode after queueing an
-> > exception, KVM ignores the error code when emulating Real Mode exceptions,
-> > and so on and so forth.
+> On Fri, 06 Sep 2024 18:18:20 -0400, Maxim Levitsky wrote:
+> > Recently we came up upon a failure where likely the guest writes
+> > 0xff4547ceb1600000 to MSR_KERNEL_GS_BASE and later on, qemu
+> > sets this value via KVM_PUT_MSRS, and is rejected by the
+> > kernel, likely due to not being canonical in 4 level paging.
+> > 
+> > One of the way to trigger this is to make the guest enter SMM,
+> > which causes paging to be disabled, which SMM bios re-enables
+> > but not the whole 5 level. MSR_KERNEL_GS_BASE on the other
+> > hand continues to contain old value.
 > > 
 > > [...]
 > 
-> Applied to kvm-x86 misc, thanks!
+> Applied to kvm-x86 misc, with some massaging (see responsed to individual
+> patches).  Thanks!
 > 
-> [1/1] KVM: x86: Document an erratum in KVM_SET_VCPU_EVENTS on Intel CPUs
->       https://github.com/kvm-x86/linux/commit/eebc1cfae6c9
+> [1/4] KVM: x86: drop x86.h include from cpuid.h
+>       https://github.com/kvm-x86/linux/commit/391bd0c520c1
+> [2/4] KVM: x86: implement emul_is_noncanonical_address using is_noncanonical_address
+>       https://github.com/kvm-x86/linux/commit/6c45d62536d0
+> [3/4] KVM: x86: model canonical checks more precisely
+>       https://github.com/kvm-x86/linux/commit/1b1336d1d858
+> [4/4] KVM: nVMX: fix canonical check of vmcs12 HOST_RIP
+>       https://github.com/kvm-x86/linux/commit/14a95598b6e7
 
 FYI, I rebased misc to v6.12-rc5, as patches in another series had already been
-taken through the tip tree.  New hash:
+taken through the tip tree.  New hashes:
 
-[1/1] KVM: x86: Document an erratum in KVM_SET_VCPU_EVENTS on Intel CPUs
-      https://github.com/kvm-x86/linux/commit/0e3b70aa137c
+[1/5] KVM: x86: drop x86.h include from cpuid.h
+      https://github.com/kvm-x86/linux/commit/e52ad1ddd0a3
+[2/5] KVM: x86: Route non-canonical checks in emulator through emulate_ops
+      https://github.com/kvm-x86/linux/commit/16ccadefa295
+[3/5] KVM: x86: Add X86EMUL_F_MSR and X86EMUL_F_DT_LOAD to aid canonical checks
+      https://github.com/kvm-x86/linux/commit/c534b37b7584
+[4/5] KVM: x86: model canonical checks more precisely
+      https://github.com/kvm-x86/linux/commit/9245fd6b8531
+[5/5] KVM: nVMX: fix canonical check of vmcs12 HOST_RIP
+      https://github.com/kvm-x86/linux/commit/90a877216e6b
 
