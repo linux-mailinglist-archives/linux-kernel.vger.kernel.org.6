@@ -1,65 +1,62 @@
-Return-Path: <linux-kernel+bounces-391575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F279B88DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:47:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E8C9B88DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E9311C21204
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D91281D8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E21673451;
-	Fri,  1 Nov 2024 01:47:26 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9122ADDAD;
-	Fri,  1 Nov 2024 01:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70B874BF5;
+	Fri,  1 Nov 2024 01:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q/JFupgb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434A78289A;
+	Fri,  1 Nov 2024 01:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730425646; cv=none; b=CU7iWAqIoU+fxG042asSXo9ckXvLHyUUwjvojD1WXTkfg6RbRmecZpsSLltIsJUJb42jzei3t5oM1nT5kUSHtqS9MM3satILlgC5+LDUVk+Uo8vePzlkgKRd6fuJv+b2sIjihz8lT7+OEX4MzDMncou1QIc2zHdsaeJXb+etyW0=
+	t=1730425797; cv=none; b=QdoQgurthr/5RnWHcEXBHytWSd48E+Hel5oIe+omkbTH3GgiNH+hx/4U+4oc88doIkFKI2/XW2m4vJXAu1QfMG2gYxPQhByFZGzmaizRRFgc3z8oitwhnenYNVratQE0p9/B2KrBqu6OmJ1aHj9SLzdRskrs9HBtokFVPKrpFSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730425646; c=relaxed/simple;
-	bh=sXZCbRbeFr64bWTbo4bDXx21yjrRFDO5DVEu8ooKcUI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=aHu54tKVXbsyiZm+ix4gCNWyk5gmMHlzdK645uTmSmbaVztHiTHz4VohjH3pnDXOm0FwW6eF1vt/DSk3ZH7dMIFC1o8br9zNi8uy3VlDTGPcbfNkldG/VFlIco6xl8FMrzp63p8b8NEx1WO5AA0MPfb+4xlvZj57EPD8dCJqqI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id CF8C992009C; Fri,  1 Nov 2024 02:47:17 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id C827A92009B;
-	Fri,  1 Nov 2024 01:47:17 +0000 (GMT)
-Date: Fri, 1 Nov 2024 01:47:17 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Aleksandar Rikalo <arikalo@gmail.com>, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-    Conor Dooley <conor+dt@kernel.org>, 
-    Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-    Gregory CLEMENT <gregory.clement@bootlin.com>, 
-    Theo Lebrun <theo.lebrun@bootlin.com>, Arnd Bergmann <arnd@arndb.de>, 
-    devicetree@vger.kernel.org, 
-    Djordje Todorovic <djordje.todorovic@htecgroup.com>, 
-    Chao-ying Fu <cfu@wavecomp.com>, 
-    Daniel Lezcano <daniel.lezcano@linaro.org>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@kernel.org>, 
-    Hauke Mehrtens <hauke@hauke-m.de>, 
-    Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>, linux-kernel@vger.kernel.org, 
-    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-    Marc Zyngier <maz@kernel.org>, 
-    "paulburton@kernel.org" <paulburton@kernel.org>, 
-    Peter Zijlstra <peterz@infradead.org>, 
-    Serge Semin <fancer.lancer@gmail.com>, 
-    Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v8 00/13] MIPS: Support I6500 multi-cluster
- configuration
-In-Reply-To: <c7d5a4e9-f080-46dd-9b96-07eb08d361f4@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2411010146340.40463@angie.orcam.me.uk>
-References: <20241028175935.51250-1-arikalo@gmail.com> <c7d5a4e9-f080-46dd-9b96-07eb08d361f4@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1730425797; c=relaxed/simple;
+	bh=dE/ylJ6ge1HqyoW9KyWdTWFUjztcM0sAXkdF7dnXeaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lsoWvAabJPuli6zbwNczelqKRXCRQDIINjH4F5Cv6IyUjpSribnYwwRYn5Ui+zDHj1AjC/6faATal2tnob7gsyb87BfxcEtcGcu5WvQ0muIDVuQZImTedFeeSvESI2j65pVJXRjG28ijvgdWIc5aDEQBxVWYu9rz4/Kw7Mkjd2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q/JFupgb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49094C4CEC3;
+	Fri,  1 Nov 2024 01:49:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730425796;
+	bh=dE/ylJ6ge1HqyoW9KyWdTWFUjztcM0sAXkdF7dnXeaY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=q/JFupgbMKZgQ495HX2P33PdvSIrJV3/NNeKT6CPJMaxh3c+rPteRAj09A9L1BA0+
+	 XxZ/pzQjTauyOBmEODAKVygey1QRUEjQoUIzZCos/sGERIgLSQgOy4tWM81T0aWeRb
+	 DX3kRIHPwrV7UxA06/B9Bn1o+C05DIUdy3N3bVsFSotoAyt4rOxc8+wC76/QphYtaO
+	 rqymvrECTI9m2erJ0zmH/tQTow33Zacx2SevANUsuldp182fQmPYg4re6Vv8zxDlIv
+	 2gkdCXaBPNOxIU2kUcXBwyJmhtYkE2AQLPr3pRdamKSZSKZPYBB29IX3lmTC+x9PDT
+	 /i9hDMMjhGTNA==
+Date: Thu, 31 Oct 2024 18:49:55 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Maksym Kutsevol <max@kutsevol.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Breno Leitao <leitao@debian.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v4 2/2] netcons: Add udp send fail statistics
+ to netconsole
+Message-ID: <20241031184955.159d2211@kernel.org>
+In-Reply-To: <CAO6EAnW4LwZax-UJf8s1uNS=V7FYJ6e1N3MekNjzaoyVDCO_Tg@mail.gmail.com>
+References: <20241027-netcons-add-udp-send-fail-statistics-to-netconsole-v4-0-a8065a43c897@kutsevol.com>
+	<20241027-netcons-add-udp-send-fail-statistics-to-netconsole-v4-2-a8065a43c897@kutsevol.com>
+	<20241030184928.3273f76d@kernel.org>
+	<CAO6EAnW4LwZax-UJf8s1uNS=V7FYJ6e1N3MekNjzaoyVDCO_Tg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,12 +64,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 30 Oct 2024, Jiaxun Yang wrote:
+On Thu, 31 Oct 2024 21:19:26 -0400 Maksym Kutsevol wrote:
+> Thanks for looking into this!
+> 
+> Parroting examples, e.g.
+> struct pcpu_lstats {
+> u64_stats_t packets;
+> u64_stats_t bytes;
+> struct u64_stats_sync syncp;
+> } __aligned(2 * sizeof(u64));
+> 
+> in netdevice.h https://github.com/torvalds/linux/blob/master/include/linux/netdevice.h#L2743-L2747
+> I don't have any strongly held opinion about this. I'd appreciate an
+> explanation (a link would suffice) why this is a bad idea.
 
-> Reviewd-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+No entirely sure why the pcpu stats in netdev are aligned like this,
+but yours are not per cpu, and not fast path of any sort. So aligning
+is a premature optimization in the first place.
 
- Typo here.
+> > > +static void netpoll_send_udp_count_errs(struct netconsole_target *nt,
+> > > +                                     const char *msg, int len)  
+> >
+> > This is defined in the netconsole driver, it should not use the
+> > netpoll_ prefix for the function name.'  
+> 
+> netconsole_send_udp_count_errs sounds better?
 
-  Maciej
+I don't think the _count_errs() suffix is needed any more
 
