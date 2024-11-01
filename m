@@ -1,95 +1,130 @@
-Return-Path: <linux-kernel+bounces-391991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3D69B8E47
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D44F29B8E7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:01:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266811F232D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:58:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55C051F25CE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3156E17108A;
-	Fri,  1 Nov 2024 09:57:44 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F3A15F330;
+	Fri,  1 Nov 2024 10:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Irny/Uno"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691DD15C158;
-	Fri,  1 Nov 2024 09:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5759F158553
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730455063; cv=none; b=SF3GGUhTQmri2nd6oDr+bnjAtstDZxvZuqKvrF7faVmUGvUU3Gt9jGJU/lMNQ/9hAQ2m+MyzgljlY0sjs/ldf8BnlY3T5aWLHxkTNvCgRDBRs2xKuaTIZDGBnk7rzPZKnbdbJHD585VFjkdkNYVC4L5EDKMi/7pS24SP0Ig833Q=
+	t=1730455210; cv=none; b=ENGxBB2hpYHgugSri/oYdnuMjxQyV2elaUBrMzIX37x5H0kCWgRh+cjDum3E44Emk9dXC8gHx1Kswhs/HV3J4QP0HNl6EDDSjoQ0E2RD+LM166YTy1l5x1v7t4ElwXlgYEZdEmQQyyJqtEt/aPPIakyrwNLSb6kd1ivsQ+yNaqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730455063; c=relaxed/simple;
-	bh=pK/WO2daHDcq6dA5/6aSgiM2yMEiHnUvcPj0ZRSJ19s=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=huTTOl1K5ZNlBypR+UKRNKHbEO+QAZfQARztC1UN44wIjr0/29mQ9rW/w92ltTYpVpRTwGReQX5RapVHFBVRsH5xNr0wnR3O3NvWzSRPFDN8APmnIdz0UquyO5znDL8NQElFX4M82WYOy/GQsn1vJzcmH4M/WIyHjwaJ1Evf294=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xfx7J1tDTz10PFq;
-	Fri,  1 Nov 2024 17:55:24 +0800 (CST)
-Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id E85861800A5;
-	Fri,  1 Nov 2024 17:57:37 +0800 (CST)
-Received: from [10.67.110.237] (10.67.110.237) by
- kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 1 Nov 2024 17:57:37 +0800
-Subject: Re: [PATCH] media: atomisp: Add check for rgby_data memory allocation
- failure
-To: Andy Shevchenko <andy@kernel.org>
-CC: <mchehab@kernel.org>, <hdegoede@redhat.com>,
-	<sakari.ailus@linux.intel.com>, <gregkh@linuxfoundation.org>,
-	<linux-media@vger.kernel.org>, <linux-staging@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-References: <20241101154823.3067891-1-lihuafei1@huawei.com>
- <ZySRjyrxI9jrcY1q@smile.fi.intel.com>
-From: Li Huafei <lihuafei1@huawei.com>
-Message-ID: <d2590a9f-7786-ca08-a705-a5b287e74ba3@huawei.com>
-Date: Fri, 1 Nov 2024 17:57:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+	s=arc-20240116; t=1730455210; c=relaxed/simple;
+	bh=szirmOHLLGPT4Rpk5rV9+e7gy9gLSwyM1IEzBkLyjk0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AMPI5/V0FFXEzzxyDE7nHNlMXpj9sXd+HKCVyxBCIJAVaJrpEG3YPmUX7Fbro+CE8DgboLTIfaRLfqdHeSqAT3nWGR34jptQrhZvmwv7ATijD0ge4VeFdBXWNaSU+CrTs5a0TUPxp49tpxmqxLHGqYW32pwnCnfeTHS+1eXlmOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Irny/Uno; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c8b557f91so18537065ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 03:00:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730455208; x=1731060008; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kXE+qi0LSm8ODysTE3U4uCY5bjtR4TQVd3Ql3XOl3gw=;
+        b=Irny/UnoKmAK6jtUTdzsAAOsLZIL/68bgiIh9VeI7LmTvAaN+KBZcsyT1+M5kTy9uM
+         +oHgK4E6MpWeM+LagEJFGR5IM1WRXYI83KwSYJPYYv2goizhdQh/AB2O4Tcacas9F5yL
+         7qg7VTbAOLAckFM+4XYwJ0gGPds0NYEPVA4GFEo4WJUb8yujA47Urv6aFkeA5aKS50rb
+         ZwbhUcF81DCbQ2iDcBSrxmrPiE0axkyqqA5tZZBLm3A0fxPw2A7w4OaHIN4MD3XFMIsP
+         t2i+RRY831FjwcVahQyhqqNg3KLx7bSJ7LiqXAub+IsSyxIEqlSz9bEOHYpMZgsRhUjq
+         eXLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730455208; x=1731060008;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kXE+qi0LSm8ODysTE3U4uCY5bjtR4TQVd3Ql3XOl3gw=;
+        b=vNt8ypuESO93q6ItNRwTyCIV4K+Wm8VEoYhCOazvru743Q2eKfpLHZxK0swBwRVFgq
+         EJWXlHfcaXllZTztAIzyWLiPGBRwsr5WAmpCPzwo9oPrgMUBSPxn+T2R+6fBBTrtZ5R2
+         HwdjyCt8f2sA5nK0m3njbXbGmY58Wo+K01/s4vcsQMtIwZD/2+ZoEXpfqS+zvwlk67IK
+         SP2VNTFYv9D/nsYwpdj65XANQRghQBvv4SpELbfX/c78J+Ow4IS/iT1rIgA9rRwh8jUC
+         n20qjuOCb38rcc2Y/+jgd0+nMSuJVWLxu2DbgQf0XsyE3KOfhDgcgYAztXUW9XwfNYk+
+         52oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBK1ialZHK2Df0RYD+IPZ5DYvMIDVx8oA2ZPGMV3oqMBjtTGnB4KgkxQZT+Fs+1uGkSLJ/UcDoVSQPYBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx093banyN+xNFDjXJtrXc2oeC55QdXIl3OhBEkCssP0rYklY+C
+	0GOIIQXQ/4YNz11uBg8FaTO6mNIh++Ltjd0dmGc6ruDvk3QCEY9a
+X-Google-Smtp-Source: AGHT+IH+qDmPE014XFSIXoWs+bf29PK2M0J/yz6dZkz/5vEdYvX38kp2/2dRiZcLu/cOq6W9GxN86A==
+X-Received: by 2002:a17:902:f684:b0:206:fd9d:b88d with SMTP id d9443c01a7336-210c6d291e5mr258001815ad.61.1730455207493;
+        Fri, 01 Nov 2024 03:00:07 -0700 (PDT)
+Received: from TW-MATTJAN1.eu.trendnet.org (61-216-130-235.hinet-ip.hinet.net. [61.216.130.235])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa4850esm4595553a91.27.2024.11.01.03.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 03:00:06 -0700 (PDT)
+From: Matt Jan <zoo868e@gmail.com>
+To: Dave Kleikamp <shaggy@kernel.org>,
+	jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Shuan Khan <skhan@linuxfoundation.org>
+Cc: Matt Jan <zoo868e@gmail.com>,
+	syzbot+9e90a1c5eedb9dc4c6cc@syzkaller.appspotmail.com
+Subject: [PATCH v4] jfs: UBSAN: shift-out-of-bounds in dbFindBits
+Date: Fri,  1 Nov 2024 17:59:55 +0800
+Message-Id: <20241101095955.9786-1-zoo868e@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <671b3f75.050a0220.2eb763.00d7.GAE@google.com>
+References: <671b3f75.050a0220.2eb763.00d7.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZySRjyrxI9jrcY1q@smile.fi.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf500004.china.huawei.com (7.202.181.242)
+Content-Transfer-Encoding: 8bit
 
+Ensure l2nb is less than BUDMIN by performing a sanity check in the caller.
+Return -EIO if the check fails.
 
-Hi Andy,
+#syz test
 
-On 2024/11/1 16:30, Andy Shevchenko wrote:
-> On Fri, Nov 01, 2024 at 11:48:23PM +0800, Li Huafei wrote:
->> In ia_css_3a_statistics_allocate(), there is no check on the allocation
->> result of the rgby_data memory. If rgby_data is not successfully
->> allocated, it may trigger the assert(host_stats->rgby_data) assertion in
->> ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
-> 
-> Not sure if this code even run on currently supported hardware / firmware,
-> but fix looks okay.
-> 
->> Fixes: ad85094b293e ("Revert "media: staging: atomisp: Remove driver"")
-> 
-> No, this is an intermediate commit, you should find the original, which is
-> earlier in the history.
-> 
+Reported-by: syzbot+9e90a1c5eedb9dc4c6cc@syzkaller.appspotmail.com
+Signed-off-by: Matt Jan <zoo868e@gmail.com>
+---
+Changes in v4: Thanks to Shaggy for the review. We now perform a sanity check instead of continuing as if nothing is wrong.
+Changes in v3: Return the result earlier instead of assert it
+Changes in v2: Test if the patch resolve the issue through syzbot and reference the reporter
 
-Apologies, the correct fix tag should be:
+ fs/jfs/jfs_dmap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index 974ecf5e0d95..89c22a18314f 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -1217,7 +1217,7 @@ dbAllocNear(struct bmap * bmp,
+ 	int word, lword, rc;
+ 	s8 *leaf;
+ 
+-	if (dp->tree.leafidx != cpu_to_le32(LEAFIND)) {
++	if (dp->tree.leafidx != cpu_to_le32(LEAFIND) || l2nb >= L2DBWORD) {
+ 		jfs_error(bmp->db_ipbmap->i_sb, "Corrupt dmap page\n");
+ 		return -EIO;
+ 	}
+@@ -1969,7 +1969,7 @@ dbAllocDmapLev(struct bmap * bmp,
+ 	if (dbFindLeaf((dmtree_t *) &dp->tree, l2nb, &leafidx, false))
+ 		return -ENOSPC;
+ 
+-	if (leafidx < 0)
++	if (leafidx < 0 || l2nb >= L2DBWORD)
+ 		return -EIO;
+ 
+ 	/* determine the block number within the file system corresponding
+-- 
+2.25.1
 
-If this fix can be applied, do I need to send a v2, or can you help add the Fix tag?
-
-Thanks,
-Huafei
 
