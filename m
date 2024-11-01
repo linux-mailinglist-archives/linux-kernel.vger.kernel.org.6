@@ -1,142 +1,126 @@
-Return-Path: <linux-kernel+bounces-392834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AAC99B98A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:31:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA5D9B98AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5051C22020
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:31:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C1631C21FE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C451D151F;
-	Fri,  1 Nov 2024 19:30:41 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51291D0B8B;
+	Fri,  1 Nov 2024 19:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uvkp8qaT"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D371CEAB0
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C9413B792;
+	Fri,  1 Nov 2024 19:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489441; cv=none; b=bhyFo2Qeie32E4HjwBibLfIp76sNMeseO/0e5Keapx5X8TrLkWQYN6xiW25GzLUEt3flsrA1kWbMmsvmcWlwK/vHYA3FY5s6itrkLHx5Yg1xuh854y3PseWC8Kmn7mOTsCjdv5B5slLMm/d5fGSkLKk8h5FhOWWF1N3sS6odv0Y=
+	t=1730489471; cv=none; b=f/PrOLw3+gG8nIzUqWZQlM1sSSDWLIi0du5x6BZBBnIYVKTDt0WoocvbM91NBCiorR/NsRNHTSamhhyT5h1SY40K5BhE39IDnjE1kXQrWSoD7YEl2+M52ae8jDtt0EZO3mMDv8b7bTamBIXGa3PlBVDAvMrPqarcin90gCMWt1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489441; c=relaxed/simple;
-	bh=omhhXKt59jMCE7ucHu+mPaaSXRmDsyFYiTxxDpzTFxc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YZQLTasM7yOZ1nLZH4X9Cdr/vmnK+EqddxDUGpQsROuhUZTnJBMkOxC8kDN6cmKIQPqizn/S8Duc5mSMsxawk90l8gX3LmUw/lH7FZEgEvGoMeqHnPcXCFKQ/Z/ZCImI7MfL1Zpr8ywtro5dk72yHxKARkuhsk4wHWR2YjgDdpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b7974696so6502405ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:30:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730489439; x=1731094239;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1730489471; c=relaxed/simple;
+	bh=AJ4CS96WAaefrS31owoIg2zPjF9ZVZyzGhKtLx/uVkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qBbz0dLyxk1WvVwjIsnz/9SC8KWFaBkR329JSG0GAa2CYK8JKX0Dvkox93YeQUzwEa8TC1bEloPvf7bBB2bsvcbaHlmXIh9mK7EFAI+aLrbGXEUfzyIy7xujXUWMDVP6eweVMrLapApl8Fu243eZF+SOx1Rtz+1wRhZFddLLjRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uvkp8qaT; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ea8de14848so1621749a12.2;
+        Fri, 01 Nov 2024 12:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730489469; x=1731094269; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kJs0Tz2ZmpCJLLFV0O8fbCAEbDM0nq3Zbx8X0e7YsxY=;
-        b=kqWYUCXvTZ8r6sK8gAnb7P79VbItvUIttZ98ZR3jw1Ta47jtIQG2g/9M4LIlgDLjpM
-         /dILbUnFPBNXbBEGg4T0BsfIzLPCi3jcH8vINxVLzhC/Q/3y+PBsGaxoR4foZSZ9K7kL
-         eIuWg2/Pvfmq8d8RoHqQbniiebz8H7HxQvwwDrY3TRUnkulWpXLyGbQI+zCvFftQqYIc
-         z/w8DvfV1D1Z4hbUdCnrxGT9ic3F2BtEE9Z7roiFVLp02zqhqTTuBU/bpxVRaFChQKEv
-         OD9UDWZ2Ac7DHd8jvRSzGccQv4ZrlykbvnTlTRnPhfoM7DwUnWtJxxxnHmya5fygirZi
-         xHEg==
-X-Gm-Message-State: AOJu0YyyjvbcegAsNn4r3WDSsENA8mZCKEYMwbagwSXLpv66pbTENLnP
-	qtyt1Cl//ORncpgcwww6m6EL3X9ikS6yyOL3bKgq/gceK9QRKs/W752KMIKpjOr0PEse3t7plDi
-	Y/h8Obe5MJTx8vBCEdHcQ2pyqlIZOE7XFhZrymCFbSddLK6sbNO4CTgg=
-X-Google-Smtp-Source: AGHT+IGLQkK+ImSW4aRCVE43kdhZ9ff7mqeO5/NU12OpxhWrzwLdqlL+gvGpz9HxpAUyYoNPIbSGFHJQbTDhqI2xv5PwtSAlgdVQ
+        bh=2NDDCbG1ahSlEGv1KkyBWJl1W3ZyvWt4FXc2MkJZxdY=;
+        b=Uvkp8qaT5l5VSGYReGAaPDRzd28eShGiIeY9A8iLiSXi4yGBtx8oduQn/CkQbNtLH5
+         dFGUEXLomPNF8dEejM2/vLnjkIX5ttNpWYO+irA8sh+dBzv8ePGZ6N7e6D1F6RSbvQAR
+         W+oav7pIkttrulD9AaNM2W8FNxLa/HRJrb0K9xZ5+eqGXYK5BX1YsCCVnFyCNUn17rAO
+         0wRHf14TWWsXka3QezEAO/i1CRdIY5A9btRWvLRPvhO1k1EKg6mym0l+V8GDnvs+gBHA
+         qDIT2VMbwCveED/tt0n5bZ0If8BThDeTEFNw0YS0mvfEK2HLFzcDRUkSRiKMMMqilYbZ
+         3GSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730489469; x=1731094269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2NDDCbG1ahSlEGv1KkyBWJl1W3ZyvWt4FXc2MkJZxdY=;
+        b=qCoNBNO53h753w4ruqxMmTqOlaWVzzxZ2X/TsckucIkqF5Hhjjsdu8fs2Ma3X18zD0
+         9CLsLmWasz1YilWo/CbaXG3DFMfD4+Z0xbScI8c5W5AZBQVK+2qMpLd0ITU6KyxS2fHn
+         kyeqqDb5AvvvVNvOzvkYb+RQ8Y+iNS0TSfmc9HZTgvKfOfa5tag4giL7QUgOBY5tQI+c
+         kK8fczZrDws1QHHZ8dbI/iBUeBBOCTcqLclQyma6iX9yYY1P1LNUPhod2akJAU3fmbHz
+         d5XDjxe34qwgAmnJHCmlddrcTWVAMt9vv3hjo68d2daCyJTBOkqTw8W5w+XClOKQTHSU
+         Kckg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgjt9VSjvMB4iJmqizO+9ASkU7rZIadgLA98Ur1cAGz+XXHEHy2kPCzcOfAzfWNFLQxag=@vger.kernel.org, AJvYcCX68W0FLVdFZuwbo30Oxcxe8Pbe9wKlWPj2aitpKN48MnCqdhg03TbV/UhrwOM/xJozo2yweESAosi0z2DK+8MF@vger.kernel.org, AJvYcCXvRznOWlmVTxrsKQXMTL8ICT5ipnV7yBtjGtfW8vQ+pBhZACbgyeIGtMmPBi0HJBf8GkRhSlOZjUoKErwo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhky+bUqLfknKJGFl+Pi59xjj8vNMehiSqwHDR364KVxS18lQS
+	7WtvygWClhulDgrWKV3lXVmOfwKdFBFG6baqJ425Ojbdn1ztZtuIehiC/+v2sIzarnzr6Wex8Lg
+	BIU83en4mcyjoKmGIo0ix/yxnvXw=
+X-Google-Smtp-Source: AGHT+IH2JcQByIR08ndwyvZQilY6ZPngUA3Q8UPQqX29XjCXWrY8BWAu0dR78Tu6HtvLiDFNwB2xv2YGfXbsOuu6t/s=
+X-Received: by 2002:a17:90b:4acc:b0:2e2:bb02:4668 with SMTP id
+ 98e67ed59e1d1-2e93c300b75mr8657535a91.40.1730489468993; Fri, 01 Nov 2024
+ 12:31:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24a:0:b0:3a0:9f85:d74f with SMTP id
- e9e14a558f8ab-3a6b031a257mr55890595ab.16.1730489437240; Fri, 01 Nov 2024
- 12:30:37 -0700 (PDT)
-Date: Fri, 01 Nov 2024 12:30:37 -0700
-In-Reply-To: <000000000000afab690616b12f99@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67252c5d.050a0220.35b515.0176.GAE@google.com>
-Subject: Re: [syzbot] Re: [PATCH v2] Bluetooth: fix use-after-free in device_for_each_child()
-From: syzbot <syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20241031130704.3249126-1-colin.i.king@gmail.com>
+In-Reply-To: <20241031130704.3249126-1-colin.i.king@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 1 Nov 2024 12:30:56 -0700
+Message-ID: <CAEf4Bzbd2qDmUmVYtX56oz7Cj4+H88LyemSVd3YxCmcPYLg5-Q@mail.gmail.com>
+Subject: Re: [PATCH][next] bpf: replace redundant |= operation with assignmen
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Thu, Oct 31, 2024 at 6:07=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> The operation msk |=3D ~0ULL contains a redundant bit-wise or operation
+> since all the bits are going to be set to 1, so replace this with
+> an assignment since this is more optimal and probably clearer too.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  kernel/bpf/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+> index 9aaf5124648b..fea07e12601f 100644
+> --- a/kernel/bpf/inode.c
+> +++ b/kernel/bpf/inode.c
+> @@ -914,7 +914,7 @@ static int bpf_parse_param(struct fs_context *fc, str=
+uct fs_parameter *param)
+>                 str =3D param->string;
+>                 while ((p =3D strsep(&str, ":"))) {
+>                         if (strcmp(p, "any") =3D=3D 0) {
+> -                               msk |=3D ~0ULL;
+> +                               msk =3D ~0ULL;
 
-***
+This was done for consistency with the other branch. Is there anything
+wrong with this code? Doesn't seem so, so I'd like to keep it as is.
 
-Subject: Re: [PATCH v2] Bluetooth: fix use-after-free in device_for_each_ch=
-ild()
-Author: luiz.dentz@gmail.com
+pw-bot: cr
 
-On Fri, Nov 1, 2024 at 1:37=E2=80=AFPM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi Dmitry,
->
-> On Fri, Nov 1, 2024 at 11:31=E2=80=AFAM Luiz Augusto von Dentz
-> <luiz.dentz@gmail.com> wrote:
-> >
-> > Hi Dmitry,
-> >
-> > On Fri, Nov 1, 2024 at 11:17=E2=80=AFAM Dmitry Antipov <dmantipov@yande=
-x.ru> wrote:
-> > >
-> > > On 11/1/24 6:12 PM, Luiz Augusto von Dentz wrote:
-> > >
-> > > > There is no Tested-by thus why I assumed it wasn't tested by syzbot=
- yet.
-> > >
-> > > Ugh. Until today I've assumed that Tested-by: is applicable to human-=
-driven
-> > > testing only :-).
-> >
-> > Nope, in fact it is very handy to have syzbot test your changes since
-> > it may hit other problems as well.
->
-> Looks like this doesn't solve the problem, in fact I think you are
-> getting it backwards, you are trying to reparent the parent dev not
-> the child and I assume by destroying the parent device there should be
-> some way to reset the parent which seems to be the intent the
-> following code in hci_conn_del_sysfs:
->
->     while (1) {
->         struct device *dev;
->
->         dev =3D device_find_child(&conn->dev, NULL, __match_tty);
->         if (!dev)
->             break;
->         device_move(dev, NULL, DPM_ORDER_DEV_LAST);
->         put_device(dev);
->     }
->
-> But note that it only does that after matching tty, but I guess we
-> want to do it regardless otherwise we may have the child objects still
-> access it, that said we should probably use device_for_each_child
-> though if that is safe to do calls to device_move under its callback.
-
-#syz test
-
-> > > Dmitry
-> > >
-> >
-> >
-> > --
-> > Luiz Augusto von Dentz
->
->
->
+>                         } else if (find_btf_enum_const(info.btf, enum_t, =
+enum_pfx, p, &val)) {
+>                                 msk |=3D 1ULL << val;
+>                         } else {
 > --
-> Luiz Augusto von Dentz
-
-
-
---=20
-Luiz Augusto von Dentz
+> 2.39.5
+>
 
