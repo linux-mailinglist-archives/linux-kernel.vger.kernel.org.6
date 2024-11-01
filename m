@@ -1,136 +1,139 @@
-Return-Path: <linux-kernel+bounces-392688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C03A9B9718
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:06:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 103E89B9713
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:06:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6411F21EAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:06:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B737E1F21C3B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E33B1CDFD2;
-	Fri,  1 Nov 2024 18:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D301CDFAC;
+	Fri,  1 Nov 2024 18:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGFyzzrY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaTcdR1+"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2B31CDA27;
-	Fri,  1 Nov 2024 18:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7E413B7A3;
+	Fri,  1 Nov 2024 18:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730484385; cv=none; b=SaENCSdwvsHTbr19+CnDuPi9wceaXBWfW0PyVW9HPIU5dpAmoCBLvyQwdDhkKfZYylIGAPZhvl2JdVbQrRC+cIEi246KWZBkh3i2cWTBoHT1jO+ete62NRQYLtMcw6wCxIQvgJPgz+6klTniwZuc9xeAKwOcfwB4qhruDy/Z/PY=
+	t=1730484361; cv=none; b=rvGCnQYhmd/74/WQnI/MnczTbDYwqyXaB/Xy+Cr2ZgjjrXQ9r5emYc17i40y4GmzfEp8r4pA2p1cH8/klqYl3n2zoSTCuehp0KY55vra8O4QQVjtelDw7CNqac/r5yHGN2XHMZe1iWmRSjN+AtZuZyqgNStn3PnJ/y0tlPyFJYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730484385; c=relaxed/simple;
-	bh=JJjwqh39fcCVx0ubjs5+WcMycs+cNM3heEyzFIYdiEE=;
+	s=arc-20240116; t=1730484361; c=relaxed/simple;
+	bh=CZLlXdBbIDY8h5RsqUNyq0Wx7XCP97oTJn4ahgLhtoI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dPgV1Rt/ymYCdQK5j9hFiOYEXhcpcUbAmewzuyVt1omEIggwSWhKGkgi4d1VLuvN2rRLXzpABIAMRju/TvHepLWE1ZOQ/phq122+Cdss0HQm+Ax4rtYMdzANi/0VR+vAStec/9rxlZE7/L6Xm8PkYx20I2qzZ0PT/iGxMfjdcgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGFyzzrY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6537CC4CED4;
-	Fri,  1 Nov 2024 18:06:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730484384;
-	bh=JJjwqh39fcCVx0ubjs5+WcMycs+cNM3heEyzFIYdiEE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oGFyzzrYctRAw0+vSdKszYhCr6MZakc+bum0xBkNuoIQjBDZeALsgpY3fpU/YiVy/
-	 MTo8d1l8hu7PYeFzes6xmZUeJlbgCq1oLePpHv7X8KJZrPe/rIJW++V7LCiA7rgJcP
-	 uj9LI2Ws1OEVr3ma5YoOorGlgj6guMZNslSYXTDI/NOdAMqv48y7Mt2wttESaTHS0u
-	 c/vIqc0rPjpRCPr2f5R3l61Nn72sFushIGqPjLdP04vQioG+OOaOw00Wy01otQRN5V
-	 M/kSKhMjN7Ag2IktDM6GgLS/YZhl8ESusMWDp+OCz0BSSZrn4EuS4GL/gxC3NHIhR0
-	 xY0abIZFZxuTw==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb599aac99so20217991fa.1;
-        Fri, 01 Nov 2024 11:06:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6QYIwF9S7TltX5Anb20RpjNuKPpQ2VAGUEX16B7mB3jx+xlTuEvb+vi4CNP2nVzwpRIqKmDoSe16I@vger.kernel.org, AJvYcCUMPyr0QisaZiEZPxmWe8Fs9Hz8WxILKajW0IsUJqo3ccEOkHvEQ/dorbtRhAyuQLBOzJ/RMmPnMt5K@vger.kernel.org, AJvYcCV4kAcYaJCfmFRLJdCsQ1PGD67s7KY+A9yd0JdAvohhByeIOEaukY12LRwBdzTqc55+vhVGXHdSq8WkzQ==@vger.kernel.org, AJvYcCWJW+wt5Mfm6zfMpAofnf6ORKbcpYjuVAfjz0Taiy8AOYiaGV8Ng6r7hHfpKioY+UOwo0BlH2JfA/wPezgF@vger.kernel.org, AJvYcCX6FbLujOVTVKakOxhqYBtUkkBe6Aq3UNZkQr6JbN+BhA8ArF8SCl3q2xvcmjfq6gnXwhGuxNQ2LFxv@vger.kernel.org, AJvYcCXJzVdTyqKqngWg5uDO9KbU8PYNPZGY5Yec6svZ30t19dy063NrlLjMb6jpUJRGEQ0fmLOtMlm3gBY4w69g@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjFHqTF3dXW5NWnusKaSLsmtJitKLhAhb4axX+tzA/vd00pJFU
-	7QebvtBcNrTQ20jAFevfN1HFXQYoltvJbO+ZHrP8VYodAv1D4il53TT5Jjh+d2q2bDQZwAnh4Op
-	uWc87t9NxSxpnSV+eZyHxpR3ZrZY=
-X-Google-Smtp-Source: AGHT+IENQ8plh56/KCN7UexCPK7YNwOgQocP3X0UjZV+vdI494pX+xUTRKzwl4gLjC+Afni5PbyZK3sjbjZQziO76Fo=
-X-Received: by 2002:a2e:b88a:0:b0:2fb:5bf1:ca5e with SMTP id
- 38308e7fff4ca-2fedb831b8emr26176271fa.42.1730484383031; Fri, 01 Nov 2024
- 11:06:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=UznvMLWfjszQLI7no5kqzBvs78b8TPZmdg7E/mAItTGV+XaSWTjonh0bpe6lFrAUSjKW9sjBEt6zjB8Wcaj/NpuCopyupGr+txQ3P52zr4ROxU6VfTGfEKzKT3Spp5Yq0ahy+klzR2iFOK3pam4xS+3DWyo1NzjJdS8EnqWJcNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaTcdR1+; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2ad9825a7so1710409a91.0;
+        Fri, 01 Nov 2024 11:06:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730484360; x=1731089160; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CZLlXdBbIDY8h5RsqUNyq0Wx7XCP97oTJn4ahgLhtoI=;
+        b=WaTcdR1+Lyp0KiqD/VjzQZpHZbP6IyvqpxQK1My0pUc0mT+6EugPiRu/owg5GsWvT/
+         oMErS5jH1i6Q41Oo6TbdbKmOSTitRk3MMUsUJSg2Y3M9QME4khVsKkddzdlDf8Y66sZk
+         IS2UsZM4K7oz3n1sogE46V1YP5TzVyFfCpxjzMQklmsv291V3JW+FwOrXcZ8X2l887CJ
+         3ueJtYu0iluIUD4m2zmt+eoZ+8sIBS/V4RTjymH6zN3yHPqvNrzXXK4VxWIEDjA8rFdf
+         SdO51LdtJat+Iro3bghNnUAbICCKi4pmiXjI3PsEKG1zR6QRqXVr1jtG7Jfqxn8r/jjJ
+         1SIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730484360; x=1731089160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CZLlXdBbIDY8h5RsqUNyq0Wx7XCP97oTJn4ahgLhtoI=;
+        b=IgKk7njZQyAZQ8a2K+FWv16Q3SpluA4I7WTfaXdWB2DdUp/u6RNrpc5+CxCgPFiHeJ
+         LXnS57abRjb5r7Jt3TjL7Zpb8JecpxSZ01543CSOuoHHbxtl1BVMjoJVrdujrG+TfrEM
+         TEzBX4HXUttvV3Baozlen7dUB+mMKGB+m6AEb434u8+h5+k7AuSCBX4EX7ok9swqBnWt
+         JVbivVTfaRraZF48sQXS6/fo+EgXpc3EM1tEHIdMqfqSHdliV0iSuAIbbjjrJXgUeA2j
+         ipensJHRtwBDkmbH8U1UaMpNBEWKzeU27x0rNCwYFJ2aigbAfYu87G0ETdoTD48vZ06A
+         a9Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNEe79MIRvSYXgsNxMT5gjJhhIPFVpQjsXKQv3oiReyS+EasLg4G82rOBHBGyZge1/cxqvsu6HD31ok9ZinEDL7Q==@vger.kernel.org, AJvYcCVievtgQcjLi5r+nDpxKr60llwtCZBKZqW4BqY/oMQgeJN2rkU9MAoZ4UQSLrWCJo09mr6iBsHnULGrOsI=@vger.kernel.org, AJvYcCWMB0vNgU2KygDyO1wcPskJltpS3K+DOJxhOmAOlBtZJC6w15QQg3EweVLchT7YRQtt4EsgLlHwyFzLik3ViTHgDg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj2ckd9ka2naMtuyQEC1XcYYJz5KU6tqqFAH6A3A//Nzff1G92
+	nd5602tUL1tNtyc+lyGz+Z+TK/N5/xb28mQq0HMJG8H2OWqCswUzuTEXTnYqohpPf3wwCoc/nmY
+	aQSMcTjG8vQREAJoTIgVJXJ7ev3Q=
+X-Google-Smtp-Source: AGHT+IHXFd4v8n1IslBh0Yu0NspCzbBAKSE2UgMHzD8/lXtUpb9I/huSrX/AqdUys1/uF/QUQmCS0KqQciYZBEu7Czk=
+X-Received: by 2002:a17:90a:9a8c:b0:2c9:9658:d704 with SMTP id
+ 98e67ed59e1d1-2e8f11dcf62mr21331111a91.40.1730484359699; Fri, 01 Nov 2024
+ 11:05:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026051410.2819338-1-xur@google.com> <20241026051410.2819338-4-xur@google.com>
-In-Reply-To: <20241026051410.2819338-4-xur@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 2 Nov 2024 03:05:46 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR6Ni5FZJBK_FZXWZpMZG2ppvZFCtwjx9Z=o8L1e-CyjA@mail.gmail.com>
-Message-ID: <CAK7LNAR6Ni5FZJBK_FZXWZpMZG2ppvZFCtwjx9Z=o8L1e-CyjA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/7] Adjust symbol ordering in text output section
-To: Rong Xu <xur@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
-	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
-	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>, 
-	Krzysztof Pszeniczny <kpszeniczny@google.com>, Sriraman Tallam <tmsriram@google.com>, 
-	Stephane Eranian <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
+References: <cover.1730150953.git.jpoimboe@kernel.org> <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
+ <CAEf4BzY3xJ=W2qPD8i6UbSB=zNqpiA1gSd+SC3wKxQAJWjeHhA@mail.gmail.com>
+ <20241030061043.eo2vuqgsoqmjytjr@treble.attlocal.net> <CAEf4BzYd5OT9COBS4va435jqMzkjvvAHbe55AR6giv8pitUvAg@mail.gmail.com>
+ <20241031231320.h2hwns367e5byvyy@jpoimboe> <CAEf4BzZksT=GTs268KBiCsYxUcvWz5KUghjKQQR8OxGdoBt=6A@mail.gmail.com>
+ <20241101174119.qso5fdln2chdflav@jpoimboe>
+In-Reply-To: <20241101174119.qso5fdln2chdflav@jpoimboe>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 1 Nov 2024 11:05:47 -0700
+Message-ID: <CAEf4BzYCwvm0PTpoB7L5xKMaFTVUqNo8VuMHy7sRwpc4opXJzw@mail.gmail.com>
+Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, 
+	Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, 
+	Jordan Rome <jordalgo@meta.com>, Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, 
+	Jens Remus <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 26, 2024 at 7:14=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+On Fri, Nov 1, 2024 at 10:41=E2=80=AFAM Josh Poimboeuf <jpoimboe@kernel.org=
+> wrote:
 >
-> When the -ffunction-sections compiler option is enabled, each function
-> is placed in a separate section named .text.function_name rather than
-> putting all functions in a single .text section.
+> On Thu, Oct 31, 2024 at 04:28:08PM -0700, Andrii Nakryiko wrote:
+> > So all task_structs on the system using 104 bytes more, *permanently*
 >
-> However, using -function-sections can cause problems with the
-> linker script. The comments included in include/asm-generic/vmlinux.lds.h
-> note these issues.:
->   =E2=80=9CTEXT_MAIN here will match .text.fixup and .text.unlikely if de=
-ad
->    code elimination is enabled, so these sections should be converted
->    to use ".." first.=E2=80=9D
+> Either way it's permanent, we don't know when to free it until the task
+> struct is freed...
 >
-> It is unclear whether there is a straightforward method for converting
-> a suffix to "..".
+
+I'm not sure if we are arguing for the sake of arguing at this point
+:) Yes, for *those tasks* for which we at least once requested stack
+trace, that memory will stay, sure. But there are normally tons of
+threads that are almost completely idle and/or use so little CPU, that
+they won't ever be caught in the profiler, so their stack trace will
+never be requested.
+
+Sure, you can come up with a use case where you'll just go over each
+task and ask for stack trace for each of them, but that's not a common
+case.
+
+So, sorry, but no, I don't agree that these are equivalent things.
+Lazy memory allocation is a must, IMO.
+
+> > and *unconditionally*, is not a concern
 >
-> This patch modifies the order of subsections within the text output
-> section. Specifically, it repositions sections with certain fixed pattern=
-s
-> (for example .text.unlikely) before TEXT_MAIN, ensuring that they are
-> grouped and matched together. It also places .text.hot section at the
-> beginning of a page to help the TLB performance.
+> Of course it's a concern, that's why we're looking for something
+> better...
+>
+> > but lazy GFP_ATOMIC allocation when you actually need it is?
+>
+> We don't want to dip into the GFP_ATOMIC emergency reserves, those are
+> kept for more important things.
+>
+> Actually, I think I can just use GFP_NOWAIT here.
 
+Whatever semantics works for being called from NMI (even if it can fail).
 
-The fixed patterns are currently listed in this order:
-
-  .text.hot, .text_unlikely, .text.unknown, .text.asan.
-
-You reorder them to:
-
-  .text.asan, .text.unknown, .text.unlikely, .text.hot
-
-
-I believe it is better to describe your thoughts
-about the reshuffling among the fixed pattern sections.
-
-Otherwise, It is unclear to me.
-
-
-
-
---
-Best Regards
-Masahiro Yamada
+>
+> --
+> Josh
 
