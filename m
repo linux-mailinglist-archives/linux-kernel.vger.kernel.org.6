@@ -1,134 +1,178 @@
-Return-Path: <linux-kernel+bounces-392054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC109B8F2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:28:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508969B8F31
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:29:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 529C5283059
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:28:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FB751C20B80
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FB71714C8;
-	Fri,  1 Nov 2024 10:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2694616F900;
+	Fri,  1 Nov 2024 10:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dp17+hLh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O/cpWu87"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C01C160783;
-	Fri,  1 Nov 2024 10:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CAF1607B7;
+	Fri,  1 Nov 2024 10:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730456923; cv=none; b=mU8LHtEPoK95EASrcuPCKpQBARf862Jd7zPpGsxwOeoD5iZCPZv/5tllSMrvsOmhMczQQMynZtvrZFtKjjKH2SZWYZ/9Rh7V9YOOUUbqk18FKCwiYQ20hyISSiNRQOtZlLTClYbJJa6Z21XP1/mbecoy1TieSk9yGyDuAn+a3GI=
+	t=1730456933; cv=none; b=HLy/mUeDjdat9yn5BguUq2zTNIZL33GWQd+d+zM+7xUN1OF2n5RoaDVb8GqieZXytxV8V+IsiYGWIvFOyNnN4jD/SlhlnfMCMc1M4Qcb3ibhXSShlhumZhLMWtccNCcYDGQlkSr+XEPf5MHFvfJ/5O/7723Zrvj7BO4Df3daLGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730456923; c=relaxed/simple;
-	bh=mSFWh3r0scHZ1FR2DYIx0Tc2V6UZfNOyeDKa23YOOmQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Oti4BDohuQvNKzBY3gUG1Ha5F/4lewH1QnZlvuGQPqzRenKDNxo7iaJv+7ro3p+hCJbsmSYxuTIKXbFjSAokZJnbLeo2286RrvF1cKvLLxDI1vcrcOGQNvk8VmfvaKVGr/HV/mphtmDgn0JTCoUN7HuMBPWRzYmc9LPd9ZV787g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dp17+hLh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40FEBC4CECD;
-	Fri,  1 Nov 2024 10:28:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730456922;
-	bh=mSFWh3r0scHZ1FR2DYIx0Tc2V6UZfNOyeDKa23YOOmQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=Dp17+hLhUwjK7Vwhq5YmGk2Rk/Vmsz7lB3wJrvj8hnCTYk50wdScvildLCtA4iBAO
-	 6eA4s5JD6uE23Qn4gAlSnK9KxBlBRbni3VS+RIg95V3ZR/azVJqcizrcu6XMMtwJAS
-	 Mvjp40ENNcaw476FxBKgo0TQsqFR++HZ6ibnCwrrM//1IzgoZzHcNk39p6ZsvxZJ7S
-	 /6ePK9AoJdXCSJrtoWkjNiKAf21Y79MeAo+g1X290rINW5gItxttGySRNYb2V1w5wM
-	 LSIpd6L/3kNBbY9n6PC3N3wVb1ZkATqlA0IZVVOaZZ7pzVAgK9/bqmoMGP2MRUsCT1
-	 ME7TUSxuYp0XA==
+	s=arc-20240116; t=1730456933; c=relaxed/simple;
+	bh=qqzwqXPG5kSBUoiW7UPB9jyiWWdRAOWWw0hnaBf3hKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cxzm1D9HL/SQSd/Q6bghM+Bbin0soMSJZZ768HiHmCosSEv+ym1VSOUCP57zw3Pd0b5AZWQLUFbMBZhVtx+95AizqBHjj7Z+tPcsUxfSveDNMd0O8zqIJadzmvQyLR/Y/eqdFNFyeWD4qnEQjh1R43BeiwnGtaLI0Ft0M65KnEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O/cpWu87; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=eTuJEiCktuDlH3Z9V/7T4YRPqsrQfabfFwzhECL/W1g=; b=O/cpWu87U/LFdlec807JLoB9ue
+	ypsHWDDC6fzBADcZ/AKucxYP/B5OuIMLIVcDInkm1KfrEEKwE/rJL+5985NS3JhFxTagETibZwMfz
+	Egb6RCOc4O6hXRJQeCTu9UyKZkOHWWIS/O/86zDC5DC+t/CzmfrBR/u2NedfDB22iT1UL/q300bLz
+	bhaUAsjm4+26qeYGt/kCZerRADbf7rkU4DkIqj+bvsZpQLU1xUg+g4lce1Tj/VYAruRli8k2KPHGD
+	FMHuhaRm9WM7GzDaSKap78Jhlm+d33zcD6sCMQlteCkSr/PEDd4SnT8iGaVyE65WYqNdiA4L1rOHu
+	FP0I1rWA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6otW-0000000AfFc-2G7l;
+	Fri, 01 Nov 2024 10:28:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2F60A300599; Fri,  1 Nov 2024 11:28:42 +0100 (CET)
+Date: Fri, 1 Nov 2024 11:28:42 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org,
+	surenb@google.com, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] sched: Fix cgroup irq accounting for
+ CONFIG_IRQ_TIME_ACCOUNTING
+Message-ID: <20241101102842.GW14555@noisy.programming.kicks-ass.net>
+References: <20241101031750.1471-1-laoar.shao@gmail.com>
+ <20241101031750.1471-5-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 01 Nov 2024 12:28:38 +0200
-Message-Id: <D5ARS5Y7EATS.2GVNSARKXKIDI@kernel.org>
-Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
- <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
- <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
- <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
- <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
- <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
- <trenchboot-devel@googlegroups.com>
-Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
- kernel support
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Ross Philipson" <ross.philipson@oracle.com>,
- <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
- <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>
-X-Mailer: aerc 0.18.2
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
-In-Reply-To: <20240913200517.3085794-1-ross.philipson@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241101031750.1471-5-laoar.shao@gmail.com>
 
-On Fri Sep 13, 2024 at 11:04 PM EEST, Ross Philipson wrote:
-> The larger focus of the TrenchBoot project (https://github.com/TrenchBoot=
-) is to
-> enhance the boot security and integrity in a unified manner. The first ar=
-ea of
-> focus has been on the Trusted Computing Group's Dynamic Launch for establ=
-ishing
-> a hardware Root of Trust for Measurement, also know as DRTM (Dynamic Root=
- of
-> Trust for Measurement). The project has been and continues to work on pro=
-viding
-> a unified means to Dynamic Launch that is a cross-platform (Intel and AMD=
-) and
-> cross-architecture (x86 and Arm), with our recent involvment in the upcom=
-ing
-> Arm DRTM specification. The order of introducing DRTM to the Linux kernel
-> follows the maturity of DRTM in the architectures. Intel's Trusted eXecut=
-ion
-> Technology (TXT) is present today and only requires a preamble loader, e.=
-g. a
-> boot loader, and an OS kernel that is TXT-aware. AMD DRTM implementation =
-has
-> been present since the introduction of AMD-V but requires an additional
-> component that is AMD specific and referred to in the specification as th=
-e
-> Secure Loader, which the TrenchBoot project has an active prototype in
-> development. Finally Arm's implementation is in specification development=
- stage
-> and the project is looking to support it when it becomes available.
->
-> This patchset provides detailed documentation of DRTM, the approach used =
-for
-> adding the capbility, and relevant API/ABI documentation. In addition to =
-the
-> documentation the patch set introduces Intel TXT support as the first pla=
-tform
-> for Linux Secure Launch.
->
-> A quick note on terminology. The larger open source project itself is cal=
-led
-> TrenchBoot, which is hosted on Github (links below). The kernel feature e=
-nabling
-> the use of Dynamic Launch technology is referred to as "Secure Launch" wi=
-thin
-> the kernel code. As such the prefixes sl_/SL_ or slaunch/SLAUNCH will be =
-seen
-> in the code. The stub code discussed above is referred to as the SL stub.
+On Fri, Nov 01, 2024 at 11:17:50AM +0800, Yafang Shao wrote:
+> After enabling CONFIG_IRQ_TIME_ACCOUNTING to monitor IRQ pressure in our
+> container environment, we observed several noticeable behavioral changes.
+> 
+> One of our IRQ-heavy services, such as Redis, reported a significant
+> reduction in CPU usage after upgrading to the new kernel with
+> CONFIG_IRQ_TIME_ACCOUNTING enabled. However, despite adding more threads
+> to handle an increased workload, the CPU usage could not be raised. In
+> other words, even though the container’s CPU usage appeared low, it was
+> unable to process more workloads to utilize additional CPU resources, which
+> caused issues.
 
-1. I don't see any tags in most of the patches so don't get the rush. This
-   includes also patches for x86. Why I would care to review TPM patches
-   when there is over a dozen unreviewed and untested patches before it?
-2. TPM patches have been in circulation in and out of the patch set
-   for some time now with little or no improvement.
+> We can verify the CPU usage of the test cgroup using cpuacct.stat. The
+> output shows:
+> 
+>   system: 53
+>   user: 2
+> 
+> The CPU usage of the cgroup is relatively low at around 55%, but this usage
+> doesn't increase, even with more netperf tasks. The reason is that CPU0 is
+> at 100% utilization, as confirmed by mpstat:
+> 
+>   02:56:22 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>   02:56:23 PM    0    0.99    0.00   55.45    0.00    0.99   42.57    0.00    0.00    0.00    0.00
+> 
+>   02:56:23 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>   02:56:24 PM    0    2.00    0.00   55.00    0.00    0.00   43.00    0.00    0.00    0.00    0.00
+> 
+> It is clear that the %soft is not accounted into the cgroup of the
+> interrupted task. This behavior is unexpected. We should account for IRQ
+> time to the cgroup to reflect the pressure the group is under.
+> 
+> After a thorough analysis, I discovered that this change in behavior is due
+> to commit 305e6835e055 ("sched: Do not account irq time to current task"),
+> which altered whether IRQ time should be charged to the interrupted task.
+> While I agree that a task should not be penalized by random interrupts, the
+> task itself cannot progress while interrupted. Therefore, the interrupted
+> time should be reported to the user.
+> 
+> The system metric in cpuacct.stat is crucial in indicating whether a
+> container is under heavy system pressure, including IRQ/softirq activity.
+> Hence, IRQ/softirq time should be accounted for in the cpuacct system
+> usage, which also applies to cgroup2’s rstat.
+> 
+> This patch reintroduces IRQ/softirq accounting to cgroups.
 
-Why the sudden buzz? I have not heard much about this since last early
-summer.  Have to spend some time recalling what this is about anyway. I
-cannot trust that my tags make any sense before more reviewed/tested-by
-tags before the TPM patches.
+How !? what does it actually do?
 
-BR, Jarkko
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> ---
+>  kernel/sched/core.c  | 33 +++++++++++++++++++++++++++++++--
+>  kernel/sched/psi.c   | 14 +++-----------
+>  kernel/sched/stats.h |  7 ++++---
+>  3 files changed, 38 insertions(+), 16 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 06a06f0897c3..5ed2c5c8c911 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -5579,6 +5579,35 @@ __setup("resched_latency_warn_ms=", setup_resched_latency_warn_ms);
+>  static inline u64 cpu_resched_latency(struct rq *rq) { return 0; }
+>  #endif /* CONFIG_SCHED_DEBUG */
+>  
+> +#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+> +static void account_irqtime(struct rq *rq, struct task_struct *curr,
+> +			    struct task_struct *prev)
+> +{
+> +	int cpu = smp_processor_id();
+> +	s64 delta;
+> +	u64 irq;
+> +
+> +	if (!static_branch_likely(&sched_clock_irqtime))
+> +		return;
+> +
+> +	irq = irq_time_read(cpu);
+> +	delta = (s64)(irq - rq->psi_irq_time);
+
+At this point the variable is no longer exclusive to PSI and should
+probably be renamed.
+
+> +	if (delta < 0)
+> +		return;
+> +
+> +	rq->psi_irq_time = irq;
+> +	psi_account_irqtime(rq, curr, prev, delta);
+> +	cgroup_account_cputime(curr, delta);
+> +	/* We account both softirq and irq into softirq */
+> +	cgroup_account_cputime_field(curr, CPUTIME_SOFTIRQ, delta);
+
+This seems wrong.. we have CPUTIME_IRQ.
+
+> +}
+
+In fact, much of this seems like it's going about things sideways.
+
+Why can't you just add the cgroup_account_*() garbage to
+irqtime_account_irq()? That is were it's still split out into softirq
+and irq.
+
+But the much bigger question is -- how can you be sure that this
+interrupt is in fact for the cgroup you're attributing it to? Could be
+for an entirely different cgroup.
+
+
 
