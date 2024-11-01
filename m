@@ -1,209 +1,147 @@
-Return-Path: <linux-kernel+bounces-393013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C339B9ACF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:26:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0219B9AD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2597BB2195F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 028282823E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF34D1D9A50;
-	Fri,  1 Nov 2024 22:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05321D9A50;
+	Fri,  1 Nov 2024 22:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z5qGOj6c"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SpBP1jo2"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8B91AAE06
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 22:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BD31AAE06
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 22:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730499964; cv=none; b=VEuiTy285oC0KXrAs0KAyQCe/jmT0TGit9gsOWHAwy07jIljnKQo505dOwWa+UItZDPDZjZES6blJJbnYV3zm4QRPP437l3WBJCUT87ynXBHdzpK+AkXcxaCrDse4BK3CDcLniPf6JyZI9kt1mdpebJQ8iAL5w97kuMGvcpR9xI=
+	t=1730500012; cv=none; b=XeneY505kAuTcMMkcT0ndq9+zX0TJTTR67AeQQjrQGyGOKBHpB5s8BGJEz0/1/pZSHRR1TZmHiSG4b7KRCUJhEHhD3w1TorWlM1HPhCs2y5FmXX5nBA8RV8HPos0pWnbpMeDvqudB/+lxflPQ26JAn2c0IUAg06Hf9pi+bSrW5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730499964; c=relaxed/simple;
-	bh=8WgB+62A7m8cWy56yXF5qm8X2qWqEnpgx23YDfgFxSQ=;
-	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=slONGroGYXUkbMa/VwkhbPJeZys2ULQbjVQEtKUrMiBojqBkwFagSM1A46lfHkz7ERdOsnnIfmmojqL/TO7fpGjl+XII+p4ogiUF4VamwKPjvJ8h5GE+TWj3tJH6KiHHRvyBylD2mhX5pbZH4P8C0Macv2QypZymbjAitjnIWQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z5qGOj6c; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a4c303206eso8931365ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 15:26:02 -0700 (PDT)
+	s=arc-20240116; t=1730500012; c=relaxed/simple;
+	bh=T8PyvAA4h8EW6lsYtCHMxijEtV/sBCs/yJPa21lQE0w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DfCEMQYv6yL5GQAtMdpzMBbPiM1Vc9pM1TdFuw0M6o9PIZEtZDl8RIa05X/H3rCyLLGSE+LAmwS4usV5TAl/kdU0o9tSe/FcwqNOmaWG8rPSDizWt57wAPowZpm9oHfooW97tlLGwBFiQDWa7QHKpb+aGTlhqdOR0l9B1uDZvfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SpBP1jo2; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e292926104bso2264757276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 15:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730499962; x=1731104762; darn=vger.kernel.org;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ge729bSSFQAYpLNOdK0tpr7ndevPxzGAiO91GEVbAI=;
-        b=Z5qGOj6cp1OojGsOY+MNhmmCsflofIh7dT843Msu4Dd1Vs4RI9dW1fxchTH1wDJlzj
-         6M6lqBZ4v+D/IdmapvHPeKSFK38kGC6VmqlVm33meWxNE+4cqAWMNBZNBW+8d4/v95FR
-         xXLdiG7pTajcnHsskUP9bRfkGOlk0v6zfn810=
+        d=linaro.org; s=google; t=1730500009; x=1731104809; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZudTzd0+bQI8YAgJ9zoL8NILhzadYVubfY3jlJ2hS3Y=;
+        b=SpBP1jo2K1LehUkc4+mvSjSikpuR5RUq3yPwLz5UpiFibUuva6c8yqCsmzSOa0jVmN
+         5DCJBgIT54b6Y+A2v2Xq1Rgo0vXje5qCFAm0W3Na0tvZo7qP9jBV4PD9E6Ofhaw5+FHt
+         9bFXgrTU+GMv428kWnHCYwsF52oG5wtbtAwRIr9pNrFuPgv9pVUW6zaFfdLf11OD9XBa
+         mO7c3Djbu7wpG8k+JBGAWQ1GPgOod7lFSvbx8ntEgWR4j5BzCUXvbe8nBd4tf23w1qY7
+         F+gmm36FEaojiYCZp5P/IhLYrUShVHNn0selonUX3s1p3k03nVwLqsHjCffO/qqYusyk
+         /U0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730499962; x=1731104762;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1730500009; x=1731104809;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8ge729bSSFQAYpLNOdK0tpr7ndevPxzGAiO91GEVbAI=;
-        b=xDkGuXPicA+bpsQ4WibRg6VClfOY6o6teE+NTCmllfC7N3siB4OjjihPHe8YHWqBJf
-         FLyuuQ3T1cJRWXTFzrtc2cltV4+xwieEubCCq5zu5eXlFoNqcJ2w72/Pxuh32dy6qfFi
-         AL79REEPeYioR+ZvtIRZesy7Wmi2s6NrpjInrx1VMV6PSfl0J48wXrPtnX+tjd5VjgEY
-         tRCStMpp8a2kZoQzI5boY1HhWAOgRhE8cAOGlwuGDW59hs2q5Avu8djgUA5XskW6X3WY
-         pb2Of9+wt9CPkvgCDJWRVh39TIezu3nsoZsoydoV4GMkU+JYCA2pjz1WJXUqEBT5sE2O
-         Vnrg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2rDcgjvOJhKRgTnmuGW0s9oMNL62msIx0o/4Om1v7qsDHS21nB8eezvdULdoKgL1ldIZXc8HwX5X0pqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXpwHpwLgW3wwdjACJxTw/BztNxR5K+6ugEHy6FhG8IT5q8rqs
-	D2X/vLPCaEtQCgIb2ijtFG4KtuyKHEQGl7arzGbhptYuS7QrvnpaFw2GShwtOjcj5z3WBg9U7rf
-	o
-X-Google-Smtp-Source: AGHT+IEvYE5zUHozExbViAHlGqJiGaGQHg144qdlk8/veuvlKcr3K0IHDHd14kM6ALRohdTfbejSxA==
-X-Received: by 2002:a05:6e02:152b:b0:3a6:af68:6679 with SMTP id e9e14a558f8ab-3a6b03cc437mr62099095ab.25.1730499961547;
-        Fri, 01 Nov 2024 15:26:01 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6adbf2303sm8391095ab.47.2024.11.01.15.26.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 15:26:00 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------5MhXncmYMT4l0dO285lDHegg"
-Message-ID: <3ae64072-4327-4e92-b0f0-ead3743d4d54@linuxfoundation.org>
-Date: Fri, 1 Nov 2024 16:25:59 -0600
+        bh=ZudTzd0+bQI8YAgJ9zoL8NILhzadYVubfY3jlJ2hS3Y=;
+        b=X1Mx3xlBh9+RuAmS6XbObAQOOTcN26vCEqY5c+r78b3tXUbKJQn9AaFCaSV2IfK5KT
+         1zYcmzullT5fnZOXpehObMIin+G7l/FQ//Y6/EcuTFlNjASKCEIUWp/8irPwMhCoY+37
+         wW02iz18cizrL/PvHiOezWFyfPdm19698JtSrbOzrz36KeMX3+NtXkOc/0bgYtprlTuT
+         gzGHzdw+BMmZLeDYwNoznGDFPT06PX04a7xRiiYMNqWtL4nsbM4aJ55smbEAygEPW7/O
+         PwIsIKiSA314Iezz6aLe6vHGxvi7tbtykhSDhiQ0srbTXveAoNCBqClFnhCzy+msS9sp
+         4O7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUGsbIkHMu2HeNajHvFFtDaGPoicFO26W6swGxs+KVyAVDd+nlidztmDgcB7wDb0A5d0MHMcy9bEO22crI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCx3Xjznm+6MYZKtXdWgFLjjMX6hsEMRMFRvW4VqlogzMLtgsq
+	Fe6fdF9qu6NrhE2UyzxfylxrCdX+ou7cUIKh6idDfNIjAvz4QdThA24PCjdo60X6mAHc/pNrCMk
+	3MQXzn6qr6Zg0ZlkUxnHgd5blBnLu8Co1lNEl7g==
+X-Google-Smtp-Source: AGHT+IGtriCDF4xwF2pEv4oKmK1IxTM5b7GjmdDA6xwQNU8GyukANzaIo/LVK5L70uLC6wImMimFPrxbBm/wgfMeDA8=
+X-Received: by 2002:a05:6902:2182:b0:e2e:46e5:c2ca with SMTP id
+ 3f1490d57ef6-e3087a599c7mr22672334276.14.1730500009290; Fri, 01 Nov 2024
+ 15:26:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-From: Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] Kselftest fixes update for Linux 6.12-rc6
+References: <20241019-msm-hdmi-interlaced-v1-1-03bf85133445@linaro.org> <52229a96-64b0-48d0-9868-31be42b12db1@quicinc.com>
+In-Reply-To: <52229a96-64b0-48d0-9868-31be42b12db1@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sat, 2 Nov 2024 00:26:38 +0200
+Message-ID: <CAA8EJpps+spdowEbDoO2zNfyn+DnWwPgnZiFMw13ZE=iAnJEnA@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/hdmi: mark interlace_allowed as true
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This is a multi-part message in MIME format.
---------------5MhXncmYMT4l0dO285lDHegg
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Fri, 1 Nov 2024 at 23:41, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>
+>
+>
+> On 10/18/2024 2:10 PM, Dmitry Baryshkov wrote:
+> > The MSM HDMI driver supports interlaced modes. Set the corresponding
+> > flag to allow interlaced modes on the corresponding connectors.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/gpu/drm/msm/hdmi/hdmi_bridge.c | 1 +
+> >   1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> > index 4a5b5112227f..643c152e6380 100644
+> > --- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> > +++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> > @@ -336,6 +336,7 @@ int msm_hdmi_bridge_init(struct hdmi *hdmi)
+> >       bridge->funcs = &msm_hdmi_bridge_funcs;
+> >       bridge->ddc = hdmi->i2c;
+> >       bridge->type = DRM_MODE_CONNECTOR_HDMIA;
+> > +     bridge->interlace_allowed = true;
+> >       bridge->ops = DRM_BRIDGE_OP_HPD |
+> >               DRM_BRIDGE_OP_DETECT |
+> >               DRM_BRIDGE_OP_EDID;
+> >
+>
+> I had quite a bit of discussion on this internally because this spans
+> quite a few generations of chipsets.
+>
+> On very old hardware, even before msm8996, there was dedicated hardware
+> de-interlacer. But even on msm8996 or other HDMI supported chipsets
+> where the handling of if (mode->flags & DRM_MODE_FLAG_INTERLACE) is
+> present, these were because its carry forward of older interface code.
+>
+> The way we handle interlaced formats today, is software needs to handle
+> the part of dividing height / 2 and width * 2 and adjust the source crop
+> if necessary. This part has moved to userspace for recent chips.
+>
+> Othwerise, we will need to add this part in the dpu driver to adjust
+> this. I am not seeing this part there yet. So may I know how you
+> validated this change? Something similar to :
+>
+> https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/LE.UM.1.3.r3.25/drivers/gpu/drm/msm/sde/sde_plane.c#L1340
+>
+> If we add this part first to dpu code, then we can mark interlace_allowed.
 
-Hi Linus,
+I think you are mixing the interlaced formats and interlaced output.
+The code that you have pointed to is related to hardware deinterlacing
+- in other words taking the interlaced framebuffer and outputting it
+to the progressive display.
 
-Please pull the following kselftest fixes update for Linux 6.12-rc6.
+The interlace_allowed flag controls a different feature - filtering of
+the internalced modes (aka 576i, 1080i, etc). In this case we are
+using progressive frames, but the HDMI outputs a picture as two
+separate fields. I have validated this by outputting image (modetest)
+to the external HDMI display on IFC6410 and on DB820c boards.
 
-Kselftest fixes for Linux 6.12-rc6
-
-- fix syntax error in frequency calculation arithmetic expression in
-   intel_pstate run.sh
-- add missing cpupower dependency check intel_pstate run.sh
-- fix idmap_mount_tree_invalid test failure due to incorrect argument
-- fix watchdog-test run leaving the watchdog timer enabled causing
-   system reboot. With this fix, the test disables the watchdog timer
-   when it gets terminated with SIGTERM, SIGKILL, and SIGQUIT in addition
-   to SIGINT
-
-diff is attached.
-
-thanks,
--- Shuah
-
-----------------------------------------------------------------
-The following changes since commit fe05c40ca9c18cfdb003f639a30fc78a7ab49519:
-
-   selftest: hid: add the missing tests directory (2024-10-16 15:55:14 -0600)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-fixes-6.12-rc6
-
-for you to fetch changes up to dc1308bee1ed03b4d698d77c8bd670d399dcd04d:
-
-   selftests/watchdog-test: Fix system accidentally reset after watchdog-test (2024-10-28 21:34:43 -0600)
-
-----------------------------------------------------------------
-linux_kselftest-fixes-6.12-rc6
-
-Kselftest fixes for Linux 6.12-rc6
-
-- fix syntax error in frequency calculation arithmetic expression in
-   intel_pstate run.sh
-- add missing cpupower dependency check intel_pstate run.sh
-- fix idmap_mount_tree_invalid test failure due to incorrect argument
-- fix watchdog-test run leaving the watchdog timer enabled causing
-   system reboot. With this fix, the test disables the watchdog timer
-   when it gets terminated with SIGTERM, SIGKILL, and SIGQUIT in addition
-   to SIGINT
-
-----------------------------------------------------------------
-Alessandro Zanni (2):
-       selftests/intel_pstate: fix operand expected error
-       selftests/intel_pstate: check if cpupower is installed
-
-Li Zhijian (1):
-       selftests/watchdog-test: Fix system accidentally reset after watchdog-test
-
-zhouyuhang (1):
-       selftests/mount_setattr: fix idmap_mount_tree_invalid failed to run
-
-  tools/testing/selftests/intel_pstate/run.sh                | 9 +++++++--
-  tools/testing/selftests/mount_setattr/mount_setattr_test.c | 9 +++++++++
-  tools/testing/selftests/watchdog/watchdog-test.c           | 6 ++++++
-  3 files changed, 22 insertions(+), 2 deletions(-)
----------------------------------------------------------------
---------------5MhXncmYMT4l0dO285lDHegg
-Content-Type: text/x-patch; charset=UTF-8;
- name="linux_kselftest-fixes-6.12-rc6.diff"
-Content-Disposition: attachment;
- filename="linux_kselftest-fixes-6.12-rc6.diff"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWdpdCBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2ludGVsX3BzdGF0ZS9ydW4u
-c2ggYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9pbnRlbF9wc3RhdGUvcnVuLnNoCmluZGV4
-IGU3MDA4ZjYxNGFkNy4uNmEzYjg1MDMyNjRlIDEwMDc1NQotLS0gYS90b29scy90ZXN0aW5n
-L3NlbGZ0ZXN0cy9pbnRlbF9wc3RhdGUvcnVuLnNoCisrKyBiL3Rvb2xzL3Rlc3Rpbmcvc2Vs
-ZnRlc3RzL2ludGVsX3BzdGF0ZS9ydW4uc2gKQEAgLTQ0LDYgKzQ0LDExIEBAIGlmIFsgJFVJ
-RCAhPSAwIF0gJiYgWyAkRVZBTFVBVEVfT05MWSA9PSAwIF07IHRoZW4KICAgICBleGl0ICRr
-c2Z0X3NraXAKIGZpCiAKK2lmICEgY29tbWFuZCAtdiBjcHVwb3dlciAmPiAvZGV2L251bGw7
-IHRoZW4KKwllY2hvICRtc2cgY3B1cG93ZXIgY291bGQgbm90IGJlIGZvdW5kLCBwbGVhc2Ug
-aW5zdGFsbCBpdCA+JjIKKwlleGl0ICRrc2Z0X3NraXAKK2ZpCisKIG1heF9jcHVzPSQoKCQo
-bnByb2MpLTEpKQogCiBmdW5jdGlvbiBydW5fdGVzdCAoKSB7CkBAIC04Nyw5ICs5Miw5IEBA
-IG1rdF9mcmVxPSR7X21rdF9mcmVxfTAKIAogIyBHZXQgdGhlIHJhbmdlcyBmcm9tIGNwdXBv
-d2VyCiBfbWluX2ZyZXE9JChjcHVwb3dlciBmcmVxdWVuY3ktaW5mbyAtbCB8IHRhaWwgLTEg
-fCBhd2sgJyB7IHByaW50ICQxIH0gJykKLW1pbl9mcmVxPSQoKCRfbWluX2ZyZXEgLyAxMDAw
-KSkKK21pbl9mcmVxPSQoKF9taW5fZnJlcSAvIDEwMDApKQogX21heF9mcmVxPSQoY3B1cG93
-ZXIgZnJlcXVlbmN5LWluZm8gLWwgfCB0YWlsIC0xIHwgYXdrICcgeyBwcmludCAkMiB9ICcp
-Ci1tYXhfZnJlcT0kKCgkX21heF9mcmVxIC8gMTAwMCkpCittYXhfZnJlcT0kKChfbWF4X2Zy
-ZXEgLyAxMDAwKSkKIAogCiBbICRFVkFMVUFURV9PTkxZIC1lcSAwIF0gJiYgZm9yIGZyZXEg
-aW4gYHNlcSAkbWF4X2ZyZXEgLTEwMCAkbWluX2ZyZXFgCmRpZmYgLS1naXQgYS90b29scy90
-ZXN0aW5nL3NlbGZ0ZXN0cy9tb3VudF9zZXRhdHRyL21vdW50X3NldGF0dHJfdGVzdC5jIGIv
-dG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvbW91bnRfc2V0YXR0ci9tb3VudF9zZXRhdHRyX3Rl
-c3QuYwppbmRleCBjNmE4YzczMmI4MDIuLjY4ODAxZTFhOWVjMiAxMDA2NDQKLS0tIGEvdG9v
-bHMvdGVzdGluZy9zZWxmdGVzdHMvbW91bnRfc2V0YXR0ci9tb3VudF9zZXRhdHRyX3Rlc3Qu
-YworKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9tb3VudF9zZXRhdHRyL21vdW50X3Nl
-dGF0dHJfdGVzdC5jCkBAIC0xNDE0LDYgKzE0MTQsMTMgQEAgVEVTVF9GKG1vdW50X3NldGF0
-dHJfaWRtYXBwZWQsIGlkbWFwX21vdW50X3RyZWVfaW52YWxpZCkKIAlBU1NFUlRfRVEoZXhw
-ZWN0ZWRfdWlkX2dpZCgtRUJBREYsICIvdG1wL0IvYiIsIDAsIDAsIDApLCAwKTsKIAlBU1NF
-UlRfRVEoZXhwZWN0ZWRfdWlkX2dpZCgtRUJBREYsICIvdG1wL0IvQkIvYiIsIDAsIDAsIDAp
-LCAwKTsKIAorCUFTU0VSVF9FUShtb3VudCgidGVzdGluZyIsICIvbW50L0EiLCAicmFtZnMi
-LCBNU19OT0FUSU1FIHwgTVNfTk9ERVYsCisJCQkic2l6ZT0xMDAwMDAsbW9kZT03MDAiKSwg
-MCk7CisKKwlBU1NFUlRfRVEobWtkaXIoIi9tbnQvQS9BQSIsIDA3NzcpLCAwKTsKKworCUFT
-U0VSVF9FUShtb3VudCgiL3RtcCIsICIvbW50L0EvQUEiLCBOVUxMLCBNU19CSU5EIHwgTVNf
-UkVDLCBOVUxMKSwgMCk7CisKIAlvcGVuX3RyZWVfZmQgPSBzeXNfb3Blbl90cmVlKC1FQkFE
-RiwgIi9tbnQvQSIsCiAJCQkJICAgICBBVF9SRUNVUlNJVkUgfAogCQkJCSAgICAgQVRfRU1Q
-VFlfUEFUSCB8CkBAIC0xNDMzLDYgKzE0NDAsOCBAQCBURVNUX0YobW91bnRfc2V0YXR0cl9p
-ZG1hcHBlZCwgaWRtYXBfbW91bnRfdHJlZV9pbnZhbGlkKQogCUFTU0VSVF9FUShleHBlY3Rl
-ZF91aWRfZ2lkKC1FQkFERiwgIi90bXAvQi9CQi9iIiwgMCwgMCwgMCksIDApOwogCUFTU0VS
-VF9FUShleHBlY3RlZF91aWRfZ2lkKG9wZW5fdHJlZV9mZCwgIkIvYiIsIDAsIDAsIDApLCAw
-KTsKIAlBU1NFUlRfRVEoZXhwZWN0ZWRfdWlkX2dpZChvcGVuX3RyZWVfZmQsICJCL0JCL2Ii
-LCAwLCAwLCAwKSwgMCk7CisKKwkodm9pZCl1bW91bnQyKCIvbW50L0EiLCBNTlRfREVUQUNI
-KTsKIH0KIAogVEVTVF9GKG1vdW50X3NldGF0dHIsIG1vdW50X2F0dHJfbm9zeW1mb2xsb3cp
-CmRpZmYgLS1naXQgYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy93YXRjaGRvZy93YXRjaGRv
-Zy10ZXN0LmMgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy93YXRjaGRvZy93YXRjaGRvZy10
-ZXN0LmMKaW5kZXggYmM3MWNiY2EwZGRlLi5hMWY1MDZiYTU1NzggMTAwNjQ0Ci0tLSBhL3Rv
-b2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL3dhdGNoZG9nL3dhdGNoZG9nLXRlc3QuYworKysgYi90
-b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy93YXRjaGRvZy93YXRjaGRvZy10ZXN0LmMKQEAgLTMz
-NCw3ICszMzQsMTMgQEAgaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKmFyZ3ZbXSkKIAogCXBy
-aW50ZigiV2F0Y2hkb2cgVGlja2luZyBBd2F5IVxuIik7CiAKKwkvKgorCSAqIFJlZ2lzdGVy
-IHRoZSBzaWduYWxzCisJICovCiAJc2lnbmFsKFNJR0lOVCwgdGVybSk7CisJc2lnbmFsKFNJ
-R1RFUk0sIHRlcm0pOworCXNpZ25hbChTSUdLSUxMLCB0ZXJtKTsKKwlzaWduYWwoU0lHUVVJ
-VCwgdGVybSk7CiAKIAl3aGlsZSAoMSkgewogCQlrZWVwX2FsaXZlKCk7Cg==
-
---------------5MhXncmYMT4l0dO285lDHegg--
+-- 
+With best wishes
+Dmitry
 
