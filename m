@@ -1,137 +1,110 @@
-Return-Path: <linux-kernel+bounces-392392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5E89B938A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:45:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 524AA9B938F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:45:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B39B1C21ACB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABE8A28336E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B2C1A76D2;
-	Fri,  1 Nov 2024 14:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EAA1AAE10;
+	Fri,  1 Nov 2024 14:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kNNTweVN"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+IulWqz"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526751A7273;
-	Fri,  1 Nov 2024 14:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1581A7273;
+	Fri,  1 Nov 2024 14:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472295; cv=none; b=Hv6Zrv+l979Yf/RZzzfysXbOXU/IjogovNbg9GL60yc58UGgWlw72LRjqyuk/+Ph1UXFCVMfybMyn7KIgK1SNrpVxVAc1veHa2tsVlT75+fkiFkn/WCDM+KTM++M70JaudwGaAtKPQMns9a20ko9QsJ0dTtpnviAbavkv3MeorA=
+	t=1730472301; cv=none; b=A42dIjEoVHEbiSdYRPwonM9yYwNxt/wQjzJy+tuTj/ZEtmHzu1/pAo9tTuYLHAcHUvzD+M/tmW3uyf51KsXIIPRLg77sPiGL77Vv81dPl23ztTYuHhhVoQTAtfkv4H2K9SrfUUtdCdkXBbcueV8F/Vg4H5KvqhHllqXseaBl7SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472295; c=relaxed/simple;
-	bh=imtIy6t0rdqWmx22fOAJMcxKAb1MR2H0nT8FL2rjcaE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DG43NM7X+QdKQPzdlJOyKstgrwv5qvt8VblHqMaMRo1KomiEROkuKjMrVdPc322uMlBrz7rt5/2nLwTQ+Nm+xU5pgz92PKykx8sH3BWk0jU411Oj01lUunonYexTCwKVvsWudktzwDsXzG1z+6GP3t+Js0M/aXx2QMn4Cun811o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kNNTweVN; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A1Eikn0118034;
-	Fri, 1 Nov 2024 09:44:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730472286;
-	bh=TEvXM9nas2G5E+MLH3nAkA5t7zWzN2EXcd0zrqWDXcw=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=kNNTweVNP8vpJobaC3xXB5ifbCdtMeTdk1861uAjXGOiXsQ/AdYTXFMdpNi6Drxc6
-	 vUxS5lQWQ39Bp3oTtW8T0JrBkK5CCY7FCrG1/jxQfUQCf/ixu54c4zRPYOkaRVuRUl
-	 zjs6H4vHxC5Y4jx4eUtSc19AJisgjiJP8nYkNikU=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A1EikI7013217
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 1 Nov 2024 09:44:46 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 1
- Nov 2024 09:44:45 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 1 Nov 2024 09:44:45 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A1Eijgl006619;
-	Fri, 1 Nov 2024 09:44:45 -0500
-Date: Fri, 1 Nov 2024 09:44:45 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Kevin Hilman <khilman@baylibre.com>, <linux-pm@vger.kernel.org>,
-        Vibhore
- Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
-        Akashdeep Kaur
-	<a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>,
-        Markus
- Schneider-Pargmann <msp@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] pmdomain: ti_sci: collect and send low-power mode
- constraints
-Message-ID: <20241101144445.56ejnuoxshqwns37@boots>
-References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
- <173029317079.2440963.17313738472826934777.b4-ty@ti.com>
- <CAPDyKFptHq6xkKSAmeHsEuhBoEhzvudcMf2+nG08MFPwnMi+ew@mail.gmail.com>
- <7hv7x9qsvt.fsf@baylibre.com>
- <CAPDyKFpdgg+kM_Ot5GPTpMUtjmBF-pUhCeRpVb=j852_7qm=3A@mail.gmail.com>
+	s=arc-20240116; t=1730472301; c=relaxed/simple;
+	bh=XrPLkYhc9KMv8mJsqXJQNqryPfxpatNX1XegManFB6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4plnAaepV2AAcudNrK2zbjcUPjaJCnC1zYVzJp9esDSvVj04nFyZoogU5F1sJwUJErE+lVn/lkonQ3m6Ej1mMPSdSIxPqy9HwRx2bDu6ntPkNBfkhVr2T/RhV/2opldw8ZtRBpgls3x3I+fowhh44zt4JOfeXPAncJqs6DCXaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+IulWqz; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so1815444b3a.3;
+        Fri, 01 Nov 2024 07:44:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730472299; x=1731077099; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nFB9X8+bXdjRMgra+BnrPwuOPpZev8yICCAZV0Ubx6Y=;
+        b=b+IulWqz4PsD2BjLWEnMbMkVjEUtlb8ln8ZbWkQxOkwN71Yvvnj5vVLGVju0EZBzLe
+         K3KVstRcczho8m3+Vynmc3B+uBpYC4WslRN9yIteJBgCZ8dEZXgjM4wbeUyAdpYkbHf4
+         NtpNrDtr0K/094819MP4SsKdmernRD/4rlM2qBdc/SLkyx+vjrgCDLYp/zfoLlJ4WKv4
+         LaD9fkY8WBhhE7zyvOjtU3E/hdbR+oq0lG7CKzqp+XwOnjuy+Q+CZCpCpLxS8RQNlSL+
+         kL/nFskBI8LekMqNWWzhRDWwUBCFrov3uMtN9SSNbZr31RHZBHLY7HI/mTzFFt63HW09
+         pWKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730472299; x=1731077099;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nFB9X8+bXdjRMgra+BnrPwuOPpZev8yICCAZV0Ubx6Y=;
+        b=dO3Tg5Pw2fQDd/AWoM6brFvjChwcI2afx6IQ7TqCI+hDG87FTDiAbuRX9e3fKAFN/t
+         u7ANx7zy6zzeXGA+OY1xvpU7vhNO0wHvK+XFfJXQQ013fVUr1qpIaWkkz44duaLEeySI
+         cuqTNEIqsfiLPiQW9iSkcKQ0Sk2l2+vfb0SF+sNXqTVlq1+sczkNMb4vfYtQ9liFIPKn
+         +BL4MsQmP0krE8vm4g/nb85YjrFkCj8JNEFAwku7zzx4x41Hmo3XEp8afF+Fpb/GugTC
+         Olvepemf91fSaUNRXYp3HosgvyljxuwH+glh4N9FQXV8rU5ilCk8GrOStj/HCRAXUSle
+         DykA==
+X-Forwarded-Encrypted: i=1; AJvYcCUES1bW6HBUfTbuwvPeVv3ZHS/VNenadiW7ciYlLsEaBV/ld0WuPrlYl/irutK4y+5yCHJpc5OdOrcvinGq@vger.kernel.org, AJvYcCVB6UOYHJV9uaOpmp1K/17vlwYWwNSbAq87S/9mYbuzO2HFJJpAFljGxx4UWAnxR8F8RrEe8OGd96IejAc=@vger.kernel.org, AJvYcCW7HKE50iHlRumLvdL9wrMxwyjClMK5kKwxQ2kLVoJ4qjdyXsCDn3742Yj4zoAUnLctnSqMTigZnGSm@vger.kernel.org, AJvYcCWvTpoTtMuuh4SpkBP2nvSRoqpbxz3ZCkmNwFxEcxUc2MBWRAd1AfyCxwt+FJvtaCsYvP0NKA40+XT9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdDaZnc6mABbZNnL7whElhJqVYBR5oVBFhLAxQiqYM18Qdz3Oa
+	vjB+maHrQQH5YKrZimAKG6SJUBx5j4eIBDPWcnz/R6CLsaMJ3fXHOV11lw==
+X-Google-Smtp-Source: AGHT+IFZY3czgShWLwMr8vZLa84ReNl80JQc2dqSAqMUDR9vtbY6B9GhV3hjeKXgXWBUnMGYXjB86w==
+X-Received: by 2002:a05:6a20:d493:b0:1d9:111f:4b46 with SMTP id adf61e73a8af0-1db91d86c41mr9750731637.12.1730472299120;
+        Fri, 01 Nov 2024 07:44:59 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1e5625sm2693424b3a.53.2024.11.01.07.44.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 07:44:58 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 1 Nov 2024 07:44:57 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: baneric926@gmail.com
+Cc: jdelvare@suse.com, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	corbet@lwn.net, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, openbmc@lists.ozlabs.org,
+	kwliu@nuvoton.com, kcfeng0@nuvoton.com, DELPHINE_CHIU@wiwynn.com,
+	Bonnie_Lo@wiwynn.com, Rob Herring <robh@kernel.org>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v6 1/2] dt-bindings: hwmon: Add NCT7363Y documentation
+Message-ID: <9435b7e9-abac-4d02-9969-b35a50fb538b@roeck-us.net>
+References: <20241022052905.4062682-1-kcfeng0@nuvoton.com>
+ <20241022052905.4062682-2-kcfeng0@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFpdgg+kM_Ot5GPTpMUtjmBF-pUhCeRpVb=j852_7qm=3A@mail.gmail.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20241022052905.4062682-2-kcfeng0@nuvoton.com>
 
-On 11:11-20241031, Ulf Hansson wrote:
-> On Wed, 30 Oct 2024 at 20:43, Kevin Hilman <khilman@baylibre.com> wrote:
-> >
-> > Ulf Hansson <ulf.hansson@linaro.org> writes:
-> >
-> > > On Wed, 30 Oct 2024 at 14:01, Nishanth Menon <nm@ti.com> wrote:
-> > >>
-> > >> Hi Kevin Hilman,
-> > >>
-> > >> On Fri, 06 Sep 2024 09:14:48 -0700, Kevin Hilman wrote:
-> > >> > The latest (10.x) version of the firmware for the PM co-processor (aka
-> > >> > device manager, or DM) adds support for a "managed" mode, where the DM
-> > >> > firmware will select the specific low power state which is entered
-> > >> > when Linux requests a system-wide suspend.
-> > >> >
-> > >> > In this mode, the DM will always attempt the deepest low-power state
-> > >> > available for the SoC.
-> > >> >
-> > >> > [...]
-> > >>
-> > >> I have applied the following to branch ti-drivers-soc-next on [1].
-> > >> Thank you!
-> > >>
-> > >> Ulf, based on your ack[2], I have assumed that you want me to pick
-> > >> this series up. Let me know if that is not the case and I can drop the
-> > >> series.
-> > >
-> > > Well, that was a while ago. The reason was because there was a
-> > > dependency to another series [2], when this was posted.
-> > >
-> > > If that's not the case anymore, I think it's better to funnel this via
-> > > my pmdomain tree. Please let me know how to proceed.
-> >
-> > The build-time dependency on [2] still exists, and since that was just
-> > queued up by Nishanth, I think this series should (still) go along with
-> > it to keep things simple.
-> >
-> > Kevin
+On Tue, Oct 22, 2024 at 01:29:04PM +0800, baneric926@gmail.com wrote:
+> From: Ban Feng <kcfeng0@nuvoton.com>
 > 
-> Right, that makes perfect sense to me too. If we discover conflicts,
-> let's deal with them then.
+> Add bindings for the Nuvoton NCT7363Y Fan Controller
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Ban Feng <kcfeng0@nuvoton.com>
 
+Applied.
 
-oops.. I missed this response. OK, I will let things be.
-
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Thanks,
+Guenter
 
