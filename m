@@ -1,127 +1,107 @@
-Return-Path: <linux-kernel+bounces-392104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2959B8FC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:53:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCD49B8FC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FAC4282E65
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:53:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8103728337F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED921175D26;
-	Fri,  1 Nov 2024 10:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D20176FA2;
+	Fri,  1 Nov 2024 10:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ghJQ3v9o"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H7IWqsM7"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAB9170A3D;
-	Fri,  1 Nov 2024 10:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4F52A1B2;
+	Fri,  1 Nov 2024 10:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730458429; cv=none; b=FIhC6HIbT9bnn5jh3OKfCjmBiuaByDGMDOE21HWzNFljcRluZ4QDz7PzNoafm0oPw9Q4JZc2QH9hZS5aJ9Mv3goVqLkf0DdokNCXcbnFJJbkwJAh96CNhPbMyTMwuQMP/ivzv9IQHvb4IiyRgm7EcjbzSUMRV77/LSkqr4QmFKg=
+	t=1730458479; cv=none; b=iNbP0tBErdSsQqWdH9Yo6uzIgfXH8X2w3eZxo5himZX5N3TfwxfPOzEX6RaKwyOAOFOVDzZxHN7u3p/5ki3P7AyruEHJrZ+EE7Bv2wiwGRH84grypniatQtNN3IN4/B7DrtXNcApr7qP+iEUEYTrm8bzfyuFwhTZ8paqrYNgf7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730458429; c=relaxed/simple;
-	bh=3nd+aO8xFQcDiX2wwxz/jvBUUPBaYHyn5n+Smz/yuVs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eCB8whRsoRDAGYvRuJTbyz/TemfrhSjkiqVpH3uaTjyIy/IpTyfFhZ2J4hOTcrCNoOF/p5Ue5qSiIyyl1ZYwqiRmpZpOe3YGVK/05DJv7tzjIIRL4MRpVkCt8ge0vErbxA4E8D5WFtQbCc6xKZVWcqIblsqkRUYcCvROj+Sy9p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ghJQ3v9o; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730458427; x=1761994427;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3nd+aO8xFQcDiX2wwxz/jvBUUPBaYHyn5n+Smz/yuVs=;
-  b=ghJQ3v9oMBzEBBP8Gz630GLOWmGVKmM3AA2iRHSOyDoMzrRcH0uG4MoK
-   sES0BgooQWZuGuu2apD9ejLoTQb+ofVtGwg2QQVQnBdBrjxJQ5qSRppMZ
-   CuDxbS1jfCtu43y4LeMxRnPhTP91kQabaHJgOqEl2qpBv//EOnrDwVJrU
-   PnjnFSjKT538LOo32e6T8hQ+pDa3zkH5LSoOfdwXaLEdfgRu7b+icAq2M
-   GSIa4g8vtrxssXTfAzaPbyLxRUX0HBncca9YePilhv6Z1XyEVF4N8jgsi
-   ri+cm5jMYQyAxQYJH74XyAy7cb/k2rReV8M0MHao2MOq835nEmOIee8+7
-   A==;
-X-CSE-ConnectionGUID: fNvHRwlHTk+T6pQZ0A5CHA==
-X-CSE-MsgGUID: fYru22mWQcOzf1NybcV8CQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30179197"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30179197"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 03:53:47 -0700
-X-CSE-ConnectionGUID: 6jJUseMgSh6YMKn1wOdLBQ==
-X-CSE-MsgGUID: nI7LtuUOTBaUS/BqiH5rfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="87748250"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 01 Nov 2024 03:53:45 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BA8871AC; Fri, 01 Nov 2024 12:53:43 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1730458479; c=relaxed/simple;
+	bh=cQcpOQMRfeJFrOwjc5JQJ1Pu8ZUGtxW8AYo9hH2Dr/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s/NfsC4EjpbRuenjA/S6tQpFIzmLuM57ZFTWBvklGd7A4l3dlmg7g1OHSulic2HFdE0EQkrjpP0DWuJpDEO4fmflPh5gz21lLQns8ZKgrnlRekh5ZuChzNmdP4LewQixEXFvTmC6iiKH8BoIGmucInurpTepUPWHPIlzWvZtLEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H7IWqsM7; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cMU2PXMPWhHixiOJ4wxaJ5Wp1ljqAoRHxyXW2Ip72NA=; b=H7IWqsM7Msi4h7l+86uU0JCNPN
+	CAHPiALfedD/24CnJ+CZGFqg/RdTC/3BkVAW/lbIIbwL/j9sKNhG1pK/Bo/1Ctwx+OEn0XhVAIurb
+	W7ltywfkWOjCvU9gsz2y1iiZlH0CqiutH7WiUMaRxLXWfhN4hjQjISehTD0FU88gLMGAokECZ9L6J
+	LEUrb3R3zDZWOjNvOm0SM5SGTb2SR/gRr1K6L4+EiLuzT0B13dgyULRJ/uEmGbmY3b35/bhlC5T4A
+	/Y0jQkI9MUedmbjLOmx7Ra92LDsahwP2S/Vf3p4qbRg93YaPripru3Vyfu5ScO73N+jKTWB7kHCf2
+	IcGWjXmg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6pIQ-0000000AfKW-4AIf;
+	Fri, 01 Nov 2024 10:54:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5B74F300599; Fri,  1 Nov 2024 11:54:26 +0100 (CET)
+Date: Fri, 1 Nov 2024 11:54:26 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org,
+	surenb@google.com, cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] iio: Mark iio_dev::priv member with __private
-Date: Fri,  1 Nov 2024 12:53:42 +0200
-Message-ID: <20241101105342.3645018-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+Subject: Re: [PATCH v4 0/4] sched: Fix irq accounting for
+ CONFIG_IRQ_TIME_ACCOUNTING
+Message-ID: <20241101105426.GX14555@noisy.programming.kicks-ass.net>
+References: <20241101031750.1471-1-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101031750.1471-1-laoar.shao@gmail.com>
 
-The member is not supposed to be accessed directly, mark it with
-__private to catch the misuses up.
+On Fri, Nov 01, 2024 at 11:17:46AM +0800, Yafang Shao wrote:
+> After enabling CONFIG_IRQ_TIME_ACCOUNTING to track IRQ pressure in our
+> container environment, we encountered several user-visible behavioral
+> changes:
+> 
+> - Interrupted IRQ/softirq time is not accounted for in the cpuacct cgroup
+> 
+>   This breaks userspace applications that rely on CPU usage data from
+>   cgroups to monitor CPU pressure. This patchset resolves the issue by
+>   ensuring that IRQ/softirq time is accounted for in the cgroup of the
+>   interrupted tasks.
+> 
+> - getrusage(2) does not include time interrupted by IRQ/softirq
+> 
+>   Some services use getrusage(2) to check if workloads are experiencing CPU
+>   pressure. Since IRQ/softirq time is no longer charged to task runtime,
+>   getrusage(2) can no longer reflect the CPU pressure caused by heavy
+>   interrupts.
+> 
+> This patchset addresses the first issue, which is relatively
+> straightforward. 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iio/industrialio-core.c | 2 +-
- include/linux/iio/iio.h         | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+So I don't think it is. I think they're both the same issue. You cannot
+know for whom the work done by the (soft) interrupt is.
 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index 6a6568d4a2cb..4c543490e56c 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -1665,7 +1665,7 @@ struct iio_dev *iio_device_alloc(struct device *parent, int sizeof_priv)
- 	indio_dev = &iio_dev_opaque->indio_dev;
- 
- 	if (sizeof_priv)
--		indio_dev->priv = (char *)iio_dev_opaque +
-+		ACCESS_PRIVATE(indio_dev, priv) = (char *)iio_dev_opaque +
- 			ALIGN(sizeof(*iio_dev_opaque), IIO_DMA_MINALIGN);
- 
- 	indio_dev->dev.parent = parent;
-diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-index 445d6666a291..5c6682bd4cb9 100644
---- a/include/linux/iio/iio.h
-+++ b/include/linux/iio/iio.h
-@@ -624,7 +624,7 @@ struct iio_dev {
- 	const struct iio_info		*info;
- 	const struct iio_buffer_setup_ops	*setup_ops;
- 
--	void				*priv;
-+	void				*priv __private;
- };
- 
- int iio_device_id(struct iio_dev *indio_dev);
-@@ -785,7 +785,7 @@ struct iio_dev *iio_device_alloc(struct device *parent, int sizeof_priv);
- /* The information at the returned address is guaranteed to be cacheline aligned */
- static inline void *iio_priv(const struct iio_dev *indio_dev)
- {
--	return indio_dev->priv;
-+	return ACCESS_PRIVATE(indio_dev, priv);
- }
- 
- void iio_device_free(struct iio_dev *indio_dev);
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+For instance, if you were to create 2 cgroups, and have one cgroup do a
+while(1) loop, while you'd have that other cgroup do your netperf
+workload, I suspect you'll see significant (soft)irq load on the
+while(1) cgroup, even though it's guaranteed to not be from it.
 
+Same with rusage -- rusage is fully task centric, and the work done by
+(soft) irqs are not necessarily	related to the task they interrupt.
+
+
+So while you're trying to make the world conform to your legacy
+monitoring view, perhaps you should fix your view of things.
 
