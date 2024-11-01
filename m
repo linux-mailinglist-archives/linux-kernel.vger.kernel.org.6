@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-391622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5699B896E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:42:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E55D89B8971
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:42:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7560A283023
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:42:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8D1B282DD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CFE14601F;
-	Fri,  1 Nov 2024 02:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A1814B08A;
+	Fri,  1 Nov 2024 02:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KT5BfTSd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXeLS9HE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECEA148827;
-	Fri,  1 Nov 2024 02:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F0913C9C0;
+	Fri,  1 Nov 2024 02:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730428831; cv=none; b=d9zv0x5YRYkQX7t3fYNaKInylOtEfjuNAc0HcDEd4iu5wCDBnhXIieh2CGVCQHgS3HOxiNt8qUrYpNp8iZuE+EzIfiLqFPvpC6tubFQDB3JRuNZb+s1ZmF5hyZefmuaBETyduDH5XJUzN/8A+agQP6hn8AofHpZua9LinH16qvo=
+	t=1730428835; cv=none; b=RxnKOIBg0zx0+GmnKgfMyW847E99L7X1CZK6u20BM+2P4Kdaky4pVMocn+daXBzQV7u04aS7a6U+dSn7pemzcXLEAuBPbTex3zTncjndAupkjCQ0NIcPcFj2C+pBNLsQx5r/41iYwAeNLGn0vrYoZwx/sH6dOTBUXLQqYJUDm/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730428831; c=relaxed/simple;
-	bh=PzhGqm5cQ0OgHUAFof6xHq9gPxNOGYC923YOkb/ygWA=;
+	s=arc-20240116; t=1730428835; c=relaxed/simple;
+	bh=x+K8U/7ojpsolt4ih86/2mbduUf8H+CikPIEqbmtqDQ=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=R4/DLcJRbHjI+hi9wmrNyU6MufhdpscyHzVResatbKgWF2j/XHwUJX1O7Ekyk4RBX+oBR1npwbcaJ4asBnQnMtnMWeaIdXhIsMyes7uCB3hgtnYsZTFhLWXpxjr2TqUFBcIOq4fJ/zekawbMrd4U4MTxHp5tkXLdRkPchd0E3Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KT5BfTSd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48DFCC4CED4;
-	Fri,  1 Nov 2024 02:40:31 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=tl4EdJdL30zp39snxo5dyc7bICrv1y0733+Cs2tcnGFt1z0ueEFfgZzcVjQWtwh/Kq3qOIPNSDKsiCTvYwohOfeUqDNozlH9eASaE0Ud330aJENuw2xp8+ipFyy1wK4kB1u9FqEw+tp0/8UGHTR5gUeK/42U/HvxJswXcb5jxLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXeLS9HE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 465A7C4CEC3;
+	Fri,  1 Nov 2024 02:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730428831;
-	bh=PzhGqm5cQ0OgHUAFof6xHq9gPxNOGYC923YOkb/ygWA=;
+	s=k20201202; t=1730428834;
+	bh=x+K8U/7ojpsolt4ih86/2mbduUf8H+CikPIEqbmtqDQ=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KT5BfTSdrbxUKAddydys1s82aug+cObZAWe+g7iwmJ8gAEBmKrEgfQgw7FzJFxxb+
-	 6YAdRAH23GDCrC9gBw7hBGlmzQ4Fe1sFsT0HwnVLlYONtFeUALYWQQ/uqYMTzFgb7d
-	 0xbMpmCJcgCFBCChM8sta69gf30XuphEeUC2fzA7tVZFhOGzRo9fKh2WqJMFVJpa44
-	 KvnQIf+Xm000MfTSvc0/CGAp6qaoAvocFpziSae+GPkqCx4for9Ja/BEvDrLApYiR/
-	 oOehPVPgoDnX6TZgdVpk3UyI8J0CeckFPBV6kVWRbKbZjHOkeNGt3yGT/l8Fd5ttiR
-	 tmnt43WxvkugQ==
+	b=BXeLS9HE8Zqe3ykBSd4ep+D1HPdcjNj60P/CuIC0uKT1+xlcpyYsMSomiRd71yY4y
+	 2PFvWjRl+nghM7QjPt9wDZiMkw7lEmuwoRR+bvMXwmCQ97Rt91VSXqeTdJOVgkbnvI
+	 RTP9fa/0+LmloNEtV/ktXvpp3nd9yDLFLsJfKI6hFjqz0gqUyumwBN2Jil0FDXPhTk
+	 rGMK+7yZBZvSHvTIGMKePfRhhv7QOVDof5dgCflqU8PWX0X6tEGWWdYtxaRmhuJJ5F
+	 0UYYSdOoX+dQygvpFs/VqTlUaznLSrhCZb5gxeFf3SgCnZhM90P2hqFFOmYCKMuxW5
+	 gVKodxB1JRMcQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E1F380AC02;
-	Fri,  1 Nov 2024 02:40:40 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E26380AC02;
+	Fri,  1 Nov 2024 02:40:43 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,18 +51,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] netlink: Remove the dead code in
- netlink_proto_init()
+Subject: Re: [PATCH] net: fjes: use ethtool string helpers
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173042883900.2159382.7835628012758950930.git-patchwork-notify@kernel.org>
-Date: Fri, 01 Nov 2024 02:40:39 +0000
-References: <20241030012147.357400-1-ruanjinjie@huawei.com>
-In-Reply-To: <20241030012147.357400-1-ruanjinjie@huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, kuniyu@amazon.com, dsahern@kernel.org,
- lirongqing@baidu.com, ryasuoka@redhat.com, netdev@vger.kernel.org,
+ <173042884205.2159382.4530585895783581040.git-patchwork-notify@kernel.org>
+Date: Fri, 01 Nov 2024 02:40:42 +0000
+References: <20241029232721.8442-1-rosenp@gmail.com>
+In-Reply-To: <20241029232721.8442-1-rosenp@gmail.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
  linux-kernel@vger.kernel.org
 
 Hello:
@@ -70,20 +68,19 @@ Hello:
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 30 Oct 2024 09:21:47 +0800 you wrote:
-> In the error path of netlink_proto_init(), frees the already allocated
-> bucket table for new hash tables in a loop, but it is going to panic,
-> so it is not necessary to clean up the resources, just remove the
-> dead code.
+On Tue, 29 Oct 2024 16:27:21 -0700 you wrote:
+> The latter is the preferred way to copy ethtool strings.
 > 
-> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Avoids manually incrementing the pointer.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Reviewed-by: Simon Horman <horms@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v2] netlink: Remove the dead code in netlink_proto_init()
-    https://git.kernel.org/netdev/net-next/c/bc74d329ceba
+  - net: fjes: use ethtool string helpers
+    https://git.kernel.org/netdev/net-next/c/dbb9a7ef3478
 
 You are awesome, thank you!
 -- 
