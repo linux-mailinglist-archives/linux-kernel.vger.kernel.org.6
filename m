@@ -1,106 +1,197 @@
-Return-Path: <linux-kernel+bounces-392477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593779B94A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:43:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BED59B94A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:45:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89EC41C20DB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:43:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB051C20159
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679101C9B75;
-	Fri,  1 Nov 2024 15:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03981C761F;
+	Fri,  1 Nov 2024 15:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGqhRb8j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVs0UfvS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92BE1C32E2;
-	Fri,  1 Nov 2024 15:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C8B2CAB;
+	Fri,  1 Nov 2024 15:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475795; cv=none; b=WZUlpne7MGLVSP6iZv/VzU7pnfQaqz/dW1gTUIPbrfGJsbGeyk9qmOeIIdJ0c1Uc2rIkqmQrJn23ohNqAvHG58aZgiiTCT6f/eOebRXuROdiVjVvLT4HWutxxkbsXzQPHBLq6U5vZMnRKI7ifQpN50a5LiFSLSY99EiZT+ycxs4=
+	t=1730475905; cv=none; b=OAn+tYqslvWiI2deUUkmXgRM8IlHLBuiUCshsNB19SwQiQhCGf0H9RnyNesBOSq3QQ0wm1d7J18ouE53PvHtIips8M/KAQUjE0GKuqXbPatOrvO8Cf9bzyR6YSccboIaONReNpZBddoLt0be4ybejp5ctwp/hNdVyXet3hxhwAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475795; c=relaxed/simple;
-	bh=irRgyaZNL3QbES2BKZpFC5HFrUeyLhBKBuQONdo5KOg=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=LQNobOLssH7m631CKogdOxBIGv3aee01TfYKK5pXqZjxPzuuXcqrQoJBzk8SonfRmxrt4GsXiF2la6BN4H+OVLt+JBn36JChwMNXLOvJcLbhNnuV3Kbv+fR/MbBfEHCgzYZvCaP2vCYUBPC09dtYeFfqW5QdoFTQXE+2Cw1prek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGqhRb8j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 277FEC4CECD;
-	Fri,  1 Nov 2024 15:43:15 +0000 (UTC)
+	s=arc-20240116; t=1730475905; c=relaxed/simple;
+	bh=t1pJkvv5ArO95EBUpDZbdsLDepiY0M1etPEVdzcYgMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZuTpVe0gHuiW9bAKxx+aqJGGjFtbOLyUJEG+mp02mb/svoPhoPjuMaJv10/0f+XIhchqbu4f5bFHrOfDKOqBhPn76mA07A5cFuONakg/ZSrrmpFIFQHwf2sXZ3MDgvhgIjGMtUC+xc55Fe5nCOSmL0t7qhzp8moogFIOk57o4mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVs0UfvS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA75C4CECD;
+	Fri,  1 Nov 2024 15:44:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730475795;
-	bh=irRgyaZNL3QbES2BKZpFC5HFrUeyLhBKBuQONdo5KOg=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=iGqhRb8jR4HXevjHc8GpzO5tk/iTgRBDJAhlmEszyFfNIfToCBXDMMpnPyx1YyG0G
-	 UyT/L0bngIoQ19hvlGOS7ZBCE5FjRpbj0CfRO9K8+s2VyWd6qo4wJRZOGMgPEy0YvI
-	 yTewADkihAH/QKVdQj2cTVDXG0FVQBpJqxwiPgIKRrhi0AD/LJeHHodQSnPvqtc4Gt
-	 TCmm7BTfa9hJX3s5aZez/Hrh/9tbYXjLxrYtnKp3raOryFi12UlC0cjBAOhlTvI6hC
-	 y/f19yAtUUem5jGZOqULHJMjj1vTJx81NUJh9Jzm95puOEwFeCib9t7BgSnFjhPhbd
-	 1JvhK64JRtEmg==
-Date: Fri, 01 Nov 2024 10:43:13 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1730475904;
+	bh=t1pJkvv5ArO95EBUpDZbdsLDepiY0M1etPEVdzcYgMM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SVs0UfvSjddoObL1YP4TcTpN6+JMKTAlMOtHqoNu/N5W++S8ZoFPFicaoCsigBZWY
+	 tzsC/HX9IzAFBDK7yJ0jUUgykge+QshPJphUaXyfeUUF+JuEpS/o/COytqjHhw6bfk
+	 Puqx0C4Dn8D1jyyOrR697msu4an59gWO287LimKF2sfZWd8QG8Johu2Ruz2CxZ96Mr
+	 96oWxW1+Q0h3FQJIq3Euy8DNRcTjyRLRpuV3HXN/mRruETfNZ8TVV/wuABpuviyGn+
+	 5gMXDGfb2eU9CbNsoC5MxD6+lYem2NKv3+WKaecfvPJz1LBb1ZEvgNrUSeIb6LtuMV
+	 +upizTDVi/RKg==
+Date: Fri, 1 Nov 2024 15:44:51 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Julien Stephan <jstephan@baylibre.com>, Mudit Sharma
+ <muditsharma.info@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Anshul
+ Dalal <anshulusr@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Cosmin Tanislav
+ <cosmin.tanislav@analog.com>, Ramona Gradinariu
+ <ramona.gradinariu@analog.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
+ Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Anand Ashok Dumbre
+ <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
+ <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
+ Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Benson Leung
+ <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v2 06/15] iio: light: adux1020: write_event_config: use
+ local variable for interrupt value
+Message-ID: <20241101154451.227defba@jic23-huawei>
+In-Reply-To: <ef4fe230-b7fb-4f7e-9173-ae85d305e9ae@baylibre.com>
+References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
+	<20241031-iio-fix-write-event-config-signature-v2-6-2bcacbb517a2@baylibre.com>
+	<ef4fe230-b7fb-4f7e-9173-ae85d305e9ae@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Janne Grunau <j@jannau.net>
-Cc: asahi@lists.linux.dev, Hector Martin <marcan@marcan.st>, 
- Sven Peter <sven@svenpeter.dev>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Mark Brown <broonie@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-In-Reply-To: <20241101-asahi-spi-v2-1-763a8a84d834@jannau.net>
-References: <20241101-asahi-spi-v2-0-763a8a84d834@jannau.net>
- <20241101-asahi-spi-v2-1-763a8a84d834@jannau.net>
-Message-Id: <173047579349.3488175.222264580667894425.robh@kernel.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: spi: apple,spi: Add binding for
- Apple SPI controllers
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 31 Oct 2024 11:27:45 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> On 10/31/24 10:27 AM, Julien Stephan wrote:
+> > state parameter is currently an int, but it is actually a boolean.
+> > iio_ev_state_store is actually using kstrtobool to check user input,
+> > then gives the converted boolean value to write_event_config.  The code
+> > in adux1020_write_event_config re-uses state parameter to store an
+> > integer value. To prepare for updating the write_event_config signature
+> > to use a boolean for state, introduce a new local int variable.
+> >=20
+> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> > ---
+> >  drivers/iio/light/adux1020.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/light/adux1020.c b/drivers/iio/light/adux1020.c
+> > index 2e0170be077aef9aa194fab51afbb33aec02e513..db57d84da616b91add8c5d1=
+aba08a73ce18c367e 100644
+> > --- a/drivers/iio/light/adux1020.c
+> > +++ b/drivers/iio/light/adux1020.c
+> > @@ -505,7 +505,7 @@ static int adux1020_write_event_config(struct iio_d=
+ev *indio_dev,
+> >  				       enum iio_event_direction dir, int state)
+> >  {
+> >  	struct adux1020_data *data =3D iio_priv(indio_dev);
+> > -	int ret, mask;
+> > +	int ret, mask, val;
+> > =20
+> >  	mutex_lock(&data->lock);
+> > =20
+> > @@ -526,12 +526,12 @@ static int adux1020_write_event_config(struct iio=
+_dev *indio_dev,
+> >  			mask =3D ADUX1020_PROX_OFF1_INT;
+> > =20
+> >  		if (state)
+> > -			state =3D 0;
+> > +			val =3D 0;
+> >  		else
+> > -			state =3D mask;
+> > +			val =3D mask;
+> > =20
+> >  		ret =3D regmap_update_bits(data->regmap, ADUX1020_REG_INT_MASK,
+> > -					 mask, state);
+> > +					 mask, val);
+> >  		if (ret < 0)
+> >  			goto fail;
+> > =20
+> >  =20
+>=20
+> Instead of introducing `val`, I would rewrite this as:
+>=20
+> 	if (state)
+> 		ret =3D regmap_clear_bits(...);
+> 	else
+> 		ret =3D regmap_set_bits(...);
+>=20
+Good idea.  Rather than go around again and potentially stall the end of th=
+is series.
+I made that change whilst applying.  Shout if either of you doesn't
+like the result. Diff doesn't do a perfect job on readability (it does
+if I add a line break but then the code looks worse in the end!)
+
+=46rom 06a1ca816450d1b5524f6010581a83ab9935d51b Mon Sep 17 00:00:00 2001
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Thu, 31 Oct 2024 16:27:01 +0100
+Subject: [PATCH] iio: light: adux1020: write_event_config: use local variab=
+le
+ for interrupt value
+
+state parameter is currently an int, but it is actually a boolean.
+iio_ev_state_store is actually using kstrtobool to check user input,
+then gives the converted boolean value to write_event_config.  The code
+in adux1020_write_event_config re-uses state parameter to store an
+integer value. To prepare for updating the write_event_config signature
+to use a boolean for state, introduce a new local int variable.
+
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+Link: https://patch.msgid.link/20241031-iio-fix-write-event-config-signatur=
+e-v2-6-2bcacbb517a2@baylibre.com
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+---
+ drivers/iio/light/adux1020.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/iio/light/adux1020.c b/drivers/iio/light/adux1020.c
+index 2e0170be077a..06d5bc1d246c 100644
+--- a/drivers/iio/light/adux1020.c
++++ b/drivers/iio/light/adux1020.c
+@@ -526,12 +526,11 @@ static int adux1020_write_event_config(struct iio_dev=
+ *indio_dev,
+ 			mask =3D ADUX1020_PROX_OFF1_INT;
+=20
+ 		if (state)
+-			state =3D 0;
++			ret =3D regmap_clear_bits(data->regmap,
++						ADUX1020_REG_INT_MASK, mask);
+ 		else
+-			state =3D mask;
+-
+-		ret =3D regmap_update_bits(data->regmap, ADUX1020_REG_INT_MASK,
+-					 mask, state);
++			ret =3D regmap_set_bits(data->regmap,
++					      ADUX1020_REG_INT_MASK, mask);
+ 		if (ret < 0)
+ 			goto fail;
+=20
+--=20
+2.46.2
 
 
-On Fri, 01 Nov 2024 15:25:03 +0100, Janne Grunau wrote:
-> From: Hector Martin <marcan@marcan.st>
-> 
-> The Apple SPI controller is present in SoCs such as the M1 (t8103) and
-> M1 Pro/Max (t600x). This controller uses one IRQ and one clock, and
-> doesn't need any special properties, so the binding is trivial.
-> 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> ---
->  .../devicetree/bindings/spi/apple,spi.yaml         | 62 ++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/spi/apple,spi.yaml:10:11: [error] string value is redundantly quoted with any quotes (quoted-strings)
-
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241101-asahi-spi-v2-1-763a8a84d834@jannau.net
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+>=20
+>=20
 
 
