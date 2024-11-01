@@ -1,128 +1,137 @@
-Return-Path: <linux-kernel+bounces-392831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2BC9B989E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:30:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2050F9B98A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:30:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC9E1C21FD1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:30:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B4D1F25271
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2791D968D;
-	Fri,  1 Nov 2024 19:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0501E32BD;
+	Fri,  1 Nov 2024 19:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="qUlMG2rG"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYlgEYUy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC8C1D3624;
-	Fri,  1 Nov 2024 19:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50081CF5DE;
+	Fri,  1 Nov 2024 19:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489375; cv=none; b=IDDo+HRGl4voe4nJRjXLiK2n+zmwLS2XMm5kcqUKPwhn7C79TGzuURhLda8s43rOY82bF73/rRnEiawfbgZz5X+eBS35q0KHefnKPrLfWGNx6odRzcada0+QIJo9oIg7SU98Wckqpp5NQQr5LGBH1kpvszwWjJQrip31eFM4zwg=
+	t=1730489380; cv=none; b=PwOTWUI/2ZDcA4NTmXalnM+CuUGAMN+Zm82TdtE01JoBWFfGuIeNnaeMLYyagv2CbBEz+ErW+59cfml19EZgsFCLC1OAqH2RvQqeZ6MezcQm1eb6dZ+E5HE0kNAofV1tJF89oo6nWO02fxbpv2pIc7hpG91RkvDY3ZbDTiYVlnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489375; c=relaxed/simple;
-	bh=NjClUgMgjMVgsWcpgKIDByy4IpAOZ+8mqyCzWaNAYPY=;
-	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qZzb5G9q73nawQ46Dmc72lbr+eF83bczc8GAozsoCeXBBuVB4HcZTbBoO5HdWLQZUXJk6em6heA+7/nm4K+TGrdAY4/Jg6nBm03WQm2HF+zZ94pHoSynJdrXABbPYX4GTYUMptbqvLwurnDnYey/aGmSam0iGLodPvw+gcjpjaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=qUlMG2rG; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1730489373; x=1762025373;
-  h=message-id:date:mime-version:to:cc:references:subject:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NjClUgMgjMVgsWcpgKIDByy4IpAOZ+8mqyCzWaNAYPY=;
-  b=qUlMG2rGHtevMsFv/QioebdbXtzs0FYMASu8+bXlBC8zWGtD5VO5KPOG
-   +gCncqin707RV0fImbtfJ/uF8/+XdalaoeH5R+phCexXly63NwjuRj60Y
-   gxJyeXAXYRNgCMmU5HjMpW/zQ/3THPekndQJiZcVcZ3Pto8gLO348FsGM
-   0=;
-X-IronPort-AV: E=Sophos;i="6.11,250,1725321600"; 
-   d="scan'208";a="1341371"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 19:29:33 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:29829]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.50.158:2525] with esmtp (Farcaster)
- id 9b6a62cb-9bef-4c52-ac7f-cb4c542891d8; Fri, 1 Nov 2024 19:29:32 +0000 (UTC)
-X-Farcaster-Flow-ID: 9b6a62cb-9bef-4c52-ac7f-cb4c542891d8
-Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 1 Nov 2024 19:29:32 +0000
-Received: from [192.168.8.242] (10.106.101.33) by
- EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Fri, 1 Nov 2024 19:29:28 +0000
-Message-ID: <71e9b2c8-0cc4-4646-88f0-7780e108e610@amazon.com>
-Date: Fri, 1 Nov 2024 12:29:23 -0700
+	s=arc-20240116; t=1730489380; c=relaxed/simple;
+	bh=tMMEau3NtPnyAeHx8uGed61FAphZVULNuA9qHtBhhOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QsWKWrb8Ilao0xp8fL6PB/UwqKh6yfrKrx9012vPHYvsQkDmcsdqkpY1Ni/mnPv/ViUSCLUmv8JNHmeMpFmc+PjaAYY3epUx3CkhM0+KYWMDf8BJvNLupOyyvkEOjc+WAO6JGHbHKTD0bBFvM6XpsBhvYrFJcfPAT9u2N9i9YsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYlgEYUy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B6C4C4CECD;
+	Fri,  1 Nov 2024 19:29:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730489380;
+	bh=tMMEau3NtPnyAeHx8uGed61FAphZVULNuA9qHtBhhOg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DYlgEYUyOZizWXWR8eNVvJc/QqHohbl60GpAPw3rCs6NZAduJJyXWrK+9LLSPQanO
+	 o/peCEWjEKNFFohrBB01XWsrx4sDpMLqHvdIygolfEUswTt/ryyvlx3de5SgK/ZubQ
+	 JMQPTMACdQD3wGVsrfDJX2YfK8vgkQLErPyRIgQEbIdoyAYg7rfCXaKUFyVH9T9qau
+	 ZhcABDQZLZVdDFwgGa41dxLej7yVMQo1o+LXcIdPOGLACbMqhLpULWpKh5xXDp+aHl
+	 PwbTeiyOE13V5hc8RBriybTJaUYgAwD4GRm1+zio0HAEYmGA/nJxKyXlX2SehqvJJR
+	 ZrH3uUg2RMkww==
+Date: Fri, 1 Nov 2024 12:29:37 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+Message-ID: <20241101192937.opf4cbsfaxwixgbm@jpoimboe>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+ <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
+ <20241030055314.2vg55ychg5osleja@treble.attlocal.net>
+ <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
+ <20241031230313.ubybve4r7mlbcbuu@jpoimboe>
+ <CAEf4BzaQYqPfe2Qb5n71JVAAD3-1Q7q2+_cnQMQEa43DvV5PCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: <dave.hansen@intel.com>
-CC: <ackerleytng@google.com>, <agordeev@linux.ibm.com>,
-	<aou@eecs.berkeley.edu>, <borntraeger@linux.ibm.com>, <bp@alien8.de>,
-	<canellac@amazon.at>, <catalin.marinas@arm.com>, <chenhuacai@kernel.org>,
-	<corbet@lwn.net>, <dave.hansen@linux.intel.com>, <david@redhat.com>,
-	<derekmn@amazon.com>, <elena.reshetova@intel.com>,
-	<gerald.schaefer@linux.ibm.com>, <gor@linux.ibm.com>, <graf@amazon.com>,
-	<hca@linux.ibm.com>, <hpa@zytor.com>, <jgowans@amazon.com>,
-	<jthoughton@google.com>, <kalyazin@amazon.com>, <kernel@xen0n.name>,
-	<kvm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-riscv@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <loongarch@lists.linux.dev>,
-	<luto@kernel.org>, <mathieu.desnoyers@efficios.com>, <mhiramat@kernel.org>,
-	<mingo@redhat.com>, <mlipp@amazon.at>, <palmer@dabbelt.com>,
-	<paul.walmsley@sifive.com>, <pbonzini@redhat.com>, <peterz@infradead.org>,
-	<quic_eberman@quicinc.com>, <rostedt@goodmis.org>, <roypat@amazon.co.uk>,
-	<rppt@kernel.org>, <seanjc@google.com>, <shuah@kernel.org>,
-	<svens@linux.ibm.com>, <tabba@google.com>, <tglx@linutronix.de>,
-	<vannapurve@google.com>, <will@kernel.org>, <x86@kernel.org>,
-	<xmarcalx@amazon.com>
-References: <d467e6bd-c673-415f-8bb0-91603f06498a@intel.com>
-Subject: Re: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
-Content-Language: en-US
-From: "Manwaring, Derek" <derekmn@amazon.com>
-In-Reply-To: <d467e6bd-c673-415f-8bb0-91603f06498a@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D042UWB003.ant.amazon.com (10.13.139.135) To
- EX19D003UWC002.ant.amazon.com (10.13.138.169)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzaQYqPfe2Qb5n71JVAAD3-1Q7q2+_cnQMQEa43DvV5PCQ@mail.gmail.com>
 
-On 2024-11-01 at 18:43+0000, Dave Hansen wrote:
-> On 11/1/24 11:31, Manwaring, Derek wrote:
-> > From that standpoint I'm still tempted to turn the question around a bit
-> > for the host kernel's perspective. Like if the host kernel should not
-> > (and indeed cannot with TDX controls in place) access guest private
-> > memory, why not remove it from the direct map?
+On Fri, Nov 01, 2024 at 11:34:48AM -0700, Andrii Nakryiko wrote:
+> 00200000-170ad000 r--p 00000000 07:01 5
+> 172ac000-498e7000 r-xp 16eac000 07:01 5
+> 49ae7000-49b8b000 r--p 494e7000 07:01 5
+> 49d8b000-4a228000 rw-p 4958b000 07:01 5
+> 4a228000-4c677000 rw-p 00000000 00:00 0
+> 4c800000-4ca00000 r-xp 49c00000 07:01 5
+> 4ca00000-4f600000 r-xp 49e00000 07:01 5
+> 4f600000-5b270000 r-xp 4ca00000 07:01 5
 >
-> Pretend that the machine check warts aren't there.
->
-> It costs performance and complexity, for an only theoretical gain.  This
-> is especially true for a VMM that's not doing a just doing confidential
-> guests.  You fracture the direct map to pieces forever (for now).
+> Sorry, I'm probably dense and missing something. But from the example
+> process above, isn't this check violated already? Or it's two
+> different things? Not sure, honestly.
 
-I'm hopeful we'll navigate the complexity in a worthwhile way for the
-non-CoCo case. Assuming we get there and have the option to remove from
-direct map, users with CoCo hardware could choose if they want to do
-both on their host. For me that's a sensible choice, but maybe that's
-just me.
+It's hard to tell exactly what's going on, did you strip the file names?
 
-As far as performance, are you talking about just the fracturing or
-something beyond that? The data Mike brought to LSFMMBPF 2023 showed the
-perf impact from direct map fragmentation for memfd_secret isn't "that
-bad" [1].
+The sframe limitation is per file, not per address space.  I assume
+these are one file:
 
-Derek
+> 172ac000-498e7000 r-xp 16eac000 07:01 5
 
+and these are another:
 
-[1] https://lwn.net/Articles/931406/
+> 4c800000-4ca00000 r-xp 49c00000 07:01 5
+> 4ca00000-4f600000 r-xp 49e00000 07:01 5
+> 4f600000-5b270000 r-xp 4ca00000 07:01 5
+
+Multiple mappings for a single file is fine, as long as they're
+contiguous.
+
+> > Actually I just double checked and even the kernel's ELF loader assumes
+> > that each executable has only a single text start+end address pair.
+> 
+> See above, very confused by such assumptions, but I'm hoping we are
+> talking about two different things here.
+
+The "contiguous text" thing seems enforced by the kernel for
+executables.  However it doesn't manage shared libraries, those are
+mapped by the loader, e.g. /lib64/ld-linux-x86-64.so.2.
+
+At a quick glance I can't tell if /lib64/ld-linux-x86-64.so.2 enforces
+that.
+
+> > There's no point in adding complexity to support some hypothetical.  I
+> > can remove the printk though.
+> 
+> We are talking about fundamental things like format for supporting
+> frame pointer-less stack trace capture. It will take years to adopt
+> SFrame everywhere, so I think it's prudent to think a bit ahead beyond
+> just saying "no real application should need more than 4GB text", IMO.
+
+I don't think anybody is saying that...
+
+-- 
+Josh
 
