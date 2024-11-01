@@ -1,177 +1,115 @@
-Return-Path: <linux-kernel+bounces-392863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D729B9902
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:51:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0A09B98FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C0F1F22547
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251602826A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1B61D172F;
-	Fri,  1 Nov 2024 19:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851921D27A0;
+	Fri,  1 Nov 2024 19:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQsuZSTx"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4lN64mz"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0021D1F60;
-	Fri,  1 Nov 2024 19:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DF11CACF2;
+	Fri,  1 Nov 2024 19:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730490707; cv=none; b=sNFdPRWgqFEblutSjZNbvntOPNE/WJgAhb+md9LFTSneVTxpI9ZlwrpaWJvDaiZPxTpZHnd64BZFDj9RUD8VvQ0KVUX7kI1agCMLGj3EBaLiK/25CWdFWzhndwoq6NsbsvgiLmm4KAj6aK1nsb6ZoFznIepuYyurp6AmqYjFgRg=
+	t=1730490654; cv=none; b=U8EHsd2MBLJY1oQOiWAQx0oYIKclsbwK1DhgeXDADLlaLrwFDiRKZ13CyMnKilaaksLBu8elefRqtTLamdnE2iEI+cxHaWg7foW1AzArkxUYkAD+zJDnMdWjo0E5mFzoxiumDOr9zaMh0VWGGA8sCZo6DBFe7vcg/kowoRC6Jxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730490707; c=relaxed/simple;
-	bh=NfdcIPTFkrq1CJZ3O2pc+yXXB1AVvXwj0nKZRMjuS+I=;
+	s=arc-20240116; t=1730490654; c=relaxed/simple;
+	bh=+PeT/jDp4KoZyt9s+Sve4yG5x/fHvIguUNTGGiy6glA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdAi38LaOR++iuHzE6LneKBdyuyvG+elSNWSPx8A0jXgAdpy4bI9iYZpUkx1fCmu9TMDMTwWBXnC7fVNIZS8yfXLC3J47aXTRu46LopTkVEPmjSeFY8mFInQROG+xd3rZZu+f/t+JVbUrIZAn6N8lW/HQ50vF6/g6RK1Kn4WuRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bQsuZSTx; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=G9zegkFLWgIdkwCTRtPNfg/tcHwuCzrYwV/N054Hlb542V8VzZK771ol55cVjMAmwnsaXDbAFTZGeg5nTU0neLrtLOVxc1+SwGVsevk2QatC56fKs/KjABMaSzW6qe79rUnaglyQsMqQnYpfonZR6zdeACGOdbG4aC29cCSwW0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I4lN64mz; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b14f3927ddso169473885a.3;
-        Fri, 01 Nov 2024 12:51:45 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-720d14c8dbfso921548b3a.0;
+        Fri, 01 Nov 2024 12:50:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730490704; x=1731095504; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Zt5Oyq2ZbDc+xfDrPzoymFKTcNzDTK9mifrrmXHggY=;
-        b=bQsuZSTxZ9SizGo9CA/CW0ONTnZM4d1cCW0ESvtcIjkVaxkqO0Y6pMyD5uygTK+2bt
-         f8lJ6TAB7KVJoLnIX/SAoq7TevrH2T4+bQH15oMcy4LLIt0RGMwwh8Au7KvWL4HTO1EM
-         PIPutjYwkTznIFz6QlPZYl3la5s6z5f/WmVLCqyxkI88c/q8rSa/Jb+Wpa4IuE9wFJ3G
-         Z5qNL/Z6Gq8Fh2nStMOmWX+9ph+fsvaxhyW391Jv3CwPbRxojAlk/aCiAOumxvipjy4n
-         fPzOFebzH+yM/sqsS+rhnvcGRKJ6M5MNXzdrwXkaJgjynChX1ud+25fs38KXZAEHld77
-         b0Gw==
+        d=gmail.com; s=20230601; t=1730490652; x=1731095452; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ftqK4qgrfPDQKJun50MBlxvq3jOWOxUMXftZhPIQqC4=;
+        b=I4lN64mz036a3b2h84SActAfalpTlwPTwJawBGeXZIEts8d3vR7lXenTCVLTWWYz1Z
+         XfYIfLsaaetG6zAmade4S41yx3lM0wBpGIlTwK2kMnnYWieYAhESTgSHf8zzYWbGB5XM
+         dby+uW7yEJvTewqLuU12Hhsb1TN1v6s5dAb3k+tBjaR7xZvTfViGZcq11Z8mKn6DVdYn
+         8rK7uC7Jbz/xr0pgL9SyzlH6zinXCiAu/+AaNJIWIMc1KCyqoALbU8t7UNbij9IFf1wl
+         sSBGvadBGZFxfuO56WmwNEwMmrHV+qVtmsWhvwhwfGNVP93psRihvgo9zsrrwrmdpNHw
+         7JIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730490704; x=1731095504;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Zt5Oyq2ZbDc+xfDrPzoymFKTcNzDTK9mifrrmXHggY=;
-        b=XMnNVUCIYImi35iHlKuItdXRwGcFqoxapAiUH66NAdZGXd1MfY+7knxExTCViEt/5s
-         ESIbwdMgV3UVQLGrxgIN8Ue1gPHDG8VFwU+3dQdSxbJBcSG3wWGiKbRKkYNqvxUHInev
-         ZFaFcQxbPOJfYrvhLvXAAJd38vN8LilK+tW7CAM5H3btvuQzl2Pc9hzQjE83WbCk8KmB
-         MBkX409Cxa03akucCWdSwCny51i0JXlWl84zvSTGYqHXCkGe1dTgCnOEguD8CyY65n67
-         odqLKE2KsjVGrB9YetmR1oESg5jM9m/rKpSlSZso5mcBZ4KGM/+Ji0E4B9nCFyqQV+H0
-         jDzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVu2q4zaz+La5fudz11/OBEFkz+WLbIF3iRomwh5JpOAtc1jyFvZC6JYUm3AhzD6Ql+7TUu6KLmztXcROI=@vger.kernel.org, AJvYcCW4xXGDV+gzqRNfwFhjeVP9qhfEWfs+vEgeL24nQ8i7gNBFIHJPmL3FOuRlhIg94UHxXssl9nikNCmuSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYQFwV8mbkpVwJuEjGT1OQsVRLzkY9E2qiKOowlEhOEvb63GE4
-	hQG+2Ec1nKB/Yf/oPLPQvueNbMPBgD870LD7ZS7EJHQjuMjIOozj
-X-Google-Smtp-Source: AGHT+IGLRucb60qWSoDzC20ZGsm0aymAio3/wRy2855/uIReTW6N0UKUogGsYjz5TRM/PQshs5hkKQ==
-X-Received: by 2002:a05:620a:2410:b0:7ac:b220:309a with SMTP id af79cd13be357-7b193eea86cmr3366675785a.15.1730490704526;
-        Fri, 01 Nov 2024 12:51:44 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a6fedcsm199163285a.78.2024.11.01.12.51.43
+        d=1e100.net; s=20230601; t=1730490652; x=1731095452;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ftqK4qgrfPDQKJun50MBlxvq3jOWOxUMXftZhPIQqC4=;
+        b=eo0w9opbS4HblEhKLOQMmqsBMdGDnQPUARh84uLdTM8SmO6Xwo4IdMcqG56MHOFV1O
+         rIrlTyNqTtnGiM3F67zv0UKQC8KnN/qB+gxfk9msveLHD53x20CSsIbqynSBB0ZJK2KE
+         PBVZZiAZfP4FHoU58KXykWCXXioLBMXMIcTnUPRvDMcfOqzX8Aegu7Zjj0iWI2cxJ2KH
+         oE++fVj2/3JCYvSI/D9pTr2WOrs7ENDzAfIWpDfGbDKpA8Po0ULyVxsNhmYw2Jh8OKtm
+         UJvopgPux6Z3Bbu4xaZCRaXz1r7Bvk1CeHjkM0c63H0z5vzgN/n8Y4Sgb/wItjL4lyFh
+         9KAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCmhpoetNJym3cqgo/ZtERGim9QS0xIiDfkVhzB1LXgpWj+uZb3a8DPwBlvg8EsIhnLSqXm04Mcou6@vger.kernel.org, AJvYcCVk6w2Rbb4pUB5KIO8ejzGzwIgroFdI1bHH2/up6afAZ81v+IAYdp3X3yeMFru9+DXB0av2A6geN1oO@vger.kernel.org, AJvYcCWnBQopma7GPWisz3mh74o0sBfhaHWJULNal5ZOWgStTgqt0MBc9+wC0hPrJOM5/yFWlsQvZx5pxoyz@vger.kernel.org, AJvYcCX8zYmlF6rlEqWJba2anyNVUQbwzPjIPecZztXHmhAM2zqQmsse8gVTcyT3PiepY9Pt5jwSaORzxGlJH5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7DuKO+fuiyEbbWW6E2yuCbq+b9yzMBy8YRQW+YuVNUOyg+jkR
+	PJByIHnn0oFng+tUWZdvUtJJCN1SvqRtg22mUqPHYY0tk3DhihjY
+X-Google-Smtp-Source: AGHT+IHy2efgV2f8+lIor2FHW6CLXYQw+RV7fTRd0zGkfCr0NO8eBpBbVjgDm4Wjx6iXOPHKLMcuVg==
+X-Received: by 2002:a05:6a00:10cf:b0:71e:6a99:472f with SMTP id d2e1a72fcca58-720b9de116emr10709471b3a.24.1730490651732;
+        Fri, 01 Nov 2024 12:50:51 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c54f1sm2999113b3a.121.2024.11.01.12.50.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 12:51:44 -0700 (PDT)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 981A91200043;
-	Fri,  1 Nov 2024 15:51:43 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Fri, 01 Nov 2024 15:51:43 -0400
-X-ME-Sender: <xms:TzElZ10j-eXrd7GNpv30l4_b_AVMitAXoOkCDnFULD8gWgi_RIgsEw>
-    <xme:TzElZ8G4i0hnOQjyccOf5Asbt-kOIQGYAHZJOnM2Orcm-1A_nAUbIFE12O4nUq4Uz
-    FPmHkfdkBWQqTJlLA>
-X-ME-Received: <xmr:TzElZ15oxxK0Zrjcg731hlviLBQa4qPFHPFtrGMBIOLtBsY33E4wagy65QmUXw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledguddvlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduiedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepphgruhhlmhgtkheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepsghighgvrghshieslhhinhhuthhrohhnihigrdguvgdprhgtphht
-    thhopehvsggrsghkrgesshhushgvrdgtiidprhgtphhtthhopegvlhhvvghrsehgohhogh
-    hlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehkrghsrghnqdguvghvsehgohhoghhlvghgrhhouhhp
-    shdrtghomhdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtph
-    htthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruh
-X-ME-Proxy: <xmx:TzElZy1QNyYU7a9rf9ekVospA4HpyM0JWbGzyFE7i6FPizV0ba1zeg>
-    <xmx:TzElZ4FVVSPIiUo8miotxDfc1PRWwqUZfddrAhFzE7ra88UEcdhbzQ>
-    <xmx:TzElZz_q-ed8t7TEugZbWFUoVIL_uLcRd3GI0Gxe6JlFo4tm5eVBaQ>
-    <xmx:TzElZ1nojlQs2hENdw7GcQNjwE1Z4ZKj39ynW3uMy_8MwRGEgkOz5Q>
-    <xmx:TzElZ8GwVc57024kIQWEePxJr6WDGBYrLUNkFqB8ed51-kRjzEFBBP57>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Nov 2024 15:51:43 -0400 (EDT)
-Date: Fri, 1 Nov 2024 12:50:30 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	sfr@canb.auug.org.au, longman@redhat.com, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-	akpm@linux-foundation.org
-Subject: Re: [BUG] -next lockdep invalid wait context
-Message-ID: <ZyUxBr5Umbc9odcH@boqun-archlinux>
-References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
- <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
- <ZyK0YPgtWExT4deh@elver.google.com>
- <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
- <20241031072136.JxDEfP5V@linutronix.de>
- <cca52eaa-28c2-4ed5-9870-b2531ec8b2bc@suse.cz>
- <20241031075509.hCS9Amov@linutronix.de>
- <186804c5-0ebd-4d38-b9ad-bfb74e39b353@paulmck-laptop>
+        Fri, 01 Nov 2024 12:50:51 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 1 Nov 2024 12:50:50 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Mariel Tinaco <Mariel.Tinaco@analog.com>
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-i2c@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/3] hwmon: (pmbus/ltc2978) add support for ltc7841
+Message-ID: <734abd1a-a371-4d4d-8389-a8ad445e8fc9@roeck-us.net>
+References: <20241029013734.293024-1-Mariel.Tinaco@analog.com>
+ <20241029013734.293024-4-Mariel.Tinaco@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <186804c5-0ebd-4d38-b9ad-bfb74e39b353@paulmck-laptop>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241029013734.293024-4-Mariel.Tinaco@analog.com>
 
-On Thu, Oct 31, 2024 at 10:50:29AM -0700, Paul E. McKenney wrote:
-> On Thu, Oct 31, 2024 at 08:55:09AM +0100, Sebastian Andrzej Siewior wrote:
-> > On 2024-10-31 08:35:45 [+0100], Vlastimil Babka wrote:
-> > > On 10/31/24 08:21, Sebastian Andrzej Siewior wrote:
-> > > > On 2024-10-30 16:10:58 [-0700], Paul E. McKenney wrote:
-> > > >> 
-> > > >> So I need to avoid calling kfree() within an smp_call_function() handler?
-> > > > 
-> > > > Yes. No kmalloc()/ kfree() in IRQ context.
-> > > 
-> > > However, isn't this the case that the rule is actually about hardirq context
-> > > on RT, and most of these operations that are in IRQ context on !RT become
-> > > the threaded interrupt context on RT, so they are actually fine? Or is smp
-> > > call callback a hardirq context on RT and thus it really can't do those
-> > > operations?
-> > 
-> > interrupt handlers as of request_irq() are forced-threaded on RT so you
-> > can do kmalloc()/ kfree() there. smp_call_function.*() on the other hand
-> > are not threaded and invoked directly within the IRQ context.
+On Tue, Oct 29, 2024 at 09:37:34AM +0800, Mariel Tinaco wrote:
+> Add support for LTC7841. The LTC7841 is a high performance
+> PolyPhase® single output synchronous boost converter controller.
+> Multiphase operation reduces input and output capacitor
+> requirements and allows the use of smaller inductors than the
+> single-phase equivalent.
 > 
-> OK, thank you all for the explanation!  I will fix using Boqun's
-> suggestion of irq work, but avoiding the issue Boqun raises by invoking
-
-I've tried fixing this with irq work, however, unlike normal
-work_struct, irq_work will still touch the work item header after the
-work function is executed (see irq_work_single()). So it needs more work
-to build an "one-off free" functionality on it.
-
-I think we can just use normal workqueue, because queue_work() uses
-local_irq_save() + raw_spin_lock(), so it's irq-safe even for
-non-threaded interrupts.
-
-Sending a patch soon.
-
-Regards,
-Boqun
-
-> the irq-work handler from the smp_call_function() handler.
+> The relevant registers in the LTC7841 are similar to the
+> LTC7880, only reduced by some amount. So it's just a matter of adding
+> the chip id. The device also doesn't support polling, on top of the
+> reduced register set, so a separate case for setting the chip info is
+> added.
 > 
-> It will be a few days before I get to this, so if there is a better way,
-> please do not keep it a secret!
-> 
-> 							Thanx, Paul
+> Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
+
+Applied.
+
+Thanks,
+Guenter
 
