@@ -1,98 +1,67 @@
-Return-Path: <linux-kernel+bounces-392281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34C89B91DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:20:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D619B91E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:21:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1B71F23221
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:20:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E10283072
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6783319AD5C;
-	Fri,  1 Nov 2024 13:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447E519D089;
+	Fri,  1 Nov 2024 13:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UeP8CHfs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFJivsXp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060A139FCE
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86462175B1;
+	Fri,  1 Nov 2024 13:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730467222; cv=none; b=Pv2WIoqmoF4kN2yuqZOKmkleERs0iVyxfNueHQsceWwLhFX0M5xNuJmBzCXuMVHOks0w2xsUmnUDY3RTzFeDU9kRpFLOd0IKk3X9lG2R2qNVtHPuyy/4FORwJkkY31wVOqmjMHFc5KqK1WvVVJPg/UcgZIaHoLwtyKhPHSkv1JM=
+	t=1730467278; cv=none; b=d6vKhQ/T72PNNS5RvBfPm7O/5GYOYjgV8gMtCgwT4mEDvu9Ilh2EEeXW+hvlPnEEgFL3QiBFVGiKxYCTlApHCHutGk18+3uAX6zYpdJv1i3vbFEcrD4mVQTA9K54LJnJ9taRjhRtBswf6tyrO6iH3y2jSI6B6h2LFZnp2i3jygs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730467222; c=relaxed/simple;
-	bh=Ib8c0+yuO2W2Ly0kNs6PCZE+6yi5m+yTERQ1KrasL38=;
+	s=arc-20240116; t=1730467278; c=relaxed/simple;
+	bh=GS8v4LBA28M1KDHq6fr9UYdlqdhff/Y22lq833IgKFg=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kVHLtDkXy92/6TmeZb+3cxFVyOVbQJ64eRZCk02iYxRAoLwkkrNMjTrSA9XrKT+kP4DSjjEpqVadG8PQVQFog7VZXSNisu+kPBFT+gxQVofY6Ca/uoNfTPzj2o/Zgt3NgUd3KB5iEVtxPLeARHUD9zxlXQ0ZjTfbTH8vir088UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UeP8CHfs; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730467220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ib8c0+yuO2W2Ly0kNs6PCZE+6yi5m+yTERQ1KrasL38=;
-	b=UeP8CHfsqcotZPPLvKPPdKM5UVRjgHqfOW1Sq2sB1CHTjCKzer6M5De8RXqzYQsfcMgFQS
-	eTnWi52hfpUg8Ojbva3+FWY34byu5V8115sjq2zW2dD9WfRQUhNkuW/IV/8+RaQpNKrphT
-	l3M9EkWy+JQctJbbyo7BVJCJnqkYMTM=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-177-6z04EaFNOSK-ukkE1XKCvg-1; Fri, 01 Nov 2024 09:20:18 -0400
-X-MC-Unique: 6z04EaFNOSK-ukkE1XKCvg-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5c943824429so1274141a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:20:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730467218; x=1731072018;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ib8c0+yuO2W2Ly0kNs6PCZE+6yi5m+yTERQ1KrasL38=;
-        b=Rv3sgRs1SqmlttuP1L1HC3jPO0kePqAJCA1CVk7dn5IXWSFv/VAEbTM7YzJ5YTxIx3
-         aacrGrkNaGC+qEZgr0g4va7otQ+JxoC6gU7ZIBJTWwX5YFWyzJb2R1++4t54bT3HHbZP
-         xbG17FbrqlXGETH6syvkq/84x6CPpw/OnqFLF7722CBcfIr8uJps0xeEdX8jdcPFXDn1
-         CYBeYrvOyvT+KTr7jJ8CMQM1lGHi2v52Lq+nKAR7AeLEKwonJ4yT2I/hwyB2g0K4NlpR
-         itpd82bFiXID0f6xCUmRiLpBEImDz36vAdB+8VdSHLzgjQGDRMFJTeY5FUDT/Gx7mnU2
-         /3vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVe6BMtOiXZbfInGt0+kd3okTAbNIjW6Ya8YbtkXG1RL/1V2a7qD/8FwbvpOnK6nL1Ok7VUiQ80/BdaMVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcpHcUkFFTcfEF8mEUDv8I6pjA+PmP3QypqwHU4ES0IkzuOzYP
-	uc5HKeF80jWLq2vpQ6sVx1EvOTa8fvplTq3xphQtqNp1+cl9IVQ09A35VHw4H7DfH1URhzvlySb
-	WGRpx72DZ5DNa87rhKXfs1d2Jbmzv6DlWFHj/HnKX7Bh9G3MHXkjAPMpzpejUBQ==
-X-Received: by 2002:a05:6402:1ed5:b0:5cb:6ca4:f4cd with SMTP id 4fb4d7f45d1cf-5cbbf8796ddmr18547523a12.7.1730467217655;
-        Fri, 01 Nov 2024 06:20:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFn2LPy1gUSuHKruS07GtqCmqVzlHOCD3B7tPcLNUXMz/VgPBnOw/2+LoemulFTTN8uCfv4sg==
-X-Received: by 2002:a05:6402:1ed5:b0:5cb:6ca4:f4cd with SMTP id 4fb4d7f45d1cf-5cbbf8796ddmr18547486a12.7.1730467217170;
-        Fri, 01 Nov 2024 06:20:17 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac74c6a3sm1513563a12.1.2024.11.01.06.20.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 06:20:15 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 1A99E164B96C; Fri, 01 Nov 2024 14:20:13 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Maciej
- Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev
- <sdf@fomichev.me>, Magnus Karlsson <magnus.karlsson@intel.com>,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 13/18] xsk: allow attaching XSk pool via
- xdp_rxq_info_reg_mem_model()
-In-Reply-To: <20241030165201.442301-14-aleksander.lobakin@intel.com>
-References: <20241030165201.442301-1-aleksander.lobakin@intel.com>
- <20241030165201.442301-14-aleksander.lobakin@intel.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 01 Nov 2024 14:20:13 +0100
-Message-ID: <87cyjf9jle.fsf@toke.dk>
+	 MIME-Version:Content-Type; b=DtGxaF2epmahEif6bDi6F2BXzoviunQAcxzrIzeyMuIIyVqhLh/XzxQxO9POXkmILbeBk6UijCh3SgZLH+I13EF8rZSt9Gg5uI9NfhyyHjrp3+zoaHuFeAQNpGNZwEjcQrId1N9vDE9Z0JxmMbwm2hlR7hONwChUt1mWNwXa3xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFJivsXp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FBB0C4CECD;
+	Fri,  1 Nov 2024 13:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730467278;
+	bh=GS8v4LBA28M1KDHq6fr9UYdlqdhff/Y22lq833IgKFg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=gFJivsXp2fg1DmpZOi0RG8INEqji7ihl/EkRKiZPDDJyA9jdl+e19nPWUPCN/zAt6
+	 7pNWYo0Ruk641070YtjVcG5bw/wMqsojJ/VpTTv/LP1uveaqpwkAli7ZSUqe9RwYe6
+	 McI5Si93a2B6O1hTkoi8A7Fm0vGdaRg+hyePviKyLf1hxVZtzqVPd3WQ3DInRLkEfc
+	 74l1lKXaVlt+/Ej3HlzlAB6MKSjzGV4nr2imWHWpMPvU2OEy+8ZNyUuf6XQm0s2IFc
+	 3XpcupbJ/g78bQka0+ogkNrzWY7DlaKQ7/DQSA0mwvtbnD2/3WtFPRN3y/wxjKNgJb
+	 T5ZFzForSRo/A==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/5] rust: types: avoid `as` casts, narrow unsafe scope
+In-Reply-To: <CAJ-ks9mrHuBEGvCi8pTNE=P1YHU81+cWF_emAvOKnsW0wQSWMQ@mail.gmail.com>
+ (Tamir
+	Duberstein's message of "Thu, 31 Oct 2024 07:50:26 -0400")
+References: <20241030-borrow-mut-v1-0-8f0ceaf78eaf@gmail.com>
+	<KJyhrgAd_z6Zh0U1iafSryM8P_vhgxML3COlPRUtks83dD0fidaO7EfCaNWqQLhVcN0hqekp3v6qmakvURvCsA==@protonmail.internalid>
+	<20241030-borrow-mut-v1-2-8f0ceaf78eaf@gmail.com>
+	<87frocpsui.fsf@kernel.org>
+	<oMImkzhVI8Suke0P43bPXzVQrUiKWfFjEEqD2PrWWWx9qnyLx0rwCtjbgxRSdempiC-jexN26NFzejD5bFTiMw==@protonmail.internalid>
+	<CAJ-ks9mrHuBEGvCi8pTNE=P1YHU81+cWF_emAvOKnsW0wQSWMQ@mail.gmail.com>
+Date: Fri, 01 Nov 2024 14:21:06 +0100
+Message-ID: <87cyjfnl8d.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,18 +71,169 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Alexander Lobakin <aleksander.lobakin@intel.com> writes:
+"Tamir Duberstein" <tamird@gmail.com> writes:
 
-> When you register an XSk pool as XDP Rxq info memory model, you then
-> need to manually attach it after the registration.
-> Let the user combine both actions into one by just passing a pointer
-> to the pool directly to xdp_rxq_info_reg_mem_model(), which will take
-> care of calling xsk_pool_set_rxq_info(). This looks similar to how a
-> &page_pool gets registered and reduce repeating driver code.
+> On Thu, Oct 31, 2024 at 4:51=E2=80=AFAM Andreas Hindborg <a.hindborg@kern=
+el.org> wrote:
+>>
+>> Hi Tamir,
+>>
+>> "Tamir Duberstein" <tamird@gmail.com> writes:
+>>
+>> > Replace `as` casts with `cast{,_const,_mut}` which are a bit safer.
+>> >
+>> > Reduce the scope of unsafe blocks and add missing safety comments where
+>> > an unsafe block has been split into several unsafe blocks.
+>> >
+>> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>> > ---
+>> >  rust/kernel/alloc/kbox.rs | 32 +++++++++++++++----------
+>> >  rust/kernel/sync/arc.rs   | 59 +++++++++++++++++++++++++++++---------=
+---------
+>> >  rust/kernel/types.rs      |  5 ++--
+>> >  3 files changed, 59 insertions(+), 37 deletions(-)
+>> >
+>> > diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+>> > index d69c32496b86a2315f81cafc8e6771ebb0cf10d1..7a5fdf7b660fb91ca2a8e5=
+023d69d629b0d66062 100644
+>> > --- a/rust/kernel/alloc/kbox.rs
+>> > +++ b/rust/kernel/alloc/kbox.rs
+>> > @@ -182,12 +182,12 @@ impl<T, A> Box<MaybeUninit<T>, A>
+>> >      ///
+>> >      /// Callers must ensure that the value inside of `b` is in an ini=
+tialized state.
+>> >      pub unsafe fn assume_init(self) -> Box<T, A> {
+>> > -        let raw =3D Self::into_raw(self);
+>> > +        let raw =3D Self::into_raw(self).cast();
+>> >
+>> >          // SAFETY: `raw` comes from a previous call to `Box::into_raw=
+`. By the safety requirements
+>> >          // of this function, the value inside the `Box` is in an init=
+ialized state. Hence, it is
+>> >          // safe to reconstruct the `Box` as `Box<T, A>`.
+>> > -        unsafe { Box::from_raw(raw.cast()) }
+>> > +        unsafe { Box::from_raw(raw) }
+>>
+>> I don't think this change makes sense, and it also does not do what the
+>> commit message says. The patch has quite a few changes of this pattern,
+>> and I think you should drop those changes from the patch.
 >
-> Acked-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> It's reducing the scope of the unsafe block, as mentioned in the commit m=
+essage.
 
-Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+I guess you are right. I read the commit message semantically as "split
+unsafe blocks where there are multiple unsafe operations". I still do
+not think it makes sense to do these code movements.
+
+>
+>> I _do_ think changing `as _` to `ptr::cast` makes sense.
+>>
+>> >      }
+>> >
+>> >      /// Writes the value and converts to `Box<T, A>`.
+>> > @@ -247,10 +247,10 @@ pub fn pin(x: T, flags: Flags) -> Result<Pin<Box=
+<T, A>>, AllocError>
+>> >
+>> >      /// Forgets the contents (does not run the destructor), but keeps=
+ the allocation.
+>> >      fn forget_contents(this: Self) -> Box<MaybeUninit<T>, A> {
+>> > -        let ptr =3D Self::into_raw(this);
+>> > +        let ptr =3D Self::into_raw(this).cast();
+>> >
+>> >          // SAFETY: `ptr` is valid, because it came from `Box::into_ra=
+w`.
+>> > -        unsafe { Box::from_raw(ptr.cast()) }
+>> > +        unsafe { Box::from_raw(ptr) }
+>> >      }
+>> >
+>> >      /// Drops the contents, but keeps the allocation.
+>> > @@ -356,19 +356,21 @@ impl<T: 'static, A> ForeignOwnable for Box<T, A>
+>> >      type Borrowed<'a> =3D &'a T;
+>> >
+>> >      fn into_foreign(self) -> *const core::ffi::c_void {
+>> > -        Box::into_raw(self) as _
+>> > +        Box::into_raw(self).cast_const().cast()
+>>
+>> But since we are at it, why not be more explicit and do `cast::<core::ff=
+i:c_void>`?
+>
+> These functions (`cast`, `cast_const`, and `cast_mut`) exist as a
+> compromise between fully inferred and fully explicit type coercion.
+> The doc comment on `cast_mut` explains:
+>
+> /// This is a bit safer than as because it wouldn=E2=80=99t silently chan=
+ge
+> the type if the code is refactored. [0]
+>
+> The inverse is true of `cast` - it won't silently change the constness
+> if the code is refactored.
+>
+> The purpose of this patch is to demonstrate the number of places where
+> both type and constness casting is taking place, and to set up the
+> removal of costness casts in a subsequent patch.
+
+I agree that `cast_const`, `cast_mut` and `cast` is an improvement to `as
+_`. But I think we would get even more robustness if we went with fully
+qualifying the generic parameter as in `.cast::<core::ffi::c_void>`.
+
+>
+>>
+>> <cut>
+>>
+>> > @@ -347,9 +352,11 @@ unsafe fn borrow<'a>(ptr: *const core::ffi::c_voi=
+d) -> ArcBorrow<'a, T> {
+>> >      }
+>> >
+>> >      unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self {
+>> > +        let ptr =3D ptr.cast_mut().cast();
+>> > +
+>> >          // SAFETY: The safety requirements of this function ensure th=
+at `ptr` comes from a previous
+>> >          // call to `Self::into_foreign`.
+>> > -        let inner =3D unsafe { NonNull::new_unchecked(ptr as _) };
+>> > +        let inner =3D unsafe { NonNull::new_unchecked(ptr) };
+>> >
+>> >          // SAFETY: By the safety requirement of this function, we kno=
+w that `ptr` came from
+>> >          // a previous call to `Arc::into_foreign`, which guarantees t=
+hat `ptr` is valid and
+>> > @@ -376,10 +383,14 @@ fn as_ref(&self) -> &T {
+>> >
+>> >  impl<T: ?Sized> Clone for Arc<T> {
+>> >      fn clone(&self) -> Self {
+>> > +        // SAFETY: By the type invariant, there is necessarily a refe=
+rence to the object, so it is
+>> > +        // safe to dereference it.
+>>
+>> I think it could be "By the type invariant and the existence of `&self`,
+>> it is safe to create a shared reference to the object pointed to by
+>> `self.ptr`."
+>
+> This comment was taken from the `Deref` impl just above. Should it be
+> updated there as well? The comment is contained in the `Drop` impl as
+> well.
+
+I did not realize it was a copy.
+
+I think the type invariant is actually not well formed:
+
+/// # Invariants
+///
+/// The reference count on an instance of [`Arc`] is always non-zero.
+
+There is not a reference count on an instance of `Arc`, there is a count
+on `ArcInner`, of which `Arc` owns one.
+
+What do you think?
+
+I am OK with you copying the comment from `Deref`, but if you want to,
+you could fix the wording of the invariant and update the comments.
+
+In that case the safety comment could be something like my suggestion.
+The fact that a reference to the `Arc` is live combined with the
+invariant is what guarantees the pointee of `self.ptr` is live as well.
+
+Best regards,
+Andreas Hindborg
 
 
