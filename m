@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-392017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC7B9B8EC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:09:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13AC79B8EC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69D171F21AEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:09:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E190B212AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A69715CD52;
-	Fri,  1 Nov 2024 10:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D53815C158;
+	Fri,  1 Nov 2024 10:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="bIaQQQXx"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D2514F9F8;
-	Fri,  1 Nov 2024 10:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQiLPR92"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A95C14F9F8;
+	Fri,  1 Nov 2024 10:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730455749; cv=none; b=EMIfqNvut8YFbBZYklRQVhO0turlAiwfzI7YS3akEPinJ8T6XFW3aQ9QpwLXw1ll+doScfF/7wzkocbqGlaZxUMQ+VUbyOdAX2yVAWE3Ok7sxgzaMknpNplnQ8C0bE1g02X1zgEheJgm0dO9RpNwoNDGIj5PUEKrXWNen/Hv/uM=
+	t=1730455717; cv=none; b=koRqu4KVx2cpbGPeZaPREkcZUolhtiUuPTt9hTaAjiJ4y/RTrhicDg/OHb+P3AKliV+K7qZpDFQVxcZzUanOw0fPUb+82DHnTtZ212fN2VT+R6jagkHOg9AdnrUCdEzTyQN4GXda0xXN4Oqrwuan9nOmpsBfbn7wlNJo9KcvrAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730455749; c=relaxed/simple;
-	bh=nW/mQxNwm264CJ22U0gw45sBe2y1ZlHGFdDBwkSx2MY=;
+	s=arc-20240116; t=1730455717; c=relaxed/simple;
+	bh=HtIMtOiyQPrNZJEKV7JSj/Zo5XtwvXo8ylCzsjnN/yg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9F3NONBw8DmNSGKZV2KY5qMTP+vKB72a/OgP5E5FDlAoew0v23QU5ry+23FVYvsP9w3qSC/CD93+8uiVWXijQeZ7vUudy6JAxuVhWPIMI7ixf38izDzlVHtwHyBuSR6ykR0CfBoukfqxtnktTYcXM0Z4cgQyWw14d272xvLTVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=bIaQQQXx; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=/jeTvbrAuhoLK4d33DI8+BzUn2SEMto7euH+TT/645M=;
-	b=bIaQQQXxWzhuVJceZQ4+XJQM/VRQVYlKCMVZV9A7Yuf1HaKlyHKhoCkuCj5Kst
-	niPBM3jCNyEw4aY1dV9dgEV12vomRW0rJIvB6Zh49Xj+dl1hemUu3WBMNiIZiEwX
-	5LQnG6ZrYMGZVRCKakhpT022ijMwbfT/80YTXlJjanua8=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgAXqg5_qCRnRkpkAQ--.13732S3;
-	Fri, 01 Nov 2024 18:08:01 +0800 (CST)
-Date: Fri, 1 Nov 2024 18:07:59 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: frieder.schrempf@kontron.de, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] arm64: dts: imx8mp-kontron-dl: change touchscreen
- power-supply to AVDD28-supply
-Message-ID: <ZySofxHCDFMySPS3@dragon>
-References: <20241023152637.1301847-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SHhlB52WOV16tV4AzxUFE0v6tIBKe/Bn50TKbVU4P1uvX/5O2COp/4fF6PtHxIZFqTWN8ufQT+LIq+MaOeZDcbi5ijfZlA1hl0tuMOpNaaxH2SoZigB0xUOzJYXETaZCPYEuqNDebjJa42iaOEccJjD6xRyO1PvsiUVzKmvKzDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQiLPR92; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73BB4C4CECD;
+	Fri,  1 Nov 2024 10:08:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730455717;
+	bh=HtIMtOiyQPrNZJEKV7JSj/Zo5XtwvXo8ylCzsjnN/yg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EQiLPR92V2fsn0lt/2cFXJqYrrG+KW9fcFe3Vue+aU9rCu6hGKelhfaXhLBpHFGTk
+	 we9vw69DLMG+w35Ltzhx0rAJ2lGzNPbKKtP75bMo6kQmydtRjGnAlci6ZrXA+dcqJW
+	 n/c5lUQa7LTZPfv14yqwRtkrsFAP3mgR5dwrsPOZD1QmSf+O6Aq9H9FlaQWxguFUkE
+	 JosHZe59MLd15DrvUjd6OnSVD5R2RbEKCiWI/woc1fo0SMlrZA7zMtWx0SnfbTL6kr
+	 WSu/kMR1KSLDq0ap/5ucPJr+GkPPKLngDCr+Mcf67ZXfLcDvNAPs1tN6dwxjeqKk8P
+	 zKTx2mrX158UA==
+Date: Fri, 1 Nov 2024 10:08:32 +0000
+From: Simon Horman <horms@kernel.org>
+To: Sai Krishna <saikrishnag@marvell.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sgoutham@marvell.com,
+	gakula@marvell.com, lcherian@marvell.com, jerinj@marvell.com,
+	hkelam@marvell.com, sbhatta@marvell.com,
+	kalesh-anakkur.purayil@broadcom.com
+Subject: Re: [net-next PATCH v2 1/6] octeontx2: Set appropriate PF, VF masks
+ and shifts based on silicon
+Message-ID: <20241101100832.GC1838431@kernel.org>
+References: <20241022185410.4036100-1-saikrishnag@marvell.com>
+ <20241022185410.4036100-2-saikrishnag@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,23 +62,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241023152637.1301847-1-Frank.Li@nxp.com>
-X-CM-TRANSID:Mc8vCgAXqg5_qCRnRkpkAQ--.13732S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU4ApeUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCwCKZWckj-1HagAAs4
+In-Reply-To: <20241022185410.4036100-2-saikrishnag@marvell.com>
 
-On Wed, Oct 23, 2024 at 11:26:36AM -0400, Frank Li wrote:
-> Update the touchscreen power-supply from 'power-supply' to 'AVDD28-supply' and
-> 'VDDIO-supply' as per the binding documentation in goodix.yaml.
+On Wed, Oct 23, 2024 at 12:24:05AM +0530, Sai Krishna wrote:
+> From: Subbaraya Sundeep <sbhatta@marvell.com>
 > 
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/imx8mp-kontron-dl.dtb: touchscreen@5d:
->     'power-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/input/touchscreen/goodix.yaml
+> Number of RVU PFs on CN20K silicon have increased to 96 from maximum
+> of 32 that were supported on earlier silicons. Every RVU PF and VF is
+> identified by HW using a 16bit PF_FUNC value. Due to the change in
+> Max number of PFs in CN20K, the bit encoding of this PF_FUNC has changed.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> This patch handles the change by exporting PF,VF masks and shifts
+> present in mailbox module to all other modules.
+> 
+> Also moved the NIX AF register offset macros to other files which
+> will be posted in coming patches.
+> 
+> Signed-off-by: Subbaraya Sundeep <sbhatta@marvell.com>
+> Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
 
-Applied, thanks!
+...
 
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+> index 5016ba82e142..938a911cbf1c 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+> @@ -41,10 +41,10 @@
+>  #define MAX_CPT_BLKS				2
+>  
+>  /* PF_FUNC */
+> -#define RVU_PFVF_PF_SHIFT	10
+> -#define RVU_PFVF_PF_MASK	0x3F
+> -#define RVU_PFVF_FUNC_SHIFT	0
+> -#define RVU_PFVF_FUNC_MASK	0x3FF
+> +#define RVU_PFVF_PF_SHIFT	rvu_pcifunc_pf_shift
+> +#define RVU_PFVF_PF_MASK	rvu_pcifunc_pf_mask
+> +#define RVU_PFVF_FUNC_SHIFT	rvu_pcifunc_func_shift
+> +#define RVU_PFVF_FUNC_MASK	rvu_pcifunc_func_mask
+
+Hi Subbaraya and Sai,
+
+I see that this is in keeping with the implementation prior to this patch.
+But, FWIIW, if FIELD_PREP() and friends were used then I expect the _SHIFT
+defines could be removed entirely.
+
+Please consider as a follow-up at some point.
+
+>  
+>  #ifdef CONFIG_DEBUG_FS
+>  struct dump_ctx {
+
+...
 
