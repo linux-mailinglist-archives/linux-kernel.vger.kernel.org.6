@@ -1,139 +1,98 @@
-Return-Path: <linux-kernel+bounces-392220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C18B9B912C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:34:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F19019B912D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:35:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11B461F22AB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97B191F22653
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A8D19E96A;
-	Fri,  1 Nov 2024 12:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEF+sB1a"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BDB19E7F7;
+	Fri,  1 Nov 2024 12:35:25 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43CF194ACC;
-	Fri,  1 Nov 2024 12:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7281922D6
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730464439; cv=none; b=tekSU6BrrV6P/5p2xSfXScHELZGN80dbYgp/134djE/tAA44RDgUNaFmmtBBMuFdn0yPkuDMyo3OE7cyN+81jovlJkwYrrdu+RqeiTr3kEwPYULEc469CB6UMV4TdEG7LZVdQpfeydITrTgzoAEAyV1bGFqClFdW3QoUt3dQ2yw=
+	t=1730464525; cv=none; b=BupxqulZ7vEgplnmWENi538Mcwwv1osqWMDT6v6f/2DN7xbjWJSSZeZdsbInKcGBPIp7pWeNsxTjpFzUbgoo1X4oqFN9NU3r8s9+/J9NMom8ozZgDrIzpe7FX8y8i7yG+hgNiwiFBjVrfkYlChCfZKi9b2ujBHgi5PczTUOxedQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730464439; c=relaxed/simple;
-	bh=NLZgXQly6/JBYeaoMI2Gj4UqVeX9adEe2V/e7lQ8X5I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z8I/FzOatnBrS5Aw6WGR77Uhv+Rw0Lnsn2mFOED0bx/zWCDZh8wuPewUxZa2fa3tJ9KbUz2d5Ylf9VqoPzDvYqEvgBxbiOocnBGx8QEq2HmS0gy4aWDvUZSPXrC35AuMGxOPiCjX7wjUn1lzHeT/lcmII9tgqLVrQ3wzrYymcfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kEF+sB1a; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a5075ed279so7628925ab.0;
-        Fri, 01 Nov 2024 05:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730464437; x=1731069237; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=luTIfl8fjfaYqdOzb0XicGQ8fkkc3h4j7fSA6fwqKtI=;
-        b=kEF+sB1a4/r9IryvNFDlcF30DzX0h5gQ6Z9wjcKhbFOJY1YO/UwPVE1ztABM/reY1I
-         W7n9xtNrETydxZxZhiM+ahWgRZhGrc4By6bqU0Hm3+zcJhmjQtRytkwLU9x3eC2N4Fb0
-         fi2GnibXNLGLLPYKXO/vracNhfxceK1o05CfeqCIJfVyo5heEQLLBH9MFuMFFmHExgRj
-         jQWWvoKOKZPzwtemwiqv5gSME39hUvN2flIr5iuZdFvAVnqya+g5HH5kT98dmTUIzdVq
-         KZMo7Jt7Kk9knxJF1AOTZeOzARZN8FewQzIljnGoBljSE7IkAZU9IDxxRCT9Bh8aK7kj
-         1B3g==
+	s=arc-20240116; t=1730464525; c=relaxed/simple;
+	bh=HVB5/NVaiKyBGPvEmmfY/c7p0v/zE5OlN6CpY3SZbBY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZODiQkbN14MkdAujckt6jV4oJ6GvBL/ucG4qDGKME7A+KSDN685CfFwWLuNc3o7eUthuNqZZqloMF3oxXKWamhy1AhpIbY+bvlPmSzhrFCp0O2IhvTmGoNY3J5ucycZ5gBZx8gp9k1qwD87ukCI14bumdnlKP3e1g999ie4WKI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83aba93c01bso181008439f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 05:35:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730464437; x=1731069237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=luTIfl8fjfaYqdOzb0XicGQ8fkkc3h4j7fSA6fwqKtI=;
-        b=xPGfXkfOV08Ft/uizmT3F2tEEDnsqULsoa/2dRN6PQiwUdcomx62jPTcH8YKcJrXZz
-         gZMg4Zls6h+35yYswuid+l3+MhuZOc42cZt8/5otylR8cyeZ8D1AbKfR42Hz920r/BJx
-         sZY7EV5YLeSHd/vWaqX4qrOquxpRSunjb1Hqdpzaz3SXf85zG6Gl8BXuopF9PZgLvYcA
-         ypx84isEwlgljXAOjk4G55XcKqJv6EjXOUQwZoI4kVXqnnJ+U8fQtVmFlMg3Cz1mB4Pu
-         51DYHqzqlEmoK4iYWz5sQrOBbW5sAWkfC5JdwDZkaQYQq+pMzsp8U2xa3CGQyXYVfW7Q
-         PJbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTdtddbld5udZRSRHnVNt2x1gPbpc7vbhsxIArhgJ3cvkLEgZQd64lvs1Rl1/h3Js8rML968wCshN5@vger.kernel.org, AJvYcCUhQCHNXD01RgEMVTcpaBD3BDCKq2VA9BIn2hJyd0p+pyQz0rmbnJypo2VVxIvcaD6kFZzS3tRNic9c1JmN@vger.kernel.org, AJvYcCWuqsgmzFoU1C5dvzUjln1uciX4SlhW99t01vX91lZHXiKRpzhGMHHQOyiwv8K+h9OzWBHJ/smWO3gSIuFEXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzj3UuEYv4g2SHiDsRlUWjRErHNl9HF+CBiA3jZ0XxEE3tGSai
-	kEVUoiefWAWZ7nRSOzo3pFb2uvitsOy4YCGizHq9QBfAZXk5y3FSTPdzJ45EqaVtn3rIvhL+b7u
-	SjAhAMT5lOxHz1stS5vetIxAtXPg=
-X-Google-Smtp-Source: AGHT+IHROmGFY4O7d8AzmJAHmAMWlbgwtTWlJERIniDbvCooTOD9qLFdaEGNBi0WQhCjbz4p3oj41XFMGb3QjjueJBk=
-X-Received: by 2002:a05:6e02:1e07:b0:3a4:e9b3:22ad with SMTP id
- e9e14a558f8ab-3a602f7fbabmr77904845ab.0.1730464436782; Fri, 01 Nov 2024
- 05:33:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730464523; x=1731069323;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AqxBdgu2xZeKw4i6FxiYHpI4dVZ37OtghOrpbdMwysQ=;
+        b=ZK3hCkFxwGcFgHiphj6xoBR8pP7qBQu1BjB0LsiVpr4TXve46RHXoa/6a+EIaqX4WZ
+         Y5VU+q3mxgThSsXKzyXm9yGYSNzAynBiB4vp+1vN9adgcLTLLYGFXuozHoR4vRdGoWnq
+         FwjNJkQW/ulOwAdrOwYqJrfShHi2lTAJf7BvP2Piugl3DWgnTEy8Q42me+rjg8NEQ4op
+         yFLt8bD2s3e09SyoJNrBOk7i0tfNSkE/QKhlpVljYoNQR0I1TFPIy7827yn35JYKKqiF
+         JOxCAPGwFwU35eLOeqATSfiGhUSFdeFE09uqOUOgwuDILhTiyVI3WJJ0IlzuSZ3ypZ8F
+         9Phw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoyjdkwlGSqz6l60AgH9j0XtGR+e9aovwoKTGKZPlccDPrZMeDUpaXVVMAS8X34Rma5VRW3Tml0zF9ELk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWcBJPZJw7b+/YrieasciZEBUufz5kB2VHUhT7zqMfNKP2mgSs
+	Fp9vh1esuhxbSOvzqsrUvoWaZjpl+3Rh1mMr1Ay6q/V7MjOU4pLjvadYbPr4sE2rJppQE/tC4rk
+	eSbZw8veelm1oaXMd3Iu71hX1zQc8aWVOkvYm/2QeDwOmUAg14dVcBOg=
+X-Google-Smtp-Source: AGHT+IFIPth4ymIAQm9ibhbpxBXVRYZLXve0lYxevJygCkAGVPrqxwfn7PPjFPvflXzq1Zwov5RsoyfEpkNAg6sKsITuofe+kgCR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-0-cdff2f1a5792@linaro.org>
- <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-6-cdff2f1a5792@linaro.org>
-In-Reply-To: <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-6-cdff2f1a5792@linaro.org>
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 1 Nov 2024 05:33:44 -0700
-Message-ID: <CAF6AEGu_qJYV3TnprJsqsWV_GoLhiBFQ8LNwfYDjczDparvZCA@mail.gmail.com>
-Subject: Re: [PATCH 6/6] arm64: dts: qcom: sdm845-db845c-navigation-mezzanine:
- Add cma heap for libcamera softisp support
-To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Depeng Shao <quic_depengs@quicinc.com>, Vikram Sharma <quic_vikramsa@quicinc.com>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Received: by 2002:a92:c54e:0:b0:3a3:f95f:2dd with SMTP id
+ e9e14a558f8ab-3a4ed2e0656mr273595655ab.19.1730464522993; Fri, 01 Nov 2024
+ 05:35:22 -0700 (PDT)
+Date: Fri, 01 Nov 2024 05:35:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6724cb0a.050a0220.529b6.00fe.GAE@google.com>
+Subject: [syzbot] Monthly kvm report (Nov 2024)
+From: syzbot <syzbot+list69ba935a6501a18718ab@syzkaller.appspotmail.com>
+To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 25, 2024 at 8:49=E2=80=AFAM Bryan O'Donoghue
-<bryan.odonoghue@linaro.org> wrote:
->
-> libcamera softisp requires a linux,cma heap export in order to support
-> user-space debayering, 3a and export to other system components such as
-> pipewire, Firefox/Chromium - Hangouts, Zoom etc.
+Hello kvm maintainers/developers,
 
-AFAIU libcamera could use udmabuf, etc, and there is no hw requirement
-for CMA.  So it doesn't seem we should be adding this to dt.  And I'd
-really prefer that we not be using CMA just for lolz.
+This is a 31-day syzbot report for the kvm subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/kvm
 
-BR,
--R
+During the period, 2 new issues were detected and 1 were fixed.
+In total, 3 issues are still open and 125 have been fixed so far.
 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  .../boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso     | 11 +++++=
-++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.=
-dtso b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
-> index d62a20f018e7a7e1c7e77f0c927c2d9fe7ae8509..c8507afcd1e0d1f9b14b6e4ed=
-cbc646032e7b6c9 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
-> @@ -9,6 +9,17 @@
->  #include <dt-bindings/clock/qcom,camcc-sdm845.h>
->  #include <dt-bindings/gpio/gpio.h>
->
-> +/ {
-> +       reserved-memory {
-> +               linux,cma {
-> +                       compatible =3D "shared-dma-pool";
-> +                       size =3D <0x0 0x8000000>;
-> +                       reusable;
-> +                       linux,cma-default;
-> +               };
-> +       };
-> +};
-> +
->  &camss {
->         vdda-phy-supply =3D <&vreg_l1a_0p875>;
->         vdda-pll-supply =3D <&vreg_l26a_1p2>;
->
-> --
-> 2.47.0
->
->
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 147     Yes   WARNING in handle_exception_nmi (2)
+                  https://syzkaller.appspot.com/bug?extid=4688c50a9c8e68e7aaa1
+<2> 3       Yes   WARNING in vcpu_run
+                  https://syzkaller.appspot.com/bug?extid=1522459a74d26b0ac33a
+<3> 1       No    WARNING in kvm_put_kvm (2)
+                  https://syzkaller.appspot.com/bug?extid=4f8d3ac3727ffc0ecd8a
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
