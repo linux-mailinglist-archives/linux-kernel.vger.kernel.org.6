@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-392974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5993A9B9A4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:40:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD9E9B9A54
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:41:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 655FC1C213A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:40:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A945B1C21096
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1530B1E3775;
-	Fri,  1 Nov 2024 21:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1488A1E47BC;
+	Fri,  1 Nov 2024 21:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tAPvw2zP"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kus+8N4p"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C8F487BE
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CA9487BE;
+	Fri,  1 Nov 2024 21:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730497245; cv=none; b=ExefDClp18mHxXxNm7lJtj7GSq/Q1HbBT+oaGHjNkAkz3/E8U1vacbROpTkC3WvXPkHII0aqBDsKTgE/dMr5BYHgFs1qzrWjfaQmPpJH6fXZpCZUgCekUwPKZnJLVOXN1QsVDqceZEswbLu9lC+AcugI4+gf1aw93suFaaaYLKc=
+	t=1730497307; cv=none; b=hegRVD2N08qTRDjZR7JaRdl193ODtzpNBjnbxKRyuJdrMd4OutLsFI5mnmGyOfIPYitQ9lnBbaLtoqpb8UEFb/f9VrHzupiEUyI9SZvhAkRig2SjsL9EdVjlUu/1bmtlUL4X4UJPj7OExSNUODQkgC0WtR+Ny5/RLjSkD7/qe4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730497245; c=relaxed/simple;
-	bh=oF80iahe4vnM+k6iN3jR1ao3+51/yN1Mo4o0yamZzqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rI2FAQkrBE98VBLQ0zY2sSM460UG0gXx+GUaHE2BbGh9FdjDsbNQE2iJZjQh5Mxnux3rsoOhchDYrsJmPeCL74co03IzMznnaVhQV0mzFv+jkmCRf53jpkjMvk20TPWA2UJM0PBKxdO9OZzuAWWYcCdmFi04YfHq99ZXxVyctZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tAPvw2zP; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1730497239;
-	bh=oF80iahe4vnM+k6iN3jR1ao3+51/yN1Mo4o0yamZzqo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tAPvw2zPNz+v4K3uQVVQ3GtdyTtKWwxuVHnaa3XQsQyqIYIjzpYsUo65b00XVl9dS
-	 qj+KFc9eP31FP9eLw8nSKmBwAk4SMvhM4mk2Ulinj3KquqRZuWjDf71bpzSZfcYMRz
-	 77B236hCm3zITlR+C7h/5eTTbD8aEIIvzU13ys4Q=
-Date: Fri, 1 Nov 2024 21:40:34 +0000
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] nolibc changes for v6.13
-Message-ID: <49905050-8bea-498a-9a69-bbf7e00f30c8@t-8ch.de>
-References: <ba23217d-5eaf-4146-8ed7-27289cece364@t-8ch.de>
- <7bac1319-fe1c-454d-b96d-8344bdce3961@t-8ch.de>
- <f9d51d6b-f38e-48bb-be5a-97217fb503c1@paulmck-laptop>
- <ce65b110-259a-4edf-a84b-4015c6160f52@t-8ch.de>
- <20241101213314.GC15112@1wt.eu>
+	s=arc-20240116; t=1730497307; c=relaxed/simple;
+	bh=CiN2uxsNj+DFqml8ELV9oi4hDaOwwmq30dVz/w17Qp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Qh6J9bKEkTx7Z/2i7ZXqlnSSYLQC64oAsVCpmsMDm3Vt3MT8HVKzoq9pDiLTHjbJPMQD/Woxw1E/vTzLfW85x78sGauDeBnGBSnW9nf6RVqHVA9+hhmIul7qbOsvwLz96+PDN6d1GMOc9R4YEGPBqRa6B2E/a0RG0QCQx7/zWxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kus+8N4p; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1C4w92019835;
+	Fri, 1 Nov 2024 21:41:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WxyvEmleRomRRpxzwY/QMB3t1MlR8jcEBupWPgJsTo0=; b=Kus+8N4pVUbJI4AW
+	hCJVVQaDExoYXKQS2dCi/c8BdGLsmg9fgm9nlNxFy0WlX5mkoNfFi9NOHLXZDXMy
+	xooGn7IXsoYESSqaZCpiUw6G1aLBZzqVuTorB4IBspfu+Rd7AlyKbr1V4Uy0ygKR
+	NFGzf0Nolmf1o2kteNQnFoaCr2ehHD8Vper0AMUYekADE1qvjdqV4TCcWUGnM2bs
+	1SndpLjHIsFIQuPMzEytMS0L4kcgqfGWimr+5wD7BXpbplw4Jf76DNRp8j16cEzI
+	MdQe43DXLCgFJUQpJTs7cQ79CqTgfjlyQ/64eGw7CTA5c6oQ9J8uMj5g/31SW7Mp
+	VHK+0w==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kmp0rnud-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 21:41:30 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A1LfTpK009637
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 1 Nov 2024 21:41:29 GMT
+Received: from [10.110.96.174] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 1 Nov 2024
+ 14:41:28 -0700
+Message-ID: <52229a96-64b0-48d0-9868-31be42b12db1@quicinc.com>
+Date: Fri, 1 Nov 2024 14:41:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241101213314.GC15112@1wt.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/hdmi: mark interlace_allowed as true
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20241019-msm-hdmi-interlaced-v1-1-03bf85133445@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241019-msm-hdmi-interlaced-v1-1-03bf85133445@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TjgjCD5ik6jnu8KxeyIsSuO1o5H0Q3TF
+X-Proofpoint-ORIG-GUID: TjgjCD5ik6jnu8KxeyIsSuO1o5H0Q3TF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ adultscore=0 clxscore=1015 phishscore=0 spamscore=0 mlxlogscore=999
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411010156
 
-Hi Willy,
 
-On 2024-11-01 22:33:14+0100, Willy Tarreau wrote:
-> On Fri, Nov 01, 2024 at 09:23:48PM +0000, Thomas Weißschuh wrote:
-> > Hi Paul,
-> > 
-> > On 2024-11-01 13:22:17-0700, Paul E. McKenney wrote:
-> > > On Fri, Nov 01, 2024 at 02:22:13PM +0000, Thomas Weißschuh wrote:
-> > > > (resend to add missing Cc: LKML)
-> > > > 
-> > > > 
-> > > > Hi Paul,
-> > > > 
-> > > > The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-> > > > 
-> > > >   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-> > > > 
-> > > > are available in the Git repository at:
-> > > > 
-> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git tags/nolibc-20241101-for-6.13-1
-> > > > 
-> > > > for you to fetch changes up to ad0558f3883130954ca724697f2d19aef93967b3:
-> > > > 
-> > > >   selftests/nolibc: start qemu with 1 GiB of memory (2024-10-07 21:57:45 +0200)
-> > > 
-> > > Thank you!  I have pulled this into -rcu at signed tag nolibc.2024.11.01a,
-> > > which copies from your signed tag.
-> > 
-> > Thanks!
-> > 
-> > > The usual "make run" and "make user" worked fine, but "make libc-test"
-> > > gave me the build errors shown below.  Is there some setup step that
-> > > I omitted?  Or is this not really a necessary test?
-> > 
-> > That test does not actually test nolibc but the nolibc test suite.
-> > It uses your system libc and makes sure that the nolibc test
-> > expectations match the behaviour of a "real" libc.
-> > The missing strlcat() function was added to glibc only in 2.38, so I
-> > guess you have an older version.
-> > On my glibc 2.40 "make libc-test" works and the test itself succeeds.
-> > 
-> > I'll see if there is a reasonable to make libc-test work on older glibc.
-> > But it shouldn't impact this cycle.
+
+On 10/18/2024 2:10 PM, Dmitry Baryshkov wrote:
+> The MSM HDMI driver supports interlaced modes. Set the corresponding
+> flag to allow interlaced modes on the corresponding connectors.
 > 
-> Maybe we could just enclose the test with:
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/hdmi/hdmi_bridge.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> #if !defined(__GLIBC__) || __GLIBC__ > 2 || __GLIBC_MINOR__ >= 40
->  ...
-> #endif
-
-This will mess up the test case numbers.
-The test is actually only running on nolibc anyways, so we could also
-stub out strlcat() with a dummy inline function.
-
-> The real libc test is indeed not critical but it's important that we try
-> to keep it working reasonably well over the long term as it reminds us
-> not to diverge too much.
-
-Agreed.
-
-> > For better architecture coverage I would recommend ./run-tests.sh over
-> > "make run/user". Speaking about this I remember the discussion from the
-> > 6.12 PR where Willy proposed an improved run-tests.sh error message.
-> > It seems he didn't push it as a commit, so let's add keep it in mind for
-> > next cycle.
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> index 4a5b5112227f..643c152e6380 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
+> @@ -336,6 +336,7 @@ int msm_hdmi_bridge_init(struct hdmi *hdmi)
+>   	bridge->funcs = &msm_hdmi_bridge_funcs;
+>   	bridge->ddc = hdmi->i2c;
+>   	bridge->type = DRM_MODE_CONNECTOR_HDMIA;
+> +	bridge->interlace_allowed = true;
+>   	bridge->ops = DRM_BRIDGE_OP_HPD |
+>   		DRM_BRIDGE_OP_DETECT |
+>   		DRM_BRIDGE_OP_EDID;
 > 
-> Oups, I vaguely remember proposing a trivial patch in an e-mail a while
-> ago but I don't even remember what it was about. My mind is totally taken
-> by the upcoming haproxy release these days :-/
 
-It's at https://lore.kernel.org/lkml/ZtlQbpgpn9OQOPyI@1wt.eu/
-No worries, I'll pick it up after 6.13-rc1.
+I had quite a bit of discussion on this internally because this spans 
+quite a few generations of chipsets.
 
+On very old hardware, even before msm8996, there was dedicated hardware 
+de-interlacer. But even on msm8996 or other HDMI supported chipsets 
+where the handling of if (mode->flags & DRM_MODE_FLAG_INTERLACE) is 
+present, these were because its carry forward of older interface code.
 
-Thomas
+The way we handle interlaced formats today, is software needs to handle 
+the part of dividing height / 2 and width * 2 and adjust the source crop 
+if necessary. This part has moved to userspace for recent chips.
+
+Othwerise, we will need to add this part in the dpu driver to adjust 
+this. I am not seeing this part there yet. So may I know how you 
+validated this change? Something similar to :
+
+https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/LE.UM.1.3.r3.25/drivers/gpu/drm/msm/sde/sde_plane.c#L1340
+
+If we add this part first to dpu code, then we can mark interlace_allowed.
+
+> ---
+> base-commit: c4f364c621d0d509190d673d80a9b23250607b4a
+> change-id: 20241019-msm-hdmi-interlaced-1508c1dc9bb9
+> 
+> Best regards,
 
