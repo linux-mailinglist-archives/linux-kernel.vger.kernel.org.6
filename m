@@ -1,251 +1,117 @@
-Return-Path: <linux-kernel+bounces-392521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44759B9528
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:22:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E1989B9532
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:23:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 628281F22CC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:22:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE15A1F22F02
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE201AA781;
-	Fri,  1 Nov 2024 16:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3FC1CC8A7;
+	Fri,  1 Nov 2024 16:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fZHq+tz3"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2066.outbound.protection.outlook.com [40.107.237.66])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lZKBzO/N"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966AC1798C
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730478139; cv=fail; b=bzobMREHnhoe8722FVUJaxgNJkhcWrXlsZJRoZLErEE0onLyNjMdA2aItR5gL8hPWTccQ01HvObPv2H8N3Sbt0333EbdXBlC7sbEM4kJTcV1QhRjhq/7iE6Hn1BzV4vUPQBpoSJpbVrnVV59UQeox9j4bYJtu5cJX9EYxsQ/EeE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730478139; c=relaxed/simple;
-	bh=GLY4lKfUcJ+kzm8ANrnQps1Ab3+heFt9c1+pD58ZTH8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bSeH6bC6iPotSW8YgR43wOuu1I26f78auZ+LPtML75yuM5u+tkzUVGmjATUEcTti2zQkxGc6V5A/CM9Q12ycBqAZ2VouuqSSoQoqou9qKClqVhGY89bkH4+AZ+qcMtMVXOzY6ogGDNmyo4yAPGd2GHr5TAJowY3ya8QWt4YOFTs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fZHq+tz3; arc=fail smtp.client-ip=40.107.237.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vqLaHFtD3iTSbGZeXFRTHi41oozX47XowXL2KHZNmx0J1o5wabJD6vuU2oTnNs5PEB9G9Qc3DS0YkRzdshQFwlvvPs8yUrKbvT1n21/l9MUj/+q0CGmPBCsrU6SkBC0YoL4Dd3L4T0TQdRFYaZbfPimYqXr/8CrYW9LcyfKqGrJVTKJ4QyLTKq4lFnW/qB/AFe05EhzSmll3iI5rKIbI0VehQZP7rrnxx3kI+6Yh846TFiCDfRLMjGlDdtktHdQYooDuuqZzbX4692s8G/f88JQZTeTa2WJGXJxtaugRoL2cd98Z/kmcwFQX/37RrLfVF5joRUUq72k+P5QS2zzCWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6uAjelOB4VOxy+rlR6xS9XziakUJvp2uotBbcWKDXtg=;
- b=tdKxL8KSgANomUoq/01IsJcO94KjgcE50XXt9X+PcCGVmQqmdDJskWLO/OsJ1qHHZVcqZGffMspjyd4l91K+6orodX75bm+vTtwzOhCkcmznqo4gTYhanTc65cH2ehv9+kVOKNsUK62g2YyRVJ9/wWR/90jOeQLoSwRTcwili7S4WdTSD18cQ0ZgfncIQ/JC6ddHCDW7jNVfhPIc/NTfgYyr6iBTYXBF2pncf+zivxSUylePlJadkZl8kbk32Jtq+w6R3LXnGKNTUZpzIiuN44bpJtDinuYJ0D5SWyLXR/hpcO5oLEsgDgMiOL4SOoKWeO9Mk8e6y1TAOq+VR5d49w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6uAjelOB4VOxy+rlR6xS9XziakUJvp2uotBbcWKDXtg=;
- b=fZHq+tz3Gw43b/c/DM8lTbhrOcD4GAxg2ikCJQaT/l711T1QB1eazlJ5W0gixDn2CfTejlueBqnBMo+0x2XyiiR8Td34b6EotkhVJk5jYwKkh3Yi2OMv0iafwjqMyBoHVROoM7MOSw43afSgnq8Qg0ZvYpRvCvk+T3Xsrbj6SWw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by MN2PR12MB4343.namprd12.prod.outlook.com (2603:10b6:208:26f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Fri, 1 Nov
- 2024 16:22:13 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8114.015; Fri, 1 Nov 2024
- 16:22:13 +0000
-Message-ID: <af5edb6c-3075-420e-b52f-05844c728180@amd.com>
-Date: Fri, 1 Nov 2024 11:22:11 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] amdgpu: prevent NULL pointer dereference if ATIF is
- not supported
-To: Antonio Quartulli <antonio@mandelbit.com>
-Cc: Xinhui.Pan@amd.com, alexander.deucher@amd.com, christian.koenig@amd.com,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241031152848.4716-1-antonio@mandelbit.com>
- <00e9b1f0-7bc1-418c-8e67-e8f1893be665@amd.com>
- <34c84c6a-9b0d-4d04-9ce3-edf1bb850b2c@mandelbit.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <34c84c6a-9b0d-4d04-9ce3-edf1bb850b2c@mandelbit.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN4PR0501CA0036.namprd05.prod.outlook.com
- (2603:10b6:803:40::49) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2091A1B6CF2
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730478164; cv=none; b=aiVaqjsSbf5BWgwMWg1K2aUHqC8X9LvnxYb467So6bMO0q/pmmNxW1VLllmRk+pPzGv2wwh+5bcniUUVyMnWfPkzMFFkeUhG80hiQdFP/C8cdmaG+KbYPmf3t/JtGKZEhV2+hPKoXJ9fYMOsbIeimDrZL+63mN8QRCzTNWeIuYM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730478164; c=relaxed/simple;
+	bh=ToEoY8y5UeAertZfIJABhwA7CpheQxwWzqqoTdcGFu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nw666fn+c6K21mGWTK7NsTHwHFzth4uKYNoymbYHNjPywG+siMwRmvI/9pxOLEa4dEsve3lwDe/fSkTY33+kQ5ysR2piKlrFxkjx3ErIgB65QbT9JX4pMx9hLpMOwO+/KpGW3T/UAReMSRef7ifGEn3tViEwvH4kP6d21s9XBc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lZKBzO/N; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 1 Nov 2024 09:22:30 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730478160;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1evd5lGbHCuOT8tfPmadcUQqa04tuGgPb+HSVtJmF8k=;
+	b=lZKBzO/N0DQ5XxKAtQkk86AjV5mYav4byhccRQ4eBvOGkAaxRH67vY48wf6QsY3GcRJOQc
+	Jcc90LHPWM7riQBmj5VKnWMXM9M0Jd1tad4KG4IqFHlBItdwH/wCsGkCn5RbmsKe15w2bz
+	xwxx3Z3KDUlP1gGnQMEpFuUjx4hu94M=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Andrew Jones <ajones@ventanamicro.com>,
+	James Houghton <jthoughton@google.com>,
+	David Woodhouse <dwmw@amazon.co.uk>, linux-next@vger.kernel.org
+Subject: Re: [PATCH v3 03/14] KVM: selftests: Return a value from
+ vcpu_get_reg() instead of using an out-param
+Message-ID: <ZyUARgGV4G6DOrRL@linux.dev>
+References: <20241009154953.1073471-1-seanjc@google.com>
+ <20241009154953.1073471-4-seanjc@google.com>
+ <39ea24d8-9dae-447a-ae37-e65878c3806f@sirena.org.uk>
+ <ZyTpwwm0s89iU9Pk@google.com>
+ <ZyT2CB6zodtbWEI9@linux.dev>
+ <ZyT61FF0-g8gKZfc@google.com>
+ <ZyT9rSnLcDWkWoL_@linux.dev>
+ <ZyT-6iCNlA1VSAV3@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MN2PR12MB4343:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2a85ae4-6038-4f3f-3bd7-08dcfa9157a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L0R3ME1Jc0VYZ3BXMloxcFVRVms0c1dFamVkSXB3VGFWc291WEZoeG02YzV0?=
- =?utf-8?B?Y3JScy9zdXZjZlZFa25ROUdKVTBnSlZJZHhNM0FlSUZVMUtRU1ZLalg5WUx4?=
- =?utf-8?B?RzM3YWhzRld2R0l4ZkZqbitIdlpIZnp5U25UMGFzZnI5cW5Bb2RMRmhzK1Fq?=
- =?utf-8?B?M0swQTZMQmZTQnJlVkl2L0xxd3B0Zm9pR2x1akxmVGd2YW8yWE5YaTd6UmVL?=
- =?utf-8?B?Qzg3aUNLSHRPcTFvdUJxZGszdVQyOFYrcmlDS0s5OW03OThKaklDc2FNR1Br?=
- =?utf-8?B?c3VUSlFVdzN3T0Z4aHhPQ3VIU1ZLc1Rmc0I2eXUxMDB1OHFTM1JVR3gyZGtR?=
- =?utf-8?B?c1VvbENndnByaGJyVWlURmhEU1R3eTVDYkY1RmhwelN5cTAwZGkwaWFQMllw?=
- =?utf-8?B?QkdFbjJXOExoQnFCV0ZPd2ViZzRDL3E0Zjg5bk9JYTk3REw0cmxId2RvYmts?=
- =?utf-8?B?OFdkWFRRSkNST3BEbVhOWm01MkJzTmpZSlRoZnZUQjhwWWJFakxJNEI3M3lw?=
- =?utf-8?B?T0VERCtrZkxJeHJvV1gzeS8wUDIySWRYNTRVVDZYNGZ2d3RpUnRnUVV0QmQ1?=
- =?utf-8?B?T3lxOCtrQndoN0ZDck1TZnVHSDVsTzAvOHBXNmtTUUwzeUdNUjlpYzNNOFlI?=
- =?utf-8?B?VGhPNC9ibDc5bXpnaWN1bnpvV0QwQnJ4b2UrdU4zWmJwMGxNM3AwekNNZHpU?=
- =?utf-8?B?emZydnJNaVJibm5MenpMKytNbTYyTlJ6SkNkT043N3RMcmtBTHg0dU5FUUdG?=
- =?utf-8?B?R2FNQldZbExIaWlGWG5UVG5LN3p3aCtYcy96RFduaWQ2R1hlek1rUXQyQ1V5?=
- =?utf-8?B?Rzk5eWVPL0xkdVRnK0ZyOGIxcTFkaTJtN1pUL0x2T0hSc3gyZFZQU2owMFhj?=
- =?utf-8?B?VmlVbllIeHFPUWd2SzBvcEI3YlFUaWt1T25XeUxoNHhzM0RxOHNpUzdyaDVB?=
- =?utf-8?B?aWdxdDRMRVdMbWMxQTdDSVJrR0RWSEZPU2YzNVR0M2E0QWhkWDNZdzQvWkMw?=
- =?utf-8?B?eThraWxmcjEwRGxTNG1IS0lNYWkwQjBmT2pKdVEzY3phc0pCVGNVUjI0NStR?=
- =?utf-8?B?WkZTYVdhd05wdCs0NnluUjVNYk1IOGh4NFFBbU5SQ2cyL1VWdC9IUG02YXcw?=
- =?utf-8?B?UnQ1SXFaQml1SEI1cmNOVEtRY2czeXNqVGdNeVRSR2hGY3pvcXF1TGtmRDRy?=
- =?utf-8?B?aUZUWVg5RkRzd1pESkhFcmZBMEdUVlY4b0dXM1UzN2xCU2xJL0RaZmNrQStT?=
- =?utf-8?B?WmNGTmt0Q0M1RXVURWNpY1Z0alVmUFJYWU0veTZ2M3doUFQ2T0Y2NEcvTkNr?=
- =?utf-8?B?TmF4TDltcGhqR0lHeVY3cXdKZVRtOXh4eEd4b2x3MjZTUlJIcGQ2T1BVTkZz?=
- =?utf-8?B?aHowTWh6UVFZMFU4M1g2NlZmWTI5UGZHQTdrb2x4eWFlSG1ha0x0YkRIQWhw?=
- =?utf-8?B?RzhoMnM4Wm9lMW1ocEtBZnBwaDJiOWRndnh1UkFCNXQ2QkFEK1hiTEdqZS9R?=
- =?utf-8?B?QWM4akJ1dk9YRjhvcHJqK3JqeUtaTTN6Vmxpd01QTDNqeGFEL3JoOGNOT0s5?=
- =?utf-8?B?M0taU05wcS9QQ1p2WEdLOEtyVFA3L0xjZmJHckxGK3FXMGJlTjhLOFV5alc4?=
- =?utf-8?B?ajNELzZjL1NDVFQ3Njl0bmpqV3ZDRlFjQTRtUUVNZUY4ejVZTC85VUI4bEYw?=
- =?utf-8?B?emhsVnQ3K3BaSjUrajZRcUpiUVFCb0MrVDRPZHFwcFI5WklnRUdNUUdQWVNo?=
- =?utf-8?Q?1uYgnPkzaWtx8SeX8o=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SDlKSjJRNm1oL3V2eEo0aElkQk1yOFBUaFdrOFB4U0IyWnVMNlByUnphaFJT?=
- =?utf-8?B?Y1FGdnlrT0FlK3pTU3ZCaEtzajRQMTRxQnp2V3ZodVVlNUlOaWV2SHBCMHJL?=
- =?utf-8?B?L2d1dE5VeXJrQ1Y2R25MNUN3bVMvZGh6WWRZZ3haWkgvekVIOWo1ck0xdHBH?=
- =?utf-8?B?NlRPUWowenRkd2xvK0R3dkdMeU9veU8ySFhYdDZxbllRQ3VuRktYU0FKMUZE?=
- =?utf-8?B?bmI1NytKaUdNbnNhQXp1MEFUVmV2TjdHaWh6R2ZubmtSdVljNGR4VzNKeGxz?=
- =?utf-8?B?cXlLOGRPeW5vTlhSelFtWlhxWFB2ZVVQcHI3a0FvRHF3c3B2RW5oK25jL0Vt?=
- =?utf-8?B?TEhzV0lmc2ZPRk1pclhjbTViVUhUMlk0MEkzRUc4SlI5ODErNk1HTW5kNVB4?=
- =?utf-8?B?NVBkSE1FMU9qMk9rU1JtN2xlQUJYVUw5ZFZCMXQxVU1uUXBDemhxNlBzN0pJ?=
- =?utf-8?B?bzZLOHNiRE5ua2lIV1Q1clc1cHdRa3UwaXk1NHJBM0VMNW1CeFY1SEhSUVV4?=
- =?utf-8?B?bWd1KytlQ0xrcGlEeWg2aXFwaytYQm1vQ0Q0QUxqVDRsQ1ducnJCN1lYZkRs?=
- =?utf-8?B?dy93YzZMOVBNTTQzNjBRT1NiZVdta3VQNGwzM0lOeXhheHl6V0NoelIyZzJl?=
- =?utf-8?B?a2dkSTNXUE12eXlSZ09WRDFSUFJGOGdFNDl1NkRtT3NZRU5ianpSNFpyNjl3?=
- =?utf-8?B?UHNSUFIrcWp2WVdPelJNc3ZtOWlCS0c2Rkk1ZDRHWGxBU21wdHMwZmdYcVNE?=
- =?utf-8?B?ZVRnMWgydUVqZThBM29ET0NSUnNweGhIM2tUWTBIdy9LVk1CS0Z2cTQxWEVB?=
- =?utf-8?B?Y2thelZJTXNQa28rRm1Bc3Q5VnM5eml0cXF2ZnF2NmU5UWErN3A5WStyWEww?=
- =?utf-8?B?UlJXWDJPbnYyUlZNNnVuTnpzbTN0K040enkvU1RMZE9LUHR5bFpERUcvdGJo?=
- =?utf-8?B?MFlJTHVaQm1CZW1waXVmenF3YUFIWmJWRDcySXdCc00zTllHZFRRa2pwb0xt?=
- =?utf-8?B?S2Z5aTNBdkpzK253ZEg0MG45TEgxRjdabTd3R2NHVHhqNWEzNU1SOTcwdHk2?=
- =?utf-8?B?U0t6eG9YNkdSNlpsams2MGN0Ny9sU3dUbGhoRDhmUkxSUHl3eFZ4SlNINUlu?=
- =?utf-8?B?bmk4TTF1NDZJb25HMFFHL3JxdHRMNk5wcXJDTDJ6MGFIR2ZhZkJzTUlCSjJ1?=
- =?utf-8?B?czVzZ05tamlNNEdXbm11bGtiYTBIOS9nQUxqaTJlTjc1QlVmcGF0bkxpVVUz?=
- =?utf-8?B?bHRkZ2lJcDBwSTFkMHpWKzhidm1lbnJLV0VqSTJEQWcyRGxveGNsdUdPU3hx?=
- =?utf-8?B?ZVdmUXhaUjBFcTF3czdDdENhTnZsQWpxODBUUmNUWWZqYmRJcUxjYXNqU0Nn?=
- =?utf-8?B?dmxhZWRvNjl5SVU1dGE3L21kRzY2Tm9pQ3Z1NEw0VkQ3Q2JVYzhUVkNRODBs?=
- =?utf-8?B?TU5Dc1F5djlUQTJsNXVDOThPQ0JmUWc4NzMwNDZIMitDZGxqQjVnZ3JUcE9a?=
- =?utf-8?B?YzRMQXhUTWJNUk5aZFZYcWozNGN1MldFVElVUUZtS09YbGFRTmp0aGZ3czdN?=
- =?utf-8?B?bFBTeVdqQnlMajNyT1hMcytpZ2w3ZUZUVlQwWVcxQU1jcUtwcWljd1JFb2ly?=
- =?utf-8?B?VHpVTEdENUFYZWYvNXhyZWxFWG45MGEyUFkxa0JHYkk3cDVYNzdNRDg2Sm1E?=
- =?utf-8?B?akZGSXFlTkxRWjNxY3hOUGlsS1lwRTIvYVNxYWVML09tTFFtR0Ixa3llbWF3?=
- =?utf-8?B?dlRYM2kzaVo1N1ltOUhSbzVkdDVpQ2ZBaWJ1VkY0M2hkZnc0VWtWQzhxSnlG?=
- =?utf-8?B?cHRPTzFldkRPYnc3UWNqei9kR083TFBSVWNPRGxzNm51S1VMR1JZNWI0NlhF?=
- =?utf-8?B?YVZrM0JWcW9kMm83MmVWZE5EV1NyczdhWGJMYzdxL2REbmpneGlKSldoUlNi?=
- =?utf-8?B?SWZCR1poSnF5bVRrZ3JnaUtDMW1TK1ZKYkpPL25MNHVHWkF4UVUzekduaUlm?=
- =?utf-8?B?L29UN1k3K25GL3lZSHU2Yk5wcitCQVg5dUV2TnZES0dQY3Bxa0F0VnVPZmsx?=
- =?utf-8?B?SnlEM3h5YTk0NlFUby9JRVhzZzJqclhiZHBuUm5Sd1M2dTZscUlDQjFKRE9W?=
- =?utf-8?Q?kMwdgWzLdjXw3l8jg4AHq4QIB?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2a85ae4-6038-4f3f-3bd7-08dcfa9157a4
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2024 16:22:12.9307
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vBLEU8Q5NhU1hyfpo1FNtTTdTtVyeXAU/2DuAKcOYEpdr1ugb7NLWpu2dgba9/x0BOowxJfNGpOut3H+HWyGeA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4343
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyT-6iCNlA1VSAV3@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 10/31/2024 15:50, Antonio Quartulli wrote:
-> On 31/10/2024 20:37, Mario Limonciello wrote:
->> On 10/31/2024 10:28, Antonio Quartulli wrote:
->>> acpi_evaluate_object() may return AE_NOT_FOUND (failure), which
->>> would result in dereferencing buffer.pointer (obj) while being NULL.
->>>
->>> Although this case may be unrealistic for the current code, it is
->>> still better to protect against possible bugs.
->>>
->>> Bail out also when status is AE_NOT_FOUND.
->>>
->>> This fixes 1 FORWARD_NULL issue reported by Coverity
->>> Report: CID 1600951:  Null pointer dereferences  (FORWARD_NULL)
->>>
->>> Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
->>
->> Can you please dig up the right Fixes: tag?
+On Fri, Nov 01, 2024 at 09:16:42AM -0700, Sean Christopherson wrote:
+> On Fri, Nov 01, 2024, Oliver Upton wrote:
+> > On Fri, Nov 01, 2024 at 08:59:16AM -0700, Sean Christopherson wrote:
+> > > > Can you instead just push out a topic branch and let the affected
+> > > > maintainers deal with it? This is the usual way we handle conflicts
+> > > > between trees...
+> > > 
+> > > That'd work too, but as you note below, doing that now throws a wrench in things
+> > > because essentially all arch maintainers would need merge that topic branch,
+> > > otherwise linux-next would end up in the same state.
+> > 
+> > TBH, I'm quite happy with that. Recent history has not been particularly
+> > convinincing to me that folks are actually testing arm64, let alone
+> > compiling for it when applying selftests patches.
 > 
-> Fixes: c9b7c809b89f ("drm/amd: Guard against bad data for ATIF ACPI 
-> method")
-> 
-> Your commit :)
-> 
-> Should I send v3 with the Fixes tag in it?
+> FWIW, I did compile all patches on all KVM architectures, including selftests.
+> But my base obviously didn't include the kvm-arm64 branch :-/
 
-Don't worry about it, I'll pick it up while we commit it.
+Oh, that rip wasn't aimed at you, commit 76f972c2cfdf ("KVM: selftests: Fix build
+on architectures other than x86_64") just came to mind.
 
-Thanks!
+> One thing I'll add to my workflow would be to do a local merge (and smoke test)
+> of linux-next into kvm-x86 next before pushing it out.  This isn't the only snafu
+> this cycle where such a sanity check would have saved me and others a bit of pain.
 
-> 
-> Interestingly, this pattern of checking for AE_NOT_FOUND is shared by 
-> other functions, however, they don't try to dereference the pointer to 
-> the buffer before the return statement (which caused the Coverity report).
-> It's the caller that checks if the return value is NULL or not.
-> 
-> For this function it was the same, until you added this extra check on 
-> obj->type, without checking if obj was NULL or not.
-> 
-> If we want to keep the original pattern and continue checking for 
-> AE_NOT_FOUND, we could rather do:
-> 
-> -       if (obj->type != ACPI_TYPE_BUFFER) {
-> +       if (obj && obj->type != ACPI_TYPE_BUFFER) {
-> 
-> But this feel more like "bike shed color picking" than anything else :)
-> Anyway, up to you Mario, I am open to change the patch again if the 
-> latter pattern is more preferable.
-> 
-> Regards,
-> 
->>
->> Besides that, LGTM.
->>
->> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->>
->>> ---
->>>   drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/ 
->>> drm/amd/amdgpu/amdgpu_acpi.c
->>> index cce85389427f..b8d4e07d2043 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
->>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
->>> @@ -172,8 +172,8 @@ static union acpi_object *amdgpu_atif_call(struct 
->>> amdgpu_atif *atif,
->>>                         &buffer);
->>>       obj = (union acpi_object *)buffer.pointer;
->>> -    /* Fail if calling the method fails and ATIF is supported */
->>> -    if (ACPI_FAILURE(status) && status != AE_NOT_FOUND) {
->>> +    /* Fail if calling the method fails */
->>> +    if (ACPI_FAILURE(status)) {
->>>           DRM_DEBUG_DRIVER("failed to evaluate ATIF got %s\n",
->>>                    acpi_format_exception(status));
->>>           kfree(obj);
->>
-> 
+Eh, shit happens, that's what -next is for :)
 
+The only point I wanted to make was that it is perfectly fine by me to
+spread the workload w/ a topic branch if things blow up sometime after
+your changes show up in -next.
+
+-- 
+Thanks,
+Oliver
 
