@@ -1,188 +1,86 @@
-Return-Path: <linux-kernel+bounces-392129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7A59B900F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:14:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E129B9012
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:14:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F78C282DAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:14:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3B21F2291F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E430199256;
-	Fri,  1 Nov 2024 11:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BS4NLzw0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QYYpkd0C";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BS4NLzw0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QYYpkd0C"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CBC19B586;
+	Fri,  1 Nov 2024 11:14:20 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767211946C4;
-	Fri,  1 Nov 2024 11:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2556B19B3D3;
+	Fri,  1 Nov 2024 11:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730459654; cv=none; b=nu8GyHpmK1bftoBgUbOL+IcCbLAilTpq6HvHeC5U006GGj8xf+fdM2ZmhC29ynzvATCKNdM8A0Uas88crmhSWai/hXTpC6XC62PRB38CNNEZM6x7ejYw6uAW/9aKVOgzIDDeh697IDtPIbRAqlrAIL8aNjYPeuxHhQhFvpJbO6I=
+	t=1730459660; cv=none; b=JyIQ1m5OO1U8hce18+/Pdt3BoyviiEgepO2hAvncUKh0MjA38MX5OlJ8gVMZV2pEt7WSEmhKhW/KHD9JWXaZBp2HB0okEhNdQi74jS70Vlj2pKHgUPWpinmqRilqWjWdErQC/kxkcFEbjZ6jQka53c8QBEsM81E5T336jFYAMR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730459654; c=relaxed/simple;
-	bh=h/zb5oZ2xfAJZ5EiO7dNGMWaq1y9SO/DI0yoTd4CXF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PvOELTe/JpBUV24OxI7op/7a04t0a9zizqvgUnnEiQee0LU7W46iZ2VdwRx8WrJrS1qJjBHsRHMo96az81kSkV7BP/Cs0JFo0aOQisd81BEvKyAXfGHgiuwhdLE9Jo58vccNyYpuCvMbCKFxrECDBSn7+Lasi+jlqE+bOp5N7UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BS4NLzw0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QYYpkd0C; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BS4NLzw0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QYYpkd0C; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9867021E38;
-	Fri,  1 Nov 2024 11:14:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730459650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hyyL/RD0X1cI6UUcW1ht+DqU0NPJSmQpscXuunL1J/E=;
-	b=BS4NLzw0XU/muMoq/5yvtwqScxZfMxl1B9olDrVwNdQL1Ir/NIzk38BW2XWJKV+S1Z5viQ
-	u8U9QDrtGTw961/3n3jRx/LPtAVjXZr4z88O7ZnHPZkuB1bMnGRy/L0CZD72lOnaB0WpV5
-	tGPjALejIJZ2K8keW3NdZllUDHlguvI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730459650;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hyyL/RD0X1cI6UUcW1ht+DqU0NPJSmQpscXuunL1J/E=;
-	b=QYYpkd0C2wgXSoTIyU9/Ap9mtVdOipP2rYxVuf6WfxQzzBAKLjs3oS5Qs7n5c20VEjja3M
-	eqzVqEY0UBMG5eCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BS4NLzw0;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QYYpkd0C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730459650; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hyyL/RD0X1cI6UUcW1ht+DqU0NPJSmQpscXuunL1J/E=;
-	b=BS4NLzw0XU/muMoq/5yvtwqScxZfMxl1B9olDrVwNdQL1Ir/NIzk38BW2XWJKV+S1Z5viQ
-	u8U9QDrtGTw961/3n3jRx/LPtAVjXZr4z88O7ZnHPZkuB1bMnGRy/L0CZD72lOnaB0WpV5
-	tGPjALejIJZ2K8keW3NdZllUDHlguvI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730459650;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hyyL/RD0X1cI6UUcW1ht+DqU0NPJSmQpscXuunL1J/E=;
-	b=QYYpkd0C2wgXSoTIyU9/Ap9mtVdOipP2rYxVuf6WfxQzzBAKLjs3oS5Qs7n5c20VEjja3M
-	eqzVqEY0UBMG5eCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BCC7136D9;
-	Fri,  1 Nov 2024 11:14:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9RkeIgK4JGdxVwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 01 Nov 2024 11:14:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4C06CA0AF4; Fri,  1 Nov 2024 12:14:06 +0100 (CET)
-Date: Fri, 1 Nov 2024 12:14:06 +0100
-From: Jan Kara <jack@suse.cz>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] ext4: Support setting FMODE_CAN_ATOMIC_WRITE
-Message-ID: <20241101111406.tldgl7rdfieqpq3o@quack3>
-References: <cover.1730437365.git.ritesh.list@gmail.com>
- <d8f73bc9fef19dd90de537376f11f9f26daccbeb.1730437365.git.ritesh.list@gmail.com>
+	s=arc-20240116; t=1730459660; c=relaxed/simple;
+	bh=sB/xWclADAe6BbjPs39pElgMK/SnHQ3N0shlhyPNvg8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=py02dde8JTxG0MaxKLdTYhRrtmdbqOTx3pgFI+G0/4U6ex0W0S5IpH/1nEZ87BX3J5xtjoVnlGX572JR7cAYrdrpHMFr7qGo+ZkZNAB7uAbEmQJ43NsKZGBHy+Vy4EOOWM7lciV7KHoIZlIgDAwZXG4dCyTLGz6Bww9IuuFuipg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xfyqh4N5mz10PQn;
+	Fri,  1 Nov 2024 19:12:00 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5E82A140202;
+	Fri,  1 Nov 2024 19:14:14 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 1 Nov 2024 19:14:14 +0800
+Message-ID: <763d9630-3064-4d88-8e99-549a07328ec8@huawei.com>
+Date: Fri, 1 Nov 2024 19:14:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d8f73bc9fef19dd90de537376f11f9f26daccbeb.1730437365.git.ritesh.list@gmail.com>
-X-Rspamd-Queue-Id: 9867021E38
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,oracle.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1 2/7] net: page_pool: create
+ page_pool_alloc_netmem
+To: Mina Almasry <almasrymina@google.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer
+	<hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan
+	<shuah@kernel.org>
+References: <20241029204541.1301203-1-almasrymina@google.com>
+ <20241029204541.1301203-3-almasrymina@google.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <20241029204541.1301203-3-almasrymina@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Fri 01-11-24 12:20:53, Ritesh Harjani (IBM) wrote:
-> FS needs to add the fmode capability in order to support atomic writes
-> during file open (refer kiocb_set_rw_flags()). Set this capability on
-> a regular file if ext4 can do atomic write.
+On 2024/10/30 4:45, Mina Almasry wrote:
+> Create page_pool_alloc_netmem to be the mirror of page_pool_alloc.
 > 
-> Reviewed-by: John Garry <john.g.garry@oracle.com>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> This enables drivers that want currently use page_pool_alloc to
+> transition to netmem by converting the call sites to
+> page_pool_alloc_netmem.
 
-Looks good. Feel free to add:
+For old API, page_pool_alloc_pages() always return a whole page, and
+page_pool_alloc() returns a whole page or a page fragment based on the
+requested size.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+For new netmem API, page_pool_alloc_netmems() always return a whole
+netmem, and page_pool_alloc_netmem() returns a whole netmem or a netmem
+fragment based on the requested size.
 
-									Honza
-
-> ---
->  fs/ext4/file.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index a7b9b9751a3f..96d936f5584b 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -898,6 +898,9 @@ static int ext4_file_open(struct inode *inode, struct file *filp)
->  			return ret;
->  	}
-> 
-> +	if (ext4_inode_can_atomic_write(inode))
-> +		filp->f_mode |= FMODE_CAN_ATOMIC_WRITE;
-> +
->  	filp->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
->  	return dquot_file_open(inode, filp);
->  }
-> --
-> 2.46.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Isn't it a little odd that old and new are not following the same
+pattern?
 
