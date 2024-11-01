@@ -1,106 +1,124 @@
-Return-Path: <linux-kernel+bounces-392561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 063969B958F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:37:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB019B9593
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08BD1F22C5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:37:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 207DF282327
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601EA1C75E2;
-	Fri,  1 Nov 2024 16:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEC21C8785;
+	Fri,  1 Nov 2024 16:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l14K5SRt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uh05FzQo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E9E450E2;
-	Fri,  1 Nov 2024 16:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0EB381BA;
+	Fri,  1 Nov 2024 16:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730479023; cv=none; b=FEmUuAnIWW1ys6HgkY4f8YCjjexOXZ8ywgbdybWk5dz1B8B9zqpkkfD+Tsah2mKulfYxLKlD9HjLPBeQyhyrnKBQp1Lw2bTKdFA76m4/outtckmqgDM9mfYSDqRgg1dSLMqURXbeFOBmn33MPEqH8CmXZ82YDJY1wGhs1RG3boY=
+	t=1730479036; cv=none; b=t7QzkcZbMOHskaWhlD7kSGxppFQS94EDbKGmMphJ2UyJhC2z9gcfyZojodAOWogu2cIi3EdQODe4ErGM2SNKD4ZQheMGO2RT7FPAWOHNrj2sbH5vYUWwULjdD93XXjDwATD9WOso60LiA63wu3EfqIO1hOtejNEn6vxK/8b4Jmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730479023; c=relaxed/simple;
-	bh=QET17fHgUqNbmUw/e9EdVPDP2UwGuQA8tvgZ5/yNPgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hELM1OUBxEvOoV/1VgCPP4Ic+Go7+3UXySi4eqBzhsA1igsjrvNpx4b5fh311OUTX11OybQXCczi2SOXvSqmlUtFvoqfd3E+zrm7Avf894eFv5MOHOtcqPBskepW4/lzuH876bx8/z3hr+zGl4LfKssBERwOi/F0Vvhxf3FM1/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l14K5SRt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1342DC4CECD;
-	Fri,  1 Nov 2024 16:36:54 +0000 (UTC)
+	s=arc-20240116; t=1730479036; c=relaxed/simple;
+	bh=9cb/qIM5GkNHvDl4cwky8lRENEhP+MSleP+ED061UOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jysNCS2S0+eq+ClBZRivGNwmwIWPHGk/34JBNWNZUtm91Yui4X3iCrurrkeOgG7CDkZeOiJ7qBZn1590X7rwtRLgBAhJ9hFMkokzOPcqcizQgOcyxlSa2hpQOWAlf/8mqmEFMUQZnwhZJOmcE3yKecqVksN8XtGW00r0unIO7i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uh05FzQo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A122C4CED1;
+	Fri,  1 Nov 2024 16:37:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730479023;
-	bh=QET17fHgUqNbmUw/e9EdVPDP2UwGuQA8tvgZ5/yNPgE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l14K5SRt1vC7zG+/VORahqbr+H6ulbVRDGBFQqXQrlK65o/ub6oYejiOTlB3PTP+t
-	 ojIvFQAiM6eCZyGzENOs0yMHTr2uO8dWnwfinokslRJsBu9P37TMZnux02xYOlCtzM
-	 EK6rS/bitNuCRQeM04K0w8i1fLTqvY1KCpyTTO2NKLQRnQndxkAEUdekfUn/utuDTd
-	 oOCDKuIEdj4R85KlKTGWq2I0JD6y348/hop0m/AUa2FbOMlj77L8f6dHmIh6//o3Mn
-	 MuOX0BLZg2wZpUTzzIeaMq8bP81cyI1nIOFo50d6vJ288U5hiHbTmy88m3C7SKeuRO
-	 wPHYT0ZSpEvKA==
-Date: Fri, 1 Nov 2024 16:36:51 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Ramona Gradinariu
- <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Anand Ashok Dumbre
- <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
- Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
- <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
- Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
- Linus Walleij <linus.walleij@linaro.org>, Benson Leung
- <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v2 11/15] iio: imu: st_lsm6dsx: use bool for event state
-Message-ID: <20241101163651.09ca52d4@jic23-huawei>
-In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-11-2bcacbb517a2@baylibre.com>
-References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
-	<20241031-iio-fix-write-event-config-signature-v2-11-2bcacbb517a2@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1730479036;
+	bh=9cb/qIM5GkNHvDl4cwky8lRENEhP+MSleP+ED061UOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uh05FzQohbCjpLPYZYiml+DBPG180jE/ft2iaztx7zdHObx0fRlIrEPAlxioA9rcz
+	 +wRvnqqNwgJRpMWjOOmxtuVVbeAR9g9B99Ox8qTevpgx21JJfi5ND/9pWsI1Hx4YbZ
+	 sxEV8RuzAEdsYosylUirvfywlml0oXIHTeeNsym6IuCQkG6u+VKwfIP0ZhN/Hotfni
+	 xvUDHx0/XqGHacfhf/JuOQaMcZZey97NEHMW2czpefWD6Ky/KG7q0rlhrN68zqQxr7
+	 BHs8TYKpiWOzhi0byj6MM09cFWw7TBIiArMsOybXd66+nsfTVQGGQFFWa3H6C8JZNa
+	 u2/RrSX9ce07g==
+Date: Fri, 1 Nov 2024 16:37:09 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Andrew Jones <ajones@ventanamicro.com>,
+	James Houghton <jthoughton@google.com>,
+	David Woodhouse <dwmw@amazon.co.uk>, linux-next@vger.kernel.org
+Subject: Re: [PATCH v3 03/14] KVM: selftests: Return a value from
+ vcpu_get_reg() instead of using an out-param
+Message-ID: <0bd90020-4175-48f9-9017-2eb6073101d0@sirena.org.uk>
+References: <20241009154953.1073471-1-seanjc@google.com>
+ <20241009154953.1073471-4-seanjc@google.com>
+ <39ea24d8-9dae-447a-ae37-e65878c3806f@sirena.org.uk>
+ <ZyTpwwm0s89iU9Pk@google.com>
+ <ZyT2CB6zodtbWEI9@linux.dev>
+ <ZyT61FF0-g8gKZfc@google.com>
+ <ZyT9rSnLcDWkWoL_@linux.dev>
+ <ZyT-6iCNlA1VSAV3@google.com>
+ <ZyUARgGV4G6DOrRL@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6kYfSRqCQpL5xm5l"
+Content-Disposition: inline
+In-Reply-To: <ZyUARgGV4G6DOrRL@linux.dev>
+X-Cookie: We read to say that we have read.
 
-On Thu, 31 Oct 2024 16:27:06 +0100
-Julien Stephan <jstephan@baylibre.com> wrote:
 
-> Since the write_event_config callback now uses a bool for the state
-> parameter, update the signature of the function it calls accordingly.
-> 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-Applied.
-> ---
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> index caefa15e559b8808051ff1c7f82c3f36c947933c..509e0169dcd54e773540c4e3f1b56e5b737f80c3 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> @@ -1865,7 +1865,7 @@ static int st_lsm6dsx_write_raw(struct iio_dev *iio_dev,
->  	return err;
->  }
->  
-> -static int st_lsm6dsx_event_setup(struct st_lsm6dsx_hw *hw, int state)
-> +static int st_lsm6dsx_event_setup(struct st_lsm6dsx_hw *hw, bool state)
->  {
->  	const struct st_lsm6dsx_reg *reg;
->  	unsigned int data;
-> 
+--6kYfSRqCQpL5xm5l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Fri, Nov 01, 2024 at 09:22:30AM -0700, Oliver Upton wrote:
+> On Fri, Nov 01, 2024 at 09:16:42AM -0700, Sean Christopherson wrote:
+
+> > One thing I'll add to my workflow would be to do a local merge (and smoke test)
+> > of linux-next into kvm-x86 next before pushing it out.  This isn't the only snafu
+> > this cycle where such a sanity check would have saved me and others a bit of pain.
+
+> Eh, shit happens, that's what -next is for :)
+
+> The only point I wanted to make was that it is perfectly fine by me to
+> spread the workload w/ a topic branch if things blow up sometime after
+> your changes show up in -next.
+
+Yeah, the -next breakage is a bit annoying but so long as it gets fixed
+promptly it's kind of what it's there for.  It's much more of an issue
+when things make it into mainline, and can be very problematic if it
+makes it into a tagged -rc (especially -rc1) or something.
+
+--6kYfSRqCQpL5xm5l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmclA7QACgkQJNaLcl1U
+h9Diegf/bQqyrBGdbW3sZYLGgcu7GKElqVo35sLnznNUwNVBjwT3ED3phcFvs0e+
+ykVAaeCQQQhw8p45KLci5zxYxGlymTW+lThmUSLbxAAiqZEOaP/nVcS+aKw+iS2a
+2nVXVegHJ0RXjxyupuOHJ5fEyCjnr46tPbW4Ok3W3cGrEvAhEsFqB5K9leegPLwn
+XZBPXERi3tAFS1Y57FBz9EjPLijPil2knc3/sEapi/7kjV7mZ9ahYYkscl88Fmms
+8lH1QX/Im7iQ0ayGvSFRd+o6AnCeN/vI8aGInfytJwchPrlKxDKDYlOPd6uRBj86
+6F4W4ExH23evr6zeMxhiNHXMyGbMqg==
+=KB5M
+-----END PGP SIGNATURE-----
+
+--6kYfSRqCQpL5xm5l--
 
