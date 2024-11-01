@@ -1,109 +1,106 @@
-Return-Path: <linux-kernel+bounces-392386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D91C9B937C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:41:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A9E9B937F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:42:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432EA1F24F28
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A29B01C21381
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E371A76C7;
-	Fri,  1 Nov 2024 14:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C1C1A76BC;
+	Fri,  1 Nov 2024 14:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsGAiBG8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAbVCABe"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408EB49620;
-	Fri,  1 Nov 2024 14:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580D349620;
+	Fri,  1 Nov 2024 14:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472090; cv=none; b=oz7qxuE8uejLwugdHyH693nV3QdvkNwmvQcsTMSECSm65HcX7qblLyUwE0mYVo0pQbrV7eiB/zugtNxzKB3pvdsiBL+b1diBaXTTLltnmPB6+SQgqFHwRBF+2602FeETTSQNEXCoKKlw8DdEId+sApKsyk/IgHAmQ5SmeBXTYkg=
+	t=1730472141; cv=none; b=Kxi67Lpcvxu0Oy8Wu2/V/GiWLI2KEHww2+36nkHwIGhwh9bvhQoyIwAi6BoWfSkNCbCrRqmldzoblMOY4BtsJlt69B5HDvr50hpOyk8VNS92Eh4RsxD8p+4sbHGsKEI/ubHi691VF2p94JjTBQq84xyUyG/NS3ruXTlEiXxxWJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472090; c=relaxed/simple;
-	bh=AmkGd1YtaRBsWyY/PhDUar+x9+0lYLo6JDmoiR2N3Xo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ShLDPK+HDPfMsIZVqNZP8u/uoGky3+q3nBxx+eHKbBKhhgwdS2htk2mJDZ7iB1SE+orQEkrKCL9pF3mCZ5FR4Hvg6F8DTP1x3ZWDq09HyfPxD8yK6nPvunZgICMQlqJd1BMC7Uo5MAbqis+3uqe25cqegsgAX8P9yGMKyzFLyC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsGAiBG8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB98C4CED3;
-	Fri,  1 Nov 2024 14:41:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730472089;
-	bh=AmkGd1YtaRBsWyY/PhDUar+x9+0lYLo6JDmoiR2N3Xo=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=AsGAiBG8azxgn6tnEmoy7OPWNv9wH7dvvBmKRqwRlDS6El8ZkLSF7hStvzpydtYqK
-	 Pg5U2v/XQgBSQ9woSXb4HgoYm5rAAh3FcyBnfnMi85QP47sBxwDT2xqqmKmfFiyGfN
-	 1Y0iE0agDo9xuE99kEd7u3NspQZ/oVY6Zia0FXOGbLYkixeY1P/lcyOr+xrssHoV/r
-	 AGq3E/3JlxyV0DK5mzg9n7rBazFqkJeBjZMS16hZitnq+FWPMT73pZF00gzXz8tDfG
-	 QM4oRnDSh4Lmo3J70NF8YzPohTt7sLCMKiigBtuVG5l9PzQ81Ej6QH5Z/FnikcwwEk
-	 ISMwhKfON1zXA==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so20958351fa.2;
-        Fri, 01 Nov 2024 07:41:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqtGGKYOwkRYkaz5539MnLQ7ijt48cYWMFMuoFg7UwpLlDdIbFpUfxWQJVOCO/ZoUhPJccRssnGFLHH1Zv@vger.kernel.org, AJvYcCV9RcMptKkHzeuF09QQN+M2vEgHDiZTv5GwbKMCu7Sxhy9XHTNEzs/7C62c0aNy88DacPoM4ukPBoKs@vger.kernel.org, AJvYcCXhdWrkaycAIWzl5srYZSLuUIU79116ZRiMQgIgO8jvrmxRbp45Xu5g2twypRUvhXeUJr1NQ/1F1Qo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwpn1HTfYEOzBSCKSEX5ie4rUUG1MSygnkDncezYFKWl7BvSQR
-	DSpEwnefaXV/2U0VtE0pILZmLb0VU0+K2YoWw1fXfXJlNyDAt7TRbllIzfk7f7K/e0uc8OBZi8k
-	7Tu9Kb6WC3T8AQOQ9nBQjj1k4UsA=
-X-Google-Smtp-Source: AGHT+IHc9jUui8eLzC4XhWJRVn+/2ELdbimwXFbBNramNpQcny1mdNUt1lZXT7vOKkYTUPt/Ls2DNpMd04J+Sb8odzA=
-X-Received: by 2002:a05:651c:19ab:b0:2fb:8774:4412 with SMTP id
- 38308e7fff4ca-2fcbdfc9303mr104550731fa.24.1730472088063; Fri, 01 Nov 2024
- 07:41:28 -0700 (PDT)
+	s=arc-20240116; t=1730472141; c=relaxed/simple;
+	bh=92BeyP9szRN14N3wpUCDFdAw3lp0H1Hv95G+mqqYqaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ojRUj/58I/1Om7PuQLzIEQ6J0PnoTob0sdOPQqtaBDEA1oFaZoq0DWG/5ebsp/gozW5TYP+edxTXzW0nGj7w161ApqLn3g2k63LfVMx53LhiqwHpQsWurQmZckeFiTY1U8pxAx4vPOqGJwezkOq+zWU968cArWNXCwpMMKBF6Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cAbVCABe; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ce5e3b116so16981115ad.1;
+        Fri, 01 Nov 2024 07:42:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730472137; x=1731076937; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tmGGUqAxRqXwlTKSg6HXoGDBCceWY6mb1JAL6Pmy3vU=;
+        b=cAbVCABeMN3imhtUHM/3dbNhWJlctwcUz2HpKM4kpdPUnXLN3x2nOJOrzYCg1L0HnP
+         kkP9MXRYIHvxMU5eeLeFt/LlhYFJwQcZQdOXnzRqwh650TivbG1hBVFpuP75MKUlzw7H
+         aU8YJStV9Xssb+ehxnf67j2LcKu6/sFK1CYC0lAI+3W2oXZ64GgxEKUFNsFpFO6NSXqW
+         9xcao6+c4insCcHbpNAd7bPQ0y1iMSoBR6Wan4HIqntnjhbo2n/AFL0DhtTpQOqQM/Hz
+         zPU0b/brk3DPFyomBdBNMsq9osshLRLXZEI7/unp4MldHcePP327zuxPJsW+Ibo/cx5O
+         XefA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730472137; x=1731076937;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tmGGUqAxRqXwlTKSg6HXoGDBCceWY6mb1JAL6Pmy3vU=;
+        b=KXEANJI2JmdEnR8Rv/unFIrvW/z0YkQayb2WDLXCjn5ix17tAqgBQVxu840xgnXETM
+         HDQn3gK1QwUg0hWmH9C453awTAI4bm6iezpg/mZmJQh/hcHUkibtA8JTkv/exaG6WAWz
+         NT/HjSEChp2WxfhMjPmjHi+GZTRjZMw8vB49eeYx48dVSVBqdT2jAz0FBi7b7QnxxFyy
+         cECHWnLLB55MhOoRTuV+HUrHqd0lePAHUKzTVdYZl6bQQh7G+YEn0M044V/7hE2KzSK8
+         clFljM4qy1iuGkBhuaCEBu9E+T8m/4kfK4xeoxGH9uis3VPS31W8hLk4ul+4qSqZhkSw
+         rh0w==
+X-Forwarded-Encrypted: i=1; AJvYcCU+mBHSEoqhOn31R0Yw66FrcOfmv0p8+DDBY9Fsm2j6GGsUmQjny7TiGp2UNHgKG8vBfOep5kozZTEi/cc=@vger.kernel.org, AJvYcCUDWWYToQlzlPayOW4/kQ1BN5QD0Qu5apvqka93i4mfpAKSRB35dSq+H4RqEOhJ5VUBjzvS0fQ0P6HL@vger.kernel.org, AJvYcCV0J0D8OWR3zTs0ze8iwBKcA0droWW8wVO4hg03MMb2tMnFWyMc8TUichL/il0ElzhGBBQ+aGEeN7uDORmG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv5aFkwD7y+rKeE5lM22BxxuvXDNBSLsUqeUl7iXng2eu/85KZ
+	J2orS+mof4+acO0R+AacOztVdBXl9ai5qtFiDEjFXeB2TLhZUntI
+X-Google-Smtp-Source: AGHT+IENuLZ97F2bqe7sJK5q+NTYtNe1xmrkuozpFQsm9HFqDqbxgnDPZGAl6IXcgt1vzUu5vsGJ1A==
+X-Received: by 2002:a17:902:ccc9:b0:20b:8642:9863 with SMTP id d9443c01a7336-2111af3fbf0mr46632445ad.18.1730472137542;
+        Fri, 01 Nov 2024 07:42:17 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c083fsm22142835ad.187.2024.11.01.07.42.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 07:42:16 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 1 Nov 2024 07:42:16 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Naresh Solanki <naresh.solanki@9elements.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jdelvare@suse.com, sylv@sylv.io, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: hwmon: pmbus: Add bindings for Vicor
+ pli1209bc
+Message-ID: <ff50f611-8d1a-4e17-a922-b6b2b1d94e42@roeck-us.net>
+References: <20241021123044.3648960-1-naresh.solanki@9elements.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022154508.63563-1-sebastian.reichel@collabora.com>
- <CAPDyKFoAv1jeQitHmTMhvwG9vGzN-vLby0fPzkX1E6+-Qe2dog@mail.gmail.com>
- <CAPDyKFp=sRLVBhW2aK87pYHVGi_6gNw=e3j3AGMnEWP2SVYFpw@mail.gmail.com> <9b4c9b61-a2be-465e-a4d9-034951fc862f@sirena.org.uk>
-In-Reply-To: <9b4c9b61-a2be-465e-a4d9-034951fc862f@sirena.org.uk>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 1 Nov 2024 22:41:14 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65ahUB_Q+HPFV6B-UqWCbCNLdGz58BGo9iHRhVyf1ruZA@mail.gmail.com>
-Message-ID: <CAGb2v65ahUB_Q+HPFV6B-UqWCbCNLdGz58BGo9iHRhVyf1ruZA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] Fix RK3588 GPU domain
-To: Mark Brown <broonie@kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, 
-	=?UTF-8?Q?Adri=C3=A1n_Mart=C3=ADnez_Larumbe?= <adrian.larumbe@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021123044.3648960-1-naresh.solanki@9elements.com>
 
-On Fri, Nov 1, 2024 at 10:36=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> On Fri, Nov 01, 2024 at 12:56:16PM +0100, Ulf Hansson wrote:
-> > On Wed, 23 Oct 2024 at 12:05, Ulf Hansson <ulf.hansson@linaro.org> wrot=
-e:
->
-> > > The merge strategy seems reasonable to me. But I am fine with that
-> > > whatever works for Mark.
->
-> > Mark, any update on this?
->
-> > If easier, you could also just ack the regulator patch (patch1), and
-> > can just take it all via my tree.
->
-> I'm still deciding what I think about the regulator patch, I can see why
-> it's wanted in this situation but it's also an invitation to misuse by
-> drivers just blindly requesting all supplies and not caring if things
-> work.
+On Mon, Oct 21, 2024 at 06:00:43PM +0530, Naresh Solanki wrote:
+> Remove vicor,pli1209bc from trivial-devices as it requires additional
+> properties and does not fit into the trivial devices category.
+> 
+> Add new bindings for Vicor pli1209bc, a Digital Supervisor with
+> Isolation for use with BCM Bus Converter Modules.
+> 
+> VR rails are defined under regulator node as expected by pmbus driver.
+> 
+> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I suppose an alternative is to flag which power domains actually need
-a regulator supply. The MediaTek power domain driver does this.
+Applied.
 
-There's still the issue of backwards compatibility with older device
-trees that are missing said supply though.
-
-
-ChenYu
+Thanks,
+Guenter
 
