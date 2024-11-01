@@ -1,130 +1,93 @@
-Return-Path: <linux-kernel+bounces-392188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E559B90CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCAA9B90D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E083281BEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337E2281CCE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE3B19E7F3;
-	Fri,  1 Nov 2024 11:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W+wvP0iR"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FCD19F11F;
+	Fri,  1 Nov 2024 11:57:20 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E4619D08F
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5556119CC27
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730462236; cv=none; b=TmqSPgZrkqWU7lbGMR6GsoLvW0YIUo771+YunKsqGZTTCNKeRUVTt9pMJjc6K/0TB5NC1RBDxKboAfBMvKHDY01CssJvTykjgHeIxbaaya8kTtRTtdx0/h0u7HOxNuHGGinDUJ6zztt6u3L/qDwW8p+85ByK1vih9QLM1fgLF3U=
+	t=1730462240; cv=none; b=AXlVoTzyDfnKlQSpnuMojT9wGmFpbgfoXZmwnYfO9XFtyM9JZIz3Y8EMQc2WaezzEf/6hp7O47ybVSyhFTheGxSgDfAnKWu+EbM810vUPAYrbXtCvseBBBA7xpfkalPf9pS3ydDgxCCtHiZUs9blS3Vfen6cq3GW0XWb+gs3Yj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730462236; c=relaxed/simple;
-	bh=jcU/orumlgsJbKSrF/Nm/W+DgTU2zdH6jx1nkml6CZE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HSsl8K4lOaqejnEDqNxfGoqgxXBm/H4+izHOES68LrNnWB+/z+LYEdicwl+iZfd41U4z6rsJTcJXayOR4c2LqbkPVAVeV7l537gA0mIjgbVJ4/Sz9QoQr7o3Kl1yfYdVzTNxRSI1lKhf5ZsX0RhzKYBrGuxOsUdKkwy1bbo2kMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W+wvP0iR; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ea5b97e31cso12561567b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:57:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730462232; x=1731067032; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AyPmo8da7gVQeFsoekZ63qpPCKXE92H2RSDUtfff7nM=;
-        b=W+wvP0iRisWC95frYnQDDKVpK1IMLAGryk7hBidywJfu6dWqh0qTrBWd/1yDWwbLqk
-         FMTluEtPIuhOm/59QHNsaZToDcamu4m26DFzmgbWTer720MD65X5T1zwxtbiP9BqV+9d
-         GAEcBXjl30mKOP3rKVyBaKqAqCbx1YDxyRGpB3Ax0pFpHpqVqDKXsDiQ3ZAy7ProAkRP
-         hTNML4k1KyrvhmaBOWB6Frp+Jg2PTzmApvRlJlJVIHxJemh0zvtjyWGGR7f5eHzEg3yi
-         w7iiJE6JIOLTRKgQvHUbEBlW82eYtoHWD0Hv3Yu2xsmvn3cY1qiwjXo0S+G6Rb+QcSEH
-         L3yw==
+	s=arc-20240116; t=1730462240; c=relaxed/simple;
+	bh=D5bQuqum8NEbKzevTKnqMHI44XR8ptln0KriVHztNwU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oAFP0PEy6GsohW/Nh/23wixDLmmhPf6g9To18hIXEZr9t1zWazMSMMzCvzmYyvnH5vGiYR03j9adwG78IxTc6TkH1xbl6+1Rdmw+yRlxqVJRO/9jZaF/I3jHPCRe7/hcXzssitpll7OEcINU0HbArEDvqwIiZYln+34II+cdoOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3ba4fcf24so20135735ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:57:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730462232; x=1731067032;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AyPmo8da7gVQeFsoekZ63qpPCKXE92H2RSDUtfff7nM=;
-        b=VYZ8ev2In3afhivZEXF1UfPpFFWjsetB1UsQNOKB0+u/HB9U7fBdv8vS6QMxtp+vHW
-         fInnu01BUJxwVqWipZ5FE2yPTsNiOLU+Sc/doxrIdtRLNn+ooWCyk8dnGrQYNOfQiOfZ
-         PeiJ4K+Dy18D2COF0x+7d1A1H8KMPMGCZFxN9ogdkk6f4Z7ZNXXjBGXGp4heLckqxUZl
-         wMBgSJA5Pz0vtVHQTi+0cN3GpyOzcgNdR87bzb52OyI4i0pXSt3pyCGaaoI2BxQAktgu
-         MnwBL99vLYHzEFniTSvhYetPuIsj66NVjeQpf5n4ZP5mqbBtfMd5ZPcCe+usSTNm6NXj
-         aDCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxyQ36KuzQ6Wc+FrHkGcHna5TaiaKm+Pz36lMnhq3loMnVnEzoFYROqSghs3c1b492W2Ny9caXywu0pf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaGMZ/FuzAKXSKcuX5307T8kJ+PsfsLxv/eGkq9Qs+PnpvCMmR
-	M4Mpw8kqDzKcBfA+rmGI7YmicG5sEJ7HKBTyFS5H6eCC7dtZ0XSyfRZAOrrwdJ7CEBsPnIxGP/L
-	MZhl5fcIVvnKniZvcgz5veatDT50EXHnsSbdnfw==
-X-Google-Smtp-Source: AGHT+IGjFViHhhsIEjWSeBRVVF02vu14Au/x1uufAjiQ0eyy+Lk2WKoLfjrFanaJSgIrSL/w8V1/5Fi83AtDrIju8t8=
-X-Received: by 2002:a05:690c:d18:b0:6db:d02f:b2c4 with SMTP id
- 00721157ae682-6ea64308628mr27197277b3.7.1730462231906; Fri, 01 Nov 2024
- 04:57:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730462237; x=1731067037;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q8OziaPjrMWzUcJM4X9tQOjE6A6ng6V/s7j+Smoe4w4=;
+        b=pl2n4Q2WKv//WlJ0lgcw7WpNtmEyuu6FnRkKQq1PnlNJdyCFA5OEd3AARZSoctxsMu
+         Ypf2vyyE629vNfYkZP19q4/VKBJRwofO0jJOYRIZdXH7aJGDIn6lyYo6PTcWX4YtFSXG
+         GwVokRk/bEhBotbE+I3IWJETHwpPHMH4vSEwRLfcwZrSv47Bhr4Iyhqc/pHgu1rTsPE3
+         werxwRuKheHQVoW9qRL4Z8T/0Orw4Pac+1/xhl0rVj3w3f0ICm3CAm6fXFrAQOT/Z4lP
+         SsuwxIJvBG4KzoTg890KOvT8CAEN+qA1xYvN6bTVGbLcUqWi7FYhTndEBVKsdY1Wodzz
+         K4pA==
+X-Gm-Message-State: AOJu0Yy/KKUmT6khyBZHk3toDXAeJIsJcMFff9kEBNdn6fn2Mxdkn6cT
+	soEnmy9h6vlGyfCiXnIdHav5dcuxDtf3iHD7ELayd66Yag0SIAQWO9T05ZgNFNCO2N0FFzcsjw8
+	JIRbhXNdSBMj0oQHQfXGC749YmSTrBWFEyF+l3gkkg0Nd9jF5hPRnfXA=
+X-Google-Smtp-Source: AGHT+IEkg77Gq93Dh42XbQh0LuLRrnNzlZ70NJxgUNJ3OPJQWflMx5BVa/tm5qII/Vtpa6t4QfF2S1Boi5IU9D6LG8oJ4eec5hlO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101101252.1448466-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20241101101252.1448466-1-peng.fan@oss.nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 1 Nov 2024 12:56:36 +0100
-Message-ID: <CAPDyKFqmeCCkv5Yr0K9P9eToYTYsQmQUYmbbJvoOJ0O5t5tsjQ@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: imx93-blk-ctrl: correct remove path
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	"open list:GENERIC PM DOMAINS" <linux-pm@vger.kernel.org>, 
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:1feb:b0:3a0:92b1:ec3c with SMTP id
+ e9e14a558f8ab-3a609a2b2e5mr72541845ab.4.1730462237468; Fri, 01 Nov 2024
+ 04:57:17 -0700 (PDT)
+Date: Fri, 01 Nov 2024 04:57:17 -0700
+In-Reply-To: <000000000000afab690616b12f99@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6724c21d.050a0220.35b515.016e.GAE@google.com>
+Subject: Re: [syzbot] Re: KASAN: use-after-free Read in netdev_unregister_kobject
+From: syzbot <syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 1 Nov 2024 at 11:02, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> The check condition should be 'i < bc->onecell_data.num_domains', not
-> 'bc->onecell_data.num_domains' which will make the look never finish
-> and cause kernel panic.
->
-> Also disable runtime to address
-> "imx93-blk-ctrl 4ac10000.system-controller: Unbalanced pm_runtime_enable!"
->
-> Fixes: e9aa77d413c9 ("soc: imx: add i.MX93 media blk ctrl driver")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Applied for fixes and by adding a stable tag, thanks!
+***
 
-Kind regards
-Uffe
+Subject: Re: KASAN: use-after-free Read in netdev_unregister_kobject
+Author: dmantipov@yandex.ru
 
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 6c52d4da1c742cd01a797a4d0a2d3c5a60dc9bfe
 
-> ---
->  drivers/pmdomain/imx/imx93-blk-ctrl.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pmdomain/imx/imx93-blk-ctrl.c b/drivers/pmdomain/imx/imx93-blk-ctrl.c
-> index 904ffa55b8f4..b10348ac10f0 100644
-> --- a/drivers/pmdomain/imx/imx93-blk-ctrl.c
-> +++ b/drivers/pmdomain/imx/imx93-blk-ctrl.c
-> @@ -313,7 +313,9 @@ static void imx93_blk_ctrl_remove(struct platform_device *pdev)
->
->         of_genpd_del_provider(pdev->dev.of_node);
->
-> -       for (i = 0; bc->onecell_data.num_domains; i++) {
-> +       pm_runtime_disable(&pdev->dev);
-> +
-> +       for (i = 0; i < bc->onecell_data.num_domains; i++) {
->                 struct imx93_blk_ctrl_domain *domain = &bc->domains[i];
->
->                 pm_genpd_remove(&domain->genpd);
-> --
-> 2.37.1
->
+diff --git a/net/bluetooth/hci_sysfs.c b/net/bluetooth/hci_sysfs.c
+index 367e32fe30eb..80ac537fa500 100644
+--- a/net/bluetooth/hci_sysfs.c
++++ b/net/bluetooth/hci_sysfs.c
+@@ -73,6 +73,8 @@ void hci_conn_del_sysfs(struct hci_conn *conn)
+ 		return;
+ 	}
+ 
++	device_move(&conn->dev, NULL, DPM_ORDER_DEV_LAST);
++
+ 	while (1) {
+ 		struct device *dev;
+ 
+-- 
+2.47.0
+
 
