@@ -1,151 +1,127 @@
-Return-Path: <linux-kernel+bounces-392357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801889B9305
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:22:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DBF9B9304
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:22:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042711F2333E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A7A1F23190
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3831A4AB3;
-	Fri,  1 Nov 2024 14:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF3C184542;
+	Fri,  1 Nov 2024 14:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PdGjoBaW"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rRGg3KDT"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492C719D891
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7826D1A7060
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730470890; cv=none; b=RgwUSgRDt4c7+PrL+ltW2z5yO7O2wpkprreQ00280lmFFsj6AXBS/dRYC+1H0JWMYndtdkEXCAc18mnJSluFaUuary61ASMf+S0mmlc6qSG7jq4A/s2j5cLhahWFODB8cJsiL8SQ1+K09CS/z+xnQDnoXsZg4h34YQAP1e43iq0=
+	t=1730470883; cv=none; b=k59mgVtLnzvm/ranhtKFSjEriu/7dil3Px/anre6YVlMzFwetXTMakVmXZ8gTIZpfOFhOO+tVbbsZu2TD88sGu9B8nHmbNgeE9WgtUjgUfWKA5/E38dV1QDHnLwV2pUsvlnu5cQpzZ88cwno+noVuJRBzDXnL7uBKBrCA3wc5Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730470890; c=relaxed/simple;
-	bh=1qhM1tQHEWuBqWJufij4y255YpVkJdwHXr6pTWmVYMY=;
+	s=arc-20240116; t=1730470883; c=relaxed/simple;
+	bh=16LXyBzDHfmU+yXXn54ZZmrWOVgxwgGv8ljrr4Ned+U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XferUD+1Y7Lp8o6LuWyIXUdipiAGyRM0+J1KJNPW2D0CjAMgIhGaW4z9twOg+4H/uPJ6rk0lf1nFEmohn1UnhOuNojkrAMLyH1ufzhevh66w1uyrIf9GpK2JZl1mSLsVXzlZuxcQoDJ/ZAEAm7H9S8s8SwVMtaCFdT850j3q9N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PdGjoBaW; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so3452808e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:21:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=JOs7ZaYkoK32hnpR9nknGtwEqr+DejOxt5o99wYqkZpCkjCq/ezGz5LVEAuNuU9ZhczRWiA6ii/MDtCZewYl9ZDq5oZANQhmGgXkufvwV0ImhLv5WzIFf3nlv2V7bhNFBxwj26mr4m1CCm7NmtpJeOEy/LLSZnVay1p23qAVjDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rRGg3KDT; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb3c3d5513so18439161fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:21:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730470883; x=1731075683; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730470880; x=1731075680; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tomOvulL5XQAdUq7GufhSqFpxzGL4/8bpYOjTuZZ6wM=;
-        b=PdGjoBaWFG+fh09NMe+Hasu1hH+AcMY8BON9KS4HFeID/tg0dHTWd/IkAxlYLP+SUG
-         y/KS5jXb9xXoD3E9+j9wKOko5+XM5kLIhUwwCMnvqN16CJk0ukmFQ2qtF20MJUCh8jV5
-         QgdG52lL0Sk23FhiDcPIXIFq8AkIbXjLgE9xQ=
+        bh=I+Xe0vA9b/GygARc/iiIPaC4qB7rwu85y64Y3iUm8bU=;
+        b=rRGg3KDTMWKTnBIDKriw4VURF9V6JxuqJSWG++LGXEe6WUDVSR+RLj8RZNomPTkfry
+         8XE4bHRWFoyX0mKc9fq8bCUE/c4s5wn2gYXJsvAe57EOaafgFP3NL7mTpHVuX8MOPdeq
+         +gfKTlFKeXvBSN7YP9YnbkYNDJgvcPmb9itM/5JjZsST/WXRrzhdXmO0gzrlvp/liIze
+         u7wd3kyxjvJQ4/o0uuyqffoorTmUcsyMTM27oKDNQ92Fvjwznu2tXc6YnThuWbVOsy8A
+         rB2GAjcuMVH9cCJ0QO/Q1vA0jSBLNGwCiiSnOntM1ssgK2BMgY8dhmpmt9LCsVy4dSua
+         0E0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730470883; x=1731075683;
+        d=1e100.net; s=20230601; t=1730470880; x=1731075680;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tomOvulL5XQAdUq7GufhSqFpxzGL4/8bpYOjTuZZ6wM=;
-        b=k1T1AHxf+bpVqPq+AsxCAtxN8hVxfrr/ETxU6J+zgGnzejLg+rsm3gT4zh4vvNvXKa
-         poepIscHQ9cVVHIvAk+OfRrylL0acGdPOv7kMAItdjML+kK6eBkEq4aUYFe+ZiarMjq8
-         JV1Vc5fNx+7UOLq6VcmTJzBLHonL9CAXMEVOdSKZdM9yMn+b9TjFuVAUw+i3e5JVyW/y
-         39W9qB76PCF/kM/sWT22D1XtWqrDsszHiXN+FyDb1YXOWa0rWkqX+ypBc46We3t8mHNj
-         bXmCtC7jLcJljZd1DeEmHXWMK7rp2cI2fSa8MNksN286n5Z51rXQkZydA40j0ez/LdQu
-         WeUg==
-X-Gm-Message-State: AOJu0YxUcngMR596jDAI5viPbzPlosUc7k3nbSJa5daDexzZJiHmRWPy
-	E2AsUwVuINEeVQ4RCD3qc4zwvJZuYroxlLlF6+ExX0+NAwmw+3hyyTBauA0CpZuqebwqjKSRIkA
-	nVbNv
-X-Google-Smtp-Source: AGHT+IHWmlL4qlw7ww9lz01Vfz03OXMNNwUKJIMJRktzbMz6ziUppNkuCTi5AFIAFi6D2COdwVDFpg==
-X-Received: by 2002:a05:6512:ba1:b0:539:fdee:fe04 with SMTP id 2adb3069b0e04-53b7ecd57d5mr5393916e87.11.1730470883040;
-        Fri, 01 Nov 2024 07:21:23 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bdcc3b9sm575173e87.223.2024.11.01.07.21.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 07:21:21 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f7606199so2081788e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:21:21 -0700 (PDT)
-X-Received: by 2002:a2e:a99b:0:b0:2fb:5bb8:7c00 with SMTP id
- 38308e7fff4ca-2fd058fb962mr65453321fa.2.1730470881192; Fri, 01 Nov 2024
- 07:21:21 -0700 (PDT)
+        bh=I+Xe0vA9b/GygARc/iiIPaC4qB7rwu85y64Y3iUm8bU=;
+        b=jdqfVIuAd/jkcDLqvNHnZWlhDsK4hCkgKbMVr/JEkRJS3q4/2mftzgBVX9UB+IZt08
+         5A1nzIOX6jHKIuzKg3xAgycmzrcYhrFt0rlx7/dOx2IruTl8BDWhUopItpo7h1n7FAkP
+         UG9LSnNWbK/ggxWtkvMt806LofwLb4VuN+exxN3PVBwCTCmycXHGAKTgtXCdwqenRB/f
+         zwWDlTWD1Xk5pEVbL6JUD27sH7WISNXK+F5JMYRpYl4zlxTsP1nO5i7saWj+7IlebSZ/
+         98QotxvWV9e6T+5zy44FBmN9+aj5wxkLvK/IzLN5MaHMPijjvcLw9X6Y2Lr1Z3m4o96H
+         TTBw==
+X-Gm-Message-State: AOJu0YyiOQCMrlYbJ8i3UggJFXmqxHbUieyPV0PTNmO7zrlxf3W+ZHG5
+	W09duxucN5ba72ishzbppyC3WY8WcSNz6+P3ct85/mRDIcP222HyVVOPLRmBXk9CvUPLhU0vWh+
+	OYDNRVIMNFUT8ZQFpD4NB3w8whtjQJypdAoyqGdwiQrKXpYpf
+X-Google-Smtp-Source: AGHT+IGswmPAFLw0rjYNS7CTFOcB+mCYX9kONlwsyD+LIoDXCYYwRCEhT8CyQ/R60M37KpwrhbwPZARfEFKhRGGE94k=
+X-Received: by 2002:a2e:a58f:0:b0:2fb:51a2:4f63 with SMTP id
+ 38308e7fff4ca-2fdecbf1a46mr40720671fa.34.1730470879424; Fri, 01 Nov 2024
+ 07:21:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101103647.011707614@goodmis.org> <20241101103707.290109005@goodmis.org>
-In-Reply-To: <20241101103707.290109005@goodmis.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 1 Nov 2024 07:21:05 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Uha5xwZJtdqirJtv27ZUBz7OP5oEnYg56v2i2mn0TrLw@mail.gmail.com>
-Message-ID: <CAD=FV=Uha5xwZJtdqirJtv27ZUBz7OP5oEnYg56v2i2mn0TrLw@mail.gmail.com>
-Subject: Re: [for-next][PATCH 03/11] kdb: Replace the use of simple_strto with
- safer kstrto in kdb_main
-To: Steven Rostedt <rostedt@goodmis.org>, Daniel Thompson <daniel.thompson@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yuran Pereira <yuran.pereira@hotmail.com>, 
-	Nir Lichtman <nir@lichtman.org>
+References: <20241014122551.116491-1-brgl@bgdev.pl> <CAMRc=MfscDCr8mdxSiC8zWUgdzdqLCo3=PKhuWhWueGoq_c82w@mail.gmail.com>
+In-Reply-To: <CAMRc=MfscDCr8mdxSiC8zWUgdzdqLCo3=PKhuWhWueGoq_c82w@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 1 Nov 2024 15:21:08 +0100
+Message-ID: <CAMRc=MehYdep3YvfDjZPmut4d2uKq+Cb5tQecJCQMjAEJxSdTw@mail.gmail.com>
+Subject: Re: [PATCH] mux: constify mux class
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Fri, Nov 1, 2024 at 3:36=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org>=
+On Thu, Oct 24, 2024 at 9:08=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
  wrote:
 >
-> From: Yuran Pereira <yuran.pereira@hotmail.com>
+> On Mon, Oct 14, 2024 at 2:25=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+> >
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > All class functions used here take a const pointer to the class
+> > structure so we can make the struct itself constant.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >  drivers/mux/core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/mux/core.c b/drivers/mux/core.c
+> > index 78c0022697ec..02be4ba37257 100644
+> > --- a/drivers/mux/core.c
+> > +++ b/drivers/mux/core.c
+> > @@ -42,7 +42,7 @@ struct mux_state {
+> >         unsigned int state;
+> >  };
+> >
+> > -static struct class mux_class =3D {
+> > +static const struct class mux_class =3D {
+> >         .name =3D "mux",
+> >  };
+> >
+> > --
+> > 2.43.0
+> >
 >
-> The simple_str* family of functions perform no error checking in
-> scenarios where the input value overflows the intended output variable.
-> This results in these functions successfully returning even when the
-> output does not match the input string.
+> Gentle ping.
 >
-> Or as it was mentioned [1], "...simple_strtol(), simple_strtoll(),
-> simple_strtoul(), and simple_strtoull() functions explicitly ignore
-> overflows, which may lead to unexpected results in callers."
-> Hence, the use of those functions is discouraged.
->
-> This patch replaces all uses of the simple_strto* series of functions
-> with their safer kstrto* alternatives.
->
-> Side effects of this patch:
-> - Every string to long or long long conversion using kstrto* is now
->   checked for failure.
-> - kstrto* errors are handled with appropriate `KDB_BADINT` wherever
->   applicable.
-> - A good side effect is that we end up saving a few lines of code
->   since unlike in simple_strto* functions, kstrto functions do not
->   need an additional "end pointer" variable, and the return values
->   of the latter can be directly checked in an "if" statement without
->   the need to define additional `ret` or `err` variables.
->   This, of course, results in cleaner, yet still easy to understand
->   code.
->
-> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#simple=
--strtol-simple-strtoll-simple-strtoul-simple-strtoull
->
-> Link: https://lore.kernel.org/20241028191916.GA918454@lichtman.org
-> Signed-off-by: Yuran Pereira <yuran.pereira@hotmail.com>
-> [nir: addressed review comments by fixing styling, invalid conversion and=
- a missing error return]
-> Signed-off-by: Nir Lichtman <nir@lichtman.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/debug/kdb/kdb_main.c | 69 +++++++++++--------------------------
->  1 file changed, 21 insertions(+), 48 deletions(-)
+> Bart
 
-FWIW, I personally have no objection to this patch and patch #3/3 in
-Nir's series (#5/11 in your email thread) going through the ftrace
-tree, I'm not actually the maintainer of kdb/kgdb. I'm a reviewer and
-I try my best to help, but officially you should probably have Daniel
-Thompson's Ack for them. ...or at least make sure he's CCed here
-saying that you've picked them up.
+Peter,
 
-I've added him to the conversation here.
+Your email doesn't bounce so I assume you are getting this. Any reason
+why this simple change is not being picked up?
 
--Doug
+Bart
 
