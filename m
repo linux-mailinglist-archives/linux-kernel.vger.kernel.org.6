@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-392913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B612D9B9997
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:42:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6DD9B9999
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:42:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65EA1C216AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50F3A1F21ECD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B0C1DDC10;
-	Fri,  1 Nov 2024 20:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC15E1E1322;
+	Fri,  1 Nov 2024 20:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b="MgVFTrxO"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b="JUgBzDRf"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618EB168DA
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DC91D9A57
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730493753; cv=none; b=GkMjUkST34suZSZXOYSw/sDWtxWabXqikKAOaZiedM8zyCYs986Yh31yz3aDY/ZttwWwDfTzfUdkTv+rOpaYuBdiDUTV2zvOty9ebbO+HMkC+iWMwuK77v868jqkZzhVgssUhALmVbkDS7VNrP+UkHQrxE2/xkAMt1tDKEmsgoQ=
+	t=1730493771; cv=none; b=THfetXWhnTQWRcKGmN9TeaBeVu+soAksMLnUR9zZ4VQ4VZtT4LP0fqXPM61g2Hi5fb4V33Kqk8q19/uk3UEUpAS07iNNUEKGcrTxFE1DcaS5odODcnepgquDz74rIWJBVxuIrdBg1OaqzEoE3gGxO3LEKKdidhrez8B1nPaivNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730493753; c=relaxed/simple;
-	bh=kGTmaZ8VYBva1ZK8P0FOfYrulH2hJ40jqcGH9FPdzKw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WwfrsVUkCNcraJHQYCNpPybG0YlvP4zxdKOL6rp90l7xq6rAJcK59bF4QkLCXE52NLZ6cyP41rGh1sXQsBkP76R9cxSYkVoVXzG5W9hvfaoQwknM2csJ/39zmkK8dZnCmSnfJ/FvKd2yahwQRPJt1gRlqh63p+Khkabi4cCLXnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiven.io; spf=pass smtp.mailfrom=aiven.io; dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b=MgVFTrxO; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1730493771; c=relaxed/simple;
+	bh=3QXy9050gOYncIXE+R2pbTbvmMkR4LrPZbETxEhnc74=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZuEQw7NE1m2RBBzqws0HlUTeUSd5cUtHp4L3jD9weRecRPj6E1VzItDb+8PBRsBkEkjOjuWmDogR089s6/7SoGQjUCMuOhpap2Fod2b8Iv1UnGMti9L5ryEbKSUoFhr6SYb4eDnm7kTWsWmKZi7Jv2OsfRPWKKkOlCt+VGLIBXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiven.io; spf=pass smtp.mailfrom=aiven.io; dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b=JUgBzDRf; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiven.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aiven.io
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43155afca99so20660645e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:42:31 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f6e1f756so2519121e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:42:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=aiven.io; s=google; t=1730493750; x=1731098550; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGTmaZ8VYBva1ZK8P0FOfYrulH2hJ40jqcGH9FPdzKw=;
-        b=MgVFTrxO0jdnA4qPbaTUI60B2/3o4nFRIXdYQ93khw02qFjg8dcVuPREoMimHBZLlZ
-         nfgdLWW8tEJeOeveoHFHN7t7pzZLodyLqc5vojc/N5s+GINniba17Qx0FxUifQYatQKI
-         hrpN5Fg4ROTDpJNKh4KvkQDt+YVPRgQFTDj1M=
+        d=aiven.io; s=google; t=1730493768; x=1731098568; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R6TrVFfcGXD8kSbw6FXkVrEAKiZNlsByz2hfz9EP2yM=;
+        b=JUgBzDRf3VdbAxw602f5AO/cqesxQSXFVjWckNkcsENxb0hC+M0kBU6PS1O56rBgZ4
+         s3T48Ytx/pcpKhCMI70dBYAEOvVk6/y1Nn64JOOMRG4Il1athqc9NJhDvAVOa/aXDNqr
+         U3sIm15LUMhtsQQF0QGBHN9eiqtHxI3DIivBM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730493750; x=1731098550;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kGTmaZ8VYBva1ZK8P0FOfYrulH2hJ40jqcGH9FPdzKw=;
-        b=nO63E2wk1sWMRh/1UfQOfIkYIO7/1wmXpgFu9YsNqRdfiaWm+1cixsRtJwV53xThSr
-         AF+OxsK1rZSVmDdB6lQP1Zf3PS3z/FeipfykwS1KcikQbxoLfsYW+1isLIJ5Jg4rUhqE
-         iZtDPmGiFQUPyrPOgch1QLwU2sZJgrZN1GT6keyjPHJEzqWUKiuff5B00LqMDDb+hSJU
-         uEfcT6lHytb43oZI9RzUkEFdcEa2JjG98ZANxkyHcqaRaccTfbmrJzs3hjy70cQzb54u
-         A0ncNc72BoQnEjyNMXdm5IV5wzyGjKrDQ/waRshjJvrCKdPceX3PcGfCQyFWyknycsmQ
-         r+yw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBoD/y0nG3XQl2dQP3XaLgzY2p6SbLAgLYWJOFNIL6clKcZLxtKIeP6/l2adn0i01izvXvnNis1P0g7W4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9oi3jDBugPkmZxJZxcSm855kx2DRsW40afZEW2RomWR4/fVvw
-	QjcYBa3fCC0LeeDMaLXFu4+zp+fc2/JXUIldjxyk4laO7eMzub/w5b0ppyvqnWSp7Zm7M5P9rH3
-	xSavkAQ==
-X-Google-Smtp-Source: AGHT+IG4YReyiic/m8tENyXAEwrMNkq2OLZQ8QQm5oE4rkpnsmxNvEgR400p0RVB+YD5mceFaOgWZQ==
-X-Received: by 2002:a5d:584f:0:b0:374:c33d:377d with SMTP id ffacd0b85a97d-381c7a1c51bmr3994044f8f.28.1730493749725;
-        Fri, 01 Nov 2024 13:42:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730493768; x=1731098568;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R6TrVFfcGXD8kSbw6FXkVrEAKiZNlsByz2hfz9EP2yM=;
+        b=XWZKJNFil+oJ4DoGMHbcAPnZCBsJRgHFRqn0E6hWkAIjm7Lhp3R4P6X0r2Nb6KGtXY
+         itTnJl52Mu+8ioCfFYgp7wJYzqostXFlTIZ5qMWljLobTm+oc5B63eA+k7aSsaRdSAMS
+         I255yEhfVM9zTROBPfYmNn4WHuoXK4UFc5YvMWaTp4qrZsG0NGic9um/PzZNAZU82MRz
+         XeYOGq+eWBhjl57BjzanF2kXJdgn6U8aoUZLB8p7qysp85rUt+0M5kDON9Wn7MAl9oVQ
+         XuucT5Wvgx770HmPRvba+rsr3GIjrHZxCXv/kee23Y1NmVBShg40gNtUx9gBLf0LA2fu
+         afyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVETia2CeQr9CrpCSPF2YPYn3XFrfUJDSFXwQn+L+sQRosdLPVMYm1n9GsqKH6gKMi+q1sgbB2sy/jKTBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG0yCUs8D+N/OeTm3JVwFI6joB2FpG/J9xYxUb6F4mgGc5uQtW
+	tp8sMmd8gKwUrBbGWGKlrn1WwPjKonOStneoWmcdznkIWgsJbWbPlAysYFp92JY=
+X-Google-Smtp-Source: AGHT+IE8XHuHUIipKsIjnzsYkrp4r5rPxJ5bBycpbNoE6QMC5hzsweCRTY4meEyGritA1Q0D+47FRQ==
+X-Received: by 2002:a05:6512:398d:b0:533:711:35be with SMTP id 2adb3069b0e04-53b348e154fmr12549599e87.26.1730493767880;
+        Fri, 01 Nov 2024 13:42:47 -0700 (PDT)
 Received: from ox.aiven-management.aivencloud.com (n114-74-229-70.bla3.nsw.optusnet.com.au. [114.74.229.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056edb4csm25014455ad.58.2024.11.01.13.42.26
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056edb4csm25014455ad.58.2024.11.01.13.42.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 13:42:29 -0700 (PDT)
+        Fri, 01 Nov 2024 13:42:47 -0700 (PDT)
 From: Orange Kao <orange@aiven.io>
 To: tony.luck@intel.com,
 	qiuxu.zhuo@intel.com
@@ -71,11 +72,14 @@ Cc: bp@alien8.de,
 	linux-edac@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	mchehab@kernel.org,
-	rric@kernel.org
-Subject: [PATCH 0/2] EDAC/igen6: Avoid segmentation fault and add polling support
-Date: Fri,  1 Nov 2024 20:41:12 +0000
-Message-ID: <20241101204211.414664-1-orange@aiven.io>
+	rric@kernel.org,
+	Orange Kao <orange@aiven.io>
+Subject: [PATCH 1/2] EDAC/igen6: Avoid segmentation fault when rmmod
+Date: Fri,  1 Nov 2024 20:41:13 +0000
+Message-ID: <20241101204211.414664-2-orange@aiven.io>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241101204211.414664-1-orange@aiven.io>
+References: <20241101204211.414664-1-orange@aiven.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,28 +88,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello. This is Orange from Aiven Australia. I want to propose two patches to fix
-a bug that affects my machine with Intel N100.
+The segmentation fault happens because
 
-Patch 1: Avoid segmentation fault during rmmod
-Patch 2: Add polling support
+During modprobe:
+1. In igen6_probe(), igen6_pvt will be allocated with kzalloc()
+2. In igen6_register_mci(), mci->pvt_info will point to
+   &igen6_pvt->imc[mc]
 
-The detailed reproduce steps has been documented in kernel bugzilla 219360.
-Summary below
+During rmmod:
+1. In mci_release() in edac_mc.c, it will kfree(mci->pvt_info)
+2. In igen6_remove(), it will kfree(igen6_pvt);
 
-I have a PC with Intel N100 (with PCI device 8086:461c, DID_ADL_N_SKU4 in
-igen6_edac.c) with a BIOS/UEFI that allows me to enable IBECC and error
-injection.
+And that caused double kfree on the same memory address. My proposal is to set
+mci->pvt_info to NULL to avoid double-kfree.
+---
+ drivers/edac/igen6_edac.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Interrupt seems not working in Linux, but it seems able to detect the error when
-"modprobe igen6_edac". I am not sure if this is a BIOS bug or not, but I have no
-access to BIOS source code. So I tried to implement polling, and it seems to
-work. My proposal in patch 2.
-
-Also "rmmod igen6_edac" can trigger segmentation fault. It seems caused by
-double kfree on the same memory address. I tried to fix it in patch 1.
-
-Thanks for considering this. I am new to this area so I could be wrong, and I
-might need extra help and guidance.
+diff --git a/drivers/edac/igen6_edac.c b/drivers/edac/igen6_edac.c
+index 189a2fc29e74..07dacf8c10be 100644
+--- a/drivers/edac/igen6_edac.c
++++ b/drivers/edac/igen6_edac.c
+@@ -1245,6 +1245,7 @@ static int igen6_register_mci(int mc, u64 mchbar, struct pci_dev *pdev)
+ 	imc->mci = mci;
+ 	return 0;
+ fail3:
++	mci->pvt_info = NULL;
+ 	kfree(mci->ctl_name);
+ fail2:
+ 	edac_mc_free(mci);
+@@ -1269,6 +1270,7 @@ static void igen6_unregister_mcis(void)
+ 
+ 		edac_mc_del_mc(mci->pdev);
+ 		kfree(mci->ctl_name);
++		mci->pvt_info = NULL;
+ 		edac_mc_free(mci);
+ 		iounmap(imc->window);
+ 	}
+-- 
+2.47.0
 
 
