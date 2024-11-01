@@ -1,125 +1,124 @@
-Return-Path: <linux-kernel+bounces-392002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5DE9B8E7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:01:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534E39B8E85
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558C71F25A8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:01:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 861011C21030
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004631598F4;
-	Fri,  1 Nov 2024 10:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8F015B111;
+	Fri,  1 Nov 2024 10:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FlIy/8L0"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxqqZnd9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5191814D70F
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21E5143C72;
+	Fri,  1 Nov 2024 10:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730455203; cv=none; b=N04gcvNZoxckITaPZpeXvLuN6TBxsV9FnHbrmTnCB+coj1eGRvqI/Bu1WoLlBe2SB6YRjmbWT/f7Gy49mUFQIvjabkFsUWgxi5UpIPfA3iSAJPcT0nbeWpeWV3287teK5hYjsrT8kVkqWEy8Uj2nwXQ9amBI1wFp+7iEerGG7TA=
+	t=1730455450; cv=none; b=MNCZU69LmAIQ9NyGuEaA1FaJaVj/OWhD8hYoS+UlXhYbsnimeLeMGfX1D/p558X2E3FZ1P1i7ZPa66hRDv5Jytc7S1+qby6bB5bcpBf1JIoKw3VGAWpZNV363drSMiZTv+fEjMKOJheHFGcLiFa+iaGewfeml8X6BgybG7bXkOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730455203; c=relaxed/simple;
-	bh=ZkIHuit9XH/WbkdUw4J0iAuXlse9CJHtPB9iDLM0soo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VAWA57WYm3ET78iyQ2oSoEojoFNyqx1cwjg7bb6GR1GdO99zaURI1OITGtStE4womxjopKMs9j+zyOwZQAn5NI+dRcYoIoVY0Wd5fRyc1qh5NpR4VPhxfeu5FlylZREIDLmq/wbtMR3lnrqayk8vDI2k8IiHhJ2jiPLSVwYQiU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FlIy/8L0; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d533b5412so1074608f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 03:00:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730455198; x=1731059998; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kCMYxsENI5KzW+rkth2c1UykDj87pqP/pFjISR1rPF0=;
-        b=FlIy/8L0sfKqvUXy3lvLzupC8nboS0ldmM0VdAMLYCYe+CkMzxceUqMuNNrifBpTDh
-         BQoW+BTg+f8Ic6KuCg6gUBqLzDO+v/krXH3Glmf6prBtauSGuN+JO0vb7kTXq5Jgxp33
-         KzUtLIie66NGhuD+1AP46+GnKaDLcr7WXLbn9X3pu6KZBeV0gkG4OnBYNPi2zb7ySjST
-         3VS4NiR1yUJjvM32Px5v2rzJjXud9z7a48wn3jMvlP8uwKUYFo688+AV+R0k6qwnGdBC
-         AmF0EBs2xzlT7r4+75AN+K9cg4ZwUOdgfCfRCMJFxeVEJOd0mW99GKr96qxzDD/HfbPj
-         ozWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730455198; x=1731059998;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kCMYxsENI5KzW+rkth2c1UykDj87pqP/pFjISR1rPF0=;
-        b=l9HikBRG10muVMQwvd2rg3rvtX0sF7hWSqVyRC3A0l8Bt9/Msk9Okx2Iaf1mMb6S4Z
-         S4K8AW43m8qRHqhZQEAzM1gHZmYsDdf1FOMx5Jzvz7CO0En0q6U0/lHs2KpJNgtthBIC
-         dTmAQuKfc29UoumMEQNDDpi8OJC248E0BQKA1F91MUcOOVzmsap6tdXpBPlp1TxXZ04a
-         GRcCznri5Tv8k0bbgwvNClpBXwchG72YMRtYwwZOZOeRivYEQeXgsCOFOqow5NMXcXsV
-         61/w302C1ukDlkEZhUwrYec2XWdH7eiZCN5rjJXVU/SMy3GpRW+QO9qoQ/0MB3BCb6gr
-         Xjmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcA5ux454tgy63MpBTPwQbKwmioa1jUx+2eB/wWQbeZkQSVPpJLBtqtQyOvsH90bGCD5uexfwDbWsWk9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBPfjJ8Y9S1End5UEIzczuqnzHZzVe4MeXw16Mtex8WkB7pXOG
-	nXxLCJeeQzlKXRpiAawoEor97qGIPlFCAg05WTOGRYzAjImBy1Ms5wnm4af/K+s=
-X-Google-Smtp-Source: AGHT+IHPedYLVwzy/bVIibNk6iPvacu9rvmCe3Ib1wQ1oV/5dOpF8xEpg5pq4bozzuGmgbu3MZNKhw==
-X-Received: by 2002:a5d:6a51:0:b0:37d:5301:6edb with SMTP id ffacd0b85a97d-38061221e7bmr14762555f8f.57.1730455198581;
-        Fri, 01 Nov 2024 02:59:58 -0700 (PDT)
-Received: from [192.168.0.17] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c11898easm4569503f8f.117.2024.11.01.02.59.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 02:59:58 -0700 (PDT)
-Message-ID: <a7975bd0-8593-4ecc-91d4-cbf2113037f4@linaro.org>
-Date: Fri, 1 Nov 2024 09:59:56 +0000
+	s=arc-20240116; t=1730455450; c=relaxed/simple;
+	bh=Rf8bkdBlxwr+7xHtx+gq94UWKa4xBxRh3LErQfhnuCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbpR56kEPhBH6DK4xTipjI2o5QLD83yD6VClG8m47IFXTC8LCZpytZnaWvdMh5zVw5r25HnDvrIHN5pLnVGmdQceQuzgTaENTbPT1pz02w4+ztUkVwBqk0xjEtqrZYgzEBJM0Rz/mgf7J9LAtqUWHsvjqEyGxEjNVS3a5tTyXL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxqqZnd9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED248C4CECD;
+	Fri,  1 Nov 2024 10:04:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730455449;
+	bh=Rf8bkdBlxwr+7xHtx+gq94UWKa4xBxRh3LErQfhnuCc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rxqqZnd9R34nT6j2WbLQ9Llzjrb28oDhV718cg1N6M9WqGXAdPRIQ/B3bYW8g8oaI
+	 9EQprAApa5uc8pgkMNzzw+yuhaganwCOQ0PJXipRYGhm1AfaXeaDRx+QH8ZkbKZQfr
+	 f1+fk666vIC8I5Fk5pmdzFnnV/EYzQw8r4aYkoO0GGCu5vGm1wzJkO5cJYa7UTSahg
+	 ljgkwk2zKDqop6INAG6lXT7NdPUDKU9z4gAClARws8gRbtk0D8MAUlG01h138/Bcev
+	 lRfqfp2XVcWbQxmXn+WUsdNxpFFrbWT09+1fYPncDr4yl7B8ZYGgzp0V/zykAjDzNO
+	 Ywdg7zOT8oPhA==
+Date: Fri, 1 Nov 2024 10:04:04 +0000
+From: Simon Horman <horms@kernel.org>
+To: Sai Krishna <saikrishnag@marvell.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sgoutham@marvell.com,
+	gakula@marvell.com, lcherian@marvell.com, jerinj@marvell.com,
+	hkelam@marvell.com, sbhatta@marvell.com,
+	kalesh-anakkur.purayil@broadcom.com
+Subject: Re: [net-next PATCH v2 6/6] octeontx2-pf: CN20K mbox implementation
+ between PF-VF
+Message-ID: <20241101100404.GB1838431@kernel.org>
+References: <20241022185410.4036100-1-saikrishnag@marvell.com>
+ <20241022185410.4036100-7-saikrishnag@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] media: venus: Fix pm_runtime_set_suspended() with
- runtime pm enabled
-To: Jinjie Ruan <ruanjinjie@huawei.com>, sakari.ailus@linux.intel.com,
- mchehab@kernel.org, ming.qian@nxp.com, eagle.zhou@nxp.com,
- stanimir.k.varbanov@gmail.com, quic_vgarodia@quicinc.com,
- shijie.qin@nxp.com, hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: chenridong@huawei.com
-References: <20241101094050.2421038-1-ruanjinjie@huawei.com>
- <20241101094050.2421038-4-ruanjinjie@huawei.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241101094050.2421038-4-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022185410.4036100-7-saikrishnag@marvell.com>
 
-On 01/11/2024 09:40, Jinjie Ruan wrote:
-> It is not valid to call pm_runtime_set_suspended() for devices
-> with runtime PM enabled because it returns -EAGAIN if it is enabled
-> already and working. So, call pm_runtime_disable() before to fix it.
+On Wed, Oct 23, 2024 at 12:24:10AM +0530, Sai Krishna wrote:
+> This patch implements the CN20k MBOX communication between PF and
+> it's VFs. CN20K silicon got extra interrupt of MBOX response for trigger
+> interrupt. Also few of the CSR offsets got changed in CN20K against
+> prior series of silicons.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: af2c3834c8ca ("[media] media: venus: adding core part and helper functions")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
-> v2:
-> - Add Cc stable.
-> ---
->   drivers/media/platform/qcom/venus/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index 84e95a46dfc9..cabcf710c046 100644
-> --- a/drivers/media/platform/qcom/venus/core.c
-> +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -412,8 +412,8 @@ static int venus_probe(struct platform_device *pdev)
->   	of_platform_depopulate(dev);
->   err_runtime_disable:
->   	pm_runtime_put_noidle(dev);
-> -	pm_runtime_set_suspended(dev);
->   	pm_runtime_disable(dev);
-> +	pm_runtime_set_suspended(dev);
->   	hfi_destroy(core);
->   err_core_deinit:
->   	hfi_core_deinit(core, false);
+> Signed-off-by: Sunil Kovvuri Goutham <sgoutham@marvell.com>
+> Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+...
+
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+> index 148a5c91af55..1a7920327fd5 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+> @@ -565,6 +565,23 @@ irqreturn_t otx2_pfvf_mbox_intr_handler(int irq, void *pf_irq)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static void *cn20k_pfvf_mbox_alloc(struct otx2_nic *pf, int numvfs)
+> +{
+> +	struct qmem *mbox_addr;
+> +	int err;
+> +
+> +	err = qmem_alloc(&pf->pdev->dev, &mbox_addr, numvfs, MBOX_SIZE);
+
+Hi Sai and Sunil,
+
+MBOX_SIZE is 0x10000 (i.e. 2^16).
+
+But qmem_alloc() will assign this value to the entry_sz field of an
+instance of struct qmem, whose type is u16. Thus the value will be
+truncated to 0. I didn't dig further, but this doesn't seem desirable.
+
+Flagged by Sparse on x86_64.
+
+Also, not strictly related to this patchset: There Sparse flags
+a handful of warnings in .../marvell/octeontx2/nic/otx2_pf.c,
+which all seem to relate to __iomem annotations. It would be nice
+to investigate and resolve those at some point.
+
+> +	if (err) {
+> +		dev_err(pf->dev, "qmem alloc fail\n");
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	otx2_write64(pf, RVU_PF_VF_MBOX_ADDR, (u64)mbox_addr->iova);
+> +	pf->pfvf_mbox_addr = mbox_addr;
+> +
+> +	return mbox_addr->base;
+> +}
+> +
+>  static int otx2_pfvf_mbox_init(struct otx2_nic *pf, int numvfs)
+>  {
+>  	void __iomem *hwbase;
+
+...
 
