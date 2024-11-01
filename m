@@ -1,229 +1,192 @@
-Return-Path: <linux-kernel+bounces-391694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF8C9B8A5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:16:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7A8B9B8A6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25D44B21C43
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:16:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67865282D47
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82048148317;
-	Fri,  1 Nov 2024 05:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411ED14A4F7;
+	Fri,  1 Nov 2024 05:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="PZ98ZpkO"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YYD9qxns"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6820A29CA;
-	Fri,  1 Nov 2024 05:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64074142624;
+	Fri,  1 Nov 2024 05:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730438188; cv=none; b=Xdxc7yWBS6bJJBX9xu6bmy9UQbR0LHCTVRP8Zm+F1tI2RrcrPhTXL1PjzT6Ss42kHY9AbhaHjKCFbfVB/0LSWslyfmIMKNznjja1mYHmJu3eH27KKG4Hv4HkpVZtrzQ7WCkwDoRZf77vpQ7G5IdjPens2qgVm2maxNRplByW3K8=
+	t=1730438576; cv=none; b=BjTU3MQOIv+ollAFSG/uvmLI0bYJG56QrJIIzkn3i5v1o/NLC7603GbRAjzuAesFki0MqNZ4g+N8N78enxFVLrqFArpc2SUC1lMA1PjvjHBeXHe/2DHito3q4B3QPdVQ+AsiCmofgANBVtrkwCuTYumv3zTlwQgRm9zVOItS9lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730438188; c=relaxed/simple;
-	bh=5sho6W5rRbcXLF2klckjN7JjUENBGCrzBiUMXKwz/Sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fiav08XwUH58X8kCgC+4mB1/3SGvn5dW6ai5VprwCembgTCuOakRsXweo+8qZj4CAZxSnTaZW0N1HPmLWgxVQtbh2sFDFoV8O6gRKkFQTZWZtv6cL38ZcVtBcO6Z844wxQGmMbe/NRvc0CHKIN6D0FvXnlydvrEbppnRJCM9m5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=PZ98ZpkO; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1730438170; x=1731042970; i=quwenruo.btrfs@gmx.com;
-	bh=c1FUVwX2+XzumB2CB/scVMpMsmPonjkmEYzn9ESJtWU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=PZ98ZpkO+3RaxkhTlf/cvBZZ7OsISlkI9qKSDhszzUS3z1NqFxMArPypKo0P9oGh
-	 K90qWllxGTh3l1kRQyJo9+ybvwQSdRgw3nAfyCe8RaUOF3gfJPNk0V8kKifAux9XY
-	 iloJOxD2tk7D2/OOfsT9VLeDg3WHjySF6/eCUbXG0L9ukNSEMQNxFCyruUujbFHLS
-	 KGqNfJnqlKwQ6TGNOPUK3V2q1NA+A6FttqJXFBokxOGqcCtzWd1MRQq7h5Glqk4AC
-	 JnMdXqVKLCIRqU7j9jHB4OoQAn+f8xMFw8rmUmQGYXZ0CLnPiyNZ+ozGPhQEnSkra
-	 ZcztMXm80azadG2THg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1M2f9b-1t8fp82Eal-00C9te; Fri, 01
- Nov 2024 06:16:10 +0100
-Message-ID: <4ae5d9ef-a49c-43d2-be71-d178d525edb1@gmx.com>
-Date: Fri, 1 Nov 2024 15:46:03 +1030
+	s=arc-20240116; t=1730438576; c=relaxed/simple;
+	bh=pGNjlh/5TANRkDFAanOu/LKbRP8oaSiAvvCfhO4t6yI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6Kcvv3qxJLw+YOwTM2OafQK8pwIiHp4QQvy9RW6fnDxoR5duxlf2jtPFP5kcaKMZSLR7lyuTUAk7QJALXGKKNLYTUbHRzoNRuDcet4nBbLk1aSGUaDpDjThdonkf26bLJQ8e0jYhkL9vf1mTEUB2ySNutK5m/BYuVti3Sp9TW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YYD9qxns; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730438574; x=1761974574;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=pGNjlh/5TANRkDFAanOu/LKbRP8oaSiAvvCfhO4t6yI=;
+  b=YYD9qxns7tfTKNWnEINwY5oeJvXljPRcGawyhfCWqzP3K7nexPS+Kdm2
+   U1wKHQXNqFeYLkksa+mzqGjct60JItoDsUcQTWH+QggQzUbUDHJtsCBap
+   trIDOL6eVYYIC2YufcRnYU5RT4A8uV4tH8NywAnZpQviOV7/QNbBbYVN/
+   Wf96U5njp8QgfXkEYfuJPQ8ItGlrpGs/xzDuCSgZ7W5S6u/sn8RCcT+Xw
+   9LFYYKltlTM0LHoY0BggSSFiM9/33emXHC/JvwAMbnevER1UI8tov4pcB
+   ACVCn918QNYGdEQVZMR1MZSPpVrrlg25JW7spIdn5HyBnnzfduiKlRTmu
+   Q==;
+X-CSE-ConnectionGUID: jA2xccugSsu1flMsUGDkeQ==
+X-CSE-MsgGUID: E8OGjcz2QgarRGZ/LjKR8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="30314687"
+X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
+   d="scan'208";a="30314687"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 22:22:51 -0700
+X-CSE-ConnectionGUID: TVbU//UlQUCwNIzd8pgqTg==
+X-CSE-MsgGUID: R6mTecEmTzu92S+st927WA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
+   d="scan'208";a="83678534"
+Received: from qz-dev1.sh.intel.com (HELO localhost) ([10.239.147.28])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 22:22:44 -0700
+Date: Fri, 1 Nov 2024 13:20:11 +0800
+From: Qiang Zhang <qiang4.zhang@linux.intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Jens Axboe <axboe@kernel.dk>, Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Gonglei <arei.gonglei@huawei.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Chen, Jian Jun" <jian.jun.chen@intel.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Qiang Zhang <qiang4.zhang@intel.com>,
+	virtualization@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-i2c@vger.kernel.org, netdev@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2] virtio: only reset device and restore status if
+ needed in device resume
+Message-ID: <ZyRlC-5V_NTKgzXh@dev-qz>
+References: <20241031030847.3253873-1-qiang4.zhang@linux.intel.com>
+ <20241101015101.98111-1-qiang4.zhang@linux.intel.com>
+ <CACGkMEtvrBRd8BaeUiR6bm1xVX4KUGa83s03tPWPHB2U0mYfLA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: Fix data race in log_conflicting_inodes
-To: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, clm@fb.com,
- josef@toxicpanda.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-References: <20241101035133.925251-1-zhenghaoran@buaa.edu.cn>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20241101035133.925251-1-zhenghaoran@buaa.edu.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:m8I3pxZRGycn5LptA3XbOJo/TtBxUh0fm+R2cqmZLDPPizNGSgz
- wCZIIFMyf4XiLw/qMvCJeIp/aMC4L0kXUOqmzCoKk363PvctzFOWh5Ap0u/Ydfv479h1nxZ
- MzqLsPLkRxUzdvFryVRPxon0DkoG1LrEslngA3/MCRaJTsN8NctxT2L2BYLsF7K9+uZjCQs
- lKW+9US21l6pjMgK6X8Wg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:AIh33FUjXCM=;/gaEXSzWIKl8Q3PD8zRmxp4UNlH
- +tiVWW+0bck5nycu4dNznHtJT6FabJZVmpclRt+jhQ+ALbBP9i4jnPwQnzyiu35MsHnKZFAnd
- UKL3gSpdD+s4PdUWeOZkAGk2NUM50+2lWyLGCuq0QoWAwCEGsPUbCn1zQ7leWnhKTNfDowXnQ
- Jm8iejOXE2k9p2RMA8iOrZ2nbZ0DSdsoa2sxNxuLOL5vzdh8wL/5hhXINxIWBtfxaC0CuCRur
- mgEbnzNM+pZHfGrbRmL2MVIydFgJVOq5S930qFn81HmTKjwpt2UGNQO+8PBNvLonBXHvex4UH
- sv8cSzaNC1x7tqin0zvozwxYD3WWBe41VyapYkFuxW17MiYPKibxfsg4XVpau4GhlL+aLYayC
- EIBcFYLfRx+ZYktYBlAvRSz8GpSOOe3FjKaxV0/smy3FiIf54wAMeobdaP/bYJP+Qh46PwAxY
- DHkaGBx/ri5ds18QuAArWUCb9V0hwxofJCe09x0chEac4bh88bxe8EEAV0f4TrcX207QqpPKr
- I3AKW7+UBqxZ/OF2fZRwtANJip729oCObb7GD44K0Dzk/0BYuC/CQ7SuYDrnn98utDFSVvgpI
- n6W2eNtmkoV84sAFz9J7+MX535fBrxKRIhjvpvNEm6xwd71v2GBf6oBvBjyxn62bmdYX4HtMU
- 8KKz1Ejvliz/khPPB0Ig7GASviBomqHSMzQ4D1+uSOmhFL8BdmfhV0XjXbtNspHTXuCQgljv9
- 7J07yhLMZC3OnelOLUxuFwnq+kvU4WFCunMhxtpCRXWkHL6/A+uQmzIPbRCn03UBHouzLCeuk
- vbCqrLxA+NcSv9QwFFCHnMvg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACGkMEtvrBRd8BaeUiR6bm1xVX4KUGa83s03tPWPHB2U0mYfLA@mail.gmail.com>
+
+On Fri, Nov 01, 2024 at 10:11:11AM +0800, Jason Wang wrote:
+> On Fri, Nov 1, 2024 at 9:54 AM <qiang4.zhang@linux.intel.com> wrote:
+> >
+> > From: Qiang Zhang <qiang4.zhang@intel.com>
+> >
+> > Virtio core unconditionally reset and restore status for all virtio
+> > devices before calling restore method. This breaks some virtio drivers
+> > which don't need to do anything in suspend and resume because they
+> > just want to keep device state retained.
+> 
+> The challenge is how can driver know device doesn't need rest.
+
+Hi,
+
+Per my understanding to PM, in the suspend flow, device drivers need to
+1. First manage/stop accesses from upper level software and
+2. Store the volatile context into in-memory data structures.
+3. Put devices into some low power (suspended) state.
+The resume process does the reverse.
+If a device context won't loose after entering some low power state
+(optional), it's OK to skip step 2.
+
+For virtio devices, spec doesn't define whether their states will lost
+after platform entering suspended state. So to work with different
+hypervisors, virtio drivers typically trigger a reset in suspend/resume
+flow. This works fine for virtio devices if following conditions are met:
+- Device state can be totally recoverable.
+- There isn't any working behaviour expected in suspended state, i.e. the
+  suspended state should be sub-state of reset.
+However, the first point may be hard to implement from driver side for some
+devices. The second point may be unacceptable for some kind of devices.
+
+For your question, for devices whose suspended state is alike reset state,
+the hypervisor have the flexibility to retain its state or not, kernel
+driver can unconditionally reset it with proper re-initialization to
+accomplish better compatibility. For others, hypervisor *must* retain
+device state and driver just keeps using it.
+
+> 
+> For example, PCI has no_soft_reset which has been done in the commit
+> "virtio: Add support for no-reset virtio PCI PM".
+> 
+> And there's a ongoing long discussion of adding suspend support in the
+> virtio spec, then driver know it's safe to suspend/resume without
+> reset.
+
+That's great! Hopefully it can fill the gap.
+Currently, I think we can safely move the reset to drivers' freeze methods,
+virtio core has no reason to take it as a common action required by all
+devices. And the reset operation can be optional skipped if driver have
+hints from device that it can retain state.
+
+> 
+> >
+> > Virtio GPIO is a typical example. GPIO states should be kept unchanged
+> > after suspend and resume (e.g. output pins keep driving the output) and
+> > Virtio GPIO driver does nothing in freeze and restore methods. But the
+> > reset operation in virtio_device_restore breaks this.
+> 
+> Is this mandated by GPIO or virtio spec? If yes, let's quote the revelant part.
+
+No. But in actual hardware design (e.g. Intel PCH GPIO), or from the
+requirement perspective, GPIO pin state can be (should support) retained
+in suspended state.
+If Virtio GPIO is used to let VM operate such physical GPIO chip indirectly,
+it can't be reset in suspend and resume. Meanwhile the hypervisor will
+retain pin states after suspension.
+
+> 
+> >
+> > Since some devices need reset in suspend and resume while some needn't,
+> > create a new helper function for the original reset and status restore
+> > logic so that virtio drivers can invoke it in their restore method
+> > if necessary.
+> 
+> How are those drivers classified?
+
+I think this depends whether hypervisor will keep devices state in platform
+suspend process. I think hypervisor should because suspend and reset are
+conceptually two different things.
 
 
-
-=E5=9C=A8 2024/11/1 14:21, Hao-ran Zheng =E5=86=99=E9=81=93:
-> The Data Race occurs when the `log_conflicting_inodes()` function is
-> executed in different threads at the same time. When one thread assigns
-> a value to `ctx->logging_conflict_inodes` while another thread performs
-> an `if(ctx->logging_conflict_inodes)` judgment or modifies it at the
-> same time, a data contention problem may arise.
->
-> Further, an atomicity violation may also occur here. Consider the
-> following case, when a thread A `if(ctx->logging_conflict_inodes)`
-> passes the judgment, the execution switches to another thread B, at
-> which time the value of `ctx->logging_conflict_inodes` has not yet
-> been assigned true, which would result in multiple threads executing
-> `log_conflicting_inodes()`.
->
-> To address this issue, it is recommended to add locks to protect
-> `logging_conflict_inodes` in the `btrfs_log_ctx` structure, and lock
-> protection during assignment and judgment. This modification ensures
-> that the value of `ctx->logging_conflict_inodes` does not change during
-> the validation process, thereby maintaining its integrity.
->
-> Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-> ---
->   fs/btrfs/tree-log.c | 7 +++++++
->   fs/btrfs/tree-log.h | 1 +
->   2 files changed, 8 insertions(+)
->
-> diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-> index 9637c7cdc0cf..9cdbf280ca9a 100644
-> --- a/fs/btrfs/tree-log.c
-> +++ b/fs/btrfs/tree-log.c
-> @@ -2854,6 +2854,7 @@ void btrfs_init_log_ctx(struct btrfs_log_ctx *ctx,=
- struct btrfs_inode *inode)
->   	INIT_LIST_HEAD(&ctx->conflict_inodes);
->   	ctx->num_conflict_inodes =3D 0;
->   	ctx->logging_conflict_inodes =3D false;
-> +	spin_lock_init(&ctx->logging_conflict_inodes_lock);
->   	ctx->scratch_eb =3D NULL;
->   }
->
-> @@ -5779,16 +5780,20 @@ static int log_conflicting_inodes(struct btrfs_t=
-rans_handle *trans,
->   				  struct btrfs_log_ctx *ctx)
->   {
->   	int ret =3D 0;
-> +	unsigned long logging_conflict_inodes_flags;
->
->   	/*
->   	 * Conflicting inodes are logged by the first call to btrfs_log_inode=
-(),
->   	 * otherwise we could have unbounded recursion of btrfs_log_inode()
->   	 * calls. This check guarantees we can have only 1 level of recursion=
-.
->   	 */
-> +	spin_lock_irqsave(&ctx->conflict_inodes_lock, logging_conflict_inodes_=
-flags);
->   	if (ctx->logging_conflict_inodes)
-> +		spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_conflict_i=
-nodes_flags);
-
-Not an expert on the log tree, but in the above case, the only thing the
-spinlock is protecting is a bool.
-
-This looks overkilled to me.
-
-Yes, several booleans can be stored in to a single byte, which can cause
-problems.
-
-But in that case, why not changing those booleans into a unsigned long
-and use test_bit()/set_bit()/clear_bit() so that the bit operation will
-be atomic and no need for the extra spinlock.
-
-Although I haven't check the other boolean usage, but at least for this
-@logging_conflict_inodes variable, it looks like atomic bit operation is
-safe.
-
-Thanks,
-Qu
-
-
->   		return 0;
->
->   	ctx->logging_conflict_inodes =3D true;
-> +	spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_conflict_in=
-odes_flags);
->
->   	/*
->   	 * New conflicting inodes may be found and added to the list while we
-> @@ -5869,7 +5874,9 @@ static int log_conflicting_inodes(struct btrfs_tra=
-ns_handle *trans,
->   			break;
->   	}
->
-> +	spin_lock_irqsave(&ctx->conflict_inodes_lock, logging_conflict_inodes_=
-flags);
->   	ctx->logging_conflict_inodes =3D false;
-> +	spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_conflict_in=
-odes_flags);
->   	if (ret)
->   		free_conflicting_inodes(ctx);
->
-> diff --git a/fs/btrfs/tree-log.h b/fs/btrfs/tree-log.h
-> index dc313e6bb2fa..0f862d0c80f2 100644
-> --- a/fs/btrfs/tree-log.h
-> +++ b/fs/btrfs/tree-log.h
-> @@ -44,6 +44,7 @@ struct btrfs_log_ctx {
->   	struct list_head conflict_inodes;
->   	int num_conflict_inodes;
->   	bool logging_conflict_inodes;
-> +	spinlock_t logging_conflict_inodes_lock;
->   	/*
->   	 * Used for fsyncs that need to copy items from the subvolume tree to
->   	 * the log tree (full sync flag set or copy everything flag set) to
-
+Thanks
+Qiang
 
