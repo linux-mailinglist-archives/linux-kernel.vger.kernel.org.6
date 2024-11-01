@@ -1,80 +1,92 @@
-Return-Path: <linux-kernel+bounces-391887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8941D9B8CE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:20:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060149B8CEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17CA31F22A60
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95DDF1F22BAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB79115665E;
-	Fri,  1 Nov 2024 08:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5C515665E;
+	Fri,  1 Nov 2024 08:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XOgM7I6n"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WHbOET3d"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ECF4087C;
-	Fri,  1 Nov 2024 08:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F39E4087C;
+	Fri,  1 Nov 2024 08:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730449219; cv=none; b=PHGtqdqaycUH5UZQukoVP4thP35VDpaURQW2NCDkTdhljyIFxRksawaUvrbdkBPQPqSTiyWF2sxX3LCFSZQYx4YslGtEl5odZldPOyw3wnxWgAiiQIrSIlBTPvTZMCRCCxWiTHyhsx4kHi6MjfaVNj9l3EhvRi0SQM/PeBo/Asc=
+	t=1730449273; cv=none; b=SUHd2iSb/ACdf9Q9P/ne6z/s/xNDEWcknXEVZ4k8avaRyGnno1d2SRKSIhxmkGO16lKDbgV811yI0YezPCCop3iTeONIs/7F/OjaOwBiDPCVTrFWHsu6BpEUj1Y5a6uU27wNkWBk7QrSXcQmDVVMC0aN3n3lD9/gLiax8nuQEfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730449219; c=relaxed/simple;
-	bh=HLnoqyTmhS73S+2+YnvXMBDQn5UW8hoXcGdTMQHnBjM=;
+	s=arc-20240116; t=1730449273; c=relaxed/simple;
+	bh=eyJwrokSMsPWNQHEJjZgXQVUKoFDYYrFRhHCNZeBKS0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k9lbt3k1+2udK5diTrHNywNUmDC4scwpbz2TFvaRVg60b+cPK5dHg7iOnH0/nTp06orXfHoAtRGv/3+c2PY/EKI1xwa80110S2Yz506zvoHR7CxQue6HQjoq7MwnDH99iqIUynONWdf16AajtJHh8wUKhN0XVMshLiHht0XbaUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XOgM7I6n; arc=none smtp.client-ip=192.198.163.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJjzx13gr/CakvhtbnnSLqlJx5foDqrvkt/RRGciblbQh6pAULBaKmwdDcTRVojUxBGxibCn23q5ZpKx/BKS1ObxSNc96O3jmaRL/wOB6bLE0pRhxH1WVXJGajvxo8cnd+ZK6lJBIGoblwkRxgZ4G1G+Q1igXVInSlJQRfNk7JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WHbOET3d; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730449218; x=1761985218;
+  t=1730449271; x=1761985271;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=HLnoqyTmhS73S+2+YnvXMBDQn5UW8hoXcGdTMQHnBjM=;
-  b=XOgM7I6nbd63V67sYC75KYIDJ7GL6FhVljBvlfbuVF6V0H1p7OM+2bjk
-   eDV+pqdIH64VqBjQeBv0y3WzHdKLyXCdC3RLCaIOOP2iUtFkQHQH3Gtca
-   Tvfmd9KXuLzfqRbwkZ8InGtOKBmUIIjnk7+HqDLa/4NHEcVrS3aR5k9NA
-   IYqqaeKvpr4AiMHbBzcn/cHlYAmQQpA9wrzVCHGJut+r2tEd49/2XVjX3
-   haGbpY0gIAiMKf2ttJFJHM4AVtHBgqw5NT+OgNy6/xIg8Wb113ord6Ybl
-   njUW0hrcWcVOYR1IHCJxRpKi3ODyVtu2ZqqKoXqtLX6w2m0rgwHtz8kCD
-   Q==;
-X-CSE-ConnectionGUID: cLwqVywUSmewHCoo6g1nJQ==
-X-CSE-MsgGUID: LKKhpuUcR8G62uLP7n1xow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="17846337"
+  bh=eyJwrokSMsPWNQHEJjZgXQVUKoFDYYrFRhHCNZeBKS0=;
+  b=WHbOET3dt4eRoSpHJDSbXLnm572W68g6TMVmh3iGih3wfkXk3lGg41nU
+   flRUVZx+GSCrRu/xPntvu7eXZnDlZ8WD3V+43AQ15G84a8T8Bz3eVV/Dd
+   U81RTGkkKUaHkdBLNGLIU/4LkCBdX831knx7ccFIB4AbLnktG0/WeHiwZ
+   bdaLxkz/BXd/jF3rOxHomfPIXyINYACncwkHFZOuCglogmQ+NJXrZeuSr
+   ZoVcQgkRk4umFetmC8ox7iWY+IGi+vc/DmQK2eDd6BUB+R4Xt28u9dSHH
+   gc9rD6MljV+tx02Cghcg47aSBzpOEbf7A7NX+u+57l0GugVXcntieoP4j
+   A==;
+X-CSE-ConnectionGUID: ufCoy3GuTA67kDWKCC8GEw==
+X-CSE-MsgGUID: RF/KsryoTj6lolHomsvF3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="30427082"
 X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="17846337"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:20:17 -0700
-X-CSE-ConnectionGUID: d4wCS3EqRMeAwQtKfdiSPw==
-X-CSE-MsgGUID: R/9oY3BgQv2Trvh7UoNJPg==
+   d="scan'208";a="30427082"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:21:10 -0700
+X-CSE-ConnectionGUID: u1mnmM+iTBS0L+Gpvf5ZaA==
+X-CSE-MsgGUID: IvApd8t4QEqXkTYXKr/g+w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="83005667"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.229])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:20:11 -0700
-Date: Fri, 1 Nov 2024 10:19:55 +0200
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Binbin Wu <binbin.wu@linux.intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
-	seanjc@google.com, yan.y.zhao@intel.com, isaku.yamahata@gmail.com,
-	kai.huang@intel.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, reinette.chatre@intel.com,
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: Re: [PATCH v2 16/25] KVM: TDX: Get system-wide info about TDX module
- on initialization
-Message-ID: <ZySPK71RlFqPfkmU@tlindgre-MOBL1>
-References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
- <20241030190039.77971-17-rick.p.edgecombe@intel.com>
- <88ea52ea-df9f-45d6-9022-db4313c324e2@linux.intel.com>
- <bb60b05d-5ccc-49ab-9a0c-a7f87b0c827c@intel.com>
- <ZyNP82ApuQQeNGJ3@tlindgre-MOBL1>
- <b47e8622-ea5d-47b2-97b5-02216bf6989a@intel.com>
+   d="scan'208";a="87440619"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:21:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t6mtz-00000009xcs-2cHj;
+	Fri, 01 Nov 2024 10:21:03 +0200
+Date: Fri, 1 Nov 2024 10:21:03 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for
+ FIFO mode
+Message-ID: <ZySPb5wvuqrQE48l@smile.fi.intel.com>
+References: <20241025105728.602310-1-john.ogness@linutronix.de>
+ <20241025105728.602310-2-john.ogness@linutronix.de>
+ <837a7ecd-be29-4865-9543-cb6f7e7e46e7@kernel.org>
+ <alpine.DEB.2.21.2410310349450.40463@angie.orcam.me.uk>
+ <84sesclkqx.fsf@jogness.linutronix.de>
+ <alpine.DEB.2.21.2411010102150.40463@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,44 +95,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b47e8622-ea5d-47b2-97b5-02216bf6989a@intel.com>
+In-Reply-To: <alpine.DEB.2.21.2411010102150.40463@angie.orcam.me.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Oct 31, 2024 at 10:27:11PM +0800, Xiaoyao Li wrote:
-> On 10/31/2024 5:37 PM, Tony Lindgren wrote:
-> > On Thu, Oct 31, 2024 at 05:23:57PM +0800, Xiaoyao Li wrote:
-> > > here it is to initialize the configurable CPUID bits that get reported to
-> > > userspace. Though TDX module doesn't allow them to be set in TD_PARAM for
-> > > KVM_TDX_INIT_VM, they get set to 0xff because KVM reuse these bits
-> > > EBX[23:16] as the interface for userspace to configure GPAW of TD guest
-> > > (implemented in setup_tdparams_eptp_controls() in patch 19). That's why they
-> > > need to be set as all-1 to allow userspace to configure.
-> > > 
-> > > And the comment above it is wrong and vague. we need to change it to
-> > > something like
-> > > 
-> > > 	/*
-> > >           * Though TDX module doesn't allow the configuration of guest
-> > >           * phys addr bits (EBX[23:16]), KVM uses it as the interface for
-> > >           * userspace to configure the GPAW. So need to report these bits
-> > >           * as configurable to userspace.
-> > >           */
-> > 
-> > That sounds good to me.
-> > 
-> > Hmm so care to check if we can also just leave out another "old module"
-> > comment in tdx_read_cpuid()?
-> 
-> That one did relate to old module, the module that without
-> TDX_CONFIG_FLAGS_MAXGPA_VIRT reported in tdx_feature0.
+On Fri, Nov 01, 2024 at 01:24:53AM +0000, Maciej W. Rozycki wrote:
+> On Thu, 31 Oct 2024, John Ogness wrote:
 
-OK thanks for checking.
+>  I don't expect any 550 clone to work in a different manner, but I find
+> the TI manual particularly unambiguous and well-written, and also old
+> enough for the 550 to be the state of the art rather than just legacy.
 
-> I will sent an follow up patch to complement the handling if TDX module
-> supports TDX_CONFIG_FLAGS_MAXGPA_VIRT.
+Oh, one is living in the ideal world... :-)
 
-OK
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Regards,
 
-Tony
 
