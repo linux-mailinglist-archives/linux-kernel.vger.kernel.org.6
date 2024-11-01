@@ -1,202 +1,300 @@
-Return-Path: <linux-kernel+bounces-392622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6CB9B9660
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:19:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4ED49B965C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:19:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26541F21B68
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:19:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61ACB1F222B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAB61CB50E;
-	Fri,  1 Nov 2024 17:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2D21CB501;
+	Fri,  1 Nov 2024 17:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OAHIHOH+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8tBtBPt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A50C19F436;
-	Fri,  1 Nov 2024 17:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0DD450F2;
+	Fri,  1 Nov 2024 17:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730481547; cv=none; b=fcLkpr44t5w3iphsDz1ANVj24D0aIrUDx/rqvbrbjb34HIwV48OZr/LJ2t+noHG3ja2QnpX5v/7g3gicW5j2xf6lkbevWx2zyCUHLp8BVh1TMgBzHfy1pJPlYCVi9qUu4pSph8GpqgGcWnnRHPFj7uP9P69YggLTaIpZB3Z7Gpw=
+	t=1730481530; cv=none; b=C/P/j8SXHNwUiPSOThDz/Tq0+qt072qHitEn/FEU7vGDmgj/Ojx+uB3AT1rF9jXR5pjlB41zO07SHrBc6b9S/kISYSUeN6LMjBrpHuH6z0615rmr2VWr0vA6CCKv7n0TfKgyBwDRLCEFE9MERb/txs5i8zKDaT0H0eVvy+t/09E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730481547; c=relaxed/simple;
-	bh=lxq998gJqdX9fpNp1aT7xjSU+QrdgsX0MPC9PiPtROo=;
+	s=arc-20240116; t=1730481530; c=relaxed/simple;
+	bh=gsNwhZ0VFDipjEGs0USbTH0IaJWnf6Jp2pFdQmfYRME=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQ1s1T7WGzNNV3hzpCeg87aMuUIJAUvxnvVWpLcLweu/L4HpxoS1c6JJl0yYOACKvW0inSzldKD0pkC5KKTUyCfsB8gm3b+IUOK5jHri85M3TV4o3/ylwZ3fMlx662Q8xoqaEE0KVM6PY7vHscMeioeNNaFBGIMzZTNrNpzs1WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OAHIHOH+; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730481544; x=1762017544;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lxq998gJqdX9fpNp1aT7xjSU+QrdgsX0MPC9PiPtROo=;
-  b=OAHIHOH+ksPwLqalkHhPyB2Aans8ro7VIiG/0Wr81+J4v7YwDYYly+Hw
-   yXSXHySb4hCK/sB/ZX10mviQg5uvVFqE2Vqdw2xV7KWoJoT3Q5xcBorWD
-   xl81173vgi6M+hTMZWsLU3Trj8yMRYzHK9lkiizTTLBDFl4XFBquYGM6z
-   vo3SzPxI8itAoziyGHUnkeo+Zm2c9dHPwyCFGt7ehjNl5VIhpzVp2WuYY
-   sGGr20djtu0m9E3WAppN763k8bf2daJd06+qNtXzs5QF5F2Dt27byLAe0
-   ZzI4m7pYcuQ3O9HwdIhUatRyLKpQbMG0XoQf9E3H+FWYknn1/iFXziYzO
-   Q==;
-X-CSE-ConnectionGUID: az6DQv3JSGW2UauoIfvf0A==
-X-CSE-MsgGUID: fbfm64AxTui1RTxyg2rUVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="29671138"
-X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
-   d="scan'208";a="29671138"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 10:19:00 -0700
-X-CSE-ConnectionGUID: erxjZ4CzSSuCmgrK+9hJFA==
-X-CSE-MsgGUID: 4aOi8Hy6Tz+4ZlBe8q8cHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
-   d="scan'208";a="88147807"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 01 Nov 2024 10:18:53 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6vIO-000hnX-0z;
-	Fri, 01 Nov 2024 17:18:48 +0000
-Date: Sat, 2 Nov 2024 01:18:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v5 2/7] mfd: nxp-siul2: add support for NXP SIUL2
-Message-ID: <202411020003.C5suQQDX-lkp@intel.com>
-References: <20241101080614.1070819-3-andrei.stefanescu@oss.nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+P+t56WbBWV6L37bHwsrAVhFSoja8EYlTO4X6/mqIN4fI91K72Bx8eaIUAhTXNcPsDsm+m498FhjNhxQcN2rkrPaokKUIP2KO3QLnlUurtQ0zhNteG2VsFFSFS7PpTJ8QGjLPyJej0/zTj190+HgX1FYNxVOwL9BSyDBGPKpzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8tBtBPt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA84C4CECD;
+	Fri,  1 Nov 2024 17:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730481530;
+	bh=gsNwhZ0VFDipjEGs0USbTH0IaJWnf6Jp2pFdQmfYRME=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P8tBtBPtHwGw54YKtlGhJ01EjKzhNDF39m5VxXz3yItEZ/VdR7kDJQUIQebYlmgWo
+	 5awNldrlMQ/t+R9iwcFh5RregIa+f4H/ax7LxKH4iKLEHWnSLXv90bHqSPRIWpTYEY
+	 HJkSTo/wM99a3vIG0JIrVuAiYhSOaihsYolaPWgXtZqrHVznupPcW5KsGWzhlCBQ5v
+	 uzfWe/CXlzuE+OVGHWgBaKOqEYc5XNZ2714wPhrjmFcI+gkTSBdqSxr4OJi8Ij7R4h
+	 CSlSpcGJXRXnIXZMmAzfHyHkjkVOuzHcDtfZLDJldF/+Kg+u1MdNN5NDtZrszfpM/D
+	 wftJ7dWx2KgLg==
+Date: Fri, 1 Nov 2024 12:18:48 -0500
+From: Rob Herring <robh@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+	"rfoss@kernel.org" <rfoss@kernel.org>,
+	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
+	"jonas@kwiboo.se" <jonas@kwiboo.se>,
+	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"quic_jesszhan@quicinc.com" <quic_jesszhan@quicinc.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+	"hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>,
+	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+	"arnd@arndb.de" <arnd@arndb.de>,
+	"nfraprado@collabora.com" <nfraprado@collabora.com>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	"sam@ravnborg.org" <sam@ravnborg.org>,
+	"marex@denx.de" <marex@denx.de>
+Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document dual-link LVDS
+ display common properties
+Message-ID: <20241101171848.GA3616730-robh@kernel.org>
+References: <20241028023740.19732-1-victor.liu@nxp.com>
+ <20241028023740.19732-9-victor.liu@nxp.com>
+ <01c1c4f3-1652-4b08-bd35-08b4e1c04c79@nxp.com>
+ <TY3PR01MB11346805C5D524D264669D178864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <750920ae-36b9-47f5-84e9-779332739f86@nxp.com>
+ <TY3PR01MB1134610B42A1D3424D97B04CA864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <a166da61-8cd4-44c9-987b-94d8a62faf82@nxp.com>
+ <TY3PR01MB113465D2F4C35A0728993D35E864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <cb74d47a-6d33-4f67-bf09-83173d49452f@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241101080614.1070819-3-andrei.stefanescu@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cb74d47a-6d33-4f67-bf09-83173d49452f@nxp.com>
 
-Hi Andrei,
+On Tue, Oct 29, 2024 at 04:25:52PM +0800, Liu Ying wrote:
+> On 10/29/2024, Biju Das wrote:
+> > 
+> > Hi Liu Ying,
+> 
+> Hi Biju,
+> 
+> > 
+> >> -----Original Message-----
+> >> From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of Liu Ying
+> >> Sent: 29 October 2024 07:35
+> >> Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document dual-link LVDS display common properties
+> >>
+> >> On 10/29/2024, Biju Das wrote:
+> >>> Hi Liu Ying,
+> >>
+> >> Hi Biju,
+> >>
+> >>>
+> >>>> -----Original Message-----
+> >>>> From: Liu Ying <victor.liu@nxp.com>
+> >>>> Sent: 29 October 2024 07:13
+> >>>> Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document
+> >>>> dual-link LVDS display common properties
+> >>>>
+> >>>> On 10/29/2024, Biju Das wrote:
+> >>>>> Hi Liu Ying,
+> >>>>
+> >>>> Hi Biju,
+> >>>>
+> >>>>>
+> >>>>>> -----Original Message-----
+> >>>>>> From: Liu Ying <victor.liu@nxp.com>
+> >>>>>> Sent: 29 October 2024 06:17
+> >>>>>> Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document
+> >>>>>> dual-link LVDS display common properties
+> >>>>>>
+> >>>>>> On 10/28/2024, Liu Ying wrote:
+> >>>>>>> Dual-link LVDS displays receive odd pixels and even pixels
+> >>>>>>> separately from dual LVDS links.  One link receives odd pixels and
+> >>>>>>> the other receives even pixels.  Some of those displays may also
+> >>>>>>> use only one LVDS link to receive all pixels, being odd and even agnostic.
+> >>>>>>> Document common properties for those displays by extending LVDS
+> >>>>>>> display common properties defined in lvds.yaml.
+> >>>>>>>
+> >>>>>>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >>>>>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> >>>>>>> ---
+> >>>>>>> v4:
+> >>>>>>> * Squash change for advantech,idk-2121wr.yaml and
+> >>>>>>>   panel-simple-lvds-dual-ports.yaml with lvds-dual-ports.yaml.
+> >>>>>>> (Rob)
+> >>>>>>> * Improve description in lvds-dual-ports.yaml.  (Krzysztof)
+> >>>>>>>
+> >>>>>>> v3:
+> >>>>>>> * New patch.  (Dmitry)
+> >>>>>>>
+> >>>>>>>  .../bindings/display/lvds-dual-ports.yaml     | 76 +++++++++++++++++++
+> >>>>>>>  .../display/panel/advantech,idk-2121wr.yaml   | 14 +---
+> >>>>>>>  .../panel/panel-simple-lvds-dual-ports.yaml   | 20 +----
+> >>>>>>>  3 files changed, 78 insertions(+), 32 deletions(-)  create mode
+> >>>>>>> 100644
+> >>>>>>> Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
+> >>>>>>>
+> >>>>>>> diff --git
+> >>>>>>> a/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
+> >>>>>>> b/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
+> >>>>>>> new file mode 100644
+> >>>>>>> index 000000000000..5f7a30640404
+> >>>>>>> --- /dev/null
+> >>>>>>> +++ b/Documentation/devicetree/bindings/display/lvds-dual-ports.ya
+> >>>>>>> +++ ml
+> >>>>>>> @@ -0,0 +1,76 @@
+> >>>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML
+> >>>>>>> +1.2
+> >>>>>>> +---
+> >>>>>>> +$id: http://devicetree.org/schemas/display/lvds-dual-ports.yaml#
+> >>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>>>>>> +
+> >>>>>>> +title: Dual-link LVDS Display Common Properties
+> >>>>>>> +
+> >>>>>>> +maintainers:
+> >>>>>>> +  - Liu Ying <victor.liu@nxp.com>
+> >>>>>>> +
+> >>>>>>> +description: |
+> >>>>>>> +  Common properties for LVDS displays with dual LVDS links.
+> >>>>>>> +Extend LVDS display
+> >>>>>>> +  common properties defined in lvds.yaml.
+> >>>>>>> +
+> >>>>>>> +  Dual-link LVDS displays receive odd pixels and even pixels
+> >>>>>>> + separately from  the dual LVDS links. One link receives odd
+> >>>>>>> + pixels and the other receives  even pixels. Some of those
+> >>>>>>> + displays may also use only one LVDS link to  receive all pixels, being odd and even agnostic.
+> >>>>>>> +
+> >>>>>>> +allOf:
+> >>>>>>> +  - $ref: lvds.yaml#
+> >>>>>>> +
+> >>>>>>> +properties:
+> >>>>>>> +  ports:
+> >>>>>>> +    $ref: /schemas/graph.yaml#/properties/ports
+> >>>>>>> +
+> >>>>>>> +    properties:
+> >>>>>>> +      port@0:
+> >>>>>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> >>>>>>> +        unevaluatedProperties: false
+> >>>>>>> +        description: the first LVDS input link
+> >>>>>>> +
+> >>>>>>> +        properties:
+> >>>>>>> +          dual-lvds-odd-pixels:
+> >>>>>>> +            type: boolean
+> >>>>>>> +            description: the first LVDS input link for odd pixels
+> >>>>>>> +
+> >>>>>>> +          dual-lvds-even-pixels:
+> >>>>>>> +            type: boolean
+> >>>>>>> +            description: the first LVDS input link for even
+> >>>>>>> + pixels
+> >>>>>>> +
+> >>>>>>> +        oneOf:
+> >>>>>>> +          - required: [dual-lvds-odd-pixels]
+> >>>>>>> +          - required: [dual-lvds-even-pixels]
+> >>>>>>> +          - properties:
+> >>>>>>> +              dual-lvds-odd-pixels: false
+> >>>>>>> +              dual-lvds-even-pixels: false
+> >>>>>>> +
+> >>>>>>> +      port@1:
+> >>>>>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> >>>>>>> +        unevaluatedProperties: false
+> >>>>>>> +        description: the second LVDS input link
+> >>>>>>> +
+> >>>>>>> +        properties:
+> >>>>>>> +          dual-lvds-odd-pixels:
+> >>>>>>> +            type: boolean
+> >>>>>>> +            description: the second LVDS input link for odd
+> >>>>>>> + pixels
+> >>>>>>> +
+> >>>>>>> +          dual-lvds-even-pixels:
+> >>>>>>> +            type: boolean
+> >>>>>>> +            description: the second LVDS input link for even
+> >>>>>>> + pixels
+> >>>>>>> +
+> >>>>>>> +        oneOf:
+> >>>>>>> +          - required: [dual-lvds-odd-pixels]
+> >>>>>>> +          - required: [dual-lvds-even-pixels]
+> >>>>>>> +          - properties:
+> >>>>>>> +              dual-lvds-odd-pixels: false
+> >>>>>>> +              dual-lvds-even-pixels: false
+> >>>>>>
+> >>>>>> Hmm, I should require port@0 or port@1.
+> >>>>>
+> >>>>> For dual LVDS, you need 3 ports as common use case
+> >>>>
+> >>>> For LVDS panels, only two ports for LVDS sink are needed.
+> >>>> For display bridges with LVDS sink, one additional output port is
+> >>>> needed.  However, I'm not sure if this output port should be
+> >>>> documented in this binding or not, because it doesn't look common enough considering the LVDS
+> >> panels.
+> >>>>
+> >>>>>
+> >>>>> 2 input ports and 1 outport and all are required properties.
+> >>>>
+> >>>> The output port cannot be required for LVDS panels at least.
+> >>>
+> >>> Ack.
+> >>>
+> >>>>
+> >>>> We need to require one or two input ports, because IT6263 may use one LVDS link or two.
+> >>>
+> >>> This patch is for generic dual link common cases and is not applicable for IT6263 single link case.
+> >>
+> >> Based on previous discussion(especially Dmitry's suggestion), this binding should cover display
+> >> bridges that can use one LVDS sink port or two LVDS sink ports, like IT6263.  To be clear, those
+> >> bridges may have two modes(supported by one
+> >> chip) - single LVDS sink link mode and dual LVDS sink link mode.  Those bridges are considered as
+> >> common dual-link LVDS displays.  That's why I was asked to extract the common
+> >> properties to this schema when adding IT6263 DT binding.
+> > 
+> > As per [1] and [2] both panels don’t support single LVDS link.
+> > IT6263 is bridge device that has single and dual link support.
+> > Not sure the single link case has to be taken care in ITE6263 binding itself,
+> > Leaving Dual link as it is??
+> 
+> There are a couple of bridges supporting dual-link LVDS like
+> IT6263, see lontium,lt9211.yaml and thine,thc63lvd1024.yaml.
+> So, it looks fine for this binding to cover those bridges,
+> as those LVDS links are sort of common stuff.
 
-kernel test robot noticed the following build warnings:
+Okay for that to be a follow-up patch.
 
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on linusw-pinctrl/for-next lee-mfd/for-mfd-next shawnguo/for-next linus/master lee-mfd/for-mfd-fixes v6.12-rc5 next-20241101]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This looks fine to me with the required addition.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Stefanescu/dt-bindings-mfd-add-support-for-the-NXP-SIUL2-module/20241101-160940
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20241101080614.1070819-3-andrei.stefanescu%40oss.nxp.com
-patch subject: [PATCH v5 2/7] mfd: nxp-siul2: add support for NXP SIUL2
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241102/202411020003.C5suQQDX-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241102/202411020003.C5suQQDX-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411020003.C5suQQDX-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/mfd/nxp-siul2.c: In function 'nxp_siul2_init_regmap':
->> drivers/mfd/nxp-siul2.c:318:1: warning: the frame size of 1116 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-     318 | }
-         | ^
---
->> drivers/mfd/nxp-siul2.c:50: warning: Function parameter or struct member 'reg_name' not described in 'nxp_siul2_reg_range_info'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +318 drivers/mfd/nxp-siul2.c
-
-   266	
-   267	static int nxp_siul2_init_regmap(struct platform_device *pdev,
-   268					 void __iomem *base, int siul)
-   269	{
-   270		struct regmap_config regmap_configs[SIUL2_NUM_REG_TYPES] = {
-   271			[SIUL2_MPIDR]	= nxp_siul2_regmap_generic_conf,
-   272			[SIUL2_IRQ]	= nxp_siul2_regmap_irq_conf,
-   273			[SIUL2_MSCR]	= nxp_siul2_regmap_generic_conf,
-   274			[SIUL2_IMCR]	= nxp_siul2_regmap_generic_conf,
-   275			[SIUL2_PGPDO]	= nxp_siul2_regmap_pgpdo_conf,
-   276			[SIUL2_PGPDI]	= nxp_siul2_regmap_pgpdi_conf,
-   277		};
-   278		const struct nxp_siul2_reg_range_info *tmp_range;
-   279		struct regmap_config *tmp_conf;
-   280		struct nxp_siul2_info *info;
-   281		struct nxp_siul2_mfd *priv;
-   282		void __iomem *reg_start;
-   283		int i, ret;
-   284	
-   285		priv = platform_get_drvdata(pdev);
-   286		info = &priv->siul2[siul];
-   287	
-   288		for (i = 0; i < SIUL2_NUM_REG_TYPES; i++) {
-   289			if (!s32g2_reg_ranges[siul][i].valid)
-   290				continue;
-   291	
-   292			tmp_range = &s32g2_reg_ranges[siul][i];
-   293			tmp_conf = &regmap_configs[i];
-   294			tmp_conf->name = tmp_range->reg_name;
-   295			tmp_conf->max_register =
-   296				tmp_range->reg_end_offset - tmp_range->reg_start_offset;
-   297	
-   298			if (tmp_conf->cache_type != REGCACHE_NONE)
-   299				tmp_conf->num_reg_defaults_raw =
-   300					tmp_conf->max_register / tmp_conf->reg_stride;
-   301	
-   302			if (tmp_range->reg_access) {
-   303				tmp_conf->wr_table = tmp_range->reg_access;
-   304				tmp_conf->rd_table = tmp_range->reg_access;
-   305			}
-   306	
-   307			reg_start = base + tmp_range->reg_start_offset;
-   308			info->regmaps[i] = devm_regmap_init_mmio(&pdev->dev, reg_start,
-   309								 tmp_conf);
-   310			if (IS_ERR(info->regmaps[i])) {
-   311				dev_err(&pdev->dev, "regmap %d init failed: %d\n", i,
-   312					ret);
-   313				return PTR_ERR(info->regmaps[i]);
-   314			}
-   315		}
-   316	
-   317		return 0;
- > 318	}
-   319	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Rob
 
