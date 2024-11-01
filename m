@@ -1,113 +1,195 @@
-Return-Path: <linux-kernel+bounces-392842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D83E9B98BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:35:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D4D9B98BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:35:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C15E5B21618
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:35:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5D8BB215D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB30A1D0E15;
-	Fri,  1 Nov 2024 19:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLbv6Uxx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229D51D0F4B;
+	Fri,  1 Nov 2024 19:35:33 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1021CEE94;
-	Fri,  1 Nov 2024 19:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6861CFEA4
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489732; cv=none; b=m9NCsrF+itw2jLkQqT5fdlQbFVG1dxJwtjYg8suGZoNfGMCc+Y8p+tY/lYrGZyUYqJtIV4yXUc9axMPYXTJ8AwBdJxzIlQnMNQbQ4NQxvL7eMQE1PTnt0rvxUp9ffOmAIWiyl+tOVbCGWX4/XzKQMjJVhsqQkvfjlVVt0g55BcE=
+	t=1730489732; cv=none; b=V9z+KySIPO4+DmgIWO8lxVNVSKE6uoTqJLlJnTvyUrsnZbF9aIw9nAT8KrXuKm9mgNaHL8bnXPI9Eqj2Nog9TB6m5pXiAX8+pdLmKXbcGGSLKEsS9G/6+KDFh/tqRWnOUYn6QpaTdDykOYVBdhJb7DHOLvcKdoYyQD10es8lXu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730489732; c=relaxed/simple;
-	bh=LBcJYTB6WIbJ8DlAwG7hImL3BwFHDAgo02896nLj1Z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hB+GSQ6LfKHZKh/WSj+IqFMf+rrrIyZB324fgxzayoObG2IywZv3zmry5UBHSJU6poKYkT7H/86V6yTwSg5CnLUrY+8VTjdZ//RHvYhqyuGTQZfGa7CfLsd8ITyPrkWDpep2BS7dRqQpQs4Q+SxbTd9KeifhAt6+u2kY0D1dUrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLbv6Uxx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F887C4CECE;
-	Fri,  1 Nov 2024 19:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730489730;
-	bh=LBcJYTB6WIbJ8DlAwG7hImL3BwFHDAgo02896nLj1Z4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XLbv6Uxxo8SQJm21791wg19EUL58H9utdxxI+OA95m+CsTNwB6++xU/9/m0/hprGj
-	 FtqxO722j/ulpty5c1g+TzF8YdjdDro98e1zAlPeEFWLLAoCn6+7UtlhGuTleLfpso
-	 eNscequJtH3HGY/7k19sz42uhTZQvG1XdBRIiJQkwDctN219TGQ688tmK/8/jJDeB6
-	 xnNdv9hOxEvaQG6/wx9hM3wkaPEmADMC08UUYZweW3oo+foHodWykfrMiOYhGHEePi
-	 AtOY5QHqt93iRsKHseckQw7hxrXvT4v+rFXiusKwK4RQ3t7F4tl9ow6gg6MF6Cun/f
-	 Ly6v514duNndA==
-Date: Fri, 1 Nov 2024 14:35:28 -0500
-From: Rob Herring <robh@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: krzk+dt@kernel.org, a.fatoum@pengutronix.de, conor+dt@kernel.org,
-	dinguyen@kernel.org, marex@denx.de, s.trumtrar@pengutronix.de,
-	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/23] net: stmmac: add support for dwmac 3.72a
-Message-ID: <20241101193528.GA4067749-robh@kernel.org>
-References: <20241029202349.69442-1-l.rubusch@gmail.com>
- <20241029202349.69442-12-l.rubusch@gmail.com>
+	bh=P5NjpOhW1w/eEvKGZGqUAC4prQu4vS1OH7oViAEO6fc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=N5/ptDqEEn08oa/D+sJu8hkXgkRoZtIbVHT82lWEOlOztr/8s8EySH2t43LhNvwiWT2Yk96J+xxBcdV8tsuJV8zXz0cp0GzHP4BatgeVOsbT5O/EAiiiV5dniTniO5HPdR0t8D9EdXERol4S0hjDJTrkvO6mtNK65MTltNKguYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4e52b6577so25167555ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:35:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730489730; x=1731094530;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u8lPGkX/utG/2/9kudO/gDT8XABATxXzqo3GFDswoXQ=;
+        b=Qd2P53RB6tsU4y++NrW9FbE4WkTZYNt2gbkF5pDdOgP0fC10kkMDoPLwRtyVUa5NW3
+         AEUPTiNTfE+3zv0LkKrBnf5UhRWmHAHjfwtxvfYGBm6xeuf34axqqNSg69vTU5jrb/c7
+         HHm05Z8NkKeDemLpEA80xAPrCoI9QzmApCsCmZSeo3QlAOd7ovb3iR7BsgSG9KtPbc8E
+         u2maNrxM489Caf44X+Zz5lT2OZDQ3OlreeNKf7ItvcvKP6DaV4iGD66vL3bbpgmlzBd+
+         kv9OQNExQDvMBIQbxLXQmMx2V6Oxgc9Crc8XL+JWqs5pqj5qvnDFJtO89fVFV4TzvmOX
+         TA6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJHuTTqB92P5o9D5ymdWl1XmuOY0xRkBGPXedySmxfgEeFMAtXSo0UXw1T37ptnVv3c9HQgj7ZqQxwZME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGqxG7Q8jPAbNFUG/ZPWDbPAD6RXxWyLC7l6HSHNfT3rUpZFSv
+	m2SbmSu35vN0zUZsme0jpPG6zUJsV2mh3bQkzXR4JAIq0TvA5hbfwpEglmgGrY4VWiOlL0Q2nYf
+	vqJOX1A3TgBH1Jvhr7eVdwbZGPJgu618bcAZI7Eaz11IF6KhmzKJmHfI=
+X-Google-Smtp-Source: AGHT+IHw+LrlwAqbJ6U84O21Bx/q5NNgr0Xzmcbw+SGTE4hharPM24LAWznN28NKOQk0iN2AhATamaPfyONNWfbQZuWHNHov9V2o
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029202349.69442-12-l.rubusch@gmail.com>
+X-Received: by 2002:a92:8748:0:b0:3a5:e1f5:157c with SMTP id
+ e9e14a558f8ab-3a5e1f51a2dmr103901755ab.15.1730489730072; Fri, 01 Nov 2024
+ 12:35:30 -0700 (PDT)
+Date: Fri, 01 Nov 2024 12:35:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67252d82.050a0220.35b515.0177.GAE@google.com>
+Subject: [syzbot] [ext4?] divide error in qnx6_mmi_fill_super
+From: syzbot <syzbot+6a0633f11d3fb88860bf@syzkaller.appspotmail.com>
+To: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 29, 2024 at 08:23:37PM +0000, Lothar Rubusch wrote:
-> The dwmac 3.72a is an ip version that can be found on Intel/Altera Arria10
-> SoCs. Going by the hardware features "snps,multicast-filter-bins" and
-> "snps,perfect-filter-entries" shall be supported. Thus add a
-> compatibility flag, and extend coverage of the driver for the 3.72a.
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c   | 1 +
->  drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
-> index 598eff926..b9218c07e 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
-> @@ -56,6 +56,7 @@ static const struct of_device_id dwmac_generic_match[] = {
->  	{ .compatible = "snps,dwmac-3.610"},
->  	{ .compatible = "snps,dwmac-3.70a"},
->  	{ .compatible = "snps,dwmac-3.710"},
-> +	{ .compatible = "snps,dwmac-3.72a"},
->  	{ .compatible = "snps,dwmac-4.00"},
->  	{ .compatible = "snps,dwmac-4.10a"},
->  	{ .compatible = "snps,dwmac"},
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> index 54797edc9..e7e2d6c20 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> @@ -522,6 +522,7 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
->  	if (of_device_is_compatible(np, "st,spear600-gmac") ||
->  		of_device_is_compatible(np, "snps,dwmac-3.50a") ||
->  		of_device_is_compatible(np, "snps,dwmac-3.70a") ||
-> +		of_device_is_compatible(np, "snps,dwmac-3.72a") ||
+Hello,
 
-All these of_device_is_compatible() checks should really go away and all 
-the settings just come from match table data. Then everything is const 
-and we're not matching multiple times at run-time. That would be a bit 
-of refactoring though...
+syzbot found the following issue on:
 
->  		of_device_is_compatible(np, "snps,dwmac")) {
->  		/* Note that the max-frame-size parameter as defined in the
->  		 * ePAPR v1.1 spec is defined as max-frame-size, it's
-> -- 
-> 2.25.1
-> 
+HEAD commit:    819837584309 Linux 6.12-rc5
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11653230580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=6a0633f11d3fb88860bf
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1617fe5f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1117fe5f980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-81983758.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c67be4ca64cb/vmlinux-81983758.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d6ab06862875/bzImage-81983758.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/31f696da7624/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/1eae9e19d2c5/mount_1.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6a0633f11d3fb88860bf@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 128
+qnx6: unable to set blocksize
+loop0: detected capacity change from 0 to 128
+Oops: divide error: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5358 Comm: syz-executor346 Not tainted 6.12.0-rc5-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:qnx6_mmi_fill_super+0x20c/0x810 fs/qnx6/super_mmi.c:68
+Code: c4 28 4c 89 e0 48 c1 e8 03 0f b6 04 18 84 c0 0f 85 60 05 00 00 45 85 f6 41 8b 04 24 89 c6 0f ce 0f 44 f0 b8 00 10 00 00 31 d2 <f7> f6 41 89 c6 4c 89 ff e8 67 c0 87 01 89 c3 31 ff 89 c6 e8 4c 83
+RSP: 0018:ffffc9000ceb7ac8 EFLAGS: 00010246
+RAX: 0000000000001000 RBX: dffffc0000000000 RCX: ffff888000d80000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888048292034
+RBP: 0000000000000000 R08: ffffffff831258ff R09: ffffffff8c617e00
+R10: ffffffff8c617a00 R11: ffffffff8c617600 R12: ffff888048292028
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff8880467de000
+FS:  00007f9aec9cb6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055d713e729c8 CR3: 0000000000e4c000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ qnx6_fill_super+0x181/0x15a0 fs/qnx6/inode.c:321
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1635
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9aeca3746a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9aec9cb038 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020009e00 RCX: 00007f9aeca3746a
+RDX: 0000000020009e00 RSI: 0000000020000080 RDI: 00007f9aec9cb090
+RBP: 00007f9aec9cb090 R08: 00007f9aec9cb0d0 R09: 002c73665f696d6d
+R10: 000000000020c800 R11: 0000000000000286 R12: 0000000020000080
+R13: 00007f9aec9cb0d0 R14: 0000000000009e0d R15: 0000000020000040
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:qnx6_mmi_fill_super+0x20c/0x810 fs/qnx6/super_mmi.c:68
+Code: c4 28 4c 89 e0 48 c1 e8 03 0f b6 04 18 84 c0 0f 85 60 05 00 00 45 85 f6 41 8b 04 24 89 c6 0f ce 0f 44 f0 b8 00 10 00 00 31 d2 <f7> f6 41 89 c6 4c 89 ff e8 67 c0 87 01 89 c3 31 ff 89 c6 e8 4c 83
+RSP: 0018:ffffc9000ceb7ac8 EFLAGS: 00010246
+RAX: 0000000000001000 RBX: dffffc0000000000 RCX: ffff888000d80000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888048292034
+RBP: 0000000000000000 R08: ffffffff831258ff R09: ffffffff8c617e00
+R10: ffffffff8c617a00 R11: ffffffff8c617600 R12: ffff888048292028
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff8880467de000
+FS:  00007f9aec9cb6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9ae443f000 CR3: 0000000000e4c000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	28 4c 89 e0          	sub    %cl,-0x20(%rcx,%rcx,4)
+   4:	48 c1 e8 03          	shr    $0x3,%rax
+   8:	0f b6 04 18          	movzbl (%rax,%rbx,1),%eax
+   c:	84 c0                	test   %al,%al
+   e:	0f 85 60 05 00 00    	jne    0x574
+  14:	45 85 f6             	test   %r14d,%r14d
+  17:	41 8b 04 24          	mov    (%r12),%eax
+  1b:	89 c6                	mov    %eax,%esi
+  1d:	0f ce                	bswap  %esi
+  1f:	0f 44 f0             	cmove  %eax,%esi
+  22:	b8 00 10 00 00       	mov    $0x1000,%eax
+  27:	31 d2                	xor    %edx,%edx
+* 29:	f7 f6                	div    %esi <-- trapping instruction
+  2b:	41 89 c6             	mov    %eax,%r14d
+  2e:	4c 89 ff             	mov    %r15,%rdi
+  31:	e8 67 c0 87 01       	call   0x187c09d
+  36:	89 c3                	mov    %eax,%ebx
+  38:	31 ff                	xor    %edi,%edi
+  3a:	89 c6                	mov    %eax,%esi
+  3c:	e8                   	.byte 0xe8
+  3d:	4c                   	rex.WR
+  3e:	83                   	.byte 0x83
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
