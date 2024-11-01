@@ -1,141 +1,113 @@
-Return-Path: <linux-kernel+bounces-391666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC32B9B8A0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:43:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF929B8A12
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:48:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91E09B21C0B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AAF41F226F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E9114265F;
-	Fri,  1 Nov 2024 03:43:31 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257F91448C1;
+	Fri,  1 Nov 2024 03:48:13 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CAE3FF1;
-	Fri,  1 Nov 2024 03:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2095E4C79;
+	Fri,  1 Nov 2024 03:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730432611; cv=none; b=JZfbtnuWRwWoI6dNJMD63kV2HiBQn21Ov0dKKZ2BJNyR1NTc/9Pbl3RuLOfrWz1wY/t3+TnNjlRQJuziA48bxDJIlgoyDxvyndUuDLdJoxWWNxBGaqy5zXOQhOWNoJtyXgWis+5K135b4dmGcr4hRSnjGLqLKCyDZdPxPvmUn/Q=
+	t=1730432892; cv=none; b=MgLZPt6ta6wCvHze9kxg5y08xv6DgYL1yN4yVl2b1OplyX7TCzIGseS/wULn2jnOg9cTQKSjnvC+bpQC/LRRy8q1T9nhl3tUKkORls8GGwRRKBI82pbk+Km8GWS92KXcZRfpMx6YxpsKt0rXsa+Iz9cwvvwpYa2CkBDN4YeOrYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730432611; c=relaxed/simple;
-	bh=pRMfJhGuoGdcGTTVVjevgwIk+6vs3s7GylTeKPL117A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YGvyYBsvBTImWqyTfIAAW++D0HedLqUZQdv+u4MprDoFNyFiAbUMM928eqmqKOQ6AehrtsJgddFOcVBxZU2R62F43sBQkc/20ITXCEzj2ai+UeAfUa7J4TauotiXkf0lbDemg+6cwjBnepNLanfXIEPa82ExUlOWztkIeIoIpOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	s=arc-20240116; t=1730432892; c=relaxed/simple;
+	bh=/8DGfkrX/uyHXqf8uX35ZAlWorNNEDJzm6qaD4+bFVI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OitQiMwcl4vlsXCwkND4gy9XonYGpql9VCePYQGfv9k8OMsiymU5IENBXSECGeqkfJ3eT/u/Lo74ll+SLK057gSNEjpZXf160GTQNUbIDXnlwCZVZHYuEAHKwjpbGGdrBR9vVUnXR8G8qRnJJZBRwW/CcAnYGmaHBWLCB04HdtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XfmrH5Nr1z1jwFG;
-	Fri,  1 Nov 2024 11:41:51 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id D808B1400D3;
-	Fri,  1 Nov 2024 11:43:25 +0800 (CST)
-Received: from [10.67.109.114] (10.67.109.114) by
- kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 1 Nov 2024 11:43:25 +0800
-Message-ID: <1a004693-5dd5-458c-b8ff-b9a978298122@huawei.com>
-Date: Fri, 1 Nov 2024 11:43:24 +0800
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XfmxH6FFczpXjJ;
+	Fri,  1 Nov 2024 11:46:11 +0800 (CST)
+Received: from kwepemm600002.china.huawei.com (unknown [7.193.23.29])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1940C18006C;
+	Fri,  1 Nov 2024 11:48:07 +0800 (CST)
+Received: from huawei.com (10.44.142.84) by kwepemm600002.china.huawei.com
+ (7.193.23.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 1 Nov
+ 2024 11:48:06 +0800
+From: Qi Xi <xiqi2@huawei.com>
+To: <bobo.shaobowang@huawei.com>, <xiqi2@huawei.com>, <bhe@redhat.com>,
+	<vgoyal@redhat.com>, <dyoung@redhat.com>, <holzheu@linux.vnet.ibm.com>,
+	<akpm@linux-foundation.org>, <kexec@lists.infradead.org>,
+	<linux-fsdevel@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3] fs/proc: Fix compile warning about variable 'vmcore_mmap_ops'
+Date: Fri, 1 Nov 2024 11:43:49 +0800
+Message-ID: <20241101034349.8915-1-xiqi2@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <f79d2587-2588-598f-f9b2-2e3548067d92@huawei.com>
+References: <f79d2587-2588-598f-f9b2-2e3548067d92@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: Fix uninitialized symbol 'ret'
-To: Matti Vaittinen <mazziesaccount@gmail.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>
-References: <20241031014505.2313035-1-quzicheng@huawei.com>
- <5f80c1a2-118a-4685-ac1b-81b3479f5064@gmail.com>
-From: Zicheng Qu <quzicheng@huawei.com>
-In-Reply-To: <5f80c1a2-118a-4685-ac1b-81b3479f5064@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpeml500008.china.huawei.com (7.185.36.147) To
- kwepemd200012.china.huawei.com (7.221.188.145)
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm600002.china.huawei.com (7.193.23.29)
 
-Hi Matti,
+When build with !CONFIG_MMU, the variable 'vmcore_mmap_ops'
+is defined but not used:
 
-It might be better but I am not pretty sure whether have to have both 
-gains and times, so I modified 'ret' in places where issues might arise, 
-rather than adding a restriction in iio_gts_sanity_check().
+>> fs/proc/vmcore.c:458:42: warning: unused variable 'vmcore_mmap_ops'
+     458 | static const struct vm_operations_struct vmcore_mmap_ops = {
 
-In the corner case, there is a restriction that both num_hwgain and 
-num_itime cannot be 0 simultaneously in the iio_gts_sanity_check(). 
-However, in the gain_to_scaletables() , if num_itime is 1 and num_hwgain 
-is 0, the 'gain_bytes' becomes 0 and 'all_gains' is not null after the 
-'for' loop, which causes the subsequent 'while' or 'for' to become 
-ineffective, leading to an undefined 'ret' being returned in the 'free_out'.
+Fix this by only defining it when CONFIG_MMU is enabled.
 
-Yours,
+Fixes: 9cb218131de1 ("vmcore: introduce remap_oldmem_pfn_range()")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/lkml/202410301936.GcE8yUos-lkp@intel.com/
+Signed-off-by: Qi Xi <xiqi2@huawei.com>
+---
+v3: move changelogs after the '---' line
+v2: use ifdef instead of __maybe_unused
 
--- Zicheng
+ fs/proc/vmcore.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-On 2024/10/31 15:13, Matti Vaittinen wrote:
-> Hi Zicheng,
->
-> Thanks for the patch.
->
-> On 31/10/2024 03:45, Zicheng Qu wrote:
->> Initialize the variable ret at the time of declaration to prevent it 
->> from
->> being returned without a defined value. Fixes smatch warning:
->> drivers/iio/industrialio-gts-helper.c:256 gain_to_scaletables() error:
->> uninitialized symbol 'ret'.
->>
->> Cc: stable@vger.kernel.org # v6.6+
->> Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
->> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
->> ---
->>   drivers/iio/industrialio-gts-helper.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/iio/industrialio-gts-helper.c 
->> b/drivers/iio/industrialio-gts-helper.c
->> index 59d7615c0f56..c5dc5b51693d 100644
->> --- a/drivers/iio/industrialio-gts-helper.c
->> +++ b/drivers/iio/industrialio-gts-helper.c
->> @@ -167,7 +167,7 @@ static int iio_gts_gain_cmp(const void *a, const 
->> void *b)
->>     static int gain_to_scaletables(struct iio_gts *gts, int **gains, 
->> int **scales)
->>   {
->> -    int ret, i, j, new_idx, time_idx;
->> +    int i, j, new_idx, time_idx, ret = 0;
->>       int *all_gains;
->>       size_t gain_bytes;
->
-> So, if I read it right, this handles a (corner) case where there is no 
-> times given. I am not sure how well such use has been considered 
-> because the point of GTS is helping out with cases where the gain and 
-> integration time both impact to scale.
->
-> How do you see the benefits of the gts if there is no such shared 
-> impact to scale? Sure the gts could still provide the 'standard table 
-> format' to present the gains (or times), and conversions from the 
-> register values to gains (or times), and perhaps the available scale 
-> table(s) - but I suppose it also brings a lot of unused code and some 
-> initialization overhead. (I have a vague feeling this was discussed 
-> with Jonathan during the reviews).
->
-> Reason I am asking these questions is that I wonder if the usage 
-> should be limited to cases where we have both gains and times? We 
-> could check this in the iio_gts_sanity_check(). (And, I am actually a 
-> bit surprized this check was not implemented).
->
-> Well, initialization fixes a potential bug here and does not really 
-> cost much - so big thanks to you :)
->
-> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
->
-> Yours,
->  -- Matti Vaittinen
->
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index 1fb213f379a5..9ed1f6902c8f 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -455,10 +455,6 @@ static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
+ #endif
+ }
+ 
+-static const struct vm_operations_struct vmcore_mmap_ops = {
+-	.fault = mmap_vmcore_fault,
+-};
+-
+ /**
+  * vmcore_alloc_buf - allocate buffer in vmalloc memory
+  * @size: size of buffer
+@@ -486,6 +482,11 @@ static inline char *vmcore_alloc_buf(size_t size)
+  * virtually contiguous user-space in ELF layout.
+  */
+ #ifdef CONFIG_MMU
++
++static const struct vm_operations_struct vmcore_mmap_ops = {
++	.fault = mmap_vmcore_fault,
++};
++
+ /*
+  * remap_oldmem_pfn_checked - do remap_oldmem_pfn_range replacing all pages
+  * reported as not being ram with the zero page.
+-- 
+2.33.0
+
 
