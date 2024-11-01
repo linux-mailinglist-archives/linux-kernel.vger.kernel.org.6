@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-391501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B869B87EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:52:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0AA09B87F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:52:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4981FB22A26
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41581C216A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F95145B26;
-	Fri,  1 Nov 2024 00:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5736F146592;
+	Fri,  1 Nov 2024 00:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="srlDLl08"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g3MmYjoE"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A837625634
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5866B288DB
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730422179; cv=none; b=o5KHhwYXgnVrUKOLzeNeQ2Eoh0KipbCAx/RmT0Ad8zOLKLLfDI5p904Xc6t8mCPTyK9qSxrrJWPhdl7Xr92+2Fgm9L1CtqbUCyq975dse7mvQxIi8jq7ZbFO3z0OLOx7/gyFh84uICKor+c3yLgS7Ul6/nlohhWKBO7B0UldvFc=
+	t=1730422180; cv=none; b=Dyl7shmbcOQJI1xtyw16jvScKu/rCHLobk3hAkpKfVW0UPhJ1Sh7UXuc3csXr4QPMheDZ+TFxZ9GQU9B0Fua/oVAsw9SFcD1l9bF6id1zhCQpXTp5+96nrZUyV/qJL7k7fPpIdgcXb7A2QdqjoX92oJB7E3inqa1dcULusAC5w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730422179; c=relaxed/simple;
-	bh=hqRZEUIGKV+Uo9Zqv3h83T52RbGU0wAlXf80I6pu39o=;
+	s=arc-20240116; t=1730422180; c=relaxed/simple;
+	bh=zcM1aHQYb28gPOVZ0wEf8ewRZmUMyO3eFjxSaGLZXBM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pW2OofFNLLBgrjWCUM18PJ5o0NMqF90/Psga3sPEYoz8lzQkiVodGpn/1FVnvLOtKt7jflhcAswwTwEpfY4kWYomE1PtmKynDRZKf1wdNlmV0d4ikOoHu30oR0CsCuza2St6XAVygQuEf7y7HRumTgj5iLi7FD/Fm50Q2lA+4sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=srlDLl08; arc=none smtp.client-ip=209.85.167.50
+	 In-Reply-To:To:Cc; b=pdIrBP7DVgkdwwrv5B3UyeJmkgwFyAvs/1w+rRACjLEHnHTP9OZnbDwh2Y3XeDWRNERt1Hr7ackAiiXCJSrppMS5bsP/LWyI2nZe+3M612VdVQezYrXHSibsQ1aLvw44gnBltoJslXefW5iqMktTEMoAa0CkaiXoOYd2V2EbopM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g3MmYjoE; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f1292a9bso1826684e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:49:31 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53c779ef19cso1827798e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:49:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730422169; x=1731026969; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1730422172; x=1731026972; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Rw/+3t7ER8ysifIK3ic/vRoYOJ/OSf43gFUP2vajTv4=;
-        b=srlDLl08MNlb5SmoC2i2F04gslQF7hKao9xGd6YMx1g3+IkPT8Q2SfW9V/HtH50wHk
-         UUMPXnZZ+rCvxuHlwzZmv9/LGd9eH0jhqzO4AerRcKGtTtDiZBZca+vwE53KqTR1s8Tj
-         dhe2ARLVjIZyaBhY/qNk8mbxl5ZxgMNI77v/WCiYRaGvVTjeTZ4I8JzwsTRXBywtNNv7
-         4fEieaSKSFZ4s9RR/7C4T9BGP+uivYQFmnUEEIsytpzTqyxrx+JoLcjiaGTKbOdSgEE0
-         ZA+k7srSKqERhN6DoxK6bvF7fweOCG1mBLo/Op+pwvFvqi0zFuJsKTTBJmCkq8vltoVX
-         ywEw==
+        bh=/e0gd3zVp6cTvvyF3EOIt0/nD+72AfihXakLkWnGh/A=;
+        b=g3MmYjoE+zHvwJ70S5ZCFEvtRdFyJl1UKiOkCGL0M4y/h5hCtQTQSXQgA25vxkY4Qf
+         Acl23Bs5jZ2rTgvBoiEEXfbK3h/TJ9mm2CZYR7A9kct0c99pfTTBXuhyrDAP9RRXXsRU
+         0fkIVnnPoMYQNH4EfLF4X+2ge0L4YiIy5Dwpt3dzwAOUm2KvPkHn0qBdWSpPJsl4bypi
+         d2BM1oHSpUmOg/550MaNJztrnS6FnyNqTA8md5PiXDZhRRD+SYq/t5AmfZXCk659tbZT
+         hWxeGAgrAWNs2koVtnSpjXWBWiUzsHrvWB5rz/vwptoCwQPcYH976PIkZZgOsSutN8//
+         u6ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730422169; x=1731026969;
+        d=1e100.net; s=20230601; t=1730422172; x=1731026972;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Rw/+3t7ER8ysifIK3ic/vRoYOJ/OSf43gFUP2vajTv4=;
-        b=UqA9j7EdMgRHRfkNZykexfF35BBctb3u3ouJk5CvAL2kU6L6652Cb9GlPrBwSAAK8l
-         YjInZD7Wpls8fKCZ8V02CEA2Eyi7RCE9YxCw1yFF7W+C1IQwcNARzY0fg9GpPVuIQoyF
-         nlP+kTBOj977xSvi3U9cNmAB4HUp8MGnyTD3xGdfsYyAOkABeLtXOJL9uYWYmOjfr/Mx
-         RYsphqh0r3OhCFWOsceofjHFCRl7hNjLV3eFHbELEBfLpsMgjUwmcckgYyTgKt/ezP0G
-         Bl84HmKpgL45RMbHvzoO15dvakd+OjhCDuAgEYX9E6xX3UxZc58K/vYQCM2OSZtRXLkW
-         Domg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmca5aVA7q3NY79nYHJsfGjEh5AFW3rYSxRVnI94gqBdTiV6uTIRGSqqXROZ0NlC74tCOqQ3JnNUqUnuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOKQpXQE0RRYrz/dwIHd5JZ7B4BsuVFiQwTbj7UURxLeJR6jZ2
-	5adhKPhffvH1PKXNPtWT8I7F27a75J3S5MyVDJsBh04k/WV5fVpxeMI5xTfKbbTSoGXNddJ7sFx
-	/
-X-Google-Smtp-Source: AGHT+IEt6dAE7GdyxmAaMfdY4fxd74AMuZu7+Q+555b/IKau7E+F9IounL8EFF9yvpG+KTUAShsLew==
-X-Received: by 2002:a05:6512:3b27:b0:535:6992:f2c3 with SMTP id 2adb3069b0e04-53b3491ac5emr11164283e87.41.1730422169560;
-        Thu, 31 Oct 2024 17:49:29 -0700 (PDT)
+        bh=/e0gd3zVp6cTvvyF3EOIt0/nD+72AfihXakLkWnGh/A=;
+        b=PL21E9pl2gBxiU74gMTCdYbyJaZnl3JqK8nV/qPPRfsElXbu26iVFlVweORUp8pzR2
+         92Vr2QM/GSnfF2RcYt5QXICIkxreivysCljhuPmmoQB8ShfCy/SB3LN73WK+VduCEIXb
+         X4dRdHF/8rE8Ap/ZDkobOEc2GDjHtreqNAnv3ssqTV6XC32MclzXTu/z1xRVzpavL4lm
+         tPs3Ujs/cThrvnbFUyU4Dbw9cZ3NJGIpmKUCGIR45nQRl/f9dus4TSNbKwfqXxcmZNHi
+         Na2mQteYNfxigyQs8OF4caBnHBg7oF4yUnQ3hK6sMgk0+uCjVz59i8zYYNx7BsDgTecs
+         CJeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpVKAJyG8rgyborZQU/3/LhfDKsqX2Q+2CxY8But1O1y354H7RWOrqEP9uQJbNX4XW631xrFSVRa1+CRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo8wMC4i1H66rGQI/7B86HvpevvGWSzYddxw3or2patnzq8Z9h
+	mny/DygXUYIAxZG1mwdPPF9rbvk2ir1RNazI8r4rAmLEzaTuKrsTnUtNBQuaMsKUxucL8tGIfUD
+	t
+X-Google-Smtp-Source: AGHT+IHa7ZZlYjS0LM7ksxCIRwWRnxpaFR1qej+SwC3mJbOktHRBCm8m/2h3a9AG1Xjj37cv3s8TMg==
+X-Received: by 2002:a05:6512:acf:b0:539:f496:aa88 with SMTP id 2adb3069b0e04-53c79ea6c68mr2919492e87.53.1730422172088;
+        Thu, 31 Oct 2024 17:49:32 -0700 (PDT)
 Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc958c0sm374510e87.28.2024.10.31.17.49.28
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc958c0sm374510e87.28.2024.10.31.17.49.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 17:49:28 -0700 (PDT)
+        Thu, 31 Oct 2024 17:49:30 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 01 Nov 2024 02:49:22 +0200
-Subject: [PATCH v3 1/4] dt-bindings: arm: qcom-soc: simplify SoC-matching
- patterns
+Date: Fri, 01 Nov 2024 02:49:23 +0200
+Subject: [PATCH v3 2/4] dt-bindings: arm: qcom: add QAR2130P board
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241101-sar2130p-dt-v3-1-61597eaf0c37@linaro.org>
+Message-Id: <20241101-sar2130p-dt-v3-2-61597eaf0c37@linaro.org>
 References: <20241101-sar2130p-dt-v3-0-61597eaf0c37@linaro.org>
 In-Reply-To: <20241101-sar2130p-dt-v3-0-61597eaf0c37@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -90,50 +89,85 @@ Cc: Krishna Kurapati <quic_kriskura@quicinc.com>,
  linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1381;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2491;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=hqRZEUIGKV+Uo9Zqv3h83T52RbGU0wAlXf80I6pu39o=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnJCWTuAcON8BST5o3k30HUiPQ7d/QdEBmJRGwP
- Y1/5/ZpiBqJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZyQlkwAKCRAU23LtvoBl
- uEPpD/9czDWkyVFnZBSBGN0mkQNkoZJfIasBacFZwRAjNSIvgRNQZ07kJBEzQQ14+heWMKX7uzI
- q0DlA2DVZ18NBh8JgQygW2aXdHHIsem4dU5lEGQ+TivtycP08OsEtuBoDe+j50kd57l1agciYap
- 8U/YpwNHP40XRr/LEnS/1TdaUrgu1lfjtx4yKW5gc7BOGi60uCxvkz5ebtIXk1TyGjHd3pZ5zKw
- LJzXvqVb4cYNOKX4MobnYKOU1QbqJ0qF9PS00pSY5ELnjwaxqsK5anKvbwZwl6Piduw9KySb7vE
- hnw644fSqp5mGNWmJx3Tlhbo2sXDpaMrf0kvq1NHPQ2MwfC92tv2g+6Z/vFkv4fmcZuY52f16/7
- XQP7gHGthAS34O6YE542sM7IF6tgd1ArytflWB66Fh3wE0MFd2TgMXoUVa4Lu7W3dNPNwwss+EL
- nJQU5S1OLUFQK+nVBDKCuKAt9R20hDbx27zAp+hmp3WQnnnafPazWrWMGDt/6xeaWONUt34XCKl
- Y9HW922f/OUbveI+g7oEfe2z1EaYIGb9F9S9XSaNZh+jYPzqbLW5p6H2AEhr1+Iq86A55EqmtPn
- OimkBkHxl9vpE4iEooOWvyYecl6tYRQhdX2yCSbESnUfWH934EDB1ljV7FhnShc4OBDPPAVKDt1
- DMX28EX6c8lXpNg==
+ bh=zcM1aHQYb28gPOVZ0wEf8ewRZmUMyO3eFjxSaGLZXBM=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnJCWUCfG9+eiWcn/clpUMZZDiHhY8JHuE2g3Yq
+ W2zV4kf/86JAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZyQllAAKCRAU23LtvoBl
+ uNX2D/4sbyb4IH0jVvh5UE+wk5ysRw/EvJgsv0NA5LoryGReHYHlSDxAaBUn4qF6ymMh8g8yyt3
+ 3lxV08/9Vj+dG/fPWOVNooB9US1jdfX30Yvsr0J4cb2JfLiH5p7E1WhnBTr4Nn6r7WtVsti3tvo
+ 5Xg31rfwGhZxvsEE5ng7OhJgNg76Jm8vvjA1CMrd/vl7qALpuIk6ZbknYKdtdLRKhm9AYtbYyN1
+ 1K7Ut9u89t2zE/0fMTlpepsVGyLN/7qAulMDksXa1gDmKbSaj9d4nBwDMEBB0FvxQgf3BmEEkXd
+ J+9Tgv4lPngCjWdcFf2Th2ETd0tARf4kT1MwoGHASC1zjCwoqMPbUHq2eNn27bQ1JkaMWsVOLOK
+ ZQXwP+FgKkEf1xu85FDJS3GncRrwtr2+UFtfTjzt9uU5puU5G03R5NNxnMHxOBSHkrbxCl+mw+C
+ Ctjfev+Bzd2gRwfZiSF3AfAfilJBzdrLwnbVwhhzTmVWaJFUk1asleoCYBrH+s5sMGIVxbxXITt
+ Dc39RJ8+je1OniRZ7dT4qNlyIH03uiCyjywCxYvidRd2iHpwUQtw5o1CU3bBYmfmZfutDdCPMAH
+ dhBhTAOZlTmm/NntFC7As82yh3YaiB2xARjoT8L64dN7B16R0Vygv1h/1cyS+fLMr8qyGbGPJX7
+ /ilUS2KswjtjjpQ==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The patterns for individual SoC families grew up to be pretty complex,
-containing lots of special cases and optional suffixes. Split them per
-the suffix to make it easier to extend SoC patterns.
+Add the Qualcomm QAR2130P development board using the Qualcomm AR2 Gen1
+aka SAR2130P platform.
+
+The qcom-soc.yaml chunks use explicit 'sa|sar' instead of just 'sar?' to
+be more obvious for reviewers and to ease future extensions. Overuse of
+the regular expressions can easily end up with the hard-to-read and
+modify schema.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- Documentation/devicetree/bindings/arm/qcom-soc.yaml | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/arm/qcom-soc.yaml | 4 ++--
+ Documentation/devicetree/bindings/arm/qcom.yaml     | 7 +++++++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/arm/qcom-soc.yaml b/Documentation/devicetree/bindings/arm/qcom-soc.yaml
-index d0751a572af39eecbbd2f8323a6c3c94b3fdeeac..c67dcda4c8169dd72e9b5d5ca4926991a730f67c 100644
+index c67dcda4c8169dd72e9b5d5ca4926991a730f67c..1c164e57fe9c8f911852b0222bd229452d1d71b1 100644
 --- a/Documentation/devicetree/bindings/arm/qcom-soc.yaml
 +++ b/Documentation/devicetree/bindings/arm/qcom-soc.yaml
-@@ -31,8 +31,10 @@ properties:
-   compatible:
-     oneOf:
+@@ -23,7 +23,7 @@ description: |
+ select:
+   properties:
+     compatible:
+-      pattern: "^qcom,.*(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm|x1e)[0-9]+.*$"
++      pattern: "^qcom,.*(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sar|sc|sd[amx]|sm|x1e)[0-9]+.*$"
+   required:
+     - compatible
+ 
+@@ -33,7 +33,7 @@ properties:
        # Preferred naming style for compatibles of SoC components:
--      - pattern: "^qcom,(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm|x1e)[0-9]+(pro)?-.*$"
--      - pattern: "^qcom,(sa|sc)8[0-9]+[a-z][a-z]?-.*$"
-+      - pattern: "^qcom,(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm|x1e)[0-9]+-.*$"
-+      - pattern: "^qcom,msm8[0-9]+pro-.*$"
-+      - pattern: "^qcom,sa[0-9]+p-.*$"
-+      - pattern: "^qcom,sc[0-9]+(x|xp)-.*$"
+       - pattern: "^qcom,(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm|x1e)[0-9]+-.*$"
+       - pattern: "^qcom,msm8[0-9]+pro-.*$"
+-      - pattern: "^qcom,sa[0-9]+p-.*$"
++      - pattern: "^qcom,(sa|sar)[0-9]+p-.*$"
+       - pattern: "^qcom,sc[0-9]+(x|xp)-.*$"
  
        # Legacy namings - variations of existing patterns/compatibles are OK,
-       # but do not add completely new entries to these:
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index 0f18cb35c774aec48967eddbef4b4480dbc8edbe..02b2379ccf7741a0fba345d83d0ce7db731a3772 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -52,6 +52,7 @@ description: |
+         sa8155p
+         sa8540p
+         sa8775p
++        sar2130p
+         sc7180
+         sc7280
+         sc8180x
+@@ -407,6 +408,12 @@ properties:
+               - qcom,qru1000-idp
+           - const: qcom,qru1000
+ 
++      - description: Qualcomm AR2 Gen1 platform
++        items:
++          - enum:
++              - qcom,qar2130p
++          - const: qcom,sar2130p
++
+       - items:
+           - enum:
+               - acer,aspire1
 
 -- 
 2.39.5
