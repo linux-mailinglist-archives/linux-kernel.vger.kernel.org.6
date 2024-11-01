@@ -1,147 +1,162 @@
-Return-Path: <linux-kernel+bounces-392397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5429B939E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:47:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E93D9B939B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:47:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C1391C22024
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:47:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD391C2120F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD3B1AA7AA;
-	Fri,  1 Nov 2024 14:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3310D1AAE08;
+	Fri,  1 Nov 2024 14:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDddxVyQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TlU4bueS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00371A256C;
-	Fri,  1 Nov 2024 14:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C61A256C;
+	Fri,  1 Nov 2024 14:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472412; cv=none; b=EPtxcyjws9ICf8HAGifdCLXEflzDwEjCfSsX+dICY3VZCoh9whVF0GXI6ZmeEhD0wxkPqyPWBSEIHaSUwb+oVS6tb+9OdSJXhi00z/0QikuF/6KBGrHe9EtKOKa4scr1bZBrOEqkobtc662UYQVV1I7A2I//7xwM1BaVbTvelPM=
+	t=1730472405; cv=none; b=ebTddsy3AAynLOKGqL41/dhZc5zKRG5I452LWutegaodeYkMkAh/4slrrZRX/ooBSlKrwcw7Mn1JMEXum3aBL4QB52EpeX5z9Zu+XS5sBEWiPg15n5Qv3yZZ56rQgTZ2sIr/iLNpB/9dA1HEkysVQEIiRi7spFauRNZXi/nQlAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472412; c=relaxed/simple;
-	bh=bfFO/ERSw8GFISafMmt/GXTEGunK8+XOPLQBkHfdAmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dqRODx+vXBkFfNOdosImyMYqHkizrfK7ewcjxiPvMy4Qvs8sNTGvP73Rt4CCI8mdsng/M1s7by3XIYQMXra2PZJqnq2xCo9siduj7QvV3R1LgPblo6dQ+apltGaEhi8SEGIq0gkjTCtrjWG88/ei9N/5RQ+VZkHyZvoOtDF1uBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDddxVyQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6A3C4CED7;
-	Fri,  1 Nov 2024 14:46:46 +0000 (UTC)
+	s=arc-20240116; t=1730472405; c=relaxed/simple;
+	bh=HwxmMVzLvMkz6Iea0esLVCOgt5DfZzfLpkKFluqPk6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhfPccChCqo+rhhCkXae6Fo3zj7kW3lFr5j+wk+oN4GrppDQjQHeCoClySmD8RRvTSx2S0afr5htyoB1VtbiOlGR9g/FuN2M+vI5lwUr4/l5d919lyEuDbXvxCr3BSZxsM1FNlaj8CMKMZmi40JeTIzl/X81P61i9tugb61BuoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TlU4bueS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B2C6C4CECD;
+	Fri,  1 Nov 2024 14:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730472412;
-	bh=bfFO/ERSw8GFISafMmt/GXTEGunK8+XOPLQBkHfdAmE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TDddxVyQR0FUm6pjmmMW2dVPgc04B5swwgREsKOfWb2ZdTfKeigu0o9dcZmQXaz6S
-	 /n9TFX15Me3XU/Ow+MeDfREsCSmPQbRk62IC/1OKIZ/rtpb3TPbUVvvo0UKzAzK/dQ
-	 UE/KQPhrQbw4/bngN584H2Gmp6tLzZWNHmzscblAtZPur1kzIxnZ0+e9lfJxZTFpGx
-	 za714FhhY9vidHfBPnprtYFe82fInGOgd9nsfhJ8jMzQFy+F6whQnQaTT8cdOS4ODv
-	 lR6N2qbhThRY5W7R4u2qYqCdVvM95cpH+Ig8MLkpdE266Zi+TAyR97tACwRhJtf7Wr
-	 kHLT/DdM89/AA==
-Date: Fri, 1 Nov 2024 14:46:41 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Angelo Dureghello <angelo@kernel-space.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Angelo
- Dureghello <adureghello@baylibre.com>, Conor Dooley
- <conor.dooley@microchip.com>, <lkp@intel.com>
-Subject: Re: [PATCH v9 0/8] iio: add support for the ad3552r AXI DAC IP
-Message-ID: <20241101144641.512e2ed5@jic23-huawei>
-In-Reply-To: <20241031212626.64b30020@jic23-huawei>
-References: <20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-0-f6960b4f9719@kernel-space.org>
-	<139a7fb4-124a-4d0e-b1a1-32f8d2fb65f2@baylibre.com>
-	<20241031212626.64b30020@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1730472405;
+	bh=HwxmMVzLvMkz6Iea0esLVCOgt5DfZzfLpkKFluqPk6w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TlU4bueSqUtO5V+hbz8vO0YzJl4hNnccmNnFi89FPVCl8a+1lACDLOp/Eix3MhKSB
+	 UZJFR80381Q2bRmM91JBI3GGUSxH92CpZ10lEqSMkl/JrU1G3hW3Hq42mzNt1SnV+2
+	 1JA2g+FF8/6lh04uvXW/26CNve07w26yk7EgjnUyB4XDkVGArSsafHuptjFAt+7Vz9
+	 XZxqL97vekLm6oh9COsFdMbu506fGmjQ2GWqnHOn2oQwPcm0ab1ywtqJjTVqFqaf7P
+	 yu7yn/Ers6d5rlJwnXzY75xq1lyapblTxBPhbm+D78y2xNvjOPLfCoR97I7WNzp2Pi
+	 Cugpsn5MaBZlg==
+Date: Fri, 1 Nov 2024 07:46:44 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] ext4: Do not fallback to buffered-io for DIO
+ atomic write
+Message-ID: <20241101144644.GF2386201@frogsfrogsfrogs>
+References: <cover.1730437365.git.ritesh.list@gmail.com>
+ <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
 
-On Thu, 31 Oct 2024 21:26:26 +0000
-Jonathan Cameron <jic23@kernel.org> wrote:
-
-> On Tue, 29 Oct 2024 14:08:15 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
+On Fri, Nov 01, 2024 at 12:20:54PM +0530, Ritesh Harjani (IBM) wrote:
+> atomic writes is currently only supported for single fsblock and only
+> for direct-io. We should not return -ENOTBLK for atomic writes since we
+> want the atomic write request to either complete fully or fail
+> otherwise. Hence, we should never fallback to buffered-io in case of
+> DIO atomic write requests.
+> Let's also catch if this ever happens by adding some WARN_ON_ONCE before
+> buffered-io handling for direct-io atomic writes. More details of the
+> discussion [1].
 > 
-> > On 10/28/24 4:45 PM, Angelo Dureghello wrote:  
-> > > Purpose is to add ad3552r AXI DAC (fpga-based) support.
-> > > 
-> > > The "ad3552r" AXI IP, a variant of the generic "DAC" AXI IP,
-> > > has been created to reach the maximum speed (33MUPS) supported
-> > > from the ad3552r. To obtain the maximum transfer rate, a custom
-> > > IP core module has been implemented with a QSPI interface with
-> > > DDR (Double Data Rate) mode.
-> > > 
-> > > The design is actually using the DAC backend since the register
-> > > map is the same of the generic DAC IP, except for some customized
-> > > bitfields. For this reason, a new "compatible" has been added
-> > > in adi-axi-dac.c.
-> > > 
-> > > Also, backend has been extended with all the needed functions
-> > > for this use case, keeping the names gneric.
-> > > 
-> > > The following patch is actually applying to linux-iio/testing.
-> > > 
-> > > ---    
-> > Reviewed-by: David Lechner <dlechner@baylibre.com>
-> >   
+> While at it let's add an inline helper ext4_want_directio_fallback() which
+> simplifies the logic checks and inherently fixes condition on when to return
+> -ENOTBLK which otherwise was always returning true for any write or directio in
+> ext4_iomap_end(). It was ok since ext4 only supports direct-io via iomap.
 > 
-> Series applied with 2 tweaks as called out in replies to individual
-> patches. Pushed out initially as testing for 0-day to see if there
-> are any issues my (admittedly now very lazy) build tests didn't find.
- [jic23-iio:testing 104/113]  drivers/iio/dac/ad3552r-hs.c:400:17: warning: variable 'goffs' is  uninitialized when used here
+> [1]: https://lore.kernel.org/linux-xfs/cover.1729825985.git.ritesh.list@gmail.com/T/#m9dbecc11bed713ed0d7a486432c56b105b555f04
+> Suggested-by: Darrick J. Wong <djwong@kernel.org> # inline helper
 
-was a report from 0-day. 
-I 'think' the fix (based on v6 which is last time anything set this)
-is the following and that's what I'll push out for now.
+Looks good to me now,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-If it should be something else send me a patch on top of my testing branch
-so I can quickly apply it.
+--D
 
-I've also dropped the explicit select of ADI_AXI_DAC as you can only do that
-if you also carry all it's dependencies. (another 0-day report)
-
-Thanks as ever to the lkp team for their incredibly useful service!
-
-
-
-diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
-index 97dfc598aec6..7a5b277ee370 100644
---- a/drivers/iio/dac/ad3552r-hs.c
-+++ b/drivers/iio/dac/ad3552r-hs.c
-@@ -295,7 +295,6 @@ static int ad3552r_hs_setup_custom_gain(struct ad3552r_hs_state *st,
- 
- static int ad3552r_hs_setup(struct ad3552r_hs_state *st)
- {
--       s16 goffs;
-        u16 id;
-        u16 gain = 0, offset = 0;
-        u32 ch, val, range;
-@@ -397,7 +396,7 @@ static int ad3552r_hs_setup(struct ad3552r_hs_state *st)
-                        gain = ad3552r_calc_custom_gain(st->ch_data[ch].p,
-                                                st->ch_data[ch].n,
-                                                st->ch_data[ch].gain_offset);
--                       offset = abs(goffs);
-+                       offset = abs(st->ch_data[ch].gain_offset);
- 
-                        st->ch_data[ch].range_override = 1;
-
-
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
+>  fs/ext4/file.c  |  7 +++++++
+>  fs/ext4/inode.c | 27 ++++++++++++++++++++++-----
+>  2 files changed, 29 insertions(+), 5 deletions(-)
 > 
-> Thanks,
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 96d936f5584b..a7de03e47db0 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -599,6 +599,13 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		ssize_t err;
+>  		loff_t endbyte;
 > 
-> Jonathan
+> +		/*
+> +		 * There is no support for atomic writes on buffered-io yet,
+> +		 * we should never fallback to buffered-io for DIO atomic
+> +		 * writes.
+> +		 */
+> +		WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC);
+> +
+>  		offset = iocb->ki_pos;
+>  		err = ext4_buffered_write_iter(iocb, from);
+>  		if (err < 0)
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 3e827cfa762e..5b9eeb74ce47 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3444,17 +3444,34 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
+>  	return ret;
+>  }
 > 
-
+> +static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+> +{
+> +	/* must be a directio to fall back to buffered */
+> +	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+> +		    (IOMAP_WRITE | IOMAP_DIRECT))
+> +		return false;
+> +
+> +	/* atomic writes are all-or-nothing */
+> +	if (flags & IOMAP_ATOMIC)
+> +		return false;
+> +
+> +	/* can only try again if we wrote nothing */
+> +	return written == 0;
+> +}
+> +
+>  static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+>  			  ssize_t written, unsigned flags, struct iomap *iomap)
+>  {
+>  	/*
+>  	 * Check to see whether an error occurred while writing out the data to
+> -	 * the allocated blocks. If so, return the magic error code so that we
+> -	 * fallback to buffered I/O and attempt to complete the remainder of
+> -	 * the I/O. Any blocks that may have been allocated in preparation for
+> -	 * the direct I/O will be reused during buffered I/O.
+> +	 * the allocated blocks. If so, return the magic error code for
+> +	 * non-atomic write so that we fallback to buffered I/O and attempt to
+> +	 * complete the remainder of the I/O.
+> +	 * For non-atomic writes, any blocks that may have been
+> +	 * allocated in preparation for the direct I/O will be reused during
+> +	 * buffered I/O. For atomic write, we never fallback to buffered-io.
+>  	 */
+> -	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
+> +	if (ext4_want_directio_fallback(flags, written))
+>  		return -ENOTBLK;
+> 
+>  	return 0;
+> --
+> 2.46.0
+> 
+> 
 
