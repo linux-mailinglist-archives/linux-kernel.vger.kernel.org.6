@@ -1,169 +1,162 @@
-Return-Path: <linux-kernel+bounces-391949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811319B8DC0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:22:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C939B8DC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:23:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1984B2482E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:22:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67831285532
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ACD76025;
-	Fri,  1 Nov 2024 09:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFA61586F2;
+	Fri,  1 Nov 2024 09:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CzR+xSih"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sqx/TmKk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RwalSVN0"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6339156220;
-	Fri,  1 Nov 2024 09:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE7C154C17;
+	Fri,  1 Nov 2024 09:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730452950; cv=none; b=dc6VLDUZeTiPNIbDH2MXuUzIaBq2TO2OntkBmkJ8wyToRC08iiXnqkb+XuA+6epMltAqkv0NLXVrsMzXsvrY25Q6psf2OFbKkl85/gxwDaSxKlxNQKzRroPUqfNzCD+LgrSMltyjoZdy0j4E2dVIqz6JK3pgngjLd3WJ+TPAAz8=
+	t=1730452981; cv=none; b=SF+SrqW2MkTxKNimkZbbg7mRP/ZFbVmu7Y3m033TNOkcdOyMPq3ZMcBZJKA9C/mKSCKgceEB8o6AEuOJmG4PVQA+KNMUNyg382E4MJ7QEk3EB0gEFVdjygrTS5ohLBCxWO1jcI63JAW4FBTad5pXbV8EXLO1NoyneyEP+cx2jRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730452950; c=relaxed/simple;
-	bh=bTGvYe562v4iO/ej2FrV7MW9IE5/LvMsQygTJKb+YdY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QfFDYZA5CcUP5ngjypLR3OiM3YY2sXpkrvzt3TDnTzrVexeI/b2T31JaRBRfhmxrbwYNuwvte5raXsg+MeKofLHHP2OVjMF7g8HQ+wa3yJKWlUEqyor7TpdsJrf16Jty61WFIdAjlz6ZlvgLdIRxlx8HN9eulnGfV/H5A1v3XQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CzR+xSih; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730452948; x=1761988948;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=bTGvYe562v4iO/ej2FrV7MW9IE5/LvMsQygTJKb+YdY=;
-  b=CzR+xSih+bsWOsdYJrQmSeA2DdJLvWjQDqAkkHfhuEU7VUCZxvp0QO3h
-   T+zycqzYKgdi89LoNod4MhOQx8Y8hUhDAxyAntWjSRrzNR1wyHhbWFtZ9
-   gMOa04ekdOyvg8kLRKAYY9YeTo4xviNfCesWNPPKMfOq1v3nfR72qVvpr
-   quKIb/PykR+UDg7K7JR8x1CCZAQrpWm7ui8J4hEPe9hROLkekdPcWJyck
-   bM5N+dSsBuZDAejsUCVD9pDEEDWgiFPh0upclQN1O0y8PspqkF4N7J6t+
-   nPsY/uyXcyyvtGZAFL5xX6Wc+Ad0nj9WyPvjNlaHK2g2SN5LOFinKP7L/
-   g==;
-X-CSE-ConnectionGUID: jpi/7am/RHqd5WdSn11wgQ==
-X-CSE-MsgGUID: gv9I8kefQoSTOOxia6QhNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="40844920"
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="40844920"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 02:22:25 -0700
-X-CSE-ConnectionGUID: D+IpKCtRTomwlwGuBOc3FQ==
-X-CSE-MsgGUID: y8duOdhSQS2qYZJsphVRQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="87508070"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.234])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 02:22:16 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: imre.deak@intel.com, Abel Vesa <abel.vesa@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Karol Herbst
- <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, Danilo Krummrich
- <dakr@redhat.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org
-Subject: Re: [PATCH RFC 1/4] drm/dp: Add helper to set LTTPRs in transparent
- mode
-In-Reply-To: <ZyPxLpykHkO9Xx_R@ideak-desk.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-0-cafbb9855f40@linaro.org>
- <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-1-cafbb9855f40@linaro.org>
- <ZyPxLpykHkO9Xx_R@ideak-desk.fi.intel.com>
-Date: Fri, 01 Nov 2024 11:22:13 +0200
-Message-ID: <87msijjol6.fsf@intel.com>
+	s=arc-20240116; t=1730452981; c=relaxed/simple;
+	bh=MUiDuyJ+MlELg7lT9hPPazjnUfTgX6bjLE6DVpJ+qF4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Axd96EJUX38CPhA6aRT48m0WZiVPRv9xIclXbiKaLJPIxz0NxilyIvAts4/CE5Cszovto0zfT+NK0kT7f37dMDuBHUm82xgURr4fO8XW0z67JVUR61+14KlghOur+IO7uEO6MdpIwZ7O6CAftJgP8g/ySDV/crGepW+N57HOy9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sqx/TmKk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RwalSVN0; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id E0FA611400C7;
+	Fri,  1 Nov 2024 05:22:57 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 01 Nov 2024 05:22:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1730452977;
+	 x=1730539377; bh=/f+ob6/0cs0oAQjTndC8UAIk7DAav3CEmLAxLiR/ZgA=; b=
+	sqx/TmKkrbFlbpIh2Er3egpdCCyhzsQAoBY21kEt9b/TWCscIH0VzLujadP6g7Lq
+	81SUkJ8DCPAtAK4muYBOYg1sUgigAWR2oR8fxq7kw3qiS9C6t4UnRU187E103oSR
+	BgRRP4gxrSyJwxAfs2VVG1z++vlBfkA6zbSPHifvbX8am6dQe91TeBQwA9GjDzhe
+	4HHNyLC/f2u6nxlEhcwWLe8q2AH6PD4Ibyv1sfFydp5WvZbzKUlKSoyOCmcoDhkq
+	tD4XdUwphm4Dytsz3vme812b0BIBifnELQPbxpsih30YChZgEyXmC1C4aB4eBAG0
+	t+lcuQ6JqRtsHjvAFsKKtQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730452977; x=
+	1730539377; bh=/f+ob6/0cs0oAQjTndC8UAIk7DAav3CEmLAxLiR/ZgA=; b=R
+	walSVN0B0tyKKv6K4DPnkzJmD0wHebmbjswUDltqAxO1jiNVsUhPnBEXnw1K9dTp
+	4CjHMhtjyDmw7BVi/Kl9EuRpq+CL8KcDL5lbVGDtZfXSQ+3cba5UakEtSzaSsQBL
+	+M78jRqvrv+90ycXWtzgFL7cm/EN0XqGgxNOjnRpAn8EIMUoREaVYgyN8RyQagvF
+	QP0wT5cpESJX8BYzSlEIYS/iSvZ3T4WoVlX3awG9jHTgzBqMkzXBk8mABczuSAzO
+	1qzuxrbk62IuQzeBP4r3JEtlghltfORUSqnclsBdHKiWBg7CqVteHI80DbYOSNQ6
+	tSBNNZryIpBnKfwrcIMtg==
+X-ME-Sender: <xms:8Z0kZ32hrZ15aXsK9-0uULTHRaEQJDONV7ovxYe2SBCH4x_hNuskhQ>
+    <xme:8Z0kZ2EsNq9mC9QTLkE0fz4fi3FiLxNm8n-TJOeRjn7mR3YdWLwEgpl8hZKlnVdNp
+    XP3GNbGtEpVfilCHAc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledgtdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprghnuggvrhhsrdhrohigvghllheslhhinhgrrhhordhorhhg
+    pdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtg
+    hpthhtohepnhgrrhgvshhhrdhkrghmsghojhhusehlihhnrghrohdrohhrghdprhgtphht
+    thhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrug
+    drohhrghdprhgtphhtthhopehlkhhfthdqthhrihgrghgvsehlihhsthhsrdhlihhnrghr
+    ohdrohhrghdprhgtphhtthhopehrvghgrhgvshhsihhonhhssehlihhsthhsrdhlihhnuh
+    igrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghrnh
+    gvlhdrohhrgh
+X-ME-Proxy: <xmx:8Z0kZ35jvESavaTssiskGB6M21sPWi1QP_P6WX_TceMbd_X1m9yTpQ>
+    <xmx:8Z0kZ838pMaEln6ii3f8okK2xXZbe6PbfsKIAgjCpKW2RAuwnnW36w>
+    <xmx:8Z0kZ6GVn97Jf1N9k5rVxKCaY0WV5xXorVLoHVUyB5AYWlQTtrtUXw>
+    <xmx:8Z0kZ9_3sznYY6gBTjpOCzlhYqcbDJCmzBoDA6wEg_8PvNSrM6r5-Q>
+    <xmx:8Z0kZ4YnY3lvL39ec8boZoYcKxEdDyUS05Q1FCSiHJTSzMO3SHcMk-4T>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6DB8E2220071; Fri,  1 Nov 2024 05:22:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Fri, 01 Nov 2024 10:22:30 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Naresh Kamboju" <naresh.kamboju@linaro.org>
+Cc: "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
+ "open list" <linux-kernel@vger.kernel.org>,
+ "Linux Regressions" <regressions@lists.linux.dev>,
+ lkft-triage@lists.linaro.org, "Anders Roxell" <anders.roxell@linaro.org>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Linux Media Mailing List" <linux-media@vger.kernel.org>
+Message-Id: <e9971f03-e542-43ed-a8b5-8d79127f4693@app.fastmail.com>
+In-Reply-To: <d3903c31-21ae-4ffe-9969-6faa7e430cb5@stanley.mountain>
+References: 
+ <CA+G9fYvvNm-aYodLaAwwTjEGtX0YxR-1R14FOA5aHKt0sSVsYg@mail.gmail.com>
+ <456c79d2-5041-47c4-bed2-44d257524ddd@stanley.mountain>
+ <d3903c31-21ae-4ffe-9969-6faa7e430cb5@stanley.mountain>
+Subject: Re: next-20241028: gcc-8-defconfig : ERROR: modpost: "__aeabi_uldivmod"
+ [drivers/media/dvb-frontends/cxd2841er.ko] undefined!
 Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, 31 Oct 2024, Imre Deak <imre.deak@intel.com> wrote:
-> On Thu, Oct 31, 2024 at 05:12:45PM +0200, Abel Vesa wrote:
->> According to the DisplayPort standard, LTTPRs have two operating
->> modes:
->>  - non-transparent - it replies to DPCD LTTPR field specific AUX
->>    requests, while passes through all other AUX requests
->>  - transparent - it passes through all AUX requests.
->> 
->> Switching between this two modes is done by the DPTX by issuing
->> an AUX write to the DPCD PHY_REPEATER_MODE register.
->> 
->> Add a generic helper that allows switching between these modes.
->> 
->> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->> ---
->>  drivers/gpu/drm/display/drm_dp_helper.c | 17 +++++++++++++++++
->>  include/drm/display/drm_dp_helper.h     |  1 +
->>  2 files changed, 18 insertions(+)
->> 
->> diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
->> index 6ee51003de3ce616c3a52653c2f1979ad7658e21..38d612345986ad54b42228902ea718a089d169c4 100644
->> --- a/drivers/gpu/drm/display/drm_dp_helper.c
->> +++ b/drivers/gpu/drm/display/drm_dp_helper.c
->> @@ -2694,6 +2694,23 @@ int drm_dp_lttpr_max_link_rate(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE])
->>  }
->>  EXPORT_SYMBOL(drm_dp_lttpr_max_link_rate);
->>  
->> +/**
->> + * drm_dp_lttpr_set_transparent_mode - set the LTTPR in transparent mode
->> + * @aux: DisplayPort AUX channel
->> + * @enable: Enable or disable transparent mode
->> + *
->> + * Returns 0 on success or a negative error code on failure.
+On Thu, Oct 31, 2024, at 12:27, Dan Carpenter wrote:
+> Arnd, can you take a look at this?
 >
-> Should be "Returns 1 on success".
+> diff --git a/drivers/media/dvb-frontends/cxd2841er.c 
+> b/drivers/media/dvb-frontends/cxd2841er.c
+> index d925ca24183b..e3131f5c6708 100644
+> --- a/drivers/media/dvb-frontends/cxd2841er.c
+> +++ b/drivers/media/dvb-frontends/cxd2841er.c
+> @@ -314,7 +314,7 @@ static u32 cxd2841er_calc_iffreq_xtal(enum 
+> cxd2841er_xtal xtal, u32 ifhz)
+>  	u64 tmp;
+> 
+>  	tmp = (u64) ifhz * 16777216;
+> -	do_div(tmp, ((xtal == SONY_XTAL_24000) ? 48000000 : 41000000));
+> +//	do_div(tmp, ((xtal == SONY_XTAL_24000) ? 48000000 : 41000000));
+> 
+>  	return (u32) tmp;
+>  }
 
-But is that a sensible return value?
+Not sure what is happening exactly, probably something where
+__builtin_constant_p() is inconclusive. The patch below seems
+to address it without impairing readability.
 
->
->> + */
->> +
+      Arnd
 
-Superfluous newline.
-
->> +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable)
->> +{
->> +	u8 val = enable ? DP_PHY_REPEATER_MODE_TRANSPARENT :
->> +			  DP_PHY_REPEATER_MODE_NON_TRANSPARENT;
->> +
->> +	return drm_dp_dpcd_writeb(aux, DP_PHY_REPEATER_MODE, val);
->> +}
->> +EXPORT_SYMBOL(drm_dp_lttpr_set_transparent_mode);
->> +
->>  /**
->>   * drm_dp_lttpr_max_lane_count - get the maximum lane count supported by all LTTPRs
->>   * @caps: LTTPR common capabilities
->> diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
->> index 279624833ea9259809428162f4e845654359f8c9..8821ab2d36b0e04d38ccbdddcb703b34de7ed680 100644
->> --- a/include/drm/display/drm_dp_helper.h
->> +++ b/include/drm/display/drm_dp_helper.h
->> @@ -625,6 +625,7 @@ int drm_dp_read_lttpr_phy_caps(struct drm_dp_aux *aux,
->>  			       u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
->>  int drm_dp_lttpr_count(const u8 cap[DP_LTTPR_COMMON_CAP_SIZE]);
->>  int drm_dp_lttpr_max_link_rate(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE]);
->> +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable);
->>  int drm_dp_lttpr_max_lane_count(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE]);
->>  bool drm_dp_lttpr_voltage_swing_level_3_supported(const u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
->>  bool drm_dp_lttpr_pre_emphasis_level_3_supported(const u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
->> 
->> -- 
->> 2.34.1
->> 
-
--- 
-Jani Nikula, Intel
+--- a/drivers/media/dvb-frontends/cxd2841er.c
++++ b/drivers/media/dvb-frontends/cxd2841er.c
+@@ -311,12 +311,8 @@ static int cxd2841er_set_reg_bits(struct cxd2841er_priv *priv,
+ 
+ static u32 cxd2841er_calc_iffreq_xtal(enum cxd2841er_xtal xtal, u32 ifhz)
+ {
+-       u64 tmp;
+-
+-       tmp = (u64) ifhz * 16777216;
+-       do_div(tmp, ((xtal == SONY_XTAL_24000) ? 48000000 : 41000000));
+-
+-       return (u32) tmp;
++       return div_u64(ifhz * 16777216ull,
++                       (xtal == SONY_XTAL_24000) ? 48000000 : 41000000);
+ }
+ 
+ static u32 cxd2841er_calc_iffreq(u32 ifhz)
 
