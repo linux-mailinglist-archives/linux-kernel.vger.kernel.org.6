@@ -1,148 +1,137 @@
-Return-Path: <linux-kernel+bounces-391917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66089B8D4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:51:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A049B8D51
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:53:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9BC61C21FCC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:51:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08EC9B23321
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C060B157E82;
-	Fri,  1 Nov 2024 08:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AB525757;
+	Fri,  1 Nov 2024 08:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjR7OsFr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W7TGlJKV"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0311F25757;
-	Fri,  1 Nov 2024 08:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AF414264A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 08:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730451058; cv=none; b=tFDl+fHpLrqJj79ESeE7NY1dneiuxqNxtSRpRD8HL9u5ToimXLb7LvtlwhW3mAIEFgxqpMHOgQD8FvKJoZvmMDtPTw46E0bglK3l+FAaz6nH+nl/8jCxOZUwYZUUd2AZOCWjjbPlmFjHu6biJeOee5MHMCTHZuN5z0skhtMB0WI=
+	t=1730451176; cv=none; b=qVgfEb+DH9uFSrRYSGFQk/ve+6z2vg5WcWRiPv0hZnTBa3xaWxXzg0lIMKf5ld4Bqmytoef0t0BE5Yr9jfLaJVNkWPZNPD7XmQE7uMiaj8A58eHI6h60f6oOlgADgdJj7/HkAMsxImKrQzajPGO9oZyd40AiDBzUkU3Yl9BDATY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730451058; c=relaxed/simple;
-	bh=7Gv2CqzecQ8F4MJ4RrKkxM6klDrmuRMoDH8RdhY0ReU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BkkMhn156Bi08QfVXvRZcu9FvKBe7cqIs0Vgt2ownosrQ4aCfdvbUONIJPNDp801Noz6C5XMs7edbSyIAwdV/azjsrJYVvJBZRj7jXtV+QscHvs/pgLWpiZIgtrB6cDZe47V9k4d17yCHOuv2HDv82Ky4KQ3X9fhZe+3sIg23vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qjR7OsFr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B174C4CED2;
-	Fri,  1 Nov 2024 08:50:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730451057;
-	bh=7Gv2CqzecQ8F4MJ4RrKkxM6klDrmuRMoDH8RdhY0ReU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qjR7OsFrdihA7dg0hpyjg9HMDJP61+hracN3Kea7Nu7/Azg1y4PBcP7U99Qkm9Vxk
-	 Nn9ff/BEvmY8/t1ltJa0JUCnGcKqGs6hzn/SL10Rr5r4fWRDtAeJ9LXr5sGxyFRx2z
-	 F1eIx16Rv+t4TGgSDM0/BtOY2XKAGOhVeoQfojY7DDcw9Hmxvvm7qUULsP1OuZsWPh
-	 uShABLy+TSjvZDS+W6NjrA5RiEB2zLVbx89FubLEZdHrOMny0E5nvaJitx/BXfmTyz
-	 GfIptvJ+7IXDsC7Oj9MCy6293wyoTHDKT+4Nc+naDTzxTZznrlXvbCTYWjcOJcQaDl
-	 w/KVGbLEQtrNw==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so18915221fa.3;
-        Fri, 01 Nov 2024 01:50:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUu+ShiaB5ud1wTw/PiWICMEIZpDXH88Rd9jw0V35gehOMo/ZeY9eiUWs3C9EwJY1HxDt3GprF3MQAEvGTSpVVp@vger.kernel.org, AJvYcCVCS7wzBfUTGEiyTLArNiaVoanVqsUypYBSif4HKeLreRqYsOxBDY5XK0FdGDm9ydOTgmuIu2GAnk0TcdY=@vger.kernel.org, AJvYcCVH3Yi7A/nqGvVmbOjTz2KQ9ANEGwCI1nuUedZGSnIslzqDjJSyNqqzT2/3Xgut3kFrz15wSEn8/uhW@vger.kernel.org, AJvYcCXSjC+vwVwQoiypF+zN0lP40uweMsbRmb9JzuRfpGAJyYJKXIXMSahp8NSQiNr2IYg9zBo9iJPU1DjFbhEU@vger.kernel.org, AJvYcCXVDtdplsWeeT8artZWPUqf9G/T7UTd4GSMhM1v9CrespleFHK8nMI5b0XbJ5zmDivWbuZNmM9/ZG/K@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+vdgG12DalX3Uog9Z/eJgLa/fXO39JH8Ggk/LIWqrTnkcAUhe
-	pVhFE8wPc7FG3Tfnclzqm9qLexP7w8Y+O75bZod43Ff1u7jCvss3RZ/1ug6xkMAlH0PVLnGBmBO
-	z6x1yQDwJfvkhP1L6JSKhsfAKO7g=
-X-Google-Smtp-Source: AGHT+IGq5KFbAI9S4x36ffXOC0opBJXf4wJXpPrXgnubpE+Mpoy/r4fbPNLJGcyf/oa8AjMSFwlnLkaspaUTNz8mWrE=
-X-Received: by 2002:a05:651c:211b:b0:2fb:6110:c5cb with SMTP id
- 38308e7fff4ca-2fedb7d9117mr14787541fa.34.1730451055747; Fri, 01 Nov 2024
- 01:50:55 -0700 (PDT)
+	s=arc-20240116; t=1730451176; c=relaxed/simple;
+	bh=FWS7x7kpWfD4/GL/KsPxp9jGdBMzZDtisdmNOvK2ATY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOcVAnwIpafnOxZYuinzpzYViTG4jFyO1tXdRfi7BI0u7/1spvDBa9OW8re4cHkMC55mBk6lr7AiiFPh1P1AueUK4c0N/BTuQXya3fKtvHTZ6dYGT0XIF0ya2/GSxvdpDlVRZs65yPMr/ydvZHxjLrZ2KEDRyVZMWENiaWgkaq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W7TGlJKV; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e63c8678so2037979e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 01:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730451172; x=1731055972; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wh6N/qMH5HMbHbPdjWapWn7PvZK7521EngYAjwaTJAI=;
+        b=W7TGlJKVAmB1Cl8+Z0xdfzjcQLzBPA0tl/+u2PmIEA3K4xsR2ITgeNwMA4oJ8+RhGj
+         7tQ+ZM3KyANQllSs6vYPh+ZqQp+k8Xqo+640rZSjf/8/6BxMVSGlwEQzFTgurgBehk7g
+         S7QuUz5joaaipe5Fjpzy3ebhlIjyZWVK5WBPUCUOAOgKOnm8EIQbsuQPV9SZfq1WPNdV
+         xHSA8BUKiC4/XWepN4SfazAJxjK8KrLsgvoULBCr8aloiCZdqlK+Lw7q8MijqrCUXhx2
+         mLuOHbY5C70uNiMWMKDqAbVksF8l3/+goTbWRVg/iVcDZnzUTURnSxAtHTvQxsBcMcBR
+         s9jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730451172; x=1731055972;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wh6N/qMH5HMbHbPdjWapWn7PvZK7521EngYAjwaTJAI=;
+        b=HbuIDypnHrCXqL/1FfqHQkvBNY/l/9RtXQCcp2qmT+CzngRvzVmdfTFYDSe25/0gb+
+         KmwlRq4GDRwDJGq+5rz6pLZW9qpP0jgqrcqORcEP0idWlRA7Lzu0H0RoOSJpkCJjndYl
+         6sUl0dhyPgQqJPGG+ZxcGz+tm7dS/o9BWmIEV9labwT3Q4s/chQRdVC5V1VUAA63EMgE
+         WoBDJNSOJChx+UvkS06XHEqOp9WZf2gKETHMKEhBqykDTN23G0dnikiPluwsKgL5FYRS
+         wXoXGHJpyeDnDusj6nHWiVQUep7m76qH+6eZtL+J3hA1SGMsE3Tpb5+IqtzZ6ZBVnq8B
+         FggA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEhesOYTQik7/q0A7CtErGgHB7+K6jq0YIgWxU6wAarSoWBdC36BOBtSEXHzLHegemmrNZEYakNdt9qwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6FZmYP1WhD98fadoYiu0A8XWroBcTKpVx8Fanyv5c4ibAMJof
+	OAwvo3Gf4dR13E9Kyr6taEbbKCuVb5Ho7bTimWVIRv2X9zh/9bfDiYf1OlWyUJk=
+X-Google-Smtp-Source: AGHT+IEAeTNqVFeTbtW4niG58QzyiJhhnnEnA7N9JcS+53KX4icxTnUEphIDjaUZyu1A6xjDLlUvQw==
+X-Received: by 2002:a05:6512:b02:b0:52e:9762:2ba4 with SMTP id 2adb3069b0e04-53d65df247bmr1561463e87.25.1730451172396;
+        Fri, 01 Nov 2024 01:52:52 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc95848sm484842e87.39.2024.11.01.01.52.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 01:52:51 -0700 (PDT)
+Date: Fri, 1 Nov 2024 10:52:48 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krishna Kurapati <quic_kriskura@quicinc.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: arm: qcom-soc: simplify SoC-matching
+ patterns
+Message-ID: <sjayaro5coievz22gdeu6tplzjs6kju333a6womyuk6bsvw2h5@a5ewi6sdl7wj>
+References: <20241101-sar2130p-dt-v3-0-61597eaf0c37@linaro.org>
+ <20241101-sar2130p-dt-v3-1-61597eaf0c37@linaro.org>
+ <pmgutki3fjqbka5ozalevpw7qptmzykhqxiaofqc2nh4gpnn4f@bgmz6fknavbf>
+ <iixsrpkyzae5mpwsa2qm5jdyftzgav52ryficoizlhfzw54xbi@gdfxwmjutqp2>
+ <80a37af3-ffef-4342-b7d3-f2eb36bb60ba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
- <87wmhoulb9.ffs@tglx> <D5ACNMVX5LXB.1L0S9P2J3UDJH@kernel.org>
- <87ldy3vpjh.ffs@tglx> <D5AF4HY1I6AA.27WRBDDGLYH39@kernel.org> <D5AF9K79H8WO.PVW93P31GHMH@kernel.org>
-In-Reply-To: <D5AF9K79H8WO.PVW93P31GHMH@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 1 Nov 2024 09:50:44 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHFDMKEH46MG3731FS043XyxHchoTJtDOst6kvfMezUuQ@mail.gmail.com>
-Message-ID: <CAMj1kXHFDMKEH46MG3731FS043XyxHchoTJtDOst6kvfMezUuQ@mail.gmail.com>
-Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
- kernel support
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ross Philipson <ross.philipson@oracle.com>, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-efi@vger.kernel.org, 
-	iommu@lists.linux-foundation.org, dpsmith@apertussolutions.com, 
-	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, 
-	mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de, 
-	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net, 
-	ebiederm@xmission.com, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
-	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com, 
-	trenchboot-devel@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80a37af3-ffef-4342-b7d3-f2eb36bb60ba@kernel.org>
 
-On Fri, 1 Nov 2024 at 01:40, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->
-> On Fri Nov 1, 2024 at 2:33 AM EET, Jarkko Sakkinen wrote:
-> > On Fri Nov 1, 2024 at 1:08 AM EET, Thomas Gleixner wrote:
-> > > On Fri, Nov 01 2024 at 00:37, Jarkko Sakkinen wrote:
-> > > > On Thu Oct 31, 2024 at 9:25 PM EET, Thomas Gleixner wrote:
-> > > >> So this looks pretty reasonable to me by now and I'm inclined to take it
-> > > >> through the tip x86 tree, but that needs reviewed/acked-by's from the
-> > > >> crypto and TPM folks. EFI has been reviewed already.
-> > > >>
-> > > >> Can we make progress on this please?
-> > > >
-> > > > So TPM patches do have bunch of glitches:
-> > > >
-> > > > - 15/20: I don't get this. There is nothing to report unless tree
-> > > >   is falling. The reported-by tag literally meaningless. Maybe this
-> > > >   is something that makes sense with this feature. Explain from that
-> > > >   angle.
-> > > > - 16/20: Is this actually a bug fix? If it is should be before 15/20.
-> > > > - 17/20: the commit message could do a better job explaining how the
-> > > >   locality can vary. I'm not sure how this will be used by rest of
-> > > >   the patch set.
-> > > > - 18/20: I'm not confident we want to give privilege to set locality
-> > > >   to the user space. The commit message neither makes a case of this.
-> > > >   Has this been tested to together with bus encryption (just checking)?
-> > >
-> > > Can you please explicitely voice your detailed technical concerns in
-> > > replies to the actual patches?
-> >
-> > - 15/20 looks like a rigged patch. I don't really know why it is done
-> >   so it is hard to either suggest how "resolve it".
-> > - 16/20 probably makes sense but if it is a bug fix or part of it is,
-> >   the bug fix should have relevant fixes etc tags so that it can be
-> >   picked up to stable kernels.
-> > - 17-18/20: I'd speak about this as the "one whole" i.e. here the
-> >   privilege to be able change locality during run-time is really
-> >   concerning. Could the locality be figured out for the kernel
-> >   command-line instead? The sysfs attribute can exist as read-only.
-> >
-> > So yeah, the way I see it 15-16 are the more trivial issue to sort
-> > out (probably) but with 17-18 we have an actual architectural concern
-> > for kernel overall.
->
-> Further:
->
-> 15/20: I can accept this without reported-by tag (or changed as
-> suggested-by). It does not harm.
-> 16/20: I'll re-review this with time. I'll try to get this done
-> latest next week.
->
-> So let's put focus only on 17 and 18. Can this problem be sorted out
-> by kernel command-line parameter? In the case of locality we want to
-> keep regular "chain of trust" i.e. boot-loader makes the decision,
-> *even* in the case of DRTM. I would call this almost as constraint
-> that would be wise to set.
->
+On Fri, Nov 01, 2024 at 09:37:23AM +0100, Krzysztof Kozlowski wrote:
+> On 01/11/2024 08:47, Dmitry Baryshkov wrote:
+> > On Fri, Nov 01, 2024 at 08:26:04AM +0100, Krzysztof Kozlowski wrote:
+> >> On Fri, Nov 01, 2024 at 02:49:22AM +0200, Dmitry Baryshkov wrote:
+> >>> The patterns for individual SoC families grew up to be pretty complex,
+> >>> containing lots of special cases and optional suffixes. Split them per
+> >>> the suffix to make it easier to extend SoC patterns.
+> >>
+> >> This is doing something quite different - split is not important here.
+> >> Instead you narrow the patterns significantly and disallow things like
+> >> msm8994pro, sc8280p or sc8280px, and allow things like sa5200p.
+> > 
+> > Just for the sake of correctness, msm8994pro is still allowed, if I'm
+> > not mistaken.
+> > 
+> >> I don't see here much of pattern simplifying - dropping (pro)? really
+> >> makes little difference.
+> > 
+> > Patterns are simplified by being explicit. E.g. in the previous
+> > iteration I completely didn't notice the intersection of the |p that I
+> > have added with the existing [a-z][a-z]? pattern. If you think that
+> > sa5200p should be disallowed, I can tune the numeric part of the
+> > pattern. And sc8280p / sc8280px should not be allowed in the first
+> > place, such platforms don't exist.
+> 
+> I am fine with this, but extend the commit msg with some good rationale.
+> Have in mind that the point of this pattern was *not* to validate SoCs
+> names. sa5200p is fine, sc8180p is fine and all others are fine, sc8280z
+> as well, because we do not want to grow this pattern with every new model.
+> 
+> The only, single point of this entire binding is to disallow incorrect
+> order of block names in compatible. Not validate the SoC names. If you
+> need narrower patterns to achieve that objective, sure. If you need
+> narrower patterns to validate SoC names, then nope.
 
-Please don't add a kernel command line parameter for this - the code
-running in the decompressor will be the one setting it and there are
-better ways to pass information between these components (and the
-slaunch stack is already doing that in any case)
+I need narrower patterns to simplify adding new SoCs.
+Another option is to define a mega-pattern like
+qcom,(msm|sm|sd[am]|.....)[0-9]+[a-z]*-.* . Frankly speaking I'm fine
+with that approach too.
 
-Also, let's have this discussion in the appropriate place, i.e., on
-the thread for each respective patch.
+-- 
+With best wishes
+Dmitry
 
