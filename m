@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-391814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7439B8C01
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:26:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB799B8C04
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04EC61F2317C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:26:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FF162824DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E261547D5;
-	Fri,  1 Nov 2024 07:26:08 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CFF155756;
+	Fri,  1 Nov 2024 07:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJya2eW1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFE786252;
-	Fri,  1 Nov 2024 07:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7C5154C0B;
+	Fri,  1 Nov 2024 07:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730445967; cv=none; b=OkYXnNN13OHaqK4uHMMH3kiytH3cCe8oUyTnlzDL4gMqdnPnZxEnfiqYEOfvWm6Jt/EzzoykQUyDM5ltKZM0REKLlyioCW1bbR3W9u+37REMIFk6Fi/MJ2S8r9Idv6YJTLZi01xG+1QeVxYzwJRHk3Q724sDqfurDE7PHRCyZQQ=
+	t=1730445968; cv=none; b=HXtzb5CgFBAgUFuBpMEXlLwwdm6ckDGCNa3/rL5cYnDC6uQhcrCKFHSWnOoERS4I93Z/CR2eLY7gqjDLerLcjeHXbM2l/KaviQ6q2CkF2fAF0mbdwu4oVzBrvKZq0L1Z64TqqGFJIEcVG0JU3O82qUxXOj5CwmsLeCFVoXC8bu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730445967; c=relaxed/simple;
-	bh=9KsNjW73/rwnA/MCFDoVKZvKFbcg6J+eV9177kx9fzA=;
+	s=arc-20240116; t=1730445968; c=relaxed/simple;
+	bh=HY9+PuUwlICUs5s5VIBeX7iAYF0RKIVQtbKVMOHVchQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZcepl1DiKb4+6PK0UtR+OQDq61+kbXqGiqYYqc6lr96Mi28xmy7u7Nz//NIRLqAbq0Gdimm9TEZ3SM4qI5oYmUtBUFNr6AwINjvzF1R4a/OvrBKW08chQSM0qT8vLbWyJjq6j0JgVA3MGEiuSoLz4QQ2rbNmZcgqlJ00GZs/Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=48922 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1t6m2W-001NQn-1M; Fri, 01 Nov 2024 08:25:50 +0100
-Date: Fri, 1 Nov 2024 08:25:46 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org, mic@digikod.net, netdev@vger.kernel.org,
-	audit@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v3 2/5] LSM: Replace context+len with lsm_context
-Message-ID: <ZySCeoe3kVqKTyUh@calendula>
-References: <20241023212158.18718-3-casey@schaufler-ca.com>
- <68a956fa44249434dedf7d13cd949b35@paul-moore.com>
- <ZyQPfFvPD72rx4ME@calendula>
- <ZyQRgL_jWdvKgRl-@calendula>
- <dd727620-9823-4701-aaf1-080b03fb6ccd@schaufler-ca.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iRG9MRSEs8tspr15cIZ2hos/nTGkU4gZy1xHB6CVhhA3tLEyLONpp2H0jrTz3t9Q1XK2Em8+RwNB2O3yseMlQjEJTGh0oX/Q94Um9dYU2CBcVNEWAUu7DREuSP9dpxRNct3mUsuJoXuS0Zf5h6x4dbVSmHmSs7XxobGo5orxYbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJya2eW1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08944C4CECD;
+	Fri,  1 Nov 2024 07:26:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730445968;
+	bh=HY9+PuUwlICUs5s5VIBeX7iAYF0RKIVQtbKVMOHVchQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WJya2eW1QPzPiPV6LaQrm30Uryq5yzS4xPtq+5eusVNdzsyKAfF0X5N9SHJmegjir
+	 xcrZp16eVxgd2P7gG7TZ3hx47lTL3aIIA7X6P+va/Dx2mxE0NIM6sWxh0nd62Inh2q
+	 MC/tlw6wzEqmzhgRnCbS+Ic5hjdjzM+F5JT+uCbijT7EOaShPqbARDQZMZBprCbDVv
+	 MZOt9JbEYm8ovm/KgwZ+Q2Bv10HAOyJGvJFaQeD8bE2u4Y59K4x/+DA35/+ZxB6UVW
+	 pP2rhvvY2K3Aex5zboFUjNCGNjwjKD6ZtQ3Ov5VimLHK0CC/f5Lo/lyIJeDl1TWQPZ
+	 jhBEouZ3Dic9g==
+Date: Fri, 1 Nov 2024 08:26:04 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krishna Kurapati <quic_kriskura@quicinc.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: arm: qcom-soc: simplify SoC-matching
+ patterns
+Message-ID: <pmgutki3fjqbka5ozalevpw7qptmzykhqxiaofqc2nh4gpnn4f@bgmz6fknavbf>
+References: <20241101-sar2130p-dt-v3-0-61597eaf0c37@linaro.org>
+ <20241101-sar2130p-dt-v3-1-61597eaf0c37@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,68 +61,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <dd727620-9823-4701-aaf1-080b03fb6ccd@schaufler-ca.com>
-X-Spam-Score: -1.9 (-)
+In-Reply-To: <20241101-sar2130p-dt-v3-1-61597eaf0c37@linaro.org>
 
-On Thu, Oct 31, 2024 at 04:58:13PM -0700, Casey Schaufler wrote:
-> On 10/31/2024 4:23 PM, Pablo Neira Ayuso wrote:
-> > On Fri, Nov 01, 2024 at 12:15:16AM +0100, Pablo Neira Ayuso wrote:
-> >> Hi Paul,
-> >>
-> >> This patch breaks nf_conntrack_netlink, Casey mentioned that he will
-> >> post another series.
-> 
-> I have a fix, it is pretty simple. How about I send a 6/5 patch for it?
+On Fri, Nov 01, 2024 at 02:49:22AM +0200, Dmitry Baryshkov wrote:
+> The patterns for individual SoC families grew up to be pretty complex,
+> containing lots of special cases and optional suffixes. Split them per
+> the suffix to make it easier to extend SoC patterns.
 
-No idea. I don't know what is the status of this series. I would
-suggest to repost a new series.
+This is doing something quite different - split is not important here.
+Instead you narrow the patterns significantly and disallow things like
+msm8994pro, sc8280p or sc8280px, and allow things like sa5200p.
 
-> Or, if you want to fix it yourself, in ctnetlink_secctx_size() remove the
-> declaration of "len" and replace its use in the return with "ret".
+I don't see here much of pattern simplifying - dropping (pro)? really
+makes little difference.
 
-No, sorry, I won't do that.
+Best regards,
+Krzysztof
 
-Thanks.
-
-> > Please, see:
-> >
-> > https://lore.kernel.org/netfilter-devel/ZxpxZuErvXSLApsf@calendula/
-> >
-> >> On Thu, Oct 31, 2024 at 06:53:38PM -0400, Paul Moore wrote:
-> >>> On Oct 23, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >>>> Replace the (secctx,seclen) pointer pair with a single
-> >>>> lsm_context pointer to allow return of the LSM identifier
-> >>>> along with the context and context length. This allows
-> >>>> security_release_secctx() to know how to release the
-> >>>> context. Callers have been modified to use or save the
-> >>>> returned data from the new structure.
-> >>>>
-> >>>> security_secid_to_secctx() and security_lsmproc_to_secctx()
-> >>>> will now return the length value on success instead of 0.
-> >>>>
-> >>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >>>> Cc: netdev@vger.kernel.org
-> >>>> Cc: audit@vger.kernel.org
-> >>>> Cc: netfilter-devel@vger.kernel.org
-> >>>> Cc: Todd Kjos <tkjos@google.com>
-> >>>> ---
-> >>>>  drivers/android/binder.c                |  5 ++-
-> >>>>  include/linux/lsm_hook_defs.h           |  5 ++-
-> >>>>  include/linux/security.h                |  9 +++---
-> >>>>  include/net/scm.h                       |  5 ++-
-> >>>>  kernel/audit.c                          |  9 +++---
-> >>>>  kernel/auditsc.c                        | 16 ++++------
-> >>>>  net/ipv4/ip_sockglue.c                  |  4 +--
-> >>>>  net/netfilter/nf_conntrack_netlink.c    |  8 ++---
-> >>>>  net/netfilter/nf_conntrack_standalone.c |  4 +--
-> >>>>  net/netfilter/nfnetlink_queue.c         | 27 +++++++---------
-> >>>>  net/netlabel/netlabel_unlabeled.c       | 14 +++------
-> >>>>  net/netlabel/netlabel_user.c            |  3 +-
-> >>>>  security/apparmor/include/secid.h       |  5 ++-
-> >>>>  security/apparmor/secid.c               | 26 +++++++--------
-> >>>>  security/security.c                     | 34 +++++++++-----------
-> >>>>  security/selinux/hooks.c                | 23 +++++++++++---
-> >>>>  security/smack/smack_lsm.c              | 42 +++++++++++++++----------
-> >>>>  17 files changed, 118 insertions(+), 121 deletions(-)
-> >>> See my note on patch 1/5, merging into lsm/dev.
 
