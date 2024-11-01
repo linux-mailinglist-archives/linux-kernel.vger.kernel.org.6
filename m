@@ -1,93 +1,147 @@
-Return-Path: <linux-kernel+bounces-392689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6DD9B971A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:07:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495C69B971E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:08:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB2E1C20E62
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:07:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60E0EB21845
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3011CDFAC;
-	Fri,  1 Nov 2024 18:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F154A1CDFDC;
+	Fri,  1 Nov 2024 18:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2wKpG88"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R/By8LQa"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1241CDA27;
-	Fri,  1 Nov 2024 18:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821BD1CDA27
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730484465; cv=none; b=Am0ZUs51OKpinQJ9arpsbW0iy/rUEiy1CTiAFdkUU55Y6czEC6pCAbXlL39/zWAKAkY1Iw5t7KllFGAWDjzUbwxBPvzLXXE/F0r5xZ2dTA7jVZSaiMcwAXNDtzortqRxlbXc+EL6wOcppVzVA32I9R10C44J5BHMqZmfa3BzMHk=
+	t=1730484513; cv=none; b=NH5iYXy6Bf3sx+PvMEbgjp6O9sVHADf12Plc9xDHWgPXXG/ZoVGg3bL5gjxyIDGSVEyjNa77bKYkUSGXfthgNpBiDt1e11PHmewCJwyXRJU67GE6tjjiZf5tLPOkbz7VL+0C+fCQu5u3wakvwPe4R0qCn4IvY8O2aN4ig18AsLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730484465; c=relaxed/simple;
-	bh=4ht9G50SlYlr7BPTCuy+KjNotHQlLEXbSKghIYlF3TI=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:Cc:To; b=f4u33muNSuOUb3YTcPh2CCT1M+OVB8xdHT59LrIh/Xw1yjZNT3qWXqFkurxHM0+LDTUYKPdNXY2Y6RFEUO5DgxVVCCezDhqxf+vUzzCPGf7I/ZijOziV+ubIWKXuvnLM9/ar3J0YKEWj1hhyJBWkaA/jSl6xdzQqHqJIZDU3F7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2wKpG88; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a99cc265e0aso348052566b.3;
-        Fri, 01 Nov 2024 11:07:43 -0700 (PDT)
+	s=arc-20240116; t=1730484513; c=relaxed/simple;
+	bh=wTIyBZgnq62le+5w+4w6X/ecvgjYY7nVJQm7gIAKPEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fkW66yWTKVDr5TZQhhz6hDloHbQz3xSZ6f7vcQWK2jxC9B9gE9sInb+hyklFZZjQOnD9C4b5ZOElrmPaI9Fe07dNZloSz8FTJvBlGP/Cca5xn6T8FPYETnLZ529uCHD0bZIIZc5rFW/PZka/MLpztxiWMv9Xkn18OGxsiCLj0KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R/By8LQa; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f72c913aso3760343e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:08:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730484462; x=1731089262; darn=vger.kernel.org;
-        h=to:cc:message-id:date:subject:mime-version:from
-         :content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4ht9G50SlYlr7BPTCuy+KjNotHQlLEXbSKghIYlF3TI=;
-        b=I2wKpG88RDQGuvx94kP0ySA7RO3v3ZLTlz+BMcabYqz4KNHqUiPSLdnsobnxC3oI9a
-         1lRUi1rpzGOfk0jcFzqK0nnMNqLDDtdsQWBeqh2kinVIcUDPbkuIdJoUBA/Jv5EwPWk7
-         lRSQ/WZZ4mNtcKdKOlkmGP2sswVex51euUUt785XklqllFs93t0XXaR7nRs/ypoMlh4j
-         sunW/jW1O37VPAmbzMNfxaSgeughf4Jyqp5/u8NfHq+IERos3fdXK8HE7PndFxiZC1f5
-         JGxMUUEYZuB3kKBp5xA6mS9Qk4EWVIoikKkm2a20Tv+9rSRtxH9iz9pzlPzhlev+OoYW
-         gvJw==
+        d=google.com; s=20230601; t=1730484510; x=1731089310; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ftGl4XcG9OH9sBgHhSBECZNA4rpR1fv1xw6T+vkOgXg=;
+        b=R/By8LQal/cP2QNy8QNLePJe70GiELBbBDG4kdIjFxTkxjdTdqDW2TK2emZM1g3Ct9
+         Rx4PIGkqTSTKdYwHMinNl/ac7m0qipBx5BuszxO7giFyWRAh7iR2Bhdh8LChdsKGnINt
+         x69tHtYqAFWQfpuU4xT1/muUv1HtBw0NcBy91+0xpPXTag6131doxbfZvVVV1HUqCvAg
+         HjZ5stQHnhkm9boW1PxpY3Wyj0r9lwwkzLsKmRmlIbAkRF9Z0FfyEhSkNEPrMSG2GuUr
+         EH5evwtskvzfNvxYCc49kuHTctYTB5FZW0v80J+113BRaoRKHVZwMfYkrpCebZ/oXi1M
+         3ITA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730484462; x=1731089262;
-        h=to:cc:message-id:date:subject:mime-version:from
-         :content-transfer-encoding:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4ht9G50SlYlr7BPTCuy+KjNotHQlLEXbSKghIYlF3TI=;
-        b=H2rjhZLfH5K2sFASxi7n5ByFckScIDKKZUGthx8YWHDVgJBCSawpJ01hl7phM9B4d3
-         Qg6oSe/P/Q2zkg1cRcd2dzovY/V4jMuRIfC2N/d3MCT1zYOCyz3KESdL492rZftiKhtq
-         FEb7xwjtxzPRNjK18I7yJ0lZcfpBV9NVg8oQODHBaQjdW2uazsH2zQ3Ze4oJxXcNcfRF
-         jvbs+hGW9QKJcL6TsvQXqrUKTSKwO1SDWMCo2kRiHPoEtV1VrUv7Vir6IMaoJLkkn6Yg
-         jR8F/F5C0u35Jna7fWH72V/BnfT8Z8Z4zY3H7VazH/2liXrshIRyuEcSe4kV+DAZBrtU
-         dkRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWojaRg6VBNC0LpNq/ekOThLo1bQq6kXYL4gST4TxrV8d1ZREcwDqmIvlZe4dJfylzKgue9bjxRWSrcF44=@vger.kernel.org, AJvYcCXXXDpsBFtoAeWXeRxgbO0Bcd6gPv3WwwDDcewrpvy4WxpG9lmjfb7tyJbVSPCksa5M4ijfwXt5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzTMaoqVXUUUxDfCkElP9Q2MqAlpPdIXc+Q3uHVFHKbITzuXq8
-	7UIUZi67cId6VBAArYCasml+K17X+7onZcNXvgtgbu+qzPzXmYl/
-X-Google-Smtp-Source: AGHT+IGIND0a2w6FiSMiKhuFQgaTuS9zBQtQXZDnUefy8qn1grI0b0CwYI+KoEZhLJXD0lzwYEpKAQ==
-X-Received: by 2002:a17:907:8686:b0:a99:4615:f58c with SMTP id a640c23a62f3a-a9de5d6eb9emr2496049866b.2.1730484461854;
-        Fri, 01 Nov 2024 11:07:41 -0700 (PDT)
-Received: from smtpclient.apple ([102.209.109.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56494052sm211690766b.29.2024.11.01.11.07.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 11:07:41 -0700 (PDT)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-From: Ivan Fay <ivanfay99@gmail.com>
+        d=1e100.net; s=20230601; t=1730484510; x=1731089310;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ftGl4XcG9OH9sBgHhSBECZNA4rpR1fv1xw6T+vkOgXg=;
+        b=R+oLki+08btaCUgz1E3HckGid7Btp5XeH8U23SR5ZmTsakNpAc4qYyz+be8ZXsX1qg
+         0xcnyl2xg4309ATEgiqklWMY6TV+Uj8fhmbeDc0YRsoM8Z9GdmMJtMtldW/iYaj1FOLY
+         Doiyt/TgoGsU6vJVoIUgHHzn1KATB5jHpRfO0E4Eli2pFQr6j0+RV7PUOmBi/Zep7jw/
+         FdEXF4VVz5Td7AVs+SDRArX5q7JYN9qC+Pagk61hUiYIrMXNwPYQI07NPZSLm3mgasMK
+         jaWxQqES46Ql3R6ouhIN/sUoI7nkYeK3U2QfgAM4TQWWnBepniye2XgJVNbXrEXNr0ui
+         RrBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVuSGvotBWk7JwE/+s0/qs/pbsfj3eRuyZzjeDmnYnvzWyPwjJOS7d1YezwSGshLLaVrCPg92WD4ahzmcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdArZrUpfVWQzFSifho6xTa9VH3quAZibPFOxksUFhWky4fBpF
+	AmbGW6nhXQfEkxX+qSbdtI5GDBtdIikJsYE1WrAoqUHm5WsaYL84gykyMTB9jbKXk8KbxBIVGRV
+	kRIqO49c7jzV2KIE3IWvadh+weIgwDZEVHHiF
+X-Google-Smtp-Source: AGHT+IGwMCf8aDQDescU4zGGm+ZBhK+ouK3E0Y7btO9KyPPQ1vu6pGdaYG4lHllgWVIGE4uaJ5FRjGI+iaX5NJvPKXo=
+X-Received: by 2002:a05:6512:b82:b0:539:fd75:2b88 with SMTP id
+ 2adb3069b0e04-53b34c46711mr12231661e87.60.1730484509488; Fri, 01 Nov 2024
+ 11:08:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 6.6 000/213] 6.6.57-rc1 review
-Date: Fri, 1 Nov 2024 21:07:39 +0300
-Message-Id: <D1C54175-3397-4EB5-9130-8D4889D4818D@gmail.com>
-Cc: akpm@linux-foundation.org, allen.lkml@gmail.com, broonie@kernel.org,
- conor@kernel.org, f.fainelli@gmail.com, jonathanh@nvidia.com,
- linux-kernel@vger.kernel.org, linux@roeck-us.net,
- lkft-triage@lists.linaro.org, patches@kernelci.org, patches@lists.linux.dev,
- pavel@denx.de, rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
- stable@vger.kernel.org, sudipm.mukherjee@gmail.com,
- torvalds@linux-foundation.org
-To: gregkh@linuxfoundation.org
-X-Mailer: iPhone Mail (20H350)
+MIME-Version: 1.0
+References: <CA+G9fYv_Y2tzs+uYhMGtfUK9dSYV2mFr6WyKEzJazDsdk9o5zw@mail.gmail.com>
+ <20241101095620.2526421-1-aliceryhl@google.com> <CAHC9VhS5wLQeF4LX67UgUYVG3oViA7CmSZS_kugH+M5J0XS2Vg@mail.gmail.com>
+ <CANiq72kcvpEqpwFTNFmxfJsfBMeBNiDrrvFBf_iS7+ozaECJzw@mail.gmail.com>
+ <CAHC9VhTQMo11s7mWg=zzDusJompOp01uJat-q9HjQCoEWzHRRQ@mail.gmail.com>
+ <CAH5fLgi+JJHCA_XTPC0-kaacZC6=aGSa-+DiNt06GSJNFhKc3w@mail.gmail.com> <CAHC9VhSv+ro9gOzanvPS1gZwLkqO7ZoZk7SOZ64FP+-sdmYs2Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhSv+ro9gOzanvPS1gZwLkqO7ZoZk7SOZ64FP+-sdmYs2Q@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 1 Nov 2024 19:08:16 +0100
+Message-ID: <CAH5fLggDWvR4i8L+Hin3vzOYnsP2jwZRS7cK-B=xjjOwGBaKkw@mail.gmail.com>
+Subject: Re: [PATCH] rust: lsm: replace context+len with lsm_context
+To: Paul Moore <paul@paul-moore.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, naresh.kamboju@linaro.org, 
+	casey@schaufler-ca.com, anders.roxell@linaro.org, arnd@arndb.de, 
+	brauner@kernel.org, dan.carpenter@linaro.org, kees@kernel.org, 
+	linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, ojeda@kernel.org, 
+	regressions@lists.linux.dev, rust-for-linux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, lkft@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 1, 2024 at 6:59=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Fri, Nov 1, 2024 at 1:24=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+> > On Fri, Nov 1, 2024 at 6:11=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> > > On Fri, Nov 1, 2024 at 1:04=E2=80=AFPM Miguel Ojeda
+> > > <miguel.ojeda.sandonis@gmail.com> wrote:
+> > > > On Fri, Nov 1, 2024 at 5:56=E2=80=AFPM Paul Moore <paul@paul-moore.=
+com> wrote:
+> > > > >
+> > > > > Thanks Alice.  Would you like me to pull this in via the LSM tree=
+ with
+> > > > > the associated LSM changes, or would you prefer to do this some o=
+ther
+> > > > > way?
+> > > > >
+> > > > > I'm going to merge this into lsm/dev for now so that we fix the i=
+ssue
+> > > > > in linux-next, but I'm happy to drop it or do something else, let=
+ me
+> > > > > know.
+> > > >
+> > > > Christian has the VFS side, and both are needed for this -- do you
+> > > > mean you will cross-merge vfs' branch too?
+> > >
+> > > I think our last emails crossed paths.  I'm not going to merge this
+> > > via the LSM tree as we don't have the Rust security.c helpers.
+> > > Ideally it would have been better to have the Rust LSM/security
+> > > helpers in the LSM tree for reasons like this, but it looks like it's
+> > > too late for that now.
+> >
+> > If Christian is okay with rewriting the vfs.rust.file tree, we can
+> > drop commit 94d356c0335f ("rust: security: add abstraction for
+> > secctx") from there and I'll update it and send it for inclusion in
+> > the LSM tree instead. I'll need to drop the piece that ties together
+> > `struct cred` and `secctx` from the patch, but I can follow up with a
+> > small patch for that for the 6.14 merge window.
+>
+> I can only guess at what Chrisitian wants to do, but my guess is that
+> he isn't going to be very excited about rewriting a VFS tree at this
+> stage ... which is very understandable as far as I'm concerned.
+>
+> I wouldn't worry too much about this right now, I'm going to plan on
+> holding Casey's patchset in a staging area until after the upcoming
+> merge window.
 
+Okay. If Casey's patchset is not landing for 6.13, then the fix I
+posted initially can be used. Casey is also welcome to squash my fix
+into his series if you all prefer that. I'm happy with whatever is
+easiest for you all.
 
-Sent from my iPhone
+Alice
 
