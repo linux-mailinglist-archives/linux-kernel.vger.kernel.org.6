@@ -1,137 +1,189 @@
-Return-Path: <linux-kernel+bounces-391918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A049B8D51
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:53:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EAC29B8D55
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:53:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08EC9B23321
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:53:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7431F23145
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AB525757;
-	Fri,  1 Nov 2024 08:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFA51581EE;
+	Fri,  1 Nov 2024 08:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W7TGlJKV"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TB+PxxVa"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AF414264A
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 08:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC2415667B
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 08:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730451176; cv=none; b=qVgfEb+DH9uFSrRYSGFQk/ve+6z2vg5WcWRiPv0hZnTBa3xaWxXzg0lIMKf5ld4Bqmytoef0t0BE5Yr9jfLaJVNkWPZNPD7XmQE7uMiaj8A58eHI6h60f6oOlgADgdJj7/HkAMsxImKrQzajPGO9oZyd40AiDBzUkU3Yl9BDATY=
+	t=1730451199; cv=none; b=hGDE6f8HpEMxRBklseOqjQLayxCyKRifLrZOHdM3Rw7qVPOTBPPkXQrbfrbn0qP3FRoMwQ1LD6oOe9CY3zJyIgY97qlx74a1MH6Pvy53+l/iGkNYMlb0RTU9SM8IzNnRklhNq/5EsoS053qx1LzbNmnlmsThALp2hjOcWkadldg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730451176; c=relaxed/simple;
-	bh=FWS7x7kpWfD4/GL/KsPxp9jGdBMzZDtisdmNOvK2ATY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOcVAnwIpafnOxZYuinzpzYViTG4jFyO1tXdRfi7BI0u7/1spvDBa9OW8re4cHkMC55mBk6lr7AiiFPh1P1AueUK4c0N/BTuQXya3fKtvHTZ6dYGT0XIF0ya2/GSxvdpDlVRZs65yPMr/ydvZHxjLrZ2KEDRyVZMWENiaWgkaq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W7TGlJKV; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e63c8678so2037979e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 01:52:54 -0700 (PDT)
+	s=arc-20240116; t=1730451199; c=relaxed/simple;
+	bh=kstV2gF0zr5kBHLp1ywmO2z5iBJT5icL+Gz+lQBY48o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KlizY+od+sh+njflSVcE87fAtXg9hxOjjlA3FqY7cR6rQC/CAbu25oL6+d4k+Eb9kvnhjeUAjtKR1WSnabUMAYg2MtEyLN3sS/qCtX/OTBCUF6EI1eqL6UI4XuKuUQMvrrf5gQsXgN8m5QHettXtHGaz8BIVeqkvsrdKj2h8nFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TB+PxxVa; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso2976131a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 01:53:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730451172; x=1731055972; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wh6N/qMH5HMbHbPdjWapWn7PvZK7521EngYAjwaTJAI=;
-        b=W7TGlJKVAmB1Cl8+Z0xdfzjcQLzBPA0tl/+u2PmIEA3K4xsR2ITgeNwMA4oJ8+RhGj
-         7tQ+ZM3KyANQllSs6vYPh+ZqQp+k8Xqo+640rZSjf/8/6BxMVSGlwEQzFTgurgBehk7g
-         S7QuUz5joaaipe5Fjpzy3ebhlIjyZWVK5WBPUCUOAOgKOnm8EIQbsuQPV9SZfq1WPNdV
-         xHSA8BUKiC4/XWepN4SfazAJxjK8KrLsgvoULBCr8aloiCZdqlK+Lw7q8MijqrCUXhx2
-         mLuOHbY5C70uNiMWMKDqAbVksF8l3/+goTbWRVg/iVcDZnzUTURnSxAtHTvQxsBcMcBR
-         s9jw==
+        d=tuxon.dev; s=google; t=1730451195; x=1731055995; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n/lzYU0FpFCkrz0oZB5hrlorKli7TkTBu5tvutCnhvA=;
+        b=TB+PxxVaG3g9uidZOe+9BsacVZTjeOgDM3qyml0cXwNvuZeZvjkrZkX46szS0bJI7+
+         JlvTk/vQrtt9Pdga2TyDGUlXNRJoYcVDQ7A78RRymSuxLXOc5Ep/wcM8spFZkKnyMj3X
+         fz0J71IYv+PVdvljBv4tkdWkWZDbCWSOsnByMyJsZwvQemy7lEZnjFBNuxnu9VdZPEqO
+         a37RZsMZrLA3D6cVG9IAukHBeOIWI+SED/XfLcIgUo0MNNkrbJG+HCdf20oYqxS1fD54
+         MByGixlGRD1atfKD9qAxi5/66U4UvdTd2ngVjRFvcEq9RzXv1jht20puqmnWegLI9IlC
+         8yqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730451172; x=1731055972;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wh6N/qMH5HMbHbPdjWapWn7PvZK7521EngYAjwaTJAI=;
-        b=HbuIDypnHrCXqL/1FfqHQkvBNY/l/9RtXQCcp2qmT+CzngRvzVmdfTFYDSe25/0gb+
-         KmwlRq4GDRwDJGq+5rz6pLZW9qpP0jgqrcqORcEP0idWlRA7Lzu0H0RoOSJpkCJjndYl
-         6sUl0dhyPgQqJPGG+ZxcGz+tm7dS/o9BWmIEV9labwT3Q4s/chQRdVC5V1VUAA63EMgE
-         WoBDJNSOJChx+UvkS06XHEqOp9WZf2gKETHMKEhBqykDTN23G0dnikiPluwsKgL5FYRS
-         wXoXGHJpyeDnDusj6nHWiVQUep7m76qH+6eZtL+J3hA1SGMsE3Tpb5+IqtzZ6ZBVnq8B
-         FggA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEhesOYTQik7/q0A7CtErGgHB7+K6jq0YIgWxU6wAarSoWBdC36BOBtSEXHzLHegemmrNZEYakNdt9qwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6FZmYP1WhD98fadoYiu0A8XWroBcTKpVx8Fanyv5c4ibAMJof
-	OAwvo3Gf4dR13E9Kyr6taEbbKCuVb5Ho7bTimWVIRv2X9zh/9bfDiYf1OlWyUJk=
-X-Google-Smtp-Source: AGHT+IEAeTNqVFeTbtW4niG58QzyiJhhnnEnA7N9JcS+53KX4icxTnUEphIDjaUZyu1A6xjDLlUvQw==
-X-Received: by 2002:a05:6512:b02:b0:52e:9762:2ba4 with SMTP id 2adb3069b0e04-53d65df247bmr1561463e87.25.1730451172396;
-        Fri, 01 Nov 2024 01:52:52 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc95848sm484842e87.39.2024.11.01.01.52.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 01:52:51 -0700 (PDT)
-Date: Fri, 1 Nov 2024 10:52:48 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Kurapati <quic_kriskura@quicinc.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: arm: qcom-soc: simplify SoC-matching
- patterns
-Message-ID: <sjayaro5coievz22gdeu6tplzjs6kju333a6womyuk6bsvw2h5@a5ewi6sdl7wj>
-References: <20241101-sar2130p-dt-v3-0-61597eaf0c37@linaro.org>
- <20241101-sar2130p-dt-v3-1-61597eaf0c37@linaro.org>
- <pmgutki3fjqbka5ozalevpw7qptmzykhqxiaofqc2nh4gpnn4f@bgmz6fknavbf>
- <iixsrpkyzae5mpwsa2qm5jdyftzgav52ryficoizlhfzw54xbi@gdfxwmjutqp2>
- <80a37af3-ffef-4342-b7d3-f2eb36bb60ba@kernel.org>
+        d=1e100.net; s=20230601; t=1730451195; x=1731055995;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n/lzYU0FpFCkrz0oZB5hrlorKli7TkTBu5tvutCnhvA=;
+        b=W3twYHopcbarE/U+7evK+tyiAgPfqJmixlQ12AGSvrNGm7FmzWizrIZL/5d3FRds3l
+         WrP3GF6ymgbP715+X46ZfJENnYt7rDU1K8+bk1QnVzXPdI/75uL7szRNVyFrqLio7C1S
+         thpFGEopHvlsvPeqcOQnVkdoKGMy5O8JycvrbB9eIiplFKHxMjgA9Trt06j07kM/0ZwO
+         nzEqL4RujfBphJQTWeRVOT+FoCYQ7FBdegJHQYl5Rxn/SK9ttKQ4ud+dEl1fAF7MW3Tc
+         HTB1Lwp8QjXuVZKDtOp5s6qRE9E7Gi+k7CDQHHe+8Cd3SFhTICsIbbkRJ7+2hf9K4Z92
+         TzRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIvrY2HbFR/xpwGiPBQ/Fz/4m5y9UCfDZrr6cwfzgxGmuMjpC2jIRtfF2z+rkW1+GnNt7Xe1eowKubSMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgShDITt5cz61zR1GHggsEwiGwWqrNdB0rVILzyi6NANZbwDki
+	eC4EDifKlWfrVHCnujQG4/5KJ/nyfjruOOftwf0Nnivx+hplcfd0CEXtslk/CIw=
+X-Google-Smtp-Source: AGHT+IEj3KxbXi2bqvHFQc5tuBqv3rzxtxnuw/COMIJuYYxNFOMzNrLwH0maLO3jY5NZdwEHAAxYkw==
+X-Received: by 2002:a17:906:c113:b0:a9a:533b:56e3 with SMTP id a640c23a62f3a-a9e5092a4b5mr640607366b.26.1730451195054;
+        Fri, 01 Nov 2024 01:53:15 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.190])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564e96a9sm156826066b.97.2024.11.01.01.53.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 01:53:14 -0700 (PDT)
+Message-ID: <fa63898a-33f2-44ad-88ae-bd125e48b71e@tuxon.dev>
+Date: Fri, 1 Nov 2024 10:53:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80a37af3-ffef-4342-b7d3-f2eb36bb60ba@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 03/10] clk: renesas: clk-vbattb: Add VBATTB clock
+ driver
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com,
+ magnus.damm@gmail.com, p.zabel@pengutronix.de,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241030110120.332802-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241030110120.332802-4-claudiu.beznea.uj@bp.renesas.com>
+ <mg2ugyg65ke3tngzqyyixfkawf4iop4o373dc6fosy7bfydbe5@pm43dhkd7asu>
+ <CAMuHMdUcw_UHAZRVGt=Tr0jv3NOPDibtPy1E-46Pq74YKFZxWg@mail.gmail.com>
+ <ee94a802-97ec-4a9b-9ca4-5c14e0eba116@tuxon.dev>
+ <bcc49824-b350-45d0-af84-8458a28d5eef@kernel.org>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <bcc49824-b350-45d0-af84-8458a28d5eef@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 01, 2024 at 09:37:23AM +0100, Krzysztof Kozlowski wrote:
-> On 01/11/2024 08:47, Dmitry Baryshkov wrote:
-> > On Fri, Nov 01, 2024 at 08:26:04AM +0100, Krzysztof Kozlowski wrote:
-> >> On Fri, Nov 01, 2024 at 02:49:22AM +0200, Dmitry Baryshkov wrote:
-> >>> The patterns for individual SoC families grew up to be pretty complex,
-> >>> containing lots of special cases and optional suffixes. Split them per
-> >>> the suffix to make it easier to extend SoC patterns.
-> >>
-> >> This is doing something quite different - split is not important here.
-> >> Instead you narrow the patterns significantly and disallow things like
-> >> msm8994pro, sc8280p or sc8280px, and allow things like sa5200p.
-> > 
-> > Just for the sake of correctness, msm8994pro is still allowed, if I'm
-> > not mistaken.
-> > 
-> >> I don't see here much of pattern simplifying - dropping (pro)? really
-> >> makes little difference.
-> > 
-> > Patterns are simplified by being explicit. E.g. in the previous
-> > iteration I completely didn't notice the intersection of the |p that I
-> > have added with the existing [a-z][a-z]? pattern. If you think that
-> > sa5200p should be disallowed, I can tune the numeric part of the
-> > pattern. And sc8280p / sc8280px should not be allowed in the first
-> > place, such platforms don't exist.
+
+
+On 31.10.2024 11:46, Krzysztof Kozlowski wrote:
+> On 31/10/2024 10:26, Claudiu Beznea wrote:
+>> Hi, Geert, Krzysztof,
+>>
+>> On 31.10.2024 10:43, Geert Uytterhoeven wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On Thu, Oct 31, 2024 at 8:48 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>> On Wed, Oct 30, 2024 at 01:01:13PM +0200, Claudiu wrote:
+>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>
+>>>>> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock that is used
+>>>>> by the RTC. The input to the VBATTB could be a 32KHz crystal
+>>>>> or an external clock device.
+>>>>>
+>>>>> The HW block diagram for the clock generator is as follows:
+>>>>>
+>>>>>            +----------+ XC   `\
+>>>>> RTXIN  --->|          |----->| \       +----+  VBATTCLK
+>>>>>            | 32K clock|      |  |----->|gate|----------->
+>>>>>            | osc      | XBYP |  |      +----+
+>>>>> RTXOUT --->|          |----->| /
+>>>>>            +----------+      ,
+>>>>>
+>>>>> After discussions w/ Stephen Boyd the clock tree associated with this
+>>>>> hardware block was exported in Linux as:
+>>>>>
+>>>>> vbattb-xtal
+>>>>>    xbyp
+>>>>>    xc
+>>>>>       mux
+>>>>>          vbattbclk
+>>>>>
+>>>>> where:
+>>>>> - input-xtal is the input clock (connected to RTXIN, RTXOUT pins)
+>>>>> - xc, xbyp are mux inputs
+>>>>> - mux is the internal mux
+>>>>> - vbattclk is the gate clock that feeds in the end the RTC
+>>>>>
+>>>>> to allow selecting the input of the MUX though assigned-clock DT
+>>>>> properties, using the already existing clock drivers and avoid adding
+>>>>> other DT properties. If the crystal is connected on RTXIN,
+>>>>> RTXOUT pins the XC will be selected as mux input. If an external clock
+>>>>> device is connected on RTXIN, RTXOUT pins the XBYP will be selected as
+>>>>> mux input.
+>>>>>
+>>>>> The load capacitance of the internal crystal can be configured
+>>>>> with renesas,vbattb-load-nanofarads DT property.
+>>>>>
+>>>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>>>> --- a/drivers/clk/renesas/Kconfig
+>>>>> +++ b/drivers/clk/renesas/Kconfig
+>>>>> @@ -237,6 +237,10 @@ config CLK_RZV2H
+>>>>>       bool "RZ/V2H(P) family clock support" if COMPILE_TEST
+>>>>>       select RESET_CONTROLLER
+>>>>>
+>>>>> +config CLK_RENESAS_VBATTB
+>>>>> +     bool "Renesas VBATTB clock controller"
+>>>>
+>>>> tristate
+>>>
+>>> Good point.
+>>> However, does it work as a module, or would that break the RTC?
+>>
+>> On RZ/G3S the RTC counter needs the clock provided by VBATTB.
+>>
+>> I'll try with this as a module.
 > 
-> I am fine with this, but extend the commit msg with some good rationale.
-> Have in mind that the point of this pattern was *not* to validate SoCs
-> names. sa5200p is fine, sc8180p is fine and all others are fine, sc8280z
-> as well, because we do not want to grow this pattern with every new model.
+> So it will defer, why would this be a problem? This does not look like
+
+No problems with it. I wrongly phrased it. That being said, I'll set
+CLK_RENESAS_VBATTB as module along with RTC and do the proper adjustments
+in drivers/clk/renesas/Kconfig.
+
+Thank you,
+Claudiu
+
+
+> critical core component, which would halt the system probe (and even
+> then systems like Android put everything as modules).
 > 
-> The only, single point of this entire binding is to disallow incorrect
-> order of block names in compatible. Not validate the SoC names. If you
-> need narrower patterns to achieve that objective, sure. If you need
-> narrower patterns to validate SoC names, then nope.
-
-I need narrower patterns to simplify adding new SoCs.
-Another option is to define a mega-pattern like
-qcom,(msm|sm|sd[am]|.....)[0-9]+[a-z]*-.* . Frankly speaking I'm fine
-with that approach too.
-
--- 
-With best wishes
-Dmitry
+> Best regards,
+> Krzysztof
+> 
 
