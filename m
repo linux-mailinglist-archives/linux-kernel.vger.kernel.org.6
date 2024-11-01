@@ -1,139 +1,384 @@
-Return-Path: <linux-kernel+bounces-392679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7799B96FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:59:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323569B96FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:00:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1487E281F3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:59:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFDC51F22239
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5D31CDA35;
-	Fri,  1 Nov 2024 17:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1166B1CDFA3;
+	Fri,  1 Nov 2024 18:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dXNERkzy"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQckOwKd"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1656B45016
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 17:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5799970827;
+	Fri,  1 Nov 2024 18:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730483969; cv=none; b=mNM0YYJToEluqMnqxK2/xrUKMV7EujUvHu5HbGW39OP6Li5/ge9fnN1RLYnSTYPgaCNkJaO4jWP81t58v3onabbFCVpxv0/HKspslhznspQi/2+Zfr+ImJ7q2vR3RXNeIhRu5tWCEcIYM8jQN3QZX/VvGLPdsjr3sT6snd7TehU=
+	t=1730484021; cv=none; b=fzF4rQZJOwpIIrDZA0vo1bvMNyQV7/8fqoT/Er4pOsEiObUEgSmVgv5Ht1QfmmQUUK2nrDLknYGV1z8ICQtAuTE/l81b87yTBQqO1MNDa/IBG+2N5WWM4FYColefFh1M7P1TpZuSl+SFb6eoQm85QG7F0xTNWVNzWynx7X0FEmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730483969; c=relaxed/simple;
-	bh=UbgaeArJxEeaLS8DCoPVLztbE9TSjYcjzodPBB5CarA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KlHwcRjreQXANn14j177yat3W7tl/wr412ZmLSE3t+VKaKNzZqDeIU/gF61bbIJbpjNtLug5AuZF9fjqTfOmPGi/sh4kIHL9UJoCN+uTkweG8NcGhhjg/iF15zkdHQgoUF7nbeSrOMXfrRAHFL5MLIgf7cdUDYujDIsNYR6f/do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dXNERkzy; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e28fd8cdfb8so2094960276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 10:59:27 -0700 (PDT)
+	s=arc-20240116; t=1730484021; c=relaxed/simple;
+	bh=IgMxiTAaUeJdEf/LeyHO8UujIxGJJ3BpoTSZ2DuLlyc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uLopgLaFq+JSKr4yS7PObP/74G4mmuCbjodF9Y411SYCT3RV0VEoyUs+TpBCISU2tfM0j35iPSo1zuGbZUKEI18srStAn1btnzb0Scz5BmNRA1gU9GgizTerL8UvoaDZ+vYk/VeEL5Zv2wDmUsS9EZfZEWv+gOqeE/TfMPM8PRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQckOwKd; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e983487a1so1849340b3a.2;
+        Fri, 01 Nov 2024 11:00:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1730483967; x=1731088767; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wHFTRHafBa+64JSQGkZJwqdhjQhl87yn+cc0CQ/Umeo=;
-        b=dXNERkzyvJTx49ZaXU39Z4k9AafyfxXEkZXUxRto3I87UECsQVq4n1BLWZzpHbSXT9
-         /zHdx5yBqFPak9s687VX47s4/CiNjUD4OVbyfZ1uNfhQGDJjpaKACEzHi2FM/q2zK3Ul
-         C7NHXxj6kFEGo0xI9T4uzitaSZcbmhRoXN17hlzA/ON4cWRhqMHJ0b+So9Ookc5z5zb2
-         UPFl8QdsGsL0X40Nhh5yNNZO8HAInCjWXMORLX/lAlovqQ7bt2XF0/yy/edzk0t/UbDx
-         pbLr1+lx/61tAHPMV50jvOi0snThkIOIOEnmHK3OItSV7WBw6iOiGshQC6BTvOKhtlSu
-         sPgA==
+        d=gmail.com; s=20230601; t=1730484018; x=1731088818; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ho20PkVrnbRCak35ywDE4CKQxL2Y+KHHf3gwNYey8HI=;
+        b=YQckOwKdn5B/8D9lddXvmX+XMDOuq22Fs+/VzzJZFLfyMQUbUYPp34jGJNQd02FHpW
+         T0h2QN5DYjHA4HMDaHhaKCkGmyVyUM4Kkaue/H6thaMvUhZNuCLmnTJq+7DzOxvFdFY4
+         1KtFiJbU1FZOjrWxv5NVeiVYYdsAkLkAOH7+TUGZsC4lElyMDt17E4YwU5kTTN8grXxU
+         iBJVO1X41kn/tn/rg+q+Z2o3rIlpQvAMt2XoTL1YRimrmzDwLPMaZgAOrNi6nYGrMH2+
+         0p+tD5tOmi5kNjjwfRXmKGeEC9xRCQ5LctCFDe+akKIor6zGfXZFzDvJXL5SuApjjF8G
+         oTpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730483967; x=1731088767;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wHFTRHafBa+64JSQGkZJwqdhjQhl87yn+cc0CQ/Umeo=;
-        b=f36vFYctFDzmuV69MkvGPd449IVpSRWMCa7ehbLzxCC9Zi059d4oNMdWHMQRMj1ZXC
-         26iDxZCwcdtqdGUXHrq9uJnneZVfj66Q75fm5ifV9VvQPYBjuLH9ggXPm6AgcQNgtg52
-         6M7yeLTOgN2d/dRpfb2OcJqH2ks9cd/8bHITAj7NkR6R99qqy8WybjAZqlbzNTS7TaMg
-         CK8LyDLNYtTQQYCuZbjlJvManAToiHvVe6uiZ0t/RXxGvhKOR9ESaDxrfZg5WZdXl4Cr
-         W3FhKmVB3n6+zuZTjCXRb/1boVIiODMAFj4TZowhsS8OxvVJsP3AzGrOxzpESl3nw7K6
-         IzNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUnTGZLzA30BH9BsqszL71zceMyL/rVpHd1u7FRvn99SNs3oZQ1lugeB8pYULFU/xFqLDRsHMQy7L8lrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP7vJooC0FQBObSmMI47b+WF2Da5B/hnMaEwygiWYdWspZve7t
-	bfiFIuHqQAameW+nDpX2GCZbKPxOrJipv72ITXVO00AS7gXl0CTgopz1pBWBUSbUbMpUwbmHUJH
-	lTd2fMNc0EIeTLFBfAPL7UWiNHqCN4ohWFkLQ
-X-Google-Smtp-Source: AGHT+IEYCapNRD7ztbrSnudiiod9EpcctaQvgweIgnYm1vysGZdSjWf1HTc6ccTjHniL5WPjg92cjXpUQU0GOISoNXs=
-X-Received: by 2002:a05:6902:2505:b0:e2b:e0ba:d50 with SMTP id
- 3f1490d57ef6-e3087a48a2emr20973638276.5.1730483967029; Fri, 01 Nov 2024
- 10:59:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730484018; x=1731088818;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ho20PkVrnbRCak35ywDE4CKQxL2Y+KHHf3gwNYey8HI=;
+        b=FOYoRxvJCuIhYkW3ftjUBGK63mVvI9DdnVc0yo7ASKRgDKk4E2+VMOK50AZOwiyP8D
+         /UWqKyFSHfnPwm57T+kZPOX6RhshixU+LZAh0VZVA2a8m5RiWKdcQ5eUunQqSjEG61nO
+         uSaGxO/ryolbuNHUEhXgWzR0KL7vB9jgvqPglK0nk3qLth0F2RSd9ZzE4U3iIoVOr21v
+         KNojv45pqK0ZEoJ5Te45k0vNia2bG4PVdkwCqVCMMOoJU1uKaOXK5ZTdLyQk260DKbLg
+         xQSBgj/5bJ8u2mnXiz/cU18RYrKeK050Qyn9daib+l0yj6oM3CsQ4+L99PH7mTDAnL04
+         5vUw==
+X-Forwarded-Encrypted: i=1; AJvYcCURcDLBBTKtri+JPZN8hULRFwnN6BAtMsianNXQ5smsrEanpQSR7+Zy4rL3N8a0uRGHZ218glltKv4=@vger.kernel.org, AJvYcCVQlagF0Fjx8MU5AqbwAjO4LmNGYUsygDaL11ceToyhZlWxSIq8GyfQC0PPCuvOQ04MjfPIYa1yW3/bQft0@vger.kernel.org, AJvYcCVc2iV+4TGEkNlNGPwjJMxmtI4G1MJjPzF819hygo9lUej3TnTEFwWZ4qzvhldPn4GuIO+zgHfhBFCO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/smRLz6wAeSlOBlIxdHpdQ9DEnLsaz2X/jtxS7qeRfTdoxmt+
+	/ehzGnumRKQIG4aN/xfp6an8ZVfrScXxzSjmuVC5A04IdX/XDMJ4
+X-Google-Smtp-Source: AGHT+IFmuMH1YKyaYipqlM1ZZKiVDiBwvHFFkdmQQdDKlFYsEUbZUiYfkOTnZecGa5YUypc/9Kahpw==
+X-Received: by 2002:a05:6a21:168e:b0:1d9:215c:c641 with SMTP id adf61e73a8af0-1db91e82758mr8478349637.48.1730484018228;
+        Fri, 01 Nov 2024 11:00:18 -0700 (PDT)
+Received: from fan ([2601:646:8f03:9fee:eba7:38e1:4f3b:331c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee452a7f5bsm2739006a12.24.2024.11.01.11.00.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 11:00:17 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Fri, 1 Nov 2024 11:00:14 -0700
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
+	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v2 0/14] Enable CXL PCIe port protocol error handling and
+ logging
+Message-ID: <ZyUXLpQBBgTl733z@fan>
+References: <20241025210305.27499-1-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYv_Y2tzs+uYhMGtfUK9dSYV2mFr6WyKEzJazDsdk9o5zw@mail.gmail.com>
- <20241101095620.2526421-1-aliceryhl@google.com> <CAHC9VhS5wLQeF4LX67UgUYVG3oViA7CmSZS_kugH+M5J0XS2Vg@mail.gmail.com>
- <CANiq72kcvpEqpwFTNFmxfJsfBMeBNiDrrvFBf_iS7+ozaECJzw@mail.gmail.com>
- <CAHC9VhTQMo11s7mWg=zzDusJompOp01uJat-q9HjQCoEWzHRRQ@mail.gmail.com> <CAH5fLgi+JJHCA_XTPC0-kaacZC6=aGSa-+DiNt06GSJNFhKc3w@mail.gmail.com>
-In-Reply-To: <CAH5fLgi+JJHCA_XTPC0-kaacZC6=aGSa-+DiNt06GSJNFhKc3w@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 1 Nov 2024 13:59:16 -0400
-Message-ID: <CAHC9VhSv+ro9gOzanvPS1gZwLkqO7ZoZk7SOZ64FP+-sdmYs2Q@mail.gmail.com>
-Subject: Re: [PATCH] rust: lsm: replace context+len with lsm_context
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, naresh.kamboju@linaro.org, 
-	casey@schaufler-ca.com, anders.roxell@linaro.org, arnd@arndb.de, 
-	brauner@kernel.org, dan.carpenter@linaro.org, kees@kernel.org, 
-	linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, ojeda@kernel.org, 
-	regressions@lists.linux.dev, rust-for-linux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, lkft@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025210305.27499-1-terry.bowman@amd.com>
 
-On Fri, Nov 1, 2024 at 1:24=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
-> On Fri, Nov 1, 2024 at 6:11=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
-> > On Fri, Nov 1, 2024 at 1:04=E2=80=AFPM Miguel Ojeda
-> > <miguel.ojeda.sandonis@gmail.com> wrote:
-> > > On Fri, Nov 1, 2024 at 5:56=E2=80=AFPM Paul Moore <paul@paul-moore.co=
-m> wrote:
-> > > >
-> > > > Thanks Alice.  Would you like me to pull this in via the LSM tree w=
-ith
-> > > > the associated LSM changes, or would you prefer to do this some oth=
-er
-> > > > way?
-> > > >
-> > > > I'm going to merge this into lsm/dev for now so that we fix the iss=
-ue
-> > > > in linux-next, but I'm happy to drop it or do something else, let m=
-e
-> > > > know.
-> > >
-> > > Christian has the VFS side, and both are needed for this -- do you
-> > > mean you will cross-merge vfs' branch too?
-> >
-> > I think our last emails crossed paths.  I'm not going to merge this
-> > via the LSM tree as we don't have the Rust security.c helpers.
-> > Ideally it would have been better to have the Rust LSM/security
-> > helpers in the LSM tree for reasons like this, but it looks like it's
-> > too late for that now.
->
-> If Christian is okay with rewriting the vfs.rust.file tree, we can
-> drop commit 94d356c0335f ("rust: security: add abstraction for
-> secctx") from there and I'll update it and send it for inclusion in
-> the LSM tree instead. I'll need to drop the piece that ties together
-> `struct cred` and `secctx` from the patch, but I can follow up with a
-> small patch for that for the 6.14 merge window.
+On Fri, Oct 25, 2024 at 04:02:51PM -0500, Terry Bowman wrote:
+> This is a continuation of the CXL port error handling RFC from earlier.[1]
+> The RFC resulted in the decision to add CXL PCIe port error handling to
+> the existing RCH downstream port handling in the AER service driver. This
+> patchset adds the CXL PCIe port protocol error handling and logging.
+> 
+> The first 7 patches update the existing AER service driver to support CXL
+> PCIe port protocol error handling and reporting. This includes AER service
+> driver changes for adding correctable and uncorrectable error support, CXL
+> specific recovery handling, and addition of CXL driver callback handlers.
+> 
+> The following 7 patches address CXL driver support for CXL PCIe port
+> protocol errors. This includes the following changes to the CXL drivers:
+> mapping CXL port and downstream port RAS registers, interface updates for
+> common restricted CXL host mode (RCH) and virtual hierarchy mode (VH),
+> adding port specific error handlers, and protocol error logging.
+> 
+> [1] - https://lore.kernel.org/linux-cxl/20240617200411.1426554-1-terry.bowman@amd.com/
+> 
+> Testing:
 
-I can only guess at what Chrisitian wants to do, but my guess is that
-he isn't going to be very excited about rewriting a VFS tree at this
-stage ... which is very understandable as far as I'm concerned.
+Hi Terry,
+I tried to test the patchset with aer_inject tool (with the patch you shared
+in the last version), and hit some issues.
+Could you help check and give some insights? Thanks.
 
-I wouldn't worry too much about this right now, I'm going to plan on
-holding Casey's patchset in a staging area until after the upcoming
-merge window.
+Below are some test setup info and results.
 
---=20
-paul-moore.com
+I tested two topology,
+  a. one memdev directly attaced to a HB with only one RP;
+  b. a topology with cxl switch:
+         HB
+        /  \
+      RP0   RP1
+       |
+     switch
+       |
+ ----------------
+ |    |    |    |
+mem0 mem1 mem2 mem3
+
+For both topologies, I cannot reproduce the system panic shown in your cover
+letter.  
+
+btw, I tried both compile cxl as modules and in the kernel.
+
+Below, I will use the direct-attached topology (a) as an example to show what I
+tried, hope can get some clarity about the test and what I missed or did wrong.
+
+-------------------------------------
+pci device info on the test VM 
+root@fan:~# lspci
+00:00.0 Host bridge: Intel Corporation 82G33/G31/P35/P31 Express DRAM Controller
+00:01.0 VGA compatible controller: Device 1234:1111 (rev 02)
+00:02.0 Ethernet controller: Intel Corporation 82540EM Gigabit Ethernet Controller (rev 03)
+00:03.0 Unclassified device [0002]: Red Hat, Inc. Virtio filesystem
+00:04.0 Unclassified device [0002]: Red Hat, Inc. Virtio filesystem
+00:05.0 Host bridge: Red Hat, Inc. QEMU PCIe Expander bridge
+00:1f.0 ISA bridge: Intel Corporation 82801IB (ICH9) LPC Interface Controller (rev 02)
+00:1f.2 SATA controller: Intel Corporation 82801IR/IO/IH (ICH9R/DO/DH) 6 port SATA Controller [AHCI mode] (rev 02)
+00:1f.3 SMBus: Intel Corporation 82801I (ICH9 Family) SMBus Controller (rev 02)
+0c:00.0 PCI bridge: Intel Corporation Device 7075
+0d:00.0 CXL: Intel Corporation Device 0d93 (rev 01)
+root@fan:~# 
+-------------------------------------
+
+The aer injection input file looks like below,
+
+-------------------------------------
+fan:~/cxl/cxl-test-tool$ cat /tmp/internal 
+AER
+PCI_ID 0000:0c:00.0
+UNCOR_STATUS INTERNAL
+HEADER_LOG 0 1 2 3
+------------------------------------
+
+dmesg after aer injection 
+
+ssh root@localhost -p 2024 "dmesg"
+[  613.195352] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
+[  613.195830] pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
+[  613.196253] pcieport 0000:0c:00.0: CXL Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+[  613.198199] pcieport 0000:0c:00.0: AER: No uncorrectable error found. Continuing.
+--------------------------------------
+
+The problem seems to be related to the cxl_error_handler not been assigned for
+cxlmem device. 
+
+in
+cxl_do_recover() {
+...
+    327     cxl_walk_bridge(bridge, cxl_report_error_detected, &status);                         
+    328     if (status)                                                                 
+    329         panic("CXL cachemem error. Invoking panic");                   
+...
+}
+The status returned is false, so no panic().
+
+I tried to add some dev_dbg info to the code to debug.
+Below are the debug info and kernel code changes for debugging. 
+--------------------------------------
+fan:~/cxl/cxl-test-tool$ cxl-tool.py --cmd dmesg | grep XXX
+[    1.738909] cxl_mem:cxl_mem_probe:205: cxl_mem mem0: XXX: add endpoint
+[    1.739188] cxl_mem:devm_cxl_add_endpoint:85: cxl_port port1: XXX: add endpoint
+[    1.739509] cxl_mem:devm_cxl_add_endpoint:92: cxl_mem mem0: XXX: init ep port aer
+[    1.739876] cxl_core:cxl_dport_init_ras_reporting:907: pcieport 0000:0c:00.0: XXX: assign port error handlers for dport 1
+[    1.740338] cxl_core:cxl_dport_init_ras_reporting:913: pcieport 0000:0c:00.0: XXX: assign port error handlers for dport 2
+[    1.740812] cxl_core:cxl_dport_init_ras_reporting:927: pcieport 0000:0c:00.0: XXX: assign port error handlers for dport 3
+[    1.741273] cxl_core:cxl_assign_port_error_handlers:851: pcieport 0000:0c:00.0: XXX: cxl_err_handler: (____ptrval____)
+[    1.741812] cxl_core:cxl_assign_port_error_handlers:855: pcieport 0000:0c:00.0: XXX: cxl_err_handler: (____ptrval____)
+[    1.742263] cxl_core:cxl_assign_port_error_handlers:857: pcieport 0000:0c:00.0: XXX: cxl_err_handler: (____ptrval____) (____ptrval____)
+fan:~/cxl/cxl-test-tool$ 
+--------------------------------------
+
+dmesg after error injection:
+--------------------------------------
+ssh root@localhost -p 2024 "dmesg"
+[  228.544439] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
+[  228.544977] pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
+[  228.545381] pcieport 0000:0c:00.0: CXL Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+[  228.545879] pcieport 0000:0c:00.0:   device [8086:7075] error status/mask=00400000/00000000
+[  228.546360] pcieport 0000:0c:00.0:    [22] UncorrIntErr          
+[  228.546698] pcieport 0000:0c:00.0: AER: XXX: call cxl_err_handler: 00000000a268bfcb 000000009e0da039
+[  228.547103] cxl_pci 0000:0d:00.0: AER: XXX: call cxl_err_handler: 00000000b9f08b93 0000000000000000
+[  228.547515] pcieport 0000:0c:00.0: AER: No uncorrectable error found. Continuing.
+fan:~/cxl/cxl-test-tool$ 
+--------------------------------------
+
+
+Kernel changes:
+--------------------------------------
+diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+index 5f7570c6173c..bcecd1283fc6 100644
+--- a/drivers/cxl/core/pci.c
++++ b/drivers/cxl/core/pci.c
+@@ -848,10 +848,13 @@ static void cxl_assign_port_error_handlers(struct pci_dev *pdev)
+ {
+ 	struct pci_driver *pdrv = pdev->driver;
+ 
++    dev_dbg(&pdev->dev, "XXX: cxl_err_handler: %p\n enter", pdev);
+ 	if (!pdrv)
+ 		return;
+ 
++    dev_dbg(&pdev->dev, "XXX: cxl_err_handler: %p\n", pdrv);
+ 	pdrv->cxl_err_handler = &cxl_port_error_handlers;
++    dev_dbg(&pdev->dev, "XXX: cxl_err_handler: %p %p\n", pdrv, pdrv->cxl_err_handler);
+ }
+ 
+ static void cxl_clear_port_error_handlers(void *data)
+@@ -869,12 +872,14 @@ void cxl_uport_init_ras_reporting(struct cxl_port *port)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(port->uport_dev);
+ 
++    dev_dbg(&port->dev, "XXX: assign port error handlers for uport 1\n");
+ 	/* uport may have more than 1 downstream EP. Check if already mapped. */
+ 	if (port->uport_regs.ras) {
+ 		dev_warn(&port->dev, "RAS is already mapped\n");
+ 		return;
+ 	}
+ 
++    dev_dbg(&port->dev, "XXX: assign port error handlers for uport 2\n");
+ 	port->reg_map.host = &port->dev;
+ 	if (cxl_map_component_regs(&port->reg_map, &port->uport_regs,
+ 				   BIT(CXL_CM_CAP_CAP_ID_RAS))) {
+@@ -882,6 +887,7 @@ void cxl_uport_init_ras_reporting(struct cxl_port *port)
+ 		return;
+ 	}
+ 
++    dev_dbg(&port->dev, "XXX: assign port error handlers for uport 3\n");
+ 	cxl_assign_port_error_handlers(pdev);
+ 	devm_add_action_or_reset(port->uport_dev, cxl_clear_port_error_handlers, pdev);
+ }
+@@ -898,11 +904,13 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
+ 	struct pci_host_bridge *host_bridge = to_pci_host_bridge(dport_dev);
+ 	struct pci_dev *pdev = to_pci_dev(dport_dev);
+ 
++    dev_dbg(dport_dev, "XXX: assign port error handlers for dport 1\n");
+ 	if (dport->rch && host_bridge->native_aer) {
+ 		cxl_dport_map_rch_aer(dport);
+ 		cxl_disable_rch_root_ints(dport);
+ 	}
+ 
++    dev_dbg(dport_dev, "XXX: assign port error handlers for dport 2\n");
+ 	/* dport may have more than 1 downstream EP. Check if already mapped. */
+ 	if (dport->regs.ras) {
+ 		dev_warn(dport_dev, "RAS is already mapped\n");
+@@ -916,6 +924,7 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
+ 		return;
+ 	}
+ 
++    dev_dbg(dport_dev, "XXX: assign port error handlers for dport 3\n");
+ 	cxl_assign_port_error_handlers(pdev);
+ 	devm_add_action_or_reset(dport_dev, cxl_clear_port_error_handlers, pdev);
+ }
+diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+index 067fd6389562..aa824584f8dd 100644
+--- a/drivers/cxl/mem.c
++++ b/drivers/cxl/mem.c
+@@ -82,13 +82,15 @@ static int devm_cxl_add_endpoint(struct device *host, struct cxl_memdev *cxlmd,
+ 	 * Now that the path to the root is established record all the
+ 	 * intervening ports in the chain.
+ 	 */
++    dev_dbg(host, "XXX: add endpoint\n");
+ 	for (iter = parent_port, down = NULL; !is_cxl_root(iter);
+ 	     down = iter, iter = to_cxl_port(iter->dev.parent)) {
+ 		struct cxl_ep *ep;
+ 
+ 		ep = cxl_ep_load(iter, cxlmd);
+ 		ep->next = down;
+-		cxl_init_ep_ports_aer(ep);
++        dev_dbg(ep->ep, "XXX: init ep port aer\n");
++        cxl_init_ep_ports_aer(ep);
+ 	}
+ 
+ 	/* Note: endpoint port component registers are derived from @cxlds */
+@@ -200,6 +202,7 @@ static int cxl_mem_probe(struct device *dev)
+ 			return -ENXIO;
+ 		}
+ 
++        dev_dbg(dev, "XXX: add endpoint\n");
+ 		rc = devm_cxl_add_endpoint(endpoint_parent, cxlmd, dport);
+ 		if (rc)
+ 			return rc;
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index 3785f4ca5103..8285f14994e8 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -294,6 +294,11 @@ static int cxl_report_error_detected(struct pci_dev *dev, void *data)
+ 	bool *status = data;
+ 
+ 	device_lock(&dev->dev);
++    if (pdrv) {
++        dev_dbg(&dev->dev, "XXX: call cxl_err_handler: %p %p\n", pdrv, pdrv->cxl_err_handler);
++    } else {
++        dev_dbg(&dev->dev, "XXX: call cxl_err_handler: %p no handler\n", pdrv);
++    }
+ 	if (pdrv && pdrv->cxl_err_handler &&
+ 	    pdrv->cxl_err_handler->error_detected) {
+ 		const struct cxl_error_handlers *cxl_err_handler =
+--------------------------------------
+
+Fan
+> 
+> Below are test results for this patchset using Qemu with CXL root
+> port(0c:00.0), CXL upstream switchport(0d:00.0), CXL downstream
+> switchport(0e:00.0). A CXL endpoint(0f:00.0) CE and UCE logs are
+> also added to show the existing PCIe endpoint handling is not changed.
+> 
+> This was tested using aer-inject updated to support CE and UCE internal
+> error injection. CXL RAS was set using a test patch (not upstreamed but can
+> provide if needed).
+> 
+>  - Root port UCE:
+>  root@tbowman-cxl:~/aer-inject# ./root-uce-inject.sh
+>  pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
+>  pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
+>  pcieport 0000:0c:00.0: CXL Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+>  pcieport 0000:0c:00.0:   device [8086:7075] error status/mask=00400000/02000000
+>  pcieport 0000:0c:00.0:    [22] UncorrIntErr
+>  aer_event: 0000:0c:00.0 CXL Bus Error: severity=Fatal, Uncorrectable Internal Error, TLP Header=Not available
+>  cxl_port_aer_uncorrectable_error: device=0000:0c:00.0 host=pci0000:0c status: 'Memory Address Parity Error' first_error: 'Memory Address Parity Error'
+>  Kernel panic - not syncing: CXL cachemem error. Invoking panic
+>  CPU: 1 UID: 0 PID: 146 Comm: irq/24-aerdrv Tainted: G            E      6.12.0-rc2-cxl-port-err-g2beab06a67d1 #4414
+>  Tainted: [E]=UNSIGNED_MODULE
+>  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0x27/0x90
+>   dump_stack+0x10/0x20
+>   panic+0x33e/0x380
+>   cxl_do_recovery+0x116/0x120
+>   ? srso_return_thunk+0x5/0x5f
+>   aer_isr+0x3e0/0x710
+>   irq_thread_fn+0x28/0x70
+>   irq_thread+0x179/0x240
+>   ? srso_return_thunk+0x5/0x5f
+>   ? __pfx_irq_thread_fn+0x10/0x10
+>   ? __pfx_irq_thread_dtor+0x10/0x10
+>   ? __pfx_irq_thread+0x10/0x10
+>   kthread+0xf5/0x130
+>   ? __pfx_kthread+0x10/0x10
+>   ret_from_fork+0x3c/0x60
+>   ? __pfx_kthread+0x10/0x10
+>   ret_from_fork_asm+0x1a/0x30
+>   </TASK>
+>  Kernel Offset: 0x29000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>  ---[ end Kernel panic - not syncing: CXL cachemem error. Invoking panic ]---
+...
+-- 
+Fan Ni
 
