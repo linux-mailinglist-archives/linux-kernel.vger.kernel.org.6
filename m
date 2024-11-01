@@ -1,162 +1,170 @@
-Return-Path: <linux-kernel+bounces-391950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C939B8DC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:23:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 675A49B8DC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67831285532
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CAD828580C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFA61586F2;
-	Fri,  1 Nov 2024 09:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974921586FE;
+	Fri,  1 Nov 2024 09:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sqx/TmKk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RwalSVN0"
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUiVQhmY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE7C154C17;
-	Fri,  1 Nov 2024 09:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38CA3FF1;
+	Fri,  1 Nov 2024 09:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730452981; cv=none; b=SF+SrqW2MkTxKNimkZbbg7mRP/ZFbVmu7Y3m033TNOkcdOyMPq3ZMcBZJKA9C/mKSCKgceEB8o6AEuOJmG4PVQA+KNMUNyg382E4MJ7QEk3EB0gEFVdjygrTS5ohLBCxWO1jcI63JAW4FBTad5pXbV8EXLO1NoyneyEP+cx2jRU=
+	t=1730453035; cv=none; b=aEGci3Je1GiKSWmAf/DJIE7RLStQe5vbhLobwwJ+rbzGlmVkg5JuaYx6Fk7UnSEm1JzEGO4X5r8tvrZjUs6Q7HJiQHoQGix979N2XZSb24xfSPnE3Pw0pDJ4ToRmDCBl0XH7coS5g43X3AwAqkgmxpzBs5UsuUafz9WTw9JGsaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730452981; c=relaxed/simple;
-	bh=MUiDuyJ+MlELg7lT9hPPazjnUfTgX6bjLE6DVpJ+qF4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Axd96EJUX38CPhA6aRT48m0WZiVPRv9xIclXbiKaLJPIxz0NxilyIvAts4/CE5Cszovto0zfT+NK0kT7f37dMDuBHUm82xgURr4fO8XW0z67JVUR61+14KlghOur+IO7uEO6MdpIwZ7O6CAftJgP8g/ySDV/crGepW+N57HOy9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sqx/TmKk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RwalSVN0; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id E0FA611400C7;
-	Fri,  1 Nov 2024 05:22:57 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 01 Nov 2024 05:22:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1730452977;
-	 x=1730539377; bh=/f+ob6/0cs0oAQjTndC8UAIk7DAav3CEmLAxLiR/ZgA=; b=
-	sqx/TmKkrbFlbpIh2Er3egpdCCyhzsQAoBY21kEt9b/TWCscIH0VzLujadP6g7Lq
-	81SUkJ8DCPAtAK4muYBOYg1sUgigAWR2oR8fxq7kw3qiS9C6t4UnRU187E103oSR
-	BgRRP4gxrSyJwxAfs2VVG1z++vlBfkA6zbSPHifvbX8am6dQe91TeBQwA9GjDzhe
-	4HHNyLC/f2u6nxlEhcwWLe8q2AH6PD4Ibyv1sfFydp5WvZbzKUlKSoyOCmcoDhkq
-	tD4XdUwphm4Dytsz3vme812b0BIBifnELQPbxpsih30YChZgEyXmC1C4aB4eBAG0
-	t+lcuQ6JqRtsHjvAFsKKtQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730452977; x=
-	1730539377; bh=/f+ob6/0cs0oAQjTndC8UAIk7DAav3CEmLAxLiR/ZgA=; b=R
-	walSVN0B0tyKKv6K4DPnkzJmD0wHebmbjswUDltqAxO1jiNVsUhPnBEXnw1K9dTp
-	4CjHMhtjyDmw7BVi/Kl9EuRpq+CL8KcDL5lbVGDtZfXSQ+3cba5UakEtSzaSsQBL
-	+M78jRqvrv+90ycXWtzgFL7cm/EN0XqGgxNOjnRpAn8EIMUoREaVYgyN8RyQagvF
-	QP0wT5cpESJX8BYzSlEIYS/iSvZ3T4WoVlX3awG9jHTgzBqMkzXBk8mABczuSAzO
-	1qzuxrbk62IuQzeBP4r3JEtlghltfORUSqnclsBdHKiWBg7CqVteHI80DbYOSNQ6
-	tSBNNZryIpBnKfwrcIMtg==
-X-ME-Sender: <xms:8Z0kZ32hrZ15aXsK9-0uULTHRaEQJDONV7ovxYe2SBCH4x_hNuskhQ>
-    <xme:8Z0kZ2EsNq9mC9QTLkE0fz4fi3FiLxNm8n-TJOeRjn7mR3YdWLwEgpl8hZKlnVdNp
-    XP3GNbGtEpVfilCHAc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledgtdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheprghnuggvrhhsrdhrohigvghllheslhhinhgrrhhordhorhhg
-    pdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtg
-    hpthhtohepnhgrrhgvshhhrdhkrghmsghojhhusehlihhnrghrohdrohhrghdprhgtphht
-    thhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrug
-    drohhrghdprhgtphhtthhopehlkhhfthdqthhrihgrghgvsehlihhsthhsrdhlihhnrghr
-    ohdrohhrghdprhgtphhtthhopehrvghgrhgvshhsihhonhhssehlihhsthhsrdhlihhnuh
-    igrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghrnh
-    gvlhdrohhrgh
-X-ME-Proxy: <xmx:8Z0kZ35jvESavaTssiskGB6M21sPWi1QP_P6WX_TceMbd_X1m9yTpQ>
-    <xmx:8Z0kZ838pMaEln6ii3f8okK2xXZbe6PbfsKIAgjCpKW2RAuwnnW36w>
-    <xmx:8Z0kZ6GVn97Jf1N9k5rVxKCaY0WV5xXorVLoHVUyB5AYWlQTtrtUXw>
-    <xmx:8Z0kZ9_3sznYY6gBTjpOCzlhYqcbDJCmzBoDA6wEg_8PvNSrM6r5-Q>
-    <xmx:8Z0kZ4YnY3lvL39ec8boZoYcKxEdDyUS05Q1FCSiHJTSzMO3SHcMk-4T>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6DB8E2220071; Fri,  1 Nov 2024 05:22:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730453035; c=relaxed/simple;
+	bh=ELj8XYF+YCmi8TI/wRUv1Afq/83eTPVQ4o6A6cJZWSs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HoxId/ZrTGYgV5Sv8AFUzlIXFqND9uvBxRUH1Q/OVkp6/bWm7ee/vvp5cNMqTXNHUQWIxIWEIYjr86NmGhskif7EhjqYmNoAowswT/hCkYN1uUo3O6nA5Q1ylMILJ0mJG5HtXpCv3wKJNTEjdeWPzQGltzCglptKTGvrnKT7QpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUiVQhmY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6FCEC4CECD;
+	Fri,  1 Nov 2024 09:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730453034;
+	bh=ELj8XYF+YCmi8TI/wRUv1Afq/83eTPVQ4o6A6cJZWSs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JUiVQhmYO06Y/sVA1xmqj6PQ7KQ+5ExXYImx2ry8HI1U4Ooyeh7slrHuZP+3S2gwP
+	 xl+AURmqYHebsm4pR3b0gmnO9GsHLOgzKpOL3/pNAEWVZux/FSuc1bG2slHmZzRdm0
+	 6n4cjp+8ixu0Yl/lu6Glr/r9l0UQjsLEkGkZYDq4SVuqaS73YndEcm1HGWFIUfrd0P
+	 3aOa3fVnvNb9iHTN0Sd7pRH3GTrs29b9ve7JJdrKlP+PElbB1gVO8v5fSotSDurrmc
+	 0xCJNnGEOFVLFHFXwuOyrPdCmMM7W3d8IEnsT8ZjiN0ht6g/OB3YhgedyNPsEQdI+e
+	 DcPIXdX6gocWg==
+Message-ID: <144458a6-6c63-4386-99da-3a27743288b4@kernel.org>
+Date: Fri, 1 Nov 2024 10:23:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 01 Nov 2024 10:22:30 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Naresh Kamboju" <naresh.kamboju@linaro.org>
-Cc: "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
- "open list" <linux-kernel@vger.kernel.org>,
- "Linux Regressions" <regressions@lists.linux.dev>,
- lkft-triage@lists.linaro.org, "Anders Roxell" <anders.roxell@linaro.org>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Linux Media Mailing List" <linux-media@vger.kernel.org>
-Message-Id: <e9971f03-e542-43ed-a8b5-8d79127f4693@app.fastmail.com>
-In-Reply-To: <d3903c31-21ae-4ffe-9969-6faa7e430cb5@stanley.mountain>
-References: 
- <CA+G9fYvvNm-aYodLaAwwTjEGtX0YxR-1R14FOA5aHKt0sSVsYg@mail.gmail.com>
- <456c79d2-5041-47c4-bed2-44d257524ddd@stanley.mountain>
- <d3903c31-21ae-4ffe-9969-6faa7e430cb5@stanley.mountain>
-Subject: Re: next-20241028: gcc-8-defconfig : ERROR: modpost: "__aeabi_uldivmod"
- [drivers/media/dvb-frontends/cxd2841er.ko] undefined!
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: arm: qcom-soc: simplify SoC-matching
+ patterns
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Krishna Kurapati <quic_kriskura@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241101-sar2130p-dt-v3-0-61597eaf0c37@linaro.org>
+ <20241101-sar2130p-dt-v3-1-61597eaf0c37@linaro.org>
+ <pmgutki3fjqbka5ozalevpw7qptmzykhqxiaofqc2nh4gpnn4f@bgmz6fknavbf>
+ <iixsrpkyzae5mpwsa2qm5jdyftzgav52ryficoizlhfzw54xbi@gdfxwmjutqp2>
+ <80a37af3-ffef-4342-b7d3-f2eb36bb60ba@kernel.org>
+ <sjayaro5coievz22gdeu6tplzjs6kju333a6womyuk6bsvw2h5@a5ewi6sdl7wj>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <sjayaro5coievz22gdeu6tplzjs6kju333a6womyuk6bsvw2h5@a5ewi6sdl7wj>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024, at 12:27, Dan Carpenter wrote:
-> Arnd, can you take a look at this?
->
-> diff --git a/drivers/media/dvb-frontends/cxd2841er.c 
-> b/drivers/media/dvb-frontends/cxd2841er.c
-> index d925ca24183b..e3131f5c6708 100644
-> --- a/drivers/media/dvb-frontends/cxd2841er.c
-> +++ b/drivers/media/dvb-frontends/cxd2841er.c
-> @@ -314,7 +314,7 @@ static u32 cxd2841er_calc_iffreq_xtal(enum 
-> cxd2841er_xtal xtal, u32 ifhz)
->  	u64 tmp;
+On 01/11/2024 09:52, Dmitry Baryshkov wrote:
+> On Fri, Nov 01, 2024 at 09:37:23AM +0100, Krzysztof Kozlowski wrote:
+>> On 01/11/2024 08:47, Dmitry Baryshkov wrote:
+>>> On Fri, Nov 01, 2024 at 08:26:04AM +0100, Krzysztof Kozlowski wrote:
+>>>> On Fri, Nov 01, 2024 at 02:49:22AM +0200, Dmitry Baryshkov wrote:
+>>>>> The patterns for individual SoC families grew up to be pretty complex,
+>>>>> containing lots of special cases and optional suffixes. Split them per
+>>>>> the suffix to make it easier to extend SoC patterns.
+>>>>
+>>>> This is doing something quite different - split is not important here.
+>>>> Instead you narrow the patterns significantly and disallow things like
+>>>> msm8994pro, sc8280p or sc8280px, and allow things like sa5200p.
+>>>
+>>> Just for the sake of correctness, msm8994pro is still allowed, if I'm
+>>> not mistaken.
+>>>
+>>>> I don't see here much of pattern simplifying - dropping (pro)? really
+>>>> makes little difference.
+>>>
+>>> Patterns are simplified by being explicit. E.g. in the previous
+>>> iteration I completely didn't notice the intersection of the |p that I
+>>> have added with the existing [a-z][a-z]? pattern. If you think that
+>>> sa5200p should be disallowed, I can tune the numeric part of the
+>>> pattern. And sc8280p / sc8280px should not be allowed in the first
+>>> place, such platforms don't exist.
+>>
+>> I am fine with this, but extend the commit msg with some good rationale.
+>> Have in mind that the point of this pattern was *not* to validate SoCs
+>> names. sa5200p is fine, sc8180p is fine and all others are fine, sc8280z
+>> as well, because we do not want to grow this pattern with every new model.
+>>
+>> The only, single point of this entire binding is to disallow incorrect
+>> order of block names in compatible. Not validate the SoC names. If you
+>> need narrower patterns to achieve that objective, sure. If you need
+>> narrower patterns to validate SoC names, then nope.
 > 
->  	tmp = (u64) ifhz * 16777216;
-> -	do_div(tmp, ((xtal == SONY_XTAL_24000) ? 48000000 : 41000000));
-> +//	do_div(tmp, ((xtal == SONY_XTAL_24000) ? 48000000 : 41000000));
-> 
->  	return (u32) tmp;
->  }
+> I need narrower patterns to simplify adding new SoCs.
+> Another option is to define a mega-pattern like
+> qcom,(msm|sm|sd[am]|.....)[0-9]+[a-z]*-.* . Frankly speaking I'm fine
+> with that approach too.
 
-Not sure what is happening exactly, probably something where
-__builtin_constant_p() is inconclusive. The patch below seems
-to address it without impairing readability.
+I do not see how narrower patterns, changing:
+"^qcom,(sa|sc)8[0-9]+[a-z][a-z]?-.*$"
+into
+pattern: "^qcom,sa[0-9]+p-.*$"
 
-      Arnd
+instead of
+pattern: "^qcom,sa[0-9]+[a-z]-.*$"
+is needed for that. It's true that 'p' is simpler than '[a-z]' but if
+this results in new commit next time we have sa8995r, then benefit is lost.
 
---- a/drivers/media/dvb-frontends/cxd2841er.c
-+++ b/drivers/media/dvb-frontends/cxd2841er.c
-@@ -311,12 +311,8 @@ static int cxd2841er_set_reg_bits(struct cxd2841er_priv *priv,
- 
- static u32 cxd2841er_calc_iffreq_xtal(enum cxd2841er_xtal xtal, u32 ifhz)
- {
--       u64 tmp;
--
--       tmp = (u64) ifhz * 16777216;
--       do_div(tmp, ((xtal == SONY_XTAL_24000) ? 48000000 : 41000000));
--
--       return (u32) tmp;
-+       return div_u64(ifhz * 16777216ull,
-+                       (xtal == SONY_XTAL_24000) ? 48000000 : 41000000);
- }
- 
- static u32 cxd2841er_calc_iffreq(u32 ifhz)
+Best regards,
+Krzysztof
+
 
