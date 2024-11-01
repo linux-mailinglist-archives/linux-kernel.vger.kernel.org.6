@@ -1,109 +1,87 @@
-Return-Path: <linux-kernel+bounces-392549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C329B956E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:31:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F749B9571
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFD44B212AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D33B61F22C2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20D31C7B82;
-	Fri,  1 Nov 2024 16:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6681CB512;
+	Fri,  1 Nov 2024 16:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3LJ3da5+"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Umzd/1S2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AB343AB9
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE20137747;
+	Fri,  1 Nov 2024 16:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730478670; cv=none; b=s9B5nOu+3yN0l1+hiBetjJHjzrJ7xGCVpbBG0kp2/8ZcubGazdyLmGOpQvKe2zLTvm59P+iXmkI6wgI/GxKU93qmNCx+YABcnnVbesmZAUMFYWqj1GXx8vQ2LxEI0QHVqJYzXJboIxi1ilCd0QMIJ1rf77hftwH9chDqllg6Cmk=
+	t=1730478695; cv=none; b=S4LWVo12zFbtb2vWg6RfPpYgru4/7UgxUqylWY6A9s4iNbW0ErKPPqYaNNV+Rr9z8EJLmVTbiAc0ERzaVerkPyCLL0spBW8fhHDqItBx88fYttpsmA956E07AvfMOVaKteCr3ndLv0o0AoCV+tXsksIs6pIfM8Gk89cCAu/RP+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730478670; c=relaxed/simple;
-	bh=aCYFBS0OlRXeeN66mv6hk1AzePNNwIISd3kE5LOhZGM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IF6/XRgnef5V8HICXxT4j6cOo7Ju03ftdAv1afW8m3hqU+giJrUGdyT44IJ2dFsHtVLUhnrQSFFQwyj9luNr85/aPqLGUbqOAkEswxUtY3ARvVDX/09n2xHx6UH9XcYqdYRBxTGKq7OlrB0ueIVqXjWZC8wQXKBjBxwamc7P7jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3LJ3da5+; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e0082c1dd0so49675847b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 09:31:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730478667; x=1731083467; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUMHVY5Pc5ujaPIETtg1OV7OoMZH/DlrlEhMasUvFWg=;
-        b=3LJ3da5+VnMSMaOJVtGnkKbXVzQSvLW4o0hHbA7OILbUweL6kiiES6TLw56gaunJ6Q
-         6Z1nyKTyIp06u+BlLB3ykq8nfFeffsPGNOl0rAZ8fCxaCYxkBrvTbxWL+GfgBaZajHYo
-         wjA1vXy3w8qMgvr7/fBmUiiKM7nTh2xqdYMsMHkw1o1Z2+D7bOnyySPtGN1qfxUWFyyZ
-         6DTOv5G+cYcIyCDs4+ij8iRQRFIE7lLtrBeD7UFfkJSKNUGvZ3YhAgM3oVPLWkQW4Hrr
-         5rern56Tas03NIu0YpGpDDLacjUyfhCoIE06Z05fGwNJAnLOQXYZzKJmk+D2ZiT6FGKk
-         zl0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730478667; x=1731083467;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUMHVY5Pc5ujaPIETtg1OV7OoMZH/DlrlEhMasUvFWg=;
-        b=fcUNaxT0pcfPL4EnG6bpDoaVnFJtqEfleQXN+HfeP0HZNjN53ZOr1tFKbtyp2yOqgv
-         6Kib+7JUg1kLX1VFi3+kwrSpXR+X69IeudZQ+AmNTDo3dtH3/lMHv8FimOWi6bFP8GKw
-         yCx2rEzjY31hOQ6PQ/Q8snu5tcS+xX0Ac970Wm8aPqmpEIRsJMCk+2li52IVaqNV7iJY
-         rdEqwtiIC6RMwa4SUrCE8R/jkkrnlhyYIEBH0qglpYesr2vXx63zXsv1/gvTmbLyfCv0
-         k61KAgE4ium4NcSNS3TIb3NJ0KX6coP32YxtUWODeGZZpOyCEvFWU7SbNqZr2lzZ7S9S
-         MZiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJmJYdSpHqqEdLWin4Ad345+wsgI9Y6qZLh8/T+hhi4ejM++tS1YvO6bfO8uJcCB/W4kPrBjcrDugQw0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoA9y6q8hJTHQBDPCKQKiQWcs1VGmoSYaTF1cFB0bQpCnIFGPP
-	hXYjTx6wzBxImfvEtYbNDKLah2MM70+oK6neLr8dM3ZftGk2Ojkzsc3IiBuL+FQqjYcg4PqiYjr
-	c0g==
-X-Google-Smtp-Source: AGHT+IHjSky3TikiN5BvrlqT+n0lNdXJaonGgodvNxJp+r7LiGTo8fiUiA/fuWajhuo5hdeSs5DxJ2eOWac=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:c8c6:0:b0:e33:111b:c6a4 with SMTP id
- 3f1490d57ef6-e33111bc836mr1008276.1.1730478667415; Fri, 01 Nov 2024 09:31:07
- -0700 (PDT)
-Date: Fri, 1 Nov 2024 09:31:05 -0700
-In-Reply-To: <ZyUARgGV4G6DOrRL@linux.dev>
+	s=arc-20240116; t=1730478695; c=relaxed/simple;
+	bh=elpsGko6Bj1ALymA5v5gavqHeM7GV37sKg52ryw5eLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ex4vmPvK1DCqB2wMvH8m5haoijcpytUrvH5XUbX5iD2ux3qbzqEBS8iVtlb6w5HFk/ung/pBK49jQcp6tsO/LpGBotKXc7ub9me4Kq2u5hLurRPyOVQsleLTt4Z1clUZo5U3OdQpaX6d+HKDrETk9nsaoT2NjaI7nYFD3WMzwow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Umzd/1S2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA09C4CECD;
+	Fri,  1 Nov 2024 16:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730478694;
+	bh=elpsGko6Bj1ALymA5v5gavqHeM7GV37sKg52ryw5eLE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Umzd/1S2Jn3fqC0MHd5sLAE0MhNTdUOjAI4Wzcq43nX/t2xer2R145BYAq5sUjbEz
+	 7QQP0R8Omv8ecuy9KUNLRN/APAlWIU/QMfTIUF7BWg+8XhI8N6mNigd/qU4lkd6OYD
+	 sqN4nqAUaQfowQ50Tf3RsrO6rj1lCsVtt8v2LnC9jVEqXyyQcPIL43HuMhYvgugo3Z
+	 f6yuKmU1cd1OK9Apqx9qzKrVZF+XXj+veqKg8Rb6vUughKlJXwb3EtAj6916xOELce
+	 IO8KSBU4Rgw4hvJAADZgBFKeoZoXTH5NSx96HAynwLGS4n6Itl4ZYcghKJeBJozVoL
+	 It4R+O1HSpCLg==
+Date: Fri, 1 Nov 2024 09:31:32 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Lei Wei <quic_leiwei@quicinc.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
+ quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_luoj@quicinc.com,
+ srinivas.kandagatla@linaro.org, bartosz.golaszewski@linaro.org,
+ vsmuthu@qti.qualcomm.com, john@phrozen.org
+Subject: Re: [PATCH net-next 3/5] net: pcs: qcom-ipq: Add PCS create and
+ phylink operations for IPQ9574
+Message-ID: <20241101093132.7770799c@kernel.org>
+In-Reply-To: <d7782a5e-2f67-4f62-a594-0f52144a368f@lunn.ch>
+References: <20241101-ipq_pcs_rc1-v1-0-fdef575620cf@quicinc.com>
+	<20241101-ipq_pcs_rc1-v1-3-fdef575620cf@quicinc.com>
+	<d7782a5e-2f67-4f62-a594-0f52144a368f@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241009154953.1073471-1-seanjc@google.com> <20241009154953.1073471-4-seanjc@google.com>
- <39ea24d8-9dae-447a-ae37-e65878c3806f@sirena.org.uk> <ZyTpwwm0s89iU9Pk@google.com>
- <ZyT2CB6zodtbWEI9@linux.dev> <ZyT61FF0-g8gKZfc@google.com>
- <ZyT9rSnLcDWkWoL_@linux.dev> <ZyT-6iCNlA1VSAV3@google.com> <ZyUARgGV4G6DOrRL@linux.dev>
-Message-ID: <ZyUCSZEv4w1yXwEb@google.com>
-Subject: Re: [PATCH v3 03/14] KVM: selftests: Return a value from
- vcpu_get_reg() instead of using an out-param
-From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Andrew Jones <ajones@ventanamicro.com>, James Houghton <jthoughton@google.com>, 
-	David Woodhouse <dwmw@amazon.co.uk>, linux-next@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 01, 2024, Oliver Upton wrote:
-> On Fri, Nov 01, 2024 at 09:16:42AM -0700, Sean Christopherson wrote:
-> > One thing I'll add to my workflow would be to do a local merge (and smoke test)
-> > of linux-next into kvm-x86 next before pushing it out.  This isn't the only snafu
-> > this cycle where such a sanity check would have saved me and others a bit of pain.
+On Fri, 1 Nov 2024 14:21:24 +0100 Andrew Lunn wrote:
+> > +	/* Access to PCS registers such as PCS_MODE_CTRL which are
+> > +	 * common to all MIIs, is lock protected and configured
+> > +	 * only once. This is required only for interface modes
+> > +	 * such as QSGMII.
+> > +	 */
+> > +	if (interface == PHY_INTERFACE_MODE_QSGMII)
+> > +		mutex_lock(&qpcs->config_lock);  
 > 
-> Eh, shit happens, that's what -next is for :)
+> Is there a lot of contention on this lock? Why not take it for every
+> interface mode? It would make the code simpler.
 
-Heh, but I also don't actually test -next, which was another snafu (not my fault
-this time!) from this cycle[*].  Testing 6.12-next prior to the merge window
-wouldn't have made that any less painful to bisect, but I think it would at least
-have allowed me to detect that the issue specifically came in from linux-next,
-and the bug report would have gotten to PeterZ almost two months earlier.
-
-https://lore.kernel.org/all/ZwdA0sbA2tJA3IKh@google.com
++1
+-- 
+pw-bot: cr
 
