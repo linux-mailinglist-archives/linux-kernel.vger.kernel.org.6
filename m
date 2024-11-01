@@ -1,130 +1,145 @@
-Return-Path: <linux-kernel+bounces-392306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76FA9B9227
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:35:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CFE9B922A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 143BB1C21F4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:35:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE1FB214CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92791A00DF;
-	Fri,  1 Nov 2024 13:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9045E1A01C5;
+	Fri,  1 Nov 2024 13:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nwGDVflN"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4kMwnht"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2075715B984
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067C615B984;
+	Fri,  1 Nov 2024 13:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730468129; cv=none; b=A9DXYpfS1O26zdWomX7ssHzZWed3bWiV28uDd5Ymr3YLROyltmjb0ZycTzXen4AHocU63MEth5E59GlxJiw82+n7NCV4mkcNQeWucxsbT0CsXeyJC00RIf6akoJG4//0EF4kVHv4lN+n/mhhf7uHNmvsOkVB4scR1fVG+85pbYw=
+	t=1730468303; cv=none; b=U56enbwihq1NNOec9q400i95Ao/fwr6Ssr4PYDw/BcsWg8/ZyPLjofON7MBEqs93Zg/2AdFGJDYmZXLGZQmdliaWNfAA+dA5XenAdLVT7loekB6cNh5FBG4hD6atT0dSqfZ/g+nuUbW/uVlub44OwlaFvPGmy12W8g38AYK/K/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730468129; c=relaxed/simple;
-	bh=6k8+xRM55fJHifK6NF55W1/71AyKhTV1YDlbi9Usk9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pplA1PeG+cGpV3LEC1y791SBH+ebkP/lvTfmVH7QVS5uXxLs/HXhvLPjTLP2wkJcm0GD8s4OcGdnDnX2eykYZeYUh3R+IDm1PoATjzfbR/Sr/+BU9yEzrPAAjymzkqaeojAoQwhMXqziP5S4WCZu1WURTIvh/7KV3E8+hOOB+bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nwGDVflN; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso16050265e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:35:26 -0700 (PDT)
+	s=arc-20240116; t=1730468303; c=relaxed/simple;
+	bh=7iVhs36L4kjopcpycbaXdF0gKqCmuaVVNyhJLlw/dpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VH5KqmhcTZvhJJGuX02ZEzyMniDGov5Ny6xg9pTrcqhhKbzi3szZKRX3abtgcYsL73F9CHrcW+6KSl0udpRhrKTzQsu9bLCPeoFamheHZW5C58HVIN4ezwIH+ISrBmWKZsKhH84l4sIIQBohOVbNBkkhaTcENB3VLu648zyeASs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4kMwnht; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so19248591fa.3;
+        Fri, 01 Nov 2024 06:38:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730468125; x=1731072925; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fVO5reqC0K+yECVRSAKPEHwg+XbCEkMDoIBAK/8v4Mc=;
-        b=nwGDVflNwEsynpDTtfnvxet/Xp7bqI7IJ0lBUhD2uSy+GWhBa6mG6NnSjtqmSj3LYv
-         KNqhyWBrOSy+aJQrMrF8FNunpL5k3g5lOfaPG8QzvXMQD51gSggoP1yTiAjgnt5CCaBI
-         VB5iA075URGXw97rWFrK4UO7G4r7NpLSfoJ/eOOtkIpViXIJXMYXFgE8zKEHTu5Cc4hd
-         FDhEJpgqEEqbPJmW+aBxM/YQDIQ4LBQKfsJBIqPHbYjHhJ2w4wimQzB57h8/ggUOvIYE
-         xbbKoqAA9LSU4qk7PDk1VoSM47dAmbD7Pbn2F3tTbqSGSZAoVPbB28E9SYgHFsAC2pX8
-         0A9w==
+        d=gmail.com; s=20230601; t=1730468299; x=1731073099; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hc8bwNP6FEzXbY2UCs1v+hwxnKsEGZwCErUPzqiabao=;
+        b=Y4kMwnhtJ0oxoqa8gOGhzWdp/nzWvz40G/dz3uaJ2aG8q57Jd6a+pnZcq+BB2j6BdW
+         f3WSNIVlXpyXkISeAmCqxlshfKa9Mv5TqMnxz5ibcxeC8KOuhsfdV65NUgrtVhX4hNz7
+         b3/dj4DCgI+UuYPuX6B3wDdLYQAS65PdX4Z1sskuPfOhZymhvhnuiFjkUaVh8BUhOuMe
+         kCSRa49LXg4zEv2bpEGkMMSrrZ27mqR/2+An1ZPQ8BkzmHrYWdR8LR/I1XlLqeLpVECi
+         68V3W7YZFclMd8eItaZgIsNDceY94CsIrIs0y8xctgpGca32x/ufIgZnc7JkdnjOucxu
+         pCEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730468125; x=1731072925;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fVO5reqC0K+yECVRSAKPEHwg+XbCEkMDoIBAK/8v4Mc=;
-        b=ja8EnG7hDH4NdNVQLnX4RvdmZJDn4+R1zZ7DFrnGe+cv86Sc12Sh1IK0O3JF2J296b
-         GoLC4EGv8byQg7olhdXfKvcGO6nkxdbsiesQBbULYYs+0cOgc46VHU0oGvOGzcjoLr81
-         GoGYKNXQaQAR2BiTokvcbZXsl8sy/vcAOUHySFUi054T1U+C3ZkoqAT5n8q6UX83SG4r
-         j6th+MjygIF/0VD74IpsvJmacJ9mVy9H+UUXmUwK1OmzUCIAOpJNfzfm4nQId3AoXHmU
-         KceYXNpWH8fLICfVOZzUoRkfBUlHJ3VCY9GJHYDMjlb2bYHfk4Iaxir0voHafKmazyYD
-         P5jw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoT6/JuNJsf+i5cpFrqmNIp5qk25HB0r3bPrq4ScElmf46WMElf0FfP4ZucyHcDE5IpQ0VQAH4TT5CeP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrJObxZbbpwdY0v47+I2GMhIX+FD8KZJ3ZDq2LCzzU4Fkx6Ec6
-	QEXp6PqPRLqrTJtL9iH5r5CgCROf5LCI9HYBvv+KkhAR+Y0MiXZAcN8Oz7pSjC8G6ynMFvPu6sq
-	6
-X-Google-Smtp-Source: AGHT+IG0nV06+T/VNJjG8BU7hDedhU7t6mOOTuhHuleXCw5IQBFwaEmQMFbYCqiNUrA5nIy5LG6sVg==
-X-Received: by 2002:a05:600c:45cd:b0:431:5eeb:2214 with SMTP id 5b1f17b1804b1-4319ad363eamr183206075e9.33.1730468125116;
-        Fri, 01 Nov 2024 06:35:25 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:c0f8:efae:9e3c:9a1e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431b437d362sm133860165e9.0.2024.11.01.06.35.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 06:35:24 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio fixes for v6.12-rc6
-Date: Fri,  1 Nov 2024 14:35:17 +0100
-Message-ID: <20241101133517.12627-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1730468299; x=1731073099;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hc8bwNP6FEzXbY2UCs1v+hwxnKsEGZwCErUPzqiabao=;
+        b=Q5HbKGr7lh5MSE+UyZn6KFicLpQFNXZ40bq8f7YLM6yAuNdcPWSWSyXaMxKOdM7ZZa
+         v03eXOBOiJmUZY0Z29V8spPl8ts0pUjPknAEVCYMZJWP3VSRt1knX00yGoT5MJG5DqYg
+         w8ku8JN8UYtX/VvngoVvZhJD4b1NDsNDFPyHMkImJIOfItEmIstFPwA/jVppzbEcm2c2
+         /txkzay5bOs/ONrAa8FAGZADE+6mGJZS2C8lvdWaQDBeffdfPLJiA5yLFeTONY/t4FPL
+         jrzXmjryWjzbDsyewgC1pfI/CSxnigiiKCmfVxArqD0hJlH19ZGeGasbhPFabu95WIjY
+         Z1Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIs1HcQnJEeBzQ8vHkoHW+YLI+NiXSVQBQ68NC8sGH9eCa+DIe3y6jyUWee9vhQvAClDkYFCiDl+qAEfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyj8mcl4mygi6je2yD4QBDH9j4cgAtWArjZCwemft4lHj8GzSg
+	OcZelEk0+6wzYZsAHXkZbFxocbK/zkEqzmi/c2WvZ+luYkpIvWc6
+X-Google-Smtp-Source: AGHT+IGe+YqPMG2ELX5Etn1+nK3xWnTit/IwmK2PSJ5L5om9zWiQS7kStt/a35pvW356nfnh3NPURA==
+X-Received: by 2002:a05:651c:1987:b0:2fb:6465:3198 with SMTP id 38308e7fff4ca-2fdec4ca375mr39400961fa.5.1730468298840;
+        Fri, 01 Nov 2024 06:38:18 -0700 (PDT)
+Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef8c3b1asm5681181fa.120.2024.11.01.06.38.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 06:38:17 -0700 (PDT)
+Message-ID: <fe25c0a4-7e1b-45f3-b413-c52d033c7906@gmail.com>
+Date: Fri, 1 Nov 2024 15:38:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] rust: types: add `Owned` type and `Ownable` trait
+To: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, dakr@redhat.com,
+ linux-kernel@vger.kernel.org, airlied@redhat.com,
+ miguel.ojeda.sandonis@gmail.com
+References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
+ <20241022224832.1505432-2-abdiel.janulgue@gmail.com>
+ <CAH5fLgjZ91xFo4hV4dPnDXLFr9jX3na60tVt_KuNU_c6WhhzAA@mail.gmail.com>
+ <b154dd13-8cd8-4066-ba3d-6597959ca5c5@gmail.com>
+ <ZxkPC-dLRBqBKZ5J@Boquns-Mac-mini.local>
+ <CAH5fLggEGMVspJoO6CE-gTa3-OHfkUnS=L1X-VNC8Cp57GYVkA@mail.gmail.com>
+ <Zxk7Tf-jhSse51AS@Boquns-Mac-mini.local>
+ <CAH5fLgh1zXRA1dHBEtiNxWW8kNMtO47bBnaFLVhpzgxsnS1ysw@mail.gmail.com>
+ <CAH5fLgjLouU9ZRabJtP9qK6RWNLHZvW6dtUqbCkzFqZO+9skTQ@mail.gmail.com>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <CAH5fLgjLouU9ZRabJtP9qK6RWNLHZvW6dtUqbCkzFqZO+9skTQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Alice, Boqun:
 
-Linus,
+On 24/10/2024 10:33, Alice Ryhl wrote:
+>>>>>>>
+>>>>>>> Please rename this function to from_raw to match the name used by
+>>>>>>> other similar functions.
+>>>>>>>
+>>>>>>> Also, I don't love this wording. We don't really want to guarantee
+>>>>>>> that it is unique. For example, pages have one primary owner, but
+>>>>>>> there can be others who also have refcounts to the page, so it's not
+>>>>>>> really unique. I think you just want to say that `ptr` must point at a
+>>>>>
+>>>>> But then when `Owned<Page>` dropped, it will call __free_pages() which
+>>>>> invalidate any other existing users. Do you assume that the users will
+>>>>> use pointers anyway, so it's their unsafe responsiblity to guarantee
+>>>>> that they don't use an invalid pointer?
+>>>>>
+>>>>> Also I assume you mean the others have refcounts to the page *before* an
+>>>>> `Owned<Page>` is created, right? Because if we really have a use case
+>>>>> where we want to have multiple users of a page after `Owned<Page>`
+>>>>> created, we should better provide a `Owned<Page>` to `ARef<Page>`
+>>>>> function.
+>>>>
+>>>> The __free_pages function just decrements a refcount. If there are
+>>>> other references to it, it's not actually freed.
+>>>>
+>>>
+>>> Then why don't we use page_put() there? ;-) And instead of
+>>> `Owned<Page>`, we can wrap the kernel::page as `ARef<Page>`, no?
+>>
+>> I don't think there's a function called page_put?
+> 
+> Sorry I confused myself. It's because it's called put_page.
+> 
 
-Please pull the following set of fixes for the next RC. Details are in
-the signed tag.
+How do I proceed with this? Should we use the page's reference count to 
+decide when to free the allocation and use put_page() instead of 
+__free_pages() in Page::Drop?.
 
-Thanks,
-Bartosz
+In that case, there would be no need for `Ownable`, right? As we could 
+just return ARef<Page> in both vmalloc_to_page() case and in 
+Page::alloc_page(), letting the kernel handle ownership internally.
 
-The following changes since commit 81983758430957d9a5cb3333fe324fd70cf63e7e:
+Regards,
+Abdiel
 
-  Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.12-rc6
-
-for you to fetch changes up to 604888f8c3d01fddd9366161efc65cb3182831f1:
-
-  gpiolib: fix debugfs dangling chip separator (2024-10-31 19:14:17 +0100)
-
-----------------------------------------------------------------
-gpio fixes for v6.12-rc6
-
-- fix an issue with using an uninitialized variable in GPIO swnode code
-- add a missing return value check for devm_mutex_init()
-- fix an old issue with debugfs output
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      gpio: sloppy-logic-analyzer: Check for error code from devm_mutex_init() call
-
-Johan Hovold (2):
-      gpiolib: fix debugfs newline separators
-      gpiolib: fix debugfs dangling chip separator
-
-Suraj Sonawane (1):
-      gpio: fix uninit-value in swnode_find_gpio
-
- drivers/gpio/gpio-sloppy-logic-analyzer.c | 4 +++-
- drivers/gpio/gpiolib-swnode.c             | 2 +-
- drivers/gpio/gpiolib.c                    | 4 +++-
- 3 files changed, 7 insertions(+), 3 deletions(-)
 
