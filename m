@@ -1,227 +1,196 @@
-Return-Path: <linux-kernel+bounces-392906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8DC9B9983
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:34:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE9A9B996B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B17F1F220A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:34:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AB19B209B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E40A1DDC10;
-	Fri,  1 Nov 2024 20:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B741D9A50;
+	Fri,  1 Nov 2024 20:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="QL4ptvxF"
-Received: from forward205b.mail.yandex.net (forward205b.mail.yandex.net [178.154.239.152])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bdKYNoLR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z/S8Ff0J"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4E61CC8A7;
-	Fri,  1 Nov 2024 20:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBDC1D4340;
+	Fri,  1 Nov 2024 20:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730493281; cv=none; b=HUw1/bLiG3TGNH9gX8IWBgFZ/Us/REX6i7U77+AD//n/Zt5qCbdS6OoY6f+ipX7TVdgsGtfuoVVPs7+bEZzG6FW+M3tdRP+Jhu5TKl22xsAmvX3RaI2fnCysGLA1BrV/IRThWZqIriiE1Welm41WWGXr0x+MsNqNvlypZ+wj/ys=
+	t=1730492828; cv=none; b=EItjAToQaA2aw94jp/YA5m7n4cp0lzil96mBnAcxMK2P1n6KiU+fOikfW+v53TdmcgzPaEhEt4qmFoVrSDzVAUdmJ4Zd/yhzxEf9yVccBB0HB1L72VKFimt0ezbRFJeUsHBgxJSgMn4htWtGVraEIS700yUxdCm5eo/jFs/4LuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730493281; c=relaxed/simple;
-	bh=Xh53WnxbzrLpeFD4qA+ULQsuht3m/R0vILxRTS86S1o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fz6ycGMBFHBfFqLTP0etRlHSe+cHg5rsVQY523KK7utYx/JqAjYeEzsIF6OcTTkX39UZWRFXQDlKYmon+WsWlrKi17iPMZbbITwDdO8AfKOJR3LROb5QGTqlhTir5nbjInZZL7UANpvZ/xiFt5Tmns3D19mOcWff7dB+4w8WA/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=QL4ptvxF; arc=none smtp.client-ip=178.154.239.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d102])
-	by forward205b.mail.yandex.net (Yandex) with ESMTPS id 751DF67CBD;
-	Fri,  1 Nov 2024 23:27:24 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net [IPv6:2a02:6b8:c16:179d:0:640:38f5:0])
-	by forward102b.mail.yandex.net (Yandex) with ESMTPS id 91345609A4;
-	Fri,  1 Nov 2024 23:27:15 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id DRjrc0hXoCg0-ppQ2TVzM;
-	Fri, 01 Nov 2024 23:27:14 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1730492834; bh=jirBRe0Gzm5qlc+JfJ2U0mcnBLShKzZR40RQrJHImeU=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=QL4ptvxFS+5PAsUIYEmAFYlQ+mcbh7KgSuA7ydmWcBGPXCzqlct6hUYDPxs3nKLSw
-	 268z/n6LDK5zePAtsTVNFZ/fvkAMTqbseWiLN4vFZnIL94NyZI8AWJQhjAG+O3hhKV
-	 XaEQBmSyK4/v5gjXmWWAe/0Gl5A/+0O4D5cUpWQ0=
-Authentication-Results: mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Stas Sergeev <stsp2@yandex.ru>
-To: linux-kernel@vger.kernel.org
-Cc: Stas Sergeev <stsp2@yandex.ru>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>,
-	Kees Cook <kees@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	linux-fsdevel@vger.kernel.org,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>
-Subject: [POC, RFC] scheme for transferring group_list between processes
-Date: Fri,  1 Nov 2024 23:26:57 +0300
-Message-ID: <20241101202657.468595-1-stsp2@yandex.ru>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730492828; c=relaxed/simple;
+	bh=ISQjNBpVnwth0z+xcapjqqbKON+VNDQxUdZT8Zeo8l8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=og2Am4o1u4vsYqcFr1MhwBlOTzSvVTjZ3TMKsmV/exGLlI/RPuLa2DCKcRi+HI3XLaLjlNpGtLG2nwKxup04V87Uw/FM66Dwinr9CKik0yE4lPtd+2sm1ntbp24trAED5yzHLli2o5dAMtDfuPCT0jtRCbUFjDq0SeXa3LHP/pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bdKYNoLR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z/S8Ff0J; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730492824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1xV06QTqGl9nixnpVpVhm4ITfCkevbgwfgxifl3glXs=;
+	b=bdKYNoLRW/D6u9dVR1Re/YsN9u1+39ZdE7c7n6w6JMSHxUgegbgrQ2/feVQH4Ns2UhxbXv
+	5R/lMYH3/5wnLbxfNPjnJ28b+8WzHCswX8tJ30IwZIkbQTOpTbNDANbI2rkOU28grnlFqG
+	6vV1ixY5sS+dLUhowYMcqqeHVGn5/rSUVvyARdl9YNW/1PDIU9wiwP9iRFnY0fkLLqrzEE
+	FQdULVwLCjeZ+djwB0KHPNcn1hotUoCwvvSDsEYT74Nowrcn4ZqHU06Aowwe5wr6qp2RJh
+	DtsZ2zF+0sS/DcC5jxWrAPms2vH29ByFylYP0EVgME3ujZ53UrsAANqMBB7dQA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730492824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1xV06QTqGl9nixnpVpVhm4ITfCkevbgwfgxifl3glXs=;
+	b=z/S8Ff0JoHnOXPst4EdLogpr30PKrdNkL8kIbeI27e7fNEc8RRebLhMh+dJv1eMqVIf0ua
+	wm8hdcOmpHV/gmCg==
+To: Junaid Shahid <junaids@google.com>, Brendan Jackman
+ <jackmanb@google.com>, Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Dave Hansen
+ <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Andy
+ Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Sean
+ Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Alexandre Chartre <alexandre.chartre@oracle.com>, Liran Alon
+ <liran.alon@oracle.com>, Jan Setje-Eilers <jan.setjeeilers@oracle.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>, Lorenzo Stoakes
+ <lstoakes@gmail.com>, David Hildenbrand <david@redhat.com>, Vlastimil
+ Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>, Khalid Aziz
+ <khalid.aziz@oracle.com>, Juri Lelli <juri.lelli@redhat.com>, Vincent
+ Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Valentin
+ Schneider <vschneid@redhat.com>, Paul Turner <pjt@google.com>, Reiji
+ Watanabe <reijiw@google.com>, Ofir Weisse <oweisse@google.com>, Yosry
+ Ahmed <yosryahmed@google.com>, Patrick Bellasi <derkling@google.com>, KP
+ Singh <kpsingh@google.com>, Alexandra Sandulescu <aesa@google.com>, Matteo
+ Rizzo <matteorizzo@google.com>, Jann Horn <jannh@google.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kvm@vger.kernel.org, linux-toolchains@vger.kernel.org
+Subject: Re: [PATCH 01/26] mm: asi: Make some utility functions noinstr
+ compatible
+In-Reply-To: <d0a38982-b811-4429-8b89-81e5da3aaf72@google.com>
+References: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
+ <20240712-asi-rfc-24-v1-1-144b319a40d8@google.com>
+ <20241025113455.GMZxuCX2Tzu8ulwN3o@fat_crate.local>
+ <CA+i-1C3SZ4FEPJyvbrDfE-0nQtB_8L_H_i67dQb5yQ2t8KJF9Q@mail.gmail.com>
+ <ab8ef5ef-f51c-4940-9094-28fbaa926d37@google.com> <878qu6205g.ffs@tglx>
+ <d0a38982-b811-4429-8b89-81e5da3aaf72@google.com>
+Date: Fri, 01 Nov 2024 21:27:03 +0100
+Message-ID: <87cyjevgx4.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Note: this patch is a POC and RFC. It "parasites" on pidfd code
-just for the sake of a demo. It has nothing to do with pidfd.
+On Thu, Oct 31 2024 at 18:44, Junaid Shahid wrote:
+> On 10/29/24 12:12 PM, Thomas Gleixner wrote:
+>> 
+>> I doubt that it works as you want it to work.
+>> 
+>> +	inline notrace __attribute((__section__(".noinstr.text")))	\
+>> 
+>> So this explicitely puts the inline into the .noinstr.text section,
+>> which means when it is used in .text the compiler will generate an out-of
+>> line function in the .noinstr.text section and insert a call into the
+>> usage site. That's independent of the size of the inline.
+>> 
+>
+> Oh, that's interesting. IIRC I had seen regular (.text) inline functions get 
+> inlined into .noinstr.text callers. I assume the difference is that here the 
+> section is marked explicitly rather than being implicit?
 
-The problem:
-If you use suid/sgid bits to switch to a less-privileged (home-less)
-user, then the group list can't be changed, effectively nullifying
-any supposed restrictions. As such, suid/sgid to non-root creds is
-currently practically useless.
+Correct. Inlines without any section attribute are free to be inlined in
+any section, but if the compiler decides to uninline them, then it
+sticks the uninlined version into the default section ".text".
 
-Previous solutions:
-https://www.spinics.net/lists/kernel/msg5383847.html
-This solution allows to restrict the groups from group list.
-It failed to get any attention for probably being too ad-hoc.
-https://lore.kernel.org/all/0895c1f268bc0b01cc6c8ed4607d7c3953f49728.1416041823.git.josh@xxxxxxxxxxxxxxxx/
-This solution from Josh Tripplett was considered insecure.
+The other problem there is that an out of line version can be
+instrumented if not explicitely forbidden.
 
-New proposal:
-This proposal was inspired by the credfd proposal of Andy Lutomirski:
-https://lkml2.uits.iu.edu/hypermail/linux/kernel/1403.3/01528.html
-When we send an fd with SCM_RIGHTS, is has entire creds of the sender,
-captured at a moment of opening the file.
-Now if we have a "capable" server process, it can do SO_PEERCRED to
-retrieve client's uid/gid. Then it does getgrouplist() and setgroups()
-with client's uid/gid to set the group list desired for that client.
-Then it sets euid/egid to match client's. Then it opens some file
-(pidfd file in this POC, but should be credfd) and sends it to client.
-Client then does a special ioctl() on that fd to actually set up the
-received group list.
-Such ioctl() must ensure that the change is safe:
-- If process has CAP_SETGID - ok
-- Otherwise we need to make sure the server process explicitly permitted
-  the change (not in this POC), make sure that uid==euid==suid
-  (i.e. the process won't change its creds after setting group list)
-  and make sure that euid/egid match those of the server.
-After doing these checks, the group list is applied.
+That's why we mark them __always_inline, which forces the compiler to
+inline it into the usage site unconditionally.
 
-Simply put, this proposal allows to move CAP_SETGID from the main
-process to the helper (server) process, keeping the main process
-cap-less. Its advantage over the previous proposals is that you
-end up with the _correct_ group list that _naturally_ belongs to
-that UID. Previous proposals either ended up with an empty group
-list or "restricted" group list, but never with the right one.
+> In any case, I guess we could just mark these functions as plain
+> noinstr.
 
-I put the user-space usage example here:
-https://github.com/stsp/cred_test
+No. Some of them are used in hotpath '.text'. 'noinstr' prevents them to
+be actually inlined then as I explained to you before.
 
-Would be good to hear if something like this can be considered.
+> (Unless there happens to be some other way to indicate to the compiler to place 
+> any non-inlined copy of the function in .noinstr.text but still allow inlining 
+> into .text if it makes sense optimization-wise.)
 
-Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+Ideally the compilers would provide
 
-CC: Alexander Viro <viro@zeniv.linux.org.uk>
-CC: Christian Brauner <brauner@kernel.org>
-CC: Jan Kara <jack@suse.cz>
-CC: Jens Axboe <axboe@kernel.dk>
-CC: Kees Cook <kees@kernel.org>
-CC: Oleg Nesterov <oleg@redhat.com>
-CC: linux-fsdevel@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-CC: Eric Biederman <ebiederm@xmission.com>
-CC: Andy Lutomirski <luto@kernel.org>
-CC: Josh Triplett <josh@joshtriplett.org>
----
- fs/pidfs.c                 | 31 +++++++++++++++++++++++++++++++
- include/linux/cred.h       |  4 ++++
- include/uapi/linux/pidfd.h |  1 +
- 3 files changed, 36 insertions(+)
+        __attribute__(force_caller_section)
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 80675b6bf884..06209d3b5e61 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -114,6 +114,28 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
- 	return poll_flags;
- }
- 
-+static bool can_borrow_groups(const struct cred *cred)
-+{
-+	kuid_t uid = current_uid();
-+	kgid_t gid = current_gid();
-+	kuid_t euid = current_euid();
-+	kgid_t egid = current_egid();
-+
-+	if (may_setgroups())
-+		return 1;
-+	/* TODO: make sure peer actually allowed to borrow his groups. */
-+
-+	/* Make sure the process can't switch uid/gid. */
-+	if (!uid_eq(euid, uid) || !uid_eq(current_suid(), uid))
-+		return 0;
-+	if (!gid_eq(egid, gid) || !gid_eq(current_sgid(), gid))
-+		return 0;
-+	/* Make sure the euid/egid of 2 processes are equal. */
-+	if (!uid_eq(cred->euid, euid) || !gid_eq(cred->egid, egid))
-+		return 0;
-+	return 1;
-+}
-+
- static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	struct task_struct *task __free(put_task) = NULL;
-@@ -141,8 +163,10 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	 * We're trying to open a file descriptor to the namespace so perform a
- 	 * filesystem cred ptrace check. Also, we mirror nsfs behavior.
- 	 */
-+/*
- 	if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
- 		return -EACCES;
-+*/
- 
- 	switch (cmd) {
- 	/* Namespaces that hang of nsproxy. */
-@@ -209,6 +233,13 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 			rcu_read_unlock();
- 		}
- 		break;
-+	case PIDFD_BORROW_GROUPS:
-+		if (task == current)
-+			return 0;
-+		if (!can_borrow_groups(file->f_cred))
-+			return -EPERM;
-+		set_current_groups(file->f_cred->group_info);
-+		return 0;
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 2976f534a7a3..cfdeebbd7db6 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -83,6 +83,10 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
- {
- 	return 1;
- }
-+static inline bool may_setgroups(void)
-+{
-+	return 1;
-+}
- #endif
- 
- /*
-diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
-index 565fc0629fff..1ef8e31fefed 100644
---- a/include/uapi/linux/pidfd.h
-+++ b/include/uapi/linux/pidfd.h
-@@ -28,5 +28,6 @@
- #define PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE _IO(PIDFS_IOCTL_MAGIC, 8)
- #define PIDFD_GET_USER_NAMESPACE              _IO(PIDFS_IOCTL_MAGIC, 9)
- #define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
-+#define PIDFD_BORROW_GROUPS                   _IO(PIDFS_IOCTL_MAGIC, 11)
- 
- #endif /* _UAPI_LINUX_PIDFD_H */
--- 
-2.47.0
+which makes them place an out of line inline into the section of the
+function from which it is called. But we can't have useful things or
+they are so badly documented that I can't find them ...
 
+What actually works by some definition of "works" is:
+
+       static __always_inline void __foo(void) { }
+
+       static inline void foo(void)
+       {
+                __(foo);
+       }
+
+       static inline noinstr void foo_noinstr(void)
+       {
+                __(foo);
+       }
+
+The problem is that both GCC and clang optimize foo[_noinstr]() away and
+then follow the __always_inline directive of __foo() even if I make
+__foo() insanely large and have a gazillion of different functions
+marked noinline invoking foo() or foo_noinstr(), unless I add -fno-inline
+to the command line.
+
+Which means it's not much different from just having '__always_inline
+foo()' without the wrappers....
+
+Compilers clearly lack a --do-what-I-mean command line option.
+
+Now if I'm truly nasty then both compilers do what I mean even without a
+magic command line option:
+
+       static __always_inline void __foo(void) { }
+
+       static __maybe_unused void foo(void)
+       {
+                __(foo);
+       }
+
+       static __maybe_unused noinstr void foo_noinstr(void)
+       {
+                __(foo);
+       }
+
+If there is a single invocation of either foo() or foo_noinstr() and
+they are small enough then the compiler inlines them, unless -fno-inline
+is on the command line. If there are multiple invocations and/or foo
+gets big enough then both compilers out of line them. The out of line
+wrappers with __foo() inlined in them end always up in the correct
+section.
+
+I actually really like the programming model as it is very clear about
+the intention of usage and it allows static checkers to validate.
+
+Thoughts?
+
+Thanks,
+
+        tglx
 
