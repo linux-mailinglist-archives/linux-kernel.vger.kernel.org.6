@@ -1,154 +1,131 @@
-Return-Path: <linux-kernel+bounces-392442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD9E9B9438
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:18:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B839B943C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:18:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8EE282E30
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:18:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EF8CB21B54
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AD91C75E4;
-	Fri,  1 Nov 2024 15:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1391F1C6F71;
+	Fri,  1 Nov 2024 15:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bYuZc2if"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nBr1idrK"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FCF1C303A
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 15:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365AB1C303A;
+	Fri,  1 Nov 2024 15:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730474296; cv=none; b=YVdl7z2LW+HnUrb1ypCaccFmZcnwSC719Y/nDn62GjvGJ4XT5dKxqI8nZbnstOdby163Ej//tWsPTohN8E8X05DG33nAPRhIuyw6HAC0marxCg940Qxwlfcwv8+F7T8APjxUySXp57cNXjyIu1pOGGSy678+glFPuGQqGb0WS04=
+	t=1730474320; cv=none; b=VGK9NHbp9A1z6llxi6kNpeYg/K30TwCkxE8C/H4YvPJM8IE6RM2ogAJvS5WyAyJ9x3H+MQAEtRl+r2jNQ2Oxgph4Ssm9K2AXf5Katjfxw1+uqFrrXqjtEMd+5ZO2DIwEr/J6iUxwo+eK+E2BihoX4K7bEQSa5nSaTHTwc1uI8Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730474296; c=relaxed/simple;
-	bh=xGkv3LzrhtoCbCqtDpE3y3Q0GFXGAU72Ny2WiKf/Iuk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=b3jM06v8P/gC3/GSGTgvAsyj82pc2dNqEJwGxzTyI8BG+/l35lMHyyb34krj95mIKhRbAZba/7tg6ncylgJAr9pFQBr3bCvIgpB79EX9590DamMqz1hb5VTkQSVt2GY3gZh0TiNg52911EI9mnPu31yQLT8wZSP27rEA6SuxpUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bYuZc2if; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e3705b2883so45538737b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 08:18:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730474293; x=1731079093; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=By0MMba+WbzG2cXuHlWeMQpST2oOpWmZSXA68XVHYo0=;
-        b=bYuZc2ifWnC89m8jPwJZ+9o1aVJVUPtGrn+a2Tq6I7DPyGcA7YqMirJwCywfY7dDdV
-         LulpNzMnigxZTsvXIDZqVd0UG19ynWGvrjwz5SRW/g2Y3nbuR/kASz3mqdwBJyyZSdij
-         jLg+cW5GwRjt6NxPFfAOW9D/BPgCK2aHrRLlZQ2ogRpr/BBTq3vgBDnbUVkErVrPmxGF
-         bdEiXB6uJMIDzWdMp3GEumYry8fh8R4gTLUOn89JMNi8cyiQ7KAcdZXj52mMsvzifjMd
-         PimfOS64nkjk4Ng7RqN2hT6f6KWwDVzZO89CKJYuXA7RXYpYUiIs1IDUD6eg4ir1Wkv9
-         kAtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730474293; x=1731079093;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=By0MMba+WbzG2cXuHlWeMQpST2oOpWmZSXA68XVHYo0=;
-        b=cKyLkfr3fG8tP9S9TSHR7JTrekIYlnSGp764NN9mcWED7rl8Cfb6dYGca4NUWDYW83
-         QamZsYrwyngnkIMMVminJg0aK/tvQ1XQZoU2WAFQYYqmC0imHU8qSuC2OK+miRHeOiYe
-         DoHu0pVAWEKy4wrttU2EGHIFUdYKyo+PoMZxboaTVwvCRSegE3U7eyy/+y/PnJgaBWXx
-         CU0ILkE1WIxTyLv5aZ6NtT+tMssif0iME4Qd4ZYeLGNeAhSfyhjM7Mv9hlfn+Iy+zThr
-         uIr61znlOHnKyke5mirQ6qnU/EA3O+0LRJN8tJcLgxJpGPp3tr+ltoN5YJvbLzSEdI+k
-         UntA==
-X-Forwarded-Encrypted: i=1; AJvYcCXoX6zh+rZ4lS1Du3m5jfK4Nw5hYC3l1TQGBPbw43GFUdk1bxpY0p8uSQP0cwOwBhUn9ILBWmxYXn+RIFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIvXeqOZMmxst0U2jLftK430o0DxQluqSuWR6AB4IVXIhi7CrI
-	gZTuHm2RUKMwts7zVBFKNay7jLyg1147KG8KDC0couVtatTubJE5+cys4N5ht151tjQcjT7we2L
-	xwQ==
-X-Google-Smtp-Source: AGHT+IFdnwVveoc9N/MGUlZwVqfEB7IUicwB9rrAOOy2FhtDeXiq05HGyssNX0DfJOP/ZgHAaQZXrEGcvIk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:6c8c:b0:6e3:1702:b3e6 with SMTP id
- 00721157ae682-6ea64b8c450mr251257b3.4.1730474293279; Fri, 01 Nov 2024
- 08:18:13 -0700 (PDT)
-Date: Fri, 1 Nov 2024 08:18:11 -0700
-In-Reply-To: <2233397c-f423-40e3-8546-728b50ce0489@amazon.com>
+	s=arc-20240116; t=1730474320; c=relaxed/simple;
+	bh=zuN5R7hbuH1BvhVCVBt/zGaYDCvPjEZM0tpyzDA8ZVA=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:To:
+	 Cc:Date:Message-ID; b=gW4AsvfJrzwXo4UPb6HKunBEFFmEcFh2gYwUQVcO4Vu0jQ37AwpjlNjLMymywXbeqWxHIgzeCv6PjU6LtwCpyjhOJQo17fPD6MZNA7SKuMY6dzrmCHIn/xqL7k2vsD5y7cfkQLiGl4e6v6Z/xaTPTABeI407Z63mazOdqJQUziM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nBr1idrK; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5602B3D4;
+	Fri,  1 Nov 2024 16:18:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730474311;
+	bh=zuN5R7hbuH1BvhVCVBt/zGaYDCvPjEZM0tpyzDA8ZVA=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+	b=nBr1idrKB+P9AyQS+0sPM+y+7bN56hXVF9CuFlueWKUjipSZFbS7lN/BfUDeTnwJF
+	 uPGrPgUylvhy8jz0FmPQfT2eAWO5DQJGVCTcVIynpxYP/QlyuoUrDtJtvgnXj8Rr5F
+	 BQ/3fYdj9U+abtbwYQJhqqxe8h51my0DbYNHGGeM=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <27646c08-f724-49f7-9f45-d03bad500219@amazon.co.uk> <2233397c-f423-40e3-8546-728b50ce0489@amazon.com>
-Message-ID: <ZyTxM7Po4v7VkmHO@google.com>
-Subject: Re: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Derek Manwaring <derekmn@amazon.com>
-Cc: roypat@amazon.co.uk, ackerleytng@google.com, agordeev@linux.ibm.com, 
-	aou@eecs.berkeley.edu, borntraeger@linux.ibm.com, bp@alien8.de, 
-	catalin.marinas@arm.com, chenhuacai@kernel.org, corbet@lwn.net, 
-	dave.hansen@linux.intel.com, david@redhat.com, gerald.schaefer@linux.ibm.com, 
-	gor@linux.ibm.com, graf@amazon.com, hca@linux.ibm.com, hpa@zytor.com, 
-	jgowans@amazon.com, jthoughton@google.com, kalyazin@amazon.com, 
-	kernel@xen0n.name, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	luto@kernel.org, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
-	mingo@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	pbonzini@redhat.com, peterz@infradead.org, quic_eberman@quicinc.com, 
-	rostedt@goodmis.org, rppt@kernel.org, shuah@kernel.org, svens@linux.ibm.com, 
-	tabba@google.com, tglx@linutronix.de, vannapurve@google.com, will@kernel.org, 
-	x86@kernel.org, xmarcalx@amazon.com, David Kaplan <david.kaplan@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAF6AEGu_qJYV3TnprJsqsWV_GoLhiBFQ8LNwfYDjczDparvZCA@mail.gmail.com>
+References: <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-0-cdff2f1a5792@linaro.org> <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-6-cdff2f1a5792@linaro.org> <CAF6AEGu_qJYV3TnprJsqsWV_GoLhiBFQ8LNwfYDjczDparvZCA@mail.gmail.com>
+Subject: Re: [PATCH 6/6] arm64: dts: qcom: sdm845-db845c-navigation-mezzanine: Add cma heap for libcamera softisp support
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Rob Clark <robdclark@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Depeng Shao <quic_depengs@quicinc.com>, Vikram Sharma <quic_vikramsa@quicinc.com>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Date: Fri, 01 Nov 2024 15:18:33 +0000
+Message-ID: <173047431366.2974136.175546053701391124@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
-+David Kaplan
++Cc Laurent
 
-On Thu, Oct 31, 2024, Derek Manwaring wrote:
-> On 2024-10-31 at 10:42+0000 Patrick Roy wrote:
-> > On Thu, 2024-10-31 at 09:50 +0000, David Hildenbrand wrote:
-> > > On 30.10.24 14:49, Patrick Roy wrote:
-> > >> Most significantly, I've reduced the patch series to focus only on
-> > >> direct map removal for guest_memfd for now, leaving the whole "how to do
-> > >> non-CoCo VMs in guest_memfd" for later. If this separation is
-> > >> acceptable, then I think I can drop the RFC tag in the next revision
-> > >> (I've mainly kept it here because I'm not entirely sure what to do with
-> > >> patches 3 and 4).
-> > >
-> > > Hi,
-> > >
-> > > keeping upcoming "shared and private memory in guest_memfd" in mind, I
-> > > assume the focus would be to only remove the direct map for private memory?
-> > >
-> > > So in the current upstream state, you would only be removing the direct
-> > > map for private memory, currently translating to "encrypted"/"protected"
-> > > memory that is inaccessible either way already.
-> > >
-> > > Correct?
+Quoting Rob Clark (2024-11-01 12:33:44)
+> On Fri, Oct 25, 2024 at 8:49=E2=80=AFAM Bryan O'Donoghue
+> <bryan.odonoghue@linaro.org> wrote:
 > >
-> > Yea, with the upcomming "shared and private" stuff, I would expect the
-> > the shared<->private conversions would call the routines from patch 3 to
-> > restore direct map entries on private->shared, and zap them on
-> > shared->private.
+> > libcamera softisp requires a linux,cma heap export in order to support
+> > user-space debayering, 3a and export to other system components such as
+> > pipewire, Firefox/Chromium - Hangouts, Zoom etc.
+>=20
+> AFAIU libcamera could use udmabuf, etc, and there is no hw requirement
+> for CMA.  So it doesn't seem we should be adding this to dt.  And I'd
+> really prefer that we not be using CMA just for lolz.
+
+I agree here. Otherwise this theoretically locks this memory to the pool
+'forever'. It's not something we should define in device tree.
+
+udmabuf provides a means to get memfd allocated memory which is not
+physically contiguous - but /is/ managed by a dmabuf handle.
+
+Presently with SoftISP being CPU only - physically contiguous memory is
+not required.
+
+Bryan, will this still be true when you have a GPU based ISP ? Will that
+require physically contiguous memory ? Or will the mapping into the GPU
+handle any required translations?
+
+--
+Kieran
+
+
+>=20
+> BR,
+> -R
+>=20
+> > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> > ---
+> >  .../boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso     | 11 +++=
+++++++++
+> >  1 file changed, 11 insertions(+)
 > >
-> > But as you said, the current upstream state has no notion of "shared"
-> > memory in guest_memfd, so everything is private and thus everything is
-> > direct map removed (although it is indeed already inaccessible anyway
-> > for TDX and friends. That's what makes this patch series a bit awkward
-> > :( )
-> 
-> TDX and SEV encryption happens between the core and main memory, so
-> cached guest data we're most concerned about for transient execution
-> attacks isn't necessarily inaccessible.
-> 
-> I'd be interested what Intel, AMD, and other folks think on this, but I
-> think direct map removal is worthwhile for CoCo cases as well.
-
-Removal of the direct map entries for guest private PFNs likely won't affect the
-ability of an attacker to glean information from the unencrypted data that's in
-the CPU caches, at least not on x86.  Both TDX and SEV steal physical address
-bit(s) for tagging encrypted memory, and unless things have changed on recent
-AMD microarchitectures (I'm 99.9% certain Intel CPUs haven't changed), those stolen
-address bits are propagated into the caches.  I.e. the encrypted and unencrypted
-forms of a given PFN are actually two different physical addresses under the hood.
-
-I don't actually know how SEV uses the stolen PA bits though.  I don't see how it
-simply be the ASID, because IIUC, AMD CPUs allow for more unique SEV-capable ASIDs
-than uniquely addressable PAs by the number of stolen bits.  But I would be very
-surprised if the tag for the cache isn't guaranteed to be unique per encryption key.
-
-David?
+> > diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanin=
+e.dtso b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
+> > index d62a20f018e7a7e1c7e77f0c927c2d9fe7ae8509..c8507afcd1e0d1f9b14b6e4=
+edcbc646032e7b6c9 100644
+> > --- a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
+> > +++ b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
+> > @@ -9,6 +9,17 @@
+> >  #include <dt-bindings/clock/qcom,camcc-sdm845.h>
+> >  #include <dt-bindings/gpio/gpio.h>
+> >
+> > +/ {
+> > +       reserved-memory {
+> > +               linux,cma {
+> > +                       compatible =3D "shared-dma-pool";
+> > +                       size =3D <0x0 0x8000000>;
+> > +                       reusable;
+> > +                       linux,cma-default;
+> > +               };
+> > +       };
+> > +};
+> > +
+> >  &camss {
+> >         vdda-phy-supply =3D <&vreg_l1a_0p875>;
+> >         vdda-pll-supply =3D <&vreg_l26a_1p2>;
+> >
+> > --
+> > 2.47.0
+> >
+> >
 
