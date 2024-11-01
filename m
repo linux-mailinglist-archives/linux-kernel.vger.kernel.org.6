@@ -1,167 +1,138 @@
-Return-Path: <linux-kernel+bounces-392347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059CB9B92EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:14:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6012D9B92F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:16:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4261C20DF1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 112A71F22305
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C8A1A3A9A;
-	Fri,  1 Nov 2024 14:13:52 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAF219D891;
+	Fri,  1 Nov 2024 14:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="kMbq5D5u"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EA43398A;
-	Fri,  1 Nov 2024 14:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730470432; cv=none; b=dxCleZtlJMRB3tuMLyGnVNCuBmQ0pVurCaMLp+i0XAduBUTlto6Syn0wN9gX0mTiZrwCXxbNZfQVUELcLxSG+Ni+p2Ke7UhGQ8e//9SLU+PGA/j0gmUGL4d6o3X2Rv3YapVGXrfgSjivjG2FjwJ1aFma4WHewNF3SxHpxhiGQFQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730470432; c=relaxed/simple;
-	bh=7gHYPhKB1HrIr4BHeRbqcX+ShRrQvykm0Rgcgp6icFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z8zNZPIaEXrx1tAGzzzJVu8MGi7InFQ6gkFzBHZnyPfybWehlW1Uii8zlzgsp0GFpE9EmX4hxGSfQANKl04X3SGTfr2qqwHynTYmyJ6h0dj6PswXMT/2lF/6NvafF5XEWtA696fYLXJoh7wxZ6vbhHLy4cUZcCta7a+1i2he9Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F585C4CECD;
-	Fri,  1 Nov 2024 14:13:50 +0000 (UTC)
-Date: Fri, 1 Nov 2024 10:14:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v18 16/17] Documentation: probes: Update fprobe on
- function-graph tracer
-Message-ID: <20241101101448.10a3a0a9@gandalf.local.home>
-In-Reply-To: <172991752671.443985.17111177875574390269.stgit@devnote2>
-References: <172991731968.443985.4558065903004844780.stgit@devnote2>
-	<172991752671.443985.17111177875574390269.stgit@devnote2>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629929475;
+	Fri,  1 Nov 2024 14:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730470588; cv=pass; b=YxftPWmZUEfeMmvg5Y7+swc0Nmwq7WjsOZA8tIcP1ijYJZsAPSY614IYdWC1Ia53N0sT14xOWcATru+Ww+4sxCuHjw24ikg+idoIKmz0YMATqxbu6rflIBGRSt0ELA0CriSp+uCxyrJJEEn/tOS4yFaE3ncdS96Eu50Y875GDpQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730470588; c=relaxed/simple;
+	bh=HbN9Tc2DvDZuyWjnp1OhvQikIf+Sz8xYcrmXdiycAug=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aSgEr1OjPmKDnDvGt7Rx+fWxIpFfTPRTikx0drMQqmoXTZDRgAA5DSM8KVhzlKEYVekIhT34vNkIytRqIpWxxdl91beJTj7ZDVGQgh298HYwArwE/F5n2DXds9trvc1EaLA4NNUzN6W/eseCktmUCdNYO2u2dVVrX3poTmOgLEo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=kMbq5D5u; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1730470575; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kVEf9La18gUx61NeS/ypACpSeDx1iIBtgSHdQr8OlXV9fgbtxXYqCRudmVnItPieZ5Z1bHTG3azswRiKahVYNvhaHCP3tLC/sJ9KB7oY33norhcr1Cz1xRmbgZ4xvdXEBCtm8yw6NlbBHwCDABwdouGnLiccZ3kNwHBlP2jKUB0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1730470575; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=g44Wl7tnRmFijuzlRmhgh38eYyyvVTOHdNmRVeRjRyg=; 
+	b=LabxpNW+KExwUo6U+UghWKhnPmVGLfAcqZ9Q+LF8WVLLcO/w/YlBvbBtv8i/q3+xkdit3VB/Dc522ElQ4JLoTCyKaoGKoBWYcOABg7d3al9c9Voe0NS3Yowpi31uqylQrNYUz3sz9lbvHOWbACOVZc2MqQI/RjJsQrH1mfh2Zl8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730470575;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=g44Wl7tnRmFijuzlRmhgh38eYyyvVTOHdNmRVeRjRyg=;
+	b=kMbq5D5uY0xiYgLnuuV4gUtAEAznDJq+y9o+YsskO2il0WL/lMICQebmbpO6f4ts
+	WBGoM7MI9wLhHV0iKKzSTjyFS2EGmLcn+ptzGzu1YVYWSazyrCpWpogUiANkkvprRM5
+	W6BfF8TpgnSEebJl9XZgUXTcDK1mf6WvLgue0WBM=
+Received: by mx.zohomail.com with SMTPS id 1730470574622616.129871650149;
+	Fri, 1 Nov 2024 07:16:14 -0700 (PDT)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	kernel@collabora.com,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: hugetlb_dio: Check for initial conditions to skip in the start
+Date: Fri,  1 Nov 2024 19:15:57 +0500
+Message-Id: <20241101141557.3159432-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Sat, 26 Oct 2024 13:38:46 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+The test should be skipped if initial conditions aren't fulfilled in
+the start instead of failing and outputting non-compliant TAP logs. This
+kind of failure pollutes the results. The initial conditions are:
+- The test should only execute if /tmp file can be allocated.
+- The test should only execute if huge pages are free.
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Update fprobe documentation for the new fprobe on function-graph
-> tracer. This includes some bahvior changes and pt_regs to
-> ftrace_regs interface change.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  Changes in v2:
->   - Update @fregs parameter explanation.
-> ---
->  Documentation/trace/fprobe.rst |   42 ++++++++++++++++++++++++++--------------
->  1 file changed, 27 insertions(+), 15 deletions(-)
-> 
-> diff --git a/Documentation/trace/fprobe.rst b/Documentation/trace/fprobe.rst
-> index 196f52386aaa..f58bdc64504f 100644
-> --- a/Documentation/trace/fprobe.rst
-> +++ b/Documentation/trace/fprobe.rst
-> @@ -9,9 +9,10 @@ Fprobe - Function entry/exit probe
->  Introduction
->  ============
->  
-> -Fprobe is a function entry/exit probe mechanism based on ftrace.
-> -Instead of using ftrace full feature, if you only want to attach callbacks
-> -on function entry and exit, similar to the kprobes and kretprobes, you can
-> +Fprobe is a function entry/exit probe mechanism based on the function-graph
-> +tracer.
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+Before:
+TAP version 13
+1..4
+Bail out! Error opening file
+: Read-only file system (30)
+ # Planned tests != run tests (4 != 0)
+ # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-You could still say "ftrace" as function-graph is part of the "ftrace"
-infrastructure. But I don't care either way.
+After:
+TAP version 13
+1..0 # SKIP Unable to allocate file: Read-only file system
+---
+ tools/testing/selftests/mm/hugetlb_dio.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-> +Instead of tracing all functions, if you want to attach callbacks on specific
-> +function entry and exit, similar to the kprobes and kretprobes, you can
->  use fprobe. Compared with kprobes and kretprobes, fprobe gives faster
->  instrumentation for multiple functions with single handler. This document
->  describes how to use fprobe.
-> @@ -91,12 +92,14 @@ The prototype of the entry/exit callback function are as follows:
->  
->  .. code-block:: c
->  
-> - int entry_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct pt_regs *regs, void *entry_data);
-> + int entry_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct ftrace_regs *fregs, void *entry_data);
->  
-> - void exit_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct pt_regs *regs, void *entry_data);
-> + void exit_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct ftrace_regs *fregs, void *entry_data);
->  
-> -Note that the @entry_ip is saved at function entry and passed to exit handler.
-> -If the entry callback function returns !0, the corresponding exit callback will be cancelled.
-> +Note that the @entry_ip is saved at function entry and passed to exit
-> +handler.
-> +If the entry callback function returns !0, the corresponding exit callback
-> +will be cancelled.
->  
->  @fp
->          This is the address of `fprobe` data structure related to this handler.
-> @@ -112,12 +115,10 @@ If the entry callback function returns !0, the corresponding exit callback will
->          This is the return address that the traced function will return to,
->          somewhere in the caller. This can be used at both entry and exit.
->  
-> -@regs
-> -        This is the `pt_regs` data structure at the entry and exit. Note that
-> -        the instruction pointer of @regs may be different from the @entry_ip
-> -        in the entry_handler. If you need traced instruction pointer, you need
-> -        to use @entry_ip. On the other hand, in the exit_handler, the instruction
-> -        pointer of @regs is set to the current return address.
-> +@fregs
-> +        This is the `ftrace_regs` data structure at the entry and exit. This
-> +        includes the function parameters, or the return values. So user can
-> +        access thos values via appropriate `ftrace_regs_*` APIs.
->  
->  @entry_data
->          This is a local storage to share the data between entry and exit handlers.
-> @@ -125,6 +126,17 @@ If the entry callback function returns !0, the corresponding exit callback will
->          and `entry_data_size` field when registering the fprobe, the storage is
->          allocated and passed to both `entry_handler` and `exit_handler`.
->  
-> +Entry data size and exit handlers on the same function
-> +======================================================
-> +
-> +Since the entry data is passed via per-task stack and it is has limited size,
-
-						"and it has limited size"
-
-> +the entry data size per probe is limited to `15 * sizeof(long)`. You also need
-> +to take care that the different fprobes are probing on the same function, this
-> +limit becomes smaller. The entry data size is aligned to `sizeof(long)` and
-> +each fprobe which has exit handler uses a `sizeof(long)` space on the stack,
-> +you should keep the number of fprobes on the same function as small as
-> +possible.
-
--- Steve
-
-> +
->  Share the callbacks with kprobes
->  ================================
->  
-> @@ -165,8 +177,8 @@ This counter counts up when;
->   - fprobe fails to take ftrace_recursion lock. This usually means that a function
->     which is traced by other ftrace users is called from the entry_handler.
->  
-> - - fprobe fails to setup the function exit because of the shortage of rethook
-> -   (the shadow stack for hooking the function return.)
-> + - fprobe fails to setup the function exit because of failing to allocate the
-> +   data buffer from the per-task shadow stack.
->  
->  The `fprobe::nmissed` field counts up in both cases. Therefore, the former
->  skips both of entry and exit callback and the latter skips the exit
+diff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
+index f9ac20c657ec6..60001c142ce99 100644
+--- a/tools/testing/selftests/mm/hugetlb_dio.c
++++ b/tools/testing/selftests/mm/hugetlb_dio.c
+@@ -44,13 +44,6 @@ void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
+ 	if (fd < 0)
+ 		ksft_exit_fail_perror("Error opening file\n");
+ 
+-	/* Get the free huge pages before allocation */
+-	free_hpage_b = get_free_hugepages();
+-	if (free_hpage_b == 0) {
+-		close(fd);
+-		ksft_exit_skip("No free hugepage, exiting!\n");
+-	}
+-
+ 	/* Allocate a hugetlb page */
+ 	orig_buffer = mmap(NULL, h_pagesize, mmap_prot, mmap_flags, -1, 0);
+ 	if (orig_buffer == MAP_FAILED) {
+@@ -94,8 +87,20 @@ void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
+ int main(void)
+ {
+ 	size_t pagesize = 0;
++	int fd;
+ 
+ 	ksft_print_header();
++
++	/* Open the file to DIO */
++	fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT, 0664);
++	if (fd < 0)
++		ksft_exit_skip("Unable to allocate file: %s\n", strerror(errno));
++	close(fd);
++
++	/* Check if huge pages are free */
++	if (!get_free_hugepages())
++		ksft_exit_skip("No free hugepage, exiting\n");
++
+ 	ksft_set_plan(4);
+ 
+ 	/* Get base page size */
+-- 
+2.39.5
 
 
