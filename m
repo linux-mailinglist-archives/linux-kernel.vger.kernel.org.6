@@ -1,136 +1,78 @@
-Return-Path: <linux-kernel+bounces-392738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19779B979E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:34:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D0C9B979C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8EEC1F232AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:34:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 818E3B21A15
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF71E1CEE9D;
-	Fri,  1 Nov 2024 18:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A308A1CB50E;
+	Fri,  1 Nov 2024 18:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j+Ah9SCV"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMegm/u7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08AF1CDFDE
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC050149E17
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730486059; cv=none; b=EwnsCM2aRdn7DpHMM4pH9usm6leuPtMWKUPsBoepajrke1tl2DbjdgobBr/DgDxOKC7qkrnnzKXJqAlSLRKlcka4LsjeypB/MtXChA+/Zyj8jlU/qdKayXGIcfzpsJkfG1rZZK2ALzrqCq7P3Mor2bkF9BVqjuT29zYvDUUgSIg=
+	t=1730486049; cv=none; b=XxWLbfri/rrfEuX+2R8oRpKjGgQGy0X4O1yQ1J6pIOilXyM8byEvioVkCjuotDF/VK7D9cp2cOWIeD6l6CfHAV0EQkjHoZTawlGRJefiLUCA+bN0fplL3+GNYzFO2VTpZN5kRaSVbuCNd36flBX2K1BED0RWhml9hzWa0zZWXHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730486059; c=relaxed/simple;
-	bh=oN0vujRXhSbTaSgamD07yGLZLfJwliF1KUGYf3X5eyQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=Vgdh/WSM6E9yDoEneOhtcNY5oW8zlt36LaMFneOE9LObBmcudlSTUc3M1o4CjL+LULxH97oK3YqygSFQt3zEsERBMkrMThGJSA8G069slr6ug2IiKFuyhn4g+52+qBP+pgGwY5FHP7eB4FoQTCbubsxD6TJFf71B5W0j65wswjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j+Ah9SCV; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71ec3392c25so2764938b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:34:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730486057; x=1731090857; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ILZtmXmmPjUA1g0mznhbcMlteKfyuGhztP/uRth5K5c=;
-        b=j+Ah9SCV5NTHqwIihCZcHzAPTAbejWQfPqBZHkT24HwS8Kg0PBjGehIUF3mb3RReex
-         ODEyHgLvT2BCYbouO5NOMU1qeX6RHXV7W3vbCoY0CzM2txy+eaUJeSLuEp7JJ+T3i+dV
-         0ibJthDmGHqKe8PcVvS5f/93gLqvDjjHXssu0B2WktfvLvMcTb1liQfePHBzhoNWqpOB
-         ClkuHVDSHpwxgpFyCviXkkdV+S6JG5hZZtBJ+/RgzXQ+xTy7DhYo8Dvx57WPc7b0jG3u
-         Qz7MYpwTxScxEvIayEnPHEpNaxp9mzlrX+wpxpR7CAS5zHsSyaT2ab5PaCHRR+DTesCD
-         1S9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730486057; x=1731090857;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ILZtmXmmPjUA1g0mznhbcMlteKfyuGhztP/uRth5K5c=;
-        b=DYSvmcN9UGn0vztQG/jMudarXJVbld3Pk3+OX+EgBzjqxEce9BZ/zcnke9ZBpomftP
-         gm3X/gbZt7spujz/3jbY1d0sD34zZOlICTjuaua0EYhhW5snOyAGmU7oXJbFILKmegsj
-         zttiy9R3fXJeKDW8vkAV7WYIuZX7h7pR+4FvFtQ5SfmVzpWevVKzpKHzjGMPbU0bPMMT
-         DAqrjcKQGIuew3fLvPrtaPkHa/Ry2AEW4KooMGsoGwsiXieRXzSSlKVFTASRKy0Z0vTt
-         3KeEGFvxPwgSTRCtcwQx5A0sfghWMtGG35tvKrjoK07k2wOimXkQcb9Qde9oqxLwSVEm
-         3r/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXvEbqvI7iUMdY/pxi6e/nP21cEIykOsCEpkyW2Fs9Ay09942jz12CEIC1tHm7tIvDUGNT3lUdGHvIFSbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVGZhh3pj+LeWBp3XFYvNvbm59XDiMqTHaiW1ct7Exk5mrHh6H
-	sHcg2TTvH9Jmyx08cmrSAHEsE2/bcSamH2dDjLn0ENnjvWxsrcRRoFjASdnAw5MvpLR3MY5fQnv
-	8dQ==
-X-Google-Smtp-Source: AGHT+IHeghFUa1oTqrPglV/po8yE2iF0JL0zdJIwGuRvfOvetTscuU7ZphiSgLb/o0u6deVXPooDkiBAglo=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:4604:b0:71e:4535:9310 with SMTP id
- d2e1a72fcca58-720c964ca2dmr12052b3a.0.1730486057285; Fri, 01 Nov 2024
- 11:34:17 -0700 (PDT)
-Date: Fri, 1 Nov 2024 11:34:15 -0700
-In-Reply-To: <20240719235107.3023592-2-seanjc@google.com>
+	s=arc-20240116; t=1730486049; c=relaxed/simple;
+	bh=Qmy2SsUg/DjK0ASuxpIEoHApiXwwm7Lzg/npM5rGqaA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=nEd5lqlh9bbUSSKN8EMS20POrbkTxSBADEkrLTJNG8k0+391FGh6HcbPlGhGAddXrKQ4BuPVG2rJ/QR6uGURpgkrofhFSKFImuczaekNX+GrlVBKzyhX4VSh+yecW6yTuLOMC3fCHJhrzT5R4TL2ooQf128/kwXfikvNEvNJvPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMegm/u7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F92AC4CECD;
+	Fri,  1 Nov 2024 18:34:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730486048;
+	bh=Qmy2SsUg/DjK0ASuxpIEoHApiXwwm7Lzg/npM5rGqaA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=gMegm/u7rNcN37ojZ5yUGKFsZIUhQPuLimhohZaQF0vpls8akYp5KoPaX18TGEUpf
+	 uh6FUgSRiQal7udxTuizRiKHmo+R9JKfBcaPIWEjYXym4fBuImkfjdfNtGRYU2NQuD
+	 K2klZ5dIv/rYQa323URuisrJ2djIhBv+Um1DhbbDcNHr9dffuP21WKHgPxH/gIsBud
+	 2k7KmkI8spc6Nch4p3t6z1Lyq7OrKtv7oSImME0NJEK55Ugrg26wf1xLOdVNKQuo+Y
+	 zQMuqlrE5eFJl6yJf79Q3iHETPlCxNFYslac8E5/JzgH6+xaPiFz6rnNr90ctPXJQo
+	 drnNuuXY8+wag==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB4BA3AB8A8B;
+	Fri,  1 Nov 2024 18:34:17 +0000 (UTC)
+Subject: Re: [GIT PULL] arm64 fixes for -rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241101112207.GA8472@willie-the-truck>
+References: <20241101112207.GA8472@willie-the-truck>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241101112207.GA8472@willie-the-truck>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+X-PR-Tracked-Commit-Id: 2e8a1acea8597ff42189ea94f0a63fa58640223d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3dfffd506eff69e4246a0f1760e67dd90f9bbb32
+Message-Id: <173048605655.2776063.16448857518642615257.pr-tracker-bot@kernel.org>
+Date: Fri, 01 Nov 2024 18:34:16 +0000
+To: Will Deacon <will@kernel.org>
+Cc: torvalds@linux-foundation.org, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240719235107.3023592-1-seanjc@google.com> <20240719235107.3023592-2-seanjc@google.com>
-Message-ID: <ZyUfJ4NFyb3OShjY@google.com>
-Subject: Re: [PATCH v2 01/10] KVM: x86: Enforce x2APIC's must-be-zero reserved
- ICR bits
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Jul 19, 2024, Sean Christopherson wrote:
-> Inject a #GP on a WRMSR(ICR) that attempts to set any reserved bits that
-> are must-be-zero on both Intel and AMD, i.e. any reserved bits other than
-> the BUSY bit, which Intel ignores and basically says is undefined.
-> 
-> KVM's xapic_state_test selftest has been fudging the bug since commit
-> 4b88b1a518b3 ("KVM: selftests: Enhance handling WRMSR ICR register in
-> x2APIC mode"), which essentially removed the testcase instead of fixing
-> the bug.
-> 
-> WARN if the nodecode path triggers a #GP, as the CPU is supposed to check
-> reserved bits for ICR when it's partially virtualized.
+The pull request you sent on Fri, 1 Nov 2024 11:22:08 +0000:
 
-Apparently this isn't accurate, as I've now hit the WARN twice with x2AVIC.  I
-haven't debugged in depth, but it's either INVALID_TARGET and INVALID_INT_TYPE.
-Which is odd, because the WARN only happens rarely, e.g. appears to be a race of
-some form.  But I wouldn't expect those checks to be subject to races.
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
 
-Ah, but maybe this one is referring to the VALID bit?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3dfffd506eff69e4246a0f1760e67dd90f9bbb32
 
-  address is not present in the physical or logical ID tables
+Thank you!
 
-If that's the case, then (a) ucode is buggy (IMO) and is doing table lookups
-*before* reserved bits checks, and (b) I don't see a better option than simply
-deleting the WARN.
-
-  ------------[ cut here ]------------
-  WARNING: CPU: 146 PID: 274555 at arch/x86/kvm/lapic.c:2521 kvm_apic_write_nodecode+0x7a/0x90 [kvm]
-  Modules linked in: kvm_amd kvm ... [last unloaded: kvm]
-  CPU: 146 UID: 0 PID: 274555 Comm: qemu Not tainted 6.12.0-smp--41585e8a34cb-sink #458
-  Hardware name: Google Astoria/astoria, BIOS 0.20240617.0-0 06/17/2024
-  RIP: 0010:kvm_apic_write_nodecode+0x7a/0x90 [kvm]
-  RSP: 0018:ff51c04b4d133be8 EFLAGS: 00010202
-  RAX: 0000000000000001 RBX: 0000000000000000 RCX: 00000000000cffff
-  RDX: 0000000087fd0e00 RSI: 00000000000cffff RDI: ff42132c9e336f00
-  RBP: ff51c04b4d133e50 R08: 0000000000000000 R09: 0000000000060000
-  R10: ffffffffc067428f R11: ffffffffc080aa20 R12: 00000000000cffff
-  R13: 0000000000000000 R14: ff42132d09e7c2c0 R15: 0000000000000000
-  FS:  00007fc1af0006c0(0000) GS:ff42138a08500000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000000 CR3: 0000006267e52001 CR4: 0000000000771ef0
-  PKRU: 00000000
-  Call Trace:
-   <TASK>
-   avic_incomplete_ipi_interception+0x24a/0x4c0 [kvm_amd]
-   kvm_arch_vcpu_ioctl_run+0x1e11/0x2720 [kvm]
-   kvm_vcpu_ioctl+0x54f/0x630 [kvm]
-   __se_sys_ioctl+0x6b/0xc0
-   do_syscall_64+0x83/0x160
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  RIP: 0033:0x7fc1b584624b
-   </TASK>
-  ---[ end trace 0000000000000000 ]---
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
