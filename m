@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-392806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11DF59B9855
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:21:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1579B9857
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:21:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCC351F22B28
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:21:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9151F22B1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29571CF5ED;
-	Fri,  1 Nov 2024 19:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378B71CF2AF;
+	Fri,  1 Nov 2024 19:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XIXA/UZg"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZIQbVUeK"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C3D1CEEA1
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193D71CF5CF
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730488878; cv=none; b=IxYIv5Atyl1hrFst5j1qan2VD67NAkO2JLQl3rmwSaF7uYjzX28KgRtNIFLiklyVyDybmA/eOF7zerNg1ZcRarOD1yDWp6+xkob7hCkBgehd9ojT6SpYXHqqmAAGzmxEl5oHaO3/uTIZALgKKdrpzL8ZUMEfBV5pSFyYop9Scgc=
+	t=1730488879; cv=none; b=o+3BzfTyH+mFc1VuzSlG7nKHyCUfJE1eav+1mlH6+lYBQNpLaKwRSTX1CVWLi+apxAHUkjU0IPGsxHgn6vH/4jYaF0KUhT+/QBvmh7wrnZ/6k1WFj4USKkuymO4d/AIS0nZcGO491h+QNmXiU7aYbcVRyPdYyP+myU7y40JaHIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730488878; c=relaxed/simple;
-	bh=gDCwC1SPleUIBwKe9fTtquqbqUFzDDTJZqQXk2CUcQA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=s6Y9uFDk950s9Sk4aTqMO5EDiuQZnno9baeykhIwD094x2kdsy9fenFvkfkLJ5G7WLQf6YXdX1BfEaX2eipR8fkEA18gRIYUqf89JvOxKHWheR2izqR4oz5tYNl8059k81PGaC3zpus+DHApD5VwLSf3QnuTetS+xYdnwkHoz4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XIXA/UZg; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1730488879; c=relaxed/simple;
+	bh=4aHP8sLShS56T2NW/tyehgRssjrZvgR7eKhwcI7P9DA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VAFMSZzgHz0zilaau3ZYdrJCQ1ldCM/Al894rK8rkL9NsF3TNTNhdkyFnnZxz4ed8SiJZJ8L8Tqu5TTBszygr/C+w8ddKvVjyB2q31KemAFQAxRtKp3OwbmeWq8n+tSgK22yQYLPFx7h41MkGpljrPCr0F3UvGioF1TnNLbVnHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZIQbVUeK; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e6101877abso48129137b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:21:16 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20c8d7f9128so29060915ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:21:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730488876; x=1731093676; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gRx4ATohdQbBBEdds8jqGttW3H5chvC7bMcPq5abO9s=;
-        b=XIXA/UZgiYmi/jxgsuPDVX9x1ek3jrxJCB4306y/LljpzgU4L7LHWCkZ9JWCGWOrTT
-         T0AOHo00NGuIdY+pP3rCJt68rnQvKK/mW686qdBywmZa3/6P8sVhUl7ThnURDlgYtf0k
-         NI4SUj0BX/Jl9nDg3dqt5mRif+XzMn7FHjj/6g/oEyWK97P1zJ+7zQZueklG1Abryjeh
-         G+l4B4uo7tLTypVBB7tmb4PsLIjKkxn5LcbJYRNVHzPcCcSsMtGRxS/a7QNf87Jh5pOL
-         93D9jzsQqjAmkX0Ine8t+r7N6SIdleLq77LISMJpP/PvYnCYPIJQUl4/9paONi3D93b/
-         O28A==
+        d=google.com; s=20230601; t=1730488877; x=1731093677; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=xI6w6F0Rq/ewsI+CWOomchy6WB54I1EzgId3O/qxAWU=;
+        b=ZIQbVUeKvFJ0LPEMh6P4Jzybq5nPuYEM0vmlpEBPoAxhSvteYoONg91s9szQyNJbNS
+         R5LcZBMF9Voh2MB3MLyS+a9Msxo7SSIb2ScVJg2raNW4gi7/mMyuXF5JSiH6D8rEeCAm
+         +zLPhHLR+PQlQoAXEm8Dm4bFSNJhScA8c5jI8DqG82crpdr4dtr+CCd4Clil/MLvM4UE
+         V2eUMdYBpvaImq4OnnHcSb/OgWyEk06pMvA6dPlwV7AQz+RgHzCMVT6HQL2BESL/0Vda
+         MFSCfPB07GN7+lnMb0sUeobdmsdk3yCSubiZVt7qLaffnicUVvtG5vuCIhE27K+Uh+EI
+         BB1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730488876; x=1731093676;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gRx4ATohdQbBBEdds8jqGttW3H5chvC7bMcPq5abO9s=;
-        b=bRlCeGk9pNPHN/D1N6oydf3B/4YjMNjpLjneWTfQgxLh5TljyOL6qbdnCLk1On8YeN
-         YR286Y3NzrvJDoFJr6LOlLcqU0yW5GdRPb2jPMEvL8+wETjU0AxV0rpiVO8UT056ghj3
-         8355DtkV9gCVoyCYObSHwHlVelQS3pB9NC8VWf4fNfp4dEjrYy6/Zzm3XipS6/e5kutK
-         LKqg73OdWA200KbvmqkpTuwQGikdo54R4ByRpSQ4h5OHa4X4z4/awZKwkgclHK0tbpbI
-         L+GosGX4Y3g7PyH2RWLII/nwJykUtfzD+I3WbBLuqqDyhXGP+E0VxrDKVHo1srVCJQ03
-         czlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUglU4p46g6Xx01o/R5oMN1xRlZ4pTbxD2iA0Y8NT4gM9JabMpAuTh4ztGhJZWV8n1r//uztWWcMt5D8+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy17Af9RWGquryt3cA0CdveBPiRPpNgsG5aeEYDF3l9SF2hfHhc
-	ywFH+WUXKVVYQsiJosEtWlUh6Nft/16pBTh3lwtWr+LIsrzTbBlqoizPS0XILgI7wCq8ZSzoQGp
-	uHQ==
-X-Google-Smtp-Source: AGHT+IHyeXiqfos8eUR1QXSm5Yxh076bg1NHvY90DfQOpetXU7pbsHu/DXBbVvfOG8iUCJwqIfmVk5H37TI=
+        d=1e100.net; s=20230601; t=1730488877; x=1731093677;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xI6w6F0Rq/ewsI+CWOomchy6WB54I1EzgId3O/qxAWU=;
+        b=Dk5qKVzFU61JLrrltvn7NPWE2Z1W+bwVS3lznNNYdJKjKMcq6FlNg6hysYaN16k/Jm
+         EovusGUiQdQQSJeFLkQdmKD3W2iBawrZ11gLcUeoKZCj22GgZh2Q0oV8kdjWkxYPuh+c
+         EWpS8DORxWRrNICZJ/GFT43ntKOEwjAb+sofJMnLiQk9cluQtBAQ7KqrXBXP/mgJ4aKK
+         wXpdZYijrWehm/Jd2TITbQyF5El7cZOBEL2c9MIPGJtafIwKtxzpn1B3bmN/Q8/RdJYq
+         7pfGgmvSU0hHnGseyNDrEfcgGB+erfRtKm7idmM9+jDGrslRQhHIJ8YpTaCGHJXrK4U/
+         V1uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDrMHLyTgwsYVQqmktJ3iCvLgjeNt74aT206Ij6+j3q+IGZulrsQYs2TeaP5jCcb6cHQNVmyOxZz8A2F8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5rNMIIBT+NDaB2aYJdadIcG/wvi4a0mWz+e1g8JunvozACDdR
+	3UCRnTpGJOdgJzmMJ7k5r6Svj4aTQbptoTE2K+U5YFeq/d6kP0ySte4VXLLzxNj1qoBqTCsSHXY
+	iCw==
+X-Google-Smtp-Source: AGHT+IHACu9yzXMxt2XBd8lJp3UyNmmpGDcPKIHyoyWG0kqfKEdPmB5cvzCvIkxhgVEQQMZPGusL0PGjcmA=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:6f8e:b0:6e3:2bc1:da17 with SMTP id
- 00721157ae682-6ea64bc93a8mr525467b3.4.1730488875839; Fri, 01 Nov 2024
- 12:21:15 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:903:22cf:b0:20c:857b:5dcb with SMTP id
+ d9443c01a7336-210c6c1493amr1960935ad.4.1730488877405; Fri, 01 Nov 2024
+ 12:21:17 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  1 Nov 2024 12:21:12 -0700
+Date: Fri,  1 Nov 2024 12:21:13 -0700
+In-Reply-To: <20241101192114.1810198-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241101192114.1810198-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241101192114.1810198-1-seanjc@google.com>
-Subject: [PATCH 0/2] KVM: nVMX: Fix an SVI update bug with passthrough APIC
+Message-ID: <20241101192114.1810198-2-seanjc@google.com>
+Subject: [PATCH 1/2] KVM: x86: Plumb in the vCPU to kvm_x86_ops.hwapic_isr_update()
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -80,32 +84,103 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Chao Gao <chao.gao@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Defer updating SVI (i.e. the VMCS's highest ISR cache) when L2 is active,
-but L1 has not enabled virtual interrupt delivery for L2, as an EOI that
-is emulated _by KVM_ in such a case acts on L1's ISR, i.e. vmcs01 needs to
-reflect the updated ISR when L1 is next run.
+Pass the target vCPU to the hwapic_isr_update() vendor hook so that VMX
+can defer the update until after nested VM-Exit if an EOI for L1's vAPIC
+occurs while L2 is active.
 
-Note, L1's ISR is also effectively L2's ISR in such a setup, but because
-virtual interrupt deliver is disable for L2, there's no need to update
-SVI in vmcs02, because it will never be used.
+No functional change intended.
 
-Chao Gao (1):
-  KVM: nVMX: Defer SVI update to vmcs01 on EOI when L2 is active w/o VID
-
-Sean Christopherson (1):
-  KVM: x86: Plumb in the vCPU to kvm_x86_ops.hwapic_isr_update()
-
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
  arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/kvm/lapic.c            | 22 ++++++++++++++++------
- arch/x86/kvm/lapic.h            |  1 +
- arch/x86/kvm/vmx/nested.c       |  5 +++++
- arch/x86/kvm/vmx/vmx.c          | 19 ++++++++++++++++++-
- arch/x86/kvm/vmx/vmx.h          |  1 +
+ arch/x86/kvm/lapic.c            | 11 +++++------
+ arch/x86/kvm/vmx/vmx.c          |  2 +-
  arch/x86/kvm/vmx/x86_ops.h      |  2 +-
- 7 files changed, 43 insertions(+), 9 deletions(-)
+ 4 files changed, 8 insertions(+), 9 deletions(-)
 
-
-base-commit: e466901b947d529f7b091a3b00b19d2bdee206ee
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 70c7ed0ef184..3f3de047cbfd 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1734,7 +1734,7 @@ struct kvm_x86_ops {
+ 	bool allow_apicv_in_x2apic_without_x2apic_virtualization;
+ 	void (*refresh_apicv_exec_ctrl)(struct kvm_vcpu *vcpu);
+ 	void (*hwapic_irr_update)(struct kvm_vcpu *vcpu, int max_irr);
+-	void (*hwapic_isr_update)(int isr);
++	void (*hwapic_isr_update)(struct kvm_vcpu *vcpu, int isr);
+ 	void (*load_eoi_exitmap)(struct kvm_vcpu *vcpu, u64 *eoi_exit_bitmap);
+ 	void (*set_virtual_apic_mode)(struct kvm_vcpu *vcpu);
+ 	void (*set_apic_access_page_addr)(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 65412640cfc7..5be2be44a188 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -763,7 +763,7 @@ static inline void apic_set_isr(int vec, struct kvm_lapic *apic)
+ 	 * just set SVI.
+ 	 */
+ 	if (unlikely(apic->apicv_active))
+-		kvm_x86_call(hwapic_isr_update)(vec);
++		kvm_x86_call(hwapic_isr_update)(apic->vcpu, vec);
+ 	else {
+ 		++apic->isr_count;
+ 		BUG_ON(apic->isr_count > MAX_APIC_VECTOR);
+@@ -808,7 +808,7 @@ static inline void apic_clear_isr(int vec, struct kvm_lapic *apic)
+ 	 * and must be left alone.
+ 	 */
+ 	if (unlikely(apic->apicv_active))
+-		kvm_x86_call(hwapic_isr_update)(apic_find_highest_isr(apic));
++		kvm_x86_call(hwapic_isr_update)(apic->vcpu, apic_find_highest_isr(apic));
+ 	else {
+ 		--apic->isr_count;
+ 		BUG_ON(apic->isr_count < 0);
+@@ -2767,7 +2767,7 @@ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	if (apic->apicv_active) {
+ 		kvm_x86_call(apicv_post_state_restore)(vcpu);
+ 		kvm_x86_call(hwapic_irr_update)(vcpu, -1);
+-		kvm_x86_call(hwapic_isr_update)(-1);
++		kvm_x86_call(hwapic_isr_update)(vcpu, -1);
+ 	}
+ 
+ 	vcpu->arch.apic_arb_prio = 0;
+@@ -3083,9 +3083,8 @@ int kvm_apic_set_state(struct kvm_vcpu *vcpu, struct kvm_lapic_state *s)
+ 	kvm_apic_update_apicv(vcpu);
+ 	if (apic->apicv_active) {
+ 		kvm_x86_call(apicv_post_state_restore)(vcpu);
+-		kvm_x86_call(hwapic_irr_update)(vcpu,
+-						apic_find_highest_irr(apic));
+-		kvm_x86_call(hwapic_isr_update)(apic_find_highest_isr(apic));
++		kvm_x86_call(hwapic_irr_update)(vcpu, apic_find_highest_irr(apic));
++		kvm_x86_call(hwapic_isr_update)(vcpu, apic_find_highest_isr(apic));
+ 	}
+ 	kvm_make_request(KVM_REQ_EVENT, vcpu);
+ 	if (ioapic_in_kernel(vcpu->kvm))
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 6ed801ffe33f..fe9887a5fa4a 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6868,7 +6868,7 @@ void vmx_set_apic_access_page_addr(struct kvm_vcpu *vcpu)
+ 	read_unlock(&vcpu->kvm->mmu_lock);
+ }
+ 
+-void vmx_hwapic_isr_update(int max_isr)
++void vmx_hwapic_isr_update(struct kvm_vcpu *vcpu, int max_isr)
+ {
+ 	u16 status;
+ 	u8 old;
+diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
+index a55981c5216e..48dc76bf0ec0 100644
+--- a/arch/x86/kvm/vmx/x86_ops.h
++++ b/arch/x86/kvm/vmx/x86_ops.h
+@@ -48,7 +48,7 @@ void vmx_migrate_timers(struct kvm_vcpu *vcpu);
+ void vmx_set_virtual_apic_mode(struct kvm_vcpu *vcpu);
+ void vmx_apicv_pre_state_restore(struct kvm_vcpu *vcpu);
+ void vmx_hwapic_irr_update(struct kvm_vcpu *vcpu, int max_irr);
+-void vmx_hwapic_isr_update(int max_isr);
++void vmx_hwapic_isr_update(struct kvm_vcpu *vcpu, int max_isr);
+ int vmx_sync_pir_to_irr(struct kvm_vcpu *vcpu);
+ void vmx_deliver_interrupt(struct kvm_lapic *apic, int delivery_mode,
+ 			   int trig_mode, int vector);
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
