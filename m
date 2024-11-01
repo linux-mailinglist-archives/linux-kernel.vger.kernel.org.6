@@ -1,71 +1,166 @@
-Return-Path: <linux-kernel+bounces-391589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16C09B8901
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:02:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFFC9B8904
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 974E32820DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:02:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF9DD1F22DFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC09132103;
-	Fri,  1 Nov 2024 02:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6566130499;
+	Fri,  1 Nov 2024 02:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oU7Cunw/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTHpru/V"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7393C1EA65;
-	Fri,  1 Nov 2024 02:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9620F2D047;
+	Fri,  1 Nov 2024 02:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730426528; cv=none; b=K05ivkT4qJ5ZSHNKfjfSteXg1wqDzRaYTPda2DnTvxr+cxyzRTfOM32XF+LDNcmncY2Als4fDewLgMu1Mw8HlXnh5lO1E/rCZs2b3wQiDi7Ah/Sj8KrjL9ujJLudNXsKvIsgeeD9xtcJyW+fpR3jo2er1aPcAPm6GezhqL2UDXc=
+	t=1730426600; cv=none; b=eb5TecfzQORLloyJPr1fZXmxXxA+IcVOSjm9hZIg7NCaCnMan5q8pP9dI8jfZiKdeq01jA8SniYs/rpT2pBx7Aht2Gq3EdvaF2dc5/jAPFKep9ra61bMUJzOmnsIo2tccLcIdBY5hmJYGKzdocWiqQZk0xQBgfASvmOfz8ZO2G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730426528; c=relaxed/simple;
-	bh=00Qzs0zLAQpvza5LdbNUpf4OdZ8Rc7JiePkFOhbFX4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R/ofYb6IKhStywRhJwgY39nn7fJoRigOuv/lmydYUPWYRS22s0CIe2b0iBfzD8tBbtjnJrnNt1z+lCNN5IsgdevuL0N6OZYOSvvuk3z1BFMaJbRZI5FLyPMpG9K5t5z81/8qlkLfgUhtfUN5gT5p/fviypd6VtFEgr/2ez4mBzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oU7Cunw/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C70C4CEC3;
-	Fri,  1 Nov 2024 02:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730426527;
-	bh=00Qzs0zLAQpvza5LdbNUpf4OdZ8Rc7JiePkFOhbFX4A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oU7Cunw/Eu2gpa6G+pancwyFwb0Lv+AYQZYY7SJPFaBtoeBGHyQ/soBnDO87qBXKH
-	 k139dZPkQbsvrJ7mMXCANSURqzaTQ25Hm0JwMJjLaoKLouFPccIf+s5kNLLpmOydlv
-	 jN+vu7V6CjHiXrZr4vRWMzG4HeuGIV5t96TAG2jf+V0KdYRSTM8/FuiRk7AmSCaB3i
-	 bB/0i8c90S3Eiv3GAhG5QsbLmwXvQal2Sl4cJ2QIO2jvr2Xae2nVgmiUNmC0PzrnWS
-	 v6jIRG3DbgFifG6gF509+UxfKoxXIw3TF+1NuS01iC3o22NjZrKInu7UWAXHH5oIJv
-	 iZmtnMAmHkmTQ==
-Date: Thu, 31 Oct 2024 19:02:06 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: George Guo <dongtai.guo@linux.dev>
-Cc: horms@kernel.org, paul@paul-moore.com, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, George
- Guo <guodongtai@kylinos.cn>
-Subject: Re: [PATCH net-next v2] netlabel: document doi_remove field of
- struct netlbl_calipso_ops
-Message-ID: <20241031190206.475dbc4c@kernel.org>
-In-Reply-To: <20241028123435.3495916-1-dongtai.guo@linux.dev>
-References: <20241028123435.3495916-1-dongtai.guo@linux.dev>
+	s=arc-20240116; t=1730426600; c=relaxed/simple;
+	bh=UzZGjlq2NMeCCNYaIEhS4hI/vfrwUwvmx0tvmBsn8tE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K0kWRIdnD046B6F6+b3FcRBskPfZXwKnckXLOAxkfcYEvInLMr8zhqxz8Io25DCGqR1NXI/V8b2HqqKmUVsLFO/V4tP3gIts732RlDMl5HWINafxddXnbM1Lo5qyjinmieBQJ5A5ClvDyYY9+CQ3OE+38KazHlKg1t6mwPcIcog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HTHpru/V; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ea4add8a5fso15195647b3.0;
+        Thu, 31 Oct 2024 19:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730426593; x=1731031393; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Te1OE/CZo/VDUhv2lpaanuO9l9CeXus+cfr9lW8+Q20=;
+        b=HTHpru/VRP3iMrEHLjsoXFoQwRTNNA5398pxpq7+kJtVKdXbbUzKBm4ysiRVn1m3Uj
+         waLaynzzoSxxNEBHAv1DHdMXKAkrDqaPuOMZHDn1JPGKd+x6kFPA+iajsJOr7ONoiDaA
+         hRsjkCkZHP0Gwq0pLjJNeY6vxc9eT7rm9JJZar3jlf6SSNkAWdv0J9MZsiLup2OfUWfn
+         TRkBv+f0O0b1dY6Z+wt2DEIMjnXbJ0Pp9LV/tSJiE38PfCPEroH7747uVq5V6LQc+nnE
+         ZCJ+r70c3O/I33M4+UdJyp2khHghm6beet91vhJgHBZTo9bRSrAG4MaTH8ags4LqJUPi
+         CCCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730426593; x=1731031393;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Te1OE/CZo/VDUhv2lpaanuO9l9CeXus+cfr9lW8+Q20=;
+        b=rvtVhgLKs92Z60tRo2S2W3MwT+CzyDzCJyU+K6QQoWe+Y9mQgfM1VutNZLYmBIXNjn
+         kgO2nUxtqpVKtXqNhrb4qv80MmSuvFny74R0IUv6Hxgs3oeu2wouw/zhsGAGFKmyb54P
+         Ypw8Ou8Md29L/EUNV+aQkNHy3oI25woqgJ1vsgsbNs0y3vaibJ67FFJ3nBgy0aoabL0A
+         5w4pnCo9EA5lIdPFuQ1RIYT8aZOA7E7ilVQz3OSQ3b0kH049ztqKa/eJo4EmV3piTqrd
+         ZuuE9w6g+H/I5nGlj83uPkGidBUwZVUXPho/i7V91n2ARrNEJAzCn41vlJcPBeDSDGX1
+         aenA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF19jMblWMu5ShEmugHvym8wnIUco/1yJfBruJ0wyjm5K/DGuECA+LRkGiVB/zjUyH23yhnynGrNLlMl4=@vger.kernel.org, AJvYcCVyZQJrS9avRtDE2+WyrPaokiJIAEoQoP8rZgsCnSvDarutq4l0KrJgLihIHFXTibVLvnIi0yfUdsz9s7VKClEWxw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVaM7DpPILFjRtNbY9pnmoAYsGgE1rY4db5RWlFMpHlivf2luG
+	HZwU7dd4ODFfhBeeIwP2y4KoLLz9ugBLN8Ar8ispGcOOWqFJn8AR2/sRfYsFZuMJH/v2GJ49gIb
+	F9sGRSvw9vbfHSS0/Q8WOKkFrxkVBnka8AQo=
+X-Google-Smtp-Source: AGHT+IFconlXndYXuiFUkbijurfjCn/QXjppHpR3BjmjmGzAuMrOOpa/i5ZIRe+HHn/doxcXrIzMDNy3qhlWBcjicuw=
+X-Received: by 2002:a05:690c:296:b0:647:7782:421a with SMTP id
+ 00721157ae682-6ea52549817mr56596107b3.45.1730426592621; Thu, 31 Oct 2024
+ 19:03:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241101005338.5846-1-benjamin@engflow.com>
+In-Reply-To: <20241101005338.5846-1-benjamin@engflow.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Thu, 31 Oct 2024 19:03:02 -0700
+Message-ID: <CAH0uvohLu-N+SRu=ddaHnLhC48JAj_=Pf-ZthgOTyFJ44AEumQ@mail.gmail.com>
+Subject: Re: [PATCH] perf trace: avoid garbage when not printing an trace
+ event's arguments
+To: Benjamin Peterson <benjamin@engflow.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Oct 2024 20:34:35 +0800 George Guo wrote:
-> Add documentation of doi_remove field to Kernel doc for struct netlbl_calipso_ops.
-> 
-> Flagged by ./scripts/kernel-doc -none.
+Hello Benjamin,
 
-Okay but there are 5 other warnings in this file.
-In the future please try to address all kdocs warnings in one change.
+It does not build on my system due to this warning:
+
+builtin-trace.c: In function =E2=80=98trace__fprintf_tp_fields=E2=80=99:
+builtin-trace.c:3090:35: error: field precision specifier =E2=80=98.*=E2=80=
+=99 expects
+argument of type =E2=80=98int=E2=80=99, but argument 3 has type =E2=80=98si=
+ze_t=E2=80=99 {aka =E2=80=98long
+unsigned int=E2=80=99} [-Werror=3Dformat=3D]
+ 3090 |         fprintf(trace->output, "%.*s", printed, bf);
+      |                                 ~~^~   ~~~~~~~
+      |                                   |    |
+      |                                   int  size_t {aka long unsigned in=
+t}
+
+Thanks,
+Howard
+
+On Thu, Oct 31, 2024 at 5:54=E2=80=AFPM Benjamin Peterson <benjamin@engflow=
+.com> wrote:
+>
+> trace__fprintf_tp_fields may not print any tracepoint arguments. E.g., if=
+ the
+> argument values are all zero. Previously, this would result in a totally
+> uninitialized buffer being passed to fprintf, which could lead to garbage=
+ on the
+> console. Fix the problem by passing the number of initialized bytes fprin=
+tf.
+>
+> Remove the return value of trace__fprintf_tp_fields, since it was meaning=
+less
+> and ignored.
+>
+> Fixes: f11b2803bb88 ("perf trace: Allow choosing how to augment the trace=
+point arguments")
+> Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
+> ---
+>  tools/perf/builtin-trace.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index d3f11b90d025..e93f795e680f 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -3021,7 +3021,7 @@ static void bpf_output__fprintf(struct trace *trace=
+,
+>         ++trace->nr_events_printed;
+>  }
+>
+> -static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel=
+ *evsel, struct perf_sample *sample,
+> +static void trace__fprintf_tp_fields(struct trace *trace, struct evsel *=
+evsel, struct perf_sample *sample,
+>                                        struct thread *thread, void *augme=
+nted_args, int augmented_args_size)
+>  {
+>         char bf[2048];
+> @@ -3087,7 +3087,7 @@ static size_t trace__fprintf_tp_fields(struct trace=
+ *trace, struct evsel *evsel,
+>                 printed +=3D syscall_arg_fmt__scnprintf_val(arg, bf + pri=
+nted, size - printed, &syscall_arg, val);
+>         }
+>
+> -       return printed + fprintf(trace->output, "%s", bf);
+> +       fprintf(trace->output, "%.*s", printed, bf);
+>  }
+>
+>  static int trace__event_handler(struct trace *trace, struct evsel *evsel=
+,
+> --
+> 2.39.5
+>
+>
 
