@@ -1,125 +1,103 @@
-Return-Path: <linux-kernel+bounces-392553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6F29B957A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:34:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0005F9B957F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09C121C21491
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:34:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88AB5B2106B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA8B1A08C5;
-	Fri,  1 Nov 2024 16:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAA01C7603;
+	Fri,  1 Nov 2024 16:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ku5wNbzg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="sUvVjXLq"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D621DA53;
-	Fri,  1 Nov 2024 16:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E28D1DA53;
+	Fri,  1 Nov 2024 16:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730478842; cv=none; b=kkQEuyWw/0H85Q2HbjfQzFoU8a1mbAs2k0+8M8loC4Hvs1zGa4tBzTfylcJAHn+ri4shwJyFd5m9b4XPPRSSeaIFXhzyI+oHdEJeJ/fAFDhGm5dVa4OHhNd6159jWyOyhc1LoiidlyloELfUix6mPju2ClxeS8zRTuEc5GLJeDY=
+	t=1730478874; cv=none; b=JS4Iv+hj/AYjTj61lLjoaMam+pMLAo8vucu0+NSJYmfgEpc7e/zktdevJC9r+eAxBa+3udhC/uCnYOveeJ8aDpM8HhDXIixI55/mufrzPngjfod3B4aefzbjc3qS9aCLFxFGX/TqKSFcgqDJ+6uH3bAo5t2v9hDXSG+yJ+ACzP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730478842; c=relaxed/simple;
-	bh=mV4filxoSKBiK71CYZhpWrrl9CqzhvPDqtVuqoioWyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eIzM7R727HUxnnQVf132jonZ6KNhJWqj2Ky+55BTYRD+44NqOuz8KV6tuIv82oFnVRz7+1udScXkJvin2x246ZK2s97uHYmGjBj91AkNfBtsiJalwwFbz1TBDJzDIJ78qmFK8pcvgKfzeByzjZIUqGfmitnasc1yliGn9DmaSm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ku5wNbzg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C779C4CECD;
-	Fri,  1 Nov 2024 16:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730478842;
-	bh=mV4filxoSKBiK71CYZhpWrrl9CqzhvPDqtVuqoioWyI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ku5wNbzgaB7PBFzp01OX7dN3Qoocj0oms6qDky3kymDhlxzCHfVXQhlhs8tl17TVg
-	 u5WqRUhWJYWicQ1JqAXejS0of8h6nH2RHHvzmXtKZenX6byI10t0qxgDeRH/dHoyzO
-	 QddUeSVQoH2vSOThk/YmXBMZF+MsXZ5bh+7/QWKDIbWBaPGawUnwVv3C5ZAtKTGhFf
-	 ilTtMm1/MdrZi39812ZCmE9r1958q6x50Z94xSpvsurovX907vwQFdxo6sQtA83H7N
-	 vUBitiqwDTldBfSg5zHPTjTcFZtDo9ZUYO1yVvyGqU46PnLZRtocjnIhh7Ej8oiPl5
-	 eFA743SovKREQ==
-Date: Fri, 1 Nov 2024 16:33:49 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Ramona Gradinariu
- <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Anand Ashok Dumbre
- <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
- Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
- <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
- Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
- Linus Walleij <linus.walleij@linaro.org>, Benson Leung
- <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v2 08/15] iio: accel: mma9551: use bool for event state
-Message-ID: <20241101163349.6b827eaa@jic23-huawei>
-In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-8-2bcacbb517a2@baylibre.com>
-References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
-	<20241031-iio-fix-write-event-config-signature-v2-8-2bcacbb517a2@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730478874; c=relaxed/simple;
+	bh=X2Sam5HutoJ7iiicXyA8uroAlk8826bkiyUbW3FOC68=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y/3vASsPFoV34ZPz6wj6yi3bzWsZcUTAYgX3/x8etyoi8x+qz5m7aoNNNbn4Rkat+ku/I58BRq9/MF/O8oNiOTLQE8iavuGExjwr+KhR5yE61T0Mot4VeMpldooNfQAmKcyVlIWb2TlO10Ojrfshk/1IU6k/gV9xa9WfIQeza9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=sUvVjXLq; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=R5Y/nh7AnHvmk8pCiKMUqljr9HbLzI4ZraaZx298UZs=; b=sUvVjXLqT3rneRt6vfdGSKeCrW
+	b2upRg0vLM/mCOkJAyjOUpzEKNSewCcp+EuZak2Q4o46l57tuTjyS6lqqwZA5tlqiFTdbKX8+LyLi
+	kx9yby1obuoPpIFf38Fms6iU9uJB8Zy6uwOnRkwEmASnixo4GzhE9KIPe8Yevp+fAX/XNPlMAyAwx
+	TRGu4FTESrLdLrFtCk5LIZhAQzczTTxgSDllsMZFAy1MtTN+m1eaIxLnTURo6eYIFtmlPwcvf/dKY
+	lS0Hf3E791FyESuflHJtui38qWXc3CqXfl5nKgZY5K7F6iVuttx1Wwn2PxhGcg6Ek+LJ0T/f61PVY
+	Qm9Uf/Mg==;
+Received: from [187.36.213.55] (helo=[192.168.1.103])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t6ubJ-000UmQ-9W; Fri, 01 Nov 2024 17:34:17 +0100
+Message-ID: <8abab19a-bab0-4449-b1b2-bf9a57024943@igalia.com>
+Date: Fri, 1 Nov 2024 13:34:09 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] mm: add more kernel parameters to control mTHP
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Hugh Dickins <hughd@google.com>,
+ Barry Song <baohua@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
+ <ioworker0@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com
+References: <20241030130308.1066299-1-mcanal@igalia.com>
+ <20241030155059.9e27019842ef7c009b728b27@linux-foundation.org>
+ <f2a213eb-e69b-4572-b837-0c384bbb5960@igalia.com>
+ <20241031181242.96312cd4eff58ba2369342c8@linux-foundation.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <20241031181242.96312cd4eff58ba2369342c8@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 31 Oct 2024 16:27:03 +0100
-Julien Stephan <jstephan@baylibre.com> wrote:
+Hi Andrew,
 
-> Since the write_event_config callback now uses a bool for the state
-> parameter, update the signature of the function it calls accordingly,
-> and use a bool array for event_enabled.
+On 31/10/24 22:12, Andrew Morton wrote:
+> On Thu, 31 Oct 2024 08:04:58 -0300 Maíra Canal <mcanal@igalia.com> wrote:
 > 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-Applied.
-> ---
->  drivers/iio/accel/mma9551.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>>> There isn't a lot of info here - please explain this timing issue in
+>>> more detail.
+>>>
+>>> Because the question which leaps to mind is: shouldn't the
+>>> "applications that use shmem" be changed to "configure mTHP through
+>>> sysfs" *before* "using shmem"?  Seems pretty basic.
+>>
+>> Sorry about that, I'll try to improve the commit messages and add more
+>> details.
+>>
+>> As mentioned in the example I gave ("DRM GEM objects"), my main use is
+>> GEM objects backed by shmem. I'd like to use Huge Pages on the GPU and I
+>> can only do that if I have contiguous memory to back my objects.
+>>
+>> I can't think how I can change sysfs from a DRM driver.
 > 
-> diff --git a/drivers/iio/accel/mma9551.c b/drivers/iio/accel/mma9551.c
-> index 605022f5239a6412827f4ba059aa18d490908720..6d73eec951263956f314f82542becbbae933de91 100644
-> --- a/drivers/iio/accel/mma9551.c
-> +++ b/drivers/iio/accel/mma9551.c
-> @@ -45,7 +45,7 @@ enum mma9551_tilt_axis {
->  struct mma9551_data {
->  	struct i2c_client *client;
->  	struct mutex mutex;
-> -	int event_enabled[3];
-> +	bool event_enabled[3];
->  	int irqs[MMA9551_GPIO_COUNT];
->  };
->  
-> @@ -162,7 +162,7 @@ static int mma9551_read_event_config(struct iio_dev *indio_dev,
->  
->  static int mma9551_config_incli_event(struct iio_dev *indio_dev,
->  				      enum iio_modifier axis,
-> -				      int state)
-> +				      bool state)
->  {
->  	struct mma9551_data *data = iio_priv(indio_dev);
->  	enum mma9551_tilt_axis mma_axis;
-> @@ -174,7 +174,7 @@ static int mma9551_config_incli_event(struct iio_dev *indio_dev,
->  	if (data->event_enabled[mma_axis] == state)
->  		return 0;
->  
-> -	if (state == 0) {
-> +	if (!state) {
->  		ret = mma9551_gpio_config(data->client,
->  					  (enum mma9551_gpio_pin)mma_axis,
->  					  MMA9551_APPID_NONE, 0, 0);
-> 
+> So your term "applications" actually refers to in-kernel drivers?
 
+Yes, I'll make it clearer in v4. Sorry for the vague commit message.
+
+Best Regards,
+- Maíra
 
