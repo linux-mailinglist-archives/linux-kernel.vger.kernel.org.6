@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-392456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD7C9B9469
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:30:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C499B9471
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:32:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2832C1C20F72
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:30:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DED71C21881
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C1D1C75EC;
-	Fri,  1 Nov 2024 15:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBBD1BBBC4;
+	Fri,  1 Nov 2024 15:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFKJkWnr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1uOO8A9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308E51411DE;
-	Fri,  1 Nov 2024 15:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8367482;
+	Fri,  1 Nov 2024 15:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475018; cv=none; b=fXB3wdLF2S2Ea/F6hFF7x2L4vWYTdos6zOmhiNQoH5pueAyYBbDwEORfGYoWZNkdqpSl7UOswdgfHgV87hEiNxXBgck/oyPRV3MI8pdAoWiTbvVxteI29qfoPPyA0Ljb8+5M8kJJVR0cuxdJww59mvyz0DiwP3CmE2+oJdSk8RQ=
+	t=1730475173; cv=none; b=Nl8i1u4g0C1wgMdHNqz4bhUzlThArb3aEaoCBDTQLTwMukIIPf01N9xWGP1nUbd3TR7LIGzcX70uNQde1inA5Cir0ikjfbI76DmVKZnbpKN66N1U4euYlT/KKCQvhsmQ2ltLsu5wFLUYP5RQqAKPO4ZA31Sqh3BQ2rqxPDro0zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475018; c=relaxed/simple;
-	bh=VgE+7jChh5IyD9wnRdhxDfZmf/SVR68cXAP4kxhPyHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubyG95C5wlNdMSSc9Ngb4ksoN4YtERuEGkYkiaRCUk8fu307y7i/QQJEjA0H6D++0Ot9W64zLrXZ+WYpeuBwZ93anJyD+NRXvfzoK8J+nSy5HHxwaLNq8Dt546PQi6rqnqdKbqWm5f8PyS8gzGjBnQZxdLZruulUCKoWK1EIkzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFKJkWnr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE0AEC4CECD;
-	Fri,  1 Nov 2024 15:30:16 +0000 (UTC)
+	s=arc-20240116; t=1730475173; c=relaxed/simple;
+	bh=eA6sS7IrYwjajIXFNQUoLe6SENHwun0qV7uEqwc+0NQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rGuZ7Ij2pgWU5YSNh9XZN5HFFKGE517/X8whfhzt5cvrQAEXx7xu2WyknJQQzvd3vmQbArnm26CPHQUf9VK/Dm5RTcBfLZ8i2qgYjEFBrySLBPa4+XRUk5IC1anbS/Jtqxhv1Y+UqCZEQPnQ5i0NV9WTPkovjUdYV6LCSURmffk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1uOO8A9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AB1BC4CECD;
+	Fri,  1 Nov 2024 15:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730475017;
-	bh=VgE+7jChh5IyD9wnRdhxDfZmf/SVR68cXAP4kxhPyHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qFKJkWnrPT1+WaLUEIvO59ES0WhOct5qplLA4WFliQcOcmpWP8CH1tyN77Lhd5E9S
-	 vq+egFJj7VddWDn37E6CwLUlTavaRkLqoN+KSbVyZvswjk2+GYsRWTYOt7HgyzRTs6
-	 TRPay/mjNBJtcif+DoddKnNXgyUZFfV5cDnIPCeo/bfu0QjgIO3B4GyRgD2kAGCc2O
-	 bJoNL1mfT0H2GKizJQkd656QTO7t7fE6NgfqE6hHmslSZCK2gLVnix2JxABF0iNjNs
-	 Va1XYBCOgJCttQPIuD+o2yAppk788LhgrTaFzAE1oF0Gbh5Uxd4jTy6w12cjeWoM4V
-	 XE3gKFV3Qai/g==
-Date: Fri, 1 Nov 2024 10:30:15 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, quic_mrana@quicinc.com, quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v3 2/3] PCI: qcom: Set linkup_irq if global IRQ handler
- is present
-Message-ID: <rbykc6qnqechpru4sehjvdo6iedeo4cankp3mwesdfnxyxsgs7@vj2p7wwfdqm7>
-References: <20241101-remove_wait-v3-0-7accf27f7202@quicinc.com>
- <20241101-remove_wait-v3-2-7accf27f7202@quicinc.com>
+	s=k20201202; t=1730475172;
+	bh=eA6sS7IrYwjajIXFNQUoLe6SENHwun0qV7uEqwc+0NQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=a1uOO8A9pfM8WLPoRG18XrKF5+1d2xT6jefKmyNwGStSAA0rRVPyClCMwQDVlfo6b
+	 CDjhRIsoP4G+xNsWGL3JHgccSZszyX1hnFFvEAN1FO8gaQ42f/eGb8j25LmNcvvLyO
+	 kB85rKqEj/WKRrEOb4YhPSluUMA3GsCXeKRiXZXuQ+4psGlZoYwIHHtYahkQXmEm7p
+	 z5MTPLZFt0GdZM/I2VvZmUSqfNkidvpUKYIe+iyV0xmk7RR0BfLpo73LO+UecHnuuq
+	 +yrG59A8512fb+Tdxz9+RmU245U+91mCbX3NzCWd8VsdjI3gc+911PQWC5NpzRcyDe
+	 bKPCA6CZb8l8Q==
+Date: Fri, 1 Nov 2024 15:32:40 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Cosmin Tanislav
+ <cosmin.tanislav@analog.com>, Ramona Gradinariu
+ <ramona.gradinariu@analog.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
+ Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Anand Ashok Dumbre
+ <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
+ <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
+ Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Benson Leung
+ <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v2 01/15] iio: light: ltr390: simplify code in
+ write_event_config callback
+Message-ID: <20241101153240.26c6c5ea@jic23-huawei>
+In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-1-2bcacbb517a2@baylibre.com>
+References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
+	<20241031-iio-fix-write-event-config-signature-v2-1-2bcacbb517a2@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101-remove_wait-v3-2-7accf27f7202@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 01, 2024 at 05:04:13PM GMT, Krishna chaitanya chundru wrote:
-> In cases where a global IRQ handler is present to manage link up
-> interrupts, it may not be necessary to wait for the link to be up
-> during PCI initialization which optimizes the bootup time.
+On Thu, 31 Oct 2024 16:26:56 +0100
+Julien Stephan <jstephan@baylibre.com> wrote:
+
+> iio_ev_state_store is actually using kstrtobool to check user
+> input, then gives the converted boolean value to the write_event_config
+> callback.
 > 
-> So, set linkup_irq flag if global IRQ is present and In order to set the
-> linkup_irq flag before calling dw_pcie_host_init() API, which waits for
-> link to be up, move platform_get_irq_byname_optional() API
-> above dw_pcie_host_init().
+> Remove useless code in write_event_config callback.
 > 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+Given these are good cleanup even without the final patches I'm going to
+pick them up as I go. Maybe I'll end up taking the lot though!
+
+Applied this one.
+
+Thanks
+
+Jonathan
+
 > ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  drivers/iio/light/ltr390.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index ef44a82be058..474b7525442d 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1692,6 +1692,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+> diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
+> index 8e0a3fc3d923a6f65d2a629c87e7bfd35d82a507..3bdffb6360bcbaab4df1a2d39c8ea3813b5d6bd3 100644
+> --- a/drivers/iio/light/ltr390.c
+> +++ b/drivers/iio/light/ltr390.c
+> @@ -558,10 +558,7 @@ static int ltr390_write_event_config(struct iio_dev *indio_dev,
+>  	struct ltr390_data *data = iio_priv(indio_dev);
+>  	int ret;
 >  
->  	platform_set_drvdata(pdev, pcie);
+> -	if (state != 1  && state != 0)
+> -		return -EINVAL;
+> -
+> -	if (state == 0)
+> +	if (!state)
+>  		return regmap_clear_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_EN);
 >  
-> +	irq = platform_get_irq_byname_optional(pdev, "global");
-> +	if (irq > 0)
-> +		pp->linkup_irq = true;
-
-This seems to only ever being used in dw_pcie_host_init(), would it make
-sense to use a argument to the function to pass the parameter instead of
-stashing it in the persistent data structure?
-
-Regards,
-Bjorn
-
-> +
->  	ret = dw_pcie_host_init(pp);
->  	if (ret) {
->  		dev_err(dev, "cannot initialize host\n");
-> @@ -1705,7 +1709,6 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->  		goto err_host_deinit;
->  	}
->  
-> -	irq = platform_get_irq_byname_optional(pdev, "global");
->  	if (irq > 0) {
->  		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
->  						qcom_pcie_global_irq_thread,
+>  	guard(mutex)(&data->lock);
 > 
-> -- 
-> 2.34.1
-> 
-> 
+
 
