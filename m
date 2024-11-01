@@ -1,125 +1,133 @@
-Return-Path: <linux-kernel+bounces-392255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A219B9193
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCB59B9190
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:11:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82B521C21DE5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:11:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5C4B1C215AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B7D1A0726;
-	Fri,  1 Nov 2024 13:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E37119F436;
+	Fri,  1 Nov 2024 13:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wa9R8oC3"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LyRXmGpE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D95819E982
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E2A15F40B;
+	Fri,  1 Nov 2024 13:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730466671; cv=none; b=lJojxFLGO0onugu0/JyPBw2qa4iINCWk8bxvVA6pX/HFP9QyD1oPKQvOXEaWMH7Imv2WY6oxGi+PhXMYj+fPC8W9qJx5C1/saaHn4GUtNajnCE76ITVvhzPGuDn8jHNs0VQXhVvNfX5CjQbGNhaJRw8y6xQQs/2Y50CNG1Y3SxY=
+	t=1730466669; cv=none; b=XdsKm/WqqlGSrIZVOilRF7VLjbf9qXuE3f3HIXamj0nx4OhMWrd+4ocDUNpiF79fGH5rM1vg7SNqjwFDCIiot8Y45mEcdiPy1fqoA5uIuTtJAziIPEPiN3qKY9LB1rSUPr/Qc8aPANNYMNe3iTUSKCoWJgncWUpJh08PDsEZ5To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730466671; c=relaxed/simple;
-	bh=rBKvdBkDgEnZ8/2t7qkPf2PV6TUL/0RusHurefk/Ut4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EX/lQKx8J7ZrlUDbQLB+//TwnzVAnGIfldIAGlPJMHrQCyXw66cn1cuIKvAMrigolxjKZUNfMAl3L3KA0wux8C9hHE+EV+9kkCX0xtUlKLzHN1IHWkmNHR1xjwOGvENKT3HY0TDOIuVFVpQgEb/aKUX9Xm9IGg+85I5aQOsz3lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wa9R8oC3; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a4e4776f79so236015ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:11:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730466668; x=1731071468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rBKvdBkDgEnZ8/2t7qkPf2PV6TUL/0RusHurefk/Ut4=;
-        b=Wa9R8oC30ojESYlGBaJN5FHhWFWGwcEABhXi/mNfOP60y6BuCHFir7o3TzMbmilvVq
-         PT53JJ2yG/EGDClXQFIeNxVtIC2d0T0nNCq9OTngcuJ26YVOkTcrXA5zBeGQFnu7FDc1
-         ObBB8rUPsHn/jS4Lh/EzOA2W68h+2befr+FLrxBasY/CbKW2LQdNQNIgAgaA1gvHvjvP
-         VfsOKzT7C3RS3ftszzU4IOCrXkMnbjCTYk/nM97H//8sYv0oAWHO/v0ZxlQnHNBOdFFY
-         dP4iZVsQ5acussnrc5cwIgYs72l8Q4sffYeIy5R8EKEDAMr9ELOUhxowAmR3bapuRcEA
-         SyYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730466668; x=1731071468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rBKvdBkDgEnZ8/2t7qkPf2PV6TUL/0RusHurefk/Ut4=;
-        b=BRBt5ZB99Otg+iCP84CmvWjSJtUaqXmWEcdoBO4QVC9j8O5y3gRxADfKlwZv6Zx5fI
-         x0phmDaqq1EtPkoZm2pAXjmqSkezoyQbbj5rKIyo0SUeapXHoOrgQoU6iF/Q23LgUJdQ
-         zCxSdmrpJcNe1aBCQ7Hs1OXABSnW8xa5OeRIu7Hn5aTmRJig8T5zTDjys0FVEIz4LGo2
-         h6iuilcMUT+4mHd/LZe14ZxuMADjwOfaUuMDQFEygbkYZ9jxAHASz/OVt66No6rElo4q
-         lx24nkGVczAAjfz3slmwxvDf+No8X4nYH5rmq6VF0hTfxgZeUVtpQ90FYtaTEt1ysvaN
-         bUqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXuWlEiHm2wskLEcDfseRFG6O2x/xXx/ZXK1z3mPEtQqEqFlXw1hUutdCBYUXZbnF2b1GdWME3LJptLi7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytJ+kODRA4isJ520P/UDHwJZDt2bOnPEduRUtF4t8Joq50BdeG
-	CJAHCs6okvf6JtP2dCExTSLYm8iNTHsFwFFcQunEBT+Tz0m6b8ZzQ4tQQ5tn7CYqc5fQ7CSh0hz
-	MZZTUPdgN9ZabpZUviyoSyno24+cWctgYJVJ1
-X-Gm-Gg: ASbGncuz7N2zAnfCu6ulhld0U/TA2AiTJXznZ05WueMFi60k6WCoaKmMdFT5bB8N1cp
-	eQpak6xk2H2wCKeyxZzKIUsFfY9Qm/9o=
-X-Google-Smtp-Source: AGHT+IGy5jtPAQs70nZmSVQRpEpNW+aE/1kV6A2Lr9FjnVTsOCY2FVzGfSbPMwj3G1YUCRVN/VYED/7JXkuD6qBixIQ=
-X-Received: by 2002:a05:6e02:1a08:b0:3a3:dab0:2399 with SMTP id
- e9e14a558f8ab-3a6a9414a07mr7484945ab.27.1730466668433; Fri, 01 Nov 2024
- 06:11:08 -0700 (PDT)
+	s=arc-20240116; t=1730466669; c=relaxed/simple;
+	bh=wWxvL9Cky/sSQOL1Xs4C7q8ygEJH7e18YUvNw2xwr4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QFkUqxxiDW2HBvSl5sGB2xIaWIyDEAOA3M/uqkEDFchnlMwJFDqMUcs4mpEPk6Q2LW2iefv1Q5HC7jsZ7yzgVLk2lKfLzL/LgEQC/aJhFPyM8JmFZriiFS0HfoOo00YuoqAQLtIshokRe0GMUF9zobrny1qlQtV3PYrBCqxB+AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LyRXmGpE; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730466668; x=1762002668;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wWxvL9Cky/sSQOL1Xs4C7q8ygEJH7e18YUvNw2xwr4M=;
+  b=LyRXmGpEO3hEEIMxYmQP9OyeA6GH4Pl9mRjJLfM0v6+Al/5bLep6CCW2
+   p4oMdhT/hNkzux55xDPQ7fINvxBoL0L0EqxNIcOd1kEbm3Z/OAm9u9gdL
+   Z2QI71Cg1ZMAbJoFeat5kC9/RvGXoCgU/I3CQMrDX846SYIxwnBbPY34o
+   M9n9Q8q9soGatp1Di9vkii2IKWc7ZKrQ8YScBVAvqPvYKh2grg7decIi7
+   /szpejGQIF+iDYyNyuVvR2+c1nd5/MLzokzbquCKgnhQjwdue2gCAzPbH
+   o3FgSIEUTn594sxiZhg3q6xiP59s+Jli+u31Mn43rNRyVN3N//WLAE1b6
+   Q==;
+X-CSE-ConnectionGUID: Nw473buhR9Oht1otMPedaw==
+X-CSE-MsgGUID: +DI3GuYPQFmDphX+n5xQjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33920076"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="33920076"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 06:11:07 -0700
+X-CSE-ConnectionGUID: 714fhW0XTzqqPoIH6ULTug==
+X-CSE-MsgGUID: Z2xegDoWSXmJLuhsLMTfag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="87753788"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP; 01 Nov 2024 06:11:06 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id C068B2D3; Fri, 01 Nov 2024 15:11:04 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] i2c: busses: Use *-y instead of *-objs in Makefile
+Date: Fri,  1 Nov 2024 15:11:03 +0200
+Message-ID: <20241101131103.3679560-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029204541.1301203-1-almasrymina@google.com>
- <20241029204541.1301203-3-almasrymina@google.com> <763d9630-3064-4d88-8e99-549a07328ec8@huawei.com>
-In-Reply-To: <763d9630-3064-4d88-8e99-549a07328ec8@huawei.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 1 Nov 2024 06:10:56 -0700
-Message-ID: <CAHS8izMgF8nx87D9pWPmq1pfDm1v8x5Z6gc_eMHcYo8zKX-Lrw@mail.gmail.com>
-Subject: Re: [PATCH net-next v1 2/7] net: page_pool: create page_pool_alloc_netmem
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 1, 2024 at 4:14=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
-> wrote:
->
-> On 2024/10/30 4:45, Mina Almasry wrote:
-> > Create page_pool_alloc_netmem to be the mirror of page_pool_alloc.
-> >
-> > This enables drivers that want currently use page_pool_alloc to
-> > transition to netmem by converting the call sites to
-> > page_pool_alloc_netmem.
->
-> For old API, page_pool_alloc_pages() always return a whole page, and
-> page_pool_alloc() returns a whole page or a page fragment based on the
-> requested size.
->
-> For new netmem API, page_pool_alloc_netmems() always return a whole
-> netmem, and page_pool_alloc_netmem() returns a whole netmem or a netmem
-> fragment based on the requested size.
->
-> Isn't it a little odd that old and new are not following the same
-> pattern?
+*-objs suffix is reserved rather for (user-space) host programs while
+usually *-y suffix is used for kernel drivers (although *-objs works
+for that purpose for now).
 
-Hi Yunsheng,
+Let's correct the old usages of *-objs in Makefiles.
 
-The intention is that page_pool_alloc_pages is mirrored by
-page_pool_alloc_netmems.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/i2c/busses/Makefile | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-And page_pool_alloc is mirrored by page_pool_alloc_netmem.
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index 613ec59502c8..bf2d76e055c5 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -39,10 +39,8 @@ obj-$(CONFIG_I2C_AMD_MP2)	+= i2c-amd-mp2-pci.o i2c-amd-mp2-plat.o
+ obj-$(CONFIG_I2C_AMD_ASF)	+= i2c-amd-asf-plat.o
+ obj-$(CONFIG_I2C_ASPEED)	+= i2c-aspeed.o
+ obj-$(CONFIG_I2C_AT91)		+= i2c-at91.o
+-i2c-at91-objs			:= i2c-at91-core.o i2c-at91-master.o
+-ifeq ($(CONFIG_I2C_AT91_SLAVE_EXPERIMENTAL),y)
+-	i2c-at91-objs		+= i2c-at91-slave.o
+-endif
++i2c-at91-y			:= i2c-at91-core.o i2c-at91-master.o
++i2c-at91-$(CONFIG_I2C_AT91_SLAVE_EXPERIMENTAL)	+= i2c-at91-slave.o
+ obj-$(CONFIG_I2C_AU1550)	+= i2c-au1550.o
+ obj-$(CONFIG_I2C_AXXIA)		+= i2c-axxia.o
+ obj-$(CONFIG_I2C_BCM2835)	+= i2c-bcm2835.o
+@@ -111,8 +109,8 @@ obj-$(CONFIG_I2C_SIMTEC)	+= i2c-simtec.o
+ obj-$(CONFIG_I2C_SPRD)		+= i2c-sprd.o
+ obj-$(CONFIG_I2C_ST)		+= i2c-st.o
+ obj-$(CONFIG_I2C_STM32F4)	+= i2c-stm32f4.o
+-i2c-stm32f7-drv-objs := i2c-stm32f7.o i2c-stm32.o
+ obj-$(CONFIG_I2C_STM32F7)	+= i2c-stm32f7-drv.o
++i2c-stm32f7-drv-y		:= i2c-stm32f7.o i2c-stm32.o
+ obj-$(CONFIG_I2C_SUN6I_P2WI)	+= i2c-sun6i-p2wi.o
+ obj-$(CONFIG_I2C_SYNQUACER)	+= i2c-synquacer.o
+ obj-$(CONFIG_I2C_TEGRA)		+= i2c-tegra.o
+@@ -121,10 +119,10 @@ obj-$(CONFIG_I2C_UNIPHIER)	+= i2c-uniphier.o
+ obj-$(CONFIG_I2C_UNIPHIER_F)	+= i2c-uniphier-f.o
+ obj-$(CONFIG_I2C_VERSATILE)	+= i2c-versatile.o
+ obj-$(CONFIG_I2C_WMT)		+= i2c-viai2c-wmt.o i2c-viai2c-common.o
+-i2c-octeon-objs := i2c-octeon-core.o i2c-octeon-platdrv.o
+ obj-$(CONFIG_I2C_OCTEON)	+= i2c-octeon.o
+-i2c-thunderx-objs := i2c-octeon-core.o i2c-thunderx-pcidrv.o
++i2c-octeon-y			:= i2c-octeon-core.o i2c-octeon-platdrv.o
+ obj-$(CONFIG_I2C_THUNDERX)	+= i2c-thunderx.o
++i2c-thunderx-y			:= i2c-octeon-core.o i2c-thunderx-pcidrv.o
+ obj-$(CONFIG_I2C_XILINX)	+= i2c-xiic.o
+ obj-$(CONFIG_I2C_XLP9XX)	+= i2c-xlp9xx.o
+ obj-$(CONFIG_I2C_RCAR)		+= i2c-rcar.o
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-From your description, the behavior is the same for each function and
-its mirror. What is the gap in the pattern that you see?
-
---=20
-Thanks,
-Mina
 
