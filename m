@@ -1,116 +1,133 @@
-Return-Path: <linux-kernel+bounces-392172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C48009B9097
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:47:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BF59B909D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:49:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89CD728163E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:47:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D041F228B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CFB19ADA3;
-	Fri,  1 Nov 2024 11:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AD3196D80;
+	Fri,  1 Nov 2024 11:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MrIR/2tS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPAfOum8"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FC12A1B2
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C158A15359A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730461666; cv=none; b=I6+RPQJjhe1QF9wI34x4b+wDQGA8zn0AECpNh3tcm/GPLLYRu7k8ROtFRFDOfEJwj2CK6CEuBHscNlnpiohkUIGxpsbVBZ1KPV/TSRraXQRNwOznm+2nCrp+euvV2bTgDChQcoPmVMzANXUw7DgGvIyrz+QhmtuAyMDtoXmqT0s=
+	t=1730461749; cv=none; b=fcdq+rNtimnDmpoVgCAWu1Wqal0mxLI3GLbqpECP7RAlfxFox6I+WkQu+UgzafvQ0bOIz4U5OtnPQj2bdnrUc/XHiIKNBk+tLbSc5CTMUV6hAywZ6i0DJATVed4SEB4fgvTToTk4quhUgGJ9+aED82tRYEF0EUwxlZl6BR6UBUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730461666; c=relaxed/simple;
-	bh=rFzzuYAv2SKccWouLovsdeghCh1s+OmcwrhbhkmvI6g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GWFMszJ1Hqg/rw6U24uolAIqheUKxKMDVkFtbVWUW5RcvStIZ6mBKiBYcX3bizHN6Fmwjwzz44+okW0HxqACL8RrEj60lLpFVfizVNvSXU2Y0pUle9YIGJR9Q5U8JkxR1xiaZhqeQtPz4/sEPM7QlwDxJMjLNJ/ZIp26Zj+eb2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MrIR/2tS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730461663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rFzzuYAv2SKccWouLovsdeghCh1s+OmcwrhbhkmvI6g=;
-	b=MrIR/2tSj/O9MnsqGKOoKSTJv+r8QS35qsRD2C3KaIzpAUjLB1cYo/4qebJFYCVcLUN8NA
-	CuolRiQDG1MpU8dFf/WoERWSFaLhoyERKAqkH2EOfs4BboLg4iIAreLnrbcDIn23SNWi6p
-	wBYdxPpQFJu4tHmNtc4p8kFKi7YC8jI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-286-2-pnDb-oMcOHPpoLqEOSZw-1; Fri, 01 Nov 2024 07:47:41 -0400
-X-MC-Unique: 2-pnDb-oMcOHPpoLqEOSZw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43152cd2843so11744995e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:47:41 -0700 (PDT)
+	s=arc-20240116; t=1730461749; c=relaxed/simple;
+	bh=DU5tnh4fKHvyUSqUkm2ijreq/M3qLkyq1dK4k7W971w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dEj5jTDeboubNm+BgId+4QKFf7ypOIEARuoZ4cfaap5sorWPUd2ainVVDXPZBRT0tF5idcirxE5kyODzC5UK2f93K9WYPXR3aZ3yMDPgsbzzaIn4KXhG2siEQeIOR8tGA/GE2dmwnWC7MNL8VoqxgT6d2tlerKh1i6FSbMI/8g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPAfOum8; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20e6981ca77so21263665ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:49:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730461747; x=1731066547; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kjJyrr7Ri//jIrpJtpeB/KnPwSgtUsj0MTLSIwGzd9E=;
+        b=VPAfOum8hnVhsGmobEGnFtHDPE7HmCdTQj+4IS+ql1GOp0NBFTQk1ka0tJINyxm8lH
+         pLp9gEjwTcVFbl1YzS+i4/w9nOFjHl9vKXWxfjdFdFazO0wLI3xKxE9JXYsUAEB05XYP
+         pYRznEG8CAXpVZ903pTkEGfYn9xy8bSclYpuIQ24WD1Pp6Tt3j6j4qY+7ShetUnsP2WD
+         ydHDv80jRLhN7IWn7gYBc0ov3Zd28fRBPzsJ+UrB64y7ufwnJDSpn9VfCtXCakLDjiKH
+         sIVsSVxZAlH3KOzyJKonVBMZLlOvIu13bBVxF/BuJDQd5LLVj3LHedLw0aA3FLvMEbmx
+         ZWJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730461660; x=1731066460;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730461747; x=1731066547;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rFzzuYAv2SKccWouLovsdeghCh1s+OmcwrhbhkmvI6g=;
-        b=hT/4YIv2V+38ocFN0vhvtvHTJ4lsyVGtoUqXOgW8nugGOGyr8dpuN/SY+FctFT7BRy
-         hj0sl6AonLCtX7+cqR3gyN4iG2GYXIRTOptKjb9J1aqIGS40F260Q1HYWUjvXg8tCyUO
-         uwODNW80db66/JvKDc+fu7SQf3kwdqt0z+lAFewOhQM264eXRFygunLYf0WhaYNQEd/M
-         PUHPn52ibvfitwpfxHSHskizKPEnY/riYDaHgxKOH3lrq/VvOprjbJ98FJMvG1dngWaI
-         Lx2UtMdM+l2KEYnInDr7Isxy1rhUbqiS75QZcIk857z9IUGjDGYtpNHiIHR2hIM8wpFA
-         YeKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVirp/hU9TO+KwrVV4YKR5vc7t+KjWR3+gbYvZ8wiBdWLBTf9xUnKwGnTZxMK7h3Kz2BPT39PqsNAQMoAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH+F3jm8JjhCv3D7RgfVG0aOlWJk3fdLsYw6/3e3gnZia3GFWd
-	BiGI4u84G/FQhrBueg8nA37N8WVxfIFhd4KyzXhUb0dr9AJnrNO/ZSdE6DJ4v/rHKQBNqm1I00r
-	oWAyunnXMAnYezl5dvPqbkL3mGyfMNX70YeO0keahrJ1m+YTazld+1lelKZB4PA==
-X-Received: by 2002:a05:600c:1d97:b0:431:5459:33c2 with SMTP id 5b1f17b1804b1-431bb99053bmr107786765e9.17.1730461660617;
-        Fri, 01 Nov 2024 04:47:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNlCYVzQ8SAbhWfaM5n3nvXcLZFSRiXEpUvQ8tFWfAU9tvUBvRq0rnYNEnYa0nWbeMoxReGw==
-X-Received: by 2002:a05:600c:1d97:b0:431:5459:33c2 with SMTP id 5b1f17b1804b1-431bb99053bmr107786455e9.17.1730461660233;
-        Fri, 01 Nov 2024 04:47:40 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7365sm4783523f8f.54.2024.11.01.04.47.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 04:47:39 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id BA4BA164B94E; Fri, 01 Nov 2024 12:47:38 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Maciej
- Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev
- <sdf@fomichev.me>, Magnus Karlsson <magnus.karlsson@intel.com>,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 05/18] xdp, xsk: constify read-only
- arguments of some static inline helpers
-In-Reply-To: <20241030165201.442301-6-aleksander.lobakin@intel.com>
-References: <20241030165201.442301-1-aleksander.lobakin@intel.com>
- <20241030165201.442301-6-aleksander.lobakin@intel.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 01 Nov 2024 12:47:38 +0100
-Message-ID: <87v7x79nvp.fsf@toke.dk>
+        bh=kjJyrr7Ri//jIrpJtpeB/KnPwSgtUsj0MTLSIwGzd9E=;
+        b=GDiEZDsAXc2A1BvTNBC0xBwRci8e9dCnE9ayPexDyyQMSvFLlae6RUXwDd4Mt/3b+S
+         96N4iWUFXFj73vLuZzmCnKARvFPAHGBe7YKkBjyGT4ZXG4RV0R2tNbqe2p88yCuyqbrm
+         6VnNOAe93gixc+zFzFZNaFRtm+Re9zIaDtl/lcpvuhr0fku9Vy66kJ1JNntdj8JHYQ6b
+         khT7W0r4mbElVl6/bgXyS8+zcCrKosoOQbXknGNkNP3ZafmO5l4vzkwaEWVWOg7z9n/F
+         XMHnxQMvP57QMGU5BsnFUmWUAm8uHpSz/C7NzWNn9nhuaO6uDZ77eZBwjUQF5zyKsHMl
+         DyXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvyr/42GlUvhgOqeu4veBHQmzT1P0oqGAGy4b04UY/9SXzZRn81iNU+SDIhslU36oxdiMEozlc0+2V8oY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTUPScttfhz0t/SyQgobELvVnKhigybCz6KFF773kMEF3f84bK
+	WhApPfzCYx/+YmlTsnjVNuvgDQnPSTaCX3cMUZ3UYf4dVqq7zvOb
+X-Google-Smtp-Source: AGHT+IF5Mz+chfdy3uKnsnM3ZOYAgO9h4uTte1UI1Z+NWRE821Lf9toSSYcxLNtgd6qkNtIoM3E4jg==
+X-Received: by 2002:a17:903:22ce:b0:20b:9379:f1f7 with SMTP id d9443c01a7336-21103c59efdmr93506395ad.40.1730461746977;
+        Fri, 01 Nov 2024 04:49:06 -0700 (PDT)
+Received: from EBJ9932692.tcent.cn ([43.134.20.116])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056eda5fsm20498225ad.7.2024.11.01.04.48.57
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 01 Nov 2024 04:49:06 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: akpm@linux-foundation.org
+Cc: ioworker0@gmail.com,
+	21cnbao@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	cunhuang@tencent.com,
+	david@redhat.com,
+	dj456119@gmail.com,
+	j.granados@samsung.com,
+	joel.granados@kernel.org,
+	jsiddle@redhat.com,
+	kent.overstreet@linux.dev,
+	leonylgao@tencent.com,
+	libang.li@antgroup.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux@weissschuh.net,
+	mingzhe.yang@ly.com,
+	ryan.roberts@arm.com,
+	ziy@nvidia.com
+Subject: Re: [PATCH v2 1/2] hung_task: add detect count for hung tasks
+Date: Fri,  1 Nov 2024 19:48:33 +0800
+Message-ID: <20241101114833.8377-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241027120747.42833-2-ioworker0@gmail.com>
+References: <20241027120747.42833-2-ioworker0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Alexander Lobakin <aleksander.lobakin@intel.com> writes:
+Hi Andrew,
 
-> Lots of read-only helpers for &xdp_buff and &xdp_frame, such as getting
-> the frame length, skb_shared_info etc., don't have their arguments
-> marked with `const` for no reason. Add the missing annotations to leave
-> less place for mistakes and more for optimization.
->
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+Sorry, I made a stupid mistake :(
 
-Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+sysctl_hung_task_detect_count is defined as an unsigned long, so we need
+to use proc_doulongvec_minmax instead of proc_dointvec to handle it
+correctly. Could you please fold the following changes into this patch?
+
+---
+ kernel/hung_task.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 229ff3d4e501..c18717189f32 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -330,7 +330,7 @@ static struct ctl_table hung_task_sysctls[] = {
+ 		.data		= &sysctl_hung_task_detect_count,
+ 		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0444,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_doulongvec_minmax,
+ 	},
+ };
+ 
+-- 
+
+Thanks,
+Lance
 
 
