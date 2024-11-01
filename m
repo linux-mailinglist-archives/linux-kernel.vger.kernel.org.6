@@ -1,223 +1,220 @@
-Return-Path: <linux-kernel+bounces-391988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA929B8E3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:56:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 007729B8E3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:57:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C12811C20E36
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B429528257E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A723715B0E2;
-	Fri,  1 Nov 2024 09:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C25815B13B;
+	Fri,  1 Nov 2024 09:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IZRDdOzw"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TuNZ8Bpt"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15A915990E
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 09:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E382D15990E
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 09:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730454987; cv=none; b=ZNvjmEFeuaJCPYB6xGOL0tyzD9oem2htPRkz+oAcBa/CV0sju7O7X3VBS7FGmRSZadPdqkMrPC2OXJlnr3+MZSbyawo3ZW1kELqeWUKSsqOt3NBZpY79DVuEMcKYtw1bxQM+w/8rhdeRv8SnCqtJyrsKnDPYKv96C2siNmEd/a8=
+	t=1730455060; cv=none; b=RmoCABhzGQ5LQXjzDKVfylMMNBCdhL1eufAHnAbOsuSO4taAaLbnKB+zpHwsLU3J/E/RkNn0jzUHLfVXhyBwzLuuQYWGVkC/8LC9U1yB77w0xDKxsVJ2WbAi46Mx0dvNo7NhmSYZiB4BKyGNlQQP15HkVTzVYXfFYveVd6fGbaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730454987; c=relaxed/simple;
-	bh=GOQxGFD0ZytTWG4OwqVfXTYJinyLhPSthymBTy2Eb8E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RqjIP1EqKRfcpoNkkB/3jPikIm0LqnkgrOh7tSEkoJ2kqn0QUWSaUzALrTcZkBQFRzSqrOeZSLxNcKtKhBXngO9cg19Q/l7Zh7gn2yWZipnFIzL74NMhVhChFINHB0EGKRgWBeRhlyhuiH5FhGKn7TQ71Bev5msSwb0TsuMzLbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IZRDdOzw; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e0082c1dd0so41751137b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 02:56:25 -0700 (PDT)
+	s=arc-20240116; t=1730455060; c=relaxed/simple;
+	bh=u7QY7saT7lh9qMQzC1aqvcwYfJEWmT4Ojyxuu/AyZos=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j9a7MQ7//v4SKKm2Zt90LzQKSwfWrx71Gtw+myQLdd/69jBtxyzRv6xB3sdWaN0YgUdLOg1xmnkx2KLiNUwBHpvHEpCHAhwzbwld6XKKcemSC76Q1DSqIP3coTPA+hPYgrTRkvssbjCqS5s+3jFmM1hrERAqdwAyKd9cQWtl7Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TuNZ8Bpt; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c9634c9160so2058440a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 02:57:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730454985; x=1731059785; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hmoflKYnQ7aKNSDRrJZTeq26rnTAdjCp4mlK4HuQWvs=;
-        b=IZRDdOzwZ2vze/urn98eWXPxFeAqbfrLI4RncPkZgRzPigYL70Bkc2PY5SuKeE0RU0
-         Y7AM1f3iE/HOaUlyUU5QGof7r4RRRDS08KXf7F+aAKccgJbAXcvWwqidzFBDUvqeaDmA
-         G24WZJkAMtst6MxyiVN16FuJnoPichvuhd7J99hsoVOlCpqU+JS7H7dtxTDft/xIdGPp
-         hC54LPXTctGhOUdVKvJFWUZsvjWid2Ua3BYN6SmkTHl4F/+C3puCwGRmkpVggL9x/A/0
-         +Or9vudgZTkgyNcAhy1WUk8qooSZq5lQBeOzRc+ucraAaz4U4Xvdpgip8VubksdGDFEz
-         GfJw==
+        d=tuxon.dev; s=google; t=1730455056; x=1731059856; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VkWLa1FF6BzDGEOlRo45xTi9HEweUx52IMDZUJC3W3A=;
+        b=TuNZ8Bpt7/OlYTuWd5HNjRnF/9W/IIE1IZocT5+dcpO4m/ob9w9LfDlYAvLncvpx6Y
+         xIaJyTRYPbRY/DNaggkD2xvEOoRu2ZIKIxXmRu3/kHxf+HKu+0xKFJ4y9SSTHxB0v52X
+         vo4Xt3c3i4NgPmk3DmU+9V9gf5mZjF+lNNrvOdhrvileNj8DQ8y7HfGEZxjoumfeqn6B
+         cDZOR/Fh0sBNZyKssFkSxRK123aQzXxmXigmywenrtQAxC+vu/I/4Ai2Ruxv2PXYcuPR
+         GsxDZg+TuQdyjAWwgNFW9vXkkRdFN4HZVx8C29GcDUFGo59mfPClj7QqPYIbGtfz+8lR
+         PV9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730454985; x=1731059785;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hmoflKYnQ7aKNSDRrJZTeq26rnTAdjCp4mlK4HuQWvs=;
-        b=vOT3+dJFH2u3aeAq+DxKLBE8Dob6xArwyMVB9/fNBBGIP1UtmENqVok0cN9uqaFT5i
-         Qa027jcg1HeWyHxnFmp+DEsamz1Wic/4FzYQg0YOD2HudMVTlJ2RBwfnDDy6vD0XONIf
-         Wc0ihnDIRzq5GfbkcEIPbX/xCZPKJOGhIhxYCHfhbZXJhB8Xr1NKY9jR8rhGmCSIipLH
-         1/gLViQ+pRZ36wjuXJxtHFamRXnm5v7vFNqz7E7+Hg2DzhSgs90f3gH6goNt8Gao7BRU
-         LS4nsCy6z8HOJnVy5pF3dGNX39Le/O+uWNCDfm4rAri6in4BaOX7suiWPQND+jdFFTWE
-         LEJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaz3zy0WvFudgR0hp5fvC+932CRcZAZxuoXyyY3ri1lD0Q7dNuKNBp3zzQShPj9kuwaZv2evs6inx8f2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU01Ddz1Yam7M2eeDNTxl4UpGI3dMiQ2qvMDQPMKkSDJIJ9mYC
-	oZLjB+3z8op8wIXCfm+8I4/NyZxkQs2AwBLcslH3jhQ+YRXTXjSd6sS/pocJChPrSoYiKUBjS6w
-	0dI3hTxijG0Jcng==
-X-Google-Smtp-Source: AGHT+IG2fVavzKlnr4QzZpcUQDvvH6D6+f+Mk98GHmIS792VM/YBglqgRG49x2iPQiQQgs27XavEgVyKXXEFay4=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a05:690c:4c09:b0:6e7:e493:2db6 with SMTP
- id 00721157ae682-6ea3b951361mr2169417b3.3.1730454984742; Fri, 01 Nov 2024
- 02:56:24 -0700 (PDT)
-Date: Fri,  1 Nov 2024 09:56:20 +0000
-In-Reply-To: <CA+G9fYv_Y2tzs+uYhMGtfUK9dSYV2mFr6WyKEzJazDsdk9o5zw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1730455056; x=1731059856;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VkWLa1FF6BzDGEOlRo45xTi9HEweUx52IMDZUJC3W3A=;
+        b=Qg4dZpiM7okrRYYwuhrdynA/JX8mIT0R1tSBKgWM35MYInf9OqHAwF81AOT7WL2eXq
+         MSyH86d/QMYUuJ8yiWVpWrsNwWg3KTMqVaP852yi1XpHYgWP20oHLk7gGcm8jJgL1fuC
+         4J5AdX2/RB1a34fnorajbiU3I/PWqIfNVnu49fyPeoyZx8u0zFyt89WRTRuFcLOwZgzF
+         /35SnrByWIwL9mQOTfs+PIoy2MpxVZgicgcmBySE63kwEA+8HsnfkOd4Izxj2LiZU5UD
+         tsLhSmvTyUFyH1LK+HfncXVNAXvEc94Pst4Yt4BcxWTfnEw1sKg29f7QRCllxQsHLnGT
+         /Kdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWg8Zf3Olkb5iA+gLRaxY/W2+TL7HfxhWjfcUNdRwTrDyyNZ+yLyAgrnNSWGOmZw6YpWpVRc8tlXEFtntA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR9iDqzUEZGo0NbnunhiaV6O4gzG2s+jAbt25MqKOG31SzswRp
+	Jv/8ZohzEVdrl1wB1BxwrBzgjvMVPfI592Onm/daxRMbCbywZWSiOgG1aH3Tt1M=
+X-Google-Smtp-Source: AGHT+IGRtBYD1dOUvQuIQlQLj2pdPegx5k8lcdT/lJDx4obsDzdA8gaMq9JOwdMxgv+GTXcS3XRj5g==
+X-Received: by 2002:a05:6402:40cf:b0:5cb:acb4:8f2b with SMTP id 4fb4d7f45d1cf-5cbbf876412mr14451734a12.4.1730455056199;
+        Fri, 01 Nov 2024 02:57:36 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.190])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac7c8d87sm1364136a12.76.2024.11.01.02.57.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 02:57:35 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	alexandre.belloni@bootlin.com,
+	magnus.damm@gmail.com,
+	p.zabel@pengutronix.de
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v6 0/9] Add RTC support for the Renesas RZ/G3S SoC
+Date: Fri,  1 Nov 2024 11:57:11 +0200
+Message-Id: <20241101095720.2247815-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CA+G9fYv_Y2tzs+uYhMGtfUK9dSYV2mFr6WyKEzJazDsdk9o5zw@mail.gmail.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5092; i=aliceryhl@google.com;
- h=from:subject; bh=GOQxGFD0ZytTWG4OwqVfXTYJinyLhPSthymBTy2Eb8E=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnJKKPl6aPrGB8YTXJhfCzaL9Oh695k3ASS1Fqb
- y3dRMfFgamJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZySijwAKCRAEWL7uWMY5
- Rn1pD/0TgLwq1yTZG8MK2EimNMvaP+KRF5HOpUY+kINtMwhlA+cfPHB3cZUHdMnckrRzKixRoop
- ONTExWRb5Mm2vGHke0i/y8kJwwnb4aiQxj+uG0qKdveVgldDwmA/0NgCkHuoUEyWQoJhpNvYHE1
- n+2GHxop9oTk8Nn904nRVvbTiDfVo8zXdiJi1M9nOnWeN6WdxdhZkZEbb8P7PmMFTweOItGI3HP
- AYkH2Si70HDANTT6r36zWbvAp+lVeWaQ8Zj6P0aiJkBCPvLn6NKooSYiOzov/CTUQBmwmBEJWT2
- mB47CVWjNG9SiBZhLgZdN7KeQaGDJQq2FG5SmyamwIwaGCXJgXdKj/qV60n/6cuxouPzEqwXDgM
- BA0GE/fOcKieVMJHZdmokhL7fLFu6wMOeirSXVK/Pbkd9Mtvjyp8MhsJAgTZqB14KYKEwneiPPn
- sF6gnFmJNFkYgzAIOVmjG9RaSI5FPj/f+Yl5+oa8aN+YgHmwaH+ZJ6efAvvXEEcTkNp3x7nr96S
- +Cy6VIqBcsN3y3cTHvqYDXBlMolGUUh4Ef4XLv3sx4P8b1Damfp3OQ9evnZRNn1tMs4jMkqtbZ8
- kz/QFbkyBb4Aym2/tyQhp9QZwM6OEZyH4xVlQgz5UGcOGSG0mbS83pAkwKV9soL1jGZtYPG7yL3 7OJLPCoeETzQkYg==
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241101095620.2526421-1-aliceryhl@google.com>
-Subject: [PATCH] rust: lsm: replace context+len with lsm_context
-From: Alice Ryhl <aliceryhl@google.com>
-To: naresh.kamboju@linaro.org, casey@schaufler-ca.com, paul@paul-moore.com
-Cc: anders.roxell@linaro.org, arnd@arndb.de, brauner@kernel.org, 
-	dan.carpenter@linaro.org, kees@kernel.org, linux-kernel@vger.kernel.org, 
-	lkft-triage@lists.linaro.org, ojeda@kernel.org, regressions@lists.linux.dev, 
-	rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	lkft@linaro.org, aliceryhl@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-This brings the Rust SecurityCtx abstraction [1] up to date with the new
-API where context+len is replaced with an lsm_context [2] struct.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Link: https://lore.kernel.org/r/20240915-alice-file-v10-5-88484f7a3dcf@google.com [1]
-Link: https://lore.kernel.org/r/20241023212158.18718-3-casey@schaufler-ca.com [2]
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Closes: https://lore.kernel.org/r/CA+G9fYv_Y2tzs+uYhMGtfUK9dSYV2mFr6WyKEzJazDsdk9o5zw@mail.gmail.com
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/helpers/security.c |  8 ++++----
- rust/kernel/security.rs | 38 +++++++++++++++++---------------------
- 2 files changed, 21 insertions(+), 25 deletions(-)
+Hi,
 
-diff --git a/rust/helpers/security.c b/rust/helpers/security.c
-index 239e5b4745fe..0c4c2065df28 100644
---- a/rust/helpers/security.c
-+++ b/rust/helpers/security.c
-@@ -8,13 +8,13 @@ void rust_helper_security_cred_getsecid(const struct cred *c, u32 *secid)
- 	security_cred_getsecid(c, secid);
- }
- 
--int rust_helper_security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
-+int rust_helper_security_secid_to_secctx(u32 secid, struct lsm_context *cp)
- {
--	return security_secid_to_secctx(secid, secdata, seclen);
-+	return security_secid_to_secctx(secid, cp);
- }
- 
--void rust_helper_security_release_secctx(char *secdata, u32 seclen)
-+void rust_helper_security_release_secctx(struct lsm_context *cp)
- {
--	security_release_secctx(secdata, seclen);
-+	security_release_secctx(cp);
- }
- #endif
-diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
-index 2522868862a1..25d2b1ac3833 100644
---- a/rust/kernel/security.rs
-+++ b/rust/kernel/security.rs
-@@ -15,60 +15,56 @@
- ///
- /// # Invariants
- ///
--/// The `secdata` and `seclen` fields correspond to a valid security context as returned by a
--/// successful call to `security_secid_to_secctx`, that has not yet been destroyed by calling
--/// `security_release_secctx`.
-+/// The `ctx` field corresponds to a valid security context as returned by a successful call to
-+/// `security_secid_to_secctx`, that has not yet been destroyed by `security_release_secctx`.
- pub struct SecurityCtx {
--    secdata: *mut core::ffi::c_char,
--    seclen: usize,
-+    ctx: bindings::lsm_context,
- }
- 
- impl SecurityCtx {
-     /// Get the security context given its id.
-     pub fn from_secid(secid: u32) -> Result<Self> {
--        let mut secdata = core::ptr::null_mut();
--        let mut seclen = 0u32;
--        // SAFETY: Just a C FFI call. The pointers are valid for writes.
--        to_result(unsafe { bindings::security_secid_to_secctx(secid, &mut secdata, &mut seclen) })?;
-+        // SAFETY: `struct lsm_context` can be initialized to all zeros.
-+        let mut ctx: bindings::lsm_context = unsafe { core::mem::zeroed() };
-+
-+        // SAFETY: Just a C FFI call. The pointer is valid for writes.
-+        to_result(unsafe { bindings::security_secid_to_secctx(secid, &mut ctx) })?;
- 
-         // INVARIANT: If the above call did not fail, then we have a valid security context.
--        Ok(Self {
--            secdata,
--            seclen: seclen as usize,
--        })
-+        Ok(Self { ctx })
-     }
- 
-     /// Returns whether the security context is empty.
-     pub fn is_empty(&self) -> bool {
--        self.seclen == 0
-+        self.ctx.len == 0
-     }
- 
-     /// Returns the length of this security context.
-     pub fn len(&self) -> usize {
--        self.seclen
-+        self.ctx.len as usize
-     }
- 
-     /// Returns the bytes for this security context.
-     pub fn as_bytes(&self) -> &[u8] {
--        let ptr = self.secdata;
-+        let ptr = self.ctx.context;
-         if ptr.is_null() {
--            debug_assert_eq!(self.seclen, 0);
-+            debug_assert_eq!(self.len(), 0);
-             // We can't pass a null pointer to `slice::from_raw_parts` even if the length is zero.
-             return &[];
-         }
- 
-         // SAFETY: The call to `security_secid_to_secctx` guarantees that the pointer is valid for
--        // `seclen` bytes. Furthermore, if the length is zero, then we have ensured that the
-+        // `self.len()` bytes. Furthermore, if the length is zero, then we have ensured that the
-         // pointer is not null.
--        unsafe { core::slice::from_raw_parts(ptr.cast(), self.seclen) }
-+        unsafe { core::slice::from_raw_parts(ptr.cast(), self.len()) }
-     }
- }
- 
- impl Drop for SecurityCtx {
-     fn drop(&mut self) {
--        // SAFETY: By the invariant of `Self`, this frees a pointer that came from a successful
-+        // SAFETY: By the invariant of `Self`, this frees a context that came from a successful
-         // call to `security_secid_to_secctx` and has not yet been destroyed by
-         // `security_release_secctx`.
--        unsafe { bindings::security_release_secctx(self.secdata, self.seclen as u32) };
-+        unsafe { bindings::security_release_secctx(&mut self.ctx) };
-     }
- }
+On the Renesas RZ/G3S SoC the RTC clock is provided by the VBATTB
+IP. A 32 KHz crystall oscillator could be connected to the VBATTB
+input pins. The logic to control this clock (and pass it to RTC)
+is inside the VBATTB IP. For this, the clk-vbattb driver was added
+(patches 01-03/09).
 
-base-commit: c88416ba074a8913cf6d61b789dd834bbca6681c
+Patches:
+- 01-03/09: add VBATTB support that provides the RTC clock
+-    04/09: fixes compilation error for RTCA3 when building for RISC-V
+- 05-08/09: update the device trees with proper nodes to enable RTC
+-    09/09: enable proper config flags for RTC to work on RZ/G3S SoC
+
+Merge strategy, if any:
+- clock patches (01-03/09) need to go though the same tree because of
+  patch 03/09 using the devm_clk_hw_register_gate_parent_hw() introduced
+  in patch 02/09
+- RTC patch can go though RTC tree
+- DTS and defconfig patches can go though Renesas tree
+
+Thank you,
+Claudiu Beznea
+
+Changes in v4:
+- select VBATTB and RTCA3 as module and adjusted the VBATTB Kconfig
+- fixed compilation error for RTCA3 when building for RISC-V
+- collected tags
+- dropped patches already applied
+
+Changes in v5:
+- dropped patches already applied
+- fixed build on rtc yaml file
+- fixed indentation in patch 01/10 description
+- collected tags
+- per patch changes are listed in individual patches
+
+Changes in v4:
+- added patches
+  "dt-bindings: clock: r9a08g045-cpg: Add power domain ID for RTC"
+  "clk: renesas: r9a08g045: Add power domain for RTC"
+- squashed the following patches from v3:
+  "Add clock IDs for the VBATTB controller"
+  "dt-bindings: clock: renesas,r9a08g045-vbattb: Document VBATTB"
+- fixed typos in commit description
+- moved assigned-clocks, assigned-clock-parents from the RTC
+  documentation to the VBATTB documentation; same adjustment has been
+  done on the device tree patches
+- renamed include/dt-bindings/clock/r9a08g045-vbattb.h to
+  include/dt-bindings/clock/renesas,r9a08g045-vbattb.h
+- used quartz-load-femtofarads
+- used RTC_TIMESTAMP_BEGIN_2000 and RTC_TIMESTAMP_BEGIN_2099 in the RTC
+  driver and added a comment in remove API to mention RTC cannot power
+  on the system
+- squashed defconfig patches
+- collected tags
+- per patch changes are listed in individual patches
+
+Changes in v3:
+- dropped patches "mfd: renesas-vbattb: Add a MFD driver for the Renesas
+  VBATTB IP"
+- added patches:
+-- dt-bindings: clock: r9a08g045-vbattb: Add clock IDs for
+   the VBATTB controller
+-- clk: linux/clk-provider.h: Add devm_clk_hw_register_gate_parent_hw()
+- moved Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
+  to Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
+- addressed review comments
+- per patch changes are listed in individual patches
+
+Changes in v2:
+- dropped patch "clk: renesas: r9a08g045: Add clock, reset and power domain
+  support for the VBATTB IP" as it was already integrated
+- kept only a documentation file for both VBATT MFD and clock drivers as
+  suggested
+- addressed review comments
+- used cleanup.h lock helpers
+- update startup sequence for the RTC driver
+- switch to 24 hours mode on the RTC driver
+- fixed range for the RTC driver
+- added a generic compatible for the RTC driver as this will also be
+  used by RZ/V2H
+- used clkin/xin clock names for the VBATTB clock driver to determine
+  if bypass should be configured on registers instead of having
+  dedicated DT property
+- added mfd driver for VBATTB
+- updated Kconfig flag names to include vendor name
+- removed DT node labels from Documentation files
+- used items to describe the interrupts and clocks
+
+
+Claudiu Beznea (9):
+  dt-bindings: clock: renesas,r9a08g045-vbattb: Document VBATTB
+  clk: linux/clk-provider.h: Add devm_clk_hw_register_gate_parent_hw()
+  clk: renesas: clk-vbattb: Add VBATTB clock driver
+  rtc: renesas-rtca3: Fix compilation error on RISC-V
+  arm64: dts: renesas: r9a08g045: Add VBATTB node
+  arm64: dts: renesas: r9a08g045: Add RTC node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable VBATTB
+  arm64: dts: renesas: rzg3s-smarc-som: Enable RTC
+  arm64: defconfig: Enable VBATTB clock and Renesas RTCA-3 flags
+
+ .../clock/renesas,r9a08g045-vbattb.yaml       |  84 +++++++
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  34 +++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  16 ++
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/clk/renesas/Kconfig                   |   5 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/clk-vbattb.c              | 205 ++++++++++++++++++
+ drivers/rtc/rtc-renesas-rtca3.c               |   1 +
+ .../clock/renesas,r9a08g045-vbattb.h          |  13 ++
+ include/linux/clk-provider.h                  |  18 ++
+ 10 files changed, 379 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
+ create mode 100644 drivers/clk/renesas/clk-vbattb.c
+ create mode 100644 include/dt-bindings/clock/renesas,r9a08g045-vbattb.h
+
 -- 
-2.47.0.199.ga7371fff76-goog
+2.39.2
 
 
