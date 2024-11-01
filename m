@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-391578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84139B88E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:52:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E0C9B88E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:53:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02A9EB21AA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:52:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D82282981
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F054180BF8;
-	Fri,  1 Nov 2024 01:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC1384E1C;
+	Fri,  1 Nov 2024 01:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="mOA7IDOA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEqFY/D0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF621A28C;
-	Fri,  1 Nov 2024 01:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2647D07D;
+	Fri,  1 Nov 2024 01:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730425956; cv=none; b=hvtTlCgXugV7Kp8KN202QcYxXzxPUjM/CyR/0gSN+vFsiOVWPui0kIJmxrBFNJrgYLTmZFc40YNc0KQeq2MUkiZT6mBUYoqEWrUX9glrTc4iHJ9S15dSi3pn+qyarY30RVfDF/nRo4Eni0oFvbWpqLqjPfp2ycXHMtpU94Oxcc4=
+	t=1730425992; cv=none; b=Ru1PetGv+zwj50y8qwxbouamI1V6yHNmIKc6OoG7d6/k7SF5A/ZMICurScTvLn/VEWdPi5tDP6Yz/bP06Uq4kSuZdce/bPIR17JbOSfZfv4AEZfMVSSgvyzjMCI9E1BPaeyWVwi3Upq/5Gx6TdtdJ6VktWquB2RzggrhfScEybY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730425956; c=relaxed/simple;
-	bh=rUYhonZQ44s7AHpyKlo7hmLgeKtjiBsbCXsQs2AM87c=;
+	s=arc-20240116; t=1730425992; c=relaxed/simple;
+	bh=2TU62Hgp56g5+Sz4wGbj7LZ9edguPOOihgw6ErBjvh8=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ZnqFNsxf96VDEUeuimFakYG5alv2/laAMSbgya4z+x8lRojZAXtE6PqLdOdW6GtJB/URaCSQeKXUwssux7mvu0rNOujyNeyvQrV7mTmgpam8fpitEZsZXt+OosJ8b+G6uqhz5d23bOAgdViie8jLlx8u9BF/xlkeC/5U9VgJ0v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=mOA7IDOA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A363EC4CEC3;
-	Fri,  1 Nov 2024 01:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730425955;
-	bh=rUYhonZQ44s7AHpyKlo7hmLgeKtjiBsbCXsQs2AM87c=;
+	 Mime-Version:Content-Type; b=GJIIKMPirWVW5Yp/x4qontf0meN4/E9zapxYD2ZGgBwr1Clgf+pHQ2pq5/+otGc2fHLjcp827ZhI0hzXi2ATEXf55++WIgiPPpH1BCNXBzTDAS3l5WdaD4DR8I1MgLT5LyUN9pBst8IfOhPpZQsi5V0wR20BdXUTUBisPizZbHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEqFY/D0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E254FC4CEC3;
+	Fri,  1 Nov 2024 01:53:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730425992;
+	bh=2TU62Hgp56g5+Sz4wGbj7LZ9edguPOOihgw6ErBjvh8=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mOA7IDOAhyGZXr2y5DJ0+z5H3EkStEeP+24bScIxzAUIsj7m8vmKF4Yr3wrnwFgXI
-	 r+aW2Rs2YEa434G8cFDlj+sOmGj7fCzxMDqFpBr50XQLGkLCH6QYq51/8UwUuHNkbK
-	 8t+H+zbZNSs3LeRcOWcbAoHK7clISQT7cj1+EA4o=
-Date: Thu, 31 Oct 2024 18:52:35 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Qi Xi <xiqi2@huawei.com>
-Cc: <bobo.shaobowang@huawei.com>, <bhe@redhat.com>, <vgoyal@redhat.com>,
- <dyoung@redhat.com>, <holzheu@linux.vnet.ibm.com>,
- <kexec@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fs/proc: Fix compile warning about variable
- 'vmcore_mmap_ops'
-Message-Id: <20241031185235.8bb482766ab10d2ab19fd3f6@linux-foundation.org>
-In-Reply-To: <20241031072746.12897-1-xiqi2@huawei.com>
-References: <20241031072746.12897-1-xiqi2@huawei.com>
+	b=aEqFY/D0zWm2HZsvfEQD9UCb49YP/MdonDE5DUbK9KN4miXrUPKq5U4w2j+S7U3DM
+	 YkRIS1p71AWdz6Ao9SSI1mNogr/+9XlC1MhmzB5IUOSUTahn/C+Tti0H5RwgYOReaD
+	 lhQf9qPD1L0ADJgnGM7Z56U+6/6ezbDSNwqWXGb2LpyGL6ZgLxOkw7y62BS9FySg4Y
+	 BlCxjNNtgte7SmK8+K17yI0tR5ckLqb/eSmhF/fSVKqNMJkeJhASH0PTbY0T0obUkw
+	 H8Pioh/gQbMpn5lTsGv0hcbam2SdL0DA3saXKrOkX/lDOg4JPH39KwmSnOIT/MkpUl
+	 xkL4NLNzBUmjQ==
+Date: Fri, 1 Nov 2024 10:53:06 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Naveen N Rao <naveen@kernel.org>, Anil S Keshavamurthy
+ <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ patches@lists.linux.dev
+Subject: Re: [PATCH 1/2] kprobes: Fix __get_insn_slot() after __counted_by
+ annotation
+Message-Id: <20241101105306.d198e543f9b60270cdcd570c@kernel.org>
+In-Reply-To: <20241031033731.GA2553234@thelio-3990X>
+References: <20241030-kprobes-fix-counted-by-annotation-v1-0-8f266001fad0@kernel.org>
+	<20241030-kprobes-fix-counted-by-annotation-v1-1-8f266001fad0@kernel.org>
+	<20241031105827.08b362cf0dcf558f9cf59ad8@kernel.org>
+	<20241031033731.GA2553234@thelio-3990X>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,46 +67,63 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 31 Oct 2024 15:27:46 +0800 Qi Xi <xiqi2@huawei.com> wrote:
+On Wed, 30 Oct 2024 20:37:31 -0700
+Nathan Chancellor <nathan@kernel.org> wrote:
 
-> When build with !CONFIG_MMU, the variable 'vmcore_mmap_ops'
-> is defined but not used:
+> On Thu, Oct 31, 2024 at 10:58:27AM +0900, Masami Hiramatsu wrote:
+> > On Wed, 30 Oct 2024 09:14:48 -0700
+> > Nathan Chancellor <nathan@kernel.org> wrote:
+> > 
+> > > Commit 0888460c9050 ("kprobes: Annotate structs with __counted_by()")
+> > > added a __counted_by annotation without adjusting the code for the
+> > > __counted_by requirements, resulting in a panic when UBSAN_BOUNDS and
+> > > FORTIFY_SOURCE are enabled:
+> > > 
+> > >   | memset: detected buffer overflow: 512 byte write of buffer size 0
+> > >   | WARNING: CPU: 0 PID: 1 at lib/string_helpers.c:1032 __fortify_report+0x64/0x80
+> > >   | Call Trace:
+> > >   |  __fortify_report+0x60/0x80 (unreliable)
+> > >   |  __fortify_panic+0x18/0x1c
+> > >   |  __get_insn_slot+0x33c/0x340
+> > > 
+> > > __counted_by requires that the counter be set before accessing the
+> > > flexible array but ->nused is not set until after ->slot_used is
+> > > accessed via memset(). Even if the current ->nused assignment were moved
+> > > up before memset(), the value of 1 would be incorrect because the entire
+> > > array is being accessed, not just one element.
+> > 
+> > Ah, I think I misunderstood the __counted_by(). If so, ->nused can be
+> > smaller than the accessing element of slot_used[]. I should revert it.
+> > The accessing index and ->nused should have no relationship.
+> > 
+> > for example, slots_per_page(c) is 10, and 10 kprobes are registered
+> > and then, the 1st and 2nd kprobes are unregistered. At this moment,
+> > ->nused is 8 but slot_used[9] is still used. To unregister this 10th
+> > kprobe, we have to access slot_used[9].
 > 
-> >> fs/proc/vmcore.c:458:42: warning: unused variable 'vmcore_mmap_ops'
->      458 | static const struct vm_operations_struct vmcore_mmap_ops = {
+> Ah, I totally missed that bit of the code, sorry about that. Thanks for
+> the explanation!
 > 
-> Fix this by declaring it __maybe_unused.
+> > So let's just revert the commit 0888460c9050.
 > 
+> Reverting that change sounds totally reasonable to me based on the
+> above. Will you take care of that?
 
-It's better to move the definition inside #ifdef CONFIG_MMU, perhaps this:
+Yeah, probes/for-next is a working branch. So I just dropped it.
 
---- a/fs/proc/vmcore.c~a
-+++ a/fs/proc/vmcore.c
-@@ -457,10 +457,6 @@ static vm_fault_t mmap_vmcore_fault(stru
- #endif
- }
- 
--static const struct vm_operations_struct vmcore_mmap_ops = {
--	.fault = mmap_vmcore_fault,
--};
--
- /**
-  * vmcore_alloc_buf - allocate buffer in vmalloc memory
-  * @size: size of buffer
-@@ -488,6 +484,11 @@ static inline char *vmcore_alloc_buf(siz
-  * virtually contiguous user-space in ELF layout.
-  */
- #ifdef CONFIG_MMU
-+
-+static const struct vm_operations_struct vmcore_mmap_ops = {
-+	.fault = mmap_vmcore_fault,
-+};
-+
- /*
-  * remap_oldmem_pfn_checked - do remap_oldmem_pfn_range replacing all pages
-  * reported as not being ram with the zero page.
-_
+> 
+> For what it's worth, I think patch #2 should still be applicable, if you
+> are okay with that one.
+
+Yes, other patches look good to me.
+
+Thank you,
+
+> 
+> Cheers,
+> Nathan
 
 
-Please check and test that and send it back at us a a v2 patch?
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
