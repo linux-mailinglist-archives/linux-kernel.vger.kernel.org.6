@@ -1,71 +1,85 @@
-Return-Path: <linux-kernel+bounces-391954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53719B8DCE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:26:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17299B8DD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:27:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 016781C22C4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:26:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F7C8286EEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E6E158DA3;
-	Fri,  1 Nov 2024 09:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81053158DC8;
+	Fri,  1 Nov 2024 09:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VEqteZ1n"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbr7Nmy1"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A023FF1;
-	Fri,  1 Nov 2024 09:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475A1156220;
+	Fri,  1 Nov 2024 09:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730453207; cv=none; b=Ddmss3pmIHEi2YsOBHlxC6bcVqAegpp0tjmNp87OQkvK1itImtL0u0rvrO+oRbug/AsWfVoQYrgKyyx6oSikAt2SpHCqbNCgEzSz7ksxcXa69p+DLZmvsZVbNauR4oQcd2WgN+hWpmhqGhwcMsLxsfMPdX5DU3zMJKd7NHNZeMo=
+	t=1730453252; cv=none; b=EPuEKd/taLRzRDdMIZZlm7fuk9LWsRCLu8l2fw5PpMZPIvYicaHodQI8Ufd2G1P7TaNgklSlZoyyaUoZ3Yxh/BmFLK7Fhfv0zacjaFiDT2umpO+ZopfVkUtQ37sgBRul60VAuOtx8QgAE9U3F4WoOonvA9gm6y4728SPRgML7mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730453207; c=relaxed/simple;
-	bh=foNT9LhMxcw9h0sgdEYN/DEg/68Idl66SQOZykSzYdY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JMrT//oWwNDpiaJnsMl3oeKg+1AWBzcvp+KwoMf7tZ8oDCh4rgGHNS0L47R9o5a0fhK4feUAi7t41J9zCrP9RdoKsMNQDV0PwW/dI0VfrdKw9hQBlcS2TU0br9cr6ffvcjCXzVpS5BHdJjMqAhWta4uwM0xTY2XWrLBkxQ1b7bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VEqteZ1n; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=foNT9LhMxcw9h0sgdEYN/DEg/68Idl66SQOZykSzYdY=; b=VEqteZ1nroa64zIiP0nWJK/gEv
-	/ILiwlDALMATwX1jgcMw2wjCho/f0L3Bm/FQYW/Hv77I9jJUgFPHVRtIBzkSPqv97Sr9YEoatezNs
-	ZyZv56DnRg4SnEpSR/zcn/zJxmgXwglWj/HuMZAHtdH6au0axacaWbEx9r6JnG6z0+Dm27+xrJyBv
-	EcGd+ntjyGo0QAlkK7m5iXBDQQoq1Zgd+fJ9VdOH9kRMOSgT0xZkDbeCBW3E3RnNnvXtOxxgPkCPk
-	D4DkcD5BKhOMp17wLNPNv8Aag+2M1Dx92AIYOzdQThhZSOxVN2wIRxgLMrQeg5zTlNXshSIbvdCjj
-	yJtgVhwA==;
-Received: from [212.102.57.71] (helo=[172.31.28.190])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6nvJ-0000000Fhjf-3fug;
-	Fri, 01 Nov 2024 09:26:30 +0000
-Message-ID: <5c9714690d9395533373df0c366e9019f45a6689.camel@infradead.org>
-Subject: Re: [PATCH 2/2] x86: kvm: svm: add support for ERAPS and
- FLUSH_RAP_ON_VMRUN
-From: Amit Shah <amit@infradead.org>
-To: kernel test robot <lkp@intel.com>, amit.shah@amd.com, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org, 
-	linux-doc@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
-	thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de,
- peterz@infradead.org, 	jpoimboe@kernel.org,
- pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, 	mingo@redhat.com,
- dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com, 
-	pbonzini@redhat.com, daniel.sneddon@linux.intel.com, kai.huang@intel.com, 
-	sandipan.das@amd.com, boris.ostrovsky@oracle.com, Babu.Moger@amd.com, 
-	david.kaplan@amd.com
-Date: Fri, 01 Nov 2024 10:26:28 +0100
-In-Reply-To: <202411011119.l3yRJpht-lkp@intel.com>
-References: <20241031153925.36216-3-amit@kernel.org>
-	 <202411011119.l3yRJpht-lkp@intel.com>
+	s=arc-20240116; t=1730453252; c=relaxed/simple;
+	bh=vIfMnY0JkCIAyhWqCiZR0RpSQEmHqIzo87NLNuoklGk=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FG6ySq2CA5OEOuULPrU6f/sPoIzlKO1yG9QOM5eKSog5kcSuOJuz5tNq4pkI6qpLMJrO3KiidQFvVQo2hUDwkdLeru952wHS0QAH1SPAT+oCvxoaSFji4nibSIcPTRpfZkdESFNel8NDhNN+x8u1AndwKA63Cdaho/KVAylX9Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbr7Nmy1; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e6048bc23cso1047467b6e.3;
+        Fri, 01 Nov 2024 02:27:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730453249; x=1731058049; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vIfMnY0JkCIAyhWqCiZR0RpSQEmHqIzo87NLNuoklGk=;
+        b=bbr7Nmy1hwks5nAfmDITUL3s9lSCUL9Jkrb19AKZpxoGw3pXY7MPPOxGbVeifZxz1i
+         aUyywXzVOGbbM7Kxwe+261px2F7H24XAoVpmYq38YjQkbrcgcRXh0nhJI3GU4XKIs+gg
+         nd8Yiudp48J4n5sPiAUBOgyhltOumuoQdKQMAqnlyesnWI8mTxyszJwG31PTRiiD1R5z
+         88SubsBSbv8xo/1dirTCe9mOmgIIv8CynZXzsR9wOadDLj8SnybkbsC0xxFyqlGoZFBY
+         RnC2lMD/pVoRH1qUSBnu4Jy4LTOF/TyM3oYvVQTU2jCCWQkTThefhbGmOxK0559uLaWy
+         J/Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730453249; x=1731058049;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vIfMnY0JkCIAyhWqCiZR0RpSQEmHqIzo87NLNuoklGk=;
+        b=M4Hktgi4aoupgcRObDa6tiEPkz8UwCmWsz9DRBPJsC6CUJtS/eEym8cHuxlMxCdoxy
+         Uzesm23xJoQZ4gWjLB+AMPCfj/cE5QbnlYFHh+ctij7KkHSVvLGMlYSH7o7Dlqz3iiK5
+         jIR7YABgx6J4DSFUlKuwh3+67hW6s9oyvQeeJ0uMxsAnlVu3Sf0TSQJ+irHhdmjjK6l5
+         r3MMIPaiHGpHydzJ+Dh2XEmv7jTqkblgabj/Wa8aUFOpOoSU9W5V5AUeT7b2wBh7ZHu0
+         P8tvqcHMB4tesijqgK0BSi78jLS7PwjTGT5V65UulY7/Gd4WvU7DU02FlZgy0AiMRoPO
+         oegw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Xd2HYbM5vPFRym4MtuwOU9hO82C49+zMnAZqhGJSazWnrODHBp6txpoMVGpLkWDGRpYbygIqlrr5uGxU@vger.kernel.org, AJvYcCVydf1VgEn05j99ioO1G3iLxmpkgh4YhtNcy9jLapUzwrgLc55QJb0VSE0olj7Umay+Q2baqwFUipx3@vger.kernel.org, AJvYcCWleCSvAFMyHShRQgCLh+LJYxoX+CrRbHIg9LA4rILwe4PsdtGqYk+dzjsd2PGWw3Lvd1ZVjZwNWUqlewbp@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA89TrQSH3+Y4cDDeVaqC5MLyT5mwfL5uE2l9VF/MOtwYlXeTE
+	mGSDLu9KTYTJThxX13FAMifzI+ogxu58bxmyux5gpQJP34mZMgPw
+X-Google-Smtp-Source: AGHT+IEnw1KGe2Yr+hnMsq1dWAe8G0Pz1BzODKOkH9Nt1iSct2D9op4j5ophqjwd3N20iS/bM4YuZQ==
+X-Received: by 2002:a05:6808:1b87:b0:3e6:4f5b:ae87 with SMTP id 5614622812f47-3e64f5bb068mr13279796b6e.47.1730453249109;
+        Fri, 01 Nov 2024 02:27:29 -0700 (PDT)
+Received: from [10.172.23.36] ([38.207.141.200])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee459f9050sm2205376a12.74.2024.11.01.02.27.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 02:27:28 -0700 (PDT)
+Message-ID: <73b917c76cff44f3085c79f251d958b1ec6c793a.camel@gmail.com>
+Subject: Re: [syzbot] [xfs?] KASAN: slab-use-after-free Read in
+ xfs_inode_item_push
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: syzbot <syzbot+1a28995e12fd13faa44e@syzkaller.appspotmail.com>, 
+	chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Date: Fri, 01 Nov 2024 17:27:24 +0800
+In-Reply-To: <66f5d630.050a0220.38ace9.0002.GAE@google.com>
+References: <66f5d630.050a0220.38ace9.0002.GAE@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,87 +87,192 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-T24gRnJpLCAyMDI0LTExLTAxIGF0IDEyOjE0ICswODAwLCBrZXJuZWwgdGVzdCByb2JvdCB3cm90
-ZToKPiBIaSBBbWl0LAo+IAo+IGtlcm5lbCB0ZXN0IHJvYm90IG5vdGljZWQgdGhlIGZvbGxvd2lu
-ZyBidWlsZCB3YXJuaW5nczoKPiAKPiBbYXV0byBidWlsZCB0ZXN0IFdBUk5JTkcgb24ga3ZtL3F1
-ZXVlXQo+IFthbHNvIGJ1aWxkIHRlc3QgV0FSTklORyBvbiBtc3Qtdmhvc3QvbGludXgtbmV4dCB0
-aXAvbWFzdGVyCj4gdGlwL3g4Ni9jb3JlIGxpbnVzL21hc3RlciB2Ni4xMi1yYzUgbmV4dC0yMDI0
-MTAzMV0KPiBbY2Fubm90IGFwcGx5IHRvIGt2bS9saW51eC1uZXh0IHRpcC9hdXRvLWxhdGVzdF0K
-PiBbSWYgeW91ciBwYXRjaCBpcyBhcHBsaWVkIHRvIHRoZSB3cm9uZyBnaXQgdHJlZSwga2luZGx5
-IGRyb3AgdXMgYQo+IG5vdGUuCj4gQW5kIHdoZW4gc3VibWl0dGluZyBwYXRjaCwgd2Ugc3VnZ2Vz
-dCB0byB1c2UgJy0tYmFzZScgYXMgZG9jdW1lbnRlZAo+IGluCj4gaHR0cHM6Ly9naXQtc2NtLmNv
-bS9kb2NzL2dpdC1mb3JtYXQtcGF0Y2gjX2Jhc2VfdHJlZV9pbmZvcm1hdGlvbl0KPiAKPiB1cmw6
-wqDCoMKgCj4gaHR0cHM6Ly9naXRodWIuY29tL2ludGVsLWxhYi1sa3AvbGludXgvY29tbWl0cy9B
-bWl0LVNoYWgveDg2LWNwdS1idWdzLWFkZC1zdXBwb3J0LWZvci1BTUQtRVJBUFMtZmVhdHVyZS8y
-MDI0MTAzMS0yMzQzMzIKPiBiYXNlOsKgwqAgaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2Nt
-L3ZpcnQva3ZtL2t2bS5naXTCoHF1ZXVlCj4gcGF0Y2ggbGluazrCoMKgwqAKPiBodHRwczovL2xv
-cmUua2VybmVsLm9yZy9yLzIwMjQxMDMxMTUzOTI1LjM2MjE2LTMtYW1pdCU0MGtlcm5lbC5vcmcK
-PiBwYXRjaCBzdWJqZWN0OiBbUEFUQ0ggMi8yXSB4ODY6IGt2bTogc3ZtOiBhZGQgc3VwcG9ydCBm
-b3IgRVJBUFMgYW5kCj4gRkxVU0hfUkFQX09OX1ZNUlVOCj4gY29uZmlnOiB4ODZfNjQta2V4ZWMK
-PiAoaHR0cHM6Ly9kb3dubG9hZC4wMS5vcmcvMGRheS1jaS9hcmNoaXZlLzIwMjQxMTAxLzIwMjQx
-MTAxMTExOS5sM3lSSnAKPiBodC1sa3BAaW50ZWwuY29tL2NvbmZpZykKPiBjb21waWxlcjogY2xh
-bmcgdmVyc2lvbiAxOS4xLjMKPiAoaHR0cHM6Ly9naXRodWIuY29tL2xsdm0vbGx2bS1wcm9qZWN0
-wqBhYjUxZWNjZjg4ZjUzMjFlN2M2MDU5MWM1NTQ2YjI1Cj4gNGI2YWZhYjk5KQo+IHJlcHJvZHVj
-ZSAodGhpcyBpcyBhIFc9MSBidWlsZCk6Cj4gKGh0dHBzOi8vZG93bmxvYWQuMDEub3JnLzBkYXkt
-Y2kvYXJjaGl2ZS8yMDI0MTEwMS8yMDI0MTEwMTExMTkubDN5UkpwCj4gaHQtbGtwQGludGVsLmNv
-bS9yZXByb2R1Y2UpCj4gCj4gSWYgeW91IGZpeCB0aGUgaXNzdWUgaW4gYSBzZXBhcmF0ZSBwYXRj
-aC9jb21taXQgKGkuZS4gbm90IGp1c3QgYSBuZXcKPiB2ZXJzaW9uIG9mCj4gdGhlIHNhbWUgcGF0
-Y2gvY29tbWl0KSwga2luZGx5IGFkZCBmb2xsb3dpbmcgdGFncwo+ID4gUmVwb3J0ZWQtYnk6IGtl
-cm5lbCB0ZXN0IHJvYm90IDxsa3BAaW50ZWwuY29tPgo+ID4gQ2xvc2VzOgo+ID4gaHR0cHM6Ly9s
-b3JlLmtlcm5lbC5vcmcvb2Uta2J1aWxkLWFsbC8yMDI0MTEwMTExMTkubDN5UkpwaHQtbGtwQGlu
-dGVsLmNvbS8KPiAKPiBBbGwgd2FybmluZ3MgKG5ldyBvbmVzIHByZWZpeGVkIGJ5ID4+KToKPiAK
-PiDCoMKgIEluIGZpbGUgaW5jbHVkZWQgZnJvbSBhcmNoL3g4Ni9rdm0vY3B1aWQuYzoxMzoKPiDC
-oMKgIEluIGZpbGUgaW5jbHVkZWQgZnJvbSBpbmNsdWRlL2xpbnV4L2t2bV9ob3N0Lmg6MTY6Cj4g
-wqDCoCBJbiBmaWxlIGluY2x1ZGVkIGZyb20gaW5jbHVkZS9saW51eC9tbS5oOjIyMTM6Cj4gwqDC
-oCBpbmNsdWRlL2xpbnV4L3Ztc3RhdC5oOjUwNDo0Mzogd2FybmluZzogYXJpdGhtZXRpYyBiZXR3
-ZWVuCj4gZGlmZmVyZW50IGVudW1lcmF0aW9uIHR5cGVzICgnZW51bSB6b25lX3N0YXRfaXRlbScg
-YW5kICdlbnVtCj4gbnVtYV9zdGF0X2l0ZW0nKSBbLVdlbnVtLWVudW0tY29udmVyc2lvbl0KPiDC
-oMKgwqDCoCA1MDQgfMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIHZtc3RhdF90ZXh0W05SX1ZNX1pP
-TkVfU1RBVF9JVEVNUyArCj4gwqDCoMKgwqDCoMKgwqDCoCB8wqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH5+fn5+fn5+fn5+fn5+fn5+fn5+fiBe
-Cj4gwqDCoMKgwqAgNTA1IHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgaXRlbV07Cj4gwqDCoMKgwqDCoMKgwqDCoCB8wqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH5+fn4KPiDCoMKgIGluY2x1
-ZGUvbGludXgvdm1zdGF0Lmg6NTExOjQzOiB3YXJuaW5nOiBhcml0aG1ldGljIGJldHdlZW4KPiBk
-aWZmZXJlbnQgZW51bWVyYXRpb24gdHlwZXMgKCdlbnVtIHpvbmVfc3RhdF9pdGVtJyBhbmQgJ2Vu
-dW0KPiBudW1hX3N0YXRfaXRlbScpIFstV2VudW0tZW51bS1jb252ZXJzaW9uXQo+IMKgwqDCoMKg
-IDUxMSB8wqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gdm1zdGF0X3RleHRbTlJfVk1fWk9ORV9TVEFU
-X0lURU1TICsKPiDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfn5+fn5+fn5+fn5+fn5+fn5+fn5+IF4KPiDCoMKg
-wqDCoCA1MTIgfMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBOUl9WTV9OVU1BX0VWRU5UX0lURU1TICsKPiDCoMKgwqDCoMKgwqDCoMKgIHzCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfn5+fn5+
-fn5+fn5+fn5+fn5+fn5+fgo+IMKgwqAgaW5jbHVkZS9saW51eC92bXN0YXQuaDo1MTg6MzY6IHdh
-cm5pbmc6IGFyaXRobWV0aWMgYmV0d2Vlbgo+IGRpZmZlcmVudCBlbnVtZXJhdGlvbiB0eXBlcyAo
-J2VudW0gbm9kZV9zdGF0X2l0ZW0nIGFuZCAnZW51bQo+IGxydV9saXN0JykgWy1XZW51bS1lbnVt
-LWNvbnZlcnNpb25dCj4gwqDCoMKgwqAgNTE4IHzCoMKgwqDCoMKgwqDCoMKgIHJldHVybiBub2Rl
-X3N0YXRfbmFtZShOUl9MUlVfQkFTRSArIGxydSkgKyAzOyAvLwo+IHNraXAgIm5yXyIKPiDCoMKg
-wqDCoMKgwqDCoMKgIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgfn5+fn5+fn5+fn4gXiB+fn4KPiDCoMKgIGluY2x1ZGUvbGludXgv
-dm1zdGF0Lmg6NTI0OjQzOiB3YXJuaW5nOiBhcml0aG1ldGljIGJldHdlZW4KPiBkaWZmZXJlbnQg
-ZW51bWVyYXRpb24gdHlwZXMgKCdlbnVtIHpvbmVfc3RhdF9pdGVtJyBhbmQgJ2VudW0KPiBudW1h
-X3N0YXRfaXRlbScpIFstV2VudW0tZW51bS1jb252ZXJzaW9uXQo+IMKgwqDCoMKgIDUyNCB8wqDC
-oMKgwqDCoMKgwqDCoCByZXR1cm4gdm1zdGF0X3RleHRbTlJfVk1fWk9ORV9TVEFUX0lURU1TICsK
-PiDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgfn5+fn5+fn5+fn5+fn5+fn5+fn5+IF4KPiDCoMKgwqDCoCA1MjUg
-fMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBO
-Ul9WTV9OVU1BX0VWRU5UX0lURU1TICsKPiDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfn5+fn5+fn5+fn5+fn5+
-fn5+fn5+fgo+ID4gPiBhcmNoL3g4Ni9rdm0vY3B1aWQuYzoxMzYyOjM6IHdhcm5pbmc6IGxhYmVs
-IGZvbGxvd2VkIGJ5IGEKPiA+ID4gZGVjbGFyYXRpb24gaXMgYSBDMjMgZXh0ZW5zaW9uIFstV2My
-My1leHRlbnNpb25zXQo+IMKgwqDCoCAxMzYyIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCB1bnNpZ25lZCBpbnQgZWJ4X21hc2sgPSAwOwo+IMKgwqDCoMKgwqDCoMKgwqAgfMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIF4KPiDCoMKgIDUgd2FybmluZ3MgZ2VuZXJhdGVk
-LgoKWy4uLl0KCj4gwqAgMTM2MQkJY2FzZSAweDgwMDAwMDIxOgo+ID4gMTM2MgkJCXVuc2lnbmVk
-IGludCBlYnhfbWFzayA9IDA7Cj4gwqAgMTM2MwkKPiDCoCAxMzY0CQkJZW50cnktPmVjeCA9IGVu
-dHJ5LT5lZHggPSAwOwo+IMKgIDEzNjUJCQljcHVpZF9lbnRyeV9vdmVycmlkZShlbnRyeSwKPiBD
-UFVJRF84MDAwXzAwMjFfRUFYKTsKPiDCoCAxMzY2CQo+IMKgIDEzNjcJCQkvKgo+IMKgIDEzNjgJ
-CQkgKiBCaXRzIDIzOjE2IGluIEVCWCBpbmRpY2F0ZSB0aGUgc2l6ZSBvZgo+IHRoZSBSU0IuCj4g
-wqAgMTM2OQkJCSAqIEV4cG9zZSB0aGUgdmFsdWUgaW4gdGhlIGhhcmR3YXJlIHRvIHRoZQo+IGd1
-ZXN0Lgo+IMKgIDEzNzAJCQkgKi8KPiDCoCAxMzcxCQkJaWYgKGt2bV9jcHVfY2FwX2hhcyhYODZf
-RkVBVFVSRV9FUkFQUykpCj4gwqAgMTM3MgkJCQllYnhfbWFzayB8PSBHRU5NQVNLKDIzLCAxNik7
-Cj4gwqAgMTM3MwkKPiDCoCAxMzc0CQkJZW50cnktPmVieCAmPSBlYnhfbWFzazsKPiDCoCAxMzc1
-CQkJYnJlYWs7CgpSaWdodCAtIEknbGwgYWRkIGJyYWNlcyBhcm91bmQgdGhpcyBjYXNlIHN0YXRl
-bWVudC4KCgkJQW1pdAo=
+On Thu, 2024-09-26 at 14:46 -0700, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+>=20
+> HEAD commit:=C2=A0=C2=A0=C2=A0 11a299a7933e Merge tag 'for-6.12/block-202=
+40925' of
+> git://..
+> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1378aaa998000=
+0
+> kernel config:=C2=A0
+> https://syzkaller.appspot.com/x/.config?x=3D31f49563bb05c4a8
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3D1a28995e12fd13faa44e
+> compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Debian clang version 15.0.6=
+, GNU ld (GNU Binutils for
+> Debian) 2.40
+> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/repro.syz?x=3D164f7627980000
+> C reproducer:=C2=A0=C2=A0 https://syzkaller.appspot.com/x/repro.c?x=3D109=
+23a80580000
+>=20
+> Downloadable assets:
+> disk image:
+> https://storage.googleapis.com/syzbot-assets/e97035004495/disk-11a299a7.r=
+aw.xz
+> vmlinux:
+> https://storage.googleapis.com/syzbot-assets/0be318a25b1d/vmlinux-11a299a=
+7.xz
+> kernel image:
+> https://storage.googleapis.com/syzbot-assets/91f17271baa3/bzImage-11a299a=
+7.xz
+> mounted in repro:
+> https://storage.googleapis.com/syzbot-assets/971400d21e6d/mount_0.gz
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the
+> commit:
+> Reported-by: syzbot+1a28995e12fd13faa44e@syzkaller.appspotmail.com
+>=20
+> BUG: KASAN: slab-use-after-free in xfs_inode_item_push+0x293/0x2e0
+> fs/xfs/xfs_inode_item.c:775
+> Read of size 8 at addr ffff8880774cfa70 by task xfsaild/loop2/10928
+>=20
+> CPU: 1 UID: 0 PID: 10928 Comm: xfsaild/loop2 Not tainted 6.11.0-
+> syzkaller-10669-g11a299a7933e #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 09/13/2024
+> Call Trace:
+> =C2=A0<TASK>
+> =C2=A0__dump_stack lib/dump_stack.c:94 [inline]
+> =C2=A0dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> =C2=A0print_address_description mm/kasan/report.c:377 [inline]
+> =C2=A0print_report+0x169/0x550 mm/kasan/report.c:488
+> =C2=A0kasan_report+0x143/0x180 mm/kasan/report.c:601
+> =C2=A0xfs_inode_item_push+0x293/0x2e0 fs/xfs/xfs_inode_item.c:775
+> =C2=A0xfsaild_push_item fs/xfs/xfs_trans_ail.c:395 [inline]
+> =C2=A0xfsaild_push fs/xfs/xfs_trans_ail.c:523 [inline]
+> =C2=A0xfsaild+0x112a/0x2e00 fs/xfs/xfs_trans_ail.c:705
+> =C2=A0kthread+0x2f0/0x390 kernel/kthread.c:389
+> =C2=A0ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> =C2=A0ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> =C2=A0</TASK>
+>=20
+> Allocated by task 10907:
+> =C2=A0kasan_save_stack mm/kasan/common.c:47 [inline]
+> =C2=A0kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+> =C2=A0unpoison_slab_object mm/kasan/common.c:319 [inline]
+> =C2=A0__kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
+> =C2=A0kasan_slab_alloc include/linux/kasan.h:247 [inline]
+> =C2=A0slab_post_alloc_hook mm/slub.c:4086 [inline]
+> =C2=A0slab_alloc_node mm/slub.c:4135 [inline]
+> =C2=A0kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4142
+> =C2=A0xfs_inode_item_init+0x33/0xc0 fs/xfs/xfs_inode_item.c:870
+> =C2=A0xfs_trans_ijoin+0xeb/0x130 fs/xfs/libxfs/xfs_trans_inode.c:36
+> =C2=A0xfs_create+0x8a0/0xf60 fs/xfs/xfs_inode.c:720
+> =C2=A0xfs_generic_create+0x5d5/0xf50 fs/xfs/xfs_iops.c:213
+> =C2=A0vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+> =C2=A0do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+> =C2=A0__do_sys_mkdir fs/namei.c:4300 [inline]
+> =C2=A0__se_sys_mkdir fs/namei.c:4298 [inline]
+> =C2=A0__x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
+> =C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> =C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>=20
+> Freed by task 5213:
+> =C2=A0kasan_save_stack mm/kasan/common.c:47 [inline]
+> =C2=A0kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+> =C2=A0kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+> =C2=A0poison_slab_object mm/kasan/common.c:247 [inline]
+> =C2=A0__kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+> =C2=A0kasan_slab_free include/linux/kasan.h:230 [inline]
+> =C2=A0slab_free_hook mm/slub.c:2343 [inline]
+> =C2=A0slab_free mm/slub.c:4580 [inline]
+> =C2=A0kmem_cache_free+0x1a2/0x420 mm/slub.c:4682
+> =C2=A0xfs_inode_free_callback+0x152/0x1d0 fs/xfs/xfs_icache.c:158
+> =C2=A0rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+> =C2=A0rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+> =C2=A0handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+> =C2=A0__do_softirq kernel/softirq.c:588 [inline]
+> =C2=A0invoke_softirq kernel/softirq.c:428 [inline]
+> =C2=A0__irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+> =C2=A0irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+> =C2=A0instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1037
+> [inline]
+> =C2=A0sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1=
+037
+> =C2=A0asm_sysvec_apic_timer_interrupt+0x1a/0x20
+> arch/x86/include/asm/idtentry.h:702
+>=20
+> The buggy address belongs to the object at ffff8880774cfa40
+> =C2=A0which belongs to the cache xfs_ili of size 264
+> The buggy address is located 48 bytes inside of
+> =C2=A0freed 264-byte region [ffff8880774cfa40, ffff8880774cfb48)
+>=20
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0
+> pfn:0x774cf
+> ksm flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> page_type: f5(slab)
+> raw: 00fff00000000000 ffff888142abe140 ffffea0001d56080 0000000000000007
+> raw: 0000000000000000 00000000000c000c 00000001f5000000 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Reclaimable, gfp_mask
+> 0x52c50(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_RECLAIMABLE)
+> , pid 5289, tgid 5289 (syz-executor269), ts 76754520423, free_ts
+> 21942205490
+> =C2=A0set_page_owner include/linux/page_owner.h:32 [inline]
+> =C2=A0post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+> =C2=A0prep_new_page mm/page_alloc.c:1545 [inline]
+> =C2=A0get_page_from_freelist+0x3039/0x3180 mm/page_alloc.c:3457
+> =C2=A0__alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
+> =C2=A0alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+> =C2=A0alloc_slab_page+0x6a/0x120 mm/slub.c:2413
+> =C2=A0allocate_slab+0x5a/0x2f0 mm/slub.c:2579
+> =C2=A0new_slab mm/slub.c:2632 [inline]
+> =C2=A0___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
+> =C2=A0__slab_alloc+0x58/0xa0 mm/slub.c:3909
+> =C2=A0__slab_alloc_node mm/slub.c:3962 [inline]
+> =C2=A0slab_alloc_node mm/slub.c:4123 [inline]
+> =C2=A0kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4142
+> =C2=A0xfs_inode_item_init+0x33/0xc0 fs/xfs/xfs_inode_item.c:870
+> =C2=A0xfs_trans_ijoin+0xeb/0x130 fs/xfs/libxfs/xfs_trans_inode.c:36
+> =C2=A0xfs_icreate+0x13a/0x1f0 fs/xfs/xfs_inode.c:593
+> =C2=A0xfs_symlink+0xa74/0x1230 fs/xfs/xfs_symlink.c:170
+> =C2=A0xfs_vn_symlink+0x1f5/0x740 fs/xfs/xfs_iops.c:443
+> =C2=A0vfs_symlink+0x137/0x2e0 fs/namei.c:4615
+> =C2=A0do_symlinkat+0x222/0x3a0 fs/namei.c:4641
+> page last free pid 1 tgid 1 stack trace:
+> =C2=A0reset_page_owner include/linux/page_owner.h:25 [inline]
+> =C2=A0free_pages_prepare mm/page_alloc.c:1108 [inline]
+> =C2=A0free_unref_page+0xcd0/0xf00 mm/page_alloc.c:2638
+> =C2=A0free_contig_range+0x152/0x550 mm/page_alloc.c:6748
+> =C2=A0destroy_args+0x8a/0x840 mm/debug_vm_pgtable.c:1017
+> =C2=A0debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
+> =C2=A0do_one_initcall+0x248/0x880 init/main.c:1269
+> =C2=A0do_initcall_level+0x157/0x210 init/main.c:1331
+> =C2=A0do_initcalls+0x3f/0x80 init/main.c:1347
+> =C2=A0kernel_init_freeable+0x435/0x5d0 init/main.c:1580
+> =C2=A0kernel_init+0x1d/0x2b0 init/main.c:1469
+> =C2=A0ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> =C2=A0ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>=20
+> Memory state around the buggy address:
+> =C2=A0ffff8880774cf900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> =C2=A0ffff8880774cf980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ffff8880774cfa00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^
+> =C2=A0ffff8880774cfa80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> =C2=A0ffff8880774cfb00: fb fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+>=20
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
+#syz test
+
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
