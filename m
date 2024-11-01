@@ -1,150 +1,98 @@
-Return-Path: <linux-kernel+bounces-392985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A368B9B9A6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:51:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B8F9B9A72
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58041C21AD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:51:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0362D1C21A38
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423E71F7087;
-	Fri,  1 Nov 2024 21:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD921E7C0C;
+	Fri,  1 Nov 2024 21:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Do/nMTSY"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWcBm+Xp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D99A1F5827;
-	Fri,  1 Nov 2024 21:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ECF1E571D;
+	Fri,  1 Nov 2024 21:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730497717; cv=none; b=LzXOULSAx2mMFsWKZ+m327DILJjeIvt1443KCMS5V/Ok+yNIB4ttRTVnUGUaIG6SStqbBmIsK6gDXYCEoYWaz6zxDtLjMQi2J3WjNNSlxcpgp3Qndgcy7mKvZmr4o5N9gudbrc0A/79AczuMVRMzAScabbgDaYIMbLburjyLOeY=
+	t=1730497810; cv=none; b=DBqZBjpFHoSlCMsmIA4qnDVPf9KZqhaEhHSwBKnRSli6QUxL5KYzC0cUpp7E/JPACAgoGb9mchDBOk3i1fUiC1EbDgJAKHegCTJGDjl71BM78nz2fic1u1qerySswuf8AZAtFE3VT6mXOuX8dRI2Brtk1v1XVjJ1R4TBmTV7l+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730497717; c=relaxed/simple;
-	bh=r7j2WvtsieCpZbMv5XMgyVj6RY6NOBqWFXbpmlBC0Gs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DcOzF79hVTGh7DGJw//AOCeAxebNfzOZPey24+p7lK6p56TAZ8n9COdmee8PrBwpYGIb0L2Prf2NnDTcpu+H2C76xITxGp9gPdvBQmN01jiEaCS2zAxOVaZR3YFu9/fBsywWODBTNRav8guYKav2wI2zDD35wE8RfqnuHdvk8A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Do/nMTSY; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cbcd71012so28387655ad.3;
-        Fri, 01 Nov 2024 14:48:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730497715; x=1731102515; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JkCgUid3lALqAkyziGA3/78dlQ1W88S6aeKIVhXq5Qo=;
-        b=Do/nMTSYCOUuHUb6raBXJlra9cnAqXor+XP59lK4xMnvpTP/72rWKxhfB6lix7tRXW
-         JtKYHBKgP7y0MwRv/QZkDQu0ppY87qVyPDhO1g4UFjT7qHIPJzFPJDH4WvOrEB5cscBv
-         azJ9aN54AK1kCYZYFZ6zpKvQ8Tuyois7p80iVaCxjDV1IMoMKmGgrUI0fLJxpnWiaPuJ
-         2CrCLcSiBJwac6OSd70sKFBWYQgAMRKJmNlo3X3qi7Rww2R3XtTjs7acHlN90dohMHMZ
-         W2UnB02HJ25BY6RKE0tH3BQBu8gnxJjstlAzvEy/NkBTwHj+dUa9vOWS9I9T7MSO+3gF
-         lFJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730497715; x=1731102515;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JkCgUid3lALqAkyziGA3/78dlQ1W88S6aeKIVhXq5Qo=;
-        b=AZIC57rY0sda0mbYUzWGZVvBPyEZFIzTraf2dTBmzqamWuHGBe5z5H7tn5Xr8iF6yl
-         nNLxgg1flAy55v+j10eM/O6BQ0NSv34yuIqU2/kusvlAQckDcolPGzS1ecJAi7+hzfnx
-         2DRZnyhYgGx1CTd3VYgKk3rcseFYsOh9MX1lQmibEF3EmA9ZmngexRpJV++KyR16juS4
-         UcWogJDYyngcF6VFIg8NiReaJvrOwChcedvQuUkgJhyrh5P7CIS8MkDnX+YBNxLWwqh6
-         GocQnXo+xehCHkeg416PeoqYCIlpVhUM3hUet+9O71/+0r+Iryd6xXjcV+PXqIKP/X97
-         gV3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUyHJqYx+EvhqvDW37/cu+PwggmQZtWzqHHL9tqnlJAvimqo/dlCqDBLf86RLu65AyZAm5EfDjmd+fP1uE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbifJTAfcoAZ8MV+HHwjeIIGDKSnk7lwUPHSkeKuScpnmcDC4A
-	VxodHTnQBHcViESjDNez/RbWG2OvMdxoe34N+CRoS+rWit54oaJvyAgHmOf7
-X-Google-Smtp-Source: AGHT+IF7TeB8qbK2O90WipxhJ5So7uylLqr58H+sqar5PQ2+2Kz9JTR8a/Tonh8MQjF4WjwptrcObQ==
-X-Received: by 2002:a17:902:ce91:b0:20c:7a0b:74a3 with SMTP id d9443c01a7336-2111af0aa80mr59481315ad.24.1730497715423;
-        Fri, 01 Nov 2024 14:48:35 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057cf273sm25120155ad.239.2024.11.01.14.48.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 14:48:35 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Shay Agroskin <shayagr@amazon.com>,
-	Arthur Kiyanovski <akiyano@amazon.com>,
-	David Arinzon <darinzon@amazon.com>,
-	Noam Dagan <ndagan@amazon.com>,
-	Saeed Bishara <saeedb@amazon.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jian Shen <shenjian15@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Jijie Shao <shaojijie@huawei.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next 2/2] net: ena: simplify some pointer addition
-Date: Fri,  1 Nov 2024 14:48:28 -0700
-Message-ID: <20241101214828.289752-3-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241101214828.289752-1-rosenp@gmail.com>
-References: <20241101214828.289752-1-rosenp@gmail.com>
+	s=arc-20240116; t=1730497810; c=relaxed/simple;
+	bh=KEMzaKGo3anPlxd3W6Jufkxyiqrz0Fn3Kr0IoeQ02K4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=kLG92ONafaduMJCzj82JTVOLAB+lyhgxE7hag0DKZKsLcDYB+nc6l3MoYeZN5i/I2j6g8N/vNs3cs4BaGfDInW+/QlsBmq3qrkTEQe5+TSpvRj4c+7Kq9yu7dVybsPBA+4fG33tKwN0XJQZCfhnU0/32c7FjwWsf4sEwTS8dSzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWcBm+Xp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1406AC4CECD;
+	Fri,  1 Nov 2024 21:50:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730497809;
+	bh=KEMzaKGo3anPlxd3W6Jufkxyiqrz0Fn3Kr0IoeQ02K4=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=UWcBm+Xpl3DlVCGQvVDnSl9k2SmTDdR0uxFOt2euozsCGAqRdZKyXvLnDTJfRW925
+	 x9/vMH6AjJvjF+Qak0qjfHiUes4mKkaAMHQYoVUROVmXM5Hr3mmxnja4R5D7mACU2w
+	 cW7LSmFhm2JnXt32AxHF0n3LgUyIk/4nE+l0JXyvScKlTbFwobSpbRH3HwPhB8uYAa
+	 c2RozITzQlxydytXz18BwrCWnrmBlhA9PXwqKsFqyC0p2hf+53Qcmhl+LUiuUpy3bp
+	 QTFnT+QCPtEQ5sr7ni4fh+2ldDghLhrXtlaBK87wxznb4EZuJWk5ESN1iMSe6KBAFz
+	 YFrDxBo6CDv+g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Nov 2024 23:50:05 +0200
+Message-Id: <D5B69X48SFO7.RMZ1I1926BPF@kernel.org>
+Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v11 18/20] tpm: Add sysfs interface to allow setting and
+ querying the default locality
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Ross Philipson"
+ <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
+ <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>
+X-Mailer: aerc 0.18.2
+References: <20240913200517.3085794-1-ross.philipson@oracle.com>
+ <20240913200517.3085794-19-ross.philipson@oracle.com>
+ <D5ARBBZU61YW.2SQ35HTOJ85F7@kernel.org>
+In-Reply-To: <D5ARBBZU61YW.2SQ35HTOJ85F7@kernel.org>
 
-Use ethtool_sprintf to simplify the code.
+On Fri Nov 1, 2024 at 12:06 PM EET, Jarkko Sakkinen wrote:
+> On Fri Sep 13, 2024 at 11:05 PM EEST, Ross Philipson wrote:
+> > Expose a sysfs interface to allow user mode to set and query the defaul=
+t
+> > locality set for the TPM chip.
+> >
+> > Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+>
+> Must be read-only. Should be decided per power cycle.
 
-Because strings_buf is separate from buf, it needs to be incremented
-separately.
+I'm throwing one incomplete idea not all things considered...
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/amazon/ena/ena_ethtool.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+So one idea is would be to apply set operation to /dev/tpm0 as ioctl
+(would not be available for /dev/tpmrm0).
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_ethtool.c b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-index fa9d7b8ec00d..96fa55a88faf 100644
---- a/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_ethtool.c
-@@ -1120,7 +1120,7 @@ static void ena_dump_stats_ex(struct ena_adapter *adapter, u8 *buf)
- 	u8 *strings_buf;
- 	u64 *data_buf;
- 	int strings_num;
--	int i, rc;
-+	int i;
- 
- 	strings_num = ena_get_sw_stats_count(adapter);
- 	if (strings_num <= 0) {
-@@ -1149,17 +1149,16 @@ static void ena_dump_stats_ex(struct ena_adapter *adapter, u8 *buf)
- 	/* If there is a buffer, dump stats, otherwise print them to dmesg */
- 	if (buf)
- 		for (i = 0; i < strings_num; i++) {
--			rc = snprintf(buf, ETH_GSTRING_LEN + sizeof(u64),
--				      "%s %llu\n",
--				      strings_buf + i * ETH_GSTRING_LEN,
--				      data_buf[i]);
--			buf += rc;
-+			ethtool_sprintf(&buf, "%s %llu\n", strings_buf,
-+					data_buf[i]);
-+			strings_buf += ETH_GSTRING_LEN;
- 		}
- 	else
--		for (i = 0; i < strings_num; i++)
-+		for (i = 0; i < strings_num; i++) {
- 			netif_err(adapter, drv, netdev, "%s: %llu\n",
--				  strings_buf + i * ETH_GSTRING_LEN,
--				  data_buf[i]);
-+				  strings_buf, data_buf[i]);
-+			strings_buf += ETH_GSTRING_LEN;
-+		}
- 
- 	kfree(strings_buf);
- 	kfree(data_buf);
--- 
-2.47.0
+Then at least access control rules would apply.
 
+The open here is that the IMA etc. will use a different locality during
+boot-time, like it would also with sysfs attribute.
+
+BR, Jarkko
 
