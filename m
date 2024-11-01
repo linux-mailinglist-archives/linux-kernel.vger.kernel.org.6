@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-391606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDCCF9B8935
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:16:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A5D9B8939
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:17:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8916C1F23CEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:16:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064321C22208
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F521CA8D;
-	Fri,  1 Nov 2024 02:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUHBF/CQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1DD136338;
+	Fri,  1 Nov 2024 02:17:23 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FB361FF2;
-	Fri,  1 Nov 2024 02:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6884374D1;
+	Fri,  1 Nov 2024 02:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730427396; cv=none; b=BRYi+xx+NpGnzdKlOpVg+o8VteI5PXmEHjQ8UF+UgU6Y8AZ9jHmWAuOusEUupggLb3n8ykCybuTU+v+JQIstPoMvPl4N4Y2RzUa/KSbS7OIWPIyiEmBO98NvEF6yzBCaW9YhPrcDnkF5MooUmorNvcSQapp9lgkw0DvPX8Ky7vg=
+	t=1730427443; cv=none; b=AYTDgb1SSwCrnbr8gdP9w2jbCsq++ABHdOdxLiJTkLgQOpw69A+3OHbi1UdWHxTB6f7ftEatAGpE8k+H9534Ks/mnXg6QSXoMCLE58KEL+r3TKV5I2ne74jNse1ePjQxZxeXPT6s9/weGpazpshHhzTw/hcJ1z3K+4mnR3Zfcyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730427396; c=relaxed/simple;
-	bh=/FdmqqSGllh9+zpaJJrObSitwP+gUvlbBlZmv39v+LI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AaRdEPSLdsKeTcR7nbuL3OSANyK/XSeGngh0r2I7ZMN+8w9yUrwdo4A/YKp0ZuJyytY3kNnH81xyZRnZHUvosB6nclpQD7aiLpSmlLHym7ka/NDM4ZXlCcpZ8nC7Y9xzw4CbWhnQ00fey3j4RYywLOrh/iECbCRq2BdeaFbbxa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUHBF/CQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07AAEC4CEC3;
-	Fri,  1 Nov 2024 02:16:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730427395;
-	bh=/FdmqqSGllh9+zpaJJrObSitwP+gUvlbBlZmv39v+LI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mUHBF/CQ4f8fMJrGsdDh49JLUEGlxA3pC7aNJiQ6QeL1doAFraDlCta/Upm3/+KQa
-	 WlAnoC/GhP0Xt6cxvXiytvR+U+yRf9nJjHoYWA+sP1lS81lMH416wZDfEzbwMIKK3G
-	 cT8nFo6X8b7+HvoTFz6R6dIXDtHfkFM1MurFpTb4sj7JqMhtFaBXRbbzxfSicQ1JIn
-	 J/1skIjyPAJ8uv0HQM/ruI+uZfMVquU8N/B4uEZ1pJNjHCeQUyuG+2iGSLNXfhkqGq
-	 dh5op3aKDBQXHePQAfRNRBZx3ayNqxr+JbouB+ic643mNMcp+24nI8lxzeLx9+ka5p
-	 vTLbuYGAgKVxg==
-Date: Thu, 31 Oct 2024 19:16:33 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>, chandrashekar.devegowda@intel.com,
- chiranjeevi.rapolu@linux.intel.com, haijun.liu@mediatek.com,
- m.chetan.kumar@linux.intel.com, ricardo.martinez@linux.intel.com,
- loic.poulain@linaro.org, johannes@sipsolutions.net, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2] net: wwan: t7xx: Fix off-by-one error in
- t7xx_dpmaif_rx_buf_alloc()
-Message-ID: <20241031191633.79827a62@kernel.org>
-In-Reply-To: <F9E73DD2-B898-440D-B35D-B6B10B8BC0E9@gmail.com>
-References: <20241029125600.3036659-1-ruanjinjie@huawei.com>
-	<F9E73DD2-B898-440D-B35D-B6B10B8BC0E9@gmail.com>
+	s=arc-20240116; t=1730427443; c=relaxed/simple;
+	bh=3IJ5z7vPmpvE6o56uYCMiKRwaOdrOWry1RofWajHgCE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K6oAtc0RdoXw5k4XgTuTcs4Ewc+omTTvkf01HfCEhmtih/2g/VgEy31Zrno/MEJtjcehMza1W/pbevQNYtJuQMKgAmyXJ6AH6vOYysGOmnlrUIpqhPERSV5/Ip5P9vVZPUU2yOUG6HUz21fnrDHy8VKvmsQoP9uGOiKHyxcvn4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Xfkym5yXZz1yp1C;
+	Fri,  1 Nov 2024 10:17:20 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id C6FCE140136;
+	Fri,  1 Nov 2024 10:17:11 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 1 Nov 2024 10:17:11 +0800
+Message-ID: <b1a9c348-d3c6-1786-9c51-763cec1f2384@huawei.com>
+Date: Fri, 1 Nov 2024 10:17:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [bug report] block: Non-NCQ commands will never be executed while
+ fio is continuously running
+Content-Language: en-CA
+To: Niklas Cassel <cassel@kernel.org>, Damien Le Moal <dlemoal@kernel.org>
+CC: Yu Kuai <yukuai1@huaweicloud.com>, <axboe@kernel.dk>, John Garry
+	<john.g.garry@oracle.com>, <linux-block@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>, "yukuai (C)"
+	<yukuai3@huawei.com>, "yangerkun@huawei.com" <yangerkun@huawei.com>
+References: <eef1e927-c9b2-c61d-7f48-92e65d8b0418@huawei.com>
+ <922e3d52-9567-4371-9a43-6d51f716a370@kernel.org>
+ <129e1e4b-426f-3d5b-b95c-d386c90cfe06@huawei.com>
+ <5b4a15be-1cb2-4477-8f17-b808612d10d5@kernel.org>
+ <0e78cce0-3f4c-3ddf-4d5b-ee2b5c8d7e1a@huawei.com>
+ <ZuAtLK5jIPEjhXmU@ryzen.lan>
+ <7f179f49-a57b-45bf-92f0-f577aa0b8565@kernel.org>
+ <04cf3f31-4bd8-3ce9-867a-41628e56e861@huaweicloud.com>
+ <e1ff5ccc-8204-44d8-ba62-84c8bd204fa0@kernel.org> <ZyOQWyyai2JkKyzy@ryzen>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <ZyOQWyyai2JkKyzy@ryzen>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepemh200015.china.huawei.com (7.202.181.124) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-On Wed, 30 Oct 2024 18:01:07 +0200 Sergey Ryazanov wrote:
-> On October 29, 2024 2:56:00 PM, Jinjie Ruan <ruanjinjie@huawei.com> wrote:
-> >The error path in t7xx_dpmaif_rx_buf_alloc(), free and unmap the already
-> >allocated and mapped skb in a loop, but the loop condition terminates when
-> >the index reaches zero, which fails to free the first allocated skb at
-> >index zero.
-> >
-> >Check for >= 0 so that skb at index 0 is freed as well.
-> >
-> >Fixes: d642b012df70 ("net: wwan: t7xx: Add data path interface")
-> >Suggested-by: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-> >Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>  
+
+
+On 2024/10/31 22:12, Niklas Cassel wrote:
+> On Thu, Sep 19, 2024 at 04:14:15PM +0200, Damien Le Moal wrote:
+>> On 2024/09/19 14:26, Yu Kuai wrote:
+>>>
+>>> Does libata return a specific value in this case? If so, maybe we can
+>>> stop other hctx untill this IO is handled.
+>>>
+>>> For now, I think libata should use single hctx, it just doesn't support
+>>> multiple hctx yet.
+>>
+>> libata does not care/know about hctx. It only issues commands to ATA devices,
+>> which always are single queue. And pure SATA adapters like AHCI are always
+>> single queue.
+>>
+>> The issue at hand can happen only for libsas based SAS HBAs that have multiple
+>> command submission queues (with a shared tag set). Commands for the same device
+>> may end up being submitted through different queues, and when the submitted
+>> commands include a mix of NCQ and non-NCQ commands, the problem happens without
+>> libata being able to easily do anything about it, and not possible control
+>> possible at the scsi layer either since the commands submitted are SCSI (not yet
+>> translated to ATA commands) which do not have any NCQ/non-NCQ exclusion
+>> knowledge at all. NCQ is an ATA concept unknown to the scsi and block layer.
+>>
+>> We (Niklas and I) are trying to find a solution, but that may not be within
+>> libata itself. It may need changes to libsas as well. Not sure yet. Still exploring.
 > 
-> Jakub, when applying, could you drop that suggested-by tag, please.
-> My contribution was only a small suggestion to avoid an endless loop.
-> In all other meanings this patch is original work made by Jinjie, and
-> all creds should go to him.
+> Hello Xingui,
+> 
+> I send a proposed solution to this problem here:
+> https://lore.kernel.org/linux-ide/20241031140731.224589-4-cassel@kernel.org/
+> 
+> Please test and see if it addresses your problem.
+> 
+OK, thanks for following this issue and fixing it, we will verify it as 
+soon as possible.
 
-TBH I find the while (i--) solution suggested by Ilpo more idiomatic,
-too, let's do a v3 with that and without unnecessary Suggested-by tags.
+Thanks.
+Xingui
+
 
