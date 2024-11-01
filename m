@@ -1,98 +1,85 @@
-Return-Path: <linux-kernel+bounces-392241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B84E9B915E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:55:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FFB9B9170
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:01:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8412833D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:55:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 122A61C22655
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F1419EED4;
-	Fri,  1 Nov 2024 12:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAF319F131;
+	Fri,  1 Nov 2024 13:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dvpJApGA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pqCqnkab"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296A0199E94;
-	Fri,  1 Nov 2024 12:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF06487A7;
+	Fri,  1 Nov 2024 13:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730465692; cv=none; b=FvRJpyzTIQzrHiYVyA+wDYoqY91f1JG0PyAr26hJhnYMhX79dNaA4fYR3ZheG3wWvCF1/cfwA6YrN8B3VGKtv0gIjpZhfBiPILYsaWiLpyVB8MPlQeQxLe84zQTI8X+xEMHC+tgzN4wZO2YSLFS0RHOj9SC/YC8JdsERqMsOvxQ=
+	t=1730466052; cv=none; b=rzr1vhGYkofj75u2JemDXgR1d6/K/4S7G79Hb5MsmSqWBuB4/LvE44RAFnzfG+XMrnyOut0HHQIU8LfNv7IUwpUJY/9HMllmn+aLAP+OiF/H3gW0ACylM0cDALfbXr+2roVxtuRZg8bIf4pjdTLhIFGvZq4op+5mbYi32T1ZHxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730465692; c=relaxed/simple;
-	bh=o+rpjDR9EHS4Y2S7TjYaEvnjSQNr/2grg1NqLnGbsCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sq6CUaJCSj4MuqAW9JXpMlwu+2c3Ih3+F+YJ/SNqW/cL+8zS3ETfDahtWJhdgJC5so+HypggI0lIx8tNAc3DKGNEvE0sODK5MBqvI8H4GpkI7ykt4el9h1FDGzu1Mf51mER12ZrpJAxcImWlOJp8bz7DFOccNZ+SnsH7Vjt8yD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dvpJApGA; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730465691; x=1762001691;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=o+rpjDR9EHS4Y2S7TjYaEvnjSQNr/2grg1NqLnGbsCA=;
-  b=dvpJApGATsSKnLKxFM9e77NvR6wbFpYZBqvnLN6miLleeQG0z8YXXipW
-   YIkZ2+b9+E6OSjnFGv1odxF3KGCehPutvGIg4WC51ZpVsP4+PnnHTvTdw
-   JV0iXRcrUkVGlk4GB69+a1T3V4e6qxCyO9mHPOWxbTbRo34rfsYD9GY8C
-   Ifn0wncO/yCGRYjRAbP/pQ1hMsUZT2vksgWIsESZ8b0Is0FsFFU7Tkg4/
-   diHkiNyRGzDFkIWpJ8lYeub269uZORAuU1K0Ifj7tXRYQrNt74YWLzbV7
-   biPeLooNlxv/V/yvQueBnPUqegMaHPWMEbbM7GMBke7bBNsl/uJ/jEyVV
-   w==;
-X-CSE-ConnectionGUID: 6l4c9SWCQ7yy7ppOMD3wXw==
-X-CSE-MsgGUID: z8uf0DvZSRytGZg5VjaWWA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33918109"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="33918109"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 05:54:50 -0700
-X-CSE-ConnectionGUID: cMQEf6TkR922wQpveQzeVA==
-X-CSE-MsgGUID: j57iuj3JR2yFGXUJvCkHIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="82640785"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
-  by fmviesa007.fm.intel.com with ESMTP; 01 Nov 2024 05:54:47 -0700
-Message-ID: <80d98097-9187-41a7-9d6b-7b9d6aeaa304@linux.intel.com>
-Date: Fri, 1 Nov 2024 14:57:02 +0200
+	s=arc-20240116; t=1730466052; c=relaxed/simple;
+	bh=KfUW9Uu3no2Vw8/UiSr/G5ZLwr3NM84gzJyhXC6kOiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Da/mw6yXfT1jpZZrzejOz3yZiq0cw4qMLQI5XFp/gBa6o7YWXpzn6LF44d0GYnSwBgK/Rphb4H0QLLbhNOgWFZiX04YOjj4KadAb7T57oHZzrrddyvuQQ66yLd/nOxuft9fB/+H67JYlp9gVYpqvpoS3vPU2eh/S5u2+gsdFbnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pqCqnkab; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=bN97x3CR9BhFWdKel6Cibx5eIIwEaZnJ7AACIT8nZKI=; b=pqCqnkabKeDEY3jT4YgmpXWGQR
+	+xOzW6U8Ssh2FNHYljrRlzGTbBfFPqrtGcpZoPZsx2b8E0HdDx/SJhOAUYTtfoMQaX+BNO9/2QpQz
+	EZf47juF1iTIGWwsN8xCL51JjmrIBJgRO1SaI/ayNwQE8Wq15ShQEIDtj610gOOkpJF4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t6rGQ-00Bscb-0Y; Fri, 01 Nov 2024 14:00:30 +0100
+Date: Fri, 1 Nov 2024 14:00:29 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Lei Wei <quic_leiwei@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+	quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
+	bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com,
+	john@phrozen.org
+Subject: Re: [PATCH net-next 2/5] net: pcs: Add PCS driver for Qualcomm
+ IPQ9574 SoC
+Message-ID: <8f55f21e-134e-4aa8-b1d5-fd502f05a022@lunn.ch>
+References: <20241101-ipq_pcs_rc1-v1-0-fdef575620cf@quicinc.com>
+ <20241101-ipq_pcs_rc1-v1-2-fdef575620cf@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] xhci: Combine two if statements for Etron xHCI
- host
-To: Kuangyi Chiang <ki.chiang65@gmail.com>
-Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241028025337.6372-1-ki.chiang65@gmail.com>
- <20241028025337.6372-2-ki.chiang65@gmail.com>
- <bceb89ce-7a4b-4447-8bd6-3129a37bfdb3@linux.intel.com>
- <CAHN5xi2B5CcCKEsdQf1X7HD=8ZBAW66PefmO0ajvGCNdPOc-PA@mail.gmail.com>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <CAHN5xi2B5CcCKEsdQf1X7HD=8ZBAW66PefmO0ajvGCNdPOc-PA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101-ipq_pcs_rc1-v1-2-fdef575620cf@quicinc.com>
 
-On 1.11.2024 4.30, Kuangyi Chiang wrote:
-> Hi,
-> 
-> I noticed that one of the patches in your queue has a typo:
-> 
-> Commit 3456904e4bce ("xhci: pci: Use standard pattern for device IDs")
-> 
-> The Etron xHC device names are EJ168 and EJ188, not J168 and J188.
+> +config PCS_QCOM_IPQ
+> +	tristate "Qualcomm IPQ PCS"
 
-Thanks for reporting, now fixed
+Will Qualcomm only ever have one PCS driver?
 
--Mathias
+You probably want a more specific name so that when the next PCS
+driver comes along, you have a reasonable consistent naming scheme.
 
+	Andrew
 
