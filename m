@@ -1,104 +1,136 @@
-Return-Path: <linux-kernel+bounces-392768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7F59B97E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:50:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE8E9B97E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:50:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 260BE1C229AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CC6B1C22C21
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9111CEE83;
-	Fri,  1 Nov 2024 18:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A434C1CF28A;
+	Fri,  1 Nov 2024 18:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZGnJWDVm"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CVgcqjl7"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03311AB523
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991111CEAB3
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730487036; cv=none; b=VMgM7IXbOgYwVTeLBpeBDVjaRyDgjiON8+EqEU2fithXlCw1+xHZ+Febp83W9txAF37I2QGf9ISjhFMdacrDqrBNAcDeq5xtVNPBIh/tZpF0S1vQ6Yrnv8pLbf4R/3U+kiqL77zgRyvKa4ueaWfCIugBDseqBmELH+1RdqeLMh8=
+	t=1730487038; cv=none; b=n0MAM0lcLaAKBtRjUX0ERBPK99STNYuaDLCPwCYQymKqB4mEashd8WwyBLz55AZvONKogXgP5ICe2B4ow0euus0xQ1il00nP6tZExtmpfzxsBVbVLKaD0KEIGd0FWlJcSG8FC9PmG0RPygvLhSAOdz2xSrH/hZ7ps/z9apTXDAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730487036; c=relaxed/simple;
-	bh=JghzadJb1RzeYmUv5G9/I9KYuZLOl2NXdDiCkQzqMjM=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZRBfm+JzwyY0/WQwmdrxDWTni8m2lzA7AruGvC2jxFq6T3iZBi8Gos/qSoMWvKkYmUFVUXxK6bzha5mvhlhO4uoxg9MM28EaEO+NweD9jE/vBQNFGsegd9XImuK4cqDKpOKv1bfMFbErln+knGr9k0zdxTWqVc947JTPboKqAME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZGnJWDVm; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1730487038; c=relaxed/simple;
+	bh=FXRWG6o0mg3wHP5Y0GOHcde+Dpv3ygRaeRvyXI1QrgM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=A+7cuwwOxXylFbmmYRxpqUHKm+fmQgn84y5KDjjB8HiNDNaWhKy31ZkI7jJ816vYsdSNMjvyNMP+XdA+Mpe1+LXh8J23IlOD9HbwubbGPmIPbrnHNNzfi16u/vDLUfyoh2b3OrBY7uVIpL1OYAYwJR+hkN/xxG7ksZkhuiteURs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CVgcqjl7; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e330f65bcd9so1074640276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:50:34 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e3314237b86so808981276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:50:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730487034; x=1731091834; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F0yD6fxz/OxtK4CZyxTQ3jXuBHxwejODYX78SCol3Io=;
-        b=ZGnJWDVmTLgZDe4dtg9DPJ/6dcM4kZKum+TbvesJQkPwQuMXlckVnJWtnumQL5W8pA
-         KmQxRl1aZ7H1+mDEpuBpxvCNqbT8GC6+VrxHT6AKoe2uDaENdxv27bYZGbomynoW/+jQ
-         qHzBVa37ztF4293JsqRUzohQX6bQBYGu5LtFCixDKk1NMYHHhdZ+PbLkSWTYeSZk1PVR
-         oKFaEXy03SqPn7BzZpGOIkCz1rIkF07ZC416ni5m0bz0C2NcsjeMcjaHuWoUxTaclpvY
-         8soET/jrIc8gSuCLLiGBCukbGcHDj6gfVaa5GItz2yw9q7hdr2pdsGJ96wn0n9sazjlE
-         Q3Aw==
+        d=google.com; s=20230601; t=1730487035; x=1731091835; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=qdZ3ib7R68FsaRnrZtmMP9G3NGB1gcRw7OH9rUl4h7k=;
+        b=CVgcqjl7qQTUqw/BT/NNUXr5yG7I0L+uww/nDMxqe/dJ4oU5xtMCVpQ5LiFVbZ/60B
+         WCpPm40yGnEXGXTm4wQQ9Uh79iCRr8JX/lw0s3r4SFk5p9DN6G2KMOyOnlR/KUD8+abo
+         r+JIMjhbdBKvP4wQ3xhJTyuNF9oh42hwRCkBt32T0B8/eGOwBOH4BL3r7VwKI5xlgLVy
+         OQFaxReXSbh0SEsTtFlRqTzSl7/S2FFzD9+z+IOiKhB9PibBBSAxcRS5UoH/KvYeQPyI
+         JcMfvH6+ssQgtY1rBaIeR60Tmdb2bUnC+7KZd75jykBpbPKtLVfNMeHIx8twXJsz43Ki
+         kFmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730487034; x=1731091834;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F0yD6fxz/OxtK4CZyxTQ3jXuBHxwejODYX78SCol3Io=;
-        b=pjTCVAnHtUnRaIjXNIP3C2eLFl/E8KvRUqZon+ZLa6hE4KvfXYaNxK1fymtCe1qZU8
-         39dw1JxKU38InE0l1HG6SAceKEiQazezVhNMPCjWfS/rcuZFIphcaprLyEuwVBOz5zwL
-         yPkaNmPqA86zsN1NV0MfsQiZld3zUgVHjyVzfeBC2M5c5Up4Memm5U3lcOV+bkNbwN60
-         +67uowdACqP00pB8LOWEUAWy6Y2AxK8E6q5SCbFgCYYlSdayjLYEqDysbJC4Wxmo5OyR
-         FadrShqBjH/2kTzTNWCWMVVt1ftT2VWv8HN+EmT2cdU2u2oA89UMrDoSRiP+AqFtWNcg
-         HmiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmPlxo3RtXZ6C6gF1n2jG+4YFgwArP48VXcxgQ4FdN7lNszFAYXtAqOczAM/hK86BUBoc4hK/XfleM0es=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkyS+2ziYyn7ApW/A1d68N9xPSniz6wbnWOYkCuZNs04yG4qE8
-	1ZXV7ZsOICKsLML0ECE5sUeDQGZ7EM8ja6QU6zBKcML6RfjBFlJqL2CJd5c789rOLnOiA9AWPX/
-	ccg==
-X-Google-Smtp-Source: AGHT+IHXZoWalcZy57W6wrfik1Rn3U8tlbZnbkCaEjoA8ZWubLTNsOhruGbtr6L94QWgRRFAxLRauROAibY=
+        d=1e100.net; s=20230601; t=1730487036; x=1731091836;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qdZ3ib7R68FsaRnrZtmMP9G3NGB1gcRw7OH9rUl4h7k=;
+        b=c9DyICpG37WtvPTVrT6KeTUiQNGA5mmUQPQDtu4OkoF4s/B1YY/2iLdKYq9DQK7svv
+         zzfsN4GmCBneqvMz9EDxDtg4a9RyGtcYnH0dkAePF6ni0tXMlsWijj9sGyht0UF8hwNf
+         F+Ly3t0uqVvl/HDhc29XH6i+k4TZRJjdk0/JegSkBqeD0NGd3bfCgt5pUlpnAenKJKie
+         fQ7/RSQYQrGmSNNyTzHT688aQhBkGbXyF9COHVYX3K8KauVwPcnRM+draYhPcS/EDZu+
+         Ztx8AiL2Xq7V5W7snDSUNIQPs/ZV4Z2e8YkSZiJAhzLh/GqpcpopF16asAzdQnmyeorY
+         7Z1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXNSOIuZIZcEbOqLBxLwEdQ/2jzQVxK6qYEyHLXGqqzKunH8dI/v8CIePwRVNk6rk7qGvXrNieFPwMt47Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYL7COgSAe+MCDkZxTy5foRcJNbyTwW0q1AilwRCBQuxmrJI+/
+	Sr+X+vxnnjrOYT7YmcoD/dyGnLNDkQAmx0iM4rtkCwc04JOkhHe20nP5Tu+GHFQAiqCWKsljctc
+	+fA==
+X-Google-Smtp-Source: AGHT+IGRCb4PioR1r+gwT3ZVZ/w8cEHMLugCvv7ve2RmE6Fwsyxp4YjGU/Mk4TgNku3bnUZSD298J4necgw=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:8289:0:b0:e2b:cca2:69e1 with SMTP id
- 3f1490d57ef6-e30e8d6b7edmr15277276.3.1730487033850; Fri, 01 Nov 2024 11:50:33
+ (user=seanjc job=sendgmr) by 2002:a25:2bc9:0:b0:e27:3e6a:345 with SMTP id
+ 3f1490d57ef6-e33026dcafemr2638276.10.1730487035748; Fri, 01 Nov 2024 11:50:35
  -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  1 Nov 2024 11:50:29 -0700
+Date: Fri,  1 Nov 2024 11:50:30 -0700
+In-Reply-To: <20241101185031.1799556-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241101185031.1799556-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241101185031.1799556-1-seanjc@google.com>
-Subject: [PATCH 0/2] KVM: VMX: Mark Intel PT virtualization as BROKEN
+Message-ID: <20241101185031.1799556-2-seanjc@google.com>
+Subject: [PATCH 1/2] KVM: VMX: Bury Intel PT virtualization (guest/host mode)
+ behind CONFIG_BROKEN
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Adrian Hunter <adrian.hunter@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hide Intel PT virtualization behind BROKEN, as it has multiple fatal
-flaws, several which put the host at risk, and several of which are far
-too invasive to backport to stable trees.
+Hide KVM's pt_mode module param behind CONFIG_BROKEN, i.e. disable support
+for virtualizing Intel PT via guest/host mode unless BROKEN=y.  There are
+myriad bugs in the implementation, some of which are fatal to the guest,
+and others which put the stability and health of the host at risk.
 
-I included one of the easier fixes from Adrian to help show just how
-broken PT virtualization is, e.g. to illustrate the apparent lack of usage.
+For guest fatalities, the most glaring issue is that KVM fails to ensure
+tracing is disabled, and *stays* disabled prior to VM-Enter, which is
+necessary as hardware disallows loading (the guest's) RTIT_CTL if tracing
+is enabled (enforced via a VMX consistency check).  Per the SDM:
 
-Adrian Hunter (1):
-  KVM: VMX: Allow toggling bits in MSR_IA32_RTIT_CTL when enable bit is
-    cleared
+  If the logical processor is operating with Intel PT enabled (if
+  IA32_RTIT_CTL.TraceEn = 1) at the time of VM entry, the "load
+  IA32_RTIT_CTL" VM-entry control must be 0.
 
-Sean Christopherson (1):
-  KVM: VMX: Bury Intel PT virtualization (guest/host mode) behind
-    CONFIG_BROKEN
+On the host side, KVM doesn't validate the guest CPUID configuration
+provided by userspace, and even worse, uses the guest configuration to
+decide what MSRs to save/load at VM-Enter and VM-Exit.  E.g. configuring
+guest CPUID to enumerate more address ranges than are supported in hardware
+will result in KVM trying to passthrough, save, and load non-existent MSRs,
+which generates a variety of WARNs, ToPA ERRORs in the host, a potential
+deadlock, etc.
 
- arch/x86/kvm/vmx/vmx.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Fixes: f99e3daf94ff ("KVM: x86: Add Intel PT virtualization work mode")
+Cc: stable@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/vmx/vmx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
-base-commit: e466901b947d529f7b091a3b00b19d2bdee206ee
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 6ed801ffe33f..087504fb1589 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -217,9 +217,11 @@ module_param(ple_window_shrink, uint, 0444);
+ static unsigned int ple_window_max        = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
+ module_param(ple_window_max, uint, 0444);
+ 
+-/* Default is SYSTEM mode, 1 for host-guest mode */
++/* Default is SYSTEM mode, 1 for host-guest mode (which is BROKEN) */
+ int __read_mostly pt_mode = PT_MODE_SYSTEM;
++#ifdef CONFIG_BROKEN
+ module_param(pt_mode, int, S_IRUGO);
++#endif
+ 
+ struct x86_pmu_lbr __ro_after_init vmx_lbr_caps;
+ 
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
