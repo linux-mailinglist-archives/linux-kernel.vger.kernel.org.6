@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-391747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F539B8B31
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:23:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEA99B8B35
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:25:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CD89281BF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1590282578
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F8414EC55;
-	Fri,  1 Nov 2024 06:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXtNvTWl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB7E14EC62;
+	Fri,  1 Nov 2024 06:25:01 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB5A14B97E
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 06:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344C12AD20;
+	Fri,  1 Nov 2024 06:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730442226; cv=none; b=OTz99tXntUcpUKMQi4v2a3jjmDm2KlM2kpOqcb8uqaAE73QnQc2nxusdke/OgbdfOrQ6BFPrhSBWZQ5zoNUUblkGZ8A//SxftuD42MIeSsDvnASRblwgnv+F9tO9xOMA3RHQtZ55u+R0oWq64SccddQ5kZtF/mI4VYnWMQ+hYVk=
+	t=1730442301; cv=none; b=WsyQq5p+rp5j55dPrV+8iZoA0SMA/tHzlGHQ8c2OX8uNdD4k2y+ltvuM9Szxy4dhrjU8ikx8oGA1LApWJL1lrZXjZx8GK6azezEzNAVMvzP5DyWhPELffsSbO/G7pWovvcQNt9DRnbQCQLyh2vyBilAPHLH0r3FW4dP9fi3SSlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730442226; c=relaxed/simple;
-	bh=GAaugT7OoRx+9iLr0bR4+SPriAn0i1nn9aZL+D3flGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LPSpK0mXfFop9bVYZIFb3SMLcYKzj5mRfPdRSXG/pNgHSLfP/zrXY1BJppg0aE54nsgEHRA7/dQltK83m3pH3y6citXMoRf/dAroU9DCsxE+XYc4U4od5KvUFA+xdM6x/DAx0XkxYQ9qservPPtqYjTmctCCmmAfFHTuEYek2Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PXtNvTWl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C19C4CECD;
-	Fri,  1 Nov 2024 06:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730442226;
-	bh=GAaugT7OoRx+9iLr0bR4+SPriAn0i1nn9aZL+D3flGU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PXtNvTWldhKjZqU9Bx5PHHu9cKazoBwaGTm5v0kwb4vX47hU4dFuuYT+iQ9YlGgFy
-	 bfAw96S7B2+TgW810f6fdLieJHLjK4xlL0PSBscLKxoLl01vLgH5RtEWxKTkEJnusb
-	 hHu2HSdgr1Lk3KxWeQIGxL+NkJKtnq1ezxN5u+0KpQEkDr9S3cfx7RczWqutPDb23c
-	 BdE9vSTowCRMFN9BtjD2/7siD7meWD3+0TTz7WwcIUOdNcCEkI1+HQNzUXlcGtX4Lo
-	 oGiVoIMiuMnhqxlUZI8jiXjvft1Xr9H0z4uLwYaJ6uG2SyVhTH//ri6uSfDc/V+5ON
-	 fQe0CIkVUmEig==
-Message-ID: <a006de4d-46bc-442d-9f8e-92e5d219b8b9@kernel.org>
-Date: Fri, 1 Nov 2024 07:23:43 +0100
+	s=arc-20240116; t=1730442301; c=relaxed/simple;
+	bh=g2hRf7mnB2xJ3tmxFSkGiernG4bpg+/LT5R0E4trLtI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=juecyKBFIFU7gbiR0UV/hBfqcPbG9yE+FsCxXUcIqrmSY68ri12XZywQijagRKwVhwiZvo64I3gpdsl9GznWXNNFH7gttQTbrd1gxRYbCxL0FCFg0LglFWcaw0ju94DnFZ5kMSiUVxNKxQGVUIEzYYCXATfPqFmg/zNIcBSMnts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XfrPp054qz1T9Qw;
+	Fri,  1 Nov 2024 14:22:38 +0800 (CST)
+Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 366F71800A5;
+	Fri,  1 Nov 2024 14:24:51 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ kwepemg200005.china.huawei.com (7.202.181.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 1 Nov 2024 14:24:50 +0800
+Message-ID: <0913d4ba-7298-4295-8ce0-8c38ddb9d5b6@huawei.com>
+Date: Fri, 1 Nov 2024 14:24:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,96 +47,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH-next] irqchip/renesas-rzv2h: Fix potentially mismatched
- datatype
-To: Advait Dhamorikar <advaitdhamorikar@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- anupnewsmail@gmail.com
-References: <20241031193606.87970-1-advaitdhamorikar@gmail.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20241031193606.87970-1-advaitdhamorikar@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [RFC PATCH net] net: fix data-races around sk->sk_forward_alloc
+To: Eric Dumazet <edumazet@google.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<horms@kernel.org>, <dsahern@kernel.org>, <yuehaibing@huawei.com>,
+	<zhangchangzhong@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241031122344.2148586-1-wangliang74@huawei.com>
+ <CANn89i+KL0=p2mchoZCOsZ1YoF9xhoUoubkub6YyLOY2wpSJtg@mail.gmail.com>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <CANn89i+KL0=p2mchoZCOsZ1YoF9xhoUoubkub6YyLOY2wpSJtg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemg200005.china.huawei.com (7.202.181.32)
 
-Hi,
 
-On 31. 10. 24, 20:36, Advait Dhamorikar wrote:
-> This patch updates the type of hw_irq to unsigned long to
-> match irq_hw_number_t.
-> 
-> The variable hw_irq is defined as unsigned int at places,
-> However when it is initialized using irqd_to_hwirq(), it returns
-> an irq_hw_number_t, which inturn is a typedef for unsigned long.
+在 2024/10/31 22:08, Eric Dumazet 写道:
+> On Thu, Oct 31, 2024 at 1:06 PM Wang Liang <wangliang74@huawei.com> wrote:
+>> Syzkaller reported this warning:
+> Was this a public report ?
+Yes，I find the report here (the C repo in the url is useful):
 
-"in turn"
+https://syzkaller.appspot.com/bug?id=3e9b62ff331dcc3a6c28c41207f3b9911828a46b
+>> [   65.568203][    C0] ------------[ cut here ]------------
+>> [   65.569339][    C0] WARNING: CPU: 0 PID: 16 at net/ipv4/af_inet.c:156 inet_sock_destruct+0x1c5/0x1e0
+>> [   65.575017][    C0] Modules linked in:
+>> [   65.575699][    C0] CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.12.0-rc5 #26
+>> [   ...]
+> Oh the horror, this is completely wrong and unsafe anyway.
+>
+> TCP listen path MUST be lockless, and stay lockless.
+>
+> Ask yourself : Why would a listener even hold a pktoptions in the first place ?
+>
+> Normally, each request socket can hold an ireq->pktopts (see in
+> tcp_v6_init_req())
+>
+> The skb_clone_and_charge_r() happen later in tcp_v6_syn_recv_sock()
+>
+> The correct fix is to _not_ call skb_clone_and_charge_r() for a
+> listener socket, of course, this never made _any_ sense.
+>
+> The following patch should fix both TCP  and DCCP, and as a bonus make
+> TCP SYN processing faster
+> for listeners requesting these IPV6_PKTOPTIONS things.
+Thank you very much for your suggestion and patch!
 
-But what's the purpose of this? First, why wouldn't you use 
-irq_hw_number_t then?
+However, the problem remains unsolved when I use the following patch to 
+test.
 
-Nevertheless, the HW does not support hw irqs > uint (it supports 
-1+16+32, actually). So why all this in the first place?
+Because skb_clone_and_charge_r() is still called when sk_state is 
+TCP_LISTEN in discard tag.
 
-> @@ -265,9 +265,9 @@ static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
->   	u32 titsr, titsr_k, titsel_n, tien;
->   	struct rzv2h_icu_priv *priv;
->   	u32 tssr, tssr_k, tssel_n;
-> -	unsigned int hwirq;
-> +	unsigned long hwirq;
->   	u32 tint, sense;
-> -	int tint_nr;
-> +	unsigned long tint_nr;
+So I modify the patch like this (it works after local test):
 
-Switching tint_nr to unsigned might still be a good thing to avoid weird 
-signed overflows in the future. But I don't think it warrants for a patch...
+diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+index da5dba120bc9..2d07f7385783 100644
+--- a/net/dccp/ipv6.c
++++ b/net/dccp/ipv6.c
+@@ -618,7 +618,7 @@ static int dccp_v6_do_rcv(struct sock *sk, struct 
+sk_buff *skb)
+            by tcp. Feel free to propose better solution.
+                                                --ANK (980728)
+          */
+-       if (np->rxopt.all)
++       if (np->rxopt.all && (sk->sk_state != DCCP_LISTEN))
+                 opt_skb = skb_clone_and_charge_r(skb, sk);
 
-thanks,
--- 
-js
-suse labs
+         if (sk->sk_state == DCCP_OPEN) { /* Fast path */
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index d71ab4e1efe1..0ab06ed78cac 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -1618,7 +1618,7 @@ int tcp_v6_do_rcv(struct sock *sk, struct sk_buff 
+*skb)
+            by tcp. Feel free to propose better solution.
+                                                --ANK (980728)
+          */
+-       if (np->rxopt.all)
++       if (np->rxopt.all && (sk->sk_state != TCP_LISTEN))
+                 opt_skb = skb_clone_and_charge_r(skb, sk);
 
+         if (sk->sk_state == TCP_ESTABLISHED) { /* Fast path */
+@@ -1656,8 +1656,6 @@ int tcp_v6_do_rcv(struct sock *sk, struct sk_buff 
+*skb)
+                                 if (reason)
+                                         goto reset;
+                         }
+-                       if (opt_skb)
+-                               __kfree_skb(opt_skb);
+                         return 0;
+                 }
+         } else
+
+
+> diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+> index da5dba120bc9a55c5fd9d6feda791b0ffc887423..d6649246188d72b3df6c74750779b7aa5910dcb7
+> 100644
+> --- a/net/dccp/ipv6.c
+> +++ b/net/dccp/ipv6.c
+> @@ -618,7 +618,7 @@ static int dccp_v6_do_rcv(struct sock *sk, struct
+> sk_buff *skb)
+>             by tcp. Feel free to propose better solution.
+>                                                 --ANK (980728)
+>           */
+> -       if (np->rxopt.all)
+> +       if (np->rxopt.all && sk->sk_state != DCCP_LISTEN)
+>                  opt_skb = skb_clone_and_charge_r(skb, sk);
+>
+>          if (sk->sk_state == DCCP_OPEN) { /* Fast path */
+> diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+> index d71ab4e1efe1c6598cf3d3e4334adf0881064ce9..e643dbaec9ccc92eb2d9103baf185c957ad1dd2e
+> 100644
+> --- a/net/ipv6/tcp_ipv6.c
+> +++ b/net/ipv6/tcp_ipv6.c
+> @@ -1605,25 +1605,12 @@ int tcp_v6_do_rcv(struct sock *sk, struct sk_buff *skb)
+>           *      is currently called with bh processing disabled.
+>           */
+>
+> -       /* Do Stevens' IPV6_PKTOPTIONS.
+> -
+> -          Yes, guys, it is the only place in our code, where we
+> -          may make it not affecting IPv4.
+> -          The rest of code is protocol independent,
+> -          and I do not like idea to uglify IPv4.
+> -
+> -          Actually, all the idea behind IPV6_PKTOPTIONS
+> -          looks not very well thought. For now we latch
+> -          options, received in the last packet, enqueued
+> -          by tcp. Feel free to propose better solution.
+> -                                              --ANK (980728)
+> -        */
+> -       if (np->rxopt.all)
+> -               opt_skb = skb_clone_and_charge_r(skb, sk);
+>
+>          if (sk->sk_state == TCP_ESTABLISHED) { /* Fast path */
+>                  struct dst_entry *dst;
+>
+> +               if (np->rxopt.all)
+> +                       opt_skb = skb_clone_and_charge_r(skb, sk);
+>                  dst = rcu_dereference_protected(sk->sk_rx_dst,
+>                                                  lockdep_sock_is_held(sk));
+>
+> @@ -1656,13 +1643,13 @@ int tcp_v6_do_rcv(struct sock *sk, struct sk_buff *skb)
+>                                  if (reason)
+>                                          goto reset;
+>                          }
+> -                       if (opt_skb)
+> -                               __kfree_skb(opt_skb);
+>                          return 0;
+>                  }
+>          } else
+>                  sock_rps_save_rxhash(sk, skb);
+>
+> +       if (np->rxopt.all)
+> +               opt_skb = skb_clone_and_charge_r(skb, sk);
+>          reason = tcp_rcv_state_process(sk, skb);
+>          if (reason)
+>                  goto reset;
 
