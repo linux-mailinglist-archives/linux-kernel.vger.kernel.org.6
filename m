@@ -1,187 +1,215 @@
-Return-Path: <linux-kernel+bounces-392360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B6A9B930C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:23:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC4A9B9310
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A94D1F23485
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:23:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B93B31F236D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40D71A2545;
-	Fri,  1 Nov 2024 14:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496A11A2574;
+	Fri,  1 Nov 2024 14:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mSs2a7/b"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cpOXUkvZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10C01A08C4
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B6728FC;
+	Fri,  1 Nov 2024 14:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730470964; cv=none; b=dnQ7NBrmPN9qd/MRRo8alLnZTqhde4rYKmpLYRidU7Ca3Q3hgor5gmY0WmhhnbaLPZS6sefmwq1tFBB0S8enILksih80e7yV6IQc9bFAmAnS76PYG7hgLhPvbp+F/+YNjnoUgNpgku6090C6ctEvxBD2Qqp/ePS8jhI7YMNHThc=
+	t=1730471033; cv=none; b=BNT3/CAGpmeFeKwIKNXpsN0tcC7AzC0lglFWxj1fIgEv5hX3hqsbOPM+q13R3TqZRR1o2zWtEeAz6HkGRubMBHrFlXtFtIIYXRYRlcw12HMEPoqChDCO7Bx4/qfYkJFJA/juLsMhqbR1Mz87pEMKrgNRYI2BRUIKbPRqHYvXSxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730470964; c=relaxed/simple;
-	bh=eaoYM3+CQf0qMzz9k7+znlcR8JA5fJSdnCEIFmJglng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KGGTgHlQG0uawEUu7/RDy0K8NXCj5s76AYakGk1d9nXBmPzQcU+km1m5TvINoNN+xQiDIzcNGrIGLBOxCrnRgQU0EGCgSP2/xsL7cFCveJ3txMoUSa5tY0GT9n9AMyjRkF/6aKFMRZj3fycFEjw/EUOdBfDqyNAca4kY5be2v5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mSs2a7/b; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so20463121fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:22:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730470960; x=1731075760; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3NkzkjFi+fXP94uSTTPmiY1l/XjdYqeKRey3P/qytSM=;
-        b=mSs2a7/bfjbqtCSa68hEl/jz5zQnFEh/dt1n+TQbDxWg+amTxuL1Q0mnP0CXCOPjQa
-         BQo/rMDF67nqjLxZOfV7U2fRk2spcVM3o2c+A+zRZP+3VNcUOdbNzVLsCdfeP+xZscki
-         8OruUlC0rs/jjriwJf3JVvrnoCXdEGQTUeYQuyLPsqwtSU3wKcQ36CmO02q89xagBIUF
-         1ukBPMMxsfO+arT/0ejYXPo5wa8yEXPNe20Y8tWpCeSaCMJuT7KY+wLIiesH7Bja+1to
-         e1ilL9bjAIPTp6wasxSpxbm7i1q4fPQ8z/lcjFJb7AcZd0fpDoC/gxCyTiQI2oHnTSyI
-         fYbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730470960; x=1731075760;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3NkzkjFi+fXP94uSTTPmiY1l/XjdYqeKRey3P/qytSM=;
-        b=r4/BOgax5UkvYHC2YgW1oF49hVROkYSgvEeEXd9ZGnwhN20E1Vq3OeTMG0+f4JoPg6
-         ozmaRDnWC0qW8hgaHcHTo3DUUcYK/m1b6maHZA1SxK7nhO/vb4BAU/FkXZjnqE9WtZ87
-         DYB0zih+UFpuc3hQzbE1Up/myNBiwGpHMFPJJ83RdECLH/+6s8a5JonqcniTHa3WZafV
-         ntRRM9FzGcPzvxat6Ck/zcnXuIo57lh+NzG/5sJ9rMTuXrYlURZRXSoEul6wtw7ECWe6
-         A+R0lcU0vntluyBjo10JEPPBwnZewW0/7e4Mmlt/Tr23oRmXl8oCYXsNljMnCZU55BmN
-         Jo3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVnPAac5FJOSty7wb9gOc3G88g2RCbAgfka2KZmkxpixCIxvey6KeZQTgaYkdxnCaCoB7lrJPt3ySqpcsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW+Nw+hnLL1XFWcn4A1sbYahy3zFpis2JxmB7nn5C4F9DEly1j
-	tWICUr9aUwM+4YfG2rH/EwEAao0e2E68uc7a9/zkuB29qfFMMUsawGXliHo/LsO4h74IkxkU+37
-	FopC+Rw/GGJbkfnzoyypWDaJID/wbPB/1HGgIcg==
-X-Google-Smtp-Source: AGHT+IFlDvjJIvDi2HZUP2QxWHPvwa8yzlrKeA5Te1yyulTITJs/lklicGzd4spG4MJlVOtyOjGQ7leC0jF/L+Hoijg=
-X-Received: by 2002:a05:651c:12c3:b0:2f9:c337:aca9 with SMTP id
- 38308e7fff4ca-2fed6de9eb3mr30677851fa.44.1730470960066; Fri, 01 Nov 2024
- 07:22:40 -0700 (PDT)
+	s=arc-20240116; t=1730471033; c=relaxed/simple;
+	bh=OXDMAqh2nLfuHgCU8Sscde62QdU4PrQcAwb72r1rD80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X6UMm6BYs18UzvqVtHwsEic67M9Kh/fStNmFXdhdrjZc1eaBqQelvlcs0+vTRB+tuSwuzN2m2K1zNMQ5kYDiI/h3nEjQxSyJGISDcVp9EoXIfq3l16969GoS04gFlj8cuajA78xHhbnYkQO+ObZ36m+J5p04TiH7eXGEtmAomBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cpOXUkvZ; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730471031; x=1762007031;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OXDMAqh2nLfuHgCU8Sscde62QdU4PrQcAwb72r1rD80=;
+  b=cpOXUkvZpAUuXnp8eAxltHh0uNZfmroaWQ/NJmEUWUzMIm8ysT8d0IRh
+   cRGzvCAje1yhzmf9nvo3LwA440Xoj+fmBPwc8nVqQjclQZlgAy6uA8wTN
+   cqNEhhs7ColF8sLahAItLk3fKwE3zcxsgQ7WdEMerT3INC9Fc/dGbeL6Q
+   Ftrnloe6SFI+GZhO3YbjhWS8MrzEBqQ1UOwfGwRrS1ljZOGA4KofpH74+
+   6OXXu42Y8VCeopRDZeb+5TKxiCU01HJfcN+0MDw+yYEt9EV2t4cY1ollu
+   jZ502BG3kBw0PFPRkeE6Vxzxq+FdeoO/X7xFIIRw0bpjV9kjk8tSuSaig
+   w==;
+X-CSE-ConnectionGUID: XtZGKWwsTY6T+J+I9L8p6A==
+X-CSE-MsgGUID: E00dVKKCS8WY6R3GRz9B7Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41337041"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41337041"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 07:23:50 -0700
+X-CSE-ConnectionGUID: imwns5Y0QGea1ZlKb1YZtA==
+X-CSE-MsgGUID: WV7WXGAMRJiX01/aCBZLeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
+   d="scan'208";a="87516207"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 01 Nov 2024 07:23:42 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6sYt-000hdV-1s;
+	Fri, 01 Nov 2024 14:23:39 +0000
+Date: Fri, 1 Nov 2024 22:22:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Maximilian Luz <luzmaximilian@gmail.com>,
+	Lee Chun-Yi <jlee@suse.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Ike Panhc <ike.pan@canonical.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Alexis Belmonte <alexbelm48@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+	"open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>,
+	"open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	Matthew Schwartz <matthew.schwartz@linux.dev>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v3 20/22] ACPI: platform_profile: Register class device
+ for platform profile handlers
+Message-ID: <202411012227.46a4WcxB-lkp@intel.com>
+References: <20241031040952.109057-21-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018-sc8280xp-pwrseq-v6-0-8da8310d9564@linaro.org>
-In-Reply-To: <20241018-sc8280xp-pwrseq-v6-0-8da8310d9564@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 1 Nov 2024 15:22:28 +0100
-Message-ID: <CAMRc=Md=ChXtdAY5_ZGtWQCk06mvtA2pMM2DF03-pb2StvHR7g@mail.gmail.com>
-Subject: Re: [PATCH v6 0/6] arm64: dts: qcom: enable Bluetooth and WLAN on
- sc8280xp and sm8450 boards
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
-	Kalle Valo <kvalo@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Steev Klimaszewski <steev@kali.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031040952.109057-21-mario.limonciello@amd.com>
 
-On Fri, Oct 18, 2024 at 2:49=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> This series previously only concerned sc8280xp but while enabling
-> WLAN/BT on sm8450 I noticed some more changes will be required so I
-> folded the latter into this series and updated the sc8280xp CRD and X13
-> patches.
->
-> =3D=3D
->
-> This models the WLAN and Bluetooth modules on several boards using the
-> WCN6855 module.
->
-> The wcn6855 (also known as qca6490) is a bit different from the qca6390
-> so modify the power sequencing driver to support it with separate device
-> match data.
->
-> For the sc8280xp-crd and sm8450-hdk we add the PMU, wifi and bluetooth
-> nodes with the correctly modelled wiring between them. For the X13s, we
-> rework existing nodes so that they align with the new DT bindings
-> contract.
->
-> On sm8450-hdk we require some additional toggling of the XO-CLK signal
-> so add that to the driver as well and update the bindings.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> Changes in v6:
-> - add the xo-clk signal handling to the pwrseq-qcom-wcn driver
-> - add a patch enabling wifi and bluetooth on sm8450-hdk
-> - add missing supplies to the PMUs on sc8280xp boards
-> - Link to v5: https://lore.kernel.org/all/20241008102545.40003-1-brgl@bgd=
-ev.pl/
->
-> Changes in v5:
-> - put vreg_s10b under the "B" PMIC on the CRD instead of modeling it as a
->   fixed regulator
-> - order pinctrl nodes alphabetically
-> - restore the drive-strength property for all pins to what bootfw sets it=
- to
-> - disable bias on wlan-en pin on the CRD
-> - remove stray newline
-> - add the swctrl pins to the PMU node
->
-> Changes in v4:
-> - bind bluetooth pins on X13s in patch 3/3
-> - only drop the regulator-always-on properties for vreg_s11b and vreg_s12=
-b
->   and fold this change into patch 3/3
->
-> Changes in v3:
-> - move adding the bt-enable-gpios to the PMU on the CRD to patch 2/4
-> - add a patch removing the regulator-always-on property from regulators
->   on X13s that no longer need it
->
-> Changes in v2:
-> - fix commit message in patch 1/3
-> - drop drive-strength from the wlan enable pin function
-> - drop the calibration variant property from the wifi node of the CRD
->
-> ---
-> Bartosz Golaszewski (6):
->       regulator: dt-bindings: qcom,qca6390-pmu: add more properties for w=
-cn6855
->       power: sequencing: qcom-wcn: improve support for wcn6855
->       arm64: dts: qcom: sc8280xp-crd: model the PMU of the on-board wcn68=
-55
->       arm64: dts: qcom: sc8280xp-crd: enable bluetooth
->       arm64: dts: qcom: sc8280xp-x13s: model the PMU of the on-board wcn6=
-855
->       arm64: dts: qcom: sm8450-hdk: model the PMU of the on-board wcn6855
->
->  .../bindings/regulator/qcom,qca6390-pmu.yaml       |  12 ++
->  arch/arm64/boot/dts/qcom/sc8280xp-crd.dts          | 169 +++++++++++++++=
-++++++
->  .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     | 103 +++++++++++--
->  arch/arm64/boot/dts/qcom/sm8450-hdk.dts            | 157 +++++++++++++++=
-++++
->  arch/arm64/boot/dts/qcom/sm8450.dtsi               |   2 +-
->  drivers/power/sequencing/pwrseq-qcom-wcn.c         | 101 +++++++++++-
->  6 files changed, 526 insertions(+), 18 deletions(-)
-> ---
-> base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
-> change-id: 20240807-sc8280xp-pwrseq-7b6859d846c5
->
-> Best regards,
-> --
-> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
+Hi Mario,
 
-It's been two weeks. If there are no objections to the DTS changes,
-can the remainder of this series be picked up for v6.13?
+kernel test robot noticed the following build errors:
 
-Thanks,
-Bartosz
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.12-rc5 next-20241101]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/ACPI-platform-profile-Add-a-name-member-to-handlers/20241031-121650
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241031040952.109057-21-mario.limonciello%40amd.com
+patch subject: [PATCH v3 20/22] ACPI: platform_profile: Register class device for platform profile handlers
+config: i386-buildonly-randconfig-005-20241101 (https://download.01.org/0day-ci/archive/20241101/202411012227.46a4WcxB-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241101/202411012227.46a4WcxB-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411012227.46a4WcxB-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/acpi/platform_profile.c:303:7: error: call to undeclared function 'MKDEV'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     303 |                                          MKDEV(0, pprof->minor), NULL, "platform-profile-%s",
+         |                                          ^
+   drivers/acpi/platform_profile.c:344:42: error: call to undeclared function 'MKDEV'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     344 |         device_destroy(&platform_profile_class, MKDEV(0, pprof->minor));
+         |                                                 ^
+   2 errors generated.
+
+
+vim +/MKDEV +303 drivers/acpi/platform_profile.c
+
+   261	
+   262	int platform_profile_register(struct platform_profile_handler *pprof)
+   263	{
+   264		bool registered;
+   265		int err;
+   266	
+   267		/* Sanity check the profile handler */
+   268		if (!pprof || bitmap_empty(pprof->choices, PLATFORM_PROFILE_LAST) ||
+   269		    !pprof->profile_set || !pprof->profile_get) {
+   270			pr_err("platform_profile: handler is invalid\n");
+   271			return -EINVAL;
+   272		}
+   273		if (!test_bit(PLATFORM_PROFILE_BALANCED, pprof->choices)) {
+   274			pr_err("platform_profile: handler does not support balanced profile\n");
+   275			return -EINVAL;
+   276		}
+   277		if (!pprof->dev) {
+   278			pr_err("platform_profile: handler device is not set\n");
+   279			return -EINVAL;
+   280		}
+   281	
+   282		guard(mutex)(&profile_lock);
+   283		/* We can only have one active profile */
+   284		if (cur_profile)
+   285			return -EEXIST;
+   286	
+   287		registered = platform_profile_is_registered();
+   288		if (!registered) {
+   289			/* class for individual handlers */
+   290			err = class_register(&platform_profile_class);
+   291			if (err)
+   292				return err;
+   293			/* legacy sysfs files */
+   294			err = sysfs_create_group(acpi_kobj, &platform_profile_group);
+   295			if (err)
+   296				goto cleanup_class;
+   297	
+   298		}
+   299	
+   300		/* create class interface for individual handler */
+   301		pprof->minor = idr_alloc(&platform_profile_minor_idr, pprof, 0, 0, GFP_KERNEL);
+   302		pprof->class_dev = device_create(&platform_profile_class, pprof->dev,
+ > 303						 MKDEV(0, pprof->minor), NULL, "platform-profile-%s",
+   304						 pprof->name);
+   305		if (IS_ERR(pprof->class_dev)) {
+   306			err = PTR_ERR(pprof->class_dev);
+   307			goto cleanup_legacy;
+   308		}
+   309		err = sysfs_create_group(&pprof->class_dev->kobj, &platform_profile_group);
+   310		if (err)
+   311			goto cleanup_device;
+   312	
+   313		list_add_tail(&pprof->list, &platform_profile_handler_list);
+   314		sysfs_notify(acpi_kobj, NULL, "platform_profile");
+   315	
+   316		cur_profile = pprof;
+   317		return 0;
+   318	
+   319	cleanup_device:
+   320		device_destroy(&platform_profile_class, MKDEV(0, pprof->minor));
+   321	
+   322	cleanup_legacy:
+   323		if (!registered)
+   324			sysfs_remove_group(acpi_kobj, &platform_profile_group);
+   325	cleanup_class:
+   326		if (!registered)
+   327			class_unregister(&platform_profile_class);
+   328	
+   329		return err;
+   330	}
+   331	EXPORT_SYMBOL_GPL(platform_profile_register);
+   332	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
