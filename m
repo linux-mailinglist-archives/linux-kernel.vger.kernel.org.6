@@ -1,114 +1,98 @@
-Return-Path: <linux-kernel+bounces-392368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A7D9B932D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:29:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468D39B9332
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:29:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824321C21780
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:29:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B6B28301F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808911A4E77;
-	Fri,  1 Nov 2024 14:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QR9DiodU"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA97C1A4F21;
+	Fri,  1 Nov 2024 14:29:29 +0000 (UTC)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059C01A2C06;
-	Fri,  1 Nov 2024 14:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6EA1A2C06
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730471357; cv=none; b=eKSF1gy4oNi/u4AmgUYQcR5ariF5+eW3nSVtHYO/6INXjwnSMDh3S5olZa7yCBhssVrYL5DTBj4AJs3bgneJpxQn0GkJaDci8yBTUyyj0Qe7C1kOKmEl9U6/+55ACjeQzYFnEiU9FToeap1WzAxXxxbiYmqEiD4dv69uPA2S2Gs=
+	t=1730471369; cv=none; b=VtzSRR6ee59K861iFmlmlj8tYfSVSZ3V48rd3y7Ou7UFKuuDN7/X4/5BWydIqoU958RBv2n3DDxG55TIcsOUcuX8t9XSATW6+AqNU5hFWTNG9By2mScfyJJeNgTr4ZjVRD3aDpsg2+LDkTtYGiIruI4TCULaVHiEulVxuT2qo74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730471357; c=relaxed/simple;
-	bh=sGQPau7KCDdF/Ae95DXOCmqJ7A87TuwQ1h0aYFgMeA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FNqU7gLrPStRZU2hNss9kCss0EamALeVYYUj+lzThlB7HSwIEJ+TdoiabPB8JoA3wiWfeWKR96dm1BNhDYJbAmd3PxjZy5wV+UDbDy1mx7YWQ2rg/+rcda3TnIzw4YhJMgCR2VIoyTbWOPds+1Mt3LP3b48/rjsKBhOjzcm4CZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QR9DiodU; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315ce4d250so2060305e9.2;
-        Fri, 01 Nov 2024 07:29:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730471353; x=1731076153; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=odFhpibLPvwuhQLLhb1fVT+w+/dlMBz12uJSK00SoM4=;
-        b=QR9DiodUQKPKjG9c0emqMv0coSWHJfEMiCTN2Gj0TXyrtteti3Ezb8aAKp5AyII96z
-         MoX+xi4J7jP3cwZRIde67cpbNgE3K2HiMDWq2ItSPxSXWSFq/sqWKhffBPa4GxBBYQXz
-         P2/LbaPFT/x4KbvBYkAJP6RhnTz6MMoLPR0PWa01k1MqV+iLU1MHZYNslxhG6oJqL6Is
-         kyBiLuBDCIL/ftRR3aFYjZV4FfH+uM8ytVJUCMYFB2HUqQOygRXaJsG3/J6SL48hv4ef
-         6BXtCdfjMmm2jEhPSXUsC4Dvo1TidsBKZqzceY+xnnxWfYz4fnhAdb9DSBFxKtVE8sta
-         elGQ==
+	s=arc-20240116; t=1730471369; c=relaxed/simple;
+	bh=VmHz5nlZIWqqvEKJFo1Nsn0vzxPDgXYMjLtwHruwULw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZA9kqN0DeYwt7mxCkyCHxWRSsv8eigoMFuaJ+VZaMC6jAcrsrBYHFVdK3jcs3jaqmQo2CZV3Sf6NDllTSTbygUrQrIh1Ru7+ufBJ95WL6SzjRrXE9akWJo85DwtwzT0lfw0aKFrcwHe/0xcztcvjR7Knj1qpjwIVXc1NAJ+SBWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c77459558so18301665ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:29:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730471353; x=1731076153;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=odFhpibLPvwuhQLLhb1fVT+w+/dlMBz12uJSK00SoM4=;
-        b=qr1+m601h9RvRAkrqtmwfZe7KKQU7CsZk6TmMtUUEzHaPOkLOgUzw9OBZ/e+kzM7iV
-         kJjRrcSl3zs1SnLb4RLky+E2nCkDUpZYZPtcciaOmm3iga+HgSPQnm7bNDO8yLUDNOEb
-         ZPy0qpzV60PmsICg1YQmmS0RMAcwZohi7fQOfPhbJngOj8zeKJFyIT+OOYaMkYm8gwXw
-         danHS2B2I11Fpr60IWhyZtQ/P5UWmkElcJ6tfS5gziIkUs7h1xaTDotRwceIEKdEzuAE
-         ECbJOrJNo+QYqrXxnhIKL1v8An76jEvR/TOeDU2M27gQR42lZpiLrPlgcQpmkNl/o8vl
-         zHfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXR5I8DGqXdTNYvrERaYE53rKJiiRtHtW4mJHDCvEOTre7EM/cVcp9EXCQ3pC0PRRrlqtQOdJSMMaS2P+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbMmhwBd12bJF6CvVtsPayYf5gcyGRMK/6vjKXinrQvzHDi+55
-	9Wa3kDX1jFHqPUbOaLtOBqpGWLaXvlJVrtaZkdDqiZbvNSzBU90q
-X-Google-Smtp-Source: AGHT+IEEMVRXqLdwmJV7pRqfFpEUN3/kmvstqI5JyyZgowwwoXMF0vgEs0QQNJ4tL3FcNqLPsYwFmA==
-X-Received: by 2002:a05:600c:3542:b0:42c:ba6c:d9a7 with SMTP id 5b1f17b1804b1-4319ad08603mr88397485e9.4.1730471352892;
-        Fri, 01 Nov 2024 07:29:12 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d685287sm66007415e9.35.2024.11.01.07.29.10
+        d=1e100.net; s=20230601; t=1730471367; x=1731076167;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ERLYvyPbKZ8JxkIbrL8+Ki3TJhm1EhtXm+s7krpp5vc=;
+        b=hd8B8E3ETrS0/mTR4BvgGpLcmy0UTpIrmz+jYVSMyt4NRh+BS7N74J89FAILm+83ZV
+         /jomkjGej1Ms8d8MwNq4sO/O/TGBYmwKSOuibGy/RcMi3gu8WcUw/HaAG2nxLMzlrR8s
+         Ydea+tyMeN9i7DibDCnHGgBdkOurnvOUP17YlDNB+dk8k6348fV2tvyly0JvKDb13nNU
+         r4kpY6QmeQ7LbjPRD9mp7Wc3f7dL9QRn1yo3R4NEl07mqJJ/KOODWdeSt6abBDMJfXy7
+         VLAnNdaEQ9An0XMIjgd3xZE0HJoBt0yUB4yamknqvXgUlJq1vJtaRI+DtGbEYlGaMEls
+         SUyA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Rb5AqU55PYIWaUnc9pFp2dzzGtrwaWMakKzi1aYwauRiDO+xnmPwOrrJ4iCjRoZS2JNxXcan7Qs2L4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoIVBkZ9w67Ppmikdyptc2/EXEzhJxaoS6aJxxch1OaJGGZz64
+	j4UkaAlhP3Oqgigoe2YVDSk7Lwa1zdjDUN0Xhicia+aJ69RnADRaRFMrUywhvm4=
+X-Google-Smtp-Source: AGHT+IEjuPaRXDmIHKxmEM1MgXCWCoRlSILQEUVyaX7oKcUJxOvSkElErAbt27tTtHIX1LTt/c1JlQ==
+X-Received: by 2002:a17:902:ce10:b0:20c:a97d:cc5c with SMTP id d9443c01a7336-210f74f6256mr147030695ad.6.1730471366846;
+        Fri, 01 Nov 2024 07:29:26 -0700 (PDT)
+Received: from localhost ([97.126.177.194])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056eeaa9sm22092685ad.47.2024.11.01.07.29.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 07:29:11 -0700 (PDT)
-Date: Fri, 1 Nov 2024 16:29:08 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>, Simon Horman <horms@kernel.org>,
-	andrew+netdev@lunn.ch,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com
-Subject: Re: [PATCH net-next v8 0/8] net: stmmac: Refactor FPE as a separate
- module
-Message-ID: <20241101142908.ohdxsokygout5mfs@skbuf>
-References: <cover.1730449003.git.0x1207@gmail.com>
+        Fri, 01 Nov 2024 07:29:26 -0700 (PDT)
+From: Kevin Hilman <khilman@kernel.org>
+To: Judith Mendez <jm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Bin Liu <b-liu@ti.com>, Judith Mendez
+ <jm@ti.com>
+Subject: Re: [PATCH RESEND v2] gpio: omap: Add omap_gpio_disable/enable_irq
+ calls
+In-Reply-To: <20241031145652.342696-1-jm@ti.com>
+References: <20241031145652.342696-1-jm@ti.com>
+Date: Fri, 01 Nov 2024 07:29:25 -0700
+Message-ID: <7h5xp7owmy.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1730449003.git.0x1207@gmail.com>
+Content-Type: text/plain
 
-On Fri, Nov 01, 2024 at 09:31:27PM +0800, Furong Xu wrote:
-> Refactor FPE implementation by moving common code for DWMAC4 and
-> DWXGMAC into a separate FPE module.
-> 
-> FPE implementation for DWMAC4 and DWXGMAC differs only for:
-> 1) Offset address of MAC_FPE_CTRL_STS and MTL_FPE_CTRL_STS
-> 2) FPRQ(Frame Preemption Residue Queue) field in MAC_RxQ_Ctrl1
-> 3) Bit offset of Frame Preemption Interrupt Enable
-> 
-> Tested on DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
-> 
-> Changes in v8:
->   1. Reorder functions in their natural calling order
->   2. Unexport stmmac_fpe_configure() and make it static
->   3. Swap 3rd patch and 4th patch in V7
+Hi Judith,
 
-For the series:
+Judith Mendez <jm@ti.com> writes:
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+> From: Bin Liu <b-liu@ti.com>
+>
+> Add omap_gpio_disable_irq and omap_gpio_enable_irq
+> calls in gpio-omap.
+>
+> Currently, kernel cannot disable gpio interrupts in
+> case of a irq storm, so add omap_gpio_disable/enable_irq
+> so that interrupts can be disabled/enabled.
+>
+> Signed-off-by: Bin Liu <b-liu@ti.com>
+> [Judith: Add commit message]
+> Signed-off-by: Judith Mendez <jm@ti.com>
+
+Thanks for this patch.  Can you give a bit more context on the
+problem(s) this solves and on which SoCs/platforms it was
+developed/validated?
+
+Thanks,
+
+Kevin
 
