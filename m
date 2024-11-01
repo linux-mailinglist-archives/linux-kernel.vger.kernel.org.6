@@ -1,80 +1,61 @@
-Return-Path: <linux-kernel+bounces-392856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478C19B98E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:48:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E209F9B98EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:48:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA51A1F224CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98D591F22A87
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3721D1726;
-	Fri,  1 Nov 2024 19:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869221D6DC8;
+	Fri,  1 Nov 2024 19:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XO3Dxtp0"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4zytgZa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC6E1D1728
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AD71D0F49;
+	Fri,  1 Nov 2024 19:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730490503; cv=none; b=iLMathAsb9NCMGka1l/bxNDrdG7iH/2U/GBXHebk9OnRB9BRNKybx4hlKnJ/IJGTCZH9ToyMWH6gmb0U4ibqM9cDKoefyELQZOjTdxI08z5h6ko/gKFQygMty8mUWsHS+ls0ZAKcNMwp/k3J9IOgW5hnMDY0qcYcfxWISEyjwjA=
+	t=1730490511; cv=none; b=Xj9zNz8ETLOHdBgmVWL/EAoH5+WJGhzJeSpmZ7DJl9Iv7RywhwIaHOs7sv+9UFPzuVpHHGZwupx9+fxPlDuu4P538EYPjbstx3pbXJaiEwd4uyWlhQlkW7a+9pxRtdaCdNz+5FekuyBUd6lAmrJBBSKMuUqadyCd8UNL+xBey8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730490503; c=relaxed/simple;
-	bh=3UcgYWbawCrKqnDgXfJyWHag37jLry65DZFURo9649w=;
+	s=arc-20240116; t=1730490511; c=relaxed/simple;
+	bh=qY0CZeZ9z/CEZe07PqyC8aHboYZg44UmgcubBVWYXDs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P0c2Su3y5cZUTOK+emouTuBxiyZuPWw2VXZRyg+a3TAoDcA0axQry3yk7iFfMDA59AX505/lJvOciGzj55Q2QO5Gu+54exYrL5kmuT5wYBm+TUe8hVT5LAZZ6JciX6hxS9z9Ot5e+WGbyjyFS9rYxnPY2FwC3E/IaRzemkOpWlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XO3Dxtp0; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43168d9c6c9so18392555e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:48:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730490500; x=1731095300; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VyOSdZozKOWrrNO+3IjlLg6SrCFccraJpEYre6+ope4=;
-        b=XO3Dxtp0QGqxRUGCgKj+2pedfNGc1MT8MEtbfJIt6Fq9UvdF8dqNzAOLTYz4+9s1Mr
-         Cil3COyfgoeXANg7lrtaNJDrCWqvEkU5xbRAhgYJBPZqK1m2J1qFGnPnL567+s2Uzq8v
-         F5numYIZXXZsQrjTZ+5Q1rmUvTTMZvVPK3UcZuVqYPMS+RkV6dj50OC5xQlOV3ETgmjE
-         H/Y6dFXBfc94JhZqU97OXqL/EPxkrrnPH+j7DLhgM0L+JSVaCg7w9SjgbQbGXl8xwbf2
-         jRAt+WQ2GnjStj+47KO/eBMOnrLScEUTpBhZF9CzBbmWGyxyQ5wLm6JpEer6EoCX2SaV
-         7OkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730490500; x=1731095300;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VyOSdZozKOWrrNO+3IjlLg6SrCFccraJpEYre6+ope4=;
-        b=GhQkc5KvJH8MV4wOK/RodfGCwrT3VQesjn+F3MfB3DwZY6uA6XaaBIFHXqrIajAPc0
-         DFDFSbt3FvwCXTgJZ9PGj5ovrnV+bUC9Tny110CoTUnn8mx5Du9vUanPY7BArkN3J8T3
-         JMZ71xWXFE6UHnJnAKXKm3zHDKNLGdmSb6b8H85R23IVJ36vbvyDspH05ORyr+J82dUF
-         Iyl9lJsNc3GmOcHtwZBrwBzZlE9k+/D5/tw7uN5I8Fwr9Q0BYDfIjva78rzSsnl2z8+U
-         yRDwTn7C8jbWpJzDVOIusMIrwYda91H9oniRFP4zf3YfarP8HvWlzaoXEFFrw1XKGldC
-         NzeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZubJSLbKnbsdkM59ZsW9xI0t7I0OqyidOxJoT/HlhMd+o2mLeik5uOhmdzDXIUFNxUPbL+nMrZtnlcOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY148NhiaXNR1xQAyUY+mJNcBOioRWvbCw9bvy2mTiHvnNw2By
-	7UnxyqNfhTjRuzvSmAEtaCtEoXJbIszGBO+1NpB2jjXnj/a6PsvPDLtiyxYxnTc=
-X-Google-Smtp-Source: AGHT+IEgrI9/MtejE5D2yrq6YK8eiMxUyT5D3Anib7RxObpFW22X85P9QXkSDkMps5fnbwBE2ASoBA==
-X-Received: by 2002:a5d:49c2:0:b0:37d:39c1:4d3 with SMTP id ffacd0b85a97d-380610f2ea6mr17995150f8f.6.1730490500309;
-        Fri, 01 Nov 2024 12:48:20 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d429dsm6074722f8f.31.2024.11.01.12.48.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 12:48:19 -0700 (PDT)
-Date: Fri, 1 Nov 2024 22:48:16 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	arnd@arndb.de
-Subject: Re: [PATCH 3/9] Update messaging and usb_device refs in ni_usb
-Message-ID: <ab4f8854-8d97-4c9c-bff1-86a73b4f7cab@stanley.mountain>
-References: <20241101174705.12682-1-dpenkler@gmail.com>
- <20241101174705.12682-4-dpenkler@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISf0bavVsOO7o+6TfaGgWMBhBYQeDWkPlk0dp/t6+4ewOfUcLOoMY/kCi3qt+TorOOthx2gkawErmAzsUWgctkrgCId4SMiygc5Ww+6xKpk3b1FcOjDnOLCbejQgiBfea8/eVn2xx0h/ApgWBvfIUjTRlNMb0qQFES/GkOLZjcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4zytgZa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82579C4CECD;
+	Fri,  1 Nov 2024 19:48:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730490511;
+	bh=qY0CZeZ9z/CEZe07PqyC8aHboYZg44UmgcubBVWYXDs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E4zytgZanmwWJ9XbR75BkJw6eSX10HPg1Jy4x9Fw3iuKO25JFJeWCvCBS3IK/x4Zs
+	 c/f6R2EBqPpfVTtqXdwKV5pYiD+vK0a60vj6ZdtY0xuwXdgG55crQqAFcdQOozowuZ
+	 JxSEzQwz3J+FXbi2ynikR4ofc6o8qs9iRZb9Isq/47yXM4GxGn3vEU2y26K/CF9r0v
+	 RV/hLM1oKmDr/W0vQGcn7YRBb9kcjfQpCyymbCekVV2uJt9AfRn2wO0k/BZTzvRggj
+	 NKRsp/T8YbazQSOKRsvTSSmtLt6v+6/9VyD6Hh6q2BiesEnOlHXQpRiMa2E1GmPiMC
+	 YnltZz5BGFVCQ==
+Date: Fri, 1 Nov 2024 14:48:29 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: netdev@vger.kernel.org, linux-pci@vger.kernel.org, horms@kernel.org,
+	linux-kernel@vger.kernel.org, pabeni@redhat.com,
+	xiaoning.wang@nxp.com, edumazet@google.com, linux@armlinux.org.uk,
+	devicetree@vger.kernel.org, conor+dt@kernel.org,
+	claudiu.manoil@nxp.com, krzk+dt@kernel.org,
+	christophe.leroy@csgroup.eu, alexander.stein@ew.tq-group.com,
+	Frank.Li@nxp.com, kuba@kernel.org, vladimir.oltean@nxp.com,
+	imx@lists.linux.dev, davem@davemloft.net
+Subject: Re: [PATCH v6 net-next 02/12] dt-bindings: net: add i.MX95 ENETC
+ support
+Message-ID: <173049050923.4090067.16955532766209341437.robh@kernel.org>
+References: <20241030093924.1251343-1-wei.fang@nxp.com>
+ <20241030093924.1251343-3-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,33 +64,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241101174705.12682-4-dpenkler@gmail.com>
+In-Reply-To: <20241030093924.1251343-3-wei.fang@nxp.com>
 
-On Fri, Nov 01, 2024 at 06:46:59PM +0100, Dave Penkler wrote:
->       Replace GPIB_DPRINTK with dev_dbg
->       Replace pr_xxx with dev_xxx wherever possible
->       Use previously initialized usb_device pointer
->       for usb_get_dev() and usb_put_dev().
+
+On Wed, 30 Oct 2024 17:39:13 +0800, Wei Fang wrote:
+> The ENETC of i.MX95 has been upgraded to revision 4.1, and the vendor
+> ID and device ID have also changed, so add the new compatible strings
+> for i.MX95 ENETC. In addition, i.MX95 supports configuration of RGMII
+> or RMII reference clock.
 > 
-> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
 > ---
->  drivers/staging/gpib/ni_usb/ni_usb_gpib.c | 377 ++++++++++++----------
->  1 file changed, 205 insertions(+), 172 deletions(-)
+> v2: Remove "nxp,imx95-enetc" compatible string.
+> v3:
+> 1. Add restriction to "clcoks" and "clock-names" properties and rename
+> the clock, also remove the items from these two properties.
+> 2. Remove unnecessary items for "pci1131,e101" compatible string.
+> v4: Move clocks and clock-names to top level.
+> v5: Add items to clocks and clock-names
+> v6:
+> 1. use negate the 'if' schema (not: contains: ...)
+> ---
+>  .../devicetree/bindings/net/fsl,enetc.yaml    | 28 +++++++++++++++++--
+>  1 file changed, 25 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-> index 9ff56b063681..50ec934fe8be 100644
-> --- a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-> +++ b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
-> @@ -132,13 +132,14 @@ static int ni_usb_nonblocking_send_bulk_msg(struct ni_usb_priv *ni_priv, void *d
->  	if (timeout_msecs)
->  		mod_timer(&ni_priv->bulk_timer, jiffies + msecs_to_jiffies(timeout_msecs));
->  
-> -	//pr_err("%s: submitting urb\n", __func__);
-> +	//dev_err(&usb_dev->dev, "%s: submitting urb\n", __func__);
 
-Just delete commented out code.
-
-regards,
-dan carpenter
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
