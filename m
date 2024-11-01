@@ -1,325 +1,175 @@
-Return-Path: <linux-kernel+bounces-392883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB189B9942
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:15:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051BA9B9946
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:15:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFEE1C20F9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:15:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9A5C284555
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF66A1E22FC;
-	Fri,  1 Nov 2024 20:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069ED1D279D;
+	Fri,  1 Nov 2024 20:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oOBmhYPJ"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="VkE7DZG7"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B5B1D5AA3
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC50019D089
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730492085; cv=none; b=TKCXw0ruZO95NwA/qjRUD8+51wuO+fgX79SlKG875di3du/c2pAjBZtCkiVWNkKFRJgqZBiVsMyhcrtXUqY26chZL9Mz0djE+NnzF7x0s6PPOGFCFOCtvYq3wbOkPKwkVrFUHUi5yguYaOVk0Dv9dFclg+WS+L2AGXf60UUwBEQ=
+	t=1730492134; cv=none; b=S95xyPaHs6vI9iQJGwh5/4NozTVPk2r7FnAx5gj3InmAba+cVUyEQILs6F71kWPmqVUTkzbnwTn3GCrLfKqBOQLsE4R4yVN8iGV6ptFRCwwlJCdUVOWuiP8I8XPxRS8Rx1wu+u4QktZ+w/J5BlHd/4daSkm4sb1mGQuItLH2QeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730492085; c=relaxed/simple;
-	bh=lDsHgz9pKSuRuH9kBOLZEhY3s9XaiF7nBz45LFRJ5bU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Y4wURHqcXDVkhPebp/FXYguZBT5GBba7qDxf8BD/qh22DDpxDKtsndEVxEoskioWqDR9dsC3vfHIOyzaRD3h1TAEl2VqX2LF+kT1Uf63KHuu8+zqivGbo4Xu6i5y/Jq/1ixzwUAdueMGPWLcgtSO6J7c2bTQRMzgROaW81I6EwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oOBmhYPJ; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e31e5d1739so49128527b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:14:43 -0700 (PDT)
+	s=arc-20240116; t=1730492134; c=relaxed/simple;
+	bh=KojzClBS51NXZHtfP/ssEPl81S3kAgFdoobwtV9/FUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PaKMIbIc3YUSrmebuGzcrOMtCyrbs/dRaIee3PgqbFizPPHBFTpliMqkOkFzoN9oMBQIYv54EVJZ19rPF2S8FOjttjtzLTxZM6Od9Zm8u1rfxAZhJ+xQWYedW8CcXpLwAlVDuKoeoJqg38pL15vTMjkoMYLxgLXuxu86z2AT5xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=VkE7DZG7; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso1628059a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:15:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730492082; x=1731096882; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uM4FywoyCqYZ46XNt51PzJLHMBFC4neHJbEku/Dteqg=;
-        b=oOBmhYPJidcyaxhwai/lIqLuLELZeUObsCXLs1UfEbfgpXb1ev+UmV7K7J5rPOboHI
-         knqYXmMMqzFPWIY2+lmahukFxT8IMakTTWjEcHUofPtNjB91oLgpJWglwmubcpaMCcSy
-         QMpyFy/JRTTQuVwczXQ/v5CyMwbsIV8jngXqQGXz27qMnYjD9TjlDRbZ6jpJ28KEKOWp
-         L9G+ESTNG9bIsaOdvb2yxftxWtfkISlqOmhY8lfb2dypGm6aS/WkTsmTAiw27EQSaUsn
-         ACF7qQOWqtnCImJLPYdyMocqtktwVgTMly/pfQBKWd73EpKIsSKNd27C9L0HT6SdZlIf
-         TFWA==
+        d=fastly.com; s=google; t=1730492132; x=1731096932; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4rOWj5wq1SGCaCslB1TWBLOjmfXZ4GP9FgmX1YHf/NE=;
+        b=VkE7DZG7bce/7rzDqfgjd5v6gbe0xL3pHMErjgPQSgLnHfYJ8Twqdt7N0w7x9p/GxC
+         yeF3Cb0VSlusfkQEcgIl/EQpQ7Oyg8peMEhOkOCqig36yMlaZDpzlOOyzKUaqKQzSJck
+         ZShtvq9BGrYanVAb179nR+AfPE59ZQGhXkgE8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730492082; x=1731096882;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uM4FywoyCqYZ46XNt51PzJLHMBFC4neHJbEku/Dteqg=;
-        b=WNLKLIHxq4wNxEWkwCHuBIKrApJQ7SIqtqOYo3DmDYayhNwkwGmC6/ev5SMHd8d8NU
-         OFlBuYWxHS3dcupROc2S2cl8o6YMEy2YxrzEdzpX5zzL5sq5KcnH/Jvgz4lfwZTGs4Qc
-         DKoSVuj/dtxuP0mcL2t1EOvZ69kgqaDcGMC8X828NNoRF6iw8PLQ2hipYEn0CL6M11CN
-         PtY1j4Tj59PUo4q9yJCyQG8PEN8FPNLudfKs3qouVYBAebBXxl4QoC+5YKhKnQC9DepR
-         GjdZOeGqxyE4RieWpTsUXMqo7zmXkKjbDYJqqRmtcWU9AoMOPpwzahq/Fiv7o/VteLsT
-         fdMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzSlC+eWCLanglIPNHxTh5CLjaIb79Zt3tvSZEczBjD398oTpFpHLgNmiWr4pFKnk7IEjEjsTlW4+VUgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyixJQulbn08SS1wOfd/C1x0tX3BG/8D05t7gWU089/X5BdrwSi
-	3tEokGYkX8kYbncrTLFxOA3Xx3B2KhXJ80DvmgB8MuRl0AgaTL5M6Q687cWhY4EPzJ2KU2ko6pK
-	5YkWOpA==
-X-Google-Smtp-Source: AGHT+IHkvayqxPvPT+OuRHcrPJUNO7XXBhe+H8g8uC50jF7qEsqHqllJM8vn54LRySZYAYTqMYHSANY+ziLx
-X-Received: from vipin.c.googlers.com ([35.247.89.60]) (user=vipinsh
- job=sendgmr) by 2002:a25:3602:0:b0:e22:3aea:6eb5 with SMTP id
- 3f1490d57ef6-e3302686c15mr5066276.7.1730492082565; Fri, 01 Nov 2024 13:14:42
- -0700 (PDT)
-Date: Fri,  1 Nov 2024 13:14:37 -0700
-In-Reply-To: <20241101201437.1604321-1-vipinsh@google.com>
+        d=1e100.net; s=20230601; t=1730492132; x=1731096932;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4rOWj5wq1SGCaCslB1TWBLOjmfXZ4GP9FgmX1YHf/NE=;
+        b=A2/S3agcVUGP4Rgf9EUCNTZb5kbVhehCh0eXS3OpgxUFfigMmce7hjRW4k2WOMxksr
+         mRCCSGJRu3on4xLxjYxzTTJR7Va2+25rh+dlHEbfnlyLIrsohWrYSAQQjNFMJpKBqe6D
+         o0Eqd49BhI8riQQgiB2LfpiNEeQwdttbJbs3he5clTZusLja669h2ozbb2cK7ynOD3fq
+         W+Pe++163tK2ug7b9ECyrsWoYg4EfO6kmnNtSLGjAjB0li3Y9+zW9DZ4E/zAGrERPjMb
+         cgKNrXFWD1kN32559uFtJEoiovkmVTQ7tWYzrONokxT1ImV7tNCkUl5P8/uAlYHpKeoa
+         HU/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6VbsfGn0qAK32gjF6g7oOoPZaSMNT5SjMaEKgbZj/OazJ6HA1CN3EhsSm0fDXLI6HbIjZCeNzAs9Q5N4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW9xBkrHKiXsVkFtDcHAm2IrZPom/u7ufKsHyOwpCepcsWyzpi
+	t8FPwXMUmAqvMo2o8VYe/n36JZSLqpkD/ERPO2WGzWYXJEDx+K3H6XfFNJncH3A=
+X-Google-Smtp-Source: AGHT+IGLQMQLNv4xaq8DqBOYiAGWYiXP+moKivQ5tFF9FFk0WRRRqQkt0/6YXC6frC7khIREMn44nQ==
+X-Received: by 2002:a17:90b:2e42:b0:2e9:4967:244 with SMTP id 98e67ed59e1d1-2e94c2e4c29mr6924981a91.24.1730492131974;
+        Fri, 01 Nov 2024 13:15:31 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa2603fsm5316018a91.17.2024.11.01.13.15.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 13:15:31 -0700 (PDT)
+Date: Fri, 1 Nov 2024 13:15:28 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, pabeni@redhat.com, namangulati@google.com,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
+	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH net-next v3 6/7] selftests: net: Add busy_poll_test
+Message-ID: <ZyU24Kogy3HlzNqx@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	pabeni@redhat.com, namangulati@google.com, edumazet@google.com,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
+	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+References: <20241101004846.32532-1-jdamato@fastly.com>
+ <20241101004846.32532-7-jdamato@fastly.com>
+ <20241101063426.2e1423a8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241101201437.1604321-1-vipinsh@google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241101201437.1604321-2-vipinsh@google.com>
-Subject: [PATCH v3 1/1] KVM: x86/mmu: Remove KVM mmu shrinker
-From: Vipin Sharma <vipinsh@google.com>
-To: seanjc@google.com, pbonzini@redhat.com, dmatlack@google.com
-Cc: zhi.wang.linux@gmail.com, weijiang.yang@intel.com, mizhang@google.com, 
-	liangchen.linux@gmail.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Vipin Sharma <vipinsh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101063426.2e1423a8@kernel.org>
 
-Remove KVM MMU shrinker and all its related code. Remove global
-kvm_total_used_mmu_pages and page zapping flow from MMU shrinker.
-Remove zapped_obsolete_pages list from struct kvm_arch{} and use local
-list in kvm_zap_obsolete_pages() since MMU shrinker is not using it
-anymore.
+On Fri, Nov 01, 2024 at 06:34:26AM -0700, Jakub Kicinski wrote:
+> On Fri,  1 Nov 2024 00:48:33 +0000 Joe Damato wrote:
+> > +	ip netns exec nscl nc -N 192.168.1.1 48675 < $tmp_file
+> 
+> Thanks a lot for adding the test.
 
-Current flow of KVM MMU shrinker is very disruptive to VMs. It picks the
-first VM in the vm_list, zaps the oldest page which is most likely an
-upper level SPTEs and most like to be reused. Prior to TDP MMU, this is
-even more disruptive in nested VMs case, considering L1 SPTEs will be
-the oldest even though most of the entries are for L2 SPTEs.
+Thanks for the review.
 
-As discussed in [1] shrinker logic has not be very useful in actually
-keeping VMs performant and reducing memory usage.
+> Could you replace nc with socat or
+> a similar tool? There are multiple incompatible implementations of
+> netcat packaged by various distros, we get:
+> 
+> # selftests: net: busy_poll_test.sh
+> # nc: invalid option -- 'N'
+> # Ncat: Try `--help' or man(1) ncat for more information, usage options and help. QUITTING.
+> 
+> nc is a known PITA.
 
-There was an alternative suggested [2] to repurpose shrinker for
-shrinking vCPU caches. But considering that in all of the KVM MMU
-shrinker history it hasn't been used/needed/complained, and there has
-not been any conversation regarding KVM using lots of page tables, it
-might be better to just not have shrinker. If the need arise [2] can be
-revisited.
+OK, I've replaced with socat for the v4 I am working on. I've also
+added some additional documentation to the FAQ in the cover letter
+and the kernel documentation to help answer Sridhar's question
+because it may be a question others have as well.
 
-[1] https://lore.kernel.org/lkml/Y45dldZnI6OIf+a5@google.com/
-[2] https://lore.kernel.org/kvm/20241004195540.210396-3-vipinsh@google.com/
+> > +	# set the suspend parameter for the server via its IFIDX
+> > +
+> > +	DUMP_CMD="${YNL_PATH} --spec ${SPEC_PATH} --dump napi-get --json=\"{\\\"ifindex\\\": ${NSIM_DEV_1_IFIDX}}\" --output-json"
+> > +	NSIM_DEV_1_NAPIID=$(ip netns exec nssv bash -c "$DUMP_CMD")
+> > +	NSIM_DEV_1_NAPIID=$(echo $NSIM_DEV_1_NAPIID | jq '.[] | .id')
+> > +
+> > +	SUSPEND_CMD="${YNL_PATH} --spec ${SPEC_PATH} --do napi-set --json=\"{\\\"id\\\": ${NSIM_DEV_1_NAPIID}, \\\"irq-suspend-timeout\\\": 20000000, \\\"gro-flush-timeout\\\": 50000, \\\"defer-hard-irqs\\\": 100}\""
+> > +	NSIM_DEV_1_SETCONFIG=$(ip netns exec nssv bash -c "$SUSPEND_CMD")
+> 
+> Can you try to run this test in installed mode?
+> 
+> https://docs.kernel.org/dev-tools/kselftest.html#install-selftests
+> 
+> IIRC YNL moves around when we install, you'd either need to do
+> autodetection of the path (see tools/testing/selftests/net/lib/py/ynl.py
+> and if you go down this route please move the helper which exports the
+> YNL variables to lib.sh so other tests can reuse); or teach the C code
+> to do the setup, you can link against YNL fairly easily (look at where
+> ncdevmem is added in the Makefile, it uses YNL)
 
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Suggested-by: David Matlack <dmatlack@google.com>
-Reviewed-by: David Matlack <dmatlack@google.com>
-Signed-off-by: Vipin Sharma <vipinsh@google.com>
----
- arch/x86/include/asm/kvm_host.h |   1 -
- arch/x86/kvm/mmu/mmu.c          | 111 ++------------------------------
- 2 files changed, 5 insertions(+), 107 deletions(-)
+I think I'm going to go the C route.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 70c7ed0ef1847..3e8afc82ae2fb 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1306,7 +1306,6 @@ struct kvm_arch {
- 	bool pre_fault_allowed;
- 	struct hlist_head mmu_page_hash[KVM_NUM_MMU_PAGES];
- 	struct list_head active_mmu_pages;
--	struct list_head zapped_obsolete_pages;
- 	/*
- 	 * A list of kvm_mmu_page structs that, if zapped, could possibly be
- 	 * replaced by an NX huge page.  A shadow page is on this list if its
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 443845bb2e011..3116c4c31d87c 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -179,7 +179,6 @@ struct kvm_shadow_walk_iterator {
- 
- static struct kmem_cache *pte_list_desc_cache;
- struct kmem_cache *mmu_page_header_cache;
--static struct percpu_counter kvm_total_used_mmu_pages;
- 
- static void mmu_spte_set(u64 *sptep, u64 spte);
- 
-@@ -1622,27 +1621,15 @@ static void kvm_mmu_check_sptes_at_free(struct kvm_mmu_page *sp)
- #endif
- }
- 
--/*
-- * This value is the sum of all of the kvm instances's
-- * kvm->arch.n_used_mmu_pages values.  We need a global,
-- * aggregate version in order to make the slab shrinker
-- * faster
-- */
--static inline void kvm_mod_used_mmu_pages(struct kvm *kvm, long nr)
--{
--	kvm->arch.n_used_mmu_pages += nr;
--	percpu_counter_add(&kvm_total_used_mmu_pages, nr);
--}
--
- static void kvm_account_mmu_page(struct kvm *kvm, struct kvm_mmu_page *sp)
- {
--	kvm_mod_used_mmu_pages(kvm, +1);
-+	kvm->arch.n_used_mmu_pages++;
- 	kvm_account_pgtable_pages((void *)sp->spt, +1);
- }
- 
- static void kvm_unaccount_mmu_page(struct kvm *kvm, struct kvm_mmu_page *sp)
- {
--	kvm_mod_used_mmu_pages(kvm, -1);
-+	kvm->arch.n_used_mmu_pages--;
- 	kvm_account_pgtable_pages((void *)sp->spt, -1);
- }
- 
-@@ -6380,6 +6367,7 @@ static void kvm_zap_obsolete_pages(struct kvm *kvm)
- {
- 	struct kvm_mmu_page *sp, *node;
- 	int nr_zapped, batch = 0;
-+	LIST_HEAD(invalid_list);
- 	bool unstable;
- 
- restart:
-@@ -6413,7 +6401,7 @@ static void kvm_zap_obsolete_pages(struct kvm *kvm)
- 		}
- 
- 		unstable = __kvm_mmu_prepare_zap_page(kvm, sp,
--				&kvm->arch.zapped_obsolete_pages, &nr_zapped);
-+				&invalid_list, &nr_zapped);
- 		batch += nr_zapped;
- 
- 		if (unstable)
-@@ -6429,7 +6417,7 @@ static void kvm_zap_obsolete_pages(struct kvm *kvm)
- 	 * kvm_mmu_load()), and the reload in the caller ensure no vCPUs are
- 	 * running with an obsolete MMU.
- 	 */
--	kvm_mmu_commit_zap_page(kvm, &kvm->arch.zapped_obsolete_pages);
-+	kvm_mmu_commit_zap_page(kvm, &invalid_list);
- }
- 
- /*
-@@ -6492,16 +6480,10 @@ static void kvm_mmu_zap_all_fast(struct kvm *kvm)
- 		kvm_tdp_mmu_zap_invalidated_roots(kvm);
- }
- 
--static bool kvm_has_zapped_obsolete_pages(struct kvm *kvm)
--{
--	return unlikely(!list_empty_careful(&kvm->arch.zapped_obsolete_pages));
--}
--
- void kvm_mmu_init_vm(struct kvm *kvm)
- {
- 	kvm->arch.shadow_mmio_value = shadow_mmio_value;
- 	INIT_LIST_HEAD(&kvm->arch.active_mmu_pages);
--	INIT_LIST_HEAD(&kvm->arch.zapped_obsolete_pages);
- 	INIT_LIST_HEAD(&kvm->arch.possible_nx_huge_pages);
- 	spin_lock_init(&kvm->arch.mmu_unsync_pages_lock);
- 
-@@ -7112,72 +7094,6 @@ void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, u64 gen)
- 	}
- }
- 
--static unsigned long mmu_shrink_scan(struct shrinker *shrink,
--				     struct shrink_control *sc)
--{
--	struct kvm *kvm;
--	int nr_to_scan = sc->nr_to_scan;
--	unsigned long freed = 0;
--
--	mutex_lock(&kvm_lock);
--
--	list_for_each_entry(kvm, &vm_list, vm_list) {
--		int idx;
--
--		/*
--		 * Never scan more than sc->nr_to_scan VM instances.
--		 * Will not hit this condition practically since we do not try
--		 * to shrink more than one VM and it is very unlikely to see
--		 * !n_used_mmu_pages so many times.
--		 */
--		if (!nr_to_scan--)
--			break;
--		/*
--		 * n_used_mmu_pages is accessed without holding kvm->mmu_lock
--		 * here. We may skip a VM instance errorneosly, but we do not
--		 * want to shrink a VM that only started to populate its MMU
--		 * anyway.
--		 */
--		if (!kvm->arch.n_used_mmu_pages &&
--		    !kvm_has_zapped_obsolete_pages(kvm))
--			continue;
--
--		idx = srcu_read_lock(&kvm->srcu);
--		write_lock(&kvm->mmu_lock);
--
--		if (kvm_has_zapped_obsolete_pages(kvm)) {
--			kvm_mmu_commit_zap_page(kvm,
--			      &kvm->arch.zapped_obsolete_pages);
--			goto unlock;
--		}
--
--		freed = kvm_mmu_zap_oldest_mmu_pages(kvm, sc->nr_to_scan);
--
--unlock:
--		write_unlock(&kvm->mmu_lock);
--		srcu_read_unlock(&kvm->srcu, idx);
--
--		/*
--		 * unfair on small ones
--		 * per-vm shrinkers cry out
--		 * sadness comes quickly
--		 */
--		list_move_tail(&kvm->vm_list, &vm_list);
--		break;
--	}
--
--	mutex_unlock(&kvm_lock);
--	return freed;
--}
--
--static unsigned long mmu_shrink_count(struct shrinker *shrink,
--				      struct shrink_control *sc)
--{
--	return percpu_counter_read_positive(&kvm_total_used_mmu_pages);
--}
--
--static struct shrinker *mmu_shrinker;
--
- static void mmu_destroy_caches(void)
- {
- 	kmem_cache_destroy(pte_list_desc_cache);
-@@ -7304,23 +7220,8 @@ int kvm_mmu_vendor_module_init(void)
- 	if (!mmu_page_header_cache)
- 		goto out;
- 
--	if (percpu_counter_init(&kvm_total_used_mmu_pages, 0, GFP_KERNEL))
--		goto out;
--
--	mmu_shrinker = shrinker_alloc(0, "x86-mmu");
--	if (!mmu_shrinker)
--		goto out_shrinker;
--
--	mmu_shrinker->count_objects = mmu_shrink_count;
--	mmu_shrinker->scan_objects = mmu_shrink_scan;
--	mmu_shrinker->seeks = DEFAULT_SEEKS * 10;
--
--	shrinker_register(mmu_shrinker);
--
- 	return 0;
- 
--out_shrinker:
--	percpu_counter_destroy(&kvm_total_used_mmu_pages);
- out:
- 	mmu_destroy_caches();
- 	return ret;
-@@ -7337,8 +7238,6 @@ void kvm_mmu_destroy(struct kvm_vcpu *vcpu)
- void kvm_mmu_vendor_module_exit(void)
- {
- 	mmu_destroy_caches();
--	percpu_counter_destroy(&kvm_total_used_mmu_pages);
--	shrinker_free(mmu_shrinker);
- }
- 
- /*
--- 
-2.47.0.163.g1226f6d8fa-goog
+Just to make sure I'm following how to do this properly:
+  - I've added busy_poller to YNL_GEN_FILES (and removed it from
+    TEST_GEN_FILES)
+  - It still needs to be run via the script (which sets up netdevsim
+    etc), so I am leaving that script (busy_poll_test.sh) in
+    TEST_PROGS. busy_poller is not intended to be run on its own for
+    selftest purposes.
 
+I am not sure if YNL_GEN_FILES are expected to run standalone when
+invoked or if this will work as I expect it to (busy_poll_test.sh is
+run):
+
+  [...]
+  TEST_PROGS += busy_poll_test.sh
+  
+  # YNL files, must be before "include ..lib.mk"
+  YNL_GEN_FILES := ncdevmem busy_poller
+  [...]
+
+Doing the above: I am hoping that busy_poll_test.sh will be run
+(which will use busy_poller) and that busy_poller won't be run on
+its own.
+
+Thanks for the guidance.
 
