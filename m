@@ -1,172 +1,113 @@
-Return-Path: <linux-kernel+bounces-392671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B559B96DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:52:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D56CE9B96E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66CAC28236D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04ADB1C21C2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B431CEAC6;
-	Fri,  1 Nov 2024 17:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE0F1CDFA9;
+	Fri,  1 Nov 2024 17:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xu/CAZd+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8BvkAPE"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0901C729E;
-	Fri,  1 Nov 2024 17:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43A11AA7BF;
+	Fri,  1 Nov 2024 17:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730483493; cv=none; b=oYAKGoNA3/kAtTudmTZfh4Y7+SiO7bVKnU5udyHYj2fJe0zAzBbGT012F9u+ur4UafcQmHog3cIio0IG9MsieqEGVuVQ8V6tfmHAhhvBsXr7xton7f8M6/fmmLugSpKHBIHL4lXNhvNs/qD0cCsddOFgjdPOecimSfd9HR7rv+E=
+	t=1730483530; cv=none; b=fiOR63EnS4KtzkYWO81lI48iSVsm7gdjBMSZHjaUma5S+uoo6DmW0Lafj+ReCLiGzkgvvZrWvxcDiKQLaSKt7u4Zh4V5Jiwn9zd1hKmLXykcwvFXt9VGjAfr6xRhXEdEucA+24igKYnNLtL211VT+v8nkzm3k77E42s+LnfRBrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730483493; c=relaxed/simple;
-	bh=GTi73bIjgcmiYNkVlbjFB/3s9dtDLvL4416eQTrZHsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b9A5LsshNgoCySzLKj8X0R4aeoZhWgZ+PoueXbV7s1xkpKYV6YdHezMcpIKfGEr1DuEA8KeJOZCdEpa6w2xVIqF8F3uZwYlTD1GfdNs+RT0h1Puo76A1Cc1RnCJubkna27W1nxfdMeVCiTjzTcOT/HDjRZbYDVykCDd8j7FwfFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xu/CAZd+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C87D6C4CECD;
-	Fri,  1 Nov 2024 17:51:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730483493;
-	bh=GTi73bIjgcmiYNkVlbjFB/3s9dtDLvL4416eQTrZHsI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Xu/CAZd+WcX5yN9vACy5o1bgnqTJCC0I2V9sPNl+utukYvsflSsTHfcx8eRxFK+az
-	 UDLecUWASjyR7srLSzElda+Wpcdn4HmC/+bLRLQI2AfyHUMvtDXeNulsXhFrsIcdfs
-	 13+ksxlw055XiMhzuOO1GtgJ/FgWxxle3SRwrd2VoxhLx8gijcGTApwDDHMf8EcnFD
-	 I9ldlMOhA7TL1gko0N1MBFgTDUGVPKiLpfVtOcuiXvuwKOiA+saQdQpSbwfLsBBVBX
-	 /LNPYPIx07/yGOAx670+rf6HXJAyotEyIGnQKxY7jri1GU7SyNTTulVLdenSUIXwcb
-	 FkqYnnlOfj0HQ==
-Date: Fri, 1 Nov 2024 17:51:26 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] iio: events.h: add event identifier macros for
- differential channel
-Message-ID: <20241101175126.27acd238@jic23-huawei>
-In-Reply-To: <20241028-iio-add-macro-for-even-identifier-for-differential-channels-v1-1-b452c90f7ea6@baylibre.com>
-References: <20241028-iio-add-macro-for-even-identifier-for-differential-channels-v1-0-b452c90f7ea6@baylibre.com>
-	<20241028-iio-add-macro-for-even-identifier-for-differential-channels-v1-1-b452c90f7ea6@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730483530; c=relaxed/simple;
+	bh=1iZE5ZkmN5trs/bvRgj6pkX1BjoixP8S84BE0CD2p7c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YxPDqBaYfe4POqLJq5eisAE7z2FJ3u6aTqdYmTm/VoZCCzgfHNvdjZ1o3v+vvfOzzyXe5iuikCJJRnFGQTiNb7T7IEfkaTzJlU95nO+iUmH9acStk1ccD1YzCwdKICVezs7+LxJIVa+PWUUGlJHZNpUzr4WDApS52xjOOYH2sL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y8BvkAPE; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e56df894d4so1734213a91.3;
+        Fri, 01 Nov 2024 10:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730483528; x=1731088328; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ArGmsFldK3Iuigk+QJR4rvh183g8Hj7hFL1xtjrSy6w=;
+        b=Y8BvkAPEPbkUxQpuVcZtL661kj+twfFWOrYNU6aJ67xEpZ02B9XTFeztVw0MSTdE47
+         x8sT9VZESlVhBscpGWxrbMPJaSljKR2jV77Z5cdx7TpB8Un4u6dklS7BZikvAb2mDToH
+         mroBv6ZaCyi18CNdHSgmpQQIqAlvrpqdezaxukSiSEu2Dljcba5cSZmomBTvCR/37VT/
+         9sXXgQlXbmQyVjIsdsu4qcae3XC83uqmDVo69T7IxhDovRzKBLtLF9aym2tI27z3mYo2
+         EYGzuZf7w4WfSx7FHAG6LksAz5AqQ+9Pw1/Ml8u676TJ1m063t4Yj76Gri+FuZt+lO5d
+         bOuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730483528; x=1731088328;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ArGmsFldK3Iuigk+QJR4rvh183g8Hj7hFL1xtjrSy6w=;
+        b=CIO3hSOl8XFec9+tCLAAGzMIowHqhs9Cc8Sldo69zabKAo8vyA4z3f7GAWqf8cTNRK
+         nFDPWGscz3vU3VHRo6iVGjJUdPKo2TGJIuf2V9pgubnnl6ZGv4+Spi0ydJTYkXkjwoET
+         0XrgNw0A86t0tiJq6RDZz8529sW4Hew4BcwnfKBO1xrJ0HFu8EN/m4nw1omjqG1LMm8I
+         7NIgIDlJAicxAsApqOWiMVpxBofY/BJwjqhGZHgt9G1S9htfJntfZkjKaUPm18kgxsH6
+         JwvH1LFNG77Nw9capttBqtP2GpCEHOivO25DkDIVTXpHE2CK/u3Uh7h+ej5LDkRoffu3
+         j4pA==
+X-Forwarded-Encrypted: i=1; AJvYcCUi0xIvQkQLCeuz+0TZxxN6ByDWYtp2G0qd3aFIKcZ4rToqu8ywuBbGuSJPk+WV8A0UEV8=@vger.kernel.org, AJvYcCVkU5hsKl+0oxbJxcaelOrbJwY7MNiNVUWueEx5kbK2S6JBrQ5/0hZZD5RnXIC/RN86HqK5IotfoyspQJI71fkUM0M8@vger.kernel.org, AJvYcCWAeuTWa3vDUwNdrb6sRcTD8Svw25IvQvCGDw64jUf847gaafhlikvtOPeEScZmIIn0CGpNtUau/uJ4RBkF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfbY3zTPB8l/mMSLA1o+xOvosIxYTsBckjSRGqgNRHYmp2ccF1
+	Hn5OoND6YE8dBg7Xxeh4gjm7PxTi+oGMfE36u6/EZmKNNk0UlRdT1am0hjW9zmxrfdcguAieBcU
+	DO/viqwsjv1ZQLgKc5+HjiOASa7s=
+X-Google-Smtp-Source: AGHT+IFFUnzUkEPnJf/GHb9R+I6B+8f5y/3AaJEGrAqiKnCNG1fjP0R5YjUTEuukks7go/XunoJSlrc+5/EX2bV/EY4=
+X-Received: by 2002:a17:90b:4ec3:b0:2e2:de72:2b76 with SMTP id
+ 98e67ed59e1d1-2e93c14fdb4mr10071272a91.16.1730483528103; Fri, 01 Nov 2024
+ 10:52:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20241031210938.1696639-1-andrii@kernel.org> <20241031210938.1696639-2-andrii@kernel.org>
+ <CAADnVQL-YGPDcMdJEu7E7-OKpzUaE8Kax7zOW-JYi4aPNivN7w@mail.gmail.com>
+In-Reply-To: <CAADnVQL-YGPDcMdJEu7E7-OKpzUaE8Kax7zOW-JYi4aPNivN7w@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 1 Nov 2024 10:51:56 -0700
+Message-ID: <CAEf4BzZbXmBjJHifBHCB_okYh0V6wuN2V7COUdzT4=_VxyTo7g@mail.gmail.com>
+Subject: Re: [PATCH trace/for-next 2/3] bpf: decouple BPF link/attach hook and
+ BPF program sleepable semantics
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Jordan Rife <jrife@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Oct 2024 17:38:11 +0100
-Julien Stephan <jstephan@baylibre.com> wrote:
+On Fri, Nov 1, 2024 at 9:27=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Thu, Oct 31, 2024 at 2:23=E2=80=AFPM Andrii Nakryiko <andrii@kernel.or=
+g> wrote:
+> >
+> >  static inline void bpf_link_init(struct bpf_link *link, enum bpf_link_=
+type type,
+> >                                  const struct bpf_link_ops *ops,
+> > -                                struct bpf_prog *prog)
+> > +                                struct bpf_prog *prog, bool sleepable)
+> > +{
+> > +}
+>
+> Obvious typo caught by build bot...
+> Other than that the set looks good.
 
-> Currently, there are 3 helper macros in iio/events.h to create event
-> identifiers:
-> - IIO_EVENT_CODE : create generic event identifier for differential and n=
-on
->   differential channels
-> - IIO_MOD_EVENT_CODE : create event identifier for modified (non
->   differential) channels
-> - IIO_UNMOD_EVENT_CODE : create event identifier for unmodified (non
->   differential) channels
->=20
-> For differential channels, drivers are expected to use IIO_EVENT_CODE.
-> However, only one driver in drivers/iio currently uses it correctly,
-> leading to inconsistent event identifiers for differential channels that
-> don=E2=80=99t match the intended attributes (such as max1363.c that suppo=
-rts
-> differential channels, but only uses IIO_UNMOD_EVENT_CODE).
 
-The max1363 is a weird beast IIRC. It's only been about 15 years since I im=
-plemented
-events :(
-When events are enabled it is really fiddly to read the data, so we never
-bothered. Mind you, it does indeed seem to set up the differential mode
-but not return differential events. oops.
-
->=20
-> To prevent such issues in future drivers, a new helper macro,
-> IIO_DIFF_EVENT_CODE, is introduced to specifically create event identifie=
-rs
-> for differential channels. Only one helper is needed for differential
-> channels since they cannot have modifiers.
->=20
-> Additionally, the descriptions for IIO_MOD_EVENT_CODE and
-> IIO_UNMOD_EVENT_CODE have been updated to clarify that they are intended
-> for non-differential channels,
->=20
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-Given comment below doesn't really matter, series applied.
-
-I'm tempted to just say break ABI and fix these. It's a bug
-even if a long standing one so a valid reason to cause people
-problems if they are checking for wrong event.=20
-
-Thanks,
-
-Jonathan
-
-> ---
->  include/linux/iio/events.h | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
->=20
-> diff --git a/include/linux/iio/events.h b/include/linux/iio/events.h
-> index a4558c45a548834e33702927609ca9ad447c67de..eeaba5e1525e44fd3b51985ff=
-a99837efc6cdd00 100644
-> --- a/include/linux/iio/events.h
-> +++ b/include/linux/iio/events.h
-> @@ -30,7 +30,8 @@
-> =20
-> =20
->  /**
-> - * IIO_MOD_EVENT_CODE() - create event identifier for modified channels
-> + * IIO_MOD_EVENT_CODE() - create event identifier for modified (non
-> + * differential) channels
-
-Whilst subtle and maybe ok to state here, there is no such thing as a modif=
-ied
-differential channel (because they both use chan2).
-
-So we could not mention it, but I guess it is harmless addition.
-
->   * @chan_type:	Type of the channel. Should be one of enum iio_chan_type.
->   * @number:	Channel number.
->   * @modifier:	Modifier for the channel. Should be one of enum iio_modifi=
-er.
-> @@ -43,7 +44,8 @@
->  	IIO_EVENT_CODE(chan_type, 0, modifier, direction, type, number, 0, 0)
-> =20
->  /**
-> - * IIO_UNMOD_EVENT_CODE() - create event identifier for unmodified chann=
-els
-> + * IIO_UNMOD_EVENT_CODE() - create event identifier for unmodified (non
-> + * differential) channels
->   * @chan_type:	Type of the channel. Should be one of enum iio_chan_type.
->   * @number:	Channel number.
->   * @type:	Type of the event. Should be one of enum iio_event_type.
-> @@ -53,4 +55,16 @@
->  #define IIO_UNMOD_EVENT_CODE(chan_type, number, type, direction)	\
->  	IIO_EVENT_CODE(chan_type, 0, 0, direction, type, number, 0, 0)
-> =20
-> +/**
-> + * IIO_DIFF_EVENT_CODE() - create event identifier for differential chan=
-nels
-> + * @chan_type:	Type of the channel. Should be one of enum iio_chan_type.
-> + * @chan1:	First channel number for differential channels.
-> + * @chan2:	Second channel number for differential channels.
-> + * @type:	Type of the event. Should be one of enum iio_event_type.
-> + * @direction:	Direction of the event. One of enum iio_event_direction.
-> + */
-> +
-> +#define IIO_DIFF_EVENT_CODE(chan_type, chan1, chan2, type, direction)	\
-> +	IIO_EVENT_CODE(chan_type, 1, 0, direction, type, 0, chan1, chan2)
-> +
->  #endif
->=20
-
+Yeah, leftover from the initial attempt (I decided to not touch
+bpf_link_init() in the end to avoid updating like 20 places where we
+do this for various link types). I'll send a new version.
 
