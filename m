@@ -1,216 +1,103 @@
-Return-Path: <linux-kernel+bounces-392541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83979B9550
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:27:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C58739B9554
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:27:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C7E11F22123
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D471F22DF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200CA1CB514;
-	Fri,  1 Nov 2024 16:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC81B1CACF8;
+	Fri,  1 Nov 2024 16:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KkkA25H/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alGNxX4P"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384BE1A2C06;
-	Fri,  1 Nov 2024 16:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CCD1C9DFE;
+	Fri,  1 Nov 2024 16:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730478336; cv=none; b=lQwmHVpGulIshBIg195UmtioEQz2TI1wV1XPnukB7nMW1i8PgjuaTJ/CQNJ1XeoCa31cZxk7DPG5ZxaAL2nAXZzZ01xAE4Yh1JJNjLk1HAgFnwc4Tqt4WrwefN4MF2rh692KIztvRe9MsRnMofEWg+aStk/SdOnVWbMTihAc6ko=
+	t=1730478431; cv=none; b=gn4sizSIKkP9CbIwn+nTUzKTdzXY4SvpVMZc18O1nkWc6j1IhXL58J8Xnvq9inVS1VJrVMdnkcyG/9R7z0h1hLkHM8ER8O2Dji5Mu0CSzDz1SLSuVU/8FHqGsymSDDRjowBlmy8+WeMy52RVUof31EKA9AmHcltFr4x3ljN+1jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730478336; c=relaxed/simple;
-	bh=eiFJJz3NFpwQ5pgZCqJOggjzQkyn2X13e8Jm3oofInQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pbgLNG2pgRheJ4Ba9MnZbydeaAh29JlCoiOdi4m1FZR3kAwINmQC/QZgj6IBwg1PUvp/XHJNcFPLeqz6j3KfR0URBNoubxAGMWWYc2HVicmlmoHjpkFxRmF0gJgIe69iOQMm0Ir7OJokgExsuc7Y06JH19i8qnygzb+MyalQ6iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KkkA25H/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1CZRRg002303;
-	Fri, 1 Nov 2024 16:25:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4QWx/7MUGYS6k2cD1W8BMEcfbzad37g6V5wvlkxyisc=; b=KkkA25H/GpanQOaE
-	7XRfHjuafIqbuwXCM4S9peLl/e1VFXiUiOzzi7W7KL+35MX1I89QbTLlImMuue8o
-	GFyWcAklb6+A47uJltZfahxQT0DOFL5JDLF3dp1esuAITbZUz8hJRILjDuYayJ2A
-	RUYHwcuIpSPoj1WVPiP1k8gUKEVojAiRMaDhZWcbanD7KwjyPemxCzDfcD5ZdNJc
-	P91yVG3E8JBLV6A7qePwfNUfzUjYUvv2Ut/q0t5AT+qn9bRNrt5E5WLyAAsrFwUW
-	RN/hzoAv3jrGgtjLshybBAH+S5CSNvnOWnfOF0YG15nHL9EPFigKGQUkyfB6uP8g
-	T/w+GA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kmn5fwjw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 16:25:22 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A1GPLBZ011343
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 1 Nov 2024 16:25:21 GMT
-Received: from [10.206.104.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 1 Nov 2024
- 09:25:05 -0700
-Message-ID: <c5e868e1-2dae-466c-a6fc-ef0f247fa0ce@quicinc.com>
-Date: Fri, 1 Nov 2024 21:54:56 +0530
+	s=arc-20240116; t=1730478431; c=relaxed/simple;
+	bh=ZmIoI9PA6fIEVj/7yw5DX4LvbJaFbegZUheZe3LGM/0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UsH/hBd7KgkrAexeHe7i4KxBFtSJvqryC/Kwm+vIgKNhruFuGfRoml11/ewavO4XNFoRfEUB+198d/+ibCx16f7bIiehv4pGaL+E03+bvtE7BV5P2Jq8Lvl3b1vTDlTZGB++VRqi5A3f6GyvJ75onppsqazDSXMtGtLTqthMQH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alGNxX4P; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d3e8d923fso1359222f8f.0;
+        Fri, 01 Nov 2024 09:27:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730478427; x=1731083227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dLYY+R9EbouSvKSthrZJT06QviU9iWM0Wdkcc7CpKew=;
+        b=alGNxX4Pojc4chtL27EUegTLdczJ8aBCI3fWPdXiIq2Yb7dzjTl6MrkbppejAmz75p
+         P59ieI6TZ1n5Bq65mukc80C5fvSV1GO9AQayDN6qc3P8SReXuJ2W0b9Jd9adQe5H/8Mr
+         DsLIPswsLwgHOcPdnA19rumzntNLhoi5B6gynVsdQB3ZzZFuU8yym7CwSVQC6sMHKypS
+         4MEEEP5rS5aJ1DR+15DfJjMcyGxI49JqyNwxp07zR2NRq2vEa65XeJ98UbXRWjzTSEQN
+         wR80EXVEtRq/BcS86TVG9zyI8EZV4NRdAKO1mdbGEJXfwoNlJ6YIGCzWWNPkXgQrnUHf
+         G8oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730478427; x=1731083227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dLYY+R9EbouSvKSthrZJT06QviU9iWM0Wdkcc7CpKew=;
+        b=gdx1So73jC5BkKa8aGygsiJuel5Y1/FcbMU8g0L67f+MMf99ALmt+sWPD0vBgxbzVP
+         f66CGMQC7/Nc2gGn190qCfPHNfgisO+wS3mL+o1cg7pDBgBKMVWeE6PB48dRyihIkTqJ
+         IKGiwo8cltoRx9F1AjZ/99s1gncFuGGsK4KXwFouQpjW8kMrFRA22Eg/nM4hF9G3c28H
+         ZFFBELmvSOHuOVLv4bZYb/0hu4JP9fV8Y2+r9HjrVu+g0Rsof6vFvZQCP6cmGOxf23Fa
+         OnnHmezMzzfDYpmONRvP+iPebtGSkOIouzrYVWmxPz0at9qAavJXJFrrHhkdDqU/b4aQ
+         GV/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8EQvCgx7BU69Qh9v9Xt2P5v5C8IfBvyKqEJV5d1lBkncC7hDG+0RwpKWoUc51b59HGW8=@vger.kernel.org, AJvYcCWNts0FrS1rrAI9kj3T/f6SSpB3w4uwzKEM1YUzZ44KlaO/fQEd76+zvMAlAmq9UlNN/0ndcc0L9nc0KUpu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7kBd8X5geIf0IZeBeukPGTM3GIRTqp+iJ9TmQDUhpYOR5Huw1
+	FOzrw+kOnDCIyI8WyFvQzEjI9RIgxSBRL/e1Y1acqie1kblcv0TTtcWx+EqkEcg4L7aviy8zasy
+	PiGYsZ+Op5of7ppdaKxBLaaGXk8HV2w==
+X-Google-Smtp-Source: AGHT+IGNJTH/QbU41hcv6IRF/s4Zb0h3V7k2TDKfPZNWnNOrbo7zXcVq9RECL7gQ7lVXuzz3Yh2E+QoHrS+X8CAUeSs=
+X-Received: by 2002:a5d:5cd0:0:b0:37d:4c4a:77b with SMTP id
+ ffacd0b85a97d-3806120e398mr14457591f8f.58.1730478427278; Fri, 01 Nov 2024
+ 09:27:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: opp: Add v2-qcom-adreno vendor
- bindings
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon
-	<nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20241021-gpu-acd-v2-0-9c25a62803bc@quicinc.com>
- <20241021-gpu-acd-v2-2-9c25a62803bc@quicinc.com>
- <mz4zpcr4tqh2w7vt75f4ofxjzfve54ozzgpdbi2jjzk5pdxbk7@t36tlt3mmprt>
- <d858dadb-4098-4c9f-b4f0-393dc988db5f@quicinc.com>
- <4426b4kybtac6rc4twa5pgm3hvlegofemvqjcrvh6ni7f5z2h6@5dnlv3hgywh5>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <4426b4kybtac6rc4twa5pgm3hvlegofemvqjcrvh6ni7f5z2h6@5dnlv3hgywh5>
+References: <20241031210938.1696639-1-andrii@kernel.org> <20241031210938.1696639-2-andrii@kernel.org>
+In-Reply-To: <20241031210938.1696639-2-andrii@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 1 Nov 2024 09:26:55 -0700
+Message-ID: <CAADnVQL-YGPDcMdJEu7E7-OKpzUaE8Kax7zOW-JYi4aPNivN7w@mail.gmail.com>
+Subject: Re: [PATCH trace/for-next 2/3] bpf: decouple BPF link/attach hook and
+ BPF program sleepable semantics
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Jordan Rife <jrife@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TGlv0mkW86Mz3fw9HgDqilPDJ4q9NQOF
-X-Proofpoint-GUID: TGlv0mkW86Mz3fw9HgDqilPDJ4q9NQOF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411010119
+Content-Transfer-Encoding: quoted-printable
 
-On 10/25/2024 11:58 AM, Dmitry Baryshkov wrote:
-> On Thu, Oct 24, 2024 at 12:56:58AM +0530, Akhil P Oommen wrote:
->> On 10/22/2024 11:19 AM, Krzysztof Kozlowski wrote:
->>> On Mon, Oct 21, 2024 at 05:23:43PM +0530, Akhil P Oommen wrote:
->>>> Add a new schema which extends opp-v2 to support a new vendor specific
->>>> property required for Adreno GPUs found in Qualcomm's SoCs. The new
->>>> property called "qcom,opp-acd-level" carries a u32 value recommended
->>>> for each opp needs to be shared to GMU during runtime.
->>>>
->>>> Cc: Rob Clark <robdclark@gmail.com>
->>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>> ---
->>>>  .../bindings/opp/opp-v2-qcom-adreno.yaml           | 96 ++++++++++++++++++++++
->>>>  1 file changed, 96 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
->>>> new file mode 100644
->>>> index 000000000000..6d50c0405ef8
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
->>>> @@ -0,0 +1,96 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/opp/opp-v2-qcom-adreno.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Qualcomm Adreno compatible OPP supply
->>>> +
->>>> +description:
->>>> +  Adreno GPUs present in Qualcomm's Snapdragon chipsets uses an OPP specific
->>>> +  ACD related information tailored for the specific chipset. This binding
->>>> +  provides the information needed to describe such a hardware value.
->>>> +
->>>> +maintainers:
->>>> +  - Rob Clark <robdclark@gmail.com>
->>>> +
->>>> +allOf:
->>>> +  - $ref: opp-v2-base.yaml#
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    items:
->>>> +      - const: operating-points-v2-adreno
->>>> +      - const: operating-points-v2
->>>> +
->>>> +patternProperties:
->>>> +  '^opp-?[0-9]+$':
->>>
->>> '-' should not be optional. opp1 is not expected name.
->>
->> Agree. Will change this to '^opp-[0-9]+$'
->>
->>>
->>>> +    type: object
->>>> +    additionalProperties: false
->>>> +
->>>> +    properties:
->>>> +      opp-hz: true
->>>> +
->>>> +      opp-level: true
->>>> +
->>>> +      opp-peak-kBps: true
->>>> +
->>>> +      opp-supported-hw: true
->>>> +
->>>> +      qcom,opp-acd-level:
->>>> +        description: |
->>>> +          A positive value representing the ACD (Adaptive Clock Distribution,
->>>> +          a fancy name for clk throttling during voltage droop) level associated
->>>> +          with this OPP node. This value is shared to a co-processor inside GPU
->>>> +          (called Graphics Management Unit a.k.a GMU) during wake up. It may not
->>>> +          be present for some OPPs and GMU will disable ACD while transitioning
->>>> +          to that OPP. This value encodes a voltage threshold and few other knobs
->>>> +          which are identified by characterization of the SoC. So, it doesn't have
->>>> +          any unit.
->>>
->>> Thanks for explanation and other updates. I am still not happy with this
->>> property. I do not see reason why DT should encode magic values in a
->>> quite generic piece of code. This creates poor ABI, difficult to
->>> maintain or understand.
->>>
->>
->> Configuring GPU ACD block with its respective value is a requirement for each OPP.
->> So OPP node seems like the natural place for this data.
->>
->> If it helps to resolve your concerns, I can elaborate the documentation with
->> details on the GMU HFI interface where this value should be passed on to the
->> hardware. Also replace "few other knobs" with "Delay cycles & Calibration margin"
->> in the above doc.
-> 
-> Usually the preference for DT is to specify data in a sensible way
-> rather than just the values being programmed to the register. Is it
-> possible to implement this approach for ACD values?
+On Thu, Oct 31, 2024 at 2:23=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org>=
+ wrote:
+>
+>  static inline void bpf_link_init(struct bpf_link *link, enum bpf_link_ty=
+pe type,
+>                                  const struct bpf_link_ops *ops,
+> -                                struct bpf_prog *prog)
+> +                                struct bpf_prog *prog, bool sleepable)
+> +{
+> +}
 
-I am still checking about this. Will get back.
-
--Akhil
-
-> 
->>  
->>>
-> 
-
+Obvious typo caught by build bot...
+Other than that the set looks good.
 
