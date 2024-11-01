@@ -1,161 +1,96 @@
-Return-Path: <linux-kernel+bounces-392284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345CF9B91E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:21:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D789B91EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:22:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4C53B236A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:21:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C215283BA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE8019D8A9;
-	Fri,  1 Nov 2024 13:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B7A19CCFA;
+	Fri,  1 Nov 2024 13:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="l5MDxFoS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVZ1m78h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EFB4594D;
-	Fri,  1 Nov 2024 13:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9478381B9;
+	Fri,  1 Nov 2024 13:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730467295; cv=none; b=XoE8oNbDZcKuiX1snndieaPtEGVdb2wiMfI6ueVNzaWBQSHY6Oz+KE7fATMGTy34DMdkEPOi7PZ6sx5bncYl6afClQfCK+tWCzdVNnysZc/yRQv9xFrsiCrcjAqMuQz4XdfZMLofFRwu1HTeg3IKidw7+j2AOZEUbQbgkSlbSUY=
+	t=1730467352; cv=none; b=T+823IedD+hlENSuuq9jAdBJgnkoBXArEiTdbXmUSr0FfQCFAqtyXGhKQ6QPi/dVNRPlViTUADP8H8ISY5tRhLOipUCc9HsYGMPyPlJRasOvj3RmFT1C3Fz/5SvMawiSzQzosD8lUszT+mADbotdqocVL1QwyQB+0j0sdKOgw8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730467295; c=relaxed/simple;
-	bh=XH6sbjoUubWTMqj04hlHJ/0gNF+lGmSqpStKlrwmfKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gjBdqUTj8cJR340UsYTRdRKo1/KdRvTrjZhnSdDYOqbpmQna3cMQ7mm2/Ns50jLhsEqZV6k/9EM1sCbnbi9YUzuK63q2FyRO8wbS9126+lbZudm5xd5/yuBRHItNZFJQjWvWixLRwFxjSmCFSrzG1pkkBXpH2SUj3wxKSqS9Shc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=l5MDxFoS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=AxLfJZD1nRRu4KvUSAP3JkzEZBYL1jUH+DoBIelmnw8=; b=l5MDxFoSFb1dXXTHNz6iakONe1
-	mM2kJ8bqyYp0kuCRqVJvzSmGTHlgg+dedtcPTnMGVhu6Jv4BcDVfHViNvZIe6ulLoh59PQyxtSm+X
-	K54p0JGMCMFmXjssTmT6NRJy57q7x8fcU6wEKNoqsEKt54LJe7XIlp1SELZwXa7yXtKI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t6rae-00Bskr-Oc; Fri, 01 Nov 2024 14:21:24 +0100
-Date: Fri, 1 Nov 2024 14:21:24 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lei Wei <quic_leiwei@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
-	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
-	quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
-	bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com,
-	john@phrozen.org
-Subject: Re: [PATCH net-next 3/5] net: pcs: qcom-ipq: Add PCS create and
- phylink operations for IPQ9574
-Message-ID: <d7782a5e-2f67-4f62-a594-0f52144a368f@lunn.ch>
-References: <20241101-ipq_pcs_rc1-v1-0-fdef575620cf@quicinc.com>
- <20241101-ipq_pcs_rc1-v1-3-fdef575620cf@quicinc.com>
+	s=arc-20240116; t=1730467352; c=relaxed/simple;
+	bh=JJ8e8veNWCycOWMOQ5ARA78paLuhRw5g/xjSkFeBzQg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WuX/WR4ghEne5SFtRii04+S6je4xbXy9yZbOBOAzbpnUpbl+qElEKC8eTDNrGBEZUb5IA7ZBbzeQDejT/C4u7VnmFX+nUw/1qpasG/TDWyz0aD+hpfTXLaol/yRyQLcop0qIH+fxZB7ExGyLoPMxUdN3Rlfe3nWtg3zHTrnuyA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVZ1m78h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E353C4CECD;
+	Fri,  1 Nov 2024 13:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730467352;
+	bh=JJ8e8veNWCycOWMOQ5ARA78paLuhRw5g/xjSkFeBzQg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hVZ1m78hGN4qkmNwMyCzbJPomXUea/8naJIsTdKdGy066vQSbrQw/8/H6o64D2ZrL
+	 9wGHgX8yxHzwSXjQx7S/UTgufxJ/NkrLp/NoihWJHHG5pzZnkFUI1jMmNCOd8lDFkT
+	 E/Xv/1FPPf/shQrXtSiWxADviF/G6jDRyLZkDR1fr/RnpA6qATPb3SpCS1t0HV5Qrl
+	 oD1oTFoRMrJmFhX5OpqnFlLWP/o1g8USDNGAP0agRfvJHJrbXJ8np7Ij4wI9rPWaqV
+	 oW5nmKm7VZXXb3QHeYKI0bEmm6EHQZqHM2S+JXP7xA2uzcRgQ371hTIL8oP+kyyiAT
+	 wBZWwCUhGVWvA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Tamir Duberstein" <tamird@gmail.com>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Danilo Krummrich" <dakr@kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] rust: reorder `ForeignOwnable` items
+In-Reply-To: <CANiq72nX2=yigRKhP3jN0kQ8vD0kMvUOp3rFpRQZJGAX6RrRhg@mail.gmail.com>
+ (Miguel
+	Ojeda's message of "Thu, 31 Oct 2024 13:40:20 +0100")
+References: <20241030-borrow-mut-v1-0-8f0ceaf78eaf@gmail.com>
+	<Pn1b5OU4cqz38Aiv4RL7MuzPDwDGvxLVRrLuCF7Q3_HaeLzlh4jaM0krBqB39DCFmRLWK59Do8DPaVxLNaaTNQ==@protonmail.internalid>
+	<20241030-borrow-mut-v1-4-8f0ceaf78eaf@gmail.com>
+	<871pzwpsm9.fsf@kernel.org>
+	<CAJ-ks9m-THyqK1tYL39t979BagBqj3Z-MOSn8wPhDc82awjzug@mail.gmail.com>
+	<ozMyxxwj0PTAkz1x7kMYTL5RqFlrbvJRrrc-d2UWlJxME89Dy--7ZPYLzExR73oyY3FjYyZN1Y7u8d-NCCXp7g==@protonmail.internalid>
+	<CANiq72nX2=yigRKhP3jN0kQ8vD0kMvUOp3rFpRQZJGAX6RrRhg@mail.gmail.com>
+Date: Fri, 01 Nov 2024 14:22:19 +0100
+Message-ID: <878qu3nl6c.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101-ipq_pcs_rc1-v1-3-fdef575620cf@quicinc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-> +static int ipq_pcs_config_mode(struct ipq_pcs *qpcs,
-> +			       phy_interface_t interface)
-> +{
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	/* Configure PCS interface mode */
-> +	switch (interface) {
-> +	case PHY_INTERFACE_MODE_SGMII:
-> +		/* Select Qualcomm SGMII AN mode */
-> +		ret = regmap_update_bits(qpcs->regmap, PCS_MODE_CTRL,
-> +					 PCS_MODE_SEL_MASK | PCS_MODE_AN_MODE,
-> +					 PCS_MODE_SGMII);
+"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
 
-How does Qualcomm SGMII AN mode differ from Cisco SGMII AN mode?
+> On Thu, Oct 31, 2024 at 1:23=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
+m> wrote:
+>>
+>> This change was part of the original patch. Do you prefer the code
+>> movement in the same commit?
+>
+> If we do it, please keep it separate, that is a good idea.
+>
+> However, I think Andreas means to avoid the movement at all,
+> regardless of which commit is used to do it.
 
-> +static int ipq_pcs_config_sgmii(struct ipq_pcs *qpcs,
-> +				int index,
-> +				unsigned int neg_mode,
-> +				phy_interface_t interface)
-> +{
-> +	int ret;
-> +
-> +	/* Access to PCS registers such as PCS_MODE_CTRL which are
-> +	 * common to all MIIs, is lock protected and configured
-> +	 * only once. This is required only for interface modes
-> +	 * such as QSGMII.
-> +	 */
-> +	if (interface == PHY_INTERFACE_MODE_QSGMII)
-> +		mutex_lock(&qpcs->config_lock);
+Exactly.
 
-Is there a lot of contention on this lock? Why not take it for every
-interface mode? It would make the code simpler.
 
-> +struct phylink_pcs *ipq_pcs_create(struct device_node *np)
-> +{
-> +	struct platform_device *pdev;
-> +	struct ipq_pcs_mii *qpcs_mii;
-> +	struct device_node *pcs_np;
-> +	struct ipq_pcs *qpcs;
-> +	int i, ret;
-> +	u32 index;
-> +
-> +	if (!of_device_is_available(np))
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	if (of_property_read_u32(np, "reg", &index))
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	if (index >= PCS_MAX_MII_NRS)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	pcs_np = of_get_parent(np);
-> +	if (!pcs_np)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	if (!of_device_is_available(pcs_np)) {
-> +		of_node_put(pcs_np);
-> +		return ERR_PTR(-ENODEV);
-> +	}
+Best regards,
+Andreas Hindborg
 
-How have you got this far if the parent is not available?
 
-> +	for (i = 0; i < PCS_MII_CLK_MAX; i++) {
-> +		qpcs_mii->clk[i] = of_clk_get_by_name(np, pcs_mii_clk_name[i]);
-> +		if (IS_ERR(qpcs_mii->clk[i])) {
-> +			dev_err(qpcs->dev,
-> +				"Failed to get MII %d interface clock %s\n",
-> +				index, pcs_mii_clk_name[i]);
-> +			goto err_clk_get;
-> +		}
-> +
-> +		ret = clk_prepare_enable(qpcs_mii->clk[i]);
-> +		if (ret) {
-> +			dev_err(qpcs->dev,
-> +				"Failed to enable MII %d interface clock %s\n",
-> +				index, pcs_mii_clk_name[i]);
-> +			goto err_clk_en;
-> +		}
-> +	}
 
-Maybe devm_clk_bulk_get() etc will help you here? I've never actually
-used them, so i don't know for sure.
-
-	Andrew
 
