@@ -1,218 +1,168 @@
-Return-Path: <linux-kernel+bounces-391789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CF39B8BBC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:06:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DBC59B8BC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:10:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 234911F22286
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:06:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 386C6B210FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A1E1534FB;
-	Fri,  1 Nov 2024 07:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63187155342;
+	Fri,  1 Nov 2024 07:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJKLmiem"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="eQnBa29f"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1281E495;
-	Fri,  1 Nov 2024 07:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934F31534FB;
+	Fri,  1 Nov 2024 07:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730444769; cv=none; b=T+OmvXR3JM2zY0rrtkVH9pxIXrfeW+Ek8OWE0MYtjl7zAFGb5rX5HQvWYQVOkT5GZrf5lUGe/T+pmL7NlthZ7EKcVZRwl4f3TCz3+FGY5pMxwZsNxjzg2BOjI5fQrSErfV0MKlfSLxgI3dJ4HlkgT80QM+mCDF28B2Tj0JeY1Dk=
+	t=1730445012; cv=none; b=e7KwVjmbe7Z/0XP/TTesRRpAT5s0R+izi7/zEKP5OmgPbtJbyQnkxA9sAGP34bCnY0Nc15koSV8UlYszdQ6tq7LNJLiAIYHBabb4r6ngHj6/CgOPOsuoUSpd8yhHSLnVGI2JWGtqqvDIgIKBF/5CLrRGJCvW+MxvHP7/0maH68I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730444769; c=relaxed/simple;
-	bh=ZvZeBAnC9kYknUDCBX/xc2CDVq0IkqW7BT2/xp+xC7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EE/oSvhv+LRQsFxupOHkHG8Oj3mlKcFfHoNAI8KpfcetsrX4bCP674jrXzuv4TjTeWXulnoUtv6AE6Cb3NMw5JgEr1zQ1aYdEAa3KnWyXHqEROeUBM7wTXJmYECatL14YbtxL1IdTsCIZo3KqOac5ZTvUMAH73R0R4H6MqCV7x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJKLmiem; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC26C4CECD;
-	Fri,  1 Nov 2024 07:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730444768;
-	bh=ZvZeBAnC9kYknUDCBX/xc2CDVq0IkqW7BT2/xp+xC7c=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=vJKLmiemKA7iqYmXQ81GxW51cKMwjrvpGMvZJ7mpPlWM2L8bsH7Af92qlOlhacgY5
-	 GxRWALUCbFjAn6wtm+9c0N2EINFFLG8wZ2x9/+P+ecGuz6pFKlkJ+C/sMpV/6aCkkn
-	 rXBffDnS9EeQyCTF6FbFjimym0xpQqDCiwBkhO2sCkyqnBsplxuPcEVn1rEGnL2Y8M
-	 KIZkNJeIRd5tSqlmOvHM1szrts7eJjDnfn+vaC8/t/PVXLWeyZ3jly+v01mtmL6nn9
-	 P3jzrSJ2TW90qP7v4K+Rkui2+Q2Mf9ZFkA0aIZBLX2paHkx8RS35Nw8N1ABD/0km/d
-	 iRyVHTkxplelg==
-Message-ID: <0f5c1192-090b-4c00-a951-9613289057df@kernel.org>
-Date: Fri, 1 Nov 2024 08:06:02 +0100
+	s=arc-20240116; t=1730445012; c=relaxed/simple;
+	bh=8SBtAFIZv6QdmDpsSm24E8xxTeonWxMbs9IQUu8QsfA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=kg0MaqJyaPrHEEnFMuiW97sBy7a0SQKHt/4/p+aKJ8N0WdmXZ4C8h5hXVe/ucyRZ1O+uOh2hA8o07yQKghJ4N9eBf3zE3EE3Zp5WVXKmu2MKXMdxoSux8TRIuFC465pYxqnCcZSlZF8MmuoGHxAtXOC6GuapEtaY1tGYFFU3UHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=eQnBa29f; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1730445010; x=1761981010;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=8SBtAFIZv6QdmDpsSm24E8xxTeonWxMbs9IQUu8QsfA=;
+  b=eQnBa29ffZbscWhz46GlTzr7lAtpVsr57QIgO69jWKrnVpYOwycUF4eS
+   zT7Jp2dE6aeeV3qtu3/cx4gbUWIHic5Q1R1vd6BWGiP/8dB2tYGEt4vJD
+   /f4C/DguuG1tRDhC1HFsjNegSQ66XuwtyzVCfaCMphCQLbytTo2b6Y6XU
+   I0cwGL2KpZS9GheEOljZ/kuKzSsNv+h/IieOkN+XyOdmWcmNZPCt+dgDV
+   9rTlxcmewBpDOKynFg5W/cWBaKTXLmH+IaW1Bgs/XQCeRUVADFvYawhbj
+   eZQYq4CHu6M7uIMfMJ1BrPw288cnmkLHgDCus04kukFEWzuBuspehd4nE
+   w==;
+X-CSE-ConnectionGUID: NPrwf/hMSSa00KPy6thoyw==
+X-CSE-MsgGUID: ROduA6SrQSevCJ88YzhLHQ==
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="201180317"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Nov 2024 00:10:04 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 1 Nov 2024 00:09:52 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Fri, 1 Nov 2024 00:09:49 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Subject: [PATCH net-next 0/6] net: lan969x: add VCAP functionality
+Date: Fri, 1 Nov 2024 08:09:06 +0100
+Message-ID: <20241101-sparx5-lan969x-switch-driver-3-v1-0-3c76f22f4bfa@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 1/2] genirq/affinity: add support for limiting
- managed interrupts
-To: 'Guanjun' <guanjun@linux.alibaba.com>, corbet@lwn.net, axboe@kernel.dk,
- mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
- eperezma@redhat.com, vgoyal@redhat.com, stefanha@redhat.com,
- miklos@szeredi.hu, tglx@linutronix.de, peterz@infradead.org,
- akpm@linux-foundation.org, paulmck@kernel.org, thuth@redhat.com,
- rostedt@goodmis.org, bp@alien8.de, xiongwei.song@windriver.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, virtualization@lists.linux.dev,
- linux-fsdevel@vger.kernel.org
-References: <20241031074618.3585491-1-guanjun@linux.alibaba.com>
- <20241031074618.3585491-2-guanjun@linux.alibaba.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20241031074618.3585491-2-guanjun@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJJ+JGcC/x2NywrCMBAAf6Xs2YU8ajX+inhI09Us6Fo2pQZK/
+ 93ocRiY2aCQMhW4dBsorVz4LQ3soYOUozwIeWoMzrjeGm+xzFHrEZ9RwhAqlg8vKeOkvJKix0D
+ u1A90Ho330CKz0p3rf3AFoQWF6gK3ZsZYCEeNkvJv8IossO9f2Doum5EAAAA=
+To: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lars Povlsen
+	<lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
+	=?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
+	<jensemil.schulzostergaard@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<jacob.e.keller@intel.com>, <christophe.jaillet@wanadoo.fr>
+CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+X-Mailer: b4 0.14-dev
 
-Hi,
+== Description:
 
-On 31. 10. 24, 8:46, 'Guanjun' wrote:
-> From: Guanjun <guanjun@linux.alibaba.com>
-> 
-> Commit c410abbbacb9 (genirq/affinity: Add is_managed to struct irq_affinity_desc)
-> introduced is_managed bit to struct irq_affinity_desc. Due to queue interrupts
-> treated as managed interrupts, in scenarios where a large number of
-> devices are present (using massive msix queue interrupts), an excessive number
-> of IRQ matrix bits (about num_online_cpus() * nvecs) are reserved during
-> interrupt allocation. This sequently leads to the situation where interrupts
-> for some devices cannot be properly allocated.
-> 
-> Support for limiting the number of managed interrupts on every node per allocation.
-> 
-> Signed-off-by: Guanjun <guanjun@linux.alibaba.com>
-> ---
->   .../admin-guide/kernel-parameters.txt         |  9 +++
->   block/blk-mq-cpumap.c                         |  2 +-
->   drivers/virtio/virtio_vdpa.c                  |  2 +-
->   fs/fuse/virtio_fs.c                           |  2 +-
->   include/linux/group_cpus.h                    |  2 +-
->   kernel/irq/affinity.c                         | 11 ++--
->   lib/group_cpus.c                              | 55 ++++++++++++++++++-
->   7 files changed, 73 insertions(+), 10 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 9b61097a6448..ac80f35d04c9 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -3238,6 +3238,15 @@
->   			different yeeloong laptops.
->   			Example: machtype=lemote-yeeloong-2f-7inch
->   
-> +	managed_irqs_per_node=
-> +			[KNL,SMP] Support for limiting the number of managed
-> +			interrupts on every node to prevent the case that
-> +			interrupts cannot be properly allocated where a large
-> +			number of devices are present. The default number is 0,
-> +			that means no limit to the number of managed irqs.
-> +			Format: integer between 0 and num_possible_cpus() / num_possible_nodes()
-> +			Default: 0
+This series is the third of a multi-part series, that prepares and adds
+support for the new lan969x switch driver.
 
-Kernel parameters suck. Esp. here you have to guess to even properly 
-boot. Could this be auto-tuned instead?
+The upstreaming efforts is split into multiple series (might change a
+bit as we go along):
 
-> --- a/lib/group_cpus.c
-> +++ b/lib/group_cpus.c
-> @@ -11,6 +11,30 @@
->   
->   #ifdef CONFIG_SMP
->   
-> +static unsigned int __read_mostly managed_irqs_per_node;
-> +static struct cpumask managed_irqs_cpumsk[MAX_NUMNODES] __cacheline_aligned_in_smp = {
+        1) Prepare the Sparx5 driver for lan969x (merged)
 
-This is quite excessive. On SUSE configs, this is 8192 cpu bits * 1024 
-nodes = 1 M. For everyone. You have to allocate this dynamically 
-instead. See e.g. setup_node_to_cpumask_map().
+        2) Add support for lan969x (same basic features as Sparx5
+           provides excl. FDMA and VCAP, merged).
 
-> +	[0 ... MAX_NUMNODES-1] = {CPU_BITS_ALL}
-> +};
-> +
-> +static int __init irq_managed_setup(char *str)
-> +{
-> +	int ret;
-> +
-> +	ret = kstrtouint(str, 10, &managed_irqs_per_node);
-> +	if (ret < 0) {
-> +		pr_warn("managed_irqs_per_node= cannot parse, ignored\n");
+    --> 3) Add lan969x VCAP functionality.
 
-could not be parsed
+        4) Add RGMII and FDMA functionality.
 
-> +		return 0;
-> +	}
-> +
-> +	if (managed_irqs_per_node * num_possible_nodes() > num_possible_cpus()) {
-> +		managed_irqs_per_node = num_possible_cpus() / num_possible_nodes();
-> +		pr_warn("managed_irqs_per_node= cannot be larger than %u\n",
-> +			managed_irqs_per_node);
-> +	}
-> +	return 1;
-> +}
-> +__setup("managed_irqs_per_node=", irq_managed_setup);
-> +
->   static void grp_spread_init_one(struct cpumask *irqmsk, struct cpumask *nmsk,
->   				unsigned int cpus_per_grp)
->   {
-...
-> @@ -332,6 +380,7 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
->   /**
->    * group_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
->    * @numgrps: number of groups
-> + * @is_managed: if these groups managed by kernel
+== VCAP support:
 
-are managed by the kernel
+The Versatile Content-Aware Processor (VCAP) is a content-aware packet
+processor that allows wirespeed packet inspection for rich
+implementation of, for example, advanced VLAN and QoS classification and
+manipulations, IP source guarding, longest prefix matching for Layer-3
+routing, and security features for wireline and wireless applications.
+This is all achieved by programming rules into the VCAP.
 
->    *
->    * Return: cpumask array if successful, NULL otherwise. And each element
->    * includes CPUs assigned to this group
+When a VCAP is enabled, every frame passing through the switch is
+analyzed and multiple keys are created based on the contents of the
+frame. The frame is examined to determine the frame type (for example,
+IPv4 TCP frame), so that the frame information is extracted according to
+the frame type, port-specific configuration, and classification results
+from the basic classification. Keys are applied to the VCAP and when
+there is a match between a key and a rule in the VCAP, the rule is then
+applied to the frame from which the key was extracted.
 
-thanks,
+After this series is applied, the lan969x driver will support the same
+VCAP functionality as Sparx5.
+
+== Patch breakdown:
+
+Patch #1 exposes some VCAP symbols for lan969x.
+
+Patch #2 replaces VCAP uses of SPX5_PORTS with n_ports from the match
+data.
+
+Patch #3 adds new VCAP constants to match data
+
+Patch #4 removes the is_sparx5() check to now initialize the VCAP API on
+lan969x.
+
+Patch #5 adds the auto-generated VCAP data for lan969x.
+
+Patch #6 adds the VCAP configuration data for lan969x.
+
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+---
+Daniel Machon (6):
+      net: sparx5: expose some sparx5 VCAP symbols
+      net: sparx5: replace SPX5_PORTS with n_ports
+      net: sparx5: add new VCAP constants to match data
+      net: sparx5: execute sparx5_vcap_init() on lan969x
+      net: lan969x: add autogenerated VCAP information
+      net: lan969x: add VCAP configuration data
+
+ drivers/net/ethernet/microchip/lan969x/Makefile    |    3 +-
+ drivers/net/ethernet/microchip/lan969x/lan969x.c   |    3 +
+ drivers/net/ethernet/microchip/lan969x/lan969x.h   |    8 +
+ .../microchip/lan969x/lan969x_vcap_ag_api.c        | 3843 ++++++++++++++++++++
+ .../ethernet/microchip/lan969x/lan969x_vcap_impl.c |   85 +
+ .../net/ethernet/microchip/sparx5/sparx5_main.c    |   15 +-
+ .../net/ethernet/microchip/sparx5/sparx5_main.h    |    3 +
+ .../ethernet/microchip/sparx5/sparx5_vcap_ag_api.h |    2 +
+ .../ethernet/microchip/sparx5/sparx5_vcap_impl.c   |   48 +-
+ .../ethernet/microchip/sparx5/sparx5_vcap_impl.h   |   21 +
+ 10 files changed, 3995 insertions(+), 36 deletions(-)
+---
+base-commit: 157a4881225bd0af5444aab9510e7b6da28f2469
+change-id: 20241031-sparx5-lan969x-switch-driver-3-9e2746e8b033
+
+Best regards,
 -- 
-js
-suse labs
+Daniel Machon <daniel.machon@microchip.com>
 
 
