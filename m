@@ -1,110 +1,104 @@
-Return-Path: <linux-kernel+bounces-392393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524AA9B938F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:45:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A606D9B9392
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:46:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABE8A28336E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:45:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31ED9B223DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EAA1AAE10;
-	Fri,  1 Nov 2024 14:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1810A1A4F19;
+	Fri,  1 Nov 2024 14:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+IulWqz"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KILMwxU9"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1581A7273;
-	Fri,  1 Nov 2024 14:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BA254648;
+	Fri,  1 Nov 2024 14:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472301; cv=none; b=A42dIjEoVHEbiSdYRPwonM9yYwNxt/wQjzJy+tuTj/ZEtmHzu1/pAo9tTuYLHAcHUvzD+M/tmW3uyf51KsXIIPRLg77sPiGL77Vv81dPl23ztTYuHhhVoQTAtfkv4H2K9SrfUUtdCdkXBbcueV8F/Vg4H5KvqhHllqXseaBl7SE=
+	t=1730472370; cv=none; b=a9feTVCxxiB4ov5NlVOAUFbhnnUL93TuZp+mF8rTpeNfrEjhipS3m0bpNLN2UzuIfbBK6/2LyoKEay8tU/tslK3frFBCn9YHyB10xKfHAoN64ujJmK1fAfBs18Hdj6i2cEpHWaggsrjYzJwvbzjIy28VTIQGwMZNSH8+tum2AEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472301; c=relaxed/simple;
-	bh=XrPLkYhc9KMv8mJsqXJQNqryPfxpatNX1XegManFB6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4plnAaepV2AAcudNrK2zbjcUPjaJCnC1zYVzJp9esDSvVj04nFyZoogU5F1sJwUJErE+lVn/lkonQ3m6Ej1mMPSdSIxPqy9HwRx2bDu6ntPkNBfkhVr2T/RhV/2opldw8ZtRBpgls3x3I+fowhh44zt4JOfeXPAncJqs6DCXaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+IulWqz; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so1815444b3a.3;
-        Fri, 01 Nov 2024 07:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730472299; x=1731077099; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nFB9X8+bXdjRMgra+BnrPwuOPpZev8yICCAZV0Ubx6Y=;
-        b=b+IulWqz4PsD2BjLWEnMbMkVjEUtlb8ln8ZbWkQxOkwN71Yvvnj5vVLGVju0EZBzLe
-         K3KVstRcczho8m3+Vynmc3B+uBpYC4WslRN9yIteJBgCZ8dEZXgjM4wbeUyAdpYkbHf4
-         NtpNrDtr0K/094819MP4SsKdmernRD/4rlM2qBdc/SLkyx+vjrgCDLYp/zfoLlJ4WKv4
-         LaD9fkY8WBhhE7zyvOjtU3E/hdbR+oq0lG7CKzqp+XwOnjuy+Q+CZCpCpLxS8RQNlSL+
-         kL/nFskBI8LekMqNWWzhRDWwUBCFrov3uMtN9SSNbZr31RHZBHLY7HI/mTzFFt63HW09
-         pWKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730472299; x=1731077099;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nFB9X8+bXdjRMgra+BnrPwuOPpZev8yICCAZV0Ubx6Y=;
-        b=dO3Tg5Pw2fQDd/AWoM6brFvjChwcI2afx6IQ7TqCI+hDG87FTDiAbuRX9e3fKAFN/t
-         u7ANx7zy6zzeXGA+OY1xvpU7vhNO0wHvK+XFfJXQQ013fVUr1qpIaWkkz44duaLEeySI
-         cuqTNEIqsfiLPiQW9iSkcKQ0Sk2l2+vfb0SF+sNXqTVlq1+sczkNMb4vfYtQ9liFIPKn
-         +BL4MsQmP0krE8vm4g/nb85YjrFkCj8JNEFAwku7zzx4x41Hmo3XEp8afF+Fpb/GugTC
-         Olvepemf91fSaUNRXYp3HosgvyljxuwH+glh4N9FQXV8rU5ilCk8GrOStj/HCRAXUSle
-         DykA==
-X-Forwarded-Encrypted: i=1; AJvYcCUES1bW6HBUfTbuwvPeVv3ZHS/VNenadiW7ciYlLsEaBV/ld0WuPrlYl/irutK4y+5yCHJpc5OdOrcvinGq@vger.kernel.org, AJvYcCVB6UOYHJV9uaOpmp1K/17vlwYWwNSbAq87S/9mYbuzO2HFJJpAFljGxx4UWAnxR8F8RrEe8OGd96IejAc=@vger.kernel.org, AJvYcCW7HKE50iHlRumLvdL9wrMxwyjClMK5kKwxQ2kLVoJ4qjdyXsCDn3742Yj4zoAUnLctnSqMTigZnGSm@vger.kernel.org, AJvYcCWvTpoTtMuuh4SpkBP2nvSRoqpbxz3ZCkmNwFxEcxUc2MBWRAd1AfyCxwt+FJvtaCsYvP0NKA40+XT9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdDaZnc6mABbZNnL7whElhJqVYBR5oVBFhLAxQiqYM18Qdz3Oa
-	vjB+maHrQQH5YKrZimAKG6SJUBx5j4eIBDPWcnz/R6CLsaMJ3fXHOV11lw==
-X-Google-Smtp-Source: AGHT+IFZY3czgShWLwMr8vZLa84ReNl80JQc2dqSAqMUDR9vtbY6B9GhV3hjeKXgXWBUnMGYXjB86w==
-X-Received: by 2002:a05:6a20:d493:b0:1d9:111f:4b46 with SMTP id adf61e73a8af0-1db91d86c41mr9750731637.12.1730472299120;
-        Fri, 01 Nov 2024 07:44:59 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1e5625sm2693424b3a.53.2024.11.01.07.44.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 07:44:58 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 1 Nov 2024 07:44:57 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: baneric926@gmail.com
-Cc: jdelvare@suse.com, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	corbet@lwn.net, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, openbmc@lists.ozlabs.org,
-	kwliu@nuvoton.com, kcfeng0@nuvoton.com, DELPHINE_CHIU@wiwynn.com,
-	Bonnie_Lo@wiwynn.com, Rob Herring <robh@kernel.org>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v6 1/2] dt-bindings: hwmon: Add NCT7363Y documentation
-Message-ID: <9435b7e9-abac-4d02-9969-b35a50fb538b@roeck-us.net>
-References: <20241022052905.4062682-1-kcfeng0@nuvoton.com>
- <20241022052905.4062682-2-kcfeng0@nuvoton.com>
+	s=arc-20240116; t=1730472370; c=relaxed/simple;
+	bh=O4cAnluVKJV7pjgtAUWnqipo0yYq1kLxpIgPD1mzBUo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=RsxrzDOjM2hZVI/+kGIuxKEPkPVzvYzejXYcUByZY35+dZPl2cFxCXnthy1IYnZhjeoitwfiFSU+o+CIVpi8lH8qAcFLhlofAOiCb8R/fbMz8FAW7lkhMij0CymOjQgwGvXkbqupZQ4wVXooJ+U7IBrO3Rl5jLeuk3f+scdtAQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KILMwxU9; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1730472327; x=1731077127; i=markus.elfring@web.de;
+	bh=O4cAnluVKJV7pjgtAUWnqipo0yYq1kLxpIgPD1mzBUo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KILMwxU9aGA9xvWKV920SRwOjtTrywIxfPrqg9n8aS+BJksmL30TpIlhmGTvkozR
+	 fCevAsyTXuR4kPixVtYg0IFeUdCHR2rb9ALfhYDUfioX5A6R2JtO/IQvEnZaLDnck
+	 4+M5PhHu4b7bw/5cPFP1nyKU2uLaJLdb5xWdSi+ucM/BSj7DbOlLDTGRxUnEGVCSw
+	 VUxYHbhsfqM9+BZ6DN7+vUUb0WxO13gapngHPGq4lUQ2/f8c/GRW+z4VAoItYIyVn
+	 YzRKWq0r7P1ag2jx/jw3hOpSewSe/CdErHFp/N9dUMGgC2P0DwLq+Pzy+aATkohOt
+	 37RMqXdtskffM8tmIw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mvbiu-1twvmz1Lte-014zYX; Fri, 01
+ Nov 2024 15:45:27 +0100
+Message-ID: <6f1f1f24-fa71-4a90-b45f-f09312893e41@web.de>
+Date: Fri, 1 Nov 2024 15:45:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022052905.4062682-2-kcfeng0@nuvoton.com>
+User-Agent: Mozilla Thunderbird
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-iio@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Jonathan Cameron
+ <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+References: <20241101081203.3360421-4-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 3/4] iio: accel: kxcjk-1013: Assing ddata to NULL
+ instead of NULL check
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241101081203.3360421-4-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5a7G9cU2ItYX3CStngezmoaAdj8+DQXGo+2hm9MN93ZGj8EL8Hv
+ RAGTjMuYzorc7WDHViIUj6QG5qA9LnQ0IJ7yGEFvdTDbPhhTfEIGGXjcTwPSlVtpgB9yvEd
+ lhv3t9w66t/vkOeQNOx4WhssQGt4qOFHDwGnM2E7nRQhPtvDjKrqVlcG8pfgWZ6Rn6fpD3y
+ kHfktk9bYOufyD6QyJrKw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bJQz3o/M8iM=;sXyge+0M83jPA9S9VYHVbg9bm9r
+ tc/qShvJyCEJ0OaSmdTyiWJnRHGzJiSS6fTG9GcdqhM26hhtTjGdgJD2Xnnk1y5oLT+m2lFlB
+ TRb+l9DIOcFSbQEuTZVUkc5pRsIdZzJPu28TdmFdyHEsaXAsPFPGUSKGLPQFQUJdWM+QWn6pm
+ VmOsbT2CqiJJd/zTpdmiklot//73KdHgtxPr6nOQLJ1Z7XVg1J3ZsjdZq/uhRzkKgTwk/0hd0
+ krjlnQUvNpeFprLFqRNv3opqYdLKR/LuS6hVeRD7bQVhnoayP6QyqgXCgEJKw8Iugd7oWDW3/
+ pnX0o46TCZtqLnnUWDrtOcREBQlNPrj9DRrL9UDhsxIe36rDnoxS1f/upQnxVQ1/xPfOtb3Ea
+ Xq9+vwj9K95mfBiFyzJa67SRXrqYhwvEFZUVViQuJ9edfVzMpldLyo9FsAYAO0wlK8nGR1Uf4
+ NZWaRGfqhHa7qypMbt9KYCv7LaRKVH1Y2kDSmTbZvfsh8PYrODx3AYP7oREovoDjgPIduc3/h
+ mddQhPKzOoOpN0bWs0OxjGB2EoDII+t1YzM+125qfBYBVQkm50Gx85SZZR2h+dAB4KUzhLZUe
+ 2n7DnQNR54OhrFzUFwOlGKjoqsC8Uj7fE4jgH75Z8Dk8GiJ+Ja8opDqwgM+7U6/cMsontFxcK
+ rJT6/WDQivoGvD5rSzWt8dyFHoAnjUCASz05FeM/omvH3MuxCrcHPN+eVgdmVCcIMcL6to9Iq
+ 8eS/UaiUeTNiQWsNrFmE8Tv6G8g5+0uG3m7nmV5dicokIVjVPdvXYha9gJuoqvcq6LUL0YWpz
+ zx7cArLOUylhAZIdfvcjI/bQ==
 
-On Tue, Oct 22, 2024 at 01:29:04PM +0800, baneric926@gmail.com wrote:
-> From: Ban Feng <kcfeng0@nuvoton.com>
-> 
-> Add bindings for the Nuvoton NCT7363Y Fan Controller
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Ban Feng <kcfeng0@nuvoton.com>
+> When iio_get_acpi_device_name_and_data() fails, the ddata may be left
+> uninitialised. Initialise it to NULL and drop unneeded NULL check
+> in kxcjk1013_probe()
 
-Applied.
+I propose to reduce the scope for this local variable.
 
-Thanks,
-Guenter
+
+How do you think about to use a summary phrase like =E2=80=9CReplace a poi=
+nter check
+by a variable initialisation in kxcjk1013_probe()=E2=80=9D instead?
+
+Regards,
+Markus
 
