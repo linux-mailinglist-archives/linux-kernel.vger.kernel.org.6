@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-392268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3927B9B91B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:16:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A429B91B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:16:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A1241C2328B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:16:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55DE4282054
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E2F1A0704;
-	Fri,  1 Nov 2024 13:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC59C1A2653;
+	Fri,  1 Nov 2024 13:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c23MXuWd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFCIfRxb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E940719AD5C;
-	Fri,  1 Nov 2024 13:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329CB1A2574;
+	Fri,  1 Nov 2024 13:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730466942; cv=none; b=vBjrqK1xwYjswnwBajZ0SVTg/yaw8b4tqrwCkWOqGoR5ooW2G5TogCXA/wHjted5ZM0EVk6v8xBTS8KWWNmcj7Q47idCEmA6P+SnYpJb1QkRo/gijtkwg79ffiabnnGytArphLecZBlhRuICDFogdk2bRItOaU4XrY1DjbuwAaI=
+	t=1730466945; cv=none; b=g4Nswyd02iWENfZB8ZXfrygk1tI9sFXf5gEla/H+c+V6ENLhxFpqaRxfzqTWbQxr0m7WGY6VIp/ly9ojOShERGeDe1xQOAVIlfJcDfD1Q1TxE7u5ES9QtAwKzibLZfw/8ijghdWTHvlxoGUN7wbDMqaXpnxzDU6idnMyTwbMm8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730466942; c=relaxed/simple;
-	bh=hl6MlpzKati/Jn4Aw8tL7tSGlAUzEKqO/lzOh03DLMM=;
+	s=arc-20240116; t=1730466945; c=relaxed/simple;
+	bh=oLL1uzPvimChNWEDE6/41svef1qbVUPXSlsEc5NuqtQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kbl0tM8pzObVuR96EOWD2T/bf9EMbhSVVg/CCuODCs1n/COWZBgLLT7CQNw+LWm/5ds7o6v4tgyrxjniI6CUcAtRFe1mCilj+of+FgG2rPTHAB8nyEgJXEsvJa2i07qcdxKuclfsmJmY7/kcYimm3HcSJMSFJ17meB+6+zmHjfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c23MXuWd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43AE5C4CECE;
-	Fri,  1 Nov 2024 13:15:40 +0000 (UTC)
+	 MIME-Version:Content-Type; b=i1X3/btuholK/lEWiCQxd/adKzjlW2BQ7zh3byWWaoSDzVJSVN91ui6tcLa+ojKtYyT+PNe+kqQzgkXrYThreeOJ5ERhzdKrTs8JtgoYFDTxqKxHvlMvLedW4OUDb0hyyis4DU/TzTorANywmI5WU3AD0UbV+adUs3satKyG95I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFCIfRxb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4764AC4CECE;
+	Fri,  1 Nov 2024 13:15:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730466941;
-	bh=hl6MlpzKati/Jn4Aw8tL7tSGlAUzEKqO/lzOh03DLMM=;
+	s=k20201202; t=1730466943;
+	bh=oLL1uzPvimChNWEDE6/41svef1qbVUPXSlsEc5NuqtQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=c23MXuWd5Rehqd9H1D+3mZ3LcLufGl3JlsqN1UOtSgKAflRB78wLfmPLwEs4Kr2R7
-	 aeHdYhQ8xfSD5LiGXa2JxOXdnODNuzmSDMFrGbpbnrnWC7TY1RFe2gCuKMtFJ07jJs
-	 GxBV8Uz4C1M44tkTJpWZILV5XV3EMhU8ZQejkXIaqev4Ml+Z5IGXV6PnRrHq5XRMw5
-	 wwFqha0CC2yEj1Yup7qoyR0s2a+gu+fMyhF8Uk34mDCL+WWd8B2UjNdAOOM4WpJDow
-	 Mot65ZmBXt4DJ2rDqyJ+RqMfu34KeuJwnm+KrYFTPm3GoVXsGwBCNcMldJ33NBmU1G
-	 392w4sW2RhyrQ==
+	b=JFCIfRxbzc4Kj1DlE1BObUCtLFOgwSlFug34rCtDmM7tjKBadLV0pGF3hRG7zepzh
+	 XLqkSuHD+qs7UDoMXL7PCXfcpJ/bfBFP0VzrGf/G/t55r92btGhh7YwuWA08qfE6sB
+	 rakOdw0MkHqD/mK/DU+G3Ykrib9XIqVzZTYIjrz/SkioBrBjcg+EaA4vrGe6Fs6Aqp
+	 H3XTNetVig10WTpWZly3mJx0sJ1UX/FQmzLoAfmnVgP8zTouXfw30ldwUhC9s+7Gmk
+	 B/bkbXECJG8xBnkB/GAcm8ohNKvGa3Ptl0FYc9jppRqv7Nh+lSiJZvrANwHF3APLI3
+	 BGWFdudHjNgGg==
 From: Mark Brown <broonie@kernel.org>
-To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>, 
- Mohammad Rafi Shaik <quic_mohs@quicinc.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>
-In-Reply-To: <20241031103302.2450830-1-andriy.shevchenko@linux.intel.com>
-References: <20241031103302.2450830-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] ASoC: codecs: wcd937x: Remove unused of_gpio.h
-Message-Id: <173046694000.38444.9992428018228971667.b4-ty@kernel.org>
-Date: Fri, 01 Nov 2024 13:15:40 +0000
+To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, corbet@lwn.net, 
+ anish kumar <yesanishhere@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+ linux-doc@vger.kernel.org
+In-Reply-To: <20241031035829.54852-1-yesanishhere@gmail.com>
+References: <20241031035829.54852-1-yesanishhere@gmail.com>
+Subject: Re: [PATCH V2] ASoC: doc: update clock api details
+Message-Id: <173046694202.38444.10908151912961323882.b4-ty@kernel.org>
+Date: Fri, 01 Nov 2024 13:15:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,9 +60,9 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Thu, 31 Oct 2024 12:33:02 +0200, Andy Shevchenko wrote:
-> of_gpio.h is deprecated and subject to remove. The drivers in question
-> don't use it, simply remove the unused header.
+On Wed, 30 Oct 2024 20:58:29 -0700, anish kumar wrote:
+> Added ASoC clock api kernel doc in this
+> document.
 > 
 > 
 
@@ -74,8 +72,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: codecs: wcd937x: Remove unused of_gpio.h
-      commit: bd0aff85d5f3f3fc22735ab5869008dfd8ab4867
+[1/1] ASoC: doc: update clock api details
+      commit: 019610566757a749dde7e0c92777d2c1613afef8
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
