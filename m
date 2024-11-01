@@ -1,48 +1,50 @@
-Return-Path: <linux-kernel+bounces-392069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF729B8F5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:38:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507D39B8F5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:38:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9E641F21AE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:38:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 829D21C223C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBEB19CC0C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A7D19CC06;
 	Fri,  1 Nov 2024 10:36:09 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF5D19B3D3
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF081714D3;
+	Fri,  1 Nov 2024 10:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730457369; cv=none; b=q7Y/QyfZ1IhszZTusVTzhIM5jx+jtCLmEdyLYY0CvQjXtUUumgEzlAalYqxzoB31IrwFKvb3047s1h4YTZ4wfY4+VvT2dIMiQq7yVGNYjuHfddSzpOoH9ZaoXBq+xZ7M9POA8UfeDZVoyDBPLqS6oGSWByhJirLSMOY99H7P8Mw=
+	t=1730457369; cv=none; b=tk69Bnvdh8rkiG0hJdjHol5/foWLYnJyKTeSra5PT7sgrm/MTHY51x7JU4ujw8SpajtRWL0+xhKaie5JnSJ6sOKXr4Nrwa8SOhvIooZB9HV+6GUtQo/4AOYBoNxFn+uLnsbNpJr8EhmgyjCCGKuL/oSqrc72tuYexz0ovpBgWoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730457369; c=relaxed/simple;
-	bh=0ECHqyMrwF1RhGCyzmASRVHGaUNHJ0obns2rz4Str50=;
+	bh=r0HBzAMNW4cdfSo8/EYXNRnjNpcS4i8uBOVnnKDm0bc=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Rwjm3DiOVayocGXPflMXdpuWD58y6k6kvHMS4qwfrC0ZLYqep1gc9awWgryv6fImtPpvSsxaszletpohzrE1NscX88qddQq3JTU2WPTFZTMDT7gZsi4Ct1zLibgGbLSXnmtGqFWeTr3pcRHWCiZSvnMrkF2MTUvx5Yr5vaJ1SBY=
+	 Content-Type; b=AbLm0iebXzisyKUb6qqggoa7WVSotcRBJCDdhPaYQoPegUZ+0XSx8N+lELJgMTLeC6qhC0pFLrauONWPTQLIMdXAgWQqjSzzyYwkETVlW8DoeOQaUBH3ojq8zwr2navrRnd/r0Os8BFzdQOG2cKSbvWy+mgcg2PeRSc1Svm5Enk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D117CC4CED1;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E58BBC4CED2;
 	Fri,  1 Nov 2024 10:36:08 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1t6p1f-00000005S4c-0T84;
+	id 1t6p1f-00000005S57-18Bj;
 	Fri, 01 Nov 2024 06:37:07 -0400
-Message-ID: <20241101103706.970906571@goodmis.org>
+Message-ID: <20241101103707.130624298@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 01 Nov 2024 06:36:48 -0400
+Date: Fri, 01 Nov 2024 06:36:49 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>
-Subject: [for-next][PATCH 01/11] tracing: Make percpu stack trace buffer invariant to PAGE_SIZE
+ linux-hardening@vger.kernel.org,
+ Kees Cook <kees@kernel.org>,
+ Justin Stitt <justinstitt@google.com>
+Subject: [for-next][PATCH 02/11] tracing: Replace multiple deprecated strncpy with memcpy
 References: <20241101103647.011707614@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,43 +54,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Ryan Roberts <ryan.roberts@arm.com>
+From: Justin Stitt <justinstitt@google.com>
 
-Previously the size of "struct ftrace_stacks" depended upon PAGE_SIZE.
-For the common 4K page size, on a 64-bit system, sizeof(struct
-ftrace_stacks) was 32K. But for a 64K page size, sizeof(struct
-ftrace_stacks) was 512K.
+strncpy() is deprecated for use on NUL-terminated destination strings [1] and
+as such we should prefer more robust and less ambiguous string interfaces.
 
-But ftrace stack usage requirements should be invariant to page size. So
-let's redefine FTRACE_KSTACK_ENTRIES so that "struct ftrace_stacks" is
-always sized at 32K for 64-bit and 16K for 32-bit.
+String copy operations involving manual pointer offset and length
+calculations followed by explicit NUL-byte assignments are best changed
+to either strscpy or memcpy.
 
-As a side effect, it removes the PAGE_SIZE compile-time constant
-assumption from this code, which is required to reach the goal of
-boot-time page size selection.
+strscpy is not a drop-in replacement as @len would need a one subtracted
+from it to avoid truncating the source string.
+
+To not sabotage readability of the current code, use memcpy (retaining
+the manual NUL assignment) as this unambiguously describes the desired
+behavior.
+
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+Link: https://github.com/KSPP/linux/issues/90 [2]
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20241021141832.3668264-1-ryan.roberts@arm.com
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+Cc: linux-hardening@vger.kernel.org
+Link: https://lore.kernel.org/20241014-strncpy-kernel-trace-trace_events_filter-c-v2-1-d821e81e371e@google.com
+Reviewed-by: Kees Cook <kees@kernel.org>
+Signed-off-by: Justin Stitt <justinstitt@google.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_events_filter.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index bdb776e6ceb9..f1d613d924e9 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2898,7 +2898,7 @@ trace_function(struct trace_array *tr, unsigned long ip, unsigned long
- /* Allow 4 levels of nesting: normal, softirq, irq, NMI */
- #define FTRACE_KSTACK_NESTING	4
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 0c611b281a5b..78051de581e7 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1616,7 +1616,7 @@ static int parse_pred(const char *str, void *data,
+ 				goto err_free;
+ 			}
  
--#define FTRACE_KSTACK_ENTRIES	(PAGE_SIZE / FTRACE_KSTACK_NESTING)
-+#define FTRACE_KSTACK_ENTRIES	(SZ_4K / FTRACE_KSTACK_NESTING)
+-			strncpy(num_buf, str + s, len);
++			memcpy(num_buf, str + s, len);
+ 			num_buf[len] = 0;
  
- struct ftrace_stack {
- 	unsigned long		calls[FTRACE_KSTACK_ENTRIES];
+ 			ret = kstrtoul(num_buf, 0, &ip);
+@@ -1694,7 +1694,7 @@ static int parse_pred(const char *str, void *data,
+ 		if (!pred->regex)
+ 			goto err_mem;
+ 		pred->regex->len = len;
+-		strncpy(pred->regex->pattern, str + s, len);
++		memcpy(pred->regex->pattern, str + s, len);
+ 		pred->regex->pattern[len] = 0;
+ 
+ 	} else if (!strncmp(str + i, "CPUS", 4)) {
+@@ -1859,7 +1859,7 @@ static int parse_pred(const char *str, void *data,
+ 		if (!pred->regex)
+ 			goto err_mem;
+ 		pred->regex->len = len;
+-		strncpy(pred->regex->pattern, str + s, len);
++		memcpy(pred->regex->pattern, str + s, len);
+ 		pred->regex->pattern[len] = 0;
+ 
+ 		filter_build_regex(pred);
+@@ -1919,7 +1919,7 @@ static int parse_pred(const char *str, void *data,
+ 			goto err_free;
+ 		}
+ 
+-		strncpy(num_buf, str + s, len);
++		memcpy(num_buf, str + s, len);
+ 		num_buf[len] = 0;
+ 
+ 		/* Make sure it is a value */
 -- 
 2.45.2
 
