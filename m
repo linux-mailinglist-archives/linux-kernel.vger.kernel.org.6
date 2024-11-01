@@ -1,83 +1,189 @@
-Return-Path: <linux-kernel+bounces-392851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688809B98DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:45:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2699B98DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C8A52822A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C28828181F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2771CB502;
-	Fri,  1 Nov 2024 19:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D091D172F;
+	Fri,  1 Nov 2024 19:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWU7F0mo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljEmHJVM"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC2A1CACF2;
-	Fri,  1 Nov 2024 19:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F4E1CACF2;
+	Fri,  1 Nov 2024 19:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730490347; cv=none; b=QcjNE941eRBtwSSe95NJnBqUPTv5eyb4s1SaTGjbevgMbJciZ42Oh6hKjULdaa8ajAWUU+N28zCN7BlzWLqJLfzKkaqpBhCk/3GaFEoEpEWNy9YKPADEj6O4eEIy4WmYM0J4OdH979NSEVTJh5bcbQG4zw58B7wcG7ju4/qehkw=
+	t=1730490383; cv=none; b=AvZ/qczvAzXZOwox3be3d+3OlOILo4c/q2Y6iKbHd4SddFjjmPWhqGvL5qJu+hoCAwmkOgdWQF89kIh53ngAtXGydbxxgz9/mMoIWjy1UgBgIvkUVv5vBF9qIqxdnJrBgE0KgcI3BcPLA2rLBGGK0QPYclEV3so8y4xglf8e/3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730490347; c=relaxed/simple;
-	bh=YWNoNC6IgOJgm0SF/tIFJ7L/6qpPeiZn6M9zbN/xeVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X7m1IuowlO4RF6Exoe6xIARw/EyP81rvcIILVZtY4xMVQqQLiGRUp9/ZQexeRHbNZD0zBiiROpQDQfkAyOFLIGF9sFObHoFCqKP8PTZf2uLywacoCvq/Putq4+ePxw3395U05HS0L+oOKwuoHjLgA+sMypElICdxTsSIaRRjTWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWU7F0mo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DE14C4CECD;
-	Fri,  1 Nov 2024 19:45:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730490346;
-	bh=YWNoNC6IgOJgm0SF/tIFJ7L/6qpPeiZn6M9zbN/xeVg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QWU7F0mohIBlgoCwzDfa6NQlqoHqC2bj57eoIluqRilmnwj6nOem5x/QrCxAleoHi
-	 Swc75tHM+cVEVIU0yz3iX2upl8vnUkU1C5Qy8ccyvP3Npsv9DSUXwWdgK32QewocNn
-	 VWUiJ+NstQvLI4HtaZOPIX2/U/1Zo+9tZhp1BYHvPSCjOO/yB7IOQO6uJ29BskLVVL
-	 JfaAwiJGOvRdd4kW6Je9o9mzvj9tQix7/QRez4oCD45RNRYif9XUeKh6nEG8gbm0X2
-	 3cS4Ui9uP5AnZlW2Evr0M8NsqBnI+n1FS6ISMnOW/N1kbjXkBy23La2jKcTC+I7H0r
-	 +GnB2NEmgRVZA==
-Date: Fri, 1 Nov 2024 14:45:44 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pwm: sprd,ums512-pwm: convert to YAML
-Message-ID: <173049034404.4086958.11176792870448395104.robh@kernel.org>
-References: <ZyH-JASRcpMXYsmH@standask-GA-A55M-S2HP>
+	s=arc-20240116; t=1730490383; c=relaxed/simple;
+	bh=Q1XJmMNbRTmr+G0p/GjqtphlmLT6K7uAVsxG7/Hx7MU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ImxvNrPUsrw3x7yVXex2goclBr56Tf7tC7RVBVQvWmviXUg41wosIQcHlXngak22ApZOtajAeJOqHQ7R3t2B0U19pvYLTeRWFfcGJc2aJNYoRx5hlPfbWvrWvcqxLDtk35vAR3dJLH+DonBcJDFcDHXyhGfNZ12gnuQZt/bOeMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljEmHJVM; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20e6981ca77so26413785ad.2;
+        Fri, 01 Nov 2024 12:46:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730490381; x=1731095181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mo+Yasuw/oRyXv0Io4gB8Pw1IePUj74kOgbZY0y0LoE=;
+        b=ljEmHJVMoz/KWyb96BdCCGr5qjJV2JIG0E9HJ6LxGajyz9KCwhztTLc7HNH9WNOCfG
+         sTGD5uYLEEn1+0m1MN2kPLTgS/XDYm13UOMgXCvRDF4iNmE9sRQCrZmHH5/HhTvs1tML
+         rdn+FRK3EpE+L+XQ/KpD+3Q8f4OgsIZver2Nf2AGOoKqF+pviot2LQ/P454rQGlvfT8o
+         1ACB8kXSIfbN6vB9gLuGmdSRGTK+sq6CzxMdfRthPSi+EiNbEAZ28akIeThQLuNZLRaU
+         9uogtI1Jua+38RiyuaJ+Gf7CGc85V79YMU7dZRzIJzTUo3BWWTg5XHgpQEbdBtSWbIfI
+         TMbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730490381; x=1731095181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mo+Yasuw/oRyXv0Io4gB8Pw1IePUj74kOgbZY0y0LoE=;
+        b=rlf9RL+7ELnqOrbGn5mX2SQBS/q+Fw5+piNZqewcJCbm1bQ6icoNXeoPM1TT94QKQE
+         L/ildxXpQrB88NhfvIXDPBG1/umwjTQkmwXuLrI2x8MxItLJSKc7Z3nmP5FqC3o5DfgF
+         AGyZX2xCC7YCQHooLeMDKm7XooGwAomrS5pidteNm7DSbSUHgISFy19n/AgZoHPO8rQC
+         dhYKkMzMK+KUFeiElamjpJ//dG1thDUaEjwFH0q/Ph9ggwO6fO3icA1gQLLDNIQWW7at
+         7zWaYxpF089JG3uqT+DQ+1V1TdlcfnXR5HFN1BEf049t620m8iuYxT4D97V/4lZdUvwE
+         T+9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUj59ixNRWDtpz4yZ107DvjpFQVblGXjApfIIfZ+vJhTUD8Nx3wqmc+2/DMoAdlxP9Pw9feB1n/wUlCYk92@vger.kernel.org, AJvYcCVQrP1Rsxf/dSXTnFsv5DU0+eT5Z5wEcwDt8nFHJrJ7G4xx1v2lTboT808pCwUNW1cxGHw=@vger.kernel.org, AJvYcCVu53Wqxv7GY4uH0ZO6rZevrYdi/5vp9JGa9uKVdaK4QmYapUrr3NLQXsSw2iLZgu46jvxD0ARl/rZQyQOY8ns26w==@vger.kernel.org, AJvYcCX8GcJO9Qb+UamyPYt+Vg5GL8tYZtTRQD/DvUhPPAWTWF7LT2t9k0AuK/SS/ZlgvKqF6Q4936/TlVFwDzHX3sedUA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLEvFEvX2UPXoD3Q5CVRnVzNAiaPIjPhtVlyiZIFgWdvV6Rnaf
+	2JA6L16oqf4KBm2T1ZnjtvVIXQLnRdT59j0ID12yhf5CKXXWUY0bTnXYikJFp1o8D4KpgZYqcyl
+	idHfZ4XyZryCX1GI8aHbgt0oJdfk=
+X-Google-Smtp-Source: AGHT+IG9LKkkHXi5pRokPFdZN6EHwavi1lSDB7YCcE3CLHey6at+eRKQjhdoFNA6jBPtBVtAlIqT+Pg0mMPcCAZkKo0=
+X-Received: by 2002:a17:902:c40c:b0:20c:7d4c:64db with SMTP id
+ d9443c01a7336-21103c7bfafmr98648865ad.49.1730490381440; Fri, 01 Nov 2024
+ 12:46:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyH-JASRcpMXYsmH@standask-GA-A55M-S2HP>
+References: <cover.1730150953.git.jpoimboe@kernel.org> <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+ <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
+ <20241030055314.2vg55ychg5osleja@treble.attlocal.net> <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
+ <20241031230313.ubybve4r7mlbcbuu@jpoimboe> <CAEf4BzaQYqPfe2Qb5n71JVAAD3-1Q7q2+_cnQMQEa43DvV5PCQ@mail.gmail.com>
+ <20241101192937.opf4cbsfaxwixgbm@jpoimboe> <CAEf4Bza6QZt=N8=O7NU3saHpJ_XrXRdGn48gVJMN+kawurNP3g@mail.gmail.com>
+In-Reply-To: <CAEf4Bza6QZt=N8=O7NU3saHpJ_XrXRdGn48gVJMN+kawurNP3g@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 1 Nov 2024 12:46:09 -0700
+Message-ID: <CAEf4BzZvhuUeGYbo1Nesfdx3=-WAkAT2OjSdtE4tfRV7H7PZoQ@mail.gmail.com>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, 
+	Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, 
+	Jordan Rome <jordalgo@meta.com>, Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, 
+	Jens Remus <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Nov 1, 2024 at 12:44=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Fri, Nov 1, 2024 at 12:29=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.o=
+rg> wrote:
+> >
+> > On Fri, Nov 01, 2024 at 11:34:48AM -0700, Andrii Nakryiko wrote:
+> > > 00200000-170ad000 r--p 00000000 07:01 5
+> > > 172ac000-498e7000 r-xp 16eac000 07:01 5
+> > > 49ae7000-49b8b000 r--p 494e7000 07:01 5
+> > > 49d8b000-4a228000 rw-p 4958b000 07:01 5
+> > > 4a228000-4c677000 rw-p 00000000 00:00 0
+> > > 4c800000-4ca00000 r-xp 49c00000 07:01 5
+> > > 4ca00000-4f600000 r-xp 49e00000 07:01 5
+> > > 4f600000-5b270000 r-xp 4ca00000 07:01 5
+> > >
+
+I should have maybe posted this in this form:
+
+00200000-170ad000 r--p 00000000 07:01 5  /packages/obfuscated_file
+172ac000-498e7000 r-xp 16eac000 07:01 5  /packages/obfuscated_file
+49ae7000-49b8b000 r--p 494e7000 07:01 5  /packages/obfuscated_file
+49d8b000-4a228000 rw-p 4958b000 07:01 5  /packages/obfuscated_file
+4a228000-4c677000 rw-p 00000000 00:00 0
+4c800000-4ca00000 r-xp 49c00000 07:01 5  /packages/obfuscated_file
+4ca00000-4f600000 r-xp 49e00000 07:01 5  /packages/obfuscated_file
+4f600000-5b270000 r-xp 4ca00000 07:01 5  /packages/obfuscated_file
+
+Those paths are pointing to the same binary.
 
 
-On Wed, 30 Oct 2024 10:36:36 +0100, Stanislav Jakubek wrote:
-> Convert the Spreadtrum/Unisoc UMS512 PWM controller bindings to DT schema.
-> Adjust filename to match compatible. Drop assigned-* properties as these
-> should not be needed.
-> 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
-> ---
->  .../devicetree/bindings/pwm/pwm-sprd.txt      | 40 -----------
->  .../bindings/pwm/sprd,ums512-pwm.yaml         | 66 +++++++++++++++++++
->  2 files changed, 66 insertions(+), 40 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-sprd.txt
->  create mode 100644 Documentation/devicetree/bindings/pwm/sprd,ums512-pwm.yaml
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+> > > Sorry, I'm probably dense and missing something. But from the example
+> > > process above, isn't this check violated already? Or it's two
+> > > different things? Not sure, honestly.
+> >
+> > It's hard to tell exactly what's going on, did you strip the file names=
+?
+>
+> Yes, I did, of course. But as I said, they all belong to the same main
+> binary of the process.
+>
+> >
+> > The sframe limitation is per file, not per address space.  I assume
+> > these are one file:
+> >
+> > > 172ac000-498e7000 r-xp 16eac000 07:01 5
+> >
+> > and these are another:
+> >
+> > > 4c800000-4ca00000 r-xp 49c00000 07:01 5
+> > > 4ca00000-4f600000 r-xp 49e00000 07:01 5
+> > > 4f600000-5b270000 r-xp 4ca00000 07:01 5
+> >
+> > Multiple mappings for a single file is fine, as long as they're
+> > contiguous.
+>
+> No all of what I posted above belongs to the same file (except
+> "4a228000-4c677000 rw-p 00000000 00:00 0" which doesn't have
+> associated file, but I suspect it originally was part of this file, we
+> do some tricks with re-mmap()'ing stuff due to huge pages usage).
+>
+> >
+> > > > Actually I just double checked and even the kernel's ELF loader ass=
+umes
+> > > > that each executable has only a single text start+end address pair.
+> > >
+> > > See above, very confused by such assumptions, but I'm hoping we are
+> > > talking about two different things here.
+> >
+> > The "contiguous text" thing seems enforced by the kernel for
+> > executables.  However it doesn't manage shared libraries, those are
+> > mapped by the loader, e.g. /lib64/ld-linux-x86-64.so.2.
+> >
+> > At a quick glance I can't tell if /lib64/ld-linux-x86-64.so.2 enforces
+> > that.
+> >
+> > > > There's no point in adding complexity to support some hypothetical.=
+  I
+> > > > can remove the printk though.
+> > >
+> > > We are talking about fundamental things like format for supporting
+> > > frame pointer-less stack trace capture. It will take years to adopt
+> > > SFrame everywhere, so I think it's prudent to think a bit ahead beyon=
+d
+> > > just saying "no real application should need more than 4GB text", IMO=
+.
+> >
+> > I don't think anybody is saying that...
+> >
+> > --
+> > Josh
 
