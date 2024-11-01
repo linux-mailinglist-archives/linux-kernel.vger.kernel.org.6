@@ -1,90 +1,136 @@
-Return-Path: <linux-kernel+bounces-392686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70D99B9710
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:05:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C03A9B9718
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:06:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249E31C209FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6411F21EAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA60F1CDFA3;
-	Fri,  1 Nov 2024 18:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E33B1CDFD2;
+	Fri,  1 Nov 2024 18:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y996Av5p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGFyzzrY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED9213B7A3;
-	Fri,  1 Nov 2024 18:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2B31CDA27;
+	Fri,  1 Nov 2024 18:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730484315; cv=none; b=gJYmv1WDnxXcYg5EGD8yuIBInc8Am9UEdRsj79zq1wvqJLG6yjiAbfW9DJ1Nb0j3g/TQu4EqJjxs5fSQ446u+ykLojuqOD3GKxlVN2oNimga5/xg8so0JSqatrXuPQ6f8zlNn06acPZRIg+tfGlDv8xamF4Lg5c2vJSMVXJxMnk=
+	t=1730484385; cv=none; b=SaENCSdwvsHTbr19+CnDuPi9wceaXBWfW0PyVW9HPIU5dpAmoCBLvyQwdDhkKfZYylIGAPZhvl2JdVbQrRC+cIEi246KWZBkh3i2cWTBoHT1jO+ete62NRQYLtMcw6wCxIQvgJPgz+6klTniwZuc9xeAKwOcfwB4qhruDy/Z/PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730484315; c=relaxed/simple;
-	bh=sxzJoGRLlfvtsPBjmtNEBTQuFxqr0kCI/vso5w4LIY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PnvQEmsYgyGxP8ugx6V5jMHlt7KYsbXIFQjqVFLiURNv/MVWUxmlzl48POz3Jkcx8If+nT0zUQRl4uqaxmbO1PQC5H+MIkcxvtXvvibdDWBvfqp0N89mV5YPumeF4L4prWo7zIY+V+ppzpYSQ6bsAQRdFlnE063CTgjt9Itypcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y996Av5p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD63CC4CECD;
-	Fri,  1 Nov 2024 18:05:13 +0000 (UTC)
+	s=arc-20240116; t=1730484385; c=relaxed/simple;
+	bh=JJjwqh39fcCVx0ubjs5+WcMycs+cNM3heEyzFIYdiEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dPgV1Rt/ymYCdQK5j9hFiOYEXhcpcUbAmewzuyVt1omEIggwSWhKGkgi4d1VLuvN2rRLXzpABIAMRju/TvHepLWE1ZOQ/phq122+Cdss0HQm+Ax4rtYMdzANi/0VR+vAStec/9rxlZE7/L6Xm8PkYx20I2qzZ0PT/iGxMfjdcgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGFyzzrY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6537CC4CED4;
+	Fri,  1 Nov 2024 18:06:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730484314;
-	bh=sxzJoGRLlfvtsPBjmtNEBTQuFxqr0kCI/vso5w4LIY4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Y996Av5pLu8N6VEcgHMPDInjy6vZBykHHlBpNNeWMEnw3U4/atZ060piU800xRavc
-	 c/WkY03lh0O4kHWGbvsZENBeAHEwXcYBEo9QvHqyFJM/21Ok0UXUkjnW8tN4o3JiGB
-	 OoDxR6WfFvqbcQi8Dn+4w/tygl+yLlirQ7dTdBxiYfCvFI/nUW44iHhfDRLaqoUQ85
-	 UsuNZx2ODNKMP7JB4I+iySkepv+HHbuMBHL5xEya/ctmCTTLYQX/gcZ+UgmiRh3vlQ
-	 y6e69E+9W0AmliCknlm7tEDwPaWTcjfAakF08DmGHnoLjEFWyQW0lcbSiCXhcadwKZ
-	 57joyzvZXniQw==
-Date: Fri, 1 Nov 2024 19:05:10 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Yang Yingliang <yangyingliang@huawei.com>
-Subject: [GIT PULL] i2c-host-fixes for v6.12-rc6
-Message-ID: <nqnhd2eb26lxm4ho5czgkjgnvorugixpzyvbw7pmle24wdn56f@a63bfcrj52k6>
+	s=k20201202; t=1730484384;
+	bh=JJjwqh39fcCVx0ubjs5+WcMycs+cNM3heEyzFIYdiEE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oGFyzzrYctRAw0+vSdKszYhCr6MZakc+bum0xBkNuoIQjBDZeALsgpY3fpU/YiVy/
+	 MTo8d1l8hu7PYeFzes6xmZUeJlbgCq1oLePpHv7X8KJZrPe/rIJW++V7LCiA7rgJcP
+	 uj9LI2Ws1OEVr3ma5YoOorGlgj6guMZNslSYXTDI/NOdAMqv48y7Mt2wttESaTHS0u
+	 c/vIqc0rPjpRCPr2f5R3l61Nn72sFushIGqPjLdP04vQioG+OOaOw00Wy01otQRN5V
+	 M/kSKhMjN7Ag2IktDM6GgLS/YZhl8ESusMWDp+OCz0BSSZrn4EuS4GL/gxC3NHIhR0
+	 xY0abIZFZxuTw==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb599aac99so20217991fa.1;
+        Fri, 01 Nov 2024 11:06:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6QYIwF9S7TltX5Anb20RpjNuKPpQ2VAGUEX16B7mB3jx+xlTuEvb+vi4CNP2nVzwpRIqKmDoSe16I@vger.kernel.org, AJvYcCUMPyr0QisaZiEZPxmWe8Fs9Hz8WxILKajW0IsUJqo3ccEOkHvEQ/dorbtRhAyuQLBOzJ/RMmPnMt5K@vger.kernel.org, AJvYcCV4kAcYaJCfmFRLJdCsQ1PGD67s7KY+A9yd0JdAvohhByeIOEaukY12LRwBdzTqc55+vhVGXHdSq8WkzQ==@vger.kernel.org, AJvYcCWJW+wt5Mfm6zfMpAofnf6ORKbcpYjuVAfjz0Taiy8AOYiaGV8Ng6r7hHfpKioY+UOwo0BlH2JfA/wPezgF@vger.kernel.org, AJvYcCX6FbLujOVTVKakOxhqYBtUkkBe6Aq3UNZkQr6JbN+BhA8ArF8SCl3q2xvcmjfq6gnXwhGuxNQ2LFxv@vger.kernel.org, AJvYcCXJzVdTyqKqngWg5uDO9KbU8PYNPZGY5Yec6svZ30t19dy063NrlLjMb6jpUJRGEQ0fmLOtMlm3gBY4w69g@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjFHqTF3dXW5NWnusKaSLsmtJitKLhAhb4axX+tzA/vd00pJFU
+	7QebvtBcNrTQ20jAFevfN1HFXQYoltvJbO+ZHrP8VYodAv1D4il53TT5Jjh+d2q2bDQZwAnh4Op
+	uWc87t9NxSxpnSV+eZyHxpR3ZrZY=
+X-Google-Smtp-Source: AGHT+IENQ8plh56/KCN7UexCPK7YNwOgQocP3X0UjZV+vdI494pX+xUTRKzwl4gLjC+Afni5PbyZK3sjbjZQziO76Fo=
+X-Received: by 2002:a2e:b88a:0:b0:2fb:5bf1:ca5e with SMTP id
+ 38308e7fff4ca-2fedb831b8emr26176271fa.42.1730484383031; Fri, 01 Nov 2024
+ 11:06:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241026051410.2819338-1-xur@google.com> <20241026051410.2819338-4-xur@google.com>
+In-Reply-To: <20241026051410.2819338-4-xur@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 2 Nov 2024 03:05:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR6Ni5FZJBK_FZXWZpMZG2ppvZFCtwjx9Z=o8L1e-CyjA@mail.gmail.com>
+Message-ID: <CAK7LNAR6Ni5FZJBK_FZXWZpMZG2ppvZFCtwjx9Z=o8L1e-CyjA@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] Adjust symbol ordering in text output section
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Sriraman Tallam <tmsriram@google.com>, 
+	Stephane Eranian <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
+On Sat, Oct 26, 2024 at 7:14=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+>
+> When the -ffunction-sections compiler option is enabled, each function
+> is placed in a separate section named .text.function_name rather than
+> putting all functions in a single .text section.
+>
+> However, using -function-sections can cause problems with the
+> linker script. The comments included in include/asm-generic/vmlinux.lds.h
+> note these issues.:
+>   =E2=80=9CTEXT_MAIN here will match .text.fixup and .text.unlikely if de=
+ad
+>    code elimination is enabled, so these sections should be converted
+>    to use ".." first.=E2=80=9D
+>
+> It is unclear whether there is a straightforward method for converting
+> a suffix to "..".
+>
+> This patch modifies the order of subsections within the text output
+> section. Specifically, it repositions sections with certain fixed pattern=
+s
+> (for example .text.unlikely) before TEXT_MAIN, ensuring that they are
+> grouped and matched together. It also places .text.hot section at the
+> beginning of a page to help the TLB performance.
 
-just one fix in the muxes this week.
 
-I wish you a great weekend,
-Andi
+The fixed patterns are currently listed in this order:
 
-The following changes since commit 81983758430957d9a5cb3333fe324fd70cf63e7e:
+  .text.hot, .text_unlikely, .text.unknown, .text.asan.
 
-  Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
+You reorder them to:
 
-are available in the Git repository at:
+  .text.asan, .text.unknown, .text.unlikely, .text.hot
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.12-rc6
 
-for you to fetch changes up to c4c4172fb9c2327262055cda171916e7a79fd7ff:
+I believe it is better to describe your thoughts
+about the reshuffling among the fixed pattern sections.
 
-  i2c: muxes: Fix return value check in mule_i2c_mux_probe() (2024-10-31 13:06:02 +0100)
+Otherwise, It is unclear to me.
 
-----------------------------------------------------------------
-i2c-host fixes for v6.12-rc6
 
-Fixed an incorrect error return value in the Mule Multiplexer.
 
-----------------------------------------------------------------
-Yang Yingliang (1):
-      i2c: muxes: Fix return value check in mule_i2c_mux_probe()
 
- drivers/i2c/muxes/i2c-mux-mule.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--
+Best Regards
+Masahiro Yamada
 
