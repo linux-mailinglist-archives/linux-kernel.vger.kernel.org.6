@@ -1,108 +1,131 @@
-Return-Path: <linux-kernel+bounces-393035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DDE09B9B34
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:36:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4D09B9B38
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:37:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46CB61C20EBD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:36:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F2B1F22123
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FEE1946BC;
-	Fri,  1 Nov 2024 23:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EDE1E2007;
+	Fri,  1 Nov 2024 23:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="f6+dqw8a"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JWEj9QjS";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a34UxBWJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFAA16DED5
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 23:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C75137745;
+	Fri,  1 Nov 2024 23:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730504153; cv=none; b=RoIJINpn4TvyFbA3t2MjLbYJYaL02hzYBtvs5lSCj/5mFMQ3ZPd3aEN6tRJ5IYp8OFPaXYQGM4xUK80cJYuAyp1KLYrDfmoUTxTQa979C2FYc6VhYbPIoq75xfRU34K3FpBdcF9qzVMVapCfWL2FnwUwcIV3+ytT6j9FMQhOKNw=
+	t=1730504241; cv=none; b=ZDLqvOVBEEySuLrCP8D4PoqUwnBWViS/I9sq18VYewfjVan2cOAX/1e9tGHfbnRkd5q8Y16TB8SLeBjU9bNDOwOp/g1SkNLlOr0r6FjrW/HfxIPLpo4hUaO0P/KI3/Po+Tlej8LLKol5BDek3HB8gYfbPBVknfmeIL8hEAJi9Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730504153; c=relaxed/simple;
-	bh=Ue885HcxmPf0L8ARa1j6S9W4nBVkiVf0INutQUO3kS4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KJlcFTx/jeiO8V+8hTmUi9YbEJbvTXwtKp51t3KaRTh4QesHrxYIZYsBINAr1yVZtbY3rgTK3hl2mUkyfq1ThKleK3C4lK6DCZBgWDXnodkL3ZQbPl/LXvsMxEExWevLbYiixquiuHVq7PFLhYBj3sHsCmjnnIDJPtPtDxxAlLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b=f6+dqw8a; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7edb3f93369so1732670a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 16:35:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google; t=1730504150; x=1731108950; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ue885HcxmPf0L8ARa1j6S9W4nBVkiVf0INutQUO3kS4=;
-        b=f6+dqw8al4caZhNFFLtdIFnc23Kleeh1mFV+MsH4J4ITexl5Eml1ZEyRHtH+GGEc78
-         QM/9thD8Q+2DFtnc3E+wDQqUpvQXRFRqTpS8+cbQrAc1GZsBPqG/+gVb+7rOk18Jpta5
-         ehLAPZSs2VfdG+kKxVcqQw8tWj14kjjUTshRo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730504150; x=1731108950;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ue885HcxmPf0L8ARa1j6S9W4nBVkiVf0INutQUO3kS4=;
-        b=l7w38wM4mV+7VXmbaxXKIHpDjvREjruXpEu1PhYPDBAFfFvOtiH9lfC/pE9TNeKRrf
-         9UqH3SeoAIvb/eUnzMzd99e00tVTJsY1jrlDVtyBGBZs/3ZIQb7jCpU4jmKrwUBmL0wn
-         dSwoTxeQdHe565Jdf4GtEkAIn2SuTuLmXVLpfGxTwZh7iibd0pYOoLooyfjVoKnBLdhT
-         zMBM6fojj4m4f4CpTtkxbVlotj10qefofxIy1W6zNMR20MZlgh2GNQTG+BoxCAI2cNpY
-         N7FIJil0wk3oH0fKf+Ysa75NPrxc38TuapIHfGJIuUR5KD16k5Ky2UAxphU/skLpI2XB
-         TIDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHYICawuRwCSggT07DMxa6cNhYrLw/cLzkdxj+FaRxb3LQQSeziw6vloA8ZETlWWvj8jCRzG0lrGgCVhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylFtc+7SMG83T4Vmlk9WwpP35tjBpF/A3krEhYOskMfsjgm0Jf
-	/EO59mzxKJoH4uOGRx3cBzLWQFzMnP7kNlnAi70yQSRft92IRSDNXLOAhIIEmeZvkhmnXUSjwSH
-	9w37OiQdQtoCbr26nXSOrAWntLTWIuXzQBAuh0mX7VcoWeRq0
-X-Google-Smtp-Source: AGHT+IGSCCGc2XOfqTuOFo5khzBYSCD3q/i/ZhvzprTRm0qV62b3/sKYvu1Q2BKXYbheXAm5J0pQa/GsCtf+WDDJFOU=
-X-Received: by 2002:a17:90b:5306:b0:2e2:c15f:1ffe with SMTP id
- 98e67ed59e1d1-2e94bdf49acmr7314138a91.0.1730504150505; Fri, 01 Nov 2024
- 16:35:50 -0700 (PDT)
+	s=arc-20240116; t=1730504241; c=relaxed/simple;
+	bh=3kj6OyEELQBFa/kDWXd9HVrlsW3N9aS0gU28/KPADWY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FBEs2Wwqcz1EUvh6EVcKJoD2IfYHjsbUoH0K6sid+LCmW0l2Kg8GrgseqXXQcdXNYFilSq/1ofped9L6KdJLRHuQYUyR6WaU1BVyodjLA90cquw5oWK9Yp28k869PzSqjiBdWF6FMJP52wQ6YuE/3nyJ11FGcva0L5hOEhWBrns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JWEj9QjS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a34UxBWJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730504237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5hEbhXrDUtyuWKJd3ehaILokOGyu2h6Q6B5wfuMSyD0=;
+	b=JWEj9QjSBEyCLLc2sdGDVDHcdRYMuPETvwuhGBviRL/LQKvn0eWocb5w+DiZzTkMOC7uWr
+	fPD9AbGNop10pVIuH2G+X+xTlNcnjpn660Vh8xo343ffA86Q0uSwb/8dj3Ueq4kIt/ADcQ
+	010zK74KumgO4nFr89HL5E2dEoLNEy27jC4ROhnqzx+5Z9wDK0MKHKLCNIcMKqD/Zr99ne
+	JqEajIb88CUZjq/bfKi3QEFvH57wRgSxlAteKaAlmfFj67bIMdq4VY1zkcnab4V2ZKLHw7
+	ofr7M1f2WJ2XvhOmww5tSuy3ohxhYNOXMtOf25dGqdwuD0cYokRIE9DrQHL9Cg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730504237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5hEbhXrDUtyuWKJd3ehaILokOGyu2h6Q6B5wfuMSyD0=;
+	b=a34UxBWJt0wl4wyuMAv1RCtfRBgMJ6wl9RM2K6j1I9qDmQClIdys5MO7cAup4fpZLr9ZT6
+	aU3o2yNbv17xKKBg==
+To: mapicccy <guanjun@linux.alibaba.com>
+Cc: corbet@lwn.net, axboe@kernel.dk, mst@redhat.com, jasowang@redhat.com,
+ xuanzhuo@linux.alibaba.com, eperezma@redhat.com, vgoyal@redhat.com,
+ stefanha@redhat.com, miklos@szeredi.hu, peterz@infradead.org,
+ akpm@linux-foundation.org, paulmck@kernel.org, thuth@redhat.com,
+ rostedt@goodmis.org, bp@alien8.de, xiongwei.song@windriver.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v1 1/2] genirq/affinity: add support for limiting
+ managed interrupts
+In-Reply-To: <9847EC49-8F55-486A-985D-C3EDD168762D@linux.alibaba.com>
+References: <20241031074618.3585491-1-guanjun@linux.alibaba.com>
+ <20241031074618.3585491-2-guanjun@linux.alibaba.com> <87v7x8woeq.ffs@tglx>
+ <9847EC49-8F55-486A-985D-C3EDD168762D@linux.alibaba.com>
+Date: Sat, 02 Nov 2024 00:37:16 +0100
+Message-ID: <87h68qttjn.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0e7636a21a0274eea35bfd5d874459d5078e97cc.1727926187.git.fthain@linux-m68k.org>
-In-Reply-To: <0e7636a21a0274eea35bfd5d874459d5078e97cc.1727926187.git.fthain@linux-m68k.org>
-From: Daniel Palmer <daniel@0x0f.com>
-Date: Sat, 2 Nov 2024 08:35:39 +0900
-Message-ID: <CAFr9PXn8Wi8btubVXKTNNQQyQRtvWaYV5aHyvvQLypJYp5i=9A@mail.gmail.com>
-Subject: Re: [PATCH] m68k: mvme147: Fix SCSI controller IRQ numbers
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, stable@kernel.org, 
-	linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Nov 01 2024 at 11:03, mapicccy wrote:
+>> 2024=E5=B9=B410=E6=9C=8831=E6=97=A5 18:35=EF=BC=8CThomas Gleixner <tglx@=
+linutronix.de> =E5=86=99=E9=81=93=EF=BC=9A
+>>> +	get_nodes_in_cpumask(node_to_cpumask, premask, &nodemsk);
+>>> +
+>>> +	for_each_node_mask(n, nodemsk) {
+>>> +		cpumask_and(&managed_irqs_cpumsk[n], &managed_irqs_cpumsk[n], premas=
+k);
+>>> +		cpumask_and(&managed_irqs_cpumsk[n], &managed_irqs_cpumsk[n], node_t=
+o_cpumask[n]);
+>>=20
+>> How is this managed_irqs_cpumsk array protected against concurrency?
+>
+> My intention was to allocate up to `managed_irq_per_node` cpu bits from `=
+managed_irqs_cpumask[n]`,
+> even if another task modifies some of the bits in the `managed_irqs_cpuma=
+sk[n]` at the same time.
 
-On Thu, 3 Oct 2024 at 12:32, Finn Thain <fthain@linux-m68k.org> wrote:
->
-> From: Daniel Palmer <daniel@0x0f.com>
->
-> Sometime long ago the m68k IRQ code was refactored and the interrupt
-> numbers for SCSI controller on this board ended up wrong, and it hasn't
-> worked since.
->
-> The PCC adds 0x40 to the vector for its interrupts so they end up in
-> the user interrupt range. Hence, the kernel number should be the kernel
-> offset for user interrupt range + the PCC interrupt number.
->
-> Cc: Daniel Palmer <daniel@0x0f.com>
-> Cc: stable@kernel.org
-> Fixes: 200a3d352cd5 ("[PATCH] m68k: convert VME irq code")
-> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-> Reviewed-by: Finn Thain <fthain@linux-m68k.org>
-> ---
+That may have been your intention, but how is this even remotely
+correct?
 
-The other part of this that fixes the SCSI driver itself is now merged
-and backported to stable branches so it'd be nice to get this merged
-too.
+Aside of that. If it's intentional and you think it's correct then you
+should have documented that in the code and also annotated it to not
+trigger santiziers.
+
+>> Given the limitations of the x86 vector space, which is not going away
+>> anytime soon, there are only two options IMO to handle such a scenario.
+>>=20
+>>   1) Tell the nvme/block layer to disable queue affinity management
+>>=20
+>>   2) Restrict the devices and queues to the nodes they sit on
+>
+> I have tried fixing this issue through nvme driver, but later
+> discovered that the same issue exists with virtio net.  Therefore, I
+> want to address this with a more general solution.
+
+I understand, but a general solution for this problem won't exist
+ever.
+
+It's very reasonable to restrict this for one particular device type or
+subsystem while maintaining the strict managed property for others, no?
+
+General solutions are definitely preferred, but not for the price that
+they break existing completely correct and working setups. Which is what
+your 2/2 patch does for sure.
 
 Thanks,
 
-Daniel
+        tglx
 
