@@ -1,179 +1,207 @@
-Return-Path: <linux-kernel+bounces-391751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6169B8B46
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:45:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF17C9B8B47
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:45:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DE12B21C04
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:45:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A8D282FC8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D5F14E2DA;
-	Fri,  1 Nov 2024 06:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE367153801;
+	Fri,  1 Nov 2024 06:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e1yPK6wq"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3k9YF9IY"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAB01448C1
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 06:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35CF14F115
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 06:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730443510; cv=none; b=ussEkSFKoE6mNFlHYPiwEAPmIQsYvUoKP1FfAh5cJUDZVZER/wpPEt3YdjdvcnTIoodBb2VYtcYsNkzW7HO60Jb6CnagqggdEBVP8Ayqd/lPLtjFyFFbTRCT45X4ZvzUT/Xg+OH80DbufH0rF7omKaYmgLB4Ijcv87WJjlCFjB0=
+	t=1730443514; cv=none; b=lgTptksCW14l7pJXFUIehs934FaVkzmRL844aNUtetWzoQKC5DgsDzJq9hCyL01Seta1QG6lUajCZQWIBqp8C1/nJlsnesQ9AW1ee5GWyiyUlVNDWiBtbJByH6Uj08Fp1TKIeYt5IpQs7pUeycxkvenJHX5mQ0+5Bpbt8XkvMN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730443510; c=relaxed/simple;
-	bh=f/eFC1evByRoBWC2obnndn3AQo1rcdhC7qzV++yByn4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HprKpg+FnjNwPbtw/8wp/jFAgQ9OPqTozRQqUtKWRW3xcAL6SWQ02il42E6Ci7e/MMWn6z0uPvDHXa2yduLTCk62J/Z6ipraSkwBfoc7543swmYbjYqeD7d0j0pukZNMKrQqrCOIzDLvUkLRUQjQYD5i/5eRUMBY2tnwETRjJ9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e1yPK6wq; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb518014b9so14060571fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 23:45:07 -0700 (PDT)
+	s=arc-20240116; t=1730443514; c=relaxed/simple;
+	bh=G5ggGuaVpWtCF31Oa4Amy7gU54oA09+xAmXcU0MnLbA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tBoNfrwtA7g96ugZjtXdnBOTUT/KqaBumsZYUfl2SIlFheszq0ae4nEHI0za8pm9TSi65E8A1rOVf5LemYP92Kfz8qMPPCSvjdcVGwMcGSg+dQGRR+9lsZpTGRiZWieW4YAU5/iJEZhuWraRknCUaCphJnzYphcqP6x9fU6oqIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3k9YF9IY; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e35bdb6a31so32752997b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 23:45:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730443506; x=1731048306; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=buwbwZlERL376t+nXnY+bTwXdGUxF7/rEqEox8uFaIA=;
-        b=e1yPK6wqFki4yiZQYp1VwBwjRT0jWau9N3q+oJFrZDfOrhJOrgBlKFTWf4yDznh2YW
-         vEx1iruLBFoEV6ysrtX1ZH11qhNcxhPCkNt37UIKmrIvVWN4Dti0wrkzdxM4ivLlkp7v
-         VC9ypzdk6Z+mQdThGR5+RxizkSPEaQwxbqGQuDk5soOoX8wyG8CLgWz9NxYsiTeFV0Ia
-         MmlHWEL/F3jEgzjohpHgoQXlezf0XN+/JTr5RftioWdm3Rb1e29fsuPi9ytAJ3/f3FoJ
-         Vq47SVoXieqipUjk2W7yEGZSR9PvBoF/AVYmgiPgT7CUUx0DBtAfwPFV99l6spfMcaXU
-         j4ng==
+        d=google.com; s=20230601; t=1730443511; x=1731048311; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wk7nI7vqLjvU2uvgdGyD/lG4tK8sfViYltbu/ttO3Eg=;
+        b=3k9YF9IYsVWUkODi7aZNsemhX9NrNyBWYttF4PX3fB/jsZ8DmGdwponX3umnLHe0k7
+         JzgFxfrRi0fQ4b5hAFpTF8HjbyHXK1LD1l1cb/QxXttoiKS6Fu2I88lKKs2vLYDHj+ZO
+         ok0OZpkv2vXbEGlnzkgMe+UysxrvUAexKUu4jWCoE0Ww/0JKkAjQ/Sz53hFOBv1SVwbZ
+         CmAqVahAIXly92+OtPmoYNdG1e/UIVc9K4+7cq/oUfCbBO8vNvOGQY2WfsGHVJtkyP3Z
+         aqDBhJ131Ivik8JalklmDJNjhwU3fCqRTCEq9j/50a5As3E6yEhTQ8vB+/HX9QjllapQ
+         8llw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730443506; x=1731048306;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=buwbwZlERL376t+nXnY+bTwXdGUxF7/rEqEox8uFaIA=;
-        b=CTrVig/kH7AshuCaRzTD46C33s4c+PZOS74DIFFQo2V+0UM2RjivJiLKWohcJGLq1D
-         kEaxi5ELfyWTCBqHASgjTBEdJ8EjpUitBu9Rd2V8zD2Bi/gc/k4SLkZpVmdtntYRG6m4
-         uQ0E+qf4cCcXdpwlv7kHASJwlJ/F0DDNr5x59wCyiGfgheOW+QSKK2H1It5vfFX5vKWb
-         M4tSimZXNAG5cFDhjOZMCxh1nz3Sc/htTi1vf8sVD4zdPLp42L2aTZfl5pTC3SpQSZ7i
-         lv9N72aZVlUmBj4pTXqg5sLnLFZ5+j5jS9BXtQptyAz6e3wcQBdFsByULu2GFzPAonix
-         UbFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOvEf/3C9Y2me2wlvO2vFUcg0LnoQt8Hs81lac18tfjIbF03kAxwI9ObqBo9j/ZbSYb1nisRpRHV97Z6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpky72BW2eZDD5d88ew/2v8wixhTBW9atHflW3I78r9Nn+MD/X
-	MZ8i45+eyU1P6bLPSalE7xqI1kR788CTltQ0Sj+DLlEX4Z4LePt5iWJ045Wv1vmZOQDTSMNoqxq
-	RYAblu+cSWhlkb3CdXNyaxaPesgGlA6KSPVU=
-X-Google-Smtp-Source: AGHT+IGrP23tPN6MMlCVWhvplz8qjlX5j5RlUeL4tH7d1yWnc1KxgwtfPHwcpLRh8Y9tku8eNio/rakFblLt9pDruHg=
-X-Received: by 2002:a2e:be05:0:b0:2fb:70a0:91e7 with SMTP id
- 38308e7fff4ca-2fcbdf6ff4fmr114026171fa.10.1730443505989; Thu, 31 Oct 2024
- 23:45:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730443511; x=1731048311;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wk7nI7vqLjvU2uvgdGyD/lG4tK8sfViYltbu/ttO3Eg=;
+        b=bTEVlpFxHJ8TOUA9y9HMibwAfB/7g9B1XktUp/4FtnAZdnET2pbP3bGBKWSziOmyDe
+         MzMI8bmNDRotPBAyGuon/4yaEUhlpienW0ckI8Kw8nh8pXzGL5Ce/HoNZFTCoRNn2x1o
+         /CCJCpE+JRornwD2A7nDZmqHq89OGNr0kL8C7oa26pR43LzUWT6VpMZv3h059gfh+Ooy
+         8z/Rx4h6Zf7UWZylW4yBRAiloHeK20yYiLZuJcHgGv0sisoOEpJ90Q6BS7Rv+YgZbsro
+         GEHMqKnU/KH/sTgHqwykaQ2uPNpc6GjxvYQj2vnsePvwUUygvBXCEF158cHIRBwI+lij
+         XMJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTQyB2/JOstNYyqpsSjdPAqqOMbv7ig+ZsvqaAY55Sd5clak7rYlt6r5QgxrZQN48MqC9vGAX5csfz29U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwdBOU6OrkTfnTe1uJMRNZlbrT8yg5fL2xSC2mHL0FPNEJ2LSV
+	HefQTfZte36qkMn0/g6X3bGjg1ehtO6mY8Bzef7FTlnr47rhgqqHHz8+R3mbS4gtyw2iANL2cAD
+	tursOwDG0bQ==
+X-Google-Smtp-Source: AGHT+IH86/LvJL7zohBENkvEob94IEgNdDq7UaeJygoLb+Ctdz9vST1ELgLj+vIeSoahkTX3KjZAQlBtdQ3E9w==
+X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:b1:7045:ac11:6237])
+ (user=davidgow job=sendgmr) by 2002:a25:3054:0:b0:e30:d445:a7c with SMTP id
+ 3f1490d57ef6-e30e5a03f4bmr3398276.1.1730443510674; Thu, 31 Oct 2024 23:45:10
+ -0700 (PDT)
+Date: Fri,  1 Nov 2024 14:44:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241031193606.87970-1-advaitdhamorikar@gmail.com> <87r07wufs7.ffs@tglx>
-In-Reply-To: <87r07wufs7.ffs@tglx>
-From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Date: Fri, 1 Nov 2024 12:14:54 +0530
-Message-ID: <CAJ7bepLOJZLwgm6f+RU=-xb0qPim-7VBi+062EJC5yT5_BmmpA@mail.gmail.com>
-Subject: Re: [PATCH-next] irqchip/renesas-rzv2h: Fix potentially mismatched datatype
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, anupnewsmail@gmail.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Message-ID: <20241101064505.3820737-1-davidgow@google.com>
+Subject: [PATCH v4 0/3] rust: kunit: Support KUnit tests with a user-space
+ like syntax
+From: David Gow <davidgow@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, 
+	"=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?=" <jose.exposito89@gmail.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Rae Moar <rmoar@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Benno Lossin <benno.lossin@proton.me>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Matt Gilbride <mattgilbride@google.com>
+Cc: David Gow <davidgow@google.com>, kunit-dev@googlegroups.com, 
+	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Thomas,
+This series was originally written by Jos=C3=A9 Exp=C3=B3sito, and has been
+modified and updated by Matt Gilbride and myself. The original version
+can be found here:
+https://github.com/Rust-for-Linux/linux/pull/950
 
-> and read through the matching documentation.
-My bad, I will be more imperative next time :)
+Add support for writing KUnit tests in Rust. While Rust doctests are
+already converted to KUnit tests and run, they're really better suited
+for examples, rather than as first-class unit tests.
 
-> In fact there is no problem with the existing code because the hardware
-> interrupt number range for this interrupt chip is guaranteed to be
-> smaller than UINT_MAX. IOW, a truncation from unsigned long to unsigned
-> int (on a 64-bit system) does not matter at all.
-I did not know about the interrupt range of the chip, so I
-assumed the truncation from 8 bytes to 4 might pose a problem.
+This series implements a series of direct Rust bindings for KUnit tests,
+as well as a new macro which allows KUnit tests to be written using a
+close variant of normal Rust unit test syntax. The only change required
+is replacing '#[cfg(test)]' with '#[kunit_tests(kunit_test_suite_name)]'
 
->If at all, then the proper change is either
->1) to make the related variables type irq_hw_number_t
-This seems like the better option to me. If it is needed,
-I will submit a patch v2 after waiting for some more feedback, if there's any.
+An example test would look like:
+	#[kunit_tests(rust_kernel_hid_driver)]
+	mod tests {
+	    use super::*;
+	    use crate::{c_str, driver, hid, prelude::*};
+	    use core::ptr;
 
-I have one question, static analyzers report an issue of a bad bit
-shift operation
-on line 307: tien = ICU_TSSR_TIEN(titsel_n);
-#define ICU_TSSR_TIEN(n) (BIT(7) << ((n) * 8))
+	    struct SimpleTestDriver;
+	    impl Driver for SimpleTestDriver {
+	        type Data =3D ();
+	    }
 
-From what I understand hwirq can possibly have values from 0 to 31
-If titsel_n ends up being a large remainder say 5, we can have a bad
-bitshift operation
-exceeding 64 bits.
-My humble apologies if my observations are completely off, I'm a
-beginner trying to learn
-Linux driver dev by looking at how other drivers work.
-If this is an issue what could be a possible method to fix this?
-I would be grateful if you or someone could point me to some relevant docs.
+	    #[test]
+	    fn rust_test_hid_driver_adapter() {
+	        let mut hid =3D bindings::hid_driver::default();
+	        let name =3D c_str!("SimpleTestDriver");
+	        static MODULE: ThisModule =3D unsafe { ThisModule::from_ptr(ptr::n=
+ull_mut()) };
 
-Thank you for your time and feedback,
+        	let res =3D unsafe {
+	            <hid::Adapter<SimpleTestDriver> as driver::DriverOps>::registe=
+r(&mut hid, name, &MODULE)
+	        };
+	        assert_eq!(res, Err(ENODEV)); // The mock returns -19
+	    }
+	}
 
-Best regards,
-Advait
 
-On Fri, 1 Nov 2024 at 02:54, Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Fri, Nov 01 2024 at 01:06, Advait Dhamorikar wrote:
-> > This patch updates the type of hw_irq to unsigned long to
->
-> Please do:
->
-> git grep 'This patch' Documentation/process/
->
-> and read through the matching documentation.
->
-> > match irq_hw_number_t.
-> >
-> > The variable hw_irq is defined as unsigned int at places,
-> > However when it is initialized using irqd_to_hwirq(), it returns
-> > an irq_hw_number_t, which inturn is a typedef for unsigned long.
->
-> We know that, but what is the problem this patch is actually solving?
->
-> >  static void rzv2h_icu_eoi(struct irq_data *d)
-> >  {
-> >       struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
-> > -     unsigned int hw_irq = irqd_to_hwirq(d);
-> > +     unsigned long hw_irq = irqd_to_hwirq(d);
-> >       unsigned int tintirq_nr;
->
-> It moves the type mismatch and potential truncation a few lines further
-> down:
->
->         tintirq_nr = hw_irq - ICU_TINT_START;
->
-> In fact there is no problem with the existing code because the hardware
-> interrupt number range for this interrupt chip is guaranteed to be
-> smaller than UINT_MAX. IOW, a truncation from unsigned long to unsigned
-> int (on a 64-bit system) does not matter at all.
->
-> I'm all for being type safe, but what you are doing is purely cosmetic.
->
-> If at all, then the proper change is either
->
->  1) to make the related variables type irq_hw_number_t
->
->     You cannot make assumptions about the type which is behind
->     irq_hw_number_t today. The type can change tomorrow, no?
->
-> or
->
->  2) Use a proper type cast which documents that the type conversion
->     including the potential truncation is intentional and correct.
->
->     This should not be an actual type cast, but a helper inline which
->     has the cast and explicitely returns an unsigned int.
->
-> I leave it to you to decide which variant is the correct one, but I'm
-> happy to answer your questions.
->
-> Thanks,
->
->         tglx
+Please give this a go, and make sure I haven't broken it! There's almost
+certainly a lot of improvements which can be made -- and there's a fair
+case to be made for replacing some of this with generated C code which
+can use the C macros -- but this is hopefully an adequate implementation
+for now, and the interface can (with luck) remain the same even if the
+implementation changes.
+
+A few small notable missing features:
+- Attributes (like the speed of a test) are hardcoded to the default
+  value.
+- Similarly, the module name attribute is hardcoded to NULL. In C, we
+  use the KBUILD_MODNAME macro, but I couldn't find a way to use this
+  from Rust which wasn't more ugly than just disabling it.
+- Assertions are not automatically rewritten to use KUnit assertions.
+
+---
+
+Changes since v3:
+https://lore.kernel.org/linux-kselftest/20241030045719.3085147-2-davidgow@g=
+oogle.com/T/
+- The kunit_unsafe_test_suite!() macro now panic!s if the suite name is
+  too long, triggering a compile error. (Thanks, Alice!)
+- The #[kunit_tests()] macro now preserves span information, so
+  errors can be better reported. (Thanks, Boqun!)
+- The example tests have been updated to no longer use assert_eq!() with
+  a constant bool argument (which triggered a clippy warning now we
+  have the span info).
+
+Changes since v2:
+https://lore.kernel.org/linux-kselftest/20241029092422.2884505-1-davidgow@g=
+oogle.com/T/
+- Include missing rust/macros/kunit.rs file from v2. (Thanks Boqun!)
+- The kunit_unsafe_test_suite!() macro will truncate the name of the
+  suite if it is too long. (Thanks Alice!)
+- The proc macro now emits an error if the suite name is too long.
+- We no longer needlessly use UnsafeCell<> in
+  kunit_unsafe_test_suite!(). (Thanks Alice!)
+
+Changes since v1:
+https://lore.kernel.org/lkml/20230720-rustbind-v1-0-c80db349e3b5@google.com=
+/T/
+- Rebase on top of the latest rust-next (commit 718c4069896c)
+- Make kunit_case a const fn, rather than a macro (Thanks Boqun)
+- As a result, the null terminator is now created with
+  kernel::kunit::kunit_case_null()
+- Use the C kunit_get_current_test() function to implement
+  in_kunit_test(), rather than re-implementing it (less efficiently)
+  ourselves.
+
+Changes since the GitHub PR:
+- Rebased on top of kselftest/kunit
+- Add const_mut_refs feature
+  This may conflict with https://lore.kernel.org/lkml/20230503090708.252431=
+0-6-nmi@metaspace.dk/
+- Add rust/macros/kunit.rs to the KUnit MAINTAINERS entry
+
+---
+
+Jos=C3=A9 Exp=C3=B3sito (3):
+  rust: kunit: add KUnit case and suite macros
+  rust: macros: add macro to easily run KUnit tests
+  rust: kunit: allow to know if we are in a test
+
+ MAINTAINERS          |   1 +
+ rust/kernel/kunit.rs | 194 +++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs   |   1 +
+ rust/macros/kunit.rs | 168 +++++++++++++++++++++++++++++++++++++
+ rust/macros/lib.rs   |  29 +++++++
+ 5 files changed, 393 insertions(+)
+ create mode 100644 rust/macros/kunit.rs
+
+--=20
+2.47.0.199.ga7371fff76-goog
+
 
