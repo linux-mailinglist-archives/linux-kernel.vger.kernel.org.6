@@ -1,104 +1,117 @@
-Return-Path: <linux-kernel+bounces-392171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5257D9B908E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:47:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352819B908C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:46:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F651F228C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:47:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B6C01C21381
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF57D19B586;
-	Fri,  1 Nov 2024 11:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2059C14A62B;
+	Fri,  1 Nov 2024 11:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="KJKFw353"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F9814A62B;
-	Fri,  1 Nov 2024 11:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QWyn/klj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B0D15359A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730461624; cv=none; b=H+MZUlrHAbeD3AoQqvtFk78SLQglnQfmdrqN0g9tFdFc6v8hLVugyUjWjIwB7cwKh9E95OHqb3GWfvc5SdM7nM6qZIEXNhalzHaw4RSJIFPwh464sZn/urX3ABVZgSsPAsY01JPg8mxJYUmXNA+3o8m/zR8qXPCsn1Kfwv795uE=
+	t=1730461605; cv=none; b=Asd39/yux0EMMzd5yJHvKs9LPJqrwiPjBwNN4IVtGXVsDoHrFQQEloLHT1lDSRo/scyZav0oJTTX8r/aFFnOaYdcBimnxUJ6XL16zdrdGgiSIMAO24n7b7diiNyYjDeN8kaPFn9ccwsfdn1NZkMMR45kKzzGW8B3u75q+P/sYms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730461624; c=relaxed/simple;
-	bh=2FFDvupKdpH2nMa7kFYy8HYE5gnZkKHKaoyzng9SVMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1j9XYXlO6cA8s9PlTjZHoaF4UrvJwYW5VPiu3ucaZGyygZuB7d5sfaVYpqZY7h1dPORVLJ0kxoKFIXZpxIvIBthgdLTyQhMbhua8K+HdGsEncPva3MBNMyclXhLxeXFQHMaQw8Kzn0fq2vwSXrp8L1TSHaJ18zpOf6B7YlZRgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=KJKFw353; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=vBhhEiomKrzvqxGLGcDjM350Ad9Z2r+Ry5z4X3rrDy8=;
-	b=KJKFw353fhDs710pbkq9vTdnMRsejfZ5iqwWlIWRjb1RcZwxk4IfCUPm3QLqFA
-	752EO89ExgeAZ0rHV2XEe2vHdu5s414AXZpsn7MoRT+oXfuVomORhj5HijuR7GXq
-	pj/6wl0Zs9EUHvikIXj9YKlsYf1DHuQUcihnccmjbyz3Q=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgBX8YiMvyRnpAFrAQ--.14187S3;
-	Fri, 01 Nov 2024 19:46:22 +0800 (CST)
-Date: Fri, 1 Nov 2024 19:46:20 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>,
-	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] arm64: dts: imx8mq-librem5: remove undocument
- property 'extcon' for usb-pd@3f
-Message-ID: <ZyS/jGUf2C2VlJ4J@dragon>
-References: <20241023220252.1392585-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1730461605; c=relaxed/simple;
+	bh=Ao7+jhiwR7VMIsjhTd++zXohFMFnpGuaBIUcGCft5Cc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=APXJ3xZ0HqTTUENOCwrVXFNKxf+Jb8WHqV8sn2p7gX9EmcyRmI1EmjHydcImziqurZCQVB3tWazdmPdnIqpa5tXK7H4pNF9cmQkaVLMSY3L1tCuahWRa0X+RHV+ogyc9AVcnI3MWsSHkCvg9yFK14bSpKnl8ji50Jmv4DaM6DP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QWyn/klj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730461601;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ao7+jhiwR7VMIsjhTd++zXohFMFnpGuaBIUcGCft5Cc=;
+	b=QWyn/kljIP3JnXLIqW8bvXc0L5vud+QW7vYu7Y5fCF25xLc7kuGJZbAI92thJFAjbDobts
+	OPB4VGg5ZuZp81zPSY2gHFOJ8rD1QKlm3oP5UjNVhCgAZZQjDqfHwuAVd0nn0s9VNT8xrB
+	m1E79o2s3UR+MpiISIdB3xmvz0AN0D0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-275-DcnFqWBfMsK1woMaL7OklA-1; Fri, 01 Nov 2024 07:46:40 -0400
+X-MC-Unique: DcnFqWBfMsK1woMaL7OklA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-431604a3b47so11650475e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:46:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730461599; x=1731066399;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ao7+jhiwR7VMIsjhTd++zXohFMFnpGuaBIUcGCft5Cc=;
+        b=M9iOLuL5xwFa1NCKxKMdaqX7RXwOdZzIrpOodNZKDhRbP8S6LITyNvNfLS2FUzExSC
+         VeaBKiSLkfBe6kjoJ9nCcZYDmnevSLYXBZt0+oJ9Bgp5C7qnpqrahFpURV5xx9J37qxE
+         LA6zdoaQauFCzCr5Lr8s3/eeSXMiaXGZ7o1UFxjw2M5U1+p/mj1bZdWpEOXC4q9QYjNg
+         50Ckd182jZLAEbzJa54jcntzoGAuP1Igkjcoj/O5EVoenEK52BELbNu2qo8eX09pZQgo
+         dZ62Cwk1EM8nEy1V6tw/N8P+G099SEni4cYxNAX7AAQIriTeeEG7DU6jcPwpCKSy06dW
+         EMOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkyZavUQRGEo98SQbUQ/+EecjcAwMcPvj8d/0rRwVjDbUOLnEtmVvHc1W4E/+Zh6zo0Kxda3nOPtDMU9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAZ9dLMRUpNrZXgmrpmkAKnRhWj7an+5t4o3L84vocXZ9+gwTo
+	x/GQLApuKJJtuZ/L+7DtFgn07bWphK4N9WlEcFExOnbEsb2DgqmT9zVaeZ4vW5tvV7qJOB1UhW4
+	3FGpD6SLasxD1H/RZcHtisaBXL4PBod4wF0dAXxF7WCl8P8k3bKTp5ttTpNUUnQ==
+X-Received: by 2002:a05:600c:1548:b0:42f:80f4:ab31 with SMTP id 5b1f17b1804b1-4319acadc1emr190571875e9.18.1730461599298;
+        Fri, 01 Nov 2024 04:46:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHpDaFcEn6EWvQmh/U5bQPmg4IvB1Z9BcupW5ULubk3inI7A9bmwOF6H9T18cXj699H1zpfAQ==
+X-Received: by 2002:a05:600c:1548:b0:42f:80f4:ab31 with SMTP id 5b1f17b1804b1-4319acadc1emr190571655e9.18.1730461598850;
+        Fri, 01 Nov 2024 04:46:38 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e853esm90363425e9.8.2024.11.01.04.46.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 04:46:37 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id CE513164B94C; Fri, 01 Nov 2024 12:46:36 +0100 (CET)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Maciej
+ Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev
+ <sdf@fomichev.me>, Magnus Karlsson <magnus.karlsson@intel.com>,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 04/18] bpf, xdp: constify some bpf_prog *
+ function arguments
+In-Reply-To: <20241030165201.442301-5-aleksander.lobakin@intel.com>
+References: <20241030165201.442301-1-aleksander.lobakin@intel.com>
+ <20241030165201.442301-5-aleksander.lobakin@intel.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Fri, 01 Nov 2024 12:46:36 +0100
+Message-ID: <87y1239nxf.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023220252.1392585-1-Frank.Li@nxp.com>
-X-CM-TRANSID:Ms8vCgBX8YiMvyRnpAFrAQ--.14187S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWruryDuw43uFyfJrWkZr4rAFb_yoWkJFb_AF
-	4xuw4rJrWrAFWIgas5tw4kZ3W2grWUC34ftr1rXr4kGryav398Ca97Wr4rGrn8GFWFkrZ8
-	ArZxXF15AryYkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8voGJUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEhWKZWckdPvVbQAAsc
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Copy Sebastian for comment if any.
+Alexander Lobakin <aleksander.lobakin@intel.com> writes:
 
-Shawn
+> In lots of places, bpf_prog pointer is used only for tracing or other
+> stuff that doesn't modify the structure itself. Same for net_device.
+> Address at least some of them and add `const` attributes there. The
+> object code didn't change, but that may prevent unwanted data
+> modifications and also allow more helpers to have const arguments.
+>
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 
-On Wed, Oct 23, 2024 at 06:02:52PM -0400, Frank Li wrote:
-> Remove undocment property 'extcon' for usb-pd@3f to fix below CHECK_DTBS
-> warnings:
-> arch/arm64/boot/dts/freescale/imx8mq-librem5-r2.dtb: usb-pd@3f: 'extcon' does not match any of the regexes: 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/usb/ti,tps6598x.yaml#
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-> index 1b39514d5c12a..61bdb43dec31d 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-> @@ -794,7 +794,6 @@ typec_pd: usb-pd@3f {
->  		interrupt-parent = <&gpio1>;
->  		interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
->  		interrupt-names = "irq";
-> -		extcon = <&usb3_phy0>;
->  		wakeup-source;
->  
->  		connector {
-> -- 
-> 2.34.1
-> 
+Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
 
 
