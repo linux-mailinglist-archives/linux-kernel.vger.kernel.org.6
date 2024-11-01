@@ -1,47 +1,74 @@
-Return-Path: <linux-kernel+bounces-391757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5779B8B54
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:46:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092699B8B5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F00131C21F58
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:46:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 862411F22F90
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845BF153BED;
-	Fri,  1 Nov 2024 06:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2384A14EC4B;
+	Fri,  1 Nov 2024 06:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="A3wQXONe"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vqXvCOO9"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC1F13C836;
-	Fri,  1 Nov 2024 06:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693F214F10F
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 06:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730443569; cv=none; b=UBxKx3EMt92S67Jp0WLaQgi4pjWqv82ABDELn+TTSgMxelJtumTPlcvsciYBfiXIckfsB3mwMCBK4pn1m/wWzgfaYfEOhW0h+3tPgM/r3287ni67XcHQlksNfTHG75qRwdzpA/DdcQCaWHKyWovxZPIFdPfbAdHujy7oxqOiM+4=
+	t=1730443811; cv=none; b=qUSsbwUtX/tdN+mTmOa+Z2FZrEcvF6Jc4qs/z3cAEDR3cnJjdvwNBVh1n/pPv3OPgaN3MXY+LyztZB7lJ+IOYQddnJpyoVY4iwWd7MR1V5RKYOyk3X0Wa/VWbIcXyqT3ujkEECNBCgKdzJj1TInsZ+tUkHbE1DQk/EY3ikGoou4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730443569; c=relaxed/simple;
-	bh=7do0ixXu9WwnMA6mTGgu29YbF/UAUoWuDe+jY/qVAl8=;
+	s=arc-20240116; t=1730443811; c=relaxed/simple;
+	bh=ODJ1U56tKN/dg4KO8D11FzeojPk4P9LEzQa3wCw6N0g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fThlE3Y+znaZ1gTstCEgDF44ywvanHkXbvAd/zimwWtw+abObURWm/F7Tj1W02GpmzlQAdQeM22yfQLUlVtJ/al8zGcK9oZX+S1JHoXfgfqemqSLQbmr97Dha5NwibBYZSQ2lYABRITPXjXFkz/hAFdckpCURNBEk5uuo/6OjX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=A3wQXONe; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4D08F710;
-	Fri,  1 Nov 2024 07:45:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730443559;
-	bh=7do0ixXu9WwnMA6mTGgu29YbF/UAUoWuDe+jY/qVAl8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=A3wQXONeBC0zXLjIqQQV19uZqNjeY+8D70YmE5ykXAsNQWqVcotvXxiviXVpuNHOv
-	 cASky8l0ktBagf07XUSdmoNT3WrqrjhVPVNG6kMr/LBZWr+/z/COgHcs2bfFwRSpEx
-	 VtWo+sSZaa558198BvMxVVkcryOGpZmtNB65XjTE=
-Message-ID: <0741871e-3028-4159-ba1e-96615c045b7b@ideasonboard.com>
-Date: Fri, 1 Nov 2024 08:46:00 +0200
+	 In-Reply-To:Content-Type; b=sstxyz30PbExfyFXsnEDk4FRCTQdLVKUBt4INgn/n99omn7VOZi1nTOeU03/uf6+4S8rvOZWXftP8Rmg3wOzRc6XATdSlQuguNwhDr+1MY20yn3mU9UbZPbCeCo1OYjlA9L5BF9ad3mnEiDqEvce2w/jvNiMTEMZFxTZDhwu9+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vqXvCOO9; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a039511a7so25185666b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 23:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730443807; x=1731048607; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=BoHoD7USV7MEAnZlU2UJzxgFTmdUTbHvC51Pi8erYfk=;
+        b=vqXvCOO9PmuaTgLkDPEkIzZuuHnYKs2Y6KSafQ9z2I4LXgSRA4yaiomz2zWfSCrsTr
+         hO0lADObW1nlJdBRidy9tVJ5TFaWo6Az73X8HiuTakIB2rZI8ntnTHkj50zWd8yRHLD4
+         oEazAqaxcAYjwhHUm2pUJnn0l6roI2Quv60lvy+kmgKNqWZfbsY/EnNLt4kQBbau47wk
+         vuJlxUJqnb60FCZW/oPW+AXI+YCDOGNCgT1nLm7sT6rwY0MD2OK2O/tL6lhkjaiEswD8
+         g4jgBeJ1bOcqekyDZyXAsneJXQli68KWOFwEcU73y1qnd8ua6++Of/EnKRTCfzgK64ju
+         drxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730443807; x=1731048607;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BoHoD7USV7MEAnZlU2UJzxgFTmdUTbHvC51Pi8erYfk=;
+        b=gB90aMx9PVD36pBtwvwtn+0JO57T0e5ZnsoCfSZ4gOP8nXmgh0BFX6cU1W0D8REtck
+         3xUHHSidcwbFtNhQWznV9CPf9UC+m0S/lQYkOHlMEt8sh6B8cTPsLw9XZQi7AvFU6l52
+         EBtCY3BmqTHxzdX2N5tB7EJK0PdH5xpmPpJsPpFKiS5fNwcZZnTOwON/Wwp4Sye2n0DQ
+         c7SKWcX0/H4UUuYoLA+/WxRpiphmS4fQrQCnZ7JoWMmEZT8LY3DEXoMH4sdXzH5vJVI5
+         Qu+xDt2u7DZVPTGxGNU/WjoZcWwaz0F+vz+f95tzbPEJVN4GOdyTxdTIIcB42m2u2BI9
+         9/wA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxvJRNXgeHFnl8GiGuGwHOZpthdmuC3bytjQ3hz+rR+b0JVuBKz9EjDt1WH9i5cNG8l8zN1APLwS9xuts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyitPNCqTfKcVYwH2Y6Qh2WDh2ad6AUd2WoMwaelN7GmUKmwcWY
+	rRv5rMrxSfT/kidth+/Al9psTCKES2QvuCNcoQHcqKe5DDuZTDiznwapvFnoUeY=
+X-Google-Smtp-Source: AGHT+IEAYHZTjJ6/KrgtwRF4vrEkWZBl/PoMNQCnKqHSKQ5lDc5aBqd9u5WLmF5kBRtx87lGmWqLNA==
+X-Received: by 2002:a05:6402:5256:b0:5cb:b616:5ed5 with SMTP id 4fb4d7f45d1cf-5cbbf936330mr7700329a12.5.1730443806785;
+        Thu, 31 Oct 2024 23:50:06 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac74cba4sm1252114a12.6.2024.10.31.23.50.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 23:50:05 -0700 (PDT)
+Message-ID: <aa6b6171-24ad-4dea-b0cc-28d7111416b7@linaro.org>
+Date: Fri, 1 Nov 2024 07:50:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,174 +76,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] pmdomain: ti-sci: Set PD on/off state according to
- the HW state
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, Nishanth Menon <nm@ti.com>,
- Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, vishalm@ti.com, sebin.francis@ti.com,
- d-gole@ti.com, Devarsh Thakkar <devarsht@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>
-References: <20241022-tisci-pd-boot-state-v1-1-849a6384131b@ideasonboard.com>
- <7hmsilqrw3.fsf@baylibre.com>
- <0f027b8e-9c41-4754-923b-2a285fb9593a@ideasonboard.com>
- <CAPDyKFqoXfooy-ipo_aE91TwFQOaj=Z5SZJ4G_4Hh7jCvkyTVQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: rng: add binding for BCM74110 RNG
+To: Markus Mayer <mmayer@broadcom.com>
+Cc: Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Aurelien Jarno <aurelien@aurel32.net>, Conor Dooley <conor+dt@kernel.org>,
+ Daniel Golle <daniel@makrotopia.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Francesco Dolcini <francesco.dolcini@toradex.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Device Tree Mailing List <devicetree@vger.kernel.org>,
+ Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20241030213400.802264-1-mmayer@broadcom.com>
+ <20241030213400.802264-2-mmayer@broadcom.com>
+ <db7b7745-404d-45f7-a429-c1c747de8e6b@linaro.org>
+ <CAGt4E5ud=0rwSKBTOAsx0RMB3Pkjo+HHxZ_JLPBFbOSZUTCRVg@mail.gmail.com>
 Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <CAPDyKFqoXfooy-ipo_aE91TwFQOaj=Z5SZJ4G_4Hh7jCvkyTVQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAGt4E5ud=0rwSKBTOAsx0RMB3Pkjo+HHxZ_JLPBFbOSZUTCRVg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 31/10/2024 12:25, Ulf Hansson wrote:
-> On Thu, 31 Oct 2024 at 08:39, Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
+On 31/10/2024 19:55, Markus Mayer wrote:
+> On Thu, 31 Oct 2024 at 00:29, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
 >>
->> Hi,
->>
->> On 30/10/2024 22:04, Kevin Hilman wrote:
->>> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> writes:
+>> On 30/10/2024 22:33, Markus Mayer wrote:
+>>> Add a binding for the random number generator used on the BCM74110.
 >>>
->>>> At the moment the driver sets the power state of all the PDs it creates
->>>> to off, regardless of the actual HW state. This has two drawbacks:
->>>>
->>>> 1) The kernel cannot disable unused PDs automatically for power saving,
->>>>      as it thinks they are off already
->>>>
->>>> 2) A more specific case (but perhaps applicable to other scenarios
->>>>      also): bootloader enabled splash-screen cannot be kept on the screen.
->>>>
->>>> The issue in 2) is that the driver framework automatically enables the
->>>> device's PD before calling probe() and disables it after the probe().
->>>> This means that when the display subsystem (DSS) driver probes, but e.g.
->>>> fails due to deferred probing, the DSS PD gets turned off and the driver
->>>> cannot do anything to affect that.
->>>>
->>>> Solving the 2) requires more changes to actually keep the PD on during
->>>> the boot, but a prerequisite for it is to have the correct power state
->>>> for the PD.
->>>>
->>>> The downside with this patch is that it takes time to call the 'is_on'
->>>> op, and we need to call it for each PD. In my tests with AM62 SK, using
->>>> defconfig, I see an increase from ~3.5ms to ~7ms. However, the added
->>>> feature is valuable, so in my opinion it's worth it.
->>>>
->>>> The performance could probably be improved with a new firmware API which
->>>> returns the power states of all the PDs.
+>>> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
+>>> ---
+>>>  .../bindings/rng/brcm,bcm74110.yaml           | 35 +++++++++++++++++++
+>>>  1 file changed, 35 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/rng/brcm,bcm74110.yaml
 >>>
->>> Agreed.  I think we have to pay this performance price for correctness,
->>> and we can optimizie it later with improvements to the SCI firmware and
->>> a new API.
->>>
->>>> There's also a related HW issue at play here: if the DSS IP is enabled
->>>> and active, and its PD is turned off without first disabling the DSS
->>>> display outputs, the DSS IP will hang and causes the kernel to halt if
->>>> and when the DSS driver accesses the DSS registers the next time.
->>>
->>> Ouch.
->>>
->>>> With the current upstream kernel, with this patch applied, this means
->>>> that if the bootloader enables the display, and the DSS driver is
->>>> compiled as a module, the kernel will at some point disable unused PDs,
->>>> including the DSS PD. When the DSS module is later loaded, it will hang
->>>> the kernel.
->>>>
->>>> The same issue is already there, even without this patch, as the DSS
->>>> driver may hit deferred probing, which causes the PD to be turned off,
->>>> and leading to kernel halt when the DSS driver is probed again. This
->>>> issue has been made quite rare with some arrangements in the DSS
->>>> driver's probe, but it's still there.
->>>>
->>>> So, because of the DSS hang issues, I think this patch is still an RFC.
->>>
->>> Like you said, I think that DSS hang is an issue independently of this
->>> patch, so it shouldn't hold this up IMO.
+>>> diff --git a/Documentation/devicetree/bindings/rng/brcm,bcm74110.yaml b/Documentation/devicetree/bindings/rng/brcm,bcm74110.yaml
+>>> new file mode 100644
+>>> index 000000000000..acd0856cee72
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/rng/brcm,bcm74110.yaml
 >>
->> In current upstream, if the bootloader has enabled the display, we most
->> likely won't hit the DSS hang issue as the PD will stay on until the DSS
->> driver has had a chance to probe, and the driver takes actions to avoid
->> the hang issue.
->>
->> With this patch applied, the PD may be turned off before the DSS driver
->> has had a chance to probe, causing the board to hang when the DSS driver
->> probes the first time.
->>
->> That's why I'm a bit hesitant to apply this. It could mean that for some
->> people their board stops booting.
->>
->> I'm not even sure what would be the perfect fix for this hang problem...
->>
->> We could have some built-in early boot code which checks if the DSS is
->> enabled, and disables it, so that the hang issue won't happen. But
->> that's not good if we try to keep the boot splash on the screen until
->> the userspace takes over.
->>
->> Alternatively we could, somehow, mark the DSS powerdomain to be handled
->> in a special way: if the PD is enabled at boot time, it will be kept
->> enabled until the DSS driver (somehow) changes the PD back to normal
->> operation (and if DSS driver is never loaded, PD will stay on).
+>> Filename as compatible.
 > 
-> This option is kind of what I am working on. Although, the goal is to
-> keep the code generic, so ideally we should not need any changes in
-> the DSS driver to make this work. Let's see.
+> I am not sure what you mean by this. That the filename should match
+> the compatible string? I did change the filename to
 
-If you need someone to do some testing, you know who to ask =).
+Yes.
 
-> That said, it sounds like we should defer $subject patch until we have
-> a solution for the above, right?
-
-Yes, I would say so.
-
-I'll collect the tags, and will resend this patch (as a non-RFC) when I 
-think it's safe.
-
-Thanks for the feedback, Kevin and Ulf.
-
-  Tomi
+Best regards,
+Krzysztof
 
 
