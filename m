@@ -1,85 +1,168 @@
-Return-Path: <linux-kernel+bounces-392012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BF09B8E97
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:06:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548CA9B8E9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B311F2223F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:06:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85BE71C20D02
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD29915CD52;
-	Fri,  1 Nov 2024 10:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C9315B54A;
+	Fri,  1 Nov 2024 10:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNaEA83R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZbCr/7GF"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2452F14F9F8;
-	Fri,  1 Nov 2024 10:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C856F14F9F8;
+	Fri,  1 Nov 2024 10:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730455558; cv=none; b=P4GSUGfp/CeveleapVKwh6sGq0LoJ1uxdmo7Yl//AZlYQXthBua2WsiCG9NLa0guc0PVUitFPbHPOze1x1QE4EOOLQcCol66EcYRdLAbd5ICbUQm2sOQG0Yr5NLNBxZVvI8k+FmJ0ap7w0y+J1AtQeCWy6hc/g0w90B/HJFurms=
+	t=1730455599; cv=none; b=dRJX8+iYDQWT/ZL9+PZKkeaPX8Pr5KryKBn5qOk/itISQLPfhecUBErZQiXOjBKYkig5oPJua16DAICVPMaJxwfLCoSNMslSfhAkhdgOcZZkUgqbC0lAp+jQKJ92BCPa2McQOsqdwDxYs+CPHKn1l3A/iEyrdiKIoME8sANvZmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730455558; c=relaxed/simple;
-	bh=234I1ZQTeGUQ7AweUIyteCig/kRhjTiW4dwUb89B+L4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bVFJXmKHCmFM/CCyi2vv81KlC/obOG05JoGRnja+VYcSHqV4Meo9bTCGbT2VaPLjtq9ynOuP9t/MNFQXeDNiaL5SH63X+6PIr3yL+p/KsYdHn5YzNOXjb6wetUf3KK8gNyTXas4siYkZxdtXqqPtVtGwDBuZsrCS+v03cP7T0tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNaEA83R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5FEFC4CECD;
-	Fri,  1 Nov 2024 10:05:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730455557;
-	bh=234I1ZQTeGUQ7AweUIyteCig/kRhjTiW4dwUb89B+L4=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=oNaEA83R7bQWz5ryOo6znpeaj5gIJPWSCai2b0kOxa93tMyynXXhAJRdTr73oxjSH
-	 wAVUsHNXjdWZORdwnVd5ddrynIMsydVOwBO7CqzEQk+YUSAjB7/5SZz5NjG+1S9rx/
-	 M3VBytEy9MeR80PdYDu37io8PvuZwf7j7zoKfRTGU5VFJdjwHmmDZJ7NDdj4KdvMWr
-	 brfztEtOTssQI3WtsZZAy5XOUaXg//x6gcwqAMurzDGtSI7ChflE6J/bARtdIV5yMv
-	 xUZ7yHFmp5G5JvzbYc48Xo8UGhPE6LOlqhUN51qeQJrZSi9Dm5Cd+lE/Ay+/yq8SVT
-	 re1KfmRmcVpBw==
+	s=arc-20240116; t=1730455599; c=relaxed/simple;
+	bh=YVhSfI05XHIi1Dl9EmYvodItKEm9CBoIyMk/S4f2RMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGnOl3w6wL3zlHyqBC6981eJEGYDK7QVbWW0w2mk92vEPBj85NU5dcdg7jM6amaw332vMp/qo549P+vQx/1wVnxsaq/ILPVzuXkRt7ELb8Ivrmi38dzioKiExJnvFSLE24N+tb/h2MJY9Z/1wsSzE+MmShBEcqb8l0SltHMU81U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZbCr/7GF; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cf5fEKqyg0JCHgtnclveqmepDTzyGOuykD6LHhl+fJE=; b=ZbCr/7GF2MOJ1weTB5sm/iGsCp
+	ukjlXVB+BCo8hMOpOWMOIbb+7UMTGun2L6T5VUsz6s2R774ZWGu1/YHfexDwaoqGuV2a6cjxcBA5k
+	YK2hNI27rQdRKPVFTfW+JsKElmpubX+IExaxLDMao864N+ZTh+jdDKTN8/17YW2sw65wnziSPm/DJ
+	nxLuRqbnZ24C58repf/BC8hwrHlNwgsV0eQTefBvbqkxrDoKj+2FWXNt4LGFxH+pbQWrabbXPMJRe
+	/f3GoMvZQLi1YCE646tt/7Hhc0Fe+zdQ/3dzeHZeED46AZgV6w5nDBnCnbio0jF6bRBKyfCXJB8JC
+	oDVHMOQA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6oXq-0000000Af1V-3cwN;
+	Fri, 01 Nov 2024 10:06:26 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E7525300359; Fri,  1 Nov 2024 11:06:17 +0100 (CET)
+Date: Fri, 1 Nov 2024 11:06:17 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org,
+	surenb@google.com, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] sched: Define sched_clock_irqtime as static key
+Message-ID: <20241101100617.GV14555@noisy.programming.kicks-ass.net>
+References: <20241101031750.1471-1-laoar.shao@gmail.com>
+ <20241101031750.1471-2-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 01 Nov 2024 12:05:53 +0200
-Message-Id: <D5ARAQRDROGW.3MEBL71LJ3GF2@kernel.org>
-Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
- <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
- <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
- <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
- <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
- <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
- <trenchboot-devel@googlegroups.com>
-Subject: Re: [PATCH v11 17/20] tpm: Add ability to set the default locality
- the TPM chip uses
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Ross Philipson" <ross.philipson@oracle.com>,
- <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
- <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>
-X-Mailer: aerc 0.18.2
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
- <20240913200517.3085794-18-ross.philipson@oracle.com>
-In-Reply-To: <20240913200517.3085794-18-ross.philipson@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101031750.1471-2-laoar.shao@gmail.com>
 
-On Fri Sep 13, 2024 at 11:05 PM EEST, Ross Philipson wrote:
-> Curently the locality is hard coded to 0 but for DRTM support, access
-> is needed to localities 1 through 4.
+On Fri, Nov 01, 2024 at 11:17:47AM +0800, Yafang Shao wrote:
+> Since CPU time accounting is a performance-critical path, let's define
+> sched_clock_irqtime as a static key to minimize potential overhead.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> ---
+>  kernel/sched/cputime.c | 16 +++++++---------
+>  kernel/sched/sched.h   |  1 +
+>  2 files changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+> index 0bed0fa1acd9..d0b6ea737d04 100644
+> --- a/kernel/sched/cputime.c
+> +++ b/kernel/sched/cputime.c
+> @@ -7,6 +7,8 @@
+>   #include <asm/cputime.h>
+>  #endif
+>  
+> +DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
+> +
+>  #ifdef CONFIG_IRQ_TIME_ACCOUNTING
+>  
+>  /*
+> @@ -22,16 +24,14 @@
+>   */
+>  DEFINE_PER_CPU(struct irqtime, cpu_irqtime);
+>  
+> -static int sched_clock_irqtime;
+> -
+>  void enable_sched_clock_irqtime(void)
+>  {
+> -	sched_clock_irqtime = 1;
+> +	static_branch_enable(&sched_clock_irqtime);
+>  }
+>  
+>  void disable_sched_clock_irqtime(void)
+>  {
+> -	sched_clock_irqtime = 0;
+> +	static_branch_disable(&sched_clock_irqtime);
+>  }
+>  
+>  static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
+> @@ -57,7 +57,7 @@ void irqtime_account_irq(struct task_struct *curr, unsigned int offset)
+>  	s64 delta;
+>  	int cpu;
+>  
+> -	if (!sched_clock_irqtime)
+> +	if (!static_branch_likely(&sched_clock_irqtime))
+>  		return;
+>  
+>  	cpu = smp_processor_id();
+> @@ -90,8 +90,6 @@ static u64 irqtime_tick_accounted(u64 maxtime)
+>  
+>  #else /* CONFIG_IRQ_TIME_ACCOUNTING */
+>  
+> -#define sched_clock_irqtime	(0)
+> -
+>  static u64 irqtime_tick_accounted(u64 dummy)
+>  {
+>  	return 0;
 
-Why?
+This makes no sense... in the IRQ_TIME_ACCOUNTING=n case you shouldn't
+be using the static key.
 
->
-> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-
-BR, Jarkko
+> @@ -478,7 +476,7 @@ void account_process_tick(struct task_struct *p, int user_tick)
+>  	if (vtime_accounting_enabled_this_cpu())
+>  		return;
+>  
+> -	if (sched_clock_irqtime) {
+> +	if (static_branch_likely(&sched_clock_irqtime)) {
+>  		irqtime_account_process_tick(p, user_tick, 1);
+>  		return;
+>  	}
+> @@ -507,7 +505,7 @@ void account_idle_ticks(unsigned long ticks)
+>  {
+>  	u64 cputime, steal;
+>  
+> -	if (sched_clock_irqtime) {
+> +	if (static_branch_likely(&sched_clock_irqtime)) {
+>  		irqtime_account_idle_ticks(ticks);
+>  		return;
+>  	}
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 081519ffab46..038ce65d6635 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -3179,6 +3179,7 @@ struct irqtime {
+>  };
+>  
+>  DECLARE_PER_CPU(struct irqtime, cpu_irqtime);
+> +DECLARE_STATIC_KEY_FALSE(sched_clock_irqtime);
+>  
+>  /*
+>   * Returns the irqtime minus the softirq time computed by ksoftirqd.
+> -- 
+> 2.43.5
+> 
 
