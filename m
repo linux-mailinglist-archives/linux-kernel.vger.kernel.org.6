@@ -1,139 +1,209 @@
-Return-Path: <linux-kernel+bounces-392452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C55A9B945E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:26:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 999769B9460
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:27:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DBAC1C218F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:26:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3561F21ED9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654D21C729B;
-	Fri,  1 Nov 2024 15:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DB21C7287;
+	Fri,  1 Nov 2024 15:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l17+oQiR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t+LvVyWP"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B718A1A3031;
-	Fri,  1 Nov 2024 15:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6CB1C68A6
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 15:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730474801; cv=none; b=IZxfCuUHAYkR3zagp/CS0xxZv342fySe8aVp7cMoM55v6BdIKJfVeiTz00ArjD7z8TZWSbq2tv7QXl7w+pWMjRKc9Cg7pg59oLqwS+nTTIHnHL+HfTVB45+hK0Ib6XqlNchyoQJNBjnS3jJfx6/WX4dFkw3jaEPaweLKN92zVSg=
+	t=1730474808; cv=none; b=Zsl3Yjb1upzGp98xG2b1YCvqS9FNJJakCtB3sIwbzLArSrgMdmn2FY28EHHdwUo27Gnv2Q4vzfDvH7KIi2auLbPm/LL98DWP1VW/vUimtiupArh/VUQRwsb9gmOMH8/sLaXUBq9prC85LGQLjnBkI8FfT6vWCvGSe6Sn+IcvIrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730474801; c=relaxed/simple;
-	bh=vI/NQjc09w3VuPnsKmwpWg7tRMQmr0hd6fA4o85RJow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3syZRa+oZQxKnh1BWGU+TM/sOqk+s158cDrNonOqT8RTaTjP1OrBjiJNJhL9hWCod/FiZr0emBbMsZRBDICdvceL1Amjx2qp9lRSUm2fuZ8JMHn/HW0+GmDOuzA7WiyBo/JOqgDujnUuPa3yc4ulahCGJD8qzyqe+BJJTWimlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l17+oQiR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9997AC4CECD;
-	Fri,  1 Nov 2024 15:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730474801;
-	bh=vI/NQjc09w3VuPnsKmwpWg7tRMQmr0hd6fA4o85RJow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l17+oQiRKK/3oQp/BNFD92/hhW0liTn0T4m/LgT3ZXrAvEFH1q+HhjWU8KvzZqMjB
-	 X3A/XR0gqiVN8nyxDO8hvEV4W97WPyPepjKr4b/1Z541TBKc0QIygoYa+jFKp6CI8I
-	 6UPt6Iz2Sa0LTiuQ/DM2uCh6SQMQw2e/KXwH1/NvZB+ZC0ZoKyU/vxRsz6EbdHRbS2
-	 X8DTxMdS1Fi51Ao+MYqkQdty4QP/+j1jLX/G1RY5q+XiBbcfa81prhYdQxEIY6gbCt
-	 TRahNAjSOoOhC+gh+P8ULxS2iIR3zFxedEVwOVOebmJ8yGuO10cyU1n3VVHLHrfw/r
-	 2csGzlh+TMC2A==
-Date: Fri, 1 Nov 2024 10:26:38 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, quic_mrana@quicinc.com, quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v3 1/3] PCI: dwc: Skip waiting for link up if vendor
- drivers can detect Link up event
-Message-ID: <ywuqtydbapfumelfu66237h65q2xb3rmvjtstiwvd24whn7rju@bcxldl2l4bv2>
-References: <20241101-remove_wait-v3-0-7accf27f7202@quicinc.com>
- <20241101-remove_wait-v3-1-7accf27f7202@quicinc.com>
+	s=arc-20240116; t=1730474808; c=relaxed/simple;
+	bh=wHAtH85ytanmYNA+QD9zRKwrYvKpOZ1yPwJIGLNUmVk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ugBYrk+TwpXivtmHyWW1DS0BkvhEQTFBmluQJSPTucbIf89CIehGBdWrBom5I9qUdQRObcG+2sa1ti7iYOqA9WmEGBzjfWezZv9tnUcXNdOnjZy5b+bEWda2knuRfr+GXemGdkfwvZ3mAEuOLKPuuG7xvQ8IMW5YwVsIr9VqZyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t+LvVyWP; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e6101877abso43028297b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 08:26:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730474806; x=1731079606; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A0ftFmxWefug8znYAUp23wDUAHo5xr+BS9XzbNWaTbY=;
+        b=t+LvVyWPVEwDwJMMWe42e1+vhMgEzDpXlQoECVPk+yz4tf6L9vd1i/amucC2RcK415
+         h0HolyoLEai8Mqdlgt4KnsVmPKHBog320C8N5rChYV4XN6Ex2GIwvXsAZu/TVy9UVRNo
+         x7PSYaKnc9NZn4T4pZdIXjz5ulcFusCpMcZv2eIOdtAEmFAfIINbT9tqWDvon+GUlXnR
+         e4LJFkQ2ayOJs2rKC+NAUIvoiPl++DOboftFvN9ci77cye0GpHzAH5EVnZCEVvIYeznC
+         93VEIxZglMaFdhUk6J4ef4I89bjV4bKxDbSd1CKbFA1qE6GYY/7MY1zcZ3JctOypRSLJ
+         7uJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730474806; x=1731079606;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=A0ftFmxWefug8znYAUp23wDUAHo5xr+BS9XzbNWaTbY=;
+        b=FJH+ROpUfehWsqsNBVIK1Kmo972cF8sZ0hVoyMiiPPe+7PLIC5ubEK4QVr9kbug2Fm
+         gOb87wC9UMhLqgp811Xny6EeRsTFfXRq9Ghhl89Dmtd1L6dPTAHgNNnQyvQD/dp/L/4z
+         PBHxb40XRrdMlZW6MCweR0GrKa0ruQB6XUOhirBd5GstOmP5v9xdUq6i8uKsfEW7L9ZT
+         u7LnOhY6l6R2/ZhEYqFVZ6xr3ocEJv6+8eWX0PwOzIml6RR5CWNBY0PqxK5gCF9Ki6bw
+         n4+8UyPC6Cf+CJN2OrdVy5pv7BDYsEHjNot9ZEOLi4Tlljjw1wZV7rEhMZyoTJfh8eFU
+         mqfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUsXT8KYfRW7EcLGbM8yia+XeG5I5tZ1SJ2fg9AirfDp7DxI9vfKD6aZSJWuuiv3+7/wmnnqF4pXa9AHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHx3Rv993v3c+6WtIIry9aCYwPgen/xaRK4DE712nXFs1U/a7z
+	XZ4u3oCoPMEP8BuDOa4TQuqG7i4rZkdrpWw9Nfla8bar0f0hAwGLCKNaJVrNOfYv9yec0ZzNY3h
+	PqQ==
+X-Google-Smtp-Source: AGHT+IHYLzsVc20vLRQwtzwWH/ZL6V83GRzYvw29uoFmous4MU437XqJXznaZoUcfr+GEJE6ovx7W6bgmVM=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:6f8e:b0:6e3:2bc1:da17 with SMTP id
+ 00721157ae682-6ea64bc93a8mr394077b3.4.1730474805966; Fri, 01 Nov 2024
+ 08:26:45 -0700 (PDT)
+Date: Fri, 1 Nov 2024 08:26:44 -0700
+In-Reply-To: <9c55087b-e529-46cd-8678-51975a9acc71@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101-remove_wait-v3-1-7accf27f7202@quicinc.com>
+Mime-Version: 1.0
+References: <20240826022255.361406-1-binbin.wu@linux.intel.com>
+ <20240826022255.361406-2-binbin.wu@linux.intel.com> <ZyKbxTWBZUdqRvca@google.com>
+ <3f158732a66829faaeb527a94b8df78d6173befa.camel@intel.com>
+ <ZyLWMGcgj76YizSw@google.com> <9c55087b-e529-46cd-8678-51975a9acc71@linux.intel.com>
+Message-ID: <ZyTzNHil-55v7D3r@google.com>
+Subject: Re: [PATCH v3 1/2] KVM: x86: Check hypercall's exit to userspace generically
+From: Sean Christopherson <seanjc@google.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Kai Huang <kai.huang@intel.com>, 
+	"yuan.yao@linux.intel.com" <yuan.yao@linux.intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 01, 2024 at 05:04:12PM GMT, Krishna chaitanya chundru wrote:
-> If the vendor drivers can detect the Link up event using mechanisms
-> such as Link up IRQ and can the driver can enumerate downstream devices
-> instead of waiting here, then waiting for Link up during probe is not
-> needed here, which optimizes the boot time.
-> 
-> So skip waiting for link to be up if the driver supports 'linkup_irq'.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 10 ++++++++--
->  drivers/pci/controller/dwc/pcie-designware.h      |  1 +
->  2 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 3e41865c7290..26418873ce14 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -530,8 +530,14 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  			goto err_remove_edma;
->  	}
->  
-> -	/* Ignore errors, the link may come up later */
-> -	dw_pcie_wait_for_link(pci);
-> +	/*
-> +	 * Note: The link up delay is skipped only when a link up IRQ is present.
-> +	 * This flag should not be used to bypass the link up delay for arbitrary
-> +	 * reasons.
+On Fri, Nov 01, 2024, Binbin Wu wrote:
+> On 10/31/2024 10:54 PM, Sean Christopherson wrote:
+> > My other idea was have an out-param to separate the return code intende=
+d for KVM
+> > from the return code intended for the guest.  I generally dislike out-p=
+arams, but
+> > trying to juggle a return value that multiplexes guest and host values =
+seems like
+> > an even worse idea.
+> >=20
+> > Also completely untested...
 
-Perhaps by improving the naming of the variable, you don't need 3 lines
-of comment describing the conditional.
+...
 
-> +	 */
-> +	if (!pp->linkup_irq)
-> +		/* Ignore errors, the link may come up later */
+> >   	case KVM_HC_MAP_GPA_RANGE: {
+> >   		u64 gpa =3D a0, npages =3D a1, attrs =3D a2;
+> > -		ret =3D -KVM_ENOSYS;
+> > +		*ret =3D -KVM_ENOSYS;
+> >   		if (!user_exit_on_hypercall(vcpu->kvm, KVM_HC_MAP_GPA_RANGE))
+> >   			break;
+> >   		if (!PAGE_ALIGNED(gpa) || !npages ||
+> >   		    gpa_to_gfn(gpa) + npages <=3D gpa_to_gfn(gpa)) {
+> > -			ret =3D -KVM_EINVAL;
+> > +			*ret =3D -KVM_EINVAL;
+> >   			break;
+> >   		}
+>=20
+> *ret needs to be set to 0 for this case before returning 0 to caller?
 
-Does this mean that we will be able to start handling these errors?
+No, because the caller should consume *ret if and only if the function retu=
+rn value
+is '1', i.e. iff KVM should resume the guest.  And I think we actually want=
+ to
+intentionally not touch *ret, because a sufficient smart compiler (or stati=
+c
+analysis tool) should be able to detect that incorrect usage of *ret is con=
+suming
+uninitialized data.
 
-> +		dw_pcie_wait_for_link(pci);
->  
->  	bridge->sysdata = pp;
->  
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 347ab74ac35a..539c6d106bb0 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -379,6 +379,7 @@ struct dw_pcie_rp {
->  	bool			use_atu_msg;
->  	int			msg_atu_index;
->  	struct resource		*msg_res;
-> +	bool			linkup_irq;
+> > @@ -10080,13 +10078,13 @@ unsigned long __kvm_emulate_hypercall(struct =
+kvm_vcpu *vcpu, unsigned long nr,
+> >   		return 0;
+> >   	}
+> >   	default:
+> > -		ret =3D -KVM_ENOSYS;
+> > +		*ret =3D -KVM_ENOSYS;
+> >   		break;
+> >   	}
+> >   out:
+> >   	++vcpu->stat.hypercalls;
+> > -	return ret;
+> > +	return 1;
+> >   }
+> >   EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
+> > @@ -10094,7 +10092,7 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu=
+)
+> >   {
+> >   	unsigned long nr, a0, a1, a2, a3, ret;
+> >   	int op_64_bit;
+> > -	int cpl;
+> > +	int cpl, r;
+> >   	if (kvm_xen_hypercall_enabled(vcpu->kvm))
+> >   		return kvm_xen_hypercall(vcpu);
+> > @@ -10110,10 +10108,9 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcp=
+u)
+> >   	op_64_bit =3D is_64_bit_hypercall(vcpu);
+> >   	cpl =3D kvm_x86_call(get_cpl)(vcpu);
+> > -	ret =3D __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, =
+cpl);
+> > -	if (nr =3D=3D KVM_HC_MAP_GPA_RANGE && !ret)
+> > -		/* MAP_GPA tosses the request to the user space. */
+> > -		return 0;
+> > +	r =3D __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cp=
+l, &ret);
+> > +	if (r <=3D r)
+> A typo here.
+> I guess it meant to be "if (r <=3D ret)" ?
 
-Please name this for what it is, rather than some property from which
-some other decision should be derived. (And then you need a comment to
-describe how people should interpret and use it)
+No, "if (r <=3D 0)", i.e. exit to userspace on 0 or -errno.
 
-Also, "linkup_irq" sound like an int carrying the interrupt number, not
-a boolean.
+> So the combinations will be
+> -------------------------------------------------------------------------=
+---
+> =C2=A0=C2=A0 |=C2=A0 r=C2=A0 |=C2=A0=C2=A0=C2=A0 ret=C2=A0=C2=A0=C2=A0 | =
+r <=3D ret |
+> ---|-----|-----------|----------|----------------------------------------=
+---
+> =C2=A01 |=C2=A0 0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 true=C2=A0=C2=A0 |=C2=A0 return r, which is 0, exit to us=
+erspace
+> ---|-----|-----------|----------|----------------------------------------=
+---
+> =C2=A02 |=C2=A0 1=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 false=C2=A0 |=C2=A0 set vcpu's RAX and return back to gue=
+st
+> ---|-----|-----------|----------|----------------------------------------=
+---
+> =C2=A03 |=C2=A0 1=C2=A0 | -KVM_Exxx |=C2=A0=C2=A0 false=C2=A0 |=C2=A0 set=
+ vcpu's RAX and return back to guest
+> ---|-----|-----------|----------|----------------------------------------=
+---
+> =C2=A04 |=C2=A0 1=C2=A0 |=C2=A0 Positive |=C2=A0=C2=A0 true=C2=A0=C2=A0 |=
+=C2=A0 return r, which is 1,
+> =C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 N=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+|=C2=A0 back to guest without setting vcpu's RAX
+> -------------------------------------------------------------------------=
+---
+>=20
+> KVM_HC_SEND_IPI, which calls kvm_pv_send_ipi() can hit case 4, which will
+> return back to guest without setting RAX. It is different from the curren=
+t behavior.
+>=20
+> r can be 0 only if there is no other error detected during pre-checks.
+> I think it can just check whether r is 0 or not.
 
-
-Please call it "use_async_linkup", "use_linkup_irq" or something.
-
-Regards,
-Bjorn
-
->  };
->  
->  struct dw_pcie_ep_ops {
-> 
-> -- 
-> 2.34.1
-> 
-> 
+Yeah, I just fat fingered the code (and didn't even compile test).
 
