@@ -1,189 +1,123 @@
-Return-Path: <linux-kernel+bounces-392852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2699B98DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:46:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90859B98E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C28828181F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:46:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C7CB28146F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D091D172F;
-	Fri,  1 Nov 2024 19:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F1D1D0BA4;
+	Fri,  1 Nov 2024 19:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljEmHJVM"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SBbBgz/T"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F4E1CACF2;
-	Fri,  1 Nov 2024 19:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51931D0B8B
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730490383; cv=none; b=AvZ/qczvAzXZOwox3be3d+3OlOILo4c/q2Y6iKbHd4SddFjjmPWhqGvL5qJu+hoCAwmkOgdWQF89kIh53ngAtXGydbxxgz9/mMoIWjy1UgBgIvkUVv5vBF9qIqxdnJrBgE0KgcI3BcPLA2rLBGGK0QPYclEV3so8y4xglf8e/3U=
+	t=1730490404; cv=none; b=oEUsuica7U7hLsVQw10XYK24KXuxjM/4ge/9TJ5X6PmA+Yscu966megIfbNV5o3O90VG3RIcddNVZRbaTCaoOP4RkynMPFeJJyIOUK5rGOsV/UVmc8ci9ErpdspLQ3VHCPKdAHD7TLDLibiQSaTJuZ31knJapp+LiugKd3ozvFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730490383; c=relaxed/simple;
-	bh=Q1XJmMNbRTmr+G0p/GjqtphlmLT6K7uAVsxG7/Hx7MU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ImxvNrPUsrw3x7yVXex2goclBr56Tf7tC7RVBVQvWmviXUg41wosIQcHlXngak22ApZOtajAeJOqHQ7R3t2B0U19pvYLTeRWFfcGJc2aJNYoRx5hlPfbWvrWvcqxLDtk35vAR3dJLH+DonBcJDFcDHXyhGfNZ12gnuQZt/bOeMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljEmHJVM; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20e6981ca77so26413785ad.2;
-        Fri, 01 Nov 2024 12:46:21 -0700 (PDT)
+	s=arc-20240116; t=1730490404; c=relaxed/simple;
+	bh=1ofa25jN5S0/5jFGMQVKNon9D7tabgX8zoZiE0MGARQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hfp/iMKBHFQiJY88UnPjCNErth2KlOZzoPBxVXYYYe07oYivQ0VcDV/9pW7UMpxHCvPS74ZJzzL3oAD/fm05SSrcDrYawmIFuOM+ZEXW5FVd9bqhU0pZthleo0HHi4mkXl4AxJfVY86WFmmWWoay8iFvX1AyJD6OxA7lUeXy0Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SBbBgz/T; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43158625112so19646065e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:46:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730490381; x=1731095181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mo+Yasuw/oRyXv0Io4gB8Pw1IePUj74kOgbZY0y0LoE=;
-        b=ljEmHJVMoz/KWyb96BdCCGr5qjJV2JIG0E9HJ6LxGajyz9KCwhztTLc7HNH9WNOCfG
-         sTGD5uYLEEn1+0m1MN2kPLTgS/XDYm13UOMgXCvRDF4iNmE9sRQCrZmHH5/HhTvs1tML
-         rdn+FRK3EpE+L+XQ/KpD+3Q8f4OgsIZver2Nf2AGOoKqF+pviot2LQ/P454rQGlvfT8o
-         1ACB8kXSIfbN6vB9gLuGmdSRGTK+sq6CzxMdfRthPSi+EiNbEAZ28akIeThQLuNZLRaU
-         9uogtI1Jua+38RiyuaJ+Gf7CGc85V79YMU7dZRzIJzTUo3BWWTg5XHgpQEbdBtSWbIfI
-         TMbw==
+        d=linaro.org; s=google; t=1730490401; x=1731095201; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A6CILudmT2OPooc17jg6TSDXbC214+AfvRFA780e2kw=;
+        b=SBbBgz/T8xA43cDG+MacZWQMnCfVCK0DzN3T7F+hkEKZjvY/llAKcrmdiOxM3+5Ckb
+         CN1BnkZn0a3JdM+ld+rmGy7x0mjI7z/AeWSZ6z6t6XI8flB2v5es8wTLS8ON/gRZemdT
+         ojVS2gHIlVzsfFyT3yZ1qE/vQ90KtC9vx/mH2RQJRBUIiRQVKPHA2ujCHmxXEGJrTnMt
+         nvqDSNnwAhJ/DHDNmE0XBDZRpunb1dRXAiFMtdeEzIJeDReIov6DBJntb/pzr9Qp2i29
+         xDVZqe4B6gBbxnvudqr4pkUYgSMUVBuzFWTHM/BAWmNxsS5Hm8jcbmJTHlSFDIyg/88t
+         VAhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730490381; x=1731095181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mo+Yasuw/oRyXv0Io4gB8Pw1IePUj74kOgbZY0y0LoE=;
-        b=rlf9RL+7ELnqOrbGn5mX2SQBS/q+Fw5+piNZqewcJCbm1bQ6icoNXeoPM1TT94QKQE
-         L/ildxXpQrB88NhfvIXDPBG1/umwjTQkmwXuLrI2x8MxItLJSKc7Z3nmP5FqC3o5DfgF
-         AGyZX2xCC7YCQHooLeMDKm7XooGwAomrS5pidteNm7DSbSUHgISFy19n/AgZoHPO8rQC
-         dhYKkMzMK+KUFeiElamjpJ//dG1thDUaEjwFH0q/Ph9ggwO6fO3icA1gQLLDNIQWW7at
-         7zWaYxpF089JG3uqT+DQ+1V1TdlcfnXR5HFN1BEf049t620m8iuYxT4D97V/4lZdUvwE
-         T+9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUj59ixNRWDtpz4yZ107DvjpFQVblGXjApfIIfZ+vJhTUD8Nx3wqmc+2/DMoAdlxP9Pw9feB1n/wUlCYk92@vger.kernel.org, AJvYcCVQrP1Rsxf/dSXTnFsv5DU0+eT5Z5wEcwDt8nFHJrJ7G4xx1v2lTboT808pCwUNW1cxGHw=@vger.kernel.org, AJvYcCVu53Wqxv7GY4uH0ZO6rZevrYdi/5vp9JGa9uKVdaK4QmYapUrr3NLQXsSw2iLZgu46jvxD0ARl/rZQyQOY8ns26w==@vger.kernel.org, AJvYcCX8GcJO9Qb+UamyPYt+Vg5GL8tYZtTRQD/DvUhPPAWTWF7LT2t9k0AuK/SS/ZlgvKqF6Q4936/TlVFwDzHX3sedUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLEvFEvX2UPXoD3Q5CVRnVzNAiaPIjPhtVlyiZIFgWdvV6Rnaf
-	2JA6L16oqf4KBm2T1ZnjtvVIXQLnRdT59j0ID12yhf5CKXXWUY0bTnXYikJFp1o8D4KpgZYqcyl
-	idHfZ4XyZryCX1GI8aHbgt0oJdfk=
-X-Google-Smtp-Source: AGHT+IG9LKkkHXi5pRokPFdZN6EHwavi1lSDB7YCcE3CLHey6at+eRKQjhdoFNA6jBPtBVtAlIqT+Pg0mMPcCAZkKo0=
-X-Received: by 2002:a17:902:c40c:b0:20c:7d4c:64db with SMTP id
- d9443c01a7336-21103c7bfafmr98648865ad.49.1730490381440; Fri, 01 Nov 2024
- 12:46:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730490401; x=1731095201;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A6CILudmT2OPooc17jg6TSDXbC214+AfvRFA780e2kw=;
+        b=oV/ta7OWKgVJOHHC1imTzOjASwlACfYAgQgbKjoDEoApyWN+rqcUjhcGH1bRSRAB5w
+         ioWlC1WSsRPnVeutmvr9gY2tzw8rxlJOB2eHpuohWoRnCAvTrUb39dGTCUrwjTJdFhWG
+         IdDYyh8huRMaV0dNV/27K56dBgi4TwmTODMz5WkjUGq/6pKIxL2mPWV4YtMZ/NWMmeHM
+         wFuWD7A9KCsG7eHnNmG6pJFX4kyOdppThQq0UErgYHw6nXVnLcgKdHm5Ce8+GE/E4f8c
+         dLdc6K8gVonKUcHQLVEMCWZdCBlFMkdo6pNhnHoOa59E07QWYPq18RnoFTN2CEQpEXp0
+         NpqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7ofRomddKqxPbo1wWxKyNPyqbmepMSEL95zshqEopeFbOCZyMiMu9TCMyLn0rLODex7m9EEv9tHk045s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYfqu6ux55vd4I6U2PdwKozjCfKxasYlf5GAxWK3s8OYg3uLOj
+	bWORK38RTHQcSB+l2wipDY/CFJeAoJn/xkyQdyaaaSnNh/lZP6hcvWDq0wR1bxQ=
+X-Google-Smtp-Source: AGHT+IEYhYUOmuQyVjbDtBBLtbHkZVAdS6CDRVy9twU3Ctv89CCKA3MmA3+rl4sTqEQ9BP8RtdHNBg==
+X-Received: by 2002:a05:600c:1909:b0:431:542d:2592 with SMTP id 5b1f17b1804b1-4328327eba3mr38016165e9.27.1730490401007;
+        Fri, 01 Nov 2024 12:46:41 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bb793e51sm101006135e9.1.2024.11.01.12.46.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 12:46:40 -0700 (PDT)
+Date: Fri, 1 Nov 2024 22:46:37 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dave Penkler <dpenkler@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	arnd@arndb.de
+Subject: Re: [PATCH 1/9] Fix buffer overflow in ni_usb_init
+Message-ID: <2cde383b-156f-48f8-a1f5-344561962f37@stanley.mountain>
+References: <20241101174705.12682-1-dpenkler@gmail.com>
+ <20241101174705.12682-2-dpenkler@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730150953.git.jpoimboe@kernel.org> <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
- <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
- <20241030055314.2vg55ychg5osleja@treble.attlocal.net> <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
- <20241031230313.ubybve4r7mlbcbuu@jpoimboe> <CAEf4BzaQYqPfe2Qb5n71JVAAD3-1Q7q2+_cnQMQEa43DvV5PCQ@mail.gmail.com>
- <20241101192937.opf4cbsfaxwixgbm@jpoimboe> <CAEf4Bza6QZt=N8=O7NU3saHpJ_XrXRdGn48gVJMN+kawurNP3g@mail.gmail.com>
-In-Reply-To: <CAEf4Bza6QZt=N8=O7NU3saHpJ_XrXRdGn48gVJMN+kawurNP3g@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 1 Nov 2024 12:46:09 -0700
-Message-ID: <CAEf4BzZvhuUeGYbo1Nesfdx3=-WAkAT2OjSdtE4tfRV7H7PZoQ@mail.gmail.com>
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, 
-	Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, 
-	Jordan Rome <jordalgo@meta.com>, Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, 
-	Jens Remus <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101174705.12682-2-dpenkler@gmail.com>
 
-On Fri, Nov 1, 2024 at 12:44=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Fri, Nov 1, 2024 at 12:29=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.o=
-rg> wrote:
-> >
-> > On Fri, Nov 01, 2024 at 11:34:48AM -0700, Andrii Nakryiko wrote:
-> > > 00200000-170ad000 r--p 00000000 07:01 5
-> > > 172ac000-498e7000 r-xp 16eac000 07:01 5
-> > > 49ae7000-49b8b000 r--p 494e7000 07:01 5
-> > > 49d8b000-4a228000 rw-p 4958b000 07:01 5
-> > > 4a228000-4c677000 rw-p 00000000 00:00 0
-> > > 4c800000-4ca00000 r-xp 49c00000 07:01 5
-> > > 4ca00000-4f600000 r-xp 49e00000 07:01 5
-> > > 4f600000-5b270000 r-xp 4ca00000 07:01 5
-> > >
+The subject should have a subsystem prefix:
 
-I should have maybe posted this in this form:
+staging: gpib: Fix buffer overflow in ni_usb_init()
 
-00200000-170ad000 r--p 00000000 07:01 5  /packages/obfuscated_file
-172ac000-498e7000 r-xp 16eac000 07:01 5  /packages/obfuscated_file
-49ae7000-49b8b000 r--p 494e7000 07:01 5  /packages/obfuscated_file
-49d8b000-4a228000 rw-p 4958b000 07:01 5  /packages/obfuscated_file
-4a228000-4c677000 rw-p 00000000 00:00 0
-4c800000-4ca00000 r-xp 49c00000 07:01 5  /packages/obfuscated_file
-4ca00000-4f600000 r-xp 49e00000 07:01 5  /packages/obfuscated_file
-4f600000-5b270000 r-xp 4ca00000 07:01 5  /packages/obfuscated_file
+On Fri, Nov 01, 2024 at 06:46:57PM +0100, Dave Penkler wrote:
+>   The writes buffer size was taking into accont the number of
+>   entries causing random oopses.
 
-Those paths are pointing to the same binary.
+Remove the blank lines from the start of the line.
 
+> 
+> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
 
-> > > Sorry, I'm probably dense and missing something. But from the example
-> > > process above, isn't this check violated already? Or it's two
-> > > different things? Not sure, honestly.
-> >
-> > It's hard to tell exactly what's going on, did you strip the file names=
-?
->
-> Yes, I did, of course. But as I said, they all belong to the same main
-> binary of the process.
->
-> >
-> > The sframe limitation is per file, not per address space.  I assume
-> > these are one file:
-> >
-> > > 172ac000-498e7000 r-xp 16eac000 07:01 5
-> >
-> > and these are another:
-> >
-> > > 4c800000-4ca00000 r-xp 49c00000 07:01 5
-> > > 4ca00000-4f600000 r-xp 49e00000 07:01 5
-> > > 4f600000-5b270000 r-xp 4ca00000 07:01 5
-> >
-> > Multiple mappings for a single file is fine, as long as they're
-> > contiguous.
->
-> No all of what I posted above belongs to the same file (except
-> "4a228000-4c677000 rw-p 00000000 00:00 0" which doesn't have
-> associated file, but I suspect it originally was part of this file, we
-> do some tricks with re-mmap()'ing stuff due to huge pages usage).
->
-> >
-> > > > Actually I just double checked and even the kernel's ELF loader ass=
-umes
-> > > > that each executable has only a single text start+end address pair.
-> > >
-> > > See above, very confused by such assumptions, but I'm hoping we are
-> > > talking about two different things here.
-> >
-> > The "contiguous text" thing seems enforced by the kernel for
-> > executables.  However it doesn't manage shared libraries, those are
-> > mapped by the loader, e.g. /lib64/ld-linux-x86-64.so.2.
-> >
-> > At a quick glance I can't tell if /lib64/ld-linux-x86-64.so.2 enforces
-> > that.
-> >
-> > > > There's no point in adding complexity to support some hypothetical.=
-  I
-> > > > can remove the printk though.
-> > >
-> > > We are talking about fundamental things like format for supporting
-> > > frame pointer-less stack trace capture. It will take years to adopt
-> > > SFrame everywhere, so I think it's prudent to think a bit ahead beyon=
-d
-> > > just saying "no real application should need more than 4GB text", IMO=
-.
-> >
-> > I don't think anybody is saying that...
-> >
-> > --
-> > Josh
+Add a Fixes tag.
+
+> ---
+>  drivers/staging/gpib/ni_usb/ni_usb_gpib.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
+> index 571f07800c9a..9ff56b063681 100644
+> --- a/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
+> +++ b/drivers/staging/gpib/ni_usb/ni_usb_gpib.c
+> @@ -1726,7 +1726,7 @@ static int ni_usb_init(gpib_board_t *board)
+>  	unsigned int ibsta;
+>  	int writes_len;
+>  
+> -	writes = kmalloc(sizeof(*writes), GFP_KERNEL);
+> +	writes = kmalloc(sizeof(*writes) * NUM_INIT_WRITES, GFP_KERNEL);
+
+Please use kmalloc_array().
+
+regards,
+dan carpenter
+
 
