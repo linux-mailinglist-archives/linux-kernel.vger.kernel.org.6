@@ -1,51 +1,96 @@
-Return-Path: <linux-kernel+bounces-391679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196049B8A28
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:09:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344309B8A30
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:15:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814E71F22918
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:09:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6650C1C215F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF26137742;
-	Fri,  1 Nov 2024 04:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626061474D9;
+	Fri,  1 Nov 2024 04:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lsJ/B6Z7"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J1Isdfys"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD0784E1C
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 04:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADC813777F;
+	Fri,  1 Nov 2024 04:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730434166; cv=none; b=tLvvVO0LKUNrpn+3jzuHEDOMLPz/SUehyr5Fl3ZNdjIT62Y/PuXAuDECKbQlq+8IsOXgILMOHlOJ5WZFJn2RZWSNtzhfkNvB+HOQXWd5jFf5HQOS2nHoHvekvTVYdzpZ/joVEGpWxVphwZwtIol0A7QJILMWgqcP0PFrAixsv1g=
+	t=1730434516; cv=none; b=Xd1YS2/TYaHsupMeavreu3vkxJUsJ9OnkY/NsozRxeqCayDIrhYFv402AGjqMRJhskRSUTjEckqfKn2f6yKW18OamPomDmDR5FXHOQp/0MzYtRs6Fk2tJrY6qWAfwYy68rAszTAIaWaHNi7Rr8VcT9xphO/QEw44pxlZfmZ+ado=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730434166; c=relaxed/simple;
-	bh=TdUIHuVi/9ph7I5q2Va3gRk4gff0Cl8EHEqDPA8RXEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=awpnTiDeV9BrY7TDLxmgGBVj9pZo9bqVA38NOf/MbZfMIAYTe55nwdK6mVaA7+KtC9MbQow8PRcFbruT3yZm2pG/YxOj8BljTfk0SZUFYvSIEdpd8hB8oBee/iQMb2D60C/4zDFps6UsJO+gIRsE6VS92UlEAL62J6l3voUg83s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lsJ/B6Z7; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 1 Nov 2024 00:09:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730434161;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=uTmhfDD80R+n+JEPIjWtz3k33zC9n8sn4NYC1W9JVZ4=;
-	b=lsJ/B6Z72gxaNRk9rJwl47qOMUvi4hUDwRqTJg84GE57peuG7fZlHHQUPVCretPX+VGDVB
-	rpvuDTqEcVNbde+NvnH/dxb03cRGH2i7w40LVpG3VUEE1rSqtO38ghufhTSI5Y1YtI+kn/
-	EdI5jw/c3XyUs9LxF+qsqpUYUm61ssw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.12-rc6
-Message-ID: <crtbzb56yioclpibocd7whnjit43dub4hoeycxd5fzvzsnqnou@i22opfzxvitj>
+	s=arc-20240116; t=1730434516; c=relaxed/simple;
+	bh=VJA0AjiK6NmricA4WfL9xHrUVhSflUDFGoIEBijSa3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UFXmuNfRGkCFkkK3aCej15OfesgCwBM1KGZiNcMEIGUYYRHaRsp/oxH3l7uSmaaxgt67jt4LteGjZJ7/2F+kbol4Z3WfBs9+RGImdG3UgyBRQTo6BtINEYJ3r2inV2noUMPA6pYrWDkB/Y5Yn5JcRZ795J11uZGNZ+ItTAE4rnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J1Isdfys; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730434514; x=1761970514;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VJA0AjiK6NmricA4WfL9xHrUVhSflUDFGoIEBijSa3M=;
+  b=J1IsdfysL2bmcelras1tZvrfhh+tR11Tl0WltbkP4xlkDjWOffA4XG+r
+   ZFnTcdsQVCKrofoNdze2JtFO+UkTcqDS05ERVxN3xYyVHCnNasYwsAc9H
+   MdcwsHwCfvux4dzS/HEuVraVsd+EjYz7MQmFGqkkjcPZ4c5NlvRplPQFk
+   P5lIS4ZyME1gDvmtxI6+2Yle8TjTi8icdDN5ZpfS/O/ClnMJwVe1ZDPZZ
+   Ed27We7kDcmMCpd8vQJ4MNWDdZtVI2p8CajOrtpLuZHNPvjnyFZCBs/oB
+   J8j7Y3XVxn8g1o8I49FzyGXmaAOvirDtw0+ERtWMR7MuX+sO43Mj39ybi
+   w==;
+X-CSE-ConnectionGUID: QJ/a5MsIS3OWsP2hYevK8A==
+X-CSE-MsgGUID: BhVhWwtxSZC+2ySoDZj5FA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="30414493"
+X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
+   d="scan'208";a="30414493"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 21:15:13 -0700
+X-CSE-ConnectionGUID: cFVYI5qoQiaeYqRZHIqwSw==
+X-CSE-MsgGUID: keQXpCkbQTeVGDbcHGrUGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
+   d="scan'208";a="82524144"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 31 Oct 2024 21:15:06 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6j3w-000h7d-1T;
+	Fri, 01 Nov 2024 04:15:04 +0000
+Date: Fri, 1 Nov 2024 12:14:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v3 07/12] clk: rp1: Add support for clocks provided by RP1
+Message-ID: <202411011129.wmWcuU9Z-lkp@intel.com>
+References: <c20e3d6d87c71691b149cdeeafc94009953346b2.1730123575.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,90 +99,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <c20e3d6d87c71691b149cdeeafc94009953346b2.1730123575.git.andrea.porta@suse.com>
 
-Nothing crazy to report...
+Hi Andrea,
 
-Test dashboard failures are down 40% from a month ago, critical bug
-reports have dropped off dramatically (there are a few still outstanding
-I need to get to; apparently there's still a bug with online fsck and
-open unlinked files), and we're starting to crank through the syzbot
-stuff (also, syzbot seems to have made it past the dumb "whoops, we
-forgot to validate that" and is turning up some genuinely interesting
-ones).
+kernel test robot noticed the following build errors:
 
-Been hitting some bugs in compaction (confirmed by users running with it
-flipped off), and lately I've been seeing some sporadic test hangs due
-to what looks like a block layer writeback throttling bug, ouch.
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus robh/for-next linus/master v6.12-rc5]
+[cannot apply to next-20241031]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The following changes since commit a069f014797fdef8757f3adebc1c16416271a599:
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-della-Porta/dt-bindings-clock-Add-RaspberryPi-RP1-clock-bindings/20241028-221122
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/c20e3d6d87c71691b149cdeeafc94009953346b2.1730123575.git.andrea.porta%40suse.com
+patch subject: [PATCH v3 07/12] clk: rp1: Add support for clocks provided by RP1
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241101/202411011129.wmWcuU9Z-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241101/202411011129.wmWcuU9Z-lkp@intel.com/reproduce)
 
-  bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path (2024-10-20 18:09:09 -0400)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411011129.wmWcuU9Z-lkp@intel.com/
 
-are available in the Git repository at:
+All errors (new ones prefixed by >>):
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-10-31
+   In file included from drivers/clk/clk-rp1.c:9:
+   In file included from include/linux/regmap.h:20:
+   In file included from include/linux/iopoll.h:14:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/clk/clk-rp1.c:9:
+   In file included from include/linux/regmap.h:20:
+   In file included from include/linux/iopoll.h:14:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/clk/clk-rp1.c:9:
+   In file included from include/linux/regmap.h:20:
+   In file included from include/linux/iopoll.h:14:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/clk/clk-rp1.c:621:2: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     621 |         FIELD_SET(prim, PLL_PRIM_DIV1_MASK, prim_div1);
+         |         ^
+   drivers/clk/clk-rp1.c:399:12: note: expanded from macro 'FIELD_SET'
+     399 |         (_reg) |= FIELD_PREP(mask, (_val));     \
+         |                   ^
+   drivers/clk/clk-rp1.c:622:2: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     622 |         FIELD_SET(prim, PLL_PRIM_DIV2_MASK, prim_div2);
+         |         ^
+   drivers/clk/clk-rp1.c:399:12: note: expanded from macro 'FIELD_SET'
+     399 |         (_reg) |= FIELD_PREP(mask, (_val));     \
+         |                   ^
+   drivers/clk/clk-rp1.c:767:2: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     767 |         FIELD_SET(sec, PLL_SEC_DIV_MASK, div);
+         |         ^
+   drivers/clk/clk-rp1.c:399:12: note: expanded from macro 'FIELD_SET'
+     399 |         (_reg) |= FIELD_PREP(mask, (_val));     \
+         |                   ^
+   drivers/clk/clk-rp1.c:948:3: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     948 |                 FIELD_SET(ctrl, CLK_CTRL_AUXSRC_MASK, index - data->num_std_parents);
+         |                 ^
+   drivers/clk/clk-rp1.c:399:12: note: expanded from macro 'FIELD_SET'
+     399 |         (_reg) |= FIELD_PREP(mask, (_val));     \
+         |                   ^
+   6 warnings and 4 errors generated.
 
-for you to fetch changes up to 3726a1970bd72419aa7a54f574635f855b98d67a:
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
-  bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek (2024-10-29 06:34:11 -0400)
 
-----------------------------------------------------------------
-bcachefs fixes for 6.12-rc6
+vim +/FIELD_PREP +621 drivers/clk/clk-rp1.c
 
-Various syzbot fixes, and the more notable ones:
+   607	
+   608	static int rp1_pll_set_rate(struct clk_hw *hw,
+   609				    unsigned long rate, unsigned long parent_rate)
+   610	{
+   611		struct rp1_clk_desc *pll = container_of(hw, struct rp1_clk_desc, hw);
+   612		struct rp1_clockman *clockman = pll->clockman;
+   613		const struct rp1_pll_data *data = pll->data;
+   614	
+   615		u32 prim, prim_div1, prim_div2;
+   616	
+   617		get_pll_prim_dividers(rate, parent_rate, &prim_div1, &prim_div2);
+   618	
+   619		spin_lock(&clockman->regs_lock);
+   620		prim = clockman_read(clockman, data->ctrl_reg);
+ > 621		FIELD_SET(prim, PLL_PRIM_DIV1_MASK, prim_div1);
+   622		FIELD_SET(prim, PLL_PRIM_DIV2_MASK, prim_div2);
+   623		clockman_write(clockman, data->ctrl_reg, prim);
+   624		spin_unlock(&clockman->regs_lock);
+   625	
+   626		return 0;
+   627	}
+   628	
 
-- Fix for pointers in an extent overflowing the max (16) on a filesystem
-  with many devices: we were creating too many cached copies when moving
-  data around. Now, we only create at most one cached copy if there's a
-  promote target set.
-
-  Caching will be a bit broken for reflinked data until 6.13: I have
-  larger series queued up which significantly improves the plumbing for
-  data options down into the extent (bch_extent_rebalance) to fix this.
-
-- Fix for deadlock on -ENOSPC on tiny filesystems
-
-  Allocation from the partial open_bucket list wasn't correctly
-  accounting partial open_buckets as free: this fixes the main cause of
-  tests timing out in the automated tests.
-
-----------------------------------------------------------------
-Gaosheng Cui (1):
-      bcachefs: fix possible null-ptr-deref in __bch2_ec_stripe_head_get()
-
-Gianfranco Trad (1):
-      bcachefs: Fix invalid shift in validate_sb_layout()
-
-Jeongjun Park (2):
-      bcachefs: fix shift oob in alloc_lru_idx_fragmentation
-      bcachefs: fix null-ptr-deref in have_stripes()
-
-Kent Overstreet (5):
-      bcachefs: Fix UAF in bch2_reconstruct_alloc()
-      bcachefs: Fix unhandled transaction restart in fallocate
-      bcachefs: Don't keep tons of cached pointers around
-      bcachefs: Don't filter partial list buckets in open_buckets_to_text()
-      bcachefs: Fix deadlock on -ENOSPC w.r.t. partial open buckets
-
-Piotr Zalewski (2):
-      bcachefs: init freespace inited bits to 0 in bch2_fs_initialize
-      bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek
-
- fs/bcachefs/alloc_background.h |  3 ++
- fs/bcachefs/alloc_foreground.c | 19 ++++++++--
- fs/bcachefs/bcachefs.h         |  1 +
- fs/bcachefs/btree_iter.c       | 13 +++++++
- fs/bcachefs/data_update.c      | 21 ++++++-----
- fs/bcachefs/data_update.h      |  3 +-
- fs/bcachefs/ec.c               |  4 ++
- fs/bcachefs/errcode.h          |  2 +
- fs/bcachefs/extents.c          | 86 ++++++++++++++++++++++++++++++++++--------
- fs/bcachefs/extents.h          |  5 ++-
- fs/bcachefs/fs-io.c            | 17 +++++++--
- fs/bcachefs/move.c             |  2 +-
- fs/bcachefs/recovery.c         | 14 +++++--
- fs/bcachefs/sb-downgrade.c     |  3 ++
- fs/bcachefs/super-io.c         |  5 +++
- 15 files changed, 160 insertions(+), 38 deletions(-)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
