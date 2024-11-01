@@ -1,225 +1,233 @@
-Return-Path: <linux-kernel+bounces-391713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BB29B8ABF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:48:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F282F9B8AC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:50:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D75C9B210C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:48:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2285E1C210FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D3F1487F4;
-	Fri,  1 Nov 2024 05:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047B314A4E7;
+	Fri,  1 Nov 2024 05:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVbInOZC"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="JbsC+iuM"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F4836B
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 05:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730440118; cv=none; b=GEth5rT3R3cgseh2aw/igiWpkwvoTymRA7lotSCxaoDum7pruE9FyMVy3aHMwm+YZr3xSL/+gDncUKtWW3HFlAcSYK185tb28jxAF/cWEuITQ/bY+1G4aZi4a4nn5Z6BYdry5Ed8Tl68/gtfXAgsxEr8hR3RUpTWeEacWUZuHcQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730440118; c=relaxed/simple;
-	bh=Dk++3mW8W7uDFc3FqfWKXNpIC+fSF/Ds5k5Kz8OR3Mo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=frw0230V4ws/543LaW6mYgR4qcc6r7He+bGOS5yedjIWw58Q6QgPkBasoU1PZJu1MLuzzERkdOIf88LqtogbHntup4Jqwf6P0J0TKZ8NkeqHE/CcSrGs591lB2dsuev5h1x9ghnsPVSslsvVIoWyJ5MH4ID+TEluvSfHOX944PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVbInOZC; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315dfa3e0bso1930165e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 22:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730440114; x=1731044914; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tocm+9fQXJJcOvtJEq9rUApWO8EZrViX+kDeRul5gM0=;
-        b=MVbInOZCnuCp/+S21586Por7C4Ok1vpAbQtic2Rdj3z+V6091N7JwTX9cPtcGQj9oI
-         W397OXgzeD/H47rlRDb1bkozU0ZoUcX2pLKFZv1leTbjp3qAOdF9BP/UvXHE+zBau0Kk
-         i7E9eGLfzwZ1AWE1DyvhIYZzuihlk2AoaZmUOcCxTgajpJqtMiQJDSPRa8fQuIKRecXu
-         a8vFhWghxq6+Z9iIM//NV9LL8sUGpLXI46p0GYJn3de16zNWHV/FQJ7eped7/kVT57/p
-         ydGhesU8KiXUd9Fu6uIWj6o9kMelMqmR8PtGKBbQVdTY8pqNrNBj7d63VkCPq6p82zui
-         DlvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730440114; x=1731044914;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tocm+9fQXJJcOvtJEq9rUApWO8EZrViX+kDeRul5gM0=;
-        b=j0/jcmURiIvkT8Vc6Btnz664YmN5JJ2Smq5FdZ+emYlQsEtOSyYpvl6AVDrBMlYJho
-         7Tq5S9Gk4F3ePXoMveyZfzh5OXg5AUdJSIUqjXk+la+1SAzkKPnwXixq7BOtb6/ygP5O
-         hgZ6I5GBn03eGS5BLThZEOLPMnazokQxgEgYV2ugfSbzOPKnkwhLAjRdlhVPpatLyC6j
-         qAjBxatup2yjKWupOsc0GYbZrKonRz8B0ROSqmy64mRsdBO4vcDZmhLttYL6zwInYPHn
-         n0evdKJj7t/e7bbutqj0eEenmLdioHZNwW+t8Akw/2biSIjhmxn8mHtgfrGTV6odpNk5
-         moTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXK2BklHYOm7EMDzgQys7mUfLnbMzRfhhTL1ClCSUEqBy4mOs17PyOFR8vdElAUcJqY+AoiD22ypxq0Iyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4juPl9K+Z8+Fcc40/hRWqBiwhrIHdMbkA4CjRmFIt3aTmXqQr
-	bmRyhqL8VzEKH/37NwMCcOV9Y5/oWtjDXGJNtMXmVOrQipqGC6WkJp0iHlbcG1LVlKx3rwg4mGr
-	0PWRNDY8xiKGaCUlTxiWZeKYRY6v6ew==
-X-Google-Smtp-Source: AGHT+IGLiqgrdhzH0+Qqr4PxQlkc+m8W6PfG2o5fVCbc8yQnEUgDRQ1v8Wd1Df8TSkcAlQ/SAmvjhvi+moj86g9SoYI=
-X-Received: by 2002:a05:600c:3b8a:b0:42c:b8da:c79b with SMTP id
- 5b1f17b1804b1-4319ad082c5mr83187225e9.5.1730440113534; Thu, 31 Oct 2024
- 22:48:33 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1454142623;
+	Fri,  1 Nov 2024 05:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730440221; cv=fail; b=tVONEX6hE7PnbhZ76BNnrLUFYbjg/e/nvPu1LzsDhUiNYqC3SEIq3//VipjRrROjjZeoI74GMp4O+VgWsgseQDP3T7dEmq1fXIrkgEBO0tg7VOoqxSPWDBAa7YXHx2O1kaHLYSEAyCRzG4dIr7255nKSWt9z/rWYFoUstykMIXg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730440221; c=relaxed/simple;
+	bh=ZPX8wGGO/viy1UjD0k9BM6Ghl8QgCf2ytqaFJMXK3hI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=m/MP2aZZASecQprU8afXJdQmBbav3JPXn8B5W8v9e3YzsmZPKqxSL3JeZLF3XCg/ASBqfSYQVqy/T8NZb8fT6qC2UzIrxdhiIJsVJ2KPVlH8TgddI5h2rvlQU0wFCQilec5XmLnfm+WBoZdrw0q0CkBM0Jhw/fy0PLMAjOriYJM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=JbsC+iuM; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A14UbEt030451;
+	Thu, 31 Oct 2024 22:50:09 -0700
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2049.outbound.protection.outlook.com [104.47.58.49])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42kfwh5q7e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Oct 2024 22:50:09 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G17CybM6Yzs47cGgs/Wc9V2+/PsdM2GX+ATkMgDWWWhy04GAv1nhbUIAG1ipmrNKKGIDRImwx00FsG95eizRhxlFQA3bGjPuA+VQj5/m+BVTBZ1VKZmIsMFIHq2Ccbusv2x0/hUwhhgpoMMnqLXE2cMj8vRQZLk4JSB+QWS8xACROaEHmNzPYl1n/PUdAwWmYOX744msbN0RSlJoO71MQ+z5CZHTuOUfIynv+j9iYtZe7ZbvQaRyAKyTXxNuC9p5CbtcdcQqumkPgRaOf3RixFFH17Du05lbuXuVZ5eo8xiYGz7L/B5Bb97/JMuUOve4RKdHhrNkV0X86xIelRueKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZPX8wGGO/viy1UjD0k9BM6Ghl8QgCf2ytqaFJMXK3hI=;
+ b=DVk23WlERk9R1beYZVM4TT60EyrBq2eKN5RpzVM7ZBPf9y1IMWTUkX+0Sw1keRgdY1qcC7Ty1upIu3n8ptKjMOp7UlbyxMXEyFo7IWKlZo4e3uKyRVfWxgAVC/08UTkUyvx/eay4eSiIVKNdFPSjyh1+ocgQV+FgC0H4HfvZp30MwusWvJff7Esj8ogzX+T3wZVUfAZmBiklTG9WIYE8v1GmBHi6avrXcljDWJGyrIS17352nyvINA6GaqghzVYzKWiar3gJdHtMymG4sisPMpDNcoN8dQrCwBCgh/kump8QSY3CvJVX/Tjt+s9eck4SybSGkeW42k+7cUoZEtPRZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZPX8wGGO/viy1UjD0k9BM6Ghl8QgCf2ytqaFJMXK3hI=;
+ b=JbsC+iuMPGBZvHI++XnyCPErlWvKch3D+muWQySVl5By1+ioYHWtfIMHNVz0xD5YBxiqkyHGvi9advkGOYoX+xl2aXieyqOCmgBEtunUpDwPB9udgPld7I0QSubZxNsigetk7GA1/kV557L/VeUhmH+jQhDEmp2PygmP/Lf2Kvk=
+Received: from BY3PR18MB4707.namprd18.prod.outlook.com (2603:10b6:a03:3ca::23)
+ by BY1PR18MB5950.namprd18.prod.outlook.com (2603:10b6:a03:4b7::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.23; Fri, 1 Nov
+ 2024 05:50:06 +0000
+Received: from BY3PR18MB4707.namprd18.prod.outlook.com
+ ([fe80::e225:5161:1478:9d30]) by BY3PR18MB4707.namprd18.prod.outlook.com
+ ([fe80::e225:5161:1478:9d30%7]) with mapi id 15.20.8114.023; Fri, 1 Nov 2024
+ 05:50:06 +0000
+From: Sai Krishna Gajula <saikrishnag@marvell.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sunil Kovvuri
+ Goutham <sgoutham@marvell.com>,
+        Geethasowjanya Akula <gakula@marvell.com>,
+        Linu Cherian <lcherian@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+        Hariprasad Kelam <hkelam@marvell.com>,
+        Subbaraya Sundeep Bhatta
+	<sbhatta@marvell.com>,
+        "kalesh-anakkur.purayil@broadcom.com"
+	<kalesh-anakkur.purayil@broadcom.com>
+Subject: Re: [net-next PATCH v2 4/6] octeontx2-pf: CN20K mbox REQ/ACK
+ implementation for NIC PF
+Thread-Topic: [net-next PATCH v2 4/6] octeontx2-pf: CN20K mbox REQ/ACK
+ implementation for NIC PF
+Thread-Index: AQHbLCHnGUGpHUe38kOcXZcq7CxoJw==
+Date: Fri, 1 Nov 2024 05:50:06 +0000
+Message-ID:
+ <BY3PR18MB47073B021828F4F4C8E38BC7A0562@BY3PR18MB4707.namprd18.prod.outlook.com>
+References: <20241022185410.4036100-1-saikrishnag@marvell.com>
+	<20241022185410.4036100-5-saikrishnag@marvell.com>
+ <20241029160657.2a0a2c91@kernel.org>
+In-Reply-To: <20241029160657.2a0a2c91@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BY3PR18MB4707:EE_|BY1PR18MB5950:EE_
+x-ms-office365-filtering-correlation-id: 5882a6d6-e319-4a69-a0de-08dcfa390a0c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Vk9HSGdPNmZVQk9yRWw0ZEV5ZTlML3pPdy8ybDYrRW5iaEhxcXFVU1ZMMExO?=
+ =?utf-8?B?QXV4dm00SnVsZjVZRTN0N2tsVFVvYWJNUnlhdDk4anBiWFVQdndzSU5hV1pC?=
+ =?utf-8?B?TFFwUjUxK1k1Vy9jbDVweXBqWFQ2cU5jYlNnMElxUEFIWi9uUVg4L0Z2d1c2?=
+ =?utf-8?B?bEhqalB6MllhaEhodW4wK2QxdllQTmFmaHU1a1VWNmYzVUZDajZUYUQ5czBs?=
+ =?utf-8?B?TnN2REFaK3dQUVJzYk80cXBwSFV5c1llQXNaTkM4VVl3TXErSHhPWFhnU2Mv?=
+ =?utf-8?B?czYzeVhPakM3ejRYZ1dKMllvK2l4QUtKMUhNT05mVlVJVFFMSTgwTnFtV01Y?=
+ =?utf-8?B?cjdTZ1Nub2c5SU52d0h1L0VSaGU4WHBSeXZxWUV4ZlhKSXpSL3RiU0dsNTJQ?=
+ =?utf-8?B?SWdiQVQ4SnRYd1V1SHkyNm56U3AzK1EvQU9IWHR5b2Frbi9qS1paQVVkYnRC?=
+ =?utf-8?B?SlNkaUozdExwa25iMWlHQStFZnZ2NzN6WlMwcldueGx3eDdyeWlZS2RFYXNN?=
+ =?utf-8?B?YUtMRmlqVjY2RWo2UGdBRytQb3Ixa3RCOGVjS2FxR2R0REVNbEZaeGQ4VmJX?=
+ =?utf-8?B?WHJSYjhRanIvZWVCNUx0SkxzU24rYlB6MUZVMDFTckNvOElxZkdhOGw1dVJy?=
+ =?utf-8?B?aEJzWGRYT1NHM0VWbnltTEVpSmhUdUh6T2tPYnFEUzRYSXcrdG5hd1FtejJo?=
+ =?utf-8?B?VlVTdkdzV0xuT3BSQk50YkhVcHhHQms0eUMxd0Flbkw1aEFndXJHNHpXdnhZ?=
+ =?utf-8?B?L0VBcjU1eXpZOUJia29ydDlvWVRVck13ZUtMQnAwL05ZaDQwWFAzaFFMV2Nl?=
+ =?utf-8?B?eEk5WjVTUXI0Rlo5dkQyM0FGblVRQWw0em44bmtmdDg3U2g4VFhSWTNldVp1?=
+ =?utf-8?B?S0I2cGwzOXRLVnc5N3NiKzFmZlhxai8wbHg0aUxqMDlqZ2M2YlBJR0FxSkZE?=
+ =?utf-8?B?TDBpUDhia3I3aWptd0VDWS9BWHA5bHZwcTh0Q3NwSC9UalpMWVZDVmJwbzZu?=
+ =?utf-8?B?dDQrUkM5NFNkVEZJdUJTeWE0cnV3aEFkejJ6QSsySnVyTmcrczlQMDVMb21C?=
+ =?utf-8?B?Q0xxZVZ4MVZRMFhMaVRDR2pZdGc1SVIxeHZtUURLSFVrdUdjVDZDMGNzQlVI?=
+ =?utf-8?B?NVJBOFBHdFYvR1BaaTR2NXYrdksvdkdVcncra2pIZ3lSWW9qVDY2RmNzZzRu?=
+ =?utf-8?B?QkRZcDR5S2JGcEh4U0ZHUTV3eVBXZWZTT1cxNEprTDcxYWM0VmdKUGFySHE5?=
+ =?utf-8?B?T0xDemRPY2xWbndRT09qR0dhS05XWjlZWW56UzVYaGZwSTAyWkdlNlQrMHN3?=
+ =?utf-8?B?VlVMbU1PL2hONHI5ZjQ0V1dSUFBnQTIwNVIzT1VwQTFnaUdNRjZOT3A0WWlO?=
+ =?utf-8?B?MlZndmhqczZoY2Y4dVlPSVdoeC81b0o0TCtmcFlVdjZBN3BYcVBubGtBeEd3?=
+ =?utf-8?B?SFFlbERhbUN5b1BONTdLbktjSW91cFVTYTdnMGlqZzhMUnFOOXBPVUpERm03?=
+ =?utf-8?B?RCtBU1EvQlNteGZGUi9oNmhpTlAvNlp4RUhVWDZuQ3B5Wk5NTXNEczZjWWFX?=
+ =?utf-8?B?TVBGQVRuZW4raDJQSnRDR3BBWWJDNkc5cXZWZXVnYW94VGlLV3lxWVVObmdB?=
+ =?utf-8?B?Si9xMWlsR3RHcVFOcHBKL2NwaitoSkwweG11MzJDbGxRVjVLREQ4aGNJVmNJ?=
+ =?utf-8?B?NTRFbEdqQ0JmQWdxWVc4SFRJK3VmY0hDM0VGeE1iUTc1WDg3dFUwYW1lV29u?=
+ =?utf-8?B?alVIcURoR3daUXA5a1d0NGtxaVl1ZE5zL3JIaG93R2U5UkdnSkxiN1FYL2ly?=
+ =?utf-8?Q?d1osK78ziMvXDDRu7Q517SmzPROif1YfWzZw4=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR18MB4707.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?WFVuQkZ5MFo3TEZXNk1OS1ZCSUFZeXpja21IY3JyS1lkK0lEb0dPblZqd3Er?=
+ =?utf-8?B?SWloWFlZOThSczNBS09HL1VJeUp2aVFWTnUyMTd4bGl6VHFlc3V4WG9GRkgv?=
+ =?utf-8?B?MWZCa2hONWYrWWs5UE5ZM3RMZHc1RGhyeTBwaGdqV1Q1K1VLeWVud3JkaG9O?=
+ =?utf-8?B?Q2Ntc0laOFNiOFo1ZnMvWE80SnJ0OXpzeFVZL2d2VlE4SkxzQ2o1RUd1VFRW?=
+ =?utf-8?B?SkxGaWNIbEs4SDN4S0F0OGJrb0hqem1kRmJ2SmpBM2xzeEZxVi8ybkNtUHZp?=
+ =?utf-8?B?T3NFeFU5RDdkUmlKbk1wNjZ6RE9WZUNINGJXWHZ4Smg5c3ZNOFh0dExyZjlx?=
+ =?utf-8?B?ZEFZMEZTQ013WTFhdWpTZDJsTTFzMFJZbjFuWXR2MTdSWnl0Q0lYOGpDWDVl?=
+ =?utf-8?B?K3FjRGNrTVgzWXNFQStDMkZRbWxsaDlub2t2WVhEeXUybjlTaVZFbG5VVjB3?=
+ =?utf-8?B?MWU5Z004SHdSRnJmd3QyVC9wRXRNTHNsTkhWcVJTVEdLUVRhSWptUUllNEUx?=
+ =?utf-8?B?Y1BvSkU0TjUvK2xVcldXZEZBMDRMa1QzSDNtRzVJbkFpYkxpZnBzS1ZzSDA4?=
+ =?utf-8?B?dU4vVkxBWDhWelVicURMcHJWRDExeGxNdW1IcUdxWWNabnlJYXg2RGxjVXpM?=
+ =?utf-8?B?UHFWMnBZNE4rZlVzaFFqU2FpbFBwNWdPSHFFRDBaTnV0b0c4V0VpZXBQWko3?=
+ =?utf-8?B?enMxbWdlMUVvd0NkbUpYbld1Z0tzTW1ySVB6MGFTYkFSdnRaRlB5UnRZQk1F?=
+ =?utf-8?B?Z2NOeTVkSzBpQ3RyTTlRSGhkVkJaU3JjRDZSMGVnL1JqcFpHZnV0ajFWK3ZY?=
+ =?utf-8?B?Q0VxM1cxUFZqRTVwNjEyUHlFTytGMzRORjZIQ0ZjdTNzbDhhUGlPSmJyMk1S?=
+ =?utf-8?B?OG90bTJWTmRDaWd5RDlIQ2FRc3pjaHpOMjdqSkVmVlBKVXBxb2t0R0M5R1ZQ?=
+ =?utf-8?B?WnNMNm5EMFZvMklkalYzVWZXRFBRaUgveWN3TzIxYjB2WHdFeisweUhPc3ha?=
+ =?utf-8?B?ZkdCTThHRHh2aVBYQ0ovTzE3dFN5NFduR2RGS3dCTHl0bUZQcFh3UTlKa1FV?=
+ =?utf-8?B?YzE4SE9TQlNZZ2tPMmhvNTAyd0NLUC8zOHJzbU9pSGJSTUtoeGFRUXc2Y3Iy?=
+ =?utf-8?B?N1I0RlVGWFMrY2QwYkJJV1BDd2ZhQVF0L29UbFp2ZWl3NktKK1J3TDVtaGZE?=
+ =?utf-8?B?NFBZa1ZMaGlGSTZtNG1oYkVJMHdmbnNiMWhTS0Rmb3g2Vml6UFUrc1R0eXFi?=
+ =?utf-8?B?a0hSZnpTZTgyTUJWeFphLy9DYUw0c05tMWpUNjJPNlZadVNzaWN5OUl6S2t2?=
+ =?utf-8?B?ckd5c2oxZnJnYmV0ZDRNczFheFNnNUIvb1RsVVZSUVJicU1ucWVOR3A2NGVm?=
+ =?utf-8?B?MDFpdHlLNVMycm1yelhJdFdQZnozejR4Z3ZZQnljbTdxYnRzSVRRMnNLK2hZ?=
+ =?utf-8?B?cTdMSks0aDFuM3p1dnNBanh6dVBHOGZVTTNOaTdJNjRlWjgvczNFR1Bua3Fy?=
+ =?utf-8?B?OTlTQkhQZGFuRWRkVU44Rm5tKzh4bFJKYUNMY1RkZU9ZN01ocllzMTdlM0w5?=
+ =?utf-8?B?MGhnekFVTDQvamVaakFHeXpRU3JEalY2QkMvU3VqRFRRWVh5NmdpR3ZIckJ2?=
+ =?utf-8?B?KzJKZERVOTdwZG5pQ2Z6R2ZEWDlUbjVLUzFxTkhVMlBNVm9QMEZWM2Rzck00?=
+ =?utf-8?B?bUM5aEh2dVpGdnVMd3dodzlIRHBlM2pDVGpwc2gwcUhlVFlPUkllcXBXNU9k?=
+ =?utf-8?B?T28zWUxtaFo2ZGl0NHgxTjFuR2JiNC9TRlBSRG1BM25qSk9HSTV4eGVGVm1j?=
+ =?utf-8?B?MXFkaDh1Q1c4VVR1UkVjODRKK2l4eFpLL0ZvSHJRNzBnVnpIT2ZGZkZTdlV4?=
+ =?utf-8?B?RlpuS1NJMUpHZnQ5bGNrSVlZYXhDWGFSZ3lKZjFrdmRld1ZGbzNnVDZiYXdL?=
+ =?utf-8?B?ZjA2MkZKM1Rhb1I1RURudVpJS2RjblJZQ2NmN2RhVFY1dHd1SVl1L3pYdjYw?=
+ =?utf-8?B?QjRYZTl5d2w0ZVp0N3d0YUp0Q2NYZmNjQTJWdXh2bTRhV095NG1qSzN4SnRI?=
+ =?utf-8?B?NFFEYlo3RTVoOE1kSUZDZWlNSzdCd09CL2VyeXFlNVBVMmZ6Smc4ZkRyVFRa?=
+ =?utf-8?Q?O85PNQR66+j0zOSx6yBm+PUjN?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1730354393-19672-1-git-send-email-zhiguo.niu@unisoc.com>
- <1730354393-19672-2-git-send-email-zhiguo.niu@unisoc.com> <bf348748-46ba-47dd-a12d-5111be2df95e@kernel.org>
- <CAHJ8P3+VY6RYgrCPJRSjJp82qJaYGUyqR3vV3OGRO_Q774qxxw@mail.gmail.com>
-In-Reply-To: <CAHJ8P3+VY6RYgrCPJRSjJp82qJaYGUyqR3vV3OGRO_Q774qxxw@mail.gmail.com>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Fri, 1 Nov 2024 13:48:22 +0800
-Message-ID: <CAHJ8P3LFDBwgm1SUr3A3fNOLbP37vybPLuUJ=aYBtKgEh66BfQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] f2fs: fix to adjust appropriate length for fiemap
-To: Chao Yu <chao@kernel.org>
-Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4707.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5882a6d6-e319-4a69-a0de-08dcfa390a0c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2024 05:50:06.7836
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5uo1ay71H2LxCLxYF9w+U5bPniICbgtXrIWipaktVvlg9QWlVm5veRxkwoo7oL/aRN/iSnSMUiN2fmoEYmRrJQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR18MB5950
+X-Proofpoint-ORIG-GUID: PuNP60Rqu1jIC6h6fsDsIFKvs18rP7Yf
+X-Proofpoint-GUID: PuNP60Rqu1jIC6h6fsDsIFKvs18rP7Yf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Zhiguo Niu <niuzhiguo84@gmail.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=881=E6=97=
-=A5=E5=91=A8=E4=BA=94 11:27=E5=86=99=E9=81=93=EF=BC=9A
->
-> Chao Yu <chao@kernel.org> =E4=BA=8E2024=E5=B9=B411=E6=9C=881=E6=97=A5=E5=
-=91=A8=E4=BA=94 10:36=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On 2024/10/31 13:59, Zhiguo Niu wrote:
-> > > If user give a file size as "length" parameter for fiemap
-> > > operations, but this size is non-block size aligned,
-> > > it will show 2 segments fiemap results even this whole file
-> > > is contiguous on disk, such as the following results, please
-> > > note that this f2fs_io has been modified for testing.
-> > >
-> > >   ./f2fs_io fiemap 0 19304 ylog/analyzer.py
-> > > Fiemap: offset =3D 0 len =3D 19304
-> > >          logical addr.    physical addr.   length           flags
-> > > 0       0000000000000000 0000000020baa000 0000000000004000 00001000
-> > > 1       0000000000004000 0000000020bae000 0000000000001000 00001001
-> > >
-> > > after this patch:
-> > >   ./f2fs_io fiemap 0 19304 ylog/analyzer.py
-> > > Fiemap: offset =3D 0 len =3D 19304
-> > >       logical addr.    physical addr.   length           flags
-> > > 0     0000000000000000 00000000315f3000 0000000000005000 00001000
-> >
-> > Why is FIEMAP_EXTENT_LAST missing in #0 extent? As we can see it
-> > in #1 extent before your change.
-> Hi Chao,
-> for normal fiemap, we just  can tag  FIEMAP_EXTENT_LAST in the following:
->
-> /* HOLE */
-> if (!compr_cluster && !(map.m_flags & F2FS_MAP_FLAGS)) {
-> start_blk =3D next_pgofs;
->
-> if (blks_to_bytes(inode, start_blk) < blks_to_bytes(inode,
-> max_inode_blocks(inode)))
-> goto prep_next;
->
-> flags |=3D FIEMAP_EXTENT_LAST;
-> }
-> but after this patch, if file length =3D 19304, blk len =3D5(page size=3D=
-4096),
-> and f2fs_map_blocks will run once if the file is  contiguous on disk,
-> and will tag
-> F2FS_MAP_FLAGS to map.m_flags, so the following case will not run.
-> then
->
-> if (size) {
-> flags |=3D FIEMAP_EXTENT_MERGED;
-> if (IS_ENCRYPTED(inode))
-> flags |=3D FIEMAP_EXTENT_DATA_ENCRYPTED;
->
-> ret =3D fiemap_fill_next_extent(fieinfo, logical,
-> phys, size, flags);
-> trace_f2fs_fiemap(inode, logical, phys, size, flags, ret);
-> if (ret)
-> goto out;
-> size =3D 0;
-> }
-> fiemap_fill_next_extent will return 1, then go out , this fiemap flow fin=
-ishes.
->
-> >
-> > 1       0000000000004000 0000000020bae000 0000000000001000 00001001
-> but back to this case, because
->
-> next:
-> memset(&map, 0, sizeof(map));
-> map.m_lblk =3D start_blk;
-> map.m_len =3D bytes_to_blks(inode, len);
-> map.m_next_pgofs =3D &next_pgofs;
-> map.m_seg_type =3D NO_CHECK_TYPE;
->
-> map.m_len will not  reduce the part that has beed maped even map.m_lbk
-> has changed,
-> for example, if file length =3D 19304, before patch, map.m_len=3D4,
-> after once f2fs_map_block,  map.m_lbk=3D4, map.m_len still =3D4, so
-> there will be "HOLE" case in the follow-up f2fs_map_block
-> so it will loop until start_blk reaches the maxbytes.
-> /* HOLE */
-> if (!compr_cluster && !(map.m_flags & F2FS_MAP_FLAGS)) {
-> start_blk =3D next_pgofs;
->
-> if (blks_to_bytes(inode, start_blk) < blks_to_bytes(inode,
-> max_inode_blocks(inode)))
-> goto prep_next;
->
-> flags |=3D FIEMAP_EXTENT_LAST;
-> }
->
-> there is another case before this patch, file size =3D 5 blocks, if we
-> pass the len not
-> greater than or equal to 5=EF=BC=8C it will not tag FIEMAP_EXTENT_LAST
->
->  # ./f2fs_io_new fiemap 0 4 file.apk
-> Fiemap: offset =3D 0 len =3D 4
->         logical addr.    physical addr.   length           flags
-> 0       0000000000000000 000000070e08f000 0000000000004000 00001008
->
-> but if len equal or greater than 5,   it will tag FIEMAP_EXTENT_LAST
->  # ./f2fs_io_new fiemap 0 5 file.apk
-> Fiemap: offset =3D 0 len =3D 5
->         logical addr.    physical addr.   length           flags
-> 0       0000000000000000 000000070e08f000 0000000000004000 00001008
-> 1       0000000000004000 000000070e090000 0000000000001000 00001001
-> thanks!
-Hi Chao, pls ignore this reply , I will confirm your questions.
-thanks a lot~
-> >
-> > Thanks,
-> >
-> > >
-> > > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> > > ---
-> > > f2fs_io has been modified for testing, the length for fiemap is
-> > > real file size, not block number
-> > > ---
-> > >   fs/f2fs/data.c | 4 ++--
-> > >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > > index 90fa8ab..8c9bb42 100644
-> > > --- a/fs/f2fs/data.c
-> > > +++ b/fs/f2fs/data.c
-> > > @@ -1966,8 +1966,8 @@ int f2fs_fiemap(struct inode *inode, struct fie=
-map_extent_info *fieinfo,
-> > >                       goto out;
-> > >       }
-> > >
-> > > -     if (bytes_to_blks(inode, len) =3D=3D 0)
-> > > -             len =3D blks_to_bytes(inode, 1);
-> > > +     if (len & (blks_to_bytes(inode, 1) - 1))
-> > > +             len =3D round_up(len, blks_to_bytes(inode, 1));
-> > >
-> > >       start_blk =3D bytes_to_blks(inode, start);
-> > >       last_blk =3D bytes_to_blks(inode, start + len - 1);
-> >
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYWt1YiBLaWNpbnNraSA8a3Vi
+YUBrZXJuZWwub3JnPg0KPiBTZW50OiBXZWRuZXNkYXksIE9jdG9iZXIgMzAsIDIwMjQgNDozNyBB
+TQ0KPiBUbzogU2FpIEtyaXNobmEgR2FqdWxhIDxzYWlrcmlzaG5hZ0BtYXJ2ZWxsLmNvbT4NCj4g
+Q2M6IGRhdmVtQGRhdmVtbG9mdC5uZXQ7IGVkdW1hemV0QGdvb2dsZS5jb207IHBhYmVuaUByZWRo
+YXQuY29tOw0KPiBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnOyBTdW5pbCBLb3Z2dXJpDQo+IEdvdXRoYW0gPHNnb3V0aGFtQG1hcnZlbGwuY29tPjsg
+R2VldGhhc293amFueWEgQWt1bGENCj4gPGdha3VsYUBtYXJ2ZWxsLmNvbT47IExpbnUgQ2hlcmlh
+biA8bGNoZXJpYW5AbWFydmVsbC5jb20+OyBKZXJpbiBKYWNvYg0KPiA8amVyaW5qQG1hcnZlbGwu
+Y29tPjsgSGFyaXByYXNhZCBLZWxhbSA8aGtlbGFtQG1hcnZlbGwuY29tPjsgU3ViYmFyYXlhDQo+
+IFN1bmRlZXAgQmhhdHRhIDxzYmhhdHRhQG1hcnZlbGwuY29tPjsga2FsZXNoLQ0KPiBhbmFra3Vy
+LnB1cmF5aWxAYnJvYWRjb20uY29tDQo+IFN1YmplY3Q6IFJlOiBbbmV0LW5leHQgUEFUQ0ggdjIg
+NC82XSBvY3Rlb250eDItcGY6IENOMjBLIG1ib3gNCj4gUkVRL0FDSyBpbXBsZW1lbnRhdGlvbiBm
+b3IgTklDIFBGDQo+IA0KPiBPbiBXZWQsIDIzIE9jdCAyMDI0IDAwOuKAijI0OuKAijA4ICswNTMw
+IFNhaSBLcmlzaG5hIHdyb3RlOiA+ICsvKiogPiArICogQ04yMGsNCj4gUlZVIFBGIE1CT1ggSW50
+ZXJydXB0IFZlY3RvciBFbnVtZXJhdGlvbiA+ICsgKiA+ICsgKiBWZWN0b3JzIDAgLSAzIGFyZQ0K
+PiBjb21wYXRpYmxlIHdpdGggcHJlIGNuMjBrIGFuZCBoZW5jZSA+ICsgKiBleGlzdGluZyBtYWNy
+b3MgYXJlIGJlaW5nIHJldXNlZC4NCj4gPiArDQo+IE9uIFdlZCwgMjMgT2N0IDIwMjQgMDA6MjQ6
+MDggKzA1MzAgU2FpIEtyaXNobmEgd3JvdGU6DQo+ID4gKy8qKg0KPiA+ICsgKiBDTjIwayBSVlUg
+UEYgTUJPWCBJbnRlcnJ1cHQgVmVjdG9yIEVudW1lcmF0aW9uDQo+ID4gKyAqDQo+ID4gKyAqIFZl
+Y3RvcnMgMCAtIDMgYXJlIGNvbXBhdGlibGUgd2l0aCBwcmUgY24yMGsgYW5kIGhlbmNlDQo+ID4g
+KyAqIGV4aXN0aW5nIG1hY3JvcyBhcmUgYmVpbmcgcmV1c2VkLg0KPiA+ICsgKi8NCj4gDQo+IFBs
+ZWFzZSBkb24ndCB1c2UgLyoqIHVubGVzcyB0aGUgY29tbWVudCBpcyBpbiBrZXJuZWwtZG9jIGZv
+cm1hdC4NCj4gSXQgY2F1c2VzIHdhcm5pbmdzIGZvciBkb2N1bWVudGF0aW9uIGV4dHJhY3RvcnM6
+DQoNCkFjaywgIFdpbGwgc3VibWl0IFYzIHBhdGNoIHdpdGggY29ycmVjdGluZyB0aGUgZXJyb3Iu
+DQoNCj4gDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9tYXJ2ZWxsL29jdGVvbnR4Mi9hZi9jbjIw
+ay9zdHJ1Y3QuaDoxMjogd2FybmluZzogVGhpcw0KPiBjb21tZW50IHN0YXJ0cyB3aXRoICcvKion
+LCBidXQgaXNuJ3QgYSBrZXJuZWwtZG9jIGNvbW1lbnQuIFJlZmVyDQo+IERvY3VtZW50YXRpb24v
+ZG9jLWd1aWRlL2tlcm5lbC1kb2MucnN0DQo+ICAgKiBDTjIwayBSVlUgUEYgTUJPWCBJbnRlcnJ1
+cHQgVmVjdG9yIEVudW1lcmF0aW9uDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9tYXJ2ZWxsL29j
+dGVvbnR4Mi9hZi9jbjIway9zdHJ1Y3QuaDoxMjogd2FybmluZzoNCj4gbWlzc2luZyBpbml0aWFs
+IHNob3J0IGRlc2NyaXB0aW9uIG9uIGxpbmU6DQo+ICAgKiBDTjIwayBSVlUgUEYgTUJPWCBJbnRl
+cnJ1cHQgVmVjdG9yIEVudW1lcmF0aW9uDQo+IC0tDQo+IHB3LWJvdDogY3INCg0KVGhhbmtzLA0K
+U2FpDQo=
 
