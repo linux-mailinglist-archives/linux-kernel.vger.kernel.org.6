@@ -1,234 +1,242 @@
-Return-Path: <linux-kernel+bounces-392876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D559B9923
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:06:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 196F99B9926
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:07:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56E5D282D8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A139D282FD5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466901D2F5D;
-	Fri,  1 Nov 2024 20:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C731D365A;
+	Fri,  1 Nov 2024 20:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="ieysLvMv"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HquCUdbT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A551ABEA1
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6995A1ABEA1
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730491556; cv=none; b=pVsbXMkpezp1qvGsWo96DpbATaujxS0/xXX0/6M+nkFxgW50s6VNyr8ryM12Z7zn/fcnkLgsVdfPwCNxEezuUTuBjnL+rg/qkaOd2oxKlNtXfj5+Gg7PTipTxljGvb7QEI4Am5jjYzIX1fWDg7G/XkTidA0NKiXQQq5IUqigYZs=
+	t=1730491640; cv=none; b=J4EHtLTrgAjo0eCChp+it3R10asVqdk7C6sZ0Kw8+kh6C6gVfxm/gu+nQ1TvDQ8NatCrr0H3BDUzyHlDQ9io9DQUU93oA/UwrLYYfXKxJ6aDe4spe6tvRK45CX7UWWWIvg7i4dM0/5Ly9zZDl+YsPuYmlFI3XSFrByotQWA2EXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730491556; c=relaxed/simple;
-	bh=N1aJndOMAw1SjLF6jH4D6Z5XANz96QCZvNODswRk4c0=;
+	s=arc-20240116; t=1730491640; c=relaxed/simple;
+	bh=N88GzlmxEE9HtkMlzHArbN+K5hMRhPN+NNP1INNrCOQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZPyyed+6oczJtVNJVlMGrrCoR2gYVk/yBfvQo4lHeQexJ4GTRT8T8EmjBYPnNmyYzO/jb//3jpg6yDZGFXubedt4O0H3dCy/QtbdGE+yGK81Vdhe72ZrCiN4PlfoNY9Uxad+47FzcwAtAntnnKn7aXU8eVPeuTg6EyemCtNiAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=ieysLvMv; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1JWJXr010414;
-	Fri, 1 Nov 2024 20:05:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pps0720; bh=Ko
-	J4vSAK5YxnCXsmrMAKZ+F/0g5uFXr4mfTkEeM2p+k=; b=ieysLvMvvmI14bUCax
-	ztFfk3ZIOdnopRqMOjlH0agRQiTZS/4FQf1FprcGJAJ6GS/8654laF1OhQ0+r+jd
-	g/LvGE2HJiWuxy8eNsDAOY7IxxTkDDKUMVOlrIy1oxtWmcB/M7DnS3cuaZ16WtMP
-	btwXlWwikn0OfWuX0iwHVsrG4iU/wvxkmtZjP7eqvk9dHaQiSKapJC9uHkz5iou3
-	3778scx/SIPutfOt0uPn/YoNT87d7qLtaInRaKMe01kfoZpnE4wHSITuj6YeUQv7
-	5I7nLFGp5SdiA4MTKmsmbvE3jUpPsmNG9talgVYkA0qrdR12vtYhLCgvKH2O3uQX
-	pTOw==
-Received: from p1lg14881.it.hpe.com ([16.230.97.202])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 42n3qgru65-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 20:05:33 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
+	 Content-Type:Content-Disposition:In-Reply-To; b=m7kJ1yaD9Pj0JQ3D6/LcZl2RJPiAXHmlKlKvWw5WroapGJVj4zoE/ze6CkdY2MImtY+CitjsHfY0FUQXrPLu4z2nHR0976HDWCdI1o11FDYk5gu541dahPGPwfZ0quUrqf8Cb3ct9+REi6SnKcrOoUqchOxYQ3kKcNoG8eZzRwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HquCUdbT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730491637;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rLKNPdZ2ZjYLPtoqDOBfRXehXk2qVxTUmNoRZaqpXHs=;
+	b=HquCUdbTpUqP6GCUdImu6QIKKGRd6aQ8nM8FJ5TgwKVEDn+iQrYNlp2WHl/OogE6IU84/e
+	mj5Ziiz6xLsu/lQs4CHDFne09NQ8TD0BxOpRp4oDHcyghCIzgk6cVHN+GIp3Fuem5ut3b3
+	VAeKhN1uFUD1LzOUYs/2CdGpYWNPO24=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-617-3qwXkxSxPnKlS1Pan7fHQA-1; Fri,
+ 01 Nov 2024 16:07:14 -0400
+X-MC-Unique: 3qwXkxSxPnKlS1Pan7fHQA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 20A22806B5A;
-	Fri,  1 Nov 2024 20:05:32 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id E4EA7801FF5;
-	Fri,  1 Nov 2024 20:05:28 +0000 (UTC)
-Date: Fri, 1 Nov 2024 15:05:26 -0500
-From: Steve Wahl <steve.wahl@hpe.com>
-To: samir <samir@linux.ibm.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        linux-kernel@vger.kernel.org, Russ Anderson <rja@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>, vishalc@linux.ibm.com,
-        sshegde@linux.ibm.com, srikar@linux.ibm.com
-Subject: Re: [PATCH] sched/topology: improve topology_span_sane speed
-Message-ID: <ZyU0hkjeIteoThQ7@swahl-home.5wahls.com>
-References: <20241010155111.230674-1-steve.wahl@hpe.com>
- <d64234e1e2c537be9d490247295f7b36@linux.ibm.com>
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DDE4E197703E;
+	Fri,  1 Nov 2024 20:07:11 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.88.10])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA98A19560A2;
+	Fri,  1 Nov 2024 20:07:07 +0000 (UTC)
+Date: Fri, 1 Nov 2024 16:07:04 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de
+Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
+Message-ID: <20241101200704.GE689589@pauld.westford.csb>
+References: <20240727102732.960974693@infradead.org>
+ <20240727105030.226163742@infradead.org>
+ <20241101124715.GA689589@pauld.westford.csb>
+ <20241101125659.GY14555@noisy.programming.kicks-ass.net>
+ <20241101133822.GC689589@pauld.westford.csb>
+ <20241101142649.GX9767@noisy.programming.kicks-ass.net>
+ <20241101144225.GD689589@pauld.westford.csb>
+ <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d64234e1e2c537be9d490247295f7b36@linux.ibm.com>
-X-Proofpoint-GUID: GNqD910myT6_q5YxRVbm8WR1nnjjxwBC
-X-Proofpoint-ORIG-GUID: GNqD910myT6_q5YxRVbm8WR1nnjjxwBC
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 phishscore=0 adultscore=0 bulkscore=0 impostorscore=0
- mlxscore=0 spamscore=0 mlxlogscore=826 priorityscore=1501 malwarescore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411010143
+In-Reply-To: <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Oct 29, 2024 at 11:04:52PM +0530, samir wrote:
+
+Hi Mike,
+
+On Fri, Nov 01, 2024 at 07:08:31PM +0100 Mike Galbraith wrote:
+> On Fri, 2024-11-01 at 10:42 -0400, Phil Auld wrote:
+> > On Fri, Nov 01, 2024 at 03:26:49PM +0100 Peter Zijlstra wrote:
+> > > On Fri, Nov 01, 2024 at 09:38:22AM -0400, Phil Auld wrote:
+> > >
+> > > > How is delay dequeue causing more preemption?
+> > >
+> > > The thing delay dequeue does is it keeps !eligible tasks on the runqueue
+> > > until they're picked again. Them getting picked means they're eligible.
+> > > If at that point they're still not runnable, they're dequeued.
+> > >
+> > > By keeping them around like this, they can earn back their lag.
+> > >
+> > > The result is that the moment they get woken up again, they're going to
+> > > be eligible and are considered for preemption.
+> > >
+> > >
+> > > The whole thinking behind this is that while 'lag' measures the
+> > > mount of service difference from the ideal (positive lag will have less
+> > > service, while negative lag will have had too much service), this is
+> > > only true for the (constantly) competing task.
+> > >
+> > > The moment a task leaves, will it still have had too much service? And
+> > > after a few seconds of inactivity?
+> > >
+> > > So by keeping the deactivated tasks (artificially) in the competition
+> > > until they're at least at the equal service point, lets them burn off
+> > > some of that debt.
+> > >
+> > > It is not dissimilar to how CFS had sleeper bonus, except that was
+> > > walltime based, while this is competition based.
+> > >
+> > >
+> > > Notably, this makes a significant difference for interactive tasks that
+> > > only run periodically. If they're not eligible at the point of wakeup,
+> > > they'll incur undue latency.
+> > >
+> > >
+> > > Now, I imagine FIO to have tasks blocking on IO, and while they're
+> > > blocked, they'll be earning their eligibility, such that when they're
+> > > woken they're good to go, preempting whatever.
+> > >
+> > > Whatever doesn't seem to enjoy this.
+> > >
+> > >
+> > > Given BATCH makes such a terrible mess of things, I'm thinking FIO as a
+> > > whole does like preemption -- so now it's a question of figuring out
+> > > what exactly it does and doesn't like. Which is never trivial :/
+> > >
+> >
+> > Thanks for that detailed explanation.
+> >
+> > I can confirm that FIO does like the preemption
+> >
+> > NO_WAKEUP_P and DELAY��� - 427 MB/s
+> > NO_WAKEUP_P and NO_DELAY - 498 MB/s
+> > WAKEUP_P and DELAY������ - 519 MB/s
+> > WAKEUP_P and NO_DELAY��� - 590 MB/s
+> >
+> > Something in the delay itself
+> > (extra tasks in the queue? not migrating the delayed task? ...)
 > 
-> I have verified this patch on PowerPC and below are the results for "time
-> ppc64_cpu —smt =off/4" mode,
-> Here are the 5 iteration data for “time ppc64_cpu --smt=off/4” command(min,
-> max, Average, and Std Dev).
+> I think it's all about short term fairness and asymmetric buddies.
+
+Thanks for jumping in.  My jargon decoder ring seems to be failing me
+so I'm not completely sure what you are saying below :)
+
+"buddies" you mean tasks that waking each other up and sleeping.
+And one runs for longer than the other, right?
+
 > 
-> ——————Without patch——————
-> ————uname -a————
-> 6.12.0-rc5
+> tbench comparison eevdf vs cfs, 100% apple to apple.
 > 
-> ————lscpu————
-> lscpu
-> Architecture:             ppc64le
->   Byte Order:             Little Endian
-> CPU(s):                   360
->   On-line CPU(s) list:    0-359
-> NUMA:
->   NUMA node(s):           4
->   NUMA node0 CPU(s):      0-95
->   NUMA node1 CPU(s):      96-191
->   NUMA node2 CPU(s):      192-271
->   NUMA node3 CPU(s):      272-359
+> 1 tbench buddy pair scheduled cross core.
 > 
-> Without Patch:
-> Metric	       SMT Off (s)   SMT 4 (s)
-> Min	      	  68.63	      37.64
-> Max	      	  74.92	      39.39
-> Average	   	  70.92	      38.48
-> Std Dev	    	  2.22	      0.63
+>   PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ P COMMAND
+> 13770 root      20   0   21424   1920   1792 S 60.13 0.012   0:33.81 3 tbench
+> 13771 root      20   0    4720    896    768 S 46.84 0.006   0:26.10 2 tbench_srv
+ 
+> Note 60/47 utilization, now pinned/stacked.
 > 
+> 6.1.114-cfs
+>   PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ P COMMAND
+>  4407 root      20   0   21424   1980   1772 R 50.00 0.012   0:29.20 3 tbench
+>  4408 root      20   0    4720    124      0 R 50.00 0.001   0:28.76 3 tbench_srv
+
+What is the difference between these first two?  The first is on
+separate cores so they don't interfere with each other? And the second is
+pinned to the same core?
+
+>
+> Note what happens to the lighter tbench_srv. Consuming red hot L2 data,
+> it can utilize a full 50%, but it must first preempt wide bottom buddy.
+>
+
+We've got "light" and "wide" here which is a bit mixed metaphorically :) 
+So here CFS is letting the wakee preempt the waker and providing pretty
+equal fairness. And hot l2 caching is masking the assymmetry. 
+
+> Now eevdf.  (zero source deltas other than eevdf)
+> 6.1.114-eevdf -delay_dequeue
+>   PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ P COMMAND
+>  4988 root      20   0   21424   1948   1736 R 56.44 0.012   0:32.92 3 tbench
+>  4989 root      20   0    4720    128      0 R 44.55 0.001   0:25.49 3 tbench_srv
+> 6.1.114-eevdf +delay_dequeue
+>   PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ P COMMAND
+>  4934 root      20   0   21424   1952   1736 R 52.00 0.012   0:30.09 3 tbench
+>  4935 root      20   0    4720    124      0 R 49.00 0.001   0:28.15 3 tbench_srv
 > 
-> ——————With patch——————
-> ————uname -a————
-> 6.12.0-rc5-dirty
+> As Peter noted, delay_dequeue levels the sleeper playing field.  Both
+> of these guys are 1:1 sleepers, but they're asymmetric in width.
+
+With wakeup preemption off it doesn't help in my case. I was thinking
+maybe the preemption was preventing some batching of IO completions or
+initiations. But that was wrong it seems. 
+
+Does it also possibly make wakeup migration less likely and thus increase
+stacking?  
+
+> Bottom line, box full of 1:1 buddies pairing up and stacking in L2.
 > 
-> ————lscpu————
-> lscpu
-> Architecture:             ppc64le
->   Byte Order:             Little Endian
-> CPU(s):                   360
->   On-line CPU(s) list:    0-359
-> NUMA:
->   NUMA node(s):           4
->   NUMA node0 CPU(s):      0-95
->   NUMA node1 CPU(s):      96-191
->   NUMA node2 CPU(s):      192-271
->   NUMA node3 CPU(s):      272-359
+> tbench 8
+> 6.1.114-cfs      3674.37 MB/sec
+> 6.1.114-eevdf    3505.25 MB/sec -delay_dequeue
+>                  3701.66 MB/sec +delay_dequeue
 > 
-> With Patch:
-> Metric	    SMT Off (s)	    SMT 4 (s)
-> Min 	        68.748	     33.442
-> Max	        72.954	     38.042
-> Average	        70.309	     36.206
-> Std Dev	        1.41	     1.66
+> For tbench, preemption = shorter turnaround = higher throughput.
+
+So here you have a benchmark that gets a ~5% boost from delayed_dequeue.
+
+But I've got one that get's a 20% penalty so I'm not exactly sure what
+to make of that. Clearly FIO does not have the same pattern as tbench. 
+
+It's not a special case though, this is one that our perf team runs
+regularly to look for regressions. 
+
+I'll be able to poke at it more next week so hopefully I can see what it's
+doing. 
+
+
+Cheers,
+Phil
+
+
 > 
-> From the results it’s seen that there is no significant improvement,
-> however, with the patch applied, the SMT=4 state shows a decrease in both
-> average time, as reflected in the lower average (36.21s vs. 38.48s) and
-> higher standard deviation (1.66s vs. 0.63s) compared to the previous without
-> patch apply result.
-
-Samir,
-
-I found your results interesting.  So I tried to compare with our
-systems, and I get similar results.  Around 300 processors, this patch
-makes little difference.  At higher counts, the topology_span_sane
-function change has more influence.
-
-I don't have PPC system access, but I tried to recreate similar
-results on our x86_64 systems.  I took a 8 socket, 60 core/socket, 2
-thread/core system (960 CPUs), and limited it to 20 physical
-cores/socket (320 CPUs) for comparison.
-
-I'm using scripts from Intel's System Health Check,
-"Set-Half-Of-The-Cores-Offline.sh" and "Set-All-Cores-Online.sh", but
-similar results could be obtained with anything that manipulates
-/sys/devices/system/cpu/cpu*/online.
-
-I also found that the first offlining attempt after a reboot goes much
-faster, so I threw out the first result after reboot and then measured
-5 iterations.  (The reason for this probably needs exploration, but it
-happens for me on both patched and unpatched versions.)
-
-All times in seconds.  
-
-With 20 cores / socket (320 CPUs counting hyperthreads):
-
-Without patch:
-		Half-Offline	All-Online
-min		21.47		30.76
-max		22.35		31.31
-avg		22.04		31.124
-std.dev.	0.3419795	0.2175545
-
-With patch:
-		Half-Offline	All-Online
-min		20.43		28.23
-max		21.93		29.76
-avg		20.786		28.874
-std.dev.	0.6435293	0.6366553
-
-Not a huge difference at this level.
-
-At 60 cores / socket (960 CPUs counting hyperthreads):
-
-Without patch:
-                Half-Offline    All-Online
-min		275.34		321.47
-max		288.05		331.89
-avg		282.964		326.884
-std.dev.	5.8835813	4.0268945
-
-With patch:
-                Half-Offline    All-Online
-min		208.9		247.17
-max		219.49		251.48
-avg		212.392		249.394
-std.dev.	4.1717586	1.6904526
-
-Here it starts to make a difference, and as the number of CPUs goes
-up, it gets worse.
-
-I should note that I made my measurements with v2 of the patch,
-recently posted.  Version 2 does remove a memory allocation, which
-might have improved things.
-
-Thanks,
-
---> Steve Wahl
+> 	-Mike
+> 
 
 -- 
-Steve Wahl, Hewlett Packard Enterprise
+
 
