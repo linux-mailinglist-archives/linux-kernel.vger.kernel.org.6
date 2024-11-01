@@ -1,209 +1,200 @@
-Return-Path: <linux-kernel+bounces-392453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999769B9460
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:27:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1D29B9464
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:27:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3561F21ED9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:27:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2C71F21421
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DB21C7287;
-	Fri,  1 Nov 2024 15:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2391C760A;
+	Fri,  1 Nov 2024 15:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t+LvVyWP"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="3SagI3t1"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6CB1C68A6
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 15:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D461C6F43
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 15:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730474808; cv=none; b=Zsl3Yjb1upzGp98xG2b1YCvqS9FNJJakCtB3sIwbzLArSrgMdmn2FY28EHHdwUo27Gnv2Q4vzfDvH7KIi2auLbPm/LL98DWP1VW/vUimtiupArh/VUQRwsb9gmOMH8/sLaXUBq9prC85LGQLjnBkI8FfT6vWCvGSe6Sn+IcvIrw=
+	t=1730474856; cv=none; b=tAP0q5/1tQDtpX0LddyJ121NyYbU4hf4S/BQMZ8p4GtxFI+ur9OduPms0VejXKa3nT977tVHf6aV4x9GwO0dfSIXd0bodhI6QYkWgKAY8whSNtOotrWQdUEhEse029Wx8VbzBOHuCr7/1Kb1XqCK/+PWHxpmqZg+blNekZILt4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730474808; c=relaxed/simple;
-	bh=wHAtH85ytanmYNA+QD9zRKwrYvKpOZ1yPwJIGLNUmVk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ugBYrk+TwpXivtmHyWW1DS0BkvhEQTFBmluQJSPTucbIf89CIehGBdWrBom5I9qUdQRObcG+2sa1ti7iYOqA9WmEGBzjfWezZv9tnUcXNdOnjZy5b+bEWda2knuRfr+GXemGdkfwvZ3mAEuOLKPuuG7xvQ8IMW5YwVsIr9VqZyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t+LvVyWP; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e6101877abso43028297b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 08:26:46 -0700 (PDT)
+	s=arc-20240116; t=1730474856; c=relaxed/simple;
+	bh=v6bPRfzSENICoKf9OISSZbMLHA1bYo0mcGwtUDZpoK8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=pnC3mwL9pWj6DTbVpQVQxYFoL8woy9ePSMpm/lkR6DAT6Q2ECxWTYJTror90nLRsZnthe9Nwvo+uQyHZEq6LdiHteC8gd5kpDMOAn0ql27XAu+5IEkRJRU+u1ZQQijB/uBN8pLvsO44bP3dmeWlaUNaMP62ZGuU3PX1bewbaT6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=3SagI3t1; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cb6704ff6bso2780581a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 08:27:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730474806; x=1731079606; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A0ftFmxWefug8znYAUp23wDUAHo5xr+BS9XzbNWaTbY=;
-        b=t+LvVyWPVEwDwJMMWe42e1+vhMgEzDpXlQoECVPk+yz4tf6L9vd1i/amucC2RcK415
-         h0HolyoLEai8Mqdlgt4KnsVmPKHBog320C8N5rChYV4XN6Ex2GIwvXsAZu/TVy9UVRNo
-         x7PSYaKnc9NZn4T4pZdIXjz5ulcFusCpMcZv2eIOdtAEmFAfIINbT9tqWDvon+GUlXnR
-         e4LJFkQ2ayOJs2rKC+NAUIvoiPl++DOboftFvN9ci77cye0GpHzAH5EVnZCEVvIYeznC
-         93VEIxZglMaFdhUk6J4ef4I89bjV4bKxDbSd1CKbFA1qE6GYY/7MY1zcZ3JctOypRSLJ
-         7uJA==
+        d=fairphone.com; s=fair; t=1730474851; x=1731079651; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K6TkXEo4x1I5Rzwt8fjqhUP2t7jAOO31BIJtURlqSmc=;
+        b=3SagI3t1U8CH99DmXDvZmkGIbbxKeCjM9vLWKrwep4eNtJH8xc48NrzDbhtMSFPqY5
+         bfafTDTEgEuGQVgICE9QAJfYJDGPnS+vCFT4n7RLMTYYgbXFUAGCPj2REl3JccXGtNS+
+         9EjDsg08WCZB3fmetfifqWBpDlKfJTYz81m6x2wQNc6V6S08DSTr8mY0QH/XXsqeR4Tt
+         EeomETE1N7CCrBTYiqQXvTNCgTUy3cSHCawm+RPt+e6yTt6cDRDi5vBkve11eA5UzOp6
+         1IqC6UjrMUh8eivk0XvR+5YGcyCNMDiTwg0NBu9QHt8ny6SpE6vzgtDloW3aXnj2on5O
+         jf8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730474806; x=1731079606;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=A0ftFmxWefug8znYAUp23wDUAHo5xr+BS9XzbNWaTbY=;
-        b=FJH+ROpUfehWsqsNBVIK1Kmo972cF8sZ0hVoyMiiPPe+7PLIC5ubEK4QVr9kbug2Fm
-         gOb87wC9UMhLqgp811Xny6EeRsTFfXRq9Ghhl89Dmtd1L6dPTAHgNNnQyvQD/dp/L/4z
-         PBHxb40XRrdMlZW6MCweR0GrKa0ruQB6XUOhirBd5GstOmP5v9xdUq6i8uKsfEW7L9ZT
-         u7LnOhY6l6R2/ZhEYqFVZ6xr3ocEJv6+8eWX0PwOzIml6RR5CWNBY0PqxK5gCF9Ki6bw
-         n4+8UyPC6Cf+CJN2OrdVy5pv7BDYsEHjNot9ZEOLi4Tlljjw1wZV7rEhMZyoTJfh8eFU
-         mqfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUsXT8KYfRW7EcLGbM8yia+XeG5I5tZ1SJ2fg9AirfDp7DxI9vfKD6aZSJWuuiv3+7/wmnnqF4pXa9AHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHx3Rv993v3c+6WtIIry9aCYwPgen/xaRK4DE712nXFs1U/a7z
-	XZ4u3oCoPMEP8BuDOa4TQuqG7i4rZkdrpWw9Nfla8bar0f0hAwGLCKNaJVrNOfYv9yec0ZzNY3h
-	PqQ==
-X-Google-Smtp-Source: AGHT+IHYLzsVc20vLRQwtzwWH/ZL6V83GRzYvw29uoFmous4MU437XqJXznaZoUcfr+GEJE6ovx7W6bgmVM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:6f8e:b0:6e3:2bc1:da17 with SMTP id
- 00721157ae682-6ea64bc93a8mr394077b3.4.1730474805966; Fri, 01 Nov 2024
- 08:26:45 -0700 (PDT)
-Date: Fri, 1 Nov 2024 08:26:44 -0700
-In-Reply-To: <9c55087b-e529-46cd-8678-51975a9acc71@linux.intel.com>
+        d=1e100.net; s=20230601; t=1730474851; x=1731079651;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=K6TkXEo4x1I5Rzwt8fjqhUP2t7jAOO31BIJtURlqSmc=;
+        b=Aqc49mICG2NNJvnQZ5J2Y/GWZBqmC5XkXmwxHQ40QJC0dQPsN46mymZRFL4PKQbqKZ
+         wWOrqAAgmhMIlhhMf0ULOKOT82Xu0XTKnCHcHL8cPeXw129lIQiwxnopBTVycqmaQ50V
+         C9pB75cD3R1362MygYq8AlQgpTiZjB9TZ8RbVwHA4C1eWsMrdLP/f9CHP0k/PImPknrc
+         iRIO0XD8hM79zHhX86e98ThkvmAKLxuhcvRL3a7pyQFLrcdBij2sp2g9FJfu+5/kJf3Y
+         9y6hoAkHVR1HNxtvvYJGWdTrqSRW0Y6g2iYv4A9NOWoMEC6X/pK2eYZMFNLycG6YnEtb
+         CjCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvIindZ+Ntuap20BFZb4NLAgPNEIKd2C7EKjYE+5MrXMsRp/MXj3uEnEpcHH+JZ9noExXoORciTGU5w/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyahGncStvEBxoZr8Urz7/czern03xyrc9TJuZlZ0f+caEkfXg4
+	LBGhTRbFRHMxp02TIBhltd8LeC7EdbZx0KopKTnRpn7c417bqQ/ZL0U4FKcVWrs=
+X-Google-Smtp-Source: AGHT+IHBNPcncBQHtNtb7STpigHQlaFGA7NJY+pQaXbjyeqQZ6bXscULA7A1iluv+zMZo2STz3vLvw==
+X-Received: by 2002:a05:6402:2695:b0:5c2:6d16:ad5e with SMTP id 4fb4d7f45d1cf-5ceb92a7bc4mr2823312a12.19.1730474851261;
+        Fri, 01 Nov 2024 08:27:31 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac5cb8fbsm1607974a12.0.2024.11.01.08.27.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 08:27:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240826022255.361406-1-binbin.wu@linux.intel.com>
- <20240826022255.361406-2-binbin.wu@linux.intel.com> <ZyKbxTWBZUdqRvca@google.com>
- <3f158732a66829faaeb527a94b8df78d6173befa.camel@intel.com>
- <ZyLWMGcgj76YizSw@google.com> <9c55087b-e529-46cd-8678-51975a9acc71@linux.intel.com>
-Message-ID: <ZyTzNHil-55v7D3r@google.com>
-Subject: Re: [PATCH v3 1/2] KVM: x86: Check hypercall's exit to userspace generically
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Kai Huang <kai.huang@intel.com>, 
-	"yuan.yao@linux.intel.com" <yuan.yao@linux.intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Nov 2024 16:27:30 +0100
+Message-Id: <D5AY4ZK858IO.3BH1USXK7NTAD@fairphone.com>
+Cc: <linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+Subject: Re: [PATCH v4 0/6] media: qcom: camss: Add sc7280 support
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Vikram Sharma" <quic_vikramsa@quicinc.com>, <rfoss@kernel.org>,
+ <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>, <mchehab@kernel.org>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <akapatra@quicinc.com>, <hariramp@quicinc.com>, <andersson@kernel.org>,
+ <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+ <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
+ <will@kernel.org>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241030105347.2117034-1-quic_vikramsa@quicinc.com>
+In-Reply-To: <20241030105347.2117034-1-quic_vikramsa@quicinc.com>
 
-On Fri, Nov 01, 2024, Binbin Wu wrote:
-> On 10/31/2024 10:54 PM, Sean Christopherson wrote:
-> > My other idea was have an out-param to separate the return code intende=
-d for KVM
-> > from the return code intended for the guest.  I generally dislike out-p=
-arams, but
-> > trying to juggle a return value that multiplexes guest and host values =
-seems like
-> > an even worse idea.
-> >=20
-> > Also completely untested...
+On Wed Oct 30, 2024 at 11:53 AM CET, Vikram Sharma wrote:
+> SC7280 is a Qualcomm SoC. This series adds support to bring up the CSIPHY=
+,
+> CSID, VFE/RDI interfaces in SC7280.
+>
+> SC7280 provides
+>
+> - 3 x VFE, 3 RDI per VFE
+> - 2 x VFE Lite, 4 RDI per VFE
+> - 3 x CSID
+> - 2 x CSID Lite
+> - 5 x CSI PHY
+>
+> The changes are verified on SC7280 qcs6490-rb3gen2 board, with attached v=
+ision mezzanine
+> the base dts for qcs6490-rb3gen2 is:
+> https://lore.kernel.org/all/20231103184655.23555-1-quic_kbajaj@quicinc.co=
+m/
 
-...
+Hi Vikram!
 
-> >   	case KVM_HC_MAP_GPA_RANGE: {
-> >   		u64 gpa =3D a0, npages =3D a1, attrs =3D a2;
-> > -		ret =3D -KVM_ENOSYS;
-> > +		*ret =3D -KVM_ENOSYS;
-> >   		if (!user_exit_on_hypercall(vcpu->kvm, KVM_HC_MAP_GPA_RANGE))
-> >   			break;
-> >   		if (!PAGE_ALIGNED(gpa) || !npages ||
-> >   		    gpa_to_gfn(gpa) + npages <=3D gpa_to_gfn(gpa)) {
-> > -			ret =3D -KVM_EINVAL;
-> > +			*ret =3D -KVM_EINVAL;
-> >   			break;
-> >   		}
->=20
-> *ret needs to be set to 0 for this case before returning 0 to caller?
+Two things:
 
-No, because the caller should consume *ret if and only if the function retu=
-rn value
-is '1', i.e. iff KVM should resume the guest.  And I think we actually want=
- to
-intentionally not touch *ret, because a sufficient smart compiler (or stati=
-c
-analysis tool) should be able to detect that incorrect usage of *ret is con=
-suming
-uninitialized data.
+You use the property "power-domains-names" in both bindings and dtsi but
+this property is never parsed in the kernel. This should be
+"power-domain-names"
 
-> > @@ -10080,13 +10078,13 @@ unsigned long __kvm_emulate_hypercall(struct =
-kvm_vcpu *vcpu, unsigned long nr,
-> >   		return 0;
-> >   	}
-> >   	default:
-> > -		ret =3D -KVM_ENOSYS;
-> > +		*ret =3D -KVM_ENOSYS;
-> >   		break;
-> >   	}
-> >   out:
-> >   	++vcpu->stat.hypercalls;
-> > -	return ret;
-> > +	return 1;
-> >   }
-> >   EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
-> > @@ -10094,7 +10092,7 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu=
-)
-> >   {
-> >   	unsigned long nr, a0, a1, a2, a3, ret;
-> >   	int op_64_bit;
-> > -	int cpl;
-> > +	int cpl, r;
-> >   	if (kvm_xen_hypercall_enabled(vcpu->kvm))
-> >   		return kvm_xen_hypercall(vcpu);
-> > @@ -10110,10 +10108,9 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcp=
-u)
-> >   	op_64_bit =3D is_64_bit_hypercall(vcpu);
-> >   	cpl =3D kvm_x86_call(get_cpl)(vcpu);
-> > -	ret =3D __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, =
-cpl);
-> > -	if (nr =3D=3D KVM_HC_MAP_GPA_RANGE && !ret)
-> > -		/* MAP_GPA tosses the request to the user space. */
-> > -		return 0;
-> > +	r =3D __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cp=
-l, &ret);
-> > +	if (r <=3D r)
-> A typo here.
-> I guess it meant to be "if (r <=3D ret)" ?
+Second, I still can't get the test pattern to work on my QCM6490-based
+phone (Fairphone 5). Could you please try if the commands as per [0]
+work on your board?
 
-No, "if (r <=3D 0)", i.e. exit to userspace on 0 or -errno.
+[0] https://lore.kernel.org/linux-arm-msm/c912f2da-519c-4bdc-a5cb-e19c3aa63=
+ea8@linaro.org/
 
-> So the combinations will be
-> -------------------------------------------------------------------------=
----
-> =C2=A0=C2=A0 |=C2=A0 r=C2=A0 |=C2=A0=C2=A0=C2=A0 ret=C2=A0=C2=A0=C2=A0 | =
-r <=3D ret |
-> ---|-----|-----------|----------|----------------------------------------=
----
-> =C2=A01 |=C2=A0 0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0=C2=A0 true=C2=A0=C2=A0 |=C2=A0 return r, which is 0, exit to us=
-erspace
-> ---|-----|-----------|----------|----------------------------------------=
----
-> =C2=A02 |=C2=A0 1=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0=C2=A0 false=C2=A0 |=C2=A0 set vcpu's RAX and return back to gue=
-st
-> ---|-----|-----------|----------|----------------------------------------=
----
-> =C2=A03 |=C2=A0 1=C2=A0 | -KVM_Exxx |=C2=A0=C2=A0 false=C2=A0 |=C2=A0 set=
- vcpu's RAX and return back to guest
-> ---|-----|-----------|----------|----------------------------------------=
----
-> =C2=A04 |=C2=A0 1=C2=A0 |=C2=A0 Positive |=C2=A0=C2=A0 true=C2=A0=C2=A0 |=
-=C2=A0 return r, which is 1,
-> =C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0 N=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-|=C2=A0 back to guest without setting vcpu's RAX
-> -------------------------------------------------------------------------=
----
->=20
-> KVM_HC_SEND_IPI, which calls kvm_pv_send_ipi() can hit case 4, which will
-> return back to guest without setting RAX. It is different from the curren=
-t behavior.
->=20
-> r can be 0 only if there is no other error detected during pre-checks.
-> I think it can just check whether r is 0 or not.
+Regards
+Luca
 
-Yeah, I just fat fingered the code (and didn't even compile test).
+>
+> Changes in V4:
+> - V3 had 8 patches and V4 is reduced to 6.
+> - Removed [Patch v3 2/8] as binding change is not required for dtso.
+> - Removed [Patch v3 3/8] as the fix is already taken care in latest
+>   kernel tip.=20
+> - Updated alignment for dtsi and dt-bindings.
+> - Adding qcs6490-rb3gen2-vision-mezzanine as overlay.=20
+> - Link to v3: https://lore.kernel.org/linux-arm-msm/20241011140932.174412=
+4-1-quic_vikramsa@quicinc.com/
+>
+> Changes in V3:
+> - Added missed subject line for cover letter of V2.
+> - Updated Alignment, indentation and properties order.
+> - edit commit text for [PATCH 02/10] and [PATCH 03/10].
+> - Refactor camss_link_entities.
+> - Removed camcc enablement changes as it already done.
+> - Link to v2: https://lore.kernel.org/linux-arm-msm/20240904-camss_on_sc7=
+280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com/
+>
+> Changes in V2:
+> - Improved indentation/formatting.
+> - Removed _src clocks and misleading code comments.
+> - Added name fields for power domains and csid register offset in DTSI.
+> - Dropped minItems field from YAML file.
+> - Listed changes in alphabetical order.
+> - Updated description and commit text to reflect changes
+> - Changed the compatible string from imx412 to imx577.
+> - Added board-specific enablement changes in the newly created vision
+>   board DTSI file.
+> - Fixed bug encountered during testing.
+> - Moved logically independent changes to a new/seprate patch.
+> - Removed cci0 as no sensor is on this port and MCLK2, which was a
+>   copy-paste error from the RB5 board reference.
+> - Added power rails, referencing the RB5 board.
+> - Discarded Patch 5/6 completely (not required).
+> - Removed unused enums.
+> - Link to v1: https://lore.kernel.org/linux-arm-msm/20240629-camss_first_=
+post_linux_next-v1-0-bc798edabc3a@quicinc.com/
+>
+> Suresh Vankadara (1):
+>   media: qcom: camss: Add support for camss driver on SC7280
+>
+> Vikram Sharma (5):
+>   media: dt-bindings: media: camss: Add qcom,sc7280-camss binding
+>   media: qcom: camss: Sort CAMSS version enums and compatible strings
+>   media: qcom: camss: Restructure camss_link_entities
+>   arm64: dts: qcom: sc7280: Add support for camss
+>   arm64: dts: qcom: qcs6490-rb3gen2-vision-mezzanine: Add vision
+>     mezzanine
+>
+>  .../bindings/media/qcom,sc7280-camss.yaml     | 439 +++++++++++++++
+>  arch/arm64/boot/dts/qcom/Makefile             |   4 +
+>  .../qcs6490-rb3gen2-vision-mezzanine.dtso     |  73 +++
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi          | 208 ++++++++
+>  .../media/platform/qcom/camss/camss-csid.c    |   1 -
+>  .../qcom/camss/camss-csiphy-3ph-1-0.c         |  13 +-
+>  .../media/platform/qcom/camss/camss-csiphy.c  |   5 +
+>  .../media/platform/qcom/camss/camss-csiphy.h  |   1 +
+>  drivers/media/platform/qcom/camss/camss-vfe.c |   8 +-
+>  drivers/media/platform/qcom/camss/camss.c     | 500 ++++++++++++++++--
+>  drivers/media/platform/qcom/camss/camss.h     |   1 +
+>  11 files changed, 1190 insertions(+), 63 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/media/qcom,sc7280-c=
+amss.yaml
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezza=
+nine.dtso
+
 
