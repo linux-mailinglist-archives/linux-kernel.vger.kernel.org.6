@@ -1,157 +1,122 @@
-Return-Path: <linux-kernel+bounces-391807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF559B8BEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:16:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B5E9B8BE4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:15:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391A71F21A51
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:16:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ED201F22A6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15449153801;
-	Fri,  1 Nov 2024 07:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAB11547C8;
+	Fri,  1 Nov 2024 07:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PN8b1S1t"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sa0meP7T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4731514FB;
-	Fri,  1 Nov 2024 07:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80931531E3;
+	Fri,  1 Nov 2024 07:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730445359; cv=none; b=oyIjsKW2rG3ydjZkNbSgsqLChT7X2WlTaWkvKpyk0A82oBRXWV2xift2fv1n2vovPFipm9GRw9u88yk6Yp6q4t0Ke7EA1aDCEe80deLPd88qg57TnF+1rJRDCvAT6eegmVt4nZWafJnm+ggWRoZAo+Xq17kfEU+xapHYbFgCl+I=
+	t=1730445335; cv=none; b=oB2DlxpIpSIfxSmOSRD161N+gjd+gM+eRewlnupHlxbBqi9ar3az2FO5YC6sObfslgXh59tzIAw05vL1oM24ORgrzdQUV1sqZkepOfgp1Xvcx/JQlzxk+4YXv9gCnFcJ3DywYW5F/d9FBQE1L2vaHdg1K1FXtFgmI4h3iMCxgkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730445359; c=relaxed/simple;
-	bh=3VOGJbXx4MAegdFQC/Y6Vr+EmoSscZ1ALddVseDSaGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Mzl8gpwi6P8kFJp1+t6xJbZEhhMRRhnBsB0dfzzp5asmHSHrUG2fbtVjiC0RMIIqbYSF6XQaXJUoGyaorkTgmS3EhvRGb+HyEhcDt9sYguCdHoIzr3/uq3xZ0ZUH77ZKCx2X5d4gXxWzeC9w1YlRiLk9bIEAiiF71hRMi/K5Nxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PN8b1S1t; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A175Jje026701;
-	Fri, 1 Nov 2024 07:15:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ovhgDWrMf5z56w1aAHROlrv9Fuapjcb0MG42724dH+s=; b=PN8b1S1tVqhFnKeU
-	KIuRzfWScZJjnAh0bArxZ3mqiVKpaNV500tJVd94regqI982al7cdJFwFj4swQBA
-	aH65gCeaXITANmJRmxFSmB8G3Fa4fBYKNeWQOi98KoSZC2+cHHjsSytMXCFPzH9h
-	aIG2F8cy8HZhfrR8k7Lhd+nbk+8BZfE48++0nrVZAxK2q0VOm+g9RaxoC/stEiBX
-	sDdOcEy9xjyiYMIUztHfLEhA3yCpOQv4H+r5xziGew5WaNIh0Ci4urS+uCDQu+t8
-	W/88b+MdDOVNTYQ3khmTJl/tgWJqoSD7ZUQ4CAxWJvLOBIisMSsmN7x8W1OqH+Hw
-	7EV9sw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k1p39gfs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 07:15:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A17FGXl012862
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 1 Nov 2024 07:15:16 GMT
-Received: from [10.216.44.28] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 1 Nov 2024
- 00:15:10 -0700
-Message-ID: <2ea32f2b-a765-420d-9cc7-f0d04d27ed6e@quicinc.com>
-Date: Fri, 1 Nov 2024 12:45:07 +0530
+	s=arc-20240116; t=1730445335; c=relaxed/simple;
+	bh=pqCHbefJia4K1aQNqr1JJ0xqZ/HF1gOFf70y9GquLnQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=rPabca7V3Y4cwidq8i7VqaIRIqw1JsdoagP7VPXE9vJ1ptvPZzYSwExqWOd+9KsGBELkxkfrZnu3EPN4ZxF1DKUrLX+wz+K2Us+ODln/0bvecAnXf7bGv1sq3pywERwIrPg4MXqRcCqJCy7pM24S8gwUbww0tp0mOsulcqWXYVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sa0meP7T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7386C4CED3;
+	Fri,  1 Nov 2024 07:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730445334;
+	bh=pqCHbefJia4K1aQNqr1JJ0xqZ/HF1gOFf70y9GquLnQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=sa0meP7TB9ImCr9Iium0o34uyLo55rKpvlZg3Xy9Ub5ryk1a0EbNNMCsyKAS+mP1Q
+	 mwOkIOcWPmF+ksNcDV85avuEfGtCwBzhy5kaSQWweMdfcCgxcbBQ0KCZsiW4idbucZ
+	 xirpwG/kd5KvqEc8FVdGR8ZARwFugca/dz1MHy6/9mq/WMvdX/aZVWd8wxgSzFVw4X
+	 i+YnLhWaYUWIDu99sKgqsy5zZtbYKWagJ0jM8Zs5l/ilaWq4YFeMK+MbnQLdaOOgHk
+	 UBu/KImE77URpLonFvix8LLst5dE6Vx13kunLZcqv+I9i9Kga9Ijl3GL0plOtFHWKc
+	 84akrOyqAxwPw==
+From: William Breathitt Gray <wbg@kernel.org>
+Date: Fri, 01 Nov 2024 16:15:08 +0900
+Subject: [PATCH 1/2] gpio: pci-idio-16: Replace deprecated PCI functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/11] clk: qcom: gpucc-qcs615: Add QCS615 graphics clock
- controller driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Abhishek Sahu
-	<absahu@codeaurora.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com>
- <20241019-qcs615-mm-clockcontroller-v1-8-4cfb96d779ae@quicinc.com>
- <omn34rwurlxrjckb5d6xb2brg6zwcizonmqyfckvngk5msrfav@b3i2bdjk5vw7>
- <2aa768a4-b0e9-4b2f-8d74-736a88cf81cd@quicinc.com>
- <CAA8EJppZyJt_MWrafSKReuCXy0RtEAQ6VE-kt_Fp41eFpsW2SA@mail.gmail.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <CAA8EJppZyJt_MWrafSKReuCXy0RtEAQ6VE-kt_Fp41eFpsW2SA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uc-jdeAzzNGQkuQbTjeYeVb1f9QNB-N4
-X-Proofpoint-ORIG-GUID: uc-jdeAzzNGQkuQbTjeYeVb1f9QNB-N4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0
- phishscore=0 clxscore=1015 impostorscore=0 mlxlogscore=670 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411010050
+Message-Id: <20241101-pci_iomap_region_gpio_acces-v1-1-26eb1dc93e45@kernel.org>
+References: <20241101-pci_iomap_region_gpio_acces-v1-0-26eb1dc93e45@kernel.org>
+In-Reply-To: <20241101-pci_iomap_region_gpio_acces-v1-0-26eb1dc93e45@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ William Breathitt Gray <wbg@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1802; i=wbg@kernel.org;
+ h=from:subject:message-id; bh=pqCHbefJia4K1aQNqr1JJ0xqZ/HF1gOFf70y9GquLnQ=;
+ b=owGbwMvMwCW21SPs1D4hZW3G02pJDOkqDSJvv7TK1vxqyZuvXKR69ar9k+I7bt8Er/PL8M/OY
+ 9aofvu8o5SFQYyLQVZMkaXX/OzdB5dUNX68mL8NZg4rE8gQBi5OAZjIgruMDK95+Ld+rOw2d+MW
+ bxJd+v+j4qHGyztvrO9imima8TBF/zwjw2VzPwc731zxPm8lDoUyK3U9RUvur53MXRkL5WO6jR9
+ zAwA=
+X-Developer-Key: i=wbg@kernel.org; a=openpgp;
+ fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
 
+pcim_iomap_regions() and pcim_iomap_table() have been deprecated in
+commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
+pcim_iomap_regions_request_all()"). Replace these functions with
+pcim_iomap_region().
 
+In order to match the rest of the code in idio_16_probe(), utilize
+dev_err_probe() to handle error for pcim_enable_device().
 
-On 10/31/2024 8:44 PM, Dmitry Baryshkov wrote:
-> On Wed, 30 Oct 2024 at 20:04, Taniya Das <quic_tdas@quicinc.com> wrote:
->>
->>
->>
->> On 10/19/2024 1:58 AM, Dmitry Baryshkov wrote:
->>>> +static struct gdsc gx_gdsc = {
->>>> +    .gdscr = 0x100c,
->>>> +    .en_rest_wait_val = 0x2,
->>>> +    .en_few_wait_val = 0x2,
->>>> +    .clk_dis_wait_val = 0x2,
->>>> +    .pd = {
->>>> +            .name = "gx_gdsc",
->>> .power_on = gdsc_gx_do_nothing_enable ? Or is it controlled directly on
->>> this platform?
->>>
->>
->> On QCS615 the GPU clocks are directly controlled by high level OS.
-> 
-> Is it one of the gmu-wrapper platforms?
-> 
+Signed-off-by: William Breathitt Gray <wbg@kernel.org>
+---
+ drivers/gpio/gpio-pci-idio-16.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-Not, sure of the gmu-wrapper, but this platform does not have GMU.
-
->>
->>>> +    },
->>>> +    .pwrsts = PWRSTS_OFF_ON,
->>>> +    .flags = POLL_CFG_GDSCR,
->>>> +};
->>>> +
->>
->> --
->> Thanks & Regards,
->> Taniya Das.
-> 
-> 
-> 
+diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
+index 44c0a21b1d1d9f1ba4e013ba0947ccae78288d5c..64f332c805507645039615e0a89b83175f6bb616 100644
+--- a/drivers/gpio/gpio-pci-idio-16.c
++++ b/drivers/gpio/gpio-pci-idio-16.c
+@@ -70,24 +70,17 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	struct device *const dev = &pdev->dev;
+ 	int err;
+ 	const size_t pci_bar_index = 2;
+-	const char *const name = pci_name(pdev);
+ 	struct idio_16_regmap_config config = {};
+ 	void __iomem *regs;
+ 	struct regmap *map;
+ 
+ 	err = pcim_enable_device(pdev);
+-	if (err) {
+-		dev_err(dev, "Failed to enable PCI device (%d)\n", err);
+-		return err;
+-	}
+-
+-	err = pcim_iomap_regions(pdev, BIT(pci_bar_index), name);
+-	if (err) {
+-		dev_err(dev, "Unable to map PCI I/O addresses (%d)\n", err);
+-		return err;
+-	}
++	if (err)
++		return dev_err_probe(dev, err, "Failed to enable PCI device\n");
+ 
+-	regs = pcim_iomap_table(pdev)[pci_bar_index];
++	regs = pcim_iomap_region(pdev, pci_bar_index, pci_name(pdev));
++	if (IS_ERR(regs))
++		return dev_err_probe(dev, PTR_ERR(regs), "Unable to map PCI I/O addresses\n");
+ 
+ 	map = devm_regmap_init_mmio(dev, regs, &idio_16_regmap_config);
+ 	if (IS_ERR(map))
 
 -- 
-Thanks & Regards,
-Taniya Das.
+2.47.0
+
 
