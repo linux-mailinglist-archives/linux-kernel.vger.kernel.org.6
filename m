@@ -1,162 +1,155 @@
-Return-Path: <linux-kernel+bounces-392396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E93D9B939B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:47:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343999B93AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:48:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD391C2120F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:47:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 576451C2096D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3310D1AAE08;
-	Fri,  1 Nov 2024 14:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC141AA793;
+	Fri,  1 Nov 2024 14:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TlU4bueS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cIX6fuKv"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C61A256C;
-	Fri,  1 Nov 2024 14:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7345E1A76BC
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472405; cv=none; b=ebTddsy3AAynLOKGqL41/dhZc5zKRG5I452LWutegaodeYkMkAh/4slrrZRX/ooBSlKrwcw7Mn1JMEXum3aBL4QB52EpeX5z9Zu+XS5sBEWiPg15n5Qv3yZZ56rQgTZ2sIr/iLNpB/9dA1HEkysVQEIiRi7spFauRNZXi/nQlAs=
+	t=1730472484; cv=none; b=t1DErzjcC2k+QVCKvdx+5Tn2DTQHEyIKjddb5qArl/zefzrPVGb/0pVDnVq8wEvQ9E42h439VBOx4ruqIrgL0LIGPED3XWU8nd2Efx49RLNx056kn5LnT5xuhq9wkMmBiw3uGPomSA/IeUBzzg+A7F9KjwkCLStDdBSXkUCMOH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472405; c=relaxed/simple;
-	bh=HwxmMVzLvMkz6Iea0esLVCOgt5DfZzfLpkKFluqPk6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhfPccChCqo+rhhCkXae6Fo3zj7kW3lFr5j+wk+oN4GrppDQjQHeCoClySmD8RRvTSx2S0afr5htyoB1VtbiOlGR9g/FuN2M+vI5lwUr4/l5d919lyEuDbXvxCr3BSZxsM1FNlaj8CMKMZmi40JeTIzl/X81P61i9tugb61BuoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TlU4bueS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B2C6C4CECD;
-	Fri,  1 Nov 2024 14:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730472405;
-	bh=HwxmMVzLvMkz6Iea0esLVCOgt5DfZzfLpkKFluqPk6w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TlU4bueSqUtO5V+hbz8vO0YzJl4hNnccmNnFi89FPVCl8a+1lACDLOp/Eix3MhKSB
-	 UZJFR80381Q2bRmM91JBI3GGUSxH92CpZ10lEqSMkl/JrU1G3hW3Hq42mzNt1SnV+2
-	 1JA2g+FF8/6lh04uvXW/26CNve07w26yk7EgjnUyB4XDkVGArSsafHuptjFAt+7Vz9
-	 XZxqL97vekLm6oh9COsFdMbu506fGmjQ2GWqnHOn2oQwPcm0ab1ywtqJjTVqFqaf7P
-	 yu7yn/Ers6d5rlJwnXzY75xq1lyapblTxBPhbm+D78y2xNvjOPLfCoR97I7WNzp2Pi
-	 Cugpsn5MaBZlg==
-Date: Fri, 1 Nov 2024 07:46:44 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] ext4: Do not fallback to buffered-io for DIO
- atomic write
-Message-ID: <20241101144644.GF2386201@frogsfrogsfrogs>
-References: <cover.1730437365.git.ritesh.list@gmail.com>
- <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
+	s=arc-20240116; t=1730472484; c=relaxed/simple;
+	bh=/Lo0SSKZxUY4iHjD0LeZv0mV6fASOYVUcG7mLz+tc54=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Z6N1WcCyJT/+ncXGB39ltPj6Rztas/tK91ymaW+oMWLh8Z7D9TKc6dumDfGVvnTs1qJga6zPjl/X7VWZleHT0Jy8/TtIE1QVoSP4pVbPG77ZfziQSaGROl/+og+EKBb8rm6zfFPzwHEcWajQqUIiKRzFvcL/aMB/er0PRIhscjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cIX6fuKv; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7edbbc3a9f2so1712039a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:48:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730472482; x=1731077282; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G/DE0DbUg8M7Q/DJxS90r+0tog95n4HSr4HfODo/BC0=;
+        b=cIX6fuKv+3yuHboiGIHTTkhC7T3EUaXfQVDxPB+oAiRohNO+puS96HIJ14w+gM4QVJ
+         Qe85l8fGO/H8SSUP0i3EDU6ZHX0GxK42FQ9R4hj23EmYigpyCJrE5Z2c6zeywsSK2YaL
+         mq4nzc9fXVEKHJrcdElI07AhpD/KXsZ0QF1KqcCnunuLUmdfSrBnx1ovgf93KqRbA3IO
+         K6rM9onYyCiXDl2XYaaJygmes06VX3wUS7o7IkOl8sZlISR/PE4XUU4ryLht+AVW5LCU
+         z4K00RjybpXCz1hqUwoVDh/cfGGNGR+V+p+X3DwgSDvnhGwlCOy8CKIokuLSMOnixqEM
+         5xlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730472482; x=1731077282;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=G/DE0DbUg8M7Q/DJxS90r+0tog95n4HSr4HfODo/BC0=;
+        b=xCjsz8xaqp9lzMNV0teI5kqmGCR3sn4dS7u0GFixAcfM/GI/oJV6Q4pvK4aAlIKu4x
+         x7b3AtG+ps0hERdT+5Dlvxe1wV49RFX+hzmlrHoGg+TDB42ALRR1AAvXCu6ZgWFg6xz3
+         ZFle0w8ImifJP+3p2+4rBQkhTzikmRJkklHMtQ3uc5/Fioe8doMQWD4grwdiN3BW/Zgn
+         nZH/sPVesIAfSVWXPjZrwuolxevBOflNeah9HUeq+xhIGgJ2a/Mn4759PZmC0U6ZCpiu
+         FE5B8zBlehFZo0F8bIFf20x19VNTDDxMnYMp2QMR7q8pKx8OF2XHWHbzogru2DEKe/xx
+         J61w==
+X-Forwarded-Encrypted: i=1; AJvYcCVZq4Pe5KPkv6yTemLj5PdS0aJLWy6vo/97IHRHdYHJlaqENBOcV9iSfxJk0iDOHpHEW+bPUjBjoGCG5DM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIyip7MA+tX/bikmgkdYYaXw+oluVcIq4y3H7BZL8+Hp0iys/E
+	FxgU4NZ99kOryYkRMkubDLd+UkeqcAolCLNqWjgwyKrD1SjerRNaoSh/oukU5zzIEK2sZxUg0fA
+	Y+w==
+X-Google-Smtp-Source: AGHT+IHIf47dwb0nbkXT8QGaJrWq+fHjP6RSYp5sBCxZxmiVg/IHgboRnjvSBKMyLIM+q34Z1vnYxW9f4KA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a63:fa55:0:b0:7ea:83fc:1f0c with SMTP id
+ 41be03b00d2f7-7edd7c3149dmr31512a12.5.1730472481723; Fri, 01 Nov 2024
+ 07:48:01 -0700 (PDT)
+Date: Fri, 1 Nov 2024 07:48:00 -0700
+In-Reply-To: <39ea24d8-9dae-447a-ae37-e65878c3806f@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
+Mime-Version: 1.0
+References: <20241009154953.1073471-1-seanjc@google.com> <20241009154953.1073471-4-seanjc@google.com>
+ <39ea24d8-9dae-447a-ae37-e65878c3806f@sirena.org.uk>
+Message-ID: <ZyTpwwm0s89iU9Pk@google.com>
+Subject: Re: [PATCH v3 03/14] KVM: selftests: Return a value from
+ vcpu_get_reg() instead of using an out-param
+From: Sean Christopherson <seanjc@google.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Andrew Jones <ajones@ventanamicro.com>, James Houghton <jthoughton@google.com>, 
+	David Woodhouse <dwmw@amazon.co.uk>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 01, 2024 at 12:20:54PM +0530, Ritesh Harjani (IBM) wrote:
-> atomic writes is currently only supported for single fsblock and only
-> for direct-io. We should not return -ENOTBLK for atomic writes since we
-> want the atomic write request to either complete fully or fail
-> otherwise. Hence, we should never fallback to buffered-io in case of
-> DIO atomic write requests.
-> Let's also catch if this ever happens by adding some WARN_ON_ONCE before
-> buffered-io handling for direct-io atomic writes. More details of the
-> discussion [1].
-> 
-> While at it let's add an inline helper ext4_want_directio_fallback() which
-> simplifies the logic checks and inherently fixes condition on when to return
-> -ENOTBLK which otherwise was always returning true for any write or directio in
-> ext4_iomap_end(). It was ok since ext4 only supports direct-io via iomap.
-> 
-> [1]: https://lore.kernel.org/linux-xfs/cover.1729825985.git.ritesh.list@gmail.com/T/#m9dbecc11bed713ed0d7a486432c56b105b555f04
-> Suggested-by: Darrick J. Wong <djwong@kernel.org> # inline helper
+On Fri, Nov 01, 2024, Mark Brown wrote:
+> On Wed, Oct 09, 2024 at 08:49:42AM -0700, Sean Christopherson wrote:
+> > Return a uint64_t from vcpu_get_reg() instead of having the caller prov=
+ide
+> > a pointer to storage, as none of the vcpu_get_reg() usage in KVM selfte=
+sts
+> > accesses a register larger than 64 bits, and vcpu_set_reg() only accept=
+s a
+> > 64-bit value.  If a use case comes along that needs to get a register t=
+hat
+> > is larger than 64 bits, then a utility can be added to assert success a=
+nd
+> > take a void pointer, but until then, forcing an out param yields ugly c=
+ode
+> > and prevents feeding the output of vcpu_get_reg() into vcpu_set_reg().
+>=20
+> This commit, which is in today's -next as 5c6c7b71a45c9c, breaks the
+> build on arm64:
+>=20
+> aarch64/psci_test.c: In function =E2=80=98host_test_system_off2=E2=80=99:
+> aarch64/psci_test.c:247:9: error: too many arguments to function =E2=80=
+=98vcpu_get_reg=E2=80=99
+>   247 |         vcpu_get_reg(target, KVM_REG_ARM_PSCI_VERSION, &psci_vers=
+ion);
+>       |         ^~~~~~~~~~~~
+> In file included from aarch64/psci_test.c:18:
+> include/kvm_util.h:705:24: note: declared here
+>   705 | static inline uint64_t vcpu_get_reg(struct kvm_vcpu *vcpu, uint64=
+_t id)
+>       |                        ^~~~~~~~~~~~
+> At top level:
+> cc1: note: unrecognized command-line option =E2=80=98-Wno-gnu-variable-si=
+zed-type-not-at
+> -end=E2=80=99 may have been intended to silence earlier diagnostics
+>=20
+> since the updates done to that file did not take account of 72be5aa6be4
+> ("KVM: selftests: Add test for PSCI SYSTEM_OFF2") which has been merged
+> in the kvm-arm64 tree.
 
-Looks good to me now,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Bugger.  In hindsight, it's obvious that of course arch selftests would add=
+ usage
+of vcpu_get_reg().
 
---D
+Unless someone has a better idea, I'll drop the series from kvm-x86, post a=
+ new
+version that applies on linux-next, and then re-apply the series just befor=
+e the
+v6.13 merge window (rinse and repeat as needed if more vcpu_get_reg() users=
+ come
+along).
 
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> ---
->  fs/ext4/file.c  |  7 +++++++
->  fs/ext4/inode.c | 27 ++++++++++++++++++++++-----
->  2 files changed, 29 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 96d936f5584b..a7de03e47db0 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -599,6 +599,13 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		ssize_t err;
->  		loff_t endbyte;
-> 
-> +		/*
-> +		 * There is no support for atomic writes on buffered-io yet,
-> +		 * we should never fallback to buffered-io for DIO atomic
-> +		 * writes.
-> +		 */
-> +		WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC);
-> +
->  		offset = iocb->ki_pos;
->  		err = ext4_buffered_write_iter(iocb, from);
->  		if (err < 0)
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 3e827cfa762e..5b9eeb74ce47 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3444,17 +3444,34 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
->  	return ret;
->  }
-> 
-> +static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
-> +{
-> +	/* must be a directio to fall back to buffered */
-> +	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
-> +		    (IOMAP_WRITE | IOMAP_DIRECT))
-> +		return false;
-> +
-> +	/* atomic writes are all-or-nothing */
-> +	if (flags & IOMAP_ATOMIC)
-> +		return false;
-> +
-> +	/* can only try again if we wrote nothing */
-> +	return written == 0;
-> +}
-> +
->  static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
->  			  ssize_t written, unsigned flags, struct iomap *iomap)
->  {
->  	/*
->  	 * Check to see whether an error occurred while writing out the data to
-> -	 * the allocated blocks. If so, return the magic error code so that we
-> -	 * fallback to buffered I/O and attempt to complete the remainder of
-> -	 * the I/O. Any blocks that may have been allocated in preparation for
-> -	 * the direct I/O will be reused during buffered I/O.
-> +	 * the allocated blocks. If so, return the magic error code for
-> +	 * non-atomic write so that we fallback to buffered I/O and attempt to
-> +	 * complete the remainder of the I/O.
-> +	 * For non-atomic writes, any blocks that may have been
-> +	 * allocated in preparation for the direct I/O will be reused during
-> +	 * buffered I/O. For atomic write, we never fallback to buffered-io.
->  	 */
-> -	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
-> +	if (ext4_want_directio_fallback(flags, written))
->  		return -ENOTBLK;
-> 
->  	return 0;
-> --
-> 2.46.0
-> 
-> 
+That would be a good oppurtunity to do the $(ARCH) directory switch[*] too,=
+ e.g.
+have a "selftests_late" or whatever topic branch.
+
+Sorry for the pain Mark, you've been playing janitor for us too much lately=
+.
+
+[*] https://lore.kernel.org/all/20240826190116.145945-1-seanjc@google.com
 
