@@ -1,85 +1,113 @@
-Return-Path: <linux-kernel+bounces-391816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471589B8C07
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:26:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35FDD9B8C0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4163B21242
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:26:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF7452821F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFD61547D8;
-	Fri,  1 Nov 2024 07:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0B0153BF6;
+	Fri,  1 Nov 2024 07:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzg8WFqP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDmhzBQi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8F514A4E9;
-	Fri,  1 Nov 2024 07:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047841547C9;
+	Fri,  1 Nov 2024 07:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730446007; cv=none; b=hpg9XUpZMgiVZDCRbk4p8P0k9qV4Mgs1CTcIRCO/faazzrpD5UkeDwHXyCFMQFOL/4aAqnIChj5L+44x6IhiBurqFUliJa9gioWR7YzlQ53E9SutFI/iQIVUv1FzvP2dmSdnM0BSHOqrkv/4kLC9CV7T9jHTllYLNgFgqYR9QMM=
+	t=1730446026; cv=none; b=j+WyuGiidL5yN16f9BIR7Bz0D8GZf75yRrgJ+bmAQ0vkyEYD6L8e/6gyxF4JHxZAuYhleUz5K9FiuP9yjx1T7zF+o8TVdKjJpq/5IQrxITChXp/57A/TuJbZhXCw9rfbYg9X3l+wM7KEoIcyUj50jcwrwR4qoUHHj+C0z2lnFIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730446007; c=relaxed/simple;
-	bh=Wb1QsSIev6n0zl6P3JKiFxEbw0p6G0Nd0bRgW8dyGcU=;
+	s=arc-20240116; t=1730446026; c=relaxed/simple;
+	bh=eB/YxladbY67Z1rGM/yK1zVVfqWKD65iIbhTpOy341Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNyhkWXIFcUVt4F0mzFZFcTBkhcDJQ6gvRigvKymy1KMBlJRLhCullZTzhiGkns4/V/mML9epd1NTVGNxXJ9c/+PlHkOkBxTc4pNx8c5fOrKgYREEHVW+qk8OoAgCuOuLyWYlnIa9cyJi+aTv9IyKq1HTfgpzFczUTIqrcCgEEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzg8WFqP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52D9C4CECD;
-	Fri,  1 Nov 2024 07:26:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dc9Fl2fzuZ43fA0Lcp70h4+wNEnTS6m4kW5xxBErbIi6fwn69MnbnLXUA5Qfk1WxLlihmVEIi6Vr4otWuByzPnXxW35wRkwMiLjqyQmHXYG3NeSAjrsqje0MM9Mm6xpnX9KM1uW822GI3SDgm1PDL6aHCENZj435miU2alIgGHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDmhzBQi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3057C4CECD;
+	Fri,  1 Nov 2024 07:27:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730446007;
-	bh=Wb1QsSIev6n0zl6P3JKiFxEbw0p6G0Nd0bRgW8dyGcU=;
+	s=k20201202; t=1730446025;
+	bh=eB/YxladbY67Z1rGM/yK1zVVfqWKD65iIbhTpOy341Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qzg8WFqP9oo9NKpFQp6MswlVR9XWv2RZZiM7My6nn2+i8+h7Tvo7Tj/4Ip+UlfTna
-	 N2A+bXAsZa0sStdQcUSD5Ma7RnG595Vz/+FMAY8kCcCww5RWnwb1Zwil2lbtTIhAgT
-	 RrPWn159v2jfr2DQPWcm0suFL3VUZ3jSw8V+oaZk4rVDlU++TxWdNp8JjXG0o3aqvx
-	 mUMbDMRsDSwCLAbF6evfB06J9AC2PFOSQXh0gxIiqnJHk3KP6XmcM9gZQqL+0bes0/
-	 gXL4tN3ayRBsAeN8h8OUmpgUFMKFLH8Ulte9+w4L0vm3SgqnYbz2nSB/jkaXRk2Y/Q
-	 mKhJxXzZva8Yw==
-Date: Fri, 1 Nov 2024 08:26:43 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Kurapati <quic_kriskura@quicinc.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: arm: qcom: add QAR2130P board
-Message-ID: <ouyxtvrbsdzl6avuoqn4br3p2yi3m47gpyir4lrmrsvydvdmr3@qj4ojrc5iw4j>
-References: <20241101-sar2130p-dt-v3-0-61597eaf0c37@linaro.org>
- <20241101-sar2130p-dt-v3-2-61597eaf0c37@linaro.org>
+	b=cDmhzBQi4YTa0N5Msh41yVsVAP1dMN4CQB/M2DhBeySbNoCTF+ZMGFUGGpBtj8lSt
+	 FLDsDJhRWVRMVEBzJi4UpIdl6ZqccdXfbQwYUR87Rx1s21LSs/0whgmcBCrpY1ySGN
+	 8p1WnGjgOHGB7Xkf+WEhRnpdwh1UNOdcdo3WZ4ftF6FXNt3MXg4g6waUvRM0XjmY/x
+	 5PNrhX3qSy/UV3DHjUOnUQyv70vt//Zr/uI9NZYmZZvdIhgBUKzpTIW7FH+xjl8X6e
+	 UJ0c7XDunu/N5V1V1YQxj7W0kCqo9ypOqklz67LTPKJrMtwLbnFoYXqhGQFdhQLpKN
+	 pa2oCz/HXMyBA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t6m3j-000000004kI-0lrJ;
+	Fri, 01 Nov 2024 08:27:03 +0100
+Date: Fri, 1 Nov 2024 08:27:03 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: neil.armstrong@linaro.org, Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
+ parent to aux bridge
+Message-ID: <ZySCx9mvjRjo0Xfp@hovoldconsulting.com>
+References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
+ <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
+ <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
+ <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
+ <751a4ab5-acbf-4e57-8cf4-51ab10206cc9@linux.dev>
+ <ZyOvAqnuxbNnGWli@hovoldconsulting.com>
+ <30fefafc-d19a-40cb-bcb1-3c586ba8e67e@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241101-sar2130p-dt-v3-2-61597eaf0c37@linaro.org>
+In-Reply-To: <30fefafc-d19a-40cb-bcb1-3c586ba8e67e@linux.dev>
 
-On Fri, Nov 01, 2024 at 02:49:23AM +0200, Dmitry Baryshkov wrote:
-> Add the Qualcomm QAR2130P development board using the Qualcomm AR2 Gen1
-> aka SAR2130P platform.
+On Fri, Nov 01, 2024 at 11:49:07AM +0800, Sui Jingfeng wrote:
+> On 2024/11/1 00:23, Johan Hovold wrote:
+> > On Thu, Oct 31, 2024 at 11:06:38PM +0800, Sui Jingfeng wrote:
+> >
+> >> But I think Johan do need more times to understand what exactly
+> >> the real problem is. We do need times to investigate new method.
+
+> > No, I know perfectly well what the (immediate) problem is here (I was
+> > the one adding support for the of_node_reused flag some years back).
+> >
+> > I just wanted to make sure that the commit message was correct and
+> > complete before merging (and also to figure out whether this particular
+> > patch needed to be backported).
 > 
-> The qcom-soc.yaml chunks use explicit 'sa|sar' instead of just 'sar?' to
-> be more obvious for reviewers and to ease future extensions. Overuse of
-> the regular expressions can easily end up with the hard-to-read and
-> modify schema.
+> Well under such a design, having the child device sharing the 'OF' device
+> node with it parent device means that one parent device can *only*
+> create one AUX bridge child device.
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  Documentation/devicetree/bindings/arm/qcom-soc.yaml | 4 ++--
->  Documentation/devicetree/bindings/arm/qcom.yaml     | 7 +++++++
->  2 files changed, 9 insertions(+), 2 deletions(-)
+> Since If you create two or more child AUX bridge, *all* of them will
+> call devm_drm_of_get_bridge(&auxdev->dev, auxdev->dev.of_node, 0, 0),
+> then we will *contend* the same next bridge resource.
+> 
+> Because of the 'auxdev->dev.of_node' is same for all its instance.
+> While other display bridges seems don't has such limitations.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Oh, I'm not saying that there cannot be further issues with the design
+or implementation here. And perhaps fixing those would make the
+immediate issue Abel was trying to address go away.
 
-Best regards,
-Krzysztof
-
+Johan
 
