@@ -1,198 +1,188 @@
-Return-Path: <linux-kernel+bounces-392501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E6B9B94E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:06:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51BF89B94DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72CA1283BFC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:06:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 742481C213C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B1F1C82F3;
-	Fri,  1 Nov 2024 16:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCD51C761F;
+	Fri,  1 Nov 2024 16:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5zELRtH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YZbqLSuQ"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D200D81ACA;
-	Fri,  1 Nov 2024 16:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585B181ACA
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730477167; cv=none; b=XcJETzJh0Sdu+w8TY4EuUvgLpJaMD+nPXzQ0b5AGFtRPxUCSAqRfEY9oRo83N/RKvzEasN7Wb56a3+fqGn5gN+SjRtxQxVeBeNTG49iOh/2aA0tgtkz/9EUmNJkRzAwxCEqNp02FfKLJkSdq9ynlaDVQo/9S6tsu4OoY4dp7Uj8=
+	t=1730476960; cv=none; b=DBMty1A2tKgZZaxmIm8B2ks/4AP6a52oUGEQRcYTEiJ+Bs+MVw54HidWhhfY1f6oUbW4aEtl+yZLja7eADnNoVi0Er26kTZcdrT6/itqwbbbf/GHzpLytfkFRL3bNcd3x31nAE/32SUouwAmN8vEQDeNmZcO9URqXQKlzPz6liU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730477167; c=relaxed/simple;
-	bh=4S+pRg+jKAU5U0sHcwkK0/Iq9498uZZRXnJEb+oAdv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o1YNSKkTdrk7qdAgQRHbHvEke+DhFytNjR+mi3WC3OxS+gSR94Sjw1zxvBbz1AqGzPzR06hjo5Q2mpumLpMXkccp7w+dW0ZuFNBOJvUCuHvwWl27ybTb0JEOZO5XTRspyV5tY2zSQtE9EWQnnANeJElupYhCP8NGkhLThsuHEig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5zELRtH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1221EC4CECD;
-	Fri,  1 Nov 2024 16:05:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730477167;
-	bh=4S+pRg+jKAU5U0sHcwkK0/Iq9498uZZRXnJEb+oAdv4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a5zELRtHls8OA0jW/I9NJV8QWjJ25s4S0RI4BX4gGobl98QHmHNj6seEnbtduRhhV
-	 dWzfY1RwUvQxPDeNU710rOM+ApwCThagAjmbno04oYmX0zqhVOGAm5mDfhDB0vtTiB
-	 6kziyYtZX6/UcfOpGPcDzifMAsm06Y2F0axjmnb77Z7srcZHAN/+LIP+zvLjZB483J
-	 HZQcpn8RNgYY0d7THaCXPeyUYT0sBEnJzaA69GeOh/3ytpkGfYfozenx/mZFkHyT1a
-	 ayDJfiy+S6FyOWW8a1djQtUWTqcSe1keIn/JarTwH53P4uES4GTM/YBPBCjm/Yw+ru
-	 rEhoCg2PP1bpw==
-Date: Fri, 1 Nov 2024 18:02:03 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Gregory Price <gourry@gourry.net>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
-	dave.jiang@intel.com, ira.weiny@intel.com,
-	alison.schofield@intel.com, dave.hansen@linux.intel.com,
-	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, hpa@zytor.com, rafael@kernel.org,
-	lenb@kernel.org, david@redhat.com, osalvador@suse.de,
-	gregkh@linuxfoundation.org, akpm@linux-foundation.org
-Subject: Re: [PATCH v5 1/3] memory: implement
- memory_block_advise/probe_max_size
-Message-ID: <ZyT7e3xS2p6DqGYO@kernel.org>
-References: <20241101134706.1185-1-gourry@gourry.net>
- <20241101134706.1185-2-gourry@gourry.net>
+	s=arc-20240116; t=1730476960; c=relaxed/simple;
+	bh=3GKBrVny2p2TifcSB3WctuIjIC7hYHaEm5aSo9o2juE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QbEZxMDaYHXjPPMzI3NpKpfTHfduEvhmDPmrYu8DqRR+YUFeQpYTwv3s8KUiscf3LAz/6ABxnTKiw9c2gCvnCNlztwPoJT8G44KVJFqaG/BQWCA6CNUAsuozHn0Z7JRWIwRjxeAv2hz8L9Xx6+O7f4Hhh+zM2VN9FM/30+GyjVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YZbqLSuQ; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ca4877690so115475ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 09:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730476957; x=1731081757; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w2rpfAEpsLtKNOAU374yYtxAN0UepXKdz1kTy844WGM=;
+        b=YZbqLSuQ7VL2dYVVVC026T5yLpQq9P5/whM6gIX5UBhY4A82hnZbpXyZ+JwVj3Icjs
+         YmUNTAlOz9f2Dg1ZGEstJJURRAlx1gmJziqsQ0UuKkHd7L64BS/1Utdt6BEX2cfS/Fcz
+         Oz+uQO+GW2kr7kwS0otaIVWiS+Un6zO6Z/+lpP7IzjDp+qTAw+HW3KAVCuVL8Crb1gpg
+         NhuAKleIEVYmncJ8qARyKdb/aZX9IlhSbVtQfpLNlF1vliNc/AA7o1lCmaCOr6mFYND5
+         VzRzOcrzSgS99a78WEpe0/qo27y9t/7wYvwwtB9nAqA8XVPoOLKL2jyy1YD7G/i0nJX5
+         bv7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730476957; x=1731081757;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w2rpfAEpsLtKNOAU374yYtxAN0UepXKdz1kTy844WGM=;
+        b=BJ4HkVIJMFzWGDYg/+4giaWEQMBynTy7C7sJ/H+bRahtRzJ7xKW5DuzVXjXmBntdt5
+         GTTnOGTy6xE05hbGiIYc1QOYJxPQxDrAPIp8Fd4lQGKskeEwmD+UcUuBVmRRRWSqN7kB
+         kXg2APaopS9rTgvWXN2rPvscsHZforxntFfH0O2DPhYUeGmV3l6k7xKlgWC0+PS99tfP
+         Kco3L14QEhOqgVFtMhIu9b6KdIpsxpUv5Jz9evLjlDCMq4s+XjU+lwPLX/rBsHAemviA
+         /C+I0CnR8MdiuFdK0iHojQMFXIJhqrceqeitzXkSWCUJFbmqvOEFi3122AoY7fNcFYXA
+         7Jpw==
+X-Gm-Message-State: AOJu0YyzJbZ+8Z+se0v8j5oocKmdt878qqux5JkkZ6BZIPCyXMt0hwum
+	V8VeUi15W/u/nQRnVP8QjEM1JcMlI84Qg/adlkCp4FJkuyPccZwsQ7uf0U6/l55Jh2ASlJJFBTZ
+	oGec32zY7Zd4ns5Flf3faE8jWnD/TUZzI3/PK
+X-Gm-Gg: ASbGncvC5Y6/E80b0H1f0RKpnNJ2RLaESHwX19STy1FAyHfOEDnTYtSusUn9gX4LUzG
+	5CZYtfkoXMauMxv2HaSlVgqZ+Fk8ziiIl
+X-Google-Smtp-Source: AGHT+IGM2L33nn/G3uhGQLPmrXLjceVs08q5vkjwS9HQF1fX7xGb7+zd7WkPYP+bgCq5nmPeNJB3l50fp+eNvrgmDb0=
+X-Received: by 2002:a17:903:246:b0:20c:568f:37c7 with SMTP id
+ d9443c01a7336-211055b58femr4605115ad.17.1730476957085; Fri, 01 Nov 2024
+ 09:02:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101134706.1185-2-gourry@gourry.net>
+References: <20241031223948.4179222-1-ctshao@google.com> <20241031223948.4179222-2-ctshao@google.com>
+In-Reply-To: <20241031223948.4179222-2-ctshao@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 1 Nov 2024 09:02:22 -0700
+Message-ID: <CAP-5=fVaD8GLhMmM=d4DqHnT24ZDHPAWU56mzSF5OXY=pTO3UA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] perf: Reveal PMU type in fdinfo
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, Kan <kan.liang@linux.intel.com>, 
+	Ze Gao <zegao2021@gmail.com>, Yang Jihong <yangjihong1@huawei.com>, 
+	Weilin Wang <weilin.wang@intel.com>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 01, 2024 at 09:47:03AM -0400, Gregory Price wrote:
-> Hotplug memory sources may have opinions on what the memblock size
-> should be - usually for alignment purposes.  For example, CXL memory
-> extents can be 256MB with a matching alignment. If this size/alignment
-> is smaller than the block size, it can result in stranded capacity.
-> 
-> Implement memory_block_advise_max_size for use prior to allocator init,
-> for software to advise the system on the max block size.
-> 
-> Implement memory_block_probe_max_size for use by arch init code to
-> calculate the best block size. Use of advice is architecture defined.
-> 
-> The probe value can never change after first probe. Calls to advise
-> after probe will return -EBUSY to aid debugging.
-> 
-> On systems without hotplug, always return -ENODEV and 0 respectively.
-> 
-> Suggested-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> Acked-by: David Hildenbrand <david@redhat.com>
+On Thu, Oct 31, 2024 at 3:39=E2=80=AFPM Chun-Tse Shao <ctshao@google.com> w=
+rote:
+>
+> It gives useful info on knowing which PMUs are reserved by this process.
+> Also add extra attributes which would be useful.
+>
+> ```
+> Testing cycles
+> $ ./perf stat -e cycles &
+> $ cat /proc/`pidof perf`/fdinfo/3
+> pos:    0
+> flags:  02000002
+> mnt_id: 16
+> ino:    3081
+> perf_event-orig_type:   0
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+nit: I think this should be:
+perf_event-type:   0
+this output was from an earlier version.
 
+> perf_event-attr.config1:        0
+> perf_event-attr.config2:        0
+> perf_event-attr.config3:        0
+>
+> Testing L1-dcache-load-misses//
+> $ ./perf stat -e L1-dcache-load-misses &
+> $ cat /proc/`pidof perf`/fdinfo/3
+> pos:    0
+> flags:  02000002
+> mnt_id: 16
+> ino:    1072
+> perf_event-attr.type:   3
+> perf_event-attr.config: 65536
+> perf_event-attr.config1:        0
+> perf_event-attr.config2:        0
+> perf_event-attr.config3:        0
+> ```
+>
+> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
 > ---
->  drivers/base/memory.c  | 53 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/memory.h | 10 ++++++++
->  2 files changed, 63 insertions(+)
-> 
-> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-> index 67858eeb92ed..835793150b41 100644
-> --- a/drivers/base/memory.c
-> +++ b/drivers/base/memory.c
-> @@ -110,6 +110,59 @@ static void memory_block_release(struct device *dev)
->  	kfree(mem);
->  }
->  
-> +
-> +/* Max block size to be set by memory_block_advise_max_size */
-> +static unsigned long memory_block_advised_size;
-> +static bool memory_block_advised_size_queried;
-> +
-> +/**
-> + * memory_block_advise_max_size() - advise memory hotplug on the max suggested
-> + *				    block size, usually for alignment.
-> + * @size: suggestion for maximum block size. must be aligned on power of 2.
-> + *
-> + * Early boot software (pre-allocator init) may advise archs on the max block
-> + * size. This value can only decrease after initialization, as the intent is
-> + * to identify the largest supported alignment for all sources.
-> + *
-> + * Use of this value is arch-defined, as is min/max block size.
-> + *
-> + * Return: 0 on success
-> + *	   -EINVAL if size is 0 or not pow2 aligned
-> + *	   -EBUSY if value has already been probed
-> + */
-> +int __init memory_block_advise_max_size(unsigned long size)
-> +{
-> +	if (!size || !is_power_of_2(size))
-> +		return -EINVAL;
-> +
-> +	if (memory_block_advised_size_queried)
-> +		return -EBUSY;
-> +
-> +	if (memory_block_advised_size) {
-> +		memory_block_advised_size = min(memory_block_advised_size,
-> +						size);
-> +	} else {
-> +		memory_block_advised_size = size;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * memory_block_advised_max_size() - query advised max hotplug block size.
-> + *
-> + * After the first call, the value can never change. Callers looking for the
-> + * actual block size should use memory_block_size_bytes. This interface is
-> + * intended for use by arch-init when initializing the hotplug block size.
-> + *
-> + * Return: advised size in bytes, or 0 if never set.
-> + */
-> +unsigned long memory_block_advised_max_size(void)
-> +{
-> +	memory_block_advised_size_queried = true;
-> +	return memory_block_advised_size;
-> +}
-> +
->  unsigned long __weak memory_block_size_bytes(void)
->  {
->  	return MIN_MEMORY_BLOCK_SIZE;
-> diff --git a/include/linux/memory.h b/include/linux/memory.h
-> index c0afee5d126e..8202d0efbf46 100644
-> --- a/include/linux/memory.h
-> +++ b/include/linux/memory.h
-> @@ -149,6 +149,14 @@ static inline int hotplug_memory_notifier(notifier_fn_t fn, int pri)
->  {
->  	return 0;
->  }
-> +static inline int memory_block_advise_max_size(unsigned long size)
-> +{
-> +	return -ENODEV;
-> +}
-> +static inline unsigned long memory_block_advised_max_size(void)
-> +{
-> +	return 0;
-> +}
->  #else /* CONFIG_MEMORY_HOTPLUG */
->  extern int register_memory_notifier(struct notifier_block *nb);
->  extern void unregister_memory_notifier(struct notifier_block *nb);
-> @@ -181,6 +189,8 @@ int walk_dynamic_memory_groups(int nid, walk_memory_groups_func_t func,
->  void memory_block_add_nid(struct memory_block *mem, int nid,
->  			  enum meminit_context context);
->  #endif /* CONFIG_NUMA */
-> +int memory_block_advise_max_size(unsigned long size);
-> +unsigned long memory_block_advised_max_size(void);
->  #endif	/* CONFIG_MEMORY_HOTPLUG */
->  
->  /*
-> -- 
-> 2.43.0
-> 
+>  kernel/events/core.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index cdd09769e6c56..e0891c376fd9d 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8,6 +8,7 @@
+>   *  Copyright  =C2=A9  2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.co=
+m>
+>   */
+>
+> +#include "linux/seq_file.h"
 
--- 
-Sincerely yours,
-Mike.
+nit: I think you should use angle < > rather than quotes on the
+include for consistency.
+
+Thanks,
+Ian
+
+>  #include <linux/fs.h>
+>  #include <linux/mm.h>
+>  #include <linux/cpu.h>
+> @@ -6820,6 +6821,17 @@ static int perf_fasync(int fd, struct file *filp, =
+int on)
+>         return 0;
+>  }
+>
+> +static void perf_show_fdinfo(struct seq_file *m, struct file *f)
+> +{
+> +       struct perf_event *event =3D f->private_data;
+> +
+> +       seq_printf(m, "perf_event-attr.type:\t%u\n", event->orig_type);
+> +       seq_printf(m, "perf_event-attr.config:\t%llu\n", event->attr.conf=
+ig);
+> +       seq_printf(m, "perf_event-attr.config1:\t%llu\n", event->attr.con=
+fig1);
+> +       seq_printf(m, "perf_event-attr.config2:\t%llu\n", event->attr.con=
+fig2);
+> +       seq_printf(m, "perf_event-attr.config3:\t%llu\n", event->attr.con=
+fig3);
+> +}
+> +
+>  static const struct file_operations perf_fops =3D {
+>         .release                =3D perf_release,
+>         .read                   =3D perf_read,
+> @@ -6828,6 +6840,7 @@ static const struct file_operations perf_fops =3D {
+>         .compat_ioctl           =3D perf_compat_ioctl,
+>         .mmap                   =3D perf_mmap,
+>         .fasync                 =3D perf_fasync,
+> +       .show_fdinfo            =3D perf_show_fdinfo,
+>  };
+>
+>  /*
+> --
+> 2.47.0.163.g1226f6d8fa-goog
+>
 
