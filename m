@@ -1,247 +1,114 @@
-Return-Path: <linux-kernel+bounces-392575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2909B95BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:44:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F6C9B95CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3EC282A7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACC828413E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03321CB501;
-	Fri,  1 Nov 2024 16:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC701CDA1E;
+	Fri,  1 Nov 2024 16:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="pn87DnAX"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUwoG//T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817341CC177;
-	Fri,  1 Nov 2024 16:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1B11CDA02;
+	Fri,  1 Nov 2024 16:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730479421; cv=none; b=VrN3oxRo0o1M6UGjkM0ZpNkzuCaKEFxiMnxs/NU+IaJFBtO7PjhmsN5iDBQSX0XHICDxLEHIKNqXFk4EHA1IxC4woOxpQjf3xY33GXHt3m1kSTskOp/0RWGu/CCyjdLVGN1+N05jx4omutgX6Et0r8NgouXRBtXZFh1wb2QkrU0=
+	t=1730479468; cv=none; b=MWEs7I89E0TuSFuMh0wB1SCHRpahf767n4sRZCgf9SzrIKOllG7tWBeUvmln6UuFKtyqTbSx2ECydCOWGedj2z6AkMqUiZrTwa1W8QaQiNk02vtpEt2UOTFt1UP5xw3rBV2YM48K9lg9Mv0EcVtrlnMZva+upqsO0KT+cwUr70k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730479421; c=relaxed/simple;
-	bh=lb9RjaO/cLTpIA5ytTYGjlJe27AiShJpYxvElcVEufQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MZRfmEhIEinO8KuG/taDa7IDAmUCguqUE//gh4l/uH1OeICCWhaSZmZg8nMz0KMK01ty904aDmfH5H7Z2C2hZZBjHFTc2iNE2FqZg3ByxV/wZV9t05j/Y5XU9yQ4G2r04RXcjGn2VsnfMGAEG5Hxubk8GDz0FXGGTIuPbeuVB5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=pn87DnAX; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=1Ftxs1X2bzMP8j6QK8gh+paXxKWIM0HgFnEN8ePS9Tc=; b=pn87DnAXiqTKqX3MhKegErUZj5
-	8fCM7W1FYVlDWFulKMj228VX/ZFBQhPW4JdWHiNJiwft3+OKS2uzZ38b0zQkfN7UDdR63V5WJmxNJ
-	0cosR6SaUcOAmBfdPq5JkJzMoDj8rmyXRxm5n8gdLhSHxkpUdnkxrjNy6F6WQp+T9Hq942V7HLV3C
-	riIgfxGS/lJw0g3kwhnuyvJbZ219OKN0jbsI4l8TPLXRXOdfFlve7BfHTYfALrHsT8CTepBHlg3m+
-	+N3x4S5N5bDYQV3qfkogt58NtqJQWVUwatzywOpDBtCpGXtluXxG07xA2u0cIp2s8qwApichjWNIj
-	cvwLKPEQ==;
-Received: from [189.78.222.89] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1t6ukB-000V2F-9N; Fri, 01 Nov 2024 17:43:27 +0100
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	krisman@kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Nathan Chancellor <nathan@kernel.org>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Theodore Ts'o <tytso@mit.edu>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v2 3/3] tmpfs: Initialize sysfs during tmpfs init
-Date: Fri,  1 Nov 2024 13:42:51 -0300
-Message-ID: <20241101164251.327884-4-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241101164251.327884-1-andrealmeid@igalia.com>
-References: <20241101164251.327884-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1730479468; c=relaxed/simple;
+	bh=1CfY2+o4mRhy02U7CFSYwo0qVuQU+kj4WkP+HlKqRn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TPJCfb+o81Ks5tEgAPd9EPaCModKB1emBk+2qPbN9S6Nf+ROfCWikB1LZVzmNTlwvOQttfSXVe+JzkXTo0Vgx0wqXJwF5pfXMQtz/xriePIdDEOPNxedwEPLlWihgEsHjUJnHdzYQAg0+emWwyY6dBOvAQXqub/XuKRCxxHv1JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUwoG//T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1145FC4CED3;
+	Fri,  1 Nov 2024 16:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730479468;
+	bh=1CfY2+o4mRhy02U7CFSYwo0qVuQU+kj4WkP+HlKqRn0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RUwoG//TVOvFq/Z1QHtZYQirIJMBlS/ZHXo9vBPUi0Cy17F9j38/a/zHCwtOEm+A+
+	 jdAI7FoQWJ3E7573lT0saQ+1WwkRsUr30AomYt07P6Jm+HAD55oXdbAlh5JgFHBBcg
+	 /TivdakH0u8CYOnH1xagXujZ4e7+vg4FIIUfiQC9/kUkDKREYlEuTHucOjUyKDNV43
+	 16tmfjxwvKsDTI1rAC/Y7BUc/mC+Me2Nl1FXZcv/bTXZocBCLFYBI0Pu2XZyW91u7I
+	 ZuYJZdvuiJJ9W/q5PRmAmH9rXDbLOLxB4bwEnwBWVn+TDgr9N6e/CSZG/uMhTF5l0s
+	 2FGA5tFv/zEXA==
+Date: Fri, 1 Nov 2024 16:44:14 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Cosmin Tanislav
+ <cosmin.tanislav@analog.com>, Ramona Gradinariu
+ <ramona.gradinariu@analog.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
+ Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Anand Ashok Dumbre
+ <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
+ <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
+ Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Benson Leung
+ <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v2 15/15] iio: light: apds9960: remove useless return
+Message-ID: <20241101164414.4f14c75f@jic23-huawei>
+In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-15-2bcacbb517a2@baylibre.com>
+References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
+	<20241031-iio-fix-write-event-config-signature-v2-15-2bcacbb517a2@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Instead of using fs_initcall(), initialize sysfs with the rest of the
-filesystem. This is the right way to do it because otherwise any error
-during tmpfs_sysfs_init() would get silently ignored. It's also useful
-if tmpfs' sysfs ever need to display runtime information.
+On Thu, 31 Oct 2024 16:27:10 +0100
+Julien Stephan <jstephan@baylibre.com> wrote:
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-Changes from v1:
-- Fixed ifdef guard for tmpfs_sysfs_init()
----
- mm/shmem.c | 130 ++++++++++++++++++++++++++++-------------------------
- 1 file changed, 68 insertions(+), 62 deletions(-)
+> return 0 statement at the end of apds9960_read_event_config is useless.
+> Remove it.
+Strange that never triggered a build warning that I noticed.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 6038e1d11987..a5355cf9443c 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -5126,6 +5126,66 @@ static struct file_system_type shmem_fs_type = {
- 	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP | FS_MGTIME,
- };
- 
-+#if defined(CONFIG_SYSFS) && defined(CONFIG_TMPFS)
-+
-+#define __INIT_KOBJ_ATTR(_name, _mode, _show, _store)			\
-+{									\
-+	.attr	= { .name = __stringify(_name), .mode = _mode },	\
-+	.show	= _show,						\
-+	.store	= _store,						\
-+}
-+
-+#define TMPFS_ATTR_W(_name, _store)				\
-+	static struct kobj_attribute tmpfs_attr_##_name =	\
-+			__INIT_KOBJ_ATTR(_name, 0200, NULL, _store)
-+
-+#define TMPFS_ATTR_RW(_name, _show, _store)			\
-+	static struct kobj_attribute tmpfs_attr_##_name =	\
-+			__INIT_KOBJ_ATTR(_name, 0644, _show, _store)
-+
-+#define TMPFS_ATTR_RO(_name, _show)				\
-+	static struct kobj_attribute tmpfs_attr_##_name =	\
-+			__INIT_KOBJ_ATTR(_name, 0444, _show, NULL)
-+
-+#if IS_ENABLED(CONFIG_UNICODE)
-+static ssize_t casefold_show(struct kobject *kobj, struct kobj_attribute *a,
-+			char *buf)
-+{
-+		return sysfs_emit(buf, "supported\n");
-+}
-+TMPFS_ATTR_RO(casefold, casefold_show);
-+#endif
-+
-+static struct attribute *tmpfs_attributes[] = {
-+#if IS_ENABLED(CONFIG_UNICODE)
-+	&tmpfs_attr_casefold.attr,
-+#endif
-+	NULL
-+};
-+
-+static const struct attribute_group tmpfs_attribute_group = {
-+	.attrs = tmpfs_attributes,
-+	.name = "features"
-+};
-+
-+static struct kobject *tmpfs_kobj;
-+
-+static int __init tmpfs_sysfs_init(void)
-+{
-+	int ret;
-+
-+	tmpfs_kobj = kobject_create_and_add("tmpfs", fs_kobj);
-+	if (!tmpfs_kobj)
-+		return -ENOMEM;
-+
-+	ret = sysfs_create_group(tmpfs_kobj, &tmpfs_attribute_group);
-+	if (ret)
-+		kobject_put(tmpfs_kobj);
-+
-+	return ret;
-+}
-+#endif /* CONFIG_SYSFS && CONFIG_TMPFS */
-+
- void __init shmem_init(void)
- {
- 	int error;
-@@ -5149,6 +5209,14 @@ void __init shmem_init(void)
- 		goto out1;
- 	}
- 
-+#if defined(CONFIG_SYSFS) && defined(CONFIG_TMPFS)
-+	error = tmpfs_sysfs_init();
-+	if (error) {
-+		pr_err("Could not init tmpfs sysfs\n");
-+		goto out1;
-+	}
-+#endif
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	if (has_transparent_hugepage() && shmem_huge > SHMEM_HUGE_DENY)
- 		SHMEM_SB(shm_mnt->mnt_sb)->huge = shmem_huge;
-@@ -5546,65 +5614,3 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
- 	return page;
- }
- EXPORT_SYMBOL_GPL(shmem_read_mapping_page_gfp);
--
--#if defined(CONFIG_SYSFS) && defined(CONFIG_TMPFS)
--
--#define __INIT_KOBJ_ATTR(_name, _mode, _show, _store)			\
--{									\
--	.attr	= { .name = __stringify(_name), .mode = _mode },	\
--	.show	= _show,						\
--	.store	= _store,						\
--}
--
--#define TMPFS_ATTR_W(_name, _store)				\
--	static struct kobj_attribute tmpfs_attr_##_name =	\
--			__INIT_KOBJ_ATTR(_name, 0200, NULL, _store)
--
--#define TMPFS_ATTR_RW(_name, _show, _store)			\
--	static struct kobj_attribute tmpfs_attr_##_name =	\
--			__INIT_KOBJ_ATTR(_name, 0644, _show, _store)
--
--#define TMPFS_ATTR_RO(_name, _show)				\
--	static struct kobj_attribute tmpfs_attr_##_name =	\
--			__INIT_KOBJ_ATTR(_name, 0444, _show, NULL)
--
--#if IS_ENABLED(CONFIG_UNICODE)
--static ssize_t casefold_show(struct kobject *kobj, struct kobj_attribute *a,
--			char *buf)
--{
--		return sysfs_emit(buf, "supported\n");
--}
--TMPFS_ATTR_RO(casefold, casefold_show);
--#endif
--
--static struct attribute *tmpfs_attributes[] = {
--#if IS_ENABLED(CONFIG_UNICODE)
--	&tmpfs_attr_casefold.attr,
--#endif
--	NULL
--};
--
--static const struct attribute_group tmpfs_attribute_group = {
--	.attrs = tmpfs_attributes,
--	.name = "features"
--};
--
--static struct kobject *tmpfs_kobj;
--
--static int __init tmpfs_sysfs_init(void)
--{
--	int ret;
--
--	tmpfs_kobj = kobject_create_and_add("tmpfs", fs_kobj);
--	if (!tmpfs_kobj)
--		return -ENOMEM;
--
--	ret = sysfs_create_group(tmpfs_kobj, &tmpfs_attribute_group);
--	if (ret)
--		kobject_put(tmpfs_kobj);
--
--	return ret;
--}
--
--fs_initcall(tmpfs_sysfs_init);
--#endif /* CONFIG_SYSFS && CONFIG_TMPFS */
--- 
-2.47.0
+Anyhow applied.  
+
+So I did end up more or less (i.e. with tweaks) applying the whole series.
+If you have time to follow up on the few cases I spotted where passing the
+bool value into functions instead of an int may make for better
+readability.
+
+> 
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> ---
+>  drivers/iio/light/apds9960.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
+> index 7b3da88885693c488807da459ceaa1cbb3881bcd..d30441d3370309fce9d6c717d42b829ff1db3174 100644
+> --- a/drivers/iio/light/apds9960.c
+> +++ b/drivers/iio/light/apds9960.c
+> @@ -749,8 +749,6 @@ static int apds9960_read_event_config(struct iio_dev *indio_dev,
+>  	default:
+>  		return -EINVAL;
+>  	}
+> -
+> -	return 0;
+>  }
+>  
+>  static int apds9960_write_event_config(struct iio_dev *indio_dev,
+> 
 
 
