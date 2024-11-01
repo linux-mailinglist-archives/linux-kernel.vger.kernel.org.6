@@ -1,147 +1,218 @@
-Return-Path: <linux-kernel+bounces-392690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495C69B971E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:08:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 662C59B971F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:09:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60E0EB21845
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:08:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCE7AB216D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F154A1CDFDC;
-	Fri,  1 Nov 2024 18:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292F01CDFA7;
+	Fri,  1 Nov 2024 18:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R/By8LQa"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="m/ivxbRX"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821BD1CDA27
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873CA1CB321
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730484513; cv=none; b=NH5iYXy6Bf3sx+PvMEbgjp6O9sVHADf12Plc9xDHWgPXXG/ZoVGg3bL5gjxyIDGSVEyjNa77bKYkUSGXfthgNpBiDt1e11PHmewCJwyXRJU67GE6tjjiZf5tLPOkbz7VL+0C+fCQu5u3wakvwPe4R0qCn4IvY8O2aN4ig18AsLw=
+	t=1730484555; cv=none; b=l5DsQLW2xMTSeeHY/TyoHCk4aoxGanDEHVBT2oXq7cSCVhWrNtXf6VE4onytxhAYtWA7rfmZerd339iaddFYxTm40W5V2KzwXtkN9ONLkI3vp4uzwy+AlJ1ixuhUsC1IgfNH57tdYbnLI4Q//UuLXO7BS265pZ7KAJoF5jwHxCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730484513; c=relaxed/simple;
-	bh=wTIyBZgnq62le+5w+4w6X/ecvgjYY7nVJQm7gIAKPEE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fkW66yWTKVDr5TZQhhz6hDloHbQz3xSZ6f7vcQWK2jxC9B9gE9sInb+hyklFZZjQOnD9C4b5ZOElrmPaI9Fe07dNZloSz8FTJvBlGP/Cca5xn6T8FPYETnLZ529uCHD0bZIIZc5rFW/PZka/MLpztxiWMv9Xkn18OGxsiCLj0KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R/By8LQa; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f72c913aso3760343e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730484510; x=1731089310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ftGl4XcG9OH9sBgHhSBECZNA4rpR1fv1xw6T+vkOgXg=;
-        b=R/By8LQal/cP2QNy8QNLePJe70GiELBbBDG4kdIjFxTkxjdTdqDW2TK2emZM1g3Ct9
-         Rx4PIGkqTSTKdYwHMinNl/ac7m0qipBx5BuszxO7giFyWRAh7iR2Bhdh8LChdsKGnINt
-         x69tHtYqAFWQfpuU4xT1/muUv1HtBw0NcBy91+0xpPXTag6131doxbfZvVVV1HUqCvAg
-         HjZ5stQHnhkm9boW1PxpY3Wyj0r9lwwkzLsKmRmlIbAkRF9Z0FfyEhSkNEPrMSG2GuUr
-         EH5evwtskvzfNvxYCc49kuHTctYTB5FZW0v80J+113BRaoRKHVZwMfYkrpCebZ/oXi1M
-         3ITA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730484510; x=1731089310;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ftGl4XcG9OH9sBgHhSBECZNA4rpR1fv1xw6T+vkOgXg=;
-        b=R+oLki+08btaCUgz1E3HckGid7Btp5XeH8U23SR5ZmTsakNpAc4qYyz+be8ZXsX1qg
-         0xcnyl2xg4309ATEgiqklWMY6TV+Uj8fhmbeDc0YRsoM8Z9GdmMJtMtldW/iYaj1FOLY
-         Doiyt/TgoGsU6vJVoIUgHHzn1KATB5jHpRfO0E4Eli2pFQr6j0+RV7PUOmBi/Zep7jw/
-         FdEXF4VVz5Td7AVs+SDRArX5q7JYN9qC+Pagk61hUiYIrMXNwPYQI07NPZSLm3mgasMK
-         jaWxQqES46Ql3R6ouhIN/sUoI7nkYeK3U2QfgAM4TQWWnBepniye2XgJVNbXrEXNr0ui
-         RrBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuSGvotBWk7JwE/+s0/qs/pbsfj3eRuyZzjeDmnYnvzWyPwjJOS7d1YezwSGshLLaVrCPg92WD4ahzmcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdArZrUpfVWQzFSifho6xTa9VH3quAZibPFOxksUFhWky4fBpF
-	AmbGW6nhXQfEkxX+qSbdtI5GDBtdIikJsYE1WrAoqUHm5WsaYL84gykyMTB9jbKXk8KbxBIVGRV
-	kRIqO49c7jzV2KIE3IWvadh+weIgwDZEVHHiF
-X-Google-Smtp-Source: AGHT+IGwMCf8aDQDescU4zGGm+ZBhK+ouK3E0Y7btO9KyPPQ1vu6pGdaYG4lHllgWVIGE4uaJ5FRjGI+iaX5NJvPKXo=
-X-Received: by 2002:a05:6512:b82:b0:539:fd75:2b88 with SMTP id
- 2adb3069b0e04-53b34c46711mr12231661e87.60.1730484509488; Fri, 01 Nov 2024
- 11:08:29 -0700 (PDT)
+	s=arc-20240116; t=1730484555; c=relaxed/simple;
+	bh=GA3DIH8k3j9pYH/Bl6BYIuAJu5F2st1ewT0p2THTlrw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=B/Iy8hBMDh10qABXiyE4mCNBlIzVsay6CG3EoNF2OFzcqGfbYzWQO6FxCble/eQoAjYSSqM6GFK7HZ0JNDaxMcc5MS7Ck3lpN7Yo4q03u7k07PzTA07aoyo1R+XMt/hYQgUUCBA7E6JJsbyL2Rc208uG2pkFmSu8M282wKFSV1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=m/ivxbRX; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730484513; x=1731089313; i=efault@gmx.de;
+	bh=7opc3LHSElwOkD8p1sc5OTM05usHzju1dJINWaCETFE=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=m/ivxbRXNLPIXGdJviio+Bz/w2QIwfQMdma7vYzbvesm2oWbS40G4MSQgtLk5020
+	 PLNT6i0DwPRvi3PxV7cWNxkfIAdAzYLrDpGfu8ggE2q2JoMix9z6oHkadubiZPNz4
+	 DNVYhbtfrTB26JNTMCGEbXn5CE5aJ9RNjNGiOjUZsooAr4m5872I6+5CQV6syjfLm
+	 1gk6MDtrz+JAJfdYS2YITgj6AseeN7ihmlwgX2B7a71akEL11XXg8T+R7NerluG9e
+	 hLmrvaEuBUTHM9go32WMpl7tVhllEjCS0Pu5QzqyEVH7BCVuMI0HtvOaPyfR7hClE
+	 BAyaGofwfc4tG2hr6Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.16]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MoO6M-1te51t08N6-00jCC1; Fri, 01
+ Nov 2024 19:08:33 +0100
+Message-ID: <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
+Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
+From: Mike Galbraith <efault@gmx.de>
+To: Phil Auld <pauld@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de,  vschneid@redhat.com, linux-kernel@vger.kernel.org,
+ kprateek.nayak@amd.com,  wuyun.abel@bytedance.com,
+ youssefesmat@chromium.org, tglx@linutronix.de
+Date: Fri, 01 Nov 2024 19:08:31 +0100
+In-Reply-To: <20241101144225.GD689589@pauld.westford.csb>
+References: <20240727102732.960974693@infradead.org>
+	 <20240727105030.226163742@infradead.org>
+	 <20241101124715.GA689589@pauld.westford.csb>
+	 <20241101125659.GY14555@noisy.programming.kicks-ass.net>
+	 <20241101133822.GC689589@pauld.westford.csb>
+	 <20241101142649.GX9767@noisy.programming.kicks-ass.net>
+	 <20241101144225.GD689589@pauld.westford.csb>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYv_Y2tzs+uYhMGtfUK9dSYV2mFr6WyKEzJazDsdk9o5zw@mail.gmail.com>
- <20241101095620.2526421-1-aliceryhl@google.com> <CAHC9VhS5wLQeF4LX67UgUYVG3oViA7CmSZS_kugH+M5J0XS2Vg@mail.gmail.com>
- <CANiq72kcvpEqpwFTNFmxfJsfBMeBNiDrrvFBf_iS7+ozaECJzw@mail.gmail.com>
- <CAHC9VhTQMo11s7mWg=zzDusJompOp01uJat-q9HjQCoEWzHRRQ@mail.gmail.com>
- <CAH5fLgi+JJHCA_XTPC0-kaacZC6=aGSa-+DiNt06GSJNFhKc3w@mail.gmail.com> <CAHC9VhSv+ro9gOzanvPS1gZwLkqO7ZoZk7SOZ64FP+-sdmYs2Q@mail.gmail.com>
-In-Reply-To: <CAHC9VhSv+ro9gOzanvPS1gZwLkqO7ZoZk7SOZ64FP+-sdmYs2Q@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 1 Nov 2024 19:08:16 +0100
-Message-ID: <CAH5fLggDWvR4i8L+Hin3vzOYnsP2jwZRS7cK-B=xjjOwGBaKkw@mail.gmail.com>
-Subject: Re: [PATCH] rust: lsm: replace context+len with lsm_context
-To: Paul Moore <paul@paul-moore.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, naresh.kamboju@linaro.org, 
-	casey@schaufler-ca.com, anders.roxell@linaro.org, arnd@arndb.de, 
-	brauner@kernel.org, dan.carpenter@linaro.org, kees@kernel.org, 
-	linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, ojeda@kernel.org, 
-	regressions@lists.linux.dev, rust-for-linux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, lkft@linaro.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:AZthKZfWnQLysYJZVMV1PWNPpmERMNwNe5jNBKYeUO+BoiwHhyk
+ iYL+8cYTt+6XTDVNT9wxl/DQmbyunw/lNGLM5ZRWQiWzAhB3XgDESU8fdqIofqIMQsJPPmW
+ rl3baQwT0GNl4PgNnrSEDZUb7mSKGZWZplFxEHNkM8F+Cq0IgR0dMZ0+5h90RccqPHAI5HA
+ zcnaoGh5gg+bB4LdvmzNQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:u1zNwz075T4=;S1GG8Y1NHR9Nu0ccdGagOe/FaQ3
+ pHZDpf5sLwcLF0meKndbPOzID07jRimFcpzhHgpGxXGzF//3UjKX55Xzw78SG7MdhlwWCmzF3
+ psp51vjDcHmyrnYX8rA6AT/2VWGY6+EBBG4IoaYEJ5W8ARNK5P/Mjpa2hFTLqXnyKdNictgZ/
+ GaCuJg/yP3KTrD7MXk3QhLO8Lw04BKilh+cU63zHcyPxKjUzuzw3Zpj4YtK+jJlb0yP2gD5Rs
+ ki44UFPqPFO+u6YKb/IGfnB0RMhL27L1eSrPITzvcPUBii20ZkHJbbvAS/mn2IxZKcoAjanx8
+ RcPTr/URPDLWD17OObECpofrkHbfnBvwISvRNiw8K6SVwdCrlJODHKU1vF/P7/AD5l9iWSqOs
+ 7umCvZqupAlgeD24+uicnf/RWm4F1CgBcxRL+2WU9MD6fuhIJWNRCpo8/ijo7D2jFiP/+r5U2
+ V72zy1B0u7++NQpre8qgDxgjwBCeME7UzCMdZ2GMJ4We2ssdK7f2CIGoPYf8p/5ZwTbNS9oV+
+ Iux1WlkwVeJFezWHG90Mo8HsKjq/EmAFDrSns688ZQH6zpPeniy8t9wWwHR2ezBXwoIo6J8Ge
+ YGVsEUyDnZQCvKCQ/eQhAdbOUCJBG1GK9i1UMQ8gktnMpmV19IImirvA/6UBWKSi/VCVvGr8g
+ iMUcN+P/VzrFaEG0KlUoYyy0Xc59KE5+hJfMevZeBezHLQZqJ7e0DbDxv6T5JgB1duXjWkZH6
+ qqIoMo5Deo5tC0ArXLtYos2S96zlnWnGWwWHM4Q+m1Pon8cyiif9djYUsfDTb0KiXLe48j5vs
+ 8sKIyDLqBGA8txSODCQUSMzQ==
 
-On Fri, Nov 1, 2024 at 6:59=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> On Fri, Nov 1, 2024 at 1:24=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> =
-wrote:
-> > On Fri, Nov 1, 2024 at 6:11=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > > On Fri, Nov 1, 2024 at 1:04=E2=80=AFPM Miguel Ojeda
-> > > <miguel.ojeda.sandonis@gmail.com> wrote:
-> > > > On Fri, Nov 1, 2024 at 5:56=E2=80=AFPM Paul Moore <paul@paul-moore.=
-com> wrote:
-> > > > >
-> > > > > Thanks Alice.  Would you like me to pull this in via the LSM tree=
- with
-> > > > > the associated LSM changes, or would you prefer to do this some o=
-ther
-> > > > > way?
-> > > > >
-> > > > > I'm going to merge this into lsm/dev for now so that we fix the i=
-ssue
-> > > > > in linux-next, but I'm happy to drop it or do something else, let=
- me
-> > > > > know.
-> > > >
-> > > > Christian has the VFS side, and both are needed for this -- do you
-> > > > mean you will cross-merge vfs' branch too?
-> > >
-> > > I think our last emails crossed paths.  I'm not going to merge this
-> > > via the LSM tree as we don't have the Rust security.c helpers.
-> > > Ideally it would have been better to have the Rust LSM/security
-> > > helpers in the LSM tree for reasons like this, but it looks like it's
-> > > too late for that now.
+On Fri, 2024-11-01 at 10:42 -0400, Phil Auld wrote:
+> On Fri, Nov 01, 2024 at 03:26:49PM +0100 Peter Zijlstra wrote:
+> > On Fri, Nov 01, 2024 at 09:38:22AM -0400, Phil Auld wrote:
 > >
-> > If Christian is okay with rewriting the vfs.rust.file tree, we can
-> > drop commit 94d356c0335f ("rust: security: add abstraction for
-> > secctx") from there and I'll update it and send it for inclusion in
-> > the LSM tree instead. I'll need to drop the piece that ties together
-> > `struct cred` and `secctx` from the patch, but I can follow up with a
-> > small patch for that for the 6.14 merge window.
+> > > How is delay dequeue causing more preemption?
+> >
+> > The thing delay dequeue does is it keeps !eligible tasks on the runque=
+ue
+> > until they're picked again. Them getting picked means they're eligible=
+.
+> > If at that point they're still not runnable, they're dequeued.
+> >
+> > By keeping them around like this, they can earn back their lag.
+> >
+> > The result is that the moment they get woken up again, they're going t=
+o
+> > be eligible and are considered for preemption.
+> >
+> >
+> > The whole thinking behind this is that while 'lag' measures the
+> > mount of service difference from the ideal (positive lag will have les=
+s
+> > service, while negative lag will have had too much service), this is
+> > only true for the (constantly) competing task.
+> >
+> > The moment a task leaves, will it still have had too much service? And
+> > after a few seconds of inactivity?
+> >
+> > So by keeping the deactivated tasks (artificially) in the competition
+> > until they're at least at the equal service point, lets them burn off
+> > some of that debt.
+> >
+> > It is not dissimilar to how CFS had sleeper bonus, except that was
+> > walltime based, while this is competition based.
+> >
+> >
+> > Notably, this makes a significant difference for interactive tasks tha=
+t
+> > only run periodically. If they're not eligible at the point of wakeup,
+> > they'll incur undue latency.
+> >
+> >
+> > Now, I imagine FIO to have tasks blocking on IO, and while they're
+> > blocked, they'll be earning their eligibility, such that when they're
+> > woken they're good to go, preempting whatever.
+> >
+> > Whatever doesn't seem to enjoy this.
+> >
+> >
+> > Given BATCH makes such a terrible mess of things, I'm thinking FIO as =
+a
+> > whole does like preemption -- so now it's a question of figuring out
+> > what exactly it does and doesn't like. Which is never trivial :/
+> >
 >
-> I can only guess at what Chrisitian wants to do, but my guess is that
-> he isn't going to be very excited about rewriting a VFS tree at this
-> stage ... which is very understandable as far as I'm concerned.
+> Thanks for that detailed explanation.
 >
-> I wouldn't worry too much about this right now, I'm going to plan on
-> holding Casey's patchset in a staging area until after the upcoming
-> merge window.
+> I can confirm that FIO does like the preemption
+>
+> NO_WAKEUP_P and DELAY=C2=A0=C2=A0=C2=A0 - 427 MB/s
+> NO_WAKEUP_P and NO_DELAY - 498 MB/s
+> WAKEUP_P and DELAY=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 519 MB/s
+> WAKEUP_P and NO_DELAY=C2=A0=C2=A0=C2=A0 - 590 MB/s
+>
+> Something in the delay itself
+> (extra tasks in the queue? not migrating the delayed task? ...)
 
-Okay. If Casey's patchset is not landing for 6.13, then the fix I
-posted initially can be used. Casey is also welcome to squash my fix
-into his series if you all prefer that. I'm happy with whatever is
-easiest for you all.
+I think it's all about short term fairness and asymmetric buddies.
 
-Alice
+tbench comparison eevdf vs cfs, 100% apple to apple.
+
+1 tbench buddy pair scheduled cross core.
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ P COM=
+MAND
+13770 root      20   0   21424   1920   1792 S 60.13 0.012   0:33.81 3 tbe=
+nch
+13771 root      20   0    4720    896    768 S 46.84 0.006   0:26.10 2 tbe=
+nch_srv
+
+Note 60/47 utilization, now pinned/stacked.
+
+6.1.114-cfs
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ P COM=
+MAND
+ 4407 root      20   0   21424   1980   1772 R 50.00 0.012   0:29.20 3 tbe=
+nch
+ 4408 root      20   0    4720    124      0 R 50.00 0.001   0:28.76 3 tbe=
+nch_srv
+
+Note what happens to the lighter tbench_srv. Consuming red hot L2 data,
+it can utilize a full 50%, but it must first preempt wide bottom buddy.
+
+Now eevdf.  (zero source deltas other than eevdf)
+6.1.114-eevdf -delay_dequeue
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ P COM=
+MAND
+ 4988 root      20   0   21424   1948   1736 R 56.44 0.012   0:32.92 3 tbe=
+nch
+ 4989 root      20   0    4720    128      0 R 44.55 0.001   0:25.49 3 tbe=
+nch_srv
+6.1.114-eevdf +delay_dequeue
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ P COM=
+MAND
+ 4934 root      20   0   21424   1952   1736 R 52.00 0.012   0:30.09 3 tbe=
+nch
+ 4935 root      20   0    4720    124      0 R 49.00 0.001   0:28.15 3 tbe=
+nch_srv
+
+As Peter noted, delay_dequeue levels the sleeper playing field.  Both
+of these guys are 1:1 sleepers, but they're asymmetric in width.
+
+Bottom line, box full of 1:1 buddies pairing up and stacking in L2.
+
+tbench 8
+6.1.114-cfs      3674.37 MB/sec
+6.1.114-eevdf    3505.25 MB/sec -delay_dequeue
+                 3701.66 MB/sec +delay_dequeue
+
+For tbench, preemption =3D shorter turnaround =3D higher throughput.
+
+	-Mike
 
