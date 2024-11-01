@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-392950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6779B9A07
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:18:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79DF9B9A0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:19:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D66B7283414
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:18:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A687D2820AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9132F1E7C2C;
-	Fri,  1 Nov 2024 21:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023021E282A;
+	Fri,  1 Nov 2024 21:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WvWPXgHZ"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EzQo/aXk"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789391E5727
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9ECD1E8822
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730495894; cv=none; b=iEn7XnRvMaZMINpWxGFXAr2plx/cJ9asniXSxO+izsDuMUaEBRItpbM/7kwUC0Ui1VW4MDdgO2OdNmi56oFEydW6cxL7KmRW30/SdpH8SBm0lAeMFG4GY5CLm+QjVtZTNgcZ9IWBGb2jZluddwHXHHoxEuFcOA+uzQJ8bJIVjZg=
+	t=1730495897; cv=none; b=eAiSoS3IWACGLV8dNM2oaozaUheej5OMwf2cMdUy6bdjAjT8cgNRCaku+kFnij0FVpcLg/oqXVb8Pu7nLTebOpkIWPQ3FYH1oC/zFkpGkmdYh+i/13ZzKg48cgfvLYgGyYzH85X8WYHAaleusDsu5OIAhQ+7VOF71u3ZYMLYeTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730495894; c=relaxed/simple;
-	bh=AXaKmiz1BPQtO2iQli6F6rV4sK5t/IYfLGMeASUAz3s=;
+	s=arc-20240116; t=1730495897; c=relaxed/simple;
+	bh=IjlLFEUYu2zjf+fcVluS0a24eBoaE0MG36505ysGUqk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ka00uDguZSkwt+Ym7oXECg9YV4v4tKdxKJH0lvT1uWFskteBffJtpmZYiKwBYKB9CrnVvbRrFF597z4rjYoCh0hBTc8RWYrRBw3Anawy9/+SG6grEPQarpja+UEgtbIR4zdshoVBtDKVM6RTPPBPvacKj6X7JZtJJVKk4+nlmDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WvWPXgHZ; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=f5yxOLyy4j7vpC9zkQ7KYUcQDZyEiarl33neemydYI7NwhFTW3WN32a3F3eLV+BTDDhqvtQO0JTuT6Mxm5VyYbPlPTS+TR7mjFEZ62+ITVDSQXR23z0ouCfy6eF9TRofzxyEXtK4eJv0Xxh6ojSrq0jJEHxXoTT6BSl0vBDzdJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EzQo/aXk; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e9ba43a9a0so37585487b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 14:18:13 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20c9fe994daso28345045ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 14:18:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730495892; x=1731100692; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730495895; x=1731100695; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KFX7yvC3uxLOE0+Ihey450D1Cp+BaYpjbmXJpiztrUI=;
-        b=WvWPXgHZ3Ptp0wIVorugku0quL5+fKPyHgOdcsyivfOk3vlB6BPVUPHDK0AWYLpNg6
-         77iyCqjjPO/wquA3JDBgfscbMTsN5cVIBXi5PTCJe5xKE151Sk5vbfDVRAKNHDc+z+AN
-         VKjIuPUsodSw+YF9ZQ42qIg6Towjgp9YUFdOSm7lyIW4xPvf2pNKUuGROEN+NdKrSFyQ
-         RZduOjhyAoDvsX+R0525zEjUPDAy7w+sHCTnYujRPl/AClvMDKa1jgW4oTh4+YewCpzf
-         LypoX7eOM8+LKLmgy/wxX6PkvoX1UOe1Uv8fG0NuQe9/9aaPoUh2+TiKZMEfVRIasQnN
-         v8fA==
+        bh=+ZTH0w/ifPPJsyd/kMb3fQD+p1V9r2cvzE6mOf+DuGg=;
+        b=EzQo/aXk5XSL/N4LSHagfWH8BVV8c7c8zJPnWKZzn+fowygJQ91gIMoTHxLwnB1xwy
+         hUiUtDeoASHrJbyvdz8y3Wx6ITmGDgOyvWU0MINPnN34Ej9VXMdxdM8FIYj3WHQuKSyg
+         Cl5m4V1cw63EU9o49m4yJMLGf5OKlbQFPIyH5ZojhQWtwo7NlsciRCX4xbBhEKOe5s8M
+         /r3Fmfh8uJVO1d4RFTTwSPrJnqsjDyoP9Jr1ZB9v7AAHgnIU+8HrScjlCGaU5OjWlYKi
+         YnlWcvqu3+QnmoMkCrgsDsx92vIPIKN7+EVD0cucVloCKQZQxpoD0hE4S1Xr88s4T0B5
+         q3ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730495892; x=1731100692;
+        d=1e100.net; s=20230601; t=1730495895; x=1731100695;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KFX7yvC3uxLOE0+Ihey450D1Cp+BaYpjbmXJpiztrUI=;
-        b=ia59BcGlM+rscE3FYxwIzkS28Nd73qVVRSLuMy4fxMHJ/D3+FFUSdLgtTCQNptwWgZ
-         vl5EA3sHeuaqe4ctLseiZvJImS7BKCYiHihe2mRRlXhQc2f4JQlOtet4BPKnu2gbAEaO
-         2775nprJtJim7a+ZheikQb5awD2xdPbck3fwKyq9Pgqix9sJJY3T7pnoOmSCxdB2l6mi
-         UvVrDUO8GUBunaPT+gMmMtB3kHUez9hL8zY2KixIyXxvdrUAhjxWh4u03pnSYa0nN9b4
-         sln/92P6Cr9qxl1W2bTMB2PVaIrsYzYYvK6DocrTv9OYWE8CHvhfieA4tTF4APCWk1Pa
-         WaKw==
-X-Gm-Message-State: AOJu0YxXqdxjJ9ThIQjtmWlkh03cYKeYhhj/zZlvlQqMnQdTsMGz6GJy
-	qPpjTvgPW+T+p/czooSb9ktzj5NzdwZdsTSe32QiAfCR4/WeuRoI97poNE6MTuGRQjumhAVzlrR
-	ZPRC4Iga0kn3XALBugTai/voA3fGl/DOwPiMoJB8TXPnOBvy4KFXy2b8xd19edpSfqmDtKCvyt/
-	hzOU1IQsBRty/WpyIAc0/6d9JrH8CaGTE9namU+s2m
-X-Google-Smtp-Source: AGHT+IFzp1ZkvjZarXFv7ndXQiRnJC0i3qabDPbnFkimDF8b30bYVnAD68cjpnIzcFlKFCf57DfDFgniUns=
+        bh=+ZTH0w/ifPPJsyd/kMb3fQD+p1V9r2cvzE6mOf+DuGg=;
+        b=FPyKHs+2VL1ulOL1j2Mr4i4Ok/4b2qvf8i1Wx20VSmz1CCner//3x531Ueh+J4y5HV
+         Thz5CQs4LnW37655llcs44K9hbHYAz1kMZQFaZKljaHVsnIw5OwFm5F9TH03BVS5W+rk
+         aPIjqAn3RU0DMOH3bcyIh3a1KqFjc3Z+eteffWI6Rrib3VKU6YLEXl5hRAOLNhhbiWxj
+         dIPEVondSoL42VtnWpVyIl1gxu5khorNjmBzcg5/dlNhKyxh1kcAJmz+7f7ww9miEMaI
+         A51H72aX4pxx1w2HklA5A5p91e5So4XNnux65GXadTgSCNQqPo7qA6iTp4RMRySgvsyR
+         CKAA==
+X-Gm-Message-State: AOJu0YzCFZ3+gJ1pemt2q06PayS9MqAvIh85+YjOKTL45hjyeebvt1Hq
+	bYtF1J89T4JfFp5BBfObWtjqPfUEt39bzli9hTmpT7IX7cQF65UAHFnMiwNNgV2rK/qzPT6secO
+	r3sVtMnpE+apDJtpjEYtCsQTQWiDLqdyBV37WlkL6oUIoHhR5p6bBCPmgMHXcdwTkyrS75NZWPG
+	miS+tFNwKGxDixxXWvE4OpPlh3eQ7zJ+UQBEaEE1SW
+X-Google-Smtp-Source: AGHT+IH8SMMRpwqDbQyjVHL8zK9hCyMKiVkv6uc/MEaeZSiljJNEqIYG7jaEu4cPgFY0YzqebjIY2XPUD1E=
 X-Received: from colette.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:ce7])
- (user=ctshao job=sendgmr) by 2002:a25:b847:0:b0:e30:dfb5:8a8d with SMTP id
- 3f1490d57ef6-e30e5a03f2fmr4698276.2.1730495891733; Fri, 01 Nov 2024 14:18:11
- -0700 (PDT)
-Date: Fri,  1 Nov 2024 21:17:56 +0000
+ (user=ctshao job=sendgmr) by 2002:a17:902:f681:b0:20c:6f7e:2cb4 with SMTP id
+ d9443c01a7336-210f748d4e6mr1813385ad.1.1730495893790; Fri, 01 Nov 2024
+ 14:18:13 -0700 (PDT)
+Date: Fri,  1 Nov 2024 21:17:57 +0000
 In-Reply-To: <20241101211757.824743-1-ctshao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241101211757.824743-1-ctshao@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241101211757.824743-2-ctshao@google.com>
-Subject: [PATCH v2 2/3] perf: Reveal PMU type in fdinfo
+Message-ID: <20241101211757.824743-3-ctshao@google.com>
+Subject: [PATCH v2 3/3] perf evsel: Find process with busy PMUs for EBUSY
 From: Chun-Tse Shao <ctshao@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
@@ -87,80 +87,135 @@ Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Weilin Wang <weilin.wang@intel.com>, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-It gives useful info on knowing which PMUs are reserved by this process.
-Also add extra attributes which would be useful.
+It parses fdinfo with PMU type, comparing with the event which failed to
+open, and report the processes causing EBUSY error.
 
 ```
-Testing cycles
+Testing cycles and intel_pt//
 $ ./perf stat -e cycles &
-$ cat /proc/`pidof perf`/fdinfo/3
-pos:    0
-flags:  02000002
-mnt_id: 16
-ino:    3081
-perf_event-attr.type:   0
-perf_event-attr.config: 0
-perf_event-attr.config1:        0
-perf_event-attr.config2:        0
-perf_event-attr.config3:        0
-
-Testing L1-dcache-load-misses//
-$ ./perf stat -e L1-dcache-load-misses &
-$ cat /proc/`pidof perf`/fdinfo/3
-pos:    0
-flags:  02000002
-mnt_id: 16
-ino:    1072
-perf_event-attr.type:   3
-perf_event-attr.config: 65536
-perf_event-attr.config1:        0
-perf_event-attr.config2:        0
-perf_event-attr.config3:        0
+[1] 55569
+$ ./perf stat -e intel_pt// &
+[2] 55683
+$ ./perf stat -e intel_pt//
+Error:
+The PMU intel_pt counters are busy and in use by another process.
+Possible processes:
+55683 ./perf stat -e intel_pt//
 ```
+Only perf with intel_pt was reported.
 
 Signed-off-by: Chun-Tse Shao <ctshao@google.com>
 ---
- kernel/events/core.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ tools/perf/util/evsel.c | 79 +++++++++++++++++++++++++++++------------
+ 1 file changed, 57 insertions(+), 22 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index cdd09769e6c56..c950b6fc92cda 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -55,6 +55,7 @@
- #include <linux/pgtable.h>
- #include <linux/buildid.h>
- #include <linux/task_work.h>
-+#include <linux/seq_file.h>
-
- #include "internal.h"
-
-@@ -6820,6 +6821,17 @@ static int perf_fasync(int fd, struct file *filp, int on)
- 	return 0;
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 9a5b6a6f8d2e5..dfcb801d8921a 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -3286,7 +3286,8 @@ static bool find_process(const char *name)
+ 	return ret ? false : true;
  }
 
-+static void perf_show_fdinfo(struct seq_file *m, struct file *f)
-+{
-+	struct perf_event *event = f->private_data;
+-static int dump_perf_event_processes(char *msg, size_t size)
++static int dump_perf_event_processes(const struct perf_event_attr *failed_attr,
++				     char *msg, size_t size)
+ {
+ 	DIR *proc_dir;
+ 	struct dirent *proc_entry;
+@@ -3327,29 +3328,61 @@ static int dump_perf_event_processes(char *msg, size_t size)
+ 				continue;
+ 			/* Take care as readlink doesn't null terminate the string. */
+ 			if (!strncmp(path, "anon_inode:[perf_event]", link_size)) {
+-				int cmdline_fd;
+-				ssize_t cmdline_size;
+-
+-				scnprintf(path, sizeof(path), "%s/cmdline", proc_entry->d_name);
+-				cmdline_fd = openat(dirfd(proc_dir), path, O_RDONLY);
+-				if (cmdline_fd == -1)
+-					continue;
+-				cmdline_size = read(cmdline_fd, path, sizeof(path) - 1);
+-				close(cmdline_fd);
+-				if (cmdline_size < 0)
++				int fdinfo_fd;
++				ssize_t fdinfo_size;
++				char *line;
++				u32 perf_event_type = INT_MAX;
 +
-+	seq_printf(m, "perf_event-attr.type:\t%u\n", event->orig_type);
-+	seq_printf(m, "perf_event-attr.config:\t%llu\n", event->attr.config);
-+	seq_printf(m, "perf_event-attr.config1:\t%llu\n", event->attr.config1);
-+	seq_printf(m, "perf_event-attr.config2:\t%llu\n", event->attr.config2);
-+	seq_printf(m, "perf_event-attr.config3:\t%llu\n", event->attr.config3);
-+}
++				/* Let's check the PMU type reserved by this process */
++				scnprintf(path, sizeof(path), "%s/fdinfo/%s",
++					  proc_entry->d_name, fd_entry->d_name);
++				fdinfo_fd = openat(dirfd(proc_dir), path, O_RDONLY);
++				fdinfo_size = read(fdinfo_fd, path, sizeof(path) - 1);
++				if (fdinfo_size < 0)
+ 					continue;
+-				path[cmdline_size] = '\0';
+-				for (ssize_t i = 0; i < cmdline_size; i++) {
+-					if (path[i] == '\0')
+-						path[i] = ' ';
++				path[fdinfo_size] = '\0';
 +
- static const struct file_operations perf_fops = {
- 	.release		= perf_release,
- 	.read			= perf_read,
-@@ -6828,6 +6840,7 @@ static const struct file_operations perf_fops = {
- 	.compat_ioctl		= perf_compat_ioctl,
- 	.mmap			= perf_mmap,
- 	.fasync			= perf_fasync,
-+	.show_fdinfo		= perf_show_fdinfo,
- };
++				line = strtok(path, "\n");
++				while (line != NULL) {
++					if (sscanf(line,
++						   "perf_event-attr.type:\t%u",
++						   &perf_event_type) == 1)
++						break;
++					line = strtok(NULL, "\n");
+ 				}
 
- /*
+-				if (printed == 0)
+-					printed += scnprintf(msg, size, "Possible processes:\n");
+-
+-				printed += scnprintf(msg + printed, size - printed,
+-						"%s %s\n", proc_entry->d_name, path);
+-				break;
++				/* Report the process which reserves the conflicted PMU. */
++				/* If fdinfo does not contain PMU type, report it too. */
++				if (perf_event_type == failed_attr->type ||
++				    perf_event_type == INT_MAX) {
++					int cmdline_fd;
++					ssize_t cmdline_size;
++
++					scnprintf(path, sizeof(path),
++						  "%s/cmdline",
++						  proc_entry->d_name);
++					cmdline_fd = openat(dirfd(proc_dir), path, O_RDONLY);
++					if (cmdline_fd == -1)
++						continue;
++					cmdline_size = read(cmdline_fd, path, sizeof(path) - 1);
++					close(cmdline_fd);
++					if (cmdline_size < 0)
++						continue;
++					path[cmdline_size] = '\0';
++					for (ssize_t i = 0; i < cmdline_size; i++) {
++						if (path[i] == '\0')
++							path[i] = ' ';
++					}
++
++					if (printed == 0)
++						printed += scnprintf(
++							msg, size,
++							"Possible processes:\n");
++
++					printed += scnprintf(msg + printed, size - printed,
++							"%s %s\n", proc_entry->d_name, path);
++					break;
++				}
+ 			}
+ 		}
+ 		closedir(fd_dir);
+@@ -3458,7 +3491,9 @@ int evsel__open_strerror(struct evsel *evsel, struct target *target,
+ 			msg, size,
+ 			"The PMU %s counters are busy and in use by another process.\n",
+ 			evsel->pmu ? evsel->pmu->name : "");
+-		return printed + dump_perf_event_processes(msg + printed, size - printed);
++		return printed + dump_perf_event_processes(&evsel->core.attr,
++							   msg + printed,
++							   size - printed);
+ 		break;
+ 	case EINVAL:
+ 		if (evsel->core.attr.sample_type & PERF_SAMPLE_CODE_PAGE_SIZE && perf_missing_features.code_page_size)
 --
 2.47.0.163.g1226f6d8fa-goog
 
