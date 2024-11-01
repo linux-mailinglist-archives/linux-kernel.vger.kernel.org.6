@@ -1,185 +1,115 @@
-Return-Path: <linux-kernel+bounces-392552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999A89B9577
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:33:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493569B957D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BFEF1F22C2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:33:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D2F32826AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B891A2643;
-	Fri,  1 Nov 2024 16:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153551CACF8;
+	Fri,  1 Nov 2024 16:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBtLqn68"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ty6dMvF9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C772AE74;
-	Fri,  1 Nov 2024 16:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3931DA53;
+	Fri,  1 Nov 2024 16:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730478787; cv=none; b=ovhCXcUnbwpjYLwnHRI/2RWk3qmKDHN/Va5HNts0CSzjGmddphZHWcTMVMEs2hOLcW2SwtXj2JfJRFKeIaMvRSv4zkmF9tFR3qRRGKh7fscDymA30tqaDRBwQ8UL1BsgWCUGHobcE/jum7WUK4H9ATW25sJnLdKSEAaZYPiMZPQ=
+	t=1730478846; cv=none; b=ATkP38g0YpnF9GDRjchF/StvHBeiUQ9QBAf/XUOTRkFxeR1jPsmsuVZ8qsm0co+U5lD8frQU86ca+psF2wfR2PRajgS5ZvAgKIva12scK4UTmoEY7lRuNrf/Xz8raF2E3sso5Ws/dMkNqopyWHkvoUAsBy9Jol3xvve4NXQk2jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730478787; c=relaxed/simple;
-	bh=+/EHCXpDx5L4TC1H3xO4NniCxN6vsO+DisWCZAUvFfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f151/fZ3zU35dVj3JwL+MCu1nCO51UyAFm83K72pngRuUfkB3hHJ9O+kIkxjtYfq9mlg/8vTTXseEQLMb2KqNGdTfr7uTrNSTtaitI0PclsTt3l4PCttcTJ3NFEZNCAzz/EcwGdDpXV/iSqNuWPmH8AcrALQdDsS/G8RlT46zCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBtLqn68; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B808C4CED1;
-	Fri,  1 Nov 2024 16:32:59 +0000 (UTC)
+	s=arc-20240116; t=1730478846; c=relaxed/simple;
+	bh=Ikj84yJ51LEfFhFpQlvLIMVUXtEQQsi5c2QpoOJD3yE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=N1dKvH+gZw4+Iuf3K7EnPtMxsHngpH7j4nmHVeczYNGKRCUMtrazI93Aw7TUSR0VVP42f9eTH2RsqUiblFG9T32j96QvSWDlpkkSKSrW8Vk2a0P0ImaN/EqI6tBh/ni7xSvN7hSlqyRvrVVz+vXzvU8kDnoke9xG8/OzifZnSwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ty6dMvF9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3EBC4CED3;
+	Fri,  1 Nov 2024 16:34:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730478787;
-	bh=+/EHCXpDx5L4TC1H3xO4NniCxN6vsO+DisWCZAUvFfQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MBtLqn68LZmCHrH+m2q+Ee/PWSyb1Rvg+5Fv/hPKvpVh3jY05/3tva+cCIdP41T1Z
-	 7YcitCuFcBXL8gnUakCUv5+/pIhEiE/zRETRnzd1+eu4jiNSJ81ciVE69aYgaZQWn6
-	 hWh/E97wU+AuCtetOZZ/13vi4oqK7IFjaX97YHy2Ah5S3yYTdd6tW8DA7/wBi+//FR
-	 VWpaxupDfjRBdmCCfri9Gp4P+FrUJO+40jZS5FAYXVXC811dO7vCeGruTpavORgqOL
-	 /Oja0SOgIzdZxPMV2gr0UicMD0nAqtoV94WLXlRmr0r6oJTLe262XwITFd1uRLtFsL
-	 Iax0cC2YMmLKA==
-Date: Fri, 1 Nov 2024 16:32:55 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Ramona Gradinariu
- <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Anand Ashok Dumbre
- <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
- Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
- <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
- Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
- Linus Walleij <linus.walleij@linaro.org>, Benson Leung
- <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev,
- Julia Lawall <julia.lawall@inria.fr>
-Subject: Re: [PATCH v2 07/15] iio: fix write_event_config signature
-Message-ID: <20241101163255.5f4d9d70@jic23-huawei>
-In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-7-2bcacbb517a2@baylibre.com>
-References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
-	<20241031-iio-fix-write-event-config-signature-v2-7-2bcacbb517a2@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1730478846;
+	bh=Ikj84yJ51LEfFhFpQlvLIMVUXtEQQsi5c2QpoOJD3yE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ty6dMvF9oGRTyguG7cHtfdEXLJjzpcKMMqAhtDhup6paN5AL8zciCIpR9wg45uaFp
+	 sJyPwMq3iB9nqEMQoa7Jp7ePy3511YeA2k8IhnXaVYx+B+kx/3Jv+tKSCjhn8ThbLg
+	 C9fIyW3YNAMoYPqDX2nn8jQ7KfJ7/fMMLZSAolsAbwhRC7FWCrI/Dqv4SlfotuxHvk
+	 guYBa5onaoUYDvK6/fDG/lHbUbMz3KA0Vnp+MK9qNGLcjtZj6NXOd8DiKYVEkEn4lg
+	 /2A/gkL8ezRzfflPG0lVPSMS2JEhgOf418v34/GL7TW/RYZOWQtCHpDVzDhYoo//nq
+	 HH3r8A0hAMz2A==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Fri, 01 Nov 2024 09:33:05 -0700
+Subject: [PATCH] irqchip/mips-gic: Fix selection of
+ GENERIC_IRQ_EFFECTIVE_AFF_MASK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241101-mips-fix-generic_irq_effective_aff_mask-select-v1-1-d94db6e0de0d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMACJWcC/x2N0QrCMBAEf6Xcswe5IH3wV0RCSDf10MaakyKU/
+ ruHj7MwszsZusLoMuzUsanpqznIaaByz20G6+RMMcSzSBBedDWu+uUZzdWStL8TakX56IaUa01
+ Ltgcbnj7xOIYMiVMRieTRtcPl/+H1dhw/OePV/oAAAAA=
+X-Change-ID: 20241101-mips-fix-generic_irq_effective_aff_mask-select-660ae12dc112
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Chao-ying Fu <cfu@wavecomp.com>, Paul Burton <paulburton@kernel.org>, 
+ Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>, 
+ Aleksandar Rikalo <arikalo@gmail.com>, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, patches@lists.linux.dev, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1311; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=Ikj84yJ51LEfFhFpQlvLIMVUXtEQQsi5c2QpoOJD3yE=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDOmqTH9lrFZw6poycItPd/0S/SvczPTXvBWm593WzLQR5
+ KnhY/PrKGVhEONikBVTZKl+rHrc0HDOWcYbpybBzGFlAhnCwMUpABN5qcfwV6677P+V6lL1Qif3
+ lh0VLJG1javf7Sqzns5X489YmNr4gZHhoOhX7ufZPXUS2fffbAjgC3np4iFdcUb3Meel2Qv5vsR
+ zAgA=
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Thu, 31 Oct 2024 16:27:02 +0100
-Julien Stephan <jstephan@baylibre.com> wrote:
+Without SMP enabled (such as in allnoconfig), there is a Kconfig warning
+because CONFIG_IRQ_EFFECTIVE_AFF_MASK is unconditionally selected by
+CONFIG_MIPS_GIC:
 
-> write_event_config callback use an int for state, but it is actually a
-> boolean. iio_ev_state_store is actually using kstrtobool to check user
-> input, then gives the converted boolean value to write_event_config.
-> 
-> Fix signature and update all iio drivers to use the new signature.
-> 
-> This patch has been partially written using coccinelle with the
-> following script:
-> 
-> $ cat iio-bool.cocci
-> // Options: --all-includes
-> 
-> virtual patch
-> 
-> @c1@
-> identifier iioinfo;
-> identifier wecfunc;
-> @@
->  static const struct iio_info iioinfo = {
->         ...,
->         .write_event_config =
-> (
->  wecfunc
-> |
->  &wecfunc
-> ),
->         ...,
->  };
-> 
-> @@
-> identifier c1.wecfunc;
-> identifier indio_dev, chan, type, dir, state;
-> @@
->  int wecfunc(struct iio_dev *indio_dev, const struct iio_chan_spec *chan, enum iio_event_type type, enum iio_event_direction dir,
-> -int
-> +bool
->  state) {
->   ...
->  }
-> 
-> make coccicheck MODE=patch COCCI=iio-bool.cocci M=drivers/iio
-> 
-> Unfortunately, this script didn't match all files:
-> * all write_event_config callbacks using iio_device_claim_direct_scoped
->   were not detected and not patched.
-> * all files that do not assign and declare the write_event_config
->   callback in the same file.
-> 
-> iio.h was also manually updated.
-> 
-> The patch was build tested using allmodconfig config.
-> 
-> cc: Julia Lawall <julia.lawall@inria.fr>
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+  WARNING: unmet direct dependencies detected for GENERIC_IRQ_EFFECTIVE_AFF_MASK
+    Depends on [n]: SMP [=n]
+    Selected by [y]:
+    - MIPS_GIC [=y]
 
-Hi Julien,
+Add a dependency on SMP to the selection, which matches all other
+selections of CONFIG_IRQ_EFFECTIVE_AFF_MASK.
 
-I went through these by hand.  There are somewhere maybe it is worth
-passing booleans down into leaf functions and only convert to int
-right at the end (for a field write) but I don't think we care.
-The cases here are more of the variety of converting a bool to an int
-to use it as a bool (like the ones you clear up later in this series).
+Fixes: 322a90638768 ("irqchip/mips-gic: Multi-cluster support")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/irqchip/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Neither is wrong, just inefficient, so applied and pushed out as testing
-for 0-day to take a look.
-Fingers crossed nothing got missed!
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index f20adf759d401089576ef963437017d4f1f495de..ef0fa6975dab9502efda80cdc0c5e21c251f4abd 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -352,7 +352,7 @@ config KEYSTONE_IRQ
+ 
+ config MIPS_GIC
+ 	bool
+-	select GENERIC_IRQ_EFFECTIVE_AFF_MASK
++	select GENERIC_IRQ_EFFECTIVE_AFF_MASK if SMP
+ 	select GENERIC_IRQ_IPI if SMP
+ 	select IRQ_DOMAIN_HIERARCHY
+ 	select MIPS_CM
 
-Jonathan
+---
+base-commit: d1cb1437b785f312d63f447e2e79ff768e7ccc29
+change-id: 20241101-mips-fix-generic_irq_effective_aff_mask-select-660ae12dc112
 
-> diff --git a/drivers/iio/accel/fxls8962af-core.c b/drivers/iio/accel/fxls8962af-core.c
-> index ab427f3461dbbef535c2ec2cf2982202ca97bb82..f07fba17048e7b5c1958807b14d4bcb3ff87e26d 100644
-> --- a/drivers/iio/accel/fxls8962af-core.c
-> +++ b/drivers/iio/accel/fxls8962af-core.c
-> @@ -617,7 +617,7 @@ static int
->  fxls8962af_write_event_config(struct iio_dev *indio_dev,
->  			      const struct iio_chan_spec *chan,
->  			      enum iio_event_type type,
-> -			      enum iio_event_direction dir, int state)
-> +			      enum iio_event_direction dir, bool state)
->  {
->  	struct fxls8962af_data *data = iio_priv(indio_dev);
->  	u8 enable_event, enable_bits;
-This passes the state variable into fxls8962af_event_setup() as an integer
-and uses it as a boolean.  Might as well be bool all the way.
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
-
-> diff --git a/drivers/iio/light/gp2ap020a00f.c b/drivers/iio/light/gp2ap020a00f.c
-> index 81e718cdeae32d60581cb490148f4f1c0bd695c7..1a352c88598e5d701256aa8659a7f9683bce56f9 100644
-> --- a/drivers/iio/light/gp2ap020a00f.c
-> +++ b/drivers/iio/light/gp2ap020a00f.c
-> @@ -1159,7 +1159,7 @@ static int gp2ap020a00f_write_event_config(struct iio_dev *indio_dev,
->  					   const struct iio_chan_spec *chan,
->  					   enum iio_event_type type,
->  					   enum iio_event_direction dir,
-> -					   int state)
-> +					   bool state)
-This one could do with a follow up as the state variable is passed as an integer
-to another function that then uses it as a bool.
-
->  {
->  	struct gp2ap020a00f_data *data = iio_priv(indio_dev);
->  	enum gp2ap020a00f_cmd cmd;
 
