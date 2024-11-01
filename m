@@ -1,219 +1,115 @@
-Return-Path: <linux-kernel+bounces-392514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EAC9B9517
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:17:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E969B9511
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:16:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04ADD2836D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:17:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0448E1F22F03
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60111C9DFE;
-	Fri,  1 Nov 2024 16:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984861B6CF2;
+	Fri,  1 Nov 2024 16:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ppBnUaj7"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF971A2562;
-	Fri,  1 Nov 2024 16:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IzYv/Ayf"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9721384BF
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730477852; cv=none; b=JCNLRDkWzXrGWQRFJT61Cnz0w4PoDeaFKhRndlth6/zSSnYHHdHhCHUKquFRq1E9jiEfEpbcxuvp6bHnQA+zCTVG+wI33AYUZh24ULlFs9yDnxVpm7rg9HUOEf+carc1WXWgQeJEhquuk1Ds1olryO/MH14e2N+BLJBJQbE/j8E=
+	t=1730477807; cv=none; b=oVvc/ENyCW3KtXqw6L9/EynmoHRLXT2jdJTY6IWqwnx2INSfYECAG80YzVJddu7aLxaYulmSWOVQkFPjc000vL+jFSXKhAbhDjOy6a3TMLiRvOWKvd0H4BhDZzQEGEBxCWR9K1ESUFYLBPTp31Vh8u3gV+D/MK2NuVL8WghEZFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730477852; c=relaxed/simple;
-	bh=rAW4QXiFohJU1maAFUjdAif96HWy5sV1RA/bAFLS3w4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KjZBGTnWERtwv0A4npr5qJ5hibbeeI2aNtEbCKYyOwSrp8JMP5j9vy2Zq3afAtXFHFVG+glVFL1v5s7/hnRvysvAJckg995IsMEkzXZBc50AgW1pQm5EgCGBn4KuUL81+Qkxp7vH/HzZ4AX71ZiED7h8EosgMMVP/DDYob1US40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ppBnUaj7; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=VbP3U
-	bvphUA5k39oKEOm7yxupFsZ2rmjYYdzMH7gns4=; b=ppBnUaj7/+lHNf/cM/QYL
-	90fnKvBzs6bnrnLRvT5PxhmC5+mi1AqfCwItbgMDfQLooj4jdUNo1z4tMHuKQLBa
-	u1hDg58DujUpI5B4Fe6cVUq5DmAwDMO/xO6Wam2RdL4lo/9ib5xJT2SLnt3UgmPq
-	WEuipyz9TQTp71dULWiPG0=
-Received: from localhost.localdomain (unknown [47.252.33.72])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3H7Th_iRn6adKAA--.9355S4;
-	Sat, 02 Nov 2024 00:16:53 +0800 (CST)
-From: mrpre <mrpre@163.com>
-To: yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	martin.lau@kernel.org,
-	edumazet@google.com,
-	jakub@cloudflare.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: mrpre <mrpre@163.com>
-Subject: [PATCH v2 2/2] bpf: implement libbpf sockmap cpu affinity
-Date: Sat,  2 Nov 2024 00:16:24 +0800
-Message-ID: <20241101161624.568527-3-mrpre@163.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241101161624.568527-1-mrpre@163.com>
-References: <20241101161624.568527-1-mrpre@163.com>
+	s=arc-20240116; t=1730477807; c=relaxed/simple;
+	bh=xaLPiV2P+iFOGORP3GmSsCXQJJWWFEtG1+56r8fgQQ8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=fCJN48khljcmXwMZTjwmKsp0kx7JSqtWDefDRdznF1L8yJuwEL8k/pQ7Svfovci6cx+MdRDU1Jf5XNwOpVGaqPIW2QwEvSn7JsHk7IHYgwsQdlV70+fHT8bBRfrIB1HvFZZD9QbfJbCb4C/S6VvP3bZl4iDoRkBcP9rgAPExu2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IzYv/Ayf; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e292dbfd834so3650376276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 09:16:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730477804; x=1731082604; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hX5tyyhHqv16hXch1rLN0W0q9yFTn7ruBymiSqraZAY=;
+        b=IzYv/AyfqBZ3oyrXDDEJm9OB0OPBvT+81GyHHWFnYRNXLnp/Wo2v+KPN0kz+jZPdI6
+         5n3/RsnkU+gN6sg6SBflzzpNZNC/buU+3KLVUYkfjAy/jEdwCGiX6H9EkdKPIlIg1VKo
+         tIYbctcyINUx0FYhlizKfDiM1oizKsB7BpBQngYZIq4vT9aM4fnM+3Ayts6561fL757d
+         OOpEgep3unKiyFU4FZtWa4yUINJU6kXKX1JaO+1M1YC2TxbNn4qjuLVdF92XG288axqV
+         wtUQta7NB4HacD5QCrTOgl/NclwQTYFiG6pXfEIfHvZIB2CDOU2imdX+jGlGhWYZK4I+
+         5XSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730477804; x=1731082604;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hX5tyyhHqv16hXch1rLN0W0q9yFTn7ruBymiSqraZAY=;
+        b=OS2T1o0sBnabUKIF53fVt7AaRyc/jcHmcaba8aH5qtikL+KJhqzzYljAQ+Qel/eR6Y
+         fGxIPEM0sVc8NyoeuuYbhQv2nb4hk+LHgb8JVvGffasg6ztx/OG2XlSdjIO6sD9peSF6
+         NAreEdpMuZRqPJjizFbH1J5FFcMUSPzW8gwR3WPO5Ln9uZGrHMLtpkBGixZCMJd3MN90
+         2ng+hevp7eKocnkH1FwjhRJy4XyHmgSPjDGlwU3W7FeaDtYhxpZxLM5xyHCvFU8UDv+P
+         ad+vmnfBaFS7sTRf6k5nCBzT9XARk9+rkuTmCiiGQ6i7lUKzDFVo3eP/BMZzCQy6dFmj
+         1mXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXs7yXn4YfEUDfwODrzJDjzcRI0hDcK6mSBZm/jw12daARQM6z4PDMUJK9I09LuSYqc90n59Py1VPRzoAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6z3NC4WAfaOmOe00Zr9CgDReFlXhOJkp8tsqn3XFf1dvnLNOX
+	yQnvBQ6hytpYXV80E4WZG9Q9ooQh5QHFPd/Fdl1rx+xpe/AhqKIIgDPaFNlM79GRJrYuDRXkJ7b
+	XZQ==
+X-Google-Smtp-Source: AGHT+IFqadUfHcDo1fnNxpX1VCp4eu6teKzEJN9syL1uwq8yv7xcjwbZMF7JDB8DnbLfXveA32Uk5MCvzSo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:b2a5:0:b0:e30:dccd:9aaa with SMTP id
+ 3f1490d57ef6-e3302686a1fmr4471276.6.1730477804134; Fri, 01 Nov 2024 09:16:44
+ -0700 (PDT)
+Date: Fri, 1 Nov 2024 09:16:42 -0700
+In-Reply-To: <ZyT9rSnLcDWkWoL_@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3H7Th_iRn6adKAA--.9355S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3WrWkAr17tr47AFW3AF13urg_yoW7ArWxpF
-	9YkF4SkF4Sqay5XrWYqa1IgrW5CF4Igw1jyrsrJ3W5ArnFgw1Iqr1xtan3Ar13Xrs5Aw48
-	A34a9r4rJ348ZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pNQ6JfUUUUU=
-X-CM-SenderInfo: xpus2vi6rwjhhfrp/1tbiDwCKp2ck9vdy2QABsK
+Mime-Version: 1.0
+References: <20241009154953.1073471-1-seanjc@google.com> <20241009154953.1073471-4-seanjc@google.com>
+ <39ea24d8-9dae-447a-ae37-e65878c3806f@sirena.org.uk> <ZyTpwwm0s89iU9Pk@google.com>
+ <ZyT2CB6zodtbWEI9@linux.dev> <ZyT61FF0-g8gKZfc@google.com> <ZyT9rSnLcDWkWoL_@linux.dev>
+Message-ID: <ZyT-6iCNlA1VSAV3@google.com>
+Subject: Re: [PATCH v3 03/14] KVM: selftests: Return a value from
+ vcpu_get_reg() instead of using an out-param
+From: Sean Christopherson <seanjc@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Andrew Jones <ajones@ventanamicro.com>, James Houghton <jthoughton@google.com>, 
+	David Woodhouse <dwmw@amazon.co.uk>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-implement libbpf sockmap cpu affinity
+On Fri, Nov 01, 2024, Oliver Upton wrote:
+> On Fri, Nov 01, 2024 at 08:59:16AM -0700, Sean Christopherson wrote:
+> > > Can you instead just push out a topic branch and let the affected
+> > > maintainers deal with it? This is the usual way we handle conflicts
+> > > between trees...
+> > 
+> > That'd work too, but as you note below, doing that now throws a wrench in things
+> > because essentially all arch maintainers would need merge that topic branch,
+> > otherwise linux-next would end up in the same state.
+> 
+> TBH, I'm quite happy with that. Recent history has not been particularly
+> convinincing to me that folks are actually testing arm64, let alone
+> compiling for it when applying selftests patches.
 
-Signed-off-by: Jiayuan Chen <mrpre@163.com>
----
- tools/include/uapi/linux/bpf.h                |  4 ++++
- tools/lib/bpf/bpf.c                           | 22 +++++++++++++++++++
- tools/lib/bpf/bpf.h                           |  9 ++++++++
- tools/lib/bpf/libbpf.map                      |  1 +
- .../selftests/bpf/prog_tests/sockmap_basic.c  | 19 ++++++++++++----
- 5 files changed, 51 insertions(+), 4 deletions(-)
+FWIW, I did compile all patches on all KVM architectures, including selftests.
+But my base obviously didn't include the kvm-arm64 branch :-/
 
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index f28b6527e815..ba6c39f40f10 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -1509,6 +1509,10 @@ union bpf_attr {
- 			__aligned_u64 next_key;
- 		};
- 		__u64		flags;
-+		union {
-+			/* specify the CPU where sockmap job run on */
-+			__aligned_u64 target_cpu;
-+		};
- 	};
- 
- 	struct { /* struct used by BPF_MAP_*_BATCH commands */
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index 2a4c71501a17..13c3f3cfe889 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -401,6 +401,28 @@ int bpf_map_update_elem(int fd, const void *key, const void *value,
- 	return libbpf_err_errno(ret);
- }
- 
-+int bpf_map_update_elem_opts(int fd, const void *key, const void *value,
-+			     __u64 flags, const struct bpf_map_update_opts *opts)
-+{
-+	union bpf_attr attr;
-+	int ret;
-+	__u64 *target_cpu;
-+
-+	if (!OPTS_VALID(opts, bpf_map_update_opts))
-+		return libbpf_err(-EINVAL);
-+
-+	target_cpu = OPTS_GET(opts, target_cpu, NULL);
-+	memset(&attr, 0, sizeof(attr));
-+	attr.map_fd = fd;
-+	attr.key = ptr_to_u64(key);
-+	attr.value = ptr_to_u64(value);
-+	attr.flags = flags;
-+	attr.target_cpu = ptr_to_u64(target_cpu);
-+
-+	ret = sys_bpf(BPF_MAP_UPDATE_ELEM, &attr, sizeof(attr));
-+	return libbpf_err_errno(ret);
-+}
-+
- int bpf_map_lookup_elem(int fd, const void *key, void *value)
- {
- 	const size_t attr_sz = offsetofend(union bpf_attr, flags);
-diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
-index a4a7b1ad1b63..aec6dfddf697 100644
---- a/tools/lib/bpf/bpf.h
-+++ b/tools/lib/bpf/bpf.h
-@@ -147,6 +147,15 @@ LIBBPF_API int bpf_btf_load(const void *btf_data, size_t btf_size,
- 
- LIBBPF_API int bpf_map_update_elem(int fd, const void *key, const void *value,
- 				   __u64 flags);
-+struct bpf_map_update_opts {
-+	size_t sz;  /* size of this struct for forward/backward compatibility */
-+	/* specify the CPU where the sockmap job run on */
-+	__u64 *target_cpu;
-+	size_t :0;
-+};
-+#define bpf_map_update_opts__last_field target_cpu
-+LIBBPF_API int bpf_map_update_elem_opts(int fd, const void *key, const void *value,
-+					__u64 flags, const struct bpf_map_update_opts *opts);
- 
- LIBBPF_API int bpf_map_lookup_elem(int fd, const void *key, void *value);
- LIBBPF_API int bpf_map_lookup_elem_flags(int fd, const void *key, void *value,
-diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
-index 54b6f312cfa8..5a26a1d8624f 100644
---- a/tools/lib/bpf/libbpf.map
-+++ b/tools/lib/bpf/libbpf.map
-@@ -17,6 +17,7 @@ LIBBPF_0.0.1 {
- 		bpf_map_lookup_and_delete_elem;
- 		bpf_map_lookup_elem;
- 		bpf_map_update_elem;
-+                bpf_map_update_elem_opts;
- 		bpf_obj_get;
- 		bpf_obj_get_info_by_fd;
- 		bpf_obj_pin;
-diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c b/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-index 82bfb266741c..84a35cb4b9fe 100644
---- a/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-+++ b/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-@@ -190,13 +190,18 @@ static void test_skmsg_helpers_with_link(enum bpf_map_type map_type)
- 	test_skmsg_load_helpers__destroy(skel);
- }
- 
--static void test_sockmap_update(enum bpf_map_type map_type)
-+static void test_sockmap_update(enum bpf_map_type map_type, bool cpu_affinity)
- {
- 	int err, prog, src;
- 	struct test_sockmap_update *skel;
- 	struct bpf_map *dst_map;
- 	const __u32 zero = 0;
- 	char dummy[14] = {0};
-+	__u64 target_cpu = 0;
-+
-+	LIBBPF_OPTS(bpf_map_update_opts, update_opts,
-+		.target_cpu = &target_cpu,
-+	);
- 	LIBBPF_OPTS(bpf_test_run_opts, topts,
- 		.data_in = dummy,
- 		.data_size_in = sizeof(dummy),
-@@ -219,7 +224,11 @@ static void test_sockmap_update(enum bpf_map_type map_type)
- 	else
- 		dst_map = skel->maps.dst_sock_hash;
- 
--	err = bpf_map_update_elem(src, &zero, &sk, BPF_NOEXIST);
-+	if (cpu_affinity)
-+		err = bpf_map_update_elem_opts(src, &zero, &sk, BPF_NOEXIST, &update_opts);
-+	else
-+		err = bpf_map_update_elem(src, &zero, &sk, BPF_NOEXIST);
-+
- 	if (!ASSERT_OK(err, "update_elem(src)"))
- 		goto out;
- 
-@@ -896,9 +905,11 @@ void test_sockmap_basic(void)
- 	if (test__start_subtest("sockhash sk_msg load helpers"))
- 		test_skmsg_helpers(BPF_MAP_TYPE_SOCKHASH);
- 	if (test__start_subtest("sockmap update"))
--		test_sockmap_update(BPF_MAP_TYPE_SOCKMAP);
-+		test_sockmap_update(BPF_MAP_TYPE_SOCKMAP, false);
-+	if (test__start_subtest("sockmap update cpu affinity"))
-+		test_sockmap_update(BPF_MAP_TYPE_SOCKMAP, true);
- 	if (test__start_subtest("sockhash update"))
--		test_sockmap_update(BPF_MAP_TYPE_SOCKHASH);
-+		test_sockmap_update(BPF_MAP_TYPE_SOCKHASH, false);
- 	if (test__start_subtest("sockmap update in unsafe context"))
- 		test_sockmap_invalid_update();
- 	if (test__start_subtest("sockmap copy"))
--- 
-2.43.5
+One thing I'll add to my workflow would be to do a local merge (and smoke test)
+of linux-next into kvm-x86 next before pushing it out.  This isn't the only snafu
+this cycle where such a sanity check would have saved me and others a bit of pain.
 
+https://lore.kernel.org/all/20241101153857.GAZyT2EdLXKs7ZmDFx@fat_crate.local
 
