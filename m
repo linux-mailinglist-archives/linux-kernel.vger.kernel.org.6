@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-393016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39009B9AE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:39:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1561D9B9AE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:40:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F13B1F222AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:39:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F38461C21445
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BF81E767B;
-	Fri,  1 Nov 2024 22:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322CF1E6DFE;
+	Fri,  1 Nov 2024 22:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEhrLwqB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KYjSc3XC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAFA156C72;
-	Fri,  1 Nov 2024 22:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C6C1607B4;
+	Fri,  1 Nov 2024 22:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730500763; cv=none; b=aSPBla3LBiCUnCmNsYqneMTQggvYEtWSSyhuNJ8ns8UiRdDEP0YbraMKdmCGD27YoplBReAPlh5LwuIoAOS5J+AkHs9Z5G3gGV7N+Ar9lnuSd6RQeVW7N+xGkkvRIitYu7plNNAKlxvZiZKdZvSVqlubPuvtGfE5Hx6C2NV5cPc=
+	t=1730500827; cv=none; b=GM58zIvjYKTQRPiw5MqukCTwAiCNrOH9p8x5yWUYcc276AoU3B2Mqw4u0zti0wHiL0QwzegTyKncr6yXrFbhGr3qoRubpNKb7bZE/N35yNIciBTZF9ROKxZT34CZMlVX2hBZHl1hiIp50WL0BWpQFa2xI8DuXKf6RgdWuF6w6bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730500763; c=relaxed/simple;
-	bh=JkmskpWLroWyTPtf1p/0xaay+Zwr1MUY5lzV+zGUd1c=;
+	s=arc-20240116; t=1730500827; c=relaxed/simple;
+	bh=sMW1iMQ4lLqWN3HqoFgf6CYTcFcZSa67VJDpiJOY6+o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nE7/IZVlx4yRuFrmPQCWRQquTkmZ4oL8PAn/ItY4niaHc4wQ9yP8EjwYqYv4bS8OcRbFOIUL96YLbMCPWWoXjMROoZ6cUa3ets6oyhTSsHe3iiu7zkQmJL5YL3agu7f+8VFItkhnJFQSdFusORNMjsL93B7Ighuos4FZzvFccsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEhrLwqB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 072F5C4CECD;
-	Fri,  1 Nov 2024 22:39:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730500762;
-	bh=JkmskpWLroWyTPtf1p/0xaay+Zwr1MUY5lzV+zGUd1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LEhrLwqByhfLvAU785JeArYUuInGTqkBsGV3r3plSQ8zSbQAV6fT+ET7wqEU5o5VA
-	 ct7o/GLXp2+/PbBbP1QN334NceDAeGev8dTIyBaNpZxzb6p0AY8Znr3vdNOeI/f1LS
-	 Oz+QIM7HGR+hvpLC20DDRetymBXJYfjj9VRTn08bKEm2t1Lp6PcPDnGni1/dN9RbXN
-	 p7KckOVoTXBme68zzAN3mCqqDK4u2art9j+inl0K6gITEYx7xgvFhacdYnCRnIbsBt
-	 biEVrtmlNKtzEwdNtS8V93i5t980S16YKJxmXvG9T5lwJBZeTTueW1wQdfH3d51/xM
-	 meKMFv06sf29g==
-Date: Fri, 1 Nov 2024 22:39:15 +0000
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "debug@rivosinc.com" <debug@rivosinc.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"vbabka@suse.cz" <vbabka@suse.cz>, "arnd@arndb.de" <arnd@arndb.de>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH RFC/RFT v2 2/2] kernel: converge common shadow stack flow
- agnostic to arch
-Message-ID: <7f392b4e-9970-42d4-8204-2aa967a5375d@sirena.org.uk>
-References: <20241016-shstk_converge-v2-0-c41536eb5c3b@rivosinc.com>
- <20241016-shstk_converge-v2-2-c41536eb5c3b@rivosinc.com>
- <7109dfcc6df5a610dcfe35a77bb7a84f8932485b.camel@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YYNJJsCpfpGBmBItDkwozK/ONwHHygJLLHSOBoWxzPcBEx+oJqd733svUA6bMx69DwfYXRBF3Cpj8mR+jeAqhAvYyFsrqHDzTHcOEYFWc+mTFEWOCHuvzaGLp3YpY/KKC9M62H3dr0Jhqe/U453GA/P1oXBr2vhBFekJmInP1do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KYjSc3XC; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730500825; x=1762036825;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sMW1iMQ4lLqWN3HqoFgf6CYTcFcZSa67VJDpiJOY6+o=;
+  b=KYjSc3XCPAzvQWlaMHd+cgvlY9kvBg6Dau5HMtd9q6rxnaMA/+5yP8Jx
+   pSZzPjYkDC05KP10kDPvk/73EGpX6PRHo/w4gjT8ozCoLZyxYUFkKXM11
+   iGbQOroyJ+SNBAt6LaHOwiKujhcxeUBKbMb7DI8swJIZWYHs2ze5E/C6J
+   rClVBtPVBqDmENYA/rzGNQI5Z6Vz6w29vcD1pe9h0k8U2ClbFyerrCVMo
+   kt5EbXJj34Kt/VfA/029g/pkdyTWwE9U1bqjlbomj+Pk5MGsD0c1b3SZ1
+   BRHBCyK2HjuQee0gnyUFEiYcrfhAPHRHfuyRYStiNvj9PfDqy58JIUAWC
+   g==;
+X-CSE-ConnectionGUID: yA7AKUOZToqYTyixbIlvOQ==
+X-CSE-MsgGUID: o0pbPpItTF6qqYvQqKllZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33971633"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="33971633"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 15:40:24 -0700
+X-CSE-ConnectionGUID: MVxzXCWySY2A3JHFUc4O8w==
+X-CSE-MsgGUID: 7btia7agTySAFPD1MCQDlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,251,1725346800"; 
+   d="scan'208";a="87032201"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 15:40:22 -0700
+Date: Fri, 1 Nov 2024 15:40:21 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>, x86@kernel.org,
+	James Morse <james.morse@arm.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v8 1/7] x86/resctrl: Prepare for per-ctrl_mon group
+ mba_MBps control
+Message-ID: <ZyVY1UdOCu7ZPVsw@agluck-desk3>
+References: <20241029172832.93963-1-tony.luck@intel.com>
+ <20241029172832.93963-2-tony.luck@intel.com>
+ <f6205054-c29e-97d6-67d3-dd3544a01dec@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="H7fCiCztkNSvBJxu"
-Content-Disposition: inline
-In-Reply-To: <7109dfcc6df5a610dcfe35a77bb7a84f8932485b.camel@intel.com>
-X-Cookie: We read to say that we have read.
-
-
---H7fCiCztkNSvBJxu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <f6205054-c29e-97d6-67d3-dd3544a01dec@intel.com>
 
-On Fri, Nov 01, 2024 at 09:50:27PM +0000, Edgecombe, Rick P wrote:
-> On Wed, 2024-10-16 at 14:57 -0700, Deepak Gupta wrote:
+On Fri, Nov 01, 2024 at 03:03:32PM -0700, Fenghua Yu wrote:
+> > diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+> > index b681c2e07dbf..5b55a7ac7013 100644
+> > --- a/arch/x86/kernel/cpu/resctrl/core.c
+> > +++ b/arch/x86/kernel/cpu/resctrl/core.c
+> > @@ -958,6 +958,11 @@ static __init bool get_rdt_mon_resources(void)
+> >   	if (rdt_cpu_has(X86_FEATURE_CQM_MBM_LOCAL))
+> >   		rdt_mon_features |= (1 << QOS_L3_MBM_LOCAL_EVENT_ID);
+> > +	if (rdt_mon_features & (1 << QOS_L3_MBM_LOCAL_EVENT_ID))
+> 
+> Please change this check to:
+> 
+> 	if (is_mbm_local_enabled())
+> 
+> > +		mba_mbps_default_event = QOS_L3_MBM_LOCAL_EVENT_ID;
+> > +	else if (rdt_mon_features & (1 << QOS_L3_MBM_TOTAL_EVENT_ID))
+> 
+> and this check to:
+> 
+> 	else if (is_mbm_total_enabled())
+> 
+> > +		mba_mbps_default_event = QOS_L3_MBM_TOTAL_EVENT_ID;
+> > +
 
-> > - * The maximum distance INCSSP can move the SSP is 2040 bytes, before
-> > - * it would read the memory. Therefore a single page gap will be enough
-> > - * to prevent any operation from shifting the SSP to an adjacent stack,
-> > - * since it would have to land in the gap at least once, causing a
-> > - * fault.
+You are correct. I had a moment of amnesia and forgot those
+helpers existed and just pasted the expressions used to set
+each of the bits in rdt_mon_features.
 
-> I want to take a deeper look at this series once I can apply and test it, but
-> can we maybe make this comment more generic and keep it? I think it is similar
-> reasoning for arm (?), is there anything situation like this for risc-v? Or
-> rather, why does risc-v have the guard gaps?
+I will change as you suggest.
 
-Yes, for arm64 you can only move the pointer in single frames so a
-single page is enough.
-
---H7fCiCztkNSvBJxu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmclWJIACgkQJNaLcl1U
-h9BbbAf/YCyway5BCg6C3KzepN1gz5b37UP2Bq3e+NcpcYbuR6W4n/objROMTtBc
-nsknhZwTf6tIRzlmJyJPi4i0IEVsBXMgH7oe77yvZ2z2Cgw7ZUteK3gGiYV3Z/Si
-XYIheFf3VcavqebwBiuSkBicYRUmpDtw41KHXjjh51KKCAM7j/fYp+ZCxJsvZINl
-VruJKtOVl/tyQ+BzFtRlWP/HJ8V3Lyc3bpHM7AMvAihfuOPKFgj/XGi591VRumor
-jil6i2Q2KioyFq7NMIWn40QQn5ewJNrNyvK2JK3Jj/Uf8EcQIsNlhPVUFSGMt34c
-MYRZ/U8CCx/7KkbjeOjuelYwP+ayMQ==
-=h97G
------END PGP SIGNATURE-----
-
---H7fCiCztkNSvBJxu--
+-Tony
 
