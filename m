@@ -1,112 +1,161 @@
-Return-Path: <linux-kernel+bounces-392903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB489B9977
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:29:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318B99B997B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E7C1F21ECD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:29:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B337AB213A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ABD1D967E;
-	Fri,  1 Nov 2024 20:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F93E1D9A57;
+	Fri,  1 Nov 2024 20:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vbKLqbqy"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U/2QVr+v"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6B31D5AB6
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC7C1CC8A7;
+	Fri,  1 Nov 2024 20:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730492961; cv=none; b=EIRI+1Ukt4khR4qyBkJv1p6plBpqxn/b9kLT51ny6eb0+vlrrbezZ4ZfKvICcwCLOK2QVtyrwJ2TvrnonCnqBMFyFx1On9qB+5g0qGfiU7b+6lw0j2xRhGuqZj7bK8CtXMf1Sspg72r+Nnku+Ku9/wfhtJp5VvoLxgzN4kArPGI=
+	t=1730493183; cv=none; b=beI4rBY0q/PAbx63BXFxDrF6mn2jG2s9Td9JHHWtnoo7sEc7QWQ0ZogH1WSism5j/c4hQac0oKDFYYLG5apIs9VCC0MEARzrjfWau64OoENFXx4MXDjEhaCJPUkzR+5GJlFp8G++ZMvDIW2noYb+0Jjgnay6umfDlOmhcGjwk3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730492961; c=relaxed/simple;
-	bh=SHtIzlTdskgqF/JotKMdHU2LJfq+lln40ai2gKwXBZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eyvgud8p01IcARX4UIo9l5YUpG5s8QkBrzSDiP216TL0HwOzNzNFDTWC65vhXRuffwegJajzSVfu1ZkR/cjAaJY4qAckK061rCO0ARVz2tAoYx+0yU9JmVa15Mdkl4i8QYs8H7wdRhPbeW1Xm3WsveV4vyXHVlMBt8GIlMa2J5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vbKLqbqy; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2a97c2681so1796945a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:29:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730492957; x=1731097757; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=37Ml4ihCR1TC/QhKboatJNZ1ET5x5XZk+QbDisk1nWE=;
-        b=vbKLqbqyaU/YRnm42T062qh51fNZIQQ77ahIorhJnkIlbj8zKBZR9eXHr0nIH/KkWS
-         M+cnm81iYoMlRBH41ykIJCGC992YiG5lzwttPg8pURfL1yr1n/EFRI38u9m/sFhHX/Z+
-         fNpt7RJbgJlMUkQbeAWNVdPD+zpeKYEj8aQiwVhkSZkELQG6Az4Rt/8xXV2tN0/2CLDu
-         bOcgE6kBQOCc8ZfkemHfPrn7VClkN9uwz+ApfGYnxBvy9t4VPYwQeE/NNe2HqKNUvLuM
-         Uj5G1rSOjxCbSOFN/uR7Cxz5iX9auy6y79rhzHPAO0ggOENYu60NTVDQV8hbSkBZ9fsT
-         YZzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730492957; x=1731097757;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=37Ml4ihCR1TC/QhKboatJNZ1ET5x5XZk+QbDisk1nWE=;
-        b=W58TAR9v/8zdrMdrpaZNG50lidnMAv8TYOvSWPpNt//qkVRD5whO0MT3OB3WOexiL3
-         rewa0UrQnc8lo6S2cogllL6E2s71svHIkfI8a5rBBi/1GVbCySHv7wz35LC2wvaHJrAT
-         3aDzt7P6QR4xkNUd6FDYlNL7+06/hrUgsoehdNXo43naxtx5nStdhf4vqKEx/qjwFJoR
-         fD8N1JTa1Leh5DFNZW+26viMdbDT/EzQK4zDIqrT1T3YReuciwUFLtQK2EmtCob9P+Qb
-         oTiE5AU+rxR5LmLJR4tR/JJFZUqMQaiojgSx7sh7hmeQ8vrYb2iuD7rm8M4fiSjlYF4m
-         Ju6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXSO55War8GhAZxXBqz6qWUU8GiO5RG27zEJjOKqpBpyLEBlTXVf5QkF2ibwy4ieQ93zZrISk6Mj/A73ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+bYipNDQMS7mmakY0CghEyWtNiHgbqwQBDtrL18TYCmy4c5VL
-	eLMkbx3pjarSiWPAJ2XEif4ikkm3+pLUYE1AtroROzUiIRSDKYsGKiUoSsv/zZqNRZ6CHoGZKzB
-	ru8Y=
-X-Google-Smtp-Source: AGHT+IEuGyZz/WBx1ul7rIyEtn2aVVVvVjBz+RnMGGnpTvoeJ0INGxNW/v4lDRjyuwVayFnotQksXA==
-X-Received: by 2002:a17:90a:a58f:b0:2e3:171e:3b8c with SMTP id 98e67ed59e1d1-2e92cf2d074mr12419264a91.25.1730492957589;
-        Fri, 01 Nov 2024 13:29:17 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93daac445sm3153148a91.18.2024.11.01.13.29.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 13:29:17 -0700 (PDT)
-Message-ID: <8fb2e8a3-c46c-4116-9f5e-0ab826ec9d22@kernel.dk>
-Date: Fri, 1 Nov 2024 14:29:15 -0600
+	s=arc-20240116; t=1730493183; c=relaxed/simple;
+	bh=3zY9i7eVZVZU4i18IDVjGC84vGqTYKsQGM1Cr93Egaw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TMoNY/gi5Cd3r7kxHAskVDwyrJoKRegd2GW8IZCCIK4mbg80WTh1JJdmQNNvFRdGiQAdJxV5oi/5P+kNIzmCdxU6H13HnX3kFjHpqmzc+jdJJ1Uya3gzeMJUjRVIV4AMhucgsY5GqeMh/49+lUAKN3X3BmCLyAsz4MW+RcTVa/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=U/2QVr+v; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A1KWmqa034638;
+	Fri, 1 Nov 2024 15:32:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730493168;
+	bh=KypOe+BlfLSfJMLuOXuYaOsSBR/ncaDRPdeWgpwfoQE=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=U/2QVr+vHmyRIWdgg7K1N/XnCu6lUmpi3RJwtidaD/KThJ4ZtLXaymBTHDKGsjdkv
+	 jSGrmS0gWUEYaIJ41S9Mn5eKcC1eStwzk0sGU+RWMU91b/hb8ZEzG3xqD9/MJr1otN
+	 BXrmMuAo1njmmf1I4ydFRISQcnK1dIBqnibsvdfc=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A1KWmhS014997
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 1 Nov 2024 15:32:48 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 1
+ Nov 2024 15:32:48 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 1 Nov 2024 15:32:48 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A1KWmTs057956;
+	Fri, 1 Nov 2024 15:32:48 -0500
+Date: Fri, 1 Nov 2024 15:32:48 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Kevin Hilman <khilman@baylibre.com>
+CC: Ulf Hansson <ulf.hansson@linaro.org>, <linux-pm@vger.kernel.org>,
+        Vibhore
+ Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
+        Akashdeep Kaur
+	<a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>,
+        Markus
+ Schneider-Pargmann <msp@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/3] pmdomain: ti_sci: collect and send low-power mode
+ constraints
+Message-ID: <20241101203248.oxddn7yea3us5nth@tables>
+References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
+ <173029317079.2440963.17313738472826934777.b4-ty@ti.com>
+ <CAPDyKFptHq6xkKSAmeHsEuhBoEhzvudcMf2+nG08MFPwnMi+ew@mail.gmail.com>
+ <7hv7x9qsvt.fsf@baylibre.com>
+ <CAPDyKFpdgg+kM_Ot5GPTpMUtjmBF-pUhCeRpVb=j852_7qm=3A@mail.gmail.com>
+ <20241101144445.56ejnuoxshqwns37@boots>
+ <7hwmhnnf0f.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] general protection fault in
- io_sqe_buffer_register
-To: syzbot <syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <67253504.050a0220.3c8d68.08e1.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <67253504.050a0220.3c8d68.08e1.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7hwmhnnf0f.fsf@baylibre.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 11/1/24 2:07 PM, syzbot wrote:
-> Hello,
+On 08:35-20241101, Kevin Hilman wrote:
+> Nishanth Menon <nm@ti.com> writes:
 > 
-> syzbot found the following issue on:
+> > On 11:11-20241031, Ulf Hansson wrote:
+> >> On Wed, 30 Oct 2024 at 20:43, Kevin Hilman <khilman@baylibre.com> wrote:
+> >> >
+> >> > Ulf Hansson <ulf.hansson@linaro.org> writes:
+> >> >
+> >> > > On Wed, 30 Oct 2024 at 14:01, Nishanth Menon <nm@ti.com> wrote:
+> >> > >>
+> >> > >> Hi Kevin Hilman,
+> >> > >>
+> >> > >> On Fri, 06 Sep 2024 09:14:48 -0700, Kevin Hilman wrote:
+> >> > >> > The latest (10.x) version of the firmware for the PM co-processor (aka
+> >> > >> > device manager, or DM) adds support for a "managed" mode, where the DM
+> >> > >> > firmware will select the specific low power state which is entered
+> >> > >> > when Linux requests a system-wide suspend.
+> >> > >> >
+> >> > >> > In this mode, the DM will always attempt the deepest low-power state
+> >> > >> > available for the SoC.
+> >> > >> >
+> >> > >> > [...]
+> >> > >>
+> >> > >> I have applied the following to branch ti-drivers-soc-next on [1].
+> >> > >> Thank you!
+> >> > >>
+> >> > >> Ulf, based on your ack[2], I have assumed that you want me to pick
+> >> > >> this series up. Let me know if that is not the case and I can drop the
+> >> > >> series.
+> >> > >
+> >> > > Well, that was a while ago. The reason was because there was a
+> >> > > dependency to another series [2], when this was posted.
+> >> > >
+> >> > > If that's not the case anymore, I think it's better to funnel this via
+> >> > > my pmdomain tree. Please let me know how to proceed.
+> >> >
+> >> > The build-time dependency on [2] still exists, and since that was just
+> >> > queued up by Nishanth, I think this series should (still) go along with
+> >> > it to keep things simple.
+> >> >
+> >> > Kevin
+> >> 
+> >> Right, that makes perfect sense to me too. If we discover conflicts,
+> >> let's deal with them then.
+> >
+> >
+> > oops.. I missed this response. OK, I will let things be.
+> >
 > 
-> HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
-> git tree:       linux-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=12052630580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
-> dashboard link: https://syzkaller.appspot.com/bug?extid=05c0f12a4d43d656817e
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15abc6f7980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10eb655f980000
+> Oops, 0day bot found a build error in linux-next when CONFIG_PM_SLEEP is
+> not defined[1].  Need to respin to fix this.
+> 
+> v5 coming right up....
+> 
+> Kevin
+> 
+> [1] https://lore.kernel.org/all/CA+G9fYtioQ22nVr9m22+qyMqUNRsGdA=cFw_j1OUv=x8Pcs-bw@mail.gmail.com/
 
-Same deal:
+Kevin,
 
-#syz test: git://git.kernel.dk/linux for-6.13/io_uring
+Unfortunately, I have chosen to drop the series. We are too late in
+the window to take the updated series and wait for new regression
+reports. On the flip side, this will clean up the flow for Ulf to take
+your V5 since the dependent series should ideally hit rc1 by then.
+
+Thanks for addressing the report fast.
 
 -- 
-Jens Axboe
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
