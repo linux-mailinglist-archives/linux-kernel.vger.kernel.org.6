@@ -1,132 +1,127 @@
-Return-Path: <linux-kernel+bounces-392103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249949B8FC2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:53:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2959B8FC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:53:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 568B91C210DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FAC4282E65
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D61A17625C;
-	Fri,  1 Nov 2024 10:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED921175D26;
+	Fri,  1 Nov 2024 10:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="r9VzzRi+"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ghJQ3v9o"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6900615A849;
-	Fri,  1 Nov 2024 10:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAB9170A3D;
+	Fri,  1 Nov 2024 10:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730458387; cv=none; b=EZFb5Rlzf9+H8cBgz4qmMSHBLGr6LvmtrQofWAF2/s8xk9L0M+JAyPqW+VVyqrEIO7OcKp4zsPbA0lohmPwOUPFxkoR8fvF6ZgbTeiJG+5pA6swYhhPOFZ7oj1uxcKSZa3vSW4Mhbt+LXDwgXk2zm3WhUx3IeOEQ0T5vSn0MYR0=
+	t=1730458429; cv=none; b=FIhC6HIbT9bnn5jh3OKfCjmBiuaByDGMDOE21HWzNFljcRluZ4QDz7PzNoafm0oPw9Q4JZc2QH9hZS5aJ9Mv3goVqLkf0DdokNCXcbnFJJbkwJAh96CNhPbMyTMwuQMP/ivzv9IQHvb4IiyRgm7EcjbzSUMRV77/LSkqr4QmFKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730458387; c=relaxed/simple;
-	bh=jrULZg4ou+aDyNcoBXl/ExbJGAa8QubISoiQ4TyKDp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k8v8iOnWLK2/LfyMCCXCzhRxGvAosQ9HLiRpeyGZ1jVkkbN+QLUV3EF16VSphezZOHnPbi/4vc52jtsRuzEpXHQjq3UCMWcsukKUeFANc9pH84Nw1zeWLXkbWuvWdxhZXbuuqlqqm/MEcPCeYi+xk8/4Q7xvObWflSwDJ6QCSXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=r9VzzRi+; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730458374; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=GlyU/jmz8E+JausTqFQnV6XgtV59/K6paYp/eLXbSPI=;
-	b=r9VzzRi+TAQ0rrZsKlZFmKidIdjwhmlRjeq+gOmEjJxLxvkM4PGJKEZ53PJ89nvm9PVsL+xFdbFRHDI/EA1sNWPIojJOu4rNWgbN3l7xlPUx4zsuqb1QR10K+zA2+qe5nAtLIYDnnFSnuePVkVpRGtVXpTI1LKIFczob0TkzEtY=
-Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WIRFmgx_1730458373 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 01 Nov 2024 18:52:54 +0800
-Date: Fri, 1 Nov 2024 18:52:53 +0800
-From: Dust Li <dust.li@linux.alibaba.com>
-To: liqiang <liqiang64@huawei.com>, wenjia@linux.ibm.com,
-	jaka@linux.ibm.com, alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com, guwen@linux.alibaba.com
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, luanjianhai@huawei.com,
-	zhangxuzhou4@huawei.com, dengguangxing@huawei.com,
-	gaochao24@huawei.com, kuba@kernel.org
-Subject: Re: [PATCH net-next] net/smc: Optimize the search method of reused
- buf_desc
-Message-ID: <20241101105253.GG101007@linux.alibaba.com>
-Reply-To: dust.li@linux.alibaba.com
-References: <20241101082342.1254-1-liqiang64@huawei.com>
+	s=arc-20240116; t=1730458429; c=relaxed/simple;
+	bh=3nd+aO8xFQcDiX2wwxz/jvBUUPBaYHyn5n+Smz/yuVs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eCB8whRsoRDAGYvRuJTbyz/TemfrhSjkiqVpH3uaTjyIy/IpTyfFhZ2J4hOTcrCNoOF/p5Ue5qSiIyyl1ZYwqiRmpZpOe3YGVK/05DJv7tzjIIRL4MRpVkCt8ge0vErbxA4E8D5WFtQbCc6xKZVWcqIblsqkRUYcCvROj+Sy9p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ghJQ3v9o; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730458427; x=1761994427;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3nd+aO8xFQcDiX2wwxz/jvBUUPBaYHyn5n+Smz/yuVs=;
+  b=ghJQ3v9oMBzEBBP8Gz630GLOWmGVKmM3AA2iRHSOyDoMzrRcH0uG4MoK
+   sES0BgooQWZuGuu2apD9ejLoTQb+ofVtGwg2QQVQnBdBrjxJQ5qSRppMZ
+   CuDxbS1jfCtu43y4LeMxRnPhTP91kQabaHJgOqEl2qpBv//EOnrDwVJrU
+   PnjnFSjKT538LOo32e6T8hQ+pDa3zkH5LSoOfdwXaLEdfgRu7b+icAq2M
+   GSIa4g8vtrxssXTfAzaPbyLxRUX0HBncca9YePilhv6Z1XyEVF4N8jgsi
+   ri+cm5jMYQyAxQYJH74XyAy7cb/k2rReV8M0MHao2MOq835nEmOIee8+7
+   A==;
+X-CSE-ConnectionGUID: fNvHRwlHTk+T6pQZ0A5CHA==
+X-CSE-MsgGUID: fYru22mWQcOzf1NybcV8CQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30179197"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30179197"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 03:53:47 -0700
+X-CSE-ConnectionGUID: 6jJUseMgSh6YMKn1wOdLBQ==
+X-CSE-MsgGUID: nI7LtuUOTBaUS/BqiH5rfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="87748250"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 01 Nov 2024 03:53:45 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id BA8871AC; Fri, 01 Nov 2024 12:53:43 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] iio: Mark iio_dev::priv member with __private
+Date: Fri,  1 Nov 2024 12:53:42 +0200
+Message-ID: <20241101105342.3645018-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101082342.1254-1-liqiang64@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On 2024-11-01 16:23:42, liqiang wrote:
->We create a lock-less link list for the currently 
->idle reusable smc_buf_desc.
->
->When the 'used' filed mark to 0, it is added to 
->the lock-less linked list. 
->
->When a new connection is established, a suitable 
->element is obtained directly, which eliminates the 
->need for traversal and search, and does not require 
->locking resource.
->
->A lock-less linked list is a linked list that uses 
->atomic operations to optimize the producer-consumer model.
->
->I didn't find a suitable public benchmark, so I tested the 
->time-consuming comparison of this function under multiple 
->connections based on redis-benchmark (test in smc loopback-ism mode):
+The member is not supposed to be accessed directly, mark it with
+__private to catch the misuses up.
 
-I think you can run test wrk/nginx test with short-lived connection.
-For example:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/iio/industrialio-core.c | 2 +-
+ include/linux/iio/iio.h         | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-```
-# client
-wrk -H "Connection: close" http://$serverIp
-
-# server
-nginx
-```
-
->
->    1. On the current version:
->        [x.832733] smc_buf_get_slot cost:602 ns, walk 10 buf_descs
->        [x.832860] smc_buf_get_slot cost:329 ns, walk 12 buf_descs
->        [x.832999] smc_buf_get_slot cost:479 ns, walk 17 buf_descs
->        [x.833157] smc_buf_get_slot cost:679 ns, walk 13 buf_descs
->        ...
->        [x.045240] smc_buf_get_slot cost:5528 ns, walk 196 buf_descs
->        [x.045389] smc_buf_get_slot cost:4721 ns, walk 197 buf_descs
->        [x.045537] smc_buf_get_slot cost:4075 ns, walk 198 buf_descs
->        [x.046010] smc_buf_get_slot cost:6476 ns, walk 199 buf_descs
->
->    2. Apply this patch:
->        [x.180857] smc_buf_get_slot_free cost:75 ns
->        [x.181001] smc_buf_get_slot_free cost:147 ns
->        [x.181128] smc_buf_get_slot_free cost:97 ns
->        [x.181282] smc_buf_get_slot_free cost:132 ns
->        [x.181451] smc_buf_get_slot_free cost:74 ns
->
->It can be seen from the data that it takes about 5~6us to traverse 200 
->times, and the time complexity of the lock-less linked algorithm is O(1).
->
->And my test process is only single-threaded. If multiple threads 
->establish SMC connections in parallel, locks will also become a 
->bottleneck, and lock-less linked can solve this problem well.
->
->SO I guess this patch should be beneficial in scenarios where a 
->large number of short connections are parallel?
-
-Based on your data, I'm afraid the short-lived connection
-test won't show much benificial. Since the time to complete a
-SMC-R connection should be several orders of magnitude larger
-than 100ns.
-
-Best regards,
-Dust
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index 6a6568d4a2cb..4c543490e56c 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -1665,7 +1665,7 @@ struct iio_dev *iio_device_alloc(struct device *parent, int sizeof_priv)
+ 	indio_dev = &iio_dev_opaque->indio_dev;
+ 
+ 	if (sizeof_priv)
+-		indio_dev->priv = (char *)iio_dev_opaque +
++		ACCESS_PRIVATE(indio_dev, priv) = (char *)iio_dev_opaque +
+ 			ALIGN(sizeof(*iio_dev_opaque), IIO_DMA_MINALIGN);
+ 
+ 	indio_dev->dev.parent = parent;
+diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+index 445d6666a291..5c6682bd4cb9 100644
+--- a/include/linux/iio/iio.h
++++ b/include/linux/iio/iio.h
+@@ -624,7 +624,7 @@ struct iio_dev {
+ 	const struct iio_info		*info;
+ 	const struct iio_buffer_setup_ops	*setup_ops;
+ 
+-	void				*priv;
++	void				*priv __private;
+ };
+ 
+ int iio_device_id(struct iio_dev *indio_dev);
+@@ -785,7 +785,7 @@ struct iio_dev *iio_device_alloc(struct device *parent, int sizeof_priv);
+ /* The information at the returned address is guaranteed to be cacheline aligned */
+ static inline void *iio_priv(const struct iio_dev *indio_dev)
+ {
+-	return indio_dev->priv;
++	return ACCESS_PRIVATE(indio_dev, priv);
+ }
+ 
+ void iio_device_free(struct iio_dev *indio_dev);
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
 
