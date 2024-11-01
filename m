@@ -1,117 +1,199 @@
-Return-Path: <linux-kernel+bounces-392967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83589B9A40
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:30:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33DA99B9A41
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:30:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CF131C213CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8F601F23330
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927B61E32C0;
-	Fri,  1 Nov 2024 21:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4452B1E2848;
+	Fri,  1 Nov 2024 21:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aQKtWboz"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQa6/6cz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F532487BE;
-	Fri,  1 Nov 2024 21:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFEE16F8EB;
+	Fri,  1 Nov 2024 21:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730496632; cv=none; b=n6G8v7qn0WWDDVf9V4sk4gasUOcVMjyglsF4Fzyk4+J1ksv/y2kvELwWbazSh0Y+hpOFUXyeecrIDOj5CibvpfVxDHYCrJjJLwYY3Lw/JtYYj7PzVNjosAemWsvMdZQGuJIfaOGHLxSgme9hcULWmCn/+01tEqvmKBTkZQhJDYU=
+	t=1730496643; cv=none; b=Xaiew2g7QNMhmmJmrsvPPDp8bGRbjPzfVVmSbsrxdsvAGBy0QASGgdn+Ur6Q/e15P4MBTRUbc/m2Bx8j9/KE8xSlIcEHVu9+HcAMRy3wB/VWIrVr0StbZBroa8+EwbDJDG26b+H415gStmufgqEivwTS/XJHBQxVRN2UsUiyGfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730496632; c=relaxed/simple;
-	bh=4XXEqFe+awDGK6MZZOMvzpJ1Ocl5W/M0aI/NI1Ytm4E=;
+	s=arc-20240116; t=1730496643; c=relaxed/simple;
+	bh=zHcpDcHVFycn0Zup9LeBJ46NcGVuJOjUuesO/WUGV8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f19zWit4ABwSLy28522Txomy6z7Bdowby2Ijhmko4ZezN3MhLEDwu5Qb11e9vEruHgTiuo4YJxB4yKZYVxtAjLGzqlMJcuaHGLy7T0JYvs5kfhpK+QLrsKw8tPCJAAvCWZyhceupY3xx6UTGq4UxYkP2ocmAwf4lAY1Z7VTcDmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aQKtWboz; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BJ69mwcrQjbCZcBQ06k2f/aDMOK4/+BOGc+i+AZ1IYs=; b=aQKtWbozKSreyZatoPTL3p2d9i
-	gBKBCBGDDwyUq40yVubShCS0zvQa2LWY6K8fZkkQ5/z/nc/qapbWevnSPQK25oDgn5GeB9dfMX113
-	FDiKSQPhFLWvjZvynHTdvWe8D7nN7YXUdkHzpfhGKLh4nyq5dOpBJEOLkH+XxqVkri07tHaxG6DSp
-	eJFiaRrvC3V5Y388sx+5TlRo1Kau66bpCsb3w5diMzdIi6f8WgA2vZt9VvWUBX+HqEOjZMgrH4oUp
-	Olkq1ecq810NA0U0yi02DIpvrusoIewxyrAInYUcaKqAOAL8aAsJpCnRaGd7SWFlmhMdbOOFl3FQB
-	e9SRsFAQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6zDt-0000000ADGo-14KH;
-	Fri, 01 Nov 2024 21:30:25 +0000
-Date: Fri, 1 Nov 2024 21:30:25 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>,
-	Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: Simplify getattr interface function checking
- AT_GETATTR_NOSEC flag
-Message-ID: <20241101213025.GP1350452@ZenIV>
-References: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KO34Q4jru0L7r0zbr6yTb5sCDQVujgSAlnVsznAhYK8h0VKYk+6rXlCs74u1rJatpTYXfNv7AGMTxu/HtJHdj0rufBvo8ouQtCJS3tWcehDd9+kOJOcugN9rlpakomKop5WmwirLwjswfLVWTWh9PCw8IYzD8Y9LHQ3fSX485Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQa6/6cz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F79C4CECD;
+	Fri,  1 Nov 2024 21:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730496643;
+	bh=zHcpDcHVFycn0Zup9LeBJ46NcGVuJOjUuesO/WUGV8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XQa6/6czCdHSO+iPNuKeUpfDPoKq52MBfMn/0CS2dZzMdMIT9h5jQgisFyeLf44rX
+	 fMnTL05Il8MTNppCJ4etNfoowfXazswEpQzvhYPbp23FNB6rS/cGFkI31drW67T3tr
+	 IpQwXJp2JYmYnNt1hrPoIAEthd/sXZgyqFSpAtYvqPr6UBjt1MfJKgwFxnooVmL6YL
+	 07FXbzzjFQfnGxtQGufVYpyYIZMc4hifqX5auUnmYH7lJ9VYKE987++jlOWz4dPXKD
+	 SRnQLAXaj/1+pjJBwrgqOZAEM7QS7H+byJZgRJYtSifDIASdnLxXkJW84I0kRrso1n
+	 En9AcmA/seIaA==
+Date: Fri, 1 Nov 2024 18:30:40 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Benjamin Peterson <benjamin@engflow.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] perf trace: avoid garbage when not printing a trace
+ event's arguments
+Message-ID: <ZyVIgKcAuqZSYYB1@x1>
+References: <20241101005338.5846-1-benjamin@engflow.com>
+ <20241101172714.84386-1-benjamin@engflow.com>
+ <CAH0uvohNO517GAD7XH-VvUvU+dPdeZBKDw0Teij50sAPSe9sCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvohNO517GAD7XH-VvUvU+dPdeZBKDw0Teij50sAPSe9sCQ@mail.gmail.com>
 
-On Fri, Nov 01, 2024 at 03:37:03PM -0400, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
+On Fri, Nov 01, 2024 at 02:00:46PM -0700, Howard Chu wrote:
+> Hello Benjamin,
 > 
-> Commit 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface
-> function")' introduced the AT_GETATTR_NOSEC flag to ensure that the
-> call paths only call vfs_getattr_nosec if it is set instead of vfs_getattr.
-> Now, simplify the getattr interface functions of filesystems where the flag
-> AT_GETATTR_NOSEC is checked.
+> Before your patch:
 > 
-> There is only a single caller of inode_operations getattr function and it
-> is located in fs/stat.c in vfs_getattr_nosec. The caller there is the only
-> one from which the AT_GETATTR_NOSEC flag is passed from.
+> perf $ ./perf trace -e net:netif_rx_exit
+>      0.000 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
+>     28.153 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
+>     36.429 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
+>     36.461 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
 > 
-> Two filesystems are checking this flag in .getattr and the flag is always
-> passed to them unconditionally from only vfs_getattr_nosec:
+> After:
 > 
-> - ecryptfs:  Simplify by always calling vfs_getattr_nosec in
->              ecryptfs_getattr. From there the flag is passed to no other
->              function and this function is not called otherwise.
+> perf $ ./perf trace -e net:netif_rx_exit
+>      0.000 irq/79-brcmf_p/1694977 net:netif_rx_exit()
+>      7.352 irq/79-brcmf_p/1694977 net:netif_rx_exit()
+>     30.232 irq/79-brcmf_p/1694977 net:netif_rx_exit()
+>     37.529 irq/79-brcmf_p/1694977 net:netif_rx_exit()
 > 
-> - overlayfs: Simplify by always calling vfs_getattr_nosec in
->              ovl_getattr. From there the flag is passed to no other
->              function and this function is not called otherwise.
+> It works beautifully, but I'm thinking can we simplify it by just doing:
 > 
-> The query_flags in vfs_getattr_nosec will mask-out AT_GETATTR_NOSEC from
-> any caller using AT_STATX_SYNC_TYPE as mask so that the flag is not
-> important inside this function. Also, since no filesystem is checking the
-> flag anymore, remove the flag entirely now, including the BUG_ON check that
-> never triggered.
+> +       char bf[2048] = { 0 };
+>         size_t size = sizeof(bf);
 > 
-> The net change of the changes here combined with the originan commit is
-> that ecryptfs and overlayfs do not call vfs_getattr but only
-> vfs_getattr_nosec.
+> That being said, trace__fprintf_tp_fields() should return void because
+> currently its return value is not used by any other functions, plus
+> this line:
 > 
-> Fixes: 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface function")
-> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-> Closes: https://lore.kernel.org/linux-fsdevel/20241101011724.GN1350452@ZenIV/T/#u
-> Cc: Tyler Hicks <code@tyhicks.com>
-> Cc: ecryptfs@vger.kernel.org
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: linux-unionfs@vger.kernel.org
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> return printed + fprintf(trace->output, "%s", bf);
+> 
+> in trace__fprintf_tp_fields() does not make much sense, since that
+> will be 2 * printed. So I'm thinking maybe:
+> 
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 748b061f8678..8a628d1e80f3 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -3021,10 +3021,10 @@ static void bpf_output__fprintf(struct trace *trace,
+>         ++trace->nr_events_printed;
+>  }
+> 
+> -static size_t trace__fprintf_tp_fields(struct trace *trace, struct
+> evsel *evsel, struct perf_sample *sample,
+> +static void trace__fprintf_tp_fields(struct trace *trace, struct
+> evsel *evsel, struct perf_sample *sample,
+>                                        struct thread *thread, void
+> *augmented_args, int augmented_args_size)
+>  {
+> -       char bf[2048];
+> +       char bf[2048] = { 0 };
+>         size_t size = sizeof(bf);
+>         struct tep_format_field *field = evsel->tp_format->format.fields;
+>         struct syscall_arg_fmt *arg = __evsel__syscall_arg_fmt(evsel);
+> @@ -3087,7 +3087,7 @@ static size_t trace__fprintf_tp_fields(struct
+> trace *trace, struct evsel *evsel,
+>                 printed += syscall_arg_fmt__scnprintf_val(arg, bf +
+> printed, size - printed, &syscall_arg, val);
+>         }
+> 
+> -       return printed + fprintf(trace->output, "%s", bf);
+> +       fprintf(trace->output, "%s", bf);
+>  }
+> 
+>  static int trace__event_handler(struct trace *trace, struct evsel *evsel,
+> 
+> 
+> Then this will be one more diff line than yours.
+> 
+> But that's just my opinion, yours works just fine, thank you :).
+> Arnaldo, what do you think?
+> 
+> Tested-by: Howard Chu <howardchu95@gmail.com>
 
-Applied (viro/vfs.git#work.statx2)
+I haven't tested it yet, just in my mind :-)
+
+The patch looks ok and seems to fix a real problem, my only concern, a
+pet peeve, was that it, in addition to fixing a real problem, did an
+unrelated change, the "Remove the return value...", that part looks like
+a distraction, something that shouldn't be there.
+
+- Arnaldo
+ 
+> Thanks,
+> Howard
+> 
+> On Fri, Nov 1, 2024 at 10:27 AM Benjamin Peterson <benjamin@engflow.com> wrote:
+> >
+> > trace__fprintf_tp_fields may not print any tracepoint arguments. E.g., if the
+> > argument values are all zero. Previously, this would result in a totally
+> > uninitialized buffer being passed to fprintf, which could lead to garbage on the
+> > console. Fix the problem by passing the number of initialized bytes fprintf.
+> >
+> > Remove the return value of trace__fprintf_tp_fields, since it was meaningless
+> > and ignored.
+> >
+> > Fixes: f11b2803bb88 ("perf trace: Allow choosing how to augment the tracepoint arguments")
+> > Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
+> > ---
+> >  tools/perf/builtin-trace.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > index d3f11b90d025..4e785ea29df6 100644
+> > --- a/tools/perf/builtin-trace.c
+> > +++ b/tools/perf/builtin-trace.c
+> > @@ -3021,7 +3021,7 @@ static void bpf_output__fprintf(struct trace *trace,
+> >         ++trace->nr_events_printed;
+> >  }
+> >
+> > -static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel, struct perf_sample *sample,
+> > +static void trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel, struct perf_sample *sample,
+> >                                        struct thread *thread, void *augmented_args, int augmented_args_size)
+> >  {
+> >         char bf[2048];
+> > @@ -3087,7 +3087,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
+> >                 printed += syscall_arg_fmt__scnprintf_val(arg, bf + printed, size - printed, &syscall_arg, val);
+> >         }
+> >
+> > -       return printed + fprintf(trace->output, "%s", bf);
+> > +       fprintf(trace->output, "%.*s", (int)printed, bf);
+> >  }
+> >
+> >  static int trace__event_handler(struct trace *trace, struct evsel *evsel,
+> > --
+> > 2.39.5
+> >
 
