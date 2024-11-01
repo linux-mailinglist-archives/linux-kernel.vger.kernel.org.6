@@ -1,210 +1,115 @@
-Return-Path: <linux-kernel+bounces-392584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093049B95D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:47:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5554B9B95DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:48:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCDF5283F21
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:47:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1171C227A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C385A1C7610;
-	Fri,  1 Nov 2024 16:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7356D1C9B80;
+	Fri,  1 Nov 2024 16:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQUY/eVd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HpLdezW8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EC0381BA;
-	Fri,  1 Nov 2024 16:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4BA1CA81;
+	Fri,  1 Nov 2024 16:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730479661; cv=none; b=eMzIklZVkacAGvJs/hiHlNSgkWeyuoTYvYQNofrRZkJEWigod2EtmCdlGRtmSgIbAcnXaQrGXj3+x7fsKT99d2We/Pi7GMGTw8P8idn4qPfc5T9qOk4Z8tDMaIxwOEO+qn2+vN5+3O0SbV/CZuEITIvty9YlRiNH0lcU8H4QBIY=
+	t=1730479718; cv=none; b=UBip6bz9orGZMb6D1Fme9CJ8VkyyKMoSlgEgjsuAy15dVCCxapi0Jji+9ReGsY3gbw2A8tYrE8HGgPoi/oAkwb7XJ6KPBgIKV+A4EF6tU6+pWQv0WzrGTr/DN49PMYh9qL6RAsepRUr/7Ne2j7BMSPhnlAsbh44JwsPBqoE430U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730479661; c=relaxed/simple;
-	bh=UzFU9/m7+8m26UU31xEOtmbcL1H29397cR78nXzZvQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=oLMAb4+TmRSZ0opEP+cb/jYhLTRXQoYl6hxuE5i2mBEUoo5aNIAxpLOH5j1rWLoaLaMiUW5ziT2P+768la6HfucfMPaYvkMjfJjQ/sxa397eTQ3PzYmfnPpX/oNRmudAIPqiuh51dYppuyIXenAk2G/A7s67djwL7+IW+u2EhbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQUY/eVd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6410DC4CED2;
-	Fri,  1 Nov 2024 16:47:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730479659;
-	bh=UzFU9/m7+8m26UU31xEOtmbcL1H29397cR78nXzZvQU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=dQUY/eVdkZdoqqzYoThHXl3YdvB1WliybufHtqpun53iymC8wnsYleFG/dYrHLVcv
-	 JDMmglYDYLLKS2nR1yVTkxDCCA5X4TZJaGVdDVo/KYU9obJCGGlwlsQTV0QRYnv+PP
-	 NVESXti4uuHF+LltBtN7MPl5lxFQKnGpqp14A/OqkbDTi0/TDSOHqwEwcdyvpH05ZP
-	 PKZjzrBB0+3pY0p4n+Ae9oqVw8AER9zE5J+ZyAX0t9vwhRRQihCrlmgTEqff7Qf91v
-	 wAGOYP+WYepPCmY5+/b7eE+smKHzYfUUt/oo461qAJkWICHMl92px6AKdJbWv8hc3n
-	 L+5WPPTcbBoxw==
-Date: Fri, 1 Nov 2024 11:47:37 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-	Aditya Prabhune <aprabhune@nvidia.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
-	Bert Kenward <bkenward@solarflare.com>,
-	Matt Carlson <mcarlson@broadcom.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Jean Delvare <jdelvare@suse.de>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/sysfs: Fix read permissions for VPD attributes
-Message-ID: <20241101164737.GA1308861@bhelgaas>
+	s=arc-20240116; t=1730479718; c=relaxed/simple;
+	bh=kBgcL3BfWWkILvcuUMtI4DpC5265s1HmZIUOzebuBTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImiXFZ4yYPObIc3QE6Owr0TH2frRJeOeV4t92xrnINN+JpFzhRP1fn3jodhqgww6b23MddjGoBv25MA2OxceEVr5KhKBjFEC9FuPWG4vfwUR7Gx10V6nQHv35xOxbFhLbdGFHkcu4GYjUAWyHOmhOicrP5v7rtxA7leTqDU4xkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HpLdezW8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5E70740E021C;
+	Fri,  1 Nov 2024 16:48:33 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id e_X65bLd7ZEI; Fri,  1 Nov 2024 16:48:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730479708; bh=OMMDrgLOSB2qpzgDwcq8B2U0GznJU8oQ+4h52sCCWjg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HpLdezW89bcbIP48ARNiRiO1jZBz1adgCt9GZooz/jLAxxbfGeYjyAivPmbsqxd4c
+	 UwsPIl2tUaVrJ/Wl297DPj87dHaec9g0HbXlGSYtIZznpW9Uc1ARsguRWeJhYJJPma
+	 xJE/HibJR0GTPZv3gTluwzBLVNBM/bunsQWgQNrl+vB832YxnerRsP0+hhm+yhRYB3
+	 H/9krU239yGIljkrH4zsWBswaPylNbIRfsVW/2MHdTQbc5TyFLoJ6BZuESHMsIY+Ya
+	 9h1hCpGnf83g/HNH5Wk/9r4YcIa9DZSBvNhZknlROcuGzVAvOfrZ8z+CMg3gJCW7vM
+	 LQCGC4SbXDfo9+PpraS07geDr8IVQtF2nL8i3VCn3ySw1IGQJxoi5u64ItE1GAifjO
+	 LvRyxRv1LV7Vfe/MKJ0zhhJW9/0wkCuI8kk6JfvT/UnGOTauwjwQXmi8Vu7zg2kMTN
+	 1cl6iINfWBRpdRj/5jaa/YydoLx464xbaPHkAVFFJXNqA+XEDzAakE7+54ozTe8JWd
+	 ABl7ElLJnKQh9RVxIdg/IzNPwVYkotG+OidXRQLN2+t31YiY0YoiuffPuD6L/IgU/4
+	 d2xUQRRc2lmTbkrBvBMie6B7Xd1kOkO7tHOhx9loF7N0nIUfZLyDfdJI8uXYIAXiwV
+	 k50KPDzTo9HOBZfyqjC6tBq0=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1085540E0219;
+	Fri,  1 Nov 2024 16:48:02 +0000 (UTC)
+Date: Fri, 1 Nov 2024 17:48:01 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Gregory Price <gourry@gourry.net>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
+	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
+	dave.jiang@intel.com, ira.weiny@intel.com,
+	alison.schofield@intel.com, dave.hansen@linux.intel.com,
+	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	mingo@redhat.com, hpa@zytor.com, rafael@kernel.org, lenb@kernel.org,
+	david@redhat.com, osalvador@suse.de, gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org, rppt@kernel.org
+Subject: Re: [PATCH v5 2/3] x86: probe memory block size advisement value
+ during mm init
+Message-ID: <20241101164801.GDZyUGQbe6g4FqtPf6@fat_crate.local>
+References: <20241101134706.1185-1-gourry@gourry.net>
+ <20241101134706.1185-3-gourry@gourry.net>
+ <20241101155147.GBZyT5E190IxnQMzaP@fat_crate.local>
+ <ZyT_fLBsVLlcnYNi@PC2K9PVX.TheFacebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241101143300.GA339254@unreal>
+In-Reply-To: <ZyT_fLBsVLlcnYNi@PC2K9PVX.TheFacebook.com>
 
-On Fri, Nov 01, 2024 at 04:33:00PM +0200, Leon Romanovsky wrote:
-> On Thu, Oct 31, 2024 at 06:22:52PM -0500, Bjorn Helgaas wrote:
-> > On Tue, Oct 29, 2024 at 07:04:50PM -0500, Bjorn Helgaas wrote:
-> > > On Mon, Oct 28, 2024 at 10:05:33AM +0200, Leon Romanovsky wrote:
-> > > > From: Leon Romanovsky <leonro@nvidia.com>
-> > > > 
-> > > > The Virtual Product Data (VPD) attribute is not readable by regular
-> > > > user without root permissions. Such restriction is not really needed,
-> > > > as data presented in that VPD is not sensitive at all.
-> > > > 
-> > > > This change aligns the permissions of the VPD attribute to be accessible
-> > > > for read by all users, while write being restricted to root only.
-> > > > 
-> > > > Cc: stable@vger.kernel.org
-> > > > Fixes: d93f8399053d ("PCI/sysfs: Convert "vpd" to static attribute")
-> > > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > > 
-> > > Applied to pci/vpd for v6.13, thanks!
-> > 
-> > I think this deserves a little more consideration than I gave it
-> > initially.
-> > 
-> > Obviously somebody is interested in using this; can we include some
-> > examples so we know there's an actual user?
-> 
-> I'll provide it after the weekend.
-> 
-> > Are we confident that VPD never contains anything sensitive?  It may
-> > contain arbitrary vendor-specific information, so we can't know what
-> > might be in that part.
-> 
-> It depends on the vendor, but I'm pretty confident that any sane vendor who
-> read the PCI spec will not put sensitive information in the VPD. The
-> spec is very clear that this open to everyone.
+On Fri, Nov 01, 2024 at 12:19:08PM -0400, Gregory Price wrote:
+> I don't personally understand the implications of this switch off hand,
+> probably warrants a separate patch submission if you think it's important
+> given the original logic is boot_cpu_has and I don't want to increase
+> scope change here.
 
-I don't think the spec really defines "everyone" in this context, does
-it?  The concept of privileged vs unprivileged users is an OS
-construct, not really something the PCIe spec covers.
+We want to switch the code to cpu_feature_enabled():
 
-> > Reading VPD is fairly complicated and we've had problems in the past
-> > (we have quirk_blacklist_vpd() for devices that behave
-> > "unpredictably"), so it's worth considering whether allowing non-root
-> > to do this could be exploited or could allow DOS attacks.
-> 
-> It is not different from any other PCI field. If you are afraid of DOS,
-> you should limit to read all other fields too.
+https://lore.kernel.org/r/20241031103401.GBZyNdGQ-ZyXKyzC_z@fat_crate.local
 
-Reading VPD is much different than reading things from config space.
+and it is not increasing the scope at all. You can simply say:
 
-To read VPD, software needs to:
+"Convert to cpu_feature_enabled() while at it."
 
-  - Mutex with any other read/write path
+in the commit message.
 
-  - Write the VPD address to read to the VPD Address register, with F
-    bit clear
+Thx.
 
-  - Wait (with timeout) for hardware to set the F bit of VPD Address
-    register
+-- 
+Regards/Gruss,
+    Boris.
 
-  - Read VPD information from the VPD Data register
-
-  - Repeat as necessary
-
-The address is 15 bits wide, so there may be up to 32KB of VPD data.
-The only way to determine the actual length is to read the data and
-parse the data items, which is vulnerable to corrupted EEPROMs and
-hardware issues if we read beyond the implemented size.
-
-The PCI core currently doesn't touch VPD until a driver or userspace
-(via sysfs) reads or writes it, so this path is not tested on most
-devices.
-
-> > For reference, here are the fields defined in PCIe r6.0, sec 6.27.2
-> > (although VPD can contain anything a manufacturer wants to put there):
-> > 
-> >   PN Add-in Card Part Number
-> >   EC Engineering Change Level of the Add-in Card
-> >   FG Fabric Geography
-> >   LC Location
-> >   MN Manufacture ID
-> >   PG PCI Geography
-> >   SN Serial Number
-> >   TR Thermal Reporting
-> >   Vx Vendor Specific
-> >   CP Extended Capability
-> >   RV Checksum and Reserved
-> >   FF Form Factor
-> >   Yx System Specific
-> >   YA Asset Tag Identifier
-> >   RW Remaining Read/Write Area
-> > 
-> > The Conventional PCI spec, r3.0, sec 6.4, says:
-> > 
-> >   Vital Product Data (VPD) is the information that uniquely defines
-> >   items such as the hardware, software, and microcode elements of a
-> >   system. The VPD provides the system with information on various FRUs
-> >   (Field Replaceable Unit) including Part Number, Serial Number, and
-> >   other detailed information. VPD also provides a mechanism for
-> >   storing information such as performance and failure data on the
-> >   device being monitored. The objective, from a system point of view,
-> >   is to collect this information by reading it from the hardware,
-> >   software, and microcode components.
-> > 
-> > Some of that, e.g., performance and failure data, might be considered
-> > sensitive in some environments.
-> 
-> I'm enabling it for modern device which is compliant to PCI spec v6.0.
-> Do you want me to add quirk_allow_vpd() to allow only specific devices to
-> read that field? It is doable but not scalable.
-
-None of these questions really has to do with old vs new devices.  An
-"allow-list" quirk is possible, but I agree it would be a maintenance
-headache.  To me it feels like VPD is kind of in the same category as
-dmesg logs.  We try to avoid putting secret stuff in dmesg, but
-generally distros still don't make it completely public.
-
-> > > > ---
-> > > > I added stable@ as it was discovered during our hardware ennoblement
-> > > > and it is important to be picked by distributions too.
-> > > > ---
-> > > >  drivers/pci/vpd.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
-> > > > index e4300f5f304f..2537685cac90 100644
-> > > > --- a/drivers/pci/vpd.c
-> > > > +++ b/drivers/pci/vpd.c
-> > > > @@ -317,7 +317,7 @@ static ssize_t vpd_write(struct file *filp, struct kobject *kobj,
-> > > >  
-> > > >  	return ret;
-> > > >  }
-> > > > -static BIN_ATTR(vpd, 0600, vpd_read, vpd_write, 0);
-> > > > +static BIN_ATTR_RW(vpd, 0);
-> > > >  
-> > > >  static struct bin_attribute *vpd_attrs[] = {
-> > > >  	&bin_attr_vpd,
-> > > > -- 
-> > > > 2.46.2
-> > > > 
+https://people.kernel.org/tglx/notes-about-netiquette
 
