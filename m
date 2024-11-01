@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-392757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D00F9B97CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:40:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2DBB9B97CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:40:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7061C20833
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 128DE1C2031F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505A51CDFDC;
-	Fri,  1 Nov 2024 18:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EB21CEEA1;
+	Fri,  1 Nov 2024 18:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niiaH5Qs"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6pQLTUq"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2119A7602D
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D861CEE82
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730486420; cv=none; b=NdVerGnfquDKvXko6ovqGIUx6Uf9TO3iVHNaSKBVJC3+N2aYg0LV+SgRRg3LoFt2mL7s9CuR4qCs/PEUsxvmACCq3Vx9gkShH16xIWf2vMy/tBkE6bdoOgOo7enj32VF7bYtMChdGVXgSWDI6OhNkQ8PUvI4rm3Ro2fOTFlnT4I=
+	t=1730486424; cv=none; b=MqXdEIgYRRjn2y4DkBN5XmVvgqCvmskcGq8Xk6mRcd6+BxB0/aQQvDD7ClT76hSMtv31hYxNGt5hsSFpr6hDIy9Z9p4LVPAvUKBg/a4jlw763/zDyT5EjaZ3/yGB22xpWCJnQLVPfkzXv3nAIcBypNQ1LHXgUiP1XrUtBSLcoSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730486420; c=relaxed/simple;
-	bh=DkAVtKAGLSMH4HMan7qBCgb5QZQElY7M2pnYrh7xjeY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HwTVLkWqP1JwrgcxA2LqTvs+F7FrLYI5FFmn27WwCWk080irm2ZyLttLNUq3O4KqbCSEhs/0jEULrZfgVL5Awa36I6T1DTbQSIyqqeRg/+F4lPhSypCtMyJw04oI4f8qhJrCO9X6CmYgckGvj5wxRYXPs/x8c4tyyG4YQJspprE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niiaH5Qs; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1730486424; c=relaxed/simple;
+	bh=vtf97JfxjX82lzzJ2ayrvX+aZhQw6cMjibQNpU85lkg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Au/NzweakT2vT5AtJm15L+BFcMwRnhSVfgZiKgJpm3bmvG+rJ5+Bf1UC7DO7EFjRsmUAdLDCt3jh/LWXxAgzHUm8e0Fj3rhYMHfjGn5Z1rDAoTEF+n3QjFbOt2UrVuuJKjO7TVF4vL3LvlWiNH4VcI6SfaowdWGOAONGHhPudxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y6pQLTUq; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539fe02c386so2978189e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:40:18 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so3786384e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:40:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730486417; x=1731091217; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EWC1yOTC5QFlqMhqCf1j0kyrByhgWgxna16p0UGDJ/I=;
-        b=niiaH5Qsb5kUOVczp9qiFMN0kvOcumm2urrNk4fIJ1NBIrwtRT77E72avvep9qZJZX
-         Mh9cOzUFdStWap5wdR0OsuBMPfHPy2ha9L871IdzJSP/Zav549FnUnfMx5OmnuW959/F
-         MLqBWNOuWNnwcRPms3faXZQZWq4LB3rqYa7Am0oyf7RXbfxcYgYiS1YnXDil0hcSGs/+
-         9egmiI5MpIXGAAgo6G4msEFnPIcKeWnR50DCLw5mWgS/tywVYT3vprYVfq79xwURxFMe
-         niXTBSeJPCnpKJWuGJJawi+TwzuddO4BWKgJlqXMs2whs33fEmJ0PnVkCeCv0UzEoIoI
-         kPxA==
+        d=gmail.com; s=20230601; t=1730486421; x=1731091221; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=325HZLula7jSoNoGXlC+vhYpf/xwBEOPgui+U1ZAOR4=;
+        b=Y6pQLTUqXvus24b8u1CrJHA4s1jj8HKXfipIm3QPMTn8wK19CdVp/r2V6XJMm1EmWK
+         4gsEiyEd1i5q2sbDaQyXS0NQkxr9Lpxy0a859/xiqYTNpTQ8s9TiNkwRMPTdOaos++FM
+         /r9vvepIMjgpcd9TM1rVj7N5q35TwQXhXRiqmKehHH5gBbjTiHiAFOq0Kq4RGolStoMr
+         gy1ZUbYGt2c2n7PELlzgnkiE2+DtxXks5YO2aJh35IOR2fIGICpHwYMo12RcPllC+nCg
+         SHoRR63AFx6OAteB8ZylCui9P1GqCxp6ORJCQXP0lNiENd+T1Po1IDUVzUijFU9KeMfm
+         LShA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730486417; x=1731091217;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EWC1yOTC5QFlqMhqCf1j0kyrByhgWgxna16p0UGDJ/I=;
-        b=enudyHYLsWILY9b19bKZ2EOTAgiWO3zobQKasCqNE9hL7cO2XbhCkEPnCFY6ZqsrY4
-         qtuDC9CwwOhC1rI3nyI2D1jEGhWf0iBipAAs4AGitSyRqu9tXvmEsJ20XG88/G4r/Utq
-         m6JlmE3NucPnikyb56vNdGnoYZ9WkEuB20RmPOdcG/3jBlmeXv5yw0rOcg/vfnORp6Y5
-         q6us9LskhrCWDfkNjw6Fi7XCcGwKc07RjUxFfycR61oemmCM9P7b2WcAgYzSqbRr1TR5
-         TfAA4RHqIexxy8m3X5JBcCpOJLofkiMjOvDsBUeJQ2kssyJvqKujQPed1E+Lc43I2zw4
-         WISg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQH+3s4+zxDk9Tpqmo+uitz4cROBvKuMAoZaRCXCrlrEokJZs6o9a+iNqjEKfADCs6lKoqDDSD/dir9Lg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2X0Uzl6xSFkjPcK38VsFDHpft4blszkO03iw3ZWXVRifYQJi0
-	2COM0xPs+p3aoTAIaxa5g+PtbN3US7gsPBX8NKAzzB3SxuQhIOqe
-X-Google-Smtp-Source: AGHT+IHLjQ8uX4kh50Kgv4JyHszznqgBG5TRqOm0LAgUvXB/FB4l6W6aA7yqdjLqOptEmMvEvounmQ==
-X-Received: by 2002:a05:6512:23a7:b0:52f:1b08:d2d8 with SMTP id 2adb3069b0e04-53c7bbdcaa9mr3079453e87.7.1730486416985;
-        Fri, 01 Nov 2024 11:40:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730486421; x=1731091221;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=325HZLula7jSoNoGXlC+vhYpf/xwBEOPgui+U1ZAOR4=;
+        b=XKY/Qp9picP1wZzP/oFIhZbvolqDqj5AgQpksFBEQfPOd9/YFpKvGJR8rxqXV8op2b
+         7EnGvrBqpOOzAUVddRBXQO2sFF6Ir8GYbsI+Vo0TYGwWFsohBrOqnygsHbICTC72vN7c
+         hOH3P84YwHweOhtDwpzlnB33B390mIhe1bFEi35UasRRlNC9Zlexc9NXHYdUJSQWOCvu
+         VK4Izoj7jXaQNo3/cEUliooX7JDpR7Mkkn6VbThgePrYDRiwyn7fcsfPAoB6mNPItjt7
+         PMREDS2W0O+0ZtvLqbvB7KsbNmpMg98/DjxnK3zv4DrhBQGvoZMGF96da5GqDX0il00b
+         y64Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUnML9vTyK++uWI7VaZGXsi5+Gy4/ESRw9diwyYq6/I2D5d8OUPvGkFwjXz/N9tmxj2kuEZ2EvNkdmMSRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1YnAH+K7Bqjv5eqZ5VKUplBxvHWD1oez7PNmDYenv85z0VSB8
+	20ileqKDxyiwTMGVlc5XaLIjSxYw77TyV1/M//LX6qlDhA4+Mdtm
+X-Google-Smtp-Source: AGHT+IFJs6WKOoZ+dQPXZdy5J0yt3B7+wP/Od81xCXCJNl3ABlWzNAHthdTYNFEexLKPL7ABxshCLw==
+X-Received: by 2002:a05:6512:3a8b:b0:539:89a8:600f with SMTP id 2adb3069b0e04-53d65de5298mr4080862e87.23.1730486420555;
+        Fri, 01 Nov 2024 11:40:20 -0700 (PDT)
 Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc957cbsm646821e87.60.2024.11.01.11.40.14
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc957cbsm646821e87.60.2024.11.01.11.40.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 11:40:16 -0700 (PDT)
+        Fri, 01 Nov 2024 11:40:19 -0700 (PDT)
 From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 To: ryabinin.a.a@gmail.com,
 	andreyknvl@gmail.com,
@@ -77,10 +79,12 @@ Cc: arnd@kernel.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	snovitoll@gmail.com
-Subject: [PATCH 0/2] kasan: few improvements on kunit tests
-Date: Fri,  1 Nov 2024 23:40:09 +0500
-Message-Id: <20241101184011.3369247-1-snovitoll@gmail.com>
+Subject: [PATCH 1/2] kasan: use EXPORT_SYMBOL_IF_KUNIT to export symbols
+Date: Fri,  1 Nov 2024 23:40:10 +0500
+Message-Id: <20241101184011.3369247-2-snovitoll@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241101184011.3369247-1-snovitoll@gmail.com>
+References: <20241101184011.3369247-1-snovitoll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,29 +93,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series addresses the issue [1] with KASAN symbols used
-in the Kunit test, but exported as EXPORT_SYMBOL_GPL.
+Replace EXPORT_SYMBOL_GPL with EXPORT_SYMBOL_IF_KUNIT to mark the
+symbols as visible only if CONFIG_KUNIT is enabled.
 
-Also a small tweak of marking kasan_atomics() as KUNIT_CASE_SLOW
-to avoid kunit report that the test should be marked as slow.
+KASAN Kunit test should import the namespace EXPORTED_FOR_KUNIT_TESTING
+to use these marked symbols.
 
-Both patches have been tested on (CONFIG_KASAN_KUNIT_TEST=y):
-- x86_64: CONFIG_KASAN=y
-- arm64: CONFIG_KASAN_HW_TAGS=y
-
-[1] https://lore.kernel.org/linux-mm/ZxigQIF59s3_h5PS@infradead.org/T/
-
-EXPORT_SYMBOL_IF_KUNIT
-
-Sabyrzhan Tasbolatov (2):
-  kasan: use EXPORT_SYMBOL_IF_KUNIT to export symbols for kunit tests
-  kasan: change kasan_atomics kunit test as KUNIT_CASE_SLOW
-
+Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218315
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+---
  mm/kasan/hw_tags.c      |  7 ++++---
- mm/kasan/kasan_test_c.c |  4 +++-
+ mm/kasan/kasan_test_c.c |  2 ++
  mm/kasan/report.c       | 17 +++++++++--------
- 3 files changed, 16 insertions(+), 12 deletions(-)
+ 3 files changed, 15 insertions(+), 11 deletions(-)
 
+diff --git a/mm/kasan/hw_tags.c b/mm/kasan/hw_tags.c
+index 9958ebc15d38..ccd66c7a4081 100644
+--- a/mm/kasan/hw_tags.c
++++ b/mm/kasan/hw_tags.c
+@@ -8,6 +8,7 @@
+ 
+ #define pr_fmt(fmt) "kasan: " fmt
+ 
++#include <kunit/visibility.h>
+ #include <linux/init.h>
+ #include <linux/kasan.h>
+ #include <linux/kernel.h>
+@@ -394,12 +395,12 @@ void kasan_enable_hw_tags(void)
+ 
+ #if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST)
+ 
+-EXPORT_SYMBOL_GPL(kasan_enable_hw_tags);
++EXPORT_SYMBOL_IF_KUNIT(kasan_enable_hw_tags);
+ 
+-void kasan_force_async_fault(void)
++VISIBLE_IF_KUNIT void kasan_force_async_fault(void)
+ {
+ 	hw_force_async_tag_fault();
+ }
+-EXPORT_SYMBOL_GPL(kasan_force_async_fault);
++EXPORT_SYMBOL_IF_KUNIT(kasan_force_async_fault);
+ 
+ #endif
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index a181e4780d9d..3e495c09342e 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -33,6 +33,8 @@
+ 
+ #define OOB_TAG_OFF (IS_ENABLED(CONFIG_KASAN_GENERIC) ? 0 : KASAN_GRANULE_SIZE)
+ 
++MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING);
++
+ static bool multishot;
+ 
+ /* Fields set based on lines observed in the console. */
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index b48c768acc84..e5bc4e3ee198 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -10,6 +10,7 @@
+  */
+ 
+ #include <kunit/test.h>
++#include <kunit/visibility.h>
+ #include <linux/bitops.h>
+ #include <linux/ftrace.h>
+ #include <linux/init.h>
+@@ -134,18 +135,18 @@ static bool report_enabled(void)
+ 
+ #if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST) || IS_ENABLED(CONFIG_KASAN_MODULE_TEST)
+ 
+-bool kasan_save_enable_multi_shot(void)
++VISIBLE_IF_KUNIT bool kasan_save_enable_multi_shot(void)
+ {
+ 	return test_and_set_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags);
+ }
+-EXPORT_SYMBOL_GPL(kasan_save_enable_multi_shot);
++EXPORT_SYMBOL_IF_KUNIT(kasan_save_enable_multi_shot);
+ 
+-void kasan_restore_multi_shot(bool enabled)
++VISIBLE_IF_KUNIT void kasan_restore_multi_shot(bool enabled)
+ {
+ 	if (!enabled)
+ 		clear_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags);
+ }
+-EXPORT_SYMBOL_GPL(kasan_restore_multi_shot);
++EXPORT_SYMBOL_IF_KUNIT(kasan_restore_multi_shot);
+ 
+ #endif
+ 
+@@ -157,17 +158,17 @@ EXPORT_SYMBOL_GPL(kasan_restore_multi_shot);
+  */
+ static bool kasan_kunit_executing;
+ 
+-void kasan_kunit_test_suite_start(void)
++VISIBLE_IF_KUNIT void kasan_kunit_test_suite_start(void)
+ {
+ 	WRITE_ONCE(kasan_kunit_executing, true);
+ }
+-EXPORT_SYMBOL_GPL(kasan_kunit_test_suite_start);
++EXPORT_SYMBOL_IF_KUNIT(kasan_kunit_test_suite_start);
+ 
+-void kasan_kunit_test_suite_end(void)
++VISIBLE_IF_KUNIT void kasan_kunit_test_suite_end(void)
+ {
+ 	WRITE_ONCE(kasan_kunit_executing, false);
+ }
+-EXPORT_SYMBOL_GPL(kasan_kunit_test_suite_end);
++EXPORT_SYMBOL_IF_KUNIT(kasan_kunit_test_suite_end);
+ 
+ static bool kasan_kunit_test_suite_executing(void)
+ {
 -- 
 2.34.1
 
