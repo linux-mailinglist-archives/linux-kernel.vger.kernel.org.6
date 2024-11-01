@@ -1,154 +1,226 @@
-Return-Path: <linux-kernel+bounces-392048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43EF59B8F14
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:22:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E1D9B8F1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 675511C2288E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:22:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1A91F22F57
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C15F14A098;
-	Fri,  1 Nov 2024 10:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE33165F1D;
+	Fri,  1 Nov 2024 10:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zNrDVJU8"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b="dOdiFv6I"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2054.outbound.protection.outlook.com [40.107.241.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E80D156C71
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730456507; cv=none; b=f78KV5vmS4uJM7nEWU6S/uVoRCXbtZr1suIU4+EIunZD+GUGGrJol19/JV147ICCHXXEp3qz6k5d6ai3uKkXJdCl8p0FnNApRucNOPf/QPi4vqZg307AypDuDbQ9x3qu+f0VqEWTDfSEH7k2CYWKvPSg2lA9cG7SdH4bMVETnLg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730456507; c=relaxed/simple;
-	bh=4/ezJhMVv4g5+hO3ZmYWJYwO3H0qSI/sZ7ZYkaIRCjY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d7uhf5axnrlrIk0B8dEKpZLeRUiHEN2ogqZRdKJ4nchst571b+NeYu9sMP9cGg+55cfKg/KnfKqAtUrsCfkimiQpAdD7h9+Xhf5oOZ+ANaFXSYqBhRM4IeJZ3o9QJG6/2B41O1xLNgqEfpNoIZok2Dqt1weqIRJsH/5kGDSta8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zNrDVJU8; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e38fa1f82fso14876067b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 03:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730456504; x=1731061304; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=v1OOWFaJk+1JoyvwxXdi8qci9o7AVgvK3rkL5KCBYSI=;
-        b=zNrDVJU88sjWhXO5CVcp8A+GgbkOpUNcSC3IThVnwzKdCmKYujGQjNqx6tTNssTKtq
-         EbceWmEc9P93+EGQBKOXTsnrWVLR6Zspj8Dx18NspaH3LByPurUkL8wYwEv9juYXUuZQ
-         rl4+Uzav0u9YwuMv5dckfGu1efLJoZwoeCoq4wZ6vlmR3RkQoCdAycO3CKnTMV60N3NK
-         s3+1bGyNR0gO4h8HJ7SqBmdOXxKCKXSY28Q1rzij5DgKPY839dWbp8ImgO76oJRMrddd
-         fIedmls1vldRsI2SeqiTIaIp71Ni7FLj2uwWwGwrY7EcEqrWG+KoJrfCvl+dDaOJeTkv
-         wclA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730456504; x=1731061304;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v1OOWFaJk+1JoyvwxXdi8qci9o7AVgvK3rkL5KCBYSI=;
-        b=bknT4E27+ZeXs/5pSbDAyPbailC7rnh0DbxZoTSUgK+LUUy2f29ELMXuUaj+ue53Rx
-         Nty7ZmUACGYrpFos/ZibeqduZqmvKOOwqv/4MihqSLMhZtiOcgKJLPiHEALME8QAUG5B
-         kWyiu++ZaxLOVqDKtGNSuW06sRwHA7KSzEONNvEmgh5bNhIgGFO48gZZ/LL7QjFyCp63
-         cyNqtfIlqfKznlQ8IhSYUW5oe+QjK8bIM9JxDULGFEv7ElvKHFHpM3qPnGm9jnOKMTG2
-         WKP/2izPiJfFk3xuFwFsO7Gg7GE+4xBgnJXPej5YDzHQxYazom+5vga3PmgNdX3O6uZ+
-         FwIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPjRgNG2Zm8CZeEvOoKe1KCwz8Ol/GXkNOKXuYvux2doU121JOct2z0tqh47Darnuk2EYtf9Sb/xUkFdY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy70eo09OUe7BolJjJfk62t3Zuo+UnyytBWzSo6v4uz29uzVanx
-	8NAJ6URZMiNgBJz8lWh8VeYpjFyjp9u0QDgsMBFFCy5Mb/py+Co3IoJgYOHOHiYT3qPNqH7ug+9
-	ICPizXJqr9/OZKS5SZW5Qv3Z8ouk74/MMj2txdw==
-X-Google-Smtp-Source: AGHT+IH3otYNddLuzk8gQrByLU+Sf4Mj9Uga9WVF0JjPzZQt9IvpKS5zTDwy//SSX+obcs3a4lj5hYohRHYRqexjcQQ=
-X-Received: by 2002:a05:690c:3506:b0:6dd:b7e0:65b2 with SMTP id
- 00721157ae682-6e9d8a6f784mr243997357b3.24.1730456504581; Fri, 01 Nov 2024
- 03:21:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56AA15A864;
+	Fri,  1 Nov 2024 10:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730456588; cv=fail; b=TU79Tbuhre/pJkW8ltqsLeFZ8VcTz+ZE/+ApnHPCQHI2awGp2ovhKcIscRWCT56TRTIViwi+YZXJNBBf89s8X1B8Hgws5P5uyqpPTOReJJXP3YydwwRwfcT4jvH+/MZqWgTEUCDaJQqxjmQ3OyqlMBNXWyvE3ECMQBTT6AX0t2o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730456588; c=relaxed/simple;
+	bh=LjKkHpHSY52pjtoBc/nUwjF5ABdLAfkqMZdE2K78ZLw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=VZiLnT8vK+uwVT5g/5JkBSzfj3G5SBa0mk0pjyTWOpANI5dc/HsuP1QIWOYVa3DPYG/3fq+68GeMpXE5Y29TmFVdpTAWr4A1oFryhOzT4C0EHKkDouOF5enWEBePTaeKW88RuJplZF89ZXQf71R0LDC62VewcAWE5mKzqH7qkCM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk; spf=pass smtp.mailfrom=prevas.dk; dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b=dOdiFv6I; arc=fail smtp.client-ip=40.107.241.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prevas.dk
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a6UVQsb31AR+xq6IwAeeRB1ZxBtOA0KlVdIwiUKe2UaTp7S7h/9kGw32p0Oqp1J2wEx3IlyAFsEALkvQCeR+rLhuRjHnKtedTd79+ZuL9ex+RggqDnQc2MeCGlcA9U2qWupUrYt/VPidRbpLFEvFPYjDSfR7btde8i0pSQalGPiw/92hfJhEUlYeeZJy9t31n/pCRtsgssJI/4VPqwoovbbprxdCwc4i6X8vmNbC/WYX7ITLPFwXbTjyTP/Y5QNJxLpn8J6ZaAJ+sZzNLqAuVtvi6+/HTHNVoZI8/9UW9cDE9YV9GgPnFTHZUwMSM6NBGK9XKajYt+HEgWncE9DVvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cCAedM2cUW/uWOSWokfoEARL5Py5bnXvQM+PqSHYdf0=;
+ b=NjqjaeNAOZsRl7qBnWJ2nox/tVxwIEQU5dXwpSa09kJh7eBP4CfuRQyXnTyeO1RaN93VVWO/dnrUzod4pB7c/riCsG+bZv04jUcj+GTOgG64v3qmDOdDY24gk2SosLFIfwVT2MA1LBd538AQnjFz8fHZusGup8waeClY46rumuplIR2DdP4iDb3F3hBIYq+b28C0qO8GwqwSlxPr5ZbHDEQL1bF2bLYqeBumvOVYgq/CHdLU2jEvcZZCHhIg3xT8HIx98ZQDdIpEUYVI5Kr78nUWITbj3ZFfXSXxqOGbOq/KZOZkLG+M9feMFYzxJlq6pvJpyceiwPnzHdOgYPhWUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
+ dkim=pass header.d=prevas.dk; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cCAedM2cUW/uWOSWokfoEARL5Py5bnXvQM+PqSHYdf0=;
+ b=dOdiFv6IocCpwa046j2eonkyQIxMRxz9Y06c2Erto/Lw0OgVps32jUABu+azwVPK261fTqwHUrXuilu/76OKAAQOqZxOdMrd7lO+U2XxAODwWrVfanK5fKiG0q+jWlIXK+hql5Fxsnv67WwcMgwztUSfZl49rFgUh8NnlvtZ2yw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=prevas.dk;
+Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:45a::14)
+ by DU4PR10MB8321.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:56b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Fri, 1 Nov
+ 2024 10:23:00 +0000
+Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9fcc:5df3:197:6691]) by DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9fcc:5df3:197:6691%5]) with mapi id 15.20.8114.015; Fri, 1 Nov 2024
+ 10:23:00 +0000
+From: Rasmus Villemoes <ravi@prevas.dk>
+To: Jeff King <peff@peff.net>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,  Masahiro Yamada
+ <masahiroy@kernel.org>,  linux-kernel@vger.kernel.org,
+  linux-kbuild@vger.kernel.org,  git@vger.kernel.org
+Subject: Re: [PATCH] setlocalversion: Add workaround for "git describe"
+ performance issue
+In-Reply-To: <20241031122456.GB593548@coredump.intra.peff.net> (Jeff King's
+	message of "Thu, 31 Oct 2024 08:24:56 -0400")
+References: <309549cafdcfe50c4fceac3263220cc3d8b109b2.1730337435.git.jpoimboe@kernel.org>
+	<87bjz0k17c.fsf@prevas.dk>
+	<20241031114210.GA593548@coredump.intra.peff.net>
+	<20241031122456.GB593548@coredump.intra.peff.net>
+Date: Fri, 01 Nov 2024 11:23:05 +0100
+Message-ID: <8734kbjlrq.fsf@prevas.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Content-Type: text/plain
+X-ClientProxiedBy: MM0P280CA0020.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:a::15) To DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:45a::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101-sar2130p-dt-v3-0-61597eaf0c37@linaro.org>
- <20241101-sar2130p-dt-v3-1-61597eaf0c37@linaro.org> <pmgutki3fjqbka5ozalevpw7qptmzykhqxiaofqc2nh4gpnn4f@bgmz6fknavbf>
- <iixsrpkyzae5mpwsa2qm5jdyftzgav52ryficoizlhfzw54xbi@gdfxwmjutqp2>
- <80a37af3-ffef-4342-b7d3-f2eb36bb60ba@kernel.org> <sjayaro5coievz22gdeu6tplzjs6kju333a6womyuk6bsvw2h5@a5ewi6sdl7wj>
- <144458a6-6c63-4386-99da-3a27743288b4@kernel.org>
-In-Reply-To: <144458a6-6c63-4386-99da-3a27743288b4@kernel.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 1 Nov 2024 12:21:33 +0200
-Message-ID: <CAA8EJpqC2j8GC3Z72ShtnyBxFx5jBttg-J1V_MJDuJZUsKon_Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: arm: qcom-soc: simplify SoC-matching patterns
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Kurapati <quic_kriskura@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR10MB7100:EE_|DU4PR10MB8321:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1fc7ad2d-ad65-46aa-a976-08dcfa5f2918
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZCPAcNAXnxf1+neoEGjXUehyCWFypqXXkPnWvxINXncjSNtLByQhkGf0ZCLh?=
+ =?us-ascii?Q?7Zu0uIu1bD6cxAnyjELrJSjQ7mPDvDXsssmV3gkX2oNkj6srPwUKMdKiHTzQ?=
+ =?us-ascii?Q?7BpqbklK6foBgYF5Kj7ju8e64DDAsNMLt9wOAEEyZ6KdpXjnrSrT2VEL14Q5?=
+ =?us-ascii?Q?ko59yanEuheYxp6hjbI4aWQYrRLTJgnSzHDOj1HO2/p+vI3W6/ny+NgOAgbj?=
+ =?us-ascii?Q?lTACwHX40XkYU+48afbpFHlyZqJ99edKbLkH1N+RovDLYYEzeqLsCxg+3Rnj?=
+ =?us-ascii?Q?UYyzMnwpfMp3TgbIhPCymzi5b2CoX4RetZPDADyMccx6CkHOFmxoC2RJGTpC?=
+ =?us-ascii?Q?miS2+tk3CTWV1mfCIYlk93kTKs0n39VJAm+/g6uascJybDLp/vVJecttYov2?=
+ =?us-ascii?Q?GWAsSvfDdTib8+WcSB8B0jMWr0E+s8+djyJpMgNLi6B8sLfmRvoPxG+w5Anf?=
+ =?us-ascii?Q?EWd1R7f0drqr1/1D6TXph7zg3Pxpotxy2lJA1+0Ez6qQ5OS6gGiPMfSKN0Pq?=
+ =?us-ascii?Q?l8AH11Iz7cDV56PuQQvbz+lg4lmUveoy7+j5zuX1STvGc0onQEGHVM73r+gg?=
+ =?us-ascii?Q?EIIf6g6nCpN0vOK77P7U9gP2gD+k5r0wXsx9RoZdnxFU/i+z9QF0y1RdTpeu?=
+ =?us-ascii?Q?XsHBFUmkUSnIyp+xfJlh21QpN753Co3799gxA9GSwBmprQbYrnne6OwizenB?=
+ =?us-ascii?Q?UYnfU90O4n4R3KRJ6s3Ngs3hMGlSpAAxX4VcrsaSLHLCbEXzJpqmFwQB/qaA?=
+ =?us-ascii?Q?bbS7Rr9U61MaV4vtf/wI0dDytkllEObjEo3Ye2aLgtvKdiyKCJNXFrBnJhGz?=
+ =?us-ascii?Q?WLXFxZ1Qsb0JRPcvPkKiQnLGeV6iHCu6luMJ+AKV1KqhcDLTDbsCG8Mdsl5L?=
+ =?us-ascii?Q?oW4WodUE1AkC3o4cgt9cx60RdfG02irjUGmVlk7kqoZi8Qn+33uY3KlUG1ru?=
+ =?us-ascii?Q?ebcSJUd5wsOYpFSxIvYjA+FOOBGAbzu2FdhqV3VyYguYgAgWydUYSENbxReM?=
+ =?us-ascii?Q?PbsVA2GPYewtJ7MpGgx4ZCAAcYjSA6WRBNy3PIZfV0VA1ZsWZpDT9V/r7OD3?=
+ =?us-ascii?Q?kBHKCm/8Xbp2mc7a40XXtDJNwotoZQWyx3m2GxymE50qyb8X0ZhdiJmom0II?=
+ =?us-ascii?Q?+wQDvOcLLme2CDddSvX/Sj43clsNR++DvcKESZTR1jso2YI8OxFpQm2Aw3Ei?=
+ =?us-ascii?Q?bz9e5JBc38gbHZeWdblSkXU390fLknXg8x8uxi13iQw4/3fSGvlPMGZiu6uJ?=
+ =?us-ascii?Q?u8h7cZjbvX1fpOcEr7qeqcwrV5gW6cUc3Rif6FSWrW/KQ9sk85K19MEIu8fH?=
+ =?us-ascii?Q?c1arnUHOWfQ7qvg1G5tSbi4UlWb7/0axXclFUQFW54JTnjGF1Y8Qeg0QFyiE?=
+ =?us-ascii?Q?jxNrkgY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3zKRgTBnn3txwBLV5El48nFSK8OqyRE+cr4jJzIQZH49V5EQKtHbjUEY7ppR?=
+ =?us-ascii?Q?f59UEiHkzMjxc5E/eHtgLqatH0tg/XhmHUsuMKMbkNuSzZ1j5DTh3IWPeQ+i?=
+ =?us-ascii?Q?vR49ShXCFTLUSSZrRdEqFnpFwQu1oC45bbOGlM1YUMoU02C9MmJzIGfE68AL?=
+ =?us-ascii?Q?NEeiy5KA1UnGk30xAHh6w06dDWmqYa3DMdqVnh40chO7IchgmSbVhF7zwDrF?=
+ =?us-ascii?Q?a/7TjpykC9esZNH2MUnYMHsgW8WnLhwOVV9y/dRregNT0YRCqmMdDsphNeda?=
+ =?us-ascii?Q?20ttkEH33dITsPuvQFjZl+x23DsXdpyIJixCI+dXVFuMEnjClwT7+V4ujOfu?=
+ =?us-ascii?Q?FTnX9XZJCtlUnsZ5xenRLex068IoZsweG2k+DqMs3uGX7iU8eG10BFYro2mS?=
+ =?us-ascii?Q?LwU4cq/uaeL7aL212LjfBsYoeG+1VomwUEfLP6K2kIP8UYaLZMLCZRGzD4zo?=
+ =?us-ascii?Q?TVshG8XQ/j3Zm+dTu/lUwDP08adl5wPNKce0U9uGwoc4s7kK4CUF2qhEcGYC?=
+ =?us-ascii?Q?HmwfmRtixu6lVyTFQXg/P+1E8WRsTz0f5DK2afqh6amdhb5xeHVeiwp3nVMV?=
+ =?us-ascii?Q?CKgWFOuMStGQHvlTP6a3qOJLVAz3bImsmwIWk6d1XQFY6KpvwCp5v7rgh5v9?=
+ =?us-ascii?Q?klTSJ6jBNxj2PvUSXbelxEu3ZfRwZoX6cKt9rokjzUdpr3ld9GAGDMjPNKV/?=
+ =?us-ascii?Q?j0YxU47+PIvku8eCuNjGax3TLOqa6nIL18o1Ue9JmOg04y3Jv42UHxCg0EOs?=
+ =?us-ascii?Q?INv/kBlksVuf6uonZFUT9Mxpk9MNXTYC8vTdZlTYPC5wvrxxBJ8a5WUm0nDn?=
+ =?us-ascii?Q?ylpkx7obNq6JkSKI1EsnBkQhKoLQrPYdSk5ibPOr8avAN5fUSrkNQQh2UEk+?=
+ =?us-ascii?Q?+8NoydztwGre75KU/Ydlll1gap/TOWYIKlPWt8nu2iz3GGjnjjdLW/uA9inu?=
+ =?us-ascii?Q?bKdTNtM5yhIbWp//OrxzjtH3CulO6dtBm6kY9CzyFOKRpbSZTHJgXvYeHSe/?=
+ =?us-ascii?Q?6VAVHbUo8VxKXObfzUyi1eSdb1zsn1IhpE8n8APSAaQGeQ5bNE0lGePBVq3/?=
+ =?us-ascii?Q?hZe3y/3u0mr929nG1N00zGqlrlAC1oRD16QUhRIu3nVJAvNsk5+sYKJfVCCh?=
+ =?us-ascii?Q?gya6Prb+dvFDv+TTIomzSoBV74ZWTUISlGlPIqeWiBvGb5+ICl3/YT3P/9w+?=
+ =?us-ascii?Q?bRjIKKweHqy0L+EL5T6jWbsk2EqVjXkargDPQDrgR9bjfDd/k/UYNjPjUg7s?=
+ =?us-ascii?Q?NiltVyOTqc1WF2iDFX7YaAAatj1jYvswCfwAgh81dampA3QtM81RS9nds0gX?=
+ =?us-ascii?Q?5Lq3V4fA6jq3D6o1UAbZwC1RTPn3oGov4wQk/FpWOLQl8wwRn94X4NidsIV5?=
+ =?us-ascii?Q?pzzFgd+M120khX+TFKYhZN4BG0Y7p0BQRQz4h9xfHcD9yh7s93VwbqNdxpyw?=
+ =?us-ascii?Q?8JDgMFcmOhkEDZU3IJDsA154+qky7yMwgaS0TEIC612GanuslyEdLs7sfN18?=
+ =?us-ascii?Q?GbgDhmXPkyCiElvtWSM2NXCxw83RVtciGryHYQux5otv2N7QonjjIV2fS0Ag?=
+ =?us-ascii?Q?e4FZ6nuHhhwp+eb1EMOFQZqIV8Y49yU6PIDQuJnRGLFxWPncXNJp06SNbAZ0?=
+ =?us-ascii?Q?qQ=3D=3D?=
+X-OriginatorOrg: prevas.dk
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1fc7ad2d-ad65-46aa-a976-08dcfa5f2918
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2024 10:22:59.9632
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wGaDzTQP8iDbqBenMiWk1lc5gdJidD5pfhmwSfAXG75R+hc765+cCshS3SCodnCMAntdu2pBRjmmlJDomP33QL350qbMMq3KnFxhRmyVxVM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB8321
 
-On Fri, 1 Nov 2024 at 11:23, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 01/11/2024 09:52, Dmitry Baryshkov wrote:
-> > On Fri, Nov 01, 2024 at 09:37:23AM +0100, Krzysztof Kozlowski wrote:
-> >> On 01/11/2024 08:47, Dmitry Baryshkov wrote:
-> >>> On Fri, Nov 01, 2024 at 08:26:04AM +0100, Krzysztof Kozlowski wrote:
-> >>>> On Fri, Nov 01, 2024 at 02:49:22AM +0200, Dmitry Baryshkov wrote:
-> >>>>> The patterns for individual SoC families grew up to be pretty complex,
-> >>>>> containing lots of special cases and optional suffixes. Split them per
-> >>>>> the suffix to make it easier to extend SoC patterns.
-> >>>>
-> >>>> This is doing something quite different - split is not important here.
-> >>>> Instead you narrow the patterns significantly and disallow things like
-> >>>> msm8994pro, sc8280p or sc8280px, and allow things like sa5200p.
-> >>>
-> >>> Just for the sake of correctness, msm8994pro is still allowed, if I'm
-> >>> not mistaken.
-> >>>
-> >>>> I don't see here much of pattern simplifying - dropping (pro)? really
-> >>>> makes little difference.
-> >>>
-> >>> Patterns are simplified by being explicit. E.g. in the previous
-> >>> iteration I completely didn't notice the intersection of the |p that I
-> >>> have added with the existing [a-z][a-z]? pattern. If you think that
-> >>> sa5200p should be disallowed, I can tune the numeric part of the
-> >>> pattern. And sc8280p / sc8280px should not be allowed in the first
-> >>> place, such platforms don't exist.
-> >>
-> >> I am fine with this, but extend the commit msg with some good rationale.
-> >> Have in mind that the point of this pattern was *not* to validate SoCs
-> >> names. sa5200p is fine, sc8180p is fine and all others are fine, sc8280z
-> >> as well, because we do not want to grow this pattern with every new model.
-> >>
-> >> The only, single point of this entire binding is to disallow incorrect
-> >> order of block names in compatible. Not validate the SoC names. If you
-> >> need narrower patterns to achieve that objective, sure. If you need
-> >> narrower patterns to validate SoC names, then nope.
-> >
-> > I need narrower patterns to simplify adding new SoCs.
-> > Another option is to define a mega-pattern like
-> > qcom,(msm|sm|sd[am]|.....)[0-9]+[a-z]*-.* . Frankly speaking I'm fine
-> > with that approach too.
->
-> I do not see how narrower patterns, changing:
-> "^qcom,(sa|sc)8[0-9]+[a-z][a-z]?-.*$"
-> into
-> pattern: "^qcom,sa[0-9]+p-.*$"
->
-> instead of
-> pattern: "^qcom,sa[0-9]+[a-z]-.*$"
-> is needed for that. It's true that 'p' is simpler than '[a-z]' but if
-> this results in new commit next time we have sa8995r, then benefit is lost.
+On Thu, Oct 31 2024, Jeff King <peff@peff.net> wrote:
 
-Ok, let's drop it, I will just update the qcom-soc.yaml to handle
-sar21330p via the "^qcom,(sa|sar|sc)8[0-9]+[a-z][a-z]?-.*$"
-
+> On Thu, Oct 31, 2024 at 07:42:10AM -0400, Jeff King wrote:
 >
-> Best regards,
-> Krzysztof
+>> That works, but I have a feeling that figured out what the heck is going
+>> on with gave_up_on might produce a more elegant solution.
 >
+> OK, I think I might have made some sense of this.
+>
+> In finish_depth_computation(), we traverse down "list" forever, passing
+> flags up to our parents, until we find a commit that is marked with the
+> same "within" flag as our candidate. And then if everything left has
+> that same "within" flag set, we can bail.
+>
+> So I _think_ the point is to basically count up what we'd get from this
+> traversal:
+>
+>   $tag..$commit
+>
+> where "$tag" is the candidate tag we found, and "$commit" is what we're
+> trying to describe (so imagine "git describe --match=$tag $commit").
 
+Yeah, so this is really just what the setlocalversion script wants to
+know. For a few diffent possible values of $tag (in most cases just 1),
+we ask: Is $tag an annotated tag? Is it an ancestor of HEAD? And if so,
+how many commits are in $tag..HEAD.
 
--- 
-With best wishes
-Dmitry
+Perhaps we could on the kernel side replace the "git describe --match"
+calls with a helper, something like this (needs a lot of polishing):
+
+===
+# Produce output similar to what "git describe --match=$tag 2>
+# /dev/null" would.  It doesn't have to match exactly as the caller is
+# only interested in whether $tag == HEAD, and if not, the number
+# between the tag and the short sha1.
+describe()
+{
+    # Is $tag an annotated tag? Could/should probably be written using
+    # some plumbing instead of git describe, but with --exact-match,
+    # we avoid the walk-to-the-start-of-history behaviour, so fine for
+    # this demo.
+    git describe --exact-match --match=$tag $tag >/dev/null 2>/dev/null || return 1
+
+    # Can it be used to describe HEAD, i.e. is it an ancestor of HEAD?
+    git merge-base --is-ancestor $tag HEAD || return 1
+
+    # Find the number that "git describe" would append.
+    count=$(git rev-list --count $tag..HEAD)
+    if [ $count -eq 0 ] ; then
+        echo "$tag"
+    else
+        echo "$tag-$count-$head"
+    fi
+}
+===
+
+But if we go this route, we should probably rework the logic
+somewhat. There's no point getting the count ourselves, stuffing that
+into a string, and then splitting that string with awk to %05d format
+the count.
+
+I also don't know if either the --is-ancestor or the rev-list count
+could end up doing the same walk-all-commits we're trying to avoid.
+
+Rasmus
 
