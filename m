@@ -1,200 +1,149 @@
-Return-Path: <linux-kernel+bounces-391647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F869B89DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:17:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19EE9B89D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:17:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4D311C20C81
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:17:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6A9A282E51
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6BB145324;
-	Fri,  1 Nov 2024 03:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EFB4087C;
+	Fri,  1 Nov 2024 03:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eh4EnK7z"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e06ZpUlN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B1413C9A4;
-	Fri,  1 Nov 2024 03:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4679B13A24D;
+	Fri,  1 Nov 2024 03:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730431028; cv=none; b=snlXlwCzT33apo1+izfFngGVpbw54e7kQYTcu8Q6WxTqa1tI2YJHpdkF0qXbyLGpblAdAJRG9y10FijLFvHsKg+MJ5UdhLFv/FdWAoTOZXJEp4gafR4l+SN3oCnVuV401/VPfg5vShukYoJzWGuZ5D+1NjyHF99Qp9y22L/uTOw=
+	t=1730430951; cv=none; b=PoEvkHsJ6zVfgxlPUc0pldWnIDeifdePIEwJ8cVOP/OPtbKvSfaN4V8ocvB7fmbMlnssxoKaC+x3L1zYi+Dxi47d3uTKAQUjqF7kkkqFfCbKbwfBHEg2ZmyV4GF5Hor+BsbAY2aedpeXuzOYFZQ642AYt6/xCBb8Blbz6mqvpiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730431028; c=relaxed/simple;
-	bh=C34BvjwkI7ip7vWr5F+5OztvzheGZHJBHE44is5Amy4=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=XlnnVa8XcNkPvmtTrVoVbw71auIe6PqOqbou907b5LVxx12aiFYSImfW7SZMy92njmZ/WDD9dcCpqsRjU2ic2BDXH4K7BlqAPu8RMKWNpmbVuD2kP2YK5W8DkMh82kkY7Wn5S2PcoYuciQz3phqSElOUuXS9ZBYlhNkeslI0sHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eh4EnK7z; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ed9c16f687so1208793a12.0;
-        Thu, 31 Oct 2024 20:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730431025; x=1731035825; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eQHeJYJMiWQgVcB83ltfxRkmEP0Z+jaxx3ZbRoO0JNk=;
-        b=eh4EnK7zpKE5fbfq1ZX5IeVDM2vCIE+fdLgiZPkAY5vloj6HdtxgkZmHYawxdl8ZEk
-         aQKWWck9FRKDO/nn3hGBj0OV8fZ0kfiC/QiOi/+SCoBVRpAElp3KQUTL6VqgFz4aqUB7
-         rmMPBDtUNSE8YR62Lc5tjvLcYocD8ez5FMImlh9YrnWYvCtCxvzloC/Ad5/ytFhC6nwM
-         LTJD3iJWHwq9qjZPEOGQJJuNU4zBUo/S2VEzRt0ubN/DGM399PPso+Z+5UEOBB5qHj78
-         8bhWooymf2cXnZtWnlUwB+rb2ppa2isDH/hCHlQlAvc12k5/zN49b6MqTUUzWV+ACkW2
-         VehQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730431025; x=1731035825;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eQHeJYJMiWQgVcB83ltfxRkmEP0Z+jaxx3ZbRoO0JNk=;
-        b=JwD1rzMn7dM2kKx6789L7IN5E+0SSZ4iLK9ybzQ+YLFnoEzmv567q3bwOzPURNQKSp
-         gZlyZpyYiXHxJX/bL2NznRjRQBhhgJgE4fNicTi2BIL/ZeGFlNWKHb/k8utvVC/aW96K
-         siiefxrhXkUXvGfJ86XGpXRogNjp5VCZuurQztNIQ6oeZN4mxYaswe8LM3EU+88JaMqi
-         tqjbcqikzmR8Ta2jwZCHaxTqWVKIfiOJ2+ByepqmQZtkYCfl53Uf6y6tY5xHP1jvTSPw
-         OQN/0kEV6EXc9e7241+wHxlY2g+NQbKt1z3UCOe+bEkamAeONofojaeN7ifN9DH3a6EP
-         3E3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUaLAJBjsPRs/2py2efpPUa2TaO/ZgVErItDAqcOJgym7D1sv/B53bNWX8ZG9bzCVP/qyIONFzOAFxg@vger.kernel.org, AJvYcCVUVFpCa3MeniwDEUz8uQa8c7yJptLVWSxlpIZ3XojrL/MdImctDZfAOksfzhLXAJ99b+4jz3sNSFOqC2rc@vger.kernel.org, AJvYcCWyOVHy0KRY3h7H0Qw+p5PfTCAj42BvCafskkP3zA6WlU2nJjOkHgYpF6GzaI+ScFz6NUJZAYLVWo4Qvdqo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6yn5DyObuCbXO28MVu2nCxC3ulFbIhJFXoIWyEKguaMdC8xNC
-	qiRf/Wk2mzViHFT2wjkgJrVMQXoQkNIbF6eadMXuPMqCvpKuC2fwRVp+Aw==
-X-Google-Smtp-Source: AGHT+IG7+BrXI8EZ64Tpvc4GtpKul/4xOEvw6ZgbJiOiojc2M/zTqPQ943LllcKoBKh09C0gIU8GEg==
-X-Received: by 2002:a05:6a21:e8e:b0:1d9:2453:433e with SMTP id adf61e73a8af0-1db91d517c4mr5987324637.4.1730431025171;
-        Thu, 31 Oct 2024 20:17:05 -0700 (PDT)
-Received: from dw-tp ([203.81.243.23])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b8d2fsm1887059b3a.9.2024.10.31.20.17.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 20:17:04 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, John Garry <john.g.garry@oracle.com>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] ext4: Do not fallback to buffered-io for DIO atomic write
-In-Reply-To: <20241031215111.GF21832@frogsfrogsfrogs>
-Date: Fri, 01 Nov 2024 08:41:42 +0530
-Message-ID: <874j4rzlzl.fsf@gmail.com>
-References: <cover.1730286164.git.ritesh.list@gmail.com> <3c6f41ebed5ca2a669fb05ccc38e8530d0e3e220.1730286164.git.ritesh.list@gmail.com> <20241031215111.GF21832@frogsfrogsfrogs>
+	s=arc-20240116; t=1730430951; c=relaxed/simple;
+	bh=Z/Z3v3f5ZNuL1B/BD2BcQLw4mmBCJrnNHI1teHcC+iI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=lOLBw3wiv5eztpIJeHV2yIq+BNIF1jKyyR8TIvbEPxkeC+dlLj3RNO4MsivNKjqrMJnzxZgoGMeUajOcm8GdD0Z56uhKYKxMwNuVtWGyXREc81gNnhMsH/JGAvnAPtmOHcyPX8H+XeAUmI7E3iB2bsfvXBlNBtzI6qbPabu6diU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e06ZpUlN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49VMbU12008963;
+	Fri, 1 Nov 2024 03:15:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=xrhQ149HLnk4
+	JXhbaoX5SCWn4CD66hZ2w9+VqWyaaLE=; b=e06ZpUlNfoP+xUzayshvYCGYsG6+
+	+yVW4rlYPF/4jJ17LplVRQui6Rl/lCzMksxk7SpxODpkjytg9xMp9c3+xL3MSlfF
+	+XSFGlVZ5Vi1T8T1+hGgJkOJPjB9zZcKFPTgZ7rT9CbnldDjXtdR33eY2+dfcDYk
+	HjpV0qQhI7Xq2n8KHDHofs2Htc9atYiJNDFNW68uVvyUTUBaWQlH/PVtTq9rKD/P
+	4SOZGJVnrC9om0/kCua8qolgw88V7JQrJ4AEe/dhPcutdU2zn3H//V7p3xYxxL3Q
+	W8q5S5A99xs1ncWJ1eHf2bldc5KbTQo68uVQ5lUm0Jz2vgC+d5Ixn/Eb+w==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgusq53-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 03:15:44 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A13Fe6e010611;
+	Fri, 1 Nov 2024 03:15:41 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 42gsgmd4tc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 01 Nov 2024 03:15:40 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4A13FekI010585;
+	Fri, 1 Nov 2024 03:15:40 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-spuppala-hyd.qualcomm.com [10.213.108.54])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 4A13FeQt010579;
+	Fri, 01 Nov 2024 03:15:40 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 4137148)
+	id 7B3D95001B7; Fri,  1 Nov 2024 08:45:39 +0530 (+0530)
+From: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Asutosh Das <quic_asutoshd@quicinc.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        quic_gaurkash@quicinc.com, quic_neersoni@quicinc.com,
+        quic_spuppala@quicinc.com
+Subject: [PATCH RFC 0/6] Hardware wrapped key support for MMC core
+Date: Fri,  1 Nov 2024 08:45:33 +0530
+Message-Id: <20241101031539.13285-1-quic_spuppala@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: hj8AtRXfLcJMXeR1v4kl2u5FnMUYeUho
+X-Proofpoint-GUID: hj8AtRXfLcJMXeR1v4kl2u5FnMUYeUho
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411010022
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-"Darrick J. Wong" <djwong@kernel.org> writes:
+This series adds support for wrapped keys by implementing relevant
+callbacks MMC core and QCom layer.
 
-> On Wed, Oct 30, 2024 at 09:27:41PM +0530, Ritesh Harjani (IBM) wrote:
->> atomic writes is currently only supported for single fsblock and only
->> for direct-io. We should not return -ENOTBLK for atomic writes since we
->> want the atomic write request to either complete fully or fail
->> otherwise. We should not fallback to buffered-io in case of DIO atomic
->> write requests.
->> Let's also catch if this ever happens by adding some WARN_ON_ONCE before
->> buffered-io handling for direct-io atomic writes.
->> 
->> More details of the discussion [1].
->> 
->> [1]: https://lore.kernel.org/linux-xfs/cover.1729825985.git.ritesh.list@gmail.com/T/#m9dbecc11bed713ed0d7a486432c56b105b555f04
->> 
->> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> ---
->>  fs/ext4/file.c  |  7 +++++++
->>  fs/ext4/inode.c | 14 +++++++++-----
->>  2 files changed, 16 insertions(+), 5 deletions(-)
->> 
->> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
->> index 8116bd78910b..61787a37e9d4 100644
->> --- a/fs/ext4/file.c
->> +++ b/fs/ext4/file.c
->> @@ -599,6 +599,13 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->>  		ssize_t err;
->>  		loff_t endbyte;
->>  
->> +		/*
->> +		 * There is no support for atomic writes on buffered-io yet,
->> +		 * we should never fallback to buffered-io for DIO atomic
->> +		 * writes.
->> +		 */
->> +		WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC);
->> +
->>  		offset = iocb->ki_pos;
->>  		err = ext4_buffered_write_iter(iocb, from);
->>  		if (err < 0)
->> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> index fcdee27b9aa2..26b3c84d7f64 100644
->> --- a/fs/ext4/inode.c
->> +++ b/fs/ext4/inode.c
->> @@ -3449,12 +3449,16 @@ static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
->>  {
->>  	/*
->>  	 * Check to see whether an error occurred while writing out the data to
->> -	 * the allocated blocks. If so, return the magic error code so that we
->> -	 * fallback to buffered I/O and attempt to complete the remainder of
->> -	 * the I/O. Any blocks that may have been allocated in preparation for
->> -	 * the direct I/O will be reused during buffered I/O.
->> +	 * the allocated blocks. If so, return the magic error code for
->> +	 * non-atomic write so that we fallback to buffered I/O and attempt to
->> +	 * complete the remainder of the I/O.
->> +	 * For atomic writes we will simply fail the I/O request if we coudn't
->> +	 * write anything. For non-atomic writes, any blocks that may have been
->> +	 * allocated in preparation for the direct I/O will be reused during
->> +	 * buffered I/O.
->>  	 */
->> -	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
->> +	if (!(flags & IOMAP_ATOMIC) && (flags & (IOMAP_WRITE | IOMAP_DIRECT))
->
-> Huh.  The WRITE|DIRECT check doesn't look right to me, because the
-> expression returns true for any write or any directio.  I think that's
-> currently "ok" because ext4_iomap_end is only called for directio
-> writes, but this bugs me anyway.  For a directio write fallback, that
-> comparison really should be:
->
-> 	(flags & (WRITE|DIRECT)) == (WRITE|DIRECT)
->
+They patches do the following:
+- Tested on top of Hardware wrapped key support for QCom ICE and UFS core: https://patchwork.kernel.org/project/linux-scsi/cover/20241011-wrapped-keys-v7-0-e3f7a752059b@linaro.org/
 
-yes. You are right. It is working since ext4 only supports iomap
-for DIRECTIO. But I agree it's better be fixed to avoid problem in future.
+Tested on QCM6490.
 
-> static inline bool
-> ext4_want_directio_fallback(unsigned flags, ssize_t written)
-> {
-> 	/* must be a directio to fall back to buffered */
-> 	if (flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
-> 		    (IOMAP_WRITE | IOMAP_DIRECT)
-> 		return false;
->
-> 	/* atomic writes are all-or-nothing */
-> 	if (flags & IOMAP_ATOMIC)
-> 		return false;
->
-> 	/* can only try again if we wrote nothing */
-> 	return written == 0;
-> }
->
-> 	if (ext4_want_directio_fallback(flags, written))
-> 		return -ENOTBLK;
->
+How to test:
 
-I like the above helper. Thanks for doing that. 
-I will incorporate this in v4.
+Use the wip-wrapped-keys branch from https://github.com/ebiggers/fscryptctl
+to build a custom fscryptctl that supports generating wrapped keys.
 
+Enable the following config options:
+CONFIG_BLK_INLINE_ENCRYPTION=y
+CONFIG_QCOM_INLINE_CRYPTO_ENGINE=m
+CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
+CONFIG_MMC_CRYPTO=y
 
->> +			&& written == 0)
->
-> Nit: put the '&&' operator on the previous line when there's a multiline
-> expression.
->
+$ mkfs.ext4 -F -O encrypt,stable_inodes /dev/mmcblk0p12
+$ mount /dev/mmcblk0p12 -o inlinecrypt /mnt
+$ fscryptctl generate_hw_wrapped_key /dev/mmcblk0p12 > /mnt/key.longterm
+$ fscryptctl prepare_hw_wrapped_key /dev/mmcblk0p12 < /mnt/key.longterm > /tmp/key.ephemeral
+$ KEYID=$(fscryptctl add_key --hw-wrapped-key < /tmp/key.ephemeral /mnt)
+$ rm -rf /mnt/dir
+$ mkdir /mnt/dir
+$ fscryptctl set_policy --hw-wrapped-key --iv-ino-lblk-32 "$KEYID" /mnt/dir
+$ dmesg > /mnt/dir/test.txt
+$ sync
 
-I guess we don't need this if we do it with your above inline helper.
-But sure, next time will keep in mind for any such changes.
+Reboot the board
 
-> --D
->
+$ mount /dev/mmcblk0p12 -o inlinecrypt /mnt
+$ ls /mnt/dir
+$ fscryptctl prepare_hw_wrapped_key /dev/mmcblk0p12 < /mnt/key.longterm > /tmp/key.ephemeral
+$ KEYID=$(fscryptctl add_key --hw-wrapped-key < /tmp/key.ephemeral /mnt)
+$ fscryptctl set_policy --hw-wrapped-key --iv-ino-lblk-32 "$KEYID" /mnt/dir
+$ cat /mnt/dir/test.txt # File should now be decrypted
 
-Thanks for the review!
--ritesh
+Seshu Madhavi Puppala (6):
+  mmc: host: support wrapped keys in mmc
+  mmc: host: add support to derive software secret
+  mmc: host: add support for generate, import and prepare keys
+  mmc: host: wrapped keys support in mmc qcom
+  mmc: host: implement derive sw secret vop in mmc qcom
+  mmc: host: support for generate, import and prepare key
 
->>  		return -ENOTBLK;
->>  
->>  	return 0;
->> -- 
->> 2.46.0
->> 
->> 
+ drivers/mmc/host/cqhci-crypto.c | 79 +++++++++++++++++++++++++++++----
+ drivers/mmc/host/cqhci.h        | 22 +++++++++
+ drivers/mmc/host/sdhci-msm.c    | 59 +++++++++++++++++++++++-
+ 3 files changed, 151 insertions(+), 9 deletions(-)
+
+-- 
+2.17.1
+
 
