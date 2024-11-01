@@ -1,161 +1,125 @@
-Return-Path: <linux-kernel+bounces-392183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B163F9B90C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:56:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 555129B90BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757FF2814BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9D901F21B68
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8112F19E997;
-	Fri,  1 Nov 2024 11:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWQFYSgc"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58A319B5AC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BECB19D8BE;
 	Fri,  1 Nov 2024 11:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="a/eEwnea"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B5219D081;
+	Fri,  1 Nov 2024 11:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730462139; cv=none; b=Ly4OrK4Vp2DmYO0Jk3Let3GafE+h3kAKcwQrkenag6zpOB6so4Rc/89o4E1V7xpVuN4Uf/Yozc7cZuzuXHLVQpCpcJn7eAunsVO0Kyykggo/1hxN4iBXxCwCH0DVKuwuOwCE/sBEEetqRo3A0UptG1jtqWnt/tI2GhVfxi2WDJo=
+	t=1730462136; cv=none; b=EQiZ4RwjdpJPUSK5XH8G5r5H1NyJ1YJZGTrXSbBR8vdCkb500UhzA9Wmvd8uMjkeLaGW2UpqE8UHGNIvkQBXZN4SdDs5XfRIXoPuw+gFwPSe4LiB+5GghLU1I943K8saFudOlJ7CQa7IZgpitkFQCNW/tKOU0+ZohmNcPlJCAn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730462139; c=relaxed/simple;
-	bh=9Ylq0p3hXYbuQxs7GCkS0Vlv1jdDLlPQvnTyCIoxY9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ClP9NG+veoLS4hZjIxypjacMhPMWw94qjTBKnRNsJKSV56fFltkgteFJLsl/XQezo6WA/WuCIUcLhoRWA+qyo7AAY/ft/MaOS00jfsJtberniUb9NgyCWIBCQG56ZwuqvOFzWtxfVPNeBUvWuUUGOvvVb4LetTOcrLRiJSz20oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWQFYSgc; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ea5f68e17aso14499227b3.3;
-        Fri, 01 Nov 2024 04:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730462137; x=1731066937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LnYuFt1DD8rn3W96RMdwI5f7csrcu+bi2efGBPMVZh4=;
-        b=dWQFYSgcoagisO7Y5evhYRnc8iiIO/c+vwIW2QujgRZFpJStguQWTj5uoe6ElnEKDO
-         hIjQavSzZtB4EVLWv2rafKcxHLA9XomS+rwrSvLL8tQM/LCvisHd03AtVia2yFkjW1H5
-         Hz4YdW4+duk1F3UdCRzu+2sAoptxyVYcI1Ow6GjhB5JMdcsL2sYiNpqGi2I2QBRnJHMI
-         z/XleZ/gx5DSQzpfBMeSD1Jm46sFVRtLj2uDk2C7aB2ggAJbW8mVTJ9moazxmt0iryJQ
-         iFerRWnekZ94PBat/UvoP4ImaZLpuyyeFMeSClStlyqTFY33NNbYty3DsIJtQGGcdk85
-         ksTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730462137; x=1731066937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LnYuFt1DD8rn3W96RMdwI5f7csrcu+bi2efGBPMVZh4=;
-        b=f1Bt750Ynpy+yBhC02Myya/jDLZKnQLY9QERGE/6IoQIRXvgST2rUAUd29cmAlGMmd
-         jiLvkBLPWFMSJNNXDPIKFQCq/SGK1kzEQJNS+iW5PUIQqZIfT7nzGsNn7D0pNov54E1f
-         /dlY+mmZOV5BlUSf0fGvQavBGPx1vuJOS4R3rdMiR3fulOkqzw93I5Ie09lDiNV0J/R1
-         zJd138caaNgTsEgFypZcJfY0UxNdaXhkwz6eHKJ2FDRtH+nbnTWvx+6hcxGmgNM5cPRY
-         4RGwmR66ZrsF9DHgY6byn0nVyexfG3M6W/U6+YEBEGB8mdSiG4rHXr4+C1fPAcWmH85O
-         vkrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSRl+ckAFpzpLjDHhFokJ9V9ZM/YR6T8jiRH2dK8PxOgdyvL+duUjgCNcSRp1R3JQbcJCSbeJhGR62ZpSm@vger.kernel.org, AJvYcCXRwLKuUFvqGSzyGKr1gcayAk6lxVBzmq7n6+SulwzIHmIXYUT08HvIYX7/nYlpSvmZKFTcZVx/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz878NQnA90bSri7SfUcjivJPRAOBb/m7bKpeKNgqv85qZLlGD3
-	3bP537ZC5PdcKyFCbcYXNprKoNVXeq/cR1AuoqBD3+pOAxyoiUEc3ZOyfpyVft3jec4pZutEdKh
-	yuyYcVNVyO6ACzml+/RSWuPHyYKg=
-X-Google-Smtp-Source: AGHT+IH7mjDxM9PZhB13mf1xekSj/BwHCeaXuQtqxIhZ8iBq4BsIPuJS5lRcnhEbwmqlfguKjPZc5nwQKS+bcZfXbZ8=
-X-Received: by 2002:a05:690c:62c3:b0:6e9:d33f:eafc with SMTP id
- 00721157ae682-6e9d88d09a4mr235388357b3.8.1730462136919; Fri, 01 Nov 2024
- 04:55:36 -0700 (PDT)
+	s=arc-20240116; t=1730462136; c=relaxed/simple;
+	bh=YgheqCGz5W29kaXksMwAsSLSItD+uZ0Eo9BVpZbhL50=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mZzJZDqXWHyYjOeVbAsa1mr1MK8piIwbStqMREVIJK5iquCxidg9E1RfA6sKZSI2wERYFLlcedDyRd+K7rT6ugCjiLalRoVV7HvHR5XEMEsFWA5WJpNCyFEBZLaDO/ix6IiO/BcHNhWN7yfrxnRhnhVK32YUesk11bpPoLbC1a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=a/eEwnea; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 318CF3D4;
+	Fri,  1 Nov 2024 12:55:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730462127;
+	bh=YgheqCGz5W29kaXksMwAsSLSItD+uZ0Eo9BVpZbhL50=;
+	h=From:Date:Subject:To:Cc:From;
+	b=a/eEwneaxNk6oWJRPCLor+aANObSNwjnxnCP5bGCka8VI1i6CkzFeM0EHlitOfikF
+	 DrXyhjgAtZ4BRYeVmDbVKUfok90oK0QRxoQOIGAdbAf2bvpt+i8tqzuUr8JDij80yx
+	 cjkOSWmopNw1Ke6rdPicWBKWbigbQwMPwoMsyoYI=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Date: Fri, 01 Nov 2024 13:55:15 +0200
+Subject: [PATCH] media: raspberrypi: cfe: Fix mapping of dmabuf buffers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101031750.1471-1-laoar.shao@gmail.com> <20241101031750.1471-2-laoar.shao@gmail.com>
- <20241101100617.GV14555@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241101100617.GV14555@noisy.programming.kicks-ass.net>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Fri, 1 Nov 2024 19:55:00 +0800
-Message-ID: <CALOAHbC3h5QyOyCB99xyBwiw+NW7BEqcRDoRwfvTc3id1NM4=A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] sched: Define sched_clock_irqtime as static key
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org, surenb@google.com, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241101-rp1-cfe-fixes-seg-size-v1-1-0aacf2da56e5@ideasonboard.com>
+X-B4-Tracking: v=1; b=H4sIAKLBJGcC/x3L0QpAQBBG4VfRXJvaWUq8ilwsfswN2inJ5t1tL
+ r86J5EhKoy6IlHEpabHniFlQdMW9hWsczZ552sRJxxP4WkBL3rD2LCy6QMeG1e5dg5NHTzl+Yz
+ 4i/z2w/t+QRV3oWgAAAA=
+To: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Naushir Patuck <naush@raspberrypi.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1356;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=YgheqCGz5W29kaXksMwAsSLSItD+uZ0Eo9BVpZbhL50=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnJMGvFaCtuDuyf61e0vv8PqzSJB/xa17jDfwQW
+ NGrimnq/deJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZyTBrwAKCRD6PaqMvJYe
+ 9eNFD/9DUTfzgMBvDuE/F3k405rVzyAORyhjBXr0Duc/OrM9lBlDIG/ONRSY0o6qO/4ZQC5YsDU
+ EwrZtGSBoz64NZuYl7Z6a+MocK2A3izCAeObWSj8tIIKme6zvEFxfMQxhpLeJOLFfdJpOzPOHKO
+ VpEloIccudNFJzZ4akkWJBuiq37JAhMefysGdA6gJFmW5rKZLIFgydYEeo+R8W7oQsocbVB8utG
+ z9BgmQ+wPMuiyUSDh+VFyv1H3wEdHgvOs+9kPQokhg/TqD5nrzYUezENUp8PpupZA/TMdEkcfqA
+ BFXTabQDmNBykvtMKrmtsbzRGaVryu6w4wSUoM6h71LWpANIFjtlca4vFk3GclDBLdO+ejA7B/1
+ cY8ecpBA5bR6CBX6hqx88bnxo4j6+o9l2neZMCMoCo2jr2jgnReOejI0jT4sWn698D7lWg6DhZH
+ vZkAunYNcOJG+gjTYyN7k5rDKSGA85d/ZvDU8wONpMdDAnSowioKwd3nwFXXUrxLKNVyX0WkWPc
+ /wcb9mTKebDrnQlOI34cVGpiJ8fXRI0IQFIMCz4SmmmcfJkeooldFLcduo9uYVdEwF48Kdbz98Q
+ 1OtjfkalIC1ZmXO7+TyAvpx4TS1Dp5RdGDdavLXDGFLQQg4Dd6zhx8eOPdBAJkUuTG3z+AQDoMS
+ Sskai3Yq9FFlqTA==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Fri, Nov 1, 2024 at 6:06=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
-> On Fri, Nov 01, 2024 at 11:17:47AM +0800, Yafang Shao wrote:
-> > Since CPU time accounting is a performance-critical path, let's define
-> > sched_clock_irqtime as a static key to minimize potential overhead.
-> >
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > ---
-> >  kernel/sched/cputime.c | 16 +++++++---------
-> >  kernel/sched/sched.h   |  1 +
-> >  2 files changed, 8 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-> > index 0bed0fa1acd9..d0b6ea737d04 100644
-> > --- a/kernel/sched/cputime.c
-> > +++ b/kernel/sched/cputime.c
-> > @@ -7,6 +7,8 @@
-> >   #include <asm/cputime.h>
-> >  #endif
-> >
-> > +DEFINE_STATIC_KEY_FALSE(sched_clock_irqtime);
-> > +
-> >  #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-> >
-> >  /*
-> > @@ -22,16 +24,14 @@
-> >   */
-> >  DEFINE_PER_CPU(struct irqtime, cpu_irqtime);
-> >
-> > -static int sched_clock_irqtime;
-> > -
-> >  void enable_sched_clock_irqtime(void)
-> >  {
-> > -     sched_clock_irqtime =3D 1;
-> > +     static_branch_enable(&sched_clock_irqtime);
-> >  }
-> >
-> >  void disable_sched_clock_irqtime(void)
-> >  {
-> > -     sched_clock_irqtime =3D 0;
-> > +     static_branch_disable(&sched_clock_irqtime);
-> >  }
-> >
-> >  static void irqtime_account_delta(struct irqtime *irqtime, u64 delta,
-> > @@ -57,7 +57,7 @@ void irqtime_account_irq(struct task_struct *curr, un=
-signed int offset)
-> >       s64 delta;
-> >       int cpu;
-> >
-> > -     if (!sched_clock_irqtime)
-> > +     if (!static_branch_likely(&sched_clock_irqtime))
-> >               return;
-> >
-> >       cpu =3D smp_processor_id();
-> > @@ -90,8 +90,6 @@ static u64 irqtime_tick_accounted(u64 maxtime)
-> >
-> >  #else /* CONFIG_IRQ_TIME_ACCOUNTING */
-> >
-> > -#define sched_clock_irqtime  (0)
-> > -
-> >  static u64 irqtime_tick_accounted(u64 dummy)
-> >  {
-> >       return 0;
->
-> This makes no sense... in the IRQ_TIME_ACCOUNTING=3Dn case you shouldn't
-> be using the static key.
+When using buffers from DRM, DMA-API gives a warning about: "mapping sg
+segment longer than device claims to support [len=307200] [max=65536]"
 
-will change it.
+Add a call to vb2_dma_contig_set_max_seg_size() to tell the DMA-API
+about the supported segment size (which is UINT_MAX).
 
---=20
-Regards
-Yafang
+Fixes: 6edb685abb2a ("media: raspberrypi: Add support for RP1-CFE")
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+ drivers/media/platform/raspberrypi/rp1-cfe/cfe.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+index 045910de6c57..e52d8b20df40 100644
+--- a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
++++ b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+@@ -2341,6 +2341,12 @@ static int cfe_probe(struct platform_device *pdev)
+ 		goto err_cfe_put;
+ 	}
+ 
++	ret = vb2_dma_contig_set_max_seg_size(&pdev->dev, UINT_MAX);
++	if (ret) {
++		dev_err(&pdev->dev, "Unable to set max_seg_size\n");
++		goto err_cfe_put;
++	}
++
+ 	/* TODO: Enable clock only when running. */
+ 	cfe->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(cfe->clk))
+
+---
+base-commit: 698b6e3163bafd61e1b7d13572e2c42974ac85ec
+change-id: 20241101-rp1-cfe-fixes-seg-size-b70309da74a2
+
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
