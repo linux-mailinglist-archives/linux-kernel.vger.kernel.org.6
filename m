@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-392976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610089B9A55
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:42:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A6D9B9A56
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:43:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182EA1F2322F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:42:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 054D11C212E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0311E5027;
-	Fri,  1 Nov 2024 21:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C769D1E47C5;
+	Fri,  1 Nov 2024 21:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b="fgMaCcHT"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="gsgk7/D5"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E832487BE
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7621E2612
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730497321; cv=none; b=GJ7nI1kv4ILuB65N9vcX08OQ4HrYLMPiGIhWCEccJkDKofamCFHrku9klBXvSGZ3pe3TBZRyz20xjGHuF1sSIx/t4bSyD6iRtRhBE9a0SZ0rCo1on5bWoDx0teubbrj4jw7e4w8bE9doR62L6A1FPiVC5U/LYKuswOF7frExAF0=
+	t=1730497381; cv=none; b=MpOWmaMtl4qvM7gANHQa5m2MLqagIQwazifgtAcxyxIoj9CCWaRsSF1NBZbc1Cmwh8P9edfxz8IeRvwAKBvrklgTJT0RmXT4h4a2hvTYTLNSEf+2DOQPSoG3xlEO9UVtJ+3fx4PYjr9Ighgy26KSDFNIJNGzNs3NomSBlEjTDmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730497321; c=relaxed/simple;
-	bh=DbfqY7IFcAPB09OyKpR93DM2ZjDMYjW04ydu1Tn6UTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FYrSMLXbRv/R/8onJddtuTpXdmTcnT5rmGIA4LNx1oY9Sc4zAUe0Dnu+yJPqJs1DEzKUAvniHSvFHz39y5+iiv9cBnajqMM3Xb4Hlz/tkM9BXxtGvzRqGppAhWxBk0XL5zTrZVrjKD6auI2SycGnvoEKnqod9Y9ZuLbHfI5yYco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com; spf=pass smtp.mailfrom=engflow.com; dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b=fgMaCcHT; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engflow.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so3978987e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 14:41:59 -0700 (PDT)
+	s=arc-20240116; t=1730497381; c=relaxed/simple;
+	bh=/ZgM+DthZuf8tZlOitoakk/860/05c98LB7mxNSZshs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=uI3vaUn65DGV2mGuMvi1yqcrnUY4Jr1mWHRDR7IG3m/m5PkmIcmaMBUhQgThYRDlP8WCd7WcDxJ0a2DYsbr5oOTV0kYV6Jhbw58XB5LVcobQPVxopBZV/pj7jWyXx1T83wzZYdv2Nj7qkBgKOkDJKH56bbanMw+y/yWZXESVecI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=gsgk7/D5; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4314c006fa4so2659875e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 14:42:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=engflow.com; s=google; t=1730497318; x=1731102118; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1730497378; x=1731102178; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jo90b8Yd71LhW+/ErXRjU0g+lG1e6qGL15CJicn+PDI=;
-        b=fgMaCcHTsMt7X51dL8HaT5rEY+mU0JMciTpvRAlgWAYq34eclsHs1mbj4uiRPDEKvJ
-         pE1CDg242KhWOW77wVOw/dBA1dUGxEI7oEEkKUJOjA8Eoy9chQz2OylPq10Fk3tJiaSq
-         OJq3OJrsTSsBaadj4snN0AtAj9eZkh5s+qyEY=
+        bh=/ZgM+DthZuf8tZlOitoakk/860/05c98LB7mxNSZshs=;
+        b=gsgk7/D53SvZmOhZVyxvXCwUIPrnGx888dRgAm+sp9e7biD+/ajo64u0wcZiDNtRpO
+         4ywBiOocrq7lZ+UBgwFFp//d6epq4fndPTotIw5RVuviMWvdmvHT4KmNk8+epWM+bSJQ
+         FfTNkqx0D9UHoDpOHtEET/DC7kF+Zo05GVfvYr13dF0ARVxYUbBp+I45a3gQCxUxQtF2
+         jEeQEjsRq+bjvWeEW80tVY8w7OhhaKIY7YBjEe2TGau9AQWehkFcVJ2FUQn8QDKzNZoG
+         bhVvtOhoYw9YZhXv3iQ92vyVaG0lcjeR0rKkJ/xJ+XKlde752f25aQQnY69ryTzLwzKU
+         i7UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730497318; x=1731102118;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730497378; x=1731102178;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jo90b8Yd71LhW+/ErXRjU0g+lG1e6qGL15CJicn+PDI=;
-        b=FJ2KtWXy+UbKy4JSTS6/wWgpnfr5IBLY3QIWiwlePdxpjFCQRJEMSjwcF4/H7Az6W1
-         bd1Njaco+Gemfau+KE5l7k9UDA0iw1VSrEN3gJDJn2HXH7oeuORiJ+giYGGhIVGsDYQY
-         ZID5PxRO4xSUbfXl6uNHCS+rkc9lSACqjtEm8hmtHOmPMqPVM49hU0GiWyY3S32Ws4Aa
-         euuYVIdsa90DdAbX4GBnswdMZRxBfsO+NlO+UyfoHZS1o09Zq7Iz5htapC5R7eCp6Xy1
-         uSdlAB1MwkRAxFfdxt5CfyawmR12rjV8Rb3ETlpTZHhMEAkd4kpSOvJbsesM7fyUpob+
-         z3zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnTq1v/hDXl1SQ6rH7XfMh739n1AGLZ6gceJbnuhH9JeM000s2p40xLR3q8Hos2NELFiQwlIuu1oQqpfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4wSszNJbiDFwZvYp4HkxwcDne6JxG21ofUufzKCrmQ31cRsSP
-	bU03/UUQM3j+Op4rNNCpNL7NWJ8bJhIHg7k2KEYOTBnjnCrsjX99Y+tlHJxXpYSrTBFoJ3IDTAP
-	QxPQJeFU9BiScl1OUuauzpiW7Z3RveFB2ZR0isA==
-X-Google-Smtp-Source: AGHT+IGcJSS7owX3TBRF8ZsKYn+5S4Q3Hg1EpCxbdq1KPte+oQuDZLnbzKisdC+ggu1lDkdDgpVrbty8dyMekv9XJ2k=
-X-Received: by 2002:a05:6512:3d10:b0:539:94f5:bf with SMTP id
- 2adb3069b0e04-53d65e16d9dmr4558411e87.59.1730497317409; Fri, 01 Nov 2024
- 14:41:57 -0700 (PDT)
+        bh=/ZgM+DthZuf8tZlOitoakk/860/05c98LB7mxNSZshs=;
+        b=jK5srDxtmjWuS6UrpzbPG8kJ41VUXU9xzyCxvx4r6t3/DGLbMdxo/zhpUNK34NUeSI
+         QZV1rzDXOzwT6oQjfaCIJU15cLETrmzA3YrzXSn9SSs4jV60L0xgyFj5pQ6QTu004Hro
+         7HSCbm7k/Tb6z4RJvHJe+zNKGZ7eAk9r3G2ynMbLOX40JDQjdZ5vl0sbZoYvhta2iCFe
+         AX/eqxd0V+qxVVTgga+2VwnZKzIcU4Kkx4oc+h3zDgOZQAuh0GFBCb1bf6Bmsu7GwUGO
+         cOEomoEakx7/cQjUPDndps+M3dZ2wTS8dUuLEY3kVMfpTpt7jgIWYdSccuL14AITZr8K
+         sU/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWX2yT4ZrJv+XDLttG33lvvGX4iyq8P99IsJS//SJjiiTDwy11Axxx8FaLQwlBFsBm2jAZKPcz4f1xsz8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv6uUCL+vW9dS+8FJEhiIzZvkQYTMKcqq2tJYt4OfyhaXYc36F
+	6q6xS1xA+LgORP8gnLur2ivD2STMpaHGIUNxR7hKU1SKERY0WtczxvNOUEBj8ik=
+X-Google-Smtp-Source: AGHT+IFLzBdexP8pqlR0nmX/00xf7SVomBe7J6FB0aM0mI5tvdjCnjz1DnH/K8jss5nUXrvUcNS6ew==
+X-Received: by 2002:a05:600c:1c91:b0:42c:aeee:80a with SMTP id 5b1f17b1804b1-4319ad40b45mr97057145e9.7.1730497377649;
+        Fri, 01 Nov 2024 14:42:57 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:a4f:301:15ba:84ae:1181:c3ad])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116a781sm6283185f8f.96.2024.11.01.14.42.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Nov 2024 14:42:57 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241101005338.5846-1-benjamin@engflow.com> <20241101172714.84386-1-benjamin@engflow.com>
- <CAH0uvohNO517GAD7XH-VvUvU+dPdeZBKDw0Teij50sAPSe9sCQ@mail.gmail.com> <ZyVIgKcAuqZSYYB1@x1>
-In-Reply-To: <ZyVIgKcAuqZSYYB1@x1>
-From: Benjamin Peterson <benjamin@engflow.com>
-Date: Fri, 1 Nov 2024 14:41:46 -0700
-Message-ID: <CAEmfU+ufKWoJLvhksPzADMKkbinV37Tv1KODU6RdJfBM9Juy7w@mail.gmail.com>
-Subject: Re: [PATCH v2] perf trace: avoid garbage when not printing a trace
- event's arguments
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Howard Chu <howardchu95@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, 
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>, 
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH v2] params: Annotate struct module_param_attrs with
+ __counted_by()
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <ZyTI3NoFY7uGfTWo@smile.fi.intel.com>
+Date: Fri, 1 Nov 2024 22:42:46 +0100
+Cc: kees@kernel.org,
+ gustavoars@kernel.org,
+ mcgrof@kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <2B4C6889-9AAC-4AF6-A2CB-9FCC0E479D2A@toblux.com>
+References: <20240823145931.107964-3-thorsten.blum@toblux.com>
+ <ZyTI3NoFY7uGfTWo@smile.fi.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+X-Mailer: Apple Mail (2.3776.700.51.11.1)
 
-On Fri, Nov 1, 2024 at 2:30=E2=80=AFPM Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
->
-> On Fri, Nov 01, 2024 at 02:00:46PM -0700, Howard Chu wrote:
-> > Hello Benjamin,
+On 1. Nov 2024, at 13:26, Andy Shevchenko wrote:
+> On Fri, Aug 23, 2024 at 04:59:33PM +0200, Thorsten Blum wrote:
+>> Add the __counted_by compiler attribute to the flexible array member
+>> attrs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+>> CONFIG_FORTIFY_SOURCE.
+>>=20
+>> Increment num before adding a new param_attribute to the attrs array =
+and
+>> adjust the array index accordingly. Increment num immediately after =
+the
+>> first reallocation such that the reallocation for the NULL terminator
+>> only needs to add 1 (instead of 2) to mk->mp->num.
+>>=20
+>> Use struct_size() instead of manually calculating the size for the
+>> reallocation.
+>>=20
+>> Use krealloc_array() for the additional NULL terminator.
+>=20
+> What is / was the resolution on this change? It seems it either fell =
+in cracks
+> or being abandoned.
 
-Thanks for testing & reviewing.
+There was a false-positive Clang issue with this patch [1] (and other
+__counted_by() patches) that was mostly discussed here [2]. Clang has
+since made some changes and there is a patch for the kernel [3].
 
-> >
-> > Before your patch:
-> >
-> > perf $ ./perf trace -e net:netif_rx_exit
-> >      0.000 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
-> >     28.153 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
-> >     36.429 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
-> >     36.461 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
-> >
-> > After:
-> >
-> > perf $ ./perf trace -e net:netif_rx_exit
-> >      0.000 irq/79-brcmf_p/1694977 net:netif_rx_exit()
-> >      7.352 irq/79-brcmf_p/1694977 net:netif_rx_exit()
-> >     30.232 irq/79-brcmf_p/1694977 net:netif_rx_exit()
-> >     37.529 irq/79-brcmf_p/1694977 net:netif_rx_exit()
-> >
-> > It works beautifully, but I'm thinking can we simplify it by just doing=
-:
-> >
-> > +       char bf[2048] =3D { 0 };
-> >         size_t size =3D sizeof(bf);
-> >
+I'll probably resend this patch once [3] has been merged.
 
-I believe this is slightly suboptimal because it obliges the compiler
-to zero out 2kib of the stack every time the function is called.
+Best,
+Thorsten
 
-> >
-> > Tested-by: Howard Chu <howardchu95@gmail.com>
->
-> I haven't tested it yet, just in my mind :-)
->
-> The patch looks ok and seems to fix a real problem, my only concern, a
-> pet peeve, was that it, in addition to fixing a real problem, did an
-> unrelated change, the "Remove the return value...", that part looks like
-> a distraction, something that shouldn't be there.
-
-In my mind, it was related because both the bug and the odd return
-value arise from incorrect counting of the number of written bytes.
-Obviously, the fix is what I care about, so feel free to strip out the
-return value change on import, or I can resend.
+[1] https://lore.kernel.org/r/20240913164630.GA4091534@thelio-3990X/
+[2] https://lore.kernel.org/r/ZvV6X5FPBBW7CO1f@archlinux/
+[3] https://lore.kernel.org/r/20241029140036.577804-1-kernel@jfarr.cc/=
 
