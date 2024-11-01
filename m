@@ -1,127 +1,222 @@
-Return-Path: <linux-kernel+bounces-392031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796FF9B8EE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:17:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FB89B8EEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:18:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA542833A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:17:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D90091C231A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E82F15C15F;
-	Fri,  1 Nov 2024 10:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859FC15AAB6;
+	Fri,  1 Nov 2024 10:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Vmz8C9rt"
-Received: from msa.smtpout.orange.fr (msa-218.smtpout.orange.fr [193.252.23.218])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYiBj1PW"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14965156F28;
-	Fri,  1 Nov 2024 10:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCF01586F2
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730456265; cv=none; b=pp8dQWWIi2wZZv3iyb7tdtCCUO43YXiRt3nGmTKOnIe/MSLdtoTAQ5EZ4FMk3J9l0hI47+hAYFulY0pNGemFanLZCpzM8Reg8sbCB361Q27jYexni1CtFllZms7yTZH5SLkk/j9RobanrX8ZZxFsS0epU2YTO2zbMfttKVj3EWE=
+	t=1730456307; cv=none; b=JfnMqhjVfupvw8b3mhgVtSoeeXHWvKuS53QOOZrfx8bYw/DT9ntcynEItKMRQJpQkAXBGwinNrR7HjrffdxaD0snywc0xFzFqp3YY0yv+Cep3A6N/G4qxt2k4wxoV+rlb4J2sHlSUZO8QuY50HDLkR95PyEhX7twTTIUMZy1EYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730456265; c=relaxed/simple;
-	bh=/kpNeAZ5W7kfgLzBK3bZ9/+VoPRaZE0HpJHhDpbcJqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tJGDkslTSOkeRjTBgp/s/x0YtXJ5rp138mBE7wdfLl++zyKMdexpQIPZUGtNHSrx/apA1hAp3s11/qGpkuh38v2Y6H2KJ2Igod5Dr2QyVnsYOJUr/DqYVrae7T91mCbTzisuyC8+jRqgYt9asZPF9TgxfTepR3ReTknYdFqMdjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Vmz8C9rt; arc=none smtp.client-ip=193.252.23.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 6oiitPoJqlUew6oiitfNq9; Fri, 01 Nov 2024 11:17:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730456252;
-	bh=TJm0FTTapjfsTGHQas8+XIvgu/RJ1IZnH5FHoN9D0qQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Vmz8C9rt2n48leYSOdBgKlNf7m7wEV4yE8zpBHfBwTwOMR9LL2ARDs1BYM+hPvXWn
-	 fQivIGZLGNgPGm32a/EjGSN2kMCXrEpSVhvk31PQyjp1NAJQtvx2FjyW6nxjzDItRP
-	 jaos0rZEmbY3q98zEj5ExK/l697wMChcBXjQzYnm6eI8UuTrMwpkN+TZgICSp4hgIc
-	 wp3LgffU103yKZmrnBthmEqFc2WuEc5I2AyCvXVovgL3QDUphE/z+PnKG8oJ8miQFf
-	 2M+5np8pV5avdndIwpB6+3fhhc8P3egk/jIQkfOTpUyW2YUuDY3OKZ1Gg/+aHiJYJV
-	 qGPGM9waDlXDg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 01 Nov 2024 11:17:32 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <4fada863-b125-454d-97d0-efbf44ec3bc8@wanadoo.fr>
-Date: Fri, 1 Nov 2024 11:17:32 +0100
+	s=arc-20240116; t=1730456307; c=relaxed/simple;
+	bh=ipFVqEBpiK2Tzcv4RDXc8uhuWXygpW0n551czX3pIZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H4vFGUZ/nARo82bP18ubmykVYEEbzVhWrJtEUsCjXpKDRJ0GS3QTxKuxRyMLApRKCCBIc8IDtFJ6nK8f/P9VA4v1hpT/8vL7QDQVOuKXD5OQ9WIspRByIyWoFX/1PsdIbifZdGZkdVfdtxWK4sTYfgyfQrIr1dCGHXB/Pw2pRIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYiBj1PW; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso16581271fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 03:18:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730456304; x=1731061104; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KwxM/FjA9AksgVOtf8rzlVE3z9HPcVCwlrxiT5luSQU=;
+        b=hYiBj1PWL29b9C0pVsO53GicGJvil8sIMciZHmtuOeRdoc0FFdgSOmM+gYgHs5FJh7
+         4ft7z/bH67F/5Sq0ba5LHiN6Mpo9rlNrRJw2nYYG/bzxZeiF6jeZRN4BRyXHlmISKwPv
+         R0jPwpd3iW959Ayl4J50inz75+l8FlKy2zcR4A10BurfItMVfCWuWjTrikudgV9icgvR
+         VvMrwZWTKjya5QFCbFgCwwBWMfsaBQ4a5r978MiynG1BT0M9VYUzCTpXNDmhcG4i/m0g
+         6WoKzpUEmIFYONvkOsXqLq9WHqnbBk/IvrtR1NSflxvHmH9RTc0l9an1m8xOE/3rVZKI
+         uP5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730456304; x=1731061104;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KwxM/FjA9AksgVOtf8rzlVE3z9HPcVCwlrxiT5luSQU=;
+        b=jNEyqX+/DyXSFL7ePeFWdce17kfXBMwntLqifXLoz56H6vPkNnpK+HXDI64/5ipVhE
+         00FqwKNCe3e22Oa8nm8Z+PESE8aP73HSgpi1xSfpDrGkfewdLc/kFC1ge7O/5ePtnXj3
+         cEMGTc5TdfbHkotGSffcb9XUPBbr5FwoJxY7e3VEGiBXEfd9/WDcNEc54LEHjTsmXc8Y
+         6G9MTHJuBokkR+vY2XOcisseBzVnhSNT9IP4USZOTMZzmQShIv2J5JoaMQGW0e2dPZml
+         FtHfKZv3LGzWKUAuDfITsYvaNgsLMHWAzYrYzmo2Yokz08OGd0Zz6B+CdUcR8CG3pe7c
+         ++IA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwPOxgIWwp/x6tWwxJabvOGn9OaiASqamHitKp4xLLjEMDwPEgC3gRQh8YYOYk7/dNNwLlB8ZXDQ/oBks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV73exFveAGFZFFtZvYhQcCfwVgOIQmUID29XLN5LK5A0Y3ugH
+	p9fjG6ZYmbPXUF0pvg7hOmgYOv7CqeUc+ZMcVprIq/sbdNzsDH2jTBdVMne3JftFvaVZctA6D70
+	/dkRnvnQ8i+5z8W7g4ieDHa8t47E=
+X-Google-Smtp-Source: AGHT+IGktJR4kXiSVcEP5zyV7fVZbNHuALXiNZ/K8o5Zyj0KzJIQB/BDX4XXF+spSRskc7kGZPunVPyRF1WkVpBdtPs=
+X-Received: by 2002:a05:651c:994:b0:2fb:5504:794d with SMTP id
+ 38308e7fff4ca-2fedb7ecb76mr14926851fa.44.1730456303431; Fri, 01 Nov 2024
+ 03:18:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Input: bbnsm_pwrkey - add remove hook
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, dmitry.torokhov@gmail.com
-Cc: Frank.Li@nxp.com, ping.bai@nxp.com, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-References: <20241101101222.1448210-1-peng.fan@oss.nxp.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241101101222.1448210-1-peng.fan@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241031193606.87970-1-advaitdhamorikar@gmail.com>
+ <87r07wufs7.ffs@tglx> <CAJ7bepLOJZLwgm6f+RU=-xb0qPim-7VBi+062EJC5yT5_BmmpA@mail.gmail.com>
+ <TY3PR01MB120896A09E7CF11D55164527BC2562@TY3PR01MB12089.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB120896A09E7CF11D55164527BC2562@TY3PR01MB12089.jpnprd01.prod.outlook.com>
+From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Date: Fri, 1 Nov 2024 15:48:11 +0530
+Message-ID: <CAJ7bep+ras3xdWfH-7YLbVha0QVN-ONmp39Pvf_TpYhh9A=o-g@mail.gmail.com>
+Subject: Re: [PATCH-next] irqchip/renesas-rzv2h: Fix potentially mismatched datatype
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>, 
+	"anupnewsmail@gmail.com" <anupnewsmail@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Le 01/11/2024 à 11:12, Peng Fan (OSS) a écrit :
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Without remove hook to clear wake irq, there will be kernel dump when
-> doing module test.
-> "bbnsm_pwrkey 44440000.bbnsm:pwrkey: wake irq already initialized"
-> 
-> Add remove hook to clear wake irq and set wakeup to false.
-> 
-> Fixes: 40e40fdfec3f ("Input: bbnsm_pwrkey - add bbnsm power key support")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->   drivers/input/misc/nxp-bbnsm-pwrkey.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/input/misc/nxp-bbnsm-pwrkey.c b/drivers/input/misc/nxp-bbnsm-pwrkey.c
-> index eb4173f9c820..847964f7ebdd 100644
-> --- a/drivers/input/misc/nxp-bbnsm-pwrkey.c
-> +++ b/drivers/input/misc/nxp-bbnsm-pwrkey.c
-> @@ -187,6 +187,17 @@ static int bbnsm_pwrkey_probe(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> +static void bbnsm_pwrkey_remove(struct platform_device *pdev)
-> +{
-> +	struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
-> +
-> +	dev_pm_clear_wake_irq(&pdev->dev);
-> +	device_init_wakeup(&pdev->dev, false);
-> +
-> +	if (bbnsm)
+Hello Fabrizio,
 
-IIUC, no need to test, if the remove function is called, this can't be NULL.
+> Which static analyzers did you use?
+I used the Synopsys blackduck coverity scanner.
 
-> +		input_unregister_device(bbnsm->input);
-> +}
-> +
->   static int __maybe_unused bbnsm_pwrkey_suspend(struct device *dev)
->   {
->   	struct platform_device *pdev = to_platform_device(dev);
-> @@ -223,6 +234,8 @@ static struct platform_driver bbnsm_pwrkey_driver = {
->   		.of_match_table = bbnsm_pwrkey_ids,
->   	},
->   	.probe = bbnsm_pwrkey_probe,
-> +	.remove_new = bbnsm_pwrkey_remove,
+> In this case it's not a bad bit shift operation. The code never passes a parameter that makes it exceed the 64 bit boundary.
+> There is nothing to fix in this case.
+> Remember that analysers are not always right, you still need to read and understand the code.
+Yes, I needed clarification because I wasn't so sure what range of
+values irqd_to_hwirq() returned to hwirq.
 
-I think that .remove should be used here instead.
-(see 
-https://elixir.bootlin.com/linux/v6.12-rc5/source/include/linux/platform_device.h#L240) 
+Thanks for your time and the insights,
 
+Kind regards,
+Advait
 
-> +
->   };
->   module_platform_driver(bbnsm_pwrkey_driver);
->   
-
-CJ
+On Fri, 1 Nov 2024 at 15:18, Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+>
+> Hello Advait,
+>
+> Thanks for your email.
+>
+> > From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+> > Subject: Re: [PATCH-next] irqchip/renesas-rzv2h: Fix potentially mismatched datatype
+> >
+> > Hello Thomas,
+> >
+> > > and read through the matching documentation.
+> > My bad, I will be more imperative next time :)
+> >
+> > > In fact there is no problem with the existing code because the hardware
+> > > interrupt number range for this interrupt chip is guaranteed to be
+> > > smaller than UINT_MAX. IOW, a truncation from unsigned long to unsigned
+> > > int (on a 64-bit system) does not matter at all.
+> > I did not know about the interrupt range of the chip, so I
+> > assumed the truncation from 8 bytes to 4 might pose a problem.
+> >
+> > >If at all, then the proper change is either
+> > >1) to make the related variables type irq_hw_number_t
+> > This seems like the better option to me. If it is needed,
+> > I will submit a patch v2 after waiting for some more feedback, if there's any.
+> >
+> > I have one question, static analyzers report an issue of a bad bit
+> > shift operation
+> > on line 307: tien = ICU_TSSR_TIEN(titsel_n);
+> > #define ICU_TSSR_TIEN(n) (BIT(7) << ((n) * 8))
+>
+> Which static analyzers did you use?
+>
+> >
+> > From what I understand hwirq can possibly have values from 0 to 31
+> > If titsel_n ends up being a large remainder say 5, we can have a bad
+> > bitshift operation
+> > exceeding 64 bits.
+>
+> In this case it's not a bad bit shift operation. The code never passes a parameter that makes it exceed the 64 bit boundary.
+>
+> There is nothing to fix in this case.
+>
+> Remember that analysers are not always right, you still need to read and understand the code.
+>
+> Kind regards,
+> Fab
+>
+> > My humble apologies if my observations are completely off, I'm a
+> > beginner trying to learn
+> > Linux driver dev by looking at how other drivers work.
+> > If this is an issue what could be a possible method to fix this?
+> > I would be grateful if you or someone could point me to some relevant docs.
+> >
+> > Thank you for your time and feedback,
+> >
+> > Best regards,
+> > Advait
+> >
+> > On Fri, 1 Nov 2024 at 02:54, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > >
+> > > On Fri, Nov 01 2024 at 01:06, Advait Dhamorikar wrote:
+> > > > This patch updates the type of hw_irq to unsigned long to
+> > >
+> > > Please do:
+> > >
+> > > git grep 'This patch' Documentation/process/
+> > >
+> > > and read through the matching documentation.
+> > >
+> > > > match irq_hw_number_t.
+> > > >
+> > > > The variable hw_irq is defined as unsigned int at places,
+> > > > However when it is initialized using irqd_to_hwirq(), it returns
+> > > > an irq_hw_number_t, which inturn is a typedef for unsigned long.
+> > >
+> > > We know that, but what is the problem this patch is actually solving?
+> > >
+> > > >  static void rzv2h_icu_eoi(struct irq_data *d)
+> > > >  {
+> > > >       struct rzv2h_icu_priv *priv = irq_data_to_priv(d);
+> > > > -     unsigned int hw_irq = irqd_to_hwirq(d);
+> > > > +     unsigned long hw_irq = irqd_to_hwirq(d);
+> > > >       unsigned int tintirq_nr;
+> > >
+> > > It moves the type mismatch and potential truncation a few lines further
+> > > down:
+> > >
+> > >         tintirq_nr = hw_irq - ICU_TINT_START;
+> > >
+> > > In fact there is no problem with the existing code because the hardware
+> > > interrupt number range for this interrupt chip is guaranteed to be
+> > > smaller than UINT_MAX. IOW, a truncation from unsigned long to unsigned
+> > > int (on a 64-bit system) does not matter at all.
+> > >
+> > > I'm all for being type safe, but what you are doing is purely cosmetic.
+> > >
+> > > If at all, then the proper change is either
+> > >
+> > >  1) to make the related variables type irq_hw_number_t
+> > >
+> > >     You cannot make assumptions about the type which is behind
+> > >     irq_hw_number_t today. The type can change tomorrow, no?
+> > >
+> > > or
+> > >
+> > >  2) Use a proper type cast which documents that the type conversion
+> > >     including the potential truncation is intentional and correct.
+> > >
+> > >     This should not be an actual type cast, but a helper inline which
+> > >     has the cast and explicitely returns an unsigned int.
+> > >
+> > > I leave it to you to decide which variant is the correct one, but I'm
+> > > happy to answer your questions.
+> > >
+> > > Thanks,
+> > >
+> > >         tglx
 
