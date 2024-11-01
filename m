@@ -1,191 +1,110 @@
-Return-Path: <linux-kernel+bounces-392628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0219B9675
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 258649B9679
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB8431F21C4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:21:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CACBA1F214E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803401CC141;
-	Fri,  1 Nov 2024 17:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DD61CB526;
+	Fri,  1 Nov 2024 17:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OiIdnXga"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oltbq8yl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5F41CACEB;
-	Fri,  1 Nov 2024 17:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49741BD9DC;
+	Fri,  1 Nov 2024 17:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730481646; cv=none; b=AlVaYw3ZPRc/1fic8kN5VZVd89BClNdM+LNjHPxI1woqp6+tFiAoWe8HHgWj7d7cvUc2KAFQbSMPsJ9YSnnaaLTgR1/GjMm0FrsnYWEylw96KezbpOjscdnJoCTA5Hz2+qkEFaos2ARIbUwRJdGAdJ1J4IqH2l9JUXL+LlAhRaQ=
+	t=1730481713; cv=none; b=pfuBpFeeOv9c1luok3VE01pBV6YgAk7zcWt191FkHGfMb1Hl8br9jQIRNWszb5L1QEmi4Y/jz2/WlkR6JO9XeoAv5xsU9GuNM6y9UwFfUVfCZ28bbkXFHyZWm54DmlXFAudDMblZygcqqWQNkBxsA/Ms5lsxGnXiYmprG4S8kR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730481646; c=relaxed/simple;
-	bh=JQUGAkKtWtuixpyKXvV6X4p91cSL2otwfZ1ndMlp72U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F1HPxPR4AASXjE0Tyw6citb4oUDHPNDEZgGv8e+7dUkvUYQUIvwT+bngchwGd4AHFwYnGYljC9HQkjN51IzMo4VqxDmOwDVR5vjzfN/X8YYV9HLTwzxnTTMHQCHpmfUDM31o9sfgMTVa0tkruFmWPrFL8LGy409hlr0lbzozJIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OiIdnXga; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730481645; x=1762017645;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JQUGAkKtWtuixpyKXvV6X4p91cSL2otwfZ1ndMlp72U=;
-  b=OiIdnXgazYHvyf7LnPm38f+e4xe8fmMS+ZoutlDsTLzEZZlJkDg03k0a
-   zjtZrzLnyV7OWISv0C3/5kgqJFD+iTihGsu8xw+6qNu2FPguzg5dY4kCP
-   hNmNyNZe2f30jlWuGkIWXG125s4B/8GR/n8tBBg29AxpGDjOASQ5gYnkv
-   ODc+JZIQ6VA2pVWawwBWdADNFHHzqqLhhP3sQiNO/9p6DeIXPDpVC23JW
-   H7g2e8e8S7gVaKeLZ5sdAQMcheDEmZNHxG+Ic2xrTDgKJ57qqRwLhYB22
-   BlbO1mpm6RmIk2uyrNpWNT4rYT/0zN+u0Hy33kdRfmBbnDW8w4md7H2gj
-   w==;
-X-CSE-ConnectionGUID: 9UDM6ekxRQGWftvr0SAOBQ==
-X-CSE-MsgGUID: OtkLbcadQBSVrX08e74Rpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41352544"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41352544"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 10:20:44 -0700
-X-CSE-ConnectionGUID: P6WoitMvTceDc6oAW6kXww==
-X-CSE-MsgGUID: LNpDzPlsRxCpzCJmDkTCdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
-   d="scan'208";a="82899568"
-Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO [10.124.220.146]) ([10.124.220.146])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 10:20:41 -0700
-Message-ID: <51fe5ad1-7057-4d43-b92c-580d187d2aeb@intel.com>
-Date: Fri, 1 Nov 2024 10:20:39 -0700
+	s=arc-20240116; t=1730481713; c=relaxed/simple;
+	bh=3A2/E11RnZgbKpQM60gPR6/16KeHF4eQh342j9UDESM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MkrLzUD70IVL13e40WOPWG4fOWgyvqIkh7XEltswcB7iR4Rpx7hUdhZVuRVhlLBg9rx6JMLizTYHf4SpZPgTNrU4fEFvxqotS8mg79wSHhlDYuOkH3efZdtHIFc+BV8BUF8fI95ljQ0e0z7aVez3m6z/SpAcX+/oxcVuSrgGrJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oltbq8yl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB98C4CECD;
+	Fri,  1 Nov 2024 17:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730481712;
+	bh=3A2/E11RnZgbKpQM60gPR6/16KeHF4eQh342j9UDESM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Oltbq8yl/+NgUCRoK5gDXZ6TqGHRBXXNP0l8DZunO8JLxAsOlx04a2jPRDnpDwNaz
+	 Uij8n+ekZoW3LkB/iapCqXKieuqN3HpmXQaR54bKDfs8yhZ7v9aEsNYAxPVmTRO0nb
+	 1zWngrKGYJ+7tvVXm6145d4H13gbQWqbvYk20ZJ/eXjK/koeWE8gStyXHWNlWZZzRY
+	 vKdWq+p01gxF+1j0ruIM74qz7+e+THH9S2zLTzdYwEJ1Ct7ScITRPJKyzgw3WHNikK
+	 mjQyfL6nBYAuXO4iwFYRC2ip56c1drrEEKtD3ihVOhBj3Sqq0xpjNQQibLKTaLeTgE
+	 i5GJwlmmFCynQ==
+Date: Fri, 1 Nov 2024 12:21:50 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: devicetree@vger.kernel.org, tzimmermann@suse.de,
+	jernej.skrabec@gmail.com, imx@lists.linux.dev,
+	tomi.valkeinen@ideasonboard.com, airlied@gmail.com, jonas@kwiboo.se,
+	catalin.marinas@arm.com, will@kernel.org, mripard@kernel.org,
+	shawnguo@kernel.org, hverkuil@xs4all.nl,
+	maarten.lankhorst@linux.intel.com, festevam@gmail.com,
+	quic_bjorande@quicinc.com, sakari.ailus@linux.intel.com,
+	linux-arm-kernel@lists.infradead.org, biju.das.jz@bp.renesas.com,
+	s.hauer@pengutronix.de, geert+renesas@glider.be,
+	thierry.reding@gmail.com, neil.armstrong@linaro.org, marex@denx.de,
+	mchehab@kernel.org, simona@ffwll.ch, linux-media@vger.kernel.org,
+	conor+dt@kernel.org, kernel@pengutronix.de,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, krzk+dt@kernel.org,
+	Laurent.pinchart@ideasonboard.com, arnd@arndb.de, sam@ravnborg.org,
+	andrzej.hajda@intel.com, rfoss@kernel.org,
+	dmitry.baryshkov@linaro.org, quic_jesszhan@quicinc.com,
+	nfraprado@collabora.com, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 09/13] dt-bindings: display: bridge: Add ITE IT6263
+ LVDS to HDMI converter
+Message-ID: <173048170995.3772353.5460654511674582491.robh@kernel.org>
+References: <20241028023740.19732-1-victor.liu@nxp.com>
+ <20241028023740.19732-10-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
-To: "Manwaring, Derek" <derekmn@amazon.com>
-Cc: ackerleytng@google.com, agordeev@linux.ibm.com, aou@eecs.berkeley.edu,
- borntraeger@linux.ibm.com, bp@alien8.de, catalin.marinas@arm.com,
- chenhuacai@kernel.org, corbet@lwn.net, dave.hansen@linux.intel.com,
- david@redhat.com, gerald.schaefer@linux.ibm.com, gor@linux.ibm.com,
- graf@amazon.com, hca@linux.ibm.com, hpa@zytor.com, jgowans@amazon.com,
- jthoughton@google.com, kalyazin@amazon.com, kernel@xen0n.name,
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- luto@kernel.org, mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
- mingo@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
- pbonzini@redhat.com, peterz@infradead.org, quic_eberman@quicinc.com,
- rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org,
- seanjc@google.com, shuah@kernel.org, svens@linux.ibm.com, tabba@google.com,
- tglx@linutronix.de, vannapurve@google.com, will@kernel.org, x86@kernel.org,
- xmarcalx@amazon.com, mlipp@amazon.at, canellac@amazon.at,
- elena.reshetova@intel.com
-References: <784d1522-0451-4844-a334-8b7d49019437@intel.com>
- <7bd627df-0303-4ded-b8c8-ceb84fb20f0d@amazon.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <7bd627df-0303-4ded-b8c8-ceb84fb20f0d@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028023740.19732-10-victor.liu@nxp.com>
 
-On 11/1/24 09:56, Manwaring, Derek wrote:
-...
->>> Any software except guest TD or TDX module must not be able to
->>> speculatively or non-speculatively access TD private memory,
->>
->> That's a pretty broad claim and it involves mitigations in hardware and
->> the TDX module.
->>
->> 1. https://cdrdv2.intel.com/v1/dl/getContent/733575
+
+On Mon, 28 Oct 2024 10:37:36 +0800, Liu Ying wrote:
+> Document ITE IT6263 LVDS to HDMI converter.
 > 
-> Thank you, I hadn't seen that. That is a very strong claim as far as
-> preventing speculative access; I didn't realize Intel claimed that about
-> TDX. The comma followed by "to detect if a prior corruption attempt was
-> successful" makes me wonder a bit if the statement is not quite as broad
-> as it sounds, but maybe that's just meant to relate it to the integrity
-> section?
-
-I think it's just relating it to the integrity section.
-
->> If the attack is mitigated when the > data is _mapped_, then it's
->> certainly not possible _unmapped_.
->>
->> So why bother with direct map removal for TDX?  A VMM write to TD
->> private data causes machine checks.  So any kernel bug that even
->> accidentally writes to kernel memory can bring the whole system down.
->> Not nice.
+> Product link:
+> https://www.ite.com.tw/en/product/cate1/IT6263
 > 
-> Fair enough. It hasn't been clear to me if there is a machine check when
-> the host kernel accesses guest memory only transiently. I was assuming
-> there is not. 
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> ---
+> v4:
+> * Require dual-lvds-odd-pixels or dual-lvds-even-pixels DT properties for
+>   port@1.
+> * Drop "data-mirror: true"(30-bit LVDS data bit order is not reversed).
+> 
+> v3:
+> * Reference lvds-dual-ports.yaml.  (Dmitry)
+> * Add data-mapping DT property.  (Dmitry, Biju)
+> * Allow data-mirror.
+> * Drop ite,lvds-link-num-data-lanes DT property.  (Dmitry, Biju)
+> 
+> v2:
+> * Document number of LVDS link data lanes.  (Biju)
+> * Simplify ports property by dropping "oneOf".  (Rob)
+> 
+>  .../bindings/display/bridge/ite,it6263.yaml   | 250 ++++++++++++++++++
+>  1 file changed, 250 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
+> 
 
-Previous generations of hardware have had some nastiness in this area.
-Speculative accesses were (I think) logged in the machine check banks,
-but wouldn't raise an #MC.  I believe TDX-capable hardware won't even
-log speculative accesses.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> But if other mitigations completely prevent even speculative access
-> of TD private memory like you're saying, then agree nothing to gain
-> from direct map removal in the TDX case.
-Remember, guest unmapping is done in the VMM.  The VMM is not trusted in
-the TDX (or SEV-SNP) model.  If any VMM can harm the protections on
-guest memory, then we have a big problem.
-
-That isn't to say big problem can't happen.  Say some crazy attack comes
-to light where the VMM can attack TDX if the VMM has mapping for a guest
-(or TDX module) memory.  Crazier things have happened, and guest
-unmapping _would_ help there, if you trusted the VMM.
-
-Basically, I think guest unmapping only helps system security as a whole
-if you must _already_ trust the VMM.
 
