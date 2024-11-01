@@ -1,131 +1,139 @@
-Return-Path: <linux-kernel+bounces-391677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6B39B8A25
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:06:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A4E9B8A26
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:07:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC3A1C21634
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:06:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AE801C217F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368551422B8;
-	Fri,  1 Nov 2024 04:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705D914600C;
+	Fri,  1 Nov 2024 04:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOABM2wQ"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KkAvnGu+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E89211C
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 04:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B109038FA3;
+	Fri,  1 Nov 2024 04:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730434004; cv=none; b=s3SjoVgVmZKHNzDK5uAY5Ezk9PMYiSWMJCoEEN9q/cCAbA4Wg1aGdyzazmgKgeS9j3NwOfjUGTHA7ny1zpUwRjevnirwqxTvUj0pehS5oEcoh3cyVMe/t2/osB0+LHHW2hC2RVbSFTwIkwUnokaPKrrrvVrD7yFSNzRDLQ0DIyQ=
+	t=1730434059; cv=none; b=tfhhS47ERxi21bnHie2Ly7GCji3NyExXQ0awtfWRbdxrP9UqA3T6ZBWnqD2N8VEDD03dnBS8/V80mwkfmQtcTbpooScXolyHZSh1UnRtjGgVrd587ryZbk86o/PYy98IkQukeJjP6wPosYD1TcB78zWZm3JpGIkoiaCp3/MeR40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730434004; c=relaxed/simple;
-	bh=wg+7EhxTHp/RU3B2qd+RlvJRvoI7xgJzuhBj4xZgTQw=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=NejRZOkCSPyKH/TFRyIH/CdqXvXlOeGJpwv3VwU0LJv2nXpBMRvQRH977wOBJvcAaHMIdYbVY0QJUHxZq7er5WozHkX28cl/0fcI6ealjriO0icHaL3DMbRoH+wtFMyy/fDjLDfbwfEsn3mtBmsH5G7aZu/CKJmh1jFQIHzF0Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HOABM2wQ; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-720aa3dbda5so1172072b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730434002; x=1731038802; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z6fNV9cqBbjiDhmOMg+ZfjCE9jQFN6pT8SjAyM1Cm5I=;
-        b=HOABM2wQzBveHZH7xjzG9/yGzPolsTiHqs1O3cqml1YTI2rqoPxJAIjXo6SJarQ9N7
-         QFsJOOaf/iCmv3vWppZyPaTOE0KGyJwnp2EcOC7FkH+wuJl/d3mFYosXbxV1YkEMa9Ac
-         HNqrwIlzBh4l3UTq8gYSDxNyECjOgpjl77I2I4A6wBQga2vDPiaX4/HHlXVksxhBN1rH
-         /nHyGz/uphZCbOo+6vDzQ2zdE1Re+FRia3gt3JeMUEyt27JxTOGHHlRJIirtXXODcSXk
-         +agrjJf9bOhwNqsI4YrY1dzfOVvl+noFjOp27eW3+NWx1hcaRaL6F/VIHRHUClX1pJ7w
-         Sixw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730434002; x=1731038802;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z6fNV9cqBbjiDhmOMg+ZfjCE9jQFN6pT8SjAyM1Cm5I=;
-        b=pjLJc2tVxgBzVU5zNN3n88hcFu9eKs60H2Vr5/F2y4EKaKwLwXqqk7iMmtO7fHXI1Q
-         dabrN7/MuJXo2HVFx60jLZXaarn0HToECW/KdARCtGJ8EBXG9uZ4+kGvKD/IC2sp2j/3
-         n1rPkbAejnMF/pPczQSAjoJqpGT4nyavkd7Yscmqs2VWJppMZImzTnMSacoBGzoZzBfg
-         KWZQD/+3lQorE+CHyaYQhkj2ZSZIb8RXijW2lSnLD81w2Jhc76DXBl/2ZFf9aBrvGfQH
-         nBPsY6tTesCisFOhidVEpAM6sjXCymAf4Yj1OYongjTBId6cdI0CToL7XMd4/bs00CDP
-         cImQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCAV5WV/bYgZBrmjxP9v2p44ekVm0GcxN7Y60SWKZMJii535JMu4svmDf9gWn7dYLaqknKV+rdgKNZQs0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQlxzB+aN5wuZ/Xrktoxf4v0MS6nWxXVTXoGmoZlvlU7JwpPMc
-	8MdNKmmogntm+hQgtWm7J7+a1sfvlepT6aIaCEFIaTXJPfnDxfN5
-X-Google-Smtp-Source: AGHT+IFRZttj0xlmw4OmFxhi0fckSwFgrA7Yr/3PVKMpe0/4OOitM0lPDhLUY1wXX/iIP6DL31PNxA==
-X-Received: by 2002:a05:6a21:8cc9:b0:1d9:83cd:3d88 with SMTP id adf61e73a8af0-1d9eeb95defmr14112699637.14.1730434001670;
-        Thu, 31 Oct 2024 21:06:41 -0700 (PDT)
-Received: from localhost.localdomain ([43.153.70.29])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93daac954sm1958373a91.23.2024.10.31.21.06.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Oct 2024 21:06:41 -0700 (PDT)
-From: mengensun88@gmail.com
-X-Google-Original-From: mengensun@tencent.com
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	alexjlzheng@tencent.com,
-	MengEn Sun <mengensun@tencent.com>
-Subject: [PATCH v2] vmstat: call fold_vm_zone_numa_events() before show per zone NUMA event
-Date: Fri,  1 Nov 2024 12:06:38 +0800
-Message-Id: <1730433998-10461-1-git-send-email-mengensun@tencent.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1730434059; c=relaxed/simple;
+	bh=1sEXB+ushg9fQ1al0t+VIyGQ0yT1lVo4SrYrQPA56/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AAB2jW+QlEBD8A36HeCZKxpXcz+REQ0v0Z8E0mCBS2/gNHAI9TsJvL2Sl6OXL2JzKzYsJ6Hg/ZpUNjNLI36RdmsaNUsfmc743NnBm6Ca4EfVB90otlTGP0KOnmL0I738M/nBpt4C0gVU3F1KU9HoOhMPlYpU12wQPDfwCHBfrP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KkAvnGu+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730434049;
+	bh=9dDxhNEZb0bvr/fHxrN6Wiv6fmCfOovAqAmzrRTl8XM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KkAvnGu+bzc2mYiUrqV66oJoNUoVHotY6d4bjAI92giigS42xLIpfPCoxB3UYYEy/
+	 JCohVlsotoPQe+l1RkVTs0HsaaHW1vAHhjvd0lXaWWYBrF+aAklsIL/ea1QxR+ucQR
+	 hOQ07k4WN4isJs2jVboX8c+Fy3PLlMA3nuBSAaE7Qo98dNeJjwpEfGAf9MzzxAKiT1
+	 bUQjE3KTtOQzihXIfGrX3pYXKfQxHpPLaWA/kHdcveCjX3C0/NK+0IuWXVrvyInxXy
+	 DIAQdD8d9mpx0bjnRheQkL49Uf16ZirFCn+8GciMhHNnNNKqNR6HLEXgmcBUCCrr96
+	 fyJij0lw4D2pg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XfnPs2yMgz4x5J;
+	Fri,  1 Nov 2024 15:07:29 +1100 (AEDT)
+Date: Fri, 1 Nov 2024 15:07:30 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Amit Sunil Dhamne <amitsd@google.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Message-ID: <20241101150730.090dc30f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/4xMmUkNb+HNfppPlUGg2g9U";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: MengEn Sun <mengensun@tencent.com>
+--Sig_/4xMmUkNb+HNfppPlUGg2g9U
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Since 5.14-rc1, NUMA events will only be folded from per-CPU
-statistics to per zone and global statistics when the user
-actually needs it.
+Hi all,
 
-Currently, the kernel has performs the fold operation when reading
-/proc/vmstat, but does not perform the fold operation in
-/proc/zoneinfo. This can lead to inaccuracies in the following
-statistics in zoneinfo:
-- numa_hit
-- numa_miss
-- numa_foreign
-- numa_interleave
-- numa_local
-- numa_other
+Today's linux-next merge of the usb tree got a conflict in:
 
-Therefore, before printing per-zone vm_numa_event when reading
-/proc/zoneinfo, we should also perform the fold operation.
+  drivers/usb/typec/tcpm/tcpm.c
 
-Fixes: f19298b9516c ("mm/vmstat: convert NUMA statistics to basic NUMA counters")
-Reviewed-by: JinLiang Zheng <alexjlzheng@tencent.com>
-Signed-off-by: MengEn Sun <mengensun@tencent.com>
----
-changelog:
-v1: https://lore.kernel.org/linux-mm/20241030163527.cc9075a4aeb60448873aea73@linux-foundation.org/
-v2: made some modifications to the commit message: 
-    - Made the commit information more detailed
-    - Added the range of versions that need to be fixed.
----
- mm/vmstat.c | 1 +
- 1 file changed, 1 insertion(+)
+between commit:
 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index b5a4cea..2770800 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1778,6 +1778,7 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
- 			   zone_page_state(zone, i));
- 
- #ifdef CONFIG_NUMA
-+	fold_vm_zone_numa_events(zone);
- 	for (i = 0; i < NR_VM_NUMA_EVENT_ITEMS; i++)
- 		seq_printf(m, "\n      %-12s %lu", numa_stat_name(i),
- 			   zone_numa_event_state(zone, i));
--- 
-1.8.3.1
+  afb92ad8733e ("usb: typec: tcpm: restrict SNK_WAIT_CAPABILITIES_TIMEOUT t=
+ransitions to non self-powered devices")
 
+from the usb.current tree and commit:
+
+  33a0302455d6 ("usb: typec: tcpm: Add support for parsing time dt properti=
+es")
+
+from the usb tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/usb/typec/tcpm/tcpm.c
+index 7ae341a40342,a8fcca029e78..000000000000
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@@ -5042,13 -5055,10 +5056,14 @@@ static void run_state_machine(struct tc
+  		if (port->vbus_never_low) {
+  			port->vbus_never_low =3D false;
+  			tcpm_set_state(port, SNK_SOFT_RESET,
+- 				       PD_T_SINK_WAIT_CAP);
++ 				       port->timings.sink_wait_cap_time);
+  		} else {
+ -			tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
+ +			if (!port->self_powered)
+ +				upcoming_state =3D SNK_WAIT_CAPABILITIES_TIMEOUT;
+ +			else
+ +				upcoming_state =3D hard_reset_state(port);
+- 			tcpm_set_state(port, upcoming_state, PD_T_SINK_WAIT_CAP);
+++			tcpm_set_state(port, upcoming_state,
++ 				       port->timings.sink_wait_cap_time);
+  		}
+  		break;
+  	case SNK_WAIT_CAPABILITIES_TIMEOUT:
+
+--Sig_/4xMmUkNb+HNfppPlUGg2g9U
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmckVAIACgkQAVBC80lX
+0GwBDAf/W4gv00KbXldu+bRHS7XvZKlBefcap8kdsd8/2oJCQ+m9fNQmSpzrGQ9o
+bnY+e71VnEp8nNmYwjzdWv7qNSAvSOyL/T04tOaqMciNMq5vDRvvpq/KC2KFsFb+
+23wSBa9VP2G6LDZ3QvkkvYclMEgeL/AQB9E2Ny9mYvdbD9EHgll329G1ktIAvwsx
+9dkcoyslbv5cCjp1F13irxZ1EkRmibvdpt9OCNqbw67a/OQsBCi5gSrYsadBozEN
+BZhDnxjLAv/y3ZVn8O2rYGwqmG7RxBkmjI+Wwl9S4iBl9zGBfxEpPjucmsmd3QMo
++om/7leOKiNGGsVnl5GGFpolR/uMPw==
+=m1uX
+-----END PGP SIGNATURE-----
+
+--Sig_/4xMmUkNb+HNfppPlUGg2g9U--
 
