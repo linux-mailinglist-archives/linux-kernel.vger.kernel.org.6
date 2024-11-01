@@ -1,108 +1,119 @@
-Return-Path: <linux-kernel+bounces-392619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31409B964F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:14:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72CC69B9653
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:15:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71C741F22CFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3153C1F23051
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039EB1C9DF6;
-	Fri,  1 Nov 2024 17:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5F31CB512;
+	Fri,  1 Nov 2024 17:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWRgoQKa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6gxk55o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB921CA81;
-	Fri,  1 Nov 2024 17:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AD619F430;
+	Fri,  1 Nov 2024 17:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730481268; cv=none; b=KbRWE5/iO7SjcETrOprIzaNkvTzOdNvlribekAKqriO3FxN/FCvNBoSoiqazj2TdHW7N5S5Vky/q7xfeUf22TrnZxkwbwdjjtRxOMNYYikmK98WilW8A6TiHJMtmSdKOpGvWf1FF7GNsMAPbRmOHVc7woTt7E4t5wapByyplw1U=
+	t=1730481296; cv=none; b=rIvJcZ/wDKwmon5wBQDxux/5FGx877bhc/DvGMtA4Zbse1hJPqWiwS9/CIgdSmPFt28sYJdxChRgTco822k7ZAWFCfC/ruy9ZdThDB0CmWLsyWR5kVtfiWu8839KEvNM2A8EzxyORM8gEKmj8zVCdTuKB4kX0ICl1DVECXHks+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730481268; c=relaxed/simple;
-	bh=t7jCJGcff3SakeRBVtopNaYzOmhOtoxkGSrpxV88o0k=;
+	s=arc-20240116; t=1730481296; c=relaxed/simple;
+	bh=8PQtSQtI2CnGXoc91N1O+lH/gZDi0mLFYKuOeJ3uXlY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUbwfCS0wm33vgaDqxkAoEjBx/inaWIwe7t8VzgUdzlyPWFFqNYrGtEKd+dr1tfK38gR+tPH52BW36DVubASsqFWlGiAWDe2+SpijjjtIr+1eOZxNA1nDa6bcqSqT5VqPiVwGu8VbmpnrBzjc2BbeeJ63UmmHdXNvEew9oT+fSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWRgoQKa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE980C4CECD;
-	Fri,  1 Nov 2024 17:14:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3v18WcQKYO+PseLkreJyNHzTeYpCWEREHPXA462+XodGXdgnpASJSCFeqzRUQZCiziYgfn9U9/KRocp4ztqLUjl3Adsbvrl7HxghfFoPXmJF+HBURW7kBb2WCKFGtW8IB4D4WW+6eHOOupM2ErBAYfGOHtnCmlj2NUr83qV7X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6gxk55o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5331C4CECD;
+	Fri,  1 Nov 2024 17:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730481267;
-	bh=t7jCJGcff3SakeRBVtopNaYzOmhOtoxkGSrpxV88o0k=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=UWRgoQKa+3GiDICunCPQClgjWjn+qDGVO0kXqpBA7LUJOPmQCIM8hH/wGZfsSEEEm
-	 4KvKBKe42IrQgSonw2TXrXXOre5xvZLgDfusDeVlA3f6jCZdsEdRfUdn68TtQd+IZ9
-	 escB4Sb3UEQyn7fFy2ECJkcaAddOW8rMXAkbYRLUVO6FVaD5OUsc0tXrSmYOFjWo2i
-	 7Ib3kb+lqWpMkxw5GLWAtCgOyJXylmp/+IYKKbkultN9tWSTl6SAS64ZOceLCZJRzY
-	 kyoTJotH2AmghfzHzoHA942vPbRfPP1IQF/h0hvJtilD7dW4yOl385BNvsgUPjGhKA
-	 MeK7SwaHXpf5w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 73DC9CE0D6F; Fri,  1 Nov 2024 10:14:27 -0700 (PDT)
-Date: Fri, 1 Nov 2024 10:14:27 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Elver <elver@google.com>, linux-next@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-mm@kvack.org, sfr@canb.auug.org.au, longman@redhat.com,
-	boqun.feng@gmail.com, cl@linux.com, penberg@kernel.org,
-	rientjes@google.com, iamjoonsoo.kim@lge.com,
-	akpm@linux-foundation.org
-Subject: Re: [BUG] -next lockdep invalid wait context
-Message-ID: <ed93c68c-fb17-4c20-958e-0fc4ce8bcd83@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
- <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
- <ZyK0YPgtWExT4deh@elver.google.com>
- <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
- <20241031072136.JxDEfP5V@linutronix.de>
- <cca52eaa-28c2-4ed5-9870-b2531ec8b2bc@suse.cz>
- <20241031075509.hCS9Amov@linutronix.de>
- <751e281a-126b-4bcd-8965-71affac4a783@suse.cz>
+	s=k20201202; t=1730481295;
+	bh=8PQtSQtI2CnGXoc91N1O+lH/gZDi0mLFYKuOeJ3uXlY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S6gxk55oOasN96QdE6pIPL8XeM+bZZjNFhozsbBCu8O3G5PJZ+tIMGN3JA1/7irku
+	 LB7tMIrId1BdjgITf1p83aLxtzdt853gruWbUz8KL6M3Zv/3ZEB0jsIug84MQPRzPy
+	 ev4LsO2Rdvus8hduw+k2fJe0gP8JOAxOSs7gS0NzjWmGm6WR8zhol4EBkSdv55p0Nr
+	 wMTbwaO4vrBWg99/Cqb/uTniJafRfyhW0GlIiMhhCzYITtSgFFgsEqRO/tKKqwk/sN
+	 t3gjs4IIOBkic2xPuqQskljRpsYz2UQBALwtD1IJQmpOiBru8WxqaUcXLhk8uzeVBh
+	 cMFapqj+Yjqwg==
+Date: Fri, 1 Nov 2024 17:14:50 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Suraj Gupta <suraj.gupta2@amd.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, radhey.shyam.pandey@amd.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	git@amd.com, harini.katakam@amd.com
+Subject: Re: [PATCH net] dt-bindings: net: xlnx,axi-ethernet: Correct
+ phy-mode property value
+Message-ID: <20241101-left-handshake-7efc5a202311@spud>
+References: <20241028091214.2078726-1-suraj.gupta2@amd.com>
+ <20241031185312.65bc62dc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4wu+VIv2GgdEYoAq"
+Content-Disposition: inline
+In-Reply-To: <20241031185312.65bc62dc@kernel.org>
+
+
+--4wu+VIv2GgdEYoAq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <751e281a-126b-4bcd-8965-71affac4a783@suse.cz>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 09:18:52AM +0100, Vlastimil Babka wrote:
-> On 10/31/24 08:55, Sebastian Andrzej Siewior wrote:
-> > On 2024-10-31 08:35:45 [+0100], Vlastimil Babka wrote:
-> >> On 10/31/24 08:21, Sebastian Andrzej Siewior wrote:
-> >> > On 2024-10-30 16:10:58 [-0700], Paul E. McKenney wrote:
-> >> >> 
-> >> >> So I need to avoid calling kfree() within an smp_call_function() handler?
-> >> > 
-> >> > Yes. No kmalloc()/ kfree() in IRQ context.
-> >> 
-> >> However, isn't this the case that the rule is actually about hardirq context
-> >> on RT, and most of these operations that are in IRQ context on !RT become
-> >> the threaded interrupt context on RT, so they are actually fine? Or is smp
-> >> call callback a hardirq context on RT and thus it really can't do those
-> >> operations?
-> > 
-> > interrupt handlers as of request_irq() are forced-threaded on RT so you
-> > can do kmalloc()/ kfree() there. smp_call_function.*() on the other hand
-> > are not threaded and invoked directly within the IRQ context.
-> 
-> Makes sense, thanks.
-> 
-> So how comes rcutorture wasn't deadlocking on RT already, is it (or RCU
-> itself) doing anything differently there that avoids the kfree() from
-> smp_call_function() handler?
+On Thu, Oct 31, 2024 at 06:53:12PM -0700, Jakub Kicinski wrote:
+> On Mon, 28 Oct 2024 14:42:14 +0530 Suraj Gupta wrote:
+> > Correct phy-mode property value to 1000base-x.
+> >=20
+> > Fixes: cbb1ca6d5f9a ("dt-bindings: net: xlnx,axi-ethernet: convert bind=
+ings document to yaml")
+> > Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+> > ---
+> >  Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.ya=
+ml b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
+> > index e95c21628281..fb02e579463c 100644
+> > --- a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
+> > +++ b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
+> > @@ -61,7 +61,7 @@ properties:
+> >        - gmii
+> >        - rgmii
+> >        - sgmii
+> > -      - 1000BaseX
+> > +      - 1000base-x
+> > =20
+> >    xlnx,phy-type:
+> >      description:
+>=20
+> Can we get an ack from DT folks?
 
-This was scftorture rather than rcutorture.  While I know of others who
-regularly run rcutorture, to the best of my knowledge I am the only one
-who ever runs scftorture, which tests smp_call_function(), its friends,
-and its diagnostics.
+I dunno, the commit message gives no detail at all about the impact of
+changing this, so I don't want to ack it. I *assume* that this is parsed
+by common code and 1000BaseX is not understood by that common code,
+but...
 
-							Thanx, Paul
+--4wu+VIv2GgdEYoAq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyUMigAKCRB4tDGHoIJi
+0i2GAQCuoR/upzZy1sxES575nS/BSelCvFz2AM3Cj92y894zLwD/ZQg/jXivbBWs
+IxMNq6HKt9TBMnZSC0zFLZ6yQoDIag4=
+=RM9+
+-----END PGP SIGNATURE-----
+
+--4wu+VIv2GgdEYoAq--
 
