@@ -1,105 +1,159 @@
-Return-Path: <linux-kernel+bounces-392232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008D99B914C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:49:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3050D9B913D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:43:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C78C1C20ED4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:49:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB6A1F22951
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7239F19D891;
-	Fri,  1 Nov 2024 12:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95F619EEBD;
+	Fri,  1 Nov 2024 12:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="arSkomw8"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTQ108ki"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB459F9D9;
-	Fri,  1 Nov 2024 12:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E51D19E7F7;
+	Fri,  1 Nov 2024 12:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730465335; cv=none; b=mtfeicfWgWHplKKi1R0x0HfdGcxrZgWnIm02lKHVXytjhfvaawoVcF01HN6k6Zjgvuzpy1CzPGlMdkXRZgybJXZiVubkUclZen2zTEEfoULdIcWDZIWQTSPesukNPD91kWwwnkHPXr0pjM9s+pRssMJb/OnxwmeWDR5RNdHXlwM=
+	t=1730465010; cv=none; b=mnSpeoy2tNy3ptWdi/thXTCA9B6VVAvOJDGnhHwp9zUR3z5cETj+x1QWWyjJLZGb8cuIyi2yz0shUux7P8i7TVBitkSdLYaAlOnZ5s3L7katy8tL762Gs2e2taNCQZ7EgR8zSYEu4fK/M4Uewpcj8iz59nVnCbFyphVDweVATXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730465335; c=relaxed/simple;
-	bh=t6MOPlAFLeix/1c7rFrh7y0ZxRC8o+cTFGNYkWdBSF4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=cUMCvk3ThwAzGsIDvtZnZL26rH1nSaxfEbW9fh96VYg+FmMGRkOokOnciIeuZ2IPSc0W0txrVuwPvSVfH+gRrT0FREjj6Rog5PxSBc5HRo12/9f3XPdJxz+jCvRp2gcbnoATiKlJLeQ9sUS5NcX18DUl6MZkJXP0bMy7Ep88K+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=arSkomw8; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730464991; x=1731069791; i=markus.elfring@web.de;
-	bh=wC6WwKWnhI299rVfj7xX/miU/prcrbdI5Rd6yT/vKLg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=arSkomw8bsI+nNP//y/cuEP5WVFZgcivYOYB/OOo5NclW286/y/ewY6Iv5mKQnq4
-	 RABBihg0yesZVZDy+nmwdFzInw4M1AQAnAIEbJk7FDf1Mfpj//RTkt5DVR1yQ8YIM
-	 YF/BQEleimA8nz4+lN5ScyrxLtiHqO/WkvjKN52kxxkyOhqy3zL4zxxGY1V89FFRm
-	 15z/t9W2JPv5VxqMGw+99tOAjL9Q3eC4u3e7/PZ/pXZ7+oKlbNI/vCsAWJRDAfWEP
-	 W5ieFluaphewatZhB20DNBaTVsTnJiYANlaOjkOBk9Q6ZXf1CFfMH/Bnsvx96LO+t
-	 hwqOxhFz3YJMEUUvfg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MDMvE-1sxXKq3amE-005IGv; Fri, 01
- Nov 2024 13:43:10 +0100
-Message-ID: <8c7a5bcc-1fdb-45af-8f0c-1f9b6f0cf058@web.de>
-Date: Fri, 1 Nov 2024 13:43:06 +0100
+	s=arc-20240116; t=1730465010; c=relaxed/simple;
+	bh=uPlh3P5DwiTFnDljux1ea+i8bOrJ1psZxB9V4LleEII=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kGh1zURWoTWR6z5LhN60HveS+DaSCRou9kl7XK51NyoX6ke0ubsEyRJ+D0PUVcwm+nZ3mGtWQJOl0l5Arz2S0YWKsvTbb/54Dbcei/DzRJcp9cdXmdrEFfRtHysKXlIi0i6/l2SaQk6eSCLl1TLCQ4z550GK9hC3XUSXQ3C3qM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTQ108ki; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7D6C4CECE;
+	Fri,  1 Nov 2024 12:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730465009;
+	bh=uPlh3P5DwiTFnDljux1ea+i8bOrJ1psZxB9V4LleEII=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hTQ108kikP8x12oxffI82zsXg6c0NtrMDkTtRGBM0jxRogs7+aF07hGH+m265vkOa
+	 HqqNZsqrxra6Tpo8i4YfWRJIMShllKx/0xQ8LuaY2L+FQEjwLwaVBWIlTdjCa2G0P9
+	 sfYWbv/X0Bo1lirL5OBx3l+s4EgOQfnrTJYEcWXV+YWTJUmo7ueVFIeYuNiNg0ujlY
+	 wCA+a5EUradafD2LLizEeHm2b8KGOAY2LCQd/wY2OSDUE8n6a3Xdu7Z8LXUKdCDIOQ
+	 C2JLm2qOt5mCvFAckwp0jSGH0GVyNCmtklkSm6sPeAQEF5W9HD5ZIiHfKyCz/1hUxY
+	 j9oeDHvK1j2lg==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Fri,  1 Nov 2024 13:43:21 +0100
+Message-ID: <20241101-vfs-fixes-11d83463b3ce@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-iio@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-References: <20241101081203.3360421-2-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 1/4] iio: light: ltr501: Assing ddata to NULL
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241101081203.3360421-2-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:0NMoCiaEoR2Qle64Ww0/lEfZ7OUQnbY7y7k5caHPwgeIESC6aSw
- nukqSpEJnzmCoJFCQhIBOrHhLe6rlKThC59jSIBAiXlf4zifql/HPq6KFx5sDgPxwYpwzui
- jIg1BHfPd5AiMEQIY+gkvF2T1to56ub17bb6HWpSa+pX2m+miINs4Jth+YtBNT6SQqptxJk
- 7VSEpIMac4nccF88d7Now==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KhywX60mZHU=;JH6165shfRPTr6Ef7sCjRBvj+ga
- fo5DmQfOJBMZuczQpJyGn8/4kwK/wifVGur0kKnYujKsPppKZOy2F4os1Ph4CicULk/fMtmkX
- TDG4kOBRKbk2Z8bWXpvFvC/vwz17BgVfx/c0kP5bThdvafAQmKgOIgU+lHa3SLxEY9MAl3Prs
- yHJFStd/o0JjzG+kDZvtmB5m03SLyVwXiPcR3KpD7WKJmiE/yCDfDFexsHwjBI+5LEeR0xS7H
- /McjpN5VvkBZMOiVq2VehEguipMWIgKL7nfHLhbYqrGw1ufoO84Jrp4rVqBBrFYP0cHAcjrQq
- QCzDWHuw4EOSwFKxs/ICaxsy4Kj1pde2U+COyHWB8tZTCxPTF9cLYkkdVwIY90kdmWvIXyTQa
- wHxZZB8tslVIlbm6xNo6xxJTDw5JS92VwjPhzyC9B46gdM3bbUg0T+11+6jDmImBphnFv2pTq
- DbRH4lUmHLAdR5YfBaFSG/FPD5Kg2tvrM9cOJ9W6B0+W+VBTr8XC3xFCfTZFlHKLMk/8hajHR
- wnZijKjXuoo01Ag/DeoAVcwEMucli8vmprGfOhX5K3Jlzfub71bDCqDgAHac7Re5d9gx6t3uh
- b9emX9csvl04EzjBmFgPpv1zZ9W7Of0TH1Legq+a/llSazGNNn4vpVGGj4DxEqyS0mVb85C2M
- MA0m+YqAr8LRJxU1ObmHZa6B6LNdVriOInh2mwm8/kMDpiEhFpWnQsnvkxLzsOLAHMWjG2iPl
- 5Q+/aHtoc+EKOz3B5fRpoc/DSAyfhn0jaG1p0DvV6KkHygbZwPrxJYblrgEn6ze6ILv/Hcafg
- tw6BbHRBM+yrNvwsL3TmoTvQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3217; i=brauner@kernel.org; h=from:subject:message-id; bh=uPlh3P5DwiTFnDljux1ea+i8bOrJ1psZxB9V4LleEII=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSrnHm1M1nJyVh8RcjJi9Fu7z70FEhfY/lzVEt7ncWES Nfc+WtdO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbysZXhn/nkAC8FC4G2thnH zx9kUng7VfO/T/JvC16DS9+3lZUmPmZkaPV0essRydZooRw+oUdMqFM7a7XEg69/tdYbXRRp1Xj MBAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-> When iio_get_acpi_device_name_and_data() fails, the ddata may be left
-> uninitialised. Initialise it to NULL.
+Hey Linus,
 
-How do you think about to perform the variable assignment only in
-a corresponding else branch?
+/* Summary */
+This contains a few fixes:
 
-Can it be that this adjustment does not really matter here because of
-the following statement?
+VFS:
 
-	if (!name)
-		return -ENODEV;
+- Fix copy_page_from_iter_atomic() if KMAP_LOCAL_FORCE_MAP=y is set.
 
+- Add a get_tree_bdev_flags() helper that allows to modify e.g., whether
+  errors are logged into the filesystem context during superblock
+  creation. This is used by erofs to fix a userspace regression where an
+  error is currently logged when its used on a regular file which is an
+  new allowed mode in erofs.
 
-Regards,
-Markus
+netfs:
+
+- Fix the sysfs debug path in the documentation.
+
+- Fix iov_iter_get_pages*() for folio queues by skipping the page
+  extracation if we're at the end of a folio.
+
+afs:
+
+- Fix moving subdirectories to different parent directory.
+
+autofs:
+
+- Fix handling of AUTOFS_DEV_IOCTL_TIMEOUT_CMD ioctl in
+  validate_dev_ioctl(). The actual ioctl number, not the ioctl command
+  needs to be checked for autofs.
+
+/* Testing */
+
+gcc version 14.2.0 (Debian 14.2.0-3)
+Debian clang version 16.0.6 (27+b1)
+
+All patches are based on v6.11-rc4 and have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+No known conflicts.
+
+The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+
+  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12-rc6.fixes
+
+for you to fetch changes up to c749d9b7ebbc5716af7a95f7768634b30d9446ec:
+
+  iov_iter: fix copy_page_from_iter_atomic() if KMAP_LOCAL_FORCE_MAP (2024-10-28 13:39:35 +0100)
+
+(Note, I'm still not fully recovered so currently with a little reduced
+ activity.)
+Please consider pulling these changes from the signed vfs-6.12-rc6.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.12-rc6.fixes
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge patch series "fs/super.c: introduce get_tree_bdev_flags()"
+
+David Howells (2):
+      afs: Fix missing subdir edit when renamed between parent dirs
+      iov_iter: Fix iov_iter_get_pages*() for folio_queue
+
+Gao Xiang (2):
+      fs/super.c: introduce get_tree_bdev_flags()
+      erofs: use get_tree_bdev_flags() to avoid misleading messages
+
+Hongbo Li (1):
+      doc: correcting the debug path for cachefiles
+
+Hugh Dickins (1):
+      iov_iter: fix copy_page_from_iter_atomic() if KMAP_LOCAL_FORCE_MAP
+
+Ian Kent (1):
+      autofs: fix thinko in validate_dev_ioctl()
+
+ Documentation/filesystems/caching/cachefiles.rst |  2 +-
+ fs/afs/dir.c                                     | 25 +++++++
+ fs/afs/dir_edit.c                                | 91 +++++++++++++++++++++++-
+ fs/afs/internal.h                                |  2 +
+ fs/autofs/dev-ioctl.c                            |  5 +-
+ fs/erofs/super.c                                 |  4 +-
+ fs/super.c                                       | 26 +++++--
+ include/linux/fs_context.h                       |  6 ++
+ include/trace/events/afs.h                       |  7 +-
+ lib/iov_iter.c                                   | 25 ++++---
+ 10 files changed, 169 insertions(+), 24 deletions(-)
 
