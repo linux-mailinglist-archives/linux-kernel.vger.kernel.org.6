@@ -1,137 +1,125 @@
-Return-Path: <linux-kernel+bounces-392095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94EB59B8FA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:45:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13C69B8F89
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:43:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4103F1F214AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:45:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62667B24F02
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EBD1AB6E9;
-	Fri,  1 Nov 2024 10:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C421A0AFE;
+	Fri,  1 Nov 2024 10:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y0WQ5hTo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CSsNuvOC"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A939170A15;
-	Fri,  1 Nov 2024 10:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8271A0724
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730457603; cv=none; b=AHHcC0Ls32WzafAazGqAhcDmN2AYz1I7VXKzVt+VgtTbqUE0ysiJAnkhMaoWhKqD/k6NpGAi0wWK0T5MH2V9OoXnwrKzciaDJ3m6kvyUqUOXBoBsi74eprHaGoj3rw30lnJfA/3of8slW3lN0mzvXZaxpUHgeRaPyEZh44ff6g0=
+	t=1730457582; cv=none; b=rbyLYVf00MzjyxotSzqMybB1oL3oO/3V+L0lVtkqOdu31jPSRAAz71gQjHMgjfJlWum6NU3TKvd1BRD2NTMhO1NTpNWGHUd859fsst7evqgvyZF6pD4+WcS2Zzkx1QJFacl7AbhiYA+Ci5L5bfn2RRapCVaAxczRJCrdaHXDG1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730457603; c=relaxed/simple;
-	bh=LB0ERSXQL/Llu9CsxiUVYqiS/OzFA+1sg2d30cc2eNI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=KL/G6I32+eCDyPpKyJQCAjXHb9De+/WfimUm+mGndiFmTupnDdy3VwK8SzcXUstk0rLhUxcQ41350kkbGX427EiEIyaG8rIqw0RsAjs6KHuMUIFYzu44g74C4jKDB6eO3uC+bU3NJOxRrmS3zE2HkfZ1BsXyvdxab5MPzHV16Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y0WQ5hTo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A19LBnJ004630;
-	Fri, 1 Nov 2024 10:39:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	t1cA9NDwFLH5+vfmPGgF5z/CRZpfWRBSGlRVBz5PXQE=; b=Y0WQ5hToLd0VhKE8
-	8Im6pWtW047ydpfFEmazd8L383TrGBHsso0IKhznXhRQZf1QSueAIzQMDc23maEs
-	bLwjJHAIar/5WKxcdwmj8PmIa58Qf5g15UpN0jTZNuwkWpXUp5CHafH1k8jpixit
-	BHnqyvYY25MaoJtXFKj2jt8k482rjE5gHmyOMcwlPSASey4weIdD5S5nbq8RemZN
-	eSIsnOz28sKWcTtQ4bsMOvFhFQwPeH1XZc3bRtxI+0FL4A7vspTvnNrv5GJQvNVc
-	qDmSnd9QFWqTQMiqiJVHXiZp75F8HmpMg3Ef1QP9WUWlke+Uts0ryNOt3r6aAjLZ
-	IxA+CA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42m65pby9a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 10:39:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A1AdTQL027105
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 1 Nov 2024 10:39:29 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 1 Nov 2024 03:39:24 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Fri, 1 Nov 2024 16:08:23 +0530
-Subject: [PATCH v2 11/11] arm64: defconfig: Enable QCS615 clock controllers
+	s=arc-20240116; t=1730457582; c=relaxed/simple;
+	bh=nIWiBwHnkqzLYf7olD7gqFwtSd6ENgt+tj/vqI3johw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ShjZFK32XaaiwDYVw7518//UF21Me2eEqELlk8dkoygtIfzdJ+Cq4x5wymUX5034s4jC3a++w2Qrjul3e+XjrySTcNvB9Nx9qbk4BudY4CA+ALwMUVcn99aEEWBL3VR6iB+bvRsXAbdX3isOrVqFB0CfcVF3KvmHyLJ4jDCeOsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CSsNuvOC; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43152b79d25so16418535e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 03:39:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730457577; x=1731062377; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UpA6oZQuCmloruRIu239MJgRSbmWeTtcRHZ1zdEpTxc=;
+        b=CSsNuvOCZphaHsCblUXB52RgpMZi9QtIGqkIAw3dtKWBpk/mSu5RQXaBGn1SbCCMof
+         JVR47iAiQg8xMtHs38rpZ9pffcmH6V+G3tbZ21cBnRo8vZnYBB6ayfCGRHKBqSCjdwuV
+         kAavmya0nZ5l/BkMOQnzRcB4Ev+wvDWFkW0QvvdxRPl8QJcVfz19ME8oLFI9jG+n848X
+         b1TXClTSyAtM1neeqfchTGYtsqt6M/TaaIAQ5G3XV2wG2FNZ/sMdPLbkJ31RqtdVmRuX
+         uBC4HQDEU3Xp4ht/PdbDiCbl2a/h4yEeRMg/jlp/prRLiGdFii6DVHiN1qu7Zw/JNUOI
+         se/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730457577; x=1731062377;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UpA6oZQuCmloruRIu239MJgRSbmWeTtcRHZ1zdEpTxc=;
+        b=qYw5SsaHtRB93vvGqZSktP4yq5IxZaaealQBY6dol2AdjDmULopI61MegxG256uc/P
+         lgAzG513OAHhwh7KXY/i55S6tfAIpucbzaX4nmlJu+lFrX8Ywrx+hV8z705q7zCtBo4+
+         2cCC422nVYRYxNhPCOgNWxWfPEeSYa2o00/Mpbp5ZpiwshP9SWJ+sYYTPlbHxUyAa+XV
+         KH+ypvG8IrV/37s1W9fTRl9+6FJglXo2V/ZUt9iOX/sxdHG0YSWwV3Q+FDlT8g0kdnV1
+         FpLXHytvR2jhdY3X5CGbjIvIr4274uwDk0r40uh60M0tjbTpNJiM/sO7Dyg6IGctTLIK
+         Icxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNiHUgJ1OV87nyVY/EERzS4gg/Cz5OKH2AfHqmTNQVmVz4+mQIKwXau8APcEfw4VAeuN9FrFqsf10uiRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1EAG4GYs1J4ey95LqlD+QsFW2M4/jerl6Nb7x4/2NeXgJFnxh
+	0dhBD8vI6ow4YQBKObehcbPOJK80z9heBFcFQ7ALl8TwPt7sv7rAjQfw7LB1uI8=
+X-Google-Smtp-Source: AGHT+IGUUeraI2AHPHyOxMnlI92HlBbXuqTgbdxId0qtgQfqlUmT1WHhFGv8dsxR7gHrSyAPOAzU8Q==
+X-Received: by 2002:a05:600c:3c8d:b0:431:508a:1a7b with SMTP id 5b1f17b1804b1-4327b801250mr57559765e9.34.1730457577384;
+        Fri, 01 Nov 2024 03:39:37 -0700 (PDT)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ab305sm55854545e9.7.2024.11.01.03.39.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 03:39:37 -0700 (PDT)
+Message-ID: <a2c7d55b-bdaf-4cc1-a653-b398952219f2@linaro.org>
+Date: Fri, 1 Nov 2024 10:39:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] media: amphion: Fix pm_runtime_set_suspended()
+ with runtime pm enabled
+To: Jinjie Ruan <ruanjinjie@huawei.com>, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, ming.qian@nxp.com, eagle.zhou@nxp.com,
+ stanimir.k.varbanov@gmail.com, quic_vgarodia@quicinc.com,
+ shijie.qin@nxp.com, hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: chenridong@huawei.com
+References: <20241101094050.2421038-1-ruanjinjie@huawei.com>
+ <20241101094050.2421038-3-ruanjinjie@huawei.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241101094050.2421038-3-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241101-qcs615-mm-clockcontroller-v2-11-d1a4870a4aed@quicinc.com>
-References: <20241101-qcs615-mm-clockcontroller-v2-0-d1a4870a4aed@quicinc.com>
-In-Reply-To: <20241101-qcs615-mm-clockcontroller-v2-0-d1a4870a4aed@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Abhishek Sahu
-	<absahu@codeaurora.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bOO5f36N5ZfUWi0Dlhoq045WA244N6zj
-X-Proofpoint-GUID: bOO5f36N5ZfUWi0Dlhoq045WA244N6zj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- phishscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- mlxlogscore=696 suspectscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411010076
 
-Enable the QCS615 display, video, camera and graphics clock controller
-for their respective functionalities on the Qualcomm QCS615 ride
-platform.
-
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 730f303350c36a75661dc267fdd0f8f3088153fc..2fa666156b88b44a8298651e276c196cded9a7f8 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1322,7 +1322,11 @@ CONFIG_MSM_GCC_8998=y
- CONFIG_MSM_MMCC_8998=m
- CONFIG_QCM_GCC_2290=y
- CONFIG_QCM_DISPCC_2290=m
-+CONFIG_QCS_DISPCC_615=m
-+CONFIG_QCS_CAMCC_615=m
- CONFIG_QCS_GCC_404=y
-+CONFIG_QCS_GPUCC_615=m
-+CONFIG_QCS_VIDEOCC_615=m
- CONFIG_QDU_GCC_1000=y
- CONFIG_SC_CAMCC_8280XP=m
- CONFIG_SC_DISPCC_7280=m
-
--- 
-2.45.2
-
+On 01/11/2024 09:40, Jinjie Ruan wrote:
+> It is not valid to call pm_runtime_set_suspended() for devices
+> with runtime PM enabled because it returns -EAGAIN if it is enabled
+> already and working. So, call pm_runtime_disable() before to fix it.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: b50a64fc54af ("media: amphion: add amphion vpu device driver")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+> v2:
+> - Add fix tag.
+> - Add Cc stable.
+> ---
+>   drivers/media/platform/amphion/vpu_drv.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/amphion/vpu_drv.c b/drivers/media/platform/amphion/vpu_drv.c
+> index 2bf70aafd2ba..51d5234869f5 100644
+> --- a/drivers/media/platform/amphion/vpu_drv.c
+> +++ b/drivers/media/platform/amphion/vpu_drv.c
+> @@ -151,8 +151,8 @@ static int vpu_probe(struct platform_device *pdev)
+>   	media_device_cleanup(&vpu->mdev);
+>   	v4l2_device_unregister(&vpu->v4l2_dev);
+>   err_vpu_deinit:
+> -	pm_runtime_set_suspended(dev);
+>   	pm_runtime_disable(dev);
+> +	pm_runtime_set_suspended(dev);
+>   
+>   	return ret;
+>   }
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
