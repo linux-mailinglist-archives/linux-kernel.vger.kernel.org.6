@@ -1,168 +1,107 @@
-Return-Path: <linux-kernel+bounces-392982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF52D9B9A64
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:50:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD389B9A66
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D30731C215CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:50:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C23981C214BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C6B1F472E;
-	Fri,  1 Nov 2024 21:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07091F4FBF;
+	Fri,  1 Nov 2024 21:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YVjOECtG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aflBpbOM"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDC725634;
-	Fri,  1 Nov 2024 21:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162681D1310;
+	Fri,  1 Nov 2024 21:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730497689; cv=none; b=bgZZ9JUX9topRuHNGyPDTOi57Yw/IqFKVHJBCFikUWg+f8dVcXv/7/kJeUkxeRKDf23yQVy43pSNwAv4lEDqJkt6ebmLRPaRGwONFuPpbsZW7+sfCdaToCAbYhmy5ahK3/AFWa42M3H64wusVm9XQps0gCoeRCHrivz1fo1u6h0=
+	t=1730497714; cv=none; b=nomBNZCash940uWqmLXL9Kpj7nlD7j+OKX8Zdy1cCtJJPsKnJGNXuaLOGvIu8YG+CKJzGcdVIv9JwMlnVPE4a/gRGr8vqK43TI1/3s7geEgR/9s7gruVmADPIckBTMCPsrATHJU4L8N6weD9wMblf5Vba6mPszFch/JewIOIclw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730497689; c=relaxed/simple;
-	bh=Dwdq9rHIpOh+78kD6lWNmELuBrWSfYZSR/MPnUOKJUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NFDhQAfnembHhzhqhBFdWJdnj5cE6C2Y76VybbrHogko2NPd/kIrv2rLNl2dq89MWPtLCcW+bR6q9pztsD8v5VwG3zAoQzTu0ot+kSkumSwdElXXMDjuiJDSJtn11JhkB5FcKdmPbLEY1NFDHrzjV12lV4wj/SWObV8yxNmw8JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YVjOECtG; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730497688; x=1762033688;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Dwdq9rHIpOh+78kD6lWNmELuBrWSfYZSR/MPnUOKJUA=;
-  b=YVjOECtGaaiXmxZJkkCRA2bKy++UCudc4u1YiEjD7dA49LdPRKLrGP5c
-   KQKw+c/dgTeVjqh9Ynhc6GPJdqMHEvObgiEF/xgGyml1X90vtEwQTk4nj
-   Mpln/hXGU1q0NZIWRBiOrhRSOVddRnm5JS4pIiJpC599fWJvhy9Uk9VHw
-   3ZdephmLCoivghRBrhRKzC/xkus3lX8yThGzAWF/lz/a9DaQV9lv0/SVk
-   4Ayz1f6kBMx3A/tCR30gefTH6KH0vP8ju7ZlfeArxLF2UFAYJBfq3Py08
-   V8mqhth1X3Uy6n8aKv3GpNw9bEIOoGigItJDa5gnFVDJuZPSu2v5wX/W1
-   Q==;
-X-CSE-ConnectionGUID: gfGt6b4ZReSl1CHfVo9GfQ==
-X-CSE-MsgGUID: hKh4ICcBQ/aS+N8hq48qNw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30229825"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30229825"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 14:48:07 -0700
-X-CSE-ConnectionGUID: 9w/56nX/RnCHrAdIl5pDBA==
-X-CSE-MsgGUID: yEtcosP4Tc+1RCMNMWkXcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,251,1725346800"; 
-   d="scan'208";a="82613540"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 01 Nov 2024 14:48:01 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6zUt-000i55-08;
-	Fri, 01 Nov 2024 21:47:59 +0000
-Date: Sat, 2 Nov 2024 05:47:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v5 4/7] pinctrl: s32: convert the driver into an mfd cell
-Message-ID: <202411020514.qOUrieWa-lkp@intel.com>
-References: <20241101080614.1070819-5-andrei.stefanescu@oss.nxp.com>
+	s=arc-20240116; t=1730497714; c=relaxed/simple;
+	bh=qOyTTVkBLP1YnGMddEiaBMbtswAaiMCW3SPMIUioFVc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=coMKRysK/QfixRGsjFXXSkajVJVtkqxp6fWOPpuJFavZtPhwuEBSCdOoqlq4YIobDpJ8lyDXSGDUe8smIacV+LWWpeS/WFztR90vT2K2dNt6MehF/cPO/aoBivjI3lnMjTuOuRxWFL4yTHd/ZXRPae0vsOipeQPUq/AYkGR++vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aflBpbOM; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ce65c8e13so27222895ad.1;
+        Fri, 01 Nov 2024 14:48:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730497712; x=1731102512; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=noE1sbEKFDZrbYOA8JlhyS8ihnBLzSlP3tvD0FZfyKY=;
+        b=aflBpbOMRu6LK/0jmWDqnmoNCU/mfCzwAz3ldc4LifvbzcIT5mm7FmzE+28J7uCewu
+         E6cJ3ramHRmfHpXEvAdcYarlH28tYXW2Vdow2lCW2zhhflcLmnNZIDZA1xkVegDp/klx
+         SAEpLN6Pns2VoIiPi5WXse5hP6aiUivI8tJmhrwHHdAmrK8HwXTj/HhIgxyDKiHlcUG7
+         h972b/ZJG7EozElVNsFd6TyrPjRl+0RMCFX2JcdYldQRylvaN7GLlJv242odx2ZqdcSc
+         vpwp+rpS1UjMW1pBMs51bsJG6wI62UEeuPNgPpkGJ7y3vOJCIP+4jlnoJ1iIyEnB6kWd
+         0B+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730497712; x=1731102512;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=noE1sbEKFDZrbYOA8JlhyS8ihnBLzSlP3tvD0FZfyKY=;
+        b=njOGgVM3SYwwmOw3xvRuXkuX5AooNE8TTYvLX72PI9hdnhOmWXuhDq8CyFX8hFXOO6
+         YROOYIeTP6GctDsuw/QsSnrU19xxf1sTG1zrbtoWAVr9rh+IrJmQXKZgRkJqCQ15IUBp
+         VtK1RtxN/lRnwtyaTS7g+53EKfTsQovs91RIxHjxYcSMihWb/XImNi1qpbFOIk0F2gsI
+         6E8/x8xH7glkJuy64aNHq18zUkW5CpFnvylBnzWQygHzJZOAHnio95nRrfhS4A3hNtWR
+         lKbkvNHl2R+f+EN7ZU2rhA4ktgOQ3hiKHgjydQT04cazAw0wLM6ni/7/xVakADX9JU9Z
+         aarw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaGeizqo5O0ZOXcoxWe7NjFPnKghdOMWBbw3Xx0VVQ0Oq+HjjV730HcICy9tDhMzNEEqDkBWE9282PFps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySmHeLrBw/8RYuPdJNJNvfiXE6Da8dR3e/lv9BRODuy0gKwLEz
+	rudW4PaBSh8fMg958Jcsx6CvT+fTyrGpp56hJNBlhA2T6uHJUdzJ7KPiVHGt
+X-Google-Smtp-Source: AGHT+IHISPdujUY/EsUwPX2ickOcfQezhjpp1bzEpRgb5rr5skB7fbE+BO3CHq4s1fkuXfvrAM9uQQ==
+X-Received: by 2002:a17:903:2308:b0:20c:ecd8:d0af with SMTP id d9443c01a7336-21103abcb03mr116467865ad.9.1730497712074;
+        Fri, 01 Nov 2024 14:48:32 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057cf273sm25120155ad.239.2024.11.01.14.48.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 14:48:31 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Shay Agroskin <shayagr@amazon.com>,
+	Arthur Kiyanovski <akiyano@amazon.com>,
+	David Arinzon <darinzon@amazon.com>,
+	Noam Dagan <ndagan@amazon.com>,
+	Saeed Bishara <saeedb@amazon.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jian Shen <shenjian15@huawei.com>,
+	Salil Mehta <salil.mehta@huawei.com>,
+	Jijie Shao <shaojijie@huawei.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next 0/2] net: ena: two cleanups
+Date: Fri,  1 Nov 2024 14:48:26 -0700
+Message-ID: <20241101214828.289752-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101080614.1070819-5-andrei.stefanescu@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Andrei,
+Simplify some code.
 
-kernel test robot noticed the following build warnings:
+Rosen Penev (2):
+  net: ena: remove devm from ethtool
+  net: ena: simplify some pointer addition
 
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on linusw-pinctrl/for-next lee-mfd/for-mfd-next shawnguo/for-next linus/master v6.12-rc5 next-20241101]
-[cannot apply to lee-mfd/for-mfd-fixes]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Stefanescu/dt-bindings-mfd-add-support-for-the-NXP-SIUL2-module/20241101-160940
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20241101080614.1070819-5-andrei.stefanescu%40oss.nxp.com
-patch subject: [PATCH v5 4/7] pinctrl: s32: convert the driver into an mfd cell
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20241102/202411020514.qOUrieWa-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241102/202411020514.qOUrieWa-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411020514.qOUrieWa-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/pinctrl/nxp/pinctrl-s32cc.c:103: warning: Function parameter or struct member 'gpio_configs_lock' not described in 's32_pinctrl'
->> drivers/pinctrl/nxp/pinctrl-s32cc.c:103: warning: Excess struct member 'gpiop_configs_lock' description in 's32_pinctrl'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MODVERSIONS
-   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-   Selected by [y]:
-   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
-
-
-vim +103 drivers/pinctrl/nxp/pinctrl-s32cc.c
-
-fd84aaa8173d3f Chester Lin       2023-02-20   82  
-157a51f7e5e81e Andrei Stefanescu 2024-11-01   83  /**
-157a51f7e5e81e Andrei Stefanescu 2024-11-01   84   * struct s32_pinctrl - private driver data
-fd84aaa8173d3f Chester Lin       2023-02-20   85   * @dev: a pointer back to containing device
-fd84aaa8173d3f Chester Lin       2023-02-20   86   * @pctl: a pointer to the pinctrl device structure
-fd84aaa8173d3f Chester Lin       2023-02-20   87   * @regions: reserved memory regions with start/end pin
-fd84aaa8173d3f Chester Lin       2023-02-20   88   * @info: structure containing information about the pin
-fd84aaa8173d3f Chester Lin       2023-02-20   89   * @gpio_configs: Saved configurations for GPIO pins
-fd84aaa8173d3f Chester Lin       2023-02-20   90   * @gpiop_configs_lock: lock for the `gpio_configs` list
-157a51f7e5e81e Andrei Stefanescu 2024-11-01   91   * @saved_context: Configuration saved over system sleep
-fd84aaa8173d3f Chester Lin       2023-02-20   92   */
-fd84aaa8173d3f Chester Lin       2023-02-20   93  struct s32_pinctrl {
-fd84aaa8173d3f Chester Lin       2023-02-20   94  	struct device *dev;
-fd84aaa8173d3f Chester Lin       2023-02-20   95  	struct pinctrl_dev *pctl;
-fd84aaa8173d3f Chester Lin       2023-02-20   96  	struct s32_pinctrl_mem_region *regions;
-fd84aaa8173d3f Chester Lin       2023-02-20   97  	struct s32_pinctrl_soc_info *info;
-fd84aaa8173d3f Chester Lin       2023-02-20   98  	struct list_head gpio_configs;
-fd84aaa8173d3f Chester Lin       2023-02-20   99  	spinlock_t gpio_configs_lock;
-fd84aaa8173d3f Chester Lin       2023-02-20  100  #ifdef CONFIG_PM_SLEEP
-fd84aaa8173d3f Chester Lin       2023-02-20  101  	struct s32_pinctrl_context saved_context;
-fd84aaa8173d3f Chester Lin       2023-02-20  102  #endif
-fd84aaa8173d3f Chester Lin       2023-02-20 @103  };
-fd84aaa8173d3f Chester Lin       2023-02-20  104  
+ drivers/net/ethernet/amazon/ena/ena_ethtool.c | 31 ++++++++-----------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
+
 
