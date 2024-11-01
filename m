@@ -1,248 +1,242 @@
-Return-Path: <linux-kernel+bounces-393044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386CA9B9B4F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:54:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 767279B9B58
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:55:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45D181C2100F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:54:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 366F32819CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0C01DB344;
-	Fri,  1 Nov 2024 23:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4D41E572C;
+	Fri,  1 Nov 2024 23:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ve9RlS3/"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JiCWLKTc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3112165F0C
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 23:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730505261; cv=none; b=Wr9VuvpHywc0S9iwz7a3Vk3URK8+kzlGNKmMO1ssyQ3LkoWPMbCLs2Z6YGgUSC6eTyi0u8CUWltNsd+W0joMr2VSEvQtkArp/GTXK2qR8rYCL/QgfUQ6xzQ8utqcEyHiMv5YzssWxg7lef9O08eJRCW6mmbBbWCRdxeStzYtJdU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730505261; c=relaxed/simple;
-	bh=yTJKn1AFIFfuDgNX/0/sXW9FSsYOmdezLZ0LPNEMizY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M9I/+/6I3YqUq1yHv9VXwNjvXM3AFxR5GsV0pxvxkUZ0vk1gHDGYXG0zsZCPs5tl0t/GVCtc61SX2hZZuYZn2w133qxrMzjx6CrOXlcD7G2NxV+vWamfvJBmJsy7B2yD4yrnUwS2hT5lYqDqJix+nw+XOMKEZkvQQ+vf1l0b9ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ve9RlS3/; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a99ebb390a5so640474166b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 16:54:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730505258; x=1731110058; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s46yAeYtRZRXErnvIrcHa5aBLJ0YN/7lb71VHZ7n0/8=;
-        b=ve9RlS3/YK6sM0Tiiw3Cs7epWWiYoJtx3VjgN1EN/iZi5FyROb4LB5hEjP5gfwnmK9
-         PiXdmoSj9UdbsSLby+ElyvEs8L7MbUAcm37NeIpOvZv0lJFvtaltuEf0/haAs9nRNvOb
-         mE1liANwBEXuh+o3NuKJqgqi16N/oHO/jgsupPfyglaO2mNbO+BD+CRPlIB+dV6uX2KU
-         H5T77qM9yJbHCDpPZwU/pYFQ5anEe5vhyWjRV072KfKWVz/3byDXeUqyUWNFFo6wQguA
-         BH5zUvsq2i1bQ1C7qlZrBpPMj3oB7eTHwjCc1zToaOymNU4dkax7wo1hkg8uZlV+9ISF
-         GBzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730505258; x=1731110058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s46yAeYtRZRXErnvIrcHa5aBLJ0YN/7lb71VHZ7n0/8=;
-        b=ECcuZeIf4RbKgkzyB/Qm2DH5S/n59HFvsW7xlq++83B3sKloh5bKpCUoQrrdL5Qg1i
-         p1Ud6VzL98wgo8nUOWOugyPpfnUqV1uMOTGd8CMCnzdOUoJIgRk1Li+e9YQ/ADjsgFXG
-         Q9oQDJ8KtE71LGrn136HC1TRmigRet13oOqY1topPER744ukUQ8J7U2Bm3QXGRZrtsWc
-         CbMLX1YzGDdu+vTyM9zOB5OYUHJ+4hkuTCmlx2YQzAyUV1B7ZimHkupswy1USqYzPRxl
-         afMSVKTvawRe5VaqInvbiaMkgqwDM3B6wX+G6XgymH8gMSMdDdZRrW2Lr7X4pOUEKd2V
-         iLtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnPARJ6MsdX3KgUIyNuSB7etj/A5YIk4ALRa0FukS+vJ+ewCpaBx2lP006VqJco3jSH8z8+0tV3ibzxoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlHFnre8k6hQ6mRW1Ft+TMcU8ra22T5KOItcUByxe9DbcHj6+/
-	4GBosG+cLnu+K+IKiGJkHQk7q4zrsQLHTDNhCL8YwA1n8QLDPF624OcePlv8hM25EMcI6xcY3LR
-	cz9r+UDdcFUFFfGdofyDAxPMOpWqY6qGHhRkZ
-X-Google-Smtp-Source: AGHT+IH/ohEDCZvXVI6OyWtqbyKy+nUacKivhLLATC82VvTVw4yqwsTLZMDifM/YCBBO3VEWbdD1oCAxD2Zn2cJ0Hi0=
-X-Received: by 2002:a17:907:60d5:b0:a9a:e0b8:5bac with SMTP id
- a640c23a62f3a-a9e65434d81mr490930566b.23.1730505257962; Fri, 01 Nov 2024
- 16:54:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7D41CEADD;
+	Fri,  1 Nov 2024 23:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730505329; cv=fail; b=VwusE63XRpXjYwiQfWjdr397N28mcrIILNYi5daK893vOAji+X/+b02mWmdIGuW69Sn+J3WqChq5vf5VucoPCMMg7XuYapECR6LKCsoDYMMBRugpd/1EdQBexgvZD7kpm0ycZoK2WIuKSTYX/VWxbLd7lJtibmzGrTI7HEjTSB4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730505329; c=relaxed/simple;
+	bh=2RTENDAa8OKiKcVpOCcEyKHrwdS+1CdFnU+7kyTEn+Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GFdAu+4SEcWeqdW/zbTc98NRMfVHbDi9mv81CAonf+5oFceSk8S4+CaepnYEvvcxR+fqwYTlowhgsy7Nno3SfSdJSEuG9BUo14MPrayuxao8ThmrhBDV1Y0eSI44lxjoWTxKvrw1Ek8ul/IJk92i4WVRUxcJwDxU2HdgSOA5fZg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JiCWLKTc; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730505328; x=1762041328;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=2RTENDAa8OKiKcVpOCcEyKHrwdS+1CdFnU+7kyTEn+Q=;
+  b=JiCWLKTcjSeGGWt5GjC7k70S4K7Z1vMOXQCnQSVhIH2Y5ggOK/PEdmiD
+   RKTJdS2rKCQRGqhTraShaCr0YU6hvICe3iOHTrGj6M6gLefTRKVvS1HR7
+   mFMIkziuPspJAhq61MHSfauD/V9HMXOKOlAsrgwh+zuxdDtz6Szd0zYIL
+   5zn3RUjS/RkXR9z4V/xJIpCPiEODXRmJXNCOaBCPUknoorcoAPc6njWuV
+   REX5pRii0S9oxMfKFmcfsuZGzHKPhyueRlEfH5dGoT/qjIZI/DIuktt6J
+   Py8BjSFjklME7gmQODK2M0hGdwmuvOzZz79JOJ1/GCPC8stdlxGozPaJn
+   Q==;
+X-CSE-ConnectionGUID: Rvvqw2jWR4iDDgVY7hB3dw==
+X-CSE-MsgGUID: mGkLNts2RkmM+6KH6ACfug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="40915349"
+X-IronPort-AV: E=Sophos;i="6.11,251,1725346800"; 
+   d="scan'208";a="40915349"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 16:55:27 -0700
+X-CSE-ConnectionGUID: 8zW5A+wNTOGazVJyiaFfkw==
+X-CSE-MsgGUID: EzS5PmCLTTWpo86WpOnZ1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,251,1725346800"; 
+   d="scan'208";a="87922322"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Nov 2024 16:55:27 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 1 Nov 2024 16:55:26 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 1 Nov 2024 16:55:26 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 1 Nov 2024 16:55:26 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KWSBNkf5ou3rtqgYkQ6mQnWnfEXzqzje4KwT+UlTY7Ma7sFM3RojmH6cWLSXji4gHaUXKQn3rlIu3SrWeJWS4ZLNpb1N9tdPV0rRcqxlaYGNTzBJ//QWmoKezvbB5p4oKdRQahBY4U6TnnsdzJ/BmA+4uefiA5LqMGU27+B5zrTz1ATMGcvftf+QDQjd1TOgxPes+IABnQ84vOqHCawQ46RZc0bsy/s3foaoet8ACWyvA/phV9hz2IA8iRkDFMPeYeygXNDFkHfXCHaICvwa2upmzYH4GdnwKhx+8gBDTCwahk5gW5uh0CkieTlIq6qz6H41Rpy9lfWHMbpZyL+6NA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2RTENDAa8OKiKcVpOCcEyKHrwdS+1CdFnU+7kyTEn+Q=;
+ b=uxc2gJpPz3x2hw6MWHqLQY+24T+Rz/5G7yw3IneyZZD8l/PXXoEZYdgXjZaQFYWNWIKH1XCGXdklinOIKwwH93LwgCrntoURqNOyrGwiwtBXIbSIXTplF7rQC1JzM6hpqab0Kwj3TbdJ0ZacMRvl0OnEQLTqVViHgkUSyPLEMBRdEmllox+J2M35mCnxR4skw+E0IUJzJysl6Wt+LQcOqznPwlPF8UyLe6RDjs7YlpPNLbM1wZstI5syklIP/fBYqi0FsuSDaC+vy6mwnap6Xu8fEPwiQUKWajJaARjgovRXyh/6auTpzKmM5JTD63o8Y+yzvnXGIQQSrnnwUBRc+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by MN0PR11MB6010.namprd11.prod.outlook.com (2603:10b6:208:371::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Fri, 1 Nov
+ 2024 23:55:19 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%3]) with mapi id 15.20.8114.015; Fri, 1 Nov 2024
+ 23:55:19 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: "Yu, Fenghua" <fenghua.yu@intel.com>, "Chatre, Reinette"
+	<reinette.chatre@intel.com>, Peter Newman <peternewman@google.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
+	"x86@kernel.org" <x86@kernel.org>
+CC: James Morse <james.morse@arm.com>, Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>, Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: RE: [PATCH v8 6/7] x86/resctrl: Add write option to "mba_MBps_event"
+ file
+Thread-Topic: [PATCH v8 6/7] x86/resctrl: Add write option to "mba_MBps_event"
+ file
+Thread-Index: AQHbKigHp2P1tXTtZkmmnqKqvRPLY7KjFsiAgAAFx7A=
+Date: Fri, 1 Nov 2024 23:55:19 +0000
+Message-ID: <SJ1PR11MB60833197C3FCC0B3CF9AA290FC562@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20241029172832.93963-1-tony.luck@intel.com>
+ <20241029172832.93963-7-tony.luck@intel.com>
+ <6a677a4b-7163-cc2d-a615-6b8c499eb281@intel.com>
+In-Reply-To: <6a677a4b-7163-cc2d-a615-6b8c499eb281@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|MN0PR11MB6010:EE_
+x-ms-office365-filtering-correlation-id: 263ff7dd-8a28-4dd6-3206-08dcfad0a3f8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?UDMydi94Z2hvaS83U2Z3NnoyeVBDd1E3L1ZZYk9yYm1uTGZUQjkxYk9wYitk?=
+ =?utf-8?B?ZThVcDRrZXhyWGV2Z3NwN0ovaXBabW84S0cvYkhSb3JVbjBYQm9IeVBYcmR5?=
+ =?utf-8?B?c2ZOWHpjRlFDSU8ybXlCOU9BcmJuUWFKRmhpekVKbElQMUNORUNMaTdpY0Zu?=
+ =?utf-8?B?MFNyMmY2aUV4OVQrdnIrV2RYRjhCVit4b0p1dkQzalNXMHFWdEt2OW1TaVVE?=
+ =?utf-8?B?bU1YRDFKdVg2dmUxd0pxN21jWURmZG80cnVuQzh4QytaMnpPYnBWcm0vTFVz?=
+ =?utf-8?B?V2pXb096UkJrVzNycHhMellzaHhJc0dySTVxd3Z2OGE1SWFvRnZWV0MwdEJE?=
+ =?utf-8?B?Q3diOXQ3anBPK010enlyTDJLU29TTy9wRlhrMm9wOTQzY0Z4VkgrTUlLNXYv?=
+ =?utf-8?B?L2UxS3JJMHVlQmdEb1VycyszdkM3RXg4Nkg5ODVKQ2RYaFQrUFkvYVBoUFYw?=
+ =?utf-8?B?MTU5bytyQldEby9PYkpjTklVQXRmYUR4bjZTY1kxM3ZiWXhqSGFhVGZKWWov?=
+ =?utf-8?B?U3NlQWJLaWJ1a2Z3VnNTQmIvSzJDOEszbkEzd1VIOEdqWUF1Ny9SRWdGSGNl?=
+ =?utf-8?B?T2lEdjMvZWZGRU1rUWhucDdjd3FJS0ljOEJSUHpiSkduTSt2L0xKcDdoN1Jq?=
+ =?utf-8?B?VktvT3dGa0lDdzN3SFRJbnBaVnBGeTVwckJvSlRaOUNqNVdSMWhVVWRjTFdW?=
+ =?utf-8?B?OTllU2dpSEVUc20wQm92RXMyTVA3Z2lWV0RTOWlycXZuOE4rSTluUWNRVHM1?=
+ =?utf-8?B?ZUJUaHp0K3pqcmg2YnJlb3RjTFBsWlNNL2JQYWlVMnkzYStPZ2QyUnp4cVgv?=
+ =?utf-8?B?eXdiUzFScXorMDMvdDVoTkpjWEFiVDJXenBWNHd1bHN4YWRKRzlBd2N1dGVp?=
+ =?utf-8?B?c1dWODBSR2pGUUdSS2RMM20yTzJRVXovVlF3MVRiMW91SHpaN0QvcHlFT2Uy?=
+ =?utf-8?B?RGtCbjNtOFNzbmNzWG83UU5jWlBFN281YjVLOEZOb3RNeGhCRkU5aHFkS2Nm?=
+ =?utf-8?B?akRPSnB1MFkxVEU1RUNRRW9rUEZNOC8yNmd3ckVPdjBNTEFtL2VIMTZKR0VN?=
+ =?utf-8?B?dW1EblRId21xMHlodnpJL0lYcVNOTURVVlk0Yk5ZNVZsa3AzWnpjbDJiUkJn?=
+ =?utf-8?B?Q0QvR0JpaEk2T3lqR1lORFhvQno1NTFJQ2czeXM0L0ZyMVNQNEJBYjhOZllV?=
+ =?utf-8?B?aWkvZVZhdDZTNi9WZ0xYUWVSRjRpSlY2OGl6UjhWZCtCemlqNFVQK1N6RjJT?=
+ =?utf-8?B?U0NYRU1VYk40WUhTUUttVGE4RXU0dnl6LzFIQVUxV0lNaEVsQUNSQ2pWS2xn?=
+ =?utf-8?B?VmEvODdyNFBjZkZ2dTlyMmxsSlMwT0szanRWVWxramttVk53VG83NHdaUFcr?=
+ =?utf-8?B?cytrM29haUppUjlOVGlaZmxFczJheitlOXU2OTNRZHJnSUVLcUNhTVFCbFd6?=
+ =?utf-8?B?NTh3M0NBSUZLUTJhcFNlRFRQT3FZeEh1MFFXMmJta3AvQStMbmVFMmc1SEhM?=
+ =?utf-8?B?NWIyQUhkWkplaHlTdGtMS2hDcEZEMWxDM2hsdWFwcllya2NyUW1XSVdES0Fr?=
+ =?utf-8?B?NWgxSnBuL1BmSCtYUFdUM2JOY2lrdnIySEoxQjZHSm9pRlBPMDEvelkvUVA4?=
+ =?utf-8?B?RkdHdlh4M0hUZFp1YmErNWdZS0F4dmFSc1FZMU1QY2JNeVdSNVhlemdBVDBJ?=
+ =?utf-8?B?aDNzcXBZQlBGY2szcHg5OWZsZ1ZOWk53UFQwekt2ZmQvMUd2UENQbE4rWjQ4?=
+ =?utf-8?B?SDV2NTdWdHdQWmlnWlcvdDhneUZBWVlRLzdKMVNieG02MVFnS2FEM2RGdW9s?=
+ =?utf-8?Q?JZ1I/IDoWfUgQBugtfBqRUE9jOPS9na5WrJYE=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ekkwM2lEa3Y4NDFzR0tIbGdOU29sWUd0Z1hqRmZKbGo4R0pYUFRwaEZmUDUz?=
+ =?utf-8?B?dUNpdlFxOGpNc3F0U0xFODhUTnlFU3U5SmtVRkFXdzBXeWt0YkQrbnZTdStJ?=
+ =?utf-8?B?a094OG9EOGQ1WURXS1pMN3dhTDJwZURPTHpPWDhHUTVJeTFJc0FSR1JWZHl0?=
+ =?utf-8?B?WUYwcEszUnhOS1Zlam9wNHdZMkNzcGZUOGNudmh6N3ZkTjJsY1pMNm5HeC80?=
+ =?utf-8?B?b0NQd2hmaUlKaldnS2R0eXNWSkd6cGR3ZG5BUy9NVHFOZjI2MVF5ZHBPNGVW?=
+ =?utf-8?B?Wjl1by9rQ0pGaVpyZVhtczRCNnNHNDlYeGsxeGpJL0FqMXphUEc0c2hNWlAw?=
+ =?utf-8?B?Z29IdGI4MS8yclY5YjczZHZFMHJqZ2N1OTlOQWFuRTloMFVnVHNyVjR3dFlr?=
+ =?utf-8?B?bnJhenQ0dFNhWDBCQUxIMGhGaEpPWGdXVkgxRjlvaHZIbnFLQUozN0ovdkl0?=
+ =?utf-8?B?TWZUUlI4enNkejFCUG94NXVtVm5UTGh1NC9udnFSclZTY0VsZGdWNURwVFRk?=
+ =?utf-8?B?VjczSVByVjV0alBjVDViRFNmWkRBejhGTGlYcFk4MGppcVJPeUxZeE94Z2hw?=
+ =?utf-8?B?TDJWcWlSTXNoSVNKaWNEK3hvT25TdzZoM0g0bFlldlE5YjlWZmVXQXlXR2I5?=
+ =?utf-8?B?Y1NMOFdieUhuKzJtQW5ud1M2UW1tU2FYVnVhekd6V1UyNmNGSmRGRDlzK2xk?=
+ =?utf-8?B?OFh1czdNUkpERDVOaUJGcXQzbHlJTlc2REE1QW5kbnk3T2VQby91SVRzL011?=
+ =?utf-8?B?SWlPd2xYVjZVanF3STg4OU03ZHRSSWxkL2Zqa2ZUdmF3QnBMU1RpdENtUkEz?=
+ =?utf-8?B?MHhKMEFndk9LSWJ3L2VudDFHWWJNVGQyUE5YRUF0c3hnZjlncElNdDVSTlJp?=
+ =?utf-8?B?dGhVVHJTcy9xWFhQZ0RxN1dGdXdiYW5qRzB4WVlqL29GSHQ2cjhhb0hxVjFK?=
+ =?utf-8?B?QldiVG1nQW4zc1VXaTFDb0VDN0lhNEhvUitsV2loV2g1R1FMR05VM1NvRWVt?=
+ =?utf-8?B?eU5aNjU5cFV2eFM3czBxS0ZlclNWMmhBQ1FSNWlwQ0ljZjBpeUUwTDh0TXBs?=
+ =?utf-8?B?dTYvblZBbk9sK0UrSjZORnEvT2ZCN08wOHNuVWJySHR0NXY0Q2pCeFhZY1NQ?=
+ =?utf-8?B?RjlPM0JpY0o5cnc1RVdnRlppdmNZY3p6MlJKY2lNbVF4RWdkS1gvR29LWWxn?=
+ =?utf-8?B?djNiMzN1NmFCRnU0R3ZhSHFGNXdjK0pMVTF3dHNXQ3ZkV1FVc0lQa2x5QThw?=
+ =?utf-8?B?eC9mdTROU1E0WERPcnBEWnc2RGRaSUlPZk51MGd4M2I2N0s0dWE1RmVBYmRO?=
+ =?utf-8?B?UmxzQ0hqeElXclhTZ1NxbWIyMVB3TWRmS1ljdldMRUJBRFRQWVBHQ2svWGlM?=
+ =?utf-8?B?UjFna1BHTm5MSExpM2VjUjNkM0RraThscFV4bENza1N1RTdmU3JjMm1mQTd5?=
+ =?utf-8?B?VXRNakMrVFhWNVVCMDNITWVZY09yVHE3UzdsT2VmVTBGYjVycWJQV3pKV3V2?=
+ =?utf-8?B?MENCaENzUWJESmNhaGZIREZOL1VIaDcrdjhrRnM0a01HZnlGaVpja2FHZG5C?=
+ =?utf-8?B?QlY5Umo4N0lpMzhOOXJlTmFIU3lmcDZ0czkrdzk1T0tmNE4xeEk2cTA3ZVhr?=
+ =?utf-8?B?K0h4RTdLNUtnYnJvWGp6aFV3ajRSbW9ZWk1URFQ0ODRxb1ZpQThBZ1hOYkU2?=
+ =?utf-8?B?ZmFJWVJKSmNhNjllRUs1VlRNRkxMUkwyM3ZCTHBTOGJPQWxHOHpidXYrNzlE?=
+ =?utf-8?B?bDBCR1VjWTBJSlJrZDUvSVM0eXdGTURzQks4c1A3djJJSDF2SkZhUU43L1or?=
+ =?utf-8?B?cVFqV0djT3BidUxsOFhMR2NVdmZob2ZPeWd0UjJBMjdOT1NpYU1FbS9ENkdR?=
+ =?utf-8?B?U21rKzJQaGt0L1p5RXZZZ1ZPOTl0c3lkMEZZMzVuYWNWSGRkOGVOMTkveW5k?=
+ =?utf-8?B?OVpZYXRHWUtXd1FZKzcwMUI2UjlXR3NvTEdSVGJjV3lnMGFKSW82OVF2VVor?=
+ =?utf-8?B?WHNtdHVpWGV4VmdNTWNsNS9YVTkxdVE0RmJHR29zYVljZWFVQkkxSVh3ZDlH?=
+ =?utf-8?B?MEVXVEEvSkgvWnlxTDlpUzhKZFNpbzJQaU5vYmorWit2ODlzbXNJNVNsWjhZ?=
+ =?utf-8?Q?yy0UgtEQ2N+P8a10AStRE34OT?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621134041.3170480-1-michael.roth@amd.com>
- <20240621134041.3170480-5-michael.roth@amd.com> <ZnwkMyy1kgu0dFdv@google.com>
- <r3tffokfww4yaytdfunj5kfy2aqqcsxp7sm3ga7wdytgyb3vnz@pfmstnvtuyg2>
- <Zn8YM-s0TRUk-6T-@google.com> <r7wqzejwpcvmys6jx7qcio2r6wvxfiideniqmwv5tohbohnvzu@6stwuvmnrkpo>
- <f8dfeab2-e5f2-4df6-9406-0aff36afc08a@linux.intel.com> <CAAH4kHZ-9ajaLH8C1N2MKzFuBKjx+BVk9-t24xhyEL3AKEeMQQ@mail.gmail.com>
- <Zx_V5SHwzDAl8ZQR@google.com> <CAAH4kHaOy0s93vp96-ZeX3PykCv_XsGM3z36=Fr1dEADsctMrg@mail.gmail.com>
- <20241101215216.qzexyzahj63vfw4d@amd.com>
-In-Reply-To: <20241101215216.qzexyzahj63vfw4d@amd.com>
-From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Fri, 1 Nov 2024 16:54:05 -0700
-Message-ID: <CAAH4kHa3jrW4PqNVfKYm46g9FYJqy2BhaLqHerLwZb3dp8e9aQ@mail.gmail.com>
-Subject: Re: [PATCH v1 4/5] KVM: Introduce KVM_EXIT_COCO exit type
-To: Michael Roth <michael.roth@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, kvm@vger.kernel.org, 
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	pbonzini@redhat.com, jroedel@suse.de, thomas.lendacky@amd.com, 
-	pgonda@google.com, ashish.kalra@amd.com, bp@alien8.de, pankaj.gupta@amd.com, 
-	liam.merwick@oracle.com, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Chao P Peng <chao.p.peng@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 263ff7dd-8a28-4dd6-3206-08dcfad0a3f8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2024 23:55:19.0382
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qCLsugxAuxBxNRK/IHmzLqhODlEf1RSM0NgjxhYzsdk6bF1cIz5HN39Cke+o/9aAXFncYagGDU0yG659I13HIw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6010
+X-OriginatorOrg: intel.com
 
-On Fri, Nov 1, 2024 at 3:04=E2=80=AFPM Michael Roth <michael.roth@amd.com> =
-wrote:
->
-> On Fri, Nov 01, 2024 at 01:53:26PM -0700, Dionna Amalie Glaze wrote:
-> > On Mon, Oct 28, 2024 at 11:20=E2=80=AFAM Sean Christopherson <seanjc@go=
-ogle.com> wrote:
-> > >
-> > > On Fri, Sep 13, 2024, Dionna Amalie Glaze wrote:
-> > > > We can extend the ccp driver to, on extended guest request, lock th=
-e
-> > > > command buffer, get the REPORTED_TCB, complete the request, unlock =
-the
-> > > > command buffer, and return both the response and the REPORTED_TCB a=
-t
-> > > > the time of the request.
-> > >
-> > > Holding a lock across an exit to userspace seems wildly unsafe.
-> >
-> > I wasn't suggesting this. I was suggesting adding a special ccp symbol
-> > that would perform two sev commands under the same lock to ensure we
-> > know the REPORTED_TCB that was used to derive the VCEK that signs an
-> > attestation report in the MSG_REPORT_REQ guest request. We use that
-> > atomicity to be sure that when we exit to user space to request
-> > certificates that we're getting the right version certificates.
-> >
-> > >
-> > > Can you explain the race that you are trying to close, with the exact=
- "bad" sequence
-> > > of events laid out in chronological order, and an explanation of why =
-the race can't
-> > > be sovled in userspace?  I read through your previous comment[*] (whi=
-ch I assume
-> > > is the race you want to close?), but I couldn't quite piece together =
-exactly what's
-> > > broken.
->
-> Hi Dionna,
->
-> >
-> > 1. the control plane delivers a firmware update. Current TCB version
-> > goes up. The machine signals that it needs new certificates before it
-> > can commit.
-> > 2. VM performs an extended guest request.
-> > 3. KVM exits to user space to get certificates before getting the
-> > report from firmware.
-> > 4. [what I understand Michael Roth was suggesting] User space grabs a
-> > file lock to see if it can read the cached certificates. It reads the
-> > certificates and releases the lock before returning to KVM.
-> > 5. the control plane delivers the certificates to the machine and
-> > tells it to commit. The machine grabs the certificate file lock, runs
-> > SNP_COMMIT, and releases the file lock. This command updates both
-> > COMMITTED_TCB and REPORTED_TCB.
-> > 6. KVM asks firmware to complete the MSG_REPORT_REQ request, but it's
-> > a different REPORTED_TCB.
-> > 7. Guest receives the wrong certificates for certifying the report it
-> > just received.
-> >
-> > The fact that 4 has to release the lock before getting the attestation
-> > report is the problem.
->
-> We wouldn't actually release the lock before getting the attestation
-> report. There's more specifics on the suggested flow in the documentation
-> update accompanying this patch:
->
-> +    NOTE: In the case of SEV-SNP, the endorsement key used by firmware m=
-ay
-> +    change as a result of management activities like updating SEV-SNP fi=
-rmware
-> +    or loading new endorsement keys, so some care should be taken to kee=
-p the
-> +    returned certificate data in sync with the actual endorsement key in=
- use by
-> +    firmware at the time the attestation request is sent to SNP firmware=
-. The
-> +    recommended scheme to do this is:
-> +
-> +      - The VMM should obtain a shared or exclusive lock on the path the
-> +        certificate blob file resides at before reading it and returning=
- it to
-> +        KVM, and continue to hold the lock until the attestation request=
- is
-> +        actually sent to firmware. To facilitate this, the VMM can set t=
-he
-> +        ``immediate_exit`` flag of kvm_run just after supplying the cert=
-ificate
-> +        data, and just before and resuming the vCPU. This will ensure th=
-e vCPU
-> +        will exit again to userspace with ``-EINTR`` after it finishes f=
-etching
-> +        the attestation request from firmware, at which point the VMM ca=
-n
-> +        safely drop the file lock.
-> +
-> +      - Tools/libraries that perform updates to SNP firmware TCB values =
-or
-> +        endorsement keys (e.g. via /dev/sev interfaces such as ``SNP_COM=
-MIT``,
-> +        ``SNP_SET_CONFIG``, or ``SNP_VLEK_LOAD``, see
-> +        Documentation/virt/coco/sev-guest.rst for more details) in such =
-a way
-> +        that the certificate blob needs to be updated, should similarly =
-take an
-> +        exclusive lock on the certificate blob for the duration of any u=
-pdates
-> +        to endorsement keys or the certificate blob contents to ensure t=
-hat
-> +        VMMs using the above scheme will not return certificate blob dat=
-a that
-> +        is out of sync with the endorsement key used by firmware.
->
-> So #5 would not be able to obtain an exclusive file lock until userspace
-> receives confirmation that the attestation request was processed by
-> firmware. At that point it will be an accurate reflection of the
-> attestation state associated with that particular version of the
-> certificates that was fetched from userspace. So at that point the,
-> transaction is done at that point and userspace can safely release the lo=
-ck.
->
-
-Thanks for the clarification. I'll need to understand this pathway
-better in our VMM to test this patch series effectively.
-Will get back to you.
-
-> -Mike
->
-> > If we instead get the report and know what the REPORTED_TCB was when
-> > serving that request, then we can exit to user space requesting the
-> > certificates for the report in hand.
-> > A concurrent update can update the reported_tcb like in the above
-> > scenario, but it won't interfere with certificates since the machine
-> > should have certificates for both TCB_VERSIONs to provide until the
-> > commit is complete.
-> >
-> > I don't think it's workable to have 1 grab the file lock and for 5 to
-> > release it. Waiting for a service to update stale certificates should
-> > not block user attestation requests. It would make 4's failure to get
-> > the lock return VMM_BUSY and eventually cause attestations to time out
-> > in sev-guest.
-> >
-> > >
-> > > [*] https://lore.kernel.org/all/CAAH4kHb03Una2kcvyC3W=3D1ZfANBWF_7a7z=
-sSmWhr_r9g3rCDZw@mail.gmail.com
-> >
-> >
-> >
-> > --
-> > -Dionna Glaze, PhD, CISSP, CCSP (she/her)
-
-
-
---=20
--Dionna Glaze, PhD, CISSP, CCSP (she/her)
+PiA+ICsgICBpZiAoIXN0cmNtcChidWYsICJtYm1fbG9jYWxfYnl0ZXMiKSkgew0KPiA+ICsgICAg
+ICAgICAgIGlmIChpc19tYm1fbG9jYWxfZW5hYmxlZCgpKQ0KPiA+ICsgICAgICAgICAgICAgICAg
+ICAgcmR0Z3JwLT5tYmFfbWJwc19ldmVudCA9IFFPU19MM19NQk1fTE9DQUxfRVZFTlRfSUQ7DQo+
+ID4gKyAgICAgICAgICAgZWxzZQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgcmV0ID0gLUVOWElP
+Ow0KPiA+ICsgICB9IGVsc2UgaWYgKCFzdHJjbXAoYnVmLCAibWJtX3RvdGFsX2J5dGVzIikpIHsN
+Cj4gPiArICAgICAgICAgICBpZiAoaXNfbWJtX3RvdGFsX2VuYWJsZWQoKSkNCj4gPiArICAgICAg
+ICAgICAgICAgICAgIHJkdGdycC0+bWJhX21icHNfZXZlbnQgPSBRT1NfTDNfTUJNX1RPVEFMX0VW
+RU5UX0lEOw0KPg0KPg0KPiBVc2VyIG1heSB0aGluayBlYWNoIHRpbWUgdG9nZ2xpbmcgdGhlIGxv
+Y2FsL3RvdGFsIGV2ZW50IHdpbGwgZWZmZWN0IE1CQS4NCj4gQW5kIHRoZXkgbWF5IGNyZWF0ZSB1
+c2FnZSBjYXNlIGxpa2UgZnJlcXVlbnRseSBjaGFuZ2luZyB0aGUgZXZlbnRzIHRvDQo+IG1haW50
+YWluL2FkanVzdCBib3RoIHRvdGFsIGFuZCBsb2NhbCB3aXRoaW4gYncgYm91bmRhcnkuDQo+DQo+
+IEJ1dCB0b2dnbGluZyBtYmFfbWJwc19ldmVudCBmYXN0ZXIgdGhhbiAxc2VjIGRvZXNuJ3QgaGF2
+ZSBhbnkgZWZmZWN0IG9uDQo+IE1CQSBTQyBiZWNhdXNlIE1CQSBTQyBpcyBjYWxsZWQgZXZlcnkg
+b25lIHNlY29uZC4NCj4NCj4gTWF5YmUgbmVlZCB0byBhZGQgYSByYXRlbGltaXQgb2YgMSBzZWNv
+bmQgb24gY2FsbGluZyB0aGlzIGZ1bmN0aW9uPyBBbmQNCj4gYWRkaW5nIGluZm8gaW4gdGhlIGRv
+Y3VtZW50IHRoYXQgdG9nZ2xpbmcgc3BlZWQgc2hvdWxkIGJlIHNsb3dlciB0aGFuIDENCj4gc2Vj
+b25kPw0KDQpUaGUgbGltaXQgd291bGQgbmVlZCB0byBiZSBwZXIgY3RybF9tb24gZ3JvdXAsIG5v
+dCBvbiBjYWxscyB0byB0aGlzIGZ1bmN0aW9uLg0KSXQncyBwZXJmZWN0bHkgb2sgdG8gc3dpdGNo
+IG11bHRpcGxlIGdyb3VwcyBpbiBhIHNob3J0IGludGVydmFsLg0KDQpJJ20gbm90IHN1cmUgaG93
+IHRvIHJhdGUgbGltaXQgaGVyZS4gSSBjb3VsZCBhZGQgYSBkZWxheSBzbyB0aGF0IHRoZSB3cml0
+ZSgpDQpjYWxsIGJsb2NrcyB1bnRpbCBlbm91Z2ggdGltZSBwYXNzZXMgYmVmb3JlIG1ha2luZyB0
+aGUgY2hhbmdlLiBCdXQNCndoYXQgc2hvdWxkIEkgZG8gaWYgYSB1c2VyIHN1Ym1pdHMgbW9yZSB3
+cml0ZXMgdG8gdGhlIGZpbGU/IFF1ZXVlIHRoZW0NCmFsbCBhbmQgYXBwbHkgYXQgb25lIHNlY29u
+ZCBpbnRlcnZhbHM/DQoNCk1heWJlIGl0IHdvdWxkIGJlIGJldHRlciB0byBqdXN0IHRvIGFkZCBz
+b21lIGFkZGl0aW9uYWwgdGV4dCB0byB0aGUNCmRvY3VtZW50YXRpb24gcG9pbnRpbmcgb3V0IHRo
+YXQgcmVzY3RybCBvbmx5IGNoZWNrcyBiYW5kd2lkdGggb25jZQ0KcGVyIHNlY29uZCB0byBtYWtl
+IHRocm90dGxpbmcgYWRqdXN0bWVudHMuIFNvIGNoYW5nZXMgdG8gdGhlIGV2ZW50DQp3aWxsIG9u
+bHkgaGF2ZSBlZmZlY3QgYWZ0ZXIgc29tZSBzZWNvbmRzIGhhdmUgcGFzc2VkPw0KDQotVG9ueQ0K
 
