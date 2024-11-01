@@ -1,139 +1,143 @@
-Return-Path: <linux-kernel+bounces-391678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A4E9B8A26
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:07:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 196049B8A28
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AE801C217F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814E71F22918
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705D914600C;
-	Fri,  1 Nov 2024 04:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF26137742;
+	Fri,  1 Nov 2024 04:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KkAvnGu+"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lsJ/B6Z7"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B109038FA3;
-	Fri,  1 Nov 2024 04:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD0784E1C
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 04:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730434059; cv=none; b=tfhhS47ERxi21bnHie2Ly7GCji3NyExXQ0awtfWRbdxrP9UqA3T6ZBWnqD2N8VEDD03dnBS8/V80mwkfmQtcTbpooScXolyHZSh1UnRtjGgVrd587ryZbk86o/PYy98IkQukeJjP6wPosYD1TcB78zWZm3JpGIkoiaCp3/MeR40=
+	t=1730434166; cv=none; b=tLvvVO0LKUNrpn+3jzuHEDOMLPz/SUehyr5Fl3ZNdjIT62Y/PuXAuDECKbQlq+8IsOXgILMOHlOJ5WZFJn2RZWSNtzhfkNvB+HOQXWd5jFf5HQOS2nHoHvekvTVYdzpZ/joVEGpWxVphwZwtIol0A7QJILMWgqcP0PFrAixsv1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730434059; c=relaxed/simple;
-	bh=1sEXB+ushg9fQ1al0t+VIyGQ0yT1lVo4SrYrQPA56/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AAB2jW+QlEBD8A36HeCZKxpXcz+REQ0v0Z8E0mCBS2/gNHAI9TsJvL2Sl6OXL2JzKzYsJ6Hg/ZpUNjNLI36RdmsaNUsfmc743NnBm6Ca4EfVB90otlTGP0KOnmL0I738M/nBpt4C0gVU3F1KU9HoOhMPlYpU12wQPDfwCHBfrP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KkAvnGu+; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730434049;
-	bh=9dDxhNEZb0bvr/fHxrN6Wiv6fmCfOovAqAmzrRTl8XM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KkAvnGu+bzc2mYiUrqV66oJoNUoVHotY6d4bjAI92giigS42xLIpfPCoxB3UYYEy/
-	 JCohVlsotoPQe+l1RkVTs0HsaaHW1vAHhjvd0lXaWWYBrF+aAklsIL/ea1QxR+ucQR
-	 hOQ07k4WN4isJs2jVboX8c+Fy3PLlMA3nuBSAaE7Qo98dNeJjwpEfGAf9MzzxAKiT1
-	 bUQjE3KTtOQzihXIfGrX3pYXKfQxHpPLaWA/kHdcveCjX3C0/NK+0IuWXVrvyInxXy
-	 DIAQdD8d9mpx0bjnRheQkL49Uf16ZirFCn+8GciMhHNnNNKqNR6HLEXgmcBUCCrr96
-	 fyJij0lw4D2pg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XfnPs2yMgz4x5J;
-	Fri,  1 Nov 2024 15:07:29 +1100 (AEDT)
-Date: Fri, 1 Nov 2024 15:07:30 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>
-Cc: Amit Sunil Dhamne <amitsd@google.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the usb tree with the usb.current tree
-Message-ID: <20241101150730.090dc30f@canb.auug.org.au>
+	s=arc-20240116; t=1730434166; c=relaxed/simple;
+	bh=TdUIHuVi/9ph7I5q2Va3gRk4gff0Cl8EHEqDPA8RXEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=awpnTiDeV9BrY7TDLxmgGBVj9pZo9bqVA38NOf/MbZfMIAYTe55nwdK6mVaA7+KtC9MbQow8PRcFbruT3yZm2pG/YxOj8BljTfk0SZUFYvSIEdpd8hB8oBee/iQMb2D60C/4zDFps6UsJO+gIRsE6VS92UlEAL62J6l3voUg83s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lsJ/B6Z7; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 1 Nov 2024 00:09:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730434161;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=uTmhfDD80R+n+JEPIjWtz3k33zC9n8sn4NYC1W9JVZ4=;
+	b=lsJ/B6Z72gxaNRk9rJwl47qOMUvi4hUDwRqTJg84GE57peuG7fZlHHQUPVCretPX+VGDVB
+	rpvuDTqEcVNbde+NvnH/dxb03cRGH2i7w40LVpG3VUEE1rSqtO38ghufhTSI5Y1YtI+kn/
+	EdI5jw/c3XyUs9LxF+qsqpUYUm61ssw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.12-rc6
+Message-ID: <crtbzb56yioclpibocd7whnjit43dub4hoeycxd5fzvzsnqnou@i22opfzxvitj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/4xMmUkNb+HNfppPlUGg2g9U";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/4xMmUkNb+HNfppPlUGg2g9U
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Nothing crazy to report...
 
-Hi all,
+Test dashboard failures are down 40% from a month ago, critical bug
+reports have dropped off dramatically (there are a few still outstanding
+I need to get to; apparently there's still a bug with online fsck and
+open unlinked files), and we're starting to crank through the syzbot
+stuff (also, syzbot seems to have made it past the dumb "whoops, we
+forgot to validate that" and is turning up some genuinely interesting
+ones).
 
-Today's linux-next merge of the usb tree got a conflict in:
+Been hitting some bugs in compaction (confirmed by users running with it
+flipped off), and lately I've been seeing some sporadic test hangs due
+to what looks like a block layer writeback throttling bug, ouch.
 
-  drivers/usb/typec/tcpm/tcpm.c
+The following changes since commit a069f014797fdef8757f3adebc1c16416271a599:
 
-between commit:
+  bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path (2024-10-20 18:09:09 -0400)
 
-  afb92ad8733e ("usb: typec: tcpm: restrict SNK_WAIT_CAPABILITIES_TIMEOUT t=
-ransitions to non self-powered devices")
+are available in the Git repository at:
 
-from the usb.current tree and commit:
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-10-31
 
-  33a0302455d6 ("usb: typec: tcpm: Add support for parsing time dt properti=
-es")
+for you to fetch changes up to 3726a1970bd72419aa7a54f574635f855b98d67a:
 
-from the usb tree.
+  bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek (2024-10-29 06:34:11 -0400)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+----------------------------------------------------------------
+bcachefs fixes for 6.12-rc6
 
---=20
-Cheers,
-Stephen Rothwell
+Various syzbot fixes, and the more notable ones:
 
-diff --cc drivers/usb/typec/tcpm/tcpm.c
-index 7ae341a40342,a8fcca029e78..000000000000
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@@ -5042,13 -5055,10 +5056,14 @@@ static void run_state_machine(struct tc
-  		if (port->vbus_never_low) {
-  			port->vbus_never_low =3D false;
-  			tcpm_set_state(port, SNK_SOFT_RESET,
-- 				       PD_T_SINK_WAIT_CAP);
-+ 				       port->timings.sink_wait_cap_time);
-  		} else {
- -			tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
- +			if (!port->self_powered)
- +				upcoming_state =3D SNK_WAIT_CAPABILITIES_TIMEOUT;
- +			else
- +				upcoming_state =3D hard_reset_state(port);
-- 			tcpm_set_state(port, upcoming_state, PD_T_SINK_WAIT_CAP);
-++			tcpm_set_state(port, upcoming_state,
-+ 				       port->timings.sink_wait_cap_time);
-  		}
-  		break;
-  	case SNK_WAIT_CAPABILITIES_TIMEOUT:
+- Fix for pointers in an extent overflowing the max (16) on a filesystem
+  with many devices: we were creating too many cached copies when moving
+  data around. Now, we only create at most one cached copy if there's a
+  promote target set.
 
---Sig_/4xMmUkNb+HNfppPlUGg2g9U
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  Caching will be a bit broken for reflinked data until 6.13: I have
+  larger series queued up which significantly improves the plumbing for
+  data options down into the extent (bch_extent_rebalance) to fix this.
 
------BEGIN PGP SIGNATURE-----
+- Fix for deadlock on -ENOSPC on tiny filesystems
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmckVAIACgkQAVBC80lX
-0GwBDAf/W4gv00KbXldu+bRHS7XvZKlBefcap8kdsd8/2oJCQ+m9fNQmSpzrGQ9o
-bnY+e71VnEp8nNmYwjzdWv7qNSAvSOyL/T04tOaqMciNMq5vDRvvpq/KC2KFsFb+
-23wSBa9VP2G6LDZ3QvkkvYclMEgeL/AQB9E2Ny9mYvdbD9EHgll329G1ktIAvwsx
-9dkcoyslbv5cCjp1F13irxZ1EkRmibvdpt9OCNqbw67a/OQsBCi5gSrYsadBozEN
-BZhDnxjLAv/y3ZVn8O2rYGwqmG7RxBkmjI+Wwl9S4iBl9zGBfxEpPjucmsmd3QMo
-+om/7leOKiNGGsVnl5GGFpolR/uMPw==
-=m1uX
------END PGP SIGNATURE-----
+  Allocation from the partial open_bucket list wasn't correctly
+  accounting partial open_buckets as free: this fixes the main cause of
+  tests timing out in the automated tests.
 
---Sig_/4xMmUkNb+HNfppPlUGg2g9U--
+----------------------------------------------------------------
+Gaosheng Cui (1):
+      bcachefs: fix possible null-ptr-deref in __bch2_ec_stripe_head_get()
+
+Gianfranco Trad (1):
+      bcachefs: Fix invalid shift in validate_sb_layout()
+
+Jeongjun Park (2):
+      bcachefs: fix shift oob in alloc_lru_idx_fragmentation
+      bcachefs: fix null-ptr-deref in have_stripes()
+
+Kent Overstreet (5):
+      bcachefs: Fix UAF in bch2_reconstruct_alloc()
+      bcachefs: Fix unhandled transaction restart in fallocate
+      bcachefs: Don't keep tons of cached pointers around
+      bcachefs: Don't filter partial list buckets in open_buckets_to_text()
+      bcachefs: Fix deadlock on -ENOSPC w.r.t. partial open buckets
+
+Piotr Zalewski (2):
+      bcachefs: init freespace inited bits to 0 in bch2_fs_initialize
+      bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek
+
+ fs/bcachefs/alloc_background.h |  3 ++
+ fs/bcachefs/alloc_foreground.c | 19 ++++++++--
+ fs/bcachefs/bcachefs.h         |  1 +
+ fs/bcachefs/btree_iter.c       | 13 +++++++
+ fs/bcachefs/data_update.c      | 21 ++++++-----
+ fs/bcachefs/data_update.h      |  3 +-
+ fs/bcachefs/ec.c               |  4 ++
+ fs/bcachefs/errcode.h          |  2 +
+ fs/bcachefs/extents.c          | 86 ++++++++++++++++++++++++++++++++++--------
+ fs/bcachefs/extents.h          |  5 ++-
+ fs/bcachefs/fs-io.c            | 17 +++++++--
+ fs/bcachefs/move.c             |  2 +-
+ fs/bcachefs/recovery.c         | 14 +++++--
+ fs/bcachefs/sb-downgrade.c     |  3 ++
+ fs/bcachefs/super-io.c         |  5 +++
+ 15 files changed, 160 insertions(+), 38 deletions(-)
 
