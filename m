@@ -1,198 +1,248 @@
-Return-Path: <linux-kernel+bounces-392126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E879B9003
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:12:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757049B900B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:14:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9D171F20FBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:11:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04BF11F2148E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29573194ACC;
-	Fri,  1 Nov 2024 11:11:50 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E1B19925B;
+	Fri,  1 Nov 2024 11:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xb5Bjqcr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k5RVC1wO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K5oSEMFB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UuNIMjbF"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8084175D2D;
-	Fri,  1 Nov 2024 11:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADA718953D;
+	Fri,  1 Nov 2024 11:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730459509; cv=none; b=LdKCNhpcMHBasiBTR9FjXNDKqPVpURPGfBR3vvTuXqkL6EAcCi+NmuPDlsjFoP/sJni0n3qE7Fd9soymD7fzZeBzyuD5XSRUEwKuVJFNA6j4NlfFP+b6Kt+403P8EOj/9s1hfWmckVki81KNrSqm1uvPb/9+4SayVV/qqYP5g3A=
+	t=1730459637; cv=none; b=BiZ5V+1MEAEA3jmbOyDst82ha/7xObxxpX0x0n3YWFC40MpKcLRVYnNcWUzSZ/C4DdVKmbAcM79iS/9yrDGoRA1FxvV/3OLFOiZX3uIiaUtM2w1ylxqujT+ZZNPvT2Pa6ZijZMb2OlYfHRCZGh+wnt3o9OCmgGT0z7syUfDiDjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730459509; c=relaxed/simple;
-	bh=jzzj7rC//JLmXktNJ9n2mbVqfz461nEmBaKK0rjPMls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ObSMAJPK0wZB+WqQUOIMTp4g6xMC3kqRTZ6X/y75Hh27mx8gVGKM65oA2sJ2nxoT12EaCgKvLr6FNTGdBAcfO70B4+XsIZbipSFozJFO3pTf8zmuBn5t0LTRY34tQ+5kCCXEFG6wA0CidLDrdvkI4Ch6Th59JGUkUohRxtwepZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XfypB0z8QzQsQH;
-	Fri,  1 Nov 2024 19:10:42 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id DC89E140337;
-	Fri,  1 Nov 2024 19:11:43 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 1 Nov 2024 19:11:43 +0800
-Message-ID: <a50250bf-fe76-4324-96d7-b3acf087a18c@huawei.com>
-Date: Fri, 1 Nov 2024 19:11:43 +0800
+	s=arc-20240116; t=1730459637; c=relaxed/simple;
+	bh=wofRbP/pMn87nKTukTcLzSwkzXDzjiYYay3B9CTczQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qfzC/L1YaRoWm0nbU91W0Bz+uyxN4BnnD6Qstb4WNK96+UiTFsa0BlauzhGLC4OX/e0tecVn6C98OOMwzcBsOlyGaP9VNOyNCWUthpoWqNISYODpZxHsI9K4TL9i1giR54DbzVu17bsPz4gS9R0xkPwODKNF+vNYvpbn4vscEvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xb5Bjqcr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k5RVC1wO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K5oSEMFB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UuNIMjbF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0960E21E2F;
+	Fri,  1 Nov 2024 11:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730459633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DtT3u0Jge1FAxA07AdN4UGOFLn9EB0JG4DUFrAIuua8=;
+	b=xb5Bjqcr2eEQJ/x0W1fo4gRcHfea1/4F4em6Xt7l+ax7e2bUtaPGtnS+6ZFaBef97lEbGG
+	jN0cBvTNK80VA1G6v8uQI+DE6grOlt/S0afoGUV+TouLfcxvwZ4Q8e8T14IiRynT+rro4X
+	HfkBXiWnyZz/8AFT6HiRdFk6PoeTTGM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730459633;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DtT3u0Jge1FAxA07AdN4UGOFLn9EB0JG4DUFrAIuua8=;
+	b=k5RVC1wO6G+derlfstBOxTSpOs7DI6rtiakrkaMotBbwO3FfVpuQXNfagPRKdEwzksTbdn
+	8uo/BN3ZSxFfySAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=K5oSEMFB;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UuNIMjbF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730459632; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DtT3u0Jge1FAxA07AdN4UGOFLn9EB0JG4DUFrAIuua8=;
+	b=K5oSEMFBOKBXvqSnmOUbRs50mEXwidlhVoaTtyKLAGpjqPbbfoXypcha2mepBKj7FZo5Vo
+	BvB0Ai0yV4OKPKDbj6vcta6XdWC1QDa3wdVGfCc3T0vIcjCWHpG+pbY+7EckPuowJi3SZ6
+	9ioq+ndxNjphyEHwjzoiXitZf1mfy+w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730459632;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DtT3u0Jge1FAxA07AdN4UGOFLn9EB0JG4DUFrAIuua8=;
+	b=UuNIMjbF9xclxCvqWukvgTgsqM43sQ106ZLwPH/dyKLhH8RsTF+NOYuoOfdnWt1+olKt43
+	LwZj9K55VnPWEMAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F1BFD136D9;
+	Fri,  1 Nov 2024 11:13:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AxX9Ou+3JGdgVwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 01 Nov 2024 11:13:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A8D0FA0AF4; Fri,  1 Nov 2024 12:13:36 +0100 (CET)
+Date: Fri, 1 Nov 2024 12:13:36 +0100
+From: Jan Kara <jack@suse.cz>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] ext4: Do not fallback to buffered-io for DIO
+ atomic write
+Message-ID: <20241101111336.j34umexmaww4uyae@quack3>
+References: <cover.1730437365.git.ritesh.list@gmail.com>
+ <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
- has already unbound
-To: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>, Jesper
- Dangaard Brouer <hawk@kernel.org>, <davem@davemloft.net>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <zhangkun09@huawei.com>, <fanghaiqing@huawei.com>,
-	<liuyonglong@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander
- Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Andrew
- Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, kernel-team
-	<kernel-team@cloudflare.com>
-References: <20241022032214.3915232-1-linyunsheng@huawei.com>
- <20241022032214.3915232-4-linyunsheng@huawei.com>
- <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
- <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
- <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
- <cf1911c5-622f-484c-9ee5-11e1ac83da24@huawei.com> <878qu7c8om.fsf@toke.dk>
- <1eac33ae-e8e1-4437-9403-57291ba4ced6@huawei.com> <87o731by64.fsf@toke.dk>
- <023fdee7-dbd4-4e78-b911-a7136ff81343@huawei.com> <874j4sb60w.fsf@toke.dk>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <874j4sb60w.fsf@toke.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78fb5c40dde4847dc32af09e668a6f81fa251137.1730437365.git.ritesh.list@gmail.com>
+X-Rspamd-Queue-Id: 0960E21E2F
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 2024/11/1 0:18, Toke Høiland-Jørgensen wrote:
-
-...
-
->>>
->>> Eliding the details above, but yeah, you're right, there are probably
->>> some pernicious details to get right if we want to flush all caches. S
->>> I wouldn't do that to start with. Instead, just add the waiting to start
->>> with, then wait and see if this actually turns out to be a problem in
->>> practice. And if it is, identify the source of that problem, deal with
->>> it, rinse and repeat :)
->>
->> I am not sure if I have mentioned to you that jakub had a RFC for the waiting,
->> see [1]. And Yonglong Cc'ed had tested it, the waiting caused the driver unload
->> stalling forever and some task hung, see [2].
->>
->> The root cause for the above case is skb_defer_free_flush() not being called
->> as mentioned before.
+On Fri 01-11-24 12:20:54, Ritesh Harjani (IBM) wrote:
+> atomic writes is currently only supported for single fsblock and only
+> for direct-io. We should not return -ENOTBLK for atomic writes since we
+> want the atomic write request to either complete fully or fail
+> otherwise. Hence, we should never fallback to buffered-io in case of
+> DIO atomic write requests.
+> Let's also catch if this ever happens by adding some WARN_ON_ONCE before
+> buffered-io handling for direct-io atomic writes. More details of the
+> discussion [1].
 > 
-> Well, let's fix that, then! We already logic to flush backlogs when a
-> netdevice is going away, so AFAICT all that's needed is to add the
-
-Is there a possiblity that the page_pool owned page might be still handled/cached
-in somewhere of networking if netif_rx_internal() is already called for the
-corresponding skb and skb_attempt_defer_free() is called after skb_defer_free_flush()
-added in below patch is called?
-
-Maybe add a timeout thing like timer to call kick_defer_list_purge() if you treat
-'outstanding forever' as leaked? I actually thought about this, but had not found
-out an elegant way to add the timeout.
-
-> skb_defer_free_flush() to that logic. Totally untested patch below, that
-> we should maybe consider applying in any case.
-
-I am not sure about that as the above mentioned timing window, but it does seem we
-might need to do something similar in dev_cpu_dead().
-
+> While at it let's add an inline helper ext4_want_directio_fallback() which
+> simplifies the logic checks and inherently fixes condition on when to return
+> -ENOTBLK which otherwise was always returning true for any write or directio in
+> ext4_iomap_end(). It was ok since ext4 only supports direct-io via iomap.
 > 
->> I am not sure if I understand the reasoning behind the above suggestion to 'wait
->> and see if this actually turns out to be a problem' when we already know that there
->> are some cases which need cache kicking/flushing for the waiting to work and those
->> kicking/flushing may not be easy and may take indefinite time too, not to mention
->> there might be other cases that need kicking/flushing that we don't know yet.
->>
->> Is there any reason not to consider recording the inflight pages so that unmapping
->> can be done for inflight pages before driver unbound supposing dynamic number of
->> inflight pages can be supported?
->>
->> IOW, Is there any reason you and jesper taking it as axiomatic that recording the
->> inflight pages is bad supposing the inflight pages can be unlimited and recording
->> can be done with least performance overhead?
+> [1]: https://lore.kernel.org/linux-xfs/cover.1729825985.git.ritesh.list@gmail.com/T/#m9dbecc11bed713ed0d7a486432c56b105b555f04
+> Suggested-by: Darrick J. Wong <djwong@kernel.org> # inline helper
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ext4/file.c  |  7 +++++++
+>  fs/ext4/inode.c | 27 ++++++++++++++++++++++-----
+>  2 files changed, 29 insertions(+), 5 deletions(-)
 > 
-> Well, page pool is a memory allocator, and it already has a mechanism to
-> handle returning of memory to it. You're proposing to add a second,
-> orthogonal, mechanism to do this, one that adds both overhead and
-
-I would call it as a replacement/improvement for the old one instead of
-'a second, orthogonal' as the old one doesn't really exist after this patch.
-
-> complexity, yet doesn't handle all cases (cf your comment about devmem).
-
-I am not sure if unmapping only need to be done using its own version DMA API
-for devmem yet, but it seems waiting might also need to use its own version
-of kicking/flushing for devmem as devmem might be held from the user space?
-
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 96d936f5584b..a7de03e47db0 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -599,6 +599,13 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		ssize_t err;
+>  		loff_t endbyte;
 > 
-> And even if it did handle all cases, force-releasing pages in this way
-> really feels like it's just papering over the issue. If there are pages
-> being leaked (or that are outstanding forever, which basically amounts
-> to the same thing), that is something we should be fixing the root cause
-> of, not just working around it like this series does.
-
-If there is a definite time for waiting, I am probably agreed with the above.
-From the previous discussion, it seems the time to do the kicking/flushing
-would be indefinite depending how much cache to be scaned/flushed.
-
-For the 'papering over' part, it seems it is about if we want to paper over
-different kicking/flushing or paper over unmapping using different DMA API.
-
-Also page_pool is not really a allocator, instead it is more like a pool
-based on different allocator, such as buddy allocator or devmem allocator.
-I am not sure it makes much to do the flushing when page_pool_destroy() is
-called if the buddy allocator behind the page_pool is not under memory
-pressure yet.
-
-For the 'leaked' part mentioned above, I am agreed that it should be fixed
-if we have a clear and unified definition of 'leaked'， for example, is it
-allowed to keep the cache outstanding forever if the allocator is not under
-memory pressure and not ask for the releasing of its memory?
-
-Doesn't it make more sense to use something like shrinker_register() mechanism
-to decide whether to do the flushing?
-
-IOW, maybe it makes more sense that the allocator behind the page_pool should
-be deciding whether to do the kicking/flushing, and maybe page_pool should also
-use the shrinker_register() mechanism to empty its cache when necessary instead
-of deciding whether to do the kicking/flushing.
-
-So I am not even sure if it is appropriate to do the cache kicking/flushing
-during waiting, not to mention the indefinite time to do the kicking/flushing.
-
+> +		/*
+> +		 * There is no support for atomic writes on buffered-io yet,
+> +		 * we should never fallback to buffered-io for DIO atomic
+> +		 * writes.
+> +		 */
+> +		WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC);
+> +
+>  		offset = iocb->ki_pos;
+>  		err = ext4_buffered_write_iter(iocb, from);
+>  		if (err < 0)
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 3e827cfa762e..5b9eeb74ce47 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3444,17 +3444,34 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
+>  	return ret;
+>  }
 > 
-> -Toke
+> +static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+> +{
+> +	/* must be a directio to fall back to buffered */
+> +	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+> +		    (IOMAP_WRITE | IOMAP_DIRECT))
+> +		return false;
+> +
+> +	/* atomic writes are all-or-nothing */
+> +	if (flags & IOMAP_ATOMIC)
+> +		return false;
+> +
+> +	/* can only try again if we wrote nothing */
+> +	return written == 0;
+> +}
+> +
+>  static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+>  			  ssize_t written, unsigned flags, struct iomap *iomap)
+>  {
+>  	/*
+>  	 * Check to see whether an error occurred while writing out the data to
+> -	 * the allocated blocks. If so, return the magic error code so that we
+> -	 * fallback to buffered I/O and attempt to complete the remainder of
+> -	 * the I/O. Any blocks that may have been allocated in preparation for
+> -	 * the direct I/O will be reused during buffered I/O.
+> +	 * the allocated blocks. If so, return the magic error code for
+> +	 * non-atomic write so that we fallback to buffered I/O and attempt to
+> +	 * complete the remainder of the I/O.
+> +	 * For non-atomic writes, any blocks that may have been
+> +	 * allocated in preparation for the direct I/O will be reused during
+> +	 * buffered I/O. For atomic write, we never fallback to buffered-io.
+>  	 */
+> -	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
+> +	if (ext4_want_directio_fallback(flags, written))
+>  		return -ENOTBLK;
 > 
+>  	return 0;
+> --
+> 2.46.0
 > 
-> Patch to flush the deferred free list when taking down a netdevice;
-> compile-tested only:
-
-As mentioned above, doesn't it have the time window below?
-
-            CPU 0                           CPU1
-      unregister_netdev()                    .
-             .                               .
-     flush_all_backlogs()                    .
-             .                               .
-             .                     skb_attempt_defer_free()
-             .                               .
-             .                               .
-             .                               .
-             .                               .
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
