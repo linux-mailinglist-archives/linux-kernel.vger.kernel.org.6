@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-392175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1FC9B90A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:52:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5909B90AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:53:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA3D28316B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:52:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEBE8B219C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D8019C546;
-	Fri,  1 Nov 2024 11:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF03919B5B8;
+	Fri,  1 Nov 2024 11:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmAgbgm5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B12015820C;
-	Fri,  1 Nov 2024 11:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Khd5Svqz"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC9615820C;
+	Fri,  1 Nov 2024 11:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730461935; cv=none; b=C04GHCqpNJ+6pErEWehmlTGvTBFn+lxCWPDDkV+wCWasOZZo1GSx2pS8Qks2jRa9WjkNKV8zaqBJ5U/blO/B2e5Lxny2GpJX97ey+lvYlcXfx/uLTyxQxqRNewViKOtEUkA3NYC8efQsBAEmrldAGrlM4GPPvdLdcmhME8c5R0Y=
+	t=1730462019; cv=none; b=cJ1/38y/pVf97r7knb/UcwkuUUPwx8Kqr70bRffp07pyUigdLkXgbo/PGrQ/tsmdDjQYf/xcAiKBeZzx1qEZd5fZM6OZ1wDGjGE1vD03zcJ8uA4l0w5r9yiTmTjrES1uWxlcawgNAK+v7GY/FCf5aGp99mPqe9Ky3ITzEhhHtZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730461935; c=relaxed/simple;
-	bh=57TfoCYTbEwQPkJzCSWfPWSdR5l5+Kvm1S5E2+Mg2eE=;
+	s=arc-20240116; t=1730462019; c=relaxed/simple;
+	bh=s9zEschFheqpl3MVHG7AX/iz6sgGYdQcunUDorltRvE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IecH52Nje4mSDuC0M+cjDS/SnHbUyY/3PmyGongnEXNFHI8OH3k0CpFpZBntllJ1owcM6qt1GXTHaM5sWF8zmtPk+vWmtuah8kB6zn7RLuc1hw2R5MKDvoBb58E9XRQFNXFlhKf54AVxS2599gX6pMJIOXRuA9TO1VCWm8PAVrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmAgbgm5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B166C4CECD;
-	Fri,  1 Nov 2024 11:52:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730461934;
-	bh=57TfoCYTbEwQPkJzCSWfPWSdR5l5+Kvm1S5E2+Mg2eE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KmAgbgm5I89HECc45z6DksI6Df2ImIw57iPYWvFdWioyuIg2lglcTgxjNnjfYfaHi
-	 CQJ/wNz0lQyJsmyJoOvW4SkLL6WBjKX9ldFMDxnNCVh5pxlGUK2FlCdBWWX9WifFhK
-	 YeYLtXId3O2e4dPfLvyd00mwkZ63RcOUuG9rhbthTm5vYa+SLjBtZAzi6WU5HW6EJo
-	 Z7SL1PoIFDrZhyBb7WJzTKFtiiVP4wq0c0YWXwIaAurmX2E0DWKcu2TmuxOYeilZt9
-	 j4R7qQGDlrizkruOpwX0zKtjhmMdWZOTbs5Uk29EXDETLovKzc8tW8fpXb4LIAHy0b
-	 cBP/zcHBdmZgA==
-Date: Fri, 1 Nov 2024 12:51:49 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Yun Zhou <yun.zhou@windriver.com>
-Cc: mcgrof@kernel.org, kees@kernel.org, rostedt@goodmis.org, 
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel: add pid_max to pid_namespace
-Message-ID: <4jlpjuptn5fzgrfgbct2l3dyerb3gnxwd3ujir4dodwkxivmxs@u7mptlgts2wq>
-References: <20241030052933.1041408-1-yun.zhou@windriver.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OvOvTZ7jiV/rx7Egb/DrVunTarX53+tdH/KoGosBU/mjrVvN5/WF0eHqvFzE6Mgj2iI5D4w/+sz5ARR400gaXWE1W/U8sDSd5Da6dkpUqwUrpMfJVA6ysUcJqfb3RySpbCd1GciGLT+3Yd4o/WI6McqdmkLCO6msjbHxfc2HD/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Khd5Svqz; arc=none smtp.client-ip=1.95.21.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=YmSTqBtY8i0PV0/oOuK2+7GAOUhp/cEFMitg8aJfC1I=;
+	b=Khd5SvqzK4rtnwdSVspx1OZJIDfgoHn0uXLi2VrZvWn1NQHe+VltzzSGFdGFwX
+	KMTs+S9syWRr9k9cmpgf0VHlQQgQf9QmPe3t1VbtD7G0ejwSS2jQ5Tl50BhBYl5M
+	5qIGCZx2vvT8H6OO4nQ/NEZknXoT9AT0Olnn0eMgU/MWo=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDHn4XewCRn1RZrAQ--.14133S3;
+	Fri, 01 Nov 2024 19:51:59 +0800 (CST)
+Date: Fri, 1 Nov 2024 19:51:57 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: imx8mn-bsh-smm-s2/pro: add simple-framebuffer
+Message-ID: <ZyTA3WLJ36ZAQyDN@dragon>
+References: <20241024102800.3481574-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,156 +61,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030052933.1041408-1-yun.zhou@windriver.com>
+In-Reply-To: <20241024102800.3481574-1-dario.binacchi@amarulasolutions.com>
+X-CM-TRANSID:Ms8vCgDHn4XewCRn1RZrAQ--.14133S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7urWxGFW7JF4rCrWrZw4rAFb_yoW8Zr15pa
+	4DGF1rWrs2vw40k3s0vF4Iqrn5t3yDXF129FWfW342kwsayFySgw1xKrsrW3Z0vr4kXw4I
+	kF13Wr1fKrWYqaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYc_fUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCweKZWcks1IjcgAAsQ
 
-On Wed, Oct 30, 2024 at 01:29:33PM +0800, Yun Zhou wrote:
-> It is necessary to have a different pid_max in different containers.
-> For example, multiple containers are running on a host, one of which
-> is Android, and its 32 bit bionic libc only accepts pid <= 65535. So
-> it requires the global pid_max <= 65535. This will cause configuration
-> conflicts with other containers and also limit the maximum number of
-> tasks for the entire system.
+On Thu, Oct 24, 2024 at 12:27:56PM +0200, Dario Binacchi wrote:
+> Add a simple-framebuffer node for U-Boot to further fill and activate.
 > 
-> Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
+> Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
+> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> 
 > ---
->  include/linux/pid_namespace.h     |  1 +
->  kernel/pid.c                      | 12 +++++------
->  kernel/pid_namespace.c            | 35 ++++++++++++++++++++++++++-----
->  kernel/sysctl.c                   |  9 --------
->  kernel/trace/pid_list.c           |  2 +-
->  kernel/trace/trace.h              |  2 --
->  kernel/trace/trace_sched_switch.c |  2 +-
->  7 files changed, 39 insertions(+), 24 deletions(-)
 > 
-> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
-> index f9f9931e02d6..064cfe2542fc 100644
-> --- a/include/linux/pid_namespace.h
-> +++ b/include/linux/pid_namespace.h
-> @@ -38,6 +38,7 @@ struct pid_namespace {
->  	struct ucounts *ucounts;
->  	int reboot;	/* group exit code if this pidns was rebooted */
->  	struct ns_common ns;
-> +	int pid_max;
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
->  	int memfd_noexec_scope;
->  #endif
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 2715afb77eab..f8026a61436b 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -60,8 +60,6 @@ struct pid init_struct_pid = {
->  	}, }
->  };
->  
-> -int pid_max = PID_MAX_DEFAULT;
-> -
->  int pid_max_min = RESERVED_PIDS + 1;
->  int pid_max_max = PID_MAX_LIMIT;
->  /*
-> @@ -78,6 +76,7 @@ static u64 pidfs_ino = RESERVED_PIDS;
+>  .../freescale/imx8mn-bsh-smm-s2-display.dtsi  | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi b/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi
+> index 7675583a6b67..3d670534a714 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi
+> @@ -4,6 +4,34 @@
 >   */
->  struct pid_namespace init_pid_ns = {
->  	.ns.count = REFCOUNT_INIT(2),
-> +	.pid_max = PID_MAX_DEFAULT,
->  	.idr = IDR_INIT(init_pid_ns.idr),
->  	.pid_allocated = PIDNS_ADDING,
->  	.level = 0,
-> @@ -198,7 +197,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  			tid = set_tid[ns->level - i];
 >  
->  			retval = -EINVAL;
-> -			if (tid < 1 || tid >= pid_max)
-> +			if (tid < 1 || tid >= tmp->pid_max)
->  				goto out_free;
->  			/*
->  			 * Also fail if a PID != 1 is requested and
-> @@ -238,7 +237,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  			 * a partially initialized PID (see below).
->  			 */
->  			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-> -					      pid_max, GFP_ATOMIC);
-> +					      tmp->pid_max, GFP_ATOMIC);
->  		}
->  		spin_unlock_irq(&pidmap_lock);
->  		idr_preload_end();
-> @@ -653,11 +652,12 @@ void __init pid_idr_init(void)
->  	BUILD_BUG_ON(PID_MAX_LIMIT >= PIDNS_ADDING);
->  
->  	/* bump default and minimum pid_max based on number of cpus */
-> -	pid_max = min(pid_max_max, max_t(int, pid_max,
-> +	init_pid_ns.pid_max = min(pid_max_max, max_t(int, init_pid_ns.pid_max,
->  				PIDS_PER_CPU_DEFAULT * num_possible_cpus()));
->  	pid_max_min = max_t(int, pid_max_min,
->  				PIDS_PER_CPU_MIN * num_possible_cpus());
-> -	pr_info("pid_max: default: %u minimum: %u\n", pid_max, pid_max_min);
-> +	pr_info("pid_max: default: %u minimum: %u\n", init_pid_ns.pid_max,
-> +			pid_max_min);
->  
->  	idr_init(&init_pid_ns.idr);
->  
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index d70ab49d5b4a..d8ddc0c56599 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -111,6 +111,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
->  	ns->user_ns = get_user_ns(user_ns);
->  	ns->ucounts = ucounts;
->  	ns->pid_allocated = PIDNS_ADDING;
-> +	ns->pid_max = parent_pid_ns->pid_max;
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
->  	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
->  #endif
-> @@ -280,19 +281,45 @@ static int pid_ns_ctl_handler(const struct ctl_table *table, int write,
->  
->  	return ret;
->  }
-> +#endif	/* CONFIG_CHECKPOINT_RESTORE */
+>  / {
+> +	chosen {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
 > +
-> +static int pid_max_ns_ctl_handler(const struct ctl_table *table, int write,
-> +		void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	struct pid_namespace *pid_ns = task_active_pid_ns(current);
-> +	struct ctl_table tmp = *table;
+> +		framebuffer-panel0 {
+> +			compatible = "simple-framebuffer";
+> +			clocks = <&clk IMX8MN_CLK_DISP_PIXEL_ROOT>, /* lcdif */
+> +				 <&clk IMX8MN_CLK_DISP_APB_ROOT>,
+> +				 <&clk IMX8MN_CLK_DISP_AXI_ROOT>,
+> +				 <&clk IMX8MN_VIDEO_PLL1>,
+> +				 <&clk IMX8MN_CLK_DISP_AXI_ROOT>, /* pgc_dispmix */
+> +				 <&clk IMX8MN_CLK_DISP_APB_ROOT>,
+> +				 <&clk IMX8MN_CLK_DISP_AXI>,
+> +				 <&clk IMX8MN_CLK_DISP_APB>,
+> +				 <&clk IMX8MN_SYS_PLL2_1000M>,
+> +				 <&clk IMX8MN_SYS_PLL1_800M>,
+> +				 <&clk IMX8MN_CLK_DSI_CORE>, /* mipi_disi */
+> +				 <&clk IMX8MN_CLK_DSI_PHY_REF>;
 > +
-> +	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
-> +		return -EPERM;
-> +
-> +	tmp.data = &pid_ns->pid_max;
-> +	if (pid_ns->parent)
-> +		tmp.extra2 = &pid_ns->parent->pid_max;
-> +
-> +	return proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-> +}
->  
-> -extern int pid_max;
->  static struct ctl_table pid_ns_ctl_table[] = {
-> +#ifdef CONFIG_CHECKPOINT_RESTORE
->  	{
->  		.procname = "ns_last_pid",
->  		.maxlen = sizeof(int),
->  		.mode = 0666, /* permissions are checked in the handler */
->  		.proc_handler = pid_ns_ctl_handler,
->  		.extra1 = SYSCTL_ZERO,
-> -		.extra2 = &pid_max,
-> +		.extra2 = &init_pid_ns.pid_max,
->  	},
-> -};
->  #endif	/* CONFIG_CHECKPOINT_RESTORE */
-> +	{
-> +		.procname = "pid_max",
-> +		.maxlen = sizeof(int),
-> +		.mode = 0644,
-> +		.proc_handler = pid_max_ns_ctl_handler,
-> +		.extra1 = &pid_max_min,
-> +		.extra2 = &pid_max_max,
-> +	},
-> +	{ }
-There is no longer any need for sentinels in ctl_table arrays. Please
-remove this one for your next version.
 
-Best
+Unneeded newline.
 
--- 
+I dropped it and applied the patch.
 
-Joel Granados
+Shawn
+
+> +			power-domains = <&disp_blk_ctrl IMX8MN_DISPBLK_PD_LCDIF>,
+> +					<&disp_blk_ctrl IMX8MN_DISPBLK_PD_MIPI_DSI>;
+> +			dvdd-supply = <&reg_3v3_dvdd>;
+> +			avdd-supply = <&reg_v3v3_avdd>;
+> +			status = "disabled";
+> +		};
+> +	};
+> +
+>  	backlight: backlight {
+>  		compatible = "pwm-backlight";
+>  		pwms = <&pwm1 0 700000 0>;	/* 700000 ns = 1337Hz */
+> -- 
+> 2.43.0
+> 
+
 
