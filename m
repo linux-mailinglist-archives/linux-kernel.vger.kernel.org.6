@@ -1,151 +1,162 @@
-Return-Path: <linux-kernel+bounces-391876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA78E9B8CB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CD29B8CA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A11528462F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:12:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE09D283972
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09FB158A33;
-	Fri,  1 Nov 2024 08:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B298156885;
+	Fri,  1 Nov 2024 08:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cQSIudXM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nco7pHNy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F60815697A;
-	Fri,  1 Nov 2024 08:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E61715531A;
+	Fri,  1 Nov 2024 08:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730448736; cv=none; b=av7cp4XkuEjhn3u8xCz6RYQUllAlEDHiCElHkbNhMtmi5HtvHQuVIRRTxfkg/8aEc3oVp/91hFAoZSLq6BoErrxk9GbKZRuPWGivik+p0tdF7+D0QQXuFA2ne22GU16rk1l4I6cIkGEwt8YmE+UXgYLpN59xel7CezZDmGUhT+Y=
+	t=1730448517; cv=none; b=UVxIV9qX5jiB5MTg/XSEW18taSy5QZGL6w7+HTiCFCCVunH0kpqr7RWt5hxDKOzoTSX+RMxOON6/hrN5CuBThRdRjcNURTiLHXPu/ngBW4JNECMwzyANdCkdMo1Or1RaSZA5r5Xl5fFmyH9EFosR2k5w3BQvCouHlst9MRcnoqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730448736; c=relaxed/simple;
-	bh=fBv79w3eKoOjs9m//MWJ8cMaBmRaNg6AHgoFuopBHP4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KZ83pobfCdboGizEOGTEXuycSqEkMk0SqE86MZNQ+zRE+jXaIBXQzIYxe84QqYkM2ikPoC+gffpprSktx6TUQNc+M/Q5kWF675xPKsJzfbklKG2uf228l/hNAoxEb/wCA27kY1BQvijZ+0oMi0CNMb5xPsqHRKYxfLCdWp38XyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cQSIudXM; arc=none smtp.client-ip=192.198.163.8
+	s=arc-20240116; t=1730448517; c=relaxed/simple;
+	bh=PWykbg1w3A80eKkwEXxVoNvWAUdPzbmblHOAfS91HEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TALpSXz+ukflKyzPJ3vj4EHvaH6HFsT19sVpoJZS4zQq1HTRS9Ge+vXdXEH9r7xsDecwrTzsLG5qW+SwT9QLXIogY4KI2q5RC4mJBiGjlu2I71pQvyrGqGBj1yNNsgQLoTjdVw/qv7mHuBIS85vS2FL5sMWXcmvmrsz4Cl8p84A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nco7pHNy; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730448734; x=1761984734;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=fBv79w3eKoOjs9m//MWJ8cMaBmRaNg6AHgoFuopBHP4=;
-  b=cQSIudXMxfMYr+IWber6IRHgukCG1NJNwmU8QTlpCyJfGlBwOuLX2kYS
-   xrasQdH9/kAjIUtmB8188nzXUS9Z8R+SjYE7ZmchsYdi5hOb0xw+/d7yz
-   O7xya6TkuwaLWWDTT7veQQizGO+iuvMWp0f3a1nKAatfXvNpv0xT2BiHT
-   J6CkXs9x9LHMUoAjCXNGG+cJkSZUYHG1uKGBLAE/9Wudc8fsRtGIUdorF
-   8fVxwoYDgEFFEaG60osSuqnChVphelRK4zYh49QtdbRiq0pEEuj43DgdB
-   2xvoIJxU71zapjweWVF9Goj6/AeiKFuSy5GVtJ5Ovuh9GJvzf6nbk14Yy
-   Q==;
-X-CSE-ConnectionGUID: z9p8vRgDSaeQJj37F/2dRw==
-X-CSE-MsgGUID: cJMJjyNrRRyLAhlh5kVbJQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="47698435"
+  t=1730448516; x=1761984516;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PWykbg1w3A80eKkwEXxVoNvWAUdPzbmblHOAfS91HEQ=;
+  b=nco7pHNyMOuOQxgnvbcQguu0FSoVsZZLOMaMt8RbF4sWzD/NTg3EFpVA
+   4ghnHYShQGC1my6GS6JSEfOJjZ4pLNKJtZ/Bbl+a3ElGdp6z/V46HGCzY
+   puK+ztISl5I+Z/T/0uyu7Ziuf3GboLHMN+Zh5K+jywf6tzJkZRYS08DTy
+   yIp0JNubK95Q6ZepdZkSmhzq3s6SRrUXcfnZx6ADK+t2Vh2K8AudTDUHB
+   k2+j5qWx0jmVr0zUgJNeFr3UpOsIqzLGCtz9ZYyKPxFcdwvaBfQpcshM+
+   buH2aUZx0k+s0yq5X4sc6WXBH5x3JBZlzqMSbU/FzIvzNpbUeP9x+PYf3
+   A==;
+X-CSE-ConnectionGUID: rMCbxOMVTLOXwSXqSpG00w==
+X-CSE-MsgGUID: /W1rKyj/TsSgMGkIQie/OQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="33044792"
 X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="47698435"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:12:11 -0700
-X-CSE-ConnectionGUID: Y4Bg4QaqRqu2v99qxk7ofA==
-X-CSE-MsgGUID: KZL/9SQSSvaeFF9OXYJRsw==
+   d="scan'208";a="33044792"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:08:35 -0700
+X-CSE-ConnectionGUID: XOj9jkV1Qx+/prjKI6wiwA==
+X-CSE-MsgGUID: DfcZ98QlTOCqNwcVqyAHYQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="87712824"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 01 Nov 2024 01:12:10 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3113944B; Fri, 01 Nov 2024 10:12:08 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH v2 4/4] iio: accel: kxcjk-1013: Deduplicate ODR startup time array
-Date: Fri,  1 Nov 2024 10:08:29 +0200
-Message-ID: <20241101081203.3360421-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241101081203.3360421-1-andriy.shevchenko@linux.intel.com>
-References: <20241101081203.3360421-1-andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="120355505"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:08:32 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id A247611FA28;
+	Fri,  1 Nov 2024 10:08:29 +0200 (EET)
+Date: Fri, 1 Nov 2024 08:08:29 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: mchehab@kernel.org, ming.qian@nxp.com, eagle.zhou@nxp.com,
+	stanimir.k.varbanov@gmail.com, quic_vgarodia@quicinc.com,
+	bryan.odonoghue@linaro.org, hans.verkuil@cisco.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/3] media: i2c: dw9768: Fix pm_runtime_set_suspended()
+ with runtime pm enabled
+Message-ID: <ZySMfQAJ-NkYmUoP@kekkonen.localdomain>
+References: <20240923035115.3008900-1-ruanjinjie@huawei.com>
+ <20240923035115.3008900-2-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923035115.3008900-2-ruanjinjie@huawei.com>
 
-The content of kxcj91008_odr_start_up_times and kxcjk1013_odr_start_up_times
-is identical, deduplicate it.
+Hi Jinjie,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iio/accel/kxcjk-1013.c | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
+Thanks for the patch.
 
-diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
-index 753ec2f71a9a..f65fde06f2c1 100644
---- a/drivers/iio/accel/kxcjk-1013.c
-+++ b/drivers/iio/accel/kxcjk-1013.c
-@@ -193,23 +193,6 @@ static const struct kx_odr_start_up_time kxcjk1013_odr_start_up_times[] = {
- 	{ }
- };
- 
--/* KXCJ9-1008 */
--static const struct kx_odr_start_up_time kxcj91008_odr_start_up_times[] = {
--	{ 0x08, 100000 },
--	{ 0x09, 100000 },
--	{ 0x0A, 100000 },
--	{ 0x0B, 100000 },
--	{ 0x00, 80000 },
--	{ 0x01, 41000 },
--	{ 0x02, 21000 },
--	{ 0x03, 11000 },
--	{ 0x04, 6400 },
--	{ 0x05, 3900 },
--	{ 0x06, 2700 },
--	{ 0x07, 2100 },
--	{ }
--};
--
- /* KXCTJ2-1009 */
- static const struct kx_odr_start_up_time kxtj21009_odr_start_up_times[] = {
- 	{ 0x08, 1240000 },
-@@ -325,24 +308,24 @@ static const struct kx_chipset_info kxcjk1013_info = {
- 
- static const struct kx_chipset_info kxcj91008_info = {
- 	.regs = &kxcjk1013_regs,
--	.times = pm_ptr(kxcj91008_odr_start_up_times),
-+	.times = pm_ptr(kxcjk1013_odr_start_up_times),
- };
- 
- static const struct kx_chipset_info kxcj91008_kiox010a_info = {
- 	.regs = &kxcjk1013_regs,
--	.times = pm_ptr(kxcj91008_odr_start_up_times),
-+	.times = pm_ptr(kxcjk1013_odr_start_up_times),
- 	.acpi_type = ACPI_KIOX010A,
- };
- 
- static const struct kx_chipset_info kxcj91008_kiox020a_info = {
- 	.regs = &kxcjk1013_regs,
--	.times = pm_ptr(kxcj91008_odr_start_up_times),
-+	.times = pm_ptr(kxcjk1013_odr_start_up_times),
- 	.acpi_type = ACPI_GENERIC,
- };
- 
- static const struct kx_chipset_info kxcj91008_smo8500_info = {
- 	.regs = &kxcjk1013_regs,
--	.times = pm_ptr(kxcj91008_odr_start_up_times),
-+	.times = pm_ptr(kxcjk1013_odr_start_up_times),
- 	.acpi_type = ACPI_SMO8500,
- };
- 
+On Mon, Sep 23, 2024 at 11:51:13AM +0800, Jinjie Ruan wrote:
+> It is not valid to call pm_runtime_set_suspended() and
+> pm_runtime_set_active() for devices with runtime PM enabled because it
+> returns -EAGAIN if it is enabled already and working. So, adjust the
+> order to fix it.
+> 
+> Fixes: 5f9a089b6de3 ("dw9768: Enable low-power probe on ACPI")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  drivers/media/i2c/dw9768.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/dw9768.c b/drivers/media/i2c/dw9768.c
+> index 18ef2b35c9aa..61db1e8d2727 100644
+> --- a/drivers/media/i2c/dw9768.c
+> +++ b/drivers/media/i2c/dw9768.c
+> @@ -471,7 +471,6 @@ static int dw9768_probe(struct i2c_client *client)
+>  	 * to be powered on in an ACPI system. Similarly for power off in
+>  	 * remove.
+>  	 */
+> -	pm_runtime_enable(dev);
+>  	full_power = (is_acpi_node(dev_fwnode(dev)) &&
+>  		      acpi_dev_state_d0(dev)) ||
+>  		     (is_of_node(dev_fwnode(dev)) && !pm_runtime_enabled(dev));
+
+pm_runtime_enabled() should be replaced by IS_ENABLED(CONFIG_PM) here.
+
+> @@ -484,6 +483,7 @@ static int dw9768_probe(struct i2c_client *client)
+>  		pm_runtime_set_active(dev);
+>  	}
+>  
+> +	pm_runtime_enable(dev);
+>  	ret = v4l2_async_register_subdev(&dw9768->sd);
+>  	if (ret < 0) {
+>  		dev_err(dev, "failed to register V4L2 subdev: %d", ret);
+> @@ -495,12 +495,12 @@ static int dw9768_probe(struct i2c_client *client)
+>  	return 0;
+>  
+>  err_power_off:
+> +	pm_runtime_disable(dev);
+>  	if (full_power) {
+>  		dw9768_runtime_suspend(dev);
+>  		pm_runtime_set_suspended(dev);
+>  	}
+>  err_clean_entity:
+> -	pm_runtime_disable(dev);
+>  	media_entity_cleanup(&dw9768->sd.entity);
+>  err_free_handler:
+>  	v4l2_ctrl_handler_free(&dw9768->ctrls);
+> @@ -517,12 +517,12 @@ static void dw9768_remove(struct i2c_client *client)
+>  	v4l2_async_unregister_subdev(&dw9768->sd);
+>  	v4l2_ctrl_handler_free(&dw9768->ctrls);
+>  	media_entity_cleanup(&dw9768->sd.entity);
+> +	pm_runtime_disable(dev);
+>  	if ((is_acpi_node(dev_fwnode(dev)) && acpi_dev_state_d0(dev)) ||
+>  	    (is_of_node(dev_fwnode(dev)) && !pm_runtime_enabled(dev))) {
+
+And similarly here. The patch seems fine with that change.
+
+>  		dw9768_runtime_suspend(dev);
+>  		pm_runtime_set_suspended(dev);
+>  	}
+> -	pm_runtime_disable(dev);
+>  }
+>  
+>  static const struct of_device_id dw9768_of_table[] = {
+
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+Kind regards,
 
+Sakari Ailus
 
