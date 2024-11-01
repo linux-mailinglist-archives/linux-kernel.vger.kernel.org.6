@@ -1,161 +1,104 @@
-Return-Path: <linux-kernel+bounces-392904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318B99B997B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:33:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA4F9B9984
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:35:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B337AB213A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510241C216B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F93E1D9A57;
-	Fri,  1 Nov 2024 20:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9AD1E25E7;
+	Fri,  1 Nov 2024 20:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U/2QVr+v"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hbV37bSQ"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC7C1CC8A7;
-	Fri,  1 Nov 2024 20:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE691E2313
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730493183; cv=none; b=beI4rBY0q/PAbx63BXFxDrF6mn2jG2s9Td9JHHWtnoo7sEc7QWQ0ZogH1WSism5j/c4hQac0oKDFYYLG5apIs9VCC0MEARzrjfWau64OoENFXx4MXDjEhaCJPUkzR+5GJlFp8G++ZMvDIW2noYb+0Jjgnay6umfDlOmhcGjwk3A=
+	t=1730493288; cv=none; b=QHgwnxq500gTZ9GfTiLWxLxNg5gcsdIV2S+SmIG5EQF/pVkrnZLTUm0/QJmyOpM20/75kbepEwiEK4rnCH8LQnG47LCw4oxIFKp5JWHpCEaNfPrX+QC9/qCgzoShfOd3uMRdNRSUopk6bHPKzKua1Fn9nL9JMiyndFqdUgtKYcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730493183; c=relaxed/simple;
-	bh=3zY9i7eVZVZU4i18IDVjGC84vGqTYKsQGM1Cr93Egaw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TMoNY/gi5Cd3r7kxHAskVDwyrJoKRegd2GW8IZCCIK4mbg80WTh1JJdmQNNvFRdGiQAdJxV5oi/5P+kNIzmCdxU6H13HnX3kFjHpqmzc+jdJJ1Uya3gzeMJUjRVIV4AMhucgsY5GqeMh/49+lUAKN3X3BmCLyAsz4MW+RcTVa/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=U/2QVr+v; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A1KWmqa034638;
-	Fri, 1 Nov 2024 15:32:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730493168;
-	bh=KypOe+BlfLSfJMLuOXuYaOsSBR/ncaDRPdeWgpwfoQE=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=U/2QVr+vHmyRIWdgg7K1N/XnCu6lUmpi3RJwtidaD/KThJ4ZtLXaymBTHDKGsjdkv
-	 jSGrmS0gWUEYaIJ41S9Mn5eKcC1eStwzk0sGU+RWMU91b/hb8ZEzG3xqD9/MJr1otN
-	 BXrmMuAo1njmmf1I4ydFRISQcnK1dIBqnibsvdfc=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A1KWmhS014997
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 1 Nov 2024 15:32:48 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 1
- Nov 2024 15:32:48 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 1 Nov 2024 15:32:48 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A1KWmTs057956;
-	Fri, 1 Nov 2024 15:32:48 -0500
-Date: Fri, 1 Nov 2024 15:32:48 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Kevin Hilman <khilman@baylibre.com>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, <linux-pm@vger.kernel.org>,
-        Vibhore
- Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
-        Akashdeep Kaur
-	<a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>,
-        Markus
- Schneider-Pargmann <msp@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] pmdomain: ti_sci: collect and send low-power mode
- constraints
-Message-ID: <20241101203248.oxddn7yea3us5nth@tables>
-References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
- <173029317079.2440963.17313738472826934777.b4-ty@ti.com>
- <CAPDyKFptHq6xkKSAmeHsEuhBoEhzvudcMf2+nG08MFPwnMi+ew@mail.gmail.com>
- <7hv7x9qsvt.fsf@baylibre.com>
- <CAPDyKFpdgg+kM_Ot5GPTpMUtjmBF-pUhCeRpVb=j852_7qm=3A@mail.gmail.com>
- <20241101144445.56ejnuoxshqwns37@boots>
- <7hwmhnnf0f.fsf@baylibre.com>
+	s=arc-20240116; t=1730493288; c=relaxed/simple;
+	bh=JGIKGLosAwaInaFR/dbZOVxT/qUwBnIv05j7Oofz3dM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q+h7NOhcauE9Yd9A1QETX3C4IEeQgK3FY0p41R9d5LBdfC04VueFUftnmo1mrxIM/L3e5tbyARK1kcucuo61rrvETVgsZfTEoHwNWCrUcGBxa98WGzMpB9LnyoaL2M4LKIM1QNBsEsbbtHpSry6m+hgogemZo5Hc2WmSnbfFw6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hbV37bSQ; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e617ef81so1275e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:34:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730493285; x=1731098085; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JGIKGLosAwaInaFR/dbZOVxT/qUwBnIv05j7Oofz3dM=;
+        b=hbV37bSQhnYD+J/AL3xQnhTidhuOE753wZZHsPMhQWpxBEgn3gV30VTzzQl53R8xcq
+         Zb7pVFQHyXfqS2PTzm7q0uFZPV2ox2p5zii5/8KjFBO16+85a5RidfsCrjPdIJbJOiWk
+         zOdQVCVSGVzLBZZro0Gsbqzf6JZW0PLlaKXYjGN1axCDewi7Nwk6vwdBQ4elCkGFACUg
+         FOHwXljzLdBcXr+ACzNgxYRXEN3xCdrrgm9eSVxa/daDHj6HiYS6sa4WCPmgwNvzX0Gz
+         eftcQfWwlOWWRl+SDk2Lt9t2iXxtIXczOttzskTRsfsSPksvHPlLILZ9qB/FOhYMMy1j
+         qI0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730493285; x=1731098085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JGIKGLosAwaInaFR/dbZOVxT/qUwBnIv05j7Oofz3dM=;
+        b=vW4YhZ2VzgN4jOkaCTFCJH7Z1UylRZjCwHV6PsvIx8YVhuPzQpwZToUsORnofpDbfU
+         lsNeKco5HWRTW+aS0bE+n221g8kyyhvlYp/SoDn4YQ17XiCw6Qh9C2NynnlAs+AJsW8U
+         uEncJyFTZw64LZWY1bR++tJX2IxkeKmBa24TTNtL/JKnIJmu2LmMHIXFc0Tsp3D61+Df
+         UEpcTATGwSIfawBuFAfhPdmS8glIT2gndgtYrNTAhbkVN060Iie4+kj9ZPHaanAXr885
+         HsKRkuQfb4513HunIafcpcTbrCpIMCALCx6Hjl2WyYNvBkKD/OktorqX9/9h3+ghaU+V
+         dlXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwk1Jz9Z1OYTftyLmU/h4/N4V84CVPOjHtwFDfraR4FIKJGQfgj5h64q2rzIy9aWLcANow6ys7DdlPCNQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfVlRluZ9Rurvt+P+hj0bp2Vj6Z0g9qsVYON2SVYyo80nnp8Wf
+	8YrXgbsVsVVAOFK0+khu4pXsepKgiHGtFw1WP0SX7IUFdNBXQpiZRLYrhQRSm7BD4WFZ3BayOXw
+	miiS7AxdrRncE7J24YwfJsm6CYay3u1QI8b2A
+X-Gm-Gg: ASbGncvVMYpfVSnylhG4JCYG/zLXVLCOh5R6MncKaBOs3LXkZfmJKbCw+A6oJjEI5LM
+	EDc65nDTf6ZVZgd/X21NfcQnLmZAeuDyxzJ93YGnVDosdltNN6filGKty9ZJX
+X-Google-Smtp-Source: AGHT+IHleSpzUKqJpIQL1LrNUhvfc142T9+XqdGHrdAhF6QcicNe3I5wzlOtm+Kk9zqaztwqVj/nx8LtNAJjTI6lcF8=
+X-Received: by 2002:a19:5508:0:b0:530:baaa:ee10 with SMTP id
+ 2adb3069b0e04-53d6b1abe1cmr9794e87.3.1730493284385; Fri, 01 Nov 2024 13:34:44
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <7hwmhnnf0f.fsf@baylibre.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241101184627.131391-1-lorenzo.stoakes@oracle.com>
+In-Reply-To: <20241101184627.131391-1-lorenzo.stoakes@oracle.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 1 Nov 2024 21:34:06 +0100
+Message-ID: <CAG48ez1RvgDWXAt_gGw03EzY5bfh_2C21sBP0bBfhnq7ukv95Q@mail.gmail.com>
+Subject: Re: [PATCH] mm: remove unnecessary page_table_lock on stack expansion
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08:35-20241101, Kevin Hilman wrote:
-> Nishanth Menon <nm@ti.com> writes:
-> 
-> > On 11:11-20241031, Ulf Hansson wrote:
-> >> On Wed, 30 Oct 2024 at 20:43, Kevin Hilman <khilman@baylibre.com> wrote:
-> >> >
-> >> > Ulf Hansson <ulf.hansson@linaro.org> writes:
-> >> >
-> >> > > On Wed, 30 Oct 2024 at 14:01, Nishanth Menon <nm@ti.com> wrote:
-> >> > >>
-> >> > >> Hi Kevin Hilman,
-> >> > >>
-> >> > >> On Fri, 06 Sep 2024 09:14:48 -0700, Kevin Hilman wrote:
-> >> > >> > The latest (10.x) version of the firmware for the PM co-processor (aka
-> >> > >> > device manager, or DM) adds support for a "managed" mode, where the DM
-> >> > >> > firmware will select the specific low power state which is entered
-> >> > >> > when Linux requests a system-wide suspend.
-> >> > >> >
-> >> > >> > In this mode, the DM will always attempt the deepest low-power state
-> >> > >> > available for the SoC.
-> >> > >> >
-> >> > >> > [...]
-> >> > >>
-> >> > >> I have applied the following to branch ti-drivers-soc-next on [1].
-> >> > >> Thank you!
-> >> > >>
-> >> > >> Ulf, based on your ack[2], I have assumed that you want me to pick
-> >> > >> this series up. Let me know if that is not the case and I can drop the
-> >> > >> series.
-> >> > >
-> >> > > Well, that was a while ago. The reason was because there was a
-> >> > > dependency to another series [2], when this was posted.
-> >> > >
-> >> > > If that's not the case anymore, I think it's better to funnel this via
-> >> > > my pmdomain tree. Please let me know how to proceed.
-> >> >
-> >> > The build-time dependency on [2] still exists, and since that was just
-> >> > queued up by Nishanth, I think this series should (still) go along with
-> >> > it to keep things simple.
-> >> >
-> >> > Kevin
-> >> 
-> >> Right, that makes perfect sense to me too. If we discover conflicts,
-> >> let's deal with them then.
-> >
-> >
-> > oops.. I missed this response. OK, I will let things be.
-> >
-> 
-> Oops, 0day bot found a build error in linux-next when CONFIG_PM_SLEEP is
-> not defined[1].  Need to respin to fix this.
-> 
-> v5 coming right up....
-> 
-> Kevin
-> 
-> [1] https://lore.kernel.org/all/CA+G9fYtioQ22nVr9m22+qyMqUNRsGdA=cFw_j1OUv=x8Pcs-bw@mail.gmail.com/
+On Fri, Nov 1, 2024 at 7:46=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> Ever since commit 8d7071af8907 ("mm: always expand the stack with the mma=
+p
+> write lock held") we have been expanding the stack with the mmap write lo=
+ck
+> held.
 
-Kevin,
+Right, in the 6.1 LTS tree and newer, the old stack expansion under
+mmap read lock is gone.
 
-Unfortunately, I have chosen to drop the series. We are too late in
-the window to take the updated series and wait for new regression
-reports. On the flip side, this will clean up the flow for Ulf to take
-your V5 since the dependent series should ideally hit rc1 by then.
+(A related cleanup that also removed remains of the old stack
+expansion mechanism was e4bd84c069f2 ("mm: Always downgrade mmap_lock
+if requested").)
 
-Thanks for addressing the report fast.
-
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Reviewed-by: Jann Horn <jannh@google.com>
 
