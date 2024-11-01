@@ -1,157 +1,99 @@
-Return-Path: <linux-kernel+bounces-392818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21D79B987C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:26:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F499B987E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:27:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B7AEB216B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:26:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B65F4B216EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974DC1D0175;
-	Fri,  1 Nov 2024 19:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77641D0425;
+	Fri,  1 Nov 2024 19:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LwSQ9dA8"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q3C6c/Wg"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0E81CEE88
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C581D0421
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489190; cv=none; b=B39+Z/Nrq3U9Z4fJ3bLWXknW/MK4lu8Xd2ldeQQealM5xNfRt4xI/bnK/JtSM+crh0ZMNZ5iSm0DS3ns8MFvAlbFQmrST7hTPx9MBGVStuf4HnYP4U//GemWj2bacTGDWbZufRnqECj1zhQA1LP+VBiXldzuG/G8Sj9XdOFXkPY=
+	t=1730489203; cv=none; b=tWjujZ8jRcWWPP73ILxbjCDnMgDyAdPgq/fJvlGleQgITdFRyfVCR5S+nWhhBpb63UuHkcxWY4TvfNy4fc91HURjhBGYzVb6LUrnTU1ppx4yrBZ5SjSyl+rafazlIJbKw0sd6ksM+aYF/nED2tscJeLqSvN93RW9m7IS7Pt62EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489190; c=relaxed/simple;
-	bh=5YQIiDu0dUlJHULMrj11OKIb/F1m9NxdbYFo8bpLXbI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nrQmxDsU7fAtA4rFbZDnijnxVNxA8zkUvp3uEzOsEKx63Fq3Wo4RcR1eTMbA12WVn9TabBUnduV3myft+x/AdIBULy8YrxgiJ1g1nDvM3i0N93XcHzp4QcbW5IhuYAUsNf2jDQBRJaPEuu3d+u/ZAoEz+xNMqxN0p2UEQ08bxNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LwSQ9dA8; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7180cc146d8so1169225a34.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:26:25 -0700 (PDT)
+	s=arc-20240116; t=1730489203; c=relaxed/simple;
+	bh=y9gMRmSgRhR2ZzgRFa1iVD1DWemELrWiDT0kiGYVqFQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tuALVzc9eru2oJF3RDI/4VOPR/f1vn9soEPXaIXY7zHxB0tZxZDqKcpQ1xXOg1TMMdnDM44RhqMvCEp5cfBCfXKWVqEBML+sxz6KjV8MWPIh0aheaAztc1Aj06IzWURHZUHk40dKsYqsPVjGfErSbqV8e1A94OMMtOY4lBRR7Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q3C6c/Wg; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71e58e838d5so2854290b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:26:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730489185; x=1731093985; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OSXJbaaZjYaOy9jDlQqwtzCh35NpZ0KX5EKFSupi5Yw=;
-        b=LwSQ9dA8reOOTsnRVD+Qk8RQHjAwDXy250S81qKE0tVH9VNlQpvwGI/aFPo/4US2gx
-         Sc+EFiLoAyXIZsaaJUEjktSitacecrfX47p2kKl1+pNG0CB6RMcVAVsmIcAX+ZQu8Ayh
-         MO4JjKpOy4nYV2P+G4wA7kH6nVBFsHIQ1C7e3m//6rdVbG3Nrqu6F8pS+OOKyuommSHe
-         BZqGk9kvXkVfZMhzFfIalDToVUYajVz8FbS6PrT5eIqwj6XcfQ1OaLs+sT/gnx0Kvjvc
-         gPXwuS0E1cdBo/uu3M/Pu3bcUDP+aMfOTTE0LRZIQpYZpsoUqq3dlfRiPtjz4qDvhMY5
-         ivNQ==
+        d=google.com; s=20230601; t=1730489201; x=1731094001; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l6/SBlVL29Guf7OgbzpBZ87muPd4kGOblg4NhLF75g8=;
+        b=Q3C6c/WgNh3t5T9LzHw29pJdc/AyHgJBeb0CKoQijvZi5YS1gyienTzLOonqLCCU4e
+         PirkoOjUcKU42RV/XbySH2HkuhIcot7+y9vojPUCKwGs1E3MaLMNCe2z46Nb0fsRdeOC
+         lAvLtDhNBnCLweUuCQFn305csdvtjkuQsZxh3YU7tsWzEw4Nb/OAsg9nvOZglAWs2ZKy
+         MbZhduf3VszsOwJaAJit2Sm3NVdIs1cywBgr82thhWoUNIP/99Vp5A0k6J+Cr87YhEPq
+         SLlQP0ZLMRPpcEMHooX2vcFqjtG9g5rYL1Uzq595gYTwkW7TBh4iqR03sVMKou1ft5KC
+         HNbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730489185; x=1731093985;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OSXJbaaZjYaOy9jDlQqwtzCh35NpZ0KX5EKFSupi5Yw=;
-        b=QVB7v2hyDXvxQYcEHQP4FF2e5lpKa18Ao6n9887btCbiiQP6XvjVEzhK7kwHuQVaw8
-         gRFy06Wx5mN6LkZjePeWC1kKzcg4tVz1umpqFSwMheaPwSnM7GBvHEAwOlZ75jegjJU4
-         4JtopMrelv005VX8VdROgsG5fh2T+pIyo81OlnLA9voGtwYglvN+c82wTQ0zjzwDZ6FR
-         MtPhN7otZiHi1OrtkBYWIoLE8qE2SMiTvpgdqpBAl2BZXQTFQzM3xGaxdgadzgN9Q0VG
-         nVqCQyDAe6dGrlTV/6GsnjRmIGXNRF686d3vQ4OXhrPrFiHGwgC9MIExqApZ3R2Wsrvc
-         xddA==
-X-Forwarded-Encrypted: i=1; AJvYcCWv+I8xxYNfyic1n6sHjyAIfhEtncdUgNwKmU5OqIzj8vpb9lbRIFVnUkNu7k1a1Yfpy/fCtPaq9H0YcVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yych/70IkpQALYisIkG440ZO79eouys83UXFXYlzXIdiIJiOBXr
-	G88/u0qXQKT/6Q4gDxkxVobEG/IYFUfwg3QiHX0f+kgXDN5sKXIUGLYmoB4JjPytY/LMF5pp7SN
-	q
-X-Google-Smtp-Source: AGHT+IFn0omlwGkmEwEHPxzlpz5Xt8pkBY2VI53QJJufULOaAOfpzCfWQfonqed9e6SbxptQhnksgQ==
-X-Received: by 2002:a05:6870:ab8d:b0:278:222c:98c4 with SMTP id 586e51a60fabf-294647c553fmr10961567fac.21.1730489184823;
-        Fri, 01 Nov 2024 12:26:24 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29487485e8csm1249796fac.17.2024.11.01.12.26.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 12:26:23 -0700 (PDT)
-Message-ID: <bff6d5d6-1cbb-4447-9682-4c20223ee03e@baylibre.com>
-Date: Fri, 1 Nov 2024 14:26:21 -0500
+        d=1e100.net; s=20230601; t=1730489201; x=1731094001;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l6/SBlVL29Guf7OgbzpBZ87muPd4kGOblg4NhLF75g8=;
+        b=uBmLOnjbCdtOeWi+34ABcAmr5br4ixlp/wnAYbJmGiw4aXgwFO+Y0kECQLSqMjI9cs
+         F5j0QcCf20Z5qU8E9veiYB37SZMSsOdz56oOkUsl4lmp5OGJ3XuDTMwu5qQXGizxyX2D
+         OWFxWOTXZb6oPjeF4PCUm813QEnOiJ6VkN3ole2V0lmY9X2R3iH1wIrafLIISYGN1I5f
+         KeKlA3UkwIcQNieYS76NVeXy4nwMJcYqJHi4YcOg4eFqJVV8YySxri1Al/T1Yr/vIcIw
+         7EE+Sjd5tF0TPHuWtlWLGIW+SMt6Qe8C1io2ksHmuAKNOVWL/fWaRvkaO4Q1F5tv/2il
+         E9Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQR00hUkqdTWf0dH5x/3ESIBSrhiiVwEo1fMG+VB2p0QT8TFl0tHefavR67bI1W0qwvflSyj3VeTgva18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHQO1rt+YfY3y4LnSx4fOS/vrS+jj7qw5i/V/U7U/qsK3DpFHj
+	y9IbfvSB678zPFVxCYnRNy+F2AgqLfD12uXDXpDKsBTSvjthPMjJZyysXa0pSMpI9q6/I694750
+	Ldw==
+X-Google-Smtp-Source: AGHT+IFkhgtKHE81DUnfzmtMTNF6Rg9WpI+qnz+2pkM4Gl68lwQnDeSODf98f2ouigJe4+3xU4RiVhh5za0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a62:f20f:0:b0:71e:5dff:32dd with SMTP id
+ d2e1a72fcca58-72062f04347mr39339b3a.2.1730489201065; Fri, 01 Nov 2024
+ 12:26:41 -0700 (PDT)
+Date: Fri, 1 Nov 2024 12:26:39 -0700
+In-Reply-To: <173039505425.1508775.86255062373291663.b4-ty@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/6] iio: adc: adi-axi-adc: add interface type
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- conor+dt@kernel.org, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20241101112358.22996-1-antoniu.miclaus@analog.com>
- <20241101112358.22996-4-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241101112358.22996-4-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240828232013.768446-1-seanjc@google.com> <173039505425.1508775.86255062373291663.b4-ty@google.com>
+Message-ID: <ZyUrbykshu2YcrfR@google.com>
+Subject: Re: [PATCH] KVM: x86: Ensure vcpu->mode is loaded from memory in kvm_vcpu_exit_request()
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 11/1/24 6:23 AM, Antoniu Miclaus wrote:
-> Add support for getting the interface (CMOS or LVDS) used by the AXI ADC
-> IP.
+On Thu, Oct 31, 2024, Sean Christopherson wrote:
+> On Wed, 28 Aug 2024 16:20:13 -0700, Sean Christopherson wrote:
+> > Wrap kvm_vcpu_exit_request()'s load of vcpu->mode with READ_ONCE() to
+> > ensure the variable is re-loaded from memory, as there is no guarantee the
+> > caller provides the necessary annotations to ensure KVM sees a fresh value,
+> > e.g. the VM-Exit fastpath could theoretically reuse the pre-VM-Enter value.
 > 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-
-> changes in v5:
->  - use IIO_BACKEND_INTERFACE_SERIAL_CMOS and IIO_BACKEND_INTERFACE_SERIAL_LVDS
->  drivers/iio/adc/adi-axi-adc.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+> Applied to kvm-x86 misc, thanks!
 > 
-> diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
-> index 5c8c87eb36d1..f6475bc93796 100644
-> --- a/drivers/iio/adc/adi-axi-adc.c
-> +++ b/drivers/iio/adc/adi-axi-adc.c
-> @@ -39,6 +39,9 @@
->  #define   ADI_AXI_REG_RSTN_MMCM_RSTN		BIT(1)
->  #define   ADI_AXI_REG_RSTN_RSTN			BIT(0)
->  
-> +#define ADI_AXI_ADC_REG_CONFIG			0x000c
-> +#define   ADI_AXI_ADC_REG_CONFIG_CMOS_OR_LVDS_N	BIT(7)
-> +
->  #define ADI_AXI_ADC_REG_CTRL			0x0044
->  #define    ADI_AXI_ADC_CTRL_DDR_EDGESEL_MASK	BIT(1)
->  
-> @@ -290,6 +293,25 @@ static int axi_adc_chan_disable(struct iio_backend *back, unsigned int chan)
->  				 ADI_AXI_REG_CHAN_CTRL_ENABLE);
->  }
->  
-> +static int axi_adc_interface_type_get(struct iio_backend *back,
-> +				      enum iio_backend_interface_type *type)
-> +{
-> +	struct adi_axi_adc_state *st = iio_backend_get_priv(back);
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	ret = regmap_read(st->regmap, ADI_AXI_ADC_REG_CONFIG, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val & ADI_AXI_ADC_REG_CONFIG_CMOS_OR_LVDS_N)
+> [1/1] KVM: x86: Ensure vcpu->mode is loaded from memory in kvm_vcpu_exit_request()
+>       https://github.com/kvm-x86/linux/commit/ba50bb4a9fb5
 
-FIELD_GET() also works here.
+FYI, I rebased misc to v6.12-rc5, as patches in another series had already been
+taken through the tip tree.  New hash:
 
-> +		*type = IIO_BACKEND_INTERFACE_SERIAL_CMOS;
-> +	else
-> +		*type = IIO_BACKEND_INTERFACE_SERIAL_LVDS;
-> +
-> +	return 0;
-> +}
-> +
->  static struct iio_buffer *axi_adc_request_buffer(struct iio_backend *back,
->  						 struct iio_dev *indio_dev)
->  {
-> @@ -337,6 +359,7 @@ static const struct iio_backend_ops adi_axi_adc_ops = {
->  	.iodelay_set = axi_adc_iodelays_set,
->  	.test_pattern_set = axi_adc_test_pattern_set,
->  	.chan_status = axi_adc_chan_status,
-> +	.interface_type_get = axi_adc_interface_type_get,
->  	.debugfs_reg_access = iio_backend_debugfs_ptr(axi_adc_reg_access),
->  	.debugfs_print_chan_status = iio_backend_debugfs_ptr(axi_adc_debugfs_print_chan_status),
->  };
-
+[1/1] KVM: x86: Ensure vcpu->mode is loaded from memory in kvm_vcpu_exit_request()
+      https://github.com/kvm-x86/linux/commit/3ffe874ea3eb
 
