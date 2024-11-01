@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-392799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58A69B983E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:16:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BC19B9840
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:16:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C0601F20FFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBDCB2822AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1F01D0499;
-	Fri,  1 Nov 2024 19:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780641CACC4;
+	Fri,  1 Nov 2024 19:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cpP66Lqc"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y/OQUvXV"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C79A1D0141
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA371D0438
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730488500; cv=none; b=FTZHEF4z1qdWTnkNDkdFutIRqIcL90pR1t49GXnMSdhENu53VLwYKariOmrp62niNE8rw7r6e1uxfdsnW86BKhWi1UoIqKTGsDRxz+QmoEcaWFynveo9NNb+G7iMlPhqFAjFvMg3e7XdssBgkENXfUby1WHqKDymLdweUQ7Fi6s=
+	t=1730488502; cv=none; b=iDFgOjAKuqSiYgrELpl7rSBlOUkKE6AywxzuhwrKP8a2PkGy8MZOc8GbTf8Rm+qts0yPSR6IyxIDHdpout/abQ4/HkptHakC0aQ24nWuGtCE2aOaxrlGTYxNTsN2vTAn4nf1HtYCuDebKfVhB7FhSwki8Wag04fjwkS7gQREwX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730488500; c=relaxed/simple;
-	bh=jxo9Um4MNyRp6WJPIZhGVnb1qXFxFmLRqxQh0eevjEE=;
+	s=arc-20240116; t=1730488502; c=relaxed/simple;
+	bh=8JHdaYM0xXhzHuPv71pVBdeyV3cel6FJgdk6+9WWaVA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z9OXNF8FtTFmBMksrCPMqEoOKLiQgZZHJl574eRsMl/7EIhFiAlmceyEgGvbNISbnJVfv7l9RSH8QfF5PrUP3/kyGFgbxmtLX6Grra6lYg/2ejLpI76Yt4XrweAnQAYI0yJUhMcYHwgI1o4a/RCTs5GwCZgGs3JYeycJSjmvz9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cpP66Lqc; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=fP9b1HsVC9gCiJ2XmDJbhpd3wrTqsIXwtiU+sdT9YFiUEaEjsmb2HzCxyG3cZ2dYRfcFxsO1d3lI0WhVO1pus0ntSby/BjVFqzs1ak+o2QyW4BACbb7xs30I66r0wPTsoWSPsDLYBmWdy3XI1I96QsApgm1IlfI91LGFIN3lrC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y/OQUvXV; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71e6241c002so2293644b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:14:59 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e30d7b4205eso4474255276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:15:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730488498; x=1731093298; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730488500; x=1731093300; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=EBjQChsQkGdvyBMJ4mZedLs9/EtB6ki+0LIpNzc1JfM=;
-        b=cpP66Lqcvzu6DgaQMrk4QQb6+98To8U76187ywYqr9RGdt7fsA/cM7IT7RfVgJCIXK
-         UiVrcWkYxZhyqf7+gJKnqtD57IMtItXARBUfMThyGlvVm8a5tA9xMBkOuSv5vrpSqUPb
-         jZ0UZKBMDj1o5NGKFRkbHV55XdRSYCtWxtJ9Ky9P3WkMcZcZu8LLyt2A+T6iSYyk64fy
-         bNLsZMQSRcr4V//ZQmHETXw5TEzxdSHebqq2ORLhkFMMNuVbM63qJcMHsT3p8YUj5sYX
-         GKCPEna8u3gQgYyxf1hwUXwcQqQxfBB7iR44DgUYjS44KZI4FIoRroP5twW6emen5u3w
-         l1lg==
+        bh=wVNlWehVR99hr0dhSgfmMBMjHWaw56c/QaGVUiFdMnE=;
+        b=y/OQUvXVmBoZpB9GM80tjlwh9YHuL9VajNcnKoRh7V9JIZOhEay3nC0EQHox0n03pL
+         ivC95imijxI8qZS9vBuCndliju2eaXvBTzLqSHPdJzWWKkjmnccO81+w7kzZB2TW665I
+         ibzXIpCodmYTkjt4e/6qWrcMUd/NJKLD3PEOwuGVJ3Gr3zkCukfLieRWH4uQ02uS4C6y
+         evDDJSPAw5ynF7K0MSq5Md6fE/iCmAEvEp855k6lUMiaHpY1ctWBULrj+Aj0WN3aBgZL
+         493IG2B8tK5st8XnXlYMz6TClqHwNj9aW5ZxWITwhbC+NOZwu6sJMqtJ6Bem4KwyF7iT
+         IDFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730488498; x=1731093298;
+        d=1e100.net; s=20230601; t=1730488500; x=1731093300;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EBjQChsQkGdvyBMJ4mZedLs9/EtB6ki+0LIpNzc1JfM=;
-        b=kfn1O2/qxOyQWmIqaTTFeaRsY/jJb120hkgAs4lVCIswfvuPlIEAZ1t1WB5YyAk62b
-         ML0WE88TO2QMPhtySO1VtXqqlahKtA6O0eDLSEhBWlU4bIzb/Ou8tvG3C6wfqVEBvLjh
-         oMBd6BUOsMoGpXUeZcepyeirdd8qlzBBDw/JCSHmKtpmM25y/7fWa5aqbuGgRSJeoI07
-         j7XDtKW2AXhbbHpQQPf7anT8PlnOyhy9hhNz2X2UuIzF8ux0ytQnXve64orW6duOkG6u
-         DGVIDAB4m/eInlmvL/MOQkWjDkJ1VJ2gJckfwnOKppDiqgZxU89Znq5e352OBvNt40PQ
-         zO2g==
-X-Forwarded-Encrypted: i=1; AJvYcCU4JwTJ6Ln+gPvsDYCmk6+B8SV7sRpSL4jLAfHB+Zb5gAJTN4vCnoCQ67VSfENjPt1/LGEv3VGQVyCK1cM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJJ2WDoRIXv3M57ZbxeQtSEZeKxr+rglLmit7McXKk9dxiKDg3
-	DHwhkgtouy9fGLxGBTMY7J2HH4KtIUPk+0WyhyE2bz+d7Tv/7r4eA8DPNW4E3dd7Nu0Jwu6SECS
-	cPQ==
-X-Google-Smtp-Source: AGHT+IHfw1GQRMnZPA8VfH9+KSaVs33bq1UNe4WX1/RW4FnvMArjWdJh1n6jjxhCzBGh/CGN8O4meR5kuDc=
+        bh=wVNlWehVR99hr0dhSgfmMBMjHWaw56c/QaGVUiFdMnE=;
+        b=CGaPni1+m9yjh0DT+blPplhIQHhj6+ZHW8AnbyqxBFv5gDcFPXVbomjQt17RIVaWbo
+         89rF88GM5tLPLYcIVc6acSDXNXrERaMU1pl7ei6AzfBtUAI+eUfYPxxG7oolj7L6a8ue
+         v2p3rvXmVqp5PGevWybORbDKt77ks3dWZ7zqzNOCDTzOvWqPLqfbBYIjds+bf8HMI4SR
+         MGHjyS6shk75SOy81ZWGX5ilgeWu0VTh+NY4MAwNJTSJLTfcxReyQTsFp5WNdiz9Nl0R
+         afadKMqFAv8pA9VpnhVG0YnWARTRYxMRnLTpHVVuwlX3NTrVZ9vcmAF9AMCs6dN0Vdsy
+         FwlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlekgZoVHWwXDGZLfMbJVkwKBMvD778QYBuhQoGhL9RiDQUdGPVptvbDqK6bBUZBFP+CYV3fVfsuKtQxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykGExPiHuoH27htS6bSAkQ6A5ASA1sMaSeFK3vNeZGFSqUZTfh
+	PDTbZfMR5dlfYtU4oB6Ril6vwXo7U66d9wLM8cArpm3BtlzCCJV1z3DRMJRJd/T6H379T6E34QN
+	T8A==
+X-Google-Smtp-Source: AGHT+IE0pt6vhmwVNHvx7nlyxdB88wq01HOL2kongx16D3PnuLsTZ3nsV3jgWijzqVurWsp/OrsYYOQXUfE=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:aa7:8183:0:b0:71e:4df8:a3e7 with SMTP id
- d2e1a72fcca58-720bc86b580mr19190b3a.2.1730488498550; Fri, 01 Nov 2024
- 12:14:58 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a25:8241:0:b0:e29:7cfa:9fbc with SMTP id
+ 3f1490d57ef6-e30e5b678ffmr4451276.11.1730488500431; Fri, 01 Nov 2024 12:15:00
+ -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  1 Nov 2024 12:14:46 -0700
+Date: Fri,  1 Nov 2024 12:14:47 -0700
 In-Reply-To: <20241101191447.1807602-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,68 +75,140 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241101191447.1807602-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241101191447.1807602-5-seanjc@google.com>
-Subject: [PATCH 4/5] KVM: nVMX: Use vmcs01's controls shadow to check for
- IRQ/NMI windows at VM-Enter
+Message-ID: <20241101191447.1807602-6-seanjc@google.com>
+Subject: [PATCH 5/5] KVM: nVMX: Honor event priority when emulating PI
+ delivery during VM-Enter
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Chao Gao <chao.gao@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Use vmcs01's execution controls shadow to check for IRQ/NMI windows after
-a successful nested VM-Enter, instead of snapshotting the information prior
-to emulating VM-Enter.  It's quite difficult to see that the entire reason
-controls are snapshot prior nested VM-Enter is to read them from vmcs01
-(vmcs02 is loaded if nested VM-Enter is successful).
+Move the handling of a nested posted interrupt notification that is
+unblocked by nested VM-Enter (unblocks L1 IRQs when ack-on-exit is enabled
+by L1) from VM-Enter emulation to vmx_check_nested_events().  To avoid a
+pointless forced immediate exit, i.e. to not regress IRQ delivery latency
+when a nested posted interrupt is pending at VM-Enter, block processing of
+the notification IRQ if and only if KVM must block _all_ events.  Unlike
+injected events, KVM doesn't need to actually enter L2 before updating the
+vIRR and vmcs02.GUEST_INTR_STATUS, as the resulting L2 IRQ will be blocked
+by hardware itself, until VM-Enter to L2 completes.
 
-That could be solved with a comment, but explicitly using vmcs01's shadow
-makes the code self-documenting to a certain extent.
+Note, very strictly speaking, moving the IRQ from L2's PIR to IRR before
+entering L2 is still technically wrong.  But, practically speaking, only a
+userspace that is deliberately checking KVM_STATE_NESTED_RUN_PENDING
+against PIR and IRR can even notice; L2 will see architecturally correct
+behavior, as KVM ensure the VM-Enter is finished before doing anything
+that would effectively preempt the PIR=>IRR movement.
 
-No functional change intended (vmcs01's execution controls must not be
-modified during emulation of nested VM-Enter).
-
+Reported-by: Chao Gao <chao.gao@intel.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/vmx/nested.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ arch/x86/kvm/vmx/nested.c | 53 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 38 insertions(+), 15 deletions(-)
 
 diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 4d20ab647876..0540faef0c85 100644
+index 0540faef0c85..0c6c0aeaddc2 100644
 --- a/arch/x86/kvm/vmx/nested.c
 +++ b/arch/x86/kvm/vmx/nested.c
-@@ -3486,7 +3486,6 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
- 	enum vm_entry_failure_code entry_failure_code;
--	bool evaluate_pending_interrupts;
- 	union vmx_exit_reason exit_reason = {
- 		.basic = EXIT_REASON_INVALID_STATE,
- 		.failed_vmentry = 1,
-@@ -3505,9 +3504,6 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
+@@ -3725,14 +3725,6 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 	if (unlikely(status != NVMX_VMENTRY_SUCCESS))
+ 		goto vmentry_failed;
  
- 	kvm_service_local_tlb_flush_requests(vcpu);
- 
--	evaluate_pending_interrupts = exec_controls_get(vmx) &
--		(CPU_BASED_INTR_WINDOW_EXITING | CPU_BASED_NMI_WINDOW_EXITING);
+-	/* Emulate processing of posted interrupts on VM-Enter. */
+-	if (nested_cpu_has_posted_intr(vmcs12) &&
+-	    kvm_apic_has_interrupt(vcpu) == vmx->nested.posted_intr_nv) {
+-		vmx->nested.pi_pending = true;
+-		kvm_make_request(KVM_REQ_EVENT, vcpu);
+-		kvm_apic_clear_irr(vcpu, vmx->nested.posted_intr_nv);
+-	}
 -
- 	if (!vmx->nested.nested_run_pending ||
- 	    !(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_DEBUG_CONTROLS))
- 		vmx->nested.pre_vmenter_debugctl = vmcs_read64(GUEST_IA32_DEBUGCTL);
-@@ -3590,9 +3586,11 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mode(struct kvm_vcpu *vcpu,
- 	 * Re-evaluate pending events if L1 had a pending IRQ/NMI/INIT/SIPI
- 	 * when it executed VMLAUNCH/VMRESUME, as entering non-root mode can
- 	 * effectively unblock various events, e.g. INIT/SIPI cause VM-Exit
--	 * unconditionally.
-+	 * unconditionally.  Take care to pull data from vmcs01 as appropriate,
-+	 * e.g. when checking for interrupt windows, as vmcs02 is now loaded.
+ 	/* Hide L1D cache contents from the nested guest.  */
+ 	vmx->vcpu.arch.l1tf_flush_l1d = true;
+ 
+@@ -4194,13 +4186,25 @@ static int vmx_check_nested_events(struct kvm_vcpu *vcpu)
  	 */
--	if (unlikely(evaluate_pending_interrupts) ||
-+	if ((__exec_controls_get(&vmx->vmcs01) & (CPU_BASED_INTR_WINDOW_EXITING |
-+						  CPU_BASED_NMI_WINDOW_EXITING)) ||
- 	    kvm_apic_has_pending_init_or_sipi(vcpu) ||
- 	    kvm_apic_has_interrupt(vcpu))
- 		kvm_make_request(KVM_REQ_EVENT, vcpu);
+ 	bool block_nested_exceptions = vmx->nested.nested_run_pending;
+ 	/*
+-	 * New events (not exceptions) are only recognized at instruction
++	 * Events that don't require injection, i.e. that are virtualized by
++	 * hardware, aren't blocked by a pending VM-Enter as KVM doesn't need
++	 * to regain control in order to deliver the event, and hardware will
++	 * handle event ordering, e.g. with respect to injected exceptions.
++	 *
++	 * But, new events (not exceptions) are only recognized at instruction
+ 	 * boundaries.  If an event needs reinjection, then KVM is handling a
+-	 * VM-Exit that occurred _during_ instruction execution; new events are
+-	 * blocked until the instruction completes.
++	 * VM-Exit that occurred _during_ instruction execution; new events,
++	 * irrespective of whether or not they're injected, are blocked until
++	 * the instruction completes.
++	 */
++	bool block_non_injected_events = kvm_event_needs_reinjection(vcpu);
++	/*
++	 * Inject events are blocked by nested VM-Enter, as KVM is responsible
++	 * for managing priority between concurrent events, i.e. KVM needs to
++	 * wait until after VM-Enter completes to deliver injected events.
+ 	 */
+ 	bool block_nested_events = block_nested_exceptions ||
+-				   kvm_event_needs_reinjection(vcpu);
++				   block_non_injected_events;
+ 
+ 	if (lapic_in_kernel(vcpu) &&
+ 		test_bit(KVM_APIC_INIT, &apic->pending_events)) {
+@@ -4312,18 +4316,26 @@ static int vmx_check_nested_events(struct kvm_vcpu *vcpu)
+ 	if (kvm_cpu_has_interrupt(vcpu) && !vmx_interrupt_blocked(vcpu)) {
+ 		int irq;
+ 
+-		if (block_nested_events)
+-			return -EBUSY;
+-		if (!nested_exit_on_intr(vcpu))
++		if (!nested_exit_on_intr(vcpu)) {
++			if (block_nested_events)
++				return -EBUSY;
++
+ 			goto no_vmexit;
++		}
+ 
+ 		if (!nested_exit_intr_ack_set(vcpu)) {
++			if (block_nested_events)
++				return -EBUSY;
++
+ 			nested_vmx_vmexit(vcpu, EXIT_REASON_EXTERNAL_INTERRUPT, 0, 0);
+ 			return 0;
+ 		}
+ 
+ 		irq = kvm_cpu_get_extint(vcpu);
+ 		if (irq != -1) {
++			if (block_nested_events)
++				return -EBUSY;
++
+ 			nested_vmx_vmexit(vcpu, EXIT_REASON_EXTERNAL_INTERRUPT,
+ 					  INTR_INFO_VALID_MASK | INTR_TYPE_EXT_INTR | irq, 0);
+ 			return 0;
+@@ -4342,11 +4354,22 @@ static int vmx_check_nested_events(struct kvm_vcpu *vcpu)
+ 		 * and enabling posted interrupts requires ACK-on-exit.
+ 		 */
+ 		if (irq == vmx->nested.posted_intr_nv) {
++			/*
++			 * Nested posted interrupts are delivered via RVI, i.e.
++			 * aren't injected by KVM, and so can be queued even if
++			 * manual event injection is disallowed.
++			 */
++			if (block_non_injected_events)
++				return -EBUSY;
++
+ 			vmx->nested.pi_pending = true;
+ 			kvm_apic_clear_irr(vcpu, irq);
+ 			goto no_vmexit;
+ 		}
+ 
++		if (block_nested_events)
++			return -EBUSY;
++
+ 		nested_vmx_vmexit(vcpu, EXIT_REASON_EXTERNAL_INTERRUPT,
+ 				  INTR_INFO_VALID_MASK | INTR_TYPE_EXT_INTR | irq, 0);
+ 
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
