@@ -1,132 +1,269 @@
-Return-Path: <linux-kernel+bounces-392252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 148999B9185
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:08:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD0B9B918B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:10:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB0728391E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:08:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8AA1F23172
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382D919F432;
-	Fri,  1 Nov 2024 13:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5CA19F423;
+	Fri,  1 Nov 2024 13:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ylc6i+PX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V/BD6Q7K"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88932487A7;
-	Fri,  1 Nov 2024 13:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C0B487A7
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730466484; cv=none; b=Hx4saZqQ7RfizsqGNdkBrndK+5XQq6zQ3b6slJb0Lk9tPp31DCXYp4yUSH1bLWP5dWQxzwuQ1MaG9Re/QXm5YMURTkSGv3oZ1qdZPFdC67Em6A9kiw1IDaXdtKvIuiuBzlkiI2wSaQUu0lXThXYpv2gTWcVvk95Vi42NqGsnh3I=
+	t=1730466608; cv=none; b=KMlgs9tCLz/vtk+1QJVfGT2W0on15Cc5qsgBmqHUtpqUhlNowT2WQHpJLEvboWPi2QzwjMhJ+sPDBKx0KLnURVemXzG9IArc3Sic5x24d+ddfQQ2F1FqlDMd29bnOKnQW7Wb8ZBQjx88ZkoMSd+skhK2vdIxzlSkD7mI3rLBLMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730466484; c=relaxed/simple;
-	bh=2SzPN9eZ9YXTCtIfY58EFEEvjtP/SDawY1JwxmDF++I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZ4mHE7LU0F4QbugdjkP1e/zqWgqh3lj2xmdEJSgbupXZggFpVOfHtRrTqA4wGBz07zlCxsEUKPGYHZnDdl01NUOzkYbrX7Uiirri5+Jj5f8+S+lpqLD+su3tBqaQC6NF5p5Y/0PqB7AzUXJ1go1zHM0qYgM7Nr2KTpmR7X9tSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ylc6i+PX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24B02C4CECD;
-	Fri,  1 Nov 2024 13:07:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730466484;
-	bh=2SzPN9eZ9YXTCtIfY58EFEEvjtP/SDawY1JwxmDF++I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ylc6i+PXadApsTrC1+EHUyKZIZnnbtk5yPisr6xCT1pFwE9gK/CLFWiHQNRuQI799
-	 kCBO4RxaczMABJO8tQBCqq3YL0ahawM9dTOEu4HAWN5LKPmb7YR2IWZ0jwQk1pw0XW
-	 fSuGXY62Kc12y34/wRKzjUhAHqaGgwCWSHv+8qZG7DO6PHZgTUO6TJQ1XH+Lfb6uQx
-	 iZteyzfKIG8FHUKZz8O690Vi+yn0jR1aQChsU5dqlPHjGkdNYRiCEYHrqO4V6wlO2c
-	 1G7j9vKxDIIR23W/3UhX4PfTe8XXv/4M+wNQtB9QHIteKOd8v86sXg2riL9PpYdU82
-	 Fa14lZg2mx2/w==
-Date: Fri, 1 Nov 2024 13:07:57 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Anup Patel <anup@brainfault.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Andrew Jones <ajones@ventanamicro.com>,
-	James Houghton <jthoughton@google.com>,
-	David Woodhouse <dwmw@amazon.co.uk>, linux-next@vger.kernel.org
-Subject: Re: [PATCH v3 03/14] KVM: selftests: Return a value from
- vcpu_get_reg() instead of using an out-param
-Message-ID: <39ea24d8-9dae-447a-ae37-e65878c3806f@sirena.org.uk>
-References: <20241009154953.1073471-1-seanjc@google.com>
- <20241009154953.1073471-4-seanjc@google.com>
+	s=arc-20240116; t=1730466608; c=relaxed/simple;
+	bh=l9cjlou6mpETLrQVOj1LeWVrg+4r4bM75qya6s4Z8dY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Qm0k3lc/pk4d/V49zkuFAAU/UrQ9yPVn8bjgzlhhsiQf0UEzIFLas97m5R7OrLNQXT46aeJ6SJFJwdZ/vCt9o4uc6/vkdDJik6C3Di/ukZ+YVn9NdKlr7c8Im2XoWfuTMfvqoh1u7bdxwQBppwCiHP89WEvDkJ9/YETkE9zDfwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V/BD6Q7K; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730466604;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HlrLEHSrIjMehLpiiUtAbg0zaECkOh0tWzc6F/xoVzU=;
+	b=V/BD6Q7KBL7TPon4HxQwcIt43rcfveZWkucd1dsh0f3oHR6to9I9kwdyr6R58Ye3CT5JSe
+	WdqzWoG5R9QQ9PUpLkPJXdh/rDXAjtLMIBho9ZGLmy16Gob+8kDiZh/ZG+DjS29pMmXUco
+	BB/JTAByse4+oix4zXgpW+hV2BCpAOQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-495-SB_ncT_TMweJfqQEmamlZw-1; Fri, 01 Nov 2024 09:10:03 -0400
+X-MC-Unique: SB_ncT_TMweJfqQEmamlZw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4315afcae6cso10964995e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:10:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730466602; x=1731071402;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HlrLEHSrIjMehLpiiUtAbg0zaECkOh0tWzc6F/xoVzU=;
+        b=L90E3h9pqekg0t4ohCBCLXu/UVeoadLOP7mN5zubPG+aaW6Ez002PpH9Bc80c1HOJx
+         j5p7EtPLlyOEHxkNdUEYAZPKVyl8FxHeIsrYUDRwFoIYjXQighMNapy78pc55wg5AXsz
+         426Hpx3Z6c0yDApsGHB7SG8CBC+OdpkeLvm5CSrZE9vgt4PWHzQEV/cQiAZPeiBh1f+E
+         zwn5wcEaLH8B/LUH9mH2MBCH6w69f6iQ9Tfy6DeQrATItegWRfI0Y8N+0xNz+UswIh8J
+         t7USztYx92X8L01DyFQMBTxo9wRNM9D86KtV20HnA9r+HdkWdaBUflxLmWtw08CZGcyZ
+         BahA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9pnEaMTMTM1tnguGj2NOy9hJwFT4hS0+1rQdQqevLchqsOLTmmg2WHhkRzP/iAe7fkKC4QB40wS5bZ1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxifwKz8UKSwuNFEB1UPVFqXbBWRw5K6n6pg6zRp5xG14O4PLCi
+	+dubetFhKADL7iaLizF2CPI7oRTpdT7MFzy0JszYIL0HFXfRjzb2ss9L1Ui0+Boii3r2qmRn+ug
+	XB0ZgRC/lkB4JJYV9fRbBlKvCzsCToEZrhaTQV8qGg8KC3HJYB885RqiUbjZDCg==
+X-Received: by 2002:a05:600c:46c5:b0:431:7c25:8600 with SMTP id 5b1f17b1804b1-43282fcfa63mr29332755e9.2.1730466602221;
+        Fri, 01 Nov 2024 06:10:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsgHEsuAvFxkuf8HOXBXlUTTWg1Ksu26Xw7Mg7bz9nTOc2oVpqJ4spztSOBYj/kRFgbQ0gkQ==
+X-Received: by 2002:a05:600c:46c5:b0:431:7c25:8600 with SMTP id 5b1f17b1804b1-43282fcfa63mr29332465e9.2.1730466601768;
+        Fri, 01 Nov 2024 06:10:01 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9a99d3sm92048415e9.38.2024.11.01.06.10.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 06:10:01 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 47E02164B963; Fri, 01 Nov 2024 14:09:59 +0100 (CET)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Maciej
+ Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev
+ <sdf@fomichev.me>, Magnus Karlsson <magnus.karlsson@intel.com>,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 09/18] page_pool: allow mixing PPs within
+ one bulk
+In-Reply-To: <20241030165201.442301-10-aleksander.lobakin@intel.com>
+References: <20241030165201.442301-1-aleksander.lobakin@intel.com>
+ <20241030165201.442301-10-aleksander.lobakin@intel.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Fri, 01 Nov 2024 14:09:59 +0100
+Message-ID: <87ldy39k2g.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YtZ2j2bWyKb0/r3q"
-Content-Disposition: inline
-In-Reply-To: <20241009154953.1073471-4-seanjc@google.com>
-X-Cookie: Sales tax applies.
+Content-Type: text/plain
+
+Alexander Lobakin <aleksander.lobakin@intel.com> writes:
+
+> The main reason for this change was to allow mixing pages from different
+> &page_pools within one &xdp_buff/&xdp_frame. Why not?
+> Adjust xdp_return_frame_bulk() and page_pool_put_page_bulk(), so that
+> they won't be tied to a particular pool. Let the latter create a
+> separate bulk of pages which's PP is different and flush it recursively.
+> This greatly optimizes xdp_return_frame_bulk(): no more hashtable
+> lookups. Also make xdp_flush_frame_bulk() inline, as it's just one if +
+> function call + one u32 read, not worth extending the call ladder.
+>
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+
+Neat idea, but one comment, see below:
+
+[...]
+
+>  /**
+>   * page_pool_put_page_bulk() - release references on multiple pages
+> - * @pool:	pool from which pages were allocated
+>   * @data:	array holding page pointers
+>   * @count:	number of pages in @data
+> + * @rec:	whether it's called recursively by itself
+>   *
+>   * Tries to refill a number of pages into the ptr_ring cache holding ptr_ring
+>   * producer lock. If the ptr_ring is full, page_pool_put_page_bulk()
+> @@ -854,21 +865,43 @@ EXPORT_SYMBOL(page_pool_put_unrefed_page);
+>   * Please note the caller must not use data area after running
+>   * page_pool_put_page_bulk(), as this function overwrites it.
+>   */
+> -void page_pool_put_page_bulk(struct page_pool *pool, struct page **data,
+> -			     u32 count)
+> +void page_pool_put_page_bulk(struct page **data, u32 count, bool rec)
+>  {
+> +	struct page_pool *pool = NULL;
+> +	struct xdp_frame_bulk sub;
+>  	int i, bulk_len = 0;
+>  	bool allow_direct;
+>  	bool in_softirq;
+>  
+> -	allow_direct = page_pool_napi_local(pool);
+> +	xdp_frame_bulk_init(&sub);
+>  
+>  	for (i = 0; i < count; i++) {
+> -		netmem_ref netmem = page_to_netmem(compound_head(data[i]));
+> +		struct page *page;
+> +		netmem_ref netmem;
+> +
+> +		if (!rec) {
+> +			page = compound_head(data[i]);
+> +			netmem = page_to_netmem(page);
+>  
+> -		/* It is not the last user for the page frag case */
+> -		if (!page_pool_is_last_ref(netmem))
+> +			/* It is not the last user for the page frag case */
+> +			if (!page_pool_is_last_ref(netmem))
+> +				continue;
+> +		} else {
+> +			page = data[i];
+> +			netmem = page_to_netmem(page);
+> +		}
+> +
+> +		if (unlikely(!pool)) {
+> +			pool = page->pp;
+> +			allow_direct = page_pool_napi_local(pool);
+> +		} else if (page->pp != pool) {
+> +			/*
+> +			 * If the page belongs to a different page_pool, save
+> +			 * it to handle recursively after the main loop.
+> +			 */
+> +			page_pool_bulk_rec_add(&sub, page);
+>  			continue;
+> +		}
+>  
+>  		netmem = __page_pool_put_page(pool, netmem, -1, allow_direct);
+>  		/* Approved for bulk recycling in ptr_ring cache */
+> @@ -876,6 +909,9 @@ void page_pool_put_page_bulk(struct page_pool *pool, struct page **data,
+>  			data[bulk_len++] = (__force void *)netmem;
+>  	}
+>  
+> +	if (sub.count)
+> +		page_pool_put_page_bulk(sub.q, sub.count, true);
+> +
+
+In the worst case here, this function can recursively call itself
+XDP_BULK_QUEUE_SIZE (=16) times. Which will blow ~2.5k of stack size,
+and lots of function call overhead. I'm not saying this level of
+recursion is likely to happen today, but who knows about future uses? So
+why not make it iterative instead of recursive (same basic idea, but
+some kind of 'goto begin', or loop, instead of the recursive call)?
+
+Something like:
 
 
---YtZ2j2bWyKb0/r3q
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+void page_pool_put_page_bulk(void **data, int count)
+{
+	struct page *bulk_prod[XDP_BULK_QUEUE_SIZE];
+	int page_count = 0, pages_left, bulk_len, i;
+	bool allow_direct;
+	bool in_softirq;
 
-On Wed, Oct 09, 2024 at 08:49:42AM -0700, Sean Christopherson wrote:
-> Return a uint64_t from vcpu_get_reg() instead of having the caller provide
-> a pointer to storage, as none of the vcpu_get_reg() usage in KVM selftests
-> accesses a register larger than 64 bits, and vcpu_set_reg() only accepts a
-> 64-bit value.  If a use case comes along that needs to get a register that
-> is larger than 64 bits, then a utility can be added to assert success and
-> take a void pointer, but until then, forcing an out param yields ugly code
-> and prevents feeding the output of vcpu_get_reg() into vcpu_set_reg().
+	for (i = 0; i < count; i++) {
+		struct page *p = compound_head(data[i]));
+                
+		if (page_pool_is_last_ref(page_to_netmem(p)))
+			data[page_count++] = p;
+	}
 
-This commit, which is in today's -next as 5c6c7b71a45c9c, breaks the
-build on arm64:
+begin:
+	pool = data[0]->pp;
+	allow_direct = page_pool_napi_local(pool);
+	pages_left = 0;
+	bulk_len = 0;
 
-aarch64/psci_test.c: In function =E2=80=98host_test_system_off2=E2=80=99:
-aarch64/psci_test.c:247:9: error: too many arguments to function =E2=80=98v=
-cpu_get_reg=E2=80=99
-  247 |         vcpu_get_reg(target, KVM_REG_ARM_PSCI_VERSION, &psci_versio=
-n);
-      |         ^~~~~~~~~~~~
-In file included from aarch64/psci_test.c:18:
-include/kvm_util.h:705:24: note: declared here
-  705 | static inline uint64_t vcpu_get_reg(struct kvm_vcpu *vcpu, uint64_t=
- id)
-      |                        ^~~~~~~~~~~~
-At top level:
-cc1: note: unrecognized command-line option =E2=80=98-Wno-gnu-variable-size=
-d-type-not-at
--end=E2=80=99 may have been intended to silence earlier diagnostics
+	for (i = 0; i < page_count; i++) {
+                struct page *p = data[i];
+		netmem_ref netmem;
+                
+		if (unlikely(p->pp != pool)) {
+			data[pages_left++] = p;
+			continue;
+		}
 
-since the updates done to that file did not take account of 72be5aa6be4
-("KVM: selftests: Add test for PSCI SYSTEM_OFF2") which has been merged
-in the kvm-arm64 tree.
+		netmem = __page_pool_put_page(pool, page_to_netmem(p), -1, allow_direct);
+		/* Approved for bulk recycling in ptr_ring cache */
+		if (netmem)
+			bulk_prod[bulk_len++] = (__force void *)netmem;
+	}
 
---YtZ2j2bWyKb0/r3q
-Content-Type: application/pgp-signature; name="signature.asc"
+	if (!bulk_len)
+		goto out;
 
------BEGIN PGP SIGNATURE-----
+	/* Bulk producer into ptr_ring page_pool cache */
+	in_softirq = page_pool_producer_lock(pool);
+	for (i = 0; i < bulk_len; i++) {
+		if (__ptr_ring_produce(&pool->ring, bulk_prod[i])) {
+			/* ring full */
+			recycle_stat_inc(pool, ring_full);
+			break;
+		}
+	}
+	recycle_stat_add(pool, ring, i);
+	page_pool_producer_unlock(pool, in_softirq);
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmck0qwACgkQJNaLcl1U
-h9DFvAf+NFZ+z1aCylPPLFa+zTDz5MmqEcjVpfhQkyHhNKHUjHoiGTKMUmWyQMUR
-zuLXQxeTLLfX2TUAY8iDXERwVa3DJcXBSA8OkTxEQ8duTVgasxJrEH5e9hapL4yw
-qi35won+snSoVC5aal8C4cR5rAV8QUTyUdDDLCrdVGOdxfeeRc2oXXDUgy25kAO4
-qC9GygserSiAkTN4RndpjwI1P1izwqrfOByxZ5gCJhTcODN24/DiVMd5ilqSvEBg
-r0nYU+tZo+ELvY6B+hRDZVbLnfRK15iiJrig9duhfHWMiApgcOywYRahbDV+p6ph
-UabPeoJZ1JqGF4etWEfaIQLkyg6QTg==
-=5qTN
------END PGP SIGNATURE-----
+	/* Hopefully all pages was return into ptr_ring */
+	if (likely(i == bulk_len))
+		goto out;
 
---YtZ2j2bWyKb0/r3q--
+	/* ptr_ring cache full, free remaining pages outside producer lock
+	 * since put_page() with refcnt == 1 can be an expensive operation
+	 */
+	for (; i < bulk_len; i++)
+		page_pool_return_page(pool, (__force netmem_ref)bulk_prod[i]);
+
+out:
+	if (pages_left) {
+		page_count = pages_left;
+		goto begin;
+	}        
+}
+    
+  
+Personally I also think this is easier to read, and it gets rid of the
+'rec' function parameter wart... :)
+
+-Toke
+
 
