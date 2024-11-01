@@ -1,84 +1,134 @@
-Return-Path: <linux-kernel+bounces-392487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126609B94C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:54:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 833C69B94C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D537B21663
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:54:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C5B8B22012
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3E71C830D;
-	Fri,  1 Nov 2024 15:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7F31C8781;
+	Fri,  1 Nov 2024 15:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FH3erEBV"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Twz+bMkd"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44D4145A17;
-	Fri,  1 Nov 2024 15:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827511C7B9C
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 15:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730476472; cv=none; b=p76VKy4Qsuiuf2n1LGumZnNxFQRYLobBImpEgwec7RTOmRxLbXgatHU7shEwbkPKU61lRduNHgDjLeQWJjM3YTerrxbqCk2k8NrNtwGwC88z/Et8r/MtKWo2QRiI0tTizDRJqAqq1HQIPJSL45Jg8yo2KDdBQgYyTP41VeOxp0A=
+	t=1730476549; cv=none; b=OUEz6KTG5E1r4Kx/hGUa+1xTs7ATsFeLM2kht2azjcik/l1NfGUBjMmlC0EBQIiOvrSZVuwV801y23wZqZJShwJjKKPZPU9QKgS/dfTEQOUbdszN24wVg3s1mdAmJZphlOL7y+zBqWBsVc/puNxsMqafMnlsvSs11F9+pD2AkD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730476472; c=relaxed/simple;
-	bh=c8vzJp8mUlLCVOG1/gaZBZdCC2A1PmwSCORRUbrMsok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EkMoq16oGYeLi/uqF8mTo3fkQlZupSilW49+3Mt1DGCSxoNdpnKDDfEDrqyrrdKSTZjmYtyjKSdzpf+Kcy9HnAo7CUyW7G7CjSSffTwX5xZEKnsmoygLFkVHFoEqOPHVEnQttciinMZyjuUVMUpdcm2fTA91kKEZQHqZfnp3MPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FH3erEBV; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hjp3B+rMiaFuvfOkDbxYf9shcT++p3671+VOrmTNNXU=; b=FH3erEBVmqrsdXeUC5kWsCJZJp
-	3q+RJ5ZBBEKw647tqmBYHGs52Kxaon0ld49HdHUoqJXzYS61Nn6NXjX0U6MRorAt+iONxJEBtW/uk
-	LdqM6FbFH9HW2KM7TtuV8omH13hSOlHlqvUAWvaFad9g5r8oQxCDV99U/jUMkodXU5/pACYNKWgfY
-	4Crey+HLXqo6JIrYfXd6g6khMsa/DaLEWT6WoQR9lC3PpSVX0WY9jyjFdu15DZ2TufAUdYoFuRIIe
-	YV6UXQdJuCsEVs7ew2tsEWI0eRfApznQm0UtFLVEyvxTkLign6EdG8YUPHF/FY8yakSePzrIUss8A
-	haNfQ7ig==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6tyb-0000000G08N-24M3;
-	Fri, 01 Nov 2024 15:54:17 +0000
-Date: Fri, 1 Nov 2024 15:54:17 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kinsey Ho <kinseyho@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	David Rientjes <rientjes@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	David Hildenbrand <david@redhat.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Kaiyang Zhao <kaiyang2@cs.cmu.edu>,
-	Sourav Panda <souravpanda@google.com>, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH mm-unstable v1 0/2] Track pages allocated for struct
-Message-ID: <ZyT5qROhtuWeuxga@casper.infradead.org>
-References: <20241031224551.1736113-1-kinseyho@google.com>
- <20241031160604.bcd5740390f05a01409b64f3@linux-foundation.org>
+	s=arc-20240116; t=1730476549; c=relaxed/simple;
+	bh=4uAD9jOOqXaCa32oc6A+GDRWQpHNHx04sARiGTc2Qu4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u+q7WQdP6fVOJucqWLqlZNDpm5rqUrkch2XQcAY019NFpNIXtu0LVTw8xeSIRG9jdlyANK84+xa1YsSs0FujHstyi11Lcp0V8WVS/l8UVqQOAW+ZKsi6yuHrJnCaKsVioSUHEUnzPNTq/3eb4rn/OHChHRXvZz6EncVGlCwP0bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Twz+bMkd; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e30116efc9so1677569a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 08:55:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730476547; x=1731081347; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qLBlsEZQifedxSMlNM71vQWvxRSeWYs3fggN7cWB9ls=;
+        b=Twz+bMkdAKNON9eZpqP/2UcRFv1nUm4omV0TdAHf3tm3AJPFpHcHsUFngDloahHqyq
+         LVeF7djHyFvHYcig5dDo0bbtUfskSWDC7HEwx0tjEtbEZMaMJQJLCE1vMcmFLu5MKoLg
+         864UBVpfgwWRlbwjDA5UtNg/CD3SB3cZW/eu4rwOTmNgUbKB0HYUestcDDv3gkObmq97
+         WFBVjj6BpGlKtPVa5adTIxxJUcIENiUi9xpOqDNr7mnoOwSkGLq4Uv+NQeO08eUecxKv
+         1u3A4DmynbELs7Xj5znoS1CUgtjvURcqI5fmD3YRbRnN4rJsUeu+9J7ggO/AdYk9Izgb
+         nMlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730476547; x=1731081347;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qLBlsEZQifedxSMlNM71vQWvxRSeWYs3fggN7cWB9ls=;
+        b=rxMOQQfAsnd1lEJklTEi6Yuz9o4X3l8BInBgr9CAIaQhYTw/srhPX9f27mDdv+1ZB3
+         EyDxHpK2ErHMrkc4ERXcQi58xBBPgVWZ8p7LcFTcUPEb6noVc3qQI30x8wRL/5pLrhKZ
+         b/FmmqxPWyxDTmelgXMJoC08TAVw4HeA+d0HFr1OSXxyGVmX0mhuguMz47ymTEbHycyg
+         WSkF+6Ze/mfkDCZwBBUIhe2dgwZZ359WoK61l1LemKOXgxOhaD61+fZz7CqZz7szvRhz
+         e9T9JlXln2RdLN/e5dmtQC0ImH2Xsb/yFej+PvDJCIYro/SAPSXGHx+r229Sh34uFqK6
+         0uqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIp/h9NTrRFVOpV6kAalzGMxvPN+ELsR+FG+3VshIsJO2XSJ26C86ay3UTOqizOYhUhFldOfXPh8YzRds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsuVYySXHlCkyo41DpJSrFlfZoIcXbp6INm/p6mFcWMLWnvHpH
+	TmQush1nY6+J07OtrDJl5Rqz2ulb+OYKzsz9nXeEzX2TCjqGZs7HdmEVin0EzzZv6+Q9dFAVFvr
+	e4Gk8zfi66mgcC1kJ+lAxOKwLuIliOAHACTeK
+X-Google-Smtp-Source: AGHT+IHMRbP5nE3OD/sTxFNgEl4A+Ix91K3szIsn26YzRn5L7WbY5jaruHKUNjBpS/XhaoJn/vvvjAV9HGaLKjL/bmk=
+X-Received: by 2002:a17:90a:d14f:b0:2e2:bb32:73eb with SMTP id
+ 98e67ed59e1d1-2e8f10a72a3mr26553959a91.31.1730476546681; Fri, 01 Nov 2024
+ 08:55:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031160604.bcd5740390f05a01409b64f3@linux-foundation.org>
+References: <671756af.050a0220.10f4f4.010f.GAE@google.com> <20241022142901.GA13306@ziepe.ca>
+In-Reply-To: <20241022142901.GA13306@ziepe.ca>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Fri, 1 Nov 2024 16:55:32 +0100
+Message-ID: <CANp29Y534CT0jqhp5LQi_ZCs=1_i4duRO=4CJ52by9ZDW-1Wfw@mail.gmail.com>
+Subject: Re: [syzbot] [rdma?] INFO: task hung in add_one_compat_dev (3)
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: syzbot <syzbot+6dee15fdb0606ef7b6ba@syzkaller.appspotmail.com>, leon@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 04:06:04PM -0700, Andrew Morton wrote:
-> Possibly dumb question: can we switch swap_cgroup_prepare to kmalloc()
-> (or kmem-cache_alloc()) and use slab's accounting to satisfy this
-> requirement?
+Hi Jason,
 
-It looks to me like a bad reimplemention of vmalloc().  It looks like
-this code used to make more sense once upon a time, but now it's really
-just vmalloc().  Or did I miss something?
+On Tue, Oct 22, 2024 at 4:29=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
+e:
+>
+> On Tue, Oct 22, 2024 at 12:39:27AM -0700, syzbot wrote:
+>
+> > 1 lock held by syz-executor/27959:
+> >  #0: ffffffff8fcbffc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/=
+rtnetlink.c:79 [inline]
+> >  #0: ffffffff8fcbffc8 (rtnl_mutex){+.+.}-{3:3}, at: __rtnl_newlink net/=
+core/rtnetlink.c:3749 [inline]
+> >  #0: ffffffff8fcbffc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_newlink+0xab7/=
+0x20a0 net/core/rtnetlink.c:3772
+>
+> There is really something wrong with the new sykzaller reporting, can
+> someone fix it?
+>
+> The kernel log that shows the programs:
+>
+> https://syzkaller.appspot.com/x/log.txt?x=3D10d72727980000
+>
+> Doesn't have the word "newlink"/"new"/"link" etc, and yet there is an
+> executor clearly sitting in a newlink netlink callback when we
+> crashed.
+
+These are likely coming from the network devices initialization code.
+When syzbot spins up a new syz-executor, it creates a lot of
+networking devices as one of the first steps.
+https://github.com/google/syzkaller/blob/f00eed24f2a1332b07fef1a353a4391339=
+78d97b/executor/common_linux.h#L1482
+
+So those syz-executors might have just been unable to start and then
+they were abandoned (?)
+
+>
+> We need to see the syzkaller programs that are triggering these issues
+> to get ideas, and for some reason they are missing now.
+
+Once syzbot manages to find a reproducer, hopefully things will become
+more clear.
+
+--=20
+Aleksandr
+
+>
+> Jason
+>
 
