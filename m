@@ -1,148 +1,166 @@
-Return-Path: <linux-kernel+bounces-392972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5A29B9A48
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:36:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77DA9B9A4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80C611F23363
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 947E8283F97
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF231E47BC;
-	Fri,  1 Nov 2024 21:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2651E6DD5;
+	Fri,  1 Nov 2024 21:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="kJFGcK7P"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CkGTGYk/"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C0416F8EB;
-	Fri,  1 Nov 2024 21:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730496988; cv=pass; b=fFQIT8wBauQc9z8si+/6EdmfYpa4di/nQo9tvUtYdJXiqfujxAvUDpmxfiTesk4NFJIqZuog0pXlq7vHF4W77QD3E8u+m7OLOqFXQSxuZh9LghbYIxzRTSF3iWsa8RkDvho+WwPa+M3CdHrpvZ5Ea5n/T2o12gxuvsGTqnPgg2o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730496988; c=relaxed/simple;
-	bh=dUYHsEZiYqbUgRMNwFN/xI61QBnMhgl08f0EFMD2ha8=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C4A1E47A5;
+	Fri,  1 Nov 2024 21:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730497101; cv=none; b=u9WCkp9rig2DnslMRg9yV/FkBBMsRDq7/YIO8Rilgg88jRD1r724y2soUJwYjP1fwXUMqTiRwrV9mamjBgP2IOB48XfS4ySJw+SSccvh1plP8A1kxat76PGpBm5wiBtq7WPGExUtkApYZomnYCW05phykpCzweigf3e/12mHI2Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730497101; c=relaxed/simple;
+	bh=NaUGQoO+qua7rt17PrqWsXidf3yvC6bM0P7qWmzWNvQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s2SWHcnLdE4TH98I6+wXqRMrrk+CmYlFmd6qJScUziGqVc2W5J0py+taoX0zcpY33pR4KUQveVJG4g9wZrnC8lJUWQV/PVxmds8/IRJu8yTfK++NLtyfTZrUHaQx4w7KZ4caGC2UxNabIpCz+TaJ2YhrajzgagyDJ/AVb9lUQZs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=kJFGcK7P; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730496962; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=c0/oSnW3qgXohyX2ioSOL6MsthONf456o2MyAC90ucdp/0GIaV0mDBTaIpySDqr9v3B0qT0UtEDpu6TAlhOQwIaSh9j780dxyYkxDrE1EG1y7MHQ7YGMRIo8UVk+lNPCtbCzboz/SzODmDilpzSLil9N2Oqo7tor286GjYbn3Ro=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1730496962; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=dUYHsEZiYqbUgRMNwFN/xI61QBnMhgl08f0EFMD2ha8=; 
-	b=bDR0qiYaIPIRJI79NFUAcvJaXK8Nh8Pnkm1IDgHi+ogZHygWINdPVOUa14mRZMhhCcARQI7x9oq2PzI08ckSlUUuExnFJkLVdPvxpt523SyfU5SH5O1nXBpf6iAZpDn6U3yQFPJ9GzKiOAhX9e6QxkKcBm3RxexYCFSxtzz+4ZE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730496962;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=dUYHsEZiYqbUgRMNwFN/xI61QBnMhgl08f0EFMD2ha8=;
-	b=kJFGcK7PraYbPv6+lH4VJtSEtn0RmXlwv65YniGVukJFQJjQ7NIEsbipvdd+v4bH
-	hTZivSykCSQyzDNBJMKc/7vLrVfrEWnStHsq89EFpVLfRwNGuNJ4yibM2ddoLYDMp81
-	xjxcELlEfOhkH2iKkG4LLn1BgBQZu9p4vggHiyTc=
-Received: by mx.zohomail.com with SMTPS id 1730496960315327.07503190696764;
-	Fri, 1 Nov 2024 14:36:00 -0700 (PDT)
-Received: by mercury (Postfix, from userid 1000)
-	id 95B8010604B0; Fri, 01 Nov 2024 22:35:53 +0100 (CET)
-Date: Fri, 1 Nov 2024 22:35:53 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Elaine Zhang <zhangqing@rock-chips.com>, 
-	=?utf-8?B?QWRyacOhbiBNYXJ0w61uZXo=?= Larumbe <adrian.larumbe@collabora.com>, Boris Brezillon <boris.brezillon@collabora.com>, 
-	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v3 0/7] Fix RK3588 GPU domain
-Message-ID: <avq5v5c23croz7fydzmmuj7zmcfp37ehgrt3gl5csyam5lbx2g@id4prnbhv4ot>
-References: <20241022154508.63563-1-sebastian.reichel@collabora.com>
- <CAPDyKFoAv1jeQitHmTMhvwG9vGzN-vLby0fPzkX1E6+-Qe2dog@mail.gmail.com>
- <CAPDyKFp=sRLVBhW2aK87pYHVGi_6gNw=e3j3AGMnEWP2SVYFpw@mail.gmail.com>
- <9b4c9b61-a2be-465e-a4d9-034951fc862f@sirena.org.uk>
- <CAGb2v65ahUB_Q+HPFV6B-UqWCbCNLdGz58BGo9iHRhVyf1ruZA@mail.gmail.com>
- <27yrptpmhdbugmrgxaxllnbllv3adu3tzgl7e26b3flsvhlf3g@nfqn2fvmktmc>
- <cbe94b51-09f3-44ca-b2f1-f8da7ffdf05a@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aiwp+prRCKvYaTswJOyxj58UJW28lnYG1G/q3wykIPMgOn2Jj3cDQHW7bcuYGQT6Vb+OMOHQplq0fKBWSM2mIVnGbiGyBSst5Ix1p5DSzys5fBvUhoNIH6EGaTCJHggZtZa7/ufSXG3qRzVyvaP5RqF5yQpGRs5D68UH4g6DS3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CkGTGYk/; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-460e6d331d6so15129581cf.2;
+        Fri, 01 Nov 2024 14:38:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730497099; x=1731101899; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xCOILmRNqBE6ZWY1p4IX8uvti1SM8oZ7fsEHU+TvcSA=;
+        b=CkGTGYk/XJ4M+jEfKLmfc3G65Gc5dXlCAcLst7nghrKqnsWDparsXJzSAUsEDo+wXN
+         LFM3FLOygfMaZRTzKRD/CCKyKcFE8e+NHrkO2KP5lfMWCeRAtCQqGfV+nNvxTODQOpQZ
+         JzsLkJ5TiVI05rbtBbb4gsYvRLbvfld2MXDhacKoLJC6QiL9Zkc+Qvw3EG8cIGQfNSmc
+         +ulyImzzi4c3w+9yU/IyQY+kWkcfQ2aJwMsSSRkGlPyxKDPMplAFqexb9GSOYOJqata3
+         NlBckCqUx1akpM5dKmmjBfRPPp2yBDjZBfqLYuOnyKBessBH49vfDzyepe5XK0xa6R9G
+         zOKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730497099; x=1731101899;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xCOILmRNqBE6ZWY1p4IX8uvti1SM8oZ7fsEHU+TvcSA=;
+        b=lcrGcxKnMtMDmoRJg7ZLIlU4FfNL0wxwa8G8Qk9rLCi90YkpqTbttKLX/9i12ZezsY
+         z5h+YglJE0SfKJ7ivqS8YhDLRSCe8/afuZPG5cQPkT7eWLbOZwO+Hscwby0pvtqjjHal
+         0CGmhC/BRIc3qahT0EYE17rLOkXrtiyNAH53AigZaS1DarD2g432+ezx3El5aIJr13QL
+         FdwOA391FMeK9DFYddyU//hSA1NN0WMspdX0KZoORea7OY1La/3OVfK0xNFNhrVF1vUf
+         ER10ENOtkLKwgtWMt8ysXGq+8FH1p4VRU2nP4QTZ01zaHVObjFU+IrbDtIebPgM6heyx
+         5uJA==
+X-Forwarded-Encrypted: i=1; AJvYcCViApLZf3xfOw2ibOQYZJm4Bc7reBxXGpFO5V0hqEf8SAHqAqjtP6zMmLvsCeNlEuoclrjeUFrArer8wGE=@vger.kernel.org, AJvYcCWXtL9Cl0lSDsBLbMPAPSdf6ERbtu9KKYcYf0ctMpkIFn6ASyE2qmOpR8pslFXRfBNTWegKvV6AMe26qQNPgbU=@vger.kernel.org, AJvYcCWcbUj7QuF4Yi1ZX0qBYC/mzoD+t2vKXB2KmWb79EEp4kHNDrymWCg6i+7l4x//6eHEhaaM0KA9VC+KY5GJOkuI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz86B/zl3C6NSMI8Hg2NQJX51dlXIjYWWtkJDhhRG/N4e5b9FwJ
+	Ull2HvEhvmY8QXaaVqPdMCMnCLGZB7K1gUxWfjtLXwhSeDmTlEbQ
+X-Google-Smtp-Source: AGHT+IFzuAuuMva5coyqLPg9S15y8Mlaf80dpYp9sux05DwQgjZpyiJ8ElxROSwl3wxI07O7wq0IFA==
+X-Received: by 2002:ac8:4e35:0:b0:462:c322:47b9 with SMTP id d75a77b69052e-462c32249bfmr21194581cf.17.1730497098666;
+        Fri, 01 Nov 2024 14:38:18 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad0893e3sm22421981cf.6.2024.11.01.14.38.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 14:38:18 -0700 (PDT)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id A1C701200043;
+	Fri,  1 Nov 2024 17:38:17 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Fri, 01 Nov 2024 17:38:17 -0400
+X-ME-Sender: <xms:SUolZ67Zi6tFQeKLYrDAGgygskeNElk99V5waD3BD2Epu8Iw_lEIVw>
+    <xme:SUolZz4ffIiMw4fjIG4bFoafs1Or_JQ34pfEempuwmnQ1ynOCM2OVhu6B69DupIBw
+    ND1VZO9sI8UEOzyDg>
+X-ME-Received: <xmr:SUolZ5dZcym49XMSNA-ceTX4wwhpeB0O_o_grNBmCoRasKdmWQbLnAgUCZI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledgudehtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenogfuuhhsphgvtghtffhomhgrihhnucdlgeelmdenucfjughr
+    peffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfhvg
+    hnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvghr
+    nhepkeejgfdufefhiefggffhtdehgefgtdduvdekjeelffehueefffetteevgfefueejne
+    cuffhomhgrihhnpehgihhthhhusgdrihhonecuvehluhhsthgvrhfuihiivgeptdenucfr
+    rghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsoh
+    hnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhg
+    peepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduie
+    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiughgohifsehgohhoghhl
+    vgdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehjohhsvgdrvgigphhoshhithhokeelsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    sghrvghnuggrnhdrhhhighhgihhnsheslhhinhhugidruggvvhdprhgtphhtthhopehrmh
+    horghrsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehg
+    mhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtg
+    hpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtohep
+    sghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:SUolZ3I7shbs8uYlTvA_--JMSUBThRNdym6H__rY5PKLeht3FhgyZA>
+    <xmx:SUolZ-J_p7BK9E4_RDDjZL3nmk_CsYM4kPqTew2Q8FoxrOSaV7qiVg>
+    <xmx:SUolZ4wbdRWtJHgTeccwd_MwD_YSUdupY-2vIFaaMdWWwqg9oQrdMg>
+    <xmx:SUolZyIUSpnf6l39nX2cFK3c3EAi_5YlJ5TGIVCLVjs_YYMcPB_ePQ>
+    <xmx:SUolZ1brqeYtkrotPzyhNGlOSSIcse4LCf7ne9eiTYAHJhOL8ygTmsyM>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 1 Nov 2024 17:38:17 -0400 (EDT)
+Date: Fri, 1 Nov 2024 14:38:16 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: David Gow <davidgow@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	=?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Matt Gilbride <mattgilbride@google.com>, kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] rust: macros: add macro to easily run KUnit tests
+Message-ID: <ZyVKSKUq_bKH5jn_@Boquns-Mac-mini.local>
+References: <20241101064505.3820737-1-davidgow@google.com>
+ <20241101064505.3820737-3-davidgow@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qwagicrogdfbufct"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cbe94b51-09f3-44ca-b2f1-f8da7ffdf05a@sirena.org.uk>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/230.373.91
-X-ZohoMailClient: External
+In-Reply-To: <20241101064505.3820737-3-davidgow@google.com>
 
+On Fri, Nov 01, 2024 at 02:45:01PM +0800, David Gow wrote:
+[...]
+> @@ -273,3 +275,11 @@ macro_rules! kunit_unsafe_test_suite {
+>          };
+>      };
+>  }
+> +
+> +#[kunit_tests(rust_kernel_kunit)]
+> +mod tests {
+> +    #[test]
+> +    fn rust_test_kunit_example_test() {
+> +        assert_eq!(1 + 1, 2);
 
---qwagicrogdfbufct
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 0/7] Fix RK3588 GPU domain
-MIME-Version: 1.0
+Clippy reported:
 
-Hi,
+ERROR:root:error: identical args used in this `assert_eq!` macro call
+   --> ../rust/kernel/kunit.rs:348:20
+    |
+348 |         assert_eq!(1 + 1, 2);
+    |                    ^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#eq_op
+    = note: `-D clippy::eq-op` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::eq_op)]`
 
-On Fri, Nov 01, 2024 at 07:22:28PM +0000, Mark Brown wrote:
-> On Fri, Nov 01, 2024 at 08:04:52PM +0100, Sebastian Reichel wrote:
-> > On Fri, Nov 01, 2024 at 10:41:14PM +0800, Chen-Yu Tsai wrote:
->=20
-> > > There's still the issue of backwards compatibility with older device
-> > > trees that are missing said supply though.
->=20
-> > Exactly :)
->=20
-> > As far as I can see the same misuse potential also exists for the
-> > plain devm_regulator_get() version.
->=20
-> You'll get warnings but I'm not sure that's such a huge issue?
+but this lint doesn't make sense to me, I would say we just drop this
+lint?
 
-I see that as a feature and not as an issue. Obviously the
-dependency should be properly described in DT. When we upstreamed
-GPU support for RK3588 we did not mark the GPU regulator as always-on
-[*] and that has been copied to all other upstreamed RK3588 board DTs.
-This means all of them are buggy now. Getting a warning might help
-people to understand what is going on. In any case I fixed up every
-in-tree user as part of this series.
+Regards,
+Boqun
 
-[*] Older Rockchip platforms (which are not touched by this series)
-and downstream RK3588 have the GPU regulator marked as always-on.
-
-Greetings,
-
--- Sebastian
-
---qwagicrogdfbufct
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmclSbYACgkQ2O7X88g7
-+prITQ/+Lo2bN91GtZH1sC9wK852DhkaHZ3XYvltKURPIJZu7p2GuqGeFZw+mUWr
-PIoHHiVAfjOI+I2Ycvg5cuvXVaTaDV1ATBiJjaKN/qWH7fgq0Q3iQgNi4ArU3KS8
-6v6NBCzzUiWslu057EeEIvq3KeH+Q7OSxl3IUWPSJS6NvelgecvneNi1j9KCwq3h
-RVl3IuumWYLfFZ4uW5ft/+dy3GNCv6HdlFmLvcGFupZMqpXFv9yOvpZGl83YyPv5
-amSxtr++aKMi7h7kryjXHySD7BxR90JL+fPHXMGvxbL8ayKgPVyjM1kfFVhmcYt4
-yKRAc/G5Y6TY2d0bshHDRfpuVL4/mv8Nzbz4mxai1+KvLnEAWi1A6845dzKje1Ar
-m0CEj0WpiMgffPw/E088YvwNMdntMrLB/okNn+EjMQlecz332dNFDlj/KvXB5+sk
-8hwW8MjOK8ALlS9RcVS/s3CzD3dcgTo+5MOGA2i2WqFEwORDvjDmzltwA0Pj5Pl3
-Pqy+0T/scBUtdrjGoeTxO4iGZSn49TFjEMO92DAjnyt9MUq7Q7aCUM1qPCtbE1fe
-9ukZF7jBz6DhJ4ahNv9Uk8uw1KcwPa7I0jxRAscacZBvBWwb0D9nGF33vY4h1Ivc
-dvz68qw0uirqexV2G6aczQ5FoCY3qbZ71NX8MWUWY0ykK5do+cc=
-=9b8r
------END PGP SIGNATURE-----
-
---qwagicrogdfbufct--
+> +    }
+> +}
+[...]
 
