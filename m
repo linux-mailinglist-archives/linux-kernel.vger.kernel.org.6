@@ -1,74 +1,55 @@
-Return-Path: <linux-kernel+bounces-392020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D299B8ECE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:13:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 047679B8EEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:18:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0144A282529
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:13:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD518283738
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6C215B97E;
-	Fri,  1 Nov 2024 10:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="DJV+b/L9"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE9715A864;
+	Fri,  1 Nov 2024 10:17:52 +0000 (UTC)
+Received: from ciao.gmane.io (ciao.gmane.io [116.202.254.214])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C443A14F9F8;
-	Fri,  1 Nov 2024 10:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E970A156F28
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.254.214
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730456028; cv=none; b=o3/0KZIf8TOk6FqgVpOQU1gz9xgBr7ZUi5nKgYletYEcyt0BkZ0TPaea0eloRKHM+mWWQO6G7stds0smQ3MLCDx40faxprzWChUzbyYlkgaZiwk/CbZcNsX92ByAFf9M+7VbjyKDBBj088BnaoIKYelkW0O29GMt9pN5oyk5shU=
+	t=1730456272; cv=none; b=f3MF3MIFGVCSWSpJ3XO5ofnqiwQQlZAWW7nsav6ruh+Yrs+lbtcZMvBUZblVxQPCQowwjytcFdQHS7Pq7Tpo7yUaO08zLEDYaDWmff2Z9yJ/EZjrr1nxPd51daOAlKfnnYjOprxFZkegfn4eC91rmLdpCCwEzMS3I0jIFEbrg2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730456028; c=relaxed/simple;
+	s=arc-20240116; t=1730456272; c=relaxed/simple;
 	bh=e00zWZfVfIqdu2m8FU2GXwtFX+jh2hRaBYAD7fGyLTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=J9MuVWZwqZ/GCyzoOdTvkC3rzIAcAD/eeomIVinMeUwwGzHRMeIlmFaAumTcYyTPZOPWafOwjSfYhO7tu7i/bWPf4nMnYCIGtTJRt4lolXYg7g45XBCLZMOQlEEGn7mo+fqUGeck8hkCUzGKUorYr6Xz25twbgjBvIdqulb+9LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=DJV+b/L9; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 6odttG1kh0BU06odttqAPd; Fri, 01 Nov 2024 11:12:33 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730455953;
-	bh=MqViK48ZOFVhYhDKi1KfVPCJOQdOzhjPPwehrUW3dGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=DJV+b/L9NAY8zywsApAlxx8dRKxzG9WWz7/nUZk7guunmhsioH5TYXTdR/3OSCm/k
-	 o4XqQsTlcxDtAzavKwlVu27JyGvxG119BwoZNWLa7dEqqOPtzzd/z8OUNHBn3SxhuB
-	 2eIaKqZFYzYNHVDXvd5CuyyAqLdgH+iMLoLnDqO7kHCJUdaN/RIm3OYPMs/at7lPTc
-	 vmgJRZI/BUcOJlEi7HDRfi1xaTBp+pWUxR6H/DnoXOWeGtGI156l7E5YigUrwuRiwK
-	 hhuRGnHVdkGmnRsvIDPForPapYO6WXeF/zVUsQqHQE6wks+LF1ccaTt4h3+lk59lds
-	 V2K6Nk5NtPBJQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 01 Nov 2024 11:12:33 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <f22fc806-7816-4da9-8cac-a84db22d96fd@wanadoo.fr>
+	h=To:From:Subject:Date:Message-ID:References:Mime-Version:
+	 Content-Type:In-Reply-To; b=BSvuQxfA81XRuvsk+aE1s071ilViwUZBXZAb6cZzrf5AH2NDJwLw2zEuBBCv4wN+T0Ot4x2C3DS50Z59k3+Be05h4uaLfVeKQi+WuYQxfqsUklh6g6HXv8TaK14YPlAAyXu4ATfwgUywqzih0KZxbBQNnXuhJCp00VPpZcKX2Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=m.gmane-mx.org; arc=none smtp.client-ip=116.202.254.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.gmane-mx.org
+Received: from list by ciao.gmane.io with local (Exim 4.92)
+	(envelope-from <glk-linux-kernel-4@m.gmane-mx.org>)
+	id 1t6odz-0004XZ-GE
+	for linux-kernel@vger.kernel.org; Fri, 01 Nov 2024 11:12:39 +0100
+X-Injected-Via-Gmane: http://gmane.org/
+To: linux-kernel@vger.kernel.org
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] rtc: bbnsm: add remove hook
 Date: Fri, 1 Nov 2024 11:12:30 +0100
+Message-ID: <f22fc806-7816-4da9-8cac-a84db22d96fd@wanadoo.fr>
+References: <20241101101032.1446992-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rtc: bbnsm: add remove hook
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
- "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Newsgroups: gmane.linux.kernel
-References: <20241101101032.1446992-1-peng.fan@oss.nxp.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241101101032.1446992-1-peng.fan@oss.nxp.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US, fr-FR
+In-Reply-To: <20241101101032.1446992-1-peng.fan@oss.nxp.com>
 
 Le 01/11/2024 à 11:10, Peng Fan (OSS) a écrit :
 > From: Peng Fan <peng.fan@nxp.com>
@@ -121,4 +102,5 @@ https://elixir.bootlin.com/linux/v6.12-rc5/source/include/linux/platform_device.
 >   
 
 CJ
+
 
