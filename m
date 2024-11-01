@@ -1,158 +1,148 @@
-Return-Path: <linux-kernel+bounces-392431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949A79B93FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:09:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF1D9B9402
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B31F1F20F2B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:09:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50001C20A83
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E6C1BB6B3;
-	Fri,  1 Nov 2024 15:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F931AC891;
+	Fri,  1 Nov 2024 15:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TNmUjjRJ"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OpD4IMGA"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4D81AAE00;
-	Fri,  1 Nov 2024 15:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3B51AB517;
+	Fri,  1 Nov 2024 15:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730473718; cv=none; b=DhrQB8o9ywSFtp3m2dkads4rCF8AiOTpfqEZgy3evJA3m1XB24chLul9c7Sc0JmCxbdAIX935WmtYlF8LOxfVunPkamHi7CKpoHPvapTA+fOUAx80kciBWrEL1mZrNcel8cMDQ1Gd5nXYXaQOk1uOL0JWA1uFqKDELKILxGJusk=
+	t=1730473774; cv=none; b=LmkmhtA8lt8heRn/zOOjxBeZT4dLJLE/5LTrIRLeqAveNL5KBv49K4MgtGtEJKx39TczirNWqgaUpOb5yh/MaR6u716SacxuHVZKe0ms2PRc1gdjzprUJ2mxCfgmMY/2hLzL/Hp2C+CXhDveCto76IUmcRyqzJWluJYagNJBgPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730473718; c=relaxed/simple;
-	bh=c6vixD2UtKgBTEGYBA4IBx+FWPVk0mN6X3UaVNC4oO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUj70a+TAM9pjgXkfb+NN0zLXZHS624aLqcpl2/Kcltj6mQOjntc2dNS4+SfP0YbPXLQdeeRgT/UDT94NWh6LdGKs5WW482C57vRfVAen/TnGfg7nnYwHbE5JPCZJ1hT5NL+gMr7450EGRxtXEV63cpUgpC0Fa0jMksnefif+BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TNmUjjRJ; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1730473774; c=relaxed/simple;
+	bh=8O6+8zSdIrOsYZwhpn/UdsD7JMLogYbKMaHww4edegI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KwQGARShHqWVXpDUVHGbmXIsdtquMBKiniUKSabFBHr+YqN2/Yc5Mm33etiMJ1nSgChn9tQ96svzcZm7CDC8cRU4ACyarBVFriwM008q7Dao4NOdy8ufeN7USZR8bsgRcrKA25XPaVvwwVieDsebhFRbmdbIs9tVAuMXAd/628w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OpD4IMGA; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e625b00bcso1764289b3a.3;
-        Fri, 01 Nov 2024 08:08:33 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so1845495b3a.1;
+        Fri, 01 Nov 2024 08:09:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730473713; x=1731078513; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2CmMdpGUnFePHYrsBQ6Q2Mizbty9ECFme4tqH9oKWuw=;
-        b=TNmUjjRJgJsiRsYqu/tKpyWHfqFVzzvy3mqQenGf5d10dOg/PV7V3ByrC2GoLQv1U5
-         HVzUpstsEZsZcuYAY7f2EsOgK8hxAznq+FwqOCcoYMKjBen8OuAzBd9p6wPt6SMBM4U5
-         h1KZGNQjYb40wyDRdFPu9I1ZF87BDUUleeswyUwcHHiLJhBB8paaVeUwCI3H4e+p9UIC
-         lPjzEPkn9+4cGZtiU5hIyhVIlPX4TCA2DHtuvqpjQSUQ9AFzGNjBV/BHOMJ1N3nzbyIF
-         5HsYa4aSAjhUkfQ85dypck1m8Kc4ImyRyd86UCS/vMj8iksw8QC2iMURXcgPYLnWU32W
-         hJXw==
+        d=gmail.com; s=20230601; t=1730473772; x=1731078572; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gjnycSKe7PLm9xEIfiXtceGbvBfhF7/8n6iYzZypH+Y=;
+        b=OpD4IMGAQasFlLTbG1WWViP5oR0n2jr3z85HRlBdNg3a2dCsiNfVOUcQhgGF+ge3eA
+         pqvETLyUuaHlkOnWrM84DPvFm1GXEjTouu+GtwXj+Y4hSk+S8v1m1gEDdXRCC0RyK1Mx
+         bNf1s2JYaKhv0CjOYgikfpSFM8cBpJmV/kO8oJqXB0daflmuZK3YqRKg5FiD9lAVlTWE
+         duKJ4rHQnPAB5CuYJnFqhoVPWw9iuQeKFhcvQW3v3QgwLhCsAW1wcy4aYSxF9wBLr+yB
+         w/WuNMN2jQl2AG0tZgKA/kvpgOQtTteLb0H+lSvl5MipwfFQnCQ3FS1KATMl006ATOyZ
+         4S3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730473713; x=1731078513;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2CmMdpGUnFePHYrsBQ6Q2Mizbty9ECFme4tqH9oKWuw=;
-        b=ligqce1orIeo19+O6YlbolKpS4p0ZcpkiujGOfMNtRk0BL1obE0hIRldcGsxY1HJ3g
-         JuPvUllOYSnypK4u0g9ffxPkU1wb4vYHcEusjYW9F7zDMS1sbBOmL4XYZJInHkBiMhNl
-         mEI3TRdOdXfx2z8GDg8sEJztBACLXNZj4Gvm5O/tBhK8kFSGTXHF3tUsBROGmE59isoa
-         Oqc//tkkAZKlQURH1w5MadXtBrCoIo9NhxhRz0datoWJyA8MFsmTtX8upJVrCLHLejMz
-         /E9VqnMjlDiwRWPkWRRuMiTOy8z/O4bYfQa43RBj84P94+ReOC7LJci8LuldRHna6Mf6
-         RgBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+2EtD8x+IR+5lG/LyMwqxxR9BmV7K+A2iA7tO//Uiia1Zuh99kLktNe1n3dxVm0T/1LlyJnLvlk2lj5g=@vger.kernel.org, AJvYcCUYfVixazUNgzDmFmGbtzlv5h31McaRvSSOHSOUZIKd5QgvWHa2rUpesmx4LPyQh9ovQKZnjD/+SRfm@vger.kernel.org, AJvYcCUsBnpi9V6+nOjw3Ji2JO1iYsVf71v83F4L7d40Sj+0gtaJn2x1AKKZdbPcd+Iz/G73VWWffbPNLama@vger.kernel.org, AJvYcCVY8tyYMbEe+xvGekh49wO+FksRpoD2eJZdFAjjcMVKsPRJn2JW2SstPZYYwQSsFtr6McnGr/ar9O4z@vger.kernel.org, AJvYcCXhGNGv56+CUcqL8Xo+qmlKELTYPAIpYXFGdMPo08giWphB/IO7cSzPS3Uj9r8EQhB54UErbGSwNkH/J6Ga@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdLvcoVdSEW/t88ZNTu/jVqiifWBG6cHIKt9X3wvud0DPeWLr6
-	Nvdhsul7o+fLo+8x3NNU7vf3W0Ou/5cZfA3ihSdlxfTpo3dn4DJw
-X-Google-Smtp-Source: AGHT+IGw93/HsyjgUnAfeY8EGDn4mNBprwaF1ZcDkdpL1uk/hwkmsJo4n62S1q//MIYva2B6TCrKwg==
-X-Received: by 2002:a05:6a00:10cf:b0:71e:6a99:472f with SMTP id d2e1a72fcca58-720b9de116emr9532316b3a.24.1730473713160;
-        Fri, 01 Nov 2024 08:08:33 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b8cf3sm2748398b3a.20.2024.11.01.08.08.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 08:08:32 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 1 Nov 2024 08:08:31 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Naresh Solanki <naresh.solanki@9elements.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] hwmon: (pmbus/core) add wp module param
-Message-ID: <47164712-876e-4bb8-a4fa-4b3d91f2554b@roeck-us.net>
-References: <20241024-tps25990-v3-0-b6a6e9d4b506@baylibre.com>
- <20241024-tps25990-v3-3-b6a6e9d4b506@baylibre.com>
+        d=1e100.net; s=20230601; t=1730473772; x=1731078572;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gjnycSKe7PLm9xEIfiXtceGbvBfhF7/8n6iYzZypH+Y=;
+        b=l8UQ68tz+j/nUolIIGsJnWmU1xDE+tRy99L4wQrrNlNERebSGsLXfl2gSHqXUxRxsQ
+         mXKO4ZHhbcFoyOkbqo5debnfi6inbcKdM0OZD7rMdN7oOyyg2tpfVg8KLdctk9uOus6G
+         v3CVFeT2ugha2NveZLbP0zqzTn4C3uy9M+tBJQeRixb4tjx5B4SSED+X/Xvngwe4xHmB
+         2Me+ackEPkLXo4TGtlFW5jaz7uK3g/3PKB6AjtdxyW65cQQOSgQTwoVHse5u2a9fy079
+         SV04+e1OysntrpjKWN0ypEYG8p0HlFRMAAPado5HfDv+HxhnMTCKSVpfmUrQxTB4x7my
+         lIzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGuCuM4ZKWH/ngqN0c265a4sV3LsugGt8C/DyV4Ci0BFSoG4X9E4jTeJN7PO6nPlPc/tbqrSwcN5ng@vger.kernel.org, AJvYcCXBVePs8Utis+KZavZ6Aaaq3fNA61lywDKnASd2vvMZi6ZoE9xE5YaUDGrfzV+q3zSPacjVU+tmRe4Fl9qN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMub+RVLaT+XV9dlkpbpPeRhhSSjQvbvj6zLpziGxAo3xo7nwD
+	ZJuOtU4pEXdzc+MLhrBlnbb4HuQGpHip8iXujKrMZSu4MlJxiM30K19SHB+/
+X-Google-Smtp-Source: AGHT+IGj1ICWG+enL/mz+nRHk/RtiB2DmVTTu6rkphqnle4KBHonuvB3QqFfG5gzDuZ4/b49o0GKyg==
+X-Received: by 2002:a05:6a00:3c91:b0:720:75c2:7a92 with SMTP id d2e1a72fcca58-720c98d32b7mr5329009b3a.15.1730473772025;
+        Fri, 01 Nov 2024 08:09:32 -0700 (PDT)
+Received: from [192.168.0.122] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c38c7sm2745972b3a.125.2024.11.01.08.09.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 08:09:31 -0700 (PDT)
+Message-ID: <b0e81bfe-f7d3-475c-95af-7824d60deed9@gmail.com>
+Date: Fri, 1 Nov 2024 23:09:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024-tps25990-v3-3-b6a6e9d4b506@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH asahi-soc/dt 04/10] arm64: dts: apple: t7000: Add PMGR
+ node
+To: Rob Herring <robh@kernel.org>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241029010526.42052-1-towinchenmi@gmail.com>
+ <20241029010526.42052-5-towinchenmi@gmail.com>
+ <CAL_JsqLv2DJOsL=3bxf229ZdArL1TqArw+9cLtmjYMkm5yfZ7Q@mail.gmail.com>
+Content-Language: en-MW
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <CAL_JsqLv2DJOsL=3bxf229ZdArL1TqArw+9cLtmjYMkm5yfZ7Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24, 2024 at 08:10:37PM +0200, Jerome Brunet wrote:
-> Add a module parameter to force the write protection mode of pmbus chips.
+
+
+On 1/11/2024 21:04, Rob Herring wrote:
+> On Mon, Oct 28, 2024 at 8:06 PM Nick Chan <towinchenmi@gmail.com> wrote:
+>>
+>> This adds the PMGR node and all known power state subnodes. Since there
+>> are a large number of them, let's put them in a separate file to include.
+>>
+>> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+>> ---
+>>  arch/arm64/boot/dts/apple/t7000-6.dtsi        |   4 +
+>>  arch/arm64/boot/dts/apple/t7000-handheld.dtsi |   4 +
+>>  arch/arm64/boot/dts/apple/t7000-j42d.dts      |   1 +
+>>  arch/arm64/boot/dts/apple/t7000-mini4.dtsi    |   4 +
+>>  arch/arm64/boot/dts/apple/t7000-n102.dts      |   4 +
+>>  arch/arm64/boot/dts/apple/t7000-pmgr.dtsi     | 641 ++++++++++++++++++
+>>  arch/arm64/boot/dts/apple/t7000.dtsi          |  14 +
+>>  7 files changed, 672 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/apple/t7000-pmgr.dtsi
+>>
+>> diff --git a/arch/arm64/boot/dts/apple/t7000-6.dtsi b/arch/arm64/boot/dts/apple/t7000-6.dtsi
+>> index f60ea4a4a387..77d74d6af1c4 100644
+>> --- a/arch/arm64/boot/dts/apple/t7000-6.dtsi
+>> +++ b/arch/arm64/boot/dts/apple/t7000-6.dtsi
+>> @@ -48,3 +48,7 @@ switch-mute {
+>>                 };
+>>         };
+>>  };
+>> +
+>> +&framebuffer0 {
+>> +       power-domains = <&ps_disp0 &ps_mipi_dsi>;
+>> +};
+>> diff --git a/arch/arm64/boot/dts/apple/t7000-handheld.dtsi b/arch/arm64/boot/dts/apple/t7000-handheld.dtsi
+>> index 8984c9ec6cc8..566346be5b53 100644
+>> --- a/arch/arm64/boot/dts/apple/t7000-handheld.dtsi
+>> +++ b/arch/arm64/boot/dts/apple/t7000-handheld.dtsi
+>> @@ -10,6 +10,10 @@
+>>   */
+>>
+>>  / {
+>> +       aliases {
+>> +               framebuffer0 = &framebuffer0;
 > 
-> 2 protections modes are provided to start with:
-> * 0: Remove the write protection if possible
-> * 1: Enable full write protection if possible
+> Looks like an unrelated change. Also, not a standard alias name. So please drop.
+Alright, (for other SoCs as well) the next version will not have any
+"framebuffer0"
+aliases additions.
+
 > 
-> Of course, if the parameter is not provided, the default write protection
-> status of the pmbus chips is left untouched.
-> 
-> Suggested-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  4 ++
->  drivers/hwmon/pmbus/pmbus_core.c                | 74 ++++++++++++++++++-------
->  2 files changed, 59 insertions(+), 19 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 1518343bbe2237f1d577df5656339d6224b769be..aa79242fe0a9238f618182289f18563ed63cba1c 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -4733,6 +4733,10 @@
->  			Format: { parport<nr> | timid | 0 }
->  			See also Documentation/admin-guide/parport.rst.
->  
-> +	pmbus.wp=	[HW] PMBus Chips write protection forced mode
-> +			Format: { 0 | 1 }
-> +			See drivers/hwmon/pmbus/pmbus_core.c
-> +
+> Rob
 
-I have always seen that file as applicable for core kernel parameters,
-not for driver kernel parameters. I can not accept a global change like
-this without guidance. Please explain why it is desirable to have this
-parameter documented here and not in driver documentation.
-
->  	pmtmr=		[X86] Manual setup of pmtmr I/O Port.
->  			Override pmtimer IOPort with a hex value.
->  			e.g. pmtmr=0x508
-> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
-> index 7bdd8f2ffcabc51500437182f411e9826cd7a55d..ce697ca03de01c0e5a352f8f6b72671137721868 100644
-> --- a/drivers/hwmon/pmbus/pmbus_core.c
-> +++ b/drivers/hwmon/pmbus/pmbus_core.c
-> @@ -31,6 +31,20 @@
->  #define PMBUS_ATTR_ALLOC_SIZE	32
->  #define PMBUS_NAME_SIZE		24
->  
-> +/*
-> + * PMBus write protect forced mode:
-> + * PMBus may come up with a variety of write protection configuration.
-> + * 'pmbus_wp' may be used if a particular write protection is necessary.
-> + * The ability to actually alter the protection may also depend on the chip
-> + * so the actual runtime write protection configuration may differ from
-> + * the requested one. pmbus_core currently support the following value:
-> + * - 0: write protection removed
-> + * - 1: write protection fully enabled, including OPERATION and VOUT_COMMAND
-> + *      registers. Chips essentially become read-only with this.
-
-Would it be desirable to also suppport the ability to set the output voltage
-but not limits (PB_WP_VOUT) ?
-
-Guenter
+Nick Chan
 
