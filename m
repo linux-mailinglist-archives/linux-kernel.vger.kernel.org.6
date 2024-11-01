@@ -1,264 +1,170 @@
-Return-Path: <linux-kernel+bounces-392733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E9F9B9798
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:33:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA3A9B979B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:34:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF58DB222D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:33:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35BAFB21508
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF791CF298;
-	Fri,  1 Nov 2024 18:32:57 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4274A1CEAAC;
+	Fri,  1 Nov 2024 18:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L+KFgwT+"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6252B1CEAAC
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26611A0BE7;
+	Fri,  1 Nov 2024 18:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730485977; cv=none; b=LJoKFG5sHg5nqGO6RHIx3A6/WeaRzfwQzPXpak/qsEjmhIZ9j1voT02mnO8/nz2ccfwSYp+e+A3HiaupcNH6DKpWj2Oz2Qf4K0Pi8vCPp2qJdg1/qYkZauibwJkn1EVKlkAvCHWRNr4B6nkxr4KlXz8kLtN5aeDxTJRK8ICPiA0=
+	t=1730486031; cv=none; b=FlUIwquv0yqEZgZSSaQ6YG3JxMRVxD9cTaeX1NXWME2abtix8Czf+yjtNh8xqv5/jriLjEKyivF7/BHc1ChgHrQVe25++P93H3U7VMQEkMcdN0LX00w25qxuzEvJgSgrfRrX4Tl/CkHP2Y0V8Y9Uj9Tf/nBdrBL9NNkRDsVd2gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730485977; c=relaxed/simple;
-	bh=oeCReh64l4m4+kFJ7b+1DM7GsvtpgHfmbM82h6AcaWw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=CU7/MwsrZOquCCnSMe3sT02d/bk/Tecrt4zJClr2ja8E2F5YMCbNVgjrtT4iez0T1L0YW68IHbG8t3kSOzuRM3pgTpdfjIv2yi3fkiMxHGIU7LYCpIbMcpKIv64jdRaLiwGG9iEp0prowtcJZlbEPQkQ74EpdnWfURz9cF1GREs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E50A0C4CED4;
-	Fri,  1 Nov 2024 18:32:56 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1t6wT5-00000005X4z-3nkF;
-	Fri, 01 Nov 2024 14:33:55 -0400
-Message-ID: <20241101183355.781823434@goodmis.org>
-User-Agent: quilt/0.68
-Date: Fri, 01 Nov 2024 14:33:30 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Eric Sandeen <sandeen@redhat.com>,
- Shuah Khan <shuah@kernel.org>,
- Ali Zahraee <ahzahraee@gmail.com>,
- Christian Brauner <brauner@kernel.org>,
- David Howells <dhowells@redhat.com>,
- Kalesh Singh <kaleshsingh@google.com>
-Subject: [for-linus][PATCH 3/3] tracing/selftests: Add tracefs mount options test
-References: <20241101183327.693623203@goodmis.org>
+	s=arc-20240116; t=1730486031; c=relaxed/simple;
+	bh=tROKjePuUSAmKwGZuyxzGjNzAUwcXQRit98mObk0JPU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LxpFnQN+jHYl4Y/GUudaJzAbjACyXeSYiG3HjyQCPLzXc5poCY4Mvwnp/ptetYmiC6kxP/JWY6Pf8yqheOUtQWD9xZygtjOO1FTu8nnc8Ek34WpyfcxHyINqyJsYPpd2FXchec+Dj571x9tZK08FS/Prtj7O5QtkY3FHyvrPtuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L+KFgwT+; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cb15b84544so2660012a12.2;
+        Fri, 01 Nov 2024 11:33:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730486028; x=1731090828; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+aKXYmYjBAuMzUUIrdg8wG61gEq+XCTqxoCb6g2OWXI=;
+        b=L+KFgwT+BpL7LM4O7Bvw4c0Nuaxihtnf4PCxM2npR5IiK093rNZx4Qr5RJ36FivMZH
+         uML4oPQ5SuNTpxDsEfET9BspC8iQmCs7wrGuVkqGRyTGGYSbxoA48sEohnmDW/KuZtIS
+         7MmPF9p3zP8Mv36ogyTERzS8ZeUd3BhvQPCHn7XRvf/TGtv13RQXMBECVJd9qBFHCtwu
+         Ng+fIatSFv0Fiq219koKvGescyrZPsKAH6M+E4cIxkbl6y7Qxsl7MkRi4u2rF+AtfstQ
+         0km5ATid7V6timClR9tu8gsFShYFbtgXqKHBeNUyv4YPKd/g6sd4QgfS4GIr+r1d3CaW
+         yI5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730486028; x=1731090828;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+aKXYmYjBAuMzUUIrdg8wG61gEq+XCTqxoCb6g2OWXI=;
+        b=wGYVo+JSBQg2pZXQAR7wW0+fmnr7S/rsS++5LIb5MqMletQeVuKslw12yWBdCZ/mPP
+         yI2zH7X7avMq/rl1xn3szUO6+Id6lrcT6Ud3Fh4g0ITEz7avhbZEi9XJYhQD//2Q4quN
+         kNLGCN8/LgC639CONILgkR8ELeh7jJAKv/mxjXp/WLbfjBOmxV6Yliu/UACvollBhJTe
+         lTSH/JFWbmwwUJnd4rqExGTKQnrbNfI7pzRFvmx51OzZezMHSqu0vKX1rw8Rz/iOKE0+
+         fyk8C3yM/VV+EwVzv/78aJWIgPxLkr4DJbRKwVlVjAFXpfiD12DZ0CxacxJWcMP1QLT0
+         qkfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkuMPgomzkC6LnbECD2/my6RXZXCgQ2Fns98zQZTOVoO8Id82TBadqYaFKfdkE5hCg+kEzk2q5zW5LPFtx@vger.kernel.org, AJvYcCXQueZlfuOFnyUnq2ioJa5cdMFN7avqQlNSvs53edDjJBCfezrnCAV+lnAGCbqHkyDs5afgGOmKRbEZ@vger.kernel.org, AJvYcCXp49DO3+n5ZreCbdmM50aLghCK0ASY2XoxofbZX2wL2aEWGSPbkt2Dq+snK+PIhpm3E1d/4wV/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaACX0ddcE4FfhLghujWYotKyN5BUYhggMmpT5BhQ90ZmBe8B5
+	MPg4wr5ravv4pZbtNcG8bEX37A/SCJPnS6b/uiSOaMz/1+xR9Jt+exlnBQl8NA/XrKSx0FPoQdN
+	A87TOcYnx3VoTSoPNombePMlRi0g=
+X-Google-Smtp-Source: AGHT+IGir20gPToL50TgOpG3orUvf19xkLLVjvjLOCoU66Vkq4D32IzyCycWQAYpcoMknZ+dUtfXBJc4Jegp+l+59nA=
+X-Received: by 2002:a05:6402:2808:b0:5cb:739d:5416 with SMTP id
+ 4fb4d7f45d1cf-5ceb936b3d3mr3274777a12.31.1730486027898; Fri, 01 Nov 2024
+ 11:33:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
+ <ZyIZ_Sq9D_v5v43l@tiehlicka> <20241030150102.GA706616@cmpxchg.org>
+ <ZyJQaXAZSMKkFVQ2@tiehlicka> <20241030183044.GA706387@cmpxchg.org>
+ <CAN+CAwM1FJCaGrdBMarD2YthX8jcBEKx9Sd07yj-ZcpDxinURQ@mail.gmail.com>
+ <ZyM7_i1HFnFfUmIR@tiehlicka> <CAN+CAwMioguv6itTSYVUO9__kQVv6HZO2-i0NWt10-x7f6JVSQ@mail.gmail.com>
+ <20241031183413.bb0bc34e8354cc14cdfc3c29@linux-foundation.org>
+In-Reply-To: <20241031183413.bb0bc34e8354cc14cdfc3c29@linux-foundation.org>
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+Date: Fri, 1 Nov 2024 14:33:36 -0400
+Message-ID: <CAN+CAwORE8+P7Td9yebkb0TVT92SZv8oasrypewCspf5om1fYQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>, nphamcs@gmail.com, 
+	shakeel.butt@linux.dev, roman.gushchin@linux.dev, muchun.song@linux.dev, 
+	tj@kernel.org, lizefan.x@bytedance.com, mkoutny@suse.com, corbet@lwn.net, 
+	lnyng@meta.com, cgroups@vger.kernel.org, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kalesh Singh <kaleshsingh@google.com>
+On Thu, Oct 31, 2024 at 9:34=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Thu, 31 Oct 2024 15:03:34 -0400 Joshua Hahn <joshua.hahnjy@gmail.com> =
+wrote:
+>
+> > Andrew -- I am sorry to ask again, but do you think you can replace
+> > the 3rd section in the patch (3. Implementation Details) with the
+> > following paragraphs?
+>
+> No problem.
+> : 3.  Implementation Details:
+> : In the alloc / free hugetlb functions, we call lruvec_stat_mod_folio
+> : regardless of whether memcg accounts hugetlb.  mem_cgroup_commit_charge
+> : which is called from alloc_hugetlb_folio will set memcg for the folio
+> : only if the CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING cgroup mount option is
+> : used, so lruvec_stat_mod_folio accounts per-memcg hugetlb counters only
+> : if the feature is enabled.  Regardless of whether memcg accounts for
+> : hugetlb, the newly added global counter is updated and shown in
+> : /proc/vmstat.
+> :
+> : The global counter is added because vmstats is the preferred framework
+> : for cgroup stats.  It makes stat items consistent between global and
+> : cgroups.  It also provides a per-node breakdown, which is useful.
+> : Because it does not use cgroup-specific hooks, we also keep generic MM
+> : code separate from memcg code.
+> :
+> : With this said, there are 2 problems:
+> : (a) They are still not reported in memory.stat, which means the
+> :     disparity between the memcg reports are still there.
+> : (b) We cannot reasonably expect users to enable the hugeTLB controller
+> :     just for the sake of hugeTLB usage reporting, especially since
+> :     they don't have any use for hugeTLB usage enforcing [2].
+> :
+> : [1] https://lore.kernel.org/all/20231006184629.155543-1-nphamcs@gmail.c=
+om/
+> : [2] Of course, we can't make a new patch for every feature that can be
+> :     duplicated. However, since the existing solution of enabling the
+> :     hugeTLB controller is an imperfect solution that still leaves a
+> :     discrepancy between memory.stat and memory.curent, I think that it
+> :     is reasonable to isolate the feature in this case.
+>
 
-Add a selftest to check that the tracefs gid mount option is applied
-correctly.
+Hello Andrew,
 
-   ./ftracetest test.d/00basic/mount_options.tc
+Thank you for your help as always. I apologize for not being clear in my
+original request -- the "With this said, there are 2 problems:" paragraph i=
+s
+part of the 2nd section (2. We already have a hugeTLB controller...) So the
+outline will be:
 
-Use the new readme string "[gid=<gid>] as a requirement and also update
-test_ownership.tc requirements to use this.
+This patch introduces...
 
-Cc: Eric Sandeen <sandeen@redhat.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Ali Zahraee <ahzahraee@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Link: https://lore.kernel.org/20241030171928.4168869-4-kaleshsingh@google.com
-Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- .../ftrace/test.d/00basic/mount_options.tc    | 101 ++++++++++++++++++
- .../ftrace/test.d/00basic/test_ownership.tc   |  16 +--
- .../testing/selftests/ftrace/test.d/functions |  25 +++++
- 3 files changed, 129 insertions(+), 13 deletions(-)
- create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/mount_options.tc
+1. Why is this patch necessary?\n
+Currently, memcg hugeTLB accounting...
 
-diff --git a/tools/testing/selftests/ftrace/test.d/00basic/mount_options.tc b/tools/testing/selftests/ftrace/test.d/00basic/mount_options.tc
-new file mode 100644
-index 000000000000..35e8d47d6072
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/00basic/mount_options.tc
-@@ -0,0 +1,101 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Test tracefs GID mount option
-+# requires: "[gid=<gid>]":README
-+
-+fail() {
-+	local msg="$1"
-+
-+	echo "FAILED: $msg"
-+	exit_fail
-+}
-+
-+find_alternate_gid() {
-+	local original_gid="$1"
-+	tac /etc/group | grep -v ":$original_gid:" | head -1 | cut -d: -f3
-+}
-+
-+mount_tracefs_with_options() {
-+	local mount_point="$1"
-+	local options="$2"
-+
-+	mount -t tracefs -o "$options" nodev "$mount_point"
-+
-+	setup
-+}
-+
-+unmount_tracefs() {
-+	local mount_point="$1"
-+
-+	# Need to make sure the mount isn't busy so that we can umount it
-+	(cd $mount_point; finish_ftrace;)
-+
-+	cleanup
-+}
-+
-+create_instance() {
-+	local mount_point="$1"
-+	local instance="$mount_point/instances/$(mktemp -u test-XXXXXX)"
-+
-+	mkdir "$instance"
-+	echo "$instance"
-+}
-+
-+remove_instance() {
-+	local instance="$1"
-+
-+	rmdir "$instance"
-+}
-+
-+check_gid() {
-+	local mount_point="$1"
-+	local expected_gid="$2"
-+
-+	echo "Checking permission group ..."
-+
-+	cd "$mount_point"
-+
-+	for file in "." "events" "events/sched" "events/sched/sched_switch" "events/sched/sched_switch/enable"; do
-+		local gid=`stat -c "%g" $file`
-+		if [ "$gid" -ne "$expected_gid" ]; then
-+			cd - # Return to the previous working directory (tracefs root)
-+			fail "$(realpath $file): Expected group $expected_gid; Got group $gid"
-+		fi
-+	done
-+
-+	cd - # Return to the previous working directory (tracefs root)
-+}
-+
-+test_gid_mount_option() {
-+	local mount_point=$(get_mount_point)
-+	local mount_options=$(get_mnt_options "$mount_point")
-+	local original_group=$(stat -c "%g" .)
-+	local other_group=$(find_alternate_gid "$original_group")
-+
-+	# Set up mount options with new GID for testing
-+	local new_options=`echo "$mount_options" | sed -e "s/gid=[0-9]*/gid=$other_group/"`
-+	if [ "$new_options" = "$mount_options" ]; then
-+		new_options="$mount_options,gid=$other_group"
-+		mount_options="$mount_options,gid=$original_group"
-+	fi
-+
-+	# Unmount existing tracefs instance and mount with new GID
-+	unmount_tracefs "$mount_point"
-+	mount_tracefs_with_options "$mount_point" "$new_options"
-+
-+	check_gid "$mount_point" "$other_group"
-+
-+	# Check that files created after the mount inherit the GID
-+	local instance=$(create_instance "$mount_point")
-+	check_gid "$instance" "$other_group"
-+	remove_instance "$instance"
-+
-+	# Unmount and remount with the original GID
-+	unmount_tracefs "$mount_point"
-+	mount_tracefs_with_options "$mount_point" "$mount_options"
-+	check_gid "$mount_point" "$original_group"
-+}
-+
-+test_gid_mount_option
-+
-+exit 0
-diff --git a/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc b/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc
-index 094419e190c2..e71cc3ad0bdf 100644
---- a/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc
-+++ b/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc
-@@ -1,24 +1,14 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
- # description: Test file and directory ownership changes for eventfs
-+# requires: "[gid=<gid>]":README
- 
- original_group=`stat -c "%g" .`
- original_owner=`stat -c "%u" .`
- 
--mount_point=`stat -c '%m' .`
-+local mount_point=$(get_mount_point)
- 
--# If stat -c '%m' does not work (e.g. busybox) or failed, try to use the
--# current working directory (which should be a tracefs) as the mount point.
--if [ ! -d "$mount_point" ]; then
--	if mount | grep -qw $PWD ; then
--		mount_point=$PWD
--	else
--		# If PWD doesn't work, that is an environmental problem.
--		exit_unresolved
--	fi
--fi
--
--mount_options=`mount | grep "$mount_point" | sed -e 's/.*(\(.*\)).*/\1/'`
-+mount_options=$(get_mnt_options "$mount_point")
- 
- # find another owner and group that is not the original
- other_group=`tac /etc/group | grep -v ":$original_group:" | head -1 | cut -d: -f3`
-diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
-index 779f3e62ec90..84d6a9c7ad67 100644
---- a/tools/testing/selftests/ftrace/test.d/functions
-+++ b/tools/testing/selftests/ftrace/test.d/functions
-@@ -193,3 +193,28 @@ ftrace_errlog_check() { # err-prefix command-with-error-pos-by-^ command-file
-     # "  Command: " and "^\n" => 13
-     test $(expr 13 + $pos) -eq $N
- }
-+
-+# Helper to get the tracefs mount point
-+get_mount_point() {
-+	local mount_point=`stat -c '%m' .`
-+
-+	# If stat -c '%m' does not work (e.g. busybox) or failed, try to use the
-+	# current working directory (which should be a tracefs) as the mount point.
-+	if [ ! -d "$mount_point" ]; then
-+		if mount | grep -qw "$PWD"; then
-+			mount_point=$PWD
-+		else
-+			# If PWD doesn't work, that is an environmental problem.
-+			exit_unresolved
-+		fi
-+	fi
-+	echo "$mount_point"
-+}
-+
-+# Helper function to retrieve mount options for a given mount point
-+get_mnt_options() {
-+	local mnt_point="$1"
-+	local opts=$(mount | grep -m1 "$mnt_point" | sed -e 's/.*(\(.*\)).*/\1/')
-+
-+	echo "$opts"
-+}
-\ No newline at end of file
--- 
-2.45.2
+Aside from the consistency between...
 
+2. We already have a hugeTLB controller. Why not use that?\n
+It is true that hugeTLB tracks...
 
+With this said, there are 2 problems:\n
+  (a) They are still not...
+  (b) We cannot reasonably...
+
+3. Implementation Details\n
+In the alloc / free hugetlb functions, ...
+
+The global counter is added because...
+
+[1] https://lore.kernel.org/ ...
+[2] Of course, we can't make a new patch...
+
+Thank you for your patience. I promise that this is the last change
+to the patch message, I apologize for the frequent requests for
+modifications. I hope you have a great day!
+Joshua
 
