@@ -1,103 +1,133 @@
-Return-Path: <linux-kernel+bounces-392558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5E29B9584
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:35:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C88F9B9586
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:35:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 525DC1C2200E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:35:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC8171F21B8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A38D1C7603;
-	Fri,  1 Nov 2024 16:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D811A1C7B82;
+	Fri,  1 Nov 2024 16:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIcg9who"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1tpwuz/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DF7130A73;
-	Fri,  1 Nov 2024 16:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F25214884F;
+	Fri,  1 Nov 2024 16:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730478923; cv=none; b=Eb4XyH+yFjGkZuAGTwIAz/z79x2YN8CDA5p2uvrphRMFxm+Z3iv1aP95we1EB7A6z/VM6W+wzijMLtEqlgivFKMYXiBu+SndlgFvj/eXI37G/fbwshZOE38/hPFaFH85g4GU+VNQYGjP7ZEzdjBJ7vE9GqBwTfwdmxo/VGmsvw0=
+	t=1730478947; cv=none; b=mR1bXfNIPeDiMirgBZ0ii6XLo+gruH1V6tZ6fCHMiko3iE1WpeE5FIjcbIO8Ewy04A/XnZ8X2QT/Op9/ra0LJ0W/hhJLt/p8vMnZYbggU65ZFbNjnmoU9KHAlVU6Vzk6U8P8kyKKY+axhuEa6+kwJZue8pYtUkKamT4LlrG+Ysc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730478923; c=relaxed/simple;
-	bh=+1C8XZLRKBsstfJe1rtPfe199feU9kaxe8V4whbdD18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o49vM9ztWZd1oxU03Q+SqAz94eC72El56BExRT4f3esRpO98L1rB8YdG3IRsCy+NtrWmK5EVRGVvNrozo1c6mC5vz5z7AqzoCtffwcP8YRupR/lsc3jOQNOVketbC/p5KrDAhFWtEv5X4ukMH6Ir8emdTXNtSxFvmeeEm+xhPx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIcg9who; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a0f198d38so323215866b.1;
-        Fri, 01 Nov 2024 09:35:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730478919; x=1731083719; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tpr6TYQOLg8yjzavlYiVrt5ZjA57kPKJZVGbq8xKRME=;
-        b=XIcg9whoUXHa1XlmuLRi5CKcjWCZn5YkHsUYpV/OK2bBPX44/3QroxfR37wI4pFYdb
-         tpVTxIObr/NONKtZorMbERQhPA8rqCKEdmB/c9cE1chwS4ikq5NzGt5YXuvNoxJpMDKA
-         NRNI/kD60kXYTOZEoJnd5eVFbNo2U0uxmKDaRNYUN08Uoz4pU+aGwu3lw3pfPHX8it2Z
-         JngceSZV5Y/WaFC/KY6ozHkVL0hlrNvyV1RcoT/clNBXRlpaS45PIWxaLWn7OSdZ8KGd
-         CagEV97EKyg44lsTgLuqGF/s2fLgo4qYqZTB4SybUHUsf1RSystxpx9OTniFtRGh34us
-         rFNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730478919; x=1731083719;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tpr6TYQOLg8yjzavlYiVrt5ZjA57kPKJZVGbq8xKRME=;
-        b=MXcxjweLI0uWNIYsukVZLdHIHLaIrCvxjBnWXO//dq1jFUCKCEvGsorMCRa94Xi36D
-         QuoJ7+1UFdu/qp9P+7O5Kt9XkaKkOltnBm1x+S1tOk1pJNUOw+ldE5dpwvqzj2kl2O2B
-         PXdKT7hw5Sw07I08ie4YiGg7fnIq/+78KIIpUtEyiXC/4nlYGzwogcofStnLQzU/lvqx
-         4f1q2HLPOWWabMWaurUNQGr0C8zIOOcGbT3bXAleubWN2OkGA1MNuYz5lka6zWrPUp3W
-         jPGzpRYlS0lfSioB0sjfJOxy0JEvtHBGEPwsicTB4JvpzQDB5JT+6vMdNJJ/kby/f8Ou
-         UNWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdvhWNPIJW7hh5DvuypzeEBgEZISAZ7WkxEGjlwFtYKyaKIAv90/7DjcEELirmmxMIkiIOuZEhAJVp0kRZ@vger.kernel.org, AJvYcCXYMFZP31zrA5JS7yUYkP/OJlTMJO3S4ZWM42KtSuZrM0DBJQDnV+cu6Iwm5GovIG7MLo4MtaLiFYn37g+d@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZaqH+HBbfo++o7YcydhElN0Gv6H+3pQw4kN6jd0uzPOzeX+xV
-	f9dDk3aObYD4+FHFHgtKTkpzbrHCACVF74S/G4JptQCxwK89HPo=
-X-Google-Smtp-Source: AGHT+IEPkDHlV3oZirqn7gb2APSbbjvfSUiHI2RlzZX5BtBGJjrI/zST1FWntl0hYPnzQII0rye3GA==
-X-Received: by 2002:a17:906:f5a5:b0:a99:8edf:a367 with SMTP id a640c23a62f3a-a9e657fd779mr364779566b.57.1730478919134;
-        Fri, 01 Nov 2024 09:35:19 -0700 (PDT)
-Received: from p183 ([46.53.252.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56494202sm200956866b.22.2024.11.01.09.35.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 09:35:18 -0700 (PDT)
-Date: Fri, 1 Nov 2024 19:35:16 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Qingjie Xing <xqjcool@gmail.com>, christophe.jaillet@wanadoo.fr,
-	willy@infradead.org, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] proc: Add a way to make proc files writable
-Message-ID: <978cbbac-51ad-4f0b-8cb2-7a3807e6c98d@p183>
-References: <20241101013920.28378-1-xqjcool@gmail.com>
- <20241031191453.a4c55e8b2bfb4bf8349f4287@linux-foundation.org>
+	s=arc-20240116; t=1730478947; c=relaxed/simple;
+	bh=VAe8JaPazApSPoTOUWuTu3lf+OPBhaGqX0zo7n9+08M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CWL5jk0db7UymXwhDaZvx62ra8/NwbhVNmn7M/74Ksndfv44xQFvoLvEhR4TX2KWeaylIFDkoWvBOMp15eOlfP8EnFKp7SVPCm4bipO0gLFVrncw+scV5BqqKm6c0X//qMAgppnvLQz+hvdwSfPwRMgvxSbmef0EFQfWe9RGz/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1tpwuz/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5961FC4CECD;
+	Fri,  1 Nov 2024 16:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730478946;
+	bh=VAe8JaPazApSPoTOUWuTu3lf+OPBhaGqX0zo7n9+08M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=X1tpwuz/azyd+hEHYQjWyu3g6WzlxirePGr5tCzhPoWJyPcCzmsEvwV5GXsMRiwNa
+	 vlsRjpdYWH3r9cTrFOMjThIeBCPTmSrYRXty9uluBDplvDMsRjzeVBufZIv23P8Py5
+	 B7z70h1jPSyqTn6Og+yxxM/Tsp42XQ3+MjY/4Ls2AIA8SfGIUxy4UOBUr+IYDTPa5V
+	 aVTDYB2GetSTplCXpGubAh0HZbMfrkG/YtEAt2E80CgPtLFf2CYFwUvcnRW7i/BlVU
+	 9+Zvvh0KxeSd6F46d7hxskBtXy5cumZz/EbDo5FuUh1umx64DRth2XtYdUIki3KtSn
+	 RvS3gzWoPPEgg==
+Date: Fri, 1 Nov 2024 16:35:35 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Cosmin Tanislav
+ <cosmin.tanislav@analog.com>, Ramona Gradinariu
+ <ramona.gradinariu@analog.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
+ Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Anand Ashok Dumbre
+ <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
+ <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
+ Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Benson Leung
+ <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v2 10/15] iio: imu: bmi323: use bool for event state
+Message-ID: <20241101163535.644a006f@jic23-huawei>
+In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-10-2bcacbb517a2@baylibre.com>
+References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
+	<20241031-iio-fix-write-event-config-signature-v2-10-2bcacbb517a2@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241031191453.a4c55e8b2bfb4bf8349f4287@linux-foundation.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024 at 07:14:53PM -0700, Andrew Morton wrote:
-> On Thu, 31 Oct 2024 18:39:20 -0700 Qingjie Xing <xqjcool@gmail.com> wrote:
-> 
-> > Provide an extra function, proc_create_single_write_data() that
-> > act like its non-write version but also set a write method in
-> > the proc_dir_entry struct. Alse provide a macro
-> > proc_create_single_write to reduces the boilerplate code in the callers.
-> > 
-> 
-> Please fully describe the reason for making this change.
-> 
-> Also, we are reluctant to add a new interface to Linux unless we add
-> new users of that interface at the same time.
+On Thu, 31 Oct 2024 16:27:05 +0100
+Julien Stephan <jstephan@baylibre.com> wrote:
 
-Yeah, /proc outside /proc/${pid} and /proc/sys should be pretty dead.
+> Since the write_event_config callback now uses a bool for the state
+> parameter, update the signatures of the functions it calls accordingly.
+> 
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+Applied.
+> ---
+>  drivers/iio/imu/bmi323/bmi323_core.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
+> index 76a88e1ccc1d89988eb52d6b1be8da0f5005f0e6..161bb1d2e761688dd740635f8a2830e9562d1b59 100644
+> --- a/drivers/iio/imu/bmi323/bmi323_core.c
+> +++ b/drivers/iio/imu/bmi323/bmi323_core.c
+> @@ -467,7 +467,7 @@ static int bmi323_feature_engine_events(struct bmi323_data *data,
+>  			    BMI323_FEAT_IO_STATUS_MSK);
+>  }
+>  
+> -static int bmi323_step_wtrmrk_en(struct bmi323_data *data, int state)
+> +static int bmi323_step_wtrmrk_en(struct bmi323_data *data, bool state)
+>  {
+>  	enum bmi323_irq_pin step_irq;
+>  	int ret;
+> @@ -484,7 +484,7 @@ static int bmi323_step_wtrmrk_en(struct bmi323_data *data, int state)
+>  	ret = bmi323_update_ext_reg(data, BMI323_STEP_SC1_REG,
+>  				    BMI323_STEP_SC1_WTRMRK_MSK,
+>  				    FIELD_PREP(BMI323_STEP_SC1_WTRMRK_MSK,
+> -					       state ? 1 : 0));
+> +					       state));
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -506,7 +506,7 @@ static int bmi323_motion_config_reg(enum iio_event_direction dir)
+>  }
+>  
+>  static int bmi323_motion_event_en(struct bmi323_data *data,
+> -				  enum iio_event_direction dir, int state)
+> +				  enum iio_event_direction dir, bool state)
+>  {
+>  	unsigned int state_value = state ? BMI323_FEAT_XYZ_MSK : 0;
+>  	int config, ret, msk, raw, field_value;
+> @@ -570,7 +570,7 @@ static int bmi323_motion_event_en(struct bmi323_data *data,
+>  }
+>  
+>  static int bmi323_tap_event_en(struct bmi323_data *data,
+> -			       enum iio_event_direction dir, int state)
+> +			       enum iio_event_direction dir, bool state)
+>  {
+>  	enum bmi323_irq_pin tap_irq;
+>  	int ret, tap_enabled;
+> 
+
 
