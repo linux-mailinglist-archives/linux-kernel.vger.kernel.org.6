@@ -1,103 +1,118 @@
-Return-Path: <linux-kernel+bounces-392542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58739B9554
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:27:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275929B9557
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D471F22DF0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:27:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D711C20F4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC81B1CACF8;
-	Fri,  1 Nov 2024 16:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112751C9DFE;
+	Fri,  1 Nov 2024 16:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alGNxX4P"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sl8Bgwcw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CCD1C9DFE;
-	Fri,  1 Nov 2024 16:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C61798C;
+	Fri,  1 Nov 2024 16:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730478431; cv=none; b=gn4sizSIKkP9CbIwn+nTUzKTdzXY4SvpVMZc18O1nkWc6j1IhXL58J8Xnvq9inVS1VJrVMdnkcyG/9R7z0h1hLkHM8ER8O2Dji5Mu0CSzDz1SLSuVU/8FHqGsymSDDRjowBlmy8+WeMy52RVUof31EKA9AmHcltFr4x3ljN+1jo=
+	t=1730478459; cv=none; b=e1+BtKhvBRg31EicmQaPGIPQMjta5yAzkq7m2+y9jC0XryAWWU5TUsukUVxysxpulbXwhX5N7uqrJB4pdwEiL3YedUykpkIUJm8ATsM8IedIP2L+5p7byl3IubszJSN5VogvRBoer/1uikX7RmCThLrMb4pgBxkuspqf1S2AEzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730478431; c=relaxed/simple;
-	bh=ZmIoI9PA6fIEVj/7yw5DX4LvbJaFbegZUheZe3LGM/0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UsH/hBd7KgkrAexeHe7i4KxBFtSJvqryC/Kwm+vIgKNhruFuGfRoml11/ewavO4XNFoRfEUB+198d/+ibCx16f7bIiehv4pGaL+E03+bvtE7BV5P2Jq8Lvl3b1vTDlTZGB++VRqi5A3f6GyvJ75onppsqazDSXMtGtLTqthMQH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alGNxX4P; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d3e8d923fso1359222f8f.0;
-        Fri, 01 Nov 2024 09:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730478427; x=1731083227; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dLYY+R9EbouSvKSthrZJT06QviU9iWM0Wdkcc7CpKew=;
-        b=alGNxX4Pojc4chtL27EUegTLdczJ8aBCI3fWPdXiIq2Yb7dzjTl6MrkbppejAmz75p
-         P59ieI6TZ1n5Bq65mukc80C5fvSV1GO9AQayDN6qc3P8SReXuJ2W0b9Jd9adQe5H/8Mr
-         DsLIPswsLwgHOcPdnA19rumzntNLhoi5B6gynVsdQB3ZzZFuU8yym7CwSVQC6sMHKypS
-         4MEEEP5rS5aJ1DR+15DfJjMcyGxI49JqyNwxp07zR2NRq2vEa65XeJ98UbXRWjzTSEQN
-         wR80EXVEtRq/BcS86TVG9zyI8EZV4NRdAKO1mdbGEJXfwoNlJ6YIGCzWWNPkXgQrnUHf
-         G8oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730478427; x=1731083227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dLYY+R9EbouSvKSthrZJT06QviU9iWM0Wdkcc7CpKew=;
-        b=gdx1So73jC5BkKa8aGygsiJuel5Y1/FcbMU8g0L67f+MMf99ALmt+sWPD0vBgxbzVP
-         f66CGMQC7/Nc2gGn190qCfPHNfgisO+wS3mL+o1cg7pDBgBKMVWeE6PB48dRyihIkTqJ
-         IKGiwo8cltoRx9F1AjZ/99s1gncFuGGsK4KXwFouQpjW8kMrFRA22Eg/nM4hF9G3c28H
-         ZFFBELmvSOHuOVLv4bZYb/0hu4JP9fV8Y2+r9HjrVu+g0Rsof6vFvZQCP6cmGOxf23Fa
-         OnnHmezMzzfDYpmONRvP+iPebtGSkOIouzrYVWmxPz0at9qAavJXJFrrHhkdDqU/b4aQ
-         GV/w==
-X-Forwarded-Encrypted: i=1; AJvYcCU8EQvCgx7BU69Qh9v9Xt2P5v5C8IfBvyKqEJV5d1lBkncC7hDG+0RwpKWoUc51b59HGW8=@vger.kernel.org, AJvYcCWNts0FrS1rrAI9kj3T/f6SSpB3w4uwzKEM1YUzZ44KlaO/fQEd76+zvMAlAmq9UlNN/0ndcc0L9nc0KUpu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7kBd8X5geIf0IZeBeukPGTM3GIRTqp+iJ9TmQDUhpYOR5Huw1
-	FOzrw+kOnDCIyI8WyFvQzEjI9RIgxSBRL/e1Y1acqie1kblcv0TTtcWx+EqkEcg4L7aviy8zasy
-	PiGYsZ+Op5of7ppdaKxBLaaGXk8HV2w==
-X-Google-Smtp-Source: AGHT+IGNJTH/QbU41hcv6IRF/s4Zb0h3V7k2TDKfPZNWnNOrbo7zXcVq9RECL7gQ7lVXuzz3Yh2E+QoHrS+X8CAUeSs=
-X-Received: by 2002:a5d:5cd0:0:b0:37d:4c4a:77b with SMTP id
- ffacd0b85a97d-3806120e398mr14457591f8f.58.1730478427278; Fri, 01 Nov 2024
- 09:27:07 -0700 (PDT)
+	s=arc-20240116; t=1730478459; c=relaxed/simple;
+	bh=kJqFcsvQINdidT98+YNnLof9J1GKlvt9L8buCuMsEtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jetXeJeFRbPirzuNu2YeV0JbvVFV5TzgblfWMCATloYUwYjhU83H1JMrKRT8OMxU6dHGnlWodr4wUczHPUWwBDsFEXYboWHl3DNcuf1C2hPz+LgiZOAOQTE1hz0U1Jkbs5TYZZHRGgNwwurE+slkZXSk88CPPPOSn6lkoze/uao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sl8Bgwcw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A7D2C4CECD;
+	Fri,  1 Nov 2024 16:27:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730478458;
+	bh=kJqFcsvQINdidT98+YNnLof9J1GKlvt9L8buCuMsEtc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sl8BgwcwXkDpC76XnctTpLrhDP+mSRqYETjfbM1UA5+8kI2Tu+SjqUw0bVQd8+nwh
+	 u+6SaLasKcLMdvxgiafbTqYANY03f+frzcUtYQS8iHWY+jhd5/VenwNIipiUFtav9x
+	 +LSrAOWO9sqokkZbHz0/W2pvEtXOGRacCwjJMZEgqGEthKKvqAj9r2eZzHBLbV1JTf
+	 Xy9HiY8jqSYtJXuz3hNEAhL2Vgcz857CwP1LqsI2y6s7kRVh5moCZFlcaWzjfWGqo8
+	 wO1cf/hsOhe09GBvvGrpm9fyAkUa7J7WZBLE9xIlDhct3+N20bG7TtvG2Evoj/eez2
+	 kva02sLNcG4ag==
+Date: Fri, 1 Nov 2024 16:27:32 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Janne Grunau <j@jannau.net>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] spi: apple: Add driver for Apple SPI controller
+Message-ID: <0b4901b4-8cb7-49e2-a411-a6c57b9edd97@sirena.org.uk>
+References: <20241101-asahi-spi-v2-0-763a8a84d834@jannau.net>
+ <20241101-asahi-spi-v2-2-763a8a84d834@jannau.net>
+ <e3008c6b-ba71-46cf-810b-053dbafe2cfb@sirena.org.uk>
+ <20241101161905.GB194146@robin.jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031210938.1696639-1-andrii@kernel.org> <20241031210938.1696639-2-andrii@kernel.org>
-In-Reply-To: <20241031210938.1696639-2-andrii@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 1 Nov 2024 09:26:55 -0700
-Message-ID: <CAADnVQL-YGPDcMdJEu7E7-OKpzUaE8Kax7zOW-JYi4aPNivN7w@mail.gmail.com>
-Subject: Re: [PATCH trace/for-next 2/3] bpf: decouple BPF link/attach hook and
- BPF program sleepable semantics
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Jordan Rife <jrife@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mRv77eGBnhX9W2oC"
+Content-Disposition: inline
+In-Reply-To: <20241101161905.GB194146@robin.jannau.net>
+X-Cookie: We read to say that we have read.
 
-On Thu, Oct 31, 2024 at 2:23=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org>=
- wrote:
->
->  static inline void bpf_link_init(struct bpf_link *link, enum bpf_link_ty=
-pe type,
->                                  const struct bpf_link_ops *ops,
-> -                                struct bpf_prog *prog)
-> +                                struct bpf_prog *prog, bool sleepable)
-> +{
-> +}
 
-Obvious typo caught by build bot...
-Other than that the set looks good.
+--mRv77eGBnhX9W2oC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Nov 01, 2024 at 05:19:05PM +0100, Janne Grunau wrote:
+> On Fri, Nov 01, 2024 at 04:08:20PM +0000, Mark Brown wrote:
+> > On Fri, Nov 01, 2024 at 03:25:04PM +0100, Janne Grunau via B4 Relay wrote:
+
+> > > +++ b/drivers/spi/spi-apple.c
+> > > @@ -0,0 +1,531 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Apple SoC SPI device driver
+
+> > Please make the entire comment block a C++ one so things look more
+> > intentional.
+
+> I did after your the same comment in v1 but reverted that since
+> checkpatch.pl complained. See
+
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/checkpatch.pl?id=a674fefd1732#n3742
+
+> The inconsistency between *.h and *.c is surprising. I'll change it and
+> ignore checkpatch.pl for v3. I'll address the other comemnts as well.
+
+Did you make the comment block a C++ one or a C one?  The SPDX header
+does need to be a C++ comment (//) for the SPDX parsers so I'm saying
+make everything else also use //.  There's some constraints from tools
+that consume C headers but don't support the C++ syntax.
+
+--mRv77eGBnhX9W2oC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmclAXMACgkQJNaLcl1U
+h9CKEAgAgU3tdPmqQKdOXiFwpZBujNpETg0Fgi0njVkztO2Zp9Wk4RNoW6rfq2Kj
+L4izInHsvBx+vaOZoym2NKgYrrjTMiETjR8u4K+5NP0X0FCqOS7jKAl+Zzoh5m9p
+l15LtYap0VAv5Ac10zoLbvPX1GtzC6R36fPMvxAXQ36OlI4cPevqk8IAo5KhAis7
+NPe8+92HTdTYnAkV+m3fqJHgJXF3UaQyWSFElHJO7CpCC0XtN9Gu8dJ5Qf5lpR7P
+y9Pgm23VUmIHKTX6EQXWwooHGme2PxqjIoPxV2/evnFJ2XOukZYe96S33saXLJHC
+rRqkV1jhePyVNP4tSN4KGHSOjtLH6Q==
+=GRtA
+-----END PGP SIGNATURE-----
+
+--mRv77eGBnhX9W2oC--
 
