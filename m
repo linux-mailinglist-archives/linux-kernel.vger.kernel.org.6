@@ -1,130 +1,125 @@
-Return-Path: <linux-kernel+bounces-392003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44F29B8E7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:01:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5DE9B8E7A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55C051F25CE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558C71F25A8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F3A15F330;
-	Fri,  1 Nov 2024 10:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004631598F4;
+	Fri,  1 Nov 2024 10:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Irny/Uno"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FlIy/8L0"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5759F158553
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5191814D70F
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 10:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730455210; cv=none; b=ENGxBB2hpYHgugSri/oYdnuMjxQyV2elaUBrMzIX37x5H0kCWgRh+cjDum3E44Emk9dXC8gHx1Kswhs/HV3J4QP0HNl6EDDSjoQ0E2RD+LM166YTy1l5x1v7t4ElwXlgYEZdEmQQyyJqtEt/aPPIakyrwNLSb6kd1ivsQ+yNaqg=
+	t=1730455203; cv=none; b=N04gcvNZoxckITaPZpeXvLuN6TBxsV9FnHbrmTnCB+coj1eGRvqI/Bu1WoLlBe2SB6YRjmbWT/f7Gy49mUFQIvjabkFsUWgxi5UpIPfA3iSAJPcT0nbeWpeWV3287teK5hYjsrT8kVkqWEy8Uj2nwXQ9amBI1wFp+7iEerGG7TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730455210; c=relaxed/simple;
-	bh=szirmOHLLGPT4Rpk5rV9+e7gy9gLSwyM1IEzBkLyjk0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AMPI5/V0FFXEzzxyDE7nHNlMXpj9sXd+HKCVyxBCIJAVaJrpEG3YPmUX7Fbro+CE8DgboLTIfaRLfqdHeSqAT3nWGR34jptQrhZvmwv7ATijD0ge4VeFdBXWNaSU+CrTs5a0TUPxp49tpxmqxLHGqYW32pwnCnfeTHS+1eXlmOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Irny/Uno; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c8b557f91so18537065ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 03:00:08 -0700 (PDT)
+	s=arc-20240116; t=1730455203; c=relaxed/simple;
+	bh=ZkIHuit9XH/WbkdUw4J0iAuXlse9CJHtPB9iDLM0soo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VAWA57WYm3ET78iyQ2oSoEojoFNyqx1cwjg7bb6GR1GdO99zaURI1OITGtStE4womxjopKMs9j+zyOwZQAn5NI+dRcYoIoVY0Wd5fRyc1qh5NpR4VPhxfeu5FlylZREIDLmq/wbtMR3lnrqayk8vDI2k8IiHhJ2jiPLSVwYQiU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FlIy/8L0; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d533b5412so1074608f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 03:00:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730455208; x=1731060008; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kXE+qi0LSm8ODysTE3U4uCY5bjtR4TQVd3Ql3XOl3gw=;
-        b=Irny/UnoKmAK6jtUTdzsAAOsLZIL/68bgiIh9VeI7LmTvAaN+KBZcsyT1+M5kTy9uM
-         +oHgK4E6MpWeM+LagEJFGR5IM1WRXYI83KwSYJPYYv2goizhdQh/AB2O4Tcacas9F5yL
-         7qg7VTbAOLAckFM+4XYwJ0gGPds0NYEPVA4GFEo4WJUb8yujA47Urv6aFkeA5aKS50rb
-         ZwbhUcF81DCbQ2iDcBSrxmrPiE0axkyqqA5tZZBLm3A0fxPw2A7w4OaHIN4MD3XFMIsP
-         t2i+RRY831FjwcVahQyhqqNg3KLx7bSJ7LiqXAub+IsSyxIEqlSz9bEOHYpMZgsRhUjq
-         eXLw==
+        d=linaro.org; s=google; t=1730455198; x=1731059998; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kCMYxsENI5KzW+rkth2c1UykDj87pqP/pFjISR1rPF0=;
+        b=FlIy/8L0sfKqvUXy3lvLzupC8nboS0ldmM0VdAMLYCYe+CkMzxceUqMuNNrifBpTDh
+         BQoW+BTg+f8Ic6KuCg6gUBqLzDO+v/krXH3Glmf6prBtauSGuN+JO0vb7kTXq5Jgxp33
+         KzUtLIie66NGhuD+1AP46+GnKaDLcr7WXLbn9X3pu6KZBeV0gkG4OnBYNPi2zb7ySjST
+         3VS4NiR1yUJjvM32Px5v2rzJjXud9z7a48wn3jMvlP8uwKUYFo688+AV+R0k6qwnGdBC
+         AmF0EBs2xzlT7r4+75AN+K9cg4ZwUOdgfCfRCMJFxeVEJOd0mW99GKr96qxzDD/HfbPj
+         ozWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730455208; x=1731060008;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kXE+qi0LSm8ODysTE3U4uCY5bjtR4TQVd3Ql3XOl3gw=;
-        b=vNt8ypuESO93q6ItNRwTyCIV4K+Wm8VEoYhCOazvru743Q2eKfpLHZxK0swBwRVFgq
-         EJWXlHfcaXllZTztAIzyWLiPGBRwsr5WAmpCPzwo9oPrgMUBSPxn+T2R+6fBBTrtZ5R2
-         HwdjyCt8f2sA5nK0m3njbXbGmY58Wo+K01/s4vcsQMtIwZD/2+ZoEXpfqS+zvwlk67IK
-         SP2VNTFYv9D/nsYwpdj65XANQRghQBvv4SpELbfX/c78J+Ow4IS/iT1rIgA9rRwh8jUC
-         n20qjuOCb38rcc2Y/+jgd0+nMSuJVWLxu2DbgQf0XsyE3KOfhDgcgYAztXUW9XwfNYk+
-         52oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBK1ialZHK2Df0RYD+IPZ5DYvMIDVx8oA2ZPGMV3oqMBjtTGnB4KgkxQZT+Fs+1uGkSLJ/UcDoVSQPYBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx093banyN+xNFDjXJtrXc2oeC55QdXIl3OhBEkCssP0rYklY+C
-	0GOIIQXQ/4YNz11uBg8FaTO6mNIh++Ltjd0dmGc6ruDvk3QCEY9a
-X-Google-Smtp-Source: AGHT+IH+qDmPE014XFSIXoWs+bf29PK2M0J/yz6dZkz/5vEdYvX38kp2/2dRiZcLu/cOq6W9GxN86A==
-X-Received: by 2002:a17:902:f684:b0:206:fd9d:b88d with SMTP id d9443c01a7336-210c6d291e5mr258001815ad.61.1730455207493;
-        Fri, 01 Nov 2024 03:00:07 -0700 (PDT)
-Received: from TW-MATTJAN1.eu.trendnet.org (61-216-130-235.hinet-ip.hinet.net. [61.216.130.235])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa4850esm4595553a91.27.2024.11.01.03.00.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 03:00:06 -0700 (PDT)
-From: Matt Jan <zoo868e@gmail.com>
-To: Dave Kleikamp <shaggy@kernel.org>,
-	jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Shuan Khan <skhan@linuxfoundation.org>
-Cc: Matt Jan <zoo868e@gmail.com>,
-	syzbot+9e90a1c5eedb9dc4c6cc@syzkaller.appspotmail.com
-Subject: [PATCH v4] jfs: UBSAN: shift-out-of-bounds in dbFindBits
-Date: Fri,  1 Nov 2024 17:59:55 +0800
-Message-Id: <20241101095955.9786-1-zoo868e@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <671b3f75.050a0220.2eb763.00d7.GAE@google.com>
-References: <671b3f75.050a0220.2eb763.00d7.GAE@google.com>
+        d=1e100.net; s=20230601; t=1730455198; x=1731059998;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kCMYxsENI5KzW+rkth2c1UykDj87pqP/pFjISR1rPF0=;
+        b=l9HikBRG10muVMQwvd2rg3rvtX0sF7hWSqVyRC3A0l8Bt9/Msk9Okx2Iaf1mMb6S4Z
+         S4K8AW43m8qRHqhZQEAzM1gHZmYsDdf1FOMx5Jzvz7CO0En0q6U0/lHs2KpJNgtthBIC
+         dTmAQuKfc29UoumMEQNDDpi8OJC248E0BQKA1F91MUcOOVzmsap6tdXpBPlp1TxXZ04a
+         GRcCznri5Tv8k0bbgwvNClpBXwchG72YMRtYwwZOZOeRivYEQeXgsCOFOqow5NMXcXsV
+         61/w302C1ukDlkEZhUwrYec2XWdH7eiZCN5rjJXVU/SMy3GpRW+QO9qoQ/0MB3BCb6gr
+         Xjmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcA5ux454tgy63MpBTPwQbKwmioa1jUx+2eB/wWQbeZkQSVPpJLBtqtQyOvsH90bGCD5uexfwDbWsWk9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBPfjJ8Y9S1End5UEIzczuqnzHZzVe4MeXw16Mtex8WkB7pXOG
+	nXxLCJeeQzlKXRpiAawoEor97qGIPlFCAg05WTOGRYzAjImBy1Ms5wnm4af/K+s=
+X-Google-Smtp-Source: AGHT+IHPedYLVwzy/bVIibNk6iPvacu9rvmCe3Ib1wQ1oV/5dOpF8xEpg5pq4bozzuGmgbu3MZNKhw==
+X-Received: by 2002:a5d:6a51:0:b0:37d:5301:6edb with SMTP id ffacd0b85a97d-38061221e7bmr14762555f8f.57.1730455198581;
+        Fri, 01 Nov 2024 02:59:58 -0700 (PDT)
+Received: from [192.168.0.17] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c11898easm4569503f8f.117.2024.11.01.02.59.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 02:59:58 -0700 (PDT)
+Message-ID: <a7975bd0-8593-4ecc-91d4-cbf2113037f4@linaro.org>
+Date: Fri, 1 Nov 2024 09:59:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] media: venus: Fix pm_runtime_set_suspended() with
+ runtime pm enabled
+To: Jinjie Ruan <ruanjinjie@huawei.com>, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, ming.qian@nxp.com, eagle.zhou@nxp.com,
+ stanimir.k.varbanov@gmail.com, quic_vgarodia@quicinc.com,
+ shijie.qin@nxp.com, hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: chenridong@huawei.com
+References: <20241101094050.2421038-1-ruanjinjie@huawei.com>
+ <20241101094050.2421038-4-ruanjinjie@huawei.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241101094050.2421038-4-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Ensure l2nb is less than BUDMIN by performing a sanity check in the caller.
-Return -EIO if the check fails.
+On 01/11/2024 09:40, Jinjie Ruan wrote:
+> It is not valid to call pm_runtime_set_suspended() for devices
+> with runtime PM enabled because it returns -EAGAIN if it is enabled
+> already and working. So, call pm_runtime_disable() before to fix it.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: af2c3834c8ca ("[media] media: venus: adding core part and helper functions")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+> v2:
+> - Add Cc stable.
+> ---
+>   drivers/media/platform/qcom/venus/core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+> index 84e95a46dfc9..cabcf710c046 100644
+> --- a/drivers/media/platform/qcom/venus/core.c
+> +++ b/drivers/media/platform/qcom/venus/core.c
+> @@ -412,8 +412,8 @@ static int venus_probe(struct platform_device *pdev)
+>   	of_platform_depopulate(dev);
+>   err_runtime_disable:
+>   	pm_runtime_put_noidle(dev);
+> -	pm_runtime_set_suspended(dev);
+>   	pm_runtime_disable(dev);
+> +	pm_runtime_set_suspended(dev);
+>   	hfi_destroy(core);
+>   err_core_deinit:
+>   	hfi_core_deinit(core, false);
 
-#syz test
-
-Reported-by: syzbot+9e90a1c5eedb9dc4c6cc@syzkaller.appspotmail.com
-Signed-off-by: Matt Jan <zoo868e@gmail.com>
----
-Changes in v4: Thanks to Shaggy for the review. We now perform a sanity check instead of continuing as if nothing is wrong.
-Changes in v3: Return the result earlier instead of assert it
-Changes in v2: Test if the patch resolve the issue through syzbot and reference the reporter
-
- fs/jfs/jfs_dmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index 974ecf5e0d95..89c22a18314f 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -1217,7 +1217,7 @@ dbAllocNear(struct bmap * bmp,
- 	int word, lword, rc;
- 	s8 *leaf;
- 
--	if (dp->tree.leafidx != cpu_to_le32(LEAFIND)) {
-+	if (dp->tree.leafidx != cpu_to_le32(LEAFIND) || l2nb >= L2DBWORD) {
- 		jfs_error(bmp->db_ipbmap->i_sb, "Corrupt dmap page\n");
- 		return -EIO;
- 	}
-@@ -1969,7 +1969,7 @@ dbAllocDmapLev(struct bmap * bmp,
- 	if (dbFindLeaf((dmtree_t *) &dp->tree, l2nb, &leafidx, false))
- 		return -ENOSPC;
- 
--	if (leafidx < 0)
-+	if (leafidx < 0 || l2nb >= L2DBWORD)
- 		return -EIO;
- 
- 	/* determine the block number within the file system corresponding
--- 
-2.25.1
-
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
