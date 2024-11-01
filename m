@@ -1,224 +1,122 @@
-Return-Path: <linux-kernel+bounces-391983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57109B8E2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:50:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3209B8E32
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E0471C20A5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129671F22288
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D80115B13B;
-	Fri,  1 Nov 2024 09:50:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E74815AAC1;
+	Fri,  1 Nov 2024 09:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="oMbMQnuh"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B563915990E
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 09:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F9842C0B;
+	Fri,  1 Nov 2024 09:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730454607; cv=none; b=uK+Cvog6nrn4N4o24YWxceVMsLzugNWyGhuyt9D6rjAIs52ChV8HnHTbF8UG6rs6P51hfo9u+36tmQVEwCMSQ7Ci1dPG8+zwmNf/+An14ol1WeYboMOQ0Vc15e6fsL8tHN96RaDL+7B2Hx4Rqvod7athLrWiAVX66Pjj+mXFAuE=
+	t=1730454772; cv=none; b=CqJeyY4MYH/yCRwvNvmf40aLpl6OSZL1mE9Dqtu7D4IlntbP+qG5uK3FkOQ+kxUuwtpfxU61bsN42dtyuSgDm/L5BwfzMKOa5itJTvavsAPKNg/SIVIQUzG5Ze+Q3W+aVPBFlWbIWzoGkyR+69npHmTq4WpsTS/G+UKQA0a1lyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730454607; c=relaxed/simple;
-	bh=kcM2EbvKLIfH4dHiElGR1ZKsPgnDpTgnQNxGBsxMk3s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uk6bIgd6qxd49LgmjMEWjoHt621aQYVOdM3m/pLAZWaw9ERpPqPSh1303PW2rcRi3HKCjltMWFAklSDXaL4Z27aETNCHlwRiLJ5+k4zDyi4IL2C5LX79Xv9ndBA1cXKFJZPsL+OagRQWQAk3InYsIsdn8HZbR4KFyieZcvyR8+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6b3808522so4166235ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 02:50:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730454604; x=1731059404;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GC8dvSTy/Po5Wp92GbZjqkWtERBTQKq319ujLKIqdOo=;
-        b=PHsfbepftnYACSBBhH0IfJ6GoDnn6RJ3qXQD83eV3WpTC1BA2unP2rkbU4jMMdPVLx
-         HZSFQ5V9h4ETvJipvuJtVEvIpJxpBYlPt5mFMyuhtcZqoEhhdPERzByANfdw75GKI8Z7
-         aCGmlNyOecnfwTlj/K9Jim1nwGCAHE0WauUepssN7c1pIEPNONvTVAuk1io+YvlA5Kos
-         gCjiOAPUbFrG7hoMqeGBvl6YkgLps8vlTpF/RIM1tLr6xIOERKO0MCFLBUaC2IF+KKDm
-         27XhKPQGKwt5vywGqpPucJEa9wUThUo/L/QaXc4mVe5mNBK1BCMXf2snCP+OBc4KS5N0
-         DlBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVj46rS4QXplCyX5x0Ir2SlUF/OemX0FTng7ToxFpIwTNiR3CZCda5P/OKB319Bs9U2syXsw6AOgebN5Ns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH+B2EQ/tD4+xGJ1na2oywE0FG9ivnNKIWhuyUnCFEoE1DuPuh
-	agdy2MF5qO2tOl4usA4biPHq3Rd91/0ZQt7pUGrAFVJ2mzWhSvs8OUpUVUHRLnC3rej6UMNduVK
-	dPE6vaylobYGJjLAMGIBqLt7SblT38dOrTJasaRJuvjG/bX0pTtwiMNQ=
-X-Google-Smtp-Source: AGHT+IF+X1z/WQ+QhtR9uluy/UsYLAbspUDvIzCLo5OodZV42QCiM9BBuTx6hda6oOOb+FA5d3pAo2CplE0NMTaPe6nrhCB+URHf
+	s=arc-20240116; t=1730454772; c=relaxed/simple;
+	bh=tJ/fGoA1skodvpCiPIjWJ9O2i9YYHjMXa6li6wcUc6w=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NN1Kp9xzbygpnBXc/cx2TRCL4ZpESPaSiwcnUdLuQoVoBIbPq9i4/s+AWt1wXijl6ZtYqSXN5dEvnseK+tnJsiRsCbOSaI8GfNb0UuRUaw1h5q8zZoHiby2sOWLJypzvzKyKjwZjinkjWupx+x6mWAw13i4nW2YXmWPcs0y7Iio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=oMbMQnuh; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A15jHCq026680;
+	Fri, 1 Nov 2024 05:52:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=Fa6jU1MdHl7FUJcaJ91oK3EAi56
+	FdnhF8cp9byp/Ojs=; b=oMbMQnuhqKuvs/jVvB19p0RZfBbpW/VNl5j8KRDilHM
+	MRbD0roI/TYbLV78JuMcPRLeNtBFxCFhXcawGnJnt4mto6O5ayo6RJZl0J7z4+sV
+	duHTKgJXQH5nlmyA9LiPGKlpyDwq8GFEqJlnV9qSaJdv24vn78FcVmq8MLyT0w6c
+	EQroVorBDyLRGUV4dw2s6h22J1JxWwB7VAOChXHabaampji3ZA27B+WvOf4IFLJ3
+	aOpVoOSyl+rmMlx6yTUqEBJPaHv2OFbtPoxYfJdJp9WdpWqo2gEd/9qIsrWOwFvf
+	a5YX6V7SV0QWUzZ2vijCR/8dxW0pRLWKoiym7GguoWg==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42m2gmps96-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 05:52:30 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4A19qTNo030992
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 1 Nov 2024 05:52:29 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 1 Nov 2024
+ 05:52:29 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 1 Nov 2024 05:52:29 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.114])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4A19qDY6011849;
+	Fri, 1 Nov 2024 05:52:15 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Ramona Gradinariu
+	<ramona.gradinariu@analog.com>,
+        Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] iio: accel: adxl380: fix raw sample read
+Date: Fri, 1 Nov 2024 11:52:01 +0200
+Message-ID: <20241101095202.20121-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2a:b0:3a4:e99a:bd41 with SMTP id
- e9e14a558f8ab-3a6b02be160mr34366115ab.12.1730454603912; Fri, 01 Nov 2024
- 02:50:03 -0700 (PDT)
-Date: Fri, 01 Nov 2024 02:50:03 -0700
-In-Reply-To: <73b917c76cff44f3085c79f251d958b1ec6c793a.camel@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6724a44b.050a0220.529b6.00d8.GAE@google.com>
-Subject: Re: [syzbot] [xfs?] KASAN: slab-use-after-free Read in xfs_inode_item_push
-From: syzbot <syzbot+1a28995e12fd13faa44e@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: ieRXWa07U8RK7zF_5F7INSsP718VLQKv
+X-Proofpoint-ORIG-GUID: ieRXWa07U8RK7zF_5F7INSsP718VLQKv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ mlxlogscore=999 spamscore=0 impostorscore=0 clxscore=1011
+ priorityscore=1501 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411010070
 
-Hello,
+The adxl380_read_chn function returns either a negative value in case an
+error occurs or the actual sample.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in xfs_inode_item_push
+Check only for negative values after a channel is read.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in xfs_inode_item_push+0x293/0x2e0 fs/xfs/xfs_inode_item.c:775
-Read of size 8 at addr ffff888061c9b698 by task xfsaild/loop2/7823
+Fixes: df36de13677a ("iio: accel: add ADXL380 driver")
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+---
+ drivers/iio/accel/adxl380.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-CPU: 1 UID: 0 PID: 7823 Comm: xfsaild/loop2 Not tainted 6.12.0-rc5-syzkaller-00181-g6c52d4da1c74 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- xfs_inode_item_push+0x293/0x2e0 fs/xfs/xfs_inode_item.c:775
- xfsaild_push_item fs/xfs/xfs_trans_ail.c:395 [inline]
- xfsaild_push fs/xfs/xfs_trans_ail.c:523 [inline]
- xfsaild+0x112a/0x2e00 fs/xfs/xfs_trans_ail.c:705
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+diff --git a/drivers/iio/accel/adxl380.c b/drivers/iio/accel/adxl380.c
+index f80527d899be..b19ee37df7f1 100644
+--- a/drivers/iio/accel/adxl380.c
++++ b/drivers/iio/accel/adxl380.c
+@@ -1181,7 +1181,7 @@ static int adxl380_read_raw(struct iio_dev *indio_dev,
+ 
+ 		ret = adxl380_read_chn(st, chan->address);
+ 		iio_device_release_direct_mode(indio_dev);
+-		if (ret)
++		if (ret < 0)
+ 			return ret;
+ 
+ 		*val = sign_extend32(ret >> chan->scan_type.shift,
+-- 
+2.47.0
 
-Allocated by task 7799:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- xfs_inode_item_init+0x33/0xc0 fs/xfs/xfs_inode_item.c:870
- xfs_trans_ijoin+0xeb/0x130 fs/xfs/libxfs/xfs_trans_inode.c:36
- xfs_create+0x8a0/0xf60 fs/xfs/xfs_inode.c:720
- xfs_generic_create+0x5d5/0xf50 fs/xfs/xfs_iops.c:213
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdirat fs/namei.c:4295 [inline]
- __se_sys_mkdirat fs/namei.c:4293 [inline]
- __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4293
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6015:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kmem_cache_free+0x1a2/0x420 mm/slub.c:4681
- xfs_inode_free_callback+0x152/0x1d0 fs/xfs/xfs_icache.c:158
- rcu_do_batch kernel/rcu/tree.c:2567 [inline]
- rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
- handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-
-The buggy address belongs to the object at ffff888061c9b668
- which belongs to the cache xfs_ili of size 264
-The buggy address is located 48 bytes inside of
- freed 264-byte region [ffff888061c9b668, ffff888061c9b770)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x61c9b
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801d3c8dc0 ffffea00017d0300 0000000000000004
-raw: 0000000000000000 00000000800c000c 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Reclaimable, gfp_mask 0x52c50(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_RECLAIMABLE), pid 6527, tgid 6525 (syz.4.33), ts 123832632595, free_ts 120134322172
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3033/0x3180 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2412
- allocate_slab+0x5a/0x2f0 mm/slub.c:2578
- new_slab mm/slub.c:2631 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
- __slab_alloc+0x58/0xa0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4141
- xfs_inode_item_init+0x33/0xc0 fs/xfs/xfs_inode_item.c:870
- xfs_trans_ijoin+0xeb/0x130 fs/xfs/libxfs/xfs_trans_inode.c:36
- xfs_create+0x8a0/0xf60 fs/xfs/xfs_inode.c:720
- xfs_generic_create+0x5d5/0xf50 fs/xfs/xfs_iops.c:213
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdirat fs/namei.c:4295 [inline]
- __se_sys_mkdirat fs/namei.c:4293 [inline]
- __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4293
-page last free pid 4674 tgid 4674 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcd0/0xf00 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- getname_flags+0xb7/0x540 fs/namei.c:139
- do_sys_openat2+0xd2/0x1d0 fs/open.c:1409
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888061c9b580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888061c9b600: fb fb fb fb fb fc fc fc fc fc fc fc fc fa fb fb
->ffff888061c9b680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff888061c9b700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
- ffff888061c9b780: fc fc fc fc fc fc fa fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
-Tested on:
-
-commit:         6c52d4da Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13345340580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e9b3366c241ed3c7
-dashboard link: https://syzkaller.appspot.com/bug?extid=1a28995e12fd13faa44e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
 
