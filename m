@@ -1,187 +1,113 @@
-Return-Path: <linux-kernel+bounces-392612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A6C9B9634
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:03:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4DE9B9639
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A646C1C223D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:03:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F68E1C22083
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A5C13777F;
-	Fri,  1 Nov 2024 17:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7C71C9DFA;
+	Fri,  1 Nov 2024 17:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hS5vwtwe"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBLkIQQN"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B711CB31A
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 17:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754B71A08C2;
+	Fri,  1 Nov 2024 17:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730480596; cv=none; b=p17JjrRU+iKFCum44zdyRz88XLbzUOYgVzLJaYbgPnHq3i1/u2b+9kimOwkN6/CAgmNq1CjFrV+HXQS7aEVH1PLTFGo1QkZrP5i7/7Y+0pf6HrIYSVXDLLaZRmBoIhFqyJwlDV3ZYcYb1o1QlkEbRUxlHKt5ryTwIXUWu/X69UY=
+	t=1730480645; cv=none; b=adveML0uSG7QY+ECuhZtqECnFTPvqrPdPIqxLPAU0yk25X6fSR+N1+0bvlQk5IMWrWFkPO70sNoSHOHX0a+8SuibOfgpgXfAiEGpQQHXKWW1Ks8SSdIHhyzB6Th6uBTSKn+iq0w1b3CcMpdiEf9uLqiGKCsQzxeUZQnWfEpFwkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730480596; c=relaxed/simple;
-	bh=hMCCbLDioYy+Gyryrg/qDlm9Q8ImU8TUBBfa89jXyLk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cdJ84cVhdfxcpnYVW+wf4krBTyr8QAofZ/qVfWz08cbVwIyv5p+Q4ej6CHrdGC2z6RzayNauNlAnwX178DocCWPH4fY1pv+UovUasQhx3E7RTyVJOY6plEQUEfFjrr0m6cTsetTiyfkxWkFxH01CRgf8yY+XyLi45JSfvPUjv24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hS5vwtwe; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4dbb4a89so210838f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 10:03:14 -0700 (PDT)
+	s=arc-20240116; t=1730480645; c=relaxed/simple;
+	bh=G7YUAtokdu7yRwuXFCob7ys8rE/bsipsEJCIqPG5sSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OCi3SvJ5shiwM3rrowmqaT1LiFKEMZCTwklnq/m8sOaeM6TXZKqWOWGo6uNRYI78VEhpPX5FqfKPertSbHWitR8VkxmWM3CFjE1lVNM/9G4dF3ayi2t4OVTJqv3YXtF4bSB0tr+zNNlyiK+riFrEe3UE+w+Uqv0JIrXb3uICClg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBLkIQQN; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea6f99e6eeso197704a12.1;
+        Fri, 01 Nov 2024 10:04:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730480592; x=1731085392; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q3NYpsGTgrceer71ppOAoBgRk89YYUeZ50Pg0gfV+Bk=;
-        b=hS5vwtwemZXn2RA1q8n+A5yKbG/9BhXrrWJEZEY7lizErSQ1SQTyMWi4mK86yF3Vhw
-         6um7XUf/CPCMX6LEOwSp6UKSNMETv2BtkUbJSmFipA5dLW7MNrsrltsPuEko+thPzTAD
-         g7kwrE3CuFrz/uEVHcoHvGJlmksXMUfxex47G9OGFPTVWPHjSC60qKx0h4KjO7YfQ9U9
-         M+X4sfedy9Vd3+hklxLII6mcRUQKdcZBy2zTZgSTm1ZwOSoC1QphMpIxclFmm0dghh0b
-         Gfi4igFFRE46twprPHiXRH0TySIyQY0RjAiNVUT7YbRuU62q6IO9F8QHgFgvzlXQpt5h
-         bKDg==
+        d=gmail.com; s=20230601; t=1730480643; x=1731085443; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VBfjrQjC+K3XRUNkllYf81cyTHRDd6nddEiHrej+VtI=;
+        b=WBLkIQQNcnM26GBmLykHX4pFd5hl+QV9z/oy27BGL2pX/odFmIMYX17OmLJpoI4NLb
+         yQ11ebxDiyjJikbb8Ps2k5TpfG5L8Bvv6YONp3c1w6pZwwVI208FgidwdxUQJ996l7hE
+         GFLZYo88TMVFr5oQ5OMWXp0Jd9lWn+xaofuICtEpTAf06gJRZkmyLwieqYOlsUFNl3Mh
+         4IOJi305glIOSqMZS75tHE5GYuvoCkSE8tic0WwJ+UaDBoRIBRbGzwjuoadxG/qmq2wX
+         Brf5Vs2Jnl8SJjRpwFVHHO8Pcv0AP6s8KG3Sq1eVy0YnE1LRyz7nNJtqDdur5h9m5zRx
+         z9oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730480592; x=1731085392;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q3NYpsGTgrceer71ppOAoBgRk89YYUeZ50Pg0gfV+Bk=;
-        b=nRJPHlhLryw0WLqr4M225M5mKYHg6M9WRIS1MazgMRSXY8W6X/Qmk6Lhgty8ZqcS0z
-         2464TDo5TfqoufISHHrl+rylsgOlYgCQzWZqmGTU3jU3jJy+OnB6aWoLSgyOOJJCi+8y
-         pV93apio0G0M5pyW2y33+VxbsTPMYiIme6GR35mRwtY4ASqnfpd6OxGIju4j+WaevAYZ
-         UyAwdg0eg08oeuqPI09NCU3YFjrY7Wj+4dQ7jiXMrs9kmy5JgK2vQ/lT5RPiSt+C3R7f
-         tCsvd9vrbKVBu3aOG76tf3w9kIXINk+KmpHNShGZxiSG0JostmzPYYG9uzRFkqivXQlR
-         VJBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVib6hpTFMPD0AwQyoLjohGWdgyxW0C4ZvJ3oqBPFrHVYEs2u8BGz+2Mzf9pfMd1xNSO/cYhRSDGtbhORk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1y2f/v5zsbw5/UKaAWltNPC30fmzrSZGqcwV+fJBQ4eDEONLH
-	aJmKc/Tqqh3caaowN44n+Rwn88eLLN1iL38URvCakji6PG3EvG7kK1VdnwnJu6U=
-X-Google-Smtp-Source: AGHT+IFCZ23WEBwwcLfQP4WYBJ1WQPAvLjnNpkz+Y58FV/YsX35Y9/WCJ4gXDC+pJP7nEDi262mLrg==
-X-Received: by 2002:a5d:5f46:0:b0:37d:4aa2:5cfe with SMTP id ffacd0b85a97d-38061173287mr8248808f8f.6.1730480592542;
-        Fri, 01 Nov 2024 10:03:12 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116ae82sm5687923f8f.93.2024.11.01.10.03.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 10:03:11 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] dt-bindings: remoteproc: qcom,sm8550-pas: Add SM8750 ADSP
-Date: Fri,  1 Nov 2024 18:03:09 +0100
-Message-ID: <20241101170309.382782-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1730480643; x=1731085443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VBfjrQjC+K3XRUNkllYf81cyTHRDd6nddEiHrej+VtI=;
+        b=fjm0jFzuJyq8vhxrlIdP81biHQ5vEXAKQZ7vSwgLRlJAU5GSKQ/8y1Ln+hzZwX77iQ
+         TRfsWOkdHwiAt13wFFx1UpbjaRFoOA1dslevtaig562ARqDL3Jj0Ak+51j+1Tmk6CRqt
+         flLQ87XGkWx3q1qaarYxK6Od3FNbbhOxr818ezVWkOrZo2REjeJhmngg3XIwg93pn8ZI
+         ZAqxNi+kD5HhRYrgnmLfLdPKrSL7h7XekGRAJ3CzedLDYaQzK//QWBHdJDZrIazVnqjL
+         aHUaWM9fBC3lefv2N8/FW4JmpI79DkTD2YtF/z46L5l7O8oKcqaKThHceiTmrDXsjXOk
+         pJZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeZk+27K0qCSWIwJeuKSBAhb1/cnOKhcILyPQOLBzIp5p7TweA0eMjVTnbqFqmYVGu4MCUNS1oUKSTHxJsUxcgwSJ1aldY@vger.kernel.org, AJvYcCVsk7syWg9C6b6LAEqGNwFfmYyrWi5wTEbmPHeuu/h2BARJWtY78dbZWtJH2A2GqS5hRecwRGFHKtlv5uc=@vger.kernel.org, AJvYcCXPGseUEs5MNJw96vQdOM0BZYaZ7AdM761fgfbq6P6/Xl5Ba1BAyxhdBlFbiGI8io6fY90Ipb0zrmjBbOEhkpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqwN5rtNVpv9Uri6sYA+UveHIhQZWWnuhfBdy0w4AJ6nY20DRK
+	EkA4Kyh4aoON39rlb4NkW0PlDLa3Sem/HljRBxrWFbMZlgjXQ+SgKNvmJvcMdNUBsihYSwVgXEc
+	xrNEj/WuakTf48hupYZ3pXfoczbM=
+X-Google-Smtp-Source: AGHT+IE989mVcGbFzSXUTNEne5q6I3f881GzwGh8vhKMnckzkFdiEGpT2eiUs8ItoTop4yVyd0Xz2gGTKnuMyPDuFbI=
+X-Received: by 2002:a17:90b:3b48:b0:2e2:c423:8e16 with SMTP id
+ 98e67ed59e1d1-2e8f0f4ccbdmr11862428a91.1.1730480642714; Fri, 01 Nov 2024
+ 10:04:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CA+G9fYv_Y2tzs+uYhMGtfUK9dSYV2mFr6WyKEzJazDsdk9o5zw@mail.gmail.com>
+ <20241101095620.2526421-1-aliceryhl@google.com> <CAHC9VhS5wLQeF4LX67UgUYVG3oViA7CmSZS_kugH+M5J0XS2Vg@mail.gmail.com>
+In-Reply-To: <CAHC9VhS5wLQeF4LX67UgUYVG3oViA7CmSZS_kugH+M5J0XS2Vg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 1 Nov 2024 18:03:49 +0100
+Message-ID: <CANiq72kcvpEqpwFTNFmxfJsfBMeBNiDrrvFBf_iS7+ozaECJzw@mail.gmail.com>
+Subject: Re: [PATCH] rust: lsm: replace context+len with lsm_context
+To: Paul Moore <paul@paul-moore.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, naresh.kamboju@linaro.org, casey@schaufler-ca.com, 
+	anders.roxell@linaro.org, arnd@arndb.de, brauner@kernel.org, 
+	dan.carpenter@linaro.org, kees@kernel.org, linux-kernel@vger.kernel.org, 
+	lkft-triage@lists.linaro.org, ojeda@kernel.org, regressions@lists.linux.dev, 
+	rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	lkft@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document compatible for Qualcomm SM8750 SoC ADSP PAS which looks fully
-compatible with SM8550 variant.  The only difference from bindings point
-of view is one more interrupt ("shutdown-ack").  Marking devices as
-compatible, using SM8550 ADSP PAS fallback, requires changing some of
-the conditionals in "if:then:" to "contains".
+On Fri, Nov 1, 2024 at 5:56=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> Thanks Alice.  Would you like me to pull this in via the LSM tree with
+> the associated LSM changes, or would you prefer to do this some other
+> way?
+>
+> I'm going to merge this into lsm/dev for now so that we fix the issue
+> in linux-next, but I'm happy to drop it or do something else, let me
+> know.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Christian has the VFS side, and both are needed for this -- do you
+mean you will cross-merge vfs' branch too?
 
----
+By the way, merging both vfs.rust.file and lsm/dev I confirm this builds fi=
+ne:
 
-Cc: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- .../bindings/remoteproc/qcom,sm8550-pas.yaml  | 48 +++++++++++++------
- 1 file changed, 34 insertions(+), 14 deletions(-)
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-index d7fad7b3c2c6..a24cbb61bda7 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-@@ -15,16 +15,20 @@ description:
- 
- properties:
-   compatible:
--    enum:
--      - qcom,sdx75-mpss-pas
--      - qcom,sm8550-adsp-pas
--      - qcom,sm8550-cdsp-pas
--      - qcom,sm8550-mpss-pas
--      - qcom,sm8650-adsp-pas
--      - qcom,sm8650-cdsp-pas
--      - qcom,sm8650-mpss-pas
--      - qcom,x1e80100-adsp-pas
--      - qcom,x1e80100-cdsp-pas
-+    oneOf:
-+      - enum:
-+          - qcom,sdx75-mpss-pas
-+          - qcom,sm8550-adsp-pas
-+          - qcom,sm8550-cdsp-pas
-+          - qcom,sm8550-mpss-pas
-+          - qcom,sm8650-adsp-pas
-+          - qcom,sm8650-cdsp-pas
-+          - qcom,sm8650-mpss-pas
-+          - qcom,x1e80100-adsp-pas
-+          - qcom,x1e80100-cdsp-pas
-+      - items:
-+          - const: qcom,sm8750-adsp-pas
-+          - const: qcom,sm8550-adsp-pas
- 
-   reg:
-     maxItems: 1
-@@ -82,6 +86,20 @@ allOf:
-           maxItems: 5
-         memory-region:
-           maxItems: 2
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - qcom,sm8750-adsp-pas
-+    then:
-+      properties:
-+        interrupts:
-+          maxItems: 6
-+        interrupt-names:
-+          maxItems: 6
-+        memory-region:
-+          maxItems: 2
-   - if:
-       properties:
-         compatible:
-@@ -129,10 +147,12 @@ allOf:
-   - if:
-       properties:
-         compatible:
--          enum:
--            - qcom,sm8550-adsp-pas
--            - qcom,sm8650-adsp-pas
--            - qcom,x1e80100-adsp-pas
-+          contains:
-+            enum:
-+              - qcom,sm8550-adsp-pas
-+              - qcom,sm8650-adsp-pas
-+              - qcom,sm8750-adsp-pas
-+              - qcom,x1e80100-adsp-pas
-     then:
-       properties:
-         power-domains:
--- 
-2.43.0
+Thanks!
 
+Cheers,
+Miguel
 
