@@ -1,54 +1,63 @@
-Return-Path: <linux-kernel+bounces-392597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADBA9B9602
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:58:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2345B9B95F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8481C21C0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:58:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D44F428287E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D488D1CC171;
-	Fri,  1 Nov 2024 16:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1E21CB325;
+	Fri,  1 Nov 2024 16:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PLBnomvS"
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="PCk7D6/X"
+Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93291CACC8;
-	Fri,  1 Nov 2024 16:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B681CA81;
+	Fri,  1 Nov 2024 16:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730480245; cv=none; b=eQeXRpy9hlsR0mKzXhIGJUc6vuF4xYvJYziAUQK6H2S37jZAySzoJCcFBXYegdVxdzUHW9nwi63+xUja7T0XHp47Egwc7k+t/ijbn5qRXT/mlFVBip0z8A1WUJKFbGLNSB892NJW+Spdh6r250Fb+5BN7OG5f/ny2FXEa3xxnK0=
+	t=1730480185; cv=none; b=Iq/AZrugbDcDrZScwSAd/j2quUAj+xi9SQZHf2ZfvMajiO13pl921lb7wuqNRwKEjzP82Q3SWh6BVN4dIc/yNeSNyPX8tjKBI5yI9jtRjTdWW7mPjDiXLGbQ0njKopxPDIvQu3j9r6mmeqURMQZ7nM/guSWSAhEimi8qeL4sdko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730480245; c=relaxed/simple;
-	bh=k47s0P2wz9OqG4UpxM357DUA+y89omV5a3jUPb/uFgk=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:Cc:To:
-	 In-Reply-To:Content-Type; b=Ieamy5S6S8InbtMABtQ2SEmJ7wMxD3PZ+EYaYBjcgpQK0dzoqDLG3G2peiq/0v+YYY8xyzPGY1HqyeyaAuoZ4usk2AXdec486b14PRt31Kbl2w9k8/BN5fao+mKCiue0PT4vbhEP0MDwhFtWXyKuexLYuQhyo8dOdt15ecAf5JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PLBnomvS; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 6uwOtzLoVNFce6uwPthwSZ; Fri, 01 Nov 2024 17:56:07 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730480167;
-	bh=MLkITH4B9BxZcDOsi8Bl2aCO3pgd38XzocbFtMgv/Vc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=PLBnomvSOtJH/II639x9Ir+kK3CEymccyvAFh6HuCTE+tz/Jug0OjtW7RcPl6Chuc
-	 fUhCol+KyceKYbRniyMEiOSUG1wpUM8kPMhp4i41wdnuDsWBvT7Vzaoxi8+oKzWS+W
-	 fuAsv3T4EZDwdKDSxjKMjO3TIS0g8D6zvTxkIkUphVJcGk0YFoWNI/0GpKN6cjdl6q
-	 MfzhqBjo5Hs+7l++B7cOJ7/CDVgVWoEUfBFb2WxL659zOsVnc3swElv4qymeM9pON1
-	 kPk6Cj2r01rRskuS7nDuDBfefNURvAuaBe9ZYrlRM0sT8kMRd+IN61VT4lYbeFsOA1
-	 70dWnkTnhquSg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 01 Nov 2024 17:56:07 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <90ff31e5-3bed-40d2-8476-1ebb772c03f3@wanadoo.fr>
-Date: Fri, 1 Nov 2024 17:56:04 +0100
+	s=arc-20240116; t=1730480185; c=relaxed/simple;
+	bh=KmcSGZZTBepw/haBxjfNfgGPXnl3daZOBZVZzzq5xe4=;
+	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Fk0ljucdrdtRL3rhaYIE/c4hLceyFDWYfzvcXPWK//4f6fJus2LK9I6XyDBZBYZ3BrozDnprQ/tZB8nymIARIK9EFgS9PmnHo5CzVAYfGEDSxCQUuLH0pJzWUH9Hd7vGcZ4kKGgKUJs1hkfiSmoTC/wq8s/HxlWunPUUyCpseXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=PCk7D6/X; arc=none smtp.client-ip=207.171.190.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1730480183; x=1762016183;
+  h=message-id:date:mime-version:to:cc:references:subject:
+   from:in-reply-to:content-transfer-encoding;
+  bh=KmcSGZZTBepw/haBxjfNfgGPXnl3daZOBZVZzzq5xe4=;
+  b=PCk7D6/Xsej0yYJGNbxAPA+qHiAKeCt3/rm3MZKcin/UJ4i9Xlw8usDF
+   74YFiJIFV5pNWSgyXDidK4xnYBMdbXIg7Bbaex4VP8vHcUtep44nGDNTK
+   hbuSj1UrFzhta5y4XhmMB438agIqZasDU0cgObqoRmZjBjNpEUpR6dMam
+   A=;
+X-IronPort-AV: E=Sophos;i="6.11,250,1725321600"; 
+   d="scan'208";a="381765496"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 16:56:22 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:55997]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.34.72:2525] with esmtp (Farcaster)
+ id 6a9142ea-5ddd-46d3-9d40-2688c563fdd9; Fri, 1 Nov 2024 16:56:21 +0000 (UTC)
+X-Farcaster-Flow-ID: 6a9142ea-5ddd-46d3-9d40-2688c563fdd9
+Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 1 Nov 2024 16:56:20 +0000
+Received: from [192.168.208.156] (10.106.101.42) by
+ EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Fri, 1 Nov 2024 16:56:17 +0000
+Message-ID: <7bd627df-0303-4ded-b8c8-ceb84fb20f0d@amazon.com>
+Date: Fri, 1 Nov 2024 09:56:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,257 +65,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-References: <20241101-x1e80100-ps8830-v4-0-f0f7518b263e@linaro.org>
- <20241101-x1e80100-ps8830-v4-2-f0f7518b263e@linaro.org>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Rajendra Nayak <quic_rjendra@quicinc.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, Johan Hovold <johan@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-In-Reply-To: <20241101-x1e80100-ps8830-v4-2-f0f7518b263e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: <dave.hansen@intel.com>
+CC: <ackerleytng@google.com>, <agordeev@linux.ibm.com>,
+	<aou@eecs.berkeley.edu>, <borntraeger@linux.ibm.com>, <bp@alien8.de>,
+	<catalin.marinas@arm.com>, <chenhuacai@kernel.org>, <corbet@lwn.net>,
+	<dave.hansen@linux.intel.com>, <david@redhat.com>, <derekmn@amazon.com>,
+	<gerald.schaefer@linux.ibm.com>, <gor@linux.ibm.com>, <graf@amazon.com>,
+	<hca@linux.ibm.com>, <hpa@zytor.com>, <jgowans@amazon.com>,
+	<jthoughton@google.com>, <kalyazin@amazon.com>, <kernel@xen0n.name>,
+	<kvm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-riscv@lists.infradead.org>, <linux-s390@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <loongarch@lists.linux.dev>,
+	<luto@kernel.org>, <mathieu.desnoyers@efficios.com>, <mhiramat@kernel.org>,
+	<mingo@redhat.com>, <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
+	<pbonzini@redhat.com>, <peterz@infradead.org>, <quic_eberman@quicinc.com>,
+	<rostedt@goodmis.org>, <roypat@amazon.co.uk>, <rppt@kernel.org>,
+	<seanjc@google.com>, <shuah@kernel.org>, <svens@linux.ibm.com>,
+	<tabba@google.com>, <tglx@linutronix.de>, <vannapurve@google.com>,
+	<will@kernel.org>, <x86@kernel.org>, <xmarcalx@amazon.com>,
+	<mlipp@amazon.at>, <canellac@amazon.at>, <elena.reshetova@intel.com>
+References: <784d1522-0451-4844-a334-8b7d49019437@intel.com>
+Subject: Re: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
+Content-Language: en-US
+From: "Manwaring, Derek" <derekmn@amazon.com>
+In-Reply-To: <784d1522-0451-4844-a334-8b7d49019437@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D038UWB002.ant.amazon.com (10.13.139.185) To
+ EX19D003UWC002.ant.amazon.com (10.13.138.169)
 
-Le 01/11/2024 à 17:29, Abel Vesa a écrit :
-> The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
-> controlled over I2C. It usually sits between a USB/DisplayPort PHY
-> and the Type-C connector, and provides orientation and altmode handling.
-> 
-> The boards that use this retimer are the ones featuring the Qualcomm
-> Snapdragon X Elite SoCs.
-> 
-> Add a driver with support for the following modes:
->   - DisplayPort 4-lanes
->   - DisplayPort 2-lanes + USB3
->   - USB3
-> 
-> There is another variant of this retimer which is called PS8833. It seems
-> to be really similar to the PS8830, so future-proof this driver by
-> naming it ps883x.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
++Elena
 
-Hi,
+On 2024-11-01 at 16:06+0000, Dave Hansen wrote:
+> On 10/31/24 17:10, Manwaring, Derek wrote:
+> > TDX and SEV encryption happens between the core and main memory, so
+> > cached guest data we're most concerned about for transient execution
+> > attacks isn't necessarily inaccessible.
+> >
+> > I'd be interested what Intel, AMD, and other folks think on this, but I
+> > think direct map removal is worthwhile for CoCo cases as well.
+>
+> I'm not sure specifically which attacks you have in mind.  [...]
+>
+> I _think_ you might be thinking of attacks like MDS where some random
+> microarchitectural buffer contains guest data after a VM exit and then
+> an attacker extracts it.  Direct map removal doesn't affect these
+> buffers and doesn't mitigate an attacker getting the data out.
 
-...
+Right, the only attacks we can thwart with direct map removal are
+transient execution attacks on the host kernel whose leak origin is
+"Mapped memory" in Table 1 of the Quarantine paper [2]. Maybe the
+simplest hypothetical to consider here is a new spectre v1 gadget in the
+host kernel.
 
-> +static void ps883x_disable_vregs(struct ps883x_retimer *retimer)
-> +{
-> +	regulator_disable(retimer->vddio_supply);
-> +	regulator_disable(retimer->vddat_supply);
-> +	regulator_disable(retimer->vddar_supply);
-> +	regulator_disable(retimer->vdd_supply);
-> +	regulator_disable(retimer->vdd33_cap_supply);
-> +	regulator_disable(retimer->vdd33_supply);
-> +}
-> +
-> +static int ps883x_get_vregs(struct ps883x_retimer *retimer)
+> The main thing I think you want to keep in mind is mentioned in the "TDX
+> Module v1.5 Base Architecture Specification"[1]:
+>
+> > Any software except guest TD or TDX module must not be able to
+> > speculatively or non-speculatively access TD private memory,
+>
+> That's a pretty broad claim and it involves mitigations in hardware and
+> the TDX module.
+>
+> 1. https://cdrdv2.intel.com/v1/dl/getContent/733575
 
-This could maybe be replaced by a
-devm_regulator_bulk_get() call?
-(and use the bulk API in other places)
+Thank you, I hadn't seen that. That is a very strong claim as far as
+preventing speculative access; I didn't realize Intel claimed that about
+TDX. The comma followed by "to detect if a prior corruption attempt was
+successful" makes me wonder a bit if the statement is not quite as broad
+as it sounds, but maybe that's just meant to relate it to the integrity
+section?
 
-> +{
-> +	struct device *dev = &retimer->client->dev;
-> +
-> +	retimer->vdd_supply = devm_regulator_get(dev, "vdd");
-> +	if (IS_ERR(retimer->vdd_supply))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->vdd_supply),
-> +				     "failed to get VDD\n");
-> +
-> +	retimer->vdd33_supply = devm_regulator_get(dev, "vdd33");
-> +	if (IS_ERR(retimer->vdd33_supply))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->vdd33_supply),
-> +				     "failed to get VDD 3.3V\n");
-> +
-> +	retimer->vdd33_cap_supply = devm_regulator_get(dev, "vdd33-cap");
-> +	if (IS_ERR(retimer->vdd33_cap_supply))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->vdd33_cap_supply),
-> +				     "failed to get VDD CAP 3.3V\n");
-> +
-> +	retimer->vddat_supply = devm_regulator_get(dev, "vddat");
-> +	if (IS_ERR(retimer->vddat_supply))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->vddat_supply),
-> +				     "failed to get VDD AT\n");
-> +
-> +	retimer->vddar_supply = devm_regulator_get(dev, "vddar");
-> +	if (IS_ERR(retimer->vddar_supply))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->vddar_supply),
-> +				     "failed to get VDD AR\n");
-> +
-> +	retimer->vddio_supply = devm_regulator_get(dev, "vddio");
-> +	if (IS_ERR(retimer->vddio_supply))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->vddio_supply),
-> +				     "failed to get VDD IO\n");
-> +
-> +	return 0;
-> +}
+> If the attack is mitigated when the > data is _mapped_, then it's
+> certainly not possible _unmapped_.
+>
+> So why bother with direct map removal for TDX?  A VMM write to TD
+> private data causes machine checks.  So any kernel bug that even
+> accidentally writes to kernel memory can bring the whole system down.
+> Not nice.
 
-...
+Fair enough. It hasn't been clear to me if there is a machine check when
+the host kernel accesses guest memory only transiently. I was assuming
+there is not. But if other mitigations completely prevent even
+speculative access of TD private memory like you're saying, then agree
+nothing to gain from direct map removal in the TDX case.
 
-> +static int ps883x_retimer_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct typec_switch_desc sw_desc = { };
-> +	struct typec_retimer_desc rtmr_desc = { };
-> +	struct ps883x_retimer *retimer;
-> +	int ret;
-> +
-> +	retimer = devm_kzalloc(dev, sizeof(*retimer), GFP_KERNEL);
-> +	if (!retimer)
-> +		return -ENOMEM;
-> +
-> +	retimer->client = client;
-> +
-> +	mutex_init(&retimer->lock);
-> +
-> +	retimer->regmap = devm_regmap_init_i2c(client, &ps883x_retimer_regmap);
-> +	if (IS_ERR(retimer->regmap)) {
-> +		ret = PTR_ERR(retimer->regmap);
-> +		dev_err(dev, "failed to allocate register map: %d\n", ret);
+Derek
 
-Maybe dev_err_probe() as below?
 
-> +		return ret;
-> +	}
-> +
-> +	ret = ps883x_get_vregs(retimer);
-> +	if (ret)
-> +		return ret;
-> +
-> +	retimer->xo_clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(retimer->xo_clk))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->xo_clk),
-> +				     "failed to get xo clock\n");
-> +
-> +	retimer->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_ASIS);
-> +	if (IS_ERR(retimer->reset_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->reset_gpio),
-> +				     "failed to get reset gpio\n");
-> +
-> +	retimer->typec_switch = typec_switch_get(dev);
-> +	if (IS_ERR(retimer->typec_switch))
-> +		return dev_err_probe(dev, PTR_ERR(retimer->typec_switch),
-> +				     "failed to acquire orientation-switch\n");
-> +
-> +	retimer->typec_mux = typec_mux_get(dev);
-> +	if (IS_ERR(retimer->typec_mux)) {
-> +		ret = dev_err_probe(dev, PTR_ERR(retimer->typec_mux),
-> +				    "failed to acquire mode-mux\n");
-> +		goto err_switch_put;
-> +	}
-> +
-> +	ret = drm_aux_bridge_register(dev);
-> +	if (ret)
-> +		goto err_mux_put;
-> +
-> +	ret = clk_prepare_enable(retimer->xo_clk);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable XO: %d\n", ret);
-> +		goto err_mux_put;
-> +	}
-> +
-> +	ret = ps883x_enable_vregs(retimer);
-> +	if (ret)
-> +		goto err_clk_disable;
-> +
-> +	sw_desc.drvdata = retimer;
-> +	sw_desc.fwnode = dev_fwnode(dev);
-> +	sw_desc.set = ps883x_sw_set;
-> +
-> +	retimer->sw = typec_switch_register(dev, &sw_desc);
-> +	if (IS_ERR(retimer->sw)) {
-> +		ret = PTR_ERR(retimer->sw);
-> +		dev_err(dev, "failed to register typec switch: %d\n", ret);
-
-Maybe dev_err_probe() as above?
-
-> +		goto err_vregs_disable;
-> +	}
-> +
-> +	rtmr_desc.drvdata = retimer;
-> +	rtmr_desc.fwnode = dev_fwnode(dev);
-> +	rtmr_desc.set = ps883x_retimer_set;
-> +
-> +	retimer->retimer = typec_retimer_register(dev, &rtmr_desc);
-> +	if (IS_ERR(retimer->retimer)) {
-> +		ret = PTR_ERR(retimer->retimer);
-> +		dev_err(dev, "failed to register typec retimer: %d\n", ret);
-
-Maybe dev_err_probe() as above?
-
-> +		goto err_switch_unregister;
-> +	}
-> +
-> +	/* skip resetting if already configured */
-> +	if (regmap_test_bits(retimer->regmap, 0x00, BIT(0)))
-> +		return 0;
-> +
-> +	gpiod_direction_output(retimer->reset_gpio, 1);
-> +
-> +	/* VDD IO supply enable to reset release delay */
-> +	usleep_range(4000, 14000);
-> +
-> +	gpiod_set_value(retimer->reset_gpio, 0);
-> +
-> +	/* firmware initialization delay */
-> +	msleep(60);
-> +
-> +	return 0;
-> +
-> +err_switch_unregister:
-> +	typec_switch_unregister(retimer->sw);
-> +err_vregs_disable:
-> +	ps883x_disable_vregs(retimer);
-> +err_clk_disable:
-> +	clk_disable_unprepare(retimer->xo_clk);
-> +err_mux_put:
-> +	typec_mux_put(retimer->typec_mux);
-> +err_switch_put:
-> +	typec_switch_put(retimer->typec_switch);
-> +
-> +	return ret;
-> +}
-> +
-> +static void ps883x_retimer_remove(struct i2c_client *client)
-> +{
-> +	struct ps883x_retimer *retimer = i2c_get_clientdata(client);
-> +
-> +	typec_retimer_unregister(retimer->retimer);
-> +	typec_switch_unregister(retimer->sw);
-> +
-> +	gpiod_set_value(retimer->reset_gpio, 1);
-> +
-> +	regulator_disable(retimer->vddio_supply);
-> +	regulator_disable(retimer->vddat_supply);
-> +	regulator_disable(retimer->vddar_supply);
-> +	regulator_disable(retimer->vdd_supply);
-> +	regulator_disable(retimer->vdd33_cap_supply);
-> +	regulator_disable(retimer->vdd33_supply);
-
-ps883x_disable_vregs()?
-
-> +
-> +	clk_disable_unprepare(retimer->xo_clk);
-> +
-> +	typec_mux_put(retimer->typec_mux);
-> +	typec_switch_put(retimer->typec_switch);
-> +}
-
-...
-
-CJ
+[2] https://download.vusec.net/papers/quarantine_raid23.pdf
 
