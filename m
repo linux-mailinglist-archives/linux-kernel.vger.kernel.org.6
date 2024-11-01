@@ -1,108 +1,153 @@
-Return-Path: <linux-kernel+bounces-391528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597609B8844
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:20:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E449B884A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD3F28257A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:20:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 321D71C21193
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA13C52F88;
-	Fri,  1 Nov 2024 01:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T30OEJa4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1674E1CA;
+	Fri,  1 Nov 2024 01:22:45 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4997220328;
-	Fri,  1 Nov 2024 01:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202FF4C3D0;
+	Fri,  1 Nov 2024 01:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730424045; cv=none; b=D7EXjqYP2MYdDVu01c6A/MgaIZaNeLsNk8eL1DZiiQs4QeYdMkqYR5y6Hi42cbKxWpnoajzv1IM1G6VM84LgwIWqevQx4pyoFL/vQv108PPvVJ1+BWbgbqT6Xl22SMQQUmSiNJ862ObYsue4xd6WENaMRvEaJ1jXMzL8Ylkz7M0=
+	t=1730424164; cv=none; b=tFJZQZg1fDGB+Ca+AHVeyZQI6/GjyIE4I5sd8jgcne8r3mBB4Mu4kXAuzW3EVc+bR2xlHp4zf8MdT5ukNnwJLLDB3aRlDOYXDx5UxCts5EUeoHx3o8ojWRcW1Gsa7tlT2BfAVZcdIS5DXFh7wTiGBzEZpjhp0r3ROmyOinLcQzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730424045; c=relaxed/simple;
-	bh=vuUWriRyJgNDUqoRutkuBPsZgLVx2wLFsmuENH79BFQ=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=UJnriN3vgHxIklz/qjl+ZZx+oB6B+4WTZk+ci5HI3aEnGq7Re/10/MJmRAYQb4x8nCbiC0EBOvzimVIVmKjXV/tQFLkze2DmfsQ0qpQXIZF6nT/g8d312qpF7Fsij1QlcSzs4SbiHnCBkoSqbSF5RRRjv2Hp08sGN3nXhftrlNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T30OEJa4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9847CC4CEC3;
-	Fri,  1 Nov 2024 01:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730424044;
-	bh=vuUWriRyJgNDUqoRutkuBPsZgLVx2wLFsmuENH79BFQ=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=T30OEJa45d3iql7Qu2R+dYAf41tbQbX0kqADVxG+zRsyE6NRa16qnwSuskCldUVzH
-	 DPGfBLPh6cFKluLGnYRXehPaptwmzDTW0lCSddoRm663c82dE7ox6XWQzntg35s1Wk
-	 +AcnOyiRLn/1yij7pXb8taVkQjj9FONvA2VRKmvLWk0VQI38Noub+TCHhL2nlDYR0J
-	 n52NekukHWAvqFPI2dPe0DKfqIY9vYXMi64gMPuZOVLff8XJ+F3sWGnFpafa9n9SiO
-	 R4xZZ5HXrZx7J8RMEO8qxBVFIMLHoMHpD+zDhITqzETu0vGy009Xve3wpZ+G6lGnlh
-	 JhA85E1xTQWxw==
-Date: Thu, 31 Oct 2024 20:20:43 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1730424164; c=relaxed/simple;
+	bh=hhcXo6WMirpD7byS/jflVeBGqT2L3zbnR7j7Z6Wr0K4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qPnbsYUPF45TM2cplCZ4ly0ZgRPfGjmEyBnC645kQnIE7Cl/sEP5YWBTCpNOgN82pk3CLaaFUCM9f/iJqQudjtTH9w9PfbksQSofSLdckynsy+4opIThIJK7Z00ygIFlYNc0R5ihT929eLc7C/LUijTBPpkdY2exDfw3kcvjKfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XfjkP20Hpz20rDY;
+	Fri,  1 Nov 2024 09:21:33 +0800 (CST)
+Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5AECD1A016C;
+	Fri,  1 Nov 2024 09:22:34 +0800 (CST)
+Received: from [10.67.109.114] (10.67.109.114) by
+ kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 1 Nov 2024 09:22:33 +0800
+Message-ID: <c1f538d2-718f-4606-9039-5bfaed653076@huawei.com>
+Date: Fri, 1 Nov 2024 09:22:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Amit Sunil Dhamne <amitsd@google.com>
-Cc: linux@roeck-us.net, gregkh@linuxfoundation.org, 
- linux-kernel@vger.kernel.org, kyletso@google.com, 
- heikki.krogerus@linux.intel.com, krzk+dt@kernel.org, 
- dmitry.baryshkov@linaro.org, conor+dt@kernel.org, badhri@google.com, 
- xu.yang_2@nxp.com, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- rdbabiera@google.com
-In-Reply-To: <20241031235957.1261244-3-amitsd@google.com>
-References: <20241031235957.1261244-1-amitsd@google.com>
- <20241031235957.1261244-3-amitsd@google.com>
-Message-Id: <173042404301.889048.6986869139957882077.robh@kernel.org>
-Subject: Re: [PATCH v1 2/3] dt-bindings: usb: maxim,max33359.yaml: add
- usage of sink bc12 time property
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iio: adc: ad7923: Fix buffer overflow for tx_buf and
+ ring_xfer
+To: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+	<noname.nuno@gmail.com>, <nuno.sa@analog.com>
+CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <djunho@gmail.com>,
+	<alexandru.ardelean@analog.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <tanghui20@huawei.com>,
+	<zhangqiao22@huawei.com>, <judy.chenhui@huawei.com>
+References: <20241028142357.1032380-1-quzicheng@huawei.com>
+ <20241029134637.2261336-1-quzicheng@huawei.com>
+ <4760ad42ae34ea53ffb98995d65c5f1d6a6b3f9e.camel@gmail.com>
+ <20241031210501.3da82113@jic23-huawei>
+From: Zicheng Qu <quzicheng@huawei.com>
+In-Reply-To: <20241031210501.3da82113@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpeml100013.china.huawei.com (7.185.36.238) To
+ kwepemd200012.china.huawei.com (7.221.188.145)
+
+Hi Jonathan and Nuno,
+
+Thank you for pointing that out. I included Nuno's name because I think 
+the final correct solution came from Nuno, and I wanted to acknowledge 
+the contribution. However, I didn't realize I needed to confirm with 
+Nuno before adding the sign-off.
+
+In the future, I will ensure to discuss with Nuno or anyone else 
+involved to avoid similar issues, or use "suggested by" instead. I 
+apologize to Nuno for any confusion this may have caused.
+
+Thanks for the guidance and apologize again.
+
+Best regards,
+Zicheng Qu
 
 
-On Thu, 31 Oct 2024 16:59:53 -0700, Amit Sunil Dhamne wrote:
-> Add usage of "sink-bc12-completion-time-ms"  connector property to
-> max33359 controller for delaying PD negotiation till BC1.2 detection
-> completes. This overcomes the occasional delays observed while
-> receiving PD messages where BC1.2 detection runs in parallel.
-> 
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+On 2024/11/1 5:05, Jonathan Cameron wrote:
+> On Thu, 31 Oct 2024 15:20:24 +0100
+> Nuno Sá <noname.nuno@gmail.com> wrote:
+>
+>> On Tue, 2024-10-29 at 13:46 +0000, Zicheng Qu wrote:
+>>> The AD7923 was updated to support devices with 8 channels, but the size
+>>> of tx_buf and ring_xfer was not increased accordingly, leading to a
+>>> potential buffer overflow in ad7923_update_scan_mode().
+>>>
+>>> Fixes: 851644a60d20 ("iio: adc: ad7923: Add support for the ad7908/ad7918/ad7928")
+>>> Cc: <stable@vger.kernel.org>
+>>> Signed-off-by: Nuno Sá <noname.nuno@gmail.com>
+>>> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+>>> ---
+>> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+>>
+> Confusing one. I'll fix the authorship up for your analog address
+>
+> Zicheng, usually a Suggested-by after checking with the author if it's
+> a patch in a review thread.
+>
+> You can't really give someone elses' SoB without them explicitly sending it.
+> If Nuno let you know that was fine off the list, then just mention that under
 > ---
->  Documentation/devicetree/bindings/usb/maxim,max33359.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/maxim,max33359.example.dtb: maxtcpc@25: connector: Unevaluated properties are not allowed ('sink-bc12-completion-time-ms' was unexpected)
-	from schema $id: http://devicetree.org/schemas/usb/maxim,max33359.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/maxim,max33359.example.dtb: connector: Unevaluated properties are not allowed ('sink-bc12-completion-time-ms' was unexpected)
-	from schema $id: http://devicetree.org/schemas/connector/usb-connector.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241031235957.1261244-3-amitsd@google.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+>
+> This time I'm going to take Nuno's RB as fine to indicate no objection
+> to the SoB. Nuno, feel free to shout if you want to handle this differently.
+>
+> Applied.
+>
+> Jonathan
+>
+>
+>>> v2:
+>>> - Fixed: Addressed buffer overflow in ad7923_update_scan_mode() due to
+>>> insufficient tx_buf and ring_xfer size for 8-channel devices.
+>>> - Issue: Original patch attempted to fix the overflow by limiting the
+>>> length, but did not address the root cause of buffer size mismatch.
+>>> - Solution: Increased tx_buf and ring_xfer sizes recommended by Nuno to
+>>> support all 8 channels, ensuring adequate buffer capacity.
+>>> - Previous patch link:
+>>> https://lore.kernel.org/linux-iio/20241028142357.1032380-1-quzicheng@huawei.com/T/#u
+>>>   drivers/iio/adc/ad7923.c | 4 ++--
+>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
+>>> index 09680015a7ab..acc44cb34f82 100644
+>>> --- a/drivers/iio/adc/ad7923.c
+>>> +++ b/drivers/iio/adc/ad7923.c
+>>> @@ -48,7 +48,7 @@
+>>>   
+>>>   struct ad7923_state {
+>>>   	struct spi_device		*spi;
+>>> -	struct spi_transfer		ring_xfer[5];
+>>> +	struct spi_transfer		ring_xfer[9];
+>>>   	struct spi_transfer		scan_single_xfer[2];
+>>>   	struct spi_message		ring_msg;
+>>>   	struct spi_message		scan_single_msg;
+>>> @@ -64,7 +64,7 @@ struct ad7923_state {
+>>>   	 * Length = 8 channels + 4 extra for 8 byte timestamp
+>>>   	 */
+>>>   	__be16				rx_buf[12] __aligned(IIO_DMA_MINALIGN);
+>>> -	__be16				tx_buf[4];
+>>> +	__be16				tx_buf[8];
+>>>   };
+>>>   
+>>>   struct ad7923_chip_info {
 
