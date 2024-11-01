@@ -1,89 +1,74 @@
-Return-Path: <linux-kernel+bounces-391483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4F89B87B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:27:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE169B87B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D77A0B22450
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:27:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2986A1C20F96
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8B41C28E;
-	Fri,  1 Nov 2024 00:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B361BC58;
+	Fri,  1 Nov 2024 00:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="AgQzWna8"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="00g056k+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234B518E20
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2CE182BD;
+	Fri,  1 Nov 2024 00:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730420778; cv=none; b=EGr6yn4q9weMz9w6Z0EZcnyYWK2mIHueAfjzFbQQQ8jmpZ1tMlurqjexnVf9pUx1HwKYPrYceBALaIiWlLoET8KncYsOva8FaQbR8SFvcm5DyvPQM5A5Ogdu67pIzQ3XsROlCPdhHyLZ0rQILzEP0tlabOHtF7hAKuCCIvSer2Q=
+	t=1730420840; cv=none; b=EZv4HFC6pXOF2q4UUXUlsW8QZcWyLoo4/QPHzZP1VHpGc6Qn8qU2llqO676N29XofTxhO7k4q4SphvT/ySFdJ8ze+5tsQP7478436KrYpIY8eqZkrT4oKDN1lLyCkangiN+VLhqjvazKNVmshbch467BxeyLvhJdmE2DkJKRMGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730420778; c=relaxed/simple;
-	bh=hHQMzWdvIRkFAAdThHUBCMm04+TgayDIk6ZW6LYgpGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U/fBWWh4N2MmSUHhGftz/pYxWbq8AEnIsrIai8Gd3+Ag/vyVeKGll3ysZGV3vw7kUMv48Y9h/C2nrjR+dVXdzo0zvkt31GSzXkw13M2uQZAt+J/pUMZUEEzrK8C4NJEILxp52YbJLyjgdysD4xop+Yxxdf5SnXO8edbVnS1Q7pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=AgQzWna8; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 130241770C0; Fri,  1 Nov 2024 00:26:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1730420772; bh=hHQMzWdvIRkFAAdThHUBCMm04+TgayDIk6ZW6LYgpGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AgQzWna8QiLrIzQsqgVJg9R1QQoZvYx6Fo+axigwerf0bSNA3Fs0kEzQyZ7fuiBGB
-	 pRQD7VDLV+tRwYJOhXv5slT4jQyPWQoOW+6IE2joi08GV7DH6SL8iPggiari9QWcWK
-	 NkW0pq8/jF/5Y7gjw620tLt6PsKg0xpbCNsrzh8TsCqMuNbgTAm5/y4lBkcjZkQ6CO
-	 NKO4mT5SAUx6Cw6tPSXp1lRlK7+GLXl8DgRTCuJn+ppmtY7nrLTuHI54FnjnTdQrkd
-	 wG7/a5V8msVX3f18c3KAX45ki2Pv27LCg08zZlgDOloK9Dr1mm6seFsbVXT3ixQhsB
-	 5J6ikzt4ycMkg==
-Date: Fri, 1 Nov 2024 00:26:12 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kdb: Fix incorrect naming of history arrow keys in code
-Message-ID: <20241101002612.GA29456@lichtman.org>
-References: <20241031192350.GA26688@lichtman.org>
- <CAD=FV=WC-ce14rgrYsVbg75dNX5tL6Saj5T8YqpAWm2ndLGdXA@mail.gmail.com>
+	s=arc-20240116; t=1730420840; c=relaxed/simple;
+	bh=OlfHbnKYf3jceLglp+umq0NwX9Cc0rpQ2KwjAb7sLKQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=e1hEPy0cI1NqPoZJJykl4vDZEfR63H7dva1ANNUeNcOuPc36wtuUtKXEDOxVk0PpmlopOXo73Q9c+6M7AQI/xPgZ3pq4RQ2KX8VxEhOmND/InmI6lNARyptEztFZKGrtlYd8lOArPVSyd494NnvtOexeHl+ZBi73EVHdp66nW5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=00g056k+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1C0AC4CEC3;
+	Fri,  1 Nov 2024 00:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730420840;
+	bh=OlfHbnKYf3jceLglp+umq0NwX9Cc0rpQ2KwjAb7sLKQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=00g056k+tEkI32NIisZsCQvMYQp5ROzX9fOHTu1pAzX+o8FerDwSehyU7kto5XYpf
+	 inT4CgZVj+9JnnHV5gFHuwZyLJq7wkQDJqo9OtdQ3H1s7yKFt1ykqrHIRvdyCue9ZE
+	 lKxA/wiDhr7BiWZrCs7gxYaQo8og8Vd5Cud2qNMk=
+Date: Thu, 31 Oct 2024 17:27:19 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: damon@lists.linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ kernel-team@meta.com
+Subject: Re: [PATCH 0/2] mm/damon/core: fix handling of zero non-sampling
+ intervals
+Message-Id: <20241031172719.8051cdd90e3c2187c609bb4e@linux-foundation.org>
+In-Reply-To: <20241031183757.49610-1-sj@kernel.org>
+References: <20241031183757.49610-1-sj@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=WC-ce14rgrYsVbg75dNX5tL6Saj5T8YqpAWm2ndLGdXA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024 at 04:06:03PM -0700, Doug Anderson wrote:
-> >
-> > kdb doesn't react to ctrl p and n, and following the code flow with GDB
-> > reveals that these values map to the up and down arrows.
-> 
-> Really? kdb reacts to "ctrl-P" and "ctrl-N" for me. It also reacts to
-> "ctrl-F" and "ctrl-B".
-> 
+On Thu, 31 Oct 2024 11:37:55 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-Interesting, how do you run kdb? I use the kgdboc=kbd kernel boot param.
-I haven't checked with serial as the console since I work with the keyboard,
-but if serial does go through this using ctrl+p/n then the code in the
-current state is misleading since the keys change depending on the I/O method.
+> DAMON's internal intervals accounting logic is not correctly handling
+> non-sampling intervals of zero values for a wrong assumption.  This
+> could cause unexpected monitoring behavior, and even result in infinite
+> hang of DAMON sysfs interface user threads in case of zero aggregation
+> interval.  Fix those by updating the intervals accounting logic.  For
+> details of the root case and solutions, please refer to commit messages
+> of fixes.
 
-Evidence in the code for usage of arrow keys in the case of keyboard can
-be seen by examining kdb_read in kernel/debug/kdb/kdb_io.c, in the /* Down */
-and /* Up */ cases the values 14 and 16 can be seen.
+Thanks.  fyi, there has been email lossage here.
 
-Do you suggest to keep as is or to work on a patch with a more generic name that
-would fit both?
-
-Thanks,
-Nir
-
-> 
-> -Doug
+Only [2/2] hit my inbox.  Neither [1/2] not [2/2] are in my linux-mm
+folder.  I found the whole series in my linux-kernel folder.
 
