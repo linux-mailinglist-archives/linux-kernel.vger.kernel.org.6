@@ -1,263 +1,147 @@
-Return-Path: <linux-kernel+bounces-392563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB569B9599
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:39:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFD09B959E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:39:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC0F1C2088D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:39:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11DDA1F213FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D131C9B97;
-	Fri,  1 Nov 2024 16:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E451C75E2;
+	Fri,  1 Nov 2024 16:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kJFIDUCy"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="xMkhhGSh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oGFgaypw"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB27F137747
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243781B4F2D;
+	Fri,  1 Nov 2024 16:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730479158; cv=none; b=PF9kU7wQIK4X4tW4JJRmoKzmM23SwpBTpommWxjyIZQLblcxn7CMV/P+tC1AVu3iF+AKyJxgEQJdBq6CKtf1/XVgLurWkjf2yd0rZWNjKy0aXiTI3PBLEwlUuSQv3XiteL6mLzpZ+yTY8achvWpmPzA0eBSb+qpdnmhfNr2r7mM=
+	t=1730479187; cv=none; b=Jk9K5jCi5HypyCLo69ZNMIm++wt9LxMpuI2kAHEyGJJQivWDUaFqy5g/xUaZOX4gfVZR2cQkFvU3KVyqNXe9LyxkzdhgL6jJZw+TsVDMx/Tz98yroVnx+ZO7ZlmKXbFI+6ghF/tvosqrF1X3/4mOZFOQbSJmufiiFXbMYhR2BFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730479158; c=relaxed/simple;
-	bh=uQ8uo+vABx8f5nA+/74ndXUQovEhFjcPT/qHC7gnL8E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ii2kPbQjj+pCYUOSa8fiyIZ8q41wofFO1H63z7gmwLDDHJHLqtRZDzYYV9NRLH2tzoldh8cFSI20rN20h9PsJre6sf23QPTH8xnsBOGfmAQXvjllRrrQ6eJ+QtC+0m4cJuYs9Wqf5kgu8EZ4YXnx2UpbiComeRW8x3+lMStIVzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kJFIDUCy; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea6aa3b68bso15615407b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 09:39:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730479154; x=1731083954; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HbKJeki4dzd2XPRMM44KMwAEciOK8zIOcm2qr7s1wcQ=;
-        b=kJFIDUCyJ7E1KXCs6goijwzhXxTdE7p5z/03sTDrZfOB/qxt4ifZlA88lmEhVQeUYS
-         M8+ACEiFKNcaiOn+4NIFHcBjApNytfa7mAYOO+ZEaLivnoNBCniealGtC5VCEPQ9G470
-         qKZjOOdpzEI7d1My9V9r7Jvf7YgHxxRYg6ctK3RbqqdVscSBPAufG4L/zOrN13C4cvTS
-         EDIgyKkBa/vA3xeUVnW15he5zoWLrOGJ4tms5N7Pvn14f3FC1LCmqpz3YDOvkevigU09
-         5oYrJtigHVF+3NTGZY3JhFykuJc/OJNP1837mRr0dGPjY9xQ5kOOyaF+7wauwjzJPMKM
-         3PjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730479154; x=1731083954;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HbKJeki4dzd2XPRMM44KMwAEciOK8zIOcm2qr7s1wcQ=;
-        b=W4Ecn2ETAt6xkvklBmAbVCdC+Q/HxS11wkS54z6VnSj85DQs2iuEPipbzNXc6vXzOn
-         LicXcHHAUQ5v/HFOh4Xag6341vLh2yf7e8c9FCkVP5b93UtHFUKa/8WwcFoL3QrThXzn
-         tpjTd/61tdNCuqhgZRRgAy+9sVKpn+HT8wfw2925VMG/HapcKGy4tGBYuWRFEEzWCvdw
-         ycUTYw2rF4prkdnLROulZbC7So3i491leyCOnbjWP/4QEOYPgOAz66MixwyUIx294mtf
-         SREPHU4dGHEXd2S44Q4Snh//bIGTcmOe6zU20sV3dxtpUgSbUMkxp/bK3fzfRyLwNtM0
-         xfkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFo7oG5naN50K9CF30UrSfmO3p8cF6T1PGF2gpAaTgUu2aa63l1k+PoUCUZDBzFdx/2UxIhDAbnxVqeCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrHAbFii4f/WJjkxV1L6Zngibtgp+Om/wvXFADcznwnBFFNbdL
-	QJ9v+fCBHJ4e7Ts42L5lVF56kOIZP/7RKLNaJgmb18atol1nIV6hUM/OhGQzzSaT9xi0aCnzWGV
-	jkw==
-X-Google-Smtp-Source: AGHT+IEZ/As1CqiUNvhsvRDX72pDJbWbYUewG6GHPtYMfGfRk/DC8Z0VB7WVVgFtrlwKk4B3jrTtoBP5VLU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:67ca:b0:6e3:d670:f62a with SMTP id
- 00721157ae682-6ea52518e31mr269617b3.3.1730479153876; Fri, 01 Nov 2024
- 09:39:13 -0700 (PDT)
-Date: Fri, 1 Nov 2024 09:39:12 -0700
-In-Reply-To: <1cace497215b025ed8b5f7815bdeb23382ecad32.camel@intel.com>
+	s=arc-20240116; t=1730479187; c=relaxed/simple;
+	bh=6ZksvsPC7Vy3hSkS0uKVoumo3Pe1bbuPY9/Q0qJFJVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6JqlRKetOgby6sD6Uj/mNBbS2cZDLZ153F+0jWlLU6vwqwH+Y/XnYJlJ1P7oHsQ0LaS5xyasMze/a+SI03IxxX/SZ5wsf29ojQOGilhseT0sVpQSvdg1MTvRLijQA8f5HuVLqLF7hgKQjMDSh+PA0pQcUcS+D+BLlwR4bbNl3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=xMkhhGSh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oGFgaypw; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 31A6F1140186;
+	Fri,  1 Nov 2024 12:39:44 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Fri, 01 Nov 2024 12:39:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1730479184; x=1730565584; bh=JYVPEmwAUm
+	doUxoWOzZktGM/4ECkeYtdHMXZnU62Ywg=; b=xMkhhGShkcvD81kye7d2wlEQ1K
+	Pfp0tN5EylGJ/IH8N9YFBuhx9QkzZywWeHJOF7JxupDu3XcDstkD70olgYjkiDbW
+	RJ4RcQlWqid0BthqNfUscRtUaQOEvlaIv+lyOGZB794ZqdGq4FLFj3iUigi27W/u
+	X/K13wghn1xg8JAGFgOhTY+MUkOzfFCy7dKryRwv9FMoXb5gyv1Vog2TiurA4xUu
+	DEcFZ2x0c9ZCauVQc6qyIozENf7PlygJX6y2g6gepYOOGGPualoibnco2ym+WsTn
+	OL4EQG/pk1w2FfA4lz6GAWgOXfN1t8Q7B+TGo34199Icdnzeltq7Oi4rVr7A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730479184; x=1730565584; bh=JYVPEmwAUmdoUxoWOzZktGM/4ECkeYtdHMX
+	ZnU62Ywg=; b=oGFgaypwLSA/5OLbFe59kL9Wt/EFwbaVDOpD8RLF/LjPg65Gglg
+	xj+bbNOJQE0+Oh5fk4mRS1NZvfqe81CAkEtZMiOW8GmiVLMKGu6y+LMMLOEo2StK
+	QCxzoXzj3F+RYImvmCzM0CfyRR2v4Zh3Yg7PjbQklnuVbOVihTmx3vcL7toom0mJ
+	7FB118uFEPyXws2DrMYSICL+kRjQrbd9bDxKqcqFzhKwiUWqhhFEwKDW0DJMdKiy
+	1Mxmm84dgWrhvIcD+XSjtssWH8hsl7MqYsBI51p2NgDJ4ShBzy9oT84dlXBSqBGF
+	x3CMUDFWMe2kB2yf4tLVzY1Hauht6Ox7PPQ==
+X-ME-Sender: <xms:TwQlZw5UmeQpcZkHFla9X91K-8GmX6gcu8xEx-yq-j0kWXw8htN5ag>
+    <xme:TwQlZx56q_8b4kmR4bA2R4fahT06zxMwKM-TGi9U7_1OO8_hcDTAw3pYQncvws64u
+    w4NT-9-6-u7MfKcjpI>
+X-ME-Received: <xmr:TwQlZ_dKwnqMHd8FClb7qRW45QTiK2wAVGoEl8Jhn28ZqhAzkhGdRjcABqA3M_5gL_DTDaYzl_QmA161TVQr9epPJz3mVscrGX4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledgledtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
+    ucfhrhhomheplfgrnhhnvgcuifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpefgudeuffelfeekgeeukedtheekjeettdfftddujefhvdehtefg
+    iefgledtueefjeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurdhnvght
+    pdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsg
+    hrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhgtrghnsehmrghr
+    tggrnhdrshhtpdhrtghpthhtohepshhvvghnsehsvhgvnhhpvghtvghrrdguvghvpdhrtg
+    hpthhtoheprghlhihsshgrsehrohhsvghniiifvghighdrihhopdhrtghpthhtoheprhho
+    sghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheprghsrghhiheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlih
+    hnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
+X-ME-Proxy: <xmx:TwQlZ1JBq2YiYm_DIN5t3eZZF5iwFNr1zSjLotPxL5MJws2qrWo0ng>
+    <xmx:TwQlZ0JAdiOnfujS6omcPe4Jgg93Pdw7F7IbE7J0zfHzXftWIDXhGQ>
+    <xmx:TwQlZ2xE01BvdFRJpksiS6W98PDFMb91iDYhwld5pLMZEwAplza3DQ>
+    <xmx:TwQlZ4K7mmfbVPaOrA22-zK4YRHHas8N2DMoD4YDC95zDYRBeAHuuQ>
+    <xmx:UAQlZ2CgVOHKN-RMwnKFnts-G4dAMh-iwHNS-QqBl3IdrKTtAhpBbrqH>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 1 Nov 2024 12:39:43 -0400 (EDT)
+Date: Fri, 1 Nov 2024 17:39:42 +0100
+From: Janne Grunau <j@jannau.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] spi: apple: Add driver for Apple SPI controller
+Message-ID: <20241101163942.GC194146@robin.jannau.net>
+References: <20241101-asahi-spi-v2-0-763a8a84d834@jannau.net>
+ <20241101-asahi-spi-v2-2-763a8a84d834@jannau.net>
+ <e3008c6b-ba71-46cf-810b-053dbafe2cfb@sirena.org.uk>
+ <20241101161905.GB194146@robin.jannau.net>
+ <0b4901b4-8cb7-49e2-a411-a6c57b9edd97@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240826022255.361406-1-binbin.wu@linux.intel.com>
- <20240826022255.361406-2-binbin.wu@linux.intel.com> <ZyKbxTWBZUdqRvca@google.com>
- <3f158732a66829faaeb527a94b8df78d6173befa.camel@intel.com>
- <ZyLWMGcgj76YizSw@google.com> <1cace497215b025ed8b5f7815bdeb23382ecad32.camel@intel.com>
-Message-ID: <ZyUEMLoy6U3L4E8v@google.com>
-Subject: Re: [PATCH v3 1/2] KVM: x86: Check hypercall's exit to userspace generically
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"yuan.yao@linux.intel.com" <yuan.yao@linux.intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0b4901b4-8cb7-49e2-a411-a6c57b9edd97@sirena.org.uk>
 
-On Fri, Nov 01, 2024, Kai Huang wrote:
-> On Thu, 2024-10-31 at 07:54 -0700, Sean Christopherson wrote:
-> > On Thu, Oct 31, 2024, Kai Huang wrote:
-> > -	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
-> > -	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
-> > -		/* MAP_GPA tosses the request to the user space. */
-> > -		return 0;
-> > +	r = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, &ret);
-> > +	if (r <= r)
-> > +		return r;
+On Fri, Nov 01, 2024 at 04:27:32PM +0000, Mark Brown wrote:
+> On Fri, Nov 01, 2024 at 05:19:05PM +0100, Janne Grunau wrote:
+> > On Fri, Nov 01, 2024 at 04:08:20PM +0000, Mark Brown wrote:
+> > > On Fri, Nov 01, 2024 at 03:25:04PM +0100, Janne Grunau via B4 Relay wrote:
 > 
-> ... should be:
+> > > > +++ b/drivers/spi/spi-apple.c
+> > > > @@ -0,0 +1,531 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +/*
+> > > > + * Apple SoC SPI device driver
 > 
-> 	if (r <= 0)
-> 		return r;
+> > > Please make the entire comment block a C++ one so things look more
+> > > intentional.
 > 
-> ?
+> > I did after your the same comment in v1 but reverted that since
+> > checkpatch.pl complained. See
 > 
-> Another option might be we move "set hypercall return value" code inside
-> __kvm_emulate_hypercall().  So IIUC the reason to split
-> __kvm_emulate_hypercall() out is for TDX, and while non-TDX uses RAX to carry
-> the hypercall return value, TDX uses R10.
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/checkpatch.pl?id=a674fefd1732#n3742
 > 
-> We can additionally pass a "kvm_hypercall_set_ret_func" function pointer to
-> __kvm_emulate_hypercall(), and invoke it inside.  Then we can change
-> __kvm_emulate_hypercall() to return: 
->     < 0 error, 
->     ==0 return to userspace, 
->     > 0 go back to guest.
+> > The inconsistency between *.h and *.c is surprising. I'll change it and
+> > ignore checkpatch.pl for v3. I'll address the other comemnts as well.
+> 
+> Did you make the comment block a C++ one or a C one?  The SPDX header
+> does need to be a C++ comment (//) for the SPDX parsers so I'm saying
+> make everything else also use //.  There's some constraints from tools
+> that consume C headers but don't support the C++ syntax.
 
-Hmm, and the caller can still handle kvm_skip_emulated_instruction(), because the
-return value is KVM's normal pattern.
+err, yes. parsing error on my part. Will change the whole comment to a
+C++ style comment.
 
-I like it!
-
-But, there's no need to pass a function pointer, KVM can write (and read) arbitrary
-GPRs, it's just avoided in most cases so that the sanity checks and available/dirty
-updates are elided.  For this code though, it's easy enough to keep kvm_rxx_read()
-for getting values, and eating the overhead of a single GPR write is a perfectly
-fine tradeoff for eliminating the return multiplexing.
-
-Lightly tested.  Assuming this works for TDX and passes testing, I'll post a
-mini-series next week.
-
---
-From: Sean Christopherson <seanjc@google.com>
-Date: Fri, 1 Nov 2024 09:04:00 -0700
-Subject: [PATCH] KVM: x86: Refactor __kvm_emulate_hypercall() to accept reg
- names, not values
-
-Rework __kvm_emulate_hypercall() to take the names of input and output
-(guest return value) registers, as opposed to taking the input values and
-returning the output value.  As part of the refactor, change the actual
-return value from __kvm_emulate_hypercall() to be KVM's de facto standard
-of '0' == exit to userspace, '1' == resume guest, and -errno == failure.
-
-Using the return value for KVM's control flow eliminates the multiplexed
-return value, where '0' for KVM_HC_MAP_GPA_RANGE (and only that hypercall)
-means "exit to userspace".
-
-Use the direct GPR accessors to read values to avoid the pointless marking
-of the registers as available, but use kvm_register_write_raw() for the
-guest return value so that the innermost helper doesn't need to multiplex
-its return value.  Using the generic kvm_register_write_raw() adds very
-minimal overhead, so as a one-off in a relatively slow path it's well
-worth the code simplification.
-
-Suggested-by: Kai Huang <kai.huang@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/kvm_host.h | 15 +++++++++----
- arch/x86/kvm/x86.c              | 40 +++++++++++++--------------------
- 2 files changed, 27 insertions(+), 28 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 6d9f763a7bb9..9e66fde1c4e4 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -2179,10 +2179,17 @@ static inline void kvm_clear_apicv_inhibit(struct kvm *kvm,
- 	kvm_set_or_clear_apicv_inhibit(kvm, reason, false);
- }
- 
--unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
--				      unsigned long a0, unsigned long a1,
--				      unsigned long a2, unsigned long a3,
--				      int op_64_bit, int cpl);
-+int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-+			      unsigned long a0, unsigned long a1,
-+			      unsigned long a2, unsigned long a3,
-+			      int op_64_bit, int cpl, int ret_reg);
-+
-+#define __kvm_emulate_hypercall(_vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, ret)	\
-+	____kvm_emulate_hypercall(vcpu,						\
-+				  kvm_##nr##_read(vcpu), kvm_##a0##_read(vcpu),	\
-+				  kvm_##a1##_read(vcpu), kvm_##a2##_read(vcpu),	\
-+				  kvm_##a3##_read(vcpu), op_64_bit, cpl, VCPU_REGS_##ret)
-+
- int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
- 
- int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index e09daa3b157c..425a301911a6 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9998,10 +9998,10 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
- 	return kvm_skip_emulated_instruction(vcpu);
- }
- 
--unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
--				      unsigned long a0, unsigned long a1,
--				      unsigned long a2, unsigned long a3,
--				      int op_64_bit, int cpl)
-+int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-+			      unsigned long a0, unsigned long a1,
-+			      unsigned long a2, unsigned long a3,
-+			      int op_64_bit, int cpl, int ret_reg)
- {
- 	unsigned long ret;
- 
-@@ -10086,15 +10086,18 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
- 
- out:
- 	++vcpu->stat.hypercalls;
--	return ret;
-+
-+	if (!op_64_bit)
-+		ret = (u32)ret;
-+
-+	kvm_register_write_raw(vcpu, ret_reg, ret);
-+	return 1;
- }
--EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
-+EXPORT_SYMBOL_GPL(____kvm_emulate_hypercall);
- 
- int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
- {
--	unsigned long nr, a0, a1, a2, a3, ret;
--	int op_64_bit;
--	int cpl;
-+	int r;
- 
- 	if (kvm_xen_hypercall_enabled(vcpu->kvm))
- 		return kvm_xen_hypercall(vcpu);
-@@ -10102,23 +10105,12 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
- 	if (kvm_hv_hypercall_enabled(vcpu))
- 		return kvm_hv_hypercall(vcpu);
- 
--	nr = kvm_rax_read(vcpu);
--	a0 = kvm_rbx_read(vcpu);
--	a1 = kvm_rcx_read(vcpu);
--	a2 = kvm_rdx_read(vcpu);
--	a3 = kvm_rsi_read(vcpu);
--	op_64_bit = is_64_bit_hypercall(vcpu);
--	cpl = kvm_x86_call(get_cpl)(vcpu);
--
--	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
--	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
--		/* MAP_GPA tosses the request to the user space. */
-+	r = __kvm_emulate_hypercall(vcpu, rax, rbx, rcx, rdx, rsi,
-+				    is_64_bit_hypercall(vcpu),
-+				    kvm_x86_call(get_cpl)(vcpu), RAX);
-+	if (r <= 0)
- 		return 0;
- 
--	if (!op_64_bit)
--		ret = (u32)ret;
--	kvm_rax_write(vcpu, ret);
--
- 	return kvm_skip_emulated_instruction(vcpu);
- }
- EXPORT_SYMBOL_GPL(kvm_emulate_hypercall);
-
-base-commit: 911785b796e325dec83b32050f294e278a306211
--- 
+Janne
 
