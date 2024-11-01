@@ -1,88 +1,84 @@
-Return-Path: <linux-kernel+bounces-392486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CE99B94C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:53:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126609B94C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:54:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F331F22318
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:53:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D537B21663
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FAC1C82F1;
-	Fri,  1 Nov 2024 15:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3E71C830D;
+	Fri,  1 Nov 2024 15:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiifxyti"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FH3erEBV"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E05145A17;
-	Fri,  1 Nov 2024 15:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44D4145A17;
+	Fri,  1 Nov 2024 15:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730476395; cv=none; b=omvYw2CLvk1j2FoUQUsHQRcq7f1Te1ufjmWQdWb64snbJ0WJvnHkaBwsHQNZNLXNUirWotJwXngXmODr3vttUwU7mn3IsYBjSqN/+/q4+AiiCk2Erm3ZK3UHtuzcZdtXTqgZ8hV06KPR7tKb2adTxEg69FdSXZFmzfkeL3TJjg0=
+	t=1730476472; cv=none; b=p76VKy4Qsuiuf2n1LGumZnNxFQRYLobBImpEgwec7RTOmRxLbXgatHU7shEwbkPKU61lRduNHgDjLeQWJjM3YTerrxbqCk2k8NrNtwGwC88z/Et8r/MtKWo2QRiI0tTizDRJqAqq1HQIPJSL45Jg8yo2KDdBQgYyTP41VeOxp0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730476395; c=relaxed/simple;
-	bh=bqtiD4+xA8uLNkzo3xFeE4uK9IwkCr/YgjE4MRB2pk4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lvdKza0bdVJFhxJNHovGRx8VHbfn+1DFRwUdawLhTGNbfrAkjjHX/HANFFHGYZGBlN3Lh4kzX78xJxvVYQku1IxrIKc8A196T6+JofoT0gIvMrCYRBo7cFdcClfkfFOwfZdNk/HKLWsWst1RSx98clsVlgLlXg3IQBwTx+c2dGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iiifxyti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51AAFC4CECD;
-	Fri,  1 Nov 2024 15:53:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730476395;
-	bh=bqtiD4+xA8uLNkzo3xFeE4uK9IwkCr/YgjE4MRB2pk4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=iiifxytiUpwrjM4t7fDAZaCEfQa/WMwH2afgkICn2VOlexqzwyGSly5Ig/ifTDkGb
-	 z5LbpZZ2cpYVQsiqUvoNGdVX45UTkiUlbbvVanXTHmwsuMXPdJZFov9/PwmHFJeEL2
-	 iDiyiNnSBi0+VhQRgbExToz7RgSw/+c5rOfNmdSaiNYsDnqDTxVdgk6I+Aj5vMxaf3
-	 K75T4KZnXUBj9mnD32UmHjlRMIR8IPFRZ7rgNkeTSeQmQXtLU5Kah8+6qvLXEm0pTm
-	 M4Rj93kQaqpGY/ymLbOaO0NfTC/ag08N8IEYqI7aQ5uNbP8+o65pmyv9+/MP2nlklP
-	 8hNk9MAf674BQ==
-From: Lee Jones <lee@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, 
- Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-In-Reply-To: <ZvVNCfk10ih0YFLW@fedora>
-References: <ZvVNCfk10ih0YFLW@fedora>
-Subject: Re: (subset) [PATCH] mfd: rtc: bd7xxxx Drop IC name from IRQ
-Message-Id: <173047639404.1919496.13548454425529763566.b4-ty@kernel.org>
-Date: Fri, 01 Nov 2024 15:53:14 +0000
+	s=arc-20240116; t=1730476472; c=relaxed/simple;
+	bh=c8vzJp8mUlLCVOG1/gaZBZdCC2A1PmwSCORRUbrMsok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EkMoq16oGYeLi/uqF8mTo3fkQlZupSilW49+3Mt1DGCSxoNdpnKDDfEDrqyrrdKSTZjmYtyjKSdzpf+Kcy9HnAo7CUyW7G7CjSSffTwX5xZEKnsmoygLFkVHFoEqOPHVEnQttciinMZyjuUVMUpdcm2fTA91kKEZQHqZfnp3MPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FH3erEBV; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hjp3B+rMiaFuvfOkDbxYf9shcT++p3671+VOrmTNNXU=; b=FH3erEBVmqrsdXeUC5kWsCJZJp
+	3q+RJ5ZBBEKw647tqmBYHGs52Kxaon0ld49HdHUoqJXzYS61Nn6NXjX0U6MRorAt+iONxJEBtW/uk
+	LdqM6FbFH9HW2KM7TtuV8omH13hSOlHlqvUAWvaFad9g5r8oQxCDV99U/jUMkodXU5/pACYNKWgfY
+	4Crey+HLXqo6JIrYfXd6g6khMsa/DaLEWT6WoQR9lC3PpSVX0WY9jyjFdu15DZ2TufAUdYoFuRIIe
+	YV6UXQdJuCsEVs7ew2tsEWI0eRfApznQm0UtFLVEyvxTkLign6EdG8YUPHF/FY8yakSePzrIUss8A
+	haNfQ7ig==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6tyb-0000000G08N-24M3;
+	Fri, 01 Nov 2024 15:54:17 +0000
+Date: Fri, 1 Nov 2024 15:54:17 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kinsey Ho <kinseyho@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	David Rientjes <rientjes@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	David Hildenbrand <david@redhat.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Kaiyang Zhao <kaiyang2@cs.cmu.edu>,
+	Sourav Panda <souravpanda@google.com>, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH mm-unstable v1 0/2] Track pages allocated for struct
+Message-ID: <ZyT5qROhtuWeuxga@casper.infradead.org>
+References: <20241031224551.1736113-1-kinseyho@google.com>
+ <20241031160604.bcd5740390f05a01409b64f3@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031160604.bcd5740390f05a01409b64f3@linux-foundation.org>
 
-On Thu, 26 Sep 2024 15:01:13 +0300, Matti Vaittinen wrote:
-> A few ROHM PMICs have an RTC block which can be controlled by the
-> rtc-bd70528 driver. The RTC driver needs the alarm interrupt information
-> from the parent MFD driver. The MFD driver provides the interrupt
-> information as a set of named interrupts, where the name is of form:
-> <PMIC model>-rtc-alm-<x>, where x is an alarm block number.
-> 
-> >From the RTC driver point of view it is irrelevant what the PMIC name
-> is. It is sufficient to know this is alarm interrupt for a block X. The
-> PMIC model information is carried to RTC via the platform device ID.
-> Hence, having the PMIC model in the interrupt name is only making things
-> more complex because the RTC driver needs to request differently named
-> interrupts on different PMICs, making code unnecessary complicated.
-> 
-> [...]
+On Thu, Oct 31, 2024 at 04:06:04PM -0700, Andrew Morton wrote:
+> Possibly dumb question: can we switch swap_cgroup_prepare to kmalloc()
+> (or kmem-cache_alloc()) and use slab's accounting to satisfy this
+> requirement?
 
-Applied, thanks!
-
-[1/1] mfd: rtc: bd7xxxx Drop IC name from IRQ
-      commit: 9b15062cc05dbfec8092f5f08ac734fd29ed7b5a
-
---
-Lee Jones [李琼斯]
-
+It looks to me like a bad reimplemention of vmalloc().  It looks like
+this code used to make more sense once upon a time, but now it's really
+just vmalloc().  Or did I miss something?
 
