@@ -1,105 +1,117 @@
-Return-Path: <linux-kernel+bounces-392228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BC89B9141
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:44:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A624F9B9143
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4F7282A8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:44:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 301DDB22215
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205F81A0721;
-	Fri,  1 Nov 2024 12:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HxvSsw9w"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BC419F101;
+	Fri,  1 Nov 2024 12:44:14 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242141A01B0
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAF419E96A;
+	Fri,  1 Nov 2024 12:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730465035; cv=none; b=AGDabqAzAD+a8F/RCmokOFxRHTVHlr4AZiXzD8ZJ0DUyF8WnuQ6hnTe3/W1HkugwlE989upB8uxUW7ka3jmL3oR/hskt+6GMZoOgoM/quEn0CoAcm73RUQskQbhFCoeBsssFTQRue3JqKU45qJw6Mdv4zQ/zeDB50k70EnrNdF8=
+	t=1730465054; cv=none; b=MC8DW1/cNzzEYzShQU/9Q7+V2/3RTwpFOEFmHD7jTvO4Hf0n0MEmw3TaII6GaX230An4Y6w0BVB2HvjmaGOuYPzZXn13dnYDR081PLcRVa5Oi1gTc+8xaJ0Ga+i1tCLRUC/l05m6TrHaHQ83NASXQTNWNmofdQbIc6xkMJEinP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730465035; c=relaxed/simple;
-	bh=GeUG3bJ8M2/QehUOj/nHzg4piQjubMloLh1kRZnMQg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MvrGq59UqWSz9Hq5IW5ROxTQdrIoSjICUk+akkuQleWbq/3DWe8tEpGOpnwlAcpJjWXIlo38/PWfYG3z04B5OTtgWvXdp4jRacan6kClhroX0OqiC6xJ24UDVxcqdslu49Y1RcxVvV8k9by6SYbrvvUiZCvUg6YGiDC+pxcyYp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HxvSsw9w; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=GeUG
-	3bJ8M2/QehUOj/nHzg4piQjubMloLh1kRZnMQg8=; b=HxvSsw9wot830pvYzEr2
-	oA87pFnJWZOaYBLaYtkGWmNUJ+ZUzLVvjAvwblbmYvVFbflNm0jF4BkwsdhO+g1+
-	u46dPG4UxOcrSlVqka4cBFBcwS3Lh9QijuJac0djAaEDadlL0K8xiUvt8xPYkIAR
-	GJGt+VEBvJGMYW1Dg2lhSQFbqCIxS5czCBbTHyTRSyaIbf/5GH3GNhLNAOL7dKwV
-	89cvP8RPZM0tTozUyOFw7bJYdSy9UtRGzPRwsCnUB5hhjOiZuucKpIuXaLcoGNcV
-	17z3jYpR30iyKW2pnVnw+e+drSCWDohsd2LDhuedW3b2BVoXEn9x5klm0XPPsT1v
-	xA==
-Received: (qmail 3746202 invoked from network); 1 Nov 2024 13:43:48 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Nov 2024 13:43:48 +0100
-X-UD-Smtp-Session: l3s3148p1@AetHSdklOtIgARS7AKAttyJ3WvkjawEB
-Date: Fri, 1 Nov 2024 14:43:47 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] i2c: Use *-y instead of *-objs in Makefile
-Message-ID: <ZyTNA34Y1BRxMhhn@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20241018150337.2182181-1-andriy.shevchenko@linux.intel.com>
- <ZyTIf8l1ghcyzJUH@smile.fi.intel.com>
+	s=arc-20240116; t=1730465054; c=relaxed/simple;
+	bh=Snyp2ySjpZzEgk0ZLrDhOfkntw7K4f2P1CXvtvSlq14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hEWpAumUuRwq4zKbtbyejDK2UrdM+mYDJHrjUuaSQuqHTDciVN7ZRAduoh0UybzMZ+WHweTsNRhdX/f2zK4HUT1TIFHWLqiDuRvDwhIlBJK3CTDRQZa2yLOahTeQeVEF72L2dVmtMoLMKIShC3KGb+yUCRMBxbujxvHGHR+vy3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xg0mK0jPzz6LD2q;
+	Fri,  1 Nov 2024 20:39:13 +0800 (CST)
+Received: from mscpeml500003.china.huawei.com (unknown [7.188.49.51])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1C03C140B55;
+	Fri,  1 Nov 2024 20:44:07 +0800 (CST)
+Received: from [10.123.123.226] (10.123.123.226) by
+ mscpeml500003.china.huawei.com (7.188.49.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 1 Nov 2024 15:44:06 +0300
+Message-ID: <8e55d735-b65d-428f-8689-8f0b729d56c4@huawei.com>
+Date: Fri, 1 Nov 2024 15:44:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+dnm4sWW3a9QdAyY"
-Content-Disposition: inline
-In-Reply-To: <ZyTIf8l1ghcyzJUH@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] Cgroup-based THP control
+To: Johannes Weiner <hannes@cmpxchg.org>,
+	<gutierrez.asier@huawei-partners.com>
+CC: <akpm@linux-foundation.org>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<baohua@kernel.org>, <willy@infradead.org>, <peterx@redhat.com>,
+	<hocko@kernel.org>, <roman.gushchin@linux.dev>, <shakeel.butt@linux.dev>,
+	<muchun.song@linux.dev>, <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <alexander.kozhevnikov@huawei-partners.com>,
+	<guohanjun@huawei.com>, <weiyongjun1@huawei.com>,
+	<wangkefeng.wang@huawei.com>, <judy.chenhui@huawei.com>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>, <kang.sun@huawei.com>
+References: <20241030083311.965933-1-gutierrez.asier@huawei-partners.com>
+ <20241030150851.GB706616@cmpxchg.org>
+Content-Language: en-US
+From: Stepanov Anatoly <stepanov.anatoly@huawei.com>
+In-Reply-To: <20241030150851.GB706616@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: mscpeml100004.china.huawei.com (7.188.51.133) To
+ mscpeml500003.china.huawei.com (7.188.49.51)
+
+On 10/30/2024 6:08 PM, Johannes Weiner wrote:
+> On Wed, Oct 30, 2024 at 04:33:08PM +0800, gutierrez.asier@huawei-partners.com wrote:
+>> From: Asier Gutierrez <gutierrez.asier@huawei-partners.com>
+>>
+>> Currently THP modes are set globally. It can be an overkill if only some
+>> specific app/set of apps need to get benefits from THP usage. Moreover, various
+>> apps might need different THP settings. Here we propose a cgroup-based THP
+>> control mechanism.
+>>
+>> THP interface is added to memory cgroup subsystem. Existing global THP control
+>> semantics is supported for backward compatibility. When THP modes are set
+>> globally all the changes are propagated to memory cgroups. However, when a
+>> particular cgroup changes its THP policy, the global THP policy in sysfs remains
+>> the same.
+>>
+>> New memcg files are exposed: memory.thp_enabled and memory.thp_defrag, which
+>> have completely the same format as global THP enabled/defrag.
+>>
+>> Child cgroups inherit THP settings from parent cgroup upon creation. Particular
+>> cgroup mode changes aren't propagated to child cgroups.
+
+> 
+> Cgroups are for hierarchical resource distribution. It's tempting to
+> add parameters you would want for flat collections of processes, but
+> it gets weird when it comes to inheritance and hiearchical semantics
+> inside the cgroup tree - like it does here. So this is not a good fit.
+> 
+> On this particular issue, I agree with what Willy and David: let's not
+> proliferate THP knobs; let's focus on making them truly transparent.
+
+We're also thinking about THP-limit direction (as mentioned in cover-letter)
+Just have per-cgroup THP-limit and only global THP knobs, with couple additional global modes
+(always-cgroup/madvise-cgroup).
+
+"always-cgroup" for instance would enable THP for those tasks
+which are attached to non-root memcg.
+
+Per-cgroup THP limit might be used in combination with global THP knobs,
+and in this we can maintain hiearchical semantics.
+
+Now it's just an idea, may be it's better to have another RFC patch-set for this,
+to be able to have more productive conversation.
 
 
---+dnm4sWW3a9QdAyY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> > Let's correct the old usages of *-objs in Makefiles.
->=20
-> Any comments?
-
-LGTM. What about fixing the drivers, too, in one go?
-
-
---+dnm4sWW3a9QdAyY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmckzQMACgkQFA3kzBSg
-KbZJLxAAg8at3+Q2hj3LMWVa5yWLplLeNnlh3z8ERZB3by7GupBg0MA1NAwG4arC
-3WEfFTTQ6tWqsNiZAX96PUOfWNVERlhpT8WgI5bfqeMLYGOEMP78pBGp0vYQpXQI
-xCQulen/IPpH5tDZk0wNkfbtYyy4KmrhNtDG2n+cO0xEHkddNiga2XYRYUn2F5Cq
-RtS1TOmYX00LERNQNkogMIWUVV3F8kCz4H19JVqExHekqHJoJwtolcB5gvCufoAq
-f0hpZs1Tb7lY45Y4Pbeye1Oyf8j0ZoRRIp2I3ZFTGyFok/kQdB7CISuKxyCk8n+A
-2XjPMsis8f76dsqlUnM/PII4BDOYGOvpglB/4fkmZfRfA1K43ZI38bUiSZXB1d10
-6gLdTNU4SGOvRK6pkjevSxh+ROhEmLZKrlBAVCbiBh2cDJ1T9ncxEuYAPvOxpY6Q
-ma4TeN1mNADB+gjkCgf0d/SyYspklTAWt6VwqFERX1bLwxB7OBUgbNPMwx4Gilkj
-pJoEqtjzBVhRgKAQgBoGD1z40YobzkLy9Va/7b81UV8V6b8s44miWHE0q6kgfMLp
-/Ju/IZDSKDpFXncHacof7L9P6OG1Y+xpDszA9dN/qM3cGIjUptMFINKb7zP2yzR5
-pjg4Pdia9V0xvYru8B6hwINS2Af3w1WfLq85dEmgM8GeB4iiJJw=
-=nAj1
------END PGP SIGNATURE-----
-
---+dnm4sWW3a9QdAyY--
+-- 
+Anatoly Stepanov, Huawei
 
