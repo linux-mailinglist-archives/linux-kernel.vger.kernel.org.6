@@ -1,100 +1,87 @@
-Return-Path: <linux-kernel+bounces-392410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91689B93D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:57:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD219B93D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:57:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 258F21C20A83
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:57:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DE9BB21063
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7001A1AA7A6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DC31AA7AA;
 	Fri,  1 Nov 2024 14:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALjHXjuP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C631A4F1F;
-	Fri,  1 Nov 2024 14:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BC519DF53
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730473025; cv=none; b=Tz1ftwXRmNVR+0sFtLKalb2YwZwrcNUtxK+oW6Pmt2vrpPpc5E4wslaIjey1I+nTfdFSmwdiTGbjJDDTBYn5sxP3NQ6QF8oF1Uyb0BRqVRArVTY04uyJwmg3qtrHEdyEINJD2XrjYvbV0NrdzcSsdJV5mYMdVgCVDG62DI1r9lc=
+	t=1730473026; cv=none; b=MgP+chDcjMR5F0WTCyLbnrsEmyDQlQptvdIZOxzZGdMoc94MMfhEg3czZLwQsJimkd0BCR6cV/qzKOdk4g7s4zzoR9URApIDB3uoFZgJVDoqWj0pdXuLwX4a8Ym27qCKJlgTeBVxiJxSeWjlrfRlb6x3rRURHhMRJZr7ofxVGbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730473025; c=relaxed/simple;
-	bh=2yaXaWSjgWn2RGNAFWPGoZ5VjS8vUknU+zhuA9ZUsVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rTwt5RlvIZFVcd8P6DIXZWdncbbn8/YFwVBIZ1Ug/3OKbzxBKRWS1+57GNmblr5PoJLSLMSvgNeWVeQgJqgH0xHnijw5tPFUCXJymPXcfTmMfunUYXH1q1XU4JFwnijjGWTr4lv2xE8ZtXp5AQPBq6pR46/52k8736NRhmuQQMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALjHXjuP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43F01C4CECD;
-	Fri,  1 Nov 2024 14:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730473025;
-	bh=2yaXaWSjgWn2RGNAFWPGoZ5VjS8vUknU+zhuA9ZUsVM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ALjHXjuP3C7Vnd+NueczS4Tz6Azn5vOZCQ06aEjyHkb7ki2o6lXaavdsuTZlV83Eg
-	 6EAjPPZ50Q17ORCudwmpgF6OUun8YGi+WVfeyc046idw+CAidyyWZrvdCmJmm/rEX8
-	 k69WLY+FHCzxz7P8J4pVcT1u0Os1eO9VCOyGSjZtzoXMmnrbalf6yHah8y96TWi/kl
-	 YuMlvvxMrEb5QVubH4P1MhKj8AGuUT5shOYahJIhurazTsT0lXQ8+nQFe0QvEbnivg
-	 xJKW2/2dDje5cM1leDSB8oMosS9YPXXbWQjKGpHjXhNBnZscgY+TJHotsu87PCrzq9
-	 HGbMSaLQi3+4Q==
-Date: Fri, 1 Nov 2024 14:56:58 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen
- <lars@metafoo.de>
-Subject: Re: [PATCH v2 0/4] iio: initialise ddata for
- iio_get_acpi_device_name_and_data()
-Message-ID: <20241101145658.25c0bd11@jic23-huawei>
-In-Reply-To: <20241101081203.3360421-1-andriy.shevchenko@linux.intel.com>
-References: <20241101081203.3360421-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730473026; c=relaxed/simple;
+	bh=7p7NxlZlrHgryQgSjVU1kcCEtuL0fyrzXG+TxUITzyU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LDE9qFTZEZcYaWVG/IILZ1iKu7aZkXSPd1l2bfe/5zVOpGb6WFZGbcgckUeqjwiDqm/G8f655LC9viGeRQBCh8hCXG2vMMWVxioJPm3+lJAAK0+ZXpu6KpSohm/lxofnAUAuS3rDrFnXJt/NfWMsZs9PZjJYuMSNbtVVzMqWPtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4f2698c76so18247005ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:57:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730473023; x=1731077823;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7bX5+Zc5C7DlFcCBk3Czk3smjZeeYWNDqBI7Biox78c=;
+        b=aHZeie+azU2wXhD0mxfYdfhgkY++aOVDL249Ax6P/WwK+bXZ9OjZ0BFt8Ggc4Imes5
+         9sr0PotuQW/+s9mfeEb8taOAcIq7xW5yYyDAH/FVhPK4nlc59KO4ZxmEQasnFN6y+ImY
+         9vYW0eoPZK/Xgz6k1KkA1q1PH08QEuigfwaNpIFXSzmJrS/STp67ontACv3GWbMnHe50
+         RzppekXpWczgkpeicqIG5VvMCK62U6kT0GmSF/TilkUlBiGRqJcLnCL3/nGo2yww6Le/
+         Bu5AlhdgV+VY8vAQnKmDJC5x4J/lpbJb/PGcGNGbC3nl4YlPxztXntx51Gf3ZFboquvC
+         MSUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpRQ0YHTJoV+DQT+9Ma0Vz6Xd044F1UGYOFg9V10VZxK5TARKxuyiN2sLSf17g11Qi48WlNMNYooILdBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5bzlt69de2XJC3UtvGYlUJWisjTIJjRrKQC4euM01wCLID3ji
+	rguktso2RtwD+gGBFZMCVhCJXfGjIOda+RxUHgbq+12qm6dgPbaiyJBrIIyEZkJLRYsMkmu8hlI
+	o1OfIJ3OW+cOFpotTUrTSDwIYkJyL1nZIn0SJ4LpHVJ0vRPajIscXkjs=
+X-Google-Smtp-Source: AGHT+IEFpdZP5uuWkzcnjIzf7bo7/W86L6XH59Sz/RXa1mVgXpiXlbfOipxGVxPUl9VZxpankvVhrIqXdvv4KozaqAODh6kBxmrP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:b24:b0:3a6:ad61:7ffc with SMTP id
+ e9e14a558f8ab-3a6b0329a4bmr47773005ab.17.1730473023301; Fri, 01 Nov 2024
+ 07:57:03 -0700 (PDT)
+Date: Fri, 01 Nov 2024 07:57:03 -0700
+In-Reply-To: <20241101143702.uKzjo%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6724ec3f.050a0220.529b6.0123.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] kernel BUG in iov_iter_revert (2)
+From: syzbot <syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri,  1 Nov 2024 10:08:25 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Hello,
 
-> Dan reported that ddata might be used uninitialised in some cases.
-> Let's initialise it to NULL (patches 1 - 3). With that, update one driver
-> to drop an unneeded anymore check (included in patch 3).
-> 
-> While at it, one more cleanup to kxcjk-1013 (patch 4) is added.
-> 
-> Jonathan, dunno if you want to rebase at this stage (probably not),
-> but if you do, feel free to fold the patches 1-3 to the initial code.
-I had to rebase anyway for another reason so given that squashed those 3 in.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-4 is on top of the tree.
+Reported-by: syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
+Tested-by: syzbot+404b4b745080b6210c6c@syzkaller.appspotmail.com
 
-Thanks,
+Tested on:
 
-Jonathan
+commit:         6c52d4da Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=150fb2a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=404b4b745080b6210c6c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14cbe630580000
 
-
-> 
-> In v2:
-> - rewritten patches 1-3 to do the job on the caller side (Jonathan)
-> 
-> Andy Shevchenko (4):
->   iio: light: ltr501: Assing ddata to NULL
->   iio: light: isl29018: Assing ddata to NULL
->   iio: accel: kxcjk-1013: Assing ddata to NULL instead of NULL check
->   iio: accel: kxcjk-1013: Deduplicate ODR startup time array
-> 
->  drivers/iio/accel/kxcjk-1013.c | 30 ++++++------------------------
->  drivers/iio/light/isl29018.c   |  2 +-
->  drivers/iio/light/ltr501.c     |  2 +-
->  3 files changed, 8 insertions(+), 26 deletions(-)
-> 
-
+Note: testing is done by a robot and is best-effort only.
 
