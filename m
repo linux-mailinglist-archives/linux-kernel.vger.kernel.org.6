@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-391843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC109B8C4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:48:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045449B8C35
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:46:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 206AFB217D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 361051C21FF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A2E15B13B;
-	Fri,  1 Nov 2024 07:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D67154BEC;
+	Fri,  1 Nov 2024 07:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QLiiX4kM"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EouYWk0K"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE5D155C82;
-	Fri,  1 Nov 2024 07:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A8714EC55
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 07:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730447207; cv=none; b=Vtj16VJw0OW9Fw4cU0I2WHYAesFwFFny65yg1iPo2tzJYXXREFs7SrJlMHGD2Hh3xOSVqpRuIIOFmhifvOcHCX4qYLhv6XgSu+zm8UuCPlK7zUB1U2/cqTwIFzPaZe71b/HyYbeG+NzA9aHt0akisMv/0vQy6Tr0aRL65/mYZrY=
+	t=1730447193; cv=none; b=K8UdqJASr9UJRRGPuP28OKklHtEqUOPrguxlFt3nS9xx6rIean3jwBDubGffYbip61rT6m1aus21YmcQUyZ3LPmHxzeTIBOywXwwhjS+OXw1GNEqI4ysuWE/QSberZBSDk960qGFLQfdWfhUNgul8DsJhRxdS2N4yX9s6qzHk0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730447207; c=relaxed/simple;
-	bh=TF6bZIvSMDp9mqHIuwU8sLZ1ByDGmrUCLsCTB5m3/fY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Po0u0cXyJexhjK0wNi0fjHiEGXHTrcF4tnoQrIF5wzg1WheqOc18eBX0aTpy7gtc+2g09PgVnZC93WHnFAgXGV48D3wXBr2c1GrRTnzQ9utbeiYfB1xIN7PDqR+nABCPJEO+CySGQaR4QVVI2zWvYh9fYnxagKKD4o8FsuBPY7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QLiiX4kM; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-20b5affde14so13810665ad.3;
-        Fri, 01 Nov 2024 00:46:45 -0700 (PDT)
+	s=arc-20240116; t=1730447193; c=relaxed/simple;
+	bh=7oyqoYAZJ0gGfbJjT6X/Fu83uh1qveXspIJipeFQvcM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WEswcC12/aQ5gYi6InMFxmGnq3v5Pcf0HdOAaxY4R+7Zpq0PwgTh4D0Bt/yZmPY8awnGQd1J1Sw0BW3aTUo6Nd39FOxDaSj9C41vJSGwJRziJnoKDFngg1iSTtQ7/LlW0QrondFzB5AylgiUjvnYRl42ICl6Is2aiLUg2i8YfzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EouYWk0K; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e5cec98cceso14478107b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 00:46:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730447205; x=1731052005; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nz4PoH12jyh9oC2ESydlrxm91wEB4TKbC9HA6hPB9Zo=;
-        b=QLiiX4kMjlcn27EPrN3eOxLtA0V5X55JKKsznrkKdcWwABlXbjkRrBgvKzUTf5bfA3
-         xxvWZzIvvtKhyrzLvaREQ+PCPwsFiNKQxLneaUM5k+L5BDBigsKekklc+ZFEH53I5bLr
-         yx9eFXhExJFrbW/mV12b0VhwG2N+nlMuQr5yBLS/REYgI9FGJbwXEAL7v9I7dvw7j0zo
-         9C50G0CLi3IWfigPzPA/vDWUBHIvOkRgUf+qx1bZs7744WApFv0WbxfCQMp0IdLEGswc
-         xD60wO559XHxnALD5LL5I1PVUFYmV75bXtj5qfrZ9mOBwaTJjhgSDSlRcKEMKEliwoZf
-         1qbg==
+        d=chromium.org; s=google; t=1730447191; x=1731051991; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x3aKq6CnvOZI2TVkmKTbWKWHY8LJPTSe8Jutza5MdE4=;
+        b=EouYWk0Kt6MmXM4jynRnZPWLkEahQCW99d5/iu+Nbzw7I4Gm1fj7NrQ6ksELFtSe7L
+         woEtAQYgO1qK0lRlfkvYApjnm2jMfvm1xp2H+UNtf85TSloUFLjfvcaDSJv3KbEbh3mz
+         6sjlgzKTHIEymmBLc2xthYD4YBc36W9MVMEbU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730447205; x=1731052005;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1730447191; x=1731051991;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Nz4PoH12jyh9oC2ESydlrxm91wEB4TKbC9HA6hPB9Zo=;
-        b=hiyM9aiScJPRBD8bZxJ4xxHPF68GIthuPD3hH1e6dJbvlF+7VRRSfsYEIcptzcvAN7
-         v2cuexdLHY4V/HF7YDaMlY3uk9ibfCziwwCFNKoxQ2o9Tv4wsVsNKEHa5AC1nxNgIapX
-         atNAhSsw0Bf41MNcaBD/BO5CLVUD55ZUNxuq5Hw9c7kUxvXNecJb9+V8Z2xuAziomDZw
-         teAeVx4njue38zsU7DxngaNwd6DzkE/tUw+1cCHISxZ5HbrlyqcD8r6xsq46EE9tGAfQ
-         Fkgp/1sMBibNR9/qOCYnDnaFl0jEQzzILW4D6hqp88s8y1Yd5qrUQmQBuMTFEK78cJcB
-         N9RA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcXwp7R+tbMocE1JzF7sbzoYr5jCAHtL4EGQw1tZl2Wf+g0tOlw4ripvRxYzujDUC2ipD8Uc45cfldTO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPmvUeO/mZ0VroH1uzahhoM5vfKQ8jeRu4vjuERttbLqIj711k
-	5Omm9PjcsZg1HCRsN3EIyBEfaza2kWH9O14kYB/lkQk5E7Qjg8oF
-X-Google-Smtp-Source: AGHT+IEnjqZXRFFl/HYyvTdaUyHu1abBvCfO6O45RDVhOBDwH+2H38UMiLNuyL6cnsCehls03BQRjw==
-X-Received: by 2002:a17:90a:508:b0:2c9:6a38:54e4 with SMTP id 98e67ed59e1d1-2e8f12f55aemr21061780a91.41.1730447205193;
-        Fri, 01 Nov 2024 00:46:45 -0700 (PDT)
-Received: from localhost.localdomain ([2001:250:4000:8246:8007:bb90:49ad:3903])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056edb4csm17640335ad.58.2024.11.01.00.46.42
+        bh=x3aKq6CnvOZI2TVkmKTbWKWHY8LJPTSe8Jutza5MdE4=;
+        b=enPosQaX4TX6qE2G1UOlyAdSkZPjBq+Lt9Mefe+zrA+UOFpNtLHij07u49ElveJzQ9
+         QZyh6RluGH3n3BoGNAok4Cd1zfCx31YlmBCoJSNz1LFsae/fWfF6q20kOLBNAoLGBG7h
+         NSFIUCgKKf364AqFyOQPjUPiChJQbGJybbs3WJEeO183OaYljpkKudM3X8CRSoO4K+cL
+         9/HEy+1jYtQjCzvvTqzgJMc5rIb5KNNLbFQxmzJuNKgLT9tcsTzGzboiz9vjP9BUOW4T
+         OB2mBJPj7+5GrPzFje5cd+7lh15JCPa7Dl3yF3GOtLLO7h0sNueoa22W8ZTxNUDQC1+H
+         n1nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLQ0kFYu26NMcySPo+IzeZdliZCNDQ9sg23P/DPTAUJvy7ax14wsWOznNmDmpozcEfxRCIo9ECRcZPdPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywtn6k8VA3tAuvZAN8MkEvTSsTWfiOwQcKvVm0o6QXUTgisdVm/
+	A+NcFLTKmsMUlsdx0AGBNKyEftiSp89+D7+rulkWfScRvAgEaQEicvJTJ/32Nw==
+X-Google-Smtp-Source: AGHT+IH20R7XRxWI1RSTumQ0lC2tj6dVSIE7SoL2mi9HjVgdEmX6PF6aQq/YAwxBUE/8KKjA26yrtQ==
+X-Received: by 2002:a05:690c:6506:b0:6dd:b9d4:71a1 with SMTP id 00721157ae682-6ea52378522mr72312107b3.16.1730447190788;
+        Fri, 01 Nov 2024 00:46:30 -0700 (PDT)
+Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d35415b1casm16444236d6.78.2024.11.01.00.46.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 00:46:44 -0700 (PDT)
-From: Gan Jie <ganjie182@gmail.com>
-To: kvalo@kernel.org
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	trivial@kernel.org,
-	ganjie163@hust.edu.cn,
-	ganjie182@gmail.com
-Subject: [PATCH] Driver:net:wireless: Fix typo 'adderss'
-Date: Fri,  1 Nov 2024 15:46:25 +0800
-Message-ID: <20241101074626.961-1-ganjie182@gmail.com>
-X-Mailer: git-send-email 2.42.0.windows.2
+        Fri, 01 Nov 2024 00:46:29 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v3 0/5] iio: hid-sensors-prox: Add support for more
+ channels
+Date: Fri, 01 Nov 2024 07:46:26 +0000
+Message-Id: <20241101-hpd-v3-0-e9c80b7c7164@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFOHJGcC/13MQQ6CMBCF4auQrq1hhiLVlfcwLpBO6SygpNVGQ
+ 7i7BWNiXL7JfP8sIgWmKE7FLAIljuzHPKpdITrXjj1JNnkLLFFBiZV0k5Fk6FY1FqztlMifUyD
+ Lz61yuebtON59eG3RBOv169XmE8hSYgtYa405o8+dC37gx7D3oRdrIuEv0x+GmYG2B2qOUCvT/
+ LFlWd4kZroG0AAAAA==
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: Harvey Yang <chenghaoyang@google.com>, linux-input@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-Fix typo 'adderss' to 'address'.
+EgisVision 620 provides two additional channels:
+- proximity
+- attention
 
-Signed-off-by: Gan Jie <ganjie182@gmail.com>
+Add support for them.
+
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/error-dump.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+- Make attention CHAN_INFO_PROCESSED.
+- Fix comment style.
+- Multiply attention by 100 to make it a percentage.
+- Link to v2: https://lore.kernel.org/r/20241028-hpd-v2-0-18f6e79154d7@chromium.org
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h b/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
-index e63b08b7d336..3af275133da0 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
-@@ -169,7 +169,7 @@ struct iwl_fw_error_dump_info {
-  * @fw_mon_wr_ptr: the position of the write pointer in the cyclic buffer
-  * @fw_mon_base_ptr: base pointer of the data
-  * @fw_mon_cycle_cnt: number of wraparounds
-- * @fw_mon_base_high_ptr: used in AX210 devices, the base adderss is 64 bit
-+ * @fw_mon_base_high_ptr: used in AX210 devices, the base address is 64 bit
-  *	so fw_mon_base_ptr holds LSB 32 bits and fw_mon_base_high_ptr hold
-  *	MSB 32 bits
-  * @reserved: for future use
+Changes in v2 (Thanks Jonathan):
+- Create new attention channel type.
+- Improve documentation for HID usages.
+- Link to v1: https://lore.kernel.org/r/20241024-hpd-v1-0-2a125882f1f8@chromium.org
+
+---
+Ricardo Ribalda (5):
+      iio: hid-sensors: Add proximity and attention IDs
+      iio: hid-sensors-prox: Factor-in hid_sensor_push_data
+      iio: Add channel type for attention
+      iio: hid-sensors-prox: Make proximity channel indexed
+      iio: hid-sensor-prox: Add support for more channels
+
+ Documentation/ABI/testing/sysfs-bus-iio |   8 ++
+ drivers/iio/industrialio-core.c         |   1 +
+ drivers/iio/light/hid-sensor-prox.c     | 195 ++++++++++++++++++--------------
+ include/linux/hid-sensor-ids.h          |   2 +
+ include/uapi/linux/iio/types.h          |   1 +
+ tools/iio/iio_event_monitor.c           |   2 +
+ 6 files changed, 122 insertions(+), 87 deletions(-)
+---
+base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
+change-id: 20241023-hpd-edeb37f1ffc4
+
+Best regards,
 -- 
-2.34.1
+Ricardo Ribalda <ribalda@chromium.org>
 
 
