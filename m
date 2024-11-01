@@ -1,78 +1,148 @@
-Return-Path: <linux-kernel+bounces-392785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24ED9B9815
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:06:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E571F9B9816
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E39081C216B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:06:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 080101C215F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C4F1CEEB4;
-	Fri,  1 Nov 2024 19:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E53B1CEEA7;
+	Fri,  1 Nov 2024 19:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UOQrMMWf"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LqEo4Jan"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0591CEEB3;
-	Fri,  1 Nov 2024 19:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6AD1CEAA4;
+	Fri,  1 Nov 2024 19:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730487988; cv=none; b=Gsb6N7nufLuKQP1nDkyMdGldgxUln0KPbvJ5YYPruhnl/EJpab3pjADb/BAafMvsczbLNdJqu4TWkoTEHIygCB0w5vv8XXxZfTRVJIgtwN1K3QfZuwHrNCq3LLo6itg8zZIJUDNtJg34eo1WyQaVFBk/rRyXbCdqmHFxx76aY/Q=
+	t=1730488039; cv=none; b=kSSorwVQOxDfkIKnoOAciZ2S1yEFygrkD0jjXZgc4DWKFJk9zOiFedNzumDXyyUWa0IO3zK6v/Bd3BHjLzTydNqNZRrZwfCyCLkqFAE9CKjzADH5sMJVZ9xVwWhPvs3h8k4Fq/kukqikTZIOKUxlIDpuegpr2n5CzEchmKQoMBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730487988; c=relaxed/simple;
-	bh=3xWr2Pv+wIaPuxk1NXjw+pgU1A7VVVQRLuOEyc6FxUI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=kpZnRkP9KiqxoUJZhbrXbYPCH+PDhzDOj1/KeaAH5I+KqXtQ0eHNO43L3LcrvV+wnYampqVwb//6skmToXoqJkR/Qjff9TowmJhFT3uUNcdgVqteKPwxfexLzlutbdIfI743bZDO9QF6eUahaHWvOla45yBiekL9Q251oMmt4Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UOQrMMWf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3E06C4CECD;
-	Fri,  1 Nov 2024 19:06:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730487986;
-	bh=3xWr2Pv+wIaPuxk1NXjw+pgU1A7VVVQRLuOEyc6FxUI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=UOQrMMWfHKVdGRcY1pl18fWXvQGB2QWEFLdaX1twjYMTfI/izpjUG7lytxDyEuSOE
-	 /fABK8w7tnzZiPat/dychuD+tNHcPfuKyXJLsdfIqnKdvxN1a3lfs5k+VPx9ukn5a3
-	 WLzHoPMd1HTvBOEVGdnDIAjLlzZYfKR8osyVEk9l61XbYEBm4LI3WqlY3SQEO6s3nv
-	 nkjxpjfpgqJGcqPwEtbPgQi9OrsVohprZoYUhg7yjayQym6k1BbbOa9X10bn3iDqlz
-	 EI/HJqugZE7QAYSglOHAppUFVFnd2kEMhhhfe5pJ3sFv4ax+1z5mAeXg29ecUBS21N
-	 T624tU6e9E+nw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E683AB8A94;
-	Fri,  1 Nov 2024 19:06:36 +0000 (UTC)
-Subject: Re: [GIT PULL] gpio fixes for v6.12-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241101133517.12627-1-brgl@bgdev.pl>
-References: <20241101133517.12627-1-brgl@bgdev.pl>
-X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241101133517.12627-1-brgl@bgdev.pl>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.12-rc6
-X-PR-Tracked-Commit-Id: 604888f8c3d01fddd9366161efc65cb3182831f1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: edf0227abd7ffa3eff5510fd760123e2e15dc879
-Message-Id: <173048799475.2811397.2845699925195434705.pr-tracker-bot@kernel.org>
-Date: Fri, 01 Nov 2024 19:06:34 +0000
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+	s=arc-20240116; t=1730488039; c=relaxed/simple;
+	bh=L0r/aTmbk45f2mBn1V1TXRJtYB+grt2a6Bs54xQ+Hr4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=KiWEzwyHr3IEWYj7/gcKMCzBdm7ExP/ozrOkRqKHE5uG5wp8uyUrW8B4UmHgzkHSiWnj73eYogEbvqlr2wvfLmrWD/8Qk+hTZIUuF5R0Pfe2e7q20u8GULO+cOmqAZcgLbUlA9+Comp0/WShHeafA0q9ujcdMWsDTuMwOnsXfFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LqEo4Jan; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B43AC4CECD;
+	Fri,  1 Nov 2024 19:07:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730488038;
+	bh=L0r/aTmbk45f2mBn1V1TXRJtYB+grt2a6Bs54xQ+Hr4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LqEo4Jan/5HivANpRvdFnehU5w+dNmXJe3Bs2UfDt8N90Ez9w/XLvNloD9+aB3sEO
+	 aGFVsxqrqpNCXJH55+cnx03TxzMQYYXHXBl9ME/onClsg0f5HRskm+nirs3TKl7DSs
+	 stZmLjkPYkcJgsJUCHRs5ySVFkIJbMrbXpcztQq8=
+Date: Fri, 1 Nov 2024 12:07:17 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Asahi Lina <lina@asahilina.net>
+Cc: Sergio Lopez Pascual <slp@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, asahi@lists.linux.dev, Jia He
+ <justin.he@arm.com>, Yibo Cai <Yibo.Cai@arm.com>, Kirill A. Shutemov
+ <kirill.shutemov@linux.intel.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Asahi Lina <lina@asahilina.net>, Sergio Lopez
+ Pascual <slp@redhat.com>
+Subject: Re: [PATCH] mm: Fix __wp_page_copy_user fallback path for remote mm
+Message-Id: <20241101120717.11db30a5abc6378da7910719@linux-foundation.org>
+In-Reply-To: <20241101-mm-remote-pfn-v1-1-080b609270b7@asahilina.net>
+References: <20241101-mm-remote-pfn-v1-1-080b609270b7@asahilina.net>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Fri,  1 Nov 2024 14:35:17 +0100:
+On Fri, 01 Nov 2024 21:08:02 +0900 Asahi Lina <lina@asahilina.net> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.12-rc6
+> If the source page is a PFN mapping, we copy back from userspace.
+> However, if this fault is a remote access, we cannot use
+> __copy_from_user_inatomic. Instead, use access_remote_vm() in this case.
+> 
+> Fixes WARN and incorrect zero-filling when writing to CoW mappings in
+> a remote process, such as when using gdb on a binary present on a DAX
+> filesystem.
+>
+> [  143.683782] ------------[ cut here ]------------
+> [  143.683784] WARNING: CPU: 1 PID: 350 at mm/memory.c:2904 __wp_page_copy_user+0x120/0x2bc
+>
+> ...
+>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/edf0227abd7ffa3eff5510fd760123e2e15dc879
+Thanks.  I assume we should backport this into earlier kernels?
 
-Thank you!
+If so, a Fixes: target is desired, to tell people how far back in time
+it should be ported.  I think it's
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+83d116c53058 ("mm: fix double page fault on arm64 if PTE_AF is cleared").
+
+
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -3081,13 +3081,18 @@ static inline int __wp_page_copy_user(struct page *dst, struct page *src,
+>  			update_mmu_cache_range(vmf, vma, addr, vmf->pte, 1);
+>  	}
+>  
+> +	/* If the mm is a remote mm, copy in the page using access_remote_vm() */
+> +	if (current->mm != mm) {
+> +		if (access_remote_vm(mm, (unsigned long)uaddr, kaddr, PAGE_SIZE, 0) != PAGE_SIZE)
+> +			goto warn;
+> +	}
+>  	/*
+>  	 * This really shouldn't fail, because the page is there
+>  	 * in the page tables. But it might just be unreadable,
+>  	 * in which case we just give up and fill the result with
+>  	 * zeroes.
+>  	 */
+> -	if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE)) {
+> +	else if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE)) {
+>  		if (vmf->pte)
+>  			goto warn;
+>  
+
+The coding style ends up being unconventional.  I made these changes:
+
+--- a/mm/memory.c~mm-fix-__wp_page_copy_user-fallback-path-for-remote-mm-fix
++++ a/mm/memory.c
+@@ -3081,18 +3081,20 @@ static inline int __wp_page_copy_user(st
+ 			update_mmu_cache_range(vmf, vma, addr, vmf->pte, 1);
+ 	}
+ 
+-	/* If the mm is a remote mm, copy in the page using access_remote_vm() */
+-	if (current->mm != mm) {
+-		if (access_remote_vm(mm, (unsigned long)uaddr, kaddr, PAGE_SIZE, 0) != PAGE_SIZE)
+-			goto warn;
+-	}
+ 	/*
+-	 * This really shouldn't fail, because the page is there
+-	 * in the page tables. But it might just be unreadable,
+-	 * in which case we just give up and fill the result with
+-	 * zeroes.
++	 * If the mm is a remote mm, copy in the page using access_remote_vm()
+ 	 */
+-	else if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE)) {
++	if (current->mm != mm) {
++		if (access_remote_vm(mm, (unsigned long)uaddr, kaddr,
++				     PAGE_SIZE, 0) != PAGE_SIZE)
++			goto warn;
++	} else if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE)) {
++		/*
++		 * This really shouldn't fail, because the page is there
++		 * in the page tables. But it might just be unreadable,
++		 * in which case we just give up and fill the result with
++		 * zeroes.
++		 */
+ 		if (vmf->pte)
+ 			goto warn;
+ 
+_
+
+I'll queue this for testing and shall await further review.
 
