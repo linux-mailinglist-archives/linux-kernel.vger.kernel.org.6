@@ -1,300 +1,159 @@
-Return-Path: <linux-kernel+bounces-392621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4ED49B965C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3026C9B9665
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61ACB1F222B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:19:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05031F21D4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2D21CB501;
-	Fri,  1 Nov 2024 17:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2D31CB514;
+	Fri,  1 Nov 2024 17:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8tBtBPt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oIa6f0uL"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0DD450F2;
-	Fri,  1 Nov 2024 17:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B34F1C9DF9
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 17:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730481530; cv=none; b=C/P/j8SXHNwUiPSOThDz/Tq0+qt072qHitEn/FEU7vGDmgj/Ojx+uB3AT1rF9jXR5pjlB41zO07SHrBc6b9S/kISYSUeN6LMjBrpHuH6z0615rmr2VWr0vA6CCKv7n0TfKgyBwDRLCEFE9MERb/txs5i8zKDaT0H0eVvy+t/09E=
+	t=1730481567; cv=none; b=sY94FOhACROR5k5303F9p0cKziZ5Tn+7kAKPo3BQSb/okTgwO+30icHT8AznmkQcfKXyv1S325331bLZAd7iYb4QxCQForcKId6O0gYYj4Tn6dj7zC1gbmLj9kHGEK22arPPyMhTPwjj2DzvPPqKBNnujnz+6ywgIXMHxJKJ5tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730481530; c=relaxed/simple;
-	bh=gsNwhZ0VFDipjEGs0USbTH0IaJWnf6Jp2pFdQmfYRME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M+P+t56WbBWV6L37bHwsrAVhFSoja8EYlTO4X6/mqIN4fI91K72Bx8eaIUAhTXNcPsDsm+m498FhjNhxQcN2rkrPaokKUIP2KO3QLnlUurtQ0zhNteG2VsFFSFS7PpTJ8QGjLPyJej0/zTj190+HgX1FYNxVOwL9BSyDBGPKpzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8tBtBPt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA84C4CECD;
-	Fri,  1 Nov 2024 17:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730481530;
-	bh=gsNwhZ0VFDipjEGs0USbTH0IaJWnf6Jp2pFdQmfYRME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P8tBtBPtHwGw54YKtlGhJ01EjKzhNDF39m5VxXz3yItEZ/VdR7kDJQUIQebYlmgWo
-	 5awNldrlMQ/t+R9iwcFh5RregIa+f4H/ax7LxKH4iKLEHWnSLXv90bHqSPRIWpTYEY
-	 HJkSTo/wM99a3vIG0JIrVuAiYhSOaihsYolaPWgXtZqrHVznupPcW5KsGWzhlCBQ5v
-	 uzfWe/CXlzuE+OVGHWgBaKOqEYc5XNZ2714wPhrjmFcI+gkTSBdqSxr4OJi8Ij7R4h
-	 CSlSpcGJXRXnIXZMmAzfHyHkjkVOuzHcDtfZLDJldF/+Kg+u1MdNN5NDtZrszfpM/D
-	 wftJ7dWx2KgLg==
-Date: Fri, 1 Nov 2024 12:18:48 -0500
-From: Rob Herring <robh@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
-	"rfoss@kernel.org" <rfoss@kernel.org>,
-	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
-	"jonas@kwiboo.se" <jonas@kwiboo.se>,
-	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"quic_jesszhan@quicinc.com" <quic_jesszhan@quicinc.com>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	"hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>,
-	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
-	"arnd@arndb.de" <arnd@arndb.de>,
-	"nfraprado@collabora.com" <nfraprado@collabora.com>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"sam@ravnborg.org" <sam@ravnborg.org>,
-	"marex@denx.de" <marex@denx.de>
-Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document dual-link LVDS
- display common properties
-Message-ID: <20241101171848.GA3616730-robh@kernel.org>
-References: <20241028023740.19732-1-victor.liu@nxp.com>
- <20241028023740.19732-9-victor.liu@nxp.com>
- <01c1c4f3-1652-4b08-bd35-08b4e1c04c79@nxp.com>
- <TY3PR01MB11346805C5D524D264669D178864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <750920ae-36b9-47f5-84e9-779332739f86@nxp.com>
- <TY3PR01MB1134610B42A1D3424D97B04CA864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <a166da61-8cd4-44c9-987b-94d8a62faf82@nxp.com>
- <TY3PR01MB113465D2F4C35A0728993D35E864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <cb74d47a-6d33-4f67-bf09-83173d49452f@nxp.com>
+	s=arc-20240116; t=1730481567; c=relaxed/simple;
+	bh=rt8kjqYI4hECPN+GbzUP+TlVy0J28k2Oz2llBOlBl6I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MM5e7HnFMgzQ0bEMbw3OXv3mmrY17u7JOiw/2UXyr5f+LBzYbPvnOmc4iAxpc9msr5NIQkuAzBFHiCp2dbKrYRi32XQBljWoV1VNq748aJEyqoTtBpY7Furoqs0C8YuAIM7b19vAHlcFZpYs/KXFOzsYpfzeHbW4mmjG4bu22Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oIa6f0uL; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43155a6c3a6so2187065e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 10:19:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730481564; x=1731086364; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yyz45xnW9rVPfU/62f8rIc8WFlRolqjmAGKe3fVtKbg=;
+        b=oIa6f0uLQal1DUglT/A85Pwxw1SfB+/TZnQsduZmT1q+WwCvVQwMnxTBUqiPyIIzmw
+         1aUrtE01fm3c8R6RqjiuJDqtSJ6xHgdAl6ypqvno5NHHOPfvPHuBfRIHmw7B47bv/UZY
+         CFi1DOjRG+NpzGH/FJxR+WytV/Ja0SxtoY7J1XAJlqmIKnmNDLubqBIgaws3CMi2KhQW
+         3BKpnU4wCinRjt+oOXFXTKxBts6LRSldj6iSYd4j33q6O0D2XPn+1cemFNSVcrYbzzlB
+         o8LMOS5Z1fMwnslTSP2Bj49wo5uRwvl4NDtbit+sOFrru11ecEnjKtQ1DnBYxOKlmMHK
+         Oo5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730481564; x=1731086364;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yyz45xnW9rVPfU/62f8rIc8WFlRolqjmAGKe3fVtKbg=;
+        b=BDTBL+ReQ6MjpJi0MeKFuGykdQ0hNrrSdc6Z0OabDq8TJPAP//RCdpEP90xRZP02U2
+         jrZC4rtnXm/4dU57obn/y8Vq1fA8r9t5fScDf/kDqkReS9girYp0Vg+03Z2/E/k2y1/f
+         2pNZQES9HYjdsA7Mk7VVZkVQHNjYLxUPfWHcGxQXiLi/Io1Gy6rRfp/SNSKRYalzsMX+
+         rgZRBj2wNV4jFMSszE/aowdKzbjMg5XhEaP8MXzNcyGncBpujF+rjPsR9qYDKheNnZjK
+         QBxhDjBmjQ3QocmGtEoj81Hr08INsTnh94RF7rM9uEhhMCVfwcLEFEb0mDTIxAzzydv9
+         D6Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCXqtEoFdB5eqge3sx3q+6pa9mCfSwb4sMLPduy8wR39UWfFvhf/xqNvTrIM9vaUQiCb8dGLpRcD1w9hwWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZlCdC1JyNfhtOhQDj2GwNbnc11X7Ssg7HNcis1iiKQ8NmPN6L
+	37Slv0nWXJdTDaiVPS5XwdUKN96QUjUzwkTxQ1AxiMq4YYnyx8UHnTKvVgtVWB4=
+X-Google-Smtp-Source: AGHT+IGyPwXyvUs9k5FWzP5oA9fjobpRUwqCYaIqND9lEL4Ls9AMutUr54tuWclkLAuV5EP1fHzX8w==
+X-Received: by 2002:a05:600c:1c91:b0:42c:b9c8:2ba9 with SMTP id 5b1f17b1804b1-4319ad2b318mr90729495e9.6.1730481563682;
+        Fri, 01 Nov 2024 10:19:23 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ab305sm68536785e9.7.2024.11.01.10.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 10:19:23 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/4] arm64: dts: qcom: sm8750: Initial audio support (not
+ yet complete)
+Date: Fri, 01 Nov 2024 18:19:10 +0100
+Message-Id: <20241101-sm8750-audio-v1-0-730aec176459@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cb74d47a-6d33-4f67-bf09-83173d49452f@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI4NJWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAyMj3eJcC3NTA93E0pTMfN0U41TztCQzczNzQzMloJaCotS0zAqwcdG
+ xtbUAb67ME14AAAA=
+X-Change-ID: 20241022-sm8750-audio-d3e7fb676716
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Melody Olvera <quic_molvera@quicinc.com>, 
+ Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1645;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=rt8kjqYI4hECPN+GbzUP+TlVy0J28k2Oz2llBOlBl6I=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnJQ2TmiZvkJQoDkX55Rjiwz/a1WrAk0xdH5zwN
+ b6sQi/nhTKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZyUNkwAKCRDBN2bmhouD
+ 1zSTD/9tONy9wEoWga1J8kwKe1bn3QgaK2JKnnaS8CppKnO3/HadhLdKAxLT6aTLhCFSHvmySsa
+ R5QtDNh5BB6U1j3EaSe1lBr9NGgYm663x3Qvnzv4+gDbm7a2vi2kgmwAeL7QHrW4uATSZVdepuv
+ GsG7obxrc8+GFVyCaeuXc4hN5EONNGxBMD6hUnJ0CLQouzRUJRegeZbnZR1U0fTYbfoVnVBil0s
+ Bl81s7Mpyx6/pYJRmhjjeiJ1HhbqZDVox+O+rTVkgvnF4SZ0QSbnwVPvZTLD6OVh/qOBE2DO7dG
+ nESk8KZHAfTcg9al6f4ZGOg4L9CUyKIto2ryTHWoAIwvnlxUUCs5kLJnfUKKOEyh4eTZfaq4Ru9
+ VLmX0klNXIU4iMRZfxwEE3xpJYJn+swuTAw8wyAoP3r/VtkZAEPj4/hWZVxAzTYzolacnh+rt5S
+ 7M/cs+9Fon0wTm9kr7R2LE4I9QD/KR8E52D0Zz2tkWHxPeCKRXadXNsej/zx0h+1k4zq5+WWlAp
+ FHo+PbkcGD10G+fQU3BI6+3uhZOyg92NuqOiG+OQgZTJH6ve/f7N+E3b2Zg0Tr9qesnTIFcRL1q
+ dBHkMn2ll2aqBMK3tTQGHc29BAGC1MpPEs/UC3CFC+w9y14M0h+GSDWsSVhA8nmy6XHptMQgQ7P
+ kS4FQpJT80B0C/A==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Tue, Oct 29, 2024 at 04:25:52PM +0800, Liu Ying wrote:
-> On 10/29/2024, Biju Das wrote:
-> > 
-> > Hi Liu Ying,
-> 
-> Hi Biju,
-> 
-> > 
-> >> -----Original Message-----
-> >> From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of Liu Ying
-> >> Sent: 29 October 2024 07:35
-> >> Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document dual-link LVDS display common properties
-> >>
-> >> On 10/29/2024, Biju Das wrote:
-> >>> Hi Liu Ying,
-> >>
-> >> Hi Biju,
-> >>
-> >>>
-> >>>> -----Original Message-----
-> >>>> From: Liu Ying <victor.liu@nxp.com>
-> >>>> Sent: 29 October 2024 07:13
-> >>>> Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document
-> >>>> dual-link LVDS display common properties
-> >>>>
-> >>>> On 10/29/2024, Biju Das wrote:
-> >>>>> Hi Liu Ying,
-> >>>>
-> >>>> Hi Biju,
-> >>>>
-> >>>>>
-> >>>>>> -----Original Message-----
-> >>>>>> From: Liu Ying <victor.liu@nxp.com>
-> >>>>>> Sent: 29 October 2024 06:17
-> >>>>>> Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document
-> >>>>>> dual-link LVDS display common properties
-> >>>>>>
-> >>>>>> On 10/28/2024, Liu Ying wrote:
-> >>>>>>> Dual-link LVDS displays receive odd pixels and even pixels
-> >>>>>>> separately from dual LVDS links.  One link receives odd pixels and
-> >>>>>>> the other receives even pixels.  Some of those displays may also
-> >>>>>>> use only one LVDS link to receive all pixels, being odd and even agnostic.
-> >>>>>>> Document common properties for those displays by extending LVDS
-> >>>>>>> display common properties defined in lvds.yaml.
-> >>>>>>>
-> >>>>>>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>>>>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> >>>>>>> ---
-> >>>>>>> v4:
-> >>>>>>> * Squash change for advantech,idk-2121wr.yaml and
-> >>>>>>>   panel-simple-lvds-dual-ports.yaml with lvds-dual-ports.yaml.
-> >>>>>>> (Rob)
-> >>>>>>> * Improve description in lvds-dual-ports.yaml.  (Krzysztof)
-> >>>>>>>
-> >>>>>>> v3:
-> >>>>>>> * New patch.  (Dmitry)
-> >>>>>>>
-> >>>>>>>  .../bindings/display/lvds-dual-ports.yaml     | 76 +++++++++++++++++++
-> >>>>>>>  .../display/panel/advantech,idk-2121wr.yaml   | 14 +---
-> >>>>>>>  .../panel/panel-simple-lvds-dual-ports.yaml   | 20 +----
-> >>>>>>>  3 files changed, 78 insertions(+), 32 deletions(-)  create mode
-> >>>>>>> 100644
-> >>>>>>> Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
-> >>>>>>>
-> >>>>>>> diff --git
-> >>>>>>> a/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
-> >>>>>>> b/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
-> >>>>>>> new file mode 100644
-> >>>>>>> index 000000000000..5f7a30640404
-> >>>>>>> --- /dev/null
-> >>>>>>> +++ b/Documentation/devicetree/bindings/display/lvds-dual-ports.ya
-> >>>>>>> +++ ml
-> >>>>>>> @@ -0,0 +1,76 @@
-> >>>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML
-> >>>>>>> +1.2
-> >>>>>>> +---
-> >>>>>>> +$id: http://devicetree.org/schemas/display/lvds-dual-ports.yaml#
-> >>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>>>>>> +
-> >>>>>>> +title: Dual-link LVDS Display Common Properties
-> >>>>>>> +
-> >>>>>>> +maintainers:
-> >>>>>>> +  - Liu Ying <victor.liu@nxp.com>
-> >>>>>>> +
-> >>>>>>> +description: |
-> >>>>>>> +  Common properties for LVDS displays with dual LVDS links.
-> >>>>>>> +Extend LVDS display
-> >>>>>>> +  common properties defined in lvds.yaml.
-> >>>>>>> +
-> >>>>>>> +  Dual-link LVDS displays receive odd pixels and even pixels
-> >>>>>>> + separately from  the dual LVDS links. One link receives odd
-> >>>>>>> + pixels and the other receives  even pixels. Some of those
-> >>>>>>> + displays may also use only one LVDS link to  receive all pixels, being odd and even agnostic.
-> >>>>>>> +
-> >>>>>>> +allOf:
-> >>>>>>> +  - $ref: lvds.yaml#
-> >>>>>>> +
-> >>>>>>> +properties:
-> >>>>>>> +  ports:
-> >>>>>>> +    $ref: /schemas/graph.yaml#/properties/ports
-> >>>>>>> +
-> >>>>>>> +    properties:
-> >>>>>>> +      port@0:
-> >>>>>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> >>>>>>> +        unevaluatedProperties: false
-> >>>>>>> +        description: the first LVDS input link
-> >>>>>>> +
-> >>>>>>> +        properties:
-> >>>>>>> +          dual-lvds-odd-pixels:
-> >>>>>>> +            type: boolean
-> >>>>>>> +            description: the first LVDS input link for odd pixels
-> >>>>>>> +
-> >>>>>>> +          dual-lvds-even-pixels:
-> >>>>>>> +            type: boolean
-> >>>>>>> +            description: the first LVDS input link for even
-> >>>>>>> + pixels
-> >>>>>>> +
-> >>>>>>> +        oneOf:
-> >>>>>>> +          - required: [dual-lvds-odd-pixels]
-> >>>>>>> +          - required: [dual-lvds-even-pixels]
-> >>>>>>> +          - properties:
-> >>>>>>> +              dual-lvds-odd-pixels: false
-> >>>>>>> +              dual-lvds-even-pixels: false
-> >>>>>>> +
-> >>>>>>> +      port@1:
-> >>>>>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> >>>>>>> +        unevaluatedProperties: false
-> >>>>>>> +        description: the second LVDS input link
-> >>>>>>> +
-> >>>>>>> +        properties:
-> >>>>>>> +          dual-lvds-odd-pixels:
-> >>>>>>> +            type: boolean
-> >>>>>>> +            description: the second LVDS input link for odd
-> >>>>>>> + pixels
-> >>>>>>> +
-> >>>>>>> +          dual-lvds-even-pixels:
-> >>>>>>> +            type: boolean
-> >>>>>>> +            description: the second LVDS input link for even
-> >>>>>>> + pixels
-> >>>>>>> +
-> >>>>>>> +        oneOf:
-> >>>>>>> +          - required: [dual-lvds-odd-pixels]
-> >>>>>>> +          - required: [dual-lvds-even-pixels]
-> >>>>>>> +          - properties:
-> >>>>>>> +              dual-lvds-odd-pixels: false
-> >>>>>>> +              dual-lvds-even-pixels: false
-> >>>>>>
-> >>>>>> Hmm, I should require port@0 or port@1.
-> >>>>>
-> >>>>> For dual LVDS, you need 3 ports as common use case
-> >>>>
-> >>>> For LVDS panels, only two ports for LVDS sink are needed.
-> >>>> For display bridges with LVDS sink, one additional output port is
-> >>>> needed.  However, I'm not sure if this output port should be
-> >>>> documented in this binding or not, because it doesn't look common enough considering the LVDS
-> >> panels.
-> >>>>
-> >>>>>
-> >>>>> 2 input ports and 1 outport and all are required properties.
-> >>>>
-> >>>> The output port cannot be required for LVDS panels at least.
-> >>>
-> >>> Ack.
-> >>>
-> >>>>
-> >>>> We need to require one or two input ports, because IT6263 may use one LVDS link or two.
-> >>>
-> >>> This patch is for generic dual link common cases and is not applicable for IT6263 single link case.
-> >>
-> >> Based on previous discussion(especially Dmitry's suggestion), this binding should cover display
-> >> bridges that can use one LVDS sink port or two LVDS sink ports, like IT6263.  To be clear, those
-> >> bridges may have two modes(supported by one
-> >> chip) - single LVDS sink link mode and dual LVDS sink link mode.  Those bridges are considered as
-> >> common dual-link LVDS displays.  That's why I was asked to extract the common
-> >> properties to this schema when adding IT6263 DT binding.
-> > 
-> > As per [1] and [2] both panels don’t support single LVDS link.
-> > IT6263 is bridge device that has single and dual link support.
-> > Not sure the single link case has to be taken care in ITE6263 binding itself,
-> > Leaving Dual link as it is??
-> 
-> There are a couple of bridges supporting dual-link LVDS like
-> IT6263, see lontium,lt9211.yaml and thine,thc63lvd1024.yaml.
-> So, it looks fine for this binding to cover those bridges,
-> as those LVDS links are sort of common stuff.
+Hi,
 
-Okay for that to be a follow-up patch.
+Dependencies
+============
+Depends on: https://lore.kernel.org/all/20241021232114.2636083-1-quic_molvera@quicinc.com/
 
-This looks fine to me with the required addition.
+Bindings for these
+==================
+All DTS added here have corresponding bindings, on the list:
+https://lore.kernel.org/all/20241022064238.22941-1-krzysztof.kozlowski@linaro.org/
+https://lore.kernel.org/all/20241101170309.382782-1-krzysztof.kozlowski@linaro.org/
 
-Rob
+Applied bindings:
+https://lore.kernel.org/all/20241022064214.22868-1-krzysztof.kozlowski@linaro.org/
+https://lore.kernel.org/all/20241022064155.22800-1-krzysztof.kozlowski@linaro.org/
+https://lore.kernel.org/all/20241022064245.22983-1-krzysztof.kozlowski@linaro.org/
+
+Description
+===========
+Add necessary SoC components for sound on SM8750: ADSP and relates
+blocks, LPASS pin controller and macro codecs.
+
+This is an early release, as I don't have sound yet fully ready, but
+speakers and DMICs work with these patches on my WIP branch.
+
+Best regards,
+Krzysztof
+
+---
+Krzysztof Kozlowski (4):
+      arm64: dts: qcom: sm8750: Add IPCC, SMP2P, AOSS and ADSP
+      arm64: dts: qcom: sm8750: Add LPASS macro codecs and pinctrl
+      arm64: dts: qcom: sm8750-mtp: Enable ADSP
+      arm64: dts: qcom: sm8750-qrd: Enable ADSP
+
+ arch/arm64/boot/dts/qcom/sm8750-mtp.dts |   7 +
+ arch/arm64/boot/dts/qcom/sm8750-qrd.dts |   7 +
+ arch/arm64/boot/dts/qcom/sm8750.dtsi    | 342 ++++++++++++++++++++++++++++++++
+ 3 files changed, 356 insertions(+)
+---
+base-commit: 79a3183ceb8e6f3607f138733786b5022dc2001e
+change-id: 20241022-sm8750-audio-d3e7fb676716
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
