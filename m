@@ -1,176 +1,155 @@
-Return-Path: <linux-kernel+bounces-392475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A7B9B94A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:43:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFFE9B94A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:43:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411B6282AE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805182829C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1F71C729B;
-	Fri,  1 Nov 2024 15:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1D81C729B;
+	Fri,  1 Nov 2024 15:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="MOaSnPjw"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Eohk9tsF"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A5425634;
-	Fri,  1 Nov 2024 15:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B073325634
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 15:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475775; cv=none; b=Lsfh/2QImPSk0qzDs03GkFT+gb3loCMaKEC9Pwnu7a6zDqBxO7DrDMe1ekaPQZSLzZbseIfwVhJOYiguW0GLlm+b/JW0h6tjYfykzyIkDCSmvyBnsqzKzx8YeHRsNttsQWVLvSmrk82GX0/kWeKS8D1Po10+1Xphdlb6sIXFGzk=
+	t=1730475787; cv=none; b=Laq4lyVjgzKsrXT4LT0OYqkeXCO9gbfgIG+EU+YqM/YEpOcirhTHT40uEO9Wr46r+EzRoNHpsg4iS5mynpL5YoA8PuLa+VZStF4KgIYaCYaabDkVAeu8iTDJf6XPdbui3OXLzFtML57FPqJiOUegZjwqlsCD19Wy+JmI7rQUwZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475775; c=relaxed/simple;
-	bh=e2RIMkxPzI4fgD86ODFquo5MfMVtY6+e/BHyT0tUnVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=abkhtR/vmi/BLW0+J1pXsmZGsGEF6u1gyPjFW7NlcgXWTulT989CgSjIqBiY5PD6uI3ntgQ++QfBeqIxvYl8OEuaZDLoj2p1eePd1HthVJe4rRteB3z9mKNCebNtnRu6DpOg0Ul3EWatY4WPru34pqs9ECTDXi5Yjo3tshGpnws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=MOaSnPjw; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 4E7BB120019;
-	Fri,  1 Nov 2024 18:42:29 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 4E7BB120019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1730475749;
-	bh=++GLuDudYgupqyL0+wip7nEuzoF4sv5Ujk/jbnUCDIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=MOaSnPjw8ycOcScy5hWFOiTbjmNq9d6VuCaKVjCmtYgWaT3saY1A5dp7U1cAgzPd2
-	 KKw0DTsT1aW4NcQOeZ7nPf8HyasRyA0SOH4L35NVyH5v1EK7z33nv4uSn6JAYS+vYx
-	 M1knP/XFeZteLarhljWFP2BUb/SJwCd+Wa6s8uMfRjc/JALgOtQlAQljpjJ5mbSD7i
-	 9aAXRaR+vF5LUShd8wbygbVVRVTQIU+coQtg0lOS3x+0SGHog77WselrzbnGAVYSIq
-	 RX22R2Qo/9zZgH120d1KTfDZcUjou+Pd/AkaYD1gEWeCZuyk+TNqGHojweMwX2cimK
-	 RIHcB4z9YGMCQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri,  1 Nov 2024 18:42:29 +0300 (MSK)
-Message-ID: <e37f23e6-f471-4061-b346-4b082f37060d@salutedevices.com>
-Date: Fri, 1 Nov 2024 18:42:28 +0300
+	s=arc-20240116; t=1730475787; c=relaxed/simple;
+	bh=4gZdD+3++gol8nGmxN7/4JFnTNURyznM1zpTtJDSSM0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IFwcTF6KTqmR9MW+eKvX+OCNlPIUF8W0zpjca1ZBGhjbeEauhOd4pj6tGtPo2kEIHKlGtHNiird0mxWfWaWbO1V6f5+opIKn6i1FMf5sakAsAE2Pu1uOxNGCwFg6o4bAstJb6K4JkIAFyCmlgIg2d9frhfn1B+TFQ6V7UM+XoF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Eohk9tsF; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e6c754bdso1998433e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 08:43:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730475782; x=1731080582; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sJwxENcc3mC3+hRr6uLgVea6nCh5dJpo3ohINRfZN3Y=;
+        b=Eohk9tsFqGkG8RF3lXUhfYIdRf7B+OURg2ZZHzFNmO+mpGI9NxFHzD3y7q0nIwDQMl
+         nb+6uIeoEc02VzAoXm9e1xkYVR2llEbqCDJZnhKk/u9D1cb97Sb6ZdyCaKyfyHlEkmGa
+         ifHjl963pHEi/bjF5cklacyBj2z0i7UF0ZLZE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730475782; x=1731080582;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sJwxENcc3mC3+hRr6uLgVea6nCh5dJpo3ohINRfZN3Y=;
+        b=usJgUXtnEIxQKcofci/54jzTWdSDULhCPsbphLe3VB9gL+QKUGVhLItrPhbnEd/ON8
+         GQj+/mxCcu2sTODPy0U87S0VKj7H0hS/jlDg9ERqc3ryZ6BknJ3GnTcZY5gucUFsEIVc
+         RQxtKaFV32+oD7RkjovH39Gj3d+GrRXQQhOopti9aOkaSob6fn/mVH81b+JHQ7U9cVbO
+         rcfwK+LlAEZClXhxckNArzn3W6BPWKz2BNRkcKo+qC78HFKvK2XcdUXo+9IT+g/DWGUZ
+         OZwL4T4AeTkCiddx+FxMTVlbPWzGHmWaNMrCgNA8+9N/nnojrtSh39P3eevyf0O2W1xc
+         UlTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ90uow9EP9GjInqybmPXOPOKs7CrRRPhhMDMTcl2NjZrT9zcHNiM0H8MeQQHlvv2h21/EuNDqJahxJf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzoQKilHz0mV3M5KlzB8Sk6CGsSJtzHvKKHTlxAwJo/2zUK3jl
+	2u1Z4SSZO2q1bBnzn8sJm4Vw92AUnRx28okmbmW/yRujRZ7SBWKjFhMvEUWTNIeremmpz44VhmW
+	RpM+2
+X-Google-Smtp-Source: AGHT+IGc8k4xNkSG2u84wUkkrwFI2A8WS6kQwDEJDGduqTaEi5jBmiUKQHozbxPSzieByDD6RyYI2g==
+X-Received: by 2002:a05:6512:2811:b0:539:f6c4:c29d with SMTP id 2adb3069b0e04-53c79ea4f23mr3955136e87.54.1730475781819;
+        Fri, 01 Nov 2024 08:43:01 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bde0c34sm592904e87.269.2024.11.01.08.43.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 08:43:01 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so2887190e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 08:43:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWTifTCoJULHlIiJwxp42AhmlopuhRZpRBaW+GCWDfCHoDEBZkldPURoPRugaUCKfHrKKFnt23MSmtLRfM=@vger.kernel.org
+X-Received: by 2002:a05:6512:3c96:b0:539:f699:bb2a with SMTP id
+ 2adb3069b0e04-53c79e2ff0amr3812872e87.20.1730475780269; Fri, 01 Nov 2024
+ 08:43:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] leds: pwm: Add optional DT property
- default-brightness
-To: Lee Jones <lee@kernel.org>
-CC: <pavel@ucw.cz>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <linux-leds@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kernel@salutedevices.com>
-References: <20241015151410.2158102-1-gnstark@salutedevices.com>
- <20241015151410.2158102-3-gnstark@salutedevices.com>
- <20241031143250.GH10824@google.com>
-Content-Language: en-US
-From: George Stark <gnstark@salutedevices.com>
-In-Reply-To: <20241031143250.GH10824@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188909 [Nov 01 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/01 12:35:00 #26800049
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20241031204041.GA27585@lichtman.org>
+In-Reply-To: <20241031204041.GA27585@lichtman.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 1 Nov 2024 08:42:43 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XY-mH2FxnnMsA99jQ2ZCcd=psTn+VJ4R9h9htK-f2ihw@mail.gmail.com>
+Message-ID: <CAD=FV=XY-mH2FxnnMsA99jQ2ZCcd=psTn+VJ4R9h9htK-f2ihw@mail.gmail.com>
+Subject: Re: [PATCH] kdb: Fix incomplete usage help of md, mds and btc commands
+To: Nir Lichtman <nir@lichtman.org>
+Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Lee
+Hi,
 
-Thanks for the review!
+On Thu, Oct 31, 2024 at 1:40=E2=80=AFPM Nir Lichtman <nir@lichtman.org> wro=
+te:
+>
+> Fix kdb usage help to document some currently missing CLI commands option=
+s
+>
+> Signed-off-by: Nir Lichtman <nir@lichtman.org>
+> ---
+>  kernel/debug/kdb/kdb_main.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-On 10/31/24 17:32, Lee Jones wrote:
-> On Tue, 15 Oct 2024, George Stark wrote:
-> 
->> When probing if default LED state is on then default brightness will be
->> applied instead of max brightness.
->>
->> Signed-off-by: George Stark <gnstark@salutedevices.com>
->> ---
->>   drivers/leds/leds-pwm.c | 13 ++++++++++---
->>   1 file changed, 10 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
->> index 7961dca0db2f..514fc8ca3e80 100644
->> --- a/drivers/leds/leds-pwm.c
->> +++ b/drivers/leds/leds-pwm.c
->> @@ -65,7 +65,8 @@ static int led_pwm_set(struct led_classdev *led_cdev,
->>   
->>   __attribute__((nonnull))
->>   static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
->> -		       struct led_pwm *led, struct fwnode_handle *fwnode)
->> +		       struct led_pwm *led, struct fwnode_handle *fwnode,
->> +		       unsigned int default_brightness)
->>   {
->>   	struct led_pwm_data *led_data = &priv->leds[priv->num_leds];
->>   	struct led_init_data init_data = { .fwnode = fwnode };
->> @@ -104,7 +105,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
->>   	/* set brightness */
->>   	switch (led->default_state) {
->>   	case LEDS_DEFSTATE_ON:
->> -		led_data->cdev.brightness = led->max_brightness;
->> +		led_data->cdev.brightness = default_brightness;
->>   		break;
->>   	case LEDS_DEFSTATE_KEEP:
->>   		{
->> @@ -141,6 +142,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
->>   static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
->>   {
->>   	struct led_pwm led;
->> +	unsigned int default_brightness;
->>   	int ret;
->>   
->>   	device_for_each_child_node_scoped(dev, fwnode) {
->> @@ -160,7 +162,12 @@ static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
->>   
->>   		led.default_state = led_init_default_state_get(fwnode);
->>   
->> -		ret = led_pwm_add(dev, priv, &led, fwnode);
->> +		ret = fwnode_property_read_u32(fwnode, "default-brightness",
->> +					       &default_brightness);
->> +		if (ret < 0 || default_brightness > led.max_brightness)
->> +			default_brightness = led.max_brightness;
->> +
->> +		ret = led_pwm_add(dev, priv, &led, fwnode, default_brightness);
-> 
-> This creates a lot more hopping around than is necessary.
-> 
-> Since led_pwm_add() already has access to the fwnode, why not look up
-> the property in there instead, thus massively simplifying things.
+Some of this is a bit similar to what I tried to do at :
 
-I looked up the new property here to be near to
-led_init_default_state_get (both props are from the same group) and
-led_pwm_add is big enough already. And you're absolutely right that the
-patch can be optimized. Please take a look at the v2
+https://lore.kernel.org/r/20240617173426.2.I5621f286f5131c84ac71a212508ba14=
+67ac443f2@changeid
 
-> 
-> 
->>   		if (ret)
->>   			return ret;
->>   	}
->> -- 
->> 2.25.1
->>
-> 
+...but that series kinda fell on the floor because my end goal was to
+try to get it so I could access IO memory and Daniel pointed out that
+what I was doing was unsafe. The earlier patches in the series are
+overall good cleanups, though. If you're interested feel free to
+iterate on any of them.
 
--- 
-Best regards
-George
+
+> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> index f5f7d7fb5936..0bdffb17b163 100644
+> --- a/kernel/debug/kdb/kdb_main.c
+> +++ b/kernel/debug/kdb/kdb_main.c
+> @@ -2667,7 +2667,7 @@ EXPORT_SYMBOL_GPL(kdb_unregister);
+>  static kdbtab_t maintab[] =3D {
+>         {       .name =3D "md",
+>                 .func =3D kdb_md,
+> -               .usage =3D "<vaddr>",
+> +               .usage =3D "<vaddr> [lines] [radix]",
+
+In my patch, I said:
+
+.usage =3D "<vaddr> [<lines> [<radix>]]",
+
+...so I had the <> characters and nested the []. I think that the <>
+is supposed to signify that you're not supposed to write the text
+"lines" but that it's a variable.
+
+
+>                 .help =3D "Display Memory Contents, also mdWcN, e.g. md8c=
+1",
+>                 .minlen =3D 1,
+>                 .flags =3D KDB_ENABLE_MEM_READ | KDB_REPEAT_NO_ARGS,
+> @@ -2686,7 +2686,7 @@ static kdbtab_t maintab[] =3D {
+>         },
+>         {       .name =3D "mds",
+>                 .func =3D kdb_md,
+> -               .usage =3D "<vaddr>",
+> +               .usage =3D "<vaddr> [lines] [radix]",
+
+From my prior research, "mds" doesn't support <radix>. However, some
+of the other "md" commands that you didn't modify do support
+lines/radix. Let me know if I got that wrong.
+
+
+-Doug
 
