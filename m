@@ -1,137 +1,140 @@
-Return-Path: <linux-kernel+bounces-392484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE989B94C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:49:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C389B94C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:52:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3B21F22378
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:49:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C7A1C20D39
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593281C9EB8;
-	Fri,  1 Nov 2024 15:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFEF1C830B;
+	Fri,  1 Nov 2024 15:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Puwmproe"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Oc2g9E3M"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689CF145A17;
-	Fri,  1 Nov 2024 15:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C278E145A17;
+	Fri,  1 Nov 2024 15:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730476137; cv=none; b=Gd5sjkIZJl9q1rBzM9jDTPkkcQwjjQj/Ss2IcyX9YRaVSagWNK/vNiS3aOWqQ5lEA6PUhiRv3WHIuCZ8QwhAdsJDhtBQWBYIClcCArJ2iDR1Fakwvni856HbjVDpwiinOaSAzW2TIh7L/cD+8EsVM4jn/AGQo3sssLZjoY4t3X0=
+	t=1730476350; cv=none; b=iDOE/rBTD6LOIIj8ParX3uBoDD5THL1omPdMq7CqPyhVO2iIrzIuKsDxIo80RLTmNmqdBBtGHMANn3Ko+sF3daODXExEJAituDmCUmexBNHPgZcFOYcOTsP6hzpDHpEY2N6H1bf/4BalLoTJPmRKloJF5w9yANqJsbNA+4fOxtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730476137; c=relaxed/simple;
-	bh=owxthw8apBkSEWYqs4yWEGhY3z/N/jKewtQA8W3IS6I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CAp5WwA1F9QWCJrr2AK31/gVSZH1F8TbSdpuVTZhROQ0/BsmtIHvxclzyx3rEVjStlFKnOPaQkXk5fXZ5iPgBWT27Zq3MrnP3UMYIgpj6pO/Mz/7AgZSe0bRwOcL/qiRiJzuYXwDN2M9cQAVXyycDiiiyvKSWWnd8z+j6jlB9qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Puwmproe; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id ADF0912001E;
-	Fri,  1 Nov 2024 18:48:52 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru ADF0912001E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1730476132;
-	bh=Gzt6Advx4UA3v5SWZS0PBIz63eWIsrEtoOW6jR3P4MQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=PuwmproesWqVjgnD5FEo83cKFfO6XHX+GIXQKFKGXpLdnhHoLMMZBc4yY6FaweMeA
-	 GDo2LS18MjrzFP996lf+iOdmyR7KmAZsERyUQCh9z2K4+8uhsDXiqzwFYQ2opTBTNJ
-	 HZhedhi62LduB1rSq2HrqXwaK1OLtFSqPIh+H6WID4BBqoEBBVOeaW/7TC+YJuUJQh
-	 hRhK001MOGWatH+R96lNuiXsOFK2MPtYHHaZcIqPKRcogKXyx/GSDfb4Zxz4O46C0p
-	 GOY3PDa1EgzqSSnEO0T22H4E9/cFgpsde8nli/RBNqP7wYlkzH1LWFZHeqa8CxINbw
-	 nzdlkeTxTVjQg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	s=arc-20240116; t=1730476350; c=relaxed/simple;
+	bh=y4hE1i+zJgISRor76aWZTr4ShGcYLYZiuG/FdfSlpAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f5e5Nw5bugA02xx8gnA6oISnpgMOiSctkHxz7qkLiDZVINCs0g+DnxhH53Bq4g+JpwbByE5oGXvgGJzjtL8wRH4yzTwvsTF0hzXjqE7JBv2MXIYuerSmquq0PVwOROqA8CwVs7UYPMOtE1dPUzzmMJ7WRDgM3AgUxPw63uEII+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Oc2g9E3M; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 15D6140E0184;
+	Fri,  1 Nov 2024 15:52:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id QRbgms-A4_gD; Fri,  1 Nov 2024 15:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730476339; bh=ot+cpDN3KZgTcegLKYz3Z1iXBLYw+MQdN5T6/AjXwXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Oc2g9E3M8kggscgtwga/u7mKVKyp3j5DXTEeBiGdybq88oRgLh47GNEAW1umFyZ/y
+	 pkdPEEQHR+4RrWcmE3S/+YND4dl43ugQBWaT0TjwGVV7GXzwGV8cQSrnOvqL65BqrJ
+	 IuVY850Yi73qoUJjiIPTALT+/hcwD3RCc8D7JBouOSMLBWhpuKk3EdRA/ucH+xCj1L
+	 ZgMsNyzXGRMgd95pmNQ5kNJvnSZiGx3o7lO+aIyfU9dp0OqbGGX5gh5UuCTCeaNir1
+	 HAt04kbIySSpPTp+QglDlfiCHjx7/1s+MOX4Lfj3t806S7zKRAb0tgF3G3bN5OfmSx
+	 96T227O2ky0AAENgtZ5pfJYu/zUZvnwj3rjlmVJF+gw2EW9n0CuBtD41sqV4CTkcud
+	 J/4L9nTUFFOrvRn9ww9kqsPrROnlEtoF707eWz1RXoWfwzuhSwRUqS4uDT5+G2HC8n
+	 RVA8l3+cvFr2R/TZC6d6jMiz29oH/fu5Q3IEWK1BrQG3tPuUeMpdjbqfJGRPRUCrj4
+	 0BjV8v2Z8ja2UOCmGW77iqmz/nGsP8XImtoowihAbNwUmpXXcg5sS9FdmX8jkKLxIM
+	 yC4SiP/C+YLk/4ljVjcdrpgRoX0CgxKX6h/e9eLdydJBU6meg1IEPG/QGzvnSxxCpc
+	 7HrPxIP8Lx0/0aDS1wtv5ld4=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri,  1 Nov 2024 18:48:52 +0300 (MSK)
-From: George Stark <gnstark@salutedevices.com>
-To: <pavel@ucw.cz>, <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>
-CC: <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>, George Stark
-	<gnstark@salutedevices.com>
-Subject: [PATCH v2 2/2] leds: pwm: Add optional DT property default-brightness
-Date: Fri, 1 Nov 2024 18:48:44 +0300
-Message-ID: <20241101154844.1175860-3-gnstark@salutedevices.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241101154844.1175860-1-gnstark@salutedevices.com>
-References: <20241101154844.1175860-1-gnstark@salutedevices.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 53D4140E015F;
+	Fri,  1 Nov 2024 15:51:53 +0000 (UTC)
+Date: Fri, 1 Nov 2024 16:51:47 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Gregory Price <gourry@gourry.net>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
+	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
+	dave.jiang@intel.com, ira.weiny@intel.com,
+	alison.schofield@intel.com, dave.hansen@linux.intel.com,
+	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	mingo@redhat.com, hpa@zytor.com, rafael@kernel.org, lenb@kernel.org,
+	david@redhat.com, osalvador@suse.de, gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org, rppt@kernel.org
+Subject: Re: [PATCH v5 2/3] x86: probe memory block size advisement value
+ during mm init
+Message-ID: <20241101155147.GBZyT5E190IxnQMzaP@fat_crate.local>
+References: <20241101134706.1185-1-gourry@gourry.net>
+ <20241101134706.1185-3-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188910 [Nov 01 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/01 12:35:00 #26800049
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241101134706.1185-3-gourry@gourry.net>
 
-When probing if default LED state is on then default brightness will be
-applied instead of max brightness.
+On Fri, Nov 01, 2024 at 09:47:04AM -0400, Gregory Price wrote:
+> Systems with hotplug may provide an advisement value on what the
+> memblock size should be.  Probe this value when the rest of the
+> configuration values are considered.
+> 
+> The new heuristic is as follows
+> 
+> 1) set_memory_block_size_order value if already set (cmdline param)
+> 2) minimum block size if memory is less than large block limit
+> 3) if no hotplug advice: Max block size if system is bare-metal,
+>    otherwise use end of memory alignment.
+> 4) if hotplug advice: lesser of advice and end of memory alignment.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> ---
+>  arch/x86/mm/init_64.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index ff253648706f..f1a495e998ce 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -1452,16 +1452,21 @@ static unsigned long probe_memory_block_size(void)
+>  	}
+>  
+>  	/*
+> -	 * Use max block size to minimize overhead on bare metal, where
+> -	 * alignment for memory hotplug isn't a concern.
+> +	 * When hotplug alignment is not a concern, maximize blocksize
+> +	 * to minimize overhead. Otherwise, align to the lesser of advice
+> +	 * alignment and end of memory alignment.
+>  	 */
+> -	if (!boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
+> +	bz = memory_block_advised_max_size();
+> +	if (!bz) {
+>  		bz = MAX_BLOCK_SIZE;
+> -		goto done;
+> +		if (!boot_cpu_has(X86_FEATURE_HYPERVISOR))
 
-Signed-off-by: George Stark <gnstark@salutedevices.com>
----
- drivers/leds/leds-pwm.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+s/boot_cpu_has/cpu_feature_enabled/
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 7961dca0db2f..7636ee178c39 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -63,6 +63,20 @@ static int led_pwm_set(struct led_classdev *led_cdev,
- 	return pwm_apply_might_sleep(led_dat->pwm, &led_dat->pwmstate);
- }
- 
-+static int led_pwm_default_brightness_get(struct fwnode_handle *fwnode,
-+					  int max_brightness)
-+{
-+	unsigned int default_brightness;
-+	int ret;
-+
-+	ret = fwnode_property_read_u32(fwnode, "default-brightness",
-+				       &default_brightness);
-+	if (ret < 0 || default_brightness > max_brightness)
-+		default_brightness = max_brightness;
-+
-+	return default_brightness;
-+}
-+
- __attribute__((nonnull))
- static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		       struct led_pwm *led, struct fwnode_handle *fwnode)
-@@ -104,7 +118,8 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 	/* set brightness */
- 	switch (led->default_state) {
- 	case LEDS_DEFSTATE_ON:
--		led_data->cdev.brightness = led->max_brightness;
-+		led_data->cdev.brightness =
-+			led_pwm_default_brightness_get(fwnode, led->max_brightness);
- 		break;
- 	case LEDS_DEFSTATE_KEEP:
- 		{
+while at it.
+
 -- 
-2.25.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
