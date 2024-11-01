@@ -1,285 +1,229 @@
-Return-Path: <linux-kernel+bounces-391499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426489B87E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:51:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386389B87EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88D2BB22081
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95BC1282214
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0CD13CF8E;
-	Fri,  1 Nov 2024 00:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D578013E028;
+	Fri,  1 Nov 2024 00:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="KUpcA0EH"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Na7BxDf8"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE721369AE
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4704D13AA26
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730422175; cv=none; b=HFRa8JLusoHVebylJpJlr2Ph9PeEW0DrxcsK/TAPzOl16WiUSgyqq7iKfGsIp99qHpSf1jAubu3DM9jpS+raG1wzPLrUEqPnsbl20ADetxO+1dQ3tyYFlntThtB+dWJCm/QbvCDa69bluUjWj2TaReoiJH0e5kIV8Ml9m0Ca644=
+	t=1730422177; cv=none; b=iag+WtXeF7F3fiC1Ju0NtA7X3k+pQ/YmGebruqPhfIO0wdQzQPBCa00ru3ed6vLAVYqu1IGJ5KSIwK/llPYRU/pHwwJfWFr3pxd4EkKronwddbM9XBiSUrMoZfEreEHmi3Gd6X2NNXZ6z9LGH8ViN+60kJCEQnmu3X8orrkxe10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730422175; c=relaxed/simple;
-	bh=JIqIEaw/Xkb4IhEOecWCp/j56eekf1dIpHWraAxZfLU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rDZ9JCXG+IGxUyhejE1lP5Vi46XlMA3yt1vA5iQN6IK3R8hHF1CXm1FisZ3Rni8D1zMXKPNokUg8CvfOO5s2mOB6JFVbFwuWOQGsnhVji5OV2k+JXlWeZkSRIYhXDskE9JVNyq/JJW9Mo2kNYiKPOIwQgyEsfeyFlRkGS3QlOt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=KUpcA0EH; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e52582cf8so1232448b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:49:27 -0700 (PDT)
+	s=arc-20240116; t=1730422177; c=relaxed/simple;
+	bh=hdHwgWkurGfGANj3VzGrzw/oKuEtZXk55vYm8sCzCGU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PbWxJSFo2zNXk6k6jxSj3e8kVfhekoGOfP4ZDeHcimM7PXJGloB9bN1UZdWKZeAieAXGLTBNrIN/hmFqRG4KMfFz/FT+UooUrIURMMFONVMGlIAsLLsnXbmRegnBVJAB3SWO1q+Zf2xAb4LKzSsU37pRMZ87z35aWZkalONY1p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Na7BxDf8; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so2585879e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730422167; x=1731026967; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eTHWnISoB9bhQ055WvkbHwZ+dmeJ9HCmVk36PR/yRAs=;
-        b=KUpcA0EH5KESLUq6Zved1VHltKSZzJoyLEFDaCVF4wniN6HN69TRFBkuNgbsQ1vSue
-         fRcijUitgqKc6Og5lz/+qNMfA9MlW39MrksklNL4/H+6cYPb+m5Me0sMGkrdEJRGFV1O
-         BFe9GJWW6tvgGm9CkCqIiOz8RqxBm1F8XWDn0=
+        d=linaro.org; s=google; t=1730422168; x=1731026968; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DzcXQ2VUHoxojflFhJ4zyH+DlyMbFhuktbFeh0uQyFg=;
+        b=Na7BxDf87+MKRugCw8oUkNfY1WvAkDv+LGrkxraUJ0pU9Mr18BjhQmncuPZyBBv8gY
+         kB6us60fR81RDMGgq3vucVogzKDrANbG1CBxI6X9clOfGUNdAbMWHZJPeqriLU+iyTVZ
+         vvc1sljmvkRWWjl7nLSFSL1tEGZPsB8BmK1hJU3DjzGgDJCpsCQPfSNjSRzl//ver7z0
+         UQ9lvSiTtl29DqSK3ISO5u1l2a8hboml/p5R3EuqOlmTfpmiTNa5978qjJCVcVHUIRwT
+         dYatL1HP1sPcN7IH2EWWZtO/S4XRuUstVNrZEXMPm+yC0ERMzoz67fuN8/pr2gWHVsrd
+         sknQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730422167; x=1731026967;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eTHWnISoB9bhQ055WvkbHwZ+dmeJ9HCmVk36PR/yRAs=;
-        b=E1M452a/54euICJ4pLhiZOPnkCfg6BgMtC/Xxas4AWZ6oex+93abZRTnGwnuuesO/w
-         FPpCziUgAA2RD1QvBiAtbbgToNqmCCJQtwiCsTtGz6ThBa/3aUu/zU+lfGMp6sTTKY1h
-         97e8Z1jma1L4AZ3sMW4Xajbdn9KXXDBRHCzjlHZs0doPJAEjIYKrJq/vvldn5fSywuvC
-         WoNdc1vreT/yVa0aCy0BvfIecs/PAAJsVPA2pUxH3v/uQLqj3w8wYDzY9bme7YaaNCn0
-         mEI2oxgCfkQxGJL/ywGjpGPApv6ayN7f3XtJQPgVCYqKbYoiVnMEmKHh0pfMvqYvyuL3
-         +vZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3gyhqEIl+Bk7e3UL2kzFIfL0fq5FuTaIST8T6quQhUjR7v54+0oQLiSzE5AvSOEwPiyl5fPq+A1uvCAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYflZ5GXGn13TXgWfpkEPe64ixzwPBcgI/GgO8C6cLI22092vR
-	BWthtQYl6ngHJ4f92m9B5/QtcI6bEL24BEZPMooSKJ0tyocGAjIyBrUIVgsFz1k=
-X-Google-Smtp-Source: AGHT+IEoY1KMHd8KZb8qMlUl9iT2A/57KkBUfF8xPOGHBaPR4o7uPXqExc76fhPtwVsPduFrWv4bRQ==
-X-Received: by 2002:a05:6a21:670f:b0:1d9:266e:8216 with SMTP id adf61e73a8af0-1dba53bf472mr1794797637.22.1730422166902;
-        Thu, 31 Oct 2024 17:49:26 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee45a12c27sm1585365a12.93.2024.10.31.17.49.25
+        d=1e100.net; s=20230601; t=1730422168; x=1731026968;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DzcXQ2VUHoxojflFhJ4zyH+DlyMbFhuktbFeh0uQyFg=;
+        b=voR2GxI/rC4XHn8OxWgp6OZXkw0JCUN1FF+a0lBFnZ42shcN4oqzQczCnn/o27uaQM
+         gvYLX2LRPshY7MI3gSqmYqrr1tYio+1aATRxBn/jiTWNvS+Tyw127vH01l+9pWkw5Ftq
+         BwhhHyTn5h0IGQWw6K7XQMu9b3bWp+vk3anBs0+oD9kdXpuCCWB1kh5GYYmTLYMO5Se5
+         OUDHgvR3FK10gYAXOTs/6NAE60+2dy8qXOlCJB4ARaAW13DNjM2eMF7KasDe4aHfRWHX
+         SjX2Jw40cMiG3SAt6WTAofVzaqy5TQSvIUH4vHzZlTG34bcqlZ5uvnv6SDd3tIt2QAgr
+         pU9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWAd/8E4fGSueKXpKJH5GKUhtJUXb5PH66m7pZa1AD3Bj8yvIYi/2MY2MoGs7jtStI0IfU/St3/8UWUCNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwZldsMcqp3vkzv7isdUCTwB0QCtjv/Xsy9letzBtXFKLV6TT0
+	OL6Xgl5xRvANhMQoohRen9pVSZZurHaUmNnOEy6UNPz8uxPirpM8LIPgaUuchyzXLUFjo2B1KZR
+	E
+X-Google-Smtp-Source: AGHT+IHvNNizONYk2uGpFer8Bu7ZmCN6ksucX/gtNZZJGB7PZF+QaaBFEAOoF/V4ZycaNh/KywIXRg==
+X-Received: by 2002:a05:6512:3b82:b0:539:9767:903d with SMTP id 2adb3069b0e04-53d65e16e31mr1463216e87.60.1730422167912;
+        Thu, 31 Oct 2024 17:49:27 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc958c0sm374510e87.28.2024.10.31.17.49.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 31 Oct 2024 17:49:26 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: pabeni@redhat.com,
-	namangulati@google.com,
-	edumazet@google.com,
-	amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	sdf@fomichev.me,
-	peter@typeblog.net,
-	m2shafiei@uwaterloo.ca,
-	bjorn@rivosinc.com,
-	hch@infradead.org,
-	willy@infradead.org,
-	willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com,
-	kuba@kernel.org,
-	Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list),
-	bpf@vger.kernel.org (open list:BPF [MISC]:Keyword:(?:\b|_)bpf(?:\b|_))
-Subject: [PATCH net-next v3 7/7] docs: networking: Describe irq suspension
-Date: Fri,  1 Nov 2024 00:48:34 +0000
-Message-Id: <20241101004846.32532-8-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241101004846.32532-1-jdamato@fastly.com>
-References: <20241101004846.32532-1-jdamato@fastly.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 0/4] arm64: dts: qcom: add QAR2130P support
+Date: Fri, 01 Nov 2024 02:49:21 +0200
+Message-Id: <20241101-sar2130p-dt-v3-0-61597eaf0c37@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJIlJGcC/42TzW7cMAyEX2XhcxVIoi1KPvU9ih4kksoaXf/U2
+ jUSBPvu0W4OSdAU8ZEGvhl6xHlpiqyDlKY/vDSrbEMZ5qkO8OPQ0DFOj6IGrnNjtW2NtqhKXK0
+ BvSg+K+cZRMS7gNBUYlklD093tV+/3+ZV/l6q6Pnt47tmf/hXMXJZVCbIkbuWhaHfTPNxka+gc
+ 5GpKG1SFEYOtmv/R5kP1DCP40W1JOhAdyZr02/2W2qhQTFpsjZJ9Ch7nJbjc1GtdQiQvDYu7DG
+ 6lKS0BCKW7Ay7PUa0XHJNWzGm6IzNHBj3cKcTkar/5IxDxOrYb/AtNKb5SZmc0bKX1JHf4zRto
+ 4yqy75zHEJKCfdkMY6kMPsE1vsgYHaFzqRMPc6sfUycdj0UnWb6U+p6iTmkrFupWHfDUiyiqF7
+ McO4PEYIFLZRdqpeDufMBE7XYthGD1qgpJ8Hom1sBjkM5z+vzvV11hVsDvizSZpRWCIHBMRgC+
+ HkaprjOD/P6eBeqOb3DoD/DtsJVEVxLUdc2foKv1+sr7+lLxuUDAAA=
+X-Change-ID: 20241027-sar2130p-dt-68d3eee86973
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Krishna Kurapati <quic_kriskura@quicinc.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6346;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=hdHwgWkurGfGANj3VzGrzw/oKuEtZXk55vYm8sCzCGU=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnJCWTk+tdm6mXKrwtz2Jkc1+rZ88o1GHocjFeN
+ oFxcSuAj8OJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZyQlkwAKCRAU23LtvoBl
+ uER3D/4++1oXrDxF0kjqdwrpGqakaFOxyuIt+m9zPwsaBssiXKIL5+Oc8TIQDgKjNXIaGi/PVs9
+ p5s1KslrDgxV+3nTRO5cbD2InTnN2TtljLdYEyWz6nr9YrPT8XH/i0VDR8MgGTMmPPiFlqqJPam
+ cfAxlEwNpsDhw8+sEqJHRuVAyGtfCJ2xPTjncwrm6wTeiFMn2P0j3sE1bEjb8YwIcKXzMy3VsiD
+ e1fjOj7gJCyIbE4a+Tr+QIQYMrkGuLv8jhLkmoevuGhhFZ1GJbQbtMcAJ5nzBS5MwUn7/zAwM9U
+ br8BYWg5wnU7RR+fW6P3RMjfgb8ReGpu4Wd7CPTewN/geFyKEMcYfWsR4gmFiuS1YE913IvC1Dw
+ SjjYOoYtSmh7lFWZl0AwSG4hl/aby7k0aqigb3co2Dn45YjZ0Sw0QfXDuFkqhW/16DhioE2bYfv
+ EtsMZWPCqZGJgWNajr5dd2PgGuLWeSZr5QLRvtLKt03FmJ4B7DmbTB/gEcFoB8CgwSrkkl++9wW
+ ncFRWlwDgyxxxjCEKjPlmDxE4vnkhxo/gpcgWnZSCCDtppYXpbnKqQozJrUrgwb+ioCPEdpb/ZA
+ 7lIB86VeVyEdcA8ltJ/dCFq6xs2QA/GQqHhjnCfNFNWepRrbm7E/xdqd6nCJuMqL2O4oawUXXg1
+ wakD1Gvcx6xK6hg==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Describe irq suspension, the epoll ioctls, and the tradeoffs of using
-different gro_flush_timeout values.
+Add device tree bindings for the QAR2130P also known as Qualcomm
+Snapdragon AR2 Gen1 Smart Viewer Development Kit. The device boots,
+provides serial console, I2C / SPI interfaces, WiFi (requires external
+BDF) and BT (requires external firmware).
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
-Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
-Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Dependencies:
+    - https://lore.kernel.org/r/20241026-sar2130p-clocks-v4-0-37100d40fadc@linaro.org
+      (clocks bindings)
+    - https://lore.kernel.org/r/20241017-sar2130p-nvmem-v1-1-6cc32789afc6@linaro.org
+      (critical bugfix)
+
+Additional bindings and drivers required for the device to function (on
+top of linux-next):
+    - https://lore.kernel.org/r/20241027-sar2130p-adsp-v1-0-bd204e39d24e@linaro.org
+    - https://lore.kernel.org/r/20241027-sar2130p-tsens-v1-1-8dee27fc02ae@linaro.org
+    - https://lore.kernel.org/r/20241018-sar2130p-iommu-v2-1-64c361fceac8@linaro.org
+    - https://lore.kernel.org/r/20241017-sar2130p-pci-v1-1-5b95e63d9624@linaro.org
+    - https://lore.kernel.org/r/20241021-sar2130p-phys-v2-0-d883acf170f7@linaro.org
+    - https://lore.kernel.org/r/20241017-sar2130p-usb-v1-1-21e01264b70e@linaro.org
+    - https://lore.kernel.org/r/20241018-sar2130p-cpufreq-v1-1-822e00b9a663@linaro.org
+    - https://lore.kernel.org/r/20241026-sar2130p-llcc-v3-0-2a58fa1b4d12@linaro.org
+    - https://lore.kernel.org/r/20241017-sar2130p-mbox-v1-1-906aa78b1358@linaro.org
+    - https://lore.kernel.org/r/20241017-sar2130p-mmc-v1-1-c84da16a001e@linaro.org
+    - https://lore.kernel.org/r/20241017-sar2130p-pdc-v1-1-cf9ccd9c37da@linaro.org
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- v1 -> v2:
-   - Updated documentation to describe the per-NAPI configuration
-     parameters.
+Changes in v3:
+- Fixed the patterns in qcom-soc.yaml to prevent sa8775p from falling
+  into two different patter bins (Rob, Krzysztof)
+- Lowercased all labels (Konrad)
+- Dropped extra -region from reserved-memory nodes names (Konrad)
+- Dropped extra comments (Konrad)
+- Added extra empty lines before status property (Konrad)
+- Fixed linebreaks in PDC device definition (Konrad)
+- Fixed order of pinctrl properties in pon node (Konrad)
+- Fixed order of properties in the PMU node (Konrad)
+- Reordered properties in PTN3222 node (Konrad)
+- Added dma-coherent to the APPS SMMU device (Konrad)
+- Link to v2: https://lore.kernel.org/r/20241030-sar2130p-dt-v2-0-027364ca0e86@linaro.org
 
- Documentation/networking/napi.rst | 132 +++++++++++++++++++++++++++++-
- 1 file changed, 130 insertions(+), 2 deletions(-)
+Changes in v2:
+- Added sar2130p to qcom-soc.yaml (Krzysztof)
+- Provided the value for USB's hs_phy_irq (Krishna)
+- Fixed uart7 node name to be serial@.
+- Link to v1: https://lore.kernel.org/r/20241027-sar2130p-dt-v1-0-739d36d31c33@linaro.org
 
-diff --git a/Documentation/networking/napi.rst b/Documentation/networking/napi.rst
-index dfa5d549be9c..3b43477a52ce 100644
---- a/Documentation/networking/napi.rst
-+++ b/Documentation/networking/napi.rst
-@@ -192,6 +192,28 @@ is reused to control the delay of the timer, while
- ``napi_defer_hard_irqs`` controls the number of consecutive empty polls
- before NAPI gives up and goes back to using hardware IRQs.
- 
-+The above parameters can also be set on a per-NAPI basis using netlink via
-+netdev-genl. This can be done programmatically in a user application or by
-+using a script included in the kernel source tree: ``tools/net/ynl/cli.py``.
-+
-+For example, using the script:
-+
-+.. code-block:: bash
-+
-+  $ kernel-source/tools/net/ynl/cli.py \
-+            --spec Documentation/netlink/specs/netdev.yaml \
-+            --do napi-set \
-+            --json='{"id": 345,
-+                     "defer-hard-irqs": 111,
-+                     "gro-flush-timeout": 11111}'
-+
-+Similarly, the parameter ``irq-suspend-timeout`` can be set using netlink
-+via netdev-genl. There is no global sysfs parameter for this value.
-+
-+``irq_suspend_timeout`` is used to determine how long an application can
-+completely suspend IRQs. It is used in combination with SO_PREFER_BUSY_POLL,
-+which can be set on a per-epoll context basis with ``EPIOCSPARAMS`` ioctl.
-+
- .. _poll:
- 
- Busy polling
-@@ -207,6 +229,46 @@ selected sockets or using the global ``net.core.busy_poll`` and
- ``net.core.busy_read`` sysctls. An io_uring API for NAPI busy polling
- also exists.
- 
-+epoll-based busy polling
-+------------------------
-+
-+It is possible to trigger packet processing directly from calls to
-+``epoll_wait``. In order to use this feature, a user application must ensure
-+all file descriptors which are added to an epoll context have the same NAPI ID.
-+
-+If the application uses a dedicated acceptor thread, the application can obtain
-+the NAPI ID of the incoming connection using SO_INCOMING_NAPI_ID and then
-+distribute that file descriptor to a worker thread. The worker thread would add
-+the file descriptor to its epoll context. This would ensure each worker thread
-+has an epoll context with FDs that have the same NAPI ID.
-+
-+Alternatively, if the application uses SO_REUSEPORT, a bpf or ebpf program be
-+inserted to distribute incoming connections to threads such that each thread is
-+only given incoming connections with the same NAPI ID. Care must be taken to
-+carefully handle cases where a system may have multiple NICs.
-+
-+In order to enable busy polling, there are two choices:
-+
-+1. ``/proc/sys/net/core/busy_poll`` can be set with a time in useconds to busy
-+   loop waiting for events. This is a system-wide setting and will cause all
-+   epoll-based applications to busy poll when they call epoll_wait. This may
-+   not be desirable as many applications may not have the need to busy poll.
-+
-+2. Applications using recent kernels can issue an ioctl on the epoll context
-+   file descriptor to set (``EPIOCSPARAMS``) or get (``EPIOCGPARAMS``) ``struct
-+   epoll_params``:, which user programs can define as follows:
-+
-+.. code-block:: c
-+
-+  struct epoll_params {
-+      uint32_t busy_poll_usecs;
-+      uint16_t busy_poll_budget;
-+      uint8_t prefer_busy_poll;
-+
-+      /* pad the struct to a multiple of 64bits */
-+      uint8_t __pad;
-+  };
-+
- IRQ mitigation
- ---------------
- 
-@@ -222,12 +284,78 @@ Such applications can pledge to the kernel that they will perform a busy
- polling operation periodically, and the driver should keep the device IRQs
- permanently masked. This mode is enabled by using the ``SO_PREFER_BUSY_POLL``
- socket option. To avoid system misbehavior the pledge is revoked
--if ``gro_flush_timeout`` passes without any busy poll call.
-+if ``gro_flush_timeout`` passes without any busy poll call. For epoll-based
-+busy polling applications, the ``prefer_busy_poll`` field of ``struct
-+epoll_params`` can be set to 1 and the ``EPIOCSPARAMS`` ioctl can be issued to
-+enable this mode. See the above section for more details.
- 
- The NAPI budget for busy polling is lower than the default (which makes
- sense given the low latency intention of normal busy polling). This is
- not the case with IRQ mitigation, however, so the budget can be adjusted
--with the ``SO_BUSY_POLL_BUDGET`` socket option.
-+with the ``SO_BUSY_POLL_BUDGET`` socket option. For epoll-based busy polling
-+applications, the ``busy_poll_budget`` field can be adjusted to the desired value
-+in ``struct epoll_params`` and set on a specific epoll context using the ``EPIOCSPARAMS``
-+ioctl. See the above section for more details.
-+
-+It is important to note that choosing a large value for ``gro_flush_timeout``
-+will defer IRQs to allow for better batch processing, but will induce latency
-+when the system is not fully loaded. Choosing a small value for
-+``gro_flush_timeout`` can cause interference of the user application which is
-+attempting to busy poll by device IRQs and softirq processing. This value
-+should be chosen carefully with these tradeoffs in mind. epoll-based busy
-+polling applications may be able to mitigate how much user processing happens
-+by choosing an appropriate value for ``maxevents``.
-+
-+Users may want to consider an alternate approach, IRQ suspension, to help deal
-+with these tradeoffs.
-+
-+IRQ suspension
-+--------------
-+
-+IRQ suspension is a mechanism wherein device IRQs are masked while epoll
-+triggers NAPI packet processing.
-+
-+While application calls to epoll_wait successfully retrieve events, the kernel will
-+defer the IRQ suspension timer. If the kernel does not retrieve any events
-+while busy polling (for example, because network traffic levels subsided), IRQ
-+suspension is disabled and the IRQ mitigation strategies described above are
-+engaged.
-+
-+This allows users to balance CPU consumption with network processing
-+efficiency.
-+
-+To use this mechanism:
-+
-+  1. The per-NAPI config parameter ``irq_suspend_timeout`` should be set to the
-+     maximum time (in nanoseconds) the application can have its IRQs
-+     suspended. This is done using netlink, as described above. This timeout
-+     serves as a safety mechanism to restart IRQ driver interrupt processing if
-+     the application has stalled. This value should be chosen so that it covers
-+     the amount of time the user application needs to process data from its
-+     call to epoll_wait, noting that applications can control how much data
-+     they retrieve by setting ``max_events`` when calling epoll_wait.
-+
-+  2. The sysfs parameter or per-NAPI config parameters ``gro_flush_timeout``
-+     and ``napi_defer_hard_irqs`` can be set to low values. They will be used
-+     to defer IRQs after busy poll has found no data.
-+
-+  3. The ``prefer_busy_poll`` flag must be set to true. This can be done using
-+     the ``EPIOCSPARAMS`` ioctl as described above.
-+
-+  4. The application uses epoll as described above to trigger NAPI packet
-+     processing.
-+
-+As mentioned above, as long as subsequent calls to epoll_wait return events to
-+userland, the ``irq_suspend_timeout`` is deferred and IRQs are disabled. This
-+allows the application to process data without interference.
-+
-+Once a call to epoll_wait results in no events being found, IRQ suspension is
-+automatically disabled and the ``gro_flush_timeout`` and
-+``napi_defer_hard_irqs`` mitigation mechanisms take over.
-+
-+It is expected that ``irq_suspend_timeout`` will be set to a value much larger
-+than ``gro_flush_timeout`` as ``irq_suspend_timeout`` should suspend IRQs for
-+the duration of one userland processing cycle.
- 
- .. _threaded:
- 
+---
+Dmitry Baryshkov (4):
+      dt-bindings: arm: qcom-soc: simplify SoC-matching patterns
+      dt-bindings: arm: qcom: add QAR2130P board
+      arm64: dts: qcom: sar2130p: add support for SAR2130P
+      arm64: dts: qcom: sar2130p: add QAR2130P board file
+
+ .../devicetree/bindings/arm/qcom-soc.yaml          |    8 +-
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/sar2130p-qar2130p.dts     |  558 ++++
+ arch/arm64/boot/dts/qcom/sar2130p.dtsi             | 3123 ++++++++++++++++++++
+ 5 files changed, 3695 insertions(+), 3 deletions(-)
+---
+base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
+change-id: 20241027-sar2130p-dt-68d3eee86973
+prerequisite-change-id: 20241027-sar2130p-adsp-fc3fad54ded3:v1
+prerequisite-patch-id: a19263ac2521636a3a7b0ed846cf1714326832c7
+prerequisite-patch-id: 7401c6f72aa9e510a01774b82586e5941980fbcc
+prerequisite-patch-id: 0b132b0936dda8e4c7443b4e7e23ff427dc0d798
+prerequisite-change-id: 20241027-sar2130p-tsens-01baed7d9254:v1
+prerequisite-patch-id: 20d50df9440a16e1cea78fb674794ebb7dc9e352
+prerequisite-change-id: 20241017-sar2130p-iommu-4ce763051f01:v2
+prerequisite-patch-id: 22f9d4a5b0c8d50b5a7317375060ff07ebcae4c3
+prerequisite-change-id: 20241017-sar2130p-pci-dc0c22bea87e:v1
+prerequisite-patch-id: 70ad0a8594e6d224648e0206f9d783fcbb69887d
+prerequisite-change-id: 20241017-sar2130p-phys-426733b80169:v2
+prerequisite-patch-id: 263dca689cc6e8334d825b19ec9005a44cdc979b
+prerequisite-patch-id: fcb8d377116bbcf9f165abba416d25c9be86d930
+prerequisite-patch-id: da7fe2737145e858d9572ff51dff3478cf15e1b0
+prerequisite-patch-id: 14e7540ecc4d365d2cea78016b2f9ffbac366921
+prerequisite-patch-id: 6b2ecc0490d903cee517301c462053d2472e6992
+prerequisite-patch-id: 874e118cd420166faa6247754c5f0a3f24de8a1b
+prerequisite-change-id: 20241017-sar2130p-usb-0e9ccdef61d6:v1
+prerequisite-patch-id: 283d975b372781bc4ab258583c82aa7edaa11edf
+prerequisite-change-id: 20241017-sar2130p-cpufreq-d7ba612fd9d7:v1
+prerequisite-patch-id: f0e7e53020e954149fc06988a583d4ca9deb7209
+prerequisite-change-id: 20241017-sar2130p-llcc-0c2616777cde:v3
+prerequisite-patch-id: 6ca6eacd9ceca6d060d23ef95594fb892e51a506
+prerequisite-patch-id: dc04e235391820e4ab04c72ac64fd852e73fade5
+prerequisite-patch-id: cdb161d351ba3ff4f9e53efaa67eb32b603af435
+prerequisite-change-id: 20241017-sar2130p-mbox-1ff72d8eb5c8:v1
+prerequisite-patch-id: f3975127d993dadf15bcffb81feb99d213471a22
+prerequisite-change-id: 20241017-sar2130p-nvmem-5f856d99bbb7:v2
+prerequisite-patch-id: a5520c74bc1a96a952ff6f744ea57636893f6278
+prerequisite-patch-id: 7a260ae7850d966e8fecd3ebc5114ac157d23c87
+prerequisite-change-id: 20241017-sar2130p-mmc-7f8b32889e31:v1
+prerequisite-patch-id: 76b640936b8b98775f8e17f719b98147dbb7be4f
+prerequisite-change-id: 20241017-sar2130p-pdc-18d3f08abdbe:v1
+prerequisite-patch-id: aa2d8a846ea684d1e127f94e01414ded8b599763
+prerequisite-change-id: 20241017-sar2130p-clocks-5fbdd9bf04ee:v5
+prerequisite-patch-id: e6927fe4ae24ab139d5fe595b36b9a9182960b70
+prerequisite-patch-id: 7cb0ec3c7122856fc33337b9e1e54693a6a7d0fa
+prerequisite-patch-id: ec05d49fb2cabbd37a462cee2761bb9509a6aa5d
+prerequisite-patch-id: 6c2171274b0615cef421498695bb61b3f1ec44d2
+prerequisite-patch-id: 3e7615c0e77e3dbe18267fe556bec7bd5b413c56
+prerequisite-patch-id: 8c0359d6075820139b0658ffcf74f8cd91f50875
+prerequisite-patch-id: a500c056466cd165fbe3acf824e0b96ee225794e
+prerequisite-patch-id: 0abbc5930afb89780a8d833b4fb7cf16865dedcd
+prerequisite-patch-id: a8016b8cda7f0f766acd92e6ba8644f45b04f30d
+prerequisite-patch-id: ddb641d43225f1165b30bb03b0243fc5bc3e7a96
+prerequisite-patch-id: 0e7dbc6cf1359f2611ec19422139f9a95f389f51
+
+Best regards,
 -- 
-2.25.1
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
