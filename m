@@ -1,122 +1,109 @@
-Return-Path: <linux-kernel+bounces-392370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449719B9338
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:30:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E649B933E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEFC31F23315
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:30:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F6D1F22F7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F201A727F;
-	Fri,  1 Nov 2024 14:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7378F1A2562;
+	Fri,  1 Nov 2024 14:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clV2wVvV"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GthHV580"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398E4136347;
-	Fri,  1 Nov 2024 14:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3368060DCF;
+	Fri,  1 Nov 2024 14:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730471416; cv=none; b=Xu+SgMz6JaGunDGMu2Fq9AODMmPrFttoWivmL8jxk86Fr6BQm0h7D1kAE5pKATSlhkgzjJcETevsgZ1255zmbF+BfhG4rmWVjIvqiRxK+Y7KUHtOVL7RTlKOgMxB5y/NOCD5Jfo3axWpA5beUNJn8qoKRQdXwEa6QqKkQyImVhs=
+	t=1730471492; cv=none; b=Atgd/8c5BCiydOSx4z88cJLIXxXEoo0LTboekWnvFSQI0bmo35T42Z5tkCdA5ish+KtoDMzCgjo6NqC6Qfsn3FcrqTP7sw+SmTuU7yEXWyRnzuNCkLqlTvor6gcZBWS1dO51zMySLxUtWYQJ5FXtGjcsCYze2gDNzMm+Pbj0ZDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730471416; c=relaxed/simple;
-	bh=TKAtd4Xz8cLFFFmnHPins+tJ+Mfne7qr3bvUedak18U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j6wmE/oqM9AwxvXH8nR8oJgRZ1XVDz7CLXIhNJ6n7Cmgis6bd98yN3rBn5s5mpwexO0KkVshvPcpl53RbechQlAXtYmTDYEkGufCG66tlDIaan7AUXLx5lb5AoHXm5/eOc4ua3iJjQ+paPaXU56MSF6UO7Cm/+4KdIloIJqWxvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clV2wVvV; arc=none smtp.client-ip=209.85.215.182
+	s=arc-20240116; t=1730471492; c=relaxed/simple;
+	bh=TF6bZIvSMDp9mqHIuwU8sLZ1ByDGmrUCLsCTB5m3/fY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f7kkhAm3+TpcH6Ye5bk36BOc4PROffHxIfk7jAHdoqcgqHBnrqQnBpfkPzqQOmEB0G9I4HJRTGystUFlLTlY6dxPqvmIO2dFxaA8ancsE7M04alZ7y7DOKAhE+COsS/ilSHihYys1eTN09U5k1k2pTltpcUAKeTnIDtHfhwLOsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GthHV580; arc=none smtp.client-ip=209.85.214.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea64af4bbbso270847a12.1;
-        Fri, 01 Nov 2024 07:30:15 -0700 (PDT)
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20c8c50fdd9so21474355ad.0;
+        Fri, 01 Nov 2024 07:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730471414; x=1731076214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TKAtd4Xz8cLFFFmnHPins+tJ+Mfne7qr3bvUedak18U=;
-        b=clV2wVvVpvtg73poXDClHokmVTSuMI+Fz7X8wserVsovSY/SBHAduC3FMs7xF2EzMo
-         J7MoqPO90lgbhyOCFiRhe+CUurxGxwrZBB/AjpbCvM7EQYTm8jVjIbLwUE+mRigT04Ui
-         FNfMp0t63MjMY3/0xPiC0lf0yBuIZ+BEPTrriV7x9MsDJ4DbcPXxhzptDSdX8xMKPgsd
-         JcP4SFXzzFW1IhWBaGafFUEGxCR1zB41f78L8esOaOdxX+Rwd8X0UJtJC2S7tmTHWkoF
-         eHgzm1FYmYPIl6uaDUqe0GWZSq3D8a3GnkFbdXzJnRE8zgU1QduTCURKo1K9atvS0H2/
-         ShNA==
+        d=gmail.com; s=20230601; t=1730471490; x=1731076290; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nz4PoH12jyh9oC2ESydlrxm91wEB4TKbC9HA6hPB9Zo=;
+        b=GthHV580v0TtJDqhGOobZsL537xUX9YqnYKruzJY16wf6u6EctG5ZeiBoVju4enYbb
+         V47Xk5zGZxtDu6aCT6b4IVVEa+sCN2XHqLu1aWLL730nA3gp/tf+8Pe8ozI57VwUsBYO
+         XXTM5lOkMn/8dVnraWAKT6uvIB55uCKg5yJqPe6Y10cvx4YS6yxqQLzYUysMDaQBAmdL
+         QLvqPqcZMdbJsiwl2bXVOQBrWNDQGog7gCos9DmKv8P0NGT9qDvuOIx/UxYbuUL57/+N
+         F3nCYj835zkTsEojRMH2iWZu1f8Okzf1CbTfL7eS3j4RAr19qmZWeEzopfH/2C4pBsx7
+         8Jag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730471414; x=1731076214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TKAtd4Xz8cLFFFmnHPins+tJ+Mfne7qr3bvUedak18U=;
-        b=reMdGsOJNS3fZey1MPu4eBzWV9N5DBt65fzufp2TKDSUPj5grOXt630EohOxbz4PZ8
-         6psCDrP4aWzGIvREos6hLEVAouteOAjf/H1LdCCA7EprgpqhWgqOwc0LwY5ecm0WDZp4
-         aX7mgGuqPUXIL4k76SEySmsdzDUX7j5iNVAfP1Jju8XKmY50mWn6Dp+vEJcI4t25zu36
-         juLNujfc4pMZpj6zx8sf2t1alr3tOcLlUBP6OnQaQQ00Q8Vp3fbdHu79miLLnl4Xvc36
-         9Pr8k53thK9c3hv0iWIiu3HxsB8niiUuKaxbeJLlVT23A8ozeuyWueVTD0kecBXSQDNV
-         YdgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcddTIFhAUva6E5m4fxOb8nt4UIPOxfdXgU8wI57ZcNJRdfqeZhg6tbyN49RbIM1jZHBDBJme4OlNk@vger.kernel.org, AJvYcCUe3POq1CKgdLDMz2qn3xbpuLOLoSsK/fl8duCYWjEs7l/wSnwKZhUbvjf4F4JsgTHviP7x@vger.kernel.org, AJvYcCW7KYjj/XP8jOjd80nepQYw5wHuokjARoOMr5Vh2TzM71baJx52ZVYCxXp12zmT9sTzTUlSihPKlMTEF5VupA==@vger.kernel.org, AJvYcCWrA/gIKCcGyaQx5vpm3q4Og4KhwKLVz+LCd+2n1tRcNXKzL/YvgTqdfmqaaPII85tiyBSx1iU0eM71ilrO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMAIo/qasMDLO6pQZELkxNxXHnLXTQGTEwCEIl7IwDDjqIkZCZ
-	42F/dGLW/ZJH/dFvpluA70bgmKWcstTjINT737cHaAoBoWFWqqqdO6HjCDCd7Yay+70EslMIpTK
-	7TC5LglDHoBK6OFmm/sZ+os4p2RU=
-X-Google-Smtp-Source: AGHT+IGOQhefEp7FLZkdniAIiiIsTLBIszMwpP4/Ctt+MCmEaSNoKLq4eMcSMtSjAgS5QbXUeuU5N7LkDLjPkosOQVw=
-X-Received: by 2002:a17:902:d50c:b0:20c:5da8:47b8 with SMTP id
- d9443c01a7336-210c689759amr141323595ad.5.1730471414470; Fri, 01 Nov 2024
- 07:30:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730471490; x=1731076290;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nz4PoH12jyh9oC2ESydlrxm91wEB4TKbC9HA6hPB9Zo=;
+        b=kAQcI1+7TQh+YcuAcW4uuLfYawT6JKgS0Z7Mkc9yP8u8yHTlrmeYgl94ISmJtV1uOJ
+         h3Uixe3UWcWBFDmsf7TS6WE8/UWNMUGLE0LqWHSA11wqb1cv7Fi2AdFGC7j6Tf5/a7Mf
+         SCtUHGCPllKgSa32WHmvsY73azUgCANpsryUYMhOe3KLxczEgacwclVBtA24v2CIgoyw
+         Bn1fmyf3hYYvrBArhDanXJ130HR7MUZR0jcFaJeJ5IhJLpTtrMd2H7esV/wRzF7A6Plz
+         v8cp+Gvh4ZSDzRg8v7TOiVaa5Zet/zaTrqT274Es3G/dPmVfAhrHl1edAfWJ/USBVI+c
+         MY1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUCmqEyAU22rfR/L3vCfmUXwDY0kfvIDsKrQvgHLTZX3GgYKXmHS1dkkiiPVoijQYPDGN8AFpvzMb2lUYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0jgjBhJh2RFid/8xhTEWe6w57RnBVS/rbFnIIIcgA5R1EvEjq
+	wS/Spy5co3zLSc6TlUI4H1/hYR7O2xEc0Sr8WcqDgqT094FjxtOf
+X-Google-Smtp-Source: AGHT+IFOQx1sT8HQFPfngTtvElgcmTuOgNhg+E5fMEru/cenHAieLUGmhItzqeknF/uTz5v8u54jqA==
+X-Received: by 2002:a17:903:1208:b0:20c:f6c5:7f6c with SMTP id d9443c01a7336-21119440041mr56999455ad.16.1730471490266;
+        Fri, 01 Nov 2024 07:31:30 -0700 (PDT)
+Received: from localhost.localdomain ([2001:250:4000:8246:8007:bb90:49ad:3903])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ef5e0sm22044495ad.34.2024.11.01.07.31.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 07:31:29 -0700 (PDT)
+From: Gan Jie <ganjie182@gmail.com>
+To: kvalo@kernel.org
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	trivial@kernel.org,
+	ganjie163@hust.edu.cn,
+	ganjie182@gmail.com
+Subject: [PATCH] wifi: iwlwifi: fw: fix typo 'adderss'
+Date: Fri,  1 Nov 2024 22:30:51 +0800
+Message-ID: <20241101143052.1531-1-ganjie182@gmail.com>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101060237.1185533-1-boqun.feng@gmail.com>
-In-Reply-To: <20241101060237.1185533-1-boqun.feng@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 1 Nov 2024 15:30:01 +0100
-Message-ID: <CANiq72ndWJtzSQSFYuVkRPhdan_PvNpvGEhQXKAZKESnt7JVAA@mail.gmail.com>
-Subject: Re: [RFC v2 00/13] LKMM *generic* atomics in Rust
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	llvm@lists.linux.dev, lkmm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
-	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
-	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, 
-	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, 
-	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
-	Trevor Gross <tmgross@umich.edu>, dakr@redhat.com, 
-	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 1, 2024 at 7:03=E2=80=AFAM Boqun Feng <boqun.feng@gmail.com> wr=
-ote:
->
-> This time, I try implementing a generic atomic type `Atomic<T>`, since
-> Benno and Gary suggested last time, and also Rust standard library is
-> also going to that direction [1].
+Fix typo 'adderss' to 'address'.
 
-I would like to thank Boqun for trying out this approach, even when he
-wasn't (and maybe still isn't) convinced.
+Signed-off-by: Gan Jie <ganjie182@gmail.com>
+---
+ drivers/net/wireless/intel/iwlwifi/fw/error-dump.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Miguel
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h b/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
+index e63b08b7d336..3af275133da0 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
+@@ -169,7 +169,7 @@ struct iwl_fw_error_dump_info {
+  * @fw_mon_wr_ptr: the position of the write pointer in the cyclic buffer
+  * @fw_mon_base_ptr: base pointer of the data
+  * @fw_mon_cycle_cnt: number of wraparounds
+- * @fw_mon_base_high_ptr: used in AX210 devices, the base adderss is 64 bit
++ * @fw_mon_base_high_ptr: used in AX210 devices, the base address is 64 bit
+  *	so fw_mon_base_ptr holds LSB 32 bits and fw_mon_base_high_ptr hold
+  *	MSB 32 bits
+  * @reserved: for future use
+-- 
+2.34.1
+
 
