@@ -1,331 +1,418 @@
-Return-Path: <linux-kernel+bounces-393000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487819B9AA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:08:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084F69B9AA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E869B21847
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:08:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C1941C21240
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20941E47B6;
-	Fri,  1 Nov 2024 22:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557101E630C;
+	Fri,  1 Nov 2024 22:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aw2zj7zT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/n423b4"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38DD1E1C32;
-	Fri,  1 Nov 2024 22:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730498894; cv=fail; b=GC4e0CbKH6aHj0UaxD5v8oN0uqz+NAjU++6dc3MvMxwdarQKCSpXdNEmA4xdTnTQL2S2YGkPhl4hFoh/pLUwSwz1bhb1c3WOMoyrb2OQVvKuGyIoVX/bfvYcsOWvzO38LgAqpHcmDqf7iRZzCBpO6Mi3/op+p+adtsJHMU9nrNg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730498894; c=relaxed/simple;
-	bh=rZd1J7goQ7G6VFtBcN9JsOzl46u8mCYzw9NmdBKov4I=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ahbI8+TZ1NGOap6YKtK6hn8UDjhV0Nr90NimSEKXc3yazsxKQPRjWvX2QdUGtv78fFFrFxCmP8bQhhmfvcAjt1ddoekcMp2lmMMQU1+0c6WP4EHCWDRFRyodgWb3R/+CPLFdbVZW6e/euNhZ1/ZhyrFv3jDrTPNVse/5XWejrFk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aw2zj7zT; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730498892; x=1762034892;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=rZd1J7goQ7G6VFtBcN9JsOzl46u8mCYzw9NmdBKov4I=;
-  b=Aw2zj7zTzXuVL/mAGBiwoo7tLB46roVzKFgQIvuSc9oNWbJSsN46VE8W
-   7PLqk6LBlv2XbIbHFPkWZ+P4IqPCibsqTrqhUH7QQjhjs8Ohpo8rynLWN
-   HXJ4FXM+WNKxG5muTcn52Oz19e/X/VzZXgiOsHreNdpOHEo+gTA8ywXBw
-   4+6kTHr5sB6bNlSpSHwyBH5iM4pc/aDPWtjm6aeY7a7rVNW0CNcByKHLp
-   7zAkcPQtITAWlIE5aVAtluBKBPQMzepO+WWOkCiOxEhFZRdW2k8p5wJfv
-   BsoPIJQ1LIzFEJFNlG//7fAOyXHx3i0233BWtKFT26k8pMRnidUCkXyJ8
-   w==;
-X-CSE-ConnectionGUID: CYtie+BwRGKJF3/ozhxDYg==
-X-CSE-MsgGUID: Sovv9HKESQy8rjOyBDFrRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30044462"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30044462"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 15:08:12 -0700
-X-CSE-ConnectionGUID: BKPP6md+S52maCrlxc0bVQ==
-X-CSE-MsgGUID: TkiX864NR6yOtvKuOcyevg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,251,1725346800"; 
-   d="scan'208";a="87611915"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Nov 2024 15:08:11 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 1 Nov 2024 15:08:10 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 1 Nov 2024 15:08:10 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.40) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 1 Nov 2024 15:08:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ACiHoQZ8C8imqwUH7ByjI6lKseuI2yZPL1sj0FCmgnotX5xOVWQ1XK5SIqURMZ92iOVP8THO/S6g/Gzw/Rpg3VE4PNKrUy0UURCzJhLxwjNumagrkzeHFL/2JOH85cO6mQK/iyhFAdl8YZ+ON2nlWRAJwOZjhreg9qaXnetk/qq3FcaOPslgtrqZUM/LPRThfQhV9Rt5kpzRkpZ5IWbCcNNMhQiSPfjgooEKEDl47714lmuoRgYpfLTHk+bGekMG3O1GWl+imQoqymBKfj7vkTLNWtNyAp1qYiyLNrc3UEXgVAR0XPstbHjhma00Yap/lD0WVi74L+DVPcAdqFyjzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=84TwujXyLjn0IYgeMhiYdt1w9u3bV6bA7Xmi6XlyqlE=;
- b=s4n9f2lLwqe3VIM2a3v0VNTv5vt1euZIFXAjsgfVm3PWCI4FDmFGpu0D4JiXG/C+4fngAApq9KTDyj0U7+g+iaGVfXXNgaPZbT4NJENd3MvUmp3M1lrWaOdT2wisN3ZSJfSlZX3isWy2vguTzDMlk1FfMnixbmCcWTfJLXRFSNoocTsmwTNuFu6+1gOgJANu02NmDnXs3Pzz7N9shWdMyJjFcexCrxTQrKDGz9q/EpACQddm3NOhtc5sqnc+aRstrVeZcqXqD4KxS9JalBpYz0BX0AlAPrMtx2ur6h4uHHmFU8RkD112yEykmVedZGG59RnVnRHZz0MGscAFJ0i4QA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB6097.namprd11.prod.outlook.com (2603:10b6:208:3d7::17)
- by DM4PR11MB8160.namprd11.prod.outlook.com (2603:10b6:8:189::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Fri, 1 Nov
- 2024 22:08:07 +0000
-Received: from IA1PR11MB6097.namprd11.prod.outlook.com
- ([fe80::8f29:c6c9:9eb2:6392]) by IA1PR11MB6097.namprd11.prod.outlook.com
- ([fe80::8f29:c6c9:9eb2:6392%4]) with mapi id 15.20.8114.020; Fri, 1 Nov 2024
- 22:08:07 +0000
-Message-ID: <2ed76893-ac65-d9a2-aeea-c927ebd2a1e8@intel.com>
-Date: Fri, 1 Nov 2024 15:08:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.11.0
-Subject: Re: [PATCH v8 3/7] x86/resctrl: Refactor mbm_update()
-Content-Language: en-US
-To: Tony Luck <tony.luck@intel.com>, Reinette Chatre
-	<reinette.chatre@intel.com>, Peter Newman <peternewman@google.com>, "Jonathan
- Corbet" <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
-	<x86@kernel.org>
-CC: James Morse <james.morse@arm.com>, Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>, Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20241029172832.93963-1-tony.luck@intel.com>
- <20241029172832.93963-4-tony.luck@intel.com>
-From: Fenghua Yu <fenghua.yu@intel.com>
-In-Reply-To: <20241029172832.93963-4-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0189.namprd05.prod.outlook.com
- (2603:10b6:a03:330::14) To IA1PR11MB6097.namprd11.prod.outlook.com
- (2603:10b6:208:3d7::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A76140E34;
+	Fri,  1 Nov 2024 22:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730499094; cv=none; b=GKt5lNPGH73fdmO4aDZErQi5Af/8bBs9k+2Q1do6jo6taK7WQgmT4k3+/CTUYwbev6L/O6bgzyvh0IsTT9KQpC3qPCQj2nNuHyhTpV/fTNWcDTqONS05cOFQkARGDxUrrrNI2i3lwFHVZtW/IoTWnrBvC3EZdIOI5LS8SJ6fb9Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730499094; c=relaxed/simple;
+	bh=NVgd0qeM5eJhA+iymIHzjTwRMkqaJc8fzn5B62mDq1o=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/vPH39x/VpdIVqs+v/7oYjVFElF0IA7g5bVuZBDCasA8nOyCB/WwIoqQ4Jv3IIBuso6bTrdaFgJj7mj7tE6Y3beuSGsLrFlk8iN7dKFm7lPnxqPP4apd4dydE26fx5g3cbvB8szvOpohDM/grKVQAD0VvQWxaj7LCJHUFhHQfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m/n423b4; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7206304f93aso2286249b3a.0;
+        Fri, 01 Nov 2024 15:11:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730499091; x=1731103891; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X21LhufANyPN/Tj7n8TfP1pRe/ZRiL+OkK+pbxybc9s=;
+        b=m/n423b4DITs57e23W6npNQRjdxrQG09AL2gWGRsAUoWjPbxYdCTcobNWaGo2DA4wh
+         2m9V2vwh4H8gyDJ/3mRusa8CVeoO2ctYg3uId41hCQzyuaOD85n9oVBEJ5Zfb4QGPnYK
+         jZRFyM7/amZQ6LacN/gWnD+dsqeigTCYeNI6QOzxTA6Wbeoyv6teV1MQ6Myrr8cmXc9L
+         rvc3a61MQg7BKuRRuaC631t31Z5IsvcD1gruqn6hL+IPAQcBjFh3aRLKaFBum6ZAzZVd
+         Ic+R1+/ZjIoL9Y/REi2iVsYYxtu0rY0GwjJDgdxcISrV/Zoh+PFMC5JI+WuX0heaDAM7
+         +qUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730499091; x=1731103891;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X21LhufANyPN/Tj7n8TfP1pRe/ZRiL+OkK+pbxybc9s=;
+        b=xP2pwC9A9jxwtshofpAqkyaW6dW6dBU16mQJPoY0Mm4NyzuXATHVMsRIsnRQbiRTOm
+         idZpoX4yxw2ynwZPysC6XxH4ODdJ9O8QAzGT1KwusmfC0ezZ2rvJ68Uo65/Zsk4LYdbO
+         weKQcMCODQuc8fv7BMkVUHoZmzcSwJseyt/52rmX5+GIb8OWs0Ns6wBzbEsH6SIfTswM
+         xXrGj0x/YBiK/30BjCq1LtCvxqUZeZDp3Y3NLklGxApxloOSO8DMqQ4c9RumKwpmflus
+         5KtDqLDcsyEerRBwY7G1ofI10yc6R1DiKDGv/m1El9WGyKoTEEKDwq7r1e/UXLD738uD
+         gUFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV36o1Xc+BqsRwCE6qlp6t6GZUMwIe5DxOEsnfUzwrihAEAZM9ub6LxE4zklTNs51mRw2xkCs2v/1ddirUZ@vger.kernel.org, AJvYcCV82YKuHc+bjyisqGu/pU0o6fAjMPSCH9ffSZaC2+Mi2TBDLbP26zJ8RDtFhXv9PHKSDLYQrl4ymqkR@vger.kernel.org, AJvYcCWc24CST/ozeDXEYfbsgGwIOCN2RXFLr/FIAjHIV3oaiSsCX/pfHjuq27SPB27W6+rfSWZZgyrz18k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUnfDwtSVbinvA1ED1MuAziIAh0aPXcyj9seRJQ6opFQR6mLMq
+	PzSxYWSyTTnCjS2qquqKoObYh5PUQINCJrVhqC+NLGu7aM+4E8Kh
+X-Google-Smtp-Source: AGHT+IGbbxtFiPyMCfArRKwSbL6RjlrOdwiBEOvXkXzELLDx/f9OZhDO9vxDcZ1fySMliPur/PtlOg==
+X-Received: by 2002:a05:6a21:9d83:b0:1d9:1377:c1a3 with SMTP id adf61e73a8af0-1dba54df54fmr6048677637.40.1730499091282;
+        Fri, 01 Nov 2024 15:11:31 -0700 (PDT)
+Received: from fan ([2601:646:8f03:9fee:eba7:38e1:4f3b:331c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee455a510fsm2912182a12.49.2024.11.01.15.11.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 15:11:30 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Fri, 1 Nov 2024 15:11:15 -0700
+To: "Bowman, Terry" <terry.bowman@amd.com>
+Cc: Fan Ni <nifan.cxl@gmail.com>, ming4.li@intel.com,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+	ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+	rrichter@amd.com, nathan.fontenot@amd.com,
+	Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v2 0/14] Enable CXL PCIe port protocol error handling and
+ logging
+Message-ID: <ZyVSAzSW1HEd2_Mp@fan>
+References: <20241025210305.27499-1-terry.bowman@amd.com>
+ <ZyUXLpQBBgTl733z@fan>
+ <8a73bfa1-b916-4f0a-92be-0cb677e1e334@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB6097:EE_|DM4PR11MB8160:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4eaea0b1-bff2-45fc-e622-08dcfac1aa71
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YkJrdjhkUWhTR0QrVUZxeWlENjJIUUVSYjVZclpCVTk1ckRPTDdlVlhJQ3J2?=
- =?utf-8?B?WnJBYXgrOWthL1g4blp0ZzhTVWpkWWYvSFRmUFJGK1ZkS1ZnQ0RpU013R0xi?=
- =?utf-8?B?a2R1LzlibXU1ZWdkNEFRZHNKaG53TDIrVVozWlRGeFlBQy9oYmptMUsvYjN4?=
- =?utf-8?B?RExQSE4vMzJ2VzJIMTlCRXIzUXRzeWZ3Qk5WZkJmeFN6aE8yZVhQcGFrZjNm?=
- =?utf-8?B?cUhJRmR2Y2pHd0d3WGZwMXFCVnZhQ0RzVU41ZXpOb3NWNlU0cVRlTHBSdTRJ?=
- =?utf-8?B?eFhvYVBxVWhqaEVZSml3Qk92WlhkRlNtUFdUVktVTGErYXVKa3dKMGxmekxM?=
- =?utf-8?B?NmNmMWR3NFJ0RG5pVWg2OVRUSERnRjA1R2VjOE4yaEV5YU1JRlJBRWtIQ0ox?=
- =?utf-8?B?ekJQYTJ5K2hLNjJGZGNtbXkyQzV0WG5sdlZyR3pWZ3lxK2Q5TXZhbHA0bnl0?=
- =?utf-8?B?STRNNFptenZLYVh5SWoxbzlJQjVQSUVaV2VCb2RKSlhUUlJsUm5DK1RkNVFi?=
- =?utf-8?B?Vk51WndYZGtVcXdkZG9XQTc0MmtnVGRYWmdJaG95M0tyTFE2ZGlkSWZ3WCtz?=
- =?utf-8?B?ekphR1djYWpxN0hDUUIyZzF3RnRRQkcrc2hkMVlMMG9FeWhEZDNlUU5vQXN4?=
- =?utf-8?B?S1JTUzk4S0hxenpTcVZ5OVgrbnA1WnN1LzcrNjJpdTZ3b2V4aG0wU0JzODVI?=
- =?utf-8?B?a2Q3dCtmVEUyRnZWZm5BZVk1M0grbGhPcEZmYkxXck5tMXZNNHNxaXhkRUkw?=
- =?utf-8?B?V25FckVGQ0daU0tqVkdPeGxVaTlPazVJc0Y3MmVBVDZUVjFuL1krRzRaYmhx?=
- =?utf-8?B?R2cwdnV3MVhkeWxPZFVTazlyeWJkRFh5MkV3ZWVITHFKWXhSaFhndXZQM1V6?=
- =?utf-8?B?d2hrZnVLdlViNmFiNDF5YjFLYWV5NW5aaGlwdkp2THdEWkpRWW4wWGZxWWgw?=
- =?utf-8?B?WExrV1o1UzRlRlJJaC9qeXBGend0M0hTakNFUzVpQVREbFl1c1YzeDlUc1Zx?=
- =?utf-8?B?UmxYcmkwaTgycGxVakVPS3cwME82MHkrdGg1T01qOGVIeEJrQzlJa1BwckxQ?=
- =?utf-8?B?bW1WUkloaCt1cWlZQ3JYa1JJeXlsbXBIbTJWeThRQm9haHhoRXNlNTNQUXUy?=
- =?utf-8?B?WEgrTzFTVWhvL3MvZmRuNjN1ek5zRHVKK1JoSTBGaGlIM1NnQ3FwQ1NJNmVH?=
- =?utf-8?B?TnpiRzRBV3hjYmN6eGVmMzBpWTg2R21ieU9HdVQvZUQ3dGdSTEtjbXZVSU5t?=
- =?utf-8?B?Tkc4OXVoTGlrZi95TTAyZjRpdHJmRnpiMUNjaDNGNzVmaWZWZVFMZm5FSUFY?=
- =?utf-8?B?bjF6VjVMM1VhNUNuTGo0dkQwY1JBY2JCbFM5UXJmcDZuWURVN096bzFGUGo2?=
- =?utf-8?B?RkU5MjBsZUNDR1c4am1laXlZSmVFS2EzTWZQK0orREpGSXZ2WXo4cm1UYXdC?=
- =?utf-8?B?N0lLRjRlRVlFVkVIcEVyS0hJSU5Ra290cm0wQmxTMGYycXpNL0RRLzRNQ085?=
- =?utf-8?B?bUlUbUREQko1Q0Y0djRtdXpCMDR4ckdnQkd6REhWaXAvRFRnbnFGNEQybHZD?=
- =?utf-8?B?NkM3cXk3WDgrSHdGN3MxY1YvMEFYQUQzY2trSHVXUEVJZCtWbW1FeTRZQ2J3?=
- =?utf-8?B?cHN1TGRScjdrU3djQ1cyZ3YwOEl0TlVTdm1JR0VLdFR2cHc3dFZKSTNOTmc3?=
- =?utf-8?B?bkh4V3ZIZ09Hdkx6SFl1QXh0bDVwcDg4UlVJcVpOelJSbkNYLzAwZmFMaEZS?=
- =?utf-8?Q?doJzKbhk8AxQ5EgLlPy2afpKIty33tHXvOYz+iN?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB6097.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YTc2NUp0NFlRR09WVTBhT1pUZzhWWHZDN1VCWHN1WHV2aEhJMWRibVQ5ME9t?=
- =?utf-8?B?ZUNxcmJlZG94cEhQaVYzc2tUUmRiRXFWc2Y0aVFRNm9DZHgrbDQvcVVCMFlD?=
- =?utf-8?B?Y0FOejBBR0hRaFBKVFZKcmV3YkpqNFpDQkc3NkN5N2dPNWh6NnNwZm1jaGli?=
- =?utf-8?B?UmZZMEdiaUtCd3hIaDNSTTlNQzMyYlJhQmRRbjFWQ0x5VmJWQzVzVlRKK0Rv?=
- =?utf-8?B?ejNLcmdCbW5wb1dZWW5QRnFQV3gvR001SWxrVGFnU3lvMUsxVEovQlZkeEZK?=
- =?utf-8?B?d0N0eVhDVUg2a2w1TVFSWTN4d3d5NDVUZ1JhQVJOdXMwdG5wNFhvUVVRcXpK?=
- =?utf-8?B?Mmc1Q25zSDNNdWhYeXNFeTRDTXhsNHVDcWpiWlhvVW14QVlVenFnR2lWNkFS?=
- =?utf-8?B?YUdxT0RGazdUZFB2SHFhUVNTZXU1cXRHQUtza1dqMzl6M2txSzRGR2hndHN1?=
- =?utf-8?B?TnZrTEFKQ2NkSzB4WkhMOUp1Znh5ZGxxOHJ3eUs0bmc4dy9DMm13T0NNOFph?=
- =?utf-8?B?aGtPZTNkWDBRTUcvd1BuTHNRSFVhSlRIOGlTMWtha0VNYU5sQjBYT1FTenVv?=
- =?utf-8?B?L3dDYUxYb05tTCtVZlZuUllpRG5mRFJhWkppNXlIamkvSW4zaHRHVk1GanZZ?=
- =?utf-8?B?cUV4dTRDUWd5cytEeTI1OVRwdnlRUjBmZ1d0NTN3SFJXbXNxbEdpcnQ3LzBQ?=
- =?utf-8?B?a2p5ak9rV2JLYkJCZG1oQ1A0VjVlUnR5TTg0cUQ2TkgxSkluMkIvNis4cm9m?=
- =?utf-8?B?YlFTVHZ2UHIyRE1tdGxpb1hnM2pXMVliQVdDNjVCbGhSaW5tVjdlMHppOFJY?=
- =?utf-8?B?VUpVWWRaL3FRSEppUnlNWVJpdURRa0hEeXBjZjREOUMvOUFTcDB5NWI2a2pB?=
- =?utf-8?B?bXI3RkJwTExLTFZKUS9ISVN4KzJJTmFvakZVWXpjdVlxaFNTbUE4UnF1RFkx?=
- =?utf-8?B?blR0SmVHMmFNdU0vNSs0VUdCTjVpY25pR3d5YS9YS0F0MzBiNkhCTWYyVytP?=
- =?utf-8?B?YVp1aE9kK0FkQ3R0UzZyQkhsNFhlOWJIYk8wWG5Fa1pHUWp4Q1h6OVhlekRr?=
- =?utf-8?B?YXlSWGEyRnB1VklaRkxZM1huT2NnRHY3elpBM2hBQXcwTU03VTJjRlFOTk5T?=
- =?utf-8?B?Nmx2TE04dFY4TFY3MjhRNEdlbjBkZ0FOb2lIS015UEpGSVlUajNFSUw5TGcy?=
- =?utf-8?B?bWcrTDA2UVh3dDBKZ1IwZUNJbXRGbUdFUDl1TXorZlRHZ0xscnFlRUZQdzV5?=
- =?utf-8?B?d0ZNckJXQkdWcXRhVldqbUdQUEFCZFhBNEQvaE0yWlpTRmk0UDdBMUJpOElL?=
- =?utf-8?B?QjAvdHhRUjNuZjRkeGp2cTNWUURtV09acHF0NHRtYjJjWUNXbWFhMnFsSnNh?=
- =?utf-8?B?VDliTkxSa3MyY0VVcURZL29lRlZkcWFJblJMVUZFbGdWVktIM2UvT2hJdUtP?=
- =?utf-8?B?THhPb01DTHlJaC9QL0dhbW5ZenJNOVJGeUNMQnRzRkNtWlg2L1Erb1FScEN5?=
- =?utf-8?B?a29DWmhQN0tKVGsvMnRBWkYrQlZ5S3NxN3BXKzlIakpvdDlCbmpINDlDMkZh?=
- =?utf-8?B?UVhaeFc4UThZb2R2Wi9aSUhTc3BJNlJkS0lxdDRleDV5dEVCQkY2alFqTW1Q?=
- =?utf-8?B?N0ZsMzkrbDM1dFdiamFLRWl0dGV5V3h3K1FEdnVRN3pBLzAzT3ZzL2FvRWl3?=
- =?utf-8?B?cjI2bjAvK2wwTTRzMDYwL29tT0EvbzVaMzltTjE0MzR5cjFIOGRaRFp0QVUz?=
- =?utf-8?B?aHJmdnVxektza0x4QXAxaG1xMVA2OFpxbnp3bkIzaGhmMjNhd0hqL3BIYmdp?=
- =?utf-8?B?d2haaXl6SzJkdVFTR1d0UXhoSTY0NVdHYlZkaWFxTER2UlJKczBxSVdjTzQ0?=
- =?utf-8?B?bjFvNjJGdEJQenRFa0duaXhzRWhWUVZ1d3M5VjA2dXZVTi9LdW40Tm5OZlZD?=
- =?utf-8?B?Sk1TSDA3NzMxNVFtZ1FacVRBbnBMTlhNWlpMRDZoMUtoUFh2SnB2WUwyVWtt?=
- =?utf-8?B?VkMzWmdwVSt6aGovUy9yRzVLOUdRbmNwbHY3REZPNW9xSUtXdzJ1SnMwR1Ex?=
- =?utf-8?B?Qml6Zlh0OFFYd1FoQVZBMUlIRlh2enR3dmNWd3pHOXVSQmw2OVB6MkZOZGhD?=
- =?utf-8?Q?JwL/5+NhUdUzKpMauC3oddaSN?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4eaea0b1-bff2-45fc-e622-08dcfac1aa71
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB6097.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2024 22:08:07.6622
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JyNwlerTs3pf4oECA22todmRIqmljEkThEDgOm5O8Eo5p4AsDVy5u1TZ894jmDd1sm/sIZEnPu/BFghxsKGlgQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8160
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a73bfa1-b916-4f0a-92be-0cb677e1e334@amd.com>
 
-Hi, Tony,
-
-On 10/29/24 10:28, Tony Luck wrote:
-> Computing memory bandwidth for all enabled events resulted in
-> identical code blocks for total and local bandwidth in mbm_update().
+On Fri, Nov 01, 2024 at 01:28:12PM -0500, Bowman, Terry wrote:
+> Hi Fan,
 > 
-> Refactor with a helper function to eliminate code duplication.
+> I added comments below.
 > 
-> No functional change.
+> On 11/1/2024 1:00 PM, Fan Ni wrote:
+> > On Fri, Oct 25, 2024 at 04:02:51PM -0500, Terry Bowman wrote:
+> >> This is a continuation of the CXL port error handling RFC from earlier.[1]
+> >> The RFC resulted in the decision to add CXL PCIe port error handling to
+> >> the existing RCH downstream port handling in the AER service driver. This
+> >> patchset adds the CXL PCIe port protocol error handling and logging.
+> >>
+> >> The first 7 patches update the existing AER service driver to support CXL
+> >> PCIe port protocol error handling and reporting. This includes AER service
+> >> driver changes for adding correctable and uncorrectable error support, CXL
+> >> specific recovery handling, and addition of CXL driver callback handlers.
+> >>
+> >> The following 7 patches address CXL driver support for CXL PCIe port
+> >> protocol errors. This includes the following changes to the CXL drivers:
+> >> mapping CXL port and downstream port RAS registers, interface updates for
+> >> common restricted CXL host mode (RCH) and virtual hierarchy mode (VH),
+> >> adding port specific error handlers, and protocol error logging.
+> >>
+> >> [1] - https://lore.kernel.org/linux-cxl/20240617200411.1426554-1-terry.bowman@amd.com/
+> >>
+> >> Testing:
+> > Hi Terry,
+> > I tried to test the patchset with aer_inject tool (with the patch you shared
+> > in the last version), and hit some issues.
+> > Could you help check and give some insights? Thanks.
+> >
+> > Below are some test setup info and results.
+> >
+> > I tested two topology,
+> >   a. one memdev directly attaced to a HB with only one RP;
+> >   b. a topology with cxl switch:
+> >          HB
+> >         /  \
+> >       RP0   RP1
+> >        |
+> >      switch
+> >        |
+> >  ----------------
+> >  |    |    |    |
+> > mem0 mem1 mem2 mem3
+> >
+> > For both topologies, I cannot reproduce the system panic shown in your cover
+> > letter.  
+> >
+> > btw, I tried both compile cxl as modules and in the kernel.
+> >
+> > Below, I will use the direct-attached topology (a) as an example to show what I
+> > tried, hope can get some clarity about the test and what I missed or did wrong.
+> >
+> > -------------------------------------
+> > pci device info on the test VM 
+> > root@fan:~# lspci
+> > 00:00.0 Host bridge: Intel Corporation 82G33/G31/P35/P31 Express DRAM Controller
+> > 00:01.0 VGA compatible controller: Device 1234:1111 (rev 02)
+> > 00:02.0 Ethernet controller: Intel Corporation 82540EM Gigabit Ethernet Controller (rev 03)
+> > 00:03.0 Unclassified device [0002]: Red Hat, Inc. Virtio filesystem
+> > 00:04.0 Unclassified device [0002]: Red Hat, Inc. Virtio filesystem
+> > 00:05.0 Host bridge: Red Hat, Inc. QEMU PCIe Expander bridge
+> > 00:1f.0 ISA bridge: Intel Corporation 82801IB (ICH9) LPC Interface Controller (rev 02)
+> > 00:1f.2 SATA controller: Intel Corporation 82801IR/IO/IH (ICH9R/DO/DH) 6 port SATA Controller [AHCI mode] (rev 02)
+> > 00:1f.3 SMBus: Intel Corporation 82801I (ICH9 Family) SMBus Controller (rev 02)
+> > 0c:00.0 PCI bridge: Intel Corporation Device 7075
+> > 0d:00.0 CXL: Intel Corporation Device 0d93 (rev 01)
+> > root@fan:~# 
+> > -------------------------------------
+> >
+> > The aer injection input file looks like below,
+> >
+> > -------------------------------------
+> > fan:~/cxl/cxl-test-tool$ cat /tmp/internal 
+> > AER
+> > PCI_ID 0000:0c:00.0
+> > UNCOR_STATUS INTERNAL
+> > HEADER_LOG 0 1 2 3
+> > ------------------------------------
+> >
+> > dmesg after aer injection 
+> >
+> > ssh root@localhost -p 2024 "dmesg"
+> > [  613.195352] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
+> > [  613.195830] pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
+> > [  613.196253] pcieport 0000:0c:00.0: CXL Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+> > [  613.198199] pcieport 0000:0c:00.0: AER: No uncorrectable error found. Continuing.
+> > -----------------------------------
 > 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->   arch/x86/kernel/cpu/resctrl/monitor.c | 69 ++++++++++-----------------
->   1 file changed, 24 insertions(+), 45 deletions(-)
+> This is likely because the device's CXL RAS status is not set and as a result returns false and bypasses the panic.
+> Unfortunately, the aer-inject only sets the AER status and triggers the interrupt. The CXL RAS is not set.
 > 
-> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-> index 3ef339e405c2..1b6cb3bbc008 100644
-> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
-> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-> @@ -829,62 +829,41 @@ static void update_mba_bw(struct rdtgroup *rgrp, struct rdt_mon_domain *dom_mbm)
->   	resctrl_arch_update_one(r_mba, dom_mba, closid, CDP_NONE, new_msr_val);
->   }
->   
-> -static void mbm_update(struct rdt_resource *r, struct rdt_mon_domain *d,
-> -		       u32 closid, u32 rmid)
-> +static void mbm_update_one_event(struct rdt_resource *r, struct rdt_mon_domain *d,
-> +				 u32 closid, u32 rmid, enum resctrl_event_id evtid)
->   {
->   	struct rmid_read rr = {0};
->   
->   	rr.r = r;
->   	rr.d = d;
-> +	rr.evtid = evtid;
-> +	rr.arch_mon_ctx = resctrl_arch_mon_ctx_alloc(rr.r, rr.evtid);
-> +	if (IS_ERR(rr.arch_mon_ctx)) {
-> +		pr_warn_ratelimited("Failed to allocate monitor context: %ld",
-> +				    PTR_ERR(rr.arch_mon_ctx));
-> +		return;
-> +	}
-> +
-> +	__mon_event_count(closid, rmid, &rr);
-> +
+> I attached 2 'test' patches. The first patch sets the device's RAS status to simulate the error reporting.
+> This will have to be adjusted as the patch looks for a specific device's bus and this will likely be a different
+> bus then the device's you test in your setup.
+> 
+> The 2nd patch enables UIE/CIE. I moved this out of the v2 patchset. I need to revisit this to see if it is
+> needed in the patchset itself (not just a test patch).
+> 
+> Regards,
+> Terry
+> 
+Hi Terry, 
 
-The comment (added in patch 2 and legacy code) is removed completely here.
+I checked the two patches you attached, do we really need the first
+patch to umask internal error? I see it is already unmasked in
+aer_enable_internal_errors() which is called in aer_probe().
+I tried to only apply the other patch and test again, it seems the test
+output is the same as applying two patches. The system panics as well.
 
-Maybe it's better to remain the comment here?
+Fan
 
-> +	if (is_mba_sc(NULL))
-> +		mbm_bw_count(closid, rmid, &rr);
-> +
-> +	resctrl_arch_mon_ctx_free(rr.r, rr.evtid, rr.arch_mon_ctx);
-> +}
->   
-> +static void mbm_update(struct rdt_resource *r, struct rdt_mon_domain *d,
-> +		       u32 closid, u32 rmid)
-> +{
->   	/*
->   	 * This is protected from concurrent reads from user
->   	 * as both the user and we hold the global mutex.
->   	 */
-> -	if (is_mbm_total_enabled()) {
-> -		rr.evtid = QOS_L3_MBM_TOTAL_EVENT_ID;
-> -		rr.val = 0;
-> -		rr.arch_mon_ctx = resctrl_arch_mon_ctx_alloc(rr.r, rr.evtid);
-> -		if (IS_ERR(rr.arch_mon_ctx)) {
-> -			pr_warn_ratelimited("Failed to allocate monitor context: %ld",
-> -					    PTR_ERR(rr.arch_mon_ctx));
-> -			return;
-> -		}
-> -
-> -		__mon_event_count(closid, rmid, &rr);
-> -
-> -		/*
-> -		 * Call the MBA software controller only for the
-> -		 * control groups and when user has enabled
-> -		 * the software controller explicitly.
-> -		 */
+> >
+> > The problem seems to be related to the cxl_error_handler not been assigned for
+> > cxlmem device. 
+> >
+> > in
+> > cxl_do_recover() {
+> > ...
+> >     327     cxl_walk_bridge(bridge, cxl_report_error_detected, &status);                         
+> >     328     if (status)                                                                 
+> >     329         panic("CXL cachemem error. Invoking panic");                   
+> > ...
+> > }
+> > The status returned is false, so no panic().
+> >
+> > I tried to add some dev_dbg info to the code to debug.
+> > Below are the debug info and kernel code changes for debugging. 
+> > --------------------------------------
+> > fan:~/cxl/cxl-test-tool$ cxl-tool.py --cmd dmesg | grep XXX
+> > [    1.738909] cxl_mem:cxl_mem_probe:205: cxl_mem mem0: XXX: add endpoint
+> > [    1.739188] cxl_mem:devm_cxl_add_endpoint:85: cxl_port port1: XXX: add endpoint
+> > [    1.739509] cxl_mem:devm_cxl_add_endpoint:92: cxl_mem mem0: XXX: init ep port aer
+> > [    1.739876] cxl_core:cxl_dport_init_ras_reporting:907: pcieport 0000:0c:00.0: XXX: assign port error handlers for dport 1
+> > [    1.740338] cxl_core:cxl_dport_init_ras_reporting:913: pcieport 0000:0c:00.0: XXX: assign port error handlers for dport 2
+> > [    1.740812] cxl_core:cxl_dport_init_ras_reporting:927: pcieport 0000:0c:00.0: XXX: assign port error handlers for dport 3
+> > [    1.741273] cxl_core:cxl_assign_port_error_handlers:851: pcieport 0000:0c:00.0: XXX: cxl_err_handler: (____ptrval____)
+> > [    1.741812] cxl_core:cxl_assign_port_error_handlers:855: pcieport 0000:0c:00.0: XXX: cxl_err_handler: (____ptrval____)
+> > [    1.742263] cxl_core:cxl_assign_port_error_handlers:857: pcieport 0000:0c:00.0: XXX: cxl_err_handler: (____ptrval____) (____ptrval____)
+> > fan:~/cxl/cxl-test-tool$ 
+> > --------------------------------------
+> >
+> > dmesg after error injection:
+> > --------------------------------------
+> > ssh root@localhost -p 2024 "dmesg"
+> > [  228.544439] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
+> > [  228.544977] pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
+> > [  228.545381] pcieport 0000:0c:00.0: CXL Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+> > [  228.545879] pcieport 0000:0c:00.0:   device [8086:7075] error status/mask=00400000/00000000
+> > [  228.546360] pcieport 0000:0c:00.0:    [22] UncorrIntErr          
+> > [  228.546698] pcieport 0000:0c:00.0: AER: XXX: call cxl_err_handler: 00000000a268bfcb 000000009e0da039
+> > [  228.547103] cxl_pci 0000:0d:00.0: AER: XXX: call cxl_err_handler: 00000000b9f08b93 0000000000000000
+> > [  228.547515] pcieport 0000:0c:00.0: AER: No uncorrectable error found. Continuing.
+> > fan:~/cxl/cxl-test-tool$ 
+> > --------------------------------------
+> >
+> >
+> > Kernel changes:
+> > --------------------------------------
+> > diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> > index 5f7570c6173c..bcecd1283fc6 100644
+> > --- a/drivers/cxl/core/pci.c
+> > +++ b/drivers/cxl/core/pci.c
+> > @@ -848,10 +848,13 @@ static void cxl_assign_port_error_handlers(struct pci_dev *pdev)
+> >  {
+> >  	struct pci_driver *pdrv = pdev->driver;
+> >  
+> > +    dev_dbg(&pdev->dev, "XXX: cxl_err_handler: %p\n enter", pdev);
+> >  	if (!pdrv)
+> >  		return;
+> >  
+> > +    dev_dbg(&pdev->dev, "XXX: cxl_err_handler: %p\n", pdrv);
+> >  	pdrv->cxl_err_handler = &cxl_port_error_handlers;
+> > +    dev_dbg(&pdev->dev, "XXX: cxl_err_handler: %p %p\n", pdrv, pdrv->cxl_err_handler);
+> >  }
+> >  
+> >  static void cxl_clear_port_error_handlers(void *data)
+> > @@ -869,12 +872,14 @@ void cxl_uport_init_ras_reporting(struct cxl_port *port)
+> >  {
+> >  	struct pci_dev *pdev = to_pci_dev(port->uport_dev);
+> >  
+> > +    dev_dbg(&port->dev, "XXX: assign port error handlers for uport 1\n");
+> >  	/* uport may have more than 1 downstream EP. Check if already mapped. */
+> >  	if (port->uport_regs.ras) {
+> >  		dev_warn(&port->dev, "RAS is already mapped\n");
+> >  		return;
+> >  	}
+> >  
+> > +    dev_dbg(&port->dev, "XXX: assign port error handlers for uport 2\n");
+> >  	port->reg_map.host = &port->dev;
+> >  	if (cxl_map_component_regs(&port->reg_map, &port->uport_regs,
+> >  				   BIT(CXL_CM_CAP_CAP_ID_RAS))) {
+> > @@ -882,6 +887,7 @@ void cxl_uport_init_ras_reporting(struct cxl_port *port)
+> >  		return;
+> >  	}
+> >  
+> > +    dev_dbg(&port->dev, "XXX: assign port error handlers for uport 3\n");
+> >  	cxl_assign_port_error_handlers(pdev);
+> >  	devm_add_action_or_reset(port->uport_dev, cxl_clear_port_error_handlers, pdev);
+> >  }
+> > @@ -898,11 +904,13 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
+> >  	struct pci_host_bridge *host_bridge = to_pci_host_bridge(dport_dev);
+> >  	struct pci_dev *pdev = to_pci_dev(dport_dev);
+> >  
+> > +    dev_dbg(dport_dev, "XXX: assign port error handlers for dport 1\n");
+> >  	if (dport->rch && host_bridge->native_aer) {
+> >  		cxl_dport_map_rch_aer(dport);
+> >  		cxl_disable_rch_root_ints(dport);
+> >  	}
+> >  
+> > +    dev_dbg(dport_dev, "XXX: assign port error handlers for dport 2\n");
+> >  	/* dport may have more than 1 downstream EP. Check if already mapped. */
+> >  	if (dport->regs.ras) {
+> >  		dev_warn(dport_dev, "RAS is already mapped\n");
+> > @@ -916,6 +924,7 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
+> >  		return;
+> >  	}
+> >  
+> > +    dev_dbg(dport_dev, "XXX: assign port error handlers for dport 3\n");
+> >  	cxl_assign_port_error_handlers(pdev);
+> >  	devm_add_action_or_reset(dport_dev, cxl_clear_port_error_handlers, pdev);
+> >  }
+> > diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> > index 067fd6389562..aa824584f8dd 100644
+> > --- a/drivers/cxl/mem.c
+> > +++ b/drivers/cxl/mem.c
+> > @@ -82,13 +82,15 @@ static int devm_cxl_add_endpoint(struct device *host, struct cxl_memdev *cxlmd,
+> >  	 * Now that the path to the root is established record all the
+> >  	 * intervening ports in the chain.
+> >  	 */
+> > +    dev_dbg(host, "XXX: add endpoint\n");
+> >  	for (iter = parent_port, down = NULL; !is_cxl_root(iter);
+> >  	     down = iter, iter = to_cxl_port(iter->dev.parent)) {
+> >  		struct cxl_ep *ep;
+> >  
+> >  		ep = cxl_ep_load(iter, cxlmd);
+> >  		ep->next = down;
+> > -		cxl_init_ep_ports_aer(ep);
+> > +        dev_dbg(ep->ep, "XXX: init ep port aer\n");
+> > +        cxl_init_ep_ports_aer(ep);
+> >  	}
+> >  
+> >  	/* Note: endpoint port component registers are derived from @cxlds */
+> > @@ -200,6 +202,7 @@ static int cxl_mem_probe(struct device *dev)
+> >  			return -ENXIO;
+> >  		}
+> >  
+> > +        dev_dbg(dev, "XXX: add endpoint\n");
+> >  		rc = devm_cxl_add_endpoint(endpoint_parent, cxlmd, dport);
+> >  		if (rc)
+> >  			return rc;
+> > diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+> > index 3785f4ca5103..8285f14994e8 100644
+> > --- a/drivers/pci/pcie/err.c
+> > +++ b/drivers/pci/pcie/err.c
+> > @@ -294,6 +294,11 @@ static int cxl_report_error_detected(struct pci_dev *dev, void *data)
+> >  	bool *status = data;
+> >  
+> >  	device_lock(&dev->dev);
+> > +    if (pdrv) {
+> > +        dev_dbg(&dev->dev, "XXX: call cxl_err_handler: %p %p\n", pdrv, pdrv->cxl_err_handler);
+> > +    } else {
+> > +        dev_dbg(&dev->dev, "XXX: call cxl_err_handler: %p no handler\n", pdrv);
+> > +    }
+> >  	if (pdrv && pdrv->cxl_err_handler &&
+> >  	    pdrv->cxl_err_handler->error_detected) {
+> >  		const struct cxl_error_handlers *cxl_err_handler =
+> > --------------------------------------
+> >
+> > Fan
+> >> Below are test results for this patchset using Qemu with CXL root
+> >> port(0c:00.0), CXL upstream switchport(0d:00.0), CXL downstream
+> >> switchport(0e:00.0). A CXL endpoint(0f:00.0) CE and UCE logs are
+> >> also added to show the existing PCIe endpoint handling is not changed.
+> >>
+> >> This was tested using aer-inject updated to support CE and UCE internal
+> >> error injection. CXL RAS was set using a test patch (not upstreamed but can
+> >> provide if needed).
+> >>
+> >>  - Root port UCE:
+> >>  root@tbowman-cxl:~/aer-inject# ./root-uce-inject.sh
+> >>  pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
+> >>  pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
+> >>  pcieport 0000:0c:00.0: CXL Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+> >>  pcieport 0000:0c:00.0:   device [8086:7075] error status/mask=00400000/02000000
+> >>  pcieport 0000:0c:00.0:    [22] UncorrIntErr
+> >>  aer_event: 0000:0c:00.0 CXL Bus Error: severity=Fatal, Uncorrectable Internal Error, TLP Header=Not available
+> >>  cxl_port_aer_uncorrectable_error: device=0000:0c:00.0 host=pci0000:0c status: 'Memory Address Parity Error' first_error: 'Memory Address Parity Error'
+> >>  Kernel panic - not syncing: CXL cachemem error. Invoking panic
+> >>  CPU: 1 UID: 0 PID: 146 Comm: irq/24-aerdrv Tainted: G            E      6.12.0-rc2-cxl-port-err-g2beab06a67d1 #4414
+> >>  Tainted: [E]=UNSIGNED_MODULE
+> >>  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> >>  Call Trace:
+> >>   <TASK>
+> >>   dump_stack_lvl+0x27/0x90
+> >>   dump_stack+0x10/0x20
+> >>   panic+0x33e/0x380
+> >>   cxl_do_recovery+0x116/0x120
+> >>   ? srso_return_thunk+0x5/0x5f
+> >>   aer_isr+0x3e0/0x710
+> >>   irq_thread_fn+0x28/0x70
+> >>   irq_thread+0x179/0x240
+> >>   ? srso_return_thunk+0x5/0x5f
+> >>   ? __pfx_irq_thread_fn+0x10/0x10
+> >>   ? __pfx_irq_thread_dtor+0x10/0x10
+> >>   ? __pfx_irq_thread+0x10/0x10
+> >>   kthread+0xf5/0x130
+> >>   ? __pfx_kthread+0x10/0x10
+> >>   ret_from_fork+0x3c/0x60
+> >>   ? __pfx_kthread+0x10/0x10
+> >>   ret_from_fork_asm+0x1a/0x30
+> >>   </TASK>
+> >>  Kernel Offset: 0x29000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+> >>  ---[ end Kernel panic - not syncing: CXL cachemem error. Invoking panic ]---
+> > ...
 
-Same comment was added in patch 2 but is removed in the helper. Maybe 
-it's better to add back the comment in the helper.
 
-> -		if (is_mba_sc(NULL))
-> -			mbm_bw_count(closid, rmid, &rr);
-> -
-> -		resctrl_arch_mon_ctx_free(rr.r, rr.evtid, rr.arch_mon_ctx);
-> -	}
-> -	if (is_mbm_local_enabled()) {
-> -		rr.evtid = QOS_L3_MBM_LOCAL_EVENT_ID;
-> -		rr.val = 0;
-> -		rr.arch_mon_ctx = resctrl_arch_mon_ctx_alloc(rr.r, rr.evtid);
-> -		if (IS_ERR(rr.arch_mon_ctx)) {
-> -			pr_warn_ratelimited("Failed to allocate monitor context: %ld",
-> -					    PTR_ERR(rr.arch_mon_ctx));
-> -			return;
-> -		}
-> -
-> -		__mon_event_count(closid, rmid, &rr);
-> -
-> -		/*
-> -		 * Call the MBA software controller only for the
-> -		 * control groups and when user has enabled
-> -		 * the software controller explicitly.
-> -		 */
 
-This same comment is in legacy code and is removed in the helper.
-
-> -		if (is_mba_sc(NULL))
-> -			mbm_bw_count(closid, rmid, &rr);
-> +	if (is_mbm_total_enabled())
-> +		mbm_update_one_event(r, d, closid, rmid, QOS_L3_MBM_TOTAL_EVENT_ID);
->   
-> -		resctrl_arch_mon_ctx_free(rr.r, rr.evtid, rr.arch_mon_ctx);
-> -	}
-> +	if (is_mbm_local_enabled())
-> +		mbm_update_one_event(r, d, closid, rmid, QOS_L3_MBM_LOCAL_EVENT_ID);
->   }
->   
->   /*
-
-Thanks.
-
--Fenghua
+-- 
+Fan Ni
 
