@@ -1,131 +1,139 @@
-Return-Path: <linux-kernel+bounces-393039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D597D9B9B3F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:44:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB409B9B41
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:48:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653AD1F21E27
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:44:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 056BF1C21231
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094E01D1F44;
-	Fri,  1 Nov 2024 23:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C661D2238;
+	Fri,  1 Nov 2024 23:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGbpU3vw"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XnXnosvs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1621D555;
-	Fri,  1 Nov 2024 23:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF18165F0C;
+	Fri,  1 Nov 2024 23:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730504667; cv=none; b=gRtynGhtAA3i1cQ5EyiC/8+H4WfZhXqnoGjTFbIo9hh14XMUIWQwk8VJ/c9QDW0vQ9E89UWJlVA0jMnI4jq010UhlRnwJt90HbKSon77d77QR5g0w3v7UdSOGBGhyMg8udGhQka+3Q2HShAxU3v6kepH0M9Nu+vmGT5hCLcUNsQ=
+	t=1730504918; cv=none; b=nO6yaeRt2/oiLplXsiJql2Wue58mhedy+CjDG3naG8vZWsAt/aST3AbQTOJZB1562DJK56Vb0jiyYEtngKwY4V4lihsbJmP9Vkoyu0ekoAvaFS1nsKiyqpQfHJfLuAOtlShgOalHcLfykmQr3LI5pXK7CUeyX8Ejy6lah9I74Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730504667; c=relaxed/simple;
-	bh=OfwXV0EML2Qo2agYug7N9wb4ZOvCenatc09gbx15RZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRvSdIEJqXptD+EfcnMAczq+H5kC7v628SXp70BFrs6Kf4WJM6b4/+aK+O/iCXUvq9VxrgbfKXrvU5enT5YH1+G6MA+WGbzaI6oIvzLXbNjGtVYEvNKpL6ycet98CF4tiSRxpa+xj03bF+Ync9XBn7mOVDZ+VomNNdNkVQUWs0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGbpU3vw; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cbcd71012so29018175ad.3;
-        Fri, 01 Nov 2024 16:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730504665; x=1731109465; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SJ7eFnOIVvV61qcZaSJGkSfja+YHjEcx+Yj4vOLi4f0=;
-        b=jGbpU3vw7du8r+a8T67UuuNFeTN4Ed1BZJLQudxIek79tlGx9K6AFTCuorq2IlfClB
-         LPgvTWbD3yWZq7kR28+ML0DunvQrEamfEzEdhi9wpAzGPokYlWrVVD37bmr8x6kAh1Vo
-         e8kxw1V23ZjtGIZt3aqX2GOWOt2D9NHfpwQd5GwN607Ku3YvlrC45WnDOqtkrJkqCUaf
-         KYpBV22WP2qOfNxWhhth7YhlZVc8djUHR7MdKxgMWP8ORDUiDI7Gl3tIyFeEr2MB8I4Y
-         4ac+2CajTyxKJgRYTc738J20wBgFWY0RImoQP6kHPmpftF14VtePnLzLbj4G0m8N/IZF
-         PT+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730504665; x=1731109465;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SJ7eFnOIVvV61qcZaSJGkSfja+YHjEcx+Yj4vOLi4f0=;
-        b=FjCKNMmVKsFB5mBLIrRKanZ8JU2QZqXn9J8cHH20D5zlEILmkpNfW6+HPyuSTtOJ68
-         GWwUNZn9j74G9hoKFa8YGBaXTwoxN2PRLqAMO3R57B379e1mc6hi3BBwy4NMU9vC3Ha7
-         unT+Od3GBj2wQsdA0TYwUNmZtaqek0E6w/qmfPVmpu0i65biqk8QPKvTbLlGv1b/x7m7
-         DGnozcDifXYDI9wSIducrT3FaV0wVjV0DFuhxG4u/f3179e9e7bvNyYM3qQBREgXiPNr
-         cFOk+bnq58SGYbtlMW7eDBdzKF14DD+5C+RiLQqi2puCG9IsB6+7n5E8sAm86K3Pyzw/
-         TP3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Z8dja64+0lyRhfc1rluA5qaxcaIlNmOSFfzAavHSBfP9c04Mi80mWBvdtoihbLIUGkXsk5V/clxAUGk=@vger.kernel.org, AJvYcCUfbYyvoN7R8eYQGy/PfPQKinZtpqtSqWzFfYCbBb/tXk4bUM2RRFae7hDuoktSvA4r9yUTfC1A0vDf@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdnRsNXOp44JOllj94IWTHyyHn7oFg+J2/rvS/ANMrJCm4/uAy
-	MnP4eYFNBPv6mw+LLWzWjuxrkyD482S2ID5oSpEKTpYPAlNVEpEv
-X-Google-Smtp-Source: AGHT+IHkGxFVU6H5gzWGCbeHC3vGSXCyIDfN2sFiShQruX6RRFKJwRUSKIwcZekXg1W+Z9/ruD9AQA==
-X-Received: by 2002:a17:902:e552:b0:20c:5c37:e2c6 with SMTP id d9443c01a7336-2111aec87d9mr54393815ad.11.1730504665273;
-        Fri, 01 Nov 2024 16:44:25 -0700 (PDT)
-Received: from gmail.com ([24.130.68.0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a2aa1sm26507185ad.164.2024.11.01.16.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 16:44:24 -0700 (PDT)
-Date: Fri, 1 Nov 2024 16:44:22 -0700
-From: Chang Yu <marcus.yu.56@gmail.com>
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Chang Yu <marcus.yu.56@gmail.com>, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	syzbot <syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [usb?] KASAN: invalid-free in dev_free
-Message-ID: <ZyVn1tNVntbykOuG@gmail.com>
-References: <0000000000003c68f3061fd2c285@google.com>
- <000000000000e82e420622326e3f@google.com>
- <CA+fCnZd2b70N6nXTyWO2UYivh_U7Wey==XWURpFy7B_x8xEFHQ@mail.gmail.com>
+	s=arc-20240116; t=1730504918; c=relaxed/simple;
+	bh=21sE4yu3fLR3GE+R+fbN8Kwt1qsk+dJsWr1o3Qpjm84=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ME8iYO8Wie79v8DlzmusDlEsHhu3W8IoWjAozyHp+xLMMmOVfZK6xY+51ptR5YAGAX50As16vNpkfFgdh2Y3NBrA09pcM6Na5A0CZ00XcUXsGe6DbFQB6JPMVjbpaYm8TYI9D1uLIuqBTy+iki10k+Hi3j3WIAdrrd5R4RWH0yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XnXnosvs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D8EC4CECD;
+	Fri,  1 Nov 2024 23:48:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730504917;
+	bh=21sE4yu3fLR3GE+R+fbN8Kwt1qsk+dJsWr1o3Qpjm84=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XnXnosvsFADcp34ib5vlgimxIxx2hd7Pjef5THJI9VVq5Ojoyv5PIg77XyeSWqkpu
+	 66nPXvTGBe2GebhBXvtmRRmwEtCk6RHvBJXW6UE5brLsMjvfjRq52vt7zjy57ah1L4
+	 TW9+pfOdpOxnHJeZwW7BbBB+PwAmxii+sHR0im5Ij8jEg3EReC9JifYlEDoVOlRsSC
+	 WH/IjMU5p8vyRKtPIlhikn2jrYpahswiqsXIGxGWZ8Yc/oSThSDzBdSkhZZ6lcSrvo
+	 SOb6qjGufmi09tVcOozs2eIJlHpLpdh0ReTQ9UOP47rKb7ityr7c6maIluBPiYmE6L
+	 X2IiZu85paz9w==
+From: SeongJae Park <sj@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Jann Horn <jannh@google.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [RFC PATCH] docs/mm: add VMA locks documentation
+Date: Fri,  1 Nov 2024 16:48:32 -0700
+Message-Id: <20241101234832.56873-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <8e02f3a4-d498-401d-aaba-e53ed2ac6a3a@lucifer.local>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+fCnZd2b70N6nXTyWO2UYivh_U7Wey==XWURpFy7B_x8xEFHQ@mail.gmail.com>
 
-On Sat, Nov 02, 2024 at 12:26:30AM +0100, Andrey Konovalov wrote:
-> On Mon, Sep 16, 2024 at 3:24 AM syzbot
-> <syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com> wrote:
+On Fri, 1 Nov 2024 20:58:39 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+
+[...]
+> On Fri, Nov 01, 2024 at 06:50:33PM +0000, Lorenzo Stoakes wrote:
+> > Locking around VMAs is complicated and confusing. While we have a number of
+> > disparate comments scattered around the place, we seem to be reaching a
+> > level of complexity that justifies a serious effort at clearly documenting
+> > how locks are expected to be interacted with when it comes to interacting
+> > with mm_struct and vm_area_struct objects.
 > >
-> > syzbot has found a reproducer for the following issue on:
+> > This is especially pertinent as regards efforts to find sensible
+> > abstractions for these fundamental objects within the kernel rust
+> > abstraction whose compiler strictly requires some means of expressing these
+> > rules (and through this expression can help self-document these
+> > requirements as well as enforce them which is an exciting concept).
 > >
-> > HEAD commit:    68d4209158f4 sub: cdns3: Use predefined PCI vendor ID cons..
-> > git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=10a96200580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=cb61872d4d8c5df9
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1297cc07980000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1217c8a9980000
-> 
-> Hi Chang,
-> 
-> I saw your patch testing request for this bug [1] (thank you for
-> looking into it!), but your patch doesn't appear correct to me, even
-> though it did satisfy syzbot. One issue that I see with the patch is
-> calling spin_unlock_irqrestore(&dev->lock) after
-> kref_put(&dev->count): kref_put() might free the device struct and
-> spin_unlock_irqrestore() will then do a UAF.
-> 
-> I'm not sure what the correct patch would be though, as I don't
-> understand what the issue is. It seems that dev_free() indeed gets
-> called twice, but since it's guarded by kref_put(), this shouldn't
-> happen AFAIU. Or at least we should get a bad refcount report.
-> 
-> Thanks!
-> 
-> [1] https://lore.kernel.org/all/6721d497.050a0220.35b515.0001.GAE@google.com/T/#mca35ec73d63ff30d7219b6739ed0801688f15f35
-Hi Andrey,
+> > The document limits scope to mmap and VMA locks and those that are
+> > immediately adjacent and relevant to them - so additionally covers page
+> > table locking as this is so very closely tied to VMA operations (and relies
+> > upon us handling these correctly).
+> >
+> > The document tries to cover some of the nastier and more confusing edge
+> > cases and concerns especially around lock ordering and page table teardown.
+> >
+> > The document also provides some VMA lock internals, which are up to date
+> > and inclusive of recent changes to recent sequence number changes.
+> >
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Thank you for the acknowledgement! I realized that patch was incorrect
-too which is why I haven't sent it out yet. I'll continue to look into
-it. I'll keep you posted if I find a solution.
+Acked-by: SeongJae Park <sj@kernel.org>
 
-Thanks!
+> > ---
+> >
+> > REVIEWERS NOTES:
+> >    You can speed up doc builds by running `make SPHINXDIRS=mm htmldocs`. I
+> >    also uploaded a copy of this to my website at
+> >    https://ljs.io/output/mm/vma_locks to make it easier to have a quick
+> >    read through. Thanks!
+> >
+> >
+> >  Documentation/mm/index.rst     |   1 +
+> >  Documentation/mm/vma_locks.rst | 527 +++++++++++++++++++++++++++++++++
+> >  2 files changed, 528 insertions(+)
+> >  create mode 100644 Documentation/mm/vma_locks.rst
+> >
+> > diff --git a/Documentation/mm/index.rst b/Documentation/mm/index.rst
+> > index 0be1c7503a01..da5f30acaca5 100644
+> > --- a/Documentation/mm/index.rst
+> > +++ b/Documentation/mm/index.rst
+> > @@ -64,3 +64,4 @@ documentation, or deleted if it has served its purpose.
+> >     vmemmap_dedup
+> >     z3fold
+> >     zsmalloc
+> > +   vma_locks
+
+This is the "Unsorted Documentation" section.  If the document is really for
+the section, I'd suggest putting it in alphabetically sorted order, for the
+consistency.  However, if putting the document under the section is not your
+real intention, I think it might be better to be put under "Process Addresses"
+section above.  What do you think?
+
+
+Thanks,
+SJ
+
+[...]
 
