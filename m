@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-392365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7225C9B931F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:25:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038649B9321
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:27:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9196B22A0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:25:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCBA52830FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9791A7AE8;
-	Fri,  1 Nov 2024 14:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A151B1A0BE5;
+	Fri,  1 Nov 2024 14:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/8qkiaO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VpIZcw7Y"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205FF1A3031;
-	Fri,  1 Nov 2024 14:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216B01BF24
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730471119; cv=none; b=Q1sFB4SEQVi3EHMRuiTUTiHkXVLkR9t3R+A2GItQ8EDwqNOKlPVwpMDAgPaeU76zlzrHKScfiXNvfgmAeP/9cc6EJmbmyd3f8dsz5kvMS8tshh3tDGJpX8V3KX4gQUB8LvddpVhnbwhq68Sa4z55W/JB6sBCF4gUnwWTaRwHivY=
+	t=1730471221; cv=none; b=b/u1fVB4p0UKx2kwHxxe/KsPcKet/4/F3RAllFPvmMlSf1lmPfiLhOdzlV58LTdz8ZD3WMEvMMvycVZt458vvLU0K1OfQb9YLI+6/Gu7UXX2bPa90pK8r+NStOPVsJJoojqBN8Nj/jxaCUpQhXuyMdSs44e8QAw1JsXp+9CRdz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730471119; c=relaxed/simple;
-	bh=7vrEPIQ4bAMycnZ9O2SmDP1fd541LGxGZlIiiqJbkww=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bPp4hz0atPn+Sli9UhpEugOZEPhGt8vr0YMja3Gic/vvu9q4pa0zIT8oQAVFDZaRBW0MvgaYXOg2QXs8SetdglRdVAVPCZZ7J1M1vwuF5x9nmsEwiGSJFP/TbZBG4CzwskzoW5vTzlLMUM5g9/Dfaz0FRGH53s25NCSyn8ReYfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/8qkiaO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AB8B6C4CED8;
-	Fri,  1 Nov 2024 14:25:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730471118;
-	bh=7vrEPIQ4bAMycnZ9O2SmDP1fd541LGxGZlIiiqJbkww=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=b/8qkiaOffx0IirFn8jZgYKZXIUobR4UZ8A0xFNEVLIpSzpuGrqezzvaUTmOcvZNK
-	 oxMPvlPg5VFiG0Pt8/0dDHRllyR6WaAanyb1+nBZ66PQ79gCAVsn1wakw32dSc+HW4
-	 7KELuhWKIUZBv7Y4i4AItAOvHgjVzjvwyOCYYKO5bx+hZDyRMkr9H1H/iV42ASfj5A
-	 6FqioZguuabaomlgZAD9GcVHoOrqvhMveAelGzGdtpFHtd9eDZr+UIkyadO+KhOOY6
-	 EZoP25wuFEv7Uu3DP4DqrSOxa9E7j1i2WB3jdoNfMWCK264cw8EMHiLL2OxGH0NnSQ
-	 i7701mJAY63tA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9574EE6F063;
-	Fri,  1 Nov 2024 14:25:18 +0000 (UTC)
-From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
-Date: Fri, 01 Nov 2024 15:25:05 +0100
-Subject: [PATCH v2 3/3] MAINTAINERS: Add apple-spi driver & binding files
+	s=arc-20240116; t=1730471221; c=relaxed/simple;
+	bh=csDC50QCLQ47lVad1nrBlueOXPGfdjtQnmigKMxgP3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s5qzNBG2HAC9Nz2+txUe1UZc/xxEfJ6xTnXwS14dAfU+S18k3iLxTbENo8VN3ZLoDmFyzEh+U9e6UKbsjnQcqbkQy2LP/+cwfm5+TRtEi0IILMW2rncnHwcavsqqSfb1wcsADpMbYoCzBVoI/SiUT2xK9E0F0hLMGCPba6169gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VpIZcw7Y; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HRevB+kZbqm5VGCy9Ywv6yEZT40BCpLMVp4OxdFSLX0=; b=VpIZcw7Y5WkWv6Gs38ATo73wUx
+	CA68bVWfRmCoElPC62lBmuZ97qz4qsp7bwLQw+vii87heqEYd3i8XrpUka/J1NZCDIW8P7KqwA0vu
+	/yF2+nkdDMuaaE79OspfHNhRcePfmWNa1LJ0fgAneqlPtKeoUTd+U/vS/kKmY9BB/AmXXe4FBo9If
+	c86Js4S66eWzQ2NLHHDSqM4oUixeKrLu17kykSWXxAJQxgmaJg0IkoSfQEULESZU2TJo3UJwTlZ48
+	z+sh6toAZbfUIkpjeWXvUNRPJ06Gmwoln9RTF6VGftV3gwewmRFgsBQXgmrtZqyCdgQ2EFooPVfSN
+	wN3/8lDQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6sbx-0000000AkBv-1qnH;
+	Fri, 01 Nov 2024 14:26:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 19FD1300599; Fri,  1 Nov 2024 15:26:49 +0100 (CET)
+Date: Fri, 1 Nov 2024 15:26:49 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Phil Auld <pauld@redhat.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
+Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
+Message-ID: <20241101142649.GX9767@noisy.programming.kicks-ass.net>
+References: <20240727102732.960974693@infradead.org>
+ <20240727105030.226163742@infradead.org>
+ <20241101124715.GA689589@pauld.westford.csb>
+ <20241101125659.GY14555@noisy.programming.kicks-ass.net>
+ <20241101133822.GC689589@pauld.westford.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241101-asahi-spi-v2-3-763a8a84d834@jannau.net>
-References: <20241101-asahi-spi-v2-0-763a8a84d834@jannau.net>
-In-Reply-To: <20241101-asahi-spi-v2-0-763a8a84d834@jannau.net>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Janne Grunau <j@jannau.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1316; i=j@jannau.net;
- s=yk2024; h=from:subject:message-id;
- bh=wbyAeXiak8ymhiqSGZePVuZ0IdBpI3guim8H/E8/EiU=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhnSVJ2cO5nswZ9Wq7uuQuBKUHqDHVLRqzn3RBfuYhYR9x
- GdLmFR0lLIwiHExyIopsiRpv+xgWF2jGFP7IAxmDisTyBAGLk4BmIjELEaGVat5HtlL5F456etw
- xI/xsAf//aAky1lcQkbzNZX539R/Z/hnLyJ0evtEEa4eJVZT+8CAuBnT/bcsX1P5J3dv2PJZx13
- 5AA==
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
-X-Endpoint-Received: by B4 Relay for j@jannau.net/yk2024 with auth_id=264
-X-Original-From: Janne Grunau <j@jannau.net>
-Reply-To: j@jannau.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101133822.GC689589@pauld.westford.csb>
 
-From: Hector Martin <marcan@marcan.st>
+On Fri, Nov 01, 2024 at 09:38:22AM -0400, Phil Auld wrote:
 
-This Apple SPI controller is present on Apple ARM SoCs (t8103/t6000).
+> How is delay dequeue causing more preemption? 
 
-Splitting this change from the binding/driver commits to avoid merge
-conflicts with other things touching this section, as usual.
+The thing delay dequeue does is it keeps !eligible tasks on the runqueue
+until they're picked again. Them getting picked means they're eligible.
+If at that point they're still not runnable, they're dequeued.
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Signed-off-by: Janne Grunau <j@jannau.net>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+By keeping them around like this, they can earn back their lag.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cc40a9d9b8cd10e2e00caa5a5881381cd40c0d9a..552febcb12a95766ff502960782941d9d016d5e0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2068,6 +2068,7 @@ F:	Documentation/devicetree/bindings/pci/apple,pcie.yaml
- F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
- F:	Documentation/devicetree/bindings/power/apple*
- F:	Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
-+F:	Documentation/devicetree/bindings/spi/apple,spi.yaml
- F:	Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
- F:	arch/arm64/boot/dts/apple/
- F:	drivers/bluetooth/hci_bcm4377.c
-@@ -2085,6 +2086,7 @@ F:	drivers/nvmem/apple-efuses.c
- F:	drivers/pinctrl/pinctrl-apple-gpio.c
- F:	drivers/pwm/pwm-apple.c
- F:	drivers/soc/apple/*
-+F:	drivers/spi/spi-apple.c
- F:	drivers/watchdog/apple_wdt.c
- F:	include/dt-bindings/interrupt-controller/apple-aic.h
- F:	include/dt-bindings/pinctrl/apple.h
-
--- 
-2.47.0
+The result is that the moment they get woken up again, they're going to
+be eligible and are considered for preemption.
 
 
+The whole thinking behind this is that while 'lag' measures the
+mount of service difference from the ideal (positive lag will have less
+service, while negative lag will have had too much service), this is
+only true for the (constantly) competing task.
+
+The moment a task leaves, will it still have had too much service? And
+after a few seconds of inactivity?
+
+So by keeping the deactivated tasks (artificially) in the competition
+until they're at least at the equal service point, lets them burn off
+some of that debt.
+
+It is not dissimilar to how CFS had sleeper bonus, except that was
+walltime based, while this is competition based.
+
+
+Notably, this makes a significant difference for interactive tasks that
+only run periodically. If they're not eligible at the point of wakeup,
+they'll incur undue latency.
+
+
+Now, I imagine FIO to have tasks blocking on IO, and while they're
+blocked, they'll be earning their eligibility, such that when they're
+woken they're good to go, preempting whatever.
+
+Whatever doesn't seem to enjoy this.
+
+
+Given BATCH makes such a terrible mess of things, I'm thinking FIO as a
+whole does like preemption -- so now it's a question of figuring out
+what exactly it does and doesn't like. Which is never trivial :/
 
