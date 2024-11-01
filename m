@@ -1,177 +1,296 @@
-Return-Path: <linux-kernel+bounces-392491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0B39B94D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:00:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DFEE9B94D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1FF4B21F42
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:00:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB0D0B21D21
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95371C761F;
-	Fri,  1 Nov 2024 16:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD86D1C9DCB;
+	Fri,  1 Nov 2024 16:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="iPUnZ8bs"
-Received: from msa.smtpout.orange.fr (out-72.smtpout.orange.fr [193.252.22.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KXRsgmKk"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C926B1DA53;
-	Fri,  1 Nov 2024 16:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28EA7602D;
+	Fri,  1 Nov 2024 16:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730476845; cv=none; b=uimo72vJj8DNmXhAPWJW7MBb9EXBZvoMOSrvftyFqr8KH/Rw7B1HXsveul5fAJhAY78H+LSW8xk/bD5reZ7uv7d+m19BD2b2ASGiZwynHPIhortzBSPDYmrjGqw14uj1iCt/apFlpnIi1LJMy8Gb+9vOKKmIUq8HFuIjsmKXDOo=
+	t=1730476845; cv=none; b=SnBVFJl2jBnK4ulvcVrZIwgB3X/BcMbtiOjtlf82khRuzUanIPW9FpQZHcwuDC3BSYY690BJfLbF0ZdqdBVfSiEv32eSDKqiAMRIyjY9/pUjkYOEZ5pVk2gJ7ycekqct7zTGokIfex9T7j++amPO6yJ91uaoIeMWN5xzSdrhu7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730476845; c=relaxed/simple;
-	bh=tgUcafWIcyw/Xw6WtWftC4IV18qq2lbN+XPC1DDYwpA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rACojyvNkRbdc8RPgiqaAs845DY+pGNpXBx4XKMuo2epZNYGBgNz1wOCKHw2srzinCoHps93+SJO5iFb3gQBCs1r74zyJ3DlTl3exWiCPaigCu27Af6H6wn9PR8FIUhuLfitxVy9ayBttlAVA3pvvDdoanRoakUXZbA2YSbTyCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=iPUnZ8bs; arc=none smtp.client-ip=193.252.22.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 6u3ZtHqXNH3SU6u3ZtLSD5; Fri, 01 Nov 2024 16:59:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730476768;
-	bh=OPHPOhW9HUBF4EAgD2hHEl89Ml4qq1QzyjIJ4lZA8VU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=iPUnZ8bsHVrouKOtqJuIaZT9mlO0HzGTPoMPj1s2yuM7ms6mOg1moCSuWZku7Ndwd
-	 jVvaMAENZvOrBkCGLorHATLAAPE6NlDfdntZ/qDdho1yOfACdoBrRqASevzKgLALSM
-	 BwHgW4OJGsJTjXJhY9j/3yFgXkQy2JwkIa5/YVqIy6++dEH7a/qKYfrrjuPoVl5cXj
-	 j4BXOjPqvwWLbR1y81ZcWdy9Uac4kiVk6xFgVLeEmzzp7W1aJAWjSi5alIw/pc53tW
-	 m4RJNOq5bexSI9JFbWxfbVKaIa40QZ76aXuFzifXUTnSDZI95RWCdQmZ+N3+ol/neF
-	 kxZXn8wK1zuEA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 01 Nov 2024 16:59:28 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <9bf24861-f792-4315-9492-e71f7d9c457f@wanadoo.fr>
-Date: Fri, 1 Nov 2024 16:59:21 +0100
+	bh=WTqhpuuOjdj30GpoiUur1pHYfRIGfRK0iWs/ST1iZyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aSwiD9viOAG7kKUHXaFDTmSMggbFqRZmPPC/l3LQoTQEHDWD6mpuljfOZxNQvHxura7g5nerxEk175H0TVcFXfSa4lJiy0zqRSdBBiO1IB537zYb3ufa1cRGrSTq6dy9AzjxaYe9yfvMTmVSFAs4bkqpoRZJF9IMpdAvjhgdzVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KXRsgmKk; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8845440E0184;
+	Fri,  1 Nov 2024 16:00:40 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FLuCjqzYDa9l; Fri,  1 Nov 2024 16:00:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730476831; bh=+O3lExo4DVA0Oqm0YYUylvzRIgxHp5PyzTOK8IHJVxo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KXRsgmKkcbxBXP7+bo4gUxIOfsC55jh0FZm2PE1T3RDIghHL4cbdCzqGgONIBGp/t
+	 D23ozTHY5pjXToU2ZIJQo0D3VuJdKGWdkqECv+xzbLzEuVOOXo+3eMVZb/V55tj+8o
+	 aRMuGVYsU4Eo0kvjIgLspI91nDufIueHkRujnZE+si/pV8XjkFulyJ8TQ0rxjB5OCX
+	 jAL+it+U+VGn0kO7f6sXzma2pUy+oZMdlydpGbtYrMLiInPGo/MlILbAndYIslmeDs
+	 vk6JSHP28sqI8ltDAgf09vu/ASxrGw7/OTUIYAne9a2p6yFkN0rESK1SlsRJH9rEkI
+	 CNrRlgPcy86oIXnmCBEOrlY9olG8aP4iB40bLSePvn9BfE/XnQoHoDaPwrJOoWDCWx
+	 SYCQCdJpIziqQYYBblmvXGvKrCStr+jChuwhxS9blFJnyZJvi2k//ZKX4T/S8K5eFW
+	 AQae+6dSGllxC9U/sPUR7gr8JF7fsRUGRiWjurXV75EHykv1y0YDhGazDr9y2K56ZB
+	 oNYRI9WF+Nc5ETy3GnI9o71IWchm83c2KwbHI8AeabeXqM/Ejh/GR6y0DsMO6zbW/r
+	 mgZLIzXHAkxSnhajROWFWatFAWuvUa4QmCqvrsD0+d4gbNHJBPLzs6Rmn3P/1IR5PM
+	 +DAkE6eLlwKuV7Ih71PHCfk0=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6053040E015F;
+	Fri,  1 Nov 2024 16:00:20 +0000 (UTC)
+Date: Fri, 1 Nov 2024 17:00:19 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikunj A Dadhania <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v14 03/13] x86/sev: Add Secure TSC support for SNP guests
+Message-ID: <20241101160019.GKZyT7E6DrVhCijDAH@fat_crate.local>
+References: <20241028053431.3439593-1-nikunj@amd.com>
+ <20241028053431.3439593-4-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] spi: apple: Add driver for Apple SPI controller
-To: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Janne Grunau <j@jannau.net>,
- Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-References: <20241101-asahi-spi-v2-0-763a8a84d834@jannau.net>
- <20241101-asahi-spi-v2-2-763a8a84d834@jannau.net>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241101-asahi-spi-v2-2-763a8a84d834@jannau.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241028053431.3439593-4-nikunj@amd.com>
 
-Le 01/11/2024 à 15:25, Janne Grunau via B4 Relay a écrit :
-> From: Hector Martin <marcan-WKacp4m3WJJeoWH0uzbU5w@public.gmane.org>
+On Mon, Oct 28, 2024 at 11:04:21AM +0530, Nikunj A Dadhania wrote:
+> Add support for Secure TSC in SNP-enabled guests. Secure TSC allows guests
+> to securely use RDTSC/RDTSCP instructions, ensuring that the parameters
+> used cannot be altered by the hypervisor once the guest is launched.
 > 
-> This SPI controller is present in Apple SoCs such as the M1 (t8103) and
-> M1 Pro/Max (t600x). It is a relatively straightforward design with two
-> 16-entry FIFOs, arbitrary transfer sizes (up to 2**32 - 1) and fully
-> configurable word size up to 32 bits. It supports one hardware CS line
-> which can also be driven via the pinctrl/GPIO driver instead, if
-> desired. TX and RX can be independently enabled.
+> Secure TSC-enabled guests need to query TSC information from the AMD
+> Security Processor. This communication channel is encrypted between the AMD
+> Security Processor and the guest, with the hypervisor acting merely as a
+> conduit to deliver the guest messages to the AMD Security Processor. Each
+> message is protected with AEAD (AES-256 GCM).
+
+Zap all that text below or shorten it to the bits only which explain why
+something is done the way it is.
+
+> Use a minimal AES GCM library
+> to encrypt and decrypt SNP guest messages for communication with the PSP.
 > 
-> There are a surprising number of knobs for tweaking details of the
-> transfer, most of which we do not use right now. Hardware CS control
-> is available, but we haven't found a way to make it stay low across
-> multiple logical transfers, so we just use software CS control for now.
+> Use mem_encrypt_init() to fetch SNP TSC information from the AMD Security
+> Processor and initialize snp_tsc_scale and snp_tsc_offset. During secondary
+> CPU initialization, set the VMSA fields GUEST_TSC_SCALE (offset 2F0h) and
+> GUEST_TSC_OFFSET (offset 2F8h) with snp_tsc_scale and snp_tsc_offset,
+> respectively.
 > 
-> There is also a shared DMA offload coprocessor that can be used to handle
-> larger transfers without requiring an IRQ every 8-16 words, but that
-> feature depends on a bunch of scaffolding that isn't ready to be
-> upstreamed yet, so leave it for later.
+> Add confidential compute platform attribute CC_ATTR_GUEST_SNP_SECURE_TSC
+> that can be used by the guest to query whether the Secure TSC feature is
+> active.
 > 
-> The hardware shares some register bit definitions with spi-s3c24xx which
-> suggests it has a shared legacy with Samsung SoCs, but it is too
-> different to warrant sharing a driver.
-> 
-> Signed-off-by: Hector Martin <marcan-WKacp4m3WJJeoWH0uzbU5w@public.gmane.org>
-> Signed-off-by: Janne Grunau <j@jannau.net>
-
-Hi,
-
-a few nitpicks, if they make sense to you or in case of v3.
-
-
-> +static int apple_spi_probe(struct platform_device *pdev)
-> +{
-> +	struct apple_spi *spi;
-> +	int ret, irq;
-> +	struct spi_controller *ctlr;
-> +
-> +	ctlr = devm_spi_alloc_master(&pdev->dev, sizeof(struct apple_spi));
-> +	if (!ctlr)
-> +		return dev_err_probe(&pdev->dev, -ENOMEM, "out of memory\n");
-
-Usually, no message is needed, because kmalloc like functions are 
-already verbose.
-
-> +
-> +	spi = spi_controller_get_devdata(ctlr);
-> +	init_completion(&spi->done);
-> +	platform_set_drvdata(pdev, ctlr);
-> +
-> +	spi->regs = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(spi->regs))
-> +		return PTR_ERR(spi->regs);
-> +
-> +	spi->clk = devm_clk_get_enabled(&pdev->dev, NULL);
-> +	if (IS_ERR(spi->clk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(spi->clk),
-> +				     "Unable to find or enable bus clock\n");
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
-> +		return irq;
-> +
-> +	ret = devm_request_irq(&pdev->dev, irq, apple_spi_irq, 0,
-> +			       dev_name(&pdev->dev), spi);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "Unable to bind to interrupt\n");
-> +
-> +	ctlr->dev.of_node = pdev->dev.of_node;
-> +	ctlr->bus_num = pdev->id;
-> +	ctlr->num_chipselect = 1;
-> +	ctlr->mode_bits = SPI_CPHA | SPI_CPOL | SPI_LSB_FIRST;
-> +	ctlr->bits_per_word_mask = SPI_BPW_RANGE_MASK(1, 32);
-> +	ctlr->flags = 0;
-
-Nitpick: not needed, the memory if already zeroed.
-
-> +	ctlr->prepare_message = apple_spi_prepare_message;
-> +	ctlr->set_cs = apple_spi_set_cs;
-> +	ctlr->transfer_one = apple_spi_transfer_one;
-> +	ctlr->auto_runtime_pm = true;
-> +
-> +	pm_runtime_set_active(&pdev->dev);
-> +	devm_pm_runtime_enable(&pdev->dev);
-
-There could be an error handling, or if intentional, maybe a (void) or a 
-comment to show the intent.
-
-> +
-> +	apple_spi_init(spi);
-> +
-> +	ret = devm_spi_register_controller(&pdev->dev, ctlr);
-> +	if (ret < 0)
-> +		return dev_err_probe(&pdev->dev, ret, "devm_spi_register_controller failed\n");
-> +
-> +	return 0;
-> +}
+> Since handle_guest_request() is common routine used by both the SEV guest
+> driver and Secure TSC code, move it to the SEV header file.
 
 ...
 
-CJ
+> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+> index c96b742789c5..88cae62382c2 100644
+> --- a/arch/x86/coco/sev/core.c
+> +++ b/arch/x86/coco/sev/core.c
+> @@ -98,6 +98,10 @@ static u64 secrets_pa __ro_after_init;
+>  
+>  static struct snp_msg_desc *snp_mdesc;
+>  
+> +/* Secure TSC values read using TSC_INFO SNP Guest request */
+> +static u64 snp_tsc_scale __ro_after_init;
+> +static u64 snp_tsc_offset __ro_after_init;
+
+I don't understand the point of this: this is supposed to be per VMSA so
+everytime you create a guest, that guest is supposed to query the PSP. What
+are those for?
+
+Or are those the guest's TSC values which you're supposed to replicate across
+the APs?
+
+If so, put that info in the comment above it - it is much more important than
+what you have there now.
+
+>  /* #VC handler runtime per-CPU data */
+>  struct sev_es_runtime_data {
+>  	struct ghcb ghcb_page;
+> @@ -1148,6 +1152,12 @@ static int wakeup_cpu_via_vmgexit(u32 apic_id, unsigned long start_ip)
+>  	vmsa->vmpl		= snp_vmpl;
+>  	vmsa->sev_features	= sev_status >> 2;
+>  
+> +	/* Set Secure TSC parameters */
+
+That's obvious. Why are you setting them, is more important.
+
+> +	if (cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC)) {
+> +		vmsa->tsc_scale = snp_tsc_scale;
+> +		vmsa->tsc_offset = snp_tsc_offset;
+> +	}
+> +
+>  	/* Switch the page over to a VMSA page now that it is initialized */
+>  	ret = snp_set_vmsa(vmsa, caa, apic_id, true);
+>  	if (ret) {
+> @@ -2942,3 +2952,83 @@ int snp_send_guest_request(struct snp_msg_desc *mdesc, struct snp_guest_req *req
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(snp_send_guest_request);
+> +
+> +static int __init snp_get_tsc_info(void)
+> +{
+> +	static u8 buf[SNP_TSC_INFO_RESP_SZ + AUTHTAG_LEN];
+
+You're allocating stuff below dynamically. Why is this buffer allocated on the
+stack?
+
+> +	struct snp_guest_request_ioctl rio;
+> +	struct snp_tsc_info_resp tsc_resp;
+
+Ditto.
+
+> +	struct snp_tsc_info_req *tsc_req;
+> +	struct snp_msg_desc *mdesc;
+> +	struct snp_guest_req req;
+> +	int rc;
+> +
+> +	/*
+> +	 * The intermediate response buffer is used while decrypting the
+> +	 * response payload. Make sure that it has enough space to cover the
+> +	 * authtag.
+> +	 */
+
+Yes, this is how you do comments - you comment stuff which is non-obvious.
+
+> +	BUILD_BUG_ON(sizeof(buf) < (sizeof(tsc_resp) + AUTHTAG_LEN));
+> +
+> +	mdesc = snp_msg_alloc();
+> +	if (IS_ERR_OR_NULL(mdesc))
+> +		return -ENOMEM;
+> +
+> +	rc = snp_msg_init(mdesc, snp_vmpl);
+> +	if (rc)
+> +		return rc;
+> +
+> +	tsc_req = kzalloc(sizeof(struct snp_tsc_info_req), GFP_KERNEL);
+> +	if (!tsc_req)
+> +		return -ENOMEM;
+
+You return here and you leak mdesc. Where are those mdesc things even freed?
+I see snp_msg_alloc() but not a "free" counterpart...
+
+> +	memset(&req, 0, sizeof(req));
+> +	memset(&rio, 0, sizeof(rio));
+> +	memset(buf, 0, sizeof(buf));
+> +
+> +	req.msg_version = MSG_HDR_VER;
+> +	req.msg_type = SNP_MSG_TSC_INFO_REQ;
+> +	req.vmpck_id = snp_vmpl;
+> +	req.req_buf = tsc_req;
+> +	req.req_sz = sizeof(*tsc_req);
+> +	req.resp_buf = buf;
+> +	req.resp_sz = sizeof(tsc_resp) + AUTHTAG_LEN;
+> +	req.exit_code = SVM_VMGEXIT_GUEST_REQUEST;
+> +
+> +	rc = snp_send_guest_request(mdesc, &req, &rio);
+> +	if (rc)
+> +		goto err_req;
+> +
+> +	memcpy(&tsc_resp, buf, sizeof(tsc_resp));
+> +	pr_debug("%s: response status %x scale %llx offset %llx factor %x\n",
+
+Prefix all hex values with "0x" so that it is unambiguous.
+
+> +		 __func__, tsc_resp.status, tsc_resp.tsc_scale, tsc_resp.tsc_offset,
+> +		 tsc_resp.tsc_factor);
+> +
+
+	if (!tsc_resp.status)
+
+> +	if (tsc_resp.status == 0) {
+> +		snp_tsc_scale = tsc_resp.tsc_scale;
+> +		snp_tsc_offset = tsc_resp.tsc_offset;
+> +	} else {
+> +		pr_err("Failed to get TSC info, response status %x\n", tsc_resp.status);
+
+								Ox
+
+> +		rc = -EIO;
+> +	}
+> +
+> +err_req:
+> +	/* The response buffer contains the sensitive data, explicitly clear it. */
+
+s/the //
+
+> +	memzero_explicit(buf, sizeof(buf));
+> +	memzero_explicit(&tsc_resp, sizeof(tsc_resp));
+> +
+> +	return rc;
+> +}
+> +
+> +void __init snp_secure_tsc_prepare(void)
+> +{
+> +	if (!cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC))
+> +		return;
+> +
+> +	if (snp_get_tsc_info()) {
+> +		pr_alert("Unable to retrieve Secure TSC info from ASP\n");
+> +		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SECURE_TSC);
+> +	}
+> +
+> +	pr_debug("SecureTSC enabled");
+> +}
+> diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
+> index 0a120d85d7bb..996ca27f0b72 100644
+> --- a/arch/x86/mm/mem_encrypt.c
+> +++ b/arch/x86/mm/mem_encrypt.c
+> @@ -94,6 +94,10 @@ void __init mem_encrypt_init(void)
+>  	/* Call into SWIOTLB to update the SWIOTLB DMA buffers */
+>  	swiotlb_update_mem_attributes();
+>  
+> +	/* Initialize SNP Secure TSC */
+
+Useless comment.
+
+> +	if (cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+> +		snp_secure_tsc_prepare();
+
+Why don't you call this one in the same if-condition in
+mem_encrypt_setup_arch() ?
+
+> +
+>  	print_mem_encrypt_feature_info();
+>  }
+>  
+> -- 
+> 2.34.1
+> 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
