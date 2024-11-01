@@ -1,149 +1,148 @@
-Return-Path: <linux-kernel+bounces-392322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2080C9B9274
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:49:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F24399B928B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:50:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0FDD1F22607
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893CA28116C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4291A2651;
-	Fri,  1 Nov 2024 13:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF9A1A08D7;
+	Fri,  1 Nov 2024 13:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DDXHq8OD"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GQsLFEV5"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1631A2C21
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F1519E96A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730468958; cv=none; b=HT0DcE6SBBgZ9hJDm5SMNNyHN8FEOCKfPYbFMh9Lw3ekT+kwoSmfDB0S6L9aEAEMhq7DHEZn8r2QzMgkGfajqBjBuhBXPrrBJVZo2Ljy1PM3dASEjrDnVYHDToenZHRcMYwAbCGIIGYv+vUVvvPf2lh0KHs1Ol95VsCmsw60N8k=
+	t=1730469024; cv=none; b=YtdiVXgLecLLgvK6EGoL3mebgP70LuUJS87Vi+7FYZB8I98btWviKrjP+3kBuJtKTedTq7BXWx+ZSnCf1rjtr4cJs2gWsHnI1H7kbXsFPFi4Uoo4YNOkhvA2ymUZ3mCuZlNURHIJkl6ZUZZoZ2/e5wh6GbkKiwO0p+7wbVBqfGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730468958; c=relaxed/simple;
-	bh=fBoe2HkvZiBkNwysnrfNCF/ZYFjLG7Kr55DZ36MBq+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VMAkPlowHd37OxasDEv9TVQxM45Rd/Ncz8P6NCCDMFeXWIWQ1+tVFJl4LsTmBBU5tpDPs0XMMkt16r9nLaOuGzwDsi90F1+vqBzuNr0q1ueCDFz8+RwtsasIgI47GxvOuoD9IaCgTidzICMfOdjPeiZrsRtHjD+2B/ZqhdDX3pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DDXHq8OD; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d4c482844so1209895f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:49:16 -0700 (PDT)
+	s=arc-20240116; t=1730469024; c=relaxed/simple;
+	bh=zu87bpCL70s/oXUC3Rx7lgPDzEV5M9sVT/p4zMoS+p0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oc992m8ag2dBGtFCvut0zr+SvcGsFNy9J6YVNHiQY0j+V9rseNgqXlTaCtQBMQ9/MhZCnVa2t2RsbnlOnRkBtdhzKGvXQwCZRrQemAKjj6GpQtrQRv18qBD7rEDIlN+3duCPldNbT0E7nzD4Pvykg3Z5Iz52jMtuMEiJ/21Lgh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GQsLFEV5; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9932aa108cso296235166b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:50:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730468955; x=1731073755; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fBoe2HkvZiBkNwysnrfNCF/ZYFjLG7Kr55DZ36MBq+k=;
-        b=DDXHq8ODN/KvV2qsNX0ckLivdlgh5e1mvAJQNo8XQ0VUEsQQDxdX36QurRAZEO9aW8
-         BHU2LU+P+GTylciT3fD/kKDAWzxBP4TWFVMFxyOH2py/dJltAinYnF5LMB+/s0koHhJU
-         fWbaBxgow2k4n87wl5msNGL78mhpHGT/1Qxs6OPfD0ZZfml+G0b14ltyQhmYve1i4d1m
-         qXfRwJshOJQgmKBhXzAPZhqYObt+1NuxSx8zEXrrPYHYgzmtmSLlhPMWjObk9hOmQbZI
-         V4G7InZPWeXo3qgbBpkN6+Xst/o1vYgrAD+M4YFR/xH1cjDIR6Fk9rrbMBWne3j7qHuC
-         jLpA==
+        d=suse.com; s=google; t=1730469019; x=1731073819; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GMQKKJ98iVpHNH3i2CXUx1LW5hgoaOShr2IlFC3AvNA=;
+        b=GQsLFEV5whx/f+5/yRNZO77X6XJ5I2olmEo3rRQx3yx899MV2ricHR8OwwxhoC/our
+         gOOe/oLgIrSLyZi6DeMKGLm9MPPF9OSlOL0RbG6XAQ/NLyjBLG21EpPLrmBASNT5q+DE
+         FkWehESNRE4VfzniZg4i8bMZ5+Rri3xq+zAE6Mr75a113CJNxRCX3dCoZIGuXSz0eJ58
+         GSnDV+7cG/rsxKwX21BuTFPnWjA66CgsL5exuBtMD1DXggnieV2TWfY3x+WgY4QLlOjs
+         SvZJmlkKF91Vwn5ENEbjjrKNKVfASjNcH/TEtlepRzC6nhhTG6Tc0/qwhCYlggjyeJ4O
+         +Uag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730468955; x=1731073755;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fBoe2HkvZiBkNwysnrfNCF/ZYFjLG7Kr55DZ36MBq+k=;
-        b=Z3ysOJyCpmcQvLZVH+fqNBg2sIsQ+9wBCrA7v/SkGL2iD3W6jefiQ108tQ0jRSeavA
-         N+/yXHWE62PomCQAsC3HDpD0qKlp/7BK0obxKT5IeyhiW5Dks27bQZiHxZRIHYLTBWWR
-         IaOQE3KQLzz+1l5XIYvOmOJces5TaZDUkgLZcf+YQrlVUgMBpP/NHJrwqluA48CM5AZ+
-         LD0fX8K07h+LUcC3+jrbdFCxrHlJljc/ZfAjGn0vlaqBn8xRjc/9h9LbtI/crLo2KeYN
-         bixUPv8teFvxdzrzeVeqTJOted6NNX+Uv/8WDnhXjivNrvKZS6emFg2nCC8ZrWnrj93a
-         KZcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVovkLx7+GPMZNI87NgjBzTLCpqdU/c16PkmJFBV7HaoUXkjIcnDBus2+1qmTu9GXMuGy9NnYdAuD4daTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylMgVICRLmHfxkokSKMp27C7C7uouffGa+ZlQ4y8Rs7DKs2Q4i
-	5PAcXpPF0sNMmtlF17xLMI+jn0sxkah2MYMo111kNgYkw0Ihuo2Z+hBnr2AJ2aSFASziANHJRlA
-	Ny+wQ9N73rsWJft4f1bKazzAFs8+U1TZyRIgg
-X-Google-Smtp-Source: AGHT+IFOlrIU29li+WwDu+4hXa3QZCTXxmxnhykRkU0LcY5/UHNkfik1M/kZo8wH2HFLuTni65Nwv/ggU7fipxM3zns=
-X-Received: by 2002:adf:fb85:0:b0:37d:5047:76d8 with SMTP id
- ffacd0b85a97d-38061205e66mr15059343f8f.59.1730468954573; Fri, 01 Nov 2024
- 06:49:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730469019; x=1731073819;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GMQKKJ98iVpHNH3i2CXUx1LW5hgoaOShr2IlFC3AvNA=;
+        b=ml+Nx9nd1rBjC987skuofEU85rWYq97yVdgj50/fljQBQMibp3TajqOxHFOrHxqqvm
+         q7bR8RZwtrH4lRdrbzIc8pUpdqxjy1FTcU1akrOzQBaA9rH5NnUh2kxXlvK1L0YJYCl0
+         jwYd3wVKqEw7TeN3yEZ1FSKxjhDsaUv/iKe9JTfPvYQIQy1zko4XfIP5lWamWuTQ5jYn
+         BI5jAfOWcFSaa8fwMq1BjNTtN1esvtIcEfrS8h2matwwgm4Z4oFaa/2o72c1V+xpMxsC
+         pPaXkLWs+rW/tN34FdIV+MWz7I57Rz3XzwUKo5GUlm1bGSlUweQAfrZkZDt2fnJ3A6zZ
+         Me+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUxJxiit5xFns7N2tPSvsWOOmwDnrFg69zXm4MGwRKmI7mug+9bYSBJamBWlV9XtmnzPUmu5UpFUVTtxnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRE47tYM6BfFpXnKavGmPimgClaLPf5J473QNGMSYcporbONFb
+	05q77lS1JhdVISIe29K6hS+A0XAZc7h53u0drupHIkbooGO+aBd6434mUPESCaE=
+X-Google-Smtp-Source: AGHT+IE3cmDk5BoxktCJSNUuOb2jDNHY+v5dPRdUMK5bfZM+U1Uy2em//nFYolTGT6CKFGhcPhkwpA==
+X-Received: by 2002:a17:907:3f9f:b0:a9a:2afc:e4d7 with SMTP id a640c23a62f3a-a9e50b948d0mr670223566b.44.1730469019255;
+        Fri, 01 Nov 2024 06:50:19 -0700 (PDT)
+Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56494465sm182111266b.30.2024.11.01.06.50.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 06:50:18 -0700 (PDT)
+Date: Fri, 1 Nov 2024 14:50:18 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Stepanov Anatoly <stepanov.anatoly@huawei.com>
+Cc: Gutierrez Asier <gutierrez.asier@huawei-partners.com>,
+	akpm@linux-foundation.org, david@redhat.com, ryan.roberts@arm.com,
+	baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+	hannes@cmpxchg.org, hocko@kernel.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	alexander.kozhevnikov@huawei-partners.com, guohanjun@huawei.com,
+	weiyongjun1@huawei.com, wangkefeng.wang@huawei.com,
+	judy.chenhui@huawei.com, yusongping@huawei.com,
+	artem.kuzin@huawei.com, kang.sun@huawei.com,
+	nikita.panov@huawei-partners.com
+Subject: Re: [RFC PATCH 0/3] Cgroup-based THP control
+Message-ID: <ZyTcmvihAl_m4FZM@tiehlicka>
+References: <ZyJNizBQ-h4feuJe@tiehlicka>
+ <d9bde9db-85b3-4efd-8b02-3a520bdcf539@huawei.com>
+ <ZyNAxnOqOfYvqxjc@tiehlicka>
+ <80d76bad-41d8-4108-ad74-f891e5180e47@huawei.com>
+ <ZySEvmfwpT_6N97I@tiehlicka>
+ <274e1560-9f6c-4dd9-b27c-2fd0f0c54d03@huawei.com>
+ <ZyTUd5wH1T_IJYRL@tiehlicka>
+ <5120497d-d60a-4a4b-a39d-9b1dbe89154c@huawei.com>
+ <ZyTXYnbDfGYGuxlt@tiehlicka>
+ <5baa6024-a0a4-4b0b-a7d1-641bba7e5b87@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
- <20241022224832.1505432-2-abdiel.janulgue@gmail.com> <CAH5fLgjZ91xFo4hV4dPnDXLFr9jX3na60tVt_KuNU_c6WhhzAA@mail.gmail.com>
- <b154dd13-8cd8-4066-ba3d-6597959ca5c5@gmail.com> <ZxkPC-dLRBqBKZ5J@Boquns-Mac-mini.local>
- <CAH5fLggEGMVspJoO6CE-gTa3-OHfkUnS=L1X-VNC8Cp57GYVkA@mail.gmail.com>
- <Zxk7Tf-jhSse51AS@Boquns-Mac-mini.local> <CAH5fLgh1zXRA1dHBEtiNxWW8kNMtO47bBnaFLVhpzgxsnS1ysw@mail.gmail.com>
- <CAH5fLgjLouU9ZRabJtP9qK6RWNLHZvW6dtUqbCkzFqZO+9skTQ@mail.gmail.com> <fe25c0a4-7e1b-45f3-b413-c52d033c7906@gmail.com>
-In-Reply-To: <fe25c0a4-7e1b-45f3-b413-c52d033c7906@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 1 Nov 2024 14:49:02 +0100
-Message-ID: <CAH5fLgjdhSgsEkknL=w6cW2OhL=FnxwdZq66BXf-PWs+BzjnVA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] rust: types: add `Owned` type and `Ownable` trait
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, dakr@redhat.com, 
-	linux-kernel@vger.kernel.org, airlied@redhat.com, 
-	miguel.ojeda.sandonis@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5baa6024-a0a4-4b0b-a7d1-641bba7e5b87@huawei.com>
 
-On Fri, Nov 1, 2024 at 2:38=E2=80=AFPM Abdiel Janulgue
-<abdiel.janulgue@gmail.com> wrote:
->
-> Hi Alice, Boqun:
->
-> On 24/10/2024 10:33, Alice Ryhl wrote:
-> >>>>>>>
-> >>>>>>> Please rename this function to from_raw to match the name used by
-> >>>>>>> other similar functions.
-> >>>>>>>
-> >>>>>>> Also, I don't love this wording. We don't really want to guarante=
-e
-> >>>>>>> that it is unique. For example, pages have one primary owner, but
-> >>>>>>> there can be others who also have refcounts to the page, so it's =
-not
-> >>>>>>> really unique. I think you just want to say that `ptr` must point=
- at a
+On Fri 01-11-24 16:39:07, Stepanov Anatoly wrote:
+> On 11/1/2024 4:28 PM, Michal Hocko wrote:
+> > On Fri 01-11-24 16:24:55, Stepanov Anatoly wrote:
+> >> On 11/1/2024 4:15 PM, Michal Hocko wrote:
+> >>> On Fri 01-11-24 14:54:27, Stepanov Anatoly wrote:
+> >>>> On 11/1/2024 10:35 AM, Michal Hocko wrote:
+> >>>>> On Thu 31-10-24 17:37:12, Stepanov Anatoly wrote:
+> >>>>>> If we consider the inheritance approach (prctl + launcher), it's fine until we need to change
+> >>>>>> THP mode property for several tasks at once, in this case some batch-change approach needed.
 > >>>>>
-> >>>>> But then when `Owned<Page>` dropped, it will call __free_pages() wh=
-ich
-> >>>>> invalidate any other existing users. Do you assume that the users w=
-ill
-> >>>>> use pointers anyway, so it's their unsafe responsiblity to guarante=
-e
-> >>>>> that they don't use an invalid pointer?
+> >>>>> I do not follow. How is this any different from a single process? Or do
+> >>>>> you mean to change the mode for an already running process?
 > >>>>>
-> >>>>> Also I assume you mean the others have refcounts to the page *befor=
-e* an
-> >>>>> `Owned<Page>` is created, right? Because if we really have a use ca=
-se
-> >>>>> where we want to have multiple users of a page after `Owned<Page>`
-> >>>>> created, we should better provide a `Owned<Page>` to `ARef<Page>`
-> >>>>> function.
-> >>>>
-> >>>> The __free_pages function just decrements a refcount. If there are
-> >>>> other references to it, it's not actually freed.
-> >>>>
+> >>>> yes, for already running set of processes
 > >>>
-> >>> Then why don't we use page_put() there? ;-) And instead of
-> >>> `Owned<Page>`, we can wrap the kernel::page as `ARef<Page>`, no?
 > >>
-> >> I don't think there's a function called page_put?
-> >
-> > Sorry I confused myself. It's because it's called put_page.
-> >
->
-> How do I proceed with this? Should we use the page's reference count to
-> decide when to free the allocation and use put_page() instead of
-> __free_pages() in Page::Drop?.
->
-> In that case, there would be no need for `Ownable`, right? As we could
-> just return ARef<Page> in both vmalloc_to_page() case and in
-> Page::alloc_page(), letting the kernel handle ownership internally.
+> >>> Why is that preferred over setting the policy upfront?
+> >> Setting the policy in advance is fine, as the first step to do.
+> >> But we might not know in advance
+> >> which exact policy is the most beneficial for one set of apps or another.
+> 
+> > 
+> > How do you plan to find that out when the application is running
+> > already?
+> For example, if someone willing to compare some DB server performance with THP-off vs THP-on,
+> and DB server restart isn't an option.
 
-Yes, it seems like we don't need Ownable for Page in the end. You can
-use ARef together with put_page() and get_page().
+So you essentially expect user tell you that they want THP and you want
+to make that happen on fly, correct? It is not like there is an actual
+monitoring and dynamic policing.
 
-Alice
+If that is the case then I am not really convinced this is a worthwhile
+to support TBH. I can see that a workload knows in advance that they
+benefit from THP but I am much more dubious about "learning during the
+runtime" is a real life thing. I might be wrong of course but if
+somebody has performance monitoring that is able to identify performance
+bottlenecks based on specific workload then applying THP on the whole
+group of proceesses seems like a very crude way to deal with that. I
+could see a case for madvice_process(MADV_COLLAPSE) to deal with
+specific memory hotspots though.
+-- 
+Michal Hocko
+SUSE Labs
 
