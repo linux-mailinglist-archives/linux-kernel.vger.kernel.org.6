@@ -1,92 +1,88 @@
-Return-Path: <linux-kernel+bounces-392163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CD79B9072
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:42:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B7F9B9065
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17FAE282803
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:42:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EBEF1F222DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7D219B586;
-	Fri,  1 Nov 2024 11:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="PWBHOkBe"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8F119ABBD;
-	Fri,  1 Nov 2024 11:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704C319ABBD;
+	Fri,  1 Nov 2024 11:41:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4156199238
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730461302; cv=none; b=oSyOX3VCMnZD7OyHxjQushB7QqNeC03cveQDMR4Yih8Nc2CxUE5/NduMEHxLygkngu8yh2n7HNgObgCF3hh/fCqdTEn52j159puAK2+U5S3blwszVWKKw58b3zFekMH3691Xe7hDKcuBy8UREJ0dya5/9uymeKqZYDE3Q48xqR0=
+	t=1730461265; cv=none; b=bJATkdx7Vt0N6maQxRClspZNYi3Djx91V09erBg0HoupmVEMmHMv1N9Y9imUisTnGGHGX/NqCDd7jDFd+DtagS2V27miIDuE//qaKbfa79g0IS72E4CQRZtMNRWoronwJFr3pMeQ2KcgV/A98Gm1AtZp2HqE0bAya8dfoZt9j8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730461302; c=relaxed/simple;
-	bh=UpIhy6ONjO+Fga90pjXdn+xEmrcqSSZ/ILq/5/r2IW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LXhkhQBfNPRd7ek0fMhbvQpXbRquhJ/SRKiZlZBbg7QYCuJ4pmsQdXv2vCiCI6GLh/Mc6holWNvn0gioo9ZpCuMiiF5MnTG9BUreM+sHOgWQ/4100FC88qQJ7iVDnjuLKiqmtfXuLgNDDZ5H9z7Jx1YlcQQrbRxWWEwFHxAWE70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=PWBHOkBe; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=c+ww708aRc0qAteUCkjthXfj1VPpWdpi32cBrs7jx40=;
-	b=PWBHOkBeUaF7mXHNKxJLf+YgphM25RjX5LqSCZLkCvuMz5RQTODLV+3SIEUMem
-	vWWdt5Xxr9lFpGM+3Wh88y4mPHmOjr+CfR8zcJHXGOS7Sh5yukjMRjTkKBTUcXgH
-	u/0gyluq3eZs9QSbBZgBRWGtzTmFei0Z9moJZKXVst09g=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCXvSdGviRndu1qAQ--.14047S3;
-	Fri, 01 Nov 2024 19:40:56 +0800 (CST)
-Date: Fri, 1 Nov 2024 19:40:54 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	"open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] arm64: dts: imx8mn-tqma8mqnl-mba8mx-usbot: fix
- coexistence of output-low and output-high in GPIO
-Message-ID: <ZyS+Rm8rRkPX6L8S@dragon>
-References: <20241023210313.1390767-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1730461265; c=relaxed/simple;
+	bh=tz0AI+nrP/NYdrpultsyaBPG0ukpKwCdaZinJiCBoLY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DmCSCwElt869hA/cxs1GKr00FtbdXtm4j66DrHHsv/MjG+iCtVLMPn2FJ7s6iKNtEtuYj2fGNpjx3pRFi8OBTlOwwP1NZ6My27T83oGy0dq6zU42u4y4OybrXUTR72vH+mpMEj0lM2GNl0iCXPK5ucq8cA43AXC3dJblbRPq6dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so19208245ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:41:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730461262; x=1731066062;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TcFRQtE48UK+gQqnvcVWuzlA1lJZubnbju4eUXeCNCA=;
+        b=e6OVPELCM8yXQdMlkoZZE5sEzOB7RV/ABBvhFr0/MuXEvtNcOZJn/0mMjx3HxgGT+C
+         FQqPxpICwBGVGyZwccS3T3MPes6qtRaaIgiijb7MSA59ta4hpIX5ygA+qyioA0x4fd5e
+         i5F1PusF/du1T6MJXqFwG1bg94yBUjesRVf7fSQc01ADbTDZ7rf2AoUlhqZFllv7PUzY
+         MhHPfAHATweLFFfsoQUCXWQpB0aoiiwEp59QIbFO66mDun+KzK21OjxSSOow7gZa3pbp
+         TRo6SatvRv0zeGACKbqfPNFA5D7xjQth/GG30TkvzI5tk40SbsiaaiIop4FbOGM3YnHm
+         u0Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5fOAqW07PlTmQvEpkHx865StJDG+SP0EbNhZz8wEW3NeBGSoaZbSoWThRFQd4Dvuy/Icfl6uOyeLkZaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQLuc92DJGqWOj13Jg0YNNO7nVepmSWFVy1dV4Wep1VpD4F/LG
+	m53VCXKgegOkgCG2sg+FZhxsgmDI79L6ka3vkWuBUKyBXN/q5UOHzHEi5WRzm9WZ3pnKzLPJOig
+	cGP51Gj8Od8gt08KbwSPuF+SUZeeRlYkvZTe9nczeAmY/fmOgF0oqEmk=
+X-Google-Smtp-Source: AGHT+IHMrfLNlU2NgthZ2FUnP+AR0AUUGE2lvP2P4VDwu/4nMlO111hT1CxL/QO9e+kQMndG1sHydas6+72M6kmMEkpxe9ZuGUtb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023210313.1390767-1-Frank.Li@nxp.com>
-X-CM-TRANSID:Ms8vCgCXvSdGviRndu1qAQ--.14047S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XF45ZF47tw47Zry5uw13CFg_yoWfKFXE9a
-	sYqw4xJ348Crn0kwnxCwsY9rW29r1xWrnIqr1Sg398KFWFvanFyF10vrySqFW5CF4jyr9r
-	G34ktw1UXrWF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8EoGJUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAgeKZWckfBi+WgAAsp
+X-Received: by 2002:a05:6e02:214f:b0:3a0:9cd5:92f7 with SMTP id
+ e9e14a558f8ab-3a6b0384e88mr36037405ab.17.1730461261908; Fri, 01 Nov 2024
+ 04:41:01 -0700 (PDT)
+Date: Fri, 01 Nov 2024 04:41:01 -0700
+In-Reply-To: <20241101111614.2670-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6724be4d.050a0220.529b6.00ec.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] INFO: task hung in do_coredump (3)
+From: syzbot <syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 23, 2024 at 05:03:13PM -0400, Frank Li wrote:
-> Fix the issue where both 'output-low' and 'output-high' exist under GPIO
-> hog nodes  (rst_usb_hub_hog and sel_usb_hub_hog) when applying device
-> tree overlays. Since /delete-property/ is not supported in the overlays,
-> setting 'output-low' results in both properties being present. The
-> workaround is to disable these hogs and create new ones with 'output-low'
-> as needed.
-> 
-> Fix below CHECK_DTBS warning:
-> arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx-usbotg.dtb: sel-usb-hub-hog:
->    {'output-low': True, 'gpio-hog': True, 'gpios': [[1, 0]], 'output-high': True, 'phandle': 108, '$nodename': ['sel-usb-hub-hog']}
->        is valid under each of {'required': ['output-low']}, {'required': ['output-high']
-> 
-> Fixes: 3f6fc30abebc ("arm64: dts: imx8mn: tqma8mqnl-mba8mx: Add USB DR overlay")
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Hello,
 
-Applied, thanks!
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: rcu detected stall in corrupted
+
+rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { P3585 } 2769 jiffies s: 8817 root: 0x0/T
+rcu: blocking rcu_node structures (internal RCU debug):
+
+
+Tested on:
+
+commit:         270c32fa MAINTAINERS: remove Florian from DSA entry
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/ mm-hotfixes-unstable
+console output: https://syzkaller.appspot.com/x/log.txt?x=12afe6f7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1940f73a609bb874
+dashboard link: https://syzkaller.appspot.com/bug?extid=a8cdfe2d8ad35db3a7fd
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15c9b2a7980000
 
 
