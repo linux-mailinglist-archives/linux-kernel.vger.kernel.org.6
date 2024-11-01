@@ -1,114 +1,111 @@
-Return-Path: <linux-kernel+bounces-391675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AC59B8A21
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:52:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E269B8A1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EAF71F22C81
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:52:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410161F22C16
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA5E145FE0;
-	Fri,  1 Nov 2024 03:52:27 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15875145FE0;
+	Fri,  1 Nov 2024 03:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y++Ha3+I"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3474C79;
-	Fri,  1 Nov 2024 03:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26FC13BC18;
+	Fri,  1 Nov 2024 03:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730433147; cv=none; b=W18jnZhGbTBrVVVaVT7qcRZMqlQpP465W2JiFZjGr7/dgJ3o/qF+AelLVqwZCX9MMdP95XfAb2s8oyX4w+xTSvbxna5i1PCl847e2LpiryDRNp3lPN+wCAyZn5qgo0DUb0xbhuPmXiI/pTBb3xbIeFItD5sRn4viHR5kLqOisi0=
+	t=1730432962; cv=none; b=bZ1JQtBh/FmxTtfE9Q1EkXm9PhEsqm3u6Tg9DAyyAq5NNT7hL1wgaWNgiXV3ihFOm3cxmedhevNu+2BL5lR9HAjFE3QX0ZPaJqGxJlEgSeHP4GtmBf3iPAwCO4+j6S/KN2HsARYN1+/y1GwKtko1a3Pb7OwSRueIE8zcrD+wbjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730433147; c=relaxed/simple;
-	bh=/8DGfkrX/uyHXqf8uX35ZAlWorNNEDJzm6qaD4+bFVI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WS2FxyYQAOHR9/1sl+gFaN3hsrzHH9ojUVm1DTiMOp2HUJDv2UxHLyR3b5QzcooTPTNEDIZQTFggMtRBHoD3c3mI37cZQ3jQbLuGi+QnqvGzyzXGWngl96aPRkPQfF7bJFm0txZw3+8EkXz+Vi/euVsfJvCpw7dfH9hIQnr1yoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xfn1Q3wMCzdkb7;
-	Fri,  1 Nov 2024 11:49:46 +0800 (CST)
-Received: from kwepemm600002.china.huawei.com (unknown [7.193.23.29])
-	by mail.maildlp.com (Postfix) with ESMTPS id E284C140361;
-	Fri,  1 Nov 2024 11:52:20 +0800 (CST)
-Received: from huawei.com (10.44.142.84) by kwepemm600002.china.huawei.com
- (7.193.23.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 1 Nov
- 2024 11:52:20 +0800
-From: Qi Xi <xiqi2@huawei.com>
-To: <ruanjinjie@huawei.com>
-CC: <akpm@linux-foundation.org>, <bhe@redhat.com>,
-	<bobo.shaobowang@huawei.com>, <dyoung@redhat.com>,
-	<holzheu@linux.vnet.ibm.com>, <kexec@lists.infradead.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<vgoyal@redhat.com>, <xiqi2@huawei.com>
-Subject: [PATCH v3] fs/proc: Fix compile warning about variable 'vmcore_mmap_ops'
-Date: Fri, 1 Nov 2024 11:48:03 +0800
-Message-ID: <20241101034803.9298-1-xiqi2@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <f79d2587-2588-598f-f9b2-2e3548067d92@huawei.com>
-References: <f79d2587-2588-598f-f9b2-2e3548067d92@huawei.com>
+	s=arc-20240116; t=1730432962; c=relaxed/simple;
+	bh=ITlk7toW7r+/8ai/vHURhDUElQIuKW6j+3xWJJXBal4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LuJ81GOPJu18tcMpI2L7yNgSFfvPmzXsxwdDArdGGsaEuAk7qqtj74P3ayCN0QLIxzjuwovAKI95jqeIUKB9mi5V3gYv5v1OuTUjdR/1t0EcI0Vg1JujL2qCUszoakOHHRnqBgX3Qg0DI6t98yUs0+ALRVvMiAui1NAm8HVQwrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y++Ha3+I; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <30fefafc-d19a-40cb-bcb1-3c586ba8e67e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730432957;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+aisCwM6KP9qhKb2kb76HEqZmfimYG5W48SHq8fMVq8=;
+	b=Y++Ha3+Inw7JOluD44nkAOSKEmpOHi1RI6ERF950vDTo2tE4evJIgqeCCjhUGWnS3wOJLE
+	KJLrcTTGP+Ayn1k31dYjysjoFgR/A1qCWb/jV/ZUx5Gngphix6NPathal7tWHsLdSmdcF/
+	QK6CmqO46uFanBZJj0jAq2gK7lGlG3c=
+Date: Fri, 1 Nov 2024 11:49:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600002.china.huawei.com (7.193.23.29)
+Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
+ parent to aux bridge
+To: Johan Hovold <johan@kernel.org>
+Cc: neil.armstrong@linaro.org, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Abel Vesa <abel.vesa@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
+ <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
+ <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
+ <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
+ <751a4ab5-acbf-4e57-8cf4-51ab10206cc9@linux.dev>
+ <ZyOvAqnuxbNnGWli@hovoldconsulting.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <ZyOvAqnuxbNnGWli@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-When build with !CONFIG_MMU, the variable 'vmcore_mmap_ops'
-is defined but not used:
 
->> fs/proc/vmcore.c:458:42: warning: unused variable 'vmcore_mmap_ops'
-     458 | static const struct vm_operations_struct vmcore_mmap_ops = {
+On 2024/11/1 00:23, Johan Hovold wrote:
+> On Thu, Oct 31, 2024 at 11:06:38PM +0800, Sui Jingfeng wrote:
+>
+>> But I think Johan do need more times to understand what exactly
+>> the real problem is. We do need times to investigate new method.
+> No, I know perfectly well what the (immediate) problem is here (I was
+> the one adding support for the of_node_reused flag some years back).
+>
+> I just wanted to make sure that the commit message was correct and
+> complete before merging (and also to figure out whether this particular
+> patch needed to be backported).
 
-Fix this by only defining it when CONFIG_MMU is enabled.
 
-Fixes: 9cb218131de1 ("vmcore: introduce remap_oldmem_pfn_range()")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/lkml/202410301936.GcE8yUos-lkp@intel.com/
-Signed-off-by: Qi Xi <xiqi2@huawei.com>
----
-v3: move changelogs after the '---' line
-v2: use ifdef instead of __maybe_unused
+Well under such a design, having the child device sharing the 'OF' device
+node with it parent device means that one parent device can *only*
+create one AUX bridge child device.
 
- fs/proc/vmcore.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Since If you create two or more child AUX bridge, *all* of them will
+call devm_drm_of_get_bridge(&auxdev->dev, auxdev->dev.of_node, 0, 0),
+then we will *contend* the same next bridge resource.
 
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index 1fb213f379a5..9ed1f6902c8f 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -455,10 +455,6 @@ static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
- #endif
- }
- 
--static const struct vm_operations_struct vmcore_mmap_ops = {
--	.fault = mmap_vmcore_fault,
--};
--
- /**
-  * vmcore_alloc_buf - allocate buffer in vmalloc memory
-  * @size: size of buffer
-@@ -486,6 +482,11 @@ static inline char *vmcore_alloc_buf(size_t size)
-  * virtually contiguous user-space in ELF layout.
-  */
- #ifdef CONFIG_MMU
-+
-+static const struct vm_operations_struct vmcore_mmap_ops = {
-+	.fault = mmap_vmcore_fault,
-+};
-+
- /*
-  * remap_oldmem_pfn_checked - do remap_oldmem_pfn_range replacing all pages
-  * reported as not being ram with the zero page.
+Because of the 'auxdev->dev.of_node' is same for all its instance.
+While other display bridges seems don't has such limitations.
+
+
+> Johan
+
 -- 
-2.33.0
+Best regards,
+Sui
 
 
