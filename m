@@ -1,185 +1,122 @@
-Return-Path: <linux-kernel+bounces-392708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2439B9751
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:21:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1449B9753
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C0F62810A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D991F21108
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9AF1CDFDC;
-	Fri,  1 Nov 2024 18:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F61F1CDFDC;
+	Fri,  1 Nov 2024 18:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stwcx.xyz header.i=@stwcx.xyz header.b="AzFMUpuB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y3HFggzA"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pDVR9O7R"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265D01AB523;
-	Fri,  1 Nov 2024 18:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3341AB523
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730485292; cv=none; b=SZST32W6+MKhbM7+tIll8nbYVRFbdyjbbIod6Z+iK8HJGA3ReaB2h40/JRyclpFmMdqt5dxVbIj1E7PD0sK0tPMPlkZG6kgBU8r3zlUij1iCPT9thl1b/LcwLG7ynnCxmEBSEvAU5cC31WSM9ibVS8f/Ab7Q9IHn0zlTYovDj98=
+	t=1730485330; cv=none; b=QGivEwJ7Cky9kIEf37tEvYLaE3rXBbX40Ci9wrwvpAY1QFrncqoCaEXucpZAZ0/p00+w1SR2zn7+fbzxF8OxQGHCiXVk2og54XSC6La4hTuJpaUlN7/MnUJCK3fsNEFV9Vdq/iN9R9R5CuRfJJpGkMqumHfSf3DquW0hTkid+zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730485292; c=relaxed/simple;
-	bh=2MGTA6HAs7C11sP8TuyJHEdqKCCV7G0t8e0AxrKIsiU=;
+	s=arc-20240116; t=1730485330; c=relaxed/simple;
+	bh=oICbhH4YrBVRKtDgMs3rfCV3tS4XMZrZc6IQWpg2qtg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/7NbBbp8l91GXVcsofLSb7j/OUBclls4dxT66nnjP0emuYOpAXY/GSHACr1AjYj0hK26eDMJxDZBht/ZrgAuoiHsBcczjnO03JZ4AFc9KcOIZBdCT4fFK6QrEX/dv8/jA6p3SbFsvRI9Hpl1CQjhJjAhReuaeY6z7vFY0Y+0GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stwcx.xyz; spf=pass smtp.mailfrom=stwcx.xyz; dkim=pass (2048-bit key) header.d=stwcx.xyz header.i=@stwcx.xyz header.b=AzFMUpuB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y3HFggzA; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stwcx.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stwcx.xyz
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.stl.internal (Postfix) with ESMTP id BB1AF1140092;
-	Fri,  1 Nov 2024 14:21:24 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Fri, 01 Nov 2024 14:21:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwcx.xyz; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1730485284; x=1730571684; bh=trF5iyL1mD
-	lTJho0oj7yyu6ZEf153IyrywjYMZ102E8=; b=AzFMUpuBaqQSowX6azU+RejWM2
-	wyDtPcAffuWlTQvjZTdW5xCbPQdHPRI7oSsB2q5Jub4hcziQYxC+0ni+LsREexF6
-	DkVjErjJ6jWIgKliaHh8QIpWLnGPdIjmS6rcen/7SZKsCGe8ZFK43pl4NDeFp6f4
-	8EM6F84JBLCJuALm1JIJcAwcInFwfL7hBYKiZgazW+TpidNPNTZi5Lq8h5NmCFzU
-	i7nlVi49WjKHDEoJm8bSLcVMQM5LeKw1yFHtgmoLBkbMrUxUKXM/hEi1QcC0DvlQ
-	F1+bWohoMAUkqxoVPAsgjRansJfXu5dmgCzU1kGGoGMYdiEMu4q1mRr7Bzkw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730485284; x=1730571684; bh=trF5iyL1mDlTJho0oj7yyu6ZEf153Iyrywj
-	YMZ102E8=; b=Y3HFggzA8Cf+GnXEc2itQv6bNdzGXV9LXv7LkmtlbalJtShsb45
-	Q83Binl5HZuhhRjn52o83Xd2UeWwo80sZIaPMAHELceowEU4S7HQdk5zHQWpFuDA
-	wNjLdlbgrlvLwGfow6j7DAZ1b6EAI3QIEZGFD81dAibSV0I5f1FmK3BVBVvXsNXY
-	e3YyLzEt2EGep70iLQc54jEjKMS+0eYfonLPpSEdid5t+7FIjod56ICEmCDEh7bw
-	5Z/vqQOShDWKECWDnZkuUozSBXAKdmNacQ3uX5zlxG+wy6PkZU5xuCgO+t+WrGF8
-	bM8b2DZh4zWimxeszL9irPUKfJWPejpOF7w==
-X-ME-Sender: <xms:IhwlZ-E3r9ZQzkkQzLmtGkxUNjVgdmMF1nIoYBzByHe4QkAAO9cMqg>
-    <xme:IhwlZ_UMMb410UlAOtHju9p7NKx5ju5-L_FwIAq674dLj4Jt7WlWfcI1N5QSXo4Dv
-    i9CKMICeH8AXpfbu7U>
-X-ME-Received: <xmr:IhwlZ4L6wmtfVh-7Ekh4j12RujvpFUkYe59fmIlfRpqbF0fR8w-Rpkf8WYw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekledgudduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecufghrlhcuvffnffculd
-    dvfedmnecujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhep
-    rfgrthhrihgtkhcuhghilhhlihgrmhhsuceophgrthhrihgtkhesshhtfigtgidrgiihii
-    eqnecuggftrfgrthhtvghrnhepueettdeikeeftdevuefhheetvdeijeekgeekgfdufefh
-    feeuteevkeeludeihfdvnecuffhomhgrihhnpehgihhthhhusgdrtghomhdpsghmtgdqrh
-    gvsghoohhtqdgtrghushgvqdhuphgurghtvgdrmhgunecuvehluhhsthgvrhfuihiivgep
-    tdenucfrrghrrghmpehmrghilhhfrhhomhepphgrthhrihgtkhesshhtfigtgidrgiihii
-    dpnhgspghrtghpthhtohepudehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegt
-    hhhinhdqthhinhhgpghkuhhosegrshhpvggvughtvggthhdrtghomhdprhgtphhtthhope
-    hjohgvlhesjhhmshdrihgurdgruhdprhgtphhtthhopegrnhgurhgvfiestghouggvtgho
-    nhhsthhruhgtthdrtghomhdrrghupdhrtghpthhtohepfihimheslhhinhhugidqfigrth
-    gthhguohhgrdhorhhgpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhnvght
-    pdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrh
-    gruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqrghsphgvvggusehlihhsthhs
-    rdhoiihlrggsshdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdifrghttghhughoghes
-    vhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:IhwlZ4Hh0P-sbjAofzrjUjvhmSJsy2ucVH52IDH7i8aU_MacgvDxrA>
-    <xmx:IhwlZ0WuuZN4vDQLb4oL5LY-rnssf2zvfevD-RWUbV11ccmbimXTuQ>
-    <xmx:IhwlZ7PNI7dDHD5EhPv2-zntEshkZ-WieccQv6MPxlVsxiqjyxOLqg>
-    <xmx:IhwlZ734rnICFGBVWJ1q2ylBez6T6uAulwZY8E_gbtChialkemR6xw>
-    <xmx:JBwlZ5XH7jXOPBijjqX88_lYe23wEXZdzuTLVKmVhgweafNvbTxZdjHf>
-Feedback-ID: i68a1478a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Nov 2024 14:21:22 -0400 (EDT)
-Date: Fri, 1 Nov 2024 14:21:20 -0400
-From: Patrick Williams <patrick@stwcx.xyz>
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-Cc: joel@jms.id.au, andrew@codeconstruct.com.au, wim@linux-watchdog.org,
-	linux@roeck-us.net, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, Peter.Yin@quantatw.com,
-	Patrick_NC_Lin@wiwynn.com, Bonnie_Lo@wiwynn.com,
-	DELPHINE_CHIU@wiwynn.com, bmc-sw@aspeedtech.com,
-	chnguyen@amperecomputing.com
-Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus handling
-Message-ID: <ZyUcIIb1dtoNhX00@heinlein.vulture-banana.ts.net>
-References: <20241101121201.2464091-1-chin-ting_kuo@aspeedtech.com>
- <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SBym5/Yc+hi6TgWKRo8akWqyWizX3HvzkUi7NA2zFcszoHgzDogLrEKN5NBer7BMqvMn2r3Vf8gaR2ahIV3hZcpn4gnRFkR1zOxF3ydzxc2B843JqfKwL9aauONgeC+cBB9beTo6rDKs21GjRjLqe38y7N+nSQvzj4Lx4FTpSI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pDVR9O7R; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431688d5127so17542265e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 11:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730485327; x=1731090127; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oICbhH4YrBVRKtDgMs3rfCV3tS4XMZrZc6IQWpg2qtg=;
+        b=pDVR9O7RTHHLpx7xE3DGwpxQHhjBOZTPwfJLhER9zJKBNO7szR60wacXGUcRitJUq6
+         z5kPHcRwynCtd4sJet0f904kpenJT45KPrA7MDL3xJR/GlYwITyXyQarxqzFlC8RoPQ7
+         5UsSELJIt8IARUy0RJW0RHiBzosa77ZrhduB5M2S8bPw5E7/slDYTt/7PpqyS+B0HEio
+         JU0rCUQVJ/uoBx52bwCG98tnYIpcQPAlWrraJI9NQaE/Yg20iQizgFIWjeyFWlyyWJUZ
+         /imwNd+DhaD12bh9+TXpLxD/a0/QcJXeoxszTNmkTr3SWcGnmlYPlXKqtAwwVpZOXaMQ
+         jkmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730485327; x=1731090127;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oICbhH4YrBVRKtDgMs3rfCV3tS4XMZrZc6IQWpg2qtg=;
+        b=wgM29JWkBjVLIJDl0Sn1iM/cdHM0hnFgDsF2TPbJ2kIKWqJnegt3+f3lfsmMBzlfA8
+         OdsbStg08Lll58FvDMTe9dGeeWNvAq2/suhHrIWI1XczQhk6K4bh6qmM8/dQtHZMqttk
+         41aqrjptHSxlCakIbWc+9nMhIcQXCwDdNNqBYMkBo7Ke5r2/QRSatcNM7KpigS5wLe80
+         5iB8e62k704T8NyVdNPlnj63YsqPDZPNEfbGikRQ9qKLhl+DIhxqUd3GjgVLrhCfPXuy
+         DkjcJ0YgNOWg73zYgecSXbzspq3ECfCbGYlgDhPIzR1J8x9J8+Db0536NkIbiWXMIyr2
+         oikg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXXTrL5zy4UXNl/TvurvZPW9QYkt3OBxfazxVf389HKXs2Ou41rlFx3oyfw9ZuGs+2pBZKELVv4TfCHwk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxITZOo/bjZEaJggJJgsJ9youpSUHPTZ57TFoeDu0LSQlsmbXtM
+	Ai4UWeVNVTUUQOAfke5Knoj2loAli6UJ6cIPjE28IDnxk0NONDg5CIGFp3FXoPs=
+X-Google-Smtp-Source: AGHT+IF1e6YHS9MBnl6Cjc/7OEazhzAZv/hYfqCkLGAfQ9a/hEhsUgo2X503FPumpBQrrAc9lE4dmg==
+X-Received: by 2002:adf:e3c9:0:b0:37d:4a80:c395 with SMTP id ffacd0b85a97d-3806113ce39mr16235424f8f.21.1730485327365;
+        Fri, 01 Nov 2024 11:22:07 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d6852d9sm69929685e9.37.2024.11.01.11.22.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 11:22:06 -0700 (PDT)
+Date: Fri, 1 Nov 2024 18:22:04 +0000
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yuran Pereira <yuran.pereira@hotmail.com>,
+	Nir Lichtman <nir@lichtman.org>
+Subject: Re: [for-next][PATCH 03/11] kdb: Replace the use of simple_strto
+ with safer kstrto in kdb_main
+Message-ID: <20241101182204.GA752705@aspen.lan>
+References: <20241101103647.011707614@goodmis.org>
+ <20241101103707.290109005@goodmis.org>
+ <CAD=FV=Uha5xwZJtdqirJtv27ZUBz7OP5oEnYg56v2i2mn0TrLw@mail.gmail.com>
+ <20241101103128.46faf14d@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="30YWrylCoTEi3uv9"
-Content-Disposition: inline
-In-Reply-To: <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
-
-
---30YWrylCoTEi3uv9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241101103128.46faf14d@gandalf.local.home>
 
-On Fri, Nov 01, 2024 at 08:11:59PM +0800, Chin-Ting Kuo wrote:
-> The boot status mapping rule follows the latest design guide from
-> the OpenBMC shown as below.
-> https://github.com/openbmc/docs/blob/master/designs/bmc-reboot-cause-upda=
-te.md#proposed-design
-> - WDIOF_EXTERN1   =3D> system is reset by Software
-> - WDIOF_CARDRESET =3D> system is reset by WDT SoC reset
-> - Others          =3D> other reset events, e.g., power on reset.
+On Fri, Nov 01, 2024 at 10:31:28AM -0400, Steven Rostedt wrote:
+> On Fri, 1 Nov 2024 07:21:05 -0700
+> Doug Anderson <dianders@chromium.org> wrote:
+>
+> > FWIW, I personally have no objection to this patch and patch #3/3 in
+> > Nir's series (#5/11 in your email thread) going through the ftrace
+> > tree, I'm not actually the maintainer of kdb/kgdb. I'm a reviewer and
+> > I try my best to help, but officially you should probably have Daniel
+> > Thompson's Ack for them. ...or at least make sure he's CCed here
+> > saying that you've picked them up.
+> >
+> > I've added him to the conversation here.
+>
+> Sure, I can even drop this patch if need be. Thanks for adding Daniel to
+> the Cc. I probably should have run these patches through get maintainers to
+> make sure everyone was accounted for.
 
-I'm quite surprised that the above is relevant for a kernel driver at
-all.  Isn't "EXTERN1" a name of a real watchdog signal from your
-hardware (my recollection is that there are 2 external watchdogs).  I
-think the point of this referenced design document was that most users
-of BMCs have "EXTERN1" used a for software reset conditions.
-`CARDRESET` should be representing resets by the watchdog itself.
+I haven't had a chance to review or hoover up the kdb/kgdb patches for
+this cycle yet (mixture of travel and other things) but they are queued
+up in my TODO list for next week.
 
-The purpose of this design proposal was not to require very specific
-changes to individual watchdog drivers, but to align the userspace use
-with the best practices already from other watchdog drivers.  I don't
-think the kernel driver should be bending to match a particular
-userspace implementation; you should be exposing the information
-available to your hardware.
+I presume the tracing tree is involved because one of them changes the
+kdb ftrace command? Are there dependencies between that and other
+patches in the seriesm?
 
-Having said that, it was known that there would need to be changes to
-the driver because some of these conditions were not adequately exposed
-at all.  I'm just still surprised that we're needing to reference that
-document as part of these changes.
 
->=20
-> On ASPEED platform, the boot status is recorded in the SCU registers.
-> - AST2400: Only a bit represents for any WDT reset.
-> - AST2500: The reset triggered by different WDT controllers can be
->            distinguished by different SCU bits. But, WDIOF_EXTERN1 or
->            WDIOF_CARDRESET still cannot be identified due to
->            HW limitation.
-> - AST2600: Different from AST2500, additional HW bits are added for
->            distinguishing WDIOF_EXTERN1 and WDIOF_CARDRESET.
-
---=20
-Patrick Williams
-
---30YWrylCoTEi3uv9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEBGD9ii4LE9cNbqJBqwNHzC0AwRkFAmclHB8ACgkQqwNHzC0A
-wRlSow/+Iye/jg2CYP74XxbljSUQyZeOx8XldLsjToFpmX1M0NWHxbdC4wK+YXdS
-t2E0NVWhfQNf6LMJtyNgcbjOtQgkI7RCiLfujmeytJTrReN3DEOSsbZmo8U+wIiD
-vUzORLpW1qMP8QDfnuNh0fhxNvOGaiR2usV7ZnfQAh2T4IiS91KT+kv9b3RGcaRn
-awzwSu8nZOkB+6sRs7JZKyIASS+gQ8Xxrk/o6Nhqy+kdVBXe0yMWOq6l1UezJ6qa
-l7SoSLxqG+G3Y4/7A4O0zM/z178a02KccqZyeAnM/OwjTIskf1s8f2yZDPOodN8O
-SsuIWOkKGPiFZtGhyKZqAXfT2XnCU0OIBJl2FGY7QsbZI7oe88Hs/zsVg7q5i7iT
-r1LffFB7mfuuAADVMkff1Lzmn2wuXfO7yVuoj1hlgoGJriLhletsoqLiBHhVRQSL
-5CMBZU6j8B7xbBpKl7MrYWaftPr87Crm5TZgEuhS73J/Y887PuyYl7SKF8NTbQTa
-d+0mJ7/gKsRYBSXzbeniOwR49uC7FgkFaf8ghh1lbJQToawg3A8p/UwBVnYWRB22
-/4fi+vTdXVNFTg8KYBtNbL4K7WgfgQac+iqpYYNBYZSa/Mfm0eSU8XVM/x/Sx6O8
-kfLSVldxTUgqePexvjWNgvJY+Uet8IjvYWT1CIqDvJ/5dXlvZB8=
-=kxlo
------END PGP SIGNATURE-----
-
---30YWrylCoTEi3uv9--
+Daniel.
 
