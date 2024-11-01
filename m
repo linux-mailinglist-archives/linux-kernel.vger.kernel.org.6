@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-392430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584209B93FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:08:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949A79B93FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A4921C20A6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:08:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B31F1F20F2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DFC1AB52F;
-	Fri,  1 Nov 2024 15:08:17 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E6C1BB6B3;
+	Fri,  1 Nov 2024 15:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TNmUjjRJ"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A695D15CD41;
-	Fri,  1 Nov 2024 15:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4D81AAE00;
+	Fri,  1 Nov 2024 15:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730473696; cv=none; b=GzPvN9d1XbsuF30vvGYXiD4fatBGJ5YILOL1hHaqvv5yt3o1N2viUbox2J8G+7ihQI7fziY4/4aSyz9bwyHAC1qM0oGl6EESzhAz12f6qACy/OkBKaKYn8m5np1tJWlj/GqD5+WWRjGElm7NFNnuhttbuca1bi9bqKA9ElmQIBw=
+	t=1730473718; cv=none; b=DhrQB8o9ywSFtp3m2dkads4rCF8AiOTpfqEZgy3evJA3m1XB24chLul9c7Sc0JmCxbdAIX935WmtYlF8LOxfVunPkamHi7CKpoHPvapTA+fOUAx80kciBWrEL1mZrNcel8cMDQ1Gd5nXYXaQOk1uOL0JWA1uFqKDELKILxGJusk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730473696; c=relaxed/simple;
-	bh=6a1dZSp9HvKtLL61oi/0+jzB9aOQa/17P7GLTEW2QBg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CPP30oqXIOr1PQukgoYXqcDNP7yZHsIaL7jjRDRIDqEkG6/G++xw6eJkovpyBWoB4PebI0SY3nIbmp0HFuzTywGCF+AsKazOsCFNf8cUWc/3MmhsMi7KgDIV5YXTSUpPkqa9ji8UJ4QnFYRHdVveTyYRlBmkIPw5yu9eFXBTlDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A18rZut032555;
-	Fri, 1 Nov 2024 08:07:49 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42mew213k8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 01 Nov 2024 08:07:49 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 1 Nov 2024 08:07:48 -0700
-Received: from pop-os.wrs.com (172.25.44.6) by ala-exchng01.corp.ad.wrs.com
- (147.11.82.252) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 1 Nov 2024 08:07:47 -0700
-From: <Randy.MacLeod@windriver.com>
-To: <stable@vger.kernel.org>, <gregkh@linuxfoundation.org>,
-        <sashal@kernel.org>
-CC: <sherry.yang@oracle.com>, <bridge@lists.linux-foundation.org>,
-        <davem@davemloft.net>, <kuba@kernel.org>, <netdev@vger.kernel.org>,
-        <nikolay@nvidia.com>, <roopa@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <randy.macleod@windriver.com>
-Subject: [PATCH 1/1: 5.10/5.15] net: bridge: xmit: make sure we have at least eth header len bytes
-Date: Fri, 1 Nov 2024 11:07:45 -0400
-Message-ID: <20241101150745.3671416-2-Randy.MacLeod@windriver.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241101150745.3671416-1-Randy.MacLeod@windriver.com>
-References: <20241101150745.3671416-1-Randy.MacLeod@windriver.com>
+	s=arc-20240116; t=1730473718; c=relaxed/simple;
+	bh=c6vixD2UtKgBTEGYBA4IBx+FWPVk0mN6X3UaVNC4oO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUj70a+TAM9pjgXkfb+NN0zLXZHS624aLqcpl2/Kcltj6mQOjntc2dNS4+SfP0YbPXLQdeeRgT/UDT94NWh6LdGKs5WW482C57vRfVAen/TnGfg7nnYwHbE5JPCZJ1hT5NL+gMr7450EGRxtXEV63cpUgpC0Fa0jMksnefif+BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TNmUjjRJ; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e625b00bcso1764289b3a.3;
+        Fri, 01 Nov 2024 08:08:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730473713; x=1731078513; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2CmMdpGUnFePHYrsBQ6Q2Mizbty9ECFme4tqH9oKWuw=;
+        b=TNmUjjRJgJsiRsYqu/tKpyWHfqFVzzvy3mqQenGf5d10dOg/PV7V3ByrC2GoLQv1U5
+         HVzUpstsEZsZcuYAY7f2EsOgK8hxAznq+FwqOCcoYMKjBen8OuAzBd9p6wPt6SMBM4U5
+         h1KZGNQjYb40wyDRdFPu9I1ZF87BDUUleeswyUwcHHiLJhBB8paaVeUwCI3H4e+p9UIC
+         lPjzEPkn9+4cGZtiU5hIyhVIlPX4TCA2DHtuvqpjQSUQ9AFzGNjBV/BHOMJ1N3nzbyIF
+         5HsYa4aSAjhUkfQ85dypck1m8Kc4ImyRyd86UCS/vMj8iksw8QC2iMURXcgPYLnWU32W
+         hJXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730473713; x=1731078513;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2CmMdpGUnFePHYrsBQ6Q2Mizbty9ECFme4tqH9oKWuw=;
+        b=ligqce1orIeo19+O6YlbolKpS4p0ZcpkiujGOfMNtRk0BL1obE0hIRldcGsxY1HJ3g
+         JuPvUllOYSnypK4u0g9ffxPkU1wb4vYHcEusjYW9F7zDMS1sbBOmL4XYZJInHkBiMhNl
+         mEI3TRdOdXfx2z8GDg8sEJztBACLXNZj4Gvm5O/tBhK8kFSGTXHF3tUsBROGmE59isoa
+         Oqc//tkkAZKlQURH1w5MadXtBrCoIo9NhxhRz0datoWJyA8MFsmTtX8upJVrCLHLejMz
+         /E9VqnMjlDiwRWPkWRRuMiTOy8z/O4bYfQa43RBj84P94+ReOC7LJci8LuldRHna6Mf6
+         RgBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+2EtD8x+IR+5lG/LyMwqxxR9BmV7K+A2iA7tO//Uiia1Zuh99kLktNe1n3dxVm0T/1LlyJnLvlk2lj5g=@vger.kernel.org, AJvYcCUYfVixazUNgzDmFmGbtzlv5h31McaRvSSOHSOUZIKd5QgvWHa2rUpesmx4LPyQh9ovQKZnjD/+SRfm@vger.kernel.org, AJvYcCUsBnpi9V6+nOjw3Ji2JO1iYsVf71v83F4L7d40Sj+0gtaJn2x1AKKZdbPcd+Iz/G73VWWffbPNLama@vger.kernel.org, AJvYcCVY8tyYMbEe+xvGekh49wO+FksRpoD2eJZdFAjjcMVKsPRJn2JW2SstPZYYwQSsFtr6McnGr/ar9O4z@vger.kernel.org, AJvYcCXhGNGv56+CUcqL8Xo+qmlKELTYPAIpYXFGdMPo08giWphB/IO7cSzPS3Uj9r8EQhB54UErbGSwNkH/J6Ga@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdLvcoVdSEW/t88ZNTu/jVqiifWBG6cHIKt9X3wvud0DPeWLr6
+	Nvdhsul7o+fLo+8x3NNU7vf3W0Ou/5cZfA3ihSdlxfTpo3dn4DJw
+X-Google-Smtp-Source: AGHT+IGw93/HsyjgUnAfeY8EGDn4mNBprwaF1ZcDkdpL1uk/hwkmsJo4n62S1q//MIYva2B6TCrKwg==
+X-Received: by 2002:a05:6a00:10cf:b0:71e:6a99:472f with SMTP id d2e1a72fcca58-720b9de116emr9532316b3a.24.1730473713160;
+        Fri, 01 Nov 2024 08:08:33 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b8cf3sm2748398b3a.20.2024.11.01.08.08.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 08:08:32 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 1 Nov 2024 08:08:31 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] hwmon: (pmbus/core) add wp module param
+Message-ID: <47164712-876e-4bb8-a4fa-4b3d91f2554b@roeck-us.net>
+References: <20241024-tps25990-v3-0-b6a6e9d4b506@baylibre.com>
+ <20241024-tps25990-v3-3-b6a6e9d4b506@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 6_PsvydZLq400R8lmhL0uJb2o0wSTisC
-X-Authority-Analysis: v=2.4 cv=dLb0m/Zb c=1 sm=1 tr=0 ts=6724eec5 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=eMPNgDwjIQXpT8XC:21 a=VlfZXiiP6vEA:10 a=t7CeM3EgAAAA:8 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=IJ2IFIBGmV0-FWXsoRQA:9
- a=FdTzh2GWekK77mhwV6Dw:22 a=cQPPKAXgyycSBL8etih5:22 a=DcSpbTIhAlouE1Uv7lRv:22
-X-Proofpoint-ORIG-GUID: 6_PsvydZLq400R8lmhL0uJb2o0wSTisC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-01_09,2024-11-01_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
- clxscore=1015 priorityscore=1501 mlxscore=0 mlxlogscore=999 suspectscore=0
- phishscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2409260000 definitions=main-2411010109
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024-tps25990-v3-3-b6a6e9d4b506@baylibre.com>
 
-From: Randy MacLeod <Randy.MacLeod@windriver.com>
+On Thu, Oct 24, 2024 at 08:10:37PM +0200, Jerome Brunet wrote:
+> Add a module parameter to force the write protection mode of pmbus chips.
+> 
+> 2 protections modes are provided to start with:
+> * 0: Remove the write protection if possible
+> * 1: Enable full write protection if possible
+> 
+> Of course, if the parameter is not provided, the default write protection
+> status of the pmbus chips is left untouched.
+> 
+> Suggested-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  4 ++
+>  drivers/hwmon/pmbus/pmbus_core.c                | 74 ++++++++++++++++++-------
+>  2 files changed, 59 insertions(+), 19 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 1518343bbe2237f1d577df5656339d6224b769be..aa79242fe0a9238f618182289f18563ed63cba1c 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4733,6 +4733,10 @@
+>  			Format: { parport<nr> | timid | 0 }
+>  			See also Documentation/admin-guide/parport.rst.
+>  
+> +	pmbus.wp=	[HW] PMBus Chips write protection forced mode
+> +			Format: { 0 | 1 }
+> +			See drivers/hwmon/pmbus/pmbus_core.c
+> +
 
-[ Upstream commit 8bd67ebb50c0145fd2ca8681ab65eb7e8cde1afc ]
+I have always seen that file as applicable for core kernel parameters,
+not for driver kernel parameters. I can not accept a global change like
+this without guidance. Please explain why it is desirable to have this
+parameter documented here and not in driver documentation.
 
-Based on above commit but simplified since pskb_may_pull_reason()
-does not exist until 6.1.
+>  	pmtmr=		[X86] Manual setup of pmtmr I/O Port.
+>  			Override pmtimer IOPort with a hex value.
+>  			e.g. pmtmr=0x508
+> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
+> index 7bdd8f2ffcabc51500437182f411e9826cd7a55d..ce697ca03de01c0e5a352f8f6b72671137721868 100644
+> --- a/drivers/hwmon/pmbus/pmbus_core.c
+> +++ b/drivers/hwmon/pmbus/pmbus_core.c
+> @@ -31,6 +31,20 @@
+>  #define PMBUS_ATTR_ALLOC_SIZE	32
+>  #define PMBUS_NAME_SIZE		24
+>  
+> +/*
+> + * PMBus write protect forced mode:
+> + * PMBus may come up with a variety of write protection configuration.
+> + * 'pmbus_wp' may be used if a particular write protection is necessary.
+> + * The ability to actually alter the protection may also depend on the chip
+> + * so the actual runtime write protection configuration may differ from
+> + * the requested one. pmbus_core currently support the following value:
+> + * - 0: write protection removed
+> + * - 1: write protection fully enabled, including OPERATION and VOUT_COMMAND
+> + *      registers. Chips essentially become read-only with this.
 
-syzbot triggered an uninit value[1] error in bridge device's xmit path
-by sending a short (less than ETH_HLEN bytes) skb. To fix it check if
-we can actually pull that amount instead of assuming.
+Would it be desirable to also suppport the ability to set the output voltage
+but not limits (PB_WP_VOUT) ?
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+a63a1f6a062033cf0f40@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=a63a1f6a062033cf0f40
-Signed-off-by: Randy MacLeod <Randy.MacLeod@windriver.com>
----
- net/bridge/br_device.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/net/bridge/br_device.c b/net/bridge/br_device.c
-index d3ea9d0779fb..84e37108c6b5 100644
---- a/net/bridge/br_device.c
-+++ b/net/bridge/br_device.c
-@@ -36,6 +36,11 @@ netdev_tx_t br_dev_xmit(struct sk_buff *skb, struct net_device *dev)
- 	const unsigned char *dest;
- 	u16 vid = 0;
- 
-+	if (unlikely(!pskb_may_pull(skb, ETH_HLEN))) {
-+		kfree_skb(skb);
-+		return NETDEV_TX_OK;
-+	}
-+
- 	memset(skb->cb, 0, sizeof(struct br_input_skb_cb));
- 
- 	rcu_read_lock();
--- 
-2.34.1
-
+Guenter
 
