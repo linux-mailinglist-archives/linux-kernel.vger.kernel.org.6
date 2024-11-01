@@ -1,169 +1,136 @@
-Return-Path: <linux-kernel+bounces-391904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFB39B8D28
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:32:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596C79B8D2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:34:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE1B42813B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:32:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 160762814F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2DA157E88;
-	Fri,  1 Nov 2024 08:32:10 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5E6156F55;
+	Fri,  1 Nov 2024 08:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Df8unsxw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40B2156F3A
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 08:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AFF14AD2B;
+	Fri,  1 Nov 2024 08:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730449930; cv=none; b=PYWlYrw5wedQK3g9p31UwJEEsPGASqfoMTPyiVFpPhmdqVFKuwQuPs5sh2MnZPjtOiybXfnGzAmMFCFzidPUFFwdAMmBUi/gyXFczJtC/FOohSNk36JpKy3+1QkVmC6eNkqSlZOq+FROd8amoOUbOTiYbD8j0WDELXD6M8/X9V0=
+	t=1730450073; cv=none; b=a+8VGOOth1ji1hOHjjf9NC+Q5Iw3lJeW8jr/nOvOl8jNTDA8hF5qnIeLx2+jwVNBZTy+ASTS9xaU50TwT/JZhUf8MBzqOO0NZezOlWY+wBzWhHRY0EAhOEHZ9/XypQUesLUhSlmKFRXfIVFn4bXoS8D8I9B0dByLVNr1XNPce0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730449930; c=relaxed/simple;
-	bh=SIw5E0b2RSZkIPrX258J7VBZ9Fk9xKHVun/bxusijmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJT5NgcidyaZoiohTn/+OnsIeFbhHAPVQCX4CLV1H+1jMYzOFZh+nUIfiH/y0BqPTquY6aXPnhEAzG547yUau0T/2tbDA5UEd02GrUKSc6AsfncM0UkGiby6O8iPg6WUwHWt1CsWlzZZsFCrSpplA5k++E9Y26D7jSoKVvOzbjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t6n4O-0007x2-Jj; Fri, 01 Nov 2024 09:31:48 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t6n4K-001U2A-0C;
-	Fri, 01 Nov 2024 09:31:44 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t6n4J-007xe3-31;
-	Fri, 01 Nov 2024 09:31:43 +0100
-Date: Fri, 1 Nov 2024 09:31:43 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH RFC net-next v2 15/18] net: pse-pd: Add support for
- getting and setting port priority
-Message-ID: <ZySR75i3BEzNbjnv@pengutronix.de>
-References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
- <20241030-feature_poe_port_prio-v2-15-9559622ee47a@bootlin.com>
- <ZyMpkJRHZWYsszh2@pengutronix.de>
- <20241031121104.6f7d669c@kmaincent-XPS-13-7390>
+	s=arc-20240116; t=1730450073; c=relaxed/simple;
+	bh=SwNNhRcqngX8wXx6DnntJCiQIdQHkHygXk8xBV+N+hg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CcEynz61kbiaay6l1vrrO/NdrXOVOY2cyjGry3aUQdYJODbGNIWJpTOZb7/C9Zz0EJJ0LqTqFVzdk3L74q/ZzAFscZlTkmsQ96Hbiloce5c4KXauMPmGnb/Tzr/fKBqGcL5radJ2wYBKeP9w6ciUda/D11dhQtDgpYW5PhtK9j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Df8unsxw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA53CC4CECD;
+	Fri,  1 Nov 2024 08:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730450072;
+	bh=SwNNhRcqngX8wXx6DnntJCiQIdQHkHygXk8xBV+N+hg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Df8unsxwjTCc0rOU8xcP24R76pDAQMPJq0co4v2i7VabETE5ARIzLwrlteiMjhBtq
+	 yiraudfBBNRqcbtD24764181hTpBZId75amvC3BRzFxjycMWWdnHYhYCgEKGinkL/P
+	 MZqL3kV/hNOHEDTfmB0J5rld/Hje6aqH1/ioAN+IjlZOWYssInzB0E+WN4eEf2Eg+c
+	 v2tB8R1X0PI3tH92f0hucUd8vtK2aF+qv/zJUcOLS1ffBlDkuAxP1A8AjhnWPvr3SD
+	 LkVvUPgSMooyaQ5T7xLxlofqIfwI+/lg9O4vz61bqRXiEu2CeX77OVNSZfLuBskWk/
+	 o1f9SQtNKOo0A==
+Message-ID: <0a15823f-d2b5-4b92-9a28-e3933394c907@kernel.org>
+Date: Fri, 1 Nov 2024 09:34:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241031121104.6f7d669c@kmaincent-XPS-13-7390>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] dt-bindings: usb: maxim,max33359.yaml: add usage
+ of sink bc12 time property
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Amit Sunil Dhamne <amitsd@google.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org,
+ heikki.krogerus@linux.intel.com, kyletso@google.com, rdbabiera@google.com,
+ badhri@google.com, linux@roeck-us.net, xu.yang_2@nxp.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20241031235957.1261244-1-amitsd@google.com>
+ <20241031235957.1261244-3-amitsd@google.com>
+ <r44xdvk53c45bhyvwhy6722vj7wttkhfesta3ty22kkt6nfrtu@vcooujz3ywlj>
+ <a86c8317-16d6-4aa0-b8fd-5c83b1445212@kernel.org>
+ <kw6czm6ekl3m6qcqt37vgwaz4wu5zllfua4sjoif66lg6gt6ns@6seazbeefnhw>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <kw6czm6ekl3m6qcqt37vgwaz4wu5zllfua4sjoif66lg6gt6ns@6seazbeefnhw>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024 at 12:11:04PM +0100, Kory Maincent wrote:
-> On Thu, 31 Oct 2024 07:54:08 +0100
-> Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+On 01/11/2024 08:59, Dmitry Baryshkov wrote:
+> On Fri, Nov 01, 2024 at 08:09:52AM +0100, Krzysztof Kozlowski wrote:
+>> On 01/11/2024 08:02, Krzysztof Kozlowski wrote:
+>>> On Thu, Oct 31, 2024 at 04:59:53PM -0700, Amit Sunil Dhamne wrote:
+>>>> Add usage of "sink-bc12-completion-time-ms"  connector property to
+>>>
+>>> There is no such property. You cannot add it. You did not even
+>>> test this patch before sending :/
+>>>
+>>
+>> Sorry, now I see that's the patch 2, not 1. Somehow I thought you
+>> started with it and I got confused.
 > 
-> > > diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
-> > > index a1ad257b1ec1..22664b1ea4a2 100644
-> > > --- a/include/uapi/linux/ethtool.h
-> > > +++ b/include/uapi/linux/ethtool.h
-> > > @@ -1002,11 +1002,35 @@ enum ethtool_c33_pse_pw_d_status {
-> > >   * enum ethtool_c33_pse_events - event list of the C33 PSE controller.
-> > >   * @ETHTOOL_C33_PSE_EVENT_OVER_CURRENT: PSE output current is too high.
-> > >   * @ETHTOOL_C33_PSE_EVENT_OVER_TEMP: PSE in over temperature state.
-> > > + * @ETHTOOL_C33_PSE_EVENT_CONNECTED: PD detected on the PSE.
-> > > + * @ETHTOOL_C33_PSE_EVENT_DISCONNECTED: PD has been disconnected on the
-> > > PSE.
-> > > + * @ETHTOOL_C33_PSE_EVENT_PORT_PRIO_STATIC_ERROR: PSE faced an error in
-> > > static
-> > > + *	port priority management mode.
-> > >   */
-> > >  
-> > >  enum ethtool_c33_pse_events {
-> > > -	ETHTOOL_C33_PSE_EVENT_OVER_CURRENT =	1 << 0,
-> > > -	ETHTOOL_C33_PSE_EVENT_OVER_TEMP =	1 << 1,
-> > > +	ETHTOOL_C33_PSE_EVENT_OVER_CURRENT =		1 << 0,
-> > > +	ETHTOOL_C33_PSE_EVENT_OVER_TEMP =		1 << 1,
-> > > +	ETHTOOL_C33_PSE_EVENT_CONNECTED =		1 << 2,
-> > > +	ETHTOOL_C33_PSE_EVENT_DISCONNECTED =		1 << 3,
-> > > +	ETHTOOL_C33_PSE_EVENT_PORT_PRIO_STATIC_ERROR =	1 << 4,
-> > > +};  
-> > 
-> > Same here, priority concept is not part of the spec, so the C33 prefix
-> > should be removed.
-> 
-> Ack. So we assume PoDL could have the same interruption events.
-> 
-> > > +/**
-> > > + * enum pse_port_prio_modes - PSE port priority modes.
-> > > + * @ETHTOOL_PSE_PORT_PRIO_DISABLED: Port priority disabled.
-> > > + * @ETHTOOL_PSE_PORT_PRIO_STATIC: PSE static port priority. Port priority
-> > > + *	based on the power requested during PD classification. This mode
-> > > + *	is managed by the PSE core.
-> > > + * @ETHTOOL_PSE_PORT_PRIO_DYNAMIC: PSE dynamic port priority. Port priority
-> > > + *	based on the current consumption per ports compared to the total
-> > > + *	power budget. This mode is managed by the PSE controller.
-> > > + */  
+> The question is why patch 2 generated the error even if it had patch 1
+> in front of it?
 
-After thinking about it more overnight, I wanted to revisit the idea of having
-a priority strategy per port. Right now, if one port is set to static or
-dynamic mode, all disabled ports seem to have to follow it somehow too. This
-makes it feel like we should have a strategy for the whole power domain, not
-just for each port.
+I suspect patch #1 did not apply, because it depends on USB next tree.
 
-I'm having trouble imagining how a per-port priority strategy would work in
-this setup.
+Best regards,
+Krzysztof
 
-Another point that came to mind is that we might have two different components
-here, and we need to keep these two parts separate in follow-up discussions:
-
-- **Budget Evaluation Strategy**: The static approach seems straightforward—if
-a class requests more than available, appropriate actions are taken. However,
-the dynamic approach has more complexity, such as determining the threshold,
-how long violations can be tolerated, and whether a safety margin should be
-maintained before exceeding maximum load.
-
-- **Disconnection Policy**: Once a budget violation is detected, this decides
-how to react, like which ports should be disconnected and in what order.
-
-Would it make more sense to have a unified strategy for power domains, where we
-apply the same budget evaluation mode (static or dynamic) and disconnection
-policy to all ports in that domain? This could make the configuration simpler
-and the power management more predictable.
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
