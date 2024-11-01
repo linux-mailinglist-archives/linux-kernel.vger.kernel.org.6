@@ -1,133 +1,162 @@
-Return-Path: <linux-kernel+bounces-392223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930399B9136
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:40:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C819B9138
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:41:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543DA282A39
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:40:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB60282C08
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A4C19E99E;
-	Fri,  1 Nov 2024 12:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCBA19E98D;
+	Fri,  1 Nov 2024 12:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="h0FAhilm"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="Kv6tcbiC"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D0822097;
-	Fri,  1 Nov 2024 12:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763D6155A5D;
+	Fri,  1 Nov 2024 12:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730464817; cv=none; b=I7sXU+wTSJ+vBCt8igx5Y71Opz/6150HPJ9/dZc/MGyMCKYPdZs+e2UhQei8mYu04oIuvID6olSlp0o1vvun33k6Z+meRQ6sNfgWL/R3Z+6c+Ik/nws1i4fF/rLWSD9d/FFkvlXAyxCqNorom3qgJikFamrzGIgwbtER6Lm0SHY=
+	t=1730464880; cv=none; b=u4AHZetiZ02uIKgx+INJv6T/z5BiqCL8JMzr7anTXDAQcByDZ74A/6fkV/ERC0GugXthl4AUVHqErs0Ipkv+LxRlnLox6ZJYwSQfAMOyjio2mO2xyqjyq6OdPHMgmqsFxxPys+XDEr3kZ8xOq3Uh+AwmBKYDLoxypmodVjZS2SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730464817; c=relaxed/simple;
-	bh=QNXdyGnqE6MurJIcF0ns6jB3cXGZVUEvz/Y3ylybaQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOPCZ4C8a5eZIRJKDxkArkNGbtFhU6Sq9TBHUvf855dNalGzceHKZG/AbSpORqkh/NeQVMEtgmrtounGEs7girt/wIUlPDXRsLqjwrDN4IyEzPPNciZVIgzBiBTv9fEhJ0auyw4cXkKFKnUhAhH79NB+XC/sVy7wzbXS1SR9gKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=h0FAhilm; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=JLfKetvUuxPUYkpPeA7mnXrzdgQkP5ynoIU4H8aYS3U=; b=h0FAhilmGmVBQ5NQWg3uCkBa5Z
-	wBWcuyUI17qGVzn7hgmPZYc8+Y/8faJQW7qsFUCd4+QAan8AfGgxrSLUThwbNqFCSqRFnV8RWNRFl
-	DvvjfhGliWxog9tagmqENZzMNVIlzb7BrBGuszd5VPi+LN8iAw7MpZz4Ue4QhsS0WqoI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t6qwa-00BsXZ-SD; Fri, 01 Nov 2024 13:40:00 +0100
-Date: Fri, 1 Nov 2024 13:40:00 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Liu Gui <kenneth.liu@sophgo.com>, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH] riscv: dts: sophgo: Add ethernet configuration for cv18xx
-Message-ID: <5b08e092-c302-43a9-a04d-3566bec96e94@lunn.ch>
-References: <20241028011312.274938-1-inochiama@gmail.com>
- <87e215a7-0b27-4336-9f9c-e63ade0772ef@lunn.ch>
- <wgggariprpp2wczsljy3vw6kp7vhnrifg6soxdgiio2seyctym@4owbzlg3ngum>
- <ftfp2rwkytqmzruogcx66d5qkn4tzrgyjtlz4hdduxhwit3tok@kczgzrjdxx46>
- <e389a60d-2fe3-46fd-946c-01dd3a0a0f6f@lunn.ch>
- <nkydxanwucqmbzzz2fb24xyelrouj6gvhuuou2ssbf4tvvhfea@6uiuueim7m3a>
+	s=arc-20240116; t=1730464880; c=relaxed/simple;
+	bh=1tyJN7tpj71GsXPgw1vXVuu1pL6JI3AXiNqruHLtMhI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sIQG6ja5OQ9HXwuD35DMBvjuafC8ILGiWX59fPav2/f5GZXh/cfk8m4V+qubnq239RfFEmE240uHZi9OKFY5okHa1anmBrs/EFs6p7SQ9HlObn21kZyLPNVtEyR5XB1yrrbiOMyaf98+FStOfX0L/9gBPECCgEkapnet9AC4m8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st; spf=pass smtp.mailfrom=marcan.st; dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b=Kv6tcbiC; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcan.st
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: marcan@marcan.st)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id D8ED843470;
+	Fri,  1 Nov 2024 12:41:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+	t=1730464874; bh=1tyJN7tpj71GsXPgw1vXVuu1pL6JI3AXiNqruHLtMhI=;
+	h=Date:Subject:To:References:From:In-Reply-To;
+	b=Kv6tcbiCwdREWMYqnVNGYwJkOnH3T7Y4RD5xN+XUWZu1/YP70sS7x6O+xFjNisQOg
+	 vH2QXCmbnrR5W/JPhK9fFYxPHM1gMVzfx3YhFaiyefi+ErqO8klh97X12MaF1EJBTk
+	 ADwUMjkkbk9wFVAhp4koK3Go71UkQnZx7ZPZk/w50LDUCROrcp6DK8zAtc1rBZzkTa
+	 s24sfplZWNRjGJepQGKamyZxHnV/qLo4NA753pdPB9seElIU2nZsBM1qdpTguM7mve
+	 o927WZoRBCx+r6VeEHobSEhNHfp4SfpDhoQv+t98gIE5pic/zuV2nm/4SXpRJrH1hp
+	 gy7Ip2ha3Dy2w==
+Message-ID: <23074410-ffe2-4f68-a983-67cec430f68f@marcan.st>
+Date: Fri, 1 Nov 2024 21:41:13 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nkydxanwucqmbzzz2fb24xyelrouj6gvhuuou2ssbf4tvvhfea@6uiuueim7m3a>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH asahi-soc/dt 00/10] Add PMGR nodes for Apple A7-A11 SoCs
+To: Nick Chan <towinchenmi@gmail.com>, Sven Peter <sven@svenpeter.dev>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241029010526.42052-1-towinchenmi@gmail.com>
+From: Hector Martin <marcan@marcan.st>
+Content-Language: en-US
+In-Reply-To: <20241029010526.42052-1-towinchenmi@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > > > > > +			mdio {
-> > > > > > +				compatible = "snps,dwmac-mdio";
-> > > > > > +				#address-cells = <1>;
-> > > > > > +				#size-cells = <0>;
-> > > > > > +
-> > > > > > +				phy0: phy@0 {
-> > > > > > +					compatible = "ethernet-phy-ieee802.3-c22";
-> > > > > > +					reg = <0>;
-> > > > > > +				};
-> > > > > > +			};
-> > > > > 
-> > > > > It is not clear to me what cv18xx.dtsi represents, 
-> > > > 
-> > > > This is a include file to define common ip for the whole
-> > > > cv18xx series SoCs (cv1800b, cv1812h, sg2000, sg2000).
-> > > > 
-> > > > > and where the PHY node should be, here, or in a .dts file. 
-> > > > > Is this a SOM, and the PHY is on the SOM? 
-> > > > 
-> > > > The phy is on the SoC, it is embedded, and no external phy
-> > > > is supported. So I think the phy node should stay here, not 
-> > > > in the dts file.
-> > > 
-> > > There is a mistake, Some package supports external rmii/mii
-> > > phy. So I will move this phy definition to board specific.
-> > 
-> > When there is an external PHY, does the internal PHY still exists? If
-> > it does, it should be listed, even if it is not used.
-> > 
-> > Do the internal and external PHY share the same MDIO bus? 
+On 2024/10/29 10:03, Nick Chan wrote:
+> This series adds the PMGR nodes and all known power state subnodes for
+> Apple A7-A11 SoCs, along with the associated dt-bindings.
 > 
-> They share the same MDIO bus and phy id setting.
-
-What do you mean by phy ID?
-
-> When an external phy
-> is select, the internal one is not initialized and can not be accessed
-> by the SoC.
+> ---
+> Nick Chan (10):
+>   dt-bindings: arm: apple: apple,pmgr: Add A7-A11 compatibles
+>   dt-bindings: arm: apple: apple,pmgr-pwrstate: Add A7-A11 compatibles
+>   arm64: dts: apple: s5l8960x: Add PMGR node
+>   arm64: dts: apple: t7000: Add PMGR node
+>   arm64: dts: apple: t7001: Add PMGR node
+>   arm64: dts: apple: s8000: Add PMGR nodes
+>   arm64: dts: apple: s8001: Add PMGR nodes
+>   arm64: dts: apple: t8010: Add PMGR nodes
+>   arm64: dts: apple: t8011: Add PMGR nodes
+>   arm64: dts: apple: t8015: Add PMGR nodes
 > 
-> > I've seen some SoCs with complex MDIO muxes for internal vs external
-> > PHYs.
-> > 
-> > 	Andrew
+>  .../bindings/arm/apple/apple,pmgr.yaml        |   5 +
+>  .../bindings/power/apple,pmgr-pwrstate.yaml   |   5 +
+>  arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi    |   4 +
+>  arch/arm64/boot/dts/apple/s5l8960x-air1.dtsi  |   4 +
+>  .../arm64/boot/dts/apple/s5l8960x-common.dtsi |   1 +
+>  arch/arm64/boot/dts/apple/s5l8960x-mini2.dtsi |   4 +
+>  arch/arm64/boot/dts/apple/s5l8960x-pmgr.dtsi  | 610 ++++++++++++
+>  arch/arm64/boot/dts/apple/s5l8960x.dtsi       |  13 +
+>  .../arm64/boot/dts/apple/s800-0-3-common.dtsi |   1 +
+>  arch/arm64/boot/dts/apple/s8000-pmgr.dtsi     | 757 ++++++++++++++
+>  arch/arm64/boot/dts/apple/s8000.dtsi          |  22 +
+>  arch/arm64/boot/dts/apple/s8001-common.dtsi   |   1 +
+>  .../arm64/boot/dts/apple/s8001-j98a-j99a.dtsi |  26 +
+>  arch/arm64/boot/dts/apple/s8001-j98a.dts      |   1 +
+>  arch/arm64/boot/dts/apple/s8001-j99a.dts      |   1 +
+>  arch/arm64/boot/dts/apple/s8001-pmgr.dtsi     | 823 ++++++++++++++++
+>  arch/arm64/boot/dts/apple/s8001.dtsi          |  22 +
+>  arch/arm64/boot/dts/apple/s800x-6s.dtsi       |   4 +
+>  arch/arm64/boot/dts/apple/s800x-ipad5.dtsi    |   4 +
+>  arch/arm64/boot/dts/apple/s800x-se.dtsi       |   4 +
+>  arch/arm64/boot/dts/apple/t7000-6.dtsi        |   4 +
+>  arch/arm64/boot/dts/apple/t7000-handheld.dtsi |   4 +
+>  arch/arm64/boot/dts/apple/t7000-j42d.dts      |   1 +
+>  arch/arm64/boot/dts/apple/t7000-mini4.dtsi    |   4 +
+>  arch/arm64/boot/dts/apple/t7000-n102.dts      |   4 +
+>  arch/arm64/boot/dts/apple/t7000-pmgr.dtsi     | 641 ++++++++++++
+>  arch/arm64/boot/dts/apple/t7000.dtsi          |  14 +
+>  arch/arm64/boot/dts/apple/t7001-air2.dtsi     |   1 +
+>  arch/arm64/boot/dts/apple/t7001-pmgr.dtsi     | 650 ++++++++++++
+>  arch/arm64/boot/dts/apple/t7001.dtsi          |  13 +
+>  arch/arm64/boot/dts/apple/t8010-7.dtsi        |   4 +
+>  arch/arm64/boot/dts/apple/t8010-common.dtsi   |   1 +
+>  arch/arm64/boot/dts/apple/t8010-ipad6.dtsi    |   4 +
+>  arch/arm64/boot/dts/apple/t8010-n112.dts      |   4 +
+>  arch/arm64/boot/dts/apple/t8010-pmgr.dtsi     | 772 +++++++++++++++
+>  arch/arm64/boot/dts/apple/t8010.dtsi          |  22 +
+>  arch/arm64/boot/dts/apple/t8011-common.dtsi   |   1 +
+>  arch/arm64/boot/dts/apple/t8011-pmgr.dtsi     | 807 +++++++++++++++
+>  arch/arm64/boot/dts/apple/t8011-pro2.dtsi     |   8 +
+>  arch/arm64/boot/dts/apple/t8011.dtsi          |  22 +
+>  arch/arm64/boot/dts/apple/t8015-common.dtsi   |   1 +
+>  arch/arm64/boot/dts/apple/t8015-pmgr.dtsi     | 931 ++++++++++++++++++
+>  arch/arm64/boot/dts/apple/t8015.dtsi          |  21 +
+>  43 files changed, 6246 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/apple/s5l8960x-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/s8000-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/s8001-j98a-j99a.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/s8001-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/t7000-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/t7001-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/t8010-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/t8011-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/t8015-pmgr.dtsi
 > 
-> There is a switch register on the SoC to decide which phy/mode is used. 
-> By defaut is internal one with rmii mode. I think a driver is needed to
-> handle this properly.
+> 
+> base-commit: 5c9de6f45db36b8a74c12e448cf9db87c97bf1e5
 
-This sounds like a complex MDIO mux. You should think about this now,
-because others have left this same problem too late and ended up with
-a complex design in order to keep backwards compatibility with old DT
-blobs which don't actually describe the real hardware.
+I'm not going to review the actual pmgr spam (I assume you did the usual
+thing and autogenerated it with the m1n1 scripts and then fixed some
+things up by hand, as we do), since really the only useful way to
+validate this is testing and I don't have these devices (nor am I
+familiar with any peculiarities).
 
-	Andrew
+Skimming the rest of the changes it looks reasonable, so:
+
+Acked-by: Hector Martin <marcan@marcan.st>
+
+Would be nice to get at least a cursory review from the DT folks, I'll
+apply to the SoC tree after that (please poke me via direct/non-PATCH
+email if I miss it, those go in a different inbox).
+
+- Hector
+
 
