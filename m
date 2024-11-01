@@ -1,116 +1,263 @@
-Return-Path: <linux-kernel+bounces-392582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A72D9B95D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:45:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB569B9599
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:39:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 401A028459F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:45:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC0F1C2088D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3354C1CB526;
-	Fri,  1 Nov 2024 16:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D131C9B97;
+	Fri,  1 Nov 2024 16:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="eQ+iv6hm"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kJFIDUCy"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07CE1CACC8;
-	Fri,  1 Nov 2024 16:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB27F137747
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730479478; cv=none; b=Q7223W7Ug/aqq3U+7S6e0+aS0vKOemAOAC+2tl7P9SSOz2229Lr5hFx6WctdWMJO5Iah2cGAGUE+yKFZ8Mq8cRWShRJAHKbqMA02gdx5Y9wuB3E5uhDDj9hYifJLH5/1eW85KBNx2x1O+PEHP9dvVL3HY7npNXaDAL0ErX14qj0=
+	t=1730479158; cv=none; b=PF9kU7wQIK4X4tW4JJRmoKzmM23SwpBTpommWxjyIZQLblcxn7CMV/P+tC1AVu3iF+AKyJxgEQJdBq6CKtf1/XVgLurWkjf2yd0rZWNjKy0aXiTI3PBLEwlUuSQv3XiteL6mLzpZ+yTY8achvWpmPzA0eBSb+qpdnmhfNr2r7mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730479478; c=relaxed/simple;
-	bh=41oDt2C/swzs6nM497WHORhY2ywQ2dohkwZWzDrJpxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gIRxd4RhQRNpvlVXLL7gm0nawP6t5dTkP0LReMpdz0FGIjuW8ICo6DkvrmEhN1pEeGXsTNmN1hfAqPFssp8KBZ6eLTcln5N2gp3jFX2sDjfFFbJNLrG8+BtrpwpHNiFvPDVqiSKSEwj3z8cbgVlQlrQokYC7mbJ00KFJR3SNv5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=eQ+iv6hm; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=SzEBSUiqX9q6QOwH+3lfpF0a+846J9p9dlVHwog/yj4=; b=eQ+iv6hmi1RyhhdT/7e0AJyq0B
-	jnteK/4rybFsrn3485KaB8QP2pVyhzHadOOUIz/oxg3ZidSZ7ij8xA+/uIxEuPw12rRql3VrwOjcE
-	W+G2UjuHUX5HL9dKwAZKKp1xHKX4lQIJ6e06etrULMGih7yS61+d6YlpnPOCf+AAEv9TZmd5TwEwe
-	oonSy4aLoCg4zwQRF3Wrb+PAmlz3jrLapEt6eklaoa6t4W7rEa6FpBnZO5YlLzn0vvyJAfiWQK0uS
-	6r+04wDfA8S/4kJpypl+TGZtiAFIVCN45jmmjHOOVwP6/RWoivCXcWlWNHt++4t4lzcMQmgJvTfvO
-	ApQitRBA==;
-Received: from [187.36.213.55] (helo=morissey..)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1t6ul5-000V38-3t; Fri, 01 Nov 2024 17:44:24 +0100
-From: =?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	Barry Song <baohua@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Lance Yang <ioworker0@gmail.com>
-Cc: linux-mm@kvack.org,
-	dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>
-Subject: [PATCH v4 5/5] mm: huge_memory: Use strscpy() instead of strcpy()
-Date: Fri,  1 Nov 2024 13:38:46 -0300
-Message-ID: <20241101164313.1073238-7-mcanal@igalia.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241101164313.1073238-2-mcanal@igalia.com>
-References: <20241101164313.1073238-2-mcanal@igalia.com>
+	s=arc-20240116; t=1730479158; c=relaxed/simple;
+	bh=uQ8uo+vABx8f5nA+/74ndXUQovEhFjcPT/qHC7gnL8E=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Ii2kPbQjj+pCYUOSa8fiyIZ8q41wofFO1H63z7gmwLDDHJHLqtRZDzYYV9NRLH2tzoldh8cFSI20rN20h9PsJre6sf23QPTH8xnsBOGfmAQXvjllRrrQ6eJ+QtC+0m4cJuYs9Wqf5kgu8EZ4YXnx2UpbiComeRW8x3+lMStIVzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kJFIDUCy; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea6aa3b68bso15615407b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 09:39:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730479154; x=1731083954; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HbKJeki4dzd2XPRMM44KMwAEciOK8zIOcm2qr7s1wcQ=;
+        b=kJFIDUCyJ7E1KXCs6goijwzhXxTdE7p5z/03sTDrZfOB/qxt4ifZlA88lmEhVQeUYS
+         M8+ACEiFKNcaiOn+4NIFHcBjApNytfa7mAYOO+ZEaLivnoNBCniealGtC5VCEPQ9G470
+         qKZjOOdpzEI7d1My9V9r7Jvf7YgHxxRYg6ctK3RbqqdVscSBPAufG4L/zOrN13C4cvTS
+         EDIgyKkBa/vA3xeUVnW15he5zoWLrOGJ4tms5N7Pvn14f3FC1LCmqpz3YDOvkevigU09
+         5oYrJtigHVF+3NTGZY3JhFykuJc/OJNP1837mRr0dGPjY9xQ5kOOyaF+7wauwjzJPMKM
+         3PjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730479154; x=1731083954;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HbKJeki4dzd2XPRMM44KMwAEciOK8zIOcm2qr7s1wcQ=;
+        b=W4Ecn2ETAt6xkvklBmAbVCdC+Q/HxS11wkS54z6VnSj85DQs2iuEPipbzNXc6vXzOn
+         LicXcHHAUQ5v/HFOh4Xag6341vLh2yf7e8c9FCkVP5b93UtHFUKa/8WwcFoL3QrThXzn
+         tpjTd/61tdNCuqhgZRRgAy+9sVKpn+HT8wfw2925VMG/HapcKGy4tGBYuWRFEEzWCvdw
+         ycUTYw2rF4prkdnLROulZbC7So3i491leyCOnbjWP/4QEOYPgOAz66MixwyUIx294mtf
+         SREPHU4dGHEXd2S44Q4Snh//bIGTcmOe6zU20sV3dxtpUgSbUMkxp/bK3fzfRyLwNtM0
+         xfkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFo7oG5naN50K9CF30UrSfmO3p8cF6T1PGF2gpAaTgUu2aa63l1k+PoUCUZDBzFdx/2UxIhDAbnxVqeCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrHAbFii4f/WJjkxV1L6Zngibtgp+Om/wvXFADcznwnBFFNbdL
+	QJ9v+fCBHJ4e7Ts42L5lVF56kOIZP/7RKLNaJgmb18atol1nIV6hUM/OhGQzzSaT9xi0aCnzWGV
+	jkw==
+X-Google-Smtp-Source: AGHT+IEZ/As1CqiUNvhsvRDX72pDJbWbYUewG6GHPtYMfGfRk/DC8Z0VB7WVVgFtrlwKk4B3jrTtoBP5VLU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:67ca:b0:6e3:d670:f62a with SMTP id
+ 00721157ae682-6ea52518e31mr269617b3.3.1730479153876; Fri, 01 Nov 2024
+ 09:39:13 -0700 (PDT)
+Date: Fri, 1 Nov 2024 09:39:12 -0700
+In-Reply-To: <1cace497215b025ed8b5f7815bdeb23382ecad32.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240826022255.361406-1-binbin.wu@linux.intel.com>
+ <20240826022255.361406-2-binbin.wu@linux.intel.com> <ZyKbxTWBZUdqRvca@google.com>
+ <3f158732a66829faaeb527a94b8df78d6173befa.camel@intel.com>
+ <ZyLWMGcgj76YizSw@google.com> <1cace497215b025ed8b5f7815bdeb23382ecad32.camel@intel.com>
+Message-ID: <ZyUEMLoy6U3L4E8v@google.com>
+Subject: Re: [PATCH v3 1/2] KVM: x86: Check hypercall's exit to userspace generically
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"yuan.yao@linux.intel.com" <yuan.yao@linux.intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Replace strcpy() with strscpy() in mm/huge_memory.c
+On Fri, Nov 01, 2024, Kai Huang wrote:
+> On Thu, 2024-10-31 at 07:54 -0700, Sean Christopherson wrote:
+> > On Thu, Oct 31, 2024, Kai Huang wrote:
+> > -	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
+> > -	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
+> > -		/* MAP_GPA tosses the request to the user space. */
+> > -		return 0;
+> > +	r = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, &ret);
+> > +	if (r <= r)
+> > +		return r;
+> 
+> ... should be:
+> 
+> 	if (r <= 0)
+> 		return r;
+> 
+> ?
+> 
+> Another option might be we move "set hypercall return value" code inside
+> __kvm_emulate_hypercall().  So IIUC the reason to split
+> __kvm_emulate_hypercall() out is for TDX, and while non-TDX uses RAX to carry
+> the hypercall return value, TDX uses R10.
+> 
+> We can additionally pass a "kvm_hypercall_set_ret_func" function pointer to
+> __kvm_emulate_hypercall(), and invoke it inside.  Then we can change
+> __kvm_emulate_hypercall() to return: 
+>     < 0 error, 
+>     ==0 return to userspace, 
+>     > 0 go back to guest.
 
-strcpy() has been deprecated because it is generally unsafe, so help to
-eliminate it from the kernel source.
+Hmm, and the caller can still handle kvm_skip_emulated_instruction(), because the
+return value is KVM's normal pattern.
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Maíra Canal <mcanal@igalia.com>
-Reviewed-by: Lance Yang <ioworker0@gmail.com>
+I like it!
+
+But, there's no need to pass a function pointer, KVM can write (and read) arbitrary
+GPRs, it's just avoided in most cases so that the sanity checks and available/dirty
+updates are elided.  For this code though, it's easy enough to keep kvm_rxx_read()
+for getting values, and eating the overhead of a single GPR write is a perfectly
+fine tradeoff for eliminating the return multiplexing.
+
+Lightly tested.  Assuming this works for TDX and passes testing, I'll post a
+mini-series next week.
+
+--
+From: Sean Christopherson <seanjc@google.com>
+Date: Fri, 1 Nov 2024 09:04:00 -0700
+Subject: [PATCH] KVM: x86: Refactor __kvm_emulate_hypercall() to accept reg
+ names, not values
+
+Rework __kvm_emulate_hypercall() to take the names of input and output
+(guest return value) registers, as opposed to taking the input values and
+returning the output value.  As part of the refactor, change the actual
+return value from __kvm_emulate_hypercall() to be KVM's de facto standard
+of '0' == exit to userspace, '1' == resume guest, and -errno == failure.
+
+Using the return value for KVM's control flow eliminates the multiplexed
+return value, where '0' for KVM_HC_MAP_GPA_RANGE (and only that hypercall)
+means "exit to userspace".
+
+Use the direct GPR accessors to read values to avoid the pointless marking
+of the registers as available, but use kvm_register_write_raw() for the
+guest return value so that the innermost helper doesn't need to multiplex
+its return value.  Using the generic kvm_register_write_raw() adds very
+minimal overhead, so as a one-off in a relatively slow path it's well
+worth the code simplification.
+
+Suggested-by: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- mm/huge_memory.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/kvm_host.h | 15 +++++++++----
+ arch/x86/kvm/x86.c              | 40 +++++++++++++--------------------
+ 2 files changed, 27 insertions(+), 28 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index a6edbd8c4f49..1ebe18ec4560 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -969,7 +969,7 @@ static int __init setup_thp_anon(char *str)
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 6d9f763a7bb9..9e66fde1c4e4 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -2179,10 +2179,17 @@ static inline void kvm_clear_apicv_inhibit(struct kvm *kvm,
+ 	kvm_set_or_clear_apicv_inhibit(kvm, reason, false);
+ }
  
- 	if (!str || strlen(str) + 1 > PAGE_SIZE)
- 		goto err;
--	strcpy(str_dup, str);
-+	strscpy(str_dup, str);
+-unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+-				      unsigned long a0, unsigned long a1,
+-				      unsigned long a2, unsigned long a3,
+-				      int op_64_bit, int cpl);
++int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
++			      unsigned long a0, unsigned long a1,
++			      unsigned long a2, unsigned long a3,
++			      int op_64_bit, int cpl, int ret_reg);
++
++#define __kvm_emulate_hypercall(_vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, ret)	\
++	____kvm_emulate_hypercall(vcpu,						\
++				  kvm_##nr##_read(vcpu), kvm_##a0##_read(vcpu),	\
++				  kvm_##a1##_read(vcpu), kvm_##a2##_read(vcpu),	\
++				  kvm_##a3##_read(vcpu), op_64_bit, cpl, VCPU_REGS_##ret)
++
+ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
  
- 	always = huge_anon_orders_always;
- 	madvise = huge_anon_orders_madvise;
-@@ -4167,7 +4167,7 @@ static ssize_t split_huge_pages_write(struct file *file, const char __user *buf,
+ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index e09daa3b157c..425a301911a6 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9998,10 +9998,10 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
+ 	return kvm_skip_emulated_instruction(vcpu);
+ }
  
- 		tok = strsep(&buf, ",");
- 		if (tok) {
--			strcpy(file_path, tok);
-+			strscpy(file_path, tok);
- 		} else {
- 			ret = -EINVAL;
- 			goto out;
+-unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+-				      unsigned long a0, unsigned long a1,
+-				      unsigned long a2, unsigned long a3,
+-				      int op_64_bit, int cpl)
++int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
++			      unsigned long a0, unsigned long a1,
++			      unsigned long a2, unsigned long a3,
++			      int op_64_bit, int cpl, int ret_reg)
+ {
+ 	unsigned long ret;
+ 
+@@ -10086,15 +10086,18 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+ 
+ out:
+ 	++vcpu->stat.hypercalls;
+-	return ret;
++
++	if (!op_64_bit)
++		ret = (u32)ret;
++
++	kvm_register_write_raw(vcpu, ret_reg, ret);
++	return 1;
+ }
+-EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
++EXPORT_SYMBOL_GPL(____kvm_emulate_hypercall);
+ 
+ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
+ {
+-	unsigned long nr, a0, a1, a2, a3, ret;
+-	int op_64_bit;
+-	int cpl;
++	int r;
+ 
+ 	if (kvm_xen_hypercall_enabled(vcpu->kvm))
+ 		return kvm_xen_hypercall(vcpu);
+@@ -10102,23 +10105,12 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
+ 	if (kvm_hv_hypercall_enabled(vcpu))
+ 		return kvm_hv_hypercall(vcpu);
+ 
+-	nr = kvm_rax_read(vcpu);
+-	a0 = kvm_rbx_read(vcpu);
+-	a1 = kvm_rcx_read(vcpu);
+-	a2 = kvm_rdx_read(vcpu);
+-	a3 = kvm_rsi_read(vcpu);
+-	op_64_bit = is_64_bit_hypercall(vcpu);
+-	cpl = kvm_x86_call(get_cpl)(vcpu);
+-
+-	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
+-	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
+-		/* MAP_GPA tosses the request to the user space. */
++	r = __kvm_emulate_hypercall(vcpu, rax, rbx, rcx, rdx, rsi,
++				    is_64_bit_hypercall(vcpu),
++				    kvm_x86_call(get_cpl)(vcpu), RAX);
++	if (r <= 0)
+ 		return 0;
+ 
+-	if (!op_64_bit)
+-		ret = (u32)ret;
+-	kvm_rax_write(vcpu, ret);
+-
+ 	return kvm_skip_emulated_instruction(vcpu);
+ }
+ EXPORT_SYMBOL_GPL(kvm_emulate_hypercall);
+
+base-commit: 911785b796e325dec83b32050f294e278a306211
 -- 
-2.46.2
-
 
