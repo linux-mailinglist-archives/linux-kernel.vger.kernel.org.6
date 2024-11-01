@@ -1,88 +1,122 @@
-Return-Path: <linux-kernel+bounces-391740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B2DA9B8B22
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:17:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642F59B8B26
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:17:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AEF91F2146D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:17:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11C311F2182C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC9814D70F;
-	Fri,  1 Nov 2024 06:17:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F251814B97E;
+	Fri,  1 Nov 2024 06:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="NEJtvFLd"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93913146D45
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 06:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B8614B075;
+	Fri,  1 Nov 2024 06:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730441826; cv=none; b=XGm1zF7xPqWj2F6oDFqNsnRIfiaOT16uMDTCTGhBmdD5n0oHa9kMKyMDN1DvO+VEZizX9gr5EFmWLEQv9UiyHOyG4dRSpqBLIgZl7GvrdxvBPpmPDGiKrOwzqFcC5C6Ro6icKEO0DTisIWkyqzJonSG6KNYKG2c5vZPCSsC8YNo=
+	t=1730441835; cv=none; b=pCoePpGI2x2LfZav5mCNQPkZLVGwDwLKUSGHeZ1qwGurYpSkPhwVDx8+WPvMTwZ2/q/envg7MeTdKAahkEfFTCxeteJ/bw2ua9sOtB58GwLQQ2XQHrAUuvgGxaf6aVy+jTE98coKtIv4Xl0QPERQW0sw5494paM3gunSLQd3I2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730441826; c=relaxed/simple;
-	bh=kct3lv/Ay66viC5s5w/Uf4vRn/IFoc64dUXrdFALStc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Kh/jFNArI3MxyBwZ+BRAkHFdvzsW9YWxyqF51oE2NOfTxfoQO8iSxKnPw+8vWYnbJS2T+tJv+L1F47Cs6rGNpAk6sQ6Gacqhjlm+X4eVGid299p+obkvXNGK9YmZgBECHyJO04VHZ9YOZ7yZfZThtrIlMDB7Yrj700SQPcLBZu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3ae3c2cacso16202725ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 23:17:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730441824; x=1731046624;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q78wViwnoupvjRhtDfaJkpo7Mm+cH/30Ybplcy1BKGE=;
-        b=uv6xqXif57YoQj90rkt27p/HFilGl6ruEWqmV4RKXrc2QYMF4YqTXrhfdo1bZWlsOn
-         s0TAb3v4RNsQ22oMMDZ/paakN0JxPmVUPMrCIp6ehu2YI4vhEzLYiEFTxjPRrvPy9xfy
-         Le7hx9j66v5XEh5RNc81q8ZhaUvmBIERt70MR8KVW+veffyOMGu1TuW2X8DOCtjis3e4
-         W1/p1927eF2yn01nJCjg1EeVLgR5gqOy2I/w+0SXUtYPT4p0Ahfq5ZpWCWMxG8Dg4EYT
-         O/utpA/Jv/wxsSpPKh0DdsoArjhjELBOxLb4wIeu6LZf0I4XfozoYXdHKXVzrPUMoR2k
-         LwSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmpGFGmnqSBGiACGiquGzWwy+46dbUdD9Jah3Yxq2PRPEuOvkOD7i92rxClXWPgdHU+q66XMCC6qf7i68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjKUcU4XqNQSLrUoZmKf5tS1CSFE821QTdilWd9KhQf7yFjyZX
-	owv9aQuve9G+Q3U50bD1SMNBzBZV/lh0GSUlXShjDn2dm0+FGmom0k/a/c5jz7D2W5fGWJKwHog
-	6SuTpG58l8X/cT1eVPKHjmu8qhNXk5payStwZqXjd22fz/ZhO5kiN22E=
-X-Google-Smtp-Source: AGHT+IG212HZVPaMiStH8AnQ233n3eXJbHVZ97Gl2j8FzrS6/zbgsV6pV/cA9qcBnahktj5Ec3I8r9A/nMFThb2mBcV66LBh63dA
+	s=arc-20240116; t=1730441835; c=relaxed/simple;
+	bh=yu1cG7CIC2MYC6M3OhZGHOfXf2MsQfyLDHAjoH+rVaQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vk9uX7Rd54yE6WpV3PXuXrwnP5DQ/q9mpaKPcdAfMJenHzThjV5bt/PbdJKJRR+MgdxEWmSR71O40tjm1FnOOcrBkUmt0s/KOO/g17dvJcaxmFlnC5pvdq5jZn5MDLE6gadMHR/ets+P79YdV3M7z6XcNMkA0Swgqjb+FadKk+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=NEJtvFLd; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=Wf6WgzYn/n1XTo8KMrM7SRj471QCpaNLgfU5SHhOBVQ=; t=1730441832; x=1730873832;
+	 b=NEJtvFLdbC0IDqjyWjFZGwJbOG+DwMXm36CfWnhd4DTobVsv+jhNVp3IgUALSmG4IRDcyTTGpa
+	scrXZjIAsWMjuDlMx6A4t9/Tg5u/q0wQ9e9iJQTiyyFeyGgrSWcw3L1niXioiqPUWgEFxt1T8B/2y
+	gEV6Xu6iFZqAx35IjczCVkxgBDHlG2clnbDZYTaJYQLbynPG/Ta+nDxugsYQizGz09lOeiBIERAcB
+	0Dhtp4g3BqapMfUkI3ag5jly+70FzVPLjsTKQbs04cVws0ydCkvfY3G+bZ/Hm6IbDzQezEVczxBkc
+	U8H97M8d9x8GXM0FPbFg1PA+qUvnNkAH8n41Q==;
+Received: from ip4d148da6.dynamic.kabel-deutschland.de ([77.20.141.166] helo=truhe.fritz.box); authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	id 1t6ky2-0007Pg-Vm; Fri, 01 Nov 2024 07:17:07 +0100
+From: Thorsten Leemhuis <linux@leemhuis.info>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2] docs: bug-bisect: add a note about bisecting -next
+Date: Fri,  1 Nov 2024 07:17:06 +0100
+Message-ID: <0b8245f429a3cb162f8f6c0686081700a9c09cc4.1730441728.git.linux@leemhuis.info>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c5a5:0:b0:3a6:ab82:db5e with SMTP id
- e9e14a558f8ab-3a6ab82e083mr36818545ab.22.1730441823732; Thu, 31 Oct 2024
- 23:17:03 -0700 (PDT)
-Date: Thu, 31 Oct 2024 23:17:03 -0700
-In-Reply-To: <CAHB1NajxyF5mBEqcuhRh6FdizNizoFsdUgBOGu=StFwUoByYAQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6724725f.050a0220.3c8d68.0869.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in close_ctree
-From: syzbot <syzbot+2665d678fffcc4608e18@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1730441832;cf286b9e;
+X-HE-SMSGID: 1t6ky2-0007Pg-Vm
 
-Hello,
+Explicitly mention how to bisect -next, as nothing in the kernel tree
+currently explains that bisects between -next versions won't work well
+and it's better to bisect between mainline and -next.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Co-developed-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+---
+v2:
+- slightly change patch descption
+- make the text more how-toish to better match the rest of the document
 
-Reported-by: syzbot+2665d678fffcc4608e18@syzkaller.appspotmail.com
-Tested-by: syzbot+2665d678fffcc4608e18@syzkaller.appspotmail.com
+v1: https://lore.kernel.org/all/20241022-doc-bisect-next-v1-1-196c0a60d554@kernel.org/
+- initial release
+---
+ Documentation/admin-guide/bug-bisect.rst | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Tested on:
+diff --git a/Documentation/admin-guide/bug-bisect.rst b/Documentation/admin-guide/bug-bisect.rst
+index 585630d14581c7..47264c199247e6 100644
+--- a/Documentation/admin-guide/bug-bisect.rst
++++ b/Documentation/admin-guide/bug-bisect.rst
+@@ -108,6 +108,27 @@ a fully reliable and straight-forward way to reproduce the regression, too.*
+ With that the process is complete. Now report the regression as described by
+ Documentation/admin-guide/reporting-issues.rst.
+ 
++Bisecting linux-next
++--------------------
++
++If you face a problem only happening in linux-next, bisect between the
++linux-next branches 'stable' and 'master'. The following commands will start
++the process for a linux-next tree you added as a remote called 'next'::
++
++  git bisect start
++  git bisect good next/stable
++  git bisect bad next/master
++
++The 'stable' branch refers to the state of linux-mainline the current
++linux-next release (found in the 'master' branch) is based on -- the former
++thus should be free of any problems that show up in -next, but not in Linus'
++tree.
++
++This will bisect across a wide range of changes, some of which you might have
++used in earlier linux-next releases without problems. Sadly there is no simple
++way to avoid checking them: bisecting from one linux-next release to a later
++one (say between 'next-20241020' and 'next-20241021') is impossible, as they
++share no common history.
+ 
+ Additional reading material
+ ---------------------------
 
-commit:         6c52d4da Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11f5155f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5a84880eccc01
-dashboard link: https://syzkaller.appspot.com/bug?extid=2665d678fffcc4608e18
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+base-commit: 062d98be0e3f6dcf08e40a1101e967b2eb4fb92f
+-- 
+2.45.0
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
