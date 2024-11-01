@@ -1,135 +1,108 @@
-Return-Path: <linux-kernel+bounces-391525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7819B883D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:18:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1CE9B883F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:19:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625B81F22114
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65C028251C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9296F4D8D1;
-	Fri,  1 Nov 2024 01:18:27 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5907E49659;
+	Fri,  1 Nov 2024 01:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOpVJusB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7E538FA6
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 01:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94014E1CA;
+	Fri,  1 Nov 2024 01:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730423907; cv=none; b=EFtTeYs+cG74tywsYiB+BWMXLdvXcD3TSyuUSqJdkUhURhtSTf1gAeWDBK68vPzLOfQl/BPtsUxU5ZI2W+ksI8TOWiup359VL2+E28J/yhcJxlhZpOryMkcKriG3OYT4nrbaWEysavg3U+saUWAYtN6vOHOkD5ksJLdsXMNDJ8I=
+	t=1730423951; cv=none; b=BdyiWgkDdCQa3F6Vik3EwQd4VohOztmbdUztm1hKqfvUIBajx2P5LzK7JuX1uFIKpGRMMphjhHemWsL4qHTj/NZo2+68jCwNcGryrvcpwSCkVfdo9C1djBDoMwxSk5AznFXnmjAVeh6CWS9OklmMZPwK+Xta3ygynpDuobVOG3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730423907; c=relaxed/simple;
-	bh=PEfDXTPYz4GSXCQlBXUChqsEd3hsSlOQwANs8jdBo6w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YMc71vaeZEP5XGiw0GGMsi7YUVbqrn/tJfuxwaVMrTO6Zryll+Ru8kGimsfmR9M+XvswYhdbreovAO2Nfdw1nO0l6caUTClyJvC45/zWirRMDTZoTcN9eV0dUHF2/HFkA9EWtovoBQZZ/4PCziMJqlGQVq5j32CxkYmQenmJSSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a4f113d2c8so18045195ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 18:18:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730423900; x=1731028700;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Wwl7sozJ8hPrF17Op6Uo3CgwBAyeeQhamMLU82keVE=;
-        b=BYVnx9xsDhmnp96C7kUTNu7Lu6XiCoep/a+0pOCg9ES926j96EAKXrgXwr95nOfyzv
-         +sAvnv5qulbiesD2N0jkCoAKNcr5N+fvxbeLNXz+6rq8Kvrm7eL0E9v6BEvh6p93RUTY
-         eClnuKfdmWip5w/yfqIrPL9jqkiYqEU42VIbivr3mx2dieSTnVmXbsLT0ZQDLHUqDTHG
-         p3EQc+ZQjxVHAOskSvJRVXULA8f6xFnuqOYcL77xSpViXx49Ol9Im3jWvWb4q9WpDdHs
-         8ePpKOhYR1pFJIWdzqb6um4dBoS/+44o5CFxFXy/aV7eWH9eOEobFlJOO90iO/Z+pmZ6
-         3yXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqSSh2sK32myV9oGj2EynLPP84zbuGXkB+bFnxXQlcIDeXgAigBoUi3Jqo7kJFWm/OQ8pQCwP2hWHbdDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyl85cYebU9+ulNE0yVHLymuBm8BorJ951YiSOdo58UwtVnXRP
-	0sTj5SUPSlma1aylbKwiTpe3mqtK5XAAZJm6+96xrOUFfIGw/sOti9K1d7GxiXWi1yyMBJgYBav
-	GGSUWhemu7QzhklWBksIjG7zsOlmidj6tvsuwDFS1GJA+kRvF5QBPq2A=
-X-Google-Smtp-Source: AGHT+IHHn3xPzT2fQIWLfASb6cJq39Sz6JSTeiH7NnohFH0vSjim0hmEeEwuEirM2GjR40ZTerOomoEuWaAemCvCj2v+Xtt0w/QY
+	s=arc-20240116; t=1730423951; c=relaxed/simple;
+	bh=a/BTAZOpBWmD64gqQe+NBKQnoP7/lsloauWesLVevVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e/6eZKQ35PtV+qYt0+vWIF5tPCJQqPU3kJFQTpjHu27I+UcwNoE9r1lSRUNLcxmnDvEX8SEPHRMaQCxBb05PM5qLhlBFuX3Bpzj1i30rLChL6ipa1Iy+6myOIZ6+/1aTpm+MUIN0mkSljQ/QRUzjReuLgHwFcwFEsnRlrU/kO/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOpVJusB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D94F5C4CEC3;
+	Fri,  1 Nov 2024 01:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730423951;
+	bh=a/BTAZOpBWmD64gqQe+NBKQnoP7/lsloauWesLVevVU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZOpVJusBDbMkB4pBTukN1gTFj0NvdsWgUwLmCerDPQGVEewMRj1Whb5KxQbdziwb4
+	 P9IY/LRsBwN+Ff5B98r0xqYJHfzgGmG8Ec7H2s+DlwBaDIlqciknz0RstOWAlpJpcq
+	 tZXgowz911Pq9lOpgSDAV5iL+YEMLbNeufjF8fEfCzAZO0WNkvmD+bvnG7geWOeJ0b
+	 BHbg/5hqngHFW8As0m7PiNeELKsN/fLY5JCyW3j6W9wf+UGsl+7fna+uWzd8TsyxZp
+	 uaf/h3Kma68z8NWh03r4ynnzGGeO5qKGDR4RoEihVx106YuwoHW1V+iLO/S5FaP3R1
+	 9i9HGT1Ek4AfA==
+Date: Thu, 31 Oct 2024 18:19:09 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Nelson Escobar via B4 Relay <devnull+neescoba.cisco.com@kernel.org>
+Cc: neescoba@cisco.com, John Daley <johndale@cisco.com>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Christian Benvenuti
+ <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman
+ <horms@kernel.org>
+Subject: Re: [PATCH net-next v2 5/5] enic: Adjust used MSI-X
+ wq/rq/cq/interrupt resources in a more robust way
+Message-ID: <20241031181909.4f12b240@kernel.org>
+In-Reply-To: <20241024-remove_vic_resource_limits-v2-5-039b8cae5fdd@cisco.com>
+References: <20241024-remove_vic_resource_limits-v2-0-039b8cae5fdd@cisco.com>
+	<20241024-remove_vic_resource_limits-v2-5-039b8cae5fdd@cisco.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b07:b0:3a5:e5cf:c5b6 with SMTP id
- e9e14a558f8ab-3a5e5cfc68bmr79893415ab.10.1730423900451; Thu, 31 Oct 2024
- 18:18:20 -0700 (PDT)
-Date: Thu, 31 Oct 2024 18:18:20 -0700
-In-Reply-To: <67237956.050a0220.35b515.015c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67242c5c.050a0220.529b6.005d.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in ext4_iomap_begin (3)
-From: syzbot <syzbot+626aa13bf52efc3aa86e@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+On Thu, 24 Oct 2024 18:19:47 -0700 Nelson Escobar via B4 Relay wrote:
+> To accomplish this do the following:
+> - Make enic_set_intr_mode() only set up interrupt related stuff.
+> - Move resource adjustment out of enic_set_intr_mode() into its own
+>   function, and basing the resources used on the most constrained
+>   resource.
+> - Move the kdump resources limitations into the new function too.
 
-HEAD commit:    0fc810ae3ae1 x86/uaccess: Avoid barrier_nospec() in 64-bit..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1684155f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=13742ac59dd3e298
-dashboard link: https://syzkaller.appspot.com/bug?extid=626aa13bf52efc3aa86e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=178a32a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16bc6630580000
+Please try to split the pure code moves / refactors to separate
+commits, this change is quite hard to review.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ce34c79f0f6a/disk-0fc810ae.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/873282a313a5/vmlinux-0fc810ae.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/027f191557a6/bzImage-0fc810ae.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/40461e1b126f/mount_0.gz
+> +	case VNIC_DEV_INTR_MODE_MSIX:
+> +		/* Adjust the number of wqs/rqs/cqs/interrupts that will be
+> +		 * used based on which resource is the most constrained
+> +		 */
+> +		wq_avail = min(enic->wq_avail, ENIC_WQ_MAX);
+> +		rq_avail = min(enic->rq_avail, ENIC_RQ_MAX);
+> +		max_queues = min(enic->cq_avail,
+> +				 enic->intr_avail - ENIC_MSIX_RESERVED_INTR);
+> +		if (wq_avail + rq_avail <= max_queues) {
+> +			/* we have enough cq and interrupt resources to cover
+> +			 *  the number of wqs and rqs
+> +			 */
+> +			enic->rq_count = rq_avail;
+> +			enic->wq_count = wq_avail;
+> +		} else {
+> +			/* recalculate wq/rq count */
+> +			if (rq_avail < wq_avail) {
+> +				enic->rq_count = min(rq_avail, max_queues / 2);
+> +				enic->wq_count = max_queues - enic->rq_count;
+> +			} else {
+> +				enic->wq_count = min(wq_avail, max_queues / 2);
+> +				enic->rq_count = max_queues - enic->wq_count;
+> +			}
+> +		}
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+626aa13bf52efc3aa86e@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5823 at fs/ext4/inode.c:3389 ext4_iomap_begin+0xaa2/0xd30 fs/ext4/inode.c:3389
-Modules linked in:
-CPU: 0 UID: 0 PID: 5823 Comm: syz-executor562 Not tainted 6.12.0-rc5-syzkaller-00063-g0fc810ae3ae1 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:ext4_iomap_begin+0xaa2/0xd30 fs/ext4/inode.c:3389
-Code: 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 48 f2 37 ff 49 be 00 00 00 00 00 fc ff df 48 8b 5c 24 48 e9 61 ff ff ff e8 2f f2 37 ff 90 <0f> 0b 90 41 bc de ff ff ff e9 87 f6 ff ff 89 d9 80 e1 07 38 c1 0f
-RSP: 0018:ffffc90003ee7560 EFLAGS: 00010293
-RAX: ffffffff825ce791 RBX: 0000000010000000 RCX: ffff888031505a00
-RDX: 0000000000000000 RSI: 00000000000000d4 RDI: 0000000000000000
-RBP: ffffc90003ee76d0 R08: ffffffff825cded8 R09: 1ffff1100f18b778
-R10: dffffc0000000000 R11: ffffed100f18b779 R12: 00000000000000d4
-R13: 1ffff1100f18b7dc R14: 000000000000000a R15: 0000000000000000
-FS:  00007f00ef14c6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000040 CR3: 0000000077f60000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- iomap_iter+0x691/0xf60 fs/iomap/iter.c:91
- __iomap_dio_rw+0xdea/0x2370 fs/iomap/direct-io.c:677
- iomap_dio_rw+0x46/0xa0 fs/iomap/direct-io.c:767
- ext4_dio_write_iter fs/ext4/file.c:577 [inline]
- ext4_file_write_iter+0x15f0/0x1a20 fs/ext4/file.c:696
- new_sync_write fs/read_write.c:590 [inline]
- vfs_write+0xaeb/0xd30 fs/read_write.c:683
- ksys_write+0x183/0x2b0 fs/read_write.c:736
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f00ef195cb9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f00ef14c168 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f00ef21e608 RCX: 00007f00ef195cb9
-RDX: 0000000000001006 RSI: 0000000020006c00 RDI: 0000000000000004
-RBP: 00007f00ef21e600 R08: 00007f00ef14c6c0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f00ef21e60c
-R13: 0000000000000006 R14: 00007ffee8483890 R15: 00007ffee8483978
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+I don't see netif_get_num_default_rss_queues() being used and you're
+now moving into the "serious queue count" territory. Please cap the
+default number of allocated Rx rings to what the helper returns.
+-- 
+pw-bot: cr
 
