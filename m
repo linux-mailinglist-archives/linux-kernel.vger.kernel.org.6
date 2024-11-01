@@ -1,112 +1,129 @@
-Return-Path: <linux-kernel+bounces-392309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E045D9B922C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:39:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E609B9236
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D2B91C21F7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BE981C2074B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F2F1A0708;
-	Fri,  1 Nov 2024 13:39:14 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0DA1A08C1;
+	Fri,  1 Nov 2024 13:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="YRF1Vn6k"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA3A15B984;
-	Fri,  1 Nov 2024 13:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956F916A959
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730468354; cv=none; b=c24GNzurkKTfvuYIIPkm739eutUBKU2ULb4KkuG8M9BhtFp9mBapPB21ISLtMBRVpGyUvYal9Op2pparLtAXGDprPtY2v+KM490/byxVU/IDZo6oJK/Ct+oUjdool4cK7kmdxYRgAPssXQKqD/bEKZ16hyyjBLKhKixPFlQqVEk=
+	t=1730468526; cv=none; b=GMJyA7KlB1qUy10wxzBHR9B7S+AGBTdFjcWBXg35w+Os33Vq2bF3J/tgiG+lIulOF99lKNDHByFrvTEgDGtUvPCTlcSK6PBvVX/vFSQn0PNqKtg+gazv6cm7Bun1MIuIgfh9Q6GKvtpe1fIPUT3bq2bOftZ93J+ki48e82W/G/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730468354; c=relaxed/simple;
-	bh=6w9ddJfdC+wbWkJ9nmnUl3R3iz0LbUYDbRnBNm1Sjdo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QfyU7OdguEw+MNGh8S8xew/jFrLYbp4Vpv0R5JKaf+1v6m/NJn4MAy+4kAR98CHDKSkdyTwar8/DwvU/iULAf2Es4Rnxc8vACbngpJ1efh70uwOPUosCsXyliiuL+kdP3hvm6kk+zgFYgXZNEDIlYKZKW05IuOSPFy2+1EA97mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xg1zp0lQYz6LD3y;
-	Fri,  1 Nov 2024 21:34:14 +0800 (CST)
-Received: from mscpeml500003.china.huawei.com (unknown [7.188.49.51])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2A46B140445;
-	Fri,  1 Nov 2024 21:39:08 +0800 (CST)
-Received: from [10.123.123.226] (10.123.123.226) by
- mscpeml500003.china.huawei.com (7.188.49.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 1 Nov 2024 16:39:07 +0300
-Message-ID: <5baa6024-a0a4-4b0b-a7d1-641bba7e5b87@huawei.com>
-Date: Fri, 1 Nov 2024 16:39:07 +0300
+	s=arc-20240116; t=1730468526; c=relaxed/simple;
+	bh=cJXYvW3abe/MNE3Xc2VsElqZLA7my5VNctTFJ04d030=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GS3pkNbcuIlqUsiPpuWqUnW4h0v36Fqlbdc490le9bBs9JkNJ+P0vhsS0CM8vixu97PLHmKLRtAJNj9E/XZIEZuP21+F3ML5cRjWss3F2W+gGgR7dDHrbZGzzJ8iSP+EuO7oBe2iTi2Yp9MuUthTTRSRVNwNrttywWp16e0+c2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=YRF1Vn6k; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b161fa1c7bso131738985a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:42:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1730468523; x=1731073323; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cJXYvW3abe/MNE3Xc2VsElqZLA7my5VNctTFJ04d030=;
+        b=YRF1Vn6kYj94b6Gof8NYIJIsnUMDd3N604tcBd46qC4CVySJK2JnSZSSPppzI6mYdL
+         lCLSxpXkTldibD+PGragg18jFog1Gpd4AcxdZiAHdn+VmUbqQCJZ3x51tk4c5ksekelS
+         NJkFHwLGD3E9B3KwqLl/q2TB7twPJ1NJoQu/I3QY/REPNoGWdeoIShPa3bU2f473geCo
+         uRD6VIBUozP3rVEfxZIiBAuHygIFpSAMsPT3x8NlN38q/jxB5U0wi9VyEivBaHHiql8J
+         tvbOhmF7rvfFaOxz816+sXq6TthHZ8aZV+HTUFjV99zsuhj35Wow637iJ16vpSVok7l1
+         JwVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730468523; x=1731073323;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cJXYvW3abe/MNE3Xc2VsElqZLA7my5VNctTFJ04d030=;
+        b=mNSiyzVsiNXkx+Nb3ImJJ7ZlFgJVSbwWquNiASOwc5mCR0g9UgSSHq6gAPIMqUJk0t
+         tbFmKXYTb9uMRHwHq43SfagM9DmoX52a2SWj9iYl89zUG/xHD+BQ6QeBc1BZNXW/dbhx
+         FE6CmN8wnGvJ9qsMN71bnvwjW68BE0Fz8UibcwaQnVLFmWriQfFCfdka4334eD6S+bb4
+         U/GomPe/QPnM9JplExp50B+W4v0CpLWKjy3grrfgIpyE11UV/rPvDFjGV4NITKsLkBiS
+         GnSUdmOibSI6wv5MEFnvcGv/pwEtbiRGCoCa45wPBCvuzLtXXeoGbGrs+lrLBdTuSeGK
+         bxcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxfMxYLTGjLvsDOA5QvliwNe9n5UuZCsbzw40BctO/Fobwk+3rMbY3PDK09BC3xpwbYcXH6aDr6be1IR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCKhS1jQJZKMHnBqRm4RNhIgRkGK2rCGU7MRREEz5GV31SyZEy
+	kWBD1qz1jDcpxfjeIBp7ovEm5bT6Zn+x45l2nUGnfAcKcsjw6J2h88ArhBR1PCc=
+X-Google-Smtp-Source: AGHT+IHKsnAIBL5bwiLhih6bmC6tVm4aSQJMldIeDtc2HksBE6g03HuX0ip2Xi6rBdXjkAjc21j7GA==
+X-Received: by 2002:a05:6214:4a81:b0:6cb:bfb5:6fc with SMTP id 6a1803df08f44-6d1856fb9dcmr414876706d6.25.1730468523486;
+        Fri, 01 Nov 2024 06:42:03 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d354178d31sm19306126d6.118.2024.11.01.06.42.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 06:42:02 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t6ruc-00000000SZq-12Ar;
+	Fri, 01 Nov 2024 10:42:02 -0300
+Date: Fri, 1 Nov 2024 10:42:02 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Gowans, James" <jgowans@amazon.com>
+Cc: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"rppt@kernel.org" <rppt@kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Durrant, Paul" <pdurrant@amazon.co.uk>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>,
+	"Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"Graf (AWS), Alexander" <graf@amazon.de>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
+Message-ID: <20241101134202.GB35848@ziepe.ca>
+References: <20240805093245.889357-1-jgowans@amazon.com>
+ <20240805093245.889357-6-jgowans@amazon.com>
+ <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
+ <20241031160635.GA35848@ziepe.ca>
+ <fe4dd4d2f5eb2209f0190d547fe29370554ceca8.camel@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] Cgroup-based THP control
-To: Michal Hocko <mhocko@suse.com>
-CC: Gutierrez Asier <gutierrez.asier@huawei-partners.com>,
-	<akpm@linux-foundation.org>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<baohua@kernel.org>, <willy@infradead.org>, <peterx@redhat.com>,
-	<hannes@cmpxchg.org>, <hocko@kernel.org>, <roman.gushchin@linux.dev>,
-	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>, <cgroups@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<alexander.kozhevnikov@huawei-partners.com>, <guohanjun@huawei.com>,
-	<weiyongjun1@huawei.com>, <wangkefeng.wang@huawei.com>,
-	<judy.chenhui@huawei.com>, <yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<kang.sun@huawei.com>, <nikita.panov@huawei-partners.com>
-References: <ZyI0LTV2YgC4CGfW@tiehlicka>
- <b74b8995-3d24-47a9-8dff-6e163690621e@huawei-partners.com>
- <ZyJNizBQ-h4feuJe@tiehlicka>
- <d9bde9db-85b3-4efd-8b02-3a520bdcf539@huawei.com>
- <ZyNAxnOqOfYvqxjc@tiehlicka>
- <80d76bad-41d8-4108-ad74-f891e5180e47@huawei.com>
- <ZySEvmfwpT_6N97I@tiehlicka>
- <274e1560-9f6c-4dd9-b27c-2fd0f0c54d03@huawei.com>
- <ZyTUd5wH1T_IJYRL@tiehlicka>
- <5120497d-d60a-4a4b-a39d-9b1dbe89154c@huawei.com>
- <ZyTXYnbDfGYGuxlt@tiehlicka>
-Content-Language: en-US
-From: Stepanov Anatoly <stepanov.anatoly@huawei.com>
-In-Reply-To: <ZyTXYnbDfGYGuxlt@tiehlicka>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: mscpeml500004.china.huawei.com (7.188.26.250) To
- mscpeml500003.china.huawei.com (7.188.49.51)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fe4dd4d2f5eb2209f0190d547fe29370554ceca8.camel@amazon.com>
 
-On 11/1/2024 4:28 PM, Michal Hocko wrote:
-> On Fri 01-11-24 16:24:55, Stepanov Anatoly wrote:
->> On 11/1/2024 4:15 PM, Michal Hocko wrote:
->>> On Fri 01-11-24 14:54:27, Stepanov Anatoly wrote:
->>>> On 11/1/2024 10:35 AM, Michal Hocko wrote:
->>>>> On Thu 31-10-24 17:37:12, Stepanov Anatoly wrote:
->>>>>> If we consider the inheritance approach (prctl + launcher), it's fine until we need to change
->>>>>> THP mode property for several tasks at once, in this case some batch-change approach needed.
->>>>>
->>>>> I do not follow. How is this any different from a single process? Or do
->>>>> you mean to change the mode for an already running process?
->>>>>
->>>> yes, for already running set of processes
->>>
->>
->>> Why is that preferred over setting the policy upfront?
->> Setting the policy in advance is fine, as the first step to do.
->> But we might not know in advance
->> which exact policy is the most beneficial for one set of apps or another.
+On Fri, Nov 01, 2024 at 01:01:00PM +0000, Gowans, James wrote:
 
-> 
-> How do you plan to find that out when the application is running
-> already?
-For example, if someone willing to compare some DB server performance with THP-off vs THP-on,
-and DB server restart isn't an option.
-Of course, if the restart is ok then we don't need such feature, "launcher" approach would be enough.
-if i got your question right.
+> Thanks Jason, that sounds perfect. I'll work on the next rev which will:
+> - expose a filesystem which owns reserved/persistent memory, just like
+> this patch.
 
+Is this step needed?
 
--- 
-Anatoly Stepanov, Huawei
+If the guest memfd is already told to get 1G pages in some normal way,
+why do we need a dedicated pool just for the KHO filesystem?
+
+Back to my suggestion, can't KHO simply freeze the guest memfd and
+then extract the memory layout, and just use the normal allocator?
+
+Or do you have a hard requirement that only KHO allocated memory can
+be preserved across kexec?
+
+Jason
 
