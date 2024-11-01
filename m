@@ -1,105 +1,155 @@
-Return-Path: <linux-kernel+bounces-393010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2419B9AC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:18:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6F89B9ACB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6609E1F21FD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:18:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 023FEB215C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F541E6DFE;
-	Fri,  1 Nov 2024 22:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50F21CCEE2;
+	Fri,  1 Nov 2024 22:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8B5Fbih"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bweWDkmU"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD4F1BDC3;
-	Fri,  1 Nov 2024 22:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9091BDC3;
+	Fri,  1 Nov 2024 22:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730499524; cv=none; b=Xm88zyOtTxggdAmEmwJX6CS4MJEK87I1dc+nGZomr/0y5RMpk8Ama2M94FRLC+qyErWFfvczndiZwxPS3j52epFhdyx+F0rOTgy3yTyJHD8U2viEdCkSjeU/UoWvZKmYy2hN1uvZSfsMeV2dTLr9z30lORcYre6cIGS9aMGazs0=
+	t=1730499583; cv=none; b=SnQnQzWTqDukqfc1CvMhNmvCgZERmTmTDVAupsFy4AzUCUVsy19zkBMa9C/85vtz6bS5ralLTpBiLj+gb8vx6eMJc7mBbpyQYU2vneUoZhPjXym5+Ee+z0IKEc2+iefo+4qlh13sTGJ7ZHK8/WkDXVA1fbTjtX2LN187GV9rEg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730499524; c=relaxed/simple;
-	bh=SfvWv72ZbUeIjpMhK1H+Di14U2NJnni6MvQ7OWwTfDo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=Tgk8V7UiG9fDuH1MkAMx4AGoUCWqxpr/uJi/XTGgSN4+PBJ3hK1QAUijCdkJLiUNvADPAxT6wSMk5oN46NF+adxRBABufqz0tJWNYqph9rtdWIFZddGiLOnLy4bWtEK5yW1e6715795CnekstnYP3yw9Ii3CojTjBDm/sYQxeTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8B5Fbih; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E707C4CECD;
-	Fri,  1 Nov 2024 22:18:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730499523;
-	bh=SfvWv72ZbUeIjpMhK1H+Di14U2NJnni6MvQ7OWwTfDo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G8B5FbihtNvVjmiGncdZkw/5g49VXEDLWU6dCd6f7AgBZV7b3MDz4Mio9teMOIupZ
-	 ARqPuoMHB79uUnWfl+rqF4KTcZ/gObfhf3oVmSS9eCRk0qutPaqPxfYhbHSu3Vq/je
-	 HAnbzuzI/c9euOqXkGM4iUaORjvXEUct9BNxVVJk/Pbc72JYcDPtDceTthEVk9fecj
-	 /Eb+mS/2aEEzZIyWFJQYVe4M7FITlC7FUxUCj5mBCz6yf4dfV6rgbJW7pxdd+uGM6c
-	 HQnGDrwoQ/wXmcgGWjGK7qycALq7sacle8cuCNP5D38T9ddXyPOhWhHpmJw1iV1I20
-	 ayJ6MSw0pdYXA==
+	s=arc-20240116; t=1730499583; c=relaxed/simple;
+	bh=5iYsLNvcY55MFjvi6m/lq9x5QRZWvJ4M+x5E7SQySwM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aSRtxqwldkrVYuNdWlDxN4gv1y/29lztvH6ujIyNCLCNf04bUH1kmGjGPF+NluxaWGbnYi9U+1ll1CMF38tks+4fGG3F2GkKMSZscWyVbhdVBFRuR03wiXdPBAvNTvP4ndtGnIE/Uexn0SQdvZVxVlIxoNV7Rv0Wckp0310qa54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bweWDkmU; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ee386ce3dfso2142757a12.1;
+        Fri, 01 Nov 2024 15:19:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730499581; x=1731104381; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=ASiyIHn/3ii7xbeQI3Xm3CDe+0D7uWXjTz/CkcuvjF4=;
+        b=bweWDkmUMniEXRuU/1LnD/56OGEoJKXHyBTbMirOzx33EEHcOxRsUI2k2mTcNJHbT7
+         iyG5BSiD/ZR9W75XLWbBgwR9xlLTtMKvtRZY+bRCM6+hcQnNLZug4m1GoqZRAUnBRQuY
+         z2dTAu65BSPCjWM4Hthwhq4PnqQW/Es5fFc55tl3Hn/9mfxJmMYlSGe6O14ueaE6I0g8
+         Qgm9FEher7XyXyfthFpYPqF1WT8tL4u3rfn0/ReC/1rFiAhH+lLWs30v9mh36m6n7ElV
+         oNAArhynOvfHpL9S9BitAe53jbR8cmEX9149wt9PG+BxcAdIHdSpkMEJ8qZcFxxAg4qx
+         jMgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730499581; x=1731104381;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ASiyIHn/3ii7xbeQI3Xm3CDe+0D7uWXjTz/CkcuvjF4=;
+        b=WjxpbFJJEbPhlGcMrtiwtYy8cHUqZL4JlWteRnAE+9RQYYjYJIcs6WKSRKwxXigpY2
+         nc+rb9i2dqrOrunQHFOuK93rUxPP+I5Es0wws3SVotuwxLq3Ghu+w9HWvC3HOrd26Cb4
+         IukyTImaGvPb/GrmsqMngpf7uxJBO8MMFoAd9fiAzpqSE9jcvdt8la71TbKSIVriMpWA
+         6RuZryfeFBWtMFZUCH/i1o4OqcQfo0Hig24l2pRtONK0uv0G4qJeKRLFfX9Gjj3GO0i4
+         xELD2y37DkxSeWpyerrDVcQUGFcmZg0AG3B2ddBy9esNVffNWkvxUm/6Pwj16ssNZCDP
+         /6Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUySjqemiH/qKypH51/Sm6tUeC4dXPOFBphUftfxUx/E4B5ToWz2aXIHsQ/ivS9/Ii4frUcM7/X8JibZzmLcWY=@vger.kernel.org, AJvYcCW/gNtbuFMXplY0V4Qla+Q+0cpGLvZAE2+bvyQpcc6KqNYskL0KoMVn4M6xHQMar2ywxcNfDsx3TWqZ6Z8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFGdarms0OeCl+7gL/yi4jlTv5kESCHOchbbUvOn4T57qEq4RG
+	KDGW6clDhJsiGwe3o/gXwWozwpp8CZ1TddDlYeUczFDNzoIBpW1H
+X-Google-Smtp-Source: AGHT+IHAfJoElGQs4UKDOuFUgAvAywk67B41uHrrSM/kNHKQQAzOFjjwRyqFsY4E1MH6AuvamYfeqA==
+X-Received: by 2002:a17:90b:2e42:b0:2e0:7580:6853 with SMTP id 98e67ed59e1d1-2e93e0fab5amr11494578a91.17.1730499580566;
+        Fri, 01 Nov 2024 15:19:40 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93da98448sm3599311a91.6.2024.11.01.15.19.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 15:19:39 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <c91f8b3c-ae3f-4d35-8b7f-2fb2b7cebebd@roeck-us.net>
+Date: Fri, 1 Nov 2024 15:19:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 02 Nov 2024 00:18:39 +0200
-Message-Id: <D5B6VSE24UFU.3IMXJC23PCNFW@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Thomas Gleixner" <tglx@linutronix.de>, "Ross Philipson"
- <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
- <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
- <iommu@lists.linux-foundation.org>
-Cc: <dpsmith@apertussolutions.com>, <mingo@redhat.com>, <bp@alien8.de>,
- <hpa@zytor.com>, <dave.hansen@linux.intel.com>, <ardb@kernel.org>,
- <mjg59@srcf.ucam.org>, <James.Bottomley@hansenpartnership.com>,
- <peterhuewe@gmx.de>, <jgg@ziepe.ca>, <luto@amacapital.net>,
- <nivedita@alum.mit.edu>, <herbert@gondor.apana.org.au>,
- <davem@davemloft.net>, <corbet@lwn.net>, <ebiederm@xmission.com>,
- <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
- <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
- <trenchboot-devel@googlegroups.com>
-Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
- kernel support
-X-Mailer: aerc 0.18.2
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
- <D5ARS5Y7EATS.2GVNSARKXKIDI@kernel.org> <87a5eivgku.ffs@tglx>
- <D5B5I0WUU8F0.30JMZ6QHPOFRK@kernel.org>
- <D5B5MLX1C8TS.2U6YPCYBWBTYT@kernel.org> <87msiitxto.ffs@tglx>
-In-Reply-To: <87msiitxto.ffs@tglx>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] watchdog: aspeed: Change aspeed_wdt_config struct
+ name to aspeed_wdt_data
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, patrick@stwcx.xyz,
+ joel@jms.id.au, andrew@codeconstruct.com.au, wim@linux-watchdog.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Cc: Peter.Yin@quantatw.com, Patrick_NC_Lin@wiwynn.com, Bonnie_Lo@wiwynn.com,
+ DELPHINE_CHIU@wiwynn.com, bmc-sw@aspeedtech.com, chnguyen@amperecomputing.com
+References: <20241101121201.2464091-1-chin-ting_kuo@aspeedtech.com>
+ <20241101121201.2464091-3-chin-ting_kuo@aspeedtech.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241101121201.2464091-3-chin-ting_kuo@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat Nov 2, 2024 at 12:04 AM EET, Thomas Gleixner wrote:
-> On Fri, Nov 01 2024 at 23:19, Jarkko Sakkinen wrote:
-> > On Fri Nov 1, 2024 at 11:13 PM EET, Jarkko Sakkinen wrote:
-> >> I think we can sort them out independently as long as we find a
-> >> conclusion how to address locality change.
-> >
-> > And to be fair: there was no reaction from anyone. It is mostly x86
-> > patch set, meaning that I was waiting for some reaction first from that
-> > side.  And I did respond to that when it came.
->
-> The x86 side is mostly self contained, so the damage there is minimal,
-> but the TPM parts are changing the generic operations and the x86 parts
-> depend on them.
->
-> So let's not create a chicken and egg problem and solve the TPM parts,
-> which at my cursory glance are partially legitimate fixes, independent
-> of the actual trenchboot x86 functionality.
+On 11/1/24 05:12, Chin-Ting Kuo wrote:
+> aspeed_wdt_config struct is used to store some HW configuration
+> information. Changing its naming to a more generic one,
+> aspeed_wdt_data, in order to contain more platform specific
+> inforamtion or SW callback functions.
+> 
+> Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
 
-Yeah, I'm already writing a (draft/RFC) patch to demonstrate my
-proposal that I sent so all good.
+I fail to see the point of this patch. It is just unnecessary churn.
+Just like drivers should not be renamed because of an extended scope
+or because someone doesn't like the old name, renaming variables should
+be avoided as well. Such renames just make future bug fixes (which may
+need to be backported) more difficult.
 
->
-> Thanks,
->
->         tglx
+Guenter
 
-BR, Jarkko
 
