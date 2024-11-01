@@ -1,122 +1,82 @@
-Return-Path: <linux-kernel+bounces-391741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 642F59B8B26
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:17:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8B89B8B2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11C311F2182C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:17:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1171F22218
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F251814B97E;
-	Fri,  1 Nov 2024 06:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6BC14E2DA;
+	Fri,  1 Nov 2024 06:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="NEJtvFLd"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="a13H3l1S"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B8614B075;
-	Fri,  1 Nov 2024 06:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16643147C98
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 06:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730441835; cv=none; b=pCoePpGI2x2LfZav5mCNQPkZLVGwDwLKUSGHeZ1qwGurYpSkPhwVDx8+WPvMTwZ2/q/envg7MeTdKAahkEfFTCxeteJ/bw2ua9sOtB58GwLQQ2XQHrAUuvgGxaf6aVy+jTE98coKtIv4Xl0QPERQW0sw5494paM3gunSLQd3I2U=
+	t=1730442079; cv=none; b=oiI4eyPr2c8sYrZeF4tSIpIHQLS2sl0nUg1s+7Sj42F+7tJ7wpTtBz/2HedqYCOK+KN7tx0ab7nRfvN/dE+xKbn7791/mjQGkjvSM69Hhy94Yic8RcsI5jN8BSWi00+mA206CSJFjczMJyYaSavKRtsV2DnQ5hs7H+MjigQ3OHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730441835; c=relaxed/simple;
-	bh=yu1cG7CIC2MYC6M3OhZGHOfXf2MsQfyLDHAjoH+rVaQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vk9uX7Rd54yE6WpV3PXuXrwnP5DQ/q9mpaKPcdAfMJenHzThjV5bt/PbdJKJRR+MgdxEWmSR71O40tjm1FnOOcrBkUmt0s/KOO/g17dvJcaxmFlnC5pvdq5jZn5MDLE6gadMHR/ets+P79YdV3M7z6XcNMkA0Swgqjb+FadKk+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=NEJtvFLd; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:Subject:Date:
-	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=Wf6WgzYn/n1XTo8KMrM7SRj471QCpaNLgfU5SHhOBVQ=; t=1730441832; x=1730873832;
-	 b=NEJtvFLdbC0IDqjyWjFZGwJbOG+DwMXm36CfWnhd4DTobVsv+jhNVp3IgUALSmG4IRDcyTTGpa
-	scrXZjIAsWMjuDlMx6A4t9/Tg5u/q0wQ9e9iJQTiyyFeyGgrSWcw3L1niXioiqPUWgEFxt1T8B/2y
-	gEV6Xu6iFZqAx35IjczCVkxgBDHlG2clnbDZYTaJYQLbynPG/Ta+nDxugsYQizGz09lOeiBIERAcB
-	0Dhtp4g3BqapMfUkI3ag5jly+70FzVPLjsTKQbs04cVws0ydCkvfY3G+bZ/Hm6IbDzQezEVczxBkc
-	U8H97M8d9x8GXM0FPbFg1PA+qUvnNkAH8n41Q==;
-Received: from ip4d148da6.dynamic.kabel-deutschland.de ([77.20.141.166] helo=truhe.fritz.box); authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	id 1t6ky2-0007Pg-Vm; Fri, 01 Nov 2024 07:17:07 +0100
-From: Thorsten Leemhuis <linux@leemhuis.info>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH v2] docs: bug-bisect: add a note about bisecting -next
-Date: Fri,  1 Nov 2024 07:17:06 +0100
-Message-ID: <0b8245f429a3cb162f8f6c0686081700a9c09cc4.1730441728.git.linux@leemhuis.info>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1730442079; c=relaxed/simple;
+	bh=+xcRSe7Af/YhaiQmjlGQjqVwE+Ioa2t+/i/XQhRNtoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J+2ExRIZcDJNcTF2YerOhgArTcpcAr7dZMqLbSGNTgNyCFA8+o90YNshhj0wMhCfpSvTdDB+V+A+D6Pi+H6JmrNpqALjakwP2KrRhtBlGHyI533JK2PDTnSwlkHJtcEqVvW1V0NFAO7UOaPQYpanvLD5/jJcqGYOVpt44M1GqvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=a13H3l1S; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id EFCC21770C0; Fri,  1 Nov 2024 06:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1730442075; bh=+xcRSe7Af/YhaiQmjlGQjqVwE+Ioa2t+/i/XQhRNtoU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a13H3l1Sb/jMcYdJDqKn+pZ7UfntuKH48KExW9Ee5ZIFJoZtJlaOXz70jXppFsOqN
+	 +PtqG9IdhBz7MJIy9F7ZWGnQJ56P5Ofs+YXCzxtB3CCyCbQAay7g4guszVNBynfdsh
+	 nnO6jIEWdlEcQvQvTlKPvTRTFEFRj5SWd7Dks9gCQ17/ANjmttNV26uPJk3Yz2AwlX
+	 GA2EOUDbuGcAPS5A7GAlwO3a93u1xVPi3143hD6bHRlJfaPVf24domVL4uYSs0U6Lc
+	 ykazM0dlnwxrp7QnfCm/Vnwz4gD8E9tz2A9AgbVp3DJalzTmAoU5KIRXqlnnoeUwRv
+	 3iNf7LCKN9QhA==
+Date: Fri, 1 Nov 2024 06:21:15 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kdb: Fix incorrect naming of history arrow keys in code
+Message-ID: <20241101062115.GA32320@lichtman.org>
+References: <20241031192350.GA26688@lichtman.org>
+ <CAD=FV=WC-ce14rgrYsVbg75dNX5tL6Saj5T8YqpAWm2ndLGdXA@mail.gmail.com>
+ <20241101002612.GA29456@lichtman.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1730441832;cf286b9e;
-X-HE-SMSGID: 1t6ky2-0007Pg-Vm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101002612.GA29456@lichtman.org>
 
-Explicitly mention how to bisect -next, as nothing in the kernel tree
-currently explains that bisects between -next versions won't work well
-and it's better to bisect between mainline and -next.
+On Fri, Nov 01, 2024 at 12:26:12AM +0000, Nir Lichtman wrote:
+> 
+> Evidence in the code for usage of arrow keys in the case of keyboard can
+> be seen by examining kdb_read in kernel/debug/kdb/kdb_io.c, in the /* Down */
+> and /* Up */ cases the values 14 and 16 can be seen.
+> 
 
-Co-developed-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
----
-v2:
-- slightly change patch descption
-- make the text more how-toish to better match the rest of the document
+Correction: The evidence can be seen in the kdb_keyboard.c file
+in the function kdb_get_kbd_char which gets the scan codes from the keyboard.
+The conversion between the up and down arrow scan codes to the 16 and 14 values
+is at lines 138 until 141.
 
-v1: https://lore.kernel.org/all/20241022-doc-bisect-next-v1-1-196c0a60d554@kernel.org/
-- initial release
----
- Documentation/admin-guide/bug-bisect.rst | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+I am thinking maybe a good solution for this confusing passing of magics
+is to export the magics to macro definitions,
+or maybe to make the keyboard flow also actually use CTRL chords?
 
-diff --git a/Documentation/admin-guide/bug-bisect.rst b/Documentation/admin-guide/bug-bisect.rst
-index 585630d14581c7..47264c199247e6 100644
---- a/Documentation/admin-guide/bug-bisect.rst
-+++ b/Documentation/admin-guide/bug-bisect.rst
-@@ -108,6 +108,27 @@ a fully reliable and straight-forward way to reproduce the regression, too.*
- With that the process is complete. Now report the regression as described by
- Documentation/admin-guide/reporting-issues.rst.
- 
-+Bisecting linux-next
-+--------------------
-+
-+If you face a problem only happening in linux-next, bisect between the
-+linux-next branches 'stable' and 'master'. The following commands will start
-+the process for a linux-next tree you added as a remote called 'next'::
-+
-+  git bisect start
-+  git bisect good next/stable
-+  git bisect bad next/master
-+
-+The 'stable' branch refers to the state of linux-mainline the current
-+linux-next release (found in the 'master' branch) is based on -- the former
-+thus should be free of any problems that show up in -next, but not in Linus'
-+tree.
-+
-+This will bisect across a wide range of changes, some of which you might have
-+used in earlier linux-next releases without problems. Sadly there is no simple
-+way to avoid checking them: bisecting from one linux-next release to a later
-+one (say between 'next-20241020' and 'next-20241021') is impossible, as they
-+share no common history.
- 
- Additional reading material
- ---------------------------
-
-base-commit: 062d98be0e3f6dcf08e40a1101e967b2eb4fb92f
--- 
-2.45.0
-
+Thanks,
+Nir
 
