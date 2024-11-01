@@ -1,148 +1,101 @@
-Return-Path: <linux-kernel+bounces-391900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232039B8D13
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:28:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C375D9B8D17
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:29:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB6E1285FBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7E21F238A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3801D15ADA1;
-	Fri,  1 Nov 2024 08:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKSr/Cdy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8F41925A8;
+	Fri,  1 Nov 2024 08:27:31 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743F315855E;
-	Fri,  1 Nov 2024 08:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD88F15D5B6;
+	Fri,  1 Nov 2024 08:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730449641; cv=none; b=dbDOUZadI+SudquOsxoZnHhL0rTEgbxbS6jL2+czz/jPTC5u3F5Z9YcCXuvjdOfloOmA7M/hsSil7Odb3c04m4/O8d5Xn8Lwljg8riAjh1GUsY49nx6LImcaR1WjlK20+VgOibaQyTzlL727mqnMcpDC38cNbwYPKk3LyBJxbnU=
+	t=1730449651; cv=none; b=lrREjYMLxMb/DFtm04g2p1OAOqhttjlIL+7Av/P6GPiXOHjGBrc/hNEZAoAB8PAie4B+juqM08gtFhUUrEX46gjz36qwphpCoInGhPOYXMAU2PUgRx88Ct6HhLcn4A/UKsXOtWShZ+N4zTncmkzNjLJWE3PWKQpEyg1rS1luKSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730449641; c=relaxed/simple;
-	bh=jhzfbbpIiiPxM14fuzz1mk/HgYx//usi40Pzz6l4ufU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nnQqw322XlEfdu4pi5QP3MWW9LqJ/OuFK8aK82TsKLHjq34bTfuDzWQa5oFS1Gwum6wug434nJgIHG/I6sjdqDJ63vH11CD/zPwI2MPmKmMc/YAAYGB5bqUaU92IFo4lPelaSpgekOsz3xfu6A3cEFDo7D4l+rj8OxcUf9bwkIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKSr/Cdy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 03CB2C4CED9;
-	Fri,  1 Nov 2024 08:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730449641;
-	bh=jhzfbbpIiiPxM14fuzz1mk/HgYx//usi40Pzz6l4ufU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RKSr/Cdyj6ILvMyMPM1zpHtHn6dI8JPHuNInXXQJINcactKaulSFUPiQ/+VkKvJHp
-	 U7aThFVEe0DnGkYm03/cQqLbbVqZlFPl8XM1GbRbaskqaG+dRMz9N80CYGwCa9WSdi
-	 5uU904RtOt1yIgW81IkEQKgH5E3NidVWEzbbDS+m2xzu18G0d1ynq0SyBDGqAYRvAx
-	 3zcaIU5SDbuoEazfeQxNGHSWmFOtrRx1oH6bIzP8Ffb7Kt1vN/uaD4s3lzUgKdA0us
-	 x8S9ihcGIQMaomQvmGB9liEHNZWjyrcKpnxxJ+CEHPAzsxoftp9VJf03erT4Eg4nTg
-	 NWV6N9uQZlBOw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB63BE674B7;
-	Fri,  1 Nov 2024 08:27:20 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Fri, 01 Nov 2024 16:27:20 +0800
-Subject: [PATCH RFC v4 4/4] arm64: dts: amlogic: a4: add pinctrl node
+	s=arc-20240116; t=1730449651; c=relaxed/simple;
+	bh=ddgJmiU4ENkfDV9jjLCh0nDalDVAbrbRr1uNrGoombY=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=MGCj1hTyKElvt4BVUxdhiPdh8XuhR8QTED/G+FIZKwlN8aRJu5v5w1YmwAR27Al8Gk/v3Y/cfeNKHW+yL6M30/kzrGMBpDkn0gYi/OhCAv+6AUD31VclnfiLJ8KutUBtbjTEbhnCf6CeNkMrd7EBZRojHvXOPRUamBUxAyq0vWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xfv7r1wzmzyT7x;
+	Fri,  1 Nov 2024 16:25:44 +0800 (CST)
+Received: from kwepemf200001.china.huawei.com (unknown [7.202.181.227])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6B90318005F;
+	Fri,  1 Nov 2024 16:27:25 +0800 (CST)
+Received: from [10.110.54.32] (10.110.54.32) by kwepemf200001.china.huawei.com
+ (7.202.181.227) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 1 Nov
+ 2024 16:27:24 +0800
+Subject: Re: [PATCH] net/smc: Optimize the search method of reused buf_desc
+To: <dust.li@linux.alibaba.com>, <wenjia@linux.ibm.com>, <jaka@linux.ibm.com>,
+	<alibuda@linux.alibaba.com>, <tonylu@linux.alibaba.com>,
+	<guwen@linux.alibaba.com>
+CC: <linux-s390@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <luanjianhai@huawei.com>,
+	<zhangxuzhou4@huawei.com>, <dengguangxing@huawei.com>, <gaochao24@huawei.com>
+References: <20241029065415.1070-1-liqiang64@huawei.com>
+ <20241101065016.GF101007@linux.alibaba.com>
+From: Li Qiang <liqiang64@huawei.com>
+Message-ID: <6d5bfce0-b01d-b46b-3a9f-5291455f3022@huawei.com>
+Date: Fri, 1 Nov 2024 16:27:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241101-a4_pinctrl-v4-4-efd98edc3ad4@amlogic.com>
-References: <20241101-a4_pinctrl-v4-0-efd98edc3ad4@amlogic.com>
-In-Reply-To: <20241101-a4_pinctrl-v4-0-efd98edc3ad4@amlogic.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730449638; l=1565;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=PpQsqIOiY8S0mM8BBg7BZh/385cWD6OF/06c6qmGVA4=;
- b=/AgQD0G4CfXMvf1y0NwGJ1qPOnpbmXeBoCSPhJhEjYqqy+/UbHbR8UqGy+KDifMKlZz/AkWJP
- 0Zc6VFMMz7EDCoAdB0PuLyB92qq8m9bdHIA0voNgT4ZCrzs0E1GZfsC
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+In-Reply-To: <20241101065016.GF101007@linux.alibaba.com>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemf200001.china.huawei.com (7.202.181.227)
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-Add pinctrl device to support Amlogic A4.
 
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi | 36 +++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ÔÚ 2024/11/1 14:50, Dust Li Ð´µÀ:
+> On 2024-10-29 14:54:15, liqiang wrote:
+>> We create a lock-less link list for the currently 
+>> idle reusable smc_buf_desc.
+>>
+>> When the 'used' filed mark to 0, it is added to 
+>> the lock-less linked list. 
+>>
+>> When a new connection is established, a suitable 
+>> element is obtained directly, which eliminates the 
+>> need for traversal and search, and does not require 
+>> locking resource.
+>>
+>> A lock-free linked list is a linked list that uses 
+>> atomic operations to optimize the producer-consumer model.
+> 
+> Do you see any performance issues without this lock-less linked list ?
+> Under what test case ? Any performance numbers would be welcome
+> 
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-index de10e7aebf21..3687764b4401 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-@@ -5,6 +5,7 @@
- 
- #include "amlogic-a4-common.dtsi"
- #include <dt-bindings/power/amlogic,a4-pwrc.h>
-+#include <dt-bindings/gpio/amlogic-gpio.h>
- / {
- 	cpus {
- 		#address-cells = <2>;
-@@ -48,3 +49,38 @@ pwrc: power-controller {
- 		};
- 	};
- };
-+
-+&apb {
-+	periphs_pinctrl: pinctrl@4000 {
-+		compatible = "amlogic,a4-periphs-pinctrl";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges = <0x0 0x0 0x0 0x4000 0x0 0x02e0>;
-+
-+		gpio: bank@0 {
-+			reg = <0x0 0x0 0x0 0x0050>,
-+			      <0x0 0xc0 0x0 0x0220>;
-+			reg-names = "mux", "gpio";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&periphs_pinctrl 0 0 73>;
-+		};
-+	};
-+
-+	aobus_pinctrl: pinctrl@8e700 {
-+		compatible = "amlogic,a4-aobus-pinctrl";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges = <0x0 0x0 0x0 0x8e700 0x0 0x0064>;
-+
-+		ao_gpio: bank@0 {
-+			reg = <0x0 0x00 0x0 0x04>,
-+			      <0x0 0x04 0x0 0x60>;
-+			reg-names = "mux", "gpio";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&aobus_pinctrl 0 0 8>;
-+		};
-+	};
-+
-+};
+I optimized it through review. I re-sent this patch based on the
+net-next repo. It contains some of my own test data. Please check it. :-)
+
+> Best regards,
+> Dust
+> 
+> .
+> 
 
 -- 
-2.37.1
-
-
+Cheers,
+Li Qiang
 
