@@ -1,183 +1,177 @@
-Return-Path: <linux-kernel+bounces-392500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DC49B94E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:05:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F96B9B94F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:07:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A772F28382A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1D031F22A6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB222186E40;
-	Fri,  1 Nov 2024 16:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D34A1C9DD8;
+	Fri,  1 Nov 2024 16:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDrsVhLf"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E6ip0iLY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1658181ACA;
-	Fri,  1 Nov 2024 16:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D281B4F2D;
+	Fri,  1 Nov 2024 16:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730477123; cv=none; b=muvny47GlmuyiXtYdy3d8UwhyxGinAx1XB0JDSJlNbG2SkF9Q2Xdv3hk3DOksevwncIGmkNzsBXYJr88uixNvnxQwsU3o+wy5QL6+O1kIgvCuwcLALwRSgwrsExTyBmjkfASN96+bymCFI2eV3BqBRyxnQZLlZSQDrfn/yULDoY=
+	t=1730477244; cv=none; b=BNPpNX455tXkCaxCXt4PKdGVKMj+F42bGnRl00/+cWlt1Glo1LOtSeNekNtX1bZugU0YOAOnZbYs0neGNJnE5MKR34fdHvAinLqJGOsReqzoLQvRnFAPxLjhJiXHWCgWwi/t+67q1zqHq6tjcvdP2AQRFbrAPs0uDI2cM/ixO1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730477123; c=relaxed/simple;
-	bh=Uu4MQlnjm2E1L/aU+HDZPVxnrRXgoclKUmjZt66t2L8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BgR/N61VW7yDD8GT+jVmKa6BCeQp5BzJE/Lrue9LAuRe01EqhFfHN/p9HVql9dJOkhPPrj/FUFL1uBmIhNUff02iOEYhfwXspMCZFlulYIsex9S8gQqK0FTxyCGuHobKNl4ZD3Ba8qyN5GPAFtO6j7snlVOsl9zXxq/Ym1ClDSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDrsVhLf; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-83ac05206f6so79593539f.2;
-        Fri, 01 Nov 2024 09:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730477119; x=1731081919; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kuGYsDq/8KVBVCrawJNRaHmxsjuDcoTms3F6ILMG2Nc=;
-        b=mDrsVhLf73MVbFsomloow6WiARQGNgy4xV2Dx9Tbwrh0gaU205XYHeKb/mZ4zOORq9
-         e6M0P901ft9yp/Tr+QVb9GwayB9boBpF0N/ZzxaRZkoLKCK/DcCrnnzXFbnSAA3pvSfz
-         vck4alBSX/FLgMEE6js+4FdeIsM8BkTWY6yMBS3MlkkIVrU+FjZIczD6Er10il11o4Bj
-         BOE5Iy6tkFvvvcmmCDghhkgUNAaZj811Pfja/2pkXwhxWXJDb0i/Uqo+fY/kCnaZFi57
-         lvP8vRvt2DwZImi9gDB43p29C05HJpd1+WGQCfnoKhObK4pQdubb+uKqJzQ6P5us6/Kj
-         t5Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730477119; x=1731081919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kuGYsDq/8KVBVCrawJNRaHmxsjuDcoTms3F6ILMG2Nc=;
-        b=PxRVtaFmRp6Ic5RvwWoOv11xotL0teF5nBxslOHYMGGuN++FNg23PF26rn8y6v1jai
-         X3dXC7gA61Uq7znlckOtkwWY8Sdo4cVD6TVmeS8DS/ElB3Od+9f3fOOLrKvxMgV9keJP
-         nVtTwQDPNoNu0+8eDEh83loFCNskwPnCXxbvOcHCDkmJUKA3fNfOk3CchgQi9pG+FTjk
-         o7BlTig+M3YZRitNmmKFeG+qyzqo/potyRJMqKy83tRZZTHt47bgkPi0OvbxdlHqUCc7
-         ieEwJcZaX6+hiTtjno9i2KwoAX18YNPgNrCQTJesS6E4nS0DnPrBcAOJxJo4QLWWEYZJ
-         2zHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHKpwdmGPXgTmg/nV4GjPYwQYmOXcmSUHGIJc9ue7LtnH5BfmtWrju2tDekRhpAH6Q9GYAj0dUmxsLcHEc@vger.kernel.org, AJvYcCV9j2UKMngL4xpPKqlLpeiA9dCOFzFG7cvFb9IkAlpkHX1gtyccSvWvw7o5tE1cKedK5mjb61+ZjC41RBs1Cg==@vger.kernel.org, AJvYcCVMpaK2NAtJohRC6Zaa8pX53pa03CvMp3bJMaW0SFzv+/HtAuE0EpHLFF6Q7X2IfTiRksUQ3O+e5KWJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxulpxtwfWASBbgm+WHzZTqDv6VvTCWntVWEFwSL+V/j1GyJIwO
-	8TyqkP0P+7U/XaW2t+9sghE1uNcbRctoF0K+8ZYHfeq1Qv5OWqJZlVW2ZYnooGvpLuVb+Na9WGI
-	+KiJXaaDZ5drnGkMRnQmy0zsDpjo=
-X-Google-Smtp-Source: AGHT+IHONrdDV4LzejxnIZF3enutVxBdz/iPFoAD8iZdgn5tMyF+owzTrNCgAzQzlf79XfKrpVjQbV7QD4AiQKQyJQk=
-X-Received: by 2002:a05:6e02:1645:b0:3a5:e250:bba1 with SMTP id
- e9e14a558f8ab-3a61752ae86mr81367985ab.18.1730477118991; Fri, 01 Nov 2024
- 09:05:18 -0700 (PDT)
+	s=arc-20240116; t=1730477244; c=relaxed/simple;
+	bh=RahQfZ/XUlkIuOR+dTOjhXIg4K5uTPhllesohsmYC0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hEcNbdeXFjAokGXeLXy3lIHvh+cTupHCSIfSD/XdLRGHpAPELhXcC9fjs1YAeLhTPxDIWUzQtI/eopeaZms9T2+gRpYabG8vcyQM/mNw7NiAXl3Jg3IYHyFaM6C/+tGiPFG3ax6aWVApYIYEXVSskj5t76RkUv8gNQk/ACTDA50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E6ip0iLY; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730477242; x=1762013242;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=RahQfZ/XUlkIuOR+dTOjhXIg4K5uTPhllesohsmYC0M=;
+  b=E6ip0iLYlwYwkAuW3I6l1TU7n4UOGQaZdbVVHkpLoZGq6iabFQ1yDuMW
+   UJ4gnP30EF9tl9L+/pH2UX0Tx72kLy9yNOgvFIYT9ZoTj5F3jm+JA5cja
+   7e/B59/Xc0HPLeVu/8FjmHRH0BXzmGG74A5hAywLSpam2C9r4h4dE9XNp
+   rw6XQqkZs0tJlXGCtx1dFw8DutIRNKhqZEUDPo0hh+p3ypSD+Wd0dAiMS
+   R/EDuBhm51Y9YjwdSY2hqx/Ji3Nh6LrfwvwX1MOEut8eSF+TE20g6tgpQ
+   /8IRXgU/8pBfHInl3RmHLUAsjBgOV+AbQ5Q2LtRrPbaCOhUwYhRPSon9x
+   g==;
+X-CSE-ConnectionGUID: PV2JVaixRr+kq5c53ZLYrg==
+X-CSE-MsgGUID: MyTPk73VTRWYKkMaaSSILA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="30459858"
+X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
+   d="scan'208";a="30459858"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 09:07:21 -0700
+X-CSE-ConnectionGUID: 4dc8HIY5RT6JkqpGnUzUUg==
+X-CSE-MsgGUID: fkeBRFMzSu6jXbNStoM6pA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
+   d="scan'208";a="83107022"
+Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO [10.124.220.146]) ([10.124.220.146])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 09:06:51 -0700
+Message-ID: <784d1522-0451-4844-a334-8b7d49019437@intel.com>
+Date: Fri, 1 Nov 2024 09:06:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-0-cdff2f1a5792@linaro.org>
- <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-6-cdff2f1a5792@linaro.org>
- <CAF6AEGu_qJYV3TnprJsqsWV_GoLhiBFQ8LNwfYDjczDparvZCA@mail.gmail.com> <173047431366.2974136.175546053701391124@ping.linuxembedded.co.uk>
-In-Reply-To: <173047431366.2974136.175546053701391124@ping.linuxembedded.co.uk>
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 1 Nov 2024 09:05:04 -0700
-Message-ID: <CAF6AEGu_vmR1N9C=1BQ21kk4w-tz6n3j-Sv14RoqbkxAeNUsvw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] arm64: dts: qcom: sdm845-db845c-navigation-mezzanine:
- Add cma heap for libcamera softisp support
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Depeng Shao <quic_depengs@quicinc.com>, Vikram Sharma <quic_vikramsa@quicinc.com>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
+To: "Manwaring, Derek" <derekmn@amazon.com>, roypat@amazon.co.uk
+Cc: ackerleytng@google.com, agordeev@linux.ibm.com, aou@eecs.berkeley.edu,
+ borntraeger@linux.ibm.com, bp@alien8.de, catalin.marinas@arm.com,
+ chenhuacai@kernel.org, corbet@lwn.net, dave.hansen@linux.intel.com,
+ david@redhat.com, gerald.schaefer@linux.ibm.com, gor@linux.ibm.com,
+ graf@amazon.com, hca@linux.ibm.com, hpa@zytor.com, jgowans@amazon.com,
+ jthoughton@google.com, kalyazin@amazon.com, kernel@xen0n.name,
+ kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ luto@kernel.org, mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
+ mingo@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, peterz@infradead.org, quic_eberman@quicinc.com,
+ rostedt@goodmis.org, rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
+ svens@linux.ibm.com, tabba@google.com, tglx@linutronix.de,
+ vannapurve@google.com, will@kernel.org, x86@kernel.org, xmarcalx@amazon.com
+References: <27646c08-f724-49f7-9f45-d03bad500219@amazon.co.uk>
+ <2233397c-f423-40e3-8546-728b50ce0489@amazon.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <2233397c-f423-40e3-8546-728b50ce0489@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 1, 2024 at 8:18=E2=80=AFAM Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
->
-> +Cc Laurent
->
-> Quoting Rob Clark (2024-11-01 12:33:44)
-> > On Fri, Oct 25, 2024 at 8:49=E2=80=AFAM Bryan O'Donoghue
-> > <bryan.odonoghue@linaro.org> wrote:
-> > >
-> > > libcamera softisp requires a linux,cma heap export in order to suppor=
-t
-> > > user-space debayering, 3a and export to other system components such =
-as
-> > > pipewire, Firefox/Chromium - Hangouts, Zoom etc.
-> >
-> > AFAIU libcamera could use udmabuf, etc, and there is no hw requirement
-> > for CMA.  So it doesn't seem we should be adding this to dt.  And I'd
-> > really prefer that we not be using CMA just for lolz.
->
-> I agree here. Otherwise this theoretically locks this memory to the pool
-> 'forever'. It's not something we should define in device tree.
->
-> udmabuf provides a means to get memfd allocated memory which is not
-> physically contiguous - but /is/ managed by a dmabuf handle.
->
-> Presently with SoftISP being CPU only - physically contiguous memory is
-> not required.
->
-> Bryan, will this still be true when you have a GPU based ISP ? Will that
-> require physically contiguous memory ? Or will the mapping into the GPU
-> handle any required translations?
+On 10/31/24 17:10, Manwaring, Derek wrote:
+> TDX and SEV encryption happens between the core and main memory, so
+> cached guest data we're most concerned about for transient execution
+> attacks isn't necessarily inaccessible.
+> 
+> I'd be interested what Intel, AMD, and other folks think on this, but I
+> think direct map removal is worthwhile for CoCo cases as well.
 
-GPU does not require phys contiguous.  OTOH it may/will impose some
-layout constraints.
+I'm not sure specifically which attacks you have in mind.  Also, don't
+forget that TDX doesn't get any intra-system security from encryption
+itself.  All that the encryption does is prevent some physical attacks.
 
-I'm kinda leaning towards teaching gbm to allocate YUV plus add a
-GBO_BO_USE_CPU usage bit if softisp also needs CPU access.  (Modern
-adreno can do cached-coherent buffers, at some small performance cost,
-so that CPU access doesn't have to fall off a cliff.)  But that
-doesn't exist yet.
+The main thing I think you want to keep in mind is mentioned in the "TDX
+Module v1.5 Base Architecture Specification"[1]:
 
-BR,
--R
+> Any software except guest TD or TDX module must not be able to
+> speculatively or non-speculatively access TD private memory,
 
->
-> --
-> Kieran
->
->
-> >
-> > BR,
-> > -R
-> >
-> > > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > > ---
-> > >  .../boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso     | 11 +=
-++++++++++
-> > >  1 file changed, 11 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzan=
-ine.dtso b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
-> > > index d62a20f018e7a7e1c7e77f0c927c2d9fe7ae8509..c8507afcd1e0d1f9b14b6=
-e4edcbc646032e7b6c9 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dts=
-o
-> > > +++ b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dts=
-o
-> > > @@ -9,6 +9,17 @@
-> > >  #include <dt-bindings/clock/qcom,camcc-sdm845.h>
-> > >  #include <dt-bindings/gpio/gpio.h>
-> > >
-> > > +/ {
-> > > +       reserved-memory {
-> > > +               linux,cma {
-> > > +                       compatible =3D "shared-dma-pool";
-> > > +                       size =3D <0x0 0x8000000>;
-> > > +                       reusable;
-> > > +                       linux,cma-default;
-> > > +               };
-> > > +       };
-> > > +};
-> > > +
-> > >  &camss {
-> > >         vdda-phy-supply =3D <&vreg_l1a_0p875>;
-> > >         vdda-pll-supply =3D <&vreg_l26a_1p2>;
-> > >
-> > > --
-> > > 2.47.0
-> > >
-> > >
+That's a pretty broad claim and it involves mitigations in hardware and
+the TDX module.
+
+I _think_ you might be thinking of attacks like MDS where some random
+microarchitectural buffer contains guest data after a VM exit and then
+an attacker extracts it.  Direct map removal doesn't affect these
+buffers and doesn't mitigate an attacker getting the data out.  TDX
+relies on other defenses.
+
+As for the CPU caches, direct map removal doesn't help or hurt anything.
+ A malicious VMM would just map the guest data if it could and try to
+extract it if that were possible.  If the attack is mitigated when the
+data is _mapped_, then it's certainly not possible _unmapped_.
+
+So why bother with direct map removal for TDX?  A VMM write to TD
+private data causes machine checks.  So any kernel bug that even
+accidentally writes to kernel memory can bring the whole system down.
+Not nice.
+
+1. https://cdrdv2.intel.com/v1/dl/getContent/733575
 
