@@ -1,166 +1,113 @@
-Return-Path: <linux-kernel+bounces-392447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009089B944D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:22:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D119B9451
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:22:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E6BE1C21A84
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B1FC1F24912
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C761C6F6C;
-	Fri,  1 Nov 2024 15:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF6A1C82E2;
+	Fri,  1 Nov 2024 15:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WUTyXX9K"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhJj0DYE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02361CBEB5;
-	Fri,  1 Nov 2024 15:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762D41C0DD6;
+	Fri,  1 Nov 2024 15:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730474462; cv=none; b=CTBfyXow04vTxlXrQarUJrRgbDHmtQPoOYtx0Qqz42Eef2+SkZka/Z1wyeQIkq6HNVA8LUDcY2Zu+9ou1vuV6N2HrO8p+4u+z2yyj87uMTyyhEpH3urgexl8pg6yfXkbEg3ZhXpaenk20Wrpl32BznQfXfP+Z0QhVi6qRBgXGa8=
+	t=1730474496; cv=none; b=hpaZuIiENNOMVCGNw3OtKToiZjiphX+HTgL/Nwg2QuicfGpFirLL2x5AePDOowk7v+9AjHl5xvn6TrdR3oEg/5jeUrLxtKwzXjQyLlv/YiZBjwkIF7QrX+ZHetcvQtKXWC54Qgru+mlXzWDclFNVKICvhPG3gXSAZzo/ClQ9sAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730474462; c=relaxed/simple;
-	bh=/+TZMp3OuOQDQDtXHRy7fu88xK0qHPfQkGlXJfyTdTg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S260G9B1ToPkXJTCZ28/FcsnTXkV9E02Il5KJfsF8lhZzSPMSddWHSsJg05uLNmZvoK4Hqy0HU2jq7dN0FD5EI0TdFuXL0OMMEnOPuyGrLuLUp1oHtsJs0Gqurj6HdKDlAXePFhKB+Rafy9vFum0acQ7CByAkGNvLbypuPBzaMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WUTyXX9K; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730474457;
-	bh=/+TZMp3OuOQDQDtXHRy7fu88xK0qHPfQkGlXJfyTdTg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WUTyXX9KAWFb3gX0LpNpPH6GX48WVZPnDO9ivRGy5nGMOGP4ZIBLd7lSW7KDolK+L
-	 Bjsp1W/eLD4Fgi2GLyJfQMYOtyPgbKF8cTktz18YKwOaKxQ/+KRidryUZPVwyE1E8a
-	 iRRyPWU23/+E2LZi+LAlUp3OuKz8tbqrDnRa8cf29cmCdM+MIpqJuGRSm6qRFyuU+K
-	 URN5dZ1roRwUmx+adiOtj5sv9e6/3I6p++hW/5dmseozw/mPNnL+vzyxa6GhMCMsK5
-	 WrqxyGzlj1z3MDGgkZPcMC6+hY0f3AYvKDQuklWwO1deJ9ggSvQx4nAWQN/jwDDfHB
-	 tvh8D2Bc1mCqQ==
-Received: from [192.168.1.214] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3445217E0F85;
-	Fri,  1 Nov 2024 16:20:54 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Fri, 01 Nov 2024 11:20:26 -0400
-Subject: [PATCH 4/4] arm64: dts: mediatek: Add mediatek,mac-wol-noninverted
- to ethernet nodes
+	s=arc-20240116; t=1730474496; c=relaxed/simple;
+	bh=Z51TdSB5ihgzOjhRHjuOdOQEElBPvJ0Ajww02Qjzc80=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q1iBMPKPjZ0EJnJIHjYOTrQJsjx/tUeEJOpWj8QzfPfo5FsC9Zhev3r1iRsUbqPwshtxD5DsJHWkt1z4lDZ/JR+549e7YZohTsCF1xy8ZH205lMQnJLLmHinT4VJEHkvIyzSwgM0Xby26qUJa8G2fS5NiNZPWmiIw0oRZL41NKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhJj0DYE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BBA7C4CECD;
+	Fri,  1 Nov 2024 15:21:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730474496;
+	bh=Z51TdSB5ihgzOjhRHjuOdOQEElBPvJ0Ajww02Qjzc80=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jhJj0DYE8D5WHUk8Iro/B8F4AFLf2sdoCE5ui6flPsheh2uM3QZvdwAptgY+va7kX
+	 /ZoEZkPBMJjAJBkvmTi9DMD2QMOMFvcics35eQgNteORLnImx2d3Ds1RlhwPFfyNjN
+	 DzNEpIn5dIIp+F77LUoGIaOdSeLHW2lLtm3vVsvdrASRpQEfFwtpS6ggwm3Iy/Zc2A
+	 wTVThfLDpcuof0kQjQzpV7j11oc/UEDh/eNbgdb9zVRx2dQ3Hwr6YMyTD7FuFWdqxr
+	 AOKJ6iTwbTYSVHBWeRIKltGFeJNyPNtJfKY9dK9iYNl0wVO84u0vPDTZaRwdtJj9cl
+	 VLPfgd67S4xkw==
+Date: Fri, 1 Nov 2024 15:21:29 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <conor+dt@kernel.org>, <dlechner@baylibre.com>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+Subject: Re: [PATCH v5 6/6] iio: adc: ad4851: add ad485x driver
+Message-ID: <20241101152129.4111408f@jic23-huawei>
+In-Reply-To: <20241101112358.22996-7-antoniu.miclaus@analog.com>
+References: <20241101112358.22996-1-antoniu.miclaus@analog.com>
+	<20241101112358.22996-7-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241101-mediatek-mac-wol-noninverted-v1-4-75b81808717a@collabora.com>
-References: <20241101-mediatek-mac-wol-noninverted-v1-0-75b81808717a@collabora.com>
-In-Reply-To: <20241101-mediatek-mac-wol-noninverted-v1-0-75b81808717a@collabora.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Biao Huang <biao.huang@mediatek.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Jose Abreu <joabreu@synopsys.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: kernel@collabora.com, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add the newly introduced and now required mediatek,mac-wol-noninverted
-property to the dwmac ethernet nodes and invert the presence of the
-mediatek,mac-wol property to make it align with the description on the
-binding and maintain the current behavior.
+On Fri, 1 Nov 2024 13:23:58 +0200
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt2712-evb.dts                   | 2 ++
- arch/arm64/boot/dts/mediatek/mt8195-demo.dts                  | 2 ++
- arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts        | 2 +-
- arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts | 2 ++
- arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts         | 2 +-
- 5 files changed, 8 insertions(+), 2 deletions(-)
+> Add support for the AD485X a fully buffered, 8-channel simultaneous
+> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
+> differential, wide common-mode range inputs.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Hi Antoniu.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712-evb.dts b/arch/arm64/boot/dts/mediatek/mt2712-evb.dts
-index c84c47c1352fba49d219fb8ace17a74953927fdc..09760a0784bfb59511ea64fb44b7aeb66326f81b 100644
---- a/arch/arm64/boot/dts/mediatek/mt2712-evb.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt2712-evb.dts
-@@ -115,6 +115,8 @@ &eth {
- 	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <&eth_default>;
- 	pinctrl-1 = <&eth_sleep>;
-+	mediatek,mac-wol-noninverted;
-+	mediatek,mac-wol;
- 	status = "okay";
- 
- 	mdio {
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195-demo.dts b/arch/arm64/boot/dts/mediatek/mt8195-demo.dts
-index 31d424b8fc7cedef65489392eb279b7fd2194a4a..f48baa0b7dcbb95816517b7e501d87e39ac63a2d 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195-demo.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8195-demo.dts
-@@ -109,6 +109,8 @@ &eth {
- 	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <&eth_default_pins>;
- 	pinctrl-1 = <&eth_sleep_pins>;
-+	mediatek,mac-wol-noninverted;
-+	mediatek,mac-wol;
- 	status = "okay";
- 
- 	mdio {
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-index 5f16fb82058056cf8cf6318c9fc373601bd6eb60..290fcdce1c9f49c475403fa4aa7a0911605d4abd 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-@@ -177,7 +177,7 @@ &eth {
- 	snps,reset-gpio = <&pio 93 GPIO_ACTIVE_HIGH>;
- 	snps,reset-delays-us = <0 10000 10000>;
- 	mediatek,tx-delay-ps = <2030>;
--	mediatek,mac-wol;
-+	mediatek,mac-wol-noninverted;
- 	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <&eth_default_pins>;
- 	pinctrl-1 = <&eth_sleep_pins>;
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts b/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
-index e2e75b8ff91880711c82f783c7ccbef4128b7ab4..ebd0deb4e9ec1d67182c7602203e4fa1a0fb1c0c 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
-@@ -271,6 +271,8 @@ &eth {
- 	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <&eth_default_pins>;
- 	pinctrl-1 = <&eth_sleep_pins>;
-+	mediatek,mac-wol-noninverted;
-+	mediatek,mac-wol;
- 	status = "okay";
- 
- 	mdio {
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-index 14ec970c4e491fbd69bf2800639abf726d47589a..a541d4fb9621c55f789d55a1eb985030827b158b 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-@@ -179,7 +179,7 @@ &eth {
- 	pinctrl-0 = <&eth_default_pins>;
- 	pinctrl-1 = <&eth_sleep_pins>;
- 	mediatek,tx-delay-ps = <2030>;
--	mediatek,mac-wol;
-+	mediatek,mac-wol-noninverted;
- 	snps,reset-gpio = <&pio 93 GPIO_ACTIVE_HIGH>;
- 	snps,reset-delays-us = <0 20000 100000>;
- 	status = "okay";
+I only took a very quick look and one thing jumped out at me.
 
--- 
-2.47.0
+Jonathan
 
+> diff --git a/drivers/iio/adc/ad4851.c b/drivers/iio/adc/ad4851.c
+> new file mode 100644
+> index 000000000000..0ef8ea0d2fc2
+> --- /dev/null
+> +++ b/drivers/iio/adc/ad4851.c
+
+> +
+> +static int ad4851_set_calibscale(struct ad4851_state *st, int ch, int val,
+> +				 int val2)
+> +{
+> +	u64 gain;
+> +	u8 buf[0];
+
+A zero size array?
+
+> +	int ret;
+> +
+> +	if (val < 0 || val2 < 0)
+> +		return -EINVAL;
+> +
+> +	gain = val * MICRO + val2;
+> +	gain = DIV_U64_ROUND_CLOSEST(gain * 32768, MICRO);
+> +
+> +	put_unaligned_be16(gain, buf);
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	ret = regmap_write(st->regmap, AD4851_REG_CHX_GAIN_MSB(ch),
+> +			   buf[0]);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_write(st->regmap, AD4851_REG_CHX_GAIN_LSB(ch),
+> +			    buf[1]);
+> +}
 
