@@ -1,120 +1,87 @@
-Return-Path: <linux-kernel+bounces-392211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363E29B9113
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:23:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D4C9B9114
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66B6E1C20F72
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:23:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AEB1283211
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9FB19DF45;
-	Fri,  1 Nov 2024 12:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="xNoiSdfS"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CF319D088;
+	Fri,  1 Nov 2024 12:23:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B47C13C;
-	Fri,  1 Nov 2024 12:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C298C13C
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730463774; cv=none; b=M+V1l4ES+VvonFDxXBIpzTfe+XZsN7sbOOjg6xw0eRxL9ZTVmOn2Ef4OpiGD/hgjRMpWNSTnMtnYXDmHAS0m4y57yQEvXDA4ILtlvN7Ryex2rma0yJ1ur7PHMF2J4b//S4xThBH9CMeO+QjwprpWDxaJKf1yJ9W1tMDxoeC04NQ=
+	t=1730463787; cv=none; b=BAVjRQDSah7P4q6gZsfeYkVMMuH9984CMYLIt8IG5oFzSh3m0sfaXAa0GR1+erFTZ9x2z19QKYaCW+QS+/z3Lv7DrFfUxWjm3xuHNugvRFWeBb0AMqG6xH8iLC+PU4LO5LucD6gwv/BdUvEaUbTBSlO9WmPsCBIj6o0G2z64iXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730463774; c=relaxed/simple;
-	bh=/TA+HIVRRCw8dKJUti+Jl47C1Bz15V0Orwm12b4BAQo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OibAUpu0koSHLcpM9Gjk6kgTw9yvNRzCJVFKPSVIggDPFKktXJLoi8d3+TT9Ff/Uk3fiBBbtOjZ9+8xw44bgL0NnAl1008T0uykdnZmPpbM9OjYVFni5ZEvC1NQf+OBXhaKOPT3UXj/26Og8EaBuHSjInKr81l05LKTKvEPnpZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=xNoiSdfS; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sendonly@marcansoft.com)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id 0025F432AE;
-	Fri,  1 Nov 2024 12:22:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1730463768;
-	bh=/TA+HIVRRCw8dKJUti+Jl47C1Bz15V0Orwm12b4BAQo=;
-	h=From:Date:Subject:To:Cc;
-	b=xNoiSdfS611jDnBHnoMcOBL5g9pU7Hl804x7mbaxffwGon4vQUVIfWf0f7zhxFKMo
-	 fyhJ5KLUy5siPpuOYs17FeECUzvgzfo4oIM9iyj0ViDVirwvZQUkrA17MyzmJXeTD2
-	 dmu7p+ExDLVOHgdEKNh7x0eCYWudlP8A0em5V+qaxSLN+ZLji3jHz54tisc4Tjf/2p
-	 Cn+rs1gFwvYCaz/+MnVh9nTGYlhpdOBiP17NdALfj4xPnvdr8Tg0V+pBQ1dC03/rfS
-	 Lj+ueaf2BNjR+fVuCLRtfYreV3k2TK/TtGNkIwYZXglkw8hTWxHtkH29cFoa1QuWP3
-	 u61x5um0uKguA==
-From: Asahi Lina <lina@asahilina.net>
-Date: Fri, 01 Nov 2024 21:22:31 +0900
-Subject: [PATCH] dax: Allow block size > PAGE_SIZE
+	s=arc-20240116; t=1730463787; c=relaxed/simple;
+	bh=NzGUTuC7dPg5eruSS6ieEOCoa0Zdoe8J51vaoNleIZo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CJRn5QbVqulRpMQDjhEQFmrYKHw/ulsTiZgqkg2ijV5/6rKoJKaI/lLwB7wg2LNqJqc4Wl4gNoRHT9GhSvFnywNCsDH3Qp/f5Cs8n8P0o3zeAfgPqPBx79dCCgdeU8pfGvTn5CWrck7ILKAIz+uO/Y2bxKD7mibDV9iMjtPy7Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83aa904b231so178663339f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 05:23:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730463784; x=1731068584;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5CczRGD/3qqQwaTh5czxj1F7zQH/wFfjPTl4Rxheujs=;
+        b=dexaI+IQFhDmI+JmeMCPO60ltD56joHimIRKA64Grv5iRufxE4T4X5hn+2IGrVlUGk
+         zgqbjUjbg1jnSksPutDKamoRKaS00JbOAUdVMQuqfB05N3opUWhQ+IB6fSEg/zf1HBnx
+         Uh1mF0Lv35imqr7IvKU1LE/LMAvu8dJfHOwlsSS1rqfm55KMWC3iRLIPImtlSi9LLkdW
+         2DKSbdhMVjK8Ip1dlvd9YGaDDQzTfBTgwONYIpqI6KQn22ysjIUr1VzzIo/Hy6jgooxP
+         +8V6LhGMPDJqiIvrc/0NetY0JMKwTiBq65SvHJUvn/gFk7+PmztEwhvIWniZm+VKDPzC
+         AM/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXoD6eHuphkjLC7C+rVBF8hkeYqU2hlhdZK331sDCZH6yedvABG4CJ4oaAjxMRN3ev4G5pc4Mou2px8ybM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNNMI9ZtNgmC2GGr/aV1NsrAY9IOQZUOS+AT8HM0BZDLEsO82G
+	ikY0bTIyGj+KoayVgsYxNgRq/zZDXwG/UUX34YlM7Icygojm1jd6/pyUFye9LxSMP6EZQSvbFYd
+	mR2zHbnRjsLuLT6B66Ka0RLmvre8SKH/ctsvtMTo3JFsZK64Sp3V5WJI=
+X-Google-Smtp-Source: AGHT+IFM41bzrPKaWDwiV8Y5ngaaFglTm5iA9T8jxMBb7EvzL0U5tZ4pt+weoStplc6N9Q+pnzoEV5JeZicdMZN0ZllQAiiooXgm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
-X-B4-Tracking: v=1; b=H4sIAAbIJGcC/x2MQQqAIBAAvyJ7TnBTKPpKdNDcai8mCiGJf086z
- sBMhUyJKcMiKiR6OPMdOuAgYL9sOEmy7wyjGg2iQultkdF2n/klOWuLatLOEDroTUx0cPl/69b
- aB5XInvBfAAAA
-X-Change-ID: 20241101-dax-page-size-83a1073b4e1b
-To: Dan Williams <dan.j.williams@intel.com>, 
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>
-Cc: Sergio Lopez Pascual <slp@redhat.com>, linux-fsdevel@vger.kernel.org, 
- nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
- Asahi Lina <lina@asahilina.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730463767; l=1369;
- i=lina@asahilina.net; s=20240902; h=from:subject:message-id;
- bh=/TA+HIVRRCw8dKJUti+Jl47C1Bz15V0Orwm12b4BAQo=;
- b=sme8DUTSaze8Opt4hubzoO/tMB7K2MMTGXJNmRMpSSZwtZbnDp236oTHUIuMtt0wgQmzowHlX
- 0ZM9LKYWCV6CcgFSXnPTS8pR4ZWkuJQwC/gZWnNoAcAfqUUxKU671+O
-X-Developer-Key: i=lina@asahilina.net; a=ed25519;
- pk=tpv7cWfUnHNw5jwf6h4t0gGgglt3/xcwlfs0+A/uUu8=
+X-Received: by 2002:a05:6e02:1e09:b0:3a4:eccc:aa5c with SMTP id
+ e9e14a558f8ab-3a609a2afbfmr79437885ab.5.1730463784668; Fri, 01 Nov 2024
+ 05:23:04 -0700 (PDT)
+Date: Fri, 01 Nov 2024 05:23:04 -0700
+In-Reply-To: <20241101115715.e3eQ9%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6724c828.050a0220.35b515.0170.GAE@google.com>
+Subject: Re: [syzbot] [pm?] KASAN: use-after-free Read in netdev_unregister_kobject
+From: syzbot <syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-For virtio-dax, the file/FS blocksize is irrelevant. FUSE always uses
-large DAX blocks (2MiB), which will work with all host page sizes. Since
-we are mapping files into the DAX window on the host, the underlying
-block size of the filesystem and its block device (if any) are
-meaningless.
+Hello,
 
-For real devices with DAX, the only requirement should be that the FS
-block size is *at least* as large as PAGE_SIZE, to ensure that at least
-whole pages can be mapped out of the device contiguously.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Fixes warning when using virtio-dax on a 4K guest with a 16K host,
-backed by tmpfs (which sets blksz == PAGE_SIZE on the host).
+Reported-by: syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com
+Tested-by: syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com
 
-Signed-off-by: Asahi Lina <lina@asahilina.net>
----
- fs/dax.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested on:
 
-diff --git a/fs/dax.c b/fs/dax.c
-index c62acd2812f8d4981aaba82acfeaf972f555362a..406fb75bdbe9d17a6e4bf3d4cb92683e90f05910 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1032,7 +1032,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
- 	int ret = 0;
- 	unsigned int scanned = 0;
- 
--	if (WARN_ON_ONCE(inode->i_blkbits != PAGE_SHIFT))
-+	if (WARN_ON_ONCE(inode->i_blkbits < PAGE_SHIFT))
- 		return -EIO;
- 
- 	if (mapping_empty(mapping) || wbc->sync_mode != WB_SYNC_ALL)
+commit:         6c52d4da Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=121e5340580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2cf68159adbdf217
+dashboard link: https://syzkaller.appspot.com/bug?extid=6cf5652d3df49fae2e3f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=107fe6f7980000
 
----
-base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
-change-id: 20241101-dax-page-size-83a1073b4e1b
-
-Cheers,
-~~ Lina
-
+Note: testing is done by a robot and is best-effort only.
 
