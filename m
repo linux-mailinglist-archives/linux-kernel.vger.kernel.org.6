@@ -1,115 +1,161 @@
-Return-Path: <linux-kernel+bounces-392458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013D99B9474
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:33:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F189B9476
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:33:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A114A1F21115
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53B01C21594
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CF81C6F43;
-	Fri,  1 Nov 2024 15:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4481C6F6C;
+	Fri,  1 Nov 2024 15:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D3SPYJEg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="DS+0S+Zu";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="SmicUxSX"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A722082C7E;
-	Fri,  1 Nov 2024 15:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA411411DE;
+	Fri,  1 Nov 2024 15:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475182; cv=none; b=cSdyxyAKy6BlGzyxBB8YH3RrFWTgg0NYDijmzOkH4QgyhI6lbIcI7UmuMAf9FEhS1xFBjxSGK1zRuoxzj5j1pR/GH4fVdJAsy03dsliMnBaDSTdmANsmJ2Dm+numr84aNToHgVCulhPtrpHQ+KQsBYUf8PhYe1GEjB0I7UOTY/o=
+	t=1730475210; cv=none; b=X9ltbFrwQlt7SnidNnioqSTallo9JSR1VQEy1oj9Y6YSmwTyBdXYzgei2AmDD3I+D1Eg0aVjF9yLyqt/Bn8JcTeuYx9RpDZ0RMn/vhXk4gyHfzhPWohc+Tziws9p/dOSEpnXczZYwjc6fwXbKFupP56HuSGkWjFti/EFKvIbUvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475182; c=relaxed/simple;
-	bh=ap9vfaIc7UJt+zz7HcnD4L60lhS/AaQ+8KbNeR3fmJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uD9Ch5ddw6hjzdezEiRUDfhQfM+H+fizE7IN3kbeWe9XVg1ZgCSkxwYxI8PtmvCs4XRn9iIqKpAxImxWedUAN7mMAxoEppM33uyN3xRq0OeDS4uJO/5wExzhTanxQtdy9n5j5eDaTKnaTHPGfCoC9kI7y6tqEhedC3D2JTkbM+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D3SPYJEg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3E77C4CECD;
-	Fri,  1 Nov 2024 15:32:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730475182;
-	bh=ap9vfaIc7UJt+zz7HcnD4L60lhS/AaQ+8KbNeR3fmJc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D3SPYJEgkxTZwmG+RFAV76AkK//8wZ2FAHZfMa2zTI2hWXcbCFmFY0viio3AKkvxr
-	 xrQcAvfe+QxXLsnJp3dcDj3mR8OLuGDatH6rnaT5UE9D57tr93vlj7GhjU/6+jkRpG
-	 q7poRLnMM/8aD965BEeW11fLTEVJ4h/mQbRoL6Hvp+8Uw8Yw7QhUkYqK1U2fgc+mRj
-	 Db6u2XJuzMCWaH4w3eedHsLeRx+bILO+rUG5HSiKmFpjsE6WwUfJsI4it8fRJXIinA
-	 Om+cZbGWZL24oIb6SJQHoze+vgHzi/wa3Pyu1CtwOisC62YceY7yhHyB2yllzKuQ24
-	 vno3GGIgZymdQ==
-Date: Fri, 1 Nov 2024 15:32:55 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Lars-Peter
- Clausen <lars@metafoo.de>, Harvey Yang <chenghaoyang@google.com>,
- linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] iio: hid-sensors-prox: Add support for more
- channels
-Message-ID: <20241101153255.4d835495@jic23-huawei>
-In-Reply-To: <20241101-hpd-v3-0-e9c80b7c7164@chromium.org>
-References: <20241101-hpd-v3-0-e9c80b7c7164@chromium.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730475210; c=relaxed/simple;
+	bh=uCSR1nco/2JW9atNWLOSnQFj9xJZMV9LnFSXSd3tJPc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YUWh43vRtOXHMjlo/PQlZxchf+d8VQi6OYeEpiLUWT0TAfRUszc7ao8ZKOvEX9sCz6+e4l+YMHZThUsXe7dfdLUfg4RtNkbeWdaLTMTBnckBYC3Hg+1+BahCGxHyqr7v2qdVxOcH++4w5NQg9ck77jiGzntY09n3pv4OaZOU/ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=DS+0S+Zu; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=SmicUxSX; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 88A4821A8E;
+	Fri,  1 Nov 2024 15:33:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1730475204; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TWKnz5HG1q20ZBFi/CXAHOKDTVAn2SNuGFLjUE68GkY=;
+	b=DS+0S+ZuIv1OZD3XuONjQzRJKC08XD79A4/kBU8P66ChDlfgGngKgG94xjhDNYeSjlCBoJ
+	IgJ4N5qFDQ6jZbB39WmwoOdmfBD7GzdUoVrFU4CvcIuCEoo8ikvjOnYu3bqSfc7kijNBJM
+	GjIJj8lacJFEmVemCc3qnHXmOvL90ac=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=SmicUxSX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1730475203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TWKnz5HG1q20ZBFi/CXAHOKDTVAn2SNuGFLjUE68GkY=;
+	b=SmicUxSX4/6iHsuOh9Yg5NHW0T2QzRReBqMJ4UqGCc3hMPdLWZ5B/NR5HIaXVfgOmOZlIT
+	qz1U93PKwPjh2qYnAQ9KRDvP/3VgNJd/dIoXjZ7IWlKHVwMqvqxcSQ/l7AukZfw1xAY75d
+	QAhPlaQFm+RDEEpM8nZeS9e1PG2iuAA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 81E09136D9;
+	Fri,  1 Nov 2024 15:33:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id svqvH8P0JGeQGQAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Fri, 01 Nov 2024 15:33:23 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.12-rc6
+Date: Fri,  1 Nov 2024 16:33:19 +0100
+Message-ID: <cover.1730474495.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 88A4821A8E
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, 01 Nov 2024 07:46:26 +0000
-Ricardo Ribalda <ribalda@chromium.org> wrote:
+Hi,
 
-> EgisVision 620 provides two additional channels:
-> - proximity
-> - attention
-> 
-> Add support for them.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-Looks good to me. I'll queue it up, but Jiri / Srinivas if either of you have time
-to take a look as well that would be great of course.
+please pull a few more stability fixes. There's one patch adding export
+of MIPS cmpxchg helper, used in the error propagation fix.
 
-I'll only push this out as testing for now to let 0-day take a look.
+- fix error propagation from split bios to the original btrfs bio
 
+- fix merging of adjacent extents (normal operation, defragmentation)
 
-> ---
-> Changes in v3:
-> - Make attention CHAN_INFO_PROCESSED.
-> - Fix comment style.
-> - Multiply attention by 100 to make it a percentage.
-> - Link to v2: https://lore.kernel.org/r/20241028-hpd-v2-0-18f6e79154d7@chromium.org
-> 
-> Changes in v2 (Thanks Jonathan):
-> - Create new attention channel type.
-> - Improve documentation for HID usages.
-> - Link to v1: https://lore.kernel.org/r/20241024-hpd-v1-0-2a125882f1f8@chromium.org
-> 
-> ---
-> Ricardo Ribalda (5):
->       iio: hid-sensors: Add proximity and attention IDs
->       iio: hid-sensors-prox: Factor-in hid_sensor_push_data
->       iio: Add channel type for attention
->       iio: hid-sensors-prox: Make proximity channel indexed
->       iio: hid-sensor-prox: Add support for more channels
-> 
->  Documentation/ABI/testing/sysfs-bus-iio |   8 ++
->  drivers/iio/industrialio-core.c         |   1 +
->  drivers/iio/light/hid-sensor-prox.c     | 195 ++++++++++++++++++--------------
->  include/linux/hid-sensor-ids.h          |   2 +
->  include/uapi/linux/iio/types.h          |   1 +
->  tools/iio/iio_event_monitor.c           |   2 +
->  6 files changed, 122 insertions(+), 87 deletions(-)
-> ---
-> base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
-> change-id: 20241023-hpd-edeb37f1ffc4
-> 
-> Best regards,
+- fix potential use after free after freeing btrfs device structures
 
+----------------------------------------------------------------
+The following changes since commit 75f49c3dc7b7423d3734f2e4dabe3dac8d064338:
+
+  btrfs: fix passing 0 to ERR_PTR in btrfs_search_dir_index_item() (2024-10-22 16:10:55 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.12-rc5-tag
+
+for you to fetch changes up to 77b0d113eec49a7390ff1a08ca1923e89f5f86c6:
+
+  btrfs: fix defrag not merging contiguous extents due to merged extent maps (2024-10-31 16:46:41 +0100)
+
+----------------------------------------------------------------
+David Sterba (1):
+      MIPS: export __cmpxchg_small()
+
+Filipe Manana (2):
+      btrfs: fix extent map merging not happening for adjacent extents
+      btrfs: fix defrag not merging contiguous extents due to merged extent maps
+
+Naohiro Aota (1):
+      btrfs: fix error propagation of split bios
+
+Zhihao Cheng (1):
+      btrfs: fix use-after-free of block device file in __btrfs_free_extra_devids()
+
+ arch/mips/kernel/cmpxchg.c |  1 +
+ fs/btrfs/bio.c             | 37 +++++++++++++------------------------
+ fs/btrfs/bio.h             |  3 +++
+ fs/btrfs/defrag.c          | 10 +++++-----
+ fs/btrfs/extent_map.c      |  7 ++++++-
+ fs/btrfs/volumes.c         |  1 +
+ 6 files changed, 29 insertions(+), 30 deletions(-)
 
