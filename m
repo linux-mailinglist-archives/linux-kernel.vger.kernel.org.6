@@ -1,205 +1,83 @@
-Return-Path: <linux-kernel+bounces-392787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575FE9B981A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:09:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921489B9849
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:18:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615B81F21F2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56826282C02
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C171CF281;
-	Fri,  1 Nov 2024 19:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mha3ZbcX"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366511CEAA0;
-	Fri,  1 Nov 2024 19:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833B31CF281;
+	Fri,  1 Nov 2024 19:17:52 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D259237B;
+	Fri,  1 Nov 2024 19:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730488147; cv=none; b=dWw9Qm+nb5FYCVDmLJiQd+4aOG9/IS/q+sr4gpRv4bdLDmgBAWmN2nM1a72vDTJDZbcbt+ZewNUVqFbuYrEkTbnpXNroeMIUKhU1ZQuLrIf4J05RpJ+UU3yXkGN0/RBK7msre8Cw/FcoiOp4GPIA54U22SxW/i5YwEaVQe+9j6Q=
+	t=1730488672; cv=none; b=gM8kFmm/spAT7ukS1PqlgA+sy3XOTuVYqx4siFpQ0sa5wrTDdMoM8DtS9Wenj2Q80hedIr/uxVrLOW8se2K0EExnMVtV8gldWAAeYg4JxSApqrZANn0uIiJvAZf+7cL1FWyiKkvp6IXTEnC6L0+eZUXAzVuKFpxvQrDCHTYFLrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730488147; c=relaxed/simple;
-	bh=dOhNJ4bqsltqosWvK48KtLLJ8Qr3/+aIrxC5qXMR0c0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z0lwnWIj4DiABLKKnXzYMSIhrbAP9ly/z2fBb6BIuBfS706B+MNnf2kJ4HnXUzccOwt1DxqmLz2FYqSSMEdddnV1Lwrp5zITk8AhsNQGM0uKci5YVv9eQjJ5p8zcNQeY0XOkC7ynsb5oesXp63YeBCrTW/BG1kq2Kn/IDJzhVAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mha3ZbcX; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea9739647bso1728649a12.0;
-        Fri, 01 Nov 2024 12:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730488145; x=1731092945; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k3Qb1j+K9O3bLKE8Y4bg9cUjItGlHhRFoYyNHvp2j38=;
-        b=Mha3ZbcX4POVTZ1BLshQByFshhUw3tVTb2ULwVxsHm6rp8mxQHlzjzXMFUlF5+6ENg
-         bDj67ZA8v5Sm+rE65E88xPYhKT9AylgRtquWjeVwEecytqdbAA8PptvzUN2gMd+V3ebm
-         FESMlRhf4Dt8RBIZzu7TMrjffSxAYDcnk1GRmBWG5PBFZS40n88lEFC03n52QuwXd1UH
-         RtEoGzZ1bvboPSaEc+4ISz/xzAZECm/04ELISoggjkJMfAADAniYvXCUbeN7vQY5cQl+
-         ZzqlQKQkvCE8NesnY1NKR+daJt0tdBDmKNvemthXJXu8IJjMLc2DSt4CzeIb4H1NUlgX
-         IlKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730488145; x=1731092945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k3Qb1j+K9O3bLKE8Y4bg9cUjItGlHhRFoYyNHvp2j38=;
-        b=Q9YQlL7GhIb1M8QboPtCD+Um8Gc1vS2A1aRIacxXiXbytVLYAwlIaQeMibv++W9quc
-         VF2UMg73/ME3EekHwUFtBx8aQaHUZANC7uoM8QzL3yCdlY0ebN65EmQvdM5l57rk0A8X
-         XVWM5cFmhHxDdAiJScuP4k6pTFhXSwxMIX9ysLBeyCV8HWCVw80yMImepTf+WmEagm/5
-         vQfe6n+v+voNWBTD1i0OPvqcXJ73XSuyDg+RW0CHFXEH2DR9PKJbw4fImkoO45QbOaZt
-         /EWiSh8jwbiVgUdEPpfDvbDeI5KCkhSlnCWX+Ma4/NArnsH9hm1lMLG5Nc6y7HzUDIHf
-         fy1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUuKmevb2P5VTDHJkuq3pq7e659lLwawUhKguA/KeoyXV1Thxpo22tdbZ7HbXs27aXCP0Kx7GsOffOEmK4A@vger.kernel.org, AJvYcCVGxptkNGkg5pMwRd4lE6Jlkg4dLr2k3x93oytBUp9rzXYO6Qx8nCLp0bT8SrEMWSfpQ54=@vger.kernel.org, AJvYcCVR5UtAmIGsKaJVFIl/G18DPll46T3ELN1dDsS7EnlqiJ9jTIYinx/fCu5TqslWvdvQx8oxPck1nGsw8SrAAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSg3SFQPjGGcnlECoR1UQ5VHhhsH9xBFUYLp+WL+YeYJunEH98
-	F32rETray089AzCKBTtxzXCTX6EFWWtUtY+dZYTXjU1Nl0CUaksr0NTTSGjM5G9MSiW7D3Tj7JL
-	p62pNl018sqiyKfD9m6UJ9Cz1TeY=
-X-Google-Smtp-Source: AGHT+IEn2Do/6jRnMA3++ufyOBL20xnaTCPgPAZSoe26DmRbJ5T5EPARCBca+GckzX2dVOaQf3148vho6PwQQBOGO0c=
-X-Received: by 2002:a17:90b:3b89:b0:2e0:a926:19b1 with SMTP id
- 98e67ed59e1d1-2e8f11dce3amr26813641a91.38.1730488145468; Fri, 01 Nov 2024
- 12:09:05 -0700 (PDT)
+	s=arc-20240116; t=1730488672; c=relaxed/simple;
+	bh=VtGa5ZKU9NG61xn0besl1aRipUS8Q+BV5+j5oxULFeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pWJu6hkS4dmxwtN3WfGiFSdAUupODbus/rqDddsBBuMHYVPH7oRH7DsQYWaeTupNj8nhfOwZwC+qhBQqkLKSY5uhShFTyIUNmMdpvrN9ASpnDcjYv0CO3mu+rmF8q9VZAnHxSB98uCHWOFogbIdvZ3KZ4FaFfyjjQ+W8Knx19AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 4A1J9BQU010012;
+	Fri, 1 Nov 2024 14:09:11 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 4A1J981p010011;
+	Fri, 1 Nov 2024 14:09:08 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Fri, 1 Nov 2024 14:09:08 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+        Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+        Jens Remus <jremus@linux.ibm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+Message-ID: <20241101190908.GV29862@gate.crashing.org>
+References: <cover.1730150953.git.jpoimboe@kernel.org> <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org> <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com> <20241030055314.2vg55ychg5osleja@treble.attlocal.net> <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com> <20241031230313.ubybve4r7mlbcbuu@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <AM6PR03MB5848098C1DF99C6C417B405D99542@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <AM6PR03MB584858690D5A02162502A02099542@AM6PR03MB5848.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB584858690D5A02162502A02099542@AM6PR03MB5848.eurprd03.prod.outlook.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 1 Nov 2024 12:08:53 -0700
-Message-ID: <CAEf4BzadfF8iSAnhWFDNmXE80ayJXDkucbeg0jv-+=FtoDg5Zg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 3/4] bpf/crib: Add struct file related CRIB kfuncs
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031230313.ubybve4r7mlbcbuu@jpoimboe>
+User-Agent: Mutt/1.4.2.3i
 
-On Tue, Oct 29, 2024 at 5:17=E2=80=AFPM Juntong Deng <juntong.deng@outlook.=
-com> wrote:
->
-> This patch adds struct file related CRIB kfuncs.
->
-> bpf_fget_task() is used to get a pointer to the struct file
-> corresponding to the task file descriptor. Note that this function
-> acquires a reference to struct file.
->
-> bpf_get_file_ops_type() is used to determine what exactly this file
-> is based on the file operations, such as socket, eventfd, timerfd,
-> pipe, etc, in order to perform different checkpoint/restore processing
-> for different file types. This function currently has only one return
-> value, FILE_OPS_UNKNOWN, but will increase with the file types that
-> CRIB supports for checkpoint/restore.
->
-> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> ---
->  kernel/bpf/crib/crib.c  |  4 ++++
->  kernel/bpf/crib/files.c | 44 +++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 48 insertions(+)
->
+On Thu, Oct 31, 2024 at 04:03:13PM -0700, Josh Poimboeuf wrote:
+> Personally I find the idea of a single 4GB+ text segment pretty
+> surprising as I've never seen anything even close to that.
 
-Please CC Christian Brauner and fs mailing list
-(linux-fsdevel@vger.kernel.org, both cc'ed) on changes like this (this
-entire patch set)
+It is pretty common I'm afraid.
 
-> diff --git a/kernel/bpf/crib/crib.c b/kernel/bpf/crib/crib.c
-> index e6536ee9a845..78ddd19d5693 100644
-> --- a/kernel/bpf/crib/crib.c
-> +++ b/kernel/bpf/crib/crib.c
-> @@ -14,6 +14,10 @@ BTF_ID_FLAGS(func, bpf_iter_task_file_next, KF_ITER_NE=
-XT | KF_RET_NULL)
->  BTF_ID_FLAGS(func, bpf_iter_task_file_get_fd)
->  BTF_ID_FLAGS(func, bpf_iter_task_file_destroy, KF_ITER_DESTROY)
->
-> +BTF_ID_FLAGS(func, bpf_fget_task, KF_ACQUIRE | KF_TRUSTED_ARGS | KF_RET_=
-NULL)
-> +BTF_ID_FLAGS(func, bpf_get_file_ops_type, KF_TRUSTED_ARGS)
-> +BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
-> +
->  BTF_KFUNCS_END(bpf_crib_kfuncs)
->
->  static const struct btf_kfunc_id_set bpf_crib_kfunc_set =3D {
-> diff --git a/kernel/bpf/crib/files.c b/kernel/bpf/crib/files.c
-> index ececf150303f..8e0e29877359 100644
-> --- a/kernel/bpf/crib/files.c
-> +++ b/kernel/bpf/crib/files.c
-> @@ -5,6 +5,14 @@
->  #include <linux/fdtable.h>
->  #include <linux/net.h>
->
-> +/**
-> + * This enum will grow with the file types that CRIB supports for
-> + * checkpoint/restore.
-> + */
-> +enum {
-> +       FILE_OPS_UNKNOWN =3D 0
-> +};
-> +
->  struct bpf_iter_task_file {
->         __u64 __opaque[3];
->  } __aligned(8);
-> @@ -102,4 +110,40 @@ __bpf_kfunc void bpf_iter_task_file_destroy(struct b=
-pf_iter_task_file *it)
->                 fput(kit->file);
->  }
->
-> +/**
-> + * bpf_fget_task() - Get a pointer to the struct file corresponding to
-> + * the task file descriptor
-> + *
-> + * Note that this function acquires a reference to struct file.
-> + *
-> + * @task: the specified struct task_struct
-> + * @fd: the file descriptor
-> + *
-> + * @returns the corresponding struct file pointer if found,
-> + * otherwise returns NULL
-> + */
-> +__bpf_kfunc struct file *bpf_fget_task(struct task_struct *task, unsigne=
-d int fd)
-> +{
-> +       struct file *file;
-> +
-> +       file =3D fget_task(task, fd);
-> +       return file;
-> +}
-> +
-> +/**
-> + * bpf_get_file_ops_type() - Determine what exactly this file is based o=
-n
-> + * the file operations, such as socket, eventfd, timerfd, pipe, etc
-> + *
-> + * This function will grow with the file types that CRIB supports for
-> + * checkpoint/restore.
-> + *
-> + * @file: a pointer to the struct file
-> + *
-> + * @returns the file operations type
-> + */
-> +__bpf_kfunc unsigned int bpf_get_file_ops_type(struct file *file)
-> +{
-> +       return FILE_OPS_UNKNOWN;
-> +}
-> +
+> Actually I just double checked and even the kernel's ELF loader assumes
+> that each executable has only a single text start+end address pair.
 
-this is not very supportable, users can do the same by accessing
-file->f_op and comparing it to a set of known struct file_operations
-references.
+Huh?  What makes you think that?  There can be many executable PT_LOAD
+segments in each and every binary.
 
->  __bpf_kfunc_end_defs();
-> --
-> 2.39.5
->
+
+Segher
 
