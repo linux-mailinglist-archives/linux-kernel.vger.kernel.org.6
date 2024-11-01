@@ -1,181 +1,171 @@
-Return-Path: <linux-kernel+bounces-392311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBEFA9B9240
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:43:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F17C9B924D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:47:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36DE5B22394
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146691F21FF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0DC1A0708;
-	Fri,  1 Nov 2024 13:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32001A08D7;
+	Fri,  1 Nov 2024 13:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LvnYbdAy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="EINromA1"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A30168DA;
-	Fri,  1 Nov 2024 13:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2615E19E96A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730468598; cv=none; b=c2lQccJNPGdAwzInlZvlz3zcwpcdj1DI3+gxQQPctNhgNunLJIWXGuxNI+UD1pvrphtr2TTg03tlH1qsnl+YEJzpXRjHw+nnJeqys4p0/rAyQZ1/V1W/ujJcFnA7hjSOupbzAlhdSZJnH2iMdYaFdltCr3FkPDvqbOe/bhAUZkA=
+	t=1730468835; cv=none; b=NCBngKNHaLBlgVwUfpTxtd7uSy6M1PjKPKqGHmIdTCzLho+fdm2zpfXd4WKzY9hSq2VtdUUAxNxM1+dqdmUtgaTuD//ZZsslvSQ8VnPnbkUDmN7mEOwUdNKrae5+AvAubBQinT2g0mwxdI8/IkcNgCimBhPD17eesFTcUnHky2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730468598; c=relaxed/simple;
-	bh=yRwKjhcSgfpvoI02LRXx6jkqVbevSG9nk+9Aecvc8cs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eg87bJUqp1wxMT+lqszJMJj1kpKkq4GndmyMpLp/5egf2t+YeJmDXM9R6+WMa5BeWcWU5ujTacaQj3xfX1ifE6dM52i5TgkzQA/ba3+uQUQycW/15InsYbYHRpYK1BEXFy45/fyfGVEccmIqG9ep819riwtmCZP68kvu8OiyD4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LvnYbdAy; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730468596; x=1762004596;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=yRwKjhcSgfpvoI02LRXx6jkqVbevSG9nk+9Aecvc8cs=;
-  b=LvnYbdAy169U8zP+PJf2ptRfxZRVTBB+2BTRYHIIKG6yUGAoDMhSuecG
-   YncmgvPBNPmTpZWy0Yo/SSHp/RojMIEiotoIav7IA8g+CeBM3m0q5XQRm
-   OBj6/9IyRd8idm9XvXi36ZB0tgFulfIojyMjvBij8PhgBBfFqLV44ezgR
-   dabH1u0UMXd+yY47uDdHirAI6fFYtSpbRrCtuIs/SQfl+aZHfooFEpcf3
-   2wNGw0crSC/APj4+NS61XePpRMqwxuFqtRfaunWp80I6TwvFJIr264iyf
-   cRnc3ReQqfXKwvxCYr8zeb0KEo0W3nGAn0tNSKvZzZsRez/Y94HTqOTHt
-   w==;
-X-CSE-ConnectionGUID: maAZwLQbSy+WBm92vZezEg==
-X-CSE-MsgGUID: 6LV34eUFTKCHUEVpKQGTzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="30119599"
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="30119599"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 06:43:14 -0700
-X-CSE-ConnectionGUID: CtpAB3qsR6W4H/fE6wenmA==
-X-CSE-MsgGUID: WFZ06Jv9TcCfH+msyxeG9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="87506784"
-Received: from ideak-desk.fi.intel.com ([10.237.72.78])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 06:43:07 -0700
-Date: Fri, 1 Nov 2024 15:43:40 +0200
-From: Imre Deak <imre.deak@intel.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Abel Vesa <abel.vesa@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH RFC 1/4] drm/dp: Add helper to set LTTPRs in transparent
- mode
-Message-ID: <ZyTbDELVW5vqFoMS@ideak-desk.fi.intel.com>
-Reply-To: imre.deak@intel.com
-References: <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-0-cafbb9855f40@linaro.org>
- <20241031-drm-dp-msm-add-lttpr-transparent-mode-set-v1-1-cafbb9855f40@linaro.org>
- <ZyPxLpykHkO9Xx_R@ideak-desk.fi.intel.com>
- <87msijjol6.fsf@intel.com>
+	s=arc-20240116; t=1730468835; c=relaxed/simple;
+	bh=DORnpLlSSPTvlRU0Z176w+GuOM3Fh07/etpOUsmN1co=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UMCfBGSuye4L4FrZoKYiqg4uE4UdRPyAXZzUcxItcx89xjbcnO9qa1x8peJs2C+4DQcjsZEQm1358I0/r1Iwe0v0/f9D0o5otIhEyoiBGinsFGT3TNvW5uXYyFzmo0PCyDBnu3qh82vtShhAnkHt/PzX08Ql4JPh9tfIRxp6PgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=EINromA1; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460ad98b043so15925081cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1730468831; x=1731073631; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pgZpdUoTAWBGW8HPZFX/sXBtOGTucTxkHn+L83ATAH8=;
+        b=EINromA1glYoEM83OqIk1FqMVBGC44SFElJ2giR/k4eQfq5Yyn07uLQ8mtVm30mAjC
+         Q86IkC+eh+ZwZvT/Tz1UcALFxpcl5P6O2t1fx/iEMSbLqGOFCecTS62s/JqlygQW/KHw
+         Qt3SOjxUCOKZSGctqnJqY8wgRKn5hBmgrE49WKc+0BjWiREbhtRvuOPu21a7xA7oMDin
+         1LI1YPyjifkUNTLkJYQUm8lGfL8r90v5gaIA/FaZGTatYPf3s15vd4KtjIrHIhUlnQZx
+         QclWnEUo6csvwgK42HSqlkVWM/f1jCxXLtcfLbJzl15LJm2dH9n3qVaaXAyZHcRdENHY
+         bRDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730468831; x=1731073631;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pgZpdUoTAWBGW8HPZFX/sXBtOGTucTxkHn+L83ATAH8=;
+        b=wxcXmXb5XIXrs3RpAjXvEmjAFLYsNzfQFja22dSRCwVoBPfNonB+WPfNNo0WK1kXYm
+         gFoCzryDznnf8OUllerJKBLVA1/OVAPekk7pXh5i/w91rL2PJi/5i/i/Rru/G6/vG5xT
+         xcUUrQ9yitc6PvKtdDtz8naPeRoRtwzRW2PAYJBAqxZfoJvaotf0AaAuFyJQu/OBS3+r
+         zb2SAp7RB7J8xTBSbbzeU0AbnKmzlHCbw6r8aBGsi/wAcHojGJIcUp6VaEcCeIM4tvyF
+         ss23pmcPND85nfJ5SGrUfEchM5rR4pVFhYbeGUFdnk44F4lfd/QBLB3KSgDcN5j2KqpW
+         TuvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfeHNge6l6v0Ap1YG2mcfLGERq60VZ0rcL+sh+v5jWOoGAoBqaSXnHZAApuyOFb0wlCn2bK70xzsK4f4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPagK8WGoVaJ8p1qcYaEe3QErU2gZrG8Ao3ANbZfHb10rIR5vm
+	9QFl56fEiyW2IwwNyRx0Psp/jx3ckSJPyId/3+TIngxMYx8UiKBIN8O3lCcPlIE=
+X-Google-Smtp-Source: AGHT+IFO7TPVt3YP/4LUm5QV2ItbjgKfbOmnapBUP+AyArR90OJPmLDKIteJ7SrM/lUFaW2ItVhwSQ==
+X-Received: by 2002:a05:622a:1a97:b0:45d:ace1:a44a with SMTP id d75a77b69052e-462b6ebae38mr51618591cf.30.1730468831023;
+        Fri, 01 Nov 2024 06:47:11 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com ([50.193.156.113])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad0cac07sm18840631cf.48.2024.11.01.06.47.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 06:47:10 -0700 (PDT)
+From: Gregory Price <gourry@gourry.net>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: linux-cxl@vger.kernel.org,
+	Jonathan.Cameron@huawei.com,
+	dan.j.williams@intel.com,
+	rrichter@amd.com,
+	Terry.Bowman@amd.com,
+	dave.jiang@intel.com,
+	ira.weiny@intel.com,
+	alison.schofield@intel.com,
+	gourry@gourry.net,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	hpa@zytor.com,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	david@redhat.com,
+	osalvador@suse.de,
+	gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org,
+	rppt@kernel.org
+Subject: [PATCH v5 0/3] memory,x86,acpi: hotplug memory alignment advisement
+Date: Fri,  1 Nov 2024 09:47:02 -0400
+Message-ID: <20241101134706.1185-1-gourry@gourry.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87msijjol6.fsf@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 01, 2024 at 11:22:13AM +0200, Jani Nikula wrote:
-> On Thu, 31 Oct 2024, Imre Deak <imre.deak@intel.com> wrote:
-> > On Thu, Oct 31, 2024 at 05:12:45PM +0200, Abel Vesa wrote:
-> >> According to the DisplayPort standard, LTTPRs have two operating
-> >> modes:
-> >>  - non-transparent - it replies to DPCD LTTPR field specific AUX
-> >>    requests, while passes through all other AUX requests
-> >>  - transparent - it passes through all AUX requests.
-> >> 
-> >> Switching between this two modes is done by the DPTX by issuing
-> >> an AUX write to the DPCD PHY_REPEATER_MODE register.
-> >> 
-> >> Add a generic helper that allows switching between these modes.
-> >> 
-> >> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> >> ---
-> >>  drivers/gpu/drm/display/drm_dp_helper.c | 17 +++++++++++++++++
-> >>  include/drm/display/drm_dp_helper.h     |  1 +
-> >>  2 files changed, 18 insertions(+)
-> >> 
-> >> diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
-> >> index 6ee51003de3ce616c3a52653c2f1979ad7658e21..38d612345986ad54b42228902ea718a089d169c4 100644
-> >> --- a/drivers/gpu/drm/display/drm_dp_helper.c
-> >> +++ b/drivers/gpu/drm/display/drm_dp_helper.c
-> >> @@ -2694,6 +2694,23 @@ int drm_dp_lttpr_max_link_rate(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE])
-> >>  }
-> >>  EXPORT_SYMBOL(drm_dp_lttpr_max_link_rate);
-> >>  
-> >> +/**
-> >> + * drm_dp_lttpr_set_transparent_mode - set the LTTPR in transparent mode
-> >> + * @aux: DisplayPort AUX channel
-> >> + * @enable: Enable or disable transparent mode
-> >> + *
-> >> + * Returns 0 on success or a negative error code on failure.
-> >
-> > Should be "Returns 1 on success".
-> 
-> But is that a sensible return value?
+When physical address regions are not aligned to memory block size,
+the misaligned portion is lost (stranded capacity).
 
-It matches what the function returns, but yes, would make more sense to
-fix the return value instead to be 0 in case of success.
+Block size (min/max/selected) is architecture defined. Most architectures
+tend to use the minimum block size or some simplistic heurist. On x86,
+memory block size increases up to 2GB, and is otherwise fitted to the
+alignment of non-hotplug (i.e. not special purpose memory).
 
-> >
-> >> + */
-> >> +
-> 
-> Superfluous newline.
-> 
-> >> +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable)
-> >> +{
-> >> +	u8 val = enable ? DP_PHY_REPEATER_MODE_TRANSPARENT :
-> >> +			  DP_PHY_REPEATER_MODE_NON_TRANSPARENT;
-> >> +
-> >> +	return drm_dp_dpcd_writeb(aux, DP_PHY_REPEATER_MODE, val);
-> >> +}
-> >> +EXPORT_SYMBOL(drm_dp_lttpr_set_transparent_mode);
-> >> +
-> >>  /**
-> >>   * drm_dp_lttpr_max_lane_count - get the maximum lane count supported by all LTTPRs
-> >>   * @caps: LTTPR common capabilities
-> >> diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
-> >> index 279624833ea9259809428162f4e845654359f8c9..8821ab2d36b0e04d38ccbdddcb703b34de7ed680 100644
-> >> --- a/include/drm/display/drm_dp_helper.h
-> >> +++ b/include/drm/display/drm_dp_helper.h
-> >> @@ -625,6 +625,7 @@ int drm_dp_read_lttpr_phy_caps(struct drm_dp_aux *aux,
-> >>  			       u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
-> >>  int drm_dp_lttpr_count(const u8 cap[DP_LTTPR_COMMON_CAP_SIZE]);
-> >>  int drm_dp_lttpr_max_link_rate(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE]);
-> >> +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable);
-> >>  int drm_dp_lttpr_max_lane_count(const u8 caps[DP_LTTPR_COMMON_CAP_SIZE]);
-> >>  bool drm_dp_lttpr_voltage_swing_level_3_supported(const u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
-> >>  bool drm_dp_lttpr_pre_emphasis_level_3_supported(const u8 caps[DP_LTTPR_PHY_CAP_SIZE]);
-> >> 
-> >> -- 
-> >> 2.34.1
-> >> 
-> 
-> -- 
-> Jani Nikula, Intel
+CXL exposes its memory for management through the ACPI CEDT (CXL Early
+Detection Table) in a field called the CXL Fixed Memory Window.  Per
+the CXL specification, this memory must be aligned to at least 256MB.
+
+When a CFMW aligns on a size less than the block size, this causes a
+loss of up to 2GB per CFMW on x86.  It is not uncommon for CFMW to be
+allocated per-device - though this behavior is BIOS defined.
+
+This patch set provides 3 things:
+ 1) implement advise/query functions in driverse/base/memory.c to
+    report/query architecture agnostic hotplug block alignment advice.
+ 2) update x86 memblock size logic to consider the hotplug advice
+ 3) add code in acpi/numa/srat.c to report CFMW alignment advice
+
+The advisement interfaces are design to be called during arch_init
+code prior to allocator and smp_init.  start_kernel will call these
+through setup_arch() (via acpi and mm/init_64.c on x86), which occurs
+prior to mm_core_init and smp_init - so no need for atomics.
+
+There's an attempt to signal callers to advise() that query has already
+occurred, but this is predicated on the notion that query actually
+occurs (which presently only happens on the x86 arch). This is to
+assist debugging future users.  Otherwise, the advise() call has
+been marked __init to help static discovery of bad call times.
+
+Once query is called the first time, it will always return the same value.
+
+Interfaces return -EBUSY and 0 respectively on systems without hotplug.
+
+v5:
+- nits and renames
+- kdoc warning
+- change to everything `unsigned long` instead of size_t
+- memory_block_advise_max_size marked __init
+  - both cannot be __init because the query is called from non-init
+- simplified alignment code in cfmws iterator
+
+Suggested-by: Ira Weiny <ira.weiny@intel.com>
+Suggested-by: David Hildenbrand <david@redhat.com>
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Gregory Price <gourry@gourry.net>
+
+Gregory Price (3):
+  memory: implement memory_block_advise/probe_max_size
+  x86: probe memory block size advisement value during mm init
+  acpi,srat: give memory block size advice based on CFMWS alignment
+
+ arch/x86/mm/init_64.c    | 15 ++++++++----
+ drivers/acpi/numa/srat.c | 12 ++++++++-
+ drivers/base/memory.c    | 53 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/memory.h   | 10 ++++++++
+ 4 files changed, 84 insertions(+), 6 deletions(-)
+
+-- 
+2.43.0
+
 
