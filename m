@@ -1,69 +1,76 @@
-Return-Path: <linux-kernel+bounces-392250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C689B917D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:05:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3149B9180
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:06:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43BF8B223ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:05:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1CA91C21C38
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D97419F117;
-	Fri,  1 Nov 2024 13:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1056519F41B;
+	Fri,  1 Nov 2024 13:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CorQ444b"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TGK9K5YY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EC2487A7;
-	Fri,  1 Nov 2024 13:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F45487A7;
+	Fri,  1 Nov 2024 13:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730466347; cv=none; b=TLttre3Iwlt/wCYbWvrZ5ySXzmXXijrwy8E0YRxfGNaTzhD6lKROIyRTw1esU7T7uXvnVgS4h34+0VFB1Dke2nKfgwvhbgS9KnFVQDjAJwQ2TstT5k+ivcmBgx48MWwg+u732+oP0nNKrJAcogZdGsETm93u7nZgruV5tg+DrfI=
+	t=1730466412; cv=none; b=QkXe9HIfciCXCUoY0CRWtkgKhFpmPUvQlbDRc1xT09dwZuiiaKZA5cI3Oe+g/pa7/K1ZXlrzjQSp/wErHU+L0BmEusFEAoQa802fnhxrP3E3jBrSrYjz7xmCCUzFbAxS6ZHwAxtnhZUBhyMmg1wwQYkgTd6RCyAn5c8Y+m8TmAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730466347; c=relaxed/simple;
-	bh=Nr3dp8vXJ0sLZgYMPhWAE2sX7ptpc5DvV4GyQ4AAt8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PPsIE2fHDlPh1rULciYRQ7TSBBvdIXn0JPyelI/CJYhfUsVMj2MT9kef62lC5Nin8lTckBrG5X2sDPZxspCRnGDRVrzJHnwD6l/BnchTpBglSvOxdkW9WBmAdIkTN47o/KoPwWfO3miezr7jZB93U9hewiT4FAe/SYk0X7Tn2Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CorQ444b; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wxNQLV+YRr0JXxilPc5fJ8f0DhP1zrWW8wgGA+gouV0=; b=CorQ444b6BCP+SEckN9Q696yRA
-	xrqYlYbKeJZ6jsNKHc+i8mYvWT5i+lQh6/r3GNtARy0TXJ8sOQ/pAMoGBPJxSCI6AWYvNbjfYuk+1
-	emgMwnFhnUBrBhWXWa+H2PjOeQmNrkPTcOozEE9LNiUMZP5dXZc4J+Vvd4XaU4DmYneNg2j+qwRAT
-	HLdMYE4NNCQXCjcKGqrInJakV3GsKHFCRdJtVNhP2NSULL05843lOv6xwX08zRaFtVaMDmUkw6z1z
-	vzd14Xx84ebVv0/I+QVT4t9UG6bzTJxm7TwDRtjzIUrGkqcMJK8I0eArM/RmnMY4JmINpGYUWgkaV
-	jqdpgu5w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6rLJ-0000000AgVs-0r8r;
-	Fri, 01 Nov 2024 13:05:33 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 952F1300599; Fri,  1 Nov 2024 14:05:31 +0100 (CET)
-Date: Fri, 1 Nov 2024 14:05:31 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Cristian Prundeanu <cpru@amazon.com>
-Cc: "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	linux-tip-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Bjoern Doebel <doebel@amazon.com>,
-	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
-	Geoff Blake <blakgeof@amazon.com>, Ali Saidi <alisaidi@amazon.com>,
-	Csaba Csoma <csabac@amazon.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
- RUN_TO_PARITY and move them to sysctl
-Message-ID: <20241101130531.GW9767@noisy.programming.kicks-ass.net>
-References: <ZxuujhhrJcoYOdMJ@BLRRASHENOY1.amd.com>
- <20241029045749.37257-1-cpru@amazon.com>
+	s=arc-20240116; t=1730466412; c=relaxed/simple;
+	bh=gu9PN5hUQEPSSl3W3JTtMH6NhqRqpmRR8rOASg6nGn8=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RlSpeKuyv6jzmBL/eh6cf/BQKg+K1g0SUDpKPyclnDyukBqr0caCGBBb/3h4gTZjVN2LrvYv9YAGWt2KMJm242hSpD1vWTPqYSAlBAvj8pTtQnOZ/mRdljdjLSKFW5B/QlQv/VR8peMvleV4AA9FMGhRoiChjRyS+Vh7OJ5d554=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TGK9K5YY; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730466410; x=1762002410;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=gu9PN5hUQEPSSl3W3JTtMH6NhqRqpmRR8rOASg6nGn8=;
+  b=TGK9K5YYH2zTpfeub4YUlgNgWw6qMUl0cLBQYX+g6ABdASRAN26naEn3
+   x8xJbWqtQsNDcZwi6v5xlPAi/z8C0yu+zGYwYqmX3r85IsW+T8Yq2VvwZ
+   /l+pjGzId39ZpuiJyyc8V4806moOSoC23UCSqIujZC9B/TgYYZdX0BLg1
+   jrUnw9GRtaNMlcLDuO2XKvulMzWuzm93FGAlX8BEALZ/m4xGhN/Gwmt3h
+   OpZnC4K+OihQLx/qTLmugw3zJDiovH86XHq6Y1qaLG+CSajM98yBPoAGH
+   oFI7alKxrxrjmFLob8h3NHN4dThOxc00Q3bQYHhCeLKygQXZPEToCo078
+   A==;
+X-CSE-ConnectionGUID: IRWnjdweR9GZJUq2ArXiug==
+X-CSE-MsgGUID: LMDZcWRSSKKa/wRVqKNFiw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33919653"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="33919653"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 06:06:49 -0700
+X-CSE-ConnectionGUID: JdetDu92QCCam8oEEkFnvg==
+X-CSE-MsgGUID: y2MPLpiwShePyNb12+62ig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="120411333"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 06:06:48 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t6rMU-0000000A2MO-0HzH;
+	Fri, 01 Nov 2024 15:06:46 +0200
+Date: Fri, 1 Nov 2024 15:06:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Chen-Yu Tsai <wenst@chromium.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] i2c: Use *-y instead of *-objs in Makefile
+Message-ID: <ZyTSZTcNU63F2GjY@smile.fi.intel.com>
+References: <20241018150337.2182181-1-andriy.shevchenko@linux.intel.com>
+ <ZyTIf8l1ghcyzJUH@smile.fi.intel.com>
+ <ZyTNA34Y1BRxMhhn@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,28 +79,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241029045749.37257-1-cpru@amazon.com>
+In-Reply-To: <ZyTNA34Y1BRxMhhn@shikoro>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Oct 28, 2024 at 11:57:49PM -0500, Cristian Prundeanu wrote:
+On Fri, Nov 01, 2024 at 02:43:47PM +0200, Wolfram Sang wrote:
+> 
+> > > Let's correct the old usages of *-objs in Makefiles.
+> > 
+> > Any comments?
+> 
+> LGTM. What about fixing the drivers, too, in one go?
 
-> My testing with SCHED_BATCH is meanwhile concluded. It did reduce the 
-> regression to less than half - but only with WAKEUP_PREEMPTION enabled. 
-> When using NO_WAKEUP_PREEMPTION, there was no performance change compared 
-> to SCHED_OTHER.
+What drivers do you have in mind?
+Shouldn't be separated commit anyway?
 
-Because BATCH affects wakeup-preemption, and if there isn't any ever, it
-makes no difference.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-A BATCH task will not preempt another BATCH task, the only thing driving
-preemption is slice exhaustion -- and we can now set slice per task to
-match with the 'work' cycle.
 
-> (At the risk of stating the obvious, using SCHED_BATCH only to get back to 
-> the default CFS performance is still only a workaround,
-
-It is not really -- it is impossible to schedule all the various
-workloads without them telling us what they really like. The quest is to
-find interfaces that make sense and are implementable. But fundamentally
-tasks will have to start telling us what they need. We've long since ran
-out of crystal balls.
 
