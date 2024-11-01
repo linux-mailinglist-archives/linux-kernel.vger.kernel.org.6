@@ -1,436 +1,447 @@
-Return-Path: <linux-kernel+bounces-392018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4199B8EC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:10:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD6C9B8ECC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:10:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37E971C21708
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA1A81F231B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0774A15DBAE;
-	Fri,  1 Nov 2024 10:09:51 +0000 (UTC)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D124175D2D;
+	Fri,  1 Nov 2024 10:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvMcxGt8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6411D14F9F8;
-	Fri,  1 Nov 2024 10:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7982E1607B7;
+	Fri,  1 Nov 2024 10:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730455790; cv=none; b=dRGOB1WUZ1wXYtUB+PnnwHIULUdHqjv5M707rt54zmKTcvKWIj1Z1Q/BP5jHWQ4FYNcOe04/r0Lmk6uF/mT6Vtk2hhxDe5i+ZPQMTcUbkxWYJAop/Tvz6+vIn5Z6WPEHajCo+uCO0FnsKeY1ezaXY+60348tnrMbLeaSB2xtm8Q=
+	t=1730455791; cv=none; b=WcryAFoTTFzWXJVYLPB+M/lxtJdSZgltcXD/pFF5dlJ5mGB+VKNT/c6W46RGvgiVfvNbdyaLg/MjapTg+qTPVZXGJcGDw6abEXDXZck93ugrwlHYh20ShU+jMzKvggBWpXYzwsOLY0/fHBCywhpu01150P0f5TYMQOiw0OhmcXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730455790; c=relaxed/simple;
-	bh=gOgjR4pn1Vgnh0u4Npu7ubOgJ8CxsZVlhsvri9yRZDc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DTTCi8ejrtI+rkADdSS6SM4wsx6Nf6CWjWG/FDKHDUpMgCXRFNwJ/0mFaZLlPsHTRR4YB2L8Gy2NU1q54nCRSEapNfrL8aaqUwBbYit0WF7Yos4uBN7pcShyzloAqVaf4Pju5mnyCtKAKA4JVogRUZqDlOGhwEK0d3xi/7+yZYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a99f1fd20c4so233386866b.0;
-        Fri, 01 Nov 2024 03:09:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730455786; x=1731060586;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aJlgJbZEXlcchXzKG2MyfYbvfgDGckfDgkmTxpW9aW8=;
-        b=AL6/+a8GjByqxJ2mb73tXNmHQ8QWXGyhFmE6ZY2dBLruPcMx7S/lvb/Il317gAdvU6
-         34vPMrOL/hGTcmHq0IzcPYeahIlsldqpWdfoEK6zXmZtNWSZmtBVGuZc1qaWte66KTp2
-         /taGgjBBihNSUV7FA0XNZbvNYLP5a2PO+imsYMJg9A6OyIxfNF0umfA0bax8obhZwDgx
-         xTQhZQsfySMwoUNFiD5N5ZILqO32gmATVqpgUuNUsA3Hb+Wfac9pw/X19IaLVECjlYoE
-         ilHfR5tZiNtwVQkeI/yDV4ymp9AKys3UKhNWBgiMQm0ZARJ7PoDgIeHhtL8WefNLGI5f
-         Cs6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUovIelLwM1FUqleaODWf4cPcmSZokmq/Wlav937mZu5So8La8Vn4LIfSDCEQ0beN01GAQI8G1x@vger.kernel.org, AJvYcCW8aNb+jiK1VDeN2tTWaXJg6EBALO6dIZvqBM4ZPKco4V9i8/75FH8CbLg3HfHbUyS+Bkviak8JALCaGTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5yb3rvHxYdAg/6QXwJq0PXcHr6nKYJF8qzbgRN4xPPVmROog+
-	JP+oKiPduoz5W07VJd74iaZ5zjgRz3lkxKeyITpzpCPb0gTQdbr9
-X-Google-Smtp-Source: AGHT+IEqS/nwPmK/Gwkqt1/l6AVIgvYtIeHArZRnzZlffBJHi31CcmSMnXEqnQtd1vhzZGXOMq9TLw==
-X-Received: by 2002:a17:907:6ea2:b0:a9a:f0e:cd4 with SMTP id a640c23a62f3a-a9e50b9e38cmr621326966b.55.1730455785432;
-        Fri, 01 Nov 2024 03:09:45 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564cdb00sm163746166b.87.2024.11.01.03.09.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 03:09:44 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 01 Nov 2024 03:09:33 -0700
-Subject: [PATCH net-next v5] net: Implement fault injection forcing skb
- reallocation
+	s=arc-20240116; t=1730455791; c=relaxed/simple;
+	bh=AcSL/03ZzuL0s3iV7KdXkVv5V8VGcWt1LULfaJMxedM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tpiRjcCDB4KQbVze++1osbr0S5JYeEXQOe/3WZNcCiK44BcqX1YtlDHbMcLAavgHt3G3A7JtXJc3z3wLKmDRo9XYdkxArakTLgIPE9Hzvi0ZWIyjvwZhknH9P2vwJJjPGYSj9kAGWVhC7bwz+hf50vj+9CVzT/mWjXgtA/pmQX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvMcxGt8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D06A3C4CECD;
+	Fri,  1 Nov 2024 10:09:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730455790;
+	bh=AcSL/03ZzuL0s3iV7KdXkVv5V8VGcWt1LULfaJMxedM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dvMcxGt8WyMZWVGe6OmimdOISYd5UDWzxUlZHwEy6YrAUfW+nJFM8p943QaFXqT5s
+	 TwHajPLInX7jEYzELyVVymEUq1ohLad0hs1kZ6EOkmr/8t7PkYXL1AIV0k6NkvGO/R
+	 RPzwwglICV6qieLjgkvA2f8RXPhqmWJcYZ4C8CkIb45shDw/KmsnUtj0AjV4JJYqij
+	 aCJ9S99nbUdj1kmG43V1Q7GBGhrMywykfVf4U30c8Jk7MMixz/mTEcfTwbxNQPsk1u
+	 qyAX0lkdwbrbO4ClX9ovmcGj8idpm0ekRGcwK1kei0rjB9xhvICKeM6/7uIQfMulQn
+	 l+Yg5C7p35NaQ==
+Message-ID: <8604b8d8-ba1d-4373-ac2d-86e3ede22c3d@kernel.org>
+Date: Fri, 1 Nov 2024 11:09:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] media: dt-bindings: media: camss: Add
+ qcom,sc7280-camss binding
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241030105347.2117034-1-quic_vikramsa@quicinc.com>
+ <20241030105347.2117034-2-quic_vikramsa@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241030105347.2117034-2-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241101-skb_fault_injection_v5-v5-1-a99696f0a853@debian.org>
-X-B4-Tracking: v=1; b=H4sIANyoJGcC/x3M4QqDIBQG0FeR73dCtgzmq4whZtd2t3EbahFE7
- z7oPMA5UCgzFTh1INPGhReBU7ZRiK8gM2me4BS6tuuNaY0un9GnsH6rZ3lTrLyI36we0m0cgk3
- 9FO9oFH6ZEu9X/IBQ1UJ7xfM8/8A0p1ByAAAA
-X-Change-ID: 20241101-skb_fault_injection_v5-6f3b6a5f4dc9
-To: Jonathan Corbet <corbet@lwn.net>, Akinobu Mita <akinobu.mita@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, kernel-team@meta.com, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11855; i=leitao@debian.org;
- h=from:subject:message-id; bh=gOgjR4pn1Vgnh0u4Npu7ubOgJ8CxsZVlhsvri9yRZDc=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnJKjn2rFhLIJc5PVdL2sdAnS7HuTt1KT36QpXE
- CuJ/uG5AfOJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZySo5wAKCRA1o5Of/Hh3
- bfaZD/9s+Bun2o3N2/z0bXn4G3gt7fHVIzW3f0pLi47OXeZXdsQYH+oLDHWI0SKaEgOP9JLNath
- gcmzeayHwKlKP4LHX+XPsrT2ITU3nLyh8xInynfEFRblvAJKFMwLrXN/LVYjX77P4VQYHHpADhe
- imcah+LlNjAF8hjLS/QSpxYEcdrtOlqjdupQkmy0SktJLUmv2aUIlWN7iW24hHgvI4ZDUVJUF9v
- sTAfgWPvrhxQL2W9MMc+5qqomuqPo/jVoMWlTaO1nM7RKJ7GlYaQOsoAk6HCZ0s9PwQ5CJSohaG
- ByiZrbvglTQY2DsfwdqG2KCt0mkbaY2o34P3D8jcI/I4JsXrYSbQBUWFH9S4PxAVzfBQN3f0tN8
- IrCLgBB3D5Fby0LeAxavdjbRK+SphVAO16lDw5Kie1FLToNx2Mqa04mrjbI4pxPGA0hBCnN7Q6/
- d78flUJVTAYG615S4I5U1QYWVvO45j0Lso+bknkK6geZ6peZgm7w4+nLmdoNAEpRqQ/ogsTRHty
- zdEpm3YYZquin6sFBF8+BQMSD7cQt1WEIJ3Hlx6wzqjv0Pa4TdMcJDr6HiFuB0JtJ6aERYb/OPz
- YjPezmypXsQYn+wXdBEoqWmmqPEdAa1gmc647XAILZTQ+uGdoF+psurqvtxkYQxcy/EADaN1uFd
- 9X6wMlTRAD+0how==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Introduce a fault injection mechanism to force skb reallocation. The
-primary goal is to catch bugs related to pointer invalidation after
-potential skb reallocation.
+On 30/10/2024 11:53, Vikram Sharma wrote:
+> Add bindings for qcom,sc7280-camss to support the camera subsystem
+> on the SC7280 platform.
+> 
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
 
-The fault injection mechanism aims to identify scenarios where callers
-retain pointers to various headers in the skb but fail to reload these
-pointers after calling a function that may reallocate the data. This
-type of bug can lead to memory corruption or crashes if the old,
-now-invalid pointers are used.
+Feedback given to one patch, applies to everything. Respond or implement
+the feedback from 2 months ago:
 
-By forcing reallocation through fault injection, we can stress-test code
-paths and ensure proper pointer management after potential skb
-reallocations.
+https://lore.kernel.org/linux-arm-msm/b17ad6e0-a99b-46c9-89e6-df72773a0bd4@kernel.org/
 
-Add a hook for fault injection in the following functions:
+> ---
+>  .../bindings/media/qcom,sc7280-camss.yaml     | 439 ++++++++++++++++++
+>  1 file changed, 439 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
+> new file mode 100644
+> index 000000000000..783a5366e32b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
+> @@ -0,0 +1,439 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,sc7280-camss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm SC7280 CAMSS ISP
+> +
+> +maintainers:
+> +  - Azam Sadiq Pasha Kapatrala Syed <akapatra@quicinc.com>
+> +  - Hariram Purushothaman <hariramp@quicinc.com>
+> +
+> +description:
+> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sc7280-camss
+> +
+> +  clocks:
+> +    maxItems: 32
+> +
+> +  clock-names:
+> +    items:
+> +      - const: camnoc_axi
+> +      - const: csi0
+> +      - const: csi1
+> +      - const: csi2
+> +      - const: csi3
+> +      - const: csi4
+> +      - const: csiphy0
+> +      - const: csiphy0_timer
+> +      - const: csiphy1
+> +      - const: csiphy1_timer
+> +      - const: csiphy2
+> +      - const: csiphy2_timer
+> +      - const: csiphy3
+> +      - const: csiphy3_timer
+> +      - const: csiphy4
+> +      - const: csiphy4_timer
+> +      - const: gcc_camera_ahb
+> +      - const: gcc_camera_axi
+> +      - const: soc_ahb
+> +      - const: vfe0_axi
+> +      - const: vfe0
+> +      - const: vfe0_cphy_rx
+> +      - const: vfe1_axi
+> +      - const: vfe1
+> +      - const: vfe1_cphy_rx
+> +      - const: vfe2_axi
+> +      - const: vfe2
+> +      - const: vfe2_cphy_rx
+> +      - const: vfe0_lite
+> +      - const: vfe0_lite_cphy_rx
+> +      - const: vfe1_lite
+> +      - const: vfe1_lite_cphy_rx
+> +
+> +  interconnects:
+> +    maxItems: 2
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: ahb
+> +      - const: hf_0
+> +
+> +  interrupts:
+> +    maxItems: 15
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csid_lite0
+> +      - const: csid_lite1
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy3
+> +      - const: csiphy4
+> +      - const: vfe0
+> +      - const: vfe1
+> +      - const: vfe2
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    items:
+> +      - description: IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: IFE2 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: Titan GDSC - Titan ISP Block, Global Distributed Switch Controller.
+> +
+> +  power-domains-names:
+> +    items:
+> +      - const: ife0
+> +      - const: ife1
+> +      - const: ife2
+> +      - const: top
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    description:
+> +      CSI input ports.
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@3:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@4:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@5:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +  reg:
+> +    maxItems: 15
+> +
+> +  reg-names:
+> +    items:
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csid_lite0
+> +      - const: csid_lite1
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy3
+> +      - const: csiphy4
+> +      - const: vfe0
+> +      - const: vfe1
+> +      - const: vfe2
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+> +
+> +  vdda-phy-supply:
+> +    description:
+> +      Phandle to a regulator supply to PHY core block.
+> +
+> +  vdda-pll-supply:
+> +    description:
+> +      Phandle to 1.8V regulator supply to PHY refclk pll block.
+> +
+> +required:
+> +  - clock-names
+> +  - clocks
+> +  - compatible
+> +  - interconnects
+> +  - interconnect-names
+> +  - interrupts
+> +  - interrupt-names
+> +  - iommus
+> +  - power-domains
+> +  - power-domains-names
+> +  - reg
+> +  - reg-names
+> +  - vdda-phy-supply
+> +  - vdda-pll-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,camcc-sc7280.h>
+> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
+> +    #include <dt-bindings/interconnect/qcom,sc7280.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        camss: camss@acaf000 {
 
- * pskb_trim_rcsum()
- * pskb_may_pull_reason()
- * pskb_trim()
+Drop unused label.
 
-As the other fault injection mechanism, protect it under a debug Kconfig
-called CONFIG_FAIL_SKB_REALLOC.
+> +            compatible = "qcom,sc7280-camss";
+> +
+> +            clocks = <&clock_camcc CAM_CC_CAMNOC_AXI_CLK>,
 
-This patch was *heavily* inspired by Jakub's proposal from:
-https://lore.kernel.org/all/20240719174140.47a868e6@kernel.org/
+Last time feedback was:
+"Please carefully read DTS coding style."
 
-CC: Akinobu Mita <akinobu.mita@gmail.com>
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Reviewed-by: Akinobu Mita <akinobu.mita@gmail.com>
-Acked-by: Paolo Abeni <pabeni@redhat.com>
----
-Changelog:
+Before that, I asked to fix the order:
+https://lore.kernel.org/all/2m4dmdsivqwo45bxvuhashrlfki3akzzc3qp2vp32nrhvairyq@uibybei3fsco/
 
-v5:
- * Updated the documentation to clarify the effectiveness of KASAN when
-   used in conjunction with this feature (Jakub)
- * Fixed a typo in a comment (Jakub)
- * Reordered the imports in skb_fault_injection.c (Jakub)
- * Moved from memzero_explicit() to memset() (Jakub)
- * Zeroing skb_realloc.devname() at IFNAMSIZ-1 (Jakub)
+I don't think this improved. I think you just skimmed through DTS coding
+style without really double-checking your code.
 
-v4:
- * Add entry in kernel-parameters.txt (Paolo)
- * Renamed the config to fail_skb_realloc (Akinobu)
- * Fixed the documentation format (Bagas)
- * https://lore.kernel.org/all/20241023113819.3395078-1-leitao@debian.org/
+Sorry, repeating both feedbacks two or three times is not acceptable to me.
 
-v3:
- * Remove decision part of skb_might_realloc() into a new function
-   should_fail_net_realloc_skb(). Marked it as ALLOW_ERROR_INJECTION,
-   so it could be controlled by fail_function and BPF (Paolo)
- * https://lore.kernel.org/all/20241014135015.3506392-1-leitao@debian.org/
+NAK
 
-v2:
- * Moved the CONFIG_FAIL_SKB_FORCE_REALLOC Kconfig entry closer to other
-   fault injection Kconfigs.  (Kuniyuki Iwashima)
- * Create a filter mechanism (Akinobu Mita)
- * https://lore.kernel.org/all/20241008111358.1691157-1-leitao@debian.org/
 
-v1:
- * https://lore.kernel.org/all/20241002113316.2527669-1-leitao@debian.org/
----
- Documentation/admin-guide/kernel-parameters.txt   |   1 +
- Documentation/fault-injection/fault-injection.rst |  40 ++++++++
- include/linux/skbuff.h                            |   9 ++
- lib/Kconfig.debug                                 |  10 ++
- net/core/Makefile                                 |   1 +
- net/core/skb_fault_injection.c                    | 106 ++++++++++++++++++++++
- 6 files changed, 167 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1518343bbe2237f1d577df5656339d6224b769be..2fb830453dcc8633ad8c48ea666daa1bd4186f25 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1546,6 +1546,7 @@
- 	failslab=
- 	fail_usercopy=
- 	fail_page_alloc=
-+	fail_skb_realloc=
- 	fail_make_request=[KNL]
- 			General fault injection mechanism.
- 			Format: <interval>,<probability>,<space>,<times>
-diff --git a/Documentation/fault-injection/fault-injection.rst b/Documentation/fault-injection/fault-injection.rst
-index 8b8aeea71c685b358dfebb419ae74277e729298a..880237dca4ff78e7f11dac3cca70969a18a70cc3 100644
---- a/Documentation/fault-injection/fault-injection.rst
-+++ b/Documentation/fault-injection/fault-injection.rst
-@@ -45,6 +45,32 @@ Available fault injection capabilities
-   ALLOW_ERROR_INJECTION() macro, by setting debugfs entries
-   under /sys/kernel/debug/fail_function. No boot option supported.
- 
-+- fail_skb_realloc
-+
-+  inject skb (socket buffer) reallocation events into the network path. The
-+  primary goal is to identify and prevent issues related to pointer
-+  mismanagement in the network subsystem.  By forcing skb reallocation at
-+  strategic points, this feature creates scenarios where existing pointers to
-+  skb headers become invalid.
-+
-+  When the fault is injected and the reallocation is triggered, cached pointers
-+  to skb headers and data no longer reference valid memory locations. This
-+  deliberate invalidation helps expose code paths where proper pointer updating
-+  is neglected after a reallocation event.
-+
-+  By creating these controlled fault scenarios, the system can catch instances
-+  where stale pointers are used, potentially leading to memory corruption or
-+  system instability.
-+
-+  To select the interface to act on, write the network name to the following file:
-+  `/sys/kernel/debug/fail_skb_realloc/devname`
-+  If this field is left empty (which is the default value), skb reallocation
-+  will be forced on all network interfaces.
-+
-+  The effectiveness of this fault detection is enhanced when KASAN is
-+  enabled, as it helps identify invalid memory references and use-after-free
-+  (UAF) issues.
-+
- - NVMe fault injection
- 
-   inject NVMe status code and retry flag on devices permitted by setting
-@@ -216,6 +242,19 @@ configuration of fault-injection capabilities.
- 	use a negative errno, you better use 'printf' instead of 'echo', e.g.:
- 	$ printf %#x -12 > retval
- 
-+- /sys/kernel/debug/fail_skb_realloc/devname:
-+
-+        Specifies the network interface on which to force SKB reallocation.  If
-+        left empty, SKB reallocation will be applied to all network interfaces.
-+
-+        Example usage::
-+
-+          # Force skb reallocation on eth0
-+          echo "eth0" > /sys/kernel/debug/fail_skb_realloc/devname
-+
-+          # Clear the selection and force skb reallocation on all interfaces
-+          echo "" > /sys/kernel/debug/fail_skb_realloc/devname
-+
- Boot option
- ^^^^^^^^^^^
- 
-@@ -227,6 +266,7 @@ use the boot option::
- 	fail_usercopy=
- 	fail_make_request=
- 	fail_futex=
-+	fail_skb_realloc=
- 	mmc_core.fail_request=<interval>,<probability>,<space>,<times>
- 
- proc entries
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 48f1e0fa2a13619e41dfba40f2593dd61f9b9a06..285e36a5e5d7806113a5eb8459ff4f32de5d1248 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2681,6 +2681,12 @@ static inline void skb_assert_len(struct sk_buff *skb)
- #endif /* CONFIG_DEBUG_NET */
- }
- 
-+#if defined(CONFIG_FAIL_SKB_REALLOC)
-+void skb_might_realloc(struct sk_buff *skb);
-+#else
-+static inline void skb_might_realloc(struct sk_buff *skb) {}
-+#endif
-+
- /*
-  *	Add data to an sk_buff
-  */
-@@ -2781,6 +2787,7 @@ static inline enum skb_drop_reason
- pskb_may_pull_reason(struct sk_buff *skb, unsigned int len)
- {
- 	DEBUG_NET_WARN_ON_ONCE(len > INT_MAX);
-+	skb_might_realloc(skb);
- 
- 	if (likely(len <= skb_headlen(skb)))
- 		return SKB_NOT_DROPPED_YET;
-@@ -3216,6 +3223,7 @@ static inline int __pskb_trim(struct sk_buff *skb, unsigned int len)
- 
- static inline int pskb_trim(struct sk_buff *skb, unsigned int len)
- {
-+	skb_might_realloc(skb);
- 	return (len < skb->len) ? __pskb_trim(skb, len) : 0;
- }
- 
-@@ -3970,6 +3978,7 @@ int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len);
- 
- static inline int pskb_trim_rcsum(struct sk_buff *skb, unsigned int len)
- {
-+	skb_might_realloc(skb);
- 	if (likely(len >= skb->len))
- 		return 0;
- 	return pskb_trim_rcsum_slow(skb, len);
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 7312ae7c3cc57b9d7e12286b4218206811d9705b..67b669d2e70eb5ec5b956794ff2bccfe698db64a 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2115,6 +2115,16 @@ config FAIL_SUNRPC
- 	  Provide fault-injection capability for SunRPC and
- 	  its consumers.
- 
-+config FAIL_SKB_REALLOC
-+	bool "Fault-injection capability forcing skb to reallocate"
-+	depends on FAULT_INJECTION_DEBUG_FS
-+	help
-+	  Provide fault-injection capability that forces the skb to be
-+	  reallocated, catching possible invalid pointers to the skb.
-+
-+	  For more information, check
-+	  Documentation/dev-tools/fault-injection/fault-injection.rst
-+
- config FAULT_INJECTION_CONFIGFS
- 	bool "Configfs interface for fault-injection capabilities"
- 	depends on FAULT_INJECTION
-diff --git a/net/core/Makefile b/net/core/Makefile
-index 5a72a87ee0f1defed67a4f40f58553e592265279..d9326600e289beb83d98ab2652130c9e7a1a005e 100644
---- a/net/core/Makefile
-+++ b/net/core/Makefile
-@@ -46,3 +46,4 @@ obj-$(CONFIG_OF)	+= of_net.o
- obj-$(CONFIG_NET_TEST) += net_test.o
- obj-$(CONFIG_NET_DEVMEM) += devmem.o
- obj-$(CONFIG_DEBUG_NET_SMALL_RTNL) += rtnl_net_debug.o
-+obj-$(CONFIG_FAIL_SKB_REALLOC) += skb_fault_injection.o
-diff --git a/net/core/skb_fault_injection.c b/net/core/skb_fault_injection.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..4235db6bdfad55a9d7ed814542888b8319356c8e
---- /dev/null
-+++ b/net/core/skb_fault_injection.c
-@@ -0,0 +1,106 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/debugfs.h>
-+#include <linux/fault-inject.h>
-+#include <linux/netdevice.h>
-+#include <linux/skbuff.h>
-+
-+static struct {
-+	struct fault_attr attr;
-+	char devname[IFNAMSIZ];
-+	bool filtered;
-+} skb_realloc = {
-+	.attr = FAULT_ATTR_INITIALIZER,
-+	.filtered = false,
-+};
-+
-+static bool should_fail_net_realloc_skb(struct sk_buff *skb)
-+{
-+	struct net_device *net = skb->dev;
-+
-+	if (skb_realloc.filtered &&
-+	    strncmp(net->name, skb_realloc.devname, IFNAMSIZ))
-+		/* device name filter set, but names do not match */
-+		return false;
-+
-+	if (!should_fail(&skb_realloc.attr, 1))
-+		return false;
-+
-+	return true;
-+}
-+ALLOW_ERROR_INJECTION(should_fail_net_realloc_skb, TRUE);
-+
-+void skb_might_realloc(struct sk_buff *skb)
-+{
-+	if (!should_fail_net_realloc_skb(skb))
-+		return;
-+
-+	pskb_expand_head(skb, 0, 0, GFP_ATOMIC);
-+}
-+EXPORT_SYMBOL(skb_might_realloc);
-+
-+static int __init fail_skb_realloc_setup(char *str)
-+{
-+	return setup_fault_attr(&skb_realloc.attr, str);
-+}
-+__setup("fail_skb_realloc=", fail_skb_realloc_setup);
-+
-+static void reset_settings(void)
-+{
-+	skb_realloc.filtered = false;
-+	memset(&skb_realloc.devname, 0, IFNAMSIZ);
-+}
-+
-+static ssize_t devname_write(struct file *file, const char __user *buffer,
-+			     size_t count, loff_t *ppos)
-+{
-+	ssize_t ret;
-+
-+	reset_settings();
-+	ret = simple_write_to_buffer(&skb_realloc.devname, IFNAMSIZ,
-+				     ppos, buffer, count);
-+	if (ret < 0)
-+		return ret;
-+
-+	skb_realloc.devname[IFNAMSIZ - 1] = '\0';
-+	/* Remove a possible \n at the end of devname */
-+	strim(skb_realloc.devname);
-+
-+	if (strnlen(skb_realloc.devname, IFNAMSIZ))
-+		skb_realloc.filtered = true;
-+
-+	return count;
-+}
-+
-+static ssize_t devname_read(struct file *file,
-+			    char __user *buffer,
-+			    size_t size, loff_t *ppos)
-+{
-+	if (!skb_realloc.filtered)
-+		return 0;
-+
-+	return simple_read_from_buffer(buffer, size, ppos, &skb_realloc.devname,
-+				       strlen(skb_realloc.devname));
-+}
-+
-+static const struct file_operations devname_ops = {
-+	.write = devname_write,
-+	.read = devname_read,
-+};
-+
-+static int __init fail_skb_realloc_debugfs(void)
-+{
-+	umode_t mode = S_IFREG | 0600;
-+	struct dentry *dir;
-+
-+	dir = fault_create_debugfs_attr("fail_skb_realloc", NULL,
-+					&skb_realloc.attr);
-+	if (IS_ERR(dir))
-+		return PTR_ERR(dir);
-+
-+	debugfs_create_file("devname", mode, dir, NULL, &devname_ops);
-+
-+	return 0;
-+}
-+
-+late_initcall(fail_skb_realloc_debugfs);
-
----
-base-commit: dbb9a7ef347828870df3e5e6ddf19469a3277fc9
-change-id: 20241101-skb_fault_injection_v5-6f3b6a5f4dc9
 
 Best regards,
--- 
-Breno Leitao <leitao@debian.org>
+Krzysztof
 
 
