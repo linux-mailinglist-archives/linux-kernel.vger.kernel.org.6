@@ -1,168 +1,185 @@
-Return-Path: <linux-kernel+bounces-391689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135FC9B8A4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:59:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4979B8A55
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:08:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D9121C21AE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:59:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D0121C214ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15A614885D;
-	Fri,  1 Nov 2024 04:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9435914B080;
+	Fri,  1 Nov 2024 05:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="OWhYry3a";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nXAd6zox"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UN5ribLw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B1D322B;
-	Fri,  1 Nov 2024 04:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA4F149DF7;
+	Fri,  1 Nov 2024 05:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730437154; cv=none; b=QRbuRWqfTr/FkfwLCned7wrEXQBkVrc2P07dAfiPPTok2F+azsK+krISu5pvdxvv5U0O0vdNiMsN0fKWUrXoAtBKUSo1sbl9ikHxTYlzhB5z5UFhO6493i4WSw1QbgllvLC+ol5msFxehMvIfSNq/fOZ4dG0ErLOXdikJ+sjPaw=
+	t=1730437697; cv=none; b=L7BsioyXFADbPA3/MMDaO41AnOCVeIZUnsRYE04GyDEKrT9ufjCtUw/yj0nli42fBKzlvg3i+qoBoPszKmN7fMBCrjQNbZAvoEhB+nb0Tyj23jQmIOmPT6jox+zxATjBg7AEqxWfiZ9Kv61ruWqaUHz95QQWf0PMytQUWvFSoYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730437154; c=relaxed/simple;
-	bh=t2sfTpM5WPgCUaI+PxFBg3ngx12mwdycHLvzxpb70eU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OsDgundIxwppX3aR5irrC4NgXGoO8EJcgKy1hNAIOXzBlxVPuTH6RJTPTvWs5EgVsVLDWvzafAKs/MoBbqg0DGssdBDVqtqvxAPeSLxfbEufVa+HXSlwNPIAZJGtW3D5HzmDOa1PcjbL++wU3i4zYTn9pQSkKdkSDgi7obys4xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=OWhYry3a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nXAd6zox; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0FFE8138012C;
-	Fri,  1 Nov 2024 00:59:10 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Fri, 01 Nov 2024 00:59:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1730437150; x=1730523550; bh=JJ9+M/HGlO5YKjsRaH9qT
-	g7jRa5jm5uIC1oaNkJ8ijs=; b=OWhYry3a4nXL7seqHkZEdAmV/IINkKaq4r/i2
-	8ivssk1ws7lb/rsqgaClf2SrWno99EqwgcyB9z7QHhlKI7qktrBWSHssnIEAqDje
-	cXQS+h/Srs8FceTRXNBaPevjq1WItkf+XyJt78knGPRRguFDUMqtgVrY3IMxvhNE
-	cEx6T8dJ82AnCFpKRsD63CS3j0pt6GeEt1L//uYC3EVB/414L+7X0Ei6SWyNhWBg
-	+Mw1pRALiOq2o/Yd49ZXvke2CxpxYc9RWuKs5+W+0tWtLHAAaSg3uTEJ93DW971w
-	EoJu90c5HWDhBKbfqz6cLpix7V5kdGgugMVTzI1EtuRzOik7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730437150; x=1730523550; bh=JJ9+M/HGlO5YKjsRaH9qTg7jRa5jm5uIC1o
-	aNkJ8ijs=; b=nXAd6zox5lWNcWWYLI118/rMtVyPijWT6/6Ke0Cs+6cgSUcx+up
-	Zq5TFrQrOl0xBYiJHOFj8N5GKlCxGiztN9okRvJcz9kcxKJRAEgH0DU8qgKRt86S
-	wpxQPYWdRy6VG6GTUqwxfQTo4fgUELYrxnNdpZhXcxWNtjcgJATm76oOVNObQEJv
-	uJJwBEw+T6XVRLDAG3ny8Wdg1AqqJhtKGIhmpbM0RTrgK3AAXcTGszfUEKlK1zw9
-	t2g8zKR+u/PtZY7RQZdo2T8voIWJkJ492FVvXGwGH75F4C8vc/Urk8Z3D30uSVVc
-	Dd6GG/2p5ZIIKR8JERHtYhBD2ltG8mWYh2Q==
-X-ME-Sender: <xms:HGAkZ4DPCXiFVV9fgTZTgeCpGWkO4ettS8HIGYAd4EryX9nUjTjVzw>
-    <xme:HGAkZ6h1kH50xh1lq6UR0-QUYYmMs_5-D2dNA2-EKPnMlKztrHsmqZRGqdrcGLcqG
-    f1Gl2Asts2LffCKvw>
-X-ME-Received: <xmr:HGAkZ7lgd8vv6aLs_kaKkdI5BrIBXZQj6hbSLm2ObtB8R7IF6As9lpqSLZDXO1rbC3ezXJs-xnF1vtJiuFf4380iX8zBgUUMWq8wbWTNJcXxuUq1Q6Ur>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekkedgjeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlje
-    dtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeffrghn
-    ihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepvd
-    eggfetgfelhefhueefkeduvdfguedvhfegleejudduffffgfetueduieeikeejnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguh
-    huuhdrgiihiidpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepmhhitg
-    hhrggvlhdrtghhrghnsegsrhhorggutghomhdrtghomhdprhgtphhtthhopegvughumhgr
-    iigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvh
-    eslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepvhhikhgrshdrghhuphhtrgessghrohgruggtohhmrdgtohhmpdhrtghpthhtoh
-    eprghnughrvgifrdhgohhsphhouggrrhgvkhessghrohgruggtohhmrdgtohhmpdhrtghp
-    thhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehprghvrghnrd
-    gthhgvsggsihessghrohgruggtohhmrdgtohhm
-X-ME-Proxy: <xmx:HGAkZ-zQKcBrQZrXkZFm6vdCHRuOgZAorWniWUl7UopJGDbpIedslQ>
-    <xmx:HGAkZ9TAVeEJ9bHzIYlw7Z9MbO8k3epXscOvEezTqMJ2brfvVbv_NA>
-    <xmx:HGAkZ5YuGBnoE_VkDrp6dL9CRUHMn-ezQ1Hp7CgPWY4775F4xKzavw>
-    <xmx:HGAkZ2QrDOJg_2ol0LsdztEj4UbFuGnk3sPPiOHuuDs6Nz5t-5QDKA>
-    <xmx:HmAkZzD2O20rt48UzA2d1b3tDYqp25J5iNGhWZl0LYus7G7s8TWwq999>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Nov 2024 00:59:07 -0400 (EDT)
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: davem@davemloft.net,
-	michael.chan@broadcom.com,
-	edumazet@google.com,
-	andrew+netdev@lunn.ch,
-	kuba@kernel.org,
-	vikas.gupta@broadcom.com,
-	andrew.gospodarek@broadcom.com,
-	pabeni@redhat.com,
-	pavan.chebbi@broadcom.com,
-	martin.lau@linux.dev
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH net] bnxt_en: ethtool: Fix ip[6] ntuple rule verification
-Date: Thu, 31 Oct 2024 22:58:30 -0600
-Message-ID: <219859e674ef7a9d8af9ab4f64a9095580f04bcc.1730436983.git.dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1730437697; c=relaxed/simple;
+	bh=H7vjDWGQG26wOoS585XzWgyDF2JFLlayqip2raZHkC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WTxRW5TSmxLJaYfTRZJSM70CP4H8zh9SAz2CXIghqRdm5tYXfXjTuYh/lvF5/WcywVZHWx2pfJrJx3h+kvOg1Gdw5Sb3vb3loDbDm+4P37mK8fINtPA7uu8ywx+mJSD7bVWh9GktKmDdCnbUeEr5Ska3/UdSJhkfuwzGAmcKbbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UN5ribLw; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730437696; x=1761973696;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=H7vjDWGQG26wOoS585XzWgyDF2JFLlayqip2raZHkC8=;
+  b=UN5ribLw3cZF1WdxQ5+lmc/pYOr8mw1RlvlFe0N/FnLhK2KQDrHI/044
+   SeCykq5Ic+pGFmX7y51j2wvdhu2OOWPmw9Uc1M7ukdt3lrtMxetXMavUp
+   5s2adPxIMRKd7cT2md+U6wGWWENDjSZWUXo1knB8DW90opMEqAlQd6+4t
+   bG1bzy0fDw1hWrIopBdeKD9t3f6BnvimLjQ/wOSCWZrMFKaUq5iiE4G8Z
+   C54Pn4hUWMeUo1YxZo9b1WCsUW9AZj0lloPKoWinj5yrSY/pIzSdMg7lx
+   iQeIpjT2MYfMadYaoPpBSMprebZvIlwR9OmFK4jsqZW76i89Xl1rgMd7U
+   A==;
+X-CSE-ConnectionGUID: aFDhHUPUTkaY1D2XSLUYLQ==
+X-CSE-MsgGUID: RSvx8SzER5O/s8yE8ijyYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="30091586"
+X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
+   d="scan'208";a="30091586"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 22:08:12 -0700
+X-CSE-ConnectionGUID: gyuYbdDbS8CwziV/0jEL0g==
+X-CSE-MsgGUID: GyW6NjXMRZOc6wgrERN0Jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
+   d="scan'208";a="120315135"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 31 Oct 2024 22:08:08 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6jtF-000h9r-2s;
+	Fri, 01 Nov 2024 05:08:05 +0000
+Date: Fri, 1 Nov 2024 13:07:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, rostedt@goodmis.org, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+	peterz@infradead.org, paulmck@kernel.org, jrife@google.com,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH trace/for-next 2/3] bpf: decouple BPF link/attach hook
+ and BPF program sleepable semantics
+Message-ID: <202411011244.LrXOUj8p-lkp@intel.com>
+References: <20241031210938.1696639-2-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031210938.1696639-2-andrii@kernel.org>
 
-Previously, trying to insert an ip or ip6 only rule would get rejected
-with -EOPNOTSUPP. For example, the following would fail:
+Hi Andrii,
 
-    ethtool -N eth0 flow-type ip6 dst-ip $IP6 context 1
+kernel test robot noticed the following build errors:
 
-The reason was that all the l4proto validation was being run despite the
-l4proto mask being set to 0x0.  Fix by only running l4proto validation
-when mask is set.
+[auto build test ERROR on trace/for-next]
 
-Fixes: 9ba0e56199e3 ("bnxt_en: Enhance ethtool ntuple support for ip flows besides TCP/UDP")
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-decouple-BPF-link-attach-hook-and-BPF-program-sleepable-semantics/20241101-051131
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20241031210938.1696639-2-andrii%40kernel.org
+patch subject: [PATCH trace/for-next 2/3] bpf: decouple BPF link/attach hook and BPF program sleepable semantics
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20241101/202411011244.LrXOUj8p-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241101/202411011244.LrXOUj8p-lkp@intel.com/reproduce)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index f71cc8188b4e..1c97ee406bd7 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -1289,10 +1289,13 @@ static int bnxt_add_l2_cls_rule(struct bnxt *bp,
- static bool bnxt_verify_ntuple_ip4_flow(struct ethtool_usrip4_spec *ip_spec,
- 					struct ethtool_usrip4_spec *ip_mask)
- {
-+	u8 mproto = ip_mask->proto;
-+	u8 sproto = ip_spec->proto;
-+
- 	if (ip_mask->l4_4_bytes || ip_mask->tos ||
- 	    ip_spec->ip_ver != ETH_RX_NFC_IP4 ||
--	    ip_mask->proto != BNXT_IP_PROTO_FULL_MASK ||
--	    (ip_spec->proto != IPPROTO_RAW && ip_spec->proto != IPPROTO_ICMP))
-+	    (mproto && mproto != BNXT_IP_PROTO_FULL_MASK) ||
-+	    (mproto && sproto != IPPROTO_RAW && sproto != IPPROTO_ICMP))
- 		return false;
- 	return true;
- }
-@@ -1300,10 +1303,12 @@ static bool bnxt_verify_ntuple_ip4_flow(struct ethtool_usrip4_spec *ip_spec,
- static bool bnxt_verify_ntuple_ip6_flow(struct ethtool_usrip6_spec *ip_spec,
- 					struct ethtool_usrip6_spec *ip_mask)
- {
-+	u8 mproto = ip_mask->l4_proto;
-+	u8 sproto = ip_spec->l4_proto;
-+
- 	if (ip_mask->l4_4_bytes || ip_mask->tclass ||
--	    ip_mask->l4_proto != BNXT_IP_PROTO_FULL_MASK ||
--	    (ip_spec->l4_proto != IPPROTO_RAW &&
--	     ip_spec->l4_proto != IPPROTO_ICMPV6))
-+	    (mproto && mproto != BNXT_IP_PROTO_FULL_MASK) ||
-+	    (mproto && sproto != IPPROTO_RAW && sproto != IPPROTO_ICMPV6))
- 		return false;
- 	return true;
- }
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411011244.LrXOUj8p-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   net/core/dev.c: In function 'bpf_xdp_link_attach':
+>> net/core/dev.c:9767:9: error: too few arguments to function 'bpf_link_init'
+    9767 |         bpf_link_init(&link->link, BPF_LINK_TYPE_XDP, &bpf_xdp_link_lops, prog);
+         |         ^~~~~~~~~~~~~
+   In file included from include/linux/security.h:35,
+                    from include/net/scm.h:9,
+                    from include/linux/netlink.h:9,
+                    from include/uapi/linux/neighbour.h:6,
+                    from include/linux/netdevice.h:44,
+                    from net/core/dev.c:92:
+   include/linux/bpf.h:2724:20: note: declared here
+    2724 | static inline void bpf_link_init(struct bpf_link *link, enum bpf_link_type type,
+         |                    ^~~~~~~~~~~~~
+
+
+vim +/bpf_link_init +9767 net/core/dev.c
+
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9744  
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9745  int bpf_xdp_link_attach(const union bpf_attr *attr, struct bpf_prog *prog)
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9746  {
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9747  	struct net *net = current->nsproxy->net_ns;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9748  	struct bpf_link_primer link_primer;
+bf4ea1d0b2cb22 Leon Hwang      2023-08-01  9749  	struct netlink_ext_ack extack = {};
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9750  	struct bpf_xdp_link *link;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9751  	struct net_device *dev;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9752  	int err, fd;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9753  
+5acc7d3e8d3428 Xuan Zhuo       2021-07-10  9754  	rtnl_lock();
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9755  	dev = dev_get_by_index(net, attr->link_create.target_ifindex);
+5acc7d3e8d3428 Xuan Zhuo       2021-07-10  9756  	if (!dev) {
+5acc7d3e8d3428 Xuan Zhuo       2021-07-10  9757  		rtnl_unlock();
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9758  		return -EINVAL;
+5acc7d3e8d3428 Xuan Zhuo       2021-07-10  9759  	}
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9760  
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9761  	link = kzalloc(sizeof(*link), GFP_USER);
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9762  	if (!link) {
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9763  		err = -ENOMEM;
+5acc7d3e8d3428 Xuan Zhuo       2021-07-10  9764  		goto unlock;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9765  	}
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9766  
+aa8d3a716b59db Andrii Nakryiko 2020-07-21 @9767  	bpf_link_init(&link->link, BPF_LINK_TYPE_XDP, &bpf_xdp_link_lops, prog);
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9768  	link->dev = dev;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9769  	link->flags = attr->link_create.flags;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9770  
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9771  	err = bpf_link_prime(&link->link, &link_primer);
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9772  	if (err) {
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9773  		kfree(link);
+5acc7d3e8d3428 Xuan Zhuo       2021-07-10  9774  		goto unlock;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9775  	}
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9776  
+bf4ea1d0b2cb22 Leon Hwang      2023-08-01  9777  	err = dev_xdp_attach_link(dev, &extack, link);
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9778  	rtnl_unlock();
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9779  
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9780  	if (err) {
+5acc7d3e8d3428 Xuan Zhuo       2021-07-10  9781  		link->dev = NULL;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9782  		bpf_link_cleanup(&link_primer);
+bf4ea1d0b2cb22 Leon Hwang      2023-08-01  9783  		trace_bpf_xdp_link_attach_failed(extack._msg);
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9784  		goto out_put_dev;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9785  	}
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9786  
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9787  	fd = bpf_link_settle(&link_primer);
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9788  	/* link itself doesn't hold dev's refcnt to not complicate shutdown */
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9789  	dev_put(dev);
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9790  	return fd;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9791  
+5acc7d3e8d3428 Xuan Zhuo       2021-07-10  9792  unlock:
+5acc7d3e8d3428 Xuan Zhuo       2021-07-10  9793  	rtnl_unlock();
+5acc7d3e8d3428 Xuan Zhuo       2021-07-10  9794  
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9795  out_put_dev:
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9796  	dev_put(dev);
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9797  	return err;
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9798  }
+aa8d3a716b59db Andrii Nakryiko 2020-07-21  9799  
+
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
