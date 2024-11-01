@@ -1,57 +1,94 @@
-Return-Path: <linux-kernel+bounces-392479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8AAF9B94AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:45:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE52C9B94B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896F028208F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:45:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96318281D51
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F57A1C9B7A;
-	Fri,  1 Nov 2024 15:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696431C7B9C;
+	Fri,  1 Nov 2024 15:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rticl3aU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c4wVWhv4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FEB24B34;
-	Fri,  1 Nov 2024 15:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690592CAB;
+	Fri,  1 Nov 2024 15:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475915; cv=none; b=Tpx3jMtWNZZrqlUwr3XyY8gQccPDmIi0mS50fH5NzaEEXXbSybQEdh33mUNBHbY2/ZY1Ed+0XJdWm6t1yjC/Zg2YhehxbjtHlPwlS+6Rla9pNOvvqHPiYJEhwDUY5qsoAEE+3N21CsA5OEerK9JcwsQTJMlV/dAbm0gZhQmQ7mw=
+	t=1730475954; cv=none; b=B4AWyh9Iqzt+q6PgVAeXHZCszUo0M+DTilzAYq008i3WBs0gqjgPz78qkDX8hyZiQMwb2TXElyawSSJhKwQ736631y5lmDMRdtvYLfadg0GFn8uSsvpvEYjAeAZydoc/1gDPSJ4udELR0vFkaHc3MPXyPje+qqhKTmGnEke1nsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475915; c=relaxed/simple;
-	bh=3vulanNLtTjI+wiz2l4SFzXx/jfbPRTrULNZ2xQqFK4=;
+	s=arc-20240116; t=1730475954; c=relaxed/simple;
+	bh=AtLvIf40LVUPIr+E+dfnhbLSuY3QnClbgKbNsZaogN4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tP/JCfEq9jhc09W+6Pmk9uhsu5nggBHorTZe4/DJ0jbJexNySTzPojTTnSWiBiT5hMdhv2MDhKN/EQjpbDfRHWUSkTgPuu2uQpj4Jrzf3rZxJRK1JnFhQXWkHGwXghNUy2B+c4QMPOHG3ScoSFjFd6U0OXMylkOLV146Z5tYsqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rticl3aU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DEECC4CECD;
-	Fri,  1 Nov 2024 15:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730475915;
-	bh=3vulanNLtTjI+wiz2l4SFzXx/jfbPRTrULNZ2xQqFK4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rticl3aUoGUST6XxG+48LKqrFksdNO96HR0AOdHnQeeU6J9IyeI/Eq9UrxCXd/PN7
-	 Jtiv5onuq9eCgsel7erep/lKdXVt4Ob0W3vtGhkP8Fge+EdM34+tOs0xf3xt87fGEi
-	 GqCzg3JX861IkOsBTt/MEZORG67m0VVCxj03hex/xgzrlHcgl/HffSrp26XvPoPWci
-	 rgUshTB2Ow3DrQwjwFn6lcanDaiFZgP8PwniYMRG3ptTGAqyyqA+b1ZcZ1o6FaOSGA
-	 JkBABXwdqLTp27HGTKHLKdZyCKLH0Exj6h4WfuFgVZ21ZT1H5xIPG1EX1SE5e+8z2i
-	 fSFJBKRqBU61Q==
-Date: Fri, 1 Nov 2024 10:45:12 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Rex Nie <rex.nie@jaguarmicro.com>
-Cc: bryan.odonoghue@linaro.org, heikki.krogerus@linux.intel.com, 
-	gregkh@linuxfoundation.org, linux@roeck-us.net, caleb.connolly@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	angus.chen@jaguarmicro.com, stable@vger.kernel.org
-Subject: Re: [PATCH v4] usb: typec: qcom-pmic: init value of
- hdr_len/txbuf_len earlier
-Message-ID: <cmudnqum4qaec6hjoxj7wxfkdui65nkij4q2fziihf7tsmg7ry@qa3lkf4g7npw>
-References: <20241030022753.2045-1-rex.nie@jaguarmicro.com>
- <20241030133632.2116-1-rex.nie@jaguarmicro.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qNnivzDeMm0SuPj5tDJX5wn9eSLekXlDK31L0IK0VPJvzBLeZU4/4U+q/A9zJ+I+RxLvIg7bGQRUxnGsEjnKDJz0iphTubKjKsqDnHg8q/8oUxbxUtlg0Lf+lQnhSOdPib9CnEADiCObUzQjhtTH2uqP2olVZ0oBgCb3VdaoaII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c4wVWhv4; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730475952; x=1762011952;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AtLvIf40LVUPIr+E+dfnhbLSuY3QnClbgKbNsZaogN4=;
+  b=c4wVWhv40TRcG8cJd2SKOzmhuT8/Zc/P5Tay0w6Wczk/zK1NJzD9Vz4f
+   mzlAx00YIHKhIlaZblB03iZFduQK4MGHUkyHDTAHLof/sEIr3JOeaSC1q
+   TNkI+LKSq4v76PYjl162Ok++alLj2987LYcKe2M27vcGH3hFa1qw4FkLw
+   6aKxJN0vOldND5Zl8/EAouhs/NOkR0qfD85qtSHqfWnX2Ajpsda3BpH1k
+   iFYyZYrNl4RVv/m5ACv4duHMEdIq5OP2eVPwVleh6Enec08Zd0OA3n5wv
+   yciBBL7GnWrpMtF48gGkhuDUtOeZR7PO9jaDSDYu7VaymO7hBRIPS7dac
+   w==;
+X-CSE-ConnectionGUID: LTvIuaENT6eoxYZScj64Xw==
+X-CSE-MsgGUID: Fx6uxMk0RIOavwzRMSya+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="41638040"
+X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
+   d="scan'208";a="41638040"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 08:45:51 -0700
+X-CSE-ConnectionGUID: nWBmi2iJTVKrItxMhYpRQg==
+X-CSE-MsgGUID: LyCahANDQCmoagk5lCwJ/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
+   d="scan'208";a="87810812"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 01 Nov 2024 08:45:45 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6tqJ-000hil-0T;
+	Fri, 01 Nov 2024 15:45:43 +0000
+Date: Fri, 1 Nov 2024 23:45:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Maximilian Luz <luzmaximilian@gmail.com>,
+	Lee Chun-Yi <jlee@suse.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Ike Panhc <ike.pan@canonical.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Alexis Belmonte <alexbelm48@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+	"open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>,
+	"open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	Matthew Schwartz <matthew.schwartz@linux.dev>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v3 20/22] ACPI: platform_profile: Register class device
+ for platform profile handlers
+Message-ID: <202411012317.1pQLOspC-lkp@intel.com>
+References: <20241031040952.109057-21-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,64 +97,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030133632.2116-1-rex.nie@jaguarmicro.com>
+In-Reply-To: <20241031040952.109057-21-mario.limonciello@amd.com>
 
-On Wed, Oct 30, 2024 at 09:36:32PM GMT, Rex Nie wrote:
-> If the read of USB_PDPHY_RX_ACKNOWLEDGE_REG failed, then hdr_len and
-> txbuf_len are uninitialized. This commit stops to print uninitialized
-> value and misleading/false data.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: a4422ff22142 (" usb: typec: qcom: Add Qualcomm PMIC Type-C driver")
-> Signed-off-by: Rex Nie <rex.nie@jaguarmicro.com>
+Hi Mario,
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+kernel test robot noticed the following build errors:
 
-Nice job. Next time, please don't use In-Reply-To between patch
-versions.
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.12-rc5 next-20241101]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Regards,
-Bjorn
+url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/ACPI-platform-profile-Add-a-name-member-to-handlers/20241031-121650
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241031040952.109057-21-mario.limonciello%40amd.com
+patch subject: [PATCH v3 20/22] ACPI: platform_profile: Register class device for platform profile handlers
+config: x86_64-buildonly-randconfig-005-20241101 (https://download.01.org/0day-ci/archive/20241101/202411012317.1pQLOspC-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241101/202411012317.1pQLOspC-lkp@intel.com/reproduce)
 
-> ---
-> V2 -> V3:
-> - add changelog, add Fixes tag, add Cc stable ml. Thanks heikki
-> - Link to v2: https://lore.kernel.org/all/20241030022753.2045-1-rex.nie@jaguarmicro.com/
-> V1 -> V2:
-> - keep printout when data didn't transmit, thanks Bjorn, bod, greg k-h
-> - Links: https://lore.kernel.org/all/b177e736-e640-47ed-9f1e-ee65971dfc9c@linaro.org/
-> ---
->  drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c
-> index 5b7f52b74a40..726423684bae 100644
-> --- a/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c
-> +++ b/drivers/usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c
-> @@ -227,6 +227,10 @@ qcom_pmic_typec_pdphy_pd_transmit_payload(struct pmic_typec_pdphy *pmic_typec_pd
->  
->  	spin_lock_irqsave(&pmic_typec_pdphy->lock, flags);
->  
-> +	hdr_len = sizeof(msg->header);
-> +	txbuf_len = pd_header_cnt_le(msg->header) * 4;
-> +	txsize_len = hdr_len + txbuf_len - 1;
-> +
->  	ret = regmap_read(pmic_typec_pdphy->regmap,
->  			  pmic_typec_pdphy->base + USB_PDPHY_RX_ACKNOWLEDGE_REG,
->  			  &val);
-> @@ -244,10 +248,6 @@ qcom_pmic_typec_pdphy_pd_transmit_payload(struct pmic_typec_pdphy *pmic_typec_pd
->  	if (ret)
->  		goto done;
->  
-> -	hdr_len = sizeof(msg->header);
-> -	txbuf_len = pd_header_cnt_le(msg->header) * 4;
-> -	txsize_len = hdr_len + txbuf_len - 1;
-> -
->  	/* Write message header sizeof(u16) to USB_PDPHY_TX_BUFFER_HDR_REG */
->  	ret = regmap_bulk_write(pmic_typec_pdphy->regmap,
->  				pmic_typec_pdphy->base + USB_PDPHY_TX_BUFFER_HDR_REG,
-> -- 
-> 2.17.1
-> 
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411012317.1pQLOspC-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/acpi/platform_profile.c: In function 'platform_profile_register':
+>> drivers/acpi/platform_profile.c:303:42: error: implicit declaration of function 'MKDEV' [-Werror=implicit-function-declaration]
+     303 |                                          MKDEV(0, pprof->minor), NULL, "platform-profile-%s",
+         |                                          ^~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/MKDEV +303 drivers/acpi/platform_profile.c
+
+   261	
+   262	int platform_profile_register(struct platform_profile_handler *pprof)
+   263	{
+   264		bool registered;
+   265		int err;
+   266	
+   267		/* Sanity check the profile handler */
+   268		if (!pprof || bitmap_empty(pprof->choices, PLATFORM_PROFILE_LAST) ||
+   269		    !pprof->profile_set || !pprof->profile_get) {
+   270			pr_err("platform_profile: handler is invalid\n");
+   271			return -EINVAL;
+   272		}
+   273		if (!test_bit(PLATFORM_PROFILE_BALANCED, pprof->choices)) {
+   274			pr_err("platform_profile: handler does not support balanced profile\n");
+   275			return -EINVAL;
+   276		}
+   277		if (!pprof->dev) {
+   278			pr_err("platform_profile: handler device is not set\n");
+   279			return -EINVAL;
+   280		}
+   281	
+   282		guard(mutex)(&profile_lock);
+   283		/* We can only have one active profile */
+   284		if (cur_profile)
+   285			return -EEXIST;
+   286	
+   287		registered = platform_profile_is_registered();
+   288		if (!registered) {
+   289			/* class for individual handlers */
+   290			err = class_register(&platform_profile_class);
+   291			if (err)
+   292				return err;
+   293			/* legacy sysfs files */
+   294			err = sysfs_create_group(acpi_kobj, &platform_profile_group);
+   295			if (err)
+   296				goto cleanup_class;
+   297	
+   298		}
+   299	
+   300		/* create class interface for individual handler */
+   301		pprof->minor = idr_alloc(&platform_profile_minor_idr, pprof, 0, 0, GFP_KERNEL);
+   302		pprof->class_dev = device_create(&platform_profile_class, pprof->dev,
+ > 303						 MKDEV(0, pprof->minor), NULL, "platform-profile-%s",
+   304						 pprof->name);
+   305		if (IS_ERR(pprof->class_dev)) {
+   306			err = PTR_ERR(pprof->class_dev);
+   307			goto cleanup_legacy;
+   308		}
+   309		err = sysfs_create_group(&pprof->class_dev->kobj, &platform_profile_group);
+   310		if (err)
+   311			goto cleanup_device;
+   312	
+   313		list_add_tail(&pprof->list, &platform_profile_handler_list);
+   314		sysfs_notify(acpi_kobj, NULL, "platform_profile");
+   315	
+   316		cur_profile = pprof;
+   317		return 0;
+   318	
+   319	cleanup_device:
+   320		device_destroy(&platform_profile_class, MKDEV(0, pprof->minor));
+   321	
+   322	cleanup_legacy:
+   323		if (!registered)
+   324			sysfs_remove_group(acpi_kobj, &platform_profile_group);
+   325	cleanup_class:
+   326		if (!registered)
+   327			class_unregister(&platform_profile_class);
+   328	
+   329		return err;
+   330	}
+   331	EXPORT_SYMBOL_GPL(platform_profile_register);
+   332	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
