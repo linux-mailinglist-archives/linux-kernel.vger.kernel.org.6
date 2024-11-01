@@ -1,96 +1,93 @@
-Return-Path: <linux-kernel+bounces-391510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF7C9B880D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:00:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC0D9B8816
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:02:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E5C1C218AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:00:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD5851C2040F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981A2126C08;
-	Fri,  1 Nov 2024 00:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCC62BCF5;
+	Fri,  1 Nov 2024 01:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qI/mldjn"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSlMCYbD"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5951BDC3
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CE634CC4;
+	Fri,  1 Nov 2024 01:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730422781; cv=none; b=giIHgeVEu5LtjvlC7m0ReKVP8lUsGVXf4VnE+3e7YV4+gDsfhpPcKwMDbYxdbaqvbqE7v7uW+qlgsfcBuljsOEFNEdcuYqo34Q+F6S/RYW8XoTNS73O5yPleDhJQA6MsP6VAHBXG3u5yr5K/YgR6JgAV+KWN9XouznysQ7KfuzI=
+	t=1730422939; cv=none; b=Ii8lJHpr0YZZMR+EMabzEF8CujHq1bGN9WoN83/U4J16q2sklg4UALHxBZesvD14AdDE5GENTKxtP3Ljb/nMRdF2oPvWNGpU1t0oRG2E51Vq77J1e1KhgFkSgzLQOopE9qqKcmA0LpJFT6muAvEAdeian+wpqeBCINTo07AibbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730422781; c=relaxed/simple;
-	bh=KfozwYSENTNbSyYlouyzU2Yp+8xq6X5Dd42Q5ixj6oI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BbYVJsqw1iyLdxiq/o0cAK9iwvAUyHlq0iyEgBEtN82c6tM6kTTgvBdo9hd3MZmtZWMfbI+4OJp8RSFmgM2M0/BR9hKncul8AS8zQttvCqYlCdpfqx5VV9UvIr8B+Hdt7yLvywVLeinBo8O1W6QL/HgC7arL2ipnWXLDXuAXAzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qI/mldjn; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d495d217bso1265060f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:59:34 -0700 (PDT)
+	s=arc-20240116; t=1730422939; c=relaxed/simple;
+	bh=rpnrvQ51Pzd6TcTCFw/1JOF6TVB5Ku7URjbwIth5Njg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DHA6I/7Hhs7HgHX2amPA95Dgs8KNVMhN81rLx8N71tWvlw2n57IzoJza4UmJ4ZB8gOGxju52w1/mZISSUfMbUH2Si5R+m1yBdxaKpipyq/Vt3uSWhHxmUfQS7k8sOt4uQjOMEkgUyGys6j2EkbCRuQsSkUPA/Qw0EtxIw0IHeyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HSlMCYbD; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7eab7622b61so1217305a12.1;
+        Thu, 31 Oct 2024 18:02:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730422773; x=1731027573; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ojB9bhU+3681CPzpjWV9dtVH/cjJFNb4PF/Se+LIZoU=;
-        b=qI/mldjnBEpejMlL9TJh0RleAreE11XqwZuKnnlt98iySLQ5kkeUGZk54pwds+q85z
-         qFt214a70cmar9TxetU7WZouG3IoEkCiqVnR65auqcgBOtPStGPTBPmf0irOz9ox1VMv
-         EQ4VC+4MtG3WjcpdIDh27hrobnHPWEQNitcw0KwzNaU7XCSz1hz/qw2CgVOsK0nQy8mO
-         /0AvRYzq8lhlFZ78OG3G5TkdAQFVlh8cc+R8P6cLoK6wVpZDMG4HXGYrPasj4btsPx/x
-         m3oXHa8DHLEb+DEkgMMUW0fre3MICHfw6CNGaRDr+JnvO2Lk6VRIi+SVc6X62t/bvFyC
-         VN4Q==
+        d=gmail.com; s=20230601; t=1730422933; x=1731027733; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xxz2el4wbZ6G3BcKbo7KzoBLvWoRppJU2dbWS5YJA44=;
+        b=HSlMCYbDvcLnX/F5tZZdGk4ZfHzh7MKxInI3uT7sKF6vL8pvWQcgoPybFNZgAm+vNe
+         MUfHs8m04o1ulsSVdYIMJvsRAvQUTCZTa9HUChU30WrDkm40b/+VZXG9jXedIhkmVFK7
+         xIxK2xsjAEPsbifsLIiKJp2s4r5pG6wotWyLxJcoErOh9JIwXVNYOkMY1OLYhAdt4pZ1
+         F3DL4Kms+ebbVeCIW3J3VCr2OBryXKAteywVmUgJ2tSH/1JZ0vRQIUL8EKCwe9WvloS1
+         eMQ0W/+nfR2Y4iojzzmBexIbLeRZVxAOr8uuLasEafDNx2kfk5v7YZmC+UQRKBWwfkVP
+         YBJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730422773; x=1731027573;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ojB9bhU+3681CPzpjWV9dtVH/cjJFNb4PF/Se+LIZoU=;
-        b=ORPXllG11WFGSKtprFQ3KMO9luQzUocZHTh8+dj5emrTTfjJkNHhjhL/RgrsKcgzyZ
-         oblsNaEjzXeIhlFFngIACRmZdKSQLjcyBt3+YdsublTBbWDgMIxXtjs+PcSK/E8tizl6
-         UY99mOJIaWPzl1HLEoWqqQhUoL1+AjEO/hESkGlsQgYHHozH4F3PDsui+QCOYNi5gnAd
-         d+bNS4kRADefttQs/ISDO/G1Shmx2ETJjwXMDClNwQtPAERqIHOCFGfWwJIA7yJldKkC
-         qbEC8W3VdwNb3mKQ8rnKL6O5MVWn57oWALlsPzctHif9HqEGQFnVATUYKIVlk6g6jV6n
-         GT0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVGmosPrMNI7H13vQBDvEUye7J3w8ssXm1kpE0uuf8fvytiSkOof1RKQTDpa1JDnqcZFO1a6PKcN/AXFKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7BcBx1m88xyiQeLnzCNo+VhFK2U9igzJ7aPSDNMw6wEJNWVBl
-	HSjhcBMw1WUjj4wUxYXPyJmvkDMiWZisUenfskBcPAI+oUsiJeoA3ycoexceI78=
-X-Google-Smtp-Source: AGHT+IF/H+r5eZyru/pYrCB38bqqGwXsoMG4fIeIGAmr6bBcc7GxkmeVlwXh4HEqUn5JsftbPsMpKw==
-X-Received: by 2002:a05:6000:1fad:b0:37d:5130:b380 with SMTP id ffacd0b85a97d-381c7a5e114mr1786417f8f.23.1730422772920;
-        Thu, 31 Oct 2024 17:59:32 -0700 (PDT)
-Received: from localhost.localdomain ([2.222.231.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947a9fsm74208035e9.22.2024.10.31.17.59.31
+        d=1e100.net; s=20230601; t=1730422933; x=1731027733;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xxz2el4wbZ6G3BcKbo7KzoBLvWoRppJU2dbWS5YJA44=;
+        b=b96t5M0dmWWFZ58si1RM5F1Zl7Id4KBbCqkP3CUsFhMFb4F0+sFlu6QgxnKxHM1F0Z
+         AhwCV05Z6TbX8CKq/R1PxbspQyeTriXyJj5ZPSESSwjwTWEwSYLeKEtY3ccKFdOhZkNV
+         Sq4npH8SMBRLTvrFBwbVVI5o6qcDIi1Y7Nonyz+KPQHVft9UJnzLwYsngfJfb9VfByG0
+         j4BFduY/N8a3lydzF3gPT3no3T6K8byXz0YmpWTo2DRVUJs02Tq/N/fmUj8bKtghw+su
+         1fRUuc6dWqKFXrlqJMBl9x5CKcmf9WPcbX3NKBKsBontAqRrFx3PHe4eIO6apLRap03j
+         IEkg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4dOBmfiKktATOpJz7Jgv3bDxt6b91u8lFamnHL8MafEtkgc5Jl1DACvMvABCEQdS5/9S7cqQW122Ll7Y=@vger.kernel.org, AJvYcCXf2SfUWdD5Ef5KqvCgoADUm1x4NnOSAw0+VDYJ6uUtvqIAh9YhKx8df/GtYfZOthxvrRB35dS59ZYAi2HMp9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSHec23uuJ6pmcZZIWiaNeKvqTa4YNsb/9kLKh/WvQQ8lNChdt
+	0hmg1GJuZjsMAlDig2OPK7ocnfYb++7Rp5ezOUkGfmTgPiTpNlMO
+X-Google-Smtp-Source: AGHT+IGZGlLwqs0no2dclauFE75oRu+pvv2rJZ5SXyzebZVJ67LKbJtJ8Xof1BVHl+beZOs6SyC9xA==
+X-Received: by 2002:a05:6a21:1796:b0:1d8:a1dc:b43 with SMTP id adf61e73a8af0-1d9a8402d85mr29843682637.24.1730422933320;
+        Thu, 31 Oct 2024 18:02:13 -0700 (PDT)
+Received: from mew.. (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ea6a1sm1743403b3a.74.2024.10.31.18.02.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 17:59:31 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: linux-sound@vger.kernel.org,
-	srinivas.kandagatla@linaro.org,
-	broonie@kernel.org
-Cc: lgirdwood@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andersson@kernel.org,
-	konradybcio@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	dmitry.baryshkov@linaro.org,
-	krzysztof.kozlowski@linaro.org,
-	caleb.connolly@linaro.org,
-	linux-kernel@vger.kernel.org,
-	a39.skl@gmail.com
-Subject: [PATCH v4 5/5] arm64: dts: qcom: qrb4210-rb2: add HDMI audio playback support
-Date: Fri,  1 Nov 2024 00:59:25 +0000
-Message-ID: <20241101005925.186696-6-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241101005925.186696-1-alexey.klimov@linaro.org>
-References: <20241101005925.186696-1-alexey.klimov@linaro.org>
+        Thu, 31 Oct 2024 18:02:13 -0700 (PDT)
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+To: anna-maria@linutronix.de,
+	frederic@kernel.org,
+	tglx@linutronix.de,
+	jstultz@google.com,
+	sboyd@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	tmgross@umich.edu,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	arnd@arndb.de
+Subject: [PATCH v5 0/7] rust: Add IO polling
+Date: Fri,  1 Nov 2024 10:01:14 +0900
+Message-ID: <20241101010121.69221-1-fujita.tomonori@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,107 +96,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add sound node and dsp-related piece to enable HDMI audio
-playback support on Qualcomm QRB4210 RB2 board. That is the
-only sound output supported for now.
+polls periodically until a condition is met or a timeout is reached.
+By using the function, the 7th patch fixes QT2025 PHY driver to sleep
+until the hardware becomes ready.
 
-The audio playback is verified using the following commands:
+As a result of the past discussion, this introduces two new types,
+Instant and Delta, which represent a specific point in time and a span
+of time, respectively.
 
-amixer -c0 cset iface=MIXER,name='SEC_MI2S_RX Audio Mixer MultiMedia1' 1
-aplay -D hw:0,0 /usr/share/sounds/alsa/Front_Center.wav
+Unlike the old rust branch, This adds a wrapper for fsleep() instead
+of msleep(). fsleep() automatically chooses the best sleep method
+based on a duration.
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 59 ++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+v5:
+- set the range of Delta for fsleep function
+- update comments
+v4: https://lore.kernel.org/lkml/20241025033118.44452-1-fujita.tomonori@gmail.com/
+- rebase on the tip tree's timers/core
+- add Instant instead of using Ktime
+- remove unused basic methods
+- add Delta as_micros_ceil method
+- use const fn for Delta from_* methods
+- add more comments based on the feedback
+- add a safe wrapper for cpu_relax()
+- add __might_sleep() macro
+v3: https://lore.kernel.org/lkml/20241016035214.2229-1-fujita.tomonori@gmail.com/
+- Update time::Delta methods (use i64 for everything)
+- Fix read_poll_timeout to show the proper debug info (file and line)
+- Move fsleep to rust/kernel/time/delay.rs
+- Round up delta for fsleep
+- Access directly ktime_t instead of using ktime APIs
+- Add Eq and Ord with PartialEq and PartialOrd
+v2: https://lore.kernel.org/lkml/20241005122531.20298-1-fujita.tomonori@gmail.com/
+- Introduce time::Delta instead of core::time::Duration
+- Add some trait to Ktime for calculating timeout
+- Use read_poll_timeout in QT2025 driver instead of using fsleep directly
+v1: https://lore.kernel.org/netdev/20241001112512.4861-1-fujita.tomonori@gmail.com/
 
-diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-index a9540e92d3e6..283a67d8e71d 100644
---- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-+++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-@@ -6,6 +6,8 @@
- /dts-v1/;
- 
- #include <dt-bindings/leds/common.h>
-+#include <dt-bindings/sound/qcom,q6afe.h>
-+#include <dt-bindings/sound/qcom,q6asm.h>
- #include <dt-bindings/usb/pd.h>
- #include "sm4250.dtsi"
- #include "pm6125.dtsi"
-@@ -103,6 +105,55 @@ led-wlan {
- 		};
- 	};
- 
-+	sound {
-+		compatible = "qcom,qrb4210-rb2-sndcard";
-+		pinctrl-0 = <&lpi_i2s2_active>;
-+		pinctrl-names = "default";
-+		model = "Qualcomm-RB2-WSA8815-Speakers-DMIC0";
-+		audio-routing = "MM_DL1", "MultiMedia1 Playback",
-+				"MM_DL2", "MultiMedia2 Playback";
-+
-+		mm1-dai-link {
-+			link-name = "MultiMedia1";
-+
-+			cpu {
-+				sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
-+			};
-+		};
-+
-+		mm2-dai-link {
-+			link-name = "MultiMedia2";
-+
-+			cpu {
-+				sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA2>;
-+			};
-+		};
-+
-+		mm3-dai-link {
-+			link-name = "MultiMedia3";
-+
-+			cpu {
-+				sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA3>;
-+			};
-+		};
-+
-+		hdmi-dai-link {
-+			link-name = "HDMI Playback";
-+
-+			cpu {
-+				sound-dai = <&q6afedai SECONDARY_MI2S_RX>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6routing>;
-+			};
-+
-+			codec {
-+				sound-dai = <&lt9611_codec 0>;
-+			};
-+		};
-+	};
-+
- 	vreg_hdmi_out_1p2: regulator-hdmi-out-1p2 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "VREG_HDMI_OUT_1P2";
-@@ -318,6 +369,14 @@ &pon_resin {
- 	status = "okay";
- };
- 
-+/* SECONDARY I2S uses 1 I2S SD Line for audio on LT9611UXC HDMI Bridge */
-+&q6afedai {
-+	dai@20 {
-+		reg = <SECONDARY_MI2S_RX>;
-+		qcom,sd-lines = <0>;
-+	};
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
+
+FUJITA Tomonori (7):
+  rust: time: Add PartialEq/Eq/PartialOrd/Ord trait to Ktime
+  rust: time: Introduce Delta type
+  rust: time: Introduce Instant type
+  rust: time: Add wrapper for fsleep function
+  MAINTAINERS: rust: Add TIMEKEEPING and TIMER abstractions
+  rust: Add read_poll_timeout functions
+  net: phy: qt2025: Wait until PHY becomes ready
+
+ MAINTAINERS               |  2 +
+ drivers/net/phy/qt2025.rs | 10 +++-
+ rust/helpers/helpers.c    |  2 +
+ rust/helpers/kernel.c     | 13 ++++++
+ rust/helpers/time.c       |  8 ++++
+ rust/kernel/error.rs      |  1 +
+ rust/kernel/io.rs         |  5 ++
+ rust/kernel/io/poll.rs    | 95 ++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs        |  2 +
+ rust/kernel/processor.rs  | 13 ++++++
+ rust/kernel/time.rs       | 97 ++++++++++++++++++++++++++++-----------
+ rust/kernel/time/delay.rs | 43 +++++++++++++++++
+ 12 files changed, 263 insertions(+), 28 deletions(-)
+ create mode 100644 rust/helpers/kernel.c
+ create mode 100644 rust/helpers/time.c
+ create mode 100644 rust/kernel/io.rs
+ create mode 100644 rust/kernel/io/poll.rs
+ create mode 100644 rust/kernel/processor.rs
+ create mode 100644 rust/kernel/time/delay.rs
+
+
+base-commit: 1d4199cbbe95efaba51304cfd844bd0ccd224e61
 -- 
-2.45.2
+2.43.0
 
 
