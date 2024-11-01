@@ -1,121 +1,139 @@
-Return-Path: <linux-kernel+bounces-392219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82759B9129
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:33:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C18B9B912C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:34:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CA021F22E50
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:33:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11B461F22AB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A27019E992;
-	Fri,  1 Nov 2024 12:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A8D19E96A;
+	Fri,  1 Nov 2024 12:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="lzfjqAC7"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEF+sB1a"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693D119CC04;
-	Fri,  1 Nov 2024 12:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43CF194ACC;
+	Fri,  1 Nov 2024 12:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730464420; cv=none; b=RAWLl8/15ye28TSXOJuvSt+jzs+Sudfi/dfE1qsk1Ran8KsrVGLoVdpmQgf4WiFEmpXOcKImR/4dQKha76F9OPLuhjUq5N4bkMc5Kx22bo0qMd3t4hHoRxaSpzGXHBpEaLdfOCeL9wVBTt5oNuwE8sLG8dTWdCjP2aa+/glWhV4=
+	t=1730464439; cv=none; b=tekSU6BrrV6P/5p2xSfXScHELZGN80dbYgp/134djE/tAA44RDgUNaFmmtBBMuFdn0yPkuDMyo3OE7cyN+81jovlJkwYrrdu+RqeiTr3kEwPYULEc469CB6UMV4TdEG7LZVdQpfeydITrTgzoAEAyV1bGFqClFdW3QoUt3dQ2yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730464420; c=relaxed/simple;
-	bh=tC+M1hH7fork9yJ4VGi51sWAlT5oGLZxXxBuaAYIzeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RbgdSepYZgGu4ld7E3YYwpPwy2meBK/TnITWwv0GXfXGmvhDX99CDAw2dObzVkhw8m2mnFqJQgq9YLIKYwP5m8ziFt4tyP5b9p9fgFSk0oyEQby/5m/CJzPxG0siOnobHwGGn04KuvkykqCjiCEHXFqWv3x2jJ7bquAwXHa5s1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st; spf=pass smtp.mailfrom=marcan.st; dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b=lzfjqAC7; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcan.st
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: marcan@marcan.st)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id 46C1A4346B;
-	Fri,  1 Nov 2024 12:33:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
-	t=1730464414; bh=tC+M1hH7fork9yJ4VGi51sWAlT5oGLZxXxBuaAYIzeA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=lzfjqAC7QS4yk5+91vpLtBSqpyvoMChGk5b35z7ZYw2NAAAgR6QBD5pL+D4TW/1+4
-	 JuCBlvOktUM0YUHhICuYn7AgutVf6XCm2Mh2hOXzg1XY3Z7YspQ2r13G0mXlWVFnZ3
-	 cNIueyOKLfTFxJotxw6emgqMMFcSDSVEe/3b26aMjH1f/kwfUcikAud7drvnh5dF5o
-	 E9uqR9Rg/9hhU4bbQNEd6wvd8xcDW3Z3GtRHmJsnAhfCh/CevZSvaIeylXemsx6zOl
-	 ccYNadlHn4cJE8d4jpgyELl4+1L4rhx7CkOSJe92Rp69IY8y39iU81LXSSVweQg1hc
-	 6i/fZgl31e1dQ==
-Message-ID: <5e0b5238-d781-458a-9285-df54a16232af@marcan.st>
-Date: Fri, 1 Nov 2024 21:33:32 +0900
+	s=arc-20240116; t=1730464439; c=relaxed/simple;
+	bh=NLZgXQly6/JBYeaoMI2Gj4UqVeX9adEe2V/e7lQ8X5I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z8I/FzOatnBrS5Aw6WGR77Uhv+Rw0Lnsn2mFOED0bx/zWCDZh8wuPewUxZa2fa3tJ9KbUz2d5Ylf9VqoPzDvYqEvgBxbiOocnBGx8QEq2HmS0gy4aWDvUZSPXrC35AuMGxOPiCjX7wjUn1lzHeT/lcmII9tgqLVrQ3wzrYymcfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kEF+sB1a; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a5075ed279so7628925ab.0;
+        Fri, 01 Nov 2024 05:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730464437; x=1731069237; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=luTIfl8fjfaYqdOzb0XicGQ8fkkc3h4j7fSA6fwqKtI=;
+        b=kEF+sB1a4/r9IryvNFDlcF30DzX0h5gQ6Z9wjcKhbFOJY1YO/UwPVE1ztABM/reY1I
+         W7n9xtNrETydxZxZhiM+ahWgRZhGrc4By6bqU0Hm3+zcJhmjQtRytkwLU9x3eC2N4Fb0
+         fi2GnibXNLGLLPYKXO/vracNhfxceK1o05CfeqCIJfVyo5heEQLLBH9MFuMFFmHExgRj
+         jQWWvoKOKZPzwtemwiqv5gSME39hUvN2flIr5iuZdFvAVnqya+g5HH5kT98dmTUIzdVq
+         KZMo7Jt7Kk9knxJF1AOTZeOzARZN8FewQzIljnGoBljSE7IkAZU9IDxxRCT9Bh8aK7kj
+         1B3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730464437; x=1731069237;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=luTIfl8fjfaYqdOzb0XicGQ8fkkc3h4j7fSA6fwqKtI=;
+        b=xPGfXkfOV08Ft/uizmT3F2tEEDnsqULsoa/2dRN6PQiwUdcomx62jPTcH8YKcJrXZz
+         gZMg4Zls6h+35yYswuid+l3+MhuZOc42cZt8/5otylR8cyeZ8D1AbKfR42Hz920r/BJx
+         sZY7EV5YLeSHd/vWaqX4qrOquxpRSunjb1Hqdpzaz3SXf85zG6Gl8BXuopF9PZgLvYcA
+         ypx84isEwlgljXAOjk4G55XcKqJv6EjXOUQwZoI4kVXqnnJ+U8fQtVmFlMg3Cz1mB4Pu
+         51DYHqzqlEmoK4iYWz5sQrOBbW5sAWkfC5JdwDZkaQYQq+pMzsp8U2xa3CGQyXYVfW7Q
+         PJbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTdtddbld5udZRSRHnVNt2x1gPbpc7vbhsxIArhgJ3cvkLEgZQd64lvs1Rl1/h3Js8rML968wCshN5@vger.kernel.org, AJvYcCUhQCHNXD01RgEMVTcpaBD3BDCKq2VA9BIn2hJyd0p+pyQz0rmbnJypo2VVxIvcaD6kFZzS3tRNic9c1JmN@vger.kernel.org, AJvYcCWuqsgmzFoU1C5dvzUjln1uciX4SlhW99t01vX91lZHXiKRpzhGMHHQOyiwv8K+h9OzWBHJ/smWO3gSIuFEXw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzj3UuEYv4g2SHiDsRlUWjRErHNl9HF+CBiA3jZ0XxEE3tGSai
+	kEVUoiefWAWZ7nRSOzo3pFb2uvitsOy4YCGizHq9QBfAZXk5y3FSTPdzJ45EqaVtn3rIvhL+b7u
+	SjAhAMT5lOxHz1stS5vetIxAtXPg=
+X-Google-Smtp-Source: AGHT+IHROmGFY4O7d8AzmJAHmAMWlbgwtTWlJERIniDbvCooTOD9qLFdaEGNBi0WQhCjbz4p3oj41XFMGb3QjjueJBk=
+X-Received: by 2002:a05:6e02:1e07:b0:3a4:e9b3:22ad with SMTP id
+ e9e14a558f8ab-3a602f7fbabmr77904845ab.0.1730464436782; Fri, 01 Nov 2024
+ 05:33:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH asahi-soc/dt 01/10] dt-bindings: arm: apple: apple,pmgr:
- Add A7-A11 compatibles
-To: Krzysztof Kozlowski <krzk@kernel.org>, Nick Chan <towinchenmi@gmail.com>
-Cc: Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig
- <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241029010526.42052-1-towinchenmi@gmail.com>
- <20241029010526.42052-2-towinchenmi@gmail.com>
- <wpwa22u5z5hamvme7za7dqe7kjl5bap2a254w32yyqrohz235g@hk3izcckbdqn>
-From: Hector Martin <marcan@marcan.st>
-Content-Language: en-US
-In-Reply-To: <wpwa22u5z5hamvme7za7dqe7kjl5bap2a254w32yyqrohz235g@hk3izcckbdqn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-0-cdff2f1a5792@linaro.org>
+ <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-6-cdff2f1a5792@linaro.org>
+In-Reply-To: <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-6-cdff2f1a5792@linaro.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 1 Nov 2024 05:33:44 -0700
+Message-ID: <CAF6AEGu_qJYV3TnprJsqsWV_GoLhiBFQ8LNwfYDjczDparvZCA@mail.gmail.com>
+Subject: Re: [PATCH 6/6] arm64: dts: qcom: sdm845-db845c-navigation-mezzanine:
+ Add cma heap for libcamera softisp support
+To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Depeng Shao <quic_depengs@quicinc.com>, Vikram Sharma <quic_vikramsa@quicinc.com>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/10/29 16:41, Krzysztof Kozlowski wrote:
-> On Tue, Oct 29, 2024 at 09:03:59AM +0800, Nick Chan wrote:
->> The blocks found on Apple A7-A11 SoCs are compatible with the existing
->> driver so add their per-SoC compatibles.
->>
->> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
->> ---
->>  Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml b/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml
->> index 673277a7a224..5001f4d5a0dc 100644
->> --- a/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml
->> +++ b/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml
->> @@ -22,6 +22,11 @@ properties:
->>    compatible:
->>      items:
->>        - enum:
->> +          - apple,s5l8960x-pmgr
->> +          - apple,t7000-pmgr
->> +          - apple,s8000-pmgr
->> +          - apple,t8010-pmgr
->> +          - apple,t8015-pmgr
-> 
-> Assuming you keep the existing order of entries in this file, which is
-> different than usually expected: alphanumeric.
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Fri, Oct 25, 2024 at 8:49=E2=80=AFAM Bryan O'Donoghue
+<bryan.odonoghue@linaro.org> wrote:
+>
+> libcamera softisp requires a linux,cma heap export in order to support
+> user-space debayering, 3a and export to other system components such as
+> pipewire, Firefox/Chromium - Hangouts, Zoom etc.
 
-Yeah, it's a bit ad-hoc but essentially "by release date" with a fork at
-t6000. So:
+AFAIU libcamera could use udmabuf, etc, and there is no hw requirement
+for CMA.  So it doesn't seem we should be adding this to dt.  And I'd
+really prefer that we not be using CMA just for lolz.
 
-- First the ancient s5l series
-- Then all the t/sXXXX chips up to t8103 (M1) (numeric order, ignoring
-prefix letter)
-- Then the rest of the "baseline" Ax,Mx chips that continue after M1,
-which are all numbered t8xxx (numeric order)
-- Finally the t6xxx series (Mx Pro/Mx Max), which forks the timeline and
-numbering after t8103/M1 (M1 Pro = t6000).
+BR,
+-R
 
-Unless there's significant objection I'd like to keep this pattern, it
-makes sense from the POV of people working on these chips.
-
-- Hector
-
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  .../boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso     | 11 +++++=
+++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.=
+dtso b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
+> index d62a20f018e7a7e1c7e77f0c927c2d9fe7ae8509..c8507afcd1e0d1f9b14b6e4ed=
+cbc646032e7b6c9 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
+> @@ -9,6 +9,17 @@
+>  #include <dt-bindings/clock/qcom,camcc-sdm845.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>
+> +/ {
+> +       reserved-memory {
+> +               linux,cma {
+> +                       compatible =3D "shared-dma-pool";
+> +                       size =3D <0x0 0x8000000>;
+> +                       reusable;
+> +                       linux,cma-default;
+> +               };
+> +       };
+> +};
+> +
+>  &camss {
+>         vdda-phy-supply =3D <&vreg_l1a_0p875>;
+>         vdda-pll-supply =3D <&vreg_l26a_1p2>;
+>
+> --
+> 2.47.0
+>
+>
 
