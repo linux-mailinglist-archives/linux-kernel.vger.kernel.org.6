@@ -1,105 +1,105 @@
-Return-Path: <linux-kernel+bounces-392256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8F19B919B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:12:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24A39B919E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:12:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A7B11C20F4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:12:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39808B22B30
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE631A00DF;
-	Fri,  1 Nov 2024 13:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A952F1A00DF;
+	Fri,  1 Nov 2024 13:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b6eBVc1x"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWqETSSs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F924156C5E;
-	Fri,  1 Nov 2024 13:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB65C15F40B;
+	Fri,  1 Nov 2024 13:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730466746; cv=none; b=CjvAfXWQ+TEv2UP2VwfLTc4+MwGuOikc3MF53i3s96+XLQkV0j8vwlLyvaaRKe0QwMCmP0+K/n1VG1bMA6zyiXfMu6F1Wkg78fG0Zbk0DK+g4ypydGelYcoYjxULhIOS6WS1Xp0SeOi5t6mXtrCqoh+tO0c8eBSA8+Z2olMvzfY=
+	t=1730466765; cv=none; b=KplccZQqzd64RNfvUR17LjYSnkKLSXVixiltI0eOf2QNFf5sCA9zj42m+HWsH0JHzbA0d5nTC0E1kAbFYbkDZ9WY3EXHoTyAaQHbsrvCmn/jCgFN5wpWhQnnYqixt6Idg5xtl/77toDWrk3kupUVw6n3IxY3UNHicTunwvkuPIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730466746; c=relaxed/simple;
-	bh=FvvkMv5YLfzduJjZcjlfjCmbHf/dOLJrKj3AM3w+wuU=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t0g7Vcfl8PZnYGIV4z4THONUtoZIneJCqf2dHs6zlfiDlgXw9vMJFqb7X/AsWytWcDrFRiKJ+Dqi21Ak65+OTsWm1kEPkWfYIaujcAFuiInbSgpeg1VNPDDjly71zGvooECaO/IVrYdV2Y8o1tPDV/B711rPj0P8Y9lvXqtOUEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b6eBVc1x; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730466745; x=1762002745;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=FvvkMv5YLfzduJjZcjlfjCmbHf/dOLJrKj3AM3w+wuU=;
-  b=b6eBVc1x2mGsih5rddGhT+lMiS9xlphyvNJ06j/pAD2ZNCBPFZOMZ29F
-   SfK0fkrDsJI3t1iOdHjqNbG3jPlDK9HkMk+DVurgsjhsiFt7R7q/blH4v
-   iGvzvEk6z6XXaeUEauUqXlUN0z8X2cI7auCu8q4I38cB4TofPYgoXzpdm
-   HPuo2V0+cX50GxlRY0rx6OoMcWsAp5wmfwsRLKYsfPP8Jhc9n53moLsak
-   Ytp6nBeWfSiw8kOAc7tFRV9Cnt/NMo8RZwONWTHtrGhlSMQ2k+TGLy3pp
-   PlEIAUmGO6+pvTaA3XOc7C+2U89DBBca6CYg5Tbhsr2P4o7WFMLXx60l3
-   A==;
-X-CSE-ConnectionGUID: lizxyZ3pQ3KY/NqsJNWImA==
-X-CSE-MsgGUID: W6P8q9H1TYW0EclT8QGoEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="55630843"
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="55630843"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 06:12:24 -0700
-X-CSE-ConnectionGUID: 73C8zUomRtCSQefpzybn0Q==
-X-CSE-MsgGUID: xtxxTxskSsq6S5DxFlZPkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="83780090"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 06:12:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t6rRs-0000000A2Rd-0gT1;
-	Fri, 01 Nov 2024 15:12:20 +0200
-Date: Fri, 1 Nov 2024 15:12:19 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] i2c: Use *-y instead of *-objs in Makefile
-Message-ID: <ZyTTs8gFx5r_N5Pi@smile.fi.intel.com>
-References: <20241018150337.2182181-1-andriy.shevchenko@linux.intel.com>
- <ZyTIf8l1ghcyzJUH@smile.fi.intel.com>
- <ZyTNA34Y1BRxMhhn@shikoro>
- <ZyTSZTcNU63F2GjY@smile.fi.intel.com>
+	s=arc-20240116; t=1730466765; c=relaxed/simple;
+	bh=c8aKn77VsKXGS88J79oTdumhoNUJfSRYQUoaGMJD+JM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OBoPllYqNfDEkrA3jPedn0QM1ockg4bTjje5fDy6S+XQ4xr/hVu7zLv3JZH77LLSIh0EwQSiHVnAYZc1xTrRS+HemcOKcmte4SbhDmkeseMUbpmNBcTHntMLoNTE4JbYUHCglVuWtOVTMEUK25TCexHReR8xLnlfKau7RuSp+Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWqETSSs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27F5EC4CECD;
+	Fri,  1 Nov 2024 13:12:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730466764;
+	bh=c8aKn77VsKXGS88J79oTdumhoNUJfSRYQUoaGMJD+JM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tWqETSSsCPX7fyTdCEFWSDmT+l/yQF5NXYAVq1GB7Ozr/DujSfiLBfuA/ANDbnxHd
+	 uT4PJcVi71sPFb2yO2TRY+uIKTcbvcdO2pSdejBA5yga35C/o0+cNYEs2+W90cAHQS
+	 C/35NxPzKQVfSjluMDlWGrI7UNRU9HNofXNSN91LvgpWvwo7O1tJG2Ss96pc64RG0O
+	 WfPK2OKF6HiP2oJV7Noln8UJLC9/AMq9Y3Se5nlX8tMjRwUYCuP6igc/sIBAW02GNB
+	 GW+E4AKkwPc9+0lXu53PFtVblRVT9g1sFYIV1D492uLS3Zjq9xPszb3/wAAns6SSdA
+	 7X4TxD/fpntDw==
+Date: Fri, 1 Nov 2024 13:12:38 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alexey Klimov <alexey.klimov@linaro.org>, konradybcio@kernel.org,
+	konrad.dybcio@oss.qualcomm.com, andersson@kernel.org,
+	srinivas.kandagatla@linaro.org, tiwai@suse.com, lgirdwood@gmail.com,
+	perex@perex.cz, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, dmitry.baryshkov@linaro.org,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 07/10] ASoC: codecs: add wsa881x-i2c amplifier codec
+ driver
+Message-ID: <1b5a24ac-e4be-4cb9-8546-6e2c39b6f9ed@sirena.org.uk>
+References: <20241101053154.497550-1-alexey.klimov@linaro.org>
+ <20241101053154.497550-8-alexey.klimov@linaro.org>
+ <jqsa7lsypf62uqjydqbyspvtnt7iuwxclfwuyatgee2zgduwvd@4wwagvovam4k>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6EfuedNwPIPEYRju"
+Content-Disposition: inline
+In-Reply-To: <jqsa7lsypf62uqjydqbyspvtnt7iuwxclfwuyatgee2zgduwvd@4wwagvovam4k>
+X-Cookie: We read to say that we have read.
+
+
+--6EfuedNwPIPEYRju
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZyTSZTcNU63F2GjY@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Nov 01, 2024 at 03:06:46PM +0200, Andy Shevchenko wrote:
-> On Fri, Nov 01, 2024 at 02:43:47PM +0200, Wolfram Sang wrote:
-> > 
-> > > > Let's correct the old usages of *-objs in Makefiles.
-> > > 
-> > > Any comments?
-> > 
-> > LGTM. What about fixing the drivers, too, in one go?
-> 
-> What drivers do you have in mind?
-> Shouldn't be separated commit anyway?
+On Fri, Nov 01, 2024 at 09:12:56AM +0100, Krzysztof Kozlowski wrote:
+> On Fri, Nov 01, 2024 at 05:31:51AM +0000, Alexey Klimov wrote:
+> > Add support to analog mode of WSA8810/WSA8815 Class-D Smart Speaker
+> > family of amplifiers. Such amplifiers is primarily interfaced with
+> > SoundWire but they also support analog mode which is configurable
+> > by setting one of the pins to high/low. In such case the WSA881X
+> > amplifier is configurable only using i2c.
 
-A separate patch just has been sent.
+Please delete unneeded context from mails when replying.  Doing this
+makes it much easier to find your reply in the message, helping ensure
+it won't be missed by people scrolling through the irrelevant quoted
+material.
 
--- 
-With Best Regards,
-Andy Shevchenko
+--6EfuedNwPIPEYRju
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmck08UACgkQJNaLcl1U
+h9Cn6Qf/dM/KBXqN2le/ErGbKs52OLuikoCz0PQ3uRuncRhSFYdnNXeK7NbAshRm
+c33XUphqxFcUm5/yorrkxHSrvGNlwPhk0226TEgo1HLfnIBV7pXLNxSe9PWBAAlF
+rJaxbr54HWlp6zp4M3t2KiBqFPFHUqW48qSOtIOj8JVXoQ9pzeih6bmnukgrzuy0
+0HfDyGUHGsf8OYfFQyrdlnfP7hL+k6TCBt/VIKbbW9uRcV/jdxazSkkOkSMGv+67
+KJcC/chf5+EZcOD0gImJh+oIRl7EuukC9QsJudvXB/YzZa+cBe9vXYxudT0uN4DJ
+7RupeQodDF1yN2+mpffBAn9N7C5qSw==
+=FsoI
+-----END PGP SIGNATURE-----
+
+--6EfuedNwPIPEYRju--
 
