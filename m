@@ -1,135 +1,133 @@
-Return-Path: <linux-kernel+bounces-392383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE1E9B936E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:38:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 600F39B9372
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:38:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4590E1F2436E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:38:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150BD1F246A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C831AAE09;
-	Fri,  1 Nov 2024 14:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F471A727D;
+	Fri,  1 Nov 2024 14:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTihCWM8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cn2Mnfum"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4BF1A0721;
-	Fri,  1 Nov 2024 14:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B419A1A0721
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730471859; cv=none; b=sF/iAWJ5PdyJppOEdhiitVLk4MvuH6zbD7wvSJk9jO0yWw8vHpUF/89gecyT4weWyjzuNKkzmd3KXikjlLS7oBHdR/ulXicTg3wp6xwMAFkfMqa22yKpDivrsRb+7lmo7n53088uNT1bMxwt6GaJFqX7LRjTjUCIrLVcj35uQbw=
+	t=1730471891; cv=none; b=lDtGpfUHZ95qNLcaDLJWAog7mnk5buEWXI9Lv/4abj0xR8WOinXMe+Zv3s6xtvKQLpXv2O2klSSImxC9xJIihYM7Xo0beQRGQA9XDbwjs4cs0XBFewTDyh/IGi9lB0NLS70fjrziv5O31gmaRwPXGzLvGBW8gH/LzdqSAns1xW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730471859; c=relaxed/simple;
-	bh=dlU5NLdy23cZwEjdBEnyuFTr14SIABsSVeUaYha2fSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nArgw6MbxgZTgPS2Ym7yuE0tNZjjAVTzfC3Pl8fYPu9g9anmx5dasuR6s2YebpAbY71vkiv+eVst9kRw3m9/VrrSSMtTYDfTuNo3dGtPZPA0w5lxR/2ju57mrtEuvI3C92ES1QdYmzwnOxewV5apSJjQj8HYWVR8Gw9JgqiamAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTihCWM8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C607C4CECD;
-	Fri,  1 Nov 2024 14:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730471858;
-	bh=dlU5NLdy23cZwEjdBEnyuFTr14SIABsSVeUaYha2fSE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jTihCWM84REZzKuwEfHAbVqWs8ysp/anL9vV9nq1XvK36xyoUJ/YOrkeOV72Vy9II
-	 VR/WiDN4jvUlYO84+Mk2G70smZhdja36BWmdGdQHH0gcVYnS6D/HWk/rJbOjWnYfyN
-	 M6JvRPHXB+5NjnE1BP8JCw/1ThUTsRX9nwoLkk7Uya8JKwBtzQuFJc5r9bqU+lTRfC
-	 aUifTXSROpIF97Nzax9Ldhqsc9t1PIfks/6FMBgD7uI9H8fD8uePh0p7of4B11wnys
-	 BON34t6sOxy3HxVR8gyu2boROLMBOiorQCh4sKlF78PFdJFhSMrXlKBbyKqugKUuvN
-	 TT0OZJcgqm/PA==
-Message-ID: <67aad19f-a512-4674-a8e3-5c6349c4edce@kernel.org>
-Date: Fri, 1 Nov 2024 15:37:32 +0100
+	s=arc-20240116; t=1730471891; c=relaxed/simple;
+	bh=AjV3KOmTQnBtBgqgDRTdiS8Vk+F9jjcQQcys2nNY5GI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fer4CCw4ZETWaIqHT85vSPGcEVjE2uHDuSzf839jcOQzVxLIfQ77ZkmwvPQ07rqb753iBfdUYmthxLy/SHhm/dOZoSEtW/MQxxxZie49XxJsV0XQs8XacJ9csYe0TrrkmOOaZVxPQfJfEIuO2YmDZqsJk0yvUSrSNypbO2JBCVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cn2Mnfum; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730471888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qV7dwY45yM9S1ZYcLQd9U+2DZJRTGxY0iWGmYsPKj1s=;
+	b=cn2MnfumRSuDVm3xnzo+7fcTE/4Ia7hGpr4W3cK0rLQbBvVaz+HW1Vmitr070pzQ2AaZij
+	2SEqvl18kAHXTc1YTEv9vT1PqvzHgmCxg4ExHWFGE71P08dg+7CCZw1h4cryk/EPbiHv5c
+	3WPVkeaKE9UPVIaa4qWGObitKFn0Wvg=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-505--hfjiQn4MzyzU2QhrSELaw-1; Fri, 01 Nov 2024 10:38:07 -0400
+X-MC-Unique: -hfjiQn4MzyzU2QhrSELaw-1
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3d7eb237dso1958005ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:38:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730471887; x=1731076687;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qV7dwY45yM9S1ZYcLQd9U+2DZJRTGxY0iWGmYsPKj1s=;
+        b=mUlvMqMr6Ow87155JVcVgz4X5yStk3BA7VPJyjgh/T+brc95Tt8JfsVFU3gLAwQsu4
+         shLAVzqbFMVtvWy1KC7bACgepJD21N3VXybz4X9InLRTXzU19Yy7WOmkCnlqwlrHtaTS
+         OASG8AnMWpRgkJYtUwXgG3w8huGrYKjPK9ri3V4mRc2XWdpYy0WO5x+KeZIevXuGwYYM
+         T/euSQ7xjoXOdulJlbOgZ5vRr+ntqPiIIuo4RQvV+TwCLw6sWNsIcbZeYA+mijITONc3
+         IgDGWVXAcuihuQAtzgRu72V1fyFJr2xdakcbxCxcGWf7xw2d4+4FYiSOoHMIEsdbUz/8
+         7c8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXLg0QMxgjzA0UfOVOS87DB+sw+HLMy6bvt0BheH/sfIz9BubkdJ2uOooRyRK8mY6AB5eO/ahb/uslc/tU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3w2n+9XnqOhEreti89OsYT5xkyJ7vQWjytBL59K9eyiGVN+Pj
+	R4wG3hXr+HSENdcF0QCoeAGEtfEh8vklv41cNNBYG1LS2yOlEbU0Nt0w5//koWsJoD2hOFifn2Z
+	l4UfCI4mFwKaLwgpjOLqXoi/JmcDNP0pfmelT9hi7CMSmLyq/AG98g9deHxu2vg==
+X-Received: by 2002:a05:6602:2150:b0:83a:acc8:5faf with SMTP id ca18e2360f4ac-83b1c62fb00mr540837039f.5.1730471886937;
+        Fri, 01 Nov 2024 07:38:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHXJW/i7LBIXYahlsw8I7b7GzGZ4pKFWW6BKIF/t1yROBU3vqy0nknibGhVjgr7ahX2TXz8DQ==
+X-Received: by 2002:a05:6602:2150:b0:83a:acc8:5faf with SMTP id ca18e2360f4ac-83b1c62fb00mr540836139f.5.1730471886606;
+        Fri, 01 Nov 2024 07:38:06 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b67bbe8ddsm83510839f.32.2024.11.01.07.38.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 07:38:06 -0700 (PDT)
+Date: Fri, 1 Nov 2024 08:38:03 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: <ankita@nvidia.com>
+Cc: <jgg@nvidia.com>, <yishaih@nvidia.com>,
+ <shameerali.kolothum.thodi@huawei.com>, <kevin.tian@intel.com>,
+ <zhiw@nvidia.com>, <aniketa@nvidia.com>, <cjia@nvidia.com>,
+ <kwankhede@nvidia.com>, <targupta@nvidia.com>, <vsethi@nvidia.com>,
+ <acurrid@nvidia.com>, <apopple@nvidia.com>, <jhubbard@nvidia.com>,
+ <danw@nvidia.com>, <anuaggarwal@nvidia.com>, <mochs@nvidia.com>,
+ <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/1] vfio/nvgrace-gpu: Add a new GH200 SKU to the
+ devid table
+Message-ID: <20241101083803.3418d15b.alex.williamson@redhat.com>
+In-Reply-To: <20241013075216.19229-1-ankita@nvidia.com>
+References: <20241013075216.19229-1-ankita@nvidia.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
-To: Jesse T <mr.bossman075@gmail.com>
-Cc: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
- <20241028053220.346283-2-TroyMitchell988@gmail.com>
- <6zx3tqdc5bma2vutexwigzlir6nr6adp7arg4qwl5ieyd3avbu@5yyhv57ttwcl>
- <dbeea869-54cd-43fe-9021-783d641f1278@gmail.com>
- <ariqiukhztgziwwgaauqy6q3pghflnoeuwtag4izwkfmtvi2kh@gnlq4d7jsaw4>
- <CAJFTR8T60Azb3refwAB9LALJthKxQz8E1ixZyEA0K=hXfNcUyg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAJFTR8T60Azb3refwAB9LALJthKxQz8E1ixZyEA0K=hXfNcUyg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 01/11/2024 15:29, Jesse T wrote:
-> On Fri, Nov 1, 2024 at 10:24 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On Tue, Oct 29, 2024 at 04:36:00PM +0800, Troy Mitchell wrote:
->>> On 2024/10/28 15:38, Krzysztof Kozlowski wrote:
->>>> On Mon, Oct 28, 2024 at 01:32:19PM +0800, Troy Mitchell wrote:
->>>>> The I2C of K1 supports fast-speed-mode and high-speed-mode,
->>>>> and supports FIFO transmission.
->>>>>
->>>>> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
->>>>> ---
+On Sun, 13 Oct 2024 07:52:16 +0000
+<ankita@nvidia.com> wrote:
+
+> From: Ankit Agrawal <ankita@nvidia.com>
 > 
-> Change in v2:
-> - drop fifo-disable property
-> - unevaluatedProperties goes after required: block
-> - drop alias
+> NVIDIA is planning to productize a new Grace Hopper superchip
+> SKU with device ID 0x2348.
+> 
+> Add the SKU devid to nvgrace_gpu_vfio_pci_table.
+> 
+> Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
+> ---
+>  drivers/vfio/pci/nvgrace-gpu/main.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/vfio/pci/nvgrace-gpu/main.c b/drivers/vfio/pci/nvgrace-gpu/main.c
+> index a7fd018aa548..a467085038f0 100644
+> --- a/drivers/vfio/pci/nvgrace-gpu/main.c
+> +++ b/drivers/vfio/pci/nvgrace-gpu/main.c
+> @@ -866,6 +866,8 @@ static const struct pci_device_id nvgrace_gpu_vfio_pci_table[] = {
+>  	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x2342) },
+>  	/* GH200 480GB */
+>  	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x2345) },
+> +	/* GH200 SKU */
+> +	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x2348) },
+>  	{}
+>  };
+>  
 
-b4 diff disagrees with you :/
+Applied to vfio next branch for v6.13.  Thanks,
 
-Best regards,
-Krzysztof
+Alex
 
 
