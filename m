@@ -1,115 +1,83 @@
-Return-Path: <linux-kernel+bounces-391594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA159B8914
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:07:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 582909B890A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25F01F22851
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3C01C21741
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EFE13C9C7;
-	Fri,  1 Nov 2024 02:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F40D13213E;
+	Fri,  1 Nov 2024 02:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUg32nlV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGxOL/2s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CA613A3F3;
-	Fri,  1 Nov 2024 02:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3891182BD;
+	Fri,  1 Nov 2024 02:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730426819; cv=none; b=BbRQZ+ZOA1W/0g9PSmeDrx67udsefC97Yywp2C3FVbEV7IOVW38/48KS8W1OkXwwNrh/hNb/ABOu57HpzoTkhyFKGytuLNFUjAGwlBOKWiUdTOEFJSVUAyVG61IOKrM21qb0k4atxAFV0qJmBk3VthGPBKlLYNRuJUu7oRFgGwg=
+	t=1730426814; cv=none; b=A1S1DPebBCvKzfJR51otQk6GWr9qCqS4QJ9X9/ycAIuEmcLImKLjp3PwGH5JkdKEpd2dLB6SldM9v91WnER+pZmgG+OG6Zm5A2oMGsZLozRMcoCvh+em2W/2eH78JqLCDJOjpwvbMrQmtWe0EWOUx0Mwd7pPKz2Hym0oEyIFv9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730426819; c=relaxed/simple;
-	bh=a/hFCgDZqsbnUBYLjL3wvxEJ7t4hBd6dwDs0Oy9yB58=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iu1a2zjQJsRkkkIW0Vm1q//kOjAIUvMv/quiDwJWx84oLRynbjwfzNb1PHAdyFSfN48Das9pZ7pCuSh91HWq6n6wa9umxqiYZVIeuqelZf9Lbzuf6k234lN/DKQwxDBRXHLr4XyvnZv8YNDLVAm/GO9bbaZPfZLWHibSpIRNdPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fUg32nlV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4D4CBC4CED7;
-	Fri,  1 Nov 2024 02:06:59 +0000 (UTC)
+	s=arc-20240116; t=1730426814; c=relaxed/simple;
+	bh=v1VJyxzhMU27MO5PGoO4nt7uc4hovgDFLcmA5uYYvHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RYWeZ3yY6SGI2AMGz1xaulQAOBf7w0yMqm4EfdW42B6PjlXZqShWtHJnky/nQfsRG3374he8Uved5mz4Wz0IZbrjEjaxEPhPKcnSl+qiS5T2rYfo1QlRF+R/bMyzKtOcIhggYEJZOUDJSMn5pm/FDzrmNHf2M2SguFARKvzjvVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cGxOL/2s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE429C4CEC3;
+	Fri,  1 Nov 2024 02:06:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730426819;
-	bh=a/hFCgDZqsbnUBYLjL3wvxEJ7t4hBd6dwDs0Oy9yB58=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=fUg32nlVkfFHvxMTs/wTO79y1W3ZgfW5c2+DBISY/VyM/SoS+bCeVXDu7LEkSlj26
-	 ZWLZORcBXV6TzkHiS7Vzh0Jvlm5Dhqu9LWZwD+KXYF1f1xBzJU12reP6Y4sloUVhgT
-	 QUuwnxYVb3qaNi4db3osbnLiyVocIYEDz819F7vvv87F1CWD4fNJwrEw0xbzaV+XXB
-	 BTA0Sl62SWuCdU+kvNocl3P8xnr+L3GDqsdcIYHMRauW2d6exdOupY3XWh+MB8DXpH
-	 LPFTeAN6aMPdt9OLnPwwGi18XfWeD+tdlQNBlEe5yXgMpYE803uISxMmwR0L0kP28B
-	 giE5LSG3usvxQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DD7E67498;
-	Fri,  1 Nov 2024 02:06:59 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Fri, 01 Nov 2024 10:06:49 +0800
-Subject: [PATCH RESEND v4 3/3] MAINTAINERS: Add an entry for Amlogic RTC
- driver
+	s=k20201202; t=1730426813;
+	bh=v1VJyxzhMU27MO5PGoO4nt7uc4hovgDFLcmA5uYYvHc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cGxOL/2sHfACj8zui4/gZWQIfeMlYPIHYxW85znfcJMTOy1zHtdkiGResRvf/7Rqy
+	 ZP2u7FSmu4ctQo/5XfHmVD+zgLkiecD/tOGo8zoW0KOO6kmpBeNcKHC4kSV8DI+2yP
+	 Oo+nEgU8b2O8w6v+s9TFasvisfBRQR/Y5d6eoGWryGK8zJNs/XGWprsZB2U7UeE0RP
+	 gHPMxTEEnRqoVOe5pIuTJzOR+BQQnrywQhYJrNSQIMRBdRZbiHfpFqBcxidERJzMYX
+	 btGxfPWBkBa2KCkoqncprnVaXH6uXb6L53dbED6XfQK96C7K9bEYXo/wZD7zovkmb7
+	 B3FVwyeVuLZXg==
+Date: Thu, 31 Oct 2024 19:06:52 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: liqiang <liqiang64@huawei.com>
+Cc: <wenjia@linux.ibm.com>, <jaka@linux.ibm.com>,
+ <alibuda@linux.alibaba.com>, <tonylu@linux.alibaba.com>,
+ <guwen@linux.alibaba.com>, <linux-s390@vger.kernel.org>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <luanjianhai@huawei.com>, <zhangxuzhou4@huawei.com>,
+ <dengguangxing@huawei.com>, <gaochao24@huawei.com>
+Subject: Re: [PATCH] net/smc: Optimize the search method of reused buf_desc
+Message-ID: <20241031190652.5f775796@kernel.org>
+In-Reply-To: <20241029065415.1070-1-liqiang64@huawei.com>
+References: <20241029065415.1070-1-liqiang64@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241101-rtc-v4-3-14e1ed486ed8@amlogic.com>
-References: <20241101-rtc-v4-0-14e1ed486ed8@amlogic.com>
-In-Reply-To: <20241101-rtc-v4-0-14e1ed486ed8@amlogic.com>
-To: Yiting Deng <yiting.deng@amlogic.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730426817; l=931;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=dltl4Bg5cOWUNAG/8WRhVbXcztZ3rrpVcPR+gcSx/Bg=;
- b=HzHLxTTw3Lvqis+Z3qX6pmogtTEP9P67Vk8W6UTuNcUXd4MPJzBuKmmzn7hAnoT3wuiKDrJzW
- ziXW2peqiFCAlmF8lRtOzry7v2EWMaUDThQBl64psRiYIiXIkr+HV5C
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
 
-From: Yiting Deng <yiting.deng@amlogic.com>
+On Tue, 29 Oct 2024 14:54:15 +0800 liqiang wrote:
+> We create a lock-less link list for the currently 
+> idle reusable smc_buf_desc.
+> 
+> When the 'used' filed mark to 0, it is added to 
+> the lock-less linked list. 
+> 
+> When a new connection is established, a suitable 
+> element is obtained directly, which eliminates the 
+> need for traversal and search, and does not require 
+> locking resource.
+> 
+> A lock-free linked list is a linked list that uses 
+> atomic operations to optimize the producer-consumer model.
 
-Add Amlogic RTC entry to MAINTAINERS to clarify the maintainers.
-
-Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 42decde38320..f595715eb3e3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1163,6 +1163,14 @@ F:	Documentation/devicetree/bindings/perf/amlogic,g12-ddr-pmu.yaml
- F:	drivers/perf/amlogic/
- F:	include/soc/amlogic/
- 
-+AMLOGIC RTC DRIVER
-+M:	Yiting Deng <yiting.deng@amlogic.com>
-+M:	Xianwei Zhao <xianwei.zhao@amlogic.com>
-+L:	linux-amlogic@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml
-+F:	drivers/rtc/rtc-amlogic-a4.c
-+
- AMPHENOL CHIPCAP 2 HUMIDITY-TEMPERATURE IIO DRIVER
- M:	Javier Carrasco <javier.carrasco.cruz@gmail.com>
- L:	linux-hwmon@vger.kernel.org
-
+Not sure what the story here is but the patch does not apply to net-next
 -- 
-2.37.1
-
-
+pw-bot: cr
 
