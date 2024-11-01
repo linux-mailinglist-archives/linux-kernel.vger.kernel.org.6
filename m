@@ -1,88 +1,172 @@
-Return-Path: <linux-kernel+bounces-392157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B7F9B9065
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:41:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C884D9B9066
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EBEF1F222DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E3492829A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704C319ABBD;
-	Fri,  1 Nov 2024 11:41:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E82199939;
+	Fri,  1 Nov 2024 11:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NOQVjbv/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="meZARsjc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4156199238
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6E4199238;
+	Fri,  1 Nov 2024 11:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730461265; cv=none; b=bJATkdx7Vt0N6maQxRClspZNYi3Djx91V09erBg0HoupmVEMmHMv1N9Y9imUisTnGGHGX/NqCDd7jDFd+DtagS2V27miIDuE//qaKbfa79g0IS72E4CQRZtMNRWoronwJFr3pMeQ2KcgV/A98Gm1AtZp2HqE0bAya8dfoZt9j8c=
+	t=1730461269; cv=none; b=q9WRfG64O2+dqRn1HExnE0/fK9tM4IQ4ay8FMDMUcnmbGJEbYCIKq/TfDW0speq8nIIXaEESoIl+OgJ6/d6Qs+F1Pk69vsJqxPDttLQeT6YE6mMeZ/ymuPYNfcJt50kgLwibeyxQ6GQjkrwYexgzJgHD9md56MsZVYFwWZbwj5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730461265; c=relaxed/simple;
-	bh=tz0AI+nrP/NYdrpultsyaBPG0ukpKwCdaZinJiCBoLY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DmCSCwElt869hA/cxs1GKr00FtbdXtm4j66DrHHsv/MjG+iCtVLMPn2FJ7s6iKNtEtuYj2fGNpjx3pRFi8OBTlOwwP1NZ6My27T83oGy0dq6zU42u4y4OybrXUTR72vH+mpMEj0lM2GNl0iCXPK5ucq8cA43AXC3dJblbRPq6dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so19208245ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:41:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730461262; x=1731066062;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TcFRQtE48UK+gQqnvcVWuzlA1lJZubnbju4eUXeCNCA=;
-        b=e6OVPELCM8yXQdMlkoZZE5sEzOB7RV/ABBvhFr0/MuXEvtNcOZJn/0mMjx3HxgGT+C
-         FQqPxpICwBGVGyZwccS3T3MPes6qtRaaIgiijb7MSA59ta4hpIX5ygA+qyioA0x4fd5e
-         i5F1PusF/du1T6MJXqFwG1bg94yBUjesRVf7fSQc01ADbTDZ7rf2AoUlhqZFllv7PUzY
-         MhHPfAHATweLFFfsoQUCXWQpB0aoiiwEp59QIbFO66mDun+KzK21OjxSSOow7gZa3pbp
-         TRo6SatvRv0zeGACKbqfPNFA5D7xjQth/GG30TkvzI5tk40SbsiaaiIop4FbOGM3YnHm
-         u0Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5fOAqW07PlTmQvEpkHx865StJDG+SP0EbNhZz8wEW3NeBGSoaZbSoWThRFQd4Dvuy/Icfl6uOyeLkZaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQLuc92DJGqWOj13Jg0YNNO7nVepmSWFVy1dV4Wep1VpD4F/LG
-	m53VCXKgegOkgCG2sg+FZhxsgmDI79L6ka3vkWuBUKyBXN/q5UOHzHEi5WRzm9WZ3pnKzLPJOig
-	cGP51Gj8Od8gt08KbwSPuF+SUZeeRlYkvZTe9nczeAmY/fmOgF0oqEmk=
-X-Google-Smtp-Source: AGHT+IHMrfLNlU2NgthZ2FUnP+AR0AUUGE2lvP2P4VDwu/4nMlO111hT1CxL/QO9e+kQMndG1sHydas6+72M6kmMEkpxe9ZuGUtb
+	s=arc-20240116; t=1730461269; c=relaxed/simple;
+	bh=x6tXHYwBIRDtTShCUUpTozgrhBMUkIiATBzmFyvMlgc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=rsVeIeDcEb8tB4NMaGSOPFUWwxTZvvsqc1Yr89KfcvKHNe6KbWkLM6VR/Ulct1TL+ylPn1Vn6cd1c26fO43/pVJBT83a4WIM4m/sZENqhDOsHe2oZyoYqdv2hurrgAKoNJyTC9LYzjsB5OWmFcH4WhesHSV7IoIZIO06Lsoqk7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NOQVjbv/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=meZARsjc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 01 Nov 2024 11:41:03 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730461265;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=78vLclkfvDOMwI65pDOwbUMQGRF3HI1YhCLyxF4rIyI=;
+	b=NOQVjbv/UUIhwxTg+IoX0Vy8I7ZX2Oh6TLu8hYcrd9ldTAVJlR6UjFvXR73Q7cYPP2ebfq
+	ZmfhftKluVfCUWcCpvLKBE5By8xVN7ywtS0540iSXbnDf50ssqEzYSwKwjTOeci4A54Qns
+	YMJ2agT5FZf7PJQcxSJWCTc0O9QN7bOEIf1W61HuKocp1FeEby2YKju6GRRw1fEGxiizC7
+	PRTb+h5LhUcnysEbr4CC2MD5i0ounolSvsF+XV6+SIRSVPi0LBDDR6dMjL/P4jZROBMxlr
+	+noBXU0gUrLXgy+Wm9jIV9E2a6YhaqoFW905/lgq03qntYNaEiFgDWnfzgmvyA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730461265;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=78vLclkfvDOMwI65pDOwbUMQGRF3HI1YhCLyxF4rIyI=;
+	b=meZARsjcMRkt3qLAf9XTCGHspO8gD3+0wyDJDJxVgHnL3EPqJcErBtDRZXCMLOQ77bcGI2
+	CyVACaD4xxc4G5BA==
+From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: ras/core] EDAC/mce_amd: Add support for FRU text in MCA
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>, Avadhut Naik <avadhut.naik@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241022194158.110073-6-avadhut.naik@amd.com>
+References: <20241022194158.110073-6-avadhut.naik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214f:b0:3a0:9cd5:92f7 with SMTP id
- e9e14a558f8ab-3a6b0384e88mr36037405ab.17.1730461261908; Fri, 01 Nov 2024
- 04:41:01 -0700 (PDT)
-Date: Fri, 01 Nov 2024 04:41:01 -0700
-In-Reply-To: <20241101111614.2670-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6724be4d.050a0220.529b6.00ec.GAE@google.com>
-Subject: Re: [syzbot] [kernfs?] INFO: task hung in do_coredump (3)
-From: syzbot <syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <173046126325.3137.7092371512802120747.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the ras/core branch of tip:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: rcu detected stall in corrupted
+Commit-ID:     612c2addff367ee461dc99ffca2bc786f105d2ec
+Gitweb:        https://git.kernel.org/tip/612c2addff367ee461dc99ffca2bc786f105d2ec
+Author:        Yazen Ghannam <yazen.ghannam@amd.com>
+AuthorDate:    Tue, 22 Oct 2024 19:36:31 
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Thu, 31 Oct 2024 10:53:04 +01:00
 
-rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { P3585 } 2769 jiffies s: 8817 root: 0x0/T
-rcu: blocking rcu_node structures (internal RCU debug):
+EDAC/mce_amd: Add support for FRU text in MCA
 
+A new "FRU Text in MCA" feature is defined where the Field Replaceable
+Unit (FRU) Text for a device is represented by a string in the new
+MCA_SYND1 and MCA_SYND2 registers. This feature is supported per MCA
+bank, and it is advertised by the McaFruTextInMca bit (MCA_CONFIG[9]).
 
-Tested on:
+The FRU Text is populated dynamically for each individual error state
+(MCA_STATUS, MCA_ADDR, et al.). Handle the case where an MCA bank covers
+multiple devices, for example, a Unified Memory Controller (UMC) bank
+that manages two DIMMs.
 
-commit:         270c32fa MAINTAINERS: remove Florian from DSA entry
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/ mm-hotfixes-unstable
-console output: https://syzkaller.appspot.com/x/log.txt?x=12afe6f7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1940f73a609bb874
-dashboard link: https://syzkaller.appspot.com/bug?extid=a8cdfe2d8ad35db3a7fd
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15c9b2a7980000
+  [ Yazen: Add Avadhut as co-developer for wrapper changes. ]
+  [ bp: Do not expose MCA_CONFIG to userspace yet. ]
 
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Co-developed-by: Avadhut Naik <avadhut.naik@amd.com>
+Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20241022194158.110073-6-avadhut.naik@amd.com
+---
+ arch/x86/include/asm/mce.h |  1 +
+ drivers/edac/mce_amd.c     | 18 ++++++++++++------
+ 2 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 4d936ee..4543cf2 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -61,6 +61,7 @@
+  *  - TCC bit is present in MCx_STATUS.
+  */
+ #define MCI_CONFIG_MCAX		0x1
++#define MCI_CONFIG_FRUTEXT	BIT_ULL(9)
+ #define MCI_IPID_MCATYPE	0xFFFF0000
+ #define MCI_IPID_HWID		0xFFF
+ 
+diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
+index 194d9fd..50d74d3 100644
+--- a/drivers/edac/mce_amd.c
++++ b/drivers/edac/mce_amd.c
+@@ -795,6 +795,7 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
+ 	struct mce *m = (struct mce *)data;
+ 	struct mce_hw_err *err = to_mce_hw_err(m);
+ 	unsigned int fam = x86_family(m->cpuid);
++	u32 mca_config_lo = 0, dummy;
+ 	int ecc;
+ 
+ 	if (m->kflags & MCE_HANDLED_CEC)
+@@ -814,11 +815,9 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
+ 		((m->status & MCI_STATUS_PCC)	? "PCC"	  : "-"));
+ 
+ 	if (boot_cpu_has(X86_FEATURE_SMCA)) {
+-		u32 low, high;
+-		u32 addr = MSR_AMD64_SMCA_MCx_CONFIG(m->bank);
++		rdmsr_safe(MSR_AMD64_SMCA_MCx_CONFIG(m->bank), &mca_config_lo, &dummy);
+ 
+-		if (!rdmsr_safe(addr, &low, &high) &&
+-		    (low & MCI_CONFIG_MCAX))
++		if (mca_config_lo & MCI_CONFIG_MCAX)
+ 			pr_cont("|%s", ((m->status & MCI_STATUS_TCC) ? "TCC" : "-"));
+ 
+ 		pr_cont("|%s", ((m->status & MCI_STATUS_SYNDV) ? "SyndV" : "-"));
+@@ -853,8 +852,15 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
+ 
+ 		if (m->status & MCI_STATUS_SYNDV) {
+ 			pr_cont(", Syndrome: 0x%016llx\n", m->synd);
+-			pr_emerg(HW_ERR "Syndrome1: 0x%016llx, Syndrome2: 0x%016llx",
+-				 err->vendor.amd.synd1, err->vendor.amd.synd2);
++			if (mca_config_lo & MCI_CONFIG_FRUTEXT) {
++				char frutext[17];
++
++				frutext[16] = '\0';
++				memcpy(&frutext[0], &err->vendor.amd.synd1, 8);
++				memcpy(&frutext[8], &err->vendor.amd.synd2, 8);
++
++				pr_emerg(HW_ERR "FRU Text: %s", frutext);
++			}
+ 		}
+ 
+ 		pr_cont("\n");
 
