@@ -1,190 +1,142 @@
-Return-Path: <linux-kernel+bounces-392840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864009B98B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:34:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AAC99B98A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:31:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61D601C22046
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5051C22020
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8711D12EC;
-	Fri,  1 Nov 2024 19:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="qWQaPqgi"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C451D151F;
+	Fri,  1 Nov 2024 19:30:41 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BC5135A63;
-	Fri,  1 Nov 2024 19:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D371CEAB0
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489664; cv=none; b=K3mhcVXJjNpAld3uRq3IxD/jI0GrdGKb59AiybiYC5tT183zRY1UkEzCsFTBEy9wDSCqfpgj5ucaSucioy4/R81svsmwaNPQXPIaq0FWwtUZTXNHK+lcex2CrzSZ/0TDjcnZaSRVRwF4anCR16cpXlw135ihCHUl2LvwrrmcEO4=
+	t=1730489441; cv=none; b=bhyFo2Qeie32E4HjwBibLfIp76sNMeseO/0e5Keapx5X8TrLkWQYN6xiW25GzLUEt3flsrA1kWbMmsvmcWlwK/vHYA3FY5s6itrkLHx5Yg1xuh854y3PseWC8Kmn7mOTsCjdv5B5slLMm/d5fGSkLKk8h5FhOWWF1N3sS6odv0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489664; c=relaxed/simple;
-	bh=6o7gWdPd7NBBYn6Ekd1ay5hn9yoQ/YFGsm/3xmnKLTE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BwcPEe3XPsWCsfXLJmXcSOsIjLMRz1WxRe2ECww/dWHZY/Yw9XH77kzY7iOJvz07xrq4cMR1c4vwI7wFB1NlkK/kUo38AQLqIsIXdOg3ULm0C5YI71jK2RM+eeZSM41Nah+yvghkFcuD1xc5ncO1hdTqoh153eFtHHW5yMsHe/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=qWQaPqgi; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=zJM7uRkwqakIbg69rQYulf7w9u0O5jlaLk9DR5UP0Q8=; b=qWQaPqgiMyMFOpB9bZMh81OkEK
-	joCuF8QsSOM7jr39Iu612LpZSCvLEPPtLb2CKIlOzFdi+AAr2P0rFN4FM6ftlb7SHXtyJe9xgMtc5
-	bZrIgvnpoAR+T1n8esyF/bm3Jg+lkZ5zT0VGFzSkaXOa4Wy9YSTX0fAunVwfZ17jJ/rWEyiCBcZqm
-	wLBt1heGe7+9sEv0e0Aeb62WNCI8mZ+jVly3Rp/giLzNquBcI1zWrgLh/i4shBeLVCOp6oPU4J9PU
-	+D5r7BG/UHqf7tvY5NxwTlug2Q1OdT+J34um/qRdPSIOtgW+wUem6V1t9zGXcKTdsPkMgx3brBAQW
-	sHg9NGfg==;
-Received: from [189.79.117.125] (helo=localhost)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1t6xPW-000YX6-7A; Fri, 01 Nov 2024 20:34:19 +0100
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-To: pkshih@realtek.com,
-	linux-wireless@vger.kernel.org
-Cc: kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@gpiccoli.net,
-	kernel-dev@igalia.com,
-	rtl8821cerfe2@gmail.com,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	stable@vger.kernel.org,
-	syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
-Subject: [PATCH V4] wifi: rtlwifi: Drastically reduce the attempts to read efuse in case of failures
-Date: Fri,  1 Nov 2024 16:30:05 -0300
-Message-ID: <20241101193412.1390391-1-gpiccoli@igalia.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1730489441; c=relaxed/simple;
+	bh=omhhXKt59jMCE7ucHu+mPaaSXRmDsyFYiTxxDpzTFxc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YZQLTasM7yOZ1nLZH4X9Cdr/vmnK+EqddxDUGpQsROuhUZTnJBMkOxC8kDN6cmKIQPqizn/S8Duc5mSMsxawk90l8gX3LmUw/lH7FZEgEvGoMeqHnPcXCFKQ/Z/ZCImI7MfL1Zpr8ywtro5dk72yHxKARkuhsk4wHWR2YjgDdpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b7974696so6502405ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:30:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730489439; x=1731094239;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kJs0Tz2ZmpCJLLFV0O8fbCAEbDM0nq3Zbx8X0e7YsxY=;
+        b=kqWYUCXvTZ8r6sK8gAnb7P79VbItvUIttZ98ZR3jw1Ta47jtIQG2g/9M4LIlgDLjpM
+         /dILbUnFPBNXbBEGg4T0BsfIzLPCi3jcH8vINxVLzhC/Q/3y+PBsGaxoR4foZSZ9K7kL
+         eIuWg2/Pvfmq8d8RoHqQbniiebz8H7HxQvwwDrY3TRUnkulWpXLyGbQI+zCvFftQqYIc
+         z/w8DvfV1D1Z4hbUdCnrxGT9ic3F2BtEE9Z7roiFVLp02zqhqTTuBU/bpxVRaFChQKEv
+         OD9UDWZ2Ac7DHd8jvRSzGccQv4ZrlykbvnTlTRnPhfoM7DwUnWtJxxxnHmya5fygirZi
+         xHEg==
+X-Gm-Message-State: AOJu0YyyjvbcegAsNn4r3WDSsENA8mZCKEYMwbagwSXLpv66pbTENLnP
+	qtyt1Cl//ORncpgcwww6m6EL3X9ikS6yyOL3bKgq/gceK9QRKs/W752KMIKpjOr0PEse3t7plDi
+	Y/h8Obe5MJTx8vBCEdHcQ2pyqlIZOE7XFhZrymCFbSddLK6sbNO4CTgg=
+X-Google-Smtp-Source: AGHT+IGLQkK+ImSW4aRCVE43kdhZ9ff7mqeO5/NU12OpxhWrzwLdqlL+gvGpz9HxpAUyYoNPIbSGFHJQbTDhqI2xv5PwtSAlgdVQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:c24a:0:b0:3a0:9f85:d74f with SMTP id
+ e9e14a558f8ab-3a6b031a257mr55890595ab.16.1730489437240; Fri, 01 Nov 2024
+ 12:30:37 -0700 (PDT)
+Date: Fri, 01 Nov 2024 12:30:37 -0700
+In-Reply-To: <000000000000afab690616b12f99@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67252c5d.050a0220.35b515.0176.GAE@google.com>
+Subject: Re: [syzbot] Re: [PATCH v2] Bluetooth: fix use-after-free in device_for_each_child()
+From: syzbot <syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Syzkaller reported a hung task with uevent_show() on stack trace. That
-specific issue was addressed by another commit [0], but even with that
-fix applied (for example, running v6.12-rc5) we face another type of hung
-task that comes from the same reproducer [1]. By investigating that, we
-could narrow it to the following path:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-(a) Syzkaller emulates a Realtek USB WiFi adapter using raw-gadget and
-dummy_hcd infrastructure.
+***
 
-(b) During the probe of rtl8192cu, the driver ends-up performing an efuse
-read procedure (which is related to EEPROM load IIUC), and here lies the
-issue: the function read_efuse() calls read_efuse_byte() many times, as
-loop iterations depending on the efuse size (in our example, 512 in total).
+Subject: Re: [PATCH v2] Bluetooth: fix use-after-free in device_for_each_ch=
+ild()
+Author: luiz.dentz@gmail.com
 
-This procedure for reading efuse bytes relies in a loop that performs an
-I/O read up to *10k* times in case of failures. We measured the time of
-the loop inside read_efuse_byte() alone, and in this reproducer (which
-involves the dummy_hcd emulation layer), it takes 15 seconds each. As a
-consequence, we have the driver stuck in its probe routine for big time,
-exposing a stack trace like below if we attempt to reboot the system, for
-example:
+On Fri, Nov 1, 2024 at 1:37=E2=80=AFPM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
+>
+> Hi Dmitry,
+>
+> On Fri, Nov 1, 2024 at 11:31=E2=80=AFAM Luiz Augusto von Dentz
+> <luiz.dentz@gmail.com> wrote:
+> >
+> > Hi Dmitry,
+> >
+> > On Fri, Nov 1, 2024 at 11:17=E2=80=AFAM Dmitry Antipov <dmantipov@yande=
+x.ru> wrote:
+> > >
+> > > On 11/1/24 6:12 PM, Luiz Augusto von Dentz wrote:
+> > >
+> > > > There is no Tested-by thus why I assumed it wasn't tested by syzbot=
+ yet.
+> > >
+> > > Ugh. Until today I've assumed that Tested-by: is applicable to human-=
+driven
+> > > testing only :-).
+> >
+> > Nope, in fact it is very handy to have syzbot test your changes since
+> > it may hit other problems as well.
+>
+> Looks like this doesn't solve the problem, in fact I think you are
+> getting it backwards, you are trying to reparent the parent dev not
+> the child and I assume by destroying the parent device there should be
+> some way to reset the parent which seems to be the intent the
+> following code in hci_conn_del_sysfs:
+>
+>     while (1) {
+>         struct device *dev;
+>
+>         dev =3D device_find_child(&conn->dev, NULL, __match_tty);
+>         if (!dev)
+>             break;
+>         device_move(dev, NULL, DPM_ORDER_DEV_LAST);
+>         put_device(dev);
+>     }
+>
+> But note that it only does that after matching tty, but I guess we
+> want to do it regardless otherwise we may have the child objects still
+> access it, that said we should probably use device_for_each_child
+> though if that is safe to do calls to device_move under its callback.
 
-task:kworker/0:3 state:D stack:0 pid:662 tgid:662 ppid:2 flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- __schedule+0xe22/0xeb6
- schedule_timeout+0xe7/0x132
- __wait_for_common+0xb5/0x12e
- usb_start_wait_urb+0xc5/0x1ef
- ? usb_alloc_urb+0x95/0xa4
- usb_control_msg+0xff/0x184
- _usbctrl_vendorreq_sync+0xa0/0x161
- _usb_read_sync+0xb3/0xc5
- read_efuse_byte+0x13c/0x146
- read_efuse+0x351/0x5f0
- efuse_read_all_map+0x42/0x52
- rtl_efuse_shadow_map_update+0x60/0xef
- rtl_get_hwinfo+0x5d/0x1c2
- rtl92cu_read_eeprom_info+0x10a/0x8d5
- ? rtl92c_read_chip_version+0x14f/0x17e
- rtl_usb_probe+0x323/0x851
- usb_probe_interface+0x278/0x34b
- really_probe+0x202/0x4a4
- __driver_probe_device+0x166/0x1b2
- driver_probe_device+0x2f/0xd8
- [...]
+#syz test
 
-We propose hereby to drastically reduce the attempts of doing the I/O
-reads in case of failures, restricted to USB devices (given that
-they're inherently slower than PCIe ones). By retrying up to 10 times
-(instead of 10000), we got reponsiveness in the reproducer, while seems
-reasonable to believe that there's no sane USB device implementation in
-the field requiring this amount of retries at every I/O read in order
-to properly work. Based on that assumption, it'd be good to have it
-backported to stable but maybe not since driver implementation (the 10k
-number comes from day 0), perhaps up to 6.x series makes sense.
-
-[0] Commit 15fffc6a5624 ("driver core: Fix uevent_show() vs driver detach race")
-
-[1] A note about that: this syzkaller report presents multiple reproducers
-that differs by the type of emulated USB device. For this specific case,
-check the entry from 2024/08/08 06:23 in the list of crashes; the C repro
-is available at https://syzkaller.appspot.com/text?tag=ReproC&x=1521fc83980000.
-
-Cc: stable@vger.kernel.org # v6.1+
-Reported-by: syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
-Tested-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
----
-
-
-V4:
-- Changed the if conditional to check if device is of USB type, instead of
-PCI type - thanks Ping-Ke Shih.
-
-- Re-addded the Bitterblue Smith's Tested-by tag, which I forgot in V3 xD
-
-V3 link: https://lore.kernel.org/r/20241031155731.1253259-1-gpiccoli@igalia.com/
+> > > Dmitry
+> > >
+> >
+> >
+> > --
+> > Luiz Augusto von Dentz
+>
+>
+>
+> --
+> Luiz Augusto von Dentz
 
 
- drivers/net/wireless/realtek/rtlwifi/efuse.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/efuse.c b/drivers/net/wireless/realtek/rtlwifi/efuse.c
-index 82cf5fb5175f..6518e77b89f5 100644
---- a/drivers/net/wireless/realtek/rtlwifi/efuse.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/efuse.c
-@@ -162,10 +162,19 @@ void efuse_write_1byte(struct ieee80211_hw *hw, u16 address, u8 value)
- void read_efuse_byte(struct ieee80211_hw *hw, u16 _offset, u8 *pbuf)
- {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
-+	u16 max_attempts = 10000;
- 	u32 value32;
- 	u8 readbyte;
- 	u16 retry;
- 
-+	/*
-+	 * In case of USB devices, transfer speeds are limited, hence
-+	 * efuse I/O reads could be (way) slower. So, decrease (a lot)
-+	 * the read attempts in case of failures.
-+	 */
-+	if (rtlpriv->rtlhal.interface == INTF_USB)
-+		max_attempts = 10;
-+
- 	rtl_write_byte(rtlpriv, rtlpriv->cfg->maps[EFUSE_CTRL] + 1,
- 		       (_offset & 0xff));
- 	readbyte = rtl_read_byte(rtlpriv, rtlpriv->cfg->maps[EFUSE_CTRL] + 2);
-@@ -178,7 +187,7 @@ void read_efuse_byte(struct ieee80211_hw *hw, u16 _offset, u8 *pbuf)
- 
- 	retry = 0;
- 	value32 = rtl_read_dword(rtlpriv, rtlpriv->cfg->maps[EFUSE_CTRL]);
--	while (!(((value32 >> 24) & 0xff) & 0x80) && (retry < 10000)) {
-+	while (!(((value32 >> 24) & 0xff) & 0x80) && (retry < max_attempts)) {
- 		value32 = rtl_read_dword(rtlpriv,
- 					 rtlpriv->cfg->maps[EFUSE_CTRL]);
- 		retry++;
--- 
-2.46.2
-
+--=20
+Luiz Augusto von Dentz
 
