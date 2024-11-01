@@ -1,214 +1,240 @@
-Return-Path: <linux-kernel+bounces-392194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04D29B90DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:02:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3369B90DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242351F23F9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:02:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 728A1282730
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B94C19CC3D;
-	Fri,  1 Nov 2024 12:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3488E19CC2F;
+	Fri,  1 Nov 2024 12:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ml7H3Wj2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzrjXcj5"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80ADC86252;
-	Fri,  1 Nov 2024 12:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4814986252;
+	Fri,  1 Nov 2024 12:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730462537; cv=none; b=qxYeWAtUifWbBPcy2rekfOOnGbgZuR0YTfvuuCg7xhiGhfVTaapsMnRwx70JlCV55Ke0QZD+bvGybYQxEcJOuo+l+ZFsGSP4o+rdGB+3CH46xzAOOqWH9XAgUVxGlr18sn63SAl2x1uEI4nBC3J4f+G7HSs9rj3LCjCqwsElSFY=
+	t=1730462691; cv=none; b=CBlP4LJfa1aVU39Ri8pUfBG1KRN/XUgYye7vUet/mQaBCvCE+SBh9XDge2FKFogT2lLFbunGyXp0Z4ra2ECkozeZ/zig9a0UUhrVa8ivZsPtpWQz+CUc7g///isBQFcE+6YUAaobOfX2kF+EtdNqbvL30ZmIu4wioba2P5YU/t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730462537; c=relaxed/simple;
-	bh=zXlmXsSCyrYCiE4Y/bcDk5StCf2s7K479mjZtcQLKgU=;
+	s=arc-20240116; t=1730462691; c=relaxed/simple;
+	bh=wFIgt5wyBAXWcsu957GVfzR18Bya39O9vbZXG9CkzGY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FYkQ1bmzWFF64sXyJWeKm2TuJkD4OZtBBzQyqnxllt3ddt6HfP/XVKdF2v6ujoQZCCBPxYxQt12APu804OmuEMjQR8NcY+svyzSY0d2axNS/fy91N5DfCMuO0YkAU+ffb5uHdU2ComMWw7rPfIgq9KM9w4Gq6FduJifcJkho9c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ml7H3Wj2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D35CC4CED1;
-	Fri,  1 Nov 2024 12:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730462537;
-	bh=zXlmXsSCyrYCiE4Y/bcDk5StCf2s7K479mjZtcQLKgU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ml7H3Wj2Wb1oJIQILdWCH4AbMvtTWYFZNBVwvpXpaSrOB7mGyePq951GoUOhlimz6
-	 qKthGosqlxtb75TTqLoXXp5DswycEgq9oV5vzvI8Iwp07oOAnednu078BYVkQUjDiq
-	 mlPqKuLLg3UarSWp7r0cse1F8zYqmvEEI4gblAeNPPA9zaw5zBt/D7fI8vN4xe+aVh
-	 Aa3zzzJXLAqxB17pwyo+Fjidm7VOxfpb5chwnB86jZ++F3M2MNBXdvhy621PPHrVdK
-	 8rzs/sLU17vxlkNRtWcCbBzJDnVWbV3XNSlU38MGPiw7lC4wTCL0LUZqmf4Qo42fVl
-	 oLRoqGkALDxUA==
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e30d1d97d20so1682759276.2;
-        Fri, 01 Nov 2024 05:02:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUU7znHpkFqrQj0GNwtjz1/PF9bXY8SKowW28GogSWVZyBkWzZ35UDUdIXG1dJ6glD/fzEREuYXprSMbwQP@vger.kernel.org, AJvYcCVLP8nQajao3hBfP9pFFnAz75XAyXIPHNdedOgVzDXaF09XN8nfFjRSN34g+adLT8rCig8R+qRjCdr8+Kx4Zg==@vger.kernel.org, AJvYcCVVOirxLIWasPgn9IbG9/SRhF8M+I6rK3d4fpYS5FnoHsdSmAICaL4LeLlqbbR+XsxUimVPlC6T0ke+@vger.kernel.org, AJvYcCVf60hykBEQmkJIvd3zUmXUBkR9AbswN7saHcfe3GIBaPhvJWx/i3ePCg3VWdkn1wYrLPo/rLOcNAey/Nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx4pMk8f4BC4dO/x2JZ73HDMymFXcsoyaWhCYSWL5MqDnzUIMc
-	IQllT7LEEPnVi7l3Li98Zcxzm9caPPvD2IdQevhRZ7f7U+qLKO+luwEF/TXnBr7qZd7bC8s7n5F
-	dbmh48DmHLfwcuMzxbebITMDx2A==
-X-Google-Smtp-Source: AGHT+IGsNLqMz/aG++/V/FvS+KiQcFzeIW8oeXXwcgYyCoEntih6aXTowBTADYjXqSGa4NgckdwB9Lxq9hsxw5pJMHA=
-X-Received: by 2002:a05:690c:6e10:b0:6e3:24c1:cdf8 with SMTP id
- 00721157ae682-6e9d8a2c2a1mr231777577b3.22.1730462535994; Fri, 01 Nov 2024
- 05:02:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=QnudePaFo1nNv+6/fAeaJauMVPeofAVNP9/pPUI3k7VG61PmleR0j+Dy4PjZYAlf6hFw4gI7/IHtNXC03fv3lc9MT8dXotAMc4+quKfSUNQqvSyWHOfCdtefiHdXgRQnfEPMsfsy6MV3uu0lW3LlCUMZ1CSiEngPHyRY/Z67m5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzrjXcj5; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cbd005d0f9so11282476d6.3;
+        Fri, 01 Nov 2024 05:04:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730462688; x=1731067488; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fHyAytKAe+smDOWg8btMON1J/oacx7QMG45/vVVRC9Y=;
+        b=XzrjXcj5bXjM2L6wNCop6Hr+PTBXcKTsy4+aZ+jHvh+vm29cJp42v+syj2vrQpB3VM
+         v5UKYpk4EEF/1Rov5ctRh8z505Y5YyDxPIoMph1YMD6rCFPl7+GjaUXrwEU8+ElOQlD7
+         v+luiwmFJX/zjvKqNbT8rxFnE15McW3lhXrLvj4BMCKckOwUR9xd0sJS7DPPzy5mdyHc
+         5BKYgMnbRBsOGlIe0XQOqXo8KsAfGmsyvX/yMHNUYKI7nzil9s36q8smHeRnEQnXrTSY
+         qJ8WXfW6dyT2t93HxMPVTBNY96v4SHi9DzzjbxrSU0IMBL+cGfJeKvug6/lAiV7STj0a
+         KJ/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730462688; x=1731067488;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fHyAytKAe+smDOWg8btMON1J/oacx7QMG45/vVVRC9Y=;
+        b=r2T6dm1EzcbTl2rzh0n1KgHj5Hq+Rq9zkJldWCxsC1pIZfPqlmbYlzqwxnxj/pomSm
+         y2QD1rYdoI2OQwO63tz80qPdLdG5W6htIC77agTXU0Pb80PYOhrKjcH749gloIzMqKB2
+         /Zotmb3FbDcCul90f109aQPCh8h7R6kgQ2vyV77RzKQfkZ1UwZ63tCXAQmzfj5DKWKIC
+         lDf/Il0Kt76s5te53BPE8jsWpeVPdbTi5qifH0Dpf2gzZt8puT1P6ZzT9ExdBCLFRqMf
+         n+85CcT0z+wSG5ai62zVnEuWWPbKDx9k6u9c0TBQh+Mgwgj4egCKJxkvO2XC6Bx8DxbQ
+         9lKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXP3xJ+KTHXec8/KVCysQfHPhG2IoktoL29mKQXX53gQBsSKpcRS2oHbcGtXXAtTqdn0Z61nqLajOEAKRph@vger.kernel.org, AJvYcCXxv3kRPgidR9RYUuPXz/eBCN1h/7i9zkF2FNEW/m3JbLs0TeWiRpnoWLerL9h0jf21Lsy+fERJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaFZtG1JdSW9YJ6510cCzLmvuwhgt7JhvoHsvoK6gFHMHdBxYP
+	owxwjegc402vOJlkFvZkKQUtHp7QZInSBK6j4hQcSxJUMxCxwFweDq2pf4LyM/DQawE5IZ3cwYL
+	skn41YR2eDcAiRWxPWZsDtYE/jEg=
+X-Google-Smtp-Source: AGHT+IFmoGjGO+gsKfTssCgdSZzH3xrfdQjWqoAp3oZbMhbTnckaB0fUnhlUlvGU4WG40c7hdSwkpv4xqqCnTlzIYOQ=
+X-Received: by 2002:a05:6214:3993:b0:6d3:452d:e1ae with SMTP id
+ 6a1803df08f44-6d35c1af3b5mr33161036d6.45.1730462688109; Fri, 01 Nov 2024
+ 05:04:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101053154.497550-1-alexey.klimov@linaro.org> <20241101053154.497550-8-alexey.klimov@linaro.org>
-In-Reply-To: <20241101053154.497550-8-alexey.klimov@linaro.org>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 1 Nov 2024 07:02:04 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJE20OHcbKY13eQsYjbNumj_vQEKQw28GU0tH0Si=G+ZA@mail.gmail.com>
-Message-ID: <CAL_JsqJE20OHcbKY13eQsYjbNumj_vQEKQw28GU0tH0Si=G+ZA@mail.gmail.com>
-Subject: Re: [PATCH v1 07/10] ASoC: codecs: add wsa881x-i2c amplifier codec driver
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: broonie@kernel.org, konradybcio@kernel.org, konrad.dybcio@oss.qualcomm.com, 
-	andersson@kernel.org, srinivas.kandagatla@linaro.org, tiwai@suse.com, 
-	lgirdwood@gmail.com, perex@perex.cz, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	dmitry.baryshkov@linaro.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20241101031750.1471-1-laoar.shao@gmail.com> <20241101031750.1471-5-laoar.shao@gmail.com>
+ <20241101102842.GW14555@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241101102842.GW14555@noisy.programming.kicks-ass.net>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Fri, 1 Nov 2024 20:04:11 +0800
+Message-ID: <CALOAHbD3mxTHmDdtXLw9oKbnDEMNVUhoL_bR4rZUohVMTjJCiA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] sched: Fix cgroup irq accounting for CONFIG_IRQ_TIME_ACCOUNTING
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org, surenb@google.com, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 1, 2024 at 12:32=E2=80=AFAM Alexey Klimov <alexey.klimov@linaro=
-.org> wrote:
+On Fri, Nov 1, 2024 at 6:28=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
+> wrote:
 >
-> Add support to analog mode of WSA8810/WSA8815 Class-D Smart Speaker
-> family of amplifiers. Such amplifiers is primarily interfaced with
-> SoundWire but they also support analog mode which is configurable
-> by setting one of the pins to high/low. In such case the WSA881X
-> amplifier is configurable only using i2c.
+> On Fri, Nov 01, 2024 at 11:17:50AM +0800, Yafang Shao wrote:
+> > After enabling CONFIG_IRQ_TIME_ACCOUNTING to monitor IRQ pressure in ou=
+r
+> > container environment, we observed several noticeable behavioral change=
+s.
+> >
+> > One of our IRQ-heavy services, such as Redis, reported a significant
+> > reduction in CPU usage after upgrading to the new kernel with
+> > CONFIG_IRQ_TIME_ACCOUNTING enabled. However, despite adding more thread=
+s
+> > to handle an increased workload, the CPU usage could not be raised. In
+> > other words, even though the container=E2=80=99s CPU usage appeared low=
+, it was
+> > unable to process more workloads to utilize additional CPU resources, w=
+hich
+> > caused issues.
 >
-> To have stereo two WSA881X amplifiers are required but mono
-> configurations are also possible.
+> > We can verify the CPU usage of the test cgroup using cpuacct.stat. The
+> > output shows:
+> >
+> >   system: 53
+> >   user: 2
+> >
+> > The CPU usage of the cgroup is relatively low at around 55%, but this u=
+sage
+> > doesn't increase, even with more netperf tasks. The reason is that CPU0=
+ is
+> > at 100% utilization, as confirmed by mpstat:
+> >
+> >   02:56:22 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %st=
+eal  %guest  %gnice   %idle
+> >   02:56:23 PM    0    0.99    0.00   55.45    0.00    0.99   42.57    0=
+.00    0.00    0.00    0.00
+> >
+> >   02:56:23 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %st=
+eal  %guest  %gnice   %idle
+> >   02:56:24 PM    0    2.00    0.00   55.00    0.00    0.00   43.00    0=
+.00    0.00    0.00    0.00
+> >
+> > It is clear that the %soft is not accounted into the cgroup of the
+> > interrupted task. This behavior is unexpected. We should account for IR=
+Q
+> > time to the cgroup to reflect the pressure the group is under.
+> >
+> > After a thorough analysis, I discovered that this change in behavior is=
+ due
+> > to commit 305e6835e055 ("sched: Do not account irq time to current task=
+"),
+> > which altered whether IRQ time should be charged to the interrupted tas=
+k.
+> > While I agree that a task should not be penalized by random interrupts,=
+ the
+> > task itself cannot progress while interrupted. Therefore, the interrupt=
+ed
+> > time should be reported to the user.
+> >
+> > The system metric in cpuacct.stat is crucial in indicating whether a
+> > container is under heavy system pressure, including IRQ/softirq activit=
+y.
+> > Hence, IRQ/softirq time should be accounted for in the cpuacct system
+> > usage, which also applies to cgroup2=E2=80=99s rstat.
+> >
+> > This patch reintroduces IRQ/softirq accounting to cgroups.
 >
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  sound/soc/codecs/Kconfig          |   11 +
->  sound/soc/codecs/Makefile         |    2 +
->  sound/soc/codecs/wsa881x-common.h |   19 +
->  sound/soc/codecs/wsa881x-i2c.c    | 1454 +++++++++++++++++++++++++++++
->  4 files changed, 1486 insertions(+)
->  create mode 100644 sound/soc/codecs/wsa881x-i2c.c
->
-> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-> index b8ea8cf73d63..3d7868977262 100644
-> --- a/sound/soc/codecs/Kconfig
-> +++ b/sound/soc/codecs/Kconfig
-> @@ -350,6 +350,7 @@ config SND_SOC_ALL_CODECS
->         imply SND_SOC_WM9712
->         imply SND_SOC_WM9713
->         imply SND_SOC_WSA881X
-> +       imply SND_SOC_WSA881X_I2C
->         imply SND_SOC_WSA883X
->         imply SND_SOC_WSA884X
->         imply SND_SOC_ZL38060
-> @@ -2484,6 +2485,16 @@ config SND_SOC_WSA881X
->           This enables support for Qualcomm WSA8810/WSA8815 Class-D
->           Smart Speaker Amplifier.
->
-> +config SND_SOC_WSA881X_I2C
-> +       tristate "WSA881X Codec - Analog mode"
-> +       depends on I2C
-> +       select REGMAP_I2C
-> +       select SND_SOC_WSA881X_COMMON
-> +       help
-> +         This enables support for Qualcomm WSA8810/WSA8815 Class-D Smart
-> +         Speaker Amplifier that works in analog mode and configurable
-> +         via I2C.
-> +
->  config SND_SOC_WSA883X
->         tristate "WSA883X Codec"
->         depends on SOUNDWIRE
-> diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-> index bc1498cedf08..682bdf63abea 100644
-> --- a/sound/soc/codecs/Makefile
-> +++ b/sound/soc/codecs/Makefile
-> @@ -399,6 +399,7 @@ snd-soc-wm9713-y :=3D wm9713.o
->  snd-soc-wm-hubs-y :=3D wm_hubs.o
->  snd-soc-wsa881x-y :=3D wsa881x.o
->  snd-soc-wsa881x-common-y :=3D wsa881x-common.o
-> +snd-soc-wsa881x-i2c-y :=3D wsa881x-i2c.o
->  snd-soc-wsa883x-y :=3D wsa883x.o
->  snd-soc-wsa884x-y :=3D wsa884x.o
->  snd-soc-zl38060-y :=3D zl38060.o
-> @@ -821,6 +822,7 @@ obj-$(CONFIG_SND_SOC_WM_ADSP)       +=3D snd-soc-wm-a=
-dsp.o
->  obj-$(CONFIG_SND_SOC_WM_HUBS)  +=3D snd-soc-wm-hubs.o
->  obj-$(CONFIG_SND_SOC_WSA881X)  +=3D snd-soc-wsa881x.o
->  obj-$(CONFIG_SND_SOC_WSA881X_COMMON)   +=3D snd-soc-wsa881x-common.o
-> +obj-$(CONFIG_SND_SOC_WSA881X_I2C)      +=3D snd-soc-wsa881x-i2c.o
->  obj-$(CONFIG_SND_SOC_WSA883X)  +=3D snd-soc-wsa883x.o
->  obj-$(CONFIG_SND_SOC_WSA884X)  +=3D snd-soc-wsa884x.o
->  obj-$(CONFIG_SND_SOC_ZL38060)  +=3D snd-soc-zl38060.o
-> diff --git a/sound/soc/codecs/wsa881x-common.h b/sound/soc/codecs/wsa881x=
--common.h
-> index cf8643e1f7f7..1b9c20cd3807 100644
-> --- a/sound/soc/codecs/wsa881x-common.h
-> +++ b/sound/soc/codecs/wsa881x-common.h
-> @@ -2,6 +2,7 @@
->  #ifndef __WSA881x_COMMON_H__
->  #define __WSA881x_COMMON_H__
->
-> +#include <linux/i2c.h>
->  #include <linux/soundwire/sdw.h>
->  #include <sound/soc.h>
->
-> @@ -193,6 +194,24 @@ struct wsa881x_priv {
->         bool port_enable[WSA881X_MAX_SWR_PORTS];
->  #endif
->
-> +#if IS_ENABLED(CONFIG_SND_SOC_WSA881X_I2C)
-> +       /* i2c interace for analog mode */
-> +       struct regmap *regmap_analog;
-> +       /* First client is for digital part, the second is for analog par=
-t */
-> +       struct i2c_client *client[2];
-> +       struct snd_soc_component *component;
-> +       struct snd_soc_dai_driver *dai_driver;
-> +       struct snd_soc_component_driver *driver;
-> +       struct gpio_desc *mclk_pin;
-> +       struct clk *wsa_mclk;
-> +       bool boost_enable;
-> +       int spk_pa_gain;
-> +       struct i2c_msg xfer_msg[2];
-> +       bool regmap_flag;
-> +       bool wsa_active;
-> +       int index;
-> +       int version;
-> +#endif
->         struct gpio_desc *sd_n;
->         /*
->          * Logical state for SD_N GPIO: high for shutdown, low for enable=
-.
-> diff --git a/sound/soc/codecs/wsa881x-i2c.c b/sound/soc/codecs/wsa881x-i2=
-c.c
-> new file mode 100644
-> index 000000000000..74fa85306ad9
-> --- /dev/null
-> +++ b/sound/soc/codecs/wsa881x-i2c.c
-> @@ -0,0 +1,1454 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2015-2016, 2018-2020, The Linux Foundation. All rights =
-reserved.
-> + * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
-> + * Copyright (c) 2024, Linaro Limited
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/slab.h>
-> +#include <linux/of_gpio.h>
+> How !? what does it actually do?
 
-No new users of this please. We are working on removing it.
+It seems there's some misunderstanding due to the term *accounting*
+here. What it actually does is track the interrupted time within a
+cgroup.
 
-Rob
+>
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > ---
+> >  kernel/sched/core.c  | 33 +++++++++++++++++++++++++++++++--
+> >  kernel/sched/psi.c   | 14 +++-----------
+> >  kernel/sched/stats.h |  7 ++++---
+> >  3 files changed, 38 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 06a06f0897c3..5ed2c5c8c911 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -5579,6 +5579,35 @@ __setup("resched_latency_warn_ms=3D", setup_resc=
+hed_latency_warn_ms);
+> >  static inline u64 cpu_resched_latency(struct rq *rq) { return 0; }
+> >  #endif /* CONFIG_SCHED_DEBUG */
+> >
+> > +#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+> > +static void account_irqtime(struct rq *rq, struct task_struct *curr,
+> > +                         struct task_struct *prev)
+> > +{
+> > +     int cpu =3D smp_processor_id();
+> > +     s64 delta;
+> > +     u64 irq;
+> > +
+> > +     if (!static_branch_likely(&sched_clock_irqtime))
+> > +             return;
+> > +
+> > +     irq =3D irq_time_read(cpu);
+> > +     delta =3D (s64)(irq - rq->psi_irq_time);
+>
+> At this point the variable is no longer exclusive to PSI and should
+> probably be renamed.
+
+OK.
+
+>
+> > +     if (delta < 0)
+> > +             return;
+> > +
+> > +     rq->psi_irq_time =3D irq;
+> > +     psi_account_irqtime(rq, curr, prev, delta);
+> > +     cgroup_account_cputime(curr, delta);
+> > +     /* We account both softirq and irq into softirq */
+> > +     cgroup_account_cputime_field(curr, CPUTIME_SOFTIRQ, delta);
+>
+> This seems wrong.. we have CPUTIME_IRQ.
+
+OK.
+
+>
+> > +}
+>
+> In fact, much of this seems like it's going about things sideways.
+>
+> Why can't you just add the cgroup_account_*() garbage to
+> irqtime_account_irq()? That is were it's still split out into softirq
+> and irq.
+
+I previously implemented this in v1: link. However, in that version,
+we had to hold the irq_lock within the critical path, which could
+impact performance. Taking inspiration from commit ddae0ca2a8fe
+("sched: Move psi_account_irqtime() out of update_rq_clock_task()
+hotpath"), I've now adapted the approach to handle it in a
+non-critical path, reducing the performance impact.
+
+>
+> But the much bigger question is -- how can you be sure that this
+> interrupt is in fact for the cgroup you're attributing it to? Could be
+> for an entirely different cgroup.
+
+As I explained in another thread, identifying the exact culprit can be
+challenging, but identifying the victim is straightforward. That=E2=80=99s
+precisely what this patch set accomplishes.
+
+--=20
+Regards
+Yafang
 
