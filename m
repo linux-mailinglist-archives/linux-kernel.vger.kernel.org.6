@@ -1,85 +1,103 @@
-Return-Path: <linux-kernel+bounces-391727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302D69B8AEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:07:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 543A89B8AFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:08:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9A6628099A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A55C282109
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345EA165F1F;
-	Fri,  1 Nov 2024 06:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF5714B06E;
+	Fri,  1 Nov 2024 06:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtOJuKqT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IYAtHctA"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AAF1581F0;
-	Fri,  1 Nov 2024 06:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399F8149E17;
+	Fri,  1 Nov 2024 06:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730441050; cv=none; b=c7Y8UPPBLODhOUMWT5uzeqm1Dk8a5qYQso89TmT/2CTrLEHlM6UiMkSYlLbdsB4gX91hpiu9XGKzMWA61al2j54suOGSZmjGuR+3AsQu1IDrSTs6w2i/+fS7lRg4UONLC+YKImBMtiaACOZ68V/RHPZF+tCnB7rh0QJAl5esYf4=
+	t=1730441266; cv=none; b=Q9YSVdXlDYyakNL9MWY+xu7A1L+NufDdPP8YVSg8RfL0hpB6pRYOHxeL80fXCyi8ZoawY+CFQ28nrLyZ4b3RudnYTclLv1KmlVn1x6yhvxrCkShMW/n1FtBJinYkYzEhBqXrxaMHmm8tAh0GRLbNqGvDCqyy8Xj9jHLZSZUhRrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730441050; c=relaxed/simple;
-	bh=0oez5y69gm+AQB/CWPtX3mefE8bWVboNKSUC+suY4XA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TnoGfVvvpdyDE5NU28LMwM4VEB76cOA+EcGORTWhgrUhfvqH9M97kaiwuULn27zDWkZ0LGPLX3ptmtSjWj+OHgKZg7EjNsiPS9Pr4S94k1VvW8DOV/L0UrOnKCfYWypz+FYzAp0lOkcl7MAvx38tZPXKrTVLYY653aDnbuUQCto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtOJuKqT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17D27C4CED2;
-	Fri,  1 Nov 2024 06:04:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730441048;
-	bh=0oez5y69gm+AQB/CWPtX3mefE8bWVboNKSUC+suY4XA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NtOJuKqTlny8BqTGIXVBPv35LbXk1enKo9L332PUYTEEOb5VoCNkBJkfY4WzX4+uK
-	 /8uchmnQ25LH6M85Ks3U5uRXEngWaLErpNiYibbJnXdwAVE5gxqK2jNrJSrRRZJvwx
-	 8hwalbRAolLpuemQfj7IDxthbVq5I7B1xYwz4LzNitSWFDICapuBHNn2FOhkshTbhU
-	 y+WNLfm+qLQc2xROuMcolsEWRh74tsNNlP/ingdDpp9yFx+kfE1cLgGCNB3FFfzC4p
-	 Lf1qTLlnwGGvlojEJj5pNL+cTkBr0uR7WmAl8ahuUi6dDZ/wa6dCl+nsyMJZWDIi5r
-	 /MNWFRB0nx+PQ==
-From: William Breathitt Gray <wbg@kernel.org>
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Philipp Stanner <pstanner@redhat.com>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] counter: intel-qep: Replace deprecated PCI functions
-Date: Fri,  1 Nov 2024 15:04:01 +0900
-Message-ID: <173044101015.654738.17588227351532800458.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241028091312.17045-2-pstanner@redhat.com>
-References: <20241028091312.17045-2-pstanner@redhat.com>
+	s=arc-20240116; t=1730441266; c=relaxed/simple;
+	bh=plt8G8LT3kR+/zrVwvToRdiIxtkQeIiQmCv7qcxEmVE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Uqv+lPrBVlgzdim/IO3/Rd2GOTrZ22Ah+ZP3orKo36g+atTvRqhV7RUpuIzVQMAiRwQm404/iKl5ET4P+o6768njFkiFrPG5mCBymDqGF54k1bxGJBQ4Bb+eO0MMOX1S3BRqsI+EudF6sXWlaSZsjajuPSGv+fJ14+AGEkpKXhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IYAtHctA; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730441258; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=iO8REokc+MjYhT6aysq5M3qSaRIAZ0Ra+oLiHl1d95w=;
+	b=IYAtHctAKUUvEoBq2KJ5lfMo6ZHqU9RZk16HjVfQ3/ywNnJa2dUerouRTLDFRqSZ4Z7quneYGLPMrpCHQKbBrMhd96vRHf29sk6O63iyP0kaFzOQLNAunci63D8718Cyi1f9+47mbn1uq30E4Ru6S6r9WjFxpzTVh6k//WewwZY=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WIN95IS_1730441247 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 01 Nov 2024 14:07:38 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: stas.yakovlev@gmail.com
+Cc: kvalo@kernel.org,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH v3 -next] wifi: ipw2x00: fix bad alignments
+Date: Fri,  1 Nov 2024 14:07:25 +0800
+Message-Id: <20241101060725.54640-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=505; i=wbg@kernel.org; h=from:subject:message-id; bh=tDc3RkITPOJOZtfpjBzexVaAcb7FSm74TVbLxwaU2b0=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDOkq+fbFH0yNQ5/8uXzU8fybNcdVdXJdPV6vD124zSlPY oZw3q/gjlIWBjEuBlkxRZZe87N3H1xS1fjxYv42mDmsTCBDGLg4BWAieisZGe791H3quMtKaZ/y pbfFh01ZHtzcwNYz4XIZpyNLxIMLc0wYGdp4zmc3KN3Yed5I+vCNbbxVWxRtLValdD649u5iwNr 5nFwA
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
 Content-Transfer-Encoding: 8bit
 
+This patch fixes incorrect code alignment.
 
-On Mon, 28 Oct 2024 10:13:13 +0100, Philipp Stanner wrote:
-> pcim_iomap_regions() and pcim_iomap_table() have been deprecated in
-> commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
-> pcim_iomap_regions_request_all()").
-> 
-> Replace these functions with pcim_iomap_region().
-> 
-> 
-> [...]
+./drivers/net/wireless/intel/ipw2x00/libipw_rx.c:871:2-3: code aligned with following code on line 882.
+./drivers/net/wireless/intel/ipw2x00/libipw_rx.c:886:2-3: code aligned with following code on line 900.
 
-Applied, thanks!
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11381
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+Changes in v3:
+  -Combine two if statements into one.
 
-[1/1] counter: intel-qep: Replace deprecated PCI functions
-      commit: 522ae89b78580c62765e160aed3479297baa75be
+ drivers/net/wireless/intel/ipw2x00/libipw_rx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Best regards,
+diff --git a/drivers/net/wireless/intel/ipw2x00/libipw_rx.c b/drivers/net/wireless/intel/ipw2x00/libipw_rx.c
+index 7e41cb7bbfe0..dc4e91f58bb4 100644
+--- a/drivers/net/wireless/intel/ipw2x00/libipw_rx.c
++++ b/drivers/net/wireless/intel/ipw2x00/libipw_rx.c
+@@ -867,8 +867,8 @@ void libipw_rx_any(struct libipw_device *ieee,
+ 	switch (ieee->iw_mode) {
+ 	case IW_MODE_ADHOC:
+ 		/* our BSS and not from/to DS */
+-		if (ether_addr_equal(hdr->addr3, ieee->bssid))
+-		if ((fc & (IEEE80211_FCTL_TODS+IEEE80211_FCTL_FROMDS)) == 0) {
++		if (ether_addr_equal(hdr->addr3, ieee->bssid) &&
++		    ((fc & (IEEE80211_FCTL_TODS + IEEE80211_FCTL_FROMDS)) == 0)) {
+ 			/* promisc: get all */
+ 			if (ieee->dev->flags & IFF_PROMISC)
+ 				is_packet_for_us = 1;
+@@ -882,8 +882,8 @@ void libipw_rx_any(struct libipw_device *ieee,
+ 		break;
+ 	case IW_MODE_INFRA:
+ 		/* our BSS (== from our AP) and from DS */
+-		if (ether_addr_equal(hdr->addr2, ieee->bssid))
+-		if ((fc & (IEEE80211_FCTL_TODS+IEEE80211_FCTL_FROMDS)) == IEEE80211_FCTL_FROMDS) {
++		if (ether_addr_equal(hdr->addr2, ieee->bssid) &&
++		    ((fc & (IEEE80211_FCTL_TODS + IEEE80211_FCTL_FROMDS)) == IEEE80211_FCTL_FROMDS)) {
+ 			/* promisc: get all */
+ 			if (ieee->dev->flags & IFF_PROMISC)
+ 				is_packet_for_us = 1;
 -- 
-William Breathitt Gray <wbg@kernel.org>
+2.32.0.3.g01195cf9f
+
 
