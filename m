@@ -1,336 +1,111 @@
-Return-Path: <linux-kernel+bounces-393005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505039B9AB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:16:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B559B9AB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D552C1F21D99
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:16:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276D5B213C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AB31AAE06;
-	Fri,  1 Nov 2024 22:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9CB1D9A50;
+	Fri,  1 Nov 2024 22:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEWFwShA"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VXZON77B"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D371BDC3;
-	Fri,  1 Nov 2024 22:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E953157E78
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 22:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730499405; cv=none; b=Ahjn4OISdi7D0cIhuccA7yH2A2ia0L4APf8cLTKI6caV8wWc1C3rbPE51f+6fg4xptjIOb3RDCxoLDPykWOD/NKhBUUOeZA2MTMdLQznitspOUwi6JdnNbZVxplI9wOZxGX8I/xbgKcrpneXdfjX/mcxsdgqOu7TrDyVxK5lJy8=
+	t=1730499439; cv=none; b=TTG1NBZ1+k8gSEA/My6j+9SP8cwZIR/p0o6Tq+N15VxQ65HatifG9ug9JjPYu2INIOWC8yeP99UsqO8Xqa54BjYSDU4wTCS1M0YlXg33utuBpW+PPwyWXnZ0ymrYRjXWCjKzxAmzlaex3uR5zpxUN1W3Ac6hLUGXNRaP8knY25o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730499405; c=relaxed/simple;
-	bh=uZ5dPDGpE0eiP8j9ElLlKmGq5FqeHBMo5AS3riI6HLA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M6jmJFi1c159KQNA21yv7a9eS2ooDvcbe6K5dqPknRWRIlLmE0nDqbfCl619fgo2+PHc4NGS5n+eFuIwRsbr9OGcWuZF2aRNQWRuQcvh8ENP1IkOADbeYK1SOqbCQEXEbHoRdn7dMyzzWHrzeTpxcIromhUrkA+Z5VUENlDv5no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEWFwShA; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c803787abso19523945ad.0;
-        Fri, 01 Nov 2024 15:16:43 -0700 (PDT)
+	s=arc-20240116; t=1730499439; c=relaxed/simple;
+	bh=qpBwNRsWZTRq3EZaHQ8NpNNe8Fwjn2USTGTYV9vPPtw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P5D/ZpIIEpYAFMB/8wQyeBMCfmQYRX/KzhureZupo+CuaCqfsD5qBQyb2PA1ZreXipBY/2Bbqfb1ayv0Nvq37BUsKpMxrNiEAgqkWA2/pH6IfimnuNZW4bYuqO1HDD62YjkNeeVXSLWM8KC/xKA5FsehCrXI9lxKZwVGrWty4ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VXZON77B; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5ebc04d4777so1189400eaf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 15:17:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730499402; x=1731104202; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=oVssyuWMC9NgATc0QPLGb+0NJAZIL3+HDWYCveIr8Uk=;
-        b=aEWFwShALAEWcWFfQr+VWDNAbkxkBrTeB89oirMNZbpp9BbaloRf5l8llwRjjlSddD
-         JApCvQmTD/kzIvrXoc3gQQH19ctdrIJSWnS8Bw8XzY9bg5X/f8Jz45p/ntmH4MtSB7IO
-         Tn18kKk4A1GtqvcbNEjygr3W0YOhFKjfnEpnHLqZJ9zeamavpCief+60hQi4Anhetzhi
-         bNHbmgvKtcEYimPAuPcNR+DxMy4UmrzPGls8PCV3NVd11zhM+aME4QBH+R9oAQjANSt8
-         DChh5h6yLP8u/LTf709tWct/N46ciel2ci/U+MMMc6MsC9SjWGP/SIzOUiCWXzwmfT09
-         bdiQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730499435; x=1731104235; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3CSzoY79/k3ar2QWQwbWZeVE8xvuTeHiY5zuTR39kF0=;
+        b=VXZON77B5e/S4dAtGCzzaP2vOaMGS0GPzknosRskv80oqvxioz8Sh/IdRJdy2Fcn2F
+         LWdKzQI4Wf6xPR5TSo4evXVCl6mpC1qMUZxhlFFLxxvF8hCQASbljDtG18H+g9lBxd0V
+         lYoVBtUVzDN9mr3HIHVXm0VFjbhRl3ml9iZl9PNicvteolaEO8Ubk5Oo6anuT21FNzUw
+         vtT9PBgHHrX/jUfAUFzJJJc5s8uRp79O4aqFP22Q9eBsZyBCnnriYG10G+QitfSuwvK6
+         JLFsCK0KiZxyNueD16U4AKIBOsRLjMcCANhpIFuET77yRN/mPb0E3LDTleJMHy/QPjgm
+         GOxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730499402; x=1731104202;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oVssyuWMC9NgATc0QPLGb+0NJAZIL3+HDWYCveIr8Uk=;
-        b=Yn6quMwFe992CY/wECcRO+65/oPHiybx8nvQjKnIBbfMt2Zz75pIJ9Ju1rFFrTMvMw
-         bHUc30TZKz/CC1hiem5POGWwNdg95CB4dpVR/vQ9UxPa0wzTiQnnded9FG6yO99gzq/V
-         dijEF+1Y+/2ixKPYuG+KAHJGICUq+QBFtWuk8hZoH43vXTRXwEyb2W7m1zCf/5EsQXPS
-         ijgQ8KOmWrku+pmwigy8s6Rjit9nUVfC3ls5nIghIy9tfOHoi+39xxgz/4eC2GqOHFcS
-         gpks/yeRrg9VkedgXjgd2nwhSrynW8TzegLOMBgZ1YVAkouMparyTgXaZXRBTqTrrqZ4
-         SE/g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4Vd3Kk+WlzdYcRaWY+4DfnyRQVsCw3RTR1NShB2qkxgzQZ2uiBt7mOKco3gEpYT/TxHHZSnilmf2DclW4IAg=@vger.kernel.org, AJvYcCWUiSvoOuZdcgT/EiHAeMsqs24OWZ1+T2IvtBDpZ6mSp0F+4XictQqru0a3beTVtaIGKamaBADnKfh112A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKuESVnn0EBs/G2mvZ8CiSA6SBx8BugjTDX3Tvf0lmEDgVL9y+
-	zNamU4NI8Gwwf2kZREhIWsyBj/YNW07XOZIEsNiFU8jl/4DQdqJG
-X-Google-Smtp-Source: AGHT+IGGxzxBg3TMMhNZ6zH3wiG+bSdfe1EX9LN1h70yeyUfvlvrjw3I/QyBdD//3HGtM/YIKK7dew==
-X-Received: by 2002:a17:902:e74e:b0:20c:76a1:604b with SMTP id d9443c01a7336-211056ee4a3mr122555475ad.12.1730499402353;
-        Fri, 01 Nov 2024 15:16:42 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d9750sm25573205ad.280.2024.11.01.15.16.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 15:16:41 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <787d7a81-0f53-4dbb-b8d6-f7b00e9cf837@roeck-us.net>
-Date: Fri, 1 Nov 2024 15:16:39 -0700
+        d=1e100.net; s=20230601; t=1730499435; x=1731104235;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3CSzoY79/k3ar2QWQwbWZeVE8xvuTeHiY5zuTR39kF0=;
+        b=bGxzfmXTDZQcv5pzM9boxtx2qCN0N3Z+Ww5ddScyIqop9l1MNjA2syDhLj+gcQ2aL9
+         Pf4y23RVCbs/JR+fBDe49CQatP2/5/Lg3kCw1WqQ8s8STCpIY9haarrMNtSApTV1G2c2
+         9m5GIDls4N8h33G7ksYPWig9mUQSqvS6losYZQpgglm520TVARGNrGPCexSVRofVA8gb
+         sN4pEes4R9j+vRr4hEBlTAsqQXC0OLr0vY84hJKDFpjJJ2CXlI+FB7Ks5caP5b/J6TbE
+         dKbGd4y/U7dgBXIwzg/BbllHbGKHIX7n+/HJQOm/NZqAjfEKo3CXQY0FDaAtXtpDYX59
+         M+aw==
+X-Forwarded-Encrypted: i=1; AJvYcCU14uO6MhlJG8AZQpNkt3gcnJftqtu5foC8tcwrMuZwsV2C1sge86HuRVNjP7hdJJYACTgGn+Vn/Gxh91Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvo4LPzk/lRINHgOUFoLa0YKE0v4LfyIHTYKn8QwoR6mggx/7q
+	HWtYseprrmTSaglQf00oRWKYhpSrpJmhz0likMtvMdU6+Ao+ieBfY8rgvbxQOQI=
+X-Google-Smtp-Source: AGHT+IGHg/nF3y2Cw9wNMLYCxmg1VqIRntcfx6/ejw9ZiK9DeVF4/Ni3eBqw7YqXBPFvTqT5AFuANA==
+X-Received: by 2002:a05:6820:1a03:b0:5c4:144b:1ff9 with SMTP id 006d021491bc7-5ec5ec9271dmr9857795eaf.5.1730499435397;
+        Fri, 01 Nov 2024 15:17:15 -0700 (PDT)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec70698049sm789817eaf.48.2024.11.01.15.17.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 15:17:14 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 0/3] iio: finish cleanup of IIO_EVENT_CODE macros
+Date: Fri, 01 Nov 2024 17:17:07 -0500
+Message-Id: <20241101-iio-fix-event-macro-use-v1-0-0000c5d09f6d@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus handling
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, patrick@stwcx.xyz,
- joel@jms.id.au, andrew@codeconstruct.com.au, wim@linux-watchdog.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-Cc: Peter.Yin@quantatw.com, Patrick_NC_Lin@wiwynn.com, Bonnie_Lo@wiwynn.com,
- DELPHINE_CHIU@wiwynn.com, bmc-sw@aspeedtech.com, chnguyen@amperecomputing.com
-References: <20241101121201.2464091-1-chin-ting_kuo@aspeedtech.com>
- <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGNTJWcC/x2MywqAIBAAf0X23IKPIOpXooPZVntIQ0uC8N+Tj
+ gMz80KiyJRgEC9Eypw4+AqqEeB26zdCXiqDlrpVSipkDrjyg5TJX3hYFwPeidDNpmvtbKTre6j
+ 1Galq/3mcSvkAm9I7E2kAAAA=
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On 11/1/24 05:11, Chin-Ting Kuo wrote:
-> The boot status in the watchdog device struct is updated during
-> controller probe stage. Application layer can get the boot status
-> through the command, cat /sys/class/watchdog/watchdogX/bootstatus.
-> 
-> The boot status mapping rule follows the latest design guide from
-> the OpenBMC shown as below.
-> https://github.com/openbmc/docs/blob/master/designs/bmc-reboot-cause-update.md#proposed-design
-> - WDIOF_EXTERN1   => system is reset by Software
-> - WDIOF_CARDRESET => system is reset by WDT SoC reset
-> - Others          => other reset events, e.g., power on reset.
-> 
-> On ASPEED platform, the boot status is recorded in the SCU registers.
-> - AST2400: Only a bit represents for any WDT reset.
-> - AST2500: The reset triggered by different WDT controllers can be
->             distinguished by different SCU bits. But, WDIOF_EXTERN1 or
->             WDIOF_CARDRESET still cannot be identified due to
->             HW limitation.
-> - AST2600: Different from AST2500, additional HW bits are added for
->             distinguishing WDIOF_EXTERN1 and WDIOF_CARDRESET.
-> 
-> Besides, since alternating boot event is triggered by WDT SoC reset,
-> it is classified as WDIOF_CARDRESET.
-> 
-> Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-> ---
->   drivers/watchdog/aspeed_wdt.c | 83 ++++++++++++++++++++++++++++++++++-
->   1 file changed, 81 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
-> index b4773a6aaf8c..4ad6335ff25b 100644
-> --- a/drivers/watchdog/aspeed_wdt.c
-> +++ b/drivers/watchdog/aspeed_wdt.c
-> @@ -11,21 +11,31 @@
->   #include <linux/io.h>
->   #include <linux/kernel.h>
->   #include <linux/kstrtox.h>
-> +#include <linux/mfd/syscon.h>
->   #include <linux/module.h>
->   #include <linux/of.h>
->   #include <linux/of_irq.h>
->   #include <linux/platform_device.h>
-> +#include <linux/regmap.h>
->   #include <linux/watchdog.h>
->   
->   static bool nowayout = WATCHDOG_NOWAYOUT;
->   module_param(nowayout, bool, 0);
->   MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
->   				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-> +struct aspeed_wdt_scu {
-> +	const char *compatible;
-> +	u32 reset_status_reg;
-> +	u32 wdt_reset_mask;
-> +	u32 wdt_sw_reset_mask;
-> +	u32 wdt_reset_mask_shift;
-> +};
->   
->   struct aspeed_wdt_config {
->   	u32 ext_pulse_width_mask;
->   	u32 irq_shift;
->   	u32 irq_mask;
-> +	struct aspeed_wdt_scu scu;
->   };
->   
->   struct aspeed_wdt {
-> @@ -39,18 +49,39 @@ static const struct aspeed_wdt_config ast2400_config = {
->   	.ext_pulse_width_mask = 0xff,
->   	.irq_shift = 0,
->   	.irq_mask = 0,
-> +	.scu = {
-> +		.compatible = "aspeed,ast2400-scu",
-> +		.reset_status_reg = 0x3c,
-> +		.wdt_reset_mask = 0x1,
-> +		.wdt_sw_reset_mask = 0,
-> +		.wdt_reset_mask_shift = 1,
-> +	},
->   };
->   
->   static const struct aspeed_wdt_config ast2500_config = {
->   	.ext_pulse_width_mask = 0xfffff,
->   	.irq_shift = 12,
->   	.irq_mask = GENMASK(31, 12),
-> +	.scu = {
-> +		.compatible = "aspeed,ast2500-scu",
-> +		.reset_status_reg = 0x3c,
-> +		.wdt_reset_mask = 0x1,
-> +		.wdt_sw_reset_mask = 0,
-> +		.wdt_reset_mask_shift = 2,
-> +	},
->   };
->   
->   static const struct aspeed_wdt_config ast2600_config = {
->   	.ext_pulse_width_mask = 0xfffff,
->   	.irq_shift = 0,
->   	.irq_mask = GENMASK(31, 10),
-> +	.scu = {
-> +		.compatible = "aspeed,ast2600-scu",
-> +		.reset_status_reg = 0x74,
-> +		.wdt_reset_mask = 0xf,
-> +		.wdt_sw_reset_mask = 0x8,
-> +		.wdt_reset_mask_shift = 16,
-> +	},
->   };
->   
->   static const struct of_device_id aspeed_wdt_of_table[] = {
-> @@ -213,6 +244,52 @@ static int aspeed_wdt_restart(struct watchdog_device *wdd,
->   	return 0;
->   }
->   
-> +static int aspeed_wdt_update_bootstatus(struct platform_device *pdev,
-> +					struct aspeed_wdt *wdt)
-> +{
-> +	struct resource *res;
-> +	struct aspeed_wdt_scu scu = wdt->cfg->scu;
-> +	struct regmap *scu_base;
-> +	u32 reset_mask_width;
-> +	u32 reset_mask_shift;
-> +	u32 reg_size = 0;
+Since [1], there are only a couple of users IIO_EVENT_CODE left in the
+kernel. We can clean these up too. Then we can make that macro "private"
+do discourage others from using it in the future.
 
-Please no unnecesary initializations.
+[1]: https://lore.kernel.org/linux-iio/20241028-iio-add-macro-for-even-identifier-for-differential-channels-v1-0-b452c90f7ea6@baylibre.com/
 
-> +	u32 idx = 0;
-> +	u32 status;
-> +	int ret;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	reg_size = res->end - res->start;
-> +
-> +	if (reg_size != 0)
-> +		idx = ((intptr_t)wdt->base & 0x00000fff) / reg_size;
-> +
-> +	/* On ast2400, only a bit is used to represent WDT reset */
-> +	if (of_device_is_compatible(pdev->dev.of_node, "aspeed,ast2400-wdt"))
-> +		idx = 0;
-> +
+---
+David Lechner (3):
+      iio: dummy: use specialized event code macros
+      iio: accel: mma9553: use specialized event code macros
+      iio: events: make IIO_EVENT_CODE macro private
 
-There is some redundancy in the above code, and platform_get_resource()
-can return NULL. If idx==0 for aspeed,ast2400-wdt anyway, the code can be
-rewritten as
+ drivers/iio/accel/mma9553.c                 | 24 +++++++++++------------
+ drivers/iio/dummy/iio_simple_dummy_events.c | 30 ++++++++++++++---------------
+ include/linux/iio/events.h                  | 15 +++++++++------
+ 3 files changed, 34 insertions(+), 35 deletions(-)
+---
+base-commit: c218214db564ca7d6885fa5859541a86197856c0
+change-id: 20241101-iio-fix-event-macro-use-cb374ab30c99
 
-	if (!of_device_is_compatible(pdev->dev.of_node, "aspeed,ast2400-wdt")) {
-		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-		if (res) {
-			reg_size = res->end - res->start;
-			if (reg_size)
-				idx = ((intptr_t)wdt->base & 0x00000fff) / reg_size;
-		}
-	}
-
-> +	scu_base = syscon_regmap_lookup_by_compatible(scu.compatible);
-> +	if (IS_ERR(scu_base))
-> +		return PTR_ERR(scu_base);
-> +
-> +	ret = regmap_read(scu_base, scu.reset_status_reg, &status);
-> +	if (ret)
-> +		return ret;
-
-The above only affects bootstatus. Why fail to load the driver just because
-bootstatus can not be read ?
-
-> +
-> +	reset_mask_width = hweight32(scu.wdt_reset_mask);
-> +	reset_mask_shift = scu.wdt_reset_mask_shift +
-> +			   reset_mask_width * idx;
-> +
-> +	if (status & (scu.wdt_sw_reset_mask << reset_mask_shift))
-> +		wdt->wdd.bootstatus = WDIOF_EXTERN1;
-> +	else if (status & (scu.wdt_reset_mask << reset_mask_shift))
-> +		wdt->wdd.bootstatus = WDIOF_CARDRESET;
-> +	else
-> +		wdt->wdd.bootstatus = 0;
-
-That is already 0.
-
-> +
-> +	return regmap_write(scu_base, scu.reset_status_reg,
-> +			    scu.wdt_reset_mask << reset_mask_shift);
-> +}
-> +
->   /* access_cs0 shows if cs0 is accessible, hence the reverted bit */
->   static ssize_t access_cs0_show(struct device *dev,
->   			       struct device_attribute *attr, char *buf)
-> @@ -458,10 +535,12 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
->   		writel(duration - 1, wdt->base + WDT_RESET_WIDTH);
->   	}
->   
-> +	ret = aspeed_wdt_update_bootstatus(pdev, wdt);
-> +	if (ret)
-> +		return ret;
-> +
->   	status = readl(wdt->base + WDT_TIMEOUT_STATUS);
->   	if (status & WDT_TIMEOUT_STATUS_BOOT_SECONDARY) {
-> -		wdt->wdd.bootstatus = WDIOF_CARDRESET;
-> -
->   		if (of_device_is_compatible(np, "aspeed,ast2400-wdt") ||
->   		    of_device_is_compatible(np, "aspeed,ast2500-wdt"))
->   			wdt->wdd.groups = bswitch_groups;
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
