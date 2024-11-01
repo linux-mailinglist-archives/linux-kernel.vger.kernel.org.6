@@ -1,127 +1,117 @@
-Return-Path: <linux-kernel+bounces-392303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC75F9B9222
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:34:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE219B9223
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:34:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59674B23C3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:34:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81931F22A8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158291ABEA9;
-	Fri,  1 Nov 2024 13:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31151A01BD;
+	Fri,  1 Nov 2024 13:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTYz0ou8"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G1p6q+MJ"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D9D19F423;
-	Fri,  1 Nov 2024 13:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FB3335D3
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730467961; cv=none; b=YXp4N0BGDqWD8VD5VbcUg1BJIdg7LDg2L2tv1e2gIhI7Nc0imQPWTyt8d4yKAI1yDs4wJnowajaNkxy94jEdMxzYA5N/RXVbkAuy1E94Ix7xUjbsizQORekqyIYSaC6C4ds3jfzagGpgFfg5lOetc0p5dRhypOePod7gBobdnTU=
+	t=1730468029; cv=none; b=Nt31TShnLx9CI5NngofzNcxOqMpGbt6Ya/LoMeAwfoo4BXn/IA8s2fQ3azoAwsFVisKI3ZN1EKKKfNQDbWEbCyDqttHfaTE8PjvhKL7gWrcQt+tqIW4KSxoK7kaCHVjh06hFSdJM7Q4/e2LvWO4TcWGaP2mxI2OZ39p/L8KaNj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730467961; c=relaxed/simple;
-	bh=udSu0PifOzRa5GkWP7sFryWEU4fALlPs0aaNg1SJDJs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QdYpaUZ06esG5/l5ZjEoPbWe2JdygXo75yUcm7WFYONC2KSLI3229vX7O5lW72/ZZeXhh+T18RLQDTcySIJNWokQLmF5/pPqIVknP03D8hvFeJssb1FsqETu7BzytseACfHwkWG+1Up+9NK1ccyH7GhZk6A7WtXMPPItSqADTUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TTYz0ou8; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso1638459a91.3;
-        Fri, 01 Nov 2024 06:32:39 -0700 (PDT)
+	s=arc-20240116; t=1730468029; c=relaxed/simple;
+	bh=cSRSVKy6fxvv4pqCUjjonIGzc8O9xPKLp2iSTjcSfEE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=Znx9M6P0lfizjzC4wOdWp+QBkP5t7Vp7anwqVZ8PR2ZaDkNNX+Aue2WG0a2Ewyfey03S/FnonJCSVnERApXM/S51CBBlEJdi3Xt1rOGLZk9jMOX4w+vN6tB5Az+rfumkp+E3OTRw6BPmXbM0jQ5HQZ1abfoW10tbkObnPc2QvTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G1p6q+MJ; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so15431675e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:33:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730467958; x=1731072758; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1730468025; x=1731072825; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XZgSPrHkP+5PHa4TM3CPdf/GMcXQ4aZTX0bTblaWKZw=;
-        b=TTYz0ou8Lu/QOWQgJN/mCerlrCBHdH2prEXt1kROYdRGpEnzDbLQvXE7bEmQaY2g4j
-         1A2jxfJE3sTwW1XKHyIgw6jxsSRHs+xYIwLLaZPPCquzT7FQv+krlLIjZNu3GuO929UI
-         ps6qpPFaw0tE6dfa1Y5VvQbEoJAP1nzxkBvgO3mUwvCohy8aGd19w3tEbkbwQTYJVwUx
-         iTaniIlW7ykjzhFhyYWoiY0gS+6mmS3/7gMFM9gQ7A9oIcE3iFPZHgakwk1oeO8yqzsD
-         kheL/2Gzvkw5tbYG8P7K8rF2DtaBaa2ZL5NAXi/uIyrc4VGI43fKssP0MZEM5TRUHem3
-         y+Aw==
+        bh=cSRSVKy6fxvv4pqCUjjonIGzc8O9xPKLp2iSTjcSfEE=;
+        b=G1p6q+MJJsqRhFUr4G6NIFliI4oHAarbBW+Z0bn8r7KXDunY+Fs2RjqPqZQ5CecLPU
+         zfihzov15LAEk8GurA+dnZTnL4p4M5fS0urjnEfLyoEyXKabJUoKU4wMH+C4AYomXOHX
+         8yrsjHuF6Tg0g0mq5T1OlHzUxl4vvnmwEJH2RjtM+OG8KWKG3ekX6JDWzeXexTloTXp3
+         +IhWIjhExQZmd/muLy5fy9C3Ha91Wqz5qwkfKTF2P0Qsr/J+4Pf/rdHva9+pPINxz7a+
+         9/MEz9bnXYRp+O9DbnMKviAV0miArJWdr6vXUIoPuHNgji9d9ap/suTwyd8UMvfc1Wop
+         pjCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730467958; x=1731072758;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XZgSPrHkP+5PHa4TM3CPdf/GMcXQ4aZTX0bTblaWKZw=;
-        b=FDXjZxKfI2osiR82ZQVT44JyHslb9qzZDVtV+0Ss2wPTgPQtpcEUR8aOGpdut8bIov
-         2DvJlZzUAlV4sY+PTX62v41GFUkNeIMrcR2Fa+SZXTJSIdps8NiQ5BAcjaMFZGCTuaL6
-         NvZWZyDJ+rwjPvlUbwGoxocoqhqSqpkYD2H+Ilv/QPlHpdpBkyOuhFUH1l5Yw/xUNBxv
-         JTNU5UTt3LovLsS0kLzM8CzZB8wsRwH13ikdK3D4R251rjIsOkgQcPi4dAKsH3K/tsaD
-         V7xjnYeru4ex5BxiNWPrDO4VZUx/kOtiWWpOpFk77BzPsiPxy+Cq0wvf8BB2X5UpQrmj
-         MW2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUvqMdkWcq9eD5RjFmjXMjaat0Lj3OP55+gz+CK1q+cjawWb8+b2NdcZ1p2tN2bPJ1QPtMEiHR6qIei7e8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXL3EChW4iSPw1U2H/COOhWTfQMpYH+xJogd6vUVrAxiOwEIL4
-	CFKAlgxB/G2rO7XUBj53OG7adwv2CmO3UIM1lzb+tnXLcDAGhi2Jf47avQ==
-X-Google-Smtp-Source: AGHT+IHTARvDrrbplxN/Ao00eWN31nXbIywcdD4rM9k0ODO/JUtkFyG0XgpgcHwQj45NcT/QvLH8bw==
-X-Received: by 2002:a17:90b:38ca:b0:2e2:cf5c:8ee8 with SMTP id 98e67ed59e1d1-2e93c186141mr8591363a91.12.1730467958001;
-        Fri, 01 Nov 2024 06:32:38 -0700 (PDT)
-Received: from localhost.localdomain ([129.146.253.192])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ee452ac4ffsm2425552a12.25.2024.11.01.06.32.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 06:32:37 -0700 (PDT)
-From: Furong Xu <0x1207@gmail.com>
-To: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Vladimir Oltean <olteanv@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	andrew+netdev@lunn.ch,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	xfr@outlook.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: [PATCH net-next v8 8/8] net: stmmac: xgmac: Enable FPE for tc-mqprio/tc-taprio
-Date: Fri,  1 Nov 2024 21:31:35 +0800
-Message-Id: <0575ef1553d572b7c8bc1baafa3fb7ac641073e0.1730449003.git.0x1207@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1730449003.git.0x1207@gmail.com>
-References: <cover.1730449003.git.0x1207@gmail.com>
+        d=1e100.net; s=20230601; t=1730468025; x=1731072825;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cSRSVKy6fxvv4pqCUjjonIGzc8O9xPKLp2iSTjcSfEE=;
+        b=VJKZZ/VWtLmO2ivJvozY9gcMi2XsTTOO3t3En+WmS6IbpAt2RkTmyvNs6CAY59eoVK
+         JPxM0I+5gAJeaK0w4gjZPT7tvWrm9e34SFNl23gYpFCFtErT8v1UcKR7mt4foNep0RQd
+         d0FqkV1gNuBNvcH8zh/ZovU+X4Z/5aU7w2MTnhuT1f2FgwlKM1WDZTYBsVpU2P5M5YhK
+         vZGX9hV20CmOI8C3kDmMbnjg8p/O18Bf1we4U/l2pZjKiGig8oxnlSD9nPI2mEOO53mF
+         pG3FcZRiagR8nHNURVd9swQ5z+RWM+XoWrQ7aXXNMKF4dSWvbyzpugXbdg8pWuK5DWwn
+         PGMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGDOfJiBAQmms1WxSzOI4JGxOZlO2Q/mFq8ZJgaWHnCMU05D/0aV6774vD4tYPhF0agEoonaC2ac1b1RU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqDmspSUvEryMlmxkHbhs7zt7Y/m1t46yRR0r1qF2ryfoicM1J
+	1xa5LLGH/Rp8z+Kdfapat7ihu2QuJ+Et3dj6A4GJhl+wTsqsRddkTMukJ4ubI50=
+X-Google-Smtp-Source: AGHT+IEH/LV34+9Gvkw5TCuAvD/S65wFK2Ymadi8Nr+OKQpBYeZS9kWI6PwyE6h92sZJAW5b995gHQ==
+X-Received: by 2002:a05:600c:3b88:b0:431:5e53:2dc4 with SMTP id 5b1f17b1804b1-431bb976d14mr84779975e9.6.1730468025405;
+        Fri, 01 Nov 2024 06:33:45 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bb78b809sm105155455e9.1.2024.11.01.06.33.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 06:33:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Nov 2024 13:33:43 +0000
+Message-Id: <D5AVPVHDHG9A.ARDI8CYMPNCN@linaro.org>
+Subject: Re: [RFC PATCH 0/2] wcd937x codec fixes
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Mark Brown" <broonie@kernel.org>
+Cc: <srinivas.kandagatla@linaro.org>, <quic_pkumpatl@quicinc.com>,
+ <a39.skl@gmail.com>, <quic_mohs@quicinc.com>,
+ <linux-sound@vger.kernel.org>, <krzysztof.kozlowski@linaro.org>,
+ <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+ <dmitry.baryshkov@linaro.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241022033132.787416-1-alexey.klimov@linaro.org>
+ <1995b110-ff67-48c3-9a82-c29a6a95a059@sirena.org.uk>
+In-Reply-To: <1995b110-ff67-48c3-9a82-c29a6a95a059@sirena.org.uk>
 
-The FPE on XGMAC is ready, it is time to update dwxgmac_tc_ops to
-let user configure FPE via tc-mqprio/tc-taprio.
+Hi Mark,
 
-Signed-off-by: Furong Xu <0x1207@gmail.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed Oct 23, 2024 at 12:21 AM BST, Mark Brown wrote:
+> On Tue, Oct 22, 2024 at 04:31:29AM +0100, Alexey Klimov wrote:
+> > This sent as RFC because of the following:
+> >=20
+> > - regarding the LO switch patch. I've got info about that from two pers=
+ons
+> > independently hence not sure what tags to put there and who should be
+> > the author. Please let me know if that needs to be corrected.
+>
+> The tags are fine there.
+>
+> Just as a general thing if two changes aren't directly related and don't
+> overlap at all it's usually better to send them separately to avoid
+> creating spurious dependencies which can slow down getting things
+> reviewed and merged.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-index 75ad2da1a37f..6a79e6a111ed 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-@@ -1290,8 +1290,8 @@ const struct stmmac_tc_ops dwxgmac_tc_ops = {
- 	.setup_cls_u32 = tc_setup_cls_u32,
- 	.setup_cbs = tc_setup_cbs,
- 	.setup_cls = tc_setup_cls,
--	.setup_taprio = tc_setup_taprio_without_fpe,
-+	.setup_taprio = tc_setup_taprio,
- 	.setup_etf = tc_setup_etf,
- 	.query_caps = tc_query_caps,
--	.setup_mqprio = tc_setup_mqprio_unimplemented,
-+	.setup_mqprio = tc_setup_dwmac510_mqprio,
- };
--- 
-2.34.1
+Thank you. Noted. Yes, they are technically independent. They were
+somehow connected in my head, something like "both are needed to have
+working audio with lesser troubles". I'll try to keep not related and
+not overlapping things separated.
 
+Best regards,
+Alexey
 
