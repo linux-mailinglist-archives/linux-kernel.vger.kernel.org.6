@@ -1,62 +1,77 @@
-Return-Path: <linux-kernel+bounces-392646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE67E9B96AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:39:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C06B89B96AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:40:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 371E0B21EC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:39:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A705B216B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05541CCED7;
-	Fri,  1 Nov 2024 17:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703321CCB36;
+	Fri,  1 Nov 2024 17:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNugFRiW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rt+3OVk3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C751CCB2A;
-	Fri,  1 Nov 2024 17:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502851CC178
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 17:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730482757; cv=none; b=Xs3pArmsVujH3bevrG5LJBosa6vpsiX6ZOav57WBfsug/+GRuoqJd/Se7nueTw7fJ86ZYksJ+0eUpkm4YTfWGjYmk/SzVh4kavceSbqPABkiOeLJu2fLPkrH+lIKZGSwXV/uTzJNrunf2+LNrSXfz8WE6bSjX6OObl0kGRfs8Ak=
+	t=1730482795; cv=none; b=kdyYEZqCVj944ZBNkm6V+NQoq7KfxQ4pEa6tq8ayil2dKxxvylDK5y3OwA2qwYQmM9VUyhgGHNDW2ccmsY0FiMKY7I3xV7ORpLh27k/fQqYZ1EoG9qgiRMTs0srl0jLwuXqOkv5hVwnP1hMSzUjV607dbrz813hzo7yHtmdsqS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730482757; c=relaxed/simple;
-	bh=MjpluMk4z1Rdc7ccRrPusPdZsycZJ1/7Dl1Io0hhDd0=;
+	s=arc-20240116; t=1730482795; c=relaxed/simple;
+	bh=v89+g/DTQWGhLe4cuYjs1XO0sK/w/oIh3Cy6SzSuvQI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFxkJwExmuxsMugytDoj42xXiXfwJn6A88ZDGFTFcRBKTUwI8EW4pxAqvXdc/FZYz5XCAtNsTfky8eHZ7k9VJOKRhk5WXY2WHAvPK1YuHM6G9nOKeu+6B9dFAm7edKAF/kQzrzUr3AFs/ttDvAMw2Z3LpbJnYM+UyavUzbrhTQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNugFRiW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F4ECC4CED2;
-	Fri,  1 Nov 2024 17:39:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730482756;
-	bh=MjpluMk4z1Rdc7ccRrPusPdZsycZJ1/7Dl1Io0hhDd0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rNugFRiWXU9A1hv0yLrPnNuqZWo/NBrOFcGqfFlDK4gWybtlvZuoCNl+xcrBGUYdP
-	 OWJ/PlOntDhgHvzfpTtieKf5A0bMLOFaz/ruk/y/KmzHzo2MgkXQho/c1oYD22G4W1
-	 b3iCEs9xsocPs1dZflBHc5ZEQSk14PuA2/drhm1SCS+hKb13/ZHluOX7lACK4B81M9
-	 Y9HHvanYUTX6Aa0i91zO6apUgfleVN/5XOtnMPunbeUQrvT0th4DppCBkAs4+WLY3c
-	 Bd1KqSp+/JZoJdHn9nD6+Drkxg0iWix+QdpgwBpt3OIPaeveosCxqX+LLdczdp69Mm
-	 EYoCxGjcKYtvg==
-Date: Fri, 1 Nov 2024 12:39:14 -0500
-From: Rob Herring <robh@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH 01/10] dt-bindings: soc: imx-blk-ctrl: add
- 'fsl,power-domains-boot-on' property
-Message-ID: <20241101173914.GA3786619-robh@kernel.org>
-References: <20241028102559.1451383-1-dario.binacchi@amarulasolutions.com>
- <20241028102559.1451383-2-dario.binacchi@amarulasolutions.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUrLg7xOUk9LVugTWBtuBkEqLR6BYIxLv5uR8Y7dBm6+AXa2GDbnXjgNqNTArGSTAcrwFHsrOS3/pgRWKwGlaI6iCWQDNPu1qt9rb0GKozMKBrHWIjXI/PZ8Ks6IDrkWIfEnQP+wEx8p87QYULyMJFs9IUwR+dwfPm+3nGzGXpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rt+3OVk3; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730482795; x=1762018795;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v89+g/DTQWGhLe4cuYjs1XO0sK/w/oIh3Cy6SzSuvQI=;
+  b=Rt+3OVk300pOCfpjs6AFEe0YY3Vi+9ZfyswzqsxqVrcfxVOF3P5P3JAb
+   M+mqSM8OmsVdT6IMavfHzIPeUFyKj5cQyHCkEr/fAGpEwpOo38Uf/vsUV
+   vbLr4D6/F2oqwSGqiHdc05CJxScXcq5jCEFpqnbgyOc4jcFoZpscaVI4n
+   0Js5C7zdBtKD2H6c4C6HYK+nhB+JuExpuTZOgM6zEGzMLnFYhIggoUbO9
+   4RNI1eNwARolKs6Qii9SJrNBxuY+lIO8EvyLLKtlsLM+gR7Azp22cLS4n
+   hf1Y3GBZy3l8trOc4SHOxH84XV5im5GW6tLa49vf8vn5sbvdcllMVVU70
+   g==;
+X-CSE-ConnectionGUID: 2tIWiQVvT+ujoM9IjPnl/w==
+X-CSE-MsgGUID: 3swk+s+5RT2pb6T5zL7ydA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33946101"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="33946101"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 10:39:54 -0700
+X-CSE-ConnectionGUID: ZtWAP1PfRSWO5BFUYHZlbg==
+X-CSE-MsgGUID: lL6wqBWATWWj/rbYsPrCXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
+   d="scan'208";a="88155105"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 01 Nov 2024 10:39:51 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6vcj-000how-0i;
+	Fri, 01 Nov 2024 17:39:49 +0000
+Date: Sat, 2 Nov 2024 01:39:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jeremy Linton <jeremy.linton@arm.com>,
+	linux-arm-kernel@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, steven.price@arm.com,
+	suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org,
+	gshan@redhat.com, sami.mujawar@arm.com,
+	linux-kernel@vger.kernel.org, Jeremy Linton <jeremy.linton@arm.com>
+Subject: Re: [PATCH] arm64: rsi: Add automatic arm-cca-guest module loading
+Message-ID: <202411020124.OBmJyKCY-lkp@intel.com>
+References: <20241029141114.7207-1-jeremy.linton@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,43 +80,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241028102559.1451383-2-dario.binacchi@amarulasolutions.com>
+In-Reply-To: <20241029141114.7207-1-jeremy.linton@arm.com>
 
-On Mon, Oct 28, 2024 at 11:25:24AM +0100, Dario Binacchi wrote:
-> This property lists the state of the power domains, indicating whether
-> they have been left on or off by the bootloader/firmware.
-> This information becomes relevant, for example, in the case of supporting
-> the simple framebuffer.
-> 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> ---
-> 
->  .../bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml       | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml
-> index eeec9965b091..00aa0b8d8ea9 100644
-> --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml
-> +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml
-> @@ -56,6 +56,15 @@ properties:
->        - const: csi-aclk
->        - const: csi-pclk
->  
-> +  fsl,power-domains-boot-on:
-> +    description: |
-> +      Provide the on/off (1/0) status of the power domains. It allows
-> +      specifying whether one or more power domains have already been
-> +      initialized and left powered on by the bootloader.
+Hi Jeremy,
 
-Sounds like a common problem *if* we wanted to fix it in DT.
+kernel test robot noticed the following build warnings:
 
-Why can't you just read the h/w registers to see which domains are 
-powered on? Perhaps because some are on, but you want to turn them off.
+[auto build test WARNING on arm64/for-next/core]
+[also build test WARNING on next-20241101]
+[cannot apply to kvmarm/next soc/for-next linus/master arm/for-next arm/fixes v6.12-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Also, for simple-framebuffer, I think you can list the power-domains to 
-keep on.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jeremy-Linton/arm64-rsi-Add-automatic-arm-cca-guest-module-loading/20241029-221213
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
+patch link:    https://lore.kernel.org/r/20241029141114.7207-1-jeremy.linton%40arm.com
+patch subject: [PATCH] arm64: rsi: Add automatic arm-cca-guest module loading
+config: arm64-randconfig-001-20241101 (https://download.01.org/0day-ci/archive/20241102/202411020124.OBmJyKCY-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241102/202411020124.OBmJyKCY-lkp@intel.com/reproduce)
 
-Rob
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411020124.OBmJyKCY-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/virt/coco/arm-cca-guest/arm-cca-guest.c:223:40: warning: 'arm_cca_match' defined but not used [-Wunused-const-variable=]
+     223 | static const struct platform_device_id arm_cca_match[] = {
+         |                                        ^~~~~~~~~~~~~
 
 
+vim +/arm_cca_match +223 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+
+   222	
+ > 223	static const struct platform_device_id arm_cca_match[] = {
+   224		{ ARMV9_RSI_PDEV_NAME, 0},
+   225		{ }
+   226	};
+   227	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
