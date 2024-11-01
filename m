@@ -1,116 +1,96 @@
-Return-Path: <linux-kernel+bounces-392419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91109B93E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:03:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8EBA9B93EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:04:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C6DAB215B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C27628177C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2701AA7AB;
-	Fri,  1 Nov 2024 15:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EC21A7273;
+	Fri,  1 Nov 2024 15:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2xZoTrs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gykLoDI2"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F8819F131;
-	Fri,  1 Nov 2024 15:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09D83EA98
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 15:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730473383; cv=none; b=ZAQKkfWdfOEBXLfjxCO3jZtN+s3Nw4AZo7YWLAKFF4D97LT4y89GXLrZJZTRllwWf+zYO1eo4bUs9dJLghtsL6dZbqZxRZwzhrnPCE3dZGSqli2O/XLXpzrXzLSSMu45B/g8So7ffgn8DMytTw2CZfoXZUpnwD4CKa5RlvnQvBw=
+	t=1730473432; cv=none; b=MeNEAdF1IPRVvtT1xKsYPQnmqkqBHf2j/r1n0XNNqzFfaqvgflQBLise8VOAev5GACuYsQ9ANNfy415V+5f+XX2pEsK3zJ0H5YmluR2DiVo1L440xjFuWyXOIDHRGwVm9P6krEPVNjyTyNyF7Do1P2WJlEPph02l9Jw5oNswXJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730473383; c=relaxed/simple;
-	bh=v1nMNnF1xZ7ucFPNPFxGfXrwsrL/ya1R0Pbjt6gfM8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i5l2sRgQGX++IzfTlwcFnOv+3ByxbOVlQ3LeuuPRG13rV2gJJw2A02yQm2tJ675k1meSOzoPH7O+xfaygFew5Wwv777YLOERr2ItP9btV0ZJ4dhFbwcEBzNoDGVZuyd/vjsFEx89pFSoZIdpzkWpoCc0d856uSHXnZ5D32RrE9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2xZoTrs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E33C4CECD;
-	Fri,  1 Nov 2024 15:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730473382;
-	bh=v1nMNnF1xZ7ucFPNPFxGfXrwsrL/ya1R0Pbjt6gfM8g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=s2xZoTrsG8TR0Jaz4IkpdjDarQjs2NyhymZQ3Z/UE17Jw7rzUnE5/zzQhy+U0uULK
-	 PbSRRmB1ItHcLYS2ydKosJDazl7s+f00kkD5S4Vzr3zq+HOeboeYHFh4fRd6K8efs9
-	 j+W0YuJSfea1vRMzA9qwRt5x6CxWAJBjzA8+TUsL6dpDLMXqBwruJNmxreRCKgamwx
-	 AQoVhh7levxFg57X6vsH5SHquop0KsVNDCjbkLfOfBdNlfEuTNqMK61iHVx+I+j0vK
-	 oiM3duqt4j4PTcWcPJe3hlO17fP7C93wEh0ZcncMx46hvbndTanTTUBCpOZPDjvqwg
-	 I+/Mai+IFyOnQ==
-Date: Fri, 1 Nov 2024 15:02:56 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen
- <lars@metafoo.de>
-Subject: Re: [PATCH v1 1/1] iio: Mark iio_dev::priv member with __private
-Message-ID: <20241101150256.19f542f3@jic23-huawei>
-In-Reply-To: <20241101105342.3645018-1-andriy.shevchenko@linux.intel.com>
-References: <20241101105342.3645018-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730473432; c=relaxed/simple;
+	bh=YX5sq6ZheiFtKApdJRRA0qJIqMgD+DQBat0h/g373yk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jg+ZxtArpOPepJTmGH1QtQ5X/K/vAiKuaHdPLkG5ccwV16cEz4lVfQOTHEKEr4HN82z37qCzglsfKFCMTvneEyNanLEsheX1pfLDB1OSwm53xOcj2QKLIn4y88OtC6UmFv78z7ir87J7WFNpSuVrpb/Fay9XpPmfBhViwaLNVsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gykLoDI2; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c87b0332cso114875ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 08:03:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730473430; x=1731078230; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YX5sq6ZheiFtKApdJRRA0qJIqMgD+DQBat0h/g373yk=;
+        b=gykLoDI2DuEq5oSSJLE5frs0TT1DzrL9IFrqPAniiyuSw+ZykdIBnw/UHL4dx/GbrE
+         hRE2UznsEjvBJ6SIEOyPdmy5xo+1hLNbMHmwLDmWxRjzIiKFhzy8IAeS79c2OoO05oC2
+         fYm0ASM1GRpefBFIQHh0pQ0GWq8pLI6XHI26/1AQ44vT/auSOyz3Sz/DZwKgRGqB3Y5l
+         08Ux/kwLyrE0DOcMHM3uf5yAi8SLl191LCURJs5Ndz4Y/yDKL+s6XSFjYi+9LePztRxL
+         PA1zDeez8146vRU8UJBZ2B7C0U8HpZsF+BzIvnF3bHNdo0Ko2hadbXvpsZPoQXybjuZX
+         8d4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730473430; x=1731078230;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YX5sq6ZheiFtKApdJRRA0qJIqMgD+DQBat0h/g373yk=;
+        b=oH1DQxEIrocujD+IxFxGNrqnrw1K6kb6GcfcBQViSITOyk2fjF3cBVwO4jkViRMfho
+         noM6KgE3olL7VR636CUgItA3qTgwJ0HJVSW0OHaevIYbUUTapO5FtTXHtrb3ZBPnEAoh
+         SjY4sOar+S0zj9k3uLBZ/9zspo8SgEujzm/o/Wj8EcC1ean8v8oeG9eSg+IEz722axql
+         9CdJpm4dmFblO+Xce8ANgOhHWlpCd1hGmmBsHhPvrtTPpTAta0rgTWuvG5XB4XXzcTH8
+         TD14+8ajM1ja/pjdpe7FHfTPJGAQpZgAVZfEdaacpVkKXct0tqkXhFLUNjw0nzxFDpJS
+         fM1A==
+X-Forwarded-Encrypted: i=1; AJvYcCV2QZfFY0RSmiummRV3KLJMzxNnm3RbZeiMwEW4Jbzkoj+1jOR3UKULmfbEcTDhIwpc9czk7sq7b7Gg8Bw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMdRbE2mc7yBXSqsRaswNzsjq47IEuQc/SA3LK5RrEKSBNu8ZY
+	m/s+wbBx1AvgmfIlMblmJHvzWly+9/WfYJOwyHtoCXFyMlZPs01JzYTxBJbJWckZivLsy3dppxi
+	u0Kof0pT34gf2DGj3kSd61OpNovw8F4UPAn/fCTVX8kibdYZ9Au9lGeg=
+X-Gm-Gg: ASbGncuQPAGV6TXwLc8a1LU3naWwIHsNaXbqLU4Ll5ca48oV+oSza0EZXV2kAfglDCr
+	t/KCMgegDjVzqemKv4wKYCuZsl8+CUJE=
+X-Google-Smtp-Source: AGHT+IHO6aa1H4NDIW0E9d+zicp8WZuquwRCLAb+vHiEevpZxqwYPVoVFHQYByqn3yh/phUy4h+4QI3F3VXJog6wc7c=
+X-Received: by 2002:a17:902:f684:b0:1f7:34e4:ebc1 with SMTP id
+ d9443c01a7336-21105425eddmr4269565ad.5.1730473429797; Fri, 01 Nov 2024
+ 08:03:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241031210938.1696639-1-andrii@kernel.org> <20241031210938.1696639-3-andrii@kernel.org>
+In-Reply-To: <20241031210938.1696639-3-andrii@kernel.org>
+From: Jordan Rife <jrife@google.com>
+Date: Fri, 1 Nov 2024 08:03:38 -0700
+Message-ID: <CADKFtnSvogoT0ArYUqUFaBVUoQN4tfX6i_OdHNc4h2kaYvpZcQ@mail.gmail.com>
+Subject: Re: [PATCH trace/for-next 3/3] bpf: ensure RCU Tasks Trace GP for
+ sleepable raw tracepoint BPF links
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	rostedt@goodmis.org, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@kernel.org, mathieu.desnoyers@efficios.com, 
+	linux-kernel@vger.kernel.org, mhiramat@kernel.org, peterz@infradead.org, 
+	paulmck@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri,  1 Nov 2024 12:53:42 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Just to confirm, I ran the reproducer from [1] after combining this
+series with Mathieu's from [2] and it ran for 20m with no issues.
 
-> The member is not supposed to be accessed directly, mark it with
-> __private to catch the misuses up.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Makes sense.  Applied and pushed out as testing for all the normal reasons.
+[1]: https://lore.kernel.org/bpf/67121037.050a0220.10f4f4.000f.GAE@google.com/
+[2]: https://lore.kernel.org/bpf/20241031152056.744137-1-mathieu.desnoyers@efficios.com/T/#u
 
-
-Jonathan
-
-> ---
->  drivers/iio/industrialio-core.c | 2 +-
->  include/linux/iio/iio.h         | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> index 6a6568d4a2cb..4c543490e56c 100644
-> --- a/drivers/iio/industrialio-core.c
-> +++ b/drivers/iio/industrialio-core.c
-> @@ -1665,7 +1665,7 @@ struct iio_dev *iio_device_alloc(struct device *parent, int sizeof_priv)
->  	indio_dev = &iio_dev_opaque->indio_dev;
->  
->  	if (sizeof_priv)
-> -		indio_dev->priv = (char *)iio_dev_opaque +
-> +		ACCESS_PRIVATE(indio_dev, priv) = (char *)iio_dev_opaque +
->  			ALIGN(sizeof(*iio_dev_opaque), IIO_DMA_MINALIGN);
->  
->  	indio_dev->dev.parent = parent;
-> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-> index 445d6666a291..5c6682bd4cb9 100644
-> --- a/include/linux/iio/iio.h
-> +++ b/include/linux/iio/iio.h
-> @@ -624,7 +624,7 @@ struct iio_dev {
->  	const struct iio_info		*info;
->  	const struct iio_buffer_setup_ops	*setup_ops;
->  
-> -	void				*priv;
-> +	void				*priv __private;
->  };
->  
->  int iio_device_id(struct iio_dev *indio_dev);
-> @@ -785,7 +785,7 @@ struct iio_dev *iio_device_alloc(struct device *parent, int sizeof_priv);
->  /* The information at the returned address is guaranteed to be cacheline aligned */
->  static inline void *iio_priv(const struct iio_dev *indio_dev)
->  {
-> -	return indio_dev->priv;
-> +	return ACCESS_PRIVATE(indio_dev, priv);
->  }
->  
->  void iio_device_free(struct iio_dev *indio_dev);
-
+Tested-by: Jordan Rife <jrife@google.com>
 
