@@ -1,124 +1,123 @@
-Return-Path: <linux-kernel+bounces-392439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F089B9421
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 348799B9432
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C5F282B4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:15:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC63F282AE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D5E1BBBC4;
-	Fri,  1 Nov 2024 15:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C641C4614;
+	Fri,  1 Nov 2024 15:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FgoRyI01"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZZMFUWU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95031AE01B;
-	Fri,  1 Nov 2024 15:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FAF4778E;
+	Fri,  1 Nov 2024 15:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730474091; cv=none; b=OWHhVdysYOwrkWhom/kpo/pRzoReT5QaSgzH2HgwqNNX/o0NpzVyXTMUV8TYwgBy46XF51f/NyvcdB2RI2H48hFWuYMaDD3B4KhMrcGqBJrSL/W5r86M7/Z6GwAccJ9G9bEybUndVeCpmXGQKK9IkVKcJs9NwmD9Ei5rFvESlho=
+	t=1730474248; cv=none; b=CaqMfyIjVDwFMFi/MuieKoU0MYtTOVUBcYYXqQpN7siDbT4ShKgnVj2sdHtovePxZjmsEhIWOhQrlmyP4g8KZ2xq0yX+l3nm0w2/Kx1W8Fteui9FHbbzd5W7exGoeEeLPRLKd7gSwBQUI8YkUPs6yiVzBIFiJeX32hw96TKXVdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730474091; c=relaxed/simple;
-	bh=HDf6jYleLt1dL9i7iCeHfUfUY0TTmgcO8vabuye36qY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MkSVlYlII6luZ8LiAwRvqP2wKrkk++o5vetVL/kavcL9AEYLHlZShlc49XlQa/nJ2Gew4uplRPpPQTGSXPqRg2QlXwy2yRtc4bRHK0QE1omJ2TLUCXX/MU2luVuU/HDuKdZ83nC9dU1Z2RVu8Rj8MPCZ9msbtyZsSKc7SM0ktwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FgoRyI01; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730474090; x=1762010090;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HDf6jYleLt1dL9i7iCeHfUfUY0TTmgcO8vabuye36qY=;
-  b=FgoRyI015GFNoF88T+leUYIcNrjnErjS3mVKnZ42hqQtpLV3/efQE7Jn
-   1b1sJ7oxQnHyH35ZC8l19YN5nBoAAh32kra2HmsXt2BsiwLLzaxm2nSO1
-   P9ufgZFbILYieix152EPbbRzez+qQoOm1x9JpnFEeZ3SnpONK0a9G7sEU
-   h7wVOoxZJV9624nwLO/tk3Tr0jKkglrpGt3ozPg1odrO4SGNVLCoG4QBD
-   OnwalF4CCmlxhLWIxyrKhiAoF1Gd8pwFJjMNZXrMlwRsAyI5AVa7pFBym
-   oUkFvU2wNDqXvQBGRQ8Wl8Yc35ph1qM8tgzKq+AZWkfQVPkFVW5I/MSQH
-   g==;
-X-CSE-ConnectionGUID: SyetON0kTH6kqmzddxVciQ==
-X-CSE-MsgGUID: 8/Bsvg+jQu+U5Am/pOBNkQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="30454123"
-X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
-   d="scan'208";a="30454123"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 08:14:49 -0700
-X-CSE-ConnectionGUID: UBQEuVPYQoW0mbS4mKno7w==
-X-CSE-MsgGUID: 6Ri9NZEUQHKCbwSfXmY+PA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
-   d="scan'208";a="82914858"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 01 Nov 2024 08:14:44 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6tMI-000hgx-0S;
-	Fri, 01 Nov 2024 15:14:42 +0000
-Date: Fri, 1 Nov 2024 23:14:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sky Huang <SkyLake.Huang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Steven Liu <Steven.Liu@mediatek.com>,
-	"SkyLake.Huang" <skylake.huang@mediatek.com>
-Subject: Re: [PATCH net-next 4/5] net: phy: mediatek: Integrate read/write
- page helper functions
-Message-ID: <202411012322.1xALQkaN-lkp@intel.com>
-References: <20241030103554.29218-5-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1730474248; c=relaxed/simple;
+	bh=Tigeh6OfHNbtXhcgO2I9tZCnaQp8q6lEANEuNMg2xyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bjFnACpRrHeptaQgWfJK2/R/zNY51vi0DxEk76HJwC+L4N+JaBX0Zrd7ICxienwl2T3uIWswyshKubV1k5FeGPopSuM3dIc18gZDtnoQHwIbfxF+0h+V/AdOvAt/MgopGul0NN2YCxkbVkULOP3Vj4ilNX1D9It6r7Ij+bmGb4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZZMFUWU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B174C4CECD;
+	Fri,  1 Nov 2024 15:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730474247;
+	bh=Tigeh6OfHNbtXhcgO2I9tZCnaQp8q6lEANEuNMg2xyg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AZZMFUWUVCHSBTJyvR1ixugO1ppY2hyEBgk2sbqadAUJF25tCZUg3CSmd+smYk7bl
+	 q6C3dh1HQs9ABdePR2dv7u71tYKjylJ/BBlwzmBfNuzqSwClJw4LnhEwY0iBk2TYO2
+	 HmNrU+CxXCr2S9E8Mi2FApv5Y0QATDOntGLJ26BXAqAPFoSfEQUk6zCS6At4GON3A/
+	 677IpiLYsy4jxJ2HkAvJZSOYBfNHcfsdJ0X09wDzsSDzVb4Dt0CLh1B+uOjcSPcu/4
+	 qYT3g0hjWtyo4QXoMcWZlY/44wl5cW7uNxopk9072Pm5P30O8V12an7EBCvzMVqlE6
+	 8mY9vGTVE54Ew==
+Date: Fri, 1 Nov 2024 15:17:21 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <conor+dt@kernel.org>, <dlechner@baylibre.com>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+Subject: Re: [PATCH 0/7] *** Add support for AD485x DAS Family ***
+Message-ID: <20241101151721.234ba899@jic23-huawei>
+In-Reply-To: <20241101112358.22996-1-antoniu.miclaus@analog.com>
+References: <20241101112358.22996-1-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030103554.29218-5-SkyLake.Huang@mediatek.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Sky,
+On Fri, 1 Nov 2024 13:23:52 +0200
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-kernel test robot noticed the following build errors:
+> Add support for AD485X fully buffered, 8-channel simultaneous sampling,
+> 16/20-bit, 1 MSPS data acquisition system (DAS) with differential, wide
+> common-mode range inputs.
+> 
+> Some particularities:
+> 1. softspan - the devices support multiple softspans which are represented in iio
+>               through offset/scale. The current handling implies changing both
+>               the scale and the offset separately via IIO, therefore in order to
+>               properly set the softspan, each time the offset changes the softspan
+>               is set to the default value. And only after changing also the scale
+>               the desired softspan is set. This is the approach we are suggesting
+>               since we need the softspan configurable from userspace and not from
+>               devicetree.
+> 
+> 2. packet format - Data provided on the CMOS and LVDS conversion data output buses
+>                    are packaged into eight channel packets. This is currently handled
+>                    as extended info.
 
-[auto build test ERROR on net-next/main]
+For future cases. The cover letter should have the version numbers as well as the
+patches.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sky-Huang/net-phy-mediatek-Re-organize-MediaTek-ethernet-phy-drivers/20241030-184043
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241030103554.29218-5-SkyLake.Huang%40mediatek.com
-patch subject: [PATCH net-next 4/5] net: phy: mediatek: Integrate read/write page helper functions
-config: s390-randconfig-002-20241101 (https://download.01.org/0day-ci/archive/20241101/202411012322.1xALQkaN-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241101/202411012322.1xALQkaN-lkp@intel.com/reproduce)
+Also, the cover letter title should be similar to the patches.
+[PATCH V5 0/7] iio: adc: Add ad485x driver.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411012322.1xALQkaN-lkp@intel.com/
+How did we get this far with wild cards in file names?
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+In IIO we always name after a particular part (there are a few historical drivers
+that don't).  Using wild cards goes wrong far too often. So rename the file as
+ad4841.c + same for the dt binding file and documentation file.
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
->> ERROR: modpost: "mtk_phy_read_page" [drivers/net/phy/mediatek/mtk-ge.ko] undefined!
->> ERROR: modpost: "mtk_phy_write_page" [drivers/net/phy/mediatek/mtk-ge.ko] undefined!
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jonathan
+
+> 
+> Antoniu Miclaus (7):
+>   iio: backend: add API for interface get
+>   iio: backend: add support for data size set
+>   iio: adc: adi-axi-adc: add interface type
+>   iio: adc: adi-axi-adc: set data format
+>   dt-bindings: iio: adc: add ad458x
+>   iio: adc: ad485x: add ad485x driver
+>   Documentation: ABI: testing: ad485x: add ABI docs
+> 
+>  .../ABI/testing/sysfs-bus-iio-adc-ad485x      |   14 +
+>  .../bindings/iio/adc/adi,ad485x.yaml          |   82 ++
+>  drivers/iio/adc/Kconfig                       |   12 +
+>  drivers/iio/adc/Makefile                      |    1 +
+>  drivers/iio/adc/ad485x.c                      | 1061 +++++++++++++++++
+>  drivers/iio/adc/adi-axi-adc.c                 |   44 +
+>  drivers/iio/industrialio-backend.c            |   45 +
+>  include/linux/iio/backend.h                   |   13 +
+>  8 files changed, 1272 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad485x
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad485x.yaml
+>  create mode 100644 drivers/iio/adc/ad485x.c
+> 
+
 
