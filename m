@@ -1,122 +1,191 @@
-Return-Path: <linux-kernel+bounces-392435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217C49B9413
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:12:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3499C9B9418
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:13:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D802C282ABA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:12:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84121B21A35
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431041ADFF9;
-	Fri,  1 Nov 2024 15:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C041BBBF4;
+	Fri,  1 Nov 2024 15:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctFgbyOD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXjwbnlx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CF219F43B;
-	Fri,  1 Nov 2024 15:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16DF1AC884;
+	Fri,  1 Nov 2024 15:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730473969; cv=none; b=P3YFFfjJhAujK71gi/hVFN4WbB1tefFK3/beeFsJd+n6mdc4HowHMSVFxVa0FboXlFmDkRz4h83prVRYwHYpBK0GL+Ap4Oe3ohSMEZd4gO/ds19dlJ9nBn7WP/GIeE8F1AiUMQjOfJ3j/FPaNkwtfk+qI06qdM4QgrmiWDZwwPo=
+	t=1730473979; cv=none; b=a6aeOVVkIKWLT///ohXil00O049rMj1HFy0Sry5S/ryveK4fc8olpCpXTIZACNypvM6XqY8jglt/WGKLiTMDuYVsIMnJDmf+9HTRTbLUWOLYWrcIJaI3evHIcJA+NnTM2fIRw62NZXoB6/p03PypXR41GQabZDiYqy5ArTP8nKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730473969; c=relaxed/simple;
-	bh=H2ADy5sNeqxI+b63MV/vhg47XWPphNDQc6A9R+JB6mQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a8LgpFubeLq8S/ilnKd7/Gf9AkBDTKtgod5jX/w8c92bXAayRRhFJGrT8VpxtB+FZ4TaqhsUIgb2ut4YH1pwzcgSZKAcRjaYsRZNyYxVZUrvm0s8IgpdWHsqyOxdgqIIlyZhZm1QniUsC8dJPdcdMNM5So1B0gQo9ZvUVy4wMAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctFgbyOD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93FF7C4CECD;
-	Fri,  1 Nov 2024 15:12:47 +0000 (UTC)
+	s=arc-20240116; t=1730473979; c=relaxed/simple;
+	bh=ekg2hMYbznCWaygXXUdGZ3n+I2d1nv9q5j+6mo/Z790=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fm+GgRcIVFVqNfMaR5azITrWh75RVse95wWVlS2YXFjBOWQHcdNC+0jxm2vRMoNlfNcRQEWrqLdjfRgkRMJQFbJgs2Q6kOQzzAGDFcyt18JTIhbD4lI+GBXysDgXAAKchDuuzdoCmW68Q+3x8gwBmvZWl2fR24Vpf/r9OI0S/zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXjwbnlx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F3BDC4CECD;
+	Fri,  1 Nov 2024 15:12:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730473969;
-	bh=H2ADy5sNeqxI+b63MV/vhg47XWPphNDQc6A9R+JB6mQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ctFgbyODFZoFOSgFgkajyO88B29tEdtiSy+qyIETb7qdI7iIUK4yn2it7yX5zkY8Q
-	 gXRHv4729KWHPSHWGVLCKNQU4LK9gcq9fVjPPCE8bjSKraMnF3Bz8PM6rEbzLPAloe
-	 hTOxqCjEYgT6baK+00GsuuryxFUC2dEG44qcW4ih4Le219SSpuj1SjV9pLSiQMzArX
-	 UxRQ0Iq0JDiRY6PZenRTcL8VJ1smvkyQgHSQzN0CHSyeaks16lXYLiyv3CM6wuTt3J
-	 ph2hDFwkQxXUc7OQeR1qGOu0SWhOUQ5C1nIwspX5zen+/yzeJH5IcRwkro+ui2s28n
-	 DLfb0AdFFzOEQ==
-Date: Fri, 1 Nov 2024 15:12:43 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Darius Berghe <darius.berghe@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] dt-bindings: iio: adis16480: add devices to
- adis16480
-Message-ID: <20241101151243.558a8577@jic23-huawei>
-In-Reply-To: <20241101130742.3479110-3-darius.berghe@analog.com>
-References: <20241101130742.3479110-1-darius.berghe@analog.com>
-	<20241101130742.3479110-3-darius.berghe@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1730473979;
+	bh=ekg2hMYbznCWaygXXUdGZ3n+I2d1nv9q5j+6mo/Z790=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LXjwbnlxiTg55GSnTO31Ut03qEys8JTLEYgutdQfLcHxxyuP7PO2gsr6scoeuZdPx
+	 TDa/kIFuLE3jEQdz32QVirg3VkJmK5iAHtoeylhbaqsmoeOvg0kzKrlLTEIWLeUJls
+	 4D+/+Qj9NQxYu6LE5Nb3g6iUd/nCBoWspM1y2olcEk0FValyyE3RUgPgjkfm+4jJkx
+	 G8cOsnzk6fqRAjO/AvjNVnwYxNVBnFAkqePhIUiRjJzgGrHAhJdYQx2fhqBZ6wXyoi
+	 vgNJMRA4PMmj80oq7QR7R++/pGnva1GcfHEBh6MnJpVKBS4EDMf2B4w8IzmCi1RvcP
+	 XIlKkeRGxWBYA==
+Date: Fri, 1 Nov 2024 08:12:58 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] ext4: Add statx support for atomic writes
+Message-ID: <20241101151258.GG2386201@frogsfrogsfrogs>
+References: <cover.1730437365.git.ritesh.list@gmail.com>
+ <0517cef1682fc1f344343c494ac769b963f94199.1730437365.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0517cef1682fc1f344343c494ac769b963f94199.1730437365.git.ritesh.list@gmail.com>
 
-On Fri, 1 Nov 2024 15:07:42 +0200
-Darius Berghe <darius.berghe@analog.com> wrote:
-
-> Add the adis16486, adis16487 and adis16489 Six Degrees
-> of Freedom Inertial Sensors to the list of compatible devices
-> of the adis16480 iio subsystem driver.
-Hi Darius
-
-Please give a brief statement of what differs between these and the
-many other compatibles in this binding (beyond the ID register)?
-
-(usually scales, features etc)
-
-In particularly you state in the docs patch that one of them
-is functionally equivalent to an existing part so there a fallback
-compatible is appropriate.
-
-See how the st,lsm6dsx does it.  The reason to do this it allows
-the potential for an old kernel driver to work fine with a newer
-device tree.
-
-Other than that the series looks good to me.
-
-Given we have a case where data could be shared, longer term
-breaking up the chip_info array into individual structures would
-allow sharing of the data.
-
-The name handling in here isn't ideal as it relies on matching
-in the spi_device_id table which is fragile.  Doing that more
-cleanly might break the sharing of structures.  Oh well, not
-relevant for this set anyway.
-
-Jonathan
-
-
-
-
+On Fri, Nov 01, 2024 at 12:20:51PM +0530, Ritesh Harjani (IBM) wrote:
+> This patch adds base support for atomic writes via statx getattr.
+> On bs < ps systems, we can create FS with say bs of 16k. That means
+> both atomic write min and max unit can be set to 16k for supporting
+> atomic writes.
 > 
-> Signed-off-by: Darius Berghe <darius.berghe@analog.com>
+> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+
+Looks good to me,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
 > ---
->  Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  fs/ext4/ext4.h  | 10 ++++++++++
+>  fs/ext4/inode.c | 12 ++++++++++++
+>  fs/ext4/super.c | 31 +++++++++++++++++++++++++++++++
+>  3 files changed, 53 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-> index e3eec38897bf..5bef2878a0df 100644
-> --- a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-> +++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-> @@ -15,7 +15,10 @@ properties:
->        - adi,adis16375
->        - adi,adis16480
->        - adi,adis16485
-> +      - adi,adis16486
-> +      - adi,adis16487
->        - adi,adis16488
-> +      - adi,adis16489
->        - adi,adis16490
->        - adi,adis16495-1
->        - adi,adis16495-2
-
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 44b0d418143c..494d443e9fc9 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
+>  	 */
+>  	struct work_struct s_sb_upd_work;
+>  
+> +	/* Atomic write unit values in bytes */
+> +	unsigned int s_awu_min;
+> +	unsigned int s_awu_max;
+> +
+>  	/* Ext4 fast commit sub transaction ID */
+>  	atomic_t s_fc_subtid;
+>  
+> @@ -3855,6 +3859,12 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
+>  	return buffer_uptodate(bh);
+>  }
+>  
+> +static inline bool ext4_inode_can_atomic_write(struct inode *inode)
+> +{
+> +
+> +	return S_ISREG(inode->i_mode) && EXT4_SB(inode->i_sb)->s_awu_min > 0;
+> +}
+> +
+>  extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+>  				  loff_t pos, unsigned len,
+>  				  get_block_t *get_block);
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 54bdd4884fe6..3e827cfa762e 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5578,6 +5578,18 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
+>  		}
+>  	}
+>  
+> +	if ((request_mask & STATX_WRITE_ATOMIC) && S_ISREG(inode->i_mode)) {
+> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+> +		unsigned int awu_min = 0, awu_max = 0;
+> +
+> +		if (ext4_inode_can_atomic_write(inode)) {
+> +			awu_min = sbi->s_awu_min;
+> +			awu_max = sbi->s_awu_max;
+> +		}
+> +
+> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
+> +	}
+> +
+>  	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
+>  	if (flags & EXT4_APPEND_FL)
+>  		stat->attributes |= STATX_ATTR_APPEND;
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 16a4ce704460..ebe1660bd840 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -4425,6 +4425,36 @@ static int ext4_handle_clustersize(struct super_block *sb)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * ext4_atomic_write_init: Initializes filesystem min & max atomic write units.
+> + * @sb: super block
+> + * TODO: Later add support for bigalloc
+> + */
+> +static void ext4_atomic_write_init(struct super_block *sb)
+> +{
+> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
+> +	struct block_device *bdev = sb->s_bdev;
+> +
+> +	if (!bdev_can_atomic_write(bdev))
+> +		return;
+> +
+> +	if (!ext4_has_feature_extents(sb))
+> +		return;
+> +
+> +	sbi->s_awu_min = max(sb->s_blocksize,
+> +			      bdev_atomic_write_unit_min_bytes(bdev));
+> +	sbi->s_awu_max = min(sb->s_blocksize,
+> +			      bdev_atomic_write_unit_max_bytes(bdev));
+> +	if (sbi->s_awu_min && sbi->s_awu_max &&
+> +	    sbi->s_awu_min <= sbi->s_awu_max) {
+> +		ext4_msg(sb, KERN_NOTICE, "Supports (experimental) DIO atomic writes awu_min: %u, awu_max: %u",
+> +			 sbi->s_awu_min, sbi->s_awu_max);
+> +	} else {
+> +		sbi->s_awu_min = 0;
+> +		sbi->s_awu_max = 0;
+> +	}
+> +}
+> +
+>  static void ext4_fast_commit_init(struct super_block *sb)
+>  {
+>  	struct ext4_sb_info *sbi = EXT4_SB(sb);
+> @@ -5336,6 +5366,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+>  
+>  	spin_lock_init(&sbi->s_bdev_wb_lock);
+>  
+> +	ext4_atomic_write_init(sb);
+>  	ext4_fast_commit_init(sb);
+>  
+>  	sb->s_root = NULL;
+> -- 
+> 2.46.0
+> 
+> 
 
