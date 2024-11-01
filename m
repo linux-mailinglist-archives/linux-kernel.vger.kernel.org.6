@@ -1,107 +1,173 @@
-Return-Path: <linux-kernel+bounces-392340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716A19B92CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:07:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 714EE9B92D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:08:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C2911F22F57
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:07:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 379F728274B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD0E168DA;
-	Fri,  1 Nov 2024 14:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E230B1A264A;
+	Fri,  1 Nov 2024 14:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VS609FzX"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcO/vy3p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930E02D600
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4F1168DA;
+	Fri,  1 Nov 2024 14:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730470011; cv=none; b=Xi9rpDsdCQgQCBKA1h+kRk6129Ur+UdFSXVXmSAH7DEPfKVakOEMrVkSOT4FsFmZ8teNGC2hr5nxv74BFl+5uuwcE/8UrY6DRUEnIgHaRe56eyGZPTHPs4u49cJZ+BD+c2wCLJLU3OsTLhx6DXiUIeHfLxdeEB0E4MDXeMGsyUc=
+	t=1730470107; cv=none; b=k65kc7VmTvF+5qK6dGSMrQsB2wHKQN4x3TWFClivVCBQwsiLptupLGE7EzBB1VgZSpXOmVQq1ecxVG8evOy384JycsPSi4qBSsICJtoJiTmgOMmOuDxV04mPxnskxfRbiDM5rOW+BeDX8cprtOe55lyxMfODEbH2HZGHY80xuBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730470011; c=relaxed/simple;
-	bh=9LQJ4wXLQ6cVARl7oC8LrR0Q3kNk4H04I5XhPBBRE0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AWnScCSzJqr1oXg32rHpQJyd9jmevY72W/gvNuDwcjchImTXPSdQ9LdWMShc2alyZSJY81lyXxVpcy9/2tXqkJPG1vqhi5a6CCvBnLQC4Bu1DzDayNQ7Ro8T/HOZbHhI8Bobz7Fqp3GvwZUSMfgAMfNklnpQCuOfAXaioSInAjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VS609FzX; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e30db524c2so1545130a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730470009; x=1731074809; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bVcbhRmhKCemj4U6MSE4gRuucOO//csTNTbnt0iLHS8=;
-        b=VS609FzXnsJ7hRrkvFyv436veQDZ8/tsJFBYZu2wZttezmvWMh6faMsPK/J0mmZKwZ
-         mN+My5XcYc3Bv9/ttCrXVQUWrEOmyXJJUbowHH0GrMHw47g2JMhDWdKhiJ7DCSAaQAs6
-         554XnuVlzT7UN/TyOh7vNFI9rrrdtuAQxSaNQ8n8DK9/D7GO2OvyGEJdcHs+1cYjUPV8
-         q3Lvjla7SCsQHiMLEO9D0v+iV/WEx4r2a1GbOpC5SKEe7KZoiYLXtcSPQzLQCyFabuEY
-         OhwqodLAMFmteDW1sF+7oW7IjZD+RAW731Z9qrWSQFMq2eTgfmoVDCBjTIhn4qt4OA67
-         8Tcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730470009; x=1731074809;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bVcbhRmhKCemj4U6MSE4gRuucOO//csTNTbnt0iLHS8=;
-        b=oV7aJO+sDVjbMb3g2oASKexEOnvV4c3G5Uzk1/DIM/ttvG8UjMztQxR2pV1M6SZkIQ
-         Sn8xmZLWzIm5mCzUy8+WkmqU+ZKSAQzkH9aDDsa0sBKhCuDT2atdci3kXDNdulMuIFzm
-         RGSE8ff509d3ztna0tHaTGo/pDopwB9Kng/6/W234vg59wdWTN4ZBxO6TLC+c4NF2Evr
-         fFde6+15UO5KFcoeb+LKcgi7g0t5tI5OIOlldqKbMrAB6W7u3obEpFMDEdu1zEagif9M
-         RI2RDYMgP7/9ENEjueHOa0pD5golRGagtJCHA84nU4/QeUStGxXC1kcNb/z+jkkcJC+n
-         oXgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGfqTb4tHhxYZEI1a5ApzbT1iCsnOHUqPZ7VCLYidz+8dIKJUSgvbBrN+z5PvQ1GyGSFWyhheXSm6Dfdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHzvxa7OGvpGLLJ2TRW0lfn24oCB5xO+Mw3aULywVGlrEQgO/y
-	ibaotEOM87+On02voodYPhDD0vVZbml3ud0Kx4nfpT6lIciXMIjGuuUodmqOE2I=
-X-Google-Smtp-Source: AGHT+IH83Y7D5tzgzoL8Skxu77Glh8axk07cgao+mR/QcJ3UP9depKKR7FBKRICMJGK2P/DAcw86tA==
-X-Received: by 2002:a17:90b:3886:b0:2e2:b281:536e with SMTP id 98e67ed59e1d1-2e94c2bddd7mr5033214a91.15.1730470008853;
-        Fri, 01 Nov 2024 07:06:48 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa24ad2sm5011638a91.14.2024.11.01.07.06.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 07:06:48 -0700 (PDT)
-Message-ID: <a9b7a578-cf47-474f-8714-297437b385cd@kernel.dk>
-Date: Fri, 1 Nov 2024 08:06:47 -0600
+	s=arc-20240116; t=1730470107; c=relaxed/simple;
+	bh=IyJCYsGxG/Uh8pfdwqgQ0399gtR9nQ5xhOoICTeHV6Y=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OcaZs2ywxsxGTNWTcx90/sxUPpNItrbAQYotLdRK3yS/4Yq8ouPxdjRTN4kDuhWK05fnzyho28QkB2UlixpyJcSVKOmWm7lsBfAkP1ai2QgHehE3/9jf8R8P+LQRCXUZsfUaKopy7wwl5VFpRieqmoG+Taa20kNFJ0mAGSfIuZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IcO/vy3p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1658C4CECD;
+	Fri,  1 Nov 2024 14:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730470107;
+	bh=IyJCYsGxG/Uh8pfdwqgQ0399gtR9nQ5xhOoICTeHV6Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IcO/vy3potDm31dXKhF+DOg+c609wAQPpjXws1zyo6Qi5bIseThT+ejPCozwwNCbp
+	 S9pRE8hOBkQzIYRV35GTNSB2L8uBUuIUz1jqL4dVDTtrxGkBxVqGxkEUqkqDAvYrbk
+	 ZiQu/P5b1vYmJuik5S8L6GQkucCZIfE8mI33sNnlpqbsRhUvr+htMMk0Y82Uf0IK6+
+	 J036WTST5GBDEwDRWf1R2dYFtQcWeY41AQ81xM0OfreeyrXiHy6NjpePT/+SQb1SH/
+	 cNvPXO1jcMU2klUsereYsWlu/hbMahCXeerydS4SSSVnn3XGMVMdBgr3DuzoE57qDa
+	 0dQQVso/LoX7A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t6sK8-008t1R-Mp;
+	Fri, 01 Nov 2024 14:08:24 +0000
+Date: Fri, 01 Nov 2024 14:08:24 +0000
+Message-ID: <86plnf11yf.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>,
+	sudeep.holla@arm.com,
+	cristian.marussi@arm.com,
+	andersson@kernel.org,
+	konrad.dybcio@linaro.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	dmitry.baryshkov@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	quic_rgottimu@quicinc.com,
+	quic_kshivnan@quicinc.com,
+	conor+dt@kernel.org,
+	quic_nkela@quicinc.com,
+	quic_psodagud@quicinc.com,
+	abel.vesa@linaro.org
+Subject: Re: [PATCH V7 0/2] qcom: x1e80100: Enable CPUFreq
+In-Reply-To: <ZyTQ9QD1tEkhQ9eu@hovoldconsulting.com>
+References: <20241030130840.2890904-1-quic_sibis@quicinc.com>
+	<ZyTQ9QD1tEkhQ9eu@hovoldconsulting.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/1] io_uring: releasing CPU resources when polling
-To: hexue <xue01.he@samsung.com>, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241101091957.564220-1-xue01.he@samsung.com>
- <CGME20241101092009epcas5p117843070fa5edd377469f13af388fc06@epcas5p1.samsung.com>
- <20241101091957.564220-2-xue01.he@samsung.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241101091957.564220-2-xue01.he@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: johan@kernel.org, quic_sibis@quicinc.com, sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org, quic_nkela@quicinc.com, quic_psodagud@quicinc.com, abel.vesa@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 11/1/24 3:19 AM, hexue wrote:
-> A new hybrid poll is implemented on the io_uring layer. Once IO issued,
-> it will not polling immediately, but block first and re-run before IO
-> complete, then poll to reap IO. This poll function could be a suboptimal
-> solution when running on a single thread, it offers the performance lower
-> than regular polling but higher than IRQ, and CPU utilization is also lower
-> than polling.
+On Fri, 01 Nov 2024 13:00:37 +0000,
+Johan Hovold <johan@kernel.org> wrote:
+> 
+> [ +CC: Marc, who I think I saw reporting something similar even if I can
+>   seem to find where right now ]
 
-This looks much better now.
+It was on IRC.
 
-Do you have a patch for liburing to enable testing of hybrid polling
-as well? Don't care about perf numbers for that, but it should get
-exercised.
+> 
+> On Wed, Oct 30, 2024 at 06:38:38PM +0530, Sibi Sankar wrote:
+> > This series enables CPUFreq support on the X1E SoC using the SCMI perf
+> > protocol. This was originally part of the RFC: firmware: arm_scmi:
+> > Qualcomm Vendor Protocol [1]. I've split it up so that this part can
+> > land earlier. Warnings Introduced by the series are fixed by [2]
+> 
+>  Sibi Sankar (2):
+> >   arm64: dts: qcom: x1e80100: Add cpucp mailbox and sram nodes
+> >   arm64: dts: qcom: x1e80100: Enable cpufreq
+> 
+> I've been running with v6 of these for a while now, without noticing any
+> issues, and just updated to v7 to be able to provide a Tested-by tag.
+> 
+> I wanted to run a compilation and see how the frequencies varied, but
+> before I got around to that I just grepped the cpufreq sysfs attributes
+> for CPU0 four times. And this triggered a reset of the machine (x1e80100
+> CRD).
+> 
+> The last values output were:
+> 
+> 	affected_cpus:0 1 2 3
+> 	cpuinfo_cur_freq:<unknown>
+> 	cpuinfo_max_freq:3417600
+> 	cpuinfo_min_freq:710400
+> 	cpuinfo_transition_latency:30000
+> 	related_cpus:0 1 2 3
+> 	scaling_available_frequencies:710400 806400 998400 1190400 1440000 1670400 1920000 2188800 2515200 2707200 2976000 320
+> 	scaling_available_governors:ondemand userspace performance schedutil
+> 	scaling_cur_freq:806400
+> 	scaling_driver:scmi
+> 	scaling_governor:schedutil
+> 	scaling_max_freq:3417600
+> 	scaling_min_freq:710400
+> 	scaling_setspeed:<unsupported>
+> 
+> Notice the <unknown> current frequency (the previous greps said 710400
+> and 2515200).
+> 
+> The last thing I see on the serial console, presumably just before
+> the reset, is:
+> 
+> 	[  196.268025] arm-scmi arm-scmi.0.auto: timed out in resp(caller: do_xfer+0x164/0x564)
+> 
+> I just rebooted and grepped again and it triggered on the first attempt
+> (cur_freq also said '<unknown>'). Same error in the log, printed when
+> grepping.
+
+I'm seeing similar things indeed. Randomly grepping in cpufreq/policy*
+results in hard resets, although I don't get much on the serial
+console when that happens. Interestingly, I also see some errors in
+dmesg at boot time:
+
+maz@semi-fraudulent:~$ dmesg| grep -i scmi
+[    0.966175] scmi_core: SCMI protocol bus registered
+[    7.929710] arm-scmi arm-scmi.2.auto: Using scmi_mailbox_transport
+[    7.939059] arm-scmi arm-scmi.2.auto: SCMI max-rx-timeout: 30ms
+[    7.945567] arm-scmi arm-scmi.2.auto: SCMI RAW Mode initialized for instance 0
+[    7.958348] arm-scmi arm-scmi.2.auto: SCMI RAW Mode COEX enabled !
+[    7.978303] arm-scmi arm-scmi.2.auto: SCMI Notifications - Core Enabled.
+[    7.985351] arm-scmi arm-scmi.2.auto: SCMI Protocol v2.0 'Qualcomm:' Firmware version 0x20000
+[    8.033774] arm-scmi arm-scmi.2.auto: Failed to add opps_by_lvl at 3801600 for NCC - ret:-16
+[    8.033902] arm-scmi arm-scmi.2.auto: Failed to add opps_by_lvl at 3801600 for NCC - ret:-16
+[    8.036528] arm-scmi arm-scmi.2.auto: Failed to add opps_by_lvl at 3801600 for NCC - ret:-16
+[    8.036744] arm-scmi arm-scmi.2.auto: Failed to add opps_by_lvl at 3801600 for NCC - ret:-16
+[    8.171232] scmi-perf-domain scmi_dev.4: Initialized 3 performance domains
+
+All these "Failed" are a bit worrying. Happy to put any theory to the
+test.
+
+Thanks,
+
+	M.
 
 -- 
-Jens Axboe
-
+Without deviation from the norm, progress is not possible.
 
