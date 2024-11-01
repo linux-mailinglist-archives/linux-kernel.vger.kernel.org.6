@@ -1,176 +1,169 @@
-Return-Path: <linux-kernel+bounces-392959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758899B9A23
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:22:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063DA9B9A25
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C931FB21BF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7F0281FC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A181E2843;
-	Fri,  1 Nov 2024 21:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9EC1E32D9;
+	Fri,  1 Nov 2024 21:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xC7btHVd"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="QHcwywjX"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8204D1A256C
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F141547DC
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730496135; cv=none; b=ibsyEiYZDRSbItZeUve4QahcQzAxBzJM97LRN4IxWmfyWqj/PlnyjjRrTozSJNLsdXlbNy24Uv5uHAf66H5ChnXD8Qd8/qB7vxSesA9b5mS/UQ36xznyAzg2/gFTU8GHMVjy/rfLmnWAVGNQx7EfZr3a3VYwVTYqZMF46VuWsWQ=
+	t=1730496255; cv=none; b=uFjkaLxQmsHpQoAMZErWpXdlxk7rirlZV72bI6dY8luYs/9GZIh0ehkcIR1wC5ff9KhpDDqWf4MlT+0sqTQHa2cffhHAcMhuZbOAOy1OVHScIAoYRu7QwJvGc/ArdSloUD74n0V4hXb4PVLAQcRFJNcLBOMCuSY4TfiP6ZGV4+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730496135; c=relaxed/simple;
-	bh=1hlRSnBMxIgGnFT5nopO8avrxoyd9weX8/cYTA1zyms=;
+	s=arc-20240116; t=1730496255; c=relaxed/simple;
+	bh=RHL+xF3CVZPqVUcgRw4y78BDHoiWWtviuypjCBEvddo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0K3XaQkmERUVFF7re6KWhTuLg+nNpovwcfF0s1AfKeC4ge1QwVG258gp8ghJ0+Olaw9NLEmMjBS/J22CfX9cked6fXU/uY+0kG3C3nR0n28eXCfgI2yUviOh0HIP2+A7THqO2Kv6QeuVW5xaQ9g5R7tmSzMVgBYuWXwBZY0u0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xC7btHVd; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 1 Nov 2024 21:21:38 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730496129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MJAt7BYdr1o1tGrdUqJzXzkGawN+UGekAKhugSDQTJU=;
-	b=xC7btHVdJ0oKc5X22DZvKst3vviBxs2uD97QbLxBHJDplTzJg9mAO2Mj8VFGgMxXzsID/W
-	wEmeD4iE79GKNpjfciYe0KwOvzrQjcn6viIw3nMcb2sZ0L7hIYaHqOrKk6wUmVDCTO4yoJ
-	r4Xd/85kAYOjA3ZBh2Q2wIzNMmUkZMg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-kernel@vger.kernel.org, Andrei Vagin <avagin@google.com>,
-	Kees Cook <kees@kernel.org>, Alexey Gladkov <legion@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] signal: restore the override_rlimit logic
-Message-ID: <ZyVGYggBMa4KIG70@google.com>
-References: <20241031200438.2951287-1-roman.gushchin@linux.dev>
- <87zfmi3f8b.fsf@email.froward.int.ebiederm.org>
- <ZyU8UNKLNfAi-U8F@google.com>
- <87o72y3c4g.fsf@email.froward.int.ebiederm.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nDFNiO25BZRfgYV+7nfSWpI2ixM3ttnfV/047ClvkYIxf2mPG7RmkvJe+ezwNQ+tZq+uz/IFT7lqRCFTfmNWhp64KKYnM9E+pN+rmN1hbkvnxTAJanar/YThVcrbhW6aAW4MWpyksI9YIwZaFUzCgH8zqPtmtrKIbw1RSbt1Hh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=QHcwywjX; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1730496239;
+	bh=RHL+xF3CVZPqVUcgRw4y78BDHoiWWtviuypjCBEvddo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QHcwywjXb0FycugFwzEM5a7hUoX1wzrKCgSCDw8/lyZ8p1WFU6A7B4mExpD1jf4QH
+	 9LDrmiwxlzRzNPmxHPMVGehKKXg6HZaKpt9Nl8vX+S+c9VF9BT9zAC/fYWuB2QTmOE
+	 2gT/MeD+tXSYqdy7epX7Lf1GwlSI3uZCvNpGXGk8=
+Date: Fri, 1 Nov 2024 21:23:48 +0000
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] nolibc changes for v6.13
+Message-ID: <ce65b110-259a-4edf-a84b-4015c6160f52@t-8ch.de>
+References: <ba23217d-5eaf-4146-8ed7-27289cece364@t-8ch.de>
+ <7bac1319-fe1c-454d-b96d-8344bdce3961@t-8ch.de>
+ <f9d51d6b-f38e-48bb-be5a-97217fb503c1@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87o72y3c4g.fsf@email.froward.int.ebiederm.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f9d51d6b-f38e-48bb-be5a-97217fb503c1@paulmck-laptop>
 
-On Fri, Nov 01, 2024 at 03:58:07PM -0500, Eric W. Biederman wrote:
-> Roman Gushchin <roman.gushchin@linux.dev> writes:
-> 
-> > On Fri, Nov 01, 2024 at 02:51:00PM -0500, Eric W. Biederman wrote:
-> >> Roman Gushchin <roman.gushchin@linux.dev> writes:
-> >> 
-> >> > Prior to commit d64696905554 ("Reimplement RLIMIT_SIGPENDING on top of
-> >> > ucounts") UCOUNT_RLIMIT_SIGPENDING rlimit was not enforced for a class
-> >> > of signals. However now it's enforced unconditionally, even if
-> >> > override_rlimit is set.
-> >> 
-> >> Not true.
-> >> 
-> >> It added a limit on the number of siginfo structures that
-> >> a container may allocate.  Have you tried not limiting your
-> >> container?
-> >> 
-> >> >This behavior change caused production issues.
-> >> 
-> >> > For example, if the limit is reached and a process receives a SIGSEGV
-> >> > signal, sigqueue_alloc fails to allocate the necessary resources for the
-> >> > signal delivery, preventing the signal from being delivered with
-> >> > siginfo. This prevents the process from correctly identifying the fault
-> >> > address and handling the error. From the user-space perspective,
-> >> > applications are unaware that the limit has been reached and that the
-> >> > siginfo is effectively 'corrupted'. This can lead to unpredictable
-> >> > behavior and crashes, as we observed with java applications.
-> >> 
-> >> Note.  There are always conditions when the allocation may fail.
-> >> The structure is allocated with __GFP_ATOMIC so it is much more likely
-> >> to fail than a typical kernel memory allocation.
-> >> 
-> >> But I agree it does look like there is a quality of implementation issue
-> >> here.
-> >> 
-> >> > Fix this by passing override_rlimit into inc_rlimit_get_ucounts() and
-> >> > skip the comparison to max there if override_rlimit is set. This
-> >> > effectively restores the old behavior.
-> >> 
-> >> Instead please just give the container and unlimited number of siginfo
-> >> structures it can play with.
-> >
-> > Well, personally I'd not use this limit too, but I don't think
-> > "it's broken, userspace shouldn't use it" argument is valid.
-> 
-> I said if you don't want the limit don't use it.
-> 
-> A version of "Doctor it hurts when I do this". To which the doctor
-> replies "Don't do that then".
-> 
-> I was also asking that you test with the limit disabled (at user
-> namespace creation time) so that you can verify that is problem.
-> 
-> >> The maximum for rlimit(RLIM_SIGPENDING) is the rlimit(RLIM_SIGPENDING)
-> >> value when the user namespace is created.
-> >> 
-> >> Given that it took 3 and half years to report this.  I am going to
-> >> say this really looks like a userspace bug.
-> >
-> > The trick here is another bug fixed by https://lkml.org/lkml/2024/10/31/185.
-> > Basically it's a leak of the rlimit value.
-> > If a limit is set and reached in the reality, all following signals
-> > will not have a siginfo attached, causing applications which depend on
-> > handling SIGSEGV to crash.
-> 
-> I will take a deeper look at the patch you are referring to.
-> 
-> >> Beyond that your patch is actually buggy, and should not be applied.
-> >> 
-> >> If we want to change the semantics and ignore the maximum number of
-> >> pending signals in a container (when override_rlimit is set) then
-> >> the code should change the computation of the max value (pegging it at
-> >> LONG_MAX) and not ignore it.
-> >
-> > Hm, isn't the unconditional (new < 0) enough to capture the overflow?
-> > Actually I'm not sure I understand how "long new" can be "> LONG_MAX"
-> > anyway.
-> 
-> Agreed "new < 0" should catch that, but still splitting the logic
-> between the calculation of max and the test of max is quite confusing.
-> It makes much more sense to put the logic into the calculate of max.
+Hi Paul,
 
-You mean something like this?
-
-diff --git a/kernel/ucount.c b/kernel/ucount.c
-index 046b3d57ebb4..49fcec41e5b4 100644
---- a/kernel/ucount.c
-+++ b/kernel/ucount.c
-@@ -317,11 +317,12 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type,
-
-        for (iter = ucounts; iter; iter = iter->ns->ucounts) {
-                long new = atomic_long_add_return(1, &iter->rlimit[type]);
--               if (new < 0 || (!override_rlimit && (new > max)))
-+               if (new < 0 || new > max)
-                        goto unwind;
-                if (iter == ucounts)
-                        ret = new;
--               max = get_userns_rlimit_max(iter->ns, type);
-+               if (!override_rlimit)
-+                       max = get_userns_rlimit_max(iter->ns, type);
-                /*
-                 * Grab an extra ucount reference for the caller when
-                 * the rlimit count was previously 0.
-
---
-
-If you strongly prefer this version, I can send a v2. I like my original
-version slightly better, but not a strong preference. Please, let me know.
+On 2024-11-01 13:22:17-0700, Paul E. McKenney wrote:
+> On Fri, Nov 01, 2024 at 02:22:13PM +0000, Thomas Weißschuh wrote:
+> > (resend to add missing Cc: LKML)
+> > 
+> > 
+> > Hi Paul,
+> > 
+> > The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+> > 
+> >   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+> > 
+> > are available in the Git repository at:
+> > 
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git tags/nolibc-20241101-for-6.13-1
+> > 
+> > for you to fetch changes up to ad0558f3883130954ca724697f2d19aef93967b3:
+> > 
+> >   selftests/nolibc: start qemu with 1 GiB of memory (2024-10-07 21:57:45 +0200)
+> 
+> Thank you!  I have pulled this into -rcu at signed tag nolibc.2024.11.01a,
+> which copies from your signed tag.
 
 Thanks!
+
+> The usual "make run" and "make user" worked fine, but "make libc-test"
+> gave me the build errors shown below.  Is there some setup step that
+> I omitted?  Or is this not really a necessary test?
+
+That test does not actually test nolibc but the nolibc test suite.
+It uses your system libc and makes sure that the nolibc test
+expectations match the behaviour of a "real" libc.
+The missing strlcat() function was added to glibc only in 2.38, so I
+guess you have an older version.
+On my glibc 2.40 "make libc-test" works and the test itself succeeds.
+
+I'll see if there is a reasonable to make libc-test work on older glibc.
+But it shouldn't impact this cycle.
+
+For better architecture coverage I would recommend ./run-tests.sh over
+"make run/user". Speaking about this I remember the discussion from the
+6.12 PR where Willy proposed an improved run-tests.sh error message.
+It seems he didn't push it as a commit, so let's add keep it in mind for
+next cycle.
+
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+>   CC      libc-test
+> nolibc-test.c: In function ‘run_syscall’:
+> nolibc-test.c:1083:63: warning: argument 1 null where non-null expected [-Wnonnull]
+>  1083 |                 CASE_TEST(stat_fault);        EXPECT_SYSER(1, stat(NULL, &stat_buf), -1, EFAULT); break;
+>       |                                                               ^~~~
+> nolibc-test.c:358:77: note: in definition of macro ‘EXPECT_SYSER2’
+>   358 |         do { if (!(cond)) result(llen, SKIPPED); else ret += expect_syserr2(expr, expret, experr1, experr2, llen); } while (0)
+>       |                                                                             ^~~~
+> nolibc-test.c:1083:47: note: in expansion of macro ‘EXPECT_SYSER’
+>  1083 |                 CASE_TEST(stat_fault);        EXPECT_SYSER(1, stat(NULL, &stat_buf), -1, EFAULT); break;
+>       |                                               ^~~~~~~~~~~~
+> In file included from nolibc-test.c:26:
+> /usr/include/x86_64-linux-gnu/sys/stat.h:205:12: note: in a call to function ‘stat’ declared ‘nonnull’
+>   205 | extern int stat (const char *__restrict __file,
+>       |            ^~~~
+> nolibc-test.c: In function ‘run_stdlib’:
+> nolibc-test.c:1137:75: warning: implicit declaration of function ‘strlcat’; did you mean ‘strncat’? [-Wimplicit-function-declaration]
+>  1137 |                 CASE_TEST(strlcat_0);          EXPECT_STRBUFEQ(is_nolibc, strlcat(buf, "bar", 0), buf, 3, "test"); break;
+>       |                                                                           ^~~~~~~
+> nolibc-test.c:613:80: note: in definition of macro ‘EXPECT_STRBUFEQ’
+>   613 |         do { if (!(cond)) result(llen, SKIPPED); else ret += expect_str_buf_eq(expr, buf, val, llen, cmp); } while (0)
+>       |                                                                                ^~~~
+> nolibc-test.c:1143:75: warning: implicit declaration of function ‘strlcpy’; did you mean ‘strncpy’? [-Wimplicit-function-declaration]
+>  1143 |                 CASE_TEST(strlcpy_0);          EXPECT_STRBUFEQ(is_nolibc, strlcpy(buf, "bar", 0), buf, 3, "test"); break;
+>       |                                                                           ^~~~~~~
+> nolibc-test.c:613:80: note: in definition of macro ‘EXPECT_STRBUFEQ’
+>   613 |         do { if (!(cond)) result(llen, SKIPPED); else ret += expect_str_buf_eq(expr, buf, val, llen, cmp); } while (0)
+>       |                                                                                ^~~~
+> nolibc-test.c: In function ‘run_syscall’:
+> nolibc-test.c:358:62: warning: argument 1 is null but the corresponding size argument 2 value is 1 [-Wnonnull]
+>   358 |         do { if (!(cond)) result(llen, SKIPPED); else ret += expect_syserr2(expr, expret, experr1, experr2, llen); } while (0)
+>       |                                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> nolibc-test.c:361:9: note: in expansion of macro ‘EXPECT_SYSER2’
+>   361 |         EXPECT_SYSER2(cond, expr, expret, experr, 0)
+>       |         ^~~~~~~~~~~~~
+> nolibc-test.c:1073:47: note: in expansion of macro ‘EXPECT_SYSER’
+>  1073 |                 CASE_TEST(poll_fault);        EXPECT_SYSER(1, poll(NULL, 1, 0), -1, EFAULT); break;
+>       |                                               ^~~~~~~~~~~~
+> In file included from /usr/include/poll.h:1,
+>                  from nolibc-test.c:35:
+> /usr/include/x86_64-linux-gnu/sys/poll.h:54:12: note: in a call to function ‘poll’ declared with attribute ‘access (write_only, 1, 2)’
+>    54 | extern int poll (struct pollfd *__fds, nfds_t __nfds, int __timeout)
+>       |            ^~~~
+> /usr/bin/ld: /tmp/ccvUtmw4.o: in function `run_stdlib':
+> nolibc-test.c:(.text+0x44f9): undefined reference to `strlcat'
+> /usr/bin/ld: nolibc-test.c:(.text+0x4580): undefined reference to `strlcat'
+> /usr/bin/ld: nolibc-test.c:(.text+0x4607): undefined reference to `strlcat'
+> /usr/bin/ld: nolibc-test.c:(.text+0x468e): undefined reference to `strlcat'
+> /usr/bin/ld: nolibc-test.c:(.text+0x4715): undefined reference to `strlcat'
+> /usr/bin/ld: /tmp/ccvUtmw4.o:nolibc-test.c:(.text+0x479c): more undefined references to `strlcat' follow
+> /usr/bin/ld: /tmp/ccvUtmw4.o: in function `run_stdlib':
+> nolibc-test.c:(.text+0x4823): undefined reference to `strlcpy'
+> /usr/bin/ld: nolibc-test.c:(.text+0x48aa): undefined reference to `strlcpy'
+> /usr/bin/ld: nolibc-test.c:(.text+0x4931): undefined reference to `strlcpy'
+> /usr/bin/ld: nolibc-test.c:(.text+0x49b8): undefined reference to `strlcpy'
+> /usr/bin/ld: nolibc-test.c:(.text+0x4a3f): undefined reference to `strlcpy'
+> collect2: error: ld returned 1 exit status
+> make: *** [Makefile:230: libc-test] Error 1
 
