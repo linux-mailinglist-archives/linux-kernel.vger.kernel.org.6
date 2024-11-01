@@ -1,101 +1,113 @@
-Return-Path: <linux-kernel+bounces-392841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082549B98B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:35:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D83E9B98BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:35:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B489B1F22F57
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:35:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C15E5B21618
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6787B1D07B9;
-	Fri,  1 Nov 2024 19:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB30A1D0E15;
+	Fri,  1 Nov 2024 19:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKPOyqtI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLbv6Uxx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFFB156880;
-	Fri,  1 Nov 2024 19:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1021CEE94;
+	Fri,  1 Nov 2024 19:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489713; cv=none; b=vFYRWT5ivAWg4vTdCFHLdFQzw1N42KVBmn5SMkXX28AYozbhoqqc+Hgn2P1o/uE2scDQ3/ZxSOy6ceTvxHAYBMeQLquazeAOFjscoUtZ2CNFb8ythwmhKnJ/Zdgxcrpx8fnfm85s4SwFQHzbh8camxtv/Kknnom6LE+rUW+ChSA=
+	t=1730489732; cv=none; b=m9NCsrF+itw2jLkQqT5fdlQbFVG1dxJwtjYg8suGZoNfGMCc+Y8p+tY/lYrGZyUYqJtIV4yXUc9axMPYXTJ8AwBdJxzIlQnMNQbQ4NQxvL7eMQE1PTnt0rvxUp9ffOmAIWiyl+tOVbCGWX4/XzKQMjJVhsqQkvfjlVVt0g55BcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489713; c=relaxed/simple;
-	bh=q6SXcTHXCTXBGwlW3/5+N4Hlf+y87fpz3fCr/0g8z1g=;
+	s=arc-20240116; t=1730489732; c=relaxed/simple;
+	bh=LBcJYTB6WIbJ8DlAwG7hImL3BwFHDAgo02896nLj1Z4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OIY0n8HXobvtkeCB+o/bAyx/Xun8vuL26YQ7uyx5PrbCWfByQ585CT7EXs3W9fgCHnmOYpMF4m8CzLw5b4EcBKZ7GElQ0G8PKcwJuQxOYaIkL6uUqVvovYexYW4WN324cnv9qW4RWZf3kod4mIC9YsWimzXP7pxr4kFhd6/KM2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKPOyqtI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB04C4CECD;
-	Fri,  1 Nov 2024 19:35:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hB+GSQ6LfKHZKh/WSj+IqFMf+rrrIyZB324fgxzayoObG2IywZv3zmry5UBHSJU6poKYkT7H/86V6yTwSg5CnLUrY+8VTjdZ//RHvYhqyuGTQZfGa7CfLsd8ITyPrkWDpep2BS7dRqQpQs4Q+SxbTd9KeifhAt6+u2kY0D1dUrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLbv6Uxx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F887C4CECE;
+	Fri,  1 Nov 2024 19:35:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730489713;
-	bh=q6SXcTHXCTXBGwlW3/5+N4Hlf+y87fpz3fCr/0g8z1g=;
+	s=k20201202; t=1730489730;
+	bh=LBcJYTB6WIbJ8DlAwG7hImL3BwFHDAgo02896nLj1Z4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eKPOyqtInd+ududObXfkqcJhzbQ98lScx05OqXh3zHwWjz2BnPVXAJJspgxo3t3g3
-	 8vC5beRPTwny8A0EX1qC3MIwtfWirYkZpuFxj3wtz8KTJ5LyGJuR8zMgyQw2GB3Gb5
-	 NmOKv0IXDY9pJZ17rT3olsFX/3ZbWWuBmPzdUcQO3AwqfAy9JVBRCF7YC9ttwhKqwf
-	 Bp6+pFVwrFL+afltUjChZqXwDTFiCuhdX14SHs4utjy5RoFRubWzgV318ofH0hVCyn
-	 CBu60GTUlsNZ9zpIo3WlXbylBBLClzZEGwRA5Dq1InDXII8EIPltUy8aijzD+KFtqe
-	 n5AXEfxi95lJQ==
-Date: Fri, 1 Nov 2024 12:35:10 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, x86@kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-Message-ID: <20241101193510.53xj5ybz6vyyqb37@jpoimboe>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
- <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
- <20241030055314.2vg55ychg5osleja@treble.attlocal.net>
- <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
- <20241031230313.ubybve4r7mlbcbuu@jpoimboe>
- <20241101190908.GV29862@gate.crashing.org>
- <20241101193305.afwfopg4ryrrgxfb@jpoimboe>
+	b=XLbv6Uxxo8SQJm21791wg19EUL58H9utdxxI+OA95m+CsTNwB6++xU/9/m0/hprGj
+	 FtqxO722j/ulpty5c1g+TzF8YdjdDro98e1zAlPeEFWLLAoCn6+7UtlhGuTleLfpso
+	 eNscequJtH3HGY/7k19sz42uhTZQvG1XdBRIiJQkwDctN219TGQ688tmK/8/jJDeB6
+	 xnNdv9hOxEvaQG6/wx9hM3wkaPEmADMC08UUYZweW3oo+foHodWykfrMiOYhGHEePi
+	 AtOY5QHqt93iRsKHseckQw7hxrXvT4v+rFXiusKwK4RQ3t7F4tl9ow6gg6MF6Cun/f
+	 Ly6v514duNndA==
+Date: Fri, 1 Nov 2024 14:35:28 -0500
+From: Rob Herring <robh@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: krzk+dt@kernel.org, a.fatoum@pengutronix.de, conor+dt@kernel.org,
+	dinguyen@kernel.org, marex@denx.de, s.trumtrar@pengutronix.de,
+	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 11/23] net: stmmac: add support for dwmac 3.72a
+Message-ID: <20241101193528.GA4067749-robh@kernel.org>
+References: <20241029202349.69442-1-l.rubusch@gmail.com>
+ <20241029202349.69442-12-l.rubusch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241101193305.afwfopg4ryrrgxfb@jpoimboe>
+In-Reply-To: <20241029202349.69442-12-l.rubusch@gmail.com>
 
-On Fri, Nov 01, 2024 at 12:33:07PM -0700, Josh Poimboeuf wrote:
-> On Fri, Nov 01, 2024 at 02:09:08PM -0500, Segher Boessenkool wrote:
-> > On Thu, Oct 31, 2024 at 04:03:13PM -0700, Josh Poimboeuf wrote:
-> > > Actually I just double checked and even the kernel's ELF loader assumes
-> > > that each executable has only a single text start+end address pair.
-> > 
-> > Huh?  What makes you think that?  There can be many executable PT_LOAD
-> > segments in each and every binary.
+On Tue, Oct 29, 2024 at 08:23:37PM +0000, Lothar Rubusch wrote:
+> The dwmac 3.72a is an ip version that can be found on Intel/Altera Arria10
+> SoCs. Going by the hardware features "snps,multicast-filter-bins" and
+> "snps,perfect-filter-entries" shall be supported. Thus add a
+> compatibility flag, and extend coverage of the driver for the 3.72a.
 > 
-> Right, but for executables (not shared libraries) the kernel seems to
-> assume they're contiguous?  See the 'start_code' and 'end_code'
-> variables in load_elf_binary() load_elf_interp().
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c   | 1 +
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
+> index 598eff926..b9218c07e 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
+> @@ -56,6 +56,7 @@ static const struct of_device_id dwmac_generic_match[] = {
+>  	{ .compatible = "snps,dwmac-3.610"},
+>  	{ .compatible = "snps,dwmac-3.70a"},
+>  	{ .compatible = "snps,dwmac-3.710"},
+> +	{ .compatible = "snps,dwmac-3.72a"},
+>  	{ .compatible = "snps,dwmac-4.00"},
+>  	{ .compatible = "snps,dwmac-4.10a"},
+>  	{ .compatible = "snps,dwmac"},
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+> index 54797edc9..e7e2d6c20 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+> @@ -522,6 +522,7 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+>  	if (of_device_is_compatible(np, "st,spear600-gmac") ||
+>  		of_device_is_compatible(np, "snps,dwmac-3.50a") ||
+>  		of_device_is_compatible(np, "snps,dwmac-3.70a") ||
+> +		of_device_is_compatible(np, "snps,dwmac-3.72a") ||
 
-Typo, see load_elf_binary (not load_elf_interp).
+All these of_device_is_compatible() checks should really go away and all 
+the settings just come from match table data. Then everything is const 
+and we're not matching multiple times at run-time. That would be a bit 
+of refactoring though...
 
--- 
-Josh
+>  		of_device_is_compatible(np, "snps,dwmac")) {
+>  		/* Note that the max-frame-size parameter as defined in the
+>  		 * ePAPR v1.1 spec is defined as max-frame-size, it's
+> -- 
+> 2.25.1
+> 
 
