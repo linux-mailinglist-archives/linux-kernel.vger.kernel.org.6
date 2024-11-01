@@ -1,120 +1,125 @@
-Return-Path: <linux-kernel+bounces-392986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6149B9A6C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:51:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34769B99F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:14:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8362815A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:51:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB0F1F228B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A281F81BA;
-	Fri,  1 Nov 2024 21:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676711E5723;
+	Fri,  1 Nov 2024 21:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="h7g00QC+"
-Received: from msa.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z27lBmP5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FE01E2828;
-	Fri,  1 Nov 2024 21:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71FD1E2848;
+	Fri,  1 Nov 2024 21:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730497748; cv=none; b=RViMq2I4+OezglbPpx+wG9JVYqPgWa2LYLNwDCRdUHX4qujAl1lAC70B5hN8JUZO/30BPyvnO0X7VJ+Nczqusws6K6GWEGz8rFrWU/4yYaawSnVq/nOeBYPdyfmoGjmRbAszihdOl8Np06u0Sp7cXe6jOzwtOx7dpoE28R68LCU=
+	t=1730495624; cv=none; b=NTww/E0HKkoMpljm3nu7mTDJPjc5eXNg6Mt+yuEWDUC9fjiicfvslB7tLU1ekFhWzo9erUUF79bs5w38b5Vss+9nEx0uSnsLAoJzf2KP9SJk1BNOivwBF1UgAYhk7giZkaNfs72N35wmt0aOyKOlCdC3xmZp0YZyqb1v919M5s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730497748; c=relaxed/simple;
-	bh=lOOo4ZXdmdikkhGGJEt2LgdpZPz5E/NO8DC+U+ixe3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rpi7fOj2j4m8ygsEbfjl36nffmHsmQi0xUo7xp1bXQEkmID1XJCAWPOfExn/+AmW4uuP8tnrlb34O1tDYnGzCfRZSoSEqRhWwD3PjzVTIErVt7/Q9daS0ZKB9yLkr5olChFAKGw8B0pCeaMKuc/aeQNHsMZFnvKawi4O3tNmJ8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=h7g00QC+; arc=none smtp.client-ip=193.252.22.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 6yxjtTrloA7fH6yxktswpK; Fri, 01 Nov 2024 22:13:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730495625;
-	bh=EYi+7zxC4m12VG02hrYZtY36xLPuD6WgT3l4MPN+hD4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=h7g00QC+zuN+TfEujN3s0xj8P9ecv5kWshswogVhEBqlPfZh/5/INCFkppQxLjtaK
-	 J/yQKYKmTRBZ/+zEKj/SEqMKUCMBhs8diO8eXo8ZdhhGaspr1SGriH8XxBZgittLdM
-	 JYjl4pMkaV3lDjm5FCfjJ52YL7lxfUU7Ns3TQ/chqT0TUnveQcZ5hLQS6Jc5TWBaid
-	 jzH8KS/maKtrVap8iEYlvhwSXs36KaWLjtzF6+imsOyseL2lecsek6QevAiErLt8nF
-	 +9z7IzsNJJIf5McHQAjPl1MjUcl5PlhHaUz3jL538KD8aWGhxHaO4W+KPyzB+vambK
-	 GYv1+9O7lX8Hg==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 01 Nov 2024 22:13:45 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] uprobes: Re-order struct uprobe_task to save some space
-Date: Fri,  1 Nov 2024 22:13:33 +0100
-Message-ID: <a9f541d0cedf421f765c77a1fb93d6a979778a88.1730495562.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730495624; c=relaxed/simple;
+	bh=vrlQ5nkW/wzdW59TsobYC/cGECVvY5bM8O3JACd5vR8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=QsU6pnyVpfJ0NFQT2KC7xBcjQboURj/mp1a57eU3ijperv/Cg3Xi5fQ7kJP9QQm3RupmUcPnR0eRiCzi0Kgkhv2Mr8RQfTInl+hxa53uYlvCxOfveg1SajETvtqgaEwiushAPtz/DcsGww5Ym4wZ6LmGPadrmeAMie/pVreN+GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z27lBmP5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71602C4CECD;
+	Fri,  1 Nov 2024 21:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730495624;
+	bh=vrlQ5nkW/wzdW59TsobYC/cGECVvY5bM8O3JACd5vR8=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=Z27lBmP5zV5S/Lm4wBLsyOzhvmCy+PaD+aSiDJoAmhJdwIpgWu7go74DLTbL/DmAQ
+	 m4VM1XbkSRlPF534HjALo5a+qdkHgu9qy7+8tWZNobfIsypdUOnVT0zMYvrKbUDL4O
+	 pr1BHsYZ9HdZm3+qsutLq53SUhzXTlall69hNmqjdD/bOYezVVbNGKRm6m/IunumGl
+	 yvVYFXZZqN56obQzEkxMIxL4DYP8SF14xIQkYNBExMzLjQ854ir3tdEZDwvoO4vfKs
+	 /NGBCW4lZDq+POOJewWgjrRi1z/wGj1/cGx7DlUqqRKhNteHFYOtX09Yf+Ee0YlFcE
+	 f90hDeNlC3TVQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Nov 2024 23:13:39 +0200
+Message-Id: <D5B5I0WUU8F0.30JMZ6QHPOFRK@kernel.org>
+Cc: <dpsmith@apertussolutions.com>, <mingo@redhat.com>, <bp@alien8.de>,
+ <hpa@zytor.com>, <dave.hansen@linux.intel.com>, <ardb@kernel.org>,
+ <mjg59@srcf.ucam.org>, <James.Bottomley@hansenpartnership.com>,
+ <peterhuewe@gmx.de>, <jgg@ziepe.ca>, <luto@amacapital.net>,
+ <nivedita@alum.mit.edu>, <herbert@gondor.apana.org.au>,
+ <davem@davemloft.net>, <corbet@lwn.net>, <ebiederm@xmission.com>,
+ <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
+ kernel support
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Thomas Gleixner" <tglx@linutronix.de>, "Ross Philipson"
+ <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
+ <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>
+X-Mailer: aerc 0.18.2
+References: <20240913200517.3085794-1-ross.philipson@oracle.com>
+ <D5ARS5Y7EATS.2GVNSARKXKIDI@kernel.org> <87a5eivgku.ffs@tglx>
+In-Reply-To: <87a5eivgku.ffs@tglx>
 
-On x86_64, with allmodconfig, struct uprobe_task is 72 bytes long, with a
-hole and some padding.
+On Fri Nov 1, 2024 at 10:34 PM EET, Thomas Gleixner wrote:
+> On Fri, Nov 01 2024 at 12:28, Jarkko Sakkinen wrote:
+> > On Fri Sep 13, 2024 at 11:04 PM EEST, Ross Philipson wrote:
+> >> A quick note on terminology. The larger open source project itself is =
+called
+> >> TrenchBoot, which is hosted on Github (links below). The kernel featur=
+e enabling
+> >> the use of Dynamic Launch technology is referred to as "Secure Launch"=
+ within
+> >> the kernel code. As such the prefixes sl_/SL_ or slaunch/SLAUNCH will =
+be seen
+> >> in the code. The stub code discussed above is referred to as the SL st=
+ub.
+> >
+> > 1. I don't see any tags in most of the patches so don't get the rush. T=
+his
+> >    includes also patches for x86. Why I would care to review TPM patche=
+s
+> >    when there is over a dozen unreviewed and untested patches before it=
+?
+> > 2. TPM patches have been in circulation in and out of the patch set
+> >    for some time now with little or no improvement.
+> >
+> > Why the sudden buzz? I have not heard much about this since last early
+> > summer.  Have to spend some time recalling what this is about anyway. I
+> > cannot trust that my tags make any sense before more reviewed/tested-by
+> > tags before the TPM patches.
+>
+> If I intend to merge the patches then I surely have looked at them
+> deeply. I don't have to send a reviewed-by just to apply them
+> afterwards.
+>
+> There was enough motion on these patches and this posting is in your
+> inbox for 6 weeks now without any reaction from you.
+>
+> The TPM changes are very much independent from the x86 specific ones, so
+> why do you want x86 review tags in order to look at the ones which are
+> specific to your subsystem especially as some of them seem to address
+> real short comings there independent of trenchboot.
 
-	/* size: 72, cachelines: 2, members: 7 */
-	/* sum members: 64, holes: 1, sum holes: 4 */
-	/* padding: 4 */
-	/* forced alignments: 1, forced holes: 1, sum forced holes: 4 */
-	/* last cacheline: 8 bytes */
+I think we can sort them out independently as long as we find a
+conclusion how to address locality change.
 
-Reorder the structure to fill the hole and avoid the padding.
+>
+> Thanks,
+>
+>         tglx
 
-This way, the whole structure fits in a single cacheline and some memory is
-saved when it is allocated.
-
-	/* size: 64, cachelines: 1, members: 7 */
-	/* forced alignments: 1 */
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- include/linux/uprobes.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index dbaf04189548..c684a470477f 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -73,6 +73,9 @@ enum uprobe_task_state {
- struct uprobe_task {
- 	enum uprobe_task_state		state;
- 
-+	unsigned int			depth;
-+	struct return_instance		*return_instances;
-+
- 	union {
- 		struct {
- 			struct arch_uprobe_task	autask;
-@@ -89,9 +92,6 @@ struct uprobe_task {
- 	unsigned long			xol_vaddr;
- 
- 	struct arch_uprobe              *auprobe;
--
--	struct return_instance		*return_instances;
--	unsigned int			depth;
- };
- 
- struct return_consumer {
--- 
-2.47.0
-
+BR, Jarkko
 
