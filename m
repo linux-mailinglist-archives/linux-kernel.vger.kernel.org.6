@@ -1,128 +1,241 @@
-Return-Path: <linux-kernel+bounces-391683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1789B8A39
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:23:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 582429B8A3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ACAD1C2156C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:23:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D351C21753
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F7A1482E1;
-	Fri,  1 Nov 2024 04:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E86147C98;
+	Fri,  1 Nov 2024 04:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="b06df2ql"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A87xs2aI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C727211C;
-	Fri,  1 Nov 2024 04:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B16738FA3
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 04:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730434978; cv=none; b=F1yibXX0Kq8qoAsDIc0t788Aaiszag3dimCtLc34k0jvQLVrjYSPuGbfxLpzPwfmT2ZFpG2XNFJXmcfnLUTFjSptGSbg1eZM4vmZAqOIHn5JspdGxRB+GduxEMhpxgEwoI5zkcYQfGBg3CG7Amy9Bay7BrEBLMzqOQKns2Z8NFM=
+	t=1730435271; cv=none; b=oSsJDCAcHm2tvPOOsyzhyvmb/b5IKZ8qNT80O6Us88//LPNqVw4sy/BwmTJy5/J6tVLMRWqdx5bk47HoONJFv05wQp7Yb995KLEofNIhTH++DOcUMGY9tELW9ouRqoX7+wbSTQnS1+Gm/9sBEUzEunG0GC2bh8G7ceEV5Irh+Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730434978; c=relaxed/simple;
-	bh=+R9vhprP6Pe387Q5ueLIl38bbj6vgw38MdtuxGVbax4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=L7+/qgp1c2WvUxJKFabj8Y4cK2vfoK/CVaG/BMY5I1wEPtqIvpcbkomJG2pYokfaWIvTmuTwoNjAYwx4nzgElvs0t4YPQVDiTis9tfjicFP2hsqjEahiDyvPHnY3AqaySKr1LxA5OtLvWCNf0dV+fG9GhnZy6LluLyO1i+B2SMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=b06df2ql; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4A14MJOf82509540, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1730434939; bh=+R9vhprP6Pe387Q5ueLIl38bbj6vgw38MdtuxGVbax4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=b06df2ql6dP0by1U8c3jHx/U9S6Qp0Ryu8CAR0u9OJBw8ulYZYN2Dze7myCFEzbFE
-	 IgnlmpGIKXj5rySbkgqYPKHE07agwDwb4EicBkYLcrjlmC7OVC18qHhpryfUQImsi2
-	 n4QLwS7ErFzwovEexr8JQr0/pZDfP74J1pHqXciEeiict0xX20J12IjyDaiyL4WY55
-	 BW2YUnyqu+JUGsma9xMQYyPt1wCPJ1azEbvOX90WH9MKw9fNqqI5gx7+MGo41FR3tq
-	 u48Gh+x2dN/hc7PCMNuQfF0GtZzSyRFdrl3jypqIdZQsH4wMdvoRmvPAmg/DQ4nd85
-	 512wP5cnF4uOg==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4A14MJOf82509540
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 1 Nov 2024 12:22:19 +0800
-Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 1 Nov 2024 12:22:20 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 1 Nov 2024 12:22:19 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
- RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
- 15.01.2507.035; Fri, 1 Nov 2024 12:22:19 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-CC: "kvalo@kernel.org" <kvalo@kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
-        "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
-        "rtl8821cerfe2@gmail.com"
-	<rtl8821cerfe2@gmail.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com"
-	<syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com>
-Subject: RE: [PATCH V3] wifi: rtlwifi: Drastically reduce the attempts to read efuse in case of failures
-Thread-Topic: [PATCH V3] wifi: rtlwifi: Drastically reduce the attempts to
- read efuse in case of failures
-Thread-Index: AQHbK62jzL4hMAZxOk2XHUy0QNETw7Kh0tAg
-Date: Fri, 1 Nov 2024 04:22:19 +0000
-Message-ID: <8363b94ee45c49c0996b12010c18b9f0@realtek.com>
-References: <20241031155731.1253259-1-gpiccoli@igalia.com>
-In-Reply-To: <20241031155731.1253259-1-gpiccoli@igalia.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1730435271; c=relaxed/simple;
+	bh=wh+/RwaI7po8sEY9saGvly1xg56dEmBAXqcDk5R75OU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ResWdOECyEvz1V8sBtNnVhSd1ZPb3WgqLTyOo/nRKZWATFGSyCbS0IUhkGobIFy2sy/+TiB8toE7PQkzxXhvnycypUBPtoY6CGDTln6M9kEqrChF0gvihZOykmnuRM3fy1FST/hjFyXzUNlPUCQjwYrQ84+l8Q1QzQkIMwbFDa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A87xs2aI; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730435269; x=1761971269;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wh+/RwaI7po8sEY9saGvly1xg56dEmBAXqcDk5R75OU=;
+  b=A87xs2aIGh2FXV5Ws212imnA//2wJ7kiLVOZfiXtbdjgAP0Ec4a8pGXL
+   kGCqidVGzLdHwuS8U4VGgS+NHB9Mc5nMfbCiaQnAppGqeIKaO2ff9nUbA
+   9shF05w/XqsRRV6+JLOTpil5EfXwElegi6++axo+pKCR7lPXHjG0hhpqL
+   3d8gglJ+OEul31uTJ+IJEWrmwVvQAbzje4Ubq23wFlWQNr2zQiOFYn/Yw
+   hFgYEBzWhUas3DvjJ3S2zmtBvv+VXhHK2iGkUmY1FPz4rbvxpu7e08t7R
+   GKmc8vuuEc8VFCXNYDq7ljjZvWs14VUNYBnHtbmOICsPt7Tk8IMpy9nt7
+   A==;
+X-CSE-ConnectionGUID: z3RLYFplRmqFQTEfO6CScw==
+X-CSE-MsgGUID: UlHmkZq+QMesbDXqjkCAkw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="34134313"
+X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
+   d="scan'208";a="34134313"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 21:27:48 -0700
+X-CSE-ConnectionGUID: V/Agzf02SsGEkTMfaKcsuA==
+X-CSE-MsgGUID: TTYTZBhqTriz+yh+SmeBxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
+   d="scan'208";a="86791849"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 21:27:46 -0700
+Message-ID: <4632a527-3ed5-438c-b850-ddaf2f782f62@linux.intel.com>
+Date: Fri, 1 Nov 2024 12:27:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iommu/vt-d: Drain PRQs when domain removed from RID
+To: Yi Liu <yi.l.liu@intel.com>, iommu@lists.linux.dev
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Joel Granados
+ <joel.granados@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org
+References: <20241031095139.44220-1-baolu.lu@linux.intel.com>
+ <97e78485-5eb2-44cb-ab33-4f8a8488b428@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <97e78485-5eb2-44cb-ab33-4f8a8488b428@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Guilherme G. Piccoli <gpiccoli@igalia.com> wrote:
-> diff --git a/drivers/net/wireless/realtek/rtlwifi/efuse.c
-> b/drivers/net/wireless/realtek/rtlwifi/efuse.c
-> index 82cf5fb5175f..0ff553f650f9 100644
-> --- a/drivers/net/wireless/realtek/rtlwifi/efuse.c
-> +++ b/drivers/net/wireless/realtek/rtlwifi/efuse.c
-> @@ -162,9 +162,19 @@ void efuse_write_1byte(struct ieee80211_hw *hw, u16 =
-address, u8 value)
->  void read_efuse_byte(struct ieee80211_hw *hw, u16 _offset, u8 *pbuf)
->  {
->         struct rtl_priv *rtlpriv =3D rtl_priv(hw);
-> +       u16 retry, max_attempts;
->         u32 value32;
->         u8 readbyte;
-> -       u16 retry;
-> +
-> +       /*
-> +        * In case of USB devices, transfer speeds are limited, hence
-> +        * efuse I/O reads could be (way) slower. So, decrease (a lot)
-> +        * the read attempts in case of failures.
-> +        */
-> +       if (rtlpriv->rtlhal.interface =3D=3D INTF_PCI)
-> +               max_attempts =3D 10000;
-> +       else
-> +               max_attempts =3D 10;
+On 11/1/24 10:52, Yi Liu wrote:
+> On 2024/10/31 17:51, Lu Baolu wrote:
+>> As this iommu driver now supports page faults for requests without
+>> PASID, page requests should be drained when a domain is removed from
+>> the RID2PASID entry.
+>>
+>> This results in the intel_iommu_drain_pasid_prq() call being moved to
+>> intel_pasid_tear_down_entry(). This indicates that when a translation
+>> is removed from any PASID entry and the PRI has been enabled on the
+>> device, page requests are flushed in the domain detachment path.
+> 
+> s/flushed/drained/. 'drained' might suit the spec more than 'flushed'.
 
-As your comment, setting max_atttempts to 10 under condition of INTF_USB wo=
-uld
-be more reasonable, like
+Done.
 
-    u16 max_attempts =3D 10000;
+> 
+> Per this change, the callers of the intel_pasid_tear_down_entry() will
+> get a mandatory PRQ drain. I think this makes sense. But most of the
+> callers do not follow a prq drain in the before. Will it introduce
+> regression (especially performance regression)?
 
-    if (rtlpriv->rtlhal.interface =3D=3D INTF_USB)
-        max_attempts =3D 10;
+intel_pasid_tear_down_entry() is called only in slow paths, so it should
+have minimal performance impact.
+
+>>
+>> The intel_iommu_drain_pasid_prq() helper has been modified to support
+>> sending device TLB invalidation requests for both PASID and non-PASID
+>> cases.
+> 
+> would it be better to rename it to be intel_iommu_drain_prq()? Also, it
+> makes much sense to separate the PRQ related code into a prq.c. :) It
+> might be done later though.
+
+Yes, this has already been addressed in another series.
+
+> 
+>>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/intel/iommu.c |  1 -
+>>   drivers/iommu/intel/pasid.c |  1 +
+>>   drivers/iommu/intel/prq.c   | 22 +++++++---------------
+>>   3 files changed, 8 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+>> index 87a3563dfe54..3878f35be09d 100644
+>> --- a/drivers/iommu/intel/iommu.c
+>> +++ b/drivers/iommu/intel/iommu.c
+>> @@ -4069,7 +4069,6 @@ static void intel_iommu_remove_dev_pasid(struct 
+>> device *dev, ioasid_t pasid,
+>>       intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
+>>       kfree(dev_pasid);
+>>       intel_pasid_tear_down_entry(iommu, dev, pasid, false);
+>> -    intel_iommu_drain_pasid_prq(dev, pasid);
+>>   }
+>>   static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
+>> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+>> index 7e76062a7ad2..31665fb62e1c 100644
+>> --- a/drivers/iommu/intel/pasid.c
+>> +++ b/drivers/iommu/intel/pasid.c
+>> @@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct 
+>> intel_iommu *iommu, struct device *dev,
+>>           iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
+>>       devtlb_invalidation_with_pasid(iommu, dev, pasid);
+>> +    intel_iommu_drain_pasid_prq(dev, pasid);
+>>   }
+>>   /*
+>> diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
+>> index 3c50c848893f..ae7f6f34462f 100644
+>> --- a/drivers/iommu/intel/prq.c
+>> +++ b/drivers/iommu/intel/prq.c
+>> @@ -66,12 +66,8 @@ void intel_iommu_drain_pasid_prq(struct device 
+>> *dev, u32 pasid)
+>>       struct pci_dev *pdev;
+>>       int head, tail;
+>>       u16 sid, did;
+>> -    int qdep;
+>>       info = dev_iommu_priv_get(dev);
+>> -    if (WARN_ON(!info || !dev_is_pci(dev)))
+>> -        return;
+>> -
+>>       if (!info->pri_enabled)
+>>           return;
+>> @@ -81,8 +77,6 @@ void intel_iommu_drain_pasid_prq(struct device *dev, 
+>> u32 pasid)
+>>       sid = PCI_DEVID(info->bus, info->devfn);
+>>       did = domain ? domain_id_iommu(domain, iommu) : FLPT_DEFAULT_DID;
+>> -    qdep = pci_ats_queue_depth(pdev);
+>> -
+>>       /*
+>>        * Check and wait until all pending page requests in the queue are
+>>        * handled by the prq handling thread.
+>> @@ -114,15 +108,13 @@ void intel_iommu_drain_pasid_prq(struct device 
+>> *dev, u32 pasid)
+>>       desc[0].qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
+>>               QI_IWD_FENCE |
+>>               QI_IWD_TYPE;
+>> -    desc[1].qw0 = QI_EIOTLB_PASID(pasid) |
+>> -            QI_EIOTLB_DID(did) |
+>> -            QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
+>> -            QI_EIOTLB_TYPE;
+>> -    desc[2].qw0 = QI_DEV_EIOTLB_PASID(pasid) |
+>> -            QI_DEV_EIOTLB_SID(sid) |
+>> -            QI_DEV_EIOTLB_QDEP(qdep) |
+>> -            QI_DEIOTLB_TYPE |
+>> -            QI_DEV_IOTLB_PFSID(info->pfsid);
+>> +    qi_desc_piotlb(did, pasid, 0, -1, 0, &desc[1]);
+> 
+> Does it make more sense to submit iotlb desc when @pasid == IOMMU_NO_PASID
+> just like you've done to the devtlb desc? Spec looks to be unclear on this
+> part, but it sounds reasonable to use iotlb desc for the
+> @pasid == IOMMU_NO_PASID case.
+
+You are right. I will make it like below:
+
+         if (pasid == IOMMU_NO_PASID) {
+                 qi_desc_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH, 
+&desc[1]);
+                 qi_desc_dev_iotlb(sid, info->pfsid, info->ats_qdep, 0,
+                                   MAX_AGAW_PFN_WIDTH, &desc[2]);
+         } else {
+                 qi_desc_piotlb(did, pasid, 0, -1, 0, &desc[1]);
+                 qi_desc_dev_iotlb_pasid(sid, info->pfsid, pasid, 
+info->ats_qdep,
+                                         0, MAX_AGAW_PFN_WIDTH, &desc[2]);
+         }
 
 
+> 
+>> +    if (pasid == IOMMU_NO_PASID)
+>> +        qi_desc_dev_iotlb(sid, info->pfsid, info->ats_qdep, 0,
+>> +                  MAX_AGAW_PFN_WIDTH, &desc[2]);
+>> +    else
+>> +        qi_desc_dev_iotlb_pasid(sid, info->pfsid, pasid, info->ats_qdep,
+>> +                    0, MAX_AGAW_PFN_WIDTH, &desc[2]);
+> 
+> I noticed devtlb_invalidation_with_pasid() passes '64 - VTD_PAGE_SHIFT'
+> which is equal to MAX_AGAW_PFN_WIDTH. Might be good to consolidate it. :)
 
+Probably cleanup it in a separated patch.
+
+>>   qi_retry:
+>>       reinit_completion(&iommu->prq_complete);
+>>       qi_submit_sync(iommu, desc, 3, QI_OPT_WAIT_DRAIN);
+> 
+
+0day reported a compiling issue:
+
+drivers/iommu/intel/prq.c: In function 'intel_iommu_drain_pasid_prq':
+ >> drivers/iommu/intel/prq.c:66:25: warning: variable 'pdev' set but 
+not used [-Wunused-but-set-variable]
+       66 |         struct pci_dev *pdev;
+          |                         ^~~~
+
+I will fix it in a v2.
+
+Thanks,
+baolu
 
