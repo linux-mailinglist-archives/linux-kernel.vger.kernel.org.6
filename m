@@ -1,158 +1,95 @@
-Return-Path: <linux-kernel+bounces-392001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796639B8E77
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:01:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B3D69B8E47
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:58:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE2C7B21F86
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266811F232D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDB31A0708;
-	Fri,  1 Nov 2024 09:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="rCrJOyjE"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3156E17108A;
+	Fri,  1 Nov 2024 09:57:44 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7284019F117
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 09:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691DD15C158;
+	Fri,  1 Nov 2024 09:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730455082; cv=none; b=ePJQWuDRTc9qFSwZuf4pclvZI/8i+xk1mqKVi0dUPlIg6lM4+zAS6JFX2azJqonrA14GPNylVJlPkSCxKYo2utEoRTwp/2lP/N4gW5QNzBl/+g3IA07mQgFP8mWIB/a60ZG04EsijiKYqsupohzn4ftMx36VvUaXQm7e6nrQUjY=
+	t=1730455063; cv=none; b=SF3GGUhTQmri2nd6oDr+bnjAtstDZxvZuqKvrF7faVmUGvUU3Gt9jGJU/lMNQ/9hAQ2m+MyzgljlY0sjs/ldf8BnlY3T5aWLHxkTNvCgRDBRs2xKuaTIZDGBnk7rzPZKnbdbJHD585VFjkdkNYVC4L5EDKMi/7pS24SP0Ig833Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730455082; c=relaxed/simple;
-	bh=5q3sZ67C/C9aXpvq5Ph2rdpLI36199ziQrN6XfaKdN8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AvSyBiV0JfI2P4QCYoe1n34h5Myk5aTBDEAdY0FErFe1S8L+VEJIMYwqqzzZJRnvvLH2+fpEUgyTF60yUTWSOdlOxdztqVP2/+SOtd7S54mYKOZtnByFTEMf25E+554AxoaY+5eR246omoLx6WHQi7T/99WepAX8lDJv6jVRV2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=rCrJOyjE; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so2542455a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 02:58:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730455079; x=1731059879; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uDVeB7Y+VIp/FplukcEJ+LJ4Vz9niC4RyWfPRl3XIfk=;
-        b=rCrJOyjEbqtAfGFSmF9fitisxGo6N/aRbGgwTYNNlDFTUVgrFwiO+alJUk5H/vdHTT
-         ADRy0YSjkVKM5qnrf4cULKAzriMFJlEiPQ7i5oulnl7meAjB0/Astm4gms3dMMi9dQnE
-         ygqQ+HDq/YfLeSgj7sfW5TbOAUMhoGiPurgD2px1kMBInsyFE7qkoQs/yNCNiO/FVdpK
-         8K+bwlrA/I9xyeany5P9TJSqC0OyyrqOoCU6uq9ipyX8ex+O0o4/LrSxfMMlxA51SBxp
-         ZtOzksRmPQZLtLEEqhXsdKAbBtszq/9ju79/9Aw7IAIivTyzv2XAD3JPM90NVLl/dZvc
-         OQXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730455079; x=1731059879;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uDVeB7Y+VIp/FplukcEJ+LJ4Vz9niC4RyWfPRl3XIfk=;
-        b=vPodRBCxqzw3HOQCTEVWSMMUToza0nmJ8qB+4LLMmSE6gDtoh5v8N2cH5e5LwT1g+B
-         6FFZED9sz0bV4Rj5YcUvpJKserZj8cB1DSUYkgfR7P9bMGFX7v6Qrqz9RymeOe2FabLo
-         +vRY77tFfjrac704HwWE1ZOOTM5SK/RfVU4dhZyUxgz+g2oQcX3Acj5eKNmqCeF9E4cz
-         M1+vWy2YMtEJ1ZbgTPDOWTdFIoLYcNlZ0dQZtohkhLc2TudH67egjEOYBQy8V1suUybH
-         qWBaHKmuqLBpIl89HBa3qAhjdMx0k8A7DHcsJBjwtf3KhE0Nmpa73MyOIe97bJBGfAOs
-         3tNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPuMiW2Q/NKLmxUTq9kyE4bprMsmyRWMjJa7uecIpQVmYtVrr5zJ+bzF9NAoq+fgCC6dzfxDSQk4EwS2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVt6Ev2Qlysu7JrS6qr4uxRxnYxvRK8IPLBb+MNCmSQ01AaLoQ
-	SJkTRjv/3fQWk17SaUCmTGyLT+rKz6drtNSVPMv1uSsXbcGcMGBNCzFYMgCr9YA=
-X-Google-Smtp-Source: AGHT+IFm5mOqj3B/Gyi2brvekA2DF+HNO4SlxfDE0BQcyiDTfbNWcuu/umQTldMEOxZlW5iJz8fSBQ==
-X-Received: by 2002:a05:6402:3585:b0:5ce:bb37:c2e1 with SMTP id 4fb4d7f45d1cf-5cebb37c36emr1662850a12.19.1730455078849;
-        Fri, 01 Nov 2024 02:57:58 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.190])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac7c8d87sm1364136a12.76.2024.11.01.02.57.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 02:57:57 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com,
-	magnus.damm@gmail.com,
-	p.zabel@pengutronix.de
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v6 9/9] arm64: defconfig: Enable VBATTB clock and Renesas RTCA-3 flags
-Date: Fri,  1 Nov 2024 11:57:20 +0200
-Message-Id: <20241101095720.2247815-10-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241101095720.2247815-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241101095720.2247815-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1730455063; c=relaxed/simple;
+	bh=pK/WO2daHDcq6dA5/6aSgiM2yMEiHnUvcPj0ZRSJ19s=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=huTTOl1K5ZNlBypR+UKRNKHbEO+QAZfQARztC1UN44wIjr0/29mQ9rW/w92ltTYpVpRTwGReQX5RapVHFBVRsH5xNr0wnR3O3NvWzSRPFDN8APmnIdz0UquyO5znDL8NQElFX4M82WYOy/GQsn1vJzcmH4M/WIyHjwaJ1Evf294=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xfx7J1tDTz10PFq;
+	Fri,  1 Nov 2024 17:55:24 +0800 (CST)
+Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id E85861800A5;
+	Fri,  1 Nov 2024 17:57:37 +0800 (CST)
+Received: from [10.67.110.237] (10.67.110.237) by
+ kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 1 Nov 2024 17:57:37 +0800
+Subject: Re: [PATCH] media: atomisp: Add check for rgby_data memory allocation
+ failure
+To: Andy Shevchenko <andy@kernel.org>
+CC: <mchehab@kernel.org>, <hdegoede@redhat.com>,
+	<sakari.ailus@linux.intel.com>, <gregkh@linuxfoundation.org>,
+	<linux-media@vger.kernel.org>, <linux-staging@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+References: <20241101154823.3067891-1-lihuafei1@huawei.com>
+ <ZySRjyrxI9jrcY1q@smile.fi.intel.com>
+From: Li Huafei <lihuafei1@huawei.com>
+Message-ID: <d2590a9f-7786-ca08-a705-a5b287e74ba3@huawei.com>
+Date: Fri, 1 Nov 2024 17:57:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZySRjyrxI9jrcY1q@smile.fi.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf500004.china.huawei.com (7.202.181.242)
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Enable the Renesas VBATTB clock and RTCA-3 RTC drivers. These are
-available on the Renesas RZ/G3S SoC. VBATTB is the clock provider for
-the RTC counter.
+Hi Andy,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+On 2024/11/1 16:30, Andy Shevchenko wrote:
+> On Fri, Nov 01, 2024 at 11:48:23PM +0800, Li Huafei wrote:
+>> In ia_css_3a_statistics_allocate(), there is no check on the allocation
+>> result of the rgby_data memory. If rgby_data is not successfully
+>> allocated, it may trigger the assert(host_stats->rgby_data) assertion in
+>> ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
+> 
+> Not sure if this code even run on currently supported hardware / firmware,
+> but fix looks okay.
+> 
+>> Fixes: ad85094b293e ("Revert "media: staging: atomisp: Remove driver"")
+> 
+> No, this is an intermediate commit, you should find the original, which is
+> earlier in the history.
+> 
 
-Changes in v6:
-- enabled as modules
-- Geert: I kept your tag, let me know if you consider otherwise
+Apologies, the correct fix tag should be:
 
-Changes in v5:
-- none
+Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
 
-Changes in v4:
-- squashed w/ patch "arm64: defconfig: Enable Renesas RTCA-3 flag" from v3
-- updated patch description
-- collected tags
+If this fix can be applied, do I need to send a v2, or can you help add the Fix tag?
 
-Changes in v3:
-- update patch title and description
-- dropped CONFIG_MFD_RENESAS_VBATTB
-
-Changes in v2:
-- added CONFIG_MFD_RENESAS_VBATTB
-- added vendor name in the VBATTB clock flag
-
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 0fad83642034..c62831e61586 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1222,6 +1222,7 @@ CONFIG_RTC_DRV_IMX_SC=m
- CONFIG_RTC_DRV_MT6397=m
- CONFIG_RTC_DRV_XGENE=y
- CONFIG_RTC_DRV_TI_K3=m
-+CONFIG_RTC_DRV_RENESAS_RTCA3=m
- CONFIG_DMADEVICES=y
- CONFIG_DMA_BCM2835=y
- CONFIG_DMA_SUN6I=m
-@@ -1371,6 +1372,7 @@ CONFIG_SM_VIDEOCC_8250=y
- CONFIG_QCOM_HFPLL=y
- CONFIG_CLK_GFM_LPASS_SM8250=m
- CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
-+CONFIG_CLK_RENESAS_VBATTB=m
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_TEGRA186_TIMER=y
--- 
-2.39.2
-
+Thanks,
+Huafei
 
