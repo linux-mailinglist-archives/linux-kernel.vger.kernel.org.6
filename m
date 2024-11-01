@@ -1,100 +1,106 @@
-Return-Path: <linux-kernel+bounces-391733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F629B8AFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:09:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E129D9B8B05
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:11:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 261A51C21D77
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:08:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A8E8B21A5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753F414F9EB;
-	Fri,  1 Nov 2024 06:08:34 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8C514D444;
+	Fri,  1 Nov 2024 06:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxotyBrg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBAF14C5BF;
-	Fri,  1 Nov 2024 06:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED17142623;
+	Fri,  1 Nov 2024 06:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730441314; cv=none; b=gepCHyPKeipZiN2VU0WGn7EsN+aHRXGAwjNv3N7uWAsrT9ZrIuhH/joFX5J+PS9FT3+l0WLBq6vFPVtUBiGRVjGpxgj2438ZarRC/94EC9PAzHn9sBmNcIZeN5c5xlxS6Y0jQQjCRTr7hVRg5+i6qzygzB2MfGp4I+RamF2mUdA=
+	t=1730441482; cv=none; b=cbd4V0zc8L1fDA2CeWvlXPunbwN0yueQDoPhvcPjpeyoG4ZS2YyRsYBEgC1NaJQS1HPFnZrrFXymF68HGErdbNUv88cwpjVWXa480m1YE/lCG5ITwSzidJR/AuBmcWN/P9wswJ81R0f/7PngfeH268TPk/zNkqz8YYt8rA0XNxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730441314; c=relaxed/simple;
-	bh=QCKu+9mVz1iPuk0V3GSi8I15IDVahcS/+5pOcgvR1No=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ebOddzY1JGyPyEp9ynXtEUG7exP+jI9tjQEQsz3KLICUVsCbHnpUSncwIwF+/TlITVyt3EE6QZq+XlMUW4Ml9eqS3tdiIaZb33pEykdLq7dFrK+qJt/L9fKxtYj9ZRbZNbclUzPX9wZvebHwoG8uXT0/JoQyVP+DQVSSJjSY8cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Xfr3d1gWfz2FbsR;
-	Fri,  1 Nov 2024 14:06:53 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id A37C61A016C;
-	Fri,  1 Nov 2024 14:08:27 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 1 Nov 2024 14:08:26 +0800
-Message-ID: <bf66c7a6-af2f-436f-a8eb-50dd46d014d6@huawei.com>
-Date: Fri, 1 Nov 2024 14:08:26 +0800
+	s=arc-20240116; t=1730441482; c=relaxed/simple;
+	bh=xuvDhMPsSnRBldbb9zqlIWoH9RpyHnNr2U6kz9Sckdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tHF/LwrVqE8V7BRl88UC8sZTPdWa+lVlIuo/pGI7Wjb9JoSyM0hlLydOwTPwqRST3m+AebfyQZWCsNA5U0rPGk7PFAuhxpuyH90SywNkqAvl3aMo52PjoF8hPJxrg7VvZk6PmvZYWpqbcFMTvYs+Z83NJqH0kpt2oOn0Ozlu7dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxotyBrg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C71BBC4CECD;
+	Fri,  1 Nov 2024 06:11:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730441481;
+	bh=xuvDhMPsSnRBldbb9zqlIWoH9RpyHnNr2U6kz9Sckdc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GxotyBrgjRANc5p7HrsCLBXgaj4HLa5WC8j/hwfVk4KJAdkHmExC7kSQTYNp89ILA
+	 Yx2fbg2gbC1Wjyn01FDcCrk577MzfB5np9DJobJUCMYKqeBjjKbyJl4ye3AMAvF9/M
+	 eWLWv6oFnkXuCdVlONIFHy4LNALMfsWKyHZrQE/pe6g5rPZdzyyrOB4cB2hoNjYS79
+	 lqHPB1G+uBa5evs4A6a/506EDsJ0Nq/l3fddVEF8YAVmp1SK1vnA6Z0/l70YE3mAJc
+	 C3wKq7ppvuxcUZM3NDVqxKZW+swjVBkdxdhk2qeZWESspprkV0FeKW4hemHsE21yeg
+	 a8+9J8MNFi77A==
+Date: Fri, 1 Nov 2024 08:11:16 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH 2/7] block: don't merge different kinds of P2P
+ transfers in a single bio
+Message-ID: <20241101061116.GC88858@unreal>
+References: <cover.1730037261.git.leon@kernel.org>
+ <34d44537a65aba6ede215a8ad882aeee028b423a.1730037261.git.leon@kernel.org>
+ <d4378502-6bc2-4064-8c35-191738105406@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
-	<shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 net-next 1/8] net: hibmcge: Add dump statistics
- supported in this module
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20241026115740.633503-1-shaojijie@huawei.com>
- <20241026115740.633503-2-shaojijie@huawei.com>
- <20241031184527.1d6afe84@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20241031184527.1d6afe84@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d4378502-6bc2-4064-8c35-191738105406@acm.org>
 
+On Thu, Oct 31, 2024 at 01:58:37PM -0700, Bart Van Assche wrote:
+> On 10/27/24 7:21 AM, Leon Romanovsky wrote:
+> > +		/*
+> > +		 * When doing ZONE_DEVICE-based P2P transfers, all pages in a
+> > +		 * bio must be P2P pages from the same device.
+> > +		 */
+> > +		if ((bio->bi_opf & REQ_P2PDMA) &&
+> > +		    !zone_device_pages_have_same_pgmap(bv->bv_page, page))
+> > +			return 0;
+> 
+> It's probably too late to change the "zone_device_" prefix into
+> something that cannot be confused with a reference to zoned block
+> devices?
 
-on 2024/11/1 9:45, Jakub Kicinski wrote:
-> On Sat, 26 Oct 2024 19:57:33 +0800 Jijie Shao wrote:
->> +	HBG_STATS_REG_I(rx_framesize_64, HBG_REG_RX_PKTS_64OCTETS_ADDR),
->> +	HBG_STATS_REG_I(rx_framesize_65_127,
->> +			HBG_REG_RX_PKTS_65TO127OCTETS_ADDR),
->> +	HBG_STATS_REG_I(rx_framesize_128_255,
->> +			HBG_REG_RX_PKTS_128TO255OCTETS_ADDR),
->> +	HBG_STATS_REG_I(rx_framesize_256_511,
->> +			HBG_REG_RX_PKTS_256TO511OCTETS_ADDR),
->> +	HBG_STATS_REG_I(rx_framesize_512_1023,
->> +			HBG_REG_RX_PKTS_512TO1023OCTETS_ADDR),
->> +	HBG_STATS_REG_I(rx_framesize_1024_1518,
->> +			HBG_REG_RX_PKTS_1024TO1518OCTETS_ADDR),
->> +	HBG_STATS_REG_I(rx_framesize_bt_1518,
->> +			HBG_REG_RX_PKTS_1519TOMAXOCTETS_ADDR),
->> +	HBG_STATS_REG_I(rx_fcs_error_cnt, HBG_REG_RX_FCS_ERRORS_ADDR),
->> +	HBG_STATS_REG_I(rx_data_error_cnt, HBG_REG_RX_DATA_ERR_ADDR),
->> +	HBG_STATS_REG_I(rx_align_error_cnt, HBG_REG_RX_ALIGN_ERRORS_ADDR),
->> +	HBG_STATS_REG_I(rx_frame_long_err_cnt, HBG_REG_RX_LONG_ERRORS_ADDR),
-> Please do not dump in ethtool statistics which can be accessed via
-> standard APIs like ethtool -I, queue_stats or rtnl_stat.
-> https://docs.kernel.org/next/networking/statistics.html
+It is never too late to send a patch which renames the names, but it needs
+to be worth it. However it is hard to see global benefit from zone_device_* rename.
+ZONE_DEVICE is a well known term in the kernel and it is used all other places
+in the kernel.
 
-ok, in V3, I will modify this patch according to this document.
+Thanks
 
-Thanks,
-Jijie Shao
-
+> 
+> Thanks,
+> 
+> Bart.
+> 
 
