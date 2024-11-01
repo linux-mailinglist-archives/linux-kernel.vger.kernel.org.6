@@ -1,189 +1,302 @@
-Return-Path: <linux-kernel+bounces-392878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6F49B9928
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:07:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48CE39B9931
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9F91F23051
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:07:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8351C20F56
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D8B1D2B11;
-	Fri,  1 Nov 2024 20:07:35 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2070C1D9667;
+	Fri,  1 Nov 2024 20:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zXNwz71D"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871A91D27A0
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AF91D0F49
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730491655; cv=none; b=phJQzeZLpuNkjrrepC3088QqO+2pOTL8EzHqSiwa6YXHg5SqjiutYlsgQgCNMoOw6lw1mei67DHyYwUpYDKX8yj+Erl3wW6A/eI33d2uIEuFe2kTT17ctFRHxR8a+B7YnzN2FIocyMtHaW8SOy0dh64KcLdpppoXl1O7Qz6EdVI=
+	t=1730491735; cv=none; b=efK434Ty2pZdV3grhScPuJO3JrXK4pnJR3JD//SigjCzaq0IUaHgkWzPbfPWF3X0PXYqyaKd1HeciI6JTd2b+JoPt7SiTAYNng1U0SEwwL3BFtyTRrXt0yh+pxsPiG8fUsxT8ilefFY/UfbnL2z5wIo/C+v9OTKq1sdicK1ZAEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730491655; c=relaxed/simple;
-	bh=pLCSgf1FA7YufT7FjypRtJtCBin2sqPNA2G6Ffx8JmY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rzoi3GrgxYmD8+vMizKRSxzPDcbZ7HPB4Rm/Ho98Y4oh9O/x0VkMeBeM+cVHb5l7PK2eduzp3KL+KGO2hOV1TVH/D9xZpraxMJjzS6qOF68wCWVLXMOBi4JqtHv/okeH9PVGQIFTaIIhvqrH7LU0qs6qA5ZnCUYhIw69XapPH8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c90919a2so23974515ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:07:33 -0700 (PDT)
+	s=arc-20240116; t=1730491735; c=relaxed/simple;
+	bh=C3bK9lq2Iat+ytyW1C1WkA7TwIFFMRn5QKSxbvhI+cU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nde5qJSHYe7GGW5rcyk0EIjgqGgdtOeneeDsla++M9f2TZKEpitUN3wCD+VTYdq471kTzbtrUd7ygga5G4BXt82L8zUjOkiEKbGk/SkwroKU1ntLTmQjMSATrQCdGhQPwxwWORYm2qY5HZK/k0589hphrmDBldcazxNY82IY+5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zXNwz71D; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4608dddaa35so74741cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:08:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730491732; x=1731096532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JBhvgsyP68AaFdlci9462ArR+t5qoTnQQ8nehGqn+cY=;
+        b=zXNwz71DBFYPz1sP5tfi2wFU+rcqCxWNhXVt2i2142V47hg70xrU6vguW7SsouXX7r
+         Zyqc37ECf0g/6Ws31Gy/T9wCErubS/LXrbzp2jJUgp3CR0i6mZfArpC6O1rjG8q3FJxW
+         d1TFY/HsqQF5DHQL1bLEMwC3ex1Al6xI2tqEKITA14oGphNGm90PA9JyNHHzv4VFc7Tz
+         SCgcrLj0pGdRigYvgQJ5q0Pbo8vfGPkKmTxrXf68CypkgzJ40jRgbkudCemnIRzbGlSZ
+         a6hVjNGCACYFOVkQXGWoD7rxzdpDHAwBtLf6l5KrVSXaoWx5WrEClQqgorYlL/SmrsUG
+         d2QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730491652; x=1731096452;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WKkXYUGj7iwxbjiKax0C3RrxchxN2fGDD9Ow3Ftv1DU=;
-        b=nXZBsLvzLapq5zsrDTx1WFHxXJfvLivur/t03MjbJ7to3kzVgyqZxfeIwi2umyQSAU
-         ri+sv0cXatHmVhHVGZijCdScod54gcHJ8gh4az526fEK7T7BeqHLhVrgGuYZZH83tGqj
-         ur7CGsn7pEpCHjynYOQWle+oTyvumrzHrk+wTUdGxVjfpQdBBzjyyoDW8xJrggcEwkrY
-         /esc+NpVc9L8GywVwevgLe4nFCIDHbjfPw/o29Y8btOcHmDS5RZtqN2nzM4q6M/8oVZf
-         xMmd3FL+P7f/UDlBlpE7PyYZxpF4t+mL9RviaReo+cC5AQ7E62VYTCkOr9h7AL017UJ5
-         nsWg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1OGHNC3Rw5+a7yz4M2SRvTH9kr/r5YYZ+c9sN1hXgV5Xe5OlrU3olkuGRHwRMwVkx1wmvNyBEoff6PZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/chje/y+QZiGJGDmHLYRJDpZmYx7PY8dCR9nn+CJUa873Iefe
-	PpEPptXrHAT+P9TCfy85PWQ0CQ4zE/u2WV2lgIL0fFC3IlfNqec3QXq0mIKHArYdX9c1RcWWTJJ
-	Oy2fShyA/P95Q0sIPPs4sdFRuMV4gT/EbExrTC17hAStYw9HNEUzPTgg=
-X-Google-Smtp-Source: AGHT+IElId++NX4OCR+e50oEteEN2/ewKdWt5dAGF5kq255zp5JCCSVY8a/ac7cvhnmE11BJXFu8qEcaOS68LzeocUNavBOmRL7o
+        d=1e100.net; s=20230601; t=1730491732; x=1731096532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JBhvgsyP68AaFdlci9462ArR+t5qoTnQQ8nehGqn+cY=;
+        b=S1Q2F7E7wnZaJTXNoQEzH4qMQ2w6nvhutyrTkxplgOAgR5YLrnWPT8osSY3tb6PquQ
+         8Pas7NAelw/ZF3EDV8aAw/AdDRXUvxGXeTZwTB/jHqJN8i/IVp8ihTMa1F/fH/LvHEOE
+         eI9UGYPI1f2dH6RIJs3Y7VckYkMEUYkIHKiexDBertCc/Vek8NXKVaeYrXmR2t1+Evxh
+         8NQvfya/Z+0a/KXTtfBwt7tI0vuKy7A2Pd+0zaN1TIAYLsdIv2ykSjFXrQhtIUnvdCpO
+         L8lXVfEQj3cdST0aUDZybQ1Jq6atpE8so2XavKVPyXBVrTSbMMVvVvknsFaV23UrN5ue
+         e0Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwPswgOGOjYTuPfjLcCtLBfML+/Qs/tmkmT2fzDJrmPaYWsIH3guugGcFKM0U/5HkQN6Ha+7yBXtkFDmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcy0H7T1J+X8Olqoo8Tdk67g2nG/ECdtYBmsr/Q2uVi1rW3cki
+	rJ6fy8vAecRQvbhVUhADIh142k/iqF3JGAtGD/9GM4XpJmWvtWnPcFCIcpECoSTbhNP+i9ulxFM
+	f55ffzyrKY9LKC3RDKlHGNzYS0LGlqWUu7uTu
+X-Gm-Gg: ASbGncupwsV6mtDekUVZKQEoE9HX20RFrkpj45C8fAJ1PCOTLN9g8AQRYAs6TnN3LrI
+	5KC7psk05w4U+hCXqmaEeDh3Ba2r/NhFwOT2fedGeb1wd+xmNy2gZD3X0oBCF
+X-Google-Smtp-Source: AGHT+IHLzbr5jZfQL/RFF11+CfvITxPQwh4PBiAl7YBrfB0o/NYh07B9/QUFW2fV1iv3quuB+T2eISwzjxXYEChmiRQ=
+X-Received: by 2002:a05:622a:5289:b0:460:77ac:8773 with SMTP id
+ d75a77b69052e-462c60000d5mr609401cf.26.1730491732027; Fri, 01 Nov 2024
+ 13:08:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1548:b0:3a2:6ce9:19c6 with SMTP id
- e9e14a558f8ab-3a4ed30fe20mr242408415ab.25.1730491652715; Fri, 01 Nov 2024
- 13:07:32 -0700 (PDT)
-Date: Fri, 01 Nov 2024 13:07:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67253504.050a0220.3c8d68.08e1.GAE@google.com>
-Subject: [syzbot] [io-uring?] general protection fault in io_sqe_buffer_register
-From: syzbot <syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20241023224409.201771-1-xur@google.com> <20241023224409.201771-2-xur@google.com>
+ <CAK7LNARiEhNBPikEv--YpdKTPt5B5tFF_J0T8+xbi1CS6WJBFQ@mail.gmail.com>
+In-Reply-To: <CAK7LNARiEhNBPikEv--YpdKTPt5B5tFF_J0T8+xbi1CS6WJBFQ@mail.gmail.com>
+From: Rong Xu <xur@google.com>
+Date: Fri, 1 Nov 2024 13:08:38 -0700
+Message-ID: <CAF1bQ=QvQ=NRCOky3-k_9eoo4BVgW+_C7g6TBmSw=qNurPW9uA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/7] Add AutoFDO support for Clang build
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Sriraman Tallam <tmsriram@google.com>, 
+	Stephane Eranian <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Nov 1, 2024 at 11:02=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> On Thu, Oct 24, 2024 at 7:44=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+> >
+> > Add the build support for using Clang's AutoFDO. Building the kernel
+> > with AutoFDO does not reduce the optimization level from the
+> > compiler. AutoFDO uses hardware sampling to gather information about
+> > the frequency of execution of different code paths within a binary.
+> > This information is then used to guide the compiler's optimization
+> > decisions, resulting in a more efficient binary. Experiments
+> > showed that the kernel can improve up to 10% in latency.
+> >
+> > The support requires a Clang compiler after LLVM 17. This submission
+> > is limited to x86 platforms that support PMU features like LBR on
+> > Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
+> >  and BRBE on ARM 1 is part of planned future work.
+> >
+> > Here is an example workflow for AutoFDO kernel:
+> >
+> > 1) Build the kernel on the host machine with LLVM enabled, for example,
+> >        $ make menuconfig LLVM=3D1
+> >     Turn on AutoFDO build config:
+> >       CONFIG_AUTOFDO_CLANG=3Dy
+> >     With a configuration that has LLVM enabled, use the following
+> >     command:
+> >        scripts/config -e AUTOFDO_CLANG
+> >     After getting the config, build with
+> >       $ make LLVM=3D1
+> >
+> > 2) Install the kernel on the test machine.
+> >
+> > 3) Run the load tests. The '-c' option in perf specifies the sample
+> >    event period. We suggest     using a suitable prime number,
+> >    like 500009, for this purpose.
+> >    For Intel platforms:
+> >       $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count>=
+ \
+> >         -o <perf_file> -- <loadtest>
+> >    For AMD platforms:
+> >       The supported system are: Zen3 with BRS, or Zen4 with amd_lbr_v2
+> >      For Zen3:
+> >       $ cat proc/cpuinfo | grep " brs"
+> >       For Zen4:
+> >       $ cat proc/cpuinfo | grep amd_lbr_v2
+> >       $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a=
+ \
+> >         -N -b -c <count> -o <perf_file> -- <loadtest>
+> >
+> > 4) (Optional) Download the raw perf file to the host machine.
+> >
+> > 5) To generate an AutoFDO profile, two offline tools are available:
+> >    create_llvm_prof and llvm_profgen. The create_llvm_prof tool is part
+> >    of the AutoFDO project and can be found on GitHub
+> >    (https://github.com/google/autofdo), version v0.30.1 or later. The
+> >    llvm_profgen tool is included in the LLVM compiler itself. It's
+> >    important to note that the version of llvm_profgen doesn't need to
+> >    match the version of Clang. It needs to be the LLVM 19 release or
+> >    later, or from the LLVM trunk.
+> >       $ llvm-profgen --kernel --binary=3D<vmlinux> --perfdata=3D<perf_f=
+ile> \
+> >         -o <profile_file>
+> >    or
+> >       $ create_llvm_prof --binary=3D<vmlinux> --profile=3D<perf_file> \
+> >         --format=3Dextbinary --out=3D<profile_file>
+> >
+> >    Note that multiple AutoFDO profile files can be merged into one via:
+> >       $ llvm-profdata merge -o <profile_file>  <profile_1> ... <profile=
+_n>
+> >
+> > 6) Rebuild the kernel using the AutoFDO profile file with the same conf=
+ig
+> >    as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
+> >       $ make LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D<profile_file>
+> >
+> > Co-developed-by: Han Shen <shenhan@google.com>
+> > Signed-off-by: Han Shen <shenhan@google.com>
+> > Signed-off-by: Rong Xu <xur@google.com>
+> > Suggested-by: Sriraman Tallam <tmsriram@google.com>
+> > Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
+> > Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Suggested-by: Stephane Eranian <eranian@google.com>
+> > Tested-by: Yonghong Song <yonghong.song@linux.dev>
+>
+>
+>
+>
+> > +Workflow
+> > +=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Here is an example workflow for AutoFDO kernel:
+> > +
+> > +1)  Build the kernel on the host machine with LLVM enabled,
+> > +    for example, ::
+> > +
+> > +      $ make menuconfig LLVM=3D1
+> > +
+> > +    Turn on AutoFDO build config::
+> > +
+> > +      CONFIG_AUTOFDO_CLANG=3Dy
+> > +
+> > +    With a configuration that with LLVM enabled, use the following com=
+mand::
+> > +
+> > +      $ scripts/config -e AUTOFDO_CLANG
+> > +
+> > +    After getting the config, build with ::
+> > +
+> > +      $ make LLVM=3D1
+> > +
+> > +2) Install the kernel on the test machine.
+> > +
+> > +3) Run the load tests. The '-c' option in perf specifies the sample
+> > +   event period. We suggest using a suitable prime number, like 500009=
+,
+> > +   for this purpose.
+> > +
+> > +   - For Intel platforms::
+> > +
+> > +      $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count=
+> -o <perf_file> -- <loadtest>
+> > +
+> > +   - For AMD platforms::
+>
+> I am not sure if this double-colon is needed
+> when the next line is not code.
 
-syzbot found the following issue on:
+Thanks for catching this. We don't mean to use "::" here. It should be
+":" and there is supposed to be a blank line after this.
+Also a blank line before "For Zen3::". I will fix this in the patch.
 
-HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12052630580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
-dashboard link: https://syzkaller.appspot.com/bug?extid=05c0f12a4d43d656817e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15abc6f7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10eb655f980000
+>
+>
+>
+> > +     The supported systems are: Zen3 with BRS, or Zen4 with amd_lbr_v2=
+. To check,
+> > +     For Zen3::
+> > +
+> > +      $ cat proc/cpuinfo | grep " brs"
+> > +
+> > +     For Zen4::
+> > +
+> > +      $ cat proc/cpuinfo | grep amd_lbr_v2
+> > +
+> > +     The following command generated the perf data file::
+> > +
+> > +      $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -=
+a -N -b -c <count> -o <perf_file> -- <loadtest>
+> > +
+> > +4) (Optional) Download the raw perf file to the host machine.
+> > +
+> > +5) To generate an AutoFDO profile, two offline tools are available:
+> > +   create_llvm_prof and llvm_profgen. The create_llvm_prof tool is par=
+t
+> > +   of the AutoFDO project and can be found on GitHub
+> > +   (https://github.com/google/autofdo), version v0.30.1 or later.
+> > +   The llvm_profgen tool is included in the LLVM compiler itself. It's
+> > +   important to note that the version of llvm_profgen doesn't need to =
+match
+> > +   the version of Clang. It needs to be the LLVM 19 release of Clang
+> > +   or later, or just from the LLVM trunk. ::
+> > +
+> > +      $ llvm-profgen --kernel --binary=3D<vmlinux> --perfdata=3D<perf_=
+file> -o <profile_file>
+> > +
+> > +   or ::
+> > +
+> > +      $ create_llvm_prof --binary=3D<vmlinux> --profile=3D<perf_file> =
+--format=3Dextbinary --out=3D<profile_file>
+> > +
+> > +   Note that multiple AutoFDO profile files can be merged into one via=
+::
+> > +
+> > +      $ llvm-profdata merge -o <profile_file> <profile_1> <profile_2> =
+... <profile_n>
+> > +
+> > +6) Rebuild the kernel using the AutoFDO profile file with the same con=
+fig as step 1,
+> > +   (Note CONFIG_AUTOFDO_CLANG needs to be enabled)::
+> > +
+> > +      $ make LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D<profile_file>
+> > +
+>
+> Trailing blank line.
+>
+> .git/rebase-apply/patch:187: new blank line at EOF.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+Will remote the blank line.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 0 UID: 0 PID: 5845 Comm: syz-executor176 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:headpage_already_acct io_uring/rsrc.c:584 [inline]
-RIP: 0010:io_buffer_account_pin io_uring/rsrc.c:614 [inline]
-RIP: 0010:io_sqe_buffer_register+0xaa8/0x2cf0 io_uring/rsrc.c:758
-Code: 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 b0 8a 55 fd 48 8b 1b 48 83 c3 18 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 8a 8a 55 fd 48 8b 03 48 89 44 24 60
-RSP: 0018:ffffc90003faf640 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: dffffc0000000000
-RDX: ffff88807ef14128 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003faf7f0 R08: ffffffff84a9ce37 R09: 1ffffd40003a8000
-R10: dffffc0000000000 R11: fffff940003a8001 R12: ffffea0001d40000
-R13: 0000000000000006 R14: 1ffff110060dc350 R15: ffff8880306e1a80
-FS:  00005555684d7380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020010404 CR3: 000000007ea62000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __io_sqe_buffers_update io_uring/rsrc.c:257 [inline]
- __io_register_rsrc_update+0x5c8/0x1320 io_uring/rsrc.c:295
- io_register_rsrc_update+0x1d1/0x230 io_uring/rsrc.c:326
- __do_sys_io_uring_register io_uring/register.c:938 [inline]
- __se_sys_io_uring_register+0x8ee/0x40d0 io_uring/register.c:915
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f96c01b8469
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc4e36b3a8 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 00000000000004b5 RCX: 00007f96c01b8469
-RDX: 0000000020000600 RSI: 0000000000000010 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 00000000000ac5f8 R09: 00000000000ac5f8
-R10: 0000000000000020 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffc4e36b578 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:headpage_already_acct io_uring/rsrc.c:584 [inline]
-RIP: 0010:io_buffer_account_pin io_uring/rsrc.c:614 [inline]
-RIP: 0010:io_sqe_buffer_register+0xaa8/0x2cf0 io_uring/rsrc.c:758
-Code: 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 b0 8a 55 fd 48 8b 1b 48 83 c3 18 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 8a 8a 55 fd 48 8b 03 48 89 44 24 60
-RSP: 0018:ffffc90003faf640 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: dffffc0000000000
-RDX: ffff88807ef14128 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003faf7f0 R08: ffffffff84a9ce37 R09: 1ffffd40003a8000
-R10: dffffc0000000000 R11: fffff940003a8001 R12: ffffea0001d40000
-R13: 0000000000000006 R14: 1ffff110060dc350 R15: ffff8880306e1a80
-FS:  00005555684d7380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f96c017d020 CR3: 000000007ea62000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 3 bytes skipped:
-   0:	df 80 3c 08 00 74    	filds  0x7400083c(%rax)
-   6:	08 48 89             	or     %cl,-0x77(%rax)
-   9:	df e8                	fucomip %st(0),%st
-   b:	b0 8a                	mov    $0x8a,%al
-   d:	55                   	push   %rbp
-   e:	fd                   	std
-   f:	48 8b 1b             	mov    (%rbx),%rbx
-  12:	48 83 c3 18          	add    $0x18,%rbx
-  16:	48 89 d8             	mov    %rbx,%rax
-  19:	48 c1 e8 03          	shr    $0x3,%rax
-  1d:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  24:	fc ff df
-* 27:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
-  2b:	74 08                	je     0x35
-  2d:	48 89 df             	mov    %rbx,%rdi
-  30:	e8 8a 8a 55 fd       	call   0xfd558abf
-  35:	48 8b 03             	mov    (%rbx),%rax
-  38:	48 89 44 24 60       	mov    %rax,0x60(%rsp)
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+>
+>
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
 
