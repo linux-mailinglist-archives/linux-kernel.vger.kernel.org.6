@@ -1,141 +1,384 @@
-Return-Path: <linux-kernel+bounces-391536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F649B885D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:25:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EAF9B885F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:26:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 171C52822CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:25:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C62B21CFF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128DA5A7B8;
-	Fri,  1 Nov 2024 01:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1A45336D;
+	Fri,  1 Nov 2024 01:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tK5O18Ys"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dyAZMncS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF86C4C3D0;
-	Fri,  1 Nov 2024 01:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5142020328;
+	Fri,  1 Nov 2024 01:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730424328; cv=none; b=QR4TKH/k9W+U5qR72ONHsjJBixBtNhqTaJL3paV5fmw949b2H18Oq8adpBO5MLlkIEjAe3PH/xFGEJMmZ28mp0mdxR8dOB5lAdkPikZmQFNn1TvIOK1iE5DU972iizIl9mhJ0Gbp/MwkWx0aEaoTt10syXiu3YFA2GARfFtsZXY=
+	t=1730424383; cv=none; b=gIoidLBZnmskfArvpL6SDsS///tqz9iy0bXt4c4ywpGPlZ3cmiFWBGp5SwwsyX/e2akqKBZdiC1Z5u3dAGViXc0ZFI8d+SJI614N2jXDHtG24E9Fp2Sw1Ht64kfh77O8bel2eNqHZ6Ui3C9ogOlHPY0ZPmTDIJkqpsGgU9Vkfe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730424328; c=relaxed/simple;
-	bh=2dbM5EpWRjcPfzrtyr+TJTsnnL79nW2KMqKKbCvuCGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GgIXokwje4oXEocn2pLxwGVxxpZxaOlXp4PBowqfWHOm1dBKs1mV8Q7aId0jjW9JHNHwGRw17JpoEcRAELxNIMu3WFOptZUL2EIOV3RQG40nw/EK27pTOOGHSbg2OZnCKQWmLwSWkRaTLSHYtV+cgvPt7prWGf1wsHk4sumd6Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tK5O18Ys; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730424309;
-	bh=MD3/3YQuyZL5hZ/YibVTQie64WK9EHSl7SiHTqu3hPc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tK5O18YsvSlAj8mF4VDS1SzrU4rH6dXFLjADbFwJv79k4B4RO7hUlaUXGuNQ+V2tu
-	 BCsMVcTuj16Q6KZbTglGEOb8yrz5I3GoijAIq0jQOIvT6/BEDBpne27smVPogOP63m
-	 znpRv7ARIAcHsGQ1MPwVd5qufzsN+Yq/RTYb5I1yfeKSfIo5t5mHut3lEosyn2to0H
-	 FSrA+IEgt7d/v1/Ny1IKvzG7COzGbsTzGTT4L92Y8MEyK+k6/OjpXiann0mLdTcacq
-	 WPYe7vlV6dtft/V8aRf7Af0cPuOV5V4X5S5TC8LyPY1jl8LO8iu/K/U4/CQgYmR8nm
-	 mjyLiKpO3s7GA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XfjpW524Dz4xKl;
-	Fri,  1 Nov 2024 12:25:07 +1100 (AEDT)
-Date: Fri, 1 Nov 2024 12:25:05 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Daniel Machon <daniel.machon@microchip.com>, Herve Codina
- <herve.codina@bootlin.com>, Networking <netdev@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the net-next tree with the reset tree
-Message-ID: <20241101122505.3eacd183@canb.auug.org.au>
+	s=arc-20240116; t=1730424383; c=relaxed/simple;
+	bh=9DTQ9JWfECVJu9Y8T6tm74SnZ1ndAWRO0zBPgiJ7DTc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NiSoDbZP3w2yiA9kBpD2xBJSwBFsUZ8jwMs0oPlU0NVJL/uQMWFkj9yM0GLRqAcbYWBurxaAZwf0NuDt36YHLhKhCX+OhbhjAuxwy+O5oTJUtZQIo8JLWKPK3COTwOPfRviMIM58M//0RjB2vcxYEROb4woFMxPMqx98cS2A42o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dyAZMncS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B430C4CEC3;
+	Fri,  1 Nov 2024 01:26:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730424382;
+	bh=9DTQ9JWfECVJu9Y8T6tm74SnZ1ndAWRO0zBPgiJ7DTc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dyAZMncSjWF6qkPUIkmmD9TVt6olAZntDCXgfunsk9KgxV/MNtvwzj7gY+bgWJkIW
+	 nGLt4zNS1DKOwON4pg8V6w2RxqOD1Ep4+JgE+cCq/UbAPz8gzk1RVgCry1z2AT6Ulg
+	 A4+TGIxmhRqj5bB3FndWPHBVAzKrVisOhmn/0zBg=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 5.15.170
+Date: Fri,  1 Nov 2024 02:26:06 +0100
+Message-ID: <2024110107-epidermis-exonerate-e12b@gregkh>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/95eJKgqrkg.3gs6ZY4s9wV8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/95eJKgqrkg.3gs6ZY4s9wV8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+I'm announcing the release of the 5.15.170 kernel.
 
-Hi all,
+All users of the 5.15 kernel series must upgrade.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+The updated 5.15.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-5.15.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
-  MAINTAINERS
+thanks,
 
-between commit:
+greg k-h
 
-  86f134941a4b ("MAINTAINERS: Add the Microchip LAN966x PCI driver entry")
+------------
 
-from the reset tree and commit:
+ Makefile                                            |    2 
+ arch/arm/boot/dts/bcm2837-rpi-cm3-io3.dts           |    2 
+ arch/arm64/Makefile                                 |    2 
+ arch/arm64/include/asm/uprobes.h                    |   12 
+ arch/arm64/kernel/probes/uprobes.c                  |    4 
+ arch/s390/include/asm/perf_event.h                  |    1 
+ arch/s390/kvm/gaccess.c                             |  162 +++++++-----
+ arch/s390/kvm/gaccess.h                             |   14 -
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c           |   23 +
+ arch/x86/kvm/svm/nested.c                           |    6 
+ block/bfq-iosched.c                                 |   37 +-
+ drivers/acpi/button.c                               |   11 
+ drivers/acpi/resource.c                             |    7 
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c            |   15 -
+ drivers/gpu/drm/msm/disp/msm_disp_snapshot_util.c   |   19 -
+ drivers/gpu/drm/msm/dsi/dsi_host.c                  |    2 
+ drivers/gpu/drm/vboxvideo/hgsmi_base.c              |   10 
+ drivers/gpu/drm/vboxvideo/vboxvideo.h               |    4 
+ drivers/infiniband/hw/bnxt_re/qplib_fp.h            |    2 
+ drivers/infiniband/hw/bnxt_re/qplib_rcfw.c          |    2 
+ drivers/infiniband/hw/bnxt_re/qplib_res.c           |   21 -
+ drivers/infiniband/hw/cxgb4/cm.c                    |    9 
+ drivers/infiniband/hw/irdma/cm.c                    |    2 
+ drivers/net/dsa/mv88e6xxx/port.c                    |    1 
+ drivers/net/ethernet/aeroflex/greth.c               |    3 
+ drivers/net/ethernet/broadcom/bcmsysport.c          |    1 
+ drivers/net/ethernet/emulex/benet/be_main.c         |   10 
+ drivers/net/ethernet/i825xx/sun3_82586.c            |    1 
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c |    4 
+ drivers/net/ethernet/realtek/r8169_main.c           |    4 
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c   |    2 
+ drivers/net/hyperv/netvsc_drv.c                     |   30 ++
+ drivers/net/macsec.c                                |   18 -
+ drivers/net/phy/dp83822.c                           |    4 
+ drivers/net/plip/plip.c                             |    2 
+ drivers/net/usb/usbnet.c                            |    4 
+ drivers/net/wwan/wwan_core.c                        |    2 
+ drivers/platform/x86/dell/dell-wmi-base.c           |    9 
+ drivers/platform/x86/dell/dell-wmi-sysman/sysman.c  |    1 
+ drivers/target/target_core_device.c                 |    2 
+ drivers/target/target_core_user.c                   |    2 
+ drivers/tty/serial/serial_core.c                    |   16 -
+ drivers/usb/dwc3/core.c                             |   19 +
+ drivers/usb/dwc3/core.h                             |    3 
+ drivers/usb/gadget/composite.c                      |   40 +++
+ drivers/usb/host/xhci-caps.h                        |   85 ++++++
+ drivers/usb/host/xhci-port.h                        |  176 +++++++++++++
+ drivers/usb/host/xhci.h                             |  262 --------------------
+ drivers/usb/typec/class.c                           |    3 
+ fs/btrfs/block-group.c                              |    2 
+ fs/cifs/smb2pdu.c                                   |    9 
+ fs/exec.c                                           |   21 -
+ fs/jfs/jfs_dmap.c                                   |    2 
+ fs/nilfs2/page.c                                    |    6 
+ fs/open.c                                           |    2 
+ fs/udf/inode.c                                      |    9 
+ include/linux/usb/composite.h                       |    6 
+ include/linux/usb/gadget.h                          |    1 
+ include/net/genetlink.h                             |    3 
+ include/net/xfrm.h                                  |   28 +-
+ include/uapi/linux/bpf.h                            |   13 
+ kernel/bpf/devmap.c                                 |   11 
+ kernel/time/posix-clock.c                           |    6 
+ kernel/trace/bpf_trace.c                            |    2 
+ kernel/trace/trace_probe.c                          |    2 
+ net/bluetooth/bnep/core.c                           |    3 
+ net/core/filter.c                                   |    8 
+ net/ipv4/devinet.c                                  |   35 +-
+ net/ipv4/inet_connection_sock.c                     |   21 +
+ net/ipv4/xfrm4_policy.c                             |   40 +--
+ net/ipv6/xfrm6_policy.c                             |   31 +-
+ net/l2tp/l2tp_netlink.c                             |    4 
+ net/netfilter/xt_NFLOG.c                            |    2 
+ net/netfilter/xt_TRACE.c                            |    1 
+ net/netfilter/xt_mark.c                             |    2 
+ net/netlink/genetlink.c                             |   28 +-
+ net/sched/sch_taprio.c                              |    3 
+ net/smc/smc_pnet.c                                  |    2 
+ net/wireless/nl80211.c                              |    8 
+ net/xfrm/xfrm_device.c                              |   11 
+ net/xfrm/xfrm_policy.c                              |   50 ++-
+ net/xfrm/xfrm_user.c                                |   10 
+ security/selinux/selinuxfs.c                        |   27 +-
+ sound/firewire/amdtp-stream.c                       |    3 
+ sound/pci/hda/patch_cs8409.c                        |    5 
+ sound/pci/hda/patch_realtek.c                       |   48 ++-
+ sound/soc/codecs/lpass-rx-macro.c                   |    2 
+ sound/soc/fsl/fsl_sai.c                             |    5 
+ sound/soc/fsl/fsl_sai.h                             |    1 
+ sound/soc/qcom/lpass-cpu.c                          |    2 
+ sound/soc/qcom/sm8250.c                             |    1 
+ 91 files changed, 905 insertions(+), 644 deletions(-)
 
-  7280f01e79cc ("net: lan969x: add match data for lan969x")
+Aleksa Sarai (1):
+      openat2: explicitly return -E2BIG for (usize > PAGE_SIZE)
 
-from the net-next tree.
+Alexander Zubkov (1):
+      RDMA/irdma: Fix misspelling of "accept*"
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Alexey Klimov (2):
+      ASoC: codecs: lpass-rx-macro: add missing CDC_RX_BCL_VBAT_RF_PROC2 to default regs values
+      ASoC: qcom: sm8250: add qrb4210-rb2-sndcard compatible string
 
---=20
-Cheers,
-Stephen Rothwell
+Andrey Shumilin (1):
+      ALSA: firewire-lib: Avoid division by zero in apply_constraint_to_size()
 
-diff --cc MAINTAINERS
-index a0cad73c28d0,c4027397286b..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -15179,12 -15091,13 +15185,19 @@@ S:	Maintaine
-  F:	Documentation/devicetree/bindings/interrupt-controller/microchip,lan96=
-6x-oic.yaml
-  F:	drivers/irqchip/irq-lan966x-oic.c
- =20
- +MICROCHIP LAN966X PCI DRIVER
- +M:	Herve Codina <herve.codina@bootlin.com>
- +S:	Maintained
- +F:	drivers/misc/lan966x_pci.c
- +F:	drivers/misc/lan966x_pci.dtso
- +
-+ MICROCHIP LAN969X ETHERNET DRIVER
-+ M:	Daniel Machon <daniel.machon@microchip.com>
-+ M:	UNGLinuxDriver@microchip.com
-+ L:	netdev@vger.kernel.org
-+ S:	Maintained
-+ F:	drivers/net/ethernet/microchip/lan969x/*
-+=20
-  MICROCHIP LCDFB DRIVER
-  M:	Nicolas Ferre <nicolas.ferre@microchip.com>
-  L:	linux-fbdev@vger.kernel.org
+Anumula Murali Mohan Reddy (1):
+      RDMA/cxgb4: Fix RDMA_CM_EVENT_UNREACHABLE error for iWARP
 
---Sig_/95eJKgqrkg.3gs6ZY4s9wV8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Armin Wolf (1):
+      platform/x86: dell-wmi: Ignore suspend notifications
 
------BEGIN PGP SIGNATURE-----
+Bhargava Chenna Marreddy (1):
+      RDMA/bnxt_re: Fix a bug while setting up Level-2 PBL pages
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmckLfEACgkQAVBC80lX
-0GwXzgf9G/RDBjSqycK2SiwjhRuAt5VG8oMJDDFcQ8b348Wf/AyhzbJTFqpLOaSJ
-hcLLLXSL5io6p5Q8T9pFk0/2k031gdsBg1E8io5pGor9Miajua6BhQ2g/Dqw8z72
-cJ1N19reJZ3spTsYT09VskxwVmihyGSCRkIB8qvqazqtzxbcS7F4P0thXRgUXSNV
-T4cwZydD3LDCJMsmfWB/ETD+JcEhxXB3JyjHxrSkzHlbXzDu7OMIuc7Of+XrTnlY
-CdGuvzH14Klov2aI/WgYBNurAneorc1UuzlIRtaZwW0jSD0mxUi34bykU5PSh3Mc
-Kl1LGNUzjCjgctHoc1UeCbrJjgI3dw==
-=BU+d
------END PGP SIGNATURE-----
+Christian Heusel (1):
+      ACPI: resource: Add LG 16T90SP to irq1_level_low_skip_override[]
 
---Sig_/95eJKgqrkg.3gs6ZY4s9wV8--
+Colin Ian King (1):
+      octeontx2-af: Fix potential integer overflows on integer shifts
+
+Crag Wang (1):
+      platform/x86: dell-sysman: add support for alienware products
+
+Dave Kleikamp (1):
+      jfs: Fix sanity check in dbMount
+
+Dmitry Antipov (1):
+      net: sched: fix use-after-free in taprio_change()
+
+Douglas Anderson (2):
+      drm/msm: Avoid NULL dereference in msm_disp_state_print_regs()
+      drm/msm: Allocate memory for disp snapshot with kvzalloc()
+
+Elson Roy Serrao (1):
+      usb: gadget: Add function wakeup support
+
+Eric Dumazet (1):
+      genetlink: hold RCU in genlmsg_mcast()
+
+Eyal Birger (2):
+      xfrm: extract dst lookup parameters into a struct
+      xfrm: respect ip protocols rules criteria when performing dst lookups
+
+Florian Kauer (1):
+      bpf: devmap: provide rxq after redirect
+
+Florian Klink (1):
+      ARM: dts: bcm2837-rpi-cm3-io3: Fix HDMI hpd-gpio pin
+
+Frank Li (1):
+      XHCI: Separate PORT and CAPs macros into dedicated file
+
+Gianfranco Trad (1):
+      udf: fix uninit-value use in udf_get_fileshortad
+
+Greg Kroah-Hartman (1):
+      Linux 5.15.170
+
+Haiyang Zhang (1):
+      hv_netvsc: Fix VF namespace also in synthetic NIC NETDEV_REGISTER event
+
+Hans de Goede (1):
+      drm/vboxvideo: Replace fake VLA at end of vbva_mouse_pointer_shape with real VLA
+
+Heiko Carstens (1):
+      s390: Initialize psw mask in perf_arch_fetch_caller_regs()
+
+Heiner Kallweit (1):
+      r8169: avoid unsolicited interrupts
+
+Jakub Boehm (1):
+      net: plip: fix break; causing plip to never transmit
+
+Janis Schoetterl-Glausch (3):
+      KVM: s390: gaccess: Refactor gpa and length calculation
+      KVM: s390: gaccess: Refactor access address range check
+      KVM: s390: gaccess: Cleanup access to guest pages
+
+Jinjie Ruan (1):
+      posix-clock: posix-clock: Fix unbalanced locking in pc_clock_settime()
+
+Jiri Olsa (1):
+      bpf,perf: Fix perf_event_detach_bpf_prog error handling
+
+Jiri Slaby (SUSE) (1):
+      serial: protect uart_port_dtr_rts() in uart_shutdown() too
+
+Jonathan Marek (1):
+      drm/msm/dsi: fix 32-bit signed integer extension in pclk_rate calculation
+
+José Relvas (1):
+      ALSA: hda/realtek: Add subwoofer quirk for Acer Predator G9-593
+
+Kailang Yang (1):
+      ALSA: hda/realtek: Update default depop procedure
+
+Kalesh AP (2):
+      RDMA/bnxt_re: Add a check for memory allocation
+      RDMA/bnxt_re: Return more meaningful error
+
+Kuniyuki Iwashima (1):
+      tcp/dccp: Don't use timer_pending() in reqsk_queue_unlink().
+
+Leo Yan (1):
+      tracing: Consider the NULL character when validating the event length
+
+Li RongQing (1):
+      net/smc: Fix searching in list of known pnetids in smc_pnet_add_pnetid
+
+Lin Ma (1):
+      net: wwan: fix global oob in wwan_rtnl_policy
+
+Mario Limonciello (1):
+      drm/amd: Guard against bad data for ATIF ACPI method
+
+Mark Rutland (2):
+      arm64: probes: Fix uprobes for big-endian kernels
+      arm64: Force position-independent veneers
+
+Martin Kletzander (1):
+      x86/resctrl: Avoid overflow in MB settings in bw_validate()
+
+Mateusz Guzik (1):
+      exec: don't WARN for racy path_noexec check
+
+Michel Alex (1):
+      net: phy: dp83822: Fix reset pin definitions
+
+Murad Masimov (1):
+      ALSA: hda/cs8409: Fix possible NULL dereference
+
+Naohiro Aota (1):
+      btrfs: zoned: fix zone unusable accounting for freed reserved extent
+
+Nico Boehr (1):
+      KVM: s390: gaccess: Check if guest address is in memslot
+
+Oliver Neukum (2):
+      net: usb: usbnet: fix race in probe failure
+      net: usb: usbnet: fix name regression
+
+Pablo Neira Ayuso (1):
+      netfilter: xtables: fix typo causing some targets not to load on IPv6
+
+Paul Moore (1):
+      selinux: improve error checking in sel_write_load()
+
+Paulo Alcantara (1):
+      smb: client: fix OOBs when building SMB2_IOCTL request
+
+Peter Rashleigh (1):
+      net: dsa: mv88e6xxx: Fix error when setting port policy on mv88e6393x
+
+Petr Vaganov (1):
+      xfrm: fix one more kernel-infoleak in algo dumping
+
+Roger Quadros (1):
+      usb: dwc3: core: Fix system suspend on TI AM62 platforms
+
+Ryusuke Konishi (1):
+      nilfs2: fix kernel bug due to missing clearing of buffer delay flag
+
+Sabrina Dubroca (2):
+      macsec: don't increment counters for an unrelated SA
+      xfrm: validate new SA's prefixlen using SA family when sel.family is unset
+
+Saravanan Vajravel (1):
+      RDMA/bnxt_re: Fix incorrect AVID type in WQE structure
+
+Sean Christopherson (1):
+      KVM: nSVM: Ignore nCR3[4:0] when loading PDPTEs from memory
+
+Shengjiu Wang (1):
+      ASoC: fsl_sai: Enable 'FIFO continue on error' FCONT bit
+
+Shubham Panwar (1):
+      ACPI: button: Add DMI quirk for Samsung Galaxy Book2 to fix initial lid detection issue
+
+Thadeu Lima de Souza Cascardo (1):
+      usb: typec: altmode should keep reference to parent
+
+Toke Høiland-Jørgensen (1):
+      bpf: Make sure internal and UAPI bpf_redirect flags don't overlap
+
+Wang Hai (6):
+      net: ethernet: aeroflex: fix potential memory leak in greth_start_xmit_gbit()
+      net: xilinx: axienet: fix potential memory leak in axienet_start_xmit()
+      net: systemport: fix potential memory leak in bcm_sysport_xmit()
+      scsi: target: core: Fix null-ptr-deref in target_alloc_device()
+      net/sun3_82586: fix potential memory leak in sun3_82586_send_packet()
+      be2net: fix potential memory leak in be_xmit()
+
+Xin Long (1):
+      ipv4: give an IPv4 dev to blackhole_netdev
+
+Ye Bin (1):
+      Bluetooth: bnep: fix wild-memory-access in proto_unregister
+
+Yu Kuai (1):
+      block, bfq: fix procress reference leakage for bfqq in merge chain
+
+Zichen Xie (1):
+      ASoC: qcom: Fix NULL Dereference in asoc_qcom_lpass_cpu_platform_probe()
+
+junhua huang (2):
+      arm64:uprobe fix the uprobe SWBP_INSN in big-endian
+      arm64/uprobes: change the uprobe_opcode_t typedef to fix the sparse warning
+
 
