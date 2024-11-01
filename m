@@ -1,122 +1,137 @@
-Return-Path: <linux-kernel+bounces-391984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3209B8E32
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:53:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27909B8E35
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:55:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129671F22288
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:53:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 567EEB2141B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E74815AAC1;
-	Fri,  1 Nov 2024 09:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259E715ADA1;
+	Fri,  1 Nov 2024 09:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="oMbMQnuh"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jwQ3JUgC"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F9842C0B;
-	Fri,  1 Nov 2024 09:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F0A158870
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 09:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730454772; cv=none; b=CqJeyY4MYH/yCRwvNvmf40aLpl6OSZL1mE9Dqtu7D4IlntbP+qG5uK3FkOQ+kxUuwtpfxU61bsN42dtyuSgDm/L5BwfzMKOa5itJTvavsAPKNg/SIVIQUzG5Ze+Q3W+aVPBFlWbIWzoGkyR+69npHmTq4WpsTS/G+UKQA0a1lyQ=
+	t=1730454911; cv=none; b=FW71hiB7y0yiOl6pwp1pBIje202qX6Yyt1mUKEIoF26HK3xuQGHeMMULub9O6ZPr7sl/OPzWgugDb6+hXJnUADURRiXk58PN/xyQVbOrJPhzRK0F5+rzXPxcd97QCsut9d1wdsBtQL2AehBzPeeIibGH7Xk8UZ8BId/gpBBoglw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730454772; c=relaxed/simple;
-	bh=tJ/fGoA1skodvpCiPIjWJ9O2i9YYHjMXa6li6wcUc6w=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NN1Kp9xzbygpnBXc/cx2TRCL4ZpESPaSiwcnUdLuQoVoBIbPq9i4/s+AWt1wXijl6ZtYqSXN5dEvnseK+tnJsiRsCbOSaI8GfNb0UuRUaw1h5q8zZoHiby2sOWLJypzvzKyKjwZjinkjWupx+x6mWAw13i4nW2YXmWPcs0y7Iio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=oMbMQnuh; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A15jHCq026680;
-	Fri, 1 Nov 2024 05:52:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=Fa6jU1MdHl7FUJcaJ91oK3EAi56
-	FdnhF8cp9byp/Ojs=; b=oMbMQnuhqKuvs/jVvB19p0RZfBbpW/VNl5j8KRDilHM
-	MRbD0roI/TYbLV78JuMcPRLeNtBFxCFhXcawGnJnt4mto6O5ayo6RJZl0J7z4+sV
-	duHTKgJXQH5nlmyA9LiPGKlpyDwq8GFEqJlnV9qSaJdv24vn78FcVmq8MLyT0w6c
-	EQroVorBDyLRGUV4dw2s6h22J1JxWwB7VAOChXHabaampji3ZA27B+WvOf4IFLJ3
-	aOpVoOSyl+rmMlx6yTUqEBJPaHv2OFbtPoxYfJdJp9WdpWqo2gEd/9qIsrWOwFvf
-	a5YX6V7SV0QWUzZ2vijCR/8dxW0pRLWKoiym7GguoWg==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42m2gmps96-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 05:52:30 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4A19qTNo030992
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 1 Nov 2024 05:52:29 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 1 Nov 2024
- 05:52:29 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Fri, 1 Nov 2024 05:52:29 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.114])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4A19qDY6011849;
-	Fri, 1 Nov 2024 05:52:15 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich
-	<Michael.Hennerich@analog.com>,
-        Ramona Gradinariu
-	<ramona.gradinariu@analog.com>,
-        Antoniu Miclaus <antoniu.miclaus@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] iio: accel: adxl380: fix raw sample read
-Date: Fri, 1 Nov 2024 11:52:01 +0200
-Message-ID: <20241101095202.20121-1-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730454911; c=relaxed/simple;
+	bh=fk7KTD9fgJ7VH4wLOaICJs2JRX5gZLgDAq+3FdiAnMI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XZoSCzfFotH2sCpdip3awx1O1h6kN7xNqHRODWNydKQOPzwYI93NHHlo40/DrmxWapQnoWR+O7Uz6VCCFc6V8HZjjm+Xs+bOlpNsiEHLfq7TsRPmDMX5+KDC1g+gXLM2vIDLSDysTRY3ul0vpaArpT6nDhJ/dvBGZlxG8PLwpf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jwQ3JUgC; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c9978a221so18592585ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 02:55:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1730454907; x=1731059707; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QUcSqKxh8PfJmGTPunCdl9RD0jnPfoQbCentgp/YDs8=;
+        b=jwQ3JUgCdgbZNlvRd5/DgE15O+4x9kfVYDH9u9YXLbWyyvdN3SksugwQByIDFA5o6k
+         ST45w5HMAGw2mxVtAfvifdxozIn5XNc4zcA+7gVSlOv4eOK9Cw00qDoapTFRDELoVNt6
+         i8ggMuWHkMhfWrCV5wt7C0kyDQIoEV95FwRmBrqpdYDNLXUfoxruvxnjm0FEeY+BH8Va
+         GU+qL4DKMy+2qZxaK/mwVYASL0D6BwGObHhcYDYR94wJL+i8IFqjEHmyhKypkORJZtIV
+         MA2IYREL+LNMkcBltk8TCp/NEk7BSRZGn5Gk67EJvANYJR7JaMqHY14ZrjaoBhLkhuLl
+         5HXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730454907; x=1731059707;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QUcSqKxh8PfJmGTPunCdl9RD0jnPfoQbCentgp/YDs8=;
+        b=CISYCepMVvhaz3kp2p7BfxbjNx630jgyqdB384+ZTg+AWnpuNsi82WiXVwGjZpBC5+
+         SM/kBW6nBxPkpk66uEALBTtyMuUzZUWJNFoKIUtQT0lkb8CC/1UvZ8BnV1zJZowqSkwI
+         fUOrMIx3OrnRQF69ppXXpbrGNahoRLXktCRV1PuVQfhh/lZKHR1CyBvPpnQoNXzR9Lcz
+         J30jguyt2t9P+BlKIlIphoTaFTtoV0uiIBOCGWXeT7KfJQLVKsktlnOd6yyrlCWg/BYO
+         w6BjpYxnPbvzM6/JZkdTMnFORpk66jjQZy14O/8Q52V1R3NcAThKdgtMOlDgp1Wtpb2O
+         XE9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWFFomTNWGQY9mdOcxEkSbjuDTgX5s6kl7MZ1OzYPuxN1SMhZ//xR5ET080dvvS7VI4y8qPQVk9OBdFRiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5op2fa7wjsnfV9hnJ/HfIMhUiaVXKhrWlrYVAzLOZg540SV8I
+	dYQecvbOoswuYoSZ8DkMYPR9MwpngwUnr79KSq9jWgtWKywSF4e9SBbO4yyOzIs=
+X-Google-Smtp-Source: AGHT+IGZ6s2M4wWBQ7i971qYJE8UZ1/VrrNCrsq9Yr/YMhPj/FzgAq7VPvy8g3uqSUyc/PE4fWA34g==
+X-Received: by 2002:a17:903:2b03:b0:20c:5e86:9b68 with SMTP id d9443c01a7336-210c68a1a99mr333797045ad.4.1730454907228;
+        Fri, 01 Nov 2024 02:55:07 -0700 (PDT)
+Received: from PXLDJ45XCM.bytedance.net ([61.213.176.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d99besm18962975ad.286.2024.11.01.02.55.03
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 01 Nov 2024 02:55:06 -0700 (PDT)
+From: Muchun Song <songmuchun@bytedance.com>
+To: tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	longman@redhat.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zefan Li <lizf.kern@gmail.com>,
+	Zefan Li <lizefan.x@bytedance.com>
+Subject: [PATCH] MAINTAINERS: remove Zefan Li
+Date: Fri,  1 Nov 2024 17:54:09 +0800
+Message-Id: <20241101095409.56794-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: ieRXWa07U8RK7zF_5F7INSsP718VLQKv
-X-Proofpoint-ORIG-GUID: ieRXWa07U8RK7zF_5F7INSsP718VLQKv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- mlxlogscore=999 spamscore=0 impostorscore=0 clxscore=1011
- priorityscore=1501 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411010070
 
-The adxl380_read_chn function returns either a negative value in case an
-error occurs or the actual sample.
+From: Zefan Li <lizf.kern@gmail.com>
 
-Check only for negative values after a channel is read.
+Not active for a long time, so remove myself from MAINTAINERS.
 
-Fixes: df36de13677a ("iio: accel: add ADXL380 driver")
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Zefan Li <lizefan.x@bytedance.com>
+Signed-off-by: Zefan Li <lizf.kern@gmail.com>
 ---
- drivers/iio/accel/adxl380.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ CREDITS     | 3 +++
+ MAINTAINERS | 2 --
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/accel/adxl380.c b/drivers/iio/accel/adxl380.c
-index f80527d899be..b19ee37df7f1 100644
---- a/drivers/iio/accel/adxl380.c
-+++ b/drivers/iio/accel/adxl380.c
-@@ -1181,7 +1181,7 @@ static int adxl380_read_raw(struct iio_dev *indio_dev,
+diff --git a/CREDITS b/CREDITS
+index d6cbd4c792a12..a00efbebc3369 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -477,6 +477,9 @@ D: Various fixes (mostly networking)
+ S: Montreal, Quebec
+ S: Canada
  
- 		ret = adxl380_read_chn(st, chan->address);
- 		iio_device_release_direct_mode(indio_dev);
--		if (ret)
-+		if (ret < 0)
- 			return ret;
++N: Zefan Li
++D: Contribution to control group stuff
++
+ N: Zoltán Böszörményi
+ E: zboszor@mail.externet.hu
+ D: MTRR emulation with Cyrix style ARR registers, Athlon MTRR support
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 32a63c456aa0d..e6db40f53784f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5664,7 +5664,6 @@ F:	kernel/context_tracking.c
  
- 		*val = sign_extend32(ret >> chan->scan_type.shift,
+ CONTROL GROUP (CGROUP)
+ M:	Tejun Heo <tj@kernel.org>
+-M:	Zefan Li <lizefan.x@bytedance.com>
+ M:	Johannes Weiner <hannes@cmpxchg.org>
+ M:	Michal Koutný <mkoutny@suse.com>
+ L:	cgroups@vger.kernel.org
+@@ -5693,7 +5692,6 @@ F:	include/linux/blk-cgroup.h
+ 
+ CONTROL GROUP - CPUSET
+ M:	Waiman Long <longman@redhat.com>
+-M:	Zefan Li <lizefan.x@bytedance.com>
+ L:	cgroups@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git
 -- 
-2.47.0
+2.20.1
 
 
