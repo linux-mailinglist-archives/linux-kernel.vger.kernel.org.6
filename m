@@ -1,82 +1,75 @@
-Return-Path: <linux-kernel+bounces-392387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A9E9B937F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:42:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA999B9380
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:42:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A29B01C21381
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:42:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DCB0283375
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C1C1A76BC;
-	Fri,  1 Nov 2024 14:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2891A76C4;
+	Fri,  1 Nov 2024 14:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAbVCABe"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GrkmE4s8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580D349620;
-	Fri,  1 Nov 2024 14:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614741A7271
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730472141; cv=none; b=Kxi67Lpcvxu0Oy8Wu2/V/GiWLI2KEHww2+36nkHwIGhwh9bvhQoyIwAi6BoWfSkNCbCrRqmldzoblMOY4BtsJlt69B5HDvr50hpOyk8VNS92Eh4RsxD8p+4sbHGsKEI/ubHi691VF2p94JjTBQq84xyUyG/NS3ruXTlEiXxxWJc=
+	t=1730472162; cv=none; b=F7LnnEPn3FSC/+DUggRxQLyR8WwBixrK2Y8nK3RIUiYgY6TsI7L8h0E6mR4804ef1L+1STkNMqjWdJcb038Tl0LFMgfQ8QbFpqQexzyU1I5+kWn2xVIlwkkr+4fg//hcuDchSeIQvBuuYqTfMdx01adlBUjPhT74rmjxpy0k8i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730472141; c=relaxed/simple;
-	bh=92BeyP9szRN14N3wpUCDFdAw3lp0H1Hv95G+mqqYqaI=;
+	s=arc-20240116; t=1730472162; c=relaxed/simple;
+	bh=/+trJElFKmQl3MJSkrbco7r3VpgVFnslUyiac16a7bg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ojRUj/58I/1Om7PuQLzIEQ6J0PnoTob0sdOPQqtaBDEA1oFaZoq0DWG/5ebsp/gozW5TYP+edxTXzW0nGj7w161ApqLn3g2k63LfVMx53LhiqwHpQsWurQmZckeFiTY1U8pxAx4vPOqGJwezkOq+zWU968cArWNXCwpMMKBF6Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cAbVCABe; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ce5e3b116so16981115ad.1;
-        Fri, 01 Nov 2024 07:42:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730472137; x=1731076937; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tmGGUqAxRqXwlTKSg6HXoGDBCceWY6mb1JAL6Pmy3vU=;
-        b=cAbVCABeMN3imhtUHM/3dbNhWJlctwcUz2HpKM4kpdPUnXLN3x2nOJOrzYCg1L0HnP
-         kkP9MXRYIHvxMU5eeLeFt/LlhYFJwQcZQdOXnzRqwh650TivbG1hBVFpuP75MKUlzw7H
-         aU8YJStV9Xssb+ehxnf67j2LcKu6/sFK1CYC0lAI+3W2oXZ64GgxEKUFNsFpFO6NSXqW
-         9xcao6+c4insCcHbpNAd7bPQ0y1iMSoBR6Wan4HIqntnjhbo2n/AFL0DhtTpQOqQM/Hz
-         zPU0b/brk3DPFyomBdBNMsq9osshLRLXZEI7/unp4MldHcePP327zuxPJsW+Ibo/cx5O
-         XefA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730472137; x=1731076937;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tmGGUqAxRqXwlTKSg6HXoGDBCceWY6mb1JAL6Pmy3vU=;
-        b=KXEANJI2JmdEnR8Rv/unFIrvW/z0YkQayb2WDLXCjn5ix17tAqgBQVxu840xgnXETM
-         HDQn3gK1QwUg0hWmH9C453awTAI4bm6iezpg/mZmJQh/hcHUkibtA8JTkv/exaG6WAWz
-         NT/HjSEChp2WxfhMjPmjHi+GZTRjZMw8vB49eeYx48dVSVBqdT2jAz0FBi7b7QnxxFyy
-         cECHWnLLB55MhOoRTuV+HUrHqd0lePAHUKzTVdYZl6bQQh7G+YEn0M044V/7hE2KzSK8
-         clFljM4qy1iuGkBhuaCEBu9E+T8m/4kfK4xeoxGH9uis3VPS31W8hLk4ul+4qSqZhkSw
-         rh0w==
-X-Forwarded-Encrypted: i=1; AJvYcCU+mBHSEoqhOn31R0Yw66FrcOfmv0p8+DDBY9Fsm2j6GGsUmQjny7TiGp2UNHgKG8vBfOep5kozZTEi/cc=@vger.kernel.org, AJvYcCUDWWYToQlzlPayOW4/kQ1BN5QD0Qu5apvqka93i4mfpAKSRB35dSq+H4RqEOhJ5VUBjzvS0fQ0P6HL@vger.kernel.org, AJvYcCV0J0D8OWR3zTs0ze8iwBKcA0droWW8wVO4hg03MMb2tMnFWyMc8TUichL/il0ElzhGBBQ+aGEeN7uDORmG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv5aFkwD7y+rKeE5lM22BxxuvXDNBSLsUqeUl7iXng2eu/85KZ
-	J2orS+mof4+acO0R+AacOztVdBXl9ai5qtFiDEjFXeB2TLhZUntI
-X-Google-Smtp-Source: AGHT+IENuLZ97F2bqe7sJK5q+NTYtNe1xmrkuozpFQsm9HFqDqbxgnDPZGAl6IXcgt1vzUu5vsGJ1A==
-X-Received: by 2002:a17:902:ccc9:b0:20b:8642:9863 with SMTP id d9443c01a7336-2111af3fbf0mr46632445ad.18.1730472137542;
-        Fri, 01 Nov 2024 07:42:17 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c083fsm22142835ad.187.2024.11.01.07.42.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 07:42:16 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 1 Nov 2024 07:42:16 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Naresh Solanki <naresh.solanki@9elements.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jdelvare@suse.com, sylv@sylv.io, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: hwmon: pmbus: Add bindings for Vicor
- pli1209bc
-Message-ID: <ff50f611-8d1a-4e17-a922-b6b2b1d94e42@roeck-us.net>
-References: <20241021123044.3648960-1-naresh.solanki@9elements.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AL52lLgXBBaBnA6kR0E5KYznbO7f6QYGErptAhVDt4mMH5vDFdaWfR5HFlQeHEnn2prNQk6o/5GOks5d8fssDX0APqoNfXe9oUzPcW4d+iwNG+qY1SuRhe99DXmPHmd8AOdExhxATba30/vFH9zxUmE6HOoHgKzT/6TfQzEdhKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GrkmE4s8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730472158;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k0B0g6xSvQ72F38uB7t1lGT7rS+vQAQmDXsEDQC5GYw=;
+	b=GrkmE4s8i0gEATva9ibxe+yk7mVTQN3c9zZgMH+2FkfJP3obarRplBMoO1IRc+fnbk/N7h
+	B126Fgp1nRQk7KxV0ubajDcD5VTrZnEvJn6n+MxpiLw0+2D5nG1ECdQ6XyJPz1YabKGEPq
+	TN6b8ND9wXNF5uaCvJv5a+h5wYSD/6s=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-369-IzjzbB3GNxuPKZr_1vwo3A-1; Fri,
+ 01 Nov 2024 10:42:34 -0400
+X-MC-Unique: IzjzbB3GNxuPKZr_1vwo3A-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3E5F1956096;
+	Fri,  1 Nov 2024 14:42:32 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.88.10])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 73EEA300018D;
+	Fri,  1 Nov 2024 14:42:28 +0000 (UTC)
+Date: Fri, 1 Nov 2024 10:42:25 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
+Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
+Message-ID: <20241101144225.GD689589@pauld.westford.csb>
+References: <20240727102732.960974693@infradead.org>
+ <20240727105030.226163742@infradead.org>
+ <20241101124715.GA689589@pauld.westford.csb>
+ <20241101125659.GY14555@noisy.programming.kicks-ass.net>
+ <20241101133822.GC689589@pauld.westford.csb>
+ <20241101142649.GX9767@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,22 +78,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021123044.3648960-1-naresh.solanki@9elements.com>
+In-Reply-To: <20241101142649.GX9767@noisy.programming.kicks-ass.net>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Oct 21, 2024 at 06:00:43PM +0530, Naresh Solanki wrote:
-> Remove vicor,pli1209bc from trivial-devices as it requires additional
-> properties and does not fit into the trivial devices category.
+On Fri, Nov 01, 2024 at 03:26:49PM +0100 Peter Zijlstra wrote:
+> On Fri, Nov 01, 2024 at 09:38:22AM -0400, Phil Auld wrote:
 > 
-> Add new bindings for Vicor pli1209bc, a Digital Supervisor with
-> Isolation for use with BCM Bus Converter Modules.
+> > How is delay dequeue causing more preemption? 
 > 
-> VR rails are defined under regulator node as expected by pmbus driver.
+> The thing delay dequeue does is it keeps !eligible tasks on the runqueue
+> until they're picked again. Them getting picked means they're eligible.
+> If at that point they're still not runnable, they're dequeued.
 > 
-> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> By keeping them around like this, they can earn back their lag.
+> 
+> The result is that the moment they get woken up again, they're going to
+> be eligible and are considered for preemption.
+> 
+> 
+> The whole thinking behind this is that while 'lag' measures the
+> mount of service difference from the ideal (positive lag will have less
+> service, while negative lag will have had too much service), this is
+> only true for the (constantly) competing task.
+> 
+> The moment a task leaves, will it still have had too much service? And
+> after a few seconds of inactivity?
+> 
+> So by keeping the deactivated tasks (artificially) in the competition
+> until they're at least at the equal service point, lets them burn off
+> some of that debt.
+> 
+> It is not dissimilar to how CFS had sleeper bonus, except that was
+> walltime based, while this is competition based.
+> 
+> 
+> Notably, this makes a significant difference for interactive tasks that
+> only run periodically. If they're not eligible at the point of wakeup,
+> they'll incur undue latency.
+> 
+> 
+> Now, I imagine FIO to have tasks blocking on IO, and while they're
+> blocked, they'll be earning their eligibility, such that when they're
+> woken they're good to go, preempting whatever.
+> 
+> Whatever doesn't seem to enjoy this.
+> 
+> 
+> Given BATCH makes such a terrible mess of things, I'm thinking FIO as a
+> whole does like preemption -- so now it's a question of figuring out
+> what exactly it does and doesn't like. Which is never trivial :/
+> 
 
-Applied.
+Thanks for that detailed explanation.
+
+I can confirm that FIO does like the preemption
+
+NO_WAKEUP_P and DELAY    - 427 MB/s
+NO_WAKEUP_P and NO_DELAY - 498 MB/s
+WAKEUP_P and DELAY       - 519 MB/s
+WAKEUP_P and NO_DELAY    - 590 MB/s
+
+Something in the delay itself
+(extra tasks in the queue? not migrating the delayed task? ...) 
+
+I'll start looking at tracing next week.
+
 
 Thanks,
-Guenter
+Phil
+
+
+-- 
+
 
