@@ -1,156 +1,137 @@
-Return-Path: <linux-kernel+bounces-391737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1309B8B12
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:14:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9176F9B8B16
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8FA0B2111D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:14:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 193E6B2199C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA2214B962;
-	Fri,  1 Nov 2024 06:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8213014B97E;
+	Fri,  1 Nov 2024 06:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b="HNrTED0L"
-Received: from thales.epochal.quest (thales.epochal.quest [51.222.15.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WmTczjPq"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F374D1482E5;
-	Fri,  1 Nov 2024 06:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.222.15.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313ED1487DD
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 06:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730441683; cv=none; b=bTG2Wn2QQyqWiESdEbuc9qtz36kI7neTTELzcNPEhnYXgZkU/Ys78wg4j6bPgVjC3UJDbYuIUJy0KJs3XhcraiX+li7WjuDg3Kz7LzM477cdDuiGr7hF8SJ0pjtPhq4xsxspPCwkbldrXVRe+k7wIWvnhMEFimw+JlXsSGP8J/U=
+	t=1730441747; cv=none; b=EsVF7h35leFvA0Gk8E2kCt+YIYdLV4Yvx8/OaT4sTSLMr6rpZGEdLLFJzdXsOMXgFdR19w7ffilLXOHLgInn/SnJ9sUCmP0mBvmPOa5CdbaqvbQ88uy1zo9Hgqcc0gsZ7iAJYNYVVj6NLxmSlZVjNjLfkQ7anBCyy72Kvm6FCgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730441683; c=relaxed/simple;
-	bh=D/kAMVeeZ1GBnRC8sst69KP3zOv7FeYAbNLbfbLkabo=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=dtJZKPyrk2VnxgXb+gplfV2OzIkphzJSahauDs4bZggm2bYD4ldxXa20iBW2qFfeSKcO75VYhMjI8jbgH8j3eFjP6Zrsh2qeFxDxOGvR4Uq2hNJs/NlS3kR3kAwX+uhXyquipd4WQ92Cdn/N3+xHhXJOEIfDqM6DuavtR6Hep2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest; spf=pass smtp.mailfrom=epochal.quest; dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b=HNrTED0L; arc=none smtp.client-ip=51.222.15.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epochal.quest
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=epochal.quest;
-	s=default; t=1730441679;
-	bh=D/kAMVeeZ1GBnRC8sst69KP3zOv7FeYAbNLbfbLkabo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HNrTED0L2H9cloFtJBd+q9cfwbKmy6zBOcIMvUfokosLXqYALQbi2ufYWQucriNPy
-	 lRUGasfiv0WrWp77DVYYc6qOam68sb5H9DrRBCituuBLxwsrLBaatU26bm9xpNSr4r
-	 VKrOlrQraJCCHR2x36dujf6u6FcBA6uAl9WWX9Z2U+ovyD4qW4FkPpvV07bbqdf8kh
-	 uQfRc6E659H7m5CiJL3i8YgreDllYuf7nRjHIiKbW1i7FxRNhPp6euibTYWxn3rTb6
-	 d3awEskB1M93ZKRzD3rYikffpDwV6LHj/YwJexbfGKpY4U+Rgau2CeyjFD36Brdfzr
-	 fPDVGy/RP8PgA==
-X-Virus-Scanned: by epochal.quest
+	s=arc-20240116; t=1730441747; c=relaxed/simple;
+	bh=J+Jtl/wPq7/sIvq26Ag+Dyt1uGggkEqLX46l4Y0JFD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GSH+tTYjWyKK1jyxGdvVeJU/nkSYtGpYMVgiJpjdXvUNN0B6ssJjXni45TaOUa/pbUhyrBVPIyz04C3XzbiuWGZvEoKh1i7lccnY4ZwuWnCHgDd9IVg4Vpvk/iUOqp0WiSaXBk+YQNBWsaQlUvGfZm3uNRiNXAjl+/YUkJt9aYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WmTczjPq; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ccffb15f-f63c-4d52-bb26-654916939cae@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730441737;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4YC7POznpvjbkEo+eDdqRIo9I6A+2MKdx9zJLeweiyg=;
+	b=WmTczjPqopaNy5j6ftE2neyrwfWYCeF8n0cn9B1+25HUWPFYYbfLu56CNllPXWNMV30YJt
+	fGcowN+OVz142Bx2Ct3nkT0WBS/a+vxMK7mZcDMLTa2neKfflVDi2AD3qDIjXVr5NLnjEQ
+	8YeMnMPLNqfDYgBks3Q8A0o0KctVvRs=
+Date: Fri, 1 Nov 2024 14:15:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 01 Nov 2024 03:14:32 -0300
-From: Cody Eksal <masterr3c0rd@epochal.quest>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Maxime Ripard <mripard@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul
- <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Viresh Kumar
- <viresh.kumar@linaro.org>, Yangtao Li <tiny.windzz@gmail.com>, Parthiban
- <parthiban@linumiz.com>, Andre Przywara <andre.przywara@arm.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/13] arm64: dts: allwinner: a100: add usb related
- nodes
-In-Reply-To: <20241031070232.1793078-7-masterr3c0rd@epochal.quest>
-References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
- <20241031070232.1793078-7-masterr3c0rd@epochal.quest>
-Message-ID: <c231d0fbd13e2ff6ea23dc907b46112f@epochal.quest>
-X-Sender: masterr3c0rd@epochal.quest
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Subject: Re: [PATCH v2] drm/bridge: Fix assignment of the of_node of the
+ parent to aux bridge
+To: neil.armstrong@linaro.org, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Abel Vesa <abel.vesa@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241018-drm-aux-bridge-mark-of-node-reused-v2-1-aeed1b445c7d@linaro.org>
+ <172951608323.1285208.3162107667310691864.b4-ty@linaro.org>
+ <230b5910-6790-44cb-90ed-222bee89054d@linux.dev>
+ <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <c2a4cc3a-2ffc-46f3-8636-238cd561f7aa@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2024/10/31 4:02 am, Cody Eksal wrote:
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi 
-> b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> index adb11b26045f..f6162a107641 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> @@ -302,6 +302,97 @@ ths: thermal-sensor@5070400 {
->  			#thermal-sensor-cells = <1>;
->  		};
-> +
-> +		usb_otg: usb@5100000 {
-> +			compatible = "allwinner,sun50i-a100-musb",
-> +				     "allwinner,sun8i-a33-musb";
-> +			reg = <0x05100000 0x0400>;
-> +			clocks = <&ccu CLK_BUS_OTG>;
-> +			resets = <&ccu RST_BUS_OTG>;
-> +			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "mc";
-> +			phys = <&usbphy 0>;
-> +			phy-names = "usb";
-> +			extcon = <&usbphy 0>;
-> +			status = "disabled";
-> +		};
-Quick note: it was determined that if ehci0 and/or ohci0 are enabled,
-peripheral mode does not function correctly. From my understanding, it 
-is
-an unrelated issue in musb that causes this; the PHY gets claimed by the
-HCI nodes before MUSB, and due to some other issue, the PHY doesn't get
-properly rerouted to MUSB. With those nodes disabled, attaching gadgets 
-to
-MUSB works correctly, and with them enabled, host mode works properly.
 
-- Cody
-> +		usbphy: phy@5100400 {
-> +			compatible = "allwinner,sun50i-a100-usb-phy",
-> +				     "allwinner,sun20i-d1-usb-phy";
-> +			reg = <0x05100400 0x100>,
-> +			      <0x05101800 0x100>,
-> +			      <0x05200800 0x100>;
-> +			reg-names = "phy_ctrl",
-> +				    "pmu0",
-> +				    "pmu1";
-> +			clocks = <&ccu CLK_USB_PHY0>,
-> +				 <&ccu CLK_USB_PHY1>;
-> +			clock-names = "usb0_phy",
-> +				      "usb1_phy";
-> +			resets = <&ccu RST_USB_PHY0>,
-> +				 <&ccu RST_USB_PHY1>;
-> +			reset-names = "usb0_reset",
-> +				      "usb1_reset";
-> +			status = "disabled";
-> +			#phy-cells = <1>;
-> +		};
-> +
-> +		ehci0: usb@5101000 {
-> +			compatible = "allwinner,sun50i-a100-ehci",
-> +				     "generic-ehci";
-> +			reg = <0x05101000 0x100>;
-> +			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_OHCI0>,
-> +				 <&ccu CLK_BUS_EHCI0>,
-> +				 <&ccu CLK_USB_OHCI0>;
-> +			resets = <&ccu RST_BUS_OHCI0>,
-> +				 <&ccu RST_BUS_EHCI0>;
-> +			phys = <&usbphy 0>;
-> +			phy-names = "usb";
-> +			status = "disabled";
-> +		};
-> +
-> +		ohci0: usb@5101400 {
-> +			compatible = "allwinner,sun50i-a100-ohci",
-> +				     "generic-ohci";
-> +			reg = <0x05101400 0x100>;
-> +			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_OHCI0>,
-> +				 <&ccu CLK_USB_OHCI0>;
-> +			resets = <&ccu RST_BUS_OHCI0>;
-> +			phys = <&usbphy 0>;
-> +			phy-names = "usb";
-> +			status = "disabled";
-> +		};
+On 2024/10/31 20:31, Neil Armstrong wrote:
+> On 30/10/2024 15:49, Sui Jingfeng wrote:
+>> Hi,
+>>
+>> On 2024/10/21 21:08, Neil Armstrong wrote:
+>>> Hi,
+>>>
+>>> On Fri, 18 Oct 2024 15:49:34 +0300, Abel Vesa wrote:
+>>>> The assignment of the of_node to the aux bridge needs to mark the
+>>>> of_node as reused as well, otherwise resource providers like 
+>>>> pinctrl will
+>>>> report a gpio as already requested by a different device when both 
+>>>> pinconf
+>>>> and gpios property are present.
+>>>> Fix that by using the device_set_of_node_from_dev() helper instead.
+>>>>
+>>>>
+>>>> [...]
+>>> Thanks, Applied to 
+>>> https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-fixes)
+>>
+>>
+>> It's quite impolite to force push patches that still under reviewing,
+>> this prevent us to know what exactly its solves.
+>
+> It's quite explicit.
+>
+
+Auxiliary bus emphasis on *compartmentalize*, layer, and distribute
+domain-specific concerns via *Linux device-driver model*.
+
+Reusing(or sharing) of_node by multiple devices proved that the two
+subsystems are still tangled together somehow. Which is fundamentally
+violate the philosophy of compartmentalization.
+
+The way that driver operated is not via Linux device-driver model either,
+lots of those kind things happens quite implicitly.
+
+But I think beautiful things associated behind this might also be voided,
+that's it.
+
+
+>>
+>> This also prevent us from finding a better solution.
+>
+> Better solution of ? This needed to be fixed and backported to stable,
+> if there's desire to redesign the driver, then it should be discussed 
+> in a separate thread.
+>
+>>
+>>> [1/1] drm/bridge: Fix assignment of the of_node of the parent to aux 
+>>> bridge
+>>> https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/85e444a68126a631221ae32c63fce882bb18a262
+>>>
+>
+-- 
+Best regards,
+Sui
+
 
