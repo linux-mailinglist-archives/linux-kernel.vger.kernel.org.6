@@ -1,148 +1,139 @@
-Return-Path: <linux-kernel+bounces-392975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD9E9B9A54
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:41:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610089B9A55
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:42:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A945B1C21096
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:41:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182EA1F2322F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1488A1E47BC;
-	Fri,  1 Nov 2024 21:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0311E5027;
+	Fri,  1 Nov 2024 21:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kus+8N4p"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b="fgMaCcHT"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CA9487BE;
-	Fri,  1 Nov 2024 21:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E832487BE
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730497307; cv=none; b=hegRVD2N08qTRDjZR7JaRdl193ODtzpNBjnbxKRyuJdrMd4OutLsFI5mnmGyOfIPYitQ9lnBbaLtoqpb8UEFb/f9VrHzupiEUyI9SZvhAkRig2SjsL9EdVjlUu/1bmtlUL4X4UJPj7OExSNUODQkgC0WtR+Ny5/RLjSkD7/qe4s=
+	t=1730497321; cv=none; b=GJ7nI1kv4ILuB65N9vcX08OQ4HrYLMPiGIhWCEccJkDKofamCFHrku9klBXvSGZ3pe3TBZRyz20xjGHuF1sSIx/t4bSyD6iRtRhBE9a0SZ0rCo1on5bWoDx0teubbrj4jw7e4w8bE9doR62L6A1FPiVC5U/LYKuswOF7frExAF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730497307; c=relaxed/simple;
-	bh=CiN2uxsNj+DFqml8ELV9oi4hDaOwwmq30dVz/w17Qp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Qh6J9bKEkTx7Z/2i7ZXqlnSSYLQC64oAsVCpmsMDm3Vt3MT8HVKzoq9pDiLTHjbJPMQD/Woxw1E/vTzLfW85x78sGauDeBnGBSnW9nf6RVqHVA9+hhmIul7qbOsvwLz96+PDN6d1GMOc9R4YEGPBqRa6B2E/a0RG0QCQx7/zWxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kus+8N4p; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1C4w92019835;
-	Fri, 1 Nov 2024 21:41:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WxyvEmleRomRRpxzwY/QMB3t1MlR8jcEBupWPgJsTo0=; b=Kus+8N4pVUbJI4AW
-	hCJVVQaDExoYXKQS2dCi/c8BdGLsmg9fgm9nlNxFy0WlX5mkoNfFi9NOHLXZDXMy
-	xooGn7IXsoYESSqaZCpiUw6G1aLBZzqVuTorB4IBspfu+Rd7AlyKbr1V4Uy0ygKR
-	NFGzf0Nolmf1o2kteNQnFoaCr2ehHD8Vper0AMUYekADE1qvjdqV4TCcWUGnM2bs
-	1SndpLjHIsFIQuPMzEytMS0L4kcgqfGWimr+5wD7BXpbplw4Jf76DNRp8j16cEzI
-	MdQe43DXLCgFJUQpJTs7cQ79CqTgfjlyQ/64eGw7CTA5c6oQ9J8uMj5g/31SW7Mp
-	VHK+0w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kmp0rnud-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Nov 2024 21:41:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A1LfTpK009637
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 1 Nov 2024 21:41:29 GMT
-Received: from [10.110.96.174] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 1 Nov 2024
- 14:41:28 -0700
-Message-ID: <52229a96-64b0-48d0-9868-31be42b12db1@quicinc.com>
-Date: Fri, 1 Nov 2024 14:41:27 -0700
+	s=arc-20240116; t=1730497321; c=relaxed/simple;
+	bh=DbfqY7IFcAPB09OyKpR93DM2ZjDMYjW04ydu1Tn6UTQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FYrSMLXbRv/R/8onJddtuTpXdmTcnT5rmGIA4LNx1oY9Sc4zAUe0Dnu+yJPqJs1DEzKUAvniHSvFHz39y5+iiv9cBnajqMM3Xb4Hlz/tkM9BXxtGvzRqGppAhWxBk0XL5zTrZVrjKD6auI2SycGnvoEKnqod9Y9ZuLbHfI5yYco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com; spf=pass smtp.mailfrom=engflow.com; dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b=fgMaCcHT; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engflow.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so3978987e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 14:41:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=engflow.com; s=google; t=1730497318; x=1731102118; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jo90b8Yd71LhW+/ErXRjU0g+lG1e6qGL15CJicn+PDI=;
+        b=fgMaCcHTsMt7X51dL8HaT5rEY+mU0JMciTpvRAlgWAYq34eclsHs1mbj4uiRPDEKvJ
+         pE1CDg242KhWOW77wVOw/dBA1dUGxEI7oEEkKUJOjA8Eoy9chQz2OylPq10Fk3tJiaSq
+         OJq3OJrsTSsBaadj4snN0AtAj9eZkh5s+qyEY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730497318; x=1731102118;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jo90b8Yd71LhW+/ErXRjU0g+lG1e6qGL15CJicn+PDI=;
+        b=FJ2KtWXy+UbKy4JSTS6/wWgpnfr5IBLY3QIWiwlePdxpjFCQRJEMSjwcF4/H7Az6W1
+         bd1Njaco+Gemfau+KE5l7k9UDA0iw1VSrEN3gJDJn2HXH7oeuORiJ+giYGGhIVGsDYQY
+         ZID5PxRO4xSUbfXl6uNHCS+rkc9lSACqjtEm8hmtHOmPMqPVM49hU0GiWyY3S32Ws4Aa
+         euuYVIdsa90DdAbX4GBnswdMZRxBfsO+NlO+UyfoHZS1o09Zq7Iz5htapC5R7eCp6Xy1
+         uSdlAB1MwkRAxFfdxt5CfyawmR12rjV8Rb3ETlpTZHhMEAkd4kpSOvJbsesM7fyUpob+
+         z3zw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnTq1v/hDXl1SQ6rH7XfMh739n1AGLZ6gceJbnuhH9JeM000s2p40xLR3q8Hos2NELFiQwlIuu1oQqpfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4wSszNJbiDFwZvYp4HkxwcDne6JxG21ofUufzKCrmQ31cRsSP
+	bU03/UUQM3j+Op4rNNCpNL7NWJ8bJhIHg7k2KEYOTBnjnCrsjX99Y+tlHJxXpYSrTBFoJ3IDTAP
+	QxPQJeFU9BiScl1OUuauzpiW7Z3RveFB2ZR0isA==
+X-Google-Smtp-Source: AGHT+IGcJSS7owX3TBRF8ZsKYn+5S4Q3Hg1EpCxbdq1KPte+oQuDZLnbzKisdC+ggu1lDkdDgpVrbty8dyMekv9XJ2k=
+X-Received: by 2002:a05:6512:3d10:b0:539:94f5:bf with SMTP id
+ 2adb3069b0e04-53d65e16d9dmr4558411e87.59.1730497317409; Fri, 01 Nov 2024
+ 14:41:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/hdmi: mark interlace_allowed as true
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20241019-msm-hdmi-interlaced-v1-1-03bf85133445@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241019-msm-hdmi-interlaced-v1-1-03bf85133445@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TjgjCD5ik6jnu8KxeyIsSuO1o5H0Q3TF
-X-Proofpoint-ORIG-GUID: TjgjCD5ik6jnu8KxeyIsSuO1o5H0Q3TF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 malwarescore=0 impostorscore=0 mlxscore=0 suspectscore=0
- adultscore=0 clxscore=1015 phishscore=0 spamscore=0 mlxlogscore=999
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411010156
+References: <20241101005338.5846-1-benjamin@engflow.com> <20241101172714.84386-1-benjamin@engflow.com>
+ <CAH0uvohNO517GAD7XH-VvUvU+dPdeZBKDw0Teij50sAPSe9sCQ@mail.gmail.com> <ZyVIgKcAuqZSYYB1@x1>
+In-Reply-To: <ZyVIgKcAuqZSYYB1@x1>
+From: Benjamin Peterson <benjamin@engflow.com>
+Date: Fri, 1 Nov 2024 14:41:46 -0700
+Message-ID: <CAEmfU+ufKWoJLvhksPzADMKkbinV37Tv1KODU6RdJfBM9Juy7w@mail.gmail.com>
+Subject: Re: [PATCH v2] perf trace: avoid garbage when not printing a trace
+ event's arguments
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Howard Chu <howardchu95@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 1, 2024 at 2:30=E2=80=AFPM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Fri, Nov 01, 2024 at 02:00:46PM -0700, Howard Chu wrote:
+> > Hello Benjamin,
 
+Thanks for testing & reviewing.
 
-On 10/18/2024 2:10 PM, Dmitry Baryshkov wrote:
-> The MSM HDMI driver supports interlaced modes. Set the corresponding
-> flag to allow interlaced modes on the corresponding connectors.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/hdmi/hdmi_bridge.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> index 4a5b5112227f..643c152e6380 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> @@ -336,6 +336,7 @@ int msm_hdmi_bridge_init(struct hdmi *hdmi)
->   	bridge->funcs = &msm_hdmi_bridge_funcs;
->   	bridge->ddc = hdmi->i2c;
->   	bridge->type = DRM_MODE_CONNECTOR_HDMIA;
-> +	bridge->interlace_allowed = true;
->   	bridge->ops = DRM_BRIDGE_OP_HPD |
->   		DRM_BRIDGE_OP_DETECT |
->   		DRM_BRIDGE_OP_EDID;
-> 
+> >
+> > Before your patch:
+> >
+> > perf $ ./perf trace -e net:netif_rx_exit
+> >      0.000 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
+> >     28.153 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
+> >     36.429 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
+> >     36.461 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
+> >
+> > After:
+> >
+> > perf $ ./perf trace -e net:netif_rx_exit
+> >      0.000 irq/79-brcmf_p/1694977 net:netif_rx_exit()
+> >      7.352 irq/79-brcmf_p/1694977 net:netif_rx_exit()
+> >     30.232 irq/79-brcmf_p/1694977 net:netif_rx_exit()
+> >     37.529 irq/79-brcmf_p/1694977 net:netif_rx_exit()
+> >
+> > It works beautifully, but I'm thinking can we simplify it by just doing=
+:
+> >
+> > +       char bf[2048] =3D { 0 };
+> >         size_t size =3D sizeof(bf);
+> >
 
-I had quite a bit of discussion on this internally because this spans 
-quite a few generations of chipsets.
+I believe this is slightly suboptimal because it obliges the compiler
+to zero out 2kib of the stack every time the function is called.
 
-On very old hardware, even before msm8996, there was dedicated hardware 
-de-interlacer. But even on msm8996 or other HDMI supported chipsets 
-where the handling of if (mode->flags & DRM_MODE_FLAG_INTERLACE) is 
-present, these were because its carry forward of older interface code.
+> >
+> > Tested-by: Howard Chu <howardchu95@gmail.com>
+>
+> I haven't tested it yet, just in my mind :-)
+>
+> The patch looks ok and seems to fix a real problem, my only concern, a
+> pet peeve, was that it, in addition to fixing a real problem, did an
+> unrelated change, the "Remove the return value...", that part looks like
+> a distraction, something that shouldn't be there.
 
-The way we handle interlaced formats today, is software needs to handle 
-the part of dividing height / 2 and width * 2 and adjust the source crop 
-if necessary. This part has moved to userspace for recent chips.
-
-Othwerise, we will need to add this part in the dpu driver to adjust 
-this. I am not seeing this part there yet. So may I know how you 
-validated this change? Something similar to :
-
-https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/caf_migration/LE.UM.1.3.r3.25/drivers/gpu/drm/msm/sde/sde_plane.c#L1340
-
-If we add this part first to dpu code, then we can mark interlace_allowed.
-
-> ---
-> base-commit: c4f364c621d0d509190d673d80a9b23250607b4a
-> change-id: 20241019-msm-hdmi-interlaced-1508c1dc9bb9
-> 
-> Best regards,
+In my mind, it was related because both the bug and the odd return
+value arise from incorrect counting of the number of written bytes.
+Obviously, the fix is what I care about, so feel free to strip out the
+return value change on import, or I can resend.
 
