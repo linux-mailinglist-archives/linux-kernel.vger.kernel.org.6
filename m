@@ -1,74 +1,93 @@
-Return-Path: <linux-kernel+bounces-391586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39EB9B88FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:59:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BCD9B88FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31C041C218C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 863261F22C84
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242B912D758;
-	Fri,  1 Nov 2024 01:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F683130AF6;
+	Fri,  1 Nov 2024 02:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="rntnZJtv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XASnb0LE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70323134BD;
-	Fri,  1 Nov 2024 01:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D9F3EA83;
+	Fri,  1 Nov 2024 02:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730426347; cv=none; b=J8t2uwk3kiDjfwb3lvCbmjmbEMApGGkfMGKcuci8Kzu79Dw1DMSM8A9+yIfx4gCQsl1iW7vvTkkG5NCg3BYUkpTV5jg3J0xt1R/F5Obz5EU8tYTAuaF7/gb5xxIBnfluDT8ed4njpkfKryRQdjKNN8YO1XeCPAboRSPAosQ4b50=
+	t=1730426424; cv=none; b=Y/p8ZBKv4LsjCU3aiGK+82+8arqStpZuRZmOnbXjSgkptrjRn9O/h10Y+R7kxfXTyCD2w19kg6WN8ATU0bQKdK8Mi+v619ZDxKS8ppHB8PySWWLSyTzVFwizhg/DXQFF6m9zfYpeFgenHtA0057h3Q5zj+FDbTAt6BPLrXVRd1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730426347; c=relaxed/simple;
-	bh=TvrKcZwqprZLdfSEr9lFsVxUlYYJfz4G5/jolpSn4nM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=AA64NpbhMyugG77Fi4BqVmwAAARFv3h7cyqJPnqdDrsgra75XRwoxOKkQW3k07SMD+Qok5zV8s7sB8kbjgFqDkKzJLnwBhOCags+6yISvPaaJoiJeICTxs6zaWzS0+QFgiR8c6QBL15jRfu75U3TU/imLRjRyBpVgmqpN0GpjVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=rntnZJtv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A120CC4CED0;
-	Fri,  1 Nov 2024 01:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730426346;
-	bh=TvrKcZwqprZLdfSEr9lFsVxUlYYJfz4G5/jolpSn4nM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rntnZJtvp+p1AqhVD+TGZ+9Y5EHJ+dIFb2YE8c6Y5YjhYLrQqNQEEG35cmREqu33A
-	 M4KOL05SMuczGOqOeC1LyscXZCjpGt+PFMtqSA0Ln2eIoA/PJceBAazlo6BT6mqwkC
-	 PmkKNWwMR5YUsBMgkbYD1jeNKlmGKTOzd1x+G0js=
-Date: Thu, 31 Oct 2024 18:59:06 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- jic23@kernel.org, bartosz.golaszewski@linaro.org,
- gregkh@linuxfoundation.org
-Subject: Re: [PATCH 1/2] util_macros.h: fix/rework find_closest() macros
-Message-Id: <20241031185906.064d733825c176addd48a733@linux-foundation.org>
-In-Reply-To: <20241031063707.795842-1-aardelean@baylibre.com>
-References: <20241031063707.795842-1-aardelean@baylibre.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730426424; c=relaxed/simple;
+	bh=fb7aOCl4XgdeRKd5/MatgM1K30h6jQLxZcWM0SZ/Frs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=VuDK+zBpyvgicjBHLOiQxjEEB2EmicPCPxm/ipFXLXzOmqTz9HOW4AbSSbZHl9mJ/zXQbXHqdrEMyevkF9tNPQaepF5ICGqgm3POl5xYRZeSQppEC8RvKV4G2CKIECflln08FGderNYdHCi9PzxxslsMPUVF/sLhtj6l5V6ci3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XASnb0LE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42970C4CEC3;
+	Fri,  1 Nov 2024 02:00:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730426424;
+	bh=fb7aOCl4XgdeRKd5/MatgM1K30h6jQLxZcWM0SZ/Frs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=XASnb0LEFqQDw31qP1E/Zs5z2ew7JbGNZvYFRrcu+Yo5Ibh7M7OYYHy7eDmxblNDe
+	 YKC0n2kAY3doR/j1ltjN0SUmOB2R66OTMZTbmdnBel5YOkAnDqGwWZJolAVohRaEYk
+	 WSHJvsjadA4NOxr829mMF6XcGZqgiMwRoUR72/VhdbvLCPJXkw3VqoR973JPb8fI13
+	 iJDfw/eV3dBDST85Q2hIBBrcvL5BliqkBPjh5jxWYKsuKkQZnyQF3Fo5VkFrJUy1te
+	 wlIxs7TqeF6xvnFY0bzEzGxmWsp4ugZ1oe6+Skhrj7dmOBAm50St+n+sYKRLujdAbY
+	 g5czNMa7kza9Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7100A380AC02;
+	Fri,  1 Nov 2024 02:00:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ptp_pch: Replace deprecated PCI functions
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173042643226.2152368.2327696285873248607.git-patchwork-notify@kernel.org>
+Date: Fri, 01 Nov 2024 02:00:32 +0000
+References: <20241028095943.20498-2-pstanner@redhat.com>
+In-Reply-To: <20241028095943.20498-2-pstanner@redhat.com>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: richardcochran@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Thu, 31 Oct 2024 08:37:06 +0200 Alexandru Ardelean <aardelean@baylibre.com> wrote:
+Hello:
 
-> A bug was found in the find_closest() (find_closest_descending() is also
-> affected after some testing), where for certain values with small
-> progressions, the rounding (done by averaging 2 values) causes an incorrect
-> index to be returned.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Please help us understand the userspace-visible effects of this bug.
+On Mon, 28 Oct 2024 10:59:44 +0100 you wrote:
+> pcim_iomap_regions() and pcim_iomap_table() have been deprecated in
+> commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
+> pcim_iomap_regions_request_all()").
+> 
+> Replace these functions with pcim_iomap_region().
+> 
+> Additionally, pass KBUILD_MODNAME to that function, since the 'name'
+> parameter should indicate who (i.e., which driver) has requested the
+> resource.
+> 
+> [...]
 
-Do you believe the bug is sufficiently serious to justify backporting
-these fixes into earlier kernel versions?  If so, are you able to help
-us identify a suitable Fixes: target?
+Here is the summary with links:
+  - ptp_pch: Replace deprecated PCI functions
+    https://git.kernel.org/netdev/net-next/c/9c5649c17737
 
-Thanks.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
