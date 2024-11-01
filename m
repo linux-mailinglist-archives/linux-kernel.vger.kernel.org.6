@@ -1,170 +1,163 @@
-Return-Path: <linux-kernel+bounces-392669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775B29B96D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:51:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB849B96DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:52:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7DD91F226BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC6B283235
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1214E1CDA3C;
-	Fri,  1 Nov 2024 17:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360C21CB321;
+	Fri,  1 Nov 2024 17:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MdxOnaeY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KU6NmAKk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BmDtsvTa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61051CDA14;
-	Fri,  1 Nov 2024 17:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B8614885D;
+	Fri,  1 Nov 2024 17:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730483411; cv=none; b=QMTBTFt2QFIKYUBctKIKkTmmqJy1fhPWWlPD0VPDtjTF9l9MDGOq+FpwefjMVW9P8fMWEXUxxkIYryB3GFpwdDEP3t/vG4X0ZGDm8VjD+IP1YZYTEXQ1m+gRlrqLyesLuezvMUPGaV1XEPf67nb0fPNoNfI7q6yY8Czo5CASunE=
+	t=1730483456; cv=none; b=LWeBmQOroXiJufclDKfQXqZdgg/pcwPqyCsE6WrEJDhJmmG6SLZjmfueAtG04XOgSalUJFZFJYf8NsVD0w53iiqORNp66e1ZeRAb5jXxsoQax2K06iZ2pOQ4iuxKLF/yGseLvB8B/B//SZbrjDN2cxbDyhaKovjRyZfSNUs8+ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730483411; c=relaxed/simple;
-	bh=1ZNHizq8Z6nKtubj+fm3UVJG60y/zHcADcUMQ6Qtbtc=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=J1QpejQBHfH+jsboKeM0hU//0p4cN4Mfm5Lg13aGM513YUTL/POVrO6saM71P9JeKRJ55fuz98JfvHZUiLdctQq5/8a8eKapwGwiu0zkn1JBX3Qq6jTzuwYh+TylgPNpP8VIuKLH+YLboBFAzaZReQYCeW7azEY/oymTxON6QH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MdxOnaeY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KU6NmAKk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 01 Nov 2024 17:50:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730483406;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=c0c/5i96tQ/c7nEr/331iCf76t8qZk6T94EaAHkxVBc=;
-	b=MdxOnaeY9zyyYtzRoB6fKmKhIxkreupnFcaCKvgyXMC5ear1YtMDw/FWzt8XiGCfgexRzm
-	Gm2UXByphFyDoSZfU5I9I6xpxGO8kBRtosdaj8zpIS5wBM1pOblpwTCmN/Cv4BliGUirVS
-	hnn8RcJ4BPQKp0yDFubni2Tq2SKkl8AaonRM/i5XeSYpakN6xh4tkNBB3p/PKQTorYSrNi
-	ZIRIhs8DwJHhlqgw6mGXKdPX0W8Q2CPRYmWxxVUQ7W+Hfw8JNn5JPueE0VsbaZlTAn8MVR
-	HDHUR/OEwPr8GyN5IEqNqfRwVMxH2w4ZmoyoTAX8tvW713bdy8/jc+1xoGC4Zw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730483406;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=c0c/5i96tQ/c7nEr/331iCf76t8qZk6T94EaAHkxVBc=;
-	b=KU6NmAKkHeTGL/nEgIDHF9/ZbnyZHYo5zaLWJ2I+t7n+hPdJEAa58MfcVlnlzxtXmPMAKW
-	20d85pzn1uqqwqAA==
-From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/mm] x86/mm/doc: Add missing details in virtual memory layout
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1730483456; c=relaxed/simple;
+	bh=8z76fWUIrMQ8Og3lj5xj4kQZ1y/oAsRmPurPzMj0fyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUwzdZF48G+0Gu0DOWBWqzC7ok/eT7SaaBm+7bWdKDDOaRu4IR/i1AlkeXn5qZFzNiKF8dX1OPWPPiNvurDBBd+dESECbyrnrVf4aZKlWoEORWhjM7jJeAbwTbeK0OVF2Sk3qoKmPKyN5GrjAZBm5+fdAFHyEU/CCRebBqzmiyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BmDtsvTa; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730483455; x=1762019455;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8z76fWUIrMQ8Og3lj5xj4kQZ1y/oAsRmPurPzMj0fyk=;
+  b=BmDtsvTaHB4UFvEN15o4QxTrWzOUGmvr1VjNx1xrRkYdY10ey38m4Q3V
+   REG83ZLu2s53Vjkl9m8nc8bezZc/1mLwyhFedo6ZtKwHdTbnSiKuIsSKk
+   5J0JkWL4vcIUDRkHQH47MLdA5S9UgqbAydcnQwQWsHXzSpDGT9z2dOIEi
+   Fw5Kl7JdKYR9TaVv5yBc7U1QjTCGY5aKsh83VQHq2N39wVFiPLYZjib7c
+   EZNACAzj70uFcajVj/nz5wVzHigtBiGkXe/ryT7exwU2KddGhFvRZ1qgm
+   6K2P+vWtLdhIlv5qCeogEt/390Kh14sbHKJQN1TADMk+p72HK6BbLf8IZ
+   w==;
+X-CSE-ConnectionGUID: nm5YB/sfRdyK5TzKb25wxw==
+X-CSE-MsgGUID: qI0XPKs6Rj+RbU3hEkTWiQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30109489"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30109489"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 10:50:54 -0700
+X-CSE-ConnectionGUID: silh1jIvQxCkBqRXrjE8cg==
+X-CSE-MsgGUID: 3W1UfGhwT/6TyULh72D0mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,250,1725346800"; 
+   d="scan'208";a="82555071"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 01 Nov 2024 10:50:51 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6vnN-000hqB-2c;
+	Fri, 01 Nov 2024 17:50:49 +0000
+Date: Sat, 2 Nov 2024 01:50:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Lechner <dlechner@baylibre.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Guillaume Stols <gstols@baylibre.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: ad7606: finish pwm_get_state_hw() TODO
+Message-ID: <202411020101.5Hs6MkwQ-lkp@intel.com>
+References: <20241029-pwm-export-pwm_get_state_hw-v2-2-03ba063a3230@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173048340553.3137.14329430184400702450.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029-pwm-export-pwm_get_state_hw-v2-2-03ba063a3230@baylibre.com>
 
-The following commit has been merged into the x86/mm branch of tip:
+Hi David,
 
-Commit-ID:     035c5e2143f3edceeede1e99ff9cf8979c548dd5
-Gitweb:        https://git.kernel.org/tip/035c5e2143f3edceeede1e99ff9cf8979c548dd5
-Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate:    Thu, 31 Oct 2024 10:49:46 +02:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Fri, 01 Nov 2024 10:38:06 -07:00
+kernel test robot noticed the following build errors:
 
-x86/mm/doc: Add missing details in virtual memory layout
+[auto build test ERROR on 6fb2fa9805c501d9ade047fc511961f3273cdcb5]
 
-Improve memory layout documentation:
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/pwm-core-export-pwm_get_state_hw/20241030-052134
+base:   6fb2fa9805c501d9ade047fc511961f3273cdcb5
+patch link:    https://lore.kernel.org/r/20241029-pwm-export-pwm_get_state_hw-v2-2-03ba063a3230%40baylibre.com
+patch subject: [PATCH v2 2/2] iio: adc: ad7606: finish pwm_get_state_hw() TODO
+config: i386-randconfig-141-20241101 (https://download.01.org/0day-ci/archive/20241102/202411020101.5Hs6MkwQ-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241102/202411020101.5Hs6MkwQ-lkp@intel.com/reproduce)
 
- - Document 4kB guard hole at the end of userspace.
-   See TASK_SIZE_MAX definition.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411020101.5Hs6MkwQ-lkp@intel.com/
 
- - Divide the description of the non-canonical hole into two parts:
-   userspace and kernel sides.
+All errors (new ones prefixed by >>):
 
- - Mention the effect of LAM on the non-canonical range.
+   drivers/iio/adc/ad7606.c: In function 'ad7606_read_raw':
+>> drivers/iio/adc/ad7606.c:765:23: error: implicit declaration of function 'pwm_get_state_hw'; did you mean 'pwm_get_state'? [-Werror=implicit-function-declaration]
+     765 |                 ret = pwm_get_state_hw(st->cnvst_pwm, &cnvst_pwm_state);
+         |                       ^~~~~~~~~~~~~~~~
+         |                       pwm_get_state
+   cc1: some warnings being treated as errors
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lore.kernel.org/all/20241031084946.2243440-1-kirill.shutemov%40linux.intel.com
----
- Documentation/arch/x86/x86_64/mm.rst | 35 ++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/arch/x86/x86_64/mm.rst b/Documentation/arch/x86/x86_64/mm.rst
-index 35e5e18..f2db178 100644
---- a/Documentation/arch/x86/x86_64/mm.rst
-+++ b/Documentation/arch/x86/x86_64/mm.rst
-@@ -29,15 +29,27 @@ Complete virtual memory map with 4-level page tables
-       Start addr    |   Offset   |     End addr     |  Size   | VM area description
-   ========================================================================================================================
-                     |            |                  |         |
--   0000000000000000 |    0       | 00007fffffffffff |  128 TB | user-space virtual memory, different per mm
-+   0000000000000000 |    0       | 00007fffffffefff | ~128 TB | user-space virtual memory, different per mm
-+   00007ffffffff000 | ~128    TB | 00007fffffffffff |    4 kB | ... guard hole
-   __________________|____________|__________________|_________|___________________________________________________________
-                     |            |                  |         |
--   0000800000000000 | +128    TB | ffff7fffffffffff | ~16M TB | ... huge, almost 64 bits wide hole of non-canonical
--                    |            |                  |         |     virtual memory addresses up to the -128 TB
-+   0000800000000000 | +128    TB | 7fffffffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
-+                    |            |                  |         |     virtual memory addresses up to the -8 EB
-                     |            |                  |         |     starting offset of kernel mappings.
-+                    |            |                  |         |
-+                    |            |                  |         | LAM relaxes canonicallity check allowing to create aliases
-+                    |            |                  |         | for userspace memory here.
-   __________________|____________|__________________|_________|___________________________________________________________
-                                                               |
-                                                               | Kernel-space virtual memory, shared between all processes:
-+  __________________|____________|__________________|_________|___________________________________________________________
-+                    |            |                  |         |
-+   8000000000000000 |   -8    EB | ffff7fffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
-+                    |            |                  |         |     virtual memory addresses up to the -128 TB
-+                    |            |                  |         |     starting offset of kernel mappings.
-+                    |            |                  |         |
-+                    |            |                  |         | LAM_SUP relaxes canonicallity check allowing to create
-+                    |            |                  |         | aliases for kernel memory here.
-   ____________________________________________________________|___________________________________________________________
-                     |            |                  |         |
-    ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor
-@@ -88,16 +100,27 @@ Complete virtual memory map with 5-level page tables
-       Start addr    |   Offset   |     End addr     |  Size   | VM area description
-   ========================================================================================================================
-                     |            |                  |         |
--   0000000000000000 |    0       | 00ffffffffffffff |   64 PB | user-space virtual memory, different per mm
-+   0000000000000000 |    0       | 00fffffffffff000 |  ~64 PB | user-space virtual memory, different per mm
-+   00fffffffffff000 |  ~64    PB | 00ffffffffffffff |    4 kB | ... guard hole
-   __________________|____________|__________________|_________|___________________________________________________________
-                     |            |                  |         |
--   0100000000000000 |  +64    PB | feffffffffffffff | ~16K PB | ... huge, still almost 64 bits wide hole of non-canonical
--                    |            |                  |         |     virtual memory addresses up to the -64 PB
-+   0100000000000000 |  +64    PB | 7fffffffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
-+                    |            |                  |         |     virtual memory addresses up to the -8EB TB
-                     |            |                  |         |     starting offset of kernel mappings.
-+                    |            |                  |         |
-+                    |            |                  |         | LAM relaxes canonicallity check allowing to create aliases
-+                    |            |                  |         | for userspace memory here.
-   __________________|____________|__________________|_________|___________________________________________________________
-                                                               |
-                                                               | Kernel-space virtual memory, shared between all processes:
-   ____________________________________________________________|___________________________________________________________
-+   8000000000000000 |   -8    EB | feffffffffffffff |   ~8 EB | ... huge, almost 63 bits wide hole of non-canonical
-+                    |            |                  |         |     virtual memory addresses up to the -64 PB
-+                    |            |                  |         |     starting offset of kernel mappings.
-+                    |            |                  |         |
-+                    |            |                  |         | LAM_SUP relaxes canonicallity check allowing to create
-+                    |            |                  |         | aliases for kernel memory here.
-+  ____________________________________________________________|___________________________________________________________
-                     |            |                  |         |
-    ff00000000000000 |  -64    PB | ff0fffffffffffff |    4 PB | ... guard hole, also reserved for hypervisor
-    ff10000000000000 |  -60    PB | ff10ffffffffffff | 0.25 PB | LDT remap for PTI
+vim +765 drivers/iio/adc/ad7606.c
+
+   733	
+   734	static int ad7606_read_raw(struct iio_dev *indio_dev,
+   735				   struct iio_chan_spec const *chan,
+   736				   int *val,
+   737				   int *val2,
+   738				   long m)
+   739	{
+   740		int ret, ch = 0;
+   741		struct ad7606_state *st = iio_priv(indio_dev);
+   742		struct ad7606_chan_scale *cs;
+   743		struct pwm_state cnvst_pwm_state;
+   744	
+   745		switch (m) {
+   746		case IIO_CHAN_INFO_RAW:
+   747			iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+   748				ret = ad7606_scan_direct(indio_dev, chan->address, val);
+   749				if (ret < 0)
+   750					return ret;
+   751				return IIO_VAL_INT;
+   752			}
+   753			unreachable();
+   754		case IIO_CHAN_INFO_SCALE:
+   755			if (st->sw_mode_en)
+   756				ch = chan->address;
+   757			cs = &st->chan_scales[ch];
+   758			*val = cs->scale_avail[cs->range][0];
+   759			*val2 = cs->scale_avail[cs->range][1];
+   760			return IIO_VAL_INT_PLUS_MICRO;
+   761		case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+   762			*val = st->oversampling;
+   763			return IIO_VAL_INT;
+   764		case IIO_CHAN_INFO_SAMP_FREQ:
+ > 765			ret = pwm_get_state_hw(st->cnvst_pwm, &cnvst_pwm_state);
+   766			if (ret < 0)
+   767				return ret;
+   768			*val = DIV_ROUND_CLOSEST_ULL(NSEC_PER_SEC, cnvst_pwm_state.period);
+   769			return IIO_VAL_INT;
+   770		}
+   771		return -EINVAL;
+   772	}
+   773	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
