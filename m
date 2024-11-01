@@ -1,383 +1,109 @@
-Return-Path: <linux-kernel+bounces-392993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5582F9B9A86
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:00:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2929B9A88
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:01:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14D09282763
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 893C51C2155B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82A81E7C16;
-	Fri,  1 Nov 2024 22:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEpPxe0Z"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E18E140E34;
-	Fri,  1 Nov 2024 22:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8881E32BD;
+	Fri,  1 Nov 2024 22:01:36 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3DC19B3E3
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 22:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730498429; cv=none; b=PiDVUaRteDk9ZVHwmcp2pFwtda4vmjRITOMNRBOz22UvhAI34WYUe+Djeo7uE0+zEQEK/6zySLAPTw6eCCCNnyqH1DoIydfYRRNeD8Axk0YsuI08miuVuOZbiH4UuvithYD3KrDPv2o8JRskQnplmNsIdl3Aw3CQqBmh3GH1tWk=
+	t=1730498496; cv=none; b=Fv2qv4JIhOTG2cjgVQi4Z4HTfgKXZK4Up1C4W5SCyFLZIrOAyqRvv45ociT+tvTLQo/KZCqnJ/quwcvTrZ1owODhgftnSUKsS6i+tlf9a/OS6Wl8sFZ3Uw1+upZgvn+iTcUNnDb5Zl7L93ykBaQ5gE860bEn3F+OQMVsD8v+BxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730498429; c=relaxed/simple;
-	bh=868UjNU7I8Jx0s4rzZ034VXHhGbSs/hiS0NKYG9xSyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CTgRlFdpv9ZnRVNDaUdKVO2Q0Zkm4YFrUXMvqSMpp6EHGqeWcJIzGzdeMLV4DStB4IOy54OvuoiuUB7v/hlC9MeQktY+bafefSzKXyyszMgKinQ7gRRIj09vkR3nPiiD0QQjg4dmFDjyQNQJhUIwYRcE80Vwf1nllQYCQWKuJMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEpPxe0Z; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7d916b6a73aso1608867a12.1;
-        Fri, 01 Nov 2024 15:00:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730498427; x=1731103227; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=skk3hYFeBwotAyy4dz+Y4hArHx0owADLBB7g9pIcvx4=;
-        b=aEpPxe0ZLVneW72bhsAY08bDd/vCg+Ithrc7j/TngPewbwLBeeObgunIAsAQJ5s+vT
-         WYjEaSeRcKxjrJQhh0QAPhk+8xmRgDdFc0Ay7fuLgygLRS6XX9zfRkWiDnQx63EWxAx+
-         BU8WeC4Qd0rn9noZ5O9j9KAQEod/UQIL2GqWvfYhjsXuNj+usZnUN3CI4yBz5gkGmsRz
-         hOJVHPPfGZZTfK+YtslsEgDcBjhXe+giVihmF/Rwkxq+U0uz8ZO7kr65UX82q4SO5YYI
-         UMHu1PMo8c80VWu0ONXvNl1UJjtmyE7ceE8Wk8sdT7G/kivHCOd/GaJu7+nlGFYxBUqB
-         epLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730498427; x=1731103227;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=skk3hYFeBwotAyy4dz+Y4hArHx0owADLBB7g9pIcvx4=;
-        b=Q4m6ygG+d76HEAwOHnhxj6T0fBQ+bnyN81lyuba34U3lV5pccd2wSARaBKEqNMoMQC
-         rbzxr+n/Xn/U8tcztyhClknEy4um9Ti31Qerq0m1nMFaJpjCFF3g7CKPiyUJx2/snUsB
-         fPa4EqM6bgiaEV4V1W21pHNB5Cx6fgFCLAd6sc6r5mhgPPro6KMZ3dgdzo7p/k7uBipc
-         8K1pu+/Lif+Xk3g+6OACFotxU9ZEAR+2uuOwwxytKI0fu3s0uSxNU1zY/vo29OcwKkEK
-         SdfT6M2FEfejlKGP1ROFPzttfuWRn4bflt+oheLYRkqZNsh/X0A1OHgwOCxbGOma+077
-         eBZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4dLh8yEKzuSxtnfby9uwuBrNuOuUR8d0P+VZZdW5OddBt8NlI9+kTJ+UR/kIcimP8sTfqCos0N0rMek8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvQUlchL6qCqCY+24S971Mx5PXueE28QmVoPjKJDOs9aL43efA
-	wDCmk58Tu72oDYHly0Xb3nqvLRoHFcoapy4+d5doiLd02AvuWxtne/W5ieat
-X-Google-Smtp-Source: AGHT+IGWZBq1YoCZhCrTgTr+pRwmZG7oZ8xq2UIi5WVuc2ZgZUAKt36Hz+YY1uVXXCOyZELIC2UN5g==
-X-Received: by 2002:a17:903:18c:b0:211:898:7cf0 with SMTP id d9443c01a7336-211089883aamr82985085ad.12.1730498427214;
-        Fri, 01 Nov 2024 15:00:27 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ef5e0sm25555235ad.34.2024.11.01.15.00.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 15:00:26 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Jian Shen <shenjian15@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jijie Shao <shaojijie@huawei.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] net: hisilicon: hns3: use ethtool string helpers
-Date: Fri,  1 Nov 2024 15:00:23 -0700
-Message-ID: <20241101220023.290926-2-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241101220023.290926-1-rosenp@gmail.com>
-References: <20241101220023.290926-1-rosenp@gmail.com>
+	s=arc-20240116; t=1730498496; c=relaxed/simple;
+	bh=cqRBkSL3AVZTnppxdG/2m1GSpxOwnBGrbyNue0klnuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AM1bA3MKYvf8x1N4sQvZj0WvKFd3NQVReSMA/EJNGV29/S5o0gSQIz4cnYDr68R2OVqHnf8MlrOddr4HX4VU4TohSz/cAtD4SHhCm2nqDBN1SwboP/q3DbdPONcBug/aSV771emRLRjMge3uCJFHKQzPXcM/QVsojSYZJpteNZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 4A1M1S3P015470;
+	Fri, 1 Nov 2024 23:01:28 +0100
+Date: Fri, 1 Nov 2024 23:01:28 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] nolibc changes for v6.13
+Message-ID: <20241101220128.GA15188@1wt.eu>
+References: <ba23217d-5eaf-4146-8ed7-27289cece364@t-8ch.de>
+ <7bac1319-fe1c-454d-b96d-8344bdce3961@t-8ch.de>
+ <f9d51d6b-f38e-48bb-be5a-97217fb503c1@paulmck-laptop>
+ <ce65b110-259a-4edf-a84b-4015c6160f52@t-8ch.de>
+ <20241101213314.GC15112@1wt.eu>
+ <49905050-8bea-498a-9a69-bbf7e00f30c8@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <49905050-8bea-498a-9a69-bbf7e00f30c8@t-8ch.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-The latter is the preferred way to copy ethtool strings.
+On Fri, Nov 01, 2024 at 09:40:34PM +0000, Thomas Weißschuh wrote:
+> > Maybe we could just enclose the test with:
+> > 
+> > #if !defined(__GLIBC__) || __GLIBC__ > 2 || __GLIBC_MINOR__ >= 40
+> >  ...
+> > #endif
+> 
+> This will mess up the test case numbers.
+> The test is actually only running on nolibc anyways, so we could also
+> stub out strlcat() with a dummy inline function.
 
-Avoids manually incrementing the pointer. Cleans up the code quite well.
+OK.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
-Reviewed-by: Jijie Shao <shaojijie@huawei.com>
-Tested-by: Jijie Shao <shaojijie@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hnae3.h   |  2 +-
- .../hns3/hns3_common/hclge_comm_tqp_stats.c   | 11 ++--
- .../hns3/hns3_common/hclge_comm_tqp_stats.h   |  2 +-
- .../ethernet/hisilicon/hns3/hns3_ethtool.c    | 53 ++++++-------------
- .../hisilicon/hns3/hns3pf/hclge_main.c        | 50 +++++++----------
- .../hisilicon/hns3/hns3vf/hclgevf_main.c      |  6 +--
- 6 files changed, 44 insertions(+), 80 deletions(-)
+> > > For better architecture coverage I would recommend ./run-tests.sh over
+> > > "make run/user". Speaking about this I remember the discussion from the
+> > > 6.12 PR where Willy proposed an improved run-tests.sh error message.
+> > > It seems he didn't push it as a commit, so let's add keep it in mind for
+> > > next cycle.
+> > 
+> > Oups, I vaguely remember proposing a trivial patch in an e-mail a while
+> > ago but I don't even remember what it was about. My mind is totally taken
+> > by the upcoming haproxy release these days :-/
+> 
+> It's at https://lore.kernel.org/lkml/ZtlQbpgpn9OQOPyI@1wt.eu/
+> No worries, I'll pick it up after 6.13-rc1.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index 27dbe367f3d3..710a8f9f2248 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -677,7 +677,7 @@ struct hnae3_ae_ops {
- 	void (*get_mac_stats)(struct hnae3_handle *handle,
- 			      struct hns3_mac_stats *mac_stats);
- 	void (*get_strings)(struct hnae3_handle *handle,
--			    u32 stringset, u8 *data);
-+			    u32 stringset, u8 **data);
- 	int (*get_sset_count)(struct hnae3_handle *handle, int stringset);
- 
- 	void (*get_regs)(struct hnae3_handle *handle, u32 *version,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c
-index 2b31188ff555..f9a3d6fc4416 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.c
-@@ -36,27 +36,22 @@ int hclge_comm_tqps_get_sset_count(struct hnae3_handle *handle)
- }
- EXPORT_SYMBOL_GPL(hclge_comm_tqps_get_sset_count);
- 
--u8 *hclge_comm_tqps_get_strings(struct hnae3_handle *handle, u8 *data)
-+void hclge_comm_tqps_get_strings(struct hnae3_handle *handle, u8 **data)
- {
- 	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
--	u8 *buff = data;
- 	u16 i;
- 
- 	for (i = 0; i < kinfo->num_tqps; i++) {
- 		struct hclge_comm_tqp *tqp =
- 			container_of(kinfo->tqp[i], struct hclge_comm_tqp, q);
--		snprintf(buff, ETH_GSTRING_LEN, "txq%u_pktnum_rcd", tqp->index);
--		buff += ETH_GSTRING_LEN;
-+		ethtool_sprintf(data, "txq%u_pktnum_rcd", tqp->index);
- 	}
- 
- 	for (i = 0; i < kinfo->num_tqps; i++) {
- 		struct hclge_comm_tqp *tqp =
- 			container_of(kinfo->tqp[i], struct hclge_comm_tqp, q);
--		snprintf(buff, ETH_GSTRING_LEN, "rxq%u_pktnum_rcd", tqp->index);
--		buff += ETH_GSTRING_LEN;
-+		ethtool_sprintf(data, "rxq%u_pktnum_rcd", tqp->index);
- 	}
--
--	return buff;
- }
- EXPORT_SYMBOL_GPL(hclge_comm_tqps_get_strings);
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.h b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.h
-index a46350162ee8..b9ff424c0bc2 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_common/hclge_comm_tqp_stats.h
-@@ -32,7 +32,7 @@ struct hclge_comm_tqp {
- 
- u64 *hclge_comm_tqps_get_stats(struct hnae3_handle *handle, u64 *data);
- int hclge_comm_tqps_get_sset_count(struct hnae3_handle *handle);
--u8 *hclge_comm_tqps_get_strings(struct hnae3_handle *handle, u8 *data);
-+void hclge_comm_tqps_get_strings(struct hnae3_handle *handle, u8 **data);
- void hclge_comm_reset_tqp_stats(struct hnae3_handle *handle);
- int hclge_comm_tqps_update_stats(struct hnae3_handle *handle,
- 				 struct hclge_comm_hw *hw);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index 97eaeec1952b..b6cc51bfdd33 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -509,54 +509,38 @@ static int hns3_get_sset_count(struct net_device *netdev, int stringset)
- 	}
- }
- 
--static void *hns3_update_strings(u8 *data, const struct hns3_stats *stats,
--		u32 stat_count, u32 num_tqps, const char *prefix)
-+static void hns3_update_strings(u8 **data, const struct hns3_stats *stats,
-+				u32 stat_count, u32 num_tqps,
-+				const char *prefix)
- {
- #define MAX_PREFIX_SIZE (6 + 4)
--	u32 size_left;
- 	u32 i, j;
--	u32 n1;
- 
--	for (i = 0; i < num_tqps; i++) {
--		for (j = 0; j < stat_count; j++) {
--			data[ETH_GSTRING_LEN - 1] = '\0';
--
--			/* first, prepend the prefix string */
--			n1 = scnprintf(data, MAX_PREFIX_SIZE, "%s%u_",
--				       prefix, i);
--			size_left = (ETH_GSTRING_LEN - 1) - n1;
--
--			/* now, concatenate the stats string to it */
--			strncat(data, stats[j].stats_string, size_left);
--			data += ETH_GSTRING_LEN;
--		}
--	}
--
--	return data;
-+	for (i = 0; i < num_tqps; i++)
-+		for (j = 0; j < stat_count; j++)
-+			ethtool_sprintf(data, "%s%u_%s", prefix, i,
-+					stats[j].stats_string);
- }
- 
--static u8 *hns3_get_strings_tqps(struct hnae3_handle *handle, u8 *data)
-+static void hns3_get_strings_tqps(struct hnae3_handle *handle, u8 **data)
- {
- 	struct hnae3_knic_private_info *kinfo = &handle->kinfo;
- 	const char tx_prefix[] = "txq";
- 	const char rx_prefix[] = "rxq";
- 
- 	/* get strings for Tx */
--	data = hns3_update_strings(data, hns3_txq_stats, HNS3_TXQ_STATS_COUNT,
--				   kinfo->num_tqps, tx_prefix);
-+	hns3_update_strings(data, hns3_txq_stats, HNS3_TXQ_STATS_COUNT,
-+			    kinfo->num_tqps, tx_prefix);
- 
- 	/* get strings for Rx */
--	data = hns3_update_strings(data, hns3_rxq_stats, HNS3_RXQ_STATS_COUNT,
--				   kinfo->num_tqps, rx_prefix);
--
--	return data;
-+	hns3_update_strings(data, hns3_rxq_stats, HNS3_RXQ_STATS_COUNT,
-+			    kinfo->num_tqps, rx_prefix);
- }
- 
- static void hns3_get_strings(struct net_device *netdev, u32 stringset, u8 *data)
- {
- 	struct hnae3_handle *h = hns3_get_handle(netdev);
- 	const struct hnae3_ae_ops *ops = h->ae_algo->ops;
--	char *buff = (char *)data;
- 	int i;
- 
- 	if (!ops->get_strings)
-@@ -564,18 +548,15 @@ static void hns3_get_strings(struct net_device *netdev, u32 stringset, u8 *data)
- 
- 	switch (stringset) {
- 	case ETH_SS_STATS:
--		buff = hns3_get_strings_tqps(h, buff);
--		ops->get_strings(h, stringset, (u8 *)buff);
-+		hns3_get_strings_tqps(h, &data);
-+		ops->get_strings(h, stringset, &data);
- 		break;
- 	case ETH_SS_TEST:
--		ops->get_strings(h, stringset, data);
-+		ops->get_strings(h, stringset, &data);
- 		break;
- 	case ETH_SS_PRIV_FLAGS:
--		for (i = 0; i < HNS3_PRIV_FLAGS_LEN; i++) {
--			snprintf(buff, ETH_GSTRING_LEN, "%s",
--				 hns3_priv_flags[i].name);
--			buff += ETH_GSTRING_LEN;
--		}
-+		for (i = 0; i < HNS3_PRIV_FLAGS_LEN; i++)
-+			ethtool_puts(&data, hns3_priv_flags[i].name);
- 		break;
- 	default:
- 		break;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 728f4777e51f..5fc08d686d25 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -595,25 +595,21 @@ static u64 *hclge_comm_get_stats(struct hclge_dev *hdev,
- 	return buf;
- }
- 
--static u8 *hclge_comm_get_strings(struct hclge_dev *hdev, u32 stringset,
--				  const struct hclge_comm_stats_str strs[],
--				  int size, u8 *data)
-+static void hclge_comm_get_strings(struct hclge_dev *hdev, u32 stringset,
-+				   const struct hclge_comm_stats_str strs[],
-+				   int size, u8 **data)
- {
--	char *buff = (char *)data;
- 	u32 i;
- 
- 	if (stringset != ETH_SS_STATS)
--		return buff;
-+		return;
- 
- 	for (i = 0; i < size; i++) {
- 		if (strs[i].stats_num > hdev->ae_dev->dev_specs.mac_stats_num)
- 			continue;
- 
--		snprintf(buff, ETH_GSTRING_LEN, "%s", strs[i].desc);
--		buff = buff + ETH_GSTRING_LEN;
-+		ethtool_puts(data, strs[i].desc);
- 	}
--
--	return (u8 *)buff;
- }
- 
- static void hclge_update_stats_for_all(struct hclge_dev *hdev)
-@@ -718,44 +714,38 @@ static int hclge_get_sset_count(struct hnae3_handle *handle, int stringset)
- }
- 
- static void hclge_get_strings(struct hnae3_handle *handle, u32 stringset,
--			      u8 *data)
-+			      u8 **data)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
--	u8 *p = (char *)data;
-+	const char *str;
- 	int size;
- 
- 	if (stringset == ETH_SS_STATS) {
- 		size = ARRAY_SIZE(g_mac_stats_string);
--		p = hclge_comm_get_strings(hdev, stringset, g_mac_stats_string,
--					   size, p);
--		p = hclge_comm_tqps_get_strings(handle, p);
-+		hclge_comm_get_strings(hdev, stringset, g_mac_stats_string,
-+				       size, data);
-+		hclge_comm_tqps_get_strings(handle, data);
- 	} else if (stringset == ETH_SS_TEST) {
- 		if (handle->flags & HNAE3_SUPPORT_EXTERNAL_LOOPBACK) {
--			memcpy(p, hns3_nic_test_strs[HNAE3_LOOP_EXTERNAL],
--			       ETH_GSTRING_LEN);
--			p += ETH_GSTRING_LEN;
-+			str = hns3_nic_test_strs[HNAE3_LOOP_EXTERNAL];
-+			ethtool_puts(data, str);
- 		}
- 		if (handle->flags & HNAE3_SUPPORT_APP_LOOPBACK) {
--			memcpy(p, hns3_nic_test_strs[HNAE3_LOOP_APP],
--			       ETH_GSTRING_LEN);
--			p += ETH_GSTRING_LEN;
-+			str = hns3_nic_test_strs[HNAE3_LOOP_APP];
-+			ethtool_puts(data, str);
- 		}
- 		if (handle->flags & HNAE3_SUPPORT_SERDES_SERIAL_LOOPBACK) {
--			memcpy(p, hns3_nic_test_strs[HNAE3_LOOP_SERIAL_SERDES],
--			       ETH_GSTRING_LEN);
--			p += ETH_GSTRING_LEN;
-+			str = hns3_nic_test_strs[HNAE3_LOOP_SERIAL_SERDES];
-+			ethtool_puts(data, str);
- 		}
- 		if (handle->flags & HNAE3_SUPPORT_SERDES_PARALLEL_LOOPBACK) {
--			memcpy(p,
--			       hns3_nic_test_strs[HNAE3_LOOP_PARALLEL_SERDES],
--			       ETH_GSTRING_LEN);
--			p += ETH_GSTRING_LEN;
-+			str = hns3_nic_test_strs[HNAE3_LOOP_PARALLEL_SERDES];
-+			ethtool_puts(data, str);
- 		}
- 		if (handle->flags & HNAE3_SUPPORT_PHY_LOOPBACK) {
--			memcpy(p, hns3_nic_test_strs[HNAE3_LOOP_PHY],
--			       ETH_GSTRING_LEN);
--			p += ETH_GSTRING_LEN;
-+			str = hns3_nic_test_strs[HNAE3_LOOP_PHY];
-+			ethtool_puts(data, str);
- 		}
- 	}
- }
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 896f1eb172d3..8739da317897 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -130,12 +130,10 @@ static int hclgevf_get_sset_count(struct hnae3_handle *handle, int strset)
- }
- 
- static void hclgevf_get_strings(struct hnae3_handle *handle, u32 strset,
--				u8 *data)
-+				u8 **data)
- {
--	u8 *p = (char *)data;
--
- 	if (strset == ETH_SS_STATS)
--		p = hclge_comm_tqps_get_strings(handle, p);
-+		hclge_comm_tqps_get_strings(handle, data);
- }
- 
- static void hclgevf_get_stats(struct hnae3_handle *handle, u64 *data)
--- 
-2.47.0
+Ah, I found it, it reminded me something, because usually I forget about
+patches once I commit them! I had pushed it to the next branch by then:
 
+  commit 6fc1d365c7394790cf7073a4acfcbf7fe4e8eff9 (HEAD -> 20240908-nolibc-next, korg-nolibc-git/next)
+  Author: Willy Tarreau <w@1wt.eu>
+  Date:   Sun Sep 8 12:00:12 2024 +0200
+
+    selftests/nolibc: run-tests.sh: detect missing toolchain
+    
+    The script tries to resolve the path to the current toolchain using
+    realpath, which fails in case it's not installed, and since it's run
+    under -e, it doesn't have the opportunity to display a help message.
+    Let's detect the absence of the required toolchain before running that
+    command and provide a friendlier message when this happens.
+    
+    Link: https://lore.kernel.org/all/ZtlQbpgpn9OQOPyI@1wt.eu/
+    Signed-off-by: Willy Tarreau <w@1wt.eu>
+
+Seems like we messed up with a forced push to next at some point :-)
+
+I rebased it on the current next and pushed it again:
+
+    648da1b274cf85fff5fe60914ae6a402013f456c
+
+Cheers,
+Willy
 
