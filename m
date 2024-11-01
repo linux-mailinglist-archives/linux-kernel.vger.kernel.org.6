@@ -1,150 +1,369 @@
-Return-Path: <linux-kernel+bounces-391461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6CD9B8775
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8172F9B877B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:04:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495CC282542
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:01:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4FB2825D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 00:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEF61A76B2;
-	Fri,  1 Nov 2024 00:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533C72914;
+	Fri,  1 Nov 2024 00:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HUkTpQi0"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VZVpEsPC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C799313C67E
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128CA380
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 00:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730419227; cv=none; b=bn/lAedIRichfS+GykgCuewlYtgQ0gj0XW8UlWaptPmfslEGtsbYBEMOeUsUQcdWxYhTPaU+/xmR1Tv2JLr8j0Z7bag6rRpwH4xOLSLlf1EKUbgcMRCGxT+sL1YAy+X4HOOaNBBacRfTrXmEJNCDoRqaCrrUdKzzkQ9fpI9LU3E=
+	t=1730419441; cv=none; b=FiNty4k2Oduz2G12wf4bwObmjRdVeP4ipenEZUYNJqSxHZmlKHAiAJ5sTnr1l6eVrgjFcSVxlG4BnO/nSNVIgjpSxq04+1E1rm/Az8e97jnWNm7wbpejiMknC6HgEDSQZjcfgkINfI8OdW3UcOLyPAm+w083VV8WbmFbGaKm++Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730419227; c=relaxed/simple;
-	bh=MTdB6P9eAH1FcYRpKNEzl/sM9MnQi9jhjNqD0z3Miuo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PDAUi+aYnuxfxVUHLXWeb7ksqRYk8RDmO5mv9rUipwGvV05anZfHRHLozP96QxHCOgaGT7+RG/hPRxLAlUoOaPm42wT7hIp+SEyc8fcPEFgiaya7c+J9Tbj/s60LzvVhZFv9A0MgtO708yIY46dOPJnNDxVkeMDs172K9ml/1LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HUkTpQi0; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3231725c9so29828687b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 17:00:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730419221; x=1731024021; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1E3qJdavv7fjHbqyvEFCACtggtWj/ztsb6CTdBP0XOU=;
-        b=HUkTpQi0ZV75r2ZAniwPmHWFjGOJOzZ8u6GYwZyO3Lz7+JpyT0Nyfdoz5VewcYETOY
-         ptEyXEu5MAEJBHxbkB/4aG4eIRmSQ7EOms07721LgHk0fqMyLwsOBExWt3RF4jY47bBX
-         ya1XjeITjigayj7Be9sR644GOO5//COokhm93z/J1HfbyE2Gnjo7HDOfyRc9qtwiYoJU
-         HUsvUC/8Bh+KgkzHF8w3D+knizLpcxiR6OYNoBYQoLT7e7qPkFmGFz6E3qXh7pxr0cf1
-         zld5Ph4c2LKPffuB59JqOdKP4dIr3Biw/EfoDqFi+/OCrwRQXJMcmA3TuT5Pw2m25N30
-         eVMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730419221; x=1731024021;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1E3qJdavv7fjHbqyvEFCACtggtWj/ztsb6CTdBP0XOU=;
-        b=UqNPD/EXVKNROpSH3gaz0GxnhrpOKOLVtCh+XX6hnV1i07iyg5ylMS55Ynb3IliCNe
-         9ayDYFEEcALJkWQcU02dBnli6JXR3bm1bDb5h9mYSeTLyXpmrJN72REGJPp6lbj52AGg
-         Zd3nIDqrAVAyA47YDREkJdErQ6Y0Lzd3e7TOMoQOc2HfRi7qJPY6glmqAjzdfXk+Forx
-         ZsSao24WfbzRoerL8tGUzMgs2VMm/xrAxPXGn3pYK6voWJGA/E8TWDDdZNv9Gr7YZt+C
-         Mz0fwzW8Msin9xbZ3Xbl4DZRudJKGyffBI/m1YujwsLi3vQRfBXq+1MCZkjh/dOFzvyT
-         tG4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVlsTUjIH64z/rZMTreyfk8c+yvUlLHo3FgUg9YJvoDACViN/73tWclfYZjrt+W7kOL0H5m/hoaQ4I8kqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3hvsgX/UKP3M2Tqs4JSNOZd3aEqYMq2q4ImSs3SvqDxtPfJtd
-	XGjqWhAo9YJtpvzGZVEPVdvhLkJSyJb4P0RHWmiOhczGkUemtX6xA+X6IRveoraK84ooyte1WZF
-	6lA==
-X-Google-Smtp-Source: AGHT+IG27m+WkXwA4bhIP2BQ4mgmMvXs/r783mfj828zYLixBTSb4bhAFRNU29d41c5oUeeHYirxFASbVfo=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2a00:79e0:2e3f:8:1498:a594:2b5d:75e5])
- (user=surenb job=sendgmr) by 2002:a25:ea48:0:b0:e30:d37d:2792 with SMTP id
- 3f1490d57ef6-e30d37d2919mr14776276.0.1730419220629; Thu, 31 Oct 2024 17:00:20
- -0700 (PDT)
-Date: Thu, 31 Oct 2024 17:00:17 -0700
+	s=arc-20240116; t=1730419441; c=relaxed/simple;
+	bh=Poj8eKibHH7hOtntgDYn12O4OH0/fMHe+qPpW3GKySI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CJQSJlGik+y2j2zVyk7l3q6fyR/Y5MeLwjNh1lVJiN2sDPdYYKTd5TUTfZATIGXA4TnSZrQdddpJfwaAsTKIdSM368SrLluFoITeKLHOsPGEf7r4zvhso/ZLfrxseBT7XDaKVaFfGMtotgZzP7xnmbTzDr6KwidejQTNoikoeVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VZVpEsPC; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730419434; x=1761955434;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Poj8eKibHH7hOtntgDYn12O4OH0/fMHe+qPpW3GKySI=;
+  b=VZVpEsPCzYvsxBHEfqGbfhcfqvHzMQiOEVgeY3FuGAGiWV5KZfyIGDVO
+   auYWu4X5pxdAQ5YNlj7YLNp5HtfWwBQrLoKyO4JdBCjht1xb4taMtUcm/
+   367CMYTMZ3WkDnhs4TjXiiondYw2RpJcjjMZ05OrTbnPkLycCz9JwkOYT
+   lzlpTbP6W/n3Lfkl19ghrJWBp2PdEvd/CqVcV+885rtLB8YUX78bbYbdn
+   LNYgKKWOaP+XemIDBKBYAsITSKb/sB9I183JmD6ZOlawJpnF11KckwxB7
+   Zst/6B73LqovTw1T7/9KVwmMLC7LYDPvR89MDG6jcOrx7WcmZ8cAlrHJy
+   A==;
+X-CSE-ConnectionGUID: o/kVrH7VSTCW3cWypY4x2A==
+X-CSE-MsgGUID: OHS4cvH+S26atAVubB6tKg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="41553688"
+X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
+   d="scan'208";a="41553688"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 17:03:53 -0700
+X-CSE-ConnectionGUID: GOq1voDbS3u9hwa37BHjtQ==
+X-CSE-MsgGUID: USlltQ6LSGq1hMyfATbSxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
+   d="scan'208";a="87925701"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 31 Oct 2024 17:03:52 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6f8n-000grC-0o;
+	Fri, 01 Nov 2024 00:03:49 +0000
+Date: Fri, 1 Nov 2024 08:03:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Akshata Jahagirdar <akshata.jahagirdar@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Matt Roper <matthew.d.roper@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>
+Subject: drivers/gpu/drm/xe/xe_migrate.c:304:52: warning: result of
+ comparison of constant 274877906944 with expression of type
+ 'resource_size_t' (aka 'unsigned int') is always true
+Message-ID: <202411010753.WxB2gR70-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241101000017.3856204-1-surenb@google.com>
-Subject: [PATCH 1/1] alloc_tag: fix empty codetag module section handling
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, dan.carpenter@linaro.org, rppt@kernel.org, 
-	mcgrof@kernel.org, petr.pavlu@suse.com, samitolvanen@google.com, 
-	da.gomez@samsung.com, yuzhao@google.com, souravpanda@google.com, 
-	pasha.tatashin@soleen.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When a module does not have any allocations, it's allocation tag section
-is empty and codetag_alloc_module_section() returns NULL. However this
-condition should never happen because codetag_needs_module_section() will
-detect an empty section and avoid calling codetag_alloc_module_section().
-Change codetag_alloc_module_section() to never return NULL, which should
-prevent static checker warnings. Add a WARN_ON() and a proper error
-reporting in case codetag_alloc_module_section() returns NULL, to prevent
-future codetag type implementations from returning NULL from their
-cttype->desc.alloc_section_mem() operation.
+Hi Akshata,
 
-Fixes: 61c9e58f3a10 ("alloc_tag: load module tags into separate contiguous memory")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/50f12fa1-17c1-4940-a6bf-beaf61f6b17a@stanley.mountain/
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- kernel/module/main.c | 4 ++++
- lib/alloc_tag.c      | 2 +-
- lib/codetag.c        | 2 +-
- 3 files changed, 6 insertions(+), 2 deletions(-)
+FYI, the error/warning still remains.
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 129c98e6380d..00c16f5c5568 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2316,6 +2316,10 @@ static int move_module(struct module *mod, struct load_info *info)
- 		if (codetag_needs_module_section(mod, sname, shdr->sh_size)) {
- 			dest = codetag_alloc_module_section(mod, sname, shdr->sh_size,
- 					arch_mod_section_prepend(mod, i), shdr->sh_addralign);
-+			if (WARN_ON(!dest)) {
-+				ret = -EINVAL;
-+				goto out_err;
-+			}
- 			if (IS_ERR(dest)) {
- 				ret = PTR_ERR(dest);
- 				goto out_err;
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index 1c74942e6dfd..00ab18ea452a 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -437,7 +437,7 @@ static void *reserve_module_tags(struct module *mod, unsigned long size,
- 
- 	/* If no tags return NULL */
- 	if (size < sizeof(struct alloc_tag))
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 
- 	/*
- 	 * align is always power of 2, so we can use IS_ALIGNED and ALIGN.
-diff --git a/lib/codetag.c b/lib/codetag.c
-index 4949511b4933..42aadd6c1454 100644
---- a/lib/codetag.c
-+++ b/lib/codetag.c
-@@ -244,7 +244,7 @@ void *codetag_alloc_module_section(struct module *mod, const char *name,
- {
- 	const char *type_name = name + strlen(CODETAG_SECTION_PREFIX);
- 	struct codetag_type *cttype;
--	void *ret = NULL;
-+	void *ret = ERR_PTR(-EINVAL);
- 
- 	mutex_lock(&codetag_lock);
- 	list_for_each_entry(cttype, &codetag_types, link) {
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0fc810ae3ae110f9e2fcccce80fc8c8d62f97907
+commit: 8d79acd567db183e675cccc6cc737d2959e2a2d9 drm/xe/migrate: Add helper function to program identity map
+date:   4 months ago
+config: i386-randconfig-052-20241101 (https://download.01.org/0day-ci/archive/20241101/202411010753.WxB2gR70-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241101/202411010753.WxB2gR70-lkp@intel.com/reproduce)
 
-base-commit: 758db9ca0107bc6c00f0ed4808974d66c8dc2fea
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411010753.WxB2gR70-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/xe/xe_migrate.c:12:
+   In file included from include/drm/ttm/ttm_tt.h:30:
+   In file included from include/linux/pagemap.h:8:
+   In file included from include/linux/mm.h:2253:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/gpu/drm/xe/xe_migrate.c:304:52: warning: result of comparison of constant 274877906944 with expression of type 'resource_size_t' (aka 'unsigned int') is always true [-Wtautological-constant-out-of-range-compare]
+     304 |                 xe_assert(xe, (xe->mem.vram.actual_physical_size <= SZ_256G));
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+   drivers/gpu/drm/xe/xe_assert.h:108:54: note: expanded from macro 'xe_assert'
+     108 | #define xe_assert(xe, condition) xe_assert_msg((xe), condition, "")
+         |                                  ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+   drivers/gpu/drm/xe/xe_assert.h:111:24: note: expanded from macro 'xe_assert_msg'
+     111 |         __xe_assert_msg(__xe, condition,                                                        \
+         |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     112 |                         "platform: %s subplatform: %d\n"                                        \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     113 |                         "graphics: %s %u.%02u step %s\n"                                        \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     114 |                         "media: %s %u.%02u step %s\n"                                           \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     115 |                         msg,                                                                    \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     116 |                         __xe->info.platform_name, __xe->info.subplatform,                       \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     117 |                         __xe->info.graphics_name,                                               \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     118 |                         __xe->info.graphics_verx100 / 100,                                      \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     119 |                         __xe->info.graphics_verx100 % 100,                                      \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     120 |                         xe_step_name(__xe->info.step.graphics),                                 \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     121 |                         __xe->info.media_name,                                                  \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     122 |                         __xe->info.media_verx100 / 100,                                         \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     123 |                         __xe->info.media_verx100 % 100,                                         \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     124 |                         xe_step_name(__xe->info.step.media),                                    \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     125 |                         ## arg);                                                                \
+         |                         ~~~~~~~
+   drivers/gpu/drm/xe/xe_assert.h:84:31: note: expanded from macro '__xe_assert_msg'
+      84 |         (void)drm_WARN(&(xe)->drm, !(condition), "[" DRM_NAME "] Assertion `%s` failed!\n" msg, \
+         |               ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      85 |                        __stringify(condition), ## arg);                                         \
+         |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/drm/drm_print.h:635:7: note: expanded from macro 'drm_WARN'
+     635 |         WARN(condition, "%s %s: [drm] " format,                         \
+         |         ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     636 |                         dev_driver_string((drm)->dev),                  \
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     637 |                         dev_name((drm)->dev), ## arg)
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/asm-generic/bug.h:132:25: note: expanded from macro 'WARN'
+     132 |         int __ret_warn_on = !!(condition);                              \
+         |                                ^~~~~~~~~
+   In file included from drivers/gpu/drm/xe/xe_migrate.c:1494:
+   drivers/gpu/drm/xe/tests/xe_migrate.c:404:12: error: too many arguments to function call, expected 10, have 11
+     402 |                 batch_size += pte_update_size(m, src_is_vram, src_is_vram, src, &src_it, &src_L0,
+         |                               ~~~~~~~~~~~~~~~
+     403 |                                               &src_L0_ofs, &src_L0_pt, 0, 0,
+     404 |                                               avail_pts);
+         |                                               ^~~~~~~~~
+   drivers/gpu/drm/xe/xe_migrate.c:490:12: note: 'pte_update_size' declared here
+     490 | static u32 pte_update_size(struct xe_migrate *m,
+         |            ^               ~~~~~~~~~~~~~~~~~~~~~
+     491 |                            bool is_vram,
+         |                            ~~~~~~~~~~~~~
+     492 |                            struct ttm_resource *res,
+         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~
+     493 |                            struct xe_res_cursor *cur,
+         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+     494 |                            u64 *L0, u64 *L0_ofs, u32 *L0_pt,
+         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     495 |                            u32 cmd_size, u32 pt_ofs, u32 avail_pts)
+         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/gpu/drm/xe/xe_migrate.c:1494:
+   drivers/gpu/drm/xe/tests/xe_migrate.c:408:23: error: too many arguments to function call, expected 10, have 11
+     406 |                 batch_size += pte_update_size(m, dst_is_vram, dst_is_vram, dst, &dst_it, &src_L0,
+         |                               ~~~~~~~~~~~~~~~
+     407 |                                               &dst_L0_ofs, &dst_L0_pt, 0,
+     408 |                                               avail_pts, avail_pts);
+         |                                                          ^~~~~~~~~
+   drivers/gpu/drm/xe/xe_migrate.c:490:12: note: 'pte_update_size' declared here
+     490 | static u32 pte_update_size(struct xe_migrate *m,
+         |            ^               ~~~~~~~~~~~~~~~~~~~~~
+     491 |                            bool is_vram,
+         |                            ~~~~~~~~~~~~~
+     492 |                            struct ttm_resource *res,
+         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~
+     493 |                            struct xe_res_cursor *cur,
+         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+     494 |                            u64 *L0, u64 *L0_ofs, u32 *L0_pt,
+         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     495 |                            u32 cmd_size, u32 pt_ofs, u32 avail_pts)
+         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   2 warnings and 2 errors generated.
+
+
+vim +304 drivers/gpu/drm/xe/xe_migrate.c
+
+   177	
+   178	static int xe_migrate_prepare_vm(struct xe_tile *tile, struct xe_migrate *m,
+   179					 struct xe_vm *vm)
+   180	{
+   181		struct xe_device *xe = tile_to_xe(tile);
+   182		u16 pat_index = xe->pat.idx[XE_CACHE_WB];
+   183		u8 id = tile->id;
+   184		u32 num_entries = NUM_PT_SLOTS, num_level = vm->pt_root[id]->level,
+   185		    num_setup = num_level + 1;
+   186		u32 map_ofs, level, i;
+   187		struct xe_bo *bo, *batch = tile->mem.kernel_bb_pool->bo;
+   188		u64 entry, pt30_ofs;
+   189	
+   190		/* Can't bump NUM_PT_SLOTS too high */
+   191		BUILD_BUG_ON(NUM_PT_SLOTS > SZ_2M/XE_PAGE_SIZE);
+   192		/* Must be a multiple of 64K to support all platforms */
+   193		BUILD_BUG_ON(NUM_PT_SLOTS * XE_PAGE_SIZE % SZ_64K);
+   194		/* And one slot reserved for the 4KiB page table updates */
+   195		BUILD_BUG_ON(!(NUM_KERNEL_PDE & 1));
+   196	
+   197		/* Need to be sure everything fits in the first PT, or create more */
+   198		xe_tile_assert(tile, m->batch_base_ofs + batch->size < SZ_2M);
+   199	
+   200		bo = xe_bo_create_pin_map(vm->xe, tile, vm,
+   201					  num_entries * XE_PAGE_SIZE,
+   202					  ttm_bo_type_kernel,
+   203					  XE_BO_FLAG_VRAM_IF_DGFX(tile) |
+   204					  XE_BO_FLAG_PINNED);
+   205		if (IS_ERR(bo))
+   206			return PTR_ERR(bo);
+   207	
+   208		/* PT31 reserved for 2M identity map */
+   209		pt30_ofs = bo->size - 2 * XE_PAGE_SIZE;
+   210		entry = vm->pt_ops->pde_encode_bo(bo, pt30_ofs, pat_index);
+   211		xe_pt_write(xe, &vm->pt_root[id]->bo->vmap, 0, entry);
+   212	
+   213		map_ofs = (num_entries - num_setup) * XE_PAGE_SIZE;
+   214	
+   215		/* Map the entire BO in our level 0 pt */
+   216		for (i = 0, level = 0; i < num_entries; level++) {
+   217			entry = vm->pt_ops->pte_encode_bo(bo, i * XE_PAGE_SIZE,
+   218							  pat_index, 0);
+   219	
+   220			xe_map_wr(xe, &bo->vmap, map_ofs + level * 8, u64, entry);
+   221	
+   222			if (vm->flags & XE_VM_FLAG_64K)
+   223				i += 16;
+   224			else
+   225				i += 1;
+   226		}
+   227	
+   228		if (!IS_DGFX(xe)) {
+   229			/* Write out batch too */
+   230			m->batch_base_ofs = NUM_PT_SLOTS * XE_PAGE_SIZE;
+   231			for (i = 0; i < batch->size;
+   232			     i += vm->flags & XE_VM_FLAG_64K ? XE_64K_PAGE_SIZE :
+   233			     XE_PAGE_SIZE) {
+   234				entry = vm->pt_ops->pte_encode_bo(batch, i,
+   235								  pat_index, 0);
+   236	
+   237				xe_map_wr(xe, &bo->vmap, map_ofs + level * 8, u64,
+   238					  entry);
+   239				level++;
+   240			}
+   241			if (xe->info.has_usm) {
+   242				xe_tile_assert(tile, batch->size == SZ_1M);
+   243	
+   244				batch = tile->primary_gt->usm.bb_pool->bo;
+   245				m->usm_batch_base_ofs = m->batch_base_ofs + SZ_1M;
+   246				xe_tile_assert(tile, batch->size == SZ_512K);
+   247	
+   248				for (i = 0; i < batch->size;
+   249				     i += vm->flags & XE_VM_FLAG_64K ? XE_64K_PAGE_SIZE :
+   250				     XE_PAGE_SIZE) {
+   251					entry = vm->pt_ops->pte_encode_bo(batch, i,
+   252									  pat_index, 0);
+   253	
+   254					xe_map_wr(xe, &bo->vmap, map_ofs + level * 8, u64,
+   255						  entry);
+   256					level++;
+   257				}
+   258			}
+   259		} else {
+   260			u64 batch_addr = xe_bo_addr(batch, 0, XE_PAGE_SIZE);
+   261	
+   262			m->batch_base_ofs = xe_migrate_vram_ofs(xe, batch_addr);
+   263	
+   264			if (xe->info.has_usm) {
+   265				batch = tile->primary_gt->usm.bb_pool->bo;
+   266				batch_addr = xe_bo_addr(batch, 0, XE_PAGE_SIZE);
+   267				m->usm_batch_base_ofs = xe_migrate_vram_ofs(xe, batch_addr);
+   268			}
+   269		}
+   270	
+   271		for (level = 1; level < num_level; level++) {
+   272			u32 flags = 0;
+   273	
+   274			if (vm->flags & XE_VM_FLAG_64K && level == 1)
+   275				flags = XE_PDE_64K;
+   276	
+   277			entry = vm->pt_ops->pde_encode_bo(bo, map_ofs + (u64)(level - 1) *
+   278							  XE_PAGE_SIZE, pat_index);
+   279			xe_map_wr(xe, &bo->vmap, map_ofs + XE_PAGE_SIZE * level, u64,
+   280				  entry | flags);
+   281		}
+   282	
+   283		/* Write PDE's that point to our BO. */
+   284		for (i = 0; i < map_ofs / PAGE_SIZE; i++) {
+   285			entry = vm->pt_ops->pde_encode_bo(bo, (u64)i * XE_PAGE_SIZE,
+   286							  pat_index);
+   287	
+   288			xe_map_wr(xe, &bo->vmap, map_ofs + XE_PAGE_SIZE +
+   289				  (i + 1) * 8, u64, entry);
+   290		}
+   291	
+   292		/* Set up a 1GiB NULL mapping at 255GiB offset. */
+   293		level = 2;
+   294		xe_map_wr(xe, &bo->vmap, map_ofs + XE_PAGE_SIZE * level + 255 * 8, u64,
+   295			  vm->pt_ops->pte_encode_addr(xe, 0, pat_index, level, IS_DGFX(xe), 0)
+   296			  | XE_PTE_NULL);
+   297		m->cleared_mem_ofs = (255ULL << xe_pt_shift(level));
+   298	
+   299		/* Identity map the entire vram at 256GiB offset */
+   300		if (IS_DGFX(xe)) {
+   301			u64 pt31_ofs = bo->size - XE_PAGE_SIZE;
+   302	
+   303			xe_migrate_program_identity(xe, vm, bo, map_ofs, 256, pat_index, pt31_ofs);
+ > 304			xe_assert(xe, (xe->mem.vram.actual_physical_size <= SZ_256G));
+   305		}
+   306	
+   307		/*
+   308		 * Example layout created above, with root level = 3:
+   309		 * [PT0...PT7]: kernel PT's for copy/clear; 64 or 4KiB PTE's
+   310		 * [PT8]: Kernel PT for VM_BIND, 4 KiB PTE's
+   311		 * [PT9...PT27]: Userspace PT's for VM_BIND, 4 KiB PTE's
+   312		 * [PT28 = PDE 0] [PT29 = PDE 1] [PT30 = PDE 2] [PT31 = 2M vram identity map]
+   313		 *
+   314		 * This makes the lowest part of the VM point to the pagetables.
+   315		 * Hence the lowest 2M in the vm should point to itself, with a few writes
+   316		 * and flushes, other parts of the VM can be used either for copying and
+   317		 * clearing.
+   318		 *
+   319		 * For performance, the kernel reserves PDE's, so about 20 are left
+   320		 * for async VM updates.
+   321		 *
+   322		 * To make it easier to work, each scratch PT is put in slot (1 + PT #)
+   323		 * everywhere, this allows lockless updates to scratch pages by using
+   324		 * the different addresses in VM.
+   325		 */
+   326	#define NUM_VMUSA_UNIT_PER_PAGE	32
+   327	#define VM_SA_UPDATE_UNIT_SIZE		(XE_PAGE_SIZE / NUM_VMUSA_UNIT_PER_PAGE)
+   328	#define NUM_VMUSA_WRITES_PER_UNIT	(VM_SA_UPDATE_UNIT_SIZE / sizeof(u64))
+   329		drm_suballoc_manager_init(&m->vm_update_sa,
+   330					  (size_t)(map_ofs / XE_PAGE_SIZE - NUM_KERNEL_PDE) *
+   331					  NUM_VMUSA_UNIT_PER_PAGE, 0);
+   332	
+   333		m->pt_bo = bo;
+   334		return 0;
+   335	}
+   336	
+
 -- 
-2.47.0.163.g1226f6d8fa-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
