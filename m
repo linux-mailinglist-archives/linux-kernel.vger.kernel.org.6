@@ -1,182 +1,192 @@
-Return-Path: <linux-kernel+bounces-391829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CB29B8C21
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:38:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D057F9B8C25
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B865B1C21FA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28641C21FD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 07:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768E81547DC;
-	Fri,  1 Nov 2024 07:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CD61547FF;
+	Fri,  1 Nov 2024 07:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e4dXFMS3"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kndf8JpZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A90153BF8
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 07:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D3455896;
+	Fri,  1 Nov 2024 07:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730446678; cv=none; b=lLRMonOPu9kiZhm9SdE961xqG7cpUzRXsjmYRIMmPWjOeQAavCRcEi/UwPCRkcjoIEs1GuObNlTWuOgizRGpYrtQ3mWY+saXuYMBz6iC/WD1QhTtGQwZ+HN6NwMmgcYRBe/rl6w1p9UL0/lwRY8RWrgLqLfnEwEqqqzBdJHwQ9Q=
+	t=1730446858; cv=none; b=HzBOle3t3ju92sqnb66uGBbhUbUv4mjdd1QdQjMprcgO/2yzuFte5i/ZYtWwo19+7V6L66CFnr4I9YZdTcwshUyUCTQaeP9pzkxUVqKib4wgZdTEMj4YKfwIua/9FKuem9HdwyrWpU9u1VqUuE7NCd/EmcJ7HZichO3Fktt4qFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730446678; c=relaxed/simple;
-	bh=qs0U2eBKO7J24LC/l1ublukecruizsLb5qGIMHieWeo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Ll4msN7Ad/zuFEdNT36bQdstX7R141VIYuv4wTJ55mbD5CfufBAdA+mmfWmD1BrkcB/4ybBCENoBG1QC9hOc0z0/taHgtq/T64TgrRMlKvf1zsBx81ydT7VVwdr3UEGtiz0LJPxQdFPuq2UlAFgNqDOEC6Bsq4HT/lVBjx5V6Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e4dXFMS3; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7187e0041d5so990086a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 00:37:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730446676; x=1731051476; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bnzJeel+BwB3jSttSAy7Q3R1q9VR8g71yrTqyLZrN/o=;
-        b=e4dXFMS3ddVi8p+fM2BtpHoLhd+2L4yg3ZUB4+e+ew9HEPLiMxeeQLiLk2o37zahKS
-         vupnJTnSf4w1pJ5Y9zQbJtwNoPn2Sr4Z5ckYNVbZ2R0EDN6yJDyvmX7n8r515JLiJtCA
-         aaHWkiniZoywttl8eIvFKmZZ7HTv//P4A8S1gFgZIrx7IxDyun6DYbU1GbUJel7PwbVS
-         jaocMCmUsKidMU/HzTwzX6kOeCreTDYxSVF3Vebe6NeoiufI+clYKxmuMVjKnVgGU00i
-         AIib6A9hfeXLDffP8cUO9t6YvLrWE0IXnY14e1PbcLJaCDx8lYS1xB1bmGkovSzpFkdp
-         wPuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730446676; x=1731051476;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bnzJeel+BwB3jSttSAy7Q3R1q9VR8g71yrTqyLZrN/o=;
-        b=mi2QLe2H4dKINT1Xb0U7DAXQ0Tr/j5QYzgwz5GjWXJFNQuxSM3Rm0a8rlqOP3f1MG5
-         XDyqf/nmGuQr9iac0P4uiK1r5CCNf765Ml3JmOwR84JsdJlwRfItT1K7fScjmigobVZu
-         x/gv77qV1pwGi0ZfTDay1YMzoibxUP75ti5xf95uWqCTs+i5UEjwn85ApT6+4sUViNY3
-         +K3gubYE8GkBIdnUd/gk4TeT6zPkPubBT8Bpu/CD/1TZrJjS9O3mRykt3SN/9jcv57zs
-         nwmky1KE9v6mXX7G2u/rdrN5oUJgo0AMAPs8ivKLeLwEZLZwZFsMyncrxN53JaqQdqZf
-         f/9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWXw+tYrdHwjsBHcpOU9HKzCmK7B0NGQ52Ea/Kyu1v3Yy1WVvkcRp3vuwxtP359z110IHi7Za2lIKy9Akk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztetSPmqRRlIMTxzTfYo4g8heeb04G4QF9OzuMdq2cFAAdxbfJ
-	NIJzg7X0y/tgknDuS30R46fi769UH5T2KzY4rIZxg2X/99sb2SsiFJwjtvrkYBJa+grm/f0H8hv
-	M6w==
-X-Google-Smtp-Source: AGHT+IHTxgosQLtMnoC48u/AiElStEQhbPJvPftBxAqrfsbetyIQ0/6qIEuIYWZ3yoCI1o1KMj1DcA==
-X-Received: by 2002:a54:4e95:0:b0:3e0:7d53:251 with SMTP id 5614622812f47-3e6608c6c52mr4407213b6e.15.1730446675714;
-        Fri, 01 Nov 2024 00:37:55 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee452979e4sm1990326a12.9.2024.11.01.00.37.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 00:37:54 -0700 (PDT)
-Date: Fri, 1 Nov 2024 00:37:45 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Shivank Garg <shivankg@amd.com>
-cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: Re: [PATCH] mm: use vma_policy() to get vm_policy
-In-Reply-To: <20241101071350.402878-1-shivankg@amd.com>
-Message-ID: <8169912f-82dc-e210-862c-f6eb092db78d@google.com>
-References: <20241101071350.402878-1-shivankg@amd.com>
+	s=arc-20240116; t=1730446858; c=relaxed/simple;
+	bh=mU0VMdm104wjRtXVgEZ+lSglLurcb/kByS+gvz22oYQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ezoW/YP/yqSNzCqcx+5go1jlEupvBuwjir4B2ihvanUuTsXKqi8w+lRaYxEwnxsVEESFeGplsdv3D/iDlAZEOdssUKsSJvrnpo0jM/pg5e+kYdZauDXPrGn8uyYNFT0KDCl6VNjsAEWyyU4IDrKSReFRBVwf5ES0WXcukLvIhJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kndf8JpZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 481CDC4CECD;
+	Fri,  1 Nov 2024 07:40:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730446858;
+	bh=mU0VMdm104wjRtXVgEZ+lSglLurcb/kByS+gvz22oYQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kndf8JpZMuw9uSCjbF0JPSc2ffqCm95tneDc4TjMoWczMtX/0pFUesBTleAp+/eeT
+	 /wScMeTnMYh2gulgTSSLCYpD2W+Jkb9QqF/MFzja+spe3lPSeSw0QauSrdait5WBc1
+	 AQqahsuRRPyHSUbWgf0NNDtqV9y9BF1fZXJMDX5I0rd4Ta/C6KzfSc78rvLVoFmTPB
+	 DPvaK2JcBVRhbfhZx+hKLpM4cYQwhfs7y2O92BWEX6esIm4L8J7g562wCKgS+uciwe
+	 O0AIU9EYScS+D3Clzvd83gR6v36FzAW/B62or1dQhEz0ewJZkOx9BFJunm1Ry6HD5u
+	 UIzpzjfE3SPpg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1t6mHA-000000005q3-1KoG;
+	Fri, 01 Nov 2024 08:40:56 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: [PATCH v3] arm64: dts: x1e80100-crd: describe HID supplies
+Date: Fri,  1 Nov 2024 08:40:06 +0100
+Message-ID: <20241101074006.22390-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Fri, 1 Nov 2024, Shivank Garg wrote:
+Add the missing HID supplies to avoid relying on other consumers to keep
+them on.
 
-> Instead of accessing vma->vm_policy directly, use vma_policy() like
-> other places for consistency.
-> 
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
+This also avoids the following warnings on boot:
 
-NAK.  The vma_policy(vma) wrapper exists to avoid #ifdef CONFIG_NUMAs
-all over the place; there is no point to it inside CONFIG_NUMA source.
+	i2c_hid_of 0-0010: supply vdd not found, using dummy regulator
+	i2c_hid_of 0-0010: supply vddl not found, using dummy regulator
+	i2c_hid_of 1-0015: supply vdd not found, using dummy regulator
+	i2c_hid_of 1-0015: supply vddl not found, using dummy regulator
+	i2c_hid_of 1-003a: supply vdd not found, using dummy regulator
+	i2c_hid_of 1-003a: supply vddl not found, using dummy regulator
 
-Hugh
+Note that VREG_MISC_3P3 is also used for things like the fingerprint
+reader which are not yet fully described so mark the regulator as always
+on for now.
 
-> ---
->  ipc/shm.c      |  2 +-
->  mm/mempolicy.c | 16 ++++++++--------
->  2 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/ipc/shm.c b/ipc/shm.c
-> index 99564c870084..ebd45e48b0d4 100644
-> --- a/ipc/shm.c
-> +++ b/ipc/shm.c
-> @@ -577,7 +577,7 @@ static struct mempolicy *shm_get_policy(struct vm_area_struct *vma,
->  					unsigned long addr, pgoff_t *ilx)
->  {
->  	struct shm_file_data *sfd = shm_file_data(vma->vm_file);
-> -	struct mempolicy *mpol = vma->vm_policy;
-> +	struct mempolicy *mpol = vma_policy(vma);
->  
->  	if (sfd->vm_ops->get_policy)
->  		mpol = sfd->vm_ops->get_policy(vma, addr, ilx);
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index b646fab3e45e..7ccbeb9966f0 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -420,7 +420,7 @@ void mpol_rebind_mm(struct mm_struct *mm, nodemask_t *new)
->  	mmap_write_lock(mm);
->  	for_each_vma(vmi, vma) {
->  		vma_start_write(vma);
-> -		mpol_rebind_policy(vma->vm_policy, new);
-> +		mpol_rebind_policy(vma_policy(vma), new);
->  	}
->  	mmap_write_unlock(mm);
->  }
-> @@ -805,8 +805,8 @@ static int vma_replace_policy(struct vm_area_struct *vma,
->  			goto err_out;
->  	}
->  
-> -	old = vma->vm_policy;
-> -	vma->vm_policy = new; /* protected by mmap_lock */
-> +	old = vma_policy(vma);
-> +	vma_policy(vma) = new; /* protected by mmap_lock */
->  	mpol_put(old);
->  
->  	return 0;
-> @@ -830,7 +830,7 @@ static int mbind_range(struct vma_iterator *vmi, struct vm_area_struct *vma,
->  		vmstart = vma->vm_start;
->  	}
->  
-> -	if (mpol_equal(vma->vm_policy, new_pol)) {
-> +	if (mpol_equal(vma_policy(vma), new_pol)) {
->  		*prev = vma;
->  		return 0;
->  	}
-> @@ -1797,7 +1797,7 @@ struct mempolicy *__get_vma_policy(struct vm_area_struct *vma,
->  {
->  	*ilx = 0;
->  	return (vma->vm_ops && vma->vm_ops->get_policy) ?
-> -		vma->vm_ops->get_policy(vma, addr, ilx) : vma->vm_policy;
-> +		vma->vm_ops->get_policy(vma, addr, ilx) : vma_policy(vma);
->  }
->  
->  /*
-> @@ -1847,7 +1847,7 @@ bool vma_policy_mof(struct vm_area_struct *vma)
->  		return ret;
->  	}
->  
-> -	pol = vma->vm_policy;
-> +	pol = vma_policy(vma);
->  	if (!pol)
->  		pol = get_task_policy(current);
->  
-> @@ -2559,11 +2559,11 @@ unsigned long alloc_pages_bulk_array_mempolicy_noprof(gfp_t gfp,
->  
->  int vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *dst)
->  {
-> -	struct mempolicy *pol = mpol_dup(src->vm_policy);
-> +	struct mempolicy *pol = mpol_dup(vma_policy(src));
->  
->  	if (IS_ERR(pol))
->  		return PTR_ERR(pol);
-> -	dst->vm_policy = pol;
-> +	vma_policy(dst) = pol;
->  	return 0;
->  }
->  
-> -- 
-> 2.34.1
+Fixes: d7e03cce0400 ("arm64: dts: qcom: x1e80100-crd: Enable more support")
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+
+Changes in v3
+ - move 'pinctrl-names' after 'pinctrl-0'
+
+Changes in v2:
+ - amend the pin config in order not to rely on the boot firmware
+
+
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 40 +++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+index b50accb220e5..88f6b1fa7c74 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+@@ -8,6 +8,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/gpio-keys.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+ 
+ #include "x1e80100.dtsi"
+@@ -277,6 +278,23 @@ vreg_edp_3p3: regulator-edp-3p3 {
+ 		regulator-boot-on;
+ 	};
+ 
++	vreg_misc_3p3: regulator-misc-3p3 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "VREG_MISC_3P3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&pm8550ve_8_gpios 6 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-0 = <&misc_3p3_reg_en>;
++		pinctrl-names = "default";
++
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	vreg_nvme: regulator-nvme {
+ 		compatible = "regulator-fixed";
+ 
+@@ -691,6 +709,9 @@ touchpad@15 {
+ 		hid-descr-addr = <0x1>;
+ 		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
+ 
++		vdd-supply = <&vreg_misc_3p3>;
++		vddl-supply = <&vreg_l12b_1p2>;
++
+ 		pinctrl-0 = <&tpad_default>;
+ 		pinctrl-names = "default";
+ 
+@@ -704,6 +725,9 @@ keyboard@3a {
+ 		hid-descr-addr = <0x1>;
+ 		interrupts-extended = <&tlmm 67 IRQ_TYPE_LEVEL_LOW>;
+ 
++		vdd-supply = <&vreg_misc_3p3>;
++		vddl-supply = <&vreg_l12b_1p2>;
++
+ 		pinctrl-0 = <&kybd_default>;
+ 		pinctrl-names = "default";
+ 
+@@ -723,6 +747,9 @@ touchscreen@10 {
+ 		hid-descr-addr = <0x1>;
+ 		interrupts-extended = <&tlmm 51 IRQ_TYPE_LEVEL_LOW>;
+ 
++		vdd-supply = <&vreg_misc_3p3>;
++		vddl-supply = <&vreg_l15b_1p8>;
++
+ 		pinctrl-0 = <&ts0_default>;
+ 		pinctrl-names = "default";
+ 	};
+@@ -856,6 +883,19 @@ &pcie6a_phy {
+ 	status = "okay";
+ };
+ 
++&pm8550ve_8_gpios {
++	misc_3p3_reg_en: misc-3p3-reg-en-state {
++		pins = "gpio6";
++		function = "normal";
++		bias-disable;
++		drive-push-pull;
++		input-disable;
++		output-enable;
++		power-source = <1>; /* 1.8 V */
++		qcom,drive-strength = <PMIC_GPIO_STRENGTH_LOW>;
++	};
++};
++
+ &pmc8380_3_gpios {
+ 	edp_bl_en: edp-bl-en-state {
+ 		pins = "gpio4";
+-- 
+2.45.2
+
 
