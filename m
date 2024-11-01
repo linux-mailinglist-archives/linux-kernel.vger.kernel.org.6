@@ -1,129 +1,121 @@
-Return-Path: <linux-kernel+bounces-392218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6099B9123
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:30:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82759B9129
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:33:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062A71C210AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CA021F22E50
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DCB19DF4B;
-	Fri,  1 Nov 2024 12:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A27019E992;
+	Fri,  1 Nov 2024 12:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHQ0KNd9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="lzfjqAC7"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8733EC13C;
-	Fri,  1 Nov 2024 12:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693D119CC04;
+	Fri,  1 Nov 2024 12:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730464232; cv=none; b=GtTPeYG1qWyCEBpw8za6cNToI3XrkGbJgm/igw0OzKmMcO/H63t/UQva7pvfGmstAWlSi1OUCLXZ3FroukGczE6sQ99LyUuEmPdhFKcReAV6rs0+DccReN3hEDivEmnnfNPpCkHDvPtdqsZ8pK8oEvuDIcskWjHyZ8DGVN0L8mo=
+	t=1730464420; cv=none; b=RAWLl8/15ye28TSXOJuvSt+jzs+Sudfi/dfE1qsk1Ran8KsrVGLoVdpmQgf4WiFEmpXOcKImR/4dQKha76F9OPLuhjUq5N4bkMc5Kx22bo0qMd3t4hHoRxaSpzGXHBpEaLdfOCeL9wVBTt5oNuwE8sLG8dTWdCjP2aa+/glWhV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730464232; c=relaxed/simple;
-	bh=7TcBxOnka1nVz+YB3rkflphZbI2fzT7QcPJP71YAV2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Km8ONNJrpKmBKdPe7jmuYfV2nnn9NsOOEGRju6aP5Q9EVsExq2MX9jbu2CCsJfxsuhM7m+OW0PVsTg5oFsmdCc8fm6vF13j965xEaTg0lgH5bOl4AvjlKeYbdjosTSyiTtoACxLV+icQUfn/nLh9i0hZC0UY+j81/ZQZWyNcY9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHQ0KNd9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 288AEC4CECD;
-	Fri,  1 Nov 2024 12:30:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730464232;
-	bh=7TcBxOnka1nVz+YB3rkflphZbI2fzT7QcPJP71YAV2o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OHQ0KNd9iULqrLiO/PvS7RwbhdGoK30GLmYzCTnH200RvPYgDNvEBdQOo75bAkTib
-	 r2tAIks3iV2FwflGonEKA0XOzsdLXdtCxu+eRtI63/i9Ro4l8fY1PQ0UgFiaNCuWUN
-	 hvSLEMvII8fQBMoO/OGqePdZsTQqfK076wzfhHgehQdJrruutapBhfKPpHKRt/lGa8
-	 208Zd67neipOlFi6QBpz3pmufbr7cDmZhmEJwiFibU8dhBSCdQ3E/MbnQttMZE+dVt
-	 Ob5CRfxRGuMhj26vqrNY9EUAUZcdfXuxkVGgtzGXQjO5WFHLPdTjeRtXuXHcNZZ+Wr
-	 YR5IBlM2C9rnw==
-Date: Fri, 1 Nov 2024 12:30:23 +0000
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"mgorman@suse.de" <mgorman@suse.de>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"vschneid@redhat.com" <vschneid@redhat.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"bsegall@google.com" <bsegall@google.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-	"yury.khrustalev@arm.com" <yury.khrustalev@arm.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"jannh@google.com" <jannh@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"wilco.dijkstra@arm.com" <wilco.dijkstra@arm.com>,
-	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-	"kees@kernel.org" <kees@kernel.org>
-Subject: Re: [PATCH RFT v12 0/8] fork: Support shadow stacks in clone3()
-Message-ID: <eca3edc3-1a2d-475c-a866-ea25d6bd9756@sirena.org.uk>
-References: <20241031-clone3-shadow-stack-v12-0-7183eb8bee17@kernel.org>
- <fe6cc8010b2b35aaa2629c4c5e972dc1c90c43c3.camel@intel.com>
+	s=arc-20240116; t=1730464420; c=relaxed/simple;
+	bh=tC+M1hH7fork9yJ4VGi51sWAlT5oGLZxXxBuaAYIzeA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RbgdSepYZgGu4ld7E3YYwpPwy2meBK/TnITWwv0GXfXGmvhDX99CDAw2dObzVkhw8m2mnFqJQgq9YLIKYwP5m8ziFt4tyP5b9p9fgFSk0oyEQby/5m/CJzPxG0siOnobHwGGn04KuvkykqCjiCEHXFqWv3x2jJ7bquAwXHa5s1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st; spf=pass smtp.mailfrom=marcan.st; dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b=lzfjqAC7; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcan.st
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: marcan@marcan.st)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 46C1A4346B;
+	Fri,  1 Nov 2024 12:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+	t=1730464414; bh=tC+M1hH7fork9yJ4VGi51sWAlT5oGLZxXxBuaAYIzeA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=lzfjqAC7QS4yk5+91vpLtBSqpyvoMChGk5b35z7ZYw2NAAAgR6QBD5pL+D4TW/1+4
+	 JuCBlvOktUM0YUHhICuYn7AgutVf6XCm2Mh2hOXzg1XY3Z7YspQ2r13G0mXlWVFnZ3
+	 cNIueyOKLfTFxJotxw6emgqMMFcSDSVEe/3b26aMjH1f/kwfUcikAud7drvnh5dF5o
+	 E9uqR9Rg/9hhU4bbQNEd6wvd8xcDW3Z3GtRHmJsnAhfCh/CevZSvaIeylXemsx6zOl
+	 ccYNadlHn4cJE8d4jpgyELl4+1L4rhx7CkOSJe92Rp69IY8y39iU81LXSSVweQg1hc
+	 6i/fZgl31e1dQ==
+Message-ID: <5e0b5238-d781-458a-9285-df54a16232af@marcan.st>
+Date: Fri, 1 Nov 2024 21:33:32 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WzOkb7e6YaToc7v5"
-Content-Disposition: inline
-In-Reply-To: <fe6cc8010b2b35aaa2629c4c5e972dc1c90c43c3.camel@intel.com>
-X-Cookie: We read to say that we have read.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH asahi-soc/dt 01/10] dt-bindings: arm: apple: apple,pmgr:
+ Add A7-A11 compatibles
+To: Krzysztof Kozlowski <krzk@kernel.org>, Nick Chan <towinchenmi@gmail.com>
+Cc: Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig
+ <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241029010526.42052-1-towinchenmi@gmail.com>
+ <20241029010526.42052-2-towinchenmi@gmail.com>
+ <wpwa22u5z5hamvme7za7dqe7kjl5bap2a254w32yyqrohz235g@hk3izcckbdqn>
+From: Hector Martin <marcan@marcan.st>
+Content-Language: en-US
+In-Reply-To: <wpwa22u5z5hamvme7za7dqe7kjl5bap2a254w32yyqrohz235g@hk3izcckbdqn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 2024/10/29 16:41, Krzysztof Kozlowski wrote:
+> On Tue, Oct 29, 2024 at 09:03:59AM +0800, Nick Chan wrote:
+>> The blocks found on Apple A7-A11 SoCs are compatible with the existing
+>> driver so add their per-SoC compatibles.
+>>
+>> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+>> ---
+>>  Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml b/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml
+>> index 673277a7a224..5001f4d5a0dc 100644
+>> --- a/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml
+>> @@ -22,6 +22,11 @@ properties:
+>>    compatible:
+>>      items:
+>>        - enum:
+>> +          - apple,s5l8960x-pmgr
+>> +          - apple,t7000-pmgr
+>> +          - apple,s8000-pmgr
+>> +          - apple,t8010-pmgr
+>> +          - apple,t8015-pmgr
+> 
+> Assuming you keep the existing order of entries in this file, which is
+> different than usually expected: alphanumeric.
+> 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
---WzOkb7e6YaToc7v5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yeah, it's a bit ad-hoc but essentially "by release date" with a fork at
+t6000. So:
 
-On Thu, Oct 31, 2024 at 09:06:09PM +0000, Edgecombe, Rick P wrote:
-> On Thu, 2024-10-31 at 19:25 +0000, Mark Brown wrote:
+- First the ancient s5l series
+- Then all the t/sXXXX chips up to t8103 (M1) (numeric order, ignoring
+prefix letter)
+- Then the rest of the "baseline" Ax,Mx chips that continue after M1,
+which are all numbered t8xxx (numeric order)
+- Finally the t6xxx series (Mx Pro/Mx Max), which forks the timeline and
+numbering after t8103/M1 (M1 Pro = t6000).
 
-> > base-commit: d17cd7b7cc92d37ee8b2df8f975fc859a261f4dc
+Unless there's significant objection I'd like to keep this pattern, it
+makes sense from the POV of people working on these chips.
 
-> Where can I find this base commit?
+- Hector
 
-Ah, that's still my branch from when I posted what's now applied in the
-arm64 tree, this is the same code:
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/gcs
-
-Sorry, I didn't rebase after the GCS code landed.  Applied branch here:
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git clone3-shadow-stack
-
---WzOkb7e6YaToc7v5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmckyd4ACgkQJNaLcl1U
-h9A/zwf9EQ28AczCH5D/BrYuZ+sphQDinPIhh020kD+hncKxKb5/pHR7YqjDCDow
-UiD2dUHuEOH5kbS8eLAYdYA2PdUmBGq3HJv1s96OqN56WrNWWQYeGPnGZjSrfW6T
-jlKlDOCm15m67oaRAKOMXaXPxKkFQumKUjk4N5GRorlMnPhUo7RACgyg/xFcKneX
-keakD5gzrSCMbabGnmtg5tumG1qOkrwG/nZL1of4f0Q8nHPLFDxfrjMSV8THAlwY
-kTZlIm6xV3MCo1ZmCJu8k+tohHH6Yft1eCjCw3Pxz8eiWiiFSlcl1Ie8n7/w3o/H
-CDR56lJwb2Lbmrftd8mIz8eVW4btfA==
-=SCG2
------END PGP SIGNATURE-----
-
---WzOkb7e6YaToc7v5--
 
