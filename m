@@ -1,208 +1,116 @@
-Return-Path: <linux-kernel+bounces-392116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64ADC9B8FE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:00:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4C59B8FE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:02:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A53A2825E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FB271F228C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3596718453E;
-	Fri,  1 Nov 2024 10:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6E4185E53;
+	Fri,  1 Nov 2024 11:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VUNeavb4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8STDRVf"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89789155324;
-	Fri,  1 Nov 2024 10:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDAE2A1B2;
+	Fri,  1 Nov 2024 11:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730458797; cv=none; b=Og58lJ24CBp5QK2oZm3lZxxu48zS2LuUj0kZ7EH5fxTiL2Wsalo1dSky2laNlnrkQcJGAjWr4Gk8Uf/rHS2fQLAx0sbiGiE7eD+6oOn5Xy5GRaYIoAb3Q/1GT6PonwKLHAVWgYfOen4TLWqVDFpjVr1+xKUDKr9LVME8KpoCVdo=
+	t=1730458945; cv=none; b=dCVLCvkMOSXyW8ID07u0EMoGkbfSvfUeSqEyGSa7qnYtLcRUdaCBiNXFsGe9qi6Qdf2BRJW4tyak7XldAQ8c9sLEqjC+aDmtJbW7lHSSYSMDbv+UciCkmVYvFFX/Qa15SQ0KOoxOBaPKVfRh+IxLrh5T6+CZB/u5RR73diCbYkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730458797; c=relaxed/simple;
-	bh=ue70Ww36EcBDEZaGYurD6rsjfoEbrn4L9zEF9CmzN+A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=D/BsunXOChYEnzM+4kMq6bh6LkXMq0ZC2bW5LTY+2VG9TzvWFNg9feINEPpfnRy2pZjL8KeX7CnKTJTZ3zfujdBuYHTVhDQQmweDMx2HKs4PJ/ol0jToyImmx6Fp5L3L/kpYt1whFD3m5FsbNc8HLzX+KkjMXnxJ9Tp4Fk4Tugs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VUNeavb4; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730458795; x=1761994795;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=ue70Ww36EcBDEZaGYurD6rsjfoEbrn4L9zEF9CmzN+A=;
-  b=VUNeavb4S59HV0KiWDIiQlOXKlxVqTifUWNjtfhc1EF8qVN2LOMWsa/x
-   NfQgTAYeoRsOex2GHISzDm2XrokS++gpkJu6NSnGRxuCkecv+/6ZBatxR
-   KnxrviVS9Zvs2BIggzJJQLHnh2zdzULs6U7lW5v7HY44jY6/nvpzbC+26
-   1lC9z7t6+6LOtJKebff7UiAxZVW7RW4c5ZIO6Uh68/qPCzhaTS3R4eZJY
-   EKLcAqUWK8M9JRbtx28ljPZpM2P+j3LQc7WkP45oL5l4aCUVx51GxVD1n
-   X5w5Qgdiw88eIQvEg6pa3NscnyPfeUDl8k+EcGZS5iKyjsERjvDbkiPDq
-   A==;
-X-CSE-ConnectionGUID: Jxw9JT2BQVuDdWmA2rImWQ==
-X-CSE-MsgGUID: NeoSFPoeQvS0XKMxLOfsfQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="29651789"
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="29651789"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 03:59:53 -0700
-X-CSE-ConnectionGUID: 6ur4aUqYSmO1fR4NBhLZlw==
-X-CSE-MsgGUID: tT97F7GiSFm1AAgVezXLiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="83365995"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.234])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 03:59:41 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, Phong LE <ple@baylibre.com>, Inki Dae
- <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
- Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Russell King
- <linux@armlinux.org.uk>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?=
- <heiko@sntech.de>, Andy
- Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH RFC v2 6/7] drm/display/hdmi: implement connector update
- functions
-In-Reply-To: <20241101-drm-bridge-hdmi-connector-v2-6-739ef9addf9e@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241101-drm-bridge-hdmi-connector-v2-0-739ef9addf9e@linaro.org>
- <20241101-drm-bridge-hdmi-connector-v2-6-739ef9addf9e@linaro.org>
-Date: Fri, 01 Nov 2024 12:59:38 +0200
-Message-ID: <871pzvjk2t.fsf@intel.com>
+	s=arc-20240116; t=1730458945; c=relaxed/simple;
+	bh=TofF4oGit+kVNFhJTdorwKxx+vOtPtL+bvcmp2ULECU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O/BN7ajHxVaIwyUlC6Suj/sqIfJsWH5da6lZN3UHQvWrf9ywXTWR6pi9I+KtdQrkcOOINEKypw40GbOPZwuDeVOqU6Mt7B3fiHrUX8ERV8BRT8InNogu6B7lP1yNHs3p8AWPidw0V2h6tsZUz4KIGC6JAsZAU6XyHgzOlhFgfPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8STDRVf; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so2184543e87.1;
+        Fri, 01 Nov 2024 04:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730458941; x=1731063741; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Kihzc34kXx/NFKsEmVBQvaMpJykR7yHUggsrDFyErHg=;
+        b=F8STDRVfZQdmi3rpC8jF744MvOIyOg2xyRwdNCmyv7cE5cbSoGfSIOTqiiW+ZldEru
+         oHPZ2PB9jzrM63/0wffmzPlmEvTxtYNe7yRJCmcmrbwWUaLvsZul+iEqROydUuKL7REp
+         wEOhgURyfhkLlannpMGRAG6pOZ9Q+ASQoUDdhYfWQLPIeRRtFnIhRkL0QomjNwYRS9q9
+         L8j2bkUH3FDtb/HP2MI03hFxmb0EJmDDnhuoypkDhpWnM0SmH2AfNUEj425S35RboKKA
+         +5evY5kd4V4FFIapWiCeoXK6aSB1Pe8kUEOh2JCnHwchSaZ/PRi90WqTwpL4bF8ZUnLA
+         m95Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730458941; x=1731063741;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kihzc34kXx/NFKsEmVBQvaMpJykR7yHUggsrDFyErHg=;
+        b=Udx2bQrk50QRTDsSxqbpA4gxELnm3v1LgQQkISMn7/X8BDNhIi8pxRAFlggA97nP5c
+         FnZpPg2PEmORyMOr6CSAZfshI30jTwkouyCgTr8FsGQFFOhyr17CXkqaRWBafFaooyb/
+         /UWDSDo+JJ1AUo8CUkO8XbCGbIRlMQxy5cjVYEMAhRyaotMTvbmg4drgt/DYf/hcnfyH
+         cpzthQeOdbjuvmRyMg7UM2acFV8FQoEbJlmczskVUA46mR5xJfUoTxqR0eG1IDW5nOnF
+         9xvLG91fdmyv9UgMa28Kyg+oORIQnOtgPtBbTnjQHhXSpW5b4THAzmbF54qYd2xKgXoK
+         rK1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUUXTWHRLA0MF/vBlTjj/91uEc3Bp+pSSlZYDh3E1r7P7hcDz6TWeOvMaACycfs9ApwJy4jf9dQdcd0Y+4=@vger.kernel.org, AJvYcCVuZtU0gzQ37yZ6s4GyDWV5SN5QMvH1nAk3mAI9hjMcGBqw5eAtT1VvVI4NBi+lo9KcE1eBbddGlmIzoFto@vger.kernel.org, AJvYcCW38eAvvGbGNS0HdTDlnzQkW6E8WJAc8zBL5zPqD2VUk3EOSZ6q5JJmIE1dPRKfCb1r5deLKSjhDpHx17Ml@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCDqnYyHLv3AyLeEP9yuk6GDJIqxYwyr/8EBTJEGXaYKP+TWiE
+	8nCwfZkc2K1UrokrBw3qJyI7iGl3P1ilUwBoknzfV0quRi2A1NaH
+X-Google-Smtp-Source: AGHT+IG7gqlfm/DA2MelrdUrZW2vdNjxw9dwV2mm8qKhoGeD/IF/bobhYVNyPgEOeew+aDvXlM1agg==
+X-Received: by 2002:a05:6512:3b2b:b0:52e:f99e:5dd1 with SMTP id 2adb3069b0e04-53b3491cd1emr11826340e87.47.1730458940826;
+        Fri, 01 Nov 2024 04:02:20 -0700 (PDT)
+Received: from [192.168.1.19] (79-100-30-28.ip.btc-net.bg. [79.100.30.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d4141sm4730507f8f.28.2024.11.01.04.02.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 04:02:20 -0700 (PDT)
+Message-ID: <71f68515-235f-4e6d-a401-f2745763f9cc@gmail.com>
+Date: Fri, 1 Nov 2024 13:02:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] media: venus: Fix pm_runtime_set_suspended() with
+ runtime pm enabled
+To: Jinjie Ruan <ruanjinjie@huawei.com>, sakari.ailus@linux.intel.com,
+ mchehab@kernel.org, ming.qian@nxp.com, eagle.zhou@nxp.com,
+ quic_vgarodia@quicinc.com, bryan.odonoghue@linaro.org, shijie.qin@nxp.com,
+ hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: chenridong@huawei.com
+References: <20241101094050.2421038-1-ruanjinjie@huawei.com>
+ <20241101094050.2421038-4-ruanjinjie@huawei.com>
+Content-Language: en-US, bg-BG
+From: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+In-Reply-To: <20241101094050.2421038-4-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 01 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> The HDMI Connectors need to perform a variety of tasks when the HDMI
-> connector state changes. Such tasks include setting or invalidating CEC
-> address, notifying HDMI codec driver, updating scrambler data, etc.
->
-> Implementing such tasks in a driver-specific callbacks is error prone.
-> Start implementing the generic helper function (currently handling only
-> the HDMI Codec framework) to be used by driver utilizing HDMI Connector
-> framework.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+On 1.11.24 г. 11:40 ч., Jinjie Ruan wrote:
+> It is not valid to call pm_runtime_set_suspended() for devices
+> with runtime PM enabled because it returns -EAGAIN if it is enabled
+> already and working. So, call pm_runtime_disable() before to fix it.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: af2c3834c8ca ("[media] media: venus: adding core part and helper functions")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > ---
->  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 56 +++++++++++++++++++++++++
->  include/drm/display/drm_hdmi_state_helper.h     |  4 ++
->  2 files changed, 60 insertions(+)
->
-> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> index feb7a3a759811aed70c679be8704072093e2a79b..dc9d0cc162b2197dcbadda26686a9c5652e74107 100644
-> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> @@ -748,3 +748,59 @@ drm_atomic_helper_connector_hdmi_clear_audio_infoframe(struct drm_connector *con
->  	return ret;
->  }
->  EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_clear_audio_infoframe);
-> +
-> +/**
-> + * __drm_atomic_helper_connector_hdmi_update_edid - Update the HDMI Connector basing on passed EDID
-> + * @connector: A pointer to the HDMI connector
-> + * @drm_edid: EDID to process
-> + *
-> + * This function should be called as a part of the .detect() / .detect_ctx()
-> + * and .force() callbacks, updating the HDMI-specific connector's data. The
-> + * function consumes passed EDID, there is no need to free it afterwards. Most
-> + * of the drivers should be able to use
-> + * @drm_atomic_helper_connector_hdmi_update() instead.
-> + *
-> + * Returns:
-> + * Zero on success, error code on failure.
-> + */
-> +int
-> +__drm_atomic_helper_connector_hdmi_update_edid(struct drm_connector *connector,
-> +					       const struct drm_edid *drm_edid)
-> +{
-> +	drm_edid_connector_update(connector, drm_edid);
-> +	drm_edid_free(drm_edid);
+> v2:
+> - Add Cc stable.
+> ---
+>   drivers/media/platform/qcom/venus/core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-Not fond of splitting resource management responsibilities
-asymmetrically like this.
-
-> +
-> +	if (!drm_edid) {
-> +		drm_connector_hdmi_codec_plugged_notify(connector, false);
-
-Is it a good idea to tie connection status to EDID presence at the
-helper level? Nearly the same, but still orthogonal.
-
-> +
-> +		// TODO: also handle CEC and scramber, HDMI sink disconnected.
-> +
-> +		return 0;
-> +	}
-> +
-> +	drm_connector_hdmi_codec_plugged_notify(connector, true);
-> +
-> +	// TODO: also handle CEC and scramber, HDMI sink is now connected.
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(__drm_atomic_helper_connector_hdmi_update_edid);
-
-Feels wrong to export and document double underscored functions to
-actually be used.
-
-> +
-> +/**
-> + * drm_atomic_helper_connector_hdmi_update - Update the HDMI Connector after reading the EDID
-> + * @connector: A pointer to the HDMI connector
-> + *
-> + * This function should be called as a part of the .detect() / .detect_ctx()
-> + * and .force() callbacks, updating the HDMI-specific connector's data.
-> + *
-> + * Returns:
-> + * Zero on success, error code on failure.
-> + */
-> +int
-> +drm_atomic_helper_connector_hdmi_update(struct drm_connector *connector)
-> +{
-> +	const struct drm_edid *drm_edid = drm_edid_read(connector);
-> +
-> +	return __drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
-> +}
-> +EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_update);
-> diff --git a/include/drm/display/drm_hdmi_state_helper.h b/include/drm/display/drm_hdmi_state_helper.h
-> index 2d45fcfa461985065a5e5ad67eddc0b1c556d526..ea0980aa25cbbfdd36f44201888c139b0ee943da 100644
-> --- a/include/drm/display/drm_hdmi_state_helper.h
-> +++ b/include/drm/display/drm_hdmi_state_helper.h
-> @@ -20,4 +20,8 @@ int drm_atomic_helper_connector_hdmi_clear_audio_infoframe(struct drm_connector
->  int drm_atomic_helper_connector_hdmi_update_infoframes(struct drm_connector *connector,
->  						       struct drm_atomic_state *state);
->  
-> +int __drm_atomic_helper_connector_hdmi_update_edid(struct drm_connector *connector,
-> +						   const struct drm_edid *drm_edid);
-> +int drm_atomic_helper_connector_hdmi_update(struct drm_connector *connector);
-> +
->  #endif // DRM_HDMI_STATE_HELPER_H_
+Acked-by: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
 
 -- 
-Jani Nikula, Intel
+regards,
+Stan
 
