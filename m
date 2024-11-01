@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-392470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB689B9491
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:39:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245C89B949A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BEF81C21002
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:39:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7D6BB21702
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551FE1C729B;
-	Fri,  1 Nov 2024 15:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1AD1C6F71;
+	Fri,  1 Nov 2024 15:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggxrEIV5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GaFb1+V/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A0C25634;
-	Fri,  1 Nov 2024 15:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB2D25634;
+	Fri,  1 Nov 2024 15:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475579; cv=none; b=b9g1cTqYd65iWLE5J0iGysNK5+FUruD1XczdWV7r5HKqQFQ0p8dyj8zgG+kjfQLDnlBlB+ZBVB4HwGMqcA9diD4K+DsoUg8QnCyhvgcZMfZ/f2Mm4zlBGkn3QPpmZlrT4Jgub3nZotOBoP2IXp7jkGSOw7SugoK+vRUMIcyslyk=
+	t=1730475663; cv=none; b=kO4W2oMvwe2FflRHPrCtbrOrixNSWQV+fFMoaYPT8k3RTi5wVUj7jJwKJXLIgBOieb5fAjRNHlgvx+5NpDgU3MHgZiS+PjxYxyVjPvqs97PCJ9BVJhLFle9ZL7Bq3B68I8DTGkbOT+rrYbK3FltHJNSVBUov52D4KyYePW0ceJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475579; c=relaxed/simple;
-	bh=vCmihEQoV1sQ3RVSmj0nT8aQeaFnoE7/Rdn3ZKtwFJ0=;
+	s=arc-20240116; t=1730475663; c=relaxed/simple;
+	bh=zla9w9yuxenlwXZM9FMEzg1b87SODZSVTWyPtyv2tJQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=namt8XN6HQlULv9NuwJ6qWrCJ4ycVrPKkGDTk50rpRKN3HKBu9F2x3p41AGKBJG1Xr6WWuVHtiboyBLLmssJ+NyyHI6GNwLYYotsUt35xT1qDlwy5XMo1E13wppzilRKhcXHVZhsxRZMAo4a66omHnab7eb6dCW3I9JWBGbhNJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggxrEIV5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0537C4CED1;
-	Fri,  1 Nov 2024 15:39:36 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=LmOGWYS3i2mW28M11cnaGZu0Eub7wPvLGXVtAzqp5DE9JJu3hseGPVJB6z0ubCRYYa2mD3BCnTzhTIeJxtpgbuBwauKhJ/Cu6lKNVfK+DexcDiiF+9o8lXWriMF0eO4NMzliSlAMqMDBv3EaXDALaVUPmVJvWf0sDWKbj/ikY18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GaFb1+V/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B599C4CECD;
+	Fri,  1 Nov 2024 15:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730475579;
-	bh=vCmihEQoV1sQ3RVSmj0nT8aQeaFnoE7/Rdn3ZKtwFJ0=;
+	s=k20201202; t=1730475662;
+	bh=zla9w9yuxenlwXZM9FMEzg1b87SODZSVTWyPtyv2tJQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ggxrEIV5y/A0Wp1Sg/E0OYQVDITTMbsixBigKgz+YM2buSPfY3VIiZ2hlmnih4XNX
-	 RVR7sqwZ2VUvun5+61bMLxFjIKdy0xm4e4lyfoOfWbwW8BAR5rUWZmJjwhLZqecRQz
-	 T+ipRhmkM2g2C1OKwNkcxfO/XEmNb9A0ld99O/kv46TFtlmXqbPSke1+zBrcoRd/gB
-	 BolyaoBK+HkIXw68rcRN/SLqKpaO3qCGRl5FmTdjPEjT4e6stVW6gaIyNlr1HaBXcC
-	 4w4gGDR82vWw8acx5fyYSurXt2dnFZ5HIzd7QHkAY/WaB8Z1f9NyeHzc+TDDwb/pnB
-	 engoxprAT3DXw==
-Message-ID: <4ce01e3b-9bcd-4d8c-bfe1-c2b17a4c2566@kernel.org>
-Date: Fri, 1 Nov 2024 16:39:33 +0100
+	b=GaFb1+V/oKwjeRtAHrj7Jz11JXecNJLRIxuWfVub7Y/7Lx1tCRuv9YZsZfDwODgr6
+	 BSprj8QPULTkHLHEgonlW4Gy1seNjtx4EfG1G6itCT6BY8QK4w5FoACp8oRJuIgZhm
+	 wdgNcbDGP+7BU/3OnqSJW24QbXtj+zB7QxspAINC7HjI9cxQ4qCBRxs2356JfRf6V6
+	 59qi3Cnc9KVjX9bQP3PMBwvFd4y/xdtl8ZIedU9eq4E3Yj2UAXRsZ1hOi61xF3cPcm
+	 h3NowUVMf7oO0Q96O+6I+d+9ZKn1w8up6DME6Wx3vyDjG/K7VZ4EDPc4LtvLQ0BRDR
+	 IH620WjfPLkUA==
+Message-ID: <9e876379-c555-45e6-8a8a-752d90fdc8ed@kernel.org>
+Date: Fri, 1 Nov 2024 16:40:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH asahi-soc/dt 01/10] dt-bindings: arm: apple: apple,pmgr:
- Add A7-A11 compatibles
-To: Hector Martin <marcan@marcan.st>, Nick Chan <towinchenmi@gmail.com>
-Cc: Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig
- <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v4 14/16] net: stmmac: dwmac-s32: add basic NXP S32G/S32R
+ glue driver
+To: Jan Petrous <jan.petrous@oss.nxp.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Emil Renner Berthing <kernel@esmil.dk>,
+ Minda Chen <minda.chen@starfivetech.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+ Keyur Chudgar <keyur@os.amperecomputing.com>,
+ Quan Nguyen <quan@os.amperecomputing.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241029010526.42052-1-towinchenmi@gmail.com>
- <20241029010526.42052-2-towinchenmi@gmail.com>
- <wpwa22u5z5hamvme7za7dqe7kjl5bap2a254w32yyqrohz235g@hk3izcckbdqn>
- <5e0b5238-d781-458a-9285-df54a16232af@marcan.st>
+ <conor+dt@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>
+References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
+ <20241028-upstream_s32cc_gmac-v4-14-03618f10e3e2@oss.nxp.com>
+ <xanb4j56u2rjwpkyj5gwh6y6t36gpvawph62jw72ksh7jximhr@cjwlp7wsxgp6>
+ <ZyOXgdqUgg2qlCah@lsv051416.swis.nl-cdc01.nxp.com>
+ <b9aefcf2-8f0d-431c-865b-34c9b8e69c4d@kernel.org>
+ <ZyO7fn3NWULA9bGG@lsv051416.swis.nl-cdc01.nxp.com>
+ <ZyO9Mfq+znZdJJrJ@lsv051416.swis.nl-cdc01.nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,23 +127,77 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <5e0b5238-d781-458a-9285-df54a16232af@marcan.st>
+In-Reply-To: <ZyO9Mfq+znZdJJrJ@lsv051416.swis.nl-cdc01.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/11/2024 13:33, Hector Martin wrote:
-> - First the ancient s5l series
-> - Then all the t/sXXXX chips up to t8103 (M1) (numeric order, ignoring
-> prefix letter)
-> - Then the rest of the "baseline" Ax,Mx chips that continue after M1,
-> which are all numbered t8xxx (numeric order)
-> - Finally the t6xxx series (Mx Pro/Mx Max), which forks the timeline and
-> numbering after t8103/M1 (M1 Pro = t6000).
+On 31/10/2024 18:24, Jan Petrous wrote:
+> On Thu, Oct 31, 2024 at 06:16:46PM +0100, Jan Petrous wrote:
+>> On Thu, Oct 31, 2024 at 04:44:45PM +0100, Krzysztof Kozlowski wrote:
+>>> On 31/10/2024 15:43, Jan Petrous wrote:
+>>>> On Tue, Oct 29, 2024 at 08:13:40AM +0100, Krzysztof Kozlowski wrote:
+>>>>> On Mon, Oct 28, 2024 at 09:24:56PM +0100, Jan Petrous (OSS) wrote:
+>>>>>> +	plat->init = s32_gmac_init;
+>>>>>> +	plat->exit = s32_gmac_exit;
+>>>>>> +	plat->fix_mac_speed = s32_fix_mac_speed;
+>>>>>> +
+>>>>>> +	plat->bsp_priv = gmac;
+>>>>>> +
+>>>>>> +	return stmmac_pltfr_probe(pdev, plat, &res);
+>>>>>> +}
+>>>>>> +
+>>>>>> +static const struct of_device_id s32_dwmac_match[] = {
+>>>>>> +	{ .compatible = "nxp,s32g2-dwmac" },
+>>>>>> +	{ .compatible = "nxp,s32g3-dwmac" },
+>>>>>> +	{ .compatible = "nxp,s32r-dwmac" },
+>>>>>
+>>>>> Why do you need three same entries?
+>>>>>
+>>>>
+>>>> We have three different SoCs and in v3 review you told me
+>>>> to return all back:
+>>>> https://patchwork.kernel.org/comment/26067257/
+>>>
+>>> It was about binding, not driver.
+>>>
+>>> I also asked there: use proper fallback and compatibility. Both comments
+>>> of course affect your driver, but why choosing only first part?
+>>>
+>>
+>> Does it mean I should remove first two (G2/G3) members from match array
+>> and use "nxp,s32r-dwmac" as fallback for G2/G3? And similarly change
+>> the bindings to:
+>>
+>>   compatible:
+>>     oneOf:
+>>       - const: nxp,s32r-dwmac
+>>       - items:
+>> 	  - enum:
+>> 	      - nxp,s32g2-dwmac
+>> 	      - nxp,s32g3-dwmac
+>>           - const: nxp,s32r-dwmac
+>>
+>> And add here, into the driver, those members back when some device
+>> specific feature will be needed? Am I understand your hints right?
+>>
 > 
-> Unless there's significant objection I'd like to keep this pattern, it
-> makes sense from the POV of people working on these chips.
+> Sorry, it's not correct. This way I'm not able to detect S32R which is
+> the only one with higher speed.
+> 
+> Then I could use the G2 as fallback I think, Ie.:
+> 
+>   compatible:
+>     oneOf:
+>       - const: nxp,s32g2-dwmac
+>       - items:
+> 	  - enum:
+>               - nxp,s32g3-dwmac
+>               - nxp,s32r-dwmac
+>            - const: nxp,s32g2-dwmac
 
-No, no, it's fine, I am just forgetting where do we have exceptions. :)
+I don't understand. In both cases you can 'detect r', if by this you
+meant match and bind. I don't care which one is the fallback, but if one
+does not work it points to different issues with your code.
 
 Best regards,
 Krzysztof
