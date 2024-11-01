@@ -1,121 +1,116 @@
-Return-Path: <linux-kernel+bounces-392184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3CA9B90C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:56:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C399B90C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B2111F229A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:56:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAF9EB221F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB49419CC2F;
-	Fri,  1 Nov 2024 11:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C19F19E7D1;
+	Fri,  1 Nov 2024 11:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DlXt89pp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MxzH+GCR"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E1A19E98D
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFA819C569
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730462142; cv=none; b=PkDPS0/p+k9wVTT0D6lmMReU4hs8JD3zrrG6fMD8WcBN2pBgUyrll9BmUH93ekIsKJxaTkvjJAd64LG5pvzMLUUzLjbPHnF8r/g64CFx9SUbJsOyyGcv4pshSFz3kcVEmaFnJd/o4vdbg81S5UGbG3kct+9etxzjF/s+dPBtqNA=
+	t=1730462183; cv=none; b=PYgJSoOaCi4jVECnBqKn/1la2Mb5HkiZimpHLW8bY6KHC4zTPQWF7M/dYa7q8pVRKZ49POaNY7qWHNxeIYyev8i2tq2vacTAx5WtMzVWa8IUFRO1Oxjyb/tT5nLSUwCjLmLiRHj1pjKdjmZs922HiWzTX9x/Pxy002AHBW7EjKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730462142; c=relaxed/simple;
-	bh=rLQ4GXrsRTWIucVhLiNMXbTmVHbjcN4k1ofxkLMQ4Hs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LxS29V102b1r4o1JgmWzQKnnyAs8oK8drLk/O4ZyvY6B92O8EUp2o/zoOtSCC6TQNI7HoHa9aWpgQetgzF980TwQHOV/L9ZyODREt3sVLaS1JtvTrAwPsnGHh6BdSKisiguuQXQ5DgEAFNdcZih8quzIXzUBfWRF8qN2xG73Lgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DlXt89pp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730462139;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rLQ4GXrsRTWIucVhLiNMXbTmVHbjcN4k1ofxkLMQ4Hs=;
-	b=DlXt89pp0tsbn7Ogej74tDuDw1c5nOYnMmwQsotaVnbhXgq2se/20cGeXX9fFEAu19AJsn
-	Ms+ChaqdB5Aw5E7g95v4py/C7TylEXrt94G+WaFbC7Xlda6oC4IADcdpdXzOErQeiIxRck
-	2ZXUkeR/uKb1BFs6yjAW7KKz/wYUPnE=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-vXCFvVF7N1ysstw0-juCig-1; Fri, 01 Nov 2024 07:55:36 -0400
-X-MC-Unique: vXCFvVF7N1ysstw0-juCig-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-431ad45828aso12466185e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:55:36 -0700 (PDT)
+	s=arc-20240116; t=1730462183; c=relaxed/simple;
+	bh=1Uojm1GMg7+SmttJF2ZuBBVhB5ST+uLPitvJ1/9BMXM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IAwitK/xSf+7z2B50unX4v6LogVQ9WFVFzeq8fMcGU56Efqa29w3dFod+n2GTkPz4wjnO9XA++g6lf/R7UzlBzEioIJKkwAf83z6eGBtZ13lNBIvjnuZhqRRs+o4PlsqS8gI1qLDPanJVYoU366EB5pEL34RX34TRoSoSMbjJ6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MxzH+GCR; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f6e1f756so1998797e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 04:56:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730462178; x=1731066978; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PR7nhijIFPqEwqWUXxfWpQdSj2cyoar1EyPI7jC4FfI=;
+        b=MxzH+GCRv9ClLXszj1vkA7X0oGAXClXXgEIfvB1I/fqumEFDtqAzfp3hURIQrIAVEZ
+         BsqbkaFi5p3FyjrPwEk4hGz5p94qimaZQXAlI7Ps+m69KiH8Gbw4dgRTSE2mb6EHnH4N
+         wi3vSnMtzyNMr7ipbOc+lxfww/zjYouA+g2Fy/JvBb0lY8OC6Nw9we4tjJHv8j9xHcqC
+         BAo0oh3U+8LGjpDZCm6O4mJaKarznjkDV/o4EOKJsTDsR/VR9PTHJcaU12FxvYyDAeEf
+         5JdKWuQtH5k8F1vC1JFfyoIGkWUw5zNWqP7LAivnTuIenqLG6C0GX4ozJ7SW3/FF5C+J
+         LQsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730462135; x=1731066935;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730462178; x=1731066978;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rLQ4GXrsRTWIucVhLiNMXbTmVHbjcN4k1ofxkLMQ4Hs=;
-        b=N2HLsOxLGfxuZ0cj3x5wP8BiinJvkxZRGKKKQcrz4BWFdnlj9gIMaVrzwWtI53NR1X
-         mc+qZESIMQD7LHFufPC+xnSTgqj+p9nYXHerMQw38wypu94jA2dY7EQJ48bGnxXS3zGj
-         Nvbm0yRQO1kDQrAqmiDZt585tIxWZe8XMRawpsku6VbsZyK8Et/NW9obFA40H6G+nTjt
-         KlIyM36q7CPm4k3LrD48nFW7Uz2e4TOP+76xpSIbRwquk9RG0iL1VqydbqkLxEilD4on
-         3nLBpSUR9QVOqAD3I1fBs/Gx+hPyy3bxayrhl+U74N9efsIQaI8v0WHzt7fEjRLOaCAG
-         blRg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0zfi9sF2IISzzYNaY0qU7unvOc9sp3XzCSUSbF/FL7B9FQbIR6NQJ31PYiaEx7MViP+3Xj8cT3styI6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8B6Z42kELyYQ6bendeA5YwlUHzBVoxkBP4AWoG0ndX7TJatl9
-	PjvpNzWMOfIIS8F/rKkLrLWKemK1MMnj4FZdjJa7oen6pMgj84KnkDPT1wclfURJbuHeu0ID4Bt
-	C1YmTWnf3gnSKAjKp94QqQrRYhco4rfr392D87+Ozn6Jv6qysafbtUXg27SABZA==
-X-Received: by 2002:a05:600c:44c7:b0:432:7c30:abe6 with SMTP id 5b1f17b1804b1-4327c30aceemr55975955e9.21.1730462134942;
-        Fri, 01 Nov 2024 04:55:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXdZQxj5mJ15uEy0W+r4kOyT+V+7YgqEIK5DabkPt4xJ6deLsXNknYU9o2vdqVUwG8HD9SXg==
-X-Received: by 2002:a05:600c:44c7:b0:432:7c30:abe6 with SMTP id 5b1f17b1804b1-4327c30aceemr55975735e9.21.1730462134490;
-        Fri, 01 Nov 2024 04:55:34 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947c03sm88091215e9.28.2024.11.01.04.55.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 04:55:33 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id C2940164B952; Fri, 01 Nov 2024 12:55:32 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Maciej
- Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev
- <sdf@fomichev.me>, Magnus Karlsson <magnus.karlsson@intel.com>,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 08/18] page_pool: make
- page_pool_put_page_bulk() actually handle array of pages
-In-Reply-To: <20241030165201.442301-9-aleksander.lobakin@intel.com>
-References: <20241030165201.442301-1-aleksander.lobakin@intel.com>
- <20241030165201.442301-9-aleksander.lobakin@intel.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 01 Nov 2024 12:55:32 +0100
-Message-ID: <87o72z9nij.fsf@toke.dk>
+        bh=PR7nhijIFPqEwqWUXxfWpQdSj2cyoar1EyPI7jC4FfI=;
+        b=IFnWe5RwDOrc1GFS+BY0mF2kLCssEfFTYiI7+OKoj1P/EWXgvETEQAJ8NQRuR+Zri9
+         OPcY3vq4U1jhiuGQ2RPeAY0bHB0D1fcM5g2l0asFkk96yJRnfJqol7662U3gtCvLoMPs
+         h/AclZumstiiMlwrCv7gUu3RR2xZtkUJYPZbKqd2fRfVnfNmyphPDQDAbWGAHJQBwBvE
+         6Owu9fB0XW8GiGawgvhQrabPHdTY3x14r9gwp4LUP+81mOE0EaTEHjtGcz0sytM6cOWy
+         v+89osjKe8UNnXQXVM6Xo3q7wm6ulnZVDDx8NWrIAdfU7ahGckTtyAzNU61Nx44gS98V
+         50yA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcH9FmC/+985kOLwz2fJ711yofAQmYWDEemMtTH13OxDMWQoRI0jDl1WPqcyIlDWmGvOmYsTE6kWozo/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo6SOm6XW+15BQYeH2X0kdcGUaDetceCTvYn9FvJg5Xvd4WjS9
+	FAwxKkFNFKikAyeptYJUGnfboemwW8C2YZawEhFOSf/azqf+neqU0oghYkOpJreGDz2GSLLKxw4
+	GsZcaugvat/wgwlYjSPdpkW/ses6AfM2m1jWd0w==
+X-Google-Smtp-Source: AGHT+IG201tjRpH4xAJy3js1MXvAZgMS+IPv3AAVo1TZLrpjjIYjlw9AiqUvvc+CIbPttUv3zlvfcUINXBzKPHjno0Q=
+X-Received: by 2002:a05:651c:211a:b0:2fc:9550:d658 with SMTP id
+ 38308e7fff4ca-2fcbe004950mr124110461fa.24.1730462178345; Fri, 01 Nov 2024
+ 04:56:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20241101080614.1070819-1-andrei.stefanescu@oss.nxp.com>
+In-Reply-To: <20241101080614.1070819-1-andrei.stefanescu@oss.nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 1 Nov 2024 12:56:07 +0100
+Message-ID: <CACRpkdbFQ6f6xg906ZREOgDifSWwfFWdxCqDxcLALZdYg6PWWQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/7] gpio: siul2-s32g2: add initial GPIO driver
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>, Larisa Grigore <larisa.grigore@nxp.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>, 
+	Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
+	Enric Balletbo <eballetb@redhat.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Alexander Lobakin <aleksander.lobakin@intel.com> writes:
+On Fri, Nov 1, 2024 at 9:06=E2=80=AFAM Andrei Stefanescu
+<andrei.stefanescu@oss.nxp.com> wrote:
 
-> Currently, page_pool_put_page_bulk() indeed takes an array of pointers
-> to the data, not pages, despite the name. As one side effect, when
-> you're freeing frags from &skb_shared_info, xdp_return_frame_bulk()
-> converts page pointers to virtual addresses and then
-> page_pool_put_page_bulk() converts them back.
-> Make page_pool_put_page_bulk() actually handle array of pages. Pass
-> frags directly and use virt_to_page() when freeing xdpf->data, so that
-> the PP core will then get the compound head and take care of the rest.
->
-> Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> Andrei Stefanescu (7):
+>   dt-bindings: mfd: add support for the NXP SIUL2 module
+>   mfd: nxp-siul2: add support for NXP SIUL2
+>   arm64: dts: s32g: make pinctrl part of mfd node
+>   pinctrl: s32: convert the driver into an mfd cell
+>   pinctrl: s32cc: change to "devm_pinctrl_register_and_init"
+>   pinctrl: s32cc: add driver for GPIO functionality
+>   MAINTAINERS: add MAINTAINER for NXP SIUL2 MFD driver
 
-Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+How do you want to merge this?
 
+Can the MFD and pinctrl parts be merged separately, or shall
+it all go into MFD or all into pinctrl?
+
+I can certainly merge it if Lee ACKs the MFD patch.
+
+Yours,
+Linus Walleij
 
