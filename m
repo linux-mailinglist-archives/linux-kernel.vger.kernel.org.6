@@ -1,121 +1,134 @@
-Return-Path: <linux-kernel+bounces-392138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8EC9B902B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:22:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BD39B9033
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:24:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4075D2826B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:22:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FE471F213F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D23199386;
-	Fri,  1 Nov 2024 11:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4633019AD97;
+	Fri,  1 Nov 2024 11:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+vndXs6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="CqPusi1I"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D60199238
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 11:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D51E14A62B;
+	Fri,  1 Nov 2024 11:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730460143; cv=none; b=a72M5eqMaorgSwCDc6YPdL4cGPEpZbt9lZpL7fJKggYnwxZoPNJc67qgCBNl3kM0oE7hANLkAA+J+umItYekmwrw9TmY86oq/ydczmJmrEKt1FmtQ0rrIsTF1gTUwfhLX3CvHEDGODewaT+YJEAwxrQIWpIXRecssJJsg6HTUMc=
+	t=1730460285; cv=none; b=pW00sETgEcbK8aSsLXmrUJF+r8bVwXseLFofEG4Ajgzz3umsoxk5901GKxuyFrgaRP56/u8lFAjCU8gj8ph3yfA6QQY4FLbB2XNS8pUoZ0ELfjvw5ynqIL5zdMkuHoSS0yN5YAlMwtHoVNyn3GsSI82qPITdwYixtC4eZojfE8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730460143; c=relaxed/simple;
-	bh=tdlKZn5k9PFGSFM3oyQ39p7jeTDTtFbsaHyBExgxcc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=X0/Pwo/3tNN/sTJZiR50pLNn5mTONFu4peuXGqD/jStP0ttJXCMlyei23SodSvz/LfBW0c6k3x5MDivrSmgyidlMV99qpVus24RalL+7P8zDqS/oWFGgxEP+vxlPvUTFMWiISlZ4EPCJJm8HOMhLa05DiCrQrwGOzbm1oKxbmzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+vndXs6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DAC8C4CECD;
-	Fri,  1 Nov 2024 11:22:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730460142;
-	bh=tdlKZn5k9PFGSFM3oyQ39p7jeTDTtFbsaHyBExgxcc4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=u+vndXs6+N2NMKcDk1uYSOhshrJfQimS3Dj/T0hKQyyRlX32URiSTCa9ee7Et2ZUe
-	 uFybPerwA5m7yvgpHLmLjS91DsdiJbFAEePvO/ipqptIKxSuT1evPNV7HOp3I02RN4
-	 i9f9aleIBVO9GTQO1cyrfigqGpOO+22KSPZqeiraSZTNRqvQrsAC4FTFhgtLCpTXl9
-	 fAmsR0aqjtjfKriH+F/+6aYC6EkHhEa0Upa058jV14S4uCdnZxi2ZG/1qfMQXGMOhT
-	 srMc8xBrDSM8byIFGEbUIbwV572KBphqHkAppfkgEIjNFHKB9/1N1sLhPcMKEatJq3
-	 WDvIxC/T/U2rg==
-Date: Fri, 1 Nov 2024 11:22:08 +0000
-From: Will Deacon <will@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: [GIT PULL] arm64 fixes for -rc6
-Message-ID: <20241101112207.GA8472@willie-the-truck>
+	s=arc-20240116; t=1730460285; c=relaxed/simple;
+	bh=53IWbInwjlO7Z5VBHcWpCMQqe7HNtwdsn8Flx18kno4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WmGoFScptbPNUBncKxGdCD0+CDSR3c22UE6+StE+LUJYxNcVJxp11MMTqn3AGfTenh/fKj2EUy0cttHoPLgYu1wv6pqVZOvVdfp3fRqMJ15vHNW+JT8fsyc2K9+5StcKlqpgx0UE4Y4/4J+DSduNL9AB7ynQlrDBBCKTAMi7MJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=CqPusi1I; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A16R460006546;
+	Fri, 1 Nov 2024 07:24:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=4ytrpuro3bSWG9Tt8uGzvDdhz3t
+	76ddrHBtHeXSYhV8=; b=CqPusi1I/vd9NYupPnGaEIjVHNKJFR5vjIyuNghzplz
+	4n6gcl+1ICB3rUlDoyZLDrHbpNe2Tj4NSlFxsPyfoJtebp0EPaCHdVIg44CbjKlz
+	JUKch4L6lAHt15XGzMM/MeJwONIpF5JMxV+IiVNIH9uWL6se15pZTxmtDwFPP8Dq
+	1VzjctAuuRTTezxEo9UWyQ4Lqy3+fjZwziUd/nkBdMscOQAVFxfG9sJUNS0xHL8p
+	NV965wyNclaOwqeYd7CjZOmYbbab/WiFyrCWIFPjYIrsYlXh9P1VA4kidnx3QSZJ
+	JdiIud+86mcg538MNptCd5K+ypefH2Dae3eKE0kyquA==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42k6yveu14-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 07:24:38 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4A1BObXX038436
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 1 Nov 2024 07:24:37 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 1 Nov 2024
+ 07:24:37 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 1 Nov 2024 07:24:37 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.114])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4A1BOP8i016631;
+	Fri, 1 Nov 2024 07:24:27 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <conor+dt@kernel.org>, <dlechner@baylibre.com>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH 0/7] *** Add support for AD485x DAS Family ***
+Date: Fri, 1 Nov 2024 13:23:52 +0200
+Message-ID: <20241101112358.22996-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: Vvu0rksF9wL1-mYRZm3GyIPdVvirzoH7
+X-Proofpoint-GUID: Vvu0rksF9wL1-mYRZm3GyIPdVvirzoH7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 suspectscore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411010082
 
-Hi Linus,
+Add support for AD485X fully buffered, 8-channel simultaneous sampling,
+16/20-bit, 1 MSPS data acquisition system (DAS) with differential, wide
+common-mode range inputs.
 
-Please pull these arm64 fixes for -rc6. The important one is a change to
-the way in which we handle protection keys around signal delivery so that
-we're more closely aligned with the x86 behaviour, however there is also
-a revert of the previous fix to disable software tag-based KASAN with
-GCC, since a workaround materialised shortly afterwards.
+Some particularities:
+1. softspan - the devices support multiple softspans which are represented in iio
+              through offset/scale. The current handling implies changing both
+              the scale and the offset separately via IIO, therefore in order to
+              properly set the softspan, each time the offset changes the softspan
+              is set to the default value. And only after changing also the scale
+              the desired softspan is set. This is the approach we are suggesting
+              since we need the softspan configurable from userspace and not from
+              devicetree.
 
-I'd love to say we're done with 6.12, but we're aware of some longstanding
-fpsimd register corruption issues that we're almost at the bottom of
-resolving. Hopefully we'll be done reviewing the fixes next week, so
-there'll be one more pull from me before the merge window opens.
+2. packet format - Data provided on the CMOS and LVDS conversion data output buses
+                   are packaged into eight channel packets. This is currently handled
+                   as extended info.
 
-Cheers,
+Antoniu Miclaus (7):
+  iio: backend: add API for interface get
+  iio: backend: add support for data size set
+  iio: adc: adi-axi-adc: add interface type
+  iio: adc: adi-axi-adc: set data format
+  dt-bindings: iio: adc: add ad458x
+  iio: adc: ad485x: add ad485x driver
+  Documentation: ABI: testing: ad485x: add ABI docs
 
-Will
+ .../ABI/testing/sysfs-bus-iio-adc-ad485x      |   14 +
+ .../bindings/iio/adc/adi,ad485x.yaml          |   82 ++
+ drivers/iio/adc/Kconfig                       |   12 +
+ drivers/iio/adc/Makefile                      |    1 +
+ drivers/iio/adc/ad485x.c                      | 1061 +++++++++++++++++
+ drivers/iio/adc/adi-axi-adc.c                 |   44 +
+ drivers/iio/industrialio-backend.c            |   45 +
+ include/linux/iio/backend.h                   |   13 +
+ 8 files changed, 1272 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad485x
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad485x.yaml
+ create mode 100644 drivers/iio/adc/ad485x.c
 
---->8
+-- 
+2.46.0
 
-The following changes since commit 7aed6a2c51ffc97a126e0ea0c270fab7af97ae18:
-
-  kasan: Disable Software Tag-Based KASAN with GCC (2024-10-15 11:38:10 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to 2e8a1acea8597ff42189ea94f0a63fa58640223d:
-
-  arm64: signal: Improve POR_EL0 handling to avoid uaccess failures (2024-10-29 17:59:12 +0000)
-
-----------------------------------------------------------------
-arm64 fixes for -rc6
-
-- Fix handling of POR_EL0 during signal delivery so that pushing the
-  signal context doesn't fail based on the pkey configuration of the
-  interrupted context and align our user-visible behaviour with that of
-  x86.
-
-- Fix a bogus pointer being passed to the CPU hotplug code from the
-  Arm SDEI driver.
-
-- Re-enable software tag-based KASAN with GCC by using an alternative
-  implementation of '__no_sanitize_address'.
-
-----------------------------------------------------------------
-Kevin Brodsky (1):
-      arm64: signal: Improve POR_EL0 handling to avoid uaccess failures
-
-Marco Elver (2):
-      kasan: Fix Software Tag-Based KASAN with GCC
-      Revert "kasan: Disable Software Tag-Based KASAN with GCC"
-
-Xiongfeng Wang (1):
-      firmware: arm_sdei: Fix the input parameter of cpuhp_remove_state()
-
- arch/arm64/kernel/signal.c   | 92 +++++++++++++++++++++++++++++++++++++-------
- drivers/firmware/arm_sdei.c  |  2 +-
- include/linux/compiler-gcc.h |  4 ++
- lib/Kconfig.kasan            |  7 +---
- 4 files changed, 85 insertions(+), 20 deletions(-)
 
