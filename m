@@ -1,435 +1,147 @@
-Return-Path: <linux-kernel+bounces-391583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C90F9B88F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:54:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0B79B88E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B1CC1F22679
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:54:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31AB9281D01
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC0913A24D;
-	Fri,  1 Nov 2024 01:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500C281ACA;
+	Fri,  1 Nov 2024 01:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CaYJP/k/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="idYJx8Sj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22BC81ACA;
-	Fri,  1 Nov 2024 01:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E66C1C687;
+	Fri,  1 Nov 2024 01:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730426047; cv=none; b=IuE8rHk14cpiM49SLBHAFTFRqxqjIa6b9eSMpGwbHe0GZDmpa5lQpKUYyqzW9GGBjmE8lEuUpXK6YBqcYjcQSShnXlDgYW0GoVayA8Y4rGQ8R+PmEPMX+HE9TY0hpl40weOoqdydo0X9zBK3cOJCWjA0TUiVEWn3gaP2NDd/+1U=
+	t=1730425870; cv=none; b=Xat2SoLn+XAyzAcWywp4866f60D8lKxJknxsEdkmEIO6ncVfeuDOhJoDOr+vj+zwrpM5CtAK3CkQQXvsq4ybPp8zzNLXt7czZf0/Yg2spJgHGji8BeardXxPuQs5ibJ3Ov+94xeIc3XXCBTlDUi17yfW+XfV6PjmA7IynInByZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730426047; c=relaxed/simple;
-	bh=3HRKGQNIiCPfH8z+twS7cEGWy+9O3/ZETqBtK388FqY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BIPOT5p2Z2YgU4QfHdb0Ud+NdGbmExWOpXhOQj6celTV1VzULFGrLV0S7iuhn2e/Lj+iJbghzlCS1SS3Sb2+UDAKRLKd0R/Sfdmc4hYKwOOpNb54hGsfpgyiWPdi9u+4OLejsxHVPL8CBayU59l8hXPifOQjnp/CciSzmxOwMPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CaYJP/k/; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730426041; x=1761962041;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3HRKGQNIiCPfH8z+twS7cEGWy+9O3/ZETqBtK388FqY=;
-  b=CaYJP/k/O9GtrrveYPp2+1Tgz5S6RVPLzwncYbvmUrLN3tUKSxLKWJYP
-   7y5kokmFn8Z6/PfDulizsjZOZijDJ2DAd5v5rWdWNGA2yljJCZmPypu7B
-   NDdIMzahu1J0E1NyenN+eu4OOS1ebIk3yjUM/XhPXzxVTM2QLd34kXded
-   z/v4v9xcaCIYbH8aW70P4QEyZJeu9iBqqG/9CtlUgMJ2lqghMv/966qzh
-   quaZLvRX3KoQVxnzhVh4YK0SkDfD6cOudJbwfr6/PZ9otoO7ussSj6DAC
-   515n5DUwlujLGPA0sUDXj38k+5iCjtXvcNJgKozESFwDT+zvJ7QsIksev
-   A==;
-X-CSE-ConnectionGUID: bjnDxhpNSrCQ3l6km2HVKA==
-X-CSE-MsgGUID: NNc6GJcbQHm/rmFcGt907w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="41559322"
-X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
-   d="scan'208";a="41559322"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 18:53:59 -0700
-X-CSE-ConnectionGUID: 3rFKcVZHRfKkqRp5id5Qlw==
-X-CSE-MsgGUID: FTKPoQIpTc+gi+1I4sWetA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
-   d="scan'208";a="106145077"
-Received: from qz-dev1.sh.intel.com (HELO localhost) ([10.239.147.28])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 18:53:40 -0700
-From: qiang4.zhang@linux.intel.com
-To: "Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Amit Shah <amit@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Gonglei <arei.gonglei@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Chen, Jian Jun" <jian.jun.chen@intel.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Anton Yakovlev <anton.yakovlev@opensynergy.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Qiang Zhang <qiang4.zhang@intel.com>,
-	virtualization@lists.linux.dev,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: [PATCH v2] virtio: only reset device and restore status if needed in device resume
-Date: Fri,  1 Nov 2024 09:50:58 +0800
-Message-ID: <20241101015101.98111-1-qiang4.zhang@linux.intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241031030847.3253873-1-qiang4.zhang@linux.intel.com>
-References: <20241031030847.3253873-1-qiang4.zhang@linux.intel.com>
+	s=arc-20240116; t=1730425870; c=relaxed/simple;
+	bh=mQn2vYnNjvmJzZqgDpy9vINksBNngUZWVd/553rFPcg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=RIbTKbJUtnhYt95m/A6CueI/50zBnolPubkdur9QR7BjhudH+EgAfKStEEYqcP0aow7CSX1kqIM29KGVoZo884cTp6r1nZ3M3Z7zXEz9iw6TQAX8m9HSd0FU+CX7NCOuhxoobIJ2t6hCRyCtTI2iNsvfMa+YUUnHYjWDLGXG8zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=idYJx8Sj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A89BEC4CED0;
+	Fri,  1 Nov 2024 01:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730425870;
+	bh=mQn2vYnNjvmJzZqgDpy9vINksBNngUZWVd/553rFPcg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=idYJx8Sj8SnC5eI7bQ/Bw/TBQSTo5m7rTvgxVXcxDZ1TgiXPj5v/dNNgZVarZMfvm
+	 MaSdhyxrS7If1diO4gMx8+l9rvpJZ4hMCn9KzZOKhho/b4cfKBTeDnkKFmZc7tft7/
+	 3SCAfveMIjBKDFZmp7Bmf9lcs+q+WY/0BwbtIDBSEp1yPPGqJDnCSyYvLQgrjFaY1K
+	 zGAE5WMpmR27EQRg/4cTcfYpfNjAmRjKZNwU1ZANOziBrcN97FqpKq4qm6tngsjuBj
+	 0hJMd+uy5TgputFdONTk5KUbG2NVDEcUXBciFG61tdYS+TZrudw7xfq7z4en1T3XFk
+	 F11UOhSDgRHug==
+Date: Fri, 1 Nov 2024 10:51:02 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
+ <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
+ <mark.rutland@arm.com>, linux-arch@vger.kernel.org, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v18 01/17] fgraph: Pass ftrace_regs to entryfunc
+Message-Id: <20241101105102.eb308ab85b2b13d03444d4bf@kernel.org>
+In-Reply-To: <20241031155324.108ed8ef@gandalf.local.home>
+References: <172991731968.443985.4558065903004844780.stgit@devnote2>
+	<172991733069.443985.15154246733356205391.stgit@devnote2>
+	<20241031155324.108ed8ef@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Qiang Zhang <qiang4.zhang@intel.com>
+On Thu, 31 Oct 2024 15:53:24 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Virtio core unconditionally reset and restore status for all virtio
-devices before calling restore method. This breaks some virtio drivers
-which don't need to do anything in suspend and resume because they
-just want to keep device state retained.
+> On Sat, 26 Oct 2024 13:35:30 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Pass ftrace_regs to the fgraph_ops::entryfunc(). If ftrace_regs is not
+> > available, it passes a NULL instead. User callback function can access
+> > some registers (including return address) via this ftrace_regs.
+> > 
+> > Note that the ftrace_regs can be NULL when the arch does NOT define:
+> > HAVE_DYNAMIC_FTRACE_WITH_ARGS or HAVE_DYNAMIC_FTRACE_WITH_REGS.
+> > More specifically, if HAVE_DYNAMIC_FTRACE_WITH_REGS is defined but
+> > not the HAVE_DYNAMIC_FTRACE_WITH_ARGS, and the ftrace ops used to
+> > register the function callback does not set FTRACE_OPS_FL_SAVE_REGS.
+> > In this case, ftrace_regs can be NULL in user callback.
+> 
+> If HAVE_DYNAMIC_FTRACE_WITH_REGS is defined but not
+> HAVE_DYNAMIC_FTRACE_WITH_ARGS is not, then the callback will have regs defined.
+> 
+> > @@ -977,7 +980,7 @@ unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
+> >  
+> >  static struct ftrace_ops graph_ops = {
+> >  	.func			= ftrace_graph_func,
+> > -	.flags			= FTRACE_OPS_GRAPH_STUB,
+> > +	.flags			= FTRACE_OPS_GRAPH_STUB | FTRACE_OPS_FL_SAVE_ARGS,
+> 
+> Enabling FTRACE_OPS_FL_SAVE_ARGS will pass full regs in that case. Are you
+> just saying in the change log that this is what you did? As it currently
+> reads, it sounds like a fgraph user needs to add FTRACE_OPS_FL_SAVE_REGS??
 
-Virtio GPIO is a typical example. GPIO states should be kept unchanged
-after suspend and resume (e.g. output pins keep driving the output) and
-Virtio GPIO driver does nothing in freeze and restore methods. But the
-reset operation in virtio_device_restore breaks this.
+Ah, good catch! It should put the flag only when HAVE_DYNAMIC_FTRACE_WITH_ARGS
+is enabled.
 
-Since some devices need reset in suspend and resume while some needn't,
-create a new helper function for the original reset and status restore
-logic so that virtio drivers can invoke it in their restore method
-if necessary.
+static struct ftrace_ops graph_ops = {
+	.func			= ftrace_graph_func,
+#ifdef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+	.flags			= FTRACE_OPS_GRAPH_STUB | FTRACE_OPS_FL_SAVE_ARGS,
+#elif defined(CONFIG_DYNAMIC_FTRACE_WITH_ARGS)
+	.flags			= FTRACE_OPS_GRAPH_STUB | FTRACE_OPS_FL_SAVE_REGS,
+#else
+	.flags			= FTRACE_OPS_GRAPH_STUB,
+#endif
 
-Signed-off-by: Qiang Zhang <qiang4.zhang@intel.com>
----
-v1 -> v2:
- - Fix compilation error when CONFIG_PM_SLEEP is disabled. Move
-   virtio_device_reset_and_restore_status out of CONFIG_PM_SLEEP scope.
+This will save fregs or regs or NULL according to the configuration.
 
- drivers/block/virtio_blk.c                 |  4 ++
- drivers/char/hw_random/virtio-rng.c        |  4 ++
- drivers/char/virtio_console.c              |  4 ++
- drivers/crypto/virtio/virtio_crypto_core.c |  4 ++
- drivers/i2c/busses/i2c-virtio.c            |  6 ++
- drivers/net/virtio_net.c                   |  4 ++
- drivers/scsi/virtio_scsi.c                 |  4 ++
- drivers/virtio/virtio.c                    | 83 ++++++++++++----------
- drivers/virtio/virtio_balloon.c            |  4 ++
- drivers/virtio/virtio_input.c              |  4 ++
- drivers/virtio/virtio_mem.c                |  4 ++
- include/linux/virtio.h                     |  1 +
- sound/virtio/virtio_card.c                 |  4 ++
- 13 files changed, 94 insertions(+), 36 deletions(-)
+> 
+> -- Steve
+> 
+> 
+> >  #ifdef FTRACE_GRAPH_TRAMP_ADDR
+> >  	.trampoline		= FTRACE_GRAPH_TRAMP_ADDR,
+> >  	/* trampoline_size is only needed for dynamically allocated tramps */
+> > @@ -987,7 +990,8 @@ static struct ftrace_ops graph_ops = {
+> >  void fgraph_init_ops(struct ftrace_ops *dst_ops,
+> >  		     struct ftrace_ops *src_ops)
+> >  {
+> > -	dst_ops->flags = FTRACE_OPS_FL_PID | FTRACE_OPS_GRAPH_STUB;
+> > +	dst_ops->flags = FTRACE_OPS_FL_PID | FTRACE_OPS_GRAPH_STUB |
+> > +			 FTRACE_OPS_FL_SAVE_ARGS;
+> >  
+> >  #ifdef CONFIG_DYNAMIC_FTRACE
+> >  	if (src_ops) {
 
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 194417abc105..bba7148bd219 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -1612,6 +1612,10 @@ static int virtblk_restore(struct virtio_device *vdev)
- 	struct virtio_blk *vblk = vdev->priv;
- 	int ret;
- 
-+	ret = virtio_device_reset_and_restore_status(vdev);
-+	if (ret)
-+		return ret;
-+
- 	ret = init_vq(vdev->priv);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/char/hw_random/virtio-rng.c b/drivers/char/hw_random/virtio-rng.c
-index dd998f4fe4f2..954280514f5a 100644
---- a/drivers/char/hw_random/virtio-rng.c
-+++ b/drivers/char/hw_random/virtio-rng.c
-@@ -218,6 +218,10 @@ static int virtrng_restore(struct virtio_device *vdev)
- {
- 	int err;
- 
-+	err = virtio_device_reset_and_restore_status(vdev);
-+	if (err)
-+		return err;
-+
- 	err = probe_common(vdev);
- 	if (!err) {
- 		struct virtrng_info *vi = vdev->priv;
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index c62b208b42f1..c431e4d5cd29 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -2132,6 +2132,10 @@ static int virtcons_restore(struct virtio_device *vdev)
- 
- 	portdev = vdev->priv;
- 
-+	ret = virtio_device_reset_and_restore_status(vdev);
-+	if (ret)
-+		return ret;
-+
- 	ret = init_vqs(portdev);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/crypto/virtio/virtio_crypto_core.c b/drivers/crypto/virtio/virtio_crypto_core.c
-index d0278eb568b9..b3363dd80448 100644
---- a/drivers/crypto/virtio/virtio_crypto_core.c
-+++ b/drivers/crypto/virtio/virtio_crypto_core.c
-@@ -536,6 +536,10 @@ static int virtcrypto_restore(struct virtio_device *vdev)
- 	struct virtio_crypto *vcrypto = vdev->priv;
- 	int err;
- 
-+	err = virtio_device_reset_and_restore_status(vdev);
-+	if (err)
-+		return err;
-+
- 	err = virtcrypto_init_vqs(vcrypto);
- 	if (err)
- 		return err;
-diff --git a/drivers/i2c/busses/i2c-virtio.c b/drivers/i2c/busses/i2c-virtio.c
-index 2a351f961b89..ce6493d6fe8e 100644
---- a/drivers/i2c/busses/i2c-virtio.c
-+++ b/drivers/i2c/busses/i2c-virtio.c
-@@ -251,6 +251,12 @@ static int virtio_i2c_freeze(struct virtio_device *vdev)
- 
- static int virtio_i2c_restore(struct virtio_device *vdev)
- {
-+	int ret;
-+
-+	ret = virtio_device_reset_and_restore_status(vdev);
-+	if (ret)
-+		return ret;
-+
- 	return virtio_i2c_setup_vqs(vdev->priv);
- }
- 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 792e9eadbfc3..5be2a5f68f68 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -6693,6 +6693,10 @@ static __maybe_unused int virtnet_restore(struct virtio_device *vdev)
- 	struct virtnet_info *vi = vdev->priv;
- 	int err;
- 
-+	err = virtio_device_reset_and_restore_status(vdev);
-+	if (err)
-+		return err;
-+
- 	err = virtnet_restore_up(vdev);
- 	if (err)
- 		return err;
-diff --git a/drivers/scsi/virtio_scsi.c b/drivers/scsi/virtio_scsi.c
-index 8471f38b730e..3aeddf6331d3 100644
---- a/drivers/scsi/virtio_scsi.c
-+++ b/drivers/scsi/virtio_scsi.c
-@@ -1016,6 +1016,10 @@ static int virtscsi_restore(struct virtio_device *vdev)
- 	struct virtio_scsi *vscsi = shost_priv(sh);
- 	int err;
- 
-+	err = virtio_device_reset_and_restore_status(vdev);
-+	if (err)
-+		return err;
-+
- 	err = virtscsi_init(vdev, vscsi);
- 	if (err)
- 		return err;
-diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-index b9095751e43b..55f80a61fb85 100644
---- a/drivers/virtio/virtio.c
-+++ b/drivers/virtio/virtio.c
-@@ -527,6 +527,41 @@ void unregister_virtio_device(struct virtio_device *dev)
- }
- EXPORT_SYMBOL_GPL(unregister_virtio_device);
- 
-+int virtio_device_reset_and_restore_status(struct virtio_device *dev)
-+{
-+	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
-+	int ret;
-+
-+	/* We always start by resetting the device, in case a previous
-+	 * driver messed it up. */
-+	virtio_reset_device(dev);
-+
-+	/* Acknowledge that we've seen the device. */
-+	virtio_add_status(dev, VIRTIO_CONFIG_S_ACKNOWLEDGE);
-+
-+	/* Maybe driver failed before freeze.
-+	 * Restore the failed status, for debugging. */
-+	if (dev->failed)
-+		virtio_add_status(dev, VIRTIO_CONFIG_S_FAILED);
-+
-+	if (!drv)
-+		return 0;
-+
-+	/* We have a driver! */
-+	virtio_add_status(dev, VIRTIO_CONFIG_S_DRIVER);
-+
-+	ret = dev->config->finalize_features(dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = virtio_features_ok(dev);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(virtio_device_reset_and_restore_status);
-+
- #ifdef CONFIG_PM_SLEEP
- int virtio_device_freeze(struct virtio_device *dev)
- {
-@@ -554,44 +589,20 @@ int virtio_device_restore(struct virtio_device *dev)
- 	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
- 	int ret;
- 
--	/* We always start by resetting the device, in case a previous
--	 * driver messed it up. */
--	virtio_reset_device(dev);
--
--	/* Acknowledge that we've seen the device. */
--	virtio_add_status(dev, VIRTIO_CONFIG_S_ACKNOWLEDGE);
--
--	/* Maybe driver failed before freeze.
--	 * Restore the failed status, for debugging. */
--	if (dev->failed)
--		virtio_add_status(dev, VIRTIO_CONFIG_S_FAILED);
--
--	if (!drv)
--		return 0;
--
--	/* We have a driver! */
--	virtio_add_status(dev, VIRTIO_CONFIG_S_DRIVER);
--
--	ret = dev->config->finalize_features(dev);
--	if (ret)
--		goto err;
--
--	ret = virtio_features_ok(dev);
--	if (ret)
--		goto err;
--
--	if (drv->restore) {
--		ret = drv->restore(dev);
--		if (ret)
--			goto err;
-+	if (drv) {
-+		if (drv->restore) {
-+			ret = drv->restore(dev);
-+			if (ret)
-+				goto err;
-+		}
-+
-+		/* If restore didn't do it, mark device DRIVER_OK ourselves. */
-+		if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER_OK))
-+			virtio_device_ready(dev);
-+
-+		virtio_config_core_enable(dev);
- 	}
- 
--	/* If restore didn't do it, mark device DRIVER_OK ourselves. */
--	if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER_OK))
--		virtio_device_ready(dev);
--
--	virtio_config_core_enable(dev);
--
- 	return 0;
- 
- err:
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index b36d2803674e..ba92b3e56391 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -1163,6 +1163,10 @@ static int virtballoon_restore(struct virtio_device *vdev)
- 	struct virtio_balloon *vb = vdev->priv;
- 	int ret;
- 
-+	ret = virtio_device_reset_and_restore_status(vdev);
-+	if (ret)
-+		return ret;
-+
- 	ret = init_vqs(vdev->priv);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/virtio/virtio_input.c b/drivers/virtio/virtio_input.c
-index a5d63269f20b..81c2ffd0e76e 100644
---- a/drivers/virtio/virtio_input.c
-+++ b/drivers/virtio/virtio_input.c
-@@ -374,6 +374,10 @@ static int virtinput_restore(struct virtio_device *vdev)
- 	struct virtio_input *vi = vdev->priv;
- 	int err;
- 
-+	err = virtio_device_reset_and_restore_status(vdev);
-+	if (err)
-+		return err;
-+
- 	err = virtinput_init_vqs(vi);
- 	if (err)
- 		return err;
-diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
-index b0b871441578..47c23aa43c20 100644
---- a/drivers/virtio/virtio_mem.c
-+++ b/drivers/virtio/virtio_mem.c
-@@ -3018,6 +3018,10 @@ static int virtio_mem_restore(struct virtio_device *vdev)
- 	struct virtio_mem *vm = vdev->priv;
- 	int ret;
- 
-+	ret = virtio_device_reset_and_restore_status(vdev);
-+	if (ret)
-+		return ret;
-+
- 	ret = virtio_mem_init_vq(vm);
- 	if (ret)
- 		return ret;
-diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-index 306137a15d07..bce26597b8fc 100644
---- a/include/linux/virtio.h
-+++ b/include/linux/virtio.h
-@@ -178,6 +178,7 @@ int virtio_device_freeze(struct virtio_device *dev);
- int virtio_device_restore(struct virtio_device *dev);
- #endif
- void virtio_reset_device(struct virtio_device *dev);
-+int virtio_device_reset_and_restore_status(struct virtio_device *dev);
- 
- size_t virtio_max_dma_size(const struct virtio_device *vdev);
- 
-diff --git a/sound/virtio/virtio_card.c b/sound/virtio/virtio_card.c
-index 965209e1d872..3c7a6d76c46c 100644
---- a/sound/virtio/virtio_card.c
-+++ b/sound/virtio/virtio_card.c
-@@ -412,6 +412,10 @@ static int virtsnd_restore(struct virtio_device *vdev)
- 	struct virtio_snd *snd = vdev->priv;
- 	int rc;
- 
-+	rc = virtio_device_reset_and_restore_status(vdev);
-+	if (rc)
-+		return rc;
-+
- 	rc = virtsnd_find_vqs(snd);
- 	if (rc)
- 		return rc;
+
 -- 
-2.45.2
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
