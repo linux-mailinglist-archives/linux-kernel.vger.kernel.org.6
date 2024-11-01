@@ -1,137 +1,138 @@
-Return-Path: <linux-kernel+bounces-392832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2050F9B98A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:30:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9019B98A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:30:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B4D1F25271
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:30:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FDF31F2560F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0501E32BD;
-	Fri,  1 Nov 2024 19:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002A41D0E15;
+	Fri,  1 Nov 2024 19:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYlgEYUy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="nI76WWIL"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50081CF5DE;
-	Fri,  1 Nov 2024 19:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2981CF5DE;
+	Fri,  1 Nov 2024 19:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489380; cv=none; b=PwOTWUI/2ZDcA4NTmXalnM+CuUGAMN+Zm82TdtE01JoBWFfGuIeNnaeMLYyagv2CbBEz+ErW+59cfml19EZgsFCLC1OAqH2RvQqeZ6MezcQm1eb6dZ+E5HE0kNAofV1tJF89oo6nWO02fxbpv2pIc7hpG91RkvDY3ZbDTiYVlnM=
+	t=1730489402; cv=none; b=GE0vzkXZuNUBXZpiGI7ibUYEdWtpeTQT9nDAR6g2vYKhWbWMPzD2Y5aQYVHQfXumpftWTHJIga8MjVsM9FaTB75tF7MyVJD+xICEB1Fp6/Wg/AzMmwSLMQGnVFpJaGyYQ8UVof+Mwl37PXbAMIQL+D8sRZD0F7RDxMWJMr6Unac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489380; c=relaxed/simple;
-	bh=tMMEau3NtPnyAeHx8uGed61FAphZVULNuA9qHtBhhOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsWKWrb8Ilao0xp8fL6PB/UwqKh6yfrKrx9012vPHYvsQkDmcsdqkpY1Ni/mnPv/ViUSCLUmv8JNHmeMpFmc+PjaAYY3epUx3CkhM0+KYWMDf8BJvNLupOyyvkEOjc+WAO6JGHbHKTD0bBFvM6XpsBhvYrFJcfPAT9u2N9i9YsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYlgEYUy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B6C4C4CECD;
-	Fri,  1 Nov 2024 19:29:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730489380;
-	bh=tMMEau3NtPnyAeHx8uGed61FAphZVULNuA9qHtBhhOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DYlgEYUyOZizWXWR8eNVvJc/QqHohbl60GpAPw3rCs6NZAduJJyXWrK+9LLSPQanO
-	 o/peCEWjEKNFFohrBB01XWsrx4sDpMLqHvdIygolfEUswTt/ryyvlx3de5SgK/ZubQ
-	 JMQPTMACdQD3wGVsrfDJX2YfK8vgkQLErPyRIgQEbIdoyAYg7rfCXaKUFyVH9T9qau
-	 ZhcABDQZLZVdDFwgGa41dxLej7yVMQo1o+LXcIdPOGLACbMqhLpULWpKh5xXDp+aHl
-	 PwbTeiyOE13V5hc8RBriybTJaUYgAwD4GRm1+zio0HAEYmGA/nJxKyXlX2SehqvJJR
-	 ZrH3uUg2RMkww==
-Date: Fri, 1 Nov 2024 12:29:37 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-Message-ID: <20241101192937.opf4cbsfaxwixgbm@jpoimboe>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
- <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
- <20241030055314.2vg55ychg5osleja@treble.attlocal.net>
- <CAEf4BzYzDRHBpTX=ED3peeXyRB4QgOUDvYSA4p__gti6mVQVcw@mail.gmail.com>
- <20241031230313.ubybve4r7mlbcbuu@jpoimboe>
- <CAEf4BzaQYqPfe2Qb5n71JVAAD3-1Q7q2+_cnQMQEa43DvV5PCQ@mail.gmail.com>
+	s=arc-20240116; t=1730489402; c=relaxed/simple;
+	bh=UHcOgKY60kHMORdxEhJ2bsmNACo25QXm+l4rjXj3v00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ujLPzlcfNTtx7PBU5CeLAX1/cifTFMm8widJq+Bgn2KA0HEgIWNR9/+VzQsSmKsYhEbybTMcXYVuk7AjWKVALS5i9wtcdkwNAfTvt9j6R/0mv4TolQFwWGC1OcuUh4+JVI/NTEBzY0f8HhojgoaCLhPjtbeTLlID7KNQPpNvXUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=nI76WWIL; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=IeU8B7tRAGK68ZBx5T5o8+VaZhBGOgwk1ohdzdqEKIk=; b=nI76WWIL5gDscrNMeYsAedfhOY
+	cUGETXe0Al45QIZP2OONBkpsgWYWgSZ9P4f3uG9FK4LxWfUZk2ViKN7E/Cb3y47TyX8HTk1a+8onB
+	Hm+AB+zv6ceQx628ddbiMiNWeVKPrkzK3xIOzELjOGodBFa0rGuSt/pH7UxSHDvpGWzLYJW35u8Vx
+	fvyIa3tvgdedkXJ0rDyIT2YRifIErTID06Q9BsAjnKBaWwPks61hwI780pImyMY9tAg8iLSoJRUDN
+	75yZd+Chu/bjqGEYjShwLqVTdoDbI5MyzXgDCDQieSN+wxV9K9hvmtjI7ejWPF5AwapPr4u4u0Qlm
+	3DMfnweg==;
+Received: from [189.79.117.125] (helo=[192.168.1.60])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t6xLA-000YRj-Bk; Fri, 01 Nov 2024 20:29:48 +0100
+Message-ID: <5f87f72b-8768-50bc-4c0e-44c8fc12f5c4@igalia.com>
+Date: Fri, 1 Nov 2024 16:29:41 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzaQYqPfe2Qb5n71JVAAD3-1Q7q2+_cnQMQEa43DvV5PCQ@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH V3] wifi: rtlwifi: Drastically reduce the attempts to read
+ efuse in case of failures
+Content-Language: en-US
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: "kvalo@kernel.org" <kvalo@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
+ "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
+ "rtl8821cerfe2@gmail.com" <rtl8821cerfe2@gmail.com>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ "syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com"
+ <syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+References: <20241031155731.1253259-1-gpiccoli@igalia.com>
+ <ae95544aabe74d1da801fed6cc73896e@realtek.com>
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <ae95544aabe74d1da801fed6cc73896e@realtek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 01, 2024 at 11:34:48AM -0700, Andrii Nakryiko wrote:
-> 00200000-170ad000 r--p 00000000 07:01 5
-> 172ac000-498e7000 r-xp 16eac000 07:01 5
-> 49ae7000-49b8b000 r--p 494e7000 07:01 5
-> 49d8b000-4a228000 rw-p 4958b000 07:01 5
-> 4a228000-4c677000 rw-p 00000000 00:00 0
-> 4c800000-4ca00000 r-xp 49c00000 07:01 5
-> 4ca00000-4f600000 r-xp 49e00000 07:01 5
-> 4f600000-5b270000 r-xp 4ca00000 07:01 5
->
-> Sorry, I'm probably dense and missing something. But from the example
-> process above, isn't this check violated already? Or it's two
-> different things? Not sure, honestly.
+On 31/10/2024 23:26, Ping-Ke Shih wrote:
+>> [...]
+> Have you run checkpatch before submission? Above two information can be in
+> formal form as suggestions of checkpatch. 
 
-It's hard to tell exactly what's going on, did you strip the file names?
+Yes, I always do that! Happens that checkpatch sometimes provides good
+advice (or even point to genuine errors), but sometimes...it's OK to
+ignore the warnings, specially if we have a reason. Below I detail more
+about my reasons:
 
-The sframe limitation is per file, not per address space.  I assume
-these are one file:
 
-> 172ac000-498e7000 r-xp 16eac000 07:01 5
-
-and these are another:
-
-> 4c800000-4ca00000 r-xp 49c00000 07:01 5
-> 4ca00000-4f600000 r-xp 49e00000 07:01 5
-> 4f600000-5b270000 r-xp 4ca00000 07:01 5
-
-Multiple mappings for a single file is fine, as long as they're
-contiguous.
-
-> > Actually I just double checked and even the kernel's ELF loader assumes
-> > that each executable has only a single text start+end address pair.
 > 
-> See above, very confused by such assumptions, but I'm hoping we are
-> talking about two different things here.
+> WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
+> #55:
 
-The "contiguous text" thing seems enforced by the kernel for
-executables.  However it doesn't manage shared libraries, those are
-mapped by the loader, e.g. /lib64/ld-linux-x86-64.so.2.
+It's like 76 long line, and helped readability on the commit message. In
+any case, I'll refactor this one in V4, but notice that it'll continue
+complaining because of point "[0]". That line has 80 or 81 chars, don't
+recall, but if I reduce it by removing the word "Commit", for example,
+checkpatch complains I'm writing a commit reference out of preferred
+format heh
 
-At a quick glance I can't tell if /lib64/ld-linux-x86-64.so.2 enforces
-that.
+So, lose-lose scenario, I can't make the tool fully happy here xD
 
-> > There's no point in adding complexity to support some hypothetical.  I
-> > can remove the printk though.
+
+> WARNING: Reported-by: should be immediately followed by Closes: with a URL to the report
+> #72:
+
+This advice would make sense..weren't it for the fact that this
+Syzkaller issue is already closed heh
+
+As I mentioned in the commit message, the main issue with this
+reproducer is a race in the uevent path vs driver shutdown, addressed by
+other commit, hence the Syzkaller report is fixed and closed.
+But...this patch fixes a secondary issue there, and pointing to the
+Syzkaller issue is useful first to give it credit, since both issues
+were found by the tool, but also to point to the reproducer, so I kept
+the Reported tag, but not the Closes one =)
+
+
+> WARNING: The commit message has 'syzkaller', perhaps it also needs a 'Fixes:' tag?
 > 
-> We are talking about fundamental things like format for supporting
-> frame pointer-less stack trace capture. It will take years to adopt
-> SFrame everywhere, so I think it's prudent to think a bit ahead beyond
-> just saying "no real application should need more than 4GB text", IMO.
 
-I don't think anybody is saying that...
+The fixes tag would point to the driver addition, ~10y ago. Stable bots
+would attempt to backport it for all releases, which I think maybe is
+not necessary. This is a small issue restricted to (old?) USB devices
+and emulated devices (in reproducers), so in my commit message instead
+of adding a Fixes tag, I've added Cc to stable with my suggestion of the
+versions to backport (6.1.y and 6.6.y basically).
 
--- 
-Josh
+That decision is up to you and other maintainers, so feel free to chime
+in if you prefer to backport to all releases or even *not* backport it
+at all, I just provided a suggestion based on my understanding about the
+issue and the relevance of this fix =]
+
+Cheers,
+
+
+Guilherme
 
