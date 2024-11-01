@@ -1,161 +1,109 @@
-Return-Path: <linux-kernel+bounces-392315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D3009B9253
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:48:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391319B925A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:48:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEA25B20F05
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F070A2828E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2701A7273;
-	Fri,  1 Nov 2024 13:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA071AA785;
+	Fri,  1 Nov 2024 13:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="lQF5mFq+"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="G/N6ZvaB"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EA81A4F2D
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB411A0AFE;
+	Fri,  1 Nov 2024 13:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730468843; cv=none; b=NPlBtiGlSdsElCR0CxY3HLjW/sMhKoS83ZJvJ4ZW36r5qCUL46ZF0CKlSPZyYEt1dnyWeydudB6AicfBPSgSma0DzxFWBqFkbBLPXSZzxNmV9QobapQtmO7e2AB8O8T59oAOTaExBdUQ6P9eCKqyeWHzCqa08x5bCJYWt8M1TcQ=
+	t=1730468853; cv=none; b=TDQTBCaWnhNpvYCWiCV6qOA7SY6/bCkl3+UuMD2AckrBHZ+EPj+BiOQhJlFoX6Aa9PgCBtnEHyGNYxEAmJz6PtRh0kEU0isGoeAN2U323YrJX6s3yyG2/WNk1vDXunzTotQDxb9b2aGssGJN8fYTjBBw8QFbl6URYXD7bLn7kXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730468843; c=relaxed/simple;
-	bh=w/E90TDRcavpiLD6UuAlqK6J3Z+bDO28CswOLV8SvO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W4ZJy3xfltZa2/UJWkDw9dQhEh9yKkW55Y6b9BM2TOUF2Q0qLAStnpbOPAIkea7yTPO2PNcvsv9dq9NGgtD4VoCfvYVL7lwyfSJUCM936UVx8odETceJ4k05wCBaeSqlxO4TPH6SeoCMeSU15kPDRSUCRzd35aic0+k7OpRgZ8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=lQF5mFq+; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4613162181dso12460561cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:47:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1730468840; x=1731073640; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y+zdKugU7xiryBghEkTtjHu3m1t20HIVG0keEZ55skE=;
-        b=lQF5mFq+8i6gXEumXeFamDXeFhH+8jUdL4ewTWNI3J5bSG7CC0UWTCmxSmbtcRBxom
-         16yoSe4ScQeZI+60P1gTQw799L3nRcF64Wjcsy5+COKycAYcr0Za4RVvIRgNTaMitXM/
-         DEBlRmrMMKX+X831rjZEW7/57B8sHXIGDPzPZsSUsyxCJ2qTTFpOoql3mZkJ/B/REXb2
-         eNhwrTM/0YXgv9xi1+utA+5jIghu6t6CrqIghaO0P/cDtQE9UzQh9BsBEqtW72T1P+X3
-         bp2TPU2EfUYBwv8ZEyEPGeLGlemC7YEGoZVG31vBV3TQcs2zalzO+6AyJdQsfIXSMYb8
-         +Xqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730468840; x=1731073640;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y+zdKugU7xiryBghEkTtjHu3m1t20HIVG0keEZ55skE=;
-        b=bsMdj2p0AMO3xrKIuUbZ/O2cKxGxhx7DbGkVBz0Qd9yL8qMQuzb9AxLUpGBze6YuAK
-         CzxnofmEWiXLgN8RfM7WbNsyp9cl44nLzZcjteucffbSr1xR6kXqteiNZD9HY6NfBVft
-         sJ8H2FrxIwxEbV8tuxEyywbnYMTlmsR7he9FvxaC8Fba4d7kbqo5vwNP6hbokSFDIZ8C
-         iPclgz6w3w00YjOuPg43ggF+Xsr+MjDWTtbNZILsaBSsUqD9wUGdLp+OkVRZhSebgDAj
-         CuWNkpL54MMI0EtjoLkh3NYcs21kDq4MN0fjMi8+rs+pn/JfZ/UXi6EYGrfEtmvse6g0
-         lgwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDzyUIskUAoJZ9RZ05ZndxOeK6jE4q/Cc87MipC6LvejriGGvYdmbzZjXQROVgCLx45e/pSVQJiIftpIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOQG7HZ3g1khJB9OGTseSCswVL3uslR4J/8Hp2vMGaxmRpSJww
-	LPZrArwl+Fp9hP5UFmcRVPmX5Wkl2l+KH4Honplm9lObr4dBvp34I8glHMKx6mk=
-X-Google-Smtp-Source: AGHT+IEqYRg/5UZkjuUahc1kZYI/R3+uQRVmb1D8Hw7IJxtfAawWOive+EatrYV0MOKL9iMFUrnP5A==
-X-Received: by 2002:ac8:5acc:0:b0:461:15a1:7889 with SMTP id d75a77b69052e-462b8680102mr46144121cf.16.1730468840141;
-        Fri, 01 Nov 2024 06:47:20 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com ([50.193.156.113])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad0cac07sm18840631cf.48.2024.11.01.06.47.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 06:47:19 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: linux-cxl@vger.kernel.org,
-	Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com,
-	rrichter@amd.com,
-	Terry.Bowman@amd.com,
-	dave.jiang@intel.com,
-	ira.weiny@intel.com,
-	alison.schofield@intel.com,
-	gourry@gourry.net,
-	dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	david@redhat.com,
-	osalvador@suse.de,
-	gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org,
-	rppt@kernel.org
-Subject: [PATCH v5 3/3] acpi,srat: give memory block size advice based on CFMWS alignment
-Date: Fri,  1 Nov 2024 09:47:05 -0400
-Message-ID: <20241101134706.1185-4-gourry@gourry.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241101134706.1185-1-gourry@gourry.net>
-References: <20241101134706.1185-1-gourry@gourry.net>
+	s=arc-20240116; t=1730468853; c=relaxed/simple;
+	bh=T/1vMKtCA38mIrGWbm6fWsJ30Yo5hwizSzXQ1B/dd5o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=vBVQURBvkNH5w7xIYhDwFDxre/atIxsqO6UWnCJ6yTyIrL3Z0UqOW1QXJbl5DHD9seAzvqRSvvq55t6Ff+dI2hIiXmtRSM4OmrDw8Vx/9y7K2EVOus+sIWuYZP/Dl1zC6IbYIwPohr4M2YFXf2piBNPH5/tEwKtaCg+GzstN5KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=G/N6ZvaB; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.1.130] (BC24930C.dsl.pool.telekom.hu [188.36.147.12])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 06E23E45AB;
+	Fri,  1 Nov 2024 13:47:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1730468844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KlGN7rLdrvw9HV0QDCJ28arpK5PO8WrojsH8+qLI3Jg=;
+	b=G/N6ZvaBzzfg169im1cDBPAkEbL2bpXcM4HPxNk40ut6egIwCsqiD4unU7dEAr3JrvwE9b
+	S3Y3+AjvKnyX157dLK1dexMjm2AbFLThxC1kRU889l6qO0cwuNJMoUxKpyZe7GJLax+8tb
+	OOytS6lyDq/E7FoW2TEIpCKLxjp/5YsktZF6aVzXHpNPLEvT2NyPi7aaxWqlZ9GI8Y3FD1
+	zNyTbfqVuIQPLT9f8tXz4xGzFtQwnsrpQHPXi0cpY8GwjNSadSd21stll8A0GJoLHfVnll
+	65WTzA87OvL40rnCqZUzRNrfn769NZ1ULzsub3Ts8QeoenPQFjiEb1zZyElWTg==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH 0/3] Add MSM8953/SDM450/SDM632 camss support
+Date: Fri, 01 Nov 2024 14:47:21 +0100
+Message-Id: <20241101-camss-msm8953-v1-0-4012559fcbc2@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOrbJGcC/x3MQQqAIBBA0avIrBM0rayrRAvRqWZhhQMRhHdPW
+ r7F/y8wZkKGSbyQ8Sam86jQjYCw+2NDSbEaWtVarZWWwSdmmTi5sTPSoPPKDhb7EKE2V8aVnv8
+ 3L6V8TvbuZV8AAAA=
+X-Change-ID: 20241101-camss-msm8953-3e8a0474e6cd
+To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Barnabas Czeman <barnabas.czeman@mainlining.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Vladimir Lypak <vladimir.lypak@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730468843; l=1102;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=T/1vMKtCA38mIrGWbm6fWsJ30Yo5hwizSzXQ1B/dd5o=;
+ b=hW8p/3bdqosl7Tu6D5+Pcc1ZfX5PcTw1DXzn+gixF312cO5ntyzGDMyd1CVb97IG6zTYzdwT6
+ aiuFQlFey6wDgnFd7LYm5zyQwMZnnzHjlbg2tLJuMBaTXGhKB3CyP6N
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Capacity is stranded when CFMWS regions are not aligned to block size.
-On x86, block size increases with capacity (2G blocks @ 64G capacity).
+Add camss support for MSM8953 based  devices.
 
-Use CFMWS base/size to report memory block size alignment advice.
+This patch series was tested on Redmi Note 4 (mido).
 
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Gregory Price <gourry@gourry.net>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- drivers/acpi/numa/srat.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Barnabás Czémán (2):
+      media: camss: vfe: implement pm domain ops for v4.1
+      media: dt-bindings: media: camss: Add qcom,msm8953-camss binding
 
-diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-index 44f91f2c6c5d..34b6993e7d6c 100644
---- a/drivers/acpi/numa/srat.c
-+++ b/drivers/acpi/numa/srat.c
-@@ -14,6 +14,7 @@
- #include <linux/errno.h>
- #include <linux/acpi.h>
- #include <linux/memblock.h>
-+#include <linux/memory.h>
- #include <linux/numa.h>
- #include <linux/nodemask.h>
- #include <linux/topology.h>
-@@ -338,13 +339,22 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
- {
- 	struct acpi_cedt_cfmws *cfmws;
- 	int *fake_pxm = arg;
--	u64 start, end;
-+	u64 start, end, align;
- 	int node;
- 
- 	cfmws = (struct acpi_cedt_cfmws *)header;
- 	start = cfmws->base_hpa;
- 	end = cfmws->base_hpa + cfmws->window_size;
- 
-+	/* Align memblock size to CFMW regions if possible */
-+	align = 1UL << __ffs(start | end);
-+	if (align >= SZ_256M) {
-+		if (memory_block_advise_max_size(align) < 0)
-+			pr_warn("CFMWS: memblock size advise failed\n");
-+	} else {
-+		pr_err("CFMWS: [BIOS BUG] base/size alignment violates spec\n");
-+	}
-+
- 	/*
- 	 * The SRAT may have already described NUMA details for all,
- 	 * or a portion of, this CFMWS HPA range. Extend the memblks
+Vladimir Lypak (1):
+      media: qcom: camss: Add MSM8953 resources
+
+ .../bindings/media/qcom,msm8953-camss.yaml         | 320 +++++++++++++++++++++
+ drivers/media/platform/qcom/camss/camss-csiphy.c   |   1 +
+ drivers/media/platform/qcom/camss/camss-ispif.c    |   5 +
+ drivers/media/platform/qcom/camss/camss-vfe-4-1.c  |  10 +-
+ drivers/media/platform/qcom/camss/camss-vfe.c      |   1 +
+ drivers/media/platform/qcom/camss/camss.c          | 168 +++++++++++
+ drivers/media/platform/qcom/camss/camss.h          |   1 +
+ 7 files changed, 504 insertions(+), 2 deletions(-)
+---
+base-commit: f9f24ca362a4d84dd8aeb4b8f3ec28cb6c43dd06
+change-id: 20241101-camss-msm8953-3e8a0474e6cd
+
+Best regards,
 -- 
-2.43.0
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
 
