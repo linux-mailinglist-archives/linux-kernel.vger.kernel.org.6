@@ -1,207 +1,189 @@
-Return-Path: <linux-kernel+bounces-392879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E1429B992C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:07:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6F49B9928
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE72B1C212DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:07:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9F91F23051
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4581D1E77;
-	Fri,  1 Nov 2024 20:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSp7NtGk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D8B1D2B11;
+	Fri,  1 Nov 2024 20:07:35 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51BA1D968D;
-	Fri,  1 Nov 2024 20:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871A91D27A0
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 20:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730491656; cv=none; b=f1Tqk7z7v07mLBX2cm9ZUCK1JVAsfRYrVYQFnkeDc4NH/8wv9PceG7q5BesbGjErImL5Vj/rgKb/tEfsUxL8zi1FzCee7opOu2C+558J2WhG/RVZPxQs2TVuLBTHvHl2dzWf74piVCXzMBNAQswEu5uuxQr57ySUXAHbGrq05Zg=
+	t=1730491655; cv=none; b=phJQzeZLpuNkjrrepC3088QqO+2pOTL8EzHqSiwa6YXHg5SqjiutYlsgQgCNMoOw6lw1mei67DHyYwUpYDKX8yj+Erl3wW6A/eI33d2uIEuFe2kTT17ctFRHxR8a+B7YnzN2FIocyMtHaW8SOy0dh64KcLdpppoXl1O7Qz6EdVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730491656; c=relaxed/simple;
-	bh=4gAT0HFny/uubV2wFiEE++QBBhOmMgPZGZyxNpwgaFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ty7ZysxOGcV6elSP8os/bn3zmOEbAk+MWb5dExcZ3nbRCpo+Lgr4spBBOBOk55SGJx57qWH6PYNMHp7Pm9u1CgAbZXv/rzKzkJLd13aJvsSno91yGEVaTyI32A+X/lsaYIJ5YNWPyS/t+2V//2iyDO9pGyg+10bWYMaGbLBd49s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSp7NtGk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1738EC4CECD;
-	Fri,  1 Nov 2024 20:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730491656;
-	bh=4gAT0HFny/uubV2wFiEE++QBBhOmMgPZGZyxNpwgaFk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nSp7NtGknZUTHxyNdjiHayaQzDcnoV9I7Rgyca29npV1RbPnNYvUBoYcyEI/z4/4B
-	 vUrncQg83m/Bnpgk/+GoD0+04QzbTbLyr38LR3FLkr7HwqncfuKxOtnwz75G2gQEE9
-	 VuRAWCjCK7JEJ0iI44nEy5pTRd2GmPaw3gMsg5c6jgk53XeUAnKe0DE1mP0tdwEx8p
-	 sfhveAa6HQDruGbLdL8AKOkXMAb2YQgH+GIKJTOh2DfNkFNSaV6ey4qeaeHpfulxDC
-	 LiZKNtHlU1h0TWPEjTo+pHeO0m2MxvnIUQSr3PELF0GhKJimHTpVapbkrI3Kw6Qh+8
-	 YiIxsgBQV4Kwg==
-Date: Fri, 1 Nov 2024 21:07:29 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: "G . Branden Robinson" <g.branden.robinson@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] proc_pid_fdinfo.5: Reduce indent for most of the
- page
-Message-ID: <20241101200729.6wgyksuwdtsms3eu@devuan>
-References: <20241015211719.1152862-1-irogers@google.com>
- <20241101132437.ahn7xdgvmqamatce@devuan>
- <CAP-5=fXo5XjxUXshm9eRX-hCcC5VWOv0C5LBZ3Z0_wQb+rdnsw@mail.gmail.com>
+	s=arc-20240116; t=1730491655; c=relaxed/simple;
+	bh=pLCSgf1FA7YufT7FjypRtJtCBin2sqPNA2G6Ffx8JmY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rzoi3GrgxYmD8+vMizKRSxzPDcbZ7HPB4Rm/Ho98Y4oh9O/x0VkMeBeM+cVHb5l7PK2eduzp3KL+KGO2hOV1TVH/D9xZpraxMJjzS6qOF68wCWVLXMOBi4JqtHv/okeH9PVGQIFTaIIhvqrH7LU0qs6qA5ZnCUYhIw69XapPH8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c90919a2so23974515ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 13:07:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730491652; x=1731096452;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WKkXYUGj7iwxbjiKax0C3RrxchxN2fGDD9Ow3Ftv1DU=;
+        b=nXZBsLvzLapq5zsrDTx1WFHxXJfvLivur/t03MjbJ7to3kzVgyqZxfeIwi2umyQSAU
+         ri+sv0cXatHmVhHVGZijCdScod54gcHJ8gh4az526fEK7T7BeqHLhVrgGuYZZH83tGqj
+         ur7CGsn7pEpCHjynYOQWle+oTyvumrzHrk+wTUdGxVjfpQdBBzjyyoDW8xJrggcEwkrY
+         /esc+NpVc9L8GywVwevgLe4nFCIDHbjfPw/o29Y8btOcHmDS5RZtqN2nzM4q6M/8oVZf
+         xMmd3FL+P7f/UDlBlpE7PyYZxpF4t+mL9RviaReo+cC5AQ7E62VYTCkOr9h7AL017UJ5
+         nsWg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1OGHNC3Rw5+a7yz4M2SRvTH9kr/r5YYZ+c9sN1hXgV5Xe5OlrU3olkuGRHwRMwVkx1wmvNyBEoff6PZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/chje/y+QZiGJGDmHLYRJDpZmYx7PY8dCR9nn+CJUa873Iefe
+	PpEPptXrHAT+P9TCfy85PWQ0CQ4zE/u2WV2lgIL0fFC3IlfNqec3QXq0mIKHArYdX9c1RcWWTJJ
+	Oy2fShyA/P95Q0sIPPs4sdFRuMV4gT/EbExrTC17hAStYw9HNEUzPTgg=
+X-Google-Smtp-Source: AGHT+IElId++NX4OCR+e50oEteEN2/ewKdWt5dAGF5kq255zp5JCCSVY8a/ac7cvhnmE11BJXFu8qEcaOS68LzeocUNavBOmRL7o
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vmpttclijleburvy"
-Content-Disposition: inline
-In-Reply-To: <CAP-5=fXo5XjxUXshm9eRX-hCcC5VWOv0C5LBZ3Z0_wQb+rdnsw@mail.gmail.com>
+X-Received: by 2002:a05:6e02:1548:b0:3a2:6ce9:19c6 with SMTP id
+ e9e14a558f8ab-3a4ed30fe20mr242408415ab.25.1730491652715; Fri, 01 Nov 2024
+ 13:07:32 -0700 (PDT)
+Date: Fri, 01 Nov 2024 13:07:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67253504.050a0220.3c8d68.08e1.GAE@google.com>
+Subject: [syzbot] [io-uring?] general protection fault in io_sqe_buffer_register
+From: syzbot <syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=12052630580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
+dashboard link: https://syzkaller.appspot.com/bug?extid=05c0f12a4d43d656817e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15abc6f7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10eb655f980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
+CPU: 0 UID: 0 PID: 5845 Comm: syz-executor176 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:headpage_already_acct io_uring/rsrc.c:584 [inline]
+RIP: 0010:io_buffer_account_pin io_uring/rsrc.c:614 [inline]
+RIP: 0010:io_sqe_buffer_register+0xaa8/0x2cf0 io_uring/rsrc.c:758
+Code: 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 b0 8a 55 fd 48 8b 1b 48 83 c3 18 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 8a 8a 55 fd 48 8b 03 48 89 44 24 60
+RSP: 0018:ffffc90003faf640 EFLAGS: 00010206
+RAX: 0000000000000003 RBX: 0000000000000018 RCX: dffffc0000000000
+RDX: ffff88807ef14128 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003faf7f0 R08: ffffffff84a9ce37 R09: 1ffffd40003a8000
+R10: dffffc0000000000 R11: fffff940003a8001 R12: ffffea0001d40000
+R13: 0000000000000006 R14: 1ffff110060dc350 R15: ffff8880306e1a80
+FS:  00005555684d7380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020010404 CR3: 000000007ea62000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __io_sqe_buffers_update io_uring/rsrc.c:257 [inline]
+ __io_register_rsrc_update+0x5c8/0x1320 io_uring/rsrc.c:295
+ io_register_rsrc_update+0x1d1/0x230 io_uring/rsrc.c:326
+ __do_sys_io_uring_register io_uring/register.c:938 [inline]
+ __se_sys_io_uring_register+0x8ee/0x40d0 io_uring/register.c:915
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f96c01b8469
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc4e36b3a8 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+RAX: ffffffffffffffda RBX: 00000000000004b5 RCX: 00007f96c01b8469
+RDX: 0000000020000600 RSI: 0000000000000010 RDI: 0000000000000003
+RBP: 0000000000000003 R08: 00000000000ac5f8 R09: 00000000000ac5f8
+R10: 0000000000000020 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc4e36b578 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:headpage_already_acct io_uring/rsrc.c:584 [inline]
+RIP: 0010:io_buffer_account_pin io_uring/rsrc.c:614 [inline]
+RIP: 0010:io_sqe_buffer_register+0xaa8/0x2cf0 io_uring/rsrc.c:758
+Code: 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 b0 8a 55 fd 48 8b 1b 48 83 c3 18 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 8a 8a 55 fd 48 8b 03 48 89 44 24 60
+RSP: 0018:ffffc90003faf640 EFLAGS: 00010206
+RAX: 0000000000000003 RBX: 0000000000000018 RCX: dffffc0000000000
+RDX: ffff88807ef14128 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003faf7f0 R08: ffffffff84a9ce37 R09: 1ffffd40003a8000
+R10: dffffc0000000000 R11: fffff940003a8001 R12: ffffea0001d40000
+R13: 0000000000000006 R14: 1ffff110060dc350 R15: ffff8880306e1a80
+FS:  00005555684d7380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f96c017d020 CR3: 000000007ea62000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 3 bytes skipped:
+   0:	df 80 3c 08 00 74    	filds  0x7400083c(%rax)
+   6:	08 48 89             	or     %cl,-0x77(%rax)
+   9:	df e8                	fucomip %st(0),%st
+   b:	b0 8a                	mov    $0x8a,%al
+   d:	55                   	push   %rbp
+   e:	fd                   	std
+   f:	48 8b 1b             	mov    (%rbx),%rbx
+  12:	48 83 c3 18          	add    $0x18,%rbx
+  16:	48 89 d8             	mov    %rbx,%rax
+  19:	48 c1 e8 03          	shr    $0x3,%rax
+  1d:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
+  24:	fc ff df
+* 27:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
+  2b:	74 08                	je     0x35
+  2d:	48 89 df             	mov    %rbx,%rdi
+  30:	e8 8a 8a 55 fd       	call   0xfd558abf
+  35:	48 8b 03             	mov    (%rbx),%rax
+  38:	48 89 44 24 60       	mov    %rax,0x60(%rsp)
 
 
---vmpttclijleburvy
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/3] proc_pid_fdinfo.5: Reduce indent for most of the
- page
-MIME-Version: 1.0
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Hi Ian,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-On Fri, Nov 01, 2024 at 11:19:18AM -0700, Ian Rogers wrote:
-> On Fri, Nov 1, 2024 at 6:24=E2=80=AFAM Alejandro Colomar <alx@kernel.org>=
- wrote:
-> >
-> > On Tue, Oct 15, 2024 at 02:17:17PM -0700, Ian Rogers wrote:
-> > > When /proc/pid/fdinfo was part of proc.5 man page the indentation made
-> > > sense. As a standalone man page the indentation doesn't need to be so
-> > > far over to the right. Remove the initial tagged pragraph and move the
-> > > styling to the initial summary description.
-> > >
-> > > Suggested-by: G. Branden Robinson <g.branden.robinson@gmail.com>
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > ---
-> > >  man/man5/proc_pid_fdinfo.5 | 66 ++++++++++++++++++------------------=
---
-> > >  1 file changed, 32 insertions(+), 34 deletions(-)
-> > >
-> > > diff --git a/man/man5/proc_pid_fdinfo.5 b/man/man5/proc_pid_fdinfo.5
-> > > index 1e23bbe02..8678caf4a 100644
-> > > --- a/man/man5/proc_pid_fdinfo.5
-> > > +++ b/man/man5/proc_pid_fdinfo.5
-> > > @@ -6,20 +6,19 @@
-> > >  .\"
-> > >  .TH proc_pid_fdinfo 5 (date) "Linux man-pages (unreleased)"
-> > >  .SH NAME
-> > > -/proc/pid/fdinfo/ \- information about file descriptors
-> > > +.IR /proc/ pid /fdinfo " \- information about file descriptors"
-> >
-> > I wouldn't add formatting here for now.  That's something I prefer to be
-> > cautious about, and if we do it, we should do it in a separate commit.
->=20
-> I'll move it to a separate patch. Is the caution due to a lack of test
-> infrastructure? That could be something to get resolved, perhaps
-> through Google summer-of-code and the like.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-That change might be controversial.  We'd first need to check that all
-software that reads the NAME section would behave well for this.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Also, many other pages might need to be changed accordingly for
-consistency.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-For testing infrastructure I think we're good.  The makefile already
-does a lot of testing.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
->=20
-> > >  .SH DESCRIPTION
-> > > -.TP
-> > > -.IR /proc/ pid /fdinfo/ " (since Linux 2.6.22)"
-> > > -This is a subdirectory containing one entry for each file which the
-> > > -process has open, named by its file descriptor.
-> > > -The files in this directory are readable only by the owner of the pr=
-ocess.
-> > > -The contents of each file can be read to obtain information
-> > > -about the corresponding file descriptor.
-> > > -The content depends on the type of file referred to by the
-> > > -corresponding file descriptor.
-> > > -.IP
-> > > +Since Linux 2.6.22,
-> >
-> > You could move this information to a HISTORY section.
->=20
-> Sure, tbh I'm not sure anybody cares about this information and it
-> could be as well to delete it. Sorry people running 17 year old
-> kernels. For now I'll try to leave it unchanged.
-
-I would like to keep it in HISTORY.  You never know when it'll be useful
-and it's just one line or a few; it won't hurt.
-
->=20
-> > > +this subdirectory contains one entry for each file that process
-> > > +.I pid
-> > > +has open, named by its file descriptor.  The files in this directory
-> >
-> > Please don't reflow existing text.  Please read about semantic newlines
-> > in man-pages(7):
-> >
-> > $ MANWIDTH=3D72 man man-pages | sed -n '/Use semantic newlines/,/^$/p'
-> >    Use semantic newlines
-> >      In  the  source of a manual page, new sentences should be started
-> >      on new lines, long sentences should be split into lines at clause
-> >      breaks (commas, semicolons, colons, and so on), and long  clauses
-> >      should be split at phrase boundaries.  This convention, sometimes
-> >      known  as  "semantic newlines", makes it easier to see the effect
-> >      of patches, which often operate at the level of  individual  sen=
-=E2=80=90
-> >      tences, clauses, or phrases.
->=20
-> I'll update for v3 but I'm reminded of `git diff --word-diff=3Dcolor` so
-> perhaps this recommendation is outdated.
-
-No, this isn't outdated, since that reduces the quality of the diff.
-Also, I review a lot of patches in the mail client, without running
-git(1).  And it's not just for reviewing diffs, but also for writing
-them.  Semantic newlines reduce the amount of work for producing the
-diffs.  And lastly, the source code reads much better if it's logically
-divided in phrases.
-
->=20
-> Thanks,
-> Ian
-
---=20
-<https://www.alejandro-colomar.es/>
-
---vmpttclijleburvy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmclNQAACgkQnowa+77/
-2zLQjA//UmIZXrXU6535kY+aK/mDc00ttn4ZEHEus8oEyTBWz3H66RobCLhJ6DFJ
-xI5J/BbrMfh9sLMWjH3qcZIIU+X3Sf4HRRtVoroYv52YoxaXdEvhZWUWxTs3E9HY
-0khMstgT7sq7O6xPP5+agLepDOkXvrcFU14lJgVlX6XCE0r/rphKUvbAq0F++Bni
-K5Xm3lh2Zrr502R0/hQqhWiaLENnuFMHCeju2OXp+CsHadU2H+PbNwG4GQv6yC16
-iNx8beNUCcmTAdEujbT8HJgptXls7HkmaMnFD6WhoumJOZiNTdObQDNvPIwRTRvY
-BjGKbYmyqsj2Eh9fg+8corHD18vC8bDZdfmKh6PvGo1Jg/KYfqBuQfhaC1U8STg+
-G1H5MDf61j4dzdM72ZzR72f/TQLXhkAZBDinJ9xeBJdIAd8EewJd4XD9+LkXxEPE
-Lqa2lAnfbGWtt1shO5gZFW/U9FOYL9C8KM0ZI8giLPn06YtbEYncdzJfIJw4ZD93
-UlnllwfyFEA2iUx8+R3I0SXXvWAQu9VYUAeipfhyIwk3TWgb1h5zrCuqmBifsVf9
-pbEUDw2K0mBuDJ07KRSdUivVWsqUP6Fxodlv+HWv4LYA3RDhXFgnizEeO8sgFntm
-MpplL9VbBayCOqjmDSUWMIe2bo8vJ44AJP4MzbGNT5wyIdcLz7U=
-=rohc
------END PGP SIGNATURE-----
-
---vmpttclijleburvy--
+If you want to undo deduplication, reply with:
+#syz undup
 
