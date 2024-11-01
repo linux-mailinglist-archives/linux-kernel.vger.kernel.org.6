@@ -1,55 +1,84 @@
-Return-Path: <linux-kernel+bounces-391674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEEF49B8A1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:52:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538C39B8A24
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623251F22688
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D181C217E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 03:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B9F145B39;
-	Fri,  1 Nov 2024 03:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFD8146000;
+	Fri,  1 Nov 2024 03:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="ol2xBmPp"
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D544C79;
-	Fri,  1 Nov 2024 03:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VFyqusHe"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76ACC4C79;
+	Fri,  1 Nov 2024 03:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730433135; cv=none; b=ODUryCqbT3aUmfYv59FGuGKCxtLU5y1kzlOo6z/YIHM0+ogN6pNFYiiE7CxcNRvrFh8G7cvZIcE6TnhaHzBKjpeoqazB4uBccreLH6WAhvqoN5JFXYfPGb4zGsHRwiDksxR33qXWkriHL0Bc/yKA3OMQjvS9LWmQ3EmalOB0gtY=
+	t=1730433538; cv=none; b=egVTDHXAGpZWlj6gyy58jr9Xe9t35sm+FK0gIis5x+fhDtR5LpdvnzURMu9UNbjDdae0qTnRX9IjH9HlHTSXi5CvnbwK88Xmfl+ESwACerzStrgUks596oUKf2gPBW/h1NTHt5hhTCWgFO33tsvgC9J9Tb98g4jzY0b2gsGraCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730433135; c=relaxed/simple;
-	bh=JpflwicX9fBsBZhasywynZ/y0TYwmbhCSocnbcuYT8o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KFexS0hsVpJ+dJemQAilK025CfnNTzdz3rC6PUqCptXsLoFoVfiOwu5o2+EuLkoiiqoF/e1ImFX6rbtd83jOuNuBXTjHgaz6nWVXgP64AVKgrHDCHRF1NqEcIDbLynus11htqe57PO/wzwF9ojOu7RZY8zdTKEqtHtieRNGvZQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=ol2xBmPp reason="key not found in DNS"; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
+	s=arc-20240116; t=1730433538; c=relaxed/simple;
+	bh=aat2SRLBzqfpOO0tUw+f+240+XOG0Y2UqKNqUXsRKzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qg/UQZQFoEy6eknsN8U78irbGjqnwHo6gkm+AGV6ncdzfMJHPn8ycPvRgvhzZQyJJ6xf171o6YeuLi3t5lz3cO2EM/MVFXqj4o6tPcwUz0NqlksxAusfuh/hiFyrt7F/Q3n6WxMM0nYBvJwrLeOac9wqDNZIzm80CSGTRvLBqUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VFyqusHe; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e30db524c2so1238556a91.1;
+        Thu, 31 Oct 2024 20:58:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
-	Message-Id:MIME-Version:Content-Transfer-Encoding; bh=VL6U2qeALI
-	oeBGhO9KbfQQvXF5+xanMkAj0oSY2OYdA=; b=ol2xBmPpdecje3+hFbWxb6Y3WY
-	6L38i1wKhX2g21+OxTFlcccVbmUP65XZaTYlGaEOT9aTHL+xs1RBc9RYItAFbUp0
-	m4rodrEDiNVgWOt4w8/+ursDO2t56PUqrDuMfGGb+7dDSrUVtjN5SJtM2akADtZn
-	UjLf4WF8rpj2irtCk=
-Received: from s1eepy-QiTianM540-A739.. (unknown [10.130.146.61])
-	by coremail-app2 (Coremail) with SMTP id Nyz+CgAX2AFHUCRn5Ya_AA--.11076S2;
-	Fri, 01 Nov 2024 11:51:48 +0800 (CST)
-From: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-To: clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: baijiaju1990@gmail.com,
-	zhenghaoran@buaa.edu.cn,
-	21371365@buaa.edu.cn
-Subject: [PATCH] btrfs: Fix data race in log_conflicting_inodes
-Date: Fri,  1 Nov 2024 11:51:33 +0800
-Message-Id: <20241101035133.925251-1-zhenghaoran@buaa.edu.cn>
-X-Mailer: git-send-email 2.34.1
+        d=gmail.com; s=20230601; t=1730433536; x=1731038336; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sFSmtqGbfIT/4iT0z5PLJ7AcPQYB66rGXOxJKiMBTHE=;
+        b=VFyqusHe5D7wHAonxzHvfSAkB1EKSSblWWGBY1iy191+xPdQGpn6ZjZZeMAITshw5b
+         6VE1R1bDVS1/pq0NkpbtB/KEDTRPNTRwiLtJ3DTCU8/sJu4SaKORdIwLh1G4+u5RnmUI
+         b8xhdbm4OTfUWGXasxKbkP+1PCLyuNj3C9NPyDwlomZvYrjINm8dq/vitvYOkdeO2kDM
+         zmlIjI5eBrBX0fo7M3MEkYm2951/frdLX4R6yTual+yJNgiNoWRkzYH5z2SvtsTjEZZi
+         0L4YDceXivjKvjoC9bGwKnsRLQ/js/9atHYZbvgSSedzCjw+M8QkhJT3W+ZFc5TWCuPW
+         A4iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730433536; x=1731038336;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sFSmtqGbfIT/4iT0z5PLJ7AcPQYB66rGXOxJKiMBTHE=;
+        b=I5eUw7+S8mCO/C0ILPq7tZpVYV8a9cNLRtlWWJLnClbgvhbdEQ1fiYUdGW94P0hGq4
+         jqp8M26OnjQxF9SIqDoBpSlNyp80nnUl8g8BRrRT60u2buq9nzbMLBJKReHTiL30+uAV
+         VMnD4NyllKdp178kBVduwnPKYnB8vTrzCe88eotEeLYWZ0OX1uLDPp76Wn9yxHGmEHsH
+         JkGKpeKNp2/Y65x8kv38lfdspQ6n6ehFI40zY1jjB/Jkh1YY6baZK4mkHpZnjLURYXJN
+         OXSu7pXOrDY/+bmQ5+Ycq32xTAFSh3uXosP1q0/Vm86iYQz+4MShxSPe2PT6gIZWohX3
+         SPsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrF1IMuD1N3PRkAk75NudJ0gHwRcg2jx7SZiVQ5IligTng/X11XwttbkQFrJjBdUM/CpmXSanjuUphhvc=@vger.kernel.org, AJvYcCX+04Uj5TiZ0eixdtYyhOp1yLFa5USH1pO30zQihMbdP9AtK37x10rxyqL9BY4Q12bzy5ZlewQP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjg2na/mznxGo3UPc97y+iRCW5yeFDEHsNlZHaSALq/waXVFOz
+	RqYYaCIDVeuLwDuaCdqgIDqh6yumS/6oNZNin2knAgt3UatkHie5
+X-Google-Smtp-Source: AGHT+IGkBJL8wRX4GxtDQsr/iacArADSVmyqrSK0Dwd0q8ln8OL6ByY2OLyV5Z2zg2+SpXa9fsi5AQ==
+X-Received: by 2002:a17:90b:2e43:b0:2e0:a77e:8305 with SMTP id 98e67ed59e1d1-2e94c533088mr2887836a91.39.1730433535731;
+        Thu, 31 Oct 2024 20:58:55 -0700 (PDT)
+Received: from localhost.localdomain ([101.94.129.40])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa2603fsm4146844a91.17.2024.10.31.20.58.52
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 31 Oct 2024 20:58:55 -0700 (PDT)
+From: Yi Zou <03zouyi09.25@gmail.com>
+To: davem@davemloft.net
+Cc: 21210240012@m.fudan.edu.cn,
+	21302010073@m.fudan.edu.cn,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	kuba@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yi Zou <03zouyi09.25@gmail.com>
+Subject: [PATCH] ipv6: route: fix possible null-pointer-dereference in ip6_route_info_create
+Date: Fri,  1 Nov 2024 11:58:43 +0800
+Message-ID: <20241101035843.52230-1-03zouyi09.25@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,105 +86,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Nyz+CgAX2AFHUCRn5Ya_AA--.11076S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF4DKFy5JFW8CF13tryDtrb_yoW5tFy7pF
-	4xWFyUG3y5X34rKF92yw4kWr1agFZxGF4UCry5Cr4xArWUXrnrtrnYvwnrCF15K34xCw1Y
-	grWrAF17u3WfArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkF1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kE
-	wVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x
-	0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF
-	7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F4
-	0Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC
-	6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIec
-	xEwVCm-wCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26F1DJr1UJwCFx2IqxVCF
-	s4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI
-	8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41l
-	IxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIx
-	AIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
-	jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZa9-UUUUU=
-X-CM-SenderInfo: 1v1sjjazstiqpexdthxhgxhubq/
 
-The Data Race occurs when the `log_conflicting_inodes()` function is
-executed in different threads at the same time. When one thread assigns
-a value to `ctx->logging_conflict_inodes` while another thread performs
-an `if(ctx->logging_conflict_inodes)` judgment or modifies it at the
-same time, a data contention problem may arise.
+In the ip6_route_info_create function, the variable fib6_nh is
+assigned the return value of nexthop_fib6_nh(rt->nh), which could
+result in fib6_nh being NULL. Immediately after this assignment,
+there is a potential dereference of fib6_nh in the following code:
+if (!ipv6_addr_any(&cfg->fc_prefsrc)) {
+ struct net_device *dev = fib6_nh->fib_nh_dev;
+This lead to a null pointer dereference (NPD) risk if fib6_nh is
+NULL. The issue can be resolved by adding a NULL check before the
+deference line.
 
-Further, an atomicity violation may also occur here. Consider the
-following case, when a thread A `if(ctx->logging_conflict_inodes)`
-passes the judgment, the execution switches to another thread B, at
-which time the value of `ctx->logging_conflict_inodes` has not yet
-been assigned true, which would result in multiple threads executing
-`log_conflicting_inodes()`.
-
-To address this issue, it is recommended to add locks to protect
-`logging_conflict_inodes` in the `btrfs_log_ctx` structure, and lock
-protection during assignment and judgment. This modification ensures
-that the value of `ctx->logging_conflict_inodes` does not change during
-the validation process, thereby maintaining its integrity.
-
-Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+Signed-off-by: Yi Zou <03zouyi09.25@gmail.com>
 ---
- fs/btrfs/tree-log.c | 7 +++++++
- fs/btrfs/tree-log.h | 1 +
- 2 files changed, 8 insertions(+)
+ net/ipv6/route.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-index 9637c7cdc0cf..9cdbf280ca9a 100644
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -2854,6 +2854,7 @@ void btrfs_init_log_ctx(struct btrfs_log_ctx *ctx, struct btrfs_inode *inode)
- 	INIT_LIST_HEAD(&ctx->conflict_inodes);
- 	ctx->num_conflict_inodes = 0;
- 	ctx->logging_conflict_inodes = false;
-+	spin_lock_init(&ctx->logging_conflict_inodes_lock);
- 	ctx->scratch_eb = NULL;
- }
- 
-@@ -5779,16 +5780,20 @@ static int log_conflicting_inodes(struct btrfs_trans_handle *trans,
- 				  struct btrfs_log_ctx *ctx)
- {
- 	int ret = 0;
-+	unsigned long logging_conflict_inodes_flags;
- 
- 	/*
- 	 * Conflicting inodes are logged by the first call to btrfs_log_inode(),
- 	 * otherwise we could have unbounded recursion of btrfs_log_inode()
- 	 * calls. This check guarantees we can have only 1 level of recursion.
- 	 */
-+	spin_lock_irqsave(&ctx->conflict_inodes_lock, logging_conflict_inodes_flags);
- 	if (ctx->logging_conflict_inodes)
-+		spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_conflict_inodes_flags);
- 		return 0;
- 
- 	ctx->logging_conflict_inodes = true;
-+	spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_conflict_inodes_flags);
- 
- 	/*
- 	 * New conflicting inodes may be found and added to the list while we
-@@ -5869,7 +5874,9 @@ static int log_conflicting_inodes(struct btrfs_trans_handle *trans,
- 			break;
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index b4251915585f..919592fa4e64 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -3821,7 +3821,7 @@ static struct fib6_info *ip6_route_info_create(struct fib6_config *cfg,
+ 			rt->fib6_flags = RTF_REJECT | RTF_NONEXTHOP;
  	}
  
-+	spin_lock_irqsave(&ctx->conflict_inodes_lock, logging_conflict_inodes_flags);
- 	ctx->logging_conflict_inodes = false;
-+	spin_unlock_irqrestore(&ctx->conflict_inodes_lock, logging_conflict_inodes_flags);
- 	if (ret)
- 		free_conflicting_inodes(ctx);
+-	if (!ipv6_addr_any(&cfg->fc_prefsrc)) {
++	if (!ipv6_addr_any(&cfg->fc_prefsrc) && fib6_nh) {
+ 		struct net_device *dev = fib6_nh->fib_nh_dev;
  
-diff --git a/fs/btrfs/tree-log.h b/fs/btrfs/tree-log.h
-index dc313e6bb2fa..0f862d0c80f2 100644
---- a/fs/btrfs/tree-log.h
-+++ b/fs/btrfs/tree-log.h
-@@ -44,6 +44,7 @@ struct btrfs_log_ctx {
- 	struct list_head conflict_inodes;
- 	int num_conflict_inodes;
- 	bool logging_conflict_inodes;
-+	spinlock_t logging_conflict_inodes_lock;
- 	/*
- 	 * Used for fsyncs that need to copy items from the subvolume tree to
- 	 * the log tree (full sync flag set or copy everything flag set) to
+ 		if (!ipv6_chk_addr(net, &cfg->fc_prefsrc, dev, 0)) {
 -- 
-2.34.1
+2.44.0
 
 
