@@ -1,125 +1,139 @@
-Return-Path: <linux-kernel+bounces-392468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2868A9B948B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:37:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D471B9B948F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACB901F21CA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:37:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7271F21EFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C521C82F0;
-	Fri,  1 Nov 2024 15:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FF91C7610;
+	Fri,  1 Nov 2024 15:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYC00OtJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PClTnFcd"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468D21C729B;
-	Fri,  1 Nov 2024 15:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9328715689A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 15:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475430; cv=none; b=ClSwbqC2HSeSXmesApoNx8wJyhTfkRPbKql5XpAA+7TFWgaXAt0G2uXRdS46N4d/syRoOXCoJIlyKkTgAQiQyvWiaRxKk9Lp3VxvxUXkz707EL6BRbhbHETpnbzwz8jQeQCNqE4vcQygVZbPLyndE+57mQ0yjbuysdvspsYCCAE=
+	t=1730475542; cv=none; b=DkkYimKy3D6QAfcpUWUQ5we7XAAMflCyothWOd4A6SiLwiOfcXTVhK2WrCdaozP49xe1D28TkNIQXvJuMvaK9cAA0iJRXLZgM1ug+Wzq3nTcxL7YoRujhMSDOB8Zvg0LAaVN7qBvxG2++Rrd4OUSO7inmk9NT1TcXZFZW7Jro5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475430; c=relaxed/simple;
-	bh=7A7xoAlxFzqvHKjOX7THt9g8OUG8yAzJ9stzmiv/cWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Io4FYKk/toMiPDIZ5s8QA7qO988qKnmPyf7BbsDksL4tTFQDiPvGiV/oeBgp0kKaJTwwFdiTWchc+BdskX3lRs569Qusu98aGL1P/eFRBYgXlSQyejvggHKFCkfe6rwqZocBN3GIm/7FqpxCHJK3N6gk+PNh0BXL07rs03T/+jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYC00OtJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB34C4CED1;
-	Fri,  1 Nov 2024 15:37:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730475429;
-	bh=7A7xoAlxFzqvHKjOX7THt9g8OUG8yAzJ9stzmiv/cWs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DYC00OtJJLTmceKdnDnDi/ze3IYHInLzbnPJwblyMVaZ6/79mK5qNn1SBTsLb2THP
-	 wEREqCfpvTEaW5eef9G+TzESdyHDAqBsE1oTqLFuHosJ88c3NBvKmU+YtSnZ3oKrUh
-	 Uzl4tqNObZKVsoPUoGqXbC6FT/AX2y+R0jCD16AQbRx0ABdAgP7+77wWIBR5vnJnZo
-	 aUi86jXogCaDebDgWfXyKeM26AwlXLz6IkVtcmzqMBtbVKOyZl82LVACQfOuP4p01+
-	 blVT77UVEHoRlXfrR2z5xR7w4Na1L+PRK7eYp0wJbonYPlKOCeuifbpSGEgls0PJ2w
-	 Y760sWGMOHvSw==
-Date: Fri, 1 Nov 2024 15:36:56 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Ramona Gradinariu
- <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Anand Ashok Dumbre
- <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
- Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
- <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
- Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
- Linus Walleij <linus.walleij@linaro.org>, Benson Leung
- <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v2 05/15] iio: proximity: sx9500: simplify code in
- write_event_config callback
-Message-ID: <20241101153656.43e27240@jic23-huawei>
-In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-5-2bcacbb517a2@baylibre.com>
-References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
-	<20241031-iio-fix-write-event-config-signature-v2-5-2bcacbb517a2@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730475542; c=relaxed/simple;
+	bh=MGpG9+U1NcrPw89BaqJoGGpatnrkgpDjLgz7qBB/IOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmqBwBTsKlWy8jkVoO4ZgI8VwuLrJ1C5+SkFEDyAdsHrPw4aTXApwOr4JHQyfZ+6Xs45DbnSQk0m2aKEHDHDHyqV8LdJh890voDwxWixRm5ECWNF4XoW7BLJGcOH+5dR9RvfBvcvumS3/p/rgUhsT836VbihgMys3VlaMYYBwmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PClTnFcd; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 1 Nov 2024 08:38:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730475537;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MDBDtrud5eJtuuxZyPOJXE2RSRr8v+TyeHi88AUx8RA=;
+	b=PClTnFcdIrcZ78W4jSshcODMfnNiSvNFtWKdgQXgVaJZCwGgQF3dDPomr/MvL2yA9B2Cwx
+	sIxnO1FBfdPS2fhSPK5ZXdGtgALWc9G1JWP6xyny1RXUjNkwgAnqURsd9JAi0B3Jon4w0B
+	kiA/rkElVf8i8EK1b4eQnPfLrgKPky8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Andrew Jones <ajones@ventanamicro.com>,
+	James Houghton <jthoughton@google.com>,
+	David Woodhouse <dwmw@amazon.co.uk>, linux-next@vger.kernel.org
+Subject: Re: [PATCH v3 03/14] KVM: selftests: Return a value from
+ vcpu_get_reg() instead of using an out-param
+Message-ID: <ZyT2CB6zodtbWEI9@linux.dev>
+References: <20241009154953.1073471-1-seanjc@google.com>
+ <20241009154953.1073471-4-seanjc@google.com>
+ <39ea24d8-9dae-447a-ae37-e65878c3806f@sirena.org.uk>
+ <ZyTpwwm0s89iU9Pk@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZyTpwwm0s89iU9Pk@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 31 Oct 2024 16:27:00 +0100
-Julien Stephan <jstephan@baylibre.com> wrote:
+Hey,
 
-> iio_ev_state_store is actually using kstrtobool to check user
-> input, then gives the converted boolean value to the write_event_config
-> callback.
+On Fri, Nov 01, 2024 at 07:48:00AM -0700, Sean Christopherson wrote:
+> On Fri, Nov 01, 2024, Mark Brown wrote:
+> > On Wed, Oct 09, 2024 at 08:49:42AM -0700, Sean Christopherson wrote:
+> > > Return a uint64_t from vcpu_get_reg() instead of having the caller provide
+> > > a pointer to storage, as none of the vcpu_get_reg() usage in KVM selftests
+> > > accesses a register larger than 64 bits, and vcpu_set_reg() only accepts a
+> > > 64-bit value.  If a use case comes along that needs to get a register that
+> > > is larger than 64 bits, then a utility can be added to assert success and
+> > > take a void pointer, but until then, forcing an out param yields ugly code
+> > > and prevents feeding the output of vcpu_get_reg() into vcpu_set_reg().
+> > 
+> > This commit, which is in today's -next as 5c6c7b71a45c9c, breaks the
+> > build on arm64:
+> > 
+> > aarch64/psci_test.c: In function ‘host_test_system_off2’:
+> > aarch64/psci_test.c:247:9: error: too many arguments to function ‘vcpu_get_reg’
+> >   247 |         vcpu_get_reg(target, KVM_REG_ARM_PSCI_VERSION, &psci_version);
+> >       |         ^~~~~~~~~~~~
+> > In file included from aarch64/psci_test.c:18:
+> > include/kvm_util.h:705:24: note: declared here
+> >   705 | static inline uint64_t vcpu_get_reg(struct kvm_vcpu *vcpu, uint64_t id)
+> >       |                        ^~~~~~~~~~~~
+> > At top level:
+> > cc1: note: unrecognized command-line option ‘-Wno-gnu-variable-sized-type-not-at
+> > -end’ may have been intended to silence earlier diagnostics
+> > 
+> > since the updates done to that file did not take account of 72be5aa6be4
+> > ("KVM: selftests: Add test for PSCI SYSTEM_OFF2") which has been merged
+> > in the kvm-arm64 tree.
 > 
-> Remove useless code in write_event_config callback.
+> Bugger.  In hindsight, it's obvious that of course arch selftests would add usage
+> of vcpu_get_reg().
 > 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-Applied and pushed out as testing. Still time for other reviews if anyone
-cares to take a look.
+> Unless someone has a better idea, I'll drop the series from kvm-x86, post a new
+> version that applies on linux-next, and then re-apply the series just before the
+> v6.13 merge window (rinse and repeat as needed if more vcpu_get_reg() users come
+> along).
 
+Can you instead just push out a topic branch and let the affected
+maintainers deal with it? This is the usual way we handle conflicts
+between trees...
+
+> That would be a good oppurtunity to do the $(ARCH) directory switch[*] too, e.g.
+> have a "selftests_late" or whatever topic branch.
+
+The right time to do KVM-wide changes (even selftests) is *early* in the
+development cycle, not last minute. It gives us plenty of time to iron out
+the wrinkles.
+
+> Sorry for the pain Mark, you've been playing janitor for us too much lately.
+
++1, appreciate your help on this.
+
+-- 
 Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/proximity/sx9500.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/proximity/sx9500.c b/drivers/iio/proximity/sx9500.c
-> index 3f4eace05cfc6a4679fe82854dc059aa4a710d6d..e3da709424d5b2bd4e746df7adc4a4969e62f2a6 100644
-> --- a/drivers/iio/proximity/sx9500.c
-> +++ b/drivers/iio/proximity/sx9500.c
-> @@ -551,7 +551,7 @@ static int sx9500_write_event_config(struct iio_dev *indio_dev,
->  
->  	mutex_lock(&data->mutex);
->  
-> -	if (state == 1) {
-> +	if (state) {
->  		ret = sx9500_inc_chan_users(data, chan->channel);
->  		if (ret < 0)
->  			goto out_unlock;
-> @@ -571,7 +571,7 @@ static int sx9500_write_event_config(struct iio_dev *indio_dev,
->  	goto out_unlock;
->  
->  out_undo_chan:
-> -	if (state == 1)
-> +	if (state)
->  		sx9500_dec_chan_users(data, chan->channel);
->  	else
->  		sx9500_inc_chan_users(data, chan->channel);
-> 
-
+Oliver
 
