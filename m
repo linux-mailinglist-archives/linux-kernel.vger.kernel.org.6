@@ -1,154 +1,101 @@
-Return-Path: <linux-kernel+bounces-392412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D0A9B93D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:59:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 447039B93D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:59:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338571F2199A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:59:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5561F2171D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8C01AA7A6;
-	Fri,  1 Nov 2024 14:59:35 +0000 (UTC)
-Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342F01AA793;
+	Fri,  1 Nov 2024 14:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/JiVMTR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E977819DF53;
-	Fri,  1 Nov 2024 14:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAD819DF53;
+	Fri,  1 Nov 2024 14:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730473175; cv=none; b=NPZXrUUYREKw/6e3O4X61N9eWkppDNkgpUeVbq1ipuhEBDyDe0tnHsgaGswcLGN/u2rrf5EM77Kk08qM9CSUhwnCl7v8RtDNo4nCACLBfEIBBdubXgiMjOkDVGM/xeVe6arhbt8gcaSVDXPhKEXlTswrxwSPv2b0MzmhSksroLI=
+	t=1730473185; cv=none; b=TvhvTeFtuL9gS3qGvlFL0voUxglU1EPZJaP/DuOJ16ebifRrfPGwDsihYAmdxo42xSEugmwGNkPdFwjPuHqsw5VybpbZQha5Xq5ysdiGUDfdFdsI01OnXeXwfTZUp5mJJyX1FOn5JPBe5UxDMnjKSN5I5dFaSg3BG2XByftRYXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730473175; c=relaxed/simple;
-	bh=xL+GqfftCmenl96Zh89R5xUH+YGIzti3inJQEhu3r2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OvHfebA/3gEICKN8J0MjUFfEI7RbJkPhJq4LIFXR03J4znnu1XDXBHFYMLlIsYHlvAT/VkQmdax0HrNP8WVIPPqHyqgKWyYWdvMXy9LPwwZGogQ2os69/kPKuqHlZV+u76LVwmqZ4+c/J8yZg+H8znVAHYwxHDMqaPvbHZ4T9/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
-Received: from mgb4.. (unknown [62.77.71.229])
-	by mx.gpxsee.org (Postfix) with ESMTPSA id E60F2746A5;
-	Fri, 01 Nov 2024 15:59:22 +0100 (CET)
-From: tumic@gpxsee.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
-Subject: [PATCH v2] media: mgb4: Fix inconsistent input/output alignment in loopback mode
-Date: Fri,  1 Nov 2024 15:59:11 +0100
-Message-ID: <20241101145911.3168-1-tumic@gpxsee.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1730473185; c=relaxed/simple;
+	bh=2X03TQNnAW9HkcVyX2wIkFgipuGM2Vgw+NEcYA8LBn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NtylhHIYgqYoK0AC0pkxkvUUcQiAaCLfTeITPe0CerszarFVifTNehMfSxgjP7giha212sUJmBBSYcxTNe1BFywntnCZkVnwXLfYkAEw6Cb2SD+f2WSX+cmZJ4+QBXyYK7IhMQitRvRG6kEG+5dBAfJpF5UCrfQI1HEMaj9p684=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/JiVMTR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB640C4CECD;
+	Fri,  1 Nov 2024 14:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730473185;
+	bh=2X03TQNnAW9HkcVyX2wIkFgipuGM2Vgw+NEcYA8LBn8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o/JiVMTRVN8axcRP/bazaFytzufdptpKkyuYOIy33rdBymDbJ04+Reu2sRpnwMynt
+	 tKXmLkivLx8N/qeNLJxeIVZtlclGNfn/r1X1RqgWbNmmU9DYNRAtEgOWPpxXznVLBu
+	 ZX7PFjLys4bONG+5mI58wH77nC4lRZlBnl78xCWL8urxbiRuKS6TvKXQbdcmgdFSIJ
+	 Z4upf/ZLzfexrZ1OLN0PTtwKfCBIpiqny91P9olk1+ZlGefwUYly/vEwSD5yBD1jwM
+	 Km32ZF1wXQSmw5gfplZXadH7GRBRCTWM4KFX9udqOVnWCCDtS9QkrUtTdjh/gmm+Mx
+	 dvlkAi0SSRPJw==
+Date: Fri, 1 Nov 2024 14:59:38 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen
+ <lars@metafoo.de>
+Subject: Re: [PATCH v3 0/4] iio: initialise ddata for
+ iio_get_acpi_device_name_and_data()
+Message-ID: <20241101145938.304fd98b@jic23-huawei>
+In-Reply-To: <20241101131705.3697913-1-andriy.shevchenko@linux.intel.com>
+References: <20241101131705.3697913-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Martin Tůma <martin.tuma@digiteqautomotive.com>
+On Fri,  1 Nov 2024 15:16:00 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Fixes broken output due to different input/output alignment in loopback
-mode when the (last) input device is closed. Instead of on device close,
-do the alignment synchronisation when starting the stream (and clear
-it when streaming is stopped).
+> Dan reported that ddata might be used uninitialised in some cases.
+> Let's initialise it to NULL (patches 1 - 3). With that, update one driver
+> to drop an unneeded anymore check (included in patch 3).
+> 
+> While at it, one more cleanup to kxcjk-1013 (patch 4) is added.
+> 
+> Jonathan, dunno if you want to rebase at this stage (probably not),
+> but if you do, feel free to fold the patches 1-3 to the initial code.
+Ah. I've just picked v2, but given I squashed anyway the commit message
+changes don't matter.  I was curious what Assing meant but not need to
+ask given I wasn't going to keep it.
 
-Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
----
- drivers/media/pci/mgb4/mgb4_vin.c | 30 +++++++++---------------------
- 1 file changed, 9 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/media/pci/mgb4/mgb4_vin.c b/drivers/media/pci/mgb4/mgb4_vin.c
-index 185fb28226b6..9375a4b5d6a7 100644
---- a/drivers/media/pci/mgb4/mgb4_vin.c
-+++ b/drivers/media/pci/mgb4/mgb4_vin.c
-@@ -260,6 +260,7 @@ static void buffer_queue(struct vb2_buffer *vb)
- static void stop_streaming(struct vb2_queue *vq)
- {
- 	struct mgb4_vin_dev *vindev = vb2_get_drv_priv(vq);
-+	struct mgb4_regs *video = &vindev->mgbdev->video;
- 	const struct mgb4_vin_config *config = vindev->config;
- 	int irq = xdma_get_user_irq(vindev->mgbdev->xdev, config->vin_irq);
- 
-@@ -273,6 +274,9 @@ static void stop_streaming(struct vb2_queue *vq)
- 		mgb4_mask_reg(&vindev->mgbdev->video, config->regs.config, 0x2,
- 			      0x0);
- 
-+	mgb4_write_reg(video, vindev->config->regs.padding, 0);
-+	set_loopback_padding(vindev, 0);
-+
- 	cancel_work_sync(&vindev->dma_work);
- 	return_all_buffers(vindev, VB2_BUF_STATE_ERROR);
- }
-@@ -280,6 +284,7 @@ static void stop_streaming(struct vb2_queue *vq)
- static int start_streaming(struct vb2_queue *vq, unsigned int count)
- {
- 	struct mgb4_vin_dev *vindev = vb2_get_drv_priv(vq);
-+	struct mgb4_regs *video = &vindev->mgbdev->video;
- 	const struct mgb4_vin_config *config = vindev->config;
- 	int irq = xdma_get_user_irq(vindev->mgbdev->xdev, config->vin_irq);
- 
-@@ -292,6 +297,9 @@ static int start_streaming(struct vb2_queue *vq, unsigned int count)
- 		mgb4_mask_reg(&vindev->mgbdev->video, config->regs.config, 0x2,
- 			      0x2);
- 
-+	mgb4_write_reg(video, vindev->config->regs.padding, vindev->padding);
-+	set_loopback_padding(vindev, vindev->padding);
-+
- 	xdma_enable_user_irq(vindev->mgbdev->xdev, irq);
- 
- 	return 0;
-@@ -324,34 +332,16 @@ static int fh_open(struct file *file)
- 
- 	if (get_timings(vindev, &vindev->timings) < 0)
- 		vindev->timings = cea1080p60;
--	set_loopback_padding(vindev, vindev->padding);
- 
- out:
- 	mutex_unlock(&vindev->lock);
- 	return rv;
- }
- 
--static int fh_release(struct file *file)
--{
--	struct mgb4_vin_dev *vindev = video_drvdata(file);
--	int rv;
--
--	mutex_lock(&vindev->lock);
--
--	if (v4l2_fh_is_singular_file(file))
--		set_loopback_padding(vindev, 0);
--
--	rv = _vb2_fop_release(file, NULL);
--
--	mutex_unlock(&vindev->lock);
--
--	return rv;
--}
--
- static const struct v4l2_file_operations video_fops = {
- 	.owner = THIS_MODULE,
- 	.open = fh_open,
--	.release = fh_release,
-+	.release = vb2_fop_release,
- 	.unlocked_ioctl = video_ioctl2,
- 	.read = vb2_fop_read,
- 	.mmap = vb2_fop_mmap,
-@@ -507,8 +497,6 @@ static int vidioc_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 
- 	vindev->padding = (f->fmt.pix.bytesperline - (f->fmt.pix.width
- 			   * pixelsize)) / pixelsize;
--	mgb4_write_reg(video, vindev->config->regs.padding, vindev->padding);
--	set_loopback_padding(vindev, vindev->padding);
- 
- 	return 0;
- }
+Jonathan
 
-base-commit: 698b6e3163bafd61e1b7d13572e2c42974ac85ec
--- 
-2.46.2
+> 
+> In v3:
+> - made Subject more specific for patches 1-3 (Markus)
+> 
+> In v2:
+> - rewritten patches 1-3 to do the job on the caller side (Jonathan)
+> 
+> Andy Shevchenko (4):
+>   iio: light: isl29018: Assign NULL to ddata in isl29018_probe()
+>   iio: light: ltr501: Assign NULL to ddata in ltr501_probe()
+>   iio: accel: kxcjk-1013: Assign NULL to ddata in kxcjk1013_probe()
+>   iio: accel: kxcjk-1013: Deduplicate ODR startup time array
+> 
+>  drivers/iio/accel/kxcjk-1013.c | 30 ++++++------------------------
+>  drivers/iio/light/isl29018.c   |  2 +-
+>  drivers/iio/light/ltr501.c     |  2 +-
+>  3 files changed, 8 insertions(+), 26 deletions(-)
+> 
 
 
