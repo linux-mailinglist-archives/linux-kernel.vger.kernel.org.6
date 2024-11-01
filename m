@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-392443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B839B943C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:18:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8639B9442
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EF8CB21B54
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:18:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3877C1C21B46
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1391F1C6F71;
-	Fri,  1 Nov 2024 15:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BA61C75EC;
+	Fri,  1 Nov 2024 15:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nBr1idrK"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xb8gJSgb"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365AB1C303A;
-	Fri,  1 Nov 2024 15:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E741C2DB2;
+	Fri,  1 Nov 2024 15:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730474320; cv=none; b=VGK9NHbp9A1z6llxi6kNpeYg/K30TwCkxE8C/H4YvPJM8IE6RM2ogAJvS5WyAyJ9x3H+MQAEtRl+r2jNQ2Oxgph4Ssm9K2AXf5Katjfxw1+uqFrrXqjtEMd+5ZO2DIwEr/J6iUxwo+eK+E2BihoX4K7bEQSa5nSaTHTwc1uI8Wc=
+	t=1730474454; cv=none; b=mW/NsQ4VJQB447XendzOrjGIfvmZkCD8ofU9XgO6JIAo1SzDRf4Z2qDMD5XpS2yKTVQhM7mtcBGcxVKATfeHFcn/CdRNg3pl9Ed3i1mCaWfqNcAZTM/9GkG10SMFxX9czxX19gu50R5Xuk+uIqeli0sKvVevW18FIN6pkMNi/U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730474320; c=relaxed/simple;
-	bh=zuN5R7hbuH1BvhVCVBt/zGaYDCvPjEZM0tpyzDA8ZVA=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:To:
-	 Cc:Date:Message-ID; b=gW4AsvfJrzwXo4UPb6HKunBEFFmEcFh2gYwUQVcO4Vu0jQ37AwpjlNjLMymywXbeqWxHIgzeCv6PjU6LtwCpyjhOJQo17fPD6MZNA7SKuMY6dzrmCHIn/xqL7k2vsD5y7cfkQLiGl4e6v6Z/xaTPTABeI407Z63mazOdqJQUziM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nBr1idrK; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5602B3D4;
-	Fri,  1 Nov 2024 16:18:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730474311;
-	bh=zuN5R7hbuH1BvhVCVBt/zGaYDCvPjEZM0tpyzDA8ZVA=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=nBr1idrKB+P9AyQS+0sPM+y+7bN56hXVF9CuFlueWKUjipSZFbS7lN/BfUDeTnwJF
-	 uPGrPgUylvhy8jz0FmPQfT2eAWO5DQJGVCTcVIynpxYP/QlyuoUrDtJtvgnXj8Rr5F
-	 BQ/3fYdj9U+abtbwYQJhqqxe8h51my0DbYNHGGeM=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730474454; c=relaxed/simple;
+	bh=YB8pbQNj6sLlzicHNtt6ickDj4H2tEh5oQmtt87rcZk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eiHrzbzZlVhKBNS1Bhnt9dmZvZ4cGK1rdCRNieCTELT//fKh1ZInR6Y/loOgzDg/xFhwNkZr6UE+gvQASRqss3ZwgwE7gly3TlFcZbK4TrYdCzM86Y+aT90ex3CmHPqCzbqw1e6I7DoEy2DbRngz4Yla+aVSbHBQFJjMEtAPl8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xb8gJSgb; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730474445;
+	bh=YB8pbQNj6sLlzicHNtt6ickDj4H2tEh5oQmtt87rcZk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Xb8gJSgbstBOSK/9BQ/qNdVRJAMkO+jB+8cY8xGLDCs/iWp4/0Sn7UETxT3IgWsXJ
+	 IrwntJ4vr08+VH0IObdSPJVQeF9YX/UkJxVQCPCCtOXGxR1M2iFjXOuIA7bhEuHe4J
+	 NzIyKzDpnZF39yCfg2dJA4xuXz00sIuRFuYhzLuGz16wQHEReMGImHkKgdDsKUvZoL
+	 Q9tjLb/TvlECyDQAYZAp8cPICOow74R8tuWWYleSy54+unnKIYnPJh8elBdPamYs4Q
+	 DRP9GhImM/TkPVAWEdVWKn+jqVIZhNQBT5eNhAnuDxPvtjChw3r2BHNK6fBYr0kr1Y
+	 f48CNAojyQSCQ==
+Received: from [192.168.1.214] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8410717E0F77;
+	Fri,  1 Nov 2024 16:20:42 +0100 (CET)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Subject: [PATCH 0/4] net: stmmac: dwmac-mediatek: Fix inverted logic for
+ mediatek,mac-wol
+Date: Fri, 01 Nov 2024 11:20:22 -0400
+Message-Id: <20241101-mediatek-mac-wol-noninverted-v1-0-75b81808717a@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAF6AEGu_qJYV3TnprJsqsWV_GoLhiBFQ8LNwfYDjczDparvZCA@mail.gmail.com>
-References: <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-0-cdff2f1a5792@linaro.org> <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-6-cdff2f1a5792@linaro.org> <CAF6AEGu_qJYV3TnprJsqsWV_GoLhiBFQ8LNwfYDjczDparvZCA@mail.gmail.com>
-Subject: Re: [PATCH 6/6] arm64: dts: qcom: sdm845-db845c-navigation-mezzanine: Add cma heap for libcamera softisp support
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Rob Clark <robdclark@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Depeng Shao <quic_depengs@quicinc.com>, Vikram Sharma <quic_vikramsa@quicinc.com>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-Date: Fri, 01 Nov 2024 15:18:33 +0000
-Message-ID: <173047431366.2974136.175546053701391124@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIALbxJGcC/x3MQQrCMBAF0KuUWTuQaWNRryIuQvLVQTuRpNRC6
+ d0NLt/mbVRRFJUu3UYFi1bN1iCHjuIz2AOsqZl613sRJzwhaZjx4ilE/uY3Wza1BWVGYjmf4hi
+ 988dhpFZ8Cu66/vvrbd9/VYDmdG4AAAA=
+X-Change-ID: 20241101-mediatek-mac-wol-noninverted-198c6c404536
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Biao Huang <biao.huang@mediatek.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Jose Abreu <joabreu@synopsys.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: kernel@collabora.com, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.2
 
-+Cc Laurent
+This series fixes the inverted handling of the mediatek,mac-wol DT
+property while keeping backward compatibility. It does so by introducing
+a new property on patch 1 and updating the driver to handle it on patch
+2. Patch 3 adds this property on the Genio 700 EVK DT, where this issue
+was noticed, to get WOL working on that platform. Patch 4 adds the new
+property on all DTs with the MediaTek DWMAC ethernet node enabled
+and inverts the presence of mediatek,mac-wol to maintain the
+current behavior and have it match the description in the binding.
 
-Quoting Rob Clark (2024-11-01 12:33:44)
-> On Fri, Oct 25, 2024 at 8:49=E2=80=AFAM Bryan O'Donoghue
-> <bryan.odonoghue@linaro.org> wrote:
-> >
-> > libcamera softisp requires a linux,cma heap export in order to support
-> > user-space debayering, 3a and export to other system components such as
-> > pipewire, Firefox/Chromium - Hangouts, Zoom etc.
->=20
-> AFAIU libcamera could use udmabuf, etc, and there is no hw requirement
-> for CMA.  So it doesn't seem we should be adding this to dt.  And I'd
-> really prefer that we not be using CMA just for lolz.
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Nícolas F. R. A. Prado (4):
+      net: dt-bindings: dwmac: Introduce mediatek,mac-wol-noninverted
+      net: stmmac: dwmac-mediatek: Handle non-inverted mediatek,mac-wol
+      arm64: dts: mediatek: mt8390-genio-700-evk: Enable ethernet MAC WOL
+      arm64: dts: mediatek: Add mediatek,mac-wol-noninverted to ethernet nodes
 
-I agree here. Otherwise this theoretically locks this memory to the pool
-'forever'. It's not something we should define in device tree.
+ Documentation/devicetree/bindings/net/mediatek-dwmac.yaml     | 11 +++++++++++
+ arch/arm64/boot/dts/mediatek/mt2712-evb.dts                   |  2 ++
+ arch/arm64/boot/dts/mediatek/mt8195-demo.dts                  |  2 ++
+ arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts         |  1 +
+ arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts        |  2 +-
+ arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts |  2 ++
+ arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts         |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c          |  9 ++++++---
+ 8 files changed, 26 insertions(+), 5 deletions(-)
+---
+base-commit: c88416ba074a8913cf6d61b789dd834bbca6681c
+change-id: 20241101-mediatek-mac-wol-noninverted-198c6c404536
 
-udmabuf provides a means to get memfd allocated memory which is not
-physically contiguous - but /is/ managed by a dmabuf handle.
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-Presently with SoftISP being CPU only - physically contiguous memory is
-not required.
-
-Bryan, will this still be true when you have a GPU based ISP ? Will that
-require physically contiguous memory ? Or will the mapping into the GPU
-handle any required translations?
-
---
-Kieran
-
-
->=20
-> BR,
-> -R
->=20
-> > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > ---
-> >  .../boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso     | 11 +++=
-++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanin=
-e.dtso b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
-> > index d62a20f018e7a7e1c7e77f0c927c2d9fe7ae8509..c8507afcd1e0d1f9b14b6e4=
-edcbc646032e7b6c9 100644
-> > --- a/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
-> > +++ b/arch/arm64/boot/dts/qcom/sdm845-db845c-navigation-mezzanine.dtso
-> > @@ -9,6 +9,17 @@
-> >  #include <dt-bindings/clock/qcom,camcc-sdm845.h>
-> >  #include <dt-bindings/gpio/gpio.h>
-> >
-> > +/ {
-> > +       reserved-memory {
-> > +               linux,cma {
-> > +                       compatible =3D "shared-dma-pool";
-> > +                       size =3D <0x0 0x8000000>;
-> > +                       reusable;
-> > +                       linux,cma-default;
-> > +               };
-> > +       };
-> > +};
-> > +
-> >  &camss {
-> >         vdda-phy-supply =3D <&vreg_l1a_0p875>;
-> >         vdda-pll-supply =3D <&vreg_l26a_1p2>;
-> >
-> > --
-> > 2.47.0
-> >
-> >
 
