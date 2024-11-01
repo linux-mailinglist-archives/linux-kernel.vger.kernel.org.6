@@ -1,206 +1,222 @@
-Return-Path: <linux-kernel+bounces-392929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4019B99C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:00:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268069B99C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:01:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A2C2833CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:00:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CAAEB216CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F9D1E2829;
-	Fri,  1 Nov 2024 21:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCB01E2828;
+	Fri,  1 Nov 2024 21:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lQXmySVY"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLmVHrGB"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3745D13C67C
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 21:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F59312D758;
+	Fri,  1 Nov 2024 21:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730494823; cv=none; b=OOpFRJmXhYrMoG0K0zzODB/1mSfyKweVzCvSyOgkHFaksyVVCw30Ik1Ni9RMPFBEAjC2fLVcHL0oG08cwITXMJtZSC9ST86ilOiZAU+RKojF3z8ZK2zpzMsNeN/JUVVCtR7toXPjgVfvraxoQ4xvZeari0WV1S7M1act8sreN+I=
+	t=1730494859; cv=none; b=mEl1vDjoO/xPqWUu8jHDugdRuuXloX0Fej/Hv4fc/P4b9+Is6F7YI6PIZXOWO/YFrbvEhrw4SBqX/CGXUZTVp+64GHvcMZWafvxTqxuT4/wjRUz5Jnwj2Mq5I1O/9BrSZ4gXqt55i7R4OBpeqF99FER6MhsnagymyhNUwzqTzIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730494823; c=relaxed/simple;
-	bh=yd1oNMlXQNHRuMi9NKJGY6s8WrK4lyJGOmQW7IQTstg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=GafCaLvzUjyvYtPJxNIQCS+LFcJcqiIjtXxWXdDnfNZ1dgyIvtQKL96s0bq/S5YIXyGvZddHAL6Gyr8WWTOzQ2yFUNy6fn94EONUUmP236j+B2sNgy6/mM2pMHyIlmEWAePMNrrGFaXZ5fE1lsEDWbzgFZwzaqxhS2Tm/5ZlMWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lQXmySVY; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e6089a1d39so1222018b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 14:00:19 -0700 (PDT)
+	s=arc-20240116; t=1730494859; c=relaxed/simple;
+	bh=miy3Kf2jwUEuhZOasiLIiux1aqtLf72tk87BaWrvkjo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fbAgFIGcZJ3hPeJIirB3pyZVSiKN1t82QRgA4CEu9NzfbK8ps9ejUGNZIECKgzZm5+Hi8kwSiP3/SxujaFwweCwmQrAwN9CcVtyH5DG3G1vKV2Z7gAGJBes6/r4iTOWYH7SP9VWZLi+652pALxXiCtzFnZHICqYOTtEkOmwvHvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLmVHrGB; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ea053b5929so20763307b3.0;
+        Fri, 01 Nov 2024 14:00:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730494818; x=1731099618; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QK/XrqgDzkOhN4kuc7qZmLsvJLPawrpRaDB6kgscLdM=;
-        b=lQXmySVYehuOhc7BQQQ/s7pyqfrMG2u0vr8cPMmjmIQ5RC+6UBqUDRPcxIYeN8h9d4
-         6f1qc44zGoIxs/I2/LKvSPQvCpUpeKsO3FU0TH9aOp2cBEaUQqS14zndjk8M+ych9qCk
-         FMgkGClqYJRJY8TQ081sH5Tn9cx/vkFCjLnDelRKq+rwHE/4lmhQHSVYrnK0uGBYvYt5
-         guQTC3848v73IMLNxNFoqQRIDmXTDs4ygnlyp3G6rfQKzDh7WoqX3nuOOUzr7i5ofwL0
-         rmezQSP2Rb7wSb2HrqNwFdImjU2VF1u9UUfuB0/mS1JzrC/B3Kmqv9/42UiViFc7URAP
-         IEIQ==
+        d=gmail.com; s=20230601; t=1730494855; x=1731099655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qaV7ELqFA+mAL6sc/qk3B5LXboH7u0S8/APmxDBWmp8=;
+        b=DLmVHrGBOaF2f5HhAwbbgQTjMp7MU/epymRSEVO3k2pB7j+zEznhlNYPxEPf0NUzet
+         Sk42Uyt/5Z1/Z6w6V/Fk6GgUyRn+FBiqgbg7SobT1f3osSvBtbWVVJhheJCAVdMSVTZG
+         f1PN/BpfO6YnjKxgXAUD4F4/K8Vw+fMORhill812bhW+YtcbsQqPcmKpH8w0IrUXEHpB
+         3IsOFVrNkzB5jFdsygMtB+hLVKZG63gt8DlEsX9foJSgdktfPVNvigsAg2qNoJQo2Nz/
+         68eG9mCvx44FywQH+z7wuEmY1SZsh5tPScXRtCbsQolEU2GR+qgycZFdt2YtCo8UiRQH
+         6+tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730494818; x=1731099618;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QK/XrqgDzkOhN4kuc7qZmLsvJLPawrpRaDB6kgscLdM=;
-        b=p7kTAtI7es9ilfgec8zGvR62+lDJkr2FYZe+PrUV+/zEViewSHvh5HN+upRg1+JZ3b
-         tUEMvxInr3xM4Xl1sK8Lv7FtY0c0CpSRDs4Ux513NQiz13spmhX0oYhFTCuJ5Bjvtez4
-         D0CDrtgFIzMgBYcWw5AIfsiD2p90nTy7pc7pKskUEQ6g5Zhcso4Gzi/LFHKbbUy9OYk7
-         ciymfhciFkrca97f9O75oqGQb47Z4UTS8+eKdxdS3U564fg853+jdY2DcNbvMLO7y7XU
-         DinGWHd+baOLhYmDKPVl+jb3Ts5PkJiJdfbJUOWFjOjesSACIiVaJiRhec7r1q5VWBkA
-         HG2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUyVTOBz5dBNwMALxA5griMtpQ90ioeuY1u81z06yRrvrGxoi0ubJVa7d2KYm2WEf78WIU2QsKEJSKcLhE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqPWzOS55a1UkMlZ6+5YVxiuJo5JoBDYkdZd6Eiah/blv5MUcd
-	SH+wC/c7SiSBofvR2Vg6wkOYdJLVHo0FORYVmLpyzvQ60ttFlGKzarvH/uftmy0=
-X-Google-Smtp-Source: AGHT+IGeoavYr/rIDZkAnrFaEnGlzF7zFA9Ef48oqV2Y27RnuBBx8c5ltJ+SujJAWX1hr8+KRN0XLw==
-X-Received: by 2002:a05:6808:de7:b0:3e7:60b9:d62b with SMTP id 5614622812f47-3e760b9da08mr1870355b6e.43.1730494818274;
-        Fri, 01 Nov 2024 14:00:18 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec704e25dbsm793593eaf.12.2024.11.01.14.00.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 14:00:16 -0700 (PDT)
-Message-ID: <54d39d0c-2021-4571-8d03-92456f2d1a4d@baylibre.com>
-Date: Fri, 1 Nov 2024 16:00:14 -0500
+        d=1e100.net; s=20230601; t=1730494855; x=1731099655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qaV7ELqFA+mAL6sc/qk3B5LXboH7u0S8/APmxDBWmp8=;
+        b=NAZkBEiD/LAF9HhuFyrAhZyjjHLNeGT6QyF03Vgj8KC3IXr2C86Xa+EpSEsATs1jkE
+         EOKsQPKujVTTo58yvt0nUcGf74K3u7NauOVwyV0sDF9ECbUlw5aBLrb4/pYcSacM/N49
+         eKtzojH4xq5CTg54vffG0veWxkPy1ZXq6QgRmDTfj2Xl/YVWc31nmkMUisATQarsPZx5
+         wguOUO2YQz0LRqva1hKd/+ViIWqoJT6Icd+S4oYDYoYlzpHIL//BL7QXSBk3yAtz0XED
+         L8pDxkazzKbqZCbG9UvLGPjZkkLBpimJ8RXROEuq+Moqsirhy6LysGh8J3iClNHSLZ5j
+         FQRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxU3efEdNvBY+Yme39KoOJFPBX5TUBmCwIWjoqOkpifvNegZGGg49+Dk7oWfNa4HbTOE0M85xcp6nOgpr4X9WTYg==@vger.kernel.org, AJvYcCX2i1TuQI+Fu6+qhpDsou1B9QiWI3XnAnb4KaZTzr95P26FomkDcb6+/NLujYBCiMhzwONJIECSdocJkio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQfTaji6Hl+EF8g419wVKGCC9svCq7AF5Dbu4405J3D7wRkDdj
+	Z5yJm4IC0cpJ1+ncjThdkU42ceySuwk0TGYxa/E9a1pNjPWmTnmS7h/Doi8+HCZv2yEDAC6k2GV
+	r0yuNG4VKOlRnKHLhg8XAEosoYMY=
+X-Google-Smtp-Source: AGHT+IELpH/0F7dV8dRl6EddHDXSq+7XHjxQcti0Y+c3T6a7N/b71cptP8YYhBzeeaH+weNQlnH7APaJPYE8K3tw2/c=
+X-Received: by 2002:a05:690c:6306:b0:6e3:1003:cb0c with SMTP id
+ 00721157ae682-6ea64c9f0a9mr51785097b3.46.1730494855149; Fri, 01 Nov 2024
+ 14:00:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] iio: adc: adi-axi-adc: set data format
-From: David Lechner <dlechner@baylibre.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- conor+dt@kernel.org, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20241101112358.22996-1-antoniu.miclaus@analog.com>
- <20241101112358.22996-5-antoniu.miclaus@analog.com>
- <0f4a6e40-a7c8-43e4-8596-4fa495159378@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <0f4a6e40-a7c8-43e4-8596-4fa495159378@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241101005338.5846-1-benjamin@engflow.com> <20241101172714.84386-1-benjamin@engflow.com>
+In-Reply-To: <20241101172714.84386-1-benjamin@engflow.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Fri, 1 Nov 2024 14:00:46 -0700
+Message-ID: <CAH0uvohNO517GAD7XH-VvUvU+dPdeZBKDw0Teij50sAPSe9sCQ@mail.gmail.com>
+Subject: Re: [PATCH v2] perf trace: avoid garbage when not printing a trace
+ event's arguments
+To: Benjamin Peterson <benjamin@engflow.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/1/24 2:52 PM, David Lechner wrote:
-> On 11/1/24 6:23 AM, Antoniu Miclaus wrote:
->> Add support for selecting the data format within the AXI ADC ip.
->>
->> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
->> ---
->> no changes in v5.
->>  drivers/iio/adc/adi-axi-adc.c | 22 ++++++++++++++++++++++
->>  1 file changed, 22 insertions(+)
->>
->> diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
->> index f6475bc93796..6f658d9b4c9d 100644
->> --- a/drivers/iio/adc/adi-axi-adc.c
->> +++ b/drivers/iio/adc/adi-axi-adc.c
->> @@ -45,6 +45,9 @@
->>  #define ADI_AXI_ADC_REG_CTRL			0x0044
->>  #define    ADI_AXI_ADC_CTRL_DDR_EDGESEL_MASK	BIT(1)
->>  
->> +#define ADI_AXI_ADC_REG_CNTRL_3			0x004c
->> +#define   ADI_AXI_ADC_CNTRL_3_CUSTOM_CTRL_MSK	GENMASK(7, 0)
->> +
->>  #define ADI_AXI_ADC_REG_DRP_STATUS		0x0074
->>  #define   ADI_AXI_ADC_DRP_LOCKED		BIT(17)
->>  
->> @@ -312,6 +315,24 @@ static int axi_adc_interface_type_get(struct iio_backend *back,
->>  	return 0;
->>  }
->>  
->> +static int axi_adc_data_size_set(struct iio_backend *back, ssize_t size)
->> +{
->> +	struct adi_axi_adc_state *st = iio_backend_get_priv(back);
->> +	unsigned int val;
->> +
->> +	if (size <= 20)
->> +		val = 0;
->> +	else if (size <= 24)
->> +		val = 1;
->> +	else if (size <= 32)
->> +		val = 3;
-> 
-> Should these be exact matches instead of "<="?
-> 
-> Also, what would val = 2 mean? Perhaps we need some macros to explain
-> the meanings of these values. The docs linked below give the meaning
-> for a different chip, but not AD485x.
-> 
->> +	else
->> +		return -EINVAL;
->> +
->> +	return regmap_update_bits(st->regmap, ADI_AXI_ADC_REG_CNTRL_3,
->> +				  ADI_AXI_ADC_CNTRL_3_CUSTOM_CONTROL_MSK, val);
-> 
+Hello Benjamin,
 
-Answering my own question:
+Before your patch:
 
-I did some digging in the HDL source code and found that there
-are actually multiple field here.
+perf $ ./perf trace -e net:netif_rx_exit
+     0.000 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
+    28.153 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
+    36.429 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
+    36.461 irq/79-brcmf_p/1694977 net:netif_rx_exit(6n<)
 
-So instead of ADI_AXI_ADC_CNTRL_3_CUSTOM_CTRL_MSK, we should have
+After:
 
-#define AD485X_CNTRL_3_CUSTOM_CTRL_OVERSAMPLING_EN	BIT(2)
-#define AD485X_CNTRL_3_CUSTOM_CTRL_PACKET_FORMAT	GENMASK(1, 0)
+perf $ ./perf trace -e net:netif_rx_exit
+     0.000 irq/79-brcmf_p/1694977 net:netif_rx_exit()
+     7.352 irq/79-brcmf_p/1694977 net:netif_rx_exit()
+    30.232 irq/79-brcmf_p/1694977 net:netif_rx_exit()
+    37.529 irq/79-brcmf_p/1694977 net:netif_rx_exit()
 
-And the meaning of PACKET_FORMAT is different for 16-bit vs.
-20-bit chips and in some cases if oversampling is enabled or not.
+It works beautifully, but I'm thinking can we simplify it by just doing:
 
-For 16-bit chips:
-	0 = 16-bit data and no status bits
-	1 = 16-bit data and 8 status bits
++       char bf[2048] =3D { 0 };
+        size_t size =3D sizeof(bf);
 
-For 20-bit chips:
-	0 = 20-bit data and no status bits
-	1 = 20-bit data and 4 status bits OR
-	    24-bit data and no status bits (oversampling)
-	2 = 20-bit data and 8 status bits and 4 bit padding OR
-	    24-bit data and 8 status bits (oversampling)
-	3 = Same as 2
+That being said, trace__fprintf_tp_fields() should return void because
+currently its return value is not used by any other functions, plus
+this line:
 
-So this tells me that A) we probably need a separate oversampling
-enable callback and B) we should be more clear about what "data
-size" means. Do we mean just the sample data size (realbits) or
-do we mean the sample data plus status bit (realbits + shift).
+return printed + fprintf(trace->output, "%s", bf);
 
-The implementation is fine for now (other than we should remove the
-val = 3 case). But if we need to enable status bit in the future,
-it won't be compatible with this function.
+in trace__fprintf_tp_fields() does not make much sense, since that
+will be 2 * printed. So I'm thinking maybe:
 
-> My understanding is that the use of REG_CHAN_CNTRL_3 is different
-> for every HDL project depending on what (frontend) chip is is being
-> used with. In the AXI DAC, we added a new compatible string for this
-> (and other reasons). Not sure if we need to go that far here, but I
-> would at least put a comment here explaining that this use of the
-> register is highly specific to the AXI AD485x variant [1] of the
-> AXI ADC IP core.
-> 
-> Ideally though, there should be an ID register that we can read
-> to get this info or use a different DT compatible string.
-> 
-> [1]: http://analogdevicesinc.github.io/hdl/library/axi_ad485x/index.html
-> 
->> +}
->> +
->>  static struct iio_buffer *axi_adc_request_buffer(struct iio_backend *back,
->>  						 struct iio_dev *indio_dev)
->>  {
->> @@ -360,6 +381,7 @@ static const struct iio_backend_ops adi_axi_adc_ops = {
->>  	.test_pattern_set = axi_adc_test_pattern_set,
->>  	.chan_status = axi_adc_chan_status,
->>  	.interface_type_get = axi_adc_interface_type_get,
->> +	.data_size_set = axi_adc_data_size_set,
->>  	.debugfs_reg_access = iio_backend_debugfs_ptr(axi_adc_reg_access),
->>  	.debugfs_print_chan_status = iio_backend_debugfs_ptr(axi_adc_debugfs_print_chan_status),
->>  };
-> 
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 748b061f8678..8a628d1e80f3 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -3021,10 +3021,10 @@ static void bpf_output__fprintf(struct trace *trace=
+,
+        ++trace->nr_events_printed;
+ }
 
+-static size_t trace__fprintf_tp_fields(struct trace *trace, struct
+evsel *evsel, struct perf_sample *sample,
++static void trace__fprintf_tp_fields(struct trace *trace, struct
+evsel *evsel, struct perf_sample *sample,
+                                       struct thread *thread, void
+*augmented_args, int augmented_args_size)
+ {
+-       char bf[2048];
++       char bf[2048] =3D { 0 };
+        size_t size =3D sizeof(bf);
+        struct tep_format_field *field =3D evsel->tp_format->format.fields;
+        struct syscall_arg_fmt *arg =3D __evsel__syscall_arg_fmt(evsel);
+@@ -3087,7 +3087,7 @@ static size_t trace__fprintf_tp_fields(struct
+trace *trace, struct evsel *evsel,
+                printed +=3D syscall_arg_fmt__scnprintf_val(arg, bf +
+printed, size - printed, &syscall_arg, val);
+        }
+
+-       return printed + fprintf(trace->output, "%s", bf);
++       fprintf(trace->output, "%s", bf);
+ }
+
+ static int trace__event_handler(struct trace *trace, struct evsel *evsel,
+
+
+Then this will be one more diff line than yours.
+
+But that's just my opinion, yours works just fine, thank you :).
+Arnaldo, what do you think?
+
+Tested-by: Howard Chu <howardchu95@gmail.com>
+
+Thanks,
+Howard
+
+On Fri, Nov 1, 2024 at 10:27=E2=80=AFAM Benjamin Peterson <benjamin@engflow=
+.com> wrote:
+>
+> trace__fprintf_tp_fields may not print any tracepoint arguments. E.g., if=
+ the
+> argument values are all zero. Previously, this would result in a totally
+> uninitialized buffer being passed to fprintf, which could lead to garbage=
+ on the
+> console. Fix the problem by passing the number of initialized bytes fprin=
+tf.
+>
+> Remove the return value of trace__fprintf_tp_fields, since it was meaning=
+less
+> and ignored.
+>
+> Fixes: f11b2803bb88 ("perf trace: Allow choosing how to augment the trace=
+point arguments")
+> Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
+> ---
+>  tools/perf/builtin-trace.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index d3f11b90d025..4e785ea29df6 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -3021,7 +3021,7 @@ static void bpf_output__fprintf(struct trace *trace=
+,
+>         ++trace->nr_events_printed;
+>  }
+>
+> -static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel=
+ *evsel, struct perf_sample *sample,
+> +static void trace__fprintf_tp_fields(struct trace *trace, struct evsel *=
+evsel, struct perf_sample *sample,
+>                                        struct thread *thread, void *augme=
+nted_args, int augmented_args_size)
+>  {
+>         char bf[2048];
+> @@ -3087,7 +3087,7 @@ static size_t trace__fprintf_tp_fields(struct trace=
+ *trace, struct evsel *evsel,
+>                 printed +=3D syscall_arg_fmt__scnprintf_val(arg, bf + pri=
+nted, size - printed, &syscall_arg, val);
+>         }
+>
+> -       return printed + fprintf(trace->output, "%s", bf);
+> +       fprintf(trace->output, "%.*s", (int)printed, bf);
+>  }
+>
+>  static int trace__event_handler(struct trace *trace, struct evsel *evsel=
+,
+> --
+> 2.39.5
+>
 
