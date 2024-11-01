@@ -1,278 +1,110 @@
-Return-Path: <linux-kernel+bounces-392596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5859B95FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:57:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94F59B9605
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F3E1C2148E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:57:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38B29B224C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAD71CACF8;
-	Fri,  1 Nov 2024 16:57:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCDC1CC178;
+	Fri,  1 Nov 2024 16:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="dHtuGpsh"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CD61CB31C
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7751B1C9DFA;
+	Fri,  1 Nov 2024 16:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730480227; cv=none; b=NSPAm3PcNHt9a7x1q3xrl93y9WQxUbv4xkK+4/rX17vZX4Mni2GzoLCNOvLctpefEgy2nyaTz75zIPqzZ0nA6O+OYE4gjacylR4TAPCzftCSP7iqnMJYYhj5KWtqpO+PJWD/moiRiCG4jKDFDYPMECPhbBMqgMHVoPBt7dvlT7Q=
+	t=1730480245; cv=none; b=hF6fAevXrL06ClxF13gizfbCu6j4121E1jp6Mo8iERwsBTCURZjXEy8RR7Bp56fCF5/nr5rYUYW5YZ5Fq+F7zV/IFy4e9z3NstdUdDbKhpOaoj/mvpcubYsrZqPqWNoJx+EqGypN26MFVQMmJA434kNAfXEfr9JX64iV9RKOMQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730480227; c=relaxed/simple;
-	bh=E2aMEhObp0Ugg1HOb713gf8y4zQ5YowVwtSkyTp8W0c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=i53imiwATnhvJBRXyjkabUdptqjNaoggweGo5sjbypaLxqsentLk4UuQhLPlWVzoh+yYI72lDAt3DmcKC7lUxLgiGADbsahXMmqMlSFe5QN9dfpFff2GDy3hRnbynK95ao6aqjCevU/rEeUuFWQVvjuSNdz0/9DPkh8PbinRrHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6add3a52eso9986065ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 09:57:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730480223; x=1731085023;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6D3+faLBnTzjy2s0KCBBpJl/yrj+ppesP40+085rlOE=;
-        b=YuTe4B0HcFMMsApmc11YbW/00XLWVMjNueTDVWIIb8z1QsjAmFjZaJB5kOWF83k8sq
-         ydipc6FmYUACdpL3+7cgJbqiSK/9pViurpNB5EY6rC3HEUSD+pP1bMEsq7mw4CLmJHzr
-         SNUObf1eXQHL83pBHMeqg1j4fq7ASIls5NzvJGM6OYacN1rV2gOzTd9kvuOF42T9kzDy
-         MFizhywokvQwYq9z4g1JQFQbvpJcoJ8rRIXe6jgq7ATsAjjVRNDkdluwcW0xepYNYu9P
-         x97RMcLUo7TApWkLwUmiuqBZnQQNJl50frdXlb1p8I4RhjotorxEQy/C8y5R8SNjE5We
-         eFYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXi+J2pc1UN7BWjUgCzJrELGaI0XcU253mBGOHgaiKvB1Yb0QKTyXkQs75sXCf6k4LuO5Al/MOpwPtXiwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2II20kQ5f96C+ZMk9B7Cp+TxrfxFbYXciJ1D7sNlS6PlYNi9x
-	2Rrp/11jlKLS54I4V69aNCiJ62Xf+aniyoamkRpeYPMeptbxN0BOqIpON7NPl5R6oGkEkl0ql7A
-	qn/DeHcpLo9DMydtiMK3EcXXRJxQDrCe8Bi65QEh+fqihMjdiRG/nlYM=
-X-Google-Smtp-Source: AGHT+IESed0yMKUBfmnR8ruLVbzsdhxZW5o9OeE4LhDK75Kr9k6kJBohiEhoOtPnsJE6OlYA/dTSMcN8i4xmTDq8tJu3pOyOmUZT
+	s=arc-20240116; t=1730480245; c=relaxed/simple;
+	bh=2rKsatq5LG+9IKHuStVw7bDmC0tFVIV2dLq/aDxa/bM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hn7gs9fk4iD/1ZPs5vYoJs0YRoKA7Jn3/x0WLe4GzU36YjPsa4uAFpxKJ6XLYHRLSe523vR3OU9Hm1H4nHPsMDCv6Lj2tS5a+vURi3kXffw2JmLhrLCa1EoviwbwalZClnmPVXpgzcPE5lgiidny2MoAIK+aWRw8PYTV57bu1ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=dHtuGpsh; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=rz0ryjT9mPDcej02Hk6SsCveNSUKvfeMX0qnfVx6BcQ=; b=dHtuGpshL5PlID52fzj6TToJtB
+	voL1NnNpNpigoGyWGbG1JIHgxlYkjHE07feIqQSWiFQ4TLqEjZANCHWP7+drN0m0hFsEj+uZDgYjG
+	oEKIs4ZbmTlp6UGJkxopWOmAlJR7HcQHCVGUUi9/udSAE4H9vrcyFzgIRN6I1myLXajOjJ2erqw86
+	2XOLj1Ua1l1Qrdm8sYu3Psp++nGNAY50w2oazW6cAkZvI7qLzhvWIGN+yhhZ7BVwzATWnRroG7Pqs
+	k6MQJhLIEI3s0CWqFb+j+LLCAC4FAJU4Ih2eFUZVtKoMCWrg5nb47Kun60Q4qidMPojx16jEebAr+
+	GtKgcKAA==;
+Date: Fri, 1 Nov 2024 17:57:04 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Alexander Stein <alexander.stein@ew.tq-group.com>,
+ linux-arm-kernel@lists.infradead.org, Shawn Guo <shawnguo@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] ARM: dts: add Kobo Clara 2E
+Message-ID: <20241101175604.20bc5427@akphone>
+In-Reply-To: <172986441097.1907834.7871985467741599221.robh@kernel.org>
+References: <20241024142206.411336-1-andreas@kemnade.info>
+	<172986441097.1907834.7871985467741599221.robh@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; aarch64-alpine-linux-musl)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:111:b0:3a3:637f:1012 with SMTP id
- e9e14a558f8ab-3a6aff71b31mr30782005ab.12.1730480223572; Fri, 01 Nov 2024
- 09:57:03 -0700 (PDT)
-Date: Fri, 01 Nov 2024 09:57:03 -0700
-In-Reply-To: <CABBYNZK=H9JtzaQudQ1b7TGU5VaJ_qX_bbSJhKSwWKh+5_1uUQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6725085f.050a0220.529b6.0145.GAE@google.com>
-Subject: Re: [syzbot] [pm?] KASAN: use-after-free Read in netdev_unregister_kobject
-From: syzbot <syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, johan.hedberg@gmail.com, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, lvc-project@linuxtesting.org, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri, 25 Oct 2024 08:55:18 -0500
+"Rob Herring (Arm)" <robh@kernel.org> wrote:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in netdev_unregister_kobject
+> On Thu, 24 Oct 2024 16:22:03 +0200, Andreas Kemnade wrote:
+> > Add a basic device tree for the Kobo Clara 2E Ebook reader.
+> > It is equipped with an i.MX6SLL SoC. EPDC PMIC drivers
+> > are not ready for mainline yet.
+> > 
+> > Changes in V2:
+> > - improved commit message about devices without binding
+> > 
+> > Andreas Kemnade (3):
+> >   dt-bindings: arm: fsl: add compatible strings for Kobo Clara 2E
+> >   ARM: dts: imx: Add devicetree for Kobo Clara 2E
+> >   ARM: imx_v6_v7_defconfig: Enable drivers for Kobo Clara 2E
+> > 
+> >  .../devicetree/bindings/arm/fsl.yaml          |   8 +
+> >  arch/arm/boot/dts/nxp/imx/Makefile            |   2 +
+> >  .../dts/nxp/imx/imx6sll-kobo-clara2e-a.dts    |  23 +
+> >  .../dts/nxp/imx/imx6sll-kobo-clara2e-b.dts    |  23 +
+> >  .../nxp/imx/imx6sll-kobo-clara2e-common.dtsi  | 514
+> > ++++++++++++++++++ arch/arm/configs/imx_v6_v7_defconfig          |
+> >  2 + 6 files changed, 572 insertions(+)
+> >  create mode 100644
+> > arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-a.dts create mode
+> > 100644 arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-b.dts create
+> > mode 100644
+> > arch/arm/boot/dts/nxp/imx/imx6sll-kobo-clara2e-common.dtsi
+> > 
+> > --
+> > 2.39.5
+> > 
+> > 
+> >   
+> 
+> 
+> My bot found new DTB warnings on the .dts files added or changed in
+> this series.
+> 
+I think they all come from existing dtsi.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in device_for_each_child+0xbb/0x1b0 drivers/base/core.c:3999
-Read of size 8 at addr ffff888021c81308 by task kbnepd bnep0/5597
-
-CPU: 0 UID: 0 PID: 5597 Comm: kbnepd bnep0 Not tainted 6.12.0-rc5-syzkaller-00181-g6c52d4da1c74 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- device_for_each_child+0xbb/0x1b0 drivers/base/core.c:3999
- pm_runtime_set_memalloc_noio+0x114/0x260 drivers/base/power/runtime.c:248
- netdev_unregister_kobject+0x178/0x250 net/core/net-sysfs.c:2109
- unregister_netdevice_many_notify+0x1851/0x1da0 net/core/dev.c:11441
- unregister_netdevice_many net/core/dev.c:11469 [inline]
- unregister_netdevice_queue+0x303/0x370 net/core/dev.c:11343
- unregister_netdevice include/linux/netdevice.h:3118 [inline]
- unregister_netdev+0x1c/0x30 net/core/dev.c:11487
- bnep_session+0x2e0e/0x3000 net/bluetooth/bnep/core.c:525
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 5425:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __do_kmalloc_node mm/slub.c:4264 [inline]
- __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4276
- kmalloc_noprof include/linux/slab.h:882 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- hci_alloc_dev_priv+0x27/0x2030 net/bluetooth/hci_core.c:2440
- hci_alloc_dev include/net/bluetooth/hci_core.h:1621 [inline]
- __vhci_create_device drivers/bluetooth/hci_vhci.c:399 [inline]
- vhci_create_device+0x116/0x6a0 drivers/bluetooth/hci_vhci.c:470
- vhci_get_user drivers/bluetooth/hci_vhci.c:527 [inline]
- vhci_write+0x3cf/0x490 drivers/bluetooth/hci_vhci.c:607
- new_sync_write fs/read_write.c:590 [inline]
- vfs_write+0xaed/0xd30 fs/read_write.c:683
- ksys_write+0x183/0x2b0 fs/read_write.c:736
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 5425:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4727
- hci_release_dev+0x1525/0x16b0 net/bluetooth/hci_core.c:2759
- bt_host_release+0x83/0x90 net/bluetooth/hci_sysfs.c:94
- device_release+0x9b/0x1c0
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x231/0x480 lib/kobject.c:737
- vhci_release+0x88/0xd0 drivers/bluetooth/hci_vhci.c:665
- __fput+0x241/0x880 fs/file_table.c:431
- task_work_run+0x251/0x310 kernel/task_work.c:239
- exit_task_work include/linux/task_work.h:43 [inline]
- do_exit+0xa2f/0x28e0 kernel/exit.c:939
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
- insert_work+0x3e/0x330 kernel/workqueue.c:2183
- __queue_work+0xb66/0xf50 kernel/workqueue.c:2343
- queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Second to last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
- insert_work+0x3e/0x330 kernel/workqueue.c:2183
- __queue_work+0xc8b/0xf50 kernel/workqueue.c:2339
- call_timer_fn+0x190/0x650 kernel/time/timer.c:1794
- expire_timers kernel/time/timer.c:1840 [inline]
- __run_timers kernel/time/timer.c:2419 [inline]
- __run_timer_base+0x695/0x8e0 kernel/time/timer.c:2430
- run_timer_base kernel/time/timer.c:2439 [inline]
- run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2449
- handle_softirqs+0x2c7/0x980 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-
-The buggy address belongs to the object at ffff888021c80000
- which belongs to the cache kmalloc-8k of size 8192
-The buggy address is located 4872 bytes inside of
- freed 8192-byte region [ffff888021c80000, ffff888021c82000)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x21c80
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff888015442280 0000000000000000 0000000000000001
-raw: 0000000000000000 0000000000020002 00000001f5000000 0000000000000000
-head: 00fff00000000040 ffff888015442280 0000000000000000 0000000000000001
-head: 0000000000000000 0000000000020002 00000001f5000000 0000000000000000
-head: 00fff00000000003 ffffea0000872001 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4752, tgid 4752 (S40network), ts 32094841667, free_ts 32026397912
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2412
- allocate_slab+0x5a/0x2f0 mm/slub.c:2578
- new_slab mm/slub.c:2631 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
- __slab_alloc+0x58/0xa0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __kmalloc_cache_noprof+0x1d5/0x2c0 mm/slub.c:4290
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- tomoyo_print_bprm security/tomoyo/audit.c:26 [inline]
- tomoyo_init_log+0x11cd/0x2050 security/tomoyo/audit.c:264
- tomoyo_supervisor+0x38a/0x11f0 security/tomoyo/common.c:2089
- tomoyo_audit_env_log security/tomoyo/environ.c:36 [inline]
- tomoyo_env_perm+0x178/0x210 security/tomoyo/environ.c:63
- tomoyo_environ security/tomoyo/domain.c:672 [inline]
- tomoyo_find_next_domain+0x146e/0x1d40 security/tomoyo/domain.c:881
- tomoyo_bprm_check_security+0x114/0x180 security/tomoyo/tomoyo.c:102
- security_bprm_check+0x86/0x250 security/security.c:1297
- search_binary_handler fs/exec.c:1740 [inline]
- exec_binprm fs/exec.c:1794 [inline]
- bprm_execve+0xa56/0x1770 fs/exec.c:1845
-page last free pid 4751 tgid 4751 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- __slab_free+0x31b/0x3d0 mm/slub.c:4490
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- vm_area_alloc+0x24/0x1d0 kernel/fork.c:472
- mmap_region+0x1134/0x2940 mm/mmap.c:1436
- do_mmap+0x8f0/0x1000 mm/mmap.c:496
- vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888021c81200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888021c81280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888021c81300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                      ^
- ffff888021c81380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888021c81400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
-Tested on:
-
-commit:         6c52d4da Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15e81630580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2cf68159adbdf217
-dashboard link: https://syzkaller.appspot.com/bug?extid=6cf5652d3df49fae2e3f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+Regards,
+Andreas
 
