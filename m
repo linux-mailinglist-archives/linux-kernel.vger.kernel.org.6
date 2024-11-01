@@ -1,192 +1,215 @@
-Return-Path: <linux-kernel+bounces-391690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0B29B8A52
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:08:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 184179B8A59
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 06:09:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28292282493
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:08:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D312B21836
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224AD14A0B7;
-	Fri,  1 Nov 2024 05:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7994C14A4E9;
+	Fri,  1 Nov 2024 05:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pna30I00"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TZfu+KSD"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0772A13DDB5;
-	Fri,  1 Nov 2024 05:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796BF1494DE
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 05:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730437695; cv=none; b=QMIYvMXzymYB1NYZU9TinSqBwmEccHmZu2+al/jCFks40AQXOcnbegEUksDfiz0hV4O9vxG7xhsw1mOuLMYEWP9Vq1gj0NjmVbOf/EjhqjSY1CVL0lUwtGDlzOJEw3ouaIUMW7hZKYqPk/jn6NkuxzYf4OLPSFAhRFnALUGBFlY=
+	t=1730437715; cv=none; b=ouJDD0K8rIKCF2qvuAEdemC+rfHMQdDU77ayToDcUgb+buQ/bQfuU7cSR0CmPnTpCHs6ixPI9rfsfwdQDJ/YWg3wPPxl1LsShAyna8hMjXPcWwzLv9laPOQRglbh6xINTeRWqZoSmzWMO3cpHzRSob4ukRzBIlTHSrRaDxWnJOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730437695; c=relaxed/simple;
-	bh=gHCvEzqGz5HrCXCX8obbMOpf4rX8W8+whNsK2k2oVnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YbUdOaM6lczdv1OGcpGvSbOf0DT8sIjz9Kg+HULZ3tcmQivXIIpVPKQurfzn/gOwyrQyqnG4bIQmkMy5WHOb4vB/UBCaQ5DhXXzLgO+TiMHt4Kt4vtuQv9Vja6E6YQRRJsEUL5BKyWRzz8kuaEU3bkZkS+XOHkgoYQfrMkK3yGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pna30I00; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730437693; x=1761973693;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gHCvEzqGz5HrCXCX8obbMOpf4rX8W8+whNsK2k2oVnA=;
-  b=Pna30I00qwvxsgjCJ2ZGBz+MG/NgTSVx3NohWr0yOeYSsdXLVKujurCF
-   k3l2lfYt0v8FvanclCFF8xULDL7g5MBcKvaRgNzZIxYppy3MezPmb0Yhv
-   w3+8Xh9gm1BoFrgvthipX1tjO2rjxSCeeaVQdVkxU0MI+DYsmSqF/LeB9
-   Rpx2p4tlsCaHas8PB1v3dq9XUOcGVF9DYJxgzdLcLlZ5uk/TdKN+gLh2r
-   Ndopcg7M5v8b4SzPdG19+ZjarX338RepY9ScYbv5DgO7wa/B0RGu/ue6z
-   ec1SispCpggw83Q7sfVw8qjb8y9wDCZy8QyL8Fy/aROtXZl3FWz7xJsVK
-   Q==;
-X-CSE-ConnectionGUID: PXeyCiwUTDqCysut5AJ0sQ==
-X-CSE-MsgGUID: ZSxb6Eq1TAeezMRaooTtgg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="30091580"
-X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
-   d="scan'208";a="30091580"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 22:08:12 -0700
-X-CSE-ConnectionGUID: VVyBlTPCQpCKxcFXEHZ3sw==
-X-CSE-MsgGUID: kOLQEgr2QummUPom66znnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
-   d="scan'208";a="120315134"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 31 Oct 2024 22:08:08 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t6jtF-000h9t-30;
-	Fri, 01 Nov 2024 05:08:05 +0000
-Date: Fri, 1 Nov 2024 13:07:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, rostedt@goodmis.org, ast@kernel.org,
-	daniel@iogearbox.net, martin.lau@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mathieu.desnoyers@efficios.com,
-	linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-	peterz@infradead.org, paulmck@kernel.org, jrife@google.com,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH trace/for-next 3/3] bpf: ensure RCU Tasks Trace GP for
- sleepable raw tracepoint BPF links
-Message-ID: <202411011255.GYntOfN5-lkp@intel.com>
-References: <20241031210938.1696639-3-andrii@kernel.org>
+	s=arc-20240116; t=1730437715; c=relaxed/simple;
+	bh=aE5/kRev+YPNg1qf+MQNdziHtczo4IwBVDu/BTgHClI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=rg+GDNxdncIFFuaM1D2TTzrHI0quf+P7jQk4xnMZ+W/VG8BOkRNoYuTUd1nK30qREy99gF2BVTxvkLDagRhUQHiV4box3/p77vZ+x4zApY3FkNKU+q79pqOyvF/kT6CoR5ypz8+PUvswKe8s7tuSXFsd1G8hmxdSz+nG97cSQBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TZfu+KSD; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241101050825epoutp013f179d5a3b124e9783de696bd9f11a90~Dv_yy9whb2478324783epoutp014
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 05:08:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241101050825epoutp013f179d5a3b124e9783de696bd9f11a90~Dv_yy9whb2478324783epoutp014
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1730437705;
+	bh=w0xXnNy5pWx74xjHIAlIzJHAEUIQhIYpEbF5vLLmF/Y=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=TZfu+KSDXbpbv99Glus3jh+SXuBy0AnQYkwfMKUtWzr0ylTFNHqMfIvWjFyhvjUAn
+	 dDxsIMlMi11c8zhPnD+NYgZ9UiS5K42nZvF8eiSHF9F5q24U278GCB9Z66qI24uqm2
+	 yW9yA99FHOOt0sQLo6RyBerA+TuhXTKIZjA+zw7Q=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241101050824epcas1p1168b5d209a9132be9c9b44194e690e1d~Dv_yXcSSh2980329803epcas1p1r;
+	Fri,  1 Nov 2024 05:08:24 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.36.135]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Xfpm74wZwz4x9QL; Fri,  1 Nov
+	2024 05:08:23 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D9.AC.09398.74264276; Fri,  1 Nov 2024 14:08:23 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241101050823epcas1p3425f5d8aad0c95efa16dff93ca103d68~Dv_w9DW932140221402epcas1p3Z;
+	Fri,  1 Nov 2024 05:08:23 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241101050823epsmtrp12f59d2924577461d5e278752c4f7fdc5~Dv_w8KvRd3107431074epsmtrp1P;
+	Fri,  1 Nov 2024 05:08:23 +0000 (GMT)
+X-AuditID: b6c32a39-39fff700000024b6-67-67246247b65e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	55.91.35203.64264276; Fri,  1 Nov 2024 14:08:23 +0900 (KST)
+Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241101050822epsmtip1d651b39b965b52490c26226570692c4d~Dv_wecxdZ1966119661epsmtip1H;
+	Fri,  1 Nov 2024 05:08:22 +0000 (GMT)
+From: =?utf-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?=
+	<inki.dae@samsung.com>
+To: "'Kaustabh Chakraborty'" <kauschluss@disroot.org>, "'Seung-Woo Kim'"
+	<sw0312.kim@samsung.com>, "'Kyungmin Park'" <kyungmin.park@samsung.com>,
+	"'David Airlie'" <airlied@gmail.com>, "'Simona Vetter'" <simona@ffwll.ch>,
+	"'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>, "'Maarten Lankhorst'"
+	<maarten.lankhorst@linux.intel.com>, "'Maxime Ripard'" <mripard@kernel.org>,
+	"'Thomas Zimmermann'" <tzimmermann@suse.de>, "'Rob Herring'"
+	<robh@kernel.org>, "'Conor Dooley'" <conor@kernel.org>
+Cc: <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+In-Reply-To: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+Subject: RE: [PATCH 0/6] Samsung Exynos 7870 DECON driver support
+Date: Fri, 1 Nov 2024 14:08:22 +0900
+Message-ID: <000001db2c1c$12e86c50$38b944f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031210938.1696639-3-andrii@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQETcOy7JkGSF7VbGFg+ao1ZCztJewFhWZRKtCZJGMA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0wTdxTft73eXUlKjoLbd2Rx7CAkMCmtUDwYuInoLtmiLCaMLSTsgEtb
+	gbbptUxdtoEsVRAnFTdKZQgiTOoYplQHTEesKDKG1SjgHCjRjQUFCg6RDsLWcrjx3/u89/m8
+	z3vfH7hQ+hANxTVaI2vQMgUkGoCcvxwli3k7J0IlP/ErSV0bPimgxurOo1TLV3aUOtFzXUTd
+	fupBqaVlN0q53WcxamD/JEY5Hg6JqFtdtShldf8koBpmzyGUuaxZRP1zoQOjjk93Y5S1agKl
+	nJMW0VtBdN/37QL64nw9QnfaRjHaYS9D6bq+9+j7h3oFdPupz+kvnXZAt/d/Qv/lWJ8e8GF+
+	sppl8lhDGKvN1eVptKoU8p1d2VuzlQlyRYwikdpEhmmZQjaFTHs3PWa7psC3DhlWxBSYfKl0
+	huPI2M3JBp3JyIapdZwxhWT1eQV6pV7GMYWcSauSaVljkkIu36j0ET/KV1d8MYvpz67bM9pT
+	hxSD8aByIMYhEQ8ba1qwchCAS4kOAFuHqlbBEwDLPJ0iHswDODhjRZ9LnKO1gC9cBHC2qQTl
+	wQSAS4v9Aj8LJVRwovwW4i+EENUInOvvFfqBkHACOPpgbKWXmNgGzQs3VhTBxBa43OnvK8YR
+	IgI2LC+t5CVEInQdOgr4OAj21fyO+GMh8Tpsbngs5GcKg94/mkX+OIRIggd+mxLxnBB4vMy8
+	YgyJUjGcvfkNxgvS4JPaMoSPg+GjXudqPhROHDFjvKAKwJHh0wgPrABe9g4DnhUHu5uqfOPh
+	Poso2NYVy7sFwumnFSJ/GhISeNAs5dkkvHrzzqoSwhunLChPoeHhGlMleM22ZjXbmtVsa1aw
+	/e9VDxA7eJHVc4UqllPolf9deK6u0AFWXnt0YgeonpqRuYAABy4AcSEZIpnRh6ukkjxm7z7W
+	oMs2mApYzgWUvsO2CEPX5ep830VrzFbEJ8rjEzbGxVOKBAX5kuSX20WslFAxRjafZfWs4blO
+	gItDiwVWD67stsLrXNqZxe92R0ztM+qimxzOJk1OeIVbYW9d3jra1HMtMzzvytGfq3LGzeqM
+	HxotH6S+kPWtx3msJNUw1PpyyY9vNr5xdXHZaXo0i96xnmtN3burMqOYMcXGOTyWk8Gbns3L
+	uAVvRuTjzJAN947ZS9h7bSkcWQ/WTxO6lrmBobsBg3AoDndFBo9cOmNBMI+sMqHySuD+LMfB
+	xvK5uKTT5iNO88L8VCaxG19CEusM29qS/i7SvsocHh8IyLn/p/qV6NBnYy3ukjbvjo/7sWFJ
+	tFgXnqUZRN4/sCWi1HEhcNr76Z7Pui49GNl8d8P2pMjIqJ3JLf2lk97qrxkS4dSMIlpo4Jh/
+	AYReaON2BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsWy7bCSnK57kkq6wYZOZosT1xcxWTyYt43N
+	YuXUVWwW84+cY7W48vU9m8Wff+fZLM6f38BucbbpDbvFpsfXWC0u75rDZjHj/D4mi4Uft7JY
+	tHUuY7X4v2cHu8Xsd/vZLWZMfslmseXNRFYHQY+T6zYzeez9toDFY+esu+wem1Z1snnMOxno
+	cb/7OJPH5iX1Hn1bVjF6bD5d7fF5k1wAVxSXTUpqTmZZapG+XQJXxv55B1kLGkQrFhx1aGBc
+	J9jFyMkhIWAiseXuHMYuRi4OIYHdjBKrFnexdzFyACUkJLZs5YAwhSUOHy6GKHnOKPFrxw02
+	kDibQKrE69V1IHERgfksEk8nbWMDcZgFdjBKHG3aygzRMY1R4u/FD4wg2zgFXCXaflxgArGF
+	BRwl/u2cAxZnEVCRWPjvD1icV8BS4lD3JEYIW1Di5MwnLCA2s4C2xNObT+HsZQtfM0N8oCDx
+	8+kyVhBbRMBKov32W1aIGhGJ2Z1tzBMYhWchGTULyahZSEbNQtKygJFlFaNkakFxbnpusWGB
+	YV5quV5xYm5xaV66XnJ+7iZGcHRrae5g3L7qg94hRiYOxkOMEhzMSiK8HwqU04V4UxIrq1KL
+	8uOLSnNSiw8xSnOwKInzir/oTRESSE8sSc1OTS1ILYLJMnFwSjUwtRfceD7l99fKJUs8q+96
+	Lg/rOZJ/tUNO6uz9lpPTGHZ+4haMvPIz7mFIiuAO7jc8t6w97/Jorb4rWx31rK1liad72lxZ
+	+x8nC1528bhm/Ao7Wlf74iw//0bWCWdctzGEv7i5RY07QIUnOXij4/sKmzqOd0qhff9n2z7c
+	7HPoewWnmHrozgbOhCJNhue1ocs42zM+1O9qu3vg7/7zYT8b17ROPF10/b3K0qykH3Fbzwa5
+	CscZVCQt/6E409kgeZ910cHttz/XcGZ69/Q9tdq0P+D/PSndx/+Zb5/e/XZJja7R+0I5HzG2
+	ovzS4wd5Xrjw/Yk4/SSudc3ahhLda61b6nZKv9sWov9huvyK98yzlFiKMxINtZiLihMB0+pD
+	qF0DAAA=
+X-CMS-MailID: 20241101050823epcas1p3425f5d8aad0c95efa16dff93ca103d68
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240919151130epcas1p10a885b3364250f5ff4e06975cfef13e4
+References: <CGME20240919151130epcas1p10a885b3364250f5ff4e06975cfef13e4@epcas1p1.samsung.com>
+	<20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
 
-Hi Andrii,
+Hi Kaustabh Chakraborty,
 
-kernel test robot noticed the following build errors:
+Sorry for late.
 
-[auto build test ERROR on trace/for-next]
+> -----Original Message-----
+> From: Kaustabh Chakraborty <kauschluss=40disroot.org>
+> Sent: Friday, September 20, 2024 12:11 AM
+> To: Inki Dae <inki.dae=40samsung.com>; Seung-Woo Kim
+> <sw0312.kim=40samsung.com>; Kyungmin Park <kyungmin.park=40samsung.com>; =
+David
+> Airlie <airlied=40gmail.com>; Simona Vetter <simona=40ffwll.ch>; Krzyszto=
+f
+> Kozlowski <krzk=40kernel.org>; Alim Akhtar <alim.akhtar=40samsung.com>;
+> Maarten Lankhorst <maarten.lankhorst=40linux.intel.com>; Maxime Ripard
+> <mripard=40kernel.org>; Thomas Zimmermann <tzimmermann=40suse.de>; Rob He=
+rring
+> <robh=40kernel.org>; Conor Dooley <conor=40kernel.org>
+> Cc: dri-devel=40lists.freedesktop.org; linux-arm-kernel=40lists.infradead=
+.org;
+> linux-samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
+> devicetree=40vger.kernel.org; Kaustabh Chakraborty <kauschluss=40disroot.=
+org>
+> Subject: =5BPATCH 0/6=5D Samsung Exynos 7870 DECON driver support
+>=20
+> This patch series aims at adding support for Exynos7870's DECON in the
+> Exynos7 DECON driver. It introduces a driver data struct so that support
+> for DECON on other SoCs can be added to it in the future.
+>=20
+> It also fixes a few bugs in the driver, such as functions recieving bad
+> pointers.
+>=20
+> Tested on Samsung Galaxy J7 Prime and Samsung Galaxy A2 Core.
+>=20
+> Signed-off-by: Kaustabh Chakraborty <kauschluss=40disroot.org>
+> ---
+> Kaustabh Chakraborty (6):
+>       drm/exynos: exynos7_drm_decon: fix uninitialized crtc reference in
+> functions
+>       drm/exynos: exynos7_drm_decon: fix suspended condition in
+> decon_commit()
+>       drm/exynos: exynos7_drm_decon: fix ideal_clk by converting it to Hz
+>       drm/exynos: exynos7_drm_decon: properly clear channels during bind
+>       drm/exynos: exynos7_drm_decon: add driver data and support for
+> Exynos7870
+>       dt-bindings: display: samsung,exynos7-decon: add exynos7870
+> compatible
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrii-Nakryiko/bpf-decouple-BPF-link-attach-hook-and-BPF-program-sleepable-semantics/20241101-051131
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20241031210938.1696639-3-andrii%40kernel.org
-patch subject: [PATCH trace/for-next 3/3] bpf: ensure RCU Tasks Trace GP for sleepable raw tracepoint BPF links
-config: x86_64-buildonly-randconfig-001-20241101 (https://download.01.org/0day-ci/archive/20241101/202411011255.GYntOfN5-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241101/202411011255.GYntOfN5-lkp@intel.com/reproduce)
+I will apply all except for the two patches below,
+=5BPATCH 2/6=5D drm/exynos: exynos7_drm_decon: fix suspended condition in d=
+econ_commit()
+=5BPATCH 6/6=5D dt-bindings: display: samsung,exynos7-decon: add exynos7870=
+ compatible
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411011255.GYntOfN5-lkp@intel.com/
+Thanks,
+Inki Dae
 
-All errors (new ones prefixed by >>):
+>=20
+>  .../display/samsung/samsung,exynos7-decon.yaml     =7C   4 +-
+>  drivers/gpu/drm/exynos/exynos7_drm_decon.c         =7C 124 +++++++++++++=
+-----
+> ---
+>  drivers/gpu/drm/exynos/regs-decon7.h               =7C  15 ++-
+>  3 files changed, 90 insertions(+), 53 deletions(-)
+> ---
+> base-commit: 4f3e012d4cfd1d9bf837870c961f462ca9f23ebe
+> change-id: 20240917-exynosdrm-decon-4c228dd1d2bf
+>=20
+> Best regards,
+> --
+> Kaustabh Chakraborty <kauschluss=40disroot.org>
 
-   kernel/bpf/syscall.c: In function 'bpf_raw_tp_link_attach':
->> kernel/bpf/syscall.c:3866:33: error: implicit declaration of function 'tracepoint_is_faultable' [-Werror=implicit-function-declaration]
-    3866 |                                 tracepoint_is_faultable(btp->tp));
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
 
-
-vim +/tracepoint_is_faultable +3866 kernel/bpf/syscall.c
-
-  3818	
-  3819	static int bpf_raw_tp_link_attach(struct bpf_prog *prog,
-  3820					  const char __user *user_tp_name, u64 cookie)
-  3821	{
-  3822		struct bpf_link_primer link_primer;
-  3823		struct bpf_raw_tp_link *link;
-  3824		struct bpf_raw_event_map *btp;
-  3825		const char *tp_name;
-  3826		char buf[128];
-  3827		int err;
-  3828	
-  3829		switch (prog->type) {
-  3830		case BPF_PROG_TYPE_TRACING:
-  3831		case BPF_PROG_TYPE_EXT:
-  3832		case BPF_PROG_TYPE_LSM:
-  3833			if (user_tp_name)
-  3834				/* The attach point for this category of programs
-  3835				 * should be specified via btf_id during program load.
-  3836				 */
-  3837				return -EINVAL;
-  3838			if (prog->type == BPF_PROG_TYPE_TRACING &&
-  3839			    prog->expected_attach_type == BPF_TRACE_RAW_TP) {
-  3840				tp_name = prog->aux->attach_func_name;
-  3841				break;
-  3842			}
-  3843			return bpf_tracing_prog_attach(prog, 0, 0, 0);
-  3844		case BPF_PROG_TYPE_RAW_TRACEPOINT:
-  3845		case BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE:
-  3846			if (strncpy_from_user(buf, user_tp_name, sizeof(buf) - 1) < 0)
-  3847				return -EFAULT;
-  3848			buf[sizeof(buf) - 1] = 0;
-  3849			tp_name = buf;
-  3850			break;
-  3851		default:
-  3852			return -EINVAL;
-  3853		}
-  3854	
-  3855		btp = bpf_get_raw_tracepoint(tp_name);
-  3856		if (!btp)
-  3857			return -ENOENT;
-  3858	
-  3859		link = kzalloc(sizeof(*link), GFP_USER);
-  3860		if (!link) {
-  3861			err = -ENOMEM;
-  3862			goto out_put_btp;
-  3863		}
-  3864		bpf_link_init_sleepable(&link->link, BPF_LINK_TYPE_RAW_TRACEPOINT,
-  3865					&bpf_raw_tp_link_lops, prog,
-> 3866					tracepoint_is_faultable(btp->tp));
-  3867		link->btp = btp;
-  3868		link->cookie = cookie;
-  3869	
-  3870		err = bpf_link_prime(&link->link, &link_primer);
-  3871		if (err) {
-  3872			kfree(link);
-  3873			goto out_put_btp;
-  3874		}
-  3875	
-  3876		err = bpf_probe_register(link->btp, link);
-  3877		if (err) {
-  3878			bpf_link_cleanup(&link_primer);
-  3879			goto out_put_btp;
-  3880		}
-  3881	
-  3882		return bpf_link_settle(&link_primer);
-  3883	
-  3884	out_put_btp:
-  3885		bpf_put_raw_tracepoint(btp);
-  3886		return err;
-  3887	}
-  3888	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
