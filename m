@@ -1,329 +1,117 @@
-Return-Path: <linux-kernel+bounces-392231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808499B9148
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:47:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC5F9B914E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05BDD1F222CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:47:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B002830E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04646158DD0;
-	Fri,  1 Nov 2024 12:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582B819D891;
+	Fri,  1 Nov 2024 12:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OZCd8+8r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="K5MdyRRX"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1D8433B3
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CE0F9D9
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 12:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730465253; cv=none; b=UaJG7pqC8Jw9wO7Y1GygnyQDRVHkvKE3+0GU/DJ8F4sz7gvmKJuzpKaHk8H0jcJwC6pV11OEzDVxRe1FWNDzVeeJ/26AnKqELlzlKdgdDOyMCZeAcP1dpnQ5KJiak8xFMIozlhABClnJim5Exq7t+YqZo1QrVyFrMg+gMTUAhpU=
+	t=1730465378; cv=none; b=UvMgEpCYU6nW3mVufXv4kMypTTwfp8YMpxmcIW0WpfWzBvJGLq+PdJOENNfoCT03j1hS0FmTlRMJA4jSM/H02QGUV7rTeP3uMZvvyrMg5ky0WGKMY1BLELEU7jYUH9+xEk/+Z+MDE3Tz2Q+OqHrWuZxbF/+YFyf++v6tSGtEw68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730465253; c=relaxed/simple;
-	bh=P9Oh7kwpuJB0beKvhfKyelwHxMCRekfFKeoFYqBx8gM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M35CsJ1MnWqYHb9L4vTHcu8GLMF+DGrvGJXRgRK5sQJHcvAmq2IxKMalBmDA2D6mrfgrDRxF+ipdnJEyqsrMdbCZ1cA05761QwtKxKKVAM/Jmox7PwStm1AJNjAI56BU/ob32E9IybLqZLRv9Skxm9oBsYfvi6b/Raj0+XeZzBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OZCd8+8r; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730465249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LX0q/MEpetcUnOFBtGDXF2PPIdbiRSdt8gd7JoLBPAA=;
-	b=OZCd8+8r+EJASScbpQP8MkVYEYKAzIpRKm1lrnPnUEskQeCfuDVKoFpJ/E1W3cbdj0b3L7
-	w/HX42NhW3Ma8HB8se+VFxGHhEg3xCECGQe6lE/OXOnw4194GIaBn/5jLaTLbhUospStb+
-	jhYeGo2i9dmUM9I++r5JBQXuRBDau6k=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-2-EDo1E9msMpubF-WwlwYWdA-1; Fri,
- 01 Nov 2024 08:47:25 -0400
-X-MC-Unique: EDo1E9msMpubF-WwlwYWdA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D2C841954B21;
-	Fri,  1 Nov 2024 12:47:22 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.88.10])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9954D19560A2;
-	Fri,  1 Nov 2024 12:47:18 +0000 (UTC)
-Date: Fri, 1 Nov 2024 08:47:15 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-Message-ID: <20241101124715.GA689589@pauld.westford.csb>
-References: <20240727102732.960974693@infradead.org>
- <20240727105030.226163742@infradead.org>
+	s=arc-20240116; t=1730465378; c=relaxed/simple;
+	bh=zj8nBfC/tfQQqExlVPs/Wlc5ORf4Bl9uV4l3BC26KKU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SCpj5rT9lZrxxCWp73CTPovhObtz0Tdd6uJlCuFN6uudWSyxn6VDoaTJ/KH3GAfzsJYFtygRpNcGjcZDAx4K2rEioeHD0vj+jQz9UrPANs2MEG/E4ENKGyTdYNiB2DR5eSiGesvpsiA8JRf/CiFWlbdw9S2MlVXeK2NH8DQCEns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=K5MdyRRX; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb5111747cso19455591fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 05:49:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730465374; x=1731070174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zj8nBfC/tfQQqExlVPs/Wlc5ORf4Bl9uV4l3BC26KKU=;
+        b=K5MdyRRX4mh1xa3IsKIwVA0WS4ZdJVijKdf0//CQ1xjKsuUWNqAi88K2pUPXa0UnRu
+         IbrG942+MtuOz3HndhpPdxT+zeXkBgcNOclZfOP6aWraEgVuKSVAuTlTCf5A15rFnP81
+         iW+F4R6gFNE+hwi3KUThzb0ETSAy4/gQWym9c3lU4geJTEImz57RPmb14sYPt1/B68du
+         LT2Ucqo86TZIkRohdTg0jqRdm5BwBcXsp1ewviiVte5X5zcvpndkt/hKCew1vrgsQT7B
+         CzjmdbgOOxvQLF2NEfWRaFrGNX5kJBu/Am1sn5jql+0Pe+yczE35JhJMUA2cjS6X61lX
+         xHSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730465374; x=1731070174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zj8nBfC/tfQQqExlVPs/Wlc5ORf4Bl9uV4l3BC26KKU=;
+        b=LNgEgmFlsxqh3SLpQiJ4YUrxMy9j8vQXuZc0hGlP18o61Bg1Kd/uSqgwPcXszJifkQ
+         1hjvrDQ0k+3NFbXsUeR4VVk12Y1LXARXPuMsHi6sUyHMX9ncaecQi5m7hJg2KcnBz/Jx
+         agOZDYSEjf7AmrpccA2RSc7+5J8MrR+j5dhcvSx3PZbylWEX2JQEYZ27O+wHxzA5yvfV
+         pugyqotp5wE/iFCRDELb2SFol8ySfmoAH5luwn+70wKnfw5daft2l+tq0JNKzHp/AJ+7
+         xddWDcYQmjltinCjuoXhqQ3BsqmjFQCB/gPusalGBn5IL99NhSU3FUHtdwlsRBCGuEPJ
+         nZpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDsSI7fucJDego+uarXw0tpolYbTti8izlmRpzpzV1xUtZEOtKVfNcZzuXcFUzEhcQoxiJLAEs0Vq4YNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjEv+NXAWT2M4JJxXA5lUrbObginAFIrQoXq6PBQr96ofNN+Hq
+	6XMO1hhMAJ6eGzuqc+fk41gy8gGjr2oQkPO1p5+trUfjAN9w1/v1P1i8U9w77YxIGxeH9ecyE08
+	ZdBLJl5GT15AzAmM+dm0lotPWdd3bQBUpQd+VCg==
+X-Google-Smtp-Source: AGHT+IG89FT+sEdQ1htQRFg/WpAQzp10MO14+uz710Q4if13hdsrIZAnlj1uKRp53tvlYrSQCaDJAya5vRYD/3hJuMc=
+X-Received: by 2002:a2e:b8c8:0:b0:2fb:628c:2580 with SMTP id
+ 38308e7fff4ca-2fdec4ca247mr34789211fa.2.1730465374478; Fri, 01 Nov 2024
+ 05:49:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240727105030.226163742@infradead.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20241031200842.22712-1-brgl@bgdev.pl> <CACRpkdYTLOBtrhmRHjEu4b6tX8ROc6OHd=f1JAROVA9Rz1ngrA@mail.gmail.com>
+In-Reply-To: <CACRpkdYTLOBtrhmRHjEu4b6tX8ROc6OHd=f1JAROVA9Rz1ngrA@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 1 Nov 2024 13:49:22 +0100
+Message-ID: <CAMRc=Mdv9Bw2Y639u3RKWvQh6kitsD9ga3tYZyoFSCNtSFvcOQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: cdev: don't report GPIOs requested as interrupts as used
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 1, 2024 at 11:35=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
+>
+> On Thu, Oct 31, 2024 at 9:08=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+>
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > GPIOs used as shared irqs can still be requested by user-space (or
+> > kernel drivers for that matter) yet we report them as used over the
+> > chardev ABI. Drop the test for FLAG_USED_AS_IRQ from
+> > gpio_desc_to_lineinfo().
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> I think at the time this was added to not let userspace meddle with
+> such GPIO lines since they were used for "something" in the kernel.
+> (Userspace as second-class citizen.)
+>
 
-Hi Peterm
+Well, it wouldn't prohibit it. It would just report it misleadingly.
+Since we'll guard the fixed input direction, I think we should be
+fine.
 
-On Sat, Jul 27, 2024 at 12:27:49PM +0200 Peter Zijlstra wrote:
-> Extend / fix 86bfbb7ce4f6 ("sched/fair: Add lag based placement") by
-> noting that lag is fundamentally a temporal measure. It should not be
-> carried around indefinitely.
-> 
-> OTOH it should also not be instantly discarded, doing so will allow a
-> task to game the system by purposefully (micro) sleeping at the end of
-> its time quantum.
-> 
-> Since lag is intimately tied to the virtual time base, a wall-time
-> based decay is also insufficient, notably competition is required for
-> any of this to make sense.
-> 
-> Instead, delay the dequeue and keep the 'tasks' on the runqueue,
-> competing until they are eligible.
-> 
-> Strictly speaking, we only care about keeping them until the 0-lag
-> point, but that is a difficult proposition, instead carry them around
-> until they get picked again, and dequeue them at that point.
+Bartosz
 
-This one is causing a 10-20% performance hit on our filesystem tests.
-
-On 6.12-rc5 (so with the latest follow ons) we get:
-
-with DELAY_DEQUEUE the bandwidth is 510 MB/s
-with NO_DELAY_DEQUEUE the bandwidth is 590 MB/s
-
-The test is fio, something like this:
-
-taskset -c 1,2,3,4,5,6,7,8 fio --rw randwrite --bs 4k --runtime 1m --fsync 0 --iodepth 32 --direct 1 --ioengine libaio --numjobs 8 --size 30g --nrfiles 1 --loops 1 --name default --randrepeat 1 --time_based --group_reporting --directory /testfs
-
-In this case it's ext4, but I'm not sure it will be FS specific.
-
-I should have the machine and setup next week to poke further but I wanted
-to mention it now just in case any one has an "aha" moment.
-
-It seems to only effect these FS loads. Other perf tests are not showing any
-issues that I am aware of.
-
-
-
-Thanks,
-Phil
-
-
-
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/sched/deadline.c |    1 
->  kernel/sched/fair.c     |   82 ++++++++++++++++++++++++++++++++++++++++++------
->  kernel/sched/features.h |    9 +++++
->  3 files changed, 81 insertions(+), 11 deletions(-)
-> 
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2428,7 +2428,6 @@ static struct task_struct *__pick_next_t
->  		else
->  			p = dl_se->server_pick_next(dl_se);
->  		if (!p) {
-> -			WARN_ON_ONCE(1);
->  			dl_se->dl_yielded = 1;
->  			update_curr_dl_se(rq, dl_se, 0);
->  			goto again;
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5379,20 +5379,44 @@ static void clear_buddies(struct cfs_rq
->  
->  static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq);
->  
-> -static void
-> +static bool
->  dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->  {
-> -	int action = UPDATE_TG;
-> +	if (flags & DEQUEUE_DELAYED) {
-> +		/*
-> +		 * DEQUEUE_DELAYED is typically called from pick_next_entity()
-> +		 * at which point we've already done update_curr() and do not
-> +		 * want to do so again.
-> +		 */
-> +		SCHED_WARN_ON(!se->sched_delayed);
-> +		se->sched_delayed = 0;
-> +	} else {
-> +		bool sleep = flags & DEQUEUE_SLEEP;
-> +
-> +		/*
-> +		 * DELAY_DEQUEUE relies on spurious wakeups, special task
-> +		 * states must not suffer spurious wakeups, excempt them.
-> +		 */
-> +		if (flags & DEQUEUE_SPECIAL)
-> +			sleep = false;
-> +
-> +		SCHED_WARN_ON(sleep && se->sched_delayed);
-> +		update_curr(cfs_rq);
->  
-> +		if (sched_feat(DELAY_DEQUEUE) && sleep &&
-> +		    !entity_eligible(cfs_rq, se)) {
-> +			if (cfs_rq->next == se)
-> +				cfs_rq->next = NULL;
-> +			se->sched_delayed = 1;
-> +			return false;
-> +		}
-> +	}
-> +
-> +	int action = UPDATE_TG;
->  	if (entity_is_task(se) && task_on_rq_migrating(task_of(se)))
->  		action |= DO_DETACH;
->  
->  	/*
-> -	 * Update run-time statistics of the 'current'.
-> -	 */
-> -	update_curr(cfs_rq);
-> -
-> -	/*
->  	 * When dequeuing a sched_entity, we must:
->  	 *   - Update loads to have both entity and cfs_rq synced with now.
->  	 *   - For group_entity, update its runnable_weight to reflect the new
-> @@ -5430,6 +5454,8 @@ dequeue_entity(struct cfs_rq *cfs_rq, st
->  
->  	if (cfs_rq->nr_running == 0)
->  		update_idle_cfs_rq_clock_pelt(cfs_rq);
-> +
-> +	return true;
->  }
->  
->  static void
-> @@ -5828,11 +5854,21 @@ static bool throttle_cfs_rq(struct cfs_r
->  	idle_task_delta = cfs_rq->idle_h_nr_running;
->  	for_each_sched_entity(se) {
->  		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
-> +		int flags;
-> +
->  		/* throttled entity or throttle-on-deactivate */
->  		if (!se->on_rq)
->  			goto done;
->  
-> -		dequeue_entity(qcfs_rq, se, DEQUEUE_SLEEP);
-> +		/*
-> +		 * Abuse SPECIAL to avoid delayed dequeue in this instance.
-> +		 * This avoids teaching dequeue_entities() about throttled
-> +		 * entities and keeps things relatively simple.
-> +		 */
-> +		flags = DEQUEUE_SLEEP | DEQUEUE_SPECIAL;
-> +		if (se->sched_delayed)
-> +			flags |= DEQUEUE_DELAYED;
-> +		dequeue_entity(qcfs_rq, se, flags);
->  
->  		if (cfs_rq_is_idle(group_cfs_rq(se)))
->  			idle_task_delta = cfs_rq->h_nr_running;
-> @@ -6918,6 +6954,7 @@ static int dequeue_entities(struct rq *r
->  	bool was_sched_idle = sched_idle_rq(rq);
->  	int rq_h_nr_running = rq->cfs.h_nr_running;
->  	bool task_sleep = flags & DEQUEUE_SLEEP;
-> +	bool task_delayed = flags & DEQUEUE_DELAYED;
->  	struct task_struct *p = NULL;
->  	int idle_h_nr_running = 0;
->  	int h_nr_running = 0;
-> @@ -6931,7 +6968,13 @@ static int dequeue_entities(struct rq *r
->  
->  	for_each_sched_entity(se) {
->  		cfs_rq = cfs_rq_of(se);
-> -		dequeue_entity(cfs_rq, se, flags);
-> +
-> +		if (!dequeue_entity(cfs_rq, se, flags)) {
-> +			if (p && &p->se == se)
-> +				return -1;
-> +
-> +			break;
-> +		}
->  
->  		cfs_rq->h_nr_running -= h_nr_running;
->  		cfs_rq->idle_h_nr_running -= idle_h_nr_running;
-> @@ -6956,6 +6999,7 @@ static int dequeue_entities(struct rq *r
->  			break;
->  		}
->  		flags |= DEQUEUE_SLEEP;
-> +		flags &= ~(DEQUEUE_DELAYED | DEQUEUE_SPECIAL);
->  	}
->  
->  	for_each_sched_entity(se) {
-> @@ -6985,6 +7029,17 @@ static int dequeue_entities(struct rq *r
->  	if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
->  		rq->next_balance = jiffies;
->  
-> +	if (p && task_delayed) {
-> +		SCHED_WARN_ON(!task_sleep);
-> +		SCHED_WARN_ON(p->on_rq != 1);
-> +
-> +		/* Fix-up what dequeue_task_fair() skipped */
-> +		hrtick_update(rq);
-> +
-> +		/* Fix-up what block_task() skipped. */
-> +		__block_task(rq, p);
-> +	}
-> +
->  	return 1;
->  }
->  /*
-> @@ -6996,8 +7051,10 @@ static bool dequeue_task_fair(struct rq
->  {
->  	util_est_dequeue(&rq->cfs, p);
->  
-> -	if (dequeue_entities(rq, &p->se, flags) < 0)
-> +	if (dequeue_entities(rq, &p->se, flags) < 0) {
-> +		util_est_update(&rq->cfs, p, DEQUEUE_SLEEP);
->  		return false;
-> +	}
->  
->  	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
->  	hrtick_update(rq);
-> @@ -12973,6 +13030,11 @@ static void set_next_task_fair(struct rq
->  		/* ensure bandwidth has been allocated on our new cfs_rq */
->  		account_cfs_rq_runtime(cfs_rq, 0);
->  	}
-> +
-> +	if (!first)
-> +		return;
-> +
-> +	SCHED_WARN_ON(se->sched_delayed);
->  }
->  
->  void init_cfs_rq(struct cfs_rq *cfs_rq)
-> --- a/kernel/sched/features.h
-> +++ b/kernel/sched/features.h
-> @@ -29,6 +29,15 @@ SCHED_FEAT(NEXT_BUDDY, false)
->  SCHED_FEAT(CACHE_HOT_BUDDY, true)
->  
->  /*
-> + * Delay dequeueing tasks until they get selected or woken.
-> + *
-> + * By delaying the dequeue for non-eligible tasks, they remain in the
-> + * competition and can burn off their negative lag. When they get selected
-> + * they'll have positive lag by definition.
-> + */
-> +SCHED_FEAT(DELAY_DEQUEUE, true)
-> +
-> +/*
->   * Allow wakeup-time preemption of the current task:
->   */
->  SCHED_FEAT(WAKEUP_PREEMPTION, true)
-> 
-> 
-
--- 
-
+> But I guess this is fine:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Yours,
+> Linus Walleij
 
