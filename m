@@ -1,132 +1,90 @@
-Return-Path: <linux-kernel+bounces-392338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 803A39B92C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:04:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91FDF9B92CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B11C41C20D5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:04:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E6B1F23930
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F781A2C27;
-	Fri,  1 Nov 2024 14:03:54 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175601A0B16;
+	Fri,  1 Nov 2024 14:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cyc9e/3A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E53EEC3;
-	Fri,  1 Nov 2024 14:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7763D19BBC
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730469834; cv=none; b=I4DM43R7oh4SsPEp6gOsJn6ZFvIs9DmithRVH3dAuBTPBUue0oDBY/Ex4F9f0umygRrinFgdsCGCDignnCoHOUzg3w8RVl8zbridE34FDuNhzoqkdjyCzRqw8CykcjcSnZtIZJPJhYoavJL9PJ/CRFV3NYvAoAD1q4UIVXum2ow=
+	t=1730469874; cv=none; b=cHegkFJdg7ZkRM8ILMrG9EOX82kmwjSH1J8OgIkso3wLqWVoTJewX9CDP/VOV5J4FPoIApzVeFyBb+ux0brD51qJtzq9PGF1GQexcNBrCM/1/yHO0SYWVutnNzBU3zp7yRB2RPqtAwm9K9fQiMjygph4Jb9a6gIk3Q2znzzIPhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730469834; c=relaxed/simple;
-	bh=0aSCMMdGWW8uVV2qD2dpIx5qDvOcUAZ2zAffj152WB8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WsLcKzHv+1/pV9Uj1zNdjdJWDErsQw9HXryinNo49u3d6BtRifyiYaI5mEHhYLF4eR/FnY9f5iOj4gPX9v5khcQUkANavIND8d+HA+NbTb36/r3fivzAqLqXuyaMVfn6KKunGifExB9yKQ9ZADxRIKGzUr0lBZLSulfnBjSsx1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xg2cH2SBRz6JB91;
-	Fri,  1 Nov 2024 22:02:23 +0800 (CST)
-Received: from mscpeml500003.china.huawei.com (unknown [7.188.49.51])
-	by mail.maildlp.com (Postfix) with ESMTPS id 43DAC140A70;
-	Fri,  1 Nov 2024 22:03:47 +0800 (CST)
-Received: from [10.123.123.226] (10.123.123.226) by
- mscpeml500003.china.huawei.com (7.188.49.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 1 Nov 2024 17:03:46 +0300
-Message-ID: <0f533707-e9fc-4abd-95fb-bf22c322285d@huawei.com>
-Date: Fri, 1 Nov 2024 17:03:46 +0300
+	s=arc-20240116; t=1730469874; c=relaxed/simple;
+	bh=MmP17vwC7Ilo3FBahRh2TnMbnoRoJp95aydVJLBVmL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAB/6UL4aIhDezo++GEoZok8RUWODaya3zik3XMmgPlM2JC2SQiPzAOmHeKODzYe5G5CHOfLZVVgvZxvI+DYi/9D5Cj6YwWFVGJvYdk6M5mIRiB9uZXg5cKiHRO/vmRHhtEG0r8Hceu3h9ClCuqO/LZodkLI/noOKlRrTB0DBvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cyc9e/3A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73698C4CECD;
+	Fri,  1 Nov 2024 14:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730469874;
+	bh=MmP17vwC7Ilo3FBahRh2TnMbnoRoJp95aydVJLBVmL8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cyc9e/3A8kdFCvBFAfiTCT1zL5OJqineFxFE9LLMS7Y4uNppoymRjyJwAMT0hXYVc
+	 RMGq7rsEoXPv1aJa7DeH9VEca+taVD9NcFXLcLWrI/pCCx9OOlGs/Ce8apxfAyC0jR
+	 YCDN0Jc5NY1iddRZA1PA0sCHuj6EEhE6WOuexeIBhHD2xT7ppn3XKUcPfqcJw/FcYg
+	 T2IB1Ek9+OEzAihmF3MXfjj8ghnrW1gx5q+VpUbHaqroiCKrb3LDldtww3vf/fLanJ
+	 ItOxA5e8nLJqEub3EAQ53Zczysniz1NYZy1DNpvo1XKgbcXyO+gOzPhyvvKf21MrKL
+	 DzMkhq1H/xL9Q==
+Date: Fri, 1 Nov 2024 15:04:30 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch v6 16/20] signal: Handle ignored signals in
+ do_sigaction(action != SIG_IGN)
+Message-ID: <ZyTf7lNNYt8Wjbfq@localhost.localdomain>
+References: <20241031151625.361697424@linutronix.de>
+ <20241031154425.561437034@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] Cgroup-based THP control
-To: Michal Hocko <mhocko@suse.com>
-CC: Gutierrez Asier <gutierrez.asier@huawei-partners.com>,
-	<akpm@linux-foundation.org>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<baohua@kernel.org>, <willy@infradead.org>, <peterx@redhat.com>,
-	<hannes@cmpxchg.org>, <hocko@kernel.org>, <roman.gushchin@linux.dev>,
-	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>, <cgroups@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<alexander.kozhevnikov@huawei-partners.com>, <guohanjun@huawei.com>,
-	<weiyongjun1@huawei.com>, <wangkefeng.wang@huawei.com>,
-	<judy.chenhui@huawei.com>, <yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<kang.sun@huawei.com>, <nikita.panov@huawei-partners.com>
-References: <ZyJNizBQ-h4feuJe@tiehlicka>
- <d9bde9db-85b3-4efd-8b02-3a520bdcf539@huawei.com>
- <ZyNAxnOqOfYvqxjc@tiehlicka>
- <80d76bad-41d8-4108-ad74-f891e5180e47@huawei.com>
- <ZySEvmfwpT_6N97I@tiehlicka>
- <274e1560-9f6c-4dd9-b27c-2fd0f0c54d03@huawei.com>
- <ZyTUd5wH1T_IJYRL@tiehlicka>
- <5120497d-d60a-4a4b-a39d-9b1dbe89154c@huawei.com>
- <ZyTXYnbDfGYGuxlt@tiehlicka>
- <5baa6024-a0a4-4b0b-a7d1-641bba7e5b87@huawei.com>
- <ZyTcmvihAl_m4FZM@tiehlicka>
-Content-Language: en-US
-From: Stepanov Anatoly <stepanov.anatoly@huawei.com>
-In-Reply-To: <ZyTcmvihAl_m4FZM@tiehlicka>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: mscpeml500003.china.huawei.com (7.188.49.51) To
- mscpeml500003.china.huawei.com (7.188.49.51)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241031154425.561437034@linutronix.de>
 
-On 11/1/2024 4:50 PM, Michal Hocko wrote:
-> On Fri 01-11-24 16:39:07, Stepanov Anatoly wrote:
->> On 11/1/2024 4:28 PM, Michal Hocko wrote:
->>> On Fri 01-11-24 16:24:55, Stepanov Anatoly wrote:
->>>> On 11/1/2024 4:15 PM, Michal Hocko wrote:
->>>>> On Fri 01-11-24 14:54:27, Stepanov Anatoly wrote:
->>>>>> On 11/1/2024 10:35 AM, Michal Hocko wrote:
->>>>>>> On Thu 31-10-24 17:37:12, Stepanov Anatoly wrote:
->>>>>>>> If we consider the inheritance approach (prctl + launcher), it's fine until we need to change
->>>>>>>> THP mode property for several tasks at once, in this case some batch-change approach needed.
->>>>>>>
->>>>>>> I do not follow. How is this any different from a single process? Or do
->>>>>>> you mean to change the mode for an already running process?
->>>>>>>
->>>>>> yes, for already running set of processes
->>>>>
->>>>
->>>>> Why is that preferred over setting the policy upfront?
->>>> Setting the policy in advance is fine, as the first step to do.
->>>> But we might not know in advance
->>>> which exact policy is the most beneficial for one set of apps or another.
->>
->>>
->>> How do you plan to find that out when the application is running
->>> already?
->> For example, if someone willing to compare some DB server performance with THP-off vs THP-on,
->> and DB server restart isn't an option.
-
+Le Thu, Oct 31, 2024 at 04:46:42PM +0100, Thomas Gleixner a écrit :
+> From: Thomas Gleixner <tglx@linutronix.de>
 > 
-> So you essentially expect user tell you that they want THP and you want
-> to make that happen on fly, correct? It is not like there is an actual
-> monitoring and dynamic policing.
-For a user/sysadmin this scenario is almost the same as experimenting with 
-global THP settings, but with explicit THP usage, less THP overuse by some random apps,
-so more predictable.
-
+> When a real handler (including SIG_DFL) is installed for a signal, which
+> had previously SIG_IGN set, then the list of ignored posix timers has to be
+> checked for timers which are affected by this change.
 > 
-> If that is the case then I am not really convinced this is a worthwhile
-> to support TBH. I can see that a workload knows in advance that they
-> benefit from THP but I am much more dubious about "learning during the
-> runtime" is a real life thing. I might be wrong of course but if
-> somebody has performance monitoring that is able to identify performance
-> bottlenecks based on specific workload then applying THP on the whole
-> group of proceesses seems like a very crude way to deal with that. I
+> Add a list walk function which checks for the matching signal number and if
+> found requeues the timers signal, so the timer is rearmed on signal
+> delivery.
+> 
+> Rearming the timer right away is not possible because that requires to drop
+> sighand lock.
+> 
+> No functional change as the counter part which queues the timers on the
+> ignored list is still missing.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-> could see a case for madvice_process(MADV_COLLAPSE) to deal with
-> specific memory hotspots though.
-Yes, we have something like this in mind.
-
--- 
-Anatoly Stepanov, Huawei
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
