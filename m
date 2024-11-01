@@ -1,101 +1,133 @@
-Return-Path: <linux-kernel+bounces-392222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39D19B9130
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:36:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930399B9136
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9ACB1F229AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:36:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543DA282A39
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBD519E826;
-	Fri,  1 Nov 2024 12:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A4C19E99E;
+	Fri,  1 Nov 2024 12:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7uKhahJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="h0FAhilm"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCC422097;
-	Fri,  1 Nov 2024 12:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D0822097;
+	Fri,  1 Nov 2024 12:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730464592; cv=none; b=iKFQyJ/gHw7kRo11xp7Rx3XWX743o9u40oKJjZlP2A+93fXWogNjrtP8VXP1hckH9PTBipVYF11u69GRzATH9yScEGdzSBZuxgJIVk6jWvYOND0wNdDsC15f7+qAcFYuQSygkFFarLGI1DtOEppTAhht55+BaXhnYT8Gk3kKE74=
+	t=1730464817; cv=none; b=I7sXU+wTSJ+vBCt8igx5Y71Opz/6150HPJ9/dZc/MGyMCKYPdZs+e2UhQei8mYu04oIuvID6olSlp0o1vvun33k6Z+meRQ6sNfgWL/R3Z+6c+Ik/nws1i4fF/rLWSD9d/FFkvlXAyxCqNorom3qgJikFamrzGIgwbtER6Lm0SHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730464592; c=relaxed/simple;
-	bh=gRP6MN8zkcU6CaP595Krk9eoXpXecFjEFluVBdHI6Dw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iLwzUbsS5dZqYnLvmFw8wlOx8j9VGBPJnmG5XVU+I6JSRogzmqPxQ9u6n8XfStb7ZwOiC7ziRLic2ipF3CQJ8RuqwUPKIsh0xTM+buGxK1NUyDVpcGAxc6zDxkyER+M/seoXaxqjYfXzLb/wMg8dePy2NqRTdS1u3Fq09tZfsvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7uKhahJ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730464590; x=1762000590;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=gRP6MN8zkcU6CaP595Krk9eoXpXecFjEFluVBdHI6Dw=;
-  b=R7uKhahJyPUgwWAMShBxRPUxfZ15oAqBA+HUVaTNreUbpwNPT+4ZxGob
-   62gPAzz3zBjfXbOa9kllbFmJ7+rCqxM94Fck0TdC+3mGABk1sgBX7zgUg
-   kELqbIeBx0RASmTEsMO1v/ZDi87VLcOvgzRP+u8h4TeMh2MRo6wNDI3Op
-   G3ub7+VZ+MTnnN0F97YedlERytxieQdJBqWVJAKnUvFWFurgAOm8P8EZu
-   4iUT0rG3UnwqQAjzGwefefQf9yDe6dtYdofGR1XR9LtxB6L54oIiI0HXo
-   Fi9k0rJ92zifAXSqo17T06QjBWpWRsjXNT/szmoPc20Omj8nAcQL7bsNi
-   Q==;
-X-CSE-ConnectionGUID: gSGLJBhJR6K5mUIPTpAS7g==
-X-CSE-MsgGUID: n3IhfjNVRDC4XVsfyFmRPw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="29647782"
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="29647782"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 05:36:25 -0700
-X-CSE-ConnectionGUID: VSxhE1D4Rv6k16aZfJE9gQ==
-X-CSE-MsgGUID: ZFqSEMFsQqy8Ka+VNR1QDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="83386198"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.38])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 05:36:23 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>, 
- Kurt Borja <kuurtb@gmail.com>, Dell.Client.Kernel@dell.com, 
- platform-driver-x86@vger.kernel.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241101110230.3303197-1-colin.i.king@gmail.com>
-References: <20241101110230.3303197-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] alienware-wmi: Fix spelling mistake "requieres"
- -> "requires"
-Message-Id: <173046457722.1736.12073152593852757455.b4-ty@linux.intel.com>
-Date: Fri, 01 Nov 2024 14:36:17 +0200
+	s=arc-20240116; t=1730464817; c=relaxed/simple;
+	bh=QNXdyGnqE6MurJIcF0ns6jB3cXGZVUEvz/Y3ylybaQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eOPCZ4C8a5eZIRJKDxkArkNGbtFhU6Sq9TBHUvf855dNalGzceHKZG/AbSpORqkh/NeQVMEtgmrtounGEs7girt/wIUlPDXRsLqjwrDN4IyEzPPNciZVIgzBiBTv9fEhJ0auyw4cXkKFKnUhAhH79NB+XC/sVy7wzbXS1SR9gKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=h0FAhilm; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=JLfKetvUuxPUYkpPeA7mnXrzdgQkP5ynoIU4H8aYS3U=; b=h0FAhilmGmVBQ5NQWg3uCkBa5Z
+	wBWcuyUI17qGVzn7hgmPZYc8+Y/8faJQW7qsFUCd4+QAan8AfGgxrSLUThwbNqFCSqRFnV8RWNRFl
+	DvvjfhGliWxog9tagmqENZzMNVIlzb7BrBGuszd5VPi+LN8iAw7MpZz4Ue4QhsS0WqoI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t6qwa-00BsXZ-SD; Fri, 01 Nov 2024 13:40:00 +0100
+Date: Fri, 1 Nov 2024 13:40:00 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Liu Gui <kenneth.liu@sophgo.com>, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH] riscv: dts: sophgo: Add ethernet configuration for cv18xx
+Message-ID: <5b08e092-c302-43a9-a04d-3566bec96e94@lunn.ch>
+References: <20241028011312.274938-1-inochiama@gmail.com>
+ <87e215a7-0b27-4336-9f9c-e63ade0772ef@lunn.ch>
+ <wgggariprpp2wczsljy3vw6kp7vhnrifg6soxdgiio2seyctym@4owbzlg3ngum>
+ <ftfp2rwkytqmzruogcx66d5qkn4tzrgyjtlz4hdduxhwit3tok@kczgzrjdxx46>
+ <e389a60d-2fe3-46fd-946c-01dd3a0a0f6f@lunn.ch>
+ <nkydxanwucqmbzzz2fb24xyelrouj6gvhuuou2ssbf4tvvhfea@6uiuueim7m3a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nkydxanwucqmbzzz2fb24xyelrouj6gvhuuou2ssbf4tvvhfea@6uiuueim7m3a>
 
-On Fri, 01 Nov 2024 11:02:30 +0000, Colin Ian King wrote:
-
-> There is a spelling mistake in a pr_warn message. Fix it.
+> > > > > > +			mdio {
+> > > > > > +				compatible = "snps,dwmac-mdio";
+> > > > > > +				#address-cells = <1>;
+> > > > > > +				#size-cells = <0>;
+> > > > > > +
+> > > > > > +				phy0: phy@0 {
+> > > > > > +					compatible = "ethernet-phy-ieee802.3-c22";
+> > > > > > +					reg = <0>;
+> > > > > > +				};
+> > > > > > +			};
+> > > > > 
+> > > > > It is not clear to me what cv18xx.dtsi represents, 
+> > > > 
+> > > > This is a include file to define common ip for the whole
+> > > > cv18xx series SoCs (cv1800b, cv1812h, sg2000, sg2000).
+> > > > 
+> > > > > and where the PHY node should be, here, or in a .dts file. 
+> > > > > Is this a SOM, and the PHY is on the SOM? 
+> > > > 
+> > > > The phy is on the SoC, it is embedded, and no external phy
+> > > > is supported. So I think the phy node should stay here, not 
+> > > > in the dts file.
+> > > 
+> > > There is a mistake, Some package supports external rmii/mii
+> > > phy. So I will move this phy definition to board specific.
+> > 
+> > When there is an external PHY, does the internal PHY still exists? If
+> > it does, it should be listed, even if it is not used.
+> > 
+> > Do the internal and external PHY share the same MDIO bus? 
 > 
+> They share the same MDIO bus and phy id setting.
+
+What do you mean by phy ID?
+
+> When an external phy
+> is select, the internal one is not initialized and can not be accessed
+> by the SoC.
 > 
+> > I've seen some SoCs with complex MDIO muxes for internal vs external
+> > PHYs.
+> > 
+> > 	Andrew
+> 
+> There is a switch register on the SoC to decide which phy/mode is used. 
+> By defaut is internal one with rmii mode. I think a driver is needed to
+> handle this properly.
 
+This sounds like a complex MDIO mux. You should think about this now,
+because others have left this same problem too late and ended up with
+a complex design in order to keep backwards compatibility with old DT
+blobs which don't actually describe the real hardware.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] alienware-wmi: Fix spelling mistake "requieres" -> "requires"
-      commit: d68cb6023356af3bd3193983ad4ec03954a0b3e2
-
---
- i.
-
+	Andrew
 
