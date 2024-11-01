@@ -1,108 +1,137 @@
-Return-Path: <linux-kernel+bounces-391911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0681F9B8D41
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:44:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C17D9B8D44
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:46:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95CEBB22AF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:44:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5D7EB22EB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95555156F55;
-	Fri,  1 Nov 2024 08:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5788D15667B;
+	Fri,  1 Nov 2024 08:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GoVkqtji"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g9upk/BZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F76156C70;
-	Fri,  1 Nov 2024 08:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCE225757
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 08:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730450677; cv=none; b=DQLjr/y3KYbBEoqQs/ku1BB/Y6v6PB4P4vTrJau7y42mv1BJCdqu5RsHhp4XOx/K03a2eQn/D5T9mO+byK9PeXMMD1iCGX2DRmn1eNuKBy0OQDUsL4lsVkyl1UHaicsoXukw3yVLjDhHIBo70q9KLQjpLXC5bqtEGgIJU4pM5Cs=
+	t=1730450797; cv=none; b=I9Q3bVEmq49UW9wt9ZBEfWI0oqZuGM34+lLvQ+vvPUyGYdLsf2II1IRmK+CAYaKGDqmdNDXxGMiz2TqXdMSrORIJy0Zom8mi1Dxh3CERDCHzgaWfP4ptUuSAG4x1bL1m7Ss4C1QUQ5HoZVveJtee78kE4bUYdu0StUj/pw3Gk/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730450677; c=relaxed/simple;
-	bh=GCMhYqA/YfCTsWWthvHXpoRveTvB5rQZPcmzM6duX/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WRiYJbIF3V9p/BPGX3jsQh1x9E6TvvG1GzEpMx1EDEJhngnqTmmEWcgY2dYsdMIgDwqGaLR/L/XZYWW1zSeaP83+KA4bSCPzIqZ4yRpmgvoWPCuUiJHBmWMSDDoX8whslgo10uBNCT9LNWeDonrUfh77DtOWUfs/dSgCPwmSZM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GoVkqtji; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730450676; x=1761986676;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GCMhYqA/YfCTsWWthvHXpoRveTvB5rQZPcmzM6duX/c=;
-  b=GoVkqtjiacXdAEaNrBXuikxezAwEXxY7k+LEKRfEg5KYOozFqJByzPpj
-   whoWaPDB9XGVRvs/qo1QjFeSy4GOnbrliQIrcdWloWPubUhv+gVwwQ+lL
-   9FDSyHhTKCJnbGhi7CEWOzq+UHVeUGDEGJpc2gBy9iY3By1aTJI4jSmjL
-   Op1PlrYsoRZp1gj3SJT3r/WDi178wv/M9HNpF8bkWaKRw7TWCMhbz3PkI
-   /pZqWYQ/PsuHIxfF/JfkgEe5FsMD7o0r/uzXzExcvEs1nGwc+Y4HjUU94
-   qiuIA/mqyLm//76J4CfKAhmi5fYlREy/7pOnS4SaLWABhR6eNfJa6Fcz2
-   w==;
-X-CSE-ConnectionGUID: eLiz2XhgQU+Gr9lwSWJ3lA==
-X-CSE-MsgGUID: b30//yZ5SEiYWQSZD9W9dQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="41610084"
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="41610084"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:44:35 -0700
-X-CSE-ConnectionGUID: 9gYS7nxMRvSrRD3BNX6YFg==
-X-CSE-MsgGUID: z0zU6Yh4Q32ZGvfo5g4uFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="82425556"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:44:32 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t6nGf-00000009y3g-4Bei;
-	Fri, 01 Nov 2024 10:44:30 +0200
-Date: Fri, 1 Nov 2024 10:44:29 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Liu Peibao <loven.liu@jaguarmicro.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
-	"xiaowu . ding" <xiaowu.ding@jaguarmicro.com>,
-	Angus Chen <angus.chen@jaguarmicro.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND TO CC MAILLIST] i2c: designware: fix master
- holding SCL low when I2C_DYNAMIC_TAR_UPDATE not set
-Message-ID: <ZySU7bEvct4_FbBX@smile.fi.intel.com>
-References: <20241101081243.1230797-1-loven.liu@jaguarmicro.com>
+	s=arc-20240116; t=1730450797; c=relaxed/simple;
+	bh=K1V3vdHigu99axIZm25bMypHk1ainthXgYopWI6Qc48=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nd65Zk0XP2nXcjF5QG1huTWNWVXOK0hvIUxHijP3pQSHtRlu/LMKYzX8Rk0LkDAyjlaxfXLJ4CqIJwEfe9EmupP0agcr9/tO20NY/269iUugHOnAeiNNeOPHUcdMxxOLpvzQTLlw5ikj1xVgjwcXP3JMYQMGjNpax8E5WnVG5aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g9upk/BZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A14d2CM002440;
+	Fri, 1 Nov 2024 08:46:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=kEacnyYxkFp32FAGX42OrlFB1RCx1qkrp2NUdwCUyIQ=; b=g9
+	upk/BZyFl+6uG4SQjaSrCm5hwqK5uOg6cijR/CPSHItcLiQ4QXUbLdijEee+OVGk
+	x9gMFE1PUohTvC2nBy5PvngrnFKCyuDLAcBevU8PmE4JMtSmQ046Z1IPMdHOlMef
+	qehbyp8DuS/jJG3toEluOzFkdaioKt/3iS8MkKMQBrPYksKctiobnpHUJADj1GeK
+	dJantyGK7oGzXWmz02zfcsvE/8R1yF/TfngcqIoO7/EWRCVRcFWvdJ1mzXvJD5yH
+	0Ub++bKfHb1IEXFLYTRDPcv3+3hkligFEmQiwSnYtCIkeV8q7p57XD0k4GFRzA2P
+	LQCUY2ijoMc5secmBioA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kmn5ee7h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 08:46:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A18kKXg014792
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 1 Nov 2024 08:46:20 GMT
+Received: from jinlmao-gv.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 1 Nov 2024 01:46:16 -0700
+From: Mao Jinlong <quic_jinlmao@quicinc.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+CC: Mao Jinlong <quic_jinlmao@quicinc.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5] arm64: defconfig: Enable STM protocol and source configs
+Date: Fri, 1 Nov 2024 16:45:58 +0800
+Message-ID: <20241101084558.36948-1-quic_jinlmao@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101081243.1230797-1-loven.liu@jaguarmicro.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jOVcNP3-4BL3zlHvbV3N46NMm11svx-H
+X-Proofpoint-GUID: jOVcNP3-4BL3zlHvbV3N46NMm11svx-H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 phishscore=0 mlxlogscore=843
+ priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411010062
 
-On Fri, Nov 01, 2024 at 04:12:43PM +0800, Liu Peibao wrote:
-> When Tx FIFO empty and last command with no STOP bit set, the master
-> holds SCL low. If I2C_DYNAMIC_TAR_UPDATE is not set, BIT(13) MST_ON_HOLD
-> of IC_RAW_INTR_STAT is not Enabled, causing the __i2c_dw_disable()
-> timeout. This is quiet similar as commit 2409205acd3c ("i2c: designware:
-> fix __i2c_dw_disable() in case master is holding SCL low") mentioned.
-> Check BIT(7) MST_HOLD_TX_FIFO_EMPTY in IC_STATUS also which is available
-> when IC_STAT_FOR_CLK_STRETCH is set.
+STM is used for logging useful softevens from various entities.
+With STM and TMC sink enabled, there will be more buffer size to store
+the logs. STM source and STM protocol need to be configured along with
+STM device for STM function refer to Documentation/trace/stm.rst.
+CONFIG_CORESIGHT_STM is already added as module. Add Coresight STM
+source and Protocol configs as module so that STM functions can be
+used.
 
-Who are those people? Why Angus Chen is not a committer of the change?
-Please, consult with the Submitting Patches documentation to clarify on these
-tags.
+Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+---
+Changes in v5:
+- Update commit message.
 
-Also, sounds to me that Fixes tag is needed.
+Changes in v4:
+- Remove Ftrace config.
 
+Changes in v3:
+- update commit message.
+
+Changes in v2:
+- select ftrace config explicitly.
+ arch/arm64/configs/defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5fdbfea7a5b2..ac11cd1a7c06 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1599,6 +1599,11 @@ CONFIG_NVMEM_SNVS_LPGPR=y
+ CONFIG_NVMEM_SPMI_SDAM=m
+ CONFIG_NVMEM_SUNXI_SID=y
+ CONFIG_NVMEM_UNIPHIER_EFUSE=y
++CONFIG_STM_PROTO_BASIC=m
++CONFIG_STM_PROTO_SYS_T=m
++CONFIG_STM_DUMMY=m
++CONFIG_STM_SOURCE_CONSOLE=m
++CONFIG_STM_SOURCE_HEARTBEAT=m
+ CONFIG_FPGA=y
+ CONFIG_FPGA_MGR_ALTERA_CVP=m
+ CONFIG_FPGA_MGR_STRATIX10_SOC=m
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
 
