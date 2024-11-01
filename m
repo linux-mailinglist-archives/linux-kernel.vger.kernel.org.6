@@ -1,131 +1,212 @@
-Return-Path: <linux-kernel+bounces-393036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4D09B9B38
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:37:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8DB9B9B3B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:38:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F2B1F22123
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:37:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937991F21FF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 23:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EDE1E2007;
-	Fri,  1 Nov 2024 23:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AFA18A6A0;
+	Fri,  1 Nov 2024 23:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JWEj9QjS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a34UxBWJ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkhESd7F"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C75137745;
-	Fri,  1 Nov 2024 23:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065131D555
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 23:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730504241; cv=none; b=ZDLqvOVBEEySuLrCP8D4PoqUwnBWViS/I9sq18VYewfjVan2cOAX/1e9tGHfbnRkd5q8Y16TB8SLeBjU9bNDOwOp/g1SkNLlOr0r6FjrW/HfxIPLpo4hUaO0P/KI3/Po+Tlej8LLKol5BDek3HB8gYfbPBVknfmeIL8hEAJi9Bk=
+	t=1730504319; cv=none; b=DgkxH+nHyyDPuWm4j59X53duXqZZFzbPOOE9a+/D3eqqVdS+JD97b5+W1n2dEdjWnJeeMUTdddpi3G7T61UNi58U0QvZ+x465ZKhurTzxsYqKzoqfXg1X1eGoUHFCUGkZ3n58lTECg2Ck50JFjxSWESfDQfygNJOBgeXr8QruIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730504241; c=relaxed/simple;
-	bh=3kj6OyEELQBFa/kDWXd9HVrlsW3N9aS0gU28/KPADWY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FBEs2Wwqcz1EUvh6EVcKJoD2IfYHjsbUoH0K6sid+LCmW0l2Kg8GrgseqXXQcdXNYFilSq/1ofped9L6KdJLRHuQYUyR6WaU1BVyodjLA90cquw5oWK9Yp28k869PzSqjiBdWF6FMJP52wQ6YuE/3nyJ11FGcva0L5hOEhWBrns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JWEj9QjS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a34UxBWJ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730504237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5hEbhXrDUtyuWKJd3ehaILokOGyu2h6Q6B5wfuMSyD0=;
-	b=JWEj9QjSBEyCLLc2sdGDVDHcdRYMuPETvwuhGBviRL/LQKvn0eWocb5w+DiZzTkMOC7uWr
-	fPD9AbGNop10pVIuH2G+X+xTlNcnjpn660Vh8xo343ffA86Q0uSwb/8dj3Ueq4kIt/ADcQ
-	010zK74KumgO4nFr89HL5E2dEoLNEy27jC4ROhnqzx+5Z9wDK0MKHKLCNIcMKqD/Zr99ne
-	JqEajIb88CUZjq/bfKi3QEFvH57wRgSxlAteKaAlmfFj67bIMdq4VY1zkcnab4V2ZKLHw7
-	ofr7M1f2WJ2XvhOmww5tSuy3ohxhYNOXMtOf25dGqdwuD0cYokRIE9DrQHL9Cg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730504237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5hEbhXrDUtyuWKJd3ehaILokOGyu2h6Q6B5wfuMSyD0=;
-	b=a34UxBWJt0wl4wyuMAv1RCtfRBgMJ6wl9RM2K6j1I9qDmQClIdys5MO7cAup4fpZLr9ZT6
-	aU3o2yNbv17xKKBg==
-To: mapicccy <guanjun@linux.alibaba.com>
-Cc: corbet@lwn.net, axboe@kernel.dk, mst@redhat.com, jasowang@redhat.com,
- xuanzhuo@linux.alibaba.com, eperezma@redhat.com, vgoyal@redhat.com,
- stefanha@redhat.com, miklos@szeredi.hu, peterz@infradead.org,
- akpm@linux-foundation.org, paulmck@kernel.org, thuth@redhat.com,
- rostedt@goodmis.org, bp@alien8.de, xiongwei.song@windriver.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, virtualization@lists.linux.dev,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v1 1/2] genirq/affinity: add support for limiting
- managed interrupts
-In-Reply-To: <9847EC49-8F55-486A-985D-C3EDD168762D@linux.alibaba.com>
-References: <20241031074618.3585491-1-guanjun@linux.alibaba.com>
- <20241031074618.3585491-2-guanjun@linux.alibaba.com> <87v7x8woeq.ffs@tglx>
- <9847EC49-8F55-486A-985D-C3EDD168762D@linux.alibaba.com>
-Date: Sat, 02 Nov 2024 00:37:16 +0100
-Message-ID: <87h68qttjn.ffs@tglx>
+	s=arc-20240116; t=1730504319; c=relaxed/simple;
+	bh=VrxA82Et/EV40DHgQd645NW/CqTU0aBpxBRZenqU9uk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZNtQFqF859/JTdc8r/opTUmhUr/NRnqNy78UW97k89G2SCUrLU2DJAf60AIkaVaMWB/cN7tfDXqXir62tFO2TmfZmGe/d3OnK/U+ypzUSqa+Nn5nNQrF0zpkjjsmGAukq134Ng4qi3Ib14dUmPfah8D0JslC2aleoonccKlFmI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkhESd7F; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431ac30d379so19521565e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 16:38:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730504316; x=1731109116; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z5rcjHrmlWR+LzcpKryq3ZwD/HvuZwE0xyR9heRD69s=;
+        b=OkhESd7FU68py8aJD7FdadgMD5FlLDdn9kbv9ZGMKerD6sDOP595v19tiuUa37RYX2
+         VEytJzW9+pmZZo6Qr5rCkCK7ue8CEuP6C/gdnpYPBj5QaPFFiT1Y4V1lFmisiiM6/jvy
+         ShQ30kB5JuY+nClWa+gHGgl6yyiU+FDisVIkbriK0RtqiX+yVzkU2006RAQc2lCQhR1h
+         pXJMqfT/I+UUztmgFjYpnplNnUPdnBt3MDnFdhT0f/M9kHNPS2HtePp6UDqTNAFdqC8P
+         SOx9dvxgvhOhC+eGmN+wGrsROGa8kV+fi4r5FRI8ANmStveVLgDk4xoVvo+bInUUF5PQ
+         LFfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730504316; x=1731109116;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z5rcjHrmlWR+LzcpKryq3ZwD/HvuZwE0xyR9heRD69s=;
+        b=U/jq4OjxgC9GItUtz0pI6TXkGXaGm3xLDVxTr019ICnGmEIiK7a4H7pJ461WKLOH+4
+         /8QJIsDnTkNF4v5qfzOlrPNE6A6wrW4kq6l3KMKWMCgpekDGqYj/ztSh7NT7tdyQd29j
+         1BqF9zY8v625peDpiWQ8jBmx2DjPti9hFlw1/FKUwAMN3jepkOCy0lHWyDM+ixFZCTe1
+         jqHNYIFt+2eg6OfVS3D8JNxiSfnEVJifaN0t2hzygp9GOflzUEK/wu8XNymkQKTVdV4H
+         ydNNCJbsFPzAwp4k97AiDyyKUqzpfVdpJegJdUmjYebgzXeYj0waKeUqlg+ukfSFgN2A
+         VAJA==
+X-Forwarded-Encrypted: i=1; AJvYcCX95cpJ7EMm3+Dv5Tq8xmPvc69jSM+XMMMQdqPi3NYM5eP8P3UXGZeOa+Iw7qbI/CdYfxlRr0SsdzbKpBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwchLVhyBQvSOB36DbXdmVzVPPfvYW/pVbBN5A8Q24YLpuneGNQ
+	BgrU1OyJc0VJ+iRPTV4oO3cATszR7eeJkMtn4QLKtq6dA5KR2CUSthfEbMM4g+xMaMt8ju9UB9h
+	SQBj2YLBFfIYudFzq6by0WE+1TDw=
+X-Google-Smtp-Source: AGHT+IEVeOhuTN1DkEBQ8XjGr9sip5JeKBjAy4hzGpo17c0t1m1d24S2PEf/M6lGQcJaBNOT2uNkU8x7ObeDEuK3JQM=
+X-Received: by 2002:a05:600c:1d1c:b0:431:55bf:fe4 with SMTP id
+ 5b1f17b1804b1-431b17365ffmr149672825e9.24.1730504316102; Fri, 01 Nov 2024
+ 16:38:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20241101184011.3369247-1-snovitoll@gmail.com> <20241101184011.3369247-2-snovitoll@gmail.com>
+In-Reply-To: <20241101184011.3369247-2-snovitoll@gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Sat, 2 Nov 2024 00:38:25 +0100
+Message-ID: <CA+fCnZchoBgJp417G8dtNkiYnSY75hBmM=beDrxhJJyuPw=7iQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kasan: use EXPORT_SYMBOL_IF_KUNIT to export symbols
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: ryabinin.a.a@gmail.com, elver@google.com, arnd@kernel.org, 
+	glider@google.com, dvyukov@google.com, vincenzo.frascino@arm.com, 
+	akpm@linux-foundation.org, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 01 2024 at 11:03, mapicccy wrote:
->> 2024=E5=B9=B410=E6=9C=8831=E6=97=A5 18:35=EF=BC=8CThomas Gleixner <tglx@=
-linutronix.de> =E5=86=99=E9=81=93=EF=BC=9A
->>> +	get_nodes_in_cpumask(node_to_cpumask, premask, &nodemsk);
->>> +
->>> +	for_each_node_mask(n, nodemsk) {
->>> +		cpumask_and(&managed_irqs_cpumsk[n], &managed_irqs_cpumsk[n], premas=
-k);
->>> +		cpumask_and(&managed_irqs_cpumsk[n], &managed_irqs_cpumsk[n], node_t=
-o_cpumask[n]);
->>=20
->> How is this managed_irqs_cpumsk array protected against concurrency?
+On Fri, Nov 1, 2024 at 7:40=E2=80=AFPM Sabyrzhan Tasbolatov <snovitoll@gmai=
+l.com> wrote:
 >
-> My intention was to allocate up to `managed_irq_per_node` cpu bits from `=
-managed_irqs_cpumask[n]`,
-> even if another task modifies some of the bits in the `managed_irqs_cpuma=
-sk[n]` at the same time.
-
-That may have been your intention, but how is this even remotely
-correct?
-
-Aside of that. If it's intentional and you think it's correct then you
-should have documented that in the code and also annotated it to not
-trigger santiziers.
-
->> Given the limitations of the x86 vector space, which is not going away
->> anytime soon, there are only two options IMO to handle such a scenario.
->>=20
->>   1) Tell the nvme/block layer to disable queue affinity management
->>=20
->>   2) Restrict the devices and queues to the nodes they sit on
+> Replace EXPORT_SYMBOL_GPL with EXPORT_SYMBOL_IF_KUNIT to mark the
+> symbols as visible only if CONFIG_KUNIT is enabled.
 >
-> I have tried fixing this issue through nvme driver, but later
-> discovered that the same issue exists with virtio net.  Therefore, I
-> want to address this with a more general solution.
+> KASAN Kunit test should import the namespace EXPORTED_FOR_KUNIT_TESTING
+> to use these marked symbols.
+>
+> Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218315
+> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+> ---
+>  mm/kasan/hw_tags.c      |  7 ++++---
+>  mm/kasan/kasan_test_c.c |  2 ++
+>  mm/kasan/report.c       | 17 +++++++++--------
+>  3 files changed, 15 insertions(+), 11 deletions(-)
+>
+> diff --git a/mm/kasan/hw_tags.c b/mm/kasan/hw_tags.c
+> index 9958ebc15d38..ccd66c7a4081 100644
+> --- a/mm/kasan/hw_tags.c
+> +++ b/mm/kasan/hw_tags.c
+> @@ -8,6 +8,7 @@
+>
+>  #define pr_fmt(fmt) "kasan: " fmt
+>
+> +#include <kunit/visibility.h>
+>  #include <linux/init.h>
+>  #include <linux/kasan.h>
+>  #include <linux/kernel.h>
+> @@ -394,12 +395,12 @@ void kasan_enable_hw_tags(void)
+>
+>  #if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST)
+>
+> -EXPORT_SYMBOL_GPL(kasan_enable_hw_tags);
+> +EXPORT_SYMBOL_IF_KUNIT(kasan_enable_hw_tags);
+>
+> -void kasan_force_async_fault(void)
+> +VISIBLE_IF_KUNIT void kasan_force_async_fault(void)
+>  {
+>         hw_force_async_tag_fault();
+>  }
+> -EXPORT_SYMBOL_GPL(kasan_force_async_fault);
+> +EXPORT_SYMBOL_IF_KUNIT(kasan_force_async_fault);
+>
+>  #endif
+> diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+> index a181e4780d9d..3e495c09342e 100644
+> --- a/mm/kasan/kasan_test_c.c
+> +++ b/mm/kasan/kasan_test_c.c
+> @@ -33,6 +33,8 @@
+>
+>  #define OOB_TAG_OFF (IS_ENABLED(CONFIG_KASAN_GENERIC) ? 0 : KASAN_GRANUL=
+E_SIZE)
+>
+> +MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING);
+> +
+>  static bool multishot;
+>
+>  /* Fields set based on lines observed in the console. */
+> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+> index b48c768acc84..e5bc4e3ee198 100644
+> --- a/mm/kasan/report.c
+> +++ b/mm/kasan/report.c
+> @@ -10,6 +10,7 @@
+>   */
+>
+>  #include <kunit/test.h>
+> +#include <kunit/visibility.h>
+>  #include <linux/bitops.h>
+>  #include <linux/ftrace.h>
+>  #include <linux/init.h>
+> @@ -134,18 +135,18 @@ static bool report_enabled(void)
+>
+>  #if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST) || IS_ENABLED(CONFIG_KASAN_MODUL=
+E_TEST)
+>
+> -bool kasan_save_enable_multi_shot(void)
+> +VISIBLE_IF_KUNIT bool kasan_save_enable_multi_shot(void)
+>  {
+>         return test_and_set_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags);
+>  }
+> -EXPORT_SYMBOL_GPL(kasan_save_enable_multi_shot);
+> +EXPORT_SYMBOL_IF_KUNIT(kasan_save_enable_multi_shot);
+>
+> -void kasan_restore_multi_shot(bool enabled)
+> +VISIBLE_IF_KUNIT void kasan_restore_multi_shot(bool enabled)
+>  {
+>         if (!enabled)
+>                 clear_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags);
+>  }
+> -EXPORT_SYMBOL_GPL(kasan_restore_multi_shot);
+> +EXPORT_SYMBOL_IF_KUNIT(kasan_restore_multi_shot);
+>
+>  #endif
+>
+> @@ -157,17 +158,17 @@ EXPORT_SYMBOL_GPL(kasan_restore_multi_shot);
+>   */
+>  static bool kasan_kunit_executing;
+>
+> -void kasan_kunit_test_suite_start(void)
+> +VISIBLE_IF_KUNIT void kasan_kunit_test_suite_start(void)
+>  {
+>         WRITE_ONCE(kasan_kunit_executing, true);
+>  }
+> -EXPORT_SYMBOL_GPL(kasan_kunit_test_suite_start);
+> +EXPORT_SYMBOL_IF_KUNIT(kasan_kunit_test_suite_start);
+>
+> -void kasan_kunit_test_suite_end(void)
+> +VISIBLE_IF_KUNIT void kasan_kunit_test_suite_end(void)
+>  {
+>         WRITE_ONCE(kasan_kunit_executing, false);
+>  }
+> -EXPORT_SYMBOL_GPL(kasan_kunit_test_suite_end);
+> +EXPORT_SYMBOL_IF_KUNIT(kasan_kunit_test_suite_end);
+>
+>  static bool kasan_kunit_test_suite_executing(void)
+>  {
+> --
+> 2.34.1
+>
 
-I understand, but a general solution for this problem won't exist
-ever.
+Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
 
-It's very reasonable to restrict this for one particular device type or
-subsystem while maintaining the strict managed property for others, no?
-
-General solutions are definitely preferred, but not for the price that
-they break existing completely correct and working setups. Which is what
-your 2/2 patch does for sure.
-
-Thanks,
-
-        tglx
+Thank you!
 
