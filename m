@@ -1,241 +1,182 @@
-Return-Path: <linux-kernel+bounces-391684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582429B8A3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:27:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74FA9B8A42
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 05:39:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D351C21753
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:27:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C80731C2153F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 04:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E86147C98;
-	Fri,  1 Nov 2024 04:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B081494C9;
+	Fri,  1 Nov 2024 04:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A87xs2aI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="QoaI2uOx"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B16738FA3
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 04:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02138433B1
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 04:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730435271; cv=none; b=oSsJDCAcHm2tvPOOsyzhyvmb/b5IKZ8qNT80O6Us88//LPNqVw4sy/BwmTJy5/J6tVLMRWqdx5bk47HoONJFv05wQp7Yb995KLEofNIhTH++DOcUMGY9tELW9ouRqoX7+wbSTQnS1+Gm/9sBEUzEunG0GC2bh8G7ceEV5Irh+Qk=
+	t=1730435949; cv=none; b=cSRujJdLHuUcpx2VsIaongEfyLZfC6oyLjG/fNVCxf42Lhl14kPlxSNtKkGIVGn/m16Z4ajWuq4mSblnwQKTkBHREaw0RlAhUfuwJf2cg7/7uff7HzSr2n6mjZI7RmJapxF4/sdPs3ko8bHGdFRSzQlfV0BAl/oD1arcbSitRb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730435271; c=relaxed/simple;
-	bh=wh+/RwaI7po8sEY9saGvly1xg56dEmBAXqcDk5R75OU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ResWdOECyEvz1V8sBtNnVhSd1ZPb3WgqLTyOo/nRKZWATFGSyCbS0IUhkGobIFy2sy/+TiB8toE7PQkzxXhvnycypUBPtoY6CGDTln6M9kEqrChF0gvihZOykmnuRM3fy1FST/hjFyXzUNlPUCQjwYrQ84+l8Q1QzQkIMwbFDa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A87xs2aI; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730435269; x=1761971269;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wh+/RwaI7po8sEY9saGvly1xg56dEmBAXqcDk5R75OU=;
-  b=A87xs2aIGh2FXV5Ws212imnA//2wJ7kiLVOZfiXtbdjgAP0Ec4a8pGXL
-   kGCqidVGzLdHwuS8U4VGgS+NHB9Mc5nMfbCiaQnAppGqeIKaO2ff9nUbA
-   9shF05w/XqsRRV6+JLOTpil5EfXwElegi6++axo+pKCR7lPXHjG0hhpqL
-   3d8gglJ+OEul31uTJ+IJEWrmwVvQAbzje4Ubq23wFlWQNr2zQiOFYn/Yw
-   hFgYEBzWhUas3DvjJ3S2zmtBvv+VXhHK2iGkUmY1FPz4rbvxpu7e08t7R
-   GKmc8vuuEc8VFCXNYDq7ljjZvWs14VUNYBnHtbmOICsPt7Tk8IMpy9nt7
-   A==;
-X-CSE-ConnectionGUID: z3RLYFplRmqFQTEfO6CScw==
-X-CSE-MsgGUID: UlHmkZq+QMesbDXqjkCAkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="34134313"
-X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
-   d="scan'208";a="34134313"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 21:27:48 -0700
-X-CSE-ConnectionGUID: V/Agzf02SsGEkTMfaKcsuA==
-X-CSE-MsgGUID: TTYTZBhqTriz+yh+SmeBxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,248,1725346800"; 
-   d="scan'208";a="86791849"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2024 21:27:46 -0700
-Message-ID: <4632a527-3ed5-438c-b850-ddaf2f782f62@linux.intel.com>
-Date: Fri, 1 Nov 2024 12:27:07 +0800
+	s=arc-20240116; t=1730435949; c=relaxed/simple;
+	bh=ZekkZF+UkdHn0Q91alOKmAiQsy9GAM3MuhejYi4hJYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpJ8sMZeFxGHflBfcdOOCm33fIgrUukWVf8QyCopTZlZqFQ1rAwAuh1CW8fBXJXbj5pAJIjOhxwDGn9WGm/YjtKDvWAw4KMBNlExrkJgV4Any2/LtGHFJAEdHlhR2Ntj9RUVs9VRweSTZkgOB1yfKe0dqygIfI9B2SRCqfEaat4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=QoaI2uOx; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ca388d242so16836505ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Oct 2024 21:39:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1730435946; x=1731040746; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IjTMm7UeOMlkBJOsYxfUqt1WhI+YrUl78uiV5XzaxbI=;
+        b=QoaI2uOxgBIC9UnQxUy+RgUg5F/39CGqMiEu018qxqfBHVNOeoXazCJ+BNQr0XVb8K
+         RAmh1MGUOdCjLDRLZ5j38uJo7Zq4IZD9rDyEv3upVFy+wom+oeZvBH1GykQm34qHCd3g
+         S30Nn0YynwzgYHue8L4c2Q8IyxONot2DcUn6A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730435946; x=1731040746;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IjTMm7UeOMlkBJOsYxfUqt1WhI+YrUl78uiV5XzaxbI=;
+        b=cAKHNxPm2cNOzSEZtiE49wZ7fb1sP4i/8TXRPQ0OrYvOqZKIBPMJfXYeB5pG6JfIiE
+         OVqR6L47tIhFIoS0Fu9l/eC/OUG8vKEyfPwSutePXvNAtE++iOZryg3Ow7jJctQzzPBe
+         W/5oUvd7oUHcBvL/UrozZ9KyooQsA1uVEDaQZyddomVrbyMipm93sSK8o7hATzyKgkiz
+         4pnv5auWEg/Jc5kClQ0Sjzs4Cm4T9MwwLRDSDlZ3dAivgPzAe42PYZztBLiCfRaJxVqX
+         v+QCrF44mLGCci00VY9zqHHRw/w2pHoqA33fyF+viIzSxGc7VyLsZcnM272dxjOx6oK4
+         UyIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMg3lZJWAMNej0UPUHrcFgMBFCsFhKFVW55+7I0UQTtJx8lIlYifKikcmMHmwdfyLDwnmo/+CdvxYj9Ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbhOUnMtnltkcZGT3IzWV4PruAR8rPCnaUcduvOQujfplZG0a4
+	LwjsammPq95VMKkiZHchD7vzW5/OOXM64UhGSArM2yJY5cLeKbQcIKmWodR4e7o=
+X-Google-Smtp-Source: AGHT+IHFzA8goxLg/i7aPIPHLWpnxlZs+6kU062+Winb+Bwot9ysYkafB2xRqmetM9tiBbmc4yIqqA==
+X-Received: by 2002:a17:903:1c7:b0:206:a87c:2864 with SMTP id d9443c01a7336-2111afd6ca6mr22884905ad.42.1730435946221;
+        Thu, 31 Oct 2024 21:39:06 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056edc7csm15778075ad.36.2024.10.31.21.39.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 21:39:05 -0700 (PDT)
+Date: Thu, 31 Oct 2024 21:39:02 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: "Samudrala, Sridhar" <sridhar.samudrala@intel.com>
+Cc: netdev@vger.kernel.org, pabeni@redhat.com, namangulati@google.com,
+	edumazet@google.com, amritha.nambiar@intel.com, sdf@fomichev.me,
+	peter@typeblog.net, m2shafiei@uwaterloo.ca, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:BPF [MISC] :Keyword:(?:b|_)bpf(?:b|_)" <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next v3 7/7] docs: networking: Describe irq suspension
+Message-ID: <ZyRbZpCiANaxNNlv@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	"Samudrala, Sridhar" <sridhar.samudrala@intel.com>,
+	netdev@vger.kernel.org, pabeni@redhat.com, namangulati@google.com,
+	edumazet@google.com, amritha.nambiar@intel.com, sdf@fomichev.me,
+	peter@typeblog.net, m2shafiei@uwaterloo.ca, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:BPF [MISC] :Keyword:(?:b|_)bpf(?:b|_)" <bpf@vger.kernel.org>
+References: <20241101004846.32532-1-jdamato@fastly.com>
+ <20241101004846.32532-8-jdamato@fastly.com>
+ <cd033a99-014c-4b41-bfca-7b893604fe5a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] iommu/vt-d: Drain PRQs when domain removed from RID
-To: Yi Liu <yi.l.liu@intel.com>, iommu@lists.linux.dev
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Joel Granados
- <joel.granados@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org
-References: <20241031095139.44220-1-baolu.lu@linux.intel.com>
- <97e78485-5eb2-44cb-ab33-4f8a8488b428@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <97e78485-5eb2-44cb-ab33-4f8a8488b428@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd033a99-014c-4b41-bfca-7b893604fe5a@intel.com>
 
-On 11/1/24 10:52, Yi Liu wrote:
-> On 2024/10/31 17:51, Lu Baolu wrote:
->> As this iommu driver now supports page faults for requests without
->> PASID, page requests should be drained when a domain is removed from
->> the RID2PASID entry.
->>
->> This results in the intel_iommu_drain_pasid_prq() call being moved to
->> intel_pasid_tear_down_entry(). This indicates that when a translation
->> is removed from any PASID entry and the PRI has been enabled on the
->> device, page requests are flushed in the domain detachment path.
+On Thu, Oct 31, 2024 at 10:47:05PM -0500, Samudrala, Sridhar wrote:
 > 
-> s/flushed/drained/. 'drained' might suit the spec more than 'flushed'.
-
-Done.
-
 > 
-> Per this change, the callers of the intel_pasid_tear_down_entry() will
-> get a mandatory PRQ drain. I think this makes sense. But most of the
-> callers do not follow a prq drain in the before. Will it introduce
-> regression (especially performance regression)?
-
-intel_pasid_tear_down_entry() is called only in slow paths, so it should
-have minimal performance impact.
-
->>
->> The intel_iommu_drain_pasid_prq() helper has been modified to support
->> sending device TLB invalidation requests for both PASID and non-PASID
->> cases.
+> On 10/31/2024 7:48 PM, Joe Damato wrote:
+> > Describe irq suspension, the epoll ioctls, and the tradeoffs of using
+> > different gro_flush_timeout values.
+> > 
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+> > Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> > ---
+> <snip>
 > 
-> would it be better to rename it to be intel_iommu_drain_prq()? Also, it
-> makes much sense to separate the PRQ related code into a prq.c. :) It
-> might be done later though.
-
-Yes, this has already been addressed in another series.
-
 > 
->>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   drivers/iommu/intel/iommu.c |  1 -
->>   drivers/iommu/intel/pasid.c |  1 +
->>   drivers/iommu/intel/prq.c   | 22 +++++++---------------
->>   3 files changed, 8 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
->> index 87a3563dfe54..3878f35be09d 100644
->> --- a/drivers/iommu/intel/iommu.c
->> +++ b/drivers/iommu/intel/iommu.c
->> @@ -4069,7 +4069,6 @@ static void intel_iommu_remove_dev_pasid(struct 
->> device *dev, ioasid_t pasid,
->>       intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
->>       kfree(dev_pasid);
->>       intel_pasid_tear_down_entry(iommu, dev, pasid, false);
->> -    intel_iommu_drain_pasid_prq(dev, pasid);
->>   }
->>   static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
->> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
->> index 7e76062a7ad2..31665fb62e1c 100644
->> --- a/drivers/iommu/intel/pasid.c
->> +++ b/drivers/iommu/intel/pasid.c
->> @@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct 
->> intel_iommu *iommu, struct device *dev,
->>           iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
->>       devtlb_invalidation_with_pasid(iommu, dev, pasid);
->> +    intel_iommu_drain_pasid_prq(dev, pasid);
->>   }
->>   /*
->> diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
->> index 3c50c848893f..ae7f6f34462f 100644
->> --- a/drivers/iommu/intel/prq.c
->> +++ b/drivers/iommu/intel/prq.c
->> @@ -66,12 +66,8 @@ void intel_iommu_drain_pasid_prq(struct device 
->> *dev, u32 pasid)
->>       struct pci_dev *pdev;
->>       int head, tail;
->>       u16 sid, did;
->> -    int qdep;
->>       info = dev_iommu_priv_get(dev);
->> -    if (WARN_ON(!info || !dev_is_pci(dev)))
->> -        return;
->> -
->>       if (!info->pri_enabled)
->>           return;
->> @@ -81,8 +77,6 @@ void intel_iommu_drain_pasid_prq(struct device *dev, 
->> u32 pasid)
->>       sid = PCI_DEVID(info->bus, info->devfn);
->>       did = domain ? domain_id_iommu(domain, iommu) : FLPT_DEFAULT_DID;
->> -    qdep = pci_ats_queue_depth(pdev);
->> -
->>       /*
->>        * Check and wait until all pending page requests in the queue are
->>        * handled by the prq handling thread.
->> @@ -114,15 +108,13 @@ void intel_iommu_drain_pasid_prq(struct device 
->> *dev, u32 pasid)
->>       desc[0].qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
->>               QI_IWD_FENCE |
->>               QI_IWD_TYPE;
->> -    desc[1].qw0 = QI_EIOTLB_PASID(pasid) |
->> -            QI_EIOTLB_DID(did) |
->> -            QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
->> -            QI_EIOTLB_TYPE;
->> -    desc[2].qw0 = QI_DEV_EIOTLB_PASID(pasid) |
->> -            QI_DEV_EIOTLB_SID(sid) |
->> -            QI_DEV_EIOTLB_QDEP(qdep) |
->> -            QI_DEIOTLB_TYPE |
->> -            QI_DEV_IOTLB_PFSID(info->pfsid);
->> +    qi_desc_piotlb(did, pasid, 0, -1, 0, &desc[1]);
+> > +
+> > +IRQ suspension
+> > +--------------
+> > +
+> > +IRQ suspension is a mechanism wherein device IRQs are masked while epoll
+> > +triggers NAPI packet processing.
+> > +
+> > +While application calls to epoll_wait successfully retrieve events, the kernel will
+> > +defer the IRQ suspension timer. If the kernel does not retrieve any events
+> > +while busy polling (for example, because network traffic levels subsided), IRQ
+> > +suspension is disabled and the IRQ mitigation strategies described above are
+> > +engaged.
+> > +
+> > +This allows users to balance CPU consumption with network processing
+> > +efficiency.
+> > +
+> > +To use this mechanism:
+> > +
+> > +  1. The per-NAPI config parameter ``irq_suspend_timeout`` should be set to the
+> > +     maximum time (in nanoseconds) the application can have its IRQs
+> > +     suspended. This is done using netlink, as described above. This timeout
+> > +     serves as a safety mechanism to restart IRQ driver interrupt processing if
+> > +     the application has stalled. This value should be chosen so that it covers
+> > +     the amount of time the user application needs to process data from its
+> > +     call to epoll_wait, noting that applications can control how much data
+> > +     they retrieve by setting ``max_events`` when calling epoll_wait.
+> > +
+> > +  2. The sysfs parameter or per-NAPI config parameters ``gro_flush_timeout``
+> > +     and ``napi_defer_hard_irqs`` can be set to low values. They will be used
+> > +     to defer IRQs after busy poll has found no data.
 > 
-> Does it make more sense to submit iotlb desc when @pasid == IOMMU_NO_PASID
-> just like you've done to the devtlb desc? Spec looks to be unclear on this
-> part, but it sounds reasonable to use iotlb desc for the
-> @pasid == IOMMU_NO_PASID case.
+> Is it required to set gro_flush_timeout and napi_defer_hard_irqs when
+> irq_suspend_timeout is set? Doesn't it override any smaller
+> gro_flush_timeout value?
 
-You are right. I will make it like below:
+It is not required to use gro_flush_timeout or napi_defer_hard_irqs,
+but if they are set they will take over when epoll finds no events.
+Their usage is recommended. See the Usage section of the cover
+letter for details.
 
-         if (pasid == IOMMU_NO_PASID) {
-                 qi_desc_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH, 
-&desc[1]);
-                 qi_desc_dev_iotlb(sid, info->pfsid, info->ats_qdep, 0,
-                                   MAX_AGAW_PFN_WIDTH, &desc[2]);
-         } else {
-                 qi_desc_piotlb(did, pasid, 0, -1, 0, &desc[1]);
-                 qi_desc_dev_iotlb_pasid(sid, info->pfsid, pasid, 
-info->ats_qdep,
-                                         0, MAX_AGAW_PFN_WIDTH, &desc[2]);
-         }
+While gro_flush_timeout and napi_defer_hard_irqs are not strictly
+required, it is difficult for the polling-based packet delivery loop
+to gain control over packet delivery.
 
+Please see a previous email about this from the RFC for more
+details:
 
-> 
->> +    if (pasid == IOMMU_NO_PASID)
->> +        qi_desc_dev_iotlb(sid, info->pfsid, info->ats_qdep, 0,
->> +                  MAX_AGAW_PFN_WIDTH, &desc[2]);
->> +    else
->> +        qi_desc_dev_iotlb_pasid(sid, info->pfsid, pasid, info->ats_qdep,
->> +                    0, MAX_AGAW_PFN_WIDTH, &desc[2]);
-> 
-> I noticed devtlb_invalidation_with_pasid() passes '64 - VTD_PAGE_SHIFT'
-> which is equal to MAX_AGAW_PFN_WIDTH. Might be good to consolidate it. :)
+https://lore.kernel.org/netdev/2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca/
 
-Probably cleanup it in a separated patch.
+In the cover letter, you can note the difference in performance when
+gro_flush_timeout is set to different values. Note the explanation
+of suspendX; each suspend case is testing a different
+gro_flush_timeout.
 
->>   qi_retry:
->>       reinit_completion(&iommu->prq_complete);
->>       qi_submit_sync(iommu, desc, 3, QI_OPT_WAIT_DRAIN);
-> 
-
-0day reported a compiling issue:
-
-drivers/iommu/intel/prq.c: In function 'intel_iommu_drain_pasid_prq':
- >> drivers/iommu/intel/prq.c:66:25: warning: variable 'pdev' set but 
-not used [-Wunused-but-set-variable]
-       66 |         struct pci_dev *pdev;
-          |                         ^~~~
-
-I will fix it in a v2.
-
-Thanks,
-baolu
+Let us know if you have any other questions; both Martin and I are
+happy to help or further explain anything that is not clear.
 
