@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-392760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212A39B97CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:42:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B649B97D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:43:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB411F2131D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77EFC1C212C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA47B1CDA2F;
-	Fri,  1 Nov 2024 18:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D67A1A0BE7;
+	Fri,  1 Nov 2024 18:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="V0bIjAFx"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hXB2cBDY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BEA13AD05
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 18:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4AA1AB6C1;
+	Fri,  1 Nov 2024 18:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730486551; cv=none; b=QhLQZhjPgILGHPav4KpwtpZpZIrdqACk+f7WXqb93IUXv6yC7USt12s8qlV8xQvBHh6RvF2zb9DX1IVlpulZ7Towa4qeeAn3G4UzDoyRJdMlIsuBJXkyLEoFpqN8PvF4xrO6Hj6WmXUZ+0A0QxwRmxRGu2EyiBE5V1Yxoa4QYBM=
+	t=1730486591; cv=none; b=V63KvBvW2WgmhvHxbZ3E9XoaY90NnfDNNR2mPjYMkUojH8BKihftaAtQoq0Yyv2QijFVZ9LceKOzjRi3A8Rm9uh1zzPhwOg8evA3czNSLmR1a376nV+nUIjiUYmhzoftBFfhQ0Un5D64M0MUMKSi6Zbcuix1oKxAKfowPnuMJy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730486551; c=relaxed/simple;
-	bh=HisETPZ7/4XpVnNzLz04dlXQEaup4n8C1uRrnmDa+O8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DyUwEAcPVV8yxjR/L4/8J4wiNI/O+sVeNPO9ws4zk0lmbT50KEWNjT1jpZxPDRZqKLaanaD+KDwmEUNpM2YEDtUqbf+JctFYWImn8IfuXd1FV1Syn94U+S41iS1/eCup4nVqPoPVHRG+M8avfqgb0SahmghZnEB3JuVsGd8EsAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=V0bIjAFx; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 5E2441770C1; Fri,  1 Nov 2024 18:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1730486548; bh=HisETPZ7/4XpVnNzLz04dlXQEaup4n8C1uRrnmDa+O8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V0bIjAFxKO+e0T5ujGJdU12J6UCn5I69bfzDQvfAAHs4SWyPzMAgAUA0W++siRjqq
-	 L/jIR9zNdXhbJoqt98VIQC419AQ/KDT6WDrhUVCjpZT2/FCOIB9cA/f9OVyPrFUpMP
-	 yQ1P2qZN+DIU5EordV512uZ2zMC78eO7jQI3zlMVWY8FMkEG6GSzJ42sEdFCQYTNGO
-	 hqqHV2+jL2kR+WMgj9A6TCHbThrSExxNIoIHixJhl0W55Vb197zicj8og09G60bAli
-	 Blzfpj3oDgWOYVMmBVMWvKGvqg6E4yJ7jqtJtT2W8/YATu0BdT1lsID0N0IhY52nh8
-	 CLHA0jrMgBWLw==
-Date: Fri, 1 Nov 2024 18:42:28 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yuran Pereira <yuran.pereira@hotmail.com>
-Subject: Re: [for-next][PATCH 03/11] kdb: Replace the use of simple_strto
- with safer kstrto in kdb_main
-Message-ID: <20241101184228.GA38763@lichtman.org>
-References: <20241101103647.011707614@goodmis.org>
- <20241101103707.290109005@goodmis.org>
- <CAD=FV=Uha5xwZJtdqirJtv27ZUBz7OP5oEnYg56v2i2mn0TrLw@mail.gmail.com>
- <20241101103128.46faf14d@gandalf.local.home>
- <20241101182204.GA752705@aspen.lan>
+	s=arc-20240116; t=1730486591; c=relaxed/simple;
+	bh=j3OTeLdioiEXWn4ftMh38JgfvmXciXzbfnqa9kQhC3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IO2x+oTpDZift9M7gsk8q4TBucRftg/Zh8yO5q3ja/lNpNFs6FM4pok/d2EjswJc0JBqrbbPZTrjDPDcQFRD+cXTFiswf+VOxuPKy4lEp0mfXEeHuz9f3yO78Fruotk0FiXOyuEdmcySmrNarTPDMCjQQpQxJhFofLGVah2Js7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hXB2cBDY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A1GcF8Y028274;
+	Fri, 1 Nov 2024 18:43:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	k13nb62oaBC/LKwTpq5E66VPRLY65tnsSUNT62O3KVQ=; b=hXB2cBDYpIJmKdhq
+	NxcdWMpNlDg38fnl0inMdXZZTCmlnT9OW6SXUQuiFxGGeqIdntNd/+TuSnU4FInG
+	mJ2+4MDO2o1IChwZsY+I/QZWObdBSlW5W8cgQqi0gk/dn3mud3xgTH1kje3oWLod
+	C3tGVV0IbzS04roZCamCvrslqLRgpXZzvpYyfpz7I0I7DYtYs99YR1x6weeUw5nx
+	6yzImzuy/eIUZ6N38481Vn3Rv+QcvPMxnu1CxlMFedJfQV5kJWMzsHN8Lc0WERG8
+	sckV3KpK5edZe/JYg4MDYAiDV6kLIssK6lgl+YNP24XWaKjxUGoz341PQdmDjToT
+	sv5eZg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42mu7c9vy1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Nov 2024 18:43:04 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A1Ih3IH003537
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 1 Nov 2024 18:43:03 GMT
+Received: from [10.110.33.199] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 1 Nov 2024
+ 11:43:03 -0700
+Message-ID: <883b48f2-26de-4d44-b26e-a84ed0d46fd8@quicinc.com>
+Date: Fri, 1 Nov 2024 11:43:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101182204.GA752705@aspen.lan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: sm8750-qrd: Enable ADSP
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>
+References: <20241101-sm8750-audio-v1-0-730aec176459@linaro.org>
+ <20241101-sm8750-audio-v1-4-730aec176459@linaro.org>
+Content-Language: en-US
+From: Melody Olvera <quic_molvera@quicinc.com>
+In-Reply-To: <20241101-sm8750-audio-v1-4-730aec176459@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0YSAUrnwyHGemuw8Pq91oMvacZKX56bT
+X-Proofpoint-ORIG-GUID: 0YSAUrnwyHGemuw8Pq91oMvacZKX56bT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ impostorscore=0 mlxlogscore=548 adultscore=0 priorityscore=1501
+ clxscore=1015 phishscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411010134
 
-On Fri, Nov 01, 2024 at 06:22:04PM +0000, Daniel Thompson wrote:
-> On Fri, Nov 01, 2024 at 10:31:28AM -0400, Steven Rostedt wrote:
-> > On Fri, 1 Nov 2024 07:21:05 -0700
-> > Doug Anderson <dianders@chromium.org> wrote:
-> >
-> > > FWIW, I personally have no objection to this patch and patch #3/3 in
-> > > Nir's series (#5/11 in your email thread) going through the ftrace
-> > > tree, I'm not actually the maintainer of kdb/kgdb. I'm a reviewer and
-> > > I try my best to help, but officially you should probably have Daniel
-> > > Thompson's Ack for them. ...or at least make sure he's CCed here
-> > > saying that you've picked them up.
-> > >
-> > > I've added him to the conversation here.
-> >
-> > Sure, I can even drop this patch if need be. Thanks for adding Daniel to
-> > the Cc. I probably should have run these patches through get maintainers to
-> > make sure everyone was accounted for.
-> 
-> 
-> I presume the tracing tree is involved because one of them changes the
-> kdb ftrace command? Are there dependencies between that and other
-> patches in the seriesm?
 
-I assume that is the reason, I just used the same recipient list that
-the original author of the patch series used a couple of months ago.
-The patch series is mostly around migrating to usage of better string
-to int conversion functions, so technically each change is not really
-dependant on the others.
 
-BTW, Thanks for the reviews Doug and for applying Steven.
+On 11/1/2024 10:19 AM, Krzysztof Kozlowski wrote:
+> Enable ADSP on QRD8750 board.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> ---
+>
+> Firmware release will follow up later.
+> ---
+>   arch/arm64/boot/dts/qcom/sm8750-qrd.dts | 7 +++++++
+>   1 file changed, 7 insertions(+)
 
-Nir.
+Reviewed-by: Melody Olvera <quic_molvera@quicinc.com>
 
-> 
-> 
-> Daniel.
+Thanks,
+Melody
 
