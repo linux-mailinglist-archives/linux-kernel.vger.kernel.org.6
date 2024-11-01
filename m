@@ -1,174 +1,120 @@
-Return-Path: <linux-kernel+bounces-392320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11EE09B926C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:49:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886CF9B9271
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360B41C2138E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B9EF2807AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 13:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736361AC882;
-	Fri,  1 Nov 2024 13:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A734B1A08D7;
+	Fri,  1 Nov 2024 13:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpUcoav2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JndgZ3c6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8031AC44D
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C361A00FA
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 13:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730468861; cv=none; b=oJsukDzoSzGNqyUaiFcTNRCD8NMqyfm73yurkfrairYc3llyxjRQszofUCz8FLv2MBsxG58748ixljKT90CL0XAJuiSHJYgpjW9CSf5+MFdsbDfxxZjziXPINcRjyxrJ5MKqfczjddn+BWkwLxD6XfArIfpn4vs+UkX12iA3wLw=
+	t=1730468910; cv=none; b=EncT7QZbwG0KMTwU8ajwCcKjGmtSp63S8limuz355Tl3MV7d67NTSoH0PMeY2Pa6c4oRVE5IoUYlRKHDoCUXm8KDmuLLf8efbhh9ligyNCYOIx9torhY33maB3SYaRh/ISJg79ieLCehpQ+/V4R9Ipu/Szy33MkwLZltsQEt+f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730468861; c=relaxed/simple;
-	bh=47uTeQgoJLNZjdbSAh3U3MwKZLtfUnSxH0iHFozGPyI=;
+	s=arc-20240116; t=1730468910; c=relaxed/simple;
+	bh=s7R+wdV0+mmYmY9C610nIqKazjHMd4Jtw3jsp9IV9FQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cR4AdHLZntvN3637dEM9Y216IvIOBYuHb7XXgU1+2Hzp5k4H0BA3fAnHbwIOdipkctMsA7kDAAN0v04TU05icCstKN2yXoovImmCyiGpndwRfpehs03NfT09lyTuJjCTmAPmO873XounR5Y0fZpX5l978cYf4ljUbeElsZVJNPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpUcoav2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B12C4CECD;
-	Fri,  1 Nov 2024 13:47:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730468861;
-	bh=47uTeQgoJLNZjdbSAh3U3MwKZLtfUnSxH0iHFozGPyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UpUcoav2WIsJDPm9I3YgFd6H9M18PhiPUmyWT8fZwievZE4oM8RcYdnuZwRPoCKt9
-	 BHwAwgIudj6yQJLOqNJjlACB5ON5xH1b9TLcNyT2WUCSOh9u35jZCD7Ye2Xy9r1hPo
-	 FaIuAIBhRYWQwEiVNlr9zIGPpxalEE1GmVt5BRUYqaZNmBuf7JHAFI8fKRJ71njQKe
-	 n8KGiU70nbiIb9sehsbAcZs1eqHXwMGCQGMGzlrd1oGJXBM991Z9KjFoL6XAtL64BT
-	 xqlbgdQd5ru+DQbSX77DleblGbjhM7ytaqdmh9UUanlZ7WX7My9enb3InuMTeIBjzV
-	 oAruI7HwvHOHA==
-Date: Fri, 1 Nov 2024 14:47:38 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch v6 15/20] posix-timers: Handle ignored list on delete and
- exit
-Message-ID: <ZyTb-oMrREz006d5@localhost.localdomain>
-References: <20241031151625.361697424@linutronix.de>
- <20241031154425.498474639@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d/ltuEB9pHG8ZslwWVAuOkHDj3NhVGSj/A8iM2+ktAoAINeH7W8PJ3U9vZ4iIMj5THYlgKH79g3L7oG5DOD9cTQHBiy5aBu9y7wxsOCuRwFMVvoAdXYX/vAnnjFmic4MhwI07g7osWb+ZUZzbYcWwkShPfqXKmK9l8zma/yv7Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JndgZ3c6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730468904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F5YDS2IxgbCyYVyHmTnSV22QiC1yW1f4+0Ftmvdu5UQ=;
+	b=JndgZ3c6yZiyh7npYH4QP2rTT2NCqlFBSfywvQqFfOK8RtkhadnC0kfzFniKla4pwinqtk
+	e5KW03Scr8t+ZcS5N8G7pfBcyErrufv+bzvfrxORxc9qaw6IHXLQnpBzbfnPD6qUkAn6k5
+	meJAgd3DYAHrYJGGM0IZcPs0tI+gn50=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-189-RPv72wKsMkqpNx6MnRMq3A-1; Fri, 01 Nov 2024 09:48:23 -0400
+X-MC-Unique: RPv72wKsMkqpNx6MnRMq3A-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbd12b8b60so69310246d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 06:48:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730468902; x=1731073702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F5YDS2IxgbCyYVyHmTnSV22QiC1yW1f4+0Ftmvdu5UQ=;
+        b=g/OCPv6nFRIxZDBZrkIlbU+G9XNhLh7rinChISVWPWsxZ4WThX4vFhlLJ3PASB3RZM
+         YfyzHzjGlA9Fz5lHTL9qlBonhuZi5XjRyEE/Kso1wvRWlWGkb1w3vG85acZTcfBgQcQM
+         nrneCWeTk9eplKRGnJlBQOjX8Snyb5rDgMEBhrQNja6s2OhHIsrnHVN3Pip9RgmMDY+S
+         IzilrWTV4EHcUxTKPXvSSwQJeOhrOufZg6ll8MSnMOfk12dTgPslGtoJT7bXMg7dx22t
+         me3YmeMOg1tZ5Dav7We0wr1JcfwR7UehG59VgglD2Anc0CBJfrW8R/mibsgjNycMo0Hy
+         7NFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkUtKiNVcR4l+U/+/7RouDnM8aSYz29LVoj7AV03S+WVrKXffpf+Y8Z5FFfWa6ueMRTS3mjDydmPVrN2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3SiQnajMU2Bftt3J11WRIlR9ey4SQ+Lr0it5Q7Ati9oliavEU
+	fUK6Ig1149I8CGrI81euTLxn8joGfmCGAF5TwSaBZBXsT2ZO/R5P7fqhb1buQsUpkkeGdhHla0O
+	sQ/gYBdvckHXAoxAxnkqvdlVODpxO+gqGhDyftHaEUF2q9fNEvM7WGxf3fIXLbo3Lh1x4aw==
+X-Received: by 2002:a05:6214:3f88:b0:6ce:23c0:b5d3 with SMTP id 6a1803df08f44-6d354304791mr99766996d6.19.1730468902558;
+        Fri, 01 Nov 2024 06:48:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbSckCZXlW9k8OKL6LD/JMrWFH2jo6zfSiWlytLvy9/1m4eOCAP+JBhW4y4WuHqZXBK6W5Ww==
+X-Received: by 2002:a05:6214:3f88:b0:6ce:23c0:b5d3 with SMTP id 6a1803df08f44-6d354304791mr99766656d6.19.1730468902229;
+        Fri, 01 Nov 2024 06:48:22 -0700 (PDT)
+Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353f9edfdsm19373306d6.6.2024.11.01.06.48.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 06:48:21 -0700 (PDT)
+Date: Fri, 1 Nov 2024 09:48:20 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Shuah Khan <shuah@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v1 2/2] selftests/mm: fix coccinelle WARNING recommending
+ the use of ARRAY_SIZE()
+Message-ID: <ZyTcJHUXWWaTIA7O@x1n>
+References: <20241101111523.1293193-2-mtodorovac69@gmail.com>
+ <20241101111523.1293193-4-mtodorovac69@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241031154425.498474639@linutronix.de>
+In-Reply-To: <20241101111523.1293193-4-mtodorovac69@gmail.com>
 
-Le Thu, Oct 31, 2024 at 04:46:41PM +0100, Thomas Gleixner a écrit :
-> From: Thomas Gleixner <tglx@linutronix.de>
+On Fri, Nov 01, 2024 at 12:15:25PM +0100, Mirsad Todorovac wrote:
+> Coccinelle gives WARNING recommending the use of ARRAY_SIZE() macro definition
+> to improve the code readability:
 > 
-> To handle posix timer signals on sigaction(SIG_IGN) properly, the timers
-> will be queued on a separate ignored list.
+> ./tools/testing/selftests/mm/uffd-unit-tests.c:1484:32-33: WARNING: Use ARRAY_SIZE
+> ./tools/testing/selftests/mm/uffd-unit-tests.c:1485:30-31: WARNING: Use ARRAY_SIZE
 > 
-> Add the necessary cleanup code for timer_delete() and exit_itimers().
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
-> V6: Warn when the ignored list is not empty after deleting all timers in
->     exit_itimers()
-> ---
->  include/linux/posix-timers.h |    4 +++-
->  kernel/time/posix-timers.c   |   26 ++++++++++++++++++++++++++
->  2 files changed, 29 insertions(+), 1 deletion(-)
-> ---
-> 
-> --- a/include/linux/posix-timers.h
-> +++ b/include/linux/posix-timers.h
-> @@ -152,7 +152,8 @@ static inline void posix_cputimers_init_
->  
->  /**
->   * struct k_itimer - POSIX.1b interval timer structure.
-> - * @list:		List head for binding the timer to signals->posix_timers
-> + * @list:		List node for binding the timer to tsk::signal::posix_timers
-> + * @ignored_list:	List node for tracking ignored timers in tsk::signal::ignored_posix_timers
->   * @t_hash:		Entry in the posix timer hash table
->   * @it_lock:		Lock protecting the timer
->   * @kclock:		Pointer to the k_clock struct handling this timer
-> @@ -176,6 +177,7 @@ static inline void posix_cputimers_init_
->   */
->  struct k_itimer {
->  	struct hlist_node	list;
-> +	struct hlist_node	ignored_list;
->  	struct hlist_node	t_hash;
->  	spinlock_t		it_lock;
->  	const struct k_clock	*kclock;
-> --- a/kernel/time/posix-timers.c
-> +++ b/kernel/time/posix-timers.c
-> @@ -1027,6 +1027,18 @@ int common_timer_del(struct k_itimer *ti
->  	return 0;
->  }
->  
-> +/*
-> + * If the deleted timer is on the ignored list, remove it and
-> + * drop the associated reference.
-> + */
-> +static inline void posix_timer_cleanup_ignored(struct k_itimer *tmr)
-> +{
-> +	if (!hlist_unhashed(&tmr->ignored_list)) {
-> +		hlist_del_init(&tmr->ignored_list);
-> +		posixtimer_putref(tmr);
-> +	}
-> +}
-> +
->  static inline int timer_delete_hook(struct k_itimer *timer)
->  {
->  	const struct k_clock *kc = timer->kclock;
-> @@ -1059,6 +1071,7 @@ SYSCALL_DEFINE1(timer_delete, timer_t, t
->  
->  	spin_lock(&current->sighand->siglock);
->  	hlist_del(&timer->list);
-> +	posix_timer_cleanup_ignored(timer);
->  	spin_unlock(&current->sighand->siglock);
->  	/*
->  	 * A concurrent lookup could check timer::it_signal lockless. It
-> @@ -1110,6 +1123,8 @@ static void itimer_delete(struct k_itime
->  	}
->  	hlist_del(&timer->list);
->  
-> +	posix_timer_cleanup_ignored(timer);
-> +
->  	/*
->  	 * Setting timer::it_signal to NULL is technically not required
->  	 * here as nothing can access the timer anymore legitimately via
-> @@ -1142,6 +1157,17 @@ void exit_itimers(struct task_struct *ts
->  	/* The timers are not longer accessible via tsk::signal */
->  	while (!hlist_empty(&timers))
->  		itimer_delete(hlist_entry(timers.first, struct k_itimer, list));
-> +
-> +	/*
-> +	 * There should be no timers on the ignored list. itimer_delete() has
-> +	 * mopped them up.
-> +	 */
-> +	if (!WARN_ON_ONCE(!hlist_empty(&tsk->signal->ignored_posix_timers)))
-> +		return;
-> +
-> +	hlist_move_list(&tsk->signal->ignored_posix_timers, &timers);
-> +	while (!hlist_empty(&timers))
-> +		posix_timer_cleanup_ignored(hlist_entry(timers.first, struct k_itimer, list));
+> Fixes: 16a45b57cbf2 ("selftests/mm: add framework for uffd-unit-test")
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kselftest@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
 
-s/list/ignored_list ?
+Acked-by: Peter Xu <peterx@redhat.com>
 
-Other than that:
+-- 
+Peter Xu
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-
-
->  }
->  
->  SYSCALL_DEFINE2(clock_settime, const clockid_t, which_clock,
-> 
-> 
 
