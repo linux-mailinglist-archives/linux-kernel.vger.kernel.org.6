@@ -1,224 +1,168 @@
-Return-Path: <linux-kernel+bounces-392981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884819B9A61
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:50:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF52D9B9A64
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D9A1C2165A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:50:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D30731C215CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE2F1EF956;
-	Fri,  1 Nov 2024 21:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C6B1F472E;
+	Fri,  1 Nov 2024 21:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DRQD73Od"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YVjOECtG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002F91EABA6;
-	Fri,  1 Nov 2024 21:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730497656; cv=fail; b=jOHKqHvkAMTT4wroROgiHLCn4rHe4Ssx9G/jovsbPez1oJ5FdN7UWX4AH7xhtxFCdT2cprhYwugIMOrmBe1EMc+XFboF/qbTyirkM18UXq8BnA6ecNYglRiXxXFpe0uWpU1knnkG+kXzRonIlCxscfGGfIcc7Qm0y9W6NVtH5HU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730497656; c=relaxed/simple;
-	bh=idDZDFsKXbnpfFymmAPd7I548090+r/cFIJ/KnH5UNs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lQVBIX7OjpkZEI0TITUhm2IMrwdLcXyI4fc4r1AmHtYZAXMZ+BJPe2vbzI0uvSORlVK8L7PYJfwk04FlnQLyrtD4m47xgFZcy8MDCJmdqJ1t0KrhpLfpifRoVHTZFn7IkJ1AWU/ozTBNYQAo7NsZc1Io5B9U0pPNEJvsRIJyIJg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DRQD73Od; arc=fail smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDC725634;
+	Fri,  1 Nov 2024 21:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730497689; cv=none; b=bgZZ9JUX9topRuHNGyPDTOi57Yw/IqFKVHJBCFikUWg+f8dVcXv/7/kJeUkxeRKDf23yQVy43pSNwAv4lEDqJkt6ebmLRPaRGwONFuPpbsZW7+sfCdaToCAbYhmy5ahK3/AFWa42M3H64wusVm9XQps0gCoeRCHrivz1fo1u6h0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730497689; c=relaxed/simple;
+	bh=Dwdq9rHIpOh+78kD6lWNmELuBrWSfYZSR/MPnUOKJUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NFDhQAfnembHhzhqhBFdWJdnj5cE6C2Y76VybbrHogko2NPd/kIrv2rLNl2dq89MWPtLCcW+bR6q9pztsD8v5VwG3zAoQzTu0ot+kSkumSwdElXXMDjuiJDSJtn11JhkB5FcKdmPbLEY1NFDHrzjV12lV4wj/SWObV8yxNmw8JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YVjOECtG; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730497654; x=1762033654;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=idDZDFsKXbnpfFymmAPd7I548090+r/cFIJ/KnH5UNs=;
-  b=DRQD73OduBauJPMjUCAF+7g8VjSJtvDe4m5ZzdLM21e3wO+umrqSSRfj
-   e0M++0ez143xAi/qxlIox59zlzn0ldip0Pf1dmwlWFgWLzEFzYQoZFe1p
-   zryYrnUISMl2L4yUnnUybcmQW6QQKl0skUslD/ibhvuzdhaCDZkXwblAs
-   oO11WY0r3Y8Zwi7wHLefVhJE6I1xItGDK9FTumEU8ruO3N5WgCTY45W0O
-   z9jmvO4aDg4/Go9T5Mfbd+Gc6TDVLs/I0DRdSb+1Lbwrt/Ybka/zVwbgo
-   G6eyn9W83+wh+rsqYTzDBIBkGyQcpWtcJpcAMAr6nncjU6YA8N3v4QDHN
-   A==;
-X-CSE-ConnectionGUID: gpPRhlaZQres1u3OO+XZ2w==
-X-CSE-MsgGUID: djKzyphWQra5t629F//B+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11243"; a="34065238"
-X-IronPort-AV: E=Sophos;i="6.11,251,1725346800"; 
-   d="scan'208";a="34065238"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 14:47:34 -0700
-X-CSE-ConnectionGUID: P+SjG3cmSPuHRUK3RYLlkg==
-X-CSE-MsgGUID: my1ohWpxTR+NFOPyrn9rwg==
+  t=1730497688; x=1762033688;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Dwdq9rHIpOh+78kD6lWNmELuBrWSfYZSR/MPnUOKJUA=;
+  b=YVjOECtGaaiXmxZJkkCRA2bKy++UCudc4u1YiEjD7dA49LdPRKLrGP5c
+   KQKw+c/dgTeVjqh9Ynhc6GPJdqMHEvObgiEF/xgGyml1X90vtEwQTk4nj
+   Mpln/hXGU1q0NZIWRBiOrhRSOVddRnm5JS4pIiJpC599fWJvhy9Uk9VHw
+   3ZdephmLCoivghRBrhRKzC/xkus3lX8yThGzAWF/lz/a9DaQV9lv0/SVk
+   4Ayz1f6kBMx3A/tCR30gefTH6KH0vP8ju7ZlfeArxLF2UFAYJBfq3Py08
+   V8mqhth1X3Uy6n8aKv3GpNw9bEIOoGigItJDa5gnFVDJuZPSu2v5wX/W1
+   Q==;
+X-CSE-ConnectionGUID: gfGt6b4ZReSl1CHfVo9GfQ==
+X-CSE-MsgGUID: hKh4ICcBQ/aS+N8hq48qNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30229825"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30229825"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 14:48:07 -0700
+X-CSE-ConnectionGUID: 9w/56nX/RnCHrAdIl5pDBA==
+X-CSE-MsgGUID: yEtcosP4Tc+1RCMNMWkXcA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,251,1725346800"; 
-   d="scan'208";a="83203544"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Nov 2024 14:47:34 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 1 Nov 2024 14:47:33 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 1 Nov 2024 14:47:33 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.173)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 1 Nov 2024 14:47:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tCnWhmywVDAVqe/fZeMWoq5/N1gJUU07IwqM7T94buvl5lMmZJnlwv1kafEGuoSQVkQfpDilGJ9L29ta0/QiA0Fw4lXzBS67pKRLZQkV65YReAldidr9eygRH2aqgQRj4KSVa848C3ELK46CHTdbBzHcF7p6WVAztJpYv7J541m84MBiG+R49a7Dl2hdgjkqDzKWNFYLqMUC7yQxYKVMXUA7iMA70E2AW4EZPiI7K45bDBONVkGWbnwRAENm+xFApUTpz+X/+tV5JKS/Ri70FKx25N6hjt+CnX0lvEWyUSHweYnqq8m/o6AsDVG+xSfyswM4lpOxiLavnwwbCi6Ncg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=idDZDFsKXbnpfFymmAPd7I548090+r/cFIJ/KnH5UNs=;
- b=QVEMJo3J+7rCDMrgyOO7dGwEp1ndOnsAlhEnZdkvd4srOjVq4iBNBnAnMn3jxqKoTLc0qEwmn1xlQRWYzJMBZavHQrBjJ7/eM6ELfY3DpggJsJlxcxkhycmGLEHuHKcqHAMFvNat1QssND4avwtsQpZKo2jkoZc5FdoYPH7EgrxBB/Y20+/aVgq9mTbe+9Ya6WTJIvDd0XzJh/SMHebDziCp12xOIKPgqmT2Z6Ljp857oCGcYaFbBqOGjUp8Fv2K2y5oIkTmoX78NhsMQHcqSVSWwn1mMZjuH5aNX4e51EY43TfU0ZzKPjgcF7JIUYcJbv5RwW95+u71zAUI44Opng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by CH3PR11MB7276.namprd11.prod.outlook.com (2603:10b6:610:14b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.24; Fri, 1 Nov
- 2024 21:47:31 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%4]) with mapi id 15.20.8093.027; Fri, 1 Nov 2024
- 21:47:31 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "debug@rivosinc.com" <debug@rivosinc.com>, "Liam.Howlett@oracle.com"
-	<Liam.Howlett@oracle.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "bp@alien8.de" <bp@alien8.de>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, "hpa@zytor.com"
-	<hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "arnd@arndb.de" <arnd@arndb.de>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "broonie@kernel.org"
-	<broonie@kernel.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org"
-	<linux-arch@vger.kernel.org>
-Subject: Re: [PATCH RFC/RFT v2 0/2] Converge common flows for cpu assisted
- shadow stack
-Thread-Topic: [PATCH RFC/RFT v2 0/2] Converge common flows for cpu assisted
- shadow stack
-Thread-Index: AQHbIBZ2sUCYeXXHvU62aFNE99XN4bKjDx8A
-Date: Fri, 1 Nov 2024 21:47:31 +0000
-Message-ID: <964caf1797be61001901b92e3b71259443d3196f.camel@intel.com>
-References: <20241016-shstk_converge-v2-0-c41536eb5c3b@rivosinc.com>
-In-Reply-To: <20241016-shstk_converge-v2-0-c41536eb5c3b@rivosinc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|CH3PR11MB7276:EE_
-x-ms-office365-filtering-correlation-id: 7a36e6c4-dd7a-4baf-1088-08dcfabec980
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?VW56ckpiM3EyTkQzMnVRNS9wV1d1MEhsUDRKY3BvTUU4Ynl3ZS84eXNnMVNH?=
- =?utf-8?B?QXIwVlNVY3dzcHpvWEUvWkxYZDJTNUpPaFVva0RWc0YwSlBsWm5sYXpjMG5j?=
- =?utf-8?B?aUovQmIwc1IzN0dTdlNBci9rUWlqbEoxNWwxeFpKYU5WekRSRmNGdmowNkZM?=
- =?utf-8?B?OVZaVnV5VTRmYXVrcS9qbXQrOWY1VHpYQ0lobk96SllhUklmZngreEQrNm8y?=
- =?utf-8?B?Z1hYZTVGaEkxSVZ4QjJ6Mk5rTDlNZ1dFNGZDa0F1WDg0VHFKZUJ2YTg0cnJy?=
- =?utf-8?B?VWVsK2VFQ3R4eDBaNG5qUXJFZnVxcjNSSWFaeXI0azJZdGlKenFkNDIxV2Fh?=
- =?utf-8?B?QjNwRWxVVFlBd0Z4NnZtTERZNnVaaXh1YzlQUmM5TTlJNFgwWEs5aERRTit1?=
- =?utf-8?B?Q0E1U3cvb1dOenFCSVJwMlJYTWl6cGp5L2cvSUtXY3piTDMzNnNZdHYxR0JN?=
- =?utf-8?B?dVFwbmhYem9BQzRJWWJUTUFFTE8rSkt0aGt1UVFoTUp3NHJVRmZqaytpdS9M?=
- =?utf-8?B?L1piUDFBZzV5L0Uvd3FrMVJ6NEZxcGdGNDF1aTlWSXYvejZ4NGc5amhqemRz?=
- =?utf-8?B?bnlnMjhDeThVZ1N0ODVKdXdrci9EMWFrRE9MdzQyK1JjRnVUU1lqc2VPaGlX?=
- =?utf-8?B?dG9CYUI4ZEVna1ZjRUk0QXViekJ0NG9HSndMSlBIYVlCNmFjcjV1b3p3VnFK?=
- =?utf-8?B?SFBHTU1lR0VlZkpGRmhEVTU3anZMbFg3L0RRWVd3a1NMOEo0QW56VXBxbjc5?=
- =?utf-8?B?c0ZnVFRWY1RVRDhTSDY1cm9CZWZHUGp0eVBSMmpzb3lKMTN2ZGtuSisvb3BC?=
- =?utf-8?B?UEU2eTZTMXFhVlovR2oyblBLczBuNmlKSS9naGNXcEpNcVVKOTQ2NW42OVJY?=
- =?utf-8?B?QTZBdlIwWCtSN0VieXdEOVBZcU9UU1J0OFNuVmlLNHlBMk1pbGtyUThhaW5t?=
- =?utf-8?B?Wmpad1YrMW1veVRGRmtvbEVYdTIwMUJCYUdUc0JqeHhNUmlTa1ZFK2xSekhx?=
- =?utf-8?B?Z3YvdjhMVW1vOHZ0SGN6NVM2cmt2Y0xVc1pWV0x0K1R0VVM3U0FIODFqUlZl?=
- =?utf-8?B?d1ZhdGx6NDE4VUxiM2V3V1hCZXY0RDlYMjZEWGpRNzlIcEQ1cnFsQ2hHc1Jo?=
- =?utf-8?B?OVhhbndPL0FOQ2ZDYUNuUVBxZjEralZuMlRzWkVoSFd0VVBmUHlXZE5pWXAr?=
- =?utf-8?B?bDU5WDhpMlAwNWorSG11QVN3REpIalNuQXVzQzJocVlOUkFiTmt0QW9rUWFE?=
- =?utf-8?B?RXpTRVFwSDN0SWlFS1VuN0daM2sxVGJ4V2tGTHZXNjVDQkZyTkE3THlyQWw4?=
- =?utf-8?B?cFhQeFRQNHhUZ2g1UUM0R0M1RHQvMEtkSGh1ZDlzTGo0U3hHNWdyRjYvY05y?=
- =?utf-8?B?Q3YyR1V0UnZBbmVrOWZqSmk1dmh6bkZTdWU5Vk5qZFpJWjR1WU5HYktpK1hr?=
- =?utf-8?B?SW4ydzNBZ1ozdmJ5bjBXamh5ZUY1YkN6NXRhVmtPL2lJOWluSkVObUZ3M2dT?=
- =?utf-8?B?ZHBsVjlvKzZOQytTTzlqck8zK29yY0tnVisyU0pvZis3RE5IV1lJZWY1TDNn?=
- =?utf-8?B?NklsRE96WlB0emV1eXBwUUZZVEM2dkpJM0cwM295SHgxU2ZWblB0dExKZ3Fk?=
- =?utf-8?B?aDRIUCtGWVJOSUdTQVdOM0tuR3hmTjUybTVROUlJWm9GTzRySjh1SGR4a0Nu?=
- =?utf-8?B?dzY2Ym1PWHJXaUZ6cGZQNnQwcFNYazYyUzlDV1k3RlJYZVVSNy9sUkhNaFJI?=
- =?utf-8?B?ak5kYUhlWnhGMnhHRE1BNWxhdHVuR0RaQ3MzUWMwaXhXSGI5bFJwMVI0RVM4?=
- =?utf-8?B?bitYano3d2R3UW5semtqekliS0MzdEJacmpaWFphOElITmUwZkhjdm5lbmlt?=
- =?utf-8?Q?oeV4/HjvHaO5V?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?d2dMTUVIejBiM0prSkN0QUxLUlF4dXZOQ054ZHZiYVpUZGpGWkh0ekhsaUpX?=
- =?utf-8?B?WFZ5cm9hTlhDeHlJcFlsL2NHWVVpKytKQktqVnl0eGRvUE91OXlJMnRadkVq?=
- =?utf-8?B?MWJUV2ZCYURmbjFucGRNandaSDU1bytndVJEVkIvWDkrS25HbU1Wb0hjRmht?=
- =?utf-8?B?ck1YQkhiaDI1Z2dwYkJkdEJ5cXhNZjV4ZnBaRzdQbzFnRlFmRWRnM2tybyt5?=
- =?utf-8?B?Q0RCTHVuZi91L0dienVyT3dibWh3cS9od3ZCNkZTZWFpL1pXRUVadEVaTVlt?=
- =?utf-8?B?dFFjMDdqb0RXbHdWSW5jcFRiVGQ2QWlVSWVxSkVDUmN5eFp2RXZ5MUx1S09B?=
- =?utf-8?B?a0R2UjNqZEhlVjJBMmZPYjlZR25Sc1pZSXljWmhYa0lxZWdUYUxxUEZhM1BP?=
- =?utf-8?B?MXZuak5VOG9sanRRN0ZpdXJZanZnVzNTZTdOY212cHB3T1FQMnhzZmcxcTJ6?=
- =?utf-8?B?WTdqdlNxVVRocWJzSUJFSStWbDVLQXhrYWNZd243bVpScnZFbFFFL2wzQk9a?=
- =?utf-8?B?Zjd0OVg2akpGZ2tPUXQxdFRvdHBrL3lnakoxeitNbm4yRFJZajl5a1FONjB2?=
- =?utf-8?B?TnNuSmFZT1ZmemlUQS9vZzVVWjVVallSbjJBS0NjTURQT3dOZVhraTF4MERW?=
- =?utf-8?B?Zmd2Q0xiUDRGR1lPRFlBazJlcHpiRGdTdmFDZFJSU04rUVNxQXllOW4xVldl?=
- =?utf-8?B?VVR2VzE1VTRxWGJHcFZiMFNNZ01zRmQ0MzlnRTdyOGhDUy9wMDViTmRrWDhI?=
- =?utf-8?B?aDk5TjBkNjMzT0xGMkNXdkZocmtPWXZQM0RMR3B3d3dhTWhCRGh1WlBXejBn?=
- =?utf-8?B?ck1IRUJtSGp3Rk1DVjI2K0VPVmdFTjhCQXRJSWFDa3NJQzBPSm5iM1hSdytq?=
- =?utf-8?B?OXpKN2IzaWFMZVBUbnIrK2tsRnFveXM1a1FIRldxU3g5SUNZbGFXa0FhQ2Mx?=
- =?utf-8?B?OGpTK0RsN1BOSTAvTjVWaXRGdjdaTmFMLzJRcFpHZFhkUloyU1RITnRxTktv?=
- =?utf-8?B?MXBRRXYrMWFrZUw3U01XWHZVN0FHWHJ6NXVIangwRWdsQ3RVOFZQNlZYQmZw?=
- =?utf-8?B?Zit3NDJlWnJRVDZUOHZ0OVB0SHNEa1lNZlkzSTFRcE41Z2hMM1BSR3FMeTFl?=
- =?utf-8?B?TVJ1U1NBc2pjQ2lYc3JTMkUyTlpPamdKREVpcmxyNGY0YWs5KzNpY3ZjUmF1?=
- =?utf-8?B?RVhOR09yVmRBb2UxZmNTTWphVlk0UGFTbml3bkVHdDRSM0svczdHWUtMNDNY?=
- =?utf-8?B?ZzJjdkpWczE1b0ZiQisrckw5cUY3YXkvNzh3Uy9YaTVwSzBiRUtVNmVMNWto?=
- =?utf-8?B?Z2Rwd2JlNHFnck5HakVGZzZzNk9yZnhPVGFsUlozTFc3UDJiOFlEMWNUa3pY?=
- =?utf-8?B?VWZGbXl4bG41eTNQazVqc1Izb1pmTGJCN3NRUHJDZUJtYmluUXJQNHpGai9O?=
- =?utf-8?B?S3Q5Sk80R0x1dWwzSE1YdTFUYjAwcVQ2SDBKdEJsR1F3eGdkS2N4SGpOUmdn?=
- =?utf-8?B?SUxkNjFjdGhzVVJwZms2c1l4b2c0dXRwb1FTbjRnWFdpWVFBek81TVkxQldU?=
- =?utf-8?B?YThoc1UweklrUmZtdmdQNktEWDFjdHJaZCtWZllyQTZRRUc2K1VKenh0cSt2?=
- =?utf-8?B?R0lGbHdRNmtFUHpwNGVQU2VVdTB2ZlRzc0lXSjZ2Qjg2WWdZWmptc1hDM0sx?=
- =?utf-8?B?QU9TdWFUUEhlQlZGOXNUZERBLzFhZ2svdGMyMFoyb1oxMmNaNEJENGZGVTRM?=
- =?utf-8?B?ME1NeFlybXhUcGw1OTRmZ1hkclJ2aTVCNFBaV0pCQUhSTytiTFNDbkdZM1Y4?=
- =?utf-8?B?RnJreWdWUUpzRHVEYStqazFaKzl4c0JTWmhVQzBlNVRMZDVyMHdJUDhYSlhC?=
- =?utf-8?B?aGd1SDNzRktBbVNwS0M4czh5L1dUZjZoa2ZwRyt2Szh1c2kzTXhBaFhZWTlV?=
- =?utf-8?B?aFBmbjRZR2kwT2lnV3JHbGFkS2FWKzZ0eWRNY1RKM0VRU0JNem9xZ1dWeCtJ?=
- =?utf-8?B?RW1XSUNuSXJyK0hoMzBtWVhxdDh1eDJIOXA5V0hSSGp5VFpndVFUVVg1Qi9y?=
- =?utf-8?B?RmJsdWF3MnFFVGZWS3RkV2s0aWhVSlBhTTUwVU53aXJXWHpCN1NkVEFNck1n?=
- =?utf-8?B?Wm1wT3lJV0NSRUhwdkdxcHNvU0NmZkY3N2YwdGhmYUMxeE0rUDRPaXVjNFhT?=
- =?utf-8?B?Rnc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4ECE8C5495B3904BA6009BC05BD777D5@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+   d="scan'208";a="82613540"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 01 Nov 2024 14:48:01 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t6zUt-000i55-08;
+	Fri, 01 Nov 2024 21:47:59 +0000
+Date: Sat, 2 Nov 2024 05:47:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
+	Larisa Grigore <larisa.grigore@nxp.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v5 4/7] pinctrl: s32: convert the driver into an mfd cell
+Message-ID: <202411020514.qOUrieWa-lkp@intel.com>
+References: <20241101080614.1070819-5-andrei.stefanescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a36e6c4-dd7a-4baf-1088-08dcfabec980
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2024 21:47:31.0626
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: g7YRwdWS50VZM9+5Ye4PakZ6GMLg54/smw9av1yr/gpRSxgYJsDbC5MFcb/74u49uu2QIGVPoUqbjFd9gvbVpZPTRxQ/159lEUQkpaJjagE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7276
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101080614.1070819-5-andrei.stefanescu@oss.nxp.com>
 
-T24gV2VkLCAyMDI0LTEwLTE2IGF0IDE0OjU3IC0wNzAwLCBEZWVwYWsgR3VwdGEgd3JvdGU6DQo+
-IC0tLQ0KPiBiYXNlLWNvbW1pdDogNGUwMTA1YWQwMTYxYjQyNjJiNTFmMDM0YTc1N2M0ODk5YzY0
-NzQ4Nw0KPiBjaGFuZ2UtaWQ6IDIwMjQxMDEwLXNoc3RrX2NvbnZlcmdlLWFlZmJjYmVmNWQ3MQ0K
-DQpXaGVyZSBjYW4gSSBmaW5kIHRoaXMgYmFzZSBjb21taXQ/DQo=
+Hi Andrei,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on linusw-pinctrl/devel]
+[also build test WARNING on linusw-pinctrl/for-next lee-mfd/for-mfd-next shawnguo/for-next linus/master v6.12-rc5 next-20241101]
+[cannot apply to lee-mfd/for-mfd-fixes]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Stefanescu/dt-bindings-mfd-add-support-for-the-NXP-SIUL2-module/20241101-160940
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20241101080614.1070819-5-andrei.stefanescu%40oss.nxp.com
+patch subject: [PATCH v5 4/7] pinctrl: s32: convert the driver into an mfd cell
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20241102/202411020514.qOUrieWa-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241102/202411020514.qOUrieWa-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411020514.qOUrieWa-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/pinctrl/nxp/pinctrl-s32cc.c:103: warning: Function parameter or struct member 'gpio_configs_lock' not described in 's32_pinctrl'
+>> drivers/pinctrl/nxp/pinctrl-s32cc.c:103: warning: Excess struct member 'gpiop_configs_lock' description in 's32_pinctrl'
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+
+
+vim +103 drivers/pinctrl/nxp/pinctrl-s32cc.c
+
+fd84aaa8173d3f Chester Lin       2023-02-20   82  
+157a51f7e5e81e Andrei Stefanescu 2024-11-01   83  /**
+157a51f7e5e81e Andrei Stefanescu 2024-11-01   84   * struct s32_pinctrl - private driver data
+fd84aaa8173d3f Chester Lin       2023-02-20   85   * @dev: a pointer back to containing device
+fd84aaa8173d3f Chester Lin       2023-02-20   86   * @pctl: a pointer to the pinctrl device structure
+fd84aaa8173d3f Chester Lin       2023-02-20   87   * @regions: reserved memory regions with start/end pin
+fd84aaa8173d3f Chester Lin       2023-02-20   88   * @info: structure containing information about the pin
+fd84aaa8173d3f Chester Lin       2023-02-20   89   * @gpio_configs: Saved configurations for GPIO pins
+fd84aaa8173d3f Chester Lin       2023-02-20   90   * @gpiop_configs_lock: lock for the `gpio_configs` list
+157a51f7e5e81e Andrei Stefanescu 2024-11-01   91   * @saved_context: Configuration saved over system sleep
+fd84aaa8173d3f Chester Lin       2023-02-20   92   */
+fd84aaa8173d3f Chester Lin       2023-02-20   93  struct s32_pinctrl {
+fd84aaa8173d3f Chester Lin       2023-02-20   94  	struct device *dev;
+fd84aaa8173d3f Chester Lin       2023-02-20   95  	struct pinctrl_dev *pctl;
+fd84aaa8173d3f Chester Lin       2023-02-20   96  	struct s32_pinctrl_mem_region *regions;
+fd84aaa8173d3f Chester Lin       2023-02-20   97  	struct s32_pinctrl_soc_info *info;
+fd84aaa8173d3f Chester Lin       2023-02-20   98  	struct list_head gpio_configs;
+fd84aaa8173d3f Chester Lin       2023-02-20   99  	spinlock_t gpio_configs_lock;
+fd84aaa8173d3f Chester Lin       2023-02-20  100  #ifdef CONFIG_PM_SLEEP
+fd84aaa8173d3f Chester Lin       2023-02-20  101  	struct s32_pinctrl_context saved_context;
+fd84aaa8173d3f Chester Lin       2023-02-20  102  #endif
+fd84aaa8173d3f Chester Lin       2023-02-20 @103  };
+fd84aaa8173d3f Chester Lin       2023-02-20  104  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
