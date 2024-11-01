@@ -1,102 +1,86 @@
-Return-Path: <linux-kernel+bounces-391968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711249B8E02
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:38:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B279B8E06
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:41:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27462283A4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:38:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90B421F225AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E909E15A86A;
-	Fri,  1 Nov 2024 09:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="WYKhduho";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="IpSDNkeo"
-Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B16C15ADB4;
+	Fri,  1 Nov 2024 09:41:37 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E017115AAB6;
-	Fri,  1 Nov 2024 09:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616C21B95B;
+	Fri,  1 Nov 2024 09:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730453917; cv=none; b=Euz30xZ1AQNV2JLw5Ms4HMEKiAHiFEZIcoIwnbSBOPyK29CwrIyxeVlGuDk2PhGPkk8e8ngJJm4AW/nxrwvZd7NChJVH+QcpayokvKIawjT+AFCbQbTCNSBhtKAQcrwyqI7Th41xGpx5yJCT+44+QgJnH8P/haPQnPyC/8NmtGA=
+	t=1730454097; cv=none; b=pzBOuylkECjrHmSvvkV3GxJyPAj2gNLFCEj4ZXKIOtAC4bgHK2kEth269jsM+hmHsvD3pYJ04ta1BRbg6eriSl2PUhbQqvh1O5jvilrIxwK80IsMZbMUG1jx5+9LiRmGRAJEgMqIvVHLlDZYhBE43mpSyEruSwANoLfnjAY7lg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730453917; c=relaxed/simple;
-	bh=5UH5ZYO1q7g1Z8k4/mlpRUHrS+F7qL+lbeCgu/TgPZk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jQmVBLzs3eE3AKBvoCK2gAVOBFa7Pnbd+yxFaMveGJnb9VH5koZ1T9Om7IKAYMSgXYicSuZE096U2uyMiTKke0ahE6+QTKT0BERLUekP2QujbKUmCf0ZkhBnT9DTyQYY/kLiNmT1TkkVcPQnDbTyM+tOxnaKyTOwy3eJsF0VYDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=WYKhduho; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=IpSDNkeo; arc=none smtp.client-ip=89.207.88.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com 6DD92E0002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-	t=1730453901; bh=5UH5ZYO1q7g1Z8k4/mlpRUHrS+F7qL+lbeCgu/TgPZk=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
-	b=WYKhduho3ag/SWd4IKqjFmP5Xen8eB8RGepp0pcrL7H+utEIRZQ74ly2LF5KeJ+sW
-	 880P9mLuBRoSI9ztW4JmJMYf+fR4lB/BgdAVpHJig2Ta3ud2lZSnnuBWRhS/+0YCWg
-	 c83/hlB2gpUtYuUdZe/LWQKs52G2nlavKo1YlCV/zBMpH7gzXvc7yqqAei++YW3CzM
-	 pQLVSLXS5Bf6r+ZiB7PleOmPsYunG008VBbcVVd0+DBd+tcF7uR/qUnzQMbaGmRKfN
-	 f8QkePiesdZt3MSRWJanzrrDMAkrzxS3jJ69yMfNQpGN0zXnJR6TdysjyqVdSAqT+u
-	 M6ho4E5NdmBHA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1730453901; bh=5UH5ZYO1q7g1Z8k4/mlpRUHrS+F7qL+lbeCgu/TgPZk=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
-	b=IpSDNkeoeYK2uEMJgfoSj8SIdfXHu5fi4gZP/j5YGdb1JNVTWj6zD2WmnJJu2Py6x
-	 tRnENn7aFHf2is4k5DYD501J74gtXaM1ktiTKYsEYbKUw4DYWrl9dMfJpxA7nrOfIx
-	 86+GnH8Eg5Y+EatVExHqYdUYC9H2vlog02D6LiThtZKgVZNvU4b26nAv1tYSyULSJ+
-	 RLWShKWl7ZKkwes1hZEgkM/nri9rJ40EXCKljvbVhNsA5dTWwMwMAgjjHE8LMJIXpu
-	 YRWBJ691MipvR80kgcpyeaO7le7VhRM/A6ytjBkH67qQk0OSrzrRD9ELLHWSTSeYdH
-	 pB52pYI+dHhkA==
-From: Anastasia Kovaleva <a.kovaleva@yadro.com>
-To: "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>
-CC: "njavali@marvell.com" <njavali@marvell.com>,
-	"GR-QLogic-Storage-Upstream@marvell.com"
-	<GR-QLogic-Storage-Upstream@marvell.com>,
-	"James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>, "bvanassche@acm.org" <bvanassche@acm.org>,
-	"quinn.tran@cavium.com" <quinn.tran@cavium.com>,
-	"himanshu.madhani@oracle.com" <himanshu.madhani@oracle.com>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux@yadro.com" <linux@yadro.com>, "hare@suse.de" <hare@suse.de>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v3 0/3] Fix bugs in qla2xxx driver
-Thread-Topic: [PATCH v3 0/3] Fix bugs in qla2xxx driver
-Thread-Index: AQHbGzIvZMV/oTAyUkWQTinjaU2zibKiTS4A
-Date: Fri, 1 Nov 2024 09:38:20 +0000
-Message-ID: <93FA6AD1-9959-4E4C-A447-9CF694A6A024@yadro.com>
-References: <20241010163236.27969-1-a.kovaleva@yadro.com>
-In-Reply-To: <20241010163236.27969-1-a.kovaleva@yadro.com>
-Accept-Language: ru-RU, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <90F19368F5ECAC4B88EE53A71DD7A831@yadro.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1730454097; c=relaxed/simple;
+	bh=3AK8du1wLJFlfzzBKRrLnyMGOoJFeRLiKZVVFpNx1Gk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PFcMMTjngauJe2BtLu8yfRv1rcMcyO50K7ykzUxgo8AfRJcAuA2gpwAP+G9mHB4Yk02t9gsHlaA/URIyhFOjGKxIZ8lf+UJxVmr/ySLrXu2vD65XZfVSXN7MNQACATYD5W/OBnZxO6cuYhnWFEheg3rnQLl6tmOitBvR9AjtFg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Xfwp56msXz20rNV;
+	Fri,  1 Nov 2024 17:40:29 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 62BA81A0191;
+	Fri,  1 Nov 2024 17:41:31 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 1 Nov
+ 2024 17:41:30 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <sakari.ailus@linux.intel.com>, <mchehab@kernel.org>, <ming.qian@nxp.com>,
+	<eagle.zhou@nxp.com>, <stanimir.k.varbanov@gmail.com>,
+	<quic_vgarodia@quicinc.com>, <bryan.odonoghue@linaro.org>,
+	<shijie.qin@nxp.com>, <hverkuil-cisco@xs4all.nl>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>
+CC: <chenridong@huawei.com>, <ruanjinjie@huawei.com>
+Subject: [PATCH v2 0/3] media: Fix pm_runtime_set_suspended() with runtime pm enabled
+Date: Fri, 1 Nov 2024 17:40:47 +0800
+Message-ID: <20241101094050.2421038-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-T24gVGh1LCAxMCBPY3QgMjAyNCAxOTozMjozMyArMDMwMCwgQW5hc3Rhc2lhIEtvdmFsZXZhIHdy
-b3RlOg0KPiBUaGlzIHNlcmllcyBvZiBwYXRjaGVzIGNvbnRhaW5zIDMgc2VwYXJhdGUgY2hhbmdl
-cyB0aGF0IGZpeCBzb21lIGJ1Z3MgaW4NCj4gdGhlIHFsYTJ4eHggZHJpdmVyLg0KPiAtLS0NCj4g
-djM6DQo+IC0gRml4IGJ1aWxkIGlzc3VlIGluIHBhdGNoIDENCj4gdjI6DQo+IC0gQ2hhbmdlIGEg
-c3BpbmxvY2sgd3JhcCB0byBhIFdSSVRFX09OQ0UoKSBpbiBwYXRjaCAxDQo+IC0gQWRkIFJldmll
-d2VkLWJ5IHRhZ3Mgb24gcGF0Y2hlcyAyIGFuZCAzDQo+IC0tLQ0KPiBBbmFzdGFzaWEgS292YWxl
-dmEgKDMpOg0KPiAgICBzY3NpOiBxbGEyeHh4OiBEcm9wIHN0YXJ2YXRpb24gY291bnRlciBvbiBz
-dWNjZXNzDQo+ICAgIHNjc2k6IHFsYTJ4eHg6IE1ha2UgdGFyZ2V0IHNlbmQgY29ycmVjdCBMT0dP
-DQo+ICAgIHNjc2k6IHFsYTJ4eHg6IFJlbW92ZSBpbmNvcnJlY3QgdHJhcA0KPg0KPiAgIGRyaXZl
-cnMvc2NzaS9xbGEyeHh4L3FsYV9pb2NiLmMgICB8IDExICsrKysrKysrKysrDQo+ICAgZHJpdmVy
-cy9zY3NpL3FsYTJ4eHgvcWxhX2lzci5jICAgIHwgIDQgKysrKw0KPiAgIGRyaXZlcnMvc2NzaS9x
-bGEyeHh4L3FsYV90YXJnZXQuYyB8IDE2ICsrKysrKystLS0tLS0tLS0NCj4gICAzIGZpbGVzIGNo
-YW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pDQo+DQoNCkdlbnRsZSBwaW5n
-DQoNCg==
+Fix a few pm_runtime_set_suspended() with runtime
+pm enabled issues.
+
+Changes in v2:
+- !pm_runtime_enabled() check -> !IS_ENABLED(CONFIG_PM) as Sakari suggested.
+- Add suggested-by.
+- Add fix tag.
+- Add Cc stable.
+
+Jinjie Ruan (3):
+  media: i2c: dw9768: Fix pm_runtime_set_suspended() with runtime pm
+    enabled
+  media: amphion: Fix pm_runtime_set_suspended() with runtime pm enabled
+  media: venus: Fix pm_runtime_set_suspended() with runtime pm enabled
+
+ drivers/media/i2c/dw9768.c               | 10 +++++-----
+ drivers/media/platform/amphion/vpu_drv.c |  2 +-
+ drivers/media/platform/qcom/venus/core.c |  2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+-- 
+2.34.1
+
 
