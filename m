@@ -1,115 +1,103 @@
-Return-Path: <linux-kernel+bounces-392513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E969B9511
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:16:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3242B9B9521
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:19:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0448E1F22F03
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:16:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D246E1F22E7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984861B6CF2;
-	Fri,  1 Nov 2024 16:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505D8145FEB;
+	Fri,  1 Nov 2024 16:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IzYv/Ayf"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hLVTrvFv"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9721384BF
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B421DA53
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 16:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730477807; cv=none; b=oVvc/ENyCW3KtXqw6L9/EynmoHRLXT2jdJTY6IWqwnx2INSfYECAG80YzVJddu7aLxaYulmSWOVQkFPjc000vL+jFSXKhAbhDjOy6a3TMLiRvOWKvd0H4BhDZzQEGEBxCWR9K1ESUFYLBPTp31Vh8u3gV+D/MK2NuVL8WghEZFQ=
+	t=1730477954; cv=none; b=Cv1WL352CHrEdg2aDgKIaNlG4jEXxLwEjKs3/8OjUxA8FnSYzc3bKj/JDOl1yjxXBxjHchp/500PyX8l5HFvCoKeMwrqcbRWGThDVvI4zEhAI04NEEBTIpLhxYr0LVX0h5H92en5M7Ajkxo9kIbRe56bqM02s3hELAUbK68x9HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730477807; c=relaxed/simple;
-	bh=xaLPiV2P+iFOGORP3GmSsCXQJJWWFEtG1+56r8fgQQ8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fCJN48khljcmXwMZTjwmKsp0kx7JSqtWDefDRdznF1L8yJuwEL8k/pQ7Svfovci6cx+MdRDU1Jf5XNwOpVGaqPIW2QwEvSn7JsHk7IHYgwsQdlV70+fHT8bBRfrIB1HvFZZD9QbfJbCb4C/S6VvP3bZl4iDoRkBcP9rgAPExu2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IzYv/Ayf; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e292dbfd834so3650376276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 09:16:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730477804; x=1731082604; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hX5tyyhHqv16hXch1rLN0W0q9yFTn7ruBymiSqraZAY=;
-        b=IzYv/AyfqBZ3oyrXDDEJm9OB0OPBvT+81GyHHWFnYRNXLnp/Wo2v+KPN0kz+jZPdI6
-         5n3/RsnkU+gN6sg6SBflzzpNZNC/buU+3KLVUYkfjAy/jEdwCGiX6H9EkdKPIlIg1VKo
-         tIYbctcyINUx0FYhlizKfDiM1oizKsB7BpBQngYZIq4vT9aM4fnM+3Ayts6561fL757d
-         OOpEgep3unKiyFU4FZtWa4yUINJU6kXKX1JaO+1M1YC2TxbNn4qjuLVdF92XG288axqV
-         wtUQta7NB4HacD5QCrTOgl/NclwQTYFiG6pXfEIfHvZIB2CDOU2imdX+jGlGhWYZK4I+
-         5XSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730477804; x=1731082604;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hX5tyyhHqv16hXch1rLN0W0q9yFTn7ruBymiSqraZAY=;
-        b=OS2T1o0sBnabUKIF53fVt7AaRyc/jcHmcaba8aH5qtikL+KJhqzzYljAQ+Qel/eR6Y
-         fGxIPEM0sVc8NyoeuuYbhQv2nb4hk+LHgb8JVvGffasg6ztx/OG2XlSdjIO6sD9peSF6
-         NAreEdpMuZRqPJjizFbH1J5FFcMUSPzW8gwR3WPO5Ln9uZGrHMLtpkBGixZCMJd3MN90
-         2ng+hevp7eKocnkH1FwjhRJy4XyHmgSPjDGlwU3W7FeaDtYhxpZxLM5xyHCvFU8UDv+P
-         ad+vmnfBaFS7sTRf6k5nCBzT9XARk9+rkuTmCiiGQ6i7lUKzDFVo3eP/BMZzCQy6dFmj
-         1mXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXs7yXn4YfEUDfwODrzJDjzcRI0hDcK6mSBZm/jw12daARQM6z4PDMUJK9I09LuSYqc90n59Py1VPRzoAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6z3NC4WAfaOmOe00Zr9CgDReFlXhOJkp8tsqn3XFf1dvnLNOX
-	yQnvBQ6hytpYXV80E4WZG9Q9ooQh5QHFPd/Fdl1rx+xpe/AhqKIIgDPaFNlM79GRJrYuDRXkJ7b
-	XZQ==
-X-Google-Smtp-Source: AGHT+IFqadUfHcDo1fnNxpX1VCp4eu6teKzEJN9syL1uwq8yv7xcjwbZMF7JDB8DnbLfXveA32Uk5MCvzSo=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:b2a5:0:b0:e30:dccd:9aaa with SMTP id
- 3f1490d57ef6-e3302686a1fmr4471276.6.1730477804134; Fri, 01 Nov 2024 09:16:44
- -0700 (PDT)
-Date: Fri, 1 Nov 2024 09:16:42 -0700
-In-Reply-To: <ZyT9rSnLcDWkWoL_@linux.dev>
+	s=arc-20240116; t=1730477954; c=relaxed/simple;
+	bh=YmTqFyapuFkDexlNLaBQ9TKRefl9qZa/7LpQlueDPug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iWTY6vbnZ5NhxesE3C2HPyAZ6IIErIF3tDNWSFKBci/AajaNnXJFZVlSsTZP1a4qH1+YnMs6dSEct4hQX3gMxw0UKQ8XJNfzX6UhyofkPFPenXPv0m3ApU6qeUvAns8DxEtGQBrD5aPg10tDEetO6taEpwjTftvkg1rprDnnrOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hLVTrvFv; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E752240E015F;
+	Fri,  1 Nov 2024 16:19:08 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 0KrUJmqolMCh; Fri,  1 Nov 2024 16:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730477944; bh=ga3EU5e3LwksEz0FqQ+0xvAlawIA21BzAgKw22O3GpI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hLVTrvFv1Kcd1oeV1zWXiHkv35eRo3qpkpEAgpWhWXB8HfSOnhhB+Au63RxpHFNGI
+	 fodSE7M0iUFnzbiA6F7BJJLHhJU12JhwvEHwcBSPXRubvgVwsENtkDwtvlPIwJsaW8
+	 Y1t5hpxM+6kJ/psHBQd7zMxewNUyJZbIKqIwTKArATUEYn0FFRxaWV8msbMneQprNj
+	 /snidavlN2diEcfcNE5MA54WNsPQdjYV81/SPfMsO0Xgg+vW3CI1qwkZVVSC//GyqE
+	 Y35O0ECSUYtR1yRQJGrApjh8N8TbkTEYfaVu9ELLr59qqxohbiPdo2XHayRwVzyCJ8
+	 Xdgwb7YfrXJAhCuNPhM7PQ4wNO3+T3BY+kPxxq4AhuB0hdmGh+lJY8MseZMpBQxNcF
+	 l9NMntdCANZlcXFlDVApdlgFMNIUXoa5XbCZWxL5qSzLJQmMjjMFex6Fklw4J7DrR3
+	 Xudte7uQRmvJjdlRYl8DN2PhLaHobJA4wh29xuTWYytIb14ENlgU+IuHuGfb40NO3X
+	 HdODACICW9EsLy4IeUS4K00CfXtKtHoTPrK79Gll5a3IIH0eBXXOBHS3CuL6T2FfbY
+	 Vba7yBIeRsTkMmV95o//WBGygAS6tdffNtSlGVZGhdShh2iOJSLyGgCa5tMJQ4RDor
+	 G9sTpr4zgz5NGWRLFy69DEQ8=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 907DD40E019C;
+	Fri,  1 Nov 2024 16:18:55 +0000 (UTC)
+Date: Fri, 1 Nov 2024 17:18:49 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Baoquan He <bhe@redhat.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
+	dyoung@redhat.com, daniel.kiper@oracle.com, noodles@fb.com,
+	lijiang@redhat.com, kexec@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v3 1/2] x86/mm: rename the confusing local variable in
+ early_memremap_is_setup_data()
+Message-ID: <20241101161849.GCZyT_aSMcGIXnGr1-@fat_crate.local>
+References: <20240911081615.262202-1-bhe@redhat.com>
+ <20240911081615.262202-2-bhe@redhat.com>
+ <20241029181101.GXZyElNXVuF6596TKG@fat_crate.local>
+ <ZyGDlYsg6YWNXSVo@MiWiFi-R3L-srv>
+ <8c81835b-97fe-a0b3-a860-0bbd5c0341f6@amd.com>
+ <ZyL8WDTw9F3laupG@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241009154953.1073471-1-seanjc@google.com> <20241009154953.1073471-4-seanjc@google.com>
- <39ea24d8-9dae-447a-ae37-e65878c3806f@sirena.org.uk> <ZyTpwwm0s89iU9Pk@google.com>
- <ZyT2CB6zodtbWEI9@linux.dev> <ZyT61FF0-g8gKZfc@google.com> <ZyT9rSnLcDWkWoL_@linux.dev>
-Message-ID: <ZyT-6iCNlA1VSAV3@google.com>
-Subject: Re: [PATCH v3 03/14] KVM: selftests: Return a value from
- vcpu_get_reg() instead of using an out-param
-From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Andrew Jones <ajones@ventanamicro.com>, James Houghton <jthoughton@google.com>, 
-	David Woodhouse <dwmw@amazon.co.uk>, linux-next@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZyL8WDTw9F3laupG@MiWiFi-R3L-srv>
 
-On Fri, Nov 01, 2024, Oliver Upton wrote:
-> On Fri, Nov 01, 2024 at 08:59:16AM -0700, Sean Christopherson wrote:
-> > > Can you instead just push out a topic branch and let the affected
-> > > maintainers deal with it? This is the usual way we handle conflicts
-> > > between trees...
-> > 
-> > That'd work too, but as you note below, doing that now throws a wrench in things
-> > because essentially all arch maintainers would need merge that topic branch,
-> > otherwise linux-next would end up in the same state.
-> 
-> TBH, I'm quite happy with that. Recent history has not been particularly
-> convinincing to me that folks are actually testing arm64, let alone
-> compiling for it when applying selftests patches.
+On Thu, Oct 31, 2024 at 11:41:12AM +0800, Baoquan He wrote:
+> Should I send the fixing patch alone and clean up the useless argument
+> 'size' later, or squash them into one patch?
 
-FWIW, I did compile all patches on all KVM architectures, including selftests.
-But my base obviously didn't include the kvm-arm64 branch :-/
+First the fix, then the cleanup.
 
-One thing I'll add to my workflow would be to do a local merge (and smoke test)
-of linux-next into kvm-x86 next before pushing it out.  This isn't the only snafu
-this cycle where such a sanity check would have saved me and others a bit of pain.
+Btw, that fix wants to go to stable no? Seeing how it breaks certain machines
+with IMA and kdump and SMe...
 
-https://lore.kernel.org/all/20241101153857.GAZyT2EdLXKs7ZmDFx@fat_crate.local
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
