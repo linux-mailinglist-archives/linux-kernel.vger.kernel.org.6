@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-392586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5554B9B95DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:48:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4F979B95DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1171C227A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CACC1F23E74
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7356D1C9B80;
-	Fri,  1 Nov 2024 16:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F4B1C9DD8;
+	Fri,  1 Nov 2024 16:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HpLdezW8"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="CvUl1lQk"
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4BA1CA81;
-	Fri,  1 Nov 2024 16:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9714E155324;
+	Fri,  1 Nov 2024 16:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730479718; cv=none; b=UBip6bz9orGZMb6D1Fme9CJ8VkyyKMoSlgEgjsuAy15dVCCxapi0Jji+9ReGsY3gbw2A8tYrE8HGgPoi/oAkwb7XJ6KPBgIKV+A4EF6tU6+pWQv0WzrGTr/DN49PMYh9qL6RAsepRUr/7Ne2j7BMSPhnlAsbh44JwsPBqoE430U=
+	t=1730479737; cv=none; b=C9QJA1gPj5aq0/24ry113n8/0w87fQCHADgGGNwLflHbqq02suQYj9D/fRs+D3rtbNkvXo9QvoWQyXf9o4zyoxG01BCZIgKPIJVuNjOnsXNo7IqyGyMHYtZpaXfaE5RekP4hVK8GkxcUwztOQZF+wJcEI8mTbfTbQ04GTdiny0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730479718; c=relaxed/simple;
-	bh=kBgcL3BfWWkILvcuUMtI4DpC5265s1HmZIUOzebuBTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImiXFZ4yYPObIc3QE6Owr0TH2frRJeOeV4t92xrnINN+JpFzhRP1fn3jodhqgww6b23MddjGoBv25MA2OxceEVr5KhKBjFEC9FuPWG4vfwUR7Gx10V6nQHv35xOxbFhLbdGFHkcu4GYjUAWyHOmhOicrP5v7rtxA7leTqDU4xkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HpLdezW8; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5E70740E021C;
-	Fri,  1 Nov 2024 16:48:33 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id e_X65bLd7ZEI; Fri,  1 Nov 2024 16:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730479708; bh=OMMDrgLOSB2qpzgDwcq8B2U0GznJU8oQ+4h52sCCWjg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HpLdezW89bcbIP48ARNiRiO1jZBz1adgCt9GZooz/jLAxxbfGeYjyAivPmbsqxd4c
-	 UwsPIl2tUaVrJ/Wl297DPj87dHaec9g0HbXlGSYtIZznpW9Uc1ARsguRWeJhYJJPma
-	 xJE/HibJR0GTPZv3gTluwzBLVNBM/bunsQWgQNrl+vB832YxnerRsP0+hhm+yhRYB3
-	 H/9krU239yGIljkrH4zsWBswaPylNbIRfsVW/2MHdTQbc5TyFLoJ6BZuESHMsIY+Ya
-	 9h1hCpGnf83g/HNH5Wk/9r4YcIa9DZSBvNhZknlROcuGzVAvOfrZ8z+CMg3gJCW7vM
-	 LQCGC4SbXDfo9+PpraS07geDr8IVQtF2nL8i3VCn3ySw1IGQJxoi5u64ItE1GAifjO
-	 LvRyxRv1LV7Vfe/MKJ0zhhJW9/0wkCuI8kk6JfvT/UnGOTauwjwQXmi8Vu7zg2kMTN
-	 1cl6iINfWBRpdRj/5jaa/YydoLx464xbaPHkAVFFJXNqA+XEDzAakE7+54ozTe8JWd
-	 ABl7ElLJnKQh9RVxIdg/IzNPwVYkotG+OidXRQLN2+t31YiY0YoiuffPuD6L/IgU/4
-	 d2xUQRRc2lmTbkrBvBMie6B7Xd1kOkO7tHOhx9loF7N0nIUfZLyDfdJI8uXYIAXiwV
-	 k50KPDzTo9HOBZfyqjC6tBq0=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1085540E0219;
-	Fri,  1 Nov 2024 16:48:02 +0000 (UTC)
-Date: Fri, 1 Nov 2024 17:48:01 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Gregory Price <gourry@gourry.net>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
-	dave.jiang@intel.com, ira.weiny@intel.com,
-	alison.schofield@intel.com, dave.hansen@linux.intel.com,
-	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	mingo@redhat.com, hpa@zytor.com, rafael@kernel.org, lenb@kernel.org,
-	david@redhat.com, osalvador@suse.de, gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org, rppt@kernel.org
-Subject: Re: [PATCH v5 2/3] x86: probe memory block size advisement value
- during mm init
-Message-ID: <20241101164801.GDZyUGQbe6g4FqtPf6@fat_crate.local>
-References: <20241101134706.1185-1-gourry@gourry.net>
- <20241101134706.1185-3-gourry@gourry.net>
- <20241101155147.GBZyT5E190IxnQMzaP@fat_crate.local>
- <ZyT_fLBsVLlcnYNi@PC2K9PVX.TheFacebook.com>
+	s=arc-20240116; t=1730479737; c=relaxed/simple;
+	bh=G8AV6hUbYa5ufbufEfytoznfbGDOKodSueBqedNnNwk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ss4f3zL9CLx57L+nuf2YEDUI8y6MJZ4x+N1QUzLMZLawkU59Lfh9UKIgVgLj68eSgWTo87MJrxk2KPJGER/rtKvpB8UFaS7aqEGatGhBa4LGKAlcyq938BiK4ur0jpklOygm6FY5ufVKAfG1GprtSVYDwhd1x0Et9TMxuaaoD4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=CvUl1lQk; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1730479736; x=1762015736;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=mqeYyGNdYJSCQ7x0jqlRY8aiViXaRNHtVV7905ZpVjU=;
+  b=CvUl1lQkzmypSkbD9v3v9EVDoKezYoL7nKSMZmUvE6YzS22jrUhe9Faq
+   OdssSSaOm1I3V9lJBfigy3XjQl6HLtwtCXZspS1auaDMU5d/rAEIE3sqm
+   en9H3dN4mGdTDZU0NQddUQ6KX8f9VnPE7Nf5tEMTykn7/ly3MawwxJLm/
+   0=;
+X-IronPort-AV: E=Sophos;i="6.11,250,1725321600"; 
+   d="scan'208";a="38237743"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 16:48:52 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:36608]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.28.125:2525] with esmtp (Farcaster)
+ id 68162ca2-5306-4bf9-8435-391cac41bce8; Fri, 1 Nov 2024 16:48:50 +0000 (UTC)
+X-Farcaster-Flow-ID: 68162ca2-5306-4bf9-8435-391cac41bce8
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 1 Nov 2024 16:48:48 +0000
+Received: from 6c7e67c6786f.amazon.com (10.106.100.41) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Fri, 1 Nov 2024 16:48:44 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <lulie@linux.alibaba.com>
+CC: <antony.antony@secunet.com>, <davem@davemloft.net>, <dsahern@kernel.org>,
+	<dust.li@linux.alibaba.com>, <edumazet@google.com>,
+	<fred.cc@alibaba-inc.com>, <horms@kernel.org>, <jakub@cloudflare.com>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <steffen.klassert@secunet.com>,
+	<willemdebruijn.kernel@gmail.com>, <yubing.qiuyubing@alibaba-inc.com>,
+	<kuniyu@amazon.com>
+Subject: Re: [PATCH v6 net-next 4/4] ipv6/udp: Add 4-tuple hash for connected socket
+Date: Fri, 1 Nov 2024 09:48:40 -0700
+Message-ID: <20241101164840.73324-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <33862f10-726d-49d3-8f86-ccef1f6792e7@linux.alibaba.com>
+References: <33862f10-726d-49d3-8f86-ccef1f6792e7@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZyT_fLBsVLlcnYNi@PC2K9PVX.TheFacebook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D043UWA003.ant.amazon.com (10.13.139.31) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Fri, Nov 01, 2024 at 12:19:08PM -0400, Gregory Price wrote:
-> I don't personally understand the implications of this switch off hand,
-> probably warrants a separate patch submission if you think it's important
-> given the original logic is boot_cpu_has and I don't want to increase
-> scope change here.
+From: Philo Lu <lulie@linux.alibaba.com>
+Date: Fri, 1 Nov 2024 19:40:19 +0800
+> On 2024/10/31 20:45, Philo Lu wrote:
+> > Implement ipv6 udp hash4 like that in ipv4. The major difference is that
+> > the hash value should be calculated with udp6_ehashfn(). Besides,
+> > ipv4-mapped ipv6 address is handled before hash() and rehash().
+> > 
+> > Core procedures of hash/unhash/rehash are same as ipv4, and udpv4 and
+> > udpv6 share the same udptable, so some functions in ipv4 hash4 can also
+> > be shared.
+> > 
+> > Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
+> > Signed-off-by: Cambda Zhu <cambda@linux.alibaba.com>
+> > Signed-off-by: Fred Chen <fred.cc@alibaba-inc.com>
+> > Signed-off-by: Yubing Qiu <yubing.qiuyubing@alibaba-inc.com>
+> > ---
+> >   net/ipv6/udp.c | 96 ++++++++++++++++++++++++++++++++++++++++++++++++--
+> >   1 file changed, 94 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+> > index 1ea99d704e31..64f13f258fca 100644
+> > --- a/net/ipv6/udp.c
+> > +++ b/net/ipv6/udp.c
+> > @@ -110,8 +110,17 @@ void udp_v6_rehash(struct sock *sk)
+> >   	u16 new_hash = ipv6_portaddr_hash(sock_net(sk),
+> >   					  &sk->sk_v6_rcv_saddr,
+> >   					  inet_sk(sk)->inet_num);
+> > +	u16 new_hash4;
+> >   
+> > -	udp_lib_rehash(sk, new_hash, 0); /* 4-tuple hash not implemented */
+> > +	if (ipv6_addr_v4mapped(&sk->sk_v6_rcv_saddr)) {
+> > +		new_hash4 = udp_ehashfn(sock_net(sk), sk->sk_rcv_saddr, sk->sk_num,
+> > +					sk->sk_daddr, sk->sk_dport);
+> 
+> Just found udp_ehashfn() used here results in an build error of 
+> undefined function.
+> 
+> I think the `ipv6_addr_v4mapped(&sk->sk_v6_rcv_saddr)` branch can be 
+> moved into udp_lib_rehash() to fix the issue. So in the worst case, we 
+> need to calculate the newhash4 twice in ipv6 hash4 rehash, one in 
+> udp_v6_rehash() and the other in udp_lib_rehash().
 
-We want to switch the code to cpu_feature_enabled():
-
-https://lore.kernel.org/r/20241031103401.GBZyNdGQ-ZyXKyzC_z@fat_crate.local
-
-and it is not increasing the scope at all. You can simply say:
-
-"Convert to cpu_feature_enabled() while at it."
-
-in the commit message.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+You can simply export udp_ehashfn().
 
