@@ -1,98 +1,208 @@
-Return-Path: <linux-kernel+bounces-392114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBF69B8FD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:57:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64ADC9B8FE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 12:00:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4D51F22F3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 10:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A53A2825E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 11:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925AE18453C;
-	Fri,  1 Nov 2024 10:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3596718453E;
+	Fri,  1 Nov 2024 10:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dbAjmW5C"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VUNeavb4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7801714BC;
-	Fri,  1 Nov 2024 10:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89789155324;
+	Fri,  1 Nov 2024 10:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730458625; cv=none; b=VrlYo5ct5UYoFJZb0Lh27sCoCExzg+92BrpqBiGHfRgi+BClnRe1Xp/3xTwNVaFuNxk1LB9EtID9nWNZxEUJwIrb4Kb4zuqNXyxyY0ALvxJJr3VOMdR2P6ZeV8ZW9Zl6oZ/dZyBTumIyE5Uuv0Fs0JSZ4TFH0s/kezhdKRrKPq4=
+	t=1730458797; cv=none; b=Og58lJ24CBp5QK2oZm3lZxxu48zS2LuUj0kZ7EH5fxTiL2Wsalo1dSky2laNlnrkQcJGAjWr4Gk8Uf/rHS2fQLAx0sbiGiE7eD+6oOn5Xy5GRaYIoAb3Q/1GT6PonwKLHAVWgYfOen4TLWqVDFpjVr1+xKUDKr9LVME8KpoCVdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730458625; c=relaxed/simple;
-	bh=in+hn4D17+str9yWgKks8piJDUKpP4SgZMTxn5xT41g=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ioFranc2e50lOW1UlqxkmEKBDO9ks714niKd4xM68OZXaBpgOMLygnaRkcYuB8L/GwqM3lqLSklPF3PVD0LdyvbAHN8SSDbLNwZS5vDz277KxlSfiNOcIyTkyZEFpdevUcvASRSGTu2AVM1ZycyVjvkIuboQFl5c8tmBgDzuwsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dbAjmW5C; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730458561; x=1731063361; i=markus.elfring@web.de;
-	bh=in+hn4D17+str9yWgKks8piJDUKpP4SgZMTxn5xT41g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dbAjmW5CHzvdNrIFLygErgLmbeBdtghdhG8383EIgVzY8YNk34w3ZBvbr20610v3
-	 2BVwMwPC/07v92MZHz76oukcLbswvtIByKk3kdEjUDbyI/kn1dIpnSignD71Ef53A
-	 Zpy9ejCRFTK6d56ZIKKoQkdt/uaXnsEXXgAqxwYN9bdipmVKkJq1xflFPIs9tc/ib
-	 MsVPDWuINLhIJkw43kF/R31unIpLB4e+OaSL6ZMZigIzzceYQEOfbpNK30FBIDP1X
-	 Rkt6YzoYmRlIgu2LU3Rmc3TYB7Ytic77w2cmRK92pPq1HPZv4P7DVuGFvlXKpTHkY
-	 +wr41/I+2xWDA0cM2w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4eGT-1toRjK27SJ-00vtmg; Fri, 01
- Nov 2024 11:56:01 +0100
-Message-ID: <568c32d4-c555-4512-8b93-637cde04d0d3@web.de>
-Date: Fri, 1 Nov 2024 11:56:00 +0100
+	s=arc-20240116; t=1730458797; c=relaxed/simple;
+	bh=ue70Ww36EcBDEZaGYurD6rsjfoEbrn4L9zEF9CmzN+A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=D/BsunXOChYEnzM+4kMq6bh6LkXMq0ZC2bW5LTY+2VG9TzvWFNg9feINEPpfnRy2pZjL8KeX7CnKTJTZ3zfujdBuYHTVhDQQmweDMx2HKs4PJ/ol0jToyImmx6Fp5L3L/kpYt1whFD3m5FsbNc8HLzX+KkjMXnxJ9Tp4Fk4Tugs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VUNeavb4; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730458795; x=1761994795;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=ue70Ww36EcBDEZaGYurD6rsjfoEbrn4L9zEF9CmzN+A=;
+  b=VUNeavb4S59HV0KiWDIiQlOXKlxVqTifUWNjtfhc1EF8qVN2LOMWsa/x
+   NfQgTAYeoRsOex2GHISzDm2XrokS++gpkJu6NSnGRxuCkecv+/6ZBatxR
+   KnxrviVS9Zvs2BIggzJJQLHnh2zdzULs6U7lW5v7HY44jY6/nvpzbC+26
+   1lC9z7t6+6LOtJKebff7UiAxZVW7RW4c5ZIO6Uh68/qPCzhaTS3R4eZJY
+   EKLcAqUWK8M9JRbtx28ljPZpM2P+j3LQc7WkP45oL5l4aCUVx51GxVD1n
+   X5w5Qgdiw88eIQvEg6pa3NscnyPfeUDl8k+EcGZS5iKyjsERjvDbkiPDq
+   A==;
+X-CSE-ConnectionGUID: Jxw9JT2BQVuDdWmA2rImWQ==
+X-CSE-MsgGUID: NeoSFPoeQvS0XKMxLOfsfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="29651789"
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="29651789"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 03:59:53 -0700
+X-CSE-ConnectionGUID: 6ur4aUqYSmO1fR4NBhLZlw==
+X-CSE-MsgGUID: tT97F7GiSFm1AAgVezXLiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="83365995"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.234])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 03:59:41 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Phong LE <ple@baylibre.com>, Inki Dae
+ <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+ Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Russell King
+ <linux@armlinux.org.uk>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?=
+ <heiko@sntech.de>, Andy
+ Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH RFC v2 6/7] drm/display/hdmi: implement connector update
+ functions
+In-Reply-To: <20241101-drm-bridge-hdmi-connector-v2-6-739ef9addf9e@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241101-drm-bridge-hdmi-connector-v2-0-739ef9addf9e@linaro.org>
+ <20241101-drm-bridge-hdmi-connector-v2-6-739ef9addf9e@linaro.org>
+Date: Fri, 01 Nov 2024 12:59:38 +0200
+Message-ID: <871pzvjk2t.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-iio@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-References: <20241101081203.3360421-2-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 1/4] iio: light: ltr501: Assing ddata to NULL
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241101081203.3360421-2-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NlV6rrsWjeuUspjnIvOegbcU/y9LP6vJyl+59v+9NCfgfnmsy9c
- /3YjV7irkODux1aZ5Eh/taHG7b4NkWVCsncU4+RN7CpMrNXwnvureSI+PHrZD+3QAr6ELvn
- JJAiOuV+r6yODkgxjYWycajnSNcdhDJaKbS37JD00Dn+L44R1jX9hPckMjrWVloO8Jppr3t
- QRhHGRw6j+hRg2NhNbNIw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:I/X1U8sCkqw=;LP4VVBfK7LAVgpDtLofSop8GMl6
- bJEwNL5Xg//dCgIRwzyUR/n1R/MskXSC9h1a7SfPR665W0SJJgMLOhouxxMM7Si4ULxBovomH
- 1BzAJo4RfcL1DfxAjmvwSxjvGNlwXEEngngBi8q5kB+9atxQO804SbTJI68Evd94bPhtqRKsi
- eaVpL4Q+Ujy3B3o+2Fmqaz77LCuh5kv4sBUJBXi637rZ8GHWgbMM7TtFkzQ1JcmQaOrxr1M1Z
- DPET7KCro3SXOfdChiu59JmTBr8u7HYyMwG1Is/1pAfBz/sbO92U2ucjdmBmt9sMWKOymP1vE
- xExEpKxjcWmgI7yzJ3l07drX1+7i2OHmCiqydngrXlWfQzYtNDzwyL4oMneZ3iCFGNYgPuuxU
- H6lmicuxaoc3ibZcWJGm0NtVZeCLrTeP2XTZ0l59SiAqTb7G7OS3BPqhS7Q72PxKvA0aDdADB
- ycBndIpgNNal8hpBfITwbnex/3tSIfMPbDTAqGAYF+7hpGVHDeUid7TYDTP/zRPMhJnUZyvqa
- O64oik5J2GHx7LFG76ifpj2mKusGbpM/IFrZaAzlh/Z2FRtfpEWTRMD+BQx9121+qAG9xafr2
- mmp4s4PN9tWZ+j/V6x7A1KuaRrT4K/nLLifu4e32lgcsTX7RMeot4kbNpYK20o58+xt7GBBJk
- wuPZNGrEzfgHG8lYAFVigtxKUWR0bmtmyvuYR1TUJ4NCQw4AmGoBtsGxG4KSh1cegSDQcl24J
- ar5KMnQMRhWPl8S1IkYRPln1xHsxT6nSabqu0X6zW0ok+kxxsDLUw4QPmzUouhEvdTTlLOJeq
- ODAvLwPAmLnuJCyml4EwpBqA==
+Content-Type: text/plain
 
-> When iio_get_acpi_device_name_and_data() fails, the ddata may be left
-> uninitialised. Initialise it to NULL.
+On Fri, 01 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> The HDMI Connectors need to perform a variety of tasks when the HDMI
+> connector state changes. Such tasks include setting or invalidating CEC
+> address, notifying HDMI codec driver, updating scrambler data, etc.
+>
+> Implementing such tasks in a driver-specific callbacks is error prone.
+> Start implementing the generic helper function (currently handling only
+> the HDMI Codec framework) to be used by driver utilizing HDMI Connector
+> framework.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 56 +++++++++++++++++++++++++
+>  include/drm/display/drm_hdmi_state_helper.h     |  4 ++
+>  2 files changed, 60 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> index feb7a3a759811aed70c679be8704072093e2a79b..dc9d0cc162b2197dcbadda26686a9c5652e74107 100644
+> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> @@ -748,3 +748,59 @@ drm_atomic_helper_connector_hdmi_clear_audio_infoframe(struct drm_connector *con
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_clear_audio_infoframe);
+> +
+> +/**
+> + * __drm_atomic_helper_connector_hdmi_update_edid - Update the HDMI Connector basing on passed EDID
+> + * @connector: A pointer to the HDMI connector
+> + * @drm_edid: EDID to process
+> + *
+> + * This function should be called as a part of the .detect() / .detect_ctx()
+> + * and .force() callbacks, updating the HDMI-specific connector's data. The
+> + * function consumes passed EDID, there is no need to free it afterwards. Most
+> + * of the drivers should be able to use
+> + * @drm_atomic_helper_connector_hdmi_update() instead.
+> + *
+> + * Returns:
+> + * Zero on success, error code on failure.
+> + */
+> +int
+> +__drm_atomic_helper_connector_hdmi_update_edid(struct drm_connector *connector,
+> +					       const struct drm_edid *drm_edid)
+> +{
+> +	drm_edid_connector_update(connector, drm_edid);
+> +	drm_edid_free(drm_edid);
 
-Would you like to use the summary phrase =E2=80=9CAssign NULL to ddata in =
-ltr501_probe()=E2=80=9D accordingly?
+Not fond of splitting resource management responsibilities
+asymmetrically like this.
 
-Regards,
-Markus
+> +
+> +	if (!drm_edid) {
+> +		drm_connector_hdmi_codec_plugged_notify(connector, false);
+
+Is it a good idea to tie connection status to EDID presence at the
+helper level? Nearly the same, but still orthogonal.
+
+> +
+> +		// TODO: also handle CEC and scramber, HDMI sink disconnected.
+> +
+> +		return 0;
+> +	}
+> +
+> +	drm_connector_hdmi_codec_plugged_notify(connector, true);
+> +
+> +	// TODO: also handle CEC and scramber, HDMI sink is now connected.
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(__drm_atomic_helper_connector_hdmi_update_edid);
+
+Feels wrong to export and document double underscored functions to
+actually be used.
+
+> +
+> +/**
+> + * drm_atomic_helper_connector_hdmi_update - Update the HDMI Connector after reading the EDID
+> + * @connector: A pointer to the HDMI connector
+> + *
+> + * This function should be called as a part of the .detect() / .detect_ctx()
+> + * and .force() callbacks, updating the HDMI-specific connector's data.
+> + *
+> + * Returns:
+> + * Zero on success, error code on failure.
+> + */
+> +int
+> +drm_atomic_helper_connector_hdmi_update(struct drm_connector *connector)
+> +{
+> +	const struct drm_edid *drm_edid = drm_edid_read(connector);
+> +
+> +	return __drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
+> +}
+> +EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_update);
+> diff --git a/include/drm/display/drm_hdmi_state_helper.h b/include/drm/display/drm_hdmi_state_helper.h
+> index 2d45fcfa461985065a5e5ad67eddc0b1c556d526..ea0980aa25cbbfdd36f44201888c139b0ee943da 100644
+> --- a/include/drm/display/drm_hdmi_state_helper.h
+> +++ b/include/drm/display/drm_hdmi_state_helper.h
+> @@ -20,4 +20,8 @@ int drm_atomic_helper_connector_hdmi_clear_audio_infoframe(struct drm_connector
+>  int drm_atomic_helper_connector_hdmi_update_infoframes(struct drm_connector *connector,
+>  						       struct drm_atomic_state *state);
+>  
+> +int __drm_atomic_helper_connector_hdmi_update_edid(struct drm_connector *connector,
+> +						   const struct drm_edid *drm_edid);
+> +int drm_atomic_helper_connector_hdmi_update(struct drm_connector *connector);
+> +
+>  #endif // DRM_HDMI_STATE_HELPER_H_
+
+-- 
+Jani Nikula, Intel
 
