@@ -1,78 +1,280 @@
-Return-Path: <linux-kernel+bounces-392666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297589B96CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:50:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A469B96D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 18:51:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AFCF1C217AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:50:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF601F21A1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 17:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633221D27A0;
-	Fri,  1 Nov 2024 17:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787381CEADD;
+	Fri,  1 Nov 2024 17:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQ6ipWTl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wquSA1m3"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8671D1E97;
-	Fri,  1 Nov 2024 17:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBC41CDA14
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 17:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730483300; cv=none; b=AdEeSUm/HmbLsWB4Kfgs81AjYItXtMx7yYdIaUKgfhtgfHmtEXPh25TBhS14ka1QT6WhrKK+5hI/hH61jYUjV2B880Hkjl6RadwKWz2hzKyU9IBM2KAsDfdFeOAGB2qtt7s5ty+5LX3vydWqd14Ce2Fnorz4WFuLb2rYPbjaIUg=
+	t=1730483346; cv=none; b=ltqL33Fh/7Qzjg1xkWph4BWVAI95UQ51ODIBx/gCOmMfcjnN/q62Ks2EZmyZa2nT3tijdJPzlKvIU/NtNotkzODKRWsNVU9hQCv2+Ryh0gwtO7jpiYzDAFS+7onVjKbDuohbf0R56ySnraNo4/GzElA1O5/dNxyU9i5CAGLQm3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730483300; c=relaxed/simple;
-	bh=WniOhPJ/Sf9cY3REbzJg9niY52tLTRjUNROz16takEg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=G7cs+1/LmLsfojHKXAGU6MuWwaj5pf9azeHGYFLLZXKLc51gqU7P7s3/gVxo4xAMurwMSORSqvH+zKpGc9sy+p1AaDLhSGz5yjd4XooeWKAYb353Ac6CpGcBX5WqR10d588qtSFC/4q4qOnaLTyN+lY/CjGYhdYyfU/TX8yvP4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQ6ipWTl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C2B9C4CECD;
-	Fri,  1 Nov 2024 17:48:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730483300;
-	bh=WniOhPJ/Sf9cY3REbzJg9niY52tLTRjUNROz16takEg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=YQ6ipWTlxaJZbRoQd8xvHJX0xiW/ek6VfPwZqnJA7BW50bva7O4afCJZa6P/Lz6JZ
-	 BE1rZhULHQ0FV+s96zODgJhVKVZfBwfDL5NuGzNTs7DWKnVPrH3B/LnTmAvAT2wQbp
-	 Gw9Eg//sAlf2/Mrv88Jqtb6kRiF5XpmgxN9BVycROo56ECE+ovp2z5C3h3WrSuWDBo
-	 expJi2i61FbTZmlZ7Rd0DDqEVnTK7na8HbCO96mM7eHW2wminNdatWsSoXqa+6n6ic
-	 46Mi0XVLuVnXTM+akJ/fhnngR4AW2VZvSEamHkGAB7/qxVgChx8aXYv5zlx9tR38nq
-	 0noJvEo+iY9Sg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB6723AB8975;
-	Fri,  1 Nov 2024 17:48:29 +0000 (UTC)
-Subject: Re: [GIT PULL] Btrfs fixes for 6.12-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1730474495.git.dsterba@suse.com>
-References: <cover.1730474495.git.dsterba@suse.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cover.1730474495.git.dsterba@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.12-rc5-tag
-X-PR-Tracked-Commit-Id: 77b0d113eec49a7390ff1a08ca1923e89f5f86c6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6b4926494ed872803bb0b3c59440ac25c35c9869
-Message-Id: <173048330852.2762608.15110048937922260835.pr-tracker-bot@kernel.org>
-Date: Fri, 01 Nov 2024 17:48:28 +0000
-To: David Sterba <dsterba@suse.com>
-Cc: torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1730483346; c=relaxed/simple;
+	bh=MNq1vw75irUPKm3uNfACSw7+CS/AqwPLJNAX26gOUdA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Io1/+sbs0XKN7V4pDEYIyJPryAKkZwRvWxrSPeyo+IsddUdMm+/VXD3msvtRD/iS5s8vCjUcQUAXhzeuw0pFBbBxXnQge5DeUMP00FcPTDX/1nB1XdproCT2TJcwsdyYv18QuwPKXCmt+0YeD889LJ25TeN70+PQYgjsWmFDTcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wquSA1m3; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e1fbe2a6b1so42703107b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 10:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730483342; x=1731088142; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gHgmf8yOjF5FUpV4FRVUFTRzyvX9RwDhNCCPw1xBMs4=;
+        b=wquSA1m3FQnMwe2tm0Leg2NlVIC0xcrhrGH7Vx9wyAwrXHFLLWNGUOoDwZpTgXBWd4
+         ZQCey0VEayb540aESpB42atpWQM7Q0/4LGSer2GwZM5OJPLXHr4sO+0ICQ++T9YSt69K
+         u14vCc9ctNW8BhNG5taOpBmZUFfMVz2YgeA2GVPoTGM6A7swPmWkJl1Nywd4RLUpVy4Z
+         6TU28JWkMsu/LNuEnoTJ/D++FRGbSLX8TZ8hkLiN4h716sCJm70le2kbypmw5Md/weL2
+         kXmIDbYfC5DtoLl6nMIoUPwySiBjcoZx+P1QCcGy1FbzBuAYGIjeQgCqBtukKD6oEq8M
+         iHtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730483342; x=1731088142;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gHgmf8yOjF5FUpV4FRVUFTRzyvX9RwDhNCCPw1xBMs4=;
+        b=q8iDxm7nQ8uIuYctkgaONQku8ihkdZVE7W/linsTF0+X4aTT4Ji1KPdF06UDfS4mrh
+         1GCpyOJ5tpdon3AuDOuQANE1nm193y5N9P2rbqEzd4YrnPiLI2axoCxsXHsEGLphzGC3
+         GOzIKcLIJ5L+aJy6/IUvdRChZBrFa8CLpDtmBXaf6KfMMmjIqi7vuX4VYjphTXIfVwv1
+         GbmbP3LQ1fe54aXAsbnnyS/24QCwO28768yLNyE0DQjB3ak6mmxguAqJTF0DJTTbxxVe
+         3d3TkVVdJsidNef65UyT31NmNXdVcPf++BOy6nT8fEvXCbK9uJc4EwqwW7C0ObozGLr5
+         BP7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVJvPGaVe6UQYaOh9gH5VzuvxEGTvAnFah5JxGyRa01lcT0v7Y0gUwJAyGWu2of+PIVc4Dq/lLjNSrWh/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx74XGbJ3j032tVhRdl071eiZUD8ayoeEVSAag/xGP05/Uk4qAZ
+	Qa+BGdJC4G4rblbKE4d8nLDz+Fhx55nNKge3rLwJn+LD/+j9X8epYSl7Ow7PV6Xe9TVScbIugr9
+	fBFId0GKmPAX3uQ==
+X-Google-Smtp-Source: AGHT+IFWPK+8jTuj/8ARDH3sf8FN30h0/V8rLUflMtASKVnWhKOAN7Kh3zxgZ8xlx5S/14HS0km2yhZx9K25O6M=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:690c:11:b0:6ea:6872:2fe6 with SMTP
+ id 00721157ae682-6ea68723031mr394537b3.4.1730483342526; Fri, 01 Nov 2024
+ 10:49:02 -0700 (PDT)
+Date: Fri,  1 Nov 2024 17:48:55 +0000
+In-Reply-To: <CAH5fLgi+JJHCA_XTPC0-kaacZC6=aGSa-+DiNt06GSJNFhKc3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <CAH5fLgi+JJHCA_XTPC0-kaacZC6=aGSa-+DiNt06GSJNFhKc3w@mail.gmail.com>
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6173; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=MNq1vw75irUPKm3uNfACSw7+CS/AqwPLJNAX26gOUdA=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnJRPMV3tqElTC1f/7fwxC0jgj8Zy8AsmPI1zej
+ DVXmJgV0CGJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZyUTzAAKCRAEWL7uWMY5
+ Rpo8EACsKxwatzXsgHlXD2b0a7MaqQ6ns6T6StjlDf6f63OfgZZnw4tUY4YNg6ElS2XrbNKeAJ1
+ sioGi2vpjVjqCo//I15Z8xocXpodOWyVM9bYCEpDpBpwPJdLJ1JOSdNhb828HNveMyaqw+Mf423
+ ldmO1IZukag99HulYyHtHubkrPhg0hXRjNayCmjc2VYQEC/4IgnoA9RCA/hYz7upEZIZ1ABxOhu
+ 9cLFZdcp9rn1xi4P3OZGIiuu/KZQCSujQgFjt8JQKdHecRgadg4pQJM2BzzEQLtiP9jPdxYCxgn
+ 9/a3pbVATU/60V+ydh+KfywrADoidyA6oYG0+kyEvNmhd8QSMe9NBMy6H5cExAhdjP9Vzqf4r0H
+ 9b8hY20KG1Ip2+Ijgm6af/aEdFeHe5fqpJjNzJWrkdsfh5vv2d/yAF49I9n8YDasP6SM4X+YaOq
+ lveI93/OeXCmqdWVybDnU5eiaYkD/MY19lWZI7Ny+8p1lkxnO/0TxDKEhsrqnFukQ7Hw36B4iQN
+ sr0nXxARPd9XY9YXrD5a2lOvhoJ5FPcyQz4k+Gz3BxKvsveqXi78s9H2JlVhJ86M8JwH7yPE9g4
+ OhuW6ZRUmFOWv6aP91wtE1BsUrrizIulcINpeQmN+mjRw0UNxCJcQWHgVCuP985UuKCKfvfJiIb zBBSv8zpG3oqvEg==
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241101-lsm-secctx-v1@google.com>
+Subject: [PATCH] rust: security: add abstraction for secctx
+From: Alice Ryhl <aliceryhl@google.com>
+To: paul@paul-moore.com, ojeda@kernel.org, brauner@kernel.org
+Cc: anders.roxell@linaro.org, arnd@arndb.de, dan.carpenter@linaro.org, 
+	kees@kernel.org, naresh.kamboju@linaro.org, casey@schaufler-ca.com, 
+	linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, 
+	regressions@lists.linux.dev, rust-for-linux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, lkft@linaro.org, 
+	benno.lossin@proton.me, yakoyoku@gmail.com, tmgross@umich.edu, 
+	gary@garyguo.net, aliceryhl@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-The pull request you sent on Fri,  1 Nov 2024 16:33:19 +0100:
+Add an abstraction for viewing the string representation of a security
+context.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.12-rc5-tag
+This is needed by Rust Binder because it has a feature where a process
+can view the string representation of the security context for incoming
+transactions. The process can use that to authenticate incoming
+transactions, and since the feature is provided by the kernel, the
+process can trust that the security context is legitimate.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6b4926494ed872803bb0b3c59440ac25c35c9869
+This abstraction makes the following assumptions about the C side:
+* When a call to `security_secid_to_secctx` is successful, it returns an
+  lsm context containing a pointer and length. The pointer references a
+  byte string and is valid for reading for that many bytes.
+* The string may be referenced until `security_release_secctx` is
+  called.
+* If CONFIG_SECURITY is set, then the three methods mentioned in
+  rust/helpers are available without a helper. (That is, they are not a
+  #define or `static inline`.)
 
-Thank you!
+This patch had to be modified after its first landing due to some
+conflicts with other changes. Please see [1] for details.
 
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
+Reviewed-by: Gary Guo <gary@garyguo.net>
+Reviewed-by: Kees Cook <kees@kernel.org>
+Link: https://lore.kernel.org/r/20241101095620.2526421-1-aliceryhl@google.com [1]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ rust/bindings/bindings_helper.h |  1 +
+ rust/helpers/helpers.c          |  1 +
+ rust/helpers/security.c         | 15 +++++++
+ rust/kernel/lib.rs              |  1 +
+ rust/kernel/security.rs         | 70 +++++++++++++++++++++++++++++++++
+ 5 files changed, 88 insertions(+)
+ create mode 100644 rust/helpers/security.c
+ create mode 100644 rust/kernel/security.rs
+
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index ae82e9c941af..3f3c39f9a83b 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -18,6 +18,7 @@
+ #include <linux/phy.h>
+ #include <linux/refcount.h>
+ #include <linux/sched.h>
++#include <linux/security.h>
+ #include <linux/slab.h>
+ #include <linux/wait.h>
+ #include <linux/workqueue.h>
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index 30f40149f3a9..36a0c833e7b4 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -17,6 +17,7 @@
+ #include "page.c"
+ #include "rbtree.c"
+ #include "refcount.c"
++#include "security.c"
+ #include "signal.c"
+ #include "slab.c"
+ #include "spinlock.c"
+diff --git a/rust/helpers/security.c b/rust/helpers/security.c
+new file mode 100644
+index 000000000000..f6deb0b28b48
+--- /dev/null
++++ b/rust/helpers/security.c
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/security.h>
++
++#ifndef CONFIG_SECURITY
++int rust_helper_security_secid_to_secctx(u32 secid, struct lsm_context *cp)
++{
++	return security_secid_to_secctx(secid, cp);
++}
++
++void rust_helper_security_release_secctx(struct lsm_context *cp)
++{
++	security_release_secctx(cp);
++}
++#endif
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 22a3bfa5a9e9..a71dc73a0d9d 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -46,6 +46,7 @@
+ pub mod print;
+ pub mod sizes;
+ pub mod rbtree;
++pub mod security;
+ mod static_assert;
+ #[doc(hidden)]
+ pub mod std_vendor;
+diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
+new file mode 100644
+index 000000000000..25d2b1ac3833
+--- /dev/null
++++ b/rust/kernel/security.rs
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: GPL-2.0
++
++// Copyright (C) 2024 Google LLC.
++
++//! Linux Security Modules (LSM).
++//!
++//! C header: [`include/linux/security.h`](srctree/include/linux/security.h).
++
++use crate::{
++    bindings,
++    error::{to_result, Result},
++};
++
++/// A security context string.
++///
++/// # Invariants
++///
++/// The `ctx` field corresponds to a valid security context as returned by a successful call to
++/// `security_secid_to_secctx`, that has not yet been destroyed by `security_release_secctx`.
++pub struct SecurityCtx {
++    ctx: bindings::lsm_context,
++}
++
++impl SecurityCtx {
++    /// Get the security context given its id.
++    pub fn from_secid(secid: u32) -> Result<Self> {
++        // SAFETY: `struct lsm_context` can be initialized to all zeros.
++        let mut ctx: bindings::lsm_context = unsafe { core::mem::zeroed() };
++
++        // SAFETY: Just a C FFI call. The pointer is valid for writes.
++        to_result(unsafe { bindings::security_secid_to_secctx(secid, &mut ctx) })?;
++
++        // INVARIANT: If the above call did not fail, then we have a valid security context.
++        Ok(Self { ctx })
++    }
++
++    /// Returns whether the security context is empty.
++    pub fn is_empty(&self) -> bool {
++        self.ctx.len == 0
++    }
++
++    /// Returns the length of this security context.
++    pub fn len(&self) -> usize {
++        self.ctx.len as usize
++    }
++
++    /// Returns the bytes for this security context.
++    pub fn as_bytes(&self) -> &[u8] {
++        let ptr = self.ctx.context;
++        if ptr.is_null() {
++            debug_assert_eq!(self.len(), 0);
++            // We can't pass a null pointer to `slice::from_raw_parts` even if the length is zero.
++            return &[];
++        }
++
++        // SAFETY: The call to `security_secid_to_secctx` guarantees that the pointer is valid for
++        // `self.len()` bytes. Furthermore, if the length is zero, then we have ensured that the
++        // pointer is not null.
++        unsafe { core::slice::from_raw_parts(ptr.cast(), self.len()) }
++    }
++}
++
++impl Drop for SecurityCtx {
++    fn drop(&mut self) {
++        // SAFETY: By the invariant of `Self`, this frees a context that came from a successful
++        // call to `security_secid_to_secctx` and has not yet been destroyed by
++        // `security_release_secctx`.
++        unsafe { bindings::security_release_secctx(&mut self.ctx) };
++    }
++}
+
+base-commit: 1008010aafe7b1e06974b8b1bf29b052fcf87f92
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.47.0.199.ga7371fff76-goog
+
 
