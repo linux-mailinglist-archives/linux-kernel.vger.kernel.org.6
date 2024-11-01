@@ -1,130 +1,206 @@
-Return-Path: <linux-kernel+bounces-392962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AE69B9A27
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:24:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66BBE9B9A2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 22:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C144B22326
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E4B281028
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284F61E2848;
-	Fri,  1 Nov 2024 21:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939321E32CC;
+	Fri,  1 Nov 2024 21:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q3qUshRB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R9cpcemk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9+AHDrb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947441E767B;
-	Fri,  1 Nov 2024 21:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEA01E282A;
+	Fri,  1 Nov 2024 21:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730496263; cv=none; b=bVTWhsxJin2+TjtHItw39T9VhnXN9lhxF1Oo5r0t395Cx+vB7C9ZtgtBSXel0S6BVVva5hgSfxsiQGGM0o/LGZ/gc6n90jaLKV7zuk7smBtckAMFpg6az0//blBoDUn/2uHEJT00UuH4/vS6W1DyfmWfbrvJQGVlRskRCzOqAIk=
+	t=1730496302; cv=none; b=ErFPbORJnUEbIb/Z3caTLYzpwk44IlDdu61YSMx09C2vYoB6RXgk/901E4Aqj5Ix8C4KuyR+hAAoSGp+XrlTtEzt7rKtnuLHgQ3pKfcIfv0ScNbBVQ2Z07LydZnkpUP4VHgDywUG7DtKM3Zbfwiby5IZ1N/7AMA10ePzjwxch/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730496263; c=relaxed/simple;
-	bh=xoMprPQaSSKMWgdHWx48W6aOHF+TNGJmi79Tqneg2ho=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=eWcf9H5q/2KwVFpye2HJnHP0geXe6XPc+T/lG7MT9PWorJPGarpd9JyIEpPdeKPBqIqsUCqpMHhYXE1GHN+QnSZPCEUisuW8B/0jcxMddJH+SlCHCLj8RLPR1QeiOZfqfblm7O2UoFqHBRZ4xvnlkK6kHLU7iQU7sVWO9WUVFy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q3qUshRB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R9cpcemk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 01 Nov 2024 21:24:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730496259;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+r13MujLqSNEjcH1bpKNUfcUzgeLbw8f72uOt9h3fzg=;
-	b=q3qUshRBX7ub4NCgSAWUvkyNTph7KLam2erOZqdr+oUzWcilS8GniOs3KYdXZ0EzbYmyJq
-	tDg4u7XGp5MZxqYxdHQmj5YkvPcMhVSq0UsBhRVtPGdrilxDblvNqhsVf6jlRJ3piBqLwH
-	L5dgIOwpbxc+3W62hYgzYF2LezMPlE6r7Q/435K8so1UNDvO00x3E5yWRWr0eWrI/Tel2R
-	8andt0QKmaU0qG7sb7cUqthXB6ADC+18R6ot6IV2LW2aH/qXBfjbz35pXZmyAhbTaM+usg
-	G+ZDefWqjh7Gv4M6LYoEco32LnSz3/DT3SZ6SzP+e3QA4Vhnwk8niq+YEAfEDw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730496259;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+r13MujLqSNEjcH1bpKNUfcUzgeLbw8f72uOt9h3fzg=;
-	b=R9cpcemkEwzzZmg523tuYKj/+qjor+W+oKI5oxP6t62srJg90qSu6L/i3uNISIbbA452B1
-	nFBgfQz9Muk3UJCw==
-From: "tip-bot2 for Nathan Chancellor" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/mips-gic: Fix selection of
- GENERIC_IRQ_EFFECTIVE_AFF_MASK
-Cc: Nathan Chancellor <nathan@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: =?utf-8?q?=3C20241101-mips-fix-generic=5Firq=5Feffective=5Faf?=
- =?utf-8?q?f=5Fmask-select-v1-1-d94db6e0de0d=40kernel=2Eorg=3E?=
-References: =?utf-8?q?=3C20241101-mips-fix-generic=5Firq=5Feffective=5Faff?=
- =?utf-8?q?=5Fmask-select-v1-1-d94db6e0de0d=40kernel=2Eorg=3E?=
+	s=arc-20240116; t=1730496302; c=relaxed/simple;
+	bh=Qe4XvEAZM9xKaxt/DCYUEtueSQuxX7qKGNYJMTtf8nA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=iVoEMxkcKTCKCj2n4iC2YmCMCSt9p7F31IRLkpiwXsUKnpAMb2pMRmIX2rz3iWVeYbHPcxfZFtkoZjHUbiPO4vMQM/BPDqNuJsSIpCNjIilHOd0e9+J3nZnD2Ezl1wk7NSt8mjke9AiDLqOOfk0Z76/7rdYjDA1FZb9uhYeWed8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9+AHDrb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF173C4CECD;
+	Fri,  1 Nov 2024 21:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730496302;
+	bh=Qe4XvEAZM9xKaxt/DCYUEtueSQuxX7qKGNYJMTtf8nA=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=A9+AHDrb7iEc06JOVyhKzUj3EhlyVYGIczbHYRs20n6DAC2LLbzD+qH+ADIa+OKIx
+	 1Sz6o023/Cg4+L9/IHKf98EkKhyA63vqlHbffpdA9xEQ3HMbxybTi3E+IG22+w/JM4
+	 2k1zUZO31oYc5XJqwkicZwsyBBWQXE7ImyjCvEcu6pfzwupQ6erFBVXhKlT9fmqkUT
+	 odjQJcF4KyRkdeOyvPvOSLyDjVSHMALfnia8ncVjpnNYg/og4d8elfFNoIj/jux5iM
+	 SW+D5P9sLrzk28SzvIkGZp75vqzEQlvRUhmztGhyH95yFNVC+ZcpUxl18XfnerPd/S
+	 /5W+faBwPQQQQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <173049625781.3137.14071140647196208757.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Nov 2024 23:24:58 +0200
+Message-Id: <D5B5QOI1GA38.26CWPZMPXP6S9@kernel.org>
+Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
+ <stable@vger.kernel.org>, "Mike Seo" <mikeseohyungjin@gmail.com>, "open
+ list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>, "open list"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] tpm: Lock TPM chip in tpm_pm_suspend() first
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jerry Snitselaar" <jsnitsel@redhat.com>
+X-Mailer: aerc 0.18.2
+References: <20241101002157.645874-1-jarkko@kernel.org>
+ <ke4tjq5p43g7z3dy4wowagwsf6tzfhecexkdmgkizvqu6n5tvl@op3zhjmplntw>
+ <D5B5D47GLWWS.119EDSKMMGFVF@kernel.org>
+ <7pc2uu52wamyvhzfc27qnws546yxt33utfibtsjd7uv2djfxdt@jlyn3n55qkfx>
+In-Reply-To: <7pc2uu52wamyvhzfc27qnws546yxt33utfibtsjd7uv2djfxdt@jlyn3n55qkfx>
 
-The following commit has been merged into the irq/core branch of tip:
+On Fri Nov 1, 2024 at 11:09 PM EET, Jerry Snitselaar wrote:
+> On Fri, Nov 01, 2024 at 11:07:15PM +0200, Jarkko Sakkinen wrote:
+> > On Fri Nov 1, 2024 at 10:23 PM EET, Jerry Snitselaar wrote:
+> > > On Fri, Nov 01, 2024 at 02:21:56AM +0200, Jarkko Sakkinen wrote:
+> > > > Setting TPM_CHIP_FLAG_SUSPENDED in the end of tpm_pm_suspend() can =
+be racy
+> > > > according, as this leaves window for tpm_hwrng_read() to be called =
+while
+> > > > the operation is in progress. The recent bug report gives also evid=
+ence of
+> > > > this behaviour.
+> > > >=20
+> > > > Aadress this by locking the TPM chip before checking any chip->flag=
+s both
+> > > > in tpm_pm_suspend() and tpm_hwrng_read(). Move TPM_CHIP_FLAG_SUSPEN=
+DED
+> > > > check inside tpm_get_random() so that it will be always checked onl=
+y when
+> > > > the lock is reserved.
+> > > >=20
+> > > > Cc: stable@vger.kernel.org # v6.4+
+> > > > Fixes: 99d464506255 ("tpm: Prevent hwrng from activating during res=
+ume")
+> > > > Reported-by: Mike Seo <mikeseohyungjin@gmail.com>
+> > > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219383
+> > > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > > > ---
+> > > > v3:
+> > > > - Check TPM_CHIP_FLAG_SUSPENDED inside tpm_get_random() so that it =
+is
+> > > >   also done under the lock (suggested by Jerry Snitselaar).
+> > > > v2:
+> > > > - Addressed my own remark:
+> > > >   https://lore.kernel.org/linux-integrity/D59JAI6RR2CD.G5E5T4ZCZ49W=
+@kernel.org/
+> > > > ---
+> > > >  drivers/char/tpm/tpm-chip.c      |  4 ----
+> > > >  drivers/char/tpm/tpm-interface.c | 32 ++++++++++++++++++++++------=
+----
+> > > >  2 files changed, 22 insertions(+), 14 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chi=
+p.c
+> > > > index 1ff99a7091bb..7df7abaf3e52 100644
+> > > > --- a/drivers/char/tpm/tpm-chip.c
+> > > > +++ b/drivers/char/tpm/tpm-chip.c
+> > > > @@ -525,10 +525,6 @@ static int tpm_hwrng_read(struct hwrng *rng, v=
+oid *data, size_t max, bool wait)
+> > > >  {
+> > > >  	struct tpm_chip *chip =3D container_of(rng, struct tpm_chip, hwrn=
+g);
+> > > > =20
+> > > > -	/* Give back zero bytes, as TPM chip has not yet fully resumed: *=
+/
+> > > > -	if (chip->flags & TPM_CHIP_FLAG_SUSPENDED)
+> > > > -		return 0;
+> > > > -
+> > > >  	return tpm_get_random(chip, data, max);
+> > > >  }
+> > > > =20
+> > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tp=
+m-interface.c
+> > > > index 8134f002b121..b1daa0d7b341 100644
+> > > > --- a/drivers/char/tpm/tpm-interface.c
+> > > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > > @@ -370,6 +370,13 @@ int tpm_pm_suspend(struct device *dev)
+> > > >  	if (!chip)
+> > > >  		return -ENODEV;
+> > > > =20
+> > > > +	rc =3D tpm_try_get_ops(chip);
+> > > > +	if (rc) {
+> > > > +		/* Can be safely set out of locks, as no action cannot race: */
+> > > > +		chip->flags |=3D TPM_CHIP_FLAG_SUSPENDED;
+> > > > +		goto out;
+> > > > +	}
+> > > > +
+> > > >  	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
+> > > >  		goto suspended;
+> > > > =20
+> > > > @@ -377,21 +384,19 @@ int tpm_pm_suspend(struct device *dev)
+> > > >  	    !pm_suspend_via_firmware())
+> > > >  		goto suspended;
+> > > > =20
+> > > > -	rc =3D tpm_try_get_ops(chip);
+> > > > -	if (!rc) {
+> > > > -		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> > > > -			tpm2_end_auth_session(chip);
+> > > > -			tpm2_shutdown(chip, TPM2_SU_STATE);
+> > > > -		} else {
+> > > > -			rc =3D tpm1_pm_suspend(chip, tpm_suspend_pcr);
+> > > > -		}
+> > > > -
+> > > > -		tpm_put_ops(chip);
+> > > > +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> > > > +		tpm2_end_auth_session(chip);
+> > > > +		tpm2_shutdown(chip, TPM2_SU_STATE);
+> > > > +		goto suspended;
+> > > >  	}
+> > > > =20
+> > > > +	rc =3D tpm1_pm_suspend(chip, tpm_suspend_pcr);
+> > > > +
+> > >
+> > >
+> > > I imagine the above still be wrapped in an else with the if (chip->fl=
+ags & TPM_CHIP_FLAG_TPM2)
+> > > otherwise it will call tpm1_pm_suspend for both tpm1 and tpm2 devices=
+, yes?
+> > >
+> > > So:
+> > >
+> > > 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> > > 		tpm2_end_auth_session(chip);
+> > > 		tpm2_shutdown(chip, TPM2_SU_STATE);
+> > > 		goto suspended;
+> > > 	} else {
+> > > 		rc =3D tpm1_pm_suspend(chip, tpm_suspend_pcr);
+> > > 	}
+> > >
+> > >
+> > > Other than that I think it looks good.
+> >=20
+> > It should be fine because after tpm2_shutdown() is called there is "got=
+o
+> > suspended;". This is IMHO more readable as it matches the structure of
+> > previous exits before it. In future if this needs to be improved it wil=
+l
+> > easier to move the logic to a helper function (e.g. __tpm_pm_suspend())
+> > where gotos are substituted with return-statements.
+> >=20
+> > BR, Jarkko
+> >=20
+>
+> Heh, yep.
+>
+> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
-Commit-ID:     0053892ff7d4bab5efdb4def0fd211ec36e26f69
-Gitweb:        https://git.kernel.org/tip/0053892ff7d4bab5efdb4def0fd211ec36e26f69
-Author:        Nathan Chancellor <nathan@kernel.org>
-AuthorDate:    Fri, 01 Nov 2024 09:33:05 -07:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 01 Nov 2024 22:15:56 +01:00
+Thanks!
 
-irqchip/mips-gic: Fix selection of GENERIC_IRQ_EFFECTIVE_AFF_MASK
-
-Without SMP enabled (such as in allnoconfig), there is a Kconfig warning
-because CONFIG_IRQ_EFFECTIVE_AFF_MASK is unconditionally selected by
-CONFIG_MIPS_GIC:
-
-  WARNING: unmet direct dependencies detected for GENERIC_IRQ_EFFECTIVE_AFF_MASK
-    Depends on [n]: SMP [=n]
-    Selected by [y]:
-    - MIPS_GIC [=y]
-
-Add a dependency on SMP to the selection, which matches all other
-selections of CONFIG_IRQ_EFFECTIVE_AFF_MASK.
-
-Fixes: 322a90638768 ("irqchip/mips-gic: Multi-cluster support")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241101-mips-fix-generic_irq_effective_aff_mask-select-v1-1-d94db6e0de0d@kernel.org
-
----
- drivers/irqchip/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index f20adf7..ef0fa69 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -352,7 +352,7 @@ config KEYSTONE_IRQ
- 
- config MIPS_GIC
- 	bool
--	select GENERIC_IRQ_EFFECTIVE_AFF_MASK
-+	select GENERIC_IRQ_EFFECTIVE_AFF_MASK if SMP
- 	select GENERIC_IRQ_IPI if SMP
- 	select IRQ_DOMAIN_HIERARCHY
- 	select MIPS_CM
+BR, Jarkko
 
