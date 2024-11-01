@@ -1,62 +1,65 @@
-Return-Path: <linux-kernel+bounces-391574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778929B88D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:46:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F279B88DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:47:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C1EE281613
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E9311C21204
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D950113C9A2;
-	Fri,  1 Nov 2024 01:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QC+9AZwb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF6417BCE;
-	Fri,  1 Nov 2024 01:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E21673451;
+	Fri,  1 Nov 2024 01:47:26 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9122ADDAD;
+	Fri,  1 Nov 2024 01:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730425530; cv=none; b=k5Vr8+ymdu/UelUUYGVJwFLrWZeaVn9AUjVjMjjwp3WpSVZ4ReDRwsYKlkluZislINOlNVYXmHHNU5H+/Q+bLitqHptCcS4/H68694h32qBLrrXVJrzWC0Yt2L7uxzTn6mOreCDt6PQ5THPs+1Tvst9SiPnfg/umxQ1T3N1VGI8=
+	t=1730425646; cv=none; b=CU7iWAqIoU+fxG042asSXo9ckXvLHyUUwjvojD1WXTkfg6RbRmecZpsSLltIsJUJb42jzei3t5oM1nT5kUSHtqS9MM3satILlgC5+LDUVk+Uo8vePzlkgKRd6fuJv+b2sIjihz8lT7+OEX4MzDMncou1QIc2zHdsaeJXb+etyW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730425530; c=relaxed/simple;
-	bh=E1Wz2vDPGlaoUMwJuJtoBhWk54UVNXhpWTv/Df1jYpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RC/WdFYfySqFRX40Esxbs8tzwN+9kpldRMb60W6r4lZA1sdiVoMzVy6VeNqGpR2bW2T5oIDJkrMvXveahkSqDc/uICsAMXGRKCoC4cmY6fOBSS5ZCJyaSAAOf8la1k2m+Yzgv8H44+8yTksOfs0lhGYdVkXWoQK8OMN+GjSeffE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QC+9AZwb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9C6EC4CEC3;
-	Fri,  1 Nov 2024 01:45:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730425529;
-	bh=E1Wz2vDPGlaoUMwJuJtoBhWk54UVNXhpWTv/Df1jYpQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QC+9AZwbEoycb1O6H/6hpggvAevIgROpqBYD4sUBm85RlSKftfaf8o5RaY7lhNUjl
-	 5lHQAqMjQ/q7wC5Ijc+wRZa5l5OnHGApFWjFCSVvPB5VLIYWzE+smuK4F77WrfwnsS
-	 cp5ci91911Hitto4Jq5RnsS8QpVfeCxD/7o2S3mlPSu0hFrUk6mLG13GIaTDTsdPos
-	 7ZA9DfnNYJ2Y7HNJ80mga1XD+kK/Zpit+XlQvKAp3nD7G4aFwqeYk6tMJOFrzlQKon
-	 Dp9dmw4f4OuR93+xXjcrR3s4eqv4TNo5KQuNZ/e7khOgEEW0SEvbr9NkTfwIN5m1eq
-	 Kkfa1gZMeUvKQ==
-Date: Thu, 31 Oct 2024 18:45:27 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <andrew+netdev@lunn.ch>, <horms@kernel.org>, <shenjian15@huawei.com>,
- <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
- <chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
- <shiyongbang@huawei.com>, <libaihan@huawei.com>,
- <jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
- <salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 net-next 1/8] net: hibmcge: Add dump statistics
- supported in this module
-Message-ID: <20241031184527.1d6afe84@kernel.org>
-In-Reply-To: <20241026115740.633503-2-shaojijie@huawei.com>
-References: <20241026115740.633503-1-shaojijie@huawei.com>
-	<20241026115740.633503-2-shaojijie@huawei.com>
+	s=arc-20240116; t=1730425646; c=relaxed/simple;
+	bh=sXZCbRbeFr64bWTbo4bDXx21yjrRFDO5DVEu8ooKcUI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=aHu54tKVXbsyiZm+ix4gCNWyk5gmMHlzdK645uTmSmbaVztHiTHz4VohjH3pnDXOm0FwW6eF1vt/DSk3ZH7dMIFC1o8br9zNi8uy3VlDTGPcbfNkldG/VFlIco6xl8FMrzp63p8b8NEx1WO5AA0MPfb+4xlvZj57EPD8dCJqqI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id CF8C992009C; Fri,  1 Nov 2024 02:47:17 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id C827A92009B;
+	Fri,  1 Nov 2024 01:47:17 +0000 (GMT)
+Date: Fri, 1 Nov 2024 01:47:17 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+cc: Aleksandar Rikalo <arikalo@gmail.com>, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+    Conor Dooley <conor+dt@kernel.org>, 
+    Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+    Gregory CLEMENT <gregory.clement@bootlin.com>, 
+    Theo Lebrun <theo.lebrun@bootlin.com>, Arnd Bergmann <arnd@arndb.de>, 
+    devicetree@vger.kernel.org, 
+    Djordje Todorovic <djordje.todorovic@htecgroup.com>, 
+    Chao-ying Fu <cfu@wavecomp.com>, 
+    Daniel Lezcano <daniel.lezcano@linaro.org>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@kernel.org>, 
+    Hauke Mehrtens <hauke@hauke-m.de>, 
+    Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>, linux-kernel@vger.kernel.org, 
+    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+    Marc Zyngier <maz@kernel.org>, 
+    "paulburton@kernel.org" <paulburton@kernel.org>, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Serge Semin <fancer.lancer@gmail.com>, 
+    Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: Re: [PATCH v8 00/13] MIPS: Support I6500 multi-cluster
+ configuration
+In-Reply-To: <c7d5a4e9-f080-46dd-9b96-07eb08d361f4@app.fastmail.com>
+Message-ID: <alpine.DEB.2.21.2411010146340.40463@angie.orcam.me.uk>
+References: <20241028175935.51250-1-arikalo@gmail.com> <c7d5a4e9-f080-46dd-9b96-07eb08d361f4@app.fastmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,28 +67,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Sat, 26 Oct 2024 19:57:33 +0800 Jijie Shao wrote:
-> +	HBG_STATS_REG_I(rx_framesize_64, HBG_REG_RX_PKTS_64OCTETS_ADDR),
-> +	HBG_STATS_REG_I(rx_framesize_65_127,
-> +			HBG_REG_RX_PKTS_65TO127OCTETS_ADDR),
-> +	HBG_STATS_REG_I(rx_framesize_128_255,
-> +			HBG_REG_RX_PKTS_128TO255OCTETS_ADDR),
-> +	HBG_STATS_REG_I(rx_framesize_256_511,
-> +			HBG_REG_RX_PKTS_256TO511OCTETS_ADDR),
-> +	HBG_STATS_REG_I(rx_framesize_512_1023,
-> +			HBG_REG_RX_PKTS_512TO1023OCTETS_ADDR),
-> +	HBG_STATS_REG_I(rx_framesize_1024_1518,
-> +			HBG_REG_RX_PKTS_1024TO1518OCTETS_ADDR),
-> +	HBG_STATS_REG_I(rx_framesize_bt_1518,
-> +			HBG_REG_RX_PKTS_1519TOMAXOCTETS_ADDR),
-> +	HBG_STATS_REG_I(rx_fcs_error_cnt, HBG_REG_RX_FCS_ERRORS_ADDR),
-> +	HBG_STATS_REG_I(rx_data_error_cnt, HBG_REG_RX_DATA_ERR_ADDR),
-> +	HBG_STATS_REG_I(rx_align_error_cnt, HBG_REG_RX_ALIGN_ERRORS_ADDR),
-> +	HBG_STATS_REG_I(rx_frame_long_err_cnt, HBG_REG_RX_LONG_ERRORS_ADDR),
+On Wed, 30 Oct 2024, Jiaxun Yang wrote:
 
-Please do not dump in ethtool statistics which can be accessed via
-standard APIs like ethtool -I, queue_stats or rtnl_stat.
-https://docs.kernel.org/next/networking/statistics.html
+> Reviewd-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+
+ Typo here.
+
+  Maciej
 
