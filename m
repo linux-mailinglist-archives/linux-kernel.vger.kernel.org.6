@@ -1,168 +1,89 @@
-Return-Path: <linux-kernel+bounces-392866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49589B9908
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:53:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874B89B990B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:54:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B271282D61
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:53:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B93A31C2129D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 19:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EDB1D7E52;
-	Fri,  1 Nov 2024 19:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cXMnX946"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498DA1D1F50;
+	Fri,  1 Nov 2024 19:54:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0691D3627
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8CB1D0B8B
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 19:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730490776; cv=none; b=q8M2qLJBcpgrnPFOvpBkSlEmOJzlM4PQ9RUDqRLm7NTvWPCUrwzXzvKulH1gDrRKlbWbhXbsOb+KB0a95iIwrFnKS9nOqA9wvoGDJYk76bqA6DQAiM2I+eTI4ZezgT20bDdqCxwriFbd4lBfcnEGBhJf63Oy2o5IJRkCekGkT+E=
+	t=1730490844; cv=none; b=DRsbpjLeYaeQD+7yKoZG2k/kMMCP/2RBDN/rmwluyXgiykiklcnS0gRd+Vn89V/cx1Ng4hN/vjwuCLSMEEviZmCjc/FmN7dEVnX3a+I5wy/3kJZKBTa4hr7NcQ38GPlNUP7JBuW4vyBfPA8YTaS0GZpVX8GwaRVrxB9Mbnw3Pyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730490776; c=relaxed/simple;
-	bh=1fQRD6HlseoWDCYFnVt7JdBQcw7mXEZmvqF4gDLC8Bs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eBz6ko3S8H4+LlNyuzQjvS1YOuXMTcH+rYa7yBiooyEpBY2DKYcvgVn/8CjxRnQM4BUZpMawtx0+TgGLFAWUb3bJBz1DTCNCDwZZbwYWaqcIC8LEKOGtKqr1SQlM/5NKfZJaJ2kHA4q6/pJyoquvZo4NIL9jYsQDEmJko02Zhr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cXMnX946; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e60d3adecbso1222928b6e.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:52:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730490773; x=1731095573; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1Y5RFN1Yg682nc4388GjuL13yMU/0zuz4gK5UIWaEMc=;
-        b=cXMnX9468zQDiWCCuEovtrMO+km8qV34ZuY5GdoHJ5YXV6ouhD1OfGecHhvzS/uw4K
-         iVF7ds2Z740xyVKQMO94iJ0gmo+Vy91SmHzZGdpJ+bUogQLH63mzZ+5fPcgr1jbADTt4
-         2OoEboeQ4uJFUnc2x2MGF1gfGQWwalfqLRyIxWM6TBVn+0nJBvXT8bp02+5Iq/85NCT8
-         oiMgMjEX3eeMIg5WMCS4wzKFvsQdlelPLSV76DfcXub3SVxo42LrLaTxx/ZCZDqG9OUa
-         1LNE8uP15Q4iG1j5NgAWjWLPY68cv9lRcICHenNevoTh2+IICWW3SFUm4dh2ygFNFc1A
-         43Yw==
+	s=arc-20240116; t=1730490844; c=relaxed/simple;
+	bh=8T08c4ViHxdRdt04IB93lbUJebJH1g6DSv3KJeWcAP4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JR05ikmbdrrDX2cIzIDJ45MJ5wEvdUCC6YtmZiIYUFSN0ovTrgU1jQ5KNOrU+GbSY5ZIFJhHbqgikb6epVRyr5JLnVVJpd7chET0uA46OwnaFG2rej1mS7jUlC7Luy3VUYa0+eGzTEf537ZRlN6C13Q0QsT1rGrFI8MOY72Ck5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3cb771556so20882375ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 12:54:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730490773; x=1731095573;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1730490843; x=1731095643;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Y5RFN1Yg682nc4388GjuL13yMU/0zuz4gK5UIWaEMc=;
-        b=hLtoYEalr29rucFRCGttzliQYkKo0meukR2zy1M0nmVePfTgONpJTvJVNS97p7evln
-         T19PuoXOOC5ZTtk1RqGW2WMxC+sdT8afZ+H/Xj4dgnGfTOtlcmzlvPn/YmWnwtd3OEnC
-         BkYxib6S39ZdI4jx1dScvTOWrV/mCQx2R3Z9DwnD3D1yJJpT6FrCwyWgFVyGiiRLh/IC
-         EUiKGGuXwcL6AEycsfwHcPPCSPbFjV11pwblTB14exHn0pSagqvYXYVYjQpw4H6V0JPz
-         bY2oa5xgZVbbLyCtXm8DbFF2uGz414qchwIlgWKiUH5+sHQNGR3mzFkMmoez43MaMnWB
-         4Erw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpulsuk44tfOyOkgsRJt+qh24WVt7aMVEG4Eu2qre6wH6KYhrlPB3MJdCt1HriDyq60tkcoy+i/OueyOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+dyG4UMH9tzDcFCu2VwfkszPAHDjoKzCivn/Hd2Ivoc/JsRCZ
-	vT0upVgGXmU8/FlCDr20pMiKzYKVA7SzQJy1QxLFihbg6rvRZEunelbFw3r/G2I=
-X-Google-Smtp-Source: AGHT+IHt7K5eAUn3WyZOQ4QBBFiXCbww8ZLgyOPtLtHxzPx/IPAKsRfVjpSk8qxn1mTyET7jUJ75IQ==
-X-Received: by 2002:a05:6808:d50:b0:3e6:580e:f12c with SMTP id 5614622812f47-3e758bfe42amr5242236b6e.10.1730490773671;
-        Fri, 01 Nov 2024 12:52:53 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e66119120dsm940758b6e.12.2024.11.01.12.52.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 12:52:52 -0700 (PDT)
-Message-ID: <0f4a6e40-a7c8-43e4-8596-4fa495159378@baylibre.com>
-Date: Fri, 1 Nov 2024 14:52:50 -0500
+        bh=t+8s9jsg7kj56nWZSY054okfs/Xt14HAbQYJwRRp8F0=;
+        b=G/PqCr9Gmre4T/XSzwYu9X8TzF18mCtGtzRr2HGCRzeLu5RhHfP5WAxsnHjxTCgKco
+         74SOCZdvJWJI1wfSacJtaQegZ70unF8q8PwI9buGivnMlDOIwxbSF1gr8Un4lkCKb2sl
+         PNX98RvRCUcQfIGtJalBKpMfnzPxthTnReSdZeWURmj5tS6ZKV+5oFMgS1wON1rzRQGQ
+         1SGZsqrYANh6LvNLK895gDCfF2LM6tslFR2e6JLZyKxuvIeyPKilEWh08juPfeyVtZ0i
+         NBmAUOGsBPD5G7EegAKl6GHZF+t4h/C7PTkoxizVVTfkWLfvsxDM3jZHDiBVuaM7bLBE
+         Pdbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzJxkctdZFI6oHXZPhFrkimsg4nP9CZCImOGqCX1rGofTsK2EsoPiYOfRsl81FIybWq2FgbpATQ+wMis8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6XroMfCZJi/CQjNmt/Ezl/otUxIJOphlYrPFhNEw4vQgtTt0V
+	0bFEAoxn6P6dTQBMN1IWqPL/gWdPyKpGv1f6IHdb6HaQgdNiCzI/C+wCPGqXOjxvNCkQ/TDlgkX
+	WDkjoilbTuU7ZCFkNF9Ha6EJvhPTPBMciSOKk+73Sqx15IZ2pxifcMVQ=
+X-Google-Smtp-Source: AGHT+IHpNLh7R0kkqJ6nQR81kFDOSR6qjieoRchkxeJRrR//riJWj1+JRQRt/TaFMUzMizLp0I89dPSh5s0mKAOVLPKrwZfvVeCC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] iio: adc: adi-axi-adc: set data format
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- conor+dt@kernel.org, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20241101112358.22996-1-antoniu.miclaus@analog.com>
- <20241101112358.22996-5-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241101112358.22996-5-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1e0a:b0:3a0:ae35:f2eb with SMTP id
+ e9e14a558f8ab-3a6b032b0edmr50789745ab.19.1730490842700; Fri, 01 Nov 2024
+ 12:54:02 -0700 (PDT)
+Date: Fri, 01 Nov 2024 12:54:02 -0700
+In-Reply-To: <CABBYNZK3cVQ1nZbRDW2-VRTwOsJOW7hoRQEV26Qeh2juDjnMvA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672531da.050a0220.35b515.0178.GAE@google.com>
+Subject: Re: [syzbot] [pm?] KASAN: use-after-free Read in netdev_unregister_kobject
+From: syzbot <syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, johan.hedberg@gmail.com, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, lvc-project@linuxtesting.org, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/1/24 6:23 AM, Antoniu Miclaus wrote:
-> Add support for selecting the data format within the AXI ADC ip.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> no changes in v5.
->  drivers/iio/adc/adi-axi-adc.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
-> index f6475bc93796..6f658d9b4c9d 100644
-> --- a/drivers/iio/adc/adi-axi-adc.c
-> +++ b/drivers/iio/adc/adi-axi-adc.c
-> @@ -45,6 +45,9 @@
->  #define ADI_AXI_ADC_REG_CTRL			0x0044
->  #define    ADI_AXI_ADC_CTRL_DDR_EDGESEL_MASK	BIT(1)
->  
-> +#define ADI_AXI_ADC_REG_CNTRL_3			0x004c
-> +#define   ADI_AXI_ADC_CNTRL_3_CUSTOM_CTRL_MSK	GENMASK(7, 0)
-> +
->  #define ADI_AXI_ADC_REG_DRP_STATUS		0x0074
->  #define   ADI_AXI_ADC_DRP_LOCKED		BIT(17)
->  
-> @@ -312,6 +315,24 @@ static int axi_adc_interface_type_get(struct iio_backend *back,
->  	return 0;
->  }
->  
-> +static int axi_adc_data_size_set(struct iio_backend *back, ssize_t size)
-> +{
-> +	struct adi_axi_adc_state *st = iio_backend_get_priv(back);
-> +	unsigned int val;
-> +
-> +	if (size <= 20)
-> +		val = 0;
-> +	else if (size <= 24)
-> +		val = 1;
-> +	else if (size <= 32)
-> +		val = 3;
+Hello,
 
-Should these be exact matches instead of "<="?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Also, what would val = 2 mean? Perhaps we need some macros to explain
-the meanings of these values. The docs linked below give the meaning
-for a different chip, but not AD485x.
+Reported-by: syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com
+Tested-by: syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com
 
-> +	else
-> +		return -EINVAL;
-> +
-> +	return regmap_update_bits(st->regmap, ADI_AXI_ADC_REG_CNTRL_3,
-> +				  ADI_AXI_ADC_CNTRL_3_CUSTOM_CONTROL_MSK, val);
+Tested on:
 
-My understanding is that the use of REG_CHAN_CNTRL_3 is different
-for every HDL project depending on what (frontend) chip is is being
-used with. In the AXI DAC, we added a new compatible string for this
-(and other reasons). Not sure if we need to go that far here, but I
-would at least put a comment here explaining that this use of the
-register is highly specific to the AXI AD485x variant [1] of the
-AXI ADC IP core.
+commit:         c4264568 Merge tag 'acpi-6.12-rc6' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=148ad340580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2cf68159adbdf217
+dashboard link: https://syzkaller.appspot.com/bug?extid=6cf5652d3df49fae2e3f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1122d340580000
 
-Ideally though, there should be an ID register that we can read
-to get this info or use a different DT compatible string.
-
-[1]: http://analogdevicesinc.github.io/hdl/library/axi_ad485x/index.html
-
-> +}
-> +
->  static struct iio_buffer *axi_adc_request_buffer(struct iio_backend *back,
->  						 struct iio_dev *indio_dev)
->  {
-> @@ -360,6 +381,7 @@ static const struct iio_backend_ops adi_axi_adc_ops = {
->  	.test_pattern_set = axi_adc_test_pattern_set,
->  	.chan_status = axi_adc_chan_status,
->  	.interface_type_get = axi_adc_interface_type_get,
-> +	.data_size_set = axi_adc_data_size_set,
->  	.debugfs_reg_access = iio_backend_debugfs_ptr(axi_adc_reg_access),
->  	.debugfs_print_chan_status = iio_backend_debugfs_ptr(axi_adc_debugfs_print_chan_status),
->  };
-
+Note: testing is done by a robot and is best-effort only.
 
