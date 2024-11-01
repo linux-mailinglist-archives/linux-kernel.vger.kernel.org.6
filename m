@@ -1,139 +1,138 @@
-Return-Path: <linux-kernel+bounces-391552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0182E9B888B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:33:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D3E9B888E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 02:34:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32BD31C21A70
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:33:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BE3D1F22C47
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 01:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED3062171;
-	Fri,  1 Nov 2024 01:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7DA61FF2;
+	Fri,  1 Nov 2024 01:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvXvVVJU"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GpuWICIL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6A027473;
-	Fri,  1 Nov 2024 01:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB9C1A28C;
+	Fri,  1 Nov 2024 01:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730424788; cv=none; b=rB1gTHO1HivnvP5Ti6891VF0Ftfg0rYyZlBdGKRhyd76FfLp1lZN8aMcuQZXlA1hziQO44b1K3dgnKkesha7bThivkBsIhX5O6fYGC7E3m9VDzmgMY0CqLAXUM0hQ0soJ/FS8BdPD7NrCWvu9sgsuSWOY+f4J20Qf27u9Bg8Xz0=
+	t=1730424855; cv=none; b=AxmfDEbrnmKOrgZJFNFyDBQ3cXkXSyodznN8rr2MtuEFDI6U7WWQmfoN1/KVOJzStVRTCDIeTUK99QzTIX8nyasRecnZhVOZwcPtP53HmNukBoZh9+f8ZcoKTZj9pyWzy+nV3hQpNCnj90AuvK23CXIPbPM+RhzY0WW05Menmpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730424788; c=relaxed/simple;
-	bh=O6lboJrr01IMvPWw1zpJ/ANdJXLzJMZGqM3UuJyX86o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fTBlSOF44thV4jbXdpZ+h6k4r8Oa7Za9bDGtkuy4Cthzl2koiAILDlkzDcxaJoTAi9wTI+IsB9aJ8MYqU7OoUgHHwbSzySE0J3khzGnbk2f9NVw0ElHgWh6QDHDN8s3v63TLmLTDOix1lHIhvH/tf74WmZE7E2gUjb6P8VDgnoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvXvVVJU; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4319399a411so13252115e9.2;
-        Thu, 31 Oct 2024 18:33:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730424781; x=1731029581; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uHKga0L8y2abkF81SzSex52lW40WHTOqZfuKH4AI/zE=;
-        b=HvXvVVJUIvttIarR3dMWLbt2CYu20yFXKz+bMqstEtYixUTqB6O6RVxI7MgyC0DiA9
-         e2rpC/65MVjwcZcnW61ePRp0DYznm4jOoaVg+PnBDTvpurEXpONX/hvuDy9RbE4dE/ql
-         jxCBEFUmGwn/6jw6TfLAQYToTI1XFciPOX0WNV643chnvI+NevtDagvTrtpNpWJxIhuz
-         iqbjSyOMzDyhRv34Fo8H8BvvG5MZGlZpoheNF5uqQMRCVGZDXrGUgPlwZe1p4N2ucni+
-         kFsFId0zj2gixbny+zgKMZHH2yfOeNyRGem7fkNUDz6cdOEEBvetiqxnQ2XHiN1nCCMD
-         s8tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730424781; x=1731029581;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uHKga0L8y2abkF81SzSex52lW40WHTOqZfuKH4AI/zE=;
-        b=sbcT/0wvFlBbeLwT6TPoa2X1W56INwO7QhrSu5K6uGcRKUK/xgXHLzbY4Yqyg6fh8c
-         UG/Jxxtx1kFA9cNytha9requ8M77mNiabPQTA+uAAg7NyBudwWQIV2xX5o9hnE5rGhBl
-         YXX8OV8ONvnsn3DsozW0t1jP5H05ZhHSNVyS3GAJ7pkaP21jRnQxD3CvR2RjN09RCUZa
-         4OnW0a9Dcm2EZjRI5CYjUvrZ09o8dZXAecLeeLd02FRTsK6z2h2I8ZeVuUao4zJ/te0s
-         1/WgeDX6jajjWLyuHtM7zPu7FbTTjpNl+piaxl/E7aGwdYTsJY1n/nyhQnHB1w1Mbqax
-         xi+A==
-X-Forwarded-Encrypted: i=1; AJvYcCU/gnb3/GqfNSOLb7IjVklBEcgjD3jTXW+OhZ9mA9nco9ZV2Rbi5ageT/qmRynz3V7cSgxc8mirZWNd0Yg=@vger.kernel.org, AJvYcCVcT4C3xt8HrdE8eHq9FLQ7mg2gUEKKLDhsADJUjcD3iJYYhEoNK2Hol650bVk7+GGxcTWQbPhWNsDj@vger.kernel.org, AJvYcCW0IIEzYELkd8OJCHd65Tu8leKkOA1eA2oCoL+ezIvy/8wwDVUpT4PRWSwx2FZE8Kv4kPJgOuPkSBsfV7fy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxwhg3HtyxBRjKwklkEfSnqBTmt5O+TbUo+bgK9V7gR+zDbWOw
-	3U91P6UxP8Osx8CVFnBpteLIWi3QypTAfSLOxc0YIfBUQFNtPgKm
-X-Google-Smtp-Source: AGHT+IGr9crswomdsnORVLCkRiN3se+j33fXRBLa8UHABGYuBLyof+bBW96/7GeCdjQjkQfRoTWMGw==
-X-Received: by 2002:a05:600c:4f03:b0:42c:ba83:3f0e with SMTP id 5b1f17b1804b1-4319ac7078dmr191766785e9.7.1730424780716;
-        Thu, 31 Oct 2024 18:33:00 -0700 (PDT)
-Received: from ux-UP-WHL01 (mailgw01.goodix.com. [45.117.96.243])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431b43ab29csm90355535e9.0.2024.10.31.18.32.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 18:33:00 -0700 (PDT)
-Date: Fri, 1 Nov 2024 09:32:52 +0800
-From: Charles Wang <charles.goodix@gmail.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, dmitry.torokhov@gmail.com,
-	hbarnor@chromium.org, conor.dooley@microchip.com, jikos@kernel.org,
-	bentiss@kernel.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
-Message-ID: <ZyQvxKi8dYOv1AOg@ux-UP-WHL01>
-References: <20241025114642.40793-2-charles.goodix@gmail.com>
- <3ypn62dsgarvmxkmdglugcinxmvpmhdqub2zvkygaonn54odf6@amfgijfcd3l3>
- <ZyLtYdwoJWx9FsdS@ux-UP-WHL01>
- <CAD=FV=UNKECLn=3VrjsJfA+HTNa9Gag1qw5jOcBvw7=ZtkZEnw@mail.gmail.com>
+	s=arc-20240116; t=1730424855; c=relaxed/simple;
+	bh=iuRrKWaA7cQTIyPCJ6yJTE+QtMeoAL4LZfUWuyrYEsE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=OAThwe9Xkm5i0GNVG9rMlXB+o0B/DydIa8u8Ouk5OklsAx7271Y6U3twtpP7ml2MhkpBXQBJ82WQ+CETUxwRt/GpzAJq5EWzJl8e7bJE6y4y8LBndQIT+13HRw/dF+teSqy3HsvsTmFXgcK5vvoHB/h9ln0QHpM5OAv6B6ek+rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GpuWICIL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C871DC4CEC3;
+	Fri,  1 Nov 2024 01:34:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730424854;
+	bh=iuRrKWaA7cQTIyPCJ6yJTE+QtMeoAL4LZfUWuyrYEsE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GpuWICIL+Q/CLeMoNRVbEARwd89pPGZ7xUCRu3cWVupQ6FST+77g34uuO/ZGFt77C
+	 3L7u8bU287h7xhes3x2bSVREFmPHuxmutMmV7rv9SW+Nn5KAdMGUuxEmWCgoc9BymO
+	 MCnKk23Hfox75P0Hb1QKLPrAn3/CdIJpqPqBAgc8=
+Date: Thu, 31 Oct 2024 18:34:13 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ nphamcs@gmail.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
+ muchun.song@linux.dev, tj@kernel.org, lizefan.x@bytedance.com,
+ mkoutny@suse.com, corbet@lwn.net, lnyng@meta.com, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
+Message-Id: <20241031183413.bb0bc34e8354cc14cdfc3c29@linux-foundation.org>
+In-Reply-To: <CAN+CAwMioguv6itTSYVUO9__kQVv6HZO2-i0NWt10-x7f6JVSQ@mail.gmail.com>
+References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
+	<ZyIZ_Sq9D_v5v43l@tiehlicka>
+	<20241030150102.GA706616@cmpxchg.org>
+	<ZyJQaXAZSMKkFVQ2@tiehlicka>
+	<20241030183044.GA706387@cmpxchg.org>
+	<CAN+CAwM1FJCaGrdBMarD2YthX8jcBEKx9Sd07yj-ZcpDxinURQ@mail.gmail.com>
+	<ZyM7_i1HFnFfUmIR@tiehlicka>
+	<CAN+CAwMioguv6itTSYVUO9__kQVv6HZO2-i0NWt10-x7f6JVSQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=UNKECLn=3VrjsJfA+HTNa9Gag1qw5jOcBvw7=ZtkZEnw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Doug,
+On Thu, 31 Oct 2024 15:03:34 -0400 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
 
-On Thu, Oct 31, 2024 at 10:58:07AM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Wed, Oct 30, 2024 at 7:37 PM Charles Wang <charles.goodix@gmail.com> wrote:
-> >
-> > > > +  goodix,hid-report-addr:
-> > >
-> > > I do not see this patch addressing previous review. Sending something
-> > > like this as v1 after long discussions also does not help.
-> > >
-> > > No, you keep sending the same and the same, without improvements.
-> > >
-> >
-> > I apologize for overlooking the discussions regarding this issue.
-> >
-> > I would like to clarify that while the current boards use the same address,
-> > but newly designed boards in the future may require different addresses.
-> >
-> > Retaining this property would likely offer more flexibility.
-> 
-> I don't feel very strongly about it, but maybe Krzysztof does?
-> Possibly the path of least resistance would be:
-> 
-> 1. You drop the property from the bindings.
-> 
-> 2. You hardcode it in the driver to be the normal value.
-> 
-> 3. If/when someone actually needs a different value then we can add it
-> as an optional property in the bindings and fall back to the default
-> value if the property isn't present.
-> 
-> What do you think? If you feel strongly about keeping the
-> "hid-report-addr" then you can certainly keep making your case.
-> However, it's probably best to wait to get agreement from Krzysztof
-> (or one of the other DT maintainers) before sending your next version
-> unless you're going to take the "path of least resistance" that I talk
-> about above.
->
+> Andrew -- I am sorry to ask again, but do you think you can replace
+> the 3rd section in the patch (3. Implementation Details) with the
+> following paragraphs?
 
-Agreed, let's wait and see the opinions of Krzysztof (or the other DT
-maintainers).
+No problem.
 
-Thanks,
-Charles
+: This patch introduces a new counter to memory.stat that tracks hugeTLB
+: usage, only if hugeTLB accounting is done to memory.current.  This feature
+: is enabled the same way hugeTLB accounting is enabled, via the
+: memory_hugetlb_accounting mount flag for cgroupsv2.
+: 
+: 1. Why is this patch necessary?
+: Currently, memcg hugeTLB accounting is an opt-in feature [1] that adds
+: hugeTLB usage to memory.current.  However, the metric is not reported in
+: memory.stat.  Given that users often interpret memory.stat as a breakdown
+: of the value reported in memory.current, the disparity between the two
+: reports can be confusing.  This patch solves this problem by including the
+: metric in memory.stat as well, but only if it is also reported in
+: memory.current (it would also be confusing if the value was reported in
+: memory.stat, but not in memory.current)
+: 
+: Aside from the consistency between the two files, we also see benefits in
+: observability.  Userspace might be interested in the hugeTLB footprint of
+: cgroups for many reasons.  For instance, system admins might want to
+: verify that hugeTLB usage is distributed as expected across tasks: i.e. 
+: memory-intensive tasks are using more hugeTLB pages than tasks that don't
+: consume a lot of memory, or are seen to fault frequently.  Note that this
+: is separate from wanting to inspect the distribution for limiting purposes
+: (in which case, hugeTLB controller makes more sense).
+: 
+: 2.  We already have a hugeTLB controller.  Why not use that?  It is true
+: that hugeTLB tracks the exact value that we want.  In fact, by enabling
+: the hugeTLB controller, we get all of the observability benefits that I
+: mentioned above, and users can check the total hugeTLB usage, verify if it
+: is distributed as expected, etc.
+: 
+: 3.  Implementation Details:
+: In the alloc / free hugetlb functions, we call lruvec_stat_mod_folio
+: regardless of whether memcg accounts hugetlb.  mem_cgroup_commit_charge
+: which is called from alloc_hugetlb_folio will set memcg for the folio
+: only if the CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING cgroup mount option is
+: used, so lruvec_stat_mod_folio accounts per-memcg hugetlb counters only
+: if the feature is enabled.  Regardless of whether memcg accounts for
+: hugetlb, the newly added global counter is updated and shown in
+: /proc/vmstat.
+: 
+: The global counter is added because vmstats is the preferred framework
+: for cgroup stats.  It makes stat items consistent between global and
+: cgroups.  It also provides a per-node breakdown, which is useful. 
+: Because it does not use cgroup-specific hooks, we also keep generic MM
+: code separate from memcg code.
+: 
+: With this said, there are 2 problems:
+: (a) They are still not reported in memory.stat, which means the
+:     disparity between the memcg reports are still there.
+: (b) We cannot reasonably expect users to enable the hugeTLB controller
+:     just for the sake of hugeTLB usage reporting, especially since
+:     they don't have any use for hugeTLB usage enforcing [2].
+: 
+: [1] https://lore.kernel.org/all/20231006184629.155543-1-nphamcs@gmail.com/
+: [2] Of course, we can't make a new patch for every feature that can be
+:     duplicated. However, since the existing solution of enabling the
+:     hugeTLB controller is an imperfect solution that still leaves a
+:     discrepancy between memory.stat and memory.curent, I think that it
+:     is reasonable to isolate the feature in this case.
+
 
