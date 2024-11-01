@@ -1,127 +1,103 @@
-Return-Path: <linux-kernel+bounces-392356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DBF9B9304
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:22:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135979B9300
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A7A1F23190
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD17282F7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF3C184542;
-	Fri,  1 Nov 2024 14:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECDD1A4F22;
+	Fri,  1 Nov 2024 14:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rRGg3KDT"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fNyq87Yd"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7826D1A7060
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2BC28FC
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730470883; cv=none; b=k59mgVtLnzvm/ranhtKFSjEriu/7dil3Px/anre6YVlMzFwetXTMakVmXZ8gTIZpfOFhOO+tVbbsZu2TD88sGu9B8nHmbNgeE9WgtUjgUfWKA5/E38dV1QDHnLwV2pUsvlnu5cQpzZ88cwno+noVuJRBzDXnL7uBKBrCA3wc5Og=
+	t=1730470878; cv=none; b=liRkdWfzB2vewBFRXWiIn4asYqF70yb3LzKyttkGragsJeyeTDG6Ob8NPDPks0VJ2jkZfK5btETcPhJ7YJrqWe7UUlXRll8OqCd0Mlrr+tLlH53CaW6KbKbGjrz+UGdMNdp9BwzZQTB+3wq1HwTRts+qiONnc2rfG15EPGniPn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730470883; c=relaxed/simple;
-	bh=16LXyBzDHfmU+yXXn54ZZmrWOVgxwgGv8ljrr4Ned+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JOs7ZaYkoK32hnpR9nknGtwEqr+DejOxt5o99wYqkZpCkjCq/ezGz5LVEAuNuU9ZhczRWiA6ii/MDtCZewYl9ZDq5oZANQhmGgXkufvwV0ImhLv5WzIFf3nlv2V7bhNFBxwj26mr4m1CCm7NmtpJeOEy/LLSZnVay1p23qAVjDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rRGg3KDT; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb3c3d5513so18439161fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:21:21 -0700 (PDT)
+	s=arc-20240116; t=1730470878; c=relaxed/simple;
+	bh=V03RrQ/eRcpUIaeIBEsO5TzVHd9uvJAoii2FS5VSLug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c8dBLmy/ZZwzo5mkhctrlhXbHxDXI7RFoEYY09ZhrUJkgQvd7kFYUP2LZz/7QCxjyyo14DrFCKK25IwSMxAUElTqxONP+xtwYruWGeD/fow4Cmh8YL4IKvd8KKA+EEMk2i6jcL15bAD8mfNpv2ndBZmXQmnHulyAla7C0aehnb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fNyq87Yd; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2e2d09decso2320530a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 07:21:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730470880; x=1731075680; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I+Xe0vA9b/GygARc/iiIPaC4qB7rwu85y64Y3iUm8bU=;
-        b=rRGg3KDTMWKTnBIDKriw4VURF9V6JxuqJSWG++LGXEe6WUDVSR+RLj8RZNomPTkfry
-         8XE4bHRWFoyX0mKc9fq8bCUE/c4s5wn2gYXJsvAe57EOaafgFP3NL7mTpHVuX8MOPdeq
-         +gfKTlFKeXvBSN7YP9YnbkYNDJgvcPmb9itM/5JjZsST/WXRrzhdXmO0gzrlvp/liIze
-         u7wd3kyxjvJQ4/o0uuyqffoorTmUcsyMTM27oKDNQ92Fvjwznu2tXc6YnThuWbVOsy8A
-         rB2GAjcuMVH9cCJ0QO/Q1vA0jSBLNGwCiiSnOntM1ssgK2BMgY8dhmpmt9LCsVy4dSua
-         0E0Q==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730470875; x=1731075675; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w+BfSGB0i3a8RGUOICAgluAkdQExBqXBgbYULqUlYcY=;
+        b=fNyq87Ydg+lMplTvdwhsIxYIA6Uov9ieiW3b85iaA5HKPCyro+VmDffDrTdaUttEpx
+         xCw30yyPmplPvDOrXOuXmL0yFlI1/SIAh2A14qjEwJn2bdZZ2tw74Gtg+JAHGpMqwji2
+         qxvpI3O5XDowonPhTvmuGLtACUx1Oy6wopcNTUikUG9//nAMefbCKAn0fHi9wWvoVxlz
+         qjYTgoXXgdUUj4kK/RPghf9+koKGfSbh2S/3AwDoiRK697T+OlYpc7ZNFHpLRDBjXUHE
+         mu+tF8ojc4NqqsI9VukzKEXk22p8f3uHb/FVYoJj1DI3ztBhX7qWg+e13hU8gc+POHwY
+         Nc2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730470880; x=1731075680;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I+Xe0vA9b/GygARc/iiIPaC4qB7rwu85y64Y3iUm8bU=;
-        b=jdqfVIuAd/jkcDLqvNHnZWlhDsK4hCkgKbMVr/JEkRJS3q4/2mftzgBVX9UB+IZt08
-         5A1nzIOX6jHKIuzKg3xAgycmzrcYhrFt0rlx7/dOx2IruTl8BDWhUopItpo7h1n7FAkP
-         UG9LSnNWbK/ggxWtkvMt806LofwLb4VuN+exxN3PVBwCTCmycXHGAKTgtXCdwqenRB/f
-         zwWDlTWD1Xk5pEVbL6JUD27sH7WISNXK+F5JMYRpYl4zlxTsP1nO5i7saWj+7IlebSZ/
-         98QotxvWV9e6T+5zy44FBmN9+aj5wxkLvK/IzLN5MaHMPijjvcLw9X6Y2Lr1Z3m4o96H
-         TTBw==
-X-Gm-Message-State: AOJu0YyiOQCMrlYbJ8i3UggJFXmqxHbUieyPV0PTNmO7zrlxf3W+ZHG5
-	W09duxucN5ba72ishzbppyC3WY8WcSNz6+P3ct85/mRDIcP222HyVVOPLRmBXk9CvUPLhU0vWh+
-	OYDNRVIMNFUT8ZQFpD4NB3w8whtjQJypdAoyqGdwiQrKXpYpf
-X-Google-Smtp-Source: AGHT+IGswmPAFLw0rjYNS7CTFOcB+mCYX9kONlwsyD+LIoDXCYYwRCEhT8CyQ/R60M37KpwrhbwPZARfEFKhRGGE94k=
-X-Received: by 2002:a2e:a58f:0:b0:2fb:51a2:4f63 with SMTP id
- 38308e7fff4ca-2fdecbf1a46mr40720671fa.34.1730470879424; Fri, 01 Nov 2024
- 07:21:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730470875; x=1731075675;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w+BfSGB0i3a8RGUOICAgluAkdQExBqXBgbYULqUlYcY=;
+        b=J2HvQH9vsjqXamZ9Vwt8eSSMq+66kZwbpKLTpyxqdps0ZJc9wcOboy1nAjH7TkXQX8
+         uNdkSObtU1DQKoOuDoEqyBdamiVfZFMsdgwQxh2YnFFZj0MfGqsaUK16EuQ5071YztjI
+         cp9LkPFfOM2QxjAdgOPISfutCaEfyxS29jYQIm98vlbCphUp+jUQxk7O09BkUeKjCeM/
+         WV7+bdKUt04Gtf3yCxaO+GdfmvlNNbGU9vWal3OF4qKgULKbRy7UZsEjSJFwwQNZdlr0
+         e0H0/HySH3LhqGu+WiE3RA2XENE0SAZLrl092wIan5sY7Xq0xbR+Zmz0w7ZMnsxjE/fy
+         sxWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCaEzKz8SSe+MLZQyCTk9eSdM0bhlRtQborH3sf2+NzY6tXMqPUgYTBLfrbKWNfvnqgEm+s05mXjfc2o8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYlFIQjaE2bhZIh12meH2EqKyZuf34AU+lzB0RwjqxVsr0UNoU
+	XQewjlKpX4eWnv3+dvCZ4B0f4tu1DSRDVE0nfX9iwGaQztImhs+USDfPaifpqvkZyc3o27JXedv
+	T1rw=
+X-Google-Smtp-Source: AGHT+IG3H1DBKYaRJALZwquhYLqr27wLRwQoVK3Kt480RwCo6CMxKoST8WWEb/7Rw26bJiGe7gYmhQ==
+X-Received: by 2002:a17:90b:1a8f:b0:2da:82d4:c63c with SMTP id 98e67ed59e1d1-2e94bcb6255mr5858519a91.4.1730470875185;
+        Fri, 01 Nov 2024 07:21:15 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93db17b0dsm2708590a91.42.2024.11.01.07.21.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 07:21:14 -0700 (PDT)
+Message-ID: <1610add8-f9b4-44ae-89ae-f01e2c5620d5@kernel.dk>
+Date: Fri, 1 Nov 2024 08:21:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014122551.116491-1-brgl@bgdev.pl> <CAMRc=MfscDCr8mdxSiC8zWUgdzdqLCo3=PKhuWhWueGoq_c82w@mail.gmail.com>
-In-Reply-To: <CAMRc=MfscDCr8mdxSiC8zWUgdzdqLCo3=PKhuWhWueGoq_c82w@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 1 Nov 2024 15:21:08 +0100
-Message-ID: <CAMRc=MehYdep3YvfDjZPmut4d2uKq+Cb5tQecJCQMjAEJxSdTw@mail.gmail.com>
-Subject: Re: [PATCH] mux: constify mux class
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/1] io_uring: releasing CPU resources when polling
+To: hexue <xue01.he@samsung.com>, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20241101092007epcas5p29e0c6a6c7a732642cba600bb1c1faff0@epcas5p2.samsung.com>
+ <20241101091957.564220-1-xue01.he@samsung.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241101091957.564220-1-xue01.he@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 24, 2024 at 9:08=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> On Mon, Oct 14, 2024 at 2:25=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
-> >
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > All class functions used here take a const pointer to the class
-> > structure so we can make the struct itself constant.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  drivers/mux/core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mux/core.c b/drivers/mux/core.c
-> > index 78c0022697ec..02be4ba37257 100644
-> > --- a/drivers/mux/core.c
-> > +++ b/drivers/mux/core.c
-> > @@ -42,7 +42,7 @@ struct mux_state {
-> >         unsigned int state;
-> >  };
-> >
-> > -static struct class mux_class =3D {
-> > +static const struct class mux_class =3D {
-> >         .name =3D "mux",
-> >  };
-> >
-> > --
-> > 2.43.0
-> >
->
-> Gentle ping.
->
-> Bart
+On 11/1/24 3:19 AM, hexue wrote:
+> changes since v7:
+> - rebase code on for-6.12/io_uring
 
-Peter,
+Though not sure why you'd base it on a branch that's long dead,
+for-6.13/io_uring is the appropriate branch. for-6.12/io_uring was
+things queued up for 6.12, it went extinct as soon as the merge window
+opened for 6.12 and it got queued up. Not a big deal as it can get hand
+applied, but new features should always get based on the branch for the
+next kernel, not the previous one.
 
-Your email doesn't bounce so I assume you are getting this. Any reason
-why this simple change is not being picked up?
-
-Bart
+-- 
+Jens Axboe
 
