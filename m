@@ -1,109 +1,74 @@
-Return-Path: <linux-kernel+bounces-392373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E649B933E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:31:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B0F9B933C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F6D1F22F7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:31:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82E90B23305
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 14:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7378F1A2562;
-	Fri,  1 Nov 2024 14:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GthHV580"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4031A4F19;
+	Fri,  1 Nov 2024 14:30:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3368060DCF;
-	Fri,  1 Nov 2024 14:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56C760DCF
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 14:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730471492; cv=none; b=Atgd/8c5BCiydOSx4z88cJLIXxXEoo0LTboekWnvFSQI0bmo35T42Z5tkCdA5ish+KtoDMzCgjo6NqC6Qfsn3FcrqTP7sw+SmTuU7yEXWyRnzuNCkLqlTvor6gcZBWS1dO51zMySLxUtWYQJ5FXtGjcsCYze2gDNzMm+Pbj0ZDE=
+	t=1730471432; cv=none; b=nuoJqGLP9pbM9Y7CunXiyP8kR79NN5AvMgve77ldIiCo81vaQ21dUQp+KWAz+pGxbEILnywdVxo8OcjlFvN6UcXv01AgtvCnfzSilkgkhZzVQmgBNLU22WKWoll3p0s7jI5+Se3gPdfELdLhustX9HskObK61vqR3xMs7fV8LcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730471492; c=relaxed/simple;
-	bh=TF6bZIvSMDp9mqHIuwU8sLZ1ByDGmrUCLsCTB5m3/fY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f7kkhAm3+TpcH6Ye5bk36BOc4PROffHxIfk7jAHdoqcgqHBnrqQnBpfkPzqQOmEB0G9I4HJRTGystUFlLTlY6dxPqvmIO2dFxaA8ancsE7M04alZ7y7DOKAhE+COsS/ilSHihYys1eTN09U5k1k2pTltpcUAKeTnIDtHfhwLOsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GthHV580; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20c8c50fdd9so21474355ad.0;
-        Fri, 01 Nov 2024 07:31:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730471490; x=1731076290; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nz4PoH12jyh9oC2ESydlrxm91wEB4TKbC9HA6hPB9Zo=;
-        b=GthHV580v0TtJDqhGOobZsL537xUX9YqnYKruzJY16wf6u6EctG5ZeiBoVju4enYbb
-         V47Xk5zGZxtDu6aCT6b4IVVEa+sCN2XHqLu1aWLL730nA3gp/tf+8Pe8ozI57VwUsBYO
-         XXTM5lOkMn/8dVnraWAKT6uvIB55uCKg5yJqPe6Y10cvx4YS6yxqQLzYUysMDaQBAmdL
-         QLvqPqcZMdbJsiwl2bXVOQBrWNDQGog7gCos9DmKv8P0NGT9qDvuOIx/UxYbuUL57/+N
-         F3nCYj835zkTsEojRMH2iWZu1f8Okzf1CbTfL7eS3j4RAr19qmZWeEzopfH/2C4pBsx7
-         8Jag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730471490; x=1731076290;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nz4PoH12jyh9oC2ESydlrxm91wEB4TKbC9HA6hPB9Zo=;
-        b=kAQcI1+7TQh+YcuAcW4uuLfYawT6JKgS0Z7Mkc9yP8u8yHTlrmeYgl94ISmJtV1uOJ
-         h3Uixe3UWcWBFDmsf7TS6WE8/UWNMUGLE0LqWHSA11wqb1cv7Fi2AdFGC7j6Tf5/a7Mf
-         SCtUHGCPllKgSa32WHmvsY73azUgCANpsryUYMhOe3KLxczEgacwclVBtA24v2CIgoyw
-         Bn1fmyf3hYYvrBArhDanXJ130HR7MUZR0jcFaJeJ5IhJLpTtrMd2H7esV/wRzF7A6Plz
-         v8cp+Gvh4ZSDzRg8v7TOiVaa5Zet/zaTrqT274Es3G/dPmVfAhrHl1edAfWJ/USBVI+c
-         MY1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUCmqEyAU22rfR/L3vCfmUXwDY0kfvIDsKrQvgHLTZX3GgYKXmHS1dkkiiPVoijQYPDGN8AFpvzMb2lUYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0jgjBhJh2RFid/8xhTEWe6w57RnBVS/rbFnIIIcgA5R1EvEjq
-	wS/Spy5co3zLSc6TlUI4H1/hYR7O2xEc0Sr8WcqDgqT094FjxtOf
-X-Google-Smtp-Source: AGHT+IFOQx1sT8HQFPfngTtvElgcmTuOgNhg+E5fMEru/cenHAieLUGmhItzqeknF/uTz5v8u54jqA==
-X-Received: by 2002:a17:903:1208:b0:20c:f6c5:7f6c with SMTP id d9443c01a7336-21119440041mr56999455ad.16.1730471490266;
-        Fri, 01 Nov 2024 07:31:30 -0700 (PDT)
-Received: from localhost.localdomain ([2001:250:4000:8246:8007:bb90:49ad:3903])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ef5e0sm22044495ad.34.2024.11.01.07.31.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 07:31:29 -0700 (PDT)
-From: Gan Jie <ganjie182@gmail.com>
-To: kvalo@kernel.org
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	trivial@kernel.org,
-	ganjie163@hust.edu.cn,
-	ganjie182@gmail.com
-Subject: [PATCH] wifi: iwlwifi: fw: fix typo 'adderss'
-Date: Fri,  1 Nov 2024 22:30:51 +0800
-Message-ID: <20241101143052.1531-1-ganjie182@gmail.com>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1730471432; c=relaxed/simple;
+	bh=PK6IHE9Avlw3op6raiygKrlA+ZzjEx9KRjFYZUkG7yE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e5v+mWTRLa3jfQVBUZd/vwSyE9KnpmpZRqKjesqTVs9F5uOt1lqLln3ZwAfq+b+35ht1s0wPGHTlroPPQNbJdClY2Dil/5XpQu2YR+05lKxhzZAm5Tk5z9L45H6AawjZ/oZqM2izH2aiFdSbDW7yV+geyPO13yXH2LTDHpmfMl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 103FAC4CECD;
+	Fri,  1 Nov 2024 14:30:30 +0000 (UTC)
+Date: Fri, 1 Nov 2024 10:31:28 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+ linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Yuran Pereira <yuran.pereira@hotmail.com>, Nir
+ Lichtman <nir@lichtman.org>
+Subject: Re: [for-next][PATCH 03/11] kdb: Replace the use of simple_strto
+ with safer kstrto in kdb_main
+Message-ID: <20241101103128.46faf14d@gandalf.local.home>
+In-Reply-To: <CAD=FV=Uha5xwZJtdqirJtv27ZUBz7OP5oEnYg56v2i2mn0TrLw@mail.gmail.com>
+References: <20241101103647.011707614@goodmis.org>
+	<20241101103707.290109005@goodmis.org>
+	<CAD=FV=Uha5xwZJtdqirJtv27ZUBz7OP5oEnYg56v2i2mn0TrLw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Fix typo 'adderss' to 'address'.
+On Fri, 1 Nov 2024 07:21:05 -0700
+Doug Anderson <dianders@chromium.org> wrote:
 
-Signed-off-by: Gan Jie <ganjie182@gmail.com>
----
- drivers/net/wireless/intel/iwlwifi/fw/error-dump.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> FWIW, I personally have no objection to this patch and patch #3/3 in
+> Nir's series (#5/11 in your email thread) going through the ftrace
+> tree, I'm not actually the maintainer of kdb/kgdb. I'm a reviewer and
+> I try my best to help, but officially you should probably have Daniel
+> Thompson's Ack for them. ...or at least make sure he's CCed here
+> saying that you've picked them up.
+> 
+> I've added him to the conversation here.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h b/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
-index e63b08b7d336..3af275133da0 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/error-dump.h
-@@ -169,7 +169,7 @@ struct iwl_fw_error_dump_info {
-  * @fw_mon_wr_ptr: the position of the write pointer in the cyclic buffer
-  * @fw_mon_base_ptr: base pointer of the data
-  * @fw_mon_cycle_cnt: number of wraparounds
-- * @fw_mon_base_high_ptr: used in AX210 devices, the base adderss is 64 bit
-+ * @fw_mon_base_high_ptr: used in AX210 devices, the base address is 64 bit
-  *	so fw_mon_base_ptr holds LSB 32 bits and fw_mon_base_high_ptr hold
-  *	MSB 32 bits
-  * @reserved: for future use
--- 
-2.34.1
+Sure, I can even drop this patch if need be. Thanks for adding Daniel to
+the Cc. I probably should have run these patches through get maintainers to
+make sure everyone was accounted for.
 
+-- Steve
 
