@@ -1,300 +1,122 @@
-Return-Path: <linux-kernel+bounces-392916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C3B9B999E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:44:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980A39B99A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 21:45:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E75461F21AF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49586282C0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 20:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A99E1E1A3B;
-	Fri,  1 Nov 2024 20:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB631E22FC;
+	Fri,  1 Nov 2024 20:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DopupVo9"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkAG1wxT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2E9168DA;
-	Fri,  1 Nov 2024 20:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECD1154BFC;
+	Fri,  1 Nov 2024 20:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730493846; cv=none; b=qGK3CV8eOu9H8/svmdxLdLoa7ik+goP669DSPVcPNHHUFbSvUjVlQ1akCaSVoM1AwMKPMjr+9YbzTMFKQ8zXB+II5IHK+ZfAyvMqyPswZfYBSmuvEc/Lngiq/AA8AQ4Je1KtdLq1YkaL5fDES64/qXtC+GaU0nWnSdcVR9qSzY4=
+	t=1730493929; cv=none; b=mZ5WD2Ger/n/29I/IfLUyJ2J4hCNJ4nBXn9f5AcB4HRg51WRqQIgyW4y0okrZyTCUCUIQ5FQLSvRVC3JfVqVCLXrJpQueblsu7M1BekHcZZrsXkjjMvATsYQ4fvvHxVbbNdTnV7qv+RJdxdARiyJUhaOKloqo63CTKhplx1hnkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730493846; c=relaxed/simple;
-	bh=kZgWT+E+imGucwM5FYY+x2OMrD6FaStxjjPGQVYzOuk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iFgpO165XEjRddiericuEuSqR70to3OL6X9kpU5mSeGTcZJNOeua5Qg7anpmrK5l4qP+LicyT9nexmsa6Ix4qZzNr9V8V4lFTv+GBVj7CjwXSkiTjdwjYp5IMaO5COGVsFT4WIBNzstSy+ibl0pVF168Y1jtFiTLP5Q9i60vzSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DopupVo9; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e29267b4dc4so2175747276.0;
-        Fri, 01 Nov 2024 13:44:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730493844; x=1731098644; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tCM+fKsGzk5AZDxT4A2dewBEVdVNNm2ySi8AOsEK/l0=;
-        b=DopupVo9r7dS5G16picQQmYfaWbV7cnYFKXGhlVOCgsGcrQy4YhX1+lnZeb0mZEMV8
-         6ZZFxTj9VJqLUC6JEeeOTmgGwBpXe/SWZ6EjXO5EMlJvgBgFQbZp/korgWGM71wn3FMr
-         kH52ekqIelY4BkNHmKY7sZAiGA4zKZ+jFkX1n4WLq7TZA21nIMQMPz47Z9yhZkQvYyDK
-         UNnBPD7I9UoVkvMLJvhe3rr2mdlQ1zyPHKQhhHXF4cRgR6HFBwyCg63a7GubU/PXlTBp
-         ptflkiFG7gNtwhSGX3Itz/aHrHEOkx03m+6YFUyqiJd2bi5HlaEDXntzoaFXNbJbt/D1
-         mDhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730493844; x=1731098644;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tCM+fKsGzk5AZDxT4A2dewBEVdVNNm2ySi8AOsEK/l0=;
-        b=sVLzmhiteHg5KjAwBUZ5I2/s684K+fFGqc9CRMV53s8xTAAbjbbKTQpA3UiQFxUQTK
-         +3Tjaa7DV1C7DV+fAy6ghLRryCCyLzNC2fbj5jvfIOqUgLYwiahs2YlnvA6V39VITNEK
-         UIBJADYbjBcRtVio8UOYZXyaOIukZZVbrBNKk2J0PGtv5hnE1LiblHOPNBqLUZW4Txjg
-         cqmGmwlnw22sv6L9oldIMSPfkOjyPz1AaWNBYB4BE7nAdnIuvYBhP9CCtXx0ce9LUcDK
-         IWzfJ6GA4jA8zp0J4BcLUaGP0PWtKgKII2g0ey1odvWQGDCJw2+/1hytQRVcTkRMHGif
-         SOXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUi2VDf8aK2XXnDdqUcVSA9Y7Ug6VrbNXIxpvhc8pvoFrf80kRur0zhFTAIwb+mqZFSWlwt9xFW/2Ib@vger.kernel.org, AJvYcCUztViepbTMkDiTqd/OZ0DMiqS2YWNdMvZ9Ez57OFlJo7jsCFj+3KeraszfQMAt0aJ78XsegQlgN2jBl3IZ@vger.kernel.org, AJvYcCWRJ6vAxG5TsVPg1UMow129caJ/cjGAzSrbyvxWE3mIPT8WKP7YAx9N6bCjsVtZHtCtxHmeN7N1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8LWG0OHtfJ62BtVb4ao/ejl1GLMgVN7iEDpZTG80gvx1eQsS2
-	XYfb99+D+HnK/S3FmTVFZzGIbLxTGHLWVZUdgPsxpLPYXpvzhr3m
-X-Google-Smtp-Source: AGHT+IEkuzO5zxQKkn/65x1uoWoqfWH/QbZaag/6vrSeC1yuyVpynp5j/emFlwaPWuvpnu0ognHsMA==
-X-Received: by 2002:a05:6902:b0e:b0:e30:cbde:1252 with SMTP id 3f1490d57ef6-e330266ec61mr3601095276.36.1730493843734;
-        Fri, 01 Nov 2024 13:44:03 -0700 (PDT)
-Received: from localhost (fwdproxy-frc-022.fbsv.net. [2a03:2880:21ff:16::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e8a61797sm871280276.12.2024.11.01.13.44.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 13:44:03 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: akpm@linux-foundation.org,
-	hannes@cmpxchg.org
-Cc: nphamcs@gmail.com,
-	shakeel.butt@linux.dev,
-	roman.gushchin@linux.dev,
-	muchun.song@linux.dev,
-	chris@chrisdown.name,
-	tj@kernel.org,
-	lizefan.x@bytedance.com,
-	mkoutny@suse.com,
-	corbet@lwn.net,
-	lnyng@meta.com,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH v4 1/1] memcg/hugetlb: Add hugeTLB counters to memcg
-Date: Fri,  1 Nov 2024 13:44:02 -0700
-Message-ID: <20241101204402.1885383-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1730493929; c=relaxed/simple;
+	bh=diFOF7xkuvBii4nhu7rBCrs4zdrQcuFj04D5kOLrVtY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=czHOYYpqar9oB+mzorgKe268EXw7/yG6iKoCqITz6k9siEj/POzWOV4pKQMVVJXEWJcuxDj4sdHkTcZe5epHI2kNKWLcjmriLJAHtEd/IRj1bH89M61lX7LMhY8KFJUNEzIQOyt9DvvxCW1FeOXqaA41eK3wSwiSvi/pCMVn/8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VkAG1wxT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B17C4CECD;
+	Fri,  1 Nov 2024 20:45:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730493928;
+	bh=diFOF7xkuvBii4nhu7rBCrs4zdrQcuFj04D5kOLrVtY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VkAG1wxTxfr31YdbAJQqbs3kgVyHLSBRc2QWMW/ugRZLKRvfiG+9YrxUij7NM/hhx
+	 m42Sbzx5bKL1kVkbQPUt/P9ia8Exzr2E+crdmeSjyjSz7exizT4n6uoWyx2MeeeT2E
+	 XtxN9ZNJS8FvMXil3wSo03QwV5dfoXVgNLxyX6Fjh1ZjU+CoMgBkR17aCeVUt4VFlz
+	 p5sTW7k0vgMP5ngmWBtgxA9HxbvNgmoQWkLxEA4ZW/xn00ksYaKqwXDN9CQWBdDu/8
+	 4QmqlZZYM2VjnkNrmEi7nSnAIKzpj7b980VkOvbp9a0UAqGxyffEpm6ByPOl8YuU/m
+	 M51GmCbuv+Txg==
+Date: Fri, 1 Nov 2024 14:45:23 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2][next] jbd2: Avoid dozens of
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <ZyU94w0IALVhc9Jy@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch introduces a new counter to memory.stat that tracks hugeTLB
-usage, only if hugeTLB accounting is done to memory.current. This
-feature is enabled the same way hugeTLB accounting is enabled, via
-the memory_hugetlb_accounting mount flag for cgroupsv2.
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we
+are getting ready to enable it, globally.
 
-1. Why is this patch necessary?
-Currently, memcg hugeTLB accounting is an opt-in feature [1] that adds
-hugeTLB usage to memory.current. However, the metric is not reported in
-memory.stat. Given that users often interpret memory.stat as a breakdown
-of the value reported in memory.current, the disparity between the two
-reports can be confusing. This patch solves this problem by including
-the metric in memory.stat as well, but only if it is also reported in
-memory.current (it would also be confusing if the value was reported in
-memory.stat, but not in memory.current)
+Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+a flexible structure (`struct shash_desc`) where the size of the
+flexible-array member (`__ctx`) is known at compile-time, and
+refactor the rest of the code, accordingly.
 
-Aside from the consistency between the two files, we also see benefits
-in observability. Userspace might be interested in the hugeTLB footprint
-of cgroups for many reasons. For instance, system admins might want to
-verify that hugeTLB usage is distributed as expected across tasks: i.e.
-memory-intensive tasks are using more hugeTLB pages than tasks that
-don't consume a lot of memory, or are seen to fault frequently. Note that
-this is separate from wanting to inspect the distribution for limiting
-purposes (in which case, hugeTLB controller makes more sense).
+So, with this, fix 77 of the following warnings:
 
-2. We already have a hugeTLB controller. Why not use that?
-It is true that hugeTLB tracks the exact value that we want. In fact, by
-enabling the hugeTLB controller, we get all of the observability
-benefits that I mentioned above, and users can check the total hugeTLB
-usage, verify if it is distributed as expected, etc.
+include/linux/jbd2.h:1800:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-With this said, there are 2 problems:
-(a) They are still not reported in memory.stat, which means the
-    disparity between the memcg reports are still there.
-(b) We cannot reasonably expect users to enable the hugeTLB controller
-    just for the sake of hugeTLB usage reporting, especially since
-    they don't have any use for hugeTLB usage enforcing [2].
-
-3. Implementation Details:
-In the alloc / free hugetlb functions, we call lruvec_stat_mod_folio
-regardless of whether memcg accounts hugetlb. mem_cgroup_commit_charge
-which is called from alloc_hugetlb_folio will set memcg for the folio
-only if the CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING cgroup mount option is
-used, so lruvec_stat_mod_folio accounts per-memcg hugetlb counters
-only if the feature is enabled. Regardless of whether memcg accounts
-for hugetlb, the newly added global counter is updated and shown
-in /proc/vmstat.
-
-The global counter is added because vmstats is the preferred framework
-for cgroup stats. It makes stat items consistent between global and
-cgroups. It also provides a per-node breakdown, which is useful.
-Because it does not use cgroup-specific hooks, we also keep generic
-MM code separate from memcg code.
-
-[1] https://lore.kernel.org/all/20231006184629.155543-1-nphamcs@gmail.com/
-[2] Of course, we can't make a new patch for every feature that can be
-    duplicated. However, since the existing solution of enabling the
-    hugeTLB controller is an imperfect solution that still leaves a
-    discrepancy between memory.stat and memory.curent, I think that it
-    is reasonable to isolate the feature in this case.
- 
-Suggested-by: Nhat Pham <nphamcs@gmail.com>
-Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Chris Down <chris@chrisdown.name>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
-Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
-Changelog
-v4:
-  * Added {acked,suggested,reviewed}-by to the list
-  * Added an extra section detailing why having no checks for mount
-    options or configs is ok (handled by lruvec_stat_mod_folio). Also
-    includes justifications for adding a global counter
-v3:
-  * Removed check for whether CGRP_ROOT_HUGETLB_ACCOUNTING is on, since
-    this check is already handled by lruvec_stat_mod (and doing the
-    check in hugetlb.c actually breaks the build if MEMCG is not
-    enabled.
-  * Because there is now only one check for the flags, I've opted to
-    do all of the cleanup in a separate patch series.
-  * Added hugetlb information in cgroup-v2.rst
-  * Added Suggested-by: Shakeel Butt
-v2:
-  * Enables the feature only if memcg accounts for hugeTLB usage
-  * Moves the counter from memcg_stat_item to node_stat_item
-  * Expands on motivation & justification in commitlog
-  * Added Suggested-by: Nhat Pham
+Changes in v2:
+ - Use DIV_ROUND_UP() to compute the number of elements for the flex
+   array. (Jan Kara)
 
- Documentation/admin-guide/cgroup-v2.rst |  5 +++++
- include/linux/mmzone.h                  |  3 +++
- mm/hugetlb.c                            |  2 ++
- mm/memcontrol.c                         | 11 +++++++++++
- mm/vmstat.c                             |  3 +++
- 5 files changed, 24 insertions(+)
+v1:
+ - Link: https://lore.kernel.org/linux-hardening/ZxvyavDjXDaV9cNg@kspp/
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 69af2173555f..bd7e81c2aa2b 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1646,6 +1646,11 @@ The following nested keys are defined.
- 	  pgdemote_khugepaged
- 		Number of pages demoted by khugepaged.
+ include/linux/jbd2.h | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+index 8aef9bb6ad57..50f7ea8714bf 100644
+--- a/include/linux/jbd2.h
++++ b/include/linux/jbd2.h
+@@ -1796,22 +1796,21 @@ static inline unsigned long jbd2_log_space_left(journal_t *journal)
+ static inline u32 jbd2_chksum(journal_t *journal, u32 crc,
+ 			      const void *address, unsigned int length)
+ {
+-	struct {
+-		struct shash_desc shash;
+-		char ctx[JBD_MAX_CHECKSUM_SIZE];
+-	} desc;
++	DEFINE_RAW_FLEX(struct shash_desc, desc, __ctx,
++		DIV_ROUND_UP(JBD_MAX_CHECKSUM_SIZE,
++			     sizeof(*((struct shash_desc *)0)->__ctx)));
+ 	int err;
  
-+	  hugetlb
-+		Amount of memory used by hugetlb pages. This metric only shows
-+		up if hugetlb usage is accounted for in memory.current (i.e.
-+		cgroup is mounted with the memory_hugetlb_accounting option).
-+
-   memory.numa_stat
- 	A read-only nested-keyed file which exists on non-root cgroups.
+ 	BUG_ON(crypto_shash_descsize(journal->j_chksum_driver) >
+ 		JBD_MAX_CHECKSUM_SIZE);
  
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 17506e4a2835..972795ae5946 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -220,6 +220,9 @@ enum node_stat_item {
- 	PGDEMOTE_KSWAPD,
- 	PGDEMOTE_DIRECT,
- 	PGDEMOTE_KHUGEPAGED,
-+#ifdef CONFIG_HUGETLB_PAGE
-+	NR_HUGETLB,
-+#endif
- 	NR_VM_NODE_STAT_ITEMS
- };
+-	desc.shash.tfm = journal->j_chksum_driver;
+-	*(u32 *)desc.ctx = crc;
++	desc->tfm = journal->j_chksum_driver;
++	*(u32 *)desc->__ctx = crc;
  
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 190fa05635f4..fbb10e52d7ea 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1925,6 +1925,7 @@ void free_huge_folio(struct folio *folio)
- 				     pages_per_huge_page(h), folio);
- 	hugetlb_cgroup_uncharge_folio_rsvd(hstate_index(h),
- 					  pages_per_huge_page(h), folio);
-+	lruvec_stat_mod_folio(folio, NR_HUGETLB, -pages_per_huge_page(h));
- 	mem_cgroup_uncharge(folio);
- 	if (restore_reserve)
- 		h->resv_huge_pages++;
-@@ -3093,6 +3094,7 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+-	err = crypto_shash_update(&desc.shash, address, length);
++	err = crypto_shash_update(desc, address, length);
+ 	BUG_ON(err);
  
- 	if (!memcg_charge_ret)
- 		mem_cgroup_commit_charge(folio, memcg);
-+	lruvec_stat_mod_folio(folio, NR_HUGETLB, pages_per_huge_page(h));
- 	mem_cgroup_put(memcg);
+-	return *(u32 *)desc.ctx;
++	return *(u32 *)desc->__ctx;
+ }
  
- 	return folio;
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 7845c64a2c57..5444d0e7bb64 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -310,6 +310,9 @@ static const unsigned int memcg_node_stat_items[] = {
- 	PGDEMOTE_KSWAPD,
- 	PGDEMOTE_DIRECT,
- 	PGDEMOTE_KHUGEPAGED,
-+#ifdef CONFIG_HUGETLB_PAGE
-+	NR_HUGETLB,
-+#endif
- };
- 
- static const unsigned int memcg_stat_items[] = {
-@@ -1346,6 +1349,9 @@ static const struct memory_stat memory_stats[] = {
- 	{ "unevictable",		NR_UNEVICTABLE			},
- 	{ "slab_reclaimable",		NR_SLAB_RECLAIMABLE_B		},
- 	{ "slab_unreclaimable",		NR_SLAB_UNRECLAIMABLE_B		},
-+#ifdef CONFIG_HUGETLB_PAGE
-+	{ "hugetlb",			NR_HUGETLB			},
-+#endif
- 
- 	/* The memory events */
- 	{ "workingset_refault_anon",	WORKINGSET_REFAULT_ANON		},
-@@ -1441,6 +1447,11 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
- 	for (i = 0; i < ARRAY_SIZE(memory_stats); i++) {
- 		u64 size;
- 
-+#ifdef CONFIG_HUGETLB_PAGE
-+		if (unlikely(memory_stats[i].idx == NR_HUGETLB) &&
-+		    !(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING))
-+			continue;
-+#endif
- 		size = memcg_page_state_output(memcg, memory_stats[i].idx);
- 		seq_buf_printf(s, "%s %llu\n", memory_stats[i].name, size);
- 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index b5a4cea423e1..871566b04b79 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1273,6 +1273,9 @@ const char * const vmstat_text[] = {
- 	"pgdemote_kswapd",
- 	"pgdemote_direct",
- 	"pgdemote_khugepaged",
-+#ifdef CONFIG_HUGETLB_PAGE
-+	"nr_hugetlb",
-+#endif
- 	/* system-wide enum vm_stat_item counters */
- 	"nr_dirty_threshold",
- 	"nr_dirty_background_threshold",
+ /* Return most recent uncommitted transaction */
 -- 
-2.43.5
+2.43.0
 
 
