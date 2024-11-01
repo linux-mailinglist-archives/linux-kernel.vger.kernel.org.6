@@ -1,113 +1,149 @@
-Return-Path: <linux-kernel+bounces-392461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-392462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E1D9B947B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:35:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB5B9B947D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 16:35:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24CA1C21C4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23378282DF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 15:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A09D1C6F71;
-	Fri,  1 Nov 2024 15:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334261AA7A3;
+	Fri,  1 Nov 2024 15:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3AiIkIU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EXDTyus9"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8944B25634;
-	Fri,  1 Nov 2024 15:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C471C2DB2
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Nov 2024 15:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730475321; cv=none; b=NBDk6T3esdGlOO1nsAUiB/m7PeEbxE6xYGy8HKuXmppvBjacHFh2CJ9oSM4bLE/HfOTxFQZr97qz6ux2UXCkEJ8gUiMgqhEXNWeR6wZWLm7sWy0/ej3jLZWdOdUTFYvE4/+4dPsSceK7F8Zjje+97FcOyPBo6UMh1++LuFk3F7E=
+	t=1730475333; cv=none; b=Rk78Emm1RRXsj0SUPE+K5HkmHi0qbrIDqnDBCk4qnR7xAhAnAzGSC6zDEDSNETILXQ/POP2qkuVR/jBMkUUND7eLRgX1sMy/R8SPl/VA2DLvwhGNdNR0OewjpWF2k+uXYoDO4B2aZ+4S66b6Ps5Gw8UcCpphMNs+v8EI2qtfSzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730475321; c=relaxed/simple;
-	bh=uwTrmg5E+/4Xe9TIGAk2cAH3uSAcEGblqU7abk42CGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kncyo/fdcGF71UPKwUWlcvxWKly+fc68SjusX7WqZ5Eaccu7ANN+BR/hkw5X1fY+zTIizPy49pGiJnyx0opIxazL0SBfb1BscXcD7b7ih+toTYGxQvZb9/PRN8a6Y4f2cShMDs01wdmJoVGnx2ja0QH6be2ova9t+plsSkPq0qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3AiIkIU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5625C4CECD;
-	Fri,  1 Nov 2024 15:35:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730475321;
-	bh=uwTrmg5E+/4Xe9TIGAk2cAH3uSAcEGblqU7abk42CGk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Q3AiIkIU/BSsjG/DRK0gOBsQNCmallFcN03rt4Dn64kR6xgsju3LZdub0MGEhcFbO
-	 8hVC7lrN2OqSTEB5eKdoNpk+yavuzjdG6TvlVlzJFHFsBoZg6v2t5i1UVtJI6u4uNL
-	 C+GYScq1jm8Z5A+QG4H/DnxGU6Ag+0qbprQUXSZnulLE6Pu3iRb5/6iqc1BQXWVVbu
-	 SkzRUcGyqaccScCfOrrGHpxBk4w/0/JdfESf6O52gSE4IacVL1tA4lgEJqjPSIZBVy
-	 ywXIYDDdFa0pOL0fgDqnzHbPKfd5KOjSZ07O+i8vjcbIFVLbf83BU2S9A0rW67jPwW
-	 FjFvCR9XuDoHg==
-Date: Fri, 1 Nov 2024 15:35:09 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Ramona Gradinariu
- <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Anand Ashok Dumbre
- <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
- Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
- <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
- Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
- Linus Walleij <linus.walleij@linaro.org>, Benson Leung
- <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
-Subject: Re: [PATCH v2 03/15] iio: light: tsl2772: simplify code in
- write_event_config callback
-Message-ID: <20241101153509.11ae74b9@jic23-huawei>
-In-Reply-To: <20241031-iio-fix-write-event-config-signature-v2-3-2bcacbb517a2@baylibre.com>
-References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
-	<20241031-iio-fix-write-event-config-signature-v2-3-2bcacbb517a2@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730475333; c=relaxed/simple;
+	bh=g4L3ibkH9jQ+qQRrFR7Kgon/qgAC5gRqo2KZvcNUwQQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Zu4+HwhOJEOqRKQH+4zadWArqtpUJdllqAVcXVsaWNtTR+1kHr5X/fLbT0qhvghz1+Ri6AAaK5FVWCxxUddxwG/VoycvC5LbOeO55zPxssMeXrYy1O11Bxs6643RMqw7Q7oanAmwMiEc4xr3//yS+9YVEbpZsL2FlirPIu7z7Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EXDTyus9; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c714cd9c8so22869895ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 08:35:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730475330; x=1731080130; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FGN+519eYtZuRigBuYtgvVW5FkfJE2dQGYi4tNlzHFY=;
+        b=EXDTyus993OdijbVkH6CpDWxAio9f6bcfBluigxBnlYcPHwYJQrI8bSPaPeM/IrzIH
+         E5h9lxXzpp+p11fx2S8tNl9mRncy6/iFrblNXRX95XDUoMFeL/6XTg21o8/vtUQREJLa
+         JEromTe/wCB+Txsdm0JvrYMRmnefkMBYQomcqCATlJBD47twM8qvOZaGEmkaS+tqOpWs
+         VYJVZDgeN3BU3mXgYUr3pElCfIdwtpreQ2EdObBL17SBaK5ORATNoE/++1o4KMB1X7yR
+         bwh3GNFKISlL4pYAHrMgYLLdBhh1277Ayo6PtEWzvtuFHwfMLbNnYLIVw/XxgoQ4uV4f
+         t6fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730475330; x=1731080130;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FGN+519eYtZuRigBuYtgvVW5FkfJE2dQGYi4tNlzHFY=;
+        b=fSzNXkPvaibf5S4pOatYCtFiu/BHctEVv4+xH7YgqnOoPy9c0WMdTgk/UKKhhzhgYL
+         Cx215D7pQXK6meCgV/o4zYHq2nvxoxxy/iutiPaf0qAndjKZRGhPaXdTLyOiST0WNd6X
+         mvfpqxg2cnFvF/a/1nBDy5VLYCmym00DchgB9ksZTkyz95+P94bvmShKCCBR2wLU6en/
+         L2JnntGxZ5oingFCqSUyLs0CR4hhY9H1RjFk89SJNb4I8dgIFzIxkJXVsRCTUpf3YSF2
+         9X/wQf5Lod1MdibgAb9LcHJps2vBuPHXTtwobkYYeTfhfAiGgUFXSzVOzEDZSXSpDIVs
+         dOIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkwK26XYEx0igS9aAb8Mst+J1CiIaFqHx5YAF0r+wI/1xGBb9YJiRf/fYEZBA4yMIYhcZ0Zl9Qen5UWhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYNuqbJFUbp1jx8djI6KfAYBn8KOYiK7WQK3QVUmX5KhGjriC8
+	N/YGqRUwy3ADWSrd/+aISAm9ZEcIEOsyF3tn/VDknql6kxj3FBmGY1yp//47MuA=
+X-Google-Smtp-Source: AGHT+IHdRk4WtBzIprISHrwlWueLoJHqAZ0Hi3OqocknTJdFlMfcN7iB86YkUJpngGBacYjvD3vJvQ==
+X-Received: by 2002:a17:902:e74d:b0:20c:7898:a8f4 with SMTP id d9443c01a7336-2111b0276a1mr44569875ad.60.1730475329852;
+        Fri, 01 Nov 2024 08:35:29 -0700 (PDT)
+Received: from localhost ([97.126.177.194])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057effcdsm22717175ad.302.2024.11.01.08.35.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 08:35:29 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Nishanth Menon <nm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, Vibhore
+ Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur
+ <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, Markus
+ Schneider-Pargmann <msp@baylibre.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] pmdomain: ti_sci: collect and send low-power
+ mode constraints
+In-Reply-To: <20241101144445.56ejnuoxshqwns37@boots>
+References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
+ <173029317079.2440963.17313738472826934777.b4-ty@ti.com>
+ <CAPDyKFptHq6xkKSAmeHsEuhBoEhzvudcMf2+nG08MFPwnMi+ew@mail.gmail.com>
+ <7hv7x9qsvt.fsf@baylibre.com>
+ <CAPDyKFpdgg+kM_Ot5GPTpMUtjmBF-pUhCeRpVb=j852_7qm=3A@mail.gmail.com>
+ <20241101144445.56ejnuoxshqwns37@boots>
+Date: Fri, 01 Nov 2024 08:35:28 -0700
+Message-ID: <7hwmhnnf0f.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Thu, 31 Oct 2024 16:26:58 +0100
-Julien Stephan <jstephan@baylibre.com> wrote:
+Nishanth Menon <nm@ti.com> writes:
 
-> iio_ev_state_store is actually using kstrtobool to check user
-> input, then gives the converted boolean value to the write_event_config
-> callback.
-> 
-> Remove useless code in write_event_config callback.
-> 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-Applied.
-> ---
->  drivers/iio/light/tsl2772.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
-> index cab468a82b616a23394977da1d8822d29d8941d3..26082f239c4c3aeabfe73ed100d6e885f5266329 100644
-> --- a/drivers/iio/light/tsl2772.c
-> +++ b/drivers/iio/light/tsl2772.c
-> @@ -1086,9 +1086,9 @@ static int tsl2772_write_interrupt_config(struct iio_dev *indio_dev,
->  	struct tsl2772_chip *chip = iio_priv(indio_dev);
->  
->  	if (chan->type == IIO_INTENSITY)
-> -		chip->settings.als_interrupt_en = val ? true : false;
-> +		chip->settings.als_interrupt_en = val;
->  	else
-> -		chip->settings.prox_interrupt_en = val ? true : false;
-> +		chip->settings.prox_interrupt_en = val;
->  
->  	return tsl2772_invoke_change(indio_dev);
->  }
-> 
+> On 11:11-20241031, Ulf Hansson wrote:
+>> On Wed, 30 Oct 2024 at 20:43, Kevin Hilman <khilman@baylibre.com> wrote:
+>> >
+>> > Ulf Hansson <ulf.hansson@linaro.org> writes:
+>> >
+>> > > On Wed, 30 Oct 2024 at 14:01, Nishanth Menon <nm@ti.com> wrote:
+>> > >>
+>> > >> Hi Kevin Hilman,
+>> > >>
+>> > >> On Fri, 06 Sep 2024 09:14:48 -0700, Kevin Hilman wrote:
+>> > >> > The latest (10.x) version of the firmware for the PM co-processor (aka
+>> > >> > device manager, or DM) adds support for a "managed" mode, where the DM
+>> > >> > firmware will select the specific low power state which is entered
+>> > >> > when Linux requests a system-wide suspend.
+>> > >> >
+>> > >> > In this mode, the DM will always attempt the deepest low-power state
+>> > >> > available for the SoC.
+>> > >> >
+>> > >> > [...]
+>> > >>
+>> > >> I have applied the following to branch ti-drivers-soc-next on [1].
+>> > >> Thank you!
+>> > >>
+>> > >> Ulf, based on your ack[2], I have assumed that you want me to pick
+>> > >> this series up. Let me know if that is not the case and I can drop the
+>> > >> series.
+>> > >
+>> > > Well, that was a while ago. The reason was because there was a
+>> > > dependency to another series [2], when this was posted.
+>> > >
+>> > > If that's not the case anymore, I think it's better to funnel this via
+>> > > my pmdomain tree. Please let me know how to proceed.
+>> >
+>> > The build-time dependency on [2] still exists, and since that was just
+>> > queued up by Nishanth, I think this series should (still) go along with
+>> > it to keep things simple.
+>> >
+>> > Kevin
+>> 
+>> Right, that makes perfect sense to me too. If we discover conflicts,
+>> let's deal with them then.
+>
+>
+> oops.. I missed this response. OK, I will let things be.
+>
 
+Oops, 0day bot found a build error in linux-next when CONFIG_PM_SLEEP is
+not defined[1].  Need to respin to fix this.
+
+v5 coming right up....
+
+Kevin
+
+[1] https://lore.kernel.org/all/CA+G9fYtioQ22nVr9m22+qyMqUNRsGdA=cFw_j1OUv=x8Pcs-bw@mail.gmail.com/
 
