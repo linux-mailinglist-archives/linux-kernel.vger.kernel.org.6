@@ -1,104 +1,105 @@
-Return-Path: <linux-kernel+bounces-391895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-391881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3EB9B8D05
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:27:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EB39B8CC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 09:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85D671F23802
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:27:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EF93B238A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Nov 2024 08:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45678156C72;
-	Fri,  1 Nov 2024 08:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D737156644;
+	Fri,  1 Nov 2024 08:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="b1KqIXuO"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B2B154C15;
-	Fri,  1 Nov 2024 08:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KMZ0gtoh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D45B839F4;
+	Fri,  1 Nov 2024 08:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730449619; cv=none; b=TF7fSwocMAJX3tz5+t5b9Hw36+0agj/ebwsl3ja9jb9PTJZ8I/OrBFOmJihrsgnEm6R2Vts872Tyn+ios2yA5HnO+k3ZTZ9RnwGiRwZynB1eO7QFsIVykBfEffQOeJUuUm2G7chYhrHboNU/diNnicDYEbTRtqsTH1TfGi8PP4w=
+	t=1730448951; cv=none; b=hLzooscjsbWClnE21LQQSs8Ao4EHAQ9ycqG1MO7RRT7na7GTkgzIJM/GJ0u4yoPVD1C0wOixYsKO60YLM+fSEbqA3HIPnnp19KrGmWNGINGd1I5YLqIYknQ4MFp19UxvcIqvib74vdUllILSY5jLg47T8W48TqhxlI4L2NpNlU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730449619; c=relaxed/simple;
-	bh=qz+sStLf3csnHSVervtbuwoNFwpbuAjWD3eBqYi2Rrc=;
+	s=arc-20240116; t=1730448951; c=relaxed/simple;
+	bh=IPEP5kYFF9OzNn1aHg9bXlSlE3OJQwyKnGdCTX+V12w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ymxct/8ZHxd9GRf2u+o13DtL7a9Cr6NOrY9e2S27yISDJt1u5ZnSWA1WJIcEhhUincug0nT0oByqG2Z4oTP9YeogrLgmClm+zjpwfGlI19NDvl1V/fNxzC1gjW26YFmE3dHkLJZjhyX06RF8TVwIkleZRVUp6VyPiw93RsrNEjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=b1KqIXuO; arc=none smtp.client-ip=220.197.32.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=pIZ4297mYks9TlNfZB/eCFyx2Nv7liMlVOj3Uim+dgg=;
-	b=b1KqIXuO36LLkH4jukpFtZ/rIBd49x54x//dPgK8gHofkebhw4UwICLC6q5WgX
-	YmZI9DjdyVt+iezP72zjkg7z6TmUT21jj/n+0QPct7A+quZGWK+5goZG4gut+bq2
-	UnnJ70z01kWqBGST65ni7unB6dOIL5o1HIlboqbV7HSfY=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgCnxfgMjiRnKmJfAQ--.13668S3;
-	Fri, 01 Nov 2024 16:15:10 +0800 (CST)
-Date: Fri, 1 Nov 2024 16:15:07 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: carlos.song@nxp.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	haibo.chen@nxp.com, frank.li@nxp.com
-Subject: Re: [PATCH 0/5] arm64: dts: imx: Add LPSPI alias for
- I.MX8ULP/8QXP/8QM/8DXL/93
-Message-ID: <ZySOC+STuelEZykQ@dragon>
-References: <20241018034532.2552325-1-carlos.song@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ecvxI9mKDkMRMFn9CwejfI6Qc0TcNHQ8pyPszWjK324amDO1rVZiIcaAOjYBmoL4ZnE9IExAGtjNVfejxIFODQqrydE4eDnYQjH4NLYUDmUHA5I3g6poOsSQaeSPIK6rlmHzE8hkwuyCIxA2IlKn8eNjo7D13gSbOmJoJQqbZY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KMZ0gtoh; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730448950; x=1761984950;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=IPEP5kYFF9OzNn1aHg9bXlSlE3OJQwyKnGdCTX+V12w=;
+  b=KMZ0gtohbAm07ZfV2ZsGhmYeyHHtYmH+mBvQYggkHz47UdoTZgg39Zgc
+   xMuJ2VVMIDva+OEJ/PNmmVR5/enmKzD03Mb5PNH9Qr5+XqSfDhcOPJ+FI
+   Sh25jBZy2DZxNCdBh75EorImngCs/JEh34BRPErwxUj3HuYiVGSBmmdvm
+   /utwG0x0M+PPyD+FxSpkhnv7WBfrvwZAGA9MRPfOeCZoBbAW4qVwjN0ar
+   zjJP3AXPovit5rEIAjUiUGQxP/R/bsIPHZ9HqXccfrSF7Gk7fayok6cng
+   cbWiZiG5IEDJC0HscOUh+PSYr1xRA7nnMXtR+91nNcRdRjLXqBBdU6pbl
+   Q==;
+X-CSE-ConnectionGUID: LTgR1UlbTXGC0rpL/tCjdQ==
+X-CSE-MsgGUID: 4zavligLQaSD76UIwPb3lA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="34147736"
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="34147736"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:15:50 -0700
+X-CSE-ConnectionGUID: QfWCztjgT5CdkqVtmSn44Q==
+X-CSE-MsgGUID: pEJlpEinTCyDRVv/ULZhqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="113688799"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 01:15:47 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t6mor-00000009xXO-12u0;
+	Fri, 01 Nov 2024 10:15:45 +0200
+Date: Fri, 1 Nov 2024 10:15:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] gpiolib: Deduplicate
+ gpiod_direction_input_nonotify() call
+Message-ID: <ZySOMUs4URLBevtx@smile.fi.intel.com>
+References: <20241031092154.2244728-1-andriy.shevchenko@linux.intel.com>
+ <CAMRc=MeiZ_U0UoU1atWxyWxEhcKwUcCK_cbYu_p-DQar27Fw+A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241018034532.2552325-1-carlos.song@nxp.com>
-X-CM-TRANSID:M88vCgCnxfgMjiRnKmJfAQ--.13668S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWrZFWxtF1xJr1DGFWkZw47Jwb_yoW8JF17pF
-	W7XFyxKw1qkr4xur4kZFW8Awn3JaykWF1fXr4rt3yYkwn5ur98trW5Kry5KFy7XFW5ZFyY
-	yayUJ3yxCwn0vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jb5rcUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBWKZWckjIUEMAABsB
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MeiZ_U0UoU1atWxyWxEhcKwUcCK_cbYu_p-DQar27Fw+A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Oct 18, 2024 at 11:45:27AM +0800, carlos.song@nxp.com wrote:
-> From: Carlos Song <carlos.song@nxp.com>
-> 
-> Now there is no alias for LPSPI on I.MX8ULP/8QXP/8QM/8DXL/93.
-> So spidevB.C index B will be automatically allocated by kernel
-> incrementally from zero according to the order of registering
-> spi controller. In this case, it is hard to determine spidevB.C
-> is spi interface of device C on which LPSPI bus. It will cause
-> confusion when operate spi devices in userspace.
-> 
-> For example, in I.MX93, When LPSPI3 and LPSPI5 are enabled
-> without alais:
-> 
-> :~# ls /dev/spidev*
-> /dev/spidev0.0  /dev/spidev1.0
-> 
-> After LPSPI alais is applied, fixedly B is the LPSPI index and
-> C is the spi device index in spidevB.C. They are the pleasant
-> spidev names. Directly spidev2.0 is the device0 at LPSPI3 bus
-> and spidev4.0 is the device0 at LPSPI5 bus:
-> 
-> :~# ls /dev/spidev*
-> /dev/spidev2.0  /dev/spidev4.0
-> 
-> Signed-off-by: Carlos Song <carlos.song@nxp.com>
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> 
-> Carlos Song (5):
->   arm64: dts: imx8qxp: Add LPSPI alias
->   arm64: dts: imx8qm: Add LPSPI alias
->   arm64: dts: imx8dxl: Add LPSPI alias
->   arm64: dts: imx8ulp: Add LPSPI alias
->   arm64: dts: imx93: Add LPSPI alias
+On Thu, Oct 31, 2024 at 08:14:56PM +0100, Bartosz Golaszewski wrote:
+> On Thu, Oct 31, 2024 at 10:22 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 
-Applied all, thanks!
+...
+
+> >  set_output_flag:
+> 
+> Ok, I'll take it but please change this label to "emulate_output" or
+> something similar that's more indicative on what the goal here is.
+
+It's out of scope of this patch.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
