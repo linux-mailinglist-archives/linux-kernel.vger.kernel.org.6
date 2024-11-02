@@ -1,222 +1,339 @@
-Return-Path: <linux-kernel+bounces-393452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305569BA0D0
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:36:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED099BA0D4
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:43:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39717B21738
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:36:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36C6D1F21AD6
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A228819E982;
-	Sat,  2 Nov 2024 14:36:26 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A239419CC27;
+	Sat,  2 Nov 2024 14:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7IKwaYx"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5144133F9
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 14:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3F15A4D5
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 14:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730558186; cv=none; b=PiQCWEXo1Q0pL2Alj1VQJuir+O67BEZ8I9xtFHCHQU0/Zn6a44rkIiMh+9OzP9MQNRl+345k8FC541Ud1TKDyRMFyU2N/uGSM65bWJ8CQxB2gFFWYXRsPjuvGfc4Ingrp4Mz9hLFLzu+WlxNMVNJYAWijyfL8y+RC4OeTpZ+/O4=
+	t=1730558592; cv=none; b=I9GkypbSicjUCtrmHt8FmpLCrukezX+IvTeCAMHyCXFuiiDtAUYIGByD7UZ81eDaUT67jJkMEnBxcHHtk9saEDvW59XuwNnPaBJn1QzHefIN2KruJugwK+LEO2GyIloYH5WDIgnwVJK/Pyrvg4h02VYdCw3VoZNNkpfeaIwZxF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730558186; c=relaxed/simple;
-	bh=Hq7LeRtWWHNSpxmrELB/KoukxLDE/IoD0HQdxrVrMWw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qMRhhUTDL/3keF9is5pZjgTIwCisq9Rc+i2zuz9IaZeWIkcCDztu/lVOEhvvU07XPzrlYBNxBIDF+hfkmP1IYU0kKfSpLndkLIM4XDYIlgOjVLSOQ5Dkb9WWsPOeguUcXgqDS2QBDFA68Ae1Jghides0WP/zvkIVz08xz0daqD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83aac7e7fd7so304717839f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 07:36:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730558183; x=1731162983;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1730558592; c=relaxed/simple;
+	bh=0feu0aiJ2GUdVjpoKmg9we8spbot83OvwcZcbZ/SJxI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UjRIIThRAwcmQIl3HDzsSR+zjb9kHvsEkJdQqZlhLlNv+26l1YlViSIkvuesggR5EHOEvesjwZvCNQbg7xhVClsXufVZaY6SeQhGSUFPyhFuWw/JhXT4vi6EucYZL52MLhpWfM0EKOdSL3ST3MOjY7nAHcBfOei028AWqcdIS0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7IKwaYx; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d5689eea8so1649326f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 07:43:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730558589; x=1731163389; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9GTWqt0xvaCSN1qf/sSPayNPZCvP3igGeul6m1e2K8M=;
-        b=dSDl/tnWFH+1i7gHMsruCb8tXUoOkRq3muChgvaH+BtYvPtgu4w0rQXNwEyuo59Zl2
-         CcHQgc6xySNK66qqRv8VlcK8P3gSX1s40vnY3sX79F0AhROpwYBljzGWXQNKIG+xH8lb
-         yedil6ZomnjkYZAX3Wt9GAnJGniRzPO+IHZ9OhAr09+PhecOGHc6ZDUMGvbHSgQCH/T8
-         2/vU81YNXz7lC/xJN3POpE5k3OgcLZZ7nOyej7suYNHN79M9cojSiZN4iijVbfvJLO49
-         uhywV87BYxbECdjC0V+wADh5y+U7sJfmdk2gdkS8Ife2OJE3EKJ6GY6tI0QDJkw3hGqP
-         /zhw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCb+Gn//XHHGTXJpspjDAxy//o5GG9y9cHL1FNtxDqhYXBCvQGXFowoykuFunQg84QVgpex6zDGsNG0lc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVau+Mj5bJ05qfGiqqdR5G9BjlrpdwuSHd4H5UB1H+KqSnoeU/
-	2XLoXSzjuzXyPD475HZmYdhFPnwUt1Xu94pLpUVbEib1Aho+FtZk5TBOxu8I5nT9axCCAr8bDe9
-	2iAozS6ivFh52f8iAF95fB5BhnHUhVd4CVQEtZjlXbhu6+NdbvxYfGrs=
-X-Google-Smtp-Source: AGHT+IGlk5YC61OLEFsOGWEauZxp1QDXq9SFdErvoBgv0oo+xxUfTYak1zIkcJt5L3bmvyLFgO9CYfjuWqXP8kXHE0ImnDcqj60U
+        bh=6461Ib2TWfT+leWWAOGRQP9/S/9eoNSD9PKEf8t7n54=;
+        b=G7IKwaYxqiymTmBjNtk6HSznrQHj4Du7SpBFaLUtj8k54FrbxR5ksRkaTgIHISSBJC
+         SAohjNL899sdORX5BnW1geZhvB3QQLALKuz4QwWdEUHr1t1ifkUDvTUd1DTpDLTxnbP6
+         kyLMeo6bQgpxFDyPPnN5KesTwwGOhSE3CH3rJxPOEOZdDqx6L89V+ro0YLGadWAT4Oic
+         UC4pCECmsaNe1T+c7IC1nPLj3AYN4s6e2oMrRgb4I26A3LahxO45bhSTWXEL8yzjuOwb
+         LF9735GjV5vrYvM3MQIHYo0MpTAIqLG0LggcieMpThpOA3kho2n4KQZpUAtW316gM2mb
+         v8Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730558589; x=1731163389;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6461Ib2TWfT+leWWAOGRQP9/S/9eoNSD9PKEf8t7n54=;
+        b=QtxZgdYYt6IVU5wlQuYKgZ9d5W4dFzliuXSgzkYpwd7HLlbM/YYzFkHIbWDGsvhtNT
+         tJ77ubTDA9b44L7WBTzSwH9JArle7ul9Esr7rgCpjshspO8bq/BHQqx4f9hgq/eytMxR
+         nI2TcEL7Jb/xb1NJPPw+Yn+9FoLDXgn1orDj95y/TjDuuA5WOUEoTx1BXy/b8sZSKWhU
+         Hq0f9TLNfDwZhTmR1x0kKsqjwGh4xtZFN4KtMgi5vjUACM8c+unvNXvenf8xI0WvFpov
+         5rxUBiTf6WNOirzA32tqNsG3+2+WfDEYo5/CqVf9lSNZSovLj6PotEajeVO4q6ywbFyQ
+         22zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEqzi4mORof0yY38XiYJqBapIN/DN3hHhNT8igybZnvUlyUzrvzIM7MMxa7HXUD0rOirIa0cI5u9ADqk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyuz9G00WUcbQ3yZpLLivdMWjr4+Ze6XEjIwwmGpG7pVReE/GA
+	/opcBKhF+ypr+U3UtQQP8Yb2kJtdC3kLPSbDfA1pIGZrykoL1+6+
+X-Google-Smtp-Source: AGHT+IH8B0EHxpxEjoM8PL5Z/sinx5Pjyum2EgXWirFSZJ0YUzDAuxrrytOacUv/gAFacY2wcwe6Bg==
+X-Received: by 2002:adf:e84f:0:b0:37d:4956:b0c2 with SMTP id ffacd0b85a97d-3806122f97emr18171728f8f.58.1730558588919;
+        Sat, 02 Nov 2024 07:43:08 -0700 (PDT)
+Received: from ?IPV6:2a02:6b67:d751:7400:c2b:f323:d172:e42a? ([2a02:6b67:d751:7400:c2b:f323:d172:e42a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947c03sm126345435e9.28.2024.11.02.07.43.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2024 07:43:08 -0700 (PDT)
+Message-ID: <2d73b4cc-47a1-44a2-b50a-0f67d25b3e22@gmail.com>
+Date: Sat, 2 Nov 2024 14:43:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1568:b0:3a6:b258:fcf with SMTP id
- e9e14a558f8ab-3a6b25813e9mr58003515ab.2.1730558183596; Sat, 02 Nov 2024
- 07:36:23 -0700 (PDT)
-Date: Sat, 02 Nov 2024 07:36:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672638e7.050a0220.3c8d68.0990.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in tree_insert_offset
-From: syzbot <syzbot+b7baad46fdef9a0008ce@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    e42b1a9a2557 Merge tag 'spi-fix-v6.12-rc5' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16854a30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
-dashboard link: https://syzkaller.appspot.com/bug?extid=b7baad46fdef9a0008ce
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e42b1a9a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3e2253169da8/vmlinux-e42b1a9a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b9d2f5008f24/bzImage-e42b1a9a.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b7baad46fdef9a0008ce@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 262144
-=======================================================
-WARNING: The mand mount option has been deprecated and
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-BTRFS: device fsid 7e32c2af-f87a-45a1-bcba-64dea7c56a53 devid 1 transid 8 /dev/loop0 (7:0) scanned by syz.0.0 (5332)
-BTRFS info (device loop0): first mount of filesystem 7e32c2af-f87a-45a1-bcba-64dea7c56a53
-BTRFS info (device loop0): using xxhash64 (xxhash64-generic) checksum algorithm
-BTRFS info (device loop0): using free-space-tree
-BTRFS info (device loop0): scrub: started on devid 1
-BTRFS info (device loop0): scrub: finished on devid 1 with status: 0
-FAULT_INJECTION: forcing a failure.
-name failslab, interval 1, probability 0, space 0, times 1
-CPU: 0 UID: 0 PID: 5332 Comm: syz.0.0 Not tainted 6.12.0-rc5-syzkaller-00005-ge42b1a9a2557 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- fail_dump lib/fault-inject.c:53 [inline]
- should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:154
- should_failslab+0xac/0x100 mm/failslab.c:46
- slab_pre_alloc_hook mm/slub.c:4038 [inline]
- slab_alloc_node mm/slub.c:4114 [inline]
- __kmalloc_cache_noprof+0x6c/0x2c0 mm/slub.c:4290
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- btrfs_cache_block_group+0xc5/0x6f0 fs/btrfs/block-group.c:928
- btrfs_update_block_group+0x26c/0xb30 fs/btrfs/block-group.c:3676
- do_free_extent_accounting fs/btrfs/extent-tree.c:2998 [inline]
- __btrfs_free_extent+0x1d88/0x3a10 fs/btrfs/extent-tree.c:3362
- run_delayed_tree_ref fs/btrfs/extent-tree.c:1740 [inline]
- run_one_delayed_ref fs/btrfs/extent-tree.c:1766 [inline]
- btrfs_run_delayed_refs_for_head fs/btrfs/extent-tree.c:2031 [inline]
- __btrfs_run_delayed_refs+0x112e/0x4680 fs/btrfs/extent-tree.c:2101
- btrfs_run_delayed_refs+0xe3/0x2c0 fs/btrfs/extent-tree.c:2213
- btrfs_commit_transaction+0x4be/0x3740 fs/btrfs/transaction.c:2197
- sync_filesystem+0x1c8/0x230 fs/sync.c:66
- btrfs_reconfigure+0x2f3/0x2c30 fs/btrfs/super.c:1507
- reconfigure_super+0x445/0x880 fs/super.c:1083
- vfs_cmd_reconfigure fs/fsopen.c:262 [inline]
- vfs_fsconfig_locked fs/fsopen.c:291 [inline]
- __do_sys_fsconfig fs/fsopen.c:472 [inline]
- __se_sys_fsconfig+0xb68/0xf70 fs/fsopen.c:344
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5b17f7e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5b18d79038 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
-RAX: ffffffffffffffda RBX: 00007f5b18135f80 RCX: 00007f5b17f7e719
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000005
-RBP: 00007f5b18d79090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f5b18135f80 R15: 00007ffd6518d2d8
- </TASK>
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5332 at fs/btrfs/free-space-cache.c:1638 tree_insert_offset+0x2c9/0x350 fs/btrfs/free-space-cache.c:1638
-Modules linked in:
-CPU: 0 UID: 0 PID: 5332 Comm: syz.0.0 Not tainted 6.12.0-rc5-syzkaller-00005-ge42b1a9a2557 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:tree_insert_offset+0x2c9/0x350 fs/btrfs/free-space-cache.c:1638
-Code: e8 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 38 4f cb fd 90 0f 0b 90 bd ef ff ff ff eb db e8 28 4f cb fd 90 <0f> 0b 90 bd ef ff ff ff eb cb e8 18 4f cb fd 90 0f 0b 90 4d 85 ed
-RSP: 0018:ffffc9000d2ce948 EFLAGS: 00010293
-RAX: ffffffff83c98968 RBX: ffff8880362db4e0 RCX: ffff88800021a440
-RDX: 0000000000000000 RSI: 0000000001504000 RDI: 0000000001504000
-RBP: ffff8880362db6d8 R08: ffffffff83c98834 R09: fffff52001a59d34
-R10: dffffc0000000000 R11: fffff52001a59d34 R12: ffff8880362db498
-R13: 0000000001504000 R14: dffffc0000000000 R15: 0000000000000000
-FS:  00007f5b18d796c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000559cf5234740 CR3: 000000004073c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- link_free_space+0xef/0x5d0 fs/btrfs/free-space-cache.c:1844
- btrfs_find_space_for_alloc+0xdb4/0xed0 fs/btrfs/free-space-cache.c:3133
- find_free_extent_unclustered fs/btrfs/extent-tree.c:3781 [inline]
- do_allocation_clustered fs/btrfs/extent-tree.c:3804 [inline]
- do_allocation fs/btrfs/extent-tree.c:4006 [inline]
- find_free_extent+0x2e59/0x5850 fs/btrfs/extent-tree.c:4541
- btrfs_reserve_extent+0x422/0x810 fs/btrfs/extent-tree.c:4695
- btrfs_alloc_tree_block+0x202/0x1440 fs/btrfs/extent-tree.c:5150
- btrfs_force_cow_block+0x526/0x1da0 fs/btrfs/ctree.c:573
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
- btrfs_update_device+0x1b0/0x580 fs/btrfs/volumes.c:2902
- remove_chunk_item+0x166/0x700 fs/btrfs/volumes.c:3183
- btrfs_remove_chunk+0xa12/0x1b20 fs/btrfs/volumes.c:3269
- btrfs_delete_unused_bgs+0xd94/0x1120 fs/btrfs/block-group.c:1681
- btrfs_remount_ro fs/btrfs/super.c:1359 [inline]
- btrfs_reconfigure+0xbda/0x2c30 fs/btrfs/super.c:1540
- reconfigure_super+0x445/0x880 fs/super.c:1083
- vfs_cmd_reconfigure fs/fsopen.c:262 [inline]
- vfs_fsconfig_locked fs/fsopen.c:291 [inline]
- __do_sys_fsconfig fs/fsopen.c:472 [inline]
- __se_sys_fsconfig+0xb68/0xf70 fs/fsopen.c:344
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5b17f7e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5b18d79038 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
-RAX: ffffffffffffffda RBX: 00007f5b18135f80 RCX: 00007f5b17f7e719
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000005
-RBP: 00007f5b18d79090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f5b18135f80 R15: 00007ffd6518d2d8
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and swapin
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>,
+ Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Andi Kleen <ak@linux.intel.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
+ "Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>,
+ Ryan Roberts <ryan.roberts@arm.com>
+References: <20241102101240.35072-1-21cnbao@gmail.com>
+ <6c14ab2c-7917-489b-b51e-401d208067f3@gmail.com>
+ <CAGsJ_4wpdf6Fky7jj8O6OuLc0WTBjKXTfEqxE0cXiUjxxuLgZA@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAGsJ_4wpdf6Fky7jj8O6OuLc0WTBjKXTfEqxE0cXiUjxxuLgZA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 02/11/2024 12:59, Barry Song wrote:
+> On Sat, Nov 2, 2024 at 8:32 PM Usama Arif <usamaarif642@gmail.com> wrote:
+>>
+>>
+>>
+>> On 02/11/2024 10:12, Barry Song wrote:
+>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>
+>>> When the proportion of folios from the zero map is small, missing their
+>>> accounting may not significantly impact profiling. However, it’s easy
+>>> to construct a scenario where this becomes an issue—for example,
+>>> allocating 1 GB of memory, writing zeros from userspace, followed by
+>>> MADV_PAGEOUT, and then swapping it back in. In this case, the swap-out
+>>> and swap-in counts seem to vanish into a black hole, potentially
+>>> causing semantic ambiguity.
+>>>
+>>> We have two ways to address this:
+>>>
+>>> 1. Add a separate counter specifically for the zero map.
+>>> 2. Continue using the current accounting, treating the zero map like
+>>> a normal backend. (This aligns with the current behavior of zRAM
+>>> when supporting same-page fills at the device level.)
+>>>
+>>> This patch adopts option 1 as pswpin/pswpout counters are that they
+>>> only apply to IO done directly to the backend device (as noted by
+>>> Nhat Pham).
+>>>
+>>> We can find these counters from /proc/vmstat (counters for the whole
+>>> system) and memcg's memory.stat (counters for the interested memcg).
+>>>
+>>> For example:
+>>>
+>>> $ grep -E 'swpin_zero|swpout_zero' /proc/vmstat
+>>> swpin_zero 1648
+>>> swpout_zero 33536
+>>>
+>>> $ grep -E 'swpin_zero|swpout_zero' /sys/fs/cgroup/system.slice/memory.stat
+>>> swpin_zero 3905
+>>> swpout_zero 3985
+>>>
+>>> Fixes: 0ca0c24e3211 ("mm: store zero pages to be swapped out in a bitmap")
+>> I don't think its a hotfix (or even a fix). It was discussed in the initial
+>> series to add these as a follow up and Joshua was going to do this soon.
+>> Its not fixing any bug in the initial series.
+> 
+> I would prefer that all kernel versions with zeromap include this
+> counter; otherwise,
+> it could be confusing to determine where swap-in and swap-out have occurred,
+> as shown by the small program below:
+> 
+> p =malloc(1g);
+> write p to zero
+> madvise_pageout
+> read p;
+> 
+> Previously, there was 1GB of swap-in and swap-out activity reported, but
+> now nothing is shown.
+> 
+> I don't mean to suggest that there's a bug in the zeromap code; rather,
+> having this counter would help clear up any confusion.
+> 
+> I didn't realize Joshua was handling it. Is he still planning to? If
+> so, I can leave it
+> with Joshua if that was the plan :-)
+> 
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Please do continue with this patch, I think he was going to look at the
+swapped_zero version that we discussed earlier anyways. Will let Joshua
+comment on it.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>>
+>>> Cc: Usama Arif <usamaarif642@gmail.com>
+>>> Cc: Chengming Zhou <chengming.zhou@linux.dev>
+>>> Cc: Yosry Ahmed <yosryahmed@google.com>
+>>> Cc: Nhat Pham <nphamcs@gmail.com>
+>>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>>> Cc: David Hildenbrand <david@redhat.com>
+>>> Cc: Hugh Dickins <hughd@google.com>
+>>> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+>>> Cc: Shakeel Butt <shakeel.butt@linux.dev>
+>>> Cc: Andi Kleen <ak@linux.intel.com>
+>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>> Cc: Chris Li <chrisl@kernel.org>
+>>> Cc: "Huang, Ying" <ying.huang@intel.com>
+>>> Cc: Kairui Song <kasong@tencent.com>
+>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+>>> ---
+>>>  -v2:
+>>>  * add separate counters rather than using pswpin/out; thanks
+>>>  for the comments from Usama, David, Yosry and Nhat;
+>>>  * Usama also suggested a new counter like swapped_zero, I
+>>>  prefer that one be separated as an enhancement patch not
+>>>  a hotfix. will probably handle it later on.
+>>>
+>> I dont think either of them would be a hotfix.
+> 
+> As mentioned above, this isn't about fixing a bug; it's simply to ensure
+> that swap-related metrics don't disappear.
+> 
+>>
+>>>  Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++++
+>>>  include/linux/vm_event_item.h           |  2 ++
+>>>  mm/memcontrol.c                         |  4 ++++
+>>>  mm/page_io.c                            | 16 ++++++++++++++++
+>>>  mm/vmstat.c                             |  2 ++
+>>>  5 files changed, 34 insertions(+)
+>>>
+>>> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+>>> index db3799f1483e..984eb3c9d05b 100644
+>>> --- a/Documentation/admin-guide/cgroup-v2.rst
+>>> +++ b/Documentation/admin-guide/cgroup-v2.rst
+>>> @@ -1599,6 +1599,16 @@ The following nested keys are defined.
+>>>         pglazyfreed (npn)
+>>>               Amount of reclaimed lazyfree pages
+>>>
+>>> +       swpin_zero
+>>> +             Number of pages moved into memory with zero content, meaning no
+>>> +             copy exists in the backend swapfile, allowing swap-in to avoid
+>>> +             I/O read overhead.
+>>> +
+>>> +       swpout_zero
+>>> +             Number of pages moved out of memory with zero content, meaning no
+>>> +             copy is needed in the backend swapfile, allowing swap-out to avoid
+>>> +             I/O write overhead.
+>>> +
+>>
+>> Maybe zero-filled pages might be a better term in both.
+> 
+> Do you mean dropping "with zero content" and replacing it by
+> Number of zero-filled pages moved out of memory ? I'm fine
+> with the change.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Yes, mainly because if you do swapout of memory that was memset 0 its still
+content, just zero-filled.
 
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Usama
+> 
+>>
+>>>         zswpin
+>>>               Number of pages moved in to memory from zswap.
+>>>
+>>> diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
+>>> index aed952d04132..f70d0958095c 100644
+>>> --- a/include/linux/vm_event_item.h
+>>> +++ b/include/linux/vm_event_item.h
+>>> @@ -134,6 +134,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
+>>>  #ifdef CONFIG_SWAP
+>>>               SWAP_RA,
+>>>               SWAP_RA_HIT,
+>>> +             SWPIN_ZERO,
+>>> +             SWPOUT_ZERO,
+>>>  #ifdef CONFIG_KSM
+>>>               KSM_SWPIN_COPY,
+>>>  #endif
+>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>> index 5e44d6e7591e..7b3503d12aaf 100644
+>>> --- a/mm/memcontrol.c
+>>> +++ b/mm/memcontrol.c
+>>> @@ -441,6 +441,10 @@ static const unsigned int memcg_vm_event_stat[] = {
+>>>       PGDEACTIVATE,
+>>>       PGLAZYFREE,
+>>>       PGLAZYFREED,
+>>> +#ifdef CONFIG_SWAP
+>>> +     SWPIN_ZERO,
+>>> +     SWPOUT_ZERO,
+>>> +#endif
+>>>  #ifdef CONFIG_ZSWAP
+>>>       ZSWPIN,
+>>>       ZSWPOUT,
+>>> diff --git a/mm/page_io.c b/mm/page_io.c
+>>> index 5d9b6e6cf96c..4b4ea8e49cf6 100644
+>>> --- a/mm/page_io.c
+>>> +++ b/mm/page_io.c
+>>> @@ -204,7 +204,9 @@ static bool is_folio_zero_filled(struct folio *folio)
+>>>
+>>>  static void swap_zeromap_folio_set(struct folio *folio)
+>>>  {
+>>> +     struct obj_cgroup *objcg = get_obj_cgroup_from_folio(folio);
+>>>       struct swap_info_struct *sis = swp_swap_info(folio->swap);
+>>> +     int nr_pages = folio_nr_pages(folio);
+>>>       swp_entry_t entry;
+>>>       unsigned int i;
+>>>
+>>> @@ -212,6 +214,12 @@ static void swap_zeromap_folio_set(struct folio *folio)
+>>>               entry = page_swap_entry(folio_page(folio, i));
+>>>               set_bit(swp_offset(entry), sis->zeromap);
+>>>       }
+>>> +
+>>> +     count_vm_events(SWPOUT_ZERO, nr_pages);
+>>> +     if (objcg) {
+>>> +             count_objcg_events(objcg, SWPOUT_ZERO, nr_pages);
+>>> +             obj_cgroup_put(objcg);
+>>> +     }
+>>>  }
+>>>
+>>>  static void swap_zeromap_folio_clear(struct folio *folio)
+>>> @@ -507,6 +515,7 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+>>>  static bool swap_read_folio_zeromap(struct folio *folio)
+>>>  {
+>>>       int nr_pages = folio_nr_pages(folio);
+>>> +     struct obj_cgroup *objcg;
+>>>       bool is_zeromap;
+>>>
+>>>       /*
+>>> @@ -521,6 +530,13 @@ static bool swap_read_folio_zeromap(struct folio *folio)
+>>>       if (!is_zeromap)
+>>>               return false;
+>>>
+>>> +     objcg = get_obj_cgroup_from_folio(folio);
+>>> +     count_vm_events(SWPIN_ZERO, nr_pages);
+>>> +     if (objcg) {
+>>> +             count_objcg_events(objcg, SWPIN_ZERO, nr_pages);
+>>> +             obj_cgroup_put(objcg);
+>>> +     }
+>>> +
+>>>       folio_zero_range(folio, 0, folio_size(folio));
+>>>       folio_mark_uptodate(folio);
+>>>       return true;
+>>> diff --git a/mm/vmstat.c b/mm/vmstat.c
+>>> index 22a294556b58..c8ef7352f9ed 100644
+>>> --- a/mm/vmstat.c
+>>> +++ b/mm/vmstat.c
+>>> @@ -1418,6 +1418,8 @@ const char * const vmstat_text[] = {
+>>>  #ifdef CONFIG_SWAP
+>>>       "swap_ra",
+>>>       "swap_ra_hit",
+>>> +     "swpin_zero",
+>>> +     "swpout_zero",
+>>>  #ifdef CONFIG_KSM
+>>>       "ksm_swpin_copy",
+>>>  #endif
+>>
+> 
+> Thanks
+> Barry
+
 
