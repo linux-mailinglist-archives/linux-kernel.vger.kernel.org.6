@@ -1,148 +1,128 @@
-Return-Path: <linux-kernel+bounces-393401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE539BA011
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:37:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7649BA012
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD7E1F21C22
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:37:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC08B1C21233
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DF3189F54;
-	Sat,  2 Nov 2024 12:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8BB189F55;
+	Sat,  2 Nov 2024 12:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ENWhMp5U"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gb0uEG1u"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD7E23CB;
-	Sat,  2 Nov 2024 12:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80674189F2D;
+	Sat,  2 Nov 2024 12:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730551025; cv=none; b=id9cCn5alTMdDQ42XKzJuougIzqD+oab9+RcXp5GdaMdqwVlSWC9HjxjHWt0IvC+Dlj9LVdylRsqR46Xiz+Mc02zlVSBIys5aHIyM2WqVOLCtKdq0oC+deZf6b4pUWeQv6dAw5GC7W3okzq1iZZwoMzuen/qVkxECOrDR7gpmec=
+	t=1730551209; cv=none; b=A2fPoizBMlz81C+V88p7u8rYwPi2JQ4siFrb/iEZVED09Jhb0f9r61M4UvlJTiED71kxa3u9nJT5E2ZjLuePzFRPNCYZilY2Pdo5b1f8t+/6E9bDaVbB8TtqH1WzKdAutYh1L0bEJvv4D98fF7bCvJFEpNnoBCEwgX4zGp4YNB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730551025; c=relaxed/simple;
-	bh=o3cGczIHKQnfbWSbfSDf/t+UcIvRs6Lh/GNmK9JIVOM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qqq/s0lGOx2l4K4T7cF8FlQazQ7hZmCXqlpdYTbplzH2el8lOGjrjJBfUJkaM6k+yS1kAsgk/HeQc4bY7ZIcaEK3WbHjBcZcPXmRAR3KyYPaWO7LS+4EizM4NRUl0Bejl6iYIsva9Foqm9Gx6BFeDWknBDAIaiX25nSFXpSvNKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ENWhMp5U; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1730551209; c=relaxed/simple;
+	bh=M3LoPgCVYqQCJptGDnW9YadgMjZnZMNBqhKDFrquiyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mce/IBvVUtYsCdJn2fJZf6LrzVLYmDuG7LOX7YXpAmEcyQYE4AegYdpoD1jJjr29TnTXghrB35IQC+PtwSipMIOKfHxLtA9Zy221rlcM5MDBphFbbD+dMciJFT9JdypvYYYbwDE0fio2iQEVcKfrJHvL7lp5iMEEzijLQe0dbSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gb0uEG1u; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c693b68f5so30248965ad.1;
-        Sat, 02 Nov 2024 05:37:04 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e5a1c9071so2475295b3a.0;
+        Sat, 02 Nov 2024 05:40:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730551024; x=1731155824; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aRKKkSWjDmCvzB6g72QbakGkMRj4v/y3yjNWuNa5zLU=;
-        b=ENWhMp5UWR908pFi30aeieYdPlwyiASWima3oDgpvJw+mAcEPRn6XNO7bOK4hbnucw
-         Km2+vB416StDyG9PV6bp7alBmQbd0GG0pHxzNUvXCjFazMTlfe00xTz2Ipq6j+Zod2/4
-         gwAEi2DxCwtKHCpa2ji55m1/o1HazTPFZ9j7DxsWZYsLMHGQj7FDxwyO55d4dg9aKfBl
-         Nqdl5lvpcJG5x/iBsXKuT4NRJB52jmk7N3DaEuS5YeS2vo8lYtiwqGHUePXkb8Gh9mYA
-         RlRWgtKzVeg+82XNwOkQN0lkj/olgg+SrpfwPO3qsRUtHogZhZ5UBdWeHgi64tdSPnc5
-         YB3A==
+        d=gmail.com; s=20230601; t=1730551208; x=1731156008; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CLO/hRq3GLq0gXyF7XmPt/4TWBAYlZbIy/wYTMBWnow=;
+        b=Gb0uEG1uOqV2WdiKVua9R0/EYD7STlDKxPDb8GlGWeelz1HHiAzBJZPRHLyJjsA4KU
+         fYEJkI+ceryEq/C9u3W1R/CmQY8AbCdrVjnOWgjg8rSeJsCbeYfs4tUXoUXRNe3iL3zt
+         lEIEW6jZ8v1iKkn93KZ4YepQ8AZQFCPqVGB4VIG90FoyOF82lTv7ptQNhmTQ0uOIL9z4
+         5E/PSK1x4prX1paT7Y22sKwIlpaqWj6u8JC8GlGLYaydtFVAL6zvYeTsOVktHDU+kxbV
+         CtlEGfPJ066jAokoP7U5tmsQ1BM9ExnaF920bZzXZ5T8jzAkZWRTRokUNZsqRo6ua7qP
+         EW3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730551024; x=1731155824;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aRKKkSWjDmCvzB6g72QbakGkMRj4v/y3yjNWuNa5zLU=;
-        b=TjKmmRF+v8BNMDGY4F0zF/+J98QcBsyJkWTV40wEQw7/nZ/7Z63vcMER48EQL77++R
-         tDwlWOSwhpDTn1xZva6zBYeDCEH0pGzh6GUQobmmQzazNu/GV0kySbUL3/tPd+qreMkG
-         8wuoTxOmzGqSHxcCxwaDm0Y/dgyU6C9AURuUQUP92cRvzT/6IDpOIW9xBu0t4Noizfxj
-         PZ5NusONCdHGByfxspBo9PyMtMh7zthvijaH7ddi3GRohhq9cq1oXjIk/Xa/bEA+CDNo
-         5CbzKgUXCUESNYwSLuM6t5ugG995ZajzSrdmfj8XThREFlX2E8aspTlZ7umITloXDhCM
-         RE3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV+F5U3pRY1pFFHJF3fm9Y16OmjZL8BdqOBwSTQwDPtuB+cucVtjTW9YR64dtJ78pQr6GicpU52RfYc8GM=@vger.kernel.org, AJvYcCWV7uqSaF5Uaz9FWQTyCPcQnpbRtbmNOdUS2UZQXjWkxK7AiFoCwfenasA0z18+m/dF0TCmHYBOmdbCpDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxijV0xzoKJqN8d82e3lIW5tNYlZ1VuIri5RVf624R3giYM5KWB
-	QebMg0gZGKRuHY7Upxg9obgtnvUzkumlLWIw/Hv7t+sziz2gim/m
-X-Google-Smtp-Source: AGHT+IEoDB/7/LJwK88imGh+HQg9IgyIlKZvv2O4c/vMoy/QqfT7MZwQpcPQH90WCb3oFIF3v+9ixA==
-X-Received: by 2002:a17:902:daca:b0:206:9a3f:15e5 with SMTP id d9443c01a7336-21103b1c3acmr156262685ad.32.1730551023681;
-        Sat, 02 Nov 2024 05:37:03 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:40f2:1024:7af1:4d34:94b:fadb:48e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d9743sm33051685ad.287.2024.11.02.05.36.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 05:37:03 -0700 (PDT)
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: surajsonawane0215@gmail.com
-Cc: broonie@kernel.org,
-	lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Subject: [PATCH v2] sound: fix uninit-value in i2s_dma_isr
-Date: Sat,  2 Nov 2024 18:06:30 +0530
-Message-Id: <20241102123630.25446-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241030170829.36161-1-surajsonawane0215@gmail.com>
-References: <20241030170829.36161-1-surajsonawane0215@gmail.com>
+        d=1e100.net; s=20230601; t=1730551208; x=1731156008;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CLO/hRq3GLq0gXyF7XmPt/4TWBAYlZbIy/wYTMBWnow=;
+        b=saydrzMNTvrqFwsZqjO1BXOewCBJRppQCzAIFvG2o9q8rDmiKhtdovz0d9L0m+x3K7
+         d+drp7pwNKVh++/1MpwfuI3P/O9sB6JSlsaGPzhMgQJSO+XRYFbhLxgvQIh9PTs3ZN2R
+         UtoorrKw6bl5oY8VAJmBiZglW1QJSmWqTmoVydQyySYygAizPL2J8ns1Ldk5oWRirDOT
+         A1aNC3lYTa15ZpJbcGDHjqLIKnipz3hjnLbrW8WUTD2GjEdKi1grWRKooUn9yxqmcbI0
+         fRervWyAxiYMB8ZAQw9JdHUhX8assgx4M0Ra7pl203hvbHTrv7B4UcyZRyBp70hOrm+y
+         pzLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUF3jdRwPtChDCOfleQdsGK4Sk3fCgLA1UkvtWVHh9F3n9r5CokO+KKWgVCfD1TqD0LEjyssPqkGTO9I0E=@vger.kernel.org, AJvYcCVNmiJLeeQMWVXkZsaM4BbD4w/LvFMhqz6ZoqfRl6ci2U2W/AiFDN7zhFxXkI2fnAAcdSzAoa5SU3ZWsTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+sMaqKwFkFVp1z3q7bkKqovoXI3xIISLeKcugCwKKuEXrlWdq
+	dcUosrlATzVw+d7YVKmfVXCyUp94+d9Vj5crw7O0J8xLdwh7xWyk
+X-Google-Smtp-Source: AGHT+IHBsQIGIV2lh3b2yS13xKYfDbUPFmLEJUgWuyvqmCPHbR5t5yr3yqidmWwqz+8HVHMOe6msSA==
+X-Received: by 2002:a17:902:ce83:b0:20c:d578:d712 with SMTP id d9443c01a7336-210f770832bmr183307455ad.59.1730551207611;
+        Sat, 02 Nov 2024 05:40:07 -0700 (PDT)
+Received: from ?IPV6:2409:40f2:1024:7af1:4d34:94b:fadb:48e? ([2409:40f2:1024:7af1:4d34:94b:fadb:48e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057e7a69sm33559785ad.290.2024.11.02.05.40.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2024 05:40:07 -0700 (PDT)
+Message-ID: <5ec78b57-725e-4d64-8b3f-c16ead77dfb2@gmail.com>
+Date: Sat, 2 Nov 2024 18:10:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sound: fix uninit-value in i2s_dma_isr
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241030170829.36161-1-surajsonawane0215@gmail.com>
+ <635f1691-74e9-4e48-8ebf-8e7ce0c6d1e3@sirena.org.uk>
+ <a4039ca2-6c76-4431-8e27-caebe1a56deb@gmail.com>
+ <d97a58c7-347b-48f9-aa69-d4ff5a4038e3@sirena.org.uk>
+ <e8fe072a-e1b9-41b0-9382-6562139e31d3@gmail.com>
+ <15f9733b-fe7a-4bf2-a6b9-7f7e04cf26f7@sirena.org.uk>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <15f9733b-fe7a-4bf2-a6b9-7f7e04cf26f7@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Fix an issue detected by the Smatch tool:
+On 01/11/24 18:45, Mark Brown wrote:
+> On Fri, Nov 01, 2024 at 02:32:43PM +0530, Suraj Sonawane wrote:
+> 
+>> I reviewed the context around val_1 and val_2 in dma_addr_next. These values
+>> are expected to come from the registers when offlevel is non-zero,
+>> representing the next DMA address and length information. If offlevel is
+>> zero, it means there’s no offset data to process, and dma_addr_next might
+>> not need updating in that case.
+> 
+>> A more precise solution would be to conditionally update prtd->dma_addr_next
+>> only when offlevel is non-zero, as this would reflect the intended logic
+>> without relying on an arbitrary initialization.
+> 
+>> Would it be better to revise the patch to conditionally update
+>> prtd->dma_addr_next only when offlevel is non-zero?
+> 
+>> Let me know if this approach aligns better with the expected behavior.
+> 
+> That seems like a reasonable approach, just skip the update when we
+> didn't read the values.
+Thanks for the feedback.
 
-sound/soc/bcm/bcm63xx-pcm-whistler.c:264 i2s_dma_isr()
-error: uninitialized symbol 'val_1'.
-sound/soc/bcm/bcm63xx-pcm-whistler.c:264 i2s_dma_isr()
-error: uninitialized symbol 'val_2'.
+I've updated the patch based on your suggestion to conditionally update 
+prtd->dma_addr_next only when offlevel is non-zero, effectively skipping 
+the update if values were not read. This approach aligns with the 
+expected logic, as it ensures dma_addr_next is only updated when valid 
+data is available, preventing any unintended updates.
 
-These errors were triggered because the variables 'val_1' and 'val_2'
-could remain uninitialized if 'offlevel' is zero, meaning the loop
-that assigns values to them does not execute. In this case,
-'dma_addr_next' would use uninitialized data, potentially leading
-to undefined behavior.
+I’ve just sent the revised patch. Please let me know if any additional 
+adjustments are needed.
 
-To resolve this, a conditional update for 'dma_addr_next' is added,
-ensuring it is assigned only when 'val_1' and 'val_2' are read.
-A new boolean variable 'val_read' flags when the values have been
-retrieved, setting 'dma_addr_next' only if valid data is available.
-
-This solution prevents the use of uninitialized data, maintaining
-defined behavior for 'dma_addr_next' in all cases, and aligns with
-expected usage of I2S RX descriptor data.
-
-Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
----
-V1: Initialize 'val_1' and 'val_2' to 0.
-V2: Add conditional update for 'dma_addr_next' based on read status to
-skip the update when values haven’t been read.
-
- sound/soc/bcm/bcm63xx-pcm-whistler.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/bcm/bcm63xx-pcm-whistler.c b/sound/soc/bcm/bcm63xx-pcm-whistler.c
-index 018f2372e..e3a4fcc63 100644
---- a/sound/soc/bcm/bcm63xx-pcm-whistler.c
-+++ b/sound/soc/bcm/bcm63xx-pcm-whistler.c
-@@ -256,12 +256,16 @@ static irqreturn_t i2s_dma_isr(int irq, void *bcm_i2s_priv)
- 
- 		offlevel = (int_status & I2S_RX_DESC_OFF_LEVEL_MASK) >>
- 			   I2S_RX_DESC_OFF_LEVEL_SHIFT;
-+		bool val_read = false;
- 		while (offlevel) {
- 			regmap_read(regmap_i2s, I2S_RX_DESC_OFF_ADDR, &val_1);
- 			regmap_read(regmap_i2s, I2S_RX_DESC_OFF_LEN, &val_2);
-+			val_read = true;
- 			offlevel--;
- 		}
--		prtd->dma_addr_next = val_1 + val_2;
-+		if (val_read)
-+			prtd->dma_addr_next = val_1 + val_2;
-+
- 		ifflevel = (int_status & I2S_RX_DESC_IFF_LEVEL_MASK) >>
- 			   I2S_RX_DESC_IFF_LEVEL_SHIFT;
- 
--- 
-2.34.1
-
+Best regards,
+Suraj Sonawane
 
