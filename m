@@ -1,86 +1,137 @@
-Return-Path: <linux-kernel+bounces-393580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4ED9BA29E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:57:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023109BA2A0
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:59:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E454DB22836
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:57:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE27F1F2259C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FFE1ABEA0;
-	Sat,  2 Nov 2024 21:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3960C1AC43A;
+	Sat,  2 Nov 2024 21:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dUbpU3Oq"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Crg+CbP+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8945D1AA7AB
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 21:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A133E1AA7AB
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 21:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730584668; cv=none; b=RmkVO9SGKlHmnzMwpAHDj+IKhoLm88CRybGXU147tr+OhJOeuxR/oFBfICnZl3KlkkVZk/qYpLKfY5NBfOBaG7a5e9Xkmodsd1mc3TJ9Qo2tpRqIBM5osf18alNFFz97zEn+89SRDZAQ+Gv32/Tp/JYy4Raf4lmgR32usw+j/XE=
+	t=1730584748; cv=none; b=O910yNlDSLZKl1z67rfPgKEkBq3AWbP7FfReR+7iu7FE9CcztD8Vkp2WRSlH0MBM90X68F1Pm4PEAyrOPGwhN2JNkU/kyaMmlKb9CottEEjTWVWbq8ES8tJE5VZ3hZcnBWzeWPq3s9VG//ajerdQDuiyiaa4nPqwDt1oK0GtSKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730584668; c=relaxed/simple;
-	bh=T1KWqA2mQphX03EbLrEOx56VxIhK3se8lNKZYT+3gDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnk8G6K+fAGdfdYnS4m5TXE53o40Fli05Qc3HjjaMIEhUfNa842umIuKUTXd635UF2fdy1NzRVfHsIl0LnXmQ7SDiMyKa8IXDu/uZIb6CzdgxPp1fKvAG6LCnxHXp6dXGUD61u/gPEMwOF0UraNO3SQw9fq0rV49XgsPkOasCVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dUbpU3Oq; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 654DB240002;
-	Sat,  2 Nov 2024 21:57:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730584657;
+	s=arc-20240116; t=1730584748; c=relaxed/simple;
+	bh=iU/GFh5PxfwqsQ8XPruyq3jiA+Rzu6wWlnuHQDY2Z64=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=l8NNw//92STOqj+AqpXvpMaRiPEtI8vzfecuHaroZ/ntJOJtXvqiN6bp6udelGqW2C/8SIlgMvzJk3ErQaGs09WaoxPm2yfN2TbJx1ju/ZtoY1F69z2B6FiLVLQekEVXIyZtmp21R6/zvRwbmYYZiGiUeZx+HbwDxUnRh5OVF90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Crg+CbP+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730584745;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hXexRIqonxXbwwjZfWS8TncvThZ06Lgb4mpHYQaEmuo=;
-	b=dUbpU3Oq0gFXPE0fErNip2xqgc8AZUmJauISfT7RXm8IX4u5e8TuTm1QDi968KnLPtt4PB
-	TEK/o1bYCaE/3O/Mb+rS+6GJdGBfIEByt5XlNrhX65H/l7PTYg3w06G5pblBoUzV88NO3F
-	3Fgru1H56+XKHI7Fy7MLtXrCkFPcQp/QuOqa8IEsWOnXUcNYcs2EgXiB4vVlUkzaA7FOMK
-	z4NQdD6Bg7E+zaEWsakUUYEvsvD9rCedySmm2BCXbxYfePeLj0XMyu7jc4R0/xpaHp7dlu
-	8etAPkFRAfsuBpnlFoul3m+rLdRVLNTxAcqyuyH7JJYGSf5ypR9D5zjfgeVKCA==
-Date: Sat, 2 Nov 2024 22:57:35 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: conor.culhane@silvaco.com, imx@lists.linux.dev,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-	miquel.raynal@bootlin.com, xiaoning.wang@nxp.com
-Subject: Re: [PATCH v2 1/1] i3c: master: svc: Modify enabled_events bit 7:0
- to act as IBI enable counter
-Message-ID: <173058462779.2458498.8277709682001410265.b4-ty@bootlin.com>
-References: <20241101165002.2479794-1-Frank.Li@nxp.com>
+	bh=ABp4GNt9hr2dQL86JdaUvGuLhtctNBvZysLpO4JDoJ8=;
+	b=Crg+CbP+zrh9PCBsoJ8MrEb0R7kwJGZZluhSU/iQHx8TrMilaxiHko7ZV9UWVgx1MrL78s
+	LhzYkbhV4VxeF+qWT1w+vfoDRiEqVkKmiTiDe7vd/JfmeZI+vrb7aw+kTu2qQxj9sdbJSP
+	Lg1CEmYfR71x13n+nEdkCfiORBwBFjo=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-400-CdByBlUuNH645wZNXiVUfg-1; Sat,
+ 02 Nov 2024 17:59:00 -0400
+X-MC-Unique: CdByBlUuNH645wZNXiVUfg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8CE5019560B1;
+	Sat,  2 Nov 2024 21:58:52 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.225.77])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E66E919560A3;
+	Sat,  2 Nov 2024 21:58:45 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
+  Peter Zijlstra <peterz@infradead.org>,  Darren Hart
+ <dvhart@infradead.org>,  Davidlohr Bueso <dave@stgolabs.net>,  Arnd
+ Bergmann <arnd@arndb.de>,  sonicadvance1@gmail.com,
+  linux-kernel@vger.kernel.org,  kernel-dev@igalia.com,
+  linux-api@vger.kernel.org,  Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH v2 0/3] futex: Create set_robust_list2
+In-Reply-To: <20241101162147.284993-1-andrealmeid@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Fri, 1 Nov 2024 13:21:44 -0300")
+References: <20241101162147.284993-1-andrealmeid@igalia.com>
+Date: Sat, 02 Nov 2024 22:58:42 +0100
+Message-ID: <87ldy170x9.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101165002.2479794-1-Frank.Li@nxp.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, 01 Nov 2024 12:50:02 -0400, Frank Li wrote:
-> Fix issue where disabling IBI on one device disables the entire IBI
-> interrupt. Modify bit 7:0 of enabled_events to serve as an IBI enable
-> counter, ensuring that the system IBI interrupt is disabled only when all
-> I3C devices have IBI disabled.
-> 
-> 
+* Andr=C3=A9 Almeida:
 
-Applied, thanks!
+> 1) x86 apps can have 32bit pointers robust lists. For a x86-64 kernel
+>    this is not a problem, because of the compat entry point. But there's
+>    no such compat entry point for AArch64, so the kernel would do the
+>    pointer arithmetic wrongly. Is also unviable to userspace to keep
+>    track every addition/removal to the robust list and keep a 64bit
+>    version of it somewhere else to feed the kernel. Thus, the new
+>    interface has an option of telling the kernel if the list is filled
+>    with 32bit or 64bit pointers.
 
-[1/1] i3c: master: svc: Modify enabled_events bit 7:0 to act as IBI enable counter
-      https://git.kernel.org/abelloni/c/25bc99be5fe5
+The size is typically different for 32-bit and 64-bit mode (12 vs 24
+bytes).  Why isn't this enough to disambiguate?
 
-Best regards,
+> 2) Apps can set just one robust list (in theory, x86-64 can set two if
+>    they also use the compat entry point). That means that when a x86 app
+>    asks FEX-Emu to call set_robust_list(), FEX have two options: to
+>    overwrite their own robust list pointer and make the app robust, or
+>    to ignore the app robust list and keep the emulator robust. The new
+>    interface allows for multiple robust lists per application, solving
+>    this.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Can't you avoid mixing emulated and general userspace code on the same
+thread?  On emulator threads, you have full control over the TCB.
+
+QEMU hints towards further problems (in linux-user/syscall.c):
+
+    case TARGET_NR_set_robust_list:
+    case TARGET_NR_get_robust_list:
+        /* The ABI for supporting robust futexes has userspace pass
+         * the kernel a pointer to a linked list which is updated by
+         * userspace after the syscall; the list is walked by the kernel
+         * when the thread exits. Since the linked list in QEMU guest
+         * memory isn't a valid linked list for the host and we have
+         * no way to reliably intercept the thread-death event, we can't
+         * support these. Silently return ENOSYS so that guest userspace
+         * falls back to a non-robust futex implementation (which should
+         * be OK except in the corner case of the guest crashing while
+         * holding a mutex that is shared with another process via
+         * shared memory).
+         */
+        return -TARGET_ENOSYS;
+
+The glibc implementation is not really prepared for this
+(__ASSUME_SET_ROBUST_LIST is defined for must architectures).  But a
+couple of years ago, we had a bunch of kernels that regressed robust
+list support on POWER, and I think we found out only when we tested an
+unrelated glibc update and saw unexpected glibc test suite failures =E2=80=
+=A6
+
+Thanks,
+Florian
+
 
