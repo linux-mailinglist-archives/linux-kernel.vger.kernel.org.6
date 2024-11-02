@@ -1,182 +1,179 @@
-Return-Path: <linux-kernel+bounces-393583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508859BA2A3
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 23:01:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375D89BA2A5
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 23:02:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDD461F2296F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:01:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF69283499
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35FB158A33;
-	Sat,  2 Nov 2024 22:01:02 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD56166F06;
+	Sat,  2 Nov 2024 22:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="j04aiFAU"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7308614E
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 22:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F648614E;
+	Sat,  2 Nov 2024 22:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730584862; cv=none; b=vCUlYYvkZWijVpvuP6GHyDw5mb6basq6eoUyfYOW0fludeGBlUCx/Lfqo88otQlPJGCEYt+KtHxhwU13jrZT8STM394JJt2a/JzLPy5SjsvaDaXkMzgoxPESw+RNl4HAGu5q/WIh42azWHGHl2gshujPEXN8S6DS8fwXBjbjFOA=
+	t=1730584914; cv=none; b=X+7tws8zoZ+x/I6ZlSHXs9EQ+TiPNbltd2H3u+kcD5PFoLHMh+S4fpl4WFJLb5fZs8yVSObLXqGlVB/LPjIl1Y6COE292fmhwZMCk+R7AUgPPfrtGiRJlqOmR5u6Luwxth1Rd6W4v9hNFamUq1cZNp7fzqMYrdcifKILWzMKNrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730584862; c=relaxed/simple;
-	bh=m6O7JVK2Y4NC2c2KWZjmfat94ZO0QYtS8+D81hBby60=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RQx+CjYatmE19mHkdS0+T6BkeAFt8Y1cmN7PMjrF/6wvmENcSlruB+SDriPZPZuOXxE1tLipQNovNyzzEfnkBC1LlE4k5BfunCjD9T5gVOy//9SMgyweI+6ajBrkASdVHy5tQ0+OiIWXnYFvBl1yJjLDwbzdxNn+nO4xFMBq82o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6c48f1312so4540075ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 15:01:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730584859; x=1731189659;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v8tbj7e9k237S9KGvUBtD9qU/B90mL+uE91vmCaf7MQ=;
-        b=Bb8/GnCO2FAfjffo6axtp1kz5XdUZXlxWWrxwWqx8Nqx9QyLmfsHXN1To5KA7MY3Rf
-         0BfIH3UYOX+7Ms1cjVXjedJ/DXF9PS+hKBX+9f0VHMmAbE4lm6KF1M+YJV+v6SU7Rkem
-         YZ0J4TQUk2ZDVLgPNNsvK+yV1ponh3bRWOsOsKPXIfWadihse9PxaGtQ17VY658Md3LL
-         A9d7tiyjvX+E6TtBvLlzOHjPE3cYIbfPB6QGhfqxtMQkYA9fzNk+vbu5Pv3SgIPkNPc5
-         25tUOULkPIehPQdLnlxAXyA+QMML1SKnBccOE7Uof7vKp0XZQo2BRZ8w6+Q4M8SgCBj/
-         hc4Q==
-X-Gm-Message-State: AOJu0YxHGT0AU6vFabBS6otdI2IIB/oIf3h2wIyt5er5ctLcI3Aysaz4
-	9ko8JNXY+1SlMIgbhUPFmqch1zdW+sW3wBIji+jml38eh7EcO1/SFqnCbCWQskJE7Vcyd+aG4iz
-	bu4lt7dAUXcAU1PHzmolrKp0LHRkJMV93JYdPEMgk33b0IKP7aM9GO8U=
-X-Google-Smtp-Source: AGHT+IEP6+rDKbplC5ep0NypEj4o99iM1dTORM/McG7tQQMcgDXy2dOuyj7U2Vd64CeGuCr28DWUQhh8oMqWhOvLPwAsT5X1Jafg
+	s=arc-20240116; t=1730584914; c=relaxed/simple;
+	bh=Sf7JXMx9xsS/c1EdJK3lN7rNnBDOmXkfcQN3U1G1LZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hmp1B6oCC85v6Eygcszh+QLnom/9KYMGBwBEZIuQ8jhqJ0Gzu8Y1huM3yN+kkTOqjR0PqXFFwTfrhBSsuLfQ8QfVwtTgXfRec972DaXTbwBKjAzc+294WO+YpwKg/TSs5DMcbL67D90EQTTvXE2cNFWkeXjIU6mypWMH/ewiQ5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=j04aiFAU; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=Xz/xV9bgfMQiU18NYnrLyS6x4kS7JNrVV7Z9KqjoIw0=; b=j04aiFAUY2pbHAiJ
+	2pFd0dgJMgr97bsSGA/xLCxLsXDiKxCa6lCCCt1apnTBthF/M4636rF5wLGuf6oDUEih9rTc9WiLj
+	mKED0h9owzqjBUfOhRw3XeUDgW8mFpATcnOzb3WoZ1r1s6welMoPKr2pBgJ1kwWgFM7c5qjwj3lbK
+	mLA/FKaJWL7jrEO6AWjGfszCkmhACcZxOJssbuNONnEigFdVj7pg6YSI8tbogRTzLjX8u1TKDLf8B
+	CvBtdHVRyH3xKXaBley8ZXoCpF4JuOzqI/0AVopm6lOUuBVYsBLwJd9Rc2lUke06Nv92/Qnyy4DgM
+	pohcqitwrmuNQNI8LA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1t7MBm-00F7uJ-09;
+	Sat, 02 Nov 2024 22:01:46 +0000
+From: linux@treblig.org
+To: shayagr@amazon.com,
+	akiyano@amazon.com,
+	darinzon@amazon.com,
+	ndagan@amazon.com,
+	saeedb@amazon.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH net-next] net: ena: Remove deadcode
+Date: Sat,  2 Nov 2024 22:01:42 +0000
+Message-ID: <20241102220142.80285-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152e:b0:3a6:b445:dc9c with SMTP id
- e9e14a558f8ab-3a6b445decemr58449385ab.3.1730584859431; Sat, 02 Nov 2024
- 15:00:59 -0700 (PDT)
-Date: Sat, 02 Nov 2024 15:00:59 -0700
-In-Reply-To: <0000000000003c68f3061fd2c285@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6726a11b.050a0220.35b515.0189.GAE@google.com>
-Subject: Re: [syzbot] [PATCH] usb: raw_gadget: Fix a KASAN double-free bug in raw_release
-From: syzbot <syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-***
+ena_com_get_dev_basic_stats() has been unused since 2017's
+commit d81db2405613 ("net/ena: refactor ena_get_stats64 to be atomic
+context safe")
 
-Subject: [PATCH] usb: raw_gadget: Fix a KASAN double-free bug in raw_release
-Author: marcus.yu.56@gmail.com
+ena_com_get_offload_settings() has been unused since the original
+commit of ENA back in 2016 in
+commit 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic
+Network Adapters (ENA)")
 
-#syz test
+Remove them.
 
-syzkaller reported a double free bug
-(https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c) in
-raw_release.
-
-I suspect this is because a race between raw_release and
-raw_ioctl_run. While kref_get in raw_ioctl_run is protected by
-the spin lock, all kref_put in raw_release are not under the
-lock. This makes it possible that a kref_put might occur during
-kref_get, which is specifically prohibited by the kref
-documentation[1].
-
-The fix is to ensure that all kref_put calls are made under lock
-and that we only call kfree(dev) after releasing the lock.
-
-[1] https://docs.kernel.org/core-api/kref.html
-
-Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
-Reported-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c
-Fixes: f2c2e717642c ("usb: gadget: add raw-gadget interface")
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/usb/gadget/legacy/raw_gadget.c | 44 ++++++++++++++------------
- 1 file changed, 24 insertions(+), 20 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_com.c | 33 -----------------------
+ drivers/net/ethernet/amazon/ena/ena_com.h | 18 -------------
+ 2 files changed, 51 deletions(-)
 
-diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
-index 112fd18d8c99..0c01d491d489 100644
---- a/drivers/usb/gadget/legacy/raw_gadget.c
-+++ b/drivers/usb/gadget/legacy/raw_gadget.c
-@@ -225,7 +225,6 @@ static void dev_free(struct kref *kref)
- 		kfree(dev->eps[i].ep->desc);
- 		dev->eps[i].state = STATE_EP_DISABLED;
- 	}
--	kfree(dev);
- }
- 
- /*----------------------------------------------------------------------*/
-@@ -330,7 +329,8 @@ static void gadget_unbind(struct usb_gadget *gadget)
- 
- 	set_gadget_data(gadget, NULL);
- 	/* Matches kref_get() in gadget_bind(). */
--	kref_put(&dev->count, dev_free);
-+	if (kref_put(&dev->count, dev_free))
-+		kfree(dev);
- }
- 
- static int gadget_setup(struct usb_gadget *gadget,
-@@ -443,34 +443,38 @@ static int raw_open(struct inode *inode, struct file *fd)
- static int raw_release(struct inode *inode, struct file *fd)
- {
- 	int ret = 0;
-+	int freed = 0;
- 	struct raw_dev *dev = fd->private_data;
- 	unsigned long flags;
--	bool unregister = false;
- 
- 	spin_lock_irqsave(&dev->lock, flags);
- 	dev->state = STATE_DEV_CLOSED;
--	if (!dev->gadget) {
--		spin_unlock_irqrestore(&dev->lock, flags);
--		goto out_put;
--	}
--	if (dev->gadget_registered)
--		unregister = true;
-+	if (!dev->gadget)
-+		goto out_put_locked;
-+	if (!dev->gadget_registered)
-+		goto out_put_locked;
- 	dev->gadget_registered = false;
- 	spin_unlock_irqrestore(&dev->lock, flags);
- 
--	if (unregister) {
--		ret = usb_gadget_unregister_driver(&dev->driver);
--		if (ret != 0)
--			dev_err(dev->dev,
--				"usb_gadget_unregister_driver() failed with %d\n",
--				ret);
--		/* Matches kref_get() in raw_ioctl_run(). */
--		kref_put(&dev->count, dev_free);
--	}
-+	ret = usb_gadget_unregister_driver(&dev->driver);
-+	if (ret != 0)
-+		dev_err(dev->dev,
-+			"usb_gadget_unregister_driver() failed with %d\n",
-+			ret);
-+
-+	spin_lock_irqsave(&dev->lock, flags);
-+	/* Matches kref_get() in raw_ioctl_run(). */
-+	freed = kref_put(&dev->count, dev_free);
-+	if (freed)
-+		goto out_free_dev;
- 
--out_put:
-+out_put_locked:
- 	/* Matches dev_new() in raw_open(). */
--	kref_put(&dev->count, dev_free);
-+	freed = kref_put(&dev->count, dev_free);
-+out_free_dev:
-+	spin_unlock_irqrestore(&dev->lock, flags);
-+	if (freed)
-+		kfree(dev);
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
+index d958cda9e58b..bc23b8fa7a37 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -2198,21 +2198,6 @@ int ena_com_get_ena_srd_info(struct ena_com_dev *ena_dev,
  	return ret;
  }
  
+-int ena_com_get_dev_basic_stats(struct ena_com_dev *ena_dev,
+-				struct ena_admin_basic_stats *stats)
+-{
+-	struct ena_com_stats_ctx ctx;
+-	int ret;
+-
+-	memset(&ctx, 0x0, sizeof(ctx));
+-	ret = ena_get_dev_stats(ena_dev, &ctx, ENA_ADMIN_GET_STATS_TYPE_BASIC);
+-	if (likely(ret == 0))
+-		memcpy(stats, &ctx.get_resp.u.basic_stats,
+-		       sizeof(ctx.get_resp.u.basic_stats));
+-
+-	return ret;
+-}
+-
+ int ena_com_get_customer_metrics(struct ena_com_dev *ena_dev, char *buffer, u32 len)
+ {
+ 	struct ena_admin_aq_get_stats_cmd *get_cmd;
+@@ -2289,24 +2274,6 @@ int ena_com_set_dev_mtu(struct ena_com_dev *ena_dev, u32 mtu)
+ 	return ret;
+ }
+ 
+-int ena_com_get_offload_settings(struct ena_com_dev *ena_dev,
+-				 struct ena_admin_feature_offload_desc *offload)
+-{
+-	int ret;
+-	struct ena_admin_get_feat_resp resp;
+-
+-	ret = ena_com_get_feature(ena_dev, &resp,
+-				  ENA_ADMIN_STATELESS_OFFLOAD_CONFIG, 0);
+-	if (unlikely(ret)) {
+-		netdev_err(ena_dev->net_device, "Failed to get offload capabilities %d\n", ret);
+-		return ret;
+-	}
+-
+-	memcpy(offload, &resp.u.offload, sizeof(resp.u.offload));
+-
+-	return 0;
+-}
+-
+ int ena_com_set_hash_function(struct ena_com_dev *ena_dev)
+ {
+ 	struct ena_com_admin_queue *admin_queue = &ena_dev->admin_queue;
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.h b/drivers/net/ethernet/amazon/ena/ena_com.h
+index a372c5e768a7..20e1529adf3b 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.h
++++ b/drivers/net/ethernet/amazon/ena/ena_com.h
+@@ -591,15 +591,6 @@ int ena_com_set_aenq_config(struct ena_com_dev *ena_dev, u32 groups_flag);
+ int ena_com_get_dev_attr_feat(struct ena_com_dev *ena_dev,
+ 			      struct ena_com_dev_get_features_ctx *get_feat_ctx);
+ 
+-/* ena_com_get_dev_basic_stats - Get device basic statistics
+- * @ena_dev: ENA communication layer struct
+- * @stats: stats return value
+- *
+- * @return: 0 on Success and negative value otherwise.
+- */
+-int ena_com_get_dev_basic_stats(struct ena_com_dev *ena_dev,
+-				struct ena_admin_basic_stats *stats);
+-
+ /* ena_com_get_eni_stats - Get extended network interface statistics
+  * @ena_dev: ENA communication layer struct
+  * @stats: stats return value
+@@ -635,15 +626,6 @@ int ena_com_get_customer_metrics(struct ena_com_dev *ena_dev, char *buffer, u32
+  */
+ int ena_com_set_dev_mtu(struct ena_com_dev *ena_dev, u32 mtu);
+ 
+-/* ena_com_get_offload_settings - Retrieve the device offloads capabilities
+- * @ena_dev: ENA communication layer struct
+- * @offlad: offload return value
+- *
+- * @return: 0 on Success and negative value otherwise.
+- */
+-int ena_com_get_offload_settings(struct ena_com_dev *ena_dev,
+-				 struct ena_admin_feature_offload_desc *offload);
+-
+ /* ena_com_rss_init - Init RSS
+  * @ena_dev: ENA communication layer struct
+  * @log_size: indirection log size
 -- 
 2.47.0
 
