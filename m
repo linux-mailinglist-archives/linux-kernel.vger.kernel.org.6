@@ -1,121 +1,97 @@
-Return-Path: <linux-kernel+bounces-393228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6D69B9E03
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:52:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45DF9B9E06
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:58:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51CCD1F226F4
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501271F22703
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6654B159596;
-	Sat,  2 Nov 2024 08:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E364E15A85E;
+	Sat,  2 Nov 2024 08:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5PffNWV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="Gecmhibf"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D23136351;
-	Sat,  2 Nov 2024 08:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D75136351;
+	Sat,  2 Nov 2024 08:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730537563; cv=none; b=Br3KXSBL1AlAPdVrc7q6UNv2xjgI6y36cotCuEoYJRVg9B2ddOVA/NUw9rTVUUccL3NwMo/D1qz6KYLs4rXkxuQ09GTbnyxMpDOrX/zH7MZXSzTKAceSk1I/DhNhgg1RxOsXKYdpgRbprAJkx+RWmbFxkPAHOBIYSj79wAqwGb4=
+	t=1730537874; cv=none; b=W8NpTq2yqfOjb8xMOjBesGUqTLlKCqhAANxUBCmjIvpiMe1x1hMJoM95JUpqP0PMU/orEGVNQgiaTAYBhR6uwZjuxd7vh9L9shiE9wjwuLfd3/Qm43KJPCOPGbFiXMgB3kyEysk9bfi4W4Vzaq6D45ZMiMX4lWev6+EIi1xmcxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730537563; c=relaxed/simple;
-	bh=5Ur0AthEvPTHPmN0Q6ms1UsYHOsLFRg2PHT8QzlnmVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1hg5ZNaoVZPpkeiXdh6t8+oY4TYt6dsiLMdGuFnjYOYDT8lCY/CWXN1tw3sULG35a9p/1/w5CAkboXCXM4y43MdVjWnXDlBdwBCnNv6X9eeEmxmWzKCVm1/oDjmltOfm7+cUxmTjBtKYpEU5pmycU19wwU+NS4IclYb796Z1kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5PffNWV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 611A4C4CED1;
-	Sat,  2 Nov 2024 08:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730537563;
-	bh=5Ur0AthEvPTHPmN0Q6ms1UsYHOsLFRg2PHT8QzlnmVg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e5PffNWV0hSAaroMTOUeypERpBd4QK69Q5mCJy20GVfB1i4BTGzIY5xkubYuO8/ig
-	 2ykIOrkevbctwbUhZRKb9klfeZwbvh07Ru+mfX5zZ+kTyd5cLGxYhEpsq9uKUDsXb/
-	 zdNJAiSlas1Bks9qIE8qHsB8fC1ZSKbB5nCBzhGJO22iH9Fz+61kSuSaB6ne4vmGt0
-	 2xoXvoEzCsMky5PJwSfmTD63KgI7hDio+UsWj47/ANX/QQRGRbofytywy8K1wt143b
-	 vMMHD5BAonRv0WzwAy9XN7ZM5EAwHRgcQUpe0yWTQ9Tcm14L12+C7WWv+MZXhT5eEe
-	 zqGNBh926zsUA==
-Date: Sat, 2 Nov 2024 09:52:39 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>, Larisa Grigore <larisa.grigore@nxp.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>, 
-	Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
-	Enric Balletbo <eballetb@redhat.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	imx@lists.linux.dev
-Subject: Re: [PATCH v5 2/7] mfd: nxp-siul2: add support for NXP SIUL2
-Message-ID: <z5ky5g46tsdmrabplgjbt3ahlnkn7gljkwsxjshwpkdqqnirwr@wavvhc2wudlh>
-References: <20241101080614.1070819-1-andrei.stefanescu@oss.nxp.com>
- <20241101080614.1070819-3-andrei.stefanescu@oss.nxp.com>
+	s=arc-20240116; t=1730537874; c=relaxed/simple;
+	bh=ktTzf+Lq/jTkyU7b4tfI8pRlbwVRvpmf7PEUMuveifk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K+I8vMgW2Y2bu8upLlsQMBCemZdd8EsFEoyLKcEtLTQKbnTLjjoX+zwhNm5fOdm2g+gqCgjjb/skGCS4glj/hlLZwS6hx41oTjWuLuhM1pGiw3dfB4MVFdO8hLbkMefIEX2IapMhn6BmnVTEGECKwZ0EmjH20iUQ5Cw1Mq3eDVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=Gecmhibf; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4A9CEA09BA;
+	Sat,  2 Nov 2024 09:57:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=oHkSNNNrwMqpzUY5rzOn
+	LOxgjwpzlT3G1/0AWJvzSww=; b=GecmhibfrMQ6yCpYosL1WkhOmP+xHjG0iK9T
+	6HiDGbqFxSQJxakL1sdfOlYdSRyBZqJdv+Pe93HUUvlqmowepDO1C4XwWCsf9kOM
+	2XJHP1ullatnEIWCLoxQbCPE55CYtzBV1FTQw8RqeW2tK7KiPdXREFqxtd8ecp0l
+	kJKkBStlW1p86Y4irCxPCrursQBsfkZN7aclHCskVrzNDY68aIvvDESexkn0N9Zz
+	Zb6NlxIo2iaQCqx0KcOIBJs3vD4LxEO7DMLZE1Z5IzyrTl1iRQlzEkQ+OlXZpTPi
+	X9+hxobi0YYd7oht8C5/F4+H6yyLWrbxk1SE2S2HyV3jVzXEMCnhZydBUrOQrjCg
+	zU6hnORa97kwcYB0P+gN9Ug2v3Bnd5xtiXW3PhpzIkb89GVaOmLLJ9zLlcCNUq0p
+	CMZfuLCWgqabPYBkSGgY9ARpeg2JaUoMUVPI5B9xJ6PGbpymlNl/cQ7v7ay8DWGN
+	3Bs/AWCUFwwo4nnvdbu4njLRzzJjaLMqVq8Xf8AA74rhZQ6GqoxRtlozDJ4uZDQc
+	/imM9iHRGNQE/swcmEa7UrzZ57Xni7PqqnfXb3NWwwzMVFOZ3fGz0hQbga/UqN8W
+	q4gcnmp2gFX0Szwejb5/JEejhgHtt3M2hmpdzNWY0W0wBQPApb+AQXwVdjFlUqqG
+	vBokBzo=
+Message-ID: <ce76f036-d8ac-4f3b-a229-ee1550c2422a@prolan.hu>
+Date: Sat, 2 Nov 2024 09:57:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241101080614.1070819-3-andrei.stefanescu@oss.nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/10] dt-bindings: dmaengine: Add Allwinner suniv
+ F1C100s DMA
+To: Rob Herring <robh@kernel.org>
+CC: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>,
+	<dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, Conor Dooley <conor.dooley@microchip.com>,
+	Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec
+	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
+References: <20241031123538.2582675-1-csokas.bence@prolan.hu>
+ <20241031123538.2582675-3-csokas.bence@prolan.hu>
+ <20241031181749.GA1260045-robh@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <20241031181749.GA1260045-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855667067
 
-On Fri, Nov 01, 2024 at 10:06:08AM +0200, Andrei Stefanescu wrote:
-> +static int nxp_siul2_probe(struct platform_device *pdev)
-> +{
-> +	struct nxp_siul2_mfd *priv;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->num_siul2 = S32G_NUM_SIUL2;
-> +	priv->siul2 = devm_kcalloc(&pdev->dev, priv->num_siul2,
-> +				   sizeof(*priv->siul2), GFP_KERNEL);
-> +	if (!priv->siul2)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, priv);
-> +	ret = nxp_siul2_parse_dtb(pdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
-> +				    nxp_siul2_devs, ARRAY_SIZE(nxp_siul2_devs),
-> +				    NULL, 0, NULL);
-> +}
-> +
-> +static const struct of_device_id nxp_siul2_dt_ids[] = {
-> +	{ .compatible = "nxp,s32g2-siul2" },
-> +	{ .compatible = "nxp,s32g3-siul2" },
 
-So devices are comaptible? Why doesn't your binding express it?
+On 2024. 10. 31. 19:17, Rob Herring wrote:
+> On Thu, Oct 31, 2024 at 01:35:29PM +0100, Csókás, Bence wrote:
+>> Add compatible string for Allwinner suniv F1C100s DMA.
+>>
+>> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>> Link: https://lore.kernel.org/linux-kernel/20241024-recycler-borrowing-5d4296fd4a56@spud/
+> 
+> You don't need a link to Conor's ack.
 
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, nxp_siul2_dt_ids);
-> +
-> +static struct platform_driver nxp_siul2_mfd_driver = {
-> +	.driver = {
-> +		.name		= "nxp-siul2-mfd",
-> +		.of_match_table	= nxp_siul2_dt_ids,
-> +	},
-> +	.probe = nxp_siul2_probe,
-> +};
-
-Best regards,
-Krzysztof
+I don't? I thought whenever I collect a tag I should provide the link as 
+well...
 
 
