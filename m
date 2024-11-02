@@ -1,121 +1,200 @@
-Return-Path: <linux-kernel+bounces-393484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D782A9BA133
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:28:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD4B9BA136
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64B4D282334
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:28:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E41D28233A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DD81A0BD8;
-	Sat,  2 Nov 2024 15:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F11189F5A;
+	Sat,  2 Nov 2024 15:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="USG+6xhO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i2WJHXyK"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E8A185936;
-	Sat,  2 Nov 2024 15:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D5A56446
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 15:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730561328; cv=none; b=A1zeCJzigJD+E9FZ0Myif9E9sV2Ko+MWGrUcH0UxH5PDc6VNrycA1wxqPi03FOkBIXXN+PhgVxQYMXgBke/Ot/1kadedtvgxHKbQ8Ad+RDzCb8UifmAs8kfY78It6cuGoMfkSzrxX5dsVg++pH+y2SxVt/0rOcYjkbzWbJ4lw/o=
+	t=1730561498; cv=none; b=EcCCl+R4SS2/I8esuF4t2aysRl5GoBZ/hHqgtfqNpGZ+Jq8Y2jPMzg9nEblGw4c8DAGVBPXRWadFdOokCeizvzQW/U68RG2CJ0Bggiy5E6kup5288Lf+95ywcrqcaTHK7om28/aG0ZCt7z69vOT8Kn136I8wGSeGhTVL+8NE9vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730561328; c=relaxed/simple;
-	bh=zAUFqbRnx3QrIZL0lXYiEoGKtF5VPcXttxczM7SZY6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QC9VPIKHfPzteDjepo1UZXg4SzfZymKssh7Aj5gj1FlSVhClHh3xcC1dhDWVXApELqQ9z5FERRKi+tDlDPaEYb5x7M/nb+qQJj1J8cYI/fT5Z8JjW/gwQXaOX80FLT7nGySyglGSri8Z4eazIRqLD/G8a2dAQ635etNB7wIRbzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=USG+6xhO; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730561325; x=1762097325;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zAUFqbRnx3QrIZL0lXYiEoGKtF5VPcXttxczM7SZY6c=;
-  b=USG+6xhO3bNumqh7xUYJoV4HD5stEe+mGJbVHV/6jNOc/HzR1hFOJf4W
-   n032K2Jp6YXLMS0pVZZSnqB9QRRfrUyu3UmF1w322xyS0nGEbLVBRTfYG
-   WWNLGR+DmW1TxZWSaIgSR5+GosHSmSVmeZNtB1qqvKZesMJgCLUN8c0V1
-   IqERh5RzmU9qQIhC/v1UGcfI/0oilAyt81C6c5/UHx61oJ7it1iF9IM/k
-   hFAUy5992ek6xSC5pzzpiYckcRPVexqERBat8ZW0bBjb5aN4QHMH6Uds/
-   0PK7SDWYoxCe7FatHkOor/DIN5GqXE9sdsfHgMDuynKw2lYuWnsc+3GX7
-   Q==;
-X-CSE-ConnectionGUID: 29cfYB+gSOmDpA3MHll8uA==
-X-CSE-MsgGUID: L1zbE58vSRuZXXaR/OmMjA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11244"; a="30411883"
-X-IronPort-AV: E=Sophos;i="6.11,253,1725346800"; 
-   d="scan'208";a="30411883"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 08:28:45 -0700
-X-CSE-ConnectionGUID: B6v/LPEhTo64evpmnST69g==
-X-CSE-MsgGUID: jRQcgbeoT7+OwZQGIUT5vA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,253,1725346800"; 
-   d="scan'208";a="83685863"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 02 Nov 2024 08:28:42 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t7G3L-000j6H-1q;
-	Sat, 02 Nov 2024 15:28:39 +0000
-Date: Sat, 2 Nov 2024 23:28:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH 10/11] riscv: mm: Use physical memory aliases to apply
- PMAs
-Message-ID: <202411022337.JHozQieV-lkp@intel.com>
-References: <20241102000843.1301099-11-samuel.holland@sifive.com>
+	s=arc-20240116; t=1730561498; c=relaxed/simple;
+	bh=B3BW8rfL9QJ8zunAdaD3K/b5ZFleIFGLjYQu34s4OWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fOsutwYwbg+ki5GZdUKII9Es3kmBf0gI6lgnLekc7WNZhYdms1fy6e73iRip+LiVzPbfko4q3/xaAkV6E3t4ddSpaUphxFkluU6X2S/0k1scuOtbOBTjRMAVVZrIQOYzBY6sB4/HhfFD6WmSlyigAHCne1uKyzhZkMQyd3FFfi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i2WJHXyK; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <91d75479-8569-40e1-914a-27268d66b5c0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730561492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8FBHpeeHnkGexRTn09DvpW55xu1PDbDpzSjMrgnDg+k=;
+	b=i2WJHXyKclJ+QbNVPY6OUqU+Xyi2WAkPbzDKHgEKxgtOrGX51uDUW5zVOXGjo2BU9v8mZ6
+	oXM6jiL8shlzW8hLytFQAO1qHAJYhlJPlqedUk798h/cgsxKB6DZA957NVNLiA+90SnM6/
+	C01ukS5dz935D8wFxpQxm/9Im4cOKtE=
+Date: Sat, 2 Nov 2024 23:31:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241102000843.1301099-11-samuel.holland@sifive.com>
+Subject: Re: [PATCH v3] drm/etnaviv: Request pages from DMA32 zone on
+ addressing_limited
+To: Lucas Stach <l.stach@pengutronix.de>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>, linux+etnaviv@armlinux.org.uk,
+ christian.gmeiner@gmail.com, airlied@gmail.com, daniel@ffwll.ch
+Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240903020857.3250038-1-xiaolei.wang@windriver.com>
+ <7a6ffbb773784dee0ea3ee87e563ac4e4f7c9c90.camel@pengutronix.de>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <7a6ffbb773784dee0ea3ee87e563ac4e4f7c9c90.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Samuel,
+Hi,
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.12-rc5 next-20241101]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 2024/10/1 20:17, Lucas Stach wrote:
+> Hi Xiaolei,
+>
+> Am Dienstag, dem 03.09.2024 um 10:08 +0800 schrieb Xiaolei Wang:
+>> Remove __GFP_HIGHMEM when requesting a page from DMA32 zone,
+>> and since all vivante GPUs in the system will share the same
+>> DMA constraints, move the check of whether to get a page from
+>> DMA32 to etnaviv_bind().
+>>
+>> Fixes: b72af445cd38 ("drm/etnaviv: request pages from DMA32 zone when needed")
+>> Suggested-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+>> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+>> ---
+>>
+>> change log
+>>
+>> v1:
+>>    https://patchwork.kernel.org/project/dri-devel/patch/20240806104733.2018783-1-xiaolei.wang@windriver.com/
+>>
+>> v2:
+>>    Modify the issue of not retaining GFP_USER in v1 and update the commit log.
+>>
+>> v3:
+>>    Use "priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"
+>> instead of
+>>    "priv->shm_gfp_mask = GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"
+> I don't understand this part of the changes in the new version. Why
+> should we drop the HIGHMEM bit always and not only in the case where
+> dma addressing is limited? This seems overly restrictive.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Holland/dt-bindings-riscv-Describe-physical-memory-regions/20241102-081311
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241102000843.1301099-11-samuel.holland%40sifive.com
-patch subject: [PATCH 10/11] riscv: mm: Use physical memory aliases to apply PMAs
-config: riscv-defconfig (https://download.01.org/0day-ci/archive/20241102/202411022337.JHozQieV-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241102/202411022337.JHozQieV-lkp@intel.com/reproduce)
+While reading the implementation of the dma_alloc_attrs() function,
+except allocate memory from device coherent pool, the rest implementation
+just mask out __GFP_DMA, __GFP_DMA32 and __GFP_HIGHMEM anyway.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411022337.JHozQieV-lkp@intel.com/
+So ?
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
 
->> ERROR: modpost: "riscv_fixup_memory_alias" [arch/riscv/kvm/kvm.ko] undefined!
+```
+void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
+		gfp_t flag, unsigned long attrs)
+{
+	const struct dma_map_ops *ops = get_dma_ops(dev);
+	void *cpu_addr;
+
+	WARN_ON_ONCE(!dev->coherent_dma_mask);
+
+	/*
+	 * DMA allocations can never be turned back into a page pointer, so
+	 * requesting compound pages doesn't make sense (and can't even be
+	 * supported at all by various backends).
+	 */
+	if (WARN_ON_ONCE(flag & __GFP_COMP))
+		return NULL;
+
+	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
+		return cpu_addr;
+
+	/* let the implementation decide on the zone to allocate from: */
+	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
+
+	if (dma_alloc_direct(dev, ops))
+		cpu_addr = dma_direct_alloc(dev, size, dma_handle, flag, attrs);
+	else if (use_dma_iommu(dev))
+		cpu_addr = iommu_dma_alloc(dev, size, dma_handle, flag, attrs);
+	else if (ops->alloc)
+		cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
+	else
+		return NULL;
+
+
+	return cpu_addr;
+}
+```
+
+
+> Regards,
+> Lucas
+>
+>> and move the check of whether to get a page from DMA32 to etnaviv_bind().
+>>
+>>   drivers/gpu/drm/etnaviv/etnaviv_drv.c | 10 +++++++++-
+>>   drivers/gpu/drm/etnaviv/etnaviv_gpu.c |  8 --------
+>>   2 files changed, 9 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+>> index 6500f3999c5f..8cb2c3ec8e5d 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+>> @@ -536,7 +536,15 @@ static int etnaviv_bind(struct device *dev)
+>>   	mutex_init(&priv->gem_lock);
+>>   	INIT_LIST_HEAD(&priv->gem_list);
+>>   	priv->num_gpus = 0;
+>> -	priv->shm_gfp_mask = GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
+>> +	priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
+>> +
+>> +	/*
+>> +	 * If the GPU is part of a system with DMA addressing limitations,
+>> +	 * request pages for our SHM backend buffers from the DMA32 zone to
+>> +	 * hopefully avoid performance killing SWIOTLB bounce buffering.
+>> +	 */
+>> +	if (dma_addressing_limited(dev))
+>> +		priv->shm_gfp_mask |= GFP_DMA32;
+>>   
+>>   	priv->cmdbuf_suballoc = etnaviv_cmdbuf_suballoc_new(drm->dev);
+>>   	if (IS_ERR(priv->cmdbuf_suballoc)) {
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+>> index 7c7f97793ddd..5e753dd42f72 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+>> @@ -839,14 +839,6 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
+>>   	if (ret)
+>>   		goto fail;
+>>   
+>> -	/*
+>> -	 * If the GPU is part of a system with DMA addressing limitations,
+>> -	 * request pages for our SHM backend buffers from the DMA32 zone to
+>> -	 * hopefully avoid performance killing SWIOTLB bounce buffering.
+>> -	 */
+>> -	if (dma_addressing_limited(gpu->dev))
+>> -		priv->shm_gfp_mask |= GFP_DMA32;
+>> -
+>>   	/* Create buffer: */
+>>   	ret = etnaviv_cmdbuf_init(priv->cmdbuf_suballoc, &gpu->buffer,
+>>   				  PAGE_SIZE);
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Sui
+
 
