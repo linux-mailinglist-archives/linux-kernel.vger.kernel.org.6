@@ -1,136 +1,143 @@
-Return-Path: <linux-kernel+bounces-393503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FEB9BA181
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:47:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F199BA187
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:54:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66DDEB21644
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:47:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0C91C209C2
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7879D1AA7B7;
-	Sat,  2 Nov 2024 16:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F7D1A7265;
+	Sat,  2 Nov 2024 16:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJ+1XHVr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4Ca04J5F"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52091A01B9;
-	Sat,  2 Nov 2024 16:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860891A3BA1
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 16:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730566008; cv=none; b=TGKMs2KlaVCLLpWDH3xaFRhbJmlXYXqjavPkfmv+6Xipx8l4znG+hJzZz6JKPbqjJ1cDJh/7iDrFNaACBSsFJ3KEulrpMicTUdC1swHIbGyvBdOZd91uRBG319IIZOZVCj0/BFzTJ0gdBsaqNyIJjm10rwE4WE+8iHTiSZ39L+w=
+	t=1730566452; cv=none; b=YtgU4yTuAl3sZeEjztt5EqplFsqH1WKkH7D1iwZJkMZKuNyS9Ch6Xj4YPOywdafccNkjLrf5BuQitEWcecsYK6i9ES1wXdO+CB/ZMOjouhgric+87LSS3t3uzWLbEW099ayO4BH2s0GSIqEgKaLukJfTAVlRSMrS+5j2HJPE6uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730566008; c=relaxed/simple;
-	bh=GxoXhXGyHNH8GVqUExL8Ti1VvRWiwrpIEQI7tN7LYew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BaGjpi3fBRKwz03ZD4iv0jnO47zab+tRtPUoZov2xdVvw/L/mHRlJZTNM3oLXk1dDHUi3Lm4QMCsRxwGkMp3ck/XogbMNkgMB71XcUT275KZ4UzNyhxFwdguBTJuam0JnCOPwCBS8Sog8h1QTRlglCptde6bxIG2bNMe8DV6IAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJ+1XHVr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42B7DC4CECE;
-	Sat,  2 Nov 2024 16:46:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730566008;
-	bh=GxoXhXGyHNH8GVqUExL8Ti1VvRWiwrpIEQI7tN7LYew=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NJ+1XHVrktQ9WGmo2EqP6wMVn/OEt/Sv2350oNUT4r8GsAp9SYm0VRx1/D+bpxg8g
-	 AhMeZGuz9tEsHn97hHwlwmvLVZz1BdRK3HPFE5YqLcs8A8XoDyXbcjgPGJYTBYv2lw
-	 e7zJmHAonSkqpKaKaw6UnNUCHZimTZLKO1FLqORq1mUqGyfy2E7ES/38e2axn3jHVc
-	 vyfrkc6wWAWUTuzFcDsIW2fxGUusCopNRtdPosLD46rmwBPJUZoGz8kFjaYjXuuFth
-	 EueP60OBXtYFWJvxL+0V8IT2yf0FfbKIXjL0+19V3Zm0XEOHjVKdBVOhl1og12Usc6
-	 DBoCweRx5bdQg==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb470a8b27so35724391fa.1;
-        Sat, 02 Nov 2024 09:46:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+psY0WGzpDhvG3YDJyMVROxy7sxk2VLnemB5+05j0oW6rsoAK3klrEMKTbiNo1In3AWOspigi0cttTQ==@vger.kernel.org, AJvYcCVQDaiqQBxElXtjpXSCI1RQSap6joIyvI0OzDmg+fZz6VDdetURad4+QK2AN7P6ofcs6rqGJYf+GNrb6g==@vger.kernel.org, AJvYcCVoUIow2cECHTqXDVMQ43VXAZneDdb+fYjrm/ohMEKNSfztj6lZ5dZwprP9/7diKs3Qb/rWykPID29E/w==@vger.kernel.org, AJvYcCVof8FfiQ+hMakMk4UUe8yn3yNd69slEZsoKMRD7pCWRwLjrzTUUy9t3oKVH68e7VaZZanV8s538LXH@vger.kernel.org, AJvYcCWuM+DUuOi7xhE6DYPt9D6N51Ig/cdeK/F941X+BY0KROpsLr1Gn/jWNeMzo/X5fc2ejDHWCtZ2Q5fhrw==@vger.kernel.org, AJvYcCXFDIgszwvJoxosRyig4BEfjOT0PLP0MOzcaoytPhYIBQ82qK65VQsL29GqbCYtPjZlfbBNwDDvynjOf2Sw@vger.kernel.org, AJvYcCXRoS9oMJac8/AwBU01ohSbQqlKMcOjRvb89QqHZZPqW++tnZmjts50QjeB9ObXZT1cb0q+ajEAi2rv8Q==@vger.kernel.org, AJvYcCXx0FK8Jg88nWHDR4t77RBynBGb8Ek7FHv/zB9yvwYtYqiMRdyDAjlJ/sPgUuh8drs9PfAV+e9JD3Uwv/KU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5jj6rU94ZpDnjF2dBoin+AzWW2D5KRzPCpz0pGwtzOl2yteTe
-	0kkW1+QCv9IFe/6UqusBm835uzpyMmx754j/W+jxZu2wiLzsk90HGs9ILeNN6ltOSnE/PYZP1/n
-	4hcxa8Bua7zIYyt/+cKdvhC4bGhc=
-X-Google-Smtp-Source: AGHT+IF1qWuAPM7OXxHa9PDtIx4xdAi/SPdwq1d4i906hC2y1gUwoZbqVs2/tV8+cHeYBRRGdC2ase7pF6ri9+FpJxc=
-X-Received: by 2002:a2e:bd87:0:b0:2f9:e1ce:1276 with SMTP id
- 38308e7fff4ca-2fedb414a6amr24137441fa.11.1730566006632; Sat, 02 Nov 2024
- 09:46:46 -0700 (PDT)
+	s=arc-20240116; t=1730566452; c=relaxed/simple;
+	bh=uvT7Jt18QdLMEnWuwF5FiFkhA6QSqQ3s+ITWtrpIjkI=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=NZx2WFne8FrQ6TbBP7LPO3529NJW3mnXOT2OYzs68JS8XgIRybdMBcWz4QIKtc2dzs98avg62SSbmdoxK2IwOmyH55YN5kGrprlBE8AsPC7qHuxXoTfkb9tshhjR6MS9Eld/f5QY+OGuyZiDmla3zsXUtFeBShfr+yZpcEZLh24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4Ca04J5F; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e7fb84f99cso60732567b3.1
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 09:54:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730566449; x=1731171249; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0uUEtUE6reGy3hUjf41A625G8CSBp4sF/WXt+DqRh+g=;
+        b=4Ca04J5Fkcps73YO1sCJ9nsLRoFRUiDHW/cqQQPawZugl830rkmlRlOILk35VCP22n
+         0OYjGBWLpLLZM/aXnZ7Ns5xn/yVlDgP4+adzgQ0gsY3XyWIptHSF5YOhf6YyQhWX2gF/
+         Bq4ecxQYnGcWK4rgRIslMZmfUQ+Lbge658Cmz3EC12PTuo+Bvvr3AXUqNuOXRDCrS8GY
+         y0UimGRcbD4wpafIhnDYJSEfDjX6j4JYf1Gq1aNSIXZwNEtB/YMHIJzdzlNhjervLTQS
+         4gO2qB5TeOaOpxCsiOHf35bo8aSt27nkfLThTgbHY9TkAT+Efm+Zc1M5IAFb/uWe0cSZ
+         CKFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730566449; x=1731171249;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0uUEtUE6reGy3hUjf41A625G8CSBp4sF/WXt+DqRh+g=;
+        b=fl/m3No4uCVr+2zB/4ecIeGCB//JVmWuckpe1oFAVzM9lwqp8wI+JjrjSblZmPlSmT
+         aGLhCSHfElHMavpHBtfYIayHYq5FOUUziYjxsJz8U26bgcMa2qBY4QBX4c278GfeWhVe
+         otUE3boI42NxzMsoOFE+Bka7ACZmZHoHXpOVWamnQ49UhYPDnCEZm+onPMuMZU11XI1L
+         I6VlaE54k8ADtHEPb1xQRLamvyJOcJswANTW4C/anL8XAyPf02TDZj2QlcEuF7vNgWgv
+         kRc5VCzW2RTkSXg2s4yCg7On6fgBQ/hPoN/E1Bx6I+FjGYPXLDo019lu8SjeMwZCqc8r
+         3biQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4SifDdVcmE/1AcOLIn/qiKZjzEazTtsABdr9n221AC2tzRZ/DDt3qBv1v5SjtzegFrNXc9nawUjkbClU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHMkiKvKrqjSaQycsepKUAaAvckqGArdSi764SFdl+CP9ORa6e
+	Emf6UbUX6OLNvZ2sF7k3bRJpA4l3vyb6NYFICoeL2OAe5dNr/gOEVOfNajMG9f/xsgKgyQvb7WB
+	T2A9VYg==
+X-Google-Smtp-Source: AGHT+IH6yRADeLOdKdN5cqV3LT8ueqp8pTwZmyGD9mGWjX5DLEF7FcbrGLj1y1N1/AolR+sBPyIB/iGB97Ps
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:26a5:cdb5:356c:64a4])
+ (user=irogers job=sendgmr) by 2002:a05:690c:11:b0:6ea:6872:2fe6 with SMTP id
+ 00721157ae682-6ea68723031mr1053497b3.4.1730566449489; Sat, 02 Nov 2024
+ 09:54:09 -0700 (PDT)
+Date: Sat,  2 Nov 2024 09:53:54 -0700
+Message-Id: <20241102165400.75785-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241026040958.GA34351@sol.localdomain> <ZyX0uGHg4Cmsk2oz@gondor.apana.org.au>
- <CAMj1kXFfPtO0vd1KqTa+QNSkRWNR7SUJ_A_zX6-Hz5HVLtLYtw@mail.gmail.com>
- <ZyX8yEqnjXjJ5itO@gondor.apana.org.au> <CAMj1kXHje-BwJVffAxN9G96Gy4Gom3Ca7dJ-_K7sgcrz7_k7Kw@mail.gmail.com>
- <CAMj1kXG8Nqw_f8OsFTq_UKRbca6w58g4uyRAZXCoCr=OwC2sWA@mail.gmail.com>
- <ZyYIO6RpjTFteaxH@gondor.apana.org.au> <20241102163605.GA28213@sol.localdomain>
-In-Reply-To: <20241102163605.GA28213@sol.localdomain>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 2 Nov 2024 17:46:34 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEQHiqkO7j1W55UHGg-LNF2CNiPnpHcKfCdKnxFQSJ14g@mail.gmail.com>
-Message-ID: <CAMj1kXEQHiqkO7j1W55UHGg-LNF2CNiPnpHcKfCdKnxFQSJ14g@mail.gmail.com>
-Subject: Re: [PATCH v2 04/18] crypto: crc32 - don't unnecessarily register
- arch algorithms
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-crypto@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-mips@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Subject: [PATCH v2 0/6] Avoid parsing tracepoint format just for id
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	James Clark <james.clark@linaro.org>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Yang Li <yang.lee@linux.alibaba.com>, Colin Ian King <colin.i.king@gmail.com>, 
+	Yang Jihong <yangjihong@bytedance.com>, "Steinar H. Gunderson" <sesse@google.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Ben Gainey <ben.gainey@arm.com>, zhaimingbing <zhaimingbing@cmss.chinamobile.com>, 
+	Zixian Cai <fzczx123@gmail.com>, Andi Kleen <ak@linux.intel.com>, Paran Lee <p4ranlee@gmail.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 2 Nov 2024 at 17:36, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Sat, Nov 02, 2024 at 07:08:43PM +0800, Herbert Xu wrote:
-> > On Sat, Nov 02, 2024 at 12:05:01PM +0100, Ard Biesheuvel wrote:
-> > >
-> > > The only issue resulting from *not* taking this patch is that btrfs
-> > > may misidentify the CRC32 implementation as being 'slow' and take an
-> > > alternative code path, which does not necessarily result in worse
-> > > performance.
-> >
-> > If we were removing crc32* (or at least crc32*-arch) from the Crypto
-> > API then these patches would be redundant.  But if we're keeping them
-> > because btrfs uses them then we should definitely make crc32*-arch
-> > do the right thing.  IOW they should not be registered if they're
-> > the same as crc32*-generic.
-> >
-> > Thanks,
->
-> I would like to eventually remove crc32 and crc32c from the crypto API, but it
-> will take some time to get all the users converted.  If there are AF_ALG users
-> it could even be impossible, though the usual culprit, iwd, doesn't appear to
-> use any CRCs, so hopefully we are fine there.
->
-> I will plan to keep this patch, but change it to use a crc32_optimizations()
-> function instead which was Ard's first suggestion.
->
-> I don't think Ard's static_call suggestion would work as-is, since considering
-> the following:
->
->     static inline u32 __pure crc32_le(u32 crc, const u8 *p, size_t len)
->     {
->             if (IS_ENABLED(CONFIG_CRC32_ARCH))
->                     return static_call(crc32_le_arch)(crc, p, len);
->             return crc32_le_base(crc, p, len);
->     }
->
-> ... the 'static_call(crc32_le_arch)(crc, p, len)' will be inlined into every
-> user, which could be a loadable module which gets loaded after crc32-${arch}.ko.
-> And AFAIK, static calls in that module won't be updated in that case.
->
+The tracepoint format isn't needed to open an event, just the id for
+the config value. Refactor the use of evsel->tp_format to use an
+accessor that will lazily construct its value. In evsel__newtp_idx
+read the id so the config value can be set up/used.
 
-Any call to static_call_update() will update all existing users, so
-this should work as expected.
+This allows tracepoints to be used without libtraceevent in a number
+of tests. Other functionality is enabled without libtracevent, such as
+mapping a tracepoint id back to its name. There may be some
+performance benefit to code using tracepoints but not using the format
+information.
 
-(Only x86 has a non-trivial implementation that patches callers inline
-- otherwise, it is either an indirect call involving a global function
-pointer variable, or a single trampoline that gets patched to point
-somewhere else)
+v2. Add additional error checking/handling in evsel__tp_format.
 
-...
->
-> So I plan to go with the crc32_optimizations() solution in v3.
->
+Ian Rogers (6):
+  tool api fs: Correctly encode errno for read/write open failures
+  perf trace-event: Constify print arguments
+  perf trace-event: Always build trace-event-info.c
+  perf evsel: Add/use accessor for tp_format
+  perf evsel: Allow evsel__newtp without libtraceevent
+  perf tests: Enable tests disabled due to tracepoint parsing
 
-That is also fine with me.
+ tools/lib/api/fs/fs.c                         |   6 +-
+ tools/perf/builtin-kmem.c                     |  15 ++-
+ tools/perf/builtin-kwork.c                    |   3 +-
+ tools/perf/builtin-record.c                   |   2 -
+ tools/perf/builtin-script.c                   |   9 +-
+ tools/perf/builtin-trace.c                    |  80 +++++++++----
+ tools/perf/tests/Build                        |   6 +-
+ tools/perf/tests/builtin-test.c               |   2 -
+ tools/perf/tests/parse-events.c               |  25 +---
+ tools/perf/util/Build                         |   2 +-
+ tools/perf/util/data-convert-bt.c             |  10 +-
+ tools/perf/util/data-convert-json.c           |   8 +-
+ tools/perf/util/evsel.c                       | 110 +++++++++++++-----
+ tools/perf/util/evsel.h                       |   9 +-
+ tools/perf/util/evsel_fprintf.c               |   4 +-
+ tools/perf/util/parse-events.c                |  16 +--
+ tools/perf/util/perf_event_attr_fprintf.c     |   4 -
+ .../util/scripting-engines/trace-event-perl.c |   3 +-
+ .../scripting-engines/trace-event-python.c    |   3 +-
+ tools/perf/util/sort.c                        |  33 ++++--
+ tools/perf/util/trace-event-parse.c           |   4 +-
+ tools/perf/util/trace-event-scripting.c       |  10 +-
+ tools/perf/util/trace-event.h                 |   4 +-
+ 23 files changed, 219 insertions(+), 149 deletions(-)
+
+-- 
+2.47.0.199.ga7371fff76-goog
+
 
