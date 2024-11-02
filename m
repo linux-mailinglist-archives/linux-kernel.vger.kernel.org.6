@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-393409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99C49BA02B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:02:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C599BA02E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:07:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751001F212B7
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:02:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0CE9B21680
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7301018A6BA;
-	Sat,  2 Nov 2024 13:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB9A18A6AE;
+	Sat,  2 Nov 2024 13:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ummwtIk0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FuEeBoKa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52ADEAC6;
-	Sat,  2 Nov 2024 13:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F586EAC6;
+	Sat,  2 Nov 2024 13:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730552538; cv=none; b=hmI7C+faDPt4bJ0HBj78MgqnapCIbs7N7g0b3grX6+b3z6AXlccOEV2lfcrvlh1PF7qe9fIQbZHdjbi7pM1fIhw48aHkT2HuCYTFZ1Nyvs4DkxuTVJcvobxUtmpE9agP8IlcLcOYRVRqth0UQQzYotJ5EuyM1SkAmG1jBpYD4AY=
+	t=1730552819; cv=none; b=H1orn7ybDR+Rd03q0pp/1HaCHMMsOr/354wqIELDj9Q5rMyvLJ/ixBrs0Wbc1+R5R4qj5MSlm9eI6OpHikBaKMvgXbIo7LbRo0vjs+irg8qyNBJ+tiQwn5iSdp1x3eG6Zl3seYR3Zh7mN2CaJ7Z7mUGpTRzf7IB3jId4/kt2Dtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730552538; c=relaxed/simple;
-	bh=7W8ecw9iKDX42Va0103cXROcPqELbw7Dq4r9AhyU8iI=;
+	s=arc-20240116; t=1730552819; c=relaxed/simple;
+	bh=QUQZ/U08FUV2AMYlJQIt0c1roE/xH5qntepaJpWp+rE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2Ii5g8ZuXNXShBIUV6WyE/daKmX1qGOIaB4kC/fy5fHweT9mI2yGjGMzKF6ttMZymihdQAXb/W/xmHahVWQ4+Gef9rAgysqwmaYIjuavp87bTDF1I0CvExgZqumJG0ykjDQohlYtJWSHeojEyG4x8h6H4wA8E3Y2TsWiwS3T7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ummwtIk0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 629DDC4CEC3;
-	Sat,  2 Nov 2024 13:02:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPZk/MyRflatoxgWhGn+Coen7cZgEhJia8maud96nRJyKVcqKfVgpTbUj2JKPRrhiXd9dxexs7Kd9j7Navl8OSfsHViz2bc2vzZbQy7zR9qIRLWu7Kcv31n2IO7j1PBuQV2d3AuBtuqFHOZ84DjS2IKsfd5nHSfU6S1GtMQqP2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FuEeBoKa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24AB7C4CED0;
+	Sat,  2 Nov 2024 13:06:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730552538;
-	bh=7W8ecw9iKDX42Va0103cXROcPqELbw7Dq4r9AhyU8iI=;
+	s=k20201202; t=1730552818;
+	bh=QUQZ/U08FUV2AMYlJQIt0c1roE/xH5qntepaJpWp+rE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ummwtIk0fBkH4u2coz36iBA1QCn9LCjkVSO7gJH0ENGGTbenuTWjetU+KP10PHhoL
-	 0JYqvCrQoqQKQLEjqwFt1Q8kRVdMtx/+vjOtclDIkz4v9ibt9h1A7CxkaKTfHerDU+
-	 7cJAhwp5gI6cW/i/MZCgDs2/LRE81NMmS7nUXB5CLBYnI43odCYednbWnM2JL6ogWZ
-	 8KneQKQjQ4SFLpszofmjjVJvHkLqdgm5wdkZ/qeAZKtdgy3jtCAxbVbm0B05E7q9nQ
-	 XfFeK1gbIw8kDIqgfc3OXW7AEZtcnZtAn7qmEZgod9ukuK8CEIe16T4USIjtjpLrI3
-	 xYLAcC2WSJ0iw==
-Date: Sat, 2 Nov 2024 14:02:14 +0100
+	b=FuEeBoKaKrzBUnRKXjnLXHmnVcYNKRqeWjwdEnb+kVkL1oMNGzPFxk4Jaoz1oauI9
+	 kWZ2upyiseDzvmWb4cKzkuRuE1T25A2EeoBJsxH9BMGlen54b916bYyMHE2A5TK7uo
+	 WgoWPtip1k2IUB9EIolrgpZv7gqSBje1vJbAuze1fR+zOVkLm2IL5mFBR3HYiYD+Ik
+	 zw0Pwv2ogwwLPaRJnhWXJUxOdzLHFJIRh8HhjVuRyIn1huVkizufvS/tbymq+6CWDe
+	 oyqQTaO1ijmJgZyDk9FOYxGL35pht+cVQt35lykhAwfWcTXUxdu5Y9MkErmAbiyGqn
+	 oPuFY6dND5+dQ==
+Date: Sat, 2 Nov 2024 14:06:55 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 03/11] dt-bindings: clock: Add Qualcomm QCS615 Camera
- clock controller
-Message-ID: <dn3pg3h7fis2hn7pgkw3qwfkvbmf5tezowbkbqp3mzd6jcir6q@fffo2jjwcjgq>
-References: <20241101-qcs615-mm-clockcontroller-v2-0-d1a4870a4aed@quicinc.com>
- <20241101-qcs615-mm-clockcontroller-v2-3-d1a4870a4aed@quicinc.com>
+To: George Stark <gnstark@salutedevices.com>
+Cc: pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel@salutedevices.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: pwm: Add default-brightness
+ property
+Message-ID: <ngwfccj55vovsaj5bdealdidgxdrxfl7nwxfdqponqzdiv3olo@epzabbxkdzxb>
+References: <20241101154844.1175860-1-gnstark@salutedevices.com>
+ <20241101154844.1175860-2-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,16 +59,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241101-qcs615-mm-clockcontroller-v2-3-d1a4870a4aed@quicinc.com>
+In-Reply-To: <20241101154844.1175860-2-gnstark@salutedevices.com>
 
-On Fri, Nov 01, 2024 at 04:08:15PM +0530, Taniya Das wrote:
-> Add DT bindings for the Camera clock on QCS615 platforms. Add the
-> relevant DT include definitions as well.
+On Fri, Nov 01, 2024 at 06:48:43PM +0300, George Stark wrote:
+> Optional default-brightness property specifies brightness value to be
+> used if default LED state is on.
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: George Stark <gnstark@salutedevices.com>
 > ---
+>  Documentation/devicetree/bindings/leds/leds-pwm.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+<form letter>
+This is a friendly reminder during the review process.
+
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation: Please add
+Acked-by/Reviewed-by/Tested-by tags when posting new versions, under
+or above your Signed-off-by tag. Tag is "received", when provided
+in a message replied to you on the mailing list. Tools like b4 can help
+here. However, there's no need to repost patches *only* to add the tags.
+The upstream maintainer will do that for tags received on the version
+they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
 
 Best regards,
 Krzysztof
