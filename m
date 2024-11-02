@@ -1,103 +1,260 @@
-Return-Path: <linux-kernel+bounces-393222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48EAD9B9DF0
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:40:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD5C9B9DF2
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3C81B21901
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83F061F21FDE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE1F1448C7;
-	Sat,  2 Nov 2024 08:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90941158D80;
+	Sat,  2 Nov 2024 08:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="DCiN/7lk"
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.185])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0WCIbhb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1AC156872
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 08:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9051448C7;
+	Sat,  2 Nov 2024 08:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730536845; cv=none; b=phFOLroY+OZIIKwWLcz4IR/kXbyoy4NyYk1Ow3y3BGz38CJAmkrwInyA/0mJT75AL+qyg0gkUD12Z0BAa5Wr+XlpzU7Sl5fHarR0jawcT74d6KCWTs+c7J2ViHbuveTKkz1qV0wsGIr9s0fWtgIfXPPx7XwoNBzBgUl9T8yj/uc=
+	t=1730536982; cv=none; b=Vxbo6V6WF56OJ0Jfp9NJaGHvgxhYC9K2QwBdAA27V+CFyEfRRd6KGK9YQSz3aWSeEYg47B4cH/0aU+lQ4/vfaUxU/FrgquBdYUDcaKU1fw2Z10rGNRY1pYlY0OFZ1wUo0LXDL6cz8PB6PS0yco5nfUM04b1tuUEvKRaV4jIYyQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730536845; c=relaxed/simple;
-	bh=m1lACV1FyspB0fk4RuDq9MTLVdmNSTyuRGA+rMaKps4=;
-	h=Date:Message-Id:From:To:Cc:In-Reply-To:Subject:References; b=SFjHT1tU72mIDbmMcyw9sZw2anrwIlh5yp4s99DsFbvN7Z9NblQ/mf1ttzqJ0t+RazDGuXiMjdsPQRGcJVmzC0UKdzma0wSWk584TuBEmnkH4p8HV3WqcrHih5nWhuL9F2bbkhORe5ke+oVtRFVhiJDguDFF8hYsl0txjwpfRfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=DCiN/7lk; arc=none smtp.client-ip=195.121.94.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: fb73fc64-98f5-11ef-8d51-005056999439
-Received: from smtp.kpnmail.nl (unknown [10.31.155.7])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id fb73fc64-98f5-11ef-8d51-005056999439;
-	Sat, 02 Nov 2024 09:39:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=subject:to:from:message-id:date;
-	bh=SOESJwGk/m0BH7DybjWTyh29n0WPp4jHNYg51LnvExA=;
-	b=DCiN/7lkFwO7MpBe3tmDSRHPmaemcDLP0hYYF+3E4NLEKN03H4mHJXcJZNNAAQlKxBB8UdvZAG5Jh
-	 J9b1D7HY8/MXxQ3mnDq3KPRYsLpswke8pXjjQBYptWt7T+5DeHyNFbWnbxgHZ6uwLDIP3l9N13rgEy
-	 r7LxcuhaiwExkywlMDZef8K5EX+wo2iDlQCpN8grSVSppyPStgzGcX6//DIFp1ZqyzmhdSX/N+g7jh
-	 K/CsR3ka5AuXmDwIBqP/awaYO/jMoVlZuiUz+2b+1ynKZopZhcYy0r/c83DFbVdGd72ynJtr4cwhsG
-	 +mkoVNjpDzs63hctmVGQ5H1LUBJmdAA==
-X-KPN-MID: 33|CNLLXHK/GrZqDr5w1I7erOjxXIjBx9wdE9L1Mf0wjG4F9Zpd3D6Gd9zERmwBM7Q
- mPAkEG/BAmO2jCnY0x6OdybuAiCXqrxgsYgj7/db/epk=
-X-KPN-VerifiedSender: Yes
-X-CMASSUN: 33|B9RhJaWMW/sEKQDBuQQ0hglTReDydKiDe86GzGIp1EwQCBNJ8VbXfe9UflrnJU6
- XTpk5Yf0qfQGb+IcfLRUk5w==
-Received: from bloch.sibelius.xs4all.nl (80-61-163-207.fixed.kpn.net [80.61.163.207])
-	by smtp.xs4all.nl (Halon) with ESMTPSA
-	id fb974d63-98f5-11ef-9749-005056998788;
-	Sat, 02 Nov 2024 09:39:33 +0100 (CET)
-Date: Sat, 02 Nov 2024 09:39:32 +0100
-Message-Id: <87wmhm3u7v.fsf@bloch.sibelius.xs4all.nl>
-From: Mark Kettenis <mark.kettenis@xs4all.nl>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: j@jannau.net, marcan@marcan.st, sven@svenpeter.dev,
-	alyssa@rosenzweig.io, broonie@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-In-Reply-To: <46b31874-9fe2-4534-9777-816765a265b1@gmail.com> (message from
-	Nick Chan on Sat, 2 Nov 2024 10:36:56 +0800)
-Subject: Re: [PATCH v3 1/3] dt-bindings: spi: apple,spi: Add binding for Apple
- SPI controllers
-References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
- <20241101-asahi-spi-v3-1-3b411c5fb8e5@jannau.net> <46b31874-9fe2-4534-9777-816765a265b1@gmail.com>
+	s=arc-20240116; t=1730536982; c=relaxed/simple;
+	bh=pP3R8S8xXnbNhkQNcIbqwo5q8l9UVwjgjBAsSLuY7NU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hlRYOtpEAzaPoccXmKtAEryIYu2ABvcc6huV7/eqcmVd9YHqrYPxhpw7oF+gQHrTAIaPXaj0WdSfGStcKkvy4Q8J63K3A0F1vxKf81vRXeykZr39wVQfqIIzX2RX79JPY4hAyJTmioDveQqSW9gWVmfG6/8YTb2hoHiKO74PV6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0WCIbhb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E81C4CEC3;
+	Sat,  2 Nov 2024 08:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730536982;
+	bh=pP3R8S8xXnbNhkQNcIbqwo5q8l9UVwjgjBAsSLuY7NU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t0WCIbhbyv1O/gIfnwtwITHf3NvkZBn7MUKM7h8Xy8Wv7jxr1TRUC33LeLvjKL3am
+	 vPQvLpI16LRVaNAjtnHQzGEeq0KVfKyr8Vdlrd5UjUPKyWzxcq/AGeDLywt+1Rr2nw
+	 qDaSalaWyHcKw8ghzxSNcMk4T6w4COlnOwwU2EGiXHC145qlGM7719McNshXD94tbI
+	 TThDrX5CLsAbRU9/Qnn1L11VffW/eyYq9LE00rIVj6IfMXqX7QFAAZQQojESPzwuc3
+	 MSa+sKZ83UKuADIfb4opJWl+SXNMp6di2+gARznfWQ3P1IU+IpsT5y0zugut3f3u34
+	 lt0een9XyltUQ==
+Date: Sat, 2 Nov 2024 09:42:58 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>, Larisa Grigore <larisa.grigore@nxp.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>, 
+	Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
+	Enric Balletbo <eballetb@redhat.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	imx@lists.linux.dev
+Subject: Re: [PATCH v5 1/7] dt-bindings: mfd: add support for the NXP SIUL2
+ module
+Message-ID: <vlkhmja7xjfjin5yffnet5ava62shsoflmkzfav6c2ylh3o6kk@hvpnmd4uyjca>
+References: <20241101080614.1070819-1-andrei.stefanescu@oss.nxp.com>
+ <20241101080614.1070819-2-andrei.stefanescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241101080614.1070819-2-andrei.stefanescu@oss.nxp.com>
 
-> Date: Sat, 2 Nov 2024 10:36:56 +0800
-> Content-Language: en-MW
+On Fri, Nov 01, 2024 at 10:06:07AM +0200, Andrei Stefanescu wrote:
+> Add the dt-bindings for the NXP SIUL2 module which is a multi
+> function device. It can export information about the SoC, configure
+> the pinmux&pinconf for pins and it is also a GPIO controller with
+> interrupt capability.
 > 
-> On 2/11/2024 03:26, Janne Grunau via B4 Relay wrote:
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> ---
+>  .../devicetree/bindings/mfd/nxp,siul2.yaml    | 191 ++++++++++++++++++
+>  1 file changed, 191 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/nxp,siul2.yaml
 > 
-> [...]
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - apple,t8103-spi
-> > +          - apple,t8112-spi
-> > +          - apple,t6000-spi
-> > +      - const: apple,spi
-> Apple A7-A11 SoCs seems to use a Samsung SPI block, so apple,spi is too
-> generic. Fallback to something like apple,t8103-spi instead.
+> diff --git a/Documentation/devicetree/bindings/mfd/nxp,siul2.yaml b/Documentation/devicetree/bindings/mfd/nxp,siul2.yaml
+> new file mode 100644
+> index 000000000000..141ec1219821
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/nxp,siul2.yaml
 
-Well, if that is a Samsung SPI block it probably should have a
-"generic" compatible that starts with "samsung,".  The M1/M2
-controllers have a different SPI block (presumably) designed by Apple
-themselves.  So I think it is (still) appropriate that that one is
-"apple,spi".
+filename based on compatible, e.g. nxp,s32g2-siul2.yaml
 
-Also, (upstream) U-Boot already uses the "apple,spi" compatible.  So
-changing it for purity sake just causes pain.
+> @@ -0,0 +1,191 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright 2024 NXP
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/nxp,siul2.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: System Integration Unit Lite2 (SIUL2)
+
+NXP S32 System Integration Unit Lite2 (SIUL2)?
+
+> +
+> +maintainers:
+> +  - Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> +
+> +description: |
+> +  SIUL2 is a hardware block which implements pinmuxing,
+> +  pinconf, GPIOs (some with interrupt capability) and
+> +  registers which contain information about the SoC.
+> +  There are generally two SIUL2 modules whose functionality
+> +  is grouped together. For example interrupt configuration
+> +  registers are part of SIUL2_1 even though interrupts are
+> +  also available for SIUL2_0 pins.
+> +
+> +  The following register types are exported by SIUL2:
+> +    - MIDR (MCU ID Register) - information related to the SoC
+> +    - interrupt configuration registers
+> +    - MSCR (Multiplexed Signal Configuration Register) - pinmuxing and pinconf
+> +    - IMCR (Input Multiplexed Signal Configuration Register)- pinmuxing
+> +    - PGPDO (Parallel GPIO Pad Data Out Register) - GPIO output value
+> +    - PGPDI (Parallel GPIO Pad Data In Register) - GPIO input value
+> +
+> +  Most registers are 32bit wide with the exception of PGPDO/PGPDI which are
+> +  16bit wide.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,s32g2-siul2
+> +      - nxp,s32g3-siul2
+> +
+> +  reg:
+> +    items:
+> +      - description: SIUL2_0 module memory
+> +      - description: SIUL2_1 module memory
+> +
+> +  reg-names:
+> +    items:
+> +      - const: siul20
+> +      - const: siul21
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +
+> +  gpio-ranges:
+> +    minItems: 2
+
+You can drop minItems
+
+> +    maxItems: 2
+> +
+> +  gpio-reserved-ranges:
+> +    minItems: 2
+
+Missing maxItems
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    const: 2
+> +
+> +  nvmem-layout:
+> +    $ref: /schemas/nvmem/layouts/nvmem-layout.yaml#
+> +    description:
+> +      This container may reference an NVMEM layout parser.
+> +
+> +patternProperties:
+> +  '-hog(-[0-9]+)?$':
+> +    required:
+> +      - gpio-hog
+> +
+> +  '-pins$':
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    patternProperties:
+> +      '-grp[0-9]$':
+> +        type: object
+> +        allOf:
+> +          - $ref: /schemas/pinctrl/pinmux-node.yaml#
+> +          - $ref: /schemas/pinctrl/pincfg-node.yaml#
+> +        description:
+> +          Pinctrl node's client devices specify pin muxes using subnodes,
+> +          which in turn use the standard properties below.
+> +
+> +        properties:
+> +          bias-disable: true
+> +          bias-high-impedance: true
+> +          bias-pull-up: true
+> +          bias-pull-down: true
+> +          drive-open-drain: true
+> +          input-enable: true
+> +          output-enable: true
+> +
+> +          pinmux:
+> +            description: |
+> +              An integer array for representing pinmux configurations of
+> +              a device. Each integer consists of a PIN_ID and a 4-bit
+> +              selected signal source(SSS) as IOMUX setting, which is
+> +              calculated as: pinmux = (PIN_ID << 4 | SSS)
+> +
+> +          slew-rate:
+> +            description: Supported slew rate based on Fmax values (MHz)
+> +            enum: [83, 133, 150, 166, 208]
+
+missing required: block
+
+> +
+> +        additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - gpio-controller
+> +  - "#gpio-cells"
+
+Keep consistent quotes, ' or "
+
+> +  - gpio-ranges
+> +  - gpio-reserved-ranges
+> +  - interrupts
+> +  - interrupt-controller
+> +  - "#interrupt-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    siul2: siul2@4009c000 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+e.g. pinctrl
+
+> +      compatible = "nxp,s32g2-siul2";
+> +      reg = <0x4009c000 0x179c>,
+> +            <0x44010000 0x17b0>;
+> +      reg-names = "siul20", "siul21";
+
+Best regards,
+Krzysztof
 
 
