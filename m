@@ -1,139 +1,170 @@
-Return-Path: <linux-kernel+bounces-393053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085F29B9B68
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:09:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC3B9B9B60
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:08:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98469B21C61
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:09:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95B22B219F6
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DB8376F1;
-	Sat,  2 Nov 2024 00:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA7E28EC;
+	Sat,  2 Nov 2024 00:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xB/o17Cm"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQ4GQD4Y"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BCF25777
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 00:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD72BA29;
+	Sat,  2 Nov 2024 00:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730506120; cv=none; b=uIFKGNPkLb4yDwUCBb9o2kW2/+NViD4odCpQ7P3pZUp5xkSoMr2a/mrO8KMGa6llTj1me1wFgtFenvqK9Q6SJsUOO4J0B//nUIjHdyJz3prGzHK3Ab8dO/0qyjlFsNPZYyOXoGhIWZQVFA/8+pmzWG1Oj2XIS5QlkMlx4irGSRo=
+	t=1730506103; cv=none; b=CAxoihWw7bTLtVawSLC91MggyrWqRORssNdDzvZKc67poIQtnSb/3o5LUK3XWw9vHiQ6JvcfnZIwd8asjw54FGx8RrLHUK3REsVz83kbo9FRVvMa57qtuTgX6crGktM7NuRUMOY/At5JI+AOBdV2I2NBdndvT5UnTt/ILQ5oca0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730506120; c=relaxed/simple;
-	bh=qPFYuz9BrK2CIqbnqSJdveevoaimtQftTkcT6cnXqi0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nPRoClL4PgSnXHYLbPNtvXidi9it8BjVadmMlTx11Vv5ZKodwfp2cZFIthFxslnGEUSjcnkYZOfGzxZvNypUc+ngnjBmibj9Eu0Ui6H5n5166QJwrfec0p3jsSUMyzxqYc48PNKTs91zbnSzX2SizkQAFMenboWi+bTRkQzALew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xB/o17Cm; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3497c8eb0so33017677b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 17:08:38 -0700 (PDT)
+	s=arc-20240116; t=1730506103; c=relaxed/simple;
+	bh=afPAMKZ2DnTwk0azcAYXvdBIeZjZBunotGqGepy6/5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNphF+TlFCICrJU/s7fe3te2tQMV3gxBZDBGv4GMezowAT/AgNvXHuCT1++8pECru/b0cI8kGmWStM3VeMpon43rRJ8cbUawQDunPnhheh80QBiTicaMfTSDEhVwTG9mN+bWGdigvEnMSi6YtR9HdgIqnVUGCoTKSkk5fY2EvMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bQ4GQD4Y; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6cbd005d0f9so15312626d6.3;
+        Fri, 01 Nov 2024 17:08:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730506118; x=1731110918; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OMflO0iOxZawpN5ZUgjewO0l15Uk7dsPv9bQCJvRKFM=;
-        b=xB/o17CmLkl9MlPv+u2Pt1Kv7k8cFsrSz7uvxSI/Ig46CyXfWtz2tZjIuZY+OFLSUn
-         wZJX6MLdakmt48fMizgvjtftRxzSeMVNwvYwCGFs2zXcv/1t3Q+mW4HK1afSH/cGB2vO
-         0zwbPgqgLufAA1hF0j7J7yrlHt9k41oDAPv/FoggkVVo9SzKm0TuO51jbgqtBWi6Uxzt
-         t4KCWycz/84QaN3P2J+rVSFdxDqfQrSUPz1xW2smntnqU5m34fnY3Pq/aZHS9Rc8BAkW
-         k/+3HOs0mw4XTADKMnicVHRis3s15aRclXG8cr/yEh+TdFV+DbSdPfSBbPrCJ9+dF8MD
-         50cA==
+        d=gmail.com; s=20230601; t=1730506100; x=1731110900; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=7+GPtCqy3A/lMC5UWG+y4iuiDKVjBBMN8qrfWjcuYE4=;
+        b=bQ4GQD4YGmiaDFIfmoNAHngSIa+QVZKlEqtOS+w/PUa6l223GrGIycz+uPiHeN33/i
+         HKK4+MG0oJlZDX2GbhQqc+Q7n1QLd15s9JiXMGoMO9C2Rgqz8ExQREX+z5tfV0fqmbgl
+         4+yS9H65xxMUNfqli/fWe1shIYo16U47eKnmApwUBrce0qm7wqGyfCfFUR1Wu26lmcx9
+         Z2warSYqsvQcUWMmGORwSvCZadcBKHfAvrm0uTsxItVIJqpT/INMyRET/273EiwapvjV
+         dIoZODj5WgcoT6fJ1c0pX+Cbnjq6T29kENHgtMd87/6QrvpCivmzDXb6xNU52aQrrs9t
+         HUiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730506118; x=1731110918;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OMflO0iOxZawpN5ZUgjewO0l15Uk7dsPv9bQCJvRKFM=;
-        b=T63VyZ3qza2IDuY57mBCNYszX7HQFYv69Vbv4r1WZdRUr4iSEK+6vebB421IXacxTs
-         5SiDH1a4mLwcHeS/d6QflA2CvOOeDbFT7T7STSdmACxDb9mf99BCdGYv8XraqXHfSWLJ
-         fI3Fo7iQVVg9zjd0WyDMl7neAhAGAnraMzrbcdueONI24vsQSEobNVUvE1OaaYWBhUeP
-         ucu2zGVeD4yGoZzGvPfh42u/3PbuAq11bXMsITRN8DLnlg+pa9ipEpx0Xo/0MCeWkRFJ
-         7L0FG9iwWNwBzZgZF+MLlCcVODzuFghpzBqDHyUb9KrKHU6ff7VyJcS60747aJ1YX+U7
-         +wgg==
-X-Gm-Message-State: AOJu0Yxa/2AcxhRJ3xK4SCefQanWIA8J9LbBosexUBeNeKTCHNGCSpOo
-	4/B+N0+PqP28sTBC5gNz+VDrsuMKozCMCEPNjTp97qKkotJarm0Flc2TfrJVmDPBxkhgwsUNryN
-	8BYCCZ6PEidb/M7KARfhvAQ8xnl1g62HcXMVu0qydukuW7C4pwpu4GicGs072ymjbqx0e3zxw76
-	TpFjTzg6/M2fBl+JQcSkQws08UlK2ifAHFY2du71AUODYqjvB5NArke16q1TF+8i6Rors=
-X-Google-Smtp-Source: AGHT+IGk0DQ4lZzrHSF/msR4LceTfpO9UC2r93MoAUGhrBvpkJQaqubi60bBsN9z/YYJPlV+RQpFn5dca8i1rnQL/g==
-X-Received: from dionnaglaze.c.googlers.com ([fda3:e722:ac3:cc00:36:e7b8:ac13:c9e8])
- (user=dionnaglaze job=sendgmr) by 2002:a05:690c:6711:b0:6d9:d865:46c7 with
- SMTP id 00721157ae682-6ea642ec3camr940447b3.2.1730506117249; Fri, 01 Nov 2024
- 17:08:37 -0700 (PDT)
-Date: Sat,  2 Nov 2024 00:08:14 +0000
-In-Reply-To: <20241102000818.2512612-1-dionnaglaze@google.com>
+        d=1e100.net; s=20230601; t=1730506100; x=1731110900;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7+GPtCqy3A/lMC5UWG+y4iuiDKVjBBMN8qrfWjcuYE4=;
+        b=emVThrzA0p+9x+eku8PR3Ce9Ifgp7wMrdvyyT/onWcnq4h5q9XAuY1mS8B+u1HqAgI
+         +4QZEu01mKE3I+o2lNtTwteCYVEvc85XIEYJEnzUUu0qok3TFYKcixzOlo18zNJyQrrc
+         IruFNUcJ7p3C9+2SXOrd9LBd+uExHWkD5hMvayvYo+uWVWoNRzaXgHvCLrmo0VZhYfUQ
+         CgobabevZb46J8nW7GlTJ6LI4peH5P9+9JXdskYv6tUMhIgbPWp5hLktI8zFHvf3bvT5
+         KA4qc4z6v7abILXNdaP99mUGJjB8EQ7UZ5sRKeFLnpDoWq4YI8aal3Mc5CJ69fNLNANy
+         0f3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUWgq/5Qm0jB22v+rhVAWOnc6uCf8OdxMYgAucfk9SQ10gfPxMK26mSdhXcUcRSPBmRWVI/uUFoR4oXUk8=@vger.kernel.org, AJvYcCWOuiLIDqDUzBObyKgLEJ9Oqv/yDZXkobyK/0v952ovjldNB/+0vyHIAoj5U8NLkbkh941hSIYhGk7aN2Y6t4Fr@vger.kernel.org, AJvYcCWZcysoLWb2iy2WWDBN7dPg6UZune6HtkSoL5FNrw7rUU9PVD/+Bei2/iTnwIBu6VPzZqpZDnaluHt28EqbkmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsULuQcefiNi1IuAm00uBsScOOUOi4BqQUWQHm30GE7I7v0KBz
+	OBik+2ixRKNVeQIq58Ws36N0Y6TuQqX99kUnb8pV7gGa5SQz5UPs
+X-Google-Smtp-Source: AGHT+IE6JZnStQn0NOX3DROJSBOB+aN/SdJ2BouU8lIbHqrYP+XlzdQDKIvEdLE3XCz67Rhp52o8tg==
+X-Received: by 2002:a05:6214:469c:b0:6c3:5b9e:699d with SMTP id 6a1803df08f44-6d35c0a3e8bmr78045856d6.2.1730506100570;
+        Fri, 01 Nov 2024 17:08:20 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353fa5569sm24580696d6.19.2024.11.01.17.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 17:08:20 -0700 (PDT)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 66E821200066;
+	Fri,  1 Nov 2024 20:08:19 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Fri, 01 Nov 2024 20:08:19 -0400
+X-ME-Sender: <xms:c20lZ_VprwE7h36tBEoP8jc1d8A31DCTM722ZwGL9tz0eOEfD1PODA>
+    <xme:c20lZ3lXtLzSBuswLUPjb-AWShzj5vElN9DHU9fruWGzPxzySs8VYn5SdThxnHWZf
+    oC7fprpcSJQXOFW3A>
+X-ME-Received: <xmr:c20lZ7ZMTOgmgVOR1hP6-90l6LsamGwfM8OCw0SL6ok58vE3glfutVXxaHk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeltddgudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhepgeekgeettdelffekfedtveelueeiudevjeeg
+    ieekvdegkedufeetfeeiiedvueelnecuffhomhgrihhnpehgihhthhhusgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
+    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
+    rghmvgdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopehmihhguhgvlhdrohhjvggurgdrshgrnhguohhnihhssehgmhgrihhlrdgtohhmpdhr
+    tghpthhtohepuggrvhhiughgohifsehgohhoghhlvgdrtghomhdprhgtphhtthhopehojh
+    gvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhsvgdrvgigphhoshhithho
+    keelsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrvghnuggrnhdrhhhighhgihhnsh
+    eslhhinhhugidruggvvhdprhgtphhtthhopehrmhhorghrsehgohhoghhlvgdrtghomhdp
+    rhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    epghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsggvnhhnohdrlhhoshhs
+    ihhnsehprhhothhonhdrmhgv
+X-ME-Proxy: <xmx:c20lZ6WZE0bIWwtaqi96WBBcBk1igBBQGgzIdgf81u_T_wWme2oJnA>
+    <xmx:c20lZ5ltwmjo-uqJKw3ps7UIIgQc_jxkdyjetQJEttGP6jVZ3w_IXA>
+    <xmx:c20lZ3e8MoErmT4U6-v7UBByK60E4RoVsGFT_OymGc89G-EzeOvE2g>
+    <xmx:c20lZzG6PvrTZoSjEFbXuLGTmh4fA34K5ccuF0YXC9QTWYClt82VCw>
+    <xmx:c20lZ7kZ2hMEhuAEaAn0KcWBafRawM8rGSs2298BaT_yMuLk2Igkf516>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 1 Nov 2024 20:08:18 -0400 (EDT)
+Date: Fri, 1 Nov 2024 17:08:17 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: David Gow <davidgow@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	=?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Matt Gilbride <mattgilbride@google.com>, kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] rust: macros: add macro to easily run KUnit tests
+Message-ID: <ZyVtcXTW99YpUF0o@Boquns-Mac-mini.local>
+References: <20241101064505.3820737-1-davidgow@google.com>
+ <20241101064505.3820737-3-davidgow@google.com>
+ <ZyVKSKUq_bKH5jn_@Boquns-Mac-mini.local>
+ <CANiq72=yhH7MEQWxVSVXGa5M5=HXudtS0Xja=w7ViU4Ph1Mpdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241102000818.2512612-1-dionnaglaze@google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241102000818.2512612-5-dionnaglaze@google.com>
-Subject: [PATCH v3 4/4] KVM: SVM: Delay legacy platform initialization on SNP
-From: Dionna Glaze <dionnaglaze@google.com>
-To: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Dionna Glaze <dionnaglaze@google.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, John Allen <john.allen@amd.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	Michael Roth <michael.roth@amd.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Tianfei zhang <tianfei.zhang@intel.com>, Alexey Kardashevskiy <aik@amd.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72=yhH7MEQWxVSVXGa5M5=HXudtS0Xja=w7ViU4Ph1Mpdw@mail.gmail.com>
 
-When no SEV or SEV-ES guests are active, then the firmware can be
-updated while (SEV-SNP) VM guests are active.
+On Fri, Nov 01, 2024 at 11:12:06PM +0100, Miguel Ojeda wrote:
+> On Fri, Nov 1, 2024 at 10:38 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > but this lint doesn't make sense to me, I would say we just drop this
+> > lint?
+> 
+> I am not sure if it is intended to fire there (i.e. to resolve
+> constants), but seems OK since it is not something one would want
+> normally to write except in exceptional cases.
+> 
 
-CC: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Borislav Petkov <bp@alien8.de>
-CC: Dave Hansen <dave.hansen@linux.intel.com>
-CC: Ashish Kalra <ashish.kalra@amd.com>
-CC: Tom Lendacky <thomas.lendacky@amd.com>
-CC: John Allen <john.allen@amd.com>
-CC: Herbert Xu <herbert@gondor.apana.org.au>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: Michael Roth <michael.roth@amd.com>
-CC: Luis Chamberlain <mcgrof@kernel.org>
-CC: Russ Weight <russ.weight@linux.dev>
-CC: Danilo Krummrich <dakr@redhat.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: Tianfei zhang <tianfei.zhang@intel.com>
-CC: Alexey Kardashevskiy <aik@amd.com>
+Hmm.. so I think clippy won't warn for a normal Rust #[test] function:
 
-Co-developed-by: Ashish Kalra <ashish.kalra@amd.com>
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-Reviewed-by: Ashish Kalra <ashish.kalra@amd.com>
-Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
----
- arch/x86/kvm/svm/sev.c | 2 ++
- 1 file changed, 2 insertions(+)
+	https://github.com/rust-lang/rust-clippy/pull/7811
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index f6e96ec0a5caa..8d365e2e3c1b1 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -445,6 +445,8 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
- 		goto e_no_asid;
- 
- 	init_args.probe = false;
-+	init_args.supports_download_firmware_ex =
-+		vm_type != KVM_X86_SEV_VM && vm_type != KVM_X86_SEV_ES_VM;
- 	ret = sev_platform_init(&init_args);
- 	if (ret)
- 		goto e_free;
--- 
-2.47.0.163.g1226f6d8fa-goog
+but since in this patch #[test] is handled by us instead of by "rustc
+--test" (I assume this is how Rust std handle #[cfg(test)] and
+#[test]?), clippy doesn't know.
 
+> So we could drop it globally, but if it is just this case that we
+> expect, then I think it is better to just `#[expect(...)]` it (or
+> perhaps use a different example) and then, if we see in the future
+> that we have quite a few "trivial" comparisons like this, then we can
+> drop it globally.
+> 
+
+It seems to me that clippy agrees not triggering this in test code at
+least.
+
+Regards,
+Boqun
+
+> Cheers,
+> Miguel
 
