@@ -1,133 +1,117 @@
-Return-Path: <linux-kernel+bounces-393568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059069BA26F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:31:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C10369BA271
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95059B22420
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:31:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7833F1F232BA
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D471AA793;
-	Sat,  2 Nov 2024 20:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE8D1ABEB0;
+	Sat,  2 Nov 2024 20:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="m0Pttq71"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNqbHqCV"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F734EB50
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 20:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662BE4EB50;
+	Sat,  2 Nov 2024 20:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730579489; cv=none; b=q+Gsv2zVYDZBhZDgORCDcyHiP13qzPiKv+kKXTLoJxAx4d8ZqQo9f0CvTZ4n0WhgYw0teORl+u+uifzY67OyrxH7ryyQ7vv4mW9LwQNApoPCFDaiDRS8/jpH5hwXb2e92GVlXvsPfZLLY925Xto0V2SFwKovk8SRCTEbEIq7TYQ=
+	t=1730579606; cv=none; b=Qj6uzV8rNC31A2ZJavMozEpLwNy0V4nBSyNgDhqiXFfgKirxGZB88zG+iA9FQ2ppCHP4QdM4OW6KNhFrw2TykH6dPHSbiPsg/BwH6BjJBN1ryoEzzwYNucKs+In2J86VMHmBLNHegMaR/EC8OeorPCqekC+ocB1zUZOwoN7pPFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730579489; c=relaxed/simple;
-	bh=HxPvFyzHJnjW6PKpoVstgjDtOxyC+Ga8VaX6QK0Gufo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HfqVxqcib9tv/HGa8xPuZbXtxr+q24jh/okEDgVJ5SzPZrpRN1hkQT9YcgdEB+67Voa/jDtdLM9w4KuHJxPjDe0ouYOOJB+wUmsHvq2WNBZDTsix3RCQdQcBWzoHKNK8oKfnf8BVdR2E0YKhsrYpeqIYXCzOJwYqxGo9wVDUiOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=m0Pttq71; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 03D401770FE; Sat,  2 Nov 2024 20:31:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1730579486; bh=HxPvFyzHJnjW6PKpoVstgjDtOxyC+Ga8VaX6QK0Gufo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m0Pttq716LR9r0OVP02Yj5HvCAzwWj74eqT/vM/OLybfl35WcU/ENnuxn73J50bNS
-	 G5mje34CBJEgtUtaSYCI+Wc0ViGC3tq3mq9hRlpraVUGvuZLGs+ZRUT3Zcfc1p0GAJ
-	 brjuYwJE73jz9f4f8icqYIMO2cs2VvH0b8xM0v+Ev1w9wKW590V8/Z+pZuHvUYMtWN
-	 JWDah9EV3ex9ahSsXIUu3i/6+Uon3t0DJDJF1HPXGlypFLX7EKsfNiO488kSXrEZRc
-	 Iwy78sACAN9KPAclYSla0VXLkKdw0I/01hKg0Qj9sJyRM+KeMhe94m7f+Vr7UTyACY
-	 rx5r6K25D1mqw==
-Date: Sat, 2 Nov 2024 20:31:25 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kdb: Fix incomplete usage help of md, mds and btc
- commands
-Message-ID: <20241102203125.GA51629@lichtman.org>
-References: <20241031204041.GA27585@lichtman.org>
- <CAD=FV=XY-mH2FxnnMsA99jQ2ZCcd=psTn+VJ4R9h9htK-f2ihw@mail.gmail.com>
+	s=arc-20240116; t=1730579606; c=relaxed/simple;
+	bh=cPnQwBZYflq7d5IMs6Ay6eoaThFmiNtPLwzwsAEt94g=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NCWlQxgYcxNgj6RHpi7PnCvJMRk/TqzNSvjxuUl5gcaqB9XgrnbOfyZo0NJABp5eVb3tI5ct1Cp/tA+sNL5k/nJXNi+7yXNMHo7u2o9Y8RbRR6KqSMTwyvLllsc+5ps+nG+KnuM8vBqq2uXMCCpstF1E72XrFTYYOtQN3rATYnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNqbHqCV; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so1356838e87.1;
+        Sat, 02 Nov 2024 13:33:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730579602; x=1731184402; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cPnQwBZYflq7d5IMs6Ay6eoaThFmiNtPLwzwsAEt94g=;
+        b=dNqbHqCVTsC21VTUUnyz5vVNXYonGvh2mp4fYAR4rvtZJzhMbFE/MrtuEqLNZdxFIr
+         gD0YZVy+JydkmS6FXHRD4/32vyPecKgLAo2r7rlX77K6fDm2QbQYyHvJrjzQyBWoT78i
+         XY8v49MhDIDUKzYgE9oaceOidH9scAtcEGjx7Gt76QnhDxeIvSPGGkInBRIPBiPqXEDZ
+         CwYH75kupIRH4tjQmVMN/UO2UyfYi0Ja4uAg9/Vq+0VoXl9NdLEP1sPPWSHIgFbiViZR
+         EATm+jds+XOEfUAXkup3ZEXu0OoVeKAB2bCDuns9QnRr+sZ34VozFhUMiQsBFl/S6FLh
+         fKew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730579602; x=1731184402;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cPnQwBZYflq7d5IMs6Ay6eoaThFmiNtPLwzwsAEt94g=;
+        b=osQFHX3mFkogmqqGmtLhwTPFymsA2AdQWccqWrfFL9Dg+aLsdaUT+Qb7IFrjoW0mvF
+         bGU4vpFDFgbCW9AYBoUvqssioGDu0OzfYuHDU9HbaKhbvWUM1cML99DSfiOt7yga3taI
+         FG02zIPgMMs/Vgi4eNi92KWIv78ps569kpb7+K91/GB+M38ZOZkd7Obm0w7Wl/GsTC//
+         Ds2xZNLWba8Z0jOo6WIbCf7EwWk5v7tHfEGs300FoTKaFGdDJ5Ytja8Tsewkz9rp0Mph
+         eJxL5kdRplbRwE6thkf6IK8fJ/ozha+Z53KkwhcLALDTdWaz4fmZaHwsLN+ujvLWd1RI
+         EJrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVD7ZiuT9Uo0GyaDu49+0BVdFp44iwcp73xDOpJcdF4rB6f3Kz/1XfKRfa7uGPh6S07RO63EOH2FTYcAMw=@vger.kernel.org, AJvYcCWzRvMlAde+muzIqjb5O6EDxoP33WnQlviFI9i8o4N/mlEoHJSHgARh9QCjXhCXsE0qpulGlUDg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRBT9l64WIMwGtlDXTMRcLmX9x17p+k0NT/ElbX3GuDrkPFxoq
+	Bua4GQoInTO0dBNZW6faKqb5CXtnQ4MwQtkoA7pcZh545C3E+/JE8vPw1RPvqmoCIWASOC/V+wL
+	ibmy979tgtnYnsk7ugqrTX7JVUJ8=
+X-Google-Smtp-Source: AGHT+IGoqXppe9fIqDPc/oxsvYg0tqjNuy7LHBTRSrIgWw+QL8DbNnZF6mzI/2dKk2JIvPJ2TGP0zQ1/jEXFYu9I2XM=
+X-Received: by 2002:a05:6512:e9b:b0:539:fbfd:fc74 with SMTP id
+ 2adb3069b0e04-53b7ed185a8mr8536911e87.40.1730579602168; Sat, 02 Nov 2024
+ 13:33:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=XY-mH2FxnnMsA99jQ2ZCcd=psTn+VJ4R9h9htK-f2ihw@mail.gmail.com>
+From: Yi Zou <03zouyi09.25@gmail.com>
+Date: Sun, 3 Nov 2024 04:33:10 +0800
+Message-ID: <CAH_kV5G07_ZL9O41OBYR8JrtxJsr56+Zi=65T_FkaQDefLU_DA@mail.gmail.com>
+Subject: [PATCH] ipv6: ip6_fib: fix null-pointer dereference in ipv6_route_native_seq_show()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: "David S. Miller" <davem@davemloft.net>, 21210240012@m.fudan.edu.cn, 
+	21302010073@m.fudan.edu.cn, David Ahern <dsahern@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+	Paolo Abeni <pabeni@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 01, 2024 at 08:42:43AM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Thu, Oct 31, 2024 at 1:40 PM Nir Lichtman <nir@lichtman.org> wrote:
-> >
-> > Fix kdb usage help to document some currently missing CLI commands options
-> >
-> > Signed-off-by: Nir Lichtman <nir@lichtman.org>
-> > ---
-> >  kernel/debug/kdb/kdb_main.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> Some of this is a bit similar to what I tried to do at :
-> 
-> https://lore.kernel.org/r/20240617173426.2.I5621f286f5131c84ac71a212508ba1467ac443f2@changeid
-> 
-> ...but that series kinda fell on the floor because my end goal was to
-> try to get it so I could access IO memory and Daniel pointed out that
-> what I was doing was unsafe. The earlier patches in the series are
-> overall good cleanups, though. If you're interested feel free to
-> iterate on any of them.
+Check if fib6_nh is non-NULL before accessing fib6_nh->fib_nh_gw_family
+in ipv6_route_native_seq_show() to prevent a null-pointer dereference.
+Assign dev as dev = fib6_nh ? fib6_nh->fib_nh_dev : NULL to ensure safe
+handling when nexthop_fib6_nh(rt->nh) returns NULL.
 
-Interesting, I'll take a look at that.
+Fixes: 0379e8e6a9ef ("ipv6: ip6_fib: avoid NPD in ipv6_route_native_seq_show()")
 
-> 
-> 
-> > diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-> > index f5f7d7fb5936..0bdffb17b163 100644
-> > --- a/kernel/debug/kdb/kdb_main.c
-> > +++ b/kernel/debug/kdb/kdb_main.c
-> > @@ -2667,7 +2667,7 @@ EXPORT_SYMBOL_GPL(kdb_unregister);
-> >  static kdbtab_t maintab[] = {
-> >         {       .name = "md",
-> >                 .func = kdb_md,
-> > -               .usage = "<vaddr>",
-> > +               .usage = "<vaddr> [lines] [radix]",
-> 
-> In my patch, I said:
-> 
-> .usage = "<vaddr> [<lines> [<radix>]]",
-> 
-> ...so I had the <> characters and nested the []. I think that the <>
-> is supposed to signify that you're not supposed to write the text
-> "lines" but that it's a variable.
+Signed-off-by: Yi Zou <03zouyi09.25@gmail.com>
+---
+net/ipv6/ip6_fib.c | 4 ++--
+1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sounds reasonable, just used the [lines] as it is currently in the help of
-the dmesg command but the reasoning you point out makes sense.
-
-> 
-> 
-> >                 .help = "Display Memory Contents, also mdWcN, e.g. md8c1",
-> >                 .minlen = 1,
-> >                 .flags = KDB_ENABLE_MEM_READ | KDB_REPEAT_NO_ARGS,
-> > @@ -2686,7 +2686,7 @@ static kdbtab_t maintab[] = {
-> >         },
-> >         {       .name = "mds",
-> >                 .func = kdb_md,
-> > -               .usage = "<vaddr>",
-> > +               .usage = "<vaddr> [lines] [radix]",
-> 
-> From my prior research, "mds" doesn't support <radix>. However, some
-> of the other "md" commands that you didn't modify do support
-> lines/radix. Let me know if I got that wrong.
-
-"mds" does support radix, I'll check and make sure about the other variants.
-
-Thanks,
-Nir
+diff --git a/net/ipv6/ip6_fib.c b/net/ipv6/ip6_fib.c
+index eb111d20615c..6632ab65d206 100644
+--- a/net/ipv6/ip6_fib.c
++++ b/net/ipv6/ip6_fib.c
+@@ -2555,14 +2555,14 @@ static int ipv6_route_native_seq_show(struct
+seq_file *seq, void *v)
+#else
+seq_puts(seq, "00000000000000000000000000000000 00 ");
+#endif
+- if (fib6_nh->fib_nh_gw_family) {
++ if (fib6_nh && fib6_nh->fib_nh_gw_family) {
+flags |= RTF_GATEWAY;
+seq_printf(seq, "%pi6", &fib6_nh->fib_nh_gw6);
+} else {
+seq_puts(seq, "00000000000000000000000000000000");
+}
+- dev = fib6_nh->fib_nh_dev;
++ dev = fib6_nh ? fib6_nh->fib_nh_dev : NULL;
+seq_printf(seq, " %08x %08x %08x %08x %8s\n",
+rt->fib6_metric, refcount_read(&rt->fib6_ref), 0,
+flags, dev ? dev->name : "");
+--
+2.44.0
 
