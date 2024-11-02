@@ -1,320 +1,224 @@
-Return-Path: <linux-kernel+bounces-393348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349A39B9F88
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:50:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33EE9B9F9D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8153281DFB
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27BCD1F21D85
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DC716DED2;
-	Sat,  2 Nov 2024 11:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936A219CC17;
+	Sat,  2 Nov 2024 11:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s6Dhm9zv"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGQ3gXYe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358AD170822
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 11:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D33A189BA9;
+	Sat,  2 Nov 2024 11:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730548187; cv=none; b=SXx+ykIRGok+IWCuFt4hexSEHpIRE+/mdsPcbnDEy9gJrpIkqCTAqzRNSm04XAqyFa4zINNa7qLewB3tvQ49LVgfU7FthycdvYM6MiCpvZHz41zmQursQVb4M9qvSOeCOoAxKPka8D6VU6AzOWmj2pfn6ZrUFdJuL0PSwPX9Zg4=
+	t=1730548218; cv=none; b=KOxeiAnio/qO+rXFejqxOXkrsBsg+FUZ3vegd5qt0V2s5Hv1CUdWf1dWMHvlL6Ix+YA//A4HtomLAMBQTEqWVXk8cYOoLM3bwIK6joj604UDiUdwGwBCxRxsid1NHiZpMkOoyUitAbRcz41QMeQqyD7jt/X68k8BjVAiJV4Tcew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730548187; c=relaxed/simple;
-	bh=OEFbD9NsXWHiRsEucmWd8xJpU5QSkti7zNWZQI/rsmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDJBA37gJJ2B1nx3IqCFG6n2PzPjIeZKaOSo2ODvSnYOtoEPemR+qQeKUuaGcOLt+qx9JRqrV7mZL0C9qerr0ctibEfZiX62z15ieLFIyUHWC7KKhty4plFkSG3p1XOOVPUK9sNx0KZkwr8eIWiu96G0lDkZen5oLeKvKwrfvLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s6Dhm9zv; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e681bc315so1965928b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 04:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730548185; x=1731152985; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xoMIovZwANYIwsr+ozwQc2rn2svzEdghbHBSFmyjB5A=;
-        b=s6Dhm9zvrO857WHxRIx3DkuLvVyiR9c/gkni+Gxt9OnZkmj4dYMFxQh+tDhJhJKxfX
-         gp7UoYdNirtrFcvfLpP7ZNPoJ0sr/aw9pSooDGm+zRhmFFilNOZW2kq9Vgpz7ygIPEZR
-         BuioPtygYpd54D13wmtXRoJiKK4jPoMLOcdjHKQIgQt1qjVfBXs3aWE4HHcq5jQd24oB
-         /2ubAvTOOTqZN7xKU5ZVZ99I3NFunN6oBil9hz4XIbxdIYC41q62biAYtcfV2umv4lgX
-         sUDgQlwUS3uIzfkw9kUHotMHKZ6IqQMrZrcgL4dFr0tzDjAMvWehHxyTGhcvvFVhle8n
-         EIgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730548185; x=1731152985;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xoMIovZwANYIwsr+ozwQc2rn2svzEdghbHBSFmyjB5A=;
-        b=Il3hzB5n/oRBeX5XX/zwvcuvz+3b6JSTzLWK/76jSv3WjRqimDYwzfuK3VOpswJDH1
-         /JldzGyHTqkgazVXl9EODVxswNdvlwDwBBsQRug3auoGgR4fgWLlS7rhjS7P+aBbmN1U
-         adtRZj9SRWGpoHgzRytoKzZWpT+r6X1sdC3970wk8VfAxtmiMDRn4fnPYNryljgm9vxb
-         v7A1/o0QYO0LdBUwoIMX7VJsJI2Wv1uGyJcOQD5J+aaclnSHEzlH8siJ/vaxpRbEY4YI
-         4FuAMmI/zcQrPdsOZwj6z0JvdyHLTlC8LV/Vq4rMcSq1UNQW/8ti/Tw9zCYS9Ae/ZQbF
-         jixw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcBvRdhInuf4KaCjcjRX7X4FfJXFZWrySX4pMPqWqb/mD1V1iR8Kk2w08r0yPqz4D9LVphnkLejDKU0Tc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVUWDd10cxl04580x8lN/FAkn3cBCsoroFnbEE2uwNUvakUBD3
-	+Zio0ud4B+H5sttFY6YHzkQE49M62g+VVHUq6TOFatTAIKV8ucCmW13TGWbX1A==
-X-Google-Smtp-Source: AGHT+IFAZvvqPqfrR6KD3ufdIPcBIQIJ02cjOEk09Qxuto0fFw11UoKyY+vKorg9VaD5CI4LhSN2NA==
-X-Received: by 2002:a05:6a00:2383:b0:71e:735f:692a with SMTP id d2e1a72fcca58-720bd1a046amr13892444b3a.14.1730548185366;
-        Sat, 02 Nov 2024 04:49:45 -0700 (PDT)
-Received: from thinkpad ([220.158.156.192])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1e5839sm4022440b3a.68.2024.11.02.04.49.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 04:49:44 -0700 (PDT)
-Date: Sat, 2 Nov 2024 17:19:37 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, alyssa@rosenzweig.io, bpf@vger.kernel.org,
-	broonie@kernel.org, jgg@ziepe.ca, joro@8bytes.org,
-	lgirdwood@gmail.com, maz@kernel.org, p.zabel@pengutronix.de,
-	robin.murphy@arm.com, will@kernel.org
-Subject: Re: [PATCH v3 2/2] PCI: imx6: Add IOMMU and ITS MSI support for
- i.MX95
-Message-ID: <20241102114937.w7jt7n7zr3ext5jo@thinkpad>
-References: <20241024-imx95_lut-v3-0-7509c9bbab86@nxp.com>
- <20241024-imx95_lut-v3-2-7509c9bbab86@nxp.com>
+	s=arc-20240116; t=1730548218; c=relaxed/simple;
+	bh=vVWUYhECZljkizsteSK5cJaOa6hP9/5kTSab4Q4jJ34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=beks4ZOn/UiNhcUBXPLi+lTPsK4hUQjMjlYnrvqKHYFdXnQ92DYJmhwVop4hQnP1m0SbTn9y+pdHizTBZukuwBWcBLsvDed8dXuuU8pVhOYf5lhx2KZIGhUPtUVaOgHvxO2xpuvSqCJIljTKl7psjMXAR7/oYI+1MJEHZw07MDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGQ3gXYe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E12C4CEC3;
+	Sat,  2 Nov 2024 11:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730548217;
+	bh=vVWUYhECZljkizsteSK5cJaOa6hP9/5kTSab4Q4jJ34=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pGQ3gXYeleUEF7budwO5vhNjFQOFWnX8NLdy/WnO7UgBk5SWAHpiF5qZVjKT/5nSC
+	 XugYm807w1JCLxqX29gpy0lu2dEviIzqAumdYvL/VIbUNjrO1B+gKLSebxHbUjlluJ
+	 kfntz3kD2dHPYt45Fkxn1WblzOY3ISAToGqHZ5Lgh/zeqLSajLMOWa5c6hhPNIAjGh
+	 UoXMDyHpAqgy1fObkPlTf0DzMD4DLYL7ILlUiYyG7FnsQs9aykZ254DQ5bdYHEyuQl
+	 rSLjArut4dHq030SFzmEgZV3YGGctD0m2qJg6TKk926Oiip8wNHoPfyT55TIScY+6n
+	 5C3ZDiriI5Www==
+Message-ID: <f35aa5a1-96fd-4e9a-9ecc-5e900d440d4c@kernel.org>
+Date: Sat, 2 Nov 2024 13:50:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241024-imx95_lut-v3-2-7509c9bbab86@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] usb: dwc3: core: Fix system suspend on TI AM62
+ platforms
+To: William McVicker <willmcvicker@google.com>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>,
+ Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Dhruva Gole <d-gole@ti.com>, Vishal Mahaveer <vishalm@ti.com>,
+ msp@baylibre.com, srk@ti.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-usb@vger.kernel.org, stable@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Chris Morgan <macroalpha82@gmail.com>
+References: <20241011-am62-lpm-usb-v3-1-562d445625b5@kernel.org>
+ <ZyVfcUuPq56R2m1Y@google.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <ZyVfcUuPq56R2m1Y@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 24, 2024 at 06:34:45PM -0400, Frank Li wrote:
-> For the i.MX95, configuration of a LUT is necessary to convert Bus Device
-> Function (BDF) to stream IDs, which are utilized by both IOMMU and ITS.
-> This involves examining the msi-map and smmu-map to ensure consistent
-> mapping of PCI BDF to the same stream IDs. Subsequently, LUT-related
-> registers are configured. In the absence of an msi-map, the built-in MSI
-> controller is utilized as a fallback.
+Hi William,
+
+On 02/11/2024 01:08, William McVicker wrote:
+> +linux-arm-msm@vger.kernel.org
 > 
-> Additionally, register a PCI bus callback function enable_device() and
-> disable_device() to config LUT when enable a new PCI device.
+> Hi Roger,
 > 
-
-Callbacks are not *addition*, but it is how you are implementing the LUT
-configuration. Please reword it so.
-
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v2 to v3
-> - Use the "target" argument of of_map_id()
-> - Check if rid already in lut table when enable device
+> On 10/11/2024, Roger Quadros wrote:
+>> Since commit 6d735722063a ("usb: dwc3: core: Prevent phy suspend during init"),
+>> system suspend is broken on AM62 TI platforms.
+>>
+>> Before that commit, both DWC3_GUSB3PIPECTL_SUSPHY and DWC3_GUSB2PHYCFG_SUSPHY
+>> bits (hence forth called 2 SUSPHY bits) were being set during core
+>> initialization and even during core re-initialization after a system
+>> suspend/resume.
+>>
+>> These bits are required to be set for system suspend/resume to work correctly
+>> on AM62 platforms.
+>>
+>> Since that commit, the 2 SUSPHY bits are not set for DEVICE/OTG mode if gadget
+>> driver is not loaded and started.
+>> For Host mode, the 2 SUSPHY bits are set before the first system suspend but
+>> get cleared at system resume during core re-init and are never set again.
+>>
+>> This patch resovles these two issues by ensuring the 2 SUSPHY bits are set
+>> before system suspend and restored to the original state during system resume.
+>>
+>> Cc: stable@vger.kernel.org # v6.9+
+>> Fixes: 6d735722063a ("usb: dwc3: core: Prevent phy suspend during init")
+>> Link: https://lore.kernel.org/all/1519dbe7-73b6-4afc-bfe3-23f4f75d772f@kernel.org/
+>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+>> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+>> ---
+>> Changes in v3:
+>> - Fix single line comment style
+>> - add DWC3_GUSB3PIPECTL_SUSPHY to documentation of susphy_state
+>> - Added Acked-by tag
+>> - Link to v2: https://lore.kernel.org/r/20241009-am62-lpm-usb-v2-1-da26c0cd2b1e@kernel.org
+>>
+>> Changes in v2:
+>> - Fix comment style
+>> - Use both USB3 and USB2 SUSPHY bits to determine susphy_state during system suspend/resume.
+>> - Restore SUSPHY bits at system resume regardless if it was set or cleared before system suspend.
+>> - Link to v1: https://lore.kernel.org/r/20241001-am62-lpm-usb-v1-1-9916b71165f7@kernel.org
+>> ---
+>>  drivers/usb/dwc3/core.c | 19 +++++++++++++++++++
+>>  drivers/usb/dwc3/core.h |  3 +++
+>>  2 files changed, 22 insertions(+)
+>>
+>> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+>> index 9eb085f359ce..ca77f0b186c4 100644
+>> --- a/drivers/usb/dwc3/core.c
+>> +++ b/drivers/usb/dwc3/core.c
+>> @@ -2336,6 +2336,11 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+>>  	u32 reg;
+>>  	int i;
+>>  
+>> +	dwc->susphy_state = (dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0)) &
+>> +			    DWC3_GUSB2PHYCFG_SUSPHY) ||
+>> +			    (dwc3_readl(dwc->regs, DWC3_GUSB3PIPECTL(0)) &
+>> +			    DWC3_GUSB3PIPECTL_SUSPHY);
+>> +
 > 
-> change from v1 to v2
-> - set callback to pci_host_bridge instead pci->ops.
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 159 +++++++++++++++++++++++++++++++++-
->  1 file changed, 158 insertions(+), 1 deletion(-)
+> I'm running into an issue on my Pixel 6 device with this change when the
+> dwc3-exynos device has runtime PM enabled. Basically, after the device boots up
+> and I disconnect USB, the dwc3-exynos device enters runtime suspend followed by
+> system suspend 15 seconds later. On system suspend, the clocks powering these
+> dwc3 registers are off which results in an SError. I have verified that
+> reverting this change fixes the issue.
 > 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 94f3411352bf0..95f06bfb9fc5e 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -55,6 +55,22 @@
->  #define IMX95_PE0_GEN_CTRL_3			0x1058
->  #define IMX95_PCIE_LTSSM_EN			BIT(0)
->  
-> +#define IMX95_PE0_LUT_ACSCTRL			0x1008
-> +#define IMX95_PEO_LUT_RWA			BIT(16)
-> +#define IMX95_PE0_LUT_ENLOC			GENMASK(4, 0)
-> +
-> +#define IMX95_PE0_LUT_DATA1			0x100c
-> +#define IMX95_PE0_LUT_VLD			BIT(31)
-> +#define IMX95_PE0_LUT_DAC_ID			GENMASK(10, 8)
-> +#define IMX95_PE0_LUT_STREAM_ID			GENMASK(5, 0)
-> +
-> +#define IMX95_PE0_LUT_DATA2			0x1010
-> +#define IMX95_PE0_LUT_REQID			GENMASK(31, 16)
-> +#define IMX95_PE0_LUT_MASK			GENMASK(15, 0)
-> +
-> +#define IMX95_SID_MASK				GENMASK(5, 0)
-> +#define IMX95_MAX_LUT				32
-> +
->  #define to_imx_pcie(x)	dev_get_drvdata((x)->dev)
->  
->  enum imx_pcie_variants {
-> @@ -82,6 +98,7 @@ enum imx_pcie_variants {
->  #define IMX_PCIE_FLAG_HAS_PHY_RESET		BIT(5)
->  #define IMX_PCIE_FLAG_HAS_SERDES		BIT(6)
->  #define IMX_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
-> +#define IMX_PCIE_FLAG_HAS_LUT			BIT(8)
->  
->  #define imx_check_flag(pci, val)	(pci->drvdata->flags & val)
->  
-> @@ -134,6 +151,7 @@ struct imx_pcie {
->  	struct device		*pd_pcie_phy;
->  	struct phy		*phy;
->  	const struct imx_pcie_drvdata *drvdata;
-> +	struct mutex		lock;
+> I noticed that dwc3-qcom.c also supports runtime PM for their dwc3 device and
+> most likely is affected by this as well. It would be great if someone with a
+> Qualcomm device could test out dwc3 suspend as well.
 
-Please add a comment on what the lock is guarding. 
+Chris was facing another issue with this patch on Rockchip RK3566 [1]
 
->  };
->  
->  /* Parameters for the waiting for PCIe PHY PLL to lock on i.MX7 */
-> @@ -925,6 +943,137 @@ static void imx_pcie_stop_link(struct dw_pcie *pci)
->  	imx_pcie_ltssm_disable(dev);
->  }
->  
-> +static int imx_pcie_add_lut(struct imx_pcie *imx_pcie, u16 reqid, u8 sid)
+Looks like we totally missed the runtime suspended case
+I'll think about a solution and send something by today.
 
-s/reqid/rid
+[1] - https://lore.kernel.org/all/671bef75.050a0220.e4bcd.1821@mx.google.com/
 
-> +{
-> +	struct dw_pcie *pci = imx_pcie->pci;
-> +	struct device *dev = pci->dev;
-> +	u32 data1, data2;
-> +	int i;
-> +
-> +	if (sid >= 64) {
-> +		dev_err(dev, "Invalid SID for index %d\n", sid);
-> +		return -EINVAL;
-> +	}
-> +
-> +	guard(mutex)(&imx_pcie->lock);
-> +
-> +	for (i = 0; i < IMX95_MAX_LUT; i++) {
-> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, IMX95_PEO_LUT_RWA | i);
-> +		regmap_read(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA1, &data1);
-> +
-> +		if (!(data1 & IMX95_PE0_LUT_VLD))
-> +			continue;
-> +
-> +		regmap_read(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA2, &data2);
-> +
-> +		/* Needn't add duplicated Request ID */
-> +		if (reqid == FIELD_GET(IMX95_PE0_LUT_REQID, data2))
-
-So this means LUT entry is already present for the given RID (a buggy DT maybe).
-Don't you need to emit a warning here?
-
-> +			return 0;
-> +	}
-> +
-
-You need to bail out here if no free LUT entry is available. But I'd recommend
-to combine two loops to avoid having duplicated IMX95_PE0_LUT_VLD checks and
-program LUT only if there is any free entry available.
-
-> +	for (i = 0; i < IMX95_MAX_LUT; i++) {
-> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, IMX95_PEO_LUT_RWA | i);
-> +
-> +		regmap_read(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA1, &data1);
-> +		if (data1 & IMX95_PE0_LUT_VLD)
-> +			continue;
-> +
-> +		data1 = FIELD_PREP(IMX95_PE0_LUT_DAC_ID, 0);
-> +		data1 |= FIELD_PREP(IMX95_PE0_LUT_STREAM_ID, sid);
-> +		data1 |= IMX95_PE0_LUT_VLD;
-> +
-> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA1, data1);
-> +
-> +		data2 = 0xffff;
-
-data2 = IMX95_PE0_LUT_MASK;
-
-Also add a comment on why the mask is added along with the RID.
-
-> +		data2 |= FIELD_PREP(IMX95_PE0_LUT_REQID, reqid);
-> +
-> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA2, data2);
-> +
-> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, i);
-> +
-> +		return 0;
-> +	}
-> +
-> +	dev_err(dev, "All lut already used\n");
-
-"LUT entry is not available"
-
-> +	return -EINVAL;
-> +}
-> +
-> +static void imx_pcie_remove_lut(struct imx_pcie *imx_pcie, u16 reqid)
-
-s/reqid/rid
-
-> +{
-> +	u32 data2 = 0;
-
-No need to initialize.
-
-> +	int i;
-> +
-> +	guard(mutex)(&imx_pcie->lock);
-> +
-> +	for (i = 0; i < IMX95_MAX_LUT; i++) {
-> +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, IMX95_PEO_LUT_RWA | i);
-> +
-> +		regmap_read(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA2, &data2);
-> +		if (FIELD_GET(IMX95_PE0_LUT_REQID, data2) == reqid) {
-> +			regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA1, 0);
-> +			regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA2, 0);
-> +			regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, i);
-> +
-> +			break;
-> +		}
-> +	}
-> +}
-> +
-> +static int imx_pcie_enable_device(struct pci_host_bridge *bridge, struct pci_dev *pdev)
-> +{
-> +	u32 sid_i = 0, sid_m = 0, rid = pci_dev_id(pdev);
-> +	struct device_node *target;
-> +	struct imx_pcie *imx_pcie;
-> +	struct device *dev;
-> +	int err_i, err_m;
-> +
-> +	imx_pcie = to_imx_pcie(to_dw_pcie_from_pp(bridge->sysdata));
-> +	dev = imx_pcie->pci->dev;
-
-You can assign these at initialization time.
-
-> +
-> +	target = NULL;
-> +	err_i = of_map_id(dev->of_node, rid, "iommu-map", "iommu-map-mask", &target, &sid_i);
-> +	target = NULL;
-
-What is the point in passing 'target' here?
-
-> +	err_m = of_map_id(dev->of_node, rid, "msi-map", "msi-map-mask", &target, &sid_m);
-> +
-> +
-> +	/*
-> +	 * msi-map        iommu-map
-> +	 *   Y                Y            ITS + SMMU, require the same sid
-> +	 *   Y                N            ITS
-> +	 *   N                Y            DWC MSI Ctrl + SMMU
-> +	 *   N                N            DWC MSI Ctrl
-> +	 */
-> +	if (!err_i && !err_m)
-> +		if ((sid_i & IMX95_SID_MASK) != (sid_m & IMX95_SID_MASK)) {
-> +			dev_err(dev, "its and iommu stream id miss match, please check dts file\n");
-
-"iommu-map and msi-map entries mismatch!"
-
-- Mani
+> 
+> Here is the crash stack:
+> 
+>   SError Interrupt on CPU7, code 0x00000000be000011 -- SError
+>   CPU: 7 UID: 1000 PID: 5661 Comm: binder:477_1 Tainted: G        W  OE      6.12.0-rc3-android16-0-maybe-dirty-4k #1 0439eacb3cff642033630df7ee2e250e0625f2f0
+>   96 irq, BUS_DATA0 group, 0x0
+>   Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+>   Hardware name: Raven DVT (DT)
+>   pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>   pc : readl+0x40/0x80
+>   lr : readl+0x38/0x80
+>   sp : ffffffc08baa39a0
+>   x29: ffffffc08baa39a0 x28: ffffffd4dd140000 x27: ffffffd4dd140d70
+>   x26: ffffffd4dd2b2000 x25: ffffff800cef2410 x24: ffffff800cef24c0
+>   x23: ffffffd4dd24e000 x22: ffffff887df59440 x21: ffffffc085298100
+>   x20: ffffffd4db8acf60 x19: ffffffc085298200 x18: ffffffc091b730b0
+>   x17: 000000002a703c0b x16: 000000002a703c0b x15: 0000000000953000
+>   x14: 0000000000000000 x13: 0000000000000030 x12: 0101010101010101
+>   x11: 7f7f7f7f7f7fffff x10: 0000000000000000 x9 : ffffffd4dc0d7d48
+>   x8 : 0000000000000000 x7 : 0000000000008000 x6 : 0000000000000000
+>   x5 : 500020737562ffff x4 : 500020737562ffff x3 : ffffffd4db8acf60
+>   x2 : ffffffd4db8a7bac x1 : ffffffc085298200 x0 : 0000000000000020
+>   Kernel panic - not syncing: Asynchronous SError Interrupt
+>   CPU: 7 UID: 1000 PID: 5661 Comm: binder:477_1 Tainted: G        W  OE      6.12.0-rc3-android16-0-maybe-dirty-4k #1 0439eacb3cff642033630df7ee2e250e0625f2f0
+>   Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+>   Hardware name: Raven DVT (DT)
+>   Call trace:
+>    dump_backtrace+0xec/0x128
+>    show_stack+0x18/0x28
+>    dump_stack_lvl+0x40/0x88
+>    dump_stack+0x18/0x24
+>    panic+0x134/0x45c
+>    nmi_panic+0x3c/0x88
+>    arm64_serror_panic+0x64/0x8c
+>    do_serror+0xc4/0xc8
+>    el1h_64_error_handler+0x34/0x48
+>    el1h_64_error+0x68/0x6c
+>    readl+0x40/0x80
+>    dwc3_suspend_common+0x34/0x454
+>    dwc3_suspend+0x20/0x40
+>    platform_pm_suspend+0x40/0x90
+>    dpm_run_callback+0x60/0x250
+>    device_suspend+0x334/0x614
+>    dpm_suspend+0xc4/0x368
+>    dpm_suspend_start+0x90/0x100
+>    suspend_devices_and_enter+0x128/0xad0
+>    pm_suspend+0x354/0x650
+>    state_store+0x104/0x144
+>    kobj_attr_store+0x30/0x48
+>    sysfs_kf_write+0x54/0x6c
+>    kernfs_fop_write_iter+0x104/0x1e4
+>    vfs_write+0x3bc/0x50c
+>    ksys_write+0x78/0xe8
+>    __arm64_sys_write+0x1c/0x2c
+>    invoke_syscall+0x58/0x10c
+>    el0_svc_common+0xa8/0xdc
+>    do_el0_svc+0x1c/0x28
+>    el0_svc+0x38/0x6c
+>    el0t_64_sync_handler+0x70/0xbc
+>    el0t_64_sync+0x1a8/0x1ac
+> 
+> Thanks,
+> Will
+> 
+> <snip>
+> 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+cheers,
+-roger
 
