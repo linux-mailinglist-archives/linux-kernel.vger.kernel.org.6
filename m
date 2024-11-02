@@ -1,95 +1,135 @@
-Return-Path: <linux-kernel+bounces-393382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884289B9FD4
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:57:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5639B9FD7
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:59:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B4B8B219AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:57:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99A01C20FC1
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CA4189521;
-	Sat,  2 Nov 2024 11:57:07 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51219188717;
+	Sat,  2 Nov 2024 11:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qLR8Z67T"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821AC187844
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 11:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB12156C5E;
+	Sat,  2 Nov 2024 11:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730548627; cv=none; b=K2sULCe26csVT/6KByUDMKkHo1TAZQWZq5LCDqjJLP0z2WlyTIJXwVuCj16xVpmDl7Vb2Af7nMBL1RFByLevqGf0q/b3f8GXKWZIqTBcZY2wl7+5fZotqT8y8mbSHMwBSwMwuYrZj6OFEZbqU+C5pezvvOFFJOR7NkWA1Gn7d4s=
+	t=1730548735; cv=none; b=g43jykcFTFaLbyVorU0noIH3eBmH36rTj9YIkl+rs+PzS/1YktT7dlhB9ZUQzgK7zQ7NNiphppcai5eh9e8dWqPgQ+LlO+kjdHy1Vy0PFGU3ihIhFWDFvGnWITkWj0Gk7AZ73hKtatbQgkT9kZ2kTR/I25cOOS+StO02n+iwtsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730548627; c=relaxed/simple;
-	bh=hY7Qp0LVBzkxDGAGCzMbU3IbUplH3cDlFNADtweXEZc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Pm/BSGi/q7W9ImbWr9bmJiQUWVzkzt5YZvM8RrutOn9LWqGIjLAGfhkYAFrWYIxw0rd5PqPkXhTW/DcMwDyR44ljeW8fqlzbXoxxNO4XMkYnZIYU68Dp4zdn1GZzgfjf5vQ8gHLDyOciXr5nw4mfahIsJ/ouRa48rr5CDMEuTzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ac1f28d2bso258479939f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 04:57:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730548625; x=1731153425;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQgRivpVF9UQ7N/9UZp37aX+ZdPtlXZX6nCsGrsrK7A=;
-        b=XFo3eHPUd4iEWueIPVnpcCAb7YhhJ5P7wNJY1C3+ZNvTY91RGnCIYqKfix6qehQQh7
-         ufOsaJSni+zQTJKQn8Aa0zaXNnUUV+R7/eEck72pUpYBWlO0GtbrVGVPHEbaFmj1OwVf
-         LBvUzoeki/NdvmLnK/VDiSPUGevkh5gRR6rpeWt+MkGVLc5SSQA4BVkmIHfuqPqrv1aT
-         jagyj6Qhc1AAt3uNtMdgFMio8V3727BrZuYGF+DGDLopQiD8OFB+OprgslOaMPvtjup0
-         Bmj+VDAPN+sU0DBMYWH4RGofMZPB7WOEyCkwQdgRuvbKDFAgLE2wWDsUhPyL2V/4gFA3
-         SUTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDd4S5pQ60awK6qFqTSNml11FrNeFeWq3BJPjNipg0je8Mgwa3d9MrdHyG325tUfN/YWe4YBRhLVB8cbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEuZ64VafD25VQeJTFYmklb6wHtxn59EyShlyOhzwaIijP+jfi
-	zgzrS2cSTA9NGnCs7DQ0qKcZKpFpaReR7qMD1IqC/r8cW6G5Fi9mO67594bNmjyMWbRGZyNeqba
-	+9c3Amrr7My+eCDQtc3KNTfSjLU2hjM1Gl6P5bnKYgoLumFjSCPkGofg=
-X-Google-Smtp-Source: AGHT+IFmFNjiUlFoZ19V4DOoAQ7Yfyn3jBQxK76YJvFOFc/MWy6VS9PygxeZAEgcCOGek4QuT953M5xXCWp1GzRzKm+B7wTJlhH1
+	s=arc-20240116; t=1730548735; c=relaxed/simple;
+	bh=D6bf6gLA62pRkD0pj8flG3S6quk9YQrNdAopeW5bBKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lCXenEqaO0qbY/rxJWcQ0diAtLEaZk09nBhJe+ecaL7PaaGZC2V8hEGV0xfTfXuYN+6eCSp3odpgWZKONc2hquXRHmqUjt+cXjC1HCW3Uh5zvliMAfE+nir7kz9+GkdWl2P4MeQbtWZk6Ok8I/89AExT1XrHjcpVSrMHPo97FJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qLR8Z67T; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730548722;
+	bh=6TF7qHWXKnX4ueyZiWxg6f0gvRh8CdiV1FQ7mPoKW/M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qLR8Z67TFqah17XudQ08GqBw3lJgNhFTH7j0vCpd/2RBfGUBxUTPnmsy+p4zh8sl/
+	 UZJy6MFfqdV+UTnl9GwUY8pbLjPlN7W6oh212LTggvbhL+OyVx0puf1F6aLxBJ5g/k
+	 As0j1s7LUr7gytCgipCTVRRXaP0g0JNIDI0xp5nKuVmgkpVoNPM2BnSencrYBYCYhR
+	 4myftQmz2MA/FcBsVC04Mp7Xjs1PYhioBiAQTCHm3lMAwK98bGFroNEh2enpTLDYAE
+	 VRmKi7ujllk9GRX4EH1tTNwtsqk//ooAHOlQL4U45dJXv1+cs5Fbs6+TlTuydhO4qS
+	 sxfPrRj+04WiA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xgbq56pJwz4w2K;
+	Sat,  2 Nov 2024 22:58:41 +1100 (AEDT)
+Date: Sat, 2 Nov 2024 22:58:41 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Mark Brown
+ <broonie@kernel.org>
+Subject: Re: [PATCH v2] docs: bug-bisect: add a note about bisecting -next
+Message-ID: <20241102225841.4efa2969@canb.auug.org.au>
+In-Reply-To: <c9547d48-9efa-4e4e-b7fb-d82f3621bd30@leemhuis.info>
+References: <0b8245f429a3cb162f8f6c0686081700a9c09cc4.1730441728.git.linux@leemhuis.info>
+	<20241101225916.075af3aa@canb.auug.org.au>
+	<c9547d48-9efa-4e4e-b7fb-d82f3621bd30@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fcc:b0:3a0:49da:8f6d with SMTP id
- e9e14a558f8ab-3a4ed3057c0mr239739905ab.22.1730548624722; Sat, 02 Nov 2024
- 04:57:04 -0700 (PDT)
-Date: Sat, 02 Nov 2024 04:57:04 -0700
-In-Reply-To: <6716521c.050a0220.1e4b4d.005a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67261390.050a0220.3c8d68.0976.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_dev_btree_bitmap_mark
-From: syzbot <syzbot+e8eff054face85d7ea41@syzkaller.appspotmail.com>
-To: anupnewsmail@gmail.com, bfoster@redhat.com, devnull@kernel.org, 
-	john@stoffel.org, kent.overstreet@linux.dev, lihongbo22@huawei.com, 
-	linux-bcachefs@vger.kernel.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	manas18244@iiitd.ac.in, skhan@linuxfoundation.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/2v1/SZ96.poebqvD8yaCdWD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-syzbot has bisected this issue to:
+--Sig_/2v1/SZ96.poebqvD8yaCdWD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-commit 60f2b1bcf519416dbffee219132aa949d0c39d0e
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Tue Apr 16 23:33:51 2024 +0000
+Hi Thorsten,
 
-    bcachefs: Add asserts to bch2_dev_btree_bitmap_marked_sectors()
+On Sat, 2 Nov 2024 12:28:21 +0100 Thorsten Leemhuis <linux@leemhuis.info> w=
+rote:
+>
+> On 01.11.24 12:59, Stephen Rothwell wrote:
+> >
+ > On Fri,  1 Nov 2024 07:17:06 +0100 Thorsten Leemhuis <linux@leemhuis.inf=
+o> wrote:
+> > [...] =20
+> >> +The 'stable' branch refers to the state of linux-mainline the current=
+ =20
+> >                                                              ^
+> >                                                              that the c=
+urrent =20
+>=20
+> Ohh, I thought such a "that" would be optional here, but I'm not a
+> native speaker, so I guess I was wrong.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13d4cb40580000
-start commit:   6c52d4da1c74 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1034cb40580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d4cb40580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f527353e21e067e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=e8eff054face85d7ea41
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e972a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ead340580000
+Yeah, I guess it is optional, but I prefer it written like that - it
+sounds better to my ear.
 
-Reported-by: syzbot+e8eff054face85d7ea41@syzkaller.appspotmail.com
-Fixes: 60f2b1bcf519 ("bcachefs: Add asserts to bch2_dev_btree_bitmap_marked_sectors()")
+> >> +linux-next release (found in the 'master' branch) is based on -- the =
+former
+> >> +thus should be free of any problems that show up in -next, but not in=
+ Linus'
+> >> +tree. =20
+> >=20
+> > As you say, 'stable' only works for the current linux-next release.  If
+> > you are trying to bisect a previous release, you can always find the
+> > SHA1 associated with the base of any linux-next release using "grep
+> > origin Next/SHA1s".  Not sure how useful that is. =20
+>=20
+> Hmmm. Not sure. Open for opinions here. But right now I tend to think:
+> nice to know, but not relevant enough for this text, as most people want
+> to check if latest -next is still affected -- so why then bisect with a
+> older -next release?
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+That is fine.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2v1/SZ96.poebqvD8yaCdWD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcmE/EACgkQAVBC80lX
+0GxrWQf/VT/2+CqyZMkFwzQv4WRD92JfhQ6Pm89raTs6ujYWDg2yZtG10+6nH2dG
+D25OEVQNbkwQ4dlbtojDh8hvLMDQgIbhCID/QtiRDubFXInA1PC6jLRt1VISvCTM
+xi6VCJJiA/FiQwh4jdymwbOWASZMCPJcSi615iYikiBVjFcYY5TojGE2XtZ7+2Am
+8Bw+fi4bwdBdd++GhVkovpF1Us0VHGivsSITM9A5B9cwvVo2R+MhBlKzaqVzlsFo
+KJM22OsrqU24s5Ga5brfNON6K0jXbQk5F7k6h47l6l1klMXeZ3It010ENvRiZo6R
+KHHIaIdNTtit3IzhTTCTixbqXALnIw==
+=nvsW
+-----END PGP SIGNATURE-----
+
+--Sig_/2v1/SZ96.poebqvD8yaCdWD--
 
