@@ -1,127 +1,86 @@
-Return-Path: <linux-kernel+bounces-393430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D069F9BA087
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:25:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA979BA089
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:29:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EFF0B216B7
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:25:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42664B20F03
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5155818B47B;
-	Sat,  2 Nov 2024 13:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B143D18A931;
+	Sat,  2 Nov 2024 13:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0UT1LrD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OXoVX7zV"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981261E515;
-	Sat,  2 Nov 2024 13:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAC71E515
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 13:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730553939; cv=none; b=S+gJg2oNvlGbja8Ho5YWUwIgrK2C+UVNs0VmMW/RhVVMotw7HYR3WjEZ3m4CErQnii5YXbrt86cV/8juS8RhQxgI4nxfjQPJuAiyQd4gbk+rytLWX0RVX7KIgDNjj4is+0/uUrWVmzsmmjAsYt+yGcWbP81Dk7qjUf36/YpAC5Y=
+	t=1730554144; cv=none; b=JRmcmTzAxS8Fxt9m3D2f1K/UgC96+675v8iy3zrNo6cqqpgzL5eYB6qbpKrDkDV2gerxC/U7dBkfuFPZbnzMjm+PvPmCqZVwDyW9dNPRCSWtRNsOJ8pm/LuPtA9jXT8PIK9L9XZZUH1XmE3tcVqcSkwxyU7snPnGtR0j0uR1/Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730553939; c=relaxed/simple;
-	bh=Brh7PCFfiHPodDSQkSEDFp8MWJQXOxvx1uid36Iwljc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3NiiJTiWRJ3ydqVW+NTAjHrYLgDkK0K4+FltDN619wly8OoMZzzupOIBlG6Nahu1ZHMN+SgitoXu+O26+68K109digyziOGC7tGRk9+D1SH7Jqad8uvc+p0mzatrkqSXrKN88HDm+FOVzjwsyQ1gJG4lPW6kahyx6rxT8Sy2Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0UT1LrD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2D9C4CEC3;
-	Sat,  2 Nov 2024 13:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730553939;
-	bh=Brh7PCFfiHPodDSQkSEDFp8MWJQXOxvx1uid36Iwljc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z0UT1LrD0JnecxRQ9ghkR0Z8Mk/+S/sA2GbGMku5OkqJq8LM6KrVcsVNf04GAGuuO
-	 8sm1lhzmUyW+Brp2t4BxAbCmmcKVkZu1qgsOslVddaki6ntWlrQ08SMVoEBxaQsU8+
-	 1XrJjCqB7x9V9NwbE/Jo39qdCAXHjiyFwMCC0a7C0XJHEpbaBo9f6zsnlc9QYnAvTQ
-	 fHtsGCDX7MblpS/fhrT6j7LI6SyLrR7ZWzPJhaHQJ8dZAgq+s/97q0edTtsMsvbt2j
-	 dFPfcfvpZHJvNQ3gyDkT39hmDFTWa5hEiZ74qM3chMsvJtD6c75Ky2hQN9l8fV5qV+
-	 Ed1S1Z4ypcwiA==
-Date: Sat, 2 Nov 2024 13:25:32 +0000
-From: Simon Horman <horms@kernel.org>
-To: Michael Nemanov <michael.nemanov@ti.com>
-Cc: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sabeeh Khan <sabeeh-khan@ti.com>
-Subject: Re: [PATCH v4 09/17] wifi: cc33xx: Add main.c
-Message-ID: <20241102132532.GJ1838431@kernel.org>
-References: <20241029172354.4027886-1-michael.nemanov@ti.com>
- <20241029172354.4027886-10-michael.nemanov@ti.com>
+	s=arc-20240116; t=1730554144; c=relaxed/simple;
+	bh=v29yCIdmGT8NeNp+SPirbTUQLfK6haECY0VL26l0MWw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pSWGM0R2VjYdwdbssG9pVNnsUXINEL7+bawTULCBxAIKFD8LT45wHGi/LQRzzqq96xVDIp8N8RVCUxp9aCqYEG0Xeo590IhbPWqABJUJ8dJ/N5Y9af8UG02UNfTPwwisc+2yIYVJuq92GmbCkaL3C3tPvFoVPT8PXbO6Jlj4cOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OXoVX7zV; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6F8FC60002;
+	Sat,  2 Nov 2024 13:28:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730554134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jFPxv4TFcb0xcjLdoJXvXlS5cVkkmSvweU1eSCPIPRc=;
+	b=OXoVX7zVuH1FrYOS7yaAMPQqWy0GHZALHFuzYs98iw/JAYE21Nm9iJUZik7qrQ9RW98eFY
+	yLnolfg8CELUrsxd6siXsawWXElztVfZDR2GNB96hoSv8IExdtzd767eugHl7Gl3kp6H/s
+	gIv/Jln47dYvKZGxhQP2dx+k85FsIw+3prRATLcXmv/+HaHh+tMA9Pipt13HA2aHv1bBzF
+	p2mHYjjTiLmATiDWX++i4vF4CJBWQ6VsBqx2vYpmwESSj4OjIqK+0IWofXZ+mZPLZkW4sN
+	fp+MQd6vLveJQsOiDBjKPJ7KxOxIeIm9wM1m630KGdk+ucOKJt5R3n061JqmQA==
+From: alexandre.belloni@bootlin.com
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] i3c: Document I3C_ADDR_SLOT_EXT_STATUS_MASK
+Date: Sat,  2 Nov 2024 14:28:41 +0100
+Message-ID: <20241102132841.2446176-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029172354.4027886-10-michael.nemanov@ti.com>
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Tue, Oct 29, 2024 at 07:23:46PM +0200, Michael Nemanov wrote:
-> General code and structures.
-> Notably:
-> 
-> cc33xx_irq - Handles IRQs received from the device.
-> 
-> process_core_status - Core status is a new concept in CC33xx.
-> it's a structure that is appended to each transfer from the device and
-> contains its most up-to-date status report (IRQs, buffers, etc.).
-> See struct core_status for details.
-> 
-> process_event_and_cmd_result - Responses to driver commands and
-> FW events both arrive asynchronously. Therefore, driver cannot know what
-> he read from HW until inspecting the payload. This code reads and
-> dispatches the data accordingly.
-> 
-> cc33xx_recovery_work - Driver supports basic recovery on FW crash and
-> other illegal conditions. This implements the recovery flow
-> (Remove all vifs, turn device off and on, download FW,
-> let ieee80211_restart_hw do the rest).
-> 
-> irq_deferred_work - Does irq-related work that requires holding the
-> cc->mutex. Thisd is mostly in response to HW's Tx/Rx IRQs.
-> 
-> cc33xx_nvs_cb - Callback for the NVS FW request API. Similar to wlcore,
-> this is where the init of the HW is performed.
-> 
-> cc33xx_load_ini_bin_file - Loads a configuration file from user-space
-> via the request FW API. The structure is described in a separate patch.
-> 
-> cc33xx_op_X - MAC80211 operation handlers.
-> 
-> Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
-> ---
->  drivers/net/wireless/ti/cc33xx/main.c | 5689 +++++++++++++++++++++++++
->  1 file changed, 5689 insertions(+)
->  create mode 100644 drivers/net/wireless/ti/cc33xx/main.c
-> 
-> diff --git a/drivers/net/wireless/ti/cc33xx/main.c b/drivers/net/wireless/ti/cc33xx/main.c
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-...
+As the mask is part of the enum, document it.
 
-> +static struct ieee80211_sband_iftype_data iftype_data_2ghz[] = {{
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ include/linux/i3c/master.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Hi Michael,
+diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
+index 6e5328c6c6af..12d532b012c5 100644
+--- a/include/linux/i3c/master.h
++++ b/include/linux/i3c/master.h
+@@ -298,6 +298,7 @@ enum i3c_open_drain_speed {
+  * @I3C_ADDR_SLOT_I2C_DEV: address is assigned to an I2C device
+  * @I3C_ADDR_SLOT_I3C_DEV: address is assigned to an I3C device
+  * @I3C_ADDR_SLOT_STATUS_MASK: address slot mask
++ * @I3C_ADDR_SLOT_EXT_STATUS_MASK: address slot mask with extended information
+  * @I3C_ADDR_SLOT_EXT_DESIRED: the bitmask represents addresses that are preferred by some devices,
+  *			       such as the "assigned-address" property in a device tree source.
+  * On an I3C bus, addresses are assigned dynamically, and we need to know which
+-- 
+2.47.0
 
-Sparse seems a bit unhappy about this:
-
-.../main.c:332:24: warning: incorrect type in initializer (different address spaces)
-.../main.c:332:24:    expected struct ieee80211_sband_iftype_data const [noderef] __iftype_data *iftype_data
-.../main.c:332:24:    got struct ieee80211_sband_iftype_data *
-
-So perhaps it should be:
-
-static const struct ieee80211_sband_iftype_data __iftd iftype_data_2ghz[] = {{
-
-Likewise for iftype_data_5ghz.
-
-...
 
