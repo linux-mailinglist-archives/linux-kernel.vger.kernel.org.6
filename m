@@ -1,97 +1,117 @@
-Return-Path: <linux-kernel+bounces-393412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D999BA034
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:12:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C62D9BA038
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D6A7B21621
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:12:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C748A2825E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B37618A6C4;
-	Sat,  2 Nov 2024 13:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D0C18A92A;
+	Sat,  2 Nov 2024 13:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUHv4s6e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqOtSOhu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71477EAC6;
-	Sat,  2 Nov 2024 13:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F79189F47;
+	Sat,  2 Nov 2024 13:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730553115; cv=none; b=pKdq7fubn5W7cE/sWGizDqb6pcJNFk5rUuRYNQ/1HD143ylW9aMKY8WVK+CrSBKP6hXxa/8AE0NH+tew0x8drcaXHi3mY/fN+JZwVV0/OZ4ZgDSN7wfQQLkh4VEgsguUpgRHvZRs0EHAuUxCBZsJVK8ZjG3kJ+xgeirTFMD3PDM=
+	t=1730553128; cv=none; b=g56Z6E0Nv+pqSKoUvCNgxVRKZMc8mLr8i7IlUP0yg/yYwdP8HrwqUtB9aqgZqiYUlR7I2q6tyLdLxvg+mxLlpuhkLkWtS1J4mMKpP76jdqgADzj02ZwaeeC+HR1dx2sINNUjGUa4EuRThBKy94H/aq5zg8cabFIYseoR+gdvUZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730553115; c=relaxed/simple;
-	bh=eGFck0cKd1Wy64d/Ev/jSEbK3IIKOXA4fI7Uzfoz+9k=;
+	s=arc-20240116; t=1730553128; c=relaxed/simple;
+	bh=8zBgapSvy/X1XAXpF6HYYSEqMFfiSnitRwvaXv8+hgg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTYn+6LSl4k6SEORWlP/IFJwdh0n/dv6j6Y7FeEzxHT1FHo2g3UXGDmGjGm5ggwbfCv0vQ/m9BJFbu9a0+Jh6Bs9lBJBeQ0a6nSGOajk9SIfEJ9rHM8TyErNa0f/nyltnuzuMm2lGGObB5V0H75fsf95bddfD38dwxVOZJRha1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUHv4s6e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E21A2C4CEC3;
-	Sat,  2 Nov 2024 13:11:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dv3Y9PKuMI+IkNq5GMaBENeLj4R56DMPBj6+xKGAOPMglkb+xNT2WosQ86wm3P00j/uvroJP2OIfVbH/HpyklXs8YEtW4rH1C0fuMBO6TefjY5K3y9fQfrqkxzgltDvelafiLXSawYFLt/GjtX3TIBO34jllJTazJER8DzR5qRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqOtSOhu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A18EDC4CEC3;
+	Sat,  2 Nov 2024 13:12:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730553115;
-	bh=eGFck0cKd1Wy64d/Ev/jSEbK3IIKOXA4fI7Uzfoz+9k=;
+	s=k20201202; t=1730553128;
+	bh=8zBgapSvy/X1XAXpF6HYYSEqMFfiSnitRwvaXv8+hgg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nUHv4s6eRD6BBzQHjsh+cFIyMNUx1BNkT6PJb+Vs/t6ALkfudA5Wz7c0N9VjIqXvE
-	 nwOIv10w8osITYi4ymFr3BrogeMuR3Ekn+PVgFwp/7WwdtYV0wctd+0vWlEHWX9Jgt
-	 GtNTStE8UN/7qVZZq9QE0hDg/d/QAyjzR0ccjazeCmeRd0QanNktUhWN6pzQ+Qp8ET
-	 0WPwx9TwPKdiXKesmS8jSlfheWbruBuKz9jSMA9ZKp+jk9LSQLIH9B4DZStMRLxkNB
-	 AwvsEGTXK4Qccaa9MEPrbx11qUKk2x/EV+y+08s+nkgAIgismXVnCzbUEJa00tvtTy
-	 NI8Eimmavnz1A==
-Date: Sat, 2 Nov 2024 14:11:51 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Janne Grunau <j@jannau.net>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] Apple SPI controller driver
-Message-ID: <vzulq4ewdbrk7qdurtypxpaoe4jsswddfprtdbudoxipf6d3ya@4gnbmr722pig>
-References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
+	b=kqOtSOhuQxp/jwjDMOJpvrh7YN96sJRvdzz6OH9I5ZZGH+s3upObYqakNtUYj8pLB
+	 chg4Mliu3sZ+oK2Yg1NeZrRRELCh9RfgiC7nfEcUrVBd1byxZrNFiPDAhufNr7cqGz
+	 K1e7L+qvErkB89AFbLt9KYsNdYZD8zSO8Si6YuPBt82c6mAQevsa5bTx+xcfms28mV
+	 bvPhZrpPeTwctUHykoKOzD3Uky7JCgCDUjSmvQpP+I0efYXK8AafJ4cYDjIEw3TOOl
+	 1ev5QZZ8xQgOXDnAHNsUe/sqmf3c01pXaPgi2GsMjqCzLCE+LkUKpK36tf6Wlm2GnJ
+	 xeHKwmdcniJgQ==
+Date: Sat, 2 Nov 2024 13:12:01 +0000
+From: Simon Horman <horms@kernel.org>
+To: Michael Nemanov <michael.nemanov@ti.com>
+Cc: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sabeeh Khan <sabeeh-khan@ti.com>
+Subject: Re: [PATCH v4 07/17] wifi: cc33xx: Add event.c, event.h
+Message-ID: <20241102131201.GI1838431@kernel.org>
+References: <20241029172354.4027886-1-michael.nemanov@ti.com>
+ <20241029172354.4027886-8-michael.nemanov@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
+In-Reply-To: <20241029172354.4027886-8-michael.nemanov@ti.com>
 
-On Fri, Nov 01, 2024 at 08:26:11PM +0100, Janne Grunau wrote:
-> Hi all,
+On Tue, Oct 29, 2024 at 07:23:44PM +0200, Michael Nemanov wrote:
+> Unlike in wlcore, events are queued on linked list
+> (cc->event_list) and are handled outside the IRQ
+> context. This will be more clear when looking at main.c
 > 
-> This updated series address the review comments from the original
-> submission in 2021 [1]. It adds a new SPI controller driver for Apple
-> SoCs and is based on spi-sifive. It has been tested with the generic
-> jedec,spi-nor support and with a downstream driver for an Apple specific
-> HID over SPI transport.
+> Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
+> ---
+>  drivers/net/wireless/ti/cc33xx/event.c | 363 +++++++++++++++++++++++++
+>  drivers/net/wireless/ti/cc33xx/event.h |  71 +++++
+>  2 files changed, 434 insertions(+)
+>  create mode 100644 drivers/net/wireless/ti/cc33xx/event.c
+>  create mode 100644 drivers/net/wireless/ti/cc33xx/event.h
 > 
-> As usual, I'm splitting off the MAINTAINERS and DT binding changes.
-> We would rather merge the MAINTAINERS change through the Asahi-SoC
-> tree to avoid merge conflicts as things trickle upstream, since
-> we have other submissions touching that section of the file.
-> 
-> The DT binding change can go via the SPI tree or via ours, but it's
-> easier if we merge it, as then we can make the DT changes to
-> instantiate it without worrying about DT validation failures depending
-> on merge order.
-> 
-> This is mostly Hector's work with a few minor changes to address review
-> comments from me.
-> 
-> [1] https://lore.kernel.org/linux-spi/20211212034726.26306-1-marcan@marcan.st/
-> 
-> v2:
-> - removed '#address-cells' and '#size-cells' from the bindings and added
->   Rob's Rb:
+> diff --git a/drivers/net/wireless/ti/cc33xx/event.c b/drivers/net/wireless/ti/cc33xx/event.c
 
-Where?
+...
 
-Best regards,
-Krzysztof
+> +struct event_node {
+> +	struct llist_node node;
+> +	struct cc33xx_event_mailbox event_data;
+> +};
+> +
+> +void deffer_event(struct cc33xx *cc,
+> +		  const void *event_payload, size_t event_length)
+> +{
+> +	struct event_node *event_node;
+> +	bool ret;
 
+Hi Michael,
+
+A minor nit from my side: ret is set but otherwise unused in this function.
+Probably it should be removed.
+
+> +
+> +	if (WARN_ON(event_length != sizeof(event_node->event_data)))
+> +		return;
+> +
+> +	event_node = kzalloc(sizeof(*event_node), GFP_KERNEL);
+> +	if (WARN_ON(!event_node))
+> +		return;
+> +
+> +	memcpy(&event_node->event_data,
+> +	       event_payload, sizeof(event_node->event_data));
+> +
+> +	llist_add(&event_node->node, &cc->event_list);
+> +	ret = queue_work(cc->freezable_wq, &cc->irq_deferred_work);
+> +}
+
+...
 
