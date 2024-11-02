@@ -1,160 +1,171 @@
-Return-Path: <linux-kernel+bounces-393237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FBDE9B9E1F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:18:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 180639B9E23
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:20:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7493B1C212FC
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9731C21801
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E558016087B;
-	Sat,  2 Nov 2024 09:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F61C15C15A;
+	Sat,  2 Nov 2024 09:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KpfnoM6Z"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jD53bc4f"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E7415539F
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 09:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6B413BACC;
+	Sat,  2 Nov 2024 09:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730539083; cv=none; b=e+7qVluwXKNhYmpvNVbmYBIYnvHP8M+7VYA0vWuGqzxNLSmtHYKjam7Bo9DEEUBHr16DC8s2pR7jPTCh7kjbTKkoIWF/AV4kmNABAWpJIfzSkeyj1tdyTp7ZuEjY/8qw/89xhNydPEJbvvC3goU7Wu/+5kGEyBNLZCChm8epaI0=
+	t=1730539213; cv=none; b=QtoUoW1e/9xnUInb9lKbP4usxCsJwSM5rta7UkH/KABxwzhwSDjRhH6XZhhx6aDjLGE25p1A2sAwLADDSsjECf30jVeNsT0KXpuagAKgOZ1exEnUfGhH+B/nH6f0tB1eo5sp/vVWHVC9dEmkpuWVZXVc8pGmy4ahM5ko6FdKaMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730539083; c=relaxed/simple;
-	bh=njHM0JitJ+UFde2pIECv8aDcFbSmdoTPJmBk0518qKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VOvuwhh8GYE2a0fInqOcpHeecI3+/YKiaW4mIoa2q7DAwU62Oib9a2o2hBVcxHV5WB5NvOIt/foq0hxt+a8WLlO42hC9UtnT0Qt6sLwblyEBrk0gqNko4TGgzAI+tugJGu+SSgkPboRhL43FwvxQTqKwYY4LlaeqHp6NgOh5NOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KpfnoM6Z; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A24X9pR019642
-	for <linux-kernel@vger.kernel.org>; Sat, 2 Nov 2024 09:18:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SxLosq1NBnit3HDI9GiRh3jJbkWMHk8309JHht3lgxQ=; b=KpfnoM6ZM23lHpeE
-	UVCjxPkl9b4RaGKi7bbQuFY16cv/Y08EHcVAEmTiyDtXEkJzR8K9etvGR11yf982
-	tv8B4Zgp8Ttssjj2cEiRBDYSFnvy1/rf5c5DCSlj88pTI7lMG8MWnQMLZoSevMb2
-	i6URjNwwEGszAEaUXXaVNyCVJzYZU19u9enjTmYNq2MiFuFSkIOe/T15pi7bK5cb
-	k4IJvDSOcq68cHXdk5hwyQWCNmx7IwEzf9R1jH+5ch4QRcbEJPCluYVbo/2Ky5uQ
-	n1hIZXqHbLDr8px1Lcb9HstqoqVcNqS79iLxiAe56DPpRYZ0j1LNbYlgw6aVVPjB
-	aO5UXg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd5cgd1v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 09:18:01 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b1441d231bso32301485a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 02:18:00 -0700 (PDT)
+	s=arc-20240116; t=1730539213; c=relaxed/simple;
+	bh=gdWMNWxXFHL9qw19MfKzkIcpkx3y/3En0QAut+yHzj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ppqjffqyjGWkhESdV09o3Vrf8Br3RcnLLGbXUlcRAFqOiSV2+4V7JoeW9eijVkDyJOcxbz3mw9esm4qZNG1SWXvLRlv0LwK1EXklfrCgPpIj55nJ8pomUe51HaLD7b1FwykP/H8X0XAaiFsaCBMo0oCqoLN3FMhuKQGp3Tn5Qb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jD53bc4f; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7180d9d0dcbso1061087a34.3;
+        Sat, 02 Nov 2024 02:20:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730539211; x=1731144011; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kpGFODYS8j6Lc9OgDllYcnBQdgtbbm75EKILrrrUJdM=;
+        b=jD53bc4fu3eKgADSgSp5ryOi2Pt+RtUNSHkSsDjKTopyKeR8mxRmaTENTBHW9YKPZN
+         bn2NpPYRqvIVGPbbACVzupUe7MWD8MM3v2wSsxjLoLEZl1tYaPF+5QAIeVRFpFZRR/zv
+         qyt+9g6FHw3BiXsaUb+n4T5f4LfijoQysK7O+kCq3ciE2goKgCPInzPeSycxxYMLWysj
+         o2wTqeqErhtQne2vCAnaIsVarmTUbjw3GW4pPO3TNx2WwcZ1LUBd40o58LOopUUajpMy
+         Z3CLh5+eMRrx2h2Add2J5iKHwGZY4//F2s9F0OzeTaaB5FKxS7RfIKwhxKOAQX737Q/Z
+         fY5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730539080; x=1731143880;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SxLosq1NBnit3HDI9GiRh3jJbkWMHk8309JHht3lgxQ=;
-        b=dXW/0PxYibXdilpolpqfzghbmV1np0q+x8fqmq8fIZzKjHHRagC8t3sKmM1Da4f7e3
-         fKToSUtXjFH7P9um7Xmnwuih6I8BvqM56zc+5kyFq+rpf0uuP15MibobbgAJiYYkv34d
-         Bg3/5UMPlfK1jwpRPFZuvQIY0ZEDT2OMBphNnp5Z3oOBDBb61iOHn5Lqk4Mbiz8fjeB1
-         zlPNcCGcQ23shWtD1IibNXEp9pshRcSg/Ktl2YaaCiW3GduBapLMPXvViYfHnECOfjMZ
-         d5zM5UqMAVjPfsMXqjTCygsXlLeYe4OMyLLkxZ2nWE10/9PkENZ4WHtZswptDI9Ngdx5
-         UAMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuwuyCcyy2O8vf5As8dk/ALjGzaAzJ7+4qLlJco7HmncNbi78oJHz+XfTvHjjey1K1CHGlV0t7HReqfSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9BomoFmWiF0xoJis5Zk71zw6uBWeeOynaV1+uIhNthXKppklx
-	OEkHLtKEt0boHhm5Lqd4EDFiyNpLDrwedrSCcghiRSd/omaTDpp/I6cMyY2HoEHZ4pBghzLjbIg
-	tJ8sn5g2HMhvwNyMOIgTTrcw4Nmarx6M5j2hjRAUXRwOzqek2cwOxQEJTbagtxGs=
-X-Received: by 2002:a05:620a:2a06:b0:7a9:a632:48ad with SMTP id af79cd13be357-7b193f386bcmr1681362785a.11.1730539079743;
-        Sat, 02 Nov 2024 02:17:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLJfkunugQ2at2GEhSt+xW2/lUJYpA3Jg23KZ4nV+MMia5zznXtwkl/He0lGbHfDJZbcYPtg==
-X-Received: by 2002:a05:620a:2a06:b0:7a9:a632:48ad with SMTP id af79cd13be357-7b193f386bcmr1681361585a.11.1730539079442;
-        Sat, 02 Nov 2024 02:17:59 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56496c69sm288924466b.45.2024.11.02.02.17.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Nov 2024 02:17:59 -0700 (PDT)
-Message-ID: <ed0c77bd-770c-406d-851f-8589e53cde8b@oss.qualcomm.com>
-Date: Sat, 2 Nov 2024 10:17:56 +0100
+        d=1e100.net; s=20230601; t=1730539211; x=1731144011;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kpGFODYS8j6Lc9OgDllYcnBQdgtbbm75EKILrrrUJdM=;
+        b=FOLGGAPpPiv95a1TLUu2rrbjuEOAfsWfxjKLpwVRa8uvnYgVYEXPWmtKsao4lssoUg
+         g9Ut5uhMXj38T4rSrwHFS7j4YeIbtvZj7iJ5UDwo/5G7evYr/SxNCylC8XuNX3dCrfc7
+         FkkOLwylp18Tugq1eKzcW80lbfsqe83wqqD56Uojl6fLMxO7JeSsjQLa/5zj1wycTorT
+         scL5XiuJMiaspqaqCSSpBNBWwyOaeCWm/nIcaqZTuqYXqVXft0BmBLUl+SZrXN/5PjV1
+         NyFgebeFFNz5GajT+NXiwmt0HQ+TUCfe8h5qhtp+lOVUION52m4huUSc/PDEeHfhor+3
+         KRDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0GweHSFZplVYDFWAiso7F7rIvYhaFvJ/zCUtGTnm2HEvo+T13BmvRO6IKljk9d//Ay6dUjexd4qyn@vger.kernel.org, AJvYcCV2Y7jssZ0Kj/ZSxSM949C3DWYnoI2ZSgBnA1wIVVH08r6bYL+SPSGzD269zqK7IDKeFyNB8qqNS6o=@vger.kernel.org, AJvYcCWvHxDHBiK+If7eRbDSbEB1Jbit2TSb5vAbH2bMicEEQLJpFUYtcW8Lp7MNt7j+kk63bJE8P6iQPTqR9PXR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ5XKxMU1kyqwFcbiQcUeUFkhXfg3aFitL+dbMZpCDCqOYqDyh
+	6BCHAd1FbK4tWvHs391F/oBqE83CP9E6Z06xAMhhxgkIKbYP73Ff
+X-Google-Smtp-Source: AGHT+IFLReBsrRpmxL4vu2o+HK8LR5rKgVTw5Pae/xERGUN3VNDuKb5mCI4fypHiqCUe37x/W4d24w==
+X-Received: by 2002:a05:6830:6015:b0:717:fe2d:a4e4 with SMTP id 46e09a7af769-7189b4f40e0mr8772997a34.19.1730539211247;
+        Sat, 02 Nov 2024 02:20:11 -0700 (PDT)
+Received: from illithid ([2600:1700:957d:1d70::49])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7189cccf736sm1089795a34.69.2024.11.02.02.20.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Nov 2024 02:20:10 -0700 (PDT)
+Date: Sat, 2 Nov 2024 04:20:07 -0500
+From: "G. Branden Robinson" <g.branden.robinson@gmail.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Alejandro Colomar <alx@kernel.org>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-man@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] proc_pid_fdinfo.5: Add subsection headers for
+ different fd types
+Message-ID: <20241102092007.ixxtdc6u4iutxmam@illithid>
+References: <20241101211830.1298073-1-irogers@google.com>
+ <20241101211830.1298073-3-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-To: Abel Vesa <abel.vesa@linaro.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>, Johan Hovold <johan@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241101-x1e80100-ps8830-v4-0-f0f7518b263e@linaro.org>
- <20241101-x1e80100-ps8830-v4-2-f0f7518b263e@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241101-x1e80100-ps8830-v4-2-f0f7518b263e@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: yZoTBdUZjh_LQF7gUWImP-ikbgnrF6UQ
-X-Proofpoint-GUID: yZoTBdUZjh_LQF7gUWImP-ikbgnrF6UQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 mlxscore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0
- suspectscore=0 adultscore=0 clxscore=1015 phishscore=0 malwarescore=0
- mlxlogscore=667 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411020082
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4bjtnlpbcduyzdoo"
+Content-Disposition: inline
+In-Reply-To: <20241101211830.1298073-3-irogers@google.com>
 
-On 1.11.2024 5:29 PM, Abel Vesa wrote:
-> The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
-> controlled over I2C. It usually sits between a USB/DisplayPort PHY
-> and the Type-C connector, and provides orientation and altmode handling.
-> 
-> The boards that use this retimer are the ones featuring the Qualcomm
-> Snapdragon X Elite SoCs.
-> 
-> Add a driver with support for the following modes:
->  - DisplayPort 4-lanes
->  - DisplayPort 2-lanes + USB3
->  - USB3
-> 
-> There is another variant of this retimer which is called PS8833. It seems
-> to be really similar to the PS8830, so future-proof this driver by
-> naming it ps883x.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
 
+--4bjtnlpbcduyzdoo
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 3/4] proc_pid_fdinfo.5: Add subsection headers for
+ different fd types
+MIME-Version: 1.0
+
+Hi Ian,
+
+At 2024-11-01T14:18:29-0700, Ian Rogers wrote:
+> Make the sections about eventfd, epoll, signalfd, inotify, fanotify,
+> timerfd better separated with a clearer subsection header.
+>=20
+> Signed-off-by: Ian Rogers <irogers@google.com>
 [...]
-
-> +static void ps883x_configure(struct ps883x_retimer *retimer, int cfg0, int cfg1, int cfg2)
-> +{
-> +	regmap_write(retimer->regmap, 0x0, cfg0);
-> +	regmap_write(retimer->regmap, 0x1, cfg1);
-> +	regmap_write(retimer->regmap, 0x2, cfg2);
-> +}
-
-Somewhere between introducing regcache and dropping it, you removed
-muxing to a safe mode during _configure()
-
+> +.SS eventfd
+>  .P
 [...]
+> +.SS epoll
+>  .P
+[...]
+> +.SS signalfd
+>  .P
+[...]
+> +.SS inotify
+>  .P
+[etc.]
 
-> +	/* skip resetting if already configured */
-> +	if (regmap_test_bits(retimer->regmap, 0x00, BIT(0)))
-> +		return 0;
+I suggest deleting the paragraphing macros when you add (sub)sectioning
+macros immediately before them.  In these cases the `P` calls end up
+doing nothing.
 
-What is that register and what does BIT(0) mean?
+groff_man(7):
+       .SS [subheading=E2=80=90text]
+              Set subheading=E2=80=90text as a subsection heading indented
+              between a section heading and an ordinary paragraph (.P).
+              If no argument is given, a one=E2=80=90line input trap is pla=
+nted;
+              text on the next line becomes subheading=E2=80=90text.  The l=
+eft
+              margin is reset to the value of the SN register to set the
+              heading text in bold (or the font specified by the string
+              HF).  If the heading font \*[HF] is bold, use of an italic
+              style in subheading=E2=80=90text is mapped to the bold=E2=80=
+=90italic
+              style if available in the font family.  The inset level is
+              reset to 1, setting the left margin to the value of the IN
+              register.  Text after subheading=E2=80=90text is set as an
+              ordinary paragraph (.P).
 
-Konrad
+Regards,
+Branden
+
+--4bjtnlpbcduyzdoo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEh3PWHWjjDgcrENwa0Z6cfXEmbc4FAmcl7scACgkQ0Z6cfXEm
+bc5BFg//Q9uaGXm0MGnz6aClftEXxT5cINEJIJq4ZOtnAqBKeSw5QBdlvDiPIMPr
+Rv9yHC5rz5Ha6STdxQCX6feI2OImonRaWx8ZCl92h3U03Wxhw686lBGSfdHdwJqe
+6sqMDyIVILx3oqnWkuqfs/SIKRkmbVBacBo0x6KSOglbHR/Swa9qEMtmyJzrnxzJ
+PJctPqWtxv8Zd8+zNc1caOG3ckeLwnNtUeoVC4iOe3hFdSE3XBnm5hM0UbGFSYjG
+AHcfRD3C8QsQYO+F9ikevajUwijcCXmyoQ6Pe85qqSL6Fcn1u7HHA705NEomDDD+
+Bfn3S5txZANBc1IxGqc7CKnUy3MuoIYP5bmoF8VTje3crBCBaNqg610F8FfaLPYj
+KR6mx29956y5GnfhAsYWx1nyNio+6KaBHXL9qE80Fwq4+s3V8UJT+Ii4jRd1cnI6
+JXNMfdjf82P4gKeDLi31LsYUHxO/paq0gVLerw8YPtJUiozjM5QxbnvCCSx2zKr8
+L7syuSsFt7VVQyJyY3REHT35LTxcNx7h/QRnXxlvM8lVLDzHcGegsk5lCCf2OMyg
+YjCFZihestXdMtn74kSArBWGjjqW4Zu5gojc6dMXp5pC+JzeGxhzWFN6iFGPFgUH
+LTQimXt367vOAdi9XpoaaG1FkZHiXXlMLcHbq315rctNKdsJAl8=
+=14Tv
+-----END PGP SIGNATURE-----
+
+--4bjtnlpbcduyzdoo--
 
