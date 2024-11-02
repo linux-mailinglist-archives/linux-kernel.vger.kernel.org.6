@@ -1,172 +1,117 @@
-Return-Path: <linux-kernel+bounces-393545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E178E9BA22B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:47:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468659BA22F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:48:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FBD3B21458
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 19:47:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2C531F21AA8
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 19:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4C31AB521;
-	Sat,  2 Nov 2024 19:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="cUVolbLf"
-Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031511AA7A9;
+	Sat,  2 Nov 2024 19:48:22 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF09715E5B5;
-	Sat,  2 Nov 2024 19:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1099114F12F
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 19:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730576826; cv=none; b=ni0rgK7cMNEbInucPrXUJsjZpbHWqRK1V8CXnuBZ7pe4co0rCmjp5W+pmPG+s0B2rCuqaRR0cQnYeXDuoxFzh3OP5SYLV/WW8x+SLRgakDVTXXA1bWaWd+N9lLdl3jN1RRKvhofRCWcVGz+zgOlgOjZTNn27QoAUH3bi2uZOJwE=
+	t=1730576901; cv=none; b=aVal8sDO38TEUh1hzkJYNRqt8t0lTk54piu9XJ2P3Gufu/U7TATs+FRqe41U9hinQCBpa46E3l7BRqp9/spSVLAKnSkVZ6hTLaDapHArXVQuM/0Tf+uoWea1cX4jkQJVIIoFzprJ0cvzj7AgYJd5d4Iu5M7Q7U5tWhw4r95Y+Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730576826; c=relaxed/simple;
-	bh=MQI3BNtZBxdg6mXqk8yc8wb4V0fZXGUlCkoeCxmMzyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lMSpnEc54rNMF5KWUeRPefvYOJcsyNvKYpEWcdBMxgd+g6t2sd4ruk/ZyQnNtETO1wk/bkDpQsOC6u0yQ3J9ebv55DC5THo/lt4nwgFj7ClnBUNy9ECvF4g9NmAYHDhJg6S0WAX3LvuNbbpmCsDsjBG1g6SEy8/Ll0NO5qTsLL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=cUVolbLf; arc=none smtp.client-ip=202.61.224.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 881682805B9;
-	Sat,  2 Nov 2024 20:46:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
-	t=1730576820; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=BGTnDaqtKnLhX/3sR+UXxn46A/x2F6Nip/nY5s5e61A=;
-	b=cUVolbLfq/bcxZpLz4bc++OQ6L6azX7WwNkEW08OV5Nahc38rQocTTwPrD0gttmiLds/6m
-	0HoYHc+KmEm0pAAxJcWa0jfnBkNi3atxtA2lcSXL7Z9/pMUgesS8Jbzj0FCvczyHgO1Ljl
-	6MmEabP+QjC4QUptGltAIIqMHfZML+CpIFOC0NRwJ9ch0IKoVXsSZjCbh/9qesnupWMKkB
-	MFC98K+CWLGLyJDzlwQofObmdQNchwwsJjCN5T+2CLw+/ORgWBZvwp6BjqtKwmk0x+VY+A
-	2dHCJPRFu41XjMujZIXmK6JKycr73XH5jF8JHmJm1m4RTFgSRUP1/qUMFWTVxw==
-Message-ID: <09349180-027a-4b29-a40c-9dc3425e592c@cachyos.org>
-Date: Sat, 2 Nov 2024 20:46:50 +0100
+	s=arc-20240116; t=1730576901; c=relaxed/simple;
+	bh=L4xMV/8gYoMZk3Q3diI5SpjBN7teilAKah//V0XO1UI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3sNAnYDsLS3z2dIHvwwcobMH9cWcZhZHUyORs8fDMTa4bI0oudZGvC/+twZ0c7aFco81zSqic/olGFseW7z8hF6mDr0a+1OvKH8AmmfyVCwRZQ61OoJ4lgINDgaem2BjBCre0oO7XcqhqO7qP3OizWErtCqdcLjUZJ2YwIzalU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-24-75.elisa-laajakaista.fi [88.113.24.75])
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id 6061fdeb-9953-11ef-8871-005056bdd08f;
+	Sat, 02 Nov 2024 21:48:05 +0200 (EET)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 2 Nov 2024 21:48:04 +0200
+To: victor.duicu@microchip.com
+Cc: matteomartelli3@gmail.com, jic23@kernel.org, lars@metafoo.de,
+	marius.cristea@microchip.com, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7] iio: adc: pac1921: Add ACPI support to Microchip
+ pac1921
+Message-ID: <ZyaB9G1baF10FzZD@surfacebook.localdomain>
+References: <20241031065205.50154-1-victor.duicu@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/7] Add AutoFDO support for Clang build
-To: Rong Xu <xur@google.com>, Alice Ryhl <aliceryhl@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>,
- Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>,
- Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>,
- Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
- Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>,
- workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>,
- Krzysztof Pszeniczny <kpszeniczny@google.com>,
- Sriraman Tallam <tmsriram@google.com>, Stephane Eranian <eranian@google.com>
-Cc: x86@kernel.org, linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20241102175115.1769468-1-xur@google.com>
- <20241102175115.1769468-2-xur@google.com>
-Content-Language: en-US
-From: Peter Jung <ptr1337@cachyos.org>
-Organization: CachyOS
-In-Reply-To: <20241102175115.1769468-2-xur@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031065205.50154-1-victor.duicu@microchip.com>
+
+Thu, Oct 31, 2024 at 08:52:05AM +0200, victor.duicu@microchip.com kirjoitti:
+> From: Victor Duicu <victor.duicu@microchip.com>
+> 
+> This patch implements ACPI support to Microchip pac1921.
+> The driver can read shunt resistor value and label from ACPI table.
+
+This ID might be okay, but can we please have:
+1) the list of the models (or a model) of the device on the market that has this;
+2) ACPI DSDT excerpt of the respective Device object?
+
+(I mean a laptop, tablet, phone or other device that has this sensor described
+in the ACPI)
+
+...
+
+> +/*
+> + * documentation related to the ACPI device definition
+
+Documentation
+
+> + * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
+> + */
+
+...
+
+> +	if (ACPI_HANDLE(dev))
+
+Hmm... Want this be really needed? You can try to call DSM. and if it fails try
+DT (or actually other way around as we usually do).
+
+> +		ret = pac1921_match_acpi_device(indio_dev);
+> +	else
+> +		ret = pac1921_parse_of_fw(indio_dev);
+
+...
+
+> +static const struct acpi_device_id pac1921_acpi_match[] = {
+> +	{ "MCHP1921" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(acpi, pac1921_acpi_match);
+
+Missing blank line here.
+
+...
+
+>  	.driver	 = {
+>  		.name = "pac1921",
+>  		.pm = pm_sleep_ptr(&pac1921_pm_ops),
+>  		.of_match_table = pac1921_of_match,
+> +		.acpi_match_table = pac1921_acpi_match
 
 
+Missing trailing comma here.
 
-On 02.11.24 18:51, Rong Xu wrote:
-> Add the build support for using Clang's AutoFDO. Building the kernel
-> with AutoFDO does not reduce the optimization level from the
-> compiler. AutoFDO uses hardware sampling to gather information about
-> the frequency of execution of different code paths within a binary.
-> This information is then used to guide the compiler's optimization
-> decisions, resulting in a more efficient binary. Experiments
-> showed that the kernel can improve up to 10% in latency.
-> 
-> The support requires a Clang compiler after LLVM 17. This submission
-> is limited to x86 platforms that support PMU features like LBR on
-> Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
->   and BRBE on ARM 1 is part of planned future work.
-> 
-> Here is an example workflow for AutoFDO kernel:
-> 
-> 1) Build the kernel on the host machine with LLVM enabled, for example,
->         $ make menuconfig LLVM=1
->      Turn on AutoFDO build config:
->        CONFIG_AUTOFDO_CLANG=y
->      With a configuration that has LLVM enabled, use the following
->      command:
->         scripts/config -e AUTOFDO_CLANG
->      After getting the config, build with
->        $ make LLVM=1
-> 
-> 2) Install the kernel on the test machine.
-> 
-> 3) Run the load tests. The '-c' option in perf specifies the sample
->     event period. We suggest     using a suitable prime number,
->     like 500009, for this purpose.
->     For Intel platforms:
->        $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count> \
->          -o <perf_file> -- <loadtest>
->     For AMD platforms:
->        The supported system are: Zen3 with BRS, or Zen4 with amd_lbr_v2
->       For Zen3:
->        $ cat proc/cpuinfo | grep " brs"
->        For Zen4:
->        $ cat proc/cpuinfo | grep amd_lbr_v2
->        $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a \
->          -N -b -c <count> -o <perf_file> -- <loadtest>
-> 
-> 4) (Optional) Download the raw perf file to the host machine.
-> 
-> 5) To generate an AutoFDO profile, two offline tools are available:
->     create_llvm_prof and llvm_profgen. The create_llvm_prof tool is part
->     of the AutoFDO project and can be found on GitHub
->     (https://github.com/google/autofdo), version v0.30.1 or later. The
->     llvm_profgen tool is included in the LLVM compiler itself. It's
->     important to note that the version of llvm_profgen doesn't need to
->     match the version of Clang. It needs to be the LLVM 19 release or
->     later, or from the LLVM trunk.
->        $ llvm-profgen --kernel --binary=<vmlinux> --perfdata=<perf_file> \
->          -o <profile_file>
->     or
->        $ create_llvm_prof --binary=<vmlinux> --profile=<perf_file> \
->          --format=extbinary --out=<profile_file>
-> 
->     Note that multiple AutoFDO profile files can be merged into one via:
->        $ llvm-profdata merge -o <profile_file>  <profile_1> ... <profile_n>
-> 
-> 6) Rebuild the kernel using the AutoFDO profile file with the same config
->     as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
->        $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<profile_file>
-> 
-> Co-developed-by: Han Shen<shenhan@google.com>
-> Signed-off-by: Han Shen<shenhan@google.com>
-> Signed-off-by: Rong Xu<xur@google.com>
-> Suggested-by: Sriraman Tallam<tmsriram@google.com>
-> Suggested-by: Krzysztof Pszeniczny<kpszeniczny@google.com>
-> Suggested-by: Nick Desaulniers<ndesaulniers@google.com>
-> Suggested-by: Stephane Eranian<eranian@google.com>
-> Tested-by: Yonghong Song<yonghong.song@linux.dev>
-> Tested-by: Yabin Cui<yabinc@google.com>
-> Tested-by: Nathan Chancellor<nathan@kernel.org>
-> Reviewed-by: Kees Cook<kees@kernel.org>
+>  	},
 
-Tested-by: Peter Jung <ptr1337@cachyos.org>
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
