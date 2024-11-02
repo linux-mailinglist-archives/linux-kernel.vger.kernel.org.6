@@ -1,58 +1,52 @@
-Return-Path: <linux-kernel+bounces-393586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FDB9BA2A9
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 23:03:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072AE9BA2AB
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 23:06:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0226EB225B2
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053A828283A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E1B166F34;
-	Sat,  2 Nov 2024 22:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A751C166F32;
+	Sat,  2 Nov 2024 22:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="oVHePbXe"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UiyrWGxT"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E252F8614E;
-	Sat,  2 Nov 2024 22:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80933158866
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 22:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730585024; cv=none; b=aJYTR7QRj20j44qEIayb5mwPcfQf0sRiqRn6bZz8ACXYHy3Vhvxng8ZT1blVF3zwEFqeHs+BpFwGvqKT6o7AIl/YonGUiO2QATnl/3aZx5iGIFTxJFGSyYRoaZitg/rPKkq0urfQbvehSWE+aL8SM3tOL60+xfFwnDJjZIs21tQ=
+	t=1730585156; cv=none; b=NmShZr7nndJ/EQYLpfxaUpHyuHQ8+eJAgHJUHCg/rf4Tzk/xs3E6QmFw3vaNvR4qkcqMx1AII3gk3GWmSlM0i/5czpLo66uxi9u4gPoREoN+aokBKoUsXlJa+mOkG8LUCnX6bPTDx2F3OgcGueNz9OnJJpFoVmYxwAM17XXzhlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730585024; c=relaxed/simple;
-	bh=9mfvTzcdKyU6gxQr+IJMM86C51RrQsU0NQyFHgLiCvc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IGBqB4X8g3WCzyU19G2seICekFGsNIxv7uyTz9hb9Rq03I1FaTwbjF/AHYbwCqMhb0pwvdxiqXUm9nEP1Bi+LRkoFtSsX7Qa2A71xXXpmiDUsSeoWo6+uxmyiGwVt2LucLqjkpESIx+NELsp7W0JhEWbR2xTQsPi51aEjmDWmzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=oVHePbXe; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=hvnXh5Qln8KkBwWmvdxVN9fl2krKhRgltmW3yYxCOl4=; b=oVHePbXeJJTA8dTA
-	fpxBdGwmm7IZGegOjqKVn3GplKTpPPPpX8IH98dJXQoXuS1O5S1CeN5ywg4xdLPiG28ECsc8qtWms
-	u4j6qIilj9fM/aITNDbx42HUQ+RH25BRrbY/JHwW34Qaz/B9tFMmi4xCOJKe6zh/lXpiKmFTtYkD6
-	WzyItrNHmzNPQ5NyLm0masq+Dghkwt0Xpzyd3lxVJmkmyjcyDKTj83bWgahOv8CisZfR+zePnf1nK
-	2hPW6zkcuoGmTRYHxOpkP0+v2ENTEaTPxfz/vL2BDnd7qDF2/I0nJ6XQ78kRSrNZyzxTB/lmmPRcF
-	rm93szjrTs2GPW2fRw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1t7MDY-00F7wF-2S;
-	Sat, 02 Nov 2024 22:03:36 +0000
-From: linux@treblig.org
-To: linuxdrivers@attotech.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] scsi: esas2r: Remove unused esas2r_build_cli_req
-Date: Sat,  2 Nov 2024 22:03:36 +0000
-Message-ID: <20241102220336.80541-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730585156; c=relaxed/simple;
+	bh=DGxW/3gzFbMl2TxUO+gjIwebkur7SBvooTQl/SXJEVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I3u1CVouEF9EfkNF+rZUAdwlsa+nUOlhnLzlpVkOj9jjboWPQocacwWycZhYu0Ba8I8mXOs1Ifhm5nmWZu0e4t+qREAE3noMbe4n10hMddpWQhkZaRoFfJd2IVzFrm/5dmCTcA5vUrSLCLuySFovY6+9vhCEN/Ieko+cOdl3mx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UiyrWGxT; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730585151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dhBNX0iKymGDAluv25dKc2iiAQq1RLm6UtTorT0C7Ik=;
+	b=UiyrWGxTcqUsI/Q8lsMegWOdmnFIWO+sNHUYo1to0E3cOhVdi+Co4l1bNEdHhqXivvH92J
+	uimnYt3RRqct0w1QjR0yxRn3q4lsyAy9PteKJwHAgUmvUnPvOBhxDD3j2vZF+Sdu56ZnP8
+	sG+ExnridvfwDL/BJV+jpGhFUxiLWhw=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] MIPS: kernel: proc: Use str_yes_no() helper function
+Date: Sat,  2 Nov 2024 23:04:36 +0100
+Message-ID: <20241102220437.22480-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,65 +54,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Remove hard-coded strings by using the str_yes_no() helper function.
 
-esas2r_build_cli_req() has been unused since it was added
-in 2013 by
-commit 26780d9e12ed ("[SCSI] esas2r: ATTO Technology ExpressSAS 6G SAS/SATA
-RAID Adapter Driver")
-
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- drivers/scsi/esas2r/esas2r.h     |  4 ----
- drivers/scsi/esas2r/esas2r_vda.c | 17 -----------------
- 2 files changed, 21 deletions(-)
+ arch/mips/kernel/proc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/esas2r/esas2r.h b/drivers/scsi/esas2r/esas2r.h
-index 8a133254c4f6..1e2d7c63a8e3 100644
---- a/drivers/scsi/esas2r/esas2r.h
-+++ b/drivers/scsi/esas2r/esas2r.h
-@@ -1045,10 +1045,6 @@ void esas2r_build_mgt_req(struct esas2r_adapter *a,
- 			  u32 length,
- 			  void *data);
- void esas2r_build_ae_req(struct esas2r_adapter *a, struct esas2r_request *rq);
--void esas2r_build_cli_req(struct esas2r_adapter *a,
--			  struct esas2r_request *rq,
--			  u32 length,
--			  u32 cmd_rsp_len);
- void esas2r_build_ioctl_req(struct esas2r_adapter *a,
- 			    struct esas2r_request *rq,
- 			    u32 length,
-diff --git a/drivers/scsi/esas2r/esas2r_vda.c b/drivers/scsi/esas2r/esas2r_vda.c
-index 30028e56df63..5aa728704dfc 100644
---- a/drivers/scsi/esas2r/esas2r_vda.c
-+++ b/drivers/scsi/esas2r/esas2r_vda.c
-@@ -444,23 +444,6 @@ void esas2r_build_ae_req(struct esas2r_adapter *a, struct esas2r_request *rq)
- 	}
- }
+diff --git a/arch/mips/kernel/proc.c b/arch/mips/kernel/proc.c
+index 8eba5a1ed664..3e4be48bab02 100644
+--- a/arch/mips/kernel/proc.c
++++ b/arch/mips/kernel/proc.c
+@@ -66,12 +66,12 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 	seq_printf(m, "BogoMIPS\t\t: %u.%02u\n",
+ 		      cpu_data[n].udelay_val / (500000/HZ),
+ 		      (cpu_data[n].udelay_val / (5000/HZ)) % 100);
+-	seq_printf(m, "wait instruction\t: %s\n", cpu_wait ? "yes" : "no");
++	seq_printf(m, "wait instruction\t: %s\n", str_yes_no(cpu_wait));
+ 	seq_printf(m, "microsecond timers\t: %s\n",
+-		      cpu_has_counter ? "yes" : "no");
++		      str_yes_no(cpu_has_counter));
+ 	seq_printf(m, "tlb_entries\t\t: %d\n", cpu_data[n].tlbsize);
+ 	seq_printf(m, "extra interrupt vector\t: %s\n",
+-		      cpu_has_divec ? "yes" : "no");
++		      str_yes_no(cpu_has_divec));
+ 	seq_printf(m, "hardware watchpoint\t: %s",
+ 		      cpu_has_watch ? "yes, " : "no\n");
+ 	if (cpu_has_watch) {
+@@ -155,7 +155,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
  
--/* Build a VDA CLI request. */
--void esas2r_build_cli_req(struct esas2r_adapter *a,
--			  struct esas2r_request *rq,
--			  u32 length,
--			  u32 cmd_rsp_len)
--{
--	struct atto_vda_cli_req *vrq = &rq->vrq->cli;
--
--	clear_vda_request(rq);
--
--	rq->vrq->scsi.function = VDA_FUNC_CLI;
--
--	vrq->length = cpu_to_le32(length);
--	vrq->cmd_rsp_len = cpu_to_le32(cmd_rsp_len);
--	vrq->sg_list_offset = (u8)offsetof(struct atto_vda_cli_req, sge);
--}
--
- /* Build a VDA IOCTL request. */
- void esas2r_build_ioctl_req(struct esas2r_adapter *a,
- 			    struct esas2r_request *rq,
+ 	if (cpu_has_mmips) {
+ 		seq_printf(m, "micromips kernel\t: %s\n",
+-		      (read_c0_config3() & MIPS_CONF3_ISA_OE) ?  "yes" : "no");
++		      str_yes_no(read_c0_config3() & MIPS_CONF3_ISA_OE));
+ 	}
+ 
+ 	seq_puts(m, "Options implemented\t:");
 -- 
 2.47.0
 
