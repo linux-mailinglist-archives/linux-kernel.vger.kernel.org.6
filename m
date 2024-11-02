@@ -1,79 +1,114 @@
-Return-Path: <linux-kernel+bounces-393144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D1B9B9C57
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 03:27:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473F29B9C5B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 03:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C8B1F21FEF
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 02:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 092782826BB
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 02:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9C1137930;
-	Sat,  2 Nov 2024 02:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8353C13B7BE;
+	Sat,  2 Nov 2024 02:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WP9R9KUi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMT2VHK5"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9E417C77;
-	Sat,  2 Nov 2024 02:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF9D9479;
+	Sat,  2 Nov 2024 02:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730514461; cv=none; b=KhZooyW9uWKnMsA1kEQCe2QweztfA23CiT6XqIbVoY2CklUbEIRwSRlOvx9xx5ROcXvbVQYePaQDQzH3Q9yI0I2+4xPLMyz33OB6nEJgMXURbQsstlLu2X/aFRipHPqhmYanaP5zDtYjQCdYDHOGyRoxnE+4LXyBqh75BzyRql4=
+	t=1730515021; cv=none; b=dzKHKLHODAc4d7VLDRSkg9NypjUnjTMHcpKPX0g+pmaafMeNu2N4RltUlnk//afpzAMk8/1BY2i19sbP8D95wieShGb2+Jk6VBUIcCaNIy8fER64/wQ1eIKj1UP1NwlBv/bkSwGJ1oWVwExpMPrmMnP+2LF9Vaxfla2RP3BOcAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730514461; c=relaxed/simple;
-	bh=sPYoohuUKK83shWXXrl9HVtz7juTaHQnwiFqwA86XqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qb+JtbW+1/UpP68qJavMGbvKYH7u6eCEWJb995NWKmQXCVWYeD4obo1eT1UJEq3ljEKpo4MVIqo9ShrUtGq4GLGjSHOR5JfhX/Vqa2+kuBIXM/UPhVastQuZXa1R7AtBungeJeU1TPKaRCPKvZWM6YhXHe8yEM+zohTURLKCCgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WP9R9KUi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D411BC4CECD;
-	Sat,  2 Nov 2024 02:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730514461;
-	bh=sPYoohuUKK83shWXXrl9HVtz7juTaHQnwiFqwA86XqY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WP9R9KUiUY+3RLIYe9ojB138Hh4EkYCV4mjCOYFMtfhjUuCu2jHHKOviFqF9bXAs/
-	 3vCO5O1d7IbfNgNYhbqZHNZ/xMGuEr96ShGiungiX9whZRgJhVsxnHfXi58mVVY9M3
-	 0u2qFnflI5O3HQMXu8C5TAA1sneuo+/9xjo3FAbEoIvvIlhPP6nKnJ/CewpKtFjz9s
-	 htPBiOp2okdIR7KOZrViiKubr/uLwG2DtDdm1UIdDLmozcyBx9IlUHv24o0bghv499
-	 cMkTMStSW0usiejmnIiPWyCWRBbmaprkwmRX1a7REXONLkym8zjQLxKBIbo8Em1rW7
-	 aLVa/fcep/+Aw==
-Date: Fri, 1 Nov 2024 19:27:39 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH net-next v1 0/7] devmem TCP fixes
-Message-ID: <20241101192739.6caece56@kernel.org>
-In-Reply-To: <CAHS8izO-UhDfctAsjpdipRV=WyCvUAu9VnAes0mBe2wSvV3_9g@mail.gmail.com>
-References: <20241029205524.1306364-1-almasrymina@google.com>
-	<20241031194101.301f1f72@kernel.org>
-	<CAHS8izO-UhDfctAsjpdipRV=WyCvUAu9VnAes0mBe2wSvV3_9g@mail.gmail.com>
+	s=arc-20240116; t=1730515021; c=relaxed/simple;
+	bh=HAm2uFR/BmaPeA/QPdAV5p1sBdlEXjYIAwxP1zNZREE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X+bwJWzvv6cnTjCKrz940pYiFiDnCuXTw6jQGYaIXylLEehg1xbWTHZ59VAEYZhj7DoaQ96sBFzlcuREHJoxpgBWySkVXXbPrbAIDtsnli+/7/zLzdr7F3JfY6OBgZ6JT1NvFjBBl18IdinF5EvRLAasjA1BABN3ztl91qrBtF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMT2VHK5; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so2255775b3a.3;
+        Fri, 01 Nov 2024 19:37:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730515020; x=1731119820; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=52ooFznqeRMYHCyQ/j8hVCDyBghXj5ug7pBFSOFL7Wc=;
+        b=eMT2VHK52yGGtEpzpMoH/bz4UIbB7JAgCDSUS2zPhpjumyX94CFbASW9WzHLLTbxV2
+         H4uDv8nv26DCq2Vbg+lV3/6j92VFGdlkQJv710bWhgQjrSQnrOddFR2EAZUSGg///3cH
+         FTgz/3fIy8pL9XEGPd+wldU8zaeMKPTUD6WpLZcmMbXfEZrsUnv8ZHu7qLhpsjuXUFG8
+         mjQ6ZQ/Kxha366KhCFdhDg6kDxxw5CMZ0xEdLfEYq8pFYaBD0ueMJCYT0RuhExEyBIAP
+         OgWeInZC/MNK6hj1ICf15qaMZ8AnGaQXoU7V6Mr6dKGnvLJ/gkV5Lkub2KiGBLvUqnb/
+         WtmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730515020; x=1731119820;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=52ooFznqeRMYHCyQ/j8hVCDyBghXj5ug7pBFSOFL7Wc=;
+        b=qVUF8i289iIidR6x+eYXIVMmFiMV7v+ZXnZVQqLTtR1mgRNIWbqdWfC/IBQdoobIPm
+         5KIaQ4dlfNueXLTHzcqPrfvHo1hECAj3g1E8Ad1mn+/I9a52JpGN4v++98PRzTwKXbyg
+         1II4U2K/jXbKm/RmZBFsJxfMYbaxeQQtDc6QPqwHbjwuJOIMCBRKQ9GpnQS6NyHtQ2ar
+         6JGsyZ9XiugnMBqKeadMYjgQiHMAn5egoc1Sw4dtzA8opeU9uruKCbq+UB5gRMr+IuSX
+         llkAvpotSIDV3J5jhrYe0u3FBCCt3Lzaaa+vdpKYCTj/OQVohfoVtqo2FQymO7vGarLi
+         R5Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUipQVO4Ko2wS99nOrne/nHrVpQkxYsWuFLNFHSHjTEzprsPkBtnP91995Glh/dAf8tVe74jvAu3J39ZgCk@vger.kernel.org, AJvYcCUt3960TWka4jOc47Ps6Y1iajBcMCGmtvIjj/FIAzc2jpmE33S77N2bmsw8eK5iUrsig7nCU7kpC2mA@vger.kernel.org, AJvYcCWKqP8k27kVdlGgBdI3Xe80MG9A28sRegjwgkGXmWujKO/2orwf2jDLlgnTzeVEE54i1D1PhVK2zAq7@vger.kernel.org
+X-Gm-Message-State: AOJu0YyShzvC05PrgvqMPpjZpIkL2bhp/hCcbWLtTfv7bRyYbyMXeCxd
+	aAWtTz6GAWI7IF8qqpQaoTDgMeW6bv/24pNzqp0MCiMsiipK9cTJ
+X-Google-Smtp-Source: AGHT+IGQ9zfRcHvemJpUmA2q1CaZU/zY095T+aeF4SHQo9LbXPUf1m6TDA8Q4+PugPH5HaynDPT5mA==
+X-Received: by 2002:a05:6a21:710a:b0:1d9:a1c:7086 with SMTP id adf61e73a8af0-1db91ec3ed9mr13201042637.44.1730515019885;
+        Fri, 01 Nov 2024 19:36:59 -0700 (PDT)
+Received: from [192.168.0.122] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ba19asm3338528b3a.21.2024.11.01.19.36.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Nov 2024 19:36:59 -0700 (PDT)
+Message-ID: <46b31874-9fe2-4534-9777-816765a265b1@gmail.com>
+Date: Sat, 2 Nov 2024 10:36:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: spi: apple,spi: Add binding for Apple
+ SPI controllers
+Content-Language: en-MW
+To: j@jannau.net, Hector Martin <marcan@marcan.st>,
+ Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
+ <20241101-asahi-spi-v3-1-3b411c5fb8e5@jannau.net>
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <20241101-asahi-spi-v3-1-3b411c5fb8e5@jannau.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 1 Nov 2024 06:14:14 -0700 Mina Almasry wrote:
-> But what is the 'missing input validation'? Do you mean the input
-> validation for the SO_DEVMEM_DONTNEED API? That should be handled in
-> the patch  "net: fix SO_DEVMEM_DONTNEED looping too long" in this
-> series, unless I missed something.
 
-I guess it's borderline but to me it feels like net material.
-It changes the user visible behavior. Someone can write their
-code to free 2k tokens on 6.12 and it will break on 6.13.
-I don't feel strongly but the way the series ended up getting
-split I figured maybe it was also your intuition. If you do
-follow the net path -- please move the refactor out to the net-next
-series.
+
+On 2/11/2024 03:26, Janne Grunau via B4 Relay wrote:
+
+[...]
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - apple,t8103-spi
+> +          - apple,t8112-spi
+> +          - apple,t6000-spi
+> +      - const: apple,spi
+Apple A7-A11 SoCs seems to use a Samsung SPI block, so apple,spi is too
+generic. Fallback to something like apple,t8103-spi instead.
+
+[...]
+
+Nick Chan
 
