@@ -1,100 +1,97 @@
-Return-Path: <linux-kernel+bounces-393387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BDF9B9FE2
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:04:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFED9B9FEC
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CA0D1C20BFB
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:04:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2534E28207B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BA418953D;
-	Sat,  2 Nov 2024 12:04:08 +0000 (UTC)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E089189911;
+	Sat,  2 Nov 2024 12:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ptr1337.dev header.i=@ptr1337.dev header.b="TMMtt3p/"
+Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A44E16EBE8;
-	Sat,  2 Nov 2024 12:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E556AB8;
+	Sat,  2 Nov 2024 12:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730549047; cv=none; b=AC2B6JR50p9L+x/JhuCdVQDb4DnUKxnECgxxZAtZBcvzW4zBnMl/IjJxxjdI+CvLZmQlS5VMKILnTS0kN91eJHLZgYI/ygMTiCEsBgxqbHxnGpn60fRWiqZHM/wHxwXYDIPMkiZUg1QqMnxL/ju0HqHWAVAR3eJ7OHM/i5ntX0I=
+	t=1730549636; cv=none; b=HAWITIe9hyyz5C+0tSBLxxY2FXUIf56eaVe8Td+DLPrJBcPasEZkcPuhJ+C5ZOUpHZ0AUozE3Ea6Qfy1VlN5ZRPVRcJGygf88N9zhxekk2qrUrCQ7AfmkLk49s5dDbWjkF99HVG770Tgz2352fBSVWLkIUdONaPvh1WhchCNPTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730549047; c=relaxed/simple;
-	bh=EQ8XAxpuqUA8Ez0JQdFpsCuHCg9R67pnEbTFpmmFa9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J7QNYPThuX6QzxnIovaPHt1gOrSXFfySrb/09bBL8ZslKkzujRJ6oGYV+CqbUrNcF8uTFX8KzftVyDrvKF6rvkkwsA54Pc1DGLkDxzw+NCX3QsCn7GYhioZ1hyupkQi6m0hE1zP8u/ymVchOZO4n/BK6LRJoHUcWVCHoZzNYLeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e681bc315so1970159b3a.0;
-        Sat, 02 Nov 2024 05:04:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730549046; x=1731153846;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DF6tF/ronwtGaLPzR1Y+1eJC2THWzh90BDnwiyxyUlA=;
-        b=siqfQhg8PHhkVCGQNLVxua0fmrx7sP3+YpNVEHNNgZ27JllBDbw8GpLli1oElf65B4
-         mJD3SmFfGE26Fsbn90gWDAg5Ql/I4NtB+hyTQAS1Mu0NJo/UGU72GUynwO7Tz055suRX
-         JZKGwlTcoX8ksrV0t8B+dc2j1KpmHaJl/XSauE1iNHD8VCTXrNzCgN/neQh1uZKeKRsB
-         jCM7FnW4GqDLtaxdrWm7eBWqID6t0YSbNYsy5Mjz4H3h5uxUWl6wYhXXyBUBkp9FfIR8
-         7epuH3iNnhuC6+EKr6RVgA0V1YrlO9iscf0o1WXG0zRrn13c4x0pKjA1B7iIN6T7GgRi
-         /Dyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUE79H8t5g8XEsLPFEgY1jXnYmO8e0jyp/rg7QU09zueDdYlHr2+sHLQkcf7YrgZwQEx5h2mHz8yOW2@vger.kernel.org, AJvYcCVAD23BpBnLJTd9vQ0eMPymIXIPJAO5/QH/fkG4e8xRt8JuBlGn5HoebxzezxZULkPdFqe38APtto/DwlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5xFvVz7jFr69NFfVyJ2mH6am7ZSv6YbmVSNLh7bRmGzTtahBk
-	T6cmGfiaHboTofmKXkF79xW69h2TrcW616TxSWcpvfmiOrM5tyB3
-X-Google-Smtp-Source: AGHT+IH3QBupALD0Xsyr4GM4EVgvwE8anNNXOVnVeSjs243gIoBttfPnD+0+H2RFRYw7KFhojBYygw==
-X-Received: by 2002:a05:6a00:6386:b0:71e:427e:e679 with SMTP id d2e1a72fcca58-720c965da56mr8996435b3a.4.1730549045701;
-        Sat, 02 Nov 2024 05:04:05 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ef741sm4062238b3a.82.2024.11.02.05.04.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 05:04:05 -0700 (PDT)
-Date: Sat, 2 Nov 2024 21:04:03 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Stefan Eichenberger <eichest@gmail.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	francesco.dolcini@toradex.com, Frank.li@nxp.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v4] PCI: imx6: Add suspend/resume support for i.MX6QDL
-Message-ID: <20241102120403.GF2260768@rocinante>
-References: <20241030103250.83640-1-eichest@gmail.com>
- <20241101193412.GA1317741@bhelgaas>
+	s=arc-20240116; t=1730549636; c=relaxed/simple;
+	bh=PQXUO/NpyyY6AE1OCBuJxE2fWo8+FydBP+Vw5SssCN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WLvtPn6auIOPOj9UrzhG1qxcayz7Y5go9XuWlksdZCRFM0h2AWE1C8k/kB9kEeUCoGz6pa6547I488/2o/WNLHKnr1EovVEJLt0MP8Cu1MKUaxKa/zDJ6Li/GRzKYHaGk1tVeLgS9Y1WaolM83AxkZS+hXCINS5Zoo8OmYMzkeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ptr1337.dev; spf=pass smtp.mailfrom=ptr1337.dev; dkim=pass (2048-bit key) header.d=ptr1337.dev header.i=@ptr1337.dev header.b=TMMtt3p/; arc=none smtp.client-ip=202.61.224.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ptr1337.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ptr1337.dev
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4AF772805A2;
+	Sat,  2 Nov 2024 13:06:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ptr1337.dev; s=dkim;
+	t=1730549169; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=MOnX4Fhcv18gWqefNAbz/hAajKVv81QC+1X9br1/mV8=;
+	b=TMMtt3p/z3+Eu5Um4KkXN4uM4jKuUMnipkVpe21xkvk03fa0bZs0w/ExyXVqnM3v+hv+4C
+	mNarLtG3Z7V3ru7dpVgMLC/IPKIkJZIaj9wJg9I/XQnHpHx8QXeHwCCLo6VIQsikiOSe2I
+	HPzeNyIrf4qDeeurcaJpUdkcku6rA1xUezrVTtFLoCzJVBRZOJ6+nI4HW8g7TDvLQt80MK
+	un+kElAKlcXt5z3DX/dr5ZX2YfkUhxKmd8g0PqYQqLmk06lp3MKBotxHUXyMhAlAAZDMmb
+	XKgbFcnPkN5Cnq8hJnTjGa1rR9KQjIlSaAytpGaPOrvo4AR3F+IVhl8HOlpGNw==
+From: Peter Jung <admin@ptr1337.dev>
+To: 
+Cc: jose.fernandez@linux.dev,
+	Peter Jung <admin@ptr1337.dev>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Christian Heusel <christian@heusel.eu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH] kbuild: add resolve_btfids to pacman PKGBUILD
+Date: Sat,  2 Nov 2024 13:05:26 +0100
+Message-ID: <20241102120533.1592277-1-admin@ptr1337.dev>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101193412.GA1317741@bhelgaas>
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello,
+If the config is using DEBUG_INFO_BTF, it is required to,
+package resolve_btfids with.
+Compiling dkms modules will fail otherwise.
 
-[...]
-> > Without this patch, suspend/resume will fail on i.MX6QDL devices if a
-> > PCIe device is connected. Upon resuming, the kernel will hang and
-> > display an error. Here's an example of the error encountered with the
-> > ath10k driver:
-> > ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
-> > Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
-> [...]
-> 
-> Richard and Lucas, does this look OK to you?  Since you're listed as
-> maintainers of pci-imx6.c, I'd like to have your ack before merging
-> this.
+Add a check, if resolve_btfids is present and then package it, if required.
 
-If things look fine here, then I would like to pick it up.
+Signed-off-by: Peter Jung <admin@ptr1337.dev>
+---
+ scripts/package/PKGBUILD | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-	Krzysztof
+diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+index f83493838cf9..4010899652b8 100644
+--- a/scripts/package/PKGBUILD
++++ b/scripts/package/PKGBUILD
+@@ -91,6 +91,11 @@ _package-headers() {
+ 		"${srctree}/scripts/package/install-extmod-build" "${builddir}"
+ 	fi
+ 
++	# required when DEBUG_INFO_BTF_MODULES is enabled
++	if [ -f tools/bpf/resolve_btfids/resolve_btfids ]; then
++		install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
++	fi
++
+ 	echo "Installing System.map and config..."
+ 	mkdir -p "${builddir}"
+ 	cp System.map "${builddir}/System.map"
+-- 
+2.47.0
+
 
