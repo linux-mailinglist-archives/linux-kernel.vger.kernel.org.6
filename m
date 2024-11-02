@@ -1,101 +1,155 @@
-Return-Path: <linux-kernel+bounces-393442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9989BA0B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:19:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA4BC9BA0BC
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:26:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63DA12824E4
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:19:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34DE1B2150E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA9419EEBD;
-	Sat,  2 Nov 2024 14:19:21 +0000 (UTC)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED8C19F131;
+	Sat,  2 Nov 2024 14:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQql5lkZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C466D18A925;
-	Sat,  2 Nov 2024 14:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C665C33C9;
+	Sat,  2 Nov 2024 14:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730557161; cv=none; b=urONHNihTj4xFkxCYMKFGET1Ybx3Hr0C53TjB+96NKlm1TWwqAPCfN7US/DYHj4aZRsJ7tX2SJOT8oiEROVG1njMABKbcwT7HR4zpDZQZYb3DKqSxTEhsZ+OhJP+RuLufTj5h6DuX1xLPe8C1XeJ3g5EF4XygK1xU3Gz+ni4rhU=
+	t=1730557575; cv=none; b=XAgXcWNLEcuw0OfUYPHFfR2ebom7K9RiMBZ4kisNtH7C/ViEPQ8sz78nUAseVdqZvo+oQluqHaE7Y6hVbOu4gbHulUmSx5n2StwMih3iuWDUFmJ9JMQQGlILfhzE8gvaGzcz78D5O5iQgN0j0ebk1ldceNsuTwHyITv6Q+KCM3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730557161; c=relaxed/simple;
-	bh=i4VUhHPhcihVwDXVjt1X6R/W0FnDjTq2LIn5IcgTqe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=edJFIGgSCi30AxsZAIJ9NPYC4MoBEbqzc367YCIF0pIUy5Ma+Kn5EdkUnzgSVn87UMT4PpOnK4Cwik0K4AFi57hZ6mOdtrie68OvMA7PtUUgXmwy6BLmEcYpUmeTLgcUpvl0qXm7l0n9kgtN40tej8RgM3SPCYU4KcU0hm77mN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e983487a1so2456399b3a.2;
-        Sat, 02 Nov 2024 07:19:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730557157; x=1731161957;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RoNhd3PU7MNVWI+sf1DSija4VTsLivchGzEQ82Up2A4=;
-        b=cPmrYyIa55ThLP4WAwzIA2ce5QvaJjOvLZ7TBc/WR/dLgAzCe7f2toPst2d03hOO8x
-         9ZBultzA7uMjKnTV8Tk+McEi1V57zJR2siW0K7F1yI2JoW4H3xWhEYyl+4d5tS8O/YcE
-         ibrPTWOrur/XcKjedUmUibOKl3CvIRsvsxa8J/Mk9pvSjN+M/ApbFXzQTqOBDQO3FcVt
-         aLas0EIOMihXR56tGSkgPU/kjU9ph1fKS2T6+C+dtx2Lx/wQvI0Bj9jz2BqVsHIARykV
-         P37kDaPx0R2y3e2CKaOUO3C4/l9L9BAaZe2cIFZPgVXR46sJknrzW9REAijcuLi7WPj6
-         /D9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWHrqbBCKNcQf+OEunbRuBztdZO4szLk2IZ6ptw9QrrU+t+YZq8I9gZDjAull5EDZ4gIoE2kXVC6y7l@vger.kernel.org, AJvYcCWZoWAxn1kB+JtiuG8aceeybOgsvddqRPWFhrEU00ATPB1F9QtlixNwQIpRYQoUgawDvDuAHl6rNjQyw6M=@vger.kernel.org, AJvYcCXIkD3XmMhdGskFxsrMhuy4GDBlFbt7edZNlQnc/0SSPg1jPgg/WPSvzHiWljEzxFnQEs+aRGfXKUyBsg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/IbRvdCVJ+YCTGH+ohfLDNrPqhfU8Kt9x/WpBd5r9Bey1JgrF
-	hl/oDqmi4BG7/NiSB9SON/nIJHsOUHiF+XyuSsc9rF6E/mvSLZmS
-X-Google-Smtp-Source: AGHT+IHPcKNMt6OSC6S/K2FJ3EposZZ5TOsaoIOHKw561pjEChI1kIfOypmeQ6NBttJJZ5y0zs9rDw==
-X-Received: by 2002:a05:6a00:2ea5:b0:71e:82b4:6e6e with SMTP id d2e1a72fcca58-720b9bb3edbmr14950575b3a.4.1730557157041;
-        Sat, 02 Nov 2024 07:19:17 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c3902sm4096567b3a.136.2024.11.02.07.19.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 07:19:16 -0700 (PDT)
-Date: Sat, 2 Nov 2024 23:19:14 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, robh@kernel.org,
-	vigneshr@ti.com, manivannan.sadhasivam@linaro.org,
-	thomas.richard@bootlin.com, linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH] PCI: j721e: Deassert PERST# after a delay of
- PCIE_T_PVPERL_MS ms
-Message-ID: <20241102141914.GA3440781@rocinante>
-References: <20241022083147.2773123-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1730557575; c=relaxed/simple;
+	bh=ExNNc/F5UO1JUVBaiGGCw7c3A43cKS2+lAROsZ10LyM=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=BmzwIf0iq1houyB6eBjr22OlgZfGFKoM3yJrLQ3Fu2MrAfbHQe4E1yNjUk7NlFCOb1HKc28Yh2hIi0f+CwzXI+quJPlTZazhx+O1jmy/SxLYcezxcp3YU9cu4+w2fCBka1IHqG8yWnuMKCPHTOEr04KbHNP2xGiUMIkxMSQGvwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQql5lkZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96244C4CEC3;
+	Sat,  2 Nov 2024 14:26:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730557575;
+	bh=ExNNc/F5UO1JUVBaiGGCw7c3A43cKS2+lAROsZ10LyM=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=nQql5lkZBVmH0d0x+iIN7RERdTxT1VWSNVDUNv8yOm6lxykCMTQaPSKL5ooahHWEh
+	 DO9hUBWiL2XXmRcF4qcJrSyqSn820XiBXUyRoquxsj06Jf5S3nT+QnhKRH1C5c1QNk
+	 5d/EMzCmbjKgYG22kTOvkdAe8PzSJyR1A3g3QlSiCBgmWbf4rbwR/qvhlGdIiVYILZ
+	 yfxj71bHnf6z4NylyUUnbCfNLq2keFTDaldLkSYRJPh/DjVYvFa7QuH9yDiLp6xnlC
+	 26LHKjYvVl1haIY3dk69tsRCmHKdkgl142SBypxM+Vii5DYnKUHfQ+VWQbLC3lXaI9
+	 NL3thq++CmtUg==
+Content-Type: multipart/mixed;
+ boundary=73fbcc7443089f1f7b2921e0e46f067c613c6e102287c1eb614874387539
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0
+Date: Sat, 02 Nov 2024 16:26:11 +0200
+Message-Id: <D5BRGKZLI186.20G9U85Q2XRPP@kernel.org>
+Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v11 16/20] tpm: Make locality requests return consistent
+ values
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Ross Philipson" <ross.philipson@oracle.com>,
+ <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
+ <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>
+X-Mailer: aerc 0.18.2
+References: <20240913200517.3085794-1-ross.philipson@oracle.com>
+ <20240913200517.3085794-17-ross.philipson@oracle.com>
+In-Reply-To: <20240913200517.3085794-17-ross.philipson@oracle.com>
+
+--73fbcc7443089f1f7b2921e0e46f067c613c6e102287c1eb614874387539
+Content-Type: multipart/alternative;
+ boundary=7188c54ccba4660edec87ffb8413ca5ac7c0fcf2c19a242a478fa4dddcf0
+
+--7188c54ccba4660edec87ffb8413ca5ac7c0fcf2c19a242a478fa4dddcf0
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
-In-Reply-To: <20241022083147.2773123-1-s-vadapalli@ti.com>
+Content-Type: text/plain; charset=UTF-8
 
-Hello,
+On Fri Sep 13, 2024 at 11:05 PM EEST, Ross Philipson wrote:
+> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+>
+> The function tpm_tis_request_locality() is expected to return the localit=
+y
+> value that was requested, or a negative error code upon failure. If it is=
+ called
+> while locality_count of struct tis_data is non-zero, no actual locality r=
+equest
+> will be sent. Because the ret variable is initially set to 0, the
+> locality_count will still get increased, and the function will return 0. =
+For a
+> caller, this would indicate that locality 0 was successfully requested an=
+d not
+> the state changes just mentioned.
+>
+> Additionally, the function __tpm_tis_request_locality() provides inconsis=
+tent
+> error codes. It will provide either a failed IO write or a -1 should it h=
+ave
+> timed out waiting for locality request to succeed.
+>
+> This commit changes __tpm_tis_request_locality() to return valid negative=
+ error
+> codes to reflect the reason it fails. It then adjusts the return value ch=
+eck in
+> tpm_tis_request_locality() to check for a non-negative return value befor=
+e
+> incrementing locality_cout. In addition, the initial value of the ret val=
+ue is
+> set to a negative error to ensure the check does not pass if
+> __tpm_tis_request_locality() is not called.
 
-> According to Section 2.2 of the PCI Express Card Electromechanical
-> Specification (Revision 5.1), in order to ensure that the power and the
-> reference clock are stable, PERST# has to be deasserted after a delay of
-> 100 milliseconds (TPVPERL). Currently, it is being assumed that the power
-> is already stable, which is not necessarily true. Hence, change the delay
-> to PCIE_T_PVPERL_MS to guarantee that power and reference clock are stable.
-[...]
-> This patch is based on commit
-> c2ee9f594da8 KVM: selftests: Fix build on on non-x86 architectures
-> of Mainline Linux.
+Tweaked version attached with cruft removed and story cleared.
 
-Why KVM?  Do you have the link to this commit handy?
+BR, Jarkko
 
-[...]
->  		if (pcie->reset_gpio) {
-> -			fsleep(PCIE_T_PERST_CLK_US);
-> +			msleep(PCIE_T_PVPERL_MS);
+--7188c54ccba4660edec87ffb8413ca5ac7c0fcf2c19a242a478fa4dddcf0--
 
-fsleep() with the same macro and for the same reason is also used in the
-j721e_pcie_probe() callback.  I think, we would want both changed.
+--73fbcc7443089f1f7b2921e0e46f067c613c6e102287c1eb614874387539
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename=0001-tpm-Support-multiple-localities-in-tpm_tis_request_l.patch
+Content-Type: text/x-patch; charset=utf-8;
+ name=0001-tpm-Support-multiple-localities-in-tpm_tis_request_l.patch
 
-	Krzysztof
+RnJvbSBmZDMwN2ZkYTU3OGUwNGU0ZGVmYjZlMGZmNDdmOGZlMjhhOTk5ZDRhIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiAiRGFuaWVsIFAuIFNtaXRoIiA8ZHBzbWl0aEBhcGVydHVzc29s
+dXRpb25zLmNvbT4KRGF0ZTogRnJpLCAxMyBTZXAgMjAyNCAxMzowNToxMyAtMDcwMApTdWJqZWN0
+OiBbUEFUQ0hdIHRwbTogU3VwcG9ydCBtdWx0aXBsZSBsb2NhbGl0aWVzIGluCiB0cG1fdGlzX3Jl
+cXVlc3RfbG9jYWxpdHkoKQoKVmFsaWRhdGUgdGhhdCB0aGUgaW5wdXQgbG9jYWxpdHkgaXMgd2l0
+aGluIHRoZSBjb3JyZWN0IHJhbmdlLCBhcyBzcGVjaWZpZWQKYnkgVENHIHN0YW5kYXJkcywgYW5k
+IGluY3JlYXNlIHRoZSBsb2NhbGl0eSBjb3VudCBhbHNvIGZvciB0aGUgcG9zaXRpdmUKcmV0dXJu
+IHZhbHVlcy4KClNpZ25lZC1vZmYtYnk6IERhbmllbCBQLiBTbWl0aCA8ZHBzbWl0aEBhcGVydHVz
+c29sdXRpb25zLmNvbT4KU2lnbmVkLW9mZi1ieTogUm9zcyBQaGlsaXBzb24gPHJvc3MucGhpbGlw
+c29uQG9yYWNsZS5jb20+ClNpZ25lZC1vZmYtYnk6IEphcmtrbyBTYWtraW5lbiA8amFya2tvQGtl
+cm5lbC5vcmc+Ci0tLQogZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuYyB8IDUgKysrKy0K
+IDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5jIGIvZHJpdmVycy9jaGFyL3RwbS90
+cG1fdGlzX2NvcmUuYwppbmRleCAzNTE3ZGI3MTA0MjMuLjc1ZmI1OWRmNzVhMyAxMDA2NDQKLS0t
+IGEvZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuYworKysgYi9kcml2ZXJzL2NoYXIvdHBt
+L3RwbV90aXNfY29yZS5jCkBAIC0yMzQsMTAgKzIzNCwxMyBAQCBzdGF0aWMgaW50IHRwbV90aXNf
+cmVxdWVzdF9sb2NhbGl0eShzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAsIGludCBsKQogCXN0cnVjdCB0
+cG1fdGlzX2RhdGEgKnByaXYgPSBkZXZfZ2V0X2RydmRhdGEoJmNoaXAtPmRldik7CiAJaW50IHJl
+dCA9IDA7CiAKKwlpZiAobCA8IDAgfHwgbCA+IFRQTV9NQVhfTE9DQUxJVFkpCisJCXJldHVybiAt
+RUlOVkFMOworCiAJbXV0ZXhfbG9jaygmcHJpdi0+bG9jYWxpdHlfY291bnRfbXV0ZXgpOwogCWlm
+IChwcml2LT5sb2NhbGl0eV9jb3VudCA9PSAwKQogCQlyZXQgPSBfX3RwbV90aXNfcmVxdWVzdF9s
+b2NhbGl0eShjaGlwLCBsKTsKLQlpZiAoIXJldCkKKwlpZiAocmV0ID49IDApCiAJCXByaXYtPmxv
+Y2FsaXR5X2NvdW50Kys7CiAJbXV0ZXhfdW5sb2NrKCZwcml2LT5sb2NhbGl0eV9jb3VudF9tdXRl
+eCk7CiAJcmV0dXJuIHJldDsKLS0gCjIuNDcuMAoK
+--73fbcc7443089f1f7b2921e0e46f067c613c6e102287c1eb614874387539--
 
