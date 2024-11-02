@@ -1,229 +1,263 @@
-Return-Path: <linux-kernel+bounces-393552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDEA9BA247
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:56:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322159BA251
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:57:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E0E8B21CE7
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 19:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7DAF1F23502
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 19:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743AD1ABEAC;
-	Sat,  2 Nov 2024 19:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D681AB53A;
+	Sat,  2 Nov 2024 19:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nr/ZSEYn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="S8weI+ZY"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B96A14F12F;
-	Sat,  2 Nov 2024 19:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B241A4E9E
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 19:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730577358; cv=none; b=e8bAm1irQxI1KkO1GhtMt/yUUnDxj+tBUFXYWPbK8sNHjYSTldXFGoh/iPazCFdzNrHhveAJ5+rWqxC6Z3qbomvkG1SfMfFmKKj+FW96764EK90hpvetihfSXy2IN/oo0ex3RLxP3ttI1mAFMR01blRBs2oNCJSbj0A5vgxqguc=
+	t=1730577439; cv=none; b=F9xnFewp4MCz/doddRsAWtdiyJnf/8WHuG/DkfT/lTyhmn1EHWdZQFMiOvsYK9a9iAYvCtPepQNPTniwuApmFLTva9F244rLa+TjmWqaMhLZnWRPGENsWMqt5WlVmF6L0heFh6pDovKodka3YYdiOml7vXtLeM65kLllEcKixL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730577358; c=relaxed/simple;
-	bh=g36kdeuRYZI5ierO4LxZY9yHnOtnQ6TIOAVdj/Y/oLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2ef/9slWq0PgKVusvXoeUI3N8+F/pKN4k4f05ZSzT7Lb2FB7MqlIVvdN+nUsxYfRMFsYHI+PqKJwrzWE5bOJjaMQWn2E2t3yNtNzbKv/lLkVkWj/mCUbc5NIwOhPca4lCY5viCq2VKex0KPPv+tsYogvClMdHXNlBJ+/CbtLLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nr/ZSEYn; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730577356; x=1762113356;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=g36kdeuRYZI5ierO4LxZY9yHnOtnQ6TIOAVdj/Y/oLs=;
-  b=Nr/ZSEYndI9ktyN1PT5mfkJms1IS9ucFLqn6VmfA0Ws8hKElHHIz6flE
-   kALKrXdiGTsfw/XnMAwrwGrrDLBAS10F/fl8vL8U6FwU3tym+HsQkaC4d
-   IxWpX371vI0akWF7Kt5L/6K5a/MdKjywNLKMbEi3EQnX51pVfGcodIXsX
-   aD8O767BJ4j/HzoDjQVy6q0CSATh2k4kzGQ9xULpqOTnzgHlFhk1SAHlZ
-   XuYtW+Vd21Z1+ZSQgO9oUL/FFcsw1wCVo3mZjGXTcMTkIXK9swktK1OQt
-   8p7ZLWPH0qDJQZXTdlLvF/4fHGf30LoJHH+93UVYVt9ikAbOmkMw2Rebt
-   w==;
-X-CSE-ConnectionGUID: QEBY7QQjS9G2IXq2gq4B/A==
-X-CSE-MsgGUID: 6e78hUw2TceHejVqmtGryw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30270382"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30270382"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 12:55:55 -0700
-X-CSE-ConnectionGUID: DEM1bP8vQuCq66BSj637Tw==
-X-CSE-MsgGUID: 8fsNL1ZsSEG7Z1R9sShxcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="88024912"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 02 Nov 2024 12:55:52 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t7KDt-000jI9-0Z;
-	Sat, 02 Nov 2024 19:55:49 +0000
-Date: Sun, 3 Nov 2024 03:55:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	Dzmitry Sankouski <dsankouski@gmail.com>
-Subject: Re: [PATCH v8 3/7] mfd: Add new driver for MAX77705 PMIC
-Message-ID: <202411030141.DTmej8oX-lkp@intel.com>
-References: <20241031-starqltechn_integration_upstream-v8-3-2fa666c2330e@gmail.com>
+	s=arc-20240116; t=1730577439; c=relaxed/simple;
+	bh=vkCTPEZrnTsV7OWCGO5bGCnJOS+bTKiKWsQ/KJuHjBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ArZvkVfn8JItLhMBFsGo+z5wEhlYYsA2mhL2+rWCwhu3A2bBoHDKYGpS3We9SmrxSRajEKBG90R1EnHGLdmpgUkpuze6MBvmispLZZesWCU6WssCLW61Rornw9jICRbyU8tKYzwZ7K3SUif2X6B+iWQCZiW/aE2b0qeY6bWibRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=S8weI+ZY; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-288d4da7221so1504740fac.1
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 12:57:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1730577436; x=1731182236; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2eHRJuCoN/saRECrjZiUVo1CyjsSQtW8x6zbAAwYKWI=;
+        b=S8weI+ZY9uylTcmAOLeDmiw9FkawfDWM09OCF08cLlkgDAiAZr1E7N0XrpCE331KQd
+         5THuCjzSVVkToMYUkpDs2fGyI1ho2IK2y7urP1r1wU685GEsZ8d+SBYEwPO8f9M/NEUs
+         0FbocmSGrebpn1s6d6qS379bAkUKY+V77a8xEyAZ8w0e9da59Iqq5PN+IRWIr96lgM5A
+         /29y4deU07tRH60/pbayNeJ9ERSBZ9XT/8hhWdKRcal5AjXi32drirAA/GP7yDPl0b/N
+         dhNkdU2+xPZ2Pz1BVUnCFGCLMXj/D7J96UAF4DZQwig2Hqrp1FAr5pxWcHJx4PE6hfe4
+         WwnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730577436; x=1731182236;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2eHRJuCoN/saRECrjZiUVo1CyjsSQtW8x6zbAAwYKWI=;
+        b=Oe5jVlvWpxcp8i3dWVoC1TO0zBwnl+gWNDgFej+6a7R6geunAkp6P2FncT1IdE5mLZ
+         rz4bqVz6pJ9qpGRdKcxMsob5rwfN/raYVnwaFqzuvQoTZ1tSFlNVSvHdQjea7JP9EIvU
+         4jKOK9aWpY3D+yRHEB+bxljEspvK9L4y4MSnL+eZpNyTGA8Iwwp10wMbv/ev24CBouOC
+         Ocx3xNRmgbrzCGINKZyTU02iZnTvTR/9yL1cgohH0+LeMQbOVudO6aJUjldmJAlYdrbG
+         RRxZqO7mvJgY9ZeWj6caTFIxe8JibJhfkeXSkb0AXlelQMMl/2VPlNqXEhJ4Dnizm5rG
+         VbIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXap/ipkqxfxyiXVBF+FTPhoAjdZoW2oAqyBGm+rAcBI1sj2J58zGcHm4voNotNqphZyZwX9EbGRW94R9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSkde5kmR/976bTKKvfzLjm0fxPyDmVuAIvVEL4MLj91WMTzF3
+	s0CNZlpEz92JGC2ZP3NJlTKvL/0YmXDfLdoPgzDsiyTRKmkbnQ31hA28TVs2izA=
+X-Google-Smtp-Source: AGHT+IEhhYqBn3nyCiGBuavtJ8ryJtYb1IMsp93T4ff7Z0tYx0WdumqYa1pnklichc1LcLUH4By26A==
+X-Received: by 2002:a05:6871:e085:b0:278:1c68:9c03 with SMTP id 586e51a60fabf-29051af0d58mr25402481fac.8.1730577435987;
+        Sat, 02 Nov 2024 12:57:15 -0700 (PDT)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7189cc59c92sm1275993a34.10.2024.11.02.12.57.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2024 12:57:15 -0700 (PDT)
+Message-ID: <5ee03973-1f14-44eb-b9ac-a41bc9ae474e@sifive.com>
+Date: Sat, 2 Nov 2024 14:57:13 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031-starqltechn_integration_upstream-v8-3-2fa666c2330e@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] riscv: Remove CONFIG_PAGE_OFFSET
+To: Jesse T <mr.bossman075@gmail.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>,
+ Arnd Bergmann <arnd@arndb.de>, Alexandre Ghiti <alexghiti@rivosinc.com>
+References: <20241026171441.3047904-1-samuel.holland@sifive.com>
+ <20241026171441.3047904-7-samuel.holland@sifive.com>
+ <CAJFTR8RJYdT6CQ=FgBkM3jUj=PnYnuyi3+bO3=NPeH6xJ6TTaw@mail.gmail.com>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <CAJFTR8RJYdT6CQ=FgBkM3jUj=PnYnuyi3+bO3=NPeH6xJ6TTaw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Dzmitry,
+Hi Jesse,
 
-kernel test robot noticed the following build warnings:
+On 2024-10-27 3:25 PM, Jesse T wrote:
+> On Sat, Oct 26, 2024 at 1:16 PM Samuel Holland
+> <samuel.holland@sifive.com> wrote:
+>>
+>> The current definition of CONFIG_PAGE_OFFSET is problematic for a couple
+>> of reasons:
+>>  1) The value is misleading for normal 64-bit kernels, where it is
+>>     overridden at runtime if Sv48 or Sv39 is chosen. This is especially
+>>     the case for XIP kernels, which always use Sv39.
+>>  2) The option is not user-visible, but for NOMMU kernels it must be a
+>>     valid RAM address, and for !RELOCATABLE it must additionally be the
+>>     exact address where the kernel is loaded.
+>>
+>> Fix both of these by removing the option.
+>>  1) For MMU kernels, drop the indirection through Kconfig. Additionally,
+>>     for XIP, drop the indirection through kernel_map.
+>>  2) For NOMMU kernels, use the user-visible physical RAM base if
+>>     provided. Otherwise, force the kernel to be relocatable.
+>>
+>> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> Reviewed-by: Jesse Taube <mr.bossman075@gmail.com>
 
-[auto build test WARNING on 86e3904dcdc7e70e3257fc1de294a1b75f3d8d04]
+Thanks!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20241031-053513
-base:   86e3904dcdc7e70e3257fc1de294a1b75f3d8d04
-patch link:    https://lore.kernel.org/r/20241031-starqltechn_integration_upstream-v8-3-2fa666c2330e%40gmail.com
-patch subject: [PATCH v8 3/7] mfd: Add new driver for MAX77705 PMIC
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20241103/202411030141.DTmej8oX-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241103/202411030141.DTmej8oX-lkp@intel.com/reproduce)
+>> ---
+>>
+>>  arch/riscv/Kconfig               |  8 +-------
+>>  arch/riscv/include/asm/page.h    | 15 ++++++++-------
+>>  arch/riscv/include/asm/pgtable.h |  2 +-
+>>  arch/riscv/mm/init.c             |  8 ++------
+>>  4 files changed, 12 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> index 33aa79d84021..297ccbf4b5ce 100644
+>> --- a/arch/riscv/Kconfig
+>> +++ b/arch/riscv/Kconfig
+>> @@ -195,6 +195,7 @@ config RISCV
+>>         select PCI_DOMAINS_GENERIC if PCI
+>>         select PCI_ECAM if (ACPI && PCI)
+>>         select PCI_MSI if PCI
+>> +       select RELOCATABLE if !MMU && !PHYS_RAM_BASE_FIXED
+>>         select RISCV_ALTERNATIVE if !XIP_KERNEL
+>>         select RISCV_APLIC
+>>         select RISCV_IMSIC
+>> @@ -282,13 +283,6 @@ config MMU
+>>           Select if you want MMU-based virtualised addressing space
+>>           support by paged memory management. If unsure, say 'Y'.
+>>
+>> -config PAGE_OFFSET
+>> -       hex
+>> -       default 0x80000000 if !MMU && RISCV_M_MODE
+>> -       default 0x80200000 if !MMU
+> 
+> Should the default values above now be moved to CONFIG_PHYS_RAM_BASE?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411030141.DTmej8oX-lkp@intel.com/
+No, there doesn't need to be a default address, because the default behavior is
+to be relocatable. If the kernel is running in S-mode, then it does not have
+access to all of RAM, because the firmware is using some of it. So in that case
+I don't think it makes sense to hardcode any addresses in the kernel.
 
-All warnings (new ones prefixed by >>):
+For M-mode, the default for CONFIG_PHYS_RAM_BASE is already 0x80000000.
 
-   In file included from drivers/mfd/max77705.c:8:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/mfd/max77705.c:129:6: warning: variable 'pmic_rev' is uninitialized when used here [-Wuninitialized]
-     129 |         if (pmic_rev != MAX77705_PASS3) {
-         |             ^~~~~~~~
-   drivers/mfd/max77705.c:108:13: note: initialize the variable 'pmic_rev' to silence this warning
-     108 |         u8 pmic_rev;
-         |                    ^
-         |                     = '\0'
-   5 warnings generated.
+Regards,
+Samuel
 
+>> -       default 0xc0000000 if 32BIT
+>> -       default 0xff60000000000000 if 64BIT
+>> -
+>>  config KASAN_SHADOW_OFFSET
+>>         hex
+>>         depends on KASAN_GENERIC
+>> diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
+>> index 24d1ac052609..d1acd1efe0dc 100644
+>> --- a/arch/riscv/include/asm/page.h
+>> +++ b/arch/riscv/include/asm/page.h
+>> @@ -28,15 +28,16 @@
+>>   */
+>>  #ifdef CONFIG_MMU
+>>  #ifdef CONFIG_64BIT
+>> -#define PAGE_OFFSET            kernel_map.page_offset
+>> -/*
+>> - * By default, CONFIG_PAGE_OFFSET value corresponds to SV57 address space so
+>> - * define the PAGE_OFFSET value for SV48 and SV39.
+>> - */
+>> +#define PAGE_OFFSET_L5         _AC(0xff60000000000000, UL)
+>>  #define PAGE_OFFSET_L4         _AC(0xffffaf8000000000, UL)
+>>  #define PAGE_OFFSET_L3         _AC(0xffffffd600000000, UL)
+>> +#ifdef CONFIG_XIP_KERNEL
+>> +#define PAGE_OFFSET            PAGE_OFFSET_L3
+>>  #else
+>> -#define PAGE_OFFSET            _AC(CONFIG_PAGE_OFFSET, UL)
+>> +#define PAGE_OFFSET            kernel_map.page_offset
+>> +#endif /* CONFIG_XIP_KERNEL */
+>> +#else
+>> +#define PAGE_OFFSET            _AC(0xc0000000, UL)
+>>  #endif /* CONFIG_64BIT */
+>>  #else
+>>  #define PAGE_OFFSET            ((unsigned long)phys_ram_base)
+>> @@ -100,7 +101,6 @@ typedef struct page *pgtable_t;
+>>  #define ARCH_PFN_OFFSET                (PFN_DOWN((unsigned long)phys_ram_base))
+>>
+>>  struct kernel_mapping {
+>> -       unsigned long page_offset;
+>>         unsigned long virt_addr;
+>>         unsigned long virt_offset;
+>>         uintptr_t phys_addr;
+>> @@ -114,6 +114,7 @@ struct kernel_mapping {
+>>         uintptr_t xiprom;
+>>         uintptr_t xiprom_sz;
+>>  #else
+>> +       unsigned long page_offset;
+>>         unsigned long va_kernel_pa_offset;
+>>  #endif
+>>  };
+>> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>> index d0190ee9b2e4..b8125c3aa85d 100644
+>> --- a/arch/riscv/include/asm/pgtable.h
+>> +++ b/arch/riscv/include/asm/pgtable.h
+>> @@ -15,7 +15,7 @@
+>>  #ifdef CONFIG_RELOCATABLE
+>>  #define KERNEL_LINK_ADDR       UL(0)
+>>  #else
+>> -#define KERNEL_LINK_ADDR       _AC(CONFIG_PAGE_OFFSET, UL)
+>> +#define KERNEL_LINK_ADDR       _AC(CONFIG_PHYS_RAM_BASE, UL)
+>>  #endif
+>>  #define KERN_VIRT_SIZE         (UL(-1))
+>>  #else
+>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>> index 0aad925848a4..a1a185e6faf0 100644
+>> --- a/arch/riscv/mm/init.c
+>> +++ b/arch/riscv/mm/init.c
+>> @@ -843,6 +843,8 @@ static __init void set_satp_mode(uintptr_t dtb_pa)
+>>         uintptr_t set_satp_mode_pmd = ((unsigned long)set_satp_mode) & PMD_MASK;
+>>         u64 satp_mode_cmdline = __pi_set_satp_mode_from_cmdline(dtb_pa);
+>>
+>> +       kernel_map.page_offset = PAGE_OFFSET_L5;
+>> +
+>>         if (satp_mode_cmdline == SATP_MODE_57) {
+>>                 disable_pgtable_l5();
+>>         } else if (satp_mode_cmdline == SATP_MODE_48) {
+>> @@ -1090,11 +1092,6 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+>>         kernel_map.virt_addr = KERNEL_LINK_ADDR + kernel_map.virt_offset;
+>>
+>>  #ifdef CONFIG_XIP_KERNEL
+>> -#ifdef CONFIG_64BIT
+>> -       kernel_map.page_offset = PAGE_OFFSET_L3;
+>> -#else
+>> -       kernel_map.page_offset = _AC(CONFIG_PAGE_OFFSET, UL);
+>> -#endif
+>>         kernel_map.xiprom = (uintptr_t)CONFIG_XIP_PHYS_ADDR;
+>>         kernel_map.xiprom_sz = (uintptr_t)(&_exiprom) - (uintptr_t)(&_xiprom);
+>>
+>> @@ -1106,7 +1103,6 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+>>         kernel_map.va_kernel_xip_data_pa_offset = kernel_map.virt_addr - kernel_map.phys_addr
+>>                                                 + (uintptr_t)&_sdata - (uintptr_t)&_start;
+>>  #else
+>> -       kernel_map.page_offset = _AC(CONFIG_PAGE_OFFSET, UL);
+>>         kernel_map.phys_addr = (uintptr_t)(&_start);
+>>         kernel_map.size = (uintptr_t)(&_end) - kernel_map.phys_addr;
+>>         kernel_map.va_kernel_pa_offset = kernel_map.virt_addr - kernel_map.phys_addr;
+>> --
+>> 2.45.1
+>>
+>>
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-vim +/pmic_rev +129 drivers/mfd/max77705.c
-
-   100	
-   101	static int max77705_i2c_probe(struct i2c_client *i2c)
-   102	{
-   103		struct max77693_dev *max77705;
-   104		struct regmap_irq_chip_data *irq_data;
-   105		struct irq_domain *domain;
-   106		int ret;
-   107		unsigned int pmic_rev_value;
-   108		u8 pmic_rev;
-   109	
-   110	
-   111		max77705 = devm_kzalloc(&i2c->dev, sizeof(*max77705), GFP_KERNEL);
-   112		if (!max77705)
-   113			return -ENOMEM;
-   114	
-   115		max77705->i2c = i2c;
-   116		max77705->dev = &i2c->dev;
-   117		max77705->irq = i2c->irq;
-   118		max77705->type = TYPE_MAX77705;
-   119		i2c_set_clientdata(i2c, max77705);
-   120	
-   121		max77705->regmap = devm_regmap_init_i2c(i2c, &max77705_regmap_config);
-   122	
-   123		if (IS_ERR(max77705->regmap))
-   124			return PTR_ERR(max77705->regmap);
-   125	
-   126		if (regmap_read(max77705->regmap, MAX77705_PMIC_REG_PMICREV, &pmic_rev_value) < 0)
-   127			return -ENODEV;
-   128	
- > 129		if (pmic_rev != MAX77705_PASS3) {
-   130			dev_err(max77705->dev, "rev.0x%x is not tested",
-   131				pmic_rev);
-   132			return -ENODEV;
-   133		}
-   134	
-   135		max77705->regmap_leds = devm_regmap_init_i2c(i2c, &max77705_leds_regmap_config);
-   136	
-   137		if (IS_ERR(max77705->regmap_leds))
-   138			return PTR_ERR(max77705->regmap_leds);
-   139	
-   140		ret = devm_regmap_add_irq_chip(max77705->dev, max77705->regmap,
-   141						max77705->irq,
-   142						IRQF_ONESHOT | IRQF_SHARED, 0,
-   143						&max77705_topsys_irq_chip,
-   144						&irq_data);
-   145	
-   146		if (ret)
-   147			dev_err(max77705->dev, "failed to add irq chip: %d\n", ret);
-   148	
-   149		/* Unmask interrupts from all blocks in interrupt source register */
-   150		ret = regmap_update_bits(max77705->regmap,
-   151					 MAX77705_PMIC_REG_INTSRC_MASK,
-   152					 MAX77705_SRC_IRQ_ALL, (unsigned int)~MAX77705_SRC_IRQ_ALL);
-   153	
-   154		if (ret < 0) {
-   155			dev_err(max77705->dev,
-   156				"Could not unmask interrupts in INTSRC: %d\n", ret);
-   157			return ret;
-   158		}
-   159	
-   160		domain = regmap_irq_get_domain(irq_data);
-   161	
-   162		ret = devm_mfd_add_devices(max77705->dev, PLATFORM_DEVID_NONE,
-   163					   max77705_devs, ARRAY_SIZE(max77705_devs),
-   164					   NULL, 0, domain);
-   165	
-   166		if (ret) {
-   167			dev_err(max77705->dev, "Failed to register child devices: %d\n", ret);
-   168			return ret;
-   169		}
-   170	
-   171		device_init_wakeup(max77705->dev, true);
-   172	
-   173		return 0;
-   174	}
-   175	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
