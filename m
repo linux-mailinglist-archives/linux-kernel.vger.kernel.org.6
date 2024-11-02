@@ -1,247 +1,104 @@
-Return-Path: <linux-kernel+bounces-393461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4E89BA0F9
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:04:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFAC9BA161
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:13:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E08BB1C2129C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:04:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA651C20ABD
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C7C19EEBD;
-	Sat,  2 Nov 2024 15:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57381A3A9A;
+	Sat,  2 Nov 2024 16:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="mnGoza7Y"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="USFFv7ZR";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="ApF3txI9"
+Received: from fallback21.i.mail.ru (fallback21.i.mail.ru [79.137.243.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1328678C9C;
-	Sat,  2 Nov 2024 15:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6101919CC25
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 16:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730559861; cv=none; b=Z73fTX5RBk1lbx/fONCjOFvAqVQO7+A5jCFyyk6tNaVwpaBA0Pt+VmU7Zo1gyQiTDb9zBkg1dP6CnZDPd9xjbkjFPnoRz1hIVjaxafzIx1dBIWGeVDz9BxR1EPCfSRLIV+wuqU0S9i9U33PFfopMNyvZa0oqCjQuZEdTC+76f5Y=
+	t=1730564028; cv=none; b=KgaAzWhxsKeV3Rxkw5Idhz/mM5DyJLtR7krlmW6WjUW+KvFA4Qq/gdg5yMMwS+QFSj+GVTht9Rqv5V9uWq9IaoxdC8/vkprsd+3TrPq3h5iKOIBGamxkGQAtkvIvUpd/EX3f4Iukd97N2qdE25jdrlKGSem+9Qsb6KcCz3k1HIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730559861; c=relaxed/simple;
-	bh=EsGsjnqrfynpSrhR2eT/7AHQ5QoQ/0kxHFpvQqKy2kI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mc7FsPb65+znGORm5ldAMpdvnGMFGcChfYKZ9kn2kGxNwm8gINoYz8tOuQMxK+GHxjWD4XDycdd6Wlwr55kj9jhxaGId26hAVYk12OSJfg9Jpp9gyJRXhmCNIhhBX0sGGsZ56ApwaNoZQQFPvk3vv5HsTtIyJdSL/eMM0SGv++o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=mnGoza7Y; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=KfcuEkTFDbnsEB2eizo+OjJRdsfLQdG03Z+BJy1Mb3Q=; b=mnGoza7YqL81lege
-	clQ5v6luCe3L9zgsXQilreOKnPBBPjANs4Evmsx7SY+nK3X+fZiB+m2Qxiczu5Ug70k0xgf3k9oak
-	+3oqGRNYKEqWcWpI8zMP8lpLsDy9W8FcyRCZAdqWGcsQ36vWqh9f+BG+2lZ+XWufGhONYFT44bTHb
-	npcmt7gvIT5ylmv/TIUO+ADykD4HFiebnu/EyH3mK5BQz7uYgc0zcDd3gc4meV+oYuhb+BJKU0r1g
-	bVPxQROp7787KGHdvj4hBXKeRqCfP7m8y9WqtcFnWzevjRMIA2VEfmpw2Il8Om5AwseUqY19WBJgy
-	UNxzibbLbnz75VGgrw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1t7Ffe-00F6OU-3A;
-	Sat, 02 Nov 2024 15:04:10 +0000
-Date: Sat, 2 Nov 2024 15:04:10 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: ecree.xilinx@gmail.com, habetsm.xilinx@gmail.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-net-drivers@amd.com,
+	s=arc-20240116; t=1730564028; c=relaxed/simple;
+	bh=kUsasvJVlCEwzJGmtlq+qzgmExFWVdU4/5TwLXuCOnM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J+TuQj8+6si9qJ/XQt3uCWOyYp+3bWBMvkDXiNfLJ1SwHu09mo+tFspu9TYr64uupdHqiLLNCVUMVAv4ivd0lnBI+jk61L9yC0wXh9Ynb367XocsrSMcKrRMCB4VU/DJl/hJKHXIY3iOH8d8Yh7WyGV1B5sTx+AxM/PXKzmwOFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inbox.ru; spf=pass smtp.mailfrom=inbox.ru; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=USFFv7ZR; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=ApF3txI9; arc=none smtp.client-ip=79.137.243.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inbox.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inbox.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru; s=mail4;
+	h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=9Ir51VUvnIJzd5JQOpezctLW26R234HjRtB5K862ICA=;
+	t=1730564024;x=1730654024; 
+	b=USFFv7ZRTTCGgoY+XZ5mCmioy/fObCMfExFWzjGwSMxsmFdOnDLzbmqBq4MQ1nZ5BdUqFKlbqVPsk+vj+ynXISN69z3ErB5cSUIgp9vbvzfTIrN+H6ESlGe0SKJYk7fzJHAKLHVYRrTzCWBow0CZ743iLkdGrXlJuDPdZ4vqi94U3FDkTX0D/B+kIakgzHwVG/YUMmZDNqleUym0A0IaXvavRIeO/driw2ESMnVjhHHQMHrxpBsr63SZ0LCjDX8AgX/dD/KImlHuLmMsxqXVtXCrftnYFwaiG+YwH2mpCRJ6DbOwn7JCdDeM2rvmGFFJls7aFQ0p/sw7OhjYGxDWyg==;
+Received: from [10.113.110.214] (port=48320 helo=smtp33.i.mail.ru)
+	by fallback21.i.mail.ru with esmtp (envelope-from <fido_max@inbox.ru>)
+	id 1t7Fcc-004k71-3W
+	for linux-kernel@vger.kernel.org; Sat, 02 Nov 2024 18:01:02 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru;
+	s=mail4; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
+	To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+	X-Cloud-Ids:Disposition-Notification-To;
+	bh=9Ir51VUvnIJzd5JQOpezctLW26R234HjRtB5K862ICA=; t=1730559662; x=1730649662; 
+	b=ApF3txI94flyUBzAgNUN5k6GIkA77Q5pXVM3U788/FQq8kzP9/EvuuQQrW7v1ocd1Z26s94AIH9
+	7X1gY6QxOHwXEymaD6PLOTU/nBMF3vKEMD+W/sEwBEhkmsO9BcBv6Z6wQGuAqnHCQi0ql3zMUorGn
+	bvO9k3FjFF/eRzIxXLCgCuIrL2pEM9xqhovuUn7L3IicUubCcd58WcUSmPhdFrUqAmEO8RDCpemwM
+	95wJhV55LfE7N7U1z01Sf+fo074TRd7CaUX/yHo+PXUA8nUsIVkWIHaSIit0294/MdoDQBcEM27uM
+	fttQc00bROtClZkYBkxiV9c/Fda5mQwpuLNA==;
+Received: by exim-smtp-6c5957b6dd-fj2bn with esmtpa (envelope-from <fido_max@inbox.ru>)
+	id 1t7FcN-00000000Gx4-2VTd; Sat, 02 Nov 2024 18:00:48 +0300
+From: Maxim Kochetkov <fido_max@inbox.ru>
+To: Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] sfc: Remove deadcode
-Message-ID: <ZyY_avQn4yuj6WC3@gallifrey>
-References: <20241102143317.24745-1-linux@treblig.org>
+Cc: Maxim Kochetkov <fido_max@inbox.ru>
+Subject: [PATCH] Introduce ack_after_handle option for regmap-irq
+Date: Sat,  2 Nov 2024 18:00:41 +0300
+Message-ID: <20241102150045.218510-1-fido_max@inbox.ru>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20241102143317.24745-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 15:03:46 up 178 days,  2:17,  1 user,  load average: 0.00, 0.02,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
+X-Mailru-Src: smtp
+X-7564579A: 646B95376F6C166E
+X-77F55803: 4F1203BC0FB41BD9F1CA29D43EE537F2DCF98E1C5C5670DCD23F73DB6E286ADF182A05F53808504093861004316DC0C93DE06ABAFEAF6705D0D8DB2145BDFAF827B1BB2EC4D8FC055E6CE7239E2C5700
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7CE4525FFB91B9BBCEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F790063790B55F3E386DB9B28638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D8D9DB06B47A0737797E261A2D04B5FB301C0E1FE576DB3FAB20879F7C8C5043D14489FFFB0AA5F4BF1661749BA6B97735D9442B0B5983000E8941B15DA834481FA18204E546F3947CA9FF340AA05FB58CF6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F7900637A359038F01FFAF82389733CBF5DBD5E9B5C8C57E37DE458B9E9CE733340B9D5F3BBE47FD9DD3FB595F5C1EE8F4F765FC72CEEB2601E22B093A03B725D353964B0B7D0EA88DDEDAC722CA9DD8327EE4930A3850AC1BE2E735E4A630A5B664A4FFC4224003CC83647689D4C264860C145E
+X-C1DE0DAB: 0D63561A33F958A5421AB3BDFEA435F25002B1117B3ED696C9C1C38E13F527B70E58516B1639A14B823CB91A9FED034534781492E4B8EEADA757276DBF662F3EC79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CFC7F4243AD7CD7D42FE41698D65D243FBE8E4AAD5828B8C92FFD660E9975A9C79422E0C78D0E153559C95337E58CA42E65D107CFD51C630ADB5BFE37A260F351D07C2F04C7E955CFA9F49EEF1215E7BEC913E6812662D5F2A17D6C1CDD2003EB8E03787203701020945C72C348FB7EED3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojg5lDvPDwqaaO2SlaNgkueA==
+X-Mailru-Sender: 689FA8AB762F739381B31377CF4CA219B49E24BC68D01DD8F42EB199966831C3D35F9311129B677690DE4A6105A3658D481B2AED7BCCC0A49AE3A01A4DD0D55C6C99E19F044156F45FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
+X-7564579A: B8F34718100C35BD
+X-77F55803: 6242723A09DB00B4C55E9746AA489521B4EA2933C33FC754C6EEA5792614A1AC049FFFDB7839CE9E2138FE6B7044404AFE5E35B9F7B641736FA92FD90D482F2B3DA3B2FA281C8A7B
+X-7FA49CB5: 0D63561A33F958A534727D7699B8EDE5072549F5F613C4062C563F34D3E01431CACD7DF95DA8FC8BD5E8D9A59859A8B65A3EDA775A1E0ED0CC7F00164DA146DAFE8445B8C89999728AA50765F790063794CA976D7634B470389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC8AD7102AF51AFB197F6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA775ECD9A6C639B01B78DA827A17800CE778B471BB9634AD8A731C566533BA786AA5CC5B56E945C8DA
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojg5lDvPDwqabmJNoTOeTpXA==
+X-Mailru-MI: 8000000000000800
+X-Mras: Ok
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> ef4_farch_dimension_resources(), ef4_nic_fix_nodesc_drop_stat(),
-> ef4_ticks_to_usecs() and ef4_tx_get_copy_buffer_limited() were
-> copied over from efx_ equivalents in 2016 but never used by
-> commit 5a6681e22c14 ("sfc: separate out SFC4000 ("Falcon") support into new
-> sfc-falcon driver")
-> 
-> EF4_MAX_FLUSH_TIME is also unused.
-> 
-> Remove them.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Some interrupt controllers for proper operation require acknowledgment
+only after processing.
+So add this option.
 
-Actually, NAK this copy; I'll resend it in a minute
-as part of a series with a whole load more.
+Maxim Kochetkov (2):
+  regmap-irq: Introduce regmap_irq_ack() helper
+  regmap-irq: Introduce ack_after_handle option
 
-Dave
+ drivers/base/regmap/regmap-irq.c | 94 +++++++++++++-------------------
+ include/linux/regmap.h           |  2 +
+ 2 files changed, 40 insertions(+), 56 deletions(-)
 
-> ---
->  drivers/net/ethernet/sfc/falcon/efx.c   |  8 --------
->  drivers/net/ethernet/sfc/falcon/efx.h   |  1 -
->  drivers/net/ethernet/sfc/falcon/farch.c | 22 ----------------------
->  drivers/net/ethernet/sfc/falcon/nic.c   | 11 -----------
->  drivers/net/ethernet/sfc/falcon/nic.h   |  5 -----
->  drivers/net/ethernet/sfc/falcon/tx.c    |  8 --------
->  drivers/net/ethernet/sfc/falcon/tx.h    |  3 ---
->  7 files changed, 58 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/sfc/falcon/efx.c b/drivers/net/ethernet/sfc/falcon/efx.c
-> index 8925745f1c17..b07f7e4e2877 100644
-> --- a/drivers/net/ethernet/sfc/falcon/efx.c
-> +++ b/drivers/net/ethernet/sfc/falcon/efx.c
-> @@ -1886,14 +1886,6 @@ unsigned int ef4_usecs_to_ticks(struct ef4_nic *efx, unsigned int usecs)
->  	return usecs * 1000 / efx->timer_quantum_ns;
->  }
->  
-> -unsigned int ef4_ticks_to_usecs(struct ef4_nic *efx, unsigned int ticks)
-> -{
-> -	/* We must round up when converting ticks to microseconds
-> -	 * because we round down when converting the other way.
-> -	 */
-> -	return DIV_ROUND_UP(ticks * efx->timer_quantum_ns, 1000);
-> -}
-> -
->  /* Set interrupt moderation parameters */
->  int ef4_init_irq_moderation(struct ef4_nic *efx, unsigned int tx_usecs,
->  			    unsigned int rx_usecs, bool rx_adaptive,
-> diff --git a/drivers/net/ethernet/sfc/falcon/efx.h b/drivers/net/ethernet/sfc/falcon/efx.h
-> index d3b4646545fa..52508f2c8cb2 100644
-> --- a/drivers/net/ethernet/sfc/falcon/efx.h
-> +++ b/drivers/net/ethernet/sfc/falcon/efx.h
-> @@ -198,7 +198,6 @@ int ef4_try_recovery(struct ef4_nic *efx);
->  /* Global */
->  void ef4_schedule_reset(struct ef4_nic *efx, enum reset_type type);
->  unsigned int ef4_usecs_to_ticks(struct ef4_nic *efx, unsigned int usecs);
-> -unsigned int ef4_ticks_to_usecs(struct ef4_nic *efx, unsigned int ticks);
->  int ef4_init_irq_moderation(struct ef4_nic *efx, unsigned int tx_usecs,
->  			    unsigned int rx_usecs, bool rx_adaptive,
->  			    bool rx_may_override_tx);
-> diff --git a/drivers/net/ethernet/sfc/falcon/farch.c b/drivers/net/ethernet/sfc/falcon/farch.c
-> index c64623c2e80c..01017c41338e 100644
-> --- a/drivers/net/ethernet/sfc/falcon/farch.c
-> +++ b/drivers/net/ethernet/sfc/falcon/farch.c
-> @@ -1631,28 +1631,6 @@ void ef4_farch_rx_push_indir_table(struct ef4_nic *efx)
->  	}
->  }
->  
-> -/* Looks at available SRAM resources and works out how many queues we
-> - * can support, and where things like descriptor caches should live.
-> - *
-> - * SRAM is split up as follows:
-> - * 0                          buftbl entries for channels
-> - * efx->vf_buftbl_base        buftbl entries for SR-IOV
-> - * efx->rx_dc_base            RX descriptor caches
-> - * efx->tx_dc_base            TX descriptor caches
-> - */
-> -void ef4_farch_dimension_resources(struct ef4_nic *efx, unsigned sram_lim_qw)
-> -{
-> -	unsigned vi_count;
-> -
-> -	/* Account for the buffer table entries backing the datapath channels
-> -	 * and the descriptor caches for those channels.
-> -	 */
-> -	vi_count = max(efx->n_channels, efx->n_tx_channels * EF4_TXQ_TYPES);
-> -
-> -	efx->tx_dc_base = sram_lim_qw - vi_count * TX_DC_ENTRIES;
-> -	efx->rx_dc_base = efx->tx_dc_base - vi_count * RX_DC_ENTRIES;
-> -}
-> -
->  u32 ef4_farch_fpga_ver(struct ef4_nic *efx)
->  {
->  	ef4_oword_t altera_build;
-> diff --git a/drivers/net/ethernet/sfc/falcon/nic.c b/drivers/net/ethernet/sfc/falcon/nic.c
-> index 78c851b5a56f..1b91992e3698 100644
-> --- a/drivers/net/ethernet/sfc/falcon/nic.c
-> +++ b/drivers/net/ethernet/sfc/falcon/nic.c
-> @@ -511,14 +511,3 @@ void ef4_nic_update_stats(const struct ef4_hw_stat_desc *desc, size_t count,
->  		}
->  	}
->  }
-> -
-> -void ef4_nic_fix_nodesc_drop_stat(struct ef4_nic *efx, u64 *rx_nodesc_drops)
-> -{
-> -	/* if down, or this is the first update after coming up */
-> -	if (!(efx->net_dev->flags & IFF_UP) || !efx->rx_nodesc_drops_prev_state)
-> -		efx->rx_nodesc_drops_while_down +=
-> -			*rx_nodesc_drops - efx->rx_nodesc_drops_total;
-> -	efx->rx_nodesc_drops_total = *rx_nodesc_drops;
-> -	efx->rx_nodesc_drops_prev_state = !!(efx->net_dev->flags & IFF_UP);
-> -	*rx_nodesc_drops -= efx->rx_nodesc_drops_while_down;
-> -}
-> diff --git a/drivers/net/ethernet/sfc/falcon/nic.h b/drivers/net/ethernet/sfc/falcon/nic.h
-> index ada6e036fd97..ac10c12967df 100644
-> --- a/drivers/net/ethernet/sfc/falcon/nic.h
-> +++ b/drivers/net/ethernet/sfc/falcon/nic.h
-> @@ -477,7 +477,6 @@ void ef4_farch_finish_flr(struct ef4_nic *efx);
->  void falcon_start_nic_stats(struct ef4_nic *efx);
->  void falcon_stop_nic_stats(struct ef4_nic *efx);
->  int falcon_reset_xaui(struct ef4_nic *efx);
-> -void ef4_farch_dimension_resources(struct ef4_nic *efx, unsigned sram_lim_qw);
->  void ef4_farch_init_common(struct ef4_nic *efx);
->  void ef4_farch_rx_push_indir_table(struct ef4_nic *efx);
->  
-> @@ -502,10 +501,6 @@ size_t ef4_nic_describe_stats(const struct ef4_hw_stat_desc *desc, size_t count,
->  void ef4_nic_update_stats(const struct ef4_hw_stat_desc *desc, size_t count,
->  			  const unsigned long *mask, u64 *stats,
->  			  const void *dma_buf, bool accumulate);
-> -void ef4_nic_fix_nodesc_drop_stat(struct ef4_nic *efx, u64 *stat);
-> -
-> -#define EF4_MAX_FLUSH_TIME 5000
-> -
->  void ef4_farch_generate_event(struct ef4_nic *efx, unsigned int evq,
->  			      ef4_qword_t *event);
->  
-> diff --git a/drivers/net/ethernet/sfc/falcon/tx.c b/drivers/net/ethernet/sfc/falcon/tx.c
-> index b9369483758c..e6e80b039ca2 100644
-> --- a/drivers/net/ethernet/sfc/falcon/tx.c
-> +++ b/drivers/net/ethernet/sfc/falcon/tx.c
-> @@ -40,14 +40,6 @@ static inline u8 *ef4_tx_get_copy_buffer(struct ef4_tx_queue *tx_queue,
->  	return (u8 *)page_buf->addr + offset;
->  }
->  
-> -u8 *ef4_tx_get_copy_buffer_limited(struct ef4_tx_queue *tx_queue,
-> -				   struct ef4_tx_buffer *buffer, size_t len)
-> -{
-> -	if (len > EF4_TX_CB_SIZE)
-> -		return NULL;
-> -	return ef4_tx_get_copy_buffer(tx_queue, buffer);
-> -}
-> -
->  static void ef4_dequeue_buffer(struct ef4_tx_queue *tx_queue,
->  			       struct ef4_tx_buffer *buffer,
->  			       unsigned int *pkts_compl,
-> diff --git a/drivers/net/ethernet/sfc/falcon/tx.h b/drivers/net/ethernet/sfc/falcon/tx.h
-> index 2a88c59cbbbe..868ed8a861ab 100644
-> --- a/drivers/net/ethernet/sfc/falcon/tx.h
-> +++ b/drivers/net/ethernet/sfc/falcon/tx.h
-> @@ -15,9 +15,6 @@
->  unsigned int ef4_tx_limit_len(struct ef4_tx_queue *tx_queue,
->  			      dma_addr_t dma_addr, unsigned int len);
->  
-> -u8 *ef4_tx_get_copy_buffer_limited(struct ef4_tx_queue *tx_queue,
-> -				   struct ef4_tx_buffer *buffer, size_t len);
-> -
->  int ef4_enqueue_skb_tso(struct ef4_tx_queue *tx_queue, struct sk_buff *skb,
->  			bool *data_mapped);
->  
-> -- 
-> 2.47.0
-> 
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.45.2
+
 
