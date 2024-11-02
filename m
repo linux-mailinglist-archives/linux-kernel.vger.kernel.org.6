@@ -1,127 +1,88 @@
-Return-Path: <linux-kernel+bounces-393563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D8059BA262
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:08:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110109BA264
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:09:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D50282AAA
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:08:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91CEFB21093
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458AC1ABEA8;
-	Sat,  2 Nov 2024 20:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFFF1ABEB1;
+	Sat,  2 Nov 2024 20:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZbXZWma"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d90hMuzB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5709F13BAF1;
-	Sat,  2 Nov 2024 20:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AFE189F5A;
+	Sat,  2 Nov 2024 20:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730578110; cv=none; b=j7dEDTw9+T585OkITpN9CflRoeXJ+Hoxonv46IWmjmYmLU3bGsx3i6o0OWEN9Fx55HPTSGHWrnzc5N8qwYxX0CIcRKIhp99PJxf8O9wOc5KuXeLHbuUIXHsN5u/FZEEBYp1cUCUwZX3YsAB1wCoSLfTI3n6gKMmhAnhBqVygxg4=
+	t=1730578168; cv=none; b=VuhIDfiXBqfx/vnVb/mdMiNbm1frKfOuKG/J4+TDeUoJIxYvNzUDM7fg+3R6L2aQmQFQLONv5bFhEhnG6NqRNsCaNIoPK2obeMvREc2ywKgXGcdYCFRbfpZnGV2nsqCRqyR/gwGWjZa2CORlcQmRpJcsGpkTWig334CqHL11vh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730578110; c=relaxed/simple;
-	bh=f7MqDWVyhosz9cevqy6RwU/qNdpL8bdIob8pXzUX+GQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pMM9irPo+PGcLHruWwiWsNlGutA9KtJ99GfGrK9Y1/OUxSng9S9J2VPnoJGSvi45WWDPbNbRxVmBwxnk8tn4y1oqfbSnlbFpv9lOHLaU6Rc8KA3JgsyI/Rjyd5VNNdAyyU1hIjA3RR5CFOmcpVc+vihO0wf8pXroc4nMLY5uCoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZbXZWma; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-720be2b27acso2331741b3a.0;
-        Sat, 02 Nov 2024 13:08:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730578108; x=1731182908; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UIx9Jx7Ry0yT75bCDHqE8DPM/4OB/SFj89jRIIIj2R4=;
-        b=IZbXZWmaoIHYSTWBJCV3OmVf1EvVeyyU+YO4M1gob+P5RjbV+dbXuIFA7lmCYfi5xU
-         9gQP0Hzd8qxVwCusfEzdqs2aSJeazYX+Xc3Fuzqo0eG1ZnFTIVVGe1Eb7xMOPsGWZfx+
-         wtk+e5wW6RNQXPbQUWktshAil3Ye4InbilKlDKRMtP4i+soCIXY74pkVDgLJLanBFDtD
-         RYkNbiZYd036jtxpb1K+3sqpVWRK6kL+2m1L+p7nL2IEMt55RvndTTLzI8IpgoYNXwSU
-         kGfCR+veimBpArHwsjiNJcyP1VfS9QA4AFjDYrl9dhx1jInvnWWN5eBwGyo4hb5cGp9i
-         Iw5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730578108; x=1731182908;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UIx9Jx7Ry0yT75bCDHqE8DPM/4OB/SFj89jRIIIj2R4=;
-        b=VxFMj8aa2NYTDbXTQGzlaiv7swd9Ypnbyq/gU0Yc4u+pNmiwRshrvrEmKth1YgYa1/
-         IyHZv4EWdetm7JPdnlxnEAbkx0una5W2OsIY44X+m3t0Dg3+aDHo3OedI3a+5XalDFGS
-         sqNWeFtftVjKdGcLwyKEKRD87dMANlQWbbYKYre8YKOdSwGuYmH2n1q/E3qobLToyeQM
-         sclKOFIpFZPUpzDTDjIZLtjf/H833mMBx9zU/F9e2WusJppDu6r5qWzLWkE3YO1ia/jJ
-         WaD6XHdG2n4Mk5CpbkZtx3wVv6+7ZEU05bwxBm8TxETSodJnx994kEDVlnUOGgkwbBLE
-         ngXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXP6+lEhtaXwYf7tXAIKeCnrrA3WYR5R5xmrE5frPON6Co840ccna8Q5b4pLn3gZrkVose/5cpQ@vger.kernel.org, AJvYcCXyY9Z3RreDEiWltbaLWDL5VptN5eU+eJzGqIDOAprkqcmoTz4Ud4dxepBjbVMFdizZ/AA42hAG8nPqTQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyySii6fZy6h1lT6VZd8kUp1gamLva3JzedIWSlZGOYOV3ZDEWL
-	T4n/COuEVg65NUMfF5sBEJnDL4VSFGYGwCDQ27RadOVJUiGiOLFtTIW5KpOknoJXhA==
-X-Google-Smtp-Source: AGHT+IGUG5+Krz1IQiWBieU+4Vxekv7aSBW37q6c5L/WGRgJNouLTqurr4I/yDtJ7D2EojJr2/z9ow==
-X-Received: by 2002:a05:6a00:2d18:b0:720:aa27:2e45 with SMTP id d2e1a72fcca58-720b9c2907dmr14899650b3a.14.1730578108404;
-        Sat, 02 Nov 2024 13:08:28 -0700 (PDT)
-Received: from localhost.localdomain ([240c:c701:2:805:409b:a7ac:813b:68b1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720c6a39a53sm3927105b3a.178.2024.11.02.13.08.24
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 02 Nov 2024 13:08:27 -0700 (PDT)
-From: Yi Zou <03zouyi09.25@gmail.com>
-To: davem@davemloft.net
-Cc: 21210240012@m.fudan.edu.cn,
-	21302010073@m.fudan.edu.cn,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	Markus.Elfring@web.de,
-	kuba@kernel.org,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1730578168; c=relaxed/simple;
+	bh=zgksz9s1bG4ueYcirt3fqcKq1nNzoJLO4iph4NdY0Yw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rKaMUKD/zxssktjaLmP0/qYNkWSJnyWXRx5JZI9f4PVKfg6OvDMqL13TxExaY2Fk2l6DKCs9L0F5nk/OgE1LX7zKX/iggkqxrMwEOnqgu60JLGDJLrgpNQ5lHa6xNYcTyov2PTkCZQQtf0ODcqwsBUVfhAhfp3hBsewH174oYrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d90hMuzB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C14C4CEC3;
+	Sat,  2 Nov 2024 20:09:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730578166;
+	bh=zgksz9s1bG4ueYcirt3fqcKq1nNzoJLO4iph4NdY0Yw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=d90hMuzBwrHdx0loVL54+Tn9PjYGzSSByJziUPp+tsAs9tT14j/eGiP6R1swFJhtY
+	 iTQGWjms3fcRCZvQq/8t+3vCGh7YL5me17/AZFXgUQ90267AQ5c/grUfxVN6x0dI0G
+	 +bzpWpTZvc8mKlUzKb/NfDdlTCPdq/1NTu+E9GYorTy+KIERm5sOOsiQXb9kTgK9Er
+	 tthymMflrAh3kyfTTjpKGNw88PJZOr8F3A6CS/uMvxQakjlXGRBBTuUuFO1kY6eB2g
+	 +j4V+zwMtAB9lI2loiz2d70pChiEXl8KK9J2ESBhmr4tyVsPbQFYlY/J6TzJpezcOR
+	 C458DS3kxospQ==
+From: Kees Cook <kees@kernel.org>
+To: Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>,
+	linux-hardening@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yi Zou <03zouyi09.25@gmail.com>
-Subject: [PATCH] ipv6: ip6_fib: fix null-pointer dereference in ipv6_route_native_seq_show()
-Date: Sun,  3 Nov 2024 04:08:20 +0800
-Message-ID: <20241102200820.1423-1-03zouyi09.25@gmail.com>
-X-Mailer: git-send-email 2.44.0
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] lib: string_helpers: silence snprintf() output truncation warning
+Date: Sat,  2 Nov 2024 13:09:22 -0700
+Message-Id: <173057816122.2383427.17386979359924647248.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241101205453.9353-1-brgl@bgdev.pl>
+References: <20241101205453.9353-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Check if fib6_nh is non-NULL before accessing fib6_nh->fib_nh_gw_family
-in ipv6_route_native_seq_show() to prevent a null-pointer dereference.
-Assign dev as dev = fib6_nh ? fib6_nh->fib_nh_dev : NULL to ensure safe
-handling when nexthop_fib6_nh(rt->nh) returns NULL.
+On Fri, 01 Nov 2024 21:54:53 +0100, Bartosz Golaszewski wrote:
+> The output of ".%03u" with the unsigned int in range [0, 4294966295] may
+> get truncated if the target buffer is not 12 bytes. This can't really
+> happen here as the 'remainder' variable cannot exceed 999 but the
+> compiler doesn't know it. To make it happy just increase the buffer to
+> where the warning goes away.
+> 
+> 
+> [...]
 
-Fixes: 0379e8e6a9ef ("ipv6: ip6_fib: avoid NPD in ipv6_route_native_seq_show()")
+Applied to for-next/hardening, thanks!
 
-Signed-off-by: Yi Zou <03zouyi09.25@gmail.com>
----
- net/ipv6/ip6_fib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[1/1] lib: string_helpers: silence snprintf() output truncation warning
+      https://git.kernel.org/kees/c/a508ef4b1dcc
 
-diff --git a/net/ipv6/ip6_fib.c b/net/ipv6/ip6_fib.c
-index eb111d20615c..6632ab65d206 100644
---- a/net/ipv6/ip6_fib.c
-+++ b/net/ipv6/ip6_fib.c
-@@ -2555,14 +2555,14 @@ static int ipv6_route_native_seq_show(struct seq_file *seq, void *v)
- #else
- 	seq_puts(seq, "00000000000000000000000000000000 00 ");
- #endif
--	if (fib6_nh->fib_nh_gw_family) {
-+	if (fib6_nh && fib6_nh->fib_nh_gw_family) {
- 		flags |= RTF_GATEWAY;
- 		seq_printf(seq, "%pi6", &fib6_nh->fib_nh_gw6);
- 	} else {
- 		seq_puts(seq, "00000000000000000000000000000000");
- 	}
- 
--	dev = fib6_nh->fib_nh_dev;
-+	dev = fib6_nh ? fib6_nh->fib_nh_dev : NULL;
- 	seq_printf(seq, " %08x %08x %08x %08x %8s\n",
- 		   rt->fib6_metric, refcount_read(&rt->fib6_ref), 0,
- 		   flags, dev ? dev->name : "");
+Take care,
+
 -- 
-2.44.0
+Kees Cook
 
 
