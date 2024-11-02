@@ -1,351 +1,303 @@
-Return-Path: <linux-kernel+bounces-393267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582B49B9E89
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:08:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0BFB9B9E8C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18C292819D8
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:08:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60363281D4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD73170822;
-	Sat,  2 Nov 2024 10:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68512170822;
+	Sat,  2 Nov 2024 10:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuRLan4p"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aetCnBGU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tIFRkwko"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6F2155741;
-	Sat,  2 Nov 2024 10:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAF23EA98;
+	Sat,  2 Nov 2024 10:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730542124; cv=none; b=YFruYeQyvT1gmFw9tI4PUVBsUtN+udBuuQUahLVGlLzsbgHzfQwVba5NqgtEHbAboKUnFaixmTv8+Q4OVywiYK0iL9ALSMWwQQ/sGu32FXHYglHBRclYKS/rzjkkyLoOYAWho23doASU981SIamUVJTdVT75M2WZug+WNb4bCUE=
+	t=1730542212; cv=none; b=W4Dp2f//nSzzEXohq3EalmsI/023f74hcV+2f3ya3Cchm8sbrlp0By/taIj4frlIW6MS87PrDRXHHFcOzVttpVScCbtBjewciIvuSnyd730Bv0CYVZ7Fto729FonaiW8TZp7mcDFHiTYpQuMKg6anEU8OSJONLBUdtxlFtKWDW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730542124; c=relaxed/simple;
-	bh=Db8fcKMwgC2ODGzCUsdbLn63n5e+Qk9CylHQ8qsLPhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p+0bezlZ+GHlE7W8czjbEA7LCk9jpdF2TvyvvhGpQxTUaQr4Zqyed9iqS/SX3opWxZGF/QqpLIKBMXQ1J15FbdQkELbFgmlJxH88DLm6ZnHlwOX3no+VgjhrwfDDFJT7Qc4Y7kFA7oJgE2k5tHXGhuO1N9pQw82DMvQ5IU6lPiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cuRLan4p; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5ebc9bda8c8so1309043eaf.0;
-        Sat, 02 Nov 2024 03:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730542121; x=1731146921; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VEbMde+eXraiIBbpjOpG3eujT1p+JDDLVMWK8m10qO0=;
-        b=cuRLan4pK64+UNOxKfqA5YCBT8SK7oMGdY2px5a0utGE3YP5J3FxzBuL2QVXoIgvAK
-         5SDb4e2MMZxfDwKWlcXIKSmZxvoxw/8W2f+XP+phCkusgVGloWbK8vvoml8pKEW9f7W8
-         pSYggtHmzpmSLe1dFbTt1S+tJh0rA5ZlcRpjwk//1xdWaSdR+x8uTCnXpEl8+CZxZC1J
-         fANzqAvII0TeJpthHe3mk22/cWS3/ZO3WCJGEhbEuYcMaqrF0MOOh7jBX6rz9nEbKKFT
-         n9Y8V/H/ayfmb+i3mswaHtIfQuzFHd8zG0SgQ3Z2uog1kgDdA7IKs/dO8x+T1IZ5Glzm
-         vvzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730542121; x=1731146921;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VEbMde+eXraiIBbpjOpG3eujT1p+JDDLVMWK8m10qO0=;
-        b=kQrwrbjlfU43NxIufrZgiWDzoAqacDQHv3kPvvLYiy0MOkOj53kqh8XRtmTyZSiGJV
-         YU0yUPIds5gGXCpsrqv4v4F/qhgKo16h7IsMkRypA2jpyrwnKaVhHeSlC63LgZ8dmtLF
-         DMFdQz6MRotSyHO/hi8B/x4mxUj8GTSKgmSS4nINgnz7tBoopppF+Rh4z+j440BPoR6f
-         kNIgUCgb3O2KHrFZTnPJxFbNFRkeL691qKD1yPsJDkJxbhUqH9GWK7rP70PzjZBKwueE
-         ODoYfrt4V+6+9J99RQQsbzr2s80fz3qQ+yeN9TG/YbCPSi3yNJtlCBzzbLJfAM3NMRlu
-         mjXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU018kxwR93PSgHhx3cfempHWBpCbC0wB2D3gpwPgiDQGT+Fj5flbhWK5XL7HYfBkcgOFLrNIXnGtuz@vger.kernel.org, AJvYcCV1SlZmIZlY3ouG6V3hIl4oPSSIZK/1SZLoNovLEyXKyAMxL5i20pVkLDtklOZvuSX5E/aDfse7EPA=@vger.kernel.org, AJvYcCXQWLBXa9h2UZHGHEzhkE4Y7IOOaNIyjg4eL1rgpI7YGu/nQCr7rV4MRXxRoKD56ZH2xCmOUmYn8cqfGCM6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEfdrhKHwjvJlaLv+5rVySrkcrEVwwLqHx2imJjaWy+U6iz/UO
-	JbAE3vf+xp7M3loydVQ8QYW0ZGmNc/lqIH4GY5Cod6wvlihl1RdQ
-X-Google-Smtp-Source: AGHT+IHBvsMgeKrq3oKXKSABXqmQEbhXQYBnVtdGQacRqSwlTXiLWHPFCkbmf6VTavUq93qPG/Ax8Q==
-X-Received: by 2002:a05:6871:a68a:b0:288:60bc:1361 with SMTP id 586e51a60fabf-2949ed9d5bamr5922265fac.19.1730542121409;
-        Sat, 02 Nov 2024 03:08:41 -0700 (PDT)
-Received: from illithid ([2600:1700:957d:1d70::49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7189cc7e86asm1094583a34.37.2024.11.02.03.08.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 03:08:39 -0700 (PDT)
-Date: Sat, 2 Nov 2024 05:08:37 -0500
-From: "G. Branden Robinson" <g.branden.robinson@gmail.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org, cjwatson@debian.org, groff@gnu.org
-Subject: Re: [PATCH v2 1/3] proc_pid_fdinfo.5: Reduce indent for most of the
- page
-Message-ID: <20241102100837.anfonowxfx4ekn3d@illithid>
-References: <20241015211719.1152862-1-irogers@google.com>
- <20241101132437.ahn7xdgvmqamatce@devuan>
- <CAP-5=fXo5XjxUXshm9eRX-hCcC5VWOv0C5LBZ3Z0_wQb+rdnsw@mail.gmail.com>
- <20241101200729.6wgyksuwdtsms3eu@devuan>
+	s=arc-20240116; t=1730542212; c=relaxed/simple;
+	bh=h+oLhylA1wQocLgErjWwIh3jcje/y3CI1D+otl1JZqg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Ov0V8cuFHJeqNq6NSaXcv5cyA9XjHoYKZ1hpQgoofEYsq3pCB2x7GuhhVGUoFzPQHpcXFJaEN8MkHv6WInYdZFA3Q+OAwOITzv2y3C8YHvEZVJCG+fBqC1MLhT699MG80NY5txGqnFy0NsE2IvVvaHUJ3c/WZO39kn6gTmhCDRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aetCnBGU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tIFRkwko; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 02 Nov 2024 10:10:01 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730542202;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qiH5zC7VRz+ra+OAgwlQT6/sMmfY6QSKKXe4ym4JzJQ=;
+	b=aetCnBGU3F9RO+b8j0gGqhTuCNWeX/d4yR67XjbLu+H42HyOzWWhlvldR9Wm978Y/UGgRs
+	SqSZz8IjKf6EBocm4bSxeKKtZRdai4tiU8u7pfJk0lyh6jFAaPs7h4SR9BCL0QGFjwo7bw
+	nzH4isEvMNb7ShI9ZdfbUTv+7YCrqA+kmqFo1hHKjfNwUiJ3KgOzmGSV0sujbJ16QJ+QhX
+	pmuVtroGj6KqvqzMCs5/YqJUO8Nm9x3VRDLu1TMVy4yEg4gfZMvOhtyj37kVtIJJg8g4io
+	dVgXIbc4OUPdAsnZqans0Vt/JHWTJEz4xvAhOh3KdZ5eCY8ZHTwz5ysN45ARIg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730542202;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qiH5zC7VRz+ra+OAgwlQT6/sMmfY6QSKKXe4ym4JzJQ=;
+	b=tIFRkwkoD52qkXN5gCAw5iO2nH0i9rrQO2o/YK2V0Ub0x+UzgUHkz7K/CstWAQqJpGbJ3p
+	5E8OoIXiWl+69ZDA==
+From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: timers/vdso] vdso: Rename struct arch_vdso_data to arch_vdso_time_data
+Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Heiko Carstens <hca@linux.ibm.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241010-vdso-generic-base-v1-28-b64f0842d512@linutronix.de>
+References: <20241010-vdso-generic-base-v1-28-b64f0842d512@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="aabs2ooqy7tzaxis"
-Content-Disposition: inline
-In-Reply-To: <20241101200729.6wgyksuwdtsms3eu@devuan>
-
-
---aabs2ooqy7tzaxis
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/3] proc_pid_fdinfo.5: Reduce indent for most of the
- page
-MIME-Version: 1.0
-
-[adding Colin Watson to CC; and the groff list because I started musing]
-
-Hi Alex,
-
-At 2024-11-01T21:07:29+0100, Alejandro Colomar wrote:
-> > > > -/proc/pid/fdinfo/ \- information about file descriptors
-> > > > +.IR /proc/ pid /fdinfo " \- information about file descriptors"
-> > >
-> > > I wouldn't add formatting here for now.  That's something I prefer
-> > > to be cautious about, and if we do it, we should do it in a
-> > > separate commit.
-> >=20
-> > I'll move it to a separate patch. Is the caution due to a lack of
-> > test infrastructure? That could be something to get resolved,
-> > perhaps through Google summer-of-code and the like.
->=20
-> That change might be controversial.
-
-Then let those with objections step forward and make them!
-
-(I may be one of them; see below.)
-
-> We'd first need to check that all software that reads the NAME section
-> would behave well for this.
-
-Not _all_ software, surely.  Anybody can write a craptastic man(7)
-scraper, and several have, mainly back when Web 1.0 was going to eat the
-world.  Most of those have withered on the vine.
-
-This is the _Linux_ man-pages project, so what matters are (1) man page
-formatters and (2) man page indexers that GNU/Linux systems actually
-use.  Where people get nervous with the "NAME" section is because of the
-indexer; if one's man(7) _formatter_ can't handle an `IR` call, it
-hasn't earned the name.
-
-Here's a sample input.
-
-$ cat /tmp/proc_pid_fdinfo_mini.5
-=2ETH proc_pid_fdinfo_mini 5 2024-11-02 "example"
-=2ESH Name
-=2EIR /proc/ pid /fdinfo " \- information about file descriptors"
-=2ESH Description
-Text text text text.
-
-Starting with formatters, let's see how they do.
-
-$ nroff -man /tmp/proc_pid_fdinfo_mini.5
-proc_pid_fdinfo_mini(5)       File Formats Manual      proc_pid_fdinfo_mini=
-(5)
-
-Name
-       /proc/pid/fdinfo - information about file descriptors
-
-Description
-       Text text text text.
-
-example                           2024=E2=80=9011=E2=80=9002           proc=
-_pid_fdinfo_mini(5)
-$ mandoc /tmp/proc_pid_fdinfo_mini.5 | ul
-proc_pid_fdinfo_mini(5)       File Formats Manual      proc_pid_fdinfo_mini=
-(5)
-
-Name
-       /proc/pid/fdinfo - information about file descriptors
-
-Description
-       Text text text text.
-
-example                           2024-11-02           proc_pid_fdinfo_mini=
-(5)
-$ ~/heirloom/bin/nroff -man /tmp/proc_pid_fdinfo_mini.5 | ul
-proc_pid_fdinfo_mini(5)       File Formats Manual      proc_pid_fdinfo_mini=
-(5)
-
-
-
-Name
-       /proc/pid/fdinfo - information about file descriptors
-
-Description
-       Text text text text.
-
-
-
-example                           2024-11-02           proc_pid_fdinfo_mini=
-(5)
-$ DWBHOME=3D~/dwb ~/dwb/bin/nroff -man /tmp/proc_pid_fdinfo_mini.5 | cat -s=
- | ul
-
-       proc_pid_fdinfo_mini(5)example (2024-11-02)roc_pid_fdinfo_mini(5)
-
-       Name
-            /proc/pid/fdinfo - information about file descriptors
-
-       Description
-            Text text text text.
-
-       Page 1                                        (printed 11/2/2024)
-
-I leave the execution of these to perceive the correct font style
-changes as an exercise for the reader, but they all get the
-"/proc/pid/fdinfo" line right.
-
-On GNU/Linux systems, the only man page indexer I know of is Colin
-Watson's man-db--specifically, its mandb(8) program.  But it's nicely
-designed so that the "topic and summary description extraction" task is
-delegated to a standalone tool, lexgrog(1), and we can use that.
-
-$ lexgrog /tmp/proc_pid_fdinfo_mini.5
-/tmp/proc_pid_fdinfo_mini.5: parse failed
-
-Oh, damn.  I wasn't expecting that.  Maybe this is what defeats Michael
-Kerrisk's scraper with respect to groff's man pages.[1]
-
-Well, I can find a silver lining here, because it gives me an even
-better reason than I had to pitch an idea I've been kicking around for a
-while.  Why not enhance groff man(7) to support a mode where _it_ will
-spit out the "Name"/"NAME" section, and only that, _for_ you?
-
-This would be as easy as checking for an option, say '-d EXTRACT=3DName',
-and having the package's "TH" and "SH" macro definitions divert
-(literally, with the `di` request) everything _except_ the section of
-interest to a diversion that is then never called/output.  (This is
-similar to an m4 feature known as the "black hole diversion".)
-
-All of the features necessary to implement this[2] were part of troff as
-far as back as the birth of the man(7) package itself.  It's not clear
-to me why it wasn't done back in the 1980s.
-
-lexgrog(1) itself will of course have to stay around for years to come,
-but this could take a significant distraction off of Colin's plate--I
-believe I have seen him grumble about how much *roff syntax he has to
-parse to have the feature be workable, and that's without upstart groff
-maintainers exploring up to every boundary that existed even in 1979 and
-cheerfully exercising their findings in man pages.
-
-I also of course have ideas for generalizing the feature, so that you
-can request any (sub)section by name, and, with a bit more ambition,[4]
-paragraph tags (`TP`) too.
-
-So you could do things like:
-
-nroff -man -d EXTRACT=3D"RETURN VALUE" man3/bsearch.3
-
-and:
-
-nroff -man -d EXTRACT=3D"OPTIONS/-b" man8/zic.8
-
-=2E..does this sound appetizing to anyone?
-
-> Also, many other pages might need to be changed accordingly for
-> consistency.
-
-I withdraw the suggestion until lexgrog(1) flexes its own muscles, or
-has groff(1) do the lifting.  I'm sorry for prompting churn, Ian.
-
-> No, this isn't outdated, since that reduces the quality of the diff.
-> Also, I review a lot of patches in the mail client, without running
-> git(1).  And it's not just for reviewing diffs, but also for writing
-> them.  Semantic newlines reduce the amount of work for producing the
-> diffs.
-
-It's a real win for diffs.
-
-Here's a very recent example from groff.
-
-diff --git a/man/groff.7.man b/man/groff.7.man
-index 1fb635f2b..1d248b237 100644
---- a/man/groff.7.man
-+++ b/man/groff.7.man
-@@ -1281,6 +1281,7 @@ .SH Identifiers
- typeface,
- color,
- special character or character class,
-+hyphenation language code,
- environment,
- or stream.
- .
-
-
-(So recent that in fact I haven't pushed that yet.)
-
-Lists like the foregoing are common in man pages.
-
-Regards,
-Branden
-
-[1] https://man7.org/linux/man-pages/dir_by_project.html#groff
-[2] String definitions, "string comparisons"[3], and diversions.
-[3] strictly, "formatted output comparisons"
-
-    https://www.gnu.org/software/groff/manual/groff.html.node/Operators-in-=
-Conditionals.html
-
-    You can do stricter string comparisons in GNU troff.  And I've
-    thought of some syntactic sugar for performing them that wouldn't
-    break backward compatibility.
-
-[4] To really land the feature, we need automatic tag generation from
-    input text (we don't want to make the man page author construct
-    their own tags).  Another reason we want the construction to be
-    automatic is to make the tags unique when multiple man pages are
-    formatted in one run, as one might do when making a book of man
-    pages.  Automatic tagging will also enable the slaying of two other
-    ancient dragons.
-
-    1.  deep internal links for PDF bookmarks
-    2.  pod2man's `IX`-happy output; the widespread use of this
-        nonstandard macro confuses way too many novice page authors, and
-        bloats document size.
-
-   Another feature we'll really want to do this right is improved string
-   processing facilities.  That, too, is something that will pay
-   dividends in several areas.  With a proper string iterator in the
-   formatter (and a couple more conditional operators),[5] it will be
-   possible to write a string library as a macro file, slimming down the
-   formatter itself a little and making macro writers' lives easier.
-   We're only two days into the month and this has already come up on
-   the groff list.
-
-   https://lists.gnu.org/archive/html/groff/2024-11/msg00002.html
-
-[5] https://savannah.gnu.org/bugs/?62264
-
---aabs2ooqy7tzaxis
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEh3PWHWjjDgcrENwa0Z6cfXEmbc4FAmcl+h0ACgkQ0Z6cfXEm
-bc6Tew//bjp8yetBBhlWQr0hlq2SWKJNTLzeH4Vvwvljv0BOnDDj/HgewU7aGSxh
-sRqcB77/5zH7XQxaRIIyRzwro2v5/4fCxwM93yCG3W3TH0M99TSVNh08MHEdouPy
-G0TH430t7jH3yvEx+Jk6GAn/1n28Yp3KJbqhiM6lRkpAIJCTKw1Ul2Fb3LzVhzyy
-mK2Q1z04P+rKQxY+LjWTSLiu8z09vvY8V1EQGEIaQ7xGdmYMUJ6YMZvwjMwbPg7i
-Plsc7A6kCSdYvxuGg8aanY9iUOeVj7XezWfYLOO0fBIFAL3BRk/jfnauhmmWV0lH
-LtakHqeH1Fi0fgQmMCF9KuIHJ2ugjkmu/Vh5WnlLHpJlw++xLElHydPggIwKdPW3
-fMv0cY8kT0LOhx+Cq8nyBQRhDCnkBqR4x6N3oY44DcMYQ9NhT8YKhRJOfHhanQ5F
-vwsnG8f1llPAI9JPosjZp4Sdi0euOPLQIKCHPe1IXcX2XpugXA0DIJYXJOy/9qxH
-ULYKAyDa5dVaWf/+M2lu3KBArYvrX/gdBYflyT2jb4tcmOE5mffgbKD/02TNtD5M
-YdsVRdHV6wor4m7+KBKckoTEW0azfaYrF7tqBlwu9d7XT28byMtdVzbDwNAUi/87
-JXd1R+vqgoUIBa5M2bUnwdt67fgYFSgd6ahz2kefHmH7IloiSYY=
-=8bLa
------END PGP SIGNATURE-----
-
---aabs2ooqy7tzaxis--
+Message-ID: <173054220135.3137.10781057478330597889.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+The following commit has been merged into the timers/vdso branch of tip:
+
+Commit-ID:     3bf96deae5ad9664bdf2db95599e52221f9ddc33
+Gitweb:        https://git.kernel.org/tip/3bf96deae5ad9664bdf2db95599e52221f9ddc33
+Author:        Nam Cao <namcao@linutronix.de>
+AuthorDate:    Thu, 10 Oct 2024 09:01:30 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 02 Nov 2024 11:05:16 +01:00
+
+vdso: Rename struct arch_vdso_data to arch_vdso_time_data
+
+The struct arch_vdso_data is only about vdso time data. So rename it to
+arch_vdso_time_data to make it obvious.
+Non time-related data will be migrated out of these structs soon.
+
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Heiko Carstens <hca@linux.ibm.com> # s390
+Link: https://lore.kernel.org/all/20241010-vdso-generic-base-v1-28-b64f0842d512@linutronix.de
+
+---
+ arch/Kconfig                            |  2 +-
+ arch/riscv/Kconfig                      |  2 +-
+ arch/riscv/include/asm/vdso/data.h      | 17 -----------------
+ arch/riscv/include/asm/vdso/time_data.h | 17 +++++++++++++++++
+ arch/riscv/kernel/sys_hwprobe.c         |  2 +-
+ arch/riscv/kernel/vdso/hwprobe.c        |  4 ++--
+ arch/s390/Kconfig                       |  2 +-
+ arch/s390/include/asm/vdso/data.h       | 12 ------------
+ arch/s390/include/asm/vdso/time_data.h  | 12 ++++++++++++
+ include/vdso/datapage.h                 |  8 ++++----
+ 10 files changed, 39 insertions(+), 39 deletions(-)
+ delete mode 100644 arch/riscv/include/asm/vdso/data.h
+ create mode 100644 arch/riscv/include/asm/vdso/time_data.h
+ delete mode 100644 arch/s390/include/asm/vdso/data.h
+ create mode 100644 arch/s390/include/asm/vdso/time_data.h
+
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 8af374e..7f1ec32 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -1530,7 +1530,7 @@ config HAVE_SPARSE_SYSCALL_NR
+ 	  entries at 4000, 5000 and 6000 locations. This option turns on syscall
+ 	  related optimizations for a given architecture.
+ 
+-config ARCH_HAS_VDSO_DATA
++config ARCH_HAS_VDSO_TIME_DATA
+ 	bool
+ 
+ config HAVE_STATIC_CALL
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 6254594..c278280 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -50,7 +50,7 @@ config RISCV
+ 	select ARCH_HAS_SYSCALL_WRAPPER
+ 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+ 	select ARCH_HAS_UBSAN
+-	select ARCH_HAS_VDSO_DATA
++	select ARCH_HAS_VDSO_TIME_DATA
+ 	select ARCH_KEEP_MEMBLOCK if ACPI
+ 	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE	if 64BIT && MMU
+ 	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
+diff --git a/arch/riscv/include/asm/vdso/data.h b/arch/riscv/include/asm/vdso/data.h
+deleted file mode 100644
+index dc2f76f..0000000
+--- a/arch/riscv/include/asm/vdso/data.h
++++ /dev/null
+@@ -1,17 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef __RISCV_ASM_VDSO_DATA_H
+-#define __RISCV_ASM_VDSO_DATA_H
+-
+-#include <linux/types.h>
+-#include <vdso/datapage.h>
+-#include <asm/hwprobe.h>
+-
+-struct arch_vdso_data {
+-	/* Stash static answers to the hwprobe queries when all CPUs are selected. */
+-	__u64 all_cpu_hwprobe_values[RISCV_HWPROBE_MAX_KEY + 1];
+-
+-	/* Boolean indicating all CPUs have the same static hwprobe values. */
+-	__u8 homogeneous_cpus;
+-};
+-
+-#endif /* __RISCV_ASM_VDSO_DATA_H */
+diff --git a/arch/riscv/include/asm/vdso/time_data.h b/arch/riscv/include/asm/vdso/time_data.h
+new file mode 100644
+index 0000000..dfa6522
+--- /dev/null
++++ b/arch/riscv/include/asm/vdso/time_data.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __RISCV_ASM_VDSO_TIME_DATA_H
++#define __RISCV_ASM_VDSO_TIME_DATA_H
++
++#include <linux/types.h>
++#include <vdso/datapage.h>
++#include <asm/hwprobe.h>
++
++struct arch_vdso_time_data {
++	/* Stash static answers to the hwprobe queries when all CPUs are selected. */
++	__u64 all_cpu_hwprobe_values[RISCV_HWPROBE_MAX_KEY + 1];
++
++	/* Boolean indicating all CPUs have the same static hwprobe values. */
++	__u8 homogeneous_cpus;
++};
++
++#endif /* __RISCV_ASM_VDSO_TIME_DATA_H */
+diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+index cea0ca2..711a31f 100644
+--- a/arch/riscv/kernel/sys_hwprobe.c
++++ b/arch/riscv/kernel/sys_hwprobe.c
+@@ -402,7 +402,7 @@ static int do_riscv_hwprobe(struct riscv_hwprobe __user *pairs,
+ static int __init init_hwprobe_vdso_data(void)
+ {
+ 	struct vdso_data *vd = __arch_get_k_vdso_data();
+-	struct arch_vdso_data *avd = &vd->arch_data;
++	struct arch_vdso_time_data *avd = &vd->arch_data;
+ 	u64 id_bitsmash = 0;
+ 	struct riscv_hwprobe pair;
+ 	int key;
+diff --git a/arch/riscv/kernel/vdso/hwprobe.c b/arch/riscv/kernel/vdso/hwprobe.c
+index 1e926e4..a158c02 100644
+--- a/arch/riscv/kernel/vdso/hwprobe.c
++++ b/arch/riscv/kernel/vdso/hwprobe.c
+@@ -17,7 +17,7 @@ static int riscv_vdso_get_values(struct riscv_hwprobe *pairs, size_t pair_count,
+ 				 unsigned int flags)
+ {
+ 	const struct vdso_data *vd = __arch_get_vdso_data();
+-	const struct arch_vdso_data *avd = &vd->arch_data;
++	const struct arch_vdso_time_data *avd = &vd->arch_data;
+ 	bool all_cpus = !cpusetsize && !cpus;
+ 	struct riscv_hwprobe *p = pairs;
+ 	struct riscv_hwprobe *end = pairs + pair_count;
+@@ -52,7 +52,7 @@ static int riscv_vdso_get_cpus(struct riscv_hwprobe *pairs, size_t pair_count,
+ 			       unsigned int flags)
+ {
+ 	const struct vdso_data *vd = __arch_get_vdso_data();
+-	const struct arch_vdso_data *avd = &vd->arch_data;
++	const struct arch_vdso_time_data *avd = &vd->arch_data;
+ 	struct riscv_hwprobe *p = pairs;
+ 	struct riscv_hwprobe *end = pairs + pair_count;
+ 	unsigned char *c = (unsigned char *)cpus;
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index d339fe4..8cdd835 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -88,7 +88,7 @@ config S390
+ 	select ARCH_HAS_STRICT_MODULE_RWX
+ 	select ARCH_HAS_SYSCALL_WRAPPER
+ 	select ARCH_HAS_UBSAN
+-	select ARCH_HAS_VDSO_DATA
++	select ARCH_HAS_VDSO_TIME_DATA
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	select ARCH_INLINE_READ_LOCK
+ 	select ARCH_INLINE_READ_LOCK_BH
+diff --git a/arch/s390/include/asm/vdso/data.h b/arch/s390/include/asm/vdso/data.h
+deleted file mode 100644
+index 0e2b40e..0000000
+--- a/arch/s390/include/asm/vdso/data.h
++++ /dev/null
+@@ -1,12 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef __S390_ASM_VDSO_DATA_H
+-#define __S390_ASM_VDSO_DATA_H
+-
+-#include <linux/types.h>
+-
+-struct arch_vdso_data {
+-	__s64 tod_steering_delta;
+-	__u64 tod_steering_end;
+-};
+-
+-#endif /* __S390_ASM_VDSO_DATA_H */
+diff --git a/arch/s390/include/asm/vdso/time_data.h b/arch/s390/include/asm/vdso/time_data.h
+new file mode 100644
+index 0000000..8a08752
+--- /dev/null
++++ b/arch/s390/include/asm/vdso/time_data.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __S390_ASM_VDSO_TIME_DATA_H
++#define __S390_ASM_VDSO_TIME_DATA_H
++
++#include <linux/types.h>
++
++struct arch_vdso_time_data {
++	__s64 tod_steering_delta;
++	__u64 tod_steering_end;
++};
++
++#endif /* __S390_ASM_VDSO_TIME_DATA_H */
+diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
+index b85f24c..d967baa 100644
+--- a/include/vdso/datapage.h
++++ b/include/vdso/datapage.h
+@@ -19,10 +19,10 @@
+ #include <vdso/time32.h>
+ #include <vdso/time64.h>
+ 
+-#ifdef CONFIG_ARCH_HAS_VDSO_DATA
+-#include <asm/vdso/data.h>
++#ifdef CONFIG_ARCH_HAS_VDSO_TIME_DATA
++#include <asm/vdso/time_data.h>
+ #else
+-struct arch_vdso_data {};
++struct arch_vdso_time_data {};
+ #endif
+ 
+ #define VDSO_BASES	(CLOCK_TAI + 1)
+@@ -114,7 +114,7 @@ struct vdso_data {
+ 	u32			hrtimer_res;
+ 	u32			__unused;
+ 
+-	struct arch_vdso_data	arch_data;
++	struct arch_vdso_time_data arch_data;
+ };
+ 
+ /**
 
