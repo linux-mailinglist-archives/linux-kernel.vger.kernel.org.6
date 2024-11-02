@@ -1,178 +1,162 @@
-Return-Path: <linux-kernel+bounces-393481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB469BA12B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:24:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C509BA12E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:25:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A06CDB21404
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5DE281BFA
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA6219F461;
-	Sat,  2 Nov 2024 15:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A041A0B1A;
+	Sat,  2 Nov 2024 15:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lUKJqR7s"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1M0PmGB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874C3185936
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 15:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1CE19F43A;
+	Sat,  2 Nov 2024 15:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730561086; cv=none; b=bzN1OrZazE3BoeU7+zz44ZHNMDAZ+z0e5YvSOEmdqar0pzxRX//7rCVnU5Br0pJHqlFgNJGV9fLaK7iFNIZRiaYPsoi+su5mK3UfOegFlUJzPTUGKuuoXD2joGeT39Ej+XeyoiE7zA5uF57f0b4hqjDfkZku1XNbGNghcnCMOqY=
+	t=1730561100; cv=none; b=pYnBjaaVyQNIzi8FxmEA6KxHP6DQe0J7x6OkgK7bTRfbvA/lk6woJvat4OTTL4CmpAZNCy7U1lUISKr9Je8Y+RXn54SUzZw8Durux4xVgHdhicITpz6jmOXQierAQ7lN8ElRb7hTXuYShD2p1Z7lkZ798hdfJ6L4WkBkpoHlz+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730561086; c=relaxed/simple;
-	bh=naPVckIaIqRDTyQyjYm5TuyD2+k+aoNuQtkFc+UMH0Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sx0J6llJTe/yRN4rsJqbyi6jTZOtZJGIByKriLzggqE+6Q+RQMi6YFWvGP+GHi3338ZpJOQ8OnzItOV2Sj0Wy3uF3Qei+II7sqR5721IeFhh25GJ+ndtEvumTaR6+626HaGjkaEMuexrXGdV+Pc17KoG3lWmRXZmuLwxxUJPt5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lUKJqR7s; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <06a4c8d0-a443-458b-82a5-ff90efc47ec0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730561080;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ScCswAKEEiXX1cjo9YHcQ9iy5zm0qIs66Se0a1qxy7A=;
-	b=lUKJqR7sE9+ylNBln5t3yPqho3rAmrFNxWWqVqL4OZ4yy0YOv00SvgNOSeP34dC1oenVxD
-	kVROxI4ABC1HHntX7rMrof5dTIEsiKX274OVIE8fR3P3V/9GbZ2qmE9nJ1nsNwnagsnogz
-	AWAnpV9PCIyag35vXq/T8DsaYEQNMb8=
-Date: Sat, 2 Nov 2024 23:24:31 +0800
+	s=arc-20240116; t=1730561100; c=relaxed/simple;
+	bh=aeiR89A3bm+yZZrMX0t/ta1PKN9Avc4snrD4b1mhJLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VzB5Njjrmxf77CGqOYCrgvGfXEfcp7+MLFNM8TpVBC4AdB+Zl/EFtxJ5OWDd34a0Ikt742LzVq3303TPSIyTp3jFXou3K/OuGhJxvrcL3JAerc0uitqhEhYu3efhMM3RUabbYUqFu0wontz14y77fUKXRyQvISWC/LhNYJBo5X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M1M0PmGB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBFB6C4CEC3;
+	Sat,  2 Nov 2024 15:24:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730561100;
+	bh=aeiR89A3bm+yZZrMX0t/ta1PKN9Avc4snrD4b1mhJLc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=M1M0PmGB7Ax1DRm/gT5gUaXCZO9evDJJr+rMN+cegn94ulnCKIsdoyqECPso/atw3
+	 cwck259IUI51UZegF5w5Ozu/2umYtOQtjiiaIIYJqUwclAt8Xou2PgfR/Cjp7AtcOK
+	 7OtVmt06joELIb7z5a7dJu799/zQxZSisY5Wyo6FcBmGEzovOiD2Q8k28VMGeQuRNJ
+	 yOyHhZFL8oXOGaZiz5ufCTBHbmKX+aKiMtvP0E2lB8Tj3WZO1ITkhCuFPlVTvDyG0U
+	 RfBBOpKke0II3mA5sdrbdqoBIP/slR0Hh+uGyptaLn3UDiahpxRBr4cpsrbUDgHd5t
+	 DrnaVQHkbnzGg==
+Date: Sat, 2 Nov 2024 15:24:52 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ anshulusr@gmail.com, gustavograzs@gmail.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/7] iio: chemical: bme680: Add triggered buffer
+ support
+Message-ID: <20241102152452.062ff2c4@jic23-huawei>
+In-Reply-To: <20241102131311.36210-4-vassilisamir@gmail.com>
+References: <20241102131311.36210-1-vassilisamir@gmail.com>
+	<20241102131311.36210-4-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3] drm/etnaviv: Request pages from DMA32 zone on
- addressing_limited
-To: xiaolei wang <xiaolei.wang@windriver.com>,
- Lucas Stach <l.stach@pengutronix.de>, linux+etnaviv@armlinux.org.uk,
- christian.gmeiner@gmail.com, airlied@gmail.com, daniel@ffwll.ch
-Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240903020857.3250038-1-xiaolei.wang@windriver.com>
- <7a6ffbb773784dee0ea3ee87e563ac4e4f7c9c90.camel@pengutronix.de>
- <49288307-a98d-460d-88d5-e92f23a31a46@windriver.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <49288307-a98d-460d-88d5-e92f23a31a46@windriver.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Sat,  2 Nov 2024 14:13:07 +0100
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-I forget to mention that  the commit title should be "on addressing limited devices",
-the underscore between the last two words is not necessary. It's a typo when reply
-email.
+> Add triggered buffer and soft timestamp support. The available scan mask
+> enables all the channels of the sensor in order to follow the operation of
+> the sensor. The sensor basically starts to capture from all channels
+> as long as it enters into FORCED mode.
+> 
+> The bulk read, reads a total of 15 registers from the sensor, 0x1D..0x2B.
+> Even though some of those registers are not reported in the register map
+> of the device, this is how the BME680 Sensor API [1] proposes to do it.
+> This allows to have one bulk read instead of multiple ones.
+> 
+> Link: https://github.com/boschsensortec/BME68x_SensorAPI/blob/v4.4.8/bme68x.c#L1200
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Applied with a couple of (to me) superfluous comments dropped.
+> +static irqreturn_t bme680_trigger_handler(int irq, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct bme680_data *data = iio_priv(indio_dev);
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +	u32 adc_temp, adc_press, adc_humid;
+> +	u16 adc_gas_res, gas_regs_val;
+> +	u8 gas_range;
+> +	s32 t_fine;
+> +	int ret;
+> +
+> +	guard(mutex)(&data->lock);
+> +
+> +	ret = bme680_set_mode(data, BME680_MODE_FORCED);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	ret = bme680_wait_for_eoc(data);
+> +	if (ret)
+> +		goto out;
+> +
+> +	/* Burst read data regs */
+This one dropped as kind of obvious from the code.
+> +	ret = regmap_bulk_read(data->regmap, BME680_REG_MEAS_STAT_0,
+> +			       data->buf, sizeof(data->buf));
+> +	if (ret) {
+> +		dev_err(dev, "failed to burst read sensor data\n");
+> +		goto out;
+> +	}
+> +	if (data->buf[0] & BME680_GAS_MEAS_BIT) {
+> +		dev_err(dev, "gas measurement incomplete\n");
+> +		goto out;
+> +	}
+> +
+> +	/* Temperature calculations */
+> +	adc_temp = FIELD_GET(BME680_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[5]));
+> +	if (adc_temp == BME680_MEAS_SKIPPED) {
+> +		dev_err(dev, "reading temperature skipped\n");
+> +		goto out;
+> +	}
+> +	data->scan.chan[0] = bme680_compensate_temp(data, adc_temp);
+> +	t_fine = bme680_calc_t_fine(data, adc_temp);
+> +
+> +	/* Pressure calculations */
+> +	adc_press = FIELD_GET(BME680_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[2]));
+> +	if (adc_press == BME680_MEAS_SKIPPED) {
+> +		dev_err(dev, "reading pressure skipped\n");
+> +		goto out;
+> +	}
+> +	data->scan.chan[1] = bme680_compensate_press(data, adc_press, t_fine);
+> +
+> +	/* Humidity calculations */
+> +	adc_humid = get_unaligned_be16(&data->buf[8]);
+> +	if (adc_humid == BME680_MEAS_SKIPPED) {
+> +		dev_err(dev, "reading humidity skipped\n");
+> +		goto out;
+> +	}
+> +	data->scan.chan[2] = bme680_compensate_humid(data, adc_humid, t_fine);
+> +
+> +	/* Gas calculations */
+> +	gas_regs_val = get_unaligned_be16(&data->buf[13]);
+> +	adc_gas_res = FIELD_GET(BME680_ADC_GAS_RES, gas_regs_val);
+> +	if ((gas_regs_val & BME680_GAS_STAB_BIT) == 0) {
+> +		dev_err(dev, "heater failed to reach the target temperature\n");
+> +		goto out;
+> +	}
+> +	gas_range = FIELD_GET(BME680_GAS_RANGE_MASK, gas_regs_val);
+> +	data->scan.chan[3] = bme680_compensate_gas(data, adc_gas_res, gas_range);
+> +
+> +	/* Push to buffer */
+This one is extremely obvious so dropped.
 
-
-On 2024/10/1 20:32, xiaolei wang wrote:
->
->
-> On 10/1/24 20:17, Lucas Stach wrote:
->> CAUTION: This email comes from a non Wind River email account!
->> Do not click links or open attachments unless you recognize the sender and know the content is safe.
->>
->> Hi Xiaolei,
->>
->> Am Dienstag, dem 03.09.2024 um 10:08 +0800 schrieb Xiaolei Wang:
->>> Remove __GFP_HIGHMEM when requesting a page from DMA32 zone,
->>> and since all vivante GPUs in the system will share the same
->>> DMA constraints, move the check of whether to get a page from
->>> DMA32 to etnaviv_bind().
->>>
->>> Fixes: b72af445cd38 ("drm/etnaviv: request pages from DMA32 zone when needed")
->>> Suggested-by: Sui Jingfeng<sui.jingfeng@linux.dev>
->>> Signed-off-by: Xiaolei Wang<xiaolei.wang@windriver.com>
->>> ---
->>>
->>> change log
->>>
->>> v1:
->>>    https://patchwork.kernel.org/project/dri-devel/patch/20240806104733.2018783-1-xiaolei.wang@windriver.com/
->>>
->>> v2:
->>>    Modify the issue of not retaining GFP_USER in v1 and update the commit log.
->>>
->>> v3:
->>>    Use "priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"
->>> instead of
->>>    "priv->shm_gfp_mask = GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"
->> I don't understand this part of the changes in the new version. Why
->> should we drop the HIGHMEM bit always and not only in the case where
->> dma addressing is limited? This seems overly restrictive.
->
-> Makes sense, thanks for your reminder, I will drop the HIGHMEM bit 
-> when the next version has address limit
->
->     if (dma_addressing_limited(gpu->dev)) {
->         priv->shm_gfp_mask |= GFP_DMA32;
->         priv->shm_gfp_mask &= ~__GFP_HIGHMEM;
->     }
->
-> thanks
->
-> xiaolei
->
->> Regards,
->> Lucas
->>
->>> and move the check of whether to get a page from DMA32 to etnaviv_bind().
->>>
->>>   drivers/gpu/drm/etnaviv/etnaviv_drv.c | 10 +++++++++-
->>>   drivers/gpu/drm/etnaviv/etnaviv_gpu.c |  8 --------
->>>   2 files changed, 9 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
->>> index 6500f3999c5f..8cb2c3ec8e5d 100644
->>> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
->>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
->>> @@ -536,7 +536,15 @@ static int etnaviv_bind(struct device *dev)
->>>        mutex_init(&priv->gem_lock);
->>>        INIT_LIST_HEAD(&priv->gem_list);
->>>        priv->num_gpus = 0;
->>> -     priv->shm_gfp_mask = GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
->>> +     priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
->>> +
->>> +     /*
->>> +      * If the GPU is part of a system with DMA addressing limitations,
->>> +      * request pages for our SHM backend buffers from the DMA32 zone to
->>> +      * hopefully avoid performance killing SWIOTLB bounce buffering.
->>> +      */
->>> +     if (dma_addressing_limited(dev))
->>> +             priv->shm_gfp_mask |= GFP_DMA32;
->>>
->>>        priv->cmdbuf_suballoc = etnaviv_cmdbuf_suballoc_new(drm->dev);
->>>        if (IS_ERR(priv->cmdbuf_suballoc)) {
->>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
->>> index 7c7f97793ddd..5e753dd42f72 100644
->>> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
->>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
->>> @@ -839,14 +839,6 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
->>>        if (ret)
->>>                goto fail;
->>>
->>> -     /*
->>> -      * If the GPU is part of a system with DMA addressing limitations,
->>> -      * request pages for our SHM backend buffers from the DMA32 zone to
->>> -      * hopefully avoid performance killing SWIOTLB bounce buffering.
->>> -      */
->>> -     if (dma_addressing_limited(gpu->dev))
->>> -             priv->shm_gfp_mask |= GFP_DMA32;
->>> -
->>>        /* Create buffer: */
->>>        ret = etnaviv_cmdbuf_init(priv->cmdbuf_suballoc, &gpu->buffer,
->>>                                  PAGE_SIZE);
-
--- 
-Best regards,
-Sui
-
+> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->scan,
+> +					   iio_get_time_ns(indio_dev));
+> +out:
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +	return IRQ_HANDLED;
+> +}
+> +
 
