@@ -1,155 +1,169 @@
-Return-Path: <linux-kernel+bounces-393486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC2F9BA137
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:32:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A98599BA0FB
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0104E2822E3
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:32:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4C2281F77
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2826B1A0B07;
-	Sat,  2 Nov 2024 15:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E174018BB87;
+	Sat,  2 Nov 2024 15:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="EfzqPLcc";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="g2u6xzv1"
-Received: from fallback1.i.mail.ru (fallback1.i.mail.ru [79.137.243.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tweaklogic.com header.i=@tweaklogic.com header.b="c+gmsUSO"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2395356446
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 15:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C24878C9C
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 15:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730561529; cv=none; b=E2nn3cySWs7avinCf0W02VOLEtw3WIXr1kRYHUeup8g7n6XGN8pqvm1zSivgHAGRdntoJgNja5A5WjQze7vYG4UduaGK00DCHJUl50o+vyu+NUoUYDepc/djt3SDjDgIj4q7hohlLOpLVGUItKxmbCRvTRtcPwE/QHhP8mojGf0=
+	t=1730560180; cv=none; b=P22/pGw7lroRJu2ZrK0RS8Azve0iVdX917NeCb+b/X3g3Gc0KlOBwhweaZHhip/wRlBK/jydJFh2D8sOjSXR3FrqPWHVXT1/Uk9yfLN2u1wvNJUAilKjr5L+1dl1IrLMXGHTqAEGvquDs92EpMFeWgpW/gYy9bH6JbpAMMENcT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730561529; c=relaxed/simple;
-	bh=6/p+9rmin3dK9Rw+Uy4Bz2zs+Rzr/5zFfgz/XxyUxv0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=THgdnhhw1Lye9CXq7OD015k1JaTt7WSCuVqEJmaOo0rAwZjGELVnfDSeDBrnGoAMgxP3tHElKos2967GCH44wyWKv+zCS40HPP6a5QPI0pI3ezZ9bUtyDqUsGNVlyFudRv/BRdfNARMmZVAOkb5PVP7Bk1Eh2Y7E2WeBDZQpP8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inbox.ru; spf=pass smtp.mailfrom=inbox.ru; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=EfzqPLcc; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=g2u6xzv1; arc=none smtp.client-ip=79.137.243.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inbox.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inbox.ru
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru; s=mail4;
-	h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=vdeBe/DLmHjw2+s+J7CLyp7iFITTEXmMLErhQRjCenY=;
-	t=1730561526;x=1730651526; 
-	b=EfzqPLcckuSu8DFSqBsS+WtpM0Jekzpt5OV1LD8XzFF6zzrN99miqLSL0bJWj9Ddvr14oK9mtHwwdmQlWd9RqaKgSZaSjoKCaliGhqDesLjKH7JVWiHknhViQi6nT9qsYRH+ncPDzsnUKO64ZiZgvqpuXbM7seJ38HwfEfB7a9DKkA3dk6jz/XEGYflGtB5i0tf477q7nLBrBvY2LQm89v2xIobOhy8GdkkIjGOwlFaCWftZ4GHzJDx4FIF9T3YbWrahD4vwUlJMKuAg1+HXny4Wv+1Bjf82/qXIuhPEzDdAMFkhm7D2ttVu00zUqEVqQbAAbDXMQ3dh2iHeKxq/CA==;
-Received: from [10.113.128.120] (port=55852 helo=smtp54.i.mail.ru)
-	by fallback1.i.mail.ru with esmtp (envelope-from <fido_max@inbox.ru>)
-	id 1t7Fcn-001bwE-AD
-	for linux-kernel@vger.kernel.org; Sat, 02 Nov 2024 18:01:13 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru;
-	s=mail4; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
-	X-Cloud-Ids:Disposition-Notification-To;
-	bh=vdeBe/DLmHjw2+s+J7CLyp7iFITTEXmMLErhQRjCenY=; t=1730559673; x=1730649673; 
-	b=g2u6xzv1dPa3vYFBptHw44tWAmjSgELE6ZwQd1aJGUPHyLQbu16tbZN0WhM1JmtnhNwDfwUHOBN
-	3UaoSJ4tXTqDawnF0qUl0bZ+4TO//gxd4fyf1miSywYJsojEKF3Zn0bGEAolirBhYRVqezBig4XlM
-	TIcSJefQRhQn9wzGGLvlC41WIm3LyI0+hLlHT0GIZRSpV07Zvqx02bWPFZ1brwnqC8NYng2Ogy2Aw
-	gZaePB3HTiw5nFSoHPcQEvhTeQ7ders7WpRmbbkhd6XebRjhNzsMI6dYk9QBvs9gW8Jfxx7tApw3E
-	SaHeMFHbGOJdvGBsqUZmbywkABamhGWvhpUg==;
-Received: by exim-smtp-6c5957b6dd-fj2bn with esmtpa (envelope-from <fido_max@inbox.ru>)
-	id 1t7Fca-00000000Gx4-2s4z; Sat, 02 Nov 2024 18:01:01 +0300
-From: Maxim Kochetkov <fido_max@inbox.ru>
-To: Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org
-Cc: Maxim Kochetkov <fido_max@inbox.ru>
-Subject: [PATCH] regmap-irq: Introduce ack_after_handle option
-Date: Sat,  2 Nov 2024 18:00:43 +0300
-Message-ID: <20241102150045.218510-3-fido_max@inbox.ru>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241102150045.218510-1-fido_max@inbox.ru>
-References: <20241102150045.218510-1-fido_max@inbox.ru>
+	s=arc-20240116; t=1730560180; c=relaxed/simple;
+	bh=L+Ocnh5eBjxxGrMYxyxEgEVGaSoGcibumMOipADOpEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ihGOQY5aQjvT1NuN1PozI6g6S/bvk1krbufFYc/VdaDESNJNQLnBCKzeRv3EDgbQVISPtK1vlxraF5j9zgDSXGnUWTbskArmIuIhS+4z3utL5zDNr8HU8ziSMRkOZ/SIMJGlGAzxAPPQlhNs+eAnL3/3eNjddUykuomi65DYFTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tweaklogic.com; spf=pass smtp.mailfrom=tweaklogic.com; dkim=pass (2048-bit key) header.d=tweaklogic.com header.i=@tweaklogic.com header.b=c+gmsUSO; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tweaklogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tweaklogic.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cceb8d8b4so18251005ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 08:09:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tweaklogic.com; s=google; t=1730560178; x=1731164978; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0leqICJyTXfsj1QTNtYhe89s48cLc/TfjqKKmksT/s0=;
+        b=c+gmsUSOlByMUBNvaUvQJn/waHTAPxaVvP7cBDbCvxlAAxsYckdxsyZNu83hNJ23vI
+         Ab9z+KF18H+V5a7OMZzpjDqQg69a66mpvoPq+FjwnliKziRHKmkwSo+Lpd1H9f+eTXma
+         DT1YQolbUjpYQ8WWJtQulIhQK1coRpj9B1ExDM+m9Ae9BX+eK9TfRyeoVhic0qGhTqiV
+         alXP7wMCgq7GYPo91+bPnnfchCP0sDBYnKiWeQU+xvPoVpfI4T+G20YEYiUl/WLJ+Jdz
+         sxtQPXpyvb2TwL7THvEbV7JhmsQrTsb+BpxARY/kNMYuMZSBtEnfpofQ0ivJuo4ve6Kg
+         OquA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730560178; x=1731164978;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0leqICJyTXfsj1QTNtYhe89s48cLc/TfjqKKmksT/s0=;
+        b=VPdn7RqhVrJ0GTwNgbxcRtITIl+vtvhrHh/si+KbS9o3tp0Br4WuTJJopImllU2RWZ
+         TuO9btyAODfz6mzKNio+wYhjOm9M6MUHG9siyVeFBCEal0y2mcaGuvrIsEXWLrcUMbwc
+         UJNE1IyrjSlIDbo1KsCF8a4VeRDJNijnYYAdraU5KIvNNMufM8tBU5uiTLXIViRlR4yK
+         3HWfYcnfj0uYfZAIYglBAM7xcT9vS35kBwbCHa1bh2HHKHoRy1SRPCdgUvm2Hwa/pAm5
+         zB/KBvwLMJjOPVgtJxyAHVRhb4Jq9FVA0t3E3K+/JoQLhyigP2MFp2+47SxeG+zlEJD8
+         sW7g==
+X-Forwarded-Encrypted: i=1; AJvYcCW54qgtV6Sf6nO/II7o8UxCr0klZ8z/3UxXEIL1a42C4EsMFT95INzqJyoU+73cto+cBVaf/PlaGOeG96c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhN8RWcEej5RzmqCGq70KbjsuT5mO4zioKWmULJP369ODACkoM
+	l4ypN0hzTE44/koJ6k4K4zYPHfFfhO7LPS5C/+JbZFobcAk+AfNiMpn08d3nDJ8=
+X-Google-Smtp-Source: AGHT+IGtMCKhO/lNmhTUeMJKCu6Ot50mbF1xufreQMYqVzRQWGDn7Q9Kxh30qqU37dlU6/vepIGY0Q==
+X-Received: by 2002:a17:902:ec8e:b0:211:2fb2:6a6 with SMTP id d9443c01a7336-2112fb206e3mr49239715ad.24.1730560177752;
+        Sat, 02 Nov 2024 08:09:37 -0700 (PDT)
+Received: from [192.168.50.161] ([180.150.112.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c0ed3sm34953685ad.216.2024.11.02.08.09.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2024 08:09:37 -0700 (PDT)
+Message-ID: <43b07db2-6856-4dd2-8616-560a24d9f09a@tweaklogic.com>
+Date: Sun, 3 Nov 2024 01:39:25 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 13/15] iio: light: apds9306: simplifies if branch in
+ apds9306_write_event_config
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+ Mudit Sharma <muditsharma.info@gmail.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Cosmin Tanislav <cosmin.tanislav@analog.com>,
+ Ramona Gradinariu <ramona.gradinariu@analog.com>,
+ Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Dan Robertson <dan@dlrobertson.com>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
+ Michal Simek <michal.simek@amd.com>, Mariel Tinaco
+ <Mariel.Tinaco@analog.com>, Jagath Jog J <jagathjog1996@gmail.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Kevin Tsai <ktsai@capellamicro.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Benson Leung
+ <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
+References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
+ <20241031-iio-fix-write-event-config-signature-v2-13-2bcacbb517a2@baylibre.com>
+ <20241101164118.687be624@jic23-huawei>
+ <4e4e5281-d489-42b5-b358-c44958cfa4f9@tweaklogic.com>
+ <CAEHHSva6+Br9rXE9n0wqXuwQqetXN=Ae5vg0rxmPRfCVdw9atA@mail.gmail.com>
+Content-Language: en-US
+From: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
+In-Reply-To: <CAEHHSva6+Br9rXE9n0wqXuwQqetXN=Ae5vg0rxmPRfCVdw9atA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Mailru-Src: smtp
-X-4EC0790: 10
-X-7564579A: 78E4E2B564C1792B
-X-77F55803: 4F1203BC0FB41BD92733C19FC6DB0C8B17DC026970B09D7B6652C6FAA5D0821F182A05F5380850406A0E455650B572753DE06ABAFEAF670510E7222FC75DA9EC27B1BB2EC4D8FC0564783DCF1A4C2DEE
-X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE795530B80AF2ADB7BEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637129C704593A46970EA1F7E6F0F101C6723150C8DA25C47586E58E00D9D99D84E1BDDB23E98D2D38BC08E230531AC9C901C98D639A26E7B448780B6AF7099949BB3149EF453A61B3C1DF9E95F17B0083B26EA987F6312C9EC140C956E756FBB7AC26CFBAC0749D213D2E47CDBA5A96583C09775C1D3CA48CFB73CFAAED92B6E13117882F4460429724CE54428C33FAD30A8DF7F3B2552694AC26CFBAC0749D213D2E47CDBA5A9658378DA827A17800CE7089B44B3323BCBA59FA2833FD35BB23DF004C906525384302BEBFE083D3B9BA71A620F70A64A45A98AA50765F79006372E808ACE2090B5E1725E5C173C3A84C317B107DEF921CE79089D37D7C0E48F6C8AA50765F7900637AD0424077D726551EFF80C71ABB335746BA297DBC24807EABDAD6C7F3747799A
-X-C1DE0DAB: 0D63561A33F958A534F5B92D0C6DD6BA5002B1117B3ED69694671BEF450A2A95F5FEB6EB1EB183FD823CB91A9FED034534781492E4B8EEADABF80F987DAEDACBC79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
-X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF3FED46C3ACD6F73ED3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF037D97CAAD28268801668E415732833E44D49D983F1D5A0CA820EFF7E4C0528FB2CCF8B0FF448A899C95337E58CA42E6FA90C9952981856BB5BFE37A260F351D0722081BCD10184E9F49EEF1215E7BEC913E6812662D5F2A17D6C1CDD2003EB8E03787203701020945C72C348FB7EED3
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojg5lDvPDwqabgpcOVNa8pDA==
-X-Mailru-Sender: 689FA8AB762F739381B31377CF4CA21948B07ACB158FCA24F42EB199966831C3F70DA7B1A36253CF90DE4A6105A3658D481B2AED7BCCC0A49AE3A01A4DD0D55C6C99E19F044156F45FEEDEB644C299C0ED14614B50AE0675
-X-Mras: Ok
-X-7564579A: B8F34718100C35BD
-X-77F55803: 6242723A09DB00B4C55E9746AA489521B4EA2933C33FC754F2A151E3DCFF867F049FFFDB7839CE9E2138FE6B7044404A0D7291E2F0B4CCD5B6D8191D57E75AC60C1B06175A9203F5
-X-7FA49CB5: 0D63561A33F958A5B094B508445E66DFF9419C3C9E0D9342F77DAFE12C088A7ACACD7DF95DA8FC8BD5E8D9A59859A8B64071617579528AACCC7F00164DA146DAFE8445B8C89999728AA50765F7900637F8E7BBE36542B4C0389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC802A3942546F0CC5EF6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA775ECD9A6C639B01B78DA827A17800CE70BB89B22BF4660DC731C566533BA786AA5CC5B56E945C8DA
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojg5lDvPDwqaagAUS6yQ+cwA==
-X-Mailru-MI: 8000000000000800
-X-Mras: Ok
 
-Some interrupt controllers may have simple level interrupt detection
-without enable/disable functionality. Mask/unmask simply disables
-interrupt signaling to the upstream chip. If we try to ack these
-interrupts before handling, we will get a false interrupt with empty
-status. So the only one possible way to handle this interrupts is
-to ack them after handling.
-
-Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
----
- drivers/base/regmap/regmap-irq.c | 8 +++++++-
- include/linux/regmap.h           | 2 ++
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index 7dcd2118b4d2..8ad6486fc3bd 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -479,7 +479,7 @@ static irqreturn_t regmap_irq_thread(int irq, void *d)
- 	for (i = 0; i < data->chip->num_regs; i++) {
- 		data->status_buf[i] &= ~data->mask_buf[i];
- 
--		if (data->status_buf[i])
-+		if (!chip->ack_after_handle && data->status_buf[i])
- 			regmap_irq_ack(data, data->status_buf[i], i);
- 	}
- 
-@@ -491,6 +491,12 @@ static irqreturn_t regmap_irq_thread(int irq, void *d)
- 		}
- 	}
- 
-+	if (chip->ack_after_handle)
-+		for (i = 0; i < data->chip->num_regs; i++) {
-+			if (data->status_buf[i])
-+				regmap_irq_ack(data, data->status_buf[i], i);
-+		}
-+
- exit:
- 	if (chip->handle_post_irq)
- 		chip->handle_post_irq(chip->irq_drv_data);
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 570aa9d797b4..a6c94d2ba548 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -1572,6 +1572,7 @@ struct regmap_irq_chip_data;
-  * @use_ack:     Use @ack register even if it is zero.
-  * @ack_invert:  Inverted ack register: cleared bits for ack.
-  * @clear_ack:  Use this to set 1 and 0 or vice-versa to clear interrupts.
-+ * @ack_after_handle: Use this to ack interrupts after handling.
-  * @status_invert: Inverted status register: cleared bits are active interrupts.
-  * @wake_invert: Inverted wake register: cleared bits are wake enabled.
-  * @type_in_mask: Use the mask registers for controlling irq type. Use this if
-@@ -1635,6 +1636,7 @@ struct regmap_irq_chip {
- 	unsigned int use_ack:1;
- 	unsigned int ack_invert:1;
- 	unsigned int clear_ack:1;
-+	unsigned int ack_after_handle:1;
- 	unsigned int status_invert:1;
- 	unsigned int wake_invert:1;
- 	unsigned int type_in_mask:1;
--- 
-2.45.2
+On 3/11/24 00:59, Julien Stephan wrote:
+> Le sam. 2 nov. 2024 à 14:21, Subhajit Ghosh
+> <subhajit.ghosh@tweaklogic.com> a écrit :
+>>
+>> On 2/11/24 03:11, Jonathan Cameron wrote:
+>>> On Thu, 31 Oct 2024 16:27:08 +0100
+>>> Julien Stephan <jstephan@baylibre.com> wrote:
+>>>
+>>>> Simplifies the regmap_wite if branch in apds9306_write_event_config.
+>>> Applied.
+>>>>
+>>>> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+>>>> ---
+>>>>    drivers/iio/light/apds9306.c | 5 +----
+>>>>    1 file changed, 1 insertion(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iio/light/apds9306.c b/drivers/iio/light/apds9306.c
+>>>> index 8adc74040db2bddf93fbb773e3519abcc726b9a6..9c08e7c3ad0c17519689a630d42fe9b90438dfe8 100644
+>>>> --- a/drivers/iio/light/apds9306.c
+>>>> +++ b/drivers/iio/light/apds9306.c
+>>>> @@ -1125,10 +1125,7 @@ static int apds9306_write_event_config(struct iio_dev *indio_dev,
+>>>>               }
+>>>>       }
+>>>>       case IIO_EV_TYPE_THRESH_ADAPTIVE:
+>>>> -            if (state)
+>>>> -                    return regmap_field_write(rf->int_thresh_var_en, 1);
+>>>> -            else
+>>>> -                    return regmap_field_write(rf->int_thresh_var_en, 0);
+>>>> +            return regmap_field_write(rf->int_thresh_var_en, state);
+>>>>       default:
+>>>>               return -EINVAL;
+>>>>       }
+>>>>
+>>>
+>> Hi Julien,
+>> Sorry for the delay.
+>> "int_thresh_var_en" corresponds to APDS9306_INT_CFG_REG bit 3 (Datasheet: INT_CFG, Address: 0x19) which
+>> is a single bit value only. If user does "echo 4 > /sys/bus/iio/devices/iio:device0/events/thresh_adaptive_either_en",
+>> which trickles down to the "state" variable, do we really want to write any other value except "0" or "1"?
+>> Correct me if I am wrong here.
+> 
+> Hi Subhajit,
+> In drivers/iio/industrialio-event.c, iio_ev_state_store is actually
+> using kstrtobool to check user input, then gives the converted boolean
+> value to write_event_configOhh ok, that's handy.
+> So state is a boolean. By the way the purpose of this series is to
+> clean up code and use a bool instead of int for the state parameter.
+Thank you Julien for your efforts.
+> 
+> So new code is equivalent to what was there before.
+> Cheers
+> Julien
+> 
+Since it is already applied, nothing much for me to do here.
+Regards,
+Subhajit Ghosh
 
 
