@@ -1,214 +1,105 @@
-Return-Path: <linux-kernel+bounces-393170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918159B9CC4
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 05:04:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85BC29B9CC6
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 05:14:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262941F22175
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 04:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6CD1C2138B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 04:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5EA13C689;
-	Sat,  2 Nov 2024 04:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A75140E50;
+	Sat,  2 Nov 2024 04:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="yanwBs1F"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2cGy4QuP"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676B817F7
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 04:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568D417F7
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 04:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730520272; cv=none; b=ascJPfEKTrJe+ugmpaxh9sc1igFRiG/vAydNICaWRnyLFKS3nmF5AGlBdjrUNz0xTezEhEhuTuQfZbGlrqkmRFlcGRaFKDu+jA4GyVd31Wh8TJR87D724maRV9VQXJSqjZo2AKLJLydL7x8woYeYouAaPJHYiIcHjA4qFL3a7Vw=
+	t=1730520883; cv=none; b=J9yje6d2VCWhbrZs9AeuU3aFiIPQrDxR8nN2WGgoilo2vRaucgxVHa1RJKZi/zRknsc3L5o37j5zRyAuq9HoFf8i0CDSP2LcS0NEtNWyyPTCrYWALQ8sS8xdLKXoRif8jaa4sUhR/MMAMyXMd4WqarHjQ4N7RIvguxYy5Z57nrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730520272; c=relaxed/simple;
-	bh=sPq+SJ0a3+k9JP5GL+8kQ3Xd/sRatONjAlsfu/kmHlU=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=hQ7FkB3fE0XHLkPzCfe0BbrWuL2Hb9rX6ahHhlx7ZaRzgcFjBXRjkdYfhvLGY0zj4PchCflM+6ArzTHE3S0xkN1XCPwCNMkYntEl+7jpGdq/z4choolghXN8O2hE2T4xdwrrpWiE0PTHneQQXFPes3Ng0HqUW3hSZkVJ0Bgv2uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=yanwBs1F; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730519956; bh=GW0nztBNVJY9Pkc2QrBgRYV+FP9ZJ4yeU0I7HWzUgoQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=yanwBs1FPpeSO2BsIPEatgVnUz37TlWIX4ElG3NMONI1pIsC0sODBtHTLOlRPo/wp
-	 PLJdlMTboCGw7UPdb5Cz/HH2ZXCKMtXOW5YdD36/0hIDfbMqJiH/LTLliyN2VJ6eSg
-	 48OxuOe2tQPTfgZ9KkU4/d2Tcn+LMr4XoutmkEyA=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id ECE87A87; Sat, 02 Nov 2024 11:59:14 +0800
-X-QQ-mid: xmsmtpt1730519954t0dm2g6y9
-Message-ID: <tencent_C34B2C1BD325BFBAC0BB5C339C9EB01B4008@qq.com>
-X-QQ-XMAILINFO: NDgMZBR9sMmaP+1mcOH883s6BTSz1LqicTvZC3tQmat/iksQoklSDyeC1jdzuE
-	 3sqzqwQEX7Gw83BaJWeXNYHynUWURc53Ea0wzRglhMYcpy0P4kZcEdOSKdneYqSTEG1T+21ROo3F
-	 kj0DUpcQXXlb6h75RQz/AaLiZc5GD5i5L4jJSqvco5hZhTnQIW0zF3xBbQgGY1nADH+QTkVMxMb0
-	 hhprTgK9m7T2mPCzIRd8WzHQsz31iE7M/Ov5AiZ2gYcalCknHfzTk3PZM0sIaVnJoPKYrzsXf6HQ
-	 kzyMkA4s5Rgfpnb662nKGBG7ePVfyTjDjlPBAU/ZEM7wGlvN60PhuDlG29EKkO4yLkWvDPoWME6v
-	 Fn4gNveySsQ7SYbZHtPTejBL1qTXUiyZu1W0BqL0NDnrzxXZN64qPC3vC54iI1VTfVGRKaZm/dj+
-	 1PPiVCA6nnDyMdgokeotGsLYU0nRcGUwhq2R1Qys+zRUx7zuhH68IK7piR4SBq1MEQDGKZx+hh6b
-	 8ms96iO/L9gdYox5A2+sQqwzo1UJxdsLiMVbL66JAM9FNesvfNfptBs9o2Xn/C4BfD3huXOuUQ2/
-	 h8DDjCNLSJaQVLnGz75Y2MPCOCJtApin9ZwLZHHM+0z6Dae8k9qg/Rfwz7YBfqHEAv9uwvnDFrW1
-	 83IBjN4GR6FIOori3otTSPDzzdPIhTZ89rw1mu0eaTvA8jGVi8EhpYeA5I0FeAPGjpuDuUnS4L39
-	 EeV2khoZaEeHi1eElFHdIfMSrZXa3orAcscJlHJs45KUOhmpMWLOBNhf4o4kQFPM9thObYX58NQz
-	 fTmsQ06r4SbwPSEIVqjJdkzkl6M1sXcRkQ8+96EhvDYABKGdm5cbo2mwSbNjnTP6t8EBRxeUC2Sp
-	 yIvH/tjt2XqQ2cfDLvKZQavhoF2PsBzs7iNSImuKurzqM53qp5TRQ=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+d2adb332fe371b0595e3@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bpf?] WARNING: locking bug in bpf_map_put
-Date: Sat,  2 Nov 2024 11:59:15 +0800
-X-OQ-MSGID: <20241102035914.4133613-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <67251dc5.050a0220.529b6.015c.GAE@google.com>
-References: <67251dc5.050a0220.529b6.015c.GAE@google.com>
+	s=arc-20240116; t=1730520883; c=relaxed/simple;
+	bh=ZhD0A6fFMQgetHxXaUqGCccl4RdLc+5B+f0TDv/tFb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ex5jdKrIfx2xwi20t3E/Y1ZjuWaV79foIVXqFyk6QpTpMjulPTZ0H1lVaI1M5mKSxFkUXzbqNiUNt5VrTcM9J1W5qdkEuadufdh13N3CsBZOvgmjGLK2HHUMHY1qt1PoPCs3HTSjgXhxDAYy1hjzxZAjVJQIeEJk0PkrywpcmqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2cGy4QuP; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so2515112a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 21:14:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730520880; x=1731125680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZhD0A6fFMQgetHxXaUqGCccl4RdLc+5B+f0TDv/tFb0=;
+        b=2cGy4QuPB2OTwOayYfQKb9Gr7r2oBUxDUbkGdXe8PKm0RHCKmQvVPajlSny9uiAP3E
+         qRg1wJhxWx9TKjBlq8UkcEprLLGQ0Ppa2mC1ebjQsdIQAXYksHOAZpLJpFhGte1x3UOf
+         jK0NXPLiCBzFOUCkpsDxu/CxtsWIyFOZanGy2g6/7AaMQnKpOFqZRX2nQQ57yQLuuYgu
+         sW6pO1hHVqXqjm0OPAx/+uRCW39y/+4rQhz9I0t5tORMwpZW15JxqvSe08J7dW07aXjz
+         pMpHYlFE5ukI7UA31SeemUz2hd/QNfio0tfFZ4Rc8mHaO0o8fN+gUlfX50i0zjnR8aNJ
+         pHJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730520880; x=1731125680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZhD0A6fFMQgetHxXaUqGCccl4RdLc+5B+f0TDv/tFb0=;
+        b=ol1cO7vlDiuL6xIAUp7AFHzkHHebmFfRb1JBVUuXIXd9fZClNcKi2vQw8DegsLYm8G
+         e9Jjz2K5kJIdvtpDK2KDLlI6r2yStG95uRqYvGySj14o21p/oQBZfkju4jEKXXd/Ikag
+         YvB1S325q7MCliUQ82gqYdHYjl6kwFpLEnt2zW+qfWS4zL7JcmqvxlB2WKffrcsxNgLn
+         tm0CJtvrs5Qz9cWqZMLWHlGLwUSYyCfTp1vAYbL3wW3sFY8fM5jbp2mGgSLJNXJ9Bnj7
+         Z51Kbe1vrsGA8oEpqLKu8zbZ7CV37ta2Diey+x5kc643zN0qxx3H3D5q27gqKynZ/YzZ
+         jQqA==
+X-Gm-Message-State: AOJu0YwADuVD/OpMMnpu8ZUgk3UJ1T4GB/y0E7SfXRlA1nlRngKAdO0M
+	eNzYXX+Xxzu+5nk8FTkOPzVF2QjcyubBMkGffuXGlw4pzeJz2R97cGLbgVyW/eEh4oA+0H48knA
+	AoWAUBaoN3iihvduTA8lQTOZ1Icqj+PxmRXU=
+X-Google-Smtp-Source: AGHT+IHd4My05K20F74U4VNXVkl89e2GMigufvzRDMaeQNOohx4FEt2r4OzlrMTKam0oJE5fnuYW1weqFjIUrGDrbj8=
+X-Received: by 2002:a17:907:3f2a:b0:a9a:4cf:5cea with SMTP id
+ a640c23a62f3a-a9e50cace53mr879565966b.54.1730520879481; Fri, 01 Nov 2024
+ 21:14:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241031115448.978498636@linutronix.de> <20241031120328.536010148@linutronix.de>
+In-Reply-To: <20241031120328.536010148@linutronix.de>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 1 Nov 2024 21:14:28 -0700
+Message-ID: <CANDhNCoDbRNq7miiU-oGnX0VBUbZ=sDpP4Ko6OYQye+A=Z5HAg@mail.gmail.com>
+Subject: Re: [patch 1/2] timekeeping: Remove CONFIG_DEBUG_TIMEKEEPING
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-there is a raw_spin_lock and spin_lock:
+On Thu, Oct 31, 2024 at 5:04=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> Since 135225a363ae timekeeping_cycles_to_ns() handles large offsets which
+> would lead to 64bit multiplication overflows correctly. It's also protect=
+ed
+> against negative motion of the clocksource unconditionally, which was
+> exclusive to x86 before.
+>
+> timekeeping_advance() handles large offsets already correctly.
+>
+> That means the value of CONFIG_DEBUG_TIMEKEEPING which analyzed these cas=
+es
+> is very close to zero. Remove all of it.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-      raw_spin_lock(&b->raw_lock);
-      spin_lock(&map_idr_lock);
-      spin_unlock(&map_idr_lock);
-      raw_spin_unlock(&b->raw_lock);
+Thanks for doing this cleanup, Thomas!
 
-#syz test: upstream master
-
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index a8f1808a1ca5..4891904ee1fc 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -54,7 +54,7 @@ DEFINE_PER_CPU(int, bpf_prog_active);
- static DEFINE_IDR(prog_idr);
- static DEFINE_SPINLOCK(prog_idr_lock);
- static DEFINE_IDR(map_idr);
--static DEFINE_SPINLOCK(map_idr_lock);
-+static DEFINE_RAW_SPINLOCK(map_idr_lock);
- static DEFINE_IDR(link_idr);
- static DEFINE_SPINLOCK(link_idr_lock);
- 
-@@ -352,11 +352,11 @@ static int bpf_map_alloc_id(struct bpf_map *map)
- 	int id;
- 
- 	idr_preload(GFP_KERNEL);
--	spin_lock_bh(&map_idr_lock);
-+	raw_spin_lock_bh(&map_idr_lock);
- 	id = idr_alloc_cyclic(&map_idr, map, 1, INT_MAX, GFP_ATOMIC);
- 	if (id > 0)
- 		map->id = id;
--	spin_unlock_bh(&map_idr_lock);
-+	raw_spin_unlock_bh(&map_idr_lock);
- 	idr_preload_end();
- 
- 	if (WARN_ON_ONCE(!id))
-@@ -377,12 +377,12 @@ void bpf_map_free_id(struct bpf_map *map)
- 	if (!map->id)
- 		return;
- 
--	spin_lock_irqsave(&map_idr_lock, flags);
-+	raw_spin_lock_irqsave(&map_idr_lock, flags);
- 
- 	idr_remove(&map_idr, map->id);
- 	map->id = 0;
- 
--	spin_unlock_irqrestore(&map_idr_lock, flags);
-+	raw_spin_unlock_irqrestore(&map_idr_lock, flags);
- }
- 
- #ifdef CONFIG_MEMCG
-@@ -1479,9 +1479,9 @@ struct bpf_map *__bpf_map_inc_not_zero(struct bpf_map *map, bool uref)
- 
- struct bpf_map *bpf_map_inc_not_zero(struct bpf_map *map)
- {
--	spin_lock_bh(&map_idr_lock);
-+	raw_spin_lock_bh(&map_idr_lock);
- 	map = __bpf_map_inc_not_zero(map, false);
--	spin_unlock_bh(&map_idr_lock);
-+	raw_spin_unlock_bh(&map_idr_lock);
- 
- 	return map;
- }
-@@ -4278,11 +4278,37 @@ static int bpf_obj_get_next_id(const union bpf_attr *attr,
- 	return err;
- }
- 
-+static int bpf_obj_get_next_id_raw(const union bpf_attr *attr,
-+			       union bpf_attr __user *uattr,
-+			       struct idr *idr,
-+			       raw_spinlock_t *lock)
-+{
-+	u32 next_id = attr->start_id;
-+	int err = 0;
-+
-+	if (CHECK_ATTR(BPF_OBJ_GET_NEXT_ID) || next_id >= INT_MAX)
-+		return -EINVAL;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	next_id++;
-+	raw_spin_lock_bh(lock);
-+	if (!idr_get_next(idr, &next_id))
-+		err = -ENOENT;
-+	raw_spin_unlock_bh(lock);
-+
-+	if (!err)
-+		err = put_user(next_id, &uattr->next_id);
-+
-+	return err;
-+}
-+
- struct bpf_map *bpf_map_get_curr_or_next(u32 *id)
- {
- 	struct bpf_map *map;
- 
--	spin_lock_bh(&map_idr_lock);
-+	raw_spin_lock_bh(&map_idr_lock);
- again:
- 	map = idr_get_next(&map_idr, id);
- 	if (map) {
-@@ -4292,7 +4318,7 @@ struct bpf_map *bpf_map_get_curr_or_next(u32 *id)
- 			goto again;
- 		}
- 	}
--	spin_unlock_bh(&map_idr_lock);
-+	raw_spin_unlock_bh(&map_idr_lock);
- 
- 	return map;
- }
-@@ -4378,13 +4404,13 @@ static int bpf_map_get_fd_by_id(const union bpf_attr *attr)
- 	if (f_flags < 0)
- 		return f_flags;
- 
--	spin_lock_bh(&map_idr_lock);
-+	raw_spin_lock_bh(&map_idr_lock);
- 	map = idr_find(&map_idr, id);
- 	if (map)
- 		map = __bpf_map_inc_not_zero(map, true);
- 	else
- 		map = ERR_PTR(-ENOENT);
--	spin_unlock_bh(&map_idr_lock);
-+	raw_spin_unlock_bh(&map_idr_lock);
- 
- 	if (IS_ERR(map))
- 		return PTR_ERR(map);
-@@ -5656,7 +5682,7 @@ static int __sys_bpf(enum bpf_cmd cmd, bpfptr_t uattr, unsigned int size)
- 					  &prog_idr, &prog_idr_lock);
- 		break;
- 	case BPF_MAP_GET_NEXT_ID:
--		err = bpf_obj_get_next_id(&attr, uattr.user,
-+		err = bpf_obj_get_next_id_raw(&attr, uattr.user,
- 					  &map_idr, &map_idr_lock);
- 		break;
- 	case BPF_BTF_GET_NEXT_ID:
-Upstream-Status: Pending
-
+Acked-by: John Stultz <jstultz@google.com>
 
