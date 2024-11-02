@@ -1,385 +1,308 @@
-Return-Path: <linux-kernel+bounces-393113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20799B9BFE
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 02:33:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC9A9B9C03
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 02:37:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2BAD282969
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:33:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76AA4B218F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5379D1494C3;
-	Sat,  2 Nov 2024 01:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9314B5C1;
+	Sat,  2 Nov 2024 01:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="mxg9SOa0"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLMvs0L+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639CD20311;
-	Sat,  2 Nov 2024 01:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1441F4C66;
+	Sat,  2 Nov 2024 01:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730511159; cv=none; b=jOo8dwFzNx9DbWusXB0+WfogCI9Bai+DUMVTNYu6WfO+UjwjuMHXUNo71afE0munLPutJQHkjLwhec5kzyn12VjSYonOp7Yiv3QwVqjqTTgbDKniS58USEYWyIu8gjHycpbvq4lIEadmdIPyB+51DKhi283mayXy6vkyi+PbCeY=
+	t=1730511450; cv=none; b=cGs6Vw80C4x+M6XITK3iTTQmpno19RkHUwnj3ks6H19yrj2Ofg/5HiW4VC8+GYz/sjYohZhoy1w4VINe+DmV1BFj0Wa1TGXHoiPyHPHK1v4H5v6pGdVnn7etVHwbW8pGvOufZkgZVfd9aRW6NqEokcVUdqXg++lmpxvqbXbKc3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730511159; c=relaxed/simple;
-	bh=DslKXLg2Zr2z19fnU7Ixn0ASDtw735LB7MiiKIyt3bM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZedeVD14MEREToovYUusjhwyzG6pzODBhv3pglqbzkq2D0CYKIJgTJQDzt6pgh+aV34DZtpr/rwTjZ0D0hnCwWtN0r6/tq2Utvw7ESaLYIBybmPIgC9TlsjxVKCtmAErU3KQMWOgklOlYpBuvzTfg0mG1G52HJFNRMyufElzUxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=mxg9SOa0; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.0.162] (BC24930C.dsl.pool.telekom.hu [188.36.147.12])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 23365E45BB;
-	Sat,  2 Nov 2024 01:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1730511155;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dzf7OSlGFsYbHbrT/u9c9DeFTq786LnjyLY+MlZq1EU=;
-	b=mxg9SOa0izabppWRRALnwTM1M3XUNLBbluif/9FG7ZI10iUoJOYqu12KGGaE2EUKsdOrYZ
-	K9VJX+jwKB+S2ik5jUk5E0dN7v2TYEigTlUGCu15heLvqTAkAqPxyTW7UYx1dseXyU+G+/
-	BDT5584ZRboHby6wIJW/8edAjjghLGgi7H90O/X8amvrOS6ZE+BM1fBALScH4DqwywFeEs
-	JEyD693/2m6NoSpEZKKZlI7Th8iA3Lq0BQYaL/5xQWKrogp4/hT0I74bZyngNlHEqDH/CA
-	TImhVbikriTzYO4hY3plfgNNjcjmgyZQA1oPu+PouX+65xSgZ4ZeLNJNYaadLw==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Sat, 02 Nov 2024 02:32:30 +0100
-Subject: [PATCH v2 3/3] media: qcom: camss: Add MSM8953 resources
+	s=arc-20240116; t=1730511450; c=relaxed/simple;
+	bh=dg3Vvk9BW/08Uyv9TSnw8NEQAwhAZCODUD7UGzdocAI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u923jiLE85Ur/wABijHsxX2ko4oO6I6dRpYT2eAO3DOJY5536TaB9lble/ZKt/nQx/fAh5r+4c9cWtym5gdQbljHWkjYHAR6X5l+XCvkWCa7QPrz/eGTZWlOEYgZ1cWBtaPcyGWHNhECRP6NO6gj2TxTkNvQIcSkT317ymsoHvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLMvs0L+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE197C4CECD;
+	Sat,  2 Nov 2024 01:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730511449;
+	bh=dg3Vvk9BW/08Uyv9TSnw8NEQAwhAZCODUD7UGzdocAI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lLMvs0L+DA7kvp+zMAyuyHd2pZmYG/dz+fmCBnOBeoZEoG05ipe1OYdEp/Vcpx/4V
+	 jdohUR73m/hgg5nDraEzZ1L/FlVnczAcB4pzO6YQcHjk2VsY3jQfVxL0UMoDNapJFm
+	 8vCo0IVo/gVA2Ugeb1oDBY1u23yrHnf2gBzT1OXPrYuH2b89+RK584kvX+LVFGzplk
+	 WSyuPaE6r2Ty/WBWQQD4AleDUnWltHoyAQG02Qzhq2jFd+fVhdgHD2PX0f7ULDz3uN
+	 56AdymL4OsOgpYk1TOh9nWmK6q/xEdVIRK2kUcfjDFf92T4clf4W/dXd6KzAdTvFRZ
+	 ipZfuH4lcvklg==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: ross.philipson@oracle.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Cc: James.Bottomley@hansenpartnership.com,
+	andrew.cooper3@citrix.com,
+	ardb@kernel.org,
+	baolu.lu@linux.intel.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	davem@davemloft.net,
+	dpsmith@apertussolutions.com,
+	dwmw2@infradead.org,
+	ebiederm@xmission.com,
+	herbert@gondor.apana.org.au,
+	hpa@zytor.com,
+	iommu@lists.linux-foundation.org,
+	kanth.ghatraju@oracle.com,
+	kexec@lists.infradead.org,
+	linux-crypto@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	luto@amacapital.net,
+	mingo@redhat.com,
+	mjg59@srcf.ucam.org,
+	nivedita@alum.mit.edu,
+	tglx@linutronix.de,
+	trenchboot-devel@googlegroups.com,
+	x86@kernel.org
+Subject: [RFC PATCH] tpm, tpm_tis: Introduce TPM_IOC_SET_LOCALITY
+Date: Sat,  2 Nov 2024 03:37:14 +0200
+Message-ID: <20241102013716.1036396-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20240913200517.3085794-18-ross.philipson@oracle.com>
+References: <20240913200517.3085794-18-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241102-camss-msm8953-v2-3-837310e4541c@mainlining.org>
-References: <20241102-camss-msm8953-v2-0-837310e4541c@mainlining.org>
-In-Reply-To: <20241102-camss-msm8953-v2-0-837310e4541c@mainlining.org>
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Barnabas Czeman <barnabas.czeman@mainlining.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Vladimir Lypak <vladimir.lypak@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730511153; l=10213;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=PnM5Cv/TBUZL46+xva+ATIZeM9wr9Jw9jEaBnoP4xEk=;
- b=yIx3EfxjNmXZBtY3OZAPHaCtpUeuhUllvOqwQhAJOxJU0iE35ebMWIjkxCXY+f+LnUGEM/ppQ
- cvfXhxdCT/DB299XLAP3hAeiL4L4XLBQsgk/0oG3ZoXKTTg5mJn6jAT
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-From: Vladimir Lypak <vladimir.lypak@gmail.com>
+DRTM needs to be able to set the locality used by kernel. Provide
+TPM_IOC_SET_LOCALITY operation for this purpose. It is enabled only if
+the kernel command-line has 'tpm.set_locality_enabled=1'. The operation
+is one-shot allowed only for tpm_tis for the moment.
 
-This commit describes the hardware layout for the MSM8953/SDM450/SDM632
-for the following hardware blocks:
-
-- 2 x VFE, 3 RDI per VFE
-- 3 x CSID
-- 3 x CSI PHY
-
-Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-Acked-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- drivers/media/platform/qcom/camss/camss-csiphy.c |   1 +
- drivers/media/platform/qcom/camss/camss-ispif.c  |   5 +
- drivers/media/platform/qcom/camss/camss-vfe.c    |   1 +
- drivers/media/platform/qcom/camss/camss.c        | 170 +++++++++++++++++++++++
- drivers/media/platform/qcom/camss/camss.h        |   1 +
- 5 files changed, 178 insertions(+)
+NOTE: Only compile-tested.
+---
+ .../admin-guide/kernel-parameters.txt         |  5 ++
+ .../userspace-api/ioctl/ioctl-number.rst      |  2 +
+ drivers/char/tpm/tpm-chip.c                   |  2 +-
+ drivers/char/tpm/tpm-dev.c                    | 70 +++++++++++++++++++
+ drivers/char/tpm/tpm_tis_core.c               |  2 +
+ include/linux/tpm.h                           | 10 +++
+ include/uapi/linux/tpm.h                      | 11 +++
+ 7 files changed, 101 insertions(+), 1 deletion(-)
+ create mode 100644 include/uapi/linux/tpm.h
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-index 68a3ea1ba2a5299cf28289dfdb958cfdff3c91e0..5af2b382a843c2b8857339ba28930fe1682c9412 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-@@ -596,6 +596,7 @@ int msm_csiphy_subdev_init(struct camss *camss,
- 		return PTR_ERR(csiphy->base);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 1518343bbe22..9e760de6c307 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6727,6 +6727,11 @@
+ 	torture.verbose_sleep_duration= [KNL]
+ 			Duration of each verbose-printk() sleep in jiffies.
  
- 	if (camss->res->version == CAMSS_8x16 ||
-+	    camss->res->version == CAMSS_8x53 ||
- 	    camss->res->version == CAMSS_8x96) {
- 		csiphy->base_clk_mux =
- 			devm_platform_ioremap_resource_byname(pdev, res->reg[1]);
-diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/media/platform/qcom/camss/camss-ispif.c
-index a12dcc7ff438c55167bc2981fd399dbf178181df..2dc585c6123dd248a5bacd9c7a88cb5375644311 100644
---- a/drivers/media/platform/qcom/camss/camss-ispif.c
-+++ b/drivers/media/platform/qcom/camss/camss-ispif.c
-@@ -830,6 +830,7 @@ static int ispif_set_stream(struct v4l2_subdev *sd, int enable)
- 		ispif_select_cid(ispif, intf, cid, vfe, 1);
- 		ispif_config_irq(ispif, intf, vfe, 1);
- 		if (camss->res->version == CAMSS_8x96 ||
-+		    camss->res->version == CAMSS_8x53 ||
- 		    camss->res->version == CAMSS_660)
- 			ispif_config_pack(ispif,
- 					  line->fmt[MSM_ISPIF_PAD_SINK].code,
-@@ -848,6 +849,7 @@ static int ispif_set_stream(struct v4l2_subdev *sd, int enable)
++	tpm.set_locality_enabled= [HW,TPM]
++			Enable one-shot locality setting after the boot. It can
++			can be set with the TPM_IOC_SET_LOCALE ioctl applied to
++			/dev/tpm0. The parameter is set by default as '0'.
++
+ 	tpm_suspend_pcr=[HW,TPM]
+ 			Format: integer pcr id
+ 			Specify that at suspend time, the tpm driver
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index e4be1378ba26..3eba57ab2fb1 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -338,6 +338,8 @@ Code  Seq#    Include File                                           Comments
+ 0xA3  90-9F  linux/dtlk.h
+ 0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
+ 0xA4  00-1F  uapi/asm/sgx.h                                          <mailto:linux-sgx@vger.kernel.org>
++0xA4  00-1F  uapi/linux/tpm.h                                        TPM
++                                                                     <mailto:linux-integrity@vger.kernel.org>
+ 0xA5  01-05  linux/surface_aggregator/cdev.h                         Microsoft Surface Platform System Aggregator
+                                                                      <mailto:luzmaximilian@gmail.com>
+ 0xA5  20-2F  linux/surface_aggregator/dtx.h                          Microsoft Surface DTX driver
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 7df7abaf3e52..c8016342352a 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -44,7 +44,7 @@ static int tpm_request_locality(struct tpm_chip *chip)
+ 	if (!chip->ops->request_locality)
+ 		return 0;
  
- 		mutex_lock(&ispif->config_lock);
- 		if (camss->res->version == CAMSS_8x96 ||
-+		    camss->res->version == CAMSS_8x53 ||
- 		    camss->res->version == CAMSS_660)
- 			ispif_config_pack(ispif,
- 					  line->fmt[MSM_ISPIF_PAD_SINK].code,
-@@ -1111,6 +1113,7 @@ int msm_ispif_subdev_init(struct camss *camss,
- 	if (camss->res->version == CAMSS_8x16)
- 		ispif->line_num = 2;
- 	else if (camss->res->version == CAMSS_8x96 ||
-+		 camss->res->version == CAMSS_8x53 ||
- 		 camss->res->version == CAMSS_660)
- 		ispif->line_num = 4;
- 	else
-@@ -1130,6 +1133,7 @@ int msm_ispif_subdev_init(struct camss *camss,
- 			ispif->line[i].nformats =
- 					ARRAY_SIZE(ispif_formats_8x16);
- 		} else if (camss->res->version == CAMSS_8x96 ||
-+			   camss->res->version == CAMSS_8x53 ||
- 			   camss->res->version == CAMSS_660) {
- 			ispif->line[i].formats = ispif_formats_8x96;
- 			ispif->line[i].nformats =
-@@ -1162,6 +1166,7 @@ int msm_ispif_subdev_init(struct camss *camss,
- 		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x16,
- 			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
- 	else if (camss->res->version == CAMSS_8x96 ||
-+		 camss->res->version == CAMSS_8x53 ||
- 		 camss->res->version == CAMSS_660)
- 		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x96,
- 			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index 83c5a36d071fcc32c4b8a89e4e429dc1820df139..80a62ba11295042802cbaec617fb87c492ea6a55 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -285,6 +285,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+-	rc = chip->ops->request_locality(chip, 0);
++	rc = chip->ops->request_locality(chip, chip->default_locality);
+ 	if (rc < 0)
+ 		return rc;
  
- 	switch (vfe->camss->res->version) {
- 	case CAMSS_8x16:
-+	case CAMSS_8x53:
- 		switch (sink_code) {
- 		case MEDIA_BUS_FMT_YUYV8_1X16:
- 		{
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index fabe034081ed0a7c0e0fcd8bc76c4eb396cb0067..9fb31f4c18adee886cd0bcf84438a8f27635e07f 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -152,6 +152,160 @@ static const struct camss_subdev_resources vfe_res_8x16[] = {
- 	}
- };
+diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
+index 97c94b5e9340..bb9c346947aa 100644
+--- a/drivers/char/tpm/tpm-dev.c
++++ b/drivers/char/tpm/tpm-dev.c
+@@ -13,8 +13,74 @@
+  * Device file system interface to the TPM
+  */
+ #include <linux/slab.h>
++#include <uapi/linux/tpm.h>
+ #include "tpm-dev.h"
  
-+static const struct camss_subdev_resources csid_res_8x53[] = {
-+	/* CSID0 */
-+	{
-+		.regulators = { "vdda" },
-+		.clock = { "top_ahb", "ispif_ahb", "csi0_ahb", "ahb",
-+			   "csi0", "csi0_phy", "csi0_pix", "csi0_rdi" },
-+		.clock_rate = { { 0 },
-+				{ 0 },
-+				{ 0 },
-+				{ 0 },
-+				{ 100000000, 200000000, 310000000,
-+				  400000000, 465000000 },
-+				{ 0 },
-+				{ 0 },
-+				{ 0 } },
-+		.reg = { "csid0" },
-+		.interrupt = { "csid0" },
-+		.csid = {
-+			.hw_ops = &csid_ops_4_7,
-+			.parent_dev_ops = &vfe_parent_dev_ops,
-+			.formats = &csid_formats_4_7
-+		}
-+	},
++static bool set_locality_enabled;
++module_param(set_locality_enabled, bool, 0644);
 +
-+	/* CSID1 */
-+	{
-+		.regulators = { "vdda" },
-+		.clock = { "top_ahb", "ispif_ahb", "csi1_ahb", "ahb",
-+			   "csi1", "csi1_phy", "csi1_pix", "csi1_rdi" },
-+		.clock_rate = { { 0 },
-+				{ 0 },
-+				{ 0 },
-+				{ 0 },
-+				{ 100000000, 200000000, 310000000,
-+				  400000000, 465000000 },
-+				{ 0 },
-+				{ 0 },
-+				{ 0 } },
-+		.reg = { "csid1" },
-+		.interrupt = { "csid1" },
-+		.csid = {
-+			.hw_ops = &csid_ops_4_7,
-+			.parent_dev_ops = &vfe_parent_dev_ops,
-+			.formats = &csid_formats_4_7
-+		}
-+	},
++/*
++ * Set a locality as a one-shot operation. A chip must declare support for it
++ * with %TPM_CHIP_FLAG_SET_LOCALITY_ENABLED, which will cleared after setting
++ * the locality.
++ */
++static long tpm_ioc_set_locality(struct tpm_chip *chip, u8 __user *localityp)
++{
++	u8 locality;
 +
-+	/* CSID2 */
-+	{
-+		.regulators = { "vdda" },
-+		.clock = { "top_ahb", "ispif_ahb", "csi2_ahb", "ahb",
-+			   "csi2", "csi2_phy", "csi2_pix", "csi2_rdi" },
-+		.clock_rate = { { 0 },
-+				{ 0 },
-+				{ 0 },
-+				{ 0 },
-+				{ 100000000, 200000000, 310000000,
-+				  400000000, 465000000 },
-+				{ 0 },
-+				{ 0 },
-+				{ 0 } },
-+		.reg = { "csid2" },
-+		.interrupt = { "csid2" },
-+		.csid = {
-+			.hw_ops = &csid_ops_4_7,
-+			.parent_dev_ops = &vfe_parent_dev_ops,
-+			.formats = &csid_formats_4_7
-+		}
-+	},
-+};
++	if (!set_locality_enabled)
++		return -ENOIOCTLCMD;
 +
-+static const struct camss_subdev_resources ispif_res_8x53 = {
-+	/* ISPIF */
-+	.clock = { "top_ahb", "ahb", "ispif_ahb",
-+		   "csi0", "csi0_pix", "csi0_rdi",
-+		   "csi1", "csi1_pix", "csi1_rdi",
-+		   "csi2", "csi2_pix", "csi2_rdi" },
-+	.clock_for_reset = { "vfe0", "csi_vfe0", "vfe1", "csi_vfe1" },
-+	.reg = { "ispif", "csi_clk_mux" },
-+	.interrupt = { "ispif" },
-+};
++	if (chip->flags & TPM_CHIP_FLAG_SET_LOCALITY_ENABLED)
++		return -EOPNOTSUPP;
 +
-+static const struct camss_subdev_resources vfe_res_8x53[] = {
-+	/* VFE0 */
-+	{
-+		.regulators = {},
-+		.clock = { "top_ahb", "ahb", "ispif_ahb",
-+			   "vfe0", "csi_vfe0", "vfe0_ahb", "vfe0_axi" },
-+		.clock_rate = { { 0 },
-+				{ 0 },
-+				{ 0 },
-+				{ 50000000, 100000000, 133330000,
-+				  160000000, 200000000, 266670000,
-+				  310000000, 400000000, 465000000 },
-+				{ 0 },
-+				{ 0 },
-+				{ 0 } },
-+		.reg = { "vfe0" },
-+		.interrupt = { "vfe0" },
-+		.vfe = {
-+			.line_num = 3,
-+			.has_pd = true,
-+			.pd_name = "vfe0",
-+			.hw_ops = &vfe_ops_4_1,
-+			.formats_rdi = &vfe_formats_rdi_8x16,
-+			.formats_pix = &vfe_formats_pix_8x16
-+		}
-+	},
++	if (copy_from_user(&locality, localityp, sizeof(locality)))
++		return -EFAULT;
 +
-+	/* VFE1 */
-+	{
-+		.regulators = {},
-+		.clock = { "top_ahb", "ahb", "ispif_ahb",
-+			   "vfe1", "csi_vfe1", "vfe1_ahb", "vfe1_axi" },
-+		.clock_rate = { { 0 },
-+				{ 0 },
-+				{ 0 },
-+				{ 50000000, 100000000, 133330000,
-+				  160000000, 200000000, 266670000,
-+				  310000000, 400000000, 465000000 },
-+				{ 0 },
-+				{ 0 },
-+				{ 0 } },
-+		.reg = { "vfe1" },
-+		.interrupt = { "vfe1" },
-+		.vfe = {
-+			.line_num = 3,
-+			.has_pd = true,
-+			.pd_name = "vfe1",
-+			.hw_ops = &vfe_ops_4_1,
-+			.formats_rdi = &vfe_formats_rdi_8x16,
-+			.formats_pix = &vfe_formats_pix_8x16
-+		}
++	if (locality >= TPM_MAX_LOCALITY)
++		return -EINVAL;
++
++	chip->default_locality = locality;
++	chip->flags &= ~TPM_CHIP_FLAG_SET_LOCALITY_ENABLED;
++	return 0;
++}
++
++static long tpm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	struct file_priv *priv = file->private_data;
++	void __user *argp = (void __user *)arg;
++	struct tpm_chip *chip = priv->chip;
++	int ret;
++
++	mutex_lock(&priv->buffer_mutex);
++
++	ret = tpm_try_get_ops(chip);
++	if (ret)
++		goto out;
++
++	switch (cmd) {
++	case TPM_IOC_SET_LOCALITY:
++		tpm_ioc_set_locality(chip, argp);
++		break;
++	default:
++		ret = -ENOIOCTLCMD;
++		break;
 +	}
-+};
 +
-+static const struct resources_icc icc_res_8x53[] = {
-+	{
-+		.name = "cam_ahb",
-+		.icc_bw_tbl.avg = 38400,
-+		.icc_bw_tbl.peak = 76800,
-+	},
-+	{
-+		.name = "cam_vfe0_mem",
-+		.icc_bw_tbl.avg = 939524,
-+		.icc_bw_tbl.peak = 1342177,
-+	},
-+	{
-+		.name = "cam_vfe1_mem",
-+		.icc_bw_tbl.avg = 939524,
-+		.icc_bw_tbl.peak = 1342177,
-+	},
-+};
++	tpm_put_ops(chip);
 +
- static const struct camss_subdev_resources csiphy_res_8x96[] = {
- 	/* CSIPHY0 */
- 	{
-@@ -2248,6 +2402,7 @@ static int camss_probe(struct platform_device *pdev)
- 		return -ENOMEM;
++out:
++	mutex_unlock(&priv->buffer_mutex);
++	return 0;
++}
++
++#ifdef CONFIG_COMPAT
++static long tpm_compat_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
++{
++	return tpm_ioctl(filep, cmd, arg);
++}
++#endif
++
+ static int tpm_open(struct inode *inode, struct file *file)
+ {
+ 	struct tpm_chip *chip;
+@@ -59,6 +125,10 @@ static int tpm_release(struct inode *inode, struct file *file)
  
- 	if (camss->res->version == CAMSS_8x16 ||
-+	    camss->res->version == CAMSS_8x53 ||
- 	    camss->res->version == CAMSS_8x96) {
- 		camss->ispif = devm_kcalloc(dev, 1, sizeof(*camss->ispif), GFP_KERNEL);
- 		if (!camss->ispif)
-@@ -2389,6 +2544,20 @@ static const struct camss_resources msm8916_resources = {
- 	.link_entities = camss_link_entities
+ const struct file_operations tpm_fops = {
+ 	.owner = THIS_MODULE,
++	.unlocked_ioctl = tpm_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl = tpm_compat_ioctl,
++#endif
+ 	.open = tpm_open,
+ 	.read = tpm_common_read,
+ 	.write = tpm_common_write,
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index fdef214b9f6b..3517db710423 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -1111,6 +1111,8 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 	if (IS_ERR(chip))
+ 		return PTR_ERR(chip);
+ 
++	chip->flags |= TPM_CHIP_FLAG_SET_LOCALITY_ENABLED;
++
+ #ifdef CONFIG_ACPI
+ 	chip->acpi_dev_handle = acpi_dev_handle;
+ #endif
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 587b96b4418e..27071ef13b7a 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -147,6 +147,12 @@ struct tpm_chip_seqops {
+  */
+ #define TPM2_MAX_CONTEXT_SIZE 4096
+ 
++/*
++ * The maximum locality (0 - 4) for a TPM, as defined in section 3.2 of the
++ * Client Platform Profile Specification.
++ */
++#define TPM_MAX_LOCALITY		4
++
+ struct tpm_chip {
+ 	struct device dev;
+ 	struct device devs;
+@@ -202,6 +208,9 @@ struct tpm_chip {
+ 	/* active locality */
+ 	int locality;
+ 
++	/* the default locality used by the kernel (default 0) */
++	u8 default_locality;
++
+ #ifdef CONFIG_TCG_TPM2_HMAC
+ 	/* details for communication security via sessions */
+ 
+@@ -348,6 +357,7 @@ enum tpm_chip_flags {
+ 	TPM_CHIP_FLAG_SUSPENDED			= BIT(8),
+ 	TPM_CHIP_FLAG_HWRNG_DISABLED		= BIT(9),
+ 	TPM_CHIP_FLAG_DISABLE			= BIT(10),
++	TPM_CHIP_FLAG_SET_LOCALITY_ENABLED	= BIT(11),
  };
  
-+static const struct camss_resources msm8953_resources = {
-+	.version = CAMSS_8x53,
-+	.icc_res = icc_res_8x53,
-+	.icc_path_num = ARRAY_SIZE(icc_res_8x53),
-+	.csiphy_res = csiphy_res_8x96,
-+	.csid_res = csid_res_8x53,
-+	.ispif_res = &ispif_res_8x53,
-+	.vfe_res = vfe_res_8x53,
-+	.csiphy_num = ARRAY_SIZE(csiphy_res_8x96),
-+	.csid_num = ARRAY_SIZE(csid_res_8x53),
-+	.vfe_num = ARRAY_SIZE(vfe_res_8x53),
-+	.link_entities = camss_link_entities
-+};
+ #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
+diff --git a/include/uapi/linux/tpm.h b/include/uapi/linux/tpm.h
+new file mode 100644
+index 000000000000..654080e1b1e5
+--- /dev/null
++++ b/include/uapi/linux/tpm.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_TPM_H
++#define _UAPI_TPM_H
 +
- static const struct camss_resources msm8996_resources = {
- 	.version = CAMSS_8x96,
- 	.csiphy_res = csiphy_res_8x96,
-@@ -2455,6 +2624,7 @@ static const struct camss_resources sc8280xp_resources = {
- 
- static const struct of_device_id camss_dt_match[] = {
- 	{ .compatible = "qcom,msm8916-camss", .data = &msm8916_resources },
-+	{ .compatible = "qcom,msm8953-camss", .data = &msm8953_resources },
- 	{ .compatible = "qcom,msm8996-camss", .data = &msm8996_resources },
- 	{ .compatible = "qcom,sdm660-camss", .data = &sdm660_resources },
- 	{ .compatible = "qcom,sdm845-camss", .data = &sdm845_resources },
-diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
-index 0ce84fcbbd25c7825212beb74073ffd4c70858a8..9da7f48f5dd762d27521d449051892e956693970 100644
---- a/drivers/media/platform/qcom/camss/camss.h
-+++ b/drivers/media/platform/qcom/camss/camss.h
-@@ -78,6 +78,7 @@ enum pm_domain {
- 
- enum camss_version {
- 	CAMSS_8x16,
-+	CAMSS_8x53,
- 	CAMSS_8x96,
- 	CAMSS_660,
- 	CAMSS_845,
-
++#include <linux/types.h>
++#include <linux/ioctl.h>
++
++#define TPM_MAGIC 0xA4
++#define TPM_IOC_SET_LOCALITY _IOW(TPM_MAGIC, 0x00, u8)
++
++#endif /* _UAPI_TPM_H */
 -- 
 2.47.0
 
