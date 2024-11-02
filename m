@@ -1,151 +1,174 @@
-Return-Path: <linux-kernel+bounces-393501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B10C9BA175
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:41:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3AF9BA178
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB2A51F217BE
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4942820E3
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF64B1A727F;
-	Sat,  2 Nov 2024 16:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E35B1A7265;
+	Sat,  2 Nov 2024 16:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W/Z9DoKp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNvDmNyN"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF5119D07C;
-	Sat,  2 Nov 2024 16:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F30175D47;
+	Sat,  2 Nov 2024 16:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730565710; cv=none; b=Qa7utScTr5vH7DK/Vsjb9j/WtuvfpyxRsGRhKRAxTfVXKqiajyUBasqcQz08e4f4m/3YyXc7qmt+sig9zHMfGCXv8FhS6PuEjuAWEBq068Lu/ysiI4CT0K8aTCmg7Y8ZH1HnvthxazhiZRjWrp4pgDzm4P6EduHoeoEzIlAkJaA=
+	t=1730565989; cv=none; b=d1Hyn5CKUbV5484D3JmZKBeQ+OveWoyhWPd6FbkhZuoVdYIgYro7iaTnVKOflojtAN7XrVUlxVrKYccz+lUU/IoYLaJa42amGRbO79aPYrcqZcQZweWQV21WiveeRhgQxSZ4xEZI6K1EbiRPtbSdWpfJkhegcl2gh2ZaKwI56xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730565710; c=relaxed/simple;
-	bh=8eJNOpsoxzv7j39wBOnqkPrmkqI00gtVAHasD6qe9is=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRXgizmImXVda9NDEiMlQE+vW4CDPrbmQwYTERhWJqQr146i+B4eQ39kKat25I7WThAgM9Nztkm7vH3hsC9I2Wblk3O9F9HOT8MO5lNCAT3KomKjxFBjXq4i9qdiGnOOe0ayPixhDwRv7eGnJ3/wCgqV9ghf4xKNLKxj8kkHC8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W/Z9DoKp; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730565709; x=1762101709;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=8eJNOpsoxzv7j39wBOnqkPrmkqI00gtVAHasD6qe9is=;
-  b=W/Z9DoKpZnXekfa9C2upTt4pTaI4AIOEE0/maDuroGucPdJtUO+MQIti
-   mv4v3hgKpgCU/4+PqCMGqqq/ZovF0c8RrWBUDwGPXqgbagnJzdU2E9qZg
-   aEszZpgjWWnhFSppVpsIXy//Bf48D5iyeSGJOM1O8WysVHlU0ASOzUPJw
-   jfseKeJOzitshwcnT6TPqJmobW6kSqO/FUWwGIVY6rFmuaUjuv+n7VOEx
-   bU2Vm0Egb119g7ta7bc73z9Fk9DprRGqGjgpKZZWBK4cuBkqwLt4zACp3
-   QNJZo+p86LJR4J9gqXPeidF+NTzMHThdyYHi30xyx05xb2/qlt2uPjf5H
-   w==;
-X-CSE-ConnectionGUID: TQEyd+rnTya+DnCsdUlXMw==
-X-CSE-MsgGUID: V27TlIpYQtqJWAJ9PzxMCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="34000605"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="34000605"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 09:41:48 -0700
-X-CSE-ConnectionGUID: qNdRniwOSrC94yjsLA8GZQ==
-X-CSE-MsgGUID: MbXpxPoESIWjPtcdr0vJsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,253,1725346800"; 
-   d="scan'208";a="120697681"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 02 Nov 2024 09:41:45 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t7HC2-000jAe-1y;
-	Sat, 02 Nov 2024 16:41:42 +0000
-Date: Sun, 3 Nov 2024 00:40:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Arnd Bergmann <arnd@arndb.de>,
-	sonicadvance1@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com, linux-api@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Subject: Re: [PATCH v2 2/3] futex: Create set_robust_list2
-Message-ID: <202411030038.W5DgvCYP-lkp@intel.com>
-References: <20241101162147.284993-3-andrealmeid@igalia.com>
+	s=arc-20240116; t=1730565989; c=relaxed/simple;
+	bh=9ls3dERKRIdmJCZ2URbsiv3CcC+qSab+dQUjuNjjfT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UhZ0qApbArS3Toc8/4eWC5nvmHB4Z3hdAXchXmo06wsvnjfJ2A+fEZnYbDD7is78WddaJvksadvL1KWzgxYkRwYJmwMbTjXLjgmJotqv9YCOIFlghXoVmrEfUV/6AuzNcwZpPi07B5Cussl4jPeYxwdTn8mFCqGRC8SebEZfy2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aNvDmNyN; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cb7139d9dso27222485ad.1;
+        Sat, 02 Nov 2024 09:46:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730565988; x=1731170788; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wu1IcKoJUxRY+49oDrmQhrjE4vDkW2TWldSnGKBSz7Y=;
+        b=aNvDmNyNMQ/dz9VWWfV6Js73c4phHaD1hamTKsJx3j0g53TzkQeTyfxuKorhC1dfS1
+         32lx0cOGKfokQJQ7SS8C701wSvm7mO6UaLTUETRTaZFDt9IogzRYC5NSixfku8CyC7rB
+         O1MZZt0+TGpYhMldi5TUOD6A+t2pUO6Tq95SWHXeUmm51Bp1PQzP1Ftnl5OzxoecoQsw
+         lljR/naibitBopSRn4d/ys2BPeaOT4iFs+8Uv6Pxykp/mAmwgj987c9NZT1T8OU/bUut
+         B+DfPaRJaLHwqQaCKHXn0i5GP+029p4bDt90ZpJm3Hb5+v+bh9EHnMn+xTALz5AgIzyq
+         vnGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730565988; x=1731170788;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wu1IcKoJUxRY+49oDrmQhrjE4vDkW2TWldSnGKBSz7Y=;
+        b=BBrr3zsCMN6Q21DM5sKwRer7FHK9KLhEo+imwWEaAyrWrUyFLLPCAP0pf2XwscnhlU
+         nvrBbbiZH9rHikkBfYEpXT+5oL52DIX/9yfNC6HRzP4HooR7IMqfP7f3OLOIU/wq1Ixs
+         MhQXSESExNX79zq+rwiOyf13DsFHiJUBlQWXinQ7YMFTxSZJoctY06IskDFNF7zP3f9y
+         FC07j/sdEfTUzJ4Q7GCNrySR1qmk5Wn4K9CqeUaGXTQ9nzI4imXS9Qtla5kU9uMJrKRH
+         BReG4Vi/8l12IjpREfd+t0m5GVnxWDj9ZkNbQCGUmPnz3W1w31n77WKQXVOv2fpbK0Q7
+         NGfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAk+jxYd7hmUobVhC75PO4JgVbqlxYBWTSC5Z7fjRvohPIC65fTOEM0jp867jyFx3HNIaTe3XS@vger.kernel.org, AJvYcCVclj4D8fWv+oeU50S7H+bAFdGRTDQge/3XpWGaQIFdjmcunl26EHMS6HbXvXWiaf68/XdNEDg1Aw6x2dY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm1fVN8BxEBJWW6FKg+x57pP22Kp+g/hHxTUmUaPF0ppcqXooq
+	fQJdxgZmpYz96JGicoZDDxReEm3GobglEedg7RLaosIdyBIFYOeI
+X-Google-Smtp-Source: AGHT+IFMwL204glb+Tqv8APpV3BkFvm4TZijbeAaJXn4kWnIhPNtE/iQNI0REzFPPwK5X5J8SL2Gjw==
+X-Received: by 2002:a17:903:18f:b0:20c:9326:559 with SMTP id d9443c01a7336-210c6b07121mr364436815ad.29.1730565987538;
+        Sat, 02 Nov 2024 09:46:27 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ee3ccsm35556345ad.46.2024.11.02.09.46.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2024 09:46:26 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <9c54d0ff-15d3-4868-afba-ae3ccde28a41@roeck-us.net>
+Date: Sat, 2 Nov 2024 09:46:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241101162147.284993-3-andrealmeid@igalia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/137] 6.1.115-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org,
+ Tiezhu Yang <yangtiezhu@loongson.cn>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+References: <20241028062258.708872330@linuxfoundation.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241028062258.708872330@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi André,
+On 10/27/24 23:23, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.115 release.
+> There are 137 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
+> Anything received after that time might be too late.
+> 
 
-kernel test robot noticed the following build warnings:
+[ ... ]
 
-[auto build test WARNING on tip/locking/core]
-[also build test WARNING on tip/sched/core linus/master v6.12-rc5 next-20241101]
-[cannot apply to tip/x86/asm]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Tiezhu Yang <yangtiezhu@loongson.cn>
+>      LoongArch: Add support to clone a time namespace
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Almeida/futex-Use-explicit-sizes-for-compat_exit_robust_list/20241102-002419
-base:   tip/locking/core
-patch link:    https://lore.kernel.org/r/20241101162147.284993-3-andrealmeid%40igalia.com
-patch subject: [PATCH v2 2/3] futex: Create set_robust_list2
-config: i386-randconfig-062-20241102 (https://download.01.org/0day-ci/archive/20241103/202411030038.W5DgvCYP-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241103/202411030038.W5DgvCYP-lkp@intel.com/reproduce)
+This patch triggers:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411030038.W5DgvCYP-lkp@intel.com/
+Building loongarch:defconfig ... failed
+--------------
+Error log:
+arch/loongarch/kernel/vdso.c: In function 'vvar_fault':
+arch/loongarch/kernel/vdso.c:54:36: error: implicit declaration of function 'find_timens_vvar_page'
 
-sparse warnings: (new ones prefixed by >>)
-   kernel/futex/core.c:915:59: sparse: sparse: cast removes address space '__user' of expression
-   kernel/futex/core.c:915:59: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected unsigned int [noderef] [usertype] __user *head @@     got unsigned int [usertype] * @@
-   kernel/futex/core.c:915:59: sparse:     expected unsigned int [noderef] [usertype] __user *head
-   kernel/futex/core.c:915:59: sparse:     got unsigned int [usertype] *
-   kernel/futex/core.c:1108:42: sparse: sparse: cast removes address space '__user' of expression
->> kernel/futex/core.c:1108:42: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct robust_list_head32 [noderef] __user *head @@     got struct robust_list_head32 * @@
-   kernel/futex/core.c:1108:42: sparse:     expected struct robust_list_head32 [noderef] __user *head
-   kernel/futex/core.c:1108:42: sparse:     got struct robust_list_head32 *
-   kernel/futex/core.c: note: in included file (through include/linux/smp.h, include/linux/alloc_tag.h, include/linux/percpu.h, ...):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+because the missing function is not generic in v6.1.y.
 
-vim +1108 kernel/futex/core.c
+Reverting the patch on its own does not work because commit a67d4a02bf43
+("LoongArch: Don't crash in stack_top() for tasks without vDSO") depends on it.
+Reverting both patches fixes the problem.
 
-  1095	
-  1096	static void futex_cleanup(struct task_struct *tsk)
-  1097	{
-  1098		struct robust_list2_entry *curr, *n;
-  1099		struct list_head *list2 = &tsk->robust_list2;
-  1100	
-  1101	#ifdef CONFIG_64BIT
-  1102		if (unlikely(tsk->robust_list)) {
-  1103			exit_robust_list64(tsk, tsk->robust_list);
-  1104			tsk->robust_list = NULL;
-  1105		}
-  1106	#else
-  1107		if (unlikely(tsk->robust_list)) {
-> 1108			exit_robust_list32(tsk, (struct robust_list_head32 *) tsk->robust_list);
-  1109			tsk->robust_list = NULL;
-  1110		}
-  1111	#endif
-  1112	
+Copying the authors of both patches for advice.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Guenter
+
 
