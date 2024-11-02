@@ -1,148 +1,117 @@
-Return-Path: <linux-kernel+bounces-393428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF75D9BA071
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:21:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4D19BA07E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:24:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A36C1281EF6
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:21:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45931C2113A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC6918A92A;
-	Sat,  2 Nov 2024 13:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tweaklogic.com header.i=@tweaklogic.com header.b="YMvA0ThG"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D000018A950;
+	Sat,  2 Nov 2024 13:23:55 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE2318A6BF
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 13:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B199D1E515;
+	Sat,  2 Nov 2024 13:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730553682; cv=none; b=eDym+U4IvSUM920NNu9WGpbKhl9zRoAW6lf9cxxuU7cE8Lx4EKret/qRHisMwDWVSRrj6PNqvobK7jE6Je4bEBI+0TEAKbxfRuQU/kthw82sCF/OVIiOfAh9uxHwZdzzRT3wJYX36bRK7G/I/zo9lIhkSEv5AoS5tbuIoycmHWg=
+	t=1730553835; cv=none; b=DuJqP4iIejIbbPzP8W4oci7veLzwFijLSsPF8v1dp7zdtgpkID2eSdqr+7UpB9ddZV1ouxb+fxwVf9t3MlSydZHzP7/D3Xuc1bxsLB5wCaxgmGELNDK9JIUCFHkJ+CyV7y6AaYpVLtfVmGpz3tEKRDuK+ZAkYWjm+M6gXwhihn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730553682; c=relaxed/simple;
-	bh=TYC9l1TDXilNXaG0BsW3CdCYdRUtd8+mZKCtV6EyLI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WZuUiZHf9d1J9UzL7DEhDGOlfTvKP6WJpy2ug7qRSrgAjqfJPmLBO3GCyHP8+NTd2GnNmvxUbdVXM8QEtDN+lCsyMoe9RngqZ/xDKsWttA9JNLj2tSkHISj9YpqtkFcKJOh5xV92FOjoJomqSkQvH1/evEbTPuIk/MUmIOG5L78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tweaklogic.com; spf=pass smtp.mailfrom=tweaklogic.com; dkim=pass (2048-bit key) header.d=tweaklogic.com header.i=@tweaklogic.com header.b=YMvA0ThG; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tweaklogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tweaklogic.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20e6981ca77so30851695ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 06:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tweaklogic.com; s=google; t=1730553680; x=1731158480; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8P6J7CC2+ddqyvspzxGk9dhLYIMX+2ilpolCnOsNTNQ=;
-        b=YMvA0ThGzwDEvA2IuhP4lRriPTdOWobAFEJbhzac/pd1uMhZqvVLnwD7kXEvBg5ElC
-         6LTu9dRein+WbEw4ZfZqgzgNVFoFM5BvVhHB6lYBqB5GZtYIr++ASLDXNe6U0QlUUvaK
-         7tvqGGpSLGrIL5zRJUpVZHs8oGgMw2AE70EqrA0a1NyzqHeVi+GVjhVSsIlvdYfYqy/M
-         EY3fJimMR8d8RDkstPY2AMm96XYm7RyrviZYOlRf0rdKe7GzU6B2+KSfiAJ6Qh1R2KYI
-         xdHDn/MYPGzIBGjbjgC4m0DeU5vSZV9dU6zJP0b5r0adhOqtm/ekpKMaz2EE2MLJvbC1
-         c6yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730553680; x=1731158480;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8P6J7CC2+ddqyvspzxGk9dhLYIMX+2ilpolCnOsNTNQ=;
-        b=dvfsKK76Pcrbfku0rYYpOJ9eqGtBS9jVLZc1DSvkDlwDH0SWda7zi0Ls4VM+nVF14s
-         gw2GKCTJ5D9u/fT/Nr6sh+UeFiF9b7e3OkZfD2X/YZYXXg92BTFh258NqKA5zrG0dwbv
-         WCx6roRAk3NG0ImFB1N/ArTu7nHUW0U7xcwcjr/C784HKkkt4AZ6jhgoKhZZzwuPMB4i
-         SOXdWGbCf3Uo+k4GO/IedR69I6pd2wsBfbwWgMz5+iQpk3eQqezaxJFfImcq9ejOEnLW
-         YzCaqoohSoEg9XKf/qGT7vj2RKxrb/FZlzb5lQfj/BjaR2d6ufK1LhDFCzidoMdnb3Z7
-         ENAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV33HgnC4V+LZUBO8kbMGzQuMgHrOI3UHtA8J0BcM6dwex4jUoqQUjCXN7RnLnxsZ4v8Sac1muGoeEB0Ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBLRAiL7JUwXTv3U+UiP8j9FG9T/MWAVMif2905sLj8sRFvmo8
-	eaImyJ1j6UpfoZKam+J18N+IQc+YCUjon0RrPEMIksc+A9c8XxQQew+LEgwFp98=
-X-Google-Smtp-Source: AGHT+IGq+i8a8MyrkZrVMk7tFGx4jYT5BKdNbeajY1pRzeXD9zZdCy+jANqzkpIEbDK9zAkNl1bK+w==
-X-Received: by 2002:a17:902:d2c8:b0:20c:a055:9f07 with SMTP id d9443c01a7336-21103b1a5cfmr145523125ad.26.1730553678217;
-        Sat, 02 Nov 2024 06:21:18 -0700 (PDT)
-Received: from [192.168.50.161] ([180.150.112.66])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2110570b482sm33784505ad.71.2024.11.02.06.21.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Nov 2024 06:21:17 -0700 (PDT)
-Message-ID: <4e4e5281-d489-42b5-b358-c44958cfa4f9@tweaklogic.com>
-Date: Sat, 2 Nov 2024 23:51:05 +1030
+	s=arc-20240116; t=1730553835; c=relaxed/simple;
+	bh=cnZgompK9DLpu0oUx4hd67geHcCcGIiOVdT4sPIWGek=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=SMOP6YWnaRm+ewKHa/C2aXL9IyGmo3w1dZMfFdPa1bY35DqeDCR/+QxtQL5gDHkSW2yYpdO8ptHWfUJN7QHGq+m/4Y4uHx9W6ejBwfG0zfemxNkYDOu5X02+K+rS1I51fdVtHWO02eBHSyup9HHJ4BkI6rkVBRIIS+D352ltl78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:51330)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1t7E6Z-00FGat-NV; Sat, 02 Nov 2024 07:23:51 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:43360 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1t7E6Y-00EG20-Q8; Sat, 02 Nov 2024 07:23:51 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Kees Cook
+ <kees@kernel.org>,  linux-kernel@vger.kernel.org,
+  kernel-janitors@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-mm@kvack.org
+References: <34b8c52b67934b293a67558a9a486aea7ba08951.1730539498.git.christophe.jaillet@wanadoo.fr>
+Date: Sat, 02 Nov 2024 08:23:31 -0500
+In-Reply-To: <34b8c52b67934b293a67558a9a486aea7ba08951.1730539498.git.christophe.jaillet@wanadoo.fr>
+	(Christophe JAILLET's message of "Sat, 2 Nov 2024 10:25:04 +0100")
+Message-ID: <87jzdl3h2k.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/15] iio: light: apds9306: simplifies if branch in
- apds9306_write_event_config
-To: Jonathan Cameron <jic23@kernel.org>,
- Julien Stephan <jstephan@baylibre.com>
-Cc: Mudit Sharma <muditsharma.info@gmail.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Cosmin Tanislav <cosmin.tanislav@analog.com>,
- Ramona Gradinariu <ramona.gradinariu@analog.com>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Dan Robertson <dan@dlrobertson.com>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Matteo Martelli <matteomartelli3@gmail.com>,
- Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
- Michal Simek <michal.simek@amd.com>, Mariel Tinaco
- <Mariel.Tinaco@analog.com>, Jagath Jog J <jagathjog1996@gmail.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Kevin Tsai <ktsai@capellamicro.com>,
- Linus Walleij <linus.walleij@linaro.org>, Benson Leung
- <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
-References: <20241031-iio-fix-write-event-config-signature-v2-0-2bcacbb517a2@baylibre.com>
- <20241031-iio-fix-write-event-config-signature-v2-13-2bcacbb517a2@baylibre.com>
- <20241101164118.687be624@jic23-huawei>
-Content-Language: en-US
-From: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
-In-Reply-To: <20241101164118.687be624@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1t7E6Y-00EG20-Q8;;;mid=<87jzdl3h2k.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+784bjb7XOAmC0ASw8osPUmENC1hfnnhw=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4998]
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 303 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 11 (3.8%), b_tie_ro: 10 (3.3%), parse: 0.99
+	(0.3%), extract_message_metadata: 13 (4.2%), get_uri_detail_list: 1.02
+	(0.3%), tests_pri_-2000: 13 (4.2%), tests_pri_-1000: 2.5 (0.8%),
+	tests_pri_-950: 1.17 (0.4%), tests_pri_-900: 0.97 (0.3%),
+	tests_pri_-90: 93 (30.6%), check_bayes: 91 (30.0%), b_tokenize: 5
+	(1.7%), b_tok_get_all: 33 (11.0%), b_comp_prob: 2.2 (0.7%),
+	b_tok_touch_all: 47 (15.6%), b_finish: 0.92 (0.3%), tests_pri_0: 153
+	(50.6%), check_dkim_signature: 0.48 (0.2%), check_dkim_adsp: 3.1
+	(1.0%), poll_dns_idle: 1.29 (0.4%), tests_pri_10: 2.9 (1.0%),
+	tests_pri_500: 9 (2.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] fs: binfmt: Fix a typo
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, kees@kernel.org, jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, christophe.jaillet@wanadoo.fr
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-On 2/11/24 03:11, Jonathan Cameron wrote:
-> On Thu, 31 Oct 2024 16:27:08 +0100
-> Julien Stephan <jstephan@baylibre.com> wrote:
-> 
->> Simplifies the regmap_wite if branch in apds9306_write_event_config.
-> Applied.
->>
->> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
->> ---
->>   drivers/iio/light/apds9306.c | 5 +----
->>   1 file changed, 1 insertion(+), 4 deletions(-)
->>
->> diff --git a/drivers/iio/light/apds9306.c b/drivers/iio/light/apds9306.c
->> index 8adc74040db2bddf93fbb773e3519abcc726b9a6..9c08e7c3ad0c17519689a630d42fe9b90438dfe8 100644
->> --- a/drivers/iio/light/apds9306.c
->> +++ b/drivers/iio/light/apds9306.c
->> @@ -1125,10 +1125,7 @@ static int apds9306_write_event_config(struct iio_dev *indio_dev,
->>   		}
->>   	}
->>   	case IIO_EV_TYPE_THRESH_ADAPTIVE:
->> -		if (state)
->> -			return regmap_field_write(rf->int_thresh_var_en, 1);
->> -		else
->> -			return regmap_field_write(rf->int_thresh_var_en, 0);
->> +		return regmap_field_write(rf->int_thresh_var_en, state);
->>   	default:
->>   		return -EINVAL;
->>   	}
->>
-> 
-Hi Julien,
-Sorry for the delay.
-"int_thresh_var_en" corresponds to APDS9306_INT_CFG_REG bit 3 (Datasheet: INT_CFG, Address: 0x19) which
-is a single bit value only. If user does "echo 4 > /sys/bus/iio/devices/iio:device0/events/thresh_adaptive_either_en",
-which trickles down to the "state" variable, do we really want to write any other value except "0" or "1"?
-Correct me if I am wrong here.
-Regards,
-Subhajit Ghosh
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+
+> A 't' is missing in "binfm_misc".
+> Add it.
+
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  fs/binfmt_misc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index 31660d8cc2c6..df6a229b5e62 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -998,7 +998,7 @@ static int bm_fill_super(struct super_block *sb, struct fs_context *fc)
+>  		/*
+>  		 * If it turns out that most user namespaces actually want to
+>  		 * register their own binary type handler and therefore all
+> -		 * create their own separate binfm_misc mounts we should
+> +		 * create their own separate binfmt_misc mounts we should
+>  		 * consider turning this into a kmem cache.
+>  		 */
+>  		misc = kzalloc(sizeof(struct binfmt_misc), GFP_KERNEL);
 
