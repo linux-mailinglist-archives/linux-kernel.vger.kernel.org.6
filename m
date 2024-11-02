@@ -1,153 +1,155 @@
-Return-Path: <linux-kernel+bounces-393325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 373099B9F43
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:28:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DFD9B9F47
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:28:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69C9F1C2188B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09EC028257E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B867E176AB9;
-	Sat,  2 Nov 2024 11:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39894176AA1;
+	Sat,  2 Nov 2024 11:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="vjmTzVjh"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ww2X6ids"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9F913C67E;
-	Sat,  2 Nov 2024 11:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F17A13C67E;
+	Sat,  2 Nov 2024 11:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730546896; cv=none; b=X80DhQlma/Dy6y9aikK101myELkWepAS9peWBJ04DSnILfoDtMfOw7Ov0pgtpJmFdRb0uk6IofajCN3GJYauqsAgpAe+H1Qj6DYna5SHXfAnSorYtIXvh19fR6JOFxb2d9W7lfPLRptExbKP9wvSwfLNAsspHVp/5olEO4eBqHM=
+	t=1730546913; cv=none; b=Lc5C005kz3cSTzCHgXz4OpZo4quDR6T0/lCOFGnWCznGqJliDXV30ViGmA4Hwx6uz5dQdYsQ5X8IN+QOvuC+y6H33i0On7nmBkVbBo8eRaTWg43HcaqCax39LKstt6glDa2ECQ8uT4epJt0JhrBwNlc9nBSiVRjW2s0zb+19R7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730546896; c=relaxed/simple;
-	bh=6Xuvqvjz0O0f5DtMDCZIJtSxqS5u8/HCzRNuy/jlh0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCmBQeWs4vgXlMEDHumF4xiIKUYeXw5l9J/uhJzqTIG7/uzRquCj7Fs1/vzG0lvMjVX8uFiBImihx3YRBT+YoWfZIJEvODWBBv2n6z6+Y5MniyT+IyGaja6r9+9NyVXfaQ71FBFn9idreF3JP6nXzCE5VYYdQ7jjjGbE7d1k15g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=vjmTzVjh; arc=none smtp.client-ip=212.227.17.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1730546857; x=1731151657; i=christian@heusel.eu;
-	bh=WmMrR/YhdN4xuscWAnklkE6sNO6ghcpu6+bEbGV0Dl8=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vjmTzVjh0S6GfFz24w7LgZLafZcxyg/CzcOzuKD6qKO+ytJm7SgiHWJxGl3R/+lu
-	 BCxrMZVfhO3iBmMa9x2Y9F74pflSaX8cl60zCD4ffZvHX04HEeAn3wvMtgPbfPYHS
-	 iMRPw7w49MwG27wlR9qtdw5qQ7T8zvy9JT1kxVVwrtKV/cX49uc65pmlFAqISzKif
-	 eOPoQYqezruUquf4sg/ciaGZe798zaDixOlYO+b8JfWTRjKoy1szrI2tDiem+KEfV
-	 M7M6GweONgY6PlMrQdg6c+Ek/fgK100CYB9OBxAECoKlUsfRkMCS+D0NcQ3Pn6lbC
-	 Ym5ytnc0D8weKfScYw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([84.170.95.171]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MhDEq-1tkOvj2UsM-00ajVM; Sat, 02 Nov 2024 12:27:37 +0100
-Date: Sat, 2 Nov 2024 12:27:36 +0100
-From: Christian Heusel <christian@heusel.eu>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] bpf: replace redundant |= operation with assignmen
-Message-ID: <cef129cd-44b2-449c-8a60-c918af005cbc@heusel.eu>
-References: <20241031130704.3249126-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1730546913; c=relaxed/simple;
+	bh=UZMFDoAo5FmpoZ12WjntjmscqJDHICva9l8MSR9Qrqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ikW6Ej8CPnFPYs8nSE8wXLVq9HPO5HugvNFWb02/w0Zed7/cb9o3dzV9GUoS98VaMZd15j3KcrMtmCdOzusqWTUJFnbIRQbXLB4ZkfxNrFnQo8o4OojfS3/l/bUz9v2iclCPCf6f2VZykq6WjlddpaxjL0Qa1C679s7F9DPQgLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ww2X6ids; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=Sm3j3fQJAxFZUYQ4MHzOerlbFFEShkjW02q/uFLGtMg=; t=1730546911;
+	x=1730978911; b=ww2X6idslJZx60IRETR1A3LlKZDRlwQBO6NBDUcHZePjasz+759B63qI4CZAn
+	fwaAsDsxEeEPa+Bi6e6yhb9bKcoIG5OxHCKhsEkceqa4FNuA8+if/24+BiGnqvkyWc54ePKz3VJoX
+	/e5DDMjz5Ef0T/XvWjGnmyJsYEiUIv3JLhnPwfdfZ0wwmMJAjg4P2aHw22ChAzWigvN6SX/rN/3f2
+	+tP+wOGrqhdZna/w2Fp8WoAPa6OlXgc0dcO9FenB6Psu86Trc+iFlPitUtUxzz6TSR1QkKozCBfu0
+	NII8jMjilUDTCCUXg9TkWJzOClirYEi2KUOUbc+Pi0PWuQ0Ocw==;
+Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t7CIp-0001Aj-CS; Sat, 02 Nov 2024 12:28:23 +0100
+Message-ID: <c9547d48-9efa-4e4e-b7fb-d82f3621bd30@leemhuis.info>
+Date: Sat, 2 Nov 2024 12:28:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mq46d7w2jh5srwvq"
-Content-Disposition: inline
-In-Reply-To: <20241031130704.3249126-1-colin.i.king@gmail.com>
-X-Provags-ID: V03:K1:BLFSXaSDwrRUxOWPQAYJW4MCsCZ66VH3B5fNZlyrNPQpIVwAuxQ
- EIkKOJtYFfeQVdxZQqwxoddegPY2yO9b51n6S7hW4vjrFPm1SRmruP8OQbvYJCNaXs1/FCR
- Ep06esM4QyyHNAg7NYWvu5YGBpbHFBbDG2ksbGy6afBXhFQPgXihjw9yKdo7OHLTHIH3DM9
- WAIfJ3H8CT/iuXFlPJ4tw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0c9rEGd8oOs=;gNv4hqN2OexMjuuM10htPanwg2B
- p4OqAKHEKbgJADSpmFSXa/BjBgfSY8VkxKDNwPe+hMWdRkhF+ADhwG49MONFNgwPj9da3b4dx
- rgUUXIz2s2AsQkPDGHo+fJxAKwYNTtFBvdg/qX+gXZvw219u1rrk+zhSf3U8Wb4Q/sSDpdr7k
- ox1MgluLPvnX0m+8p4zi/fscS+C6FNJAMlqHrz/+h1R7J3W8Gd29UHxuDnILTMTVOaHk5w8uh
- INXCOEv0U9sZVd0Z8oHTkarsdr++kuRaKY5dnXltuBAyYCgXLu1rf0fdLAv9yIVjYZjclOi7Y
- 554Wws/ICn/9XF2rWzxuXpDOOaUr+aq03xTOfowyA+E7OOZAr3ns4BRR3Ms9WONtQHLYmtOir
- Zz/tFA+n5PkzVanhR5TVSRaeqRM0i9otuJ1/HyVGNL6jWfkwgoV5DWXlnlE4Hl5/Nm/t2oKXm
- wA3WmA5w8Aso+hiHVK5iY3sR5QR84YGsmP39gjIfDMI+Ab/E5/DIAAygi1g92TM7WMk7eIP2c
- fUHLmUPGXG75NUuHx8cHmWOTsX5op3sp26E5Toee/Tlef11X3tFsDKOhsQjhVFT+o18huCZBM
- nSb9Ie+lffn+vstVzgKJKblFHi59iwxjryt1EulzW1CZ00DtyotCO93ZiiBWyXMtxfzGpQEnA
- 2T6AcKCtwYyhZlntf4rj909FCrGmf5wUMlWqGLu8HOsX/XF1O70/5O1D6vM6sfSoDYB+xdin3
- RJQlXJHHt/Q3JqGeh1UZJclnKG4s5NI5g==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] docs: bug-bisect: add a note about bisecting -next
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>
+References: <0b8245f429a3cb162f8f6c0686081700a9c09cc4.1730441728.git.linux@leemhuis.info>
+ <20241101225916.075af3aa@canb.auug.org.au>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-MW
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <20241101225916.075af3aa@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1730546911;fe94a657;
+X-HE-SMSGID: 1t7CIp-0001Aj-CS
 
+On 01.11.24 12:59, Stephen Rothwell wrote:
+>
+> Thanks for this.  A couple of comments.
 
---mq46d7w2jh5srwvq
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH][next] bpf: replace redundant |= operation with assignmen
-MIME-Version: 1.0
+yw; thx for your feedback!
 
-On 24/10/31 01:07PM, Colin Ian King wrote:
-> The operation msk |=3D ~0ULL contains a redundant bit-wise or operation
-> since all the bits are going to be set to 1, so replace this with
-> an assignment since this is more optimal and probably clearer too.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  kernel/bpf/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-> index 9aaf5124648b..fea07e12601f 100644
-> --- a/kernel/bpf/inode.c
-> +++ b/kernel/bpf/inode.c
-> @@ -914,7 +914,7 @@ static int bpf_parse_param(struct fs_context *fc, str=
-uct fs_parameter *param)
->  		str =3D param->string;
->  		while ((p =3D strsep(&str, ":"))) {
->  			if (strcmp(p, "any") =3D=3D 0) {
-> -				msk |=3D ~0ULL;
-> +				msk =3D ~0ULL;
->  			} else if (find_btf_enum_const(info.btf, enum_t, enum_pfx, p, &val)) {
->  				msk |=3D 1ULL << val;
->  			} else {
-> --=20
-> 2.39.5
+> On Fri,  1 Nov 2024 07:17:06 +0100 Thorsten Leemhuis <linux@leemhuis.info> wrote:
+> [...]
+>> +Bisecting linux-next
+>> +--------------------
+>> +
+>> +If you face a problem only happening in linux-next, bisect between the
+>> +linux-next branches 'stable' and 'master'. The following commands will start
+>> +the process for a linux-next tree you added as a remote called 'next'::
+>> +
+>> +  git bisect start
+>> +  git bisect good next/stable
+>> +  git bisect bad next/master
+>> +
+>> +The 'stable' branch refers to the state of linux-mainline the current
+>                                                              ^
+>                                                              that the current
 
-The patch subject contains a typo ("assignmen" should be "assignment"),
-but maybe this can just be fixed on apply ..
+Ohh, I thought such a "that" would be optional here, but I'm not a
+native speaker, so I guess I was wrong.
 
-Cheers,
-Chris
+>> +linux-next release (found in the 'master' branch) is based on -- the former
+>> +thus should be free of any problems that show up in -next, but not in Linus'
+>> +tree.
+> 
+> As you say, 'stable' only works for the current linux-next release.  If
+> you are trying to bisect a previous release, you can always find the
+> SHA1 associated with the base of any linux-next release using "grep
+> origin Next/SHA1s".  Not sure how useful that is.
 
---mq46d7w2jh5srwvq
-Content-Type: application/pgp-signature; name="signature.asc"
+Hmmm. Not sure. Open for opinions here. But right now I tend to think:
+nice to know, but not relevant enough for this text, as most people want
+to check if latest -next is still affected -- so why then bisect with a
+older -next release?
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmcmDKgACgkQwEfU8yi1
-JYWdIxAAotM3cGdE2NzOWvfeXmB8y5/PcO7OvXnCcp4RiWLjDHDO2TA1Mq3fOkRb
-TdBAIByTs2xo2lRyYFreqnoWA+PvwX7oxJouR1SMEWUbyWfWf3SwjiWgk4vW1V1B
-cmmF87IeRRN2ViIjW/aIhN2pjVcRjHxRZJcjORNlfDEewJDd9iT4cE5IkYcE9W/C
-baipFrEj6J0Kf7ewq22A3mKbaHRCoNYDRkOgNonh1jEORX0MHwMJIDHhVkzmtgC6
-tStNIDDg3A9Hp11li+eTDecA0OC9nvENYntfWvpdAqUi8jlC/+62LxadcSerTCSf
-N+ru/Qw7bJ8D9hmBano7iXzBFHK9rNVS73ctus0cIM2ge2JLDqdbs/QkAchk12vk
-drDcJc2VH931lh9eI88uDfQWSJFjFgI1yN2kBdycjsqIvX9VbZfJcb635FYbgK20
-KFF4ZhB8d5DTdR8+2UHpum5FgNWOITXB9u+NHSVZDd5a4y26E1gXBGr8jXHp85wx
-WIthFb+65YHwaGyeohR8RcEiG7SPIqAyqmdUUqJgKqzIeFlK1ww+UWQpK2rwJEd5
-fzukt2s3CeXKy9OB36ZfZ8MBj+Mz7J198AjP+KC3nBPla2n0NcY9hDX38XBQ91Hk
-9wfcA54NifMJLMPE3U8WU2CYGBnkufLDB0yYdiP3IY3lrSDwCT4=
-=b+Wj
------END PGP SIGNATURE-----
-
---mq46d7w2jh5srwvq--
+Ciao, Thorsten
 
