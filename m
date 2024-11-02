@@ -1,192 +1,172 @@
-Return-Path: <linux-kernel+bounces-393065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B8C9B9B80
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:12:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3CB9B9B61
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DFA91F21A17
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:12:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60A3A1C2114A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473D11547D2;
-	Sat,  2 Nov 2024 00:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37D31C01;
+	Sat,  2 Nov 2024 00:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="SY6ztOBW"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="keBEPT3X"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C951591EA
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 00:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF45F749C
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 00:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730506143; cv=none; b=fhQfstVoF9k6isIEwrqU31gSBhSNlBdu0kQSYRE7T60lxXN+mi3WuWLtUBECSNqFoHyXSS0O0NzREjtiZQ+h8TurmYxABvsFkBhfOKhq3/LFvyWbvGQV/LOd4BA9W6xMv0DsvjgG16QHh4wdnsd96nve0jdV+gMqkk7iIsC2/mQ=
+	t=1730506112; cv=none; b=lUtsNtV9CETsArBh+4XKQc2wunHlwCFtiP5vF2u2obmLWswBufF1IT6UD22rvBOyR+lJ5QRcYqOSefCOl+VOUNCc20mtd1CTM2Dz1XxFoJdsg6TB6HryIgThVPUrVswbulYq98ty1szAHs3ASWH3dz23HEwBEFu4mvIc64y/0Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730506143; c=relaxed/simple;
-	bh=5bKzEp2E+apaTWEuLlcZsnWspoDb+MAs6T0sPiKfRr0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kk7ojkmcyFo5AK8ZRUEvPPkvxH9yF0AzJFH1IPCXED/udWgdhdewO2/g2LGEiBHrg7EDtgb83cGzq4TwYxDiCbR89nVxyjCmEKkF+9p6Uc3vYuYeOj7LTT4kq1SOGUV8feHzLIzMmPMBbp3KmuKz1ZhE8hU67apTxjYLekxoHtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=SY6ztOBW; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e2ad9825a7so1884143a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 17:09:01 -0700 (PDT)
+	s=arc-20240116; t=1730506112; c=relaxed/simple;
+	bh=K1VAQPVUjHp05FqtkiMkE/py7WN/uSlSMBrH41D1a6c=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HPTgl08put3oOtXM1C7U1Vt9TKD2oDzu0pOOBaMqBW57lP0M85H7cnr6dd7bivgGDUs0GzJryVX9XRxo6hNvqYOR+ry2R6SWsImWiTtIJVPHyPLebUsSynys/4g9/ybKlxiOUj4TJxpw9A4SypR5lysjZRQspBxJTsPijGNyicU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=keBEPT3X; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2e5efb04da7so2477728a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 17:08:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1730506141; x=1731110941; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z+rAnka3y7HDTfLG1azR9CpKSqpVN1TkP7KNPAjIJyU=;
-        b=SY6ztOBWRReFT9XsGxvvetOPY/gmuKuYiDDJ0IU8zs5oUuaLRnrsRpdH26CpFd2M/m
-         e/7xJpabONin6t02qx+a4UVDSRmZS787e3qLGsd+ydAk4XGpvOjN4BSqxM0n22ISPKna
-         S0WDmXOinsyEgSe4hflq7nLl011ZgFQ63hAFyyHzVhQL1OO+Yf5C3J3US+mMXFTQctMj
-         oN7dM/tQSc6FPXN+EhGJ2kJ+rRRKr1Cl6QDvkkAWdgFHyx7b1Pf8QqXFQ8LH+6hKxlgt
-         Nx6ejDumvyco6SBg4WfCeR+HWkZKGGMvXR9b1FNNewybuUN0ySJwCOBmvKjRQpAMY/4T
-         PGsA==
+        d=google.com; s=20230601; t=1730506110; x=1731110910; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=InJ/HRG3JZjFlXztSL9n1ISL7FHhXYKx7rtmr+D9bWY=;
+        b=keBEPT3XhV1Y+pA4Ud7sUrX+7Yfv5XAADKCzieFROXW0pSAB9yuEyz/Ue6MOIyTtGO
+         fNFP2wWnaw/KBKfmkPYiSPvC8EGsCGWHkKCWzkkMG0hV796wzXWCrGZmhkD4uNaSXiuZ
+         6w8v9CKyhTr007F4T+JUHYe6emiJFiawvMDx4EMCPn/RUdAlVd6PXER08SH9Bv8C1MYU
+         gPnKwm/+381HzRm7pdE0qc5j84BoMf1Mv72/vT6Nr1Q19HFfzqXTUNQUJkXNvcjgTSlO
+         5+lpUHrP6AhFQ/SX6X+90UmWPy+iXHOYNX4rsNU90rOxre+/jiGDPKNcJi6zl0KnCL+k
+         fFqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730506141; x=1731110941;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z+rAnka3y7HDTfLG1azR9CpKSqpVN1TkP7KNPAjIJyU=;
-        b=TDEgxuEFxAZDQ9Q/uj/UKyXtFgaXl3u/ZiUNv9lOo0gWTiwuuRIQ1614M3xl33LEsA
-         kAFGD0OlKWnW8kiuKSLxMLI4BvcXi+8Fwlq/IHkpSRj7YG1T+DWPWeD7k2FqeJqhhpH8
-         rzkJAm2Dzlvxtjl9axADBA5kTM4+j3oPZyObR7DaX9feSNNMEJ+vCyVQ96zd0qvbJqo2
-         3XCSdZt0S9aUn3GyzETTerJptohzSbC3LJ0WSODwXSB1IkhnN2a+ftRH1dHuiPYBdhBL
-         MT6JARvyeS5yKJBgcepJf0glqCd2N8sj4jDkF3jxKa69G8RxwRmNbEm/+5ncN6+kvDGv
-         YSgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1spyBJJlUca50QezERNHRYmnVLQcLp76n4uMrfFrqycmYNO3wjr2Ui9TO3JTxXbRHjEIeFRVNBoe4AFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm/xxaNq1itObMlU2DLE6WD9Lmb/ewID8CWuJqTm5LxTIjvuAY
-	Vr0+le7x3FfSBl8eXv3jaxYxMEUcf3gFdOpyJqpX2D0MB+DHOacAoUOovDxldDHXG3aHDuMZi+O
-	3
-X-Google-Smtp-Source: AGHT+IE9dycbI2epbg/rXlLb7+LyF9i1Z79AYkysLeojOoNqjBBp2pOKME/1fRPoHW8Jt+G33gBPpg==
-X-Received: by 2002:a17:90b:4d01:b0:2e2:c98e:c33f with SMTP id 98e67ed59e1d1-2e8f1058039mr30664103a91.1.1730506141388;
-        Fri, 01 Nov 2024 17:09:01 -0700 (PDT)
-Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fc00856sm5505749a91.54.2024.11.01.17.09.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 17:09:00 -0700 (PDT)
-From: Samuel Holland <samuel.holland@sifive.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org,
-	Conor Dooley <conor@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH 11/11] riscv: dts: starfive: jh7100: Use physical memory ranges for DMA
-Date: Fri,  1 Nov 2024 17:08:05 -0700
-Message-ID: <20241102000843.1301099-12-samuel.holland@sifive.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20241102000843.1301099-1-samuel.holland@sifive.com>
-References: <20241102000843.1301099-1-samuel.holland@sifive.com>
+        d=1e100.net; s=20230601; t=1730506110; x=1731110910;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=InJ/HRG3JZjFlXztSL9n1ISL7FHhXYKx7rtmr+D9bWY=;
+        b=T/hjZndDbven/m2mj7CJfGwr0NfBBnY/bRBLLNhCnFXtgqsmgoUbxVEflIJIL7PprF
+         IHZzd0s55TkYJkNcbdJCSO9SkMfEnqtQKYXVkmYSCZiUqOL1HgaP4Z1fmHAOZuydwH9f
+         WkQ3suupeZzteBpCDaAeBoU3ktBsIFPwHgkA5avK9VhRHxGur2DN6pTSx2dDTH6g5Fgs
+         10rtSNddfo/mHgKhp/X9Bos6+i3vkGfSZnRJMRNk72oL80TBeu1siPzjMHuU6RFo6x1E
+         MVbKOZni0sH3COfTMfD2DGVat05poVWxf7CvnuKv2crIJ+1Yg6smgTcB3VAfv0MSiD4o
+         EE2A==
+X-Gm-Message-State: AOJu0YzjFB5rMKJfosSIsC4iSVohlgiVSIiNMDU1vetVoe+idHaYB70C
+	8T7g0BrFjCL5iSsUUovRqGj95wr5p0WYBBUmIngokePgjOAkHNqBcsW0+PeFjYokUuoI3pJ86Qr
+	zEukbMk0GRfjO1yyKgPZW0ddiKGqkDSUBBgJu4TvrTWOLFsGfTGGJyXhO07dAFd/Mf0LXlNUqLJ
+	NV6WwjLtPl3ljpUo7yLSyr0MVEQH3G58E3P93m2/qkGI5JuCng+YtOW5cYIkONdQ4kXm0=
+X-Google-Smtp-Source: AGHT+IGRYxENLwLvq9b7oKrvhOSz1wzeXWo1ih0uS1qsmrAg4+Tmjt8/3GDxsy3voAv8ttVBOjE0Q5CFjnrHRHQkAg==
+X-Received: from dionnaglaze.c.googlers.com ([fda3:e722:ac3:cc00:36:e7b8:ac13:c9e8])
+ (user=dionnaglaze job=sendgmr) by 2002:a17:90a:2c4a:b0:2e2:d3dc:d3ca with
+ SMTP id 98e67ed59e1d1-2e8f0d4bd47mr41845a91.0.1730506108201; Fri, 01 Nov 2024
+ 17:08:28 -0700 (PDT)
+Date: Sat,  2 Nov 2024 00:08:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241102000818.2512612-1-dionnaglaze@google.com>
+Subject: [PATCH v3 0/4] Support SEV firmware hotloading
+From: Dionna Glaze <dionnaglaze@google.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org
+Cc: Dionna Glaze <dionnaglaze@google.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	John Allen <john.allen@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, Michael Roth <michael.roth@amd.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Danilo Krummrich <dakr@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Tianfei zhang <tianfei.zhang@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-JH7100 provides a physical memory region which is a noncached alias of
-normal cacheable DRAM. Now that Linux can apply PMAs by selecting
-between aliases of a physical memory region, any page of DRAM can be
-marked as noncached for use with DMA, and the preallocated DMA pool is
-no longer needed. This allows portable kernels to boot on JH7100 boards.
+The SEV-SNP API specifies a command for hotloading the SEV firmware.
+when no SEV or SEV-ES guests are running. The firmware hotloading
+support is dependent on the firmware_upload API for better ease-of-use,
+and to not necessarily require SEV firmware hotloading support when
+building the ccp driver.
 
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
----
+For safety, there are steps the kernel should take before allowing a
+firmware to be committed:
 
- arch/riscv/Kconfig.errata                     | 19 ------------
- .../boot/dts/starfive/jh7100-common.dtsi      | 30 ++++---------------
- 2 files changed, 6 insertions(+), 43 deletions(-)
+1. Writeback invalidate all.
+2. Data fabric flush.
+3. All GCTX pages must be updated successfully with SNP_GUEST_STATUS
 
-diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
-index 2806ed7916c7..fc2c7fb2caff 100644
---- a/arch/riscv/Kconfig.errata
-+++ b/arch/riscv/Kconfig.errata
-@@ -53,25 +53,6 @@ config ERRATA_SIFIVE_CIP_1200
- 
- 	  If you don't know what to do here, say "Y".
- 
--config ERRATA_STARFIVE_JH7100
--	bool "StarFive JH7100 support"
--	depends on ARCH_STARFIVE
--	depends on !DMA_DIRECT_REMAP
--	depends on NONPORTABLE
--	select DMA_GLOBAL_POOL
--	select RISCV_DMA_NONCOHERENT
--	select RISCV_NONSTANDARD_CACHE_OPS
--	select SIFIVE_CCACHE
--	default n
--	help
--	  The StarFive JH7100 was a test chip for the JH7110 and has
--	  caches that are non-coherent with respect to peripheral DMAs.
--	  It was designed before the Zicbom extension so needs non-standard
--	  cache operations through the SiFive cache controller.
--
--	  Say "Y" if you want to support the BeagleV Starlight and/or
--	  StarFive VisionFive V1 boards.
--
- config ERRATA_THEAD
- 	bool "T-HEAD errata"
- 	depends on RISCV_ALTERNATIVE
-diff --git a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
-index ae1a6aeb0aea..34885fe40e2d 100644
---- a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
-@@ -9,8 +9,14 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/pinctrl/pinctrl-starfive-jh7100.h>
-+#include <dt-bindings/riscv/physical-memory.h>
- 
- / {
-+	riscv,physical-memory-regions =
-+		<0x00 0x00000000 0x40 0x00000000 (PMA_RW | PMA_IO) 0x0>,
-+		<0x00 0x80000000 0x08 0x00000000 (PMA_RWXA | PMA_NONCOHERENT_MEMORY) 0x0>,
-+		<0x10 0x00000000 0x08 0x00000000 (PMA_RWX | PMA_NONCACHEABLE_MEMORY | PMR_ALIAS(1)) 0x0>;
-+
- 	aliases {
- 		mmc0 = &sdio0;
- 		mmc1 = &sdio1;
-@@ -42,30 +48,6 @@ led-ack {
- 		};
- 	};
- 
--	reserved-memory {
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		dma-reserved@fa000000 {
--			reg = <0x0 0xfa000000 0x0 0x1000000>;
--			no-map;
--		};
--
--		linux,dma@107a000000 {
--			compatible = "shared-dma-pool";
--			reg = <0x10 0x7a000000 0x0 0x1000000>;
--			no-map;
--			linux,dma-default;
--		};
--	};
--
--	soc {
--		dma-ranges = <0x00 0x80000000 0x00 0x80000000 0x00 0x7a000000>,
--			     <0x00 0xfa000000 0x10 0x7a000000 0x00 0x01000000>,
--			     <0x00 0xfb000000 0x00 0xfb000000 0x07 0x85000000>;
--	};
--
- 	wifi_pwrseq: wifi-pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&gpio 37 GPIO_ACTIVE_LOW>;
+The snp_context_create function had the possibility to leak GCTX pages,
+so the first patch fixes that bug in KVM.
+
+The ccp driver must continue to be unloadable, so the second patch in
+this series fixes a cyclic refcount bug in firmware_loader.
+
+The third patch adds SEV_CMD_DOWNLOAD_FIRMWARE_EX support with the
+required safety conditions and adds a new argument to the platform
+initialization arguments to delay legacy platform initialization.
+The command allows for firmware to be committed at the time of download,
+but due to the safety requirements, its better to leave that to a follow-up
+SNP_COMMIT command.
+
+The fourth patch uses the new platform initialization argument when the
+vm_type is not legacy SEV/SEV-ES.
+
+The bulk of this series is in the changes to ccp in the third patch.
+
+The KVM_EXIT for requesting certificates on extended guest request is
+not part of this patch series. Any such support must be designed with
+races between SNP_COMMIT and servicing extended guest requests such that
+the REPORTED_TCB in an attestation_report always correctly corresponds
+to the certificates returned by the extended guest request handler.
+
+Changes from v2:
+  - Fix download_firmware_ex struct definition to be the proper size,
+    and clear to 0 before using. Thanks to Alexey Kardashevskiy.
+Changes from v1:
+  - Fix double-free with incorrect goto label on error.
+  - checkpatch cleanup.
+  - firmware_loader comment cleanup and one-use local variable inlining.
+
+CC: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Borislav Petkov <bp@alien8.de>
+CC: Dave Hansen <dave.hansen@linux.intel.com>
+CC: Ashish Kalra <ashish.kalra@amd.com>
+CC: Tom Lendacky <thomas.lendacky@amd.com>
+CC: John Allen <john.allen@amd.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: Michael Roth <michael.roth@amd.com>
+CC: Luis Chamberlain <mcgrof@kernel.org>
+CC: Russ Weight <russ.weight@linux.dev>
+CC: Danilo Krummrich <dakr@redhat.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Tianfei zhang <tianfei.zhang@intel.com>
+CC: Alexey Kardashevskiy <aik@amd.com>
+
+Dionna Glaze (4):
+  kvm: svm: Fix gctx page leak on invalid inputs
+  firmware_loader: Move module refcounts to allow unloading
+  crypto: ccp: Add SNP firmware hotload support
+  KVM: SVM: Delay legacy platform initialization on SNP
+
+ arch/x86/kvm/svm/sev.c                      |  10 +-
+ drivers/base/firmware_loader/sysfs_upload.c |  16 +-
+ drivers/crypto/ccp/Kconfig                  |   2 +
+ drivers/crypto/ccp/sev-dev.c                | 399 +++++++++++++++++++-
+ drivers/crypto/ccp/sev-dev.h                |  14 +
+ include/linux/psp-sev.h                     |  29 ++
+ include/uapi/linux/psp-sev.h                |   5 +
+ 7 files changed, 454 insertions(+), 21 deletions(-)
+
 -- 
-2.45.1
+2.47.0.163.g1226f6d8fa-goog
 
 
