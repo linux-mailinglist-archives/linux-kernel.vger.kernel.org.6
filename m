@@ -1,227 +1,110 @@
-Return-Path: <linux-kernel+bounces-393470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1DA9BA110
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:17:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2829BA112
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDEFF1F2187C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:17:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70EE71C20BDC
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD591ABEA7;
-	Sat,  2 Nov 2024 15:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71ABF19F461;
+	Sat,  2 Nov 2024 15:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="B2sad9+f"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xn0eM4cp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36D619F409;
-	Sat,  2 Nov 2024 15:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FF9185936;
+	Sat,  2 Nov 2024 15:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730560598; cv=none; b=NZLyOMJLdQBn5W+/uSIlE2dt52XPT6yuETneqOQtCcIDqMwB1Ng8/AS4yPmTQu2ZTycRSydrmKVGKdQSn7Z7iwaUcm7csmmSg7/FXKvKaJ/RdQneP58qqVnFr2JYOiaYHEk07J8vYLNSC0P5TKcDVwVQD590lqqQ/Dk/sepsHX4=
+	t=1730560709; cv=none; b=lpV+s2Qfk84LoXfH6kHv4wqr7V47+4/dpvRy0wUU9rLSKoK+ZXtvdLZGfWp8zBvX4gpjYiO4bzJnOrwyLgGflmItuKII3nmm3D39FyheY2tiXp5NHdggZqPFzFTk+jVkGi9UxiAFj+1cG1XVB3g8V/rNJ8cqC4BMU2mG4po68H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730560598; c=relaxed/simple;
-	bh=P5HZuhcGf3cFBA+A3tV5V3VnkK+SmRrbOL72QSgrTKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SwZZGptKnjpJlWauIbh1z4U4yn75rJ+Db6V6yMPSgD91rXlexQgUvGDXPh0uyTSoTn7CTMzyQipxOcn9M9Gp4gntmxeVqpBDSo1IWeeLwvjf/RUHrAVS0YIk7tVkSVZ1sWgVRluZJ311xIPzsyKzOd4SAWE0eNOySJzKNchQS4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=B2sad9+f; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=yrQTyP91hTnzUDfr+6Z9M449GasNlZJsvCf6FX7ZLlY=; b=B2sad9+f1PHt+PgD
-	BwJtNHQLBDsArkExCpm49vTqBbJQSdZucuFfaOHo9BkPRW7Dwpe79ZCX8hr7QGZGhvtZKavXwSAjZ
-	ODMtfY0rvM8hqOAm5eNmRLFdSrrvupSLv8PjXgx6tt4onfZ5bs1B9UZGqHv766W6mKxauAB/QSvs8
-	yls05WaaOfx21ayQUZTSJtah6WcftN/I7092jqG/YuDRyMot2qXrPWmZ0YmufBZoMoVGFKulXp0HS
-	PfnHQ2nOFjmlXt2f2DK5PwVRhl+0nwiTLsxErfHLyx5KuAFQurnEl2zgps6OazCoz3+hpJ5gzpEFG
-	iQAlRw//GhWkONkR8Q==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1t7Fra-00F6WZ-2I;
-	Sat, 02 Nov 2024 15:16:30 +0000
-From: linux@treblig.org
-To: ecree.xilinx@gmail.com,
-	habetsm.xilinx@gmail.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-net-drivers@amd.com,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH net-next 4/4] sfc: Remove more unused functions
-Date: Sat,  2 Nov 2024 15:16:25 +0000
-Message-ID: <20241102151625.39535-5-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241102151625.39535-1-linux@treblig.org>
-References: <20241102151625.39535-1-linux@treblig.org>
+	s=arc-20240116; t=1730560709; c=relaxed/simple;
+	bh=eBQzoo1AquovwalhpTStAoXAQHeDO1nu2xL8O6GPt7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=If5UtHemuCUTLrilyFYavV6H8G7c7PhkHLh5iL8qg/F5Sowzhj+3CZIAQkT6aqWJjT/aN4qycfc+1wECgw6m7TLVenQhGkQ5GTS4MfDiCoVk8zrPK1nw7s3ahIuRq8aSL0fE+z+/7NpQeCbbVR5ovNkWe1Ne5OmlltI4EJvnSKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xn0eM4cp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A30F9C4CEC3;
+	Sat,  2 Nov 2024 15:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730560709;
+	bh=eBQzoo1AquovwalhpTStAoXAQHeDO1nu2xL8O6GPt7Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Xn0eM4cpt6M27s7cRuMbvHByBxbLr/RNfhxjkB4yu/gERmMsKpl00RLj7ajK0ZlwE
+	 n3z0aTMBJyAgwISPxa9ZVHatoczR5V9pme8DPbCzf1WEN9SZRsZFvcYstCC+C4DTl3
+	 uSL6BVIIkAvzEFyC335iwU+pFk9kazYJF/KLEbLxT1qrrl1MB3AeyIKZywn+coArlw
+	 SejmMG5htFUZ0TcN56B8b/gjMkksU7nlDKQzC6eXm478IKxlraB18+dClqRtPwPjM8
+	 qui/tYz2j3CfsW072oN5JKAUfUKDBBHUjU7XpJEiyNfHdYNtprN8nVIMzSkhsUVOAC
+	 B6l8qStFYe2lg==
+Date: Sat, 2 Nov 2024 15:18:20 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Zicheng Qu <quzicheng@huawei.com>
+Cc: <lars@metafoo.de>, <nuno.sa@analog.com>, <andy.shevchenko@gmail.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <tanghui20@huawei.com>, <zhangqiao22@huawei.com>, <judy.chenhui@huawei.com>
+Subject: Re: [PATCH] iio: Fix fwnode_handle in
+ __fwnode_iio_channel_get_by_name()
+Message-ID: <20241102151820.609347ba@jic23-huawei>
+In-Reply-To: <20241102092525.2389952-1-quzicheng@huawei.com>
+References: <20241102092525.2389952-1-quzicheng@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Sat, 2 Nov 2024 09:25:25 +0000
+Zicheng Qu <quzicheng@huawei.com> wrote:
 
-efx_ticks_to_usecs(), efx_reconfigure_port(), efx_ptp_get_mode(), and
-efx_tx_get_copy_buffer_limited() are unused.
-They seem to be partially due to the later splits to Siena, but
-some seem unused for longer.
+> In the fwnode_iio_channel_get_by_name(), iterating over parent nodes to
+> acquire IIO channels via fwnode_for_each_parent_node(). The variable
+> chan was mistakenly attempted on the original node instead of the
+> current parent node. This patch corrects the logic to ensure that
+> __fwnode_iio_channel_get_by_name() is called with the correct parent
+> node.
+> 
+> Cc: stable@vger.kernel.org # v6.6+
+> Fixes: 1e64b9c5f9a0 ("iio: inkern: move to fwnode properties")
+> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+Hi Zicheng,
 
-Remove them.
+Good catch. I briefly wondered if this was unused code.  It is
+used, just not that much and it seems not on boards anyone is
+testing.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/net/ethernet/sfc/efx.c        |  8 --------
- drivers/net/ethernet/sfc/efx.h        |  1 -
- drivers/net/ethernet/sfc/efx_common.c | 16 ----------------
- drivers/net/ethernet/sfc/efx_common.h |  1 -
- drivers/net/ethernet/sfc/ptp.c        |  5 -----
- drivers/net/ethernet/sfc/ptp.h        |  1 -
- drivers/net/ethernet/sfc/tx.c         |  8 --------
- drivers/net/ethernet/sfc/tx.h         |  3 ---
- 8 files changed, 43 deletions(-)
+arch/arm/boot/dts/st/ste-ux500-samsung-janice.dts
 
-diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
-index 36b3b57e2055..0382ac30d1aa 100644
---- a/drivers/net/ethernet/sfc/efx.c
-+++ b/drivers/net/ethernet/sfc/efx.c
-@@ -417,14 +417,6 @@ unsigned int efx_usecs_to_ticks(struct efx_nic *efx, unsigned int usecs)
- 	return usecs * 1000 / efx->timer_quantum_ns;
- }
- 
--unsigned int efx_ticks_to_usecs(struct efx_nic *efx, unsigned int ticks)
--{
--	/* We must round up when converting ticks to microseconds
--	 * because we round down when converting the other way.
--	 */
--	return DIV_ROUND_UP(ticks * efx->timer_quantum_ns, 1000);
--}
--
- /* Set interrupt moderation parameters */
- int efx_init_irq_moderation(struct efx_nic *efx, unsigned int tx_usecs,
- 			    unsigned int rx_usecs, bool rx_adaptive,
-diff --git a/drivers/net/ethernet/sfc/efx.h b/drivers/net/ethernet/sfc/efx.h
-index 7a6cab883d66..45e191686625 100644
---- a/drivers/net/ethernet/sfc/efx.h
-+++ b/drivers/net/ethernet/sfc/efx.h
-@@ -168,7 +168,6 @@ extern const struct ethtool_ops efx_ethtool_ops;
- 
- /* Global */
- unsigned int efx_usecs_to_ticks(struct efx_nic *efx, unsigned int usecs);
--unsigned int efx_ticks_to_usecs(struct efx_nic *efx, unsigned int ticks);
- int efx_init_irq_moderation(struct efx_nic *efx, unsigned int tx_usecs,
- 			    unsigned int rx_usecs, bool rx_adaptive,
- 			    bool rx_may_override_tx);
-diff --git a/drivers/net/ethernet/sfc/efx_common.c b/drivers/net/ethernet/sfc/efx_common.c
-index 13cf647051af..c88ec3e24836 100644
---- a/drivers/net/ethernet/sfc/efx_common.c
-+++ b/drivers/net/ethernet/sfc/efx_common.c
-@@ -635,22 +635,6 @@ int __efx_reconfigure_port(struct efx_nic *efx)
- 	return rc;
- }
- 
--/* Reinitialise the MAC to pick up new PHY settings, even if the port is
-- * disabled.
-- */
--int efx_reconfigure_port(struct efx_nic *efx)
--{
--	int rc;
--
--	EFX_ASSERT_RESET_SERIALISED(efx);
--
--	mutex_lock(&efx->mac_lock);
--	rc = __efx_reconfigure_port(efx);
--	mutex_unlock(&efx->mac_lock);
--
--	return rc;
--}
--
- /**************************************************************************
-  *
-  * Device reset and suspend
-diff --git a/drivers/net/ethernet/sfc/efx_common.h b/drivers/net/ethernet/sfc/efx_common.h
-index 2c54dac3e662..19a8ca530969 100644
---- a/drivers/net/ethernet/sfc/efx_common.h
-+++ b/drivers/net/ethernet/sfc/efx_common.h
-@@ -40,7 +40,6 @@ void efx_destroy_reset_workqueue(void);
- void efx_start_monitor(struct efx_nic *efx);
- 
- int __efx_reconfigure_port(struct efx_nic *efx);
--int efx_reconfigure_port(struct efx_nic *efx);
- 
- #define EFX_ASSERT_RESET_SERIALISED(efx)				\
- 	do {								\
-diff --git a/drivers/net/ethernet/sfc/ptp.c b/drivers/net/ethernet/sfc/ptp.c
-index aaacdcfa54ae..36bceeeb6483 100644
---- a/drivers/net/ethernet/sfc/ptp.c
-+++ b/drivers/net/ethernet/sfc/ptp.c
-@@ -1800,11 +1800,6 @@ int efx_ptp_tx(struct efx_nic *efx, struct sk_buff *skb)
- 	return NETDEV_TX_OK;
- }
- 
--int efx_ptp_get_mode(struct efx_nic *efx)
--{
--	return efx->ptp_data->mode;
--}
--
- int efx_ptp_change_mode(struct efx_nic *efx, bool enable_wanted,
- 			unsigned int new_mode)
- {
-diff --git a/drivers/net/ethernet/sfc/ptp.h b/drivers/net/ethernet/sfc/ptp.h
-index 6946203499ef..feab7bdd7889 100644
---- a/drivers/net/ethernet/sfc/ptp.h
-+++ b/drivers/net/ethernet/sfc/ptp.h
-@@ -26,7 +26,6 @@ int efx_ptp_get_ts_config(struct efx_nic *efx,
- void efx_ptp_get_ts_info(struct efx_nic *efx,
- 			 struct kernel_ethtool_ts_info *ts_info);
- bool efx_ptp_is_ptp_tx(struct efx_nic *efx, struct sk_buff *skb);
--int efx_ptp_get_mode(struct efx_nic *efx);
- int efx_ptp_change_mode(struct efx_nic *efx, bool enable_wanted,
- 			unsigned int new_mode);
- int efx_ptp_tx(struct efx_nic *efx, struct sk_buff *skb);
-diff --git a/drivers/net/ethernet/sfc/tx.c b/drivers/net/ethernet/sfc/tx.c
-index fe2d476028e7..6b4a343a455d 100644
---- a/drivers/net/ethernet/sfc/tx.c
-+++ b/drivers/net/ethernet/sfc/tx.c
-@@ -49,14 +49,6 @@ static inline u8 *efx_tx_get_copy_buffer(struct efx_tx_queue *tx_queue,
- 	return (u8 *)page_buf->addr + offset;
- }
- 
--u8 *efx_tx_get_copy_buffer_limited(struct efx_tx_queue *tx_queue,
--				   struct efx_tx_buffer *buffer, size_t len)
--{
--	if (len > EFX_TX_CB_SIZE)
--		return NULL;
--	return efx_tx_get_copy_buffer(tx_queue, buffer);
--}
--
- static void efx_tx_maybe_stop_queue(struct efx_tx_queue *txq1)
- {
- 	/* We need to consider all queues that the net core sees as one */
-diff --git a/drivers/net/ethernet/sfc/tx.h b/drivers/net/ethernet/sfc/tx.h
-index f2c4d2f89919..f882749af8c3 100644
---- a/drivers/net/ethernet/sfc/tx.h
-+++ b/drivers/net/ethernet/sfc/tx.h
-@@ -15,9 +15,6 @@
- unsigned int efx_tx_limit_len(struct efx_tx_queue *tx_queue,
- 			      dma_addr_t dma_addr, unsigned int len);
- 
--u8 *efx_tx_get_copy_buffer_limited(struct efx_tx_queue *tx_queue,
--				   struct efx_tx_buffer *buffer, size_t len);
--
- /* What TXQ type will satisfy the checksum offloads required for this skb? */
- static inline unsigned int efx_tx_csum_type_skb(struct sk_buff *skb)
- {
--- 
-2.47.0
+Anyhow, fix looks good to me. Applied to the fixes-togreg branch of iio.git
+and marked for stable.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/inkern.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+> index 151099be2863..3305ebbdbc07 100644
+> --- a/drivers/iio/inkern.c
+> +++ b/drivers/iio/inkern.c
+> @@ -269,7 +269,7 @@ struct iio_channel *fwnode_iio_channel_get_by_name(struct fwnode_handle *fwnode,
+>  			return ERR_PTR(-ENODEV);
+>  		}
+>  
+> -		chan = __fwnode_iio_channel_get_by_name(fwnode, name);
+> +		chan = __fwnode_iio_channel_get_by_name(parent, name);
+>  		if (!IS_ERR(chan) || PTR_ERR(chan) != -ENODEV) {
+>  			fwnode_handle_put(parent);
+>   			return chan;
 
 
