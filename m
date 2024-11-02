@@ -1,282 +1,126 @@
-Return-Path: <linux-kernel+bounces-393577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F689BA292
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:41:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F93D9BA294
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B5FA1C21789
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:41:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2323A1C21A91
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7571ABEB1;
-	Sat,  2 Nov 2024 21:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC311ABEAC;
+	Sat,  2 Nov 2024 21:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUCkZeZt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b="YRNtUsgb"
+Received: from thales.epochal.quest (thales.epochal.quest [51.222.15.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E4714AD20;
-	Sat,  2 Nov 2024 21:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D9F1AAE1E;
+	Sat,  2 Nov 2024 21:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.222.15.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730583671; cv=none; b=R6pTaRWHxoqifhdrPXV+aLIWauraqwoJymD0vujP+R6NbgdgC5Jh1GZLWegkoFS1zMoi4Ni5kjUUctsjy5RL1JI/Bf59x1O67tKor+5mUndKfyQxpuOy2kdGkvgO8Vsd30NW+BkmGB2rNwTkxfivqNIb9bMMdrNIESrdKkgvfiQ=
+	t=1730583885; cv=none; b=SPRoTispT+Uog0KVlvjGsfLy34XfvGkjzPqjADma/FtUQLJfPCNJfsQmIG0zBrBlW73NaEfTEY7a47kOhXY4I/fZyOE+keEkFNPk29ozt0nofWAP3SSC5QMuL2gDuNhZ0qv7XDTYaQhgtzLILIOURNUAshe5rehqWpCzPjVfX10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730583671; c=relaxed/simple;
-	bh=/c2O3YS/cOYDIPdqZPnfxaGOcF3uCPuJZI6+tQd9U6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hc5NYi3h8x7gEYS+FoE9d7n+HtmS4AVpaljvaOK9D1eICyvc0qWtSQZFLGIQ8bhNVtXf0huUsTvoYbvTuUiesLIEaQyDrFFLx6Cas/NGQFVOQjlp5WpS/d1ys4J71wyHWNaWe0JKOn04Er7M7BT6jnAGtvggcga0S4pYe90M9us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUCkZeZt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A134CC4CEC3;
-	Sat,  2 Nov 2024 21:36:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730583671;
-	bh=/c2O3YS/cOYDIPdqZPnfxaGOcF3uCPuJZI6+tQd9U6c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NUCkZeZtYEUmnJ1FDpk2ad7Kuh4S1hEJOITt9ITaaOICyRXZIgfZpGMbHLk+aOQmR
-	 KD0ElOZ9x71uBleV6yWa7e7xC4+p7Hewu+Bb2QbO59M7nz/jFqhq0fWYye3M4xej16
-	 cs/SFy4G1+jw+lkWRR/r4vwjdcfK8cxWUTmW3NnaqAt97UWtGZ+7Q1iSPIiXiWh7ev
-	 9CB4lx4s5faR+E+d0z+zHuo73ahaZQ1FeJmlQPmhTDLqGiNGnIST7PKccc7h2ZRqmM
-	 K3vcMM7pH9VfHMwe9NTDGVFccmXes2Wa2CgAwruOOIVIDdA1M7/kkEmvaizGnQn0i/
-	 Pqd+WUNzOisqw==
-Date: Sat, 2 Nov 2024 22:36:20 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: "G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	cjwatson@debian.org
-Cc: Ian Rogers <irogers@google.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org, cjwatson@debian.org, groff@gnu.org
-Subject: Re: [PATCH v2 1/3] proc_pid_fdinfo.5: Reduce indent for most of the
- page
-Message-ID: <20241102213620.kfccilxvhihwmnld@devuan>
-References: <20241015211719.1152862-1-irogers@google.com>
- <20241101132437.ahn7xdgvmqamatce@devuan>
- <CAP-5=fXo5XjxUXshm9eRX-hCcC5VWOv0C5LBZ3Z0_wQb+rdnsw@mail.gmail.com>
- <20241101200729.6wgyksuwdtsms3eu@devuan>
- <20241102100837.anfonowxfx4ekn3d@illithid>
- <20241102103937.ose4y72a7yl3dcmz@devuan>
+	s=arc-20240116; t=1730583885; c=relaxed/simple;
+	bh=Lu/8kzBZcinrEdsRMpHobonycBFaKkQUKqIBgEOAOog=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=PXlGZelTe0mkyKzXYvfBRt+OLMBUaZi/jZJNj9gKq43/pCbaK1ObZyRYiMRX+i4TLbYwvjF+nC9db8yRE3EcZb8+FUnSt+nRWTgpGndkMw4ZVQ16R5QpeF2z/gDSAPkm5O2zCDR5JE4+J9pOlcJm5SwwwGZwqgSWC+bQbOHZSy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest; spf=pass smtp.mailfrom=epochal.quest; dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b=YRNtUsgb; arc=none smtp.client-ip=51.222.15.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epochal.quest
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=epochal.quest;
+	s=default; t=1730583882;
+	bh=Lu/8kzBZcinrEdsRMpHobonycBFaKkQUKqIBgEOAOog=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YRNtUsgbeXSuR+N83j0SDxH5tvMaogSfMyQ3WPAd0pjOdHFX8tQXrlutFALSolz2h
+	 CHmTkNr9obUuqNG5umh/Mg63FdHkf2uVBKvCMKTYp5CO9vuKJEVSuslYcDxZvdYYWx
+	 nlIg6qiGrFKDEFUkTPnm5vj8T77TP3q79P0irGaOew4T/VrY8qd5lPGxTKj92ICOnI
+	 99YnuppdjAhXOYkKmsArBCttjrHFm6qMO9YWzUYYavigE+phV0zYwPi/a+LzwzEWrN
+	 z+tbRwvQnjY8nZ3ANlo4sH2y/ZiHJe6ajESDpoe4G9YFeYghB05vXyCm2fPBslErNM
+	 kd2lc5J4rc6Ow==
+X-Virus-Scanned: by epochal.quest
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ptczkh6frrdnk65f"
-Content-Disposition: inline
-In-Reply-To: <20241102103937.ose4y72a7yl3dcmz@devuan>
+Date: Sat, 02 Nov 2024 18:44:41 -0300
+From: Cody Eksal <masterr3c0rd@epochal.quest>
+To: Andre Przywara <andre.przywara@arm.com>, Yangtao Li
+ <tiny.windzz@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Conor
+ Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime Ripard
+ <mripard@kernel.org>, Nishanth Menon <nm@ti.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Vinod Koul
+ <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Viresh Kumar
+ <viresh.kumar@linaro.org>, Yangtao Li <tiny.windzz@gmail.com>, Parthiban
+ <parthiban@linumiz.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/13] clk: sunxi-ng: a100: enable MMC clock
+ reparenting
+In-Reply-To: <20241031120857.60bc0d94@donnerap.manchester.arm.com>
+References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
+ <20241031070232.1793078-9-masterr3c0rd@epochal.quest>
+ <20241031120857.60bc0d94@donnerap.manchester.arm.com>
+Message-ID: <885047f813d0c55eae13f26b0bfe041d@epochal.quest>
+X-Sender: masterr3c0rd@epochal.quest
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On 2024/10/31 9:08 am, Andre Przywara wrote:
+> Well, while this change indeed prevented that error message you mentioned,
+> but the SD card still doesn't work for me: it probes and I can mount a
+> filesystem on it, but then it hangs, for instance when running an "ls" on
+> it. It could be my setup (lacking DT or device issue or missing kernel
+> config), though, and the eMMC works for me this way, but it would be good
+> to have that sorted. 
+I'm investigating this now; it appears mmc2/eMMC is more consistent when
+CLK_NO_REPARENT is set
 
---ptczkh6frrdnk65f
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/3] proc_pid_fdinfo.5: Reduce indent for most of the
- page
-MIME-Version: 1.0
+> Also it would be good to know why CLK_SET_RATE_NO_REPARENT was put there
+> in the first place: I don't see it in any other MMC clocks in sunxi-ng, so
+> it wasn't just copied&pasted.
+Seeing that mmc2 acts better with the flag, perhaps it was copy + pasted
+from that config. Or perhaps the issues we're running into comes from
+elsewhere in the chain. At the moment, that's only speculation, though;
+I'm waiting on a device that has an SD card slot so I can perform more
+testing myself and debug these issues.
 
-Hi Branden, Colin,
+> So was there a problem that this flag was supposed to fix? Is that
+> something that only applied to older kernels (back when the MMC patches
+> were first posted), and which has now been fixed/changed elsewhere?
+Yangtao Li/Frank Lee assumably no longer works at Allwinner, as the email
+he used to submit this originally no longer exists, but I believe the same
+Yangtao is now a maintainer of the Allwinner cpufreq subsystem, and is
+CC'd on these patches. I'm sending this reply to him as well; perhaps he
+may have some additional insight.
 
-On Sat, Nov 02, 2024 at 11:40:13AM +0100, Alejandro Colomar wrote:
-> > I also of course have ideas for generalizing the feature, so that you
-> > can request any (sub)section by name, and, with a bit more ambition,[4]
-> > paragraph tags (`TP`) too.
-> >=20
-> > So you could do things like:
-> >=20
-> > nroff -man -d EXTRACT=3D"RETURN VALUE" man3/bsearch.3
->=20
-> I certainly use this.
->=20
-> 	#  man_section()  prints specific manual page sections (DESCRIPTION, SYN=
-OPSIS,
-> 	# ...) of all manual pages in a directory (or in a single manual page fi=
-le).
-> 	# Usage example:  .../man-pages$ man_section man2 SYNOPSIS 'SEE ALSO';
->=20
-> 	man_section()
-> 	{
-> 		if [ $# -lt 2 ]; then
-> 			>&2 echo "Usage: ${FUNCNAME[0]} <dir> <section>...";
-> 			return $EX_USAGE;
-> 		fi
->=20
-> 		local page=3D"$1";
-> 		shift;
-> 		local sect=3D"$*";
->=20
-> 		find "$page" -type f \
-> 		|xargs wc -l \
-> 		|grep -v -e '\b1 ' -e '\btotal\b' \
-> 		|awk '{ print $2 }' \
-> 		|sort \
-> 		|while read -r manpage; do
-> 			(sed -n '/^\.TH/,/^\.SH/{/^\.SH/!p}' <"$manpage";
-> 			 for s in $sect; do
-> 				<"$manpage" \
-> 				sed -n \
-> 					-e "/^\.SH $s/p" \
-> 					-e "/^\.SH $s/,/^\.SH/{/^\.SH/!p}";
-> 			 done;) \
-> 			|mandoc -Tutf8 2>/dev/null \
-> 			|col -pbx;
-> 		done;
-> 	}
+> I feel a bit uneasy of just removing this just because it works(TM),
+> especially if it doesn't really (SD card for me, for instance).
+I agree; I was quickly preparing V2 to hopefully get this in before the
+6.13 window for the sunxi tree closed, and added this in last minute after
+verifying it worked on my current device, which lacks an SD card slot.
 
-On the other hand, you may want to just package this small shell script
-(or rather a part of it) as a program.
+This patch can be skipped for now, as it's apparent MMC0/1 require a little
+more love before we can merge it in. I'll submit new patches in the future
+once this is figured out.
 
-How about this?
+Thanks!
+- Cody
 
-	$ cat /usr/local/bin/mansect
-	#!/bin/sh
-
-	if [ $# -lt 1 ]; then
-		>&2 echo "Usage: $0 SECTION [FILE ...]";
-		return 1;
-	fi
-
-	s=3D"$1";
-	shift;
-
-
-	if test -z "$*"; then
-		sed -n \
-			-e '/^\.TH/,/^\.SH/{/^\.SH/!p}' \
-			-e '/^\.SH '"$s"'$/p' \
-			-e '/^\.SH '"$s"'$/,/^\.SH/{/^\.SH/!p}' \
-			;
-	else
-		find "$@" -not -type d \
-		| xargs wc -l \
-		| sed '${/ total$/d}' \
-		| grep -v '\b1 ' \
-		| awk '{ print $2 }' \
-		| xargs -L1 sed -n \
-			-e '/^\.TH/,/^\.SH/{/^\.SH/!p}' \
-			-e '/^\.SH '"$s"'$/p' \
-			-e '/^\.SH '"$s"'$/,/^\.SH/{/^\.SH/!p}' \
-			;
-	fi;
-
-This only filters the source of the page, producing output that's
-suitable for the groff pipeline.
-
-	alx@devuan:~$ man -w proc | xargs cat | mansect NAME
-	.TH proc 5 2024-06-15 "Linux man-pages 6.9.1-158-g2ac94c631"
-	.SH NAME
-	proc \- process information, system information, and sysctl pseudo-filesys=
-tem
-	alx@devuan:~$ man -w strtol strtoul | xargs mansect 'NAME'
-	.TH strtol 3 2024-07-23 "Linux man-pages 6.9.1-158-g2ac94c631"
-	.SH NAME
-	strtol, strtoll, strtoq \- convert a string to a long integer
-	.TH strtoul 3 2024-07-23 "Linux man-pages 6.9.1-158-g2ac94c631"
-	.SH NAME
-	strtoul, strtoull, strtouq \- convert a string to an unsigned long integer
-
-You can request several sections with a regex:
-
-	$ man -w strtol strtoul | xargs mansect '\(NAME\|SEE ALSO\)'
-	.TH strtol 3 2024-07-23 "Linux man-pages 6.9.1-158-g2ac94c631"
-	.SH NAME
-	strtol, strtoll, strtoq \- convert a string to a long integer
-	.SH SEE ALSO
-	.BR atof (3),
-	.BR atoi (3),
-	.BR atol (3),
-	.BR strtod (3),
-	.BR strtoimax (3),
-	.BR strtoul (3)
-	.TH strtoul 3 2024-07-23 "Linux man-pages 6.9.1-158-g2ac94c631"
-	.SH NAME
-	strtoul, strtoull, strtouq \- convert a string to an unsigned long integer
-	.SH SEE ALSO
-	.BR a64l (3),
-	.BR atof (3),
-	.BR atoi (3),
-	.BR atol (3),
-	.BR strtod (3),
-	.BR strtol (3),
-	.BR strtoumax (3)
-
-And it can then be piped to groff(1) to format the entire set of pages:
-
-	$ man -w strtol strtoul | xargs mansect '\(NAME\|SEE ALSO\)' | groff -man =
--Tutf8
-	strtol(3)                  Library Functions Manual                  strto=
-l(3)
-
-	NAME
-	     strtol, strtoll, strtoq - convert a string to a long integer
-
-	SEE ALSO
-	     atof(3), atoi(3), atol(3), strtod(3), strtoimax(3), strtoul(3)
-
-	Linux man=E2=80=90pages 6.9.1=E2=80=90158=E2=80=90g2ac... 2024=E2=80=9007=
-=E2=80=9023                         strtol(3)
-	=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80
-	strtoul(3)                 Library Functions Manual                 strtou=
-l(3)
-
-	NAME
-	     strtoul, strtoull, strtouq - convert a string to an unsigned long int=
-eger
-
-	SEE ALSO
-	     a64l(3), atof(3), atoi(3), atol(3), strtod(3), strtol(3), strtoumax(3)
-
-	Linux man=E2=80=90pages 6.9.1=E2=80=90158=E2=80=90g2ac... 2024=E2=80=9007=
-=E2=80=9023                        strtoul(3)
-
-
-This is quite naive, and will not work with pages that define their own
-stuff, since this script is not groff(1).  But it should be as fast as
-is possible, which is what Colin wants, is as simple as it can be (and
-thus relatively safe), and should work with most pages (as far as
-indexing is concerned, probably all?).
-
-
-Have a lovely night!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---ptczkh6frrdnk65f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmcmm04ACgkQnowa+77/
-2zI6oRAAmc4IuCUxorPruqbBwNoVvT87J8omNEjhQdrN2D4Qhofs94T+KPiBng4y
-oOWZrYty05VOXOmVqFIXmwIZ5aW8yQNoTG0FAQo5DV65C+FDoi/aXLIpuETXza2C
-SWA9Ebq8LHC/oFY6XArLd1l/DS4KaBsvyLnKj1ewiQ9IQbLiDaBcpLgmsEQnUiHJ
-STzk/D2SBiEI5iUhMMkBDhsaTseTaGq83m7jn206JQA2g1NQ/8GeWV7LlXceRzhe
-uSVTfhqw8qU+dPdSxCU/BXPr1jp0MqEe0ujYVdcSQMZsuk8qeIL07Bqvp23S8oMS
-hM2dZIOOxG+IFb5S6saMFaUoRob0LkusNSXEu3FUy86iptBo5UAKy26pUNHaYxq1
-g7eO5GxNZVPgnoNJGDtLD+QqIxTfSbogvuAbnNrTjRVxWRmwgTiUANo3U19nll4o
-RG/u0ACkIH69KusTucHbbOp0o/JXAhTcZLen++Slg+/eSAy1o44FwjBoKy8rY7k1
-K+Yp8Oi3idDVbG54sUu6kyooYge/a8C+Rj95KaFdi5ERo3FYF91tGba0eWfM/JBt
-4wmGqCBcDYZTmuMSiVLZ5TCPTp7gewX4TIamKrqM/mgby585RkbqqWPkJckZtEMv
-LNb1hws3RiQF0toeYJAmv3HLaFSpDeDp0BW4JdI9XRWXWnE81+Y=
-=tWCc
------END PGP SIGNATURE-----
-
---ptczkh6frrdnk65f--
+> Cheers,
+> Andre
+> 
+>> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu-sun50i-a100.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
 
