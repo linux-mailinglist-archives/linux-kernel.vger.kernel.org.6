@@ -1,87 +1,94 @@
-Return-Path: <linux-kernel+bounces-393073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF059B9B92
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:30:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E1A9B9B94
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:38:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50DD1F218EA
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:30:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2FDBB211E1
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37AEE545;
-	Sat,  2 Nov 2024 00:30:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B25C125;
+	Sat,  2 Nov 2024 00:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAeSHjuF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1BE5223
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 00:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BFD191;
+	Sat,  2 Nov 2024 00:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730507407; cv=none; b=X2KVU+OSF4WUdz0O5JsAmYUNMknQjNy9ybsYM2D4YWrSzaDxJfvkXn7Q2qXwTd+20o/ZcGkrLE9JU8q8PaXc0ON9w8xY/qCuKd1WYtj9zJxfZ/Dd7yym0gwPpatTiX+gW/Z8w0IbRhY5DzXixNDPF2Mh9V2Kac+2dzQFw9JgV1g=
+	t=1730507887; cv=none; b=tWps2T7Cbk3+GTpvaWHQfXP+SFtVkmjYqbZtiXoed+fU1b3slT7daw3cN+hlQ6DzVF8EVhVL4dkw0jxnJ/c8s7sLaafc9UOibh5miuG+xDoSrnSlW2yfz7RA/m3R4IAdLVm6FDlaZeGIAZCo1PofevogjWPDBc5Iiq7rsSioNgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730507407; c=relaxed/simple;
-	bh=pMfgz5FZcB8V1A7a+f7S71bDBICz8+sYDJAe+NTatbw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LzMQwb5MW84mb54HXVKYNI/lZwgf9T1dOzoJQc90f++Q932u4GB8UCHfQQwo2/XR3g3yFggf1h360kYw25wiYRIAQvJWiTVEw09ObXw5sODfuAaeBTKGbLpo9ZJRwo7rx7CHw3vxcynwgIESan2fFRxKYmZabnGAgjrIUa33fqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b37c6dd4so11315915ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 17:30:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730507405; x=1731112205;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JvYoAlr7fwQXNVysMTBydtr2zz2d8WPLkEiP1079ZJY=;
-        b=nzFB1p2BaeKiQ9aTlFYRTLS+WyyuTvgrFUXfFhNK1gymerR6LmR+lkwSLwg2fdY43m
-         Co80n/nKgT9y2Zl3al88941kA6CsKYY8/3o5ockZwzntSdkG5zXc5tugieC6c9upiJTL
-         ao6JTiGI1vbNxGJaDeqaxvzFla47ZPHLwGZRHqLacMrtR8keeoBYlSAzxt2ePjmkrjip
-         2Mvu1vFqyujg8x0APF42I4l/asKMRri20ch11K+7vIg7GFCs3fHE8nLP6i4wY6vDlwoe
-         EaDUXM5iQ5TbGP8ZEYd89bWZXYgB13mS6QN26lE6wYH1btbV4MlISPk/YZiUcFUyevh0
-         tUYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVytdElpGP/hsZNoVQ2okOACsB/I8t2c6JbEDvhTYP5PFDQuCswjhWyEHzZnTd6s/7sNhaxyyJsivOryEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcvqQIkseUACeS3oS3Em4aCqVLghIjF+Pt/qpZlcjTb78epzVB
-	6wdAhe5cd9xsOVml5CMw9ENZgxnDiQBzaeW9Vg9eNzfHHRZl922Hs0sOvL86CyZx0WZUy2kRRGs
-	gqEDh/i8+Kclw9alCF+mfNd045KoFhRoODQCDtfcUeI0xai7Ko4CUSbk=
-X-Google-Smtp-Source: AGHT+IGLVu54dCKeipWN8mJjJQ+jVBl61bBu50QIRiPDovbY6NM+cKRfEZ3D6qvp74f+akmS1xDJi/TJh3WezG/xoCeTijggyW3f
+	s=arc-20240116; t=1730507887; c=relaxed/simple;
+	bh=JFK1OHVqTofEDq3leWsTvT03TNJPeYi4cNAO7FLcsmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HePn47fGifjYi8WWHEZO4Fuyy5vVPChMOoNHHGCXlGjHLPB2h/h+wvdAovSrwZ6SHloAFb5uBt+PrOemy5PUv6GSLq95QFbTpd2NZ7rwRc2zfn1iilExoe47LO1X0TiKl9BXBg25P5mFMoZrarl0oIoQ8Mp9mANSzFMxcZg3wq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAeSHjuF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 235ADC4CECD;
+	Sat,  2 Nov 2024 00:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730507886;
+	bh=JFK1OHVqTofEDq3leWsTvT03TNJPeYi4cNAO7FLcsmI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZAeSHjuFr/X2PgBrC0GfOEsdFPZxqJBmAWFhVXHBgM3PGf7XjVv1tSYNKnDw+uQgq
+	 qFVkobVEevn7EAuCMxmdjqYa2cWjdlJVswgtuZfZoJpXrHZ69YuaKZRrPL5YWFh8dZ
+	 CCYAV31482ubwjKopaSTbOmBtxmHkqHl/g8lG0saeDJo6OqdSRhkIgILl9lk3T4ez8
+	 92ZzOzWNs3eQMeoV8wN6PIGYI1oP9q/t8yBIhJAKD22kjVXdXBvJngdN0NGQCx2LTK
+	 n2DMLz7la9GdqttmpeCafpiFxQjHbhxt3KJIrYJDj28FkVH5hY9fl1Fz0lP1ldWL8c
+	 Wy3IgO3bX2bmA==
+Date: Fri, 1 Nov 2024 21:38:03 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Benjamin Peterson <benjamin@engflow.com>
+Cc: Howard Chu <howardchu95@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] perf trace: avoid garbage when not printing a trace
+ event's arguments
+Message-ID: <ZyV0a6e_46R9pmQw@x1>
+References: <20241101005338.5846-1-benjamin@engflow.com>
+ <20241101172714.84386-1-benjamin@engflow.com>
+ <CAH0uvohNO517GAD7XH-VvUvU+dPdeZBKDw0Teij50sAPSe9sCQ@mail.gmail.com>
+ <ZyVIgKcAuqZSYYB1@x1>
+ <CAEmfU+ufKWoJLvhksPzADMKkbinV37Tv1KODU6RdJfBM9Juy7w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca1:b0:3a6:b9bf:71ec with SMTP id
- e9e14a558f8ab-3a6b9bf7f81mr25163805ab.8.1730507405136; Fri, 01 Nov 2024
- 17:30:05 -0700 (PDT)
-Date: Fri, 01 Nov 2024 17:30:05 -0700
-In-Reply-To: <20241102.090820.1442069226259701918.konishi.ryusuke@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6725728d.050a0220.3c8d68.090f.GAE@google.com>
-Subject: Re: [syzbot] [nilfs?] general protection fault in touch_buffer
-From: syzbot <syzbot+9982fb8d18eba905abe2@syzkaller.appspotmail.com>
-To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEmfU+ufKWoJLvhksPzADMKkbinV37Tv1KODU6RdJfBM9Juy7w@mail.gmail.com>
 
-Hello,
+On Fri, Nov 01, 2024 at 02:41:46PM -0700, Benjamin Peterson wrote:
+> On Fri, Nov 1, 2024 at 2:30 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > I haven't tested it yet, just in my mind :-)
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> > The patch looks ok and seems to fix a real problem, my only concern, a
+> > pet peeve, was that it, in addition to fixing a real problem, did an
+> > unrelated change, the "Remove the return value...", that part looks like
+> > a distraction, something that shouldn't be there.
+ 
+> In my mind, it was related because both the bug and the odd return
+> value arise from incorrect counting of the number of written bytes.
 
-Reported-by: syzbot+9982fb8d18eba905abe2@syzkaller.appspotmail.com
-Tested-by: syzbot+9982fb8d18eba905abe2@syzkaller.appspotmail.com
+> Obviously, the fix is what I care about, so feel free to strip out the
+> return value change on import, or I can resend.
 
-Tested on:
+The point is to try to focus on the fix, and do just what is needed for
+that. Everything else ends up being a distraction.
 
-commit:         c4264568 Merge tag 'acpi-6.12-rc6' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1454f2a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
-dashboard link: https://syzkaller.appspot.com/bug?extid=9982fb8d18eba905abe2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1726555f980000
-
-Note: testing is done by a robot and is best-effort only.
+- Arnaldo
 
