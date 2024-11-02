@@ -1,511 +1,336 @@
-Return-Path: <linux-kernel+bounces-393408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168109BA027
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:00:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D33E9BA023
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 447F6B21485
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62FB1F21979
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4FC18A6A7;
-	Sat,  2 Nov 2024 13:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8C518A947;
+	Sat,  2 Nov 2024 13:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="M9Ok2dkV"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSzy9XXY"
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5387C198A30;
-	Sat,  2 Nov 2024 13:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81E318A6DE
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 12:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730552418; cv=none; b=mVXqv30YTjZJphg6HsFQGy0POaA7k69GchUEn8mOY0KuqNUqChguZSvdvduDJuHa+Y/nmXPZL3CnONwmh7yE3LDoh3M7h5sAfzL48jgktdtQlcYkW9ZbPcojN+FcNVt2K1800WlkrLvyy5cQ2Z1gTK60jiEcuQ4PV5C2PscyygQ=
+	t=1730552400; cv=none; b=UMRpAkvl5Hoj6LQlDuK9xOnjV0Z7icuI2uNC/YwzCXBN/drglzTWCXnVBk+6zSZ76e2fa58FAKcQgbsoEhWU3UOTwr87ZxNTrfe/h0jmSne0whlR4EDUnlshK3hhlVgtpe/5sbcx0bs/+wfdhpiT9FEqH7L0K69B7GKv4bmed8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730552418; c=relaxed/simple;
-	bh=WkVG92KNGudSZMatx1GeAahvdfnBBhhb6qJUAzX4wiY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N+MP7OxvccX+pw5LK6zdalXCVhly07S+T62x3aSdMdpCIuHSI+ckpZsgWcqtMIV1ppqtJHOTi2UtxgqShcJu6Jau+BmD95AJDC+v/G5pJqTIDMLZ9JzrKpeCv+SQmyx/glUotKpQIV37CLYLFFvrrH3ggATy17hUPBv+NbH3zqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=M9Ok2dkV; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C1E54A0ABF;
-	Sat,  2 Nov 2024 14:00:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=DhxQ91EGT4DSYqoWyGId
-	CsC8RIt53R71Y7/n9OcCCsE=; b=M9Ok2dkVlK2arCoOFEvfco0RUuX22MQkXxKc
-	IKhzPL1YwM9VbNvU+FhU22zFtC/txHqI6QI2Y0gLcsNVFTPvgP4Wl78XTqIuWYHq
-	jNW6/NM7xL9w30oh8Zoaod3S0vLmazBeemDU8/NHRhxpR5B5KbX0ERJ4VnEcOHv7
-	fw2TtQV0GpVNRGvjcUXlgKHSBwsESlbOSbnvDDJN4d+TzKs9DNpEbGxVHcFdY5WU
-	BkyvJY+f2+XO+LnTtNl4tlmrMSrIr24L2LYvixoOnCMzTZyoecF2K999En3iTzZu
-	lE3BNyvrCIGHPbAwEQgMA4EBiqYpRwrmisVBqBCJOzbk+PZBBWFvMJ9Wd4Y7stym
-	VViA/gmTk9N2Z9LmbroXfaHJqszsB3LcAer6/bWIbLf6ucLs54j/CHdRF8cmUJmE
-	xABH7T5T90Jps8iSSxe+HFVs8Htm9KLsHKUYTaK8sWZi8TqprXdVsRbHuj7RBPXU
-	wyO1YHW0aBMXEVsMH1v5ZRmpYXTyi/8IbwXP7hVJ9hARwK/bIpycxHWPQIPZ7xa2
-	h/aSydJnpsQMsKbTiX1iArjJVQkEokaGpXJFE0q/U+SPYU62wROAQ1A/en2R+E/N
-	XT3Upobum46FnTYuUqbG/g1lIr0FWBXpx3yomODVYKnma1/64ZzAnI+7/AHOLPZp
-	UxkAKks=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <linux-sound@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: Mesih Kilinc <mesihkilinc@gmail.com>,
-	=?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Liam
- Girdwood" <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Jaroslav
- Kysela" <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai
-	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
-	<samuel@sholland.org>
-Subject: [PATCH v5 3/3] ASoC: sun4i-codec: Add support for Allwinner suniv F1C100s
-Date: Sat, 2 Nov 2024 13:57:12 +0100
-Message-ID: <20241102125712.2647325-4-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241102125712.2647325-1-csokas.bence@prolan.hu>
-References: <20241102125712.2647325-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1730552400; c=relaxed/simple;
+	bh=QPCeBxQs18nl+bQ+3tpTaNIt4O4c459EfvCocRLHwWc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dGHnWAcSAVBJnKcF/5hdHZodxJXwfqK/7BVsXnETBKBRmpgnCOj3rjtXCCJvg/15J027i3FNToGvnpeMHewCoPIFlsfbqk699wSWGRtTWYmR7emoV+1/5aRpeKbaCA5XVOlqBWQCcciwfJmsGuAIPVTKcoz4jIZJIMQey7mCLwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nSzy9XXY; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-84fd50f2117so798204241.1
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 05:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730552397; x=1731157197; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s9eY34h26T5YqsifdWK+fuQaARCStH94lZ0P8RHpef8=;
+        b=nSzy9XXYX1ly9wt/9To+Vcyu2ZyfwIgn3/HxKOloSDhvtxXWh/UvwzWFC0EzZetQ7D
+         YHb1uv7aQZNWm6y5IUgn+X8lfllkDjF0aMWzN6Sd2WmrHlwqv47+Ye5XhWuA+rcEd0iz
+         6WUCrhmn2jISQPZaiLpnoi+gk5JDC3hs5wYG2fbU616jM3+TFepi4uc+ra3SLTRmODd4
+         JH2oS1XWvIJi6d2vzT+wZC68O15CitMHyAlGewXOq7JKnRXlnVQbnYVbKqXWRYVDu/iB
+         OZyumOpqbOluH4cymf5j8Tiq7Qki7EotNpcmBITmBtMrAgSmZHaD6O4GEYxkeJUrJ+jK
+         JqCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730552397; x=1731157197;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s9eY34h26T5YqsifdWK+fuQaARCStH94lZ0P8RHpef8=;
+        b=qAOm2wLb8Vhwf0ApbbZVAAP0vbFL7sxijEYcm7OZ9Ng5mGujfbpfQWaMcXJW3GNG3t
+         1jxf2447io/kGOv4PwCOA2LxjJeLy8eXIVCelX0Ez31AETjZkxInQRayAXdxZWYAGfAq
+         G9WXdCbsTK74k90zGfi1rj60dX9NflT2PmFhulB46VduVlGhUrHiVPmnJ2OiVOIEwJaQ
+         mSMciS1vf0uNeI5Oct1JUW3iZomdpnsXqpihNRRYvKVRkLYhZP1+1db/YOTfxCqxw0vz
+         H0Rj9728n+rO1AvvxynoaqM3bycV+BgBDpB7unExzdfBHO/RMydnCSlf9sQcJjJ7cFZH
+         xSLg==
+X-Forwarded-Encrypted: i=1; AJvYcCW68xYN3LhbUtWRogMZIY+H4JZ08pqIus1d4yfaR0cgh6h8O9Fg+iRnzGqy9yG/5eKjzHTVf1vjU7iaTI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJwc+5xSJKIsFcSVhwhbrv+cHZGhp9QV2ME8nXqUVwwQLRS8zv
+	mtJUaLvEOI0DMRtKlwP2GOEkc1S/1McZf+/EMKS8b1eJQgUzU3orpdBbceQTHrm/o7P+Tlhyw6D
+	VqB2xLf4HGwRfJO4P7rh8QW/74AY=
+X-Google-Smtp-Source: AGHT+IFd1mg+M9K1+toPlgwgdi4V28Fps9AKszqZUKFKsd6bMDxy3FFIoFwzWjoZIHM8wvWSUZnH9kGxjEd4Mh3lIYg=
+X-Received: by 2002:a05:6102:1610:b0:4a4:93d0:df13 with SMTP id
+ ada2fe7eead31-4a8cfb8572amr26375078137.16.1730552397476; Sat, 02 Nov 2024
+ 05:59:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241102101240.35072-1-21cnbao@gmail.com> <6c14ab2c-7917-489b-b51e-401d208067f3@gmail.com>
+In-Reply-To: <6c14ab2c-7917-489b-b51e-401d208067f3@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sat, 2 Nov 2024 20:59:46 +0800
+Message-ID: <CAGsJ_4wpdf6Fky7jj8O6OuLc0WTBjKXTfEqxE0cXiUjxxuLgZA@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and swapin
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Yosry Ahmed <yosryahmed@google.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1730552412;VERSION=7979;MC=2572422261;ID=222168;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D9485566706B
+Content-Transfer-Encoding: quoted-printable
 
-From: Mesih Kilinc <mesihkilinc@gmail.com>
+On Sat, Nov 2, 2024 at 8:32=E2=80=AFPM Usama Arif <usamaarif642@gmail.com> =
+wrote:
+>
+>
+>
+> On 02/11/2024 10:12, Barry Song wrote:
+> > From: Barry Song <v-songbaohua@oppo.com>
+> >
+> > When the proportion of folios from the zero map is small, missing their
+> > accounting may not significantly impact profiling. However, it=E2=80=99=
+s easy
+> > to construct a scenario where this becomes an issue=E2=80=94for example=
+,
+> > allocating 1 GB of memory, writing zeros from userspace, followed by
+> > MADV_PAGEOUT, and then swapping it back in. In this case, the swap-out
+> > and swap-in counts seem to vanish into a black hole, potentially
+> > causing semantic ambiguity.
+> >
+> > We have two ways to address this:
+> >
+> > 1. Add a separate counter specifically for the zero map.
+> > 2. Continue using the current accounting, treating the zero map like
+> > a normal backend. (This aligns with the current behavior of zRAM
+> > when supporting same-page fills at the device level.)
+> >
+> > This patch adopts option 1 as pswpin/pswpout counters are that they
+> > only apply to IO done directly to the backend device (as noted by
+> > Nhat Pham).
+> >
+> > We can find these counters from /proc/vmstat (counters for the whole
+> > system) and memcg's memory.stat (counters for the interested memcg).
+> >
+> > For example:
+> >
+> > $ grep -E 'swpin_zero|swpout_zero' /proc/vmstat
+> > swpin_zero 1648
+> > swpout_zero 33536
+> >
+> > $ grep -E 'swpin_zero|swpout_zero' /sys/fs/cgroup/system.slice/memory.s=
+tat
+> > swpin_zero 3905
+> > swpout_zero 3985
+> >
+> > Fixes: 0ca0c24e3211 ("mm: store zero pages to be swapped out in a bitma=
+p")
+> I don't think its a hotfix (or even a fix). It was discussed in the initi=
+al
+> series to add these as a follow up and Joshua was going to do this soon.
+> Its not fixing any bug in the initial series.
 
-Allwinner suniv F1C100s has similar but primitive audio codec
-comparared to sun4i. Add support for it.
+I would prefer that all kernel versions with zeromap include this
+counter; otherwise,
+it could be confusing to determine where swap-in and swap-out have occurred=
+,
+as shown by the small program below:
 
-Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-[ csokas.bence: Remove `non_legacy_dai_naming` ]
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
+p =3Dmalloc(1g);
+write p to zero
+madvise_pageout
+read p;
 
-Notes:
-    Changes in v2:
-    * Whitespace
+Previously, there was 1GB of swap-in and swap-out activity reported, but
+now nothing is shown.
 
- sound/soc/sunxi/sun4i-codec.c | 352 ++++++++++++++++++++++++++++++++++
- 1 file changed, 352 insertions(+)
+I don't mean to suggest that there's a bug in the zeromap code; rather,
+having this counter would help clear up any confusion.
 
-diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
-index 4953b5013c58..e253fb8a4226 100644
---- a/sound/soc/sunxi/sun4i-codec.c
-+++ b/sound/soc/sunxi/sun4i-codec.c
-@@ -5,6 +5,7 @@
-  * Copyright 2015 Maxime Ripard <maxime.ripard@free-electrons.com>
-  * Copyright 2015 Adam Sampson <ats@offog.org>
-  * Copyright 2016 Chen-Yu Tsai <wens@csie.org>
-+ * Copyright 2018 Mesih Kilinc <mesihkilinc@gmail.com>
-  *
-  * Based on the Allwinner SDK driver, released under the GPL.
-  */
-@@ -230,6 +231,62 @@
- 
- #define SUN4I_DMA_MAX_BURST			(8)
- 
-+/* suniv specific registers */
-+
-+#define SUNIV_DMA_MAX_BURST			(4)
-+
-+/* Codec DAC digital controls and FIFO registers */
-+#define SUNIV_CODEC_ADC_FIFOC			(0x10)
-+#define SUNIV_CODEC_ADC_FIFOC_EN_AD		(28)
-+#define SUNIV_CODEC_ADC_FIFOS			(0x14)
-+#define SUNIV_CODEC_ADC_RXDATA			(0x18)
-+
-+/* Output mixer and gain controls */
-+#define SUNIV_CODEC_OM_DACA_CTRL			(0x20)
-+#define SUNIV_CODEC_OM_DACA_CTRL_DACAREN		(31)
-+#define SUNIV_CODEC_OM_DACA_CTRL_DACALEN		(30)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXEN			(29)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXEN			(28)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RHPPAMUTE		(27)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LHPPAMUTE		(26)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RHPIS			(25)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LHPIS			(24)
-+#define SUNIV_CODEC_OM_DACA_CTRL_HPCOM_CTL		(22)
-+#define SUNIV_CODEC_OM_DACA_CTRL_COMPTEN		(21)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_MICIN		(20)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_LINEIN	(19)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_FMIN		(18)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_RDAC		(17)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_LDAC		(16)
-+#define SUNIV_CODEC_OM_DACA_CTRL_HPPAEN			(15)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_MICIN		(12)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_LINEIN	(11)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_FMIN		(10)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_LDAC		(9)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_RDAC		(8)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LTLNMUTE		(7)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RTLNMUTE		(6)
-+#define SUNIV_CODEC_OM_DACA_CTRL_HPVOL			(0)
-+
-+/* Analog Input Mixer controls */
-+#define SUNIV_CODEC_ADC_ACTL		(0x24)
-+#define SUNIV_CODEC_ADC_ADCEN		(31)
-+#define SUNIV_CODEC_ADC_MICG		(24)
-+#define SUNIV_CODEC_ADC_LINEINVOL	(21)
-+#define SUNIV_CODEC_ADC_ADCG		(16)
-+#define SUNIV_CODEC_ADC_ADCMIX_MIC	(13)
-+#define SUNIV_CODEC_ADC_ADCMIX_FMINL	(12)
-+#define SUNIV_CODEC_ADC_ADCMIX_FMINR	(11)
-+#define SUNIV_CODEC_ADC_ADCMIX_LINEIN	(10)
-+#define SUNIV_CODEC_ADC_ADCMIX_LOUT	(9)
-+#define SUNIV_CODEC_ADC_ADCMIX_ROUT	(8)
-+#define SUNIV_CODEC_ADC_PASPEEDSELECT	(7)
-+#define SUNIV_CODEC_ADC_FMINVOL		(4)
-+#define SUNIV_CODEC_ADC_MICAMPEN	(3)
-+#define SUNIV_CODEC_ADC_MICBOOST	(0)
-+
-+#define SUNIV_CODEC_ADC_DBG		(0x4c)
-+
- struct sun4i_codec {
- 	struct device	*dev;
- 	struct regmap	*regmap;
-@@ -1218,6 +1275,228 @@ static const struct snd_soc_component_driver sun8i_a23_codec_codec = {
- 	.endianness		= 1,
- };
- 
-+/*suniv F1C100s codec */
-+
-+/* headphone controls */
-+static const char * const suniv_codec_hp_src_enum_text[] = {
-+	"DAC", "Mixer",
-+};
-+
-+static SOC_ENUM_DOUBLE_DECL(suniv_codec_hp_src_enum,
-+			    SUNIV_CODEC_OM_DACA_CTRL,
-+			    SUNIV_CODEC_OM_DACA_CTRL_LHPIS,
-+			    SUNIV_CODEC_OM_DACA_CTRL_RHPIS,
-+			    suniv_codec_hp_src_enum_text);
-+
-+static const struct snd_kcontrol_new suniv_codec_hp_src[] = {
-+	SOC_DAPM_ENUM("Headphone Source Playback Route",
-+		      suniv_codec_hp_src_enum),
-+};
-+
-+/* mixer controls */
-+static const struct snd_kcontrol_new suniv_codec_adc_mixer_controls[] = {
-+	SOC_DAPM_SINGLE("Right Out Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_ROUT, 1, 0),
-+	SOC_DAPM_SINGLE("Left Out Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_LOUT, 1, 0),
-+	SOC_DAPM_SINGLE("Line In Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_LINEIN, 1, 0),
-+	SOC_DAPM_SINGLE("Right FM In Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_FMINR, 1, 0),
-+	SOC_DAPM_SINGLE("Left FM In Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_FMINL, 1, 0),
-+	SOC_DAPM_SINGLE("Mic Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_MIC, 1, 0),
-+};
-+
-+static const struct snd_kcontrol_new suniv_codec_dac_lmixer_controls[] = {
-+	SOC_DAPM_SINGLE("Right DAC Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_RDAC, 1, 0),
-+	SOC_DAPM_SINGLE("Left DAC Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_LDAC, 1, 0),
-+	SOC_DAPM_SINGLE("FM In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_FMIN, 1, 0),
-+	SOC_DAPM_SINGLE("Line In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_LINEIN, 1, 0),
-+	SOC_DAPM_SINGLE("Mic In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_MICIN, 1, 0),
-+};
-+
-+static const struct snd_kcontrol_new suniv_codec_dac_rmixer_controls[] = {
-+	SOC_DAPM_SINGLE("Left DAC Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_LDAC, 1, 0),
-+	SOC_DAPM_SINGLE("Right DAC Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_RDAC, 1, 0),
-+	SOC_DAPM_SINGLE("FM In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_FMIN, 1, 0),
-+	SOC_DAPM_SINGLE("Line In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_LINEIN, 1, 0),
-+	SOC_DAPM_SINGLE("Mic In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_MICIN, 1, 0),
-+};
-+
-+static const DECLARE_TLV_DB_SCALE(suniv_codec_dvol_scale, -7308, 116, 0);
-+static const DECLARE_TLV_DB_SCALE(suniv_codec_hp_vol_scale, -6300, 100, 1);
-+static const DECLARE_TLV_DB_SCALE(suniv_codec_out_mixer_pregain_scale,
-+				  -450, 150, 0);
-+
-+static const DECLARE_TLV_DB_RANGE(suniv_codec_mic_gain_scale,
-+	0, 0, TLV_DB_SCALE_ITEM(0, 0, 0),
-+	1, 7, TLV_DB_SCALE_ITEM(2400, 300, 0),
-+);
-+
-+static const struct snd_kcontrol_new suniv_codec_codec_widgets[] = {
-+	SOC_SINGLE_TLV("DAC Playback Volume", SUN4I_CODEC_DAC_DPC,
-+		       SUN4I_CODEC_DAC_DPC_DVOL, 0x3f, 1,
-+		       suniv_codec_dvol_scale),
-+	SOC_SINGLE_TLV("Headphone Playback Volume",
-+		       SUNIV_CODEC_OM_DACA_CTRL,
-+		       SUNIV_CODEC_OM_DACA_CTRL_HPVOL, 0x3f, 0,
-+		       suniv_codec_hp_vol_scale),
-+	SOC_DOUBLE("Headphone Playback Switch",
-+		   SUNIV_CODEC_OM_DACA_CTRL,
-+		   SUNIV_CODEC_OM_DACA_CTRL_LHPPAMUTE,
-+		   SUNIV_CODEC_OM_DACA_CTRL_RHPPAMUTE, 1, 0),
-+	SOC_SINGLE_TLV("Line In Playback Volume",
-+		       SUNIV_CODEC_ADC_ACTL, SUNIV_CODEC_ADC_LINEINVOL,
-+		       0x7, 0, suniv_codec_out_mixer_pregain_scale),
-+	SOC_SINGLE_TLV("FM In Playback Volume",
-+		       SUNIV_CODEC_ADC_ACTL, SUNIV_CODEC_ADC_FMINVOL,
-+		       0x7, 0, suniv_codec_out_mixer_pregain_scale),
-+	SOC_SINGLE_TLV("Mic In Playback Volume",
-+		       SUNIV_CODEC_ADC_ACTL, SUNIV_CODEC_ADC_MICG,
-+		       0x7, 0, suniv_codec_out_mixer_pregain_scale),
-+
-+	/* Microphone Amp boost gains */
-+	SOC_SINGLE_TLV("Mic Boost Volume", SUNIV_CODEC_ADC_ACTL,
-+		       SUNIV_CODEC_ADC_MICBOOST, 0x7, 0,
-+		       suniv_codec_mic_gain_scale),
-+	SOC_SINGLE_TLV("ADC Capture Volume",
-+		       SUNIV_CODEC_ADC_ACTL, SUNIV_CODEC_ADC_ADCG,
-+		       0x7, 0, suniv_codec_out_mixer_pregain_scale),
-+};
-+
-+static const struct snd_soc_dapm_widget suniv_codec_codec_dapm_widgets[] = {
-+	/* Microphone inputs */
-+	SND_SOC_DAPM_INPUT("MIC"),
-+
-+	/* Microphone Bias */
-+	/* deleted: HBIAS, MBIAS */
-+
-+	/* Mic input path */
-+	SND_SOC_DAPM_PGA("Mic Amplifier", SUNIV_CODEC_ADC_ACTL,
-+			 SUNIV_CODEC_ADC_MICAMPEN, 0, NULL, 0),
-+
-+	/* Line In */
-+	SND_SOC_DAPM_INPUT("LINEIN"),
-+
-+	/* FM In */
-+	SND_SOC_DAPM_INPUT("FMINR"),
-+	SND_SOC_DAPM_INPUT("FMINL"),
-+
-+	/* Digital parts of the ADCs */
-+	SND_SOC_DAPM_SUPPLY("ADC Enable", SUNIV_CODEC_ADC_FIFOC,
-+			    SUNIV_CODEC_ADC_FIFOC_EN_AD, 0,
-+			    NULL, 0),
-+
-+	/* Analog parts of the ADCs */
-+	SND_SOC_DAPM_ADC("ADC", "Codec Capture", SUNIV_CODEC_ADC_ACTL,
-+			 SUNIV_CODEC_ADC_ADCEN, 0),
-+
-+	/* ADC Mixers */
-+	SOC_MIXER_ARRAY("ADC Mixer", SUNIV_CODEC_ADC_ACTL,
-+			SND_SOC_NOPM, 0,
-+			suniv_codec_adc_mixer_controls),
-+
-+	/* Digital parts of the DACs */
-+	SND_SOC_DAPM_SUPPLY("DAC Enable", SUN4I_CODEC_DAC_DPC,
-+			    SUN4I_CODEC_DAC_DPC_EN_DA, 0,
-+			    NULL, 0),
-+
-+	/* Analog parts of the DACs */
-+	SND_SOC_DAPM_DAC("Left DAC", "Codec Playback",
-+			 SUNIV_CODEC_OM_DACA_CTRL,
-+			 SUNIV_CODEC_OM_DACA_CTRL_DACALEN, 0),
-+	SND_SOC_DAPM_DAC("Right DAC", "Codec Playback",
-+			 SUNIV_CODEC_OM_DACA_CTRL,
-+			 SUNIV_CODEC_OM_DACA_CTRL_DACAREN, 0),
-+
-+	/* Mixers */
-+	SOC_MIXER_ARRAY("Left Mixer", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXEN, 0,
-+			suniv_codec_dac_lmixer_controls),
-+	SOC_MIXER_ARRAY("Right Mixer", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXEN, 0,
-+			suniv_codec_dac_rmixer_controls),
-+
-+	/* Headphone output path */
-+	SND_SOC_DAPM_MUX("Headphone Source Playback Route",
-+			 SND_SOC_NOPM, 0, 0, suniv_codec_hp_src),
-+	SND_SOC_DAPM_OUT_DRV("Headphone Amp", SUNIV_CODEC_OM_DACA_CTRL,
-+			     SUNIV_CODEC_OM_DACA_CTRL_HPPAEN, 0, NULL, 0),
-+	SND_SOC_DAPM_SUPPLY("HPCOM Protection", SUNIV_CODEC_OM_DACA_CTRL,
-+			    SUNIV_CODEC_OM_DACA_CTRL_COMPTEN, 0, NULL, 0),
-+	SND_SOC_DAPM_REG(snd_soc_dapm_supply, "HPCOM", SUNIV_CODEC_OM_DACA_CTRL,
-+			 SUNIV_CODEC_OM_DACA_CTRL_HPCOM_CTL, 0x3, 0x3, 0),
-+	SND_SOC_DAPM_OUTPUT("HP"),
-+};
-+
-+static const struct snd_soc_dapm_route suniv_codec_codec_dapm_routes[] = {
-+	/* DAC Routes */
-+	{ "Left DAC", NULL, "DAC Enable" },
-+	{ "Right DAC", NULL, "DAC Enable" },
-+
-+	/* Microphone Routes */
-+	{ "Mic Amplifier", NULL, "MIC"},
-+
-+	/* Left Mixer Routes */
-+	{ "Left Mixer", "Right DAC Playback Switch", "Right DAC" },
-+	{ "Left Mixer", "Left DAC Playback Switch", "Left DAC" },
-+	{ "Left Mixer", "FM In Playback Switch", "FMINL" },
-+	{ "Left Mixer", "Line In Playback Switch", "LINEIN" },
-+	{ "Left Mixer", "Mic In Playback Switch", "Mic Amplifier" },
-+
-+	/* Right Mixer Routes */
-+	{ "Right Mixer", "Left DAC Playback Switch", "Left DAC" },
-+	{ "Right Mixer", "Right DAC Playback Switch", "Right DAC" },
-+	{ "Right Mixer", "FM In Playback Switch", "FMINR" },
-+	{ "Right Mixer", "Line In Playback Switch", "LINEIN" },
-+	{ "Right Mixer", "Mic In Playback Switch", "Mic Amplifier" },
-+
-+	/* ADC Mixer Routes */
-+	{ "ADC Mixer", "Right Out Capture Switch", "Right Mixer" },
-+	{ "ADC Mixer", "Left Out Capture Switch", "Left Mixer" },
-+	{ "ADC Mixer", "Line In Capture Switch", "LINEIN" },
-+	{ "ADC Mixer", "Right FM In Capture Switch", "FMINR" },
-+	{ "ADC Mixer", "Left FM In Capture Switch", "FMINL" },
-+	{ "ADC Mixer", "Mic Capture Switch", "Mic Amplifier" },
-+
-+	/* Headphone Routes */
-+	{ "Headphone Source Playback Route", "DAC", "Left DAC" },
-+	{ "Headphone Source Playback Route", "DAC", "Right DAC" },
-+	{ "Headphone Source Playback Route", "Mixer", "Left Mixer" },
-+	{ "Headphone Source Playback Route", "Mixer", "Right Mixer" },
-+	{ "Headphone Amp", NULL, "Headphone Source Playback Route" },
-+	{ "HP", NULL, "Headphone Amp" },
-+	{ "HPCOM", NULL, "HPCOM Protection" },
-+
-+	/* ADC Routes */
-+	{ "ADC", NULL, "ADC Mixer" },
-+	{ "ADC", NULL, "ADC Enable" },
-+};
-+
-+static const struct snd_soc_component_driver suniv_codec_codec = {
-+	.controls		= suniv_codec_codec_widgets,
-+	.num_controls		= ARRAY_SIZE(suniv_codec_codec_widgets),
-+	.dapm_widgets		= suniv_codec_codec_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(suniv_codec_codec_dapm_widgets),
-+	.dapm_routes		= suniv_codec_codec_dapm_routes,
-+	.num_dapm_routes	= ARRAY_SIZE(suniv_codec_codec_dapm_routes),
-+	.idle_bias_on		= 1,
-+	.use_pmdown_time	= 1,
-+	.endianness		= 1,
-+};
-+
- static const struct snd_soc_component_driver sun4i_codec_component = {
- 	.name			= "sun4i-codec",
- 	.legacy_dai_naming	= 1,
-@@ -1520,6 +1799,56 @@ static struct snd_soc_card *sun8i_v3s_codec_create_card(struct device *dev)
- 	return card;
- };
- 
-+static const struct snd_soc_dapm_widget suniv_codec_card_dapm_widgets[] = {
-+	SND_SOC_DAPM_HP("Headphone", NULL),
-+	SND_SOC_DAPM_LINE("Line In", NULL),
-+	SND_SOC_DAPM_LINE("Right FM In", NULL),
-+	SND_SOC_DAPM_LINE("Left FM In", NULL),
-+	SND_SOC_DAPM_MIC("Mic", NULL),
-+	SND_SOC_DAPM_SPK("Speaker", sun4i_codec_spk_event),
-+};
-+
-+/* Connect digital side enables to analog side widgets */
-+static const struct snd_soc_dapm_route suniv_codec_card_routes[] = {
-+	/* ADC Routes */
-+	{ "ADC", NULL, "ADC Enable" },
-+	{ "Codec Capture", NULL, "ADC" },
-+
-+	/* DAC Routes */
-+	{ "Left DAC", NULL, "DAC Enable" },
-+	{ "Right DAC", NULL, "DAC Enable" },
-+	{ "Left DAC", NULL, "Codec Playback" },
-+	{ "Right DAC", NULL, "Codec Playback" },
-+};
-+
-+static struct snd_soc_card *suniv_codec_create_card(struct device *dev)
-+{
-+	struct snd_soc_card *card;
-+	int ret;
-+
-+	card = devm_kzalloc(dev, sizeof(*card), GFP_KERNEL);
-+	if (!card)
-+		return ERR_PTR(-ENOMEM);
-+
-+	card->dai_link = sun4i_codec_create_link(dev, &card->num_links);
-+	if (!card->dai_link)
-+		return ERR_PTR(-ENOMEM);
-+
-+	card->dev		= dev;
-+	card->name		= "F1C100s Audio Codec";
-+	card->dapm_widgets	= suniv_codec_card_dapm_widgets;
-+	card->num_dapm_widgets	= ARRAY_SIZE(suniv_codec_card_dapm_widgets);
-+	card->dapm_routes	= suniv_codec_card_routes;
-+	card->num_dapm_routes	= ARRAY_SIZE(suniv_codec_card_routes);
-+	card->fully_routed	= true;
-+
-+	ret = snd_soc_of_parse_audio_routing(card, "allwinner,audio-routing");
-+	if (ret)
-+		dev_warn(dev, "failed to parse audio-routing: %d\n", ret);
-+
-+	return card;
-+};
-+
- static const struct regmap_config sun4i_codec_regmap_config = {
- 	.reg_bits	= 32,
- 	.reg_stride	= 4,
-@@ -1562,6 +1891,13 @@ static const struct regmap_config sun8i_v3s_codec_regmap_config = {
- 	.max_register	= SUN8I_H3_CODEC_ADC_DBG,
- };
- 
-+static const struct regmap_config suniv_codec_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= SUNIV_CODEC_ADC_DBG,
-+};
-+
- struct sun4i_codec_quirks {
- 	const struct regmap_config *regmap_config;
- 	const struct snd_soc_component_driver *codec;
-@@ -1646,6 +1982,17 @@ static const struct sun4i_codec_quirks sun8i_v3s_codec_quirks = {
- 	.dma_max_burst	= SUN4I_DMA_MAX_BURST,
- };
- 
-+static const struct sun4i_codec_quirks suniv_f1c100s_codec_quirks = {
-+	.regmap_config	= &suniv_codec_regmap_config,
-+	.codec		= &suniv_codec_codec,
-+	.create_card	= suniv_codec_create_card,
-+	.reg_adc_fifoc	= REG_FIELD(SUNIV_CODEC_ADC_FIFOC, 0, 31),
-+	.reg_dac_txdata	= SUN4I_CODEC_DAC_TXDATA,
-+	.reg_adc_rxdata	= SUNIV_CODEC_ADC_RXDATA,
-+	.has_reset	= true,
-+	.dma_max_burst	= SUNIV_DMA_MAX_BURST,
-+};
-+
- static const struct of_device_id sun4i_codec_of_match[] = {
- 	{
- 		.compatible = "allwinner,sun4i-a10-codec",
-@@ -1671,6 +2018,10 @@ static const struct of_device_id sun4i_codec_of_match[] = {
- 		.compatible = "allwinner,sun8i-v3s-codec",
- 		.data = &sun8i_v3s_codec_quirks,
- 	},
-+	{
-+		.compatible = "allwinner,suniv-f1c100s-codec",
-+		.data = &suniv_f1c100s_codec_quirks,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, sun4i_codec_of_match);
-@@ -1846,4 +2197,5 @@ MODULE_AUTHOR("Emilio López <emilio@elopez.com.ar>");
- MODULE_AUTHOR("Jon Smirl <jonsmirl@gmail.com>");
- MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com>");
- MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
-+MODULE_AUTHOR("Mesih Kilinc <mesikilinc@gmail.com>");
- MODULE_LICENSE("GPL");
--- 
-2.34.1
+I didn't realize Joshua was handling it. Is he still planning to? If
+so, I can leave it
+with Joshua if that was the plan :-)
 
+>
+> > Cc: Usama Arif <usamaarif642@gmail.com>
+> > Cc: Chengming Zhou <chengming.zhou@linux.dev>
+> > Cc: Yosry Ahmed <yosryahmed@google.com>
+> > Cc: Nhat Pham <nphamcs@gmail.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: Hugh Dickins <hughd@google.com>
+> > Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > Cc: Shakeel Butt <shakeel.butt@linux.dev>
+> > Cc: Andi Kleen <ak@linux.intel.com>
+> > Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Cc: Chris Li <chrisl@kernel.org>
+> > Cc: "Huang, Ying" <ying.huang@intel.com>
+> > Cc: Kairui Song <kasong@tencent.com>
+> > Cc: Ryan Roberts <ryan.roberts@arm.com>
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > ---
+> >  -v2:
+> >  * add separate counters rather than using pswpin/out; thanks
+> >  for the comments from Usama, David, Yosry and Nhat;
+> >  * Usama also suggested a new counter like swapped_zero, I
+> >  prefer that one be separated as an enhancement patch not
+> >  a hotfix. will probably handle it later on.
+> >
+> I dont think either of them would be a hotfix.
 
+As mentioned above, this isn't about fixing a bug; it's simply to ensure
+that swap-related metrics don't disappear.
+
+>
+> >  Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++++
+> >  include/linux/vm_event_item.h           |  2 ++
+> >  mm/memcontrol.c                         |  4 ++++
+> >  mm/page_io.c                            | 16 ++++++++++++++++
+> >  mm/vmstat.c                             |  2 ++
+> >  5 files changed, 34 insertions(+)
+> >
+> > diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/ad=
+min-guide/cgroup-v2.rst
+> > index db3799f1483e..984eb3c9d05b 100644
+> > --- a/Documentation/admin-guide/cgroup-v2.rst
+> > +++ b/Documentation/admin-guide/cgroup-v2.rst
+> > @@ -1599,6 +1599,16 @@ The following nested keys are defined.
+> >         pglazyfreed (npn)
+> >               Amount of reclaimed lazyfree pages
+> >
+> > +       swpin_zero
+> > +             Number of pages moved into memory with zero content, mean=
+ing no
+> > +             copy exists in the backend swapfile, allowing swap-in to =
+avoid
+> > +             I/O read overhead.
+> > +
+> > +       swpout_zero
+> > +             Number of pages moved out of memory with zero content, me=
+aning no
+> > +             copy is needed in the backend swapfile, allowing swap-out=
+ to avoid
+> > +             I/O write overhead.
+> > +
+>
+> Maybe zero-filled pages might be a better term in both.
+
+Do you mean dropping "with zero content" and replacing it by
+Number of zero-filled pages moved out of memory ? I'm fine
+with the change.
+
+>
+> >         zswpin
+> >               Number of pages moved in to memory from zswap.
+> >
+> > diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_ite=
+m.h
+> > index aed952d04132..f70d0958095c 100644
+> > --- a/include/linux/vm_event_item.h
+> > +++ b/include/linux/vm_event_item.h
+> > @@ -134,6 +134,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPO=
+UT,
+> >  #ifdef CONFIG_SWAP
+> >               SWAP_RA,
+> >               SWAP_RA_HIT,
+> > +             SWPIN_ZERO,
+> > +             SWPOUT_ZERO,
+> >  #ifdef CONFIG_KSM
+> >               KSM_SWPIN_COPY,
+> >  #endif
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 5e44d6e7591e..7b3503d12aaf 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -441,6 +441,10 @@ static const unsigned int memcg_vm_event_stat[] =
+=3D {
+> >       PGDEACTIVATE,
+> >       PGLAZYFREE,
+> >       PGLAZYFREED,
+> > +#ifdef CONFIG_SWAP
+> > +     SWPIN_ZERO,
+> > +     SWPOUT_ZERO,
+> > +#endif
+> >  #ifdef CONFIG_ZSWAP
+> >       ZSWPIN,
+> >       ZSWPOUT,
+> > diff --git a/mm/page_io.c b/mm/page_io.c
+> > index 5d9b6e6cf96c..4b4ea8e49cf6 100644
+> > --- a/mm/page_io.c
+> > +++ b/mm/page_io.c
+> > @@ -204,7 +204,9 @@ static bool is_folio_zero_filled(struct folio *foli=
+o)
+> >
+> >  static void swap_zeromap_folio_set(struct folio *folio)
+> >  {
+> > +     struct obj_cgroup *objcg =3D get_obj_cgroup_from_folio(folio);
+> >       struct swap_info_struct *sis =3D swp_swap_info(folio->swap);
+> > +     int nr_pages =3D folio_nr_pages(folio);
+> >       swp_entry_t entry;
+> >       unsigned int i;
+> >
+> > @@ -212,6 +214,12 @@ static void swap_zeromap_folio_set(struct folio *f=
+olio)
+> >               entry =3D page_swap_entry(folio_page(folio, i));
+> >               set_bit(swp_offset(entry), sis->zeromap);
+> >       }
+> > +
+> > +     count_vm_events(SWPOUT_ZERO, nr_pages);
+> > +     if (objcg) {
+> > +             count_objcg_events(objcg, SWPOUT_ZERO, nr_pages);
+> > +             obj_cgroup_put(objcg);
+> > +     }
+> >  }
+> >
+> >  static void swap_zeromap_folio_clear(struct folio *folio)
+> > @@ -507,6 +515,7 @@ static void sio_read_complete(struct kiocb *iocb, l=
+ong ret)
+> >  static bool swap_read_folio_zeromap(struct folio *folio)
+> >  {
+> >       int nr_pages =3D folio_nr_pages(folio);
+> > +     struct obj_cgroup *objcg;
+> >       bool is_zeromap;
+> >
+> >       /*
+> > @@ -521,6 +530,13 @@ static bool swap_read_folio_zeromap(struct folio *=
+folio)
+> >       if (!is_zeromap)
+> >               return false;
+> >
+> > +     objcg =3D get_obj_cgroup_from_folio(folio);
+> > +     count_vm_events(SWPIN_ZERO, nr_pages);
+> > +     if (objcg) {
+> > +             count_objcg_events(objcg, SWPIN_ZERO, nr_pages);
+> > +             obj_cgroup_put(objcg);
+> > +     }
+> > +
+> >       folio_zero_range(folio, 0, folio_size(folio));
+> >       folio_mark_uptodate(folio);
+> >       return true;
+> > diff --git a/mm/vmstat.c b/mm/vmstat.c
+> > index 22a294556b58..c8ef7352f9ed 100644
+> > --- a/mm/vmstat.c
+> > +++ b/mm/vmstat.c
+> > @@ -1418,6 +1418,8 @@ const char * const vmstat_text[] =3D {
+> >  #ifdef CONFIG_SWAP
+> >       "swap_ra",
+> >       "swap_ra_hit",
+> > +     "swpin_zero",
+> > +     "swpout_zero",
+> >  #ifdef CONFIG_KSM
+> >       "ksm_swpin_copy",
+> >  #endif
+>
+
+Thanks
+Barry
 
