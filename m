@@ -1,168 +1,206 @@
-Return-Path: <linux-kernel+bounces-393192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E11B9B9D7C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 07:41:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0EC9B9D80
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 07:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67CC5283454
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 06:41:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73FB21F21A4A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 06:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52A81537AC;
-	Sat,  2 Nov 2024 06:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRswdGJW"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA5F15383A;
+	Sat,  2 Nov 2024 06:44:01 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27B018035;
-	Sat,  2 Nov 2024 06:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBCC154420;
+	Sat,  2 Nov 2024 06:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730529696; cv=none; b=ebR4JgQOMgn2HYwWK2IBk1G20DLdymSD/KhMkO5OZPApdj4cndznMSpQ8Apv1KxUPJ4gxB4vYxva0X7JXIFsKrKLDqgTpWW6REfYF4fz7Ue/77AXj1UteSbtO8TSWAB7UCXLJX1PCpOWEbRHiLD51INqdb1CM0F81ne4j5AS3Us=
+	t=1730529841; cv=none; b=sE/SxTGUoL4sEIVgfN67E7v2OmFvvLmba0RE44Ny2//xGDuArCOwGC/P9lB1YUzQKt9tpzRHSAZUwp+gQatcPzrdplTF7Q5TGnplSsQ8MKBSr+F8E5oYVt6xhtqCmL8l+GOaG7bMflnGbkVoF8rosNDSoJLUJALw+ENAv61oTP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730529696; c=relaxed/simple;
-	bh=q6koMgHtxWpj12S29izdPMdRIRoyRLsTXC3G5OcaXIk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uy3ltDmH9IGmp0+d1xT+hHLczntIa6OAq1t+eVIPImb2jZKZIWeob25h5HadkO2spk3Zy8FS4xqxNMbhztu2qIm/K6b6SyfXfyv1EFkw92FSSUfLSNv/GD5RMgshFLmBsN3/SNB4i5YX8i6zfSfCuM2t1Ru7IrQr9SK3Q38pPdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZRswdGJW; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7db54269325so1869326a12.2;
-        Fri, 01 Nov 2024 23:41:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730529694; x=1731134494; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6xrCMcLwfpG79B+Nt/Saq5AW3T1GsSahXes/JtabzUg=;
-        b=ZRswdGJWL9Gso8YemKFpnBKQTNBYLlWQn/zSlXIsfwljAJDZnkZ0/J7cW1CG2jEmJ3
-         Ydb+o1Fm1qxbk3xgopzRAZ0ymr0mopxn0a05JdJB3zbUWkK/iQQdgwrxmr1J+ax/H270
-         T7A+JyWTsncpsyema7JnifK0wGJnRJFaRB8+IFfKW+YA3jkbtoK5Lc0fJAt4jv80BeUV
-         cSVq/hY1g4ErNNM4qBSjwNyl8ldqQh5JEpuwoVMhPh+fYMSCloFmte1jXYBkZdLqr6/O
-         NSA47wn3nx+pIBBMGkNw288eMP2GkUpscFGG+shRygQgIT1bFIlS2/3Lg9dX0t0EWPsY
-         0heg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730529694; x=1731134494;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6xrCMcLwfpG79B+Nt/Saq5AW3T1GsSahXes/JtabzUg=;
-        b=ByVsywG3maCFzya+SU3N8xulZmMq+htSBZiDoims2zrjKUfW4be5jdFwEeJaQQ8OVJ
-         8Wh3EBmih1IXM8xekevCbxX27JWwc8E114AS7aoM3MapfcaWzm7VInXtlyLrKkcEAJG1
-         8XM0ECqF1qicdUMxof9q0h/3HfsehEe7obw4tI9Nu+rqsnnJUQyEeVDFjuljeXML0hy7
-         ydRk+UxDvqmkWupyu27GTpIBtvM3KAfVHy5Q3sQKhtcVgPJTX/UMKY5YNC6TRHEBJBk6
-         kxgAk+oPx6lNketohRRGncihHTT6G3GBKBYLPqGKKK/9GK9iW7Ee3Os8HOXWiK2tcgYJ
-         Yqew==
-X-Forwarded-Encrypted: i=1; AJvYcCW510uzFZfOwbk2jn/+/DzILD1rur/0Q9jeCSr0sMe/R7c7YyR64AXA7nzfsOGlEVSkn02DVHREEsuCq3n2@vger.kernel.org, AJvYcCWhvXEC2TtvMxvydCJnhZ4srF8xNo/gcZAArTdXI/0GV9Fvmkm4WOj5WVGyK1GFC8JDHNyIPUq0Hg6LJZ7C@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiAEiPs+8k1Rc8xdG+xbcrrNBXlrjow217YZodfxplQnxMfpqL
-	CnuhzYgq4s6RP7Cm+bRsO0Opt7qAwVEzGNXq2QOAUvcUyUwIJPab
-X-Google-Smtp-Source: AGHT+IGNH1feXJP0DJ+JPnOsuq4mybHzaxFmAymHvgierHheOER6khY51HdCmh4Tyb565RU/8TBQvQ==
-X-Received: by 2002:a17:90b:3d87:b0:2e2:af6c:79b2 with SMTP id 98e67ed59e1d1-2e94c51c61bmr8811240a91.29.1730529693865;
-        Fri, 01 Nov 2024 23:41:33 -0700 (PDT)
-Received: from xqjcool.lan (d209-121-228-72.bchsia.telus.net. [209.121.228.72])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fbdfc25sm5927735a91.42.2024.11.01.23.41.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 23:41:33 -0700 (PDT)
-From: Qingjie Xing <xqjcool@gmail.com>
-To: adobriyan@gmail.com
-Cc: akpm@linux-foundation.org,
-	brauner@kernel.org,
-	christophe.jaillet@wanadoo.fr,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	willy@infradead.org,
-	xqjcool@gmail.com
-Subject: Re: [PATCH] proc: Add a way to make proc files writable
-Date: Fri,  1 Nov 2024 23:41:32 -0700
-Message-ID: <20241102064132.73443-1-xqjcool@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <978cbbac-51ad-4f0b-8cb2-7a3807e6c98d@p183>
-References: <978cbbac-51ad-4f0b-8cb2-7a3807e6c98d@p183>
+	s=arc-20240116; t=1730529841; c=relaxed/simple;
+	bh=CEPiZmlaOgfiy1fI/76QvlTTEvCqNeS0OgAx6cSUIn4=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=FonYSMBleYXdpBb9kpgKRgtWKuzeCBI2IsNH5ztEz5wVZuO/hl7BHkLIZobuc9pqCyOWxajH96AO7KrkC0miqftuhxLreby8U/6EDLA/ibbaz+UuPTnROU5jeL33oxXc2tT4skOIp0giWqe90NLFAI8uIs5F/R+PJd67w7RMaXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XgSph1xxDz20rHh;
+	Sat,  2 Nov 2024 14:42:52 +0800 (CST)
+Received: from kwepemf200001.china.huawei.com (unknown [7.202.181.227])
+	by mail.maildlp.com (Postfix) with ESMTPS id A67671A0188;
+	Sat,  2 Nov 2024 14:43:54 +0800 (CST)
+Received: from [10.110.54.32] (10.110.54.32) by kwepemf200001.china.huawei.com
+ (7.202.181.227) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 2 Nov
+ 2024 14:43:53 +0800
+Subject: Re: [PATCH net-next] net/smc: Optimize the search method of reused
+ buf_desc
+To: <dust.li@linux.alibaba.com>, <wenjia@linux.ibm.com>, <jaka@linux.ibm.com>,
+	<alibuda@linux.alibaba.com>, <tonylu@linux.alibaba.com>,
+	<guwen@linux.alibaba.com>
+CC: <linux-s390@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <luanjianhai@huawei.com>,
+	<zhangxuzhou4@huawei.com>, <dengguangxing@huawei.com>,
+	<gaochao24@huawei.com>, <kuba@kernel.org>
+References: <20241101082342.1254-1-liqiang64@huawei.com>
+ <20241101105253.GG101007@linux.alibaba.com>
+From: Li Qiang <liqiang64@huawei.com>
+Message-ID: <fa7dc8fc-fc6a-5ee1-94a2-b4ad62624834@huawei.com>
+Date: Sat, 2 Nov 2024 14:43:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20241101105253.GG101007@linux.alibaba.com>
+Content-Type: text/plain; charset="gbk"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf200001.china.huawei.com (7.202.181.227)
 
-Thank you for your feedback.
 
-The motivation for this change is to simplify the creation and management of writable proc files. Many existing parts of the kernel codebase require writable proc files and currently need to set up a proc_ops struct with both read and write methods, which introduces redundancy and boilerplate code.
 
-By providing proc_create_single_write_data() and the associated macro proc_create_single_write, we reduce the need for each caller to explicitly set up write methods, making the code simpler and more maintainable. This can benefit areas where writable proc files are commonly used, as it streamlines the implementation and improves readability.
+ÔÚ 2024/11/1 18:52, Dust Li Ð´µÀ:
+> On 2024-11-01 16:23:42, liqiang wrote:
+>> connections based on redis-benchmark (test in smc loopback-ism mode):
+> 
+> I think you can run test wrk/nginx test with short-lived connection.
+> For example:
+> 
+> ```
+> # client
+> wrk -H "Connection: close" http://$serverIp
+> 
+> # server
+> nginx
+> ```
 
-In the future, we foresee potential use cases where other components of the kernel may need to adopt this approach for their writable proc files, thus justifying the addition of this interface.
+I tested with nginx, the test command is:
+# server
+smc_run nginx
 
-for example:
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index 34f68ef74b8f..e6fb61505e51 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -513,26 +513,13 @@ static int pgctrl_show(struct seq_file *seq, void *v)
-        return 0;
- }
+# client
+smc_run wrk -t <2,4,8,16,32,64> -c 200 -H "Connection: close" http://127.0.0.1
 
--static ssize_t pgctrl_write(struct file *file, const char __user *buf,
--                           size_t count, loff_t *ppos)
-+static int pgctrl_write(struct file *file, char *data, size_t count)
- {
--       char data[128];
-        struct pktgen_net *pn = net_generic(current->nsproxy->net_ns, pg_net_id);
+Requests/sec
+--------+---------------+---------------+
+req/s	| without patch	| apply patch	|
+--------+---------------+---------------+
+-t 2	|6924.18	|7456.54	|
+--------+---------------+---------------+
+-t 4	|8731.68	|9660.33	|
+--------+---------------+---------------+
+-t 8	|11363.22	|13802.08	|
+--------+---------------+---------------+
+-t 16	|12040.12	|18666.69	|
+--------+---------------+---------------+
+-t 32	|11460.82	|17017.28	|
+--------+---------------+---------------+
+-t 64	|11018.65	|14974.80	|
+--------+---------------+---------------+
 
-        if (!capable(CAP_NET_ADMIN))
-                return -EPERM;
+Transfer/sec
+--------+---------------+---------------+
+trans/s	| without patch	| apply patch	|
+--------+---------------+---------------+
+-t 2	|24.72MB	|26.62MB	|
+--------+---------------+---------------+
+-t 4	|31.18MB	|34.49MB	|
+--------+---------------+---------------+
+-t 8	|40.57MB	|49.28MB	|
+--------+---------------+---------------+
+-t 16	|42.99MB	|66.65MB	|
+--------+---------------+---------------+
+-t 32	|40.92MB	|60.76MB	|
+--------+---------------+---------------+
+-t 64	|39.34MB	|53.47MB	|
+--------+---------------+---------------+
 
--       if (count == 0)
--               return -EINVAL;
--
--       if (count > sizeof(data))
--               count = sizeof(data);
--
--       if (copy_from_user(data, buf, count))
--               return -EFAULT;
--
--       data[count - 1] = 0;    /* Strip trailing '\n' and terminate string */
--
-        if (!strcmp(data, "stop"))
-                pktgen_stop_all_threads(pn);
-        else if (!strcmp(data, "start"))
-@@ -542,22 +529,9 @@ static ssize_t pgctrl_write(struct file *file, const char __user *buf,
-        else
-                return -EINVAL;
+> 
+>>
+>>    1. On the current version:
+>>        [x.832733] smc_buf_get_slot cost:602 ns, walk 10 buf_descs
+>>        [x.832860] smc_buf_get_slot cost:329 ns, walk 12 buf_descs
+>>        [x.832999] smc_buf_get_slot cost:479 ns, walk 17 buf_descs
+>>        [x.833157] smc_buf_get_slot cost:679 ns, walk 13 buf_descs
+>>        ...
+>>        [x.045240] smc_buf_get_slot cost:5528 ns, walk 196 buf_descs
+>>        [x.045389] smc_buf_get_slot cost:4721 ns, walk 197 buf_descs
+>>        [x.045537] smc_buf_get_slot cost:4075 ns, walk 198 buf_descs
+>>        [x.046010] smc_buf_get_slot cost:6476 ns, walk 199 buf_descs
+>>
+>>    2. Apply this patch:
+>>        [x.180857] smc_buf_get_slot_free cost:75 ns
+>>        [x.181001] smc_buf_get_slot_free cost:147 ns
+>>        [x.181128] smc_buf_get_slot_free cost:97 ns
+>>        [x.181282] smc_buf_get_slot_free cost:132 ns
+>>        [x.181451] smc_buf_get_slot_free cost:74 ns
+>>
+>> It can be seen from the data that it takes about 5~6us to traverse 200 
+> 
+> Based on your data, I'm afraid the short-lived connection
+> test won't show much benificial. Since the time to complete a
+> SMC-R connection should be several orders of magnitude larger
+> than 100ns.
 
--       return count;
--}
--
--static int pgctrl_open(struct inode *inode, struct file *file)
--{
--       return single_open(file, pgctrl_show, pde_data(inode));
-+       return 0;
- }
+Sorry, I didn't explain my test data well before.
 
--static const struct proc_ops pktgen_proc_ops = {
--       .proc_open      = pgctrl_open,
--       .proc_read      = seq_read,
--       .proc_lseek     = seq_lseek,
--       .proc_write     = pgctrl_write,
--       .proc_release   = single_release,
--};
--
- static int pktgen_if_show(struct seq_file *seq, void *v)
- {
-        const struct pktgen_dev *pkt_dev = seq->private;
-@@ -3982,7 +3956,7 @@ static int __net_init pg_net_init(struct net *net)
-                pr_warn("cannot create /proc/net/%s\n", PG_PROC_DIR);
-                return -ENODEV;
+The main optimized functions of this patch are as follows:
+
+```
+struct smc_buf_desc *smc_buf_get_slot(...)
+{
+	struct smc_buf_desc *buf_slot;
+        down_read(lock);
+        list_for_each_entry(buf_slot, buf_list, list) {
+                if (cmpxchg(&buf_slot->used, 0, 1) == 0) {
+                        up_read(lock);
+                        return buf_slot;
+                }
         }
--       pe = proc_create(PGCTRL, 0600, pn->proc_dir, &pktgen_proc_ops);
-+       pe = proc_create_single_write(PGCTRL, 0600, pn->proc_dir, pgctrl_show, pgctrl_write);
-        if (pe == NULL) {
-                pr_err("cannot create %s procfs entry\n", PGCTRL);
-                ret = -EINVAL;
+        up_read(lock);
+        return NULL;
+}
+```
+The above data is the time-consuming data of this function.
+If the current system has 200 active links, then during the
+process of establishing a new SMC connection, this function
+must traverse all 200 active links, which will take 5~6us.
+If there are already 1,000 for active links, it takes about 30us.
 
+After optimization, this function takes <100ns, it has nothing
+to do with the number of active links.
+
+Moreover, the lock has been removed, which is firendly to multi-thread
+parallel scenarios.
+
+The optimized code is as follows:
+
+```
+static struct smc_buf_desc *smc_buf_get_slot_free(struct llist_head *buf_llist)
+{
+        struct smc_buf_desc *buf_free;
+        struct llist_node *llnode;
+
+        if (llist_empty(buf_llist))
+                return NULL;
+        // lock-less link list don't need an lock
+        llnode = llist_del_first(buf_llist);
+        buf_free = llist_entry(llnode, struct smc_buf_desc, llist);
+        WRITE_ONCE(buf_free->used, 1);
+        return buf_free;
+}
+```
+
+-- 
+Cheers,
+Li Qiang
 
