@@ -1,142 +1,140 @@
-Return-Path: <linux-kernel+bounces-393218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B6F9B9DE4
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:24:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C039B9DEA
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7A8282CCA
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:24:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DB41B21A5C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81D7158866;
-	Sat,  2 Nov 2024 08:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A506158866;
+	Sat,  2 Nov 2024 08:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="KsVeJxJS"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="TAJdI5nA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HuP631SA"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1F042070;
-	Sat,  2 Nov 2024 08:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1AA149013;
+	Sat,  2 Nov 2024 08:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730535860; cv=none; b=j2Hs2WEOZnGBR/XUQXFfLTWdLFQHR4tjzOHruhCatyDM3XSIYUqfNqNrVofD0iO3/qY1GRDmRXAERM21cuwPHGr5iNfjZkKPJv9mSThcpyf4rY7B+otIboo1Yg7LZT6V2ORTb/uSoMKBSSmMSCKPDLcTGTQhrkVv/oybv5r2YC4=
+	t=1730536577; cv=none; b=kI/AvFziHzRjqRJz7d41zqDzWiUlyjRU2Ep8wXoVDCUyLM9C8LRiBR41WzyfAHffLCUC1T/LyZF7IB4D3PdaUxbEJo5aicmNuI88ALc+yZsvgx6esDzE2PW36sYSNCIdbjiqWyfgcHcx0zNMT5c3RB5Z3abpEt5LurHmI+SHnBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730535860; c=relaxed/simple;
-	bh=yGK1KN39J4qBgGabjddBS4CW61b4/PobSXi3k7uiWHY=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Xe9Pcpe+PAKS98gbU8DNRb3FAvyGnyYkVdSxzYcbdl2580dRrzEUTTsoN3uuf0cRmymFTEo4Pi+2KugFTcAWqRpGHk8jnkmtRapE43ak3m7xlIJMgzgZdMMPGSOCxpyjs2aGwCYM2u3sv8bWwszyx4ot3w6UsC8z8y8O3DcFT6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=KsVeJxJS; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1730535858; x=1762071858;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=yGK1KN39J4qBgGabjddBS4CW61b4/PobSXi3k7uiWHY=;
-  b=KsVeJxJSsfvTecCS7p3uO0fWGJmzJdAFFSO1dht5IBT/Pc4Xi3o9zCBh
-   i+SUv7eHpo6jQfDtF+UIV1J4MQXCwfvhd8oTxQ/bDbIdaeRyTK96VxRHW
-   MRFB1BQNayXiY0A/IHCLwq0TFZMwDLs+4ufqWDuS5HxIErzzwZB/A0VFv
-   E=;
-X-IronPort-AV: E=Sophos;i="6.11,252,1725321600"; 
-   d="scan'208";a="142784627"
-Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
-Thread-Topic: [PATCH 05/10] guestmemfs: add file mmap callback
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 08:24:17 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:21274]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.4.191:2525] with esmtp (Farcaster)
- id d77b947b-8f2e-4f82-a732-694a889584ed; Sat, 2 Nov 2024 08:24:16 +0000 (UTC)
-X-Farcaster-Flow-ID: d77b947b-8f2e-4f82-a732-694a889584ed
-Received: from EX19D004EUC003.ant.amazon.com (10.252.51.249) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Sat, 2 Nov 2024 08:24:15 +0000
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19D004EUC003.ant.amazon.com (10.252.51.249) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Sat, 2 Nov 2024 08:24:15 +0000
-Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
- EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
- 15.02.1258.034; Sat, 2 Nov 2024 08:24:15 +0000
-From: "Gowans, James" <jgowans@amazon.com>
-To: "jgg@ziepe.ca" <jgg@ziepe.ca>
-CC: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
-	<rppt@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>,
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Durrant,
- Paul" <pdurrant@amazon.co.uk>, "Woodhouse, David" <dwmw@amazon.co.uk>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
-	<seanjc@google.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "Saenz
- Julienne, Nicolas" <nsaenz@amazon.es>, "Graf (AWS), Alexander"
-	<graf@amazon.de>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jack@suse.cz" <jack@suse.cz>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>
-Thread-Index: AQHbKlc3IZ2PqNLJ5E+mkZOTFQYr3bKg/xKAgAAJ94CAAV52AIAAC3wAgAE5hQA=
-Date: Sat, 2 Nov 2024 08:24:15 +0000
-Message-ID: <9df04c57f9d5f351bb1b4eeef764bf9ccc6711b1.camel@amazon.com>
-References: <20240805093245.889357-1-jgowans@amazon.com>
-	 <20240805093245.889357-6-jgowans@amazon.com>
-	 <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
-	 <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
-	 <20241031160635.GA35848@ziepe.ca>
-	 <fe4dd4d2f5eb2209f0190d547fe29370554ceca8.camel@amazon.com>
-	 <20241101134202.GB35848@ziepe.ca>
-In-Reply-To: <20241101134202.GB35848@ziepe.ca>
-Accept-Language: en-ZA, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1EDB8442E7DDA94C9445F2E7A451F7F9@amazon.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1730536577; c=relaxed/simple;
+	bh=D+Mijo0FL6xpK9EOLFIwHY+A29Y47n3svW0py42hJ8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bpO8UtdIsL7+txSEljgBj15IhQmXcMX+Nj2f8NHxwsQLXcvA/eGyJyIOCw+89AZ/Bj7fJ8+jtv8vNB7Nt07MuateApylFV/kgeqen8rszGGQ5br57LlHWz9ywi7ad1y13A0++i0iJlKS7EvpuH+CoQTQg4jLFLYXbUWteXqRRTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=TAJdI5nA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HuP631SA; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id B17BE1140113;
+	Sat,  2 Nov 2024 04:36:13 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Sat, 02 Nov 2024 04:36:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1730536573; x=1730622973; bh=CxnydXbwJ5
+	eq9YUDX/EDzhIGvXa8fKehgoMmewXSQHs=; b=TAJdI5nAD6q3HluHLkaBXGD9f6
+	gHJCALc9zMPzV0vRb8UB2lYzPr979fqIkVsoqGYkPuKKDo9X9K8s2NJnNu4UH6Up
+	Kq2jUJ0GAsU98bTEUM/jXcRw95wkorCLioREZthUv0yPOFO8ooCSv0fem9SIcRP/
+	ANX9Wv+pStJ0ogH/8TmuOVnFPNyeW705fsPZWlfq09+hHf6x+rgYLp2ZABl5RyI7
+	6awdEkvJKk3Spnb7XTYYUTlDxkturI5Yn/8sMBY1tZWkKZ+NqIzlkpfvU1s2jDih
+	JcR3MIhw4ZHa91k/sSLaXnCQDfXerIcKCR8ltgLt64BugfEjuUti/rgI1HSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730536573; x=1730622973; bh=CxnydXbwJ5eq9YUDX/EDzhIGvXa8fKehgoM
+	mewXSQHs=; b=HuP631SAvyeeZHWs+JrtVJWwL00bMZ0gi+cQns6gFZM2gu4S1PK
+	rV3ly0VRs9LsvpZhQ+coufByMgCmiWjyOJHtBITCHPJ+z1qjP9RU0jdbULCYzAGC
+	DefaDb6KMwPKbQeAEO4GyYU9zGOPKDAWJMkxTWK4a5Y2pPMTRquoPP+N1/ussHth
+	CwG0dC4V6RNJPV82sgl4+ZJkfjzHzfS+m4N0zRdGLtjhTgyJAPnvY3cQuLqEIv8Y
+	+GrwkLniHAnafbIyQ6qbDDAGiS7ChdDqPsF7+VBPkSRM4vSGm4tQ4UqExJqV4EDx
+	tJrKqPUW3/pysECFCqFnjvEzAEYAdpKKTLg==
+X-ME-Sender: <xms:e-QlZ_a9_L_-1qdndBi9EyVE1RfvY0h-Gb_COzmZPWrKvuXouquq0g>
+    <xme:e-QlZ-YBBowAHMAQ_SE73I4PT1VdvHrDj1RNu70FpMsnicmu4P3WIH-POWueb9Ka_
+    S5h-Vnt3YqVtP0SbVs>
+X-ME-Received: <xmr:e-QlZx_Lqy8r4Z5fAiv39L3BOYL7MpJL_hUn7GUl6K-1kcUMjVABIUxQEsu0-fhZVtvGN0BmI4lyJhL_0qYObFVjQnWzyrznrT8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeltddguddvtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
+    necuhfhrohhmpeflrghnnhgvucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqne
+    cuggftrfgrthhtvghrnhepgfduueffleefkeegueektdehkeejtedtffdtudejhfdvheet
+    gfeigfeltdeufeejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnhgv
+    thdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    htohifihhntghhvghnmhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrhgtrghn
+    sehmrghrtggrnhdrshhtpdhrtghpthhtohepshhvvghnsehsvhgvnhhpvghtvghrrdguvg
+    hvpdhrtghpthhtoheprghlhihsshgrsehrohhsvghniiifvghighdrihhopdhrtghpthht
+    ohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprg
+    hsrghhiheslhhishhtshdrlhhinhhugidruggvvh
+X-ME-Proxy: <xmx:e-QlZ1rCGgyYwIm0MvtZUxAbZcABlPTgAHcfvQTlzJqOAJ4-tgx_Yg>
+    <xmx:e-QlZ6pgPaU9Pjm19b883M6R3UeFUufranZFbUrX4Uon-jJBw0Fp9w>
+    <xmx:e-QlZ7SAmYmre5LCDI_AdOFSS1T3dfKMYdJ4RDnD04sOy_ONYOexIA>
+    <xmx:e-QlZyoWi7B9Q94K7a402vdT3F8InxhnTcuPL2dc_bFRvQGospOBOw>
+    <xmx:feQlZ_7_vg1vU6QchmWwft0O504JlUpp_2PPFt47138o039zjUeq9ck_>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 2 Nov 2024 04:36:10 -0400 (EDT)
+Date: Sat, 2 Nov 2024 09:36:08 +0100
+From: Janne Grunau <j@jannau.net>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: spi: apple,spi: Add binding for
+ Apple SPI controllers
+Message-ID: <20241102083608.GA308136@robin.jannau.net>
+References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
+ <20241101-asahi-spi-v3-1-3b411c5fb8e5@jannau.net>
+ <46b31874-9fe2-4534-9777-816765a265b1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <46b31874-9fe2-4534-9777-816765a265b1@gmail.com>
 
-T24gRnJpLCAyMDI0LTExLTAxIGF0IDEwOjQyIC0wMzAwLCBKYXNvbiBHdW50aG9ycGUgd3JvdGU6
-DQo+IA0KPiBPbiBGcmksIE5vdiAwMSwgMjAyNCBhdCAwMTowMTowMFBNICswMDAwLCBHb3dhbnMs
-IEphbWVzIHdyb3RlOg0KPiANCj4gPiBUaGFua3MgSmFzb24sIHRoYXQgc291bmRzIHBlcmZlY3Qu
-IEknbGwgd29yayBvbiB0aGUgbmV4dCByZXYgd2hpY2ggd2lsbDoNCj4gPiAtIGV4cG9zZSBhIGZp
-bGVzeXN0ZW0gd2hpY2ggb3ducyByZXNlcnZlZC9wZXJzaXN0ZW50IG1lbW9yeSwganVzdCBsaWtl
-DQo+ID4gdGhpcyBwYXRjaC4NCj4gDQo+IElzIHRoaXMgc3RlcCBuZWVkZWQ/DQo+IA0KPiBJZiB0
-aGUgZ3Vlc3QgbWVtZmQgaXMgYWxyZWFkeSB0b2xkIHRvIGdldCAxRyBwYWdlcyBpbiBzb21lIG5v
-cm1hbCB3YXksDQo+IHdoeSBkbyB3ZSBuZWVkIGEgZGVkaWNhdGVkIHBvb2wganVzdCBmb3IgdGhl
-IEtITyBmaWxlc3lzdGVtPw0KPiANCj4gQmFjayB0byBteSBzdWdnZXN0aW9uLCBjYW4ndCBLSE8g
-c2ltcGx5IGZyZWV6ZSB0aGUgZ3Vlc3QgbWVtZmQgYW5kDQo+IHRoZW4gZXh0cmFjdCB0aGUgbWVt
-b3J5IGxheW91dCwgYW5kIGp1c3QgdXNlIHRoZSBub3JtYWwgYWxsb2NhdG9yPw0KPiANCj4gT3Ig
-ZG8geW91IGhhdmUgYSBoYXJkIHJlcXVpcmVtZW50IHRoYXQgb25seSBLSE8gYWxsb2NhdGVkIG1l
-bW9yeSBjYW4NCj4gYmUgcHJlc2VydmVkIGFjcm9zcyBrZXhlYz8NCg0KS0hPIGNhbiBwZXJzaXN0
-IGFueSBtZW1vcnkgcmFuZ2VzIHdoaWNoIGFyZSBub3QgTU9WQUJMRS4gUHJvdmlkZWQgdGhhdA0K
-Z3Vlc3RfbWVtZmQgZG9lcyBub24tbW92YWJsZSBhbGxvY2F0aW9ucyB0aGVuIHNlcmlhbGlzaW5n
-IGFuZCBwZXJzaXN0aW5nDQpzaG91bGQgYmUgcG9zc2libGUuDQoNClRoZXJlIGFyZSBvdGhlciBy
-ZXF1aXJlbWVudHMgaGVyZSwgc3BlY2lmaWNhbGx5IHRoZSBhYmlsaXR5IHRvIGJlDQoqZ3VhcmFu
-dGVlZCogR2lCLWxldmVsIGFsbG9jYXRpb25zLCBoYXZlIHRoZSBndWVzdCBtZW1vcnkgb3V0IG9m
-IHRoZQ0KZGlyZWN0IG1hcCBmb3Igc2VjcmV0IGhpZGluZywgYW5kIHJlbW92ZSB0aGUgc3RydWN0
-IHBhZ2Ugb3ZlcmhlYWQuDQpTdHJ1Y3QgcGFnZSBvdmVyaGVhZCBjb3VsZCBiZSBoYW5kbGVkIHZp
-YSBIVk8uIEJ1dCBjb25zaWRlcmluZyB0aGF0IHRoZQ0KbWVtb3J5IG11c3QgYmUgb3V0IG9mIHRo
-ZSBkaXJlY3QgbWFwIGl0IHNlZW1zIHVubmVjZXNzYXJ5IHRvIGhhdmUgc3RydWN0DQpwYWdlcywg
-YW5kIHVubmVjZXNzYXJ5IHRvIGhhdmUgaXQgbWFuYWdlZCBieSBhbiBleGlzdGluZyBhbGxvY2F0
-b3IuIFRoZQ0Kb25seSBleGlzdGluZyAxIEdpQiBhbGxvY2F0b3IgSSBrbm93IG9mIGlzIGh1Z2V0
-bGJmcz8gTGV0IG1lIGtub3cgaWYNCnRoZXJlJ3Mgc29tZXRoaW5nIGVsc2UgdGhhdCBjYW4gYmUg
-dXNlZC4NClRoYXQncyB0aGUgbWFpbiBtb3RpdmF0aW9uIGZvciBhIHNlcGFyYXRlIHBvb2wgYWxs
-b2NhdGVkIG9uIGVhcmx5IGJvb3QuDQpUaGlzIGlzIHF1aXRlIHNpbWlsYXIgdG8gaHVnZXRsYmZz
-LCBzbyBhIG5hdHVyYWwgcXVlc3Rpb24gaXMgaWYgd2UgY291bGQNCnVzZSBhbmQgc2VyaWFsaXNl
-IGh1Z2V0bGJmcyBpbnN0ZWFkLCBidXQgdGhhdCBwcm9iYWJseSBvcGVucyBhbm90aGVyIGNhbg0K
-b2Ygd29ybXMgb2YgY29tcGxleGl0eS4NCg0KVGhlcmUncyBtb3JlIHRoYW4ganVzdCB0aGUgZ3Vl
-c3RfbWVtZmRzIGFuZCB0aGVpciBhbGxvY2F0aW9ucyB0bw0Kc2VyaWFsaXNlOyBpdCdzIHByb2Jh
-Ymx5IHVzZWZ1bCB0byBiZSBhYmxlIHRvIGhhdmUgYSBkaXJlY3Rvcnkgc3RydWN0dXJlDQppbiB0
-aGUgZmlsZXN5c3RlbSwgUE9TSVggZmlsZSBBQ0xzLCBhbmQgcGVyaGFwcyBzb21lIG90aGVyIGZp
-bGVzeXN0ZW0NCm1ldGFkYXRhLiBGb3IgdGhpcyByZWFzb24gSSBzdGlsbCB0aGluayB0aGF0IGhh
-dmluZyBhIG5ldyBmaWxlc3lzdGVtDQpkZXNpZ25lZCBmb3IgdGhpcyB1c2UtY2FzZSB3aGljaCBj
-cmVhdGVzIGd1ZXN0X21lbWZkIG9iamVjdHMgd2hlbiBmaWxlcw0KYXJlIG9wZW5lZCBpcyB0aGUg
-d2F5IHRvIGdvLg0KDQpMZXQgbWUga25vdyB3aGF0IHlvdSB0aGluay4NCg0KSkcNCg==
+On Sat, Nov 02, 2024 at 10:36:56AM +0800, Nick Chan wrote:
+> 
+> 
+> On 2/11/2024 03:26, Janne Grunau via B4 Relay wrote:
+> 
+> [...]
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - apple,t8103-spi
+> > +          - apple,t8112-spi
+> > +          - apple,t6000-spi
+> > +      - const: apple,spi
+> Apple A7-A11 SoCs seems to use a Samsung SPI block, so apple,spi is too
+> generic. Fallback to something like apple,t8103-spi instead.
+
+Have you looked at it? This one still seems to be somehow Samsung
+related. See the previous discussion at
+https://lore.kernel.org/linux-devicetree/d87ae109-4b58-7465-b16e-3bf7c9d60f1f@marcan.st/
+
+Even the A7-A11 SPI controllers are not compatible "apple,spi" doesn't
+prevent us from using something like "apple,s5l-spi" for those.
+
+Janne
 
