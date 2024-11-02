@@ -1,110 +1,97 @@
-Return-Path: <linux-kernel+bounces-393411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00CC09BA030
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:07:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D999BA034
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:12:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE77B216BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:07:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D6A7B21621
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55BD18A6C2;
-	Sat,  2 Nov 2024 13:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B37618A6C4;
+	Sat,  2 Nov 2024 13:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/4Nxcs+"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUHv4s6e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A820EAC6;
-	Sat,  2 Nov 2024 13:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71477EAC6;
+	Sat,  2 Nov 2024 13:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730552850; cv=none; b=UED8nZjvDzBpU3mIKAvfryBFEg5R1/bGygpER7L7iv8PmKjr70+Q2HUSMakp3WOEMs6JmjJocuJBLjj6KQ+o15V+/DQ9Quyb9SmcL1jo2XhyrZd0rypqB8Wnr9gfO79uVsbqPD35NDxMVz2QYA1hgY2yMNbTobLIMWlQ7VB8k4o=
+	t=1730553115; cv=none; b=pKdq7fubn5W7cE/sWGizDqb6pcJNFk5rUuRYNQ/1HD143ylW9aMKY8WVK+CrSBKP6hXxa/8AE0NH+tew0x8drcaXHi3mY/fN+JZwVV0/OZ4ZgDSN7wfQQLkh4VEgsguUpgRHvZRs0EHAuUxCBZsJVK8ZjG3kJ+xgeirTFMD3PDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730552850; c=relaxed/simple;
-	bh=tm5JTs+8rrJD6s7WDi8gLZfx1FcLQYY5V8dG7CsjcX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SJot+QwgQaz6xBGCsiWkOEsmEIvOyymTHz0W59cAyYJ/BvXcO11N4a1+faTyMsl/k0TPtefvDfHrXsIqKt543SY4GUmNeeUA/n06+Wv8Ug8dlPgSFRxf9MKAs8d6wCinWE73/m5jf3RS5RFxPn1Pl3a6p2DnY4MfgCmBPrN8VY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P/4Nxcs+; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-431695fa98bso21312105e9.3;
-        Sat, 02 Nov 2024 06:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730552845; x=1731157645; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=S4iOsAcaLFjRe6ZZb9+QSgjIyDu6SShR56xzrQ22ljQ=;
-        b=P/4Nxcs+Z6uo0ZC6gRP3H4lbycgUWzOEwNDuJdYVTePW7YenDs98JOCq2vkSKB4Eq+
-         QIQNoBOIqdhGJ3YnlGUZ1tK+OMgwtJ0VdJil0qZB4yVjnlqP6JZmgJWtG1eY1gbMuhQn
-         KikcZetLA8z7m8kSu9D5bXk72Dqm81KoKHYcOyRheCTwTBeyVZmJKe2pKu5unvnfHM6e
-         gJuAZUThXCR/X3nguAqf/xflrB2I1LqObrm+lT95jR2+9NyKhteePOVDr0wcbnFuT5aM
-         BTzlvy/ClQUwL3Nx3+QtvXBPvEClnwnkVot+MH5/0PNR2peIbZ6sDjn12dTxLF2tYyla
-         4YgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730552845; x=1731157645;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S4iOsAcaLFjRe6ZZb9+QSgjIyDu6SShR56xzrQ22ljQ=;
-        b=LUgqylLEGwcW/c6v2RLDN1zOCqqNaDYej+3mpqeUS99LH8q/9Ug716506/Gzv1t03J
-         qk6p9lSZfZp3QALfgXZsic1Txe7jeUj90UXirFF+ygpy/9bufNZ+v3dXNjF84EzxRw01
-         PY1uz79akDsIzv9D5rqsDM3SRdm5Sgp1MoJxhJnj7ApD9gxOFB56mqm2E2N5+gI1uirV
-         GBgCFkALIGKQhT0FdG9htpyUzFWlIM4jwOeIDQ2Tt2ZlLynOxMake7U4XosHONjujxXr
-         vt1yYrazyPVNHcvQesM8rI8ewLhlDsxalKztkvkBgkhynhPNz+oCySlVulnXdiK9+59k
-         geOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVH5NxUm2A6K0LFN9Ut0hd1nAfeW4OsfcDyagNCDON+Ps9OcbCaloheX4zctALb834f1efV1K17U03euUvz9IA=@vger.kernel.org, AJvYcCXO3ydaxpm4e6X2FbMz4fep00pn+KITF0VuS8cQqx3sY3bIo0N8vOQEsUI4Q39hsHTKSDZW4ut3gA3ZzRVW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz33IabWfDOK7EHxYGWQnPQtH12BC4TUBQg9oRwBthVSmQGeSwD
-	C/mVEiQ6kSyF3mFi7rdPHhXCPIsYgd4kXmEg0cRnrNEPlOioQtyy
-X-Google-Smtp-Source: AGHT+IENln2RkJNRAASU9Ya8UIFIYQzyX/oVv5uQaDwgkHA/iNIs5WUWvcFEFXYMqg4je2UAkEJReA==
-X-Received: by 2002:a05:600c:46d4:b0:427:ff3b:7a20 with SMTP id 5b1f17b1804b1-4319ad049a8mr215124795e9.27.1730552844525;
-        Sat, 02 Nov 2024 06:07:24 -0700 (PDT)
-Received: from void.void ([31.210.180.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d6852c3sm94227215e9.38.2024.11.02.06.07.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 06:07:24 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] bcachefs: Fix a typo
-Date: Sat,  2 Nov 2024 15:06:28 +0200
-Message-ID: <20241102130709.9259-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.47.0.170.g23d289d273.dirty
+	s=arc-20240116; t=1730553115; c=relaxed/simple;
+	bh=eGFck0cKd1Wy64d/Ev/jSEbK3IIKOXA4fI7Uzfoz+9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LTYn+6LSl4k6SEORWlP/IFJwdh0n/dv6j6Y7FeEzxHT1FHo2g3UXGDmGjGm5ggwbfCv0vQ/m9BJFbu9a0+Jh6Bs9lBJBeQ0a6nSGOajk9SIfEJ9rHM8TyErNa0f/nyltnuzuMm2lGGObB5V0H75fsf95bddfD38dwxVOZJRha1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUHv4s6e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E21A2C4CEC3;
+	Sat,  2 Nov 2024 13:11:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730553115;
+	bh=eGFck0cKd1Wy64d/Ev/jSEbK3IIKOXA4fI7Uzfoz+9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nUHv4s6eRD6BBzQHjsh+cFIyMNUx1BNkT6PJb+Vs/t6ALkfudA5Wz7c0N9VjIqXvE
+	 nwOIv10w8osITYi4ymFr3BrogeMuR3Ekn+PVgFwp/7WwdtYV0wctd+0vWlEHWX9Jgt
+	 GtNTStE8UN/7qVZZq9QE0hDg/d/QAyjzR0ccjazeCmeRd0QanNktUhWN6pzQ+Qp8ET
+	 0WPwx9TwPKdiXKesmS8jSlfheWbruBuKz9jSMA9ZKp+jk9LSQLIH9B4DZStMRLxkNB
+	 AwvsEGTXK4Qccaa9MEPrbx11qUKk2x/EV+y+08s+nkgAIgismXVnCzbUEJa00tvtTy
+	 NI8Eimmavnz1A==
+Date: Sat, 2 Nov 2024 14:11:51 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Janne Grunau <j@jannau.net>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Apple SPI controller driver
+Message-ID: <vzulq4ewdbrk7qdurtypxpaoe4jsswddfprtdbudoxipf6d3ya@4gnbmr722pig>
+References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
 
-Fix a typo: nonexistant -> nonexistent.
+On Fri, Nov 01, 2024 at 08:26:11PM +0100, Janne Grunau wrote:
+> Hi all,
+> 
+> This updated series address the review comments from the original
+> submission in 2021 [1]. It adds a new SPI controller driver for Apple
+> SoCs and is based on spi-sifive. It has been tested with the generic
+> jedec,spi-nor support and with a downstream driver for an Apple specific
+> HID over SPI transport.
+> 
+> As usual, I'm splitting off the MAINTAINERS and DT binding changes.
+> We would rather merge the MAINTAINERS change through the Asahi-SoC
+> tree to avoid merge conflicts as things trickle upstream, since
+> we have other submissions touching that section of the file.
+> 
+> The DT binding change can go via the SPI tree or via ours, but it's
+> easier if we merge it, as then we can make the DT changes to
+> instantiate it without worrying about DT validation failures depending
+> on merge order.
+> 
+> This is mostly Hector's work with a few minor changes to address review
+> comments from me.
+> 
+> [1] https://lore.kernel.org/linux-spi/20211212034726.26306-1-marcan@marcan.st/
+> 
+> v2:
+> - removed '#address-cells' and '#size-cells' from the bindings and added
+>   Rob's Rb:
 
-Via codespell.
+Where?
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- fs/bcachefs/alloc_background.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/bcachefs/alloc_background.c b/fs/bcachefs/alloc_background.c
-index c84a91572a1d..5f40b92fbf16 100644
---- a/fs/bcachefs/alloc_background.c
-+++ b/fs/bcachefs/alloc_background.c
-@@ -1395,7 +1395,7 @@ static noinline_for_stack int bch2_check_discard_freespace_key(struct btree_tran
- 
- 	if (fsck_err_on(!bch2_dev_bucket_exists(c, pos),
- 			trans, need_discard_freespace_key_to_invalid_dev_bucket,
--			"entry in %s btree for nonexistant dev:bucket %llu:%llu",
-+			"entry in %s btree for nonexistent dev:bucket %llu:%llu",
- 			bch2_btree_id_str(iter->btree_id), pos.inode, pos.offset))
- 		goto delete;
- 
--- 
-2.47.0.170.g23d289d273.dirty
+Best regards,
+Krzysztof
 
 
