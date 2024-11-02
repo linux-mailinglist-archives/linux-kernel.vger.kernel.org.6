@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-393565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6BE9BA266
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:17:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C004D9BA267
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12C21C2216F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:17:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 004F01C20B0D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B3D1AA7AB;
-	Sat,  2 Nov 2024 20:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254C51AA7AB;
+	Sat,  2 Nov 2024 20:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ngsqHqKa"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="KUE4E6J6"
 Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104354EB50
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 20:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE554EB50
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 20:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730578615; cv=none; b=Mq6lG3PgaGNM2xrqSqXyZob/yNPRA58sMxFs7ATzqjNKvscjy4eWO9H4g+l9LjQEeOS28p/9XvqeBz8kn+vDAW7bDcBIpvHRWHuKrR+2zGhPNOPhSPYbB0FV7UMjjidnkIAyVD4X5WsxeZiEL3VdaywjRe1/ODLU/5gubCfLPjo=
+	t=1730578689; cv=none; b=ElxVqihZIDUeC1pyd715K8uQUk5JgB+S9LmqxC0Yuq1s96t0PLjakSRJrXIz7fEcI9ctqrrVvxgtGPjtrMvoOzP539kVIu7vJV+3GIKFpeD3MXSemkTi2Lnf2bFHslEnC/Tu9nMIhmTn2YG4FaLr+pBCL4OCpbAyZHkg4qSZmIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730578615; c=relaxed/simple;
-	bh=fNUEyevbI6VLnGpzfI1HHZkT9gshIAU2rw1DWgFu3WI=;
+	s=arc-20240116; t=1730578689; c=relaxed/simple;
+	bh=pfu4WC958or0l++WDyoyo0Va13J5EJ8ud60SL6edK24=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q4MRQViADw3eSPzhS88RIvtC8Hc8DRwERNi5pZnQu6Ozy1sQghCE8m6urH+n+Wp5DWg5YzlYdBQnhQgqyjFUg3kyrIaYWbXUxzOBomPoMDYeCBoB8bLrZwA5kQ6gGZLrvMkw6fJiGG6qTvMu0QflU2M3oYotVCNw2WQ+wUMl3Sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=ngsqHqKa; arc=none smtp.client-ip=209.85.166.45
+	 In-Reply-To:Content-Type; b=MV+zdC7XYwdoyuvQuDgFvoqpUXnhwe6cENxi44F3ZY8LK4Rdhqm6axsBdilGv/gki/cs3SGWjYg6NX5WcrwoluvHZS/xnE6vA9DaVkjPxLRwknzSm+LSAqfurHK0RHXFCFFP6i+4ABogt9/RnUqJWBHrSq5fXiV4OuQ6YxcXQw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=KUE4E6J6; arc=none smtp.client-ip=209.85.166.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83abe7fc77eso122605039f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 13:16:53 -0700 (PDT)
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83aad4a05eeso125886439f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 13:18:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1730578613; x=1731183413; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1730578687; x=1731183487; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mfwK4sEdTx9F/aBDurQK3UATh0DRHqT2tqgZLd5JDpc=;
-        b=ngsqHqKaxqX12PU2ibSfFyXOh/uMiJnu2MDsLSTNpvWdh+RrHO9zdUTazdesPoHkzc
-         eGuiPV6USLfR4ZuSumm0jpgYMY9Ydh6C6Ls+ozK9Y0YR5EMppqSg7s5C5epEjK6F6wvn
-         /psU07cV6r/Dwr1U/TaoMCTygXul5Nsd02OSduSyvdNJYcMRX6unF7nrc4DTq0IqOOjF
-         1s3ywQbwtDLPwUojMiJpAFEend4yNmSXPpEhqPqlhReGz1sNPlHx9PCNz7r0ac23Gzkr
-         yeNd3gn9JyTE0Owvy7oNwGbrQuG9NSP2I91uvPjU11wLinF29zEvfv09WTr4+GvycMts
-         XPnw==
+        bh=Uv6c+k0dm8ixfMK+kRUbChJ5vy9Z65ImLeSVIElSlFk=;
+        b=KUE4E6J6+9dJpVpONZ0HeD9BsMTMpGIcGZELD2p64CSUNfzsX7vkVt+FSXnKk5azll
+         850j7cNzT0nPmR378n2qegK8Ie8Q30vgEvvafjzdjEci3ODG5eJuDfz+jo5w1C2JhZL1
+         fYpikLcSolgfg3hGxUss4v/xzr99Z1xMjj9uJ4Dx3EVpgXH97TR3uUU0bM4zWhu8eaEO
+         RnElrD3l1+TOSBFZryeUz+RwZO8fVtBIv58xwDm+zlPcv969FWNbdOWUFAZ8eBZAmz79
+         e1BLwkjH7CSEbxaEQaP71dgwa6u0IQDvHeyRV+OdylVGu/4JaqNn2JQ9zBbDt4qTIBXc
+         oRWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730578613; x=1731183413;
+        d=1e100.net; s=20230601; t=1730578687; x=1731183487;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mfwK4sEdTx9F/aBDurQK3UATh0DRHqT2tqgZLd5JDpc=;
-        b=f8mh/9udjSIGDuVFtyemRSXpOpJNwVy7JU11zRHS3/yqthyq96urD5JR/WLcvpaTD2
-         4So9DzA+NfFX9LfyZ67DLmMOv6GRHwAhQHvj6qLEjI+JWz63L+uth9lIsqwwM5CoHKXH
-         vg2fmIoFQN4MTB7gtk3aklkZnxMchF3cy0JvIlgsP/n1DuK2jAZy8W2uMfTpYWF7gx9R
-         SWSH0+H1A0KB/Dd4ZtHizlzVztf7ZOtObYK4Mvhxb5EzQnye8xnbZXk7t67jDoad3+SI
-         ibtsUL9kgTiB2XdKYLmlmhftpY0s7qyABM3X9saltfziaJe33scBGYVVLc+MFwEGFcgq
-         +ErA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZjuxYDS2VXEe6Bgy/1txodQEAkKfq/Nmb7n6BfyLr4mND5x79f+mTs0/B9i/yrLWS3FxpEdFLhfOILJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbn7LUD84DLtFdSaWRXwUqiVLeCKpTpnPqDIotn7ogOy1GtDOM
-	+ErHn9WWeokbliJ7Q04vg6ifTUxLk5aLyv3UNdW6Gv/GX/27Ecrn5gRj1DERi10=
-X-Google-Smtp-Source: AGHT+IHxkCjpiwvEUT4o38BUaI3lSwIPU5kBEbJUiHJaWVt4Bg1m1dEkBKxTOmT48n1sycp0+0I3CQ==
-X-Received: by 2002:a05:6e02:52e:b0:3a5:e3bc:c1bf with SMTP id e9e14a558f8ab-3a5e3bcc3ddmr127637225ab.23.1730578613043;
-        Sat, 02 Nov 2024 13:16:53 -0700 (PDT)
+        bh=Uv6c+k0dm8ixfMK+kRUbChJ5vy9Z65ImLeSVIElSlFk=;
+        b=TukTkv2DmSlrxy34TffRSjewniVc8vmk7uuAa/2CiWGxFYrLM/1/a+9PAP0980piDq
+         9mpUTPQWJSYJVqGrxWMt8nJWJA6d7R43lSW8XJgnwu+OZH4tBpQIS0dPgFEm0I8nI21/
+         LCOX3H++SJdbe+9zMge2ClX5VjluAS3VGZeP8QSmRttxRQZrB7l6nfi6vmdbMY7MJPZ4
+         cB7GExyzVSVUXRSIZUkIO869Mg7Awbn0iiuTQGUHRnFlXYzxyWZ6LVKo1NQT3DFLDFdd
+         D9Xe2ZAPviezLUjmZo6jJBJ3akhUP3vxg+qePakHHCqL38oJG9UbF0Xjq0Hz7ihpcM5T
+         875Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXAo2NHesOB7XD4LIvE3a9xB1aYXafktkW/PTUbHunW/B0fD4tJjvuiLG0rqMYOE/c8Zjo/BZND5pFYrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypRVbCECfwWRx1kWsiLGRYhOOxBNRgbNckSmbbtTsw+w4P0usx
+	pzRAZ5ZFyZvcOB3ecuvz0QBYeZ4wAdcQrXG5EJiJt7qXsCutxyEpQYD/x62c1vE=
+X-Google-Smtp-Source: AGHT+IEJc+EiNFpj9B5V/ByTf51tnyN0Vtl+t+p6pQirqCmqUqbkma3bOQA4lF2nU6yG6Loqga/zcQ==
+X-Received: by 2002:a05:6602:2d8d:b0:83a:97e7:8bcf with SMTP id ca18e2360f4ac-83b5676f6c7mr1760042139f.11.1730578687159;
+        Sat, 02 Nov 2024 13:18:07 -0700 (PDT)
 Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6a97cf520sm14786615ab.25.2024.11.02.13.16.51
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de0497794asm1274337173.88.2024.11.02.13.18.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Nov 2024 13:16:52 -0700 (PDT)
-Message-ID: <43f05f71-71f7-4073-ae3b-5f5fa35ad2b8@sifive.com>
-Date: Sat, 2 Nov 2024 15:16:51 -0500
+        Sat, 02 Nov 2024 13:18:06 -0700 (PDT)
+Message-ID: <9617eb4f-842d-4678-926e-478471de479b@sifive.com>
+Date: Sat, 2 Nov 2024 15:18:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,8 +75,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] RISC-V: clarify what some RISCV_ISA* config
- options do
+Subject: Re: [PATCH v4 2/2] RISC-V: separate Zbb optimisations requiring and
+ not requiring toolchain support
 To: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org
 Cc: Conor Dooley <conor.dooley@microchip.com>, xiao.w.wang@intel.com,
  Andrew Jones <ajones@ventanamicro.com>, pulehui@huawei.com,
@@ -86,33 +86,36 @@ Cc: Conor Dooley <conor.dooley@microchip.com>, xiao.w.wang@intel.com,
  Pu Lehui <pulehui@huaweicloud.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
  <bjorn@kernel.org>
 References: <20241024-aspire-rectify-9982da6943e5@spud>
- <20241024-overdue-slogan-0b0f69d3da91@spud>
+ <20241024-chump-freebase-d26b6d81af33@spud>
 From: Samuel Holland <samuel.holland@sifive.com>
 Content-Language: en-US
-In-Reply-To: <20241024-overdue-slogan-0b0f69d3da91@spud>
+In-Reply-To: <20241024-chump-freebase-d26b6d81af33@spud>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 2024-10-24 5:19 AM, Conor Dooley wrote:
 > From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> During some discussion on IRC yesterday and on Pu's bpf patch [1]
-> I noticed that these RISCV_ISA* Kconfig options are not really clear
-> about their implications. Many of these options have no impact on what
-> userspace is allowed to do, for example an application can use Zbb
-> regardless of whether or not the kernel does. Change the help text to
-> try and clarify whether or not an option affects just the kernel, or
-> also userspace. None of these options actually control whether or not an
-> extension is detected dynamically as that's done regardless of Kconfig
-> options, so drop any text that implies the option is required for
-> dynamic detection, rewording them as "do x when y is detected".
+> It seems a bit ridiculous to require toolchain support for BPF to
+> assemble Zbb instructions, so move the dependency on toolchain support
+> for Zbb optimisations out of the Kconfig option and to the callsites.
 > 
-> Link: https://lore.kernel.org/linux-riscv/20240328-ferocity-repose-c554f75a676c@spud/ [1]
+> Zbb support has always depended on alternatives, so while adjusting the
+> config options guarding optimisations, remove any checks for
+> whether or not alternatives are enabled.
+> 
 > Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
->  arch/riscv/Kconfig | 36 +++++++++++++++++++-----------------
->  1 file changed, 19 insertions(+), 17 deletions(-)
+>  arch/riscv/Kconfig                    |  4 ++--
+>  arch/riscv/include/asm/arch_hweight.h |  6 +++---
+>  arch/riscv/include/asm/bitops.h       |  4 ++--
+>  arch/riscv/include/asm/checksum.h     |  3 +--
+>  arch/riscv/lib/csum.c                 | 21 +++------------------
+>  arch/riscv/lib/strcmp.S               |  5 +++--
+>  arch/riscv/lib/strlen.S               |  5 +++--
+>  arch/riscv/lib/strncmp.S              |  5 +++--
+>  8 files changed, 20 insertions(+), 33 deletions(-)
 
 Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
 
