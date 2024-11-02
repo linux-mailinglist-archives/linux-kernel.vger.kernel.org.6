@@ -1,137 +1,180 @@
-Return-Path: <linux-kernel+bounces-393581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023109BA2A0
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:59:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3327B9BA2A2
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:59:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE27F1F2259C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36291F22A2E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3960C1AC43A;
-	Sat,  2 Nov 2024 21:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885CB1AC448;
+	Sat,  2 Nov 2024 21:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Crg+CbP+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Gt+Da33K"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A133E1AA7AB
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 21:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635EC1AA7AB;
+	Sat,  2 Nov 2024 21:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730584748; cv=none; b=O910yNlDSLZKl1z67rfPgKEkBq3AWbP7FfReR+7iu7FE9CcztD8Vkp2WRSlH0MBM90X68F1Pm4PEAyrOPGwhN2JNkU/kyaMmlKb9CottEEjTWVWbq8ES8tJE5VZ3hZcnBWzeWPq3s9VG//ajerdQDuiyiaa4nPqwDt1oK0GtSKQ=
+	t=1730584762; cv=none; b=di+nlMu9n9h/FV28uitzYjfITh+hx96dGYA+ZsNnt48a3grwVhnQyPX+9Q+y+95o/20BiLPvQtY0QzdfHa+OOMOuKe4W9dMliYUXUalxI58cN+OgOiuFip570QpKaNR0U1tI6NVPWWe2wKC3VC6fbtbjCoQcYyUDXi9BAWq6BPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730584748; c=relaxed/simple;
-	bh=iU/GFh5PxfwqsQ8XPruyq3jiA+Rzu6wWlnuHQDY2Z64=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=l8NNw//92STOqj+AqpXvpMaRiPEtI8vzfecuHaroZ/ntJOJtXvqiN6bp6udelGqW2C/8SIlgMvzJk3ErQaGs09WaoxPm2yfN2TbJx1ju/ZtoY1F69z2B6FiLVLQekEVXIyZtmp21R6/zvRwbmYYZiGiUeZx+HbwDxUnRh5OVF90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Crg+CbP+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730584745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ABp4GNt9hr2dQL86JdaUvGuLhtctNBvZysLpO4JDoJ8=;
-	b=Crg+CbP+zrh9PCBsoJ8MrEb0R7kwJGZZluhSU/iQHx8TrMilaxiHko7ZV9UWVgx1MrL78s
-	LhzYkbhV4VxeF+qWT1w+vfoDRiEqVkKmiTiDe7vd/JfmeZI+vrb7aw+kTu2qQxj9sdbJSP
-	Lg1CEmYfR71x13n+nEdkCfiORBwBFjo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-400-CdByBlUuNH645wZNXiVUfg-1; Sat,
- 02 Nov 2024 17:59:00 -0400
-X-MC-Unique: CdByBlUuNH645wZNXiVUfg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8CE5019560B1;
-	Sat,  2 Nov 2024 21:58:52 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.225.77])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E66E919560A3;
-	Sat,  2 Nov 2024 21:58:45 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
-  Peter Zijlstra <peterz@infradead.org>,  Darren Hart
- <dvhart@infradead.org>,  Davidlohr Bueso <dave@stgolabs.net>,  Arnd
- Bergmann <arnd@arndb.de>,  sonicadvance1@gmail.com,
-  linux-kernel@vger.kernel.org,  kernel-dev@igalia.com,
-  linux-api@vger.kernel.org,  Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH v2 0/3] futex: Create set_robust_list2
-In-Reply-To: <20241101162147.284993-1-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Fri, 1 Nov 2024 13:21:44 -0300")
-References: <20241101162147.284993-1-andrealmeid@igalia.com>
-Date: Sat, 02 Nov 2024 22:58:42 +0100
-Message-ID: <87ldy170x9.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730584762; c=relaxed/simple;
+	bh=Sf7JXMx9xsS/c1EdJK3lN7rNnBDOmXkfcQN3U1G1LZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MORONTyCy1ul8DFCrEeapkn4h4gjkr0fy+Nr9XaBiyjalg145bxUtwJfqyB2EEifTruvGuBkCiXL+YyD3d3CUZb6jObW/DOyZ8yW1U/aieacdKMAd/ApyDwyN7J5orH2t5LdnMxAJyn6moA8Rh9Lq0XPMCWViF5xvDBVxTntyJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Gt+Da33K; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=Xz/xV9bgfMQiU18NYnrLyS6x4kS7JNrVV7Z9KqjoIw0=; b=Gt+Da33K8WvdmEmK
+	gCaMXwL2Z6NM2plnxX+elx1jHnCqD6hLS0YfAVN1OXi8UgTnqwrTpCMXCyNKXTh2Atvldm0XvVbJ4
+	rCSseC1uxqC8JUSVQMDko+nzVBetjCB8d+9XFUMi3QQyWBXslb8VUihQyRfOc2JZSExx7kUQB+j1h
+	xlT2KQSaO/gX0nH78vvEWXLDaCXFzipP7nwjgEdcp4arUEfpuW8K5gRxhBWwPozplinB4uq2zLaaR
+	+otb7OeJ5yrUgoaLSQcvPLNY4PJEXICGYrdYK+yhvtaZl7VzlOywwMK4aNG8ouqXRbCxPZOoRhQMi
+	a9dGghCF/DnUCJm3Uw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1t7M9F-00F7qi-0F;
+	Sat, 02 Nov 2024 21:59:09 +0000
+From: linux@treblig.org
+To: shayagr@amazon.com,
+	akiyano@amazon.com,
+	darinzon@amazon.com,
+	ndagan@amazon.com,
+	saeedb@amazon.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] net: ena: Remove deadcode
+Date: Sat,  2 Nov 2024 21:59:07 +0000
+Message-ID: <20241102215907.79931-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
 
-* Andr=C3=A9 Almeida:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-> 1) x86 apps can have 32bit pointers robust lists. For a x86-64 kernel
->    this is not a problem, because of the compat entry point. But there's
->    no such compat entry point for AArch64, so the kernel would do the
->    pointer arithmetic wrongly. Is also unviable to userspace to keep
->    track every addition/removal to the robust list and keep a 64bit
->    version of it somewhere else to feed the kernel. Thus, the new
->    interface has an option of telling the kernel if the list is filled
->    with 32bit or 64bit pointers.
+ena_com_get_dev_basic_stats() has been unused since 2017's
+commit d81db2405613 ("net/ena: refactor ena_get_stats64 to be atomic
+context safe")
 
-The size is typically different for 32-bit and 64-bit mode (12 vs 24
-bytes).  Why isn't this enough to disambiguate?
+ena_com_get_offload_settings() has been unused since the original
+commit of ENA back in 2016 in
+commit 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic
+Network Adapters (ENA)")
 
-> 2) Apps can set just one robust list (in theory, x86-64 can set two if
->    they also use the compat entry point). That means that when a x86 app
->    asks FEX-Emu to call set_robust_list(), FEX have two options: to
->    overwrite their own robust list pointer and make the app robust, or
->    to ignore the app robust list and keep the emulator robust. The new
->    interface allows for multiple robust lists per application, solving
->    this.
+Remove them.
 
-Can't you avoid mixing emulated and general userspace code on the same
-thread?  On emulator threads, you have full control over the TCB.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/net/ethernet/amazon/ena/ena_com.c | 33 -----------------------
+ drivers/net/ethernet/amazon/ena/ena_com.h | 18 -------------
+ 2 files changed, 51 deletions(-)
 
-QEMU hints towards further problems (in linux-user/syscall.c):
-
-    case TARGET_NR_set_robust_list:
-    case TARGET_NR_get_robust_list:
-        /* The ABI for supporting robust futexes has userspace pass
-         * the kernel a pointer to a linked list which is updated by
-         * userspace after the syscall; the list is walked by the kernel
-         * when the thread exits. Since the linked list in QEMU guest
-         * memory isn't a valid linked list for the host and we have
-         * no way to reliably intercept the thread-death event, we can't
-         * support these. Silently return ENOSYS so that guest userspace
-         * falls back to a non-robust futex implementation (which should
-         * be OK except in the corner case of the guest crashing while
-         * holding a mutex that is shared with another process via
-         * shared memory).
-         */
-        return -TARGET_ENOSYS;
-
-The glibc implementation is not really prepared for this
-(__ASSUME_SET_ROBUST_LIST is defined for must architectures).  But a
-couple of years ago, we had a bunch of kernels that regressed robust
-list support on POWER, and I think we found out only when we tested an
-unrelated glibc update and saw unexpected glibc test suite failures =E2=80=
-=A6
-
-Thanks,
-Florian
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
+index d958cda9e58b..bc23b8fa7a37 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -2198,21 +2198,6 @@ int ena_com_get_ena_srd_info(struct ena_com_dev *ena_dev,
+ 	return ret;
+ }
+ 
+-int ena_com_get_dev_basic_stats(struct ena_com_dev *ena_dev,
+-				struct ena_admin_basic_stats *stats)
+-{
+-	struct ena_com_stats_ctx ctx;
+-	int ret;
+-
+-	memset(&ctx, 0x0, sizeof(ctx));
+-	ret = ena_get_dev_stats(ena_dev, &ctx, ENA_ADMIN_GET_STATS_TYPE_BASIC);
+-	if (likely(ret == 0))
+-		memcpy(stats, &ctx.get_resp.u.basic_stats,
+-		       sizeof(ctx.get_resp.u.basic_stats));
+-
+-	return ret;
+-}
+-
+ int ena_com_get_customer_metrics(struct ena_com_dev *ena_dev, char *buffer, u32 len)
+ {
+ 	struct ena_admin_aq_get_stats_cmd *get_cmd;
+@@ -2289,24 +2274,6 @@ int ena_com_set_dev_mtu(struct ena_com_dev *ena_dev, u32 mtu)
+ 	return ret;
+ }
+ 
+-int ena_com_get_offload_settings(struct ena_com_dev *ena_dev,
+-				 struct ena_admin_feature_offload_desc *offload)
+-{
+-	int ret;
+-	struct ena_admin_get_feat_resp resp;
+-
+-	ret = ena_com_get_feature(ena_dev, &resp,
+-				  ENA_ADMIN_STATELESS_OFFLOAD_CONFIG, 0);
+-	if (unlikely(ret)) {
+-		netdev_err(ena_dev->net_device, "Failed to get offload capabilities %d\n", ret);
+-		return ret;
+-	}
+-
+-	memcpy(offload, &resp.u.offload, sizeof(resp.u.offload));
+-
+-	return 0;
+-}
+-
+ int ena_com_set_hash_function(struct ena_com_dev *ena_dev)
+ {
+ 	struct ena_com_admin_queue *admin_queue = &ena_dev->admin_queue;
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.h b/drivers/net/ethernet/amazon/ena/ena_com.h
+index a372c5e768a7..20e1529adf3b 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.h
++++ b/drivers/net/ethernet/amazon/ena/ena_com.h
+@@ -591,15 +591,6 @@ int ena_com_set_aenq_config(struct ena_com_dev *ena_dev, u32 groups_flag);
+ int ena_com_get_dev_attr_feat(struct ena_com_dev *ena_dev,
+ 			      struct ena_com_dev_get_features_ctx *get_feat_ctx);
+ 
+-/* ena_com_get_dev_basic_stats - Get device basic statistics
+- * @ena_dev: ENA communication layer struct
+- * @stats: stats return value
+- *
+- * @return: 0 on Success and negative value otherwise.
+- */
+-int ena_com_get_dev_basic_stats(struct ena_com_dev *ena_dev,
+-				struct ena_admin_basic_stats *stats);
+-
+ /* ena_com_get_eni_stats - Get extended network interface statistics
+  * @ena_dev: ENA communication layer struct
+  * @stats: stats return value
+@@ -635,15 +626,6 @@ int ena_com_get_customer_metrics(struct ena_com_dev *ena_dev, char *buffer, u32
+  */
+ int ena_com_set_dev_mtu(struct ena_com_dev *ena_dev, u32 mtu);
+ 
+-/* ena_com_get_offload_settings - Retrieve the device offloads capabilities
+- * @ena_dev: ENA communication layer struct
+- * @offlad: offload return value
+- *
+- * @return: 0 on Success and negative value otherwise.
+- */
+-int ena_com_get_offload_settings(struct ena_com_dev *ena_dev,
+-				 struct ena_admin_feature_offload_desc *offload);
+-
+ /* ena_com_rss_init - Init RSS
+  * @ena_dev: ENA communication layer struct
+  * @log_size: indirection log size
+-- 
+2.47.0
 
 
