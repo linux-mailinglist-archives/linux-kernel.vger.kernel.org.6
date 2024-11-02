@@ -1,114 +1,86 @@
-Return-Path: <linux-kernel+bounces-393145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473F29B9C5B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 03:37:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C261D9B9C5F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 03:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 092782826BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 02:37:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1D4BB21874
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 02:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8353C13B7BE;
-	Sat,  2 Nov 2024 02:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMT2VHK5"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE12146A9B;
+	Sat,  2 Nov 2024 02:56:13 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF9D9479;
-	Sat,  2 Nov 2024 02:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ADD20EB;
+	Sat,  2 Nov 2024 02:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730515021; cv=none; b=dzKHKLHODAc4d7VLDRSkg9NypjUnjTMHcpKPX0g+pmaafMeNu2N4RltUlnk//afpzAMk8/1BY2i19sbP8D95wieShGb2+Jk6VBUIcCaNIy8fER64/wQ1eIKj1UP1NwlBv/bkSwGJ1oWVwExpMPrmMnP+2LF9Vaxfla2RP3BOcAs=
+	t=1730516173; cv=none; b=i03+kmDBMvtiZGVJf5OI94oVzHONzsbn5um4V1Z6EutXertSeX7gJxe37A45m4+2jiAeAwvLkQNqbcEBhdXnhB9TFrBAqs5odtI7EZpwYxZ+v8rMt0ip+o0Zgz/ROGm7epQrGk3SW299aUs6i8P6oraDfH61qYQKCaOL6FYWbXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730515021; c=relaxed/simple;
-	bh=HAm2uFR/BmaPeA/QPdAV5p1sBdlEXjYIAwxP1zNZREE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X+bwJWzvv6cnTjCKrz940pYiFiDnCuXTw6jQGYaIXylLEehg1xbWTHZ59VAEYZhj7DoaQ96sBFzlcuREHJoxpgBWySkVXXbPrbAIDtsnli+/7/zLzdr7F3JfY6OBgZ6JT1NvFjBBl18IdinF5EvRLAasjA1BABN3ztl91qrBtF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMT2VHK5; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so2255775b3a.3;
-        Fri, 01 Nov 2024 19:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730515020; x=1731119820; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=52ooFznqeRMYHCyQ/j8hVCDyBghXj5ug7pBFSOFL7Wc=;
-        b=eMT2VHK52yGGtEpzpMoH/bz4UIbB7JAgCDSUS2zPhpjumyX94CFbASW9WzHLLTbxV2
-         H4uDv8nv26DCq2Vbg+lV3/6j92VFGdlkQJv710bWhgQjrSQnrOddFR2EAZUSGg///3cH
-         FTgz/3fIy8pL9XEGPd+wldU8zaeMKPTUD6WpLZcmMbXfEZrsUnv8ZHu7qLhpsjuXUFG8
-         mjQ6ZQ/Kxha366KhCFdhDg6kDxxw5CMZ0xEdLfEYq8pFYaBD0ueMJCYT0RuhExEyBIAP
-         OgWeInZC/MNK6hj1ICf15qaMZ8AnGaQXoU7V6Mr6dKGnvLJ/gkV5Lkub2KiGBLvUqnb/
-         WtmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730515020; x=1731119820;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=52ooFznqeRMYHCyQ/j8hVCDyBghXj5ug7pBFSOFL7Wc=;
-        b=qVUF8i289iIidR6x+eYXIVMmFiMV7v+ZXnZVQqLTtR1mgRNIWbqdWfC/IBQdoobIPm
-         5KIaQ4dlfNueXLTHzcqPrfvHo1hECAj3g1E8Ad1mn+/I9a52JpGN4v++98PRzTwKXbyg
-         1II4U2K/jXbKm/RmZBFsJxfMYbaxeQQtDc6QPqwHbjwuJOIMCBRKQ9GpnQS6NyHtQ2ar
-         6JGsyZ9XiugnMBqKeadMYjgQiHMAn5egoc1Sw4dtzA8opeU9uruKCbq+UB5gRMr+IuSX
-         llkAvpotSIDV3J5jhrYe0u3FBCCt3Lzaaa+vdpKYCTj/OQVohfoVtqo2FQymO7vGarLi
-         R5Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUipQVO4Ko2wS99nOrne/nHrVpQkxYsWuFLNFHSHjTEzprsPkBtnP91995Glh/dAf8tVe74jvAu3J39ZgCk@vger.kernel.org, AJvYcCUt3960TWka4jOc47Ps6Y1iajBcMCGmtvIjj/FIAzc2jpmE33S77N2bmsw8eK5iUrsig7nCU7kpC2mA@vger.kernel.org, AJvYcCWKqP8k27kVdlGgBdI3Xe80MG9A28sRegjwgkGXmWujKO/2orwf2jDLlgnTzeVEE54i1D1PhVK2zAq7@vger.kernel.org
-X-Gm-Message-State: AOJu0YyShzvC05PrgvqMPpjZpIkL2bhp/hCcbWLtTfv7bRyYbyMXeCxd
-	aAWtTz6GAWI7IF8qqpQaoTDgMeW6bv/24pNzqp0MCiMsiipK9cTJ
-X-Google-Smtp-Source: AGHT+IGQ9zfRcHvemJpUmA2q1CaZU/zY095T+aeF4SHQo9LbXPUf1m6TDA8Q4+PugPH5HaynDPT5mA==
-X-Received: by 2002:a05:6a21:710a:b0:1d9:a1c:7086 with SMTP id adf61e73a8af0-1db91ec3ed9mr13201042637.44.1730515019885;
-        Fri, 01 Nov 2024 19:36:59 -0700 (PDT)
-Received: from [192.168.0.122] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ba19asm3338528b3a.21.2024.11.01.19.36.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 19:36:59 -0700 (PDT)
-Message-ID: <46b31874-9fe2-4534-9777-816765a265b1@gmail.com>
-Date: Sat, 2 Nov 2024 10:36:56 +0800
+	s=arc-20240116; t=1730516173; c=relaxed/simple;
+	bh=D5jHm/2iFM4uDlNx58MNahVQZDdbqB2cnP7kCC8bh5w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QN8Clo7r/gQr1HIqMhTxD/iZKB1s3Pz4JCrF8su/P+aRv1ZiN8Wn4Q5RLEWHQvTv8HZ0UxFky9otWh/xtRj7dL+ki2O79+t1UFtMFsk7vMdhVC1Zrzx4H/7WDP6oFVJ8ceiUMc6KHCUjPIY7Fjoe2EDg2SdsB8uPFWbAXb2vXQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XgMjy26xfzdkRl;
+	Sat,  2 Nov 2024 10:53:26 +0800 (CST)
+Received: from kwepemd200024.china.huawei.com (unknown [7.221.188.85])
+	by mail.maildlp.com (Postfix) with ESMTPS id 29000140133;
+	Sat,  2 Nov 2024 10:56:01 +0800 (CST)
+Received: from localhost.huawei.com (10.90.30.45) by
+ kwepemd200024.china.huawei.com (7.221.188.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 2 Nov 2024 10:56:00 +0800
+From: Chenghai Huang <huangchenghai2@huawei.com>
+To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<liulongfang@huawei.com>, <qianweili@huawei.com>, <linwenkai6@hisilicon.com>,
+	<wangzhou1@hisilicon.com>, <huangchenghai2@huawei.com>
+Subject: [PATCH v3 0/2] crypto: hisilicon - fix the authsize and icv problems of aead in sec
+Date: Sat, 2 Nov 2024 10:55:57 +0800
+Message-ID: <20241102025559.2256734-1-huangchenghai2@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: spi: apple,spi: Add binding for Apple
- SPI controllers
-Content-Language: en-MW
-To: j@jannau.net, Hector Martin <marcan@marcan.st>,
- Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
- <20241101-asahi-spi-v3-1-3b411c5fb8e5@jannau.net>
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <20241101-asahi-spi-v3-1-3b411c5fb8e5@jannau.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200024.china.huawei.com (7.221.188.85)
 
+1. Fix for aead invalid authsize.
+2. Fix for aead icv error.
 
+---
+Changes in v3:
+- Call crypto_aead_authsize to obtain authsize instead of
+actx->authsize.
+- Link to v2: https://lore.kernel.org/all/20241018105830.169212-1-huangchenghai2@huawei.com/
 
-On 2/11/2024 03:26, Janne Grunau via B4 Relay wrote:
+Changes in v2:
+- Restored authsize to the tfm.
+- Link to v1: https://lore.kernel.org/all/20240929112630.863282-1-huangchenghai2@huawei.com/
 
-[...]
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - apple,t8103-spi
-> +          - apple,t8112-spi
-> +          - apple,t6000-spi
-> +      - const: apple,spi
-Apple A7-A11 SoCs seems to use a Samsung SPI block, so apple,spi is too
-generic. Fallback to something like apple,t8103-spi instead.
+---
+Wenkai Lin (2):
+  crypto: hisilicon/sec2 - fix for aead icv error
+  crypto: hisilicon/sec2 - fix for aead invalid authsize
 
-[...]
+ drivers/crypto/hisilicon/sec2/sec.h        |   1 -
+ drivers/crypto/hisilicon/sec2/sec_crypto.c | 156 ++++++++++-----------
+ drivers/crypto/hisilicon/sec2/sec_crypto.h |  11 --
+ 3 files changed, 73 insertions(+), 95 deletions(-)
 
-Nick Chan
+-- 
+2.33.0
+
 
