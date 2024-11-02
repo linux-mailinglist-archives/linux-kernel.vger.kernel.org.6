@@ -1,190 +1,119 @@
-Return-Path: <linux-kernel+bounces-393336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB579B9F5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:35:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD279B9F63
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BF001F21CAA
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:35:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1028B20B8D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD686198A30;
-	Sat,  2 Nov 2024 11:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AD517ADF7;
+	Sat,  2 Nov 2024 11:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfCLKIVl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RBQTjrbo"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADF717A58C;
-	Sat,  2 Nov 2024 11:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55318175D54
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 11:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730547264; cv=none; b=eQaMR4SDYZUlc5bh+10ngi8xsYNSnByihpnWdzqy6SIrLDMqC8dFh5eHJ8CJ3Xn4JxUmWU3fUXME0effC+Zb3kMWRq7kkzhS8HBBRLBbVtVvBYCdbnpoPrM/J1nVth0s0UUJk4nrF88133dfK1FnrVJj8DXhOtj9ZI1GYcZatME=
+	t=1730547529; cv=none; b=a5+z4Z7CovMjcVQub2SeyuDMJM2lweyMj7UUo26ZKQ0U/ubJ65wYxyOit+lZis9Ze+t1zsl6ELMffBH9ckeE11T1Zq3idL/lgQIFh06dHjJDdr7PutI0s9/kAffs7kpRMzNFfGiFGEeUQTBIrkwbNEwvlbqEsvVRmPkv/HnTj+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730547264; c=relaxed/simple;
-	bh=NtPyrw1FXMvbsmz7Nr23KWeYuAkw5uGGVtbW3/WwzPg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RgWbPe3nJYGunsZGsejZvP+Efh/yyziaEV2iEOymXQEs+anL7gRYx6No4ivglQ4RI9FRLQWZEx6jyOFWTw6CBBFtV1X55sPXT72kb7c0riq32u9kPCrIhqCXU/hX/W/E2ig07roFqlJnhGbnQF8w+15Irnyhrv6EAdNp8Lcy9v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tfCLKIVl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BFBECC4CED7;
-	Sat,  2 Nov 2024 11:34:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730547263;
-	bh=NtPyrw1FXMvbsmz7Nr23KWeYuAkw5uGGVtbW3/WwzPg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=tfCLKIVlF/qtmS2TbdOnH5+/SIaiaQcg2HUFOpxXUlRzU3G8dLnXgNkBbejhx8PqB
-	 dAcQlY1hlZC8G4jPMgvw6O/dBRPxD1D6tpJkkdY/m7cI5tLd0GPx967Qq82aBM8/AT
-	 VlDnF7aKpvESPZIyrUVZH9xPjI6qo5Ng5Zgc1uMY1Cq0Uoco8plg1hxGyQjJlQzCFW
-	 yKFvAFMM7uvwo5WbIZj4UYq9mEpzOGXPk+zw+xUC3dLHHdO1YrYobU/UhMydLdHDUj
-	 3gBHUXcvc04CE0VHEOqF/9ChKO4IMyK1A96uKyp4uFQtGYSWaDK31gTmYW/9NbJmc9
-	 iGHol/hK3sSaA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F30E677FD;
-	Sat,  2 Nov 2024 11:34:23 +0000 (UTC)
-From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
-Date: Sat, 02 Nov 2024 12:34:24 +0100
-Subject: [PATCH 5/5] arm64: dts: apple: Add SPI NOR nvram partition to all
- devices
+	s=arc-20240116; t=1730547529; c=relaxed/simple;
+	bh=2dIcYHUHHSHUxXdvGjqFxwDG3pY4LGa9o4b9agNpjm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l47dh+kXrJrfhVwRo90oDY2Vw/pLVO/qsdMp/S6SKFIEanpbDv/VJNDZZZkpkDn6mDRBYpxD5UMUa+9CX0jCrbNL1SRON87E+SnqU3C+PpV66ay0HnzEzTRS74cFKBk2jvFK+FL/6lwGQNdafEGNkL0OK4mYlIz30KNFWnuTPCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RBQTjrbo; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso22043415e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 04:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730547526; x=1731152326; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FmDE2sdaLjNOs4aD8vxBNfz+8tHcw49VErx6rFxgu7k=;
+        b=RBQTjrbohiKZNqIPQLkvjDUvkocb7TGdeYxgwzsQxpUQYkn+gu6q7rcRXMiqNR5c9o
+         WFBjBx2t7RgRXE6Id0dZboLwTTGCT93nBScHvtUpHLmJFE98GqiCCaP023tobpVGZKtX
+         v4diiuHlxRsLMxo1rLGKsgW8/bbFM1EW3/NE2sJCUXQ5nV6VB4L3TR/zXLb+UZ3aXUqZ
+         9YCKqtUllhynoaO3+wY+jGNCOslPuGZGYWj5kFqT8M1PW/+m7U01PsfuKwsz06Jk/Nuc
+         QKb0snsvIT8+g7BFS14erkNtAPE9+E4zuRYDEzo3XvYFW042wGXIKqLchWbATer1Iftz
+         8Skg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730547526; x=1731152326;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FmDE2sdaLjNOs4aD8vxBNfz+8tHcw49VErx6rFxgu7k=;
+        b=jkLqlXo46r+ieF0xpg3XeZGp2vTbAcUS5fIs9fUICaOkrBrUmMXdNE+tnd81jwh0rb
+         H+Q+042gZ3HCeTbFq1Bex40deitW9zPZ4FJOOqtavzBfVrhSBDEeL9xb2HbXIOY4YMfm
+         VD6NhzgnP5yCfIYa487R56npDPmjwFqlp3kyGr+nepqZaOCB+ICUGEljFDznvRDzgvuX
+         mhVf2vXYiZkeUzCnxDaxN+dINirnMBNJMx+pnB5kgZ+OUYgjytf8i03sNUzZtlHFwVl1
+         fRWoyuHZkt/uxhjagxeicb9JwrxhJy/yB5OGCusfID6iySp46YUp+62ShMMJPFQ+Y0QM
+         GLug==
+X-Forwarded-Encrypted: i=1; AJvYcCVeItv6a8aLfq7BhcVntNFcedO5owxCfSlrn7lxqCB9fJQwKXcBQFrGTzYYP4XMG4pLRQl2LFWMyiLyfRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx8gPpGePjcom5FNkLWSaQOGgPqArOyWKTfh8uJW7TP1qBUe2l
+	0l3ARyQdUeu+KrI7LLX4hCYoUH82Q2desA9s9XQ0//n7EgK22AC/+p4n+6itq1k=
+X-Google-Smtp-Source: AGHT+IHZgVCGFgEml8l2JE2qSNFWCtFv9ZqySVcQuZTYZQV4augsKxhgVOzAUHddOviPkYnNbJxEyg==
+X-Received: by 2002:a05:600c:3515:b0:431:5df7:b310 with SMTP id 5b1f17b1804b1-4319aca52f4mr228460695e9.8.1730547525576;
+        Sat, 02 Nov 2024 04:38:45 -0700 (PDT)
+Received: from [192.168.0.35] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d6983ddsm93042935e9.44.2024.11.02.04.38.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2024 04:38:44 -0700 (PDT)
+Message-ID: <787ae421-0df0-45ae-bc3f-762ad73b8216@linaro.org>
+Date: Sat, 2 Nov 2024 11:38:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] arm64: dts: qcom: sdm845-db845c-navigation-mezzanine:
+ Add cma heap for libcamera softisp support
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Rob Clark <robdclark@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Depeng Shao <quic_depengs@quicinc.com>,
+ Vikram Sharma <quic_vikramsa@quicinc.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-0-cdff2f1a5792@linaro.org>
+ <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-6-cdff2f1a5792@linaro.org>
+ <CAF6AEGu_qJYV3TnprJsqsWV_GoLhiBFQ8LNwfYDjczDparvZCA@mail.gmail.com>
+ <173047431366.2974136.175546053701391124@ping.linuxembedded.co.uk>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <173047431366.2974136.175546053701391124@ping.linuxembedded.co.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241102-asahi-spi-dt-v1-5-7ac44c0a88f9@jannau.net>
-References: <20241102-asahi-spi-dt-v1-0-7ac44c0a88f9@jannau.net>
-In-Reply-To: <20241102-asahi-spi-dt-v1-0-7ac44c0a88f9@jannau.net>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Janne Grunau <j@jannau.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3506; i=j@jannau.net;
- s=yk2024; h=from:subject:message-id;
- bh=4sH2FvtVOU7J6ZD/GsHPG804yvHnrTdh0gHvxrTVtvc=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhnQ1PrvyhtB54ap732lO8opJM52R+f/D5FkNsoGxHWksx
- +wqDt/pKGVhEONikBVTZEnSftnBsLpGMab2QRjMHFYmkCEMXJwCMJH10YwMR55PusaXVe8n5XBh
- Jqvmi6X3HwnWcxaqPZLuPqRQ7laTxMjwjb09Sa9la9eqb9+XvDPIMT0xK+7G9qk8gW1XQyw2N6m
- zAQA=
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
-X-Endpoint-Received: by B4 Relay for j@jannau.net/yk2024 with auth_id=264
-X-Original-From: Janne Grunau <j@jannau.net>
-Reply-To: j@jannau.net
 
-From: Janne Grunau <j@jannau.net>
+On 01/11/2024 15:18, Kieran Bingham wrote:
+> Presently with SoftISP being CPU only - physically contiguous memory is
+> not required.
 
-All known M1* and M2* devices use an identical SPI NOR flash
-configuration with a partition containing a non-volatile key:value
-storage. Use a .dtsi and include it for every device.
-The nvram partition parameters itself depend on the version of the
-installed Apple iboot boot loader. m1n1 will fill in the current values
-provided by Apple's iboot.
+Yes, I've misinterpreted what we discussed, udmabuf should be enough on 
+qcom.
 
-Signed-off-by: Janne Grunau <j@jannau.net>
+> Bryan, will this still be true when you have a GPU based ISP ? Will that
+> require physically contiguous memory ? Or will the mapping into the GPU
+> handle any required translations?
+
+I believe it should be fine because we do glTexImage2D on the way in ATM 
+and have support for eglCreateImageKHR(.., .., .., .., .., 
+   EGL_DMA_BUF_PLANE0_FD_EXT, dma_fd); but in either case phys contig 
+doesn't matter.
+
 ---
- arch/arm64/boot/dts/apple/spi1-nvram.dtsi      | 39 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi |  2 ++
- arch/arm64/boot/dts/apple/t600x-j375.dtsi      |  2 ++
- arch/arm64/boot/dts/apple/t8103-jxxx.dtsi      |  2 ++
- arch/arm64/boot/dts/apple/t8112-jxxx.dtsi      |  2 ++
- 5 files changed, 47 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/apple/spi1-nvram.dtsi b/arch/arm64/boot/dts/apple/spi1-nvram.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..3df2fd3993b52884d7c00b65099c88d830a7a4c3
---- /dev/null
-+++ b/arch/arm64/boot/dts/apple/spi1-nvram.dtsi
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+//
-+// Devicetree include for common spi-nor nvram flash.
-+//
-+// Apple uses a consistent configiguration for the nvram on all known M1* and
-+// M2* devices.
-+//
-+// Copyright The Asahi Linux Contributors
-+
-+/ {
-+	aliases {
-+		nvram = &nvram;
-+	};
-+};
-+
-+&spi1 {
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0x0>;
-+		spi-max-frequency = <25000000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			nvram: partition@700000 {
-+				label = "nvram";
-+				/* To be filled by the loader */
-+				reg = <0x0 0x0>;
-+				status = "disabled";
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi b/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-index 2e471dfe43cf885c1234d36bf0e0acfdc4904621..22ebc78e120bf8f0f71fd532e9dce4dcd117bbc6 100644
---- a/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-@@ -119,3 +119,5 @@ sdhci0: mmc@0,0 {
- &fpwm0 {
- 	status = "okay";
- };
-+
-+#include "spi1-nvram.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t600x-j375.dtsi b/arch/arm64/boot/dts/apple/t600x-j375.dtsi
-index 1e5a19e49b089d4b3c5e12828b682d1993e35e75..d5b985ad567936111ee5cccc9ca9fc23d01d9edf 100644
---- a/arch/arm64/boot/dts/apple/t600x-j375.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-j375.dtsi
-@@ -126,3 +126,5 @@ &pcie0_dart_2 {
- &pcie0_dart_3 {
- 	status = "okay";
- };
-+
-+#include "spi1-nvram.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8103-jxxx.dtsi b/arch/arm64/boot/dts/apple/t8103-jxxx.dtsi
-index 5988a4eb6efaa008c290b1842e0da2aae8052ba4..8e82231acab59ca0bffdcecfb6681f59661fcd96 100644
---- a/arch/arm64/boot/dts/apple/t8103-jxxx.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8103-jxxx.dtsi
-@@ -90,3 +90,5 @@ bluetooth0: bluetooth@0,1 {
- &nco_clkref {
- 	clock-frequency = <900000000>;
- };
-+
-+#include "spi1-nvram.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8112-jxxx.dtsi b/arch/arm64/boot/dts/apple/t8112-jxxx.dtsi
-index f5edf61113e7aa869613d672b281f7b7e84efb79..6da35496a4c88dbaba125ebbe8c5a4a428c647c3 100644
---- a/arch/arm64/boot/dts/apple/t8112-jxxx.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8112-jxxx.dtsi
-@@ -79,3 +79,5 @@ &i2c3 {
- &nco_clkref {
- 	clock-frequency = <900000000>;
- };
-+
-+#include "spi1-nvram.dtsi"
-
--- 
-2.47.0
-
-
+bod
 
