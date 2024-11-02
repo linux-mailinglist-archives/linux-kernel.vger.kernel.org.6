@@ -1,98 +1,147 @@
-Return-Path: <linux-kernel+bounces-393587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072AE9BA2AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 23:06:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91829BA2AD
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 23:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053A828283A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:06:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA92DB21B8D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A751C166F32;
-	Sat,  2 Nov 2024 22:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522BB16A95B;
+	Sat,  2 Nov 2024 22:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UiyrWGxT"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="UvU7xkB9"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80933158866
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 22:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF6D15623A;
+	Sat,  2 Nov 2024 22:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730585156; cv=none; b=NmShZr7nndJ/EQYLpfxaUpHyuHQ8+eJAgHJUHCg/rf4Tzk/xs3E6QmFw3vaNvR4qkcqMx1AII3gk3GWmSlM0i/5czpLo66uxi9u4gPoREoN+aokBKoUsXlJa+mOkG8LUCnX6bPTDx2F3OgcGueNz9OnJJpFoVmYxwAM17XXzhlk=
+	t=1730585356; cv=none; b=pH89WJbn4/76lMp0BSG5Ge/Yw59316W4YJwMDNJHKw17pnc/UTnpGELcCtPEXJ/zmfx6lp4vUSSCsIx1mMYs043YK5qPgxj6Gd2gMS2JFewNRSJ6qBT65B4f8yYjwckZioMpUTBpVS1peAxFLrtIyGa/Fe4Z12qCBZINkZzBn/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730585156; c=relaxed/simple;
-	bh=DGxW/3gzFbMl2TxUO+gjIwebkur7SBvooTQl/SXJEVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I3u1CVouEF9EfkNF+rZUAdwlsa+nUOlhnLzlpVkOj9jjboWPQocacwWycZhYu0Ba8I8mXOs1Ifhm5nmWZu0e4t+qREAE3noMbe4n10hMddpWQhkZaRoFfJd2IVzFrm/5dmCTcA5vUrSLCLuySFovY6+9vhCEN/Ieko+cOdl3mx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UiyrWGxT; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730585151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=dhBNX0iKymGDAluv25dKc2iiAQq1RLm6UtTorT0C7Ik=;
-	b=UiyrWGxTcqUsI/Q8lsMegWOdmnFIWO+sNHUYo1to0E3cOhVdi+Co4l1bNEdHhqXivvH92J
-	uimnYt3RRqct0w1QjR0yxRn3q4lsyAy9PteKJwHAgUmvUnPvOBhxDD3j2vZF+Sdu56ZnP8
-	sG+ExnridvfwDL/BJV+jpGhFUxiLWhw=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: kernel: proc: Use str_yes_no() helper function
-Date: Sat,  2 Nov 2024 23:04:36 +0100
-Message-ID: <20241102220437.22480-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1730585356; c=relaxed/simple;
+	bh=kikpwqI//uyYfSsse1xjYLmU45mmiKnCb1MCiKi43/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PNV5+J1UpaFVccVVFlSzRMo8IcJllIj2k00fzp+j5OpBNYqX4HZQ9JoCrJg9wy6YuSDWuBwHQ3mBWpPzsoxHVsLPWYzDTafuyADGZwCZIvgDtGe7PuTaGMVjSX/ChR8chSNhUtDudoIkbH15phFOdI+H7zJq7SauIMOn5VOzlxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=UvU7xkB9; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=AycwtpPKy3WyiL43tzTobf844buvtjAigNy6uC85R24=; b=UvU7xkB9gxXDeg3y
+	UtWzKpRYNG3OlLoS8bXN4dkkXsDR4WpoiX3a6HxlX8l3GLUohI99boj3drFgOGG/xGNUlmqhR8VZ+
+	NBrHIaQ7GDgejaAfAfMso0YP18fUOQpgUpmQthIvEEw3xBn+plzfPdm0usyvrNmmOg++P2lIveOYC
+	EECuo//zV2iCPjm3jU8ila6U9LOwNafwzmxsWpOz3k6qjaR8f+O/r67Uukz5+pbkp2tuIXY0ARR9d
+	UHfbRrTIWs4v6BM5fMYaSL6Pr2zkEm8f/6r2BQ5Kd2bVlzJYtIYfjm8ALy0pJEWhisNlBRQlPrKn9
+	dVT9QjflBp19G5J+Nw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1t7MIw-00F7ys-0d;
+	Sat, 02 Nov 2024 22:09:10 +0000
+Date: Sat, 2 Nov 2024 22:09:10 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: linuxdrivers@attotech.com, James.Bottomley@hansenpartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: esas2r: Remove unused esas2r_build_cli_req
+Message-ID: <ZyajBhCcMv865wLZ@gallifrey>
+References: <20241102220336.80541-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20241102220336.80541-1-linux@treblig.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 22:08:08 up 178 days,  9:22,  1 user,  load average: 0.00, 0.01,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Remove hard-coded strings by using the str_yes_no() helper function.
+FYI: Bradley Groves, the driver maintainer's email server didn't like the patch with:
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/mips/kernel/proc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+  Action: failed
+  Final-Recipient: rfc822;linuxdrivers@attotech.com
+  Status: 5.0.0
+  Remote-MTA: dns; mx-01-us-west-2.prod.hydra.sophos.com
+  Diagnostic-Code: smtp; 550 5.7.1 XGEMAIL_0011 Command rejected
 
-diff --git a/arch/mips/kernel/proc.c b/arch/mips/kernel/proc.c
-index 8eba5a1ed664..3e4be48bab02 100644
---- a/arch/mips/kernel/proc.c
-+++ b/arch/mips/kernel/proc.c
-@@ -66,12 +66,12 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 	seq_printf(m, "BogoMIPS\t\t: %u.%02u\n",
- 		      cpu_data[n].udelay_val / (500000/HZ),
- 		      (cpu_data[n].udelay_val / (5000/HZ)) % 100);
--	seq_printf(m, "wait instruction\t: %s\n", cpu_wait ? "yes" : "no");
-+	seq_printf(m, "wait instruction\t: %s\n", str_yes_no(cpu_wait));
- 	seq_printf(m, "microsecond timers\t: %s\n",
--		      cpu_has_counter ? "yes" : "no");
-+		      str_yes_no(cpu_has_counter));
- 	seq_printf(m, "tlb_entries\t\t: %d\n", cpu_data[n].tlbsize);
- 	seq_printf(m, "extra interrupt vector\t: %s\n",
--		      cpu_has_divec ? "yes" : "no");
-+		      str_yes_no(cpu_has_divec));
- 	seq_printf(m, "hardware watchpoint\t: %s",
- 		      cpu_has_watch ? "yes, " : "no\n");
- 	if (cpu_has_watch) {
-@@ -155,7 +155,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
- 
- 	if (cpu_has_mmips) {
- 		seq_printf(m, "micromips kernel\t: %s\n",
--		      (read_c0_config3() & MIPS_CONF3_ISA_OE) ?  "yes" : "no");
-+		      str_yes_no(read_c0_config3() & MIPS_CONF3_ISA_OE));
- 	}
- 
- 	seq_puts(m, "Options implemented\t:");
+Shrug,
+
+Dave
+
+* linux@treblig.org (linux@treblig.org) wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> esas2r_build_cli_req() has been unused since it was added
+> in 2013 by
+> commit 26780d9e12ed ("[SCSI] esas2r: ATTO Technology ExpressSAS 6G SAS/SATA
+> RAID Adapter Driver")
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/scsi/esas2r/esas2r.h     |  4 ----
+>  drivers/scsi/esas2r/esas2r_vda.c | 17 -----------------
+>  2 files changed, 21 deletions(-)
+> 
+> diff --git a/drivers/scsi/esas2r/esas2r.h b/drivers/scsi/esas2r/esas2r.h
+> index 8a133254c4f6..1e2d7c63a8e3 100644
+> --- a/drivers/scsi/esas2r/esas2r.h
+> +++ b/drivers/scsi/esas2r/esas2r.h
+> @@ -1045,10 +1045,6 @@ void esas2r_build_mgt_req(struct esas2r_adapter *a,
+>  			  u32 length,
+>  			  void *data);
+>  void esas2r_build_ae_req(struct esas2r_adapter *a, struct esas2r_request *rq);
+> -void esas2r_build_cli_req(struct esas2r_adapter *a,
+> -			  struct esas2r_request *rq,
+> -			  u32 length,
+> -			  u32 cmd_rsp_len);
+>  void esas2r_build_ioctl_req(struct esas2r_adapter *a,
+>  			    struct esas2r_request *rq,
+>  			    u32 length,
+> diff --git a/drivers/scsi/esas2r/esas2r_vda.c b/drivers/scsi/esas2r/esas2r_vda.c
+> index 30028e56df63..5aa728704dfc 100644
+> --- a/drivers/scsi/esas2r/esas2r_vda.c
+> +++ b/drivers/scsi/esas2r/esas2r_vda.c
+> @@ -444,23 +444,6 @@ void esas2r_build_ae_req(struct esas2r_adapter *a, struct esas2r_request *rq)
+>  	}
+>  }
+>  
+> -/* Build a VDA CLI request. */
+> -void esas2r_build_cli_req(struct esas2r_adapter *a,
+> -			  struct esas2r_request *rq,
+> -			  u32 length,
+> -			  u32 cmd_rsp_len)
+> -{
+> -	struct atto_vda_cli_req *vrq = &rq->vrq->cli;
+> -
+> -	clear_vda_request(rq);
+> -
+> -	rq->vrq->scsi.function = VDA_FUNC_CLI;
+> -
+> -	vrq->length = cpu_to_le32(length);
+> -	vrq->cmd_rsp_len = cpu_to_le32(cmd_rsp_len);
+> -	vrq->sg_list_offset = (u8)offsetof(struct atto_vda_cli_req, sge);
+> -}
+> -
+>  /* Build a VDA IOCTL request. */
+>  void esas2r_build_ioctl_req(struct esas2r_adapter *a,
+>  			    struct esas2r_request *rq,
+> -- 
+> 2.47.0
+> 
 -- 
-2.47.0
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
