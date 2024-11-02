@@ -1,134 +1,234 @@
-Return-Path: <linux-kernel+bounces-393449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB04E9BA0CB
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:32:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4409BA0CD
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:33:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FC052825CB
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 530EF1C20F34
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2E019CC02;
-	Sat,  2 Nov 2024 14:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B77419CC27;
+	Sat,  2 Nov 2024 14:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eeoWIdMP"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="JyXIQ46b"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB235A4D5;
-	Sat,  2 Nov 2024 14:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8F733F9;
+	Sat,  2 Nov 2024 14:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730557922; cv=none; b=FGJQWo/LgZ/10p6i2NaRSrg6kfd9cq4MKKvqAeBTHeQEyfEgElw48Z+0uyiMiLQtfZrtqgmHEvY/rK6841LJfVXPjkkMI47zs3xLVwTb/E5svW0qjcSreJaWkv31UdUwqX/2hDl7IFcHcf3TNa9A1ftqpOFs7re/dSROzd6zVq0=
+	t=1730558019; cv=none; b=LkD9xEWuaHYe0U3pRPAqOLpRjfkpUtWleGzaAstw9EKYSLtXpNeGL6efWIEU2CK4J6itwfjs9EZlshx+6tUNicWr835sOn6sTFUNkUpaqels2OUbEH9RuGt4/TWCtX7y4+qTuWHs+8jo5WWFRaJ1R4PIKG72KTyRoaOZ4J9otBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730557922; c=relaxed/simple;
-	bh=VoPv0nCeP2KrCbSJNTwdSe/naVgbmSZFA8ESeMEM7YE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lIMtLtju2RF9TSALbHqJbNpxgcjEV72fdVMJzmGotefY8fHXI3A4eeKOKuAFeV09JrlCCNdDNs6YO2MP3qf5NVKwD9eT3y4znC2e4d1d6LRXEFSDDTMG1plivxTs1sCSMeAxdUL5pTXd0Ge/0XOqt3GcDY+Q16XJopj/bIE2LhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eeoWIdMP; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d3e8d923fso1865099f8f.0;
-        Sat, 02 Nov 2024 07:32:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730557919; x=1731162719; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uAYb8ZWo+6oqgopAoB/L+X6KhCpnV2TRcgj8aWyRjcs=;
-        b=eeoWIdMPhaL3I9zarbxL8UjFpqQFmdAJFearhwU3V1qscSpYWFwl3uL0Bj+n9rZj/r
-         niQfKwzv7PCkpfmPxHjXE4r7u5h2cvjTSWwLAP/xHjsweBiTeUg1dApCTyHGwWB6jMd6
-         cbb9DkyZuhEr8Hggqx06vVNlRp+6EsumCGlcB3qS12apmqNDWbuJq+4HeSE9l4yY7N+d
-         BB+x/Qjqn0G5cArzoSJIE/mmke9Jb0WwwxM8uqskruODSooWQ8a58pAuvgKQpinSf67B
-         2vN/RoYipv4/W7ER/XbObfqVDiYPxFIdjVvwJFwdfrx8YM+EOav3b98XLInnG01cJlJd
-         0WGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730557919; x=1731162719;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uAYb8ZWo+6oqgopAoB/L+X6KhCpnV2TRcgj8aWyRjcs=;
-        b=usRtIQtYHQmbvG2voIHGxi0u01a4OpGcUUFcFDFDikLepq4PG6O+yOPOX5VGfSFoEk
-         ivTI5CyKyJywVwhikVVBjMb7NxttA158k88hW6JNlZJ7kr4voW2x5Wcdy0QU4ISgcqrP
-         teaESa3HsORUKfDsnPzhzHgu3uGfNGr1ZkfAouR0s3El75qI0QNDdVL8/oi04+dhMQOB
-         RLCY8E5uC1s3irFLT5k4WISjRM0O49vge36jggT4KwC6SFaUqqY8WfQG24OIUdF3vu4E
-         SYpD/1TECpJ8WQvJhJaFDhoOsKI01BFPVEzBZ4vD6g0fmn28lYOx1NRdLDLbHpmsismI
-         jZzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaxE6QubNNZR8QbjuNAQBkr2BaNHqrNhRKhMQFBndsGvzmmaIg4Ms2JHfH7mAH11hgsz+MtVblOtVE@vger.kernel.org, AJvYcCVLyhWsujygiiJL5k0f5OZwg1RL6hCrToj6X3CAXDgnb1nURs0/yQ7eKOvLAIHdlbh2bTR7ndxE9vPJd+Xm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2tubsnsV7MrvS5RXjWuHXEJscLEkRAEhyCArV2cu4GqrcrGng
-	uLiDenjSoRgnhgmLuWMdvYdJwWxHEfp14RQbaZGGeCbQily/fFdi
-X-Google-Smtp-Source: AGHT+IHO7EK4WejfjK60Ywe/XJsJA7dpSEF+xjKyDkwV41ZCRX7ykEoI4QfPPkh6TJrgd+sMtyrihA==
-X-Received: by 2002:adf:a15b:0:b0:37d:4ebe:163e with SMTP id ffacd0b85a97d-38061206a7emr18644432f8f.53.1730557918570;
-        Sat, 02 Nov 2024 07:31:58 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:492c:2677:72f4:9f57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c1189118sm8196240f8f.116.2024.11.02.07.31.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 07:31:58 -0700 (PDT)
-Date: Sat, 2 Nov 2024 15:31:56 +0100
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Shawn Guo <shawnguo2@yeah.net>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, francesco.dolcini@toradex.com,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v1 1/2] arm64: dts: imx8mm-verdin: add single-master
- property to all i2c nodes
-Message-ID: <ZyY33Ai6xndqTHzi@eichest-laptop>
-References: <20241025095915.22313-1-eichest@gmail.com>
- <20241025095915.22313-2-eichest@gmail.com>
- <ZyWv+BVp91xYr4UZ@dragon>
+	s=arc-20240116; t=1730558019; c=relaxed/simple;
+	bh=JRd71z6CUMYCvugCsAT5+pDVaAsOQB1Rkz1mIIy1W6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ob3io1IceTVoBVv8+ogy+GQ61mTJg+EoYdQIkmlQPKFZi3vJcFgmukk7gzbaErWwh1HvQYm3xpgDzLH5hhGixyHQLnra6T7GMEKKmLssy5RZgoAoSVpHJ4PzR425HP0NJ02n4PfjG9UFnULIdeEWkMMgBAVfZ2rIJN7Tf1zK0O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=JyXIQ46b; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=B0hFXMIsdTaqRLf4YssnEZtCdXxr4gtqyM7yHXkLYng=; b=JyXIQ46bQMP4AWdm
+	lTjVzw0vycEL7kkq6u2n1qeEJguy/IgC80Oq1h1i9RTUX+tBF3Wl2vFloiIOpro2AXTyNCkmmNzHA
+	3UW/c94O1RikbK4fsFeRCu+bDOFBr1L2RR1rQ3vgJsNeuT5rSKlK5F91jKwubgrlqHX+xx1e2R9bZ
+	MeoYfZ7lBV+NxcQbyJG3O5MoGEv1wxnZha6iToKUSsVOp0EuDqecF6KSiDb6D0fp2wd5uAu7JwZmk
+	wADNCFnq00CCacsoeRCV4rknSnFdkwX4/P7L++IaQ1QqfOPJ5UeOUawVFLV7yiXLMUhR5cK13LmCe
+	p4urwaqKEhEkObTNCQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1t7FBm-00F6Ij-3D;
+	Sat, 02 Nov 2024 14:33:19 +0000
+From: linux@treblig.org
+To: ecree.xilinx@gmail.com,
+	habetsm.xilinx@gmail.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-net-drivers@amd.com,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH net-next] sfc: Remove deadcode
+Date: Sat,  2 Nov 2024 14:33:16 +0000
+Message-ID: <20241102143317.24745-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyWv+BVp91xYr4UZ@dragon>
+Content-Transfer-Encoding: 8bit
 
-Hi Shawn,
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-On Sat, Nov 02, 2024 at 12:52:08PM +0800, Shawn Guo wrote:
-> On Fri, Oct 25, 2024 at 11:58:02AM +0200, Stefan Eichenberger wrote:
-> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > 
-> > By default we expect all i2c nodes to be single-master, we do not have
-> > any module or carrier board that uses multi-master mode on any i2c
-> > controller. With this property set, we benefit from optimisations made
-> > exclusively for single-masters.
-> > 
-> > Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > ---
-> >  arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-> > index 5fa3959141911..95d5d2333ca1e 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-> > @@ -367,6 +367,7 @@ &i2c1 {
-> >  	pinctrl-1 = <&pinctrl_i2c1_gpio>;
-> >  	scl-gpios = <&gpio5 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> >  	sda-gpios = <&gpio5 15 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> > +	single-master;
-> 
-> Hmm, I do not see this property is documented in i2c-imx bindings.
+ef4_farch_dimension_resources(), ef4_nic_fix_nodesc_drop_stat(),
+ef4_ticks_to_usecs() and ef4_tx_get_copy_buffer_limited() were
+copied over from efx_ equivalents in 2016 but never used by
+commit 5a6681e22c14 ("sfc: separate out SFC4000 ("Falcon") support into new
+sfc-falcon driver")
 
-According to the discussion we had in this thread
-https://lore.kernel.org/linux-i2c/2bbddaxyjkxfmlgmq3yqcbzo7dsb2pq5bvdatk2y4ig4iintkt@35btqkdv7sy3/
-it is not necessary to have the property documentation in the i2c-imx
-binding because it is already documented in the dt-schema:
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
-In the initial discussion, it was addressed for multi-master setups, but
-it also applies for single-master. See also this discussion:
-https://lore.kernel.org/all/bcdd6cae28edd9dd05a71118f9979e7460688775.camel@pengutronix.de/
+EF4_MAX_FLUSH_TIME is also unused.
 
-Let me know if I have missed anything or misunderstood.
+Remove them.
 
-Regards,
-Stefan
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/net/ethernet/sfc/falcon/efx.c   |  8 --------
+ drivers/net/ethernet/sfc/falcon/efx.h   |  1 -
+ drivers/net/ethernet/sfc/falcon/farch.c | 22 ----------------------
+ drivers/net/ethernet/sfc/falcon/nic.c   | 11 -----------
+ drivers/net/ethernet/sfc/falcon/nic.h   |  5 -----
+ drivers/net/ethernet/sfc/falcon/tx.c    |  8 --------
+ drivers/net/ethernet/sfc/falcon/tx.h    |  3 ---
+ 7 files changed, 58 deletions(-)
+
+diff --git a/drivers/net/ethernet/sfc/falcon/efx.c b/drivers/net/ethernet/sfc/falcon/efx.c
+index 8925745f1c17..b07f7e4e2877 100644
+--- a/drivers/net/ethernet/sfc/falcon/efx.c
++++ b/drivers/net/ethernet/sfc/falcon/efx.c
+@@ -1886,14 +1886,6 @@ unsigned int ef4_usecs_to_ticks(struct ef4_nic *efx, unsigned int usecs)
+ 	return usecs * 1000 / efx->timer_quantum_ns;
+ }
+ 
+-unsigned int ef4_ticks_to_usecs(struct ef4_nic *efx, unsigned int ticks)
+-{
+-	/* We must round up when converting ticks to microseconds
+-	 * because we round down when converting the other way.
+-	 */
+-	return DIV_ROUND_UP(ticks * efx->timer_quantum_ns, 1000);
+-}
+-
+ /* Set interrupt moderation parameters */
+ int ef4_init_irq_moderation(struct ef4_nic *efx, unsigned int tx_usecs,
+ 			    unsigned int rx_usecs, bool rx_adaptive,
+diff --git a/drivers/net/ethernet/sfc/falcon/efx.h b/drivers/net/ethernet/sfc/falcon/efx.h
+index d3b4646545fa..52508f2c8cb2 100644
+--- a/drivers/net/ethernet/sfc/falcon/efx.h
++++ b/drivers/net/ethernet/sfc/falcon/efx.h
+@@ -198,7 +198,6 @@ int ef4_try_recovery(struct ef4_nic *efx);
+ /* Global */
+ void ef4_schedule_reset(struct ef4_nic *efx, enum reset_type type);
+ unsigned int ef4_usecs_to_ticks(struct ef4_nic *efx, unsigned int usecs);
+-unsigned int ef4_ticks_to_usecs(struct ef4_nic *efx, unsigned int ticks);
+ int ef4_init_irq_moderation(struct ef4_nic *efx, unsigned int tx_usecs,
+ 			    unsigned int rx_usecs, bool rx_adaptive,
+ 			    bool rx_may_override_tx);
+diff --git a/drivers/net/ethernet/sfc/falcon/farch.c b/drivers/net/ethernet/sfc/falcon/farch.c
+index c64623c2e80c..01017c41338e 100644
+--- a/drivers/net/ethernet/sfc/falcon/farch.c
++++ b/drivers/net/ethernet/sfc/falcon/farch.c
+@@ -1631,28 +1631,6 @@ void ef4_farch_rx_push_indir_table(struct ef4_nic *efx)
+ 	}
+ }
+ 
+-/* Looks at available SRAM resources and works out how many queues we
+- * can support, and where things like descriptor caches should live.
+- *
+- * SRAM is split up as follows:
+- * 0                          buftbl entries for channels
+- * efx->vf_buftbl_base        buftbl entries for SR-IOV
+- * efx->rx_dc_base            RX descriptor caches
+- * efx->tx_dc_base            TX descriptor caches
+- */
+-void ef4_farch_dimension_resources(struct ef4_nic *efx, unsigned sram_lim_qw)
+-{
+-	unsigned vi_count;
+-
+-	/* Account for the buffer table entries backing the datapath channels
+-	 * and the descriptor caches for those channels.
+-	 */
+-	vi_count = max(efx->n_channels, efx->n_tx_channels * EF4_TXQ_TYPES);
+-
+-	efx->tx_dc_base = sram_lim_qw - vi_count * TX_DC_ENTRIES;
+-	efx->rx_dc_base = efx->tx_dc_base - vi_count * RX_DC_ENTRIES;
+-}
+-
+ u32 ef4_farch_fpga_ver(struct ef4_nic *efx)
+ {
+ 	ef4_oword_t altera_build;
+diff --git a/drivers/net/ethernet/sfc/falcon/nic.c b/drivers/net/ethernet/sfc/falcon/nic.c
+index 78c851b5a56f..1b91992e3698 100644
+--- a/drivers/net/ethernet/sfc/falcon/nic.c
++++ b/drivers/net/ethernet/sfc/falcon/nic.c
+@@ -511,14 +511,3 @@ void ef4_nic_update_stats(const struct ef4_hw_stat_desc *desc, size_t count,
+ 		}
+ 	}
+ }
+-
+-void ef4_nic_fix_nodesc_drop_stat(struct ef4_nic *efx, u64 *rx_nodesc_drops)
+-{
+-	/* if down, or this is the first update after coming up */
+-	if (!(efx->net_dev->flags & IFF_UP) || !efx->rx_nodesc_drops_prev_state)
+-		efx->rx_nodesc_drops_while_down +=
+-			*rx_nodesc_drops - efx->rx_nodesc_drops_total;
+-	efx->rx_nodesc_drops_total = *rx_nodesc_drops;
+-	efx->rx_nodesc_drops_prev_state = !!(efx->net_dev->flags & IFF_UP);
+-	*rx_nodesc_drops -= efx->rx_nodesc_drops_while_down;
+-}
+diff --git a/drivers/net/ethernet/sfc/falcon/nic.h b/drivers/net/ethernet/sfc/falcon/nic.h
+index ada6e036fd97..ac10c12967df 100644
+--- a/drivers/net/ethernet/sfc/falcon/nic.h
++++ b/drivers/net/ethernet/sfc/falcon/nic.h
+@@ -477,7 +477,6 @@ void ef4_farch_finish_flr(struct ef4_nic *efx);
+ void falcon_start_nic_stats(struct ef4_nic *efx);
+ void falcon_stop_nic_stats(struct ef4_nic *efx);
+ int falcon_reset_xaui(struct ef4_nic *efx);
+-void ef4_farch_dimension_resources(struct ef4_nic *efx, unsigned sram_lim_qw);
+ void ef4_farch_init_common(struct ef4_nic *efx);
+ void ef4_farch_rx_push_indir_table(struct ef4_nic *efx);
+ 
+@@ -502,10 +501,6 @@ size_t ef4_nic_describe_stats(const struct ef4_hw_stat_desc *desc, size_t count,
+ void ef4_nic_update_stats(const struct ef4_hw_stat_desc *desc, size_t count,
+ 			  const unsigned long *mask, u64 *stats,
+ 			  const void *dma_buf, bool accumulate);
+-void ef4_nic_fix_nodesc_drop_stat(struct ef4_nic *efx, u64 *stat);
+-
+-#define EF4_MAX_FLUSH_TIME 5000
+-
+ void ef4_farch_generate_event(struct ef4_nic *efx, unsigned int evq,
+ 			      ef4_qword_t *event);
+ 
+diff --git a/drivers/net/ethernet/sfc/falcon/tx.c b/drivers/net/ethernet/sfc/falcon/tx.c
+index b9369483758c..e6e80b039ca2 100644
+--- a/drivers/net/ethernet/sfc/falcon/tx.c
++++ b/drivers/net/ethernet/sfc/falcon/tx.c
+@@ -40,14 +40,6 @@ static inline u8 *ef4_tx_get_copy_buffer(struct ef4_tx_queue *tx_queue,
+ 	return (u8 *)page_buf->addr + offset;
+ }
+ 
+-u8 *ef4_tx_get_copy_buffer_limited(struct ef4_tx_queue *tx_queue,
+-				   struct ef4_tx_buffer *buffer, size_t len)
+-{
+-	if (len > EF4_TX_CB_SIZE)
+-		return NULL;
+-	return ef4_tx_get_copy_buffer(tx_queue, buffer);
+-}
+-
+ static void ef4_dequeue_buffer(struct ef4_tx_queue *tx_queue,
+ 			       struct ef4_tx_buffer *buffer,
+ 			       unsigned int *pkts_compl,
+diff --git a/drivers/net/ethernet/sfc/falcon/tx.h b/drivers/net/ethernet/sfc/falcon/tx.h
+index 2a88c59cbbbe..868ed8a861ab 100644
+--- a/drivers/net/ethernet/sfc/falcon/tx.h
++++ b/drivers/net/ethernet/sfc/falcon/tx.h
+@@ -15,9 +15,6 @@
+ unsigned int ef4_tx_limit_len(struct ef4_tx_queue *tx_queue,
+ 			      dma_addr_t dma_addr, unsigned int len);
+ 
+-u8 *ef4_tx_get_copy_buffer_limited(struct ef4_tx_queue *tx_queue,
+-				   struct ef4_tx_buffer *buffer, size_t len);
+-
+ int ef4_enqueue_skb_tso(struct ef4_tx_queue *tx_queue, struct sk_buff *skb,
+ 			bool *data_mapped);
+ 
+-- 
+2.47.0
+
 
