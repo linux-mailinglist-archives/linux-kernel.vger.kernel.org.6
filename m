@@ -1,90 +1,83 @@
-Return-Path: <linux-kernel+bounces-393080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89A69B9BA3
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:50:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B7A9B9BA5
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD80628234C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:50:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C6C41C211EB
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033D61BC41;
-	Sat,  2 Nov 2024 00:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C491171C;
+	Sat,  2 Nov 2024 00:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRhbE48U"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqpU1Mq1"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029654690;
-	Sat,  2 Nov 2024 00:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CFC191;
+	Sat,  2 Nov 2024 00:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730508598; cv=none; b=LwdJGb8H8IXHYPVGlIBEFIZ73RHLeiEa8GlRgTeHhjvW2jetpwXLxt0J/GzWeSwJ3zxYFyXQjIX/e3DGW8m8MJM+GF+rg2EOL4p/7MBWt4SEzKTxUJs7pv+N9o+C5l9iCOUwKPDiWjwce4KFMbYBpyGK3Co4KIAOA+BIcrgggz8=
+	t=1730508664; cv=none; b=UtfwJscEEK3gjoUggGFBuGyDo9terAz1Arx0d5GSXfTpmske+I/+CbMjY8Xs+3lWFdSIbmGomvuPn18LSwAPdpubgtwOjMJEUyUc+xFJYulrDIYgI7K8pyw9A6D6Wt2p0zt/cIrqkAJEOH5lhEJYpcHfcdw35iqunoUeQb+Zryo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730508598; c=relaxed/simple;
-	bh=qEroFCiIBuVzalKB5k23XEUrskQ5paOey5x9e6/IrCQ=;
+	s=arc-20240116; t=1730508664; c=relaxed/simple;
+	bh=XpFydpuIBmwZE635p7YZzmUWJPO3ARERCA/AayY+nzU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L4vZH3jvaXKvyNT6usD+fIPpIBC4rRo/KB/dnx+KO4G1PPRkp9GWtxJCc7gsWp8aPnb3MkXAcIqLhC1Jihn0qhXOrvTqFRFxzv64uGWOTFOcYxYJ4p1bPDO/yvFiCh7QjxtJTrkA3bEioX5T7er6grnqwZFlJCaJ8c1TzQFYmfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XRhbE48U; arc=none smtp.client-ip=209.85.210.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=kmeZRbFRHqYHr+u2E4MT9AIjBEnW/X/KyoeJeMVMlnlFf88EZMU585O6GhbZkAU8+EPo9N13+y3+G1Y03KypiBndApGuKpwIiRaOvQTrrLsg6k4oMmiy1l1SGXusvL94OcGm0YF8FOFMw/dEMGLhSlx0DlBvYEJCpzQgLFyyWA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqpU1Mq1; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-720be27db27so1897111b3a.2;
-        Fri, 01 Nov 2024 17:49:56 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20cbca51687so23812505ad.1;
+        Fri, 01 Nov 2024 17:51:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730508596; x=1731113396; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730508662; x=1731113462; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DXIAuR/51D0pou43bt+LOMQQ2AlEuDQoocShKXn+15Y=;
-        b=XRhbE48U8tADGBVXesXeDoj2i3wX3tQ8cUtzsccXlamkH+rjKwzA+MpCLj4F6BgcfG
-         hdS05MhFrK9CKPPbPIBfBzOaZGKbJhVgJyW4pxSHqFbqUFCMAEhdlprxcE3HhYAYjERe
-         RGHwsbKwmGOL8JK240aVZdQHS+9GcNsgNZNbaAx1bD3wvk3knxOnUGMnSYtmKqars0DS
-         8rkLOe6SYXfzANr9hxKGIscKhpQk5GKxY8ZtIuiRUy8+1yLKwegDXex8AtnJ6ULiQzkJ
-         9FA28Rsj7/zXkqm1ZcIWpTTlHOo66zCA95IwBTgbp9YN4b7YiQErcc+PUvX34Wyc+tqf
-         YhrQ==
+        bh=02siiafPBB+WwrD70k7f5oYXgfNSeX3MzSwQ/u7qGxI=;
+        b=jqpU1Mq1hdaAyXC0MCYHC+SCh+IxARRWto5fP0/B0vCd8rbXfwx10zUqZZTfcOwvln
+         MqaF9KHC5ae9f6DcQJVfbMWSLu0JkJIBrVu78Jj1Sgwxn3Rwv452LJ/VHnc2ooIFMCp5
+         +rbxvpGCLZlOD0vHQMUHjn6jyenBf09gt70Nyg5COeyuU6YimU9+GdCWMDnT712Pwari
+         qLWBlgtKeRAjHgrsYnD2vFIWR0wuGX/jOkITR2ZyrMgAAJWz4UZVStUyPKI5bO7d7G30
+         w0DwmEZLiJGYf45Xj46WvIRLpTeQ67aQ8IfI9L49/BZc7ZSrzVROEdCNv1YS9jMZcteX
+         OvbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730508596; x=1731113396;
+        d=1e100.net; s=20230601; t=1730508662; x=1731113462;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DXIAuR/51D0pou43bt+LOMQQ2AlEuDQoocShKXn+15Y=;
-        b=AleFB3JNo0x/Cjo1o+FcSRrQwGN0/UUi9tPikJX/bqd+IGAR1pcQ3s8fLIpu06eFit
-         z/pSL5FdqcdzKVyTKi5RwlfoAoHMKYOM7HvWVfkxIZpvpnRqgnccMXwOjOWug+wM+Xl2
-         d/B1kQKFNTd6p6fwZpG964xtd6b9F47Uld3HTaaZVz43ZM+GrE3hUBNXuG6htNec+HGX
-         IZECCkeHGvdCMBR+9Zn/2Dr46OSGJHf65Tdn0c59eX2QRUTBsCNRMg14x7qJ9ciPqYC0
-         U/5fUFe/cWAnjCfL8AcoqA23SLorHGTXf02qInX1FUGC7ODKxTtykXNAJzlIiKqhwsMn
-         Vc8g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9qPzZIeotqOcitO/+Ri2jkIuAEgDJ8mKiadShNeIQzCXLv5wDMctRi903wIL5eiMkSqKjyF0YYJcZ@vger.kernel.org, AJvYcCUnNhAbGSJL3BttGGa15LVpOtc3MEqxzC2qQR82e144XgUk55YSxOBmyiurR+mFqmvX2twZ0mrE23WI3y69@vger.kernel.org, AJvYcCXzhPEmF2hiw9BttC63Ox3z1PD/EmtGnF7Uo3RcvFBt1O3Xqbvo3eB6MrubkqiMvaOypCiBrb4V@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXyZzrkR9HsFpOARZxYX8ufXYv5FVRVtiFE0GUExV0Xj1/L2xL
-	IUYJ1wvnIk1O6GELKtAodUFMatngF3cw9K0uV6hrrEnLWfRAw0a0
-X-Google-Smtp-Source: AGHT+IHbrS7Zz8aqhA9iNJ6BENNi1qi8TjZ5N6MLO9abZP6T/0eW2eyn4Dxkv2ihng2PAT86PcvCUA==
-X-Received: by 2002:a05:6a20:b40a:b0:1d9:29ab:9b49 with SMTP id adf61e73a8af0-1d9eee1e129mr15296159637.32.1730508596196;
-        Fri, 01 Nov 2024 17:49:56 -0700 (PDT)
+        bh=02siiafPBB+WwrD70k7f5oYXgfNSeX3MzSwQ/u7qGxI=;
+        b=GPjZuSJ/pdzFZLTtpe7XexSPfg0PiowQqPpcJvnJLhGyEd48f2s8MXTPmKV14DcgxF
+         hQIKj57fop6rd/LHIPAPLC04tya2Dimj1ar8XUOG2554pKD6lw5xTpSRbwML8cdViGvN
+         wz2ysL7VfkvyWqrQMrpGKfrVPt0GNV39725mVfBXd0MJRaeZyp3MnRjAj+SVIA61sTXw
+         vsPQRXLtH9tKQ4dX25kwT23Z1xRxZC2Rum8Bfhcsi2yktrGFgSiz0NgnWiZGLZNv7/2z
+         BAOymzH4puEHLMWMoQOMnsq+Y51G5JwIyd2ahABKIVzOV03keIk9fOb4tm0UFqzMAcbk
+         79AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkYcS7LJ6T5bZqKm8ZyIHot9ODC8qZXIYbFSULLPN1zHyGFRNo5tLsOq9m7EAruFsmEFayksEncaqmZrEA@vger.kernel.org, AJvYcCXbr/qF4M83UA6XAk1+2f2s3qqaE8BRh/6MFO3XKD5YisMQMTKtTIm1UACLdgvN53b9LHM7S65u84aN@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPojZSTGZFOO684du9gb1sdu1pJTW8wlL4LAH8G/qN9IUL/QVw
+	hLC7d8ytPd2GW2r8LG5rDc3jqVGRjLys6EczALC0wYtpfrAJMl/7
+X-Google-Smtp-Source: AGHT+IFHGKcbBzTBN6w+LmMFrDb+s/iIBlF+oSnT13qe0i7i+AMUtykuFT0A6r8jbSq24XPs62aIow==
+X-Received: by 2002:a17:902:da8f:b0:20b:58f2:e1a0 with SMTP id d9443c01a7336-2111aee4402mr74234475ad.18.1730508662020;
+        Fri, 01 Nov 2024 17:51:02 -0700 (PDT)
 Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee459f9050sm3127263a12.74.2024.11.01.17.49.55
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d44b8sm26490065ad.263.2024.11.01.17.51.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 17:49:55 -0700 (PDT)
-Date: Sat, 2 Nov 2024 08:49:26 +0800
+        Fri, 01 Nov 2024 17:51:01 -0700 (PDT)
+Date: Sat, 2 Nov 2024 08:50:33 +0800
 From: Inochi Amaoto <inochiama@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Richard Cochran <richardcochran@gmail.com>, Jisheng Zhang <jszhang@kernel.org>, 
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Liu Gui <kenneth.liu@sophgo.com>, Yixun Lan <dlan@gentoo.org>, 
-	Longbin Li <looong.bin@gmail.com>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] riscv: dts: sophgo: Add ethernet configuration for cv18xx
-Message-ID: <nrpyz7kdbcx2zlrgtqd7fkg2fb5n2s4matjj6ouy6jxcubcwzy@vwnlhrgchgm3>
-References: <20241028011312.274938-1-inochiama@gmail.com>
- <87e215a7-0b27-4336-9f9c-e63ade0772ef@lunn.ch>
- <wgggariprpp2wczsljy3vw6kp7vhnrifg6soxdgiio2seyctym@4owbzlg3ngum>
- <ftfp2rwkytqmzruogcx66d5qkn4tzrgyjtlz4hdduxhwit3tok@kczgzrjdxx46>
- <e389a60d-2fe3-46fd-946c-01dd3a0a0f6f@lunn.ch>
- <nkydxanwucqmbzzz2fb24xyelrouj6gvhuuou2ssbf4tvvhfea@6uiuueim7m3a>
- <5b08e092-c302-43a9-a04d-3566bec96e94@lunn.ch>
+To: Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	Inochi Amaoto <inochiama@outlook.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: dts: sophgo: fix pinctrl base-address
+Message-ID: <zfnisncpvhjtnsfdciwnqdzlh6bhcdslxx5tp76smmyskgtdpi@wcwdrllaeifo>
+References: <20241028-fix-address-v1-1-dcbe21e59ccf@bootlin.com>
+ <ihmors43w3ttfun7c4fj75ahh2hnhafdxhlmocbxfwttigj3fq@wxud2d2srisn>
+ <MA0P287MB28221D96A094D7C3373C1865FE562@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,69 +86,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5b08e092-c302-43a9-a04d-3566bec96e94@lunn.ch>
+In-Reply-To: <MA0P287MB28221D96A094D7C3373C1865FE562@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 
-On Fri, Nov 01, 2024 at 01:40:00PM +0100, Andrew Lunn wrote:
-> > > > > > > +			mdio {
-> > > > > > > +				compatible = "snps,dwmac-mdio";
-> > > > > > > +				#address-cells = <1>;
-> > > > > > > +				#size-cells = <0>;
-> > > > > > > +
-> > > > > > > +				phy0: phy@0 {
-> > > > > > > +					compatible = "ethernet-phy-ieee802.3-c22";
-> > > > > > > +					reg = <0>;
-> > > > > > > +				};
-> > > > > > > +			};
-> > > > > > 
-> > > > > > It is not clear to me what cv18xx.dtsi represents, 
-> > > > > 
-> > > > > This is a include file to define common ip for the whole
-> > > > > cv18xx series SoCs (cv1800b, cv1812h, sg2000, sg2000).
-> > > > > 
-> > > > > > and where the PHY node should be, here, or in a .dts file. 
-> > > > > > Is this a SOM, and the PHY is on the SOM? 
-> > > > > 
-> > > > > The phy is on the SoC, it is embedded, and no external phy
-> > > > > is supported. So I think the phy node should stay here, not 
-> > > > > in the dts file.
-> > > > 
-> > > > There is a mistake, Some package supports external rmii/mii
-> > > > phy. So I will move this phy definition to board specific.
+On Sat, Nov 02, 2024 at 06:28:50AM +0800, Chen Wang wrote:
+> Hi, Inochi,
+> 
+> Will you pick this on sophgo/for-next?
+> 
+> Regards,
+> 
+> Chen
+> 
+> On 2024/10/30 11:50, Inochi Amaoto wrote:
+> > On Mon, Oct 28, 2024 at 11:43:24AM +0100, Thomas Bonnefille wrote:
+> > > Fix the base-address of the pinctrl controller to match its register
+> > > address.
 > > > 
-> > > When there is an external PHY, does the internal PHY still exists? If
-> > > it does, it should be listed, even if it is not used.
-> > > 
-> > > Do the internal and external PHY share the same MDIO bus? 
+> > > Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> > Fixes: 93b61555f509 ("riscv: dts: sophgo: Add initial SG2002 SoC device tree")
 > > 
-> > They share the same MDIO bus and phy id setting.
-> 
-> What do you mean by phy ID?
-> 
 
-It is just part of the MDIO mux. Just ignore it. It is just
-used to show only one phy can be used at the same time.
-
-> > When an external phy
-> > is select, the internal one is not initialized and can not be accessed
-> > by the SoC.
-> > 
-> > > I've seen some SoCs with complex MDIO muxes for internal vs external
-> > > PHYs.
-> > > 
-> > > 	Andrew
-> > 
-> > There is a switch register on the SoC to decide which phy/mode is used. 
-> > By defaut is internal one with rmii mode. I think a driver is needed to
-> > handle this properly.
-> 
-> This sounds like a complex MDIO mux. You should think about this now,
-> because others have left this same problem too late and ended up with
-> a complex design in order to keep backwards compatibility with old DT
-> blobs which don't actually describe the real hardware.
-> 
-> 	Andrew
-
-Thanks, I wiil design a driver for it to handle this mux.
+Yeah, I have quened this patch and will merge it once I have
+space time, so please wait.
 
 Regards,
 Inochi
