@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-393365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8BC9B9FAF
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:53:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516369B9FB2
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:53:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FAE5282443
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:53:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77391F213CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77A31ABEC6;
-	Sat,  2 Nov 2024 11:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C991AD9F9;
+	Sat,  2 Nov 2024 11:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G5vWdUg+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7CIrl/+R"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qDDachor";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LJB2xdUg"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A40A1AAE01;
-	Sat,  2 Nov 2024 11:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8955189503;
+	Sat,  2 Nov 2024 11:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730548226; cv=none; b=I93SJTm2TA/XLrBZPJ26aaAmlcx3nxOWqhE4etThU3/vCRGnLGIv2XcPETmJu1uf4nRIOf/5od150Xf4yR2oWTnjNtQYcjsbLnN+0eJYuderPGN42ih7VO6TA5jw2ZoDQJc0k2u4ItcQH6KB7/Ay6SGwhLOPo5Q6ylJjdDwPjns=
+	t=1730548227; cv=none; b=Jc1kMwIzFzvokZNVnog4DlB/FjtE1QfekpPWL+ZnMLlzHWjaa0kgPt5fnDSZhrCB+8VhJsgJx7Q7BtKR+VrAtBsSv5/Zgje7ZgAJawEgotAwmA7Z961z32L0naN8/vA33fE07sdtqveYlE62iqbyeZa1duWoxaii8sqUQpPPGw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730548226; c=relaxed/simple;
-	bh=Z2h5o5O4mlCsyfEh4y+ta6wyfnuRpj4fx3Eq21OUeZk=;
+	s=arc-20240116; t=1730548227; c=relaxed/simple;
+	bh=pUkX7h0Rz1fDXLBOoF0mPzCJuo9no1BGe2zJyQq5oX0=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=W0c/CBMqC4/iy1G47fxapMb362VoPdkLQuFVjdD1TC2R6fHOMFoo5yeek2kvVnoTJUPZB0xoamGkpILqs+V7vO4swxNirs2mBG6hWMn3HpQ4rip7Ax/Rp484NN2SCZqDdrsfsvjKQuumtFMm57dG7AvA+uGm2KzRm78baGvWBsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G5vWdUg+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7CIrl/+R; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=beka1hE8TtOFJI4291MFIN/R0OBWioKZztyKylcmIBZK7HHDMqFnpXRH9a6dDYUOS9hvba9ceUDiDEz8w3wezzo03D7Yem5Vd2eq55vcJAIGSh0ETAnmodS+fURGFZ/b1sr24ukxa78Zz0q2S8Bbs6ESBd3Ubsfelw7rX2olguk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qDDachor; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LJB2xdUg; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 02 Nov 2024 11:50:22 -0000
+Date: Sat, 02 Nov 2024 11:50:23 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730548223;
+	s=2020; t=1730548224;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZgCD755TaMnjT2Sjh5hJu7N0OWT3fRpQc4ieJ12xDU8=;
-	b=G5vWdUg+2W/kgMhrUoeJNwWuxs4uACeQsrCplbcorVaoPq0h67oP5T76BuT49Mvlvnd3VO
-	ss00+q3Y8ZZh5aXlmSRfTgqqKibYt3zubc+CcAZuadl17tTbZyStoNMHN50xE81m48XPuR
-	yqcjGPcplStmfE6QdpqoQJIwXfXJdvsabxlTivNj5tYgLEh1lhOe4zVw4APDTELv5vQlB/
-	DphGVzshPIP3ebliIqH5+Pu1WB+usjLvgCpe25hFk8eg3GwtAYYCPYVmobzwFqfDUd++sV
-	H8TOyRnYF1yV2WiU/pn5jX03+FOD2QRxuDvUQ82kLwRUaCJ/x6pABE+XGV4HAw==
+	bh=orOW9IA1jvRZfLj8mtM5k1NqLovf6ybDkTnBvfjuwwI=;
+	b=qDDachorBnQa/b+857n6Vf9QgCVzQ76elk9EmUEiCErpB8h66uTm2b1nICUma9J8V6JCBK
+	lEpth1MH+oEibtlqtnO++GiWBSjiDNiKCjLArTzw0l6fBHpHKoIj5k3GsuNoRIp+p82zaF
+	26eqgLas3CJACVZPOjzW2mp3TnxC8KLblGP7p/w/G/6r9wYbstcSrnOWnQSZuPIjNVcuIH
+	hPixUNcJphbIyrcsSMtnQAp49bp0GW9SxFOD14GZSOlaBXIPh4vNtnlocwG3HMnGtDRDWi
+	4bhC9b2NW6Og7Buejy2joOOeUXceo/Hi3FYpfe3NcLt78lQvatB7Qlh38qotMw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730548223;
+	s=2020e; t=1730548224;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZgCD755TaMnjT2Sjh5hJu7N0OWT3fRpQc4ieJ12xDU8=;
-	b=7CIrl/+RoqUQ+7E4+993dlQp42t0Zvmx1QmU7zVs/PbwIIZwn2p4VknDjZu4qOdIWXqoWz
-	S4CeJellS/ykTQBA==
+	bh=orOW9IA1jvRZfLj8mtM5k1NqLovf6ybDkTnBvfjuwwI=;
+	b=LJB2xdUgeyLNK8qrsmn+jGR2nEcYi7XKzT57EXamXQQxNibOAoAR2vXSPFDUdRDp1demt+
+	ykVxtt9dLc5hXGAg==
 From:
  tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] x86/vdso: Access rng data from kernel without vvar
+Subject:
+ [tip: timers/vdso] x86/vdso: Use __arch_get_vdso_data() to access vdso data
 Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241010-vdso-generic-base-v1-13-b64f0842d512@linutronix.de>
-References: <20241010-vdso-generic-base-v1-13-b64f0842d512@linutronix.de>
+In-Reply-To: <20241010-vdso-generic-base-v1-11-b64f0842d512@linutronix.de>
+References: <20241010-vdso-generic-base-v1-11-b64f0842d512@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173054822231.3137.6490176705178257299.tip-bot2@tip-bot2>
+Message-ID: <173054822372.3137.11740237093914632953.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,83 +82,48 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the timers/vdso branch of tip:
 
-Commit-ID:     7821571be92f9c81f63d4639e652e85d258ce5f2
-Gitweb:        https://git.kernel.org/tip/7821571be92f9c81f63d4639e652e85d258=
-ce5f2
+Commit-ID:     dd937454d905fad9fcbeccd35ecfc8c3c096fe76
+Gitweb:        https://git.kernel.org/tip/dd937454d905fad9fcbeccd35ecfc8c3c09=
+6fe76
 Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Thu, 10 Oct 2024 09:01:15 +02:00
+AuthorDate:    Thu, 10 Oct 2024 09:01:13 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Sat, 02 Nov 2024 12:37:34 +01:00
 
-x86/vdso: Access rng data from kernel without vvar
+x86/vdso: Use __arch_get_vdso_data() to access vdso data
 
-Remove the usage of the vvar _vdso_rng_data from the kernel-space code,
-as the x86 vvar machinery is about to be removed.
-The definition of the structure is unnecessary, as the data lives in a
-page pre-allocated by the linker anyways.
-The vdso user-space access to the rng data will be switched soon.
-
-DEFINE_VVAR_SINGLE() is now unused. It will be removed later togehter
-with the rest of vvar.h.
+The implementation details of the vdso_data access will change.
+Prepare for that by using the existing helper function.
 
 Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241010-vdso-generic-base-v1-13-b64f0842d5=
+Link: https://lore.kernel.org/all/20241010-vdso-generic-base-v1-11-b64f0842d5=
 12@linutronix.de
 
 ---
- arch/x86/entry/vdso/vma.c            | 1 -
- arch/x86/include/asm/vdso/vsyscall.h | 2 +-
- arch/x86/include/asm/vvar.h          | 4 +++-
- 3 files changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/vdso/getrandom.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index b8fed8b..8437906 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -39,7 +39,6 @@ struct vdso_data *arch_get_vdso_data(void *vvar_page)
- #undef EMIT_VVAR
+diff --git a/arch/x86/include/asm/vdso/getrandom.h b/arch/x86/include/asm/vds=
+o/getrandom.h
+index ff5334a..ecdcdbc 100644
+--- a/arch/x86/include/asm/vdso/getrandom.h
++++ b/arch/x86/include/asm/vdso/getrandom.h
+@@ -32,8 +32,8 @@ static __always_inline ssize_t getrandom_syscall(void *buff=
+er, size_t len, unsig
 =20
- DEFINE_VVAR(struct vdso_data, _vdso_data);
--DEFINE_VVAR_SINGLE(struct vdso_rng_data, _vdso_rng_data);
-=20
- unsigned int vclocks_used __read_mostly;
-=20
-diff --git a/arch/x86/include/asm/vdso/vsyscall.h b/arch/x86/include/asm/vdso=
-/vsyscall.h
-index a1f916b..ce8d5c8 100644
---- a/arch/x86/include/asm/vdso/vsyscall.h
-+++ b/arch/x86/include/asm/vdso/vsyscall.h
-@@ -21,7 +21,7 @@ struct vdso_data *__x86_get_k_vdso_data(void)
- static __always_inline
- struct vdso_rng_data *__x86_get_k_vdso_rng_data(void)
+ static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(=
+void)
  {
--	return &_vdso_rng_data;
-+	return (void *)&__vvar_page + __VDSO_RND_DATA_OFFSET;
+-	if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode =3D=3D VDSO_CLOCK=
+MODE_TIMENS)
+-		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)&=
+__vdso_data);
++	if (IS_ENABLED(CONFIG_TIME_NS) && __arch_get_vdso_data()->clock_mode =3D=3D=
+ VDSO_CLOCKMODE_TIMENS)
++		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)_=
+_arch_get_vdso_data());
+ 	return &__vdso_rng_data;
  }
- #define __arch_get_k_vdso_rng_data __x86_get_k_vdso_rng_data
 =20
-diff --git a/arch/x86/include/asm/vvar.h b/arch/x86/include/asm/vvar.h
-index 01e60e0..fe3434d 100644
---- a/arch/x86/include/asm/vvar.h
-+++ b/arch/x86/include/asm/vvar.h
-@@ -19,6 +19,8 @@
- #ifndef _ASM_X86_VVAR_H
- #define _ASM_X86_VVAR_H
-=20
-+#define __VDSO_RND_DATA_OFFSET  640
-+
- #ifdef EMIT_VVAR
- /*
-  * EMIT_VVAR() is used by the kernel linker script to put vvars in the
-@@ -62,7 +64,7 @@ DECLARE_VVAR(0, struct vdso_data, _vdso_data)
-=20
- #if !defined(_SINGLE_DATA)
- #define _SINGLE_DATA
--DECLARE_VVAR_SINGLE(640, struct vdso_rng_data, _vdso_rng_data)
-+DECLARE_VVAR_SINGLE(__VDSO_RND_DATA_OFFSET, struct vdso_rng_data, _vdso_rng_=
-data)
- #endif
-=20
- #undef DECLARE_VVAR
 
