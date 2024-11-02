@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-393214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F639B9DCF
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:56:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E319B9DD1
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:57:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA2A1F22235
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 07:56:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3475128291C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 07:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F10156C74;
-	Sat,  2 Nov 2024 07:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29035156C74;
+	Sat,  2 Nov 2024 07:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBV3brip"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNBmKftk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A48012FF69;
-	Sat,  2 Nov 2024 07:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8036812FF69;
+	Sat,  2 Nov 2024 07:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730534165; cv=none; b=LttiU5OtMwFWyntfzABdbZMNA+5Oxic5QKWVEpNRiBwhN24Vg0Wgnb0cZTxVgvWWvZG2VaQDEwkPMlx59040e7PazHjHVvQdRkSwU6jPY2s337GqrPOO/bSWWHbZqwflm22pzYDXwtKpdQB1eN5BHBsPxYSBoG5zN3afIDqan2M=
+	t=1730534220; cv=none; b=a++tjzqnYOFt6iRLmJAh+2d3K4Q1Z97dLbzyjwNxWPkXykimVZQo2eItSiKEklhC6X+Pj3P/VWmb17Ze7eWxWyHt36mepUgiybPBKgtEr1ov/xVr/Za3SXZN6BkTw+xFHTkSYpaCkh6S7Q2d+N2MnPlibrTKCwwgUF0kiJWlxkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730534165; c=relaxed/simple;
-	bh=fldAxtdVmighiw1Xz9hhdENpTpUPfnW8Z5fYdIp9fVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lWLI+547pbfL4DZY7vZAQ+YEcV/kaBhVQyktAt2l7U0oOewSKidlXijvMOC0sO3BnxOxsueMxyIcwYVXPyMKiEXs4gyK2jp0DtulnQA82mUxXUz8uD0x8yPIQczHarJxswjAotcxt3CIQdRNiTNxlnBD0mVzx6fwVJ9iPDjwfUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBV3brip; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD73AC4CEC3;
-	Sat,  2 Nov 2024 07:56:02 +0000 (UTC)
+	s=arc-20240116; t=1730534220; c=relaxed/simple;
+	bh=BitM8KRVJwA7pViMcYxTM/oQamBQOjB+WxzT1mwDhvI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fxDS3/bE80elufu20cyE1yAA251bPhI4weg13bUEPhUAC7XZO3ol3zlNsa6WAxXWkx4BTVezK7jyC17AReB3iUIaoMlcxREXwvDwSxifPHBmzIaSm7wNqpi19fPgX707HUW4+cWhMQSyJugFCikdoKkPrImjukIN0CQQecKxi+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNBmKftk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A30BAC4CEC3;
+	Sat,  2 Nov 2024 07:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730534165;
-	bh=fldAxtdVmighiw1Xz9hhdENpTpUPfnW8Z5fYdIp9fVY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vBV3briprrVWI0BuSKrAdEfZcPUK6IZAgl83hrEEBA51E4BaKNHM/2ilMBHDFSw1q
-	 gNjomm1l7FDfUo4r8BjJqzvaVcqkzjp0qZexhqfNswa3qJr7g+OKsMMctRQT3bMoDz
-	 iPMtOHfTUxUHXzrKqBt6zmoLGrydRztVol39Ra9qS5QEuQe2nxdkfZ+f04RKqjdEZX
-	 hifx0PjE6HScMHgRO7zOW3E2KM50BZhNlqlyK4FFRdMmah+KuPq8IpFdz12nRI/5iu
-	 PlH9IuaVs8QrWL5s7yVRjFXn2ukZvln1XqFlFx07PiQ8AaC13dKFAPxKIoujKjnEgG
-	 iEwzCcfZzIARg==
-Message-ID: <559908e3-ca6b-4bbd-846d-940cf338e2b7@kernel.org>
-Date: Sat, 2 Nov 2024 08:56:00 +0100
+	s=k20201202; t=1730534220;
+	bh=BitM8KRVJwA7pViMcYxTM/oQamBQOjB+WxzT1mwDhvI=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=jNBmKftkAhysn1Vl2uul2B5tWopNEMppZLMBxOLB4saGCwQR2hnG9bHpn4fAOqJf/
+	 arXZRJgtTxKShQKvZ+nufV3RJkMZUlkgbl+Lr9pg5IZbfstWum7TPgtrogdJ3G9GXQ
+	 78t+kbmGYacnBdciGTyKmmdpYSbutoF4otx+NuenIS8YYLNbw/VKJUPnVeKHii8KA3
+	 Zf/dXsoq1yDJ4qjo2x+4m0Iug3kXXVc/PB5+qN6/H3m/Hf3/YQz5A7F+qZIV8KRWTN
+	 s7Kh7kSXol4+53zO1bS362isbt9L1wDt5f+2ZpB538MjsYGTxxf8+a6sM5VYOc2wJs
+	 T5GLRUimN3OkQ==
+Message-ID: <b968933c-3a16-43f7-be65-ea637d654859@kernel.org>
+Date: Sat, 2 Nov 2024 08:56:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: sx150xq: allow gpio line
- naming
-To: hs@denx.de, linux-kernel@vger.kernel.org
-Cc: Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20241031151238.67753-1-hs@denx.de>
- <20241031151238.67753-3-hs@denx.de>
- <639d6ab8-688a-437c-adb9-9dea1fbd0c51@kernel.org>
- <644ae184-1fef-fa42-06de-e1086b7b14bb@denx.de>
+Subject: Re: [PATCH net-next v1 1/1] nfc: st21nfca: Remove unused of_gpio.h
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241101084212.3363129-1-andriy.shevchenko@linux.intel.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,85 +99,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <644ae184-1fef-fa42-06de-e1086b7b14bb@denx.de>
+In-Reply-To: <20241101084212.3363129-1-andriy.shevchenko@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/11/2024 06:24, Heiko Schocher wrote:
->>>     reg:
->>>       maxItems: 1
->>>   
->>> +  gpio-line-names:
->>> +    minItems: 1
->>
->> I think gpio-line-names should always match the actual number of GPIOs
->> for given device. Do you have here devices with 1 gpio? This could be
->> further constrained in if:then sections.
+On 01/11/2024 09:42, Andy Shevchenko wrote:
+> of_gpio.h is deprecated and subject to remove. The drivers in question
+> don't use it, simply remove the unused header.
 > 
-> I have the device with "sx150x_16_pins", see drivers/pinctrl/pinctrl-sx150x.c
-> 
-> I started with minItems, because I thought it is okay to allow
-> less names... (as I did in patch 3/3) but see now, that other drivers have
-> minItems = maxItems.
-> 
-> So I think I should add to my patch the following part:
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Yes, but in top-level you keep widest constraints, so min 5 max 17.
-
-> 
-> hs@threadripper:linux  [aristainetos3-dts-v3] $ git diff
-> diff --git a/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml 
-> b/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
-> index fd0936545bb8..0872ee1c6fa6 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
-> @@ -91,6 +91,45 @@ required:
-> 
->   allOf:
->     - $ref: pinctrl.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - semtech,sx1501q
-> +              - semtech,sx1504q
-> +              - semtech,sx1507q
-> +    then:
-> +       properties:
-> +          gpio-line-names:
-> +              minItems: 5
-> +              maxItems: 5
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - semtech,sx1502q
-> +              - semtech,sx1505q
-> +              - semtech,sx1508q
-> +    then:
-> +       properties:
-> +          gpio-line-names:
-> +              minItems: 9
-> +              maxItems: 9
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - semtech,sx1503q
-> +              - semtech,sx1506q
-> +              - semtech,sx1509q
-> +    then:
-> +       properties:
-> +          gpio-line-names:
-> +              minItems: 17
-> +              maxItems: 17
->     - if:
->         not:
->           properties:
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
