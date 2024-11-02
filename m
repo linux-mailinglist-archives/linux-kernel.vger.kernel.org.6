@@ -1,111 +1,225 @@
-Return-Path: <linux-kernel+bounces-393296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402D09B9EC5
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:16:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E64EE9B9EB8
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:13:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753971C22754
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DC22822D4
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80A417277F;
-	Sat,  2 Nov 2024 10:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA711AA793;
+	Sat,  2 Nov 2024 10:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="XgKiC9le"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XoBldCEW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZJ/keT1o"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C28B1714C9;
-	Sat,  2 Nov 2024 10:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8F318A935;
+	Sat,  2 Nov 2024 10:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730542235; cv=none; b=rl0b3ratusmzWct3n7aFTL7bGlT3d6E97mX3ibgw4i2/XfAPRSTQqxhVBHckONDrIeepQ0aRw/SQmwmyTanqMaopoU6x1wlGixEb9cu6iRrmm6JIYjqVfKXEERFovfTouIDfb5hNxfrCxkdoL0Ro0yZzisiYh1ycVNXvzGozAVQ=
+	t=1730542221; cv=none; b=LngzCAcZx7IGZjOgJSOLKpu5ufwy2N1cq1/qzkLnPDIPYo5Saqjo+bxYv7nDdzKpX3Y3Hg5kmCexmFiUd4aaumjXpU7J1lEASfewtuFJ+/c6fUn24y6hl52tFDg90KPNdImCNKJr845HX08cFQJ45+xC3HRX5vP3IUzPUdPPFHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730542235; c=relaxed/simple;
-	bh=msZfN1vlHTTQkwq03Xyv0w1GgK6cVJfBoFs08qoycKU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U6iq2C2XloqEcuU/vPylnnK8VHrw5Q5OVrMp9V6/ibMA4S38Q8D/Yssy/A4j4EyImsgYu1pcKOXZgTmExjoPA2Llqr7vq0cIwt7cEfffMOgGV+tnd+lrEy7fkxm2yAeXxQ2NJX6P9VodoNGkgt3Ssmy6C9dIHiZpEPo9BaOUmCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=XgKiC9le; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C8941A09BA;
-	Sat,  2 Nov 2024 11:10:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=dC+s2x2zpsTUqYLdynlJ3f94YiheKXfponBNvdNMjDQ=; b=
-	XgKiC9leoIhXmEAbZVWSBFsTDdg50PyWu8AvvLrkfT79/2cypQocCu0/JVzHzxCo
-	FX9gFnIlOWM7C1GWp7tiaeNGmF3NMZUX9Na5G4NuHSzMB7LQRhxB+THIGQ3vHhrx
-	EDKACzlA/6rvuklZxCoyXHRayFy5gtKxFQvFvCecArlhB4bTrvG1uWoCGt+7v0yW
-	IN6j12Exu+LTCuYz6g1h6QzRnOot9Iq5oWJ4B/rq6Dx95iBoL8ZN0xSC+BDEUrii
-	3XAlKVkg68RsnCofGSM5czpirf4EJKe0lrOCzUDtfnltBW1VCQ0aHQYoNzyqNUCE
-	RLBlDY0vzTRfGg2fUbnHi6Ao5UDVxJG/mccJd3d2dyYNQJRLqfjVEVgPIFWA6Bk5
-	JUfdtdfKQwDlGlrSSMut4vNjU+ZCTyGiUskcPWkhssQcFr5Idm4zplXOortqkU5n
-	q4NZDHMmo9OTXMcF/5seugSlZGK2vnotl3Dp/hI/fWf3tDVYFCg6Z0zxeznl9H4c
-	IJDj3EgwjUUzA33prma/x4WpFhx978xItF7aeikUun7jcU6NqAgNjdSjKY6aJzXn
-	mMb0ahFyoYnOg42RteikoZt3TVuHlji2oB0ONDFc/TZpDk0xmHcy5aDeZL4KQ2mL
-	SsfkKTyg/82fs7KZ2ZDnTkb6rBkuyoqQiLE7g0JaULE=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Mark
- Brown" <broonie@kernel.org>, Mesih Kilinc <mesihkilinc@gmail.com>, Vinod Koul
-	<vkoul@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, "Chen-Yu
- Tsai" <wens@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Conor Dooley <conor.dooley@microchip.com>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Amit Singh Tomar <amitsinght@marvell.com>
-Subject: [PATCH v5 0/5] Add support for DMA of F1C100s
-Date: Sat, 2 Nov 2024 11:10:17 +0100
-Message-ID: <20241102101017.2636558-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730542221; c=relaxed/simple;
+	bh=bEjljXuw2HyjS2XCD6cc9N/dlZfhWYhE3eispGRRPpo=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=RxNUwCw7FFAaPSUUl6Fod7QHZmKPpzVoLqJmfZahBYrWsxj04UPQb8Kvs8vjtaHCFJeY2pe7qtTbLvHm/fZIGf6gb40NpaHE3n6PNfA6xO3FEuZVFzk5YPg/rEO/Mb2TitfXH7H+euYIM6T9NjqF6GkJDcDSis5M4nEFH2jHWl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XoBldCEW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZJ/keT1o; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 02 Nov 2024 10:10:17 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730542218;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QH+h0+LCUBDfNdGRKyE0uW//suynBE0BZqk9m6AbmM4=;
+	b=XoBldCEWAK+PiBlhDRULscOp6TDCTU1BlMnexWFpFxuQjL2sj3eC3OjDq9YuvEuaxYXRml
+	vybElKl9AZXnxFegmg+1q+qocXRk9UUUg2rRCn3GhqWyJj5gaEBNYImeBpkjiS4qKPd3aT
+	ZMHlzz/8Y9+W78KCUlYpsZ2/kDuFoppbJs5aMSiRJtH68W5T4psyzLHjwaAxSmO2WbWJ5B
+	7NSEacTPNP6L95fbESxFOZYp1fW85xTdXpCurBXr9lvuBzRssDh62Q2akbsCsRo8wNMDAi
+	Musu5AqJjt0YwW80AmJCbj85M96HenY4575XMFiSGXAJXEWVHnYjfXVgEHfUbA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730542218;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QH+h0+LCUBDfNdGRKyE0uW//suynBE0BZqk9m6AbmM4=;
+	b=ZJ/keT1oEatb4/3RUb2wdajymR8s/ojbScX8Qg7859xcu0Cn4uDK6usBwfOW6bfpYQtNod
+	ekkeg0+POB/nuvBw==
+From:
+ tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/vdso] riscv: vdso: Use only one single vvar mapping
+Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241010-vdso-generic-base-v1-6-b64f0842d512@linutronix.de>
+References: <20241010-vdso-generic-base-v1-6-b64f0842d512@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1730542228;VERSION=7979;MC=3166311018;ID=220060;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855667067
+Message-ID: <173054221726.3137.4497967603302313710.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Support for Allwinner F1C100s/200s series audio was
-submitted in 2018 as an RFC series, but was not merged,
-despite having only minor errors. However, this is
-essential for having audio on these SoCs.
-This series was forward-ported/rebased to the best of
-my abilities, on top of Linus' tree as of now:
-commit c2ee9f594da8 ("KVM: selftests: Fix build on on non-x86 architectures")
+The following commit has been merged into the timers/vdso branch of tip:
 
-Link: https://lore.kernel.org/all/cover.1543782328.git.mesihkilinc@gmail.com/
+Commit-ID:     fbea49c3a44649c4edb607a4aa0ca793e02bb875
+Gitweb:        https://git.kernel.org/tip/fbea49c3a44649c4edb607a4aa0ca793e02=
+bb875
+Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+AuthorDate:    Thu, 10 Oct 2024 09:01:08 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 02 Nov 2024 11:05:13 +01:00
 
-As requested by many, this series will now be split in 2, the DMA and the
-ALSA/ASoC codec driver. This is the DMA part of the series.
+riscv: vdso: Use only one single vvar mapping
 
-Csókás, Bence (1):
-  dt-bindings: dmaengine: Add Allwinner suniv F1C100s DMA
+The vvar mapping is the same for all processes. Use a single mapping to
+simplify the logic and align it with the other architectures.
 
-Mesih Kilinc (4):
-  dma-engine: sun4i: Add a quirk to support different chips
-  dma-engine: sun4i: Add has_reset option to quirk
-  dma-engine: sun4i: Add support for Allwinner suniv F1C100s
-  ARM: dts: suniv: f1c100s: Add support for DMA
+In addition this will enable the move of the vvar handling into generic code.
 
- .../bindings/dma/allwinner,sun4i-a10-dma.yaml |   4 +-
- .../arm/boot/dts/allwinner/suniv-f1c100s.dtsi |  10 +
- drivers/dma/Kconfig                           |   4 +-
- drivers/dma/sun4i-dma.c                       | 217 +++++++++++++++---
- 4 files changed, 200 insertions(+), 35 deletions(-)
+Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20241010-vdso-generic-base-v1-6-b64f0842d51=
+2@linutronix.de
 
--- 
-2.34.1
+---
+ arch/riscv/kernel/vdso.c | 52 ++++++++++++---------------------------
+ 1 file changed, 17 insertions(+), 35 deletions(-)
 
-
+diff --git a/arch/riscv/kernel/vdso.c b/arch/riscv/kernel/vdso.c
+index 98315b9..3ca3ae4 100644
+--- a/arch/riscv/kernel/vdso.c
++++ b/arch/riscv/kernel/vdso.c
+@@ -23,11 +23,6 @@ enum vvar_pages {
+ 	VVAR_NR_PAGES,
+ };
+=20
+-enum rv_vdso_map {
+-	RV_VDSO_MAP_VVAR,
+-	RV_VDSO_MAP_VDSO,
+-};
+-
+ #define VVAR_SIZE  (VVAR_NR_PAGES << PAGE_SHIFT)
+=20
+ static union vdso_data_store vdso_data_store __page_aligned_data;
+@@ -38,8 +33,6 @@ struct __vdso_info {
+ 	const char *vdso_code_start;
+ 	const char *vdso_code_end;
+ 	unsigned long vdso_pages;
+-	/* Data Mapping */
+-	struct vm_special_mapping *dm;
+ 	/* Code Mapping */
+ 	struct vm_special_mapping *cm;
+ };
+@@ -92,6 +85,8 @@ struct vdso_data *arch_get_vdso_data(void *vvar_page)
+ 	return (struct vdso_data *)(vvar_page);
+ }
+=20
++static const struct vm_special_mapping rv_vvar_map;
++
+ /*
+  * The vvar mapping contains data for a specific time namespace, so when a t=
+ask
+  * changes namespace we must unmap its vvar data for the old namespace.
+@@ -108,12 +103,8 @@ int vdso_join_timens(struct task_struct *task, struct ti=
+me_namespace *ns)
+ 	mmap_read_lock(mm);
+=20
+ 	for_each_vma(vmi, vma) {
+-		if (vma_is_special_mapping(vma, vdso_info.dm))
+-			zap_vma_pages(vma);
+-#ifdef CONFIG_COMPAT
+-		if (vma_is_special_mapping(vma, compat_vdso_info.dm))
++		if (vma_is_special_mapping(vma, &rv_vvar_map))
+ 			zap_vma_pages(vma);
+-#endif
+ 	}
+=20
+ 	mmap_read_unlock(mm);
+@@ -155,43 +146,34 @@ static vm_fault_t vvar_fault(const struct vm_special_ma=
+pping *sm,
+ 	return vmf_insert_pfn(vma, vmf->address, pfn);
+ }
+=20
+-static struct vm_special_mapping rv_vdso_maps[] __ro_after_init =3D {
+-	[RV_VDSO_MAP_VVAR] =3D {
+-		.name   =3D "[vvar]",
+-		.fault =3D vvar_fault,
+-	},
+-	[RV_VDSO_MAP_VDSO] =3D {
+-		.name   =3D "[vdso]",
+-		.mremap =3D vdso_mremap,
+-	},
++static const struct vm_special_mapping rv_vvar_map =3D {
++	.name   =3D "[vvar]",
++	.fault =3D vvar_fault,
++};
++
++static struct vm_special_mapping rv_vdso_map __ro_after_init =3D {
++	.name   =3D "[vdso]",
++	.mremap =3D vdso_mremap,
+ };
+=20
+ static struct __vdso_info vdso_info __ro_after_init =3D {
+ 	.name =3D "vdso",
+ 	.vdso_code_start =3D vdso_start,
+ 	.vdso_code_end =3D vdso_end,
+-	.dm =3D &rv_vdso_maps[RV_VDSO_MAP_VVAR],
+-	.cm =3D &rv_vdso_maps[RV_VDSO_MAP_VDSO],
++	.cm =3D &rv_vdso_map,
+ };
+=20
+ #ifdef CONFIG_COMPAT
+-static struct vm_special_mapping rv_compat_vdso_maps[] __ro_after_init =3D {
+-	[RV_VDSO_MAP_VVAR] =3D {
+-		.name   =3D "[vvar]",
+-		.fault =3D vvar_fault,
+-	},
+-	[RV_VDSO_MAP_VDSO] =3D {
+-		.name   =3D "[vdso]",
+-		.mremap =3D vdso_mremap,
+-	},
++static struct vm_special_mapping rv_compat_vdso_map __ro_after_init =3D {
++	.name   =3D "[vdso]",
++	.mremap =3D vdso_mremap,
+ };
+=20
+ static struct __vdso_info compat_vdso_info __ro_after_init =3D {
+ 	.name =3D "compat_vdso",
+ 	.vdso_code_start =3D compat_vdso_start,
+ 	.vdso_code_end =3D compat_vdso_end,
+-	.dm =3D &rv_compat_vdso_maps[RV_VDSO_MAP_VVAR],
+-	.cm =3D &rv_compat_vdso_maps[RV_VDSO_MAP_VDSO],
++	.cm =3D &rv_compat_vdso_map,
+ };
+ #endif
+=20
+@@ -227,7 +209,7 @@ static int __setup_additional_pages(struct mm_struct *mm,
+ 	}
+=20
+ 	ret =3D _install_special_mapping(mm, vdso_base, VVAR_SIZE,
+-		(VM_READ | VM_MAYREAD | VM_PFNMAP), vdso_info->dm);
++		(VM_READ | VM_MAYREAD | VM_PFNMAP), &rv_vvar_map);
+ 	if (IS_ERR(ret))
+ 		goto up_fail;
+=20
 
