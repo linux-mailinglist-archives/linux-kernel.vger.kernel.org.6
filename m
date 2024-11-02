@@ -1,158 +1,234 @@
-Return-Path: <linux-kernel+bounces-393046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED659B9B5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D029B9B5E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C600A1C2114A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81C9B1C20FAC
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A15828EC;
-	Sat,  2 Nov 2024 00:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4E43D69;
+	Sat,  2 Nov 2024 00:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IzXFLAkK"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KdX+W17P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298B7193
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 00:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24757F6
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 00:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730505676; cv=none; b=odvPhFgHLorki1oYg1ZJ3m7EXixgCS9Ir4mdlXUqlYBC7LT1RbYA7cgqUZ3cmRZfj2oQNmGAvxPwvrlBz7RxrrnCQ5ZniWX/yuJX9jX3TdcUTRm8/0RUgUqyioG2GINuG0zG3MpZGqxPRxZcNvn3QwSYhnZxjS1GZ4aGI08IyTU=
+	t=1730505971; cv=none; b=SYQBtjXrP2pulAlj0cmpWSb0MFMbLe9UDULWFLCJ4XFWWhPlXl3kT4oE2WUUG1RX2Rm6+oj5p25poNk35w+fpb9Waxaf+5NtbjRT+Dt1UU79iFb3UgKlR0jH/MrdRhaJJySa2PYGteg4thTyH8yRf6DJtWfe3TjchD4D3cxl0O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730505676; c=relaxed/simple;
-	bh=oO5dEtCYKHA8WVp/y+Q9JDrwAquCxvO29vbUzO+v2dY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=duxAJszyS4B2cboKlouj27LtHn603g+qpj9TamCslTtAoclGv8BdTjwMUkwAivL96K+9WyKpC4Y+9wEUt7GPykGgqXqCAVqVuh2WJrHXrcJ7wQ5FE44Kzx05nETkcymXiirBE25NnGCvg2Y1oZwlyN0ZX5kLkWm9sZHm4K0gIO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IzXFLAkK; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cceb8d8b4so15941695ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 17:01:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730505674; x=1731110474; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tQlnDsBGBd5CAx+c3fZXd9BvBPvh5/l0g6m2gnycK5Y=;
-        b=IzXFLAkK4rg/e4nC+3QYtRDyQt8/r2/CAkFrg0Rh2w2ipqLNvKkjKXsWvb/G+5N1cx
-         OIv/qYPd8tNqR6rG4WrI83xWzmvJUnrYDqZT9STjEDBGlz/3tF8VHDtBUE7XVso2Xgia
-         5t8gGDpstLgVHyr7Vpj+bnyqXR0X9TR9thfCousC47NnTMnMzoocXBFHREXvEfuc5hGs
-         z6ARfljX9LRgzjzD0+MnWxjPlIGM2fpJ/xnxHTrz43S/MGm+Lj0Uobolv1WISgRl32pB
-         SB4RkucQ+I7gf8hcTbCXrGhYEvitpvnM+oa6LQqmooAEjiM2CpmcUTNjjhdUDwVK5Ebh
-         K+8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730505674; x=1731110474;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tQlnDsBGBd5CAx+c3fZXd9BvBPvh5/l0g6m2gnycK5Y=;
-        b=icpOzkvL47jf+PtbSg46Roe0qij9yaxcJjULuHEk2CpMoSdyr/9Da0Z5HOhuvfRxoH
-         IrVFDgCNnEWlsc5WTqR5SlK0kGXSwlnJd+xOiLS8ckVDlEZoFmp05KT6neWaZzrURdvq
-         7p4Yevu1/KtKL9l2PKWIo7km7XSwXlRdO9FF3TvSuyRaex+KR+3SWY/4d71tubJkJXcn
-         DoQ3X8FDa+nCyN9w5lX1pB5SdxQ6pw3psBRYjy+to3nZS8rzeVG6e6K3IaxT3tbpgz4Q
-         X0jfwXAy+Fyz87QS2grZcHpW0QNPi+m+Lj0SN4YcXlD/fJzWZ0un+RZfsLDfLkMBxNCD
-         Sjvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtiNzty+2Y/AoT+DDyou7eTMeCgMV32O/T8wQspRh7FTniWOee6+HRWkriSprDwzG94qv1lITg9M0GuFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxas1AJtNgqO0euuB2cdv30Thk/BBupjRk9QLBrDAOYwYawThwZ
-	J6DpUBvYoGy/pJyM/KL5SUAtgTP26a9ZNnej1LtqygzGQhAfc3bItzQW99WphAXQmsOkF6G6AhK
-	0qE/G4BAI7jSJfdI6uE74Key5oqo=
-X-Google-Smtp-Source: AGHT+IEnrcAVcZXkp/niZpYU2l8IpIjNYvOacuB+pzIpPD3b46rCkHvlbrWia7qukikf0ww499n9eAGJYXsuaqXBQrE=
-X-Received: by 2002:a17:903:2a8b:b0:20b:6c1e:1e13 with SMTP id
- d9443c01a7336-21119468f38mr80067875ad.23.1730505674296; Fri, 01 Nov 2024
- 17:01:14 -0700 (PDT)
+	s=arc-20240116; t=1730505971; c=relaxed/simple;
+	bh=RFBCvAfRJZVPtrwDBWsGzzzaP6W6R/D2rPQqsCyLu0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JIzM2DD8AUlKX0SzNdVMuRpub3vBYq6KFTHOEV9Co6vz5JHVl6juGdfUKnE1rne8gQ88j+1wZvQsy2dhLM54hiqFvErCiDmDPAj/LIjQt5ijIId3ZkWbkdZIyaJriU7ggUgmdZk4bgXaFx1KJ5hZ8qKkdOYhTs0Kg2eVgVS4LvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KdX+W17P; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730505968;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S1PBfSrAzBxmUVqSgHsa1F6KHo6yq8ammotU0yHgYcQ=;
+	b=KdX+W17PajqTWWV0W4MAgCJKP5i/DnVLSwivThi2OzLR9vXR/RhcoMXgcxArtNv7FZD97i
+	EzyTzNWao7QNKHR21jn0xy6IpF0MgGEf9hH9AO4vTr/HghTchUxVLI7q2Pwb7ETT7DZNpJ
+	1rvwlhzpT+5H0rpIYzhRq/Qad6lW350=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-523-JEQr7_kkMe6sYl1uXyu7Gw-1; Fri,
+ 01 Nov 2024 20:06:02 -0400
+X-MC-Unique: JEQr7_kkMe6sYl1uXyu7Gw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E59221956095;
+	Sat,  2 Nov 2024 00:06:00 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.4])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4EF74195605A;
+	Sat,  2 Nov 2024 00:05:52 +0000 (UTC)
+Date: Sat, 2 Nov 2024 08:05:47 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: syzbot <syzbot+71abe7ab2b70bca770fd@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, davem@davemloft.net, dsahern@kernel.org,
+	edumazet@google.com, hch@lst.de, horms@kernel.org, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] general protection fault in put_page (3)
+Message-ID: <ZyVs271blMTITWVZ@fedora>
+References: <67251378.050a0220.3c8d68.08cb.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029084859.135172-1-gye976@gmail.com> <6um3enfackjotwj2ikhvpbnyq3ocro34b5iahx72yhzfxemjsn@xqnovtxzsapb>
-In-Reply-To: <6um3enfackjotwj2ikhvpbnyq3ocro34b5iahx72yhzfxemjsn@xqnovtxzsapb>
-From: gyeyoung <gye976@gmail.com>
-Date: Sat, 2 Nov 2024 09:01:02 +0900
-Message-ID: <CAKbEznuRLDwDhuYi3WwWR7GWbvu0oBCB53UF_4Yr+FpScYmWDA@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/xe: Fix build error for XE_IOCTL_DBG macro
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Oded Gabbay <ogabbay@kernel.org>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67251378.050a0220.3c8d68.08cb.GAE@google.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-> >--- a/drivers/gpu/drm/xe/xe_macros.h
-> >+++ b/drivers/gpu/drm/xe/xe_macros.h
-> >@@ -11,8 +11,12 @@
-> > #define XE_WARN_ON WARN_ON
-> >
-> > #define XE_IOCTL_DBG(xe, cond) \
-> >-      ((cond) && (drm_dbg(&(xe)->drm, \
-> >-                          "Ioctl argument check failed at %s:%d: %s", \
-> >-                          __FILE__, __LINE__, #cond), 1))
-> >+({ \
-> >+      if ((cond)) \
-> >+              drm_dbg(&(xe)->drm, \
-> >+                      "Ioctl argument check failed at %s:%d: %s", \
-> >+                      __FILE__, __LINE__, #cond); \
-> >+      (cond); \
->
-> there's a double cond evaluation here and given any expression can be
-> given to XE_IOCTL_DBG(), this doens't look very safe. I think this would
-> be safer as:
->
-> #define XE_IOCTL_DBG(xe, cond) ({                                       \
->          int cond__ = !!(cond);                                          \
->          if (cond__)                                                     \
->                  drm_dbg(&(xe)->drm,                                     \
->                          "Ioctl argument check failed at %s:%d: %s",     \
->                          __FILE__, __LINE__, #cond);                     \
->          cond__;                                                         \
-> })
->
-> as it then evaluates cond just once. Also the generated code seems to be
-> sane compared to what we had before too.
->
+On Fri, Nov 01, 2024 at 10:44:24AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=131f2630580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=71abe7ab2b70bca770fd
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1110d2a7980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153e5540580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+> 
+> The issue was bisected to:
+> 
+> commit e4e535bff2bc82bb49a633775f9834beeaa527db
+> Author: Ming Lei <ming.lei@redhat.com>
+> Date:   Thu Oct 24 05:00:15 2024 +0000
+> 
+>     iov_iter: don't require contiguous pages in iov_iter_extract_bvec_pages
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1539b2a7980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1339b2a7980000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+71abe7ab2b70bca770fd@syzkaller.appspotmail.com
+> Fixes: e4e535bff2bc ("iov_iter: don't require contiguous pages in iov_iter_extract_bvec_pages")
+> 
+> Oops: general protection fault, probably for non-canonical address 0xed2e87ee8f0cadc6: 0000 [#1] PREEMPT SMP KASAN PTI
+> KASAN: maybe wild-memory-access in range [0x69745f7478656e30-0x69745f7478656e37]
+> CPU: 1 UID: 0 PID: 5869 Comm: syz-executor171 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> RIP: 0010:_compound_head include/linux/page-flags.h:242 [inline]
+> RIP: 0010:put_page+0x23/0x260 include/linux/mm.h:1552
+> Code: 90 90 90 90 90 90 90 55 41 57 41 56 53 49 89 fe 48 bd 00 00 00 00 00 fc ff df e8 d8 ae 0d f8 49 8d 5e 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 5f e5 77 f8 48 8b 1b 48 89 de 48 83
+> RSP: 0018:ffffc90003f970a8 EFLAGS: 00010207
+> RAX: 0d2e8bee8f0cadc6 RBX: 69745f7478656e36 RCX: ffff8880306d3c00
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 69745f7478656e2e
+> RBP: dffffc0000000000 R08: ffffffff898706fd R09: 1ffffffff203a076
+> R10: dffffc0000000000 R11: fffffbfff203a077 R12: 0000000000000000
+> R13: ffff88807fd7a842 R14: 69745f7478656e2e R15: 69745f7478656e2e
+> FS:  0000555590726380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000000045ad50 CR3: 0000000025350000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  skb_page_unref include/linux/skbuff_ref.h:43 [inline]
+>  __skb_frag_unref include/linux/skbuff_ref.h:56 [inline]
+>  skb_release_data+0x483/0x8a0 net/core/skbuff.c:1119
+>  skb_release_all net/core/skbuff.c:1190 [inline]
+>  __kfree_skb net/core/skbuff.c:1204 [inline]
+>  sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
+>  kfree_skb_reason include/linux/skbuff.h:1262 [inline]
+>  kfree_skb include/linux/skbuff.h:1271 [inline]
+>  __ip_flush_pending_frames net/ipv4/ip_output.c:1538 [inline]
+>  ip_flush_pending_frames+0x12d/0x260 net/ipv4/ip_output.c:1545
+>  udp_flush_pending_frames net/ipv4/udp.c:829 [inline]
+>  udp_sendmsg+0x5d2/0x2a50 net/ipv4/udp.c:1302
+>  sock_sendmsg_nosec net/socket.c:729 [inline]
+>  __sock_sendmsg+0x1a6/0x270 net/socket.c:744
+>  sock_sendmsg+0x134/0x200 net/socket.c:767
+>  splice_to_socket+0xa10/0x10b0 fs/splice.c:889
+>  do_splice_from fs/splice.c:941 [inline]
+>  direct_splice_actor+0x11b/0x220 fs/splice.c:1164
+>  splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
+>  do_splice_direct_actor fs/splice.c:1207 [inline]
+>  do_splice_direct+0x289/0x3e0 fs/splice.c:1233
+>  do_sendfile+0x561/0xe10 fs/read_write.c:1388
+>  __do_sys_sendfile64 fs/read_write.c:1455 [inline]
+>  __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1441
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f17eb533ab9
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffdeb190c28 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f17eb533ab9
+> RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000004
+> RBP: 00007f17eb5a65f0 R08: 0000000000000006 R09: 0000000000000006
+> R10: 0000020000023893 R11: 0000000000000246 R12: 0000000000000001
+> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:_compound_head include/linux/page-flags.h:242 [inline]
+> RIP: 0010:put_page+0x23/0x260 include/linux/mm.h:1552
+> Code: 90 90 90 90 90 90 90 55 41 57 41 56 53 49 89 fe 48 bd 00 00 00 00 00 fc ff df e8 d8 ae 0d f8 49 8d 5e 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 5f e5 77 f8 48 8b 1b 48 89 de 48 83
+> RSP: 0018:ffffc90003f970a8 EFLAGS: 00010207
+> RAX: 0d2e8bee8f0cadc6 RBX: 69745f7478656e36 RCX: ffff8880306d3c00
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 69745f7478656e2e
+> RBP: dffffc0000000000 R08: ffffffff898706fd R09: 1ffffffff203a076
+> R10: dffffc0000000000 R11: fffffbfff203a077 R12: 0000000000000000
+> R13: ffff88807fd7a842 R14: 69745f7478656e2e R15: 69745f7478656e2e
+> FS:  0000555590726380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000000045ad50 CR3: 0000000025350000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> ----------------
+> Code disassembly (best guess):
+>    0:	90                   	nop
+>    1:	90                   	nop
+>    2:	90                   	nop
+>    3:	90                   	nop
+>    4:	90                   	nop
+>    5:	90                   	nop
+>    6:	90                   	nop
+>    7:	55                   	push   %rbp
+>    8:	41 57                	push   %r15
+>    a:	41 56                	push   %r14
+>    c:	53                   	push   %rbx
+>    d:	49 89 fe             	mov    %rdi,%r14
+>   10:	48 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbp
+>   17:	fc ff df
+>   1a:	e8 d8 ae 0d f8       	call   0xf80daef7
+>   1f:	49 8d 5e 08          	lea    0x8(%r14),%rbx
+>   23:	48 89 d8             	mov    %rbx,%rax
+>   26:	48 c1 e8 03          	shr    $0x3,%rax
+> * 2a:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1) <-- trapping instruction
+>   2e:	74 08                	je     0x38
+>   30:	48 89 df             	mov    %rbx,%rdi
+>   33:	e8 5f e5 77 f8       	call   0xf877e597
+>   38:	48 8b 1b             	mov    (%rbx),%rbx
+>   3b:	48 89 de             	mov    %rbx,%rsi
+>   3e:	48                   	rex.W
+>   3f:	83                   	.byte 0x83
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
 
-Yes, if (cond) has operator like ++, it will be a bug. I miss that...
-I will revise a patch again by referring to your review, thanks.
-
-> And I also needed this to build-test:
->
-> | diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
-> | index 08cfea04e22bd..82585d442f017 100644
-> | --- a/drivers/gpu/drm/drm_print.c
-> | +++ b/drivers/gpu/drm/drm_print.c
-> | @@ -215,9 +215,8 @@ void __drm_printfn_dbg(struct drm_printer *p, struct va_format *vaf)
-> |  {
-> |         const struct drm_device *drm = p->arg;
-> |         const struct device *dev = drm ? drm->dev : NULL;
-> | -       enum drm_debug_category category = p->category;
-> |
-> | -       if (!__drm_debug_enabled(category))
-> | +       if (!__drm_debug_enabled(p->category))
-> |                 return;
-> |
-> |         __drm_dev_vprintk(dev, KERN_DEBUG, p->origin, p->prefix, vaf);
->
-> as otherwise it complains category is unused.
->
-
-I also submitted a seperate patch to fix '__drm_debug_enabled' macro,
-from '#define __drm_debug_enabled(category)  true'
-to     '#define __drm_debug_enabled(category)  ({ void(category);  true; })'
-This removes the build error caused by the unused 'category', too.
-
-Anyway, it can be build. I tested both cases.
-I realize now that these two patches should have been submitted as a
-patch series
-I'm sorry for my mistakes.
+#syz test: https://github.com/ming1/linux.git for-next
 
 Thanks,
-Gyeyoung Baek
+Ming
 
-> Lucas De Marchi
 
