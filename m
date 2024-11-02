@@ -1,118 +1,222 @@
-Return-Path: <linux-kernel+bounces-393451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0689BA0CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:36:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305569BA0D0
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEED32825AE
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:36:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39717B21738
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B24818B47C;
-	Sat,  2 Nov 2024 14:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiiilVKB"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A228819E982;
+	Sat,  2 Nov 2024 14:36:26 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2C733F9
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 14:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5144133F9
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 14:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730558171; cv=none; b=p7eTPAslfiqywJTdt0DVwMyKWrGkhkJMzgm0CmwLAza5XjGbpO9cOlFEJG/FPjvZrhQjsWFOc7NPArH/Xrec0yT/yfP24gJk545uMKOaezgrAKkZckELwz4lZnGWx//czZStjiTkgBGHjyU9cG5LPDg/zOeZ7PvAfM1MF9i2268=
+	t=1730558186; cv=none; b=PiQCWEXo1Q0pL2Alj1VQJuir+O67BEZ8I9xtFHCHQU0/Zn6a44rkIiMh+9OzP9MQNRl+345k8FC541Ud1TKDyRMFyU2N/uGSM65bWJ8CQxB2gFFWYXRsPjuvGfc4Ingrp4Mz9hLFLzu+WlxNMVNJYAWijyfL8y+RC4OeTpZ+/O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730558171; c=relaxed/simple;
-	bh=jen3Fr+N40Cko1laLEWb06nyy02f9b1SKWGey5w+uQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iLendk6IpZieeszz+27ONAnftrKLiWBCs20YqdN9X1nv5pBLXn8AUCgKApcv7h8Ggk8AMNwkpwS3J7iooduas1d5Nsk2Z8nidutpL6pZJhIICqE8gcdcgnh6qteRJaWmqSmL4sswVRZLjDSfhV9wj9SQzqcfsfDOROk5zkUjhSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PiiilVKB; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so24108095e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 07:36:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730558168; x=1731162968; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r2f8PcOKU/FF7Pc238+N7r6RVxJuBnH+dra36GzbN3Q=;
-        b=PiiilVKBm/l8zNgZ+DFEGaz4Qd1LueLzc4JocRA/EGfmx41W6Mck5M7chspWyxmOkw
-         MeXs/m9SWUxD6PHJ4wZGLvezfgE26nzlrBcx7FW7iiaz7UomW6Nckw3gzdJFnoMI7GiW
-         T6D0Qz5eU9o1WeH+/AsH291ouZWjyu+ClCdff3gr2X7Cg0GjgiNjkZRxi68uMO9pzgHJ
-         c1nhQPNzbZ+sFP6sJzHvj6rDRO6swuzbS1EgOYSloPGqzHPSqsJ+tHRRIv7TUViUR/Bh
-         RGD9lpeURmljBht2K5SPB9u+L6Hu0Y/11JSFJTsLiGFwYqq3XzguR55TGsbNkMrA7H/2
-         Z9rg==
+	s=arc-20240116; t=1730558186; c=relaxed/simple;
+	bh=Hq7LeRtWWHNSpxmrELB/KoukxLDE/IoD0HQdxrVrMWw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qMRhhUTDL/3keF9is5pZjgTIwCisq9Rc+i2zuz9IaZeWIkcCDztu/lVOEhvvU07XPzrlYBNxBIDF+hfkmP1IYU0kKfSpLndkLIM4XDYIlgOjVLSOQ5Dkb9WWsPOeguUcXgqDS2QBDFA68Ae1Jghides0WP/zvkIVz08xz0daqD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83aac7e7fd7so304717839f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 07:36:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730558168; x=1731162968;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r2f8PcOKU/FF7Pc238+N7r6RVxJuBnH+dra36GzbN3Q=;
-        b=OPSqGwmAmXROixmGv5xmhLaf/vkcV3UKlffpjrmWaLwzSwI2m4hGBYZu01rqJLWq8p
-         vdM6wmQUQA+aNVe5SlmDPZuu3FXyncJegcFxGZQnM+1SzrZa/jcZwXV+qoa0JIfk8sSU
-         3t406QuRXpJNFyiHuWsAxQVSVMYW4WcQ21aCdJ5ys1y59JPc20bpepf60NAHP5OjbXDO
-         3HXtEP1NosVNm2q5wxBU08lrXWNDA/cnqReX8XEtWr6fjsx7Z0hja1sU/7j4tHySyFOr
-         BJ9Iag6IdX6yr2oXQCi3VWNN+hk2ewk9fN1f+3fI8vttuqsW6lGrKB48gZxG9vhRxG82
-         DONQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEDLeqMQpAaRry2EyXeDpB79q6vMJE5Sjk8ad7L0hDFg3twesjX3pJ31Dyx1fySFfuefhByZD96xnzuZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkOrUtO+bUdYTNC5S/UumFOmLrlgTvo2FHtiAZS6ho5Y23eqX0
-	oAGnA0qZDUPaXO8y8xjXFMET1JnhH+Hj6Qfp/dWTSCZNXCo6kGDM
-X-Google-Smtp-Source: AGHT+IG2ZwFxftz+i126vYwTLkOIpd6nzrVgPGTfjFmQz2ucEFkNbpKfCCu2yMagL13buIP7HKDmjA==
-X-Received: by 2002:adf:e28a:0:b0:37d:45f0:dd0a with SMTP id ffacd0b85a97d-380610f2a9emr19284579f8f.1.1730558168360;
-        Sat, 02 Nov 2024 07:36:08 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:492c:2677:72f4:9f57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abb5sm8202298f8f.100.2024.11.02.07.36.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 07:36:07 -0700 (PDT)
-Date: Sat, 2 Nov 2024 15:36:06 +0100
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Shawn Guo <shawnguo2@yeah.net>
-Cc: linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	elinor.montmasson@savoirfairelinux.com,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v1] ARM: imx_v6_v7_defconfig: enable SND_SOC_SPDIF
-Message-ID: <ZyY41nJY9ghwe-Y4@eichest-laptop>
-References: <20241030122128.115000-1-eichest@gmail.com>
- <ZyXTFhEm9UCBii2c@dragon>
+        d=1e100.net; s=20230601; t=1730558183; x=1731162983;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9GTWqt0xvaCSN1qf/sSPayNPZCvP3igGeul6m1e2K8M=;
+        b=dSDl/tnWFH+1i7gHMsruCb8tXUoOkRq3muChgvaH+BtYvPtgu4w0rQXNwEyuo59Zl2
+         CcHQgc6xySNK66qqRv8VlcK8P3gSX1s40vnY3sX79F0AhROpwYBljzGWXQNKIG+xH8lb
+         yedil6ZomnjkYZAX3Wt9GAnJGniRzPO+IHZ9OhAr09+PhecOGHc6ZDUMGvbHSgQCH/T8
+         2/vU81YNXz7lC/xJN3POpE5k3OgcLZZ7nOyej7suYNHN79M9cojSiZN4iijVbfvJLO49
+         uhywV87BYxbECdjC0V+wADh5y+U7sJfmdk2gdkS8Ife2OJE3EKJ6GY6tI0QDJkw3hGqP
+         /zhw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCb+Gn//XHHGTXJpspjDAxy//o5GG9y9cHL1FNtxDqhYXBCvQGXFowoykuFunQg84QVgpex6zDGsNG0lc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVau+Mj5bJ05qfGiqqdR5G9BjlrpdwuSHd4H5UB1H+KqSnoeU/
+	2XLoXSzjuzXyPD475HZmYdhFPnwUt1Xu94pLpUVbEib1Aho+FtZk5TBOxu8I5nT9axCCAr8bDe9
+	2iAozS6ivFh52f8iAF95fB5BhnHUhVd4CVQEtZjlXbhu6+NdbvxYfGrs=
+X-Google-Smtp-Source: AGHT+IGlk5YC61OLEFsOGWEauZxp1QDXq9SFdErvoBgv0oo+xxUfTYak1zIkcJt5L3bmvyLFgO9CYfjuWqXP8kXHE0ImnDcqj60U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyXTFhEm9UCBii2c@dragon>
+X-Received: by 2002:a05:6e02:1568:b0:3a6:b258:fcf with SMTP id
+ e9e14a558f8ab-3a6b25813e9mr58003515ab.2.1730558183596; Sat, 02 Nov 2024
+ 07:36:23 -0700 (PDT)
+Date: Sat, 02 Nov 2024 07:36:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672638e7.050a0220.3c8d68.0990.GAE@google.com>
+Subject: [syzbot] [btrfs?] WARNING in tree_insert_offset
+From: syzbot <syzbot+b7baad46fdef9a0008ce@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Shawn,
+Hello,
 
-On Sat, Nov 02, 2024 at 03:21:58PM +0800, Shawn Guo wrote:
-> On Wed, Oct 30, 2024 at 01:21:12PM +0100, Stefan Eichenberger wrote:
-> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > 
-> > Enable SND_SOC_SPDIF in imx_v6_v7_defconfig to support SPDIF audio. This
-> > change will fix commit d469b771afe1 ("ARM: dts: imx6: update spdif sound
-> > card node properties") which moves away from the old "spdif-controller"
-> > property to the new "audio-codec" property.
-> > 
-> > Fixes: d469b771afe1 ("ARM: dts: imx6: update spdif sound card node properties")
-> 
-> It doesn't look a fix to me.
+syzbot found the following issue on:
 
-I agree somehow, it was just that before the referenced commit our test
-succeeds with the imx_v6_v7_defconfig and after that we get the
-following error:
-[   24.165534] platform sound-spdif: deferred probe pending: fsl-asoc-card: snd_soc_register_card failed
+HEAD commit:    e42b1a9a2557 Merge tag 'spi-fix-v6.12-rc5' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16854a30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=b7baad46fdef9a0008ce
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-So maybe it is not a fix in the sense of a bug, but it fixes the error
-message. However, I'm also fine with removing the Fixes tag.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Regards,
-Stefan
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e42b1a9a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3e2253169da8/vmlinux-e42b1a9a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b9d2f5008f24/bzImage-e42b1a9a.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b7baad46fdef9a0008ce@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 262144
+=======================================================
+WARNING: The mand mount option has been deprecated and
+         and is ignored by this kernel. Remove the mand
+         option from the mount to silence this warning.
+=======================================================
+BTRFS: device fsid 7e32c2af-f87a-45a1-bcba-64dea7c56a53 devid 1 transid 8 /dev/loop0 (7:0) scanned by syz.0.0 (5332)
+BTRFS info (device loop0): first mount of filesystem 7e32c2af-f87a-45a1-bcba-64dea7c56a53
+BTRFS info (device loop0): using xxhash64 (xxhash64-generic) checksum algorithm
+BTRFS info (device loop0): using free-space-tree
+BTRFS info (device loop0): scrub: started on devid 1
+BTRFS info (device loop0): scrub: finished on devid 1 with status: 0
+FAULT_INJECTION: forcing a failure.
+name failslab, interval 1, probability 0, space 0, times 1
+CPU: 0 UID: 0 PID: 5332 Comm: syz.0.0 Not tainted 6.12.0-rc5-syzkaller-00005-ge42b1a9a2557 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ fail_dump lib/fault-inject.c:53 [inline]
+ should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:154
+ should_failslab+0xac/0x100 mm/failslab.c:46
+ slab_pre_alloc_hook mm/slub.c:4038 [inline]
+ slab_alloc_node mm/slub.c:4114 [inline]
+ __kmalloc_cache_noprof+0x6c/0x2c0 mm/slub.c:4290
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ btrfs_cache_block_group+0xc5/0x6f0 fs/btrfs/block-group.c:928
+ btrfs_update_block_group+0x26c/0xb30 fs/btrfs/block-group.c:3676
+ do_free_extent_accounting fs/btrfs/extent-tree.c:2998 [inline]
+ __btrfs_free_extent+0x1d88/0x3a10 fs/btrfs/extent-tree.c:3362
+ run_delayed_tree_ref fs/btrfs/extent-tree.c:1740 [inline]
+ run_one_delayed_ref fs/btrfs/extent-tree.c:1766 [inline]
+ btrfs_run_delayed_refs_for_head fs/btrfs/extent-tree.c:2031 [inline]
+ __btrfs_run_delayed_refs+0x112e/0x4680 fs/btrfs/extent-tree.c:2101
+ btrfs_run_delayed_refs+0xe3/0x2c0 fs/btrfs/extent-tree.c:2213
+ btrfs_commit_transaction+0x4be/0x3740 fs/btrfs/transaction.c:2197
+ sync_filesystem+0x1c8/0x230 fs/sync.c:66
+ btrfs_reconfigure+0x2f3/0x2c30 fs/btrfs/super.c:1507
+ reconfigure_super+0x445/0x880 fs/super.c:1083
+ vfs_cmd_reconfigure fs/fsopen.c:262 [inline]
+ vfs_fsconfig_locked fs/fsopen.c:291 [inline]
+ __do_sys_fsconfig fs/fsopen.c:472 [inline]
+ __se_sys_fsconfig+0xb68/0xf70 fs/fsopen.c:344
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5b17f7e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f5b18d79038 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+RAX: ffffffffffffffda RBX: 00007f5b18135f80 RCX: 00007f5b17f7e719
+RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000005
+RBP: 00007f5b18d79090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+R13: 0000000000000000 R14: 00007f5b18135f80 R15: 00007ffd6518d2d8
+ </TASK>
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5332 at fs/btrfs/free-space-cache.c:1638 tree_insert_offset+0x2c9/0x350 fs/btrfs/free-space-cache.c:1638
+Modules linked in:
+CPU: 0 UID: 0 PID: 5332 Comm: syz.0.0 Not tainted 6.12.0-rc5-syzkaller-00005-ge42b1a9a2557 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:tree_insert_offset+0x2c9/0x350 fs/btrfs/free-space-cache.c:1638
+Code: e8 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 38 4f cb fd 90 0f 0b 90 bd ef ff ff ff eb db e8 28 4f cb fd 90 <0f> 0b 90 bd ef ff ff ff eb cb e8 18 4f cb fd 90 0f 0b 90 4d 85 ed
+RSP: 0018:ffffc9000d2ce948 EFLAGS: 00010293
+RAX: ffffffff83c98968 RBX: ffff8880362db4e0 RCX: ffff88800021a440
+RDX: 0000000000000000 RSI: 0000000001504000 RDI: 0000000001504000
+RBP: ffff8880362db6d8 R08: ffffffff83c98834 R09: fffff52001a59d34
+R10: dffffc0000000000 R11: fffff52001a59d34 R12: ffff8880362db498
+R13: 0000000001504000 R14: dffffc0000000000 R15: 0000000000000000
+FS:  00007f5b18d796c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000559cf5234740 CR3: 000000004073c000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ link_free_space+0xef/0x5d0 fs/btrfs/free-space-cache.c:1844
+ btrfs_find_space_for_alloc+0xdb4/0xed0 fs/btrfs/free-space-cache.c:3133
+ find_free_extent_unclustered fs/btrfs/extent-tree.c:3781 [inline]
+ do_allocation_clustered fs/btrfs/extent-tree.c:3804 [inline]
+ do_allocation fs/btrfs/extent-tree.c:4006 [inline]
+ find_free_extent+0x2e59/0x5850 fs/btrfs/extent-tree.c:4541
+ btrfs_reserve_extent+0x422/0x810 fs/btrfs/extent-tree.c:4695
+ btrfs_alloc_tree_block+0x202/0x1440 fs/btrfs/extent-tree.c:5150
+ btrfs_force_cow_block+0x526/0x1da0 fs/btrfs/ctree.c:573
+ btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
+ btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
+ btrfs_update_device+0x1b0/0x580 fs/btrfs/volumes.c:2902
+ remove_chunk_item+0x166/0x700 fs/btrfs/volumes.c:3183
+ btrfs_remove_chunk+0xa12/0x1b20 fs/btrfs/volumes.c:3269
+ btrfs_delete_unused_bgs+0xd94/0x1120 fs/btrfs/block-group.c:1681
+ btrfs_remount_ro fs/btrfs/super.c:1359 [inline]
+ btrfs_reconfigure+0xbda/0x2c30 fs/btrfs/super.c:1540
+ reconfigure_super+0x445/0x880 fs/super.c:1083
+ vfs_cmd_reconfigure fs/fsopen.c:262 [inline]
+ vfs_fsconfig_locked fs/fsopen.c:291 [inline]
+ __do_sys_fsconfig fs/fsopen.c:472 [inline]
+ __se_sys_fsconfig+0xb68/0xf70 fs/fsopen.c:344
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5b17f7e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f5b18d79038 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+RAX: ffffffffffffffda RBX: 00007f5b18135f80 RCX: 00007f5b17f7e719
+RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000005
+RBP: 00007f5b18d79090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+R13: 0000000000000000 R14: 00007f5b18135f80 R15: 00007ffd6518d2d8
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
