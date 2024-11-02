@@ -1,81 +1,160 @@
-Return-Path: <linux-kernel+bounces-393337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D11A9B9F5F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:36:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AA89B9F4C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A05BE1C21577
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:36:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5473A1F21F94
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2AE17A586;
-	Sat,  2 Nov 2024 11:36:44 +0000 (UTC)
-Received: from kawka3.in.waw.pl (kawka3.in.waw.pl [68.183.222.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7361779BB;
+	Sat,  2 Nov 2024 11:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqCrLfF9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6E4140E50;
-	Sat,  2 Nov 2024 11:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.183.222.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E282595;
+	Sat,  2 Nov 2024 11:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730547403; cv=none; b=liDK1H5HDX7Ls5Z5cFprU20Azkw9/l8lD641o5gKnr57gmyBRfl/Zv3W769krdcU1nmyW6EzfwiQVLqywkaELp2Kk0UHe7tli0hygR0GtimfXrq8+jih+ndQBZdQHYRvgEFWO2AD95Ny1HTfAoQ5cgshkoC4vu4e/ma/lNQYpK4=
+	t=1730547161; cv=none; b=cwAWEw+0Y1Vgkdg88WKAa2+laSHIYtTP0WsBH5a9C/LCma9HxM60cKD4S7yr6d4ZopAKvcfmyNvwwiBQFvczQWstvqUPinNgOFr1o/K0RW0JhPl/SwB/pjpUoxgX2/7vvQ8IZqXQcFj3zZbWRARUApXKoOSZLE+F6WK6/G7XbTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730547403; c=relaxed/simple;
-	bh=pdAiiMvAw5Re8jxW9WtPoUOENTWlMR9q2CsiR4T+ZTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H0BoirbwUvB5d2gIi9NyizH75j1J5/i3wSr+5WSlRyzyVfmTwzA3XztML7ZzZw+77AKojG5oXvkTmjs+t9TZaFhTw4GCbzKAjoTA91Nnh1otaQ2D+yA7uXaKNF7Y2LEXj0+N6m48jA9hLmoLQdpx6MwtVp5V906ekG8mrzS2w3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl; spf=pass smtp.mailfrom=in.waw.pl; arc=none smtp.client-ip=68.183.222.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in.waw.pl
-Received: by kawka3.in.waw.pl (Postfix, from userid 1000)
-	id B80CB5826E1; Sat,  2 Nov 2024 11:29:55 +0000 (UTC)
-Date: Sat, 2 Nov 2024 11:29:55 +0000
-From: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <skhan@linuxfoundation.org>, Kees Cook <kees@kernel.org>,
-	Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>
-Subject: Re: [PATCH 1/2] exec: fix up /proc/pid/comm in the
- execveat(AT_EMPTY_PATH) case
-Message-ID: <ZyYNM58N-Fp_1xB8@kawka3.in.waw.pl>
-References: <20241030203732.248767-1-tycho@tycho.pizza>
- <173041263505.1781237.9706368369948860422.b4-ty@kernel.org>
+	s=arc-20240116; t=1730547161; c=relaxed/simple;
+	bh=adVR7Ni9kXC6EEF8ItL/jXSktedT4tVJaYlcGnkDeaM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GJT7k4tWN4XqiFxGJ01E6Ri97eVTOJCwzkUS7EW+xPboKCcq5hsPUF7MbRSytHMR/xIej6xZegE4riNODRh3MUZiMwQzGph0vYZ4HhaOCZIv3tWjXWKZ/0Hq4BW55rfabTbAA6wiAqJ4QT1sBLenecfTSA1ADp/9nyIJwjHvDsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqCrLfF9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38EBCC4CEC3;
+	Sat,  2 Nov 2024 11:32:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730547160;
+	bh=adVR7Ni9kXC6EEF8ItL/jXSktedT4tVJaYlcGnkDeaM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cqCrLfF9gEmxZ1p3fZ0IGE7QevkZZOkKem6Jw0mC07QCVQ4LyZaU9UpT0TUWNDA92
+	 fFpkt3RoQukrYcWgRl9+VvC7keIWNwBm2Qs1WqWgNog7TsZ1TSsOSYJhy6NugbUK3+
+	 55ozivmYc4mu4SvKCLI7ihomXbnP55HHW80QzR6h8i+iPWMyeJ7TMoszyizZqpoLBU
+	 GpwliptA/a45ceFjmCN3auZiBYVgoI/MHWzOgc3RmpRJxtX0DCzogra4hZF0AJf7WZ
+	 ntveKIsKVHAitApHP6GycS0JnuksRH+t5/YG1P/bZhThDQZ+vqQLqj7pyRWgyVyiDT
+	 SdcVS4K+xRl3A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t7CMv-0095nJ-UL;
+	Sat, 02 Nov 2024 11:32:38 +0000
+Date: Sat, 02 Nov 2024 11:32:37 +0000
+Message-ID: <86jzdl27my.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Frank Li <Frank.Li@nxp.com>,	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,	Krzysztof =?UTF-8?B?V2lsY3p5?=
+ =?UTF-8?B?xYRza2k=?= <kw@linux.com>,	Rob Herring <robh@kernel.org>,	Shawn
+ Guo <shawnguo@kernel.org>,	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,	Fabio Estevam
+ <festevam@gmail.com>,	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,	alyssa@rosenzweig.io,	bpf@vger.kernel.org,
+	broonie@kernel.org,	jgg@ziepe.ca,	joro@8bytes.org,	lgirdwood@gmail.com,
+	p.zabel@pengutronix.de,	robin.murphy@arm.com,	will@kernel.org
+Subject: Re: [PATCH v3 1/2] PCI: Add enable_device() and disable_device() callbacks for bridges
+In-Reply-To: <20241102111012.23zwz4et2qkafyca@thinkpad>
+References: <20241024-imx95_lut-v3-0-7509c9bbab86@nxp.com>
+	<20241024-imx95_lut-v3-1-7509c9bbab86@nxp.com>
+	<20241102111012.23zwz4et2qkafyca@thinkpad>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173041263505.1781237.9706368369948860422.b4-ty@kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: manivannan.sadhasivam@linaro.org, Frank.Li@nxp.com, bhelgaas@google.com, hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, alyssa@rosenzweig.io, bpf@vger.kernel.org, broonie@kernel.org, jgg@ziepe.ca, joro@8bytes.org, lgirdwood@gmail.com, p.zabel@pengutronix.de, robin.murphy@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Oct 31, 2024 at 03:10:37PM -0700, Kees Cook wrote:
-> On Wed, 30 Oct 2024 14:37:31 -0600, Tycho Andersen wrote:
-> > Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> > switching to execveat() for service execution, but can't, because the
-> > contents of /proc/pid/comm are the file descriptor which was used,
-> > instead of the path to the binary. This makes the output of tools like
-> > top and ps useless, especially in a world where most fds are opened
-> > CLOEXEC so the number is truly meaningless.
+On Sat, 02 Nov 2024 11:10:12 +0000,
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> 
+> On Thu, Oct 24, 2024 at 06:34:44PM -0400, Frank Li wrote:
+> > Some PCIe host bridges require special handling when enabling or disabling
+> > PCIe Endpoints. For example, the i.MX95 platform has a lookup table to map
+> > Requester IDs to StreamIDs, which are used by the SMMU and MSI controller
+> > to identify the source of DMA accesses.
 > > 
-> > [...]
+> > Without this mapping, DMA accesses may target unintended memory, which
+> > would corrupt memory or read the wrong data.
+> > 
+> > Add a host bridge .enable_device() hook the imx6 driver can use to
+> > configure the Requester ID to StreamID mapping. The hardware table isn't
+> > big enough to map all possible Requester IDs, so this hook may fail if no
+> > table space is available. In that case, return failure from
+> > pci_enable_device().
+> > 
+> > It might make more sense to make pci_set_master() decline to enable bus
+> > mastering and return failure, but it currently doesn't have a way to return
+> > failure.
+> > 
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> > Change from v2 to v3
+> > - use Bjorn suggest's commit message.
+> > - call disable_device() when error happen.
+> > 
+> > Change from v1 to v2
+> > - move enable(disable)device ops to pci_host_bridge
+> > ---
+> >  drivers/pci/pci.c   | 23 ++++++++++++++++++++++-
+> >  include/linux/pci.h |  2 ++
+> >  2 files changed, 24 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index 7d85c04fbba2a..5e0cb9b6f4d4f 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -2056,6 +2056,7 @@ int __weak pcibios_enable_device(struct pci_dev *dev, int bars)
+> >  static int do_pci_enable_device(struct pci_dev *dev, int bars)
+> >  {
+> >  	int err;
+> > +	struct pci_host_bridge *host_bridge;
+> >  	struct pci_dev *bridge;
+> >  	u16 cmd;
+> >  	u8 pin;
+> > @@ -2068,9 +2069,16 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
+> >  	if (bridge)
+> >  		pcie_aspm_powersave_config_link(bridge);
+> >  
+> > +	host_bridge = pci_find_host_bridge(dev->bus);
+> > +	if (host_bridge && host_bridge->enable_device) {
+> > +		err = host_bridge->enable_device(host_bridge, dev);
+> > +		if (err)
+> > +			return err;
+> > +	}
 > 
-> Applied to for-next/execve, thanks!
+> How about wrapping the enable/disable part in a helper?
 > 
-> [1/2] exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case
->       https://git.kernel.org/kees/c/7bdc6fc85c9a
-> [2/2] selftests/exec: add a test for execveat()'s comm
->       https://git.kernel.org/kees/c/bd104872311a
+> 	int pci_host_bridge_enable_device(dev);
+> 	void pci_host_bridge_disable_device(dev);
+> 
+> The definition could be placed in drivers/pci/pci.h as an inline
+> function.
 
-I tested this with systemd compiled with -Dfexece=true and it all
-seems to work fine. Thanks!
+What does it bring? I would see the point if there was another user.
+But this is very much core infrastructure which doesn't lend itself to
+duplication.
 
-Zbyszek
+Unless you have something in mind?
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
