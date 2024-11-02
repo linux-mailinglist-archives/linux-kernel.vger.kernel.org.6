@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-393101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C892F9B9BDC
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 02:11:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC18F9B9BDE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 02:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9CECB213AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:11:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC522819C3
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A3113E022;
-	Sat,  2 Nov 2024 01:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6B9147C79;
+	Sat,  2 Nov 2024 01:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEqOtzyk"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4KPJe4e"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D581013B7BE;
-	Sat,  2 Nov 2024 01:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8A913F435;
+	Sat,  2 Nov 2024 01:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730509851; cv=none; b=Yp8/sf59b5ocw1NHYgFswozRem2CaUmsRNOc0WLN+b+fMKaoSGvehcw9uvrGRT9A7v7AC8qZieUymKkNgoYRCPclYROwAPOpuPZuNPVWhbbJC2SXtIhBQOcVXnkMS41imHdIzzKOPQMOREbweZ+dNZBv7g1ssihDdzL+OsNg/N0=
+	t=1730509855; cv=none; b=h/5NjX7azUgRUAHOFpaV96+HfpcPBgSXMK0HtC3ZRSWOfu5YB8gteCkIlQ2sSVe7NfgYnK4Dm05xKNFtDGhDon5BCOM5eIp3QDbmvyl4FjgbiVaTQL1UBJvk5qK8sb1UOouzkSbJwq80WyyGTZoCKQbt0ObBGgCYgJ4+HREjOec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730509851; c=relaxed/simple;
-	bh=SzS/hp6ZTSc4CXveKcb+F3wOdEtvm7HPi7hP+3Vuxds=;
+	s=arc-20240116; t=1730509855; c=relaxed/simple;
+	bh=Wqum4+2DlKwXPJfGBhEHgIowTNVYGsF7gXpmJi2mZCs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rCY99jdKHe8GhHMZ4wTCFx23uWqc9S4u6w5XrdOuXRXC8Iva8Gp398j92FuORIYYtj7s6X9VKCvQ9h7pX+nhj5bcuftxrOnTsrbdIvgLRuNU5Qmlaz+Nz9TvG11ryt8RMntt+MaevTbirpHkGNuK5B4iJ41prSUB54ImLvQLS2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TEqOtzyk; arc=none smtp.client-ip=209.85.210.177
+	 MIME-Version; b=dQP8ihoVL7nLv2u/9LApMZ5hq4ZiqHX44UlfJn6+UJUSDuaAZTK4lEU/fBs0XQpHbe5TUY0WrOupgyCNt+Ya7aGkr5To2PuWSzJ4T42QE/doFegajYhai871vXtsEVUO5RRoiATPXJjhJPUPNf1Lzqk47MTwTwINoOgcVDfkB9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4KPJe4e; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so2206198b3a.1;
-        Fri, 01 Nov 2024 18:10:49 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso2027700b3a.3;
+        Fri, 01 Nov 2024 18:10:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730509849; x=1731114649; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730509852; x=1731114652; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h29fXuXIIZCeKG22Kvh4EAzKydaTzTD6caajZ+GKEeQ=;
-        b=TEqOtzyknbh1tzqg8ZWKbR8T5boBxKb+s/YANszdlYmibROvcpwurrytvpwDYs92uv
-         ACLwhjLxngHC/30F5FI5oWDX98HJH0OJ0UXZWkKpqA0quqkfS1AvTxDnE2NbEWW9i4l+
-         swsRlauow1uwRj3SK8GqsLG3qYdoFtNnCzXXeQP0aZH0XV/RwxiBs28BJHUfVVGRf3Bg
-         gZdOFMpvispapACbuB+3GzsAHyiyveWRo4s9FMiZrgbBcKQOQukvWiLnlknybd1IHGU7
-         n0LWi9qonwvR/Kkg453eNc+SWjSJctgGx+nZZqWzpQp/u67USdrQcybhc27lZXRxRE4I
-         /04w==
+        bh=dZj8MLvtC5u5/G8dsckvO4061YfoeeWz6Ah03C4dE/Y=;
+        b=Q4KPJe4ebl/7pqFfdbIFegnHS/ZDbKDzhbCsyqNWPXorWk65SerdL5j5cHoLJtQKa7
+         BjwWeIqD36ckoCj/IFHz+LMfL7nKNTxncZpZb14Us5W+dC6HbUK6ZvDny+Pk6RINs6wt
+         qV0C3wIhsKLbLtnaaRZdozK/e85e+tHWsnLHDLQjS5mvtizPLIKXo4bwddZFWdd1eTeb
+         CORM2DL0aKWAfDDTx4ZKl5E46GK1+5aFrcSEdKO73e/Wvw3Cp4dBlkOJuMHKw3v+O+fR
+         70tbKzZUw8CsujXVOkRw9w4iN8sO+MM3wakfZBLpk6vn+mwVEfGjPQ5lHwPeqoPdT84u
+         jAgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730509849; x=1731114649;
+        d=1e100.net; s=20230601; t=1730509852; x=1731114652;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h29fXuXIIZCeKG22Kvh4EAzKydaTzTD6caajZ+GKEeQ=;
-        b=XefzUXcDN4i104wS+QZ84lvdoUCnwPhr9fKQsmExZXQejXfpN0ipHOxXS2ULRkaA14
-         emhkoUTPI4nJZ8baPE94560HdaiO4ba+kUqY2dBQVJnLeB2/yx56nKgxGIbhdg0f6NFe
-         9JPKzY9qoXQxo6bVe4Vp3PHH6U1i8CUCa9zbr4L/2rLllNNA5ae9uYv+3Rjb1ZM1Pc8I
-         FvpWQvfBUjhQYHFb79BBuoYw8ryzrROnO4/3xz2iP/GePvg2PYRJ7AELg1WILJu6d16v
-         YvUIKgDAgtPuAoooIz1rCEzJyGUshoE4xWqBLRjwaNUqGxGJYnfWrjki5HI9vLXBGFR4
-         Y9bA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3EmGoXGWy8FTr4I/sjksm51n1ksbFibqr7DisCQkptNJD8OWoI29EIy+tc9nGFPk18olmUKJC8Ymd@vger.kernel.org, AJvYcCXWZJswgIbxkbnq0rJbQzbxfr/z94n7X/E1YFrd7Q9g/8q+0g1nswX8Nj3LicN6LbnlEO1axK9Vx7rut1Tu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVRT/2YzJqf2kr6SYLjvGpuQGH82aPRIdYz/Pl8on72oWUyFyX
-	LIcZt09mS9isSF5pN0N8MmHWfmnjEbfVyrXg/sQWx0LWZ+B5YorV
-X-Google-Smtp-Source: AGHT+IFg1BH4shjmXcH1lH1KDFMSDOFMgpMViGOZwdoq0aLV32sLr0YCFKQgUbTbE0nM8quxHTvHGA==
-X-Received: by 2002:a05:6a00:84b:b0:71e:f14:869c with SMTP id d2e1a72fcca58-720c98834a4mr8053818b3a.6.1730509848958;
-        Fri, 01 Nov 2024 18:10:48 -0700 (PDT)
+        bh=dZj8MLvtC5u5/G8dsckvO4061YfoeeWz6Ah03C4dE/Y=;
+        b=WKjdmqAGsiLOJLwm0fKvwyVWihBwpTNRmtUcX4hBrk46a5iYxG90pzD+CzphofyfEx
+         /lUeCbQ020413Gt1WgzoUgoZGQTTyLbHQEKXMjgsguQO18cUYJxAldPRi21UGQDXLo7T
+         fzGXp80/e5rpfL4eklC6b6gV4Oc5dfwnoVQps3fBsMiIRuezAhC6nTX9NpsyGFcLAnNR
+         n1Pam4vmO7cyx1bf4sh9Vb0Mev45PpKt8X3AGdxv4rWr8AihJwMZ9ofEPX5la5ABt+Cp
+         kDnUKiwDW+rnnzKR/x4fjZAFIWJS2vlI3SOabjv3OyH1+UObu5a6BWDu/Kg85fkYsxLJ
+         R/Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFobZHMwu0QbQbIqHXrrcjub3p2PFm6tLi6bZK3YowcXgmDifVgAnf5F42AJRkQAfDBLmUCGw+l4Jzf8iv@vger.kernel.org, AJvYcCUbJOEj1TuJom+Yz9dhpCliAlJjW3/fCfMajMk4Ra+Lbj58Pet5kC0nC1lZtnjN5QscDoQu7aqoYK8h@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtsAQPmy0DGGfx2im7p1xLdArLTWoJDblm8zTQ55i7VDU4b6q3
+	lMAsQ4yvVYSkoClKw9LDtdA7b5yD3DKQDX3IXG8EB25P3zlENQtW
+X-Google-Smtp-Source: AGHT+IHPD0jr2QxQbts+nsqyDA84r7n/7u32nv1waKOWsdSz8XLfLxePRmY0oMpVmnsFJKsjlh5foQ==
+X-Received: by 2002:a05:6a00:cc9:b0:71e:6eb:786e with SMTP id d2e1a72fcca58-720c990b6ccmr7893896b3a.13.1730509852155;
+        Fri, 01 Nov 2024 18:10:52 -0700 (PDT)
 Received: from localhost.localdomain ([49.130.42.137])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-720bc2c38adsm3287708b3a.133.2024.11.01.18.10.46
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-720bc2c38adsm3287708b3a.133.2024.11.01.18.10.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 18:10:48 -0700 (PDT)
+        Fri, 01 Nov 2024 18:10:51 -0700 (PDT)
 From: Nick Chan <towinchenmi@gmail.com>
 To: Hector Martin <marcan@marcan.st>,
 	Sven Peter <sven@svenpeter.dev>,
@@ -78,9 +78,9 @@ To: Hector Martin <marcan@marcan.st>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH v2 04/10] arm64: dts: apple: t7000: Add PMGR node
-Date: Sat,  2 Nov 2024 09:08:26 +0800
-Message-ID: <20241102011004.59339-5-towinchenmi@gmail.com>
+Subject: [PATCH v2 05/10] arm64: dts: apple: t7001: Add PMGR node
+Date: Sat,  2 Nov 2024 09:08:27 +0800
+Message-ID: <20241102011004.59339-6-towinchenmi@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241102011004.59339-1-towinchenmi@gmail.com>
 References: <20241102011004.59339-1-towinchenmi@gmail.com>
@@ -98,31 +98,16 @@ are a large number of them, let's put them in a separate file to include.
 Acked-by: Hector Martin <marcan@marcan.st>
 Signed-off-by: Nick Chan <towinchenmi@gmail.com>
 ---
- arch/arm64/boot/dts/apple/t7000-6.dtsi     |   4 +
- arch/arm64/boot/dts/apple/t7000-j42d.dts   |   1 +
- arch/arm64/boot/dts/apple/t7000-mini4.dtsi |   4 +
- arch/arm64/boot/dts/apple/t7000-n102.dts   |   4 +
- arch/arm64/boot/dts/apple/t7000-pmgr.dtsi  | 641 +++++++++++++++++++++
- arch/arm64/boot/dts/apple/t7000.dtsi       |  14 +
- 6 files changed, 668 insertions(+)
- create mode 100644 arch/arm64/boot/dts/apple/t7000-pmgr.dtsi
+ arch/arm64/boot/dts/apple/t7001-air2.dtsi |   1 +
+ arch/arm64/boot/dts/apple/t7001-pmgr.dtsi | 650 ++++++++++++++++++++++
+ arch/arm64/boot/dts/apple/t7001.dtsi      |  13 +
+ 3 files changed, 664 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/apple/t7001-pmgr.dtsi
 
-diff --git a/arch/arm64/boot/dts/apple/t7000-6.dtsi b/arch/arm64/boot/dts/apple/t7000-6.dtsi
-index f60ea4a4a387..77d74d6af1c4 100644
---- a/arch/arm64/boot/dts/apple/t7000-6.dtsi
-+++ b/arch/arm64/boot/dts/apple/t7000-6.dtsi
-@@ -48,3 +48,7 @@ switch-mute {
- 		};
- 	};
- };
-+
-+&framebuffer0 {
-+	power-domains = <&ps_disp0 &ps_mipi_dsi>;
-+};
-diff --git a/arch/arm64/boot/dts/apple/t7000-j42d.dts b/arch/arm64/boot/dts/apple/t7000-j42d.dts
-index 2231db6a739d..4de5e6a3f230 100644
---- a/arch/arm64/boot/dts/apple/t7000-j42d.dts
-+++ b/arch/arm64/boot/dts/apple/t7000-j42d.dts
+diff --git a/arch/arm64/boot/dts/apple/t7001-air2.dtsi b/arch/arm64/boot/dts/apple/t7001-air2.dtsi
+index 19fabd425c52..e4ec8c1977de 100644
+--- a/arch/arm64/boot/dts/apple/t7001-air2.dtsi
++++ b/arch/arm64/boot/dts/apple/t7001-air2.dtsi
 @@ -20,6 +20,7 @@ chosen {
  		framebuffer0: framebuffer@0 {
  			compatible = "apple,simple-framebuffer", "simple-framebuffer";
@@ -131,42 +116,19 @@ index 2231db6a739d..4de5e6a3f230 100644
  			/* Format properties will be added by loader */
  			status = "disabled";
  		};
-diff --git a/arch/arm64/boot/dts/apple/t7000-mini4.dtsi b/arch/arm64/boot/dts/apple/t7000-mini4.dtsi
-index c64ddc402fda..e5a9656045f2 100644
---- a/arch/arm64/boot/dts/apple/t7000-mini4.dtsi
-+++ b/arch/arm64/boot/dts/apple/t7000-mini4.dtsi
-@@ -49,3 +49,7 @@ switch-mute {
- 		};
- 	};
- };
-+
-+&framebuffer0 {
-+	power-domains = <&ps_disp0 &ps_dp>;
-+};
-diff --git a/arch/arm64/boot/dts/apple/t7000-n102.dts b/arch/arm64/boot/dts/apple/t7000-n102.dts
-index 9c55d339ba4e..99eb8a2b8c73 100644
---- a/arch/arm64/boot/dts/apple/t7000-n102.dts
-+++ b/arch/arm64/boot/dts/apple/t7000-n102.dts
-@@ -46,3 +46,7 @@ button-volup {
- 		};
- 	};
- };
-+
-+&framebuffer0 {
-+	power-domains = <&ps_disp0 &ps_mipi_dsi>;
-+};
-diff --git a/arch/arm64/boot/dts/apple/t7000-pmgr.dtsi b/arch/arm64/boot/dts/apple/t7000-pmgr.dtsi
+diff --git a/arch/arm64/boot/dts/apple/t7001-pmgr.dtsi b/arch/arm64/boot/dts/apple/t7001-pmgr.dtsi
 new file mode 100644
-index 000000000000..5948fa7afffc
+index 000000000000..7321cfdcd189
 --- /dev/null
-+++ b/arch/arm64/boot/dts/apple/t7000-pmgr.dtsi
-@@ -0,0 +1,641 @@
++++ b/arch/arm64/boot/dts/apple/t7001-pmgr.dtsi
+@@ -0,0 +1,650 @@
 +// SPDX-License-Identifier: GPL-2.0+ OR MIT
 +/*
-+ * PMGR Power domains for the Apple T7000 "A8" SoC
++ * PMGR Power domains for the Apple T7001 "A8X" SoC
 + *
 + * Copyright (c) 2024, Nick Chan <towinchenmi@gmail.com>
 + */
++
 +&pmgr {
 +	ps_cpu0: power-controller@20000 {
 +		compatible = "apple,t7000-pmgr-pwrstate", "apple,pmgr-pwrstate";
@@ -183,6 +145,15 @@ index 000000000000..5948fa7afffc
 +		#power-domain-cells = <0>;
 +		#reset-cells = <0>;
 +		label = "cpu1";
++		apple,always-on; /* Core device */
++	};
++
++	ps_cpu2: power-controller@20010 {
++		compatible = "apple,t7000-pmgr-pwrstate", "apple,pmgr-pwrstate";
++		reg = <0x20010 4>;
++		#power-domain-cells = <0>;
++		#reset-cells = <0>;
++		label = "cpu2";
 +		apple,always-on; /* Core device */
 +	};
 +
@@ -532,6 +503,14 @@ index 000000000000..5948fa7afffc
 +		label = "disp_busmux";
 +	};
 +
++	ps_disp1_busmux: power-controller@202c0 {
++		compatible = "apple,t7000-pmgr-pwrstate", "apple,pmgr-pwrstate";
++		reg = <0x202c0 4>;
++		#power-domain-cells = <0>;
++		#reset-cells = <0>;
++		label = "disp1_busmux";
++	};
++
 +	ps_media: power-controller@202d8 {
 +		compatible = "apple,t7000-pmgr-pwrstate", "apple,pmgr-pwrstate";
 +		reg = <0x202d8 4>;
@@ -581,7 +560,7 @@ index 000000000000..5948fa7afffc
 +		#power-domain-cells = <0>;
 +		#reset-cells = <0>;
 +		label = "disp1";
-+		power-domains = <&ps_disp_busmux>;
++		power-domains = <&ps_disp1_busmux>;
 +	};
 +
 +	ps_pcie_ref: power-controller@20220 {
@@ -677,7 +656,7 @@ index 000000000000..5948fa7afffc
 +		#power-domain-cells = <0>;
 +		#reset-cells = <0>;
 +		label = "smx";
-+		apple,always-on; /* Apple Fabric, critical block */
++		apple,always-on; /* Apple fabric, critical block */
 +	};
 +
 +	ps_sf: power-controller@20298 {
@@ -686,7 +665,7 @@ index 000000000000..5948fa7afffc
 +		#power-domain-cells = <0>;
 +		#reset-cells = <0>;
 +		label = "sf";
-+		apple,always-on; /* Apple Fabric, critical block */
++		apple,always-on; /* Apple fabric, critical block */
 +	};
 +
 +	ps_cp: power-controller@202a0 {
@@ -698,18 +677,9 @@ index 000000000000..5948fa7afffc
 +		apple,always-on; /* Core device */
 +	};
 +
-+	ps_mipi_dsi: power-controller@202b8 {
++	ps_dp: power-controller@202b8 {
 +		compatible = "apple,t7000-pmgr-pwrstate", "apple,pmgr-pwrstate";
 +		reg = <0x202b8 4>;
-+		#power-domain-cells = <0>;
-+		#reset-cells = <0>;
-+		label = "mipi_dsi";
-+		power-domains = <&ps_disp_busmux>;
-+	};
-+
-+	ps_dp: power-controller@202c0 {
-+		compatible = "apple,t7000-pmgr-pwrstate", "apple,pmgr-pwrstate";
-+		reg = <0x202c0 4>;
 +		#power-domain-cells = <0>;
 +		#reset-cells = <0>;
 +		label = "dp";
@@ -802,23 +772,15 @@ index 000000000000..5948fa7afffc
 +		power-domains = <&ps_venc>;
 +	};
 +};
-diff --git a/arch/arm64/boot/dts/apple/t7000.dtsi b/arch/arm64/boot/dts/apple/t7000.dtsi
-index a7cc29e84c84..ed1e9a62ba05 100644
---- a/arch/arm64/boot/dts/apple/t7000.dtsi
-+++ b/arch/arm64/boot/dts/apple/t7000.dtsi
-@@ -62,6 +62,7 @@ serial0: serial@20a0c0000 {
+diff --git a/arch/arm64/boot/dts/apple/t7001.dtsi b/arch/arm64/boot/dts/apple/t7001.dtsi
+index a76e034c85e3..c471f57cca0e 100644
+--- a/arch/arm64/boot/dts/apple/t7001.dtsi
++++ b/arch/arm64/boot/dts/apple/t7001.dtsi
+@@ -72,9 +72,18 @@ serial0: serial@20a0c0000 {
  			/* Use the bootloader-enabled clocks for now. */
  			clocks = <&clkref>, <&clkref>;
  			clock-names = "uart", "clk_uart_baud0";
 +			power-domains = <&ps_uart0>;
- 			status = "disabled";
- 		};
- 
-@@ -74,9 +75,18 @@ serial6: serial@20a0d8000 {
- 			/* Use the bootloader-enabled clocks for now. */
- 			clocks = <&clkref>, <&clkref>;
- 			clock-names = "uart", "clk_uart_baud0";
-+			power-domains = <&ps_uart6>;
  			status = "disabled";
  		};
  
@@ -833,7 +795,7 @@ index a7cc29e84c84..ed1e9a62ba05 100644
  		wdt: watchdog@20e027000 {
  			compatible = "apple,t7000-wdt", "apple,wdt";
  			reg = <0x2 0x0e027000 0x0 0x1000>;
-@@ -90,11 +100,13 @@ aic: interrupt-controller@20e100000 {
+@@ -88,11 +97,13 @@ aic: interrupt-controller@20e100000 {
  			reg = <0x2 0x0e100000 0x0 0x100000>;
  			#interrupt-cells = <3>;
  			interrupt-controller;
@@ -847,12 +809,12 @@ index a7cc29e84c84..ed1e9a62ba05 100644
  
  			gpio-controller;
  			#gpio-cells = <2>;
-@@ -123,3 +135,5 @@ timer {
+@@ -121,3 +132,5 @@ timer {
  			     <AIC_FIQ AIC_TMR_GUEST_VIRT IRQ_TYPE_LEVEL_HIGH>;
  	};
  };
 +
-+#include "t7000-pmgr.dtsi"
++#include "t7001-pmgr.dtsi"
 -- 
 2.47.0
 
