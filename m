@@ -1,110 +1,126 @@
-Return-Path: <linux-kernel+bounces-393179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9DE39B9D52
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 06:34:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 524169B9D54
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 06:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92AA4286645
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 05:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24931F253E5
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 05:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F135A14A62A;
-	Sat,  2 Nov 2024 05:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B78149E16;
+	Sat,  2 Nov 2024 05:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHZzgP7r"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="lgp50Ey0"
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.58.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1147C2595;
-	Sat,  2 Nov 2024 05:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF072595
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 05:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.58.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730525648; cv=none; b=hMahDV8g/7CcHxX4UWgfIrX9Pmj1YHIIy6cZwaI4gMh1bdH0RWUis19ReXIdFyk3oq7eyvDwrmxs53yy8zspbor1E1koy5l3ZN5jE48K5fVWWW0FguGU6HivbIuSR1AO3mCZo8LokrsLdqs7VMPOoOeyekkL9rsZfi/4CzAjqdE=
+	t=1730526111; cv=none; b=ktAO6EccyS8akvbq0KnI7b7qWC5hFrWAaZtd1tDg2iKDx4ferXW08XbAH0Er/dWQumHPsaqyu0jAUXl3ARdU72jjlGYR9sTWgNwInzw/eZVhWYXWeZFdUXOKRQq2pVcxVCmu8niq24bdrzPi/0h9UgFJ+HWfhvKqpz/A71CRKRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730525648; c=relaxed/simple;
-	bh=7ZWq3c6xaRl+h6ragkZhBKlh/9oJe6LqL4h5CFwBSm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y5k9QOBUO2ajQOVIrS2hRwMCR65gCjcW08JrUSPiuvPej6hLrMz2HMmT3Wvyo6sTmIqbSkmZZF9bjPiMLv622VZlox1eh+NrHQsZilyaIgAShPDGyogClB2Xh2jlvLPT3GtGPz5qXg6owSRR4TTSEN3CuQzegSN77T9jSLD3Ih4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHZzgP7r; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c714cd9c8so27879275ad.0;
-        Fri, 01 Nov 2024 22:34:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730525646; x=1731130446; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yl0ZSjV2wwdG7v/jul86kkIeCsNbggoH1Vd4XqoR3yw=;
-        b=nHZzgP7rI1VPJGWhCiV36tJBJNQnINDs7YkZC8ifKiGdsy3QIGCAkdjh3l1aJNAuba
-         WrP9K/V7f7OV4OkNmXg463iYkHGDSiZ/vwzwme+i5JokmSVZoGYLeZsRl2m3oh4UwAMp
-         3O2iDGm5Z5z7edDtUvPJeEQyCrgGnc5vEapDkh6I0hABkxOXbGZ0Psifv+WmlOWjxZ/5
-         XabIdr+SBIBR0B0EBvDIBJzTAeAbfE7guzNFF6Q93JITPFnUJeIjMXiPAP3V6BTG/Wu6
-         1SPz3AoCmjCJjR1oXq2G4xtg7NykVKc2MjtQGxL3ZPR+UgZcJqEYtdkHV5DjOOgKIvZ0
-         0C4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730525646; x=1731130446;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yl0ZSjV2wwdG7v/jul86kkIeCsNbggoH1Vd4XqoR3yw=;
-        b=qVCY4JqPs1Hyb1NUJRLbFJBlzHS2xHNe5eo3tYQUItPEQWmwl9dD2j98chBPtzemN+
-         upMgX6HMtPjvHbynHiE+CWKh9SbTh6zUqxqPivUXijfq6qb28N0IaQM0llDHlhAdhVAi
-         EdIyTStyVUqUbQjlNDcE1BA6PqeidHdbWd1uqb3uBYF0L5at5GPpam5ef6cxFKecU0Uu
-         SHJN0iwEvwNPmS+TkKHz6riEofSXmBptLYooS6T4C39FYknkNnZ3eP9/FtE59CUReQGb
-         +GoNc0t03/qEyY0Q1apHN/hdRBKb+N4Qhh/qF4wzE2WmyNCcT9mUgxGQJAa1X/8rtYzb
-         03kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWz+6l6WATI1FUr/138fP4kzRoGfTC4DwsHNpm/inpTaA0Isu875MafNUbqeY1MQ95RR68hr3tBiGRatD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZTyUKy/298vOS8eDVLOTjK0nQvCNWAo/ygS43V0PgbPT+Y0jq
-	jbLNL39fl+Uj+qHHcMY+8GU1ktij+9CYWM09WJZVjAnBffCBMVux
-X-Google-Smtp-Source: AGHT+IFSBLSRmWr+ADqlQojeA6O0wCRf+1EVr8y7UIwQWNNJ4vrlbCerMlqoHCiFATN78RepdHZAyA==
-X-Received: by 2002:a17:902:ce85:b0:20c:a1a3:5373 with SMTP id d9443c01a7336-2111b01c640mr83003945ad.55.1730525646080;
-        Fri, 01 Nov 2024 22:34:06 -0700 (PDT)
-Received: from localhost ([129.146.253.192])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a63f2sm28700365ad.168.2024.11.01.22.34.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 22:34:05 -0700 (PDT)
-Date: Sat, 2 Nov 2024 13:33:54 +0800
-From: Furong Xu <0x1207@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrew
- Lunn <andrew@lunn.ch>, Simon Horman <horms@kernel.org>,
- andrew+netdev@lunn.ch, Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- xfr@outlook.com
-Subject: Re: [PATCH net-next v8 0/8] net: stmmac: Refactor FPE as a separate
- module
-Message-ID: <20241102133354.00002357@gmail.com>
-In-Reply-To: <20241101142908.ohdxsokygout5mfs@skbuf>
-References: <cover.1730449003.git.0x1207@gmail.com>
-	<20241101142908.ohdxsokygout5mfs@skbuf>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730526111; c=relaxed/simple;
+	bh=yOUQSBsILkKt77B9oalo0ExmSVmo29tUfsF6B6jI7Yg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GapHctKd0XJGmKDZax2U4BAydUYiUEQnNsv9IdAL+yV92vBwT/i4qqvP5UuzL60BQjl/6uhIPoX0VBvs6P3uq1rXjEXHpqNK/F+dQmb6Ckw8rfdtQiQ/9tcrvgedkZzMWxKQMxk2XEtPYxdg/Mi9hpV8+tgWLZpxK2SPJglgesU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=lgp50Ey0; arc=none smtp.client-ip=114.132.58.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1730526092;
+	bh=BIyYvigQq7UKFOdCDQCsps6q948TUJUQ8Syfr7kRYLc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=lgp50Ey09tdTgFVLkWFehw/M79cvCoAluz0J4ZmsZ73cRobsw3i8Vn3pdJk2zp9eA
+	 AWUa+msR/Lx3V9XibidghcOoS+3TtulUUYyToa+dymRizp9dmMdciuiqV6W6NfK0Po
+	 CvpKSpUi2sVX6rejqfxC19NbOxg5l2HaAnuj8SwY=
+X-QQ-mid: bizesmtpip3t1730526061t8abo2y
+X-QQ-Originating-IP: lGcQ/SKHCJLsGWmdKi8OnvoZ3URBdJcfKRGdsM5umzs=
+Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 02 Nov 2024 13:40:59 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 2957908697263137939
+From: WangYuli <wangyuli@uniontech.com>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	tglx@linutronix.de,
+	max.kellermann@ionos.com,
+	arnd@arndb.de,
+	wangyuli@uniontech.com
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	guanwentao@uniontech.com,
+	jiaxun.yang@flygoat.com,
+	zhanjun@uniontech.com,
+	anshuman.khandual@arm.com,
+	akpm@linux-foundation.org,
+	vbabka@suse.cz,
+	geert@linux-m68k.org
+Subject: [PATCH] LoongArch: mm/vma: define a default value for VM_DATA_DEFAULT_FLAGS
+Date: Sat,  2 Nov 2024 13:40:41 +0800
+Message-ID: <1BC681DB785E0181+20241102054042.74847-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NOIkHYnr7Vzd9Ys9MjSHks47cd4f9/dIsFgaTDaTP71h4QfRSOi/6lkX
+	QkkhmY+P1/b1gnmcyDR4ViSZsePxE3ZdASpecFQ/70A9NcosY2Yk/VMl/89w/e7TIGstClF
+	fz8KMipk4bNwp4j7s95HLp71jAhRXkly5KeXR9XSGwy44HkweyNOicq4fIapXitT3WUFLVp
+	PTCzYmg6xYpp4MHRU6lKrIbXkV5A6ppy3+a1c9u1NlbeL+3sm2627M/RjVAHM0Lv+F0WW36
+	QKXQC8zLwT19mfuz0hlZvC+2ag7dRLnEYhYPdsvhMUtTinAblAXNPgSiV9d5AyNCHOCzLgi
+	G/myw245l7UGAzZtoukdqUIapkiYrEQV4ehQDxeqLyAr8Oj9HJUCerU+erx+T55aLfQOyff
+	M9cICW9lENko+uJivFpLLp80a1Fug7kchBEyEzOwtijewtndXay7hGOfbKy+Qi/8psyb/Zi
+	STHRwSnDoRk936jIVucRc1mxgUmgRvU7lFgXfGr6KVcPRLnsi75Fet/bm7Z+DJXe051vzJX
+	GIezIfcZH7gaq5Aa61fw1kFTN+LO5xHIEQ1tR14agYrb+4zNtNm9CkiOJBbfcuztQUcnb0w
+	hyusiIFd6VZzn/sAtoybDA2BIswwoW7GY1/xnm8MtDhRHcdOaGCbDINuNmgMJuOuKqZk38Z
+	tHssf6J4OzEjOuheQDPUc62jrW4dWemqYS9Mi1+1AJoeX+weYUgaZMVm87TKplO6w5JIOzJ
+	C+mQudZX3VnxT+Tg8iY+qbw54E2ajM7Yi1d2lakyi8Q8tVKnqlyqimVpvovtYlltiF6P4bl
+	MBG/GnedIXrslzaO/CzclySZjJtr8SsfAZrBAzdjZkWo4R32voaXobZvxm6Ku30ufA1Tn6F
+	aINgnC8CmLh22yzjevxLjO36cUk3DerRNDhSRuXxzjxl99MA7AxjIwfIEpXrhhfplVThQEC
+	VhHBb87kJJR9JGxdUVmxTPKmZ4OTQkXNGvyzxDziUeMVi/3xG3Mw5y9rGkE5UpquNEXMzMc
+	eLjjyShAHVk6eg9jDt/oHfiGvq3G8yUK6jX7e4j5Wa6qbBv86u
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-Hi Vladimir,
+Commit c62da0c35d58 ("mm/vma: define a default value for
+VM_DATA_DEFAULT_FLAGS") has unified default values of
+VM_DATA_DEFAULT_FLAGS across different platforms.
 
-On Fri, 1 Nov 2024 16:29:08 +0200, Vladimir Oltean <olteanv@gmail.com> wrote:
+Apply the same consistency to LoongArch.
 
-> For the series:
-> 
-> Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+Suggested-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/loongarch/include/asm/page.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Much appreciated for your valuable comments on this series and also the
-previous series that moves stmmac FPE over to the new standard
-ethtool-mm/tc-mqprio/tc-taprio.
-The FPE support on stmmac would never be so complete and so soon without your help.
+diff --git a/arch/loongarch/include/asm/page.h b/arch/loongarch/include/asm/page.h
+index e85df33f11c7..8f21567a3188 100644
+--- a/arch/loongarch/include/asm/page.h
++++ b/arch/loongarch/include/asm/page.h
+@@ -113,10 +113,7 @@ struct page *tlb_virt_to_page(unsigned long kaddr);
+ extern int __virt_addr_valid(volatile void *kaddr);
+ #define virt_addr_valid(kaddr)	__virt_addr_valid((volatile void *)(kaddr))
+ 
+-#define VM_DATA_DEFAULT_FLAGS \
+-	(VM_READ | VM_WRITE | \
+-	 ((current->personality & READ_IMPLIES_EXEC) ? VM_EXEC : 0) | \
+-	 VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
++#define VM_DATA_DEFAULT_FLAGS	VM_DATA_FLAGS_TSK_EXEC
+ 
+ #include <asm-generic/memory_model.h>
+ #include <asm-generic/getorder.h>
+-- 
+2.45.2
 
-Have a nice weekend :)
 
