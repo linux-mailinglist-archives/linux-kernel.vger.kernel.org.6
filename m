@@ -1,103 +1,142 @@
-Return-Path: <linux-kernel+bounces-393346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80649B9F83
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:46:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B149B9F86
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:49:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6010D1F21B9F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:46:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A47E2826BB
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA31189B8E;
-	Sat,  2 Nov 2024 11:46:38 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70719186E40;
+	Sat,  2 Nov 2024 11:49:03 +0000 (UTC)
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB13A15A85E;
-	Sat,  2 Nov 2024 11:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8920C7F6;
+	Sat,  2 Nov 2024 11:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730547997; cv=none; b=khfGTD+TKelrtP3vjAXuWhDdMUTQXfBBNtoJIuKZdQxWh0ZgPPgHxOh4NjEhK9g9HPxewC0rD6xva2ANMFELl9g8DMMZilYr5UjdsVQ5kNwrHmot9DPWpQaerynjSi/5vtsx4mcS7HB+IDngiUBn/n8SziKuZYn8Nr+M44of62A=
+	t=1730548143; cv=none; b=LNQ0rQOtLZ4cK1VqLHLmWVMOHTts6ZI3AEy79RNGFZjItRx08Yy3B15/pXo0QMvsKLpWWjR9RhdK6yBwObUNEnJavu0PkK9LHgeAQWEids5AK4LtiLK55fJBWpwfcr/ZUBedsjUnUulcJ2AIO4PveZW1uY3SppXVpJRftN9xrTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730547997; c=relaxed/simple;
-	bh=I7knZNHDliZk9Hk0Pj85mAdWlDEOEeVfj001CftATno=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aTi1Ufu9jgInnELGc+Qu7GkcobDCVQhy6fkA+MZaC3oJk2kA4ANjVfr0V/8aVMFat5MTQk8ekQuN38SAYJRsNVqAudJZKprzeZiEJlSyM+Ki5S+dA/rEWZqrR3p3IYI5zMU+CyRMaJ02QkDgaTfvqC7u/SsoUqsPNazHvV6hxMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 286AEC4CEC3;
-	Sat,  2 Nov 2024 11:46:37 +0000 (UTC)
-Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id 2061F5F9F2;
-	Sat,  2 Nov 2024 19:46:34 +0800 (CST)
-From: Chen-Yu Tsai <wens@csie.org>
-To: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-pm@vger.kernel.org, linux-sunxi@lists.linux.dev, 
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- Cody Eksal <masterr3c0rd@epochal.quest>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
- Samuel Holland <samuel@sholland.org>, Stephen Boyd <sboyd@kernel.org>, 
- Vinod Koul <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, Yangtao Li <tiny.windzz@gmail.com>, 
- Parthiban <parthiban@linumiz.com>, Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
-References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
-Subject: Re: (subset) [PATCH v2 00/13] sunxi: A100/A133 second stage
- support
-Message-Id: <173054799410.64486.11694812401132710377.b4-ty@csie.org>
-Date: Sat, 02 Nov 2024 19:46:34 +0800
+	s=arc-20240116; t=1730548143; c=relaxed/simple;
+	bh=W2cSYdIgTxYR8mOPhf+ODb+RkckYv34eRxJumqWmJ98=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jzr3Tknydp7X2ww467gO3Y/BUuW1UHLJ9FhOgpbpL+hc6UNbGIdL1tZgplz+nPhk1DPVT/wrZHnu7qI+0oxbne9y8NKqgMxgnnXtmf9m5T4JoYPGvCOEt14A+RtoHuYhVYpK5dBrTRVZtwy+5JkkBegsD8pV7WrrIz65JAETmOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a6adaee7acso7914645ab.0;
+        Sat, 02 Nov 2024 04:49:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730548137; x=1731152937;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UCDur7kMwBxLZ7iPM36W+L8Iemo6gZ+3RoWOEA3d2yQ=;
+        b=H9nEIKCvpGy71QNZu/p7cVNGyxTsvpwnQJweO8tKhcIZjzqqDgnanmy0T/wPqqYEm1
+         dG4qlNnSo3/Lj6JJsGvea/pHde3177YdK01IYcLnCXBu1GGASWqiSZBXBJs2W3PKMKF/
+         +3URsqhRayPXl73R3Zrzfb37qTOpmVqr87kFW+Nsrd/bu+HBrZzBqLmW/+KPjgaYFi05
+         sJ42Yyehz8UhoMFLkQohl1HkMZhFh56sHJbEGJhfux/a1GxAbZ3ZHhJhE6JTYl3fbtAR
+         XFHCX5zD6a1s1JS+bmPnJ1x9DMcdsG1ZjffgMiRPbIfYdZC3l097OSlyDpRsYzIZaEdG
+         HiXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPolnl3mAOzMF/9zMcdwRFYD63CyciSRJjFEAU3e7xoK4f7ewhfu+p0Ljy039mgd816gH0vLDmIlePW/mn@vger.kernel.org, AJvYcCVPpSfVApHZhZHNHnugo0xkzLM0tVFwt4IKhIgiDhx+p0ruFNEZOMbgdsTa7uk5j34+7QVvW5C1iURO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxZpcL5Uc7mBLYREdEdZjrZ+BkMq2xFjp2HI+rfPhYYDKnLbuC
+	ZMkE1IfHQW5jI3g/qZEOnuD98oDFG11FfmeF2Ep53vQccktYe+JFUQ6dxvF3HU0=
+X-Google-Smtp-Source: AGHT+IHcWdsMnb+Nu566FNwvSGOeJZwI2yU7n3VRWpobNlLaab3UQj8pI3gEvfEQ9ARE/GpX2qQ1XA==
+X-Received: by 2002:a05:6e02:1c01:b0:3a6:aee2:1696 with SMTP id e9e14a558f8ab-3a6aee218b9mr59957085ab.21.1730548136763;
+        Sat, 02 Nov 2024 04:48:56 -0700 (PDT)
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com. [209.85.166.47])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de048bfbe7sm1131748173.54.2024.11.02.04.48.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2024 04:48:56 -0700 (PDT)
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-83abe4524ccso99132239f.1;
+        Sat, 02 Nov 2024 04:48:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUZja1syE9tnXG5AV51O9pizDsVWhSxDiUhRmkY5wa2xJlNOJlEqPTs36DfxbPbaFvUoow7LfPhE7rH84qq@vger.kernel.org, AJvYcCUpGLXIl3gZQSXTSr3mzI1SaLJwbVGRuhsiH05YIXfJYpf528HIvxBe+bJsevepIz6Ruxptr66NytVz@vger.kernel.org
+X-Received: by 2002:a05:6602:29ce:b0:82c:ed57:ebd9 with SMTP id
+ ca18e2360f4ac-83b650372b4mr1250261339f.10.1730548135524; Sat, 02 Nov 2024
+ 04:48:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest> <20241031070232.1793078-11-masterr3c0rd@epochal.quest>
+In-Reply-To: <20241031070232.1793078-11-masterr3c0rd@epochal.quest>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 2 Nov 2024 19:48:41 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66TAttAezXE7TnT5N6XFW2482ipuqkcpwjeDud6v=xD3w@mail.gmail.com>
+Message-ID: <CAGb2v66TAttAezXE7TnT5N6XFW2482ipuqkcpwjeDud6v=xD3w@mail.gmail.com>
+Subject: Re: [PATCH v2 10/13] arm64: dts: allwinner: a100: perf1: Add eMMC and
+ MMC node
+To: Cody Eksal <masterr3c0rd@epochal.quest>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Viresh Kumar <vireshk@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Yangtao Li <tiny.windzz@gmail.com>, Parthiban <parthiban@linumiz.com>, 
+	Andre Przywara <andre.przywara@arm.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 31 Oct 2024 04:02:13 -0300, Cody Eksal wrote:
-> This is V2 of this series [5], with some changes that were requested and
-> others that were made after testing on more devices. Thank you for all of
-> your feedback! A changelog is available below.
-> 
-> ==================
-> Back in 2020, two Allwinner employees, Yangtao Li and Shuosheng Huang, each
-> submitted a patch series for the A100 series of SoCs; [1] intended to add
-> support for the watchdog, ARM PMU, DMA, USB, and (e)MMC controller, and [2]
-> implemented DVFS support. Some patches from the first series landed, but
-> the rest were seemingly abandoned.
-> 
-> [...]
+On Thu, Oct 31, 2024 at 3:03=E2=80=AFPM Cody Eksal <masterr3c0rd@epochal.qu=
+est> wrote:
+>
+> From: Yangtao Li <frank@allwinnertech.com>
+>
+> A100 perf1 hava MicroSD slot and on-board eMMC module, add support for th=
+em.
+>
+> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
+> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
 
-Applied to dt-for-6.13 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
+So I skipped this one since Andre had some questions about the previous
+mmc clock patch. And I believe this one won't work without it?
 
-[01/13] arm64: dts: allwinner: A100: Add PMU mode
-        commit: 248b20ed03545656bd1775ed115369854f58f55c
-[02/13] arm64: dts: allwinner: a100: add watchdog node
-        commit: f84a3aa7782687ca0fa54f768fc6bb825575f91a
-[03/13] dt-bindings: phy: sun50i-a64: add a100 compatible
-        commit: 4402ef303d4b90748646568cf48f52eea035057a
-[04/13] dt-bindings: usb: Add A100 compatible string
-        commit: 1e7d0e2a53e6bf4b43f78858b1fb10aa38259375
-[05/13] dt-bindings: usb: sunxi-musb: Add A100 compatible string
-        commit: e144e89de0e491ea191847b0dc15a5aeb27951eb
-[06/13] arm64: dts: allwinner: a100: add usb related nodes
-        commit: c3cc9b02f7490d93635692cf58b0a4e517a60ab2
-[09/13] arm64: allwinner: a100: Add MMC related nodes
-        commit: fcfbb8d9ec584c256c0a6e1ae3174a21b007f399
+ChenYu
 
-Best regards,
--- 
-Chen-Yu Tsai <wens@csie.org>
-
+> ---
+>  .../allwinner/sun50i-a100-allwinner-perf1.dts    | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dt=
+s b/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> index 2f8c7ee60283..d418fc272b3c 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> @@ -39,6 +39,22 @@ &ehci1 {
+>         status =3D "okay";
+>  };
+>
+> +&mmc0 {
+> +       vmmc-supply =3D <&reg_dcdc1>;
+> +       cd-gpios =3D <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
+> +       bus-width =3D <4>;
+> +       status =3D "okay";
+> +};
+> +
+> +&mmc2 {
+> +       vmmc-supply =3D <&reg_dcdc1>;
+> +       vqmmc-supply =3D <&reg_aldo1>;
+> +       cap-mmc-hw-reset;
+> +       non-removable;
+> +       bus-width =3D <8>;
+> +       status =3D "okay";
+> +};
+> +
+>  &ohci0 {
+>         status =3D "okay";
+>  };
+> --
+> 2.47.0
+>
 
