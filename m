@@ -1,183 +1,140 @@
-Return-Path: <linux-kernel+bounces-393162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D95E9B9C8C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 04:48:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4849B9C8F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 04:54:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 880ACB21C1A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 03:48:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91F811C2143B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 03:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C6112BEBB;
-	Sat,  2 Nov 2024 03:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8670B34CDD;
+	Sat,  2 Nov 2024 03:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="glGHEmHu"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="BY6bjFZ3"
+Received: from pv50p00im-zteg10021401.me.com (pv50p00im-zteg10021401.me.com [17.58.6.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD06482DD
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 03:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD745184F
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 03:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730519309; cv=none; b=KamPOKBhhyeFPvX4ZtZoxMCPMGXf1IP5bYAdPVmcWc8WnHIUtGo2e941I+iQWBX7+Y3WgwPhYyGjAcKpj+KaCoVjVPhTlVvM99p/vFRDlZV8U65s2H8bYhcjExeVypPsR4lcLzhWq411rwJvNJY9MfSI0f8j1iIxFVA+3vh4MUI=
+	t=1730519655; cv=none; b=ClCPjh5uA5m04nR1OMBWuyLrpWr76K7OmU2LpdNavr9/I5VGUEBJRkFuH/pHJNfL7dllqhOvrmeoC3F9DkllGzmk6+xvaYp/RnWP8GqyiNpoWBU0bwP8qp9RBiJLbVsPhLCxjcoNhtEgoWw8fKRAZ9eF+aysyKC6Sro20iLnLU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730519309; c=relaxed/simple;
-	bh=vP4zsOqNtMbKO2+jVJEXwJdYxLid9vzXb56DQWl1K9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rd9mt5epscukHBjICEGHXFx7d7p/S1UKJW5djS2p5tLITd4q9uQUVYjQAfrP6G54BKjzPHg9gcsY5qKC41qz8JW+L13/UMeQhwtqqQfS6F2mMgjvLFLVFi+xLZYBFSlwsWinclD6lUsN2YN+MZcxRqUT7tnTycDP6Ml7YtGTFaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=glGHEmHu; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-83ab00438acso79631639f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 20:48:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1730519306; x=1731124106; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cFAxfJPYMHZcgM/IbSJdK8jCoxixwBpatcLPEMEnlyg=;
-        b=glGHEmHuBRHQ2w1lkMPygKEzcCZXom8snmPAObJGJ5Iobo59FC7HRyd8UQHrimEaJr
-         0mpZE4h6EJ0e7g/6YA0NQcXoYY1PcdKYWQiB7P1IvZzpozmqcylsjw+tSjtZWtjrkIlZ
-         loCNSltUi22qrUTACQRvDK4ceiDKzlNptknYNBA1VuprCwhMz6911rHwuoMHfhWL3tAq
-         U0vc+3fhnvLGI+oB/71Aw0YUJQ9XxlFjumfsPp3sv3SRgkJ8tp7H0TSI2UHN3EXcVtJI
-         McP8r+nP4nhmyy/jtPufH01wej5Xjs+gFp7Bz3LotSqFoniCLGhRPLupLP3T62Wzm5yX
-         b/9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730519306; x=1731124106;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cFAxfJPYMHZcgM/IbSJdK8jCoxixwBpatcLPEMEnlyg=;
-        b=QKItjdOblNgjSTxqiXZcr3sVMkqZibsdTUf/6m9//zqaXWDqj19j1z4Clle9apetA8
-         qvtaZabcZ39zHJIS8gwJMBV0QbvY6Qmpa7e20SwS5Tt4RyUfWUcTBMDq2uVmXXiWZLW9
-         1HI2jOTs5gll66UGYSfy/ibDLzIEwHW9kZf1u3Vs5SEJwFABK9akKcjTSI8FFM3cKGuy
-         iuBFZfb05op0IwdjsrNJR5ZvrNQU1T/zcz6KmbWqvOuSQkEsG7JXL04lD8gfKfeeHVVn
-         j+sea/6gZC7mugyRyBYkYU7viQA8mNjgrPkdiSwOZ80Xg1DhG0q3E3EoV479BU2gnxOo
-         2d4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXuxoK2lcOeVMbQF5ax3uTuOaTADCxdIAGtSITBxNUqyUlXnMtLlz9cV9RtMoWbKXGHrjLp5MNzU87vh10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjLIz7IQJjEdtCA3d+pSW51134uRZ+If2WM4r+1wPkfEVhxfLV
-	UTHWhHUsv/XG2FmLandtuZxuWXsCdB7Dw3oxo7QYtdxVQIJPaTGKt12Una+iF6s=
-X-Google-Smtp-Source: AGHT+IEjX1mR0HcedUZXdXQVrMhUH8jXN4cBozN2zssjtGKah59T7pHiVZuQPT9WVqvySZ4MDCEgRw==
-X-Received: by 2002:a6b:7e44:0:b0:805:2048:a492 with SMTP id ca18e2360f4ac-83b7133cf86mr460121839f.6.1730519306354;
-        Fri, 01 Nov 2024 20:48:26 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b67bb57a5sm108525239f.28.2024.11.01.20.48.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Nov 2024 20:48:25 -0700 (PDT)
-Message-ID: <846b4f2a-602e-431e-affc-0e995db5eee5@sifive.com>
-Date: Fri, 1 Nov 2024 22:48:24 -0500
+	s=arc-20240116; t=1730519655; c=relaxed/simple;
+	bh=g6POW7UQm1RCR+ROES5iCPiakiF0ZYX0hUZ0jLALV9Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XmRFKa+jymTWtLutCYDErJWFKUoNNGA7ke/oNJCTbfKFcPrnPH32v4O08y2vRDrGm3ehf3fNm0oGFsgReO8YMDOZdAWkSRGXss9CiDH+uda62QMfq3T6rR3uWBaMSbroZdMqEKWWgYXbXDxlHVbt8Z7YAqeeRnA0EgcE2sC0Tu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=BY6bjFZ3; arc=none smtp.client-ip=17.58.6.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1730519653;
+	bh=xlxxWuHtdUZSNGnMupwcBRSja7uiXJHdtgOzQJyG6DQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:
+	 x-icloud-hme;
+	b=BY6bjFZ3zmF/M8+lLFLPHdb+fs6oo+UZrYmCZTBvAIKa//KXcc9iHFQ06xRTh2KaN
+	 lsZQjRkZap8Wh43CWLW3GwvMJjLTQXP2oBSCAtXKvU0fgIexJ5Xz6yJIN7KY2q9oTX
+	 FvkowVcZRpQRQWgqiF5yvYrs3ZtzaHL5eZ4Zq7rXFCM7V4cqDwDL6z0YUUGY85akV+
+	 dq2Grk4YY5PKMjlVq/RY3SErsjw/zEP9Fho3RUF75RUzJPyW2ZZ78BUFlL8Ww7qrU7
+	 AigarVHbeGt3FdkM8RTB1nl8D7Q6b4rk/UgDBgzKx/rBFlfRMn5GE7qU29W0P7CCLG
+	 S6AL+tUf6l4rg==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10021401.me.com (Postfix) with ESMTPSA id B81F88E0218;
+	Sat,  2 Nov 2024 03:54:02 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH v4 0/6] phy: core: Fix bugs for several APIs and simplify
+ an API
+Date: Sat, 02 Nov 2024 11:53:42 +0800
+Message-Id: <20241102-phy_core_fix-v4-0-4f06439f61b1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
-To: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
- <20241028053220.346283-2-TroyMitchell988@gmail.com>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <20241028053220.346283-2-TroyMitchell988@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEaiJWcC/3XNTQ6CMBCG4auYrq3pD1Jw5T2MITCdShdSbLWRE
+ O5uYYUYl98kzzsjCegtBnLajcRjtMG6Lo1svyPQ1t0NqdVpE8FExplgtG+HCpzHytg3RVnr/Ki
+ bsjCKJNJ7TOcld7mm3drwdH5Y6pHP1z+hyCmjTBUsF0bpWvHz42XBdnAAdydzKoo1zzZcJG6AQ
+ S51Y8DIXy5XXG6/y8R52ZQKJELJ1TefpukDkR3tpygBAAA=
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Lee Jones <lee@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ Johan Hovold <johan@kernel.org>, Zijun Hu <zijun_hu@icloud.com>, 
+ stable@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
+ Johan Hovold <johan+linaro@kernel.org>
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: bKDoCi3h4Kfl4oMlH4_7A_7ORU9H-yE3
+X-Proofpoint-GUID: bKDoCi3h4Kfl4oMlH4_7A_7ORU9H-yE3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-02_02,2024-11-01_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 clxscore=1015
+ mlxlogscore=617 malwarescore=0 adultscore=0 mlxscore=0 phishscore=0
+ suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2411020031
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-Hi Troy,
+This patch series is to fix bugs for below APIs:
 
-On 2024-10-28 12:32 AM, Troy Mitchell wrote:
-> The I2C of K1 supports fast-speed-mode and high-speed-mode,
-> and supports FIFO transmission.
-> 
-> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-> ---
->  .../bindings/i2c/spacemit,k1-i2c.yaml         | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> new file mode 100644
-> index 000000000000..57af66f494e7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/i2c/spacemit,k1-i2c.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: I2C controller embedded in SpacemiT's K1 SoC
-> +
-> +maintainers:
-> +  - Troy Mitchell <troymitchell988@gmail.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: spacemit,k1-i2c
-> +
-> +  reg:
-> +    maxItems: 2
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
+devm_phy_put()
+devm_of_phy_provider_unregister()
+devm_phy_destroy()
+phy_get()
+of_phy_get()
+devm_phy_get()
+devm_of_phy_get()
+devm_of_phy_get_by_index()
 
-Looking at the K1 user manual (9.1.4.77 RCPU I2C0 CLOCK RESET CONTROL
-REGISTER(RCPU_I2C0_CLK_RST)), I see two clocks (pclk, fclk) and a reset, which
-looks to be standard across the peripherals in this SoC. Please be sure that the
-binding covers all resources needed to use this peripheral.
+And simplify below API:
 
-> +
-> +  clock-frequency:
-> +    description:
-> +      Desired I2C bus clock frequency in Hz. As only fast and high-speed
-> +      modes are supported by hardware, possible values are 100000 and 400000.
-> +    enum: [100000, 400000]
+of_phy_simple_xlate().
 
-This looks wrong. In the manual I see:
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v4:
+- Correct commit message for patch 6/6
+- Link to v3: https://lore.kernel.org/r/20241030-phy_core_fix-v3-0-19b97c3ec917@quicinc.com
 
-* Supports standard-mode operation up to 100 Kbps
-* Supports fast-mode operation up to 400Kbps
-* Supports high-speed mode (HS mode) slave operation up to 3.4Mbps(High-speed
-I2C only)
-* Supports high-speed mode (HS mode) master operation up to 3.3 Mbps (High-speed
-I2C only)
+Changes in v3:
+- Correct commit message based on Johan's suggestions for patches 1/6-3/6.
+- Use goto label solution suggested by Johan for patch 4/6, also correct
+  commit message and remove the inline comment for it.
+- Link to v2: https://lore.kernel.org/r/20241024-phy_core_fix-v2-0-fc0c63dbfcf3@quicinc.com
 
-So even ignoring HS mode, 100 kHz and 400 kHz are only the maximums, not fixed
-frequencies.
+Changes in v2:
+- Correct title, commit message, and inline comments.
+- Link to v1: https://lore.kernel.org/r/20241020-phy_core_fix-v1-0-078062f7da71@quicinc.com
 
-Regards,
-Samuel
+---
+Zijun Hu (6):
+      phy: core: Fix that API devm_phy_put() fails to release the phy
+      phy: core: Fix that API devm_of_phy_provider_unregister() fails to unregister the phy provider
+      phy: core: Fix that API devm_phy_destroy() fails to destroy the phy
+      phy: core: Fix an OF node refcount leakage in _of_phy_get()
+      phy: core: Fix an OF node refcount leakage in of_phy_provider_lookup()
+      phy: core: Simplify API of_phy_simple_xlate() implementation
 
-> +    default: 100000
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c@d4010800 {
-> +        compatible = "spacemit,k1-i2c";
-> +        reg = <0x0 0xd4010800 0x0 0x38>;
-> +        interrupt-parent = <&plic>;
-> +        interrupts = <36>;
-> +        clocks = <&ccu 90>;
-> +        clock-frequency = <100000>;
-> +    };
-> +
-> +...
+ drivers/phy/phy-core.c | 43 +++++++++++++++++++++----------------------
+ 1 file changed, 21 insertions(+), 22 deletions(-)
+---
+base-commit: e70d2677ef4088d59158739d72b67ac36d1b132b
+change-id: 20241020-phy_core_fix-e3ad65db98f7
+
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
