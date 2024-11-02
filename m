@@ -1,155 +1,181 @@
-Return-Path: <linux-kernel+bounces-393326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DFD9B9F47
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:28:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE2C9B9F49
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09EC028257E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:28:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C8E3B21151
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39894176AA1;
-	Sat,  2 Nov 2024 11:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ww2X6ids"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067E3140E50;
+	Sat,  2 Nov 2024 11:30:06 +0000 (UTC)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F17A13C67E;
-	Sat,  2 Nov 2024 11:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699A1171E7C;
+	Sat,  2 Nov 2024 11:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730546913; cv=none; b=Lc5C005kz3cSTzCHgXz4OpZo4quDR6T0/lCOFGnWCznGqJliDXV30ViGmA4Hwx6uz5dQdYsQ5X8IN+QOvuC+y6H33i0On7nmBkVbBo8eRaTWg43HcaqCax39LKstt6glDa2ECQ8uT4epJt0JhrBwNlc9nBSiVRjW2s0zb+19R7o=
+	t=1730547005; cv=none; b=YF3j3pwBlZjVAmahleGCfmXwJYDmaX5fc398y2XPTVvnuDtzyJjuklQm7VeBjKFkegbJV0wyTWSfzfYp5XcbJKXn320sjnS4kYy3qnb/SNkcmZBlF3a+J3raY/qh6LbZTDDldZVGdI7sNzyajHM9knpUAjYOFXwCxDhocpAwgGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730546913; c=relaxed/simple;
-	bh=UZMFDoAo5FmpoZ12WjntjmscqJDHICva9l8MSR9Qrqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ikW6Ej8CPnFPYs8nSE8wXLVq9HPO5HugvNFWb02/w0Zed7/cb9o3dzV9GUoS98VaMZd15j3KcrMtmCdOzusqWTUJFnbIRQbXLB4ZkfxNrFnQo8o4OojfS3/l/bUz9v2iclCPCf6f2VZykq6WjlddpaxjL0Qa1C679s7F9DPQgLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ww2X6ids; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=Sm3j3fQJAxFZUYQ4MHzOerlbFFEShkjW02q/uFLGtMg=; t=1730546911;
-	x=1730978911; b=ww2X6idslJZx60IRETR1A3LlKZDRlwQBO6NBDUcHZePjasz+759B63qI4CZAn
-	fwaAsDsxEeEPa+Bi6e6yhb9bKcoIG5OxHCKhsEkceqa4FNuA8+if/24+BiGnqvkyWc54ePKz3VJoX
-	/e5DDMjz5Ef0T/XvWjGnmyJsYEiUIv3JLhnPwfdfZ0wwmMJAjg4P2aHw22ChAzWigvN6SX/rN/3f2
-	+tP+wOGrqhdZna/w2Fp8WoAPa6OlXgc0dcO9FenB6Psu86Trc+iFlPitUtUxzz6TSR1QkKozCBfu0
-	NII8jMjilUDTCCUXg9TkWJzOClirYEi2KUOUbc+Pi0PWuQ0Ocw==;
-Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t7CIp-0001Aj-CS; Sat, 02 Nov 2024 12:28:23 +0100
-Message-ID: <c9547d48-9efa-4e4e-b7fb-d82f3621bd30@leemhuis.info>
-Date: Sat, 2 Nov 2024 12:28:21 +0100
+	s=arc-20240116; t=1730547005; c=relaxed/simple;
+	bh=/F1oVefCGAZN0JK03Otc0zwkAJofnTFCZ5g14PrPdhU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tQZZgBwpZ2VP9x1c2azGal6Tj0gwG/kiE6uRH85oVy3PcN7MaeQxyGRvcWgjtB9IR+hujpUzb43rPAAdugZaKwN+KzriHrRcpWITI0yvGBiX0ClnHWzGHFaXHWbfCegzZraKTJVzzEykEJPdXKLmjrSZwMLGn3WsTn/jNJJIGxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so26861921fa.0;
+        Sat, 02 Nov 2024 04:30:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730547001; x=1731151801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2//9P0I4J3XvBkNzIbbNIA2dq470ULwziNwddPzImEE=;
+        b=JLCeWIJwB6LA3vVhXQffzWJsT8271aEJSjVm0fhHOIFwMEqNS9bwYr/Xxs+DPmCgR1
+         a2i2XVlk4zEXlR/S30F94BTi3XrbtBAVJKma++yUy1zG5HqoyMVyB+27JtYTi7UQADdZ
+         NotHXZ9leTdi/dmS5q0vGO1xDggmhPfzrCQjpcQBKdNHSwsSY5b4vpT+5AIHncaR2I/J
+         YjdnHtCP9HnllQhIj9OYVhe2Y6AJTMKKUlBfG5YvPv55yWYRwO10gAYswCMSp0qYwLg7
+         FUSh4r+i7NFhHVawg0zF94rZWQFeeDAJ5hHu4WQKuN8Xz/RAaQ6kIhPnfBUa08EmiLMe
+         aZPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBdE+hSxsbphEtod99+LN8gkB5pTYHNarAJdjw9uNNYOWjg7rvv4crLpRPlPcxkKctOZ0gClev7u5X@vger.kernel.org, AJvYcCXXZ52KTS5ZU5iKHGUl2UVrQjzJc3xG9wx8U22oT76ENKWqnj4YYnwcZ991dQcy2bQoB12SWKLQublwFHWz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGEcEEgtLdNnPvSjDekotJk8VYpJBC3a0FXG9HBPHVBA1l3HaV
+	nvnEhwOO3SjYxdWx440V7kqo4MssG3q2RIHwwFq2PrZSkmXujkeNTwwGHmqC7vw=
+X-Google-Smtp-Source: AGHT+IFrCEbx/9JVN4tXGepoYmzDI958bCIzuo4JVpLTyA3kjQUkPu4EqFij1Km2PSsNvnwyvPZNLw==
+X-Received: by 2002:a2e:b894:0:b0:2fb:570a:496e with SMTP id 38308e7fff4ca-2fd058fc799mr76866641fa.9.1730547000739;
+        Sat, 02 Nov 2024 04:30:00 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef8fa17asm8694781fa.134.2024.11.02.04.30.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2024 04:30:00 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb5740a03bso26144251fa.1;
+        Sat, 02 Nov 2024 04:30:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW7KTVv7eLVaoyZ4157Y+OOQ4wBZr4wFIK+JgsOaNKfO4reqGEtG9n+579u1qriIPny41uw+MVf/Dul@vger.kernel.org, AJvYcCXAiWmRPaEocMAfwwhNdd1QwXPxIpnfWSW7ELT/BBNc/YizCeP7vKcwgbZez0s1W/3AB0WQgQ3MAWnxQRpt@vger.kernel.org
+X-Received: by 2002:a05:651c:1508:b0:2fb:656b:4c69 with SMTP id
+ 38308e7fff4ca-2fd0df8886amr74910741fa.43.1730547000254; Sat, 02 Nov 2024
+ 04:30:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs: bug-bisect: add a note about bisecting -next
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
- Mark Brown <broonie@kernel.org>
-References: <0b8245f429a3cb162f8f6c0686081700a9c09cc4.1730441728.git.linux@leemhuis.info>
- <20241101225916.075af3aa@canb.auug.org.au>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-MW
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <20241101225916.075af3aa@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1730546911;fe94a657;
-X-HE-SMSGID: 1t7CIp-0001Aj-CS
+References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest> <20241031070232.1793078-8-masterr3c0rd@epochal.quest>
+In-Reply-To: <20241031070232.1793078-8-masterr3c0rd@epochal.quest>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 2 Nov 2024 19:29:46 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66meMUPwOUr4Qutqu7TO-UwDtCdwOhwDv8JE_JMZi=58w@mail.gmail.com>
+Message-ID: <CAGb2v66meMUPwOUr4Qutqu7TO-UwDtCdwOhwDv8JE_JMZi=58w@mail.gmail.com>
+Subject: Re: [PATCH v2 07/13] arm64: allwinner: A100: enable EHCI, OHCI and
+ USB PHY nodes in Perf1
+To: Cody Eksal <masterr3c0rd@epochal.quest>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Viresh Kumar <vireshk@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Yangtao Li <tiny.windzz@gmail.com>, Parthiban <parthiban@linumiz.com>, 
+	Andre Przywara <andre.przywara@arm.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01.11.24 12:59, Stephen Rothwell wrote:
+On Thu, Oct 31, 2024 at 3:03=E2=80=AFPM Cody Eksal <masterr3c0rd@epochal.qu=
+est> wrote:
 >
-> Thanks for this.  A couple of comments.
+> From: Yangtao Li <frank@allwinnertech.com>
+>
+> Add USB support on A100 perf1 board, which include two USB2.0 port.
+>
+> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
+> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+> ---
+> Changes in V2:
+>  - Add dr_mode here, instead of in the .dtsi
+>
+>  .../allwinner/sun50i-a100-allwinner-perf1.dts | 39 +++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dt=
+s b/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> index f5c5c1464482..2f8c7ee60283 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> @@ -7,6 +7,8 @@
+>
+>  #include "sun50i-a100.dtsi"
+>
+> +#include <dt-bindings/gpio/gpio.h>
+> +
+>  /{
+>         model =3D "Allwinner A100 Perf1";
+>         compatible =3D "allwinner,a100-perf1", "allwinner,sun50i-a100";
+> @@ -18,6 +20,36 @@ aliases {
+>         chosen {
+>                 stdout-path =3D "serial0:115200n8";
+>         };
+> +
+> +       reg_usb1_vbus: usb1-vbus {
+> +               compatible =3D "regulator-fixed";
+> +               regulator-name =3D "usb1-vbus";
+> +               regulator-min-microvolt =3D <5000000>;
+> +               regulator-max-microvolt =3D <5000000>;
+> +               gpio =3D <&pio 7 10 GPIO_ACTIVE_HIGH>; /* PH10 */
+> +               enable-active-high;
+> +       };
+> +};
+> +
+> +&ehci0 {
+> +       status =3D "okay";
+> +};
+> +
+> +&ehci1 {
+> +       status =3D "okay";
+> +};
+> +
+> +&ohci0 {
+> +       status =3D "okay";
+> +};
+> +
+> +&ohci1 {
+> +       status =3D "okay";
+> +};
+> +
+> +&usb_otg {
+> +       dr_mode =3D "otg";
+> +       status =3D "okay";
 
-yw; thx for your feedback!
+Since you noted in the previous patch that OTG doesn't work if OHCI0/EHCI0
+are enabled and probed before musb, maybe we should keep them disabled
+for the time being?
 
-> On Fri,  1 Nov 2024 07:17:06 +0100 Thorsten Leemhuis <linux@leemhuis.info> wrote:
-> [...]
->> +Bisecting linux-next
->> +--------------------
->> +
->> +If you face a problem only happening in linux-next, bisect between the
->> +linux-next branches 'stable' and 'master'. The following commands will start
->> +the process for a linux-next tree you added as a remote called 'next'::
->> +
->> +  git bisect start
->> +  git bisect good next/stable
->> +  git bisect bad next/master
->> +
->> +The 'stable' branch refers to the state of linux-mainline the current
->                                                              ^
->                                                              that the current
+You could leave a TODO item above the &usb_otg node.
 
-Ohh, I thought such a "that" would be optional here, but I'm not a
-native speaker, so I guess I was wrong.
+ChenYu
 
->> +linux-next release (found in the 'master' branch) is based on -- the former
->> +thus should be free of any problems that show up in -next, but not in Linus'
->> +tree.
-> 
-> As you say, 'stable' only works for the current linux-next release.  If
-> you are trying to bisect a previous release, you can always find the
-> SHA1 associated with the base of any linux-next release using "grep
-> origin Next/SHA1s".  Not sure how useful that is.
-
-Hmmm. Not sure. Open for opinions here. But right now I tend to think:
-nice to know, but not relevant enough for this text, as most people want
-to check if latest -next is still affected -- so why then bisect with a
-older -next release?
-
-Ciao, Thorsten
+>  };
+>
+>  &pio {
+> @@ -178,3 +210,10 @@ &uart0 {
+>         pinctrl-0 =3D <&uart0_pb_pins>;
+>         status =3D "okay";
+>  };
+> +
+> +&usbphy {
+> +       usb0_id_det-gpios =3D <&pio 7 8 GPIO_ACTIVE_HIGH>; /* PH8 */
+> +       usb0_vbus-supply =3D <&reg_drivevbus>;
+> +       usb1_vbus-supply =3D <&reg_usb1_vbus>;
+> +       status =3D "okay";
+> +};
+> --
+> 2.47.0
+>
 
