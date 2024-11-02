@@ -1,93 +1,159 @@
-Return-Path: <linux-kernel+bounces-393142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4499B9C52
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 03:20:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9069F9B9C54
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 03:22:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2AC2B2198C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 02:20:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA1E1B21416
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 02:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E28413665B;
-	Sat,  2 Nov 2024 02:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B8882890;
+	Sat,  2 Nov 2024 02:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbn5BRVU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SvN+bs8R"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71625249F9;
-	Sat,  2 Nov 2024 02:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281E1249F9
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 02:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730514021; cv=none; b=Ng9qDTDFAZL/O+0aVDML7pStvlGdAOIQQFnall1TyIFVmy7hMFESjS2DIAdsQR4hv83zFiiTnN+BiIiD/Emty0Ae8C7V3kmNuWnI70FBuq01fnB8dQSzphZu98kQ5BLLbbQnE+oZmpB+Oh0vbqfzRIc0Bqne0XYBKiGC+yQ4TKk=
+	t=1730514144; cv=none; b=gdT0ChqpnRVTobPET0ZzD8IXzIZro1bv7ueOx/rSGD0qCTYsv7Pns1kFoRvNQf9e6CVCqZnySa8OZNPGDCJeTHjr4JzCFwA6Sar4Haxq64CkntZFeF1dZ5yc0fkKPL0RFKqvStWVR8vS1RTZVU9yzzrnHXIrCylQ9tFZS0k4Mzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730514021; c=relaxed/simple;
-	bh=UJhc1BEfXPgr74QkV2GxYzBCuO9egGha+1beHL+B8Xg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=U9P3+7Ik5MLyxeAgfU/m+DeZSHtqpTnUQf5RhWYzrrgVkEbJkXvMcqEXdBwlwYoW6MA32WqKt6My5lE4bvMFAJ0FVPzxpJSoHmajkCjFTewlXXQpvsv5OLGpiG17IBvZUhHr9qLz/S2m3FqEJChyz3VYiblay2InEl+ZpgVzJSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbn5BRVU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FFF2C4CECD;
-	Sat,  2 Nov 2024 02:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730514021;
-	bh=UJhc1BEfXPgr74QkV2GxYzBCuO9egGha+1beHL+B8Xg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pbn5BRVUmvazhkNzSVfqivJI9waT3vL5iMAT/ZoJTlfrjXDu1HeQoWJwrdgqOJAmX
-	 Wyyi+ucm5PpYidq9h7OaxDq6A7HLRsCins5rys2T7KrZ+5qN0c0YSEGqdjwspieoPG
-	 18/VKwU43RxhCuKK+VBRQ4c3eBWjqu+8WkUiP7yak8OcEvPx4P+42wBeUR0DPJRa14
-	 rt8lYtG0b3vbkl+bR0b4Yqa1BrKUdwJYPWS7+xqCC1NdGyVZhLyixSKcrWuJh717T6
-	 YVqO57K5W7NgDIGwdCz57N/72XXttzuDt5pELeaXG+YpSkPSQc6Y7QFhGMzcZsopo1
-	 iK2qRwEmcbn4g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C6F3AB8A90;
-	Sat,  2 Nov 2024 02:20:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730514144; c=relaxed/simple;
+	bh=1xjzQWAnB3Ay2HOz1oHv3HZX5UPhRW8Kvtv7NPXaG/Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=JuOd2eNnUJ0NlaH52XnmH3IodtwlXTFGZ5+UWfFqmqhmryIygRbG819uOep3rITQrHcjpzyXYKAc4X+i0+gohXxFp/6tU1+iFBZeiMyu0O4y9SPPN76hAsS4AmDyA/R7XiPi/U3jecepAanvSZlnTRaytriBceukSrH1+7IozFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SvN+bs8R; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e4e481692so2327931b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 19:22:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730514142; x=1731118942; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bXcmHSC56/ByVBCx/WoZJC+GVyQ+I9bFtyJEnrciFRM=;
+        b=SvN+bs8Rqsdy0LBnE/O0AwkGtJ/cwI41MZSP4hBA5VEulLs9GsIlLTew9C7/j2tCTh
+         c8nDvCJQb4euoBnbXnvD6rlTAvQcuJCYnZ3MJkhPFHJy8CS8j/j+Xi/Nyf461pZMU1V2
+         //Cdc0hG2zZJAOZHM/FCsYqw6PVgNwMvdYkii6jzmEOgBghUy33aqox374AdwpAjaAEW
+         t7DUvC2u9gDkBj0HnnITyeReVf3s203VRaGMoj/I9fJjpk95LSVvzBxKYbELYbXFJQ2A
+         N+xdbTa3rXhiO3q57JkpDzUBpPGmXFbA4wznS0cnEtung2PKpxVQh/ZLo+08gqbYanIN
+         WyUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730514142; x=1731118942;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bXcmHSC56/ByVBCx/WoZJC+GVyQ+I9bFtyJEnrciFRM=;
+        b=Is4xec/cs+5hTkMAdNyvXdvMDGLGCfc2PdpOMnJ87hWQ6FRoB6CKO5IhIz7Kws2j7S
+         B2VZ0KEpJPtHF8o1MjrMajt4GqZKsx4RhXKy2MEu1OoDPk/m7K3MlbPNO6ujSbMcbGUs
+         GSCKVy9hp0PqO7q27H4yaVUWKKRToez1Qn9DMMEYCfpvQN4jQjYESWF0lTJIN+U3dVSm
+         NOkC9c2zsX0VCZhtGBH/fanGz/xKt8cnglqgC0qyBYeW5vUn7Xlutw+AIya6loByFtHc
+         OjetCHZk7gy5o55RcTY8tKTCKNwFGWnYHm33UyrWBvkWckxCHLRKxcOTGZ9h9eD64keR
+         2kbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpoMqVOLxkhAgE9IjiaTf7noc2fdC5TLlejOxHapsxPXNvaBsVDBPKppG5lnHv7RqDqDubo/cpHO/Fvdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBFu1hNMTzmS2EGp9hDysD08H1Zn+o5smld+wWqlZi3+3qg/+f
+	XtSRppg9XKuEHSibVmEYpgLM9+LCQ+J/Yd7NYjdcShce9qfNn47L
+X-Google-Smtp-Source: AGHT+IEHigW4MYYWdNAxbx5bIv2fu2U6puZvygq0xmtIkT7iCcQH7EHK42vEZXwu43CanE6Fs3xNPw==
+X-Received: by 2002:a05:6a00:1746:b0:71e:fb4:6c98 with SMTP id d2e1a72fcca58-720c99dca77mr8600897b3a.23.1730514142299;
+        Fri, 01 Nov 2024 19:22:22 -0700 (PDT)
+Received: from gye-ThinkPad-T590.. ([59.16.200.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc205582sm3363387b3a.88.2024.11.01.19.22.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 19:22:22 -0700 (PDT)
+From: Gyeyoung Baek <gye976@gmail.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Gyeyoung Baek <gye976@gmail.com>,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] drm/xe: Fix build error for XE_IOCTL_DBG macro
+Date: Sat,  2 Nov 2024 11:22:03 +0900
+Message-Id: <20241102022204.155039-1-gye976@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] dt-bindings: net: xlnx,axi-ethernet: Correct phy-mode
- property value
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173051402925.2895750.10291096132066734100.git-patchwork-notify@kernel.org>
-Date: Sat, 02 Nov 2024 02:20:29 +0000
-References: <20241028091214.2078726-1-suraj.gupta2@amd.com>
-In-Reply-To: <20241028091214.2078726-1-suraj.gupta2@amd.com>
-To: Suraj Gupta <suraj.gupta2@amd.com>
-Cc: radhey.shyam.pandey@amd.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, git@amd.com,
- harini.katakam@amd.com
 
-Hello:
+if CONFIG_DRM_USE_DYNAMIC_DEBUG is set,
+'drm_dbg' function is replaced with '__dynamic_func_call_cls',
+which is replaced with a do while statement.
+so in the previous code, there are the following build errors.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+include/linux/dynamic_debug.h:221:58: error: expected expression before ‘do’
+  221 | #define __dynamic_func_call_cls(id, cls, fmt, func, ...) do {   \
+      |                                                          ^~
+include/linux/dynamic_debug.h:248:9: note: in expansion of macro ‘__dynamic_func_call_cls’
+  248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+include/drm/drm_print.h:425:9: note: in expansion of macro ‘_dynamic_func_call_cls’
+  425 |         _dynamic_func_call_cls(cat, fmt, __drm_dev_dbg,         \
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+include/drm/drm_print.h:504:9: note: in expansion of macro ‘drm_dev_dbg’
+  504 |         drm_dev_dbg((drm) ? (drm)->dev : NULL, DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
+      |         ^~~~~~~~~~~
+include/drm/drm_print.h:522:33: note: in expansion of macro ‘drm_dbg_driver’
+  522 | #define drm_dbg(drm, fmt, ...)  drm_dbg_driver(drm, fmt, ##__VA_ARGS__)
+      |                                 ^~~~~~~~~~~~~~
+drivers/gpu/drm/xe/xe_macros.h:14:21: note: in expansion of macro ‘drm_dbg’
+   14 |         ((cond) && (drm_dbg(&(xe)->drm, \
+      |                     ^~~~~~~
+drivers/gpu/drm/xe/xe_bo.c:2029:13: note: in expansion of macro ‘XE_IOCTL_DBG’
+ 2029 |         if (XE_IOCTL_DBG(xe, !gem_obj))
 
-On Mon, 28 Oct 2024 14:42:14 +0530 you wrote:
-> Correct phy-mode property value to 1000base-x.
-> 
-> Fixes: cbb1ca6d5f9a ("dt-bindings: net: xlnx,axi-ethernet: convert bindings document to yaml")
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> ---
->  Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+the problem is that,
+XE_IOCTL_DBG uses this function for conditional expr.
 
-Here is the summary with links:
-  - [net] dt-bindings: net: xlnx,axi-ethernet: Correct phy-mode property value
-    https://git.kernel.org/netdev/net/c/b2183187c5fd
+so I fix the expr to be compatible with the do while statement,
+by referring to "https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html".
 
-You are awesome, thank you!
+v2: I modified this to print when only cond is true.
+v3: Modify to evaluate cond only once.
+v4: There was a mistake in v3, send this again.
+
+Signed-off-by: Gyeyoung Baek <gye976@gmail.com>
+---
+ drivers/gpu/drm/xe/xe_macros.h | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/xe/xe_macros.h b/drivers/gpu/drm/xe/xe_macros.h
+index daf56c846d03..51ac8faa8975 100644
+--- a/drivers/gpu/drm/xe/xe_macros.h
++++ b/drivers/gpu/drm/xe/xe_macros.h
+@@ -10,9 +10,13 @@
+ 
+ #define XE_WARN_ON WARN_ON
+ 
+-#define XE_IOCTL_DBG(xe, cond) \
+-	((cond) && (drm_dbg(&(xe)->drm, \
+-			    "Ioctl argument check failed at %s:%d: %s", \
+-			    __FILE__, __LINE__, #cond), 1))
++#define XE_IOCTL_DBG(xe, cond) ({					\
++	int cond__ = !!(cond);						\
++	if (cond__)                                           		\
++		drm_dbg(&(xe)->drm,                                    	\
++			"Ioctl argument check failed at %s:%d: %s",	\
++			__FILE__, __LINE__, #cond);                    	\
++	cond__;                                                        	\
++})
+ 
+ #endif
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
 
