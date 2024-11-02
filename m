@@ -1,128 +1,142 @@
-Return-Path: <linux-kernel+bounces-393219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE8A9B9DE6
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:29:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B6F9B9DE4
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:24:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C075FB216F7
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7A8282CCA
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96791156677;
-	Sat,  2 Nov 2024 08:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81D7158866;
+	Sat,  2 Nov 2024 08:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="PAm4xQX6"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="KsVeJxJS"
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7903A42070
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 08:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1F042070;
+	Sat,  2 Nov 2024 08:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730536131; cv=none; b=ZDaXADqtoZSlbbV9hQ1ttp98ZY4INy/eg/LSB+qy99QzIj35ciDfwHTXICT7uqFehUBT0m9gvvugAjgUTwMKJReLzz3sbIVyBIhYvDfBY5EVHpBYc9xUZ894l1uR+Muchr/72+/qYt/BU5IUxoLggsZSe2Gp0SX5ob9S1iGhXis=
+	t=1730535860; cv=none; b=j2Hs2WEOZnGBR/XUQXFfLTWdLFQHR4tjzOHruhCatyDM3XSIYUqfNqNrVofD0iO3/qY1GRDmRXAERM21cuwPHGr5iNfjZkKPJv9mSThcpyf4rY7B+otIboo1Yg7LZT6V2ORTb/uSoMKBSSmMSCKPDLcTGTQhrkVv/oybv5r2YC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730536131; c=relaxed/simple;
-	bh=VucVWMwmqOoxwHUI426J6iBczgkBi6FfGNvz8HXKWg0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=mbUx5moh5YBH1k8HbTLHziAUWgS4DYcvI9DG5ESWvw8CHcDOtvYakSJ0GPqT/eAChGUJ0hCo4Tn0+NBIma1UWGQXQEXjRobLyGEW87P/2AZmPl97askt/EuDBxEelowkd7WmPgqn2riUBuOv+xO5JnVeVZj/6f0yT0f1AWFA7gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=PAm4xQX6; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730535814; bh=56bfg8HErm/Yf4IHwIPGaZpVasaUNl/SrVReGKrfo5I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=PAm4xQX6q3+qphA4kEt/zuFiwqZkSTBWYBy7CPdR1zRb1acFkpsPxq5p30EcobPcO
-	 mYles30HQi+QvF2zcO80rAdmXAamdab91l496mm3TO86W9AHP6VClSA0evLAjOOLZo
-	 Zc82+HbTQAEPi1IfNOoDRwiIa9H4x1c50TzFim6w=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszc25-0.qq.com (NewEsmtp) with SMTP
-	id 5E10A4AA; Sat, 02 Nov 2024 16:23:33 +0800
-X-QQ-mid: xmsmtpt1730535813t35l1n5d1
-Message-ID: <tencent_F5D894DCE9D6EE76CF4C7BCE6CBC2FAD6E0A@qq.com>
-X-QQ-XMAILINFO: NQR8mRxMnur9+sRo5sukoIcvVWU1miBjLMwz74M8LEgujI/vWpnMoMQgLUNiKD
-	 frfA9X6sgszR2Dx30/MknW+SHtvfDoNxm/+W4MOgAiEDzpi+6qKasJzrDT0IVzggWdZeXu0lnuam
-	 yfCIq0tFvuzCb/DisDpHB0oetW3gmmank1lPhC8ETI8yBskvPSrQqiY1+Fu/scgpgWBwGZ6+IuiE
-	 rkL0k0WskIht7195zZtLFGh/HwDE+g3ul8/WaQrjzdpsqoYBgK3Vy/h0P8vabioTJteRD7npS861
-	 R8TKtF+nUuqBUFDQmBD3OYKgt8LGDO7BRmsVZSBlu//qOgCDjYipH/27x4GoF5VW1u6XO0Ngw6zg
-	 f78776aejkLilZCkOkbxOPQHHtcjOkq9Gy+hm9DbkX8glz1hXYr14uTuqrQRVM5qFHHmr3g7IfU9
-	 bloYAOLFQjM1fYitgO1cWbbQAz0cZ3kaZHczBlgHUG+YZQkohO1WS8gPjgC+9G48sFMRBxE/rIvG
-	 KZLnMaNkQEqhsDvqsWiNIcvSRsIQzneGQy0FQNAOd4qUyXZN3LRuJKdIiGbVS7gDK+er8gwyAYLo
-	 w/RtAu0kb76A142x88fmG+/zPVgWybLHn78a1Dr1qJqQvY7TqSos0bOax9SItJB8WN4VYGbt+cBs
-	 RbOXh4SDm7IjwkZktCG7AL9PrR8yVcHVXGO3ztEcnEhJtiHOF5gIRNrmIuvR12fajgMnQyvqb1O+
-	 ZRSc7n/IRicdbRJoiO3kgmsouw5yUYgMGBtGFEteNLAQd01zFWS51LwpVcRdcKcPKM5AL92hXxPh
-	 K/vAHaferwTpTc8ZvUgvy5S+JlUjb3dVWXNOiuo94Bma4yg4vfZ9ChH7PSAErLUfukEOs3ZMhWE5
-	 2T0aOomwKNl1nFzikr8GQd2OrkkfPP0x9i0pHjxdua
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+d2adb332fe371b0595e3@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bpf?] WARNING: locking bug in bpf_map_put
-Date: Sat,  2 Nov 2024 16:23:33 +0800
-X-OQ-MSGID: <20241102082332.180525-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <67251dc5.050a0220.529b6.015c.GAE@google.com>
-References: <67251dc5.050a0220.529b6.015c.GAE@google.com>
+	s=arc-20240116; t=1730535860; c=relaxed/simple;
+	bh=yGK1KN39J4qBgGabjddBS4CW61b4/PobSXi3k7uiWHY=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Xe9Pcpe+PAKS98gbU8DNRb3FAvyGnyYkVdSxzYcbdl2580dRrzEUTTsoN3uuf0cRmymFTEo4Pi+2KugFTcAWqRpGHk8jnkmtRapE43ak3m7xlIJMgzgZdMMPGSOCxpyjs2aGwCYM2u3sv8bWwszyx4ot3w6UsC8z8y8O3DcFT6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=KsVeJxJS; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1730535858; x=1762071858;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=yGK1KN39J4qBgGabjddBS4CW61b4/PobSXi3k7uiWHY=;
+  b=KsVeJxJSsfvTecCS7p3uO0fWGJmzJdAFFSO1dht5IBT/Pc4Xi3o9zCBh
+   i+SUv7eHpo6jQfDtF+UIV1J4MQXCwfvhd8oTxQ/bDbIdaeRyTK96VxRHW
+   MRFB1BQNayXiY0A/IHCLwq0TFZMwDLs+4ufqWDuS5HxIErzzwZB/A0VFv
+   E=;
+X-IronPort-AV: E=Sophos;i="6.11,252,1725321600"; 
+   d="scan'208";a="142784627"
+Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
+Thread-Topic: [PATCH 05/10] guestmemfs: add file mmap callback
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 08:24:17 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:21274]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.4.191:2525] with esmtp (Farcaster)
+ id d77b947b-8f2e-4f82-a732-694a889584ed; Sat, 2 Nov 2024 08:24:16 +0000 (UTC)
+X-Farcaster-Flow-ID: d77b947b-8f2e-4f82-a732-694a889584ed
+Received: from EX19D004EUC003.ant.amazon.com (10.252.51.249) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Sat, 2 Nov 2024 08:24:15 +0000
+Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
+ EX19D004EUC003.ant.amazon.com (10.252.51.249) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Sat, 2 Nov 2024 08:24:15 +0000
+Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
+ EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
+ 15.02.1258.034; Sat, 2 Nov 2024 08:24:15 +0000
+From: "Gowans, James" <jgowans@amazon.com>
+To: "jgg@ziepe.ca" <jgg@ziepe.ca>
+CC: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
+	<rppt@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>,
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Durrant,
+ Paul" <pdurrant@amazon.co.uk>, "Woodhouse, David" <dwmw@amazon.co.uk>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
+	<seanjc@google.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "Saenz
+ Julienne, Nicolas" <nsaenz@amazon.es>, "Graf (AWS), Alexander"
+	<graf@amazon.de>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"jack@suse.cz" <jack@suse.cz>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>
+Thread-Index: AQHbKlc3IZ2PqNLJ5E+mkZOTFQYr3bKg/xKAgAAJ94CAAV52AIAAC3wAgAE5hQA=
+Date: Sat, 2 Nov 2024 08:24:15 +0000
+Message-ID: <9df04c57f9d5f351bb1b4eeef764bf9ccc6711b1.camel@amazon.com>
+References: <20240805093245.889357-1-jgowans@amazon.com>
+	 <20240805093245.889357-6-jgowans@amazon.com>
+	 <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
+	 <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
+	 <20241031160635.GA35848@ziepe.ca>
+	 <fe4dd4d2f5eb2209f0190d547fe29370554ceca8.camel@amazon.com>
+	 <20241101134202.GB35848@ziepe.ca>
+In-Reply-To: <20241101134202.GB35848@ziepe.ca>
+Accept-Language: en-ZA, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1EDB8442E7DDA94C9445F2E7A451F7F9@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-there is a raw_spin_lock and spin_lock:
-
-      raw_spin_lock(&b->raw_lock);
-      spin_lock(&map_idr_lock);
-      spin_unlock(&map_idr_lock);
-      raw_spin_unlock(&b->raw_lock);
-
-#syz test: upstream master
-
-diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-index b14b87463ee0..c2e0b26c8053 100644
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -78,7 +78,7 @@
-  */
- struct bucket {
- 	struct hlist_nulls_head head;
--	raw_spinlock_t raw_lock;
-+	spinlock_t lock;
- };
- 
- #define HASHTAB_MAP_LOCK_COUNT 8
-@@ -140,8 +140,8 @@ static void htab_init_buckets(struct bpf_htab *htab)
- 
- 	for (i = 0; i < htab->n_buckets; i++) {
- 		INIT_HLIST_NULLS_HEAD(&htab->buckets[i].head, i);
--		raw_spin_lock_init(&htab->buckets[i].raw_lock);
--		lockdep_set_class(&htab->buckets[i].raw_lock,
-+		spin_lock_init(&htab->buckets[i].lock);
-+		lockdep_set_class(&htab->buckets[i].lock,
- 					  &htab->lockdep_key);
- 		cond_resched();
- 	}
-@@ -164,7 +164,7 @@ static inline int htab_lock_bucket(const struct bpf_htab *htab,
- 		return -EBUSY;
- 	}
- 
--	raw_spin_lock(&b->raw_lock);
-+	spin_lock(&b->lock);
- 	*pflags = flags;
- 
- 	return 0;
-@@ -175,7 +175,7 @@ static inline void htab_unlock_bucket(const struct bpf_htab *htab,
- 				      unsigned long flags)
- {
- 	hash = hash & min_t(u32, HASHTAB_MAP_LOCK_MASK, htab->n_buckets - 1);
--	raw_spin_unlock(&b->raw_lock);
-+	spin_unlock(&b->lock);
- 	__this_cpu_dec(*(htab->map_locked[hash]));
- 	local_irq_restore(flags);
- 	preempt_enable();
-
+T24gRnJpLCAyMDI0LTExLTAxIGF0IDEwOjQyIC0wMzAwLCBKYXNvbiBHdW50aG9ycGUgd3JvdGU6
+DQo+IA0KPiBPbiBGcmksIE5vdiAwMSwgMjAyNCBhdCAwMTowMTowMFBNICswMDAwLCBHb3dhbnMs
+IEphbWVzIHdyb3RlOg0KPiANCj4gPiBUaGFua3MgSmFzb24sIHRoYXQgc291bmRzIHBlcmZlY3Qu
+IEknbGwgd29yayBvbiB0aGUgbmV4dCByZXYgd2hpY2ggd2lsbDoNCj4gPiAtIGV4cG9zZSBhIGZp
+bGVzeXN0ZW0gd2hpY2ggb3ducyByZXNlcnZlZC9wZXJzaXN0ZW50IG1lbW9yeSwganVzdCBsaWtl
+DQo+ID4gdGhpcyBwYXRjaC4NCj4gDQo+IElzIHRoaXMgc3RlcCBuZWVkZWQ/DQo+IA0KPiBJZiB0
+aGUgZ3Vlc3QgbWVtZmQgaXMgYWxyZWFkeSB0b2xkIHRvIGdldCAxRyBwYWdlcyBpbiBzb21lIG5v
+cm1hbCB3YXksDQo+IHdoeSBkbyB3ZSBuZWVkIGEgZGVkaWNhdGVkIHBvb2wganVzdCBmb3IgdGhl
+IEtITyBmaWxlc3lzdGVtPw0KPiANCj4gQmFjayB0byBteSBzdWdnZXN0aW9uLCBjYW4ndCBLSE8g
+c2ltcGx5IGZyZWV6ZSB0aGUgZ3Vlc3QgbWVtZmQgYW5kDQo+IHRoZW4gZXh0cmFjdCB0aGUgbWVt
+b3J5IGxheW91dCwgYW5kIGp1c3QgdXNlIHRoZSBub3JtYWwgYWxsb2NhdG9yPw0KPiANCj4gT3Ig
+ZG8geW91IGhhdmUgYSBoYXJkIHJlcXVpcmVtZW50IHRoYXQgb25seSBLSE8gYWxsb2NhdGVkIG1l
+bW9yeSBjYW4NCj4gYmUgcHJlc2VydmVkIGFjcm9zcyBrZXhlYz8NCg0KS0hPIGNhbiBwZXJzaXN0
+IGFueSBtZW1vcnkgcmFuZ2VzIHdoaWNoIGFyZSBub3QgTU9WQUJMRS4gUHJvdmlkZWQgdGhhdA0K
+Z3Vlc3RfbWVtZmQgZG9lcyBub24tbW92YWJsZSBhbGxvY2F0aW9ucyB0aGVuIHNlcmlhbGlzaW5n
+IGFuZCBwZXJzaXN0aW5nDQpzaG91bGQgYmUgcG9zc2libGUuDQoNClRoZXJlIGFyZSBvdGhlciBy
+ZXF1aXJlbWVudHMgaGVyZSwgc3BlY2lmaWNhbGx5IHRoZSBhYmlsaXR5IHRvIGJlDQoqZ3VhcmFu
+dGVlZCogR2lCLWxldmVsIGFsbG9jYXRpb25zLCBoYXZlIHRoZSBndWVzdCBtZW1vcnkgb3V0IG9m
+IHRoZQ0KZGlyZWN0IG1hcCBmb3Igc2VjcmV0IGhpZGluZywgYW5kIHJlbW92ZSB0aGUgc3RydWN0
+IHBhZ2Ugb3ZlcmhlYWQuDQpTdHJ1Y3QgcGFnZSBvdmVyaGVhZCBjb3VsZCBiZSBoYW5kbGVkIHZp
+YSBIVk8uIEJ1dCBjb25zaWRlcmluZyB0aGF0IHRoZQ0KbWVtb3J5IG11c3QgYmUgb3V0IG9mIHRo
+ZSBkaXJlY3QgbWFwIGl0IHNlZW1zIHVubmVjZXNzYXJ5IHRvIGhhdmUgc3RydWN0DQpwYWdlcywg
+YW5kIHVubmVjZXNzYXJ5IHRvIGhhdmUgaXQgbWFuYWdlZCBieSBhbiBleGlzdGluZyBhbGxvY2F0
+b3IuIFRoZQ0Kb25seSBleGlzdGluZyAxIEdpQiBhbGxvY2F0b3IgSSBrbm93IG9mIGlzIGh1Z2V0
+bGJmcz8gTGV0IG1lIGtub3cgaWYNCnRoZXJlJ3Mgc29tZXRoaW5nIGVsc2UgdGhhdCBjYW4gYmUg
+dXNlZC4NClRoYXQncyB0aGUgbWFpbiBtb3RpdmF0aW9uIGZvciBhIHNlcGFyYXRlIHBvb2wgYWxs
+b2NhdGVkIG9uIGVhcmx5IGJvb3QuDQpUaGlzIGlzIHF1aXRlIHNpbWlsYXIgdG8gaHVnZXRsYmZz
+LCBzbyBhIG5hdHVyYWwgcXVlc3Rpb24gaXMgaWYgd2UgY291bGQNCnVzZSBhbmQgc2VyaWFsaXNl
+IGh1Z2V0bGJmcyBpbnN0ZWFkLCBidXQgdGhhdCBwcm9iYWJseSBvcGVucyBhbm90aGVyIGNhbg0K
+b2Ygd29ybXMgb2YgY29tcGxleGl0eS4NCg0KVGhlcmUncyBtb3JlIHRoYW4ganVzdCB0aGUgZ3Vl
+c3RfbWVtZmRzIGFuZCB0aGVpciBhbGxvY2F0aW9ucyB0bw0Kc2VyaWFsaXNlOyBpdCdzIHByb2Jh
+Ymx5IHVzZWZ1bCB0byBiZSBhYmxlIHRvIGhhdmUgYSBkaXJlY3Rvcnkgc3RydWN0dXJlDQppbiB0
+aGUgZmlsZXN5c3RlbSwgUE9TSVggZmlsZSBBQ0xzLCBhbmQgcGVyaGFwcyBzb21lIG90aGVyIGZp
+bGVzeXN0ZW0NCm1ldGFkYXRhLiBGb3IgdGhpcyByZWFzb24gSSBzdGlsbCB0aGluayB0aGF0IGhh
+dmluZyBhIG5ldyBmaWxlc3lzdGVtDQpkZXNpZ25lZCBmb3IgdGhpcyB1c2UtY2FzZSB3aGljaCBj
+cmVhdGVzIGd1ZXN0X21lbWZkIG9iamVjdHMgd2hlbiBmaWxlcw0KYXJlIG9wZW5lZCBpcyB0aGUg
+d2F5IHRvIGdvLg0KDQpMZXQgbWUga25vdyB3aGF0IHlvdSB0aGluay4NCg0KSkcNCg==
 
