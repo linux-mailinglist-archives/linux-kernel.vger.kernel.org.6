@@ -1,171 +1,168 @@
-Return-Path: <linux-kernel+bounces-393238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 180639B9E23
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:20:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BE49B9E27
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:24:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9731C21801
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A3001F22651
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F61C15C15A;
-	Sat,  2 Nov 2024 09:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0546416191B;
+	Sat,  2 Nov 2024 09:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jD53bc4f"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vuG4/JyJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pzr6QA4d"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6B413BACC;
-	Sat,  2 Nov 2024 09:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7590113BACC;
+	Sat,  2 Nov 2024 09:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730539213; cv=none; b=QtoUoW1e/9xnUInb9lKbP4usxCsJwSM5rta7UkH/KABxwzhwSDjRhH6XZhhx6aDjLGE25p1A2sAwLADDSsjECf30jVeNsT0KXpuagAKgOZ1exEnUfGhH+B/nH6f0tB1eo5sp/vVWHVC9dEmkpuWVZXVc8pGmy4ahM5ko6FdKaMI=
+	t=1730539479; cv=none; b=UlYYXBYjOJ8hKczwRN1ReGjp01PXRFa7QFjn8FN33rY+Ci4jxNSO4v6SazhDUl1R9i+4sPWEW/UOOKjO3bkKmCKZ+4YaVdnQm4XDyVhSQ7KMHcpAAHM9HWdKEZ+uojjgo+tSU0V5UVlCbl4iQ/QHQTxu8URBi/Sc9I6/ek7eEuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730539213; c=relaxed/simple;
-	bh=gdWMNWxXFHL9qw19MfKzkIcpkx3y/3En0QAut+yHzj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ppqjffqyjGWkhESdV09o3Vrf8Br3RcnLLGbXUlcRAFqOiSV2+4V7JoeW9eijVkDyJOcxbz3mw9esm4qZNG1SWXvLRlv0LwK1EXklfrCgPpIj55nJ8pomUe51HaLD7b1FwykP/H8X0XAaiFsaCBMo0oCqoLN3FMhuKQGp3Tn5Qb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jD53bc4f; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7180d9d0dcbso1061087a34.3;
-        Sat, 02 Nov 2024 02:20:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730539211; x=1731144011; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kpGFODYS8j6Lc9OgDllYcnBQdgtbbm75EKILrrrUJdM=;
-        b=jD53bc4fu3eKgADSgSp5ryOi2Pt+RtUNSHkSsDjKTopyKeR8mxRmaTENTBHW9YKPZN
-         bn2NpPYRqvIVGPbbACVzupUe7MWD8MM3v2wSsxjLoLEZl1tYaPF+5QAIeVRFpFZRR/zv
-         qyt+9g6FHw3BiXsaUb+n4T5f4LfijoQysK7O+kCq3ciE2goKgCPInzPeSycxxYMLWysj
-         o2wTqeqErhtQne2vCAnaIsVarmTUbjw3GW4pPO3TNx2WwcZ1LUBd40o58LOopUUajpMy
-         Z3CLh5+eMRrx2h2Add2J5iKHwGZY4//F2s9F0OzeTaaB5FKxS7RfIKwhxKOAQX737Q/Z
-         fY5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730539211; x=1731144011;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kpGFODYS8j6Lc9OgDllYcnBQdgtbbm75EKILrrrUJdM=;
-        b=FOLGGAPpPiv95a1TLUu2rrbjuEOAfsWfxjKLpwVRa8uvnYgVYEXPWmtKsao4lssoUg
-         g9Ut5uhMXj38T4rSrwHFS7j4YeIbtvZj7iJ5UDwo/5G7evYr/SxNCylC8XuNX3dCrfc7
-         FkkOLwylp18Tugq1eKzcW80lbfsqe83wqqD56Uojl6fLMxO7JeSsjQLa/5zj1wycTorT
-         scL5XiuJMiaspqaqCSSpBNBWwyOaeCWm/nIcaqZTuqYXqVXft0BmBLUl+SZrXN/5PjV1
-         NyFgebeFFNz5GajT+NXiwmt0HQ+TUCfe8h5qhtp+lOVUION52m4huUSc/PDEeHfhor+3
-         KRDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0GweHSFZplVYDFWAiso7F7rIvYhaFvJ/zCUtGTnm2HEvo+T13BmvRO6IKljk9d//Ay6dUjexd4qyn@vger.kernel.org, AJvYcCV2Y7jssZ0Kj/ZSxSM949C3DWYnoI2ZSgBnA1wIVVH08r6bYL+SPSGzD269zqK7IDKeFyNB8qqNS6o=@vger.kernel.org, AJvYcCWvHxDHBiK+If7eRbDSbEB1Jbit2TSb5vAbH2bMicEEQLJpFUYtcW8Lp7MNt7j+kk63bJE8P6iQPTqR9PXR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ5XKxMU1kyqwFcbiQcUeUFkhXfg3aFitL+dbMZpCDCqOYqDyh
-	6BCHAd1FbK4tWvHs391F/oBqE83CP9E6Z06xAMhhxgkIKbYP73Ff
-X-Google-Smtp-Source: AGHT+IFLReBsrRpmxL4vu2o+HK8LR5rKgVTw5Pae/xERGUN3VNDuKb5mCI4fypHiqCUe37x/W4d24w==
-X-Received: by 2002:a05:6830:6015:b0:717:fe2d:a4e4 with SMTP id 46e09a7af769-7189b4f40e0mr8772997a34.19.1730539211247;
-        Sat, 02 Nov 2024 02:20:11 -0700 (PDT)
-Received: from illithid ([2600:1700:957d:1d70::49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7189cccf736sm1089795a34.69.2024.11.02.02.20.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 02:20:10 -0700 (PDT)
-Date: Sat, 2 Nov 2024 04:20:07 -0500
-From: "G. Branden Robinson" <g.branden.robinson@gmail.com>
-To: Ian Rogers <irogers@google.com>
-Cc: Alejandro Colomar <alx@kernel.org>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] proc_pid_fdinfo.5: Add subsection headers for
- different fd types
-Message-ID: <20241102092007.ixxtdc6u4iutxmam@illithid>
-References: <20241101211830.1298073-1-irogers@google.com>
- <20241101211830.1298073-3-irogers@google.com>
+	s=arc-20240116; t=1730539479; c=relaxed/simple;
+	bh=i9+CMHUkMww78j1eGiwagnjFRk6uvaAFmv+8ijbFMkw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PAZuqhO+O6d9naP2KBRV85CyyNR91DMGq9xdJVrdIUKvvz4X1d81AkPSn4L/rwzAZ+yedQSZ2vugNxxl1yBEQd3C6/bHLhUa+5tvn/Wb1E9FaXCRV7hxMt8TM5PDlUZWXjiTIoT8ACB5PF3o430PVW2i8qJpOzQ9WwpZhRYT3wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vuG4/JyJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pzr6QA4d; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 02 Nov 2024 09:24:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730539475;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pVtEiwYCbm8mH9lMf4np5azLZVfrBBJvcfjuP3wWqLM=;
+	b=vuG4/JyJSeAFWiAfY1kHnh7H3MHkIQYWbvje9Ioth0/kooPa/JXjUAHxgVAaQ+u5+ybglj
+	WVtn0AvIhPn9HDhk6pZspuwRhc3JYsAEgxfU47YmrFGYSBms785sf+dJPaarySYndjb+LU
+	IO5+AeQcggTX3jB+RpiEM7PNtg/0dIsI2rMif6nOL5js+m4ZflNHWRqV+ZTg9nNqBSI+xm
+	ww6KAPooM1HCCpAECWQxcFZEEoXhPRIPSgQuAcLeGcR2bF2Xb98CPa1LEUtN7AbI3Z8JXK
+	EZBW6tSw1Oi2HbsHAhVPWrqxclf9sZknFezytto2rb8zMNc/mcpIhPkavrBq/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730539475;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pVtEiwYCbm8mH9lMf4np5azLZVfrBBJvcfjuP3wWqLM=;
+	b=pzr6QA4dnkrE7cwrps/EcRmiXM5rwOzofyInPZj7SS1lskaJo5iKTGL29SOF9JHzt2iSuS
+	+QUE80AtKZfL15Bw==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] timekeeping: Always check for negative motion
+Cc: Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241031120328.599430157@linutronix.de>
+References: <20241031120328.599430157@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4bjtnlpbcduyzdoo"
-Content-Disposition: inline
-In-Reply-To: <20241101211830.1298073-3-irogers@google.com>
+Message-ID: <173053947434.3137.8990439381902202381.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the timers/core branch of tip:
 
---4bjtnlpbcduyzdoo
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 3/4] proc_pid_fdinfo.5: Add subsection headers for
- different fd types
-MIME-Version: 1.0
+Commit-ID:     c163e40af9b2331b2c629fd4ec8b703ed4d4ae39
+Gitweb:        https://git.kernel.org/tip/c163e40af9b2331b2c629fd4ec8b703ed4d4ae39
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Thu, 31 Oct 2024 13:04:08 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 02 Nov 2024 10:14:31 +01:00
 
-Hi Ian,
+timekeeping: Always check for negative motion
 
-At 2024-11-01T14:18:29-0700, Ian Rogers wrote:
-> Make the sections about eventfd, epoll, signalfd, inotify, fanotify,
-> timerfd better separated with a clearer subsection header.
->=20
-> Signed-off-by: Ian Rogers <irogers@google.com>
-[...]
-> +.SS eventfd
->  .P
-[...]
-> +.SS epoll
->  .P
-[...]
-> +.SS signalfd
->  .P
-[...]
-> +.SS inotify
->  .P
-[etc.]
+clocksource_delta() has two variants. One with a check for negative motion,
+which is only selected by x86. This is a historic leftover as this function
+was previously used in the time getter hot paths.
 
-I suggest deleting the paragraphing macros when you add (sub)sectioning
-macros immediately before them.  In these cases the `P` calls end up
-doing nothing.
+Since 135225a363ae timekeeping_cycles_to_ns() has unconditional protection
+against this as a by-product of the protection against 64bit math overflow.
 
-groff_man(7):
-       .SS [subheading=E2=80=90text]
-              Set subheading=E2=80=90text as a subsection heading indented
-              between a section heading and an ordinary paragraph (.P).
-              If no argument is given, a one=E2=80=90line input trap is pla=
-nted;
-              text on the next line becomes subheading=E2=80=90text.  The l=
-eft
-              margin is reset to the value of the SN register to set the
-              heading text in bold (or the font specified by the string
-              HF).  If the heading font \*[HF] is bold, use of an italic
-              style in subheading=E2=80=90text is mapped to the bold=E2=80=
-=90italic
-              style if available in the font family.  The inset level is
-              reset to 1, setting the left margin to the value of the IN
-              register.  Text after subheading=E2=80=90text is set as an
-              ordinary paragraph (.P).
+clocksource_delta() is only used in the clocksource watchdog and in
+timekeeping_advance(). The extra conditional there is not hurting anyone.
 
-Regards,
-Branden
+Remove the config option and unconditionally prevent negative motion of the
+readout.
 
---4bjtnlpbcduyzdoo
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: John Stultz <jstultz@google.com>
+Link: https://lore.kernel.org/all/20241031120328.599430157@linutronix.de
 
------BEGIN PGP SIGNATURE-----
+---
+ arch/x86/Kconfig                   | 1 -
+ kernel/time/Kconfig                | 5 -----
+ kernel/time/timekeeping_internal.h | 7 -------
+ 3 files changed, 13 deletions(-)
 
-iQIzBAABCAAdFiEEh3PWHWjjDgcrENwa0Z6cfXEmbc4FAmcl7scACgkQ0Z6cfXEm
-bc5BFg//Q9uaGXm0MGnz6aClftEXxT5cINEJIJq4ZOtnAqBKeSw5QBdlvDiPIMPr
-Rv9yHC5rz5Ha6STdxQCX6feI2OImonRaWx8ZCl92h3U03Wxhw686lBGSfdHdwJqe
-6sqMDyIVILx3oqnWkuqfs/SIKRkmbVBacBo0x6KSOglbHR/Swa9qEMtmyJzrnxzJ
-PJctPqWtxv8Zd8+zNc1caOG3ckeLwnNtUeoVC4iOe3hFdSE3XBnm5hM0UbGFSYjG
-AHcfRD3C8QsQYO+F9ikevajUwijcCXmyoQ6Pe85qqSL6Fcn1u7HHA705NEomDDD+
-Bfn3S5txZANBc1IxGqc7CKnUy3MuoIYP5bmoF8VTje3crBCBaNqg610F8FfaLPYj
-KR6mx29956y5GnfhAsYWx1nyNio+6KaBHXL9qE80Fwq4+s3V8UJT+Ii4jRd1cnI6
-JXNMfdjf82P4gKeDLi31LsYUHxO/paq0gVLerw8YPtJUiozjM5QxbnvCCSx2zKr8
-L7syuSsFt7VVQyJyY3REHT35LTxcNx7h/QRnXxlvM8lVLDzHcGegsk5lCCf2OMyg
-YjCFZihestXdMtn74kSArBWGjjqW4Zu5gojc6dMXp5pC+JzeGxhzWFN6iFGPFgUH
-LTQimXt367vOAdi9XpoaaG1FkZHiXXlMLcHbq315rctNKdsJAl8=
-=14Tv
------END PGP SIGNATURE-----
-
---4bjtnlpbcduyzdoo--
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 2852fcd..53a5eda 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -145,7 +145,6 @@ config X86
+ 	select ARCH_HAS_PARANOID_L1D_FLUSH
+ 	select BUILDTIME_TABLE_SORT
+ 	select CLKEVT_I8253
+-	select CLOCKSOURCE_VALIDATE_LAST_CYCLE
+ 	select CLOCKSOURCE_WATCHDOG
+ 	# Word-size accesses may read uninitialized data past the trailing \0
+ 	# in strings and cause false KMSAN reports.
+diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
+index 8ebb6d5..b0b97a6 100644
+--- a/kernel/time/Kconfig
++++ b/kernel/time/Kconfig
+@@ -17,11 +17,6 @@ config ARCH_CLOCKSOURCE_DATA
+ config ARCH_CLOCKSOURCE_INIT
+ 	bool
+ 
+-# Clocksources require validation of the clocksource against the last
+-# cycle update - x86/TSC misfeature
+-config CLOCKSOURCE_VALIDATE_LAST_CYCLE
+-	bool
+-
+ # Timekeeping vsyscall support
+ config GENERIC_TIME_VSYSCALL
+ 	bool
+diff --git a/kernel/time/timekeeping_internal.h b/kernel/time/timekeeping_internal.h
+index b3dca83..63e600e 100644
+--- a/kernel/time/timekeeping_internal.h
++++ b/kernel/time/timekeeping_internal.h
+@@ -30,7 +30,6 @@ static inline void timekeeping_inc_mg_floor_swaps(void)
+ 
+ #endif
+ 
+-#ifdef CONFIG_CLOCKSOURCE_VALIDATE_LAST_CYCLE
+ static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
+ {
+ 	u64 ret = (now - last) & mask;
+@@ -41,12 +40,6 @@ static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
+ 	 */
+ 	return ret & ~(mask >> 1) ? 0 : ret;
+ }
+-#else
+-static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
+-{
+-	return (now - last) & mask;
+-}
+-#endif
+ 
+ /* Semi public for serialization of non timekeeper VDSO updates. */
+ unsigned long timekeeper_lock_irqsave(void);
 
