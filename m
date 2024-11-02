@@ -1,170 +1,109 @@
-Return-Path: <linux-kernel+bounces-393315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21FCA9B9F0F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:47:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20939B9F09
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:47:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5492281D1D
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BCC5281D1E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4820172BAE;
-	Sat,  2 Nov 2024 10:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09ACC172BA8;
+	Sat,  2 Nov 2024 10:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hfmsa6p8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GETuJANe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D50D17085C;
-	Sat,  2 Nov 2024 10:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437A314F10E;
+	Sat,  2 Nov 2024 10:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730544461; cv=none; b=ib9Ibb+HwaTpSQsDfmrvbQbFBWWBg2wUtCSSp/gN4fvLPB4F6qG5YIX9AuyS7xV/H1V+x2WZP35IgNoe9TRcIj1Y9zPMY8IwsFktJJfSP+FPYsZNZc8tvwqBlFbjoaZopNoLiy5vdBtXGQvKY05EBby/wpOWlVU7v07O6Ij8SDc=
+	t=1730544434; cv=none; b=Zx0HOxLw1SGuMRQW3Ht+wBqCBD7qf3Et0desgt7asZW78VkClxDaBDQb6hDobhtFtOom1tt7xH4fSxqh63FRkHrxq5DREMQ2Ywlq34QTveYhssc1be3vOIVd56J/oJWCpWlbthBwVqmo7j+VGMbANuEdU6fv9ZuAWbcH1deIxe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730544461; c=relaxed/simple;
-	bh=zybFxd/JEqTLlTVQcJAakhPKB9jHi5x6yGUbpN3RLkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BdMC5xPGX1tTNpHAA2sEBaox+NGAEV+UucC0AIOcG3MLjNfnZQhAhYO6KGwUnybyQ2xRU0JKRralT5rkutLJ+3MB15kWl0o39Rm2VJ1Q55KZIlTEGe2XRAEsRzEQlTAvg3YHDfsKw9B9c1ajG30DpvrBC8KgeWHB4KkuK6oP48c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hfmsa6p8; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730544459; x=1762080459;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zybFxd/JEqTLlTVQcJAakhPKB9jHi5x6yGUbpN3RLkQ=;
-  b=Hfmsa6p8WAIo5Ql42LN8E4rqZoCP36SKdUjzedRAh0CfwpYF50gXMdat
-   +mwD5vUhGbmG2h2lE4T2efJsqgxcQmwARODj+oXq94F7e1oXPOYT1yKSO
-   oaR+EL9YQL1fDp0AQd5sOLz0TMY3Te0SBN7EerFI7FaJRI27i6ZhmkJ7X
-   0YCmUNKiKXZLRfuiSiVdBl6sx1h+e3zrj4v9nCz/JAWSUM5LCiPLGDGAI
-   AhSmkL4SnGF5g72FmVhG2yBxXAtqQrBMomuLiVVVFOrjweWIOwqX7/Uj1
-   gxyIRsIJjFGwCjznpvaZ3uv+cMeXOc31LxmQJSD9DWPDYnUTXqfvJVBVs
-   w==;
-X-CSE-ConnectionGUID: uIoyf/SYSBmO7OJeBt4oZA==
-X-CSE-MsgGUID: JckAahPFS/aIccDj13yQ6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="52865922"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="52865922"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 03:47:38 -0700
-X-CSE-ConnectionGUID: fdgXRwBHRWaknwcAKmGDkA==
-X-CSE-MsgGUID: 33/uCdm4SVmTE6cRcbybZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,252,1725346800"; 
-   d="scan'208";a="113978725"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 02 Nov 2024 03:47:32 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t7BfF-000inD-0a;
-	Sat, 02 Nov 2024 10:47:29 +0000
-Date: Sat, 2 Nov 2024 18:46:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jishnu Prakash <quic_jprakash@quicinc.com>, jic23@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, agross@kernel.org, andersson@kernel.org,
-	dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org,
-	daniel.lezcano@linaro.org, sboyd@kernel.org,
-	quic_subbaram@quicinc.com, quic_collinsd@quicinc.com,
-	quic_amelende@quicinc.com, quic_kamalw@quicinc.com,
-	amitk@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, lee@kernel.org, rafael@kernel.org,
-	rui.zhang@intel.com, lukasz.luba@arm.com, lars@metafoo.de,
-	quic_skakitap@quicinc.com, neil.armstrong@linaro.org,
-	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, cros-qcom-dts-watchers@chromium.org,
-	Jishnu Prakash <quic_jprakash@quicinc.com>
-Subject: Re: [PATCH V4 3/4] iio: adc: Add support for QCOM PMIC5 Gen3 ADC
-Message-ID: <202411021830.6iNtNN1E-lkp@intel.com>
-References: <20241030185854.4015348-4-quic_jprakash@quicinc.com>
+	s=arc-20240116; t=1730544434; c=relaxed/simple;
+	bh=M7FdSpu+PhluM81llzaa2KRxqj+jubQ2BPx4TOrWNTc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kg6Xq0W1qNJ12Y2fafKQB8+qVRqg3tXpc+mw1cAekbqAGvJ8yMPG36s6CDexJGgCv6hLuDA+aPZOfbdo+cVc+Bulu1vd8dYAYDVrpVi4ZS5uRsWw87LGn784ziA+z5wFgr5cbDK4Mv0122zL9lvEd0KImS8lin5J+qzfP8ypuLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GETuJANe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEDAFC4CED3;
+	Sat,  2 Nov 2024 10:47:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730544433;
+	bh=M7FdSpu+PhluM81llzaa2KRxqj+jubQ2BPx4TOrWNTc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GETuJANeH7gctgmH/+nyiGbLZgU60kn5uvKaHdxC3jOHXyMIY+5SIP3FVcC5h/4vv
+	 2F7xHCEoHJS0lX3P7aD3ut8mIFSrFv0fHm6Op2JrumAUKGqrtpD0EWeTVv6BzOthLb
+	 cOPP8GebgckiemWtQdsi6mBWqLiYHzeSWyMzb1zENPEsHy5Xv2w9L9UtNhAaMFqePl
+	 DwhnDPyV/TgRCpycn4X3kpJ24lrXa/PI2ONFP7TokPIoc1Slpz4EGZ4aA86XjzMGou
+	 SSLprHHgimxQ0kP5J6bxA4m+lTjGXKTj+ngmbOktZM9E/03kahXIaRmHD6mbHIg0BX
+	 2ajJSBCd/ctBA==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so25879141fa.0;
+        Sat, 02 Nov 2024 03:47:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4DaOq0oOBHqr7RTBtXSnrQr3v5FBK/T5Atky/xzgmDPSazktVcFRQA2vb5a4DG4OaXos8Dhut85tfog==@vger.kernel.org, AJvYcCUiGAEBuSp3yntmvjLEMGQv78gioPH3x5d4F6akQib/HdGhReLdQm4bd/pRRgWWgGcnB3dfreKui8TOMQ==@vger.kernel.org, AJvYcCUy/aDGqOciArXItChS1epQOvwnUO15Kpsvmw1AxtgZADLvIWJ3nNgSu2x2YjIyUXizqDHpoHkPAUwF@vger.kernel.org, AJvYcCUyQIed0/Bd5xwDYtYu+F0/ZBMDk9Zgg73pbwWmxuhmr3ULATSxgjDbGYtwv5pybYXlw55QnWEvxP1UFGfP@vger.kernel.org, AJvYcCV9kO0d6x20R8g+jwHzy0F3cDBpobbsXwh0Vl5pZUZKDgMgacKwWF8v9+roIFBmEingiED5djjVBETg7w==@vger.kernel.org, AJvYcCVuLS0g0Rs92rwnPs4LeyVkPAExATUeeJdEkiGUEey2APixwKVh58H4lrtePST/jXb1o1QJUBXTVgDnPCEW@vger.kernel.org, AJvYcCWQ0pl1zo+MvcEADpJPTj/wjX9Yf6Gb3cwo07aITc/yz5lnKxCqC1UZnz2VYdH0qU06PhbRBJ5rNvRA6A==@vger.kernel.org, AJvYcCX9Iim/kcniCRYC+mRLYlBO5dJIerj9E0ItYmy7uL6P21+nEWcb06auKVC+O+Rvhu8xYg5Zz0U69OWWMQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa2JZ7ixjsksvcaF6YzeJ6s/mveJFduBR1ZJ+iEkrDaWt5OBVV
+	+C8DWB3J22wGc4cAT613QO1uR+NRIQ2C6wBqg+czFR0LkiUPPgBieE7+yaNmrnLayETHI83y103
+	4lntG4bdhQEbezlK+4RKQzeHEN8c=
+X-Google-Smtp-Source: AGHT+IH0WCZimX1F/VX+DWohj1qqHgkCvV1OEM1qu/eyPpSjntB2c2S/MHD4wvbHvrBfL9ia8YhfUT4VBcWPbilaETQ=
+X-Received: by 2002:a05:651c:506:b0:2fb:4603:da13 with SMTP id
+ 38308e7fff4ca-2fcbe0989bfmr124544811fa.39.1730544432162; Sat, 02 Nov 2024
+ 03:47:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030185854.4015348-4-quic_jprakash@quicinc.com>
+References: <20241026040958.GA34351@sol.localdomain> <ZyX0uGHg4Cmsk2oz@gondor.apana.org.au>
+ <CAMj1kXFfPtO0vd1KqTa+QNSkRWNR7SUJ_A_zX6-Hz5HVLtLYtw@mail.gmail.com> <ZyX8yEqnjXjJ5itO@gondor.apana.org.au>
+In-Reply-To: <ZyX8yEqnjXjJ5itO@gondor.apana.org.au>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sat, 2 Nov 2024 11:46:59 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHje-BwJVffAxN9G96Gy4Gom3Ca7dJ-_K7sgcrz7_k7Kw@mail.gmail.com>
+Message-ID: <CAMj1kXHje-BwJVffAxN9G96Gy4Gom3Ca7dJ-_K7sgcrz7_k7Kw@mail.gmail.com>
+Subject: Re: [PATCH v2 04/18] crypto: crc32 - don't unnecessarily register
+ arch algorithms
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-crypto@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-mips@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jishnu,
+On Sat, 2 Nov 2024 at 11:20, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> On Sat, Nov 02, 2024 at 10:58:53AM +0100, Ard Biesheuvel wrote:
+> >
+> > At least btrfs supports a variety of checksums/hashes (crc32c, xxhash,
+> > sha) via the shash API.
+>
+> OK, given that btrfs is still doing this, I think we should still
+> register crc32c-arch conditionally.  Having it point to crc32c-generic
+> is just confusing (at least if you use btrfs).
+>
 
-kernel test robot noticed the following build warnings:
+Agreed. So we should take this patch.
 
-[auto build test WARNING on 6fb2fa9805c501d9ade047fc511961f3273cdcb5]
+The current issue with btrfs is that it will misidentify
+crc32c-generic on arm64 as being 'slow', but this was already fixed by
+my patches that are already in cryptodev.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jishnu-Prakash/dt-bindings-iio-adc-Move-QCOM-ADC-bindings-to-iio-adc-folder/20241031-030237
-base:   6fb2fa9805c501d9ade047fc511961f3273cdcb5
-patch link:    https://lore.kernel.org/r/20241030185854.4015348-4-quic_jprakash%40quicinc.com
-patch subject: [PATCH V4 3/4] iio: adc: Add support for QCOM PMIC5 Gen3 ADC
-config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20241102/202411021830.6iNtNN1E-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241102/202411021830.6iNtNN1E-lkp@intel.com/reproduce)
+On arm64, crc32 instructions are always available (the only known
+micro-architecture that omitted them has been obsolete for years), and
+on x86_64 the situation is similar in practice (introduced in SSE
+4.2), and so this patch changes very little for the majority of btrfs
+users.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411021830.6iNtNN1E-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/iio/adc/qcom-spmi-adc5-gen3.c:31: warning: Cannot understand  * @adc_tm: indicates TM type if the channel is used for TM measurements.
-    on line 31 - I thought it was a doc line
->> drivers/iio/adc/qcom-spmi-adc5-gen3.c:70: warning: Function parameter or struct member 'dev_data' not described in 'adc5_chip'
->> drivers/iio/adc/qcom-spmi-adc5-gen3.c:70: warning: Function parameter or struct member 'tm_aux' not described in 'adc5_chip'
-
-
-vim +31 drivers/iio/adc/qcom-spmi-adc5-gen3.c
-
-    29	
-    30	/**
-  > 31	 * @adc_tm: indicates TM type if the channel is used for TM measurements.
-    32	 * @chip: pointer to top-level ADC device structure.
-    33	 */
-    34	
-    35	struct adc5_channel_prop {
-    36		struct adc5_channel_common_prop common_props;
-    37		int				adc_tm;
-    38		struct adc5_chip		*chip;
-    39	};
-    40	
-    41	/**
-    42	 * struct adc5_chip - ADC private structure.
-    43	 * @dev: SPMI ADC5 Gen3 device.
-    44	 * @num_sdams: number of SDAMs (Shared Direct Access Memory Module) being used.
-    45	 * @nchannels: number of ADC channels.
-    46	 * @chan_props: array of ADC channel properties.
-    47	 * @iio_chans: array of IIO channels specification.
-    48	 * @complete: ADC result notification after interrupt is received.
-    49	 * @lock: ADC lock for access to the peripheral, to prevent concurrent
-    50	 * requests from multiple clients.
-    51	 * @n_tm_channels: number of ADC channels used for TM measurements.
-    52	 * @data: software configuration data.
-    53	 */
-    54	struct adc5_chip {
-    55		struct device			*dev;
-    56		struct adc5_device_data	dev_data;
-    57		unsigned int			num_sdams;
-    58		unsigned int			nchannels;
-    59		struct adc5_channel_prop	*chan_props;
-    60		struct iio_chan_spec		*iio_chans;
-    61		struct completion		complete;
-    62		/*
-    63		 * lock for access to the peripheral, to prevent concurrent
-    64		 * requests from multiple clients.
-    65		 */
-    66		struct mutex			lock;
-    67		const struct adc5_data		*data;
-    68		unsigned int			n_tm_channels;
-    69		struct auxiliary_device		*tm_aux;
-  > 70	};
-    71	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+But on architectures such as 32-bit ARM, where these instructions are
+only available if you are booting a 32-bit kernel on a 64-bit CPU
+(which is more common than you might think), this patch will ensure
+that crc32-arm / crc32c-arm are only registered if the instructions
+are actually available, and btrfs will take the slow async patch for
+checksumming if they are not. (I seriously doubt that btrfs on 32-bit
+ARM is a thing but who knows)
 
