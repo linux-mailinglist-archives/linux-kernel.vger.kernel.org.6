@@ -1,117 +1,127 @@
-Return-Path: <linux-kernel+bounces-393429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4D19BA07E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:24:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D069F9BA087
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45931C2113A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:24:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EFF0B216B7
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D000018A950;
-	Sat,  2 Nov 2024 13:23:55 +0000 (UTC)
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5155818B47B;
+	Sat,  2 Nov 2024 13:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0UT1LrD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B199D1E515;
-	Sat,  2 Nov 2024 13:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981261E515;
+	Sat,  2 Nov 2024 13:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730553835; cv=none; b=DuJqP4iIejIbbPzP8W4oci7veLzwFijLSsPF8v1dp7zdtgpkID2eSdqr+7UpB9ddZV1ouxb+fxwVf9t3MlSydZHzP7/D3Xuc1bxsLB5wCaxgmGELNDK9JIUCFHkJ+CyV7y6AaYpVLtfVmGpz3tEKRDuK+ZAkYWjm+M6gXwhihn0=
+	t=1730553939; cv=none; b=S+gJg2oNvlGbja8Ho5YWUwIgrK2C+UVNs0VmMW/RhVVMotw7HYR3WjEZ3m4CErQnii5YXbrt86cV/8juS8RhQxgI4nxfjQPJuAiyQd4gbk+rytLWX0RVX7KIgDNjj4is+0/uUrWVmzsmmjAsYt+yGcWbP81Dk7qjUf36/YpAC5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730553835; c=relaxed/simple;
-	bh=cnZgompK9DLpu0oUx4hd67geHcCcGIiOVdT4sPIWGek=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=SMOP6YWnaRm+ewKHa/C2aXL9IyGmo3w1dZMfFdPa1bY35DqeDCR/+QxtQL5gDHkSW2yYpdO8ptHWfUJN7QHGq+m/4Y4uHx9W6ejBwfG0zfemxNkYDOu5X02+K+rS1I51fdVtHWO02eBHSyup9HHJ4BkI6rkVBRIIS+D352ltl78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:51330)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1t7E6Z-00FGat-NV; Sat, 02 Nov 2024 07:23:51 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:43360 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1t7E6Y-00EG20-Q8; Sat, 02 Nov 2024 07:23:51 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Kees Cook
- <kees@kernel.org>,  linux-kernel@vger.kernel.org,
-  kernel-janitors@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-mm@kvack.org
-References: <34b8c52b67934b293a67558a9a486aea7ba08951.1730539498.git.christophe.jaillet@wanadoo.fr>
-Date: Sat, 02 Nov 2024 08:23:31 -0500
-In-Reply-To: <34b8c52b67934b293a67558a9a486aea7ba08951.1730539498.git.christophe.jaillet@wanadoo.fr>
-	(Christophe JAILLET's message of "Sat, 2 Nov 2024 10:25:04 +0100")
-Message-ID: <87jzdl3h2k.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1730553939; c=relaxed/simple;
+	bh=Brh7PCFfiHPodDSQkSEDFp8MWJQXOxvx1uid36Iwljc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3NiiJTiWRJ3ydqVW+NTAjHrYLgDkK0K4+FltDN619wly8OoMZzzupOIBlG6Nahu1ZHMN+SgitoXu+O26+68K109digyziOGC7tGRk9+D1SH7Jqad8uvc+p0mzatrkqSXrKN88HDm+FOVzjwsyQ1gJG4lPW6kahyx6rxT8Sy2Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0UT1LrD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2D9C4CEC3;
+	Sat,  2 Nov 2024 13:25:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730553939;
+	bh=Brh7PCFfiHPodDSQkSEDFp8MWJQXOxvx1uid36Iwljc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z0UT1LrD0JnecxRQ9ghkR0Z8Mk/+S/sA2GbGMku5OkqJq8LM6KrVcsVNf04GAGuuO
+	 8sm1lhzmUyW+Brp2t4BxAbCmmcKVkZu1qgsOslVddaki6ntWlrQ08SMVoEBxaQsU8+
+	 1XrJjCqB7x9V9NwbE/Jo39qdCAXHjiyFwMCC0a7C0XJHEpbaBo9f6zsnlc9QYnAvTQ
+	 fHtsGCDX7MblpS/fhrT6j7LI6SyLrR7ZWzPJhaHQJ8dZAgq+s/97q0edTtsMsvbt2j
+	 dFPfcfvpZHJvNQ3gyDkT39hmDFTWa5hEiZ74qM3chMsvJtD6c75Ky2hQN9l8fV5qV+
+	 Ed1S1Z4ypcwiA==
+Date: Sat, 2 Nov 2024 13:25:32 +0000
+From: Simon Horman <horms@kernel.org>
+To: Michael Nemanov <michael.nemanov@ti.com>
+Cc: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sabeeh Khan <sabeeh-khan@ti.com>
+Subject: Re: [PATCH v4 09/17] wifi: cc33xx: Add main.c
+Message-ID: <20241102132532.GJ1838431@kernel.org>
+References: <20241029172354.4027886-1-michael.nemanov@ti.com>
+ <20241029172354.4027886-10-michael.nemanov@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1t7E6Y-00EG20-Q8;;;mid=<87jzdl3h2k.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+784bjb7XOAmC0ASw8osPUmENC1hfnnhw=
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4998]
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 303 ms - load_scoreonly_sql: 0.04 (0.0%),
-	signal_user_changed: 11 (3.8%), b_tie_ro: 10 (3.3%), parse: 0.99
-	(0.3%), extract_message_metadata: 13 (4.2%), get_uri_detail_list: 1.02
-	(0.3%), tests_pri_-2000: 13 (4.2%), tests_pri_-1000: 2.5 (0.8%),
-	tests_pri_-950: 1.17 (0.4%), tests_pri_-900: 0.97 (0.3%),
-	tests_pri_-90: 93 (30.6%), check_bayes: 91 (30.0%), b_tokenize: 5
-	(1.7%), b_tok_get_all: 33 (11.0%), b_comp_prob: 2.2 (0.7%),
-	b_tok_touch_all: 47 (15.6%), b_finish: 0.92 (0.3%), tests_pri_0: 153
-	(50.6%), check_dkim_signature: 0.48 (0.2%), check_dkim_adsp: 3.1
-	(1.0%), poll_dns_idle: 1.29 (0.4%), tests_pri_10: 2.9 (1.0%),
-	tests_pri_500: 9 (2.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] fs: binfmt: Fix a typo
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, kees@kernel.org, jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, christophe.jaillet@wanadoo.fr
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029172354.4027886-10-michael.nemanov@ti.com>
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
-
-> A 't' is missing in "binfm_misc".
-> Add it.
-
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Tue, Oct 29, 2024 at 07:23:46PM +0200, Michael Nemanov wrote:
+> General code and structures.
+> Notably:
+> 
+> cc33xx_irq - Handles IRQs received from the device.
+> 
+> process_core_status - Core status is a new concept in CC33xx.
+> it's a structure that is appended to each transfer from the device and
+> contains its most up-to-date status report (IRQs, buffers, etc.).
+> See struct core_status for details.
+> 
+> process_event_and_cmd_result - Responses to driver commands and
+> FW events both arrive asynchronously. Therefore, driver cannot know what
+> he read from HW until inspecting the payload. This code reads and
+> dispatches the data accordingly.
+> 
+> cc33xx_recovery_work - Driver supports basic recovery on FW crash and
+> other illegal conditions. This implements the recovery flow
+> (Remove all vifs, turn device off and on, download FW,
+> let ieee80211_restart_hw do the rest).
+> 
+> irq_deferred_work - Does irq-related work that requires holding the
+> cc->mutex. Thisd is mostly in response to HW's Tx/Rx IRQs.
+> 
+> cc33xx_nvs_cb - Callback for the NVS FW request API. Similar to wlcore,
+> this is where the init of the HW is performed.
+> 
+> cc33xx_load_ini_bin_file - Loads a configuration file from user-space
+> via the request FW API. The structure is described in a separate patch.
+> 
+> cc33xx_op_X - MAC80211 operation handlers.
+> 
+> Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
 > ---
->  fs/binfmt_misc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-> index 31660d8cc2c6..df6a229b5e62 100644
-> --- a/fs/binfmt_misc.c
-> +++ b/fs/binfmt_misc.c
-> @@ -998,7 +998,7 @@ static int bm_fill_super(struct super_block *sb, struct fs_context *fc)
->  		/*
->  		 * If it turns out that most user namespaces actually want to
->  		 * register their own binary type handler and therefore all
-> -		 * create their own separate binfm_misc mounts we should
-> +		 * create their own separate binfmt_misc mounts we should
->  		 * consider turning this into a kmem cache.
->  		 */
->  		misc = kzalloc(sizeof(struct binfmt_misc), GFP_KERNEL);
+>  drivers/net/wireless/ti/cc33xx/main.c | 5689 +++++++++++++++++++++++++
+>  1 file changed, 5689 insertions(+)
+>  create mode 100644 drivers/net/wireless/ti/cc33xx/main.c
+> 
+> diff --git a/drivers/net/wireless/ti/cc33xx/main.c b/drivers/net/wireless/ti/cc33xx/main.c
+
+...
+
+> +static struct ieee80211_sband_iftype_data iftype_data_2ghz[] = {{
+
+Hi Michael,
+
+Sparse seems a bit unhappy about this:
+
+.../main.c:332:24: warning: incorrect type in initializer (different address spaces)
+.../main.c:332:24:    expected struct ieee80211_sband_iftype_data const [noderef] __iftype_data *iftype_data
+.../main.c:332:24:    got struct ieee80211_sband_iftype_data *
+
+So perhaps it should be:
+
+static const struct ieee80211_sband_iftype_data __iftd iftype_data_2ghz[] = {{
+
+Likewise for iftype_data_5ghz.
+
+...
 
