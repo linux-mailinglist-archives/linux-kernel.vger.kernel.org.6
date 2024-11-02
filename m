@@ -1,200 +1,187 @@
-Return-Path: <linux-kernel+bounces-393485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD4B9BA136
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:31:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFD79BA13B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:33:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E41D28233A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:31:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15888B212EE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F11189F5A;
-	Sat,  2 Nov 2024 15:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7B71A0BE1;
+	Sat,  2 Nov 2024 15:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i2WJHXyK"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DftYCHxx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D5A56446
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 15:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F28E56446;
+	Sat,  2 Nov 2024 15:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730561498; cv=none; b=EcCCl+R4SS2/I8esuF4t2aysRl5GoBZ/hHqgtfqNpGZ+Jq8Y2jPMzg9nEblGw4c8DAGVBPXRWadFdOokCeizvzQW/U68RG2CJ0Bggiy5E6kup5288Lf+95ywcrqcaTHK7om28/aG0ZCt7z69vOT8Kn136I8wGSeGhTVL+8NE9vc=
+	t=1730561605; cv=none; b=PmYSow0PUhsiiNHL9PIxR/xg0y38lSaBX1tBgNfVk5xqhXXrzbgZzz9Fg3d5+nB0NdwcCPwNlX1bKGFBjZ6bbDxYHGCfkJTnwspZR+PFh1w5/gv/SFL1msOPNdr6u3OUiAakd/8FkV//Tzx3H+eDp311g0gKbDueyOi+yk9FdUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730561498; c=relaxed/simple;
-	bh=B3BW8rfL9QJ8zunAdaD3K/b5ZFleIFGLjYQu34s4OWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fOsutwYwbg+ki5GZdUKII9Es3kmBf0gI6lgnLekc7WNZhYdms1fy6e73iRip+LiVzPbfko4q3/xaAkV6E3t4ddSpaUphxFkluU6X2S/0k1scuOtbOBTjRMAVVZrIQOYzBY6sB4/HhfFD6WmSlyigAHCne1uKyzhZkMQyd3FFfi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i2WJHXyK; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <91d75479-8569-40e1-914a-27268d66b5c0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730561492;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8FBHpeeHnkGexRTn09DvpW55xu1PDbDpzSjMrgnDg+k=;
-	b=i2WJHXyKclJ+QbNVPY6OUqU+Xyi2WAkPbzDKHgEKxgtOrGX51uDUW5zVOXGjo2BU9v8mZ6
-	oXM6jiL8shlzW8hLytFQAO1qHAJYhlJPlqedUk798h/cgsxKB6DZA957NVNLiA+90SnM6/
-	C01ukS5dz935D8wFxpQxm/9Im4cOKtE=
-Date: Sat, 2 Nov 2024 23:31:24 +0800
+	s=arc-20240116; t=1730561605; c=relaxed/simple;
+	bh=sXtLlj7XPZ9pojfaipDxHncUgVCzNZeXs7DpPEH7uaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mVSMbANmB786LtNVlVxazI8dNJ+hA9+JPTfuVg0x0SJqnByL11pOIXDF1hC6oBh7QR/ZDCJXmRQ+jnyiV1WQh5yMGeSv8bPzUwMZaE+AKcZxpiuF9KACHZsHRuLsgASTEgIjAzkQ2ATGWwzyPQ1Uu1FroTZXJD3jhaE6UFB0NHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DftYCHxx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA45C4CEC3;
+	Sat,  2 Nov 2024 15:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730561605;
+	bh=sXtLlj7XPZ9pojfaipDxHncUgVCzNZeXs7DpPEH7uaA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DftYCHxxvD2/qgzBxy/DsKnApVPFWMsQIizGfopUqEasz/EUFbVYiuwEwvzmkrFjD
+	 jEkkWYFE96fRoJkT7r7B8EqiLKvICnWKCPuWKr5m9YJ5Ya3EY14DS/Z3f4p55g8m07
+	 zarzDnCLgcoln567HOTiFROJtq7dU8rGY1Yf5gO9XEond4cCvR3Nu4nU2rdTvQePcq
+	 Pl5otw/QHelQYlDhtOn8wofBoriA0+ddfhEnu3qIXhyKfGIssTHv/JMB/8C0uyvR+0
+	 IaWRDY0qb5VJkP6yIl3njuMkDha6458lVM3JP8OGK+HnfYrup3HQBy8NZLSh9AVwGO
+	 4INdWXt8SJ6/Q==
+Date: Sat, 2 Nov 2024 15:33:15 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ anshulusr@gmail.com, gustavograzs@gmail.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] dt-bindings: iio: bosch,bme680: Add supply
+ properties
+Message-ID: <20241102153315.2175fd5b@jic23-huawei>
+In-Reply-To: <20241102131311.36210-6-vassilisamir@gmail.com>
+References: <20241102131311.36210-1-vassilisamir@gmail.com>
+	<20241102131311.36210-6-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3] drm/etnaviv: Request pages from DMA32 zone on
- addressing_limited
-To: Lucas Stach <l.stach@pengutronix.de>,
- Xiaolei Wang <xiaolei.wang@windriver.com>, linux+etnaviv@armlinux.org.uk,
- christian.gmeiner@gmail.com, airlied@gmail.com, daniel@ffwll.ch
-Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240903020857.3250038-1-xiaolei.wang@windriver.com>
- <7a6ffbb773784dee0ea3ee87e563ac4e4f7c9c90.camel@pengutronix.de>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <7a6ffbb773784dee0ea3ee87e563ac4e4f7c9c90.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi,
+On Sat,  2 Nov 2024 14:13:09 +0100
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
+> Extend dt-binding for BME680 gas sensor device. The device incorporates
+> as well temperature, pressure and relative humidity sensors.
+This description should make it clear it is moving from trivial-devices.yaml
 
-On 2024/10/1 20:17, Lucas Stach wrote:
-> Hi Xiaolei,
->
-> Am Dienstag, dem 03.09.2024 um 10:08 +0800 schrieb Xiaolei Wang:
->> Remove __GFP_HIGHMEM when requesting a page from DMA32 zone,
->> and since all vivante GPUs in the system will share the same
->> DMA constraints, move the check of whether to get a page from
->> DMA32 to etnaviv_bind().
->>
->> Fixes: b72af445cd38 ("drm/etnaviv: request pages from DMA32 zone when needed")
->> Suggested-by: Sui Jingfeng <sui.jingfeng@linux.dev>
->> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
->> ---
->>
->> change log
->>
->> v1:
->>    https://patchwork.kernel.org/project/dri-devel/patch/20240806104733.2018783-1-xiaolei.wang@windriver.com/
->>
->> v2:
->>    Modify the issue of not retaining GFP_USER in v1 and update the commit log.
->>
->> v3:
->>    Use "priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"
->> instead of
->>    "priv->shm_gfp_mask = GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"
-> I don't understand this part of the changes in the new version. Why
-> should we drop the HIGHMEM bit always and not only in the case where
-> dma addressing is limited? This seems overly restrictive.
+dt-bindings: iio: bosch,bme680: Move from trivial-bindings and add missing supplies.
 
-While reading the implementation of the dma_alloc_attrs() function,
-except allocate memory from device coherent pool, the rest implementation
-just mask out __GFP_DMA, __GFP_DMA32 and __GFP_HIGHMEM anyway.
+Then say a little more on why you are moving it.
 
-So ?
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
 
+There was an open question on the previous version about
+setting the supplies as required (which I see you've removed).
+My understanding previously was that it is fine to make that change
+in a binding if it reflects supplies that are required to be enabled
+for the device to function at all.  If there were previously missing
+that's a binding bug we should fix.
 
-```
-void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
-		gfp_t flag, unsigned long attrs)
-{
-	const struct dma_map_ops *ops = get_dma_ops(dev);
-	void *cpu_addr;
+I'd like a clarification from the DT binding maintainers on that.
+Obviously doesn't work for other users of dt bindings but in
+Linux this would be fine as they were already on for any board
+that worked and the regulator framework will through us a fake
+regulator for cases like this.
 
-	WARN_ON_ONCE(!dev->coherent_dma_mask);
+https://lore.kernel.org/all/20241022182451.00007ac0@Huawei.com/
 
-	/*
-	 * DMA allocations can never be turned back into a page pointer, so
-	 * requesting compound pages doesn't make sense (and can't even be
-	 * supported at all by various backends).
-	 */
-	if (WARN_ON_ONCE(flag & __GFP_COMP))
-		return NULL;
+Jonathan
 
-	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
-		return cpu_addr;
+https://lore.kernel.org/all/20241022182451.00007ac0@Huawei.com/
 
-	/* let the implementation decide on the zone to allocate from: */
-	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
-
-	if (dma_alloc_direct(dev, ops))
-		cpu_addr = dma_direct_alloc(dev, size, dma_handle, flag, attrs);
-	else if (use_dma_iommu(dev))
-		cpu_addr = iommu_dma_alloc(dev, size, dma_handle, flag, attrs);
-	else if (ops->alloc)
-		cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
-	else
-		return NULL;
-
-
-	return cpu_addr;
-}
-```
-
-
-> Regards,
-> Lucas
->
->> and move the check of whether to get a page from DMA32 to etnaviv_bind().
->>
->>   drivers/gpu/drm/etnaviv/etnaviv_drv.c | 10 +++++++++-
->>   drivers/gpu/drm/etnaviv/etnaviv_gpu.c |  8 --------
->>   2 files changed, 9 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
->> index 6500f3999c5f..8cb2c3ec8e5d 100644
->> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
->> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
->> @@ -536,7 +536,15 @@ static int etnaviv_bind(struct device *dev)
->>   	mutex_init(&priv->gem_lock);
->>   	INIT_LIST_HEAD(&priv->gem_list);
->>   	priv->num_gpus = 0;
->> -	priv->shm_gfp_mask = GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
->> +	priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
->> +
->> +	/*
->> +	 * If the GPU is part of a system with DMA addressing limitations,
->> +	 * request pages for our SHM backend buffers from the DMA32 zone to
->> +	 * hopefully avoid performance killing SWIOTLB bounce buffering.
->> +	 */
->> +	if (dma_addressing_limited(dev))
->> +		priv->shm_gfp_mask |= GFP_DMA32;
->>   
->>   	priv->cmdbuf_suballoc = etnaviv_cmdbuf_suballoc_new(drm->dev);
->>   	if (IS_ERR(priv->cmdbuf_suballoc)) {
->> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
->> index 7c7f97793ddd..5e753dd42f72 100644
->> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
->> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
->> @@ -839,14 +839,6 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
->>   	if (ret)
->>   		goto fail;
->>   
->> -	/*
->> -	 * If the GPU is part of a system with DMA addressing limitations,
->> -	 * request pages for our SHM backend buffers from the DMA32 zone to
->> -	 * hopefully avoid performance killing SWIOTLB bounce buffering.
->> -	 */
->> -	if (dma_addressing_limited(gpu->dev))
->> -		priv->shm_gfp_mask |= GFP_DMA32;
->> -
->>   	/* Create buffer: */
->>   	ret = etnaviv_cmdbuf_init(priv->cmdbuf_suballoc, &gpu->buffer,
->>   				  PAGE_SIZE);
-
--- 
-Best regards,
-Sui
+> ---
+>  .../bindings/iio/chemical/bosch,bme680.yaml   | 62 +++++++++++++++++++
+>  .../devicetree/bindings/trivial-devices.yaml  |  2 -
+>  2 files changed, 62 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/iio/chemical/bosch,bme680.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/chemical/bosch,bme680.yaml b/Documentation/devicetree/bindings/iio/chemical/bosch,bme680.yaml
+> new file mode 100644
+> index 000000000000..0eac22e465e7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/chemical/bosch,bme680.yaml
+> @@ -0,0 +1,62 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/chemical/bosch,bme680.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Bosch BME680 Gas sensor
+> +
+> +maintainers:
+> +  - Vasileios Amoiridis <vassilisamir@gmail.com>
+> +
+> +description: >
+> +  BME680 is a gas sensor which combines relative humidity, barometric pressure,
+> +  ambient temperature and gas (VOC - Volatile Organic Compounds) measurements.
+> +
+> +  https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme680-ds001.pdf
+> +
+> +properties:
+> +  compatible:
+> +    const: bosch,bme680
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply: true
+> +  vddio-supply: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        bme680@77 {
+> +            compatible = "bosch,bme680";
+> +            reg = <0x77>;
+> +            vddio-supply = <&vddio>;
+> +            vdd-supply = <&vdd>;
+> +        };
+> +    };
+> +  - |
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        bme680@0 {
+> +            compatible = "bosch,bme680";
+> +            reg = <0>;
+> +            spi-max-frequency = <500000>;
+> +            vddio-supply = <&vddio>;
+> +            vdd-supply = <&vdd>;
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> index 9bf0fb17a05e..b651826e2d21 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -55,8 +55,6 @@ properties:
+>            - atmel,atsha204a
+>              # BPA-RS600: Power Supply
+>            - blutek,bpa-rs600
+> -            # Bosch Sensortec pressure, temperature, humididty and VOC sensor
+> -          - bosch,bme680
+>              # CM32181: Ambient Light Sensor
+>            - capella,cm32181
+>              # CM3232: Ambient Light Sensor
 
 
