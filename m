@@ -1,95 +1,110 @@
-Return-Path: <linux-kernel+bounces-393410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C599BA02E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:07:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CC09BA030
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:07:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0CE9B21680
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:07:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE77B216BA
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB9A18A6AE;
-	Sat,  2 Nov 2024 13:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55BD18A6C2;
+	Sat,  2 Nov 2024 13:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FuEeBoKa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/4Nxcs+"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F586EAC6;
-	Sat,  2 Nov 2024 13:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A820EAC6;
+	Sat,  2 Nov 2024 13:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730552819; cv=none; b=H1orn7ybDR+Rd03q0pp/1HaCHMMsOr/354wqIELDj9Q5rMyvLJ/ixBrs0Wbc1+R5R4qj5MSlm9eI6OpHikBaKMvgXbIo7LbRo0vjs+irg8qyNBJ+tiQwn5iSdp1x3eG6Zl3seYR3Zh7mN2CaJ7Z7mUGpTRzf7IB3jId4/kt2Dtg=
+	t=1730552850; cv=none; b=UED8nZjvDzBpU3mIKAvfryBFEg5R1/bGygpER7L7iv8PmKjr70+Q2HUSMakp3WOEMs6JmjJocuJBLjj6KQ+o15V+/DQ9Quyb9SmcL1jo2XhyrZd0rypqB8Wnr9gfO79uVsbqPD35NDxMVz2QYA1hgY2yMNbTobLIMWlQ7VB8k4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730552819; c=relaxed/simple;
-	bh=QUQZ/U08FUV2AMYlJQIt0c1roE/xH5qntepaJpWp+rE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPZk/MyRflatoxgWhGn+Coen7cZgEhJia8maud96nRJyKVcqKfVgpTbUj2JKPRrhiXd9dxexs7Kd9j7Navl8OSfsHViz2bc2vzZbQy7zR9qIRLWu7Kcv31n2IO7j1PBuQV2d3AuBtuqFHOZ84DjS2IKsfd5nHSfU6S1GtMQqP2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FuEeBoKa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24AB7C4CED0;
-	Sat,  2 Nov 2024 13:06:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730552818;
-	bh=QUQZ/U08FUV2AMYlJQIt0c1roE/xH5qntepaJpWp+rE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FuEeBoKaKrzBUnRKXjnLXHmnVcYNKRqeWjwdEnb+kVkL1oMNGzPFxk4Jaoz1oauI9
-	 kWZ2upyiseDzvmWb4cKzkuRuE1T25A2EeoBJsxH9BMGlen54b916bYyMHE2A5TK7uo
-	 WgoWPtip1k2IUB9EIolrgpZv7gqSBje1vJbAuze1fR+zOVkLm2IL5mFBR3HYiYD+Ik
-	 zw0Pwv2ogwwLPaRJnhWXJUxOdzLHFJIRh8HhjVuRyIn1huVkizufvS/tbymq+6CWDe
-	 oyqQTaO1ijmJgZyDk9FOYxGL35pht+cVQt35lykhAwfWcTXUxdu5Y9MkErmAbiyGqn
-	 oPuFY6dND5+dQ==
-Date: Sat, 2 Nov 2024 14:06:55 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: George Stark <gnstark@salutedevices.com>
-Cc: pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel@salutedevices.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: leds: pwm: Add default-brightness
- property
-Message-ID: <ngwfccj55vovsaj5bdealdidgxdrxfl7nwxfdqponqzdiv3olo@epzabbxkdzxb>
-References: <20241101154844.1175860-1-gnstark@salutedevices.com>
- <20241101154844.1175860-2-gnstark@salutedevices.com>
+	s=arc-20240116; t=1730552850; c=relaxed/simple;
+	bh=tm5JTs+8rrJD6s7WDi8gLZfx1FcLQYY5V8dG7CsjcX8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SJot+QwgQaz6xBGCsiWkOEsmEIvOyymTHz0W59cAyYJ/BvXcO11N4a1+faTyMsl/k0TPtefvDfHrXsIqKt543SY4GUmNeeUA/n06+Wv8Ug8dlPgSFRxf9MKAs8d6wCinWE73/m5jf3RS5RFxPn1Pl3a6p2DnY4MfgCmBPrN8VY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P/4Nxcs+; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-431695fa98bso21312105e9.3;
+        Sat, 02 Nov 2024 06:07:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730552845; x=1731157645; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S4iOsAcaLFjRe6ZZb9+QSgjIyDu6SShR56xzrQ22ljQ=;
+        b=P/4Nxcs+Z6uo0ZC6gRP3H4lbycgUWzOEwNDuJdYVTePW7YenDs98JOCq2vkSKB4Eq+
+         QIQNoBOIqdhGJ3YnlGUZ1tK+OMgwtJ0VdJil0qZB4yVjnlqP6JZmgJWtG1eY1gbMuhQn
+         KikcZetLA8z7m8kSu9D5bXk72Dqm81KoKHYcOyRheCTwTBeyVZmJKe2pKu5unvnfHM6e
+         gJuAZUThXCR/X3nguAqf/xflrB2I1LqObrm+lT95jR2+9NyKhteePOVDr0wcbnFuT5aM
+         BTzlvy/ClQUwL3Nx3+QtvXBPvEClnwnkVot+MH5/0PNR2peIbZ6sDjn12dTxLF2tYyla
+         4YgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730552845; x=1731157645;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S4iOsAcaLFjRe6ZZb9+QSgjIyDu6SShR56xzrQ22ljQ=;
+        b=LUgqylLEGwcW/c6v2RLDN1zOCqqNaDYej+3mpqeUS99LH8q/9Ug716506/Gzv1t03J
+         qk6p9lSZfZp3QALfgXZsic1Txe7jeUj90UXirFF+ygpy/9bufNZ+v3dXNjF84EzxRw01
+         PY1uz79akDsIzv9D5rqsDM3SRdm5Sgp1MoJxhJnj7ApD9gxOFB56mqm2E2N5+gI1uirV
+         GBgCFkALIGKQhT0FdG9htpyUzFWlIM4jwOeIDQ2Tt2ZlLynOxMake7U4XosHONjujxXr
+         vt1yYrazyPVNHcvQesM8rI8ewLhlDsxalKztkvkBgkhynhPNz+oCySlVulnXdiK9+59k
+         geOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVH5NxUm2A6K0LFN9Ut0hd1nAfeW4OsfcDyagNCDON+Ps9OcbCaloheX4zctALb834f1efV1K17U03euUvz9IA=@vger.kernel.org, AJvYcCXO3ydaxpm4e6X2FbMz4fep00pn+KITF0VuS8cQqx3sY3bIo0N8vOQEsUI4Q39hsHTKSDZW4ut3gA3ZzRVW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz33IabWfDOK7EHxYGWQnPQtH12BC4TUBQg9oRwBthVSmQGeSwD
+	C/mVEiQ6kSyF3mFi7rdPHhXCPIsYgd4kXmEg0cRnrNEPlOioQtyy
+X-Google-Smtp-Source: AGHT+IENln2RkJNRAASU9Ya8UIFIYQzyX/oVv5uQaDwgkHA/iNIs5WUWvcFEFXYMqg4je2UAkEJReA==
+X-Received: by 2002:a05:600c:46d4:b0:427:ff3b:7a20 with SMTP id 5b1f17b1804b1-4319ad049a8mr215124795e9.27.1730552844525;
+        Sat, 02 Nov 2024 06:07:24 -0700 (PDT)
+Received: from void.void ([31.210.180.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d6852c3sm94227215e9.38.2024.11.02.06.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Nov 2024 06:07:24 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH] bcachefs: Fix a typo
+Date: Sat,  2 Nov 2024 15:06:28 +0200
+Message-ID: <20241102130709.9259-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.47.0.170.g23d289d273.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241101154844.1175860-2-gnstark@salutedevices.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 01, 2024 at 06:48:43PM +0300, George Stark wrote:
-> Optional default-brightness property specifies brightness value to be
-> used if default LED state is on.
-> 
-> Signed-off-by: George Stark <gnstark@salutedevices.com>
-> ---
->  Documentation/devicetree/bindings/leds/leds-pwm.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
->
+Fix a typo: nonexistant -> nonexistent.
 
-<form letter>
-This is a friendly reminder during the review process.
+Via codespell.
 
-It looks like you received a tag and forgot to add it.
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ fs/bcachefs/alloc_background.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you do not know the process, here is a short explanation: Please add
-Acked-by/Reviewed-by/Tested-by tags when posting new versions, under
-or above your Signed-off-by tag. Tag is "received", when provided
-in a message replied to you on the mailing list. Tools like b4 can help
-here. However, there's no need to repost patches *only* to add the tags.
-The upstream maintainer will do that for tags received on the version
-they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-Best regards,
-Krzysztof
+diff --git a/fs/bcachefs/alloc_background.c b/fs/bcachefs/alloc_background.c
+index c84a91572a1d..5f40b92fbf16 100644
+--- a/fs/bcachefs/alloc_background.c
++++ b/fs/bcachefs/alloc_background.c
+@@ -1395,7 +1395,7 @@ static noinline_for_stack int bch2_check_discard_freespace_key(struct btree_tran
+ 
+ 	if (fsck_err_on(!bch2_dev_bucket_exists(c, pos),
+ 			trans, need_discard_freespace_key_to_invalid_dev_bucket,
+-			"entry in %s btree for nonexistant dev:bucket %llu:%llu",
++			"entry in %s btree for nonexistent dev:bucket %llu:%llu",
+ 			bch2_btree_id_str(iter->btree_id), pos.inode, pos.offset))
+ 		goto delete;
+ 
+-- 
+2.47.0.170.g23d289d273.dirty
 
 
