@@ -1,191 +1,103 @@
-Return-Path: <linux-kernel+bounces-393221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F369B9DEC
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:37:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48EAD9B9DF0
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:40:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51C87282A51
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:37:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3C81B21901
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6756C158D80;
-	Sat,  2 Nov 2024 08:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE1F1448C7;
+	Sat,  2 Nov 2024 08:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xQnG82ir"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="DCiN/7lk"
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98940156C72
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 08:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1AC156872
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 08:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730536646; cv=none; b=siDQIr+0oJmg7Mgvm6+MsNFwLdoGwUBJfkFkPjN4waxSFQ4KjqsBJX7y6WW794Yk/UAnSpv6ftScH17d1cEBeD2J+r8DlHyypM+r78FeMcFkD0tHKKTLc0afFr2T2AQ9oaXrvrOS/xVeAcwPJbMY1biyEZcgoL70H3pgh/LUXTY=
+	t=1730536845; cv=none; b=phFOLroY+OZIIKwWLcz4IR/kXbyoy4NyYk1Ow3y3BGz38CJAmkrwInyA/0mJT75AL+qyg0gkUD12Z0BAa5Wr+XlpzU7Sl5fHarR0jawcT74d6KCWTs+c7J2ViHbuveTKkz1qV0wsGIr9s0fWtgIfXPPx7XwoNBzBgUl9T8yj/uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730536646; c=relaxed/simple;
-	bh=dUFHckRJ9ilGqoDPaa2PWgH6gnUR89FL98Ke20jbZDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=HfPa0opV5xlb/BUueLzWGL0yyXOpJ/GxG1yyYIPwIUHQs4KvNRBUFMo4Sg4AVQDeUFu+08zxL+LlxTYguf3hBcu1wJXqieqNUpKe72XFHo0iKmILB58uytdqehH4iyT8KZKofE8xg8X0D7wXhoSPRMB6chCKZIe+WoYmBMDhVHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xQnG82ir; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d4fd00574so1633513f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 01:37:24 -0700 (PDT)
+	s=arc-20240116; t=1730536845; c=relaxed/simple;
+	bh=m1lACV1FyspB0fk4RuDq9MTLVdmNSTyuRGA+rMaKps4=;
+	h=Date:Message-Id:From:To:Cc:In-Reply-To:Subject:References; b=SFjHT1tU72mIDbmMcyw9sZw2anrwIlh5yp4s99DsFbvN7Z9NblQ/mf1ttzqJ0t+RazDGuXiMjdsPQRGcJVmzC0UKdzma0wSWk584TuBEmnkH4p8HV3WqcrHih5nWhuL9F2bbkhORe5ke+oVtRFVhiJDguDFF8hYsl0txjwpfRfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=DCiN/7lk; arc=none smtp.client-ip=195.121.94.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: fb73fc64-98f5-11ef-8d51-005056999439
+Received: from smtp.kpnmail.nl (unknown [10.31.155.7])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id fb73fc64-98f5-11ef-8d51-005056999439;
+	Sat, 02 Nov 2024 09:39:32 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730536643; x=1731141443; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y1wLSM24+3PvyH7ej2g+4G+UpBE6rJoDJskNxC1aAWA=;
-        b=xQnG82irzx3qHeDFcj8DJILRW47BdYOJKYPrb4l1uoXmTlJTl19UXOpxXJvRd4dDJw
-         JGitTk4b9JaFEmfGT6/YASZLEcDtMV/fiLb1CKh9CE+n38ksm51Z7/j28xY2vKPPWKIb
-         wVs8l8ljC/pzRGlCruHMYbyZRHt9FLDsQZ2KnV4PihZB2vDOCoyY++SDBgyVk+YXg5z1
-         ALlStqVdF8QZ4DBW/fAumL6knJFrQ2JJWUXf/Ougt4rJgExZCYRjNBqBS7Yw0+m8f/0Y
-         qLnrmrRi68gYcw7McVn0ogudxURg8Ptc+c8IoPQKfBYGZ7Moc7sLrm1lov30hILm1lrq
-         KEcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730536643; x=1731141443;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y1wLSM24+3PvyH7ej2g+4G+UpBE6rJoDJskNxC1aAWA=;
-        b=FEl/AaEqRcO1lxHuz2Sn1PnY2fVSdHApt9ds1MCt92TIpWEZuXQAEFrhu5Q2pBJIE9
-         Gk5+DjmG6HAQD5JpiTDB3OZbDT6wdaJ+6KQ9miFud2J75iX7Ha74JWDHLYZCEDjDl9du
-         afteYbM9kXGYauje3KFDWB8atjPJLBcS4F3MZMHDziJaQTSKQk+lVuifTuc366wBaYx1
-         k/O9w9+hKmIFbvWxfi9B7QRBLvCnXE7tEbqAg51N3yWeSEEu/wErFUtLe4mVgbA4UtWP
-         DETIctwZRAJMTt7gwT+tmqetCYwDxN1ijyxERmc5wreeG4e7WU4/l7FbPWyhTvrwHJGg
-         GKVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUu+qhyvbP2LAjJyvXU6/OxZWfwjupGqBu+l3KHfrl/CzYpRfIokr9ue/tFEoRhEQfpXi6gUvhETosSD+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywqjp5M3k4auSNZQyu+Qr8jMuneSgTAhTglJ0EPdDXnAPzkdD9Z
-	rm8oSKDU4dIniHd0ftCxVzYBbvmfZUwAZ46rs4XLB4nO2DMZ/ZzlSBBGOWp5Pmo=
-X-Google-Smtp-Source: AGHT+IH44ILAIvwuI9zYhtmAcV7RoQNrvn7NrERInPHKHUhKGWu6xeRArhlwj9NNXrDVF25LJw7gNw==
-X-Received: by 2002:a05:6000:18a9:b0:367:8e57:8 with SMTP id ffacd0b85a97d-381c79e3b75mr5719372f8f.19.1730536642787;
-        Sat, 02 Nov 2024 01:37:22 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5c65c7sm86574345e9.19.2024.11.02.01.37.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 01:37:22 -0700 (PDT)
-Date: Sat, 2 Nov 2024 11:37:18 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev,
-	Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v5 2/7] mfd: nxp-siul2: add support for NXP SIUL2
-Message-ID: <48498f47-1601-432b-bde5-f487668d1e85@stanley.mountain>
+	d=xs4all.nl; s=xs4all01;
+	h=subject:to:from:message-id:date;
+	bh=SOESJwGk/m0BH7DybjWTyh29n0WPp4jHNYg51LnvExA=;
+	b=DCiN/7lkFwO7MpBe3tmDSRHPmaemcDLP0hYYF+3E4NLEKN03H4mHJXcJZNNAAQlKxBB8UdvZAG5Jh
+	 J9b1D7HY8/MXxQ3mnDq3KPRYsLpswke8pXjjQBYptWt7T+5DeHyNFbWnbxgHZ6uwLDIP3l9N13rgEy
+	 r7LxcuhaiwExkywlMDZef8K5EX+wo2iDlQCpN8grSVSppyPStgzGcX6//DIFp1ZqyzmhdSX/N+g7jh
+	 K/CsR3ka5AuXmDwIBqP/awaYO/jMoVlZuiUz+2b+1ynKZopZhcYy0r/c83DFbVdGd72ynJtr4cwhsG
+	 +mkoVNjpDzs63hctmVGQ5H1LUBJmdAA==
+X-KPN-MID: 33|CNLLXHK/GrZqDr5w1I7erOjxXIjBx9wdE9L1Mf0wjG4F9Zpd3D6Gd9zERmwBM7Q
+ mPAkEG/BAmO2jCnY0x6OdybuAiCXqrxgsYgj7/db/epk=
+X-KPN-VerifiedSender: Yes
+X-CMASSUN: 33|B9RhJaWMW/sEKQDBuQQ0hglTReDydKiDe86GzGIp1EwQCBNJ8VbXfe9UflrnJU6
+ XTpk5Yf0qfQGb+IcfLRUk5w==
+Received: from bloch.sibelius.xs4all.nl (80-61-163-207.fixed.kpn.net [80.61.163.207])
+	by smtp.xs4all.nl (Halon) with ESMTPSA
+	id fb974d63-98f5-11ef-9749-005056998788;
+	Sat, 02 Nov 2024 09:39:33 +0100 (CET)
+Date: Sat, 02 Nov 2024 09:39:32 +0100
+Message-Id: <87wmhm3u7v.fsf@bloch.sibelius.xs4all.nl>
+From: Mark Kettenis <mark.kettenis@xs4all.nl>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: j@jannau.net, marcan@marcan.st, sven@svenpeter.dev,
+	alyssa@rosenzweig.io, broonie@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+In-Reply-To: <46b31874-9fe2-4534-9777-816765a265b1@gmail.com> (message from
+	Nick Chan on Sat, 2 Nov 2024 10:36:56 +0800)
+Subject: Re: [PATCH v3 1/3] dt-bindings: spi: apple,spi: Add binding for Apple
+ SPI controllers
+References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
+ <20241101-asahi-spi-v3-1-3b411c5fb8e5@jannau.net> <46b31874-9fe2-4534-9777-816765a265b1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101080614.1070819-3-andrei.stefanescu@oss.nxp.com>
 
-Hi Andrei,
+> Date: Sat, 2 Nov 2024 10:36:56 +0800
+> Content-Language: en-MW
+> 
+> On 2/11/2024 03:26, Janne Grunau via B4 Relay wrote:
+> 
+> [...]
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - apple,t8103-spi
+> > +          - apple,t8112-spi
+> > +          - apple,t6000-spi
+> > +      - const: apple,spi
+> Apple A7-A11 SoCs seems to use a Samsung SPI block, so apple,spi is too
+> generic. Fallback to something like apple,t8103-spi instead.
 
-kernel test robot noticed the following build warnings:
+Well, if that is a Samsung SPI block it probably should have a
+"generic" compatible that starts with "samsung,".  The M1/M2
+controllers have a different SPI block (presumably) designed by Apple
+themselves.  So I think it is (still) appropriate that that one is
+"apple,spi".
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Stefanescu/dt-bindings-mfd-add-support-for-the-NXP-SIUL2-module/20241101-160940
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20241101080614.1070819-3-andrei.stefanescu%40oss.nxp.com
-patch subject: [PATCH v5 2/7] mfd: nxp-siul2: add support for NXP SIUL2
-config: csky-randconfig-r072-20241102 (https://download.01.org/0day-ci/archive/20241102/202411021431.282g2yZy-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202411021431.282g2yZy-lkp@intel.com/
-
-smatch warnings:
-drivers/mfd/nxp-siul2.c:311 nxp_siul2_init_regmap() error: uninitialized symbol 'ret'.
-
-vim +/ret +311 drivers/mfd/nxp-siul2.c
-
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  267  static int nxp_siul2_init_regmap(struct platform_device *pdev,
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  268  				 void __iomem *base, int siul)
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  269  {
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  270  	struct regmap_config regmap_configs[SIUL2_NUM_REG_TYPES] = {
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  271  		[SIUL2_MPIDR]	= nxp_siul2_regmap_generic_conf,
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  272  		[SIUL2_IRQ]	= nxp_siul2_regmap_irq_conf,
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  273  		[SIUL2_MSCR]	= nxp_siul2_regmap_generic_conf,
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  274  		[SIUL2_IMCR]	= nxp_siul2_regmap_generic_conf,
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  275  		[SIUL2_PGPDO]	= nxp_siul2_regmap_pgpdo_conf,
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  276  		[SIUL2_PGPDI]	= nxp_siul2_regmap_pgpdi_conf,
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  277  	};
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  278  	const struct nxp_siul2_reg_range_info *tmp_range;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  279  	struct regmap_config *tmp_conf;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  280  	struct nxp_siul2_info *info;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  281  	struct nxp_siul2_mfd *priv;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  282  	void __iomem *reg_start;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  283  	int i, ret;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  284  
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  285  	priv = platform_get_drvdata(pdev);
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  286  	info = &priv->siul2[siul];
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  287  
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  288  	for (i = 0; i < SIUL2_NUM_REG_TYPES; i++) {
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  289  		if (!s32g2_reg_ranges[siul][i].valid)
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  290  			continue;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  291  
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  292  		tmp_range = &s32g2_reg_ranges[siul][i];
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  293  		tmp_conf = &regmap_configs[i];
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  294  		tmp_conf->name = tmp_range->reg_name;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  295  		tmp_conf->max_register =
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  296  			tmp_range->reg_end_offset - tmp_range->reg_start_offset;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  297  
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  298  		if (tmp_conf->cache_type != REGCACHE_NONE)
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  299  			tmp_conf->num_reg_defaults_raw =
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  300  				tmp_conf->max_register / tmp_conf->reg_stride;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  301  
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  302  		if (tmp_range->reg_access) {
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  303  			tmp_conf->wr_table = tmp_range->reg_access;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  304  			tmp_conf->rd_table = tmp_range->reg_access;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  305  		}
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  306  
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  307  		reg_start = base + tmp_range->reg_start_offset;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  308  		info->regmaps[i] = devm_regmap_init_mmio(&pdev->dev, reg_start,
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  309  							 tmp_conf);
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  310  		if (IS_ERR(info->regmaps[i])) {
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01 @311  			dev_err(&pdev->dev, "regmap %d init failed: %d\n", i,
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  312  				ret);
-
-Do this like: dev_err(&pdev->dev, "regmap %d init failed: %pe\n", i, info->regmaps[i]);
-
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  313  			return PTR_ERR(info->regmaps[i]);
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  314  		}
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  315  	}
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  316  
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  317  	return 0;
-5c0b3edcf6df17 Andrei Stefanescu 2024-11-01  318  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Also, (upstream) U-Boot already uses the "apple,spi" compatible.  So
+changing it for purity sake just causes pain.
 
 
