@@ -1,83 +1,133 @@
-Return-Path: <linux-kernel+bounces-393567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CD29BA269
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:20:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059069BA26F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:31:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B89428318A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:20:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95059B22420
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A20C1ABEB0;
-	Sat,  2 Nov 2024 20:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D471AA793;
+	Sat,  2 Nov 2024 20:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="WQZqGS87"
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="m0Pttq71"
 Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19824EB50;
-	Sat,  2 Nov 2024 20:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F734EB50
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 20:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730578823; cv=none; b=azhmeUWKvN+6Rx6/he6hvPDIcoBanQ9ekpfArdwdi5mjW2arvh1je7wAhDr1UzQR90Y2j6+NWIu6g2fvNxLnLpPB4YAGlkY+azycX20zCpzq34nJiQwO/CZHSwXVG42gAvqHNydd6rvz8IDGCL2U/JJRH0QQ/24QK5drmCBfBrk=
+	t=1730579489; cv=none; b=q+Gsv2zVYDZBhZDgORCDcyHiP13qzPiKv+kKXTLoJxAx4d8ZqQo9f0CvTZ4n0WhgYw0teORl+u+uifzY67OyrxH7ryyQ7vv4mW9LwQNApoPCFDaiDRS8/jpH5hwXb2e92GVlXvsPfZLLY925Xto0V2SFwKovk8SRCTEbEIq7TYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730578823; c=relaxed/simple;
-	bh=MCQ3fDQH1zb0wCaMg7Jj/z86jg/r5zXBrm9w0LNaa5E=;
+	s=arc-20240116; t=1730579489; c=relaxed/simple;
+	bh=HxPvFyzHJnjW6PKpoVstgjDtOxyC+Ga8VaX6QK0Gufo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ol+bX0cbRkFTu4oxFN1ZmaCxF2GWR+DMVpJWCzKuR/AesgsSa+8OrtZ1/9qd4RrY/H6unsyzdeFF6ug2CDu+kCHPmM0MkzclU5JU5FfnpjoVt+yzUmODP3Z0IuZUXGFD+MwhYDmM5KL1Cq1YnnPDSGGM+waZXJ49jpleR9RwX0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=WQZqGS87; arc=none smtp.client-ip=149.28.33.109
+	 Content-Type:Content-Disposition:In-Reply-To; b=HfqVxqcib9tv/HGa8xPuZbXtxr+q24jh/okEDgVJ5SzPZrpRN1hkQT9YcgdEB+67Voa/jDtdLM9w4KuHJxPjDe0ouYOOJB+wUmsHvq2WNBZDTsix3RCQdQcBWzoHKNK8oKfnf8BVdR2E0YKhsrYpeqIYXCzOJwYqxGo9wVDUiOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=m0Pttq71; arc=none smtp.client-ip=149.28.33.109
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
 Received: by lichtman.org (Postfix, from userid 1000)
-	id 04FD71770FE; Sat,  2 Nov 2024 20:20:21 +0000 (UTC)
+	id 03D401770FE; Sat,  2 Nov 2024 20:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1730578821; bh=MCQ3fDQH1zb0wCaMg7Jj/z86jg/r5zXBrm9w0LNaa5E=;
+	t=1730579486; bh=HxPvFyzHJnjW6PKpoVstgjDtOxyC+Ga8VaX6QK0Gufo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WQZqGS87fNtHQE/POPwg9D6SH7OeHuuxCiKV2c07DkbEhstJCoq3h12Q9E6RVavdn
-	 NiBXy77Qz2k25T7O6RzgU/ApY4rYBiRzxDdVlhg2jIh/QMA0gkxIlRhVModiGtwSDl
-	 WOJVB8JJQ7cVwIoM3OhWwtOmFg92w9+A/QQMnTnPRuPdjF4ReRgRi9RerILbF13GQy
-	 5LtYvtLfpexyfqA/7ILWdIPBg/YuqF7NNqpUUgpqPa56lUKzJKiPBTyo1lZbJsDZ13
-	 lA0cEPwscK9SBiYK/37ZrVt0TMYzwQ90nfkyiXZ17oG6uuPH0l0oqDGrVqQQidVWrY
-	 huOYTe46LeNHQ==
-Date: Sat, 2 Nov 2024 20:20:20 +0000
+	b=m0Pttq716LR9r0OVP02Yj5HvCAzwWj74eqT/vM/OLybfl35WcU/ENnuxn73J50bNS
+	 G5mje34CBJEgtUtaSYCI+Wc0ViGC3tq3mq9hRlpraVUGvuZLGs+ZRUT3Zcfc1p0GAJ
+	 brjuYwJE73jz9f4f8icqYIMO2cs2VvH0b8xM0v+Ev1w9wKW590V8/Z+pZuHvUYMtWN
+	 JWDah9EV3ex9ahSsXIUu3i/6+Uon3t0DJDJF1HPXGlypFLX7EKsfNiO488kSXrEZRc
+	 Iwy78sACAN9KPAclYSla0VXLkKdw0I/01hKg0Qj9sJyRM+KeMhe94m7f+Vr7UTyACY
+	 rx5r6K25D1mqw==
+Date: Sat, 2 Nov 2024 20:31:25 +0000
 From: Nir Lichtman <nir@lichtman.org>
-To: Kees Cook <kees@kernel.org>
-Cc: ebiederm@xmission.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+To: Doug Anderson <dianders@chromium.org>
+Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] exec: move warning of null argv to be next to the
- relevant code
-Message-ID: <20241102202020.GA51482@lichtman.org>
-References: <ZyYUgiPc8A8i_3FH@nirs-laptop.>
- <173057792683.2382793.11435101948652154284.b4-ty@kernel.org>
+Subject: Re: [PATCH] kdb: Fix incomplete usage help of md, mds and btc
+ commands
+Message-ID: <20241102203125.GA51629@lichtman.org>
+References: <20241031204041.GA27585@lichtman.org>
+ <CAD=FV=XY-mH2FxnnMsA99jQ2ZCcd=psTn+VJ4R9h9htK-f2ihw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <173057792683.2382793.11435101948652154284.b4-ty@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=XY-mH2FxnnMsA99jQ2ZCcd=psTn+VJ4R9h9htK-f2ihw@mail.gmail.com>
 
-On Sat, Nov 02, 2024 at 01:05:29PM -0700, Kees Cook wrote:
-> On Sat, 02 Nov 2024 14:01:22 +0200, nir@lichtman.org wrote:
-> > Problem: The warning is currently printed where it is detected that the
-> > arg count is zero but the action is only taken place later in the flow
+On Fri, Nov 01, 2024 at 08:42:43AM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> Applied to for-next/execve, thanks!
+> On Thu, Oct 31, 2024 at 1:40 PM Nir Lichtman <nir@lichtman.org> wrote:
+> >
+> > Fix kdb usage help to document some currently missing CLI commands options
+> >
+> > Signed-off-by: Nir Lichtman <nir@lichtman.org>
+> > ---
+> >  kernel/debug/kdb/kdb_main.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> Some of this is a bit similar to what I tried to do at :
+> 
+> https://lore.kernel.org/r/20240617173426.2.I5621f286f5131c84ac71a212508ba1467ac443f2@changeid
+> 
+> ...but that series kinda fell on the floor because my end goal was to
+> try to get it so I could access IO memory and Daniel pointed out that
+> what I was doing was unsafe. The earlier patches in the series are
+> overall good cleanups, though. If you're interested feel free to
+> iterate on any of them.
 
-Noted about the warn once, and thanks :)
+Interesting, I'll take a look at that.
 
 > 
-> [1/1] exec: move warning of null argv to be next to the relevant code
->       https://git.kernel.org/kees/c/cc0be150ca0e
 > 
-> Take care,
+> > diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> > index f5f7d7fb5936..0bdffb17b163 100644
+> > --- a/kernel/debug/kdb/kdb_main.c
+> > +++ b/kernel/debug/kdb/kdb_main.c
+> > @@ -2667,7 +2667,7 @@ EXPORT_SYMBOL_GPL(kdb_unregister);
+> >  static kdbtab_t maintab[] = {
+> >         {       .name = "md",
+> >                 .func = kdb_md,
+> > -               .usage = "<vaddr>",
+> > +               .usage = "<vaddr> [lines] [radix]",
 > 
-> -- 
-> Kees Cook
+> In my patch, I said:
 > 
+> .usage = "<vaddr> [<lines> [<radix>]]",
+> 
+> ...so I had the <> characters and nested the []. I think that the <>
+> is supposed to signify that you're not supposed to write the text
+> "lines" but that it's a variable.
+
+Sounds reasonable, just used the [lines] as it is currently in the help of
+the dmesg command but the reasoning you point out makes sense.
+
+> 
+> 
+> >                 .help = "Display Memory Contents, also mdWcN, e.g. md8c1",
+> >                 .minlen = 1,
+> >                 .flags = KDB_ENABLE_MEM_READ | KDB_REPEAT_NO_ARGS,
+> > @@ -2686,7 +2686,7 @@ static kdbtab_t maintab[] = {
+> >         },
+> >         {       .name = "mds",
+> >                 .func = kdb_md,
+> > -               .usage = "<vaddr>",
+> > +               .usage = "<vaddr> [lines] [radix]",
+> 
+> From my prior research, "mds" doesn't support <radix>. However, some
+> of the other "md" commands that you didn't modify do support
+> lines/radix. Let me know if I got that wrong.
+
+"mds" does support radix, I'll check and make sure about the other variants.
+
+Thanks,
+Nir
 
