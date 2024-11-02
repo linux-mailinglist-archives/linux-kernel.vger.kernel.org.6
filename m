@@ -1,174 +1,136 @@
-Return-Path: <linux-kernel+bounces-393502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C3AF9BA178
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:46:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7FEB9BA181
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:47:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4942820E3
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:46:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66DDEB21644
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E35B1A7265;
-	Sat,  2 Nov 2024 16:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7879D1AA7B7;
+	Sat,  2 Nov 2024 16:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNvDmNyN"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJ+1XHVr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F30175D47;
-	Sat,  2 Nov 2024 16:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52091A01B9;
+	Sat,  2 Nov 2024 16:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730565989; cv=none; b=d1Hyn5CKUbV5484D3JmZKBeQ+OveWoyhWPd6FbkhZuoVdYIgYro7iaTnVKOflojtAN7XrVUlxVrKYccz+lUU/IoYLaJa42amGRbO79aPYrcqZcQZweWQV21WiveeRhgQxSZ4xEZI6K1EbiRPtbSdWpfJkhegcl2gh2ZaKwI56xI=
+	t=1730566008; cv=none; b=TGKMs2KlaVCLLpWDH3xaFRhbJmlXYXqjavPkfmv+6Xipx8l4znG+hJzZz6JKPbqjJ1cDJh/7iDrFNaACBSsFJ3KEulrpMicTUdC1swHIbGyvBdOZd91uRBG319IIZOZVCj0/BFzTJ0gdBsaqNyIJjm10rwE4WE+8iHTiSZ39L+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730565989; c=relaxed/simple;
-	bh=9ls3dERKRIdmJCZ2URbsiv3CcC+qSab+dQUjuNjjfT8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UhZ0qApbArS3Toc8/4eWC5nvmHB4Z3hdAXchXmo06wsvnjfJ2A+fEZnYbDD7is78WddaJvksadvL1KWzgxYkRwYJmwMbTjXLjgmJotqv9YCOIFlghXoVmrEfUV/6AuzNcwZpPi07B5Cussl4jPeYxwdTn8mFCqGRC8SebEZfy2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aNvDmNyN; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cb7139d9dso27222485ad.1;
-        Sat, 02 Nov 2024 09:46:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730565988; x=1731170788; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wu1IcKoJUxRY+49oDrmQhrjE4vDkW2TWldSnGKBSz7Y=;
-        b=aNvDmNyNMQ/dz9VWWfV6Js73c4phHaD1hamTKsJx3j0g53TzkQeTyfxuKorhC1dfS1
-         32lx0cOGKfokQJQ7SS8C701wSvm7mO6UaLTUETRTaZFDt9IogzRYC5NSixfku8CyC7rB
-         O1MZZt0+TGpYhMldi5TUOD6A+t2pUO6Tq95SWHXeUmm51Bp1PQzP1Ftnl5OzxoecoQsw
-         lljR/naibitBopSRn4d/ys2BPeaOT4iFs+8Uv6Pxykp/mAmwgj987c9NZT1T8OU/bUut
-         B+DfPaRJaLHwqQaCKHXn0i5GP+029p4bDt90ZpJm3Hb5+v+bh9EHnMn+xTALz5AgIzyq
-         vnGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730565988; x=1731170788;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wu1IcKoJUxRY+49oDrmQhrjE4vDkW2TWldSnGKBSz7Y=;
-        b=BBrr3zsCMN6Q21DM5sKwRer7FHK9KLhEo+imwWEaAyrWrUyFLLPCAP0pf2XwscnhlU
-         nvrBbbiZH9rHikkBfYEpXT+5oL52DIX/9yfNC6HRzP4HooR7IMqfP7f3OLOIU/wq1Ixs
-         MhQXSESExNX79zq+rwiOyf13DsFHiJUBlQWXinQ7YMFTxSZJoctY06IskDFNF7zP3f9y
-         FC07j/sdEfTUzJ4Q7GCNrySR1qmk5Wn4K9CqeUaGXTQ9nzI4imXS9Qtla5kU9uMJrKRH
-         BReG4Vi/8l12IjpREfd+t0m5GVnxWDj9ZkNbQCGUmPnz3W1w31n77WKQXVOv2fpbK0Q7
-         NGfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAk+jxYd7hmUobVhC75PO4JgVbqlxYBWTSC5Z7fjRvohPIC65fTOEM0jp867jyFx3HNIaTe3XS@vger.kernel.org, AJvYcCVclj4D8fWv+oeU50S7H+bAFdGRTDQge/3XpWGaQIFdjmcunl26EHMS6HbXvXWiaf68/XdNEDg1Aw6x2dY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm1fVN8BxEBJWW6FKg+x57pP22Kp+g/hHxTUmUaPF0ppcqXooq
-	fQJdxgZmpYz96JGicoZDDxReEm3GobglEedg7RLaosIdyBIFYOeI
-X-Google-Smtp-Source: AGHT+IFMwL204glb+Tqv8APpV3BkFvm4TZijbeAaJXn4kWnIhPNtE/iQNI0REzFPPwK5X5J8SL2Gjw==
-X-Received: by 2002:a17:903:18f:b0:20c:9326:559 with SMTP id d9443c01a7336-210c6b07121mr364436815ad.29.1730565987538;
-        Sat, 02 Nov 2024 09:46:27 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ee3ccsm35556345ad.46.2024.11.02.09.46.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Nov 2024 09:46:26 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9c54d0ff-15d3-4868-afba-ae3ccde28a41@roeck-us.net>
-Date: Sat, 2 Nov 2024 09:46:23 -0700
+	s=arc-20240116; t=1730566008; c=relaxed/simple;
+	bh=GxoXhXGyHNH8GVqUExL8Ti1VvRWiwrpIEQI7tN7LYew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BaGjpi3fBRKwz03ZD4iv0jnO47zab+tRtPUoZov2xdVvw/L/mHRlJZTNM3oLXk1dDHUi3Lm4QMCsRxwGkMp3ck/XogbMNkgMB71XcUT275KZ4UzNyhxFwdguBTJuam0JnCOPwCBS8Sog8h1QTRlglCptde6bxIG2bNMe8DV6IAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJ+1XHVr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42B7DC4CECE;
+	Sat,  2 Nov 2024 16:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730566008;
+	bh=GxoXhXGyHNH8GVqUExL8Ti1VvRWiwrpIEQI7tN7LYew=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NJ+1XHVrktQ9WGmo2EqP6wMVn/OEt/Sv2350oNUT4r8GsAp9SYm0VRx1/D+bpxg8g
+	 AhMeZGuz9tEsHn97hHwlwmvLVZz1BdRK3HPFE5YqLcs8A8XoDyXbcjgPGJYTBYv2lw
+	 e7zJmHAonSkqpKaKaw6UnNUCHZimTZLKO1FLqORq1mUqGyfy2E7ES/38e2axn3jHVc
+	 vyfrkc6wWAWUTuzFcDsIW2fxGUusCopNRtdPosLD46rmwBPJUZoGz8kFjaYjXuuFth
+	 EueP60OBXtYFWJvxL+0V8IT2yf0FfbKIXjL0+19V3Zm0XEOHjVKdBVOhl1og12Usc6
+	 DBoCweRx5bdQg==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb470a8b27so35724391fa.1;
+        Sat, 02 Nov 2024 09:46:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+psY0WGzpDhvG3YDJyMVROxy7sxk2VLnemB5+05j0oW6rsoAK3klrEMKTbiNo1In3AWOspigi0cttTQ==@vger.kernel.org, AJvYcCVQDaiqQBxElXtjpXSCI1RQSap6joIyvI0OzDmg+fZz6VDdetURad4+QK2AN7P6ofcs6rqGJYf+GNrb6g==@vger.kernel.org, AJvYcCVoUIow2cECHTqXDVMQ43VXAZneDdb+fYjrm/ohMEKNSfztj6lZ5dZwprP9/7diKs3Qb/rWykPID29E/w==@vger.kernel.org, AJvYcCVof8FfiQ+hMakMk4UUe8yn3yNd69slEZsoKMRD7pCWRwLjrzTUUy9t3oKVH68e7VaZZanV8s538LXH@vger.kernel.org, AJvYcCWuM+DUuOi7xhE6DYPt9D6N51Ig/cdeK/F941X+BY0KROpsLr1Gn/jWNeMzo/X5fc2ejDHWCtZ2Q5fhrw==@vger.kernel.org, AJvYcCXFDIgszwvJoxosRyig4BEfjOT0PLP0MOzcaoytPhYIBQ82qK65VQsL29GqbCYtPjZlfbBNwDDvynjOf2Sw@vger.kernel.org, AJvYcCXRoS9oMJac8/AwBU01ohSbQqlKMcOjRvb89QqHZZPqW++tnZmjts50QjeB9ObXZT1cb0q+ajEAi2rv8Q==@vger.kernel.org, AJvYcCXx0FK8Jg88nWHDR4t77RBynBGb8Ek7FHv/zB9yvwYtYqiMRdyDAjlJ/sPgUuh8drs9PfAV+e9JD3Uwv/KU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5jj6rU94ZpDnjF2dBoin+AzWW2D5KRzPCpz0pGwtzOl2yteTe
+	0kkW1+QCv9IFe/6UqusBm835uzpyMmx754j/W+jxZu2wiLzsk90HGs9ILeNN6ltOSnE/PYZP1/n
+	4hcxa8Bua7zIYyt/+cKdvhC4bGhc=
+X-Google-Smtp-Source: AGHT+IF1qWuAPM7OXxHa9PDtIx4xdAi/SPdwq1d4i906hC2y1gUwoZbqVs2/tV8+cHeYBRRGdC2ase7pF6ri9+FpJxc=
+X-Received: by 2002:a2e:bd87:0:b0:2f9:e1ce:1276 with SMTP id
+ 38308e7fff4ca-2fedb414a6amr24137441fa.11.1730566006632; Sat, 02 Nov 2024
+ 09:46:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/137] 6.1.115-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org,
- Tiezhu Yang <yangtiezhu@loongson.cn>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-References: <20241028062258.708872330@linuxfoundation.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241028062258.708872330@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241026040958.GA34351@sol.localdomain> <ZyX0uGHg4Cmsk2oz@gondor.apana.org.au>
+ <CAMj1kXFfPtO0vd1KqTa+QNSkRWNR7SUJ_A_zX6-Hz5HVLtLYtw@mail.gmail.com>
+ <ZyX8yEqnjXjJ5itO@gondor.apana.org.au> <CAMj1kXHje-BwJVffAxN9G96Gy4Gom3Ca7dJ-_K7sgcrz7_k7Kw@mail.gmail.com>
+ <CAMj1kXG8Nqw_f8OsFTq_UKRbca6w58g4uyRAZXCoCr=OwC2sWA@mail.gmail.com>
+ <ZyYIO6RpjTFteaxH@gondor.apana.org.au> <20241102163605.GA28213@sol.localdomain>
+In-Reply-To: <20241102163605.GA28213@sol.localdomain>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sat, 2 Nov 2024 17:46:34 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEQHiqkO7j1W55UHGg-LNF2CNiPnpHcKfCdKnxFQSJ14g@mail.gmail.com>
+Message-ID: <CAMj1kXEQHiqkO7j1W55UHGg-LNF2CNiPnpHcKfCdKnxFQSJ14g@mail.gmail.com>
+Subject: Re: [PATCH v2 04/18] crypto: crc32 - don't unnecessarily register
+ arch algorithms
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-crypto@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-mips@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/27/24 23:23, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.115 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
-> 
+On Sat, 2 Nov 2024 at 17:36, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Sat, Nov 02, 2024 at 07:08:43PM +0800, Herbert Xu wrote:
+> > On Sat, Nov 02, 2024 at 12:05:01PM +0100, Ard Biesheuvel wrote:
+> > >
+> > > The only issue resulting from *not* taking this patch is that btrfs
+> > > may misidentify the CRC32 implementation as being 'slow' and take an
+> > > alternative code path, which does not necessarily result in worse
+> > > performance.
+> >
+> > If we were removing crc32* (or at least crc32*-arch) from the Crypto
+> > API then these patches would be redundant.  But if we're keeping them
+> > because btrfs uses them then we should definitely make crc32*-arch
+> > do the right thing.  IOW they should not be registered if they're
+> > the same as crc32*-generic.
+> >
+> > Thanks,
+>
+> I would like to eventually remove crc32 and crc32c from the crypto API, but it
+> will take some time to get all the users converted.  If there are AF_ALG users
+> it could even be impossible, though the usual culprit, iwd, doesn't appear to
+> use any CRCs, so hopefully we are fine there.
+>
+> I will plan to keep this patch, but change it to use a crc32_optimizations()
+> function instead which was Ard's first suggestion.
+>
+> I don't think Ard's static_call suggestion would work as-is, since considering
+> the following:
+>
+>     static inline u32 __pure crc32_le(u32 crc, const u8 *p, size_t len)
+>     {
+>             if (IS_ENABLED(CONFIG_CRC32_ARCH))
+>                     return static_call(crc32_le_arch)(crc, p, len);
+>             return crc32_le_base(crc, p, len);
+>     }
+>
+> ... the 'static_call(crc32_le_arch)(crc, p, len)' will be inlined into every
+> user, which could be a loadable module which gets loaded after crc32-${arch}.ko.
+> And AFAIK, static calls in that module won't be updated in that case.
+>
 
-[ ... ]
+Any call to static_call_update() will update all existing users, so
+this should work as expected.
 
-> Tiezhu Yang <yangtiezhu@loongson.cn>
->      LoongArch: Add support to clone a time namespace
-> 
+(Only x86 has a non-trivial implementation that patches callers inline
+- otherwise, it is either an indirect call involving a global function
+pointer variable, or a single trampoline that gets patched to point
+somewhere else)
 
-This patch triggers:
+...
+>
+> So I plan to go with the crc32_optimizations() solution in v3.
+>
 
-Building loongarch:defconfig ... failed
---------------
-Error log:
-arch/loongarch/kernel/vdso.c: In function 'vvar_fault':
-arch/loongarch/kernel/vdso.c:54:36: error: implicit declaration of function 'find_timens_vvar_page'
-
-because the missing function is not generic in v6.1.y.
-
-Reverting the patch on its own does not work because commit a67d4a02bf43
-("LoongArch: Don't crash in stack_top() for tasks without vDSO") depends on it.
-Reverting both patches fixes the problem.
-
-Copying the authors of both patches for advice.
-
-Guenter
-
+That is also fine with me.
 
