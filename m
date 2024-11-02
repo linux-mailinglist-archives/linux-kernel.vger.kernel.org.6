@@ -1,211 +1,229 @@
-Return-Path: <linux-kernel+bounces-393547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB359BA234
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:54:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDEA9BA247
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:56:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17CF61F21BAD
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 19:54:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E0E8B21CE7
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 19:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9771AB52F;
-	Sat,  2 Nov 2024 19:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743AD1ABEAC;
+	Sat,  2 Nov 2024 19:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="cdf9yJhC"
-Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nr/ZSEYn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0958D14F12F;
-	Sat,  2 Nov 2024 19:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B96A14F12F;
+	Sat,  2 Nov 2024 19:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730577233; cv=none; b=BeGnlUk2/LWqwmequSpyGxUFFtgHYJFAsEZaXax1aixXPxoAU9rKdZTgwbFEiEMO7nxxSDGANtjTcfxtMZCsb22isPAVR2MBpuRIOCeU1U+X7U4kuUQa4DaWZy3HwK6ExKKCa4uY6zKql1sRiW/0CvV31WG0sAguQ8pv4BfruQQ=
+	t=1730577358; cv=none; b=e8bAm1irQxI1KkO1GhtMt/yUUnDxj+tBUFXYWPbK8sNHjYSTldXFGoh/iPazCFdzNrHhveAJ5+rWqxC6Z3qbomvkG1SfMfFmKKj+FW96764EK90hpvetihfSXy2IN/oo0ex3RLxP3ttI1mAFMR01blRBs2oNCJSbj0A5vgxqguc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730577233; c=relaxed/simple;
-	bh=JdArpWA9vFt1hkUkWUm005K/eH4T5f2zOfSeWwDv19Q=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LbStU4spbqGW2wZ8ejtlN0x4/BObuRllTyw8JVwAZdQEVJ97ZP3drVwnkFx9xPMH9JmLqH6/bkNWDX+H2rTj449IU6ll4YjsOQcYYPSaaB4/3K3X26LCT/G2qXm1atzM2HXeclABznB3qfIDNBHY7idT1RpCYikoD6tVMV9MFQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=cdf9yJhC; arc=none smtp.client-ip=202.61.224.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2FB082805B4;
-	Sat,  2 Nov 2024 20:53:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
-	t=1730577227; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=iBgrUxzme4W2cd1/xJd7CFK8K4SzsQKvQfKry0TV6As=;
-	b=cdf9yJhCJo9REzvuK5pxQZIJ52OQDqKVDZRFO4hDKxrhXK6LFkUQ8n0iToBucy6M47lXGU
-	3QD98eIW/8gRb8m5yPBOyaj7C6Eyroi7aCMp1LJuM0PM0vwkna9K+C1AjYGlEXz/kDQ4md
-	7SukJUauJe0xVSdhjeSdLGo2r4DOlYc7xMx5nzLYhjGcYVFt3QFOEuxOHyO1eV8jtbHr1E
-	FxbAbA1RQba+JA93Bu9kgr2JYWm/BxT3kWT9Deaq/Kz1Snt1IPCOO2ORyMf6BzSyswUn5X
-	h/6DwKQbZpipNrQYsXtu0sFSu3GbZT9z42S57mieVG0z4sKUiAlCt2+PXlCw6w==
-Message-ID: <3183ab86-8f1f-4624-9175-31e77d773699@cachyos.org>
-Date: Sat, 2 Nov 2024 20:53:43 +0100
+	s=arc-20240116; t=1730577358; c=relaxed/simple;
+	bh=g36kdeuRYZI5ierO4LxZY9yHnOtnQ6TIOAVdj/Y/oLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i2ef/9slWq0PgKVusvXoeUI3N8+F/pKN4k4f05ZSzT7Lb2FB7MqlIVvdN+nUsxYfRMFsYHI+PqKJwrzWE5bOJjaMQWn2E2t3yNtNzbKv/lLkVkWj/mCUbc5NIwOhPca4lCY5viCq2VKex0KPPv+tsYogvClMdHXNlBJ+/CbtLLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nr/ZSEYn; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730577356; x=1762113356;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=g36kdeuRYZI5ierO4LxZY9yHnOtnQ6TIOAVdj/Y/oLs=;
+  b=Nr/ZSEYndI9ktyN1PT5mfkJms1IS9ucFLqn6VmfA0Ws8hKElHHIz6flE
+   kALKrXdiGTsfw/XnMAwrwGrrDLBAS10F/fl8vL8U6FwU3tym+HsQkaC4d
+   IxWpX371vI0akWF7Kt5L/6K5a/MdKjywNLKMbEi3EQnX51pVfGcodIXsX
+   aD8O767BJ4j/HzoDjQVy6q0CSATh2k4kzGQ9xULpqOTnzgHlFhk1SAHlZ
+   XuYtW+Vd21Z1+ZSQgO9oUL/FFcsw1wCVo3mZjGXTcMTkIXK9swktK1OQt
+   8p7ZLWPH0qDJQZXTdlLvF/4fHGf30LoJHH+93UVYVt9ikAbOmkMw2Rebt
+   w==;
+X-CSE-ConnectionGUID: QEBY7QQjS9G2IXq2gq4B/A==
+X-CSE-MsgGUID: 6e78hUw2TceHejVqmtGryw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30270382"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30270382"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 12:55:55 -0700
+X-CSE-ConnectionGUID: DEM1bP8vQuCq66BSj637Tw==
+X-CSE-MsgGUID: 8fsNL1ZsSEG7Z1R9sShxcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="88024912"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 02 Nov 2024 12:55:52 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t7KDt-000jI9-0Z;
+	Sat, 02 Nov 2024 19:55:49 +0000
+Date: Sun, 3 Nov 2024 03:55:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: Re: [PATCH v8 3/7] mfd: Add new driver for MAX77705 PMIC
+Message-ID: <202411030141.DTmej8oX-lkp@intel.com>
+References: <20241031-starqltechn_integration_upstream-v8-3-2fa666c2330e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/7] Add AutoFDO support for Clang build
-From: Peter Jung <ptr1337@cachyos.org>
-To: Rong Xu <xur@google.com>, Alice Ryhl <aliceryhl@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>,
- Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>,
- Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>,
- Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
- Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>,
- workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>,
- Krzysztof Pszeniczny <kpszeniczny@google.com>,
- Sriraman Tallam <tmsriram@google.com>, Stephane Eranian <eranian@google.com>
-Cc: x86@kernel.org, linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20241102175115.1769468-1-xur@google.com>
- <20241102175115.1769468-2-xur@google.com>
- <09349180-027a-4b29-a40c-9dc3425e592c@cachyos.org>
-Content-Language: en-US
-Organization: CachyOS
-In-Reply-To: <09349180-027a-4b29-a40c-9dc3425e592c@cachyos.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031-starqltechn_integration_upstream-v8-3-2fa666c2330e@gmail.com>
+
+Hi Dzmitry,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 86e3904dcdc7e70e3257fc1de294a1b75f3d8d04]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20241031-053513
+base:   86e3904dcdc7e70e3257fc1de294a1b75f3d8d04
+patch link:    https://lore.kernel.org/r/20241031-starqltechn_integration_upstream-v8-3-2fa666c2330e%40gmail.com
+patch subject: [PATCH v8 3/7] mfd: Add new driver for MAX77705 PMIC
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20241103/202411030141.DTmej8oX-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241103/202411030141.DTmej8oX-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411030141.DTmej8oX-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/mfd/max77705.c:8:
+   In file included from include/linux/i2c.h:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/mfd/max77705.c:129:6: warning: variable 'pmic_rev' is uninitialized when used here [-Wuninitialized]
+     129 |         if (pmic_rev != MAX77705_PASS3) {
+         |             ^~~~~~~~
+   drivers/mfd/max77705.c:108:13: note: initialize the variable 'pmic_rev' to silence this warning
+     108 |         u8 pmic_rev;
+         |                    ^
+         |                     = '\0'
+   5 warnings generated.
 
 
+vim +/pmic_rev +129 drivers/mfd/max77705.c
 
-On 02.11.24 20:46, Peter Jung wrote:
-> 
-> 
-> On 02.11.24 18:51, Rong Xu wrote:
->> Add the build support for using Clang's AutoFDO. Building the kernel
->> with AutoFDO does not reduce the optimization level from the
->> compiler. AutoFDO uses hardware sampling to gather information about
->> the frequency of execution of different code paths within a binary.
->> This information is then used to guide the compiler's optimization
->> decisions, resulting in a more efficient binary. Experiments
->> showed that the kernel can improve up to 10% in latency.
->>
->> The support requires a Clang compiler after LLVM 17. This submission
->> is limited to x86 platforms that support PMU features like LBR on
->> Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
->>   and BRBE on ARM 1 is part of planned future work.
->>
->> Here is an example workflow for AutoFDO kernel:
->>
->> 1) Build the kernel on the host machine with LLVM enabled, for example,
->>         $ make menuconfig LLVM=1
->>      Turn on AutoFDO build config:
->>        CONFIG_AUTOFDO_CLANG=y
->>      With a configuration that has LLVM enabled, use the following
->>      command:
->>         scripts/config -e AUTOFDO_CLANG
->>      After getting the config, build with
->>        $ make LLVM=1
->>
->> 2) Install the kernel on the test machine.
->>
->> 3) Run the load tests. The '-c' option in perf specifies the sample
->>     event period. We suggest     using a suitable prime number,
->>     like 500009, for this purpose.
->>     For Intel platforms:
->>        $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c 
->> <count> \
->>          -o <perf_file> -- <loadtest>
->>     For AMD platforms:
->>        The supported system are: Zen3 with BRS, or Zen4 with amd_lbr_v2
->>       For Zen3:
->>        $ cat proc/cpuinfo | grep " brs"
->>        For Zen4:
->>        $ cat proc/cpuinfo | grep amd_lbr_v2
->>        $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k 
->> -a \
->>          -N -b -c <count> -o <perf_file> -- <loadtest>
->>
->> 4) (Optional) Download the raw perf file to the host machine.
->>
->> 5) To generate an AutoFDO profile, two offline tools are available:
->>     create_llvm_prof and llvm_profgen. The create_llvm_prof tool is part
->>     of the AutoFDO project and can be found on GitHub
->>     (https://github.com/google/autofdo), version v0.30.1 or later. The
->>     llvm_profgen tool is included in the LLVM compiler itself. It's
->>     important to note that the version of llvm_profgen doesn't need to
->>     match the version of Clang. It needs to be the LLVM 19 release or
->>     later, or from the LLVM trunk.
->>        $ llvm-profgen --kernel --binary=<vmlinux> -- 
->> perfdata=<perf_file> \
->>          -o <profile_file>
->>     or
->>        $ create_llvm_prof --binary=<vmlinux> --profile=<perf_file> \
->>          --format=extbinary --out=<profile_file>
->>
->>     Note that multiple AutoFDO profile files can be merged into one via:
->>        $ llvm-profdata merge -o <profile_file>  <profile_1> ... 
->> <profile_n>
->>
->> 6) Rebuild the kernel using the AutoFDO profile file with the same config
->>     as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
->>        $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<profile_file>
->>
->> Co-developed-by: Han Shen<shenhan@google.com>
->> Signed-off-by: Han Shen<shenhan@google.com>
->> Signed-off-by: Rong Xu<xur@google.com>
->> Suggested-by: Sriraman Tallam<tmsriram@google.com>
->> Suggested-by: Krzysztof Pszeniczny<kpszeniczny@google.com>
->> Suggested-by: Nick Desaulniers<ndesaulniers@google.com>
->> Suggested-by: Stephane Eranian<eranian@google.com>
->> Tested-by: Yonghong Song<yonghong.song@linux.dev>
->> Tested-by: Yabin Cui<yabinc@google.com>
->> Tested-by: Nathan Chancellor<nathan@kernel.org>
->> Reviewed-by: Kees Cook<kees@kernel.org>
-> 
-> Tested-by: Peter Jung <ptr1337@cachyos.org>
-> 
+   100	
+   101	static int max77705_i2c_probe(struct i2c_client *i2c)
+   102	{
+   103		struct max77693_dev *max77705;
+   104		struct regmap_irq_chip_data *irq_data;
+   105		struct irq_domain *domain;
+   106		int ret;
+   107		unsigned int pmic_rev_value;
+   108		u8 pmic_rev;
+   109	
+   110	
+   111		max77705 = devm_kzalloc(&i2c->dev, sizeof(*max77705), GFP_KERNEL);
+   112		if (!max77705)
+   113			return -ENOMEM;
+   114	
+   115		max77705->i2c = i2c;
+   116		max77705->dev = &i2c->dev;
+   117		max77705->irq = i2c->irq;
+   118		max77705->type = TYPE_MAX77705;
+   119		i2c_set_clientdata(i2c, max77705);
+   120	
+   121		max77705->regmap = devm_regmap_init_i2c(i2c, &max77705_regmap_config);
+   122	
+   123		if (IS_ERR(max77705->regmap))
+   124			return PTR_ERR(max77705->regmap);
+   125	
+   126		if (regmap_read(max77705->regmap, MAX77705_PMIC_REG_PMICREV, &pmic_rev_value) < 0)
+   127			return -ENODEV;
+   128	
+ > 129		if (pmic_rev != MAX77705_PASS3) {
+   130			dev_err(max77705->dev, "rev.0x%x is not tested",
+   131				pmic_rev);
+   132			return -ENODEV;
+   133		}
+   134	
+   135		max77705->regmap_leds = devm_regmap_init_i2c(i2c, &max77705_leds_regmap_config);
+   136	
+   137		if (IS_ERR(max77705->regmap_leds))
+   138			return PTR_ERR(max77705->regmap_leds);
+   139	
+   140		ret = devm_regmap_add_irq_chip(max77705->dev, max77705->regmap,
+   141						max77705->irq,
+   142						IRQF_ONESHOT | IRQF_SHARED, 0,
+   143						&max77705_topsys_irq_chip,
+   144						&irq_data);
+   145	
+   146		if (ret)
+   147			dev_err(max77705->dev, "failed to add irq chip: %d\n", ret);
+   148	
+   149		/* Unmask interrupts from all blocks in interrupt source register */
+   150		ret = regmap_update_bits(max77705->regmap,
+   151					 MAX77705_PMIC_REG_INTSRC_MASK,
+   152					 MAX77705_SRC_IRQ_ALL, (unsigned int)~MAX77705_SRC_IRQ_ALL);
+   153	
+   154		if (ret < 0) {
+   155			dev_err(max77705->dev,
+   156				"Could not unmask interrupts in INTSRC: %d\n", ret);
+   157			return ret;
+   158		}
+   159	
+   160		domain = regmap_irq_get_domain(irq_data);
+   161	
+   162		ret = devm_mfd_add_devices(max77705->dev, PLATFORM_DEVID_NONE,
+   163					   max77705_devs, ARRAY_SIZE(max77705_devs),
+   164					   NULL, 0, domain);
+   165	
+   166		if (ret) {
+   167			dev_err(max77705->dev, "Failed to register child devices: %d\n", ret);
+   168			return ret;
+   169		}
+   170	
+   171		device_init_wakeup(max77705->dev, true);
+   172	
+   173		return 0;
+   174	}
+   175	
 
-The compilations and testing with the "make pacman-pkg" function from 
-the kernel worked fine.
-
-One problem I do face:
-When I apply a AutoFDO profile together with the PKGBUILD [1] from 
-archlinux im running into issues at "module_install" at the packaging.
-
-See following log:
-```
-make[2]: *** [scripts/Makefile.modinst:125: 
-/tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/arch/x86/kvm/kvm.ko] 
-Error 1
-make[2]: *** Deleting file 
-'/tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/arch/x86/kvm/kvm.ko'
-   INSTALL 
-/tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/crypto/cryptd.ko
-make[2]: *** Waiting for unfinished jobs....
-```
-
-
-This can be fixed with removed "INSTALL_MOD_STRIP=1" to the passed 
-parameters of module_install.
-
-This explicitly only happens, if a profile is passed - otherwise the 
-packaging works without problems.
-
-Regards,
-
-Peter Jung
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
