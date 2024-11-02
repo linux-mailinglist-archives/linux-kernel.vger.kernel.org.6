@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-393247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5469B9E40
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:32:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC059B9E36
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:31:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90CCE1C21B48
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:32:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 702B4B21F65
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 09:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF2E157A6B;
-	Sat,  2 Nov 2024 09:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0993B16D9AE;
+	Sat,  2 Nov 2024 09:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="d3hYGRbn"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uk6kea6D"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C909C14A630;
-	Sat,  2 Nov 2024 09:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2767E156F20
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 09:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730539946; cv=none; b=YORZXJQU92hnthN4Oc9NBzHK7PCHnFAkKWt+MJyNt0Bz1URPjQ5yhAGdpVD/xByXmu7y0PcairppOoR47q2v1hs46IpnC3SQg7/HE6ntjVcOyfRu5rdlu/A4LPVm7PunGz4GYkhs8uUxZ2nNA9FHFmFcK0wk9RvYgIJwRzLCT+E=
+	t=1730539889; cv=none; b=YO6EUZUlCROu1DXtleOI7bfmtwa0R/WdMbbYhF24CYkoOt3Wuy49T6HHGcUWlTy1n0qfgnh6ULYtpbQk75PvTfqmctXWojcJKSXJ0rX52PbmB9pv47rTqU6JL2ftNWVMAua4KKVy+aW4QpKxjpQab894LFVlGU/hY3s5Q6IOTU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730539946; c=relaxed/simple;
-	bh=L0p512+wKnI/6xaTCdQVunEfviAqYTnZfB36zigJnrs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=elHO9hOSiaKFncU/vLIwIYt4aXPYS9/7FnuX7ibmao7XVxbmFQnwBYC/RuAsmraFZTCckxRwPjkYFqzvXQOoM5K2SNYchT1Ry5UAF9wosEJ4qzYvGFGmItY8Z4TBeM0YrRgDbXkV3QKbrWcFAoPKTvTfe4e+BadwprK0vI4zOiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=d3hYGRbn; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730539896; x=1731144696; i=markus.elfring@web.de;
-	bh=L0p512+wKnI/6xaTCdQVunEfviAqYTnZfB36zigJnrs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=d3hYGRbnxdsWEvnBfogKvBHHrIAwTgmrvCn0/aqIpnvLaOmPap4ACPnOdBDkKa++
-	 btVt4RCjX6uZgsoAWMBfvYWdQdAhF+aevv0FhpwM1PE3UEMHGr6RsQGIXoSE62Uiu
-	 GHPDUOsG83t1OyQlfdU4prAVVsp4FQJXhOdEQxTAPSY2ODtBY36NMd9WvWSc6CQZK
-	 yDiYG3GzQw7MVX+vlxIiBOpofmGsKHswAM9WL48DUsg/yjeobQ/y5X1NiXafxdkpA
-	 6ghtGQ+CBIx3RSyOwrgQgo27liV968gIHWIztnRMNP4mygYfLmYuV2na8bbgakmT5
-	 RnRkH57aVNE6yPUYng==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Zns-1u12su21n2-013w2J; Sat, 02
- Nov 2024 10:31:36 +0100
-Message-ID: <736ec702-32ba-4dbd-a16c-b6d9a3ea99d8@web.de>
-Date: Sat, 2 Nov 2024 10:31:15 +0100
+	s=arc-20240116; t=1730539889; c=relaxed/simple;
+	bh=AxfZ6gGVPQPRt1Kkz1e9AnPzzLi9MaVmGq3SQAO0XGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=X2uTtvhqVMJqZC5fdF3lF+HT9bOzIE0aPhdEFAMAbL5O9GqH01bh6QROtDFyT+BiKBD3zIi13QCNMAuGT5R0fExvJLXXiGjCHxR9CTxsUtD5u/c916OGE+6IaMiJe+0eWn3r33AEGTZxQeFoDCOpKzQdFetp1TASiQz14ZCIMlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uk6kea6D; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso23044165e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 02:31:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730539884; x=1731144684; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2G33OuRKLaV8/Qlw+mzO1Q7pXloYVXQQTnj0b51x9wA=;
+        b=Uk6kea6DO+3dVkD/lMhzKq9JPrLY/9qbLQ/kuXxTQ+vi9rzA+BBnbnWASGN9dWXM9f
+         dwFyFLdyspMacm9C7UvplAdwqQ9eXVuUVkkwRlYyOAIKkKkculU385cJZjkwudrQHD2D
+         Q0eMkChINXVxMIiygDybbqzTNjm9Qs3Y7L3FDJO5THPCzastnsy6nZQhNCTnWrdrZOCk
+         ykFue19DfwicyBY7hyCMo5AIx/2EgicdObLblk8+u49ETXrOeTWNyIZ6G5Oqoa97lopf
+         G0u9UoZJTKup53qAa3UgBGKCN9DFYhXtsJAVXp6H+ULuqimW5JueagC2VwptVBtrEr6C
+         REFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730539884; x=1731144684;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2G33OuRKLaV8/Qlw+mzO1Q7pXloYVXQQTnj0b51x9wA=;
+        b=ZZ/5YqUXKXewKw3nfyAgFz01bIA69M+f0hknxHPSKx5uLYiD7n/4yDAyS2QMJ5C/C/
+         DHs0kW9SEEpPmsMnQztZmgDE33pR3RGlAI/7u8gVnDyFCy9kWGaVvrjT3mhecotwHlUp
+         WCCczKZwzGJAPsmDJC5zbBLDRbNiANT5/JZZoSxmmKA3EATwIhfVuxOcDwMB9yFb6Wcc
+         MaSrzq04c83C7TH0gWFnmBlM2K4hmf+t2aziFcjK0scgAyarhJ+uNBwMr7qpvjspwK4z
+         FJ8P9CbiSnmkfFGsxtLudOaYsfOFvIDTpuiufMiViGkZGLb3KMtdzhAz/xcfWmKtfK2T
+         HePA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoovlxG2HvEXASkUi5fGxb8bXvHfxwz7H+VE3xOlKYmtBgjocdLn5fJKj3QFyvOJN2akgxJcUJDXkhmIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVYRqGY/h61/U3UXgGuWPTbmGNmm5hF5nWFKj2b/hTx/4WGWia
+	uyaHZ+/vEd1OZM92oh1m9aAyMXI62qI4jrxCgxMP+bbOBpQZssrgCz/ur6929o4=
+X-Google-Smtp-Source: AGHT+IFMNVmV9EFSObPL947fodX0Fb+SP0SISXcsLVbP/D8qbWurJtklEVb7Kef4HIak7PcfND0EKQ==
+X-Received: by 2002:a5d:5f4f:0:b0:37d:4dcc:7fb4 with SMTP id ffacd0b85a97d-381c7a3a2e0mr5427434f8f.10.1730539884403;
+        Sat, 02 Nov 2024 02:31:24 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d414csm7493312f8f.26.2024.11.02.02.31.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Nov 2024 02:31:24 -0700 (PDT)
+Date: Sat, 2 Nov 2024 12:31:20 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] lsm: Fix signedness bug in selinux_secid_to_secctx()
+Message-ID: <2d02f331-42ee-40db-a64f-5ee378eb44db@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jinjie Ruan <ruanjinjie@huawei.com>, netdev@vger.kernel.org,
- Andrew Lunn <andrew@lunn.ch>,
- Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>,
- Chiranjeevi Rapolu <chiranjeevi.rapolu@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Jakub Kicinski <kuba@kernel.org>, Johannes Berg <johannes@sipsolutions.net>,
- Liu Haijun <haijun.liu@mediatek.com>, Loic Poulain
- <loic.poulain@linaro.org>, M Chetan Kumar <m.chetan.kumar@linux.intel.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Ricardo Martinez <ricardo.martinez@linux.intel.com>,
- Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20241101025316.3234023-1-ruanjinjie@huawei.com>
-Subject: Re: [PATCH net v3] net: wwan: t7xx: Fix off-by-one error in
- t7xx_dpmaif_rx_buf_alloc()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241101025316.3234023-1-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wcGJN4f4NEfZvSdXi2sdemW8FWLyhKS4aAh8DIJ6XuvrIylPzme
- Ay9c6x6GD+iCx5aYv48DFAdRpHe3T/w+8KVx+S1GbHZS+h6Hb4s90HSx1OWQQLnv8nvsPgI
- ZbhCCP5NqakPFPK6bTFdM4Y4e66uTR4NL962JXGF9fZotL+pMO7Do2mXJgeWodWfQ6OaDLh
- KRDPG66IT8qCuhBIXwikQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WjRNz/H5N7c=;0oKgx6M5GVDCtQEbVyX1/cFXwlO
- 3YdlomJnNwpUFNXFwGSGnm0v4RrutYbu5MjN0+lYoGsD2Mf78QFxKbbDwUyhXWAN6QXreVwOP
- xv8ObKnn3nh2eZIWkNEXSYEYrv3EcEKLFhr8se8LoP82FZPLM2/10XzoGWiKIcbKoAp6w3YIk
- BzCzbbG886JjagEDCSWY8nAkcmXwPqF5j+Kk+T6AGhS/wyDXyDC2zkm1SjsFzPIEqlRF178af
- ra7dCMjQ74UpuHtRl7hkm2oykUGa+Glvlw50/qH60IqtYR7HSQe/M4/RRoEPmB9BbJ4N6MYHz
- cWRJxVVMcpRt9hIkoRbayRUTNJyOxXF8qd499cDIoDqPrRJwXMVXCjCKohIzralq5rU8Ioioh
- aid/euEcEe7VPQ1IuPZf6X14yTM/pQPoTWQUX55cPzLyZ0o3+GtmiIVbN3OROAwx1honVD84z
- 3XNmxEVZj1z/JZmaF6xHMj+3uL8edOakayZoPcFroufg9ULeecHgeUprNAgEdYb0erOLAvx7R
- sjMArAH5gFHKGca/B6/q5dJ3z2W5rrFVGVFEkRJ/4NO5LlYE3fdvWNq0Kg6FPfXwqszf4dg89
- /hf5uGCu+uVPK1RvnfjFSd8zWxptzKq584atIfYGF/6kWxko6lFtdi7MMAJssQcGOVRwLkDrP
- 9279Zfzege6Lycr8sSP+U0jCBWX1L2NvDK5t955AfOlI38hOVXZh1J+LJw0xMeUE3MJwYCV84
- wt2I0OLQ/RFkZxJYj9SdawdgbZ0pO468/T+52u/3piY2Xw0FUwuPKZZjzHcVQ3dK694EXHrHa
- wcxqB0eqE3Ar/JD2KJkxO8kg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-=E2=80=A6
-> Check with i-- so that skb at index 0 is freed as well.
-=E2=80=A6
+The "ret" variable needs to be signed for the error checking to work.
 
-Is the same source code adjustment needed also for the implementation
-of the function =E2=80=9Ct7xx_dpmaif_rx_frag_alloc=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.12-rc5/source/drivers/net/wwan/t7xx/t7=
-xx_hif_dpmaif_rx.c#L384
+Fixes: 95a3c11eb670 ("lsm: replace context+len with lsm_context")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ security/selinux/hooks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index eca9674c9478..0ff018f557ac 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6644,7 +6644,7 @@ static int selinux_ismaclabel(const char *name)
+ static int selinux_secid_to_secctx(u32 secid, struct lsm_context *cp)
+ {
+ 	u32 seclen;
+-	u32 ret;
++	int ret;
+ 
+ 	if (cp) {
+ 		cp->id = LSM_ID_SELINUX;
+-- 
+2.45.2
+
 
