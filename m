@@ -1,137 +1,314 @@
-Return-Path: <linux-kernel+bounces-393424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5583F9BA058
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:15:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A4F9BA05C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:16:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180D3282614
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485F21F2198F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B06F18A956;
-	Sat,  2 Nov 2024 13:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741FB18A936;
+	Sat,  2 Nov 2024 13:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kru/qg6H"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ucEqhwB2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64043156CA;
-	Sat,  2 Nov 2024 13:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9C51E515;
+	Sat,  2 Nov 2024 13:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730553311; cv=none; b=ocMQ5trng53Hrf0rKK5MB42pt3At0MUkN/Nfbc/G9pV7Fw98TxC/EYrs8PlFidp7dLr7pFhlQJmjkEnLw9b5DNnhP4ZFcLA/qWHwCK8lPYiSkEbUPLMAW4iMLuNC5/LbKpU3QYuoH+JXXNIShDdx2NlzD9YjMnyXv2zViX7VKMU=
+	t=1730553364; cv=none; b=S59gvyPT1Omn+8zu19tPfwM7W8XRZC3yhjTCdyqBfhhy4QM/Gi3ufKgbnDsS3DQ17Me0TFF9OP3MSZWqNmigvq78IRJMt18wPIsAAthuIZmTB1fPraRCUNe+rh6HjelAg9T2UoIFkmytb+VWrwZ3IBg/Pcn5eQN7iWXTwGRa8bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730553311; c=relaxed/simple;
-	bh=fWFWaJrtT873uGrZbfXFWcjGiIbzel0zDqI7deZ84Bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fKqLevXTGOa4BECgAqHz1py6zM2XUxJZwxst1XpPW6AoQTXN7SbQVwvQaSXawUmn+gKtKrjYF4JkZreixH2DZyy+D3vVXeMr7/zwUNhINoVJKBDE2wmFA2RqIerfEAPH/OjA5DkV9fJG2wcc/xFNKV7m/5uFuxevv/BcIO5HTrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kru/qg6H; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cdb889222so28071155ad.3;
-        Sat, 02 Nov 2024 06:15:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730553310; x=1731158110; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YqIV8fJvUTPe1XkFfFuu3lKfRKNmYvmwJe3hWNSUszg=;
-        b=Kru/qg6HWM5IEdh6/nZFQ2Wyw3K9iESEFDvZb3s8+L4BTzX1NyUtud+IBMxV8Y7Xeq
-         ZZZdD+5vJ83rgidLycuM5Bziw5fbVCjixAXYMYHQuNXx0nKXOSL/thMbwD4evABwY5s4
-         jFHlUH/C7JbIXJwlpKnDG6ihSTkhEutsRhvS+WKTIBaWhJE3PnrrkYJulRQHIRVQdTm6
-         idd04Zg7db4u96DkKcpW3NB5oYrxy1LMzS8apcdwlZVpwkfJ/Mr6CIFvvCR38BFi2G9q
-         3P0TVuRDcggvIqbc6bazdJm/mn93Na+BPUH7CmZWCM/oM58nBXiwtIH3k4r+z9rjzdsP
-         UBsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730553310; x=1731158110;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YqIV8fJvUTPe1XkFfFuu3lKfRKNmYvmwJe3hWNSUszg=;
-        b=ZLQtFnl+Mw97INbR+ngVeTe+YkVJd+VIJPfDKN53IHFPW7hGlC+1p8LAWrfgoF4zpd
-         Vl8kvDWppoE9SrshbWyGDS18S0z6ZxcDKkvsh5TqInvbrDXGi7F5jEfGpC2FZC4Zxmsv
-         fzhjaWW53ZGpkj0OoLQCj4lM3m9kwehco+GBCg7iRPYn0h2xdifIbNHbo40eusRI6lAY
-         jLTPrY+PxOWtGFe2/xneJ6iSHN+uhm6VrKQtAVrsj23SZm8aQGULdx9z+8W7MMhXemgR
-         QxtUFOhGrtclmLuu07XxtrNyiMT3PL93U2a+UdEq9161pR80crL99B560GpGJERQhT3+
-         9idQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfMN0Yz98TWWMr9hfIpNuvPaqjlE0+jT/VY7ILzrK3oYPq1sgOKOL2iHXsxRUK9b/nGX2bmEXQRx4U@vger.kernel.org, AJvYcCVYfIu8+LgAfgAG3rfvnjNSQMLZMHqIFlJYd8YKmplKISYZRe7yIsY0rnB2bY1SBcMX3F4zldhsF38eTYls@vger.kernel.org, AJvYcCXVDTlXcV4Rnjl/PwUJh2A4OSkVL2FWdceRcD0KS9lo+o+pNxG1CSJBoz9AASzU78kg69fGcYshJbjo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS/ioBzz3700fNpyURt35JNT8PUwnN79QWshODYZXSuyyo1LvR
-	//sJttg8HDN2gu11PzuDQpcdg26enQEWiXTMpCPYjUf/orj8NvJ9zmrihx1Q
-X-Google-Smtp-Source: AGHT+IEjZyMhv52i+FdmXziel3S6uh0T/4JCB2ptezWEGIl82CVPxNSuviQk+FJATDrk0E2JnpSDUw==
-X-Received: by 2002:a17:902:d4cd:b0:20c:dc32:b5d0 with SMTP id d9443c01a7336-21103ca87e7mr141827475ad.58.1730553309583;
-        Sat, 02 Nov 2024 06:15:09 -0700 (PDT)
-Received: from [192.168.0.122] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21105706886sm33500465ad.68.2024.11.02.06.15.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Nov 2024 06:15:09 -0700 (PDT)
-Message-ID: <6fb61676-2744-4735-ab00-2a523e03ea96@gmail.com>
-Date: Sat, 2 Nov 2024 21:15:05 +0800
+	s=arc-20240116; t=1730553364; c=relaxed/simple;
+	bh=0niTr1BdvtRlVlzAmME0IL7ZEXv8usi9qtXbuvurDaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHxOxn4qDH5MjT2bzIjdmJ2oVT7dBJs1T9td/P7EEwTs4EZaye7oyyPohkhkua0KVWP4u1aNQVXroKq9MR2A5ihCA13a95Nu2bBoD2ECwB2Bt4SUt7Ngi3e/+6bXYWyUWUcwoI8b2ZAIyz6sZh26uFSMzg7nGAzIrbdBbAz1vLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ucEqhwB2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D76C4CEC3;
+	Sat,  2 Nov 2024 13:16:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730553364;
+	bh=0niTr1BdvtRlVlzAmME0IL7ZEXv8usi9qtXbuvurDaQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ucEqhwB28owJfvRpdZ7oXPZL8DtSTJ99P2f2bhlSCW0iJQ99oEhAnfQiVlQgHKG67
+	 cylomX1f0bxpj44+X8KRpQs4Erxk0iWLQGOI9u8aajQxw+Y1B1BHX6+lD1gP02iL3/
+	 BUFU1uq2oR2CfoHobJrlkIBnhSc+jlFwBo/UQ0kWPRUzL+7x7zKjUb2bmCLcuRabuM
+	 3pDlIqflpLwIKt/VAlMstKxyvdb959TtltZ9uxhqFvbjjC6vj1dKrq2zVE0fJ7A//K
+	 R5e5bc95ZWGKWvHjjTmn2gJjXSZvbx+leZbHRTxWJfAuzEW09GqwnVucvd5TRPqOlk
+	 ruQGYVxX40JDw==
+Date: Sat, 2 Nov 2024 14:16:00 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] media: dt-bindings: media: camss: Add
+ qcom,msm8953-camss binding
+Message-ID: <5a5hwcql76oxryxlhekykm7gipptfmp27ovs5uzrjemmbw47sw@lqajkvn2pkdx>
+References: <20241102-camss-msm8953-v2-0-837310e4541c@mainlining.org>
+ <20241102-camss-msm8953-v2-2-837310e4541c@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: spi: apple,spi: Add binding for Apple
- SPI controllers
-Content-Language: en-MW
-To: Mark Kettenis <mark.kettenis@xs4all.nl>
-Cc: j@jannau.net, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io,
- broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
- <20241101-asahi-spi-v3-1-3b411c5fb8e5@jannau.net>
- <46b31874-9fe2-4534-9777-816765a265b1@gmail.com>
- <87wmhm3u7v.fsf@bloch.sibelius.xs4all.nl>
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <87wmhm3u7v.fsf@bloch.sibelius.xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241102-camss-msm8953-v2-2-837310e4541c@mainlining.org>
 
+On Sat, Nov 02, 2024 at 02:32:29AM +0100, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wr=
+ote:
+> Add bindings for qcom,msm8953-camss in order to support the camera
+> subsystem for MSM8953/SDM450/SDM632.
+>=20
 
+subject: only one media prefix, the first one.
 
-On 2/11/2024 16:39, Mark Kettenis wrote:
->> Date: Sat, 2 Nov 2024 10:36:56 +0800
->> Content-Language: en-MW
->>
->> On 2/11/2024 03:26, Janne Grunau via B4 Relay wrote:
->>
->> [...]
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - apple,t8103-spi
->>> +          - apple,t8112-spi
->>> +          - apple,t6000-spi
->>> +      - const: apple,spi
->> Apple A7-A11 SoCs seems to use a Samsung SPI block, so apple,spi is too
->> generic. Fallback to something like apple,t8103-spi instead.
-> 
-> Well, if that is a Samsung SPI block it probably should have a
-> "generic" compatible that starts with "samsung,".  The M1/M2
-> controllers have a different SPI block (presumably) designed by Apple
-> themselves.  So I think it is (still) appropriate that that one is
-> "apple,spi".
-I just looked into the SPI on A7-A11 SoC in more detail instead of just
-going off the ADT compatible. It seems a very big chunk of the registers
-offsets and bits seems to be the same as the ones in M1. So, feel free to
-ignore my comment above.
+> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
+=2Eorg>
+> ---
+>  .../bindings/media/qcom,msm8953-camss.yaml         | 323 +++++++++++++++=
+++++++
+>  1 file changed, 323 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/qcom,msm8953-camss.y=
+aml b/Documentation/devicetree/bindings/media/qcom,msm8953-camss.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..1d2236bc8d94ba81d8b993a10=
+5dc5d6a812c727e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,msm8953-camss.yaml
+> @@ -0,0 +1,323 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +
 
-Acked-by: Nick Chan <towinchenmi@gmail.com>
+Drop blank line
 
-> 
-> Also, (upstream) U-Boot already uses the "apple,spi" compatible.  So
-> changing it for purity sake just causes pain.
-Well, if upstream U-Boot is using it, then I agree that "apple,spi"
-should continue to be used.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,msm8953-camss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm CAMSS ISP
 
-> 
+All CAMSS? Or only MSM8953?
 
-Nick Chan
+> +
+> +maintainers:
+> +  - Barnabas Czeman <barnabas.czeman@mainlining.org>
+> +
+> +description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,msm8953-camss
+> +
+> +  clocks:
+> +    minItems: 30
+> +    maxItems: 30
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ahb
+> +      - const: csi0
+> +      - const: csi0_ahb
+> +      - const: csi0_phy
+> +      - const: csi0_pix
+> +      - const: csi0_rdi
+> +      - const: csi1
+> +      - const: csi1_ahb
+> +      - const: csi1_phy
+> +      - const: csi1_pix
+> +      - const: csi1_rdi
+> +      - const: csi2
+> +      - const: csi2_ahb
+> +      - const: csi2_phy
+> +      - const: csi2_pix
+> +      - const: csi2_rdi
+> +      - const: csi_vfe0
+> +      - const: csi_vfe1
+> +      - const: csiphy0_timer
+> +      - const: csiphy1_timer
+> +      - const: csiphy2_timer
+> +      - const: ispif_ahb
+> +      - const: micro_ahb
+> +      - const: top_ahb
+> +      - const: vfe0
+> +      - const: vfe0_ahb
+> +      - const: vfe0_axi
+> +      - const: vfe1
+> +      - const: vfe1_ahb
+> +      - const: vfe1_axi
+> +
+> +  interrupts:
+> +    minItems: 9
+> +    maxItems: 9
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: ispif
+> +      - const: vfe0
+> +      - const: vfe1
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    items:
+> +      - description: VFE0 GDSC - Video Front End, Global Distributed Swi=
+tch Controller.
+> +      - description: VFE1 GDSC - Video Front End, Global Distributed Swi=
+tch Controller.
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: vfe0
+> +      - const: vfe1
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    description:
+> +      CSI input ports.
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                description:
+> +                  An array of physical data lanes indexes.
+> +                  Position of an entry determines the logical
+> +                  lane number, while the value of an entry
+> +                  indicates physical lane index. Lane swapping
+> +                  is supported. Physical lane indexes;
+> +                  0, 2, 3, 4.
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +  reg:
+> +    minItems: 13
+> +    maxItems: 13
+> +
+> +  reg-names:
+> +    items:
+> +      - const: csi_clk_mux
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csiphy0
+> +      - const: csiphy0_clk_mux
+> +      - const: csiphy1
+> +      - const: csiphy1_clk_mux
+> +      - const: csiphy2
+> +      - const: csiphy2_clk_mux
+> +      - const: ispif
+> +      - const: vfe0
+> +      - const: vfe1
+> +
+> +  vdda-supply:
+> +    description:
+> +      Definition of the regulator used as analog power supply.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
+> +  - interrupt-names
+> +  - iommus
+> +  - power-domains
+> +  - power-domain-names
+> +  - vdda-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,gcc-msm8953.h>
+> +
+> +    camss: camss@1b00000 {
+> +        compatible =3D "qcom,msm8953-camss";
+> +
+> +        reg =3D <0x1b00020 0x10>,
+
+Your DTS was not tested :/. Mismatched unit address.
+
+See Soc maintainer profiles about W=3D1 checks. Do not use us for such
+review, but tools.
+
+Best regards,
+Krzysztof
+
 
