@@ -1,108 +1,52 @@
-Return-Path: <linux-kernel+bounces-393190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877999B9D7A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 07:39:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 171BA9B9D7B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 07:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF8D7B21FC2
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 06:39:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89AB6B22986
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 06:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3864414F9FF;
-	Sat,  2 Nov 2024 06:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C1114D428;
+	Sat,  2 Nov 2024 06:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="XWeXwebb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TuhLkC6J"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59D81448E3;
-	Sat,  2 Nov 2024 06:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MALtmqx1"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E97218035
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 06:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730529545; cv=none; b=Wzs1Sp5YIcSNmbawI/uSATXHeXrjKpBWfpBD1KEN6xYKXgHanzybg3O4EMSd/xlEmu37GinupB/ahFPd80Es9Ywmt8JWpA8eB2L9BxxqAfAwHA+rbXGS6jP8eA+04+Qlt4RKwgvyQViZQQRh8DSAP2ZHUi/4epzs2lQ+ZRn7x54=
+	t=1730529647; cv=none; b=K6czPlQq7tD+f1245jxy++ANbQXYNG8692uFD7Z92gS8V4IwTf3c95+NBWL8HIZ5nzTs9SA6Mo7QkK2VcZCMNZyU1tvzv9GkT4bqRygkDCU9v4OJJMkxBirS32qzGBFpM5IjaQZ5iTkchxguSWVI18QUhG7JvFzdQwk8zE5Lgxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730529545; c=relaxed/simple;
-	bh=0qbL3Tdj7h8MluOWe1hTR6oaeqAjyindg0/tGLHCweE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H6/M2sH7V0ZefIuAWfMJfYY1EAuAjDEZyt+pzsIxGuGMbtrCkmKWm+VTBTaCRO5JKnI8La1dMMqKjF6r9syP8p1KQehNUpkHRl+AvcBgZbNYpdeztjWNzvUbeJTOObEWLDx31axFP5NkN7GyhOBKiqSFiOs808ELlbBLmhXm/nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=XWeXwebb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TuhLkC6J; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8A6F9138025C;
-	Sat,  2 Nov 2024 02:39:01 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Sat, 02 Nov 2024 02:39:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1730529541; x=1730615941; bh=tW5i81dGeS/Tcdwfl+DNK
-	gawU6jlm57FrL/Kr1n05gg=; b=XWeXwebbrE8cSmvJacq6sa/TSrccAW+q7tIv1
-	0zVB/areTSYULlfmpbaSLz8mwzfwBCcMypo9lh1jOS0RRwf7J87mLB65b7+QWK61
-	VhNorRqeUM0ES1tDZ3PBOugQmh6jSxHtGirPiUWEVv0WeXgrSJs52Hf3+sqEVN4x
-	YiO4QHPB+SR1/Bubi2FjlnYS/uZ3ZnXzLhkdjvSsweYMsfZevgRYYLzlAocAl4Q8
-	AtnSZg46OTgh5UzktsX5Uz6p/Ur1RkUhjDWi8F4eQJsZymIIbbA1uPnOQnJ+0Vj7
-	KOi4iOUmkv+yv9G0fP1tEkCQHwAKGnjSQK5VPIg9O8fVjMppQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730529541; x=1730615941; bh=tW5i81dGeS/Tcdwfl+DNKgawU6jlm57FrL/
-	Kr1n05gg=; b=TuhLkC6JkwGDr3mVgYyjcVlKObxB5529nZzVy38bOm0fceX1zRN
-	rceSE//8MjVPD0kgNtg3DQxlo63xAYYNJN1uk0QODChyGvmAPGodXDbOMAyOCl4P
-	1bXKVDcN5oFxb9tFk5Smv0bBYbIWEFUrl6x+LJ15keF9nwQTbFVVDsjdWgI4PZbm
-	SXyJRlXlwY/JJETnLpO9qHXW61R2fzRcYlnoihPfE7/rO8a+bS2n+xR8TTQaUGyv
-	CClbKteR7vivmDclQ+2/GmSQq2IIxvif1SkCRwFq5FHh10cT4tACjBDGgSLfMXHM
-	QIDXGCQ3xZlcaapaIPLUz8iNE2UZJMgI/xg==
-X-ME-Sender: <xms:BMklZ3Sih_tdPaRhMvoCSLOlQr_ydDV0QBFLP7Lp7bk_Q5H9v3K79Q>
-    <xme:BMklZ4x_mpemKahdNYTzLv40Pp5DaYgtyg9HHzNW-0trM7fH2uJ9ul3smpS1DXwMm
-    fuzX1OMz4uckr7u-w>
-X-ME-Received: <xmr:BMklZ81u0E8XvuNnaG0L306305beajxrPyOBIceVscr2gKVNUohCvuviqPfFNXgoucak9QJzTTBhNiB5PA6k3fTinRaDePwmCrmj--SAgzIeTzhkEtwm>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeltddgleeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlje
-    dtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeffrghn
-    ihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepvd
-    eggfetgfelhefhueefkeduvdfguedvhfegleejudduffffgfetueduieeikeejnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguh
-    huuhdrgiihiidpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuh
-    hmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughh
-    rghtrdgtohhmpdhrtghpthhtohepphgrvhgrnhdrtghhvggssghisegsrhhorggutghomh
-    drtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    rghnughrvgifrdhgohhsphhouggrrhgvkhessghrohgruggtohhmrdgtohhmpdhrtghpth
-    htoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopehmihgt
-    hhgrvghlrdgthhgrnhessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepvhhikhgrsh
-    drghhuphhtrgessghrohgruggtohhmrdgtohhm
-X-ME-Proxy: <xmx:BMklZ3DHKm9aL1X_W8AONPNMyfNbVZdRCF3LYV0gUnxcV8Qz5NLZ-g>
-    <xmx:BMklZwhP6fueHGhDQiZsPQkyg3aBggTz6HDMhJMvkVQ9fqo6o1tNxA>
-    <xmx:BMklZ7pynis25-3AupC15kPWStDtO_V3qxPXrGbbQqkSD2d5FSrM6g>
-    <xmx:BMklZ7iGn299E_Nc3cdl1JX4fFae_gsw4wKiZDszwD3ExHOJlBf9xA>
-    <xmx:BcklZ_SJ04jm7_pymXXQvx-I_xgp7oklRC4z7B3vwZjk6NS9X8XmhVD7>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 2 Nov 2024 02:38:59 -0400 (EDT)
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	pavan.chebbi@broadcom.com,
-	kuba@kernel.org,
-	andrew.gospodarek@broadcom.com,
-	andrew+netdev@lunn.ch,
-	michael.chan@broadcom.com,
-	vikas.gupta@broadcom.com,
-	martin.lau@linux.dev
-Cc: netdev@vger.kernel.org,
+	s=arc-20240116; t=1730529647; c=relaxed/simple;
+	bh=f6x6wRSgqbldWG1dme/0EDWxZbtfqbTGkNaHT+781DA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S33LYwGlwbfnlCeKpVo3avZ7QyLMC8ENcOf7vp6/IOsrqF65zPjxeFtHs5l8eDd3/eqMm+9xr/cyGJMbg5psFmVHotDBj7Rh8glqYsSz1h8eHZZ+yHP+8ZfcwkZqV83lJl5YQZ2mexqREzi935t0fgCsngSTIIdEW6mYeZdUOLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MALtmqx1; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=4epiw
+	3ui9HD6taTZFIBUVIzwxVQK2JBCcmQ9ZscPasI=; b=MALtmqx1aMjyoaPSxsqns
+	76WTVXlgGdo6RK4xFT9L1y4bcE1qDCy7qYPrEuAQ1KHJfzAiABIleY5ACaBmsM3N
+	G/BFIit7LsuVUDmrPVDnvIUKSou9D3cW+T9yf/7rggIzxG2NfP/unAbp04c567cQ
+	VRaWSkaWMXCB6ImpHdHYMQ=
+Received: from fc39.. (unknown [125.33.14.1])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgAnnw9IySVnWEkjCQ--.19355S4;
+	Sat, 02 Nov 2024 14:40:10 +0800 (CST)
+From: Honggang LI <honggangli@163.com>
+To: hch@lst.de,
+	sagi@grimberg.me,
+	kch@nvidia.com
+Cc: linux-nvme@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH net v2] bnxt_en: ethtool: Fix ip[4|6] ntuple rule verification
-Date: Sat,  2 Nov 2024 00:38:48 -0600
-Message-ID: <6fbf2d80b646ca405bd44ccd54f173f2bb92367a.1730522118.git.dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.46.0
+	Honggang LI <honggangli@163.com>
+Subject: [PATCH] nvmet-rdma: WARN_ON when nvmet_rdma_rsp::n_rdma equal zero
+Date: Sat,  2 Nov 2024 14:39:53 +0800
+Message-ID: <20241102063953.228107-1-honggangli@163.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,80 +54,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgAnnw9IySVnWEkjCQ--.19355S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZrW3WFyfuF43Gw13Jw43ZFb_yoWDWrcEkw
+	1IyF1fu3WDur1xKr129w1YyryqkFnruF1xKF4ft3y2yrWUWr90kw1ktr93Zr1xZa18CrWx
+	CFsrJrWagFWxJjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRNJ5o7UUUUU==
+X-CM-SenderInfo: 5krqwwxdqjzxi6rwjhhfrp/xtbBDwKLRWclu+jbJgAAsv
 
-Previously, trying to insert an ip4 or ip6 only rule would get rejected
-with -EOPNOTSUPP. For example, the following would fail:
+nvmet_rdma_rsp::n_rdma is an u8, which can't be negative.
 
-    ethtool -N eth0 flow-type ip6 dst-ip $IP6 context 1
-
-The reason was that all the l4proto validation was being run despite the
-l4proto mask being set to 0x0. Fix by respecting the mask on l4proto and
-treating a mask of 0x0 as wildcard l4proto.
-
-Fixes: 9ba0e56199e3 ("bnxt_en: Enhance ethtool ntuple support for ip flows besides TCP/UDP")
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+Signed-off-by: Honggang LI <honggangli@163.com>
 ---
-Changes from v1:
-* Set underlying l4proto to IPPROTO_RAW to fix get path
+ drivers/nvme/target/rdma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index f71cc8188b4e..76e62be4f4f9 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -1289,10 +1289,13 @@ static int bnxt_add_l2_cls_rule(struct bnxt *bp,
- static bool bnxt_verify_ntuple_ip4_flow(struct ethtool_usrip4_spec *ip_spec,
- 					struct ethtool_usrip4_spec *ip_mask)
- {
-+	u8 mproto = ip_mask->proto;
-+	u8 sproto = ip_spec->proto;
-+
- 	if (ip_mask->l4_4_bytes || ip_mask->tos ||
- 	    ip_spec->ip_ver != ETH_RX_NFC_IP4 ||
--	    ip_mask->proto != BNXT_IP_PROTO_FULL_MASK ||
--	    (ip_spec->proto != IPPROTO_RAW && ip_spec->proto != IPPROTO_ICMP))
-+	    (mproto && mproto != BNXT_IP_PROTO_FULL_MASK) ||
-+	    (mproto && sproto != IPPROTO_RAW && sproto != IPPROTO_ICMP))
- 		return false;
- 	return true;
- }
-@@ -1300,10 +1303,12 @@ static bool bnxt_verify_ntuple_ip4_flow(struct ethtool_usrip4_spec *ip_spec,
- static bool bnxt_verify_ntuple_ip6_flow(struct ethtool_usrip6_spec *ip_spec,
- 					struct ethtool_usrip6_spec *ip_mask)
- {
-+	u8 mproto = ip_mask->l4_proto;
-+	u8 sproto = ip_spec->l4_proto;
-+
- 	if (ip_mask->l4_4_bytes || ip_mask->tclass ||
--	    ip_mask->l4_proto != BNXT_IP_PROTO_FULL_MASK ||
--	    (ip_spec->l4_proto != IPPROTO_RAW &&
--	     ip_spec->l4_proto != IPPROTO_ICMPV6))
-+	    (mproto && mproto != BNXT_IP_PROTO_FULL_MASK) ||
-+	    (mproto && sproto != IPPROTO_RAW && sproto != IPPROTO_ICMPV6))
- 		return false;
- 	return true;
- }
-@@ -1357,7 +1362,7 @@ static int bnxt_add_ntuple_cls_rule(struct bnxt *bp,
- 		struct ethtool_usrip4_spec *ip_spec = &fs->h_u.usr_ip4_spec;
- 		struct ethtool_usrip4_spec *ip_mask = &fs->m_u.usr_ip4_spec;
+diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+index 1afd93026f9b..cdeb275a388b 100644
+--- a/drivers/nvme/target/rdma.c
++++ b/drivers/nvme/target/rdma.c
+@@ -750,7 +750,7 @@ static void nvmet_rdma_read_data_done(struct ib_cq *cq, struct ib_wc *wc)
+ 	struct nvmet_rdma_queue *queue = wc->qp->qp_context;
+ 	u16 status = 0;
  
--		fkeys->basic.ip_proto = ip_spec->proto;
-+		fkeys->basic.ip_proto = ip_mask->proto ? ip_spec->proto : IPPROTO_RAW;
- 		fkeys->basic.n_proto = htons(ETH_P_IP);
- 		fkeys->addrs.v4addrs.src = ip_spec->ip4src;
- 		fmasks->addrs.v4addrs.src = ip_mask->ip4src;
-@@ -1388,7 +1393,7 @@ static int bnxt_add_ntuple_cls_rule(struct bnxt *bp,
- 		struct ethtool_usrip6_spec *ip_spec = &fs->h_u.usr_ip6_spec;
- 		struct ethtool_usrip6_spec *ip_mask = &fs->m_u.usr_ip6_spec;
+-	WARN_ON(rsp->n_rdma <= 0);
++	WARN_ON(rsp->n_rdma == 0);
+ 	atomic_add(rsp->n_rdma, &queue->sq_wr_avail);
+ 	rsp->n_rdma = 0;
  
--		fkeys->basic.ip_proto = ip_spec->l4_proto;
-+		fkeys->basic.ip_proto = ip_mask->l4_proto ? ip_spec->l4_proto : IPPROTO_RAW;
- 		fkeys->basic.n_proto = htons(ETH_P_IPV6);
- 		fkeys->addrs.v6addrs.src = *(struct in6_addr *)&ip_spec->ip6src;
- 		fmasks->addrs.v6addrs.src = *(struct in6_addr *)&ip_mask->ip6src;
+@@ -787,7 +787,7 @@ static void nvmet_rdma_write_data_done(struct ib_cq *cq, struct ib_wc *wc)
+ 	if (!IS_ENABLED(CONFIG_BLK_DEV_INTEGRITY))
+ 		return;
+ 
+-	WARN_ON(rsp->n_rdma <= 0);
++	WARN_ON(rsp->n_rdma == 0);
+ 	atomic_add(rsp->n_rdma, &queue->sq_wr_avail);
+ 	rsp->n_rdma = 0;
+ 
 -- 
-2.46.0
+2.47.0
 
 
