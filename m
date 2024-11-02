@@ -1,59 +1,76 @@
-Return-Path: <linux-kernel+bounces-393414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7572D9BA03B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:13:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD229BA055
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D5F21F215C5
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:13:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188271F21238
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7818B18A6CF;
-	Sat,  2 Nov 2024 13:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C935B1AAE22;
+	Sat,  2 Nov 2024 13:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSsIJny7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="E7n/EJPq"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFCBEAC6;
-	Sat,  2 Nov 2024 13:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB331AB513;
+	Sat,  2 Nov 2024 13:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730553200; cv=none; b=YT3DF5tYgZdBRed/s4UmEaYdN36Qg0ovUNdGN//KiVvYjJzeWxsn7BA8Np8IAnXxs5d+l6/SYUlmypyNkm7YkRBF3KzxHNjjQ5ktq0ULAyLbVKUGJMWAQA/3yr5hK2bGfujinLfToDu6rIfk9t+SEJgtDR723kJfjUQWXWTm2J8=
+	t=1730553224; cv=none; b=qsPXWMreQD1XatH5r0YGBfkNFhOh38x9L3Y26VVLfx1dOb6ZVsoH47bar/FupK8JXGQLBgKjF2rvgXrKEzFcW9a9MHWD3FoPK2kiLRgF7g5RaLY+8HpF1OZwjLeolGte2exqzgzeOXU5RtpRnft6aRfuyp/J9Av7G+nslwdmKjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730553200; c=relaxed/simple;
-	bh=fY6Y0cEvgamB3GM0ZofEW4yzoPnHMdDWFzaDOTWcK5Y=;
+	s=arc-20240116; t=1730553224; c=relaxed/simple;
+	bh=6/65pIb5ndNYa9noe9mOGH7S8Lx6mQcVHE2d7kMkiBg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JxeamTpQQI8HMDHN/qGVYGetf0MrzGiJiAzOS2cBUi5bYERxSRwag+F/UReOl6Iyt1vl4VujbrNgyxP3WxDMMa7gJ9gy6OiZYEr0LiEXIp/wUKsOdoYCaJdrGWoTSd4lZrXM5fC/yFlc8N6M/m2aFXInUWdJujaOAm/0kwReI6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSsIJny7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A50C4CEC3;
-	Sat,  2 Nov 2024 13:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730553200;
-	bh=fY6Y0cEvgamB3GM0ZofEW4yzoPnHMdDWFzaDOTWcK5Y=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObJVe3q/d2Fg4O9fExUVKn+dWIdrXWPGfFmrrOA9pn274xi4Kk6givUVOaBuUBv9FX0e3XasKJw7eM4fG6iP5Iy7NUGN+8iQjKE9GQmX4FDkC3bZmof56zLPsOZO1Rayf/N7BTiTm8bzg5B+86kpcgk0cNBo5ppt43wVUrAT5AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=E7n/EJPq; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3130940E0184;
+	Sat,  2 Nov 2024 13:13:39 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id KqbIVZ5My0aj; Sat,  2 Nov 2024 13:13:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730553214; bh=4AkUjEDwanlU2m83/S/nynUi7OpncKP1iwIp29w3Zu0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JSsIJny7Sgz9dNxWFRRe/UlE08GOdpnI7Znm/4fPHitGCANF9pYjKD18rD4bcRnl7
-	 0lP9EfELn3ewbsMt7BjqN6OGq3zF1b/EHxsjtTCrhiwh9sp5qBseDKRoUedWB25zk6
-	 ciYdtNSd9dAxkOu66nwkEapN0JnX/MXsL05MsqQMYNgrMXQX/28VHyqMkzxdmYO6Z3
-	 NepNvLx9/lRYs74uC+ei98PfIWhUNZJb2ZN9RbkFyrc0FYLwc0ogv0+csdsozlNvcJ
-	 3HQAvmDI/DeyBKdkN6aP9JaNsAGYxNtYnifefX8DvlqHiKnw68VcJRgjm+4Bm1QryX
-	 jILmSSqzUO9DQ==
-Date: Sat, 2 Nov 2024 14:13:16 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Markus Mayer <mmayer@broadcom.com>
-Cc: Olivia Mackall <olivia@selenic.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Aurelien Jarno <aurelien@aurel32.net>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Golle <daniel@makrotopia.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Francesco Dolcini <francesco.dolcini@toradex.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Device Tree Mailing List <devicetree@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: rng: add binding for BCM74110 RNG
-Message-ID: <bz4r3qtdrarycfgnke54w4mxbtw52yav7bzofjx42ruibm2axx@pj5vhi7qy7pk>
-References: <20241101211316.91345-1-mmayer@broadcom.com>
- <20241101211316.91345-2-mmayer@broadcom.com>
+	b=E7n/EJPqZgrsRrl87JyPffnC3Kjfzcwx2pSNWbKys//7hvk9XZu/CuktNiIqqH5y8
+	 7P8j1uwwLy+oT0+VRvK2PSlmhMzOTbnmjRq9COXOzo9FuIlY/MmyBCiD8XJD8NZ4js
+	 awieL3aBoOzelxNAyCWmNznsYdjY9zB/Qwq+wrtWyH/REhMqnRzaY4+0fucHGK9q/j
+	 w5e7+Ipl8Kj+d5LDUEu6bULBgwLqmF2lgqXcrP6JQ4wEVag3SZwchVPQRusKVsRjAh
+	 H+JOEYRcFEloOg4ato2s5o9a2KizJn+zb/tHc+haOzedsBS1E6IBu+kfpNwD3GG97S
+	 +4lqbFdEBrX+0lDjk5jRjzdKiEYxb8mkBq0mE2zsroHmPwds/NgyRBhPs5MpSQAh4y
+	 GL4OP2B1jMWE7Xbjb3+PYT//ExyGf98EttPvZ+OFKxcv1SYFG3eUtHGnLlNmxUtpxI
+	 J9mGuFEkWjq6jQ/RjvZcgLYYwTG6PytT58bTKQAFaF2itFiduyI6+pFPIF5ajerBT0
+	 yKqs5Vbb9qaTMkpFEYPj5tcCIY43T1z29W8cvWHrQwcyRm5UXY+n6m1iZH/xJhgqHw
+	 sTP3ScBVYtTe/iGcjtGTYv947Ijfa+ZPJpMdUAgLvL2RigN4F/bnjGgdn1pcfadoyq
+	 8tH6nF+qhxU1J/SJ45eIP3k0=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CAA9240E0163;
+	Sat,  2 Nov 2024 13:13:24 +0000 (UTC)
+Date: Sat, 2 Nov 2024 14:13:18 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: tony.luck@intel.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+	mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] x86/mce/genpool: Make mce_gen_pool_create()
+ return explicit error codes
+Message-ID: <20241102131318.GMZyYlbjX0c4q1YEx4@fat_crate.local>
+References: <20241016123036.21366-1-qiuxu.zhuo@intel.com>
+ <20241025024602.24318-1-qiuxu.zhuo@intel.com>
+ <20241025024602.24318-6-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,20 +79,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241101211316.91345-2-mmayer@broadcom.com>
+In-Reply-To: <20241025024602.24318-6-qiuxu.zhuo@intel.com>
 
-On Fri, Nov 01, 2024 at 02:13:14PM -0700, Markus Mayer wrote:
-> Add a binding for the random number generator used on the BCM74110.
-> 
-> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
-> ---
->  .../bindings/rng/brcm,bcm74110-rng.yaml       | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rng/brcm,bcm74110-rng.yaml
+On Fri, Oct 25, 2024 at 10:45:57AM +0800, Qiuxu Zhuo wrote:
+>  	mce_numrecords = max(MCE_MIN_ENTRIES, num_possible_cpus() * MCE_PER_CPU);
+>  	mce_poolsz = mce_numrecords * (1 << order);
+>  	mce_pool = kmalloc(mce_poolsz, GFP_KERNEL);
+>  	if (!mce_pool) {
+>  		gen_pool_destroy(gpool);
+> -		return ret;
+> +		return -ENOMEM;
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This patch is just silly: the function is not that huge not to be able to see
+at a quick glance that it is -ENOMEM that is being returned in all error cases
+...
 
-Best regards,
-Krzysztof
+>  	}
+>  	ret = gen_pool_add(gpool, (unsigned long)mce_pool, mce_poolsz, -1);
+>  	if (ret) {
 
+... except in this case where, oh well, actually, it is -ENOMEM again but you
+have to go down the bowells of genalloc to see it.
+
+All in all, this is causing more churn than actually improving something...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
