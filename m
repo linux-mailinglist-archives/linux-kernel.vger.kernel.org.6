@@ -1,126 +1,127 @@
-Return-Path: <linux-kernel+bounces-393496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39B79BA154
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:01:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2919BA152
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFBE28212F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C23FB1C20E1A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4941A4F1F;
-	Sat,  2 Nov 2024 16:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41B5189F5A;
+	Sat,  2 Nov 2024 16:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FPsq+Ibm"
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoodaCKS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A883C3C;
-	Sat,  2 Nov 2024 16:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1AC45016;
+	Sat,  2 Nov 2024 16:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730563271; cv=none; b=BH5ndp4HtqEsQ2gNGnLe84xuj00Ggi2ZJioRUrqoUD7ejcp3JCCjDl3oyMfOkfZxwc11eT/VnpGsjv0qAOCW00xhobeasqtmBvjhU92/eOygsiHc95lLOW5Y0sl3uCIvdJpUcvVB5jH8n8yuCqZz54Oz3aNMczEB1KwE2eXUb9Q=
+	t=1730563213; cv=none; b=exda6ZBqj/WNymV2+XrvAQYMBZkJnKjnR8j2QidPVRwQmioL8SW01OG5KUWklNAyqm5HljK9XurqfEp69NOtbI2HJItfq/xH9yQA1cLGtNq2lXOMAqqAF1Mta2UJI6jCMaaCvKGCuRgCTIr9U7dGMvPL9LmAZlufcil0ZBgEyxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730563271; c=relaxed/simple;
-	bh=pWtlMhVEo5sTa10vHdWI3MJ+UdkICdAOYZ77Ui+PqCM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B36guDNfBN9/x6k2wTncY7ck8GEzI/qxggU8fD0ccMlmkRvYT6PweZvVEwZlA2AY/FhBU95VkrDpIRKW1BA4/2UY0yGBlREshFWk9QMV6itFX0ev6ZLaBYsTeFN7RIe3b0vtzrhV3sbh77gFED5WeZyPu5Ct+ipL0nxAlBboMAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FPsq+Ibm; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 7GXat8EQFNFce7GXatlT3S; Sat, 02 Nov 2024 16:59:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730563197;
-	bh=KGKzVWsnOyVtcs0VCIBf32JB3OlZi4k6gGyDSCVIYG4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FPsq+IbmN649gL8GgwbVI/cRjs4BDAzzEO+TIlCYtZBxAgNh9ev/V/hEToE4BL1WX
-	 j3crEuh8erPcq6Stva/3Vj1sMb6gvG8wl4jo51yGksnqp2TTKwOC6xxjlVvfy4NT5K
-	 yCDkwWGOkOhG+T+VXtJzu22cP0OAE7AXeHAWBSnEEOUMhqZJUpI1Brlng7OO4+wjOp
-	 2mEoV+iHW59WG+K7kMAsydg4k/deaZTffGX5ZvXXOrrgqDr9FJv6RhpFgZyMYWsSNi
-	 1OjQIeI2ZcfovJit6fcsIpfu9VT4CRBR3ilOLx4a/Ob04lqY7daamNq/OUmq5yttaw
-	 1MOWM5wVGIY/Q==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 02 Nov 2024 16:59:57 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: srinivas.pandruvada@linux.intel.com,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH] platform/x86/intel/vsec: Remove a useless mutex
-Date: Sat,  2 Nov 2024 16:59:41 +0100
-Message-ID: <ccc08a262304f7f8c2e435349f0f714ebf9acfcd.1730563031.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730563213; c=relaxed/simple;
+	bh=l/Le7rPKDbhqxrBPy/uf3Tc5Pa9oda1Gxc5J2ngcZJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fNXxfta6AeENM/Cmce+KKGXJ5utISGx0bK+dQPlPouy7G7U/tAMPyKt2xb/4SjWbm8PtpGekXC1P+GJyfP5lsfhnL7qiqT8uRQLbNxv4sU7/dp0pX1BQFUsiMN6HbAKwtx9PW3iAUzeFNAgQfzNR8KfoDKde8E5imhPmo61TDSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OoodaCKS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4225C4CEC3;
+	Sat,  2 Nov 2024 16:00:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730563212;
+	bh=l/Le7rPKDbhqxrBPy/uf3Tc5Pa9oda1Gxc5J2ngcZJ4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OoodaCKS3k40A8FPD9hYtz3WRAACLqjoXkQJrpKFt70JWqDe6JuynHvf4K0tBQkdZ
+	 BTUXDnPPXSsY/7zqAmt2wva1e2KDC13VIWFpWWZotqe5TixRFeNXl0rfSKo1/UWYnT
+	 j5k3w9WLSIDbwkcghRYTylrmq0ADT7Yw9Zr3ey6yHjd77y3NgSg0pB4YdAwDZbImlm
+	 MZ1YQQRGBtrmDAhxYfytcTrDDkp6oz6n2oC+C4SK2z92WcdytCJRn5VGcYR3Q5ek7v
+	 YjDw1GfuEgW3IiIuwlENy2AZ/zVIL1X83Ifh0//FyWPb2Vau41hPplew6HZRbysf+q
+	 P4B/uvj2zDCeA==
+Date: Sat, 2 Nov 2024 16:00:04 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andreas
+ Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Miguel
+ Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH 26/44] iio: Switch to use hrtimer_setup()
+Message-ID: <20241102160004.3c7874a7@jic23-huawei>
+In-Reply-To: <516b30771b0d627d6b7461611cbf476aa1fa0e6c.1729865485.git.namcao@linutronix.de>
+References: <cover.1729865485.git.namcao@linutronix.de>
+	<516b30771b0d627d6b7461611cbf476aa1fa0e6c.1729865485.git.namcao@linutronix.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-ida_alloc()/ida_free() don't need any mutex, so remove this one.
+On Mon, 28 Oct 2024 08:35:02 +0100
+Nam Cao <namcao@linutronix.de> wrote:
 
-It was introduced by commit 9a90ea7d3784 ("platform/x86/intel/vsec: Use
-mutex for ida_alloc() and ida_free()").
+> There is a newly introduced hrtimer_setup() which will replace
+> hrtimer_init(). This new function is similar to the old one, except that it
+> also sanity-checks and initializes the timer's callback function.
+> 
+> Switch to use this new function.
+> 
+> Patch was created by using Coccinelle.
+> 
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-See:
-https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L375
-https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L484
+Seems sensible to me.
 
-Review with care. This patch is clearly the opposite of the one in Fixes
-which states that locking IS needed.
-IIUC, idr_ functions need locking, but not ida_.
+https://lore.kernel.org/lkml/2159c09badceec667d800005ac98824105ba8dc6.1729864615.git.namcao@linutronix.de/
+Has definition of hrtimer_setup()
 
-If I'm wrong, could you elaborate why? (because many other places will
-need to be fixed and the doc certainly needs updating)
----
- drivers/platform/x86/intel/vsec.c | 6 ------
- 1 file changed, 6 deletions(-)
++CC  linux-iio as an FYI.
 
-diff --git a/drivers/platform/x86/intel/vsec.c b/drivers/platform/x86/intel/vsec.c
-index 7b5cc9993974..9e0f8e38178c 100644
---- a/drivers/platform/x86/intel/vsec.c
-+++ b/drivers/platform/x86/intel/vsec.c
-@@ -79,17 +79,13 @@ static void intel_vsec_remove_aux(void *data)
- 	auxiliary_device_uninit(data);
- }
- 
--static DEFINE_MUTEX(vsec_ida_lock);
--
- static void intel_vsec_dev_release(struct device *dev)
- {
- 	struct intel_vsec_device *intel_vsec_dev = dev_to_ivdev(dev);
- 
- 	xa_erase(&auxdev_array, intel_vsec_dev->id);
- 
--	mutex_lock(&vsec_ida_lock);
- 	ida_free(intel_vsec_dev->ida, intel_vsec_dev->auxdev.id);
--	mutex_unlock(&vsec_ida_lock);
- 
- 	kfree(intel_vsec_dev->resource);
- 	kfree(intel_vsec_dev);
-@@ -113,9 +109,7 @@ int intel_vsec_add_aux(struct pci_dev *pdev, struct device *parent,
- 		return ret;
- 	}
- 
--	mutex_lock(&vsec_ida_lock);
- 	id = ida_alloc(intel_vsec_dev->ida, GFP_KERNEL);
--	mutex_unlock(&vsec_ida_lock);
- 	if (id < 0) {
- 		xa_erase(&auxdev_array, intel_vsec_dev->id);
- 		kfree(intel_vsec_dev->resource);
--- 
-2.47.0
+Jonathan
+
+> ---
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> ---
+>  drivers/iio/adc/ti-tsc2046.c           | 4 +---
+>  drivers/iio/trigger/iio-trig-hrtimer.c | 4 ++--
+>  2 files changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ti-tsc2046.c b/drivers/iio/adc/ti-tsc2046.c
+> index 311d97001249..87c86d752293 100644
+> --- a/drivers/iio/adc/ti-tsc2046.c
+> +++ b/drivers/iio/adc/ti-tsc2046.c
+> @@ -812,9 +812,7 @@ static int tsc2046_adc_probe(struct spi_device *spi)
+>  
+>  	spin_lock_init(&priv->state_lock);
+>  	priv->state = TSC2046_STATE_SHUTDOWN;
+> -	hrtimer_init(&priv->trig_timer, CLOCK_MONOTONIC,
+> -		     HRTIMER_MODE_REL_SOFT);
+> -	priv->trig_timer.function = tsc2046_adc_timer;
+> +	hrtimer_setup(&priv->trig_timer, tsc2046_adc_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
+>  
+>  	ret = devm_iio_trigger_register(dev, trig);
+>  	if (ret) {
+> diff --git a/drivers/iio/trigger/iio-trig-hrtimer.c b/drivers/iio/trigger/iio-trig-hrtimer.c
+> index 716c795d08fb..82c72baccb62 100644
+> --- a/drivers/iio/trigger/iio-trig-hrtimer.c
+> +++ b/drivers/iio/trigger/iio-trig-hrtimer.c
+> @@ -145,8 +145,8 @@ static struct iio_sw_trigger *iio_trig_hrtimer_probe(const char *name)
+>  	trig_info->swt.trigger->ops = &iio_hrtimer_trigger_ops;
+>  	trig_info->swt.trigger->dev.groups = iio_hrtimer_attr_groups;
+>  
+> -	hrtimer_init(&trig_info->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+> -	trig_info->timer.function = iio_hrtimer_trig_handler;
+> +	hrtimer_setup(&trig_info->timer, iio_hrtimer_trig_handler, CLOCK_MONOTONIC,
+> +		      HRTIMER_MODE_REL_HARD);
+>  
+>  	trig_info->sampling_frequency[0] = HRTIMER_DEFAULT_SAMPLING_FREQUENCY;
+>  	trig_info->period = NSEC_PER_SEC / trig_info->sampling_frequency[0];
 
 
