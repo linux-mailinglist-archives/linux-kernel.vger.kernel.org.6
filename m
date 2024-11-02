@@ -1,55 +1,76 @@
-Return-Path: <linux-kernel+bounces-393520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCEEF9BA1BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 18:31:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBE39BA1C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 18:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88C101F21856
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:31:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480DA1C20A19
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7631A7AF6;
-	Sat,  2 Nov 2024 17:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90EE1A76CE;
+	Sat,  2 Nov 2024 17:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="s9KMDmyi"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="I4FSFLAb"
+Received: from sonic306-8.consmr.mail.bf2.yahoo.com (sonic306-8.consmr.mail.bf2.yahoo.com [74.6.132.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F82A4EB50;
-	Sat,  2 Nov 2024 17:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441BB4EB50
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 17:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.132.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730568659; cv=none; b=jEWInAlyxAcX21QQNDc42C2h7OpmKaEIb0vltcgQ6o0JnMzpY+m0KDB/w2qFbZS9Jp5bi2C+OmsGXfftoimiyabSdvokmt26KRm+c72jL0FefFhM/RgRXRwP5nrzpojeGQuVcKqt/Z0mhQXo6eVat+C4xjqTDA7j9V+G1BiQIS0=
+	t=1730569315; cv=none; b=vAslF0Yw5GWwBzBWtDEMkIfmZPFhK1g9LlXJZWxwOmI4+s3jdxkLVe2T0NYxtqOPH65B7WMpsUZugvMoLsw8LW9Gmkc5WB0vjxyG34LtTK9iSusmsNnPcGuHRmWrmjrX/trvHgCUEB8ZI1cPZdj1jg3ZaUDdDpdKaO2UQw2CytM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730568659; c=relaxed/simple;
-	bh=QEjLdGSqdqsQxZsvatxuqZSLE+aQoVLZvHnOqV6Fkgo=;
+	s=arc-20240116; t=1730569315; c=relaxed/simple;
+	bh=dFvM9H5o8lLuZ3v+nZHh7FedJzN3fiztbvdzhZ3/ovY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GgX7AGzWiKVIEnb1QJp6y8ECNrUtDTiRDubtWko8tS0ZSpwhRXalG8WcfExPOXhZliNTgzbnUXdSkCtVXTWUmkufBFbXtpFekyeYloxCYF0Ago3nFoORKVJHuG4NiK8gsaKW4D3qyyNhyiq6ektScXmXMXAw54B4Wvfh0ehZQRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=s9KMDmyi; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730568626; x=1731173426; i=markus.elfring@web.de;
-	bh=kx5Io8K8wJlg4vSJsuwGcgwj0x7OwKY6orRaelQ8v8Q=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=s9KMDmyioIc1/16pGgBYJ15rn/UD5/q+1VV3GAwHaoZGFebiJE7sQTRJ/OetyPMf
-	 HqAHsjUhcVqkl9jdDZJSWa56viALruzMnvr5LA0bqA5IO9hmBG3sLhzL+Ijj4TBRi
-	 1/xgPz7TV7OcwBTSrfgvS7Mn/pc35dHUk+DrCiFat8TB522koi0iZtz+ZU85JalfI
-	 iT2T7gezZ2QzGk+iAOT+wk4uI7i6MEBE0Cy8UB46q7mKFPCuhMKeaeADEpx/T6Hci
-	 bZ16/SXjm8hH2iRHIT4wJeSUqEHWksU8DDwQRpRjiQ18cGNdp3c5lI18rt3ad4596
-	 AvMPTl+GbgRqdqm74Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M604t-1tDdk11Ezb-00ARP5; Sat, 02
- Nov 2024 18:30:26 +0100
-Message-ID: <359e4cfa-d1f4-41ce-a986-89440fcf66cd@web.de>
-Date: Sat, 2 Nov 2024 18:30:22 +0100
+	 In-Reply-To:Content-Type; b=D0Eusf8PJKq6wpawrNlrC5q4TtNntoD8TU6vrigBYJ7YSP8RhICChznBwRHfZUVPvnNK7VDTHihtTUPADNbOhyDTTdTF5D4eKHruBrY85V0yP8YKQIDIZaHS7/0uPYHCco9Gg2h8FiwUUAt6CroRiJCMe5KYoNHCWN6C+29sAxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=I4FSFLAb; arc=none smtp.client-ip=74.6.132.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1730569312; bh=MW6dV4JWMRLh67+TEVFd357UBd4Weuohh/ckRqkqiaw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=I4FSFLAbHeSyJReLKEzhwBJcsznT+8WVOISQO7YGEfuB0gKuADBRB5+ba61jQDjNDgfXDPFfJpWKsFVsyRnqJFHAh9TRL1hCU2OZDlvZ2YUWPkfh8hLWw1DOOym0lEqQmgevNNNjprawtPJE1YIPp4GPOJLahw/4oqb7YCfy1ubtOVHIx9uOOsR9TBK/j5z6VXEOkfBJAOOyYvQbuhobNSYCDdvwyt50fTVeQmoF3M9ZKM9SG14RSEJqSMW98trfn3NXaJbVvil6wvOVnSN9vPIZn/BRX+XWt8Aosh1LaFIuV4iat3KU1YPuJWI+JvPPs60855QEd1thEu0Ldbye3A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1730569312; bh=XhfspjvQrkwEIMZSitvDejkwxnCGC5wKxmdXHUMk6wz=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=WFFnygzaAUaT+GR+oNZK+IcO4uq+oGXRyKNWayrdeTuexv3OFArOnFErunz1EJQdLd/PLVBQbKy4ecthcIWflmzt1EH0R7WtRQy+jjiQO4lm6IIlPYOPj47VcUmt7PskDInmc5usS8AHy4yAFiFyOr+Esc/+YJ0eGEe3l2vLHPcTkvQ8EEhfnJLRJesJ9P7WrYV4u/Hj/FwGJ2YUDlqZ/TxM+5veMaJF2J2e0BXNmg4YZxzjtR/qCvrFzyKZQNh5gBsKhl7FLGyxGcN6ysq4mqe7BufqxT6918KHWp+hYn78Nzyl6fMY2acSWvOPMZZRI6xFlR2ccjfLjMvuEOYMKQ==
+X-YMail-OSG: 00AVbv4VM1mBrYyX_FHYjm0lZJ12jZPOrI7sZy4elRJ3LOY.GTs3vN8Xez33U_x
+ gCBrCaz30B2PY5TLHYAh2iCavEcLx1Cn3Q2mUnWT0ypQTcrCkljgYzjc1KkImHYPCDrUaOyueZa8
+ xtkZWKr3M_ujJB9DMfrBhQ9MYG3sD1BiUsoX88I7ZBXif1eM47GpRmJyC.TJkygUAZucKG33OrQr
+ CWHfz.3F6gd6_CAawOcNI9ULFcyc55opl.KE20MGyTZ.wNCb1QyA.3g9SykKkYWfd6BecXfK83s8
+ cQOYlgvS1Lg4ymeNlTAh56Dv6dfKcSM_yTw135expLspQ9d8ZUcXu_gU7YbJXgtm7ldn99HVRV36
+ ro4L6DWaB2Zda9NfURUZkUbeqL9DLNJcvHc6W9Sj6GyI2pna62cjoK37MdyisqU6RijqiDpaq152
+ JG1u4nlLxkSgIMmkpqwqrzwIxtZmv9rwbEYAPq6uu0b1pF0G.KZJEJlyXcbTTCG1hnTjNf7VEcxu
+ t1_TFzUqGAMLnJfG6_Fmsw5UpjTejZAz002oaDtUrGuHCBKDMN.yhdkog.RY2Qp72ihlZ4wLH1rT
+ uToU.oEs5kxJWJP4MGN_l.ud.dJYRcSSHf3cir_MzTS7Fe4kD0NQTDBzJwl6L8.hGv0PYnnyhbOo
+ NDEQ5mHHunaZhQ7WcR5961L.KjjUeiaKTBrmQxEKHCEDz5K93x7.09.eOcdBjG2NJ3Y1zVW6vzYu
+ bTrS9Fh6Lq0QOUiHdfd1oUF9G13TBi74xE8txnEABr0iZYpj_d4szdRyQtV8AHmgDWhOIwzbc545
+ .XuMkR7tXxXfUv80ViUTRsdoFBDn0VJ9qoKwGTxcjhrpGCEb0kE6.o6ZX64HL6U3kwLxrYGoz36y
+ F9kAUebeoTRS81pNCVqpXNMAcoWxM56mSUi9sf.CCCP_dcvY2xGITIrVmZTLB2l8.SVK0Nqxjbiz
+ g6PpwHIdaCZ4zaLg5rjUob_Xi.qf5dLRCi.jwq2CweVw_OgYpJvSp2IkeiBKrdqzwqhDPipRvI6z
+ kyBkqLHVzskMw.Dupnk8VRXgHJYVJszs3p9wMbLLUGfbXMHqb1OfIaaChWnMk07UWNh23AMzMCrW
+ kM2bVRSpIqYG_c1pEru0fLPsc1fesoxDIdbzSt0ZAEkFIlCb808.ht2QwNrF93b5UenAAp37vjEn
+ pryS95LQXfMlT6maBPNqAQ.bQdIJWDdsolTGWQ7W461gjPShiB1eVKF56u8dPlkpotj75rX3DII4
+ biQhrRdoZQRVYswZfv4J9kEphYOcuetBfxCcX2XYTVV9Ptdb4Lq8vonuafEjLJ4ajJjVeq6BbBRj
+ 77tNCjV0lcmj_gYMWccq8b6xVhHzk_qDAFPfzrvoCHFo9dRDzxviDS8bRbUwJV8kF3eHDNB.cwdb
+ xNs18WT_kF5OGHVaS1h4Akzi1awtk.34wUE6b2DFJun7Tbx4kiZ9SQaR4J_HCf.q67XtFP3QyMh7
+ FEdLK3g9N.fiw40oxE11VGLD_JiMcDF_TnUCuQMCAHuWRtxlliEN6AV6vBythhvrpOQge.LnRVqn
+ 6YLXI8CP5xqhwM.i_XOpa1wc9rbGpz2zH4T1baztsnSqjneRD7SzAsff58Ajzki6dFwKzYGag.5r
+ XlzQ1T55u4yTLFl2ZjLUAPRTVaEOE5RWSrgmp02.aMnjRtLcxmGJLeeydcGKjIrONBqLHumk7j6X
+ ns1CoKfdjqXzeJItWMtnwtI25h3NzwO2mzBnzlS1e6wyDWKnu5Xmc5j5Fy_Xb9mw2ktJ7aujZS6Q
+ qjfZ_Eo9vdfUhu_w6ykbD4wtOAw9lJGTXzxR98mgWFZRZPAP3YLpvV99s0f1IINp0xMe5huIWCKR
+ NilegWMP64D75tSwU0TtJXSZX.2Bcn21DMLz2DDBktjn6Sz5APQjyc.LAkB6yCEjob25d.CraL7_
+ fl8boejUa4wRM78gRbC97wh.Yd_ti4WtC9WuPJGHN.F4PG6BemOHGd2DuoprxG9z2XNoaYhwuw9N
+ mcinU1ok8..B40RyVH7q4nb5OtIztrOwaglihi.ipEqHKyX6LuLgQDe0EKHwHPPjlaRE5hm7bGug
+ YspayCmVU0rkjj_c4N8SEm5XC3rPVVE_4UTttDeSI2qPL.8GIkmdlv6wa.0p3aMRlKqTdZJs0wQp
+ nWUTrmsXpPi46nOT_VWpdN1k3rdlsDwThxz8MjkRvPxCuTdjcUL.1FZwRS9oiI1seDI6g3mQ4UhB
+ xyFh_WlLDuPvA3dAMD5MUpggsLY9Tq0.ho29fMneqKaZrJ6aTs5adIsXTy17NuudhNzuG3QcoGmV
+ bIf6uZqd0_wzXtSQ-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 53e65d80-ff52-4089-be08-951dd0e3b7ee
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Sat, 2 Nov 2024 17:41:52 +0000
+Received: by hermes--production-gq1-5dd4b47f46-whghm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID bbb3197c4336a222fa4917ecdda88651;
+          Sat, 02 Nov 2024 17:41:49 +0000 (UTC)
+Message-ID: <b226a01a-2545-4b67-9cc6-59cfa0ffabbc@schaufler-ca.com>
+Date: Sat, 2 Nov 2024 10:41:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,48 +78,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ipv6: ip6_fib: fix possible null-pointer-dereference in
- ipv6_route_native_seq_show
-To: Yi Zou <03zouyi09.25@gmail.com>, netdev@vger.kernel.org
-Cc: David Ahern <dsahern@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- LKML <linux-kernel@vger.kernel.org>, 21210240012@m.fudan.edu.cn,
- 21302010073@m.fudan.edu.cn
-References: <20241101044828.55960-1-03zouyi09.25@gmail.com>
- <feac7231-5563-4f68-8554-483c7030b50a@web.de>
- <CAH_kV5EXr6B3vU3mbwHYaCHdSeCcVw9DiNT4on5rNwiAE+svRg@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAH_kV5EXr6B3vU3mbwHYaCHdSeCcVw9DiNT4on5rNwiAE+svRg@mail.gmail.com>
+Subject: Re: [PATCH next] lsm: Fix signedness bug in selinux_secid_to_secctx()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Paul Moore <paul@paul-moore.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <2d02f331-42ee-40db-a64f-5ee378eb44db@stanley.mountain>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <2d02f331-42ee-40db-a64f-5ee378eb44db@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:8hoHBIowGhlMIEo2kNNYhGcnCN34OkCxFyRF1lYF4SLvVPGlSw+
- khk1I1rTtGZ/OlScv66btrDTmNaIM0zjdhAQYAarWiwiau/TCShrpK4+8Ez+jwrhZKI6Yro
- 520rqQRHIkcvcjNXDCqQFhNhGg74hIgQ5WgrLVGxeKaD7WHirM5Lb0Q5ZVLNMESi4/RwNFf
- BT/C8CfsmWKBFk039UabA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4tvy1g6j+d0=;yTi4Z8bxyJ3BNcF8qH5359jEQTJ
- 61k7ffOMkZg7Ou0PbXFeLl00qHOqzvf8sOsHvtw6IA465SRVOUhfoXykmasTaqm/Y9CurPzdQ
- ZT9AjIaRU0RftyTdulfL2h1GuU+cBz1AJYwmOHubQgObSrPcblAuPSdKgxEoRn/ThfmYB8yFA
- PRH6dFYDR3bx5gpR001AyvwFTmweJ4pbVHbv+mMzCJLERP4HIm2AyQ/vxfBETsnzr9K1PN7eS
- kksK/og+yrklWddUZSYea8we5n1pTdJPwan0V5H8HGa3Ksctd+N/Ux8xidNKGshxi3XPj4Dfx
- BdiidPCOiIqwVnH8Rf2LrMS/gULGNZb7dvRBC+y157eC0KKcAS6X9scllm3jGGcLqyp403Mx8
- TryyckecUslEz0UfXeyZQtrKkETsjXB5Dk42PmrKJKaTC9KsomI+EEvH61CMDRTdlb7fBhRBn
- 4wvimtmKaEj90y74kRYuu92cEJMdcGF9E3zcSvOr4Xsi03Ql/0kOm9sl6MnaWw9xqSrPlI5ry
- 926aEGPKxiNJh7BuBxXJKDhquDhDbpU7vyYnsGbuVvGi04UD/pnl4hBCxdRoYf+28RBkBcAnP
- DxBaedWlfgBQimbgYfXzD3ehUjacM7D17vdAJ/tfOnaT/7BB/AthxcvpUZInAC+D/DScAEsob
- RvPeocQizTsGBRrJ4FqeyROoiqRYRjC6EjbofWhkV481/IXtI0kkLQpVCDbU0cNrdYBRJjjyV
- 872krupqsVjTLVj4sC1mykNAKRmG62WV/1R3TX79klvX7iylQ66G734aKcZColQGGKWtV0kGE
- IRuuf3YFerJ7JSywo90kPLgw==
+X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
->     Check if fib6_nh is non-NULL before accessing fib6_nh->fib_nh_gw_family
->     in ipv6_route_native_seq_show() to prevent a null-pointer dereference.
->     Assign dev as dev = fib6_nh ? fib6_nh->fib_nh_dev : NULL to ensure safe
->     handling when nexthop_fib6_nh(rt->nh) returns NULL.
-Would you like to send another improved patch version (instead of a reply)
-according to a change review?
+On 11/2/2024 2:31 AM, Dan Carpenter wrote:
+> The "ret" variable needs to be signed for the error checking to work.
 
-Regards,
-Markus
+Doh.
+
+Thank you.
+
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+
+>
+> Fixes: 95a3c11eb670 ("lsm: replace context+len with lsm_context")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  security/selinux/hooks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index eca9674c9478..0ff018f557ac 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6644,7 +6644,7 @@ static int selinux_ismaclabel(const char *name)
+>  static int selinux_secid_to_secctx(u32 secid, struct lsm_context *cp)
+>  {
+>  	u32 seclen;
+> -	u32 ret;
+> +	int ret;
+>  
+>  	if (cp) {
+>  		cp->id = LSM_ID_SELINUX;
 
