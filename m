@@ -1,111 +1,137 @@
-Return-Path: <linux-kernel+bounces-393423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD229BA055
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:15:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5583F9BA058
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:15:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188271F21238
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180D3282614
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C935B1AAE22;
-	Sat,  2 Nov 2024 13:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B06F18A956;
+	Sat,  2 Nov 2024 13:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="E7n/EJPq"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kru/qg6H"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB331AB513;
-	Sat,  2 Nov 2024 13:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64043156CA;
+	Sat,  2 Nov 2024 13:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730553224; cv=none; b=qsPXWMreQD1XatH5r0YGBfkNFhOh38x9L3Y26VVLfx1dOb6ZVsoH47bar/FupK8JXGQLBgKjF2rvgXrKEzFcW9a9MHWD3FoPK2kiLRgF7g5RaLY+8HpF1OZwjLeolGte2exqzgzeOXU5RtpRnft6aRfuyp/J9Av7G+nslwdmKjE=
+	t=1730553311; cv=none; b=ocMQ5trng53Hrf0rKK5MB42pt3At0MUkN/Nfbc/G9pV7Fw98TxC/EYrs8PlFidp7dLr7pFhlQJmjkEnLw9b5DNnhP4ZFcLA/qWHwCK8lPYiSkEbUPLMAW4iMLuNC5/LbKpU3QYuoH+JXXNIShDdx2NlzD9YjMnyXv2zViX7VKMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730553224; c=relaxed/simple;
-	bh=6/65pIb5ndNYa9noe9mOGH7S8Lx6mQcVHE2d7kMkiBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ObJVe3q/d2Fg4O9fExUVKn+dWIdrXWPGfFmrrOA9pn274xi4Kk6givUVOaBuUBv9FX0e3XasKJw7eM4fG6iP5Iy7NUGN+8iQjKE9GQmX4FDkC3bZmof56zLPsOZO1Rayf/N7BTiTm8bzg5B+86kpcgk0cNBo5ppt43wVUrAT5AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=E7n/EJPq; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3130940E0184;
-	Sat,  2 Nov 2024 13:13:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id KqbIVZ5My0aj; Sat,  2 Nov 2024 13:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730553214; bh=4AkUjEDwanlU2m83/S/nynUi7OpncKP1iwIp29w3Zu0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E7n/EJPqZgrsRrl87JyPffnC3Kjfzcwx2pSNWbKys//7hvk9XZu/CuktNiIqqH5y8
-	 7P8j1uwwLy+oT0+VRvK2PSlmhMzOTbnmjRq9COXOzo9FuIlY/MmyBCiD8XJD8NZ4js
-	 awieL3aBoOzelxNAyCWmNznsYdjY9zB/Qwq+wrtWyH/REhMqnRzaY4+0fucHGK9q/j
-	 w5e7+Ipl8Kj+d5LDUEu6bULBgwLqmF2lgqXcrP6JQ4wEVag3SZwchVPQRusKVsRjAh
-	 H+JOEYRcFEloOg4ato2s5o9a2KizJn+zb/tHc+haOzedsBS1E6IBu+kfpNwD3GG97S
-	 +4lqbFdEBrX+0lDjk5jRjzdKiEYxb8mkBq0mE2zsroHmPwds/NgyRBhPs5MpSQAh4y
-	 GL4OP2B1jMWE7Xbjb3+PYT//ExyGf98EttPvZ+OFKxcv1SYFG3eUtHGnLlNmxUtpxI
-	 J9mGuFEkWjq6jQ/RjvZcgLYYwTG6PytT58bTKQAFaF2itFiduyI6+pFPIF5ajerBT0
-	 yKqs5Vbb9qaTMkpFEYPj5tcCIY43T1z29W8cvWHrQwcyRm5UXY+n6m1iZH/xJhgqHw
-	 sTP3ScBVYtTe/iGcjtGTYv947Ijfa+ZPJpMdUAgLvL2RigN4F/bnjGgdn1pcfadoyq
-	 8tH6nF+qhxU1J/SJ45eIP3k0=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CAA9240E0163;
-	Sat,  2 Nov 2024 13:13:24 +0000 (UTC)
-Date: Sat, 2 Nov 2024 14:13:18 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: tony.luck@intel.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
-	mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/10] x86/mce/genpool: Make mce_gen_pool_create()
- return explicit error codes
-Message-ID: <20241102131318.GMZyYlbjX0c4q1YEx4@fat_crate.local>
-References: <20241016123036.21366-1-qiuxu.zhuo@intel.com>
- <20241025024602.24318-1-qiuxu.zhuo@intel.com>
- <20241025024602.24318-6-qiuxu.zhuo@intel.com>
+	s=arc-20240116; t=1730553311; c=relaxed/simple;
+	bh=fWFWaJrtT873uGrZbfXFWcjGiIbzel0zDqI7deZ84Bk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fKqLevXTGOa4BECgAqHz1py6zM2XUxJZwxst1XpPW6AoQTXN7SbQVwvQaSXawUmn+gKtKrjYF4JkZreixH2DZyy+D3vVXeMr7/zwUNhINoVJKBDE2wmFA2RqIerfEAPH/OjA5DkV9fJG2wcc/xFNKV7m/5uFuxevv/BcIO5HTrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kru/qg6H; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cdb889222so28071155ad.3;
+        Sat, 02 Nov 2024 06:15:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730553310; x=1731158110; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YqIV8fJvUTPe1XkFfFuu3lKfRKNmYvmwJe3hWNSUszg=;
+        b=Kru/qg6HWM5IEdh6/nZFQ2Wyw3K9iESEFDvZb3s8+L4BTzX1NyUtud+IBMxV8Y7Xeq
+         ZZZdD+5vJ83rgidLycuM5Bziw5fbVCjixAXYMYHQuNXx0nKXOSL/thMbwD4evABwY5s4
+         jFHlUH/C7JbIXJwlpKnDG6ihSTkhEutsRhvS+WKTIBaWhJE3PnrrkYJulRQHIRVQdTm6
+         idd04Zg7db4u96DkKcpW3NB5oYrxy1LMzS8apcdwlZVpwkfJ/Mr6CIFvvCR38BFi2G9q
+         3P0TVuRDcggvIqbc6bazdJm/mn93Na+BPUH7CmZWCM/oM58nBXiwtIH3k4r+z9rjzdsP
+         UBsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730553310; x=1731158110;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YqIV8fJvUTPe1XkFfFuu3lKfRKNmYvmwJe3hWNSUszg=;
+        b=ZLQtFnl+Mw97INbR+ngVeTe+YkVJd+VIJPfDKN53IHFPW7hGlC+1p8LAWrfgoF4zpd
+         Vl8kvDWppoE9SrshbWyGDS18S0z6ZxcDKkvsh5TqInvbrDXGi7F5jEfGpC2FZC4Zxmsv
+         fzhjaWW53ZGpkj0OoLQCj4lM3m9kwehco+GBCg7iRPYn0h2xdifIbNHbo40eusRI6lAY
+         jLTPrY+PxOWtGFe2/xneJ6iSHN+uhm6VrKQtAVrsj23SZm8aQGULdx9z+8W7MMhXemgR
+         QxtUFOhGrtclmLuu07XxtrNyiMT3PL93U2a+UdEq9161pR80crL99B560GpGJERQhT3+
+         9idQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfMN0Yz98TWWMr9hfIpNuvPaqjlE0+jT/VY7ILzrK3oYPq1sgOKOL2iHXsxRUK9b/nGX2bmEXQRx4U@vger.kernel.org, AJvYcCVYfIu8+LgAfgAG3rfvnjNSQMLZMHqIFlJYd8YKmplKISYZRe7yIsY0rnB2bY1SBcMX3F4zldhsF38eTYls@vger.kernel.org, AJvYcCXVDTlXcV4Rnjl/PwUJh2A4OSkVL2FWdceRcD0KS9lo+o+pNxG1CSJBoz9AASzU78kg69fGcYshJbjo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS/ioBzz3700fNpyURt35JNT8PUwnN79QWshODYZXSuyyo1LvR
+	//sJttg8HDN2gu11PzuDQpcdg26enQEWiXTMpCPYjUf/orj8NvJ9zmrihx1Q
+X-Google-Smtp-Source: AGHT+IEjZyMhv52i+FdmXziel3S6uh0T/4JCB2ptezWEGIl82CVPxNSuviQk+FJATDrk0E2JnpSDUw==
+X-Received: by 2002:a17:902:d4cd:b0:20c:dc32:b5d0 with SMTP id d9443c01a7336-21103ca87e7mr141827475ad.58.1730553309583;
+        Sat, 02 Nov 2024 06:15:09 -0700 (PDT)
+Received: from [192.168.0.122] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21105706886sm33500465ad.68.2024.11.02.06.15.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Nov 2024 06:15:09 -0700 (PDT)
+Message-ID: <6fb61676-2744-4735-ab00-2a523e03ea96@gmail.com>
+Date: Sat, 2 Nov 2024 21:15:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241025024602.24318-6-qiuxu.zhuo@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: spi: apple,spi: Add binding for Apple
+ SPI controllers
+Content-Language: en-MW
+To: Mark Kettenis <mark.kettenis@xs4all.nl>
+Cc: j@jannau.net, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io,
+ broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
+ <20241101-asahi-spi-v3-1-3b411c5fb8e5@jannau.net>
+ <46b31874-9fe2-4534-9777-816765a265b1@gmail.com>
+ <87wmhm3u7v.fsf@bloch.sibelius.xs4all.nl>
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <87wmhm3u7v.fsf@bloch.sibelius.xs4all.nl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 25, 2024 at 10:45:57AM +0800, Qiuxu Zhuo wrote:
->  	mce_numrecords = max(MCE_MIN_ENTRIES, num_possible_cpus() * MCE_PER_CPU);
->  	mce_poolsz = mce_numrecords * (1 << order);
->  	mce_pool = kmalloc(mce_poolsz, GFP_KERNEL);
->  	if (!mce_pool) {
->  		gen_pool_destroy(gpool);
-> -		return ret;
-> +		return -ENOMEM;
 
-This patch is just silly: the function is not that huge not to be able to see
-at a quick glance that it is -ENOMEM that is being returned in all error cases
-...
 
->  	}
->  	ret = gen_pool_add(gpool, (unsigned long)mce_pool, mce_poolsz, -1);
->  	if (ret) {
+On 2/11/2024 16:39, Mark Kettenis wrote:
+>> Date: Sat, 2 Nov 2024 10:36:56 +0800
+>> Content-Language: en-MW
+>>
+>> On 2/11/2024 03:26, Janne Grunau via B4 Relay wrote:
+>>
+>> [...]
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - enum:
+>>> +          - apple,t8103-spi
+>>> +          - apple,t8112-spi
+>>> +          - apple,t6000-spi
+>>> +      - const: apple,spi
+>> Apple A7-A11 SoCs seems to use a Samsung SPI block, so apple,spi is too
+>> generic. Fallback to something like apple,t8103-spi instead.
+> 
+> Well, if that is a Samsung SPI block it probably should have a
+> "generic" compatible that starts with "samsung,".  The M1/M2
+> controllers have a different SPI block (presumably) designed by Apple
+> themselves.  So I think it is (still) appropriate that that one is
+> "apple,spi".
+I just looked into the SPI on A7-A11 SoC in more detail instead of just
+going off the ADT compatible. It seems a very big chunk of the registers
+offsets and bits seems to be the same as the ones in M1. So, feel free to
+ignore my comment above.
 
-... except in this case where, oh well, actually, it is -ENOMEM again but you
-have to go down the bowells of genalloc to see it.
+Acked-by: Nick Chan <towinchenmi@gmail.com>
 
-All in all, this is causing more churn than actually improving something...
+> 
+> Also, (upstream) U-Boot already uses the "apple,spi" compatible.  So
+> changing it for purity sake just causes pain.
+Well, if upstream U-Boot is using it, then I agree that "apple,spi"
+should continue to be used.
 
--- 
-Regards/Gruss,
-    Boris.
+> 
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Nick Chan
 
