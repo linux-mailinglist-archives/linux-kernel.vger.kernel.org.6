@@ -1,101 +1,136 @@
-Return-Path: <linux-kernel+bounces-393600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF6F9BA2DA
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 23:58:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152699BA306
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 00:23:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06D1E1F223AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 22:58:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDBEB283775
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 23:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381851ABED9;
-	Sat,  2 Nov 2024 22:58:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F2C1ABECA;
+	Sat,  2 Nov 2024 23:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="fp3KCrPE"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438BD170A27
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 22:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821D2158DC4;
+	Sat,  2 Nov 2024 23:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730588285; cv=none; b=sKGv5ifFgPiQ/+xJPk4FQ1oExz6i4VX2g+RqIz9yGpkDdH4YbKYeiCF4N6dHyYuGu7z+9u1dUb8k9Sj53QT+8T+kP/mnx3HkQqewy/+zyudX/sPzGFuNP4P+kiJI+2iuomILLWDm64Nzn1sAj9lAj9MqB4D8S6Mc9vY6S5BeAuQ=
+	t=1730589785; cv=none; b=NY3LF2GstXgd06aVSAFrnYc17iG5hIRg0yZyCOPb42mpNho1JWNVuL2xVVV2o9KnEymuKTRzrCdAJ4dVF0GFer7cZx31ALr7z2lhhXgMBSLTUGWJGqlO0ivWfRyl6aiijLJ01n99SsaUvtilZeullh1HERBa9hDO8tf45ZsQlVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730588285; c=relaxed/simple;
-	bh=lQTJmVE2dpbn2916q3lXchAWyB180O9oib1aRjyR9Zk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UwcUXDsaFdn4iWTu0scNWQAdh8u4x6LRV6yu+8f+9n+UwAgU96723VtXfTt1xtX6ak613bll8D5pZ+r7+fvXTxv2O4MEaZr7P8s6IRrrcuKlAD/yDGxEsGsHusPjirqqcpfTnCVVdYaSXgDi+2IE2Hquv2tRxKWsrGZCBxLuYq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6c355b3f5so6868245ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 15:58:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730588283; x=1731193083;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3yBzUyljWebaGC+XnQZjALDFZL0q7JsGCGKAUh0yZEw=;
-        b=Hs3WP0mAaRPnGQiyFttlTsqeRgICaCxKsgMob4Y7vAGdxi3ar7XB/T5tLXn7GQZQwI
-         uMSQN8WLeMMOkyjNKw19qG/YIc/pQijoQFVKDn9q4zIbCyUzJySLYmFhwpKfsJzUennI
-         MUaDZ5T0XXzu1zOYRl21WsAKamT1jzLQhpVd8D0rDsgUHI6dCen+mSrNue9PHQxUIYL3
-         8UwG/ajIy3Efa3ykyayU7VbSVtSzNLQzfaAv40l3cU72TCNYMwW35HKLwTa+T/BqX9vl
-         TBKmY+ZqZjDl/b7Qh7H187wqIzQ+kSN6Ga/kpJ8uTqd+J4ONTH6Ad9U0tmJEdA9z081s
-         i2ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKFmaWVT4bdz40Dq/aKGMcy3RuC9WU6XduQsT2IsNjmUr3TYnvwZjWHba7WfU2NjgxRZE97/WVAp6GVus=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwukpUzEgzxgXMErDNKtggUCn5/3JyWpnkvNkKS75K+z/eCLoTG
-	6085g+PaPJVaJ4v4ynaphKY1bV8F1pgTZShbyosqAbT2SGMV7WuBg8McUKF0dJqbj+mEIY1PkqQ
-	d03om5aFCa09DOz2HvWpHC3vwsGN/AuiwVPqbQ2HeDooaO+vgCCF+CXk=
-X-Google-Smtp-Source: AGHT+IHiBflm0OrHzRauDd2+Qk79yPQ2UsUXEsZO3NY2JhYxJXK8UlMJyJX29+TPwFZDLAECael9bu2Y9DD9M2ZTmExsyybtfnvw
+	s=arc-20240116; t=1730589785; c=relaxed/simple;
+	bh=YJ3sYPc+iG4EtVbZOeXZIZMMgFvSsgjeYHInbchlMXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=J0vod+Wgo9npqaMMD6eeJoybKPTul1UVs2YNgtMXom14shxmZBQH0OUjMJh6qa2SIC2aRfgthcaVIHoySvrIvL5bp6+A/aStkGT8SLpC8rrMHuy4k+ZBXJ4xARsl0IPwkbOc5GaKYyE/EYFPwCAyR1QI/FxIAElpZFkDKiQ3YIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=fp3KCrPE; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 42671100004;
+	Sun,  3 Nov 2024 02:15:19 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 42671100004
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1730589319;
+	bh=QPWimwSMLRZZhnlPIYt85z2yTmcu2PSWskgTqEezw+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=fp3KCrPEMPvQlFJ2TWYiamiDWZZhTroLlRKBcnzSvPMaQS5wcuH9BGjwwpSvTHTwP
+	 xEgkLsK1oyKoyYbVX1cA3XZchUk9sGwkE435dQuvHW2h/gG8aZAazslUK7cyk4/QiJ
+	 hEjsI0NfPkP4YMqUIweJEt1cMRZhp6zrsH0olHP36AuDR7YI8klIehTcm5Nb7coRLD
+	 mQ8CkhzDNYc67fKbbHzSIC8QSdxOn31EwtHHVSMHxa4gM8JHju6AGBfuwXuH42tqiT
+	 5wkKK4ciwDk8mkBBJSRWIAkvJXqfvlXB82oi49j0kQyuOGMMra9L72JIzvQ087cl2c
+	 qk1nDIleXTy4A==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Sun,  3 Nov 2024 02:15:19 +0300 (MSK)
+Message-ID: <aa96e9ab-00d6-413b-a7e8-8c709087f5bc@salutedevices.com>
+Date: Sun, 3 Nov 2024 02:15:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdac:0:b0:3a2:6cd7:3250 with SMTP id
- e9e14a558f8ab-3a4ed29dcdemr256947425ab.10.1730588283359; Sat, 02 Nov 2024
- 15:58:03 -0700 (PDT)
-Date: Sat, 02 Nov 2024 15:58:03 -0700
-In-Reply-To: <000000000000163e1406152c6877@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6726ae7b.050a0220.35b515.018a.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] possible deadlock in ext4_xattr_inode_iget (3)
-From: syzbot <syzbot+ee72b9a7aad1e5a77c5c@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, adilger@dilger.ca, eadavis@qq.com, 
-	hdanton@sina.com, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
-	wojciech.gladysz@infogain.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: pwm: Add default-brightness
+ property
+To: Krzysztof Kozlowski <krzk@kernel.org>, <robh@kernel.org>
+CC: <pavel@ucw.cz>, <lee@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <linux-leds@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@salutedevices.com>
+References: <20241101154844.1175860-1-gnstark@salutedevices.com>
+ <20241101154844.1175860-2-gnstark@salutedevices.com>
+ <ngwfccj55vovsaj5bdealdidgxdrxfl7nwxfdqponqzdiv3olo@epzabbxkdzxb>
+Content-Language: en-US
+From: George Stark <gnstark@salutedevices.com>
+In-Reply-To: <ngwfccj55vovsaj5bdealdidgxdrxfl7nwxfdqponqzdiv3olo@epzabbxkdzxb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188949 [Nov 02 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, elixir.bootlin.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/11/02 22:22:00
+X-KSMG-LinksScanning: Clean, bases: 2024/11/02 22:22:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/02 20:58:00 #26807587
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-syzbot suspects this issue was fixed by commit:
+Hello Krzysztof, Rob
 
-commit d1bc560e9a9c78d0b2314692847fc8661e0aeb99
-Author: Wojciech G=C5=82adysz <wojciech.gladysz@infogain.com>
-Date:   Thu Aug 1 14:38:27 2024 +0000
+Thanks for noticing it, missed the tag not by purpose, sorry about it.
+Sure I'll add the tag to v3 if v3 happens.
 
-    ext4: nested locking for xattr inode
+On 11/2/24 16:06, Krzysztof Kozlowski wrote:
+> On Fri, Nov 01, 2024 at 06:48:43PM +0300, George Stark wrote:
+>> Optional default-brightness property specifies brightness value to be
+>> used if default LED state is on.
+>>
+>> Signed-off-by: George Stark <gnstark@salutedevices.com>
+>> ---
+>>   Documentation/devicetree/bindings/leds/leds-pwm.yaml | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+> 
+> <form letter>
+> This is a friendly reminder during the review process.
+> 
+> It looks like you received a tag and forgot to add it.
+> 
+> If you do not know the process, here is a short explanation: Please add
+> Acked-by/Reviewed-by/Tested-by tags when posting new versions, under
+> or above your Signed-off-by tag. Tag is "received", when provided
+> in a message replied to you on the mailing list. Tools like b4 can help
+> here. However, there's no need to repost patches *only* to add the tags.
+> The upstream maintainer will do that for tags received on the version
+> they apply.
+> 
+> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+> 
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
+> 
+> Best regards,
+> Krzysztof
+> 
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1245f55f9800=
-00
-start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel.=
-.
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1a07d5da4eb2158=
-6
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Dee72b9a7aad1e5a77=
-c5c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12407f4518000=
-0
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D140d9db1180000
-
-If the result looks correct, please mark the issue as fixed by replying wit=
-h:
-
-#syz fix: ext4: nested locking for xattr inode
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
-n
+-- 
+Best regards
+George
 
