@@ -1,229 +1,111 @@
-Return-Path: <linux-kernel+bounces-393293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1888A9B9EC0
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:14:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 402D09B9EC5
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:16:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E8C6B22499
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:14:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753971C22754
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39EF1AC459;
-	Sat,  2 Nov 2024 10:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80A417277F;
+	Sat,  2 Nov 2024 10:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZVFNr8Gk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OJLROmIF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="XgKiC9le"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBA419E97B;
-	Sat,  2 Nov 2024 10:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C28B1714C9;
+	Sat,  2 Nov 2024 10:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730542223; cv=none; b=LVFiT+0ypEHNzk7JWH2LaqxYvUkTNgSQAZyiBL/N2AWm2TnMKAhNvcZ/Yee1NCjKf8ggb541E7wnW/H1YvFc6skVAQJE8BY/E8lgJ/pPg8C/EFVKrvWao9OSekiS1XfCjGy7VXuYyuGmHAmIftzv4/3Je/N7xeWu4OjN26VbR7A=
+	t=1730542235; cv=none; b=rl0b3ratusmzWct3n7aFTL7bGlT3d6E97mX3ibgw4i2/XfAPRSTQqxhVBHckONDrIeepQ0aRw/SQmwmyTanqMaopoU6x1wlGixEb9cu6iRrmm6JIYjqVfKXEERFovfTouIDfb5hNxfrCxkdoL0Ro0yZzisiYh1ycVNXvzGozAVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730542223; c=relaxed/simple;
-	bh=JUfft22niKHtE2y8VEFtJbkM2hLEEkCyi3fXdNUSM/Q=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ivLgmHASj0prXcRKOiYq6GWcGK9twvTh8IGZGvizhkJRvY5EgA4Z+F71JTcOeODGWMjSeaX618ue0tsdnGSVBzsGfjTUTE0CN10AhWHCKBt1MvntX+M+dgDjcbFWARzeYMysp4LG5BGx+gKzht5ebJ6M4fshjPBsDKMqQO4NiLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZVFNr8Gk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OJLROmIF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 02 Nov 2024 10:10:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730542218;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sj//pWUcuTA9rXHiCA9WljblSGQ8QvHIJHKvll4H4wU=;
-	b=ZVFNr8GkSc9Oqc09YwjOSvL84KQ0jxKzSjap9hkIB3ljEaklzL8zdD7MYhlTMwtGQyzaUi
-	5hE4S57NewPxq38rmxvdPkd8qEIsBY+gAGJb+FMO/CizOxhQCFxlCHYdeni49+iDli3i3g
-	KWUW2bBI0BSX22XczZmvqToqWqwoqV6BUPnzNd/11BzfkowTr6PIRUUV/v4Ocdqut4d2r1
-	WBTCYTHzlnF0WhRyF9fnMDLRImpwPAJCYoGgoyIfbC9MuUSAf6GA18DooCRKzXTEqXj65l
-	TFdBQvNaB/KLWDiO+lTmMuWvSBzVHLKUzD/xzBywHWguCsudrH0QVhb9ccj5Iw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730542218;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sj//pWUcuTA9rXHiCA9WljblSGQ8QvHIJHKvll4H4wU=;
-	b=OJLROmIF69feLBLy/6rPZ3ZWDA7j9EuVGDBsWzuZmCkYEWQ0t1tADVVJhVifG3QvWfl7JT
-	sIqJeJMKwyEffgAg==
-From:
- tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] arm64: vdso: Use only one single vvar mapping
-Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
- Will Deacon <will@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241010-vdso-generic-base-v1-5-b64f0842d512@linutronix.de>
-References: <20241010-vdso-generic-base-v1-5-b64f0842d512@linutronix.de>
+	s=arc-20240116; t=1730542235; c=relaxed/simple;
+	bh=msZfN1vlHTTQkwq03Xyv0w1GgK6cVJfBoFs08qoycKU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U6iq2C2XloqEcuU/vPylnnK8VHrw5Q5OVrMp9V6/ibMA4S38Q8D/Yssy/A4j4EyImsgYu1pcKOXZgTmExjoPA2Llqr7vq0cIwt7cEfffMOgGV+tnd+lrEy7fkxm2yAeXxQ2NJX6P9VodoNGkgt3Ssmy6C9dIHiZpEPo9BaOUmCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=XgKiC9le; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C8941A09BA;
+	Sat,  2 Nov 2024 11:10:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=dC+s2x2zpsTUqYLdynlJ3f94YiheKXfponBNvdNMjDQ=; b=
+	XgKiC9leoIhXmEAbZVWSBFsTDdg50PyWu8AvvLrkfT79/2cypQocCu0/JVzHzxCo
+	FX9gFnIlOWM7C1GWp7tiaeNGmF3NMZUX9Na5G4NuHSzMB7LQRhxB+THIGQ3vHhrx
+	EDKACzlA/6rvuklZxCoyXHRayFy5gtKxFQvFvCecArlhB4bTrvG1uWoCGt+7v0yW
+	IN6j12Exu+LTCuYz6g1h6QzRnOot9Iq5oWJ4B/rq6Dx95iBoL8ZN0xSC+BDEUrii
+	3XAlKVkg68RsnCofGSM5czpirf4EJKe0lrOCzUDtfnltBW1VCQ0aHQYoNzyqNUCE
+	RLBlDY0vzTRfGg2fUbnHi6Ao5UDVxJG/mccJd3d2dyYNQJRLqfjVEVgPIFWA6Bk5
+	JUfdtdfKQwDlGlrSSMut4vNjU+ZCTyGiUskcPWkhssQcFr5Idm4zplXOortqkU5n
+	q4NZDHMmo9OTXMcF/5seugSlZGK2vnotl3Dp/hI/fWf3tDVYFCg6Z0zxeznl9H4c
+	IJDj3EgwjUUzA33prma/x4WpFhx978xItF7aeikUun7jcU6NqAgNjdSjKY6aJzXn
+	mMb0ahFyoYnOg42RteikoZt3TVuHlji2oB0ONDFc/TZpDk0xmHcy5aDeZL4KQ2mL
+	SsfkKTyg/82fs7KZ2ZDnTkb6rBkuyoqQiLE7g0JaULE=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Mark
+ Brown" <broonie@kernel.org>, Mesih Kilinc <mesihkilinc@gmail.com>, Vinod Koul
+	<vkoul@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, "Chen-Yu
+ Tsai" <wens@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Conor Dooley <conor.dooley@microchip.com>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Amit Singh Tomar <amitsinght@marvell.com>
+Subject: [PATCH v5 0/5] Add support for DMA of F1C100s
+Date: Sat, 2 Nov 2024 11:10:17 +0100
+Message-ID: <20241102101017.2636558-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173054221794.3137.17543302411698899887.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1730542228;VERSION=7979;MC=3166311018;ID=220060;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855667067
 
-The following commit has been merged into the timers/vdso branch of tip:
+Support for Allwinner F1C100s/200s series audio was
+submitted in 2018 as an RFC series, but was not merged,
+despite having only minor errors. However, this is
+essential for having audio on these SoCs.
+This series was forward-ported/rebased to the best of
+my abilities, on top of Linus' tree as of now:
+commit c2ee9f594da8 ("KVM: selftests: Fix build on on non-x86 architectures")
 
-Commit-ID:     63ec3218c766facf572dd5b1d5e6b2a93adb42b0
-Gitweb:        https://git.kernel.org/tip/63ec3218c766facf572dd5b1d5e6b2a93ad=
-b42b0
-Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Thu, 10 Oct 2024 09:01:07 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 02 Nov 2024 11:05:13 +01:00
+Link: https://lore.kernel.org/all/cover.1543782328.git.mesihkilinc@gmail.com/
 
-arm64: vdso: Use only one single vvar mapping
+As requested by many, this series will now be split in 2, the DMA and the
+ALSA/ASoC codec driver. This is the DMA part of the series.
 
-The vvar mapping is the same for all processes. Use a single mapping to
-simplify the logic and align it with the other architectures.
+Csókás, Bence (1):
+  dt-bindings: dmaengine: Add Allwinner suniv F1C100s DMA
 
-In addition this will enable the move of the vvar handling into generic code.
+Mesih Kilinc (4):
+  dma-engine: sun4i: Add a quirk to support different chips
+  dma-engine: sun4i: Add has_reset option to quirk
+  dma-engine: sun4i: Add support for Allwinner suniv F1C100s
+  ARM: dts: suniv: f1c100s: Add support for DMA
 
-Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Will Deacon <will@kernel.org>
-Acked-by: Will Deacon <will@kernel.org>
-Link: https://lore.kernel.org/all/20241010-vdso-generic-base-v1-5-b64f0842d51=
-2@linutronix.de
+ .../bindings/dma/allwinner,sun4i-a10-dma.yaml |   4 +-
+ .../arm/boot/dts/allwinner/suniv-f1c100s.dtsi |  10 +
+ drivers/dma/Kconfig                           |   4 +-
+ drivers/dma/sun4i-dma.c                       | 217 +++++++++++++++---
+ 4 files changed, 200 insertions(+), 35 deletions(-)
 
----
- arch/arm64/kernel/vdso.c | 43 +++++++++++----------------------------
- 1 file changed, 13 insertions(+), 30 deletions(-)
+-- 
+2.34.1
 
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 8ef20c1..e8ed8e5 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -38,8 +38,6 @@ struct vdso_abi_info {
- 	const char *vdso_code_start;
- 	const char *vdso_code_end;
- 	unsigned long vdso_pages;
--	/* Data Mapping */
--	struct vm_special_mapping *dm;
- 	/* Code Mapping */
- 	struct vm_special_mapping *cm;
- };
-@@ -112,6 +110,8 @@ struct vdso_data *arch_get_vdso_data(void *vvar_page)
- 	return (struct vdso_data *)(vvar_page);
- }
-=20
-+static const struct vm_special_mapping vvar_map;
-+
- /*
-  * The vvar mapping contains data for a specific time namespace, so when a t=
-ask
-  * changes namespace we must unmap its vvar data for the old namespace.
-@@ -128,12 +128,8 @@ int vdso_join_timens(struct task_struct *task, struct ti=
-me_namespace *ns)
- 	mmap_read_lock(mm);
-=20
- 	for_each_vma(vmi, vma) {
--		if (vma_is_special_mapping(vma, vdso_info[VDSO_ABI_AA64].dm))
--			zap_vma_pages(vma);
--#ifdef CONFIG_COMPAT_VDSO
--		if (vma_is_special_mapping(vma, vdso_info[VDSO_ABI_AA32].dm))
-+		if (vma_is_special_mapping(vma, &vvar_map))
- 			zap_vma_pages(vma);
--#endif
- 	}
-=20
- 	mmap_read_unlock(mm);
-@@ -175,6 +171,11 @@ static vm_fault_t vvar_fault(const struct vm_special_map=
-ping *sm,
- 	return vmf_insert_pfn(vma, vmf->address, pfn);
- }
-=20
-+static const struct vm_special_mapping vvar_map =3D {
-+	.name   =3D "[vvar]",
-+	.fault =3D vvar_fault,
-+};
-+
- static int __setup_additional_pages(enum vdso_abi abi,
- 				    struct mm_struct *mm,
- 				    struct linux_binprm *bprm,
-@@ -198,7 +199,7 @@ static int __setup_additional_pages(enum vdso_abi abi,
-=20
- 	ret =3D _install_special_mapping(mm, vdso_base, VVAR_NR_PAGES * PAGE_SIZE,
- 				       VM_READ|VM_MAYREAD|VM_PFNMAP,
--				       vdso_info[abi].dm);
-+				       &vvar_map);
- 	if (IS_ERR(ret))
- 		goto up_fail;
-=20
-@@ -228,7 +229,6 @@ up_fail:
- enum aarch32_map {
- 	AA32_MAP_VECTORS, /* kuser helpers */
- 	AA32_MAP_SIGPAGE,
--	AA32_MAP_VVAR,
- 	AA32_MAP_VDSO,
- };
-=20
-@@ -253,10 +253,6 @@ static struct vm_special_mapping aarch32_vdso_maps[] =3D=
- {
- 		.pages	=3D &aarch32_sig_page,
- 		.mremap	=3D aarch32_sigpage_mremap,
- 	},
--	[AA32_MAP_VVAR] =3D {
--		.name =3D "[vvar]",
--		.fault =3D vvar_fault,
--	},
- 	[AA32_MAP_VDSO] =3D {
- 		.name =3D "[vdso]",
- 		.mremap =3D vdso_mremap,
-@@ -306,7 +302,6 @@ static int __init __aarch32_alloc_vdso_pages(void)
- 	if (!IS_ENABLED(CONFIG_COMPAT_VDSO))
- 		return 0;
-=20
--	vdso_info[VDSO_ABI_AA32].dm =3D &aarch32_vdso_maps[AA32_MAP_VVAR];
- 	vdso_info[VDSO_ABI_AA32].cm =3D &aarch32_vdso_maps[AA32_MAP_VDSO];
-=20
- 	return __vdso_init(VDSO_ABI_AA32);
-@@ -401,26 +396,14 @@ out:
- }
- #endif /* CONFIG_COMPAT */
-=20
--enum aarch64_map {
--	AA64_MAP_VVAR,
--	AA64_MAP_VDSO,
--};
--
--static struct vm_special_mapping aarch64_vdso_maps[] __ro_after_init =3D {
--	[AA64_MAP_VVAR] =3D {
--		.name	=3D "[vvar]",
--		.fault =3D vvar_fault,
--	},
--	[AA64_MAP_VDSO] =3D {
--		.name	=3D "[vdso]",
--		.mremap =3D vdso_mremap,
--	},
-+static struct vm_special_mapping aarch64_vdso_map __ro_after_init =3D {
-+	.name	=3D "[vdso]",
-+	.mremap =3D vdso_mremap,
- };
-=20
- static int __init vdso_init(void)
- {
--	vdso_info[VDSO_ABI_AA64].dm =3D &aarch64_vdso_maps[AA64_MAP_VVAR];
--	vdso_info[VDSO_ABI_AA64].cm =3D &aarch64_vdso_maps[AA64_MAP_VDSO];
-+	vdso_info[VDSO_ABI_AA64].cm =3D &aarch64_vdso_map;
-=20
- 	return __vdso_init(VDSO_ABI_AA64);
- }
+
 
