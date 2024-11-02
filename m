@@ -1,128 +1,126 @@
-Return-Path: <linux-kernel+bounces-393494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7326A9BA14B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:45:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39B79BA154
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 17:01:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9441F216A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:45:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFBE28212F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 16:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C871A2C21;
-	Sat,  2 Nov 2024 15:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4941A4F1F;
+	Sat,  2 Nov 2024 16:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+sAMh9m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FPsq+Ibm"
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387CF5A4D5;
-	Sat,  2 Nov 2024 15:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A883C3C;
+	Sat,  2 Nov 2024 16:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730562316; cv=none; b=ebedktdN3GB+4awus4kSKj9V1HQImjzlnQ3dzTCKYSp1Cy/ekZq13oAobdlvZmK+ECJlnQq9VEBEwAEfaoqYUfkA+yL8HdsA5wM/z7Y+5CRMdFXlbwRSbZjnYme7mHYwQGG2F/TixYsnu/DVaJENK4HXix4N88kevJjCkDDSqL0=
+	t=1730563271; cv=none; b=BH5ndp4HtqEsQ2gNGnLe84xuj00Ggi2ZJioRUrqoUD7ejcp3JCCjDl3oyMfOkfZxwc11eT/VnpGsjv0qAOCW00xhobeasqtmBvjhU92/eOygsiHc95lLOW5Y0sl3uCIvdJpUcvVB5jH8n8yuCqZz54Oz3aNMczEB1KwE2eXUb9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730562316; c=relaxed/simple;
-	bh=8DsoVdW5mlk2YCLJUT4atpMPQdRVvCf3/gfbYRNyfT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qc0tqYAwN/DDSIU5gUhbzISYPVz1Flyx+BZDq2KsZ7Crmw9LgKtk4o4Dbha+EyjMCA0H+WwGTg2cLIMty0LOomD1pRubq7cLHD+s/iCXrjgdOO13gtDoR+Esn4hNAZXCtt+7OY6ca8WXRxiaM3bUGxYZFpEwz9g0C2r5beUGH2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+sAMh9m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89855C4CEC3;
-	Sat,  2 Nov 2024 15:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730562315;
-	bh=8DsoVdW5mlk2YCLJUT4atpMPQdRVvCf3/gfbYRNyfT8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u+sAMh9mFN7LWVhHpe4U3l57yqSH9z4svGRysiHvCJerWIWfnWuQ9ou+HD3taAJDD
-	 sjcRSpk/1rIC7+94sbW+VjUao6S6p/6dPbYCN1E9PW1Mf+mR44P/BZzmau1ZHb9TTn
-	 t+FFvom9nPP6/Yw8heMY5BQr2ewX8E1CPeoKstN9KBpuMCyVcnq8vmmA3ItryeuOXs
-	 f1HnOxKCYJHQ/nUn07hTmZe/f/wOCfPUwK+bTz/43t4/aYFGzG+IxJmhQznx9dUVUK
-	 Y+z35Q6CRVDHOgbA38exsGRk1WrKh3/ZhYsSudEzWOIbm72npk9ZVtjEtvDp1BrEgg
-	 dUEWo6tcPiM0w==
-Date: Sat, 2 Nov 2024 15:45:09 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: <victor.duicu@microchip.com>
-Cc: <matteomartelli3@gmail.com>, <lars@metafoo.de>,
- <marius.cristea@microchip.com>, <linux-iio@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7] iio: adc: pac1921: Add ACPI support to Microchip
- pac1921
-Message-ID: <20241102154509.4b2495fa@jic23-huawei>
-In-Reply-To: <20241031065205.50154-1-victor.duicu@microchip.com>
-References: <20241031065205.50154-1-victor.duicu@microchip.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730563271; c=relaxed/simple;
+	bh=pWtlMhVEo5sTa10vHdWI3MJ+UdkICdAOYZ77Ui+PqCM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B36guDNfBN9/x6k2wTncY7ck8GEzI/qxggU8fD0ccMlmkRvYT6PweZvVEwZlA2AY/FhBU95VkrDpIRKW1BA4/2UY0yGBlREshFWk9QMV6itFX0ev6ZLaBYsTeFN7RIe3b0vtzrhV3sbh77gFED5WeZyPu5Ct+ipL0nxAlBboMAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FPsq+Ibm; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 7GXat8EQFNFce7GXatlT3S; Sat, 02 Nov 2024 16:59:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1730563197;
+	bh=KGKzVWsnOyVtcs0VCIBf32JB3OlZi4k6gGyDSCVIYG4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=FPsq+IbmN649gL8GgwbVI/cRjs4BDAzzEO+TIlCYtZBxAgNh9ev/V/hEToE4BL1WX
+	 j3crEuh8erPcq6Stva/3Vj1sMb6gvG8wl4jo51yGksnqp2TTKwOC6xxjlVvfy4NT5K
+	 yCDkwWGOkOhG+T+VXtJzu22cP0OAE7AXeHAWBSnEEOUMhqZJUpI1Brlng7OO4+wjOp
+	 2mEoV+iHW59WG+K7kMAsydg4k/deaZTffGX5ZvXXOrrgqDr9FJv6RhpFgZyMYWsSNi
+	 1OjQIeI2ZcfovJit6fcsIpfu9VT4CRBR3ilOLx4a/Ob04lqY7daamNq/OUmq5yttaw
+	 1MOWM5wVGIY/Q==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 02 Nov 2024 16:59:57 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: srinivas.pandruvada@linux.intel.com,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH] platform/x86/intel/vsec: Remove a useless mutex
+Date: Sat,  2 Nov 2024 16:59:41 +0100
+Message-ID: <ccc08a262304f7f8c2e435349f0f714ebf9acfcd.1730563031.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 31 Oct 2024 08:52:05 +0200
-<victor.duicu@microchip.com> wrote:
+ida_alloc()/ida_free() don't need any mutex, so remove this one.
 
-> From: Victor Duicu <victor.duicu@microchip.com>
-> 
-> This patch implements ACPI support to Microchip pac1921.
-> The driver can read shunt resistor value and label from ACPI table.
-> 
-> Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
-Hi Victor.
+It was introduced by commit 9a90ea7d3784 ("platform/x86/intel/vsec: Use
+mutex for ida_alloc() and ida_free()").
 
-I made a few minor tweaks whilst applying (see inline)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+See:
+https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L375
+https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L484
 
-Applied to the togreg branch of iio.git and pushed out as testing for now
-so that the bots can take a look and see if we missed anything.
+Review with care. This patch is clearly the opposite of the one in Fixes
+which states that locking IS needed.
+IIUC, idr_ functions need locking, but not ida_.
 
-Jonathan
+If I'm wrong, could you elaborate why? (because many other places will
+need to be fixed and the doc certainly needs updating)
+---
+ drivers/platform/x86/intel/vsec.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-> +/*
-> + * documentation related to the ACPI device definition
-> + * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
-> + */
-> +static int pac1921_match_acpi_device(struct iio_dev *indio_dev)
-> +{
-> +	acpi_handle handle;
-> +	union acpi_object *rez;
-> +	guid_t guid;
-> +	char *label;
-> +	struct pac1921_priv *priv = iio_priv(indio_dev);
-> +	struct device *dev = &priv->client->dev;
-> +
-> +	guid_parse(PAC1921_DSM_UUID, &guid);
-> +	handle = ACPI_HANDLE(dev);
-> +
-> +	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_UOHMS_VALS, NULL);
-> +	if (!rez)
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "Could not read shunt from ACPI table\n");
-> +
-> +	priv->rshunt_uohm = rez->package.elements[0].integer.value;
-> +	ACPI_FREE(rez);
-> +
-> +	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_LABEL, NULL);
-> +	if (!rez)
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "Could not read label from ACPI table\n");
-> +
-> +	label = devm_kstrdup(dev, rez->package.elements->string.pointer, GFP_KERNEL);
-> +	if (!label)
-> +		return dev_err_probe(dev, -EINVAL, "Label is NULL\n");
-ENOMEM appropriate I think. 
-
-Also, a package is an array of elements, and this is the first one so
-maybe res->package.elements[0].string.pointer is more appropriate?
-(similar to above).
-
-
-> +
-> +	indio_dev->label = label;
-> +	ACPI_FREE(rez);
-> +
-> +	return 0;
-> +}
+diff --git a/drivers/platform/x86/intel/vsec.c b/drivers/platform/x86/intel/vsec.c
+index 7b5cc9993974..9e0f8e38178c 100644
+--- a/drivers/platform/x86/intel/vsec.c
++++ b/drivers/platform/x86/intel/vsec.c
+@@ -79,17 +79,13 @@ static void intel_vsec_remove_aux(void *data)
+ 	auxiliary_device_uninit(data);
+ }
+ 
+-static DEFINE_MUTEX(vsec_ida_lock);
+-
+ static void intel_vsec_dev_release(struct device *dev)
+ {
+ 	struct intel_vsec_device *intel_vsec_dev = dev_to_ivdev(dev);
+ 
+ 	xa_erase(&auxdev_array, intel_vsec_dev->id);
+ 
+-	mutex_lock(&vsec_ida_lock);
+ 	ida_free(intel_vsec_dev->ida, intel_vsec_dev->auxdev.id);
+-	mutex_unlock(&vsec_ida_lock);
+ 
+ 	kfree(intel_vsec_dev->resource);
+ 	kfree(intel_vsec_dev);
+@@ -113,9 +109,7 @@ int intel_vsec_add_aux(struct pci_dev *pdev, struct device *parent,
+ 		return ret;
+ 	}
+ 
+-	mutex_lock(&vsec_ida_lock);
+ 	id = ida_alloc(intel_vsec_dev->ida, GFP_KERNEL);
+-	mutex_unlock(&vsec_ida_lock);
+ 	if (id < 0) {
+ 		xa_erase(&auxdev_array, intel_vsec_dev->id);
+ 		kfree(intel_vsec_dev->resource);
+-- 
+2.47.0
 
 
