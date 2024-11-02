@@ -1,130 +1,103 @@
-Return-Path: <linux-kernel+bounces-393318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF329B9F21
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:05:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182179B9F23
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:06:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02FC0282458
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:05:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCA61C215DB
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE1B173332;
-	Sat,  2 Nov 2024 11:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8351714A8;
+	Sat,  2 Nov 2024 11:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aG8rN+aG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="b0xL7oy4"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17947155753;
-	Sat,  2 Nov 2024 11:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5480112C54B
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 11:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730545515; cv=none; b=e+c1QSMiYgnNMKxebB1pI0J4NMN94pZv8hYqUzJzM8YfDHxKXPBSZpdTwrcs73uD4iydv0aqc8iLdkxFMBcAaZZlhUXocoY54oTUY9qgk2YKSXyErL79z/KaSNrwivenFKxFZwx/VOFCiblBQchaaXSywVTXvQJoE7c7nctisXM=
+	t=1730545603; cv=none; b=kq9ONsNjwTLY7Pi+HZRTZ1kdAj58/PO/ZdN7jOtOI0uT58YH4dNo+gKxTId6K9qyxi30jeSVecaadWKq3iHXwjtbMSR3k3jR/OQUTo5xhOZon1NvsHeQHQjNw3w94U84lhwGm5XGlp9DDjW6DJFhLoEExTbnmRw668kau69B2vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730545515; c=relaxed/simple;
-	bh=/5V9RBqkx2P66EvYaaaASBdjOLj2pXbKfVO3Hh2MXq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eJsmQntV3NEmCWUc64J+AgaQrilpGh0lNasBa2Uz1sYms6ehOjg9aq4pONzcWj+rwxYS2/fj6UIgp+tNFmIaCmyljbiDV1gAvPHG/PAg535JLrd2+ONqyOjmtL6t6AL3ejgkuR/E4yXFJa2H2Ke3IPf6v6dV47E7yZKrV54hqbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aG8rN+aG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A17C1C4CED3;
-	Sat,  2 Nov 2024 11:05:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730545514;
-	bh=/5V9RBqkx2P66EvYaaaASBdjOLj2pXbKfVO3Hh2MXq0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aG8rN+aGdtH1DPyPt0RE+7lAJgUL/xXXHUelv4xEoDkJGS1o2la6NNuXa5xis93nN
-	 K8IKDmq8EiG0o9WOHBCJO193R3Cwdp0VFuoF6oYHS3VAZ2z7ZDdAaNSMmOu/MMLl0R
-	 c+5IA9wcIbiEVqWbp16rgmOQIRrPNN2745gD9NAycIDtw6YYRxmQQEvGoyQopB0/Vg
-	 9k08OIbmYhcPdDTgy3bov/BTbh35m6h2xJTok/8HFYPtgtvuO45X4GGAawAIkKqaMa
-	 YSVdXfZNrwS+ONIBbLTrgDZiGfuTf4K6InWgWETrzpSoUbxTA5sO4ko6HmUl4OCzgy
-	 RXaied76n8YRQ==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb470a8b27so34167561fa.1;
-        Sat, 02 Nov 2024 04:05:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZdQEVfF6ZUNTDckT1GEcpU7rHjdnZStQhjHmcP9ppCzvsZqxuM6Jl3tp1dearGDWbWDrEjQkEHQcsog==@vger.kernel.org, AJvYcCV+KNhPm4NasTb1Soqg7AoyjuSrb0H7utDy4TcdndiO7I2LqH+XyNr3Fwi4djC7q5hpD4R3Oz0JzvVFwg==@vger.kernel.org, AJvYcCV3zZVVVLsvjNJdZrog2r+TzK3JeCtlcGJ28BsiPl1uEk1bbFaqAQ7wvgSvOw5N0NL63JuzjznrdOkDWA==@vger.kernel.org, AJvYcCVx59gkLsPO8wUYU/Iu8c/f9KkG17WlPy2BwAis8VY/oqhe3zFPyFla2hI0Mv9QwMhnesWJtZeKhp78Dw1v@vger.kernel.org, AJvYcCW2YpBmn/XOd/GeypxwE/523DbRv306y+slyflmEC9zOMnGCzTI9oX9Wvx+dSpo2mZvEv0heY7wqqMKVQ==@vger.kernel.org, AJvYcCWbMiQLY/MsyoOl0J6W+jN5LG5e9nqbzrfauaV7ow5kKa4u7B4ycLwKPpJ3pgdu+WGBxoLvmUAb7QB5Aw==@vger.kernel.org, AJvYcCWim29nzfa/eB7xEBR3Fj4T1PnOh2IV0rvs83C2arjz3BhfWcf1bjhxL0/icu7U3M0mT+UvG5kUYnqQ@vger.kernel.org, AJvYcCXvjITxkCMmRhLOWeMbyYvJuONbDYzSKelP/amSL0mZuowrQLGXfKcDbuyuWXmKMAk675dvOcS7GpVTgiOp@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvmKQxfNvjQzOOP+jsrHI7meyRBVJWy+ExcP0Uemv92nwnUZ2w
-	s6fUBYkD+W6KtkZv4t1oafnX54BCHv62sIGWtiGA5R7ZNqAFAgig1zX5a0CIN9wmeMWZHJbcyyQ
-	t015LoXOHOXsiBkGBfOSga6y9kZ8=
-X-Google-Smtp-Source: AGHT+IE5o/Xo+U8T2tXn6oxoafBjKshUHZrf+SWe+VK5IeGRU8mut4uUUJkKbM8eXFrd2HiwYXSp4cYXTpXetvFDWaA=
-X-Received: by 2002:a2e:b8ca:0:b0:2fb:5a42:da45 with SMTP id
- 38308e7fff4ca-2fedb46de0dmr21026331fa.16.1730545513001; Sat, 02 Nov 2024
- 04:05:13 -0700 (PDT)
+	s=arc-20240116; t=1730545603; c=relaxed/simple;
+	bh=Vjjt0F+MkTMBrDnmhH5YZFacPqfr+Fn/vQZvJGdUiBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZxV8QcMJVZ55MWuxSjakzvbEOo/ghjpOM7ClgUpT7OL6+k2ztlpsuMyDVUfaBC3Jo0xinKDK4eueTIE4h9YEXaYjiuJjGaRluI1HcIq0EL3hDtTysv+hpBYF6ZmS/MADPf8MBzacjKplP+MVbXgPbiK/JNoP3tkICsrOZdxQrXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=b0xL7oy4; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 93B8C40E015E;
+	Sat,  2 Nov 2024 11:06:38 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zVC95o_iZJqe; Sat,  2 Nov 2024 11:06:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730545594; bh=x5gVCnlDPcjJpvinoTgtzzj3bTuvqlm+qfztO2S0DfE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b0xL7oy4TjWweC/cUd8U180n7dU8PfIVkEWQvkNW+zPsbqJ67DiR94E3U7pqfWTiA
+	 TzKQzSAnRoV+oclVKjZ7aD9x27hUGCj/WV7XWHxaanbkboZ28vVZWeHA/XJjEYoghF
+	 BfSB9fbr19WKycHThUmD6UknCaI1ImDgs3cXXtE0DLAlDHtPEYIrErQLPHaDq4thpz
+	 84jKJBvl0Bhh4oabkVyZGdZ1OG2ysa1EKN2w3Pcu7jq1VfJ6dd7V+Aivh4dofnJjEy
+	 xkK5BoFrY4aDgZN8iSW4ikIxBw2/SPzvDATXhWhp6h8E3OLHXC1cpnCsHq5ko/QNAa
+	 Dp53ZHTGDiiIZH5//d3rqHcPhjzDJGC+ByP1s3HtljecTiiZMVIU3WvNbDcju4eXpu
+	 Oe0fWvjzfIEDUEluMkvU/h2Ai18GfTuEPZRtrnpFYf94E7QeA3YS3iHG4YFjjzZKsE
+	 JLvpqyeOxuEqnBCMCc4SU/TmAW0it9NmWheWpierRXkJQZWuvz/Tz32uUdebY4sirt
+	 BSLtozhNKpfKo1SwofXJ11soVsChbg/L1jFZCJWMA+YM5hbzvS2sFYEvnIodzf+boM
+	 IldXHFAytgr4zo4+/G37lHnrcS2j82z8yLhvcSLRmvichPqpvv3WMIUVlI7cHp3ewS
+	 mbdLHTiK2budTmgrwIewyfjo=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4B35940E0184;
+	Sat,  2 Nov 2024 11:06:25 +0000 (UTC)
+Date: Sat, 2 Nov 2024 12:06:18 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Baoquan He <bhe@redhat.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
+	dyoung@redhat.com, daniel.kiper@oracle.com, noodles@fb.com,
+	lijiang@redhat.com, kexec@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v3 1/2] x86/mm: rename the confusing local variable in
+ early_memremap_is_setup_data()
+Message-ID: <20241102110618.GAZyYHquhmVJd4yM9O@fat_crate.local>
+References: <20240911081615.262202-1-bhe@redhat.com>
+ <20240911081615.262202-2-bhe@redhat.com>
+ <20241029181101.GXZyElNXVuF6596TKG@fat_crate.local>
+ <ZyGDlYsg6YWNXSVo@MiWiFi-R3L-srv>
+ <8c81835b-97fe-a0b3-a860-0bbd5c0341f6@amd.com>
+ <ZyL8WDTw9F3laupG@MiWiFi-R3L-srv>
+ <20241101161849.GCZyT_aSMcGIXnGr1-@fat_crate.local>
+ <ZyVxBbGYsEjifLgp@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026040958.GA34351@sol.localdomain> <ZyX0uGHg4Cmsk2oz@gondor.apana.org.au>
- <CAMj1kXFfPtO0vd1KqTa+QNSkRWNR7SUJ_A_zX6-Hz5HVLtLYtw@mail.gmail.com>
- <ZyX8yEqnjXjJ5itO@gondor.apana.org.au> <CAMj1kXHje-BwJVffAxN9G96Gy4Gom3Ca7dJ-_K7sgcrz7_k7Kw@mail.gmail.com>
-In-Reply-To: <CAMj1kXHje-BwJVffAxN9G96Gy4Gom3Ca7dJ-_K7sgcrz7_k7Kw@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 2 Nov 2024 12:05:01 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXG8Nqw_f8OsFTq_UKRbca6w58g4uyRAZXCoCr=OwC2sWA@mail.gmail.com>
-Message-ID: <CAMj1kXG8Nqw_f8OsFTq_UKRbca6w58g4uyRAZXCoCr=OwC2sWA@mail.gmail.com>
-Subject: Re: [PATCH v2 04/18] crypto: crc32 - don't unnecessarily register
- arch algorithms
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-crypto@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-mips@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZyVxBbGYsEjifLgp@MiWiFi-R3L-srv>
 
-On Sat, 2 Nov 2024 at 11:46, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> On Sat, 2 Nov 2024 at 11:20, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> >
-> > On Sat, Nov 02, 2024 at 10:58:53AM +0100, Ard Biesheuvel wrote:
-> > >
-> > > At least btrfs supports a variety of checksums/hashes (crc32c, xxhash,
-> > > sha) via the shash API.
-> >
-> > OK, given that btrfs is still doing this, I think we should still
-> > register crc32c-arch conditionally.  Having it point to crc32c-generic
-> > is just confusing (at least if you use btrfs).
-> >
->
-> Agreed. So we should take this patch.
->
-> The current issue with btrfs is that it will misidentify
-> crc32c-generic on arm64 as being 'slow', but this was already fixed by
-> my patches that are already in cryptodev.
->
-> On arm64, crc32 instructions are always available (the only known
-> micro-architecture that omitted them has been obsolete for years), and
-> on x86_64 the situation is similar in practice (introduced in SSE
-> 4.2), and so this patch changes very little for the majority of btrfs
-> users.
->
-> But on architectures such as 32-bit ARM, where these instructions are
-> only available if you are booting a 32-bit kernel on a 64-bit CPU
-> (which is more common than you might think), this patch will ensure
-> that crc32-arm / crc32c-arm are only registered if the instructions
-> are actually available, and btrfs will take the slow async patch for
-> checksumming if they are not. (I seriously doubt that btrfs on 32-bit
-> ARM is a thing but who knows)
+On Sat, Nov 02, 2024 at 08:23:33AM +0800, Baoquan He wrote:
+> Yeah, it should be added to stable. Distros may get both SME/IMA set not
+> as early as the bug introduced, while anyone doing so in an earlier kernel
+> will see the problem.
 
-(actually, backpedalling a little bit - apologies)
+Ok, I'll take your 2/2 next week and you can then send the cleanup ontop.
 
-OTOH,btrfs is the only user where this makes a difference, and its use
-of the driver name is highly questionable IMO. On x86, it shouldn't
-make a difference in practice, on arm64, it was broken for a long
-time, and on the remaining architectures, I seriously doubt that
-anyone cares about this, and so we can fix this properly if there is a
-need.
+Thx.
 
-The only issue resulting from *not* taking this patch is that btrfs
-may misidentify the CRC32 implementation as being 'slow' and take an
-alternative code path, which does not necessarily result in worse
-performance.
+-- 
+Regards/Gruss,
+    Boris.
 
-And I'd prefer static_call() / static_call_query() over a separate
-global variable to keep track of whether or not the generic code is in
-use.
+https://people.kernel.org/tglx/notes-about-netiquette
 
