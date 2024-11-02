@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-393351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D814F9B9F90
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:50:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DAC9B9F9B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:51:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A77E1C20E3A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59CB72823C7
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C40189B8E;
-	Sat,  2 Nov 2024 11:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C09919CC02;
+	Sat,  2 Nov 2024 11:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ea27lguc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rs1WXm5H"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bhz9k0Tf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JMZsLY+K"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78CA166302;
-	Sat,  2 Nov 2024 11:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E352B189B83;
+	Sat,  2 Nov 2024 11:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730548217; cv=none; b=SiNCM7HPRsemaIrD1a+xFSn8umfPa/zZjzlbeB+D0x41jv849A8IrVg33cYhuSrGdnc3dlEuLxXa2C8oMht46L882C1Nze1+ZCE1jkQKyHmHj0B1L4Zn84SSpu8k3o96Zdh3VMOq3a6Snv1yhsizRoH5gZYlXw8PLohLIH6XQ00=
+	t=1730548219; cv=none; b=mqdT0SbjGO8K+y6i3oOM20+M3E9EKpJOimmRZchIpI8q41LghB9GNcHJDNa68GXnQbyexU1GxLXZunlWSjbVgbz7jMXaZciezQimqoqHL1dyGrDxQCcLOeikjV6D0ETMeJNtDyr4RBmFhbbpUtmlrQaKJgUF36O3RdNsDzYDrsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730548217; c=relaxed/simple;
-	bh=1vF3jSafvzuqxksVp8aCZI1s5ifOH+uEW1XVtQJTIrE=;
+	s=arc-20240116; t=1730548219; c=relaxed/simple;
+	bh=l1ZgUYms0g4VtdGX+I4rFJJAhzwg+RpzjIbXZzzEV6A=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=iJwHGoShs2o+O4172TI3ehFNrJaBEDoHtjv1BnuPt5cdZHeMQwhZfOmxNKcY9YW/6ZbqfAmAn4pe43a3EcimczYkSYHs/WUBEvPVBJ4bkJiM9RM6U+T+P34P6N8jP20HmKHhHEAmSNU44QXqTzenNN9dNhYqOYK2M/yftmvHWBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ea27lguc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rs1WXm5H; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=r3BZylp4HfugW8VS1ebwHnm64vqoqOu+/Uyz5grFacoOt9ZDK0dTzVzenUMUo2WZsAT4XAIlPrSVzKLY68FnRz2Jj9Q9hOo0eGo29DXmsmCr89cVSah2UW5UFt7o1K5g89XZzxQ8gCgztqhm5wzNgJPvKGn2eSDQp9MxJM8lclU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bhz9k0Tf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JMZsLY+K; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 02 Nov 2024 11:50:13 -0000
+Date: Sat, 02 Nov 2024 11:50:14 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730548214;
+	s=2020; t=1730548215;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9zmfaCNAyxTxFB4JHomg3ARYmNloSI2RZeWY6EcMVpE=;
-	b=ea27lgucFWQlUsC1QA1Z/rapnw43UnMIHDTnEbkt8vc5UqSOHGLZW+Ho8rpf8IzR75EC53
-	/H7hxPvIZJHuGr1iKRGhIpQznW5oFgDxftJVCkUSlwfH7FYeBk/D4AedNgr8P3gRvP6Nig
-	fmOvY3xyPzH7IqReI3opBCA/IsA8Vi6A/oA1+igZqazHaMGInrWsPGSHCGEExyBmI6we76
-	qpPdXWOQrMOXTpFxmWW/mnwM2D7Lby28RFhieED7bxdIvL4mEJqtqcHKoBza1K7wjWwo2z
-	LdgknqISSoQUlOXKGQP2l2R56AwI5PMko5fZKTmJYpRCkjud84tin7rE3BkOoA==
+	bh=nZk5elShKdLkHuiwg1Je9U2ZA+1spIGZFJQ6SshQojs=;
+	b=bhz9k0TfCM2SDj4pq6vJCxGHDyO9Tz1IErlUVwS6FJmIUrXLSONdm/xeSfvZ+Akn/GRvam
+	s7hylnUoCyX7rK8g49T65oBzn52s2Ney8ZVbiu1P1BA7a7Ia6BSU1asQYpyXsjmhFxfseo
+	zD2E2AzaH8Z3udvgL0m0icTl13wufvbUl6IDoK535fA01+eDSNiNnmVUOo1v+VJJYXsXFr
+	AFvYDUBdg7amobhUZUo6JliMkYOmN+0mCYL6G8cFmvzDiGygU4o5z/h3gB5rK1Bmre7CLH
+	HkR+b4tskBrscox7hJOBNCS1mYDn3UZv7RopvnyFLb3bDFQ9eEyAGoop7ER7LQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730548214;
+	s=2020e; t=1730548215;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9zmfaCNAyxTxFB4JHomg3ARYmNloSI2RZeWY6EcMVpE=;
-	b=Rs1WXm5HbZex02JIXs+w1fe8W0DgyqXx3tZ4xcgkATeSpmWJFNMqSPfdeZ5t2wkcZTJhZ9
-	ZoyDef8lLj/3DTDg==
+	bh=nZk5elShKdLkHuiwg1Je9U2ZA+1spIGZFJQ6SshQojs=;
+	b=JMZsLY+KKEDGeJzgnZxt0uymvE58VE6r3Zuo4r+Fms735DjCQdWeEh8NtGj4Z3UhD4Boql
+	4Nq5x/EtZbahWnBA==
 From:
  tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/vdso] powerpc: Add kconfig option for the systemcfg page
+Subject: [tip: timers/vdso] powerpc/pseries/lparcfg: Fix printing of
+ system_active_processors
 Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241010-vdso-generic-base-v1-25-b64f0842d512@linutronix.de>
-References: <20241010-vdso-generic-base-v1-25-b64f0842d512@linutronix.de>
+In-Reply-To: <20241010-vdso-generic-base-v1-23-b64f0842d512@linutronix.de>
+References: <20241010-vdso-generic-base-v1-23-b64f0842d512@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173054821316.3137.7948229817888369712.tip-bot2@tip-bot2>
+Message-ID: <173054821460.3137.7715424215341395263.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,73 +82,44 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the timers/vdso branch of tip:
 
-Commit-ID:     c22c06b4cc3a7434f36dac9310604be3ebc6f4f9
-Gitweb:        https://git.kernel.org/tip/c22c06b4cc3a7434f36dac9310604be3ebc=
-6f4f9
+Commit-ID:     af2c15920a114a7acea4dcbf9cd4a7b0ff469780
+Gitweb:        https://git.kernel.org/tip/af2c15920a114a7acea4dcbf9cd4a7b0ff4=
+69780
 Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Thu, 10 Oct 2024 09:01:27 +02:00
+AuthorDate:    Thu, 10 Oct 2024 09:01:25 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Sat, 02 Nov 2024 12:37:35 +01:00
 
-powerpc: Add kconfig option for the systemcfg page
+powerpc/pseries/lparcfg: Fix printing of system_active_processors
 
-The systemcfg page through procfs is only a backwards-compatible
-interface for very old applications.
-Make it possible to be disabled.
+When printing the information "system_active_processors", the variable
+partition_potential_processors is used instead of
+partition_active_processors. The wrong value is displayed.
 
-This also creates a convenient config #define to guard any accesses to
-the systemcfg page.
+Use partition_active_processors instead.
 
 Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241010-vdso-generic-base-v1-25-b64f0842d5=
+Link: https://lore.kernel.org/all/20241010-vdso-generic-base-v1-23-b64f0842d5=
 12@linutronix.de
 
 ---
- arch/powerpc/Kconfig               | 8 ++++++++
- arch/powerpc/kernel/proc_powerpc.c | 4 ++--
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/pseries/lparcfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 8094a01..5d348e1 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -1298,6 +1298,14 @@ config MODULES_SIZE
+diff --git a/arch/powerpc/platforms/pseries/lparcfg.c b/arch/powerpc/platform=
+s/pseries/lparcfg.c
+index 62da20f..acc640f 100644
+--- a/arch/powerpc/platforms/pseries/lparcfg.c
++++ b/arch/powerpc/platforms/pseries/lparcfg.c
+@@ -553,7 +553,7 @@ static int pseries_lparcfg_data(struct seq_file *m, void =
+*v)
+ 	} else {		/* non SPLPAR case */
 =20
- endmenu
+ 		seq_printf(m, "system_active_processors=3D%d\n",
+-			   partition_potential_processors);
++			   partition_active_processors);
 =20
-+config PPC64_PROC_SYSTEMCFG
-+	def_bool y
-+	depends on PPC64 && PROC_FS
-+	help
-+	  This option enables the presence of /proc/ppc64/systemcfg through
-+	  which the systemcfg page can be accessed.
-+	  This interface only exists for backwards-compatibility.
-+
- if PPC64
- # This value must have zeroes in the bottom 60 bits otherwise lots will break
- config PAGE_OFFSET
-diff --git a/arch/powerpc/kernel/proc_powerpc.c b/arch/powerpc/kernel/proc_po=
-werpc.c
-index 910d208..3bda365 100644
---- a/arch/powerpc/kernel/proc_powerpc.c
-+++ b/arch/powerpc/kernel/proc_powerpc.c
-@@ -14,7 +14,7 @@
- #include <asm/rtas.h>
- #include <linux/uaccess.h>
-=20
--#ifdef CONFIG_PPC64
-+#ifdef CONFIG_PPC64_PROC_SYSTEMCFG
-=20
- static loff_t page_map_seek(struct file *file, loff_t off, int whence)
- {
-@@ -59,7 +59,7 @@ static int __init proc_ppc64_init(void)
- }
- __initcall(proc_ppc64_init);
-=20
--#endif /* CONFIG_PPC64 */
-+#endif /* CONFIG_PPC64_PROC_SYSTEMCFG */
-=20
- /*
-  * Create the ppc64 and ppc64/rtas directories early. This allows us to
+ 		seq_printf(m, "system_potential_processors=3D%d\n",
+ 			   partition_potential_processors);
 
