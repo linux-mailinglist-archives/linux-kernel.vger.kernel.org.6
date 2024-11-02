@@ -1,105 +1,116 @@
-Return-Path: <linux-kernel+bounces-393340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BF39B9F6C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:41:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69E09B9F6F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:41:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA92D1F21F2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:41:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C7E28238C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4007A18732C;
-	Sat,  2 Nov 2024 11:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B060186E40;
+	Sat,  2 Nov 2024 11:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hs+apn1o"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Scxvu5Ya"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0278317799F
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 11:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC37140E50;
+	Sat,  2 Nov 2024 11:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730547666; cv=none; b=DsMl0+u++YOmVrOZv/I/ip7GvNsBVFIjZHSV9lCsbQcaWrndTGJlGccC85UoUOYVx/9cCR9cIf01+AF02AqhUn0NGO5q9He118wzfMU/tMQ+kUoMi7y9QpzYPAcllRr2j+8v/HqSYrfKpHFpMR88TyZkDxSw99DRtHH/uDkCnX4=
+	t=1730547689; cv=none; b=jZkucz6IwbMJtla5ORJvjVqVZtXwKrKNiWb/vEtdJBVcas0MXmvKqbANSrzugv3yCsskyyWJnvI3lWPpv4iW25QIELJgV1zc494JPz08BOz5Dsrl39GBvHbT9ww18bt0A9Kzi8sRx9PkZ0cLTeh7cfPJFYE3SYFIRUZAkrbUtH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730547666; c=relaxed/simple;
-	bh=GMLYsyPr4xumLfGGfYRjRM3ZXtmHZmJVFx7uijw7R9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=isU1IiFttdhe4HeNPb9CwpQrPe5QbgcRpBceHgTpO9LVoW818AE4QPQrw/lAx6FNv4firLpprqXIlbrIkjCv45cpjQP0iFlA5cWp0rLl9cq+nZrRuEsdWUM6X723Mb0rHlUtOVJz6eR5SIW/3HHeXwzyadVHQJDlKut1hPpFhfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hs+apn1o; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37ec4e349f4so1727923f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 04:41:04 -0700 (PDT)
+	s=arc-20240116; t=1730547689; c=relaxed/simple;
+	bh=GNCOilcx5JlUThOsqc+xKrEw5oMdVM0JoKl+cpPWOYM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jr+p+7+p+dQ+2qkn305obLtVhFOlOo01NFR0Lrpxo0ztSfWIhN4VgAloggDi0mAtf+ILPpowSeh5QALO9WxTnxxO4dbuHTeltHQNTKX7Yi4QA80Y+grAj4nnS7sZKrN0Jm8o4Rheq1ZcywdvUNFN+j9yQw7AkSG04xEjIx6AsjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Scxvu5Ya; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cebbbbaeceso156462a12.3;
+        Sat, 02 Nov 2024 04:41:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730547663; x=1731152463; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GMLYsyPr4xumLfGGfYRjRM3ZXtmHZmJVFx7uijw7R9Q=;
-        b=hs+apn1oEkYHALiFkALDU+4DsKeI9p1q/7abUILcNjkgFniFTr+tSgxOyU7EkBxuiQ
-         nIeJekaVIMMjWFC9WpmHGuTTOt8bqBeKfs2xoBRGLxXLbTSW1ajbHg3F58dMYRs9qUAW
-         cd7zWeCH1jHRSttgzSTO6sytjUFaWP7ESxkEO7fkTREEPBgOtwxMf3j4NsY2n+zktI6W
-         GFbS6GUZrZkdXxepPdLZr47fxWB6M+PL5NM73oO6YZb6Hf8ED1GyhQiFLstam/MtXnbr
-         GIeoacV6EzrRY5dQdhNMCgYDV6LCw48MT4cnpxkedljoXKFZtvAKt3k/aexDb9w+gEGh
-         FbMQ==
+        d=gmail.com; s=20230601; t=1730547685; x=1731152485; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ODXSKIPM8Xa+YaYVLc8WanEICuRtJG6U7jSPf/7hZw=;
+        b=Scxvu5YaFBjLKtBhna7ZlB7UdwL0Umrq8SXX8A59mw/T10us+7qz1X2Ev3CV/EnO2E
+         xGIH7ZZTwIdA02Rg7bzLBeeoeorKcvZmWlaqO17PhPVsrZlMpb6ui563AcQFtLNnJCat
+         JKoq3SlookwK/UVMBWwLorTbH7qlzDiDc9TFZXiB5ldQAp/ffUt642rj7KnOWQkbriTu
+         4LsC3gNRY4giqpdt5ESPcmJkhlyF2QigABJEt6OOA8gG8KqDWsRgshWLwZqQFhagzkWi
+         mmjMKa6HrWaDgB5tqyyaULPxEWJ2g9iOkyGuhNd2pkBvEHT/ZgZnn5RVFttC+apjKapm
+         M7hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730547663; x=1731152463;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GMLYsyPr4xumLfGGfYRjRM3ZXtmHZmJVFx7uijw7R9Q=;
-        b=uHIqTJc7WYuChi+Docbt6YI218aXTGDYzCdqK/xsgf5rAC6CxCF23McEqTiAgZI/AO
-         SfQf2jENTmQjoARnw/vjnVgG81NXzNNmc4JHWliwuUyE/gQ1KgYoZcHn18GO9Czk7MnA
-         3kojbbC7i5ENJnMb3bV5hv2DzmTt59aCCjPQYBNFobo9ojSYkgtF7uBgeWVZwRHY3gm+
-         HazDSNlMC4Y8HvBqzDyGdYnqVFUWgY9ommgv/1m8QM4jz83kX8/syKWMNnDqHJtMCqb3
-         L5o/bDBzdEkwHJkjUTDKax/ed4l02DmU4Hz21MDn9ENRexBF1V8JZIFCkscXYgTueNHJ
-         uMEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAgDVA2QZbc3RrDisQIBmY59sGwnMVNdbpcInIm52sc0Ha2fZGpmDMzezhpnNXjKRrcJ7mtG6JZP/Tyts=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+M/3IOHs4xi6Syfii2HnmDJ6N6WyTo7WLEJ9ByvHj+xBLFvgK
-	+pTqeF27ZQ7yHq6ACUVFF2iPDxuSImRclUchB9Gojqbo58+MMCSW42U5wY3VyWA=
-X-Google-Smtp-Source: AGHT+IHGujsdxA97CT882qkCpdMoVH8GsT1n46/t2DVN9orVppO/tTsrbNq0fjx3WgBIeTcFlLazow==
-X-Received: by 2002:a05:6000:4029:b0:37e:d2b7:acd5 with SMTP id ffacd0b85a97d-381c7a476a8mr5356689f8f.8.1730547663353;
-        Sat, 02 Nov 2024 04:41:03 -0700 (PDT)
-Received: from [192.168.0.35] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e694sm7879785f8f.86.2024.11.02.04.41.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Nov 2024 04:41:02 -0700 (PDT)
-Message-ID: <1d24c5a4-5059-4420-ad69-a72cceb5657a@linaro.org>
-Date: Sat, 2 Nov 2024 11:41:01 +0000
+        d=1e100.net; s=20230601; t=1730547685; x=1731152485;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4ODXSKIPM8Xa+YaYVLc8WanEICuRtJG6U7jSPf/7hZw=;
+        b=pzyv3NtOwDBogdv14OtzOeFWa/VnZFA0SQAbDomu2TvgZPB2IHA3ifVhuliMddSjD+
+         nB+GoF25lRHhIHVCypXlvqc+mFlz9TKn+C6WHhkk1U/yxSTKk5xCM+uDCYea8/JlGwAr
+         5QZ2/vM3TFRmKqfMMvJk01HCYtv4mnpzIThiT3S45bme2u5XLOqb6lREflsGu2XiAtGW
+         3NVfPP/2Jx4sUK2ROkNhriOxSFhgh+e9fJSbrxpv6l8XxXLGH7s1uAKCE+mKm0hh7Dw8
+         4yQkTIXWW4f0Hn6LdcAPlj3t8VRjkSzuSiCLwPxA231LDpvKykj2oFdaama2uU1S+0NJ
+         axJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWW/t50465TlQzzlnsY3plcdmdi/EowvjzmfcnQaJKPPf82oU4T5xENlDpqcIkqza9gFT2akH+gIAr4@vger.kernel.org, AJvYcCXG84OEB0v1a+e5IBdSAXUJ/uvye+3lwQ3W3ydXdmFkmbzMpJkPkRL1KRan/Ls1rVbqsLzRRVQd@vger.kernel.org, AJvYcCXxZIWgfMba+AXg2mqgT8DL94EBYeg4/VCY/hXuMcgv818YlFFPX70LBF09V/4CguJolmwW3v9kQKrPadfz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8RbZbM9Zdjgj+fY1pCqoh+t9ajZnZTqLd4c2/qMqvPCluhe4/
+	k6OpCX5Jx1CJ/PZkYbWLfOBkmedza3faZbuL3iyXIkTqYYnL10Hfq5rZi/yQ
+X-Google-Smtp-Source: AGHT+IGP63fQoQMFb/ObB1eGQudz2/rh/yY91dTuFfLQmvqaGKroFryYsgP1YkjTo2qDjj678icCdA==
+X-Received: by 2002:a05:6402:3546:b0:5c5:bebb:5409 with SMTP id 4fb4d7f45d1cf-5cbbf88efbemr8731768a12.3.1730547685210;
+        Sat, 02 Nov 2024 04:41:25 -0700 (PDT)
+Received: from 1bb4c87f881f.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceb11a7aaasm2224918a12.83.2024.11.02.04.41.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Nov 2024 04:41:24 -0700 (PDT)
+From: Lothar Rubusch <l.rubusch@gmail.com>
+To: robh@kernel.org,
+	kuba@kernel.org
+Cc: alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	peppe.cavallaro@st.com,
+	devicetree@vger.kernel.org,
+	l.rubusch@gmail.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] Add support for Synopsis DesignWare version 3.72a
+Date: Sat,  2 Nov 2024 11:41:20 +0000
+Message-Id: <20241102114122.4631-1-l.rubusch@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] media: camss: vfe: implement pm domain ops for
- v4.1
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241102-camss-msm8953-v2-0-837310e4541c@mainlining.org>
- <20241102-camss-msm8953-v2-1-837310e4541c@mainlining.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241102-camss-msm8953-v2-1-837310e4541c@mainlining.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 02/11/2024 01:32, Barnabás Czémán wrote:
-> have to be power on/off explicitly.
+Add compatibility and dt-binding for Synopsis DesignWare version 3.72a.
+The dwmac is used on some older Altera/Intel SoCs such as Arria10.
+Updating compatibles in the driver and bindings for the DT improves the
+binding check coverage for such SoCs.
 
-"powered on/off"
-
-Pardon me I missed this @ v1.
-
-Please amend.
-
+Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
-bod
+Lothar Rubusch (2):
+  net: stmmac: add support for dwmac 3.72a
+  dt-bindings: net: snps,dwmac: add support for Arria10
+
+ Documentation/devicetree/bindings/net/snps,dwmac.yaml | 2 ++
+ drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c   | 1 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 1 +
+ 3 files changed, 4 insertions(+)
+
+-- 
+2.39.2
+
 
