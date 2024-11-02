@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-393171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85BC29B9CC6
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 05:14:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E326A9B9CC7
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 05:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6CD1C2138B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 04:14:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5460D2820FF
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 04:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A75140E50;
-	Sat,  2 Nov 2024 04:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9320A13AD20;
+	Sat,  2 Nov 2024 04:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2cGy4QuP"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UZoxe03u"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568D417F7
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 04:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7F020EB
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 04:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730520883; cv=none; b=J9yje6d2VCWhbrZs9AeuU3aFiIPQrDxR8nN2WGgoilo2vRaucgxVHa1RJKZi/zRknsc3L5o37j5zRyAuq9HoFf8i0CDSP2LcS0NEtNWyyPTCrYWALQ8sS8xdLKXoRif8jaa4sUhR/MMAMyXMd4WqarHjQ4N7RIvguxYy5Z57nrA=
+	t=1730520949; cv=none; b=Dv4Nsya/yDRYEeJlIg70E5I5RGDqihZeK2H1C1dqanEFqroZ9FEBC+/6pXGv9BylHC3bVMh4kCMB0WNCfYbX+6/g6BkuQ4E+cTCki5WKGxl1ye7ux62KqI7EevecI/2GcMfkrHwawbnVGtE0L518/i+Hs/n4PUZQqDCH0PZgQY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730520883; c=relaxed/simple;
-	bh=ZhD0A6fFMQgetHxXaUqGCccl4RdLc+5B+f0TDv/tFb0=;
+	s=arc-20240116; t=1730520949; c=relaxed/simple;
+	bh=UKd1zj9ed9x+HauKpGT7Nf+g/U9f6uZcRXFye06UpEI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ex5jdKrIfx2xwi20t3E/Y1ZjuWaV79foIVXqFyk6QpTpMjulPTZ0H1lVaI1M5mKSxFkUXzbqNiUNt5VrTcM9J1W5qdkEuadufdh13N3CsBZOvgmjGLK2HHUMHY1qt1PoPCs3HTSjgXhxDAYy1hjzxZAjVJQIeEJk0PkrywpcmqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2cGy4QuP; arc=none smtp.client-ip=209.85.208.43
+	 To:Cc:Content-Type; b=MOr/8C2d0vENLD/SeaS7PJq3FcC56ltMhfyrXO3L35Y6QdRr1fFN2WcY8H0JGXgcYBkZT9ProIPiU1rU7h8why4r++rBqZdmPK4JkmnEBZKxwVmKkciwwmsCpkiX7JWdSGGjq2REhhIyMVOfZzAh1bug18xd5PdCSQ+ZSDtJyVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UZoxe03u; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so2515112a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 21:14:41 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c9709c9b0cso3724656a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 21:15:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730520880; x=1731125680; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730520945; x=1731125745; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZhD0A6fFMQgetHxXaUqGCccl4RdLc+5B+f0TDv/tFb0=;
-        b=2cGy4QuPB2OTwOayYfQKb9Gr7r2oBUxDUbkGdXe8PKm0RHCKmQvVPajlSny9uiAP3E
-         qRg1wJhxWx9TKjBlq8UkcEprLLGQ0Ppa2mC1ebjQsdIQAXYksHOAZpLJpFhGte1x3UOf
-         jK0NXPLiCBzFOUCkpsDxu/CxtsWIyFOZanGy2g6/7AaMQnKpOFqZRX2nQQ57yQLuuYgu
-         sW6pO1hHVqXqjm0OPAx/+uRCW39y/+4rQhz9I0t5tORMwpZW15JxqvSe08J7dW07aXjz
-         pMpHYlFE5ukI7UA31SeemUz2hd/QNfio0tfFZ4Rc8mHaO0o8fN+gUlfX50i0zjnR8aNJ
-         pHJA==
+        bh=UKd1zj9ed9x+HauKpGT7Nf+g/U9f6uZcRXFye06UpEI=;
+        b=UZoxe03u/nPlf5QUfqBpJ3P3MI20IuyTH30KjTpDP9KbXGRLCJBUxGsviICNKu2iPY
+         NpG/8r9VgNWUrwYqhqlnT74SKphSTza7EjacCPyRp8cpRJTqj1sZ9MGXiHm1xKr2m3Wl
+         0KRuqiZLkM6DHER5Yik+oAeA/pTbgTk84/FzSILeQHmpX0WwB4YoM56RWhvpfQJh64nX
+         q2xdPIaAzS1vs1MrrU+U6BqPADMRvCqDB0SylXKLBjtkv4JCAdXY2fEoi8j3KnvMjKuG
+         A7mOaVUn4yFkKt+OBuvUWNRFkMqaTH8DSxNSOONWTJvcguSH1LAvhp/NNKHcm80mcaZz
+         MgUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730520880; x=1731125680;
+        d=1e100.net; s=20230601; t=1730520945; x=1731125745;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZhD0A6fFMQgetHxXaUqGCccl4RdLc+5B+f0TDv/tFb0=;
-        b=ol1cO7vlDiuL6xIAUp7AFHzkHHebmFfRb1JBVUuXIXd9fZClNcKi2vQw8DegsLYm8G
-         e9Jjz2K5kJIdvtpDK2KDLlI6r2yStG95uRqYvGySj14o21p/oQBZfkju4jEKXXd/Ikag
-         YvB1S325q7MCliUQ82gqYdHYjl6kwFpLEnt2zW+qfWS4zL7JcmqvxlB2WKffrcsxNgLn
-         tm0CJtvrs5Qz9cWqZMLWHlGLwUSYyCfTp1vAYbL3wW3sFY8fM5jbp2mGgSLJNXJ9Bnj7
-         Z51Kbe1vrsGA8oEpqLKu8zbZ7CV37ta2Diey+x5kc643zN0qxx3H3D5q27gqKynZ/YzZ
-         jQqA==
-X-Gm-Message-State: AOJu0YwADuVD/OpMMnpu8ZUgk3UJ1T4GB/y0E7SfXRlA1nlRngKAdO0M
-	eNzYXX+Xxzu+5nk8FTkOPzVF2QjcyubBMkGffuXGlw4pzeJz2R97cGLbgVyW/eEh4oA+0H48knA
-	AoWAUBaoN3iihvduTA8lQTOZ1Icqj+PxmRXU=
-X-Google-Smtp-Source: AGHT+IHd4My05K20F74U4VNXVkl89e2GMigufvzRDMaeQNOohx4FEt2r4OzlrMTKam0oJE5fnuYW1weqFjIUrGDrbj8=
-X-Received: by 2002:a17:907:3f2a:b0:a9a:4cf:5cea with SMTP id
- a640c23a62f3a-a9e50cace53mr879565966b.54.1730520879481; Fri, 01 Nov 2024
- 21:14:39 -0700 (PDT)
+        bh=UKd1zj9ed9x+HauKpGT7Nf+g/U9f6uZcRXFye06UpEI=;
+        b=VMYUxsqgrMJyw2pTtte3kD+xXM2Y/3Eur/7E8G6S7F2/zhhUF5wozOqqa+GQijXg7l
+         R2iWnvpRM1t4RL2mNjlXzuNUM0XtJFlxrkAB+F/0jFGQJRaXLXteWWTY36/JAE4drMHv
+         G/M/2GMgR0soQGY7Mnkjr4X/nNo2IZ5FLJZlbeUjDFY5T5gW4eEI03Sl8AxyL8U7iHiy
+         ZKKcteClFw0WBhT5t5IqYPlQciamxxIEMomJGBQMrHkwqpto/iYqne7Kt5Ig4ty1ux1h
+         4WHvbApP/9XXmHIR86R3PVh9/eMsflHYPTEtZlXbb7esoRKXmHMQuT4kX6KywSVXfWX5
+         uQFg==
+X-Gm-Message-State: AOJu0YwXtj91t8PArJBJXZ4EmyKa2fVG9x9iPLrFP86Nlf6apdEmnPxr
+	X/NTJ61FEezP9UjFQkoDLwk9LyInpXANM3PYSl3jyZ2TCewXoL1/s7bwOseXUTLQ/oajFxjGhxx
+	E/bNcUg3ZABZXDYXmEcFtWtsmQROwLHgDtso=
+X-Google-Smtp-Source: AGHT+IG5rGIm2Ag+4OxDuvdMCFtzRc2jiUWfdEYRpFVLsZL+97QedtJk3djwR8k2DYuO9g53BlljXtNO91RGYEVWs1k=
+X-Received: by 2002:a17:907:728d:b0:a9a:cc8a:b281 with SMTP id
+ a640c23a62f3a-a9e3a573cfbmr1156146266b.3.1730520945460; Fri, 01 Nov 2024
+ 21:15:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031115448.978498636@linutronix.de> <20241031120328.536010148@linutronix.de>
-In-Reply-To: <20241031120328.536010148@linutronix.de>
+References: <20241031115448.978498636@linutronix.de> <20241031120328.599430157@linutronix.de>
+In-Reply-To: <20241031120328.599430157@linutronix.de>
 From: John Stultz <jstultz@google.com>
-Date: Fri, 1 Nov 2024 21:14:28 -0700
-Message-ID: <CANDhNCoDbRNq7miiU-oGnX0VBUbZ=sDpP4Ko6OYQye+A=Z5HAg@mail.gmail.com>
-Subject: Re: [patch 1/2] timekeeping: Remove CONFIG_DEBUG_TIMEKEEPING
+Date: Fri, 1 Nov 2024 21:15:34 -0700
+Message-ID: <CANDhNCrL_G+HPfKPNpH5QFhouE_Hn-Nx7EAC7vUjLeL580q-UQ@mail.gmail.com>
+Subject: Re: [patch 2/2] timekeeping: Always check for negative motion
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, 
 	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
@@ -85,21 +85,25 @@ Content-Transfer-Encoding: quoted-printable
 On Thu, Oct 31, 2024 at 5:04=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
 > wrote:
 >
-> Since 135225a363ae timekeeping_cycles_to_ns() handles large offsets which
-> would lead to 64bit multiplication overflows correctly. It's also protect=
-ed
-> against negative motion of the clocksource unconditionally, which was
-> exclusive to x86 before.
+> clocksource_delta() has two variants. One with a check for negative motio=
+n,
+> which is only selected by x86. This is a historic leftover as this functi=
+on
+> was previously used in the time getter hot paths.
 >
-> timekeeping_advance() handles large offsets already correctly.
+> Since 135225a363ae timekeeping_cycles_to_ns() has unconditional protectio=
+n
+> against this as a by-product of the protection against 64bit math overflo=
+w.
 >
-> That means the value of CONFIG_DEBUG_TIMEKEEPING which analyzed these cas=
-es
-> is very close to zero. Remove all of it.
+> clocksource_delta() is only used in the clocksource watchdog and in
+> timekeeping_advance(). The extra conditional there is not hurting anyone.
+>
+> Remove the config option and unconditionally prevent negative motion of t=
+he
+> readout.
 >
 > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
-Thanks for doing this cleanup, Thomas!
 
 Acked-by: John Stultz <jstultz@google.com>
 
