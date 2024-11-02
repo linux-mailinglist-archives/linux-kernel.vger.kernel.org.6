@@ -1,220 +1,101 @@
-Return-Path: <linux-kernel+bounces-393070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435949B9B8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:20:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774669B9B8D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 01:23:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A664FB20E4E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F20D2829A3
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 00:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4DDD53C;
-	Sat,  2 Nov 2024 00:20:30 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE978F77;
+	Sat,  2 Nov 2024 00:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g8Qh4QYH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B286B848C
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 00:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D75D6AB8
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 00:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730506830; cv=none; b=ddEcRYVk7p5rDbuxhyaFb5ceKefV4D8W+ylN/nL4ActpCJqGTqvUPTVRdUG3XqG74/ETVu61LrNyRfZAr1Fh7jVx4mqfWmKYjhc2x/cIX3WPywblXmnh1QvVxGrkotJsLPLocvgthcIQRdJxZafr+Oa/aoWL8KAaOgWjZlgArOs=
+	t=1730507031; cv=none; b=j29ynrnn6I8ObXuA85jL7mTpjTvrCYlNN+tP9RCZ28sD5LVZQwAE9KN2wl8HN9Qsft8JWq3L65lXQMMlxcKBcohNs3aDSSe9ECZVhZWmQn6N2mYrL5Pq+8j5NZ245MS0ULnpotc7PmmhYx6WXdGt3fBdvTkUWT1qbr79rHHLa40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730506830; c=relaxed/simple;
-	bh=4k3FtZqKKp/bF2Ac+RG/RuQw33Ql0w933o7rfr9ZL3c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PbH7VPtcQUE1RZ+inZW2yN8P7PP9OrLGUMjwjU2b+TEo99eLaQgLkTtySQYxbvW6HcfdC2yiOrxRlKv9RwHQrhyTlwMAxbvtjOvFuL3GQvNWEbaDj80QVKNE2tpQd6CbNNTBLX0VLLYUnDmBYbVuIYgTdJvf6iajtp6Pld8tWjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abf68e7ffso238562639f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Nov 2024 17:20:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730506828; x=1731111628;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CPG06S+TLajfGy5ZlOHDAjH5ADSzS0Q/YexS4iW+jTY=;
-        b=h+7kaMHAQrcJ9tyU+OFsypvAm6DVzEcAFLiQrbuwriAu4QT/d6DX2xaaVSfOyXeItQ
-         iDji5zy99iVduipk7xnm48CJP539YjRWrFZ8Xi3Mo92+bJHly72V2MQSNhZJk+JGcXEa
-         fD2cWGyzwsxCHm4R5fVZ+7vpDHQ/DlDHd3JXvgqUuPuIWb92hVTyMdX+yXfaAtAqqb1D
-         KYUotam7SFDFtiKrKbTVngapQBX5A58I/jVcN3bfxnEwSJozfIxEB9sM+SkLNw2W3mlu
-         S/sjNpga9fxhBjZCb+cns/9YTWsS7VOs7PTWecuN7KanFnxAp4GgI7KMmPZDqRRGBd6k
-         AA7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVLg/8sylF+544Ui4h0cRBpwO9uxEgYDPV1v3EDaFIOW6VZJvlOOaxCAr4YO9dfyL0pEHrzCcPxtJQLYDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm19zrGTieRyl+gTZvapMbUD7rb8fGm4b2XnYQN3H1av+41n7L
-	IvzSphu9AamCElXwBI1heLevP/LrU8L6uvegtSQpe/OIUZjheU2K8N7/8DoXtGrsx7W1h2UNHzH
-	/mB6SublanZ2hRRBK2z1+1liOvPfCvaPlUz5S3o/udaYHVdjqPZy01aM=
-X-Google-Smtp-Source: AGHT+IFeMo00npivDJrOF1oQ+IGSJNGu9+PhSfntSMVzq2dtx/sSrEFI71yMvwZEI91fz+ZkGwB6cYrNBC5yDkstiien0ffBB9Ka
+	s=arc-20240116; t=1730507031; c=relaxed/simple;
+	bh=dEma5aIn0mASXtsHj8nPn7zriiz22/Bds1DIBpvkIjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E+GfQJCP+lUtatftjo5gU/tiP4xRWsm3Ww0BlWKv+ngFCUFQrjGeCByccoTf1pzhVZovqjQGOtKOqyn0VC9bFJFSyPkcDzUdjpY0bQ+UqTPX3TZU8KGPUBupUuJ1/Wcv0HYdPjtJ5ZUQkrZbwxql/nLjVy/smDO/ShPLfjgm2dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g8Qh4QYH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730507028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZVZopAEbNBIrE6Pzb3BRalzXXCBqMKqri4Yq7OKfFwA=;
+	b=g8Qh4QYHPLmeND5lL/k5c7hg9ntCdcKMdeahjs75lgCYw7TdpRS8cBKxb1wXphi2j+1hzr
+	8Ne0WXSiQWe2ioLdfkUkV6ajCMSq2lD9ovtgUp/8431xYsJGtdrQn8MymPeHu36EX1pnrJ
+	At03WaD5VPjTQL2ZCd2h9sNPaFE0KNk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-124-dCoGU5loNI6vRHz0pLacCw-1; Fri,
+ 01 Nov 2024 20:23:42 -0400
+X-MC-Unique: dCoGU5loNI6vRHz0pLacCw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 603EB1955D94;
+	Sat,  2 Nov 2024 00:23:40 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.3])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C399719560A2;
+	Sat,  2 Nov 2024 00:23:38 +0000 (UTC)
+Date: Sat, 2 Nov 2024 08:23:33 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
+	dyoung@redhat.com, daniel.kiper@oracle.com, noodles@fb.com,
+	lijiang@redhat.com, kexec@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v3 1/2] x86/mm: rename the confusing local variable in
+ early_memremap_is_setup_data()
+Message-ID: <ZyVxBbGYsEjifLgp@MiWiFi-R3L-srv>
+References: <20240911081615.262202-1-bhe@redhat.com>
+ <20240911081615.262202-2-bhe@redhat.com>
+ <20241029181101.GXZyElNXVuF6596TKG@fat_crate.local>
+ <ZyGDlYsg6YWNXSVo@MiWiFi-R3L-srv>
+ <8c81835b-97fe-a0b3-a860-0bbd5c0341f6@amd.com>
+ <ZyL8WDTw9F3laupG@MiWiFi-R3L-srv>
+ <20241101161849.GCZyT_aSMcGIXnGr1-@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2142:b0:3a4:e452:c42c with SMTP id
- e9e14a558f8ab-3a4ed27c5f0mr285536335ab.6.1730506827947; Fri, 01 Nov 2024
- 17:20:27 -0700 (PDT)
-Date: Fri, 01 Nov 2024 17:20:27 -0700
-In-Reply-To: <000000000000abf2f0061ba46a1a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6725704b.050a0220.35b515.0180.GAE@google.com>
-Subject: Re: [syzbot] [lvs?] possible deadlock in start_sync_thread
-From: syzbot <syzbot+e929093395ec65f969c7@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-	horms@verge.net.au, ja@ssi.bg, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org, 
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
-	pablo@netfilter.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101161849.GCZyT_aSMcGIXnGr1-@fat_crate.local>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-syzbot has found a reproducer for the following issue on:
+On 11/01/24 at 05:18pm, Borislav Petkov wrote:
+> On Thu, Oct 31, 2024 at 11:41:12AM +0800, Baoquan He wrote:
+> > Should I send the fixing patch alone and clean up the useless argument
+> > 'size' later, or squash them into one patch?
+> 
+> First the fix, then the cleanup.
 
-HEAD commit:    6c52d4da1c74 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12889630580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=672325e7ab17fdf7
-dashboard link: https://syzkaller.appspot.com/bug?extid=e929093395ec65f969c7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1788e187980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14a4f2a7980000
+Sure, will do. Thanks a lot.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/70526f6a5c28/disk-6c52d4da.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8ca3cd20d331/vmlinux-6c52d4da.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9c4393fc9a08/bzImage-6c52d4da.xz
+> 
+> Btw, that fix wants to go to stable no? Seeing how it breaks certain machines
+> with IMA and kdump and SMe...
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e929093395ec65f969c7@syzkaller.appspotmail.com
+Yeah, it should be added to stable. Distros may get both SME/IMA set not
+as early as the bug introduced, while anyone doing so in an earlier kernel
+will see the problem.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-rc5-syzkaller-00181-g6c52d4da1c74 #0 Not tainted
-------------------------------------------------------
-syz-executor158/5839 is trying to acquire lock:
-ffffffff8fcd3448 (rtnl_mutex){+.+.}-{3:3}, at: start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
-
-but task is already holding lock:
-ffff888034ac8aa8 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3056
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       smc_switch_to_fallback+0x35/0xdb0 net/smc/af_smc.c:902
-       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2771
-       sock_sendmsg_nosec net/socket.c:729 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:744
-       __sys_sendto+0x39b/0x4f0 net/socket.c:2214
-       __do_sys_sendto net/socket.c:2226 [inline]
-       __se_sys_sendto net/socket.c:2222 [inline]
-       __x64_sys_sendto+0xde/0x100 net/socket.c:2222
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       lock_sock_nested+0x48/0x100 net/core/sock.c:3611
-       do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
-       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2334
-       __sys_setsockopt+0x1a2/0x250 net/socket.c:2357
-       __do_sys_setsockopt net/socket.c:2366 [inline]
-       __se_sys_setsockopt net/socket.c:2363 [inline]
-       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2363
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (rtnl_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
-       do_ip_vs_set_ctl+0x442/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2732
-       nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
-       smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3064
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2334
-       __sys_setsockopt+0x1a2/0x250 net/socket.c:2357
-       __do_sys_setsockopt net/socket.c:2366 [inline]
-       __se_sys_setsockopt net/socket.c:2363 [inline]
-       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2363
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&smc->clcsock_release_lock);
-                               lock(sk_lock-AF_INET);
-                               lock(&smc->clcsock_release_lock);
-  lock(rtnl_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor158/5839:
- #0: ffff888034ac8aa8 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3056
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5839 Comm: syz-executor158 Not tainted 6.12.0-rc5-syzkaller-00181-g6c52d4da1c74 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
- do_ip_vs_set_ctl+0x442/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2732
- nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
- smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3064
- do_sock_setsockopt+0x3af/0x720 net/socket.c:2334
- __sys_setsockopt+0x1a2/0x250 net/socket.c:2357
- __do_sys_setsockopt net/socket.c:2366 [inline]
- __se_sys_setsockopt net/socket.c:2363 [inline]
- __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2363
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f468bc1c369
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe79331b18 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007ffe79331ce8 RCX: 00007f468bc1c369
-RDX: 000000000000048b RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 00007f468bc8f610 R08: 0000000000000018 R09: 00007ffe79331ce8
-R10: 0000000020000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffe79331cd8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-IPVS: Unkn
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
