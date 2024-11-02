@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-393285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649B79B9EB1
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:13:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D659B9EB6
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 11:13:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4704B2283F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:13:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64FF61F2472B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 10:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B8D1A76AC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E86C1A7AF5;
 	Sat,  2 Nov 2024 10:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w+jAheZM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p0j3Hyug"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tTiqN/F0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PyJEXhP2"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A03C189B85;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63A5189BB1;
 	Sat,  2 Nov 2024 10:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730542220; cv=none; b=Eso7s5ivZ30Saxan8NrbpjosZ62cMRmIA/9RzxMwL4uw2+zSCcX6/eCEhwZ47aJamZKbgLQsHMIKBSkd5poSsqK98lFBKfXZIt8outJG7/mr11IxiMsH0wNrKaxRwlJRICDyN+NOm29fSmfbWAv/5by4q1H5gM5an8GFl6pKjgo=
+	t=1730542220; cv=none; b=UGY0jJTnWR1V2pPWbwi1nAofnKqvV62r9NEpKX8GXoZiy/W+XkBUzOM/ML/cof04AXuw+kScUVbR32y2zLnaKXZNFwt5vOjAH0f1RysabA2S5XSkvgnotwrxOt51k2B/A9lJueb1w1AWllMxYAlG1FlJ2G2HJNf0olJkmFAw6WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730542220; c=relaxed/simple;
-	bh=qjZ1SSTX/KUFy5wRt0m+ldTKLEVu7You5wp8yBb07Hk=;
+	bh=A0+zKmiE4WouzRg98VBl71itFRq0Jcvq5wXh1yuOPRg=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=qe0fTFboGdwpgcVkYPxRI/IXswBw0a16O1uNKcqpPOjepuBMkgIg2wDR78gpIvvWXI1f9R7dLT/XoryGqnrmyH4E3Y1ATQC75f73JO+x+CCcKj6545XdvyKfHe1W22pI1cuy9b9Kr7xfUQ6tQgutU/nr2baFiNdb3sx2IaTCuTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w+jAheZM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p0j3Hyug; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=HffjobvG1cb4EAiSg4Ae1reemRTVuIvVuWVzbdS6Oghili5o3Vrhyo+dNhH0mGDaaqrXIT/Wn3H8xGRJv6gnvxfZhoeJy0P5l9H2oAeC3i2G+mnbkn2u14UN40OPQvnLKyOMUs2A56WnkzE7qEgJhqscqg/DWw4MlpE++oxKHo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tTiqN/F0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PyJEXhP2; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 02 Nov 2024 10:10:13 -0000
+Date: Sat, 02 Nov 2024 10:10:14 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730542214;
+	s=2020; t=1730542215;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dq19qkLv753wnb/oil92s5l5TdDt8LxbHCrYpxcDRXs=;
-	b=w+jAheZMWipbiHqsbRjvR2nNtgeDW3bL5r09FBmeUaxFgeeINE9ZAqanzjrb8ILrEL/0GD
-	Dx2PVj/4qPUq3nK7Ea6rBQbgXJ4/gSifxdU3ropYHUbGRHm71MyKpyQVglFd/a4JxT2uLn
-	w4CddBsGWlGusUXfHOlHutlD3RRs1ahFBdiuVqcEFNSHR/NrxQpfQ9up5S/d2xV+K5YzaI
-	Hi1zwR6UWItwi5G29h79/uPKtuAlngsPldthmgRFYc8AuHubQe9WRnvQGIgAcWdA0wgtmP
-	iuJ9iSSnmocPtkoXpjHe25cE3Ie1NLxqKnkhO3Z2NKxnyCgT8bAp7LlVB88BGQ==
+	bh=lx8j2IG+CSM6UU05NyJqZy2Z2Ix2oy6V1C7P2M5s21w=;
+	b=tTiqN/F0LiV2DgJzARo3VSshsXOEKaofVqOhfNMQA3bprwoqT9dNfQnNS10ICBgADkvO1B
+	b3hR1n25g/90ko2HGfJyMb7GfVy/iUYcGyK+pHvqVeGzkAEPH7X2JF8yirbkpDJO50QD0M
+	s3VCiXetx5N83a2zRSfNLdmjWtOJYisJpesRw+1gXBVZHUYsJK55OR3d8nU9Y8/CCy63Tp
+	N2tsXF5lDxni90cJlJsgHUjW7VAuW7G8xIWcCrpQ25w61mukxl4bcVzahH5yzm1+7bsEhU
+	Ub1yHzmgYkWoCMvgKAPaEA/fKhiWKgOS1Tj7QQsxmTwQkHLaQfAWR5UCqix9fA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730542214;
+	s=2020e; t=1730542215;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dq19qkLv753wnb/oil92s5l5TdDt8LxbHCrYpxcDRXs=;
-	b=p0j3HyugokaAbur4NYm4GVAmtd/zjerMjru81tKhLIRIzBXUovsJa5wadsaApX2FQxVoho
-	hMn8THtb57Jby0BA==
+	bh=lx8j2IG+CSM6UU05NyJqZy2Z2Ix2oy6V1C7P2M5s21w=;
+	b=PyJEXhP2yAbbSZA1l906M0u0SiNf9EhCbkvU/8uur70E3Jdy3kMQ0XhaDArJwzTMqAO+vx
+	zpxUCUQTzsJjU5Dg==
 From:
  tip-bot2 for Thomas =?utf-8?q?Wei=C3=9Fschuh?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/vdso] x86/vdso: Use __arch_get_vdso_data() to access vdso data
+Subject: [tip: timers/vdso] x86/mm/mmap: Remove arch_vma_name()
 Cc: thomas.weissschuh@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241010-vdso-generic-base-v1-11-b64f0842d512@linutronix.de>
-References: <20241010-vdso-generic-base-v1-11-b64f0842d512@linutronix.de>
+In-Reply-To: <20241010-vdso-generic-base-v1-10-b64f0842d512@linutronix.de>
+References: <20241010-vdso-generic-base-v1-10-b64f0842d512@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173054221396.3137.4619361866278118877.tip-bot2@tip-bot2>
+Message-ID: <173054221461.3137.6761209442761233031.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,48 +81,42 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the timers/vdso branch of tip:
 
-Commit-ID:     44e2e2c6152708394948009fab2986cf2712311f
-Gitweb:        https://git.kernel.org/tip/44e2e2c6152708394948009fab2986cf271=
-2311f
+Commit-ID:     bd6b150d560e385d37c2a29b0af8501fd24b7df1
+Gitweb:        https://git.kernel.org/tip/bd6b150d560e385d37c2a29b0af8501fd24=
+b7df1
 Author:        Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-AuthorDate:    Thu, 10 Oct 2024 09:01:13 +02:00
+AuthorDate:    Thu, 10 Oct 2024 09:01:12 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Sat, 02 Nov 2024 11:05:14 +01:00
 
-x86/vdso: Use __arch_get_vdso_data() to access vdso data
+x86/mm/mmap: Remove arch_vma_name()
 
-The implementation details of the vdso_data access will change.
-Prepare for that by using the existing helper function.
+This function does not contain any logic, delete it so the equivalent
+weak definition from kernel/signal.c is used instead.
 
 Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241010-vdso-generic-base-v1-11-b64f0842d5=
+Link: https://lore.kernel.org/all/20241010-vdso-generic-base-v1-10-b64f0842d5=
 12@linutronix.de
 
 ---
- arch/x86/include/asm/vdso/getrandom.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/mm/mmap.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/vdso/getrandom.h b/arch/x86/include/asm/vds=
-o/getrandom.h
-index ff5334a..ecdcdbc 100644
---- a/arch/x86/include/asm/vdso/getrandom.h
-+++ b/arch/x86/include/asm/vdso/getrandom.h
-@@ -32,8 +32,8 @@ static __always_inline ssize_t getrandom_syscall(void *buff=
-er, size_t len, unsig
-=20
- static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(=
-void)
- {
--	if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode =3D=3D VDSO_CLOCK=
-MODE_TIMENS)
--		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)&=
-__vdso_data);
-+	if (IS_ENABLED(CONFIG_TIME_NS) && __arch_get_vdso_data()->clock_mode =3D=3D=
- VDSO_CLOCKMODE_TIMENS)
-+		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)_=
-_arch_get_vdso_data());
- 	return &__vdso_rng_data;
+diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
+index a2cabb1..b8a6fff 100644
+--- a/arch/x86/mm/mmap.c
++++ b/arch/x86/mm/mmap.c
+@@ -163,11 +163,6 @@ unsigned long get_mmap_base(int is_legacy)
+ 	return is_legacy ? mm->mmap_legacy_base : mm->mmap_base;
  }
 =20
+-const char *arch_vma_name(struct vm_area_struct *vma)
+-{
+-	return NULL;
+-}
+-
+ /**
+  * mmap_address_hint_valid - Validate the address hint of mmap
+  * @addr:	Address hint
 
