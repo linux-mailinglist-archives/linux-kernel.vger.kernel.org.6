@@ -1,234 +1,118 @@
-Return-Path: <linux-kernel+bounces-393450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4409BA0CD
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:33:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0689BA0CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 15:36:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 530EF1C20F34
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:33:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEED32825AE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B77419CC27;
-	Sat,  2 Nov 2024 14:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B24818B47C;
+	Sat,  2 Nov 2024 14:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="JyXIQ46b"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiiilVKB"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8F733F9;
-	Sat,  2 Nov 2024 14:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2C733F9
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 14:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730558019; cv=none; b=LkD9xEWuaHYe0U3pRPAqOLpRjfkpUtWleGzaAstw9EKYSLtXpNeGL6efWIEU2CK4J6itwfjs9EZlshx+6tUNicWr835sOn6sTFUNkUpaqels2OUbEH9RuGt4/TWCtX7y4+qTuWHs+8jo5WWFRaJ1R4PIKG72KTyRoaOZ4J9otBY=
+	t=1730558171; cv=none; b=p7eTPAslfiqywJTdt0DVwMyKWrGkhkJMzgm0CmwLAza5XjGbpO9cOlFEJG/FPjvZrhQjsWFOc7NPArH/Xrec0yT/yfP24gJk545uMKOaezgrAKkZckELwz4lZnGWx//czZStjiTkgBGHjyU9cG5LPDg/zOeZ7PvAfM1MF9i2268=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730558019; c=relaxed/simple;
-	bh=JRd71z6CUMYCvugCsAT5+pDVaAsOQB1Rkz1mIIy1W6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ob3io1IceTVoBVv8+ogy+GQ61mTJg+EoYdQIkmlQPKFZi3vJcFgmukk7gzbaErWwh1HvQYm3xpgDzLH5hhGixyHQLnra6T7GMEKKmLssy5RZgoAoSVpHJ4PzR425HP0NJ02n4PfjG9UFnULIdeEWkMMgBAVfZ2rIJN7Tf1zK0O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=JyXIQ46b; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=B0hFXMIsdTaqRLf4YssnEZtCdXxr4gtqyM7yHXkLYng=; b=JyXIQ46bQMP4AWdm
-	lTjVzw0vycEL7kkq6u2n1qeEJguy/IgC80Oq1h1i9RTUX+tBF3Wl2vFloiIOpro2AXTyNCkmmNzHA
-	3UW/c94O1RikbK4fsFeRCu+bDOFBr1L2RR1rQ3vgJsNeuT5rSKlK5F91jKwubgrlqHX+xx1e2R9bZ
-	MeoYfZ7lBV+NxcQbyJG3O5MoGEv1wxnZha6iToKUSsVOp0EuDqecF6KSiDb6D0fp2wd5uAu7JwZmk
-	wADNCFnq00CCacsoeRCV4rknSnFdkwX4/P7L++IaQ1QqfOPJ5UeOUawVFLV7yiXLMUhR5cK13LmCe
-	p4urwaqKEhEkObTNCQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1t7FBm-00F6Ij-3D;
-	Sat, 02 Nov 2024 14:33:19 +0000
-From: linux@treblig.org
-To: ecree.xilinx@gmail.com,
-	habetsm.xilinx@gmail.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-net-drivers@amd.com,
+	s=arc-20240116; t=1730558171; c=relaxed/simple;
+	bh=jen3Fr+N40Cko1laLEWb06nyy02f9b1SKWGey5w+uQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLendk6IpZieeszz+27ONAnftrKLiWBCs20YqdN9X1nv5pBLXn8AUCgKApcv7h8Ggk8AMNwkpwS3J7iooduas1d5Nsk2Z8nidutpL6pZJhIICqE8gcdcgnh6qteRJaWmqSmL4sswVRZLjDSfhV9wj9SQzqcfsfDOROk5zkUjhSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PiiilVKB; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so24108095e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 07:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730558168; x=1731162968; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r2f8PcOKU/FF7Pc238+N7r6RVxJuBnH+dra36GzbN3Q=;
+        b=PiiilVKBm/l8zNgZ+DFEGaz4Qd1LueLzc4JocRA/EGfmx41W6Mck5M7chspWyxmOkw
+         MeXs/m9SWUxD6PHJ4wZGLvezfgE26nzlrBcx7FW7iiaz7UomW6Nckw3gzdJFnoMI7GiW
+         T6D0Qz5eU9o1WeH+/AsH291ouZWjyu+ClCdff3gr2X7Cg0GjgiNjkZRxi68uMO9pzgHJ
+         c1nhQPNzbZ+sFP6sJzHvj6rDRO6swuzbS1EgOYSloPGqzHPSqsJ+tHRRIv7TUViUR/Bh
+         RGD9lpeURmljBht2K5SPB9u+L6Hu0Y/11JSFJTsLiGFwYqq3XzguR55TGsbNkMrA7H/2
+         Z9rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730558168; x=1731162968;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r2f8PcOKU/FF7Pc238+N7r6RVxJuBnH+dra36GzbN3Q=;
+        b=OPSqGwmAmXROixmGv5xmhLaf/vkcV3UKlffpjrmWaLwzSwI2m4hGBYZu01rqJLWq8p
+         vdM6wmQUQA+aNVe5SlmDPZuu3FXyncJegcFxGZQnM+1SzrZa/jcZwXV+qoa0JIfk8sSU
+         3t406QuRXpJNFyiHuWsAxQVSVMYW4WcQ21aCdJ5ys1y59JPc20bpepf60NAHP5OjbXDO
+         3HXtEP1NosVNm2q5wxBU08lrXWNDA/cnqReX8XEtWr6fjsx7Z0hja1sU/7j4tHySyFOr
+         BJ9Iag6IdX6yr2oXQCi3VWNN+hk2ewk9fN1f+3fI8vttuqsW6lGrKB48gZxG9vhRxG82
+         DONQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEDLeqMQpAaRry2EyXeDpB79q6vMJE5Sjk8ad7L0hDFg3twesjX3pJ31Dyx1fySFfuefhByZD96xnzuZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkOrUtO+bUdYTNC5S/UumFOmLrlgTvo2FHtiAZS6ho5Y23eqX0
+	oAGnA0qZDUPaXO8y8xjXFMET1JnhH+Hj6Qfp/dWTSCZNXCo6kGDM
+X-Google-Smtp-Source: AGHT+IG2ZwFxftz+i126vYwTLkOIpd6nzrVgPGTfjFmQz2ucEFkNbpKfCCu2yMagL13buIP7HKDmjA==
+X-Received: by 2002:adf:e28a:0:b0:37d:45f0:dd0a with SMTP id ffacd0b85a97d-380610f2a9emr19284579f8f.1.1730558168360;
+        Sat, 02 Nov 2024 07:36:08 -0700 (PDT)
+Received: from eichest-laptop ([2a02:168:af72:0:492c:2677:72f4:9f57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abb5sm8202298f8f.100.2024.11.02.07.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Nov 2024 07:36:07 -0700 (PDT)
+Date: Sat, 2 Nov 2024 15:36:06 +0100
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Shawn Guo <shawnguo2@yeah.net>
+Cc: linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	elinor.montmasson@savoirfairelinux.com,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH net-next] sfc: Remove deadcode
-Date: Sat,  2 Nov 2024 14:33:16 +0000
-Message-ID: <20241102143317.24745-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v1] ARM: imx_v6_v7_defconfig: enable SND_SOC_SPDIF
+Message-ID: <ZyY41nJY9ghwe-Y4@eichest-laptop>
+References: <20241030122128.115000-1-eichest@gmail.com>
+ <ZyXTFhEm9UCBii2c@dragon>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyXTFhEm9UCBii2c@dragon>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hi Shawn,
 
-ef4_farch_dimension_resources(), ef4_nic_fix_nodesc_drop_stat(),
-ef4_ticks_to_usecs() and ef4_tx_get_copy_buffer_limited() were
-copied over from efx_ equivalents in 2016 but never used by
-commit 5a6681e22c14 ("sfc: separate out SFC4000 ("Falcon") support into new
-sfc-falcon driver")
+On Sat, Nov 02, 2024 at 03:21:58PM +0800, Shawn Guo wrote:
+> On Wed, Oct 30, 2024 at 01:21:12PM +0100, Stefan Eichenberger wrote:
+> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> > 
+> > Enable SND_SOC_SPDIF in imx_v6_v7_defconfig to support SPDIF audio. This
+> > change will fix commit d469b771afe1 ("ARM: dts: imx6: update spdif sound
+> > card node properties") which moves away from the old "spdif-controller"
+> > property to the new "audio-codec" property.
+> > 
+> > Fixes: d469b771afe1 ("ARM: dts: imx6: update spdif sound card node properties")
+> 
+> It doesn't look a fix to me.
 
-EF4_MAX_FLUSH_TIME is also unused.
+I agree somehow, it was just that before the referenced commit our test
+succeeds with the imx_v6_v7_defconfig and after that we get the
+following error:
+[   24.165534] platform sound-spdif: deferred probe pending: fsl-asoc-card: snd_soc_register_card failed
 
-Remove them.
+So maybe it is not a fix in the sense of a bug, but it fixes the error
+message. However, I'm also fine with removing the Fixes tag.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/net/ethernet/sfc/falcon/efx.c   |  8 --------
- drivers/net/ethernet/sfc/falcon/efx.h   |  1 -
- drivers/net/ethernet/sfc/falcon/farch.c | 22 ----------------------
- drivers/net/ethernet/sfc/falcon/nic.c   | 11 -----------
- drivers/net/ethernet/sfc/falcon/nic.h   |  5 -----
- drivers/net/ethernet/sfc/falcon/tx.c    |  8 --------
- drivers/net/ethernet/sfc/falcon/tx.h    |  3 ---
- 7 files changed, 58 deletions(-)
+Regards,
+Stefan
 
-diff --git a/drivers/net/ethernet/sfc/falcon/efx.c b/drivers/net/ethernet/sfc/falcon/efx.c
-index 8925745f1c17..b07f7e4e2877 100644
---- a/drivers/net/ethernet/sfc/falcon/efx.c
-+++ b/drivers/net/ethernet/sfc/falcon/efx.c
-@@ -1886,14 +1886,6 @@ unsigned int ef4_usecs_to_ticks(struct ef4_nic *efx, unsigned int usecs)
- 	return usecs * 1000 / efx->timer_quantum_ns;
- }
- 
--unsigned int ef4_ticks_to_usecs(struct ef4_nic *efx, unsigned int ticks)
--{
--	/* We must round up when converting ticks to microseconds
--	 * because we round down when converting the other way.
--	 */
--	return DIV_ROUND_UP(ticks * efx->timer_quantum_ns, 1000);
--}
--
- /* Set interrupt moderation parameters */
- int ef4_init_irq_moderation(struct ef4_nic *efx, unsigned int tx_usecs,
- 			    unsigned int rx_usecs, bool rx_adaptive,
-diff --git a/drivers/net/ethernet/sfc/falcon/efx.h b/drivers/net/ethernet/sfc/falcon/efx.h
-index d3b4646545fa..52508f2c8cb2 100644
---- a/drivers/net/ethernet/sfc/falcon/efx.h
-+++ b/drivers/net/ethernet/sfc/falcon/efx.h
-@@ -198,7 +198,6 @@ int ef4_try_recovery(struct ef4_nic *efx);
- /* Global */
- void ef4_schedule_reset(struct ef4_nic *efx, enum reset_type type);
- unsigned int ef4_usecs_to_ticks(struct ef4_nic *efx, unsigned int usecs);
--unsigned int ef4_ticks_to_usecs(struct ef4_nic *efx, unsigned int ticks);
- int ef4_init_irq_moderation(struct ef4_nic *efx, unsigned int tx_usecs,
- 			    unsigned int rx_usecs, bool rx_adaptive,
- 			    bool rx_may_override_tx);
-diff --git a/drivers/net/ethernet/sfc/falcon/farch.c b/drivers/net/ethernet/sfc/falcon/farch.c
-index c64623c2e80c..01017c41338e 100644
---- a/drivers/net/ethernet/sfc/falcon/farch.c
-+++ b/drivers/net/ethernet/sfc/falcon/farch.c
-@@ -1631,28 +1631,6 @@ void ef4_farch_rx_push_indir_table(struct ef4_nic *efx)
- 	}
- }
- 
--/* Looks at available SRAM resources and works out how many queues we
-- * can support, and where things like descriptor caches should live.
-- *
-- * SRAM is split up as follows:
-- * 0                          buftbl entries for channels
-- * efx->vf_buftbl_base        buftbl entries for SR-IOV
-- * efx->rx_dc_base            RX descriptor caches
-- * efx->tx_dc_base            TX descriptor caches
-- */
--void ef4_farch_dimension_resources(struct ef4_nic *efx, unsigned sram_lim_qw)
--{
--	unsigned vi_count;
--
--	/* Account for the buffer table entries backing the datapath channels
--	 * and the descriptor caches for those channels.
--	 */
--	vi_count = max(efx->n_channels, efx->n_tx_channels * EF4_TXQ_TYPES);
--
--	efx->tx_dc_base = sram_lim_qw - vi_count * TX_DC_ENTRIES;
--	efx->rx_dc_base = efx->tx_dc_base - vi_count * RX_DC_ENTRIES;
--}
--
- u32 ef4_farch_fpga_ver(struct ef4_nic *efx)
- {
- 	ef4_oword_t altera_build;
-diff --git a/drivers/net/ethernet/sfc/falcon/nic.c b/drivers/net/ethernet/sfc/falcon/nic.c
-index 78c851b5a56f..1b91992e3698 100644
---- a/drivers/net/ethernet/sfc/falcon/nic.c
-+++ b/drivers/net/ethernet/sfc/falcon/nic.c
-@@ -511,14 +511,3 @@ void ef4_nic_update_stats(const struct ef4_hw_stat_desc *desc, size_t count,
- 		}
- 	}
- }
--
--void ef4_nic_fix_nodesc_drop_stat(struct ef4_nic *efx, u64 *rx_nodesc_drops)
--{
--	/* if down, or this is the first update after coming up */
--	if (!(efx->net_dev->flags & IFF_UP) || !efx->rx_nodesc_drops_prev_state)
--		efx->rx_nodesc_drops_while_down +=
--			*rx_nodesc_drops - efx->rx_nodesc_drops_total;
--	efx->rx_nodesc_drops_total = *rx_nodesc_drops;
--	efx->rx_nodesc_drops_prev_state = !!(efx->net_dev->flags & IFF_UP);
--	*rx_nodesc_drops -= efx->rx_nodesc_drops_while_down;
--}
-diff --git a/drivers/net/ethernet/sfc/falcon/nic.h b/drivers/net/ethernet/sfc/falcon/nic.h
-index ada6e036fd97..ac10c12967df 100644
---- a/drivers/net/ethernet/sfc/falcon/nic.h
-+++ b/drivers/net/ethernet/sfc/falcon/nic.h
-@@ -477,7 +477,6 @@ void ef4_farch_finish_flr(struct ef4_nic *efx);
- void falcon_start_nic_stats(struct ef4_nic *efx);
- void falcon_stop_nic_stats(struct ef4_nic *efx);
- int falcon_reset_xaui(struct ef4_nic *efx);
--void ef4_farch_dimension_resources(struct ef4_nic *efx, unsigned sram_lim_qw);
- void ef4_farch_init_common(struct ef4_nic *efx);
- void ef4_farch_rx_push_indir_table(struct ef4_nic *efx);
- 
-@@ -502,10 +501,6 @@ size_t ef4_nic_describe_stats(const struct ef4_hw_stat_desc *desc, size_t count,
- void ef4_nic_update_stats(const struct ef4_hw_stat_desc *desc, size_t count,
- 			  const unsigned long *mask, u64 *stats,
- 			  const void *dma_buf, bool accumulate);
--void ef4_nic_fix_nodesc_drop_stat(struct ef4_nic *efx, u64 *stat);
--
--#define EF4_MAX_FLUSH_TIME 5000
--
- void ef4_farch_generate_event(struct ef4_nic *efx, unsigned int evq,
- 			      ef4_qword_t *event);
- 
-diff --git a/drivers/net/ethernet/sfc/falcon/tx.c b/drivers/net/ethernet/sfc/falcon/tx.c
-index b9369483758c..e6e80b039ca2 100644
---- a/drivers/net/ethernet/sfc/falcon/tx.c
-+++ b/drivers/net/ethernet/sfc/falcon/tx.c
-@@ -40,14 +40,6 @@ static inline u8 *ef4_tx_get_copy_buffer(struct ef4_tx_queue *tx_queue,
- 	return (u8 *)page_buf->addr + offset;
- }
- 
--u8 *ef4_tx_get_copy_buffer_limited(struct ef4_tx_queue *tx_queue,
--				   struct ef4_tx_buffer *buffer, size_t len)
--{
--	if (len > EF4_TX_CB_SIZE)
--		return NULL;
--	return ef4_tx_get_copy_buffer(tx_queue, buffer);
--}
--
- static void ef4_dequeue_buffer(struct ef4_tx_queue *tx_queue,
- 			       struct ef4_tx_buffer *buffer,
- 			       unsigned int *pkts_compl,
-diff --git a/drivers/net/ethernet/sfc/falcon/tx.h b/drivers/net/ethernet/sfc/falcon/tx.h
-index 2a88c59cbbbe..868ed8a861ab 100644
---- a/drivers/net/ethernet/sfc/falcon/tx.h
-+++ b/drivers/net/ethernet/sfc/falcon/tx.h
-@@ -15,9 +15,6 @@
- unsigned int ef4_tx_limit_len(struct ef4_tx_queue *tx_queue,
- 			      dma_addr_t dma_addr, unsigned int len);
- 
--u8 *ef4_tx_get_copy_buffer_limited(struct ef4_tx_queue *tx_queue,
--				   struct ef4_tx_buffer *buffer, size_t len);
--
- int ef4_enqueue_skb_tso(struct ef4_tx_queue *tx_queue, struct sk_buff *skb,
- 			bool *data_mapped);
- 
--- 
-2.47.0
 
 
