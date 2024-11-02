@@ -1,187 +1,182 @@
-Return-Path: <linux-kernel+bounces-393435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D828B9BA09C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:45:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D9A9BA09E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 14:46:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BB2F1C21091
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:45:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C648282279
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C920D199EA2;
-	Sat,  2 Nov 2024 13:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6541991BF;
+	Sat,  2 Nov 2024 13:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="tEYyNh5C"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/OvHFbY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C380F17741;
-	Sat,  2 Nov 2024 13:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1478C17741;
+	Sat,  2 Nov 2024 13:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730555146; cv=none; b=r+b63Of6YKo82FW2JuP7+N0c9FIDWjDdeP5UxY3qWnW5U2hkk4+cROTsOYKRPnuvNj1WkKP2We1VhviHN0EztXijr5IfXgEf4R0aHQZu3p/oNbjOYKOg85ucNYxzyEoENiqcKVEyKhUHsneNe6Bb1QVYgJTcsxNqPDr1xGMU6WA=
+	t=1730555210; cv=none; b=Gx7CD83uskTNJZuiGpdZFMiWP4kJg9jtAuMLKgL6UGQPJHecHkJICtRMufE4C9sohXagEijWNws//ZI3HpFbtkRbBDGm7xX1LkIJ/dtbIX7U0bxSnswPwtLFDnPR80Idy3v/NGX64L54WGDw/4OqdnzWGNtBtRpRxOz4kC5ogcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730555146; c=relaxed/simple;
-	bh=e03yKnN3xWXXNqLp+H7ewAvYxlWFLHNk6mNt6rYdGRM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TV/2poyWOWj4fxCrZnEETmEBFwf1SKkuOlaWj9nnwTBJaMn09j8Et3cm4oiU1hvvEEitUWZEvnXjDoW/2hKAM4jZjk9KyxNeF+DczIw7LF9d7xmj1VNUz6dw5Kn695ClgvpMTo5RrolislGB6UCVfWfCCD1RF78HGi8cMlCUNL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=tEYyNh5C; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1730555125; x=1731159925; i=wahrenst@gmx.net;
-	bh=wh8jWE/SuHQZpH1OicaEibZkdDUs8oXsmEh1paiPtHU=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tEYyNh5C432n6QJ3/ReOh2iXRHf55sXiK2LY0BnUIYoVg4puSzL3VBcGUBYKNDZ+
-	 mZyu8GUlLosI7z9Mt9wLbOeBUdfEt852Jl3vYp8mf77GIgvVBnGDpDjT7x9/A+/WY
-	 ZDr426afeaHkiBiCz7+XdhJsFNbpjpflGXgOCLC+VSnQWnUCtJNM6ETgbGP949MkM
-	 cXE1jMJurUylazlV3qogkEGACC+dnUQYlQlQamBNcV9Kb2xLrHhMFOUFUbxZdQ6Ux
-	 U3m25wyupM0lTY30ejlkxJ5WZGHf4ePp15zOQJLdO1UrIeNCz0zLNddsTecCowRDV
-	 oR3No6AZeKYfuBErQg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MNsw4-1tVVWP2fFY-00Xw0G; Sat, 02
- Nov 2024 14:45:25 +0100
-From: Stefan Wahren <wahrenst@gmx.net>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Catalin Popescu <catalin.popescu@leica-geosystems.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org,
-	regressions@lists.linux.dev,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH RFC] mmc: pwrseq_simple: Handle !RESET_CONTROLLER properly
-Date: Sat,  2 Nov 2024 14:45:22 +0100
-Message-Id: <20241102134522.333047-1-wahrenst@gmx.net>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730555210; c=relaxed/simple;
+	bh=6/ztXe5C0kLiKzO+JnaX2nzcCBLJpFZMo7r20PXRidM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MUYp39xYkVNQg+nJLruu2UZyfYhC9qTWui/pnMOUIGhE6VPCdURc6oAqOn9cOq+HPBDn1EWBYMKeHtrXDsC6fkLq2MJ3pmV7TJ8OwKOPnmWJesFAl7Bc6/5y3ocEA5oogC3toIFce/jgsqHlRbiFEnVVXh2XSF8zdoMw+LbIpQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/OvHFbY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28DAEC4CEC3;
+	Sat,  2 Nov 2024 13:46:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730555209;
+	bh=6/ztXe5C0kLiKzO+JnaX2nzcCBLJpFZMo7r20PXRidM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e/OvHFbYEyCIpYEp71NXenZ8i3H8vfQZRbFKVj30pX1caUnAMiQCk17O9pUbh8uTZ
+	 0jrPomoa+6nw3bJHUWkx8soBUMqKUnXpuV8hiEcu4abRm6nKnIzDKto6xp0ljAZLZu
+	 ixDAa1Wcq+uYk0oSQdoKSiAMnl098gH81hMTNV+bhhqJYFE1n5OPPzMjH/SD6FzvF2
+	 xABEYbwMOfsrxUCTo5mkMnfOm30IhryzQvlsqad+hPKkj3yyFPZWbxxoimXe07m4U+
+	 l559zODVp1OIdbTIStkyTIPLVDk/HLAiUkSc50RRHmU0at9S6OJv9GF4mCwXx1pwRZ
+	 j8yJMjRzaOkow==
+Date: Sat, 2 Nov 2024 14:46:44 +0100
+From: Alexey Gladkov <legion@kernel.org>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: linux-kernel@vger.kernel.org, Andrei Vagin <avagin@google.com>,
+	Kees Cook <kees@kernel.org>,
+	"Eric W. Biederman" <ebiederm@xmission.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] signal: restore the override_rlimit logic
+Message-ID: <ZyYtRHECu_LxRsje@example.org>
+References: <20241031200438.2951287-1-roman.gushchin@linux.dev>
+ <ZyVkJn2kOJzjPRyJ@example.org>
+ <ZyVpXtpAn1YKtXQS@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gR28kxpGv/paCHFYL+WOtD2omK8W76H6OxEFca2yYlzpt/S7qPc
- /02bKimVT4RMVrEYArMy4wu4g8NeZ2V/+caEDXvOpV9bkMQ6rIGVa4GSwcVTPoYteUOG1jB
- QNtiYQEllcjjBk4xs8tysy/1gw3IKr6WpZd1+a5UTJ93K5cOYrX67bgiiGJysPS0+lMlVqA
- B6iBdr4iiHwoZAiAv42ew==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1HQhTF2m7cY=;vO7nMt2DEIbIhGRCHChaoucxQme
- UfAywgwv5ofAeu82VeQq2WMWl39EncgG4flGt4kuXwaAnCHJ9hFjJxEWBwl0sDbLl0pCfz+Ox
- iRZxRwl28uewevqRjIqZUYy0JBXJaMYrNQEs/kyUkp33Of8hZss46x3/t8HBeQljij1T3plLU
- pau0V5/s6AijvxPDLADhXYQ4B2/Ro6ND2YUcKxLf7lnqZm+gga6PvvZ7pek61pIZ+P6fLCr4X
- YmuC8TY3Q+/pX7WijVMwB1JfGIg6o4l19YtueVR0Y6K3wkGbzDrtxKPML752W6XmpairEuOfK
- NOruHozFz/xVnqG0J4mirtiP8KDXtZEMBW+aNyBx/3qvge3gSl2bkqnJwtYEjNnrABvYWhhXB
- 9Lcp/xDsA1VmOy8Jj7LRp58JqMGQms0IcweMGgNb0IaR3Oos6h+Yv26hWAia+fax7Cm7muAaS
- s4XFWyz8lX/RNd8LUf1+nL9RhMrMiVIhhhQrYqI6GgGqsORzSDJQVMnIJRQnkFxhT/d/Pv6Gs
- t+Z+bMBNFFCHJIUACRJQmOTRO5OTnliwIEut72+xIbv3J8Z5Bk6+2od6egFQCXZO7mPX/DA5n
- /5DDSXQdaENQdzTxSMtXJWznc6MmG2d+kFCr4eyYETjLnA31rXdzIo8JWIoaO5DzovnGup0uy
- 8BXIgkcSu7YLlP0EW9iVG43BVjClP4mSeA11VdIf/qZeCYgzXI7CLh5F5mrCXN+m11Oj7BrDk
- /1cVAb1/HPGyI3BgGe2yvEJ0zrrafdvWfna7iNyZuJbNlEXX9EEu50zc3gp4yjdRbLsCKq0jg
- CKqD7OXfURtqFKqQHXCt2CBQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyVpXtpAn1YKtXQS@google.com>
 
-The recent introduction of reset control in pwrseq_simple introduced
-a regression for platforms without RESET_CONTROLLER support, because
-devm_reset_control_get_optional_shared() would return NULL and make all
-resets no-ops. Instead of enforcing this dependency rely on this behavior
-to determine reset support. As a benefit we can get the rid of the
-use_reset flag.
+On Fri, Nov 01, 2024 at 11:50:54PM +0000, Roman Gushchin wrote:
+> On Sat, Nov 02, 2024 at 12:28:38AM +0100, Alexey Gladkov wrote:
+> > On Thu, Oct 31, 2024 at 08:04:38PM +0000, Roman Gushchin wrote:
+> > > Prior to commit d64696905554 ("Reimplement RLIMIT_SIGPENDING on top of
+> > > ucounts") UCOUNT_RLIMIT_SIGPENDING rlimit was not enforced for a class
+> > > of signals. However now it's enforced unconditionally, even if
+> > > override_rlimit is set. This behavior change caused production issues.
+> > > 
+> > > For example, if the limit is reached and a process receives a SIGSEGV
+> > > signal, sigqueue_alloc fails to allocate the necessary resources for the
+> > > signal delivery, preventing the signal from being delivered with
+> > > siginfo. This prevents the process from correctly identifying the fault
+> > > address and handling the error. From the user-space perspective,
+> > > applications are unaware that the limit has been reached and that the
+> > > siginfo is effectively 'corrupted'. This can lead to unpredictable
+> > > behavior and crashes, as we observed with java applications.
+> > > 
+> > > Fix this by passing override_rlimit into inc_rlimit_get_ucounts() and
+> > > skip the comparison to max there if override_rlimit is set. This
+> > > effectively restores the old behavior.
+> > > 
+> > > Fixes: d64696905554 ("Reimplement RLIMIT_SIGPENDING on top of ucounts")
+> > > Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+> > > Co-developed-by: Andrei Vagin <avagin@google.com>
+> > > Signed-off-by: Andrei Vagin <avagin@google.com>
+> > > Cc: Kees Cook <kees@kernel.org>
+> > > Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+> > > Cc: Alexey Gladkov <legion@kernel.org>
+> > > Cc: <stable@vger.kernel.org>
+> > > ---
+> > >  include/linux/user_namespace.h | 3 ++-
+> > >  kernel/signal.c                | 3 ++-
+> > >  kernel/ucount.c                | 5 +++--
+> > >  3 files changed, 7 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+> > > index 3625096d5f85..7183e5aca282 100644
+> > > --- a/include/linux/user_namespace.h
+> > > +++ b/include/linux/user_namespace.h
+> > > @@ -141,7 +141,8 @@ static inline long get_rlimit_value(struct ucounts *ucounts, enum rlimit_type ty
+> > >  
+> > >  long inc_rlimit_ucounts(struct ucounts *ucounts, enum rlimit_type type, long v);
+> > >  bool dec_rlimit_ucounts(struct ucounts *ucounts, enum rlimit_type type, long v);
+> > > -long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type);
+> > > +long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type,
+> > > +			    bool override_rlimit);
+> > >  void dec_rlimit_put_ucounts(struct ucounts *ucounts, enum rlimit_type type);
+> > >  bool is_rlimit_overlimit(struct ucounts *ucounts, enum rlimit_type type, unsigned long max);
+> > >  
+> > > diff --git a/kernel/signal.c b/kernel/signal.c
+> > > index 4344860ffcac..cbabb2d05e0a 100644
+> > > --- a/kernel/signal.c
+> > > +++ b/kernel/signal.c
+> > > @@ -419,7 +419,8 @@ __sigqueue_alloc(int sig, struct task_struct *t, gfp_t gfp_flags,
+> > >  	 */
+> > >  	rcu_read_lock();
+> > >  	ucounts = task_ucounts(t);
+> > > -	sigpending = inc_rlimit_get_ucounts(ucounts, UCOUNT_RLIMIT_SIGPENDING);
+> > > +	sigpending = inc_rlimit_get_ucounts(ucounts, UCOUNT_RLIMIT_SIGPENDING,
+> > > +					    override_rlimit);
+> > >  	rcu_read_unlock();
+> > >  	if (!sigpending)
+> > >  		return NULL;
+> > > diff --git a/kernel/ucount.c b/kernel/ucount.c
+> > > index 16c0ea1cb432..046b3d57ebb4 100644
+> > > --- a/kernel/ucount.c
+> > > +++ b/kernel/ucount.c
+> > > @@ -307,7 +307,8 @@ void dec_rlimit_put_ucounts(struct ucounts *ucounts, enum rlimit_type type)
+> > >  	do_dec_rlimit_put_ucounts(ucounts, NULL, type);
+> > >  }
+> > >  
+> > > -long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
+> > > +long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type,
+> > > +			    bool override_rlimit)
+> > >  {
+> > >  	/* Caller must hold a reference to ucounts */
+> > >  	struct ucounts *iter;
+> > > @@ -316,7 +317,7 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
+> > >  
+> > >  	for (iter = ucounts; iter; iter = iter->ns->ucounts) {
+> > >  		long new = atomic_long_add_return(1, &iter->rlimit[type]);
+> > > -		if (new < 0 || new > max)
+> > > +		if (new < 0 || (!override_rlimit && (new > max)))
+> > >  			goto unwind;
+> > >  		if (iter == ucounts)
+> > >  			ret = new;
+> > 
+> > It's a bad patch. If we do as you suggest, it will
+> > do_dec_rlimit_put_ucounts() in case of overflow. This means you'll
+> > break the counter and there will be an extra decrement in __sigqueue_free().
+> > We can't just ignore the overflow here.
+> 
+> Hm, I don't think my code is changing anything in terms of the overflow handling.
+> The (new < 0) handling is exactly the same as it was, the only difference is
+> that (new > max) is allowed if override_rlimit is set. But new physically
+> can't be larger than LONG_MAX, so there is no actual change if the limit
+> is LONG_MAX.
+> 
+> Maybe I'm missing something here, please, clarify.
 
-Fixes: 73bf4b7381f7 ("mmc: pwrseq_simple: add support for one reset contro=
-l")
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-=2D--
- drivers/mmc/core/pwrseq_simple.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+I re-read your patch one more time. Sorry. Yes, you're right, i am wrong.
+You're just allow overlimit.
 
-Hi,
-will trying to reproduce the Rpi 4 regression from here [1], I found
-the issue above. I'm pretty sure the Rpi 4 regression is caused by the sam=
-e
-commit. Unfortunately I wasn't able to reproduce it.
+But one thing confuses me.
 
-[1] - https://lore.kernel.org/linux-next/6724d7d5.170a0220.1281e9.910a@mx.=
-google.com/T/#u
+Now the maximum rlimits of the upper userns are being forced. Changing
+rlimit to RLIM_INFINITY affects only the current userns and child userns.
 
-diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_si=
-mple.c
-index 24e4e63a5dc8..b8782727750e 100644
-=2D-- a/drivers/mmc/core/pwrseq_simple.c
-+++ b/drivers/mmc/core/pwrseq_simple.c
-@@ -32,7 +32,6 @@ struct mmc_pwrseq_simple {
- 	struct clk *ext_clk;
- 	struct gpio_descs *reset_gpios;
- 	struct reset_control *reset_ctrl;
--	bool use_reset;
- };
+But after this patch, this is not the case for RLIMIT_SIGPENDING and
+within userns it is possible to ignore the restrictions of upper-level
+userns which ruins the whole idea.
 
- #define to_pwrseq_simple(p) container_of(p, struct mmc_pwrseq_simple, pwr=
-seq)
-@@ -71,7 +70,7 @@ static void mmc_pwrseq_simple_pre_power_on(struct mmc_ho=
-st *host)
- 		pwrseq->clk_enabled =3D true;
- 	}
+I agree with Eric. If you don't need upper-level userns limits, you don't
+need to set them.
 
--	if (pwrseq->use_reset) {
-+	if (pwrseq->reset_ctrl) {
- 		reset_control_deassert(pwrseq->reset_ctrl);
- 		reset_control_assert(pwrseq->reset_ctrl);
- 	} else
-@@ -82,7 +81,7 @@ static void mmc_pwrseq_simple_post_power_on(struct mmc_h=
-ost *host)
- {
- 	struct mmc_pwrseq_simple *pwrseq =3D to_pwrseq_simple(host->pwrseq);
-
--	if (pwrseq->use_reset)
-+	if (pwrseq->reset_ctrl)
- 		reset_control_deassert(pwrseq->reset_ctrl);
- 	else
- 		mmc_pwrseq_simple_set_gpios_value(pwrseq, 0);
-@@ -95,7 +94,7 @@ static void mmc_pwrseq_simple_power_off(struct mmc_host =
-*host)
- {
- 	struct mmc_pwrseq_simple *pwrseq =3D to_pwrseq_simple(host->pwrseq);
-
--	if (pwrseq->use_reset)
-+	if (pwrseq->reset_ctrl)
- 		reset_control_assert(pwrseq->reset_ctrl);
- 	else
- 		mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
-@@ -137,15 +136,14 @@ static int mmc_pwrseq_simple_probe(struct platform_d=
-evice *pdev)
- 		return dev_err_probe(dev, PTR_ERR(pwrseq->ext_clk), "external clock not=
- ready\n");
-
- 	ngpio =3D of_count_phandle_with_args(dev->of_node, "reset-gpios", "#gpio=
--cells");
--	if (ngpio =3D=3D 1)
--		pwrseq->use_reset =3D true;
--
--	if (pwrseq->use_reset) {
-+	if (ngpio =3D=3D 1) {
- 		pwrseq->reset_ctrl =3D devm_reset_control_get_optional_shared(dev, NULL=
-);
- 		if (IS_ERR(pwrseq->reset_ctrl))
- 			return dev_err_probe(dev, PTR_ERR(pwrseq->reset_ctrl),
- 					     "reset control not ready\n");
--	} else {
-+	}
-+
-+	if (!pwrseq->reset_ctrl) {
- 		pwrseq->reset_gpios =3D devm_gpiod_get_array(dev, "reset", GPIOD_OUT_HI=
-GH);
- 		if (IS_ERR(pwrseq->reset_gpios) &&
- 		    PTR_ERR(pwrseq->reset_gpios) !=3D -ENOENT &&
-=2D-
-2.34.1
+-- 
+Rgrds, legion
 
 
