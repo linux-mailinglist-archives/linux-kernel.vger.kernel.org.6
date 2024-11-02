@@ -1,95 +1,54 @@
-Return-Path: <linux-kernel+bounces-393198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196F99B9D90
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:08:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13949B9D9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 08:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2BCD1F227D3
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 07:08:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D191C21A74
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 07:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058A414B965;
-	Sat,  2 Nov 2024 07:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473E91714CA;
+	Sat,  2 Nov 2024 07:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FyT3k4zB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F354156F5E;
-	Sat,  2 Nov 2024 07:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="npTm+xwn"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B7F170A07
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 07:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730531310; cv=none; b=F3BIMhqgUdtkwaUwKtYcdRQF66c909kEG7JegTu/D+EGnuj2aZSJ4WaHGtkKN3sQ3aMhbKD0FdJ90I8+wgsx8rNo2rS8wtFPGy9wvKJo3VJPE+oiWERo26PCRM3IHA7r26d4odRTP6xgNExHvm8WQum/0m06YKbpyLF2B7k90hU=
+	t=1730532194; cv=none; b=jTm02VBkHuiO1KR8iUd986xoPST2uSav4KaX3LNzZTymnlmaicuInHOgmYmqhOiFPvHIlXyMUTQINxC/Ah5giySsyPLKzPmh+XYXeEG8kuFewkcNVRERebjqkGj0h/hDTZHy5pi+hblOEqL49yPaWxux8LwD2z1LHG4FfDeNQsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730531310; c=relaxed/simple;
-	bh=kXMw8nXdTzh+5/TW0jzALf0sAcfEu/eK7OpnnWpYv/Y=;
+	s=arc-20240116; t=1730532194; c=relaxed/simple;
+	bh=gyFTHNX0NpP78SUS367GYGGtHuwo0fSgRKzGqYo9bVU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jdw/9RiwD+3yIFgobkRRGuL0qQlsDvg3hqGr9a2OCr/i5FO+uUgB5Lg+Y4kPXmil5b6FVoo2RNGNF3+EaJqZM25x4rZ6BShio3Hzu1UBp3MlQ64sQJA/NILxBofJmDc+otJR7r6B5FBw1+i61+qwEuqpxxDSTYKaTRSFfwAdObo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FyT3k4zB; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730531309; x=1762067309;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kXMw8nXdTzh+5/TW0jzALf0sAcfEu/eK7OpnnWpYv/Y=;
-  b=FyT3k4zBvgJNmsNN1T+Iy0nTn/epoZ32tl5nL+eZHs/9Fd5ZEBOZ01bF
-   A1MEiTgids/2f+iio7QDyhL15nYdakEM+ypiAamNeWeX6bg0AXDmA5S4l
-   B1bwsr3TVl51hvz/Q3Mf0Kr4hI26NGv4T1VVo+D+GNK6tCIiOldKwgD6W
-   5eZsOaU3u3ruMmu1M7s8vVv73HRz+3e2BPjdgm3Y4uGJaY2JxuNmO8LjL
-   +ShnGYGlrzDuM4vfhVP7pFofry9compcq1JKQRaDQsaVUAx0l17CL8ZmW
-   InVoJfwCdaCfWmcO0fMqMhn44jn0HyJuAyYmbVx+NiKDyswr0dPt87bDK
-   A==;
-X-CSE-ConnectionGUID: PU9bm6W7TKi6lUEApAP+gA==
-X-CSE-MsgGUID: WfN7foQLQLiP5bQ4YDIgig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30476049"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30476049"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 00:08:28 -0700
-X-CSE-ConnectionGUID: ZvuMZxJSQPWa9EjT1rIthQ==
-X-CSE-MsgGUID: 4m6SlXJwTuiw/LQreG7Obg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="87930409"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 02 Nov 2024 00:08:21 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t78F7-000iXl-2Q;
-	Sat, 02 Nov 2024 07:08:17 +0000
-Date: Sat, 2 Nov 2024 15:07:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alice Ryhl <aliceryhl@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v12 3/5] rust: samples: add tracepoint to Rust sample
-Message-ID: <202411021421.jZ0FSDq6-lkp@intel.com>
-References: <20241030-tracepoint-v12-3-eec7f0f8ad22@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BKbJ+lg2s4ATBw5W43nQhqoj1hf4f+UJeehhSW/ALrHxfjsvaUoacJKJ3KL3yFz/rf1i0VvFqp5tHYOyz+pVEALsAA8WEYg0cbBSoY4NoxcOt/ZGoxL0rthrfVHNVJDNsVtuQDIB3Uvb0G67f6h92aHllX5A5w/I7uijmBOCgLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=npTm+xwn; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=pX+/3FO2uxR1q2Xk+WQT3k8Oa1+H08pdqnymIX1S4ig=;
+	b=npTm+xwnOCJsurVHrgO9WDkItcIXCcbTn1Y5U0/SJ7OK5Ozb2MkZ3IAjxVk6KW
+	M1XFx8eyW6MosYtE18EsCssXRS2rANsVZifIJdHTrIISB97DRIXjoLbEChIlG1qn
+	ZzXl1KByQgyD5NFkkicJ5Q+/oE9R/3I0TzRHdz7YlXI9c=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgAnJtIX0yVn_rx5AQ--.14994S3;
+	Sat, 02 Nov 2024 15:22:01 +0800 (CST)
+Date: Sat, 2 Nov 2024 15:21:58 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	elinor.montmasson@savoirfairelinux.com,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v1] ARM: imx_v6_v7_defconfig: enable SND_SOC_SPDIF
+Message-ID: <ZyXTFhEm9UCBii2c@dragon>
+References: <20241030122128.115000-1-eichest@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,56 +57,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030-tracepoint-v12-3-eec7f0f8ad22@google.com>
+In-Reply-To: <20241030122128.115000-1-eichest@gmail.com>
+X-CM-TRANSID:Mc8vCgAnJtIX0yVn_rx5AQ--.14994S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWruF4kWr4furWxGw1fCrWfKrg_yoW8JF15pF
+	nrZrs7Jr48W3y5JrWUCrykWa95ZF9rXrW0qrW2ya45ZwsIy34FqF1jy342ga1DXr9a9r95
+	CFyfGF9Ikr1DX3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jzc_fUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCQiLZWclsVNF3gAAsU
 
-Hi Alice,
+On Wed, Oct 30, 2024 at 01:21:12PM +0100, Stefan Eichenberger wrote:
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> 
+> Enable SND_SOC_SPDIF in imx_v6_v7_defconfig to support SPDIF audio. This
+> change will fix commit d469b771afe1 ("ARM: dts: imx6: update spdif sound
+> card node properties") which moves away from the old "spdif-controller"
+> property to the new "audio-codec" property.
+> 
+> Fixes: d469b771afe1 ("ARM: dts: imx6: update spdif sound card node properties")
 
-kernel test robot noticed the following build errors:
+It doesn't look a fix to me.
 
-[auto build test ERROR on eb887c4567d1b0e7684c026fe7df44afa96589e6]
+Shawn
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alice-Ryhl/rust-add-static_branch_unlikely-for-static_key_false/20241031-000709
-base:   eb887c4567d1b0e7684c026fe7df44afa96589e6
-patch link:    https://lore.kernel.org/r/20241030-tracepoint-v12-3-eec7f0f8ad22%40google.com
-patch subject: [PATCH v12 3/5] rust: samples: add tracepoint to Rust sample
-config: x86_64-randconfig-103-20241101 (https://download.01.org/0day-ci/archive/20241102/202411021421.jZ0FSDq6-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241102/202411021421.jZ0FSDq6-lkp@intel.com/reproduce)
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> ---
+>  arch/arm/configs/imx_v6_v7_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
+> index 333ef55476a30..c771d7dbcadcd 100644
+> --- a/arch/arm/configs/imx_v6_v7_defconfig
+> +++ b/arch/arm/configs/imx_v6_v7_defconfig
+> @@ -321,6 +321,7 @@ CONFIG_SND_SOC_IMX_SGTL5000=y
+>  CONFIG_SND_SOC_FSL_ASOC_CARD=y
+>  CONFIG_SND_SOC_AC97_CODEC=y
+>  CONFIG_SND_SOC_CS42XX8_I2C=y
+> +CONFIG_SND_SOC_SPDIF=y
+>  CONFIG_SND_SOC_TLV320AIC3X_I2C=y
+>  CONFIG_SND_SOC_WM8960=y
+>  CONFIG_SND_SOC_WM8962=y
+> -- 
+> 2.43.0
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411021421.jZ0FSDq6-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> error[E0425]: cannot find value `__tracepoint_rust_sample_loaded` in crate `$crate::bindings`
-   --> samples/rust/rust_print.rs:87:5
-   |
-   87 | /     kernel::declare_trace! {
-   88 | |         /// # Safety
-   89 | |         ///
-   90 | |         /// Always safe to call.
-   91 | |         unsafe fn rust_sample_loaded(magic: c_int);
-   92 | |     }
-   | |_____^ not found in `$crate::bindings`
-   |
-   = note: this error originates in the macro `kernel::declare_trace` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `rust_do_trace_rust_sample_loaded` in crate `$crate::bindings`
-   --> samples/rust/rust_print.rs:87:5
-   |
-   87 | /     kernel::declare_trace! {
-   88 | |         /// # Safety
-   89 | |         ///
-   90 | |         /// Always safe to call.
-   91 | |         unsafe fn rust_sample_loaded(magic: c_int);
-   92 | |     }
-   | |_____^ not found in `$crate::bindings`
-   |
-   = note: this error originates in the macro `kernel::declare_trace` (in Nightly builds, run with -Z macro-backtrace for more info)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
