@@ -1,55 +1,74 @@
-Return-Path: <linux-kernel+bounces-393386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1836A9B9FDF
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:01:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BDF9B9FE2
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1001281F03
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:01:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CA0D1C20BFB
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF32188717;
-	Sat,  2 Nov 2024 12:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="ocJMli1t"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BA418953D;
+	Sat,  2 Nov 2024 12:04:08 +0000 (UTC)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EBD6AB8;
-	Sat,  2 Nov 2024 12:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A44E16EBE8;
+	Sat,  2 Nov 2024 12:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730548900; cv=none; b=rw5Dx/N6FHo+qQ58VBZ2We2SH8MfNt3On56F1J2TfrEkV7ihlWBXuQ45xfEs9YlKAyteUzMnFZWiqOkAtYay7njLg2Kub+fASh63W70gggKwtHqZgpi4WeDna48/OfutOZgjRzLzuCMSReXXn2m7XwTv41peWWaQjNaUs8RuKPE=
+	t=1730549047; cv=none; b=AC2B6JR50p9L+x/JhuCdVQDb4DnUKxnECgxxZAtZBcvzW4zBnMl/IjJxxjdI+CvLZmQlS5VMKILnTS0kN91eJHLZgYI/ygMTiCEsBgxqbHxnGpn60fRWiqZHM/wHxwXYDIPMkiZUg1QqMnxL/ju0HqHWAVAR3eJ7OHM/i5ntX0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730548900; c=relaxed/simple;
-	bh=SejvjcKDxw3BthMfHi6eAtNdZaOvse5g9PgP+P44VkM=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NGfXTMY5RTzXL8eZ0ROB3raB5GXHIrdjYbKU2i4X0NBMi3d4QA/+6H4kHyFW7jzRKMVPwvU9lGH8i36KXkLXEKnblFsw6VMgQgo7h5xO5MbCiBt1IO8x4vTvfZZ0Iejs/j1BF51BWQH5y0UBSDPH5GaTN2RBAJrXdCcsnXBZSEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=ocJMli1t; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: from nirs-laptop. (unknown [85.130.135.138])
-	by lichtman.org (Postfix) with ESMTPSA id 60B851770C6;
-	Sat,  2 Nov 2024 12:01:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1730548897; bh=SejvjcKDxw3BthMfHi6eAtNdZaOvse5g9PgP+P44VkM=;
-	h=Date:From:To:Subject:From;
-	b=ocJMli1teNm9L03WHiBKgGRViUZAzwIoHtSl47gK3ti12ZphgpwIthUhcZFmQHkV2
-	 N815jvatvwAUhUN6MK9xIAI74LlVpCOnwp0xKuOgHTEcsqny1jVC93U8FyFYVyRrGH
-	 RrnVfj4KMxqUHaLrYjJrfZwHo9+WkIRp5/54LS4LMirxA/s+xXugkS3/4kwLwsfIQx
-	 Bc2DRF+FU7qmAR+ZWBhXqRuXfP1I/b+2uYuXoDAfLkUCAhkxnMqBRlqwmqcEFKyaN8
-	 fNFFkBXtDWzeg362XHvhzGWSkhbuqr2xCzZlmh4PMqGuVAwLyesxe8+oPoIYRiL0PK
-	 JtlFyCXZtcXow==
-Date: Sat, 2 Nov 2024 14:01:22 +0200
-From: nir@lichtman.org
-To: ebiederm@xmission.com, kees@kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] exec: move warning of null argv to be next to the relevant
- code
-Message-ID: <ZyYUgiPc8A8i_3FH@nirs-laptop.>
+	s=arc-20240116; t=1730549047; c=relaxed/simple;
+	bh=EQ8XAxpuqUA8Ez0JQdFpsCuHCg9R67pnEbTFpmmFa9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J7QNYPThuX6QzxnIovaPHt1gOrSXFfySrb/09bBL8ZslKkzujRJ6oGYV+CqbUrNcF8uTFX8KzftVyDrvKF6rvkkwsA54Pc1DGLkDxzw+NCX3QsCn7GYhioZ1hyupkQi6m0hE1zP8u/ymVchOZO4n/BK6LRJoHUcWVCHoZzNYLeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e681bc315so1970159b3a.0;
+        Sat, 02 Nov 2024 05:04:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730549046; x=1731153846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DF6tF/ronwtGaLPzR1Y+1eJC2THWzh90BDnwiyxyUlA=;
+        b=siqfQhg8PHhkVCGQNLVxua0fmrx7sP3+YpNVEHNNgZ27JllBDbw8GpLli1oElf65B4
+         mJD3SmFfGE26Fsbn90gWDAg5Ql/I4NtB+hyTQAS1Mu0NJo/UGU72GUynwO7Tz055suRX
+         JZKGwlTcoX8ksrV0t8B+dc2j1KpmHaJl/XSauE1iNHD8VCTXrNzCgN/neQh1uZKeKRsB
+         jCM7FnW4GqDLtaxdrWm7eBWqID6t0YSbNYsy5Mjz4H3h5uxUWl6wYhXXyBUBkp9FfIR8
+         7epuH3iNnhuC6+EKr6RVgA0V1YrlO9iscf0o1WXG0zRrn13c4x0pKjA1B7iIN6T7GgRi
+         /Dyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUE79H8t5g8XEsLPFEgY1jXnYmO8e0jyp/rg7QU09zueDdYlHr2+sHLQkcf7YrgZwQEx5h2mHz8yOW2@vger.kernel.org, AJvYcCVAD23BpBnLJTd9vQ0eMPymIXIPJAO5/QH/fkG4e8xRt8JuBlGn5HoebxzezxZULkPdFqe38APtto/DwlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5xFvVz7jFr69NFfVyJ2mH6am7ZSv6YbmVSNLh7bRmGzTtahBk
+	T6cmGfiaHboTofmKXkF79xW69h2TrcW616TxSWcpvfmiOrM5tyB3
+X-Google-Smtp-Source: AGHT+IH3QBupALD0Xsyr4GM4EVgvwE8anNNXOVnVeSjs243gIoBttfPnD+0+H2RFRYw7KFhojBYygw==
+X-Received: by 2002:a05:6a00:6386:b0:71e:427e:e679 with SMTP id d2e1a72fcca58-720c965da56mr8996435b3a.4.1730549045701;
+        Sat, 02 Nov 2024 05:04:05 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ef741sm4062238b3a.82.2024.11.02.05.04.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Nov 2024 05:04:05 -0700 (PDT)
+Date: Sat, 2 Nov 2024 21:04:03 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Stefan Eichenberger <eichest@gmail.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>, lpieralisi@kernel.org,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	francesco.dolcini@toradex.com, Frank.li@nxp.com,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v4] PCI: imx6: Add suspend/resume support for i.MX6QDL
+Message-ID: <20241102120403.GF2260768@rocinante>
+References: <20241030103250.83640-1-eichest@gmail.com>
+ <20241101193412.GA1317741@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,55 +77,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241101193412.GA1317741@bhelgaas>
 
-Problem: The warning is currently printed where it is detected that the
-arg count is zero but the action is only taken place later in the flow
-even though the warning is written as if the action is taken place in
-the time of print
+Hello,
 
-This could be problematic since there could be a failure between the
-print and the code that takes action which would deem this warning
-misleading
+[...]
+> > Without this patch, suspend/resume will fail on i.MX6QDL devices if a
+> > PCIe device is connected. Upon resuming, the kernel will hang and
+> > display an error. Here's an example of the error encountered with the
+> > ath10k driver:
+> > ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
+> > Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
+> [...]
+> 
+> Richard and Lucas, does this look OK to you?  Since you're listed as
+> maintainers of pci-imx6.c, I'd like to have your ack before merging
+> this.
 
-Solution: Move the warning print after the action of adding an empty
-string as the first argument is successful
+If things look fine here, then I would like to pick it up.
 
-Signed-off-by: Nir Lichtman <nir@lichtman.org>
----
-
-Side note: I have noticed that currently the warn once variant is used
-for reporting this problem, which I guess is to reduce clutter that
-could go to dmesg, but wouldn't it be better to have this call the
-regular warn instead to better aid catching this type of bug?
-
- fs/exec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 6c53920795c2..4057b8c3e233 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1907,9 +1907,6 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	}
- 
- 	retval = count(argv, MAX_ARG_STRINGS);
--	if (retval == 0)
--		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
--			     current->comm, bprm->filename);
- 	if (retval < 0)
- 		goto out_free;
- 	bprm->argc = retval;
-@@ -1947,6 +1944,9 @@ static int do_execveat_common(int fd, struct filename *filename,
- 		if (retval < 0)
- 			goto out_free;
- 		bprm->argc = 1;
-+
-+		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
-+			     current->comm, bprm->filename);
- 	}
- 
- 	retval = bprm_execve(bprm);
--- 
-2.39.2
-
+	Krzysztof
 
