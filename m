@@ -1,117 +1,272 @@
-Return-Path: <linux-kernel+bounces-393569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10369BA271
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:33:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580999BA273
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 21:44:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7833F1F232BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:33:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72BCF1C21846
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 20:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE8D1ABEB0;
-	Sat,  2 Nov 2024 20:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09601ABEB0;
+	Sat,  2 Nov 2024 20:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNqbHqCV"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oyOGDivG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662BE4EB50;
-	Sat,  2 Nov 2024 20:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B2D4EB50;
+	Sat,  2 Nov 2024 20:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730579606; cv=none; b=Qj6uzV8rNC31A2ZJavMozEpLwNy0V4nBSyNgDhqiXFfgKirxGZB88zG+iA9FQ2ppCHP4QdM4OW6KNhFrw2TykH6dPHSbiPsg/BwH6BjJBN1ryoEzzwYNucKs+In2J86VMHmBLNHegMaR/EC8OeorPCqekC+ocB1zUZOwoN7pPFA=
+	t=1730580233; cv=none; b=SsYfiwpxFYcrxNAfGHTLkQ+Z4XgkcqRiVwPEk9ZRueAl0SAokxCsOwTPlUSI2DBQoEb2FSqhVBPS0m51DB8H5UMD1ktr3bueCmkwH9uxOv5mEKVLOrgAoIeXjucK6TucVg8B5MPH7jEQ0T2ymP17a92F1ciF+12zWkhs/AR0Ls4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730579606; c=relaxed/simple;
-	bh=cPnQwBZYflq7d5IMs6Ay6eoaThFmiNtPLwzwsAEt94g=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NCWlQxgYcxNgj6RHpi7PnCvJMRk/TqzNSvjxuUl5gcaqB9XgrnbOfyZo0NJABp5eVb3tI5ct1Cp/tA+sNL5k/nJXNi+7yXNMHo7u2o9Y8RbRR6KqSMTwyvLllsc+5ps+nG+KnuM8vBqq2uXMCCpstF1E72XrFTYYOtQN3rATYnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNqbHqCV; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so1356838e87.1;
-        Sat, 02 Nov 2024 13:33:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730579602; x=1731184402; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cPnQwBZYflq7d5IMs6Ay6eoaThFmiNtPLwzwsAEt94g=;
-        b=dNqbHqCVTsC21VTUUnyz5vVNXYonGvh2mp4fYAR4rvtZJzhMbFE/MrtuEqLNZdxFIr
-         gD0YZVy+JydkmS6FXHRD4/32vyPecKgLAo2r7rlX77K6fDm2QbQYyHvJrjzQyBWoT78i
-         XY8v49MhDIDUKzYgE9oaceOidH9scAtcEGjx7Gt76QnhDxeIvSPGGkInBRIPBiPqXEDZ
-         CwYH75kupIRH4tjQmVMN/UO2UyfYi0Ja4uAg9/Vq+0VoXl9NdLEP1sPPWSHIgFbiViZR
-         EATm+jds+XOEfUAXkup3ZEXu0OoVeKAB2bCDuns9QnRr+sZ34VozFhUMiQsBFl/S6FLh
-         fKew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730579602; x=1731184402;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cPnQwBZYflq7d5IMs6Ay6eoaThFmiNtPLwzwsAEt94g=;
-        b=osQFHX3mFkogmqqGmtLhwTPFymsA2AdQWccqWrfFL9Dg+aLsdaUT+Qb7IFrjoW0mvF
-         bGU4vpFDFgbCW9AYBoUvqssioGDu0OzfYuHDU9HbaKhbvWUM1cML99DSfiOt7yga3taI
-         FG02zIPgMMs/Vgi4eNi92KWIv78ps569kpb7+K91/GB+M38ZOZkd7Obm0w7Wl/GsTC//
-         Ds2xZNLWba8Z0jOo6WIbCf7EwWk5v7tHfEGs300FoTKaFGdDJ5Ytja8Tsewkz9rp0Mph
-         eJxL5kdRplbRwE6thkf6IK8fJ/ozha+Z53KkwhcLALDTdWaz4fmZaHwsLN+ujvLWd1RI
-         EJrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVD7ZiuT9Uo0GyaDu49+0BVdFp44iwcp73xDOpJcdF4rB6f3Kz/1XfKRfa7uGPh6S07RO63EOH2FTYcAMw=@vger.kernel.org, AJvYcCWzRvMlAde+muzIqjb5O6EDxoP33WnQlviFI9i8o4N/mlEoHJSHgARh9QCjXhCXsE0qpulGlUDg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRBT9l64WIMwGtlDXTMRcLmX9x17p+k0NT/ElbX3GuDrkPFxoq
-	Bua4GQoInTO0dBNZW6faKqb5CXtnQ4MwQtkoA7pcZh545C3E+/JE8vPw1RPvqmoCIWASOC/V+wL
-	ibmy979tgtnYnsk7ugqrTX7JVUJ8=
-X-Google-Smtp-Source: AGHT+IGoqXppe9fIqDPc/oxsvYg0tqjNuy7LHBTRSrIgWw+QL8DbNnZF6mzI/2dKk2JIvPJ2TGP0zQ1/jEXFYu9I2XM=
-X-Received: by 2002:a05:6512:e9b:b0:539:fbfd:fc74 with SMTP id
- 2adb3069b0e04-53b7ed185a8mr8536911e87.40.1730579602168; Sat, 02 Nov 2024
- 13:33:22 -0700 (PDT)
+	s=arc-20240116; t=1730580233; c=relaxed/simple;
+	bh=R8Ity0l1+p963dlS/UV3AA4DyLL41Dth45YcI9GZVUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FYgjnYuEQqPHascBq1WLhc5uau50+IKPUvF9T3gyvgYbQVuGhg47BhOKft62p9Zh3WgCKxQdx6x7Dqy2DrNvl2KBINKa3qGH1mxb2bnT+9ivKwlmMO4Wu1ct/yQanbPBtCQkmwR+ImwWaXnlLVoOKIBLWWn+XL8cfT67uOHPiZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oyOGDivG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA60C4CEC3;
+	Sat,  2 Nov 2024 20:43:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730580232;
+	bh=R8Ity0l1+p963dlS/UV3AA4DyLL41Dth45YcI9GZVUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oyOGDivGff3v0MBiBcrUq0W1uaAX8clrnMiwnlF8JexJKiXWL/7A9i7PT35QysCqB
+	 nfj1faOr4xhJRW8yuD7UoTit0bTqQy+05b2Is7ZtLb/uuqhR2l52oIyUSh8BtlLBwP
+	 adlJ+g6hZDi2O3mbz7L3V7q3o2sWcDN9KOFhj70pSk5D1TeDO+iGcYI3H66pv2J17j
+	 HuY21rm0VJ9JRKv7SHE4NQC8aH7cshj0hFuTKq2r3eqqU2mQWBAx7Z1GCCkbp/rSV2
+	 WI3X45fpVaE2BZUoX1FzxqH9Yfrhqvcz6ZphesbENLA7e4MIT+FdPu7DSdOyQXRrQw
+	 nVMooMTwNfaag==
+Date: Sat, 2 Nov 2024 13:43:48 -0700
+From: Kees Cook <kees@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Fortify compilation warning in __padata_set_cpumask()
+Message-ID: <202411021337.85E9BB06@keescook>
+References: <db7190c8-d17f-4a0d-bc2f-5903c79f36c2@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Yi Zou <03zouyi09.25@gmail.com>
-Date: Sun, 3 Nov 2024 04:33:10 +0800
-Message-ID: <CAH_kV5G07_ZL9O41OBYR8JrtxJsr56+Zi=65T_FkaQDefLU_DA@mail.gmail.com>
-Subject: [PATCH] ipv6: ip6_fib: fix null-pointer dereference in ipv6_route_native_seq_show()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: "David S. Miller" <davem@davemloft.net>, 21210240012@m.fudan.edu.cn, 
-	21302010073@m.fudan.edu.cn, David Ahern <dsahern@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
-	Paolo Abeni <pabeni@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <db7190c8-d17f-4a0d-bc2f-5903c79f36c2@t-8ch.de>
 
-Check if fib6_nh is non-NULL before accessing fib6_nh->fib_nh_gw_family
-in ipv6_route_native_seq_show() to prevent a null-pointer dereference.
-Assign dev as dev = fib6_nh ? fib6_nh->fib_nh_dev : NULL to ensure safe
-handling when nexthop_fib6_nh(rt->nh) returns NULL.
+On Thu, Oct 31, 2024 at 08:40:33PM +0000, Thomas Weißschuh wrote:
+> Hi Kees,
+> 
+> I'm running into compilation warnings/errors due to fortify-string.h.
+> 
+> Environment:
+> - Commit 0fc810ae3ae110f9e2fcccce80fc8c8d62f97907 (current mainline master)
+> - gcc (GCC) 14.2.1 20240910
+> - Relevant config (from an Arch Linux distro config):
+> 	CONFIG_64BIT=y
+> 	CONFIG_X86_64=y
+> 	CONFIG_NR_CPUS=320
+>         CONFIG_NR_CPUS_RANGE_BEGIN=2
+>         CONFIG_NR_CPUS_RANGE_END=512
+>         CONFIG_NR_CPUS_RANGE_DEFAULT=64
+> 	CONFIG_PADATA=y
+> 
+> Warning:
+> 
+>       CC      kernel/padata.o
+>     In file included from ./include/linux/string.h:390,
+>                      from ./include/linux/bitmap.h:13,
+>                      from ./include/linux/cpumask.h:12,
+>                      from ./arch/x86/include/asm/paravirt.h:21,
+>                      from ./arch/x86/include/asm/irqflags.h:80,
+>                      from ./include/linux/irqflags.h:18,
+>                      from ./include/linux/spinlock.h:59,
+>                      from ./include/linux/swait.h:7,
+>                      from ./include/linux/completion.h:12,
+>                      from kernel/padata.c:14:
+>     In function ‘bitmap_copy’,
+>         inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
+>         inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
+>     ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 41 and 536870904 bytes from a region of size 40 [-Werror=stringop-overread]
+>       114 | #define __underlying_memcpy     __builtin_memcpy
+>           |                                 ^
+>     ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
+>       633 |         __underlying_##op(p, q, __fortify_size);                        \
+>           |         ^~~~~~~~~~~~~
+>     ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
+>       678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+>           |                          ^~~~~~~~~~~~~~~~~~~~
+>     ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
+>       259 |                 memcpy(dst, src, len);
+>           |                 ^~~~~~
+>     kernel/padata.c: In function ‘__padata_set_cpumasks’:
+>     kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 40]
+>       713 |                                  cpumask_var_t pcpumask,
+>           |                                  ~~~~~~~~~~~~~~^~~~~~~~
+>     In function ‘bitmap_copy’,
+>         inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
+>         inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
+>     ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 41 and 536870904 bytes from a region of size 40 [-Werror=stringop-overread]
+>       114 | #define __underlying_memcpy     __builtin_memcpy
+>           |                                 ^
+>     ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
+>       633 |         __underlying_##op(p, q, __fortify_size);                        \
+>           |         ^~~~~~~~~~~~~
+>     ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
+>       678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+>           |                          ^~~~~~~~~~~~~~~~~~~~
+>     ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
+>       259 |                 memcpy(dst, src, len);
+>           |                 ^~~~~~
+>     kernel/padata.c: In function ‘__padata_set_cpumasks’:
+>     kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 40]
+>       713 |                                  cpumask_var_t pcpumask,
+>           |                                  ~~~~~~~~~~~~~~^~~~~~~~
+>     cc1: all warnings being treated as errors
+> 
+> Code:
+> 
+>    712	static int __padata_set_cpumasks(struct padata_instance *pinst,
+>    713					 cpumask_var_t pcpumask,
+>    714					 cpumask_var_t cbcpumask)
+>    715	{
+>    716		int valid;
+>    717		int err;
+>    718	
+>    719		valid = padata_validate_cpumask(pinst, pcpumask);
+>    720		if (!valid) {
+>    721			__padata_stop(pinst);
+>    722			goto out_replace;
+>    723		}
+>    724	
+>    725		valid = padata_validate_cpumask(pinst, cbcpumask);
+>    726		if (!valid)
+>    727			__padata_stop(pinst);
+>    728	
+>    729	out_replace:
+>    730		cpumask_copy(pinst->cpumask.pcpu, pcpumask);
+>    731		cpumask_copy(pinst->cpumask.cbcpu, cbcpumask);
+>    732	
+>    733		err = padata_setup_cpumasks(pinst) ?: padata_replace(pinst);
+>    734	
+>    735		if (valid)
+>    736			__padata_start(pinst);
+>    737	
+>    738		return err;
+>    739	}
+> 
+> 
+> The weird thing is, that only the cpumask_copy() in line 730 triggers
+> this warning. The one in line 731 doesn't. Also this is the only
+> instance of the warning I see in the whole build.
+> 
+> The warning goes away with the following change, but that introduces
+> runtime overhead and feels wrong. Also it doesn't explain why this
+> specific call is different from all others.
+> 
+> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+> index 9278a50d514f..ded9d1bcef03 100644
+> --- a/include/linux/cpumask.h
+> +++ b/include/linux/cpumask.h
+> @@ -836,7 +838,7 @@ void cpumask_shift_left(struct cpumask *dstp, const struct cpumask *srcp, int n)
+>  static __always_inline
+>  void cpumask_copy(struct cpumask *dstp, const struct cpumask *srcp)
+>  {
+> -	bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp), large_cpumask_bits);
+> +	bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp), MIN(NR_CPUS, large_cpumask_bits));
+>  }
+>  
+>  /**
+> 
+> Any ideas?
 
-Fixes: 0379e8e6a9ef ("ipv6: ip6_fib: avoid NPD in ipv6_route_native_seq_show()")
+My notes on looking at this:
 
-Signed-off-by: Yi Zou <03zouyi09.25@gmail.com>
----
-net/ipv6/ip6_fib.c | 4 ++--
-1 file changed, 2 insertions(+), 2 deletions(-)
+#define DECLARE_BITMAP(name,bits) \
+        unsigned long name[BITS_TO_LONGS(bits)]
+...
+typedef struct cpumask { DECLARE_BITMAP(bits, NR_CPUS); } cpumask_t;
 
-diff --git a/net/ipv6/ip6_fib.c b/net/ipv6/ip6_fib.c
-index eb111d20615c..6632ab65d206 100644
---- a/net/ipv6/ip6_fib.c
-+++ b/net/ipv6/ip6_fib.c
-@@ -2555,14 +2555,14 @@ static int ipv6_route_native_seq_show(struct
-seq_file *seq, void *v)
+#ifdef CONFIG_CPUMASK_OFFSTACK
+typedef struct cpumask *cpumask_var_t;
 #else
-seq_puts(seq, "00000000000000000000000000000000 00 ");
-#endif
-- if (fib6_nh->fib_nh_gw_family) {
-+ if (fib6_nh && fib6_nh->fib_nh_gw_family) {
-flags |= RTF_GATEWAY;
-seq_printf(seq, "%pi6", &fib6_nh->fib_nh_gw6);
-} else {
-seq_puts(seq, "00000000000000000000000000000000");
+typedef struct cpumask cpumask_var_t[1];
+#endif /* CONFIG_CPUMASK_OFFSTACK */
+
+...
+#define cpumask_bits(maskp) ((maskp)->bits)
+...
+
+int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
+                       cpumask_var_t cpumask)
+...
+        struct cpumask *serial_mask, *parallel_mask;
+...
+                parallel_mask = cpumask;
+        ...or...
+                parallel_mask = pinst->cpumask.pcpu;
+        ...
+        err =  __padata_set_cpumasks(pinst, parallel_mask, serial_mask);
+
+...
+static int __padata_set_cpumasks(struct padata_instance *pinst,
+                                 cpumask_var_t pcpumask,
+                                 cpumask_var_t cbcpumask)
+...
+        cpumask_copy(pinst->cpumask.cbcpu, cbcpumask);
+...
+static __always_inline
+void cpumask_copy(struct cpumask *dstp, const struct cpumask *srcp)
+{
+        bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp),
+large_cpumask_bits);
 }
-- dev = fib6_nh->fib_nh_dev;
-+ dev = fib6_nh ? fib6_nh->fib_nh_dev : NULL;
-seq_printf(seq, " %08x %08x %08x %08x %8s\n",
-rt->fib6_metric, refcount_read(&rt->fib6_ref), 0,
-flags, dev ? dev->name : "");
---
-2.44.0
+...
+extern unsigned int nr_cpu_ids;
+...
+#if NR_CPUS <= BITS_PER_LONG // false: 320 <= 64
+  #define small_cpumask_bits ((unsigned int)NR_CPUS)
+  #define large_cpumask_bits ((unsigned int)NR_CPUS)
+#elif NR_CPUS <= 4*BITS_PER_LONG // false: 320 <= 256
+  #define small_cpumask_bits nr_cpu_ids
+  #define large_cpumask_bits ((unsigned int)NR_CPUS)
+#else
+  #define small_cpumask_bits nr_cpu_ids
+  #define large_cpumask_bits nr_cpu_ids // not a compile-time constant
+#endif
+...
+static __always_inline
+void bitmap_copy(unsigned long *dst, const unsigned long *src, unsigned
+int nbits)
+{
+        unsigned int len = bitmap_size(nbits);
+
+        if (small_const_nbits(nbits))
+                *dst = *src;
+        else
+                memcpy(dst, src, len);
+}
+
+So the result is:
+
+memcpy(pcpumask->bits, cbcpumask->bits, nr_cpu_ids)
+
+And the error is that the compiler has determined that nc_cpu_ids got
+limited to possibly have a value between 41 and 536870904. This is an
+odd limit, though: 0x1FFFFFF8, but does feel constructable -- it's close
+to some magic numbers.
+
+There are some new diagnostics being added to GCC that might help track
+this down[1]. I'm waiting for a v4 before I take it for a spin.
+
+-Kees
+
+[1] https://gcc.gnu.org/pipermail/gcc-patches/2024-October/666870.html
+
+-- 
+Kees Cook
 
