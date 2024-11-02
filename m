@@ -1,74 +1,53 @@
-Return-Path: <linux-kernel+bounces-393390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFC39B9FE8
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:10:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB859B9FF4
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 13:20:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 449741C20FC1
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:10:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AF0C1F21CAF
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Nov 2024 12:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FAD18A6A6;
-	Sat,  2 Nov 2024 12:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CF3189F47;
+	Sat,  2 Nov 2024 12:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S9+/MqLN"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="NzCsfCsp"
+Received: from pv50p00im-ztdg10021801.me.com (pv50p00im-ztdg10021801.me.com [17.58.6.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BFD189F5A;
-	Sat,  2 Nov 2024 12:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29128149E16
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Nov 2024 12:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730549413; cv=none; b=msTxn2WEYPLesIcakCoICTYz6Kd0CzFW2rX1Nyg4yqTRj+UcWrpfMdRzo545GVHiHq8h2Cr1IPo5oKu9fedc22gS0cEy0IFSEM5RsRFQhX0LOGLgkHtaV5fJjNkd40E0wSopBhs2a19LikDSW6FokYjrkuxtp4HuCXjFIwpxFx8=
+	t=1730550049; cv=none; b=MuXo1g3nOnYsvIT14n+jgl5wzMd5r++ic7w4A+3GeVmV0eoIEmGfuA0jpnaOu05ERKFo4K9j7TAfUlF2cqzVE6uyEZHL+SleVOEbUSSbN/KfS1T5gThXMzrJCWhrYEhWX6RxcKV31bxF3RQEmvdmU/RsNxMHaGSvnXAK6Oa0/0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730549413; c=relaxed/simple;
-	bh=RmETCFe5x+lP5bHc1J8Jizfo3pKb/RAereNfrUN5osY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YbixxCdnE88PqKUJgtG+v+2uNIQcNIKtwkw+2X+uBO0oHioGy9imIIpQZkygTF0OPpOvH31cgOSbM0d6NydfV3Z1Ev4uqJ+0sYPsY9kP6O6Q6bHMkHylQGWop27URguParQGSJag54FK17AN0/ri3z2/1j9yrDYwZwQ8IxBT94U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S9+/MqLN; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2918664a3fso2337194276.0;
-        Sat, 02 Nov 2024 05:10:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730549411; x=1731154211; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZqvRtfQjrnuWPv8FX2A9hzDN4crJUYk0z9dSFXFnBv4=;
-        b=S9+/MqLNrhVgaQsmMWBIycdB9P9W2FczSitz6hPl9Zg4XyJofroRdzpdeOuxgU0umV
-         He3O0mvETlJi0V1PbhLgIaJnyUvUJOW9Bih2jFMy3NpkBQ+tOowevSf7QcD1Dy7EFDW/
-         ihJdcBQOJ4z5JPaG+8ZSi4XQ7oHrcn+NA/sx5Z0+WcbGvAfXuzeI9jLKMy5hR0cpu5et
-         0IKtS9Oo+/5mFlX4939LqYSXmYocen/DxMXVjuyq/HQetWbY/FhMXPaQ2zIOsfaWufJl
-         JP33Tp3nke/XAi45aYLOHsQzIZ1KYkh/q13SLUGAw3qtenMkXZYIC3jl6Pza3/SGj0Ew
-         E+1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730549411; x=1731154211;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZqvRtfQjrnuWPv8FX2A9hzDN4crJUYk0z9dSFXFnBv4=;
-        b=E9eoOxfG0lhk47tpSi4aUhkBSi/hSNtnh0m97zS9DO6lfee8nY7DVtbiTn4LD8q+iY
-         +AyTySYzeTY2UQts5isZD2IBtUuuBlH7SIbxjUgRTDWgwLLvteON2awC45zqMf8JPc7Y
-         /PcFQaxX/Sf3cBdyiUx2WxXp8A6lFCC7ruNgZWqnBAgHzg9FHOA6/XHzNe6SRYdK1mcj
-         MBujJWXKvEuRijP7zDZVfW1+3JC8tDUxGqVG8SWzN480N/SK09fbCrLj6ThyyGWEHaUm
-         WbrD+D3lEmmUJRqCs4JTltyu2IN+KerArZmvj/Mmxw8WHCYQK6eBLsOKKsiNnJMzoLMz
-         MRkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeCzinxqwBARONfd86ed6xVItohY4MUhcrMUfTcaufmY0TyM9voXuQTdl/jGGjmUUaPhQBWr8YGvHNHtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVDNirSwGdgbvpmH52XIFUdbW0S+a+7SGbpzLzp7LetAP5+wbO
-	5QAeOE0mdWAbuW9LILw3RgwjLbR20vgVnbBJoQbtMw8IxPCvrzrL5TfhVrcN3zI=
-X-Google-Smtp-Source: AGHT+IGwC6VkGtOUhcvUVsS9q/sBhaGEqtCp7G2bPHETsYXTRGmu5CNrP2r7h8lxcqfE6owAlOXniQ==
-X-Received: by 2002:a05:6902:c0d:b0:e29:2560:914c with SMTP id 3f1490d57ef6-e30e8bce90fmr7190642276.9.1730549410862;
-        Sat, 02 Nov 2024 05:10:10 -0700 (PDT)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa (186-189-35-150.setardsl.aw. [186.189.35.150])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e8adf9ecsm1139393276.59.2024.11.02.05.10.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 05:10:09 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 02 Nov 2024 08:09:49 -0400
-Subject: [PATCH v2 2/2] kunit: enable hardware acceleration when available
+	s=arc-20240116; t=1730550049; c=relaxed/simple;
+	bh=zChWzUIgsHhVArpSPejSnuq5tnBS2PpmuYTsVJrsBUM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rDwkRYXeQi2xirry36qH3q03BOlrxCsBP1MTauoA+/yqE1z/qdcPA6wayERJicoxa8KQsrg1wW9Jhk3H3gAyEpTSpUoe9DWWhJnEmZPpTExa2DWcwgAU/ONQV5mlA9eODFBGK7AmmaK67/5ZahyEMyLdzMAhlBPHr1YjycaAnJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=NzCsfCsp; arc=none smtp.client-ip=17.58.6.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1730550046;
+	bh=Vv22TbSbJLiin9JMVgXbm3kRyh4dU13ohGrYSxYcD5w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:
+	 x-icloud-hme;
+	b=NzCsfCspwJEqGdtvQqhnX5RwG/UY9AMFg1xD50hMy25BB0BbljHtmTI9w05KbOEiW
+	 Myq+rQM4lpmBiMlNFM6iQZeUe/OB7fiycn8SMrWgj9d7QMLrXvUL9WWMZO8jU4HqQt
+	 +PO9tcxO8Gq//bSgNTfisdeSAmfjSC1KlpP8Txz6hrbHezwSvUqhsQiihTcOnP5NUR
+	 fc2qpVBbQkLH6i4LEKfBx6EKJpvsL00UXMURPtChNggoXF7IE2MQKLYL6oVK4Bkspg
+	 UTxH8p94lkp2dzCvFXNlMKPCRVs4WsQIpWdWwfY/IzV3s4NXGoTb2LkE6SLAL5TkVX
+	 hLf5lzq3HrSXg==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021801.me.com (Postfix) with ESMTPSA id 3AB4D2010271;
+	Sat,  2 Nov 2024 12:20:39 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH v2 0/2] PCI: endpoint: fix bug for an API and simplify
+ another API
+Date: Sat, 02 Nov 2024 20:20:05 +0800
+Message-Id: <20241102-pci-epc-core_fix-v2-0-0785f8435be5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,62 +56,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241102-kunit-qemu-accel-macos-v2-2-9d4579fddd20@gmail.com>
-References: <20241102-kunit-qemu-accel-macos-v2-0-9d4579fddd20@gmail.com>
-In-Reply-To: <20241102-kunit-qemu-accel-macos-v2-0-9d4579fddd20@gmail.com>
-To: Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
- Alyssa Ross <hi@alyssa.is>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
- linux-kernel@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
+X-B4-Tracking: v=1; b=H4sIAPUYJmcC/32NQQrCMBBFr1Jm7UiSGmpceQ8pEqZTOwuTmmhQS
+ u9u7AFcvgf//QUyJ+EMp2aBxEWyxFDB7BqgyYcbowyVwShz0MoonEmQZ0KKia+jvNE7Y7UZvRu
+ 0gzqbE1e9JS995UnyM6bP9lD0z/6JFY0a26NznbLc2rY7P15CEmhP8Q79uq5fy56AqLIAAAA=
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Joao Pinto <jpinto@synopsys.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: sfhaZh0nZ-DIiZWaCO_Sqp6Mmgeg8wi9
+X-Proofpoint-GUID: sfhaZh0nZ-DIiZWaCO_Sqp6Mmgeg8wi9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-02_11,2024-11-01_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 suspectscore=0
+ mlxlogscore=572 adultscore=0 phishscore=0 spamscore=0 malwarescore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2411020110
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-Use KVM or HVF if supported by the QEMU binary and available on the
-system.
+This patch series is to fix bug for API devm_pci_epc_destroy()
+and simplify API pci_epc_get().
 
-This produces a nice improvement on my Apple M3 Pro running macOS 14.7:
-
-Before:
-./tools/testing/kunit/kunit.py exec --arch arm64
-[HH:MM:SS] Elapsed time: 10.145s
-
-After:
-./tools/testing/kunit/kunit.py exec --arch arm64
-[HH:MM:SS] Elapsed time: 1.773s
-
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 ---
- tools/testing/kunit/kunit_kernel.py       | 3 +++
- tools/testing/kunit/qemu_configs/arm64.py | 2 +-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+Changes in v2:
+- Correct tile and commit message for patch 1/2.
+- Add one more patch 2/2 to simplify API pci_epc_get().
+- Link to v1: https://lore.kernel.org/r/20241020-pci-epc-core_fix-v1-1-3899705e3537@quicinc.com
 
-diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
-index 61931c4926fd6645f2c62dd13f9842a432ec4167..3146acb884ecf0bcff94d5938535aabd4486fe82 100644
---- a/tools/testing/kunit/kunit_kernel.py
-+++ b/tools/testing/kunit/kunit_kernel.py
-@@ -123,6 +123,9 @@ class LinuxSourceTreeOperationsQemu(LinuxSourceTreeOperations):
- 				'-append', ' '.join(params + [self._kernel_command_line]),
- 				'-no-reboot',
- 				'-nographic',
-+				'-accel', 'kvm',
-+				'-accel', 'hvf',
-+				'-accel', 'tcg',
- 				'-serial', self._serial] + self._extra_qemu_params
- 		# Note: shlex.join() does what we want, but requires python 3.8+.
- 		print('Running tests with:\n$', ' '.join(shlex.quote(arg) for arg in qemu_command))
-diff --git a/tools/testing/kunit/qemu_configs/arm64.py b/tools/testing/kunit/qemu_configs/arm64.py
-index d3ff27024755411441f910799be30399295c9541..5c44d3a87e6dd2cd6b086138186a277a1473585b 100644
---- a/tools/testing/kunit/qemu_configs/arm64.py
-+++ b/tools/testing/kunit/qemu_configs/arm64.py
-@@ -9,4 +9,4 @@ CONFIG_SERIAL_AMBA_PL011_CONSOLE=y''',
- 			   qemu_arch='aarch64',
- 			   kernel_path='arch/arm64/boot/Image.gz',
- 			   kernel_command_line='console=ttyAMA0',
--			   extra_qemu_params=['-machine', 'virt', '-cpu', 'max,pauth-impdef=on'])
-+			   extra_qemu_params=['-machine', 'virt', '-cpu', 'max'])
+---
+Zijun Hu (2):
+      PCI: endpoint: Fix that API devm_pci_epc_destroy() fails to destroy the EPC device
+      PCI: endpoint: Simplify API pci_epc_get() implementation
 
+ drivers/pci/endpoint/pci-epc-core.c | 23 +++++++----------------
+ 1 file changed, 7 insertions(+), 16 deletions(-)
+---
+base-commit: 11066801dd4b7c4d75fce65c812723a80c1481ae
+change-id: 20241020-pci-epc-core_fix-a92512fa9d19
+
+Best regards,
 -- 
-2.47.0
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
