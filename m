@@ -1,118 +1,122 @@
-Return-Path: <linux-kernel+bounces-393945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555269BA7BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:52:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0F69BA7C0
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE80628183B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:52:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861BA1F21470
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F19C18991E;
-	Sun,  3 Nov 2024 19:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACEB18A6AB;
+	Sun,  3 Nov 2024 19:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NgJwdjBh"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+UeW6oK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123BD14F9E9
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 19:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F5014F9E9;
+	Sun,  3 Nov 2024 19:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730663557; cv=none; b=qbo+09iucldZcdVMXyX432eI5cIF0tx3AeUTyTxEd+eNLolidz8YcKqwambQeMlwe81cvPdn+pefmvuaxrl+tLr0kEaARZnhfzPSctLHGZkywqq2pPNzxPzLwkPtATf47B2MuW3qnmIh6ys/fT4lHV+Rdum+PNEdLMjcBLZN054=
+	t=1730663592; cv=none; b=oadQcWc4rpenowsb67gRJEy0zxhncluS0ah0cOTLuy+b4zS/FEF67ZmtihXMEI6RNMSB5Mgmz63N2bxYbt4ENAkrGNwPvSvZrnNcKseuMs17NZ/pi1XDOdm5blqCGhho/UEidTyzG8PLwGuBIp2qkjOHod0+zMqj4nVZ/J30E0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730663557; c=relaxed/simple;
-	bh=PQegQn3+8/PIWx8/Y7AMCPnrxj3hemTpvdg9V+17eCI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ne+cohX0ztn7JKNnTnrPUgLgnOqgC2nexMyG4e1cGE7r4JB05bN1eaqtBDb8QrhLFENEeIroi9sXb5slDkSKkheWR83VQg0NXLS0sW2D+0BmszsYzTyZpVMK9bsEOq3uAUDmyCRcdmUtxjueh4FLk95lD8ujSr3bZU1JFsCEbtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NgJwdjBh; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d4fd00574so2138999f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 11:52:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730663554; x=1731268354; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x9HRwxuKA5SYPrf0mycwo4kyEZVXW2KTXgvqsO4ho/A=;
-        b=NgJwdjBh9NP1ZCCji8ErlDAw1rE/6dF/R+pXWdwxVY/qnFcLj/P6MuDz2d6bk2fSE1
-         8Zu5SUQfYL9u2rUc3H1nsbVaJcu3rxIEDkqVvXC1gFA4epqgpnhWPLz6+B7bw+5rBlF6
-         shHYoFoHH+2lW3dgkC+9kaRZ7fSgMrchf86b6FtaQJ3ZmPejKuUPO9vReCqLknLOTDfK
-         V5dXFyrnYAUE/Lm+FaqqP1agM9Sio6YDmaUpAGpeZMjDKmOe50HRsapm2MimusRLxEf5
-         FmGGYUG8P2AqjP2Cu5tsTiIizfk7gFCMtqMCNuH/1rVGX6iSfIvj3TkcwQj0GbVILYMn
-         nIzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730663554; x=1731268354;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x9HRwxuKA5SYPrf0mycwo4kyEZVXW2KTXgvqsO4ho/A=;
-        b=YEihrhjgPXkQFYh38YunbWH6qrW378sQnZ+ARXa4E0hq6E5VGctZlWCKydLhWD5qRE
-         TnlFrMWvJmXfuxjVsTOgC7tw4nzJHuXsuDG1fAGUGs53GZpLfiONoA5vAElE2IfVubJ8
-         brvLvegRYVAhmRsQtZADaQhvfTmxyq1UuQW5KMr7ALDD16pH2YEEStaMT/J0VmYtcbG/
-         4jqhyIW7sfb3D+qwJCtk59F2QeG/bPICjvFMSABDJYcuQiSGPu7VLMysnHnOY6yVg6bA
-         IYaBGnH0PRnlLAIKc7SiTrTkiWJNG7pR5e8PVoGZ6kATXxOHrk1xIUyXooI4u1gaVAjq
-         SWzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQWNkTqSvRUExa3KMaBpKTmGlzwSUnAMHexmAJ0cE/M2obkXdInIHavh0KEYK/mIZA6WgogDm21Xa9EkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyozwpU+GIewILzMT8O3x1aCgwiOzXTE7291vKGpJe3Tbl3l/JR
-	+R4qcRr8SFPa4ZhDuw+uSz8E8I9oDVAd6W+2XTNJPAuam3pc8dVMlf7y9HpHgXg=
-X-Google-Smtp-Source: AGHT+IHRlzR/T44vFTA6xhju6BevgdlpguiQL7NPllDCW6AH3Dy70BrbMRmNdc01zD9C3OYhha4t6w==
-X-Received: by 2002:a5d:5888:0:b0:37d:3f81:153f with SMTP id ffacd0b85a97d-381c149f226mr12298762f8f.17.1730663554250;
-        Sun, 03 Nov 2024 11:52:34 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381c10e61f9sm11272153f8f.58.2024.11.03.11.52.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Nov 2024 11:52:33 -0800 (PST)
-Message-ID: <d9f946a3-44d6-4973-859e-60aa2807181c@linaro.org>
-Date: Sun, 3 Nov 2024 20:52:31 +0100
+	s=arc-20240116; t=1730663592; c=relaxed/simple;
+	bh=h/lamnr7nl1eLEeIvKsQlIYXvEl0IMpMXenrPk9JjPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XDmDGTugl6heqlUzwa15UGcSFaA3JKoqH2Gk5qm4Se0uLJrgbN57jqt/Ut6+qTF+Gr1OArfRKACHAzfg1hoF1XTKw1Na3u9OM30XKPUt5+RTmm0MIYbLBexsaaOHTIAYOs8JTrGQgmaNF6ewjwekiAGrI3jBZBBWZKf9b6Wowg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+UeW6oK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F96DC4CECD;
+	Sun,  3 Nov 2024 19:53:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730663592;
+	bh=h/lamnr7nl1eLEeIvKsQlIYXvEl0IMpMXenrPk9JjPk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=X+UeW6oKQ2i72CHEzm9mAHq6+v/yXENRcvvwt25ugoIsPgygMUG/adjuW+vazo0OP
+	 WZr3LmcBJxUw2yoNEian/vJPrHyyenRzIJkK80SKAsikKGl9GZHHksWTcT0CYInXgY
+	 PH3+0qKxT+05W20B9mJfbutBxM49cFSePPpSOhLHTELMlCKUj4RUpBmdK80gqfgZEH
+	 lUQjXy8r6sKhqwPBYYv4uPhL58TXEX3llk4LTBBnoCRGrQCjhG+/40FuDNWiUiJ11C
+	 vCEF0XBf05kam65VGMTsyA/IkAbz14UFRj4gEw+orkTQ+9kUXIevW4hQ2EI+CI9zXE
+	 BsmTR0lSmdk0Q==
+Date: Sun, 3 Nov 2024 11:53:10 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Linu Cherian <lcherian@marvell.com>
+Cc: <davem@davemloft.net>, <sgoutham@marvell.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <gakula@marvell.com>, <hkelam@marvell.com>,
+ <sbhatta@marvell.com>, <jerinj@marvell.com>, <edumazet@google.com>,
+ <pabeni@redhat.comi>, <jiri@resnulli.us>, <corbet@lwn.net>,
+ <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v4 net-next 2/3] octeontx2-af: Knobs for NPC default
+ rule counters
+Message-ID: <20241103115310.61154a0d@kernel.org>
+In-Reply-To: <20241029035739.1981839-3-lcherian@marvell.com>
+References: <20241029035739.1981839-1-lcherian@marvell.com>
+	<20241029035739.1981839-3-lcherian@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: timer: actions,owl-timer: convert to YAML
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-actions@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241103123513.2890107-1-ivo.ivanov.ivanov1@gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20241103123513.2890107-1-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 03/11/2024 13:35, Ivaylo Ivanov wrote:
-> Convert the Actions Semi Owl timer bindings to DT schema.
-> 
-> Changes during conversion:
->   - Add a description
->   - Add "clocks" as a required property, since the driver searches for it
->   - Correct the given example according to owl-s500.dtsi
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
-> v2: update commit message to be accurate (Krzysztof)
-> v2: don't preserve formatting in the description (Krzysztof)
-> v2: add allOf:if:then block constraining per variant (Krzysztof)
-> v2: add a blank line after additionalProperties (Krzysztof)
-> ---
+On Tue, 29 Oct 2024 09:27:38 +0530 Linu Cherian wrote:
+> +	struct npc_install_flow_rsp rsp = { 0 };
 
-Applied, thanks
+@rsp is reused in the loop, either it doesn't have to be inited at all,
+or it has to be inited before every use
 
+> +	struct npc_mcam *mcam = &rvu->hw->mcam;
+> +	struct rvu_npc_mcam_rule *rule;
+> +	int blkaddr;
+> +
+> +	blkaddr = rvu_get_blkaddr(rvu, BLKTYPE_NPC, 0);
+> +	if (blkaddr < 0)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&mcam->lock);
+> +	list_for_each_entry(rule, &mcam->mcam_rules, list) {
+> +		if (!is_mcam_entry_enabled(rvu, mcam, blkaddr, rule->entry))
+> +			continue;
+> +		if (!rule->default_rule)
+> +			continue;
+> +		if (enable && !rule->has_cntr) { /* Alloc and map new counter */
+> +			__rvu_mcam_add_counter_to_rule(rvu, rule->owner,
+> +						       rule, &rsp);
+> +			if (rsp.counter < 0) {
+> +				dev_err(rvu->dev, "%s: Err to allocate cntr for default rule (err=%d)\n",
+> +					__func__, rsp.counter);
+> +				break;
 
+shouldn't you "unwind" in this case? We'll leave the counter enabled
+for some rules and disabled for others
+
+> +			}
+> +			npc_map_mcam_entry_and_cntr(rvu, mcam, blkaddr,
+> +						    rule->entry, rsp.counter);
+> +		}
+> +
+> +		if (enable && rule->has_cntr) /* Reset counter before use */ {
+> +			rvu_write64(rvu, blkaddr,
+> +				    NPC_AF_MATCH_STATX(rule->cntr), 0x0);
+> +			continue;
+
+so setting to enabled while already enabled resets the value?
+If so that's neither documented, nor.. usual.
+
+> +		}
+> +
+> +		if (!enable && rule->has_cntr) /* Free and unmap counter */ {
+> +			__rvu_mcam_remove_counter_from_rule(rvu, rule->owner,
+> +							    rule);
+> +		}
+
+unnecesary parenthesis
+
+> +	}
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+pw-bot: cr
 
