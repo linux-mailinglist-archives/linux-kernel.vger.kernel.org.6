@@ -1,97 +1,120 @@
-Return-Path: <linux-kernel+bounces-393901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9CA9BA73E
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:31:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E12E9BA741
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D01CA1C20DB6
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:31:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3CF3B21A3F
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A71189B81;
-	Sun,  3 Nov 2024 17:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D15189B95;
+	Sun,  3 Nov 2024 17:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="a3euWv7Y"
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="s19XAgN7"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4796013049E;
-	Sun,  3 Nov 2024 17:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF8F13049E;
+	Sun,  3 Nov 2024 17:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730655106; cv=none; b=Z77DikyqTs/vbFzrPDSIX6SE+kuKLzzgI8gQuQz9BhkgI+24Do3SBaw9ZrU3wufqSVK3LrhXplGZQzLdejHvpI6xD7mJ6pk2Zi2adIui2p8UnMG8cIKK3Y9uNX0Bl74F05/OkPwgOCBUrC+u6cmuAlLzoWJPeN//DCdyKoNvouc=
+	t=1730655406; cv=none; b=O4izUBSg1yZJjhy3Ixb0Oxrs9vgqoYDGHlvs/F1mkAdc8P4LaxzD84404p4RLYzT9+xzKThRvSIdQMgT6D+/QS3hdCdmYxm8s0KBL5eD7dDH4tH/E2V1IbTfW0KpapWhC6fc9xDjPMFVILwcWKOznpBN9BCIXxZVdkYkmSuu8iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730655106; c=relaxed/simple;
-	bh=wfk8qbaU9InKWpE0Acf8Uzes5W/S9r9BMEmsxCgbAhM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DeQ0H8bAcWrow4lg+0OvmrfnJtOlJ7wD2MCEP3fDQaQ8bydDl9TIrbwdiScYpTy+oBs5c1Lu+0h11NDey7JeTCFpH8afaQiN7lxW1OMpQ75Z9dRMleSeZoMkmDyPtNFezne3HUAMO6U13RHHJjes4GoskWQL7Ym0wvSUKHJw4N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=a3euWv7Y; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1730655104; x=1762191104;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0VAq26ivGP6HWcypo61s63sxigrViuDKgoXzs5Trwx4=;
-  b=a3euWv7Y2mFsY9nx/YbOyXETICJ8BwkiYXBMZCxS5GQ7eMEmkegGkd1F
-   YdAYsdj0qzy6HFIpG+OD4zaX+IL8VsEIPS6kB99wCRpzXZDs5Rr1d8LmU
-   N2VieYlRHbbsw/cT3d2DUE7ACQDL5smk0Abk29oj+5t++YGDY00fUFyPD
-   A=;
-X-IronPort-AV: E=Sophos;i="6.11,255,1725321600"; 
-   d="scan'208";a="439899592"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 17:31:40 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:31684]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.22.121:2525] with esmtp (Farcaster)
- id 44ab26f6-929c-4ae1-870c-42e369fbe483; Sun, 3 Nov 2024 17:31:40 +0000 (UTC)
-X-Farcaster-Flow-ID: 44ab26f6-929c-4ae1-870c-42e369fbe483
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Sun, 3 Nov 2024 17:31:39 +0000
-Received: from 6c7e67c6786f.amazon.com (10.187.170.63) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Sun, 3 Nov 2024 17:31:35 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <markus.elfring@web.de>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
-	<jiri@resnulli.us>, <juntong.deng@outlook.com>,
-	<kernel-janitors@vger.kernel.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<nikolay@redhat.com>, <pabeni@redhat.com>, <razor@blackwall.org>,
-	<ruanjinjie@huawei.com>, <shaozhengchao@huawei.com>, <tgraf@suug.ch>
-Subject: Re: [PATCH] netlink: Fix off-by-one error in netlink_proto_init()
-Date: Sun, 3 Nov 2024 09:31:33 -0800
-Message-ID: <20241103173133.96629-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
-References: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
+	s=arc-20240116; t=1730655406; c=relaxed/simple;
+	bh=vG1dN2jvK4GPiTUTN7lh6GhShEszT/+pyjWmhMpifgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MDTxVWA1VV4jM/HvBTH5xJMd3Ug7lb8hCuxUVGxFsymeB79F/onOuoz8YY09G5sTK/02C8bhoB8rR/vtJ3SeMp6S9KnG9DYideuuFcNX7BXQXSb27MpOUeFnrkhm6IA9pMKfUdVVVm80x3NYj+6JV2QhTKizGArtQppwzXP70OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=s19XAgN7; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=nyvL5hW9tmY/2ZluyWSap3lYfFpEuf8kt49tqGDLvnA=; b=s19XAgN7WqbV0BHsi5WaM4bDOm
+	JGBBm+7BlljD6UfjZsdpYjdy5WwyEQbkIjXNcGHLz5Klu6H/I8waWhTJkVUJ/53YvZIVHmgkz4Ok1
+	W4K9ScDj9s+4tGfDfG7J/gB+nIILhvFJ9BinAC7mxjNXtO8bY/tEHyyFzxB0eqORsri/ICRgDYbvO
+	+K6nh8T9YYZBsmq+ZOg3L9EydEudOJRIMFXuPgpvh7Xb+Ct0GT4LpBmWKkUhFjcQlTQGzgkHRldY3
+	bkhVJPS/8Gu+QrafZzsKCVOyFiliF5PU/UyB3/LL/7bVYXAHB0bFZ4HV69JQbRWFDZNmDy7vr5ON6
+	qB2mSxYw==;
+Date: Sun, 3 Nov 2024 18:36:36 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Mithil Bavishi <bavishimithil@gmail.com>
+Cc: aaro.koskinen@iki.fi, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ khilman@baylibre.com, krzk+dt@kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, robh@kernel.org,
+ rogerq@kernel.org, tony@atomide.com
+Subject: Re: [PATCH v2 2/6] arm/dts: Add common device tree for Samsung
+ Galaxy Tab 2 series
+Message-ID: <20241103183636.40cc37fc@akair>
+In-Reply-To: <20241031104146.4538-1-bavishimithil@gmail.com>
+References: <20241031083248.043d25d0@akair>
+	<20241031104146.4538-1-bavishimithil@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D039UWB002.ant.amazon.com (10.13.138.79) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <Markus.Elfring@web.de>
-Date: Sun, 3 Nov 2024 14:15:18 +0100
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 3 Nov 2024 14:01:26 +0100
+Am Thu, 31 Oct 2024 10:41:45 +0000
+schrieb Mithil Bavishi <bavishimithil@gmail.com>:
+
+> > well, that takes time, I wanted to start that on the right thing.  
 > 
-> Hash tables should be properly destroyed after a rhashtable_init() call
-> failed in this function implementation.
-> The corresponding exception handling was incomplete because of
-> a questionable condition check.
-> Thus use the comparison operator “>=” instead for the affected while loop.
+> Yes indeed, I'll be more careful the next time, again sorry for the 
+> trouble, I am not used to the process of mailing lists and may have
+> done some mistakes there as well.
+> 
+probably you did not notice an error in make dtbs and the old
+devicetree on the device was still there and was used.
 
-This patch is already applied to net-next.
-https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit/?id=bc74d329ceba
+> > 1. make dtbs shows warnings  
+> 
+> > 2. make CHECK_DTBS=y ti/omap/omap4-samsung-espresso7.dtb is too
+> > noisy (probably same for espresso10).  
+> 
+> > a lot comes from the dtsi files, so you need to ignore a lot,
+> > probably either strip down the new dts to almost nothing besides
+> > dtsi includes to determine the background noise or take a similar
+> > device, redirect output and errors, diff that output with the full
+> > devicetree. I am trying to clean that dtsi warning mess up,
+> > linux-next shows a lot less warnings but that takes time.  
+> 
+> Oh, I was not aware of such tool, ran it and yeah there are a ton of
+> warnings, where can I ask for assitance if I need it while fixing
+> them.
+> 
+I hope you understood that warnings like this:
+arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dtb:
+/ocp/interconnect@4a000000/segment@0/target-module@4000/cm1@0/clocks/pad_clks_ck@108:
+failed to match any schema with compatible: ['ti,gate-clock']
+
+are not the ones you need to fix, so just the diff between old and new.
+
+> > One of the warnings that should be fixed:
+> > dts/ti/omap/omap4-samsung-espresso7.dtb: lvds-encoder: compatible:
+> > 'oneOf' conditional failed, one must be fixed: ['lvds-encoder'] is
+> > too short 'lvds-encoder' is not one of ['ti,ds90c185',
+> > 'ti,ds90c187', 'ti,sn75lvds83'] 'lvds-encoder' is not one of
+> > ['ti,ds90cf364a', 'ti,ds90cf384a', 'ti,sn65lvds94'] 'lvds-encoder'
+> > is not one of ['thine,thc63lvdm83d'] from schema $id:
+> > 	http://devicetree.org/schemas/display/bridge/lvds-codec.yaml
+> >  
+> 
+> Ah right, I have to add the encoder (doestek, dtc34lm85am) in
+> bindings and in vendor, this patchset may grow too big I assume.
+>
+You can do the binding stuff separately, lvds-encoder/panel should be
+trivial, so one patch for vendor prefix if needed and one for the
+binding.
+
+Regards,
+Andreas
 
