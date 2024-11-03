@@ -1,87 +1,130 @@
-Return-Path: <linux-kernel+bounces-393830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 994A09BA5EF
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:33:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2369BA5F1
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:35:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A10D1F21796
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:33:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17BC91C20D7B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF8C169AC5;
-	Sun,  3 Nov 2024 14:33:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056A017BB16;
+	Sun,  3 Nov 2024 14:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ER+ns65A"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAA34C81
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 14:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193CB15A8;
+	Sun,  3 Nov 2024 14:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730644386; cv=none; b=QPXaeh/aiU7Iblkc/DTSMsXTTTqWkh3JQlW5wxtHLBRhGctrY3mURjI3iAh+YIcZANUGZ5nm7ogBiyXLhAR/Hsc+YJgwEj4aOryA9lMVHOT6ZtNsVQ6bv5YgpjKN45mqbc7qVrkkcZD93hbZEyAvaX15jkBzlS20qShZEkK1KPc=
+	t=1730644510; cv=none; b=dMCI8gRtYi9rbAxIEUu2CfNlLjFRrERNYIlJ2f/bXZc2X0LSsESzu9oQBZwZQJtAjNSxUsUIudgdvUjsCJcXQbCavy5MqqMTNUNozSN9VVqwVCafRYFVGk237e1j0mWORqGuZ+f1OSMKWOSxZ5GlI6lAP9ZCz8KLHW7UKy52hb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730644386; c=relaxed/simple;
-	bh=3MMXThTltyD3s2AVHKr+nHvoPa8+9DTeGQ+ofLQFRj8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=brpvcRn+/HRc2M8qalgHU9+yz4rRzAiovGCnovCAsVyVjoqoQQ/ojUJBWtdfQ94s1uWYqfDPYkvN4K8GZ5q+GB8tO+jlXmVv6htotPXEmsBwp9omD4BZlWM7LC2OW0ad/g7fBcIVVZEds4PBcLxk8+RVnmTZb9kkc72djhq+6B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so34436005ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 06:33:04 -0800 (PST)
+	s=arc-20240116; t=1730644510; c=relaxed/simple;
+	bh=wG8Gn85Zge4Ab66VQVkdPkQl+aSYTS8FOKvqLK8bdKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SosFoT6eT1rX9jzHBkfiT+FzNpXOjroqj0hz/q7SHr+k++6uE9tWF138JdT85mEXgKrGPnSwQqtx9pk/OX+zCPvzObqH9q6GlqZmGy7Xwnc5fHXWhre8ALojp+pGX6B+F6PGtY385Mh2vzow8euimFCCg33AbCmJIIjtvUrWLuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ER+ns65A; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-20c803787abso25697515ad.0;
+        Sun, 03 Nov 2024 06:35:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730644508; x=1731249308; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=93+WiCi1ThC11RJJ36LYFSZWkX6cVfqzN1gwp+XLl5k=;
+        b=ER+ns65Ao8o8EbUQPtQtbPZyAWi1Ely9BGBMzQzLAkywnutBlI7XxRs59lTtlq1Ebp
+         bbLzL7OELZT8ba012YLwAdVHjkIZhaueDsXL2Cs0qcWHbQFsF7g9Bdtnze3cm2Vobk2B
+         Vs3GhH+fEJOYKdoxnmTx3KgcY5IcA11CHdc3lZpEmc1Vveu920ZcKzFk7EqYn/yfjYMf
+         0PH2CN6r3h21L5W/6lWVWuH8/V7Q9MOwFIavwj371qnolXD8JdiR5TPjxGvl8q4F6w4I
+         wPxhKJeziFzOu5sjiPAn/9NCYrDEdAx6n6QTawmaoX8tyLbWEJbOYovTPgNbmah71qu1
+         i+eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730644384; x=1731249184;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1730644508; x=1731249308;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M4MhLqtyhUoJwvqRHTYgi5EciCyhyTWePOhj4PeFm4Q=;
-        b=aGVBPPpHZD8CQ7ui6krddd6zp8hDX95zXEwbUaSkKVK3pkqQdkcDurRMQ6K+qltfbp
-         +A402an05S+3YA1UIq3jpWqT8LBiakl7AHRYdJXpsMICJ0jygjKR6+HRO4E/9Sf9MGWJ
-         +YI9U66yJfY62MlmPPoqlzPajiZtWHFBEITz6hZuhi1VaSxhYGl6TH/hJ5nrBLMSzp9Q
-         uFXT7ngy1MM0iSNTUaE6Mu7jaHpd7UeamhM9+PQ5A8f49qqYkkO8CKk1FozhFC9OKvYb
-         zw5Oee6KZVB4oddL5mD6PTW/PoT6o1jEZ+CR95WYggRjcNIlKwthLXU7fcgGzWD7PKpv
-         GvVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmlSwiumfWc2vJdlqreAm5aKy4Sk5Xw5mIMCyCamonNBh0jpMSX7skg0AytZinkifwkHikbc+o60W8V6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPadiO5kUIHS8ZKpqtpJP+nMzlatEmNCh00lzxAloFkx9qMepf
-	BUVGFSewwi3dzdDbS+0ix8ptkErgMxtpOA6swnAaVi8DKnoiVFqTlMIKovuNAv6VS58tSq+137v
-	i8QAChYEJAn+xKPW3C7H2qPJQalP+KZ7VINN0PGy3WL6WAEby0YaWC3s=
-X-Google-Smtp-Source: AGHT+IF5vT99jFs0woB3oVa5ZgruuX3IFh9NGX6KxSKUdRjjLYtTzwMsy5l9W1Mu/wPvqi/0HuFZYOjn1hrcYrTvyIjRw+lGwxb9
+        bh=93+WiCi1ThC11RJJ36LYFSZWkX6cVfqzN1gwp+XLl5k=;
+        b=WO7MA+vuKnPLWPRxIHuslepqEZij8noBiXnPB7jUna9wSo/2nLyK8Ox82VKsuHfHvW
+         jkwwyqPEmv1fe3dSapmLQMvDyZInXXR1oVimquO6k6rHTkt/mI22HBLUtldYaoOzawIi
+         oUkJ1XLaGihGclmA3ZttxSnuHaj+WRaGywWQGncxFdouDPg/1sjdVusrMSjuW9hGznuE
+         GcsW0QXX2/Bdw5tIoXpEbbvYIAM2TlQOlS+K8ME/bpDE3RZsGrv2/p14u3/awk2W503P
+         eFbHP40Sfv3R46mTRgjuauhJqdJn5cQLV8x+lxG9eiWrNGUe/ul1i2N55QMLU9FYkNv+
+         oIIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcY+HkLD22WrzPwmC/JqIYO1oJOKyHnEKAuad8BwTCtrRGCR3TU9CHidH8NT256dtTvolrGMPMK76isJ8=@vger.kernel.org, AJvYcCXXzqlod4X3oVfBWnC/ZkXgtFT11pX/XaWW74X7FaHXK4sEX5Q8kBpiBuSPRIC5e5vVfwtQpNDvy2jiLC+6UJoF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUT13G1M8BevCoKmAXUkxbSaXRcCqAnueTRM3laULwoV9Qj9JW
+	qQFSxYal9JTc9vh4ydw3TnPbUuxVf/w3R0P2fKMWwzcJDe8j0q0x
+X-Google-Smtp-Source: AGHT+IHYGry+rKSxu3RbntAF4BRm7OG8IenHRHObkVwbvCSJWy2jgB0XmNnR8jw0ENSyjQ9ZhweoDw==
+X-Received: by 2002:a17:902:b185:b0:207:1845:bc48 with SMTP id d9443c01a7336-211057ea994mr122515045ad.30.1730644508249;
+        Sun, 03 Nov 2024 06:35:08 -0800 (PST)
+Received: from ?IPV6:2409:8a55:301b:e120:426:560f:2ff4:d2c2? ([2409:8a55:301b:e120:426:560f:2ff4:d2c2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d4624sm46410645ad.259.2024.11.03.06.35.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Nov 2024 06:35:07 -0800 (PST)
+Message-ID: <1d8c55c7-1406-4af6-9dce-0b296cd40fc9@gmail.com>
+Date: Sun, 3 Nov 2024 22:35:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1946:b0:3a3:b527:e809 with SMTP id
- e9e14a558f8ab-3a6b0327357mr82159245ab.14.1730644383756; Sun, 03 Nov 2024
- 06:33:03 -0800 (PST)
-Date: Sun, 03 Nov 2024 06:33:03 -0800
-In-Reply-To: <tencent_A5864B09B4AED4AEEE8CB467D086DB52F106@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6727899f.050a0220.35b515.019d.GAE@google.com>
-Subject: Re: [syzbot] [bfs?] general protection fault in bfs_get_block (3)
-From: syzbot <syzbot+f51a2a34984e4d8888fd@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1 2/7] net: page_pool: create
+ page_pool_alloc_netmem
+To: Mina Almasry <almasrymina@google.com>,
+ Yunsheng Lin <linyunsheng@huawei.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>
+References: <20241029204541.1301203-1-almasrymina@google.com>
+ <20241029204541.1301203-3-almasrymina@google.com>
+ <763d9630-3064-4d88-8e99-549a07328ec8@huawei.com>
+ <CAHS8izMgF8nx87D9pWPmq1pfDm1v8x5Z6gc_eMHcYo8zKX-Lrw@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <yunshenglin0825@gmail.com>
+In-Reply-To: <CAHS8izMgF8nx87D9pWPmq1pfDm1v8x5Z6gc_eMHcYo8zKX-Lrw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 11/1/2024 9:10 PM, Mina Almasry wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+...
 
-Reported-by: syzbot+f51a2a34984e4d8888fd@syzkaller.appspotmail.com
-Tested-by: syzbot+f51a2a34984e4d8888fd@syzkaller.appspotmail.com
+>>
+>> Isn't it a little odd that old and new are not following the same
+>> pattern?
+> 
+> Hi Yunsheng,
+> 
+> The intention is that page_pool_alloc_pages is mirrored by
+> page_pool_alloc_netmems.
+> 
+> And page_pool_alloc is mirrored by page_pool_alloc_netmem.
+> 
+>>From your description, the behavior is the same for each function and
+> its mirror. What is the gap in the pattern that you see?
 
-Tested on:
+I was mostly referring to the API naming pattern.
 
-commit:         3e5e6c99 Merge tag 'nfsd-6.12-3' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=120f6b40580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
-dashboard link: https://syzkaller.appspot.com/bug?extid=f51a2a34984e4d8888fd
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17fcb630580000
+Isn't it better if page_pool_alloc is mirrored by netmem_pool_alloc and
+netmem_pool_alloc_netmems is mirrored by page_pool_alloc_pages() from
+API naming prespective?
 
-Note: testing is done by a robot and is best-effort only.
+And maybe page_pool_alloc_frag can be mirrored by netmem_pool_alloc_frag
+in the future?
+
+Also, it would be good to update Documentation/networking/page_pool.rst
+for those new netmem APIs, or create a new doc file for them.
+
+> 
+
 
