@@ -1,134 +1,240 @@
-Return-Path: <linux-kernel+bounces-393797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9E19BA558
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:02:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F439BA55C
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:02:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E4BD1C20958
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:02:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED8DC281D5D
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CB416E895;
-	Sun,  3 Nov 2024 12:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5306A165F01;
+	Sun,  3 Nov 2024 12:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GwBfeXi/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hJVBPcwC"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A031632DF;
-	Sun,  3 Nov 2024 12:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C38175D45
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 12:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730635345; cv=none; b=E/+alLZEo6rNGvgPZdwzKWJ0TvYGLMfgN1djCWLcV4baumEBcCjNK2nycMf22p+UP0rSDOusxS8DvEU4GxIfyIlO0vC2yy+Nvn5NccLUEBgnMDKpm1MWzrwkslz7l/eHL2JVj+u2tHDaXXtCgMZ1XwpBjuH8tayH+chJFBvkzzc=
+	t=1730635352; cv=none; b=FwuJeCJpyLsuTCcjuF9NuqJtmO/kitbMUqKhWPB4N5b8yM9lV/4/coZnXskzbyTTbVse2pd+sleGCsrG9yjqPhm8F6/dJHEmE21U5K8CMLA0oWUonQ84vbQukekN7ibHxSlUdTOmvzMsJj0wI7/hcn96bl8Bhh/2rF45r+r/C5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730635345; c=relaxed/simple;
-	bh=Y4qG3SXaAVQ+YzeZZ3XeJ6pdiwxgT2z0KZ92aiDC474=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kD5Z1xvwNoJdaZUfkcYReXMwkt48vkq8SyG9nkD01+nY7OLJ/75qLKt0IJXnHuTndfwIbqLUllW4Dx+rVl08EvXcBU17BgedbplxONfeXipzJlcg5608AZYnsWrV1D2cwICXKntfioClGrcPiCQ3oRanji99zghYkSPj/eynLiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GwBfeXi/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2E5DC4CECD;
-	Sun,  3 Nov 2024 12:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730635345;
-	bh=Y4qG3SXaAVQ+YzeZZ3XeJ6pdiwxgT2z0KZ92aiDC474=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GwBfeXi/XPHHNDMheuWWCahNMr0fBVdXoYo2Jw2DP5wEhhoF1otuvwcCSXzgHfR27
-	 2ksiFISJX2KzrAcn7gaEKZJtXri07tLrJHxOReqT6d9yYI0es639Z4/Qt3gFCiFAge
-	 5YsETtcLETaYHVCW7UCDKI8Htz+UB+GpKSc9gADI=
-Date: Sun, 3 Nov 2024 13:02:09 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB fixes for 6.12-rc6
-Message-ID: <ZydmQblqRdfE3dZ5@kroah.com>
+	s=arc-20240116; t=1730635352; c=relaxed/simple;
+	bh=EkfjY6qc7ZZqItUKau0nuoSNvJIwoZnbsM2jci2CLJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UepmhdsvlVamPMQ8aFUQ+r01v1VHv5p3ADbino5knkiHXRwTKu9s0bwMmlNn4QbO6KX6Np+IYUldWaTIV7SMl/YRjP/lpfilk13P0aq86dBlVih2NrsmWUFF33GA3aducOc40iaJc2O3Nhe475DK4nMxLkyILdWjECHYwNk8Ku4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hJVBPcwC; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7203c431f93so2850399b3a.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 04:02:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730635350; x=1731240150; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FUkXMfCkR70Uh4iKdLC2cSNlr1iFRoDLX5iaBLAzooI=;
+        b=hJVBPcwCsw9LtJIDvKkvMshxn8/MJmw86JwpnKPSUfM/9it8j1U/IrfUjfVylwpqk8
+         xAUzTaT22wSdlTyqF87Lm3+eB2KkLp1j8Is3eSCN5PiIEJtI80cIAlf+mCgupZMkVSsK
+         8Hoiuq0OsbWyl5R0MtNf/w9GB++4FcP9ZX3b4Sqs5goxJk4rvyGfzheNXAc3aAYopmAe
+         RxkL3WhDU/u0M0EXCNwtXPGJk4Nj5f0wftuYcDIxEcJVNPMlCLuAbkOHZIhv6XxBLzOe
+         HjW1XUniGkBOHl1xGOSPmHywNh69vXjcrVbWN9g3Yc3ytCxEpgyXJQRkWjJksqTG6TQI
+         K50g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730635350; x=1731240150;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FUkXMfCkR70Uh4iKdLC2cSNlr1iFRoDLX5iaBLAzooI=;
+        b=rwJYv9R+16Aw1j1bTuBsj+cCP3hzfVKtzcKtqYsUFO0q1OU5clI0CnutiQ0BIF4fRc
+         gMBVVKmQoqWJRyejhI+LUJkXlar37jJ8jQNIx4v+d94F8zhfHGeS1DPGxF2L2eh1lOfT
+         CeYyGB/EADL4PMNB2cvVpGiYnQke5B9wEIKPvNl//LNm7lpgNbDW8Hgo53mjiJSsjxgs
+         YH8dABgOrIQ1DBRdXTyqxvAyAMWNd/V9AHG84jbFgT8PiBEnAiSvWiL1/YYczJEzZ5sh
+         RsJzzX8P9iem55DMqL8aq4OLOvVM+/rrx9A3QeWZfMcFsnN8A77BP6e48nnyi/2mzZyX
+         7xyw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/jan4ZMXn3pkg1CJUkxfipDY3ZhcD8naUmvos9JZeWpnn6HJJ2W1mxKKUxplQfOaLJ9mSc0KOzfgiVpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGkt3xbhGBGw4070u+GzrsHZrpnm8DVJC1WOitqqxX6q7de4MX
+	b/DMB8ag8eiCZy+2h4VH3fnrHgi6K4otpbY4EoDar99FF86iaYjrVelvvNdc4Q==
+X-Google-Smtp-Source: AGHT+IG67vE3Hy81Qa1sXK1wXZ0XGN5eh5NVCE1J0d5f1x/U0tyMLbeT3PWIyJgXlJE+GgOJ+sNXFQ==
+X-Received: by 2002:a05:6a21:920b:b0:1d9:6ea3:9741 with SMTP id adf61e73a8af0-1db91d440eemr17725699637.4.1730635349968;
+        Sun, 03 Nov 2024 04:02:29 -0800 (PST)
+Received: from thinkpad ([220.158.156.209])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee459f8ee9sm5215196a12.72.2024.11.03.04.02.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 04:02:29 -0800 (PST)
+Date: Sun, 3 Nov 2024 17:32:23 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
+	linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
+Message-ID: <20241103120223.abkwgej4svas4epr@thinkpad>
+References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
+ <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+ <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
+ <3969bae0-eeb8-447a-86a5-dfdac0b136cd@rock-chips.com>
+ <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
+ <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
 
-The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+On Fri, Oct 18, 2024 at 05:20:08PM +0800, Shawn Lin wrote:
+> Hi Ulf,
+> 
+> 在 2024/10/18 17:07, Ulf Hansson 写道:
+> > On Thu, 10 Oct 2024 at 03:21, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+> > > 
+> > > Hi Ulf
+> > > 
+> > > 在 2024/10/9 21:15, Ulf Hansson 写道:
+> > > > [...]
+> > > > 
+> > > > > +
+> > > > > +static int ufs_rockchip_runtime_suspend(struct device *dev)
+> > > > > +{
+> > > > > +       struct ufs_hba *hba = dev_get_drvdata(dev);
+> > > > > +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+> > > > > +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> > > > 
+> > > > pd_to_genpd() isn't safe to use like this. It's solely to be used by
+> > > > genpd provider drivers.
+> > > > 
+> > > > > +
+> > > > > +       clk_disable_unprepare(host->ref_out_clk);
+> > > > > +
+> > > > > +       /*
+> > > > > +        * Shouldn't power down if rpm_lvl is less than level 5.
+> > > > 
+> > > > Can you elaborate on why we must not power-off the power-domain when
+> > > > level is less than 5?
+> > > > 
+> > > 
+> > > Because ufshcd driver assume the controller is active and the link is on
+> > > if level is less than 5. So the default resume policy will not try to
+> > > recover the registers until the first error happened. Otherwise if the
+> > > level is >=5, it assumes the controller is off and the link is down,
+> > > then it will restore the registers and link.
+> > > 
+> > > And the level is changeable via sysfs.
+> > 
+> > Okay, thanks for clarifying.
+> > 
+> > > 
+> > > > What happens if we power-off anyway when the level is less than 5?
+> > > > 
+> > > > > +        * This flag will be passed down to platform power-domain driver
+> > > > > +        * which has the final decision.
+> > > > > +        */
+> > > > > +       if (hba->rpm_lvl < UFS_PM_LVL_5)
+> > > > > +               genpd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
+> > > > > +       else
+> > > > > +               genpd->flags &= ~GENPD_FLAG_RPM_ALWAYS_ON;
+> > > > 
+> > > > The genpd->flags is not supposed to be changed like this - and
+> > > > especially not from a genpd consumer driver.
+> > > > 
+> > > > I am trying to understand a bit more of the use case here. Let's see
+> > > > if that helps me to potentially suggest an alternative approach.
+> > > > 
+> > > 
+> > > I was not familiar with the genpd part, so I haven't come up with
+> > > another solution. It would be great if you can guide me to the right
+> > > way.
+> > 
+> > I have been playing with the existing infrastructure we have at hand
+> > to support this, but I need a few more days to be able to propose
+> > something for you.
+> > 
+> 
+> Much appreciate.
+> 
+> > > 
+> > > > > +
+> > > > > +       return ufshcd_runtime_suspend(dev);
+> > > > > +}
+> > > > > +
+> > > > > +static int ufs_rockchip_runtime_resume(struct device *dev)
+> > > > > +{
+> > > > > +       struct ufs_hba *hba = dev_get_drvdata(dev);
+> > > > > +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+> > > > > +       int err;
+> > > > > +
+> > > > > +       err = clk_prepare_enable(host->ref_out_clk);
+> > > > > +       if (err) {
+> > > > > +               dev_err(hba->dev, "failed to enable ref out clock %d\n", err);
+> > > > > +               return err;
+> > > > > +       }
+> > > > > +
+> > > > > +       reset_control_assert(host->rst);
+> > > > > +       usleep_range(1, 2);
+> > > > > +       reset_control_deassert(host->rst);
+> > > > > +
+> > > > > +       return ufshcd_runtime_resume(dev);
+> > > > > +}
+> > > > > +
+> > > > > +static int ufs_rockchip_system_suspend(struct device *dev)
+> > > > > +{
+> > > > > +       struct ufs_hba *hba = dev_get_drvdata(dev);
+> > > > > +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+> > > > > +
+> > > > > +       /* Pass down desired spm_lvl to Firmware */
+> > > > > +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_CONFIG,
+> > > > > +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0, 0, 0, NULL);
+> > > > 
+> > > > Can you please elaborate on what goes on here? Is this turning off the
+> > > > power-domain that the dev is attached to - or what is actually
+> > > > happening?
+> > > > 
+> > > 
+> > > This smc call is trying to ask firmware not to turn off the power-domian
+> > > that the UFS is attached to and also not to turn off the power of UFS
+> > > conntroller.
+> > 
+> > Okay, thanks for clarifying!
+> > 
+> > A follow up question, don't you need to make a corresponding smc call
+> > to inform the FW that it's okay to turn off the power-domain at some
+> > point?
+> > 
+> 
+> Yes. Each time entering sleep, we teach FW if it need to turn off or keep
+> power-domain, for instance "hba->spm_lvl < 5 ? 1 : 0" , 0 means
+> off and 1 means on.
+> 
 
-  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+We had a requirement to notify the genpd provider from consumer to not turn off
+the power domain during system suspend. So Ulf came up with an API for
+consumers, device_set_wakeup_path() setting the 'dev->power.wakeup_path' which
+will be honored by the genpd core. Will that work for you?
 
-are available in the Git repository at:
+PS: The API naming suggests that the device will be used in wakeup path, which
+may not be true here but the end result will be the same.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.12-rc6
+- Mani
 
-for you to fetch changes up to afb92ad8733ef0a2843cc229e4d96aead80bc429:
-
-  usb: typec: tcpm: restrict SNK_WAIT_CAPABILITIES_TIMEOUT transitions to non self-powered devices (2024-10-29 04:38:00 +0100)
-
-----------------------------------------------------------------
-USB / Thunderbolt fixes for 6.12-rc6
-
-Here are some small USB and Thunderbolt driver fixes for 6.12-rc6 that
-have been sitting in my tree this week.  Included in here are the
-following:
-  - thunderbolt driver fixes for reported issues
-  - USB typec driver fixes
-  - xhci driver fixes for reported problems
-  - dwc2 driver revert for a broken change
-  - usb phy driver fix
-  - usbip tool fix
-
-All of these have been in linux-next this week with no reported issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Amit Sunil Dhamne (1):
-      usb: typec: tcpm: restrict SNK_WAIT_CAPABILITIES_TIMEOUT transitions to non self-powered devices
-
-Basavaraj Natikar (1):
-      xhci: Use pm_runtime_get to prevent RPM on unsupported systems
-
-Faisal Hassan (1):
-      xhci: Fix Link TRB DMA in command ring stopped completion event
-
-Gil Fine (1):
-      thunderbolt: Honor TMU requirements in the domain when setting TMU mode
-
-Greg Kroah-Hartman (1):
-      Merge tag 'thunderbolt-for-v6.12-rc5' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt into usb-linus
-
-Javier Carrasco (4):
-      usb: typec: qcom-pmic-typec: use fwnode_handle_put() to release fwnodes
-      usb: typec: qcom-pmic-typec: fix missing fwnode removal in error path
-      usb: typec: fix unreleased fwnode_handle in typec_port_register_altmodes()
-      usb: typec: use cleanup facility for 'altmodes_node'
-
-Mathias Nyman (1):
-      usb: acpi: fix boot hang due to early incorrect 'tunneled' USB3 device links
-
-Mika Westerberg (1):
-      thunderbolt: Fix KASAN reported stack out-of-bounds read in tb_retimer_scan()
-
-Stefan Wahren (1):
-      Revert "usb: dwc2: Skip clock gating on Broadcom SoCs"
-
-Zijun Hu (1):
-      usb: phy: Fix API devm_usb_put_phy() can not release the phy
-
-Zongmin Zhou (1):
-      usbip: tools: Fix detach_port() invalid port error path
-
- drivers/thunderbolt/retimer.c                 |  5 +--
- drivers/thunderbolt/tb.c                      | 48 +++++++++++++++++++++++----
- drivers/usb/core/usb-acpi.c                   |  4 +--
- drivers/usb/dwc2/params.c                     |  1 -
- drivers/usb/host/xhci-pci.c                   |  6 ++--
- drivers/usb/host/xhci-ring.c                  | 16 ++++-----
- drivers/usb/phy/phy.c                         |  2 +-
- drivers/usb/typec/class.c                     |  6 ++--
- drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c | 10 +++---
- drivers/usb/typec/tcpm/tcpm.c                 | 10 ++++--
- tools/usb/usbip/src/usbip_detach.c            |  1 +
- 11 files changed, 78 insertions(+), 31 deletions(-)
+-- 
+மணிவண்ணன் சதாசிவம்
 
