@@ -1,125 +1,73 @@
-Return-Path: <linux-kernel+bounces-393863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774D69BA673
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:50:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1159BA677
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:54:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE551C20D91
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE102817C8
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87CB17C234;
-	Sun,  3 Nov 2024 15:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B784186E40;
+	Sun,  3 Nov 2024 15:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECRrgRdZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uowakQZC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FB74A1D;
-	Sun,  3 Nov 2024 15:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E5816EC0E;
+	Sun,  3 Nov 2024 15:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730649006; cv=none; b=r9dLK0axsE3AXp3TW/wyMVWKqPNe3HilTY2I+oL2XIbqWQ+kSukbOKLdQlO2JCsf38FtbXTxc8W4c+7PbhOE3fXh6MK9jgBYeaCUATCCqCB3+JVtkUpmxI3+DONhlW8dfyPGD0gizSA09O0VPIPp8io6FI+kwo5uFtyGuupvimQ=
+	t=1730649251; cv=none; b=E7XLcQWOmCGGFqkXaDLlx42bVP7L6CjJOrEFOXoOOoFaHRJzbhwySLC++jJ9YqsxqSD/SKk2VTNpSwYl+n2Xqbg8/EflA/cV5k0DXBasWk2eEp0WWbhj/3nQ9/E0NsYjD7/GjLb3pjOdcRHR9KpMVy2EAVdneDzQERyByUnFJ0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730649006; c=relaxed/simple;
-	bh=AW4Knij9ewvLsBxLY6FtOGeMfl29M21+rl9tqeA6PmA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=i7nNvfGjwv9YGH0qDe7oVqTxFZ26jVBCJYQ4o4yQZ8x9EYxlOaD2vyy8G/MQCgpWL6mpsd1fE5mBj9yj6PzCSdBxg0RKEn9rms8LBHo3vfz2i+CrXZA0qI8fDJZTlPBWejWJSyvnMW8lIK6M+MOXYyfJaQF9lfQZXKKI8gO7f+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECRrgRdZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6AC5C4CECD;
-	Sun,  3 Nov 2024 15:50:05 +0000 (UTC)
+	s=arc-20240116; t=1730649251; c=relaxed/simple;
+	bh=6sv0lXKBraM8bsqSE/nFJD8+HhevcGipFf9cWOaUdqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ca0xTzvnOzF/x+FaluLOIQgb9skYHYHpGq3WdHNRqINakdgS1oVB06MbGpbQqh5vS8iBhySCQEJfZDisl7fFr9ABfdBIR4Os/bbfr+UAxUAgSxBx5m86jtzBTNHrb72kTlqXxyykiKnVGCJS/WWcostmCbxBPUhV5bcd10+Egmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uowakQZC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 992F2C4CECD;
+	Sun,  3 Nov 2024 15:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730649005;
-	bh=AW4Knij9ewvLsBxLY6FtOGeMfl29M21+rl9tqeA6PmA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ECRrgRdZjGN9hwJkC+gxWigdsnMdhm79OZPLc9sixVG0wTk69PWJHhLfpRIz7kJ0S
-	 iAzE9QAeFCoCbJ+sjInyxz940QRxuMVZ1TJOyfR67ALFEulh3PHX95BOO2X34qv8T0
-	 fB/lZwb5NiNWr+1LCR4tzhQPOH10Cm31wl4wBYPDuUwsWEnm/yXxRJ5+ndUy39L1FS
-	 +A6IcEg9Qvv53hcvf2nXPQfHLT/oScFfjFas+2nUQsSaZs3+gZtYGngSLsxNwWvNbw
-	 CsOjm9aoxfKlGrEacncB2GPkQBEKabeTLR6p9jNKJXOsjyPmrYYiRt6GFkav/TW87s
-	 tS9Oq3TFPLZkQ==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb559b0b00so27777581fa.0;
-        Sun, 03 Nov 2024 07:50:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWGPXIW1iztAz7B+qC8peEnu3VDxqquWCtdBO7N2hRLn5POayB8Lv5IgStptkNJHyNf0Vpd9+HXg6muUo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWTI7tfIWat4iq72PqWzxMQcKTAYNrvMyNz+PT2RRBetmIrQ1X
-	9wxq6sOtKLji6o+CoZc8/7kU6qeSq7TYDZ91xbbJTN1PGl8U3SydD5YlTMudJs7Jj9jX5btf8T5
-	ecqV2b1gXzikiwb/AN6FTyT47kVU=
-X-Google-Smtp-Source: AGHT+IEH6qS/+D0U6lTqkeMJhdBXb7uQc9Gm7F9sLTblHGebkuwIQvuzqlWHPiphvFNAaJ8jCKCS9akdi6AUDlH9nyE=
-X-Received: by 2002:a2e:a80b:0:b0:2fa:d4c1:3b71 with SMTP id
- 38308e7fff4ca-2fedb7c817cmr46315621fa.19.1730649004405; Sun, 03 Nov 2024
- 07:50:04 -0800 (PST)
+	s=k20201202; t=1730649251;
+	bh=6sv0lXKBraM8bsqSE/nFJD8+HhevcGipFf9cWOaUdqY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uowakQZCdEqIfu957nYgHU207R/xlNLbUI09F1zw5JJfhQ/3seYpZlwkxaArTbc0v
+	 i4GGtrdTZXrlKXuaguq7Edh96jPNf1xyHJbxxcrLjUx7W46RqjLcwyQBywQh+lfBit
+	 yEOkn+s01suVXWQ3byl4F2G5mxEb1nDAsbOA9ZDSQvZctM7StOQwPh5njr7vcClBNV
+	 1xhgDy80svDKlyw9hz66UJZB/XIFtJ5A+hbC8+E/c60LxpUYlJuLUYVp32XYzAh8/w
+	 oERRbgzQDIHySFemb69i/NhLKNlKdEchxIcwQx+y7UYyBsYajhPnmQAWHOsGHSez/N
+	 o1ctFPLUlIDhQ==
+Date: Sun, 3 Nov 2024 07:54:09 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Daniel Xu <dxu@dxuuu.xyz>
+Cc: davem@davemloft.net, michael.chan@broadcom.com, edumazet@google.com,
+ andrew+netdev@lunn.ch, vikas.gupta@broadcom.com,
+ andrew.gospodarek@broadcom.com, pabeni@redhat.com,
+ pavan.chebbi@broadcom.com, martin.lau@linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net] bnxt_en: ethtool: Fix ip[6] ntuple rule
+ verification
+Message-ID: <20241103075409.0d31e277@kernel.org>
+In-Reply-To: <219859e674ef7a9d8af9ab4f64a9095580f04bcc.1730436983.git.dxu@dxuuu.xyz>
+References: <219859e674ef7a9d8af9ab4f64a9095580f04bcc.1730436983.git.dxu@dxuuu.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 4 Nov 2024 00:49:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARe1AnzxumbfOD7y2CpRXSa59RvsEDTw5YAjCTim9-5GQ@mail.gmail.com>
-Message-ID: <CAK7LNARe1AnzxumbfOD7y2CpRXSa59RvsEDTw5YAjCTim9-5GQ@mail.gmail.com>
-Subject: [GIT PULL] Kbuild fixes for v6.12-rc6
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello Linus,
+On Thu, 31 Oct 2024 22:58:30 -0600 Daniel Xu wrote:
+> The reason was that all the l4proto validation was being run despite the
+> l4proto mask being set to 0x0.  Fix by only running l4proto validation
+> when mask is set.
 
-Please pull some Kbuild fixes.
-
-Thank you.
-
-
-
-The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
-
-  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-fixes-v6.12-2
-
-for you to fetch changes up to 77dc55a978e69625f9718460012e5ef0172dc4de:
-
-  modpost: fix input MODULE_DEVICE_TABLE() built for 64-bit on 32-bit
-host (2024-11-03 23:58:56 +0900)
-
-----------------------------------------------------------------
-Kbuild fixes for v6.12 (2nd)
-
- - Fix a memory leak in modpost
-
- - Resolve build issues when cross-compiling RPM and Debian packages
-
- - Fix another regression in Kconfig
-
- - Fix incorrect MODULE_ALIAS() output in modpost
-
-----------------------------------------------------------------
-Elena Salomatkina (1):
-      sumversion: Fix a memory leak in get_src_version()
-
-Masahiro Yamada (6):
-      kbuild: rpm-pkg: disable kernel-devel package when cross-compiling
-      kbuild: deb-pkg: add pkg.linux-upstream.nokernelheaders build profile
-      kbuild: deb-pkg: add pkg.linux-upstream.nokerneldbg build profile
-      kconfig: show sub-menu entries even if the prompt is hidden
-      modpost: fix acpi MODULE_DEVICE_TABLE built with mismatched endianness
-      modpost: fix input MODULE_DEVICE_TABLE() built for 64-bit on 32-bit host
-
- scripts/Makefile.package             |  7 ++++++-
- scripts/kconfig/menu.c               | 13 ++++++++++++-
- scripts/mod/file2alias.c             | 12 ++++++------
- scripts/mod/sumversion.c             |  5 +++--
- scripts/package/builddeb             |  2 +-
- scripts/package/install-extmod-build |  6 ++----
- scripts/package/mkdebian             | 10 +++++++++-
- 7 files changed, 39 insertions(+), 16 deletions(-)
-
--- 
-Best Regards
-Masahiro Yamada
+Limitation is odd, but it's not a regression nor does it violate 
+the uAPI so I think net-next would be appropriate, no Fixes tag
+(you can say "commit xyz ("..") added.." as the reference).
 
