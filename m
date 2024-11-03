@@ -1,67 +1,56 @@
-Return-Path: <linux-kernel+bounces-393868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2265D9BA687
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 728DA9BA685
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:05:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46B151C20CFA
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:06:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B0E21C20C8E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659D9186E40;
-	Sun,  3 Nov 2024 16:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E098E185955;
+	Sun,  3 Nov 2024 16:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CDNu1dBs"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jLmMv8Pa"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806B517C225;
-	Sun,  3 Nov 2024 16:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09CF7081E
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 16:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730649973; cv=none; b=DvVnrG5JyZ5rv1EANe5gfXrqla3wXWDyBW5zyWJl4HCYwn+TITt9LZMqDWo0nd8TAnfeqfq3XbZikXvvlq95ncYEpsaILXjQqoa1NE6Aqgq+Ek1QRwJqt4hG6U76qLEqDk47P75yJ82S0GQsswd/vsiRq/CbINIlEim3Yzxr5GY=
+	t=1730649942; cv=none; b=lpZuYqlmNW31NkdRNvonVCdmQ/6w1X9k2ZTz+M/sWPcRtmobg4epfS7dNORb7uCByHTmaAOrZ+aNsPV60H0PKV5pO7I6TQgI+5F5xUchP8UsbYBLVEFZ5pRwjYuouPzm+MGjGk9D2OxjjORtYfFR92dIpIOiIDBGcNfNj8ljn5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730649973; c=relaxed/simple;
-	bh=a1CL7nZDwxH2JJ+sVL+MznUaUioo4sCtbj+JOdKvfJU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yb/71FMqv5HfewZhiaefTqYZS//gNAD0wZeE9TVfOoQaGmprINkFjUs7exlEt1DsdP8h1pp0obT2s1YpsMJ3m8odMO6K1QJf2S4ucxIL0ZPF1rQWwZYVTT14nPp1RMJz25cF5V8s9SDxdTM6T1aoYTVEUbV+/R7CNeZge4AZWg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CDNu1dBs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3FnO4B010920;
-	Sun, 3 Nov 2024 16:05:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=vySMAgNa6I+8OJZVe/9XBT
-	orqwJ2DVPTOUBP8+qMTMw=; b=CDNu1dBsEk1cnkzeJ+2FgEWdyyWtvX3G43Tlll
-	R9HKaRXz4GC9O/ngDcg4PcwJhX5lNyOpp28niQe5CZK6AosfLuQVPOgQaTCZaVyC
-	WPni2vQ9q3ZNO95+hDKkr5aKoEqkbQHfJCC8GR00U2RAgetkzIbt195R9kSIynj/
-	MCRthn5S13IW3mizFZieNIYnWgIQ6lUM/mYDjOmW9C9V5FGYUSPIVcQFSJW3GG7R
-	lt3XQBcMLQ/7IjVL8KI4ysp1gIU823RfqKhYKHacUwsA6uy+zGxfasul4Uj1YV3Z
-	tBbuJds337XfB6BDnI1p+pADN/bNErshutt8GRmRbhS/i5BQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd5cj810-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 03 Nov 2024 16:05:52 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A3G5pfp004231
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 3 Nov 2024 16:05:51 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sun, 3 Nov 2024 08:05:49 -0800
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Mukesh Ojha
-	<quic_mojha@quicinc.com>
-Subject: [PATCH v3] leds: class: Protect brightness_show() with led_cdev->led_access mutex
-Date: Sun, 3 Nov 2024 21:35:27 +0530
-Message-ID: <20241103160527.82487-1-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730649942; c=relaxed/simple;
+	bh=KZ+iLQj0T2o2WZghVKDpgCmaCn3Bxc5QF4QHzV+oTwc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g7Umr/ASLfGaDcJBci/YF2sOyQf1AzlglOFO3F/Udde54uFi03p+AmV6eoiN8e8Ii+z5ALpnZuAZz6rv39CURSHDrEEeyuKn6eyOz2xjGEgpFq3czwBY6Utj6+86GwI6Hk5ldNSnZLfZEi/kXMdEui25iW2pgb+1doZL+/RPSeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jLmMv8Pa; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=sLYvPhK748ifX38GduHWW9veoVLTSotaJiOgpQyoN+k=; b=jLmMv8PaWG1t0T0z
+	Qd+KFpQ+0jhZo+xpu4fo4yNRYd1uRFN7WrBw9gvmETR5hEOodYvv3RZUrikZXHJI9aBPSjIbDkWbn
+	2eHq9ptYhH/FjhnvJVRC7vICwpp0icDtfdsYJ7yDu2VSABDfQUOCL9LSiSJD60UWnMPpyBy/qOqPc
+	drrYzY6Ix0gTWdQfddC7TmE522BnskmfuvTHR2lmPY888q/NKtnCbqBepEkBKqnlnyP58JESLtvm3
+	YENIlrCgDRtiDNq40TVdUeJL+7wJ0H98DO46cnCuB9oCYC8ooeZ3UArOZTYG4wBjrOcmYmUzgxgv4
+	t892bGhEdcpJC3sNeQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1t7d6e-00FBTA-1p;
+	Sun, 03 Nov 2024 16:05:36 +0000
+From: linux@treblig.org
+To: myungjoo.ham@samsung.com,
+	cw00.choi@samsung.com
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] extcon: Remove deadcode
+Date: Sun,  3 Nov 2024 16:05:35 +0000
+Message-ID: <20241103160535.268705-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,187 +58,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: e7lh0d3YgPegGp3l9aEVxEWqnA7njukx
-X-Proofpoint-GUID: e7lh0d3YgPegGp3l9aEVxEWqnA7njukx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 mlxscore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0
- suspectscore=0 adultscore=0 clxscore=1015 phishscore=0 malwarescore=0
- mlxlogscore=705 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411030145
 
-There is NULL pointer issue observed if from Process A where hid device
-being added which results in adding a led_cdev addition and later a
-another call to access of led_cdev attribute from Process B can result
-in NULL pointer issue.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Use mutex led_cdev->led_access to protect access to led->cdev and its
-attribute inside brightness_show() and max_brightness_show() and also
-update the comment for mutex that it should be used to protect the led
-class device fields.
+extcon_get_edev_name() has been unused since it was added in 2015 by
+commit 707d7550875a ("extcon: Add extcon_get_edev_name() API to get the
+extcon device name")
 
-	Process A 				Process B
+extcon_get_property_capability() has been unused since it was added
+in 2016 by
+commit ceaa98f442cf ("extcon: Add the support for the capability of each
+property")
+(It seems everyone just uses extcon_get_property)
 
- kthread+0x114
- worker_thread+0x244
- process_scheduled_works+0x248
- uhid_device_add_worker+0x24
- hid_add_device+0x120
- device_add+0x268
- bus_probe_device+0x94
- device_initial_probe+0x14
- __device_attach+0xfc
- bus_for_each_drv+0x10c
- __device_attach_driver+0x14c
- driver_probe_device+0x3c
- __driver_probe_device+0xa0
- really_probe+0x190
- hid_device_probe+0x130
- ps_probe+0x990
- ps_led_register+0x94
- devm_led_classdev_register_ext+0x58
- led_classdev_register_ext+0x1f8
- device_create_with_groups+0x48
- device_create_groups_vargs+0xc8
- device_add+0x244
- kobject_uevent+0x14
- kobject_uevent_env[jt]+0x224
- mutex_unlock[jt]+0xc4
- __mutex_unlock_slowpath+0xd4
- wake_up_q+0x70
- try_to_wake_up[jt]+0x48c
- preempt_schedule_common+0x28
- __schedule+0x628
- __switch_to+0x174
-						el0t_64_sync+0x1a8/0x1ac
-						el0t_64_sync_handler+0x68/0xbc
-						el0_svc+0x38/0x68
-						do_el0_svc+0x1c/0x28
-						el0_svc_common+0x80/0xe0
-						invoke_syscall+0x58/0x114
-						__arm64_sys_read+0x1c/0x2c
-						ksys_read+0x78/0xe8
-						vfs_read+0x1e0/0x2c8
-						kernfs_fop_read_iter+0x68/0x1b4
-						seq_read_iter+0x158/0x4ec
-						kernfs_seq_show+0x44/0x54
-						sysfs_kf_seq_show+0xb4/0x130
-						dev_attr_show+0x38/0x74
-						brightness_show+0x20/0x4c
-						dualshock4_led_get_brightness+0xc/0x74
+extcon_set_property_sync() has been unused since it was added in 2016
+by
+commit a580982f0836 ("extcon: Add the synchronization extcon APIs to
+support the notification")
+Everyone seems to use the none _sync version, and there's one place
+where they just call sync after it.
 
-[ 3313.874295][ T4013] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
-[ 3313.874301][ T4013] Mem abort info:
-[ 3313.874303][ T4013]   ESR = 0x0000000096000006
-[ 3313.874305][ T4013]   EC = 0x25: DABT (current EL), IL = 32 bits
-[ 3313.874307][ T4013]   SET = 0, FnV = 0
-[ 3313.874309][ T4013]   EA = 0, S1PTW = 0
-[ 3313.874311][ T4013]   FSC = 0x06: level 2 translation fault
-[ 3313.874313][ T4013] Data abort info:
-[ 3313.874314][ T4013]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-[ 3313.874316][ T4013]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[ 3313.874318][ T4013]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008f2b0a000
-..
+Remove them.
 
-[ 3313.874332][ T4013] Dumping ftrace buffer:
-[ 3313.874334][ T4013]    (ftrace buffer empty)
-..
-..
-[ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
-[ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
-[ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
-[ 3313.874656][ T4013] sp : ffffffc0b910bbd0
-..
-..
-[ 3313.874685][ T4013] Call trace:
-[ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
-[ 3313.874690][ T4013]  brightness_show+0x20/0x4c
-[ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
-[ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
-[ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
-[ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
-[ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
-[ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
-[ 3313.874711][ T4013]  ksys_read+0x78/0xe8
-[ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
-[ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
-[ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
-[ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
-[ 3313.874727][ T4013]  el0_svc+0x38/0x68
-[ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
-[ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
-
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
-Changes in v3:
- - s/Class/class in comment for variable led_access.
+ drivers/extcon/extcon.c         | 67 ---------------------------------
+ include/linux/extcon-provider.h | 10 -----
+ include/linux/extcon.h          | 20 +---------
+ 3 files changed, 1 insertion(+), 96 deletions(-)
 
-Changes in v2:
- - Updated the comment for led_access mutex lock.
- - Also added mutex protection for max_brightness_show().
-
- drivers/leds/led-class.c | 14 +++++++++++---
- include/linux/leds.h     |  2 +-
- 2 files changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 06b97fd49ad9..f69f4e928d61 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -29,11 +29,14 @@ static ssize_t brightness_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
+diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+index e7f55c021e56..41a31cc46004 100644
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -755,63 +755,6 @@ int extcon_set_property(struct extcon_dev *edev, unsigned int id,
+ }
+ EXPORT_SYMBOL_GPL(extcon_set_property);
+ 
+-/**
+- * extcon_set_property_sync() - Set property of an external connector with sync.
+- * @edev:	the extcon device
+- * @id:		the unique id indicating an external connector
+- * @prop:	the property id indicating an extcon property
+- * @prop_val:	the pointer including the new value of extcon property
+- *
+- * Note that when setting the property value of external connector,
+- * the external connector should be attached. The each property should
+- * be included in the list of supported properties according to extcon type.
+- *
+- * Returns 0 if success or error number if fail.
+- */
+-int extcon_set_property_sync(struct extcon_dev *edev, unsigned int id,
+-				unsigned int prop,
+-				union extcon_property_value prop_val)
+-{
+-	int ret;
+-
+-	ret = extcon_set_property(edev, id, prop, prop_val);
+-	if (ret < 0)
+-		return ret;
+-
+-	return extcon_sync(edev, id);
+-}
+-EXPORT_SYMBOL_GPL(extcon_set_property_sync);
+-
+-/**
+- * extcon_get_property_capability() - Get the capability of the property
+- *					for an external connector.
+- * @edev:	the extcon device
+- * @id:		the unique id indicating an external connector
+- * @prop:	the property id indicating an extcon property
+- *
+- * Returns 1 if the property is available or 0 if not available.
+- */
+-int extcon_get_property_capability(struct extcon_dev *edev, unsigned int id,
+-					unsigned int prop)
+-{
+-	int index;
+-
+-	if (!edev)
+-		return -EINVAL;
+-
+-	/* Check whether the property is supported or not */
+-	if (!is_extcon_property_supported(id, prop))
+-		return -EINVAL;
+-
+-	/* Find the cable index of external connector by using id */
+-	index = find_cable_index_by_id(edev, id);
+-	if (index < 0)
+-		return index;
+-
+-	return is_extcon_property_capability(edev, id, index, prop);
+-}
+-EXPORT_SYMBOL_GPL(extcon_get_property_capability);
+-
+ /**
+  * extcon_set_property_capability() - Set the capability of the property
+  *					for an external connector.
+@@ -1465,16 +1408,6 @@ struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev, int index)
+ EXPORT_SYMBOL_GPL(extcon_find_edev_by_node);
+ EXPORT_SYMBOL_GPL(extcon_get_edev_by_phandle);
+ 
+-/**
+- * extcon_get_edev_name() - Get the name of the extcon device.
+- * @edev:	the extcon device
+- */
+-const char *extcon_get_edev_name(struct extcon_dev *edev)
+-{
+-	return !edev ? NULL : edev->name;
+-}
+-EXPORT_SYMBOL_GPL(extcon_get_edev_name);
+-
+ static int __init extcon_class_init(void)
  {
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	unsigned int brightness;
+ 	return create_extcon_class();
+diff --git a/include/linux/extcon-provider.h b/include/linux/extcon-provider.h
+index fa70945f4e6b..4ed3262f4386 100644
+--- a/include/linux/extcon-provider.h
++++ b/include/linux/extcon-provider.h
+@@ -55,9 +55,6 @@ int extcon_set_state_sync(struct extcon_dev *edev, unsigned int id,
+ int extcon_set_property(struct extcon_dev *edev, unsigned int id,
+ 				unsigned int prop,
+ 				union extcon_property_value prop_val);
+-int extcon_set_property_sync(struct extcon_dev *edev, unsigned int id,
+-				unsigned int prop,
+-				union extcon_property_value prop_val);
+ int extcon_set_property_capability(struct extcon_dev *edev,
+ 				unsigned int id, unsigned int prop);
  
--	/* no lock needed for this */
-+	mutex_lock(&led_cdev->led_access);
- 	led_update_brightness(led_cdev);
-+	brightness = led_cdev->brightness;
-+	mutex_unlock(&led_cdev->led_access);
- 
--	return sprintf(buf, "%u\n", led_cdev->brightness);
-+	return sprintf(buf, "%u\n", brightness);
+@@ -118,13 +115,6 @@ static inline int extcon_set_property(struct extcon_dev *edev, unsigned int id,
+ 	return 0;
  }
  
- static ssize_t brightness_store(struct device *dev,
-@@ -70,8 +73,13 @@ static ssize_t max_brightness_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
+-static inline int extcon_set_property_sync(struct extcon_dev *edev,
+-				unsigned int id, unsigned int prop,
+-				union extcon_property_value prop_val)
+-{
+-	return 0;
+-}
+-
+ static inline int extcon_set_property_capability(struct extcon_dev *edev,
+ 				unsigned int id, unsigned int prop)
  {
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	unsigned int max_brightness;
-+
-+	mutex_lock(&led_cdev->led_access);
-+	max_brightness = led_cdev->max_brightness;
-+	mutex_unlock(&led_cdev->led_access);
+diff --git a/include/linux/extcon.h b/include/linux/extcon.h
+index e596a0abcb27..eb55b25e74ae 100644
+--- a/include/linux/extcon.h
++++ b/include/linux/extcon.h
+@@ -175,19 +175,14 @@ struct extcon_dev;
+ int extcon_get_state(struct extcon_dev *edev, unsigned int id);
  
--	return sprintf(buf, "%u\n", led_cdev->max_brightness);
-+	return sprintf(buf, "%u\n", max_brightness);
+ /*
+- * Following APIs get the property of each external connector.
++ * Following API get the property of each external connector.
+  * The 'id' argument indicates the defined external connector
+  * and the 'prop' indicates the extcon property.
+  *
+- * And extcon_get_property_capability() get the capability of the property
+- * for each external connector. They are used to get the capability of the
+- * property of each external connector based on the id and property.
+  */
+ int extcon_get_property(struct extcon_dev *edev, unsigned int id,
+ 				unsigned int prop,
+ 				union extcon_property_value *prop_val);
+-int extcon_get_property_capability(struct extcon_dev *edev,
+-				unsigned int id, unsigned int prop);
+ 
+ /*
+  * Following APIs register the notifier block in order to detect
+@@ -228,9 +223,6 @@ struct extcon_dev *extcon_find_edev_by_node(struct device_node *node);
+ struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev,
+ 						     int index);
+ 
+-/* Following API get the name of extcon device. */
+-const char *extcon_get_edev_name(struct extcon_dev *edev);
+-
+ #else /* CONFIG_EXTCON */
+ static inline int extcon_get_state(struct extcon_dev *edev, unsigned int id)
+ {
+@@ -244,12 +236,6 @@ static inline int extcon_get_property(struct extcon_dev *edev, unsigned int id,
+ 	return 0;
  }
- static DEVICE_ATTR_RO(max_brightness);
  
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index e5968c3ed4ae..2337f516fa7c 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -238,7 +238,7 @@ struct led_classdev {
- 	struct kernfs_node	*brightness_hw_changed_kn;
- #endif
+-static inline int extcon_get_property_capability(struct extcon_dev *edev,
+-				unsigned int id, unsigned int prop)
+-{
+-	return 0;
+-}
+-
+ static inline int extcon_register_notifier(struct extcon_dev *edev,
+ 				unsigned int id, struct notifier_block *nb)
+ {
+@@ -312,10 +298,6 @@ static inline struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev,
+ 	return ERR_PTR(-ENODEV);
+ }
  
--	/* Ensures consistent access to the LED Flash Class device */
-+	/* Ensures consistent access to the LED class device */
- 	struct mutex		led_access;
- };
+-static inline const char *extcon_get_edev_name(struct extcon_dev *edev)
+-{
+-	return NULL;
+-}
+ #endif /* CONFIG_EXTCON */
  
+ /*
 -- 
-2.34.1
+2.47.0
 
 
