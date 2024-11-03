@@ -1,105 +1,132 @@
-Return-Path: <linux-kernel+bounces-393765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C991C9BA4F9
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 10:47:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5160D9BA4FC
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 10:48:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53491B218EC
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:47:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFFD0B219CD
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC4B33FE;
-	Sun,  3 Nov 2024 09:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A73F1632EE;
+	Sun,  3 Nov 2024 09:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+T+sFdG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLR5e8xO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D397A1632D4;
-	Sun,  3 Nov 2024 09:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D35015444E;
+	Sun,  3 Nov 2024 09:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730627211; cv=none; b=KNWrwU2fsCVxnHGvli1dpwHmYOPPF+DZ6+VFJkfkXOaPwGj2UXiczTmcSt2TrhdS1kgMIvcy2KbCOEa/uJ0nhUAhPLWYjjDq9H1EkNNxd/WlW0pgZFePgqX39tETcsjcplNOs8H+Uedt63H/twAqZD6pwVygxPatDQTztC4ZY7Q=
+	t=1730627272; cv=none; b=bqLa15AzUpaosGfuw/gtcpkZu6/SYh/Y2tWfEzODLRgGzhpcngR8Eh/2rBBKc9vnFFCFeLqChpR8RGseY7b84z1dD1XoZjUw/FIZ+xjMPpXwL4/kgCG35i4OIF61vHAFuxoa11BYLs5E+tzGlJh/g5x4nLIPPNCpULD8xZlTBSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730627211; c=relaxed/simple;
-	bh=mnBM43ZNNEFrwyTfSqovAUh0lCbqk6Itz7ehWw9irSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DrgTf+n+VFc7H1Xfd6mtN3GdlGdA6BR4nH7JFgTw6Mz51uazpcNBwmwOk31VifSjuLUBADhYpOdmGjHAtaKGZOfJDgozVvDtUOajDJSXwzA+LU00LGLajzfOE6WZYqKSfkYmLVEJfZBX4wRN0st94ZMXsNaYxh4jAIenyOeqpQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+T+sFdG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 759D0C4CECD;
-	Sun,  3 Nov 2024 09:46:49 +0000 (UTC)
+	s=arc-20240116; t=1730627272; c=relaxed/simple;
+	bh=5wMdD4MvA4Aq14GVFIycl91to3NVJjqw3DBsbYcAvok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h4BxWsF8d6TatO89Zv1Q2ZcKwsYgZjJEmttq9sgWtctOWc1+wgvTU3hfY7Ix2HqKKnY3vhxAFHaG3YRKcSILZAcZkaPBrsjiiJVXekQbqj6QJotdTIEAXetF4PLvPZB4LvAX4VB0ajgDKJA9a6/QCBeztcMYD+QzTagTj9Q3o9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLR5e8xO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0035DC4AF09;
+	Sun,  3 Nov 2024 09:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730627210;
-	bh=mnBM43ZNNEFrwyTfSqovAUh0lCbqk6Itz7ehWw9irSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p+T+sFdGJrzI+6nzpxDgliHwNQuzQ9331ss9n4rhB2LIH5NWNcN9KK881c5WRERBv
-	 84wd/ThSc0Hqvf41qFs38zCM64TzaFi0dlKMeXFv4Fo3PxSHkB1y/XgloOP3R+3/SM
-	 +yrVr4+tvlAD3XtYQxvP5jVubV+JezKoqFVFANDf8xbQ/gc/89KIW80hOi4mnH/3Vl
-	 xSAu2pSEii0WPnZlGerXcx5Wm93EMm8myVx/ol/wGkeqlbZgeBz3TSLp8Ni6X06+sX
-	 9ulVOZBYzE8ql6Z8x3BVbp8dLFwf9tnpUcqO3h5orx3JxqiOn7WW4JWe3rgQaVFGOP
-	 hLGysHRi+icYA==
-Date: Sun, 3 Nov 2024 10:46:46 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	andriy.shevchenko@linux.intel.com, anshulusr@gmail.com, gustavograzs@gmail.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/7] dt-bindings: iio: bosch,bme680: Add supply
- properties
-Message-ID: <6sucdv4k5jdovqgtaemeer4cnluvnl3xgyn57mo3elgwdmojrx@phu4gowaqtuv>
-References: <20241102131311.36210-1-vassilisamir@gmail.com>
- <20241102131311.36210-6-vassilisamir@gmail.com>
- <20241102153315.2175fd5b@jic23-huawei>
+	s=k20201202; t=1730627272;
+	bh=5wMdD4MvA4Aq14GVFIycl91to3NVJjqw3DBsbYcAvok=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YLR5e8xOFdlTJzc5jsdwXJGyxjusE6yDsgjUQibFhM9k6uIQB/rG7ZVWfmUDUWL5C
+	 SlYZqaQ0crjlF2mjsg/s+Ag1HU+gr6EzXhI8OkFtKelek7Hpit/5OS7KfEQOLpNjtO
+	 HmUzz0e3nnwXng+C+u18aoOzaf5BvmWUxlNz4MtvhUP5FcJhzq0kBqO0/Mau8xfO9Z
+	 w4jBQp4zR3qAjr2KCJnsUyHa676Eai0s7R46nhIIE4hp9XOGPt91iRsoDFCh45O73h
+	 L2mJA5hy6S9WzqINdycUML5pUY/YzbEhy/2Tt5evGWhBKQyQTu9v/2gK7Rvt9Y7u76
+	 i3Q3AV7Hs3axw==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb3110b964so27448581fa.1;
+        Sun, 03 Nov 2024 01:47:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVUWm9pT9Qv+kn2zcMVPz9OqahDT3CqljwzjZvwqqUZT/W1AKmbXnLGGtgdS2ZAZMIBiusUjXy20po1jUXE@vger.kernel.org, AJvYcCXXVZ3Eigez6F16YIP5pbhFC/WLcWs7erN5oN3eSlsL5Pcpd7pJTDCzDG7d73zBLE5J99OdIUwawDcsDDQf@vger.kernel.org, AJvYcCXha6GkRtU9HMZgTQCCoQDXCuD29SrZs2ft1bgyywToimP+BiOBCnb/vAU7yQUgBTAFSP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM9dzRdvMDuYzm0fcfqC/5cO0JPWFWAOVhH7ms21uXxz9PAaPC
+	dFXw3A+ygYorL8Hirsq1DtrMzv5MkFQhzVp17ooUYCZViFJa1z1mueSEo5ZmnpcPQX3SnEaSt+a
+	XEtsTTjhHivRm+uotzt3sro+O1F0=
+X-Google-Smtp-Source: AGHT+IG9uZmCTLrhDsEkTY+lW8Pzm7vZdbBNuA+2oPqAkB4FQHNEz9xsU5oB49958S710kwniTVIrwqVamRNmiOCp8I=
+X-Received: by 2002:a2e:a586:0:b0:2fb:5ebe:ed40 with SMTP id
+ 38308e7fff4ca-2fedb781c43mr40604211fa.15.1730627270574; Sun, 03 Nov 2024
+ 01:47:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241102153315.2175fd5b@jic23-huawei>
+References: <20241102120533.1592277-1-admin@ptr1337.dev>
+In-Reply-To: <20241102120533.1592277-1-admin@ptr1337.dev>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 3 Nov 2024 18:47:14 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ=sCsTXB_O58W=AH=k8Vqzoi+hh6-BKhEjZYh-+xCvBQ@mail.gmail.com>
+Message-ID: <CAK7LNAQ=sCsTXB_O58W=AH=k8Vqzoi+hh6-BKhEjZYh-+xCvBQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: add resolve_btfids to pacman PKGBUILD
+To: Peter Jung <admin@ptr1337.dev>
+Cc: jose.fernandez@linux.dev, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Christian Heusel <christian@heusel.eu>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 02, 2024 at 03:33:15PM +0000, Jonathan Cameron wrote:
-> On Sat,  2 Nov 2024 14:13:09 +0100
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > Extend dt-binding for BME680 gas sensor device. The device incorporates
-> > as well temperature, pressure and relative humidity sensors.
-> This description should make it clear it is moving from trivial-devices.yaml
-> 
-> dt-bindings: iio: bosch,bme680: Move from trivial-bindings and add missing supplies.
-> 
-> Then say a little more on why you are moving it.
-> 
-> > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> 
-> There was an open question on the previous version about
-> setting the supplies as required (which I see you've removed).
-> My understanding previously was that it is fine to make that change
-> in a binding if it reflects supplies that are required to be enabled
-> for the device to function at all.  If there were previously missing
-> that's a binding bug we should fix.
-> 
-> I'd like a clarification from the DT binding maintainers on that.
-> Obviously doesn't work for other users of dt bindings but in
-> Linux this would be fine as they were already on for any board
-> that worked and the regulator framework will through us a fake
-> regulator for cases like this.
-> 
-> https://lore.kernel.org/all/20241022182451.00007ac0@Huawei.com/
-> 
-> Jonathan
+On Sat, Nov 2, 2024 at 9:06=E2=80=AFPM Peter Jung <admin@ptr1337.dev> wrote=
+:
+>
+> If the config is using DEBUG_INFO_BTF, it is required to,
+> package resolve_btfids with.
+> Compiling dkms modules will fail otherwise.
+>
+> Add a check, if resolve_btfids is present and then package it, if require=
+d.
+>
+> Signed-off-by: Peter Jung <admin@ptr1337.dev>
+> ---
+>  scripts/package/PKGBUILD | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> index f83493838cf9..4010899652b8 100644
+> --- a/scripts/package/PKGBUILD
+> +++ b/scripts/package/PKGBUILD
+> @@ -91,6 +91,11 @@ _package-headers() {
+>                 "${srctree}/scripts/package/install-extmod-build" "${buil=
+ddir}"
+>         fi
+>
+> +       # required when DEBUG_INFO_BTF_MODULES is enabled
+> +       if [ -f tools/bpf/resolve_btfids/resolve_btfids ]; then
+> +               install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bp=
+f/resolve_btfids/resolve_btfids
+> +       fi
+> +
 
-That was Rob's objection so I will leave it to him, but putting my two
-cents in for Linux it is not an ABI break because missing regulator
-supplies are substituted with dummy ones. Unless something changed...
 
-Best regards,
-Krzysztof
+This is not the right place.
 
+scripts/package/install-extmod-build is a script to set up
+the build environment to build external modules.
+It is shared by rpm-pkg, deb-pkg, and pacman-pkg.
+
+
+https://github.com/torvalds/linux/blob/v6.12-rc5/scripts/package/install-ex=
+tmod-build#L34
+
+You will see how objtool is copied.
+
+
+
+
+(Anyway, it depends on your urgency.
+My hope is to support objtool and resolve_btfids in more generic ways.)
+
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
