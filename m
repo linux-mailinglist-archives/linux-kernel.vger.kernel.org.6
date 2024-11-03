@@ -1,182 +1,87 @@
-Return-Path: <linux-kernel+bounces-393829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D18B9BA5E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:23:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 994A09BA5EF
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:33:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F9DA1F217D8
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A10D1F21796
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8263171E55;
-	Sun,  3 Nov 2024 14:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="GP5K9YSc"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF8C169AC5;
+	Sun,  3 Nov 2024 14:33:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95706A31;
-	Sun,  3 Nov 2024 14:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAA34C81
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 14:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730643803; cv=none; b=qDiJSvQEXla0htoe4G5FHeizS/2Z70HIuIBTwE6/ScdbJp1/9WWDFraSsGA+WcPR31NcUdWBABxLCRjPtG88VC8Q9zaW/NvEuOXy1hYrue5xod6mVyWMoa1t3q1CMRq+VqLU9/Ae3C2qSBV9dHh79BqWHnnGPFi0r7UBM+A9EDw=
+	t=1730644386; cv=none; b=QPXaeh/aiU7Iblkc/DTSMsXTTTqWkh3JQlW5wxtHLBRhGctrY3mURjI3iAh+YIcZANUGZ5nm7ogBiyXLhAR/Hsc+YJgwEj4aOryA9lMVHOT6ZtNsVQ6bv5YgpjKN45mqbc7qVrkkcZD93hbZEyAvaX15jkBzlS20qShZEkK1KPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730643803; c=relaxed/simple;
-	bh=qCUegWLwOEXdLg8GCnSpNF+Vl81XP8CX0+zmrIgJhKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e+fyAaBlpFWq/lj6+2klpf4cDOuqdbC0iFOQGaeeP87hVGEs+PObv8d/BmyI1KuOOwDFhWNTc0bB9cDISwxDPoEiJo7TLyNn3vjq+SOpKpeaSfhjeGrQ5xQ/8O/sCujOXnEVE5/qZpyZG2Oju/1pKh65Sd5h8i0ku6LaboG6xZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=GP5K9YSc; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=Uucxvjcd8BIf1N4VBFnidFDJIxQKOg5thMov+0neKrk=; b=GP5K9YScUwy3G2wn
-	tUCqzo28M7oBsQbD/5ATq2pB+nzpW1Kma6Vidx9HTqyAsl/ej5CHHM3n2RbtrETcZdCk3RJP7jOMn
-	8vAxCsp/FfDHt1J/f/T9YUNn8P/KyyTg7TAVF9IeqBIinDE8I9D0m2ENbxOGYLHoT5zj3DkV5hEUJ
-	Jq2iP91E1vlkZ7GfgRraEfm4Yzka2v/1d7USTsjPeSd3Mh/la6608sR1BulPqSL6PRrvPr5dgDvze
-	S2cJBTLuETnEwsp1lQhpviRdvSClVUiM8yFwz9rJM3mlk/mWOmWnfCz7dVBx8pq7Ymg2S09mbnMqq
-	sqqB/7Uyi7tRzroBuQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1t7bVO-00FAuD-2y;
-	Sun, 03 Nov 2024 14:23:02 +0000
-From: linux@treblig.org
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] perf: event: Remove deadcode
-Date: Sun,  3 Nov 2024 14:23:01 +0000
-Message-ID: <20241103142302.230370-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730644386; c=relaxed/simple;
+	bh=3MMXThTltyD3s2AVHKr+nHvoPa8+9DTeGQ+ofLQFRj8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=brpvcRn+/HRc2M8qalgHU9+yz4rRzAiovGCnovCAsVyVjoqoQQ/ojUJBWtdfQ94s1uWYqfDPYkvN4K8GZ5q+GB8tO+jlXmVv6htotPXEmsBwp9omD4BZlWM7LC2OW0ad/g7fBcIVVZEds4PBcLxk8+RVnmTZb9kkc72djhq+6B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so34436005ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 06:33:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730644384; x=1731249184;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M4MhLqtyhUoJwvqRHTYgi5EciCyhyTWePOhj4PeFm4Q=;
+        b=aGVBPPpHZD8CQ7ui6krddd6zp8hDX95zXEwbUaSkKVK3pkqQdkcDurRMQ6K+qltfbp
+         +A402an05S+3YA1UIq3jpWqT8LBiakl7AHRYdJXpsMICJ0jygjKR6+HRO4E/9Sf9MGWJ
+         +YI9U66yJfY62MlmPPoqlzPajiZtWHFBEITz6hZuhi1VaSxhYGl6TH/hJ5nrBLMSzp9Q
+         uFXT7ngy1MM0iSNTUaE6Mu7jaHpd7UeamhM9+PQ5A8f49qqYkkO8CKk1FozhFC9OKvYb
+         zw5Oee6KZVB4oddL5mD6PTW/PoT6o1jEZ+CR95WYggRjcNIlKwthLXU7fcgGzWD7PKpv
+         GvVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmlSwiumfWc2vJdlqreAm5aKy4Sk5Xw5mIMCyCamonNBh0jpMSX7skg0AytZinkifwkHikbc+o60W8V6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPadiO5kUIHS8ZKpqtpJP+nMzlatEmNCh00lzxAloFkx9qMepf
+	BUVGFSewwi3dzdDbS+0ix8ptkErgMxtpOA6swnAaVi8DKnoiVFqTlMIKovuNAv6VS58tSq+137v
+	i8QAChYEJAn+xKPW3C7H2qPJQalP+KZ7VINN0PGy3WL6WAEby0YaWC3s=
+X-Google-Smtp-Source: AGHT+IF5vT99jFs0woB3oVa5ZgruuX3IFh9NGX6KxSKUdRjjLYtTzwMsy5l9W1Mu/wPvqi/0HuFZYOjn1hrcYrTvyIjRw+lGwxb9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1946:b0:3a3:b527:e809 with SMTP id
+ e9e14a558f8ab-3a6b0327357mr82159245ab.14.1730644383756; Sun, 03 Nov 2024
+ 06:33:03 -0800 (PST)
+Date: Sun, 03 Nov 2024 06:33:03 -0800
+In-Reply-To: <tencent_A5864B09B4AED4AEEE8CB467D086DB52F106@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6727899f.050a0220.35b515.019d.GAE@google.com>
+Subject: Re: [syzbot] [bfs?] general protection fault in bfs_get_block (3)
+From: syzbot <syzbot+f51a2a34984e4d8888fd@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hello,
 
-event_format__print() last use was removed by 2017's
-commit 894f3f1732cb ("perf script: Use event_format__fprintf()")
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-evlist__find_tracepoint_by_id() last use was removed by 2012's
-commit e60fc847cefa ("perf evlist: Remove some unused methods")
+Reported-by: syzbot+f51a2a34984e4d8888fd@syzkaller.appspotmail.com
+Tested-by: syzbot+f51a2a34984e4d8888fd@syzkaller.appspotmail.com
 
-evlist__set_tp_filter_pid() last use was removed by 2017's
-commit dd1a50377c92 ("perf trace: Introduce filter_loop_pids()")
+Tested on:
 
-Remove them.
+commit:         3e5e6c99 Merge tag 'nfsd-6.12-3' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=120f6b40580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=f51a2a34984e4d8888fd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17fcb630580000
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- tools/perf/util/evlist.c            | 18 ------------------
- tools/perf/util/evlist.h            |  2 --
- tools/perf/util/trace-event-parse.c |  6 ------
- tools/perf/util/trace-event.h       |  3 ---
- 4 files changed, 29 deletions(-)
-
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index f14b7e6ff1dc..4b992a3f2985 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -362,19 +362,6 @@ __weak int arch_evlist__add_default_attrs(struct evlist *evlist,
- 	return __evlist__add_default_attrs(evlist, attrs, nr_attrs);
- }
- 
--struct evsel *evlist__find_tracepoint_by_id(struct evlist *evlist, int id)
--{
--	struct evsel *evsel;
--
--	evlist__for_each_entry(evlist, evsel) {
--		if (evsel->core.attr.type   == PERF_TYPE_TRACEPOINT &&
--		    (int)evsel->core.attr.config == id)
--			return evsel;
--	}
--
--	return NULL;
--}
--
- struct evsel *evlist__find_tracepoint_by_name(struct evlist *evlist, const char *name)
- {
- 	struct evsel *evsel;
-@@ -1199,11 +1186,6 @@ int evlist__set_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *pids)
- 	return ret;
- }
- 
--int evlist__set_tp_filter_pid(struct evlist *evlist, pid_t pid)
--{
--	return evlist__set_tp_filter_pids(evlist, 1, &pid);
--}
--
- int evlist__append_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *pids)
- {
- 	char *filter = asprintf__tp_filter_pids(npids, pids);
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index bcc1c6984bb5..ff73908e2178 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -144,7 +144,6 @@ int __evlist__set_tracepoints_handlers(struct evlist *evlist,
- 	__evlist__set_tracepoints_handlers(evlist, array, ARRAY_SIZE(array))
- 
- int evlist__set_tp_filter(struct evlist *evlist, const char *filter);
--int evlist__set_tp_filter_pid(struct evlist *evlist, pid_t pid);
- int evlist__set_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *pids);
- 
- int evlist__append_tp_filter(struct evlist *evlist, const char *filter);
-@@ -152,7 +151,6 @@ int evlist__append_tp_filter(struct evlist *evlist, const char *filter);
- int evlist__append_tp_filter_pid(struct evlist *evlist, pid_t pid);
- int evlist__append_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *pids);
- 
--struct evsel *evlist__find_tracepoint_by_id(struct evlist *evlist, int id);
- struct evsel *evlist__find_tracepoint_by_name(struct evlist *evlist, const char *name);
- 
- int evlist__add_pollfd(struct evlist *evlist, int fd);
-diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-index f0332bd3a501..d97830cdbd7e 100644
---- a/tools/perf/util/trace-event-parse.c
-+++ b/tools/perf/util/trace-event-parse.c
-@@ -116,12 +116,6 @@ void event_format__fprintf(struct tep_event *event,
- 	trace_seq_destroy(&s);
- }
- 
--void event_format__print(struct tep_event *event,
--			 int cpu, void *data, int size)
--{
--	return event_format__fprintf(event, cpu, data, size, stdout);
--}
--
- /*
-  * prev_state is of size long, which is 32 bits on 32 bit architectures.
-  * As it needs to have the same bits for both 32 bit and 64 bit architectures
-diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
-index bbf8b26bc8da..0e5133f1b910 100644
---- a/tools/perf/util/trace-event.h
-+++ b/tools/perf/util/trace-event.h
-@@ -42,9 +42,6 @@ struct tep_event *trace_event__tp_format_id(int id);
- void event_format__fprintf(struct tep_event *event,
- 			   int cpu, void *data, int size, FILE *fp);
- 
--void event_format__print(struct tep_event *event,
--			 int cpu, void *data, int size);
--
- int parse_ftrace_file(struct tep_handle *pevent, char *buf, unsigned long size);
- int parse_event_file(struct tep_handle *pevent,
- 		     char *buf, unsigned long size, char *sys);
--- 
-2.47.0
-
+Note: testing is done by a robot and is best-effort only.
 
