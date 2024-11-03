@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-393790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0069BA53D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:18:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 859D39BA545
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4AA61C20DD4
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:18:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A16281D6E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96811167D80;
-	Sun,  3 Nov 2024 11:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3j5uip9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC4516DEAC;
+	Sun,  3 Nov 2024 11:32:10 +0000 (UTC)
+Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDC0156C40;
-	Sun,  3 Nov 2024 11:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631901CAAC;
+	Sun,  3 Nov 2024 11:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.165.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730632721; cv=none; b=qbouRZeWzhZsSE3NGwXWBz4SAcZZQE44WgYpPIm5RuE+4GVZzeJaEPOScezY2e/aeMdPkwXwpQam6clCLTJJaUjt7WEYcdHEOQ+o9K72lOym492l1kg3BF+rIRvkIT9C8u6PDpf9bDvPzl1GAVTT/IuUL97E7wgYLrvHUleLLP4=
+	t=1730633529; cv=none; b=aDdWLqd+F1r6hkqkzlX/6F8L256I7c0S7Yjum01dKEDLgeIV3J2ijwsAy9D5kzZs93xF/VeqwaZyH9ExhU5UKlmJobYKNrXdPy284kRZ+s/d7cPUsRoKoHCi/Zz7uLW+Xmb9NoK9HjZp8dGfAZZGJf57h61hD5TN5ucybjFT4Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730632721; c=relaxed/simple;
-	bh=tsdwG1Q1xmRmxAsCgP2WDVLVVMRmygDokm5rALXU01o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eQbBk7Qz2+szQ5gU3kXKGlsO3Fym/qpa4tR9gvF5YN5R92RnxIaW3Rqr5O8qxo9neUbo7aaj0uUM1APhNgI2/pvM27W7CD4rlPHQaOW585y2x6mtPPVdRRwuF8VaG8Oh2lgl+HqPB39algwyKfjV/sp9VtS7R43ddcoRNjOzA8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3j5uip9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE74C4CECD;
-	Sun,  3 Nov 2024 11:18:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730632720;
-	bh=tsdwG1Q1xmRmxAsCgP2WDVLVVMRmygDokm5rALXU01o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V3j5uip97WbWrAa/Xn2h4XP7A71nZWwI7ETFvR+uqCSaPAoDaZEXhVYpmxr6AfzlH
-	 KJ4nosvuO7+Yh8dtW8/bui6ZkAtKTJtubB+j3WCNfbRVhAVMJTbE6Jz/EkMRiRBOXk
-	 pXLIEhxWm5m5BiOuukWMP3rk1DqAASYoauPqXJSVu8thwXSbTXrZMdxlkMdEAqSGY9
-	 9Go1hP6Aw+aUU2r/V6eCSC6qd810vwU+NZ/Vtn1zlkE8XmHKn4muqdhfLV5jkPfRAw
-	 XZxvFhRG2Ll10d8Euig8OXwLo8a8oG/p6trKmaBVazEc1B7m46B4LWRFPDnhWQgG1R
-	 W/C+SvykBPRMQ==
-Date: Sun, 3 Nov 2024 11:18:27 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Karan Sanghavi <karansanghvi98@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, Anup
- <anupnewsmail@gmail.com>
-Subject: Re: [PATCH] iio: invensense: fix integer overflow while
- multiplication
-Message-ID: <20241103111827.0894a40a@jic23-huawei>
-In-Reply-To: <20241103-coverity1586045integeroverflow-v1-1-43ea37a3f3cd@gmail.com>
-References: <20241103-coverity1586045integeroverflow-v1-1-43ea37a3f3cd@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730633529; c=relaxed/simple;
+	bh=Nj2Rh2bwcsMvT5lD+use1WRg/EWD6d7w6x6XdOrxecM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kG9Vcua/mnMM8jUh3Y71AHOjD8ZXtBd/+cCx5GB7rbQzcg9gcYF7ZQADeEtZySqX8CbpPLFmd2zRdX2CKKyBeHOUCDmsdMvpuaVSjDA1gGCSI2hcFSYfCv90dZe8X0YHxIruLPrsqGoGppq6f5u90lHvwWlGR/HehuzeDphqFBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr; spf=pass smtp.mailfrom=skole.hr; arc=none smtp.client-ip=161.53.165.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skole.hr
+Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+	by mx.skole.hr (mx.skole.hr) with ESMTP id B569481641;
+	Sun,  3 Nov 2024 12:22:22 +0100 (CET)
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje.mihanovic@skole.hr>
+To: linux-kernel@vger.kernel.org,
+ Raymond Hackley <raymondhackley@protonmail.com>
+Cc: pavel@ucw.cz, lee@kernel.org, krzysztof.kozlowski@linaro.org,
+ daniel.thompson@linaro.org, linus.walleij@linaro.org,
+ u.kleine-koenig@baylibre.com, linux-leds@vger.kernel.org
+Subject: Re: [PATCH] leds: ktd2692: Set missing timing
+Date: Sun, 03 Nov 2024 12:21:13 +0100
+Message-ID: <12557112.O9o76ZdvQC@radijator>
+In-Reply-To: <20241103083505.49648-1-raymondhackley@protonmail.com>
+References: <20241103083505.49648-1-raymondhackley@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=duje.mihanovic@skole.hr;
+ keydata=
+ mDMEZokhzhYJKwYBBAHaRw8BAQdAWJZ0hsI/ytTqHGFV8x6tzd5sB596cTeeDB4CQsTf+wC0KER
+ 1amUgTWloYW5vdmnEhyA8ZHVqZUBkdWplbWloYW5vdmljLnh5ej6ImQQTFgoAQRYhBG3/QdYN8x
+ S1t2umMK0xk1JFj60DBQJmiSHOAhsDBQkJZgGABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAA
+ AoJEK0xk1JFj60D1GABAJVSorZdMOlrp/oQtCSH/G53NE56x/JHA8VX+ZQBd/H3AP4/EcUf6eef
+ DUxVMh2bdkmuQKsVZGgOGiXpMksrVntWBrQpRHVqZSBNaWhhbm92acSHIDxkdWplLm1paGFub3Z
+ pY0Bza29sZS5ocj6ImQQTFgoAQRYhBG3/QdYN8xS1t2umMK0xk1JFj60DBQJmiSH/AhsDBQkJZg
+ GABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEK0xk1JFj60Dlw8A/i4lPOL7NaYoYePDq
+ l8MaJaR9qoUi+D+HtD3t0Koi7ztAQCdizXbuqP3AVNxy5Gpb1ozgp9Xqh2MRcNmJCHA1YhWAbg4
+ BGaJIc4SCisGAQQBl1UBBQEBB0DEc9JeA55OlZfWKgvmRgw6a/EpBQ8mDl6nQTBmnd1XHAMBCAe
+ IfgQYFgoAJhYhBG3/QdYN8xS1t2umMK0xk1JFj60DBQJmiSHOAhsMBQkJZgGAAAoJEK0xk1JFj6
+ 0DG5MA/iuo4l2GDEZ1Zf+XaS//8FwdXDO9nHkfbV2MHjF4NZXwAQDroMzBdMcqVvc8GABFlTTgG
+ j7KrRDz2HwWNyF8ZeprAQ==
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Sun, 03 Nov 2024 08:43:14 +0000
-Karan Sanghavi <karansanghvi98@gmail.com> wrote:
-
-Hi Karan,
-
-> Typecast a variable to int64_t for 64-bit arithmetic multiplication
-
-The path to actually triggering this is non obvious as these
-inputs are the result of rather complex code paths and per chip
-constraints.  Have you identified a particular combination that overflows
-or is this just based on the type?  I have no problem with applying this
-as hardening against future uses but unless we have a path to trigger
-it today it isn't a fix.
-
-If you do have a path, this description should state what it is.
-
-> 
-> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-If it's a real bug, needs a Fixes tag so we know how far to backport it.
-
+On Sunday, November 3, 2024 9:35:16=E2=80=AFAM Central European Standard Ti=
+me Raymond=20
+Hackley wrote:
+> props.timing is not set after b5a8c50e5c18. Set it with ktd2692_timing.
+>=20
+> Fixes: b5a8c50e5c18 ("leds: ktd2692: Convert to use ExpressWire library")
+> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
 > ---
->  drivers/iio/common/inv_sensors/inv_sensors_timestamp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> index f44458c380d9..d1d11d0b2458 100644
-> --- a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> +++ b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> @@ -105,8 +105,8 @@ static bool inv_update_chip_period(struct inv_sensors_timestamp *ts,
->  
->  static void inv_align_timestamp_it(struct inv_sensors_timestamp *ts)
->  {
-> -	const int64_t period_min = ts->min_period * ts->mult;
-> -	const int64_t period_max = ts->max_period * ts->mult;
-> +	const int64_t period_min = (int64_t)ts->min_period * ts->mult;
-> +	const int64_t period_max = (int64_t)ts->max_period * ts->mult;
->  	int64_t add_max, sub_max;
->  	int64_t delta, jitter;
->  	int64_t adjust;
-> 
-> ---
-> base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
-> change-id: 20241102-coverity1586045integeroverflow-cbbf357475d9
-> 
-> Best regards,
+>  drivers/leds/flash/leds-ktd2692.c | 1 +
+>  1 file changed, 1 insertion(+)
+
+Acked-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
+
+Best regards,
+=2D-
+Duje
+
+
 
 
