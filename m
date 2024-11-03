@@ -1,91 +1,144 @@
-Return-Path: <linux-kernel+bounces-393807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8118B9BA575
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:51:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448629BA577
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DA941C20D79
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:51:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5AA61F21874
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B2316E86F;
-	Sun,  3 Nov 2024 12:51:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A6B167271;
+	Sun,  3 Nov 2024 12:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSKTFmd6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54B7158DC0
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 12:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B984B166F06;
+	Sun,  3 Nov 2024 12:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730638265; cv=none; b=X6KANHXaRy+5gyHoBaLAN54fhKConXrJHE1+aGVKtazWbtnKo88w0VDgG4pm9d2HDjvi7zXr8Jx8J/lqQ/IEiG4xyTGAxuZMaCylH1nIGq1rEXe85aaYFZpJqel1y0RDm2xAcbbBRuIL2omO/nGgK5xK1kv0k+6+iwADwAvUjKY=
+	t=1730638394; cv=none; b=H7Gb1g0aZWjW0zBzZI0OItjHFB1EEjLOVLeQy8sesbhH9PlbVR+XatJIT3+oWoHah/RmSjK1W3zOvJvWxxnzy4v3R3lnHKMgQiT6pqZMn6dyweVpv+V5VyJUsUrndiTTed0qG3uwM1tsLB91BJzbgh9t3apjdn+HOZYCRKcDf24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730638265; c=relaxed/simple;
-	bh=piSZz+R1LDNqFSNj+rGYl92ubdi+Zin3YdppkW59UaE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nW4nCc+0kIak4qlqMeA4bN0jcuDS6ftC4LALRjOaTOCz5twodXVomgfuXZnFjwJh8IJuyB2Q+XGpNOgh/008LH2NJMTRL4w5I/LWwESrOhU+OFYzxR2e9kEiArtPRNGIcqUIGOhbW666iYhYHfL2iQaN4B5bpdUG+Q59eYwNxns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6bd5be0faso16627585ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 04:51:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730638263; x=1731243063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8sXV6nkrq6f/dVfYK9hV+cScjwRuISgxlc87bQs+qBg=;
-        b=kqQCCuoKnO6aWAYmOoebDYBtU8PR/oROPYw5TBFaY12bXaOjBlwDabkP8luNo5wnAJ
-         TPYdxwdskw0EN0H6ISq17qWyp6ZwFKk2NyenfhaRBYLUkxJ8V86fBxDTejkvqtV8SLa0
-         8KNj/RGLn2Vw8M61kXPDykn/qof0DkRC2OzUiniFDFnsl+dcgEeYRq7edEtVtHdNx8D5
-         7brs+FAosUsFe7wRgUdiuGgxRZZvaeOJrK4TjEA+LCPzHG1QSoTeig5fh3CHHs+Wk3/3
-         BSKl+MIHFvxb9vl+WKjlqOloqI3pXnXXsEPQPOCGwMQj59JWm5HgzWKkW3/5OlQraMJH
-         +MeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVDsFjm+Cf+OXlzi87MV+kXguFQMpG5aRl1a8VJNd4nY0OETmgxsD6XbDdlnqWlY8+btSudz1oN0D2KP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytM/TjMmo3w5zfECfLV5tjB3iV9/h667ZxKI+ySWHTMLMEJrKm
-	DqUHXJPXkpMaeFbxNlaRhyRgqtS8RkdADgtMo0P7IgvSVHjoEzT41qc2L8ydTcuI/fOStGb05br
-	i8m21adekt1dNi7MedEevOwMDeFWj0XQvv2RyZGHsKbqkux1S8zvpbw4=
-X-Google-Smtp-Source: AGHT+IGkx2KgTzybM+bFBWKiD5r1fwAdvmhysNfVCoSTb8wnFdVW8TYs63cylzjJ62wGzV5+o+fKXu1/RMQlNA3GUbARMg3gtKAe
+	s=arc-20240116; t=1730638394; c=relaxed/simple;
+	bh=ibT3pOslxzWnWXb0vn7xqhT33ppCQMYriOWgnTXF6z0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P5eVTA0qSf6qfwNc9+Rb4saybcbvw4ud1rzo57As5Jm7tq8+KHi/A2mhqFqrxCR2BWOtZftpVy0p1F+Bm1Ns1kJjA9A6qZODLaIVjfLYvWGlCSNX31+zpj6cXvHgbwJRDg8F3V2OHcVilllc3UegKnF9zFx92xQz75jvpqSQroA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSKTFmd6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87103C4CECD;
+	Sun,  3 Nov 2024 12:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730638394;
+	bh=ibT3pOslxzWnWXb0vn7xqhT33ppCQMYriOWgnTXF6z0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RSKTFmd6Ot7too7smOIY8Sh0iTR+jd62qfSyhWcIl/4qGZpb4kD6BCeqaBx7+r/yA
+	 2L509XBRGAa5vJjQdh9C8oREFBI6E8x6D1rG4QBbIQrUT1yuWdIaYPPO9eCGaNJ7Ku
+	 J+AGo7/kGsk8R0+eQhmbOWbf27IDsBLTvkvKzWHMsjCTulaLdx7LIV/UIhZScQMJOM
+	 uH3HqAy7nQpn43otLer+tlx28U2/Cz+PAB3BsyZnYpO7jBZ1zgiQRHbm8ABA37TgSc
+	 Uz7Rv6OfQDNThKfkLwO9M4WnG8OaOjIQbJpVeEwY7ncBpHjW1o1fSmrI/Eqf4xUOSq
+	 GgdR2YsWV9qLw==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@suse.de>,
+	Hans de Goede <j.w.r.degoede@hhs.nl>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Rusty Russell <rusty@rustcorp.com.au>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] modpost: fix input MODULE_DEVICE_TABLE() built for 64-bit on 32-bit host
+Date: Sun,  3 Nov 2024 21:52:57 +0900
+Message-ID: <20241103125259.944399-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1528:b0:3a3:b593:83a4 with SMTP id
- e9e14a558f8ab-3a4ed295bb6mr270904355ab.14.1730638262900; Sun, 03 Nov 2024
- 04:51:02 -0800 (PST)
-Date: Sun, 03 Nov 2024 04:51:02 -0800
-In-Reply-To: <6718dc39.050a0220.1e4b4d.0088.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672771b6.050a0220.3c8d68.0a4f.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_btree_path_level_init (2)
-From: syzbot <syzbot+eff0acb9087ee995577a@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+When building a 64-bit kernel on a 32-bit build host, incorrect
+input MODULE_ALIAS() entries may be generated.
 
-commit bf4baaa087e2be0279991f1dbf9acaa7a4c9148c
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Oct 5 21:37:02 2024 +0000
+For example, when compiling a 64-bit kernel with CONFIG_INPUT_MOUSEDEV=m
+on a 64-bit build machine, you will get the correct output:
 
-    bcachefs: Fix lockdep splat in bch2_accounting_read
+  $ grep MODULE_ALIAS drivers/input/mousedev.mod.c
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*2,*k*110,*r*0,*1,*a*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*2,*k*r*8,*a*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*14A,*r*a*0,*1,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*145,*r*a*0,*1,*18,*1C,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*110,*r*a*0,*1,*m*l*s*f*w*");
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16cd6b40580000
-start commit:   3e5e6c9900c3 Merge tag 'nfsd-6.12-3' of git://git.kernel.o..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15cd6b40580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11cd6b40580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f527353e21e067e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=eff0acb9087ee995577a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e5ab40580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1760e987980000
+However, building the same kernel on a 32-bit machine results in
+incorrect output:
 
-Reported-by: syzbot+eff0acb9087ee995577a@syzkaller.appspotmail.com
-Fixes: bf4baaa087e2 ("bcachefs: Fix lockdep splat in bch2_accounting_read")
+  $ grep MODULE_ALIAS drivers/input/mousedev.mod.c
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*2,*k*110,*130,*r*0,*1,*a*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*2,*k*r*8,*a*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*14A,*16A,*r*a*0,*1,*20,*21,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*145,*165,*r*a*0,*1,*18,*1C,*20,*21,*38,*3C,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*110,*130,*r*a*0,*1,*20,*21,*m*l*s*f*w*");
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+A similar issue occurs with CONFIG_INPUT_JOYDEV=m. On a 64-bit build
+machine, the output is:
+
+  $ grep MODULE_ALIAS drivers/input/joydev.mod.c
+  MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*0,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*2,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*8,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*6,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*k*120,*r*a*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*k*130,*r*a*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*k*2C0,*r*a*m*l*s*f*w*");
+
+However, on a 32-bit machine, the output is incorrect:
+
+  $ grep MODULE_ALIAS drivers/input/joydev.mod.c
+  MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*0,*20,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*2,*22,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*8,*28,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*6,*26,*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*k*11F,*13F,*r*a*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*k*11F,*13F,*r*a*m*l*s*f*w*");
+  MODULE_ALIAS("input:b*v*p*e*-e*1,*k*2C0,*2E0,*r*a*m*l*s*f*w*");
+
+When building a 64-bit kernel, BITS_PER_LONG is defined as 64. However,
+on a 32-bit build machine, the constant, 1L, has a 32-bit width.
+Left-shifting this constant beyond 32 bits causes wraparound.
+
+The fix in commit e0e92632715f ("[PATCH] PATCH: 1 line 2.6.18 bugfix:
+modpost-64bit-fix.patch") is incorrect; it only addresses cases where
+a 64-bit kernel is built on a 64-bit build machine, overlooking cases
+on a 32-bit build machine.
+
+Using 1ULL ensures a 64-bit width on both 32-bit and 64-bit machines,
+avoiding the wraparound issue.
+
+Fixes: e0e92632715f ("[PATCH] PATCH: 1 line 2.6.18 bugfix: modpost-64bit-fix.patch")
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/mod/file2alias.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+index 16154449dde1..c4cc11aa558f 100644
+--- a/scripts/mod/file2alias.c
++++ b/scripts/mod/file2alias.c
+@@ -743,7 +743,7 @@ static void do_input(char *alias,
+ 	for (i = min / BITS_PER_LONG; i < max / BITS_PER_LONG + 1; i++)
+ 		arr[i] = TO_NATIVE(arr[i]);
+ 	for (i = min; i < max; i++)
+-		if (arr[i / BITS_PER_LONG] & (1L << (i%BITS_PER_LONG)))
++		if (arr[i / BITS_PER_LONG] & (1ULL << (i%BITS_PER_LONG)))
+ 			sprintf(alias + strlen(alias), "%X,*", i);
+ }
+ 
+-- 
+2.43.0
+
 
