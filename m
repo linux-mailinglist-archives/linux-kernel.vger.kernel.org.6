@@ -1,75 +1,45 @@
-Return-Path: <linux-kernel+bounces-393889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DB09BA6C8
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:58:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7049BA6EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273801F21DC7
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:58:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E0621C216B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1CA18B48F;
-	Sun,  3 Nov 2024 16:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C92F18BB84;
+	Sun,  3 Nov 2024 17:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="VDzHL7gg"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="LVkLlDoy"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A0D189B86
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 16:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EA717B4E9;
+	Sun,  3 Nov 2024 17:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730653092; cv=none; b=UQjOTNKlbThDkb9o4QmwNJfIObBAsFaei3dw9v8yRfkN91LvYGy2uOzuT8QJwsndp5b6hPNHW+PSDuKjHyG4ABkvl3DoIwS93feVFgN50tU5MJ6gJC6fmfKuY4ABASXmXqD4qkXxId5e6JYccWvy67SlmGMiXXCrPNdXS/rB214=
+	t=1730653482; cv=none; b=erMFsHUQhgbB142iYnflywxk/U+fp2Lms8kEZ8VebPI8X8wMYpbaHvCWKlIRCncsNxVt0IY2kiLJieXQzRguawPOPbHiNG8CTuidTbnkCppMei1fbodIYsRveVOamWtBdxTkJbMGn2qNG9vLn9Ta+iX0OchfZcpwqgtRKvV1ha4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730653092; c=relaxed/simple;
-	bh=nijXGPcroXAozpWk+NmlPyntpqfTgpVY4Wkwm48aPAA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Wn6jXl/1P2gzIHKUoCtyhfLztBN56obYDheglPMxDu1Ex/1gPancIwACEoYB/EZOGZ7ZzT6kUfsytLZgvEJYOVv+abuO1Gtt3FJVSI25yMxYuQJFey4XPooxlz+5W0iIkjb13xu1DjE5HzGZMYyhNA+NPEJoAJt4ktXCxvTx8RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=VDzHL7gg; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20ce65c8e13so38505405ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 08:58:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1730653089; x=1731257889; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wpjo/TYXuVj+kJtSeeoa47athMXrUQ0tEtCps3hD5uI=;
-        b=VDzHL7ggU0l2Cly7w9YIHTothls+nLDZ/hnqCS50Wr5KK84zi+Q7/PJpDGpFcLQfDy
-         GKIfIy6SZ0gzx6JXywmbFWqcWb5UzRtE+QxFNXz3UOaVjM308cvUYi4/UShhJql9jos4
-         UkjYi6GE9ueHKDDEaywbcbHGAoaLBeyU0i3IM0kFUXF2iGKXQs1+q+s6kRQOw2fX7kQY
-         gBvYqmS+yE+/YzOFofmJwNjiX9T0xj/eZ+e4gM5m0Yp2d/gCFdKD3IPgpL0kWbecvap/
-         UP1ZwNNADsvWHM+Is9Iks9AkBU3D5mtD+o2oDVuaPZOrKcM+TO69+5o3ZW1zv8TSipow
-         z6iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730653089; x=1731257889;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wpjo/TYXuVj+kJtSeeoa47athMXrUQ0tEtCps3hD5uI=;
-        b=G04ADRlnljFtCVd10nR+724E0bzohYzUigipnjxx/uBKeAJSAGjMc47Hetfj0ij+4V
-         BModqrMuAiEkiLv32Jo8EYW7cauCCZWhs2hP2C+hN7jNs6Bgn76PYkl6tsS+M51WT42E
-         euqhe8bryfcgAHP7BYmK1dD5zjEDbyCRXlcv9jhWF1uoqTB3lV8YWLV+ZdZKbrGyo3RY
-         /1Taxr/ANWYkECxgduVPLSxqdyrwJHhuOvAJxKfGdADuoz7ZgfFbomehVMTaGlSd6mFo
-         +sjFtcPuXRb8REjqNnQNPcqBB0qxqhLA9E40ARh8LpkgsXhAKa7Vz3s3Yx0KeCQciuu7
-         T8zA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6wLQrkf05PEGzzjAnyM9AsyhKHHZVH/E+rDq9+AjZ23LrlcfdaxX1aZLXBO9wkYSw9cOVCnGbWJdCz8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLC2WVZGEr0bxliTXJr8QOmNbR4FxlF5HmQa929beD1/OI3yrE
-	c0Yppk84J1YJI/mdRdlVa2+IJTUL+9KuWO5GHG6NfAYEn9kmybnv+l54Y07TIsw=
-X-Google-Smtp-Source: AGHT+IH4CUmNlQEj295YqF5a2EBsZggdpPFPyaX6AYOl1G2yXvfzR+DbE4H+Xhj9TYIedBb/D4SPJA==
-X-Received: by 2002:a17:902:b205:b0:20c:ea0a:9665 with SMTP id d9443c01a7336-21103b1d99dmr143142765ad.32.1730653089291;
-        Sun, 03 Nov 2024 08:58:09 -0800 (PST)
-Received: from [127.0.1.1] (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c9783sm47531355ad.236.2024.11.03.08.58.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 08:58:08 -0800 (PST)
-From: Drew Fustini <dfustini@tenstorrent.com>
-Date: Sun, 03 Nov 2024 08:58:00 -0800
-Subject: [PATCH net-next v7 2/2] net: stmmac: Add glue layer for T-HEAD
- TH1520 SoC
+	s=arc-20240116; t=1730653482; c=relaxed/simple;
+	bh=vLmXHFQrVeANwVFZr7GPEQiJDwV80UwagiHdL+WieYg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XmsbMPo48gjndmKQEizoEYjmFVAIyb8deYNBxo0YF0B5Q47qpkMsry31Xc8cSDCdI1jb8ZFn9WtszJ5IZ8zbC73FHFMW7uBNwgNAJyrpNTbrq1S67ZxSEbW5KHx3DRjAcn3eZ5ai4XuVUAZ5VXV2pUgDaVUnU0yo/wk/dmA9FEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=LVkLlDoy; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1730653478;
+	bh=vLmXHFQrVeANwVFZr7GPEQiJDwV80UwagiHdL+WieYg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=LVkLlDoyAjxSEKNfss+XSXyWYJJQzcZv2JQqsJCbi9rUIOTJ4RL7OxwixFQenCjjd
+	 rlVUh9qqiGz1yV+aWCGMfosXXIgbUe7lyF1Ond/E8etyVdz8oI4rmOCryfvOvF9wdn
+	 hyWkvUc8pYcWGzPC5QJ3hJWaxe+zEoDAAboNa6yg=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v2 00/10] sysfs: constify struct bin_attribute (Part 1)
+Date: Sun, 03 Nov 2024 17:03:29 +0000
+Message-Id: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,376 +47,144 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241103-th1520-gmac-v7-2-ef094a30169c@tenstorrent.com>
-References: <20241103-th1520-gmac-v7-0-ef094a30169c@tenstorrent.com>
-In-Reply-To: <20241103-th1520-gmac-v7-0-ef094a30169c@tenstorrent.com>
-To: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
- Jose Abreu <joabreu@synopsys.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, Drew Fustini <drew@pdp7.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-riscv@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
- linux-stm32@st-md-mailman.stormreply.com
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOGsJ2cC/22NQQ6CMBBFr2JmbU1bQasr72GIKTC1synaKSgh3
+ N2KJm5cvp/89yZgjIQMx9UEEQdi6kIGvV5B4224oqA2M2ipCyW1ETyyY9F0gZOoKVxsSlFYKc1
+ hVxjVyhry9RbR0XPRnqsPR7z32Z5+oydOXRyX9KDe67eyVf8rgxJSaG2UdXbvZFmeHkjM3Pjeb
+ wImqOZ5fgH1E5+t0gAAAA==
+X-Change-ID: 20241028-sysfs-const-bin_attr-a00896481d0b
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Davidlohr Bueso <dave@stgolabs.net>, 
+ Jonathan Cameron <jonathan.cameron@huawei.com>, 
+ Dave Jiang <dave.jiang@intel.com>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>, 
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>, 
+ Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ "David E. Box" <david.e.box@linux.intel.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Richard Henderson <richard.henderson@linaro.org>, 
+ Matt Turner <mattst88@gmail.com>, Frederic Barrat <fbarrat@linux.ibm.com>, 
+ Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Logan Gunthorpe <logang@deltatee.com>, 
+ "K. Y. Srinivasan" <kys@microsoft.com>, 
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+ Dexuan Cui <decui@microsoft.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org, 
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-rdma@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ platform-driver-x86@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ linux-usb@vger.kernel.org, linux-alpha@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730653468; l=3861;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=vLmXHFQrVeANwVFZr7GPEQiJDwV80UwagiHdL+WieYg=;
+ b=Bvbt1J2LqQ69JnMU1VrxxAk0oh5wwQXMdeGiNk0LKpzFZww+HQ7ZSL0xtSH7vjejf+nvXyav9
+ 7mYQXMoReN6DBjpqywBjK9Kq5FxOhy2hVOb+j2ENGg6yuLHGvmQRl99
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-From: Jisheng Zhang <jszhang@kernel.org>
+struct bin_attribute contains a bunch of pointer members, which when
+overwritten by accident or malice can lead to system instability and
+security problems.
+Moving the definitions of struct bin_attribute to read-only memory
+makes these modifications impossible.
+The same change has been performed for many other structures in the
+past. (struct class, struct ctl_table...)
 
-Add dwmac glue driver to support the DesignWare-based GMAC controllers
-on the T-HEAD TH1520 SoC.
+For the structure definitions throughout the core to be moved to
+read-only memory the following steps are necessary.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-[esmil: rename plat->interface -> plat->mac_interface,
-        use devm_stmmac_probe_config_dt()]
-Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-[drew: convert from stmmac_dvr_probe() to devm_stmmac_pltfr_probe(),
-       convert register access from regmap to regular mmio]
-Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+1) Change all callbacks invoked from the sysfs core to only pass const
+   pointers
+2) Adapt the sysfs core to only work in terms of const pointers
+3) Adapt the sysfs core APIs to allow const pointers
+4) Change all structure definitions through the core to const
+
+This series provides the foundation for step 1) above.
+It converts some callbacks in a single step to const and provides a
+foundation for those callbacks where a single step is not possible.
+
+Patches 1-5 change the bin_attribute callbacks of 'struct
+attribute_group'. The remaining ones touch 'struct bin_attribute' itself.
+
+The techniques employed by this series can later be reused for the
+same change for other sysfs attributes.
+
+This series is intended to be merged through the driver core tree.
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- MAINTAINERS                                       |   1 +
- drivers/net/ethernet/stmicro/stmmac/Kconfig       |  10 +
- drivers/net/ethernet/stmicro/stmmac/Makefile      |   1 +
- drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c | 273 ++++++++++++++++++++++
- 4 files changed, 285 insertions(+)
+Changes in v2:
+- Drop RFC state
+- Refuse registration of attributes with both read/read_new or
+  write/write_new
+- Remove don't drop llseek() callback, as it is actually used.
+  Instead also migrate it to "const".
+- _Generic machinery: Simplify and make more robust against misuse
+- Link to v1: https://lore.kernel.org/r/20241031-sysfs-const-bin_attr-v1-0-2281afa7f055@weissschuh.net
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 72dee6d07ced..b53f9f6b3e04 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19830,6 +19830,7 @@ F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
- F:	Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
- F:	arch/riscv/boot/dts/thead/
- F:	drivers/clk/thead/clk-th1520-ap.c
-+F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
- F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
- 
- RNBD BLOCK DRIVERS
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 05cc07b8f48c..6658536a4e17 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -228,6 +228,16 @@ config DWMAC_SUN8I
- 	  stmmac device driver. This driver is used for H3/A83T/A64
- 	  EMAC ethernet controller.
- 
-+config DWMAC_THEAD
-+	tristate "T-HEAD dwmac support"
-+	depends on OF && (ARCH_THEAD || COMPILE_TEST)
-+	help
-+	  Support for ethernet controllers on T-HEAD RISC-V SoCs
-+
-+	  This selects the T-HEAD platform specific glue layer support for
-+	  the stmmac device driver. This driver is used for T-HEAD TH1520
-+	  ethernet controller.
-+
- config DWMAC_IMX8
- 	tristate "NXP IMX8 DWMAC support"
- 	default ARCH_MXC
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
-index c2f0e91f6bf8..d065634c6223 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Makefile
-+++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_DWMAC_STI)		+= dwmac-sti.o
- obj-$(CONFIG_DWMAC_STM32)	+= dwmac-stm32.o
- obj-$(CONFIG_DWMAC_SUNXI)	+= dwmac-sunxi.o
- obj-$(CONFIG_DWMAC_SUN8I)	+= dwmac-sun8i.o
-+obj-$(CONFIG_DWMAC_THEAD)	+= dwmac-thead.o
- obj-$(CONFIG_DWMAC_DWC_QOS_ETH)	+= dwmac-dwc-qos-eth.o
- obj-$(CONFIG_DWMAC_INTEL_PLAT)	+= dwmac-intel-plat.o
- obj-$(CONFIG_DWMAC_LOONGSON1)	+= dwmac-loongson1.o
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-new file mode 100644
-index 000000000000..dce84ed184e9
---- /dev/null
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-@@ -0,0 +1,273 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * T-HEAD DWMAC platform driver
-+ *
-+ * Copyright (C) 2021 Alibaba Group Holding Limited.
-+ * Copyright (C) 2023 Jisheng Zhang <jszhang@kernel.org>
-+ *
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_net.h>
-+#include <linux/platform_device.h>
-+
-+#include "stmmac_platform.h"
-+
-+#define GMAC_CLK_EN			0x00
-+#define  GMAC_TX_CLK_EN			BIT(1)
-+#define  GMAC_TX_CLK_N_EN		BIT(2)
-+#define  GMAC_TX_CLK_OUT_EN		BIT(3)
-+#define  GMAC_RX_CLK_EN			BIT(4)
-+#define  GMAC_RX_CLK_N_EN		BIT(5)
-+#define  GMAC_EPHY_REF_CLK_EN		BIT(6)
-+#define GMAC_RXCLK_DELAY_CTRL		0x04
-+#define  GMAC_RXCLK_BYPASS		BIT(15)
-+#define  GMAC_RXCLK_INVERT		BIT(14)
-+#define  GMAC_RXCLK_DELAY		GENMASK(4, 0)
-+#define GMAC_TXCLK_DELAY_CTRL		0x08
-+#define  GMAC_TXCLK_BYPASS		BIT(15)
-+#define  GMAC_TXCLK_INVERT		BIT(14)
-+#define  GMAC_TXCLK_DELAY		GENMASK(4, 0)
-+#define GMAC_PLLCLK_DIV			0x0c
-+#define  GMAC_PLLCLK_DIV_EN		BIT(31)
-+#define  GMAC_PLLCLK_DIV_NUM		GENMASK(7, 0)
-+#define GMAC_GTXCLK_SEL			0x18
-+#define  GMAC_GTXCLK_SEL_PLL		BIT(0)
-+#define GMAC_INTF_CTRL			0x1c
-+#define  PHY_INTF_MASK			BIT(0)
-+#define  PHY_INTF_RGMII			FIELD_PREP(PHY_INTF_MASK, 1)
-+#define  PHY_INTF_MII_GMII		FIELD_PREP(PHY_INTF_MASK, 0)
-+#define GMAC_TXCLK_OEN			0x20
-+#define  TXCLK_DIR_MASK			BIT(0)
-+#define  TXCLK_DIR_OUTPUT		FIELD_PREP(TXCLK_DIR_MASK, 0)
-+#define  TXCLK_DIR_INPUT		FIELD_PREP(TXCLK_DIR_MASK, 1)
-+
-+#define GMAC_GMII_RGMII_RATE	125000000
-+#define GMAC_MII_RATE		25000000
-+
-+struct thead_dwmac {
-+	struct plat_stmmacenet_data *plat;
-+	void __iomem *apb_base;
-+	struct device *dev;
-+};
-+
-+static int thead_dwmac_set_phy_if(struct plat_stmmacenet_data *plat)
-+{
-+	struct thead_dwmac *dwmac = plat->bsp_priv;
-+	u32 phyif;
-+
-+	switch (plat->mac_interface) {
-+	case PHY_INTERFACE_MODE_MII:
-+		phyif = PHY_INTF_MII_GMII;
-+		break;
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+		phyif = PHY_INTF_RGMII;
-+		break;
-+	default:
-+		dev_err(dwmac->dev, "unsupported phy interface %d\n",
-+			plat->mac_interface);
-+		return -EINVAL;
-+	}
-+
-+	writel(phyif, dwmac->apb_base + GMAC_INTF_CTRL);
-+	return 0;
-+}
-+
-+static int thead_dwmac_set_txclk_dir(struct plat_stmmacenet_data *plat)
-+{
-+	struct thead_dwmac *dwmac = plat->bsp_priv;
-+	u32 txclk_dir;
-+
-+	switch (plat->mac_interface) {
-+	case PHY_INTERFACE_MODE_MII:
-+		txclk_dir = TXCLK_DIR_INPUT;
-+		break;
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+		txclk_dir = TXCLK_DIR_OUTPUT;
-+		break;
-+	default:
-+		dev_err(dwmac->dev, "unsupported phy interface %d\n",
-+			plat->mac_interface);
-+		return -EINVAL;
-+	}
-+
-+	writel(txclk_dir, dwmac->apb_base + GMAC_TXCLK_OEN);
-+	return 0;
-+}
-+
-+static void thead_dwmac_fix_speed(void *priv, unsigned int speed, unsigned int mode)
-+{
-+	struct plat_stmmacenet_data *plat;
-+	struct thead_dwmac *dwmac = priv;
-+	unsigned long rate;
-+	u32 div, reg;
-+
-+	plat = dwmac->plat;
-+
-+	switch (plat->mac_interface) {
-+	/* For MII, rxc/txc is provided by phy */
-+	case PHY_INTERFACE_MODE_MII:
-+		return;
-+
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+		rate = clk_get_rate(plat->stmmac_clk);
-+		if (!rate || rate % GMAC_GMII_RGMII_RATE != 0 ||
-+		    rate % GMAC_MII_RATE != 0) {
-+			dev_err(dwmac->dev, "invalid gmac rate %ld\n", rate);
-+			return;
-+		}
-+
-+		writel(0, dwmac->apb_base + GMAC_PLLCLK_DIV);
-+
-+		switch (speed) {
-+		case SPEED_1000:
-+			div = rate / GMAC_GMII_RGMII_RATE;
-+			break;
-+		case SPEED_100:
-+			div = rate / GMAC_MII_RATE;
-+			break;
-+		case SPEED_10:
-+			div = rate * 10 / GMAC_MII_RATE;
-+			break;
-+		default:
-+			dev_err(dwmac->dev, "invalid speed %u\n", speed);
-+			return;
-+		}
-+
-+		reg = FIELD_PREP(GMAC_PLLCLK_DIV_EN, 1) |
-+		      FIELD_PREP(GMAC_PLLCLK_DIV_NUM, div);
-+		writel(reg, dwmac->apb_base + GMAC_PLLCLK_DIV);
-+		break;
-+	default:
-+		dev_err(dwmac->dev, "unsupported phy interface %d\n",
-+			plat->mac_interface);
-+		return;
-+	}
-+}
-+
-+static int thead_dwmac_enable_clk(struct plat_stmmacenet_data *plat)
-+{
-+	struct thead_dwmac *dwmac = plat->bsp_priv;
-+	u32 reg;
-+
-+	switch (plat->mac_interface) {
-+	case PHY_INTERFACE_MODE_MII:
-+		reg = GMAC_RX_CLK_EN | GMAC_TX_CLK_EN;
-+		break;
-+
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+		/* use pll */
-+		writel(GMAC_GTXCLK_SEL_PLL, dwmac->apb_base + GMAC_GTXCLK_SEL);
-+		reg = GMAC_TX_CLK_EN | GMAC_TX_CLK_N_EN | GMAC_TX_CLK_OUT_EN |
-+		      GMAC_RX_CLK_EN | GMAC_RX_CLK_N_EN;
-+		break;
-+
-+	default:
-+		dev_err(dwmac->dev, "unsupported phy interface %d\n",
-+			plat->mac_interface);
-+		return -EINVAL;
-+	}
-+
-+	writel(reg, dwmac->apb_base + GMAC_CLK_EN);
-+	return 0;
-+}
-+
-+static int thead_dwmac_init(struct platform_device *pdev, void *priv)
-+{
-+	struct thead_dwmac *dwmac = priv;
-+	unsigned int reg;
-+	int ret;
-+
-+	ret = thead_dwmac_set_phy_if(dwmac->plat);
-+	if (ret)
-+		return ret;
-+
-+	ret = thead_dwmac_set_txclk_dir(dwmac->plat);
-+	if (ret)
-+		return ret;
-+
-+	reg = readl(dwmac->apb_base + GMAC_RXCLK_DELAY_CTRL);
-+	reg &= ~(GMAC_RXCLK_DELAY);
-+	reg |= FIELD_PREP(GMAC_RXCLK_DELAY, 0);
-+	writel(reg, dwmac->apb_base + GMAC_RXCLK_DELAY_CTRL);
-+
-+	reg = readl(dwmac->apb_base + GMAC_TXCLK_DELAY_CTRL);
-+	reg &= ~(GMAC_TXCLK_DELAY);
-+	reg |= FIELD_PREP(GMAC_TXCLK_DELAY, 0);
-+	writel(reg, dwmac->apb_base + GMAC_TXCLK_DELAY_CTRL);
-+
-+	return thead_dwmac_enable_clk(dwmac->plat);
-+}
-+
-+static int thead_dwmac_probe(struct platform_device *pdev)
-+{
-+	struct stmmac_resources stmmac_res;
-+	struct plat_stmmacenet_data *plat;
-+	struct thead_dwmac *dwmac;
-+	void __iomem *apb;
-+	int ret;
-+
-+	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to get resources\n");
-+
-+	plat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
-+	if (IS_ERR(plat))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(plat),
-+				     "dt configuration failed\n");
-+
-+	dwmac = devm_kzalloc(&pdev->dev, sizeof(*dwmac), GFP_KERNEL);
-+	if (!dwmac)
-+		return -ENOMEM;
-+
-+	apb = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(apb))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(apb),
-+				     "failed to remap gmac apb registers\n");
-+
-+	dwmac->dev = &pdev->dev;
-+	dwmac->plat = plat;
-+	dwmac->apb_base = apb;
-+	plat->bsp_priv = dwmac;
-+	plat->fix_mac_speed = thead_dwmac_fix_speed;
-+	plat->init = thead_dwmac_init;
-+
-+	return devm_stmmac_pltfr_probe(pdev, plat, &stmmac_res);
-+}
-+
-+static const struct of_device_id thead_dwmac_match[] = {
-+	{ .compatible = "thead,th1520-gmac" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, thead_dwmac_match);
-+
-+static struct platform_driver thead_dwmac_driver = {
-+	.probe = thead_dwmac_probe,
-+	.driver = {
-+		.name = "thead-dwmac",
-+		.pm = &stmmac_pltfr_pm_ops,
-+		.of_match_table = thead_dwmac_match,
-+	},
-+};
-+module_platform_driver(thead_dwmac_driver);
-+
-+MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
-+MODULE_AUTHOR("Drew Fustini <drew@pdp7.com>");
-+MODULE_DESCRIPTION("T-HEAD DWMAC platform driver");
-+MODULE_LICENSE("GPL");
+---
+Thomas Weißschuh (10):
+      sysfs: explicitly pass size to sysfs_add_bin_file_mode_ns()
+      sysfs: introduce callback attribute_group::bin_size
+      PCI/sysfs: Calculate bin_attribute size through bin_size()
+      nvmem: core: calculate bin_attribute size through bin_size()
+      sysfs: treewide: constify attribute callback of bin_is_visible()
+      sysfs: treewide: constify attribute callback of bin_attribute::mmap()
+      sysfs: treewide: constify attribute callback of bin_attribute::llseek()
+      sysfs: implement all BIN_ATTR_* macros in terms of __BIN_ATTR()
+      sysfs: bin_attribute: add const read/write callback variants
+      driver core: Constify attribute arguments of binary attributes
 
+ arch/alpha/kernel/pci-sysfs.c           |  6 +--
+ drivers/base/node.c                     |  4 +-
+ drivers/base/topology.c                 |  4 +-
+ drivers/cxl/port.c                      |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c |  2 +-
+ drivers/infiniband/hw/qib/qib_sysfs.c   |  2 +-
+ drivers/misc/ocxl/sysfs.c               |  2 +-
+ drivers/mtd/spi-nor/sysfs.c             |  2 +-
+ drivers/nvmem/core.c                    | 16 ++++--
+ drivers/pci/p2pdma.c                    |  2 +-
+ drivers/pci/pci-sysfs.c                 | 42 ++++++++-------
+ drivers/pci/vpd.c                       |  2 +-
+ drivers/platform/x86/amd/hsmp.c         |  2 +-
+ drivers/platform/x86/intel/pmt/class.c  |  2 +-
+ drivers/platform/x86/intel/sdsi.c       |  2 +-
+ drivers/scsi/scsi_sysfs.c               |  2 +-
+ drivers/uio/uio_hv_generic.c            |  2 +-
+ drivers/usb/core/sysfs.c                |  2 +-
+ fs/sysfs/file.c                         | 30 +++++++----
+ fs/sysfs/group.c                        |  5 +-
+ fs/sysfs/sysfs.h                        |  2 +-
+ include/linux/sysfs.h                   | 94 ++++++++++++++++++++-------------
+ 22 files changed, 138 insertions(+), 91 deletions(-)
+---
+base-commit: 3e5e6c9900c3d71895e8bdeacfb579462e98eba1
+change-id: 20241028-sysfs-const-bin_attr-a00896481d0b
+
+Best regards,
 -- 
-2.34.1
+Thomas Weißschuh <linux@weissschuh.net>
 
 
