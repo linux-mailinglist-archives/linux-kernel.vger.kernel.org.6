@@ -1,208 +1,211 @@
-Return-Path: <linux-kernel+bounces-393931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B16E9BA795
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:07:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A46219BA797
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1EC1C20B22
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:07:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842B21F21471
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BDB189B95;
-	Sun,  3 Nov 2024 19:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C8E189BB2;
+	Sun,  3 Nov 2024 19:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWv2mTIq"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="E6051eCj"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F665C2FB;
-	Sun,  3 Nov 2024 19:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E7116EB5D;
+	Sun,  3 Nov 2024 19:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730660836; cv=none; b=avIJLJ0+hK1i5G8kjAYgHRMD46U8YiUCCnaE4g6M5ks4ihvRmNmpta9GvNjxwREsdAGrJIg4V4gIzLT9l/V3F+FnTG2+M/iVp/zjldexiV08YlPCjeCtletOM/2L/PWyJFlvbt5cQkFAzvqEMkpIc0mbiopIithbMA1hY5bDw1s=
+	t=1730661011; cv=none; b=ARo4mTh3hvSSyXJ8tfks34QI26RVlRKHS8yA3sFz2cpCGrS5Dt1sg5ZQ0iiRKnRwx9LfL5+NKdJr5VqEAVQPWN9HmuteY2ucj/mCKibfFQfoZYkqZSTBC1S/DDPy1GjR0drefI4mOopRCu0glEUDSrwVjKZT2VSJTXS6CtfXcdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730660836; c=relaxed/simple;
-	bh=inPz1olU9xAQEZazepwNq7m/9CKJqGFpLVCsLGkrwHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NB9gVaz3uxKQN+Fb8JmCgyBovDwLO7r3lUZ+qsNIgu810FrHhA/Up/sSOfkQDsSacc3gX+hLCRbGsOubF9tWOX60zC2mMtyMC0FVy1j3kwnCHJoKhM1FXXBB8DT+dYn+b0a7A0l6+uPYrfPEfMfWKrpHkbsbaIvQ6LhLfm57IEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWv2mTIq; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so27210295e9.2;
-        Sun, 03 Nov 2024 11:07:14 -0800 (PST)
+	s=arc-20240116; t=1730661011; c=relaxed/simple;
+	bh=Fmtcg7gHbp2eod0PRstGOm9fCcRs2KDhLE3Cotx5ruI=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=oH1UBKwYhcGQeqOEL7X9idg1bztQMOJ25CMA+QRRDGnBMc+nhU60H1gK0/GZe8zyYFTyC6M+UP6VASP4WpIsfY8J+EAy0y6gBX4KAQW0MsRhSfpClAqTR++hc1pzMlGH5RT6g6UjgkT6SM7tFfXYbZtcofxAJjiV51BJ1stHyjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=E6051eCj; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730660833; x=1731265633; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+PN4j5JM27ruL3MMdVRgYXopSApMIbDZTF6zIljuQt0=;
-        b=dWv2mTIqxObqBjA3SuGLPXv5EqDiF0Xl2Qoivv4An22kAAQ8GCgqzm2AykT8spNtUo
-         pXwoAMG7DBt2AstPg1fvF705yYc2nETuil+284f3s0FDcPVKUqNDutTM4Ejm+Ck80o4x
-         dkXOkI7J9q1/2varKd3wdoRUiDwGTRPG+L6z8MJoei1W0jAcmE27hPavZYXHWU7UI9dd
-         W/VH8ehZrrGpIRDK6NKUUXgK4nKNy3MKF4vbVZsQx/7jFPynmz4cL4ZB/cJTRfxGesOR
-         wDsNj6kejP9ZNUTQnFqDKbE/q8PnoIr2kqSZLVw13+XL9wjUrMyybUQid0pUgnt9Fnnu
-         XMtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730660833; x=1731265633;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+PN4j5JM27ruL3MMdVRgYXopSApMIbDZTF6zIljuQt0=;
-        b=UF+idt3sF4JKR3Fgc1V24He6GxxS8JOyr6P/keDyfYJJsKl6Lz3nXupzrh5+W9vPAb
-         os6w/t9HGg3P5aUQXXRzntonvCtRUEemBg0vkpjf4+uAY3bZ5VkUfTty6uQCvNkiq+EX
-         pYh4hYT/DsTDCWqN3nsxCoo0/VoLxntuNlSo1n0yAWcGOQfCNM9OBR7DzmVTihmAcVp2
-         ZWpLk12qrAz12pAAqnj0fZNYmEwCBNdQbwVDJMs9z2xzbUlQlWKpDTaJH9ue9iab3Z67
-         hRlZ1Q2bJ1QzIbtjp4m25hUpD3NXSHTR1SWCnUnKb0wfKOdgdOZjmAz9lbAeUS1FOJVN
-         0kNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcV893b+F1Jba+Hjja9iis2GB7Dh+MJuxlPdtplSjsUhAyMkZyXSBnzjjm3u2u4HUWNxQ6bpkDHnMK@vger.kernel.org, AJvYcCWiLE7cz5Vvhb4T+cqHdizJHbnLhpX0Sh/l9ojQOgAmIsNzlcki8NXWuHEEnGwIKloUnK3ew2wKkkCZ@vger.kernel.org, AJvYcCXKR7Fxtf0LKwe5loIXlGS+i4sLfxI7sgvhHNXl3n1kJUDVPv/5mHEXe6T+vBIJSjue+ThLYy2Zk0ByTmMb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMW47BUJ4qrguP54V6Js44/GNQbQRoEakqBF2vOmmwNVw0c/fT
-	5PUHnvAEnGiSuSjqzZvEnaOdHJZ/j10dK7ukNegV/6TR5Ujbie4F
-X-Google-Smtp-Source: AGHT+IHIFoXvuCJNYxjDuvpKDd+kNXiq3JOImcMMhf+ncuSnMB/eRPWoMljK5H6pueGZiJ/0RrgylA==
-X-Received: by 2002:a05:600c:5114:b0:431:60ac:9aef with SMTP id 5b1f17b1804b1-431bb9de94bmr163930405e9.29.1730660832897;
-        Sun, 03 Nov 2024 11:07:12 -0800 (PST)
-Received: from debian ([2a00:79c0:63e:e900:224:9bff:fe22:6dd6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d685308sm129434855e9.33.2024.11.03.11.07.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 11:07:12 -0800 (PST)
-Date: Sun, 3 Nov 2024 20:07:09 +0100
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] pwm: add support for NXPs high-side switch
- MC33XS2410
-Message-ID: <20241103190709.GA466098@debian>
-References: <20240927125745.38367-1-dima.fedrau@gmail.com>
- <20240927125745.38367-3-dima.fedrau@gmail.com>
- <oppdnsda4tqjcpsb26j5ew62t4bkkmtxuu7e2fpinnazubk5ky@tmz76o5xdrlj>
- <20241023125221.GA197308@debian>
- <eyom32milbbqp6floun4r5bpozuewbe5kk2htvhp5cmcytj2oy@bpcrd2aiwk6m>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1730661009; x=1762197009;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-transfer-encoding:mime-version:subject;
+  bh=ilmu7TW6wuGdFt7Ze70JteGywNkZc5EQwC9NJ9T/MN4=;
+  b=E6051eCjNKo+gupboBkcvtRpvrZV8bcD6AUbmREMoKKsoxGwHtNri0Wx
+   vr3DKiHq/WkcZRXUbP+4wFquYwJUngQuNz9JzBmwqx6vs9kCjPiQ23t8z
+   lMzxGNnRDNojYkHxgJCMJ34lCvlgFuR3zAAKJd5BmcquoQZPRt2JoYg6g
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.11,255,1725321600"; 
+   d="scan'208";a="144027567"
+Subject: RE: [PATCH net-next] net: ena: Remove deadcode
+Thread-Topic: [PATCH net-next] net: ena: Remove deadcode
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 19:10:07 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.17.79:14604]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.47.120:2525] with esmtp (Farcaster)
+ id d5157aae-b8fb-4ec0-8df8-273d0571e847; Sun, 3 Nov 2024 19:10:06 +0000 (UTC)
+X-Farcaster-Flow-ID: d5157aae-b8fb-4ec0-8df8-273d0571e847
+Received: from EX19D017EUA001.ant.amazon.com (10.252.50.71) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Sun, 3 Nov 2024 19:10:05 +0000
+Received: from EX19D005EUA002.ant.amazon.com (10.252.50.11) by
+ EX19D017EUA001.ant.amazon.com (10.252.50.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Sun, 3 Nov 2024 19:10:05 +0000
+Received: from EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9]) by
+ EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9%3]) with mapi id
+ 15.02.1258.035; Sun, 3 Nov 2024 19:10:05 +0000
+From: "Arinzon, David" <darinzon@amazon.com>
+To: "linux@treblig.org" <linux@treblig.org>, "Agroskin, Shay"
+	<shayagr@amazon.com>, "Kiyanovski, Arthur" <akiyano@amazon.com>, "Dagan,
+ Noam" <ndagan@amazon.com>, "Bshara, Saeed" <saeedb@amazon.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Thread-Index: AQHbLXLgvL+qB884I0GFZVN0vD/JqrKl7Dfg
+Date: Sun, 3 Nov 2024 19:10:05 +0000
+Message-ID: <8c44053e6a1948688f347ae61c977eea@amazon.com>
+References: <20241102220142.80285-1-linux@treblig.org>
+In-Reply-To: <20241102220142.80285-1-linux@treblig.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eyom32milbbqp6floun4r5bpozuewbe5kk2htvhp5cmcytj2oy@bpcrd2aiwk6m>
 
-Hello Uwe,
+> ena_com_get_dev_basic_stats() has been unused since 2017's commit
+> d81db2405613 ("net/ena: refactor ena_get_stats64 to be atomic context
+> safe")
+>=20
+> ena_com_get_offload_settings() has been unused since the original commit
+> of ENA back in 2016 in commit 1738cd3ed342 ("net: ena: Add a driver for
+> Amazon Elastic Network Adapters (ENA)")
+>=20
+> Remove them.
+>=20
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/net/ethernet/amazon/ena/ena_com.c | 33 -----------------------
+> drivers/net/ethernet/amazon/ena/ena_com.h | 18 -------------
+>  2 files changed, 51 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c
+> b/drivers/net/ethernet/amazon/ena/ena_com.c
+> index d958cda9e58b..bc23b8fa7a37 100644
+> --- a/drivers/net/ethernet/amazon/ena/ena_com.c
+> +++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+> @@ -2198,21 +2198,6 @@ int ena_com_get_ena_srd_info(struct
+> ena_com_dev *ena_dev,
+>         return ret;
+>  }
+>=20
+> -int ena_com_get_dev_basic_stats(struct ena_com_dev *ena_dev,
+> -                               struct ena_admin_basic_stats *stats)
+> -{
+> -       struct ena_com_stats_ctx ctx;
+> -       int ret;
+> -
+> -       memset(&ctx, 0x0, sizeof(ctx));
+> -       ret =3D ena_get_dev_stats(ena_dev, &ctx,
+> ENA_ADMIN_GET_STATS_TYPE_BASIC);
+> -       if (likely(ret =3D=3D 0))
+> -               memcpy(stats, &ctx.get_resp.u.basic_stats,
+> -                      sizeof(ctx.get_resp.u.basic_stats));
+> -
+> -       return ret;
+> -}
+> -
+>  int ena_com_get_customer_metrics(struct ena_com_dev *ena_dev, char
+> *buffer, u32 len)  {
+>         struct ena_admin_aq_get_stats_cmd *get_cmd; @@ -2289,24 +2274,6
+> @@ int ena_com_set_dev_mtu(struct ena_com_dev *ena_dev, u32 mtu)
+>         return ret;
+>  }
+>=20
+> -int ena_com_get_offload_settings(struct ena_com_dev *ena_dev,
+> -                                struct ena_admin_feature_offload_desc *o=
+ffload)
+> -{
+> -       int ret;
+> -       struct ena_admin_get_feat_resp resp;
+> -
+> -       ret =3D ena_com_get_feature(ena_dev, &resp,
+> -                                 ENA_ADMIN_STATELESS_OFFLOAD_CONFIG, 0);
+> -       if (unlikely(ret)) {
+> -               netdev_err(ena_dev->net_device, "Failed to get offload ca=
+pabilities
+> %d\n", ret);
+> -               return ret;
+> -       }
+> -
+> -       memcpy(offload, &resp.u.offload, sizeof(resp.u.offload));
+> -
+> -       return 0;
+> -}
+> -
+>  int ena_com_set_hash_function(struct ena_com_dev *ena_dev)  {
+>         struct ena_com_admin_queue *admin_queue =3D &ena_dev-
+> >admin_queue; diff --git a/drivers/net/ethernet/amazon/ena/ena_com.h
+> b/drivers/net/ethernet/amazon/ena/ena_com.h
+> index a372c5e768a7..20e1529adf3b 100644
+> --- a/drivers/net/ethernet/amazon/ena/ena_com.h
+> +++ b/drivers/net/ethernet/amazon/ena/ena_com.h
+> @@ -591,15 +591,6 @@ int ena_com_set_aenq_config(struct ena_com_dev
+> *ena_dev, u32 groups_flag);  int ena_com_get_dev_attr_feat(struct
+> ena_com_dev *ena_dev,
+>                               struct ena_com_dev_get_features_ctx *get_fe=
+at_ctx);
+>=20
+> -/* ena_com_get_dev_basic_stats - Get device basic statistics
+> - * @ena_dev: ENA communication layer struct
+> - * @stats: stats return value
+> - *
+> - * @return: 0 on Success and negative value otherwise.
+> - */
+> -int ena_com_get_dev_basic_stats(struct ena_com_dev *ena_dev,
+> -                               struct ena_admin_basic_stats *stats);
+> -
+>  /* ena_com_get_eni_stats - Get extended network interface statistics
+>   * @ena_dev: ENA communication layer struct
+>   * @stats: stats return value
+> @@ -635,15 +626,6 @@ int ena_com_get_customer_metrics(struct
+> ena_com_dev *ena_dev, char *buffer, u32
+>   */
+>  int ena_com_set_dev_mtu(struct ena_com_dev *ena_dev, u32 mtu);
+>=20
+> -/* ena_com_get_offload_settings - Retrieve the device offloads capabilit=
+ies
+> - * @ena_dev: ENA communication layer struct
+> - * @offlad: offload return value
+> - *
+> - * @return: 0 on Success and negative value otherwise.
+> - */
+> -int ena_com_get_offload_settings(struct ena_com_dev *ena_dev,
+> -                                struct ena_admin_feature_offload_desc *o=
+ffload);
+> -
+>  /* ena_com_rss_init - Init RSS
+>   * @ena_dev: ENA communication layer struct
+>   * @log_size: indirection log size
+> --
+> 2.47.0
 
-Am Thu, Oct 24, 2024 at 11:19:16PM +0200 schrieb Uwe Kleine-König:
-> Hello Dimitri,
-> 
-> On Wed, Oct 23, 2024 at 02:52:21PM +0200, Dimitri Fedrau wrote:
-> > Am Tue, Oct 22, 2024 at 09:54:50AM +0200 schrieb Uwe Kleine-König:
-> > > > +{
-> > > > +	struct spi_transfer t[MC33XS2410_MAX_TRANSFERS] = { { 0 } };
-> > > > +	u8 tx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
-> > > > +	u8 rx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
-> > > > +	int i, ret, reg_i, val_i;
-> > > > +
-> > > > +	if (!len)
-> > > > +		return 0;
-> > > > +
-> > > > +	if (read)
-> > > > +		len++;
-> > > > +
-> > > > +	if (len > MC33XS2410_MAX_TRANSFERS)
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	for (i = 0; i < len; i++) {
-> > > > +		reg_i = i * MC33XS2410_WORD_LEN;
-> > > > +		val_i = reg_i + 1;
-> > > > +		if (read) {
-> > > > +			if (i < len - 1) {
-> > > > +				tx[reg_i] = reg[i];
-> > > > +				tx[val_i] = ctrl[i] ? MC33XS2410_RD_CTRL : 0;
-> > > > +				t[i].tx_buf = &tx[reg_i];
-> > > > +			}
-> > > > +
-> > > > +			if (i > 0)
-> > > > +				t[i].rx_buf = &rx[reg_i - MC33XS2410_WORD_LEN];
-> > > > +		} else {
-> > > > +			tx[reg_i] = reg[i] | MC33XS2410_WR;
-> > > > +			tx[val_i] = val[i];
-> > > > +			t[i].tx_buf = &tx[reg_i];
-> > > > +		}
-> > > > +
-> > > > +		t[i].len = MC33XS2410_WORD_LEN;
-> > > > +		t[i].cs_change = 1;
-> > > 
-> > > Not sure if MC33XS2410_WORD_LEN really improves readability here.
-> > 
-> > It is used throughout in the function and improves readability overall,
-> > maybe not here but for consistency I would stick to it.
-> 
-> Seems to be subjective.
->
+LGTM, thanks for making the effort and removing this from the driver.
 
-I will get rid of it. Due to your proposal below, to use SPI_CS_WORD, the
-code to read/write from/to the device can be simplified by using a single
-transaction.
-
-> > > Why is this done using $len transfers, wouldn't a single one do (and
-> > > maybe be more performant and not rely on a spi controller that supports
-> > > cs_change)?
-> > 
-> > Without cs_change after every 16 bit, requests aren't processed by the
-> > device. Reading/writing from/to device fails. The SPI controller therefore
-> > must support cs_change. Single transfer is not possible because of the
-> > cs_change after every 16bit.
-> 
-> There is SPI_CS_WORD for this usecase.
->
-Thanks, didn't know about it. Helps a lot to simplify the code to
-read/write from/to device. Will switch to 16 bits per word and use
-SPI_CS_WORD.
-
-> > > > +	/* polarity */
-> > > > +	mask = MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm);
-> > > > +	val[2] = (state->polarity == PWM_POLARITY_INVERSED) ?
-> > > > +		 (val[2] | mask) : (val[2] & ~mask);
-> > > > +
-> > > > +	/* enable output */
-> > > > +	mask = MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm);
-> > > > +	val[3] = (state->enabled && rel_dc >= 0) ? (val[3] | mask) :
-> > > > +						   (val[3] & ~mask);
-> > > > +
-> > > > +	return mc33xs2410_write_regs(spi, reg, val, 4);
-> > > > +}
-> > > > +
-> > > > +static int mc33xs2410_pwm_get_state(struct pwm_chip *chip,
-> > > > +				    struct pwm_device *pwm,
-> > > > +				    struct pwm_state *state)
-> > > > +{
-> > > > [...]
-> > > > +	state->period = mc33xs2410_pwm_get_period(val[0]);
-> > > > +	state->polarity = (val[2] & MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm)) ?
-> > > > +			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
-> > > > +	state->enabled = !!(val[3] & MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm));
-> > > > +	mc33xs2410_pwm_set_relative_duty_cycle(state, val[1]);
-> > > 
-> > > No need to set state->duty_cycle = 0 if state->enabled is false. This is
-> > > another function I suggest to unroll as it hides more than it abstracts.
-> > 
-> > Function can be unrolled, but the check for state->enabled is needed. The
-> > device is unable to generate a 0% duty cycle, so it is turned off to
-> > generate a 0% duty cylce.
-> 
-> What breaks if you drop the check for state->enabled?
->  
-The device is unable to generate a 0% duty cycle, to support this you
-proposed in an earlier review to disable the output. Without checking if
-the output is disabled, the mc33xs2410_pwm_get_state function returns the
-wrong duty cycle for a previously setted 0% duty cycle. A "0" value in the
-MC33XS2410_PWM_DC register means that the relative duty cylce is 1/256. As
-a result there are complaints if PWM_DEBUG is enabled.
-
-Best regards,
-Dimitri
-
+Reviewed-by: David Arinzon <darinzon@amazon.com>
 
