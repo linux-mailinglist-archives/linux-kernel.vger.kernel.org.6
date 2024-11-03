@@ -1,83 +1,97 @@
-Return-Path: <linux-kernel+bounces-393971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266369BA819
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:57:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398269BA81D
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC4B6281C31
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:57:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E02A1C20E4B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FE018BC27;
-	Sun,  3 Nov 2024 20:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3118E18A95F;
+	Sun,  3 Nov 2024 21:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZfCcs/t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTICtkOI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2742C83CD3;
-	Sun,  3 Nov 2024 20:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843D32582;
+	Sun,  3 Nov 2024 21:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730667422; cv=none; b=h6vRejudbRgzhiQQNvR43jghmnHwsDT/LkdBbh3YCwgkoIw5K+BJWLrltaxvsrhg51jSeBggaq6EV31qwbNmyNwnS/t/ZpCh7hrE0KW/UiKHUV4nTI5Ss+S/efFrjsefsEE+E5PI2BgISAgzo6diSMNsDUPlEBJwVquoyinISGk=
+	t=1730667621; cv=none; b=ss3jaA0J8yH5FIZ6+K5Mjxf2hQA1e4ArHQsEJAdlJz05Zf1HCuZ4a0iWponlglzXaenM0sBQcnam5Ww8CzStSrLy8g+4QAEDKmjJ3IIylyf3RvkolG0kn50DMd6CLbMbTkpMeEvLP1i+qDTk+ttfECTy4xP7wJYQm2oTSpLVWao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730667422; c=relaxed/simple;
-	bh=kQwXeMRLlAue8MzM7s00R8H53UF6cT2XhjoFMQqxCkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TxdMdkuw3Jwq5BCzoZDuNjb+Pb2HJw9BjaisKtlxSZFYiJWIQtLzD8vLjYYYE/RjBFYPFBstSOMAk5G70dOIX5pm9Muv+QD4whjTqY3tLZx/zEpmXuh7EKGNAHOqD+KrDhMG5SojdqXceVngkyYvw16p2i6mgojpG3puR1gME5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZfCcs/t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 569F0C4CECD;
-	Sun,  3 Nov 2024 20:57:01 +0000 (UTC)
+	s=arc-20240116; t=1730667621; c=relaxed/simple;
+	bh=lQYtDDKON/MzTpBlCsO45Z/YVijax61h88SPsZIe2O0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=RZcB/PuHyPKSUURTAMbErYkAqPke8RK7pDnVBW0ApBydHQISfypKd3W9SjZ/dDIFeJ6EaPQY2LxWFAtQEZrenKmzwpRCh+yvdqRaU/bfWOVzjPHOzV/QOMj8xSiecgjxeXD22GTP3oM5Vsn8y7eovIeA8lPSxkFKVihpArFsTUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTICtkOI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0331FC4CED3;
+	Sun,  3 Nov 2024 21:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730667421;
-	bh=kQwXeMRLlAue8MzM7s00R8H53UF6cT2XhjoFMQqxCkw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fZfCcs/tF9z6dJVI8kCfdAWIbtmZ93sOavb56I2SXMKj9D34RPhWU6lJGXLkoi9s1
-	 hnWUWDui/i83Z5muJ32UcOA3ToCCVPl7KEVkWMEZe682ZFbKXw8uFwjOKH9lg7p57E
-	 3gPbhhfdE7hhxIkQFoWz7qBcPWSsuonYzWvCsEK2qTQzI3lC5wRbdt1CHKNeAQks4I
-	 u/nJcrwJzBraYbrUAqqhy/XpolIHbvkfjliSzhFnJjqcBpxoD1EhYoq/fIdXXiJbdy
-	 BipbuemJxJzsGpkaTD3e50ny4WQVtH1fxWdZooPNsWmM1mI6PFsTo1fw3/PTewR49E
-	 D8x4C9H2XQvFw==
-Date: Mon, 4 Nov 2024 05:56:59 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: bhelgaas@google.com, lorenzo.pieralisi@arm.com, frank.li@nxp.com,
-	mani@kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, imx@lists.linux.dev
-Subject: Re: [PATCH v2] PCI: dwc: Fix resume failure if no EP is connected at
- some platforms
-Message-ID: <20241103205659.GI237624@rocinante>
-References: <1721628913-1449-1-git-send-email-hongxing.zhu@nxp.com>
+	s=k20201202; t=1730667621;
+	bh=lQYtDDKON/MzTpBlCsO45Z/YVijax61h88SPsZIe2O0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=mTICtkOIuBXJLJmINXsxtm3ngbZ1xrZYWraDNy2CGmYiPp/0ZkXUTMioIQRneIUDE
+	 f6PbuBCxGERYfxQOHjBPgqtdQs/26HSJzhaAwzo2m3VZe5luD8KMxDkw4ERG1TwQ2+
+	 JlAyO5AImor9K6uBf59tw3XZB1LY9qKl9MCr77WNkd30fgZq+ls6mWBI85FGo2XOod
+	 u9NxU/LGKcRwR/ASZV0cqWXMFlIOMZDciUhE36KWfB9DXSstJs8hANmgYrPSEyDexi
+	 3NIU5hVlC8cSdDlkMlcU5kvIQ9C8J7Wuspwdu1tVbbWy5VV5jm0V33MXA2ii6YOpVf
+	 m0W1/+UqDFvZQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFF238363C3;
+	Sun,  3 Nov 2024 21:00:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1721628913-1449-1-git-send-email-hongxing.zhu@nxp.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/2] Fix issues when PF sets MAC address for VF
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173066762950.3253460.10123905926382934471.git-patchwork-notify@kernel.org>
+Date: Sun, 03 Nov 2024 21:00:29 +0000
+References: <20241031060247.1290941-1-wei.fang@nxp.com>
+In-Reply-To: <20241031060247.1290941-1-wei.fang@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, andrew+netdev@lunn.ch, claudiu.manoil@nxp.com,
+ vladimir.oltean@nxp.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev
 
-Hello,
+Hello:
 
-> The dw_pcie_suspend_noirq() function currently returns success directly
-> if no endpoint (EP) device is connected. However, on some platforms, power
-> loss occurs during suspend, causing dw_resume() to do nothing in this case.
-> This results in a system halt because the DWC controller is not initialized
-> after power-on during resume.
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 31 Oct 2024 14:02:45 +0800 you wrote:
+> The ENETC PF driver provides enetc_pf_set_vf_mac() to configure the MAC
+> address for the ENETC VF, but there are two issues when configuring the
+> MAC address of the VF through this interface. For specific issues, please
+> refer to the commit message of the following two patches. Therefore, this
+> patch set is used to fix these two issues.
 > 
-> Change call to deinit() in suspend and init() at resume regardless of
-> whether there are EP device connections or not. It is not harmful to
-> perform deinit() and init() again for the no power-off case, and it keeps
-> the code simple and consistent in logic.
+> Wei Fang (2):
+>   net: enetc: allocate vf_state during PF probes
+>   net: enetc: prevent PF from configuring MAC address for an enabled VF
+> 
+> [...]
 
-Applied to controller/dwc, thank you!
+Here is the summary with links:
+  - [net,1/2] net: enetc: allocate vf_state during PF probes
+    https://git.kernel.org/netdev/net/c/e15c5506dd39
+  - [net,2/2] net: enetc: prevent PF from configuring MAC address for an enabled VF
+    (no matching commit)
 
-[01/01] PCI: dwc: Fix resume failure if no EP is connected at some platforms
-        https://git.kernel.org/pci/pci/c/ec008c493c25
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-	Krzysztof
+
 
