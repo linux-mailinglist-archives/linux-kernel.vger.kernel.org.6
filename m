@@ -1,92 +1,181 @@
-Return-Path: <linux-kernel+bounces-393920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3FE9BA772
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:39:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 956679BA726
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FB1B281DE0
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:39:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CA5A1F2430D
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E47F14B94F;
-	Sun,  3 Nov 2024 18:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7581AB6CB;
+	Sun,  3 Nov 2024 17:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pbg00DDY"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gAex2VJy"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CAAF4F1
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 18:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0EE199384;
+	Sun,  3 Nov 2024 17:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730659143; cv=none; b=uLWwWtvYcM/M87ijIB0O9Zr+9omeFDcSfR+T+N17ZFkIKyCR8z7gLilF6XO+hLBd0nXaXJObICj5415H7OETaFY/974nnktdnnSjJFogHGZswwnD57Wpg3ILIA9UeQYKkJiwsC8Pg3UdZF53bexjuYaf5gsrxfzl2crYYEt3FGI=
+	t=1730653489; cv=none; b=BspkvCS+dtrOQQ4712Rt8ARE1zwcVCPswsbfIWNYWO3dx/EBRYKb44L1A5zy2oZ3x0JoiBBbCbZEz5CFeCCmZBdfCvaTww/mViUbC0B0Sz3Wn5AO9Y8DL/rXMER+r5tK+qmTbvOyY0DQLiRN2fGitnr6nNNLO9RV4CimsGzZFw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730659143; c=relaxed/simple;
-	bh=xeMn7Kw+jzhdqsxkIxzanCn6HNL84jvYb7LwyPq2UZo=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y+lYz5EE90mEkOuyFR65NiSCIy9rDkxGld1gIF6VkCcaUHqZALEijBI5wIAbZjuEzAlcklHHDP8ApId8IVXvpe6uLSWnFe5juYjzyogro/JlncIuhpUxrNwRmONwXY/JF0i9JtBaF75p7Rj6Q8eO/yAjff+5zvhyWnnL65pfwtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pbg00DDY; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a156513a1so613306366b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 10:39:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730659140; x=1731263940; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=BbN3riJbdbjGNLrdo1JOwS2z+UaEn1CqM288uO88t7Y=;
-        b=Pbg00DDYoSWkAU4sLI5XD3OTUqGrX+XgLHST+XRU+9GLDJBWg0ybTqDwjk5/xzRZmh
-         XAl5Q4JZlpU7wXQrV30q+5DdiyUu1YGoBJccqRnmZOmEHYlJiu8lfPNlq1QBZn9BpvLH
-         uRq1Pr49nw/rQb7vHSIbvmVZ+6ThxYYmP/Ipwvm+0SFeCqgvGecgWD+QQmbukqg1aHSB
-         H9GwNJ+8tKbXnwzZdtmG381BZXNAJvpQ7oC8qihPPoU1xd9mTBWiOq97ZDyz+apDY0A5
-         Xy3qrsgf6iWcLgBRZ/lCYlPIpJCbZTjffWdnIMH6/lki17XRpWHgVGaFM4BA/dSWOBI8
-         bAxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730659140; x=1731263940;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BbN3riJbdbjGNLrdo1JOwS2z+UaEn1CqM288uO88t7Y=;
-        b=fkz+gc1OZMpOphJcYvc9wlvUFB16fizkf0ENvZidnls5VF1JsSzgLZwm2eW4kFNqB9
-         xptrFRydqzAgybCFmeHtFRH4p2JAw3WZI3Ydv1V58dbpN2opBHbWuHalnHxr4ivfrE8a
-         EtJRWmXyPjMjNtyJaHt823AMftB11kSW40BBBVM44Y/0oeqn0jloCHJaCdHR7rtEAGp/
-         cBv7nfefWxLk3Hfn15XFLFkKYdVGkdUqz5+vL8GX6G+V36T49UsjWTXoa+oRTCTeULte
-         A2r+TvjOHtdosgi24FYsX+6eSyvOIuOwb5gSP9ggZUaeRrhmzLc9mWg3L+n4Lvk0/VRK
-         tTRg==
-X-Gm-Message-State: AOJu0YwBZ7luzCn1bzTOEvl3ObFI/UvRAouO8ZSKg3tHLsTpt6k1HV6g
-	bkOQv+J1Zh28isztK/hah89cAejsPXscXFnITFSD0s7kiYpPlZg5
-X-Google-Smtp-Source: AGHT+IE43ZQda5kgk9KSYgspGv/D7DNNEssGIO9fHQidGmKF336IspgK9Tokv3ubIemVMtBd6lGd3Q==
-X-Received: by 2002:a17:907:7da2:b0:a9a:6752:ba80 with SMTP id a640c23a62f3a-a9de5d6e1dcmr3070180866b.5.1730659140471;
-        Sun, 03 Nov 2024 10:39:00 -0800 (PST)
-Received: from akanner-r14. ([79.140.150.179])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c4f12sm448436266b.55.2024.11.03.10.38.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 10:39:00 -0800 (PST)
-Message-ID: <6727c344.170a0220.19c3a5.d62b@mx.google.com>
-X-Google-Original-Message-ID: <ZyZWg+OcUibe8M1C@akanner-r14.>
-Date: Sat, 2 Nov 2024 17:42:43 +0100
-From: Andrew Kanner <andrew.kanner@gmail.com>
-To: syzbot <syzbot+386ce9e60fa1b18aac5b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ocfs2?] general protection fault in [v2]
- ocfs2_xa_block_wipe_namevalue
-References: <67215651.a70a0220.31b018.c8d7@mx.google.com>
- <67215ae3.050a0220.24951d.0078.GAE@google.com>
- <6727c20d.170a0220.292362.d5e3@mx.google.com>
+	s=arc-20240116; t=1730653489; c=relaxed/simple;
+	bh=omnzY7OVUHnekZ/bUX8pXaM2rzeR5oe1Izmsxqjd69Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=K2d+cL5peRDb+3vHSsX8Y9D1RnArCkg9yEETh6TwCI7Qbm7gYQsn8kTHrSWqQwsoE8iGb+NkMxoh6JmM3SqxX64m8V5b+Fn0idJwrB2FqFphP3yTJEaO/N+W0cz6rlYSBceLNf1tF0XQBCAoZRaH9IMfv7yLR2YBbWQC9Yy2zAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gAex2VJy; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1730653482;
+	bh=omnzY7OVUHnekZ/bUX8pXaM2rzeR5oe1Izmsxqjd69Q=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=gAex2VJyMV+OiFkklrV8IrICkrh78EMUGYE6sgF6izsK/E9bdOLP+ue1pMfx65KEP
+	 daDJhG0bHjOZvxSIVoZOVufQPlLYRdXOaAnYLf8bMNfx7N7rX5CM0q0eWD9GRIOclJ
+	 PZ80lLezOY62im86G8xcV8ntzX7D+eMJVrF5nUUY=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 03 Nov 2024 17:03:32 +0000
+Subject: [PATCH v2 03/10] PCI/sysfs: Calculate bin_attribute size through
+ bin_size()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6727c20d.170a0220.292362.d5e3@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241103-sysfs-const-bin_attr-v2-3-71110628844c@weissschuh.net>
+References: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
+In-Reply-To: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Davidlohr Bueso <dave@stgolabs.net>, 
+ Jonathan Cameron <jonathan.cameron@huawei.com>, 
+ Dave Jiang <dave.jiang@intel.com>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>, 
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>, 
+ Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ "David E. Box" <david.e.box@linux.intel.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Richard Henderson <richard.henderson@linaro.org>, 
+ Matt Turner <mattst88@gmail.com>, Frederic Barrat <fbarrat@linux.ibm.com>, 
+ Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Logan Gunthorpe <logang@deltatee.com>, 
+ "K. Y. Srinivasan" <kys@microsoft.com>, 
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+ Dexuan Cui <decui@microsoft.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org, 
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-rdma@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ platform-driver-x86@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ linux-usb@vger.kernel.org, linux-alpha@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730653468; l=2359;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=omnzY7OVUHnekZ/bUX8pXaM2rzeR5oe1Izmsxqjd69Q=;
+ b=QEHmCC4IyJCPeU5OBXq34EhCHkpPKQglOlOaOSow6b0xRNSB6n8UoneN+GL6/CGyBOY6ZhYUm
+ LOb4xWNOB8AC0VTvIPxtVY0ZKdQGGSIFQEaRXg1966rzLgUpCbB+31p
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-please, ignore this
+Stop abusing the is_bin_visible() callback to calculate the attribute
+size. Instead use the new, dedicated bin_size() one.
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ drivers/pci/pci-sysfs.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index 5d0f4db1cab78674c5e5906f321bf7a57b742983..040f01b2b999175e8d98b05851edc078bbabbe0d 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -818,21 +818,20 @@ static struct bin_attribute *pci_dev_config_attrs[] = {
+ 	NULL,
+ };
+ 
+-static umode_t pci_dev_config_attr_is_visible(struct kobject *kobj,
+-					      struct bin_attribute *a, int n)
++static size_t pci_dev_config_attr_bin_size(struct kobject *kobj,
++					   const struct bin_attribute *a,
++					   int n)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
+ 
+-	a->size = PCI_CFG_SPACE_SIZE;
+ 	if (pdev->cfg_size > PCI_CFG_SPACE_SIZE)
+-		a->size = PCI_CFG_SPACE_EXP_SIZE;
+-
+-	return a->attr.mode;
++		return PCI_CFG_SPACE_EXP_SIZE;
++	return PCI_CFG_SPACE_SIZE;
+ }
+ 
+ static const struct attribute_group pci_dev_config_attr_group = {
+ 	.bin_attrs = pci_dev_config_attrs,
+-	.is_bin_visible = pci_dev_config_attr_is_visible,
++	.bin_size = pci_dev_config_attr_bin_size,
+ };
+ 
+ /*
+@@ -1330,21 +1329,26 @@ static umode_t pci_dev_rom_attr_is_visible(struct kobject *kobj,
+ 					   struct bin_attribute *a, int n)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
+-	size_t rom_size;
+ 
+ 	/* If the device has a ROM, try to expose it in sysfs. */
+-	rom_size = pci_resource_len(pdev, PCI_ROM_RESOURCE);
+-	if (!rom_size)
++	if (!pci_resource_end(pdev, PCI_ROM_RESOURCE))
+ 		return 0;
+ 
+-	a->size = rom_size;
+-
+ 	return a->attr.mode;
+ }
+ 
++static size_t pci_dev_rom_attr_bin_size(struct kobject *kobj,
++					const struct bin_attribute *a, int n)
++{
++	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
++
++	return pci_resource_len(pdev, PCI_ROM_RESOURCE);
++}
++
+ static const struct attribute_group pci_dev_rom_attr_group = {
+ 	.bin_attrs = pci_dev_rom_attrs,
+ 	.is_bin_visible = pci_dev_rom_attr_is_visible,
++	.bin_size = pci_dev_rom_attr_bin_size,
+ };
+ 
+ static ssize_t reset_store(struct device *dev, struct device_attribute *attr,
 
 -- 
-Andrew Kanner
+2.47.0
+
 
