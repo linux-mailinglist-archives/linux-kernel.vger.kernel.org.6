@@ -1,109 +1,125 @@
-Return-Path: <linux-kernel+bounces-393862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B8F9BA672
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:41:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 774D69BA673
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:50:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2690E1C20E8A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:41:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE551C20D91
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E6A18660A;
-	Sun,  3 Nov 2024 15:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87CB17C234;
+	Sun,  3 Nov 2024 15:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8gWtwPu"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECRrgRdZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6EB15D5C1;
-	Sun,  3 Nov 2024 15:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FB74A1D;
+	Sun,  3 Nov 2024 15:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730648501; cv=none; b=WHUKdj6lMzygy6CW3mb0KJT3WnaNK0P8dNaz17uhqxxCxsOz+vK1zfKwoQjw2XxjxLSvJSDq2H/XwQ+XBgVNQHdPN0BspNeGjhMQ/AyExuUdsQNig5eXrpcEckv1aZDZ8Qn6WuftHk2Ww/jqGB8+qa4XIBwUMrEwlk/xxDhgiyE=
+	t=1730649006; cv=none; b=r9dLK0axsE3AXp3TW/wyMVWKqPNe3HilTY2I+oL2XIbqWQ+kSukbOKLdQlO2JCsf38FtbXTxc8W4c+7PbhOE3fXh6MK9jgBYeaCUATCCqCB3+JVtkUpmxI3+DONhlW8dfyPGD0gizSA09O0VPIPp8io6FI+kwo5uFtyGuupvimQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730648501; c=relaxed/simple;
-	bh=GyLcRZpOkBrsPxswcDFQ0iEUVqRw2osCdv+d3ezkn04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X23r9j92JoB22pcjlje8uXyO77rz/XJ1SsHMT67mgdmG2TdEAhijzSQ2X5OSHycW98YuauvSc05u67TeS0fLebj8tBfFTNmBYFKg5IpDvdNpysGDa6NjLQXrEKQO7I5U5AUaLrcuLFXmbvTe/Rx/iPKGgYS1fVXr/1XobbKexoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8gWtwPu; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea535890e0so569868a12.2;
-        Sun, 03 Nov 2024 07:41:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730648499; x=1731253299; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9gTIZzADuASrTW+VUIVvizdFrSJXJfISDBymYqSNdUQ=;
-        b=Z8gWtwPu7XfmEoGNQBlUFUCrQCmW5d5h31r9m1m6BX7PRD2tpymsNkYmJSxz2FY9b7
-         iAYgdlMtsIWt6nYTgyscGrmnmPMQ2vpTbymKBIbDG0hWwmhw3XTRiBoDZhcmjY5nS2ii
-         PYUakRGN7wY7Qoj2ZbNBU3o4wV3Z5PdlSUpH7lgAojo+vdFlzDRevcOgK2fk90edjCTA
-         g6AY/d3OZYOZ8ATzIMd/ueYGbrUV1KWRucGZCjrEZFnhSoj0PT3NRmNeDsPK0SAsA5jY
-         961L6Th1akEn65SFroyQCGsxqHDrLnl7QKjyXilQGVyhsBsYwQzSnT0VvjAMkut9CpDh
-         RZQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730648499; x=1731253299;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9gTIZzADuASrTW+VUIVvizdFrSJXJfISDBymYqSNdUQ=;
-        b=JWiw4qv4rroARl2oIyxYxsE2Aybt9p+xV62RqOWX3qhmAjB8jwIsQtJRkWd47G1bVh
-         H5JINRZUy5nEvdWZNWqrsix7/tQTbD/VdfMEgQpgS7vorjWXBTnwcfa1RR6WhluySHxU
-         /FagwRRd+92zqohSkW7ag+zSrIoRTcLaEXds2mbVFlnmdMX8E5rTMP5JB1DUl1ozrXnV
-         qPm4ZlHAMlVq3cXh+uvUFIUws9/dYiUUOhKxwO+QGwfpPUTL43qC8SrJE/0Fwu6prNfD
-         1l26lBHF4NyoyIPGwYgfJhhgv4m06CvjgSdank91l1zFCbEslces0N/dqFE9Zg5HQY+7
-         7/WA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRjOMQvRO/Pn6bNNwUl9mw5+kyTZWFKPjelkXvbW8Yhy5jt8MgbJKlH+yG9W6Winrs/nQSDFjEQv1ZeEjoaK7n@vger.kernel.org, AJvYcCWqz054pdcvTvf1DFWUUkP9wXYyEvrKW1YnBcf+aRMFGqmMyWmlMho00PstOGCEfxUZ8/t2afULm0SOA3VWztU=@vger.kernel.org, AJvYcCXD3qsUBGPZs8tlQO+tNezVm+mVxflPZHF0pdhDsvWIITEV0xn778VvzHKWwDltvAmq9CSiQzlpEIhYqHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX1XVsBnmjgO+OOwbW41G0UUWXrx94EeKyUXXwT8wFQzpp7rxz
-	s9zriBYHh/8YMqXe4Khs2DaWJZfxFsWUtZk+DjJSWwj/rPLjsz/07C9zOKB0uqaOVT/0T//EPj1
-	HlrLXMOeXkVQHcCVUQGasj4ljdptotOiZ
-X-Google-Smtp-Source: AGHT+IEe28SlBSIrk0bjLKSCj7X8IBJqLInnAUxgkFLVSWSSYRoJ6oiVQ2ZyKKfTli7kJtAxzgUlvF/jYhozIC9fTy0=
-X-Received: by 2002:a17:903:2285:b0:207:da7:bd95 with SMTP id
- d9443c01a7336-210c6ce5fc8mr180583105ad.13.1730648499051; Sun, 03 Nov 2024
- 07:41:39 -0800 (PST)
+	s=arc-20240116; t=1730649006; c=relaxed/simple;
+	bh=AW4Knij9ewvLsBxLY6FtOGeMfl29M21+rl9tqeA6PmA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=i7nNvfGjwv9YGH0qDe7oVqTxFZ26jVBCJYQ4o4yQZ8x9EYxlOaD2vyy8G/MQCgpWL6mpsd1fE5mBj9yj6PzCSdBxg0RKEn9rms8LBHo3vfz2i+CrXZA0qI8fDJZTlPBWejWJSyvnMW8lIK6M+MOXYyfJaQF9lfQZXKKI8gO7f+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECRrgRdZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6AC5C4CECD;
+	Sun,  3 Nov 2024 15:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730649005;
+	bh=AW4Knij9ewvLsBxLY6FtOGeMfl29M21+rl9tqeA6PmA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ECRrgRdZjGN9hwJkC+gxWigdsnMdhm79OZPLc9sixVG0wTk69PWJHhLfpRIz7kJ0S
+	 iAzE9QAeFCoCbJ+sjInyxz940QRxuMVZ1TJOyfR67ALFEulh3PHX95BOO2X34qv8T0
+	 fB/lZwb5NiNWr+1LCR4tzhQPOH10Cm31wl4wBYPDuUwsWEnm/yXxRJ5+ndUy39L1FS
+	 +A6IcEg9Qvv53hcvf2nXPQfHLT/oScFfjFas+2nUQsSaZs3+gZtYGngSLsxNwWvNbw
+	 CsOjm9aoxfKlGrEacncB2GPkQBEKabeTLR6p9jNKJXOsjyPmrYYiRt6GFkav/TW87s
+	 tS9Oq3TFPLZkQ==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb559b0b00so27777581fa.0;
+        Sun, 03 Nov 2024 07:50:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWGPXIW1iztAz7B+qC8peEnu3VDxqquWCtdBO7N2hRLn5POayB8Lv5IgStptkNJHyNf0Vpd9+HXg6muUo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWTI7tfIWat4iq72PqWzxMQcKTAYNrvMyNz+PT2RRBetmIrQ1X
+	9wxq6sOtKLji6o+CoZc8/7kU6qeSq7TYDZ91xbbJTN1PGl8U3SydD5YlTMudJs7Jj9jX5btf8T5
+	ecqV2b1gXzikiwb/AN6FTyT47kVU=
+X-Google-Smtp-Source: AGHT+IEH6qS/+D0U6lTqkeMJhdBXb7uQc9Gm7F9sLTblHGebkuwIQvuzqlWHPiphvFNAaJ8jCKCS9akdi6AUDlH9nyE=
+X-Received: by 2002:a2e:a80b:0:b0:2fa:d4c1:3b71 with SMTP id
+ 38308e7fff4ca-2fedb7c817cmr46315621fa.19.1730649004405; Sun, 03 Nov 2024
+ 07:50:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101064505.3820737-1-davidgow@google.com> <20241101064505.3820737-3-davidgow@google.com>
- <ZyVKSKUq_bKH5jn_@Boquns-Mac-mini.local> <CANiq72=yhH7MEQWxVSVXGa5M5=HXudtS0Xja=w7ViU4Ph1Mpdw@mail.gmail.com>
- <ZyVtcXTW99YpUF0o@Boquns-Mac-mini.local>
-In-Reply-To: <ZyVtcXTW99YpUF0o@Boquns-Mac-mini.local>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 3 Nov 2024 16:41:26 +0100
-Message-ID: <CANiq72mMnmgG_SfRcxmo24Wjwtmc4Q5Q+zm4GmtZg=Cr5Dd7uw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] rust: macros: add macro to easily run KUnit tests
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: David Gow <davidgow@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	=?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 4 Nov 2024 00:49:28 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARe1AnzxumbfOD7y2CpRXSa59RvsEDTw5YAjCTim9-5GQ@mail.gmail.com>
+Message-ID: <CAK7LNARe1AnzxumbfOD7y2CpRXSa59RvsEDTw5YAjCTim9-5GQ@mail.gmail.com>
+Subject: [GIT PULL] Kbuild fixes for v6.12-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 2, 2024 at 1:08=E2=80=AFAM Boqun Feng <boqun.feng@gmail.com> wr=
-ote:
->
-> Hmm.. so I think clippy won't warn for a normal Rust #[test] function:
->
->         https://github.com/rust-lang/rust-clippy/pull/7811
+Hello Linus,
 
-That is a very good point. It is a bit surprising that those details
-are not documented, but we could mimic that behavior.
+Please pull some Kbuild fixes.
 
-(Personally, I don't particularly enjoy exceptional/context-dependent
-cases, unless it is something used everywhere, like `use`ing the
-prelude that we have).
+Thank you.
 
-Cheers,
-Miguel
+
+
+The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+
+  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-fixes-v6.12-2
+
+for you to fetch changes up to 77dc55a978e69625f9718460012e5ef0172dc4de:
+
+  modpost: fix input MODULE_DEVICE_TABLE() built for 64-bit on 32-bit
+host (2024-11-03 23:58:56 +0900)
+
+----------------------------------------------------------------
+Kbuild fixes for v6.12 (2nd)
+
+ - Fix a memory leak in modpost
+
+ - Resolve build issues when cross-compiling RPM and Debian packages
+
+ - Fix another regression in Kconfig
+
+ - Fix incorrect MODULE_ALIAS() output in modpost
+
+----------------------------------------------------------------
+Elena Salomatkina (1):
+      sumversion: Fix a memory leak in get_src_version()
+
+Masahiro Yamada (6):
+      kbuild: rpm-pkg: disable kernel-devel package when cross-compiling
+      kbuild: deb-pkg: add pkg.linux-upstream.nokernelheaders build profile
+      kbuild: deb-pkg: add pkg.linux-upstream.nokerneldbg build profile
+      kconfig: show sub-menu entries even if the prompt is hidden
+      modpost: fix acpi MODULE_DEVICE_TABLE built with mismatched endianness
+      modpost: fix input MODULE_DEVICE_TABLE() built for 64-bit on 32-bit host
+
+ scripts/Makefile.package             |  7 ++++++-
+ scripts/kconfig/menu.c               | 13 ++++++++++++-
+ scripts/mod/file2alias.c             | 12 ++++++------
+ scripts/mod/sumversion.c             |  5 +++--
+ scripts/package/builddeb             |  2 +-
+ scripts/package/install-extmod-build |  6 ++----
+ scripts/package/mkdebian             | 10 +++++++++-
+ 7 files changed, 39 insertions(+), 16 deletions(-)
+
+-- 
+Best Regards
+Masahiro Yamada
 
