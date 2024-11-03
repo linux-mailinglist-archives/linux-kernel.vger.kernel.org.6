@@ -1,106 +1,248 @@
-Return-Path: <linux-kernel+bounces-393805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EB09BA572
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:47:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2873C9BA56A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:34:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF219281CD1
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:47:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57F70B20F47
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E0E17107F;
-	Sun,  3 Nov 2024 12:47:48 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A64470832;
+	Sun,  3 Nov 2024 12:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiJHNLPT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AB2A50;
-	Sun,  3 Nov 2024 12:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631F015A8;
+	Sun,  3 Nov 2024 12:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730638067; cv=none; b=j3r+kIcyH98Eg9qhz92x5D8xSYH4YraeDy4WAHAhyLkfjnZDs8fwmmublQ3BeUkQ+tWIBXkJ6RHXyZUokLxv2VmUUh9XFeCQWEWU3DYDzxeVsiLcvEfQcFibWC1OGRbDo3pCZICnsTeTmaWyRurBr6IJFuvN+VtJ5pSOXp2KM9o=
+	t=1730637230; cv=none; b=D9VrpNbLRcGdrlEmuVmWgc1tLp6zY8KPt6gwVEy6Q7BJbGKQFUmMu1V2F4z3V1XpNn1SuvMXh036ROjCFUjxHfDut9dTx8AmXynVRGQ3AztvTE6Fg7hwyLNIX2rRiCwJCDKiRlAzsKJC9F605IPRrq2aMZMFi09V6WBhFyTYC3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730638067; c=relaxed/simple;
-	bh=SUH/9qeDJywkSzvKXFuQPnpTfF2TscJ0TEkBuPIKc0Y=;
-	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CP/vvlsWwKVqF3N/eOy67CuzkeyVqa12P+aNM5LAgIy72af+7bRauyv9We2rQ7zBuzszd19qUxjAWcl/mOqcm+hfSisn08w6wUfiIvgw4+zORf+JqgkORN//u/ONo7PWvKSQ3Mw8pQDN0e4l6EvVR2ciy6fZPBzYOu2YqhJ1QJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XhDQj2w8fz67lS1;
-	Sun,  3 Nov 2024 20:28:13 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id 327131404F5;
-	Sun,  3 Nov 2024 20:29:42 +0800 (CST)
-Received: from GurSIX1 (10.204.106.27) by frapeml500005.china.huawei.com
- (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sun, 3 Nov
- 2024 13:29:29 +0100
-From: Gur Stavi <gur.stavi@huawei.com>
-To: 'Jakub Kicinski' <kuba@kernel.org>
-CC: "Gongfan (Eric, Chip)" <gongfan1@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Cai Huoqing
-	<cai.huoqing@linux.dev>, "Guoxin (D)" <guoxin09@huawei.com>, shenchenyang
-	<shenchenyang1@hisilicon.com>, "zhoushuai (A)" <zhoushuai28@huawei.com>,
-	"Wulike (Collin)" <wulike1@huawei.com>, "shijing (A)" <shijing34@huawei.com>,
-	Meny Yossefi <meny.yossefi@huawei.com>
-References: <cover.1730290527.git.gur.stavi@huawei.com>	<ebb0fefe47c29ffed5af21d6bd39d19c2bcddd9c.1730290527.git.gur.stavi@huawei.com> <20241031193523.09f63a7e@kernel.org>
-In-Reply-To: <20241031193523.09f63a7e@kernel.org>
-Subject: RE: [RFC net-next v01 1/1] net: hinic3: Add a driver for Huawei 3rd gen NIC
-Date: Sun, 3 Nov 2024 14:29:27 +0200
-Message-ID: <000001db2dec$10d92680$328b7380$@huawei.com>
+	s=arc-20240116; t=1730637230; c=relaxed/simple;
+	bh=uwpetMsMwbnA2n9wFjVxct2il4YG+otS1qBAi7Q8uzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z+Fk9pQwo0oqL8C3NJrD/YOtFWAvUwM+6BwOxHLE4sZKktxJoB28pfeYPTslq//GJmKco9nt+iPhu/0dS9R3dvC+aCpNOq0MtJiIFbX6CoNP+0QTwf8ztm6u2C2j5UF8G69ljUkiowUUEaqfVl5KnY8OnAN1I5lWcvYfiibGZdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hiJHNLPT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00F80C4CECD;
+	Sun,  3 Nov 2024 12:33:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730637229;
+	bh=uwpetMsMwbnA2n9wFjVxct2il4YG+otS1qBAi7Q8uzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hiJHNLPTkh4rMHm3TM7JdIRs39HkXSCVsqTXYAh5z1n5R9N8tcqtom6JdGM+9To28
+	 hvmgajN9ppmpXIvDFBXxWztaZRpBjs8SQxnfA2uAx+uPD/d6yiU++mbKtw0lIsRtd7
+	 O7FxE/tjIe9fKXgqSGtOgbEfISpj7/V2+ubYvedjr4UgjNbrI3b88RnqYPa47iq12+
+	 z7Na4KfLJTSUmJSBbzFY4lXqTZpO/K2BXcXlvuo81oKAeRuL9ej33VjT4moas1tLsh
+	 bB7MYlaYJGkgnWJf2O34LrQe8t328YUT78WlIxR1Bdypsr/NQMiveIf1MTntrxHpYZ
+	 ZN+0AP9JGtk9A==
+Date: Sun, 3 Nov 2024 14:33:44 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI/sysfs: Fix read permissions for VPD attributes
+Message-ID: <20241103123344.GA42867@unreal>
+References: <20241101143300.GA339254@unreal>
+ <20241101164737.GA1308861@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHbKsTa0xys0oGhWkSQIdOtZx32g7KhpxmAgAPaQnA=
-Content-Language: en-us
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- frapeml500005.china.huawei.com (7.182.85.13)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101164737.GA1308861@bhelgaas>
 
-> On Wed, 30 Oct 2024 14:25:47 +0200 Gur Stavi wrote:
-> >  50 files changed, 18058 insertions(+)
+On Fri, Nov 01, 2024 at 11:47:37AM -0500, Bjorn Helgaas wrote:
+> On Fri, Nov 01, 2024 at 04:33:00PM +0200, Leon Romanovsky wrote:
+> > On Thu, Oct 31, 2024 at 06:22:52PM -0500, Bjorn Helgaas wrote:
+> > > On Tue, Oct 29, 2024 at 07:04:50PM -0500, Bjorn Helgaas wrote:
+> > > > On Mon, Oct 28, 2024 at 10:05:33AM +0200, Leon Romanovsky wrote:
+> > > > > From: Leon Romanovsky <leonro@nvidia.com>
+> > > > > 
+> > > > > The Virtual Product Data (VPD) attribute is not readable by regular
+> > > > > user without root permissions. Such restriction is not really needed,
+> > > > > as data presented in that VPD is not sensitive at all.
+> > > > > 
+> > > > > This change aligns the permissions of the VPD attribute to be accessible
+> > > > > for read by all users, while write being restricted to root only.
+> > > > > 
+> > > > > Cc: stable@vger.kernel.org
+> > > > > Fixes: d93f8399053d ("PCI/sysfs: Convert "vpd" to static attribute")
+> > > > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > > > 
+> > > > Applied to pci/vpd for v6.13, thanks!
+> > > 
+> > > I think this deserves a little more consideration than I gave it
+> > > initially.
+> > > 
+> > > Obviously somebody is interested in using this; can we include some
+> > > examples so we know there's an actual user?
+> > 
+> > I'll provide it after the weekend.
+
+As it is seen through lspci, nothing criminal here.
+08:00.0 Ethernet controller: Mellanox Technologies MT2910 Family [ConnectX-7]
+...
+        Capabilities: [48] Vital Product Data
+                Product Name: NVIDIA ConnectX-7 HHHL adapter Card, 200GbE / NDR200 IB, Dual-port QSFP112, PCIe 5.0 x16 with x16 PCIe extension option, Crypto, Secure Boot Capable
+                Read-only fields:
+                        [PN] Part number: MCX713106AEHEA_QP1
+                        [EC] Engineering changes: A5
+                        [V2] Vendor specific: MCX713106AEHEA_QP1
+                        [SN] Serial number: MT2314XZ0JUZ
+                        [V3] Vendor specific: 0a5efb8958deed118000946dae7db798
+                        [VA] Vendor specific: MLX:MN=MLNX:CSKU=V2:UUID=V3:PCI=V0:MODL=CX713106A
+                        [V0] Vendor specific: PCIeGen5 x16
+                        [VU] Vendor specific: MT2314XZ0JUZMLNXS0D0F0
+                        [RV] Reserved: checksum good, 1 byte(s) reserved
+                End
+
+> > 
+> > > Are we confident that VPD never contains anything sensitive?  It may
+> > > contain arbitrary vendor-specific information, so we can't know what
+> > > might be in that part.
+> > 
+> > It depends on the vendor, but I'm pretty confident that any sane vendor who
+> > read the PCI spec will not put sensitive information in the VPD. The
+> > spec is very clear that this open to everyone.
 > 
-> 4kLoC is the right ballpark to target for the initial submission.
-> Please cut this down and submit a minimal driver, then add the
-> features.
+> I don't think the spec really defines "everyone" in this context, does
+> it?  The concept of privileged vs unprivileged users is an OS
+> construct, not really something the PCIe spec covers.
 
-Ack.
-There is indeed code which is not critical to basic Ethernet functionality
-that can be postponed to later.
+Agree that it OS specific, but for me, the fields like manufacturer ID,
+serial number e.t.c shows that the VPD doesn't contain sensitive information.
 
-Our HW management infrastructure is rather large and contains 2 separate
-mechanisms (cmdq+mbox). While I hope we can trim the driver to a VF-only
-version with no ethtool support that will fit the 10KLoC ballpark, the 4KLoC
-goal is probably unrealistic for a functional driver.
+> 
+> > > Reading VPD is fairly complicated and we've had problems in the past
+> > > (we have quirk_blacklist_vpd() for devices that behave
+> > > "unpredictably"), so it's worth considering whether allowing non-root
+> > > to do this could be exploited or could allow DOS attacks.
+> > 
+> > It is not different from any other PCI field. If you are afraid of DOS,
+> > you should limit to read all other fields too.
+> 
+> Reading VPD is much different than reading things from config space.
+> 
+> To read VPD, software needs to:
+> 
+>   - Mutex with any other read/write path
+> 
+>   - Write the VPD address to read to the VPD Address register, with F
+>     bit clear
+> 
+>   - Wait (with timeout) for hardware to set the F bit of VPD Address
+>     register
+> 
+>   - Read VPD information from the VPD Data register
+> 
+>   - Repeat as necessary
+> 
+> The address is 15 bits wide, so there may be up to 32KB of VPD data.
+> The only way to determine the actual length is to read the data and
+> parse the data items, which is vulnerable to corrupted EEPROMs and
+> hardware issues if we read beyond the implemented size.
+> 
+> The PCI core currently doesn't touch VPD until a driver or userspace
+> (via sysfs) reads or writes it, so this path is not tested on most
+> devices.
 
-Is it valid to submit a non-functional kernel module and make it functional
-with follow-up submissions? For example:
-Submission 1: TX+RX logic
-Submission 2: Device management infrastructure
-Submission 3: PCI device registration and netdev creation
+The patch yes, but the flow is tested very well. It is hard to imagine
+situation where "lspci -vv" or corresponding library, never used to read
+data from device. Maybe it is not used daily on all computers, but all
+devices at least once in their lifetime were accessed.
 
+> 
+> > > For reference, here are the fields defined in PCIe r6.0, sec 6.27.2
+> > > (although VPD can contain anything a manufacturer wants to put there):
+> > > 
+> > >   PN Add-in Card Part Number
+> > >   EC Engineering Change Level of the Add-in Card
+> > >   FG Fabric Geography
+> > >   LC Location
+> > >   MN Manufacture ID
+> > >   PG PCI Geography
+> > >   SN Serial Number
+> > >   TR Thermal Reporting
+> > >   Vx Vendor Specific
+> > >   CP Extended Capability
+> > >   RV Checksum and Reserved
+> > >   FF Form Factor
+> > >   Yx System Specific
+> > >   YA Asset Tag Identifier
+> > >   RW Remaining Read/Write Area
+> > > 
+> > > The Conventional PCI spec, r3.0, sec 6.4, says:
+> > > 
+> > >   Vital Product Data (VPD) is the information that uniquely defines
+> > >   items such as the hardware, software, and microcode elements of a
+> > >   system. The VPD provides the system with information on various FRUs
+> > >   (Field Replaceable Unit) including Part Number, Serial Number, and
+> > >   other detailed information. VPD also provides a mechanism for
+> > >   storing information such as performance and failure data on the
+> > >   device being monitored. The objective, from a system point of view,
+> > >   is to collect this information by reading it from the hardware,
+> > >   software, and microcode components.
+> > > 
+> > > Some of that, e.g., performance and failure data, might be considered
+> > > sensitive in some environments.
+> > 
+> > I'm enabling it for modern device which is compliant to PCI spec v6.0.
+> > Do you want me to add quirk_allow_vpd() to allow only specific devices to
+> > read that field? It is doable but not scalable.
+> 
+> None of these questions really has to do with old vs new devices.  An
+> "allow-list" quirk is possible, but I agree it would be a maintenance
+> headache.  To me it feels like VPD is kind of in the same category as
+> dmesg logs.  We try to avoid putting secret stuff in dmesg, but
+> generally distros still don't make it completely public.
 
-Some initial submission cases we studied before our submission:
+They hide it as dmesg already exposes a lot of sensitive data. For
+example, the kernel panic reveals a lot of such data. It is definitely
+not the case for VPD, and VPD vs. dmesg comparison is not correct one.
 
-Amazon/ena: 10858 insertions
-https://lore.kernel.org/netdev/1470827002-23081-1-git-send-email-netanel@ann
-apurnalabs.com/
+Thanks
 
-Microsoft/mana: 6168 insertions
-https://lore.kernel.org/netdev/20210416060705.21998-1-decui@microsoft.com/
-
-Huawei/hinic: 12728 insertions
-https://lore.kernel.org/netdev/cover.1503330613.git.aviad.krawczyk@huawei.co
-m/
-
-
+> 
+> > > > > ---
+> > > > > I added stable@ as it was discovered during our hardware ennoblement
+> > > > > and it is important to be picked by distributions too.
+> > > > > ---
+> > > > >  drivers/pci/vpd.c | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
+> > > > > index e4300f5f304f..2537685cac90 100644
+> > > > > --- a/drivers/pci/vpd.c
+> > > > > +++ b/drivers/pci/vpd.c
+> > > > > @@ -317,7 +317,7 @@ static ssize_t vpd_write(struct file *filp, struct kobject *kobj,
+> > > > >  
+> > > > >  	return ret;
+> > > > >  }
+> > > > > -static BIN_ATTR(vpd, 0600, vpd_read, vpd_write, 0);
+> > > > > +static BIN_ATTR_RW(vpd, 0);
+> > > > >  
+> > > > >  static struct bin_attribute *vpd_attrs[] = {
+> > > > >  	&bin_attr_vpd,
+> > > > > -- 
+> > > > > 2.46.2
+> > > > > 
 
