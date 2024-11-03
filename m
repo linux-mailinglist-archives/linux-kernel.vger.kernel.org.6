@@ -1,83 +1,128 @@
-Return-Path: <linux-kernel+bounces-393855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4DF9BA65F
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:20:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825FD9BA665
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:37:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2C95B20F2A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:20:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28E49281725
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99E018595E;
-	Sun,  3 Nov 2024 15:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03144170A01;
+	Sun,  3 Nov 2024 15:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="flb3kUVK"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DlfiuaJH"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B66423774;
-	Sun,  3 Nov 2024 15:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1DE15D5C1
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 15:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730647246; cv=none; b=uX1l4RpgMc83mvaPYYjKrBjajGwcAJqvfJmCctHnYy04hV+ey/kTJX7Km57OUZ+7ie/yvmrby35V3ngj0D9kdxVqJt25nndMBAqLUJWqX1wIfjFHGpIIvx1JFGRZ9IoNOPYhGWbfMkhqlmCyDhuk9tzAyxb/r1ntJ1kteR+pI+M=
+	t=1730648258; cv=none; b=mNxhtnJ8gyIDkZ5KeGfP4wbVSVPbKZXD3hjHc9wGxWS2ra66kkTsvvOlwAgbfnuMGMdlpSyMcLsxR5ZUwipeUkOqAa1PS9KlbYIibzIgWIYNisG18UfTmnRILiTxyLjD67C8eGcQv4Yp1xWnHh5ZdWEiMov7CfrGGtCvKrYPASE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730647246; c=relaxed/simple;
-	bh=zVuaYgLRsZYa1XUybwHktQ2q0GlPerZ3CIB6sz8W8ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MW6SuK9umTKgSymdE4wr3e7X8ipXoddxRltGZts4tR41001sap13mfKiDnunIYv0k4n60/peBTaGeCphQHU+xfD0mkLlcbIUwfy8vlE37J3ubjTQOtNGvaEjs5Y8AnGPplpyVyBXw/Drr9R1brYXNu3H/K4jS+zJWgOrFl3c61I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=flb3kUVK; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=EcTJqEHOtmy9IglxtzxFtYhDHa1so+bTTn9DvV6/mbw=; b=flb3kUVKt+wvset/BhIkj4qv2z
-	og3ChRn29r3w+tpG7W0e01u6Eb7S1IgpvDGG/18J1p1wYdlxkS/4Fipp+MxnJoZ1Om/HUoS2hlTB+
-	8HUjn7ib/45Winnoln6fzT/APcNAkM80jkklStHgZkXEG4kYbQIXP6Zl0BVSSdk4SmPM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t7cP3-00C1VJ-Cf; Sun, 03 Nov 2024 16:20:33 +0100
-Date: Sun, 3 Nov 2024 16:20:33 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Diogo Silva <diogompaissilva@gmail.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, marex@denx.de,
-	tolvupostur@gmail.com
-Subject: Re: [PATCH] net: phy: ti: add PHY_RST_AFTER_CLK_EN flag
-Message-ID: <6e5298c0-eded-4fd2-8ce6-52d4239da53c@lunn.ch>
-References: <20241102151504.811306-1-paissilva@ld-100007.ds1.internal>
+	s=arc-20240116; t=1730648258; c=relaxed/simple;
+	bh=A/WnptpcEaCydNEwHhCYy3nsOgAQBjpitbug4N2yRps=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WqyJtkjJRzIVHHiUP+2CbazeUqZnuNvGlPv+gcSPMPMHxNlOUJqmE9fIKLrIPn6vyDMeDgEE86bnMiMp6Jm/C/r8Wl6aYG/M4pFGNGqmYVdJQRYarlPsgj4+fa0Tk1IsEU/dOpzxFl5nUsoqi17xmgQcIAZ/STZLvaFXFt20Sfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DlfiuaJH; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so4478562e87.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 07:37:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730648254; x=1731253054; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ecRjHWyEMPV8C3gd1Is18U/kDaXQ6jei97bXitPNEX0=;
+        b=DlfiuaJHmCCXShePfBlRVd4RF+QLRrNHKrjlEqdx3OOsfs3K9EewqzRATQFcpD9//b
+         Y3fKOmfLcu2mE1+fcDCXdWK4imm7dWEY05rPooL0wekHnzprlnT0blasmZ1nhDFAct1Z
+         d06U/f8ppMyQkweNDuFfPg20YKLKsnhNhc2Tepyo8+v2gt6ntxMCbu2BTeNwn9s0BInr
+         YcLkQqiC4KLmyLA4iOe5UxhA9pHfK8EuwqJ30p+Y9iwdNPYRG6k/ZMyGsDczI3n2Pf4P
+         GBHil7TAUIh9tp0QHGoQwO/L+LUE0XUk5fWGPzT4o1Zbyx+kfqjb34yIE3oTujb/AYpW
+         MiHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730648254; x=1731253054;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ecRjHWyEMPV8C3gd1Is18U/kDaXQ6jei97bXitPNEX0=;
+        b=rbEwIXbXAWzDiPVz1XUyd2pBpHmudZQiu/Zq2oGQHEOmF17WiN5htQTNYDgViOzbMt
+         8xGNd4V9FP3X7nIXjok3Jn3XliA/NHgTOILgIyIx9EkLuO1ZApbcBtkcjkTNAZN4bD0H
+         9Pdq9Q1+6e+jOuqlZkK/3YcOYZFN4cfUL/NjA3/klQZkwbbLxb1+6uyGaL5iazWVxpkH
+         Yq/wPu0kuc+feBQEhK4agFShMIJd6mqYVUw8rcoOZ5y2mpa42cuwzzWHk4fkFoJPxGFv
+         LBS8uv1WorXygZAUdlADJv0krQhJs+Eg2kNv2nVu5BP92xlw3xZ0hOBigOJRVz6h5S72
+         /ulw==
+X-Forwarded-Encrypted: i=1; AJvYcCUETo7nmcJa5/6uONNpkpmFaFelkeEPKO600+DrtMKggAt4kaXd3ZCN+8z2zrz0bIRKyIIr/lBcrlQgHdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmi9HwbNGD4rj2mqmVSI/DXa0iQ0Sk8Q2JGnGZ3FIyE7VKIR9l
+	Quu3UfskrHvzyHs1RRJ5A5f30jvr6tit2OOGqAdv/D3DA3pK03Cxp8PpltowY9M=
+X-Google-Smtp-Source: AGHT+IGIt5DFZkUasqecPwXsJRY0RTzQQk5JB5KmItEGGn8gWIQb9/8PWSzMLcHOvIroSJdHI8yb3Q==
+X-Received: by 2002:a05:6512:3b0c:b0:539:e85c:c888 with SMTP id 2adb3069b0e04-53c79e8ecafmr6388050e87.40.1730648253640;
+        Sun, 03 Nov 2024 07:37:33 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bcce4fbsm1321133e87.128.2024.11.03.07.37.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 07:37:32 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 0/2] firmware: scm: rework allowlist to be more scalable
+Date: Sun, 03 Nov 2024 17:37:28 +0200
+Message-Id: <20241103-rework-qseecom-v1-0-1d75d4eedc1e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241102151504.811306-1-paissilva@ld-100007.ds1.internal>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALiYJ2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQwNj3aLU8vyibN3C4tTU5Pxc3USzZIvk1LS0ZBMjEyWgpoKi1LTMCrC
+ B0bG1tQBxYCB7YAAAAA==
+X-Change-ID: 20241103-rework-qseecom-a6c8ceffc424
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1157;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=A/WnptpcEaCydNEwHhCYy3nsOgAQBjpitbug4N2yRps=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnJ5i6FjaM+w+WPOC3ywHvvDcD3GRSCA3UrIkX6
+ RsPPT6G+3aJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZyeYugAKCRCLPIo+Aiko
+ 1WjwB/475sOCgbKLXYG63fx0QaG9MuSPQO90tGasQK9GuCuT+9izd8RQfnD/ja45h5EDEubcd0V
+ sCGqRHZjeWhXm5+32ad98lBGZfA51mwK6Q12AzrS+nMKTv+RpCnXqxNhe+SnWsbnC51HXM7UNpp
+ A8kOuQm4RPXk16pyttCnhu9iWqrWzkw9gjFDlF0Is9vvdr2Zn6F0/n/RZy2ywPyIQ8BDqv4dUBD
+ ShDDPZutEaGL5Azih98ETfczldkUaWKETFcHArADCqlh5qYJLn6rMX2/LekOwXhvQbMMawLqrM2
+ sDlHLRbmbRQTh4CcFhx87zbFqRPm6PEf6EZbgq1gzgrD+Bxm
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Sat, Nov 02, 2024 at 04:15:05PM +0100, Diogo Silva wrote:
-> From: Diogo Silva <diogompaissilva@gmail.com>
-> 
-> DP83848	datasheet (section 4.7.2) indicates that the reset pin should be
-> toggled after the clocks are running. Add the PHY_RST_AFTER_CLK_EN to
-> make sure that this indication is respected.
-> 
-> In my experience not having this flag enabled would lead to, on some
-> boots, the wrong MII mode being selected if the PHY was initialized on
-> the bootloader and was receiving data during Linux boot.
-> 
-> Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
+Listing individual devices in the qcom_scm_qseecom_allowlist table
+doesn't really scale. For each new device we have to add both DT and an
+entry in the table. This way handling new devices by distributions
+becomes more complicated: it's not enough to add new DT, the qcom_scm
+also has to be patched.
 
-This should be merged to net.
+Replace a machine-based allowlist with the platform-based table. If a
+particular device has buggy or incompatible firmware, it still can be
+disabled in the table. And while the patch to disable it is pending,
+make it possible to use qcom_scm.qseecom kernel argument to forcebly
+enable or disable usage of QSEECOM.
 
-Fixes: 34e45ad9378c ("net: phy: dp83848: Add TI DP83848 Ethernet PHY")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (2):
+      firmware: qcom: scm: add modparam to control QSEECOM enablement
+      firmware: qcom: scm: rework QSEECOM allowlist
 
-    Andrew
+ drivers/firmware/qcom/qcom_scm.c | 54 ++++++++++++++++++++++++++--------------
+ 1 file changed, 36 insertions(+), 18 deletions(-)
+---
+base-commit: c88416ba074a8913cf6d61b789dd834bbca6681c
+change-id: 20241103-rework-qseecom-a6c8ceffc424
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
