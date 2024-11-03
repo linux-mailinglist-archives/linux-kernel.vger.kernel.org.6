@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-393735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0899BA49B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:10:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED6E9BA49C
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:15:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B86E1F218C4
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 08:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0369E1F210AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 08:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890BC15B13C;
-	Sun,  3 Nov 2024 08:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B756915B992;
+	Sun,  3 Nov 2024 08:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CgI1LZcR"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YB+7CW8g"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5119433AB;
-	Sun,  3 Nov 2024 08:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8729612D1F1
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 08:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730621403; cv=none; b=pTrXUdD3zsOMqDIRUmxU97H/FXvyY5AMGAV+ecs1HSrcpyMl63g9UVjojpYb3zulQ0/NnLvJVEIfBan7PphdC8N+ioCqIiFCTwnjgggcwYc7TMqNOOKvSMGU2G2BKiylK6M8mbuGnjP1iyjhNYjKFY0KnsWKzg8vGyqREgq0gF8=
+	t=1730621695; cv=none; b=hTxrIGPb/foC2WnvYoo60EvhUVFIaFBIOpmRCL+ceoxjsbEIKANyc4Gv3e8Ss4KW9+CqR/AdsiquKS6OoVVzrJ2i3UZ1MJleX8Z9m8OAFYHrZkgVMyE3td68QBAhGssOky5HMfVkxfY/VRKAYCUy2bQdpNp5NQuyCNnWL5iXTwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730621403; c=relaxed/simple;
-	bh=M1GK2JY9oVx4ESMtyQ/YXDJe+0LB9ftRIsPgz0wFA+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j/1glvBeCFrhVvQmfEdYpBpbpDQo/xP9zAi1ieoCwEAAWoBESR31eqIwPf9V0dVly7Gt2ke3czal5RaVToYlinbb6ggVQtb1EN03JpWf45EQf4JZiSAYhcN2fBuwXTjpypDEdteaYL+AaC/SK4j/1UD/btgboVdeQ0vcSpbM72k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CgI1LZcR; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730621368; x=1731226168; i=markus.elfring@web.de;
-	bh=M1GK2JY9oVx4ESMtyQ/YXDJe+0LB9ftRIsPgz0wFA+g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=CgI1LZcROhmUVkfJRhxQB67YuqafTXY8nTAw8272jNgt+VqjWlYVoo0I/RVvhphm
-	 bAtnqe1ooVlrZYR/w+s64DvYIyW+ZmfMpGDfkoQPp8wfDorjGByTNNYo2qWxbVrRz
-	 HoYldpdKLgr3NgfYDOB6RubU7ID1rS3iFJp2nBLWqXoGoesTW64IBjSnW138Clzpt
-	 px7e9kr60INuHAlz4hKOPVGMIzhx/Eh1FBUwrdjAnLlAB8mc0vYneJArcF3q4n4xo
-	 /dZ5WSjXbwMmiuv9Y2YwPHfAlrm4+DSC5CxZVjQAfxbi7GlwZnE75JCruC1xH2t9C
-	 sc4S+QUNGHM5lOYyYA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mmymz-1tW4ul0pmx-00ghxn; Sun, 03
- Nov 2024 09:09:28 +0100
-Message-ID: <a9f875ac-d09d-400a-b3f6-140a5792a76d@web.de>
-Date: Sun, 3 Nov 2024 09:09:25 +0100
+	s=arc-20240116; t=1730621695; c=relaxed/simple;
+	bh=tGyWjiAJbZxq/gN0M7wjwAgXTCkZu7rn9lglOUWEvDM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GUQS5JW4mSeYAg9E4M+EjClC6d8dtEuuGVX8ZHP+gZT4wWQZUzPk3Z3+QENXhuOScuawarau+BWuJnWppzayuQHh/oPw8gKhaL1kavcPfVR36BXyJLywrfWwufV6fKgYMzKv/zRTr1T12EqObGJ0S0tVd4okblh21XQhbAXfskk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YB+7CW8g; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a0c40849cso554280466b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 01:14:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730621692; x=1731226492; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g6htMrnylFQ5DMO55G9HZDuKW8oHvcVuvmDwZaXk8jY=;
+        b=YB+7CW8gLCu2AikjIYY8CgCADyZVi88i+xNtpdLQM6rN+OaRfdfYQNhl0YrVEkGIeL
+         0QltVRDamTGNdx8ZG8N3ulqkrg9fccf+rcwz/Qrpy4dXQ7+ZbFdPm1d1h8QgR3lAMZnI
+         y/aZKVUy9RRUyYlVvps2nCJZrDEFM4Fm13W3gLqIsKz88FURheHZTQXtfnQTWbrl1ghL
+         +ORNd6INdTVjbzJqLfBzj5ldpnlaW3fXT1lPWEMrYSG44+ZCwn53EHzFdW54yCZ6OkdB
+         TCV7+t/6dxyZ367L0X/8cQe1j2ehfqPNdD284eEUpp4l8LLE1Q8F8RCMZxJj8t2uF96u
+         iM3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730621692; x=1731226492;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g6htMrnylFQ5DMO55G9HZDuKW8oHvcVuvmDwZaXk8jY=;
+        b=TPzbxD6tIRadtam33H0ZpVQoAORlZ+iEM6Uw4MvutIpvDUs5FuFcamukRhgZvQSNDK
+         1R/fuOys6n31lIZNgL8Ztdcf0FBJVJ+cltCY6x02aVJV0qWMvUp3zlZG0QtwUu2pQRyR
+         7pFS2mg102/OtG4KRaoYx1V7zBYBw4zfBfGo2dRQw/p4fbDppGWfEemSvMm/jqjsEH68
+         GFgNHJL59ylXvW9HivuLy+/4zRxHKFjRtYFy+V4b/9oKPJim/1aPUTsCk+ePhJVjKvS5
+         +l/NqBXIhtbua2CHYHv9mgRcPNHQSU8XA4fQGJEXueVQCn4tCkGT9+5mTW0UjufKdLkm
+         z4Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrK8AssI4pnS5a+TDOup7dyDKU/Y2PS1W2/pRgeqefw0jUJEClGlivcKetQI78b0RS2h5We1YbwBgi6AE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN19a2CsO72T9mPAgVtgShfVY2a0sAXWS1tuHdCeLHYOOOOunV
+	88iOzGTz9Fi1103VP89t5nvKMCO0ARGLIqmVbMi3Qtz5Jx50iXotpfg0+A==
+X-Google-Smtp-Source: AGHT+IHtGFMxr/aiUCl4Ra72qgRMg0tYZtDJrt/wjc8HKWPsenfaF9Vcb1xKm8oQkVne20M6McdNCA==
+X-Received: by 2002:a17:907:7292:b0:a8a:6c5d:63b2 with SMTP id a640c23a62f3a-a9e3a5a049emr1654792266b.18.1730621691688;
+        Sun, 03 Nov 2024 01:14:51 -0700 (PDT)
+Received: from kernel-710.speedport.ip (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac789152sm3097882a12.43.2024.11.03.01.14.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 01:14:51 -0700 (PDT)
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Subject: [PATCH 00/13] staging: rtl8723bs: Replace function pointers and #if 1
+Date: Sun,  3 Nov 2024 09:14:21 +0100
+Message-ID: <cover.1730619982.git.philipp.g.hortmann@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4?] ipv6: ip6_fib: fix null-pointer dereference in
- ipv6_route_native_seq_show()
-To: Yi Zou <03zouyi09.25@gmail.com>, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, 21210240012@m.fudan.edu.cn,
- 21302010073@m.fudan.edu.cn, David Ahern <dsahern@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>
-References: <CAH_kV5G07_ZL9O41OBYR8JrtxJsr56+Zi=65T_FkaQDefLU_DA@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAH_kV5G07_ZL9O41OBYR8JrtxJsr56+Zi=65T_FkaQDefLU_DA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Z3inRgbsQFRfZM16WvDp4h6Y2+3rPmJArCE6C7YTaRzNivTdFcs
- K6b7CQmOXpe2AQ9EyEGuRakQe6bke2moI3/qWdgxA6sGCtnl5fN4nXlo5WByaqaOkXleGc4
- APdO4cK/TentlLOKC95X7OlQNOIv1jFGYTaL/fY+/P87kp1QbQYO5ThVe/yfBQdhNUylWVC
- 4IdVDd/zZtUdt81r4vB+w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:k1QiRippD98=;JZaivw5RoOT26aUGzRN51jO493M
- 42m7Xz+zoKsz1m2pi3cRs8CQRcvX6R/onEv+Cr9NoiRCFEPOw6hr98ehTsVzlBTBqpxemd/+2
- AvADl/W/TOTNE7EVBH+Ky0gzV4r5uQddAz8MXw2rcilPSjI/BfQAaBKCORa7JpjNRB8zSAQIH
- GS1uqhix6WoE5wyGfmUdY4vfe446qs4oi8bt4Rd8TzR+HVz3NQA2GJs1r6+qTr4TeBRbL9Zzq
- CuCrga6z6sCD5LgIomnXo/qAVNx8x4AnvWn9xcAB4FC/MzUGW5XQz3LGuPVezMYeL8uaR45cf
- f336zmN8dlq0wo+m1NOI8/khd0N9lT4XBlQLxclQEVhypqHleap60PDzYiTjWT0kHq4ku94D9
- zCDlbiygqUiXPO5XcMJE/JzcjPfuULTGOiu4RBfbJHFqK7iTvdTv+gJv/8ZHu1hVLm/twnISF
- EZu1Y06ALXPvkjeULYiVqTI6oqPMo4TFq/RY18Gpt2ZAL0T/3FX75O6aI5dI+QhtvFIkCRgpM
- ATumfRaG5SQ/T8L9Uy7v1gcI929Gx+RnAjflLgMUV22ibFW+K7V6cPejCY5g39do2F819VeoL
- Bajaj1PFtwAn4iCfQHgU6FI1A/hdzyowhp5RUKsYSs4RYZz0AZgJowGZuYwHa9xxw5SFLxjZM
- GPnWB6GpSEj7ZWxtrPEXg6pxpZfLm5ote43GrSjNQG4a3d4Bv0Q1k0MZpAN3U8Sbniqphumwo
- fIMojiB89tPKcGEE9Fpife0R+76JvL/Yuk+A88I8ELJpjSaLzzAuanTqE+BH/pEbpOSK8+9TK
- sOAAbtyS9zc/+CEIKzMUIPFQ==
+Content-Transfer-Encoding: 8bit
 
-> Check if fib6_nh is non-NULL before accessing fib6_nh->fib_nh_gw_family
-> in ipv6_route_native_seq_show() to prevent a null-pointer dereference.
-> Assign dev as dev =3D fib6_nh ? fib6_nh->fib_nh_dev : NULL to ensure saf=
-e
-> handling when nexthop_fib6_nh(rt->nh) returns NULL.
-=E2=80=A6
-> ---
-> net/ipv6/ip6_fib.c | 4 ++--
-=E2=80=A6
+Replace function pointers with functions to increase readability.
+Remove dead code resulting from #if 1.
+Replace one function that just contains one line to increase readability.
 
-It would have been more appropriate to add also a patch version descriptio=
-n.
+Tested with rtl8723bs in ODYS Trendbook Next 14
 
-See also:
-* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.12-rc5#n321
+Philipp Hortmann (13):
+  staging: rtl8723bs: Replace function thread_enter
+  staging: rtl8723bs: Remove #if 1 in function
+    hal_EfusePartialWriteCheck
+  staging: rtl8723bs: Remove #if 1 in function
+    hal_EfuseGetCurrentSize_BT
+  staging: rtl8723bs: Remove #if 1 in function ReadChipVersion8723B
+  staging: rtl8723bs: Remove function pointer check_ips_status
+  staging: rtl8723bs: Remove function pointer SetHwRegHandler
+  staging: rtl8723bs: Remove function pointer GetHwRegHandler
+  staging: rtl8723bs: Remove function pointer SetHwRegHandlerWithBuf
+  staging: rtl8723bs: Remove function pointer GetHalDefVarHandler
+  staging: rtl8723bs: Remove function pointer SetHalDefVarHandler
+  staging: rtl8723bs: Remove function pointer hal_xmit
+  staging: rtl8723bs: Remove function pointer mgnt_xmit
+  staging: rtl8723bs: Remove function pointer hal_xmitframe_enqueue
 
-* https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+p=
-reviously+submitted+patch%22
+ drivers/staging/rtl8723bs/core/rtw_cmd.c      |  2 +-
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  2 +-
+ .../staging/rtl8723bs/core/rtw_wlan_util.c    |  4 +-
+ drivers/staging/rtl8723bs/core/rtw_xmit.c     |  2 +-
+ drivers/staging/rtl8723bs/hal/hal_intf.c      | 40 ++-------
+ .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 85 +------------------
+ .../staging/rtl8723bs/hal/rtl8723bs_xmit.c    |  4 +-
+ drivers/staging/rtl8723bs/hal/sdio_halinit.c  | 21 ++---
+ drivers/staging/rtl8723bs/include/hal_intf.h  | 22 ++---
+ .../staging/rtl8723bs/include/osdep_service.h |  5 --
+ 10 files changed, 27 insertions(+), 160 deletions(-)
 
+-- 
+2.43.0
 
-Regards,
-Markus
 
