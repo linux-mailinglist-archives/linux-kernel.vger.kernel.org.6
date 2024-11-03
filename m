@@ -1,135 +1,128 @@
-Return-Path: <linux-kernel+bounces-393878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3DB99BA6A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:27:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A5F9BA6A7
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93BED2821CF
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:27:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9201F22219
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031D21885A0;
-	Sun,  3 Nov 2024 16:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCEC16EB5D;
+	Sun,  3 Nov 2024 16:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HqZcvEmw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ls14aPKP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6943617C234;
-	Sun,  3 Nov 2024 16:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698C7AD2D
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 16:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730651257; cv=none; b=kDUabD47rSLfeuudE/0UlqC/CduHwMEo7CwmhFWREoDHmBgtn3EiZlaXEKb/TrYCPLXZxSidkkfw1Ao2bH7aUrM0sCOfO9KDaOXcq0hauV29tIGRCItKwwmwfkabYzeY5sCL/BR5hrCdo8vPbLOm8j7m3Dgw5kqtbExx55soehA=
+	t=1730651553; cv=none; b=HMCflgli+fertTYNjK860mpUpdbXUGicg7EzVZZK3SQ1lsiJvvJUUump7GM57xr9qm9DIhnrwZsOtJaC/RIH4a8ajq0q73vUuBmDnEdalTujOC0PCAfP0v6M5Wd2e5qBFT2NpEb7Dj1D9Bzd6JnwEVuTDPuKLF/8o+KidnbFv60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730651257; c=relaxed/simple;
-	bh=GFbGjoWnh5QiJUZnY79oXxX4ZJdes3mjS6mT2FxB164=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HukwwVlUF18UJ7ltia8PmvCFHe/IU82+1vQt4DxAGbg6DibHbPc1qbh1EPfiH8ohZwOgpYUumuNjgw9Tv6anWnYDjzYMdg6Bf6xPOgCWDSgpfErhRd9qB+o+kDWdLc6EIG/aN/sjJKdGpo02KgsjMfOxga99d5yUU/6eXhp+1gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HqZcvEmw; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730651256; x=1762187256;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GFbGjoWnh5QiJUZnY79oXxX4ZJdes3mjS6mT2FxB164=;
-  b=HqZcvEmwzTcXFGGiSaZRSDRucHGxik82MAQTgVq1vE3TiIt99rHdfBbK
-   +fIWrbNbG85K2fZiQqOSv7BTadYHcNlWjA8omvOEy3NNinVPErYckAtHr
-   kLEFq5SZTdseoONjjNWnDudCO1ABsoS2FwkzPgd3shvN7hrjYTBhDrZwa
-   fNNtgbD+t8v4lnzoz/1j4WgJlX2mE2P26TsVAejjJQWMQhH85OOOVWbhZ
-   zS4z/DUaS0OTlbTvYvHzHxahkWBHyGgoQL2zbeTh7TLfseaFpZVGHP+KE
-   MxMSjPxz+BVifsKzyZ92dh2SOlgtICPmwV0ycwl8DFRxQlbEu68XMBroi
-   g==;
-X-CSE-ConnectionGUID: TOw3NpEoQCWHDsrqUeQaAQ==
-X-CSE-MsgGUID: orvPr2KgRbGhTdE7cktLwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="55749539"
-X-IronPort-AV: E=Sophos;i="6.11,255,1725346800"; 
-   d="scan'208";a="55749539"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 08:27:35 -0800
-X-CSE-ConnectionGUID: FFKZBkeIRp66xBgCDD4U9w==
-X-CSE-MsgGUID: cZe+WybvQaSTXaQBallnqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,255,1725346800"; 
-   d="scan'208";a="83111146"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 03 Nov 2024 08:27:32 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t7dRq-000k4F-28;
-	Sun, 03 Nov 2024 16:27:30 +0000
-Date: Mon, 4 Nov 2024 00:27:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vishnu Sanal T <t.v.s10123@gmail.com>, linux-pm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, trenn@suse.com, shuah@kernel.org,
-	jwyatt@redhat.com, jkacur@redhat.com, linux-kernel@vger.kernel.org,
-	Vishnu Sanal T <t.v.s10123@gmail.com>
-Subject: Re: [PATCH v2] implement set_enabled functions on powercap.c
-Message-ID: <202411040029.mXFFVJ8w-lkp@intel.com>
-References: <20241030152706.179779-2-t.v.s10123@gmail.com>
+	s=arc-20240116; t=1730651553; c=relaxed/simple;
+	bh=WN7YLD1Pc0M5cBEh5p18cCSGivKhJ6YjLZ9tg6VwmwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UrDXVmiWrCaHlll63L3Smg6SABbSOORBEyQfFNdEAjs0IOmu20oNUNTzCgIDRG7RT0JEQ8JD+EG1WZc1DcFT620ON7Ji3BNmxOFgsshD8aMMSb3l2azZk8pn3FncPlkv21heMdLnRLxlkySkTcE2xn7PlJN97Pz6J8qcZe03qYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ls14aPKP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A432C4CECD;
+	Sun,  3 Nov 2024 16:32:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730651552;
+	bh=WN7YLD1Pc0M5cBEh5p18cCSGivKhJ6YjLZ9tg6VwmwY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ls14aPKPTchX14dr4+4StM+nnT0JwIF5ii2doOu5p62kNWdkpZoi4l8CJkpwAB/di
+	 JWVfdNzWDcjlEiZdEfaup/2tB+kZfR5a6y8gQ4uS0fjM2ShIgt4rd/GMnNBvcyCagd
+	 fS4AbL4SOJbevV64X0gJXwnAFB59iDL8ANqsmC5nd8VctzS97rWc6WsE8t+hMSVYeJ
+	 AAkaR0YIweKI3bB6DjrGtGm+ilGuGVYiLD8d6TdLqey5tIExKXw7rTnbFL11wzBE9U
+	 KuEY5xgYRTfWoCX5YnGq6cuQdewQCVkysYa4uYyt3hSTgDOiiiiecFIdU3hU8mAbSS
+	 PoLPLzTs2UGQQ==
+Date: Sun, 3 Nov 2024 22:02:28 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: dmaengine fixes for v6.12
+Message-ID: <ZyelnAdQbssRy9zg@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Wy1kuxinFQk1ksvH"
+Content-Disposition: inline
+
+
+--Wy1kuxinFQk1ksvH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030152706.179779-2-t.v.s10123@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vishnu,
+Hello Linus,
 
-kernel test robot noticed the following build warnings:
+Here is the pull request for fixes for v6.12. Sorry Diwali festivities
+kept me bit tied up to send this earlier. Just couple of driver fixes
+for this one.
 
-[auto build test WARNING on amd-pstate/linux-next]
-[also build test WARNING on amd-pstate/bleeding-edge linus/master v6.12-rc5 next-20241101]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vishnu-Sanal-T/implement-set_enabled-functions-on-powercap-c/20241030-233021
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git linux-next
-patch link:    https://lore.kernel.org/r/20241030152706.179779-2-t.v.s10123%40gmail.com
-patch subject: [PATCH v2] implement set_enabled functions on powercap.c
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241104/202411040029.mXFFVJ8w-lkp@intel.com/reproduce)
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411040029.mXFFVJ8w-lkp@intel.com/
+are available in the Git repository at:
 
-All warnings (new ones prefixed by >>):
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
+aengine-fix-6.12
 
-   lib/powercap.c: In function 'powercap_set_enabled':
->> lib/powercap.c:79:40: warning: '%s' directive writing up to 254 bytes into a region of size 253 [-Wformat-overflow=]
-      79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
-         |                                        ^~
-   ......
-      95 |         return sysfs_set_enabled(path, mode);
-         |                                  ~~~~   
-   In function 'sysfs_set_enabled',
-       inlined from 'powercap_set_enabled' at lib/powercap.c:95:9:
-   lib/powercap.c:79:9: note: 'sprintf' output between 13 and 267 bytes into a destination of size 265
-      79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   lib/powercap.c: In function 'powercap_zone_set_enabled':
->> lib/powercap.c:79:40: warning: '%s' directive writing up to 254 bytes into a region of size 253 [-Wformat-overflow=]
-      79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
-         |                                        ^~
-   ......
-     203 |         return sysfs_set_enabled(path, mode);
-         |                                  ~~~~   
-   In function 'sysfs_set_enabled',
-       inlined from 'powercap_zone_set_enabled' at lib/powercap.c:203:9:
-   lib/powercap.c:79:9: note: 'sprintf' output between 13 and 267 bytes into a destination of size 265
-      79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+for you to fetch changes up to d35f40642904b017d1301340734b91aef69d1c0c:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  dmaengine: ti: k3-udma: Set EOP for all TRs in cyclic BCDMA transfer (202=
+4-10-14 23:41:05 +0530)
+
+----------------------------------------------------------------
+dmaengine fixes for v6.12
+
+Driver fixes for:
+ - TI driver fix to set EOP for cyclic BCDMA transfers
+ - sh rz-dmac driver fix for handling config with zero address
+
+----------------------------------------------------------------
+Jai Luthra (1):
+      dmaengine: ti: k3-udma: Set EOP for all TRs in cyclic BCDMA transfer
+
+Wolfram Sang (1):
+      dmaengine: sh: rz-dmac: handle configs where one address is zero
+
+ drivers/dma/sh/rz-dmac.c | 25 ++++++++++---------
+ drivers/dma/ti/k3-udma.c | 62 ++++++++++++++++++++++++++++++++++++--------=
+----
+ 2 files changed, 61 insertions(+), 26 deletions(-)
+
+--=20
+~Vinod
+
+--Wy1kuxinFQk1ksvH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmcnpZwACgkQfBQHDyUj
+g0ehoQ//atPMPwbRjYpHLYH0jygO1ofsgjAyaIIX5MXlEPUj+5EtiKy3p5EMj3Vc
+Zgy1uUuFENesv+v28q6XkgdpdE/mWI6b4feAFPK82ZO+XhTI31VWGMWaAbA6FdSw
+jS3bWheltyAOTCjgQ1/waT9lIa/C1u2zUTthheUovoQeDT9twfTxJCXYoVFJQn33
+yGwxSOBQQhGJPRRIM85NraMxEnim33k0/51UqfoiyAy5Ul8emisj3yLxp3Qep8zp
+j/GpUHUVAW2wN29hWUwKzQrRjkssDLHIbbD7rpFwtnqmDrRMHFv7PCyM1iArs4pq
+o4Pkp/4qKA7WZxdf48tSuFiX89L/Yd4hHyXsV3A390ziqtDszHteLRjwRSqViIxz
+MzSI7iHhMXB647BdPvb+lggL0WGatLavN7WAUYW2KawNvA0sN6crgQGxpNqzYRUs
+X9GLgmcZI3qXMMjq9natoccD3brOylUQ3HfLJC1e6KmosHFweU3uuHB4xG4NlhSa
+t1UbEDVcVvDGIYOnkYd4dbf4J+7V2HoN0icsMQo3wWb+7eiDGxUUlE2tLMGkMrWG
+xSCezFSPY+XmNjJ9wUYMTEVbdnR9sgDY6kLVh6rkbMQQ0BhtqAWvgIhRGDPhyOR4
+btIEbyMcwzpj6UcUUK9cztaGTJroPN9mZiCKCDmmHj0jv9EP0mk=
+=Xkw4
+-----END PGP SIGNATURE-----
+
+--Wy1kuxinFQk1ksvH--
 
