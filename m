@@ -1,115 +1,153 @@
-Return-Path: <linux-kernel+bounces-393840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B999BA618
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:57:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A769BA62C
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3C011F214BC
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D4D1F20F9E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B339F183CBE;
-	Sun,  3 Nov 2024 14:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE8017C9E8;
+	Sun,  3 Nov 2024 15:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVU8b3ug"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hZt/M1bD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741711714C9;
-	Sun,  3 Nov 2024 14:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56819155308;
+	Sun,  3 Nov 2024 15:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730645851; cv=none; b=rdn664tKqrdM7OdNBeof9khFs2t+5uGmG8i2LEPxXzHFEdjVOnm27l6g2BybTZm2IgyeQwCz3sxMsQJ1TcMZDzQM14DEBWhr8YWofWmdC2MP8guoNsRhvQVnAVDbJ3bWfKqKqixDsuNmNYzLKmfHPRaKUnlDwRAex02Iy+y4XOw=
+	t=1730646089; cv=none; b=VuLIafinUWVgZS9Y9z573kj4cnoXi3762vqBa2o+OXtgot5IvEj5E9RrhCKHlLAAckJlArGDi6UvlAeW/+o9qwY+5qr8cAntGDJeL/azvlM7eYcBMc6sczGb5kkzhM/P3tcEIvXHBLx4dQQ9L4jVTV5H/UhblyhqmGLyUgaWuOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730645851; c=relaxed/simple;
-	bh=EOsvNzuZPbWSw+k1ZdiEsy7Q4yXtJ7tmRLNBP6XVcFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bvr5//+M5mF/077f1ik5ioIIp8atyNqgLj0Qf4YXweuExJ6pDuulV13zy2pUnmQXGtHQ+SXVJ7AdKHLSkdNhy2hBGsDb/LlwvD58GmizYRqGb/Zuyl/gtBylgE9sP0skZ7Qn3MhBn+6Z55p/6j76jlNJ4R1E1qkSg686asEnxVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZVU8b3ug; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso600486366b.2;
-        Sun, 03 Nov 2024 06:57:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730645848; x=1731250648; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l70JIgOc7IzpCaPrM3FJwtrkPdLAYJDlpQSQ7yaSRQg=;
-        b=ZVU8b3ugRBO11jsOHaH7bBTnQc0e4Jt9vJIIcPqXtvkHfEceSl703KtwxwZadMCPzw
-         3VF946q+/gskAQvVJF4NXH/7FLb72yxaEfYLSAoAtDqgffUNd5Esnz2gV9OyDI0yiuwl
-         zhI6yBm3pzr8GDKZBCvATOoaKj4L7AyTB1JDH/z4zef0P2fTN4S9hE5o89PAfKeXbfas
-         AQTP24h2W7lIJqFcrOXHN2MWbaD2YRd2UjwR/IGOBdngfYuOnb86Ej/6T9XuGj/rRUgX
-         LJDkc4TIKbLGBvhLE0Mw9Vw+EfO2VMUO7p2TcgmhAJgwnDV1/z6O8p35UILTD9msi2SS
-         x6Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730645848; x=1731250648;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l70JIgOc7IzpCaPrM3FJwtrkPdLAYJDlpQSQ7yaSRQg=;
-        b=rjzZ+DSYwo79RF1ol+HzI2rKOyoAr+ULYAAA/SY+ch0J4c0/buV9x+NOIgCbA58hIS
-         6XWULJMgb+mXzmXszr98vHfJtgctOYFsF9+hxcnekcq9UMlrMVNZGiU7ekMNgrR60yqh
-         sYDco0FvIcymZwG/y0Izn2WCXsonezfIjDZYR4a6yfniNR1IoRw3jcBXrkeSWMF+e4l5
-         S9V5omm1r4/UkiwemTgbFtN8uEl+t7z51k3ztptYo281bHt/8vVmGBZq/YK3/hXuafch
-         y1TY6ECIsYUhcw+fISpmRWfuz0BqZF9uGUTJf2ISxiW2aSHAx7d7DN4jjOFnoviDUoq/
-         uETQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUey5XZWTOMgKzXDXflygNVcm6BTsGRL6HZ+aQyGLTiripFgzqPXM+e3GlwnqMY9mozIlkJD8qWQrji@vger.kernel.org, AJvYcCVBsW2QdwfRJG/fcS/qdtsExJA2rGOK1W0iSVcTN7lvAe0v/aU+03VdqRbGe3Im+mL9/cg8xKEjG4N1TS5T@vger.kernel.org, AJvYcCXQm31tug+R83wnQAEOTslFQ0kL9QLsYGtSVgOf+cuOofx6TZ70JHfrNpSHFqxest2jJha8CBWAD6MZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqUD2jqswVWKtdsPoawy46dYlFXA+vtMsg46i2G3qHXmbfB6u/
-	nTUzDmBcpyJROcZnq8OvAYr4LUBxvseLYdoIYoGHYJLJCZGJkA7FI0WbrQ==
-X-Google-Smtp-Source: AGHT+IFS9BezNhD2QcpuQw2ndnCLizdvkhTKmF4tibAAksPwAWzbjtK9FXV8UoZK4ALtenLknKx0qw==
-X-Received: by 2002:a17:907:1c22:b0:a99:ee4e:266d with SMTP id a640c23a62f3a-a9de5c91a9cmr2884313766b.1.1730645847510;
-        Sun, 03 Nov 2024 06:57:27 -0800 (PST)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:c24c:5620:73cc:ab84])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56494295sm438447366b.14.2024.11.03.06.57.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 06:57:26 -0800 (PST)
-Date: Sun, 3 Nov 2024 15:57:25 +0100
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
-	anshulusr@gmail.com, gustavograzs@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] iio: chemical: bme680: add power management
-Message-ID: <ZyePVVk6jzQPsjSF@vamoirid-laptop>
-References: <20241102131311.36210-1-vassilisamir@gmail.com>
- <20241102131311.36210-8-vassilisamir@gmail.com>
- <20241102153512.5b93efa7@jic23-huawei>
+	s=arc-20240116; t=1730646089; c=relaxed/simple;
+	bh=bgmGhqGPvs7CqZVRU3JCIzdDjTHPRquI+lH3DmJGO10=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ccg4cHGHvCLN3wPM6ltF0DKh70BEFfIAaWXLCz3cK+/g8vOFXsrzltlL9r5ivC5eHK9+Zc329gqvREx20FKWgUpjBvELglb+RSb4Rc7VglPiJEKVe8RqjUBDuLpcdizxidmo0TXixh1ZzMTrOe0onjUSdIVUSWcZGK7BWpBEFkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hZt/M1bD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0224C4CED3;
+	Sun,  3 Nov 2024 15:01:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730646086;
+	bh=bgmGhqGPvs7CqZVRU3JCIzdDjTHPRquI+lH3DmJGO10=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hZt/M1bDxWnHS/GYK+cXq8aX4EVmv3zWM9rZ1zXPtkKagGcgttTDUKMAtO8KJyifB
+	 WbmvHdRIb3yim7qMl6mNKuqu73eCGhMiWK34QaARLZ/7euXmBfeexIktJehLFEdNuG
+	 RuOoAlcGoZcyOPpWeMnuIwGJ3ID5JMAOFUM04tqnQECkUMbbqZ129/oacCdnVYPRLd
+	 dVcApYa7g68JOTtJ0umTyYsTPnrMmOHq+Mr2R4rfO+QZlQ1Cix/o1Gw2ymCz3SS4mp
+	 65XLemePJHjJkM1yi1tSa8sMoqkFgHMUfkQl8OwezxLa712aykpLccRtz7iTrTzXkx
+	 t+eH3rMeTQiIw==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso30205541fa.0;
+        Sun, 03 Nov 2024 07:01:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVD7IBr26XwKHJYpikqHj70umepYa84oXDVnwPrAFtmyfpMuyapYIgWsj8Chp95jaTUTDrOoUz42FF/qR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0uVEOFW3nt32ZSOz0PN4KOGiwRTTCPVULBM0Jp7ZVF0zL7IoO
+	3NIH6y28qB/95dZsBhh2aK0gAqfuxqyAyorb5jvBhyEUjDJryFZJyURrXw5lGzL+BiIiLpTFmyY
+	ofCXrPji8hVWDo9GL0cs63CbQe1o=
+X-Google-Smtp-Source: AGHT+IE4UVRstaVHKfhn9sMUSCD5vqBta9RbxafckXBpagzomVd9RUVsPl4hvHtvQNwzngUaa5WfrzRoSyPv9PrqzwI=
+X-Received: by 2002:a2e:a989:0:b0:2fb:4abb:7001 with SMTP id
+ 38308e7fff4ca-2fdec47a266mr59248051fa.2.1730646085318; Sun, 03 Nov 2024
+ 07:01:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241102153512.5b93efa7@jic23-huawei>
+References: <20241103125259.944399-1-masahiroy@kernel.org>
+In-Reply-To: <20241103125259.944399-1-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 4 Nov 2024 00:00:48 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASMrt5F36b8ekdAOB=7U+AXXdVYKYQ4Hhbyzis2db6wdQ@mail.gmail.com>
+Message-ID: <CAK7LNASMrt5F36b8ekdAOB=7U+AXXdVYKYQ4Hhbyzis2db6wdQ@mail.gmail.com>
+Subject: Re: [PATCH] modpost: fix input MODULE_DEVICE_TABLE() built for 64-bit
+ on 32-bit host
+To: linux-kbuild@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Hans de Goede <j.w.r.degoede@hhs.nl>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Rusty Russell <rusty@rustcorp.com.au>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 02, 2024 at 03:35:12PM +0000, Jonathan Cameron wrote:
-> On Sat,  2 Nov 2024 14:13:11 +0100
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > Add runtime power management to the device.
-> > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> This and previous patch look fine to me.  Just need to clean up that
-> dt-binding patch and hopefully get a clear direction on whether to require the
-> supplies or not.
-> 
-> Thanks,
-> 
-> Jonathan
+On Sun, Nov 3, 2024 at 9:53=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
+>
+> When building a 64-bit kernel on a 32-bit build host, incorrect
+> input MODULE_ALIAS() entries may be generated.
+>
+> For example, when compiling a 64-bit kernel with CONFIG_INPUT_MOUSEDEV=3D=
+m
+> on a 64-bit build machine, you will get the correct output:
+>
+>   $ grep MODULE_ALIAS drivers/input/mousedev.mod.c
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*2,*k*110,*r*0,*1,*a*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*2,*k*r*8,*a*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*14A,*r*a*0,*1,*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*145,*r*a*0,*1,*18,*1C,*m*l*s*f*w=
+*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*110,*r*a*0,*1,*m*l*s*f*w*");
+>
+> However, building the same kernel on a 32-bit machine results in
+> incorrect output:
+>
+>   $ grep MODULE_ALIAS drivers/input/mousedev.mod.c
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*2,*k*110,*130,*r*0,*1,*a*m*l*s*f*w*")=
+;
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*2,*k*r*8,*a*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*14A,*16A,*r*a*0,*1,*20,*21,*m*l*=
+s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*145,*165,*r*a*0,*1,*18,*1C,*20,*=
+21,*38,*3C,*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*3,*k*110,*130,*r*a*0,*1,*20,*21,*m*l*=
+s*f*w*");
+>
+> A similar issue occurs with CONFIG_INPUT_JOYDEV=3Dm. On a 64-bit build
+> machine, the output is:
+>
+>   $ grep MODULE_ALIAS drivers/input/joydev.mod.c
+>   MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*0,*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*2,*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*8,*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*6,*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*k*120,*r*a*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*k*130,*r*a*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*k*2C0,*r*a*m*l*s*f*w*");
+>
+> However, on a 32-bit machine, the output is incorrect:
+>
+>   $ grep MODULE_ALIAS drivers/input/joydev.mod.c
+>   MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*0,*20,*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*2,*22,*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*8,*28,*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*3,*k*r*a*6,*26,*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*k*11F,*13F,*r*a*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*k*11F,*13F,*r*a*m*l*s*f*w*");
+>   MODULE_ALIAS("input:b*v*p*e*-e*1,*k*2C0,*2E0,*r*a*m*l*s*f*w*");
+>
+> When building a 64-bit kernel, BITS_PER_LONG is defined as 64. However,
+> on a 32-bit build machine, the constant, 1L, has a 32-bit width.
+> Left-shifting this constant beyond 32 bits causes wraparound.
+>
+> The fix in commit e0e92632715f ("[PATCH] PATCH: 1 line 2.6.18 bugfix:
+> modpost-64bit-fix.patch") is incorrect; it only addresses cases where
+> a 64-bit kernel is built on a 64-bit build machine, overlooking cases
+> on a 32-bit build machine.
+>
+> Using 1ULL ensures a 64-bit width on both 32-bit and 64-bit machines,
+> avoiding the wraparound issue.
+>
+> Fixes: e0e92632715f ("[PATCH] PATCH: 1 line 2.6.18 bugfix: modpost-64bit-=
+fix.patch")
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
-Hi Jonathan,
 
-Thank you very much for the review once again!
+Applied to linux-kbuild/fixes.
 
-I will wait as well to see how that evolves and I will send a new
-version, thank you!
 
-Cheers,
-Vasilis
+--=20
+Best Regards
+Masahiro Yamada
 
