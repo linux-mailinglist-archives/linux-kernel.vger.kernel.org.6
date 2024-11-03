@@ -1,71 +1,62 @@
-Return-Path: <linux-kernel+bounces-393832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054399BA5FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:42:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872849BA5FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:49:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7871F2175C
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:42:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EB94281B66
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9CF175D37;
-	Sun,  3 Nov 2024 14:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E73B17085A;
+	Sun,  3 Nov 2024 14:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ISwhzWij"
-Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="K3/cR13p"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7173B33FE
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 14:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837E2BE6C
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 14:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730644914; cv=none; b=iHKnJpQyf1A13lMGM3l6M1iSEXEf1azIHmXXtQwI/aJxACyDffTo/ibLfBFPqzS/ZiaEvqOrbHKPeuKJzqKhBQdii3itpR+qAgGax6hYaEF8Onp6I6UPR2LkJdcBgbXuoQRqhSq8YIPELOoon5rPJTfnGyN/56pYaVwWKXMXGe4=
+	t=1730645392; cv=none; b=dQx41QBrUc/78P3qaS8vMmvwNFV73gWZXKpGMA4dRpYtKwTAHJxT+81T68pVP0Uoi4Z6PA3kRx5p4iX6ztIXQmrPYjj1sBZ9lOOeL9dGDbmkKq7ron/1dQGlAM76iNz8H16E+7ZtE3Hah4HNNbLmxvXpUe+ZaloUA750TVG0LVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730644914; c=relaxed/simple;
-	bh=yiZ3U48fvMm+mbRRn94ICyazjR0Jt6iFhAqOYggot6I=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=mrzHT3upnVyHvbPgLHRjcUMi9OuRI9oyYjnr/tCXpgPbdytQUak5c7ngPyea7QxU3b+fSTD+d5JcjaqoEFvOTrKy+asYqopqnfvTdljPkEu9hUcoGzVfNAwjC6ZRycLzo+9rVuaFSqrqcJbsLtxP45BCQBwO70IFo1Qmp2AqGlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ISwhzWij; arc=none smtp.client-ip=203.205.221.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730644601; bh=JygKIRRXTvpANN2AeH4F+3oGnhQ7OACWaQTyEfhPt2A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ISwhzWij4+K9BS4EtN6REG/uzx7SoIP0p9HtlmeK4TcvGiGxLo7UfovMoBcSgzrAX
-	 Pa1GWcbWwWCKrTjabm3Z9w5WSj0I3ohitVUtbaMO4fQZ7juE3QfxHvGmipxH3xsCym
-	 1EHUT5pk27wyAjRlWyP4V2X+oyNYE6k7dZvktcqo=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id 927B0EA1; Sun, 03 Nov 2024 22:36:39 +0800
-X-QQ-mid: xmsmtpt1730644599ty2bccfva
-Message-ID: <tencent_9D1D4FB28DB4A59E0DBD9245DD84DDDC9907@qq.com>
-X-QQ-XMAILINFO: MFdGPHhuqhNoRvcSRagK6DgerqfnoLoJyTUKxph8xaOq7y5TEjnWOD83y+3wTA
-	 r4N7EthBBO8gzbI4GAUlaaXX0uUE9AN+M6aPukwYTZO49iTjzdOaNOoQbPqgy2+jPedEWB8kBlPS
-	 68KgCpfPuG+Oz5c++ZRIwrcfJf9kK6UBs1ngtKgiskPvYnkgJRaq6VrKs02qrDJwB33S89mmqH5p
-	 bKA5gFZGo+8MavLhy41G3OCIM8rf0GdMwdFPuEfoQPVeIQvKmpE6CTt/5//2ZlBqHYr2mXBGzB1K
-	 jH3noOY5o4Pis5g4HVhodM+aapEpqQ+m07EN1mhCdPI6Yu2MYFYMCHoP1RX3Y4BbLzE0+gVBtqef
-	 kQpi9k8ac04YhP5fSYnPBc94ybDa4rqJ2Q1K8t2Sc22w+9c6HAqOwfLA3HEehT4aShL6++zkuvjk
-	 ghVzkFAPQjdlIC/0uGO/Q13MQWUOHGDive7Rh4XFceeuUGrnSPQ4rJf9K5b1AXQXsaF0LfX0j+HN
-	 8hapXRBrxOJPto3DvnPIr7A+id97REB4fIUNfwS+wquQo50aaL7koNn7lDCyCaz00SeY9L2dUli7
-	 zhtE1SBSrr3rahh2RrTQ+FOS8XDAuu0OgMWfF+21FwGSl+t1IQRZdxCaIsdZt2jbJwIvny5/4R8V
-	 HZspRu2Bg6CxEyhpO2Qqxh4WGePbmKwyJn8j31V77tZRIQh33AvpBlpaqc3fkkIkqpQ5PeN9w7pF
-	 DGkJl3YLSnrc3xvuHxAeY5qG0m7GfYPFVS33749FTXqNGc71hqTBxVK1OZA9pHKrF+5V53FNe2xN
-	 WCaZmwh9Q+jhaBvQqqB6emoA3avCVkG3jQPR7/rrgRAJYzGvY2Cg68IsAVT6OgaNsNysKGDWJgVK
-	 eqyOAOY4yayw422fuPi07hS/fvSGXw7vtYJQ03H0oa8rpMLCkwzOaLwsj28POJug==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+f51a2a34984e4d8888fd@syzkaller.appspotmail.com
-Cc: aivazian.tigran@gmail.com,
+	s=arc-20240116; t=1730645392; c=relaxed/simple;
+	bh=uABXwV59MV32aWcXwfesQBDS5fLvsJ7uii9Pje9rE6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KSf3SFs+PZTIKwy9KCKPGJlFBvg0oujDjFX1hPNqg1i3BGcR27+xPJRCajkv4CeoPU0+Jj9vDBE/uhH+e+vjJqfBDbfbLhRH9BEienqxcbuPKrXcCoDYpezKhiv5Ga1mEzy+d6hjF20YaiAUkLjUPTnQNHbbM3kE9ycj/B4emXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=K3/cR13p; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=Lb2ng7/SixEzOHLmaoTedF/AVYgSm6k/zzQSWP85gl8=; b=K3/cR13pAWd0yOw7
+	sdLeIVszlvV+fbSKXFtUPUa4Z1mNRU/1VcnyxXwIsGsjn8iNLFd5yhv/IhMuTt5F2QjA1oWVhcwWv
+	kg9RgDX+VXYtjZ0jsqOjVw5Y8Xt9fFRYisxT5AkmB7D46pOXUePaPcxkD+WSOh1hH4B6kZR/xSMcA
+	7nJy+WOo0UqjecwcLM29oL8rKVIB1cOeJtQudZlyjYYJFarMq+paDAqP1vLpDlt0V0sJuJKeK667r
+	71zPlvajXbK7P+xzKIJ5cwzOwGnypaRa9EeIgm5eb7B1Ure/R5R+6v0NUDwXZuj1rn0Wi/GIp5eEX
+	G89wurU1zmtaYrpZAg==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1t7bv7-00FAyz-1F;
+	Sun, 03 Nov 2024 14:49:37 +0000
+From: linux@treblig.org
+To: jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	tursulin@ursulin.net,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] bfs: add check for return value of sb_getblk
-Date: Sun,  3 Nov 2024 22:36:40 +0800
-X-OQ-MSGID: <20241103143639.1260230-2-eadavis@qq.com>
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] drm/i915/gt: Remove unused execlists_unwind_incomplete_requests
+Date: Sun,  3 Nov 2024 14:49:36 +0000
+Message-ID: <20241103144936.238116-1-linux@treblig.org>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <67218131.050a0220.4735a.0265.GAE@google.com>
-References: <67218131.050a0220.4735a.0265.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,53 +65,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Syzbot reported a null-ptr-deref in bfs_move_block.
-sb_getblk() can fail, so need to check its return value.
-If returned buffer head is not uptodate, it is considered corrupt.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Reported-and-tested-by: syzbot+f51a2a34984e4d8888fd@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f51a2a34984e4d8888fd
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+execlists_unwind_incomplete_requests() is unused since 2021's
+commit eb5e7da736f3 ("drm/i915/guc: Reset implementation for new GuC
+interface")
+
+Remove it.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- fs/bfs/file.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/gt/intel_engine.h               | 3 ---
+ drivers/gpu/drm/i915/gt/intel_execlists_submission.c | 9 ---------
+ 2 files changed, 12 deletions(-)
 
-diff --git a/fs/bfs/file.c b/fs/bfs/file.c
-index fa66a09e496a..983cc191d1e3 100644
---- a/fs/bfs/file.c
-+++ b/fs/bfs/file.c
-@@ -35,16 +35,28 @@ static int bfs_move_block(unsigned long from, unsigned long to,
- 					struct super_block *sb)
- {
- 	struct buffer_head *bh, *new;
-+	int err = 0;
- 
- 	bh = sb_bread(sb, from);
- 	if (!bh)
- 		return -EIO;
- 	new = sb_getblk(sb, to);
-+	if (!new) {
-+		bforget(bh);
-+		return -ENOMEM;
-+	}
-+
-+	if (!buffer_uptodate(new)) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
- 	memcpy(new->b_data, bh->b_data, bh->b_size);
- 	mark_buffer_dirty(new);
-+out:
- 	bforget(bh);
- 	brelse(new);
--	return 0;
-+	return err;
+diff --git a/drivers/gpu/drm/i915/gt/intel_engine.h b/drivers/gpu/drm/i915/gt/intel_engine.h
+index 40269e4c1e31..325da0414d94 100644
+--- a/drivers/gpu/drm/i915/gt/intel_engine.h
++++ b/drivers/gpu/drm/i915/gt/intel_engine.h
+@@ -126,9 +126,6 @@ execlists_active(const struct intel_engine_execlists *execlists)
+ 	return active;
  }
  
- static int bfs_move_blocks(struct super_block *sb, unsigned long start,
+-struct i915_request *
+-execlists_unwind_incomplete_requests(struct intel_engine_execlists *execlists);
+-
+ static inline u32
+ intel_read_status_page(const struct intel_engine_cs *engine, int reg)
+ {
+diff --git a/drivers/gpu/drm/i915/gt/intel_execlists_submission.c b/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
+index 72090f52fb85..4a80ffa1b962 100644
+--- a/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
++++ b/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
+@@ -405,15 +405,6 @@ __unwind_incomplete_requests(struct intel_engine_cs *engine)
+ 	return active;
+ }
+ 
+-struct i915_request *
+-execlists_unwind_incomplete_requests(struct intel_engine_execlists *execlists)
+-{
+-	struct intel_engine_cs *engine =
+-		container_of(execlists, typeof(*engine), execlists);
+-
+-	return __unwind_incomplete_requests(engine);
+-}
+-
+ static void
+ execlists_context_status_change(struct i915_request *rq, unsigned long status)
+ {
 -- 
-2.43.0
-
+2.47.0
 
 
