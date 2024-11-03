@@ -1,197 +1,144 @@
-Return-Path: <linux-kernel+bounces-393849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2459BA63D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:03:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E20749BA653
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:10:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4981EB20C9E
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:03:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CC7D28143F
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5FF184522;
-	Sun,  3 Nov 2024 15:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368F9180021;
+	Sun,  3 Nov 2024 15:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qy8gOKmM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="In27ywX1"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DD1C2FB;
-	Sun,  3 Nov 2024 15:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49D3171E6E
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 15:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730646222; cv=none; b=RmaKcZOsZ9uRKOmEZJ8ImKD74jkmbAXT/3q8n0uGLOOH6Psy9gfzInr+AbI1WH8Brm3HZarWKBwvKH+PFBOwFeZgCYnU5eiezg8QwROa9h3Z6krDyLm2VvP/B9mrwhDiMmaiUlX44H1//fste2pGXPvYE7rbA8bzlTXO8oON8To=
+	t=1730646652; cv=none; b=EkXX8jjalCFYlYRlcM/xWhBOoCdtM5XFZQCsRGkaT8JGoZ7D1U8lxsQ7MKBZ6fJu3pzBA45JjLJR2GEfXiUVISDxQkmUVMxi9S/9MdhQywGV+9YQ0zw0puDj11hW8cYNyAFS4CytlUA8TiHU/v7TpPmu53WzrEsQJjDhD8ZxMCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730646222; c=relaxed/simple;
-	bh=563EfkE5D0QNLDN9RLp0kZKWZbAwx5LWLn3gA89ZDCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hziOWCEHs1xCrVT25uJTwW9Sgyus+rrtAXPi4PqFyjEbu8iUCHErsXQcTrcsKn40mh26qAKjgHeN1wdo2Ze8a7xUbM9Id3/IvOqboLsTBzTAe9cfkUE3nm1DQiPa2yP3a+3nYjcd18DaEBBVL4x6p9bfag2AuOzlv6a450f3sPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qy8gOKmM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB12EC4CECD;
-	Sun,  3 Nov 2024 15:03:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730646221;
-	bh=563EfkE5D0QNLDN9RLp0kZKWZbAwx5LWLn3gA89ZDCk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Qy8gOKmMxEPwCYBx5xJgYEuqXaFBWZoeFhihwMlG0nJLISo/ynHbP/XHe1kkbVijj
-	 L+VjC3xqq0QIbPRWAtj3TBf/jMJvnE6Xu73jUwiJKd8cbpNEy12h9edJJ1xGV4CE5R
-	 YWhGr2inXn9zIKScw18blnRbSwnW6HoI4roiDeae+gto1nTIqxUGYQ+VKGg6YEo/KT
-	 EkfYmQgj+N7go4j1tOOZv9yBXc7/73d2gG/FlY56CIbbViyL1ljdffwaKgijVxB2uf
-	 yDCdYmJiVonyR3wdDFG1l6hTnRst0q3+NP3MqUolk7tNLKQ1usq4vPkJgVdeWtLWGa
-	 craUhhQ0Il6cA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6454ECE0F53; Sun,  3 Nov 2024 07:03:41 -0800 (PST)
-Date: Sun, 3 Nov 2024 07:03:41 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	sfr@canb.auug.org.au, longman@redhat.com, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-	akpm@linux-foundation.org, Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] scftorture: Use workqueue to free scf_check
-Message-ID: <88694240-1eea-4f4c-bb7b-80de25f252e7@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ZyUxBr5Umbc9odcH@boqun-archlinux>
- <20241101195438.1658633-1-boqun.feng@gmail.com>
- <37c2ad76-37d1-44da-9532-65d67e849bba@paulmck-laptop>
- <ZybviLZqjw_VYg8A@Boquns-Mac-mini.local>
+	s=arc-20240116; t=1730646652; c=relaxed/simple;
+	bh=tMB/fJGNm9+JsG3RkWjw4oTwHyNW5C0yfmIxhcRZGec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uRzeDlxq6obuPvRrK0LXCX7RXZtVnEtVUys0HH3S4hQdDmysPcRGMXf1n7n8cKkDNUfniP3iz8EM31oCJxVV6BzDdgAYkFEFKs2I9I3gg0dqHh10vVSwnwieTc6rlJtjq8dol1EAGqq7acTrDy/cBRjluksGaRH2gJlunOvW2ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=In27ywX1; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso476177466b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 07:10:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730646649; x=1731251449; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nz3r1Hpii+Ch8EYMCNIE/V74gLWjSP1nHZUmQ2/A2GA=;
+        b=In27ywX1b4GQIFdAY0K1GrqmrSQ/K8pObHwNRjMjGcPPd+eFB3LV5p2MrIWT1updCo
+         EnuoCwGeNqLH0+12qsJJ5bMENCV72CH2Q0qSv7sIxrvrtz4SxviPl4FVReAfejw0FgMo
+         R10hSUf1urVE6g0445UZAgBjV1mtDuijjI2i56mTHDA7pOvlz78bpp4pFQyj1oeSBXhc
+         nKVhxQgo+j4eGcU9QLR4YzvFe3YJ1yBgwdVUKgRQrQtVFrv4ie1M5hgjWNiYNegiLGvt
+         /7hSL1dkAgghp1NwtZPMkCIOZs7CYeVXTD1AVOaB/vH2uIyooCTEOYZE931eQ9FlY7MB
+         fWUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730646649; x=1731251449;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nz3r1Hpii+Ch8EYMCNIE/V74gLWjSP1nHZUmQ2/A2GA=;
+        b=UuI3yHHyr5muNlhyWuIXzwY1BwXltjiCziE8qzmkEBwTV1FM/rEXKY5rXsu9MwgFcE
+         GvUjenlJ9kp0UXhoiJY3GLsJqWV+xlWDP0Qiilhp1ioiP3jbsxVkRyuzFzwd0G1z7pGS
+         3KD3YDKss1s6ydVNxZ0JLXuycwp8559NFXHcJphVhhWEiS497VVRzRZk+Ebl7Hdoz0LJ
+         0ayM6lOhOXFv0qhydGgfiHdwdTshJmXpn5t0v8Dk3p5BZb8mqZpc5bvdOIOERpXnYnLp
+         M6pf/l5zuG9LgBiEZmlifdK3Wwf/yUUsJsW98A2aR7q6HmLkbr56M4MRiwnvdsBo3buT
+         Lerw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRqLmnpTOM9bVcwQRCS1rmuZBtG3S24l2eRy5wOVX/zvHpWBDIr5lvikzKsCObJFmUDKvgf52gykN1c5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMZbDRhMuxca+UxRZx5/h9ZK+czuXVgI7j2flKr9htW6ld+w8V
+	CLMonGC7pMzrT4+OPZsyJZIEgwru4SibhR+WPooerMCV+eFmdysm
+X-Google-Smtp-Source: AGHT+IHUmY7geESJ8kCdBUqY+5Y+Nt2zmyXPqAPEff+mb+ZOGsyqYHajjJjuKQH9KTjBqdxIlsn05A==
+X-Received: by 2002:a17:907:9729:b0:a9a:7f92:782 with SMTP id a640c23a62f3a-a9de61ea441mr2820644066b.52.1730646648964;
+        Sun, 03 Nov 2024 07:10:48 -0800 (PST)
+Received: from shift.daheim (p200300d5ff01130050f496fffe46beef.dip0.t-ipconnect.de. [2003:d5:ff01:1300:50f4:96ff:fe46:beef])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e566843b0sm431466066b.212.2024.11.03.07.10.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 07:10:48 -0800 (PST)
+Received: from localhost.daheim ([127.0.0.1])
+	by shift.daheim with esmtp (Exim 4.98)
+	(envelope-from <chunkeey@gmail.com>)
+	id 1t7cFb-00000002Nzh-40r9;
+	Sun, 03 Nov 2024 16:10:47 +0100
+Message-ID: <15435fb5-ae39-407d-b022-93bbe9e14fab@gmail.com>
+Date: Sun, 3 Nov 2024 16:10:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZybviLZqjw_VYg8A@Boquns-Mac-mini.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: rtl8712: Remove driver using deprecated API wext
+To: Nam Cao <namcao@linutronix.de>,
+ Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Cc: Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Linux Driver Project Developer List
+ <driverdev-devel@linuxdriverproject.org>, Kalle Valo <kvalo@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Johannes Berg <johannes@sipsolutions.net>,
+ Arnd Bergmann <arnd@arndb.de>,
+ =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?=
+ <dominik.karol.piatkowski@protonmail.com>, Xingquan Liu <b1n@b1n.io>,
+ Tudor Gheorghiu <tudor.reda@gmail.com>, Ping-Ke Shih <pkshih@realtek.com>,
+ Manisha Singh <masingh.linux@gmail.com>,
+ Dorine Tipo <dorine.a.tipo@gmail.com>, Tchadel Icard
+ <hello@tchadelicard.fr>, Felix Yan <felixonmars@archlinux.org>,
+ Moon Yeounsu <yyyynoom@gmail.com>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Roshan Khatri <topofeverest8848@gmail.com>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20241020144933.10956-1-philipp.g.hortmann@gmail.com>
+ <20241030093830.QSofC7Cl@linutronix.de>
+Content-Language: de-DE
+From: Christian Lamparter <chunkeey@gmail.com>
+In-Reply-To: <20241030093830.QSofC7Cl@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 02, 2024 at 08:35:36PM -0700, Boqun Feng wrote:
-> On Fri, Nov 01, 2024 at 04:35:28PM -0700, Paul E. McKenney wrote:
-> > On Fri, Nov 01, 2024 at 12:54:38PM -0700, Boqun Feng wrote:
-> > > Paul reported an invalid wait context issue in scftorture catched by
-> > > lockdep, and the cause of the issue is because scf_handler() may call
-> > > kfree() to free the struct scf_check:
-> > > 
-> > > 	static void scf_handler(void *scfc_in)
-> > >         {
-> > >         [...]
-> > >                 } else {
-> > >                         kfree(scfcp);
-> > >                 }
-> > >         }
-> > > 
-> > > (call chain anlysis from Marco Elver)
-> > > 
-> > > This is problematic because smp_call_function() uses non-threaded
-> > > interrupt and kfree() may acquire a local_lock which is a sleepable lock
-> > > on RT.
-> > > 
-> > > The general rule is: do not alloc or free memory in non-threaded
-> > > interrupt conntexts.
-> > > 
-> > > A quick fix is to use workqueue to defer the kfree(). However, this is
-> > > OK only because scftorture is test code. In general the users of
-> > > interrupts should avoid giving interrupt handlers the ownership of
-> > > objects, that is, users should handle the lifetime of objects outside
-> > > and interrupt handlers should only hold references to objects.
-> > > 
-> > > Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-> > > Link: https://lore.kernel.org/lkml/41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop/
-> > > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > 
-> > Thank you!
-> > 
-> > I was worried that putting each kfree() into a separate workqueue handler
-> > would result in freeing not keeping up with allocation for asynchronous
-> > testing (for example, scftorture.weight_single=1), but it seems to be
-> > doing fine in early testing.
+On 10/30/24 10:38 AM, Nam Cao wrote:
+> On Sun, Oct 20, 2024 at 04:49:29PM +0200, Philipp Hortmann wrote:
+>> This driver is in the staging area since 2010.
+>>
+>> The following reasons lead to the removal:
+>> - This driver generates maintenance workload for itself and for API wext
+>> - A MAC80211 driver was available in 2016 time frame; This driver does
+>>    not compile anymore but would be a better starting point than the
+>>    current driver. Here the note from the TODO file:
+>>    A replacement for this driver with MAC80211 support is available
+>>    at https://github.com/chunkeey/rtl8192su
+>> - no progress changing to mac80211
+>> - Using this hardware is security wise not state of the art as WPA3 is
+>>    not supported.
+>>
+>> The longterm kernels will still support this hardware for years.
+>>
+>> Find further discussions in the Link below.
+>>
+>> Link: https://lore.kernel.org/linux-staging/a02e3e0b-8a9b-47d5-87cf-2c957a474daa@gmail.com/T/#t
 > 
-> I shared the same worry, so it's why I added the comments before
-> queue_work() saying it's only OK because it's test code, it's certainly
-> not something recommended for general use.
+> I added owner of that "replacement driver" to CC:
+> Christian Lamparter <chunkeey@gmail.com>
 > 
-> But glad it turns out OK so far for scftorture ;-)
+> I vaguely remembered that he mentioned the replacement driver doesn't work
+> very well. But can't find that email again.
 
-That said, I have only tried a couple of memory sizes at 64 CPUs, the
-default (512M), which OOMs both with and without this fix and 7G, which
-is selected by torture.sh, which avoids OOMing either way.  It would be
-interesting to vary the memory provided between those limits and see if
-there is any difference in behavior.
+... and neither did r8712u. what lives on is the OpenBSD port:
+<https://man.openbsd.org/rsu.4> and the firmware: rtlwifi/rtl8712u.bin
+in linux-firmware.git:
+<https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/rtlwifi/rtl8712u.bin>
 
-It avoids OOM at the default 512M at 16 CPUs.
-
-Ah, and I did not check throughput, which might have changed.  A quick
-test on my laptop says that it dropped by almost a factor of two,
-from not quite 1M invocations/s to a bit more than 500K invocations/s.
-So something more efficient does seem in order.  ;-)
-
-tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --configs PREEMPT --duration 30 --bootargs "scftorture.weight_single=1" --trust-make
-
-							Thanx, Paul
-
-> Regards,
-> Boqun
-> 
-> > So I have queued this in my -rcu tree for review and further testing.
-> > 
-> > 							Thanx, Paul
-> > 
-> > > ---
-> > >  kernel/scftorture.c | 14 +++++++++++++-
-> > >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/kernel/scftorture.c b/kernel/scftorture.c
-> > > index 44e83a646264..ab6dcc7c0116 100644
-> > > --- a/kernel/scftorture.c
-> > > +++ b/kernel/scftorture.c
-> > > @@ -127,6 +127,7 @@ static unsigned long scf_sel_totweight;
-> > >  
-> > >  // Communicate between caller and handler.
-> > >  struct scf_check {
-> > > +	struct work_struct work;
-> > >  	bool scfc_in;
-> > >  	bool scfc_out;
-> > >  	int scfc_cpu; // -1 for not _single().
-> > > @@ -252,6 +253,13 @@ static struct scf_selector *scf_sel_rand(struct torture_random_state *trsp)
-> > >  	return &scf_sel_array[0];
-> > >  }
-> > >  
-> > > +static void kfree_scf_check_work(struct work_struct *w)
-> > > +{
-> > > +	struct scf_check *scfcp = container_of(w, struct scf_check, work);
-> > > +
-> > > +	kfree(scfcp);
-> > > +}
-> > > +
-> > >  // Update statistics and occasionally burn up mass quantities of CPU time,
-> > >  // if told to do so via scftorture.longwait.  Otherwise, occasionally burn
-> > >  // a little bit.
-> > > @@ -296,7 +304,10 @@ static void scf_handler(void *scfc_in)
-> > >  		if (scfcp->scfc_rpc)
-> > >  			complete(&scfcp->scfc_completion);
-> > >  	} else {
-> > > -		kfree(scfcp);
-> > > +		// Cannot call kfree() directly, pass it to workqueue. It's OK
-> > > +		// only because this is test code, avoid this in real world
-> > > +		// usage.
-> > > +		queue_work(system_wq, &scfcp->work);
-> > >  	}
-> > >  }
-> > >  
-> > > @@ -335,6 +346,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
-> > >  			scfcp->scfc_wait = scfsp->scfs_wait;
-> > >  			scfcp->scfc_out = false;
-> > >  			scfcp->scfc_rpc = false;
-> > > +			INIT_WORK(&scfcp->work, kfree_scf_check_work);
-> > >  		}
-> > >  	}
-> > >  	switch (scfsp->scfs_prim) {
-> > > -- 
-> > > 2.45.2
-> > > 
+Cheers,
+Christian
 
