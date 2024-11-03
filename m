@@ -1,124 +1,83 @@
-Return-Path: <linux-kernel+bounces-393854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3724E9BA65C
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:20:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4DF9BA65F
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:20:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E16471F20FFE
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:20:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2C95B20F2A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E5C187344;
-	Sun,  3 Nov 2024 15:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99E018595E;
+	Sun,  3 Nov 2024 15:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5cWNoE8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="flb3kUVK"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE70D2628C;
-	Sun,  3 Nov 2024 15:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B66423774;
+	Sun,  3 Nov 2024 15:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730647196; cv=none; b=rcbtKQaV/6iv/P5TABUG7MOFuim+8DbFEk6VSB8KpqQyLkRAbg+nBVAlNUOAP+h1/PNEyCSpoujolKXfn+JL+LMxyjiMdNHCFAFVy9N8Su1qyPYG4TUloRdDeWw/jbvCAAvgKDJM1/jyKLbA/nxEqbev7UGgue9HgVBjMSodU0s=
+	t=1730647246; cv=none; b=uX1l4RpgMc83mvaPYYjKrBjajGwcAJqvfJmCctHnYy04hV+ey/kTJX7Km57OUZ+7ie/yvmrby35V3ngj0D9kdxVqJt25nndMBAqLUJWqX1wIfjFHGpIIvx1JFGRZ9IoNOPYhGWbfMkhqlmCyDhuk9tzAyxb/r1ntJ1kteR+pI+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730647196; c=relaxed/simple;
-	bh=SfCXMZbNHN7ZBHtRMXT8dYyPlDizsgfBlczM/Izb1OA=;
+	s=arc-20240116; t=1730647246; c=relaxed/simple;
+	bh=zVuaYgLRsZYa1XUybwHktQ2q0GlPerZ3CIB6sz8W8ew=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IeYkaGo2GHw/aPhPye38XuY3lCcRm80pT4R75Ul6PR0Qir1oJ5eTqenLCUjxzfh1qRv7Xlpaiwg3Mny1/MlLSQVCVv0xuOtz/jDJs9iJHh8pu97KHenXtpCcRCy0YLRw1jqABdLE78DyX0a5ACycRansuMIbUiiQ3dGsfXzZyA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5cWNoE8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D95DC4CECD;
-	Sun,  3 Nov 2024 15:19:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730647195;
-	bh=SfCXMZbNHN7ZBHtRMXT8dYyPlDizsgfBlczM/Izb1OA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j5cWNoE8etENxU7IbfrBszJT10f6EWlfJqpPGvOpaZLTiWI1AidHTPWSL24msep+k
-	 At1fyHSehamOum/Kpf4tDMLVsWjyCbFVB1L3+uJPROcdL+JtfpRWtGbmTmmXws4+mU
-	 6Tax5d+Pem6waJZPuDXZsKSMbCUFxwDHGiatqmjanHAiNyMOnFy3GO/14wUoY9qDlK
-	 mafUcrdLGbf/qNYnEXemxmwc/kgO13ERQSBD0Q59NhZKcEgGCMs/Jsfq3Fei7V6xWc
-	 KS0Si/iP8Vl1pnx/fUh5aIOdBMiN7U2MYN4bxu2bUCfSI0yrbv2ocwZ0+G5O8IPgHi
-	 San3mdWHVOs/A==
-Date: Sun, 3 Nov 2024 17:19:46 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Zhu Yanjun <yanjun.zhu@linux.dev>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH 2/7] block: don't merge different kinds of P2P
- transfers in a single bio
-Message-ID: <20241103151946.GA99170@unreal>
-References: <cover.1730037261.git.leon@kernel.org>
- <34d44537a65aba6ede215a8ad882aeee028b423a.1730037261.git.leon@kernel.org>
- <f80e7b54-b897-4df2-a49d-bc6012640a8a@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MW6SuK9umTKgSymdE4wr3e7X8ipXoddxRltGZts4tR41001sap13mfKiDnunIYv0k4n60/peBTaGeCphQHU+xfD0mkLlcbIUwfy8vlE37J3ubjTQOtNGvaEjs5Y8AnGPplpyVyBXw/Drr9R1brYXNu3H/K4jS+zJWgOrFl3c61I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=flb3kUVK; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=EcTJqEHOtmy9IglxtzxFtYhDHa1so+bTTn9DvV6/mbw=; b=flb3kUVKt+wvset/BhIkj4qv2z
+	og3ChRn29r3w+tpG7W0e01u6Eb7S1IgpvDGG/18J1p1wYdlxkS/4Fipp+MxnJoZ1Om/HUoS2hlTB+
+	8HUjn7ib/45Winnoln6fzT/APcNAkM80jkklStHgZkXEG4kYbQIXP6Zl0BVSSdk4SmPM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t7cP3-00C1VJ-Cf; Sun, 03 Nov 2024 16:20:33 +0100
+Date: Sun, 3 Nov 2024 16:20:33 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Diogo Silva <diogompaissilva@gmail.com>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, marex@denx.de,
+	tolvupostur@gmail.com
+Subject: Re: [PATCH] net: phy: ti: add PHY_RST_AFTER_CLK_EN flag
+Message-ID: <6e5298c0-eded-4fd2-8ce6-52d4239da53c@lunn.ch>
+References: <20241102151504.811306-1-paissilva@ld-100007.ds1.internal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f80e7b54-b897-4df2-a49d-bc6012640a8a@linux.dev>
+In-Reply-To: <20241102151504.811306-1-paissilva@ld-100007.ds1.internal>
 
-On Sat, Nov 02, 2024 at 08:39:35AM +0100, Zhu Yanjun wrote:
-> 在 2024/10/27 15:21, Leon Romanovsky 写道:
-> > From: Christoph Hellwig <hch@lst.de>
-> > 
-> > To get out of the dma mapping helpers having to check every segment for
-> > it's P2P status, ensure that bios either contain P2P transfers or non-P2P
-> > transfers, and that a P2P bio only contains ranges from a single device.
-> > 
-> > This means we do the page zone access in the bio add path where it should
-> > be still page hot, and will only have do the fairly expensive P2P topology
-> > lookup once per bio down in the dma mapping path, and only for already
-> > marked bios.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> >   block/bio.c               | 36 +++++++++++++++++++++++++++++-------
-> >   block/blk-map.c           | 32 ++++++++++++++++++++++++--------
-> >   include/linux/blk_types.h |  2 ++
-> >   3 files changed, 55 insertions(+), 15 deletions(-)
-
-<...>
-
-> > @@ -410,6 +411,7 @@ enum req_flag_bits {
-> >   #define REQ_DRV		(__force blk_opf_t)(1ULL << __REQ_DRV)
-> >   #define REQ_FS_PRIVATE	(__force blk_opf_t)(1ULL << __REQ_FS_PRIVATE)
-> >   #define REQ_ATOMIC	(__force blk_opf_t)(1ULL << __REQ_ATOMIC)
-> > +#define REQ_P2PDMA	(__force blk_opf_t)(1ULL << __REQ_P2PDMA)
+On Sat, Nov 02, 2024 at 04:15:05PM +0100, Diogo Silva wrote:
+> From: Diogo Silva <diogompaissilva@gmail.com>
 > 
-> #define REQ_P2PDMA	(__force blk_opf_t)BIT_ULL(__REQ_P2PDMA)
+> DP83848	datasheet (section 4.7.2) indicates that the reset pin should be
+> toggled after the clocks are running. Add the PHY_RST_AFTER_CLK_EN to
+> make sure that this indication is respected.
 > 
-> Use BIT_ULL instead of direct left shit.
+> In my experience not having this flag enabled would lead to, on some
+> boots, the wrong MII mode being selected if the PHY was initialized on
+> the bootloader and was receiving data during Linux boot.
+> 
+> Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
 
-We keep coding style consistent and all defines above aren't implemented
-with BIT_ULL().
+This should be merged to net.
 
-Thanks
+Fixes: 34e45ad9378c ("net: phy: dp83848: Add TI DP83848 Ethernet PHY")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> 
-> Zhu Yanjun
-> 
-> >   #define REQ_NOUNMAP	(__force blk_opf_t)(1ULL << __REQ_NOUNMAP)
-> 
+    Andrew
 
