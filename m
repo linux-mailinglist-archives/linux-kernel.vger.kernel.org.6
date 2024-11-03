@@ -1,83 +1,98 @@
-Return-Path: <linux-kernel+bounces-393965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DA79BA807
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:50:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861459BA809
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E067E1F218E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:50:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B84061C20D64
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8D018BC1E;
-	Sun,  3 Nov 2024 20:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB5F18BC10;
+	Sun,  3 Nov 2024 20:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmqL4GR+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gZUH7K0Z"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A5283CD3;
-	Sun,  3 Nov 2024 20:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FBA83CD3;
+	Sun,  3 Nov 2024 20:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730667036; cv=none; b=FdpAev7162OqkDtVdEiAIsCyALQ91CZt3Ldcufon+JQcTiYrw+MKbQ0LkQ85jRDASKLnicRclIjONW2Io6hpKedi+aY8XCOEZTWlhgNCP3nVIrND5jjtWgvFyyh5m1uMCCz2qwtaLb3uv62MNy4YIjskuP09ZDY15nq6ICC49Wc=
+	t=1730667105; cv=none; b=m4FrwtMoQchA9J53tqUzRouhtNg4UYEU2QfJB/sSpA92JmpJLGji4qUCGk7EL8LTA4rsclBXCSVWy+LMDiAMce652NgZyScaigcNUoV9pcf5e1k4Y0cUSe0NzvsaYe03vCDXy6m25N7/agAx1ROjP7vjeumnOWOegGX1wCUWfQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730667036; c=relaxed/simple;
-	bh=0XUV0VbcIRK0revMTo8r7QUXU3/XHGnvm9TNClNnFVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qXdtP6Bqzcrny8/2ocNtgO2hsPZhOhGSo7Gj5ZoBUyYlRORbzKNOclDckI50Tstnkwl6loeRK4VOfP4nRoElx7+oZ9rNc/s8Cgkyb/6NUhaT0rKtFm+iUwYb+McYWCwyEXPddFKx1HQdgTv+kcIFGO+m7poa+aEHMBLj6uAx5Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmqL4GR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B821EC4CECD;
-	Sun,  3 Nov 2024 20:50:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730667036;
-	bh=0XUV0VbcIRK0revMTo8r7QUXU3/XHGnvm9TNClNnFVg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QmqL4GR+ldvCw/9MNJqu6/DT/SoZWrP8wJtwZKrQNZPeadrGkpWCjdZvBRDEmh+m4
-	 GjdCEmjtqQD64NuswLMN+UzIxO+1H8iz6k4CjEXZEmEArR4cox+9ykhra4hIzkAUe8
-	 AUEbmq35eMBGKuGtz4k0RKw2+r+6AraeolDcHWD+4X8LL0zmilX9C6nuZK+5ceMKQ6
-	 VLR+PKogOtin4UdjnDHWFWmPKhSNrL8fooG4pI3QO1bB3vz6LheKN1g/ATTW5teqwC
-	 MafoEnhLYDxhIpP/qEIiDFnw6CqDbBtlMy2fU05MPcaQ7QpEL0x0ufaew1de9EJ/e5
-	 IruML2peqXoTA==
-Date: Sun, 3 Nov 2024 12:50:34 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- andrew+netdev@lunn.ch, claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH net 0/2] Fix issues when PF sets MAC address for VF
-Message-ID: <20241103125034.27c43c51@kernel.org>
-In-Reply-To: <20241031060247.1290941-1-wei.fang@nxp.com>
-References: <20241031060247.1290941-1-wei.fang@nxp.com>
+	s=arc-20240116; t=1730667105; c=relaxed/simple;
+	bh=jP0nvKevZsqAg7vRnOclR6kOdOBBMrPZ39ZAUeBTCb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SfxHp8F9rv2/sadHVKC3HccRhIDKvYp4qsd8H5eXkKPO37np+81ogw1JzB89YOzsUFeDklkBiDfWNNunkupEsJyyAqoJxCANE7eI+CMLBNf4h5vFN1XeXsRoMhlZRV8PLef0zR592gjFlOPpVTbXeueRBIl46ypvOiej0za+s+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gZUH7K0Z; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730667090;
+	bh=dGLtAyL5N4JAUMT2iZcVDCnNodSdxkpWXNaqwZ2TEDk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gZUH7K0Z1Q0GbTGXcf7TVzJILD6qJQMAvUn5eq6D9FlYalgeSJZEXVoAJSIJDA3pX
+	 v8CkI4XPi5oo0wl+mbMj4+w9cv4oTP1VRuzR9dDvqryUcLnmVYHbaah8VLb8eRVrl2
+	 sg08Tp+eNA7cWccVbfWsakRT9QDd2uUdEuyGcf5dkwlfRcfRHhpxs3RmKc7NWoiGlq
+	 i34Pfv+yPCQMcLwgEc/pMKeg4NjK+0MejeKS0qOBkCJrENPSPY9ACNAyct9XjRWNfb
+	 YV4rWoeippz2W+zNiGTVMAJiKIHUbMoqxVO8fg/Ybpt2lUxrhWV/hehSdTP0yPpbkj
+	 zyGeYw160VFbA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XhRbQ5fnlz4x7G;
+	Mon,  4 Nov 2024 07:51:30 +1100 (AEDT)
+Date: Mon, 4 Nov 2024 07:51:32 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the omap tree
+Message-ID: <20241104075132.3e57e17e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/CkxLg+GGKP66dd4auC92ud9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/CkxLg+GGKP66dd4auC92ud9
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 31 Oct 2024 14:02:45 +0800 Wei Fang wrote:
->   net: enetc: allocate vf_state during PF probes
->   net: enetc: prevent PF from configuring MAC address for an enabled VF
+Hi all,
 
-This combination of changes would imply that nobody sets the MAC
-address on VFs via this driver, correct? Patch 1 fixes a crash
-if address is set before VFs are enabled, patch 2 forces setting
-the MAC before VFs are enabled (which would previously crash).
-Which leads me to believe this will cause regressions to all users,
-if such users exist.
+Commit
 
-The fact that the MAC address is not picked up by a running VM is
-normal, I'd say even maybe expected. IIUC hypervisor will enable 
-SRIOV at the start of day, then allocate, configure and assign VFs
-to VMs. It will FLR the VF after configuration.
+  a74a1ada3651 ("ARM: dts: am335x-bone-common: Increase MDIO reset deassert=
+ delay to 50ms")
 
-Your change will make it impossible to reconfigure VF with a MAC
-of a new VM, if any other VF is in use.
+is missing a Signed-off-by from its committer.
 
-Long story short, I don't believe the patch 2 is necessary at all,
-maybe you can print a warning to the logs, if you really want.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CkxLg+GGKP66dd4auC92ud9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcn4lQACgkQAVBC80lX
+0GwfKAf/SgzV5TN/aFc7TR/PdzWULt4tb6Ay5epBEByC1OK4d0omUVZCQ5N4UwQD
+FlAQniL+O5MFJBij9mrFyqVpRjs9xP1YW3HX+Oyy9QbfwYtNC5Bvb+gVIBb9rksh
+m84OxECOD4YxJtwQSYqpD0IqBMR8Iqgb4GDRu/jArTxTIhP9z1r88vq6hEWE8Mfp
+5GhNcPdmLlXORrlg32WxNNnpI8eLLmZpDOm6jhLOy1lm5crWLpd5ePM6SxUFHCV5
+gGMiOSARM5Wwrys+TGQeEAUuQ+o2XZ0jQYHUVsATDblRxoYZAt+373xyw3wX6hxe
+bIqgmCS55MmlYLVeDbZyHxGtFu6rrg==
+=E6YR
+-----END PGP SIGNATURE-----
+
+--Sig_/CkxLg+GGKP66dd4auC92ud9--
 
