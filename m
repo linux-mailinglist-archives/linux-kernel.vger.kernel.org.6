@@ -1,161 +1,137 @@
-Return-Path: <linux-kernel+bounces-393640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F5749BA381
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 02:55:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112B79BA383
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 02:57:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5860C2824E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 01:55:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F5DBB21D67
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 01:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB09770806;
-	Sun,  3 Nov 2024 01:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="u6nDwis5"
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A246F099;
+	Sun,  3 Nov 2024 01:57:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972A61CAAC;
-	Sun,  3 Nov 2024 01:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8091C1CAAC
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 01:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730598917; cv=none; b=PH4IERzdPOD29gZv2k0KQUYVLtwfZGkexVyYswemVng/j32R1BVISNXKeFFzW5WKsaanE78g9i+yCEzit3j5USVnOgxa6KmIGc1vs7IIaa3ZGVQN8yvWXMyYHEVeQBfip3DPosvwK/9YVQnne1hoFLJqX4r1+1NOBfANEIvb+kI=
+	t=1730599027; cv=none; b=DE2QtsoxMp6paHGbsnM8siX2UlXJuGYH5jGZGXvtb2XioA0y1tpgZM3KPh4uaJebQukJLCtZ20Nz/FTY8+5c8KdDpigSswaQ/mY/QpCmTQ0v5zKMEcLs+z1Zs/1ftEdQOoR+x8BOeUbvwKvfPvOw7Xk7e3CS6xOXU+xA6JNwBVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730598917; c=relaxed/simple;
-	bh=MQSLFU0emUg0QSn9Kb4mG6MNIHeHGE0ph4Ah++xolDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oq8xzEHNLcFvDP4IGfgAziP0lcO8pc8Y1gCFpOIVl/5tn/nJIRlBKeJg3BcU567C/fbdvc56AlrvB3GtiZVNpqtuuSYET1TCmyN+Efj5iA6970Kbfgt/YMmSEXuFiL0m3IPZIOCb4UTU6YuNn95RyHlkazHtz7aMQf51AuxHHDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=u6nDwis5; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=SULx6WWex0zzFL0T/OSMqTCr1B9gJbo9/bk9Ij2EfwI=; b=u6nDwis57Rnxvgsa2eYvT8mt1a
-	CGT3O9g8y6unsU9cd4hiWHI3Nlu833C1T/dYb3EpnmzKMaFy2KqBRFx+UbhDOYqpDMzdOyYAsbHG/
-	NgFx4MTzGto8f97RMXUV8CJP750z/pJ0PkhKhLuw2uZ1ZaLkuy0LBmUzxtF77FsY+JwhJjv/GGYOe
-	OvEvgkC1Zgu6VpSY1cFFicdCPQ+3aLJxbQYK9QkeY1AhEcweXthomy2CzbdGVuoGubyO8AD+K4+Ti
-	DPDhHkiO//LXPOhNVe/sVzeG1kY2G/j9tzdrKmB92JCN6XHdcWH3FsB6WeDOAiaD3Jh5tuM25P2TB
-	3iAFAsHg==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <cjwatson@debian.org>)
-	id 1t7PpZ-00B5DZ-Hg; Sun, 03 Nov 2024 01:55:06 +0000
-Received: from ns1.rosewood.vpn.ucam.org ([172.20.153.2] helo=riva.ucam.org)
-	by riva.rosewood.vpn.ucam.org with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <cjwatson@debian.org>)
-	id 1t7PpX-004umt-2m;
-	Sun, 03 Nov 2024 01:55:03 +0000
-Date: Sun, 3 Nov 2024 01:55:02 +0000
-From: Colin Watson <cjwatson@debian.org>
-To: "G. Branden Robinson" <g.branden.robinson@gmail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, Ian Rogers <irogers@google.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org, groff@gnu.org
-Subject: Re: [PATCH v2 1/3] proc_pid_fdinfo.5: Reduce indent for most of the
- page
-Message-ID: <ZybX9q_zReTgdMxU@riva.ucam.org>
-Mail-Followup-To: "G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	Alejandro Colomar <alx@kernel.org>, Ian Rogers <irogers@google.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org, groff@gnu.org
-References: <20241015211719.1152862-1-irogers@google.com>
- <20241101132437.ahn7xdgvmqamatce@devuan>
- <CAP-5=fXo5XjxUXshm9eRX-hCcC5VWOv0C5LBZ3Z0_wQb+rdnsw@mail.gmail.com>
- <20241101200729.6wgyksuwdtsms3eu@devuan>
- <20241102100837.anfonowxfx4ekn3d@illithid>
- <ZyZ4Tfxfr7M-EqUo@riva.ucam.org>
- <20241103005023.kdv5bkpqkpmsom5g@illithid>
+	s=arc-20240116; t=1730599027; c=relaxed/simple;
+	bh=LU5netj2YyF6BMrxeVKuu5HmJDtFuqUFgHv7V0fwg2c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JQC3OGABIuU3+hk79z0ExZf9Yz0D59uE0FCwkOA182OS6bc82yyxrYgw7qnjRkc24rTBlcz1t/Mz73czOEzdDDwYcjSr7qCuKMGjCwIt5di7nGcMsG67YbBy39oAUzK8mj15esip8RDmKNgpIJZ0SjnOHPwALKKDwixceszfsYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83ae0af926dso313721639f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 18:57:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730599024; x=1731203824;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IDnFegwnz+gAMVt3jUYxDfkOm1MB3L3uSf7CLV3sfAs=;
+        b=Sxt6WN5DPfWg/fokdLBuNqO2XtK6ZfN7mTCXM7ysfaRbV80wzllSj+RQDMrTKO+Xm7
+         h01sCSvaIzwekQ/J0DPuZZ2kB4ZlZMTjbKSJc0ERLS4UPc5waaLWA326q+Av2UIuYJjn
+         od3CiZwgfS+t4kd6R/I+pQlmmKxOx0r2nTbKALENb4NJgxk2SVCbALjzLtu+P/2lRsJQ
+         M20SGhW5/Un23+WEH9S/6c9sFoJBnMY0IwMwpig4D6nKYMt77tWd4C8OCO1JMfa3IWQk
+         TquJ7OrGL5kqIwTDztay5XrnQW9fOUBLnunt13jpm7zt8Fw/BNyzTMOsTtYt/O1iZn6V
+         kaKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDPJPDyNF8pjNrlLsQEOEGd9DqecI+qXTszMUX6WtL5JHqEz+DVIZmP5lL1ocAUfdCZy8yYI4eyqNJllc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPJR9U8uiNMl7ge6odtcE0EudjgK4Y7bq7j4VTzxcQjJfOOvHR
+	lrIZW2GciZEmLS89chBDiofGGOskKAZcWhTrXW8p36fUmBAfiu5I7SYrHFqVTSGr6AdR54kr7+D
+	icrj8TZWvr7+RkDbYKWMHhlO+W9+DwoR/XpdxqBOxd2gBTCp2eU8trjI=
+X-Google-Smtp-Source: AGHT+IE7jXY2CdsQrWvOuZ6DqOM8EWL60d5ytYUMha0S705eN/W3IwxDnHUT6SNcDanPsotPryHe92t42qh2SCmleZloghjVL2Eo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241103005023.kdv5bkpqkpmsom5g@illithid>
-X-Debian-User: cjwatson
+X-Received: by 2002:a05:6e02:b41:b0:3a0:a311:6773 with SMTP id
+ e9e14a558f8ab-3a6b035dc3emr77795845ab.21.1730599024674; Sat, 02 Nov 2024
+ 18:57:04 -0700 (PDT)
+Date: Sat, 02 Nov 2024 18:57:04 -0700
+In-Reply-To: <tencent_8D33119E281B5D4B6A1BAD2543BA98BBB808@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6726d870.050a0220.35b515.018e.GAE@google.com>
+Subject: Re: [syzbot] [bfs?] general protection fault in bfs_get_block (3)
+From: syzbot <syzbot+f51a2a34984e4d8888fd@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Nov 02, 2024 at 07:50:23PM -0500, G. Branden Robinson wrote:
-> At 2024-11-02T19:06:53+0000, Colin Watson wrote:
-> > How embarrassing.  Could somebody please file a bug on
-> > https://gitlab.com/man-db/man-db/-/issues to remind me to fix that?
-> 
-> Done; <https://gitlab.com/man-db/man-db/-/issues/46>.
+Hello,
 
-Thanks, working on it.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in mark_buffer_dirty
 
-> > I already know that getting acceptable performance for
-> > this requires care, as illustrated by one of the NEWS entries for
-> > man-db 2.10.0:
-> > 
-> >  * Significantly improve `mandb(8)` and `man -K` performance in the
-> >    common case where pages are of moderate size and compressed using
-> >    `zlib`: `mandb -c` goes from 344 seconds to 10 seconds on a test
-> >    system.
-> > 
-> > ... so I'm prepared to bet that forking nroff one page at a time will
-> > be unacceptably slow.
-> 
-> Probably, but there is little reason to run nroff that way (as of groff
-> 1.23).  It already works well, but I have ideas for further hardening
-> groff's man(7) and mdoc(7) packages such that they return to a
-> well-defined state when changing input documents.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6436 at fs/buffer.c:1177 mark_buffer_dirty+0x2e5/0x520 fs/buffer.c:1177
+Modules linked in:
+CPU: 0 UID: 0 PID: 6436 Comm: syz.0.76 Not tainted 6.12.0-rc5-syzkaller-00299-g11066801dd4b-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:mark_buffer_dirty+0x2e5/0x520 fs/buffer.c:1177
+Code: 89 df e8 fe 82 db ff 48 8b 3b be 20 00 00 00 5b 41 5e 41 5f 5d e9 fb e8 fb ff e8 26 c4 71 ff e9 73 ff ff ff e8 1c c4 71 ff 90 <0f> 0b 90 e9 61 fd ff ff e8 0e c4 71 ff 90 0f 0b 90 e9 88 fd ff ff
+RSP: 0018:ffffc9000d30eb50 EFLAGS: 00010293
+RAX: ffffffff82231604 RBX: ffff8880459fea01 RCX: ffff88803d044880
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff82231361 R09: 1ffff11003542579
+R10: dffffc0000000000 R11: ffffed100354257a R12: 000000000000000a
+R13: dffffc0000000000 R14: ffff88801aa12bc8 R15: ffff88804553b200
+FS:  00007fda86b986c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0fe3329fe4 CR3: 000000004a36e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bfs_move_block fs/bfs/file.c:47 [inline]
+ bfs_move_blocks fs/bfs/file.c:60 [inline]
+ bfs_get_block+0x8be/0xb40 fs/bfs/file.c:129
+ __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2121
+ block_write_begin+0x8f/0x120 fs/buffer.c:2231
+ bfs_write_begin+0x35/0xd0 fs/bfs/file.c:182
+ generic_perform_write+0x344/0x6d0 mm/filemap.c:4054
+ generic_file_write_iter+0xae/0x310 mm/filemap.c:4181
+ __kernel_write_iter+0x42a/0x940 fs/read_write.c:616
+ __kernel_write+0x120/0x180 fs/read_write.c:636
+ __dump_emit+0x237/0x360 fs/coredump.c:807
+ writenote+0x221/0x3b0 fs/binfmt_elf.c:1463
+ write_note_info fs/binfmt_elf.c:1941 [inline]
+ elf_core_dump+0x37ba/0x4770 fs/binfmt_elf.c:2108
+ do_coredump+0x2162/0x2ec0 fs/coredump.c:758
+ get_signal+0x13fc/0x1740 kernel/signal.c:2902
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ irqentry_exit_to_user_mode+0x79/0x280 kernel/entry/common.c:231
+ exc_page_fault+0x590/0x8c0 arch/x86/mm/fault.c:1542
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7fda85d7e721
+Code: 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 48 3d 01 f0 ff ff 73 01 <c3> 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f
+RSP: 002b:ffffffffffffffe0 EFLAGS: 00010217
+RAX: 0000000000000000 RBX: 00007fda85f36058 RCX: 00007fda85d7e719
+RDX: 0000000000000000 RSI: ffffffffffffffe0 RDI: 0000000004008011
+RBP: 00007fda85df132e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fda85f36058 R15: 00007ffe98382878
+ </TASK>
 
-Being able to keep track of which output goes with which input pages is
-critical to the indexer, though (as you acknowledge later in your
-reply).  It can't just throw the whole lot at nroff and call it a day.
 
-One other thing: mandb/lexgrog also looks for preprocessing filter hints
-in pages (`'\" te` and the like).  This is obscure, to be sure, but
-either a replacement would need to do the same thing or we'd need to be
-certain that it's no longer required.
+Tested on:
 
-> > and of course care would be needed around error handling and so on.
-> 
-> I need to give this thought, too.  What sorts of error scenarios do you
-> foresee?  GNU troff itself, if it can't open a file to be formatted,
-> reports an error diagnostic and continues to the next `argv` string
-> until it reaches the end of input.
+commit:         11066801 Merge tag 'linux_kselftest-fixes-6.12-rc6' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12280d5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=f51a2a34984e4d8888fd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=152e6987980000
 
-That might be sufficient, or man-db might need to be able to detect
-which pages had errors.  I'm not currently sure.
-
-> > but on the other hand this starts to feel like a much less natural fit
-> > for the way nroff is run in every other situation, where you're
-> > processing one document at a time.
-> 
-> This I disagree with.  Or perhaps more precisely, it's another example
-> of the exception (man(1)) swallowing the rule (nroff/troff).  nroff and
-> troff were written as Unix filters; they read the standard input stream
-> (and/or argument list)[1], do some processing, and write to standard
-> output.[2]
-> 
-> Historically, troff (or one of its preprocessors) was commonly used with
-> multiple input files to catenate them.
-
-But this application is not conceptually like catenation (even if it
-might be possible to implement it that way).  The collection of all
-manual pages on a system is not like one long document that happens to
-be split over multiple files, certainly not from an indexer's point of
-view.
-
--- 
-Colin Watson (he/him)                              [cjwatson@debian.org]
 
