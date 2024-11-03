@@ -1,248 +1,302 @@
-Return-Path: <linux-kernel+bounces-393786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972619BA52D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:46:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327509BA530
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:58:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8A91F214BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 10:46:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557091C20F28
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 10:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F77B1632CC;
-	Sun,  3 Nov 2024 10:46:32 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273D7165F04;
+	Sun,  3 Nov 2024 10:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="khbJ5rsW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38897083A
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 10:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A8B15854D;
+	Sun,  3 Nov 2024 10:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730630791; cv=none; b=W8W8e3J11Aupvo8uGLNSKIm2flriNysRF7nuNVy9vsMnl0YCQC5H4fcpsnIGJv+TseI+QG834VopUou9E5GxbGsKSrPP5+iayODJzqmVFjRcdwi5oPpAR8F5fY5RLcAYyrQe9nY5DMrhRNlA5n4MQj7qgo4u2POhNd3Quu56BA0=
+	t=1730631513; cv=none; b=GuSq3pMwgdlW1DMaqcRPESftvN0YqIllcPQ+O5Mv6l1KlnMVuDjzI17TeBM/BkLM3PHP8wmmp2XBwPcX3JoymrJGZIBg+SDNHWM1TnTfc5vW5tx6HG/1QQGV2WPzs6UcfHKnunxMRTw/4dfn+mdnPfd44hU2YgSj23l3UIfRkQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730630791; c=relaxed/simple;
-	bh=KQLirzx1EUxiaDcqWeOO5EEApXddI1DJAyLUUi7+S3Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qUszHaoV6WEAsJle3ZsGHCQn2iq+nIK03ggXmOIa7txZzqXUtZvc5VjpWnVCxrNMC2y3XlqMz+BxJIMeu1p1uAm+s1E2yaUfkBg9Jd3lN65kj0iVz+cUbYPlEMLX+DYly/AqSzml33qPW69sV/0KFfN8FSatdlJRY9eC2C2Ix6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b2aee1a3so37910895ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 02:46:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730630789; x=1731235589;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lVNC831EgkLtb//vx6WK66M9nDiPyoq0BhXr1HfiLY8=;
-        b=txp6T87csN7Cl1BgZb9lm38eOeLHo0+/Rx4NRZL3pE+eF3c4iQKwUaabJUfk6UzukZ
-         xq4mYG1zCH2HLzA0xlLNW9sn7t1lGiqB9OXAu+7LzOUdRWhh50F9wsm2rtAy62khSh1k
-         u5IYe9HIAe6bzpbuqY0vSsSPnLYkJc144Hk7o8s44EXYeDuPBZRhCJAOdhnNP4jdR/j9
-         Rh2m7xHtGV70qgAyy/QeTNmwOzVnR20XCtRV8SppDn/3P2PAjNNAbDxNx/QFPiBtN+Dd
-         1w7D8fkN+KwcUouvZ6Dc+4IBXfs+xvfRnGqw0VCpUj6hSjyh6YkKed6+gnsY/nFNY+mP
-         NhRw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4/hH1Dh9bHyE0vNG+sEbt+vWlet80AOszf/XnEJK99Np1cki+TvoAedYNuEax54ZwQ2O4+K0LdGehJ08=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCMT6d1uT5u/V0PpLxO82WdIOp24t6Rnlf2KfDIQ7RSkqzp97p
-	5DedMRMZVROA/EY/iyFlxYXz9Pw1kM2AyS4gOjMKdUKVSQgS45wDG7EGEf9txUDMaYzgFpu9I+2
-	Aw629gYYfHRvPqjjB0Meitw3Llh8rI2p0eeac8Dpl+mhn/j6iGIUvryU=
-X-Google-Smtp-Source: AGHT+IGQS2UoJCpxGILgNRePa3JvMs3jrK5EfZ/Mi96rttkzcKeIhD5zKuL6RX8f9uh6ns4m4Adw6/9iWeeJPZzH3i10LSYQU5Ur
+	s=arc-20240116; t=1730631513; c=relaxed/simple;
+	bh=v35xY16BvilLfauKTnDlNzDUfjrPghceHw0igyFPsaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dVBrOwL3es/8UZE5zIvI85OFWmO/kp9KllT8oWhpczo5+DYRdbXawWZehFzr0vua1J40ptDPCc1O2zXxSqIv7e7kqjbZXtE5TS09M0blsPDV2JmikvE0zt4Mt30dyyH57qiBvfIW/sy8UggvX33SivjvPXeydY3tXjsKje4ZfGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=khbJ5rsW; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730631510; x=1762167510;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v35xY16BvilLfauKTnDlNzDUfjrPghceHw0igyFPsaY=;
+  b=khbJ5rsWX+CrNjKyL3F9l/dIeLOCW0deHZK96p0bMaVps4iH/L/Un6AK
+   nRSVgDGXCLupBu30It+kYbNB0P/0ZNLPQ+bz0kBZGIxXUsSsOs2NWBZrq
+   ilXw5uXitR9lZbpe/CfrFKB5KWmujLaFzZIEIswLnS7F3Q24RA23hm6Dn
+   qvFwVTaHxBoXmjDQaTRP4rRflXVWmbhRz6bAeriHE8KZs7hry8xBI7rVg
+   qvYiMHsrOGgSHKQzcOuJKMpoUsk8YrSPw8BpewrEVhfustZhN8/CohVyj
+   mH6YY5mY1tvT7bPwa3R9uD8w8Jq5+iCB1LmRWDwpA2Z7PEXf/ugIjEjWj
+   g==;
+X-CSE-ConnectionGUID: q4j9PShRQDiVvuR4KGvmcA==
+X-CSE-MsgGUID: lVJr42SSRY6HWH0pX9f7iA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11244"; a="41733403"
+X-IronPort-AV: E=Sophos;i="6.11,255,1725346800"; 
+   d="scan'208";a="41733403"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 02:58:29 -0800
+X-CSE-ConnectionGUID: MbTZ5hGMR1iIyXEJIN7V5A==
+X-CSE-MsgGUID: /hNUM7r/TyGgJqFSAyaimA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,255,1725346800"; 
+   d="scan'208";a="114193069"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 03 Nov 2024 02:58:23 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t7YJI-000ju7-0N;
+	Sun, 03 Nov 2024 10:58:20 +0000
+Date: Sun, 3 Nov 2024 18:57:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	hannes@cmpxchg.org, yosryahmed@google.com, nphamcs@gmail.com,
+	chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
+	surenb@google.com, kristen.c.accardi@intel.com, zanussi@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: Re: [PATCH v2 08/13] mm: zswap: acomp_ctx mutex lock/unlock
+ optimizations.
+Message-ID: <202411031829.7KQDfJy1-lkp@intel.com>
+References: <20241103032111.333282-9-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180f:b0:3a0:8c68:7705 with SMTP id
- e9e14a558f8ab-3a5e262e863mr174477665ab.21.1730630789053; Sun, 03 Nov 2024
- 02:46:29 -0800 (PST)
-Date: Sun, 03 Nov 2024 02:46:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67275485.050a0220.3c8d68.0a37.GAE@google.com>
-Subject: [syzbot] [mm?] WARNING: locking bug in __rmqueue_pcplist
-From: syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>
-To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241103032111.333282-9-kanchana.p.sridhar@intel.com>
 
-Hello,
+Hi Kanchana,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1648155f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
-dashboard link: https://syzkaller.appspot.com/bug?extid=39f85d612b7c20d8db48
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16806e87980000
+[auto build test WARNING on 5c4cf96cd70230100b5d396d45a5c9a332539d19]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+url:    https://github.com/intel-lab-lkp/linux/commits/Kanchana-P-Sridhar/crypto-acomp-Define-two-new-interfaces-for-compress-decompress-batching/20241103-112337
+base:   5c4cf96cd70230100b5d396d45a5c9a332539d19
+patch link:    https://lore.kernel.org/r/20241103032111.333282-9-kanchana.p.sridhar%40intel.com
+patch subject: [PATCH v2 08/13] mm: zswap: acomp_ctx mutex lock/unlock optimizations.
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241103/202411031829.7KQDfJy1-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241103/202411031829.7KQDfJy1-lkp@intel.com/reproduce)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411031829.7KQDfJy1-lkp@intel.com/
 
-=============================
-[ BUG: Invalid wait context ]
-6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
------------------------------
-syz.0.49/6178 is trying to lock:
-ffff88813fffc298 (&zone->lock){-.-.}-{3:3}, at: rmqueue_bulk mm/page_alloc.c:2328 [inline]
-ffff88813fffc298 (&zone->lock){-.-.}-{3:3}, at: __rmqueue_pcplist+0x4c6/0x2b70 mm/page_alloc.c:3022
-other info that might help us debug this:
-context-{2:2}
-4 locks held by syz.0.49/6178:
- #0: ffff888031745be0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_lock include/linux/mmap_lock.h:189 [inline]
- #0: ffff888031745be0 (&mm->mmap_lock){++++}-{4:4}, at: exit_mmap+0x165/0xcb0 mm/mmap.c:1677
- #1: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #1: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #1: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: __pte_offset_map+0x82/0x380 mm/pgtable-generic.c:287
- #2: ffff88803007c978 (ptlock_ptr(ptdesc)#2){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
- #2: ffff88803007c978 (ptlock_ptr(ptdesc)#2){+.+.}-{3:3}, at: __pte_offset_map_lock+0x1ba/0x300 mm/pgtable-generic.c:402
- #3: ffff8880b8744618 (&pcp->lock){+.+.}-{3:3}, at: spin_trylock include/linux/spinlock.h:361 [inline]
- #3: ffff8880b8744618 (&pcp->lock){+.+.}-{3:3}, at: rmqueue_pcplist mm/page_alloc.c:3051 [inline]
- #3: ffff8880b8744618 (&pcp->lock){+.+.}-{3:3}, at: rmqueue mm/page_alloc.c:3095 [inline]
- #3: ffff8880b8744618 (&pcp->lock){+.+.}-{3:3}, at: get_page_from_freelist+0x7e2/0x3870 mm/page_alloc.c:3492
-stack backtrace:
-CPU: 1 UID: 0 PID: 6178 Comm: syz.0.49 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
- check_wait_context kernel/locking/lockdep.c:4898 [inline]
- __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
- rmqueue_bulk mm/page_alloc.c:2328 [inline]
- __rmqueue_pcplist+0x4c6/0x2b70 mm/page_alloc.c:3022
- rmqueue_pcplist mm/page_alloc.c:3064 [inline]
- rmqueue mm/page_alloc.c:3095 [inline]
- get_page_from_freelist+0x895/0x3870 mm/page_alloc.c:3492
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4771
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- stack_depot_save_flags+0x666/0x830 lib/stackdepot.c:627
- save_stack+0x109/0x1f0 mm/page_owner.c:157
- __set_page_owner+0x92/0x800 mm/page_owner.c:320
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1541
- prep_new_page mm/page_alloc.c:1549 [inline]
- get_page_from_freelist+0x3725/0x3870 mm/page_alloc.c:3495
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4771
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- stack_depot_save_flags+0x666/0x830 lib/stackdepot.c:627
- kasan_save_stack+0x4f/0x60 mm/kasan/common.c:48
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
- task_work_add+0xd9/0x490 kernel/task_work.c:77
- __run_posix_cpu_timers kernel/time/posix-cpu-timers.c:1219 [inline]
- run_posix_cpu_timers+0x6ac/0x810 kernel/time/posix-cpu-timers.c:1418
- tick_sched_handle kernel/time/tick-sched.c:276 [inline]
- tick_nohz_handler+0x37c/0x500 kernel/time/tick-sched.c:297
- __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
- __hrtimer_run_queues+0x551/0xd50 kernel/time/hrtimer.c:1755
- hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1817
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
- __sysvec_apic_timer_interrupt+0x110/0x420 arch/x86/kernel/apic/apic.c:1055
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0x52/0xc0 arch/x86/kernel/apic/apic.c:1049
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:variable_ffs arch/x86/include/asm/bitops.h:321 [inline]
-RIP: 0010:handle_softirqs+0x1e3/0x980 kernel/softirq.c:542
-Code: 7c 24 70 45 0f b7 e4 48 c7 c7 20 c5 09 8c e8 c4 6c 6c 0a 65 66 c7 05 32 53 ac 7e 00 00 e8 05 67 45 00 fb 49 c7 c6 c0 a0 60 8e <b8> ff ff ff ff 41 0f bc c4 41 89 c7 41 ff c7 0f 84 eb 03 00 00 44
-RSP: 0018:ffffc90000a18e40 EFLAGS: 00000286
-RAX: 959a1636e72c7c00 RBX: ffffc90000a18ee0 RCX: ffffffff8170c69a
-RDX: dffffc0000000000 RSI: ffffffff8c0ad3a0 RDI: ffffffff8c604dc0
-RBP: ffffc90000a18f50 R08: ffffffff942cd847 R09: 1ffffffff2859b08
-R10: dffffc0000000000 R11: fffffbfff2859b09 R12: 0000000000000010
-R13: 0000000000000000 R14: ffffffff8e60a0c0 R15: 1ffff11003cec000
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- common_interrupt+0xb9/0xd0 arch/x86/kernel/irq.c:278
- </IRQ>
- <TASK>
- asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
-RIP: 0010:zap_pmd_range mm/memory.c:1753 [inline]
-RIP: 0010:zap_pud_range mm/memory.c:1782 [inline]
-RIP: 0010:zap_p4d_range mm/memory.c:1803 [inline]
-RIP: 0010:unmap_page_range+0x1ffd/0x4230 mm/memory.c:1824
-Code: 02 00 00 4c 8d bc 24 c0 02 00 00 48 8b 44 24 48 48 98 48 89 c1 48 c1 e1 0c 49 01 cd 4c 3b ac 24 98 00 00 00 0f 84 44 14 00 00 <4c> 89 6c 24 28 48 8b 5c 24 38 48 8d 1c c3 e8 50 01 b2 ff e9 ec e9
-RSP: 0018:ffffc9000303f560 EFLAGS: 00000287
-RAX: 0000000000000001 RBX: ffff88803023b5c8 RCX: 0000000000001000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000303f890 R08: ffffffff81e30b9c R09: 1ffffd4000333df6
-R10: dffffc0000000000 R11: fffff94000333df7 R12: dffffc0000000000
-R13: 00000000200ba000 R14: ffffc9000303f7e0 R15: ffffc9000303f820
- unmap_vmas+0x3cc/0x5f0 mm/memory.c:1914
- exit_mmap+0x292/0xcb0 mm/mmap.c:1693
- __mmput+0x115/0x390 kernel/fork.c:1344
- exit_mm+0x220/0x310 kernel/exit.c:570
- do_exit+0x9b2/0x28e0 kernel/exit.c:925
- do_group_exit+0x207/0x2c0 kernel/exit.c:1087
- __do_sys_exit_group kernel/exit.c:1098 [inline]
- __se_sys_exit_group kernel/exit.c:1096 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1096
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faae5f7e719
-Code: Unable to access opcode bytes at 0x7faae5f7e6ef.
-RSP: 002b:00007ffc97dbc998 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007faae5f7e719
-RDX: 0000000000000064 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00007ffc97dbc9ec R08: 00007ffc97dbca7f R09: 0000000000013547
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000032
-R13: 0000000000013547 R14: 0000000000013547 R15: 00007ffc97dbca40
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	7c 24                	jl     0x26
-   2:	70 45                	jo     0x49
-   4:	0f b7 e4             	movzwl %sp,%esp
-   7:	48 c7 c7 20 c5 09 8c 	mov    $0xffffffff8c09c520,%rdi
-   e:	e8 c4 6c 6c 0a       	call   0xa6c6cd7
-  13:	65 66 c7 05 32 53 ac 	movw   $0x0,%gs:0x7eac5332(%rip)        # 0x7eac534f
-  1a:	7e 00 00
-  1d:	e8 05 67 45 00       	call   0x456727
-  22:	fb                   	sti
-  23:	49 c7 c6 c0 a0 60 8e 	mov    $0xffffffff8e60a0c0,%r14
-* 2a:	b8 ff ff ff ff       	mov    $0xffffffff,%eax <-- trapping instruction
-  2f:	41 0f bc c4          	bsf    %r12d,%eax
-  33:	41 89 c7             	mov    %eax,%r15d
-  36:	41 ff c7             	inc    %r15d
-  39:	0f 84 eb 03 00 00    	je     0x42a
-  3f:	44                   	rex.R
+All warnings (new ones prefixed by >>):
+
+   In file included from mm/zswap.c:18:
+   In file included from include/linux/highmem.h:10:
+   In file included from include/linux/mm.h:2211:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/zswap.c:18:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from mm/zswap.c:18:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from mm/zswap.c:18:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   In file included from mm/zswap.c:40:
+   In file included from mm/internal.h:13:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+>> mm/zswap.c:1529:7: warning: variable 'acomp_ctx' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+    1529 |                 if (memcg_list_lru_alloc(memcg, &zswap_list_lru, GFP_KERNEL)) {
+         |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   mm/zswap.c:1560:16: note: uninitialized use occurs here
+    1560 |         mutex_unlock(&acomp_ctx->mutex);
+         |                       ^~~~~~~~~
+   mm/zswap.c:1529:3: note: remove the 'if' if its condition is always false
+    1529 |                 if (memcg_list_lru_alloc(memcg, &zswap_list_lru, GFP_KERNEL)) {
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    1530 |                         mem_cgroup_put(memcg);
+         |                         ~~~~~~~~~~~~~~~~~~~~~~
+    1531 |                         goto put_pool;
+         |                         ~~~~~~~~~~~~~~
+    1532 |                 }
+         |                 ~
+   mm/zswap.c:1496:36: note: initialize the variable 'acomp_ctx' to silence this warning
+    1496 |         struct crypto_acomp_ctx *acomp_ctx;
+         |                                           ^
+         |                                            = NULL
+   10 warnings generated.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +1529 mm/zswap.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1491  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1492  bool zswap_store(struct folio *folio)
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1493  {
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1494  	long nr_pages = folio_nr_pages(folio);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1495  	swp_entry_t swp = folio->swap;
+68dac3aa759e32 Kanchana P Sridhar 2024-11-02  1496  	struct crypto_acomp_ctx *acomp_ctx;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1497  	struct obj_cgroup *objcg = NULL;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1498  	struct mem_cgroup *memcg = NULL;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1499  	struct zswap_pool *pool;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1500  	size_t compressed_bytes = 0;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1501  	bool ret = false;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1502  	long index;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1503  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1504  	VM_WARN_ON_ONCE(!folio_test_locked(folio));
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1505  	VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1506  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1507  	if (!zswap_enabled)
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1508  		goto check_old;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1509  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1510  	objcg = get_obj_cgroup_from_folio(folio);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1511  	if (objcg && !obj_cgroup_may_zswap(objcg)) {
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1512  		memcg = get_mem_cgroup_from_objcg(objcg);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1513  		if (shrink_memcg(memcg)) {
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1514  			mem_cgroup_put(memcg);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1515  			goto put_objcg;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1516  		}
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1517  		mem_cgroup_put(memcg);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1518  	}
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1519  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1520  	if (zswap_check_limits())
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1521  		goto put_objcg;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1522  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1523  	pool = zswap_pool_current_get();
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1524  	if (!pool)
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1525  		goto put_objcg;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1526  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1527  	if (objcg) {
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1528  		memcg = get_mem_cgroup_from_objcg(objcg);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30 @1529  		if (memcg_list_lru_alloc(memcg, &zswap_list_lru, GFP_KERNEL)) {
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1530  			mem_cgroup_put(memcg);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1531  			goto put_pool;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1532  		}
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1533  		mem_cgroup_put(memcg);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1534  	}
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1535  
+68dac3aa759e32 Kanchana P Sridhar 2024-11-02  1536  	acomp_ctx = raw_cpu_ptr(pool->acomp_ctx);
+68dac3aa759e32 Kanchana P Sridhar 2024-11-02  1537  	mutex_lock(&acomp_ctx->mutex);
+68dac3aa759e32 Kanchana P Sridhar 2024-11-02  1538  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1539  	for (index = 0; index < nr_pages; ++index) {
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1540  		struct page *page = folio_page(folio, index);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1541  		ssize_t bytes;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1542  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1543  		bytes = zswap_store_page(page, objcg, pool);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1544  		if (bytes < 0)
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1545  			goto put_pool;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1546  		compressed_bytes += bytes;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1547  	}
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1548  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1549  	if (objcg) {
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1550  		obj_cgroup_charge_zswap(objcg, compressed_bytes);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1551  		count_objcg_events(objcg, ZSWPOUT, nr_pages);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1552  	}
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1553  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1554  	atomic_long_add(nr_pages, &zswap_stored_pages);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1555  	count_vm_events(ZSWPOUT, nr_pages);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1556  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1557  	ret = true;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1558  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1559  put_pool:
+68dac3aa759e32 Kanchana P Sridhar 2024-11-02  1560  	mutex_unlock(&acomp_ctx->mutex);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1561  	zswap_pool_put(pool);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1562  put_objcg:
+f4840ccfca25db Johannes Weiner    2022-05-19  1563  	obj_cgroup_put(objcg);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1564  	if (!ret && zswap_pool_reached_full)
+4ea3fa9dd2e9c5 Yosry Ahmed        2024-04-13  1565  		queue_work(shrink_wq, &zswap_shrink_work);
+f576a1e80c3a97 Chengming Zhou     2024-02-09  1566  check_old:
+f576a1e80c3a97 Chengming Zhou     2024-02-09  1567  	/*
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1568  	 * If the zswap store fails or zswap is disabled, we must invalidate
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1569  	 * the possibly stale entries which were previously stored at the
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1570  	 * offsets corresponding to each page of the folio. Otherwise,
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1571  	 * writeback could overwrite the new data in the swapfile.
+f576a1e80c3a97 Chengming Zhou     2024-02-09  1572  	 */
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1573  	if (!ret) {
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1574  		unsigned type = swp_type(swp);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1575  		pgoff_t offset = swp_offset(swp);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1576  		struct zswap_entry *entry;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1577  		struct xarray *tree;
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1578  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1579  		for (index = 0; index < nr_pages; ++index) {
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1580  			tree = swap_zswap_tree(swp_entry(type, offset + index));
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1581  			entry = xa_erase(tree, offset + index);
+f576a1e80c3a97 Chengming Zhou     2024-02-09  1582  			if (entry)
+796c2c23e14e75 Chris Li           2024-03-26  1583  				zswap_entry_free(entry);
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1584  		}
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1585  	}
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1586  
+ccacfbe8c6963d Kanchana P Sridhar 2024-09-30  1587  	return ret;
+2b2811178e8555 Seth Jennings      2013-07-10  1588  }
+2b2811178e8555 Seth Jennings      2013-07-10  1589  
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
