@@ -1,74 +1,99 @@
-Return-Path: <linux-kernel+bounces-393876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BB39BA69D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:17:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7719BA6A0
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:23:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31C962818AE
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:17:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 108E7281CF9
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDF618784C;
-	Sun,  3 Nov 2024 16:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3338E18859E;
+	Sun,  3 Nov 2024 16:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMHVIV1g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="WmOQ1duW"
+Received: from a.peacevolution.org (a.peacevolution.org [206.189.193.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC91C15854D;
-	Sun,  3 Nov 2024 16:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB938185B7B;
+	Sun,  3 Nov 2024 16:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.193.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730650662; cv=none; b=TgY9jUE3A7rUXGb37snOIrPwICJ3Lzmp8Sbnrdfa9lnDXwkInq+JM0nkS7kUYmG0OegYubtBVjaU0DyPleHKxMFOhXNT62Pu4WCsi+dLLCP0oFgy5X9+56JgLN+k+07ljE7b/Sj44baj1NQ0kjFwk1m9gMyKNExoyZ2ElpLJ/ic=
+	t=1730650995; cv=none; b=Zi/rA4OLGlUQ/Kkx0cYPc95ThXeRAzFJ2JSnb2dxBjgJ9hLD0gbwofvSS+9/PqHPDpKPenjAKGkCmf2PbiJ+FqGLCULdssSMaXq67YhxdV/1uVNHYcNH3NohsNAZFMYyLQYBsRa0Mh1oWb9DhTB92y5yC7A4302kwq+cqMTTO1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730650662; c=relaxed/simple;
-	bh=XIzMIxVyr9UwO9xjkg6VivDTjFH5NwPJ2f17VWoBbkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eWgxGEtPdLe0tUPHb26Isu+cwL/tAuJTOaD+eyeZnz7nE8uPf3AvwzEbH6iSM02amN04ihUUhQvMNy/HnSmWzJWXF04guEEz5IAFlR/ggKa5XkX5lqHZs2g2NgJ47vfCR9qBlmyzRicgbALL19NAcXusqvAxWOBd4XbpvPAN9KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMHVIV1g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10845C4CECD;
-	Sun,  3 Nov 2024 16:17:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730650661;
-	bh=XIzMIxVyr9UwO9xjkg6VivDTjFH5NwPJ2f17VWoBbkg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CMHVIV1gbvsnmPCglnLG+MV8oI82ft7xTmHkrT7GnBmfkoFqIqRy5H694IADhNPq1
-	 MBzS7ECVSd92vK+7eBp/dXzBF5nrKdl5NTaUwha8cIqE6Jo3oXICQZPQADkoD/6JH3
-	 SLJePNqiGCOeU/zsNJ7ptf5RbO7v6zwF0hL4lK0U92T41slMXnLz2uHPkQZJOuoWKV
-	 pycg2SnwZNFWDWsWOcnziSYYul6v5j/1wY4BXTdwTrdPIHhw1Z1WlRkVyi0Vpgjwoc
-	 PDBdqEtUcOTimq9gDS+ALv2sWgTYfII9FOqDZUNGEoaKrlPpXNLDzTZ5YBpuaC0zdR
-	 +5bY5ZyKXTqKQ==
-Date: Sun, 3 Nov 2024 08:17:40 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof
- Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH net-next v1 1/1] nfc: mrvl: Don't use "proxy" headers
-Message-ID: <20241103081740.7bc006c1@kernel.org>
-In-Reply-To: <20241101083910.3362945-1-andriy.shevchenko@linux.intel.com>
-References: <20241101083910.3362945-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1730650995; c=relaxed/simple;
+	bh=Th3OOXZJfsZuk7HXCZ7L6IU6s2r0I+j2t7q7eIgzWNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CctC7duLLFCKj3wLPN0KvOLiRsKs/5B1GFLHo37uloRMrpPVYIRWR0o+zWO6OWX1q82DdwmVpWcKVH6oGsYjvrswVJdSt+1Mj+3s3Glx8lBbdI6eL4Xo4a8gp+wxhjuhPSNb2ZrCIDFRAuWcm/OpWQvhdQf8VvZo6b1c5IO2m0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=WmOQ1duW; arc=none smtp.client-ip=206.189.193.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
+Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
+	by a.peacevolution.org (Postfix) with ESMTPA id A69264C891;
+	Sun,  3 Nov 2024 16:23:10 +0000 (UTC)
+Date: Sun, 3 Nov 2024 11:23:08 -0500
+From: Aren <aren@peacevolution.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
+	Ondrej Jirman <megi@xff.cz>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 2/6] iio: light: stk3310: handle all remove logic with
+ devm callbacks
+Message-ID: <iyasbuxwpgqeeuaimcpnycrze3xg6u55uusfxnvy3i3k2ejy57@lbrrc7c3r4fx>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+ <20241102195037.3013934-7-aren@peacevolution.org>
+ <20241103112208.233f7180@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241103112208.233f7180@jic23-huawei>
+X-Spamd-Bar: /
+Authentication-Results: auth=pass smtp.auth=aren@peacevolution.org smtp.mailfrom=aren@peacevolution.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
+	s=dkim; t=1730650991;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:in-reply-to:references;
+	bh=je3uCAcHsGiyDOgvqOvzEM2tjCfi8IWbvFmZvz9katU=;
+	b=WmOQ1duWnvM+PHINwEcVOHgkXZK4Gu49qiTEWLXeIMTTD/95JdSpVS0QcU3as8OuqLbPA0
+	4vz3fZ7Jz7e2JgJIISbRBSCnHvGJhOECg4IO3GkWuibDZjDsncPb2JZgLwL/2Mah+Uj381
+	pqrN4ROz0kl2cw9L99XRu7qgNhuCrGc=
 
-On Fri,  1 Nov 2024 10:39:10 +0200 Andy Shevchenko wrote:
-> Subject: [PATCH net-next v1 1/1] nfc: mrvl: Don't use "proxy" headers
+On Sun, Nov 03, 2024 at 11:22:08AM +0000, Jonathan Cameron wrote:
+> Hi Aren,
+> 
+> > @@ -624,7 +640,7 @@ static int stk3310_probe(struct i2c_client *client)
+> >  	device_property_read_u32(&client->dev, "proximity-near-level",
+> >  				 &data->ps_near_level);
+> >  
+> > -	mutex_init(&data->lock);
+> > +	devm_mutex_init(&client->dev, &data->lock);
+> ret = devm_mutex_init()
+> if (ret)
+> 	return ret;
+> 
+> It is very unlikely to fail but technically it can.  Andy has been fixing
+> this up across the kernel (including IIO) so let's not introduce another
+> case that doesn't check it!
 
-What is a "proxy" header? Guessing by the two patches you posted - 
-are you trying to get rid of of_gpio.h?
+Right, I'll take this as my periodic reminder to read the docs / types
+more carefully :)
 
-> Update header inclusions to follow IWYU (Include What You Use)
-> principle.
+> If nothing else comes up I can probably tidy that up whilst applying.
 
-I'm definitely on board with cleaning this up, but would prefer
-to make sure we can validate new patches against introducing
-regressions. Otherwise the stream of patches will be never ending.
-What tooling do you use? Is it easy to integrate into a CI system?
+That would be great
+
+Thanks
+ - Aren
 
