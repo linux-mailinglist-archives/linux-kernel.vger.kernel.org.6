@@ -1,126 +1,105 @@
-Return-Path: <linux-kernel+bounces-393707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886639BA43A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 07:04:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E919BA43C
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 07:07:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 370BB1F21932
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 06:04:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1241F218BF
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 06:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7945E145FE5;
-	Sun,  3 Nov 2024 06:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8067148FF3;
+	Sun,  3 Nov 2024 06:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpWNZTRp"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TBHHSVFZ"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942C823B0;
-	Sun,  3 Nov 2024 06:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F96C83CDA;
+	Sun,  3 Nov 2024 06:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730613862; cv=none; b=bMYvgO8cnyCmW6FN/CJMJyPVFkF7MjQUPbU18qyyXB/x1/f2+WwYhCNTluvncs4SM4a44LSSlVqGdf1522g7hDxe/CBk87beDUdj/q8NnnxaThNMva4zra+eTMQHQWmsrxs7Z6bBrHvtnyB3h7jJ7HBhYFn3qzx67A2Loie3gMk=
+	t=1730614021; cv=none; b=C3c5GMabals2PjkUhPpkvJMwc3HdnYWkG10gnpYQAH4fMmvrC9sb0w3hLucq8oqLK3I3M6QZTaPbVpFWayYKFoz1VkC2XtZwWLVrTDCQuT0U1ham5K3X2UCs6bWJMmyWIhPAAgcDdfpoHi3tOpkBWtTFVL7g2J1Z6tvrZ5BpKpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730613862; c=relaxed/simple;
-	bh=ZLqQV5TXw93Xk2EwAtGizLmBKf9dIqO/eDTYKRh5JfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sR5IJ/fxMJxDAh+t9CflSEn0OHOpzXcIeib921t7P0jXY++4kljI+GpD4a+aQsMjq4yGSEj5hkP7XV/on2ZRPUKU+AyFeBXQGeZvZyNa9R3v71s7XrMUBLaO/X12Q8a7IcTevUMBBWscQk0t4pbjKimXJr8y4cmwDKAvjTKLzhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpWNZTRp; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso2164146a12.3;
-        Sat, 02 Nov 2024 23:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730613861; x=1731218661; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iu3Y4lvGLncvFqytUzaa9pzpUFFZ8eQkwS+oo1aB5E8=;
-        b=CpWNZTRpBB7acH2akcjULEvqZc702m3T/MVoPHAyI/vWy7KVvkqo08efcnMhpaP1uN
-         M8lCJG18dseWo0RAAS9nf5oWBYJ8lRwobPbhWMLyvairasFm45H5zEpZaPvOUJfiSIZO
-         q15W/1XtepCAqELJK2w+F+7XsCQvGkN8h9QLpZMcfxf1rlTgTFp6lZmevNpQQW5W6ODi
-         khenO8yFVLn1JN5vpbsT8yCwDSL60r9EOtA8T6kXGOt63qdNrRcJojx+rpizt8eydd/D
-         1HBg021ypDO4TEgGurrI7QhhfqrirdR3l8cJpcqyeAq6ZJkpXRyc1vQXVdzjbyseE0a8
-         mKnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730613861; x=1731218661;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Iu3Y4lvGLncvFqytUzaa9pzpUFFZ8eQkwS+oo1aB5E8=;
-        b=YajTu2HRhovEVcHY4Gt3HzQMKbYW5qmeN/9sgRGv5PubKgiUNy2RzMF8i1dbAeuvZn
-         tprLkQATp3TxYWKbtCVSzsc1e/feYbv7rFgQ2BYsQlOSdJBFad/k7BP4k3pxF3Z9sWoy
-         g1ZAPAakUDVsUSiCd8obPuDn5RI7TEKQY3tIW5oySWNRwlM7v6g+O4og+j9eSLa2gJtY
-         4XJWZ6qi0pRF7ivRfC99AxkUV6oAxXobxYm7CU3Qj9pDV9q9Zph+MKe/TMI2WGC6gwmm
-         bQsXwnZ2KTYQ9QB1hzc2tIrEL3R/2P3B6MlxmrON/6rlqbZ6XPsZVpIcd8xGxLmvJQD9
-         iSGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDvz+NWf6SsWGg58aaqEV7HZPrmqy50MoeN6lHo72dM7AHLROGNEVtucMUV71toUF956HzpYSRCuTWsobO@vger.kernel.org, AJvYcCWNHkbHYb0YXh2iA9kq+pX4naY+YGnq3p7Un2dWy9q18cAipwdRSf+5DRAOlFSAyGiClM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzh13s1JAHS3UFEPc+lQjQlLLgxbZst/Hol98TdRhY3e2WBxwZ
-	UlWcv8qcU3ubBYmdC1rPySYOuQrKsLJvtvdX5/ataGbZStymA9ja
-X-Google-Smtp-Source: AGHT+IFdDQlGrUGnyn1EBjTletOl9wXHMeq+pVWX4QtOtxFAoxkNTMC3eb5rHU8s8IxD28SmNxR3dA==
-X-Received: by 2002:a17:903:24d:b0:20b:775f:506d with SMTP id d9443c01a7336-2111af8a7b8mr114374575ad.34.1730613860838;
-        Sat, 02 Nov 2024 23:04:20 -0700 (PDT)
-Received: from ub22 ([121.137.86.69])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a1fb1sm41795465ad.158.2024.11.02.23.04.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 23:04:20 -0700 (PDT)
-Date: Sun, 3 Nov 2024 06:04:15 +0000
-From: Byeonguk Jeong <jungbu2855@gmail.com>
-To: Hou Tao <houtao1@huawei.com>
-Cc: andrii@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
-	Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf] selftests/bpf: Add a copyright notice to
- lpm_trie_map_get_next_key
-Message-ID: <ZycSXwjH4UTvx-Cn@ub22>
+	s=arc-20240116; t=1730614021; c=relaxed/simple;
+	bh=oz+wxi6Yr5rBjaQ5qPS3ySPFnEj+AGajI/WYCSDfsUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OK41E1Fu8MBtF2e+M9DmS3R9H0LPsslydUbA24lok6AyMKGE2bUwchlMdrC8+1+xV+d0oBsgKyEt3iGDqjvqanVRs2OmkPliTfEw5YdUrI10tMpyN30rBs8zqnQRiaRJ7r6/GFibEOnnoMbpS2jX89D4YEX6mmnIBb1xne+J4lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TBHHSVFZ; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A366cdJ041862;
+	Sun, 3 Nov 2024 01:06:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730613998;
+	bh=ZGHRHWeJS1fyqOYk6SMKIsYTqRUn1UDquo8pHRshV3Q=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=TBHHSVFZVGEyse+ezWW6ab6PPcE1luoIDTljMwNtcxO9pbtnOQZyYPNI7FCojI/tS
+	 9ZzwtngsXGIbg1EpxQ3fqaUkZdelAaBC5E/u0TNveYqvVqmtnk6tM0W64NuZBHF5E0
+	 X0OoVObS4+gkVBOwrs8NpvMDSa5MXU6lc6Zc0M10=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A366cwP124647
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 3 Nov 2024 01:06:38 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 3
+ Nov 2024 01:06:38 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 3 Nov 2024 01:06:38 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A366Y9C003673;
+	Sun, 3 Nov 2024 01:06:35 -0500
+Message-ID: <613421dd-ff8f-414f-837c-a43912384336@ti.com>
+Date: Sun, 3 Nov 2024 11:36:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zyb6cVpIqmMBld4U@ub22>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: ti: k3-am642-evm: Add dt overlay to disable
+ icssg for Linux
+To: MD Danish Anwar <danishanwar@ti.com>, <nm@ti.com>
+CC: <conor+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <kristo@kernel.org>, <srk@ti.com>, Roger Quadros <rogerq@kernel.org>
+References: <20241030114458.1358800-1-danishanwar@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20241030114458.1358800-1-danishanwar@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi,
 
-The selftest "verifier_bits_iter/bad words" has been failed with
-retval 115, while I did not touched anything but a comment.
 
-Do you have any idea why it failed? I am not sure whether it indicates
-any bugs in the kernel.
-
-Best,
-Byeonguk
-
-On Sun, Nov 03, 2024 at 04:41:26AM +0000, bot+bpf-ci@kernel.org wrote:
-> Dear patch submitter,
+On 30/10/24 17:14, MD Danish Anwar wrote:
+> Add k3-am642-evm-icssg1-disable.dtso overlay file that disables
+> icssg1-eth from Linux so that icssg peripherals can be used by
+> RTOS or some other OS running on R5 core.
 > 
-> CI has tested the following submission:
-> Status:     FAILURE
-> Name:       [bpf] selftests/bpf: Add a copyright notice to lpm_trie_map_get_next_key
-> Patchwork:  https://patchwork.kernel.org/project/netdevbpf/list/?series=905730&state=*
-> Matrix:     https://github.com/kernel-patches/bpf/actions/runs/11648453401
-> 
-> Failed jobs:
-> test_progs_no_alu32-s390x-gcc: https://github.com/kernel-patches/bpf/actions/runs/11648453401/job/32434970670
-> 
-> First test_progs failure (test_progs_no_alu32-s390x-gcc):
-> #433 verifier_bits_iter
-> tester_init:PASS:tester_log_buf 0 nsec
-> process_subtest:PASS:obj_open_mem 0 nsec
-> process_subtest:PASS:specs_alloc 0 nsec
-> #433/13 verifier_bits_iter/bad words
-> run_subtest:PASS:obj_open_mem 0 nsec
-> run_subtest:PASS:unexpected_load_failure 0 nsec
-> do_prog_test_run:PASS:bpf_prog_test_run 0 nsec
-> run_subtest:FAIL:1035 Unexpected retval: 115 != 0
-> 
-> 
-> Please note: this email is coming from an unmonitored mailbox. If you have
-> questions or feedback, please reach out to the Meta Kernel CI team at
-> kernel-ci@meta.com.
 
+NACK,
+
+Firstly, you disable more than ICSSG (eg OSPI why?)
+
+Secondly, if we keep introducing a "disable-xxx" DT overlay to disable
+every other component in use by RTOS on R5 (which changes per customer
+whims) then we will have explosion of dtso
+
+If there is a corresponding firmware in linux-firmware.git that solves
+need of a specific end equipment or usecase, then we can talk.
+
+Regards
+Vignesh
+
+[...]
 
