@@ -1,162 +1,97 @@
-Return-Path: <linux-kernel+bounces-393895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48ECC9BA721
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:07:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9CA9BA73E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:31:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07C24280EBB
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:07:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D01CA1C20DB6
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3CB1AAE23;
-	Sun,  3 Nov 2024 17:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A71189B81;
+	Sun,  3 Nov 2024 17:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="FKhFlW+f"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="a3euWv7Y"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE17D198A0E;
-	Sun,  3 Nov 2024 17:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4796013049E;
+	Sun,  3 Nov 2024 17:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730653488; cv=none; b=MPY0UG7ns3iQl0xTBmd5VponzDAcezsR3dITUJytMX9K6ftxZrP3ICQ3MPTcdIb71+5ugCZNWr60j8zFw2N2KA+RvAFlCZqJK7K6d3R+FfF3JcMta8Qm67AyaZs/6klGdz7xrLH2WSq2bp24Aaxp2EW0Pl+V/WViNBNgCWNdkPQ=
+	t=1730655106; cv=none; b=Z77DikyqTs/vbFzrPDSIX6SE+kuKLzzgI8gQuQz9BhkgI+24Do3SBaw9ZrU3wufqSVK3LrhXplGZQzLdejHvpI6xD7mJ6pk2Zi2adIui2p8UnMG8cIKK3Y9uNX0Bl74F05/OkPwgOCBUrC+u6cmuAlLzoWJPeN//DCdyKoNvouc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730653488; c=relaxed/simple;
-	bh=i1lGRcvBSYaAkRCU3PsefBTXEi2eEGtd/RNZhauMerg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kPDqD9yLgTfwBeAoAGE9kZKlsBz2BWZgUZImoCXvro2YjEQH3htWy4qk9/IzylJOdAdGcW2eFQcQ3YD5L9BATKz2LOkqp+88fCxejIgPJBGszhUGFzovRRWBW+qw/r7193EvoEcKs8fYb8MVO1kfvCKzUDbjPpB5BMBdeJhFqws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=FKhFlW+f; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1730653481;
-	bh=i1lGRcvBSYaAkRCU3PsefBTXEi2eEGtd/RNZhauMerg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=FKhFlW+fXVU9iiG5WHWrfxqIg2MK5RN4rmEJ6qMm9w3609SWSEqzIiyskpf0F3SE/
-	 5Hue+UAKF4NoE2Q53mkBkJ7j/9iT4JRSPm/DM+o1r+XqpuQf548H1TiWzMDARBYT4p
-	 NmQ6pgjd99tSp5B6B0CVtWY1Wv6AMrStXbMf+hV8=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 03 Nov 2024 17:03:39 +0000
-Subject: [PATCH v2 10/10] driver core: Constify attribute arguments of
- binary attributes
+	s=arc-20240116; t=1730655106; c=relaxed/simple;
+	bh=wfk8qbaU9InKWpE0Acf8Uzes5W/S9r9BMEmsxCgbAhM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DeQ0H8bAcWrow4lg+0OvmrfnJtOlJ7wD2MCEP3fDQaQ8bydDl9TIrbwdiScYpTy+oBs5c1Lu+0h11NDey7JeTCFpH8afaQiN7lxW1OMpQ75Z9dRMleSeZoMkmDyPtNFezne3HUAMO6U13RHHJjes4GoskWQL7Ym0wvSUKHJw4N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=a3euWv7Y; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1730655104; x=1762191104;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=0VAq26ivGP6HWcypo61s63sxigrViuDKgoXzs5Trwx4=;
+  b=a3euWv7Y2mFsY9nx/YbOyXETICJ8BwkiYXBMZCxS5GQ7eMEmkegGkd1F
+   YdAYsdj0qzy6HFIpG+OD4zaX+IL8VsEIPS6kB99wCRpzXZDs5Rr1d8LmU
+   N2VieYlRHbbsw/cT3d2DUE7ACQDL5smk0Abk29oj+5t++YGDY00fUFyPD
+   A=;
+X-IronPort-AV: E=Sophos;i="6.11,255,1725321600"; 
+   d="scan'208";a="439899592"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 17:31:40 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:31684]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.22.121:2525] with esmtp (Farcaster)
+ id 44ab26f6-929c-4ae1-870c-42e369fbe483; Sun, 3 Nov 2024 17:31:40 +0000 (UTC)
+X-Farcaster-Flow-ID: 44ab26f6-929c-4ae1-870c-42e369fbe483
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Sun, 3 Nov 2024 17:31:39 +0000
+Received: from 6c7e67c6786f.amazon.com (10.187.170.63) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Sun, 3 Nov 2024 17:31:35 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <markus.elfring@web.de>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+	<jiri@resnulli.us>, <juntong.deng@outlook.com>,
+	<kernel-janitors@vger.kernel.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<nikolay@redhat.com>, <pabeni@redhat.com>, <razor@blackwall.org>,
+	<ruanjinjie@huawei.com>, <shaozhengchao@huawei.com>, <tgraf@suug.ch>
+Subject: Re: [PATCH] netlink: Fix off-by-one error in netlink_proto_init()
+Date: Sun, 3 Nov 2024 09:31:33 -0800
+Message-ID: <20241103173133.96629-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
+References: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241103-sysfs-const-bin_attr-v2-10-71110628844c@weissschuh.net>
-References: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
-In-Reply-To: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Davidlohr Bueso <dave@stgolabs.net>, 
- Jonathan Cameron <jonathan.cameron@huawei.com>, 
- Dave Jiang <dave.jiang@intel.com>, 
- Alison Schofield <alison.schofield@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, 
- Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>, 
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>, 
- Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- "David E. Box" <david.e.box@linux.intel.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Richard Henderson <richard.henderson@linaro.org>, 
- Matt Turner <mattst88@gmail.com>, Frederic Barrat <fbarrat@linux.ibm.com>, 
- Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, 
- Logan Gunthorpe <logang@deltatee.com>, 
- "K. Y. Srinivasan" <kys@microsoft.com>, 
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
- Dexuan Cui <decui@microsoft.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org, 
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- linux-rdma@vger.kernel.org, linux-mtd@lists.infradead.org, 
- platform-driver-x86@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-usb@vger.kernel.org, linux-alpha@vger.kernel.org, 
- linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730653468; l=2330;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=i1lGRcvBSYaAkRCU3PsefBTXEi2eEGtd/RNZhauMerg=;
- b=wjQlo57jq0Wj7AlLBOYWjC3NLTcXdQ4S/vHvyo3etlKonEvBK3xDMeXVEI2nFeo1fRBiMSJWq
- 8Dy1FhYi+4pDACqaxOlIcEPw5eL4UaDS9rJJgllbu0x7Wp3mt9dGtys
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+X-ClientProxiedBy: EX19D039UWB002.ant.amazon.com (10.13.138.79) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-As preparation for the constification of struct bin_attribute,
-constify the arguments of the read and write callbacks.
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 3 Nov 2024 14:15:18 +0100
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 3 Nov 2024 14:01:26 +0100
+> 
+> Hash tables should be properly destroyed after a rhashtable_init() call
+> failed in this function implementation.
+> The corresponding exception handling was incomplete because of
+> a questionable condition check.
+> Thus use the comparison operator “>=” instead for the affected while loop.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/base/node.c     | 4 ++--
- drivers/base/topology.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index eb72580288e62727e5b2198a6451cf9c2533225a..3e761633ac75826bedb5dd30b879f7cc1af95ec3 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -27,7 +27,7 @@ static const struct bus_type node_subsys = {
- };
- 
- static inline ssize_t cpumap_read(struct file *file, struct kobject *kobj,
--				  struct bin_attribute *attr, char *buf,
-+				  const struct bin_attribute *attr, char *buf,
- 				  loff_t off, size_t count)
- {
- 	struct device *dev = kobj_to_dev(kobj);
-@@ -48,7 +48,7 @@ static inline ssize_t cpumap_read(struct file *file, struct kobject *kobj,
- static BIN_ATTR_RO(cpumap, CPUMAP_FILE_MAX_BYTES);
- 
- static inline ssize_t cpulist_read(struct file *file, struct kobject *kobj,
--				   struct bin_attribute *attr, char *buf,
-+				   const struct bin_attribute *attr, char *buf,
- 				   loff_t off, size_t count)
- {
- 	struct device *dev = kobj_to_dev(kobj);
-diff --git a/drivers/base/topology.c b/drivers/base/topology.c
-index 89f98be5c5b9915b2974e184bf89c4c25c183095..1090751d7f458ce8d2a50e82d65b8ce31e938f15 100644
---- a/drivers/base/topology.c
-+++ b/drivers/base/topology.c
-@@ -23,7 +23,7 @@ static ssize_t name##_show(struct device *dev,				\
- 
- #define define_siblings_read_func(name, mask)					\
- static ssize_t name##_read(struct file *file, struct kobject *kobj,		\
--			   struct bin_attribute *attr, char *buf,		\
-+			   const struct bin_attribute *attr, char *buf,		\
- 			   loff_t off, size_t count)				\
- {										\
- 	struct device *dev = kobj_to_dev(kobj);                                 \
-@@ -33,7 +33,7 @@ static ssize_t name##_read(struct file *file, struct kobject *kobj,		\
- }										\
- 										\
- static ssize_t name##_list_read(struct file *file, struct kobject *kobj,	\
--				struct bin_attribute *attr, char *buf,		\
-+				const struct bin_attribute *attr, char *buf,	\
- 				loff_t off, size_t count)			\
- {										\
- 	struct device *dev = kobj_to_dev(kobj);					\
-
--- 
-2.47.0
-
+This patch is already applied to net-next.
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit/?id=bc74d329ceba
 
