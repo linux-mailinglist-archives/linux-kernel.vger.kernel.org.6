@@ -1,145 +1,108 @@
-Return-Path: <linux-kernel+bounces-393923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2A09BA781
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:54:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF059BA785
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:54:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2473D2816FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:54:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEB5B1F21C06
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDB2189503;
-	Sun,  3 Nov 2024 18:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7647D189B86;
+	Sun,  3 Nov 2024 18:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kwQJ6F7u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YQ0JsQDf"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A3676036;
-	Sun,  3 Nov 2024 18:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A73A187879;
+	Sun,  3 Nov 2024 18:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730660046; cv=none; b=j46L2FA5swujhk5BvF3UAQkjK7ybJEFpFJ2Ac55vfS55glKBWdhja3/ZrbzC4a1Nw8tLDW2uJwbzbKSgn2N8QqFjYA5qPabWPJhQ3A2/Chf6wJEBNbhHrHnalGw0p/ZNUzzUPKgu5bVwiNGz8Wc6PUC4EHAJpcKD8/Oy1WmlROU=
+	t=1730660077; cv=none; b=DV/rVzl8q57J3yovGSPg+f6aogUHnodNJGWDH9cIvMM3ElhEmvAeJmmdDx55pMBEM/WBqs0VPLTaT48jhtZ5iZZ2igNKR4xk1ReFb0/2EP6mk4bnFLYWwP86zdCKUrAo9rE3myF1REMAppxMKk65CzVkTJ7FmGYuVCKUFdFdwUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730660046; c=relaxed/simple;
-	bh=c+u4loJ6pRD4+LwnocXU7ZKua1nFlBmCBPVm25XIrrw=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=Qbo/vXDyslolUSYAN3EpijFH7Qi2dgN3oDV2fR8woAombtBWLe0RY2JX+WjvYuetL5McQM1FJXDl0w35H52tDAhyPuUgBXFr42pEl1+QQqvSAbR3EVh2EE9tKF/06S0l3d/JA5w/4OuaU7RWutGA5Yse/zkwqoyqD/UWSfFF8hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kwQJ6F7u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B24C4CECD;
-	Sun,  3 Nov 2024 18:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730660045;
-	bh=c+u4loJ6pRD4+LwnocXU7ZKua1nFlBmCBPVm25XIrrw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kwQJ6F7uhX+7AVNDGEdd4nxuboK+nCAr360f69YsMqnc08KPUShNEmg7NcyEtpJUG
-	 WpD23cqRkDyPJqsZUiB0316cLUgQZME4zEOZzeQEEtmyewsezl9XI5CQlizyc4wPtw
-	 mUmtdeNPIy4f5fGVh66v3gyIJfKtBW02WkostFjI=
-Date: Sun, 3 Nov 2024 10:54:04 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hotfixes for 6.12-rc6
-Message-Id: <20241103105404.3c1a60806b3db3baa1519537@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730660077; c=relaxed/simple;
+	bh=Iyd8Of8fiETGqofHwy1z8/+og4fuf9C4dTnHGRLKvTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FM6QG9tReIjUGev+S+tBkuN4nnBAYz02SBUnY86sVUaSd+tEcxAfl6zMfO3Y1hRJq9GhCY7YunYnSM8huCjx6tCYED553SQFDByjJzhPJO07bOFq1/tPtzoHIl2IepUU0r9UF6GJwF5g+Tn6ioGyDCNrf3crWLOdH9lHcjJty0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YQ0JsQDf; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=N1fbm+gCyUE3nlJFxA64iuCPhiDOK9df7YjXpC2W4wU=; b=YQ0JsQDfLhClW0vRGdItj9WbT3
+	M/vd0rWboKYaABOmqwofOoQKRi3wzDGOrboRs5/y17WqXklPbzY6+1m5vcNLrSoikUnU+pa6FujQr
+	8aB6U+oaFi4i/pJlyXzDdjE0HcyOMa6wzFxB1Z9ry1T6YGHUwvn0rW7FfXXZWVsCmhcU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t7fk6-00C250-2I; Sun, 03 Nov 2024 19:54:30 +0100
+Date: Sun, 3 Nov 2024 19:54:30 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Gur Stavi <gur.stavi@huawei.com>
+Cc: 'Jakub Kicinski' <kuba@kernel.org>,
+	"Gongfan (Eric, Chip)" <gongfan1@huawei.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Cai Huoqing <cai.huoqing@linux.dev>,
+	"Guoxin (D)" <guoxin09@huawei.com>,
+	shenchenyang <shenchenyang1@hisilicon.com>,
+	"zhoushuai (A)" <zhoushuai28@huawei.com>,
+	"Wulike (Collin)" <wulike1@huawei.com>,
+	"shijing (A)" <shijing34@huawei.com>,
+	Meny Yossefi <meny.yossefi@huawei.com>
+Subject: Re: [RFC net-next v01 1/1] net: hinic3: Add a driver for Huawei 3rd
+ gen NIC
+Message-ID: <661620c5-acdd-43df-8316-da01b0d2f2b3@lunn.ch>
+References: <cover.1730290527.git.gur.stavi@huawei.com>
+ <ebb0fefe47c29ffed5af21d6bd39d19c2bcddd9c.1730290527.git.gur.stavi@huawei.com>
+ <20241031193523.09f63a7e@kernel.org>
+ <000001db2dec$10d92680$328b7380$@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000001db2dec$10d92680$328b7380$@huawei.com>
 
+On Sun, Nov 03, 2024 at 02:29:27PM +0200, Gur Stavi wrote:
+> > On Wed, 30 Oct 2024 14:25:47 +0200 Gur Stavi wrote:
+> > >  50 files changed, 18058 insertions(+)
+> > 
+> > 4kLoC is the right ballpark to target for the initial submission.
+> > Please cut this down and submit a minimal driver, then add the
+> > features.
+> 
+> Ack.
+> There is indeed code which is not critical to basic Ethernet functionality
+> that can be postponed to later.
+> 
+> Our HW management infrastructure is rather large and contains 2 separate
+> mechanisms (cmdq+mbox). While I hope we can trim the driver to a VF-only
+> version with no ethtool support that will fit the 10KLoC ballpark, the 4KLoC
+> goal is probably unrealistic for a functional driver.
 
-Linus, please merge this batch of hotfixes, thanks.
+It is really all about making you code attractive to reviewers. No
+reviewer is likely to have time to review a single 10KLoc patch. A
+reviewer is more likely to look at the code if it is broken up into 15
+smaller patches, each one which can be reviewed in a coffee break
+etc. Also, reviewers have interests. I personally have no interest in
+mailbox APIs, actually moving frames around, etc. I want to easily
+find the ethtool code, have you got pause wrong like nearly everybody
+does, are the statistics correctly broken up into the standard groups,
+are you abusing debugfs? Having little patches with good subject lines
+will draw me towards the patches i want to review.
 
+10KLoC is still on the large size. Can you throw VF out, it is just a
+plain borring single function device, like the good old e1000e?
 
-The following changes since commit 01626a18230246efdcea322aa8f067e60ffe5ccd:
-
-  mm: avoid unconditional one-tick sleep when swapcache_prepare fails (2024-10-28 21:40:41 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-11-03-10-50
-
-for you to fetch changes up to 1d4832becdc2cdb2cffe2a6050c9d9fd8ff1c58c:
-
-  mm: multi-gen LRU: use {ptep,pmdp}_clear_young_notify() (2024-11-03 10:47:03 -0800)
-
-----------------------------------------------------------------
-17 hotfixes.  9 are cc:stable.  13 are MM and 4 are non-MM.
-
-The usual collection of singletons - please see the changelogs.
-
-----------------------------------------------------------------
-Andrey Konovalov (1):
-      kasan: remove vmalloc_percpu test
-
-Barry Song (1):
-      mm: fix PSWPIN counter for large folios swap-in
-
-Chen Ridong (1):
-      mm: shrinker: avoid memleak in alloc_shrinker_info
-
-Eugen Hristev (1):
-      .mailmap: update e-mail address for Eugen Hristev
-
-Gregory Price (1):
-      vmscan,migrate: fix page count imbalance on node stats when demoting pages
-
-Hao Ge (1):
-      mm/codetag: fix null pointer check logic for ref and tag
-
-Jarkko Sakkinen (1):
-      mailmap: update Jarkko's email addresses
-
-John Hubbard (1):
-      mm/gup: stop leaking pinned pages in low memory conditions
-
-Kairui Song (1):
-      mm, swap: avoid over reclaim of full clusters
-
-Phillip Lougher (1):
-      Squashfs: fix variable overflow in squashfs_readpage_block
-
-Ryusuke Konishi (1):
-      nilfs2: fix potential deadlock with newly created symlinks
-
-Vlastimil Babka (1):
-      mm, mmap: limit THP alignment of anonymous mappings to PMD-aligned sizes
-
-Wladislav Wiebe (1):
-      tools/mm: -Werror fixes in page-types/slabinfo
-
-Yu Zhao (3):
-      mm: allow set/clear page_type again
-      mm: multi-gen LRU: remove MM_LEAF_OLD and MM_NONLEAF_TOTAL stats
-      mm: multi-gen LRU: use {ptep,pmdp}_clear_young_notify()
-
-Zi Yan (1):
-      mm: avoid VM_BUG_ON when try to map an anon large folio to zero page.
-
- .mailmap                   |   5 ++-
- fs/nilfs2/namei.c          |   3 ++
- fs/squashfs/file_direct.c  |   9 ++--
- include/linux/alloc_tag.h  |  16 ++++---
- include/linux/mmzone.h     |   7 ++--
- include/linux/page-flags.h |   8 ++++
- include/linux/swap.h       |   1 +
- mm/gup.c                   |  33 ++++++++-------
- mm/kasan/kasan_test_c.c    |  27 ------------
- mm/migrate.c               |   5 ++-
- mm/mmap.c                  |   3 +-
- mm/page_io.c               |   4 +-
- mm/rmap.c                  |   9 ++--
- mm/shrinker.c              |   8 ++--
- mm/swapfile.c              |  49 +++++++++++++---------
- mm/vmscan.c                | 102 ++++++++++++++++++++++++---------------------
- tools/mm/page-types.c      |   9 ++--
- tools/mm/slabinfo.c        |   4 +-
- 18 files changed, 159 insertions(+), 143 deletions(-)
-
+	Andrew
 
