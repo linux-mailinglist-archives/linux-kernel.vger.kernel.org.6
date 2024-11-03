@@ -1,56 +1,75 @@
-Return-Path: <linux-kernel+bounces-393877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7719BA6A0
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:23:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3DB99BA6A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:27:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 108E7281CF9
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93BED2821CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3338E18859E;
-	Sun,  3 Nov 2024 16:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031D21885A0;
+	Sun,  3 Nov 2024 16:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="WmOQ1duW"
-Received: from a.peacevolution.org (a.peacevolution.org [206.189.193.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HqZcvEmw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB938185B7B;
-	Sun,  3 Nov 2024 16:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.193.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6943617C234;
+	Sun,  3 Nov 2024 16:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730650995; cv=none; b=Zi/rA4OLGlUQ/Kkx0cYPc95ThXeRAzFJ2JSnb2dxBjgJ9hLD0gbwofvSS+9/PqHPDpKPenjAKGkCmf2PbiJ+FqGLCULdssSMaXq67YhxdV/1uVNHYcNH3NohsNAZFMYyLQYBsRa0Mh1oWb9DhTB92y5yC7A4302kwq+cqMTTO1c=
+	t=1730651257; cv=none; b=kDUabD47rSLfeuudE/0UlqC/CduHwMEo7CwmhFWREoDHmBgtn3EiZlaXEKb/TrYCPLXZxSidkkfw1Ao2bH7aUrM0sCOfO9KDaOXcq0hauV29tIGRCItKwwmwfkabYzeY5sCL/BR5hrCdo8vPbLOm8j7m3Dgw5kqtbExx55soehA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730650995; c=relaxed/simple;
-	bh=Th3OOXZJfsZuk7HXCZ7L6IU6s2r0I+j2t7q7eIgzWNE=;
+	s=arc-20240116; t=1730651257; c=relaxed/simple;
+	bh=GFbGjoWnh5QiJUZnY79oXxX4ZJdes3mjS6mT2FxB164=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CctC7duLLFCKj3wLPN0KvOLiRsKs/5B1GFLHo37uloRMrpPVYIRWR0o+zWO6OWX1q82DdwmVpWcKVH6oGsYjvrswVJdSt+1Mj+3s3Glx8lBbdI6eL4Xo4a8gp+wxhjuhPSNb2ZrCIDFRAuWcm/OpWQvhdQf8VvZo6b1c5IO2m0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=WmOQ1duW; arc=none smtp.client-ip=206.189.193.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
-Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
-	by a.peacevolution.org (Postfix) with ESMTPA id A69264C891;
-	Sun,  3 Nov 2024 16:23:10 +0000 (UTC)
-Date: Sun, 3 Nov 2024 11:23:08 -0500
-From: Aren <aren@peacevolution.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
-	Ondrej Jirman <megi@xff.cz>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] iio: light: stk3310: handle all remove logic with
- devm callbacks
-Message-ID: <iyasbuxwpgqeeuaimcpnycrze3xg6u55uusfxnvy3i3k2ejy57@lbrrc7c3r4fx>
-References: <20241102195037.3013934-3-aren@peacevolution.org>
- <20241102195037.3013934-7-aren@peacevolution.org>
- <20241103112208.233f7180@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HukwwVlUF18UJ7ltia8PmvCFHe/IU82+1vQt4DxAGbg6DibHbPc1qbh1EPfiH8ohZwOgpYUumuNjgw9Tv6anWnYDjzYMdg6Bf6xPOgCWDSgpfErhRd9qB+o+kDWdLc6EIG/aN/sjJKdGpo02KgsjMfOxga99d5yUU/6eXhp+1gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HqZcvEmw; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730651256; x=1762187256;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GFbGjoWnh5QiJUZnY79oXxX4ZJdes3mjS6mT2FxB164=;
+  b=HqZcvEmwzTcXFGGiSaZRSDRucHGxik82MAQTgVq1vE3TiIt99rHdfBbK
+   +fIWrbNbG85K2fZiQqOSv7BTadYHcNlWjA8omvOEy3NNinVPErYckAtHr
+   kLEFq5SZTdseoONjjNWnDudCO1ABsoS2FwkzPgd3shvN7hrjYTBhDrZwa
+   fNNtgbD+t8v4lnzoz/1j4WgJlX2mE2P26TsVAejjJQWMQhH85OOOVWbhZ
+   zS4z/DUaS0OTlbTvYvHzHxahkWBHyGgoQL2zbeTh7TLfseaFpZVGHP+KE
+   MxMSjPxz+BVifsKzyZ92dh2SOlgtICPmwV0ycwl8DFRxQlbEu68XMBroi
+   g==;
+X-CSE-ConnectionGUID: TOw3NpEoQCWHDsrqUeQaAQ==
+X-CSE-MsgGUID: orvPr2KgRbGhTdE7cktLwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="55749539"
+X-IronPort-AV: E=Sophos;i="6.11,255,1725346800"; 
+   d="scan'208";a="55749539"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 08:27:35 -0800
+X-CSE-ConnectionGUID: FFKZBkeIRp66xBgCDD4U9w==
+X-CSE-MsgGUID: cZe+WybvQaSTXaQBallnqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,255,1725346800"; 
+   d="scan'208";a="83111146"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 03 Nov 2024 08:27:32 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t7dRq-000k4F-28;
+	Sun, 03 Nov 2024 16:27:30 +0000
+Date: Mon, 4 Nov 2024 00:27:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vishnu Sanal T <t.v.s10123@gmail.com>, linux-pm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, trenn@suse.com, shuah@kernel.org,
+	jwyatt@redhat.com, jkacur@redhat.com, linux-kernel@vger.kernel.org,
+	Vishnu Sanal T <t.v.s10123@gmail.com>
+Subject: Re: [PATCH v2] implement set_enabled functions on powercap.c
+Message-ID: <202411040029.mXFFVJ8w-lkp@intel.com>
+References: <20241030152706.179779-2-t.v.s10123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,41 +78,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241103112208.233f7180@jic23-huawei>
-X-Spamd-Bar: /
-Authentication-Results: auth=pass smtp.auth=aren@peacevolution.org smtp.mailfrom=aren@peacevolution.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
-	s=dkim; t=1730650991;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:in-reply-to:references;
-	bh=je3uCAcHsGiyDOgvqOvzEM2tjCfi8IWbvFmZvz9katU=;
-	b=WmOQ1duWnvM+PHINwEcVOHgkXZK4Gu49qiTEWLXeIMTTD/95JdSpVS0QcU3as8OuqLbPA0
-	4vz3fZ7Jz7e2JgJIISbRBSCnHvGJhOECg4IO3GkWuibDZjDsncPb2JZgLwL/2Mah+Uj381
-	pqrN4ROz0kl2cw9L99XRu7qgNhuCrGc=
+In-Reply-To: <20241030152706.179779-2-t.v.s10123@gmail.com>
 
-On Sun, Nov 03, 2024 at 11:22:08AM +0000, Jonathan Cameron wrote:
-> Hi Aren,
-> 
-> > @@ -624,7 +640,7 @@ static int stk3310_probe(struct i2c_client *client)
-> >  	device_property_read_u32(&client->dev, "proximity-near-level",
-> >  				 &data->ps_near_level);
-> >  
-> > -	mutex_init(&data->lock);
-> > +	devm_mutex_init(&client->dev, &data->lock);
-> ret = devm_mutex_init()
-> if (ret)
-> 	return ret;
-> 
-> It is very unlikely to fail but technically it can.  Andy has been fixing
-> this up across the kernel (including IIO) so let's not introduce another
-> case that doesn't check it!
+Hi Vishnu,
 
-Right, I'll take this as my periodic reminder to read the docs / types
-more carefully :)
+kernel test robot noticed the following build warnings:
 
-> If nothing else comes up I can probably tidy that up whilst applying.
+[auto build test WARNING on amd-pstate/linux-next]
+[also build test WARNING on amd-pstate/bleeding-edge linus/master v6.12-rc5 next-20241101]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-That would be great
+url:    https://github.com/intel-lab-lkp/linux/commits/Vishnu-Sanal-T/implement-set_enabled-functions-on-powercap-c/20241030-233021
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git linux-next
+patch link:    https://lore.kernel.org/r/20241030152706.179779-2-t.v.s10123%40gmail.com
+patch subject: [PATCH v2] implement set_enabled functions on powercap.c
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241104/202411040029.mXFFVJ8w-lkp@intel.com/reproduce)
 
-Thanks
- - Aren
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411040029.mXFFVJ8w-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   lib/powercap.c: In function 'powercap_set_enabled':
+>> lib/powercap.c:79:40: warning: '%s' directive writing up to 254 bytes into a region of size 253 [-Wformat-overflow=]
+      79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
+         |                                        ^~
+   ......
+      95 |         return sysfs_set_enabled(path, mode);
+         |                                  ~~~~   
+   In function 'sysfs_set_enabled',
+       inlined from 'powercap_set_enabled' at lib/powercap.c:95:9:
+   lib/powercap.c:79:9: note: 'sprintf' output between 13 and 267 bytes into a destination of size 265
+      79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   lib/powercap.c: In function 'powercap_zone_set_enabled':
+>> lib/powercap.c:79:40: warning: '%s' directive writing up to 254 bytes into a region of size 253 [-Wformat-overflow=]
+      79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
+         |                                        ^~
+   ......
+     203 |         return sysfs_set_enabled(path, mode);
+         |                                  ~~~~   
+   In function 'sysfs_set_enabled',
+       inlined from 'powercap_zone_set_enabled' at lib/powercap.c:203:9:
+   lib/powercap.c:79:9: note: 'sprintf' output between 13 and 267 bytes into a destination of size 265
+      79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
