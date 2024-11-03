@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-393816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EA49BA597
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:16:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D375B9BA59B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 141651C20DA0
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88C041F21879
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2822A175D56;
-	Sun,  3 Nov 2024 13:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEE2175D38;
+	Sun,  3 Nov 2024 13:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ayrZ6uaD"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1W0Ul1j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABE71E52D;
-	Sun,  3 Nov 2024 13:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711461E52D;
+	Sun,  3 Nov 2024 13:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730639777; cv=none; b=rPbVaGsuN8EQhao3zF0u8uQ+LlNKnW4xTr03txJbhgMgs5RXYoxc696azrxTD0FSI4s6Lo2Mf6MPpmVl4OP0Y77SyyTwlbFZqNw3jLwTEHuYQLDwTZMKh3KL8dKUcw95ETKF+t9RbfTDfII5IGQCACP8LmVYW8zN/EBuG6a3lQw=
+	t=1730640192; cv=none; b=mlFUWL6iQ5kcGARCq46UnrozcM3oPfz9dIUiFXVQyMgUcA89fL64qTSIQsLo6/PTUS0atXxEcn8mguMw7DTFelBel1rJj6bxxR/psThcjl5hfKszq2LC2nCAwGpa0bF00YhTx0SNVMNlKvyXNyM3QihhV9eaDGYOLWRDEBCz1l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730639777; c=relaxed/simple;
-	bh=J0bEm0YavRr3TS3jeCLxcn7Q8TAWoC2sGwksqFJ2bvc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jdeAqCoGt2YNIaePsYuaPKmRn+GYv95eZTxK70xXPMmDjG59HjSPJhdv9iejB4BHVl8PRI6m+cXfWo5dj1G2RpsRW4aM1gs78/1VM4e27uQxmRgjK6pO9OB335W2iKufeVcjYTOwgG9/90anOIL/68w8HEo1+8xdaI5UlzJlY4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ayrZ6uaD; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730639723; x=1731244523; i=markus.elfring@web.de;
-	bh=GRfPwkl244f2VsYqHO3OSu1ULhSp0VlnY57ITD4BKl4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ayrZ6uaDSylyE+AY8rvbCZDy6Ww/t1YL2YPN3lwoHZpO7RkuCdqUGMdF0JXFiIVb
-	 dU0Ij9zlyGzFfycqV/JgIryuFIm4yFPmTE5lCIUCOLWKmHvD5ZxTSwW+uBZEJnmTp
-	 a61YEcksJ6x0jKOv2KXH7F5I1KVieXEwjHOp6R4w2Vm5Lb281ZbNqklYjzxqhHpxk
-	 v64AolNxnnRNXsEosTjI0J1gFS/MYx8oKUq5SjWHhlUCnYN4faCLyBaGIY2nZhr+3
-	 Lu0lyhDi1JYZ1LuDgH8drMF7zTd89tIJuX1JWBdE25mXS9pB/TidMrsC0Iw4lTg6i
-	 5otSsbQDLhfPdAj4dA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqqTb-1tcCAU04q9-00aWmi; Sun, 03
- Nov 2024 14:15:23 +0100
-Message-ID: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
-Date: Sun, 3 Nov 2024 14:15:18 +0100
+	s=arc-20240116; t=1730640192; c=relaxed/simple;
+	bh=owxpUIA5JjJe1/GJIuWE5eHKEp3bhFDZLK8QfdI5UR4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZArqvdk7RFJUHtagZkgAlkK7Nvwe2TtoXYDlUhIaxZaa1y7V625/scuIHDc7OGMjvmjAelDmD9X6GCdwFegHJVaALg8HKp5NBrY8JYuMod8DzinSrq9S9+8ZBIXTmQphDgwvJ7GQn0j8cv1wtmEn18nG/GAahRO5cshC+h4hP78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1W0Ul1j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D853EC4CED5;
+	Sun,  3 Nov 2024 13:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730640191;
+	bh=owxpUIA5JjJe1/GJIuWE5eHKEp3bhFDZLK8QfdI5UR4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=C1W0Ul1j171/CeC+sLp5WXwg3QJVkHfN7o8RA57ZdsEQLczGNhKRl1rdNKQWHrxgv
+	 DPxsUrYt5M/mFMdaei68/33Dxpt/oalXNyo/8MTBKKqn02iiTZBc2aVKTzphM+I+5q
+	 rDYl1N6iOlvONqCyOKbQg71PL7qM+jRDMLRhAlXoF7k9oVkHX9yfipZdam35qoUrW5
+	 O/OyptcdPyX3sf/wFpp66teG2QhsfnEhTtLsuRuSUBv9kLYFo7gMiiMgIul3PlYbnd
+	 Ckxa/Ou9w4qW7Yq2Y9f69TMwn9yCqT1BGtmcoa7stWa4n0KLSnfOpCv9ZgJc+a8pyD
+	 KDl82IYumz/Zg==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53b34ed38easo3232848e87.0;
+        Sun, 03 Nov 2024 05:23:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUMjJebpDfZBJHUFFiLmMPTf7tlw/y2PYb/yf0mqnoFaY1QBj1KfaafVYcdwtXG0oi/0rbg1vnLB9K4lt0D@vger.kernel.org, AJvYcCUQW7/CgQUgB+NpRQUAm639l2ZJcwceKeWrifKCI0p41sQ6RHJu6jF6xMvVBbgeh4XejmHXCPZ6HtVZlx97@vger.kernel.org, AJvYcCWNLl2yoXoMwLOVcAYyGcOINEYBTQQrH2DNbwWNQr65X70ZYHCGmbq1gn+xY+Ks3zsdIY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeITdgRunQg2tGPjTZxNNCEJ0SrddTTDeHW3qy2hRSczU/UuJC
+	44leZH66PNVX+Gf1Uf2L9jfDQECgNeZXAiPHvg55sF6n0PVJ/5T3IeWxf0lldVbkNM6GmQrcrXj
+	VVMjTTnK/q9Y6dc7RNjJCLAPeCIc=
+X-Google-Smtp-Source: AGHT+IEif4j0LPoeyuBjQdEErGyNPy2EQiFuXAV+M+x8WHwNgn5Jfb7rCZmzdfW+NcQOCRzaURku+bbfBLN2jdd1drg=
+X-Received: by 2002:a05:6512:2311:b0:539:edbe:ac86 with SMTP id
+ 2adb3069b0e04-53b348b7e1dmr14809315e87.10.1730640190560; Sun, 03 Nov 2024
+ 05:23:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Jiri Pirko <jiri@resnulli.us>, Juntong Deng <juntong.deng@outlook.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>,
- Nikolay Aleksandrov <razor@blackwall.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Thomas Graf <tgraf@suug.ch>,
- Zhengchao Shao <shaozhengchao@huawei.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Jinjie Ruan <ruanjinjie@huawei.com>, Nikolay Aleksandrov <nikolay@redhat.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] netlink: Fix off-by-one error in netlink_proto_init()
-Content-Type: text/plain; charset=UTF-8
+References: <20241102100452.793970-1-flo@geekplace.eu> <73398de9-620c-9fb9-8414-d0f5c85ac53a@applied-asynchrony.com>
+In-Reply-To: <73398de9-620c-9fb9-8414-d0f5c85ac53a@applied-asynchrony.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 3 Nov 2024 22:22:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATd0UNu8KsxeD-q2mDUTxQD3ATL1wF59B9K2pxzU08OQQ@mail.gmail.com>
+Message-ID: <CAK7LNATd0UNu8KsxeD-q2mDUTxQD3ATL1wF59B9K2pxzU08OQQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild,bpf: pass make jobs' value to pahole
+To: =?UTF-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
+Cc: Florian Schmaus <flo@geekplace.eu>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TT4XjSjVt+rEbf84WFV9lJ2jYZz/ENVfqTKLdxoeInfwoiB5GOj
- cHbwOHrInIJtM78rhKCuYzwiNNWamMzP4y223UhR78JIPxnt5pSVwgU29GTuY8C6PU44tfk
- dh7nOr8vGKhPtWeKpjnySQRCQq0MJv+0dqiOyoE2dZZRPD3u03+V3pMiYzpHyyIjKcSZz5F
- jutCb4cH/ICMbNYFG7I7Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vnA235YDMu8=;pry/bWJb/v0/8QCGck6fv7V9qia
- OMcoze3zWxQxCdCC0UYGYiUJQ0fIPoN/mIGI6iMhBap86MIRpdxv91OfTHpFRnHaZZiXWmsLp
- INmQ0s3o1z3cCtybeP/WCn8A1QDjLFokKDcavKEBesFkdxFF/KcbmEjAKcs1FGIdOyMI+gIPR
- QRgyqrKwlzZY2x65cxqzuVynbTfLgc+Mz1o2KFg1UzhzKsabhzsPRn6kGU6A2dY6G7YJmrMuK
- Caq0bUP2Lt5oOkkcZZy6dMhytg8dAGoRzg61RROLozZ/HhvcgPL2lhSTR1dIQCowa3KIDIzTD
- xsdHsBoChP4ycDGMfzV/3BE+y8adSiaZFQ+9zeCX96fBCtcAATgsP97NR8zcepIVHw6fRe2Ds
- kqRUpNRDUUMeRAp+3svMnLxjoptkmQKp3JL60nh2XZqshaglnvzQkUbX3K8B/9xRH1P+f+GIF
- Fp7r6Qi8jR6MSIlDFkDY7CcJjY3RuCHcZiqkrY3TWkgCiuhN3gxVVx+6d61YqXo0b68i/x2Z0
- vq3Ln1Pj7aey/6BzyMc/frY769X4pWl8/16/se4AvRho8+/xa7j30EtLrYqIHYUy8zBO5Yuhm
- akSFTVRyIXOue1IEtkc4LKHrKSWN6YatS4PuT+djL9Q08IzBdB1XveLA/WkuGYL20pCX94tMv
- 33xafYy+AxaSxU0r1KhWJ3zbJBQhjwqaXsrdXcd5vBpZ/mkVb6Si7EYzSRn4nbvraNnAL1rWj
- SpJlPHEG3NBfnSJYcBuX20oj/MZQ7Z2ckVk//nJrqldmoTtGy6xz3KIxx8OOtRGDcy6ghaB76
- oyFOS8KbCMdFpC/WfA2qy0FA==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 3 Nov 2024 14:01:26 +0100
+On Sun, Nov 3, 2024 at 9:04=E2=80=AFPM Holger Hoffst=C3=A4tte
+<holger@applied-asynchrony.com> wrote:
+>
+> On 2024-11-02 11:04, Florian Schmaus wrote:
+> > Pass the value of make's -j/--jobs argument to pahole, to avoid out of
+> > memory errors and make pahole respect the "jobs" value of make.
+> >
+> > On systems with little memory but many cores, invoking pahole using -j
+> > without argument potentially creates too many pahole instances,
+> > causing an out-of-memory situation. Instead, we should pass make's
+> > "jobs" value as an argument to pahole's -j, which is likely configured
+> > to be (much) lower than the actual core count on such systems.
+> >
+> > If make was invoked without -j, either via cmdline or MAKEFLAGS, then
+> > JOBS will be simply empty, resulting in the existing behavior, as
+> > expected.
+> >
+> > Signed-off-by: Florian Schmaus <flo@geekplace.eu>
+>
+> As discussed on IRC:
 
-Hash tables should be properly destroyed after a rhashtable_init() call
-failed in this function implementation.
-The corresponding exception handling was incomplete because of
-a questionable condition check.
-Thus use the comparison operator =E2=80=9C>=3D=E2=80=9D instead for the af=
-fected while loop.
+Do not do this. Others do not see what was discussed.
 
-This issue was transformed by using the Coccinelle software.
 
-Fixes: e341694e3eb5 ("netlink: Convert netlink_lookup() to use RCU protect=
-ed hash table")
-Cc: stable@vger.kernel.org
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- net/netlink/af_netlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 0a9287fadb47..9601b85dda95 100644
-=2D-- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -2936,7 +2936,7 @@ static int __init netlink_proto_init(void)
- 	for (i =3D 0; i < MAX_LINKS; i++) {
- 		if (rhashtable_init(&nl_table[i].hash,
- 				    &netlink_rhashtable_params) < 0) {
--			while (--i > 0)
-+			while (--i >=3D 0)
- 				rhashtable_destroy(&nl_table[i].hash);
- 			kfree(nl_table);
- 			goto panic;
-=2D-
-2.47.0
 
+I guess the right thing to do is to join the jobserver.
+
+https://www.gnu.org/software/make/manual/html_node/POSIX-Jobserver.html
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
