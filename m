@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-394229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73969BAC29
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:46:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34879BAC2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:47:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE47281980
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:46:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 109121C20C69
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCCE18C010;
-	Mon,  4 Nov 2024 05:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C632318CC1B;
+	Mon,  4 Nov 2024 05:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N80uiclq"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oGCu94lS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E3B800;
-	Mon,  4 Nov 2024 05:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA4B18C932;
+	Mon,  4 Nov 2024 05:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730699200; cv=none; b=oqvJDumDd1dmfjH8r/W6Ols7MgS9d3CqrOcT0FFay5c2jp47mIYhb8z/vdWgI1NEnRdhWV7BVrK0kqNDy6UMKWoO96b5aUxRgvJF4l7t8bgG2b3bSpyn7ynJfWcR6jn1MxgJPQ/Kvn2uScD1lpbymPnWHFFe5FikBadmZu3XuTw=
+	t=1730699203; cv=none; b=oDUB/7VKUTyxsv6/F1xaRJa0MNdenL9DsRpqWcaAPLPYXI8jxum1bCLU2p1g5WNXTiF3AoqMlggCJRvS5L9fUeAFv9we8qdOIDapFxkL6oyDnBhrCJ3Z3Uh87wTRY18baQZHRti71UNzwadPe0K625fqEZ+Ff2hjLmyMhVFR8CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730699200; c=relaxed/simple;
-	bh=VsaZ4KjQRsbAjLC6vSYbUfp8wn3g20hzPrGdvQVvyJ8=;
+	s=arc-20240116; t=1730699203; c=relaxed/simple;
+	bh=vdUrGKV2tdNOxlCYb34IIX5K3OuOPcbCuNVOgS5E4vo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dv6kZ5itA3fLVp61/HDZmXdFOm7FQoFEORSgbWIzvDIpfKXD8zQCtEzJlT9nPL98Jz3bcuypb000DTfoLynW+f8Op6v30p26H66KZDqh0el1FL7Iir3FbtkOTFW0B2c8xitRuyvQETfULWVGLps2dpuLuHH+g/5yz6xVQRpLQzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N80uiclq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 414DEC4CECE;
-	Mon,  4 Nov 2024 05:46:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mzM9tW6xJjXWXe42TrNFbqq7Mb9oBCTA4h7K7r7stHDHwBJhRq9b161OyGyCD6zaPuf/V1OXc3p2LZ37GnYKz91bnD0CHMkzhVCWzCIBmQB8eq3XrRP9GQn/jDOGqi7dWIS43Q+N2SUFEpwgOaU4VxVtj7gzvrj0H8fya4j/WX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oGCu94lS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58BDBC4CECE;
+	Mon,  4 Nov 2024 05:46:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730699199;
-	bh=VsaZ4KjQRsbAjLC6vSYbUfp8wn3g20hzPrGdvQVvyJ8=;
+	s=korg; t=1730699202;
+	bh=vdUrGKV2tdNOxlCYb34IIX5K3OuOPcbCuNVOgS5E4vo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N80uiclqr9jZgv7xNsJL3qQCXO+zMytUriGgBQ9Kxvv7Zsir7uaFBvWe0czAu7xsv
-	 PTVxzyG+7Gf6nlLaxJNFMbmWSot9tSUa5Mk27ZFAuceWqtuZTQYWsYBZzYuslEgQmi
-	 JgCw/PTlUgxKR/a/rTaRCGo9i9AWQ0+08jWRl5lk=
-Date: Mon, 4 Nov 2024 00:08:12 +0100
+	b=oGCu94lScktKNcMk/xgpMWH1owD+lRbdYDZV+gkNUqWjgX/DlkpB9xAK2ELvWvrKf
+	 rzwbkxDWaU1lIDqSIlfafk+b3pg/bfuF+l4hwegr2uu9DxC9Oc2EU8uViwti785BnU
+	 xgHG3gAVVeWRSkyDloh5kgrOd0/Uha6HLHzLh0Gw=
+Date: Mon, 4 Nov 2024 00:11:39 +0100
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: usb: qcom,dwc3: Add SAR2130P compatible
-Message-ID: <2024110458-seclusion-impatient-a4ee@gregkh>
-References: <20241017-sar2130p-usb-v1-1-21e01264b70e@linaro.org>
- <gohuncowxxud4rilmr23q3zc6rnkoqpbkl6v4puiexegvzr3fm@2zt4olzo64bu>
+To: Hubert =?utf-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>
+Cc: Bin Liu <b-liu@ti.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: musb: Fix hardware lockup on first Rx endpoint
+ request
+Message-ID: <2024110415-zippy-litigate-f37d@gregkh>
+References: <e905e5d9c3e76786f154a87d54690fe1a90d755a.camel@gmail.com>
+ <2024101625-fetal-oboe-1b9a@gregkh>
+ <50361c479af3067031320b19fe650a32bec6d1ba.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <gohuncowxxud4rilmr23q3zc6rnkoqpbkl6v4puiexegvzr3fm@2zt4olzo64bu>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <50361c479af3067031320b19fe650a32bec6d1ba.camel@gmail.com>
 
-On Thu, Oct 31, 2024 at 07:37:43PM +0200, Dmitry Baryshkov wrote:
-> On Thu, Oct 17, 2024 at 09:16:38PM +0300, Dmitry Baryshkov wrote:
-> > Document compatible for the Synopsys DWC3 USB Controller on SAR2130P
-> > platform.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
+On Fri, Oct 18, 2024 at 07:51:54AM +0200, Hubert Wiśniewski wrote:
+> On Wed, 2024-10-16 at 10:27 +0200, Greg Kroah-Hartman wrote:
+> > What commit id does this fix?
 > 
-> Gracious ping, the patch has been acked by DT maintainers, but is still
-> not present in linux-next and got no other reviews.
+> This does not fix any commit in particular. Bisecting reveals baebdf48c360
+> ("net: dev: Makes sure netif_rx() can be invoked in any context."), but it
+> did not create the problem, it just exposed it by changing the behaviour of
+> netif_rx(). Callback could be called from usb_ep_queue() since the very
+> beginning of the MUSB driver introduced by 550a7375fe72 ("USB: Add MUSB and
+> TUSB support").
+> 
 
-I don't see the ack here, where am I missing it?
+Great, can you resubmit this with a proper "Fixes:" tag on it so we can
+backport it to the needed stable kernel(s)?
 
 thanks,
 
