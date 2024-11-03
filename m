@@ -1,78 +1,93 @@
-Return-Path: <linux-kernel+bounces-393915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2CB9BA767
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:30:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64589BA76A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:31:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64BE2281F4A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:30:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC8EB214D3
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8558C18B49D;
-	Sun,  3 Nov 2024 18:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2F914C5B5;
+	Sun,  3 Nov 2024 18:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8YSkwGi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BCG0FqVd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E252218B486
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 18:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855D2AD2D;
+	Sun,  3 Nov 2024 18:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730658563; cv=none; b=FCXMwMcqt0o1mGOrQr64XoBWtVs51BafEZGUWhqiIH4gF+yrDm1OLvlN7O+NYMuHm3jl0dbv2vHGdaxV1rdpkJ02cxGhpx3JWXogXu05itujHvHssaHljWB8mT7p3hjm/JQ3qZ0jc0laLaEkNSIrOwOHMF95EY4x52n2cuiC5gs=
+	t=1730658704; cv=none; b=t+u2/VZSgygZ4IoVw5rZxTGV7PJZvBsdRyhJyHRp9Z7QoQR9Fv4/t7BaOvbhW1m9o/gAJ/gVtfB13EAaBYmU5ax3XbCsAljBgJuvLhOP6Xye5miYqaUc4KbN0NKS6fQc3bjDWj8XnPT/iYW7cvdetug1pNNudqVfHoVe/NJ9tzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730658563; c=relaxed/simple;
-	bh=j8F0xvU+aSc0k8h7H0Hfh5lhRwrDTQ5027L+BNmMtSI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IeJh/xysNiqmNjzmScP1CB86dqmCk7KBzPw5bYg57zt1MPg9tztzHB4TVod5Xm5840PTn9I+NJ3eQq6ISVBtEj8YjWwmJPYHaU6eMrkTEwFCodr169qBeG4jpUTSmjkB90rc1Fp69N2fS7ZHuCnFRYvCuAasKZUr/UCYu5lwM6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8YSkwGi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81AEAC4CECD;
-	Sun,  3 Nov 2024 18:29:22 +0000 (UTC)
+	s=arc-20240116; t=1730658704; c=relaxed/simple;
+	bh=4o1UCwUXBUkVa6SFTfLODuZaWt6iLKUAc+n5Wo95l4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AS2ScqfSPDjO+8IiZ3Yr7Alu3yA7vfIDynhLhK+apoH8D1RQ0rsL2mgZar8MRAxVFBsClepg2WA8u1T6IiiVCTu1p97e0eUu3OHUCmD4l6sJNf+Ub3LdGlanmT9LnfteApfXVgxS+qmCecnHhEGBZvQlXoWJYCWv2x0EoKjAw5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BCG0FqVd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8201AC4CED0;
+	Sun,  3 Nov 2024 18:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730658562;
-	bh=j8F0xvU+aSc0k8h7H0Hfh5lhRwrDTQ5027L+BNmMtSI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=R8YSkwGiuApHCYNz62zbIQCG6QY7jI7OT24hxSUTPy/sN6b7ORvX5kWLsX/CaGF4d
-	 R0BC+7zq9+/XzUqXIZ1nv7XD+HLU0Ss9T/lPpR2qggPI4tqZvVRxOxJtpvU4136Ra7
-	 vkcrd+B4/hoRTZUi5LtCQR13JthlJHFS8wjpDoczPj93MU7pVXAnEll7gkPB51Wn27
-	 8rh5O29bqIUpM/comAPBVMyMpCPwwOOfAuZ9uKyPJnNIHlX7ugGghRy0bRl+hFmUir
-	 cgXxhV2z08oGm+Z4iXH993c5+lYPnFMRwd3qDgbNZH9zHdufubEJGTdl63wHzQm0Ly
-	 K17900WQLEQhQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E3A38363C3;
-	Sun,  3 Nov 2024 18:29:32 +0000 (UTC)
-Subject: Re: [GIT pull] sched/urgent for v6.12-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <173062983173.1467946.7303190211154698526.tglx@xen13>
-References: <173062982864.1467946.2540622433845043721.tglx@xen13> <173062983173.1467946.7303190211154698526.tglx@xen13>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <173062983173.1467946.7303190211154698526.tglx@xen13>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-2024-11-03
-X-PR-Tracked-Commit-Id: 69d5e722be949a1e2409c3f2865ba6020c279db6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 33e83ffe4c57132c73b7d3fb7919006c5296c496
-Message-Id: <173065857079.3226528.8459134675274461100.pr-tracker-bot@kernel.org>
-Date: Sun, 03 Nov 2024 18:29:30 +0000
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, x86@kernel.org
+	s=k20201202; t=1730658704;
+	bh=4o1UCwUXBUkVa6SFTfLODuZaWt6iLKUAc+n5Wo95l4c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BCG0FqVduCI4+AnuzOBrTN440kH+ZKfmj3fhTAQb/2JsTdsKp156wJgt/DJXJB44u
+	 EKPxNIy2BgTZHU1Q05ZgRAyot+AjUpuzWAAdisEoicpjmN6l8hDgdZHvzE9gfGSm8u
+	 ltVYYr4a8/84gqOsu7xp/un+Q1xKCWAYWE0SxLGWqx9ikzwuUehI1BU1MgoRWLlVTW
+	 7z9CDjeJD6iiPeoLYgfLMfghBVdpuw89LIkF9gBD9vHAlzOKbXXRoIKF0YD3BsasNT
+	 8rUPgAiLxfeIQbL93uzABltqkgWNcPcWh8MppS+R5kPM7Dg3wAIFIKHg33AcbrbVgp
+	 4IDqrb9WdsScQ==
+Date: Sun, 3 Nov 2024 10:31:42 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, Masahiro Yamada
+ <masahiroy@kernel.org>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: [PATCH net-next v2 3/9] lib: packing: add pack_fields() and
+ unpack_fields()
+Message-ID: <20241103103142.4ba70d58@kernel.org>
+In-Reply-To: <20241025-packing-pack-fields-and-ice-implementation-v2-3-734776c88e40@intel.com>
+References: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
+	<20241025-packing-pack-fields-and-ice-implementation-v2-3-734776c88e40@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Sun,  3 Nov 2024 11:31:02 +0100 (CET):
+On Fri, 25 Oct 2024 17:04:55 -0700 Jacob Keller wrote:
+> +ifdef CONFIG_PACKING_CHECK_FIELDS_1
+> +HOSTCFLAGS_lib/gen_packing_checks.o += -DPACKING_CHECK_FIELDS_1
+> +endif
+> +ifdef CONFIG_PACKING_CHECK_FIELDS_2
+> +HOSTCFLAGS_lib/gen_packing_checks.o += -DPACKING_CHECK_FIELDS_2
+> +endif
+[...]
+> +ifdef CONFIG_PACKING_CHECK_FIELDS_49
+> +HOSTCFLAGS_lib/gen_packing_checks.o += -DPACKING_CHECK_FIELDS_49
+> +endif
+> +ifdef CONFIG_PACKING_CHECK_FIELDS_50
+> +HOSTCFLAGS_lib/gen_packing_checks.o += -DPACKING_CHECK_FIELDS_50
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-2024-11-03
+This series is marked as Not Applicable in PW. Not sure why.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/33e83ffe4c57132c73b7d3fb7919006c5296c496
+I can't bring myself to revive it, tho, this isn't pretty. 
+It'd be one thing to do the codegen and the ugly copy / paste
+50 times in the lib/ but all drivers have to select all field 
+counts they use..
 
-Thank you!
+Since all you want is compile time checking and logic is quite
+well constrained - can we put the field definitions in a separate
+ro section and make modpost validate them?
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Also Documentation needs to be extended with basic use examples.
 
