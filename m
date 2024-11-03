@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-393997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35FC19BA857
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:34:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6199BA85B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:39:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C2C11C20A24
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:34:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B107DB20E35
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C19318BC1D;
-	Sun,  3 Nov 2024 21:34:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F53F18C026;
+	Sun,  3 Nov 2024 21:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJNM+rpr"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BE718870D
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 21:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4674E189BA3;
+	Sun,  3 Nov 2024 21:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730669644; cv=none; b=ZA/cPDSq66nREFkru3n2brinpUEIiSHwLfsolKPxFXpnVgQgT8PXQznzWYdEyuzpq8Wifly4l6l/5oOOy8q7LHnjmKJxnpTDrUdLK+WwTUf+G4BxVtCGSvDg2riyimjOU910BK7BOVyKvbVlN6Nxfidlmv/6bV65CrNeevDnOgc=
+	t=1730669955; cv=none; b=MhNqyTMSkvAG14DmgRHP5LpI5sv73x3UNY6jo23jJR9Ay4qdDUwqcBuRS2WdQ6ZzPSQEoWjTfVXugQ6cM7vTDjCQeRmpsjHnFqGYcKvgOszLAOvZLILSqcASHklgMUXnQ5RaeFxGK5eXu5jGNboT3qMKeuV0DRXATReL4LQ8xb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730669644; c=relaxed/simple;
-	bh=blXg9xGpc16qfDm92tw9O/9aYjZ3AmVz0EK19h8E3Dc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kJCy1SsdxsWo5fTacBq3KE+YvKW6fTvcXFGUZTn3UejZsI6ejVDV6iyncJ7narUyNK/DS9T1K1N0u1xXMdEQmE3F2UdpclqSDBF3zET/RLfrpNWvk1/FVXy16cYt4H6jXVngdsnPWSP+iGLDB6FQMlYwULwEsNz5q+tG0hotSGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6c427e1b0so8515655ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 13:34:02 -0800 (PST)
+	s=arc-20240116; t=1730669955; c=relaxed/simple;
+	bh=Jok0MB3/q3anWfOSQpzxb1BnAFdIcPOVvInpT0WAEfI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C26t+bswlYuU2jQ3oxQ6KplBuUJ5+YaoLOLTP/S3nZxosW4+i0NN551D4TgPQE+Se0vGLm9B5EvMPDGDBScOXDfxYeXbkK1k2ixRmSaRh/wdLcP+ZHP6JUT2W7DSPJuQt0JzAAKnrbZ2BRLyBc7a54hfiR03Ym3yCSKO1719rwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJNM+rpr; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b1467af9dbso276832885a.0;
+        Sun, 03 Nov 2024 13:39:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730669953; x=1731274753; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WFVi2mNc7smaUSpqUV8IgqBMIyn5vhuRCKFcW8iODME=;
+        b=TJNM+rprxcWZUU+WXu/rN5cWXRsBkpueCWdmT1fmOZLiFhlcWelAnEFZIpls/+uz5J
+         EvCE99E85pHi7KcspCvcXJfEY0P007xLInFwue/dwcCIFk0l2YhI58ZdrInQKHmqxcsx
+         m4RDM8h4Ejng9f5EseerwyOxY7YGb2WD0AEUXSF9Nwb7J47FqUkpJRbU+ML0uzEgIoDw
+         N+Oxb1CJZBd7x9LHDgtvE43GFqmSGuQnse29koZm6hwr9KyZCJ89/RQd2mw4zH1o9ect
+         ZsUe+LLSbTa9cqzma9kNC7JqdqQmOi7j1OaoygONA7u7t8XfIlK6mt1qLiPMcMObOyxO
+         Hq+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730669642; x=1731274442;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jgInUz7qNUZLdUgIRTKTAOglEAA5qwoze5+vT6Jq1YQ=;
-        b=DvMd9h5s7idF3Wm7oMw4FQYkS9XnONHZm8LCKlwHcberI0U1caamdyCWtufJlRdwfG
-         3uC+8Z2NfF2xbnT0HIPft2QS8PPRfPKF4d/brDre3wRi0sV3mXe+1Hdpr0UszkK9Yae3
-         jp98W+h628LPKCytZtdnQOFQUz7+QmkdCHnXPPIjvkPXfH/Y5Sre/WCnA/xqp5ATfBcV
-         oMkdvnGMaKAseWLVwcJCoV2kXdLnJfqHptbv7j7TsCI9MkT/o+9ZSbUKYwaWiRy7m8bp
-         ln5o6yZo37EzCs/PgzP27zT1Wf03H7Glw0f3c4Fs8KIGvUCp2Gue7ETSfYbLx9R2wUJm
-         sD3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUthoGrvZ4+6QTFys1qYz/ie8THu4veUOm0U2Yjj6oUyZWs5Y9PpNlFPLTcdwFEO+lBb4um/6hmk6kAT74=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHkdn/AVrtm+SkQuXZwLT40scD64uYZrjU4vjQLpT8XkzsNBQg
-	e8MuvgafhJPKS21QBrBk4z8zWiQngiJ1d1vwlsG/ezZX/wEJqbBBtgmHqHgcfypyO8BjncAkwsP
-	gQcYmRXbPcWPslUlWxQbf8PBoLYqL7rQa+7hEiTWJrKMkqw3zkEkFIzk=
-X-Google-Smtp-Source: AGHT+IFHEMRou1rYHekLU0t1vroRMTKrxb/yKIFNxce8uo+T1r+WKfYT0UL6Y7ouEB8+jCKM9EGjomfeCFpfrcwG6Ig0Mfj72el9
+        d=1e100.net; s=20230601; t=1730669953; x=1731274753;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WFVi2mNc7smaUSpqUV8IgqBMIyn5vhuRCKFcW8iODME=;
+        b=S7IwU5KsKINC2wWg2asKMIONZP/rQE3JqJNy/irElZPO/2bbe7Hesw7AdEkVZTVw7B
+         EKlvZYQBtzjJnO6A68H+MMr7E4y8k3yREdqzAQuo7jTICldDPQsKE/XDzsuJab1hC3af
+         GpMioYVBnIPKHADObsxIu5teDSpUD1s0DtnvcZmGmvg0e83t4ibv7ceEdvHvoaVuywgS
+         ++SPO8bAjuu9utyGVGiZgP+vlwXWJomyTKGMziAlLOB22IUVU3D6v0iWGPicAb3Ie4gc
+         lu7pBvrHV42u5p4mLIBmb4PCfQZ8ikjg71nxW8mC8m7rFmf9CU9Z51e4pShnkbCFMw1/
+         f5Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCU9G58BvNNWTJJNuU3gfqeWbs0JkZnEOa4vvYeb3icVjlvN7lUg9zGxhAuko/5udIpaUxBmWgvEJMGJMg==@vger.kernel.org, AJvYcCXmS9JPz6DJsxy/pUDrk8HY6wjF0eDLao1lhx732LgdPnCK7vCWSeSgsU5QlVKVsguSpXxo0aG5m+6Sak4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHqN2c4Tz4zwnyiYVuZRIqJtB91CDUKIO81juzXIuRPW7ixwqN
+	sGo0eZGTbgbJM/TKQU6phpB5Opyvc8NMeTPh/IAip4sdhiDSnSwL
+X-Google-Smtp-Source: AGHT+IEJJ81Rfz5B53h8fh2vx4nDSYEt9Cb2ocAO1cYoLk4b3StAYMYarD9H0rz2o7m2aF4Tcd72HQ==
+X-Received: by 2002:a05:620a:450e:b0:7b1:4762:45c4 with SMTP id af79cd13be357-7b1aee51f10mr2426040785a.54.1730669953050;
+        Sun, 03 Nov 2024 13:39:13 -0800 (PST)
+Received: from newman.cs.purdue.edu ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a117c4sm365448685a.68.2024.11.03.13.39.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 13:39:12 -0800 (PST)
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+To: vigneshr@ti.com,
+	jpanis@baylibre.com,
+	wbg@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-iio@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH] counter: ti-ecap-capture: Add check for clk_enable()
+Date: Sun,  3 Nov 2024 21:39:10 +0000
+Message-Id: <20241103213910.31976-1-jiashengjiangcool@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cbc7:0:b0:3a6:a9d6:e427 with SMTP id
- e9e14a558f8ab-3a6aff50f1cmr75215455ab.9.1730669642025; Sun, 03 Nov 2024
- 13:34:02 -0800 (PST)
-Date: Sun, 03 Nov 2024 13:34:02 -0800
-In-Reply-To: <CAGiJo8RPmkhKpg1qM3ucba99Gz66AHor6H4etkD0WB8GQOkKAQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6727ec4a.050a0220.35b515.01a5.GAE@google.com>
-Subject: Re: [syzbot] [net?] KMSAN: kernel-infoleak in move_addr_to_user (7)
-From: syzbot <syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com>
-To: danielyangkang@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Add check for the return value of clk_enable() in order to catch the
+potential exception.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Fixes: 4e2f42aa00b6 ("counter: ti-ecap-capture: capture driver support for ECAP")
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+ drivers/counter/ti-ecap-capture.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Reported-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-Tested-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
+diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-capture.c
+index 675447315caf..30a269fa5da0 100644
+--- a/drivers/counter/ti-ecap-capture.c
++++ b/drivers/counter/ti-ecap-capture.c
+@@ -574,8 +574,11 @@ static int ecap_cnt_resume(struct device *dev)
+ {
+ 	struct counter_device *counter_dev = dev_get_drvdata(dev);
+ 	struct ecap_cnt_dev *ecap_dev = counter_priv(counter_dev);
++	int ret;
+ 
+-	clk_enable(ecap_dev->clk);
++	ret = clk_enable(ecap_dev->clk);
++	if (ret)
++		return ret;
+ 
+ 	ecap_cnt_capture_set_evmode(counter_dev, ecap_dev->pm_ctx.ev_mode);
+ 
+-- 
+2.25.1
 
-Tested on:
-
-commit:         a8cc7432 Merge tag 'mm-hotfixes-stable-2024-11-03-10-5..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1047b630580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c11ea7cf15419ce
-dashboard link: https://syzkaller.appspot.com/bug?extid=346474e3bf0b26bd3090
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16068740580000
-
-Note: testing is done by a robot and is best-effort only.
 
