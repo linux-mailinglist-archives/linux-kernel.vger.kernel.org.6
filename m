@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-393741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16D99BA4A1
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:15:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB0B9BA4A2
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835D9281856
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 08:15:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7380B1F21731
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 08:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55080170A31;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D133F175D37;
 	Sun,  3 Nov 2024 08:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DN8UVv2+"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUMf6SGP"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FD61632C9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7C91632E0
 	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 08:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730621698; cv=none; b=qzL6Ce43RQppRfq20/aLFnuVNlEwnxEomY/Irre/mdN8/Y4lkTBFYG54DNp9qgcmbnV58lDoMXMa4xRDjm6t20CK4XMobwVhTJjCZgfiCr3eHanROCX2JK9ceBZo7vlrmdrWkHltlk6qR58IH3nzeryojMijeNwflqqMWi/Qnms=
+	t=1730621699; cv=none; b=aOLACnWid/DUKwSLf/NUVv1rwbL8kXqt/C/JO4SsY3Lh1zjsCHVFQ137mbez3do5HpXsVRQNEuWHsO0VeWsCDaB815FTWp1lJ2RhzC0+J5U99CXE3M94stPSwXFYo7kNrtscUz/AywiJs92s70tIQc3J35BiK3ynirpQaedEKLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730621698; c=relaxed/simple;
-	bh=TXNUYX1G4d7X/z31PaSM8Wlw23ty1yqTqroUAgdDSDI=;
+	s=arc-20240116; t=1730621699; c=relaxed/simple;
+	bh=/SthlVcCaUJCfyv9+5To30Pjd+tIyLw75lQr01QO6V4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iv47g0xOxQhneZZ50JIj9zo1d79v+87dtS5KdEi31LW0c8G+XZaZ463EQzLfBqOdrLf2oWG2/tA3SUprp7G0pQn3rwdNgHkir9dCwJ4I2fDcWPPEaZV8G9H20zKLAB1xXblE+PLqFMlsysTQyrmQO+oRpULAZw7jpz7+BdBi54o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DN8UVv2+; arc=none smtp.client-ip=209.85.208.54
+	 MIME-Version; b=A0it0xKzGuwdRy20kwrZsDIM/ZKH0cILqxeCNu9+5cgrYHLbupUmIzemu7GFRYnQpHyI6klULxeovxHAuoDTaIoe6Ly5BfOwdmYp940x10NEjYVW9jeD3DJbetGv392A7Q5w9Gcv/acVhXxImu3ozzt5KNf77BIb2wSzK/hGc58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUMf6SGP; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c95a962c2bso4340502a12.2
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cec9609303so1324070a12.1
         for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 01:14:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1730621695; x=1731226495; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BhludfnkOdE6Bkm5V0G70lBT/zEk61Bs7bh9/fZXf1g=;
-        b=DN8UVv2+hSVd3AFRyvItOAB6C8FZhW0aDRjozMCfBK39rSsLcswb+caVVbebajqTDJ
-         0Q0NQgzLMDX/SBAAitQjP3oCZ4/1i8UlhBXZ7dBc9e9Ea3s06hiAXvUxsIy1dkq91SDR
-         GRSZ30cdAgVQu2t54lp5lQKpSdJkABt29QIXTBQkoavPxcBGTjf5Q7Wgh+2NxCPWo0j4
-         8n3kWQSqZ44xHZN0PEk3o+7E/EH6VYqMDxDHq1C9C1wt/k8JGJtzsWPLoaZiSQ2hzSF1
-         e1B3GEs7ORVwjPx9fAEfL9GGl16Z8yFctbSLWcuLnLz24FdGWh4wW5y71wP76UsgE2JC
-         E+3g==
+        bh=GdwTYTJsNURbKgGhx9XimSyfQDHw9X3ulBGYRri9afA=;
+        b=HUMf6SGPBTpYczMKnVpDfpRNIbTIcf70HtktWs4IBegx+ohonYW7HaS6vvuhh2ANrO
+         t4Hrbmobri19hW4hepnCkaRAEpi8kKjDZGaSGLKDXPmW4TlxFqSJbTN6S9SPaj+rMRml
+         luh8jDGgWxn790dok2Ar7Mn+ZJRXssoOo3bp/ytfwocsV9RPRNCieOCl0F8bWMY17gT7
+         mA36C8Q/FhaeN3jrgg2wETXZIBS4mgQoIA0uFo9n8iYzWZG5U2RDi9d7fY5oPXfoMa5i
+         CmVE74lkdDVoM2pg5axElrOecLSHtNCgSrZ8GIvaGflu0APVGT89QZC54+CZY0msL2Q/
+         yjuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1730621695; x=1731226495;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BhludfnkOdE6Bkm5V0G70lBT/zEk61Bs7bh9/fZXf1g=;
-        b=pYSOjKPtTxvH3AT4WGBb/g/F1KijlNfqIAVaeqVnNY4toK4bycRGbj4JD6L4kwdgS3
-         TJFobSRUW0TJDqbI/bdINv8JpFZAxPh6R2aT5tSrhgsY+bHxUaQODEhUUg44o9tdJxsU
-         4iKupZZxN9aAJyCJYJ9wkxB9rthOPwpTOIIx7gpTwuR0z+ZugC43pVXr2+RNoiUX2dr+
-         KAEaip160LnBkl+tP8hyskRzQNWHri32F2/mZPCD3gEYm7hEUXUxA8RKClMrxzwjk+v/
-         44hvMsNydJcX8I2tli9yY0Pb23zDLOBTqlM1uK8hB1tYmZg+77ggstJwsE/5BOCqNPTs
-         pxXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtk1e6toAL4a4slXWCsCQ5YZsqShpETyVr3+ieBzIV2OH1KPMIDN89mEGpJiMEYhIcYurt/NqCjPjYzp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxokSQbUpHw/0XswXUm6Kkhd9Rvt0AgU7dcsv2k4nQt2H7zVA1Q
-	Crq0N5ZkZVoEVMdGkoqe5Jadz8cTkmzN26DaFF3KfMKoo+zShX3x
-X-Google-Smtp-Source: AGHT+IF8rnO8fnO6ZDQKo2UpprEIvwcqWdLz4SsAM0c0LR/KMS1faKOQaWR/OqQWTObMB70VSR/+qA==
-X-Received: by 2002:a05:6402:5109:b0:5ce:d264:3b75 with SMTP id 4fb4d7f45d1cf-5ced2643bbcmr1666147a12.1.1730621694716;
-        Sun, 03 Nov 2024 01:14:54 -0700 (PDT)
+        bh=GdwTYTJsNURbKgGhx9XimSyfQDHw9X3ulBGYRri9afA=;
+        b=CkoNEeZNZr6skHQsPHg7ADH7eDrhl9862MqlObobroY4pkKZP3lyd0ULvqPRng5f0S
+         9F14C1zS+zHds6u/2LY1T66vyeX/Sq6cKYVzd9uQDT4zigf1yBTly9wi0QQuccKULIBb
+         3MtsydO0ENB9XBcN6jap4CJjRaPQIulgbGTF+kuMWQ5YQILCLaMocpI/tZ8HFnUc0/Lg
+         b6CWGK2fGL8qB8gQpCuiB6L33vG2DLKeavOAhxfmJSpy8L/jOOP15xUT988jvUnkuzFP
+         rZAYnf5jzkvwTpy/Xb0+dK15p6g/TyN4LeUvOh2d9yalhWdXuNYmjYQ8SKS3R04r2gQK
+         N0YA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUO0LM1v6fH5rXx1uceIgeqdXPW8kBhkSfYm7kZapJol+MIWiTVc4JgFYIoVz4CQOdhcrStY5wqRegKwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNwTBkWf4FbwV1v/ZVkHyMdfuDpXAFdayS/w5KOTdOHJFWuO7p
+	oBAaE/fYvDF8sqqtcMLt2sraq3poLr+it1KSPQ7VR0mMWiWUVB1E
+X-Google-Smtp-Source: AGHT+IE5MjUKB3SHBPEkKomjFhpIPecx86bNYfO3WeGkQFpShnXPn6Av+fqOT/PVGW9653s09ii90A==
+X-Received: by 2002:a05:6402:50d0:b0:5ce:d69f:ca1 with SMTP id 4fb4d7f45d1cf-5ced69f0dcamr219094a12.20.1730621695342;
+        Sun, 03 Nov 2024 01:14:55 -0700 (PDT)
 Received: from kernel-710.speedport.ip (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac789152sm3097882a12.43.2024.11.03.01.14.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 01:14:54 -0700 (PDT)
+        Sun, 03 Nov 2024 01:14:55 -0700 (PDT)
 From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Subject: [PATCH 05/13] staging: rtl8723bs: Remove function pointer check_ips_status
-Date: Sun,  3 Nov 2024 09:14:26 +0100
-Message-ID: <afcfbc2381d02a9f63a6ccc7acf4f31a24547488.1730619982.git.philipp.g.hortmann@gmail.com>
+Subject: [PATCH 06/13] staging: rtl8723bs: Remove function pointer SetHwRegHandler
+Date: Sun,  3 Nov 2024 09:14:27 +0100
+Message-ID: <5682bb8d6951e903d23c98615e2fc6bd463b0ba4.1730619982.git.philipp.g.hortmann@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1730619982.git.philipp.g.hortmann@gmail.com>
 References: <cover.1730619982.git.philipp.g.hortmann@gmail.com>
@@ -85,58 +85,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove function pointer check_ips_status and use CheckIPSStatus directly
+Remove function pointer SetHwRegHandler and use SetHwReg8723BS directly
 to increase readability.
 
 Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 ---
- drivers/staging/rtl8723bs/hal/hal_intf.c     | 7 +------
- drivers/staging/rtl8723bs/hal/sdio_halinit.c | 1 -
- drivers/staging/rtl8723bs/include/hal_intf.h | 1 -
- 3 files changed, 1 insertion(+), 8 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c  | 2 +-
+ drivers/staging/rtl8723bs/core/rtw_wlan_util.c | 4 ++--
+ drivers/staging/rtl8723bs/hal/hal_intf.c       | 3 +--
+ drivers/staging/rtl8723bs/hal/sdio_halinit.c   | 3 +--
+ drivers/staging/rtl8723bs/include/hal_intf.h   | 4 ++--
+ 5 files changed, 7 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+index bb639ce49431..317f3db19397 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+@@ -5637,7 +5637,7 @@ u8 setkey_hdl(struct adapter *padapter, u8 *pbuf)
+ 		rtw_hal_set_hwreg(padapter, HW_VAR_SEC_DK_CFG, (u8 *)true);
+ 
+ 	/* allow multicast packets to driver */
+-	padapter->HalFunc.SetHwRegHandler(padapter, HW_VAR_ON_RCR_AM, null_addr);
++	SetHwReg8723BS(padapter, HW_VAR_ON_RCR_AM, null_addr);
+ 
+ 	return H2C_SUCCESS;
+ }
+diff --git a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
+index 9bef4b9e2aca..73c70b016f00 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
+@@ -1575,9 +1575,9 @@ void update_wireless_mode(struct adapter *padapter)
+ 	SIFS_Timer = 0x0a0a0808; /* 0x0808 -> for CCK, 0x0a0a -> for OFDM */
+ 													/* change this value if having IOT issues. */
+ 
+-	padapter->HalFunc.SetHwRegHandler(padapter, HW_VAR_RESP_SIFS,  (u8 *)&SIFS_Timer);
++	SetHwReg8723BS(padapter, HW_VAR_RESP_SIFS,  (u8 *)&SIFS_Timer);
+ 
+-	padapter->HalFunc.SetHwRegHandler(padapter, HW_VAR_WIRELESS_MODE,  (u8 *)&(pmlmeext->cur_wireless_mode));
++	SetHwReg8723BS(padapter, HW_VAR_WIRELESS_MODE,  (u8 *)&(pmlmeext->cur_wireless_mode));
+ 
+ 	if (pmlmeext->cur_wireless_mode & WIRELESS_11B)
+ 		update_mgnt_tx_rate(padapter, IEEE80211_CCK_RATE_1MB);
 diff --git a/drivers/staging/rtl8723bs/hal/hal_intf.c b/drivers/staging/rtl8723bs/hal/hal_intf.c
-index 11d75b1b1ea9..44fab4eecb5e 100644
+index 44fab4eecb5e..756d6ed9232d 100644
 --- a/drivers/staging/rtl8723bs/hal/hal_intf.c
 +++ b/drivers/staging/rtl8723bs/hal/hal_intf.c
-@@ -156,12 +156,7 @@ void rtw_hal_disable_interrupt(struct adapter *padapter)
+@@ -108,8 +108,7 @@ uint rtw_hal_deinit(struct adapter *padapter)
  
- u8 rtw_hal_check_ips_status(struct adapter *padapter)
+ void rtw_hal_set_hwreg(struct adapter *padapter, u8 variable, u8 *val)
  {
--	u8 val = false;
--
--	if (padapter->HalFunc.check_ips_status)
--		val = padapter->HalFunc.check_ips_status(padapter);
--
--	return val;
-+	return CheckIPSStatus(padapter);
+-	if (padapter->HalFunc.SetHwRegHandler)
+-		padapter->HalFunc.SetHwRegHandler(padapter, variable, val);
++	SetHwReg8723BS(padapter, variable, val);
  }
  
- s32	rtw_hal_xmitframe_enqueue(struct adapter *padapter, struct xmit_frame *pxmitframe)
+ void rtw_hal_get_hwreg(struct adapter *padapter, u8 variable, u8 *val)
 diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-index a64b28bee019..1211b7b440cf 100644
+index 1211b7b440cf..6333a0d23d43 100644
 --- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
 +++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+@@ -1144,7 +1144,7 @@ void ReadAdapterInfo8723BS(struct adapter *padapter)
+  * If variable not handled here,
+  * some variables will be processed in SetHwReg8723B()
+  */
+-static void SetHwReg8723BS(struct adapter *padapter, u8 variable, u8 *val)
++void SetHwReg8723BS(struct adapter *padapter, u8 variable, u8 *val)
+ {
+ 	u8 val8;
+ 
 @@ -1259,7 +1259,6 @@ void rtl8723bs_set_hal_ops(struct adapter *padapter)
  
  	rtl8723b_set_hal_ops(pHalFunc);
  
--	pHalFunc->check_ips_status = &CheckIPSStatus;
- 	pHalFunc->SetHwRegHandler = &SetHwReg8723BS;
+-	pHalFunc->SetHwRegHandler = &SetHwReg8723BS;
  	pHalFunc->GetHwRegHandler = &GetHwReg8723BS;
  	pHalFunc->SetHwRegHandlerWithBuf = &SetHwRegWithBuf8723B;
+ 	pHalFunc->GetHalDefVarHandler = &GetHalDefVar8723BSDIO;
 diff --git a/drivers/staging/rtl8723bs/include/hal_intf.h b/drivers/staging/rtl8723bs/include/hal_intf.h
-index 5b52b0fd95f0..e6f4c398f35f 100644
+index e6f4c398f35f..439639f6616c 100644
 --- a/drivers/staging/rtl8723bs/include/hal_intf.h
 +++ b/drivers/staging/rtl8723bs/include/hal_intf.h
-@@ -162,7 +162,6 @@ enum hal_intf_ps_func {
- typedef s32 (*c2h_id_filter)(u8 *c2h_evt);
+@@ -170,8 +170,6 @@ struct hal_ops {
+ 	void (*hal_dm_watchdog)(struct adapter *padapter);
+ 	void (*hal_dm_watchdog_in_lps)(struct adapter *padapter);
  
- struct hal_ops {
--	u8 (*check_ips_status)(struct adapter *padapter);
- 	void (*set_channel_handler)(struct adapter *padapter, u8 channel);
- 	void (*set_chnl_bw_handler)(struct adapter *padapter, u8 channel, enum channel_width Bandwidth, u8 Offset40, u8 Offset80);
+-
+-	void (*SetHwRegHandler)(struct adapter *padapter, u8 variable, u8 *val);
+ 	void (*GetHwRegHandler)(struct adapter *padapter, u8 variable, u8 *val);
  
+ 	void (*SetHwRegHandlerWithBuf)(struct adapter *padapter, u8 variable, u8 *pbuf, int len);
+@@ -319,4 +317,6 @@ s32 rtw_hal_macid_wakeup(struct adapter *padapter, u32 macid);
+ 
+ s32 rtw_hal_fill_h2c_cmd(struct adapter *, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer);
+ 
++void SetHwReg8723BS(struct adapter *padapter, u8 variable, u8 *val);
++
+ #endif /* __HAL_INTF_H__ */
 -- 
 2.43.0
 
