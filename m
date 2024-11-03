@@ -1,84 +1,106 @@
-Return-Path: <linux-kernel+bounces-393801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFDC19BA567
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:18:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EB09BA572
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F2B1F217D6
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:18:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF219281CD1
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8951A1632DB;
-	Sun,  3 Nov 2024 12:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PSlF0CDo"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E0E17107F;
+	Sun,  3 Nov 2024 12:47:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73BA23B0
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 12:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AB2A50;
+	Sun,  3 Nov 2024 12:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730636324; cv=none; b=lTNx+KGuvZu6WDyoWDm+GpBFXQioJzP6ikNuNmR2Dqgnwv9vRP98YFU2bhuRRS7UbB6+RmNye5+YD2UEKpNMJM8pDG1jgVsrUU7llH96MLrPfzqTQGsjQzTjHDgCPpwJAUBKujchEBBh/FEyH6oWCwBenPxIZAaflJ8n90BUuEc=
+	t=1730638067; cv=none; b=j3r+kIcyH98Eg9qhz92x5D8xSYH4YraeDy4WAHAhyLkfjnZDs8fwmmublQ3BeUkQ+tWIBXkJ6RHXyZUokLxv2VmUUh9XFeCQWEWU3DYDzxeVsiLcvEfQcFibWC1OGRbDo3pCZICnsTeTmaWyRurBr6IJFuvN+VtJ5pSOXp2KM9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730636324; c=relaxed/simple;
-	bh=JBR5OYH6HGg/nV5dE4xfZ8tnOwX8Q8ZrEz65y0CMjeg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Eo9llP335D0nQYDHYhPjRurwQelyZkqS/wCYfwSXhMtsX2EGVLxJIVpckTBDKF9caVmrIsgMuFRYCSmaQEf9bcmifEKlBFFqW1Qc+72HA4fRQCkstxAYpd+tNkGSpVI17knPgQEaDn1k8KA8ueHEIZBBnv6COaMHNdPbMtyGD54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PSlF0CDo; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730636318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NyBn8heEe2xkvBGW5DCMbPyQa9qZDQbub0DgJexbKCs=;
-	b=PSlF0CDofKfBxlvP+aoNL49ohrb6cDn6esGcuRPUqBJ4bwIpp+2ij0OUGAB3ZHIxv7L8u6
-	rsl28sasHfc4m9jt+AAAFxrlg9OtT5g4h2hwWbryuyzGTd4CIRMVGCLnQuHvli+H6/8aO3
-	J3zBX42O94CAiEZrSWf/+JSU6A7U2LM=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] freevxfs: Replace one-element array with flexible array member
-Date: Sun,  3 Nov 2024 13:17:09 +0100
-Message-ID: <20241103121707.102838-3-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1730638067; c=relaxed/simple;
+	bh=SUH/9qeDJywkSzvKXFuQPnpTfF2TscJ0TEkBuPIKc0Y=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CP/vvlsWwKVqF3N/eOy67CuzkeyVqa12P+aNM5LAgIy72af+7bRauyv9We2rQ7zBuzszd19qUxjAWcl/mOqcm+hfSisn08w6wUfiIvgw4+zORf+JqgkORN//u/ONo7PWvKSQ3Mw8pQDN0e4l6EvVR2ciy6fZPBzYOu2YqhJ1QJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XhDQj2w8fz67lS1;
+	Sun,  3 Nov 2024 20:28:13 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 327131404F5;
+	Sun,  3 Nov 2024 20:29:42 +0800 (CST)
+Received: from GurSIX1 (10.204.106.27) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sun, 3 Nov
+ 2024 13:29:29 +0100
+From: Gur Stavi <gur.stavi@huawei.com>
+To: 'Jakub Kicinski' <kuba@kernel.org>
+CC: "Gongfan (Eric, Chip)" <gongfan1@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Cai Huoqing
+	<cai.huoqing@linux.dev>, "Guoxin (D)" <guoxin09@huawei.com>, shenchenyang
+	<shenchenyang1@hisilicon.com>, "zhoushuai (A)" <zhoushuai28@huawei.com>,
+	"Wulike (Collin)" <wulike1@huawei.com>, "shijing (A)" <shijing34@huawei.com>,
+	Meny Yossefi <meny.yossefi@huawei.com>
+References: <cover.1730290527.git.gur.stavi@huawei.com>	<ebb0fefe47c29ffed5af21d6bd39d19c2bcddd9c.1730290527.git.gur.stavi@huawei.com> <20241031193523.09f63a7e@kernel.org>
+In-Reply-To: <20241031193523.09f63a7e@kernel.org>
+Subject: RE: [RFC net-next v01 1/1] net: hinic3: Add a driver for Huawei 3rd gen NIC
+Date: Sun, 3 Nov 2024 14:29:27 +0200
+Message-ID: <000001db2dec$10d92680$328b7380$@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHbKsTa0xys0oGhWkSQIdOtZx32g7KhpxmAgAPaQnA=
+Content-Language: en-us
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-Replace the deprecated one-element array with a modern flexible array
-member in the struct vxfs_dirblk.
+> On Wed, 30 Oct 2024 14:25:47 +0200 Gur Stavi wrote:
+> >  50 files changed, 18058 insertions(+)
+> 
+> 4kLoC is the right ballpark to target for the initial submission.
+> Please cut this down and submit a minimal driver, then add the
+> features.
 
-Link: https://github.com/KSPP/linux/issues/79
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- fs/freevxfs/vxfs_dir.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ack.
+There is indeed code which is not critical to basic Ethernet functionality
+that can be postponed to later.
 
-diff --git a/fs/freevxfs/vxfs_dir.h b/fs/freevxfs/vxfs_dir.h
-index fbcd603365ad..8c67627f2a3d 100644
---- a/fs/freevxfs/vxfs_dir.h
-+++ b/fs/freevxfs/vxfs_dir.h
-@@ -25,7 +25,7 @@
- struct vxfs_dirblk {
- 	__fs16		d_free;		/* free space in dirblock */
- 	__fs16		d_nhash;	/* no of hash chains */
--	__fs16		d_hash[1];	/* hash chain */
-+	__fs16		d_hash[];	/* hash chain */
- };
- 
- /*
--- 
-2.47.0
+Our HW management infrastructure is rather large and contains 2 separate
+mechanisms (cmdq+mbox). While I hope we can trim the driver to a VF-only
+version with no ethtool support that will fit the 10KLoC ballpark, the 4KLoC
+goal is probably unrealistic for a functional driver.
+
+Is it valid to submit a non-functional kernel module and make it functional
+with follow-up submissions? For example:
+Submission 1: TX+RX logic
+Submission 2: Device management infrastructure
+Submission 3: PCI device registration and netdev creation
+
+
+Some initial submission cases we studied before our submission:
+
+Amazon/ena: 10858 insertions
+https://lore.kernel.org/netdev/1470827002-23081-1-git-send-email-netanel@ann
+apurnalabs.com/
+
+Microsoft/mana: 6168 insertions
+https://lore.kernel.org/netdev/20210416060705.21998-1-decui@microsoft.com/
+
+Huawei/hinic: 12728 insertions
+https://lore.kernel.org/netdev/cover.1503330613.git.aviad.krawczyk@huawei.co
+m/
+
 
 
