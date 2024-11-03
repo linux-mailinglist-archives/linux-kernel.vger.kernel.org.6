@@ -1,71 +1,75 @@
-Return-Path: <linux-kernel+bounces-393697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744859BA42D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 06:36:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182459BA438
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 06:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ECF41C20ACA
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:36:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 906CDB22F9B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E2E140E5F;
-	Sun,  3 Nov 2024 05:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763A113B791;
+	Sun,  3 Nov 2024 05:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I/WvoT5I"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NT3JSrWr"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971C57080C
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 05:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D682572;
+	Sun,  3 Nov 2024 05:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730612179; cv=none; b=MgS9PZnRsZqoR8Y6kXzMFtB8f56lIecFBMVNNfneQdoKJ6ZShtYifF5MbQcYxrJWlJciqGpaPcZSH+b4JZO1f3AP+0VIv7C4PuhsK9JSeiNQ24FDN32LBropYgiuF2ii2/zTaB92GesnZ1u1ExuYfqqtID4WtKXgi578kZlqHc8=
+	t=1730613505; cv=none; b=K/kpNsrrm3ZzsUSxxFaVp3yMv/sG4fOBzw8I1/TuMGj1AB4+XcqLIQqzwiowHGyLxByGSY77Rnkr3cEOoRxzvS7iiz9KPxf6DTTURq5JJktyFJ4QdsPCm8svNTHTv0CDc5FkfGXaEaWRE7V8riD5b5MTKX8iMivPg30ymYrvP68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730612179; c=relaxed/simple;
-	bh=drngokPcHyJ/DKnypVr5TgvXbuYzJIMa2bww5ktjvoI=;
+	s=arc-20240116; t=1730613505; c=relaxed/simple;
+	bh=C9GjAaOP6UztdlVEcTxHc6zkxCN2sPtijfriqpONP0U=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MEBkinlPBexsR+pDJcUAsBIPRcqXLhq1qmJZS/YpEDdALJfEb+h718Q1LHzpYp6Vwuxqbezfm+iG0JAzEg2PaWVF7GmVU8nplr1IrWlVMTPG+VC06yQAGsj9+6/suPOak3Nl/uu4vQj1QAfm50xY7Xn49Ncv8xLRC4LQ/kBEaI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I/WvoT5I; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730612177; x=1762148177;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=drngokPcHyJ/DKnypVr5TgvXbuYzJIMa2bww5ktjvoI=;
-  b=I/WvoT5IQw7fKGsqZ+U5lhWukYvC2n9vrAfLLD1e2yW1EHF908MSeYsM
-   CSgLuHoXT4Mf61xGTQDYjBnrSAZA8blZ2y/VxNCB+USebUAFDK9EOmhD4
-   cNnHO0Slmqp+KmNMMAOLvH9XYM8UB4IPEgH5kkJFrJsZLkZM5ObZZrBYX
-   bg8mJaPFBH0RvRo9zBBG6kIHHgG72UJmmPe6+vbskeMZDoQRGOtLYwQeH
-   FVFSpkLK8DJcGZ7bjTKkkGufu7Yig6SufpCjpalbU7ydcToJA6sVQCdW7
-   x7f1ldfvZ2bUkC1dOvXlBeNnxyKwAiD3eqVw6GviwYnwWE8bL7DwRE2Is
-   g==;
-X-CSE-ConnectionGUID: P0a7olTLRCegfdv6049UjQ==
-X-CSE-MsgGUID: MrkHDZQcSFOe9G4LpKCNqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11244"; a="34116948"
-X-IronPort-AV: E=Sophos;i="6.11,254,1725346800"; 
-   d="scan'208";a="34116948"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 22:36:16 -0700
-X-CSE-ConnectionGUID: 4qqVa/XwRHuClCfa1LF1cA==
-X-CSE-MsgGUID: IjZdVWprSCyaT7jDRFMLYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,254,1725346800"; 
-   d="scan'208";a="106667127"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 02 Nov 2024 22:36:15 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t7THY-000jjF-2N;
-	Sun, 03 Nov 2024 05:36:12 +0000
-Date: Sun, 3 Nov 2024 13:35:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: fs/bcachefs/journal.c:884:17: sparse: sparse: cast to non-scalar
-Message-ID: <202411031315.IurXMwtn-lkp@intel.com>
+	 Content-Disposition; b=f2gg0Bc/FisNP6+9HIR6qu6+BRl2vevJNqtMRc8Xvje26GFn3HS3R8beSXYDNJeMCMg2ISSdyR7679WPh29thuXizW33Shd99/v5p3ox0Y0zHLh94hLqU3ApFLGhr4v+Lrj6d+iFPDPC1eU//1RTYdMeJ5Q5RAWL65gadgOP7IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NT3JSrWr; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea76a12c32so2418644a12.1;
+        Sat, 02 Nov 2024 22:58:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730613504; x=1731218304; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aZiZQiNeawMYZeiuugM3AEghyf/eHluaA2VKO8c6yb8=;
+        b=NT3JSrWrlRB1op3eV3bHZLn2a9Qz6Xx5KfzYF3sbGfTTBo82IPzVv3jyIVkfCkm4Vh
+         VYnbANtR6D0rizJlVBicnIA+g2hH8uRMDZEf6uDhF2ivRovf2DC1oH/FR/NMdfLX0E/u
+         j1Uk8rh/d3samgz8UjIWpCkIQwE8L1CoLvQCGo2CqWFzqybA74FTSnEGvs8c27hjYBNe
+         QmmfbMIqBye+MZnuyjrByw1YjU7z5yKRlt1XX+3xe3Dex/fYeGvC9TjXtV9W2B09zZ6U
+         OWCgJwY05nJd/dF15kZTjl9pFtsr16Mf5Q/Xrflhuwa5aJCGLMRZHH6JOUJlBIvwZq9W
+         AFXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730613504; x=1731218304;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aZiZQiNeawMYZeiuugM3AEghyf/eHluaA2VKO8c6yb8=;
+        b=wcf/ZGe3348s/eHt6tCSBH8n+FJJpJtpcM9J0zSx2kpoyrQep8UWkxlUJwwoc3Zrty
+         zVe7GqpD+d5iSEDkestWBZ/K+y517OILci3OtMLaLjB6x1xxCLXrxyssj4/GUKJbkQ1D
+         r9EXCD/e/kJnaPzamdlCaWsuVKRtwu50yENmCCrio5HjgWPxG5VUnhlTjjZytWuYk4li
+         yrbyodOr1zoB+aMCB86QaMQpBT4y62DPOE24FoExRTSQK0W1XuaGKwSY1o9OlGOhx5dH
+         tQ8dk02syJGOe6ZD7NVpLT1bpMqb2gJ2c9ZqLUzXSG1G7NsZ3fJiswFLKazOZjnTS8JB
+         LFsw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5cgfE9Xi4sTHdm+56cpE3LkYsVzgqe4rdgPciKwZ29XiGDiIXowYxeZkMacAdG6yQBi6k4GSN8OM/pA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YztzItNKpTsVg7cLluzJAQ3PNZkPP3N6jM6wtujMBZtTNeJ7M68
+	0gl3OqFFEoViLN9gCMteFBTWbnBhKZYm8kBj7IHArDB/1XPTKCBXFoHU3g==
+X-Google-Smtp-Source: AGHT+IGnzTUK7gqg6Bz6abJCuqsoQwrR+2Y3TbxUmuRP3GSO0Rzw1YALvO+xY+gOv3Oy3R0xE3m6UA==
+X-Received: by 2002:a17:90b:4ec3:b0:2e2:de72:2b76 with SMTP id 98e67ed59e1d1-2e93c14fdb4mr16581943a91.16.1730613503727;
+        Sat, 02 Nov 2024 22:58:23 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:a7f1:ec91:2b04:b29a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93da983f9sm5244025a91.5.2024.11.02.22.58.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Nov 2024 22:58:23 -0700 (PDT)
+Date: Sat, 2 Nov 2024 22:58:20 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [git pull] Input updates for v6.12-rc5
+Message-ID: <ZycQ_DEua83lHubu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,62 +79,43 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   11066801dd4b7c4d75fce65c812723a80c1481ae
-commit: 1c6fdbd8f2465ddfb73a01ec620cbf3d14044e1a bcachefs: Initial commit
-date:   1 year ago
-config: arm64-randconfig-r122-20241102 (https://download.01.org/0day-ci/archive/20241103/202411031315.IurXMwtn-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
-reproduce: (https://download.01.org/0day-ci/archive/20241103/202411031315.IurXMwtn-lkp@intel.com/reproduce)
+Hi Linus,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411031315.IurXMwtn-lkp@intel.com/
+Please pull from:
 
-sparse warnings: (new ones prefixed by >>)
-   fs/bcachefs/journal.c: note: in included file (through fs/bcachefs/bcachefs.h):
-   fs/bcachefs/bcachefs_format.h:1022:42: sparse: sparse: array of flexible structures
->> fs/bcachefs/journal.c:884:17: sparse: sparse: cast to non-scalar
->> fs/bcachefs/journal.c:884:17: sparse: sparse: cast from non-scalar
-   fs/bcachefs/journal.c:150:9: sparse: sparse: context imbalance in 'journal_buf_switch' - unexpected unlock
-   fs/bcachefs/journal.c:271:13: sparse: sparse: context imbalance in 'journal_flush_write' - wrong count at exit
-   fs/bcachefs/journal.c:329:35: sparse: sparse: context imbalance in '__journal_res_get' - different lock contexts for basic block
-   fs/bcachefs/journal.c:509:6: sparse: sparse: context imbalance in 'bch2_journal_flush_seq_async' - different lock contexts for basic block
-   fs/bcachefs/journal.c:570:12: sparse: sparse: context imbalance in 'journal_seq_flushed' - different lock contexts for basic block
-   fs/bcachefs/journal.c: note: in included file (through arch/arm64/include/asm/smp.h, include/linux/smp.h, include/linux/lockdep.h, ...):
-   arch/arm64/include/asm/percpu.h:127:1: sparse: sparse: cast truncates bits from constant value (ffffffff becomes ff)
-   arch/arm64/include/asm/percpu.h:127:1: sparse: sparse: cast truncates bits from constant value (ffffffff becomes ffff)
-   arch/arm64/include/asm/percpu.h:127:1: sparse: sparse: cast truncates bits from constant value (ffffffff becomes ff)
-   arch/arm64/include/asm/percpu.h:127:1: sparse: sparse: cast truncates bits from constant value (ffffffff becomes ffff)
-   arch/arm64/include/asm/percpu.h:127:1: sparse: sparse: cast truncates bits from constant value (ffffffff becomes ff)
-   arch/arm64/include/asm/percpu.h:127:1: sparse: sparse: cast truncates bits from constant value (ffffffff becomes ffff)
-   arch/arm64/include/asm/percpu.h:127:1: sparse: sparse: cast truncates bits from constant value (ffffffff becomes ff)
-   arch/arm64/include/asm/percpu.h:127:1: sparse: sparse: cast truncates bits from constant value (ffffffff becomes ffff)
-   fs/bcachefs/journal.c:797:17: sparse: sparse: context imbalance in '__bch2_set_nr_journal_buckets' - different lock contexts for basic block
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.12-rc5
 
-vim +884 fs/bcachefs/journal.c
+to receive updates for the input subsystem. You will get:
 
-   876	
-   877	static bool bch2_journal_writing_to_device(struct journal *j, unsigned dev_idx)
-   878	{
-   879		union journal_res_state state;
-   880		struct journal_buf *w;
-   881		bool ret;
-   882	
-   883		spin_lock(&j->lock);
- > 884		state = READ_ONCE(j->reservations);
-   885		w = j->buf + !state.idx;
-   886	
-   887		ret = state.prev_buf_unwritten &&
-   888			bch2_extent_has_device(bkey_i_to_s_c_extent(&w->key), dev_idx);
-   889		spin_unlock(&j->lock);
-   890	
-   891		return ret;
-   892	}
-   893	
+- a fix for regression in input core introduced in 6.11 preventing
+  re-registering input handlers
+
+- a fix for adp5588-keys driver tyring to disable interrupt 0 at suspend
+  when devices is used without interrupt
+
+- a fix for edt-ft5x06 to stop leaking regmap structure when probing
+  fails and to make sure it is not released too early on removal.
+
+Changelog:
+---------
+
+Dmitry Torokhov (3):
+      Input: edt-ft5x06 - fix regmap leak when probe fails
+      Input: adp5588-keys - do not try to disable interrupt 0
+      Input: fix regression when re-registering input handlers
+
+Diffstat:
+--------
+
+ drivers/input/input.c                  | 134 ++++++++++++++++++---------------
+ drivers/input/keyboard/adp5588-keys.c  |   6 +-
+ drivers/input/touchscreen/edt-ft5x06.c |  19 ++++-
+ include/linux/input.h                  |  10 ++-
+ 4 files changed, 104 insertions(+), 65 deletions(-)
+
+Thanks.
+
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dmitry
 
