@@ -1,160 +1,110 @@
-Return-Path: <linux-kernel+bounces-393810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEAC99BA57D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:57:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F91C9BA585
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4DA3281D2B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60E5C2818A0
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52B816E86F;
-	Sun,  3 Nov 2024 12:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3904F16E86F;
+	Sun,  3 Nov 2024 13:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oz0cuCDk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="jqDWBJe/"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460DA3C6BA;
-	Sun,  3 Nov 2024 12:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16346175D37;
+	Sun,  3 Nov 2024 13:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730638621; cv=none; b=Ax3iZPzoKrCLKu5d24Fa1CQWQe6QAzQm/6YioTZHUxO848tviDwc355qw1uupHlp8aMhwHgMspdST2D1AfocnwgieLsaPf15l09qFqxGK9j09soKbCBx+DPoc9LD3DSUGT+mx1/1uqMawc2z6bbPqk052iUC96ehFGsRCgA4hss=
+	t=1730639060; cv=none; b=D08DXNO+1Ahj9rVinjLRVo/GClRSc2EcGWxc+I94VvB5bkm8h7mpPE5O3oEeSaJeN8QPfCTPbXRvIuE7tKXaNd1T5EJRuqqDQbqOEAOzmDBxrKK5HxsA3MJI/IMYUq5WcPUUsBhosNxnx8Z7+Ot+Tf6HPH9yGu5+zXuhQCjDHRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730638621; c=relaxed/simple;
-	bh=Ulo7nuPhsWAYT2Z4MZtXMIUNzaBvaVQ+PLkPkw/w3Vc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RgtVQBwPvLB3/jjrpkWPK8gOYypOK1IO0k1OA6dJZriyKqbg5ERuZKuoTzjJBumDCbzFditoVEwW4X222CNy+Xn8mHAo7f9WsL6hzL7F2a1uVXV6HH451Oa7/KGykxLdaAJ3Ifb0Lrxa11MXxYmHWn6RIhFViZhpb5OxIeUKi4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oz0cuCDk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD3CC4CED5;
-	Sun,  3 Nov 2024 12:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730638621;
-	bh=Ulo7nuPhsWAYT2Z4MZtXMIUNzaBvaVQ+PLkPkw/w3Vc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Oz0cuCDkAZFXhDfxaZdIElFslhXlBDHk2po/BLBB4gkgbe1fyrgy0BM8oSnouO5Jx
-	 KrNPwfWe2gVjoSqbmEqbZz0VpjaT9ZQZzDkCr/GZTU6OSbWySvEGZP5R/CCGY0A26q
-	 I5gF66IDDhMesJPtZClI2Mb7oiwVp/NIAlDOW1pG/DFmQGkrhV2dLn5dEWgCJMHqjo
-	 86KXSR7R2a6oAXyWT0QOIZulbHnA9KhzISFMPlW43f20fLBuen0uznYl+xYUD6pMFa
-	 /7alCHeYa1cX8HpKsX8qY9LzUcVDM80maH+MZ0CzIERJDbGqhUcWOkderP08UDvxeF
-	 0z+5697E0jdaQ==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb470a8b27so40003501fa.1;
-        Sun, 03 Nov 2024 04:57:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXI8uSwEw0FGI/R/m8+ZSmXFSX/7lJePK3lG+smnwYoy27oWFYXDXmOaPd0dJI9hPPnuf4VRkTAJiQpBSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUcBOB47C7Ie9jVYEmaDKlllW7Ig/rCiIQV278j0saqLHNIlpE
-	cGcOXtmuvuf/fzEtZYu1r0iQSCeqHec4JkvIGi6KpJ1M/ZxVmkW9/b7dTlbx02nqba2hRdxJ76j
-	wZaSM5q5WJHFNbF5a9cCkc3H9y6g=
-X-Google-Smtp-Source: AGHT+IF06ebLEarwXDoKFppSamZPRLpZjX3Vu4ACQhXUqkAtck63Coa7NSwE2kFzu1rTbxRjEj4C8KRp8Xpjw9qbX5k=
-X-Received: by 2002:a2e:bd12:0:b0:2fb:579a:fff with SMTP id
- 38308e7fff4ca-2fedb3ed34amr32403311fa.8.1730638619693; Sun, 03 Nov 2024
- 04:56:59 -0800 (PST)
+	s=arc-20240116; t=1730639060; c=relaxed/simple;
+	bh=sMajPi2Q7jQgrlRJ760ebRnaLlA1VcSfXoRwLl40qZo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J+oECq5dbl81xgjDdte8Hkcu9OUm7QvHJfG6jjJ/rPzIRrFfJIUjOqBl9ni8KxoIxqZEYvzthXSBgv5EAgJ2nkT3hV+j7q3s9XyTVR37w0mFzvd9gLJrHKpE0zvP7EkOdPTVZM6sQwJMgis60RlQ034fGLnsLdc1TLPvdwHj9m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=jqDWBJe/; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1730638906;
+	bh=1qs2YNwrRDZd4pch8nMQXHdJPqYYqE9eYDk77el7hbs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=jqDWBJe/dxPxXYdHD5AElj3kn7YFCRBKCPkyb8+JwNdwMXL4xXII9Jct3XxOnnA0u
+	 IVLFDp0JH5a5l3HXGxeJpvAklgRIng0LH733B50Es76TF8YpT+v0dnLwUAkF8fda5I
+	 5VZGLBL5+3moaHbQU52pdtcynmrEfZD0oaNU59fc=
+X-QQ-mid: bizesmtpip4t1730638850tns42c7
+X-QQ-Originating-IP: KRc8glwjaLwZLZu8e37iGraP3Gm377rGjMkOL4iqbXQ=
+Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sun, 03 Nov 2024 21:00:47 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6984051475002243690
+From: WangYuli <wangyuli@uniontech.com>
+To: tsbogend@alpha.franken.de,
+	wangyuli@uniontech.com,
+	dhowells@redhat.com,
+	jlayton@kernel.org
+Cc: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	jiaxun.yang@flygoat.com,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com,
+	xuerpeng@uniontech.com,
+	maqianga@uniontech.com,
+	baimingcong@uniontech.com
+Subject: [PATCH 0/2] MIPS: loongson3_defconfig: Enable blk_dev_nvme by default
+Date: Sun,  3 Nov 2024 21:00:03 +0800
+Message-ID: <324362BC443F16F8+cover.1730638429.git.wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241103124824.943659-1-masahiroy@kernel.org>
-In-Reply-To: <20241103124824.943659-1-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 3 Nov 2024 21:56:23 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASW1jrO-hENgbZS1QGiZcGeAFwOwZY6M6cAx6tafOfhqQ@mail.gmail.com>
-Message-ID: <CAK7LNASW1jrO-hENgbZS1QGiZcGeAFwOwZY6M6cAx6tafOfhqQ@mail.gmail.com>
-Subject: Re: [PATCH] modpost: fix acpi MODULE_DEVICE_TABLE built with
- mismatched endianness
-To: linux-kbuild@vger.kernel.org
-Cc: Hanjun Guo <guohanjun@huawei.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	"Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OfdzfOk+3eWlSkDEdcSZKNtYkMhlTCIDfGzaBDTUIn4oK8VUAhMFp0Nb
+	FSAbMGlCbOmCe1Sk0boFOO8rJQ9G49ie//5VaW6PkQMvrmR8yQ9PNLXplTyYzinf2CBE+Xm
+	F/ajzMof9FZ9yLP4yD3A4pFYDvCgfZIGu/cYd1Uk2BqvThvapS5yZ4XdKf3uHecN4KlKeg1
+	5gxeWQ1Wke4CdyULshlCUP5Z32KLBzNnxGCqJpxNoC7L/QhZeHm0iotsaciPJ+ixW9EnSQJ
+	nszYX+JrLpetqRnlCWKlkXRuTsirO9m8viOxypE3heEg+RdasrJATOrHyEeEdQfGbb1lUeJ
+	15pbe5CMOvDcVQ/jw0Q00MATqclblxyHai1Ls5xRsxWIP284mghw/WrLBPL7g4Nbme9xAzi
+	b7WMy61jZM8hTj/co1CxTJSNrPrAkjuDY+PECMFhy8XtoZhQ7IfsSUOzN/vTQIyJPJ7aaHa
+	76FyYNlVS0Fg8mOER9qbZLFZT5W5tMsirDXsI9X1HO541Mu0dbCeqfuHPsXISKfNfXS6yi6
+	l9aOvgy5GG0hF1DPVOWJkPAfFSXwUBCkhE3RJnGojWaXAdObthqby1lOcd5y8hThFoHDEZf
+	5HhqKTarOhr5bpic8cFtauwzxo5TkTtsRiXr8iB46v6vFfWI4wH3G/6ASlA5zcHI7ZH0rRL
+	iv8WyFoSTSyw3RcWarqpYFCD++CA/YfYmrYqMqg3DfTdj75M2NvuX7YAdHdfXPTalrAq+hU
+	+L0TrGofsxXKCEi1kGWqNDn6kBZnpJ/efOA6lI1ldWzBq//CjK3QPxsFfl2zzEELAWW6DqE
+	R+Nxjc9mQ6DfKyc+puFVp5tsspIFXZERi0FhHZHPrpL2n9rCUTS+wOaLy+/fC2/1WAD3gE0
+	HPVaniBnO0rOiC5MQPFnyu/iq7Zofo8+1xXKZ/eXuV7kehG4TPsbQRQgNdlYZwuY0yRX5bg
+	dpXjx64LzlGfGYi4BnNmdF9nMz3T76CECHikd7MdLKKPy+WsGPaSuhr91F7RBsMTBlhz4CU
+	iwwEByF6zUyXtXrZ1HHsYPzzYvgdNFY7Fd1/aHt0h5CVe/nLnh8mdd8eEylnbstKpqyJt2H
+	g==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-On Sun, Nov 3, 2024 at 9:48=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.or=
-g> wrote:
->
-> When CONFIG_SATA_AHCI_PLATFORM=3Dm, modpost outputs incorect MODULE_ALIAS=
-()
-> if the endianness of the target and the build machine do not match.
->
-> When the endianness of the target kernel and the build machine match,
-> the output is correct:
->
->   $ grep 'MODULE_ALIAS("acpi' drivers/ata/ahci_platform.mod.c
->   MODULE_ALIAS("acpi*:APMC0D33:*");
->   MODULE_ALIAS("acpi*:010601:*");
->
-> However, when building a little-endian kernel on a big-endian machine
-> (or vice versa), the output is incorrect:
->
->   $ grep 'MODULE_ALIAS("acpi' drivers/ata/ahci_platform.mod.c
->   MODULE_ALIAS("acpi*:APMC0D33:*");
->   MODULE_ALIAS("acpi*:0601??:*");
->
-> The 'cls' and 'cls_msk' fields are 32-bit.
->
-> DEF_FIELD() must be used instead of DEF_FIELD_ALIAS() to correctly handle
+A significant number of 3A4000 machines come with NVMe drives
+pre-installed, so we should support it in its defconfig.
 
-This is a typo:
+To avoid confusion, update defconfig beforehand.
 
- DEF_FIELD_ALIAS() -> DEF_FIELD_ADDR()
+WangYuli (2):
+  MIPS: loongson3_defconfig: Update configs dependencies
+  MIPS: loongson3_defconfig: Enable blk_dev_nvme by default
 
+ arch/mips/configs/loongson3_defconfig | 32 ++++++++-------------------
+ 1 file changed, 9 insertions(+), 23 deletions(-)
 
+-- 
+2.45.2
 
-> endianness of these 32-bit fields.
->
-> The check 'if (cls)' was unnecessary; it never became NULL, as it was the
-> pointer to 'symval' plus the offset to the 'cls' field.
->
-> Fixes: 26095a01d359 ("ACPI / scan: Add support for ACPI _CLS device match=
-ing")
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->
->  scripts/mod/file2alias.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-> index 99dce93a4188..16154449dde1 100644
-> --- a/scripts/mod/file2alias.c
-> +++ b/scripts/mod/file2alias.c
-> @@ -567,12 +567,12 @@ static int do_acpi_entry(const char *filename,
->                         void *symval, char *alias)
->  {
->         DEF_FIELD_ADDR(symval, acpi_device_id, id);
-> -       DEF_FIELD_ADDR(symval, acpi_device_id, cls);
-> -       DEF_FIELD_ADDR(symval, acpi_device_id, cls_msk);
-> +       DEF_FIELD(symval, acpi_device_id, cls);
-> +       DEF_FIELD(symval, acpi_device_id, cls_msk);
->
->         if (id && strlen((const char *)*id))
->                 sprintf(alias, "acpi*:%s:*", *id);
-> -       else if (cls) {
-> +       else {
->                 int i, byte_shift, cnt =3D 0;
->                 unsigned int msk;
->
-> @@ -580,10 +580,10 @@ static int do_acpi_entry(const char *filename,
->                 cnt =3D 6;
->                 for (i =3D 1; i <=3D 3; i++) {
->                         byte_shift =3D 8 * (3-i);
-> -                       msk =3D (*cls_msk >> byte_shift) & 0xFF;
-> +                       msk =3D (cls_msk >> byte_shift) & 0xFF;
->                         if (msk)
->                                 sprintf(&alias[cnt], "%02x",
-> -                                       (*cls >> byte_shift) & 0xFF);
-> +                                       (cls >> byte_shift) & 0xFF);
->                         else
->                                 sprintf(&alias[cnt], "??");
->                         cnt +=3D 2;
-> --
-> 2.43.0
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
