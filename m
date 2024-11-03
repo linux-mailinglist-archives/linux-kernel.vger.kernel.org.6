@@ -1,116 +1,197 @@
-Return-Path: <linux-kernel+bounces-393846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61CF9BA62D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:01:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2459BA63D
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA161F211A0
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:01:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4981EB20C9E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E689517DE15;
-	Sun,  3 Nov 2024 15:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5FF184522;
+	Sun,  3 Nov 2024 15:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0XX4ozx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qy8gOKmM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D89171E6E;
-	Sun,  3 Nov 2024 15:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DD1C2FB;
+	Sun,  3 Nov 2024 15:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730646106; cv=none; b=MZ1Putv58w8ozHt6sT73Msd4zUJCGH6dkdSShw+dqybJoMY81IcScyeZUht3NZayfOc+WipRj6+vZv3Zby7Qrmkg+zS37BjgvKalBhf9/+XTquTjSsc3ae262FDELPrqjGm0re3XoIP6vDhGAs8QxJ/eU+xYtYZ48PMLMKCbLSI=
+	t=1730646222; cv=none; b=RmaKcZOsZ9uRKOmEZJ8ImKD74jkmbAXT/3q8n0uGLOOH6Psy9gfzInr+AbI1WH8Brm3HZarWKBwvKH+PFBOwFeZgCYnU5eiezg8QwROa9h3Z6krDyLm2VvP/B9mrwhDiMmaiUlX44H1//fste2pGXPvYE7rbA8bzlTXO8oON8To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730646106; c=relaxed/simple;
-	bh=ATqZN/kUTCmT9mOr3mnM789HutjM8B0bW3ICfRBWggs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hnOkYX/hi9Rhl1CkWEwSmG5rmCLlXWe8p7R6twz9qtslnD4q/xdXKoFap26prHmOGkqJY6MfnmW7bX1YbrxNSSrBEGjBagkziJMjsnFCKruL+kUlE3AomtBcfHBLGvb1MBZLmYLmHjKqnbcv4Kw/NWisxLT1080KbqWjhOFDc1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0XX4ozx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0FF3C4AF0D;
-	Sun,  3 Nov 2024 15:01:45 +0000 (UTC)
+	s=arc-20240116; t=1730646222; c=relaxed/simple;
+	bh=563EfkE5D0QNLDN9RLp0kZKWZbAwx5LWLn3gA89ZDCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hziOWCEHs1xCrVT25uJTwW9Sgyus+rrtAXPi4PqFyjEbu8iUCHErsXQcTrcsKn40mh26qAKjgHeN1wdo2Ze8a7xUbM9Id3/IvOqboLsTBzTAe9cfkUE3nm1DQiPa2yP3a+3nYjcd18DaEBBVL4x6p9bfag2AuOzlv6a450f3sPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qy8gOKmM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB12EC4CECD;
+	Sun,  3 Nov 2024 15:03:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730646105;
-	bh=ATqZN/kUTCmT9mOr3mnM789HutjM8B0bW3ICfRBWggs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=F0XX4ozxB4gXQ2NnPdK6+MytrJNTNCH1WUAZ/0u2u3dC1mJ+7IqVcgxjHiI3wCun0
-	 0tzEEr0y23zu6HwLMTKpoRdUFoFBqoScyjN8EsHsQI1+6+pPdEC4V4ATLD8NjcifB0
-	 eXAjXc/w77G9Jvr6HAzn20xbKTc3MguR1cGa4XcuFO0U5R85gOHRFws43Z/L4KsemZ
-	 Z/VOYL4rdkiQvGqIxA9y50TG0nO7dZsFo802n7ZwTSbE+logmqjIkyhEh/Lcj4Fs7Y
-	 mFfp62sWWW0EEmzbFMlZ4oZGnsbVTcbFFYgSV5yGnZ0ReCCcWBzWilGStDWOI+HcVJ
-	 b6oqw4nh2IC2A==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so43001911fa.0;
-        Sun, 03 Nov 2024 07:01:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW7XtYErsQ5DYfSQ7myUII64RB5B4yZY0QZ8DMgX7Yfifo+ZYSTYGmN5YIRUysD/PZ5/QBAlOw01B03U0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhptKGa3m6LKsPia8pk8XxllIIqW0VG8MEXSNgEckF7W44mbSn
-	XRwIN9jcVpxnhPJPlKCROPJaHGTHCmE+XdgDyu5fVN+c+KZw4PNY4S+/JnNPESwwMhHjTnnvji0
-	2O0J/XEZAretfNN0doD45c/llJZU=
-X-Google-Smtp-Source: AGHT+IEmBDStAkKB9WMq27czYGT0oy8tg98TQOevCXh0nKTfBAYJKSLn9ohyJ4UmzbATKlndmaoIOrYsfR13Agh1PYU=
-X-Received: by 2002:a2e:a983:0:b0:2fb:5d19:4689 with SMTP id
- 38308e7fff4ca-2fedb3c5ff9mr30961691fa.1.1730646104481; Sun, 03 Nov 2024
- 07:01:44 -0800 (PST)
+	s=k20201202; t=1730646221;
+	bh=563EfkE5D0QNLDN9RLp0kZKWZbAwx5LWLn3gA89ZDCk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Qy8gOKmMxEPwCYBx5xJgYEuqXaFBWZoeFhihwMlG0nJLISo/ynHbP/XHe1kkbVijj
+	 L+VjC3xqq0QIbPRWAtj3TBf/jMJvnE6Xu73jUwiJKd8cbpNEy12h9edJJ1xGV4CE5R
+	 YWhGr2inXn9zIKScw18blnRbSwnW6HoI4roiDeae+gto1nTIqxUGYQ+VKGg6YEo/KT
+	 EkfYmQgj+N7go4j1tOOZv9yBXc7/73d2gG/FlY56CIbbViyL1ljdffwaKgijVxB2uf
+	 yDCdYmJiVonyR3wdDFG1l6hTnRst0q3+NP3MqUolk7tNLKQ1usq4vPkJgVdeWtLWGa
+	 craUhhQ0Il6cA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 6454ECE0F53; Sun,  3 Nov 2024 07:03:41 -0800 (PST)
+Date: Sun, 3 Nov 2024 07:03:41 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
+	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-mm@kvack.org,
+	sfr@canb.auug.org.au, longman@redhat.com, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+	akpm@linux-foundation.org, Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] scftorture: Use workqueue to free scf_check
+Message-ID: <88694240-1eea-4f4c-bb7b-80de25f252e7@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <ZyUxBr5Umbc9odcH@boqun-archlinux>
+ <20241101195438.1658633-1-boqun.feng@gmail.com>
+ <37c2ad76-37d1-44da-9532-65d67e849bba@paulmck-laptop>
+ <ZybviLZqjw_VYg8A@Boquns-Mac-mini.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241103124824.943659-1-masahiroy@kernel.org> <CAK7LNASW1jrO-hENgbZS1QGiZcGeAFwOwZY6M6cAx6tafOfhqQ@mail.gmail.com>
-In-Reply-To: <CAK7LNASW1jrO-hENgbZS1QGiZcGeAFwOwZY6M6cAx6tafOfhqQ@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 4 Nov 2024 00:01:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATz0nOKoZFeFXGii=CcAJ=O+zMV44OYFe+D-CLSJ8GKew@mail.gmail.com>
-Message-ID: <CAK7LNATz0nOKoZFeFXGii=CcAJ=O+zMV44OYFe+D-CLSJ8GKew@mail.gmail.com>
-Subject: Re: [PATCH] modpost: fix acpi MODULE_DEVICE_TABLE built with
- mismatched endianness
-To: linux-kbuild@vger.kernel.org
-Cc: Hanjun Guo <guohanjun@huawei.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	"Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZybviLZqjw_VYg8A@Boquns-Mac-mini.local>
 
-On Sun, Nov 3, 2024 at 9:56=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.or=
-g> wrote:
->
-> On Sun, Nov 3, 2024 at 9:48=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
-> >
-> > When CONFIG_SATA_AHCI_PLATFORM=3Dm, modpost outputs incorect MODULE_ALI=
-AS()
-> > if the endianness of the target and the build machine do not match.
-> >
-> > When the endianness of the target kernel and the build machine match,
-> > the output is correct:
-> >
-> >   $ grep 'MODULE_ALIAS("acpi' drivers/ata/ahci_platform.mod.c
-> >   MODULE_ALIAS("acpi*:APMC0D33:*");
-> >   MODULE_ALIAS("acpi*:010601:*");
-> >
-> > However, when building a little-endian kernel on a big-endian machine
-> > (or vice versa), the output is incorrect:
-> >
-> >   $ grep 'MODULE_ALIAS("acpi' drivers/ata/ahci_platform.mod.c
-> >   MODULE_ALIAS("acpi*:APMC0D33:*");
-> >   MODULE_ALIAS("acpi*:0601??:*");
-> >
-> > The 'cls' and 'cls_msk' fields are 32-bit.
-> >
-> > DEF_FIELD() must be used instead of DEF_FIELD_ALIAS() to correctly hand=
-le
->
-> This is a typo:
->
->  DEF_FIELD_ALIAS() -> DEF_FIELD_ADDR()
->
+On Sat, Nov 02, 2024 at 08:35:36PM -0700, Boqun Feng wrote:
+> On Fri, Nov 01, 2024 at 04:35:28PM -0700, Paul E. McKenney wrote:
+> > On Fri, Nov 01, 2024 at 12:54:38PM -0700, Boqun Feng wrote:
+> > > Paul reported an invalid wait context issue in scftorture catched by
+> > > lockdep, and the cause of the issue is because scf_handler() may call
+> > > kfree() to free the struct scf_check:
+> > > 
+> > > 	static void scf_handler(void *scfc_in)
+> > >         {
+> > >         [...]
+> > >                 } else {
+> > >                         kfree(scfcp);
+> > >                 }
+> > >         }
+> > > 
+> > > (call chain anlysis from Marco Elver)
+> > > 
+> > > This is problematic because smp_call_function() uses non-threaded
+> > > interrupt and kfree() may acquire a local_lock which is a sleepable lock
+> > > on RT.
+> > > 
+> > > The general rule is: do not alloc or free memory in non-threaded
+> > > interrupt conntexts.
+> > > 
+> > > A quick fix is to use workqueue to defer the kfree(). However, this is
+> > > OK only because scftorture is test code. In general the users of
+> > > interrupts should avoid giving interrupt handlers the ownership of
+> > > objects, that is, users should handle the lifetime of objects outside
+> > > and interrupt handlers should only hold references to objects.
+> > > 
+> > > Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
+> > > Link: https://lore.kernel.org/lkml/41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop/
+> > > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > 
+> > Thank you!
+> > 
+> > I was worried that putting each kfree() into a separate workqueue handler
+> > would result in freeing not keeping up with allocation for asynchronous
+> > testing (for example, scftorture.weight_single=1), but it seems to be
+> > doing fine in early testing.
+> 
+> I shared the same worry, so it's why I added the comments before
+> queue_work() saying it's only OK because it's test code, it's certainly
+> not something recommended for general use.
+> 
+> But glad it turns out OK so far for scftorture ;-)
 
-Applied to linux-kbuild/fixes.
+That said, I have only tried a couple of memory sizes at 64 CPUs, the
+default (512M), which OOMs both with and without this fix and 7G, which
+is selected by torture.sh, which avoids OOMing either way.  It would be
+interesting to vary the memory provided between those limits and see if
+there is any difference in behavior.
 
+It avoids OOM at the default 512M at 16 CPUs.
 
+Ah, and I did not check throughput, which might have changed.  A quick
+test on my laptop says that it dropped by almost a factor of two,
+from not quite 1M invocations/s to a bit more than 500K invocations/s.
+So something more efficient does seem in order.  ;-)
 
---=20
-Best Regards
-Masahiro Yamada
+tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --configs PREEMPT --duration 30 --bootargs "scftorture.weight_single=1" --trust-make
+
+							Thanx, Paul
+
+> Regards,
+> Boqun
+> 
+> > So I have queued this in my -rcu tree for review and further testing.
+> > 
+> > 							Thanx, Paul
+> > 
+> > > ---
+> > >  kernel/scftorture.c | 14 +++++++++++++-
+> > >  1 file changed, 13 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/scftorture.c b/kernel/scftorture.c
+> > > index 44e83a646264..ab6dcc7c0116 100644
+> > > --- a/kernel/scftorture.c
+> > > +++ b/kernel/scftorture.c
+> > > @@ -127,6 +127,7 @@ static unsigned long scf_sel_totweight;
+> > >  
+> > >  // Communicate between caller and handler.
+> > >  struct scf_check {
+> > > +	struct work_struct work;
+> > >  	bool scfc_in;
+> > >  	bool scfc_out;
+> > >  	int scfc_cpu; // -1 for not _single().
+> > > @@ -252,6 +253,13 @@ static struct scf_selector *scf_sel_rand(struct torture_random_state *trsp)
+> > >  	return &scf_sel_array[0];
+> > >  }
+> > >  
+> > > +static void kfree_scf_check_work(struct work_struct *w)
+> > > +{
+> > > +	struct scf_check *scfcp = container_of(w, struct scf_check, work);
+> > > +
+> > > +	kfree(scfcp);
+> > > +}
+> > > +
+> > >  // Update statistics and occasionally burn up mass quantities of CPU time,
+> > >  // if told to do so via scftorture.longwait.  Otherwise, occasionally burn
+> > >  // a little bit.
+> > > @@ -296,7 +304,10 @@ static void scf_handler(void *scfc_in)
+> > >  		if (scfcp->scfc_rpc)
+> > >  			complete(&scfcp->scfc_completion);
+> > >  	} else {
+> > > -		kfree(scfcp);
+> > > +		// Cannot call kfree() directly, pass it to workqueue. It's OK
+> > > +		// only because this is test code, avoid this in real world
+> > > +		// usage.
+> > > +		queue_work(system_wq, &scfcp->work);
+> > >  	}
+> > >  }
+> > >  
+> > > @@ -335,6 +346,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
+> > >  			scfcp->scfc_wait = scfsp->scfs_wait;
+> > >  			scfcp->scfc_out = false;
+> > >  			scfcp->scfc_rpc = false;
+> > > +			INIT_WORK(&scfcp->work, kfree_scf_check_work);
+> > >  		}
+> > >  	}
+> > >  	switch (scfsp->scfs_prim) {
+> > > -- 
+> > > 2.45.2
+> > > 
 
