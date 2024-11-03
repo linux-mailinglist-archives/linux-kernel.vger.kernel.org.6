@@ -1,93 +1,112 @@
-Return-Path: <linux-kernel+bounces-393999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952BF9BA85C
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:44:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7EA9BA867
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFDB1C204FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EC901C20BD4
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3593118C022;
-	Sun,  3 Nov 2024 21:44:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D846418C323;
+	Sun,  3 Nov 2024 21:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mewEIfEK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6A0189BA3
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 21:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB4D7494;
+	Sun,  3 Nov 2024 21:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730670244; cv=none; b=GMsShP3ePw6Qs9rCmNe9InZmEink6ywIeQwuvPdA0W5mwlziQwe8lDDp44AGJMPvQMmcxTvmn4gYl/6GCEuCws9qcnW/nyqnCxITtFBYAtgHC7MZWox96A+fmQ2d/8gp3/SQ5Zh1Vf8q8U4vivIXAD58YeAiacMYxu+kMBVNTyc=
+	t=1730670872; cv=none; b=kPUknphpkgZB0rzbKKJzq8zH0cy2nyJtjWjvwpRsjSE0Rf+6s5h7Za/J+23a086V6/xUeRYIm+a9AqBHrWIbLAheu8bMv1a2AuYZZ4b4Ppq1+byCzassvryNLfz/ozWUEz1LBSlXXlDzSTKCFRMnlQ6jLIXP/opJIKQ9p7OzL44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730670244; c=relaxed/simple;
-	bh=zBF+GSZ7YwNI69KX7PqHEYoUS8rHRpZofDiCqhQh7zs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JitGuSSt4L0S3gxJVi2ej7XbT3l7loTO6CtrgguXKd+Ft4yyYVqFnlGSBMIZQ2IHIAv6bwGGZsQX4Ww3YWeqr7C/4/FchNSBiHX/fX4JGJQSsME3bWoCoW+fp14KlydMSVH1sUsG6iZBkZJWw/4HKp7CWXK/vy0CcRD62g5wI4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83aba93c01bso404805139f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 13:44:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730670242; x=1731275042;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nH3g9Eu+SKqvYL/+QnSsbCoqULeFX9qeqY4PZFurRu0=;
-        b=jVWGR8A2uq8VQBsMM7TBE2hx4E1QGupmGjykKtYmrExwjVatHSSN4qjmRbLYzl11kX
-         BmN6aaiXiR6IGzeadxOzN7Xq4/P+FMo0jhEVIhyZzc/UHvl+tuiFbYrlc+pbfzU0u/m4
-         UkkUPtsQKXJsm+f1NYY4Tg+Jq53CiE1xp9vUXvhVyQysFNdqRquaSvUSYcmZbfJh2rMz
-         2LbWX1Di0QmcCPROadOMY/TmQpqgKiIEst6wMDSOc5QwNlANWGgQe1S2NVnZEdNLYp+/
-         UwaKoZ9BNR9PK6PC1KNjIjMDlG3bcPbtDrAXH5dMcQw9bxswFEDu8L9kEbyGSCW058k0
-         JG2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVBypSyD9XpRLIV6nB1i6rwCPGMIsCUCPPNjBE/vCRfAQ1NbHmxmUR0AIJmQTAav2weTNuOlJYRbRo3nks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDhQA1dCDjaGYfy2FlKCPeerfQRhEl8+VbST96rQVLUzvpK/E2
-	NN5z3JY8zEmm5eJuW7r6gyrv9XeFAqARR0wVTcUq96GT+jbLECAgBRxvvtmNJdXlthLPhdXQg3W
-	KUhYP5FM/L3G6YNqJV5789tR+R2Hh+p13ZWG8jwFdNX6NetHcQ8rUK4I=
-X-Google-Smtp-Source: AGHT+IFJVqyxrCZoTiT9u5k8v+EEl2TJthYI0xfdgiwkO6ptTdgPSRRexRCdRY0mgnkrmOicDBwi7Ua5HWlxfaMuXnN0s4zw8FME
+	s=arc-20240116; t=1730670872; c=relaxed/simple;
+	bh=v9w0BxpsLDNVbOMlKTirUxvhokjy+UsTVK8rJ2/Y5jM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VEakdaAm3sUwiaPh6mDBfrioH4JIv9qfsYcquZ3yJ3jwAO8Lq2BDq01nFcZoj6y3Y1HrOu1qs0g0bKKXO1S0GTO/VDvwOkV7dNSlozP1nvOw5JR9AsiUjUSPchn+Q5rtFMHegl1A/LPaapKcKlE4vxW8vsOR1pIvFkZkI2kj+zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mewEIfEK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 657B2C4CECF;
+	Sun,  3 Nov 2024 21:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730670871;
+	bh=v9w0BxpsLDNVbOMlKTirUxvhokjy+UsTVK8rJ2/Y5jM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mewEIfEKvP3WGyLzLY3uE31CS5QORB6FotFSSb/iyU4gFkHNIoD9q7GY7d3UG30Id
+	 gRbEvsgBnFk+qcGGzvK4gR2FX0DCEeZb651Ao3BnnFD6xeGmA+TuOsnkEQvEuTv6dr
+	 oHayGrC4E/c84sDg2hc4tSuBzAkzm1SUxURWsGTtQ+OnXWiXQnsFImEjUrB+kiR+Nv
+	 V752QK/y+lJECavsXkhnqPfSJBArU1Wd3VNYDhv/hmpVhla+8Nk3wwBJpvpE1mdzOw
+	 efNeHHkZAw29pgD+LbRs9xIJGiSGtDxTe7t3xdsV/O7gmLYcSdrkVIq7lWF7ItbX+l
+	 wt4N2wZxztxSA==
+Date: Sun, 3 Nov 2024 13:54:29 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Jian Shen <shenjian15@huawei.com>, Salil Mehta
+ <salil.mehta@huawei.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Jijie Shao <shaojijie@huawei.com>, Wei Fang
+ <wei.fang@nxp.com>, Louis Peens <louis.peens@corigine.com>,
+ "justinstitt@google.com" <justinstitt@google.com>, Jacob Keller
+ <jacob.e.keller@intel.com>, Wojciech Drewek <wojciech.drewek@intel.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Hongbo Li <lihongbo22@huawei.com>,
+ Yonglong Liu <liuyonglong@huawei.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>, Ahmed Zaki <ahmed.zaki@intel.com>, Arnd
+ Bergmann <arnd@arndb.de>, Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+ Simon Horman <horms@kernel.org>, Jie Wang <wangjie125@huawei.com>, Peiyang
+ Wang <wangpeiyang1@huawei.com>, Hao Lan <lanhao@huawei.com>,
+ linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH net-next] net: hisilicon: use ethtool string helpers
+Message-ID: <20241103135429.1556ea05@kernel.org>
+In-Reply-To: <20241030220746.305924-1-rosenp@gmail.com>
+References: <20241030220746.305924-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:188d:b0:3a6:b360:c6e5 with SMTP id
- e9e14a558f8ab-3a6b360c89amr92635775ab.16.1730670242500; Sun, 03 Nov 2024
- 13:44:02 -0800 (PST)
-Date: Sun, 03 Nov 2024 13:44:02 -0800
-In-Reply-To: <6719c407.050a0220.10f4f4.01dc.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6727eea2.050a0220.35b515.01a6.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_search_slot
-From: syzbot <syzbot+3030e17bd57a73d39bd7@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, dsterba@suse.cz, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lizhi.xu@windriver.com, quwenruo.btrfs@gmx.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-syzbot has bisected this issue to:
+On Wed, 30 Oct 2024 15:07:46 -0700 Rosen Penev wrote:
+> -static void *hns3_update_strings(u8 *data, const struct hns3_stats *stats,
+> -		u32 stat_count, u32 num_tqps, const char *prefix)
+> +static void hns3_update_strings(u8 **data, const struct hns3_stats *stats,
+> +				u32 stat_count, u32 num_tqps,
+> +				const char *prefix)
+>  {
+>  #define MAX_PREFIX_SIZE (6 + 4)
 
-commit 42437a6386ffeaaf200731e73d723ea491f3fe7d
-Author: Josef Bacik <josef@toxicpanda.com>
-Date:   Fri Oct 16 15:29:18 2020 +0000
+This define can also go away
 
-    btrfs: introduce mount option rescue=ignorebadroots
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=178b4d5f980000
-start commit:   3e5e6c9900c3 Merge tag 'nfsd-6.12-3' of git://git.kernel.o..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=144b4d5f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=104b4d5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f527353e21e067e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=3030e17bd57a73d39bd7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bc8d5f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ba6b40580000
-
-Reported-by: syzbot+3030e17bd57a73d39bd7@syzkaller.appspotmail.com
-Fixes: 42437a6386ff ("btrfs: introduce mount option rescue=ignorebadroots")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> -	u32 size_left;
+>  	u32 i, j;
+> -	u32 n1;
+>  
+> -	for (i = 0; i < num_tqps; i++) {
+> -		for (j = 0; j < stat_count; j++) {
+> -			data[ETH_GSTRING_LEN - 1] = '\0';
+> -
+> -			/* first, prepend the prefix string */
+> -			n1 = scnprintf(data, MAX_PREFIX_SIZE, "%s%u_",
+> -				       prefix, i);
+> -			size_left = (ETH_GSTRING_LEN - 1) - n1;
+> -
+> -			/* now, concatenate the stats string to it */
+> -			strncat(data, stats[j].stats_string, size_left);
+> -			data += ETH_GSTRING_LEN;
+> -		}
+> -	}
+> -
+> -	return data;
+> +	for (i = 0; i < num_tqps; i++)
+> +		for (j = 0; j < stat_count; j++)
+> +			ethtool_sprintf(data, "%s%u_%s", prefix, i,
+> +					stats[j].stats_string);
+>  }
+-- 
+pw-bot: cr
 
