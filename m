@@ -1,91 +1,126 @@
-Return-Path: <linux-kernel+bounces-393731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF7759BA48B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:00:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2A89BA48E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:04:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74C2F1F2123A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 08:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56CE31C211F2
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 08:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F198D15CD58;
-	Sun,  3 Nov 2024 08:00:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BB415B13D;
+	Sun,  3 Nov 2024 08:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3ugWj83"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFACD158219
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 08:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949222628D;
+	Sun,  3 Nov 2024 08:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730620806; cv=none; b=GAX/MKZ3/KyUAaVouVi1vfyGP4B3UX6vgQAjG9GlAEg/SJc81WD6sOCDTjW7cJhz0GRZPQuT3mC3VFz4ejqtd/TPYCQDHh/96hxwX23ojAstGh5CacfPhOkzfG+2bdmo4wLCvuTnfkeOh/jOzOW568GKek8K59pK21J+MpdF4+g=
+	t=1730621036; cv=none; b=GHMAd73aXvhZd7c4xVkuSReE59be2zEwpzoGgP4qyUQAqcEmrn0UxW84hiEeSSnAlqxD+NtzCjnKdsRPAAOxvUuA+UKek7uHP9dZwJtfOZJfKzfcXFnk5pfe4dedr8+knLDjptqVJIUcIyMKdT/Gm/ghVSctDA7hW6KrU7xXJgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730620806; c=relaxed/simple;
-	bh=Lqsft7adr0COfx9QvP8i+mZOqTv8xbTJfU1ig+o6UuE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=re636BxflAPx2tqG/nZuq2J7wLQBwE2GngRPEn0KUGUjSZ7oSTZsnq3tdbeeObjsrH6o8w85qjeE6GbnJDGHoRk+C0pWFDHRv0ACvtQqbpyfo/MVeyr4fFBx8yeoG7VW5qoPzmoicklskmjOM6c7HFJgkRyDT9OIuB3rUb5GO/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c5a6c5e1so44552515ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 01:00:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730620804; x=1731225604;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dmP+HGQUwPW0ypY8esrOjnmsI7a99i7CTGI0scCwH0I=;
-        b=JJunGqtv1EsjrdTZgmpZ8MJR9TBf3f9SOO7K/kenFE+ztQZNkq0WYKxAKjQ62VEdGp
-         eC50nd/diQtIcNLOkBaIf87hEAHWezz+DeTczIiZSMXcm8if8cRDPjeMITLozUIWhd21
-         z16r6ZV3vzZRt2WmN//NS8bfKOiJf5ZVhtnPlWT/Zo4YOYGhzXu5fZREX6E9L/hSzKQC
-         iVRgmjDC1ilSPwJQnaAn+h1IlYMWBMzBJRe1UYXSx6U/9BoleaMN3SNVv9YHNHEsuJO3
-         sEpUmMLTb8twS13xH9v0IPQf0XyV5iEZwAdlklLfAkjPJ8R5YUlF04lCpTXYBXa9+Qbv
-         /CJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwCzvUWZeE8u/nnvyrcoC1SF9WefWEVaaEszXtErh3z5kWFJSWOUd4x/h5KPyzLB7T3NmepEuOkX3A8c0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/XaLzxKjWyZBAJHUKgip3blCrbHKudBJ0wcC3qp58dg7LtynU
-	aXaZ6oB0VDVM+frD+tpxrpOM3+WG783noYrN2pdc786y8zAfmaDgM6fdv3tK/yJ9YB9q79RsmHe
-	2cTG9QyCwMmKnOIUyWMMcXpjbzN78O698R/gPtoKikTXFV9vandSgILQ=
-X-Google-Smtp-Source: AGHT+IH0buP0zXdG32JSHCLOF/6Mgi+ie9pEBHNGOEtrKdJwcvzsE9Cjn15xg0v/QLD/Co46kwwx0BCzpHV46XxLmKQBIQE9CbBB
+	s=arc-20240116; t=1730621036; c=relaxed/simple;
+	bh=nvAf8GTIV/8JCsOU6Rof/enufImCxOjzOcAhet3YJlU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i66V8juhL8p35LY1Nsan/w+NOScsGRUyPadEzM/lfq29K0OQ4r5tAWN7wd8JO90pFzSTX39NktFYHPoZthsLR44iq8itHgRPid2LZn1A7CzLYcFpTkjkpVlrBRhnaI9E91UvgkxOxn+7UA98gh8ELwttwmpvEuBsux2XAg1mH4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3ugWj83; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62C45C4CECD;
+	Sun,  3 Nov 2024 08:03:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730621036;
+	bh=nvAf8GTIV/8JCsOU6Rof/enufImCxOjzOcAhet3YJlU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=t3ugWj833LmFbZhaoK5hjalJvd0m2Szc3LkmIKbY+V8VW+tylIwCWI62hPof+DPNl
+	 zu379es3B6n262LmHN6P6fCJGjBrDWdtuH4xVjD0KC6JQ5znnyMxXQGpk8rA7Bfa87
+	 XWWwJHPSkD5UlL1f/lUG4vi/zdX5uJhFQ513fWMCK6Gbzhh+ZIxd3f9HgBK+c9xvGq
+	 ByfhKUBPuSBovdG6yD6CBiSd8nXLmzuYh7yxAbSqkXFiJ7kycAZwxiCJUOL6LKNgp1
+	 iAuSlhWwqHnCR3m02fSlf3x3Q8EVWHhWQa1ckuYuewSx7DB4TupxZOPrWKwkYiFfJP
+	 unO3OsipYxnhQ==
+Message-ID: <5fc19470-dc8c-4c12-b3f5-822bac97f38c@kernel.org>
+Date: Sun, 3 Nov 2024 09:03:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d98c:0:b0:3a6:bf1a:17d2 with SMTP id
- e9e14a558f8ab-3a6bf1a1a5emr27714515ab.1.1730620803983; Sun, 03 Nov 2024
- 01:00:03 -0700 (PDT)
-Date: Sun, 03 Nov 2024 01:00:03 -0700
-In-Reply-To: <67253504.050a0220.3c8d68.08e1.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67272d83.050a0220.35b515.0198.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] general protection fault in io_sqe_buffer_register
-From: syzbot <syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] media: dt-bindings: media: camss: Add
+ qcom,msm8953-camss
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241102-camss-msm8953-v3-0-7041c9fa7a58@mainlining.org>
+ <20241102-camss-msm8953-v3-2-7041c9fa7a58@mainlining.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241102-camss-msm8953-v3-2-7041c9fa7a58@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+On 02/11/2024 23:39, Barnabás Czémán wrote:
+> Add bindings for qcom,msm8953-camss in order to support the camera
+> subsystem for MSM8953.
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 
-commit 661768085e99aad356ebc77d78ac41fd02eccbe3
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Wed Oct 30 15:51:58 2024 +0000
+Subject did not improve much. Why do you need to say twice that this is
+a media subsystem? See DT submitting patches document:
+https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst
 
-    io_uring/rsrc: get rid of the empty node and dummy_ubuf
+Best regards,
+Krzysztof
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1586e987980000
-start commit:   f9f24ca362a4 Add linux-next specific files for 20241031
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1786e987980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1386e987980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
-dashboard link: https://syzkaller.appspot.com/bug?extid=05c0f12a4d43d656817e
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15abc6f7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10eb655f980000
-
-Reported-by: syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com
-Fixes: 661768085e99 ("io_uring/rsrc: get rid of the empty node and dummy_ubuf")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
