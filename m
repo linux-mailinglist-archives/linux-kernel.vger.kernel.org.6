@@ -1,430 +1,580 @@
-Return-Path: <linux-kernel+bounces-393769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5C09BA502
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 10:50:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B523D9BA505
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:07:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E5D31C21171
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:50:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4DA1B217F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 10:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E581632F3;
-	Sun,  3 Nov 2024 09:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C816615C128;
+	Sun,  3 Nov 2024 10:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="dOzJp+mw"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2041.outbound.protection.outlook.com [40.107.20.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fkxcrduT"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9C58614E;
-	Sun,  3 Nov 2024 09:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730627408; cv=fail; b=N0Q1TH46vDsg+6BX6R1Pk9iN24nDc8ASv2gL0RtZ0OGBu12Ai5a+qcerVHGd2OLolSutpuhXFfW/GyqPqIIX/jNPXynBXdJjR8BR5I+Cvl+4l6YZmuaO6HE96kPD3HR58HmbSioTGdCh64dldxc+lhO3josu8GJ3U/YZTO2YEYg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730627408; c=relaxed/simple;
-	bh=yV6G2tasLKUakTtA6GjY14+jEjwal1f4qY8/XgmGWKo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NKcMKzC2j4E08ozm9TfzGn22vpGeb4mk3RmoDZO0bYhA0jX/QRCeejH6taTVBNv2rWr4jdDKYtC9PHCLcNs0WPZcvhCkNYVJl+IXiG0GHYc64LHlEeG56Xsga+Z1CDfIAVBjyO+SNUGlV+ZCj7V7amIdqnYYjGt1j95qjdGkKEk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=dOzJp+mw; arc=fail smtp.client-ip=40.107.20.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iVTXqh1XMVwi1eijMrzhUH22aS/3j1/5yg8FTF3JfDlxYM+sviA8PEh5KPnKLAPz+qIN9e9WRUu5esqi/7ko8Z2B0ExeSUmYO2VeObZg7v/REd/ko/E093izhaeEE0hFFZjSa1SEZpllptl3H42m+4uNALKNuE7Zg/eAkmAhGMISWq5eYIfYGP+b5DF8nDO7QlJ5jsPoyJI65jaeBO6rAT6Il6iJvjP82GKxXacjEnCRA7Jq8PZC/T2RaBZGC3L8BlPEe+uxV9Hz1Cwkd+TuunRGsYHq4A9f5q7aF9DUB0TM34SZN0izoe2O13kmIpCrrAk3K+gLNzAOiUNL2HL6rQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BR2SfInFHY9B+gWDDTVfcuHH6i9pFcH6/L8TyfJ54uI=;
- b=VCrlgv0obFSEV7yWRkoGZwwKpPlTWL0pk2HZn9ewuPjlI8XykmTizB8dehYfrERrz5IIWEQFj5AC5wXQLnYb0vGYy4Qt/ly2OgXafLrE5Qo++hnHvI+r5DCBqcZk3JkkM4bumL61afgBzkW+dQ+xweScaK/iuBfDcypzZSjAah+RTVpNXygiqFHZzt76T0++l7D68Xu6a6hQ7jmUYV6rFuYFbjNLxPk/yw5uGEh9whUFCIg7Yfbx9wZVzUomUhc6+EnNYvoH4Wwa+owjgzDHOB5MqWU1d6167m8yA0sKOEhpbdooVubjsppUfHK+LkuldzpvT1RrqkH7Opr3z+7AOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BR2SfInFHY9B+gWDDTVfcuHH6i9pFcH6/L8TyfJ54uI=;
- b=dOzJp+mwkG8DHyXIDo7zWasjkO8qHgIIa7S6rWaT+Nz5PHtp0uCx5F++EXfK6+2hhgN8nkp4dS0HwIVfAvtJXbPAhbc3Xj/mLPdRqKq2E3EzsZ930CL7f5IyOw821GUGv4k5foxRSy49VIDRLmRx0XiThPvpJrzmXKXTBXJocBeUqxTnXTSNbM2wXpdVe2chbjGvUV25dEdnpe9X5krnMZE0CqaYPKAxCqCjIu4p4MKH9vPtAvzl+9tSDG/sF+BHClajs8nmCkbEU4O0p365p0OtlKsQqKhv8wj3VSoH/pwQcMfROrcD/tPAT6C3V+4znyN18bibpHAqTtGqdoV/Ag==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by VI1PR10MB3278.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:137::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.15; Sun, 3 Nov
- 2024 09:50:03 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%5]) with mapi id 15.20.8137.014; Sun, 3 Nov 2024
- 09:50:03 +0000
-Message-ID: <4fa5b5f5-6e76-4d3f-b3b4-1e977b7d3c4a@siemens.com>
-Date: Sun, 3 Nov 2024 10:50:01 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/7] PCI: keystone: Add support for PVU-based DMA
- isolation on AM654
-To: Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, Tero Kristo <kristo@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Siddharth Vadapalli <s-vadapalli@ti.com>,
- Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
- <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Bjorn Helgaas <bhelgaas@google.com>
-References: <cover.1725901439.git.jan.kiszka@siemens.com>
- <f6ea60ec075e981a9b587b42baec33649e3f3918.1725901439.git.jan.kiszka@siemens.com>
- <3d7abd75-68a2-4232-ad8c-e874c10df1ae@ti.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <3d7abd75-68a2-4232-ad8c-e874c10df1ae@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0149.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b8::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A5A5223
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 10:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730628442; cv=none; b=THu497YnLjNIkVfOTTzCYvDQS2ypsBWd8HupsGlMxbqrPKtIRoiXwV/FpYN0rW1ohUh2OJxOj5IKhft5wGePKiqcf4zfu+iLCG0Cm82enOfTwO/1Ko6qcqZ80xZGHMqWEun/eqeBZi5oLrq4FOKSU9XmrrBPg34m8FGmcKPyhdI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730628442; c=relaxed/simple;
+	bh=vWI2G2l3mJT9aoBO2pRuALeOThFH7iMr726v4mXo5Ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7u1r9ctXJ195SBATr4YLpY5cLWbZVnh608eDz/w8tG37BV5J2s8pfsYjDVBaWfbwN0JRqIA8zcrq666zoNAoJM+TBQPka2oMCnxqyeQ43SngALtfl/YAn7i/AapthCJSeUgD09VcHuK7HOlJ2EfEHTPMhiYxGfQRWsSJVtOm38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fkxcrduT; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3174994e87.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 02:07:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730628438; x=1731233238; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dWQe9ItrzIhWtAO42n072tRbKjn0j2GHrtyPy6YwwBU=;
+        b=fkxcrduTPLJj5ItrBbGaCWmOYKwucQUFPHItB94gZnPHhT23Tp/NDuuuObUkFCKJ1x
+         IT45lp8cxDJL2Jwt3ErVoA2Kj1qmejsVDIK+XQj6oyVhRRrKJu90U44jbrPIOWVvkDN1
+         rM9Eo1ZnTE5buZb+Yp7hzI4FfxOp/xvS/tqJnXN4B6OCkWBJNkK6jde3V/gSXR/2/yr+
+         1rgAtC8hzbroo+jJPIYhiDnL263NYBxn59ZOtTW7/tjJt9zpnd/tyx0ZHea48EadJzSB
+         RLBbQY5+56yvriIOB/jcWYNnPWOG7vlKmRXoDLl+hKAaIrwptgSq6hJ19/rgxyCvX9lf
+         noAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730628438; x=1731233238;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dWQe9ItrzIhWtAO42n072tRbKjn0j2GHrtyPy6YwwBU=;
+        b=h6N9gQlXgohK1zvEw7DxIUMzX7XUQmZ+2NWtzmneY1+6dObwWwzEL/kx8grxv5ijQc
+         eJ89FufbinDeP/G+NDvDz4uDPMtC3iE4g1QXWVjNVvHIbwrwxwf5M1/f3jQ5QMny0IKK
+         +0cF6bRwH5GzZExkdblYnbE7wrKRA5/Fr3pwSJ+B41mOk70CgMmJsD3VmrdLMZ+UvynC
+         X2jHz6WY+JX54SuP9rIxBcXKcGPC7izdlsbFcd3Pu4utKjWKy9AgSKbuNxr4WU7OP8Fl
+         GNADirHJJsNCxvZuuU/Gns0VAKVsg5lvsZIkgTfjJWhZQWLa2RreoLlAWKc6w3NjRnn+
+         sECw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZze7u1WM9u1sIv5vIywVtZh9B2jNNxWfemIpsmhg8qUjM+qm2WO5Rmbs3BojIFd8clttLXofCe6F+xyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLdYc9lxmUySNc00mJcd24FFetuqDQNSkQHEjF57aPmEKrdPHm
+	W5zib8f4BUDySoR8cXVU4vENeSkrjy8yhMOftgmQ9jw+fXzNuH2qHnmqb+E7u7A=
+X-Google-Smtp-Source: AGHT+IE2KpKGDsmMmuRF/7OhW9csZPxcN02A4dTYvn/3nzuC7CwnVXJ9ycwbmaMT5zV6XyVDPWjKXQ==
+X-Received: by 2002:ac2:4a77:0:b0:53b:1ede:9174 with SMTP id 2adb3069b0e04-53c7bc1cfa7mr3138140e87.28.1730628437905;
+        Sun, 03 Nov 2024 02:07:17 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc95912sm1235083e87.14.2024.11.03.02.07.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 02:07:16 -0800 (PST)
+Date: Sun, 3 Nov 2024 12:07:13 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
+	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
+	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 drm-dp 2/4] drm/hisilicon/hibmc: add dp link moduel in
+ hibmc
+Message-ID: <75l76kvswcjaanf4c4zqyucbl56epx7ucjrr4izwnjitsiw3b7@xsnwpebuu7ea>
+References: <20241101105028.2177274-1-shiyongbang@huawei.com>
+ <20241101105028.2177274-3-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VI1PR10MB3278:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e776285-81ae-4932-dfe9-08dcfbece38d
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?KzNsWWlBeXdZcG1UUUdaYWE4bXdpUmxXT1lReDNOUG1pR2hKOFlvU05sWlVi?=
- =?utf-8?B?V3lZNFUvVVdSOTd0dDRwMmJCYWNDeXp4dnd2NjhZZFEvcjcyajhaQ09zWGtE?=
- =?utf-8?B?T2pnWklNWE9RY1F1eTFNYlpkWGNBNTVaRHIxbTRmV3ZxL1M2T1Bad0JzbXR1?=
- =?utf-8?B?aUFNU21OenZDbS9IRjVpWThoSStlc2ltcjFvWldSVWRxRXVUTDRsQVlxSmEv?=
- =?utf-8?B?WFVCVVozMkJ2VW51VFVTTVdjVXZ4UWo5YzNKZWY1Mnc3WXNuczdQRWRTRmk0?=
- =?utf-8?B?UUpCRmN3aWdQQ2ppK1lvaFpGc280UE8rR2dqQnlqZU0rVHJuWFJYMWxHVjZM?=
- =?utf-8?B?MTdSdTJYNlhaZzFITVpCZnQ0ZFRBcHZGUWJDQmhuUnM2MUZRcjkxWFVPYU9R?=
- =?utf-8?B?ZlVyc2NzYjVrZDVOYU9EVUQvR0JxMXA1cVBUQlh1c2N5M2dXdGY3ZG5VVnZV?=
- =?utf-8?B?cllHT1BEdGcxWmlZOGNaaEtwSGQ2K2RsWmtFMDk1TzFXZGZVQ2tXb1g4ZmxP?=
- =?utf-8?B?cGw3eitEZHpEVHBOZWZsc2tOOGZuWjFRaDE0QlJOLzdrT3RXNm1tQ242RFdt?=
- =?utf-8?B?eWpnMDVGN2paSHc0bTU5eWZ4Z3MwdHc0ZFBYUXcrVm9vaGh1U2Nmd1p2S0V6?=
- =?utf-8?B?blEwN1E2S2xFYm96ZHBIaUtpTUxsdkxadG05eEtaeFlaNzVPVkZXWjNmUWlP?=
- =?utf-8?B?K05tVTdzVVZKbWFHMXhrcyszU3N6TTVZWVdtVC9UWXhTWHZERWRqdHdDVll2?=
- =?utf-8?B?TFJhTTllY042dnFJYjhYT0k0NjVSNkN0ekNSYlhiUmNyRmw1U2VvWUlZczdn?=
- =?utf-8?B?b3BpR0FPTGlDWmJkK0szZkhqcW5qY0FZYTltSWJkMytsa1RPYmhJOEVYR3N3?=
- =?utf-8?B?UlVQUUpOZzVNRmxxQkw3S0NBWHB3TDhPd3RaeEE0a1BSTVh5TmRKTVh6YnAv?=
- =?utf-8?B?YStNYkl4Tzd2d1dnR1ZrSzhNV0VZczZra3RTYy9LT1EzbGhjL01xTG9iNUk5?=
- =?utf-8?B?MlFiLzFzb1pzS0V2NWIxL2xmbXFaZG1WVGlsdHZhMDZEb042aTNxa1JGM3d4?=
- =?utf-8?B?SVoweEl0bXpNZzUzektGSnV3WlRRcXlNcFdvd3JUa05lYmNzdzlETUFNQ1pp?=
- =?utf-8?B?Z0ZsTFpzdXhxVFRkN1VOMG9wYUNETFN3Z2UvenVmSkZtRnhqU1cwQ3pSeDJP?=
- =?utf-8?B?UXZKNXdKWk4zN3IzZTRhbmlDMFVWS1JPRENHb1NwOFRBd2w4aU5sM3hOQ1FW?=
- =?utf-8?B?ajFWK2RXSFZsT3RHY2puLzlnQ1BsQmM5TzNobkRLbjJVMmhFUVJrb01DYUJl?=
- =?utf-8?B?Sk1GQ004VjlXM2lwc1NFcVIxTUNjYkppWlI0dTd1L1FWRTNPNzVxL256WjdB?=
- =?utf-8?B?R2NIcGtnVHdsV0xJb0RMWXZkTUpRRGdNejFML1BXdFNab2UveXZoeTkxWkI1?=
- =?utf-8?B?TkUwTGZ2YkU5QjdUSlpxQnJpVStkRUpKSFdyTGdsSGFOMG51QkhUODFQQUVz?=
- =?utf-8?B?UlkvZVh3RkVVdVJkSDR1YzM4ME9NeTVKZXBpNVNPaE5YT1V6UmVBcTREWHlx?=
- =?utf-8?B?a1RvWTlxbzljU3c1Z1hGZ1J4VndJYWh1Q2dZbm1PcGdaK2hrK0N3OWx4NUJK?=
- =?utf-8?B?MkJlWWlKOTQyRHNNQnVEVitRQ2NCQVdCWS94RW5lcy9LdEJIWjZLT1JvblVo?=
- =?utf-8?B?SWl1NjhIMkVnWnNSd3ZWTzR0TnNmYi9FTlFsK2pPQk9aVzZHcXpuSUJHWDNj?=
- =?utf-8?Q?Z5FcquFxBKJ4+bUHuSqKhPE9/3D/XbT6wYeec4n?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Ujd3blZ1ZWYvd29RT25SK1FiTXV4WTN4QVIxVC9jQ0kyWjJ1RTlXNWZ3VDRz?=
- =?utf-8?B?QmpwN3NZdlJINE1GdjFwTXNvR01XZzJJZm81V2RpTHVCMHkvOWtSNDZDNWIw?=
- =?utf-8?B?Ym1Ob29oNkxjdVY5WkRHa2VIWUhrWHlzbEVmTFMzNVpOREZ6QkRva3dWS2w3?=
- =?utf-8?B?RE9hUzBlZVdxMFpqUjB6UmVqQ1RKb0NDS0hUWjFHb2ZQRUt1NUlDaUZESU9p?=
- =?utf-8?B?WTBVZkNUbXZhcmxlbmdLK2JhMFdtU0dscE9jc2ZYdzUwcThSUDlsNmxCTkt5?=
- =?utf-8?B?YjRIRGgzWWJ5R1VLd2tLRDhHdjFuMGp4Z0orZnpJRU5GM2pmYUc3REZjd0RI?=
- =?utf-8?B?SlErVDdGbDh6RVhiZHRCYXdCWS9mTTViSkd4WjV6dkl5Uk1RdlYyQXBLL3Ba?=
- =?utf-8?B?OFpyeGtmVjhtMWY3c2FYTkFpeHIrVE1SR2lob3J1Rnd6S2liaitJbzZ3RzZz?=
- =?utf-8?B?OFpGc29JaEpQMk1INk1xYW1aamIyWnZUNVcwaXkxVFVDQ3Q2UlFJL01UTEJR?=
- =?utf-8?B?T09Ma0kxc29odkpYZnZGelRIN1N0cVVpOUN5MkhOTXZ1NExQaUlCWDM4VHJx?=
- =?utf-8?B?TnlPUU5HTmpBeUJHR21Kb2dCRDMzb21JbzFjTTRaemY3cFY0bHZ5MC9WTWZZ?=
- =?utf-8?B?YkdRZGQ4STFKeGlMQ0ZHSWc1SVlnM3BiSGkyMk1ibFc2YmZDZ3ZicVh2WVpr?=
- =?utf-8?B?K3NzRjZZaXg5dkV2YkdoK0hTTGpBVVcwaVZieGJoa2V4ZVBBNVdrZUNEUkQy?=
- =?utf-8?B?a1M1UUkwODFKYTlpeFZaWWpFRFFrYi9EMEJUemplQmdlK2ZiYWUyanJXNUxL?=
- =?utf-8?B?NE1NcGY4c0hnSmE1bXZLZnpCTTVVbjRsZ3pNdjBRQmprVEhDUjVDMlJiWFJN?=
- =?utf-8?B?MTNBNFMwUUl2WjR1WDRUb3U5YkhWa0VGUExmT3dQU3NZYzZVdk5tQTRvRW9Q?=
- =?utf-8?B?LzBZYTRJeSs2NVRJUXJvc0tXWjFRN1U4UzVWNXJMcGlYcGZqa3ZTNkVNN2JT?=
- =?utf-8?B?SGZlTjJBdW1tY3BiT0lWM2hzeE40QXlwM3gwaXk5OVR0NUhHZlJHYjNvNk1F?=
- =?utf-8?B?NnJ6WVNVQ3luOGtucmZTZSt3dDN2NWtRcDNWbnJxZllnMkxTamlPb2VvYU5Z?=
- =?utf-8?B?cThEWVNPMlFhU1c0c01wcHBWWnQ0K0d0QVBIblhENFI5QVdWendmUkxMa2NS?=
- =?utf-8?B?YTV6TFh6WnluVG40S000bDJrd0pCbytWcjJ5bDlYWC9SODM4UGRuMnRRUm5H?=
- =?utf-8?B?UkFqTkpNTVQ2RW5FL1U4aGJqL010V3RyaERiMFZZc1BsbTl1cHAwblI0Nm5E?=
- =?utf-8?B?WU9SZkF3YnNBTWF4dXNUVWhqN1NockRRMjVLNC9CSFI2ZFFpY01PbjhFV0xt?=
- =?utf-8?B?Ly81Tzd2eTg0YVBJcDlWUFlRa2pXZmxxcmFEay9qcXgraXpYWXE4Y0pIcWFU?=
- =?utf-8?B?VkZvT0taSk85YVJMVmRVQ2JFdW9YbnRodTdYOUJpcWhzb3M3aGE5cTJ5b3A0?=
- =?utf-8?B?c3ZVbXNJMHV3UmhhOVg3dEJWek44M0h2NWhndDF0RXo3M0lFempzQ2FXYTF3?=
- =?utf-8?B?M1I1M1Ezbm14eWlleEVua2hndVFGOXBScklWTEk1QnVvTGFzTFBtMHZGRisr?=
- =?utf-8?B?djlTaXpkMDlBZ2xxc0czaHJWY2xHZTZYVEZjOFIrM1dXQVJiT1lBd1hlNUZp?=
- =?utf-8?B?TWdUYkhacFpEUVBKdjlUc3NOV1dEMmNFVTljN0EzYmR3WTRUQWdBYit6VW4x?=
- =?utf-8?B?VHRKUXNWdTQzNmRtY3JEU1drU1hRNkdPa1NhQTUrWGIzTVdrb1ZSbWVDUmJY?=
- =?utf-8?B?OEVxUllMakFvNUtTL2R2ZzZpem5MamFQU0I3Vy9BV0dqQVlBN1JZcisrbHVw?=
- =?utf-8?B?M2djMlFXTnM5bE9ZWE5GTm1oUkkzcnZZbVdqZlFZUUx0eDZEV3lWazhFNUlk?=
- =?utf-8?B?MVEyK21nUXIzWklZdjA3NFEvaWl3Zjh2OGNCOHphVzQyMFV5aWt1TFVyNEMr?=
- =?utf-8?B?TjhZK2ZEL1NpUVpBVGV3amcvU0ZVcDk5RzlLdFJad0Yxb09FR0Y1OGFkamlU?=
- =?utf-8?B?dFk4aWtncWlKR3hHT1B5OFNId1hrd3ZMZlVPRzU5ZlJSVVlVSVVNRlUwcmlQ?=
- =?utf-8?Q?4nHAhwD28gCjqi6N4uCih66rl?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e776285-81ae-4932-dfe9-08dcfbece38d
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2024 09:50:02.9865
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4bpdW8i91i74RCOuoLJyWtbxUEOW6ICTLnh9kbftvEWgHbEki1uCirsAG1xtW8qB7uuyH5MEC31Jnosjk9z2gw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3278
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101105028.2177274-3-shiyongbang@huawei.com>
 
-On 03.11.24 07:15, Vignesh Raghavendra wrote:
+On Fri, Nov 01, 2024 at 06:50:26PM +0800, Yongbang Shi wrote:
+> From: baihan li <libaihan@huawei.com>
 > 
+> Add link training process functions in this moduel.
 > 
-> On 09/09/24 22:33, Jan Kiszka wrote:
->> From: Jan Kiszka <jan.kiszka@siemens.com>
->>
->> The AM654 lacks an IOMMU, thus does not support isolating DMA requests
->> from untrusted PCI devices to selected memory regions this way. Use
->> static PVU-based protection instead. The PVU, when enabled, will only
->> accept DMA requests that address previously configured regions.
->>
->> Use the availability of a restricted-dma-pool memory region as trigger
->> and register it as valid DMA target with the PVU. In addition, enable
->> the mapping of requester IDs to VirtIDs in the PCI RC. Use only a single
->> VirtID so far, catching all devices. This may be extended later on.
->>
->> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->> ---
->> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
->> CC: "Krzysztof Wilczyński" <kw@linux.com>
->> CC: Bjorn Helgaas <bhelgaas@google.com>
->> CC: linux-pci@vger.kernel.org
->> ---
->>  drivers/pci/controller/dwc/pci-keystone.c | 108 ++++++++++++++++++++++
->>  1 file changed, 108 insertions(+)
->>
->> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
->> index 2219b1a866fa..a5954cae6d5d 100644
->> --- a/drivers/pci/controller/dwc/pci-keystone.c
->> +++ b/drivers/pci/controller/dwc/pci-keystone.c
->> @@ -19,6 +19,7 @@
->>  #include <linux/mfd/syscon.h>
->>  #include <linux/msi.h>
->>  #include <linux/of.h>
->> +#include <linux/of_address.h>
->>  #include <linux/of_irq.h>
->>  #include <linux/of_pci.h>
->>  #include <linux/phy/phy.h>
->> @@ -26,6 +27,7 @@
->>  #include <linux/regmap.h>
->>  #include <linux/resource.h>
->>  #include <linux/signal.h>
->> +#include <linux/ti-pvu.h>
->>  
->>  #include "../../pci.h"
->>  #include "pcie-designware.h"
->> @@ -111,6 +113,16 @@
->>  
->>  #define PCI_DEVICE_ID_TI_AM654X		0xb00c
->>  
->> +#define KS_PCI_VIRTID			0
->> +
->> +#define PCIE_VMAP_xP_CTRL		0x0
->> +#define PCIE_VMAP_xP_REQID		0x4
->> +#define PCIE_VMAP_xP_VIRTID		0x8
->> +
->> +#define PCIE_VMAP_xP_CTRL_EN		BIT(0)
->> +
->> +#define PCIE_VMAP_xP_VIRTID_VID_MASK	0xfff
->> +
->>  struct ks_pcie_of_data {
->>  	enum dw_pcie_device_mode mode;
->>  	const struct dw_pcie_host_ops *host_ops;
->> @@ -1125,6 +1137,96 @@ static const struct of_device_id ks_pcie_of_match[] = {
->>  	{ },
->>  };
->>  
->> +#ifdef CONFIG_TI_PVU
->> +static int ks_init_vmap(struct platform_device *pdev, const char *vmap_name)
->> +{
->> +	struct resource *res;
->> +	void __iomem *base;
->> +	u32 val;
->> +
+> Signed-off-by: baihan li <libaihan@huawei.com>
+> Signed-off-by: yongbang shi <shiyongbang@huawei.com>
+> ---
+> Changelog:
+> v2 -> v3:
+>   - using switchcase in dp_link_reduce_lane, suggested by Dmitry Baryshkov.
+>   - deleting dp_link_pattern2dpcd function and using macros directly, suggested by Dmitry Baryshkov.
+>   - deleting EFAULT error codes, suggested by Dmitry Baryshkov.
+> v1 -> v2:
+>   - using drm_dp_* functions implement dp link training process, suggested by Jani Nikula.
+>   - fix build errors reported by kernel test robot <lkp@intel.com>
+>     Closes: https://lore.kernel.org/oe-kbuild-all/202410031735.8iRZZR6T-lkp@intel.com/
+>   v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
+> ---
+>  drivers/gpu/drm/hisilicon/hibmc/Makefile     |   2 +-
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c | 346 +++++++++++++++++++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.h |  25 ++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |   8 +
+>  4 files changed, 380 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.h
 > 
-> Nit:
-> 
-> 	if (!IS_ENABLED(CONFIG_TI_PVU))
-> 		return 0;
-> 
-> 
-> this looks cleaner than #ifdef.. #else..#endif .
-> 
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> index 8770ec6dfffd..94d77da88bbf 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+> -	       dp/dp_aux.o
+> +	       dp/dp_aux.o dp/dp_link.o
+>  
+>  obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
+> new file mode 100644
+> index 000000000000..7146de020c93
+> --- /dev/null
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
+> @@ -0,0 +1,346 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +// Copyright (c) 2024 Hisilicon Limited.
+> +
+> +#include <linux/delay.h>
+> +#include <drm/drm_device.h>
+> +#include <drm/drm_print.h>
+> +#include "dp_comm.h"
+> +#include "dp_reg.h"
+> +#include "dp_link.h"
+> +#include "dp_aux.h"
+> +
+> +const u8 link_rate_map[] = {DP_LINK_BW_1_62, DP_LINK_BW_2_7,
+> +			    DP_LINK_BW_5_4, DP_LINK_BW_8_1};
 
-Can be done, but it would move the stubbing to include/linux/ti-pvu.h
-and ti_pvu_create_region and ti_pvu_remove_region.
+hibmc_dp_link_rate_map[]
 
-Jan
+> +
+> +static int hibmc_dp_link_training_configure(struct dp_dev *dp)
+> +{
+> +	u8 buf[2];
+> +	int ret;
+> +
+> +	/* DP 2 lane */
+> +	dp_reg_write_field(dp->base + DP_PHYIF_CTRL0, DP_CFG_LANE_DATA_EN,
+> +			   dp->link.cap.lanes == DP_LANE_NUM_2 ? 0x3 : 0x1);
+> +	dp_reg_write_field(dp->base + DP_DPTX_GCTL0, DP_CFG_PHY_LANE_NUM,
+> +			   dp->link.cap.lanes == DP_LANE_NUM_2 ? 0x1 : 0);
+> +
+> +	/* enhanced frame */
+> +	dp_reg_write_field(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_FRAME_MODE, 0x1);
+> +
+> +	/* set rate and lane count */
+> +	buf[0] = hibmc_dp_get_link_rate(dp->link.cap.link_rate);
+> +	buf[1] = DP_LANE_COUNT_ENHANCED_FRAME_EN | dp->link.cap.lanes;
+> +	ret = drm_dp_dpcd_write(&dp->aux, DP_LINK_BW_SET, buf, sizeof(buf));
+> +	if (ret != sizeof(buf)) {
+> +		drm_dbg_dp(dp->dev, "dp aux write link rate and lanes failed, ret: %d\n", ret);
+> +		return ret >= 0 ? -EIO : ret;
+> +	}
+> +
+> +	/* set 8b/10b and downspread */
+> +	buf[0] = 0x10;
+> +	buf[1] = 0x1;
+> +	ret = drm_dp_dpcd_write(&dp->aux, DP_DOWNSPREAD_CTRL, buf, sizeof(buf));
+> +	if (ret != sizeof(buf)) {
+> +		drm_dbg_dp(dp->dev, "dp aux write 8b/10b and downspread failed, ret: %d\n", ret);
+> +		return ret >= 0 ? -EIO : ret;
+> +	}
+> +
+> +	ret = drm_dp_read_dpcd_caps(&dp->aux, dp->dpcd);
+> +	if (ret)
+> +		drm_err(dp->dev, "dp aux read dpcd failed, ret: %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int hibmc_dp_link_set_pattern(struct dp_dev *dp, int pattern)
+> +{
+> +	int ret;
+> +	u8 val;
+> +	u8 buf;
+> +
+> +	buf = (u8)pattern;
+> +	if (pattern != DP_TRAINING_PATTERN_DISABLE && pattern != DP_TRAINING_PATTERN_4) {
+> +		buf |= DP_LINK_SCRAMBLING_DISABLE;
+> +		dp_reg_write_field(dp->base + DP_PHYIF_CTRL0, DP_CFG_SCRAMBLE_EN, 0x1);
+> +	} else {
+> +		dp_reg_write_field(dp->base + DP_PHYIF_CTRL0, DP_CFG_SCRAMBLE_EN, 0);
+> +	}
+> +
+> +	switch (pattern) {
+> +	case DP_TRAINING_PATTERN_1:
+> +		val = 1;
+> +		break;
+> +	case DP_TRAINING_PATTERN_2:
+> +		val = 2;
+> +		break;
+> +	case DP_TRAINING_PATTERN_3:
+> +		val = 3;
+> +		break;
+> +	case DP_TRAINING_PATTERN_4:
+> +		val = 4;
+> +		break;
+> +	default:
+> +		val = 0;
 
-> 
-> Rest LGTM
-> 
->> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, vmap_name);
->> +	base = devm_pci_remap_cfg_resource(&pdev->dev, res);
->> +	if (IS_ERR(base))
->> +		return PTR_ERR(base);
->> +
->> +	writel(0, base + PCIE_VMAP_xP_REQID);
->> +
->> +	val = readl(base + PCIE_VMAP_xP_VIRTID);
->> +	val &= ~PCIE_VMAP_xP_VIRTID_VID_MASK;
->> +	val |= KS_PCI_VIRTID;
->> +	writel(val, base + PCIE_VMAP_xP_VIRTID);
->> +
->> +	val = readl(base + PCIE_VMAP_xP_CTRL);
->> +	val |= PCIE_VMAP_xP_CTRL_EN;
->> +	writel(val, base + PCIE_VMAP_xP_CTRL);
->> +
->> +	return 0;
->> +}
->> +
->> +static int ks_init_restricted_dma(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct of_phandle_iterator it;
->> +	struct resource phys;
->> +	int err;
->> +
->> +	/* Only process the first restricted dma pool, more are not allowed */
->> +	of_for_each_phandle(&it, err, dev->of_node, "memory-region",
->> +			    NULL, 0) {
->> +		if (of_device_is_compatible(it.node, "restricted-dma-pool"))
->> +			break;
->> +	}
->> +	if (err)
->> +		return err == -ENOENT ? 0 : err;
->> +
->> +	err = of_address_to_resource(it.node, 0, &phys);
->> +	if (err < 0) {
->> +		dev_err(dev, "failed to parse memory region %pOF: %d\n",
->> +			it.node, err);
->> +		return 0;
->> +	}
->> +
->> +	/* Map all incoming requests on low and high prio port to virtID 0 */
->> +	err = ks_init_vmap(pdev, "vmap_lp");
->> +	if (err)
->> +		return err;
->> +	err = ks_init_vmap(pdev, "vmap_hp");
->> +	if (err)
->> +		return err;
->> +
->> +	/*
->> +	 * Enforce DMA pool usage with the help of the PVU.
->> +	 * Any request outside will be dropped and raise an error at the PVU.
->> +	 */
->> +	return ti_pvu_create_region(KS_PCI_VIRTID, &phys);
->> +}
->> +
->> +static void ks_release_restricted_dma(struct platform_device *pdev)
->> +{
->> +	struct of_phandle_iterator it;
->> +	struct resource phys;
->> +	int err;
->> +
->> +	of_for_each_phandle(&it, err, pdev->dev.of_node, "memory-region",
->> +			    NULL, 0) {
->> +		if (of_device_is_compatible(it.node, "restricted-dma-pool") &&
->> +		    of_address_to_resource(it.node, 0, &phys) == 0) {
->> +			ti_pvu_remove_region(KS_PCI_VIRTID, &phys);
->> +			break;
->> +		}
->> +	}
->> +}
->> +#else
->> +static inline int ks_init_restricted_dma(struct platform_device *pdev)
->> +{
->> +	return 0;
->> +}
->> +
->> +static inline void ks_release_restricted_dma(struct platform_device *pdev)
->> +{
->> +}
->> +#endif
->> +
->>  static int ks_pcie_probe(struct platform_device *pdev)
->>  {
->>  	const struct dw_pcie_host_ops *host_ops;
->> @@ -1273,6 +1375,10 @@ static int ks_pcie_probe(struct platform_device *pdev)
->>  	if (ret < 0)
->>  		goto err_get_sync;
->>  
->> +	ret = ks_init_restricted_dma(pdev);
->> +	if (ret < 0)
->> +		goto err_get_sync;
->> +
->>  	switch (mode) {
->>  	case DW_PCIE_RC_TYPE:
->>  		if (!IS_ENABLED(CONFIG_PCI_KEYSTONE_HOST)) {
->> @@ -1354,6 +1460,8 @@ static void ks_pcie_remove(struct platform_device *pdev)
->>  	int num_lanes = ks_pcie->num_lanes;
->>  	struct device *dev = &pdev->dev;
->>  
->> +	ks_release_restricted_dma(pdev);
->> +
->>  	pm_runtime_put(dev);
->>  	pm_runtime_disable(dev);
->>  	ks_pcie_disable_phy(ks_pcie);
-> 
+return -EINVAL?
 
+> +	}
+> +
+> +	dp_reg_write_field(dp->base + DP_PHYIF_CTRL0, DP_CFG_PAT_SEL, val);
+> +
+> +	ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_PATTERN_SET, &buf, sizeof(buf));
+> +	if (ret != sizeof(buf)) {
+> +		drm_dbg_dp(dp->dev, "dp aux write training pattern set failed\n");
+> +		return ret >= 0 ? -EIO : ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int hibmc_dp_link_training_cr_pre(struct dp_dev *dp)
+> +{
+> +	u8 *train_set = dp->link.train_set;
+> +	int ret;
+> +	u8 i;
+> +
+> +	ret = hibmc_dp_link_training_configure(dp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = hibmc_dp_link_set_pattern(dp, DP_TRAINING_PATTERN_1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < dp->link.cap.lanes; i++)
+> +		train_set[i] = DP_TRAIN_VOLTAGE_SWING_LEVEL_2;
+> +
+> +	ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET, train_set, dp->link.cap.lanes);
+> +	if (ret != dp->link.cap.lanes) {
+> +		drm_dbg_dp(dp->dev, "dp aux write training lane set failed\n");
+> +		return ret >= 0 ? -EIO : ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static bool hibmc_dp_link_get_adjust_train(struct dp_dev *dp, u8 lane_status[DP_LINK_STATUS_SIZE])
+> +{
+> +	u8 pre_emph[DP_LANE_NUM_MAX] = {0};
+> +	u8 voltage[DP_LANE_NUM_MAX] = {0};
+> +	bool changed = false;
+> +	u8 train_set;
+> +	u8 lane;
+> +
+> +	for (lane = 0; lane < dp->link.cap.lanes; lane++) {
+> +		voltage[lane] = drm_dp_get_adjust_request_voltage(lane_status, lane);
+> +		pre_emph[lane] = drm_dp_get_adjust_request_pre_emphasis(lane_status, lane);
+
+train_set[lane] = drm_dp_get_adjust_request_voltage() |
+                  drm_dp_get_adjust_request_pre_emphasis();
+
+> +	}
+> +
+> +	for (lane = 0; lane < dp->link.cap.lanes; lane++) {
+> +		train_set = voltage[lane] | pre_emph[lane];
+> +		if (dp->link.train_set[lane] != train_set) {
+> +			changed = true;
+> +			dp->link.train_set[lane] = train_set;
+> +		}
+> +	}
+
+	if (memcmp(dp->link.train_set, train_set)) {
+		memcpy(dp->link.train_set, train_set);
+		return true;
+	}
+
+	return false;
+
+> +
+> +	return changed;
+> +}
+> +
+> +u8 hibmc_dp_get_link_rate(u8 index)
+> +{
+> +	return link_rate_map[index];
+> +}
+> +
+> +static int hibmc_dp_link_reduce_rate(struct dp_dev *dp)
+> +{
+> +	if (dp->link.cap.link_rate > 0) {
+> +		dp->link.cap.link_rate--;
+> +		return 0;
+> +	}
+> +
+> +	drm_err(dp->dev, "dp link training reduce rate failed, already lowest rate\n");
+> +
+> +	return -ELNRNG;
+
+Link number out of range? Just -EIO or -EINVAL
+
+> +}
+> +
+> +static int hibmc_dp_link_reduce_lane(struct dp_dev *dp)
+> +{
+> +	switch (dp->link.cap.lanes) {
+> +	case DP_LANE_NUM_2:
+> +		dp->link.cap.lanes--;
+> +		break;
+> +	case DP_LANE_NUM_1:
+> +		drm_err(dp->dev, "dp link training reduce lane failed, already reach minimum\n");
+> +		return -ELNRNG;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int hibmc_dp_link_training_cr(struct dp_dev *dp)
+> +{
+> +	u8 lane_status[DP_LINK_STATUS_SIZE] = {0};
+> +	bool level_changed;
+> +	u32 voltage_tries;
+> +	u32 cr_tries;
+> +	u32 max_cr;
+> +	int ret;
+> +
+> +	/*
+> +	 * DP 1.4 spec define 10 for maxtries value, for pre DP 1.4 version set a limit of 80
+> +	 * (4 voltage levels x 4 preemphasis levels x 5 identical voltage retries)
+> +	 */
+> +	max_cr = dp->link.cap.rx_dpcd_revision >= DP_DPCD_REV_14 ? 10 : 80;
+> +
+> +	voltage_tries = 1;
+> +	for (cr_tries = 0; cr_tries < max_cr; cr_tries++) {
+> +		drm_dp_link_train_clock_recovery_delay(&dp->aux, dp->dpcd);
+> +
+> +		ret = drm_dp_dpcd_read_link_status(&dp->aux, lane_status);
+> +		if (ret != DP_LINK_STATUS_SIZE) {
+> +			drm_err(dp->dev, "Get lane status failed\n");
+> +			return ret;
+> +		}
+> +
+> +		if (drm_dp_clock_recovery_ok(lane_status, dp->link.cap.lanes)) {
+> +			drm_info(dp->dev, "dp link training cr done\n");
+> +			dp->link.status.clock_recovered = true;
+> +			return 0;
+> +		}
+> +
+> +		if (voltage_tries == 5) {
+> +			drm_info(dp->dev, "same voltage tries 5 times\n");
+> +			dp->link.status.clock_recovered = false;
+> +			return 0;
+> +		}
+> +
+> +		level_changed = hibmc_dp_link_get_adjust_train(dp, lane_status);
+> +		ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET, dp->link.train_set,
+> +					dp->link.cap.lanes);
+> +		if (ret != dp->link.cap.lanes) {
+> +			drm_dbg_dp(dp->dev, "Update link training failed\n");
+> +			return ret >= 0 ? -EIO : ret;
+> +		}
+> +
+> +		voltage_tries = level_changed ? 1 : voltage_tries + 1;
+> +	}
+> +
+> +	drm_err(dp->dev, "dp link training clock recovery %u timers failed\n", max_cr);
+> +	dp->link.status.clock_recovered = false;
+> +
+> +	return 0;
+> +}
+> +
+> +static int hibmc_dp_link_training_channel_eq(struct dp_dev *dp)
+> +{
+> +	u8 lane_status[DP_LINK_STATUS_SIZE] = {0};
+> +	u8 eq_tries;
+> +	int tps;
+> +	int ret;
+> +
+> +	if (dp->link.cap.is_tps4)
+> +		tps = DP_TRAINING_PATTERN_4;
+> +	else if (dp->link.cap.is_tps3)
+> +		tps = DP_TRAINING_PATTERN_3;
+> +	else
+> +		tps = DP_TRAINING_PATTERN_2;
+> +
+> +	ret = hibmc_dp_link_set_pattern(dp, tps);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (eq_tries = 0; eq_tries < EQ_MAX_RETRY; eq_tries++) {
+> +		drm_dp_link_train_channel_eq_delay(&dp->aux, dp->dpcd);
+> +
+> +		ret = drm_dp_dpcd_read_link_status(&dp->aux, lane_status);
+> +		if (ret != DP_LINK_STATUS_SIZE) {
+> +			drm_err(dp->dev, "get lane status failed\n");
+> +			break;
+> +		}
+> +
+> +		if (!drm_dp_clock_recovery_ok(lane_status, dp->link.cap.lanes)) {
+> +			drm_info(dp->dev, "clock recovery check failed\n");
+> +			drm_info(dp->dev, "cannot continue channel equalization\n");
+> +			dp->link.status.clock_recovered = false;
+> +			break;
+> +		}
+> +
+> +		if (drm_dp_channel_eq_ok(lane_status, dp->link.cap.lanes)) {
+> +			dp->link.status.channel_equalized = true;
+> +			drm_info(dp->dev, "dp link training eq done\n");
+> +			break;
+> +		}
+> +
+> +		hibmc_dp_link_get_adjust_train(dp, lane_status);
+> +		ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET,
+> +					dp->link.train_set, dp->link.cap.lanes);
+> +		if (ret != dp->link.cap.lanes) {
+> +			drm_dbg_dp(dp->dev, "Update link training failed\n");
+> +			ret = (ret >= 0) ? -EIO : ret;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (eq_tries == EQ_MAX_RETRY)
+> +		drm_err(dp->dev, "channel equalization failed %u times\n", eq_tries);
+> +
+> +	hibmc_dp_link_set_pattern(dp, DP_TRAINING_PATTERN_DISABLE);
+> +
+> +	return ret < 0 ? ret : 0;
+> +}
+> +
+> +static int hibmc_dp_link_downgrade_training_cr(struct dp_dev *dp)
+> +{
+> +	if (hibmc_dp_link_reduce_rate(dp))
+> +		return hibmc_dp_link_reduce_lane(dp);
+> +
+> +	return 0;
+> +}
+> +
+> +static int hibmc_dp_link_downgrade_training_eq(struct dp_dev *dp)
+> +{
+> +	if ((dp->link.status.clock_recovered && !dp->link.status.channel_equalized)) {
+> +		if (!hibmc_dp_link_reduce_lane(dp))
+> +			return 0;
+> +	}
+> +
+> +	return hibmc_dp_link_reduce_rate(dp);
+> +}
+> +
+> +int hibmc_dp_link_training(struct dp_dev *dp)
+> +{
+> +	struct hibmc_dp_link *link = &dp->link;
+> +	int ret;
+> +
+> +	while (true) {
+> +		ret = hibmc_dp_link_training_cr_pre(dp);
+> +		if (ret)
+> +			goto err;
+> +
+> +		ret = hibmc_dp_link_training_cr(dp);
+> +		if (ret)
+> +			goto err;
+> +
+> +		if (!link->status.clock_recovered) {
+> +			ret = hibmc_dp_link_downgrade_training_cr(dp);
+> +			if (ret)
+> +				goto err;
+> +			continue;
+> +		}
+> +
+> +		ret = hibmc_dp_link_training_channel_eq(dp);
+> +		if (ret)
+> +			goto err;
+> +
+> +		if (!link->status.channel_equalized) {
+> +			ret = hibmc_dp_link_downgrade_training_eq(dp);
+> +			if (ret)
+> +				goto err;
+> +			continue;
+> +		}
+> +
+> +		return 0;
+> +	}
+> +
+> +err:
+> +	hibmc_dp_link_set_pattern(dp, DP_TRAINING_PATTERN_DISABLE);
+> +
+> +	return ret;
+> +}
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.h
+> new file mode 100644
+> index 000000000000..b4958d122083
+> --- /dev/null
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/* Copyright (c) 2024 Hisilicon Limited. */
+> +
+> +#ifndef DP_LINK_H
+> +#define DP_LINK_H
+> +
+> +#include "dp_comm.h"
+> +
+> +#define DP_LANE_NUM_MAX		2
+> +#define DP_LANE_STATUS_SIZE	1
+
+unused
+
+> +#define DP_LANE_NUM_1		0x1
+> +#define DP_LANE_NUM_2		0x2
+
+Are you sure that you need to define 1 and 2? It's not like cap.lanes
+requires a define to be understood.
+
+> +
+> +enum dp_pattern_e {
+> +	DP_PATTERN_NO = 0,
+> +	DP_PATTERN_TPS1,
+> +	DP_PATTERN_TPS2,
+> +	DP_PATTERN_TPS3,
+> +	DP_PATTERN_TPS4,
+> +};
+
+Unused
+
+> +
+> +int hibmc_dp_link_training(struct dp_dev *dp);
+> +u8 hibmc_dp_get_link_rate(u8 index);
+> +
+> +#endif
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> index 83cf0cc06ae2..1032f6cde761 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> @@ -12,16 +12,24 @@
+>  #define DP_AUX_RD_DATA0			0x64
+>  #define DP_AUX_REQ			0x74
+>  #define DP_AUX_STATUS			0x78
+> +#define DP_PHYIF_CTRL0			0xa0
+> +#define DP_VIDEO_CTRL			0x100
+>  #define DP_DPTX_RST_CTRL		0x700
+> +#define DP_DPTX_GCTL0			0x708
+>  
+>  #define DP_CFG_AUX_SYNC_LEN_SEL			BIT(1)
+>  #define DP_CFG_AUX_TIMER_TIMEOUT		BIT(2)
+> +#define DP_CFG_STREAM_FRAME_MODE		BIT(6)
+>  #define DP_CFG_AUX_MIN_PULSE_NUM		GENMASK(13, 9)
+> +#define DP_CFG_LANE_DATA_EN			GENMASK(11, 8)
+> +#define DP_CFG_PHY_LANE_NUM			GENMASK(2, 1)
+>  #define DP_CFG_AUX_REQ				BIT(0)
+>  #define DP_CFG_AUX_RST_N			BIT(4)
+>  #define DP_CFG_AUX_TIMEOUT			BIT(0)
+>  #define DP_CFG_AUX_READY_DATA_BYTE		GENMASK(16, 12)
+>  #define DP_CFG_AUX				GENMASK(24, 17)
+>  #define DP_CFG_AUX_STATUS			GENMASK(11, 4)
+> +#define DP_CFG_SCRAMBLE_EN			BIT(0)
+> +#define DP_CFG_PAT_SEL				GENMASK(7, 4)
+>  
+>  #endif
+> -- 
+> 2.33.0
+> 
 
 -- 
-Siemens AG, Technology
-Linux Expert Center
+With best wishes
+Dmitry
 
