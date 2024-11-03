@@ -1,119 +1,160 @@
-Return-Path: <linux-kernel+bounces-393809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071859BA57B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:56:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAC99BA57D
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:57:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811331F21CE7
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:56:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4DA3281D2B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDD217333D;
-	Sun,  3 Nov 2024 12:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52B816E86F;
+	Sun,  3 Nov 2024 12:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DxTDn6oK"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oz0cuCDk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36576A50;
-	Sun,  3 Nov 2024 12:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460DA3C6BA;
+	Sun,  3 Nov 2024 12:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730638584; cv=none; b=rWAMni6rConRL0XpxKjk3WW5YbyYdq2N/oi/gKoW1HwnNeqvbt0LQAaV3vipOaK7FGSaXKzBlL2abCdwcPGMdLCxmCwjikHOCKMTLqauYJztmfUu0xSSKpOHmScSFZtr848vF8DMYpHsNPgKzk1dVuMZ3HtcjsxqH7exCWwajvk=
+	t=1730638621; cv=none; b=Ax3iZPzoKrCLKu5d24Fa1CQWQe6QAzQm/6YioTZHUxO848tviDwc355qw1uupHlp8aMhwHgMspdST2D1AfocnwgieLsaPf15l09qFqxGK9j09soKbCBx+DPoc9LD3DSUGT+mx1/1uqMawc2z6bbPqk052iUC96ehFGsRCgA4hss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730638584; c=relaxed/simple;
-	bh=5BPjS0OhAOC67ybt4pGDY+igTlAREpgzNPHZfG2fOz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=muI8s4o6S5P4S6rbXE6yRMM8VqOtrkMeycSqWkRqUwb2o1sj28gz2qoG0U5vXqROxvuz79ugdUpha+rC8eIEZ5FoesuaeCH0Jo/U8orGa+eRqPOg0NhKGa5Anc1Dbb06QLZSqq0V096d+cDRJ7L5pvHmobsx+J7ix575N1a90Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DxTDn6oK; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A3Cu1O3048337;
-	Sun, 3 Nov 2024 06:56:01 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730638561;
-	bh=tLvRfw/FM5dRmeV/mlHH2Fgn6SVR6Sf13E7zxcblSYw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=DxTDn6oKReH3yQDRBDLyCmXmHjRtOCX87Mjiu9G/cUr6SuTppF8LUdPf+Jyz2KL3C
-	 qr7eLML4ptoKOf0eG3QwTIP2wA15H06pmOuPksPCAutR9X8KbOD5cBq9CH1AopBqO5
-	 BjYmIZKZo59Mw3nx+JbQGepbHHLoPDAx/dewMZz4=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A3Cu1AH083882
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 3 Nov 2024 06:56:01 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 3
- Nov 2024 06:56:01 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 3 Nov 2024 06:56:01 -0600
-Received: from [10.250.202.81] ([10.250.202.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A3CtvF0036607;
-	Sun, 3 Nov 2024 06:55:58 -0600
-Message-ID: <c2fd6c15-6b30-4777-93ae-d20b0c4a76a0@ti.com>
-Date: Sun, 3 Nov 2024 14:55:57 +0200
+	s=arc-20240116; t=1730638621; c=relaxed/simple;
+	bh=Ulo7nuPhsWAYT2Z4MZtXMIUNzaBvaVQ+PLkPkw/w3Vc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RgtVQBwPvLB3/jjrpkWPK8gOYypOK1IO0k1OA6dJZriyKqbg5ERuZKuoTzjJBumDCbzFditoVEwW4X222CNy+Xn8mHAo7f9WsL6hzL7F2a1uVXV6HH451Oa7/KGykxLdaAJ3Ifb0Lrxa11MXxYmHWn6RIhFViZhpb5OxIeUKi4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oz0cuCDk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD3CC4CED5;
+	Sun,  3 Nov 2024 12:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730638621;
+	bh=Ulo7nuPhsWAYT2Z4MZtXMIUNzaBvaVQ+PLkPkw/w3Vc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Oz0cuCDkAZFXhDfxaZdIElFslhXlBDHk2po/BLBB4gkgbe1fyrgy0BM8oSnouO5Jx
+	 KrNPwfWe2gVjoSqbmEqbZz0VpjaT9ZQZzDkCr/GZTU6OSbWySvEGZP5R/CCGY0A26q
+	 I5gF66IDDhMesJPtZClI2Mb7oiwVp/NIAlDOW1pG/DFmQGkrhV2dLn5dEWgCJMHqjo
+	 86KXSR7R2a6oAXyWT0QOIZulbHnA9KhzISFMPlW43f20fLBuen0uznYl+xYUD6pMFa
+	 /7alCHeYa1cX8HpKsX8qY9LzUcVDM80maH+MZ0CzIERJDbGqhUcWOkderP08UDvxeF
+	 0z+5697E0jdaQ==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb470a8b27so40003501fa.1;
+        Sun, 03 Nov 2024 04:57:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXI8uSwEw0FGI/R/m8+ZSmXFSX/7lJePK3lG+smnwYoy27oWFYXDXmOaPd0dJI9hPPnuf4VRkTAJiQpBSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUcBOB47C7Ie9jVYEmaDKlllW7Ig/rCiIQV278j0saqLHNIlpE
+	cGcOXtmuvuf/fzEtZYu1r0iQSCeqHec4JkvIGi6KpJ1M/ZxVmkW9/b7dTlbx02nqba2hRdxJ76j
+	wZaSM5q5WJHFNbF5a9cCkc3H9y6g=
+X-Google-Smtp-Source: AGHT+IF06ebLEarwXDoKFppSamZPRLpZjX3Vu4ACQhXUqkAtck63Coa7NSwE2kFzu1rTbxRjEj4C8KRp8Xpjw9qbX5k=
+X-Received: by 2002:a2e:bd12:0:b0:2fb:579a:fff with SMTP id
+ 38308e7fff4ca-2fedb3ed34amr32403311fa.8.1730638619693; Sun, 03 Nov 2024
+ 04:56:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/17] wifi: cc33xx: Add main.c
-To: Simon Horman <horms@kernel.org>
-CC: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sabeeh Khan
-	<sabeeh-khan@ti.com>
-References: <20241029172354.4027886-1-michael.nemanov@ti.com>
- <20241029172354.4027886-10-michael.nemanov@ti.com>
- <20241102132532.GJ1838431@kernel.org>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <20241102132532.GJ1838431@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241103124824.943659-1-masahiroy@kernel.org>
+In-Reply-To: <20241103124824.943659-1-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 3 Nov 2024 21:56:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASW1jrO-hENgbZS1QGiZcGeAFwOwZY6M6cAx6tafOfhqQ@mail.gmail.com>
+Message-ID: <CAK7LNASW1jrO-hENgbZS1QGiZcGeAFwOwZY6M6cAx6tafOfhqQ@mail.gmail.com>
+Subject: Re: [PATCH] modpost: fix acpi MODULE_DEVICE_TABLE built with
+ mismatched endianness
+To: linux-kbuild@vger.kernel.org
+Cc: Hanjun Guo <guohanjun@huawei.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	"Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/2/2024 3:25 PM, Simon Horman wrote:
+On Sun, Nov 3, 2024 at 9:48=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
+>
+> When CONFIG_SATA_AHCI_PLATFORM=3Dm, modpost outputs incorect MODULE_ALIAS=
+()
+> if the endianness of the target and the build machine do not match.
+>
+> When the endianness of the target kernel and the build machine match,
+> the output is correct:
+>
+>   $ grep 'MODULE_ALIAS("acpi' drivers/ata/ahci_platform.mod.c
+>   MODULE_ALIAS("acpi*:APMC0D33:*");
+>   MODULE_ALIAS("acpi*:010601:*");
+>
+> However, when building a little-endian kernel on a big-endian machine
+> (or vice versa), the output is incorrect:
+>
+>   $ grep 'MODULE_ALIAS("acpi' drivers/ata/ahci_platform.mod.c
+>   MODULE_ALIAS("acpi*:APMC0D33:*");
+>   MODULE_ALIAS("acpi*:0601??:*");
+>
+> The 'cls' and 'cls_msk' fields are 32-bit.
+>
+> DEF_FIELD() must be used instead of DEF_FIELD_ALIAS() to correctly handle
 
-...
-> 
-> Hi Michael,
-> 
-> Sparse seems a bit unhappy about this:
-> 
-> .../main.c:332:24: warning: incorrect type in initializer (different address spaces)
-> .../main.c:332:24:    expected struct ieee80211_sband_iftype_data const [noderef] __iftype_data *iftype_data
-> .../main.c:332:24:    got struct ieee80211_sband_iftype_data *
-> 
-> So perhaps it should be:
-> 
-> static const struct ieee80211_sband_iftype_data __iftd iftype_data_2ghz[] = {{
-> 
-> Likewise for iftype_data_5ghz.
-> 
+This is a typo:
 
-Hi Simon,
+ DEF_FIELD_ALIAS() -> DEF_FIELD_ADDR()
 
-Yeah I saw that and was unsure how to properly solve it, Sparse does not 
-seems to like direct use of this variable. The above is based on old 
-code and I see newer implementations are using 
-ieee80211_set_sband_iftype_data which has the casting that should make 
-Sparse at ease. I'll try migrating the CC33xx code to this convention 
-which will require moving some structs around.
 
-Thanks and regards,
-Michael.
+
+> endianness of these 32-bit fields.
+>
+> The check 'if (cls)' was unnecessary; it never became NULL, as it was the
+> pointer to 'symval' plus the offset to the 'cls' field.
+>
+> Fixes: 26095a01d359 ("ACPI / scan: Add support for ACPI _CLS device match=
+ing")
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+>  scripts/mod/file2alias.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+> index 99dce93a4188..16154449dde1 100644
+> --- a/scripts/mod/file2alias.c
+> +++ b/scripts/mod/file2alias.c
+> @@ -567,12 +567,12 @@ static int do_acpi_entry(const char *filename,
+>                         void *symval, char *alias)
+>  {
+>         DEF_FIELD_ADDR(symval, acpi_device_id, id);
+> -       DEF_FIELD_ADDR(symval, acpi_device_id, cls);
+> -       DEF_FIELD_ADDR(symval, acpi_device_id, cls_msk);
+> +       DEF_FIELD(symval, acpi_device_id, cls);
+> +       DEF_FIELD(symval, acpi_device_id, cls_msk);
+>
+>         if (id && strlen((const char *)*id))
+>                 sprintf(alias, "acpi*:%s:*", *id);
+> -       else if (cls) {
+> +       else {
+>                 int i, byte_shift, cnt =3D 0;
+>                 unsigned int msk;
+>
+> @@ -580,10 +580,10 @@ static int do_acpi_entry(const char *filename,
+>                 cnt =3D 6;
+>                 for (i =3D 1; i <=3D 3; i++) {
+>                         byte_shift =3D 8 * (3-i);
+> -                       msk =3D (*cls_msk >> byte_shift) & 0xFF;
+> +                       msk =3D (cls_msk >> byte_shift) & 0xFF;
+>                         if (msk)
+>                                 sprintf(&alias[cnt], "%02x",
+> -                                       (*cls >> byte_shift) & 0xFF);
+> +                                       (cls >> byte_shift) & 0xFF);
+>                         else
+>                                 sprintf(&alias[cnt], "??");
+>                         cnt +=3D 2;
+> --
+> 2.43.0
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
