@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-393674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3489BA3E8
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:11:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0CD9BA3EB
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B001C20C08
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 04:11:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D455A281777
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 04:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5169C13BAE2;
-	Sun,  3 Nov 2024 04:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116FA12D1F1;
+	Sun,  3 Nov 2024 04:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="EYyrgkGP"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D1L2tiyF"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0358713635E
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 04:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2924BA31;
+	Sun,  3 Nov 2024 04:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730607054; cv=none; b=GOY9S5fCn7jPo+RJ52tp33Hs0qA1lrdqfwnqk9Xi/7/BS1e3a+ioQDKTZF1NkL/SBHQLNBnj3Fkgy+4YOc2t2Vbon7bk/g6od6AFohijqlt8c0OalxSJxqP7OLZgd1ZMtmF0NakQPW3RRwR/1EEKlaHxPEvvDXR8G7z5HAqzHbU=
+	t=1730607736; cv=none; b=C1zMW2tyy76cZYrNKDr67QUhoIow/Cpc0NvgRw5ki+Wb+vkpq13ymH2bn2Uz/bJ/qlcNGB3Is8eLj+8D0rMJ+JkYK4UsZiqzFU3ki73TYQVHOvUKK8MEX6ov3GcxtiwW+SMpZ2SWvTqiIrkmb8ggiSx2X0/NeYrw0ILR70G24Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730607054; c=relaxed/simple;
-	bh=xTxPw0CcizNWkYCAn8c8UgrWWW+GaQdSBsCV59pgcp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tAihuQ8OkHwspUClkosQhjYGNz8MlWRTAObVKO7wC8fZP0LtoVPNq//arMKvF3PxHID/WyN1+3/HgXavMCXwqmVt4S+I7dPje7LprGKMv8mBC5jtzwRHyjqJXMiNyZrB1+zwYxM852wW8imFlZL2KAgEAS2ZMPy/cXEFrFqbI14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=EYyrgkGP; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso2567287a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 21:10:52 -0700 (PDT)
+	s=arc-20240116; t=1730607736; c=relaxed/simple;
+	bh=IerCCKyp+i7fDrVdh8gyikBCnf3TLCOlfEqRvSKTIXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZJpWoOxB4lAC/DFBI22FiWYZbpNeqKMSVLZXDjygIgLmpLdZb0c/X0F4Cnh27c2J3uitbpHsVh/trd6+qfXAHByZw90DJ8ccv+QdiS4f/vuBvIyX8quPdi5OYRUfvXkJmV+RmH6W77QcJG7xA8I5oJ4njaDeyLpDOiy6vfha52c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D1L2tiyF; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso2497561b3a.3;
+        Sat, 02 Nov 2024 21:22:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730607052; x=1731211852; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h/iCSnN/M7HQhmE74Mj4nBBH2JpYOpk0mdmCbZW6msY=;
-        b=EYyrgkGPJeKu6FZm3u1tTfIc+wTGtbVo+pRf1pLT5tC3Z/2s6pjo7kerJMyZbRt6x7
-         P0AQEQB9iKowkYBqOE2oIOKGTvt3p7Q0e5EYbaok9o9UnmCmj1rbRIqchE5AnUV+pFMA
-         CTk+T0Rm7+SWU02amGzxQrggdtK0rWC5KBwjc=
+        d=gmail.com; s=20230601; t=1730607734; x=1731212534; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hUpt+HATsZJL+RG8BWSpg0OeAVVkuazZ98fyiiRz2y8=;
+        b=D1L2tiyFw48vDtfZ7/lJ3/A77tlT3MSd9K9kcjU7Tdt6rbBGRw2cuySx5Ovftj4nue
+         BJhAyaBfWEYln9Sft+WA56o7AUxKL7CRW1ST4ooIHJ3kkm+7bMj54dCREhVLY16QFNJ6
+         5seFV6LVsgrbOsK0fpT4LvbVgw+cyzxZYR7EvrlUL7I30kYHAgibDynO9A/sEhjj+655
+         k2dplrSYj3zN7ib1a2HOncZRvQn8oVaTXPzQAEHieNR9Jz3t/kcmpZfaUdQEHFSkxgDm
+         4VCNfjrU3FakvHHLHluZYs4Az8vfsXs4ahpdK3G0SY2J971HrvjMCStSV7BVkADNIx+l
+         KcKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730607052; x=1731211852;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1730607734; x=1731212534;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h/iCSnN/M7HQhmE74Mj4nBBH2JpYOpk0mdmCbZW6msY=;
-        b=JsGsjXUMSlGcMY5Cr0ImVyh2540sB8UCOAo+FoxrHOG6bE9vtEE+0gbtxhtwic5/ke
-         +IPn1CpeHd7z5IbmyvDZ+K4La7U/noE5YecFh0j8iVjkBSbvG3+Jgspvn9rNipPeEemZ
-         rOqWYIlJP/aMUJrs+e4DWyt5Ij8sjOlU4UPo/BrRGt8l/yHo8cKMPUmva7ZwHjTAhezO
-         uaSA/nG+7nlIQBdgYNzz4GfG0F9kjrv7sWz6Fkh+RYhuZilUa/KJFRl1UAVPvjkGuWg1
-         E1f1q6uW8qnHT7ufu8MbXq92nz7E3w25rPB09mOU/t2R2jyE/hBXTAXRgBZvhRLX/T8R
-         fn9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUA+Tl5+kAnvpfkxuwU5RDK/hK4uHXYKI+fv4Jn4P9SIk7SYP+GSm5dhckYAjOIzXZpiYUqmnGjSXCkH28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYNGIsW6PKwiW+kzMSDGvQZB3UvTCJfM58NVFeH5C4QrKFmHnU
-	6cjAtPK+GtA/2IJ0+hS2gZcWpiqkb1O3jP9iz7E4OTs6iQbAimeLRm5Jkj+uyZGQKKvS/lzznPD
-	r
-X-Google-Smtp-Source: AGHT+IEhUpctNzyB3Q/oVIYxbRXEG5RJ4wFo2uHDkY11JbH34UZ1+uPmsCEyS2zgljj0ve1XBu4tPg==
-X-Received: by 2002:a17:90a:510f:b0:2e2:cd65:de55 with SMTP id 98e67ed59e1d1-2e8f10723a7mr31449321a91.20.1730607052119;
-        Sat, 02 Nov 2024 21:10:52 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93da983f9sm5131469a91.5.2024.11.02.21.10.50
+        bh=hUpt+HATsZJL+RG8BWSpg0OeAVVkuazZ98fyiiRz2y8=;
+        b=oNN2VAzlqWSPe3iL3yg3e23isk0cZZdim3mxa6jUyQFHZ5aCn3oB0Lan3ubcvMsBJP
+         C6vD6/fQD9ldQF/WfY213csWk+pSyYhv2KJtGrd0lciu8Jsm/uGNvZrulslw6cXGBm9K
+         7pbnO/XZqBqa2jXcEfRIFeyRWrQkmEy9v+3/flmLFG/vwsXHdAnrYkJAiZpS9hITlpkr
+         EFTAZIX77PLTux4fO2j7/XRJHOLoBt8/q/ti2k2TvsrXiy0KJEgD8ShI6aEfv+kj1wqw
+         y5BtXtHXR7kOLig8HlbYuAk2C3oiDJZeQsX6JxBh76dKSr62Qz/s3hpeFJTl690zwDK8
+         U4Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUzMCeSQ7bxsCpcwlHrOAGW0f271cw0D8LAVS7eSb5eKKNYp0QIvghcCvDQYzFf2l+CRpmYjPzvnG/mlWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC1L+vU1kzUpYLUpQdQhnxd/WV5Cs/J0q7eefHoXSzVbP9QoDH
+	I9XBXWAksAvUbE2AKXhciwYR1wbjS3tIxXq9j/2WgvxIyXdv08vG
+X-Google-Smtp-Source: AGHT+IEVXlyCJ2b0V9cJd8wSOgdtUmBgxWmwBDAWN3QxAyR+y05vZdrpDOm9TKpLDuJRnKIEoSwi5Q==
+X-Received: by 2002:a05:6a00:3910:b0:71d:fbf3:f769 with SMTP id d2e1a72fcca58-720c99ca5bemr13163861b3a.28.1730607734285;
+        Sat, 02 Nov 2024 21:22:14 -0700 (PDT)
+Received: from ub22 ([121.137.86.69])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c3db8sm4968276b3a.131.2024.11.02.21.22.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 21:10:51 -0700 (PDT)
-Date: Sat, 2 Nov 2024 21:10:49 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: netdev@vger.kernel.org, edumazet@google.com, willy@infradead.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-kernel@vger.kernel.org, mkarsten@uwaterloo.ca,
-	sridhar.samudrala@intel.com
-Subject: Re: [PATCH net-next v4 5/7] eventpoll: Control irq suspension for
- prefer_busy_poll
-Message-ID: <Zyb3yS6Whi5Na0lg@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Hillf Danton <hdanton@sina.com>, netdev@vger.kernel.org,
-	edumazet@google.com, willy@infradead.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-kernel@vger.kernel.org, mkarsten@uwaterloo.ca,
-	sridhar.samudrala@intel.com
-References: <20241102005214.32443-1-jdamato@fastly.com>
- <20241102233925.2948-1-hdanton@sina.com>
+        Sat, 02 Nov 2024 21:22:13 -0700 (PDT)
+Date: Sun, 3 Nov 2024 04:22:09 +0000
+From: Byeonguk Jeong <jungbu2855@gmail.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Hou Tao <houtao1@huawei.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH bpf] selftests/bpf: Add a copyright notice to
+ lpm_trie_map_get_next_key
+Message-ID: <Zyb6cVpIqmMBld4U@ub22>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,51 +81,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241102233925.2948-1-hdanton@sina.com>
 
-On Sun, Nov 03, 2024 at 07:39:25AM +0800, Hillf Danton wrote:
-> On Sat,  2 Nov 2024 00:52:01 +0000 Martin Karsten <mkarsten@uwaterloo.ca>
-> > 
-> > @@ -2005,8 +2032,10 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
-> >  			 * trying again in search of more luck.
-> >  			 */
-> >  			res = ep_send_events(ep, events, maxevents);
-> > -			if (res)
-> > +			if (res) {
-> > +				ep_suspend_napi_irqs(ep);
-> 
-> Leave napi irq intact in case of -EINTR.
+Add a copyright notice that was missed at the commit
+d7f214aeacb9 ("selftests/bpf: Add test for trie_get_next_key()")
 
-(I've added Martin and Sridhar to the CC list)
+Signed-off-by: Byeonguk Jeong <jungbu2855@gmail.com>
+---
+ .../testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for pointing out this inconsistency. It's not a big problem,
-because on receiving EINTR or another error code, the app either
-retries epoll_wait or, if the app is buggy somehow and doesn't retry
-epoll_wait, the timer fires and everything proceeds as normal.
+diff --git a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c
+index 0ba015686492..3821d229cad3 100644
+--- a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c
++++ b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c
+@@ -1,5 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
+-
++/* Copyright (c) 2024 Ahnlab, Inc.  */
+ #define _GNU_SOURCE
+ #include <linux/bpf.h>
+ #include <stdio.h>
+-- 
+2.43.0
 
-However, since irqs are not suspended at other points in ep_poll
-where an error code is returned, it is probably best to be
-consistent and not suspend here either. We will fix this in the next
-revision.
-
-Sridhar: Since the change is very minor I plan to retain your
-Reviewed-by, but if you'd like me to drop it, please let me know.
-
-The proposed fix will look like:
-
-if (res) {
-  if (res > 0)
-    ep_suspend_napi_irqs(ep);
-  return res;
-}
-
-
-> 
-> >  				return res;
-> > +			}
-> >  		}
-> >  
-> >  		if (timed_out)
-> > -- 
-> > 2.25.1
 
