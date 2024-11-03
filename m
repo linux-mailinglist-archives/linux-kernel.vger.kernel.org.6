@@ -1,134 +1,128 @@
-Return-Path: <linux-kernel+bounces-393682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD2B9BA3FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:55:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4099BA3FB
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BF151F21B82
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 04:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C264F1C21110
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 04:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB2A13632B;
-	Sun,  3 Nov 2024 04:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499631386D1;
+	Sun,  3 Nov 2024 04:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k7J70+Rf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UITFML6Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F09320B;
-	Sun,  3 Nov 2024 04:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A972320B;
+	Sun,  3 Nov 2024 04:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730609719; cv=none; b=uU5QZt+U6N6mmFC6S9AaZ/nMkBRYrUUECHrwkyngm7OH5c7E0IXIdLkijnXRus7uVV/AbsCGZFWo6vH1XeTifNJrDB5PhKFVjkorqxeSgcORFRA/mOrE0CVslfsMkGq7LdUUJECInONERqVdWfkOspUtd/OUtfjTtl1OjUqR5r0=
+	t=1730609751; cv=none; b=o5QsGLPnjJJBTBvMsmTzAQ3QKII+3y/Qi4kJelkiPKu7gX9oROD4eszT6IVXKtBendGLMg08tYBl5dx6c73WzQUIid6IP6I/WWy3czJU1vphZcCF7LyfvSemsDlrGrcTX+KqF1KpRJTP2s2mymPmQ5yvvVa2mlL6ebE9NWs66SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730609719; c=relaxed/simple;
-	bh=tlQrntuUWRfP2jYT5MQ26UOHKEWeDh6VfzqbpkmBdnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uiXzoTEBMOE/FjHw2hwZyq/5hWXT+9WID3uHMQa1h22ZlxEsoiMuFldJO5iP+k5FQ9KzSiby6qc9QGNiYnYZG4/sAfu+1aqUT+JAR5zlhAjzelIbVfJg0qF/RmYJsCYi/n76eYml8IiRc1cPv/d0GCBQpn8DR0nhsfhyJ1wjWvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k7J70+Rf; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730609717; x=1762145717;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tlQrntuUWRfP2jYT5MQ26UOHKEWeDh6VfzqbpkmBdnM=;
-  b=k7J70+Rfk12qQEfoCxz4OnR/p85e3JZ5S+79WKMUqEWU046qen9TcWep
-   cZQ4UAcUQ+0MRsV7L4Fowph7c9/sVjVD3jc18drWDU2RUB6BKNm7KiQtq
-   aQwqqnHj4xcPksgOuLcxbghx3M6hBH+odXp7LZTarsw3YWqSf7oMyhv5U
-   +lI4hyhR2Q/TQNmDP3jBEmS6hM7FvBgUEcO9Zc32+UJVMiwKY/9YqX0M8
-   dZ1ttF4QgZxM+1Qe6Dy53k0ZbVyJzOdMmqvxhanBfeOkCMq18ddWnrYco
-   yL0BZ9C9b7P6scd5zCf4kYCflvOvOiVIFSXjE6TdGf3JettWISo2qzDtM
-   g==;
-X-CSE-ConnectionGUID: kRsVw6L0RC6iNq56E4Vf7w==
-X-CSE-MsgGUID: lFtqKOlgSNqreAoCIM4pjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11244"; a="29748595"
-X-IronPort-AV: E=Sophos;i="6.11,254,1725346800"; 
-   d="scan'208";a="29748595"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 21:55:16 -0700
-X-CSE-ConnectionGUID: Gd8XBjQMQ8i3R2rqK/h5Pw==
-X-CSE-MsgGUID: t9neAcF7T+yWCCRI/ZSZ+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,254,1725346800"; 
-   d="scan'208";a="83673950"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 02 Nov 2024 21:55:13 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t7Sdq-000jhd-2r;
-	Sun, 03 Nov 2024 04:55:10 +0000
-Date: Sun, 3 Nov 2024 12:54:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Benjamin Peterson <benjamin@engflow.com>
-Cc: oe-kbuild-all@lists.linux.dev, Benjamin Peterson <benjamin@engflow.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf trace: avoid garbage when not printing an trace
- event's arguments
-Message-ID: <202411031202.CkbT89xW-lkp@intel.com>
-References: <20241101005338.5846-1-benjamin@engflow.com>
+	s=arc-20240116; t=1730609751; c=relaxed/simple;
+	bh=+09uscfLel9NWsLsYgmtDzXrHUoiLefG41k8w3meA4E=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=PlhKZvagbE+GY8WSfeJIplz5icDelTN7Z0DTGGIwmpcRItP4U4U91wBNisDgpz15DQa7k5nK0gnWaz/Y1n3hkllmJLJDIBmn+JZ/xIHq2zj8zBLhBf4G+1KaGWLZWTzaoeuHXY8nyEPr9QOxCUcq/jF/wYtRtzDxAzjffAVP3HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UITFML6Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0442BC4CECD;
+	Sun,  3 Nov 2024 04:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730609751;
+	bh=+09uscfLel9NWsLsYgmtDzXrHUoiLefG41k8w3meA4E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UITFML6YWTmQKugoWzmkCCU54RTz9pfe2Z+gTtjRRW0lnlQTeP4PlRbDUS5Fv+6/L
+	 OJaIyQWeQv4FKt00bD1leamDtC4uUMFSi23xVAJ7tByCqpwSbxZhAIAJBbD5468XnQ
+	 afRGR0dlz8IlnM7bakuXfSWgb5EdaKcEpVe7CsIbsUY27TaD/sNUQ19YtSqUhQalRb
+	 59nredZ/s8EaB0VU5Or2jsaWvT6pjyw3sfV5uvvc1E55Qhm269FnWFg0GODsrR5g50
+	 WBx+4OHkO9AA6aKh10tzbWXf27tMFmNYsGVA65/oEDwmqacCmqzroaC8pMgHXXDM7y
+	 TF094RHQrEl0Q==
+Date: Sun, 3 Nov 2024 13:55:48 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] uprobes: Re-order struct uprobe_task to save some space
+Message-Id: <20241103135548.0c19e1a1451e598c18d8c42f@kernel.org>
+In-Reply-To: <a9f541d0cedf421f765c77a1fb93d6a979778a88.1730495562.git.christophe.jaillet@wanadoo.fr>
+References: <a9f541d0cedf421f765c77a1fb93d6a979778a88.1730495562.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101005338.5846-1-benjamin@engflow.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Benjamin,
+On Fri,  1 Nov 2024 22:13:33 +0100
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-kernel test robot noticed the following build errors:
+> On x86_64, with allmodconfig, struct uprobe_task is 72 bytes long, with a
+> hole and some padding.
+> 
+> 	/* size: 72, cachelines: 2, members: 7 */
+> 	/* sum members: 64, holes: 1, sum holes: 4 */
+> 	/* padding: 4 */
+> 	/* forced alignments: 1, forced holes: 1, sum forced holes: 4 */
+> 	/* last cacheline: 8 bytes */
+> 
+> Reorder the structure to fill the hole and avoid the padding.
+> 
+> This way, the whole structure fits in a single cacheline and some memory is
+> saved when it is allocated.
+> 
+> 	/* size: 64, cachelines: 1, members: 7 */
+> 	/* forced alignments: 1 */
+> 
 
-[auto build test ERROR on perf-tools-next/perf-tools-next]
-[also build test ERROR on tip/perf/core perf-tools/perf-tools linus/master acme/perf/core v6.12-rc5 next-20241101]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Looks good to me.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Peterson/perf-trace-avoid-garbage-when-not-printing-an-trace-event-s-arguments/20241101-085413
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git perf-tools-next
-patch link:    https://lore.kernel.org/r/20241101005338.5846-1-benjamin%40engflow.com
-patch subject: [PATCH] perf trace: avoid garbage when not printing an trace event's arguments
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241103/202411031202.CkbT89xW-lkp@intel.com/reproduce)
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411031202.CkbT89xW-lkp@intel.com/
+Thank you!
 
-All errors (new ones prefixed by >>):
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only
+> ---
+>  include/linux/uprobes.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index dbaf04189548..c684a470477f 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -73,6 +73,9 @@ enum uprobe_task_state {
+>  struct uprobe_task {
+>  	enum uprobe_task_state		state;
+>  
+> +	unsigned int			depth;
+> +	struct return_instance		*return_instances;
+> +
+>  	union {
+>  		struct {
+>  			struct arch_uprobe_task	autask;
+> @@ -89,9 +92,6 @@ struct uprobe_task {
+>  	unsigned long			xol_vaddr;
+>  
+>  	struct arch_uprobe              *auprobe;
+> -
+> -	struct return_instance		*return_instances;
+> -	unsigned int			depth;
+>  };
+>  
+>  struct return_consumer {
+> -- 
+> 2.47.0
+> 
 
-   Makefile.config:652: No libunwind found. Please install libunwind-dev[el] >= 1.1 and/or set LIBUNWIND_DIR
-     PERF_VERSION = 6.12.rc3.g6e02cf5e2f22
-   builtin-trace.c: In function 'trace__fprintf_tp_fields':
->> builtin-trace.c:3090:35: error: field precision specifier '.*' expects argument of type 'int', but argument 3 has type 'size_t' {aka 'long unsigned int'} [-Werror=format=]
-    3090 |         fprintf(trace->output, "%.*s", printed, bf);
-         |                                 ~~^~   ~~~~~~~
-         |                                   |    |
-         |                                   int  size_t {aka long unsigned int}
-   cc1: all warnings being treated as errors
-   make[6]: *** [tools/build/Makefile.build:105: tools/perf/builtin-trace.o] Error 1
-   make[5]: *** [Makefile.perf:762: tools/perf/perf-in.o] Error 2
-   make[5]: *** Waiting for unfinished jobs....
-   make[4]: *** [Makefile.perf:292: sub-make] Error 2
-   make[3]: *** [Makefile:76: all] Error 2
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
