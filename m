@@ -1,147 +1,276 @@
-Return-Path: <linux-kernel+bounces-394007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99919BA87F
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 23:19:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189169BA883
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 23:19:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F1831F210FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:19:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0659281EFD
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD06618C324;
-	Sun,  3 Nov 2024 22:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Z0lAo4pm"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF42A18C32E;
+	Sun,  3 Nov 2024 22:19:31 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC9FC2FB
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 22:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5768418C009
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 22:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730672337; cv=none; b=bfDbxNt16ol3LuU9zlGenf+8A9H/tmfca99cGvr+mdU4I61tYTxP0UCF5aGNe8wwCxW/pEYPBKpOpbvfrEgzGGzkJdxGpAadTsky6A7RVqrN6PaJd2Rv8aGLH6rOiwAgH17ytf5Ir8TCrXnG/i7/3pCZHSFWpc09nJGtKC17DgY=
+	t=1730672371; cv=none; b=tyxWq7kYZdw9IVQfAVxtPtBz3msBMA6xBj1K3TCdfl4mKDGIOTxgWUiYjtlrShDuaPqQNZixEHKnwxCMpOLYzll74bw8b51Narjs36ysFZOcjjStCTkP2D3APIon7uJogc2Sd4Yti2aOHySu2EiKNqJZBTWTic0fo+ga3ZFJGLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730672337; c=relaxed/simple;
-	bh=YGawsJXB+jsEC2Okr4d21ol8xSluHNkz7XQ5YfM4hmc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bzqpN85KqPffnT3SCPm+Tt6kYlGCd+BK37dDm9428AXSLgMTxiOcWkSbdlmr0l1cfmzTrUzguEVt8LIDS4MZT36WyH+lejUFulfWRyCxKqX32Sm44FVPguTAJQShDOOGCau2Rl1GEQVJwDzrCutGgTd3c0yEKA8MkXKv3CN5ibs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Z0lAo4pm; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7e9f377a3c9so521442a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 14:18:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1730672335; x=1731277135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DR6c/WPJN94TSRP9CTlobXAtJd4oqXafjQHarDgT3xg=;
-        b=Z0lAo4pm9kE/AL/MM90CCrdbc1DMqNVaTcZF/rgDQgpKxHJF7ikrdnOVHBP9i0yA1O
-         D7XOB58ITkxOPaQ0AH4oCWdWUT3g9BjRdB54RXkwGGmMf54GDRpWbnnyeXnLBOmDGnGt
-         87/P6Q1YmWdZWkir9mk7RL8oq0GuwnVoF8w68cPlPUWSuefOVa4O1TaoHjiXVwp4oIM+
-         zUq0+vi2/MBegEAIbdogQpQ4lvhTvK74SkxYt+60Njxpi0WnDNwqIRJDAkn37n3SriKU
-         j0/O7j37FJqHo6jj7gjqOI6HTawQeskaWN67/OOKmoEirxnUskWvlzPlYH07ODDd4ygC
-         DjXQ==
+	s=arc-20240116; t=1730672371; c=relaxed/simple;
+	bh=bO9OJotYEzM2+vVRB5il0EnhrqFe5lgqyaf6ZsQf/Q4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VpMDOv/eoPowFxyXyb5rJPhcsDzMy6EeUE1Hwgn82lJRh4AZ+r6rvQKDMiyHJabo6HF+JWp9BZc1oV+BNu8W1JqSs3IR15vxZbC7vyrz+sR/amaXLIm9+G2MqqUG4XbogQ142l9ahauCxZ1s5znju/zxIM3rl7mZmi//qTKrqSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4e41e2732so38321265ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 14:19:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730672335; x=1731277135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DR6c/WPJN94TSRP9CTlobXAtJd4oqXafjQHarDgT3xg=;
-        b=j1rfaAC92/SH4oxmpGqX3NS/oPS1Fljx8/k0UeqXplzwf8vvZtVicgQCT0CbwDFotA
-         IokorelzMCPwk3XUwsHthsV1KozaXLStM/LrwzWutKpglb9dgK+3Z4h/RIZy3r382j1P
-         eNpVaFP9Bj5jC3x3AktMqttcNarHWlyKoQHOX0dJ8MANdC9JH0NSQHqEzwDuqTU2Ozmr
-         dBXY2IcXaXGhjgRgJ5VqplFDLfIz1OrhsOKW5d0+6og4NAM1OXwA00o5KuUP1Xx5gWQQ
-         w4TwEKVzVmG6OpoCPDHjEDlWYwW9ACrlj3AQ7+B8P1UdFey6S1qqwLpyfrveb019S3T3
-         4A4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWWAc/Ra07McO5IoFpA+O7I6fAVuLJBQZSbUvsu7CLjyp+Ijwx7q4yOlTLSRnJr3d02GiEVFvfp3rlI62A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweVhjoCG2IHFPaCQLemrHqsEQNMbJGfyNiRvIjua1rSU8JDc+U
-	aaRVAeiqqnz6GbWktb6qJC+J/BOug5Jn9K3TqD1A2gcLD/2LPsZIR5affsqqM1v43CwbxTjGQtS
-	nD2wdXkoLPmzyJ9aHDn6J9vqKvzqpudxoxVuofg==
-X-Google-Smtp-Source: AGHT+IExPA2hsiAKoyDZwRCgYk5UAZ7TEXffOizLQFxWQDP2pcqP6Jrb05184RINemMWnN8NpvwAMu6stmFhPCSnf1w=
-X-Received: by 2002:a17:90a:77c5:b0:2e5:5a58:630 with SMTP id
- 98e67ed59e1d1-2e8f11a8ba9mr15038332a91.5.1730672334564; Sun, 03 Nov 2024
- 14:18:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730672368; x=1731277168;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NZIgSmxRYm8E+xa5d7Au2QP17BqgW2Q7/r/PyOGlTVo=;
+        b=iJIobnBYdopIV/HIiXn02UQl9NMJ9jp+YXmmFQYr6/YQ6wGPPkAij+/JM2S0c9i1V0
+         u8r2G+1BclfN25EoGsGHT0nxtUxCoJQ4rsH5qlv/EEHuJXAGRppBehyMB+mISFos98mZ
+         df28LGqDzSEPCm/lN1JSk52mD5XWkOqWZqTYEB2/u7avpF4TSTnrp8iYBHZmGxH9CY38
+         tAgUbI3KiASLEYS2MipvdygjyWHu7tvaHUeFk072/B9p03n0HGEGNCy/Sl/Dn9xNahtL
+         t98Ca+wAWuaDNA1A4OgZ813+jGD0slkx/TdJohxYMIEd8xdeZmoL2RbzdQm5lzDtRszL
+         G8mA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8k97NWCwPrGom+sLWUXWp5nUuqGuA3pJ1sWV7+BZLG7TzELK44fxv4LXqSGoCpcTtdNpIvA5Nnr24I9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbbN4REKPfZhXHlfyfd5yJGoPrMa+VwohXtg9gqgZu6QzzKAJJ
+	UjgylWKInZkU9k1ocgYAvBRsZ9nhG+tiMe/VRUFImQgb5StJXZmnB8CQ4c94ls+2xkEXCTxZNrG
+	IaX877cSTa42Apnfb0JouVgC9gv6qvyCtLntyFDUslraPr8LhvD6snTQ=
+X-Google-Smtp-Source: AGHT+IGEcWcWl7bGZfPIF94SJSQTObO7kdMGWvP5SyTeJURLHfWp1YQ01L634BbBAjTVcWBkYfIv5i0qVIi4aog4SyE3l7Su2C0t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101034647.51590-1-csander@purestorage.com>
- <20241101034647.51590-2-csander@purestorage.com> <CY8PR12MB71958512F168E2C172D0BE05DC502@CY8PR12MB7195.namprd12.prod.outlook.com>
-In-Reply-To: <CY8PR12MB71958512F168E2C172D0BE05DC502@CY8PR12MB7195.namprd12.prod.outlook.com>
-From: Caleb Sander <csander@purestorage.com>
-Date: Sun, 3 Nov 2024 14:18:43 -0800
-Message-ID: <CADUfDZofFwy12oZYTmm3TE314RM79EGsxV6bKEBRMVFv8C3jNg@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/2] mlx5/core: deduplicate {mlx5_,}eq_update_ci()
-To: Parav Pandit <parav@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:188d:b0:3a6:b360:c6e5 with SMTP id
+ e9e14a558f8ab-3a6b360c89amr93253375ab.16.1730672368513; Sun, 03 Nov 2024
+ 14:19:28 -0800 (PST)
+Date: Sun, 03 Nov 2024 14:19:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6727f6f0.050a0220.3c8d68.0aa9.GAE@google.com>
+Subject: [syzbot] [block?] possible deadlock in __submit_bio
+From: syzbot <syzbot+949ae54e95a2fab4cbb4@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ming.lei@redhat.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 2, 2024 at 8:55=E2=80=AFPM Parav Pandit <parav@nvidia.com> wrot=
-e:
->
->
->
-> > From: Caleb Sander Mateos <csander@purestorage.com>
-> > Sent: Friday, November 1, 2024 9:17 AM
-> >
-> > The logic of eq_update_ci() is duplicated in mlx5_eq_update_ci(). The o=
-nly
-> > additional work done by mlx5_eq_update_ci() is to increment
-> > eq->cons_index. Call eq_update_ci() from mlx5_eq_update_ci() to avoid
-> > the duplication.
-> >
-> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > ---
-> >  drivers/net/ethernet/mellanox/mlx5/core/eq.c | 9 +--------
-> >  1 file changed, 1 insertion(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > index 859dcf09b770..078029c81935 100644
-> > --- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > @@ -802,19 +802,12 @@ struct mlx5_eqe *mlx5_eq_get_eqe(struct
-> > mlx5_eq *eq, u32 cc)  }  EXPORT_SYMBOL(mlx5_eq_get_eqe);
-> >
-> >  void mlx5_eq_update_ci(struct mlx5_eq *eq, u32 cc, bool arm)  {
-> > -     __be32 __iomem *addr =3D eq->doorbell + (arm ? 0 : 2);
-> > -     u32 val;
-> > -
-> >       eq->cons_index +=3D cc;
-> > -     val =3D (eq->cons_index & 0xffffff) | (eq->eqn << 24);
-> > -
-> > -     __raw_writel((__force u32)cpu_to_be32(val), addr);
-> > -     /* We still want ordering, just not swabbing, so add a barrier */
-> > -     wmb();
-> > +     eq_update_ci(eq, arm);
-> Long ago I had similar rework patches to get rid of __raw_writel(), which=
- I never got chance to push,
->
-> Eq_update_ci() is using full memory barrier.
-> While mlx5_eq_update_ci() is using only write memory barrier.
->
-> So it is not 100% deduplication by this patch.
-> Please have a pre-patch improving eq_update_ci() to use wmb().
-> Followed by this patch.
+Hello,
 
-Right, patch 1/2 in this series is changing eq_update_ci() to use
-writel() instead of __raw_writel() and avoid the memory barrier:
-https://lore.kernel.org/lkml/20241101034647.51590-1-csander@purestorage.com=
-/
-Are you suggesting something different? If so, it would be great if
-you could clarify what you mean.
+syzbot found the following issue on:
 
-Best,
-Caleb
+HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f26630580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
+dashboard link: https://syzkaller.appspot.com/bug?extid=949ae54e95a2fab4cbb4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102632a7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16749340580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/61af3e8f2dbd/mount_0.gz
+
+The issue was bisected to:
+
+commit f1be1788a32e8fa63416ad4518bbd1a85a825c9d
+Author: Ming Lei <ming.lei@redhat.com>
+Date:   Fri Oct 25 00:37:20 2024 +0000
+
+    block: model freeze & enter queue as lock for supporting lockdep
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13eafaa7980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=101afaa7980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17eafaa7980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+949ae54e95a2fab4cbb4@syzkaller.appspotmail.com
+Fixes: f1be1788a32e ("block: model freeze & enter queue as lock for supporting lockdep")
+
+exFAT-fs (loop0): failed to load upcase table (idx : 0x00012153, chksum : 0x822ffc2e, utbl_chksum : 0xe619d30d)
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor382/6007 is trying to acquire lock:
+ffff8881427474e8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: __submit_bio+0x2c2/0x560 block/blk-core.c:629
+
+but task is already holding lock:
+ffff888034dd00e8 (&sbi->s_lock){+.+.}-{4:4}, at: exfat_create+0x1a2/0x5a0 fs/exfat/namei.c:553
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&sbi->s_lock){+.+.}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       exfat_lookup+0x140/0x18f0 fs/exfat/namei.c:701
+       lookup_open fs/namei.c:3573 [inline]
+       open_last_lookups fs/namei.c:3694 [inline]
+       path_openat+0x11a7/0x3590 fs/namei.c:3930
+       do_filp_open+0x235/0x490 fs/namei.c:3960
+       do_sys_openat2+0x13e/0x1d0 fs/open.c:1419
+       do_sys_open fs/open.c:1434 [inline]
+       __do_sys_openat fs/open.c:1450 [inline]
+       __se_sys_openat fs/open.c:1445 [inline]
+       __x64_sys_openat+0x247/0x2a0 fs/open.c:1445
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&sb->s_type->i_mutex_key#15){++++}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
+       inode_lock include/linux/fs.h:817 [inline]
+       __generic_file_fsync+0x97/0x1a0 fs/libfs.c:1536
+       exfat_file_fsync+0xf9/0x1d0 fs/exfat/file.c:524
+       __loop_update_dio+0x1a4/0x500 drivers/block/loop.c:204
+       loop_set_status+0x62b/0x8f0 drivers/block/loop.c:1290
+       lo_ioctl+0xcbc/0x1f50
+       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:907 [inline]
+       __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&q->q_usage_counter(io)#17){++++}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       bio_queue_enter block/blk.h:75 [inline]
+       blk_mq_submit_bio+0x1510/0x2490 block/blk-mq.c:3069
+       __submit_bio+0x2c2/0x560 block/blk-core.c:629
+       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+       submit_bh fs/buffer.c:2819 [inline]
+       __sync_dirty_buffer+0x23d/0x390 fs/buffer.c:2857
+       exfat_set_volume_dirty+0x5d/0x80 fs/exfat/super.c:124
+       exfat_create+0x1aa/0x5a0 fs/exfat/namei.c:554
+       lookup_open fs/namei.c:3595 [inline]
+       open_last_lookups fs/namei.c:3694 [inline]
+       path_openat+0x1c03/0x3590 fs/namei.c:3930
+       do_filp_open+0x235/0x490 fs/namei.c:3960
+       do_sys_openat2+0x13e/0x1d0 fs/open.c:1419
+       do_sys_open fs/open.c:1434 [inline]
+       __do_sys_openat fs/open.c:1450 [inline]
+       __se_sys_openat fs/open.c:1445 [inline]
+       __x64_sys_openat+0x247/0x2a0 fs/open.c:1445
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &q->q_usage_counter(io)#17 --> &sb->s_type->i_mutex_key#15 --> &sbi->s_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sbi->s_lock);
+                               lock(&sb->s_type->i_mutex_key#15);
+                               lock(&sbi->s_lock);
+  rlock(&q->q_usage_counter(io)#17);
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor382/6007:
+ #0: ffff888034b8a420 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
+ #1: ffff88807733e330 (&sb->s_type->i_mutex_key#15){++++}-{4:4}, at: inode_lock include/linux/fs.h:817 [inline]
+ #1: ffff88807733e330 (&sb->s_type->i_mutex_key#15){++++}-{4:4}, at: open_last_lookups fs/namei.c:3691 [inline]
+ #1: ffff88807733e330 (&sb->s_type->i_mutex_key#15){++++}-{4:4}, at: path_openat+0x89a/0x3590 fs/namei.c:3930
+ #2: ffff888034dd00e8 (&sbi->s_lock){+.+.}-{4:4}, at: exfat_create+0x1a2/0x5a0 fs/exfat/namei.c:553
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 6007 Comm: syz-executor382 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ bio_queue_enter block/blk.h:75 [inline]
+ blk_mq_submit_bio+0x1510/0x2490 block/blk-mq.c:3069
+ __submit_bio+0x2c2/0x560 block/blk-core.c:629
+ __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+ submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+ submit_bh fs/buffer.c:2819 [inline]
+ __sync_dirty_buffer+0x23d/0x390 fs/buffer.c:2857
+ exfat_set_volume_dirty+0x5d/0x80 fs/exfat/super.c:124
+ exfat_create+0x1aa/0x5a0 fs/exfat/namei.c:554
+ lookup_open fs/namei.c:3595 [inline]
+ open_last_lookups fs/namei.c:3694 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3930
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1419
+ do_sys_open fs/open.c:1434 [inline]
+ __do_sys_openat fs/open.c:1450 [inline]
+ __se_sys_openat fs/open.c:1445 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1445
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd567e88559
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe5ed3b418 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007fd567ed10aa RCX: 00007fd567e88559
+RDX: 000000000000275a RSI: 0000000020000080 RDI: 00000000ffffff9c
+RBP: 0000000000000000 R08: 0023706f6f6c2f76 R09: 00007ffe5ed3b450
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe5ed3b43c
+R13: 0000000000000028 R14: 431bde82d7b634db R15: 00007ffe5ed3b470
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
