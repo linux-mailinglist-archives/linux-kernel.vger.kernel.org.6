@@ -1,67 +1,58 @@
-Return-Path: <linux-kernel+bounces-393981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E729BA83C
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:06:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 202EA9BA842
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:13:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5EC3B20978
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:06:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFEBEB211E9
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0985818C005;
-	Sun,  3 Nov 2024 21:06:30 +0000 (UTC)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DA818BC37;
+	Sun,  3 Nov 2024 21:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cBq/u85e"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AF915C14B;
-	Sun,  3 Nov 2024 21:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C077EC2FB;
+	Sun,  3 Nov 2024 21:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730667989; cv=none; b=nk4IVaYiihnIRnYyOhYi5rnKhWEr53JQvz4DcYhpYY9/3bv/BLgGNkCGPMEg+XvFC6bFsVWaAAsRnZ6YbZWu6l//Z85PIMYW8Xm1OdmciHuD0S/lAs6ZO5iOnOvblonvD4vX/4ACUYN9yYg61sgizO4hGYoLKYfHc+Ku6hOGP7M=
+	t=1730668376; cv=none; b=lsiQhqlEXKKeMrcBxGSci7B+SVu781X+9qQsjJkvAw0OWaAAHo9+q6T7IsXJ1srf/WyLHCNRKYdLaJmgDXy8Wnda+jvJZ6HS0+9vmdR+gU6ewp2SGqpx2d5ukGPbDwKwRB3QUBBpZ+QIRzX6TF+PiFm4R8Pq4i2pmEpdA2P/19M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730667989; c=relaxed/simple;
-	bh=bViyCNx7IkwpIkvnj9Zr4e3mF74VuUnl0vXRLZmYLRQ=;
+	s=arc-20240116; t=1730668376; c=relaxed/simple;
+	bh=OrHP/C87GXayQ8LpWYy6cpovSsIWwKGIklS+Y06lGjs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fAn9Of766louwuj0l+gkmHLpmXj5lb9BJAiyO5xsKC6MfRWgH/D6wHmXzhWOS3Fj4cJunQzIZOGMaQglVAcABJH6ZmQptt1TBlN5Zu31dcQXQ38jkqTDF8wuJvSS/VkjQPMo8HP6n6Rn1rzqOXsuWoayR1wrSvt/vDiVagCiwuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-720be2b27acso2784073b3a.0;
-        Sun, 03 Nov 2024 13:06:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730667987; x=1731272787;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OdXLylQlZ9Tj3s4tp6NVE6CDQHIYZCRiCbzxNvRzB8Y=;
-        b=FoW0xWFBkjG52LdnyaNopZXGyImuaw6cVT5ZAzSBLUmS5ool1Y1W04udIVhYUqtH1M
-         qWMLG3fX5seVPyHl0GGrHW0ZctbGzwaBcTVYkzjslbTp9Zz8THTBBYk29hurSapjhNM1
-         bFCjGrI6mqeGOfoxRJrAfn9Nuu3+ebYo5rzg2KwWEtJT4k3K2D9bc9DYyPTfjeyHc+Hn
-         saWWXu8M1E6LwJHHqNO+kwUaG1urC7Odi9EJrO+A7cxoz/dMgibIyU6Gl+HtEoIdURkW
-         tnhOICnEpWiUIgEDkMXFUC/20+aohcIG6+yA91Hs2AwKgUuE+WfT7fEz5iaAf7pdtu0s
-         PGMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUh8NF6pM++g8/WWB7MTkqdH3Ot/k0nk26NoI7LBnItWZ0WCB75hm4WMoswHpufzQDNAxoIS6O8DQz4b7k=@vger.kernel.org, AJvYcCWCLUmhj9ZOdMBtQO6fKYJsRMzAnMcjn8Yb1g8q0koYJCzC9Upd9E56GhNz5E2B08+oYSrtF1PK/vra@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx/DqtzpPBW0v66H+Iyb/TMEJVPK51Sk5KWMq/a9oH/o/3sMTP
-	oZucHfJs3Pofs7Bc2ZFZkbJ6GfFBoN4cuMfF2zILuBIXZNEjUsVH
-X-Google-Smtp-Source: AGHT+IGYy5jVsN3Rgu5s8FJn2BIs27OnMRPfCyk7W+axLO91wyEHj+Gcm+Hn5gMgPRNEcSPhj8rh3Q==
-X-Received: by 2002:a05:6a00:1794:b0:71e:db72:3c87 with SMTP id d2e1a72fcca58-720b9d949eemr19292028b3a.20.1730667987502;
-        Sun, 03 Nov 2024 13:06:27 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1efb45sm6144523b3a.85.2024.11.03.13.06.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 13:06:26 -0800 (PST)
-Date: Mon, 4 Nov 2024 06:06:25 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, robh@kernel.org,
-	vigneshr@ti.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	u-kumar1@ti.com, danishanwar@ti.com, srk@ti.com
-Subject: Re: [PATCH] PCI: j721e: Add PCIe support for J722S SoC
-Message-ID: <20241103210625.GM237624@rocinante>
-References: <20240524092349.158443-1-s-vadapalli@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtJ0D6BuCseM0dX1JFvTGlwd+gPyxW0Z4w2Sbh1tenZCq9O+eXm/PhrBm4K0LJnyaT1Eg1TVJnfU8cwWHSLZljJ+6N7QJHAOrEqi/TpVAxAOaGYPoSIzmdlXHkB8tZsJfM+MzC3E0SEdXcjHw0LjZKwVZ1kKPiY/tW7rG7btoP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cBq/u85e; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=u9af+63g91MWH5Q/sekGcHeUCPlXa1HKblO1SD+KLHc=; b=cBq/u85eBFBcZQxZW3iMjFG89x
+	MOvzGmp6iA0/Szv7H0wdqO9yPD6o3Xa1lXfNa4APn62DC1lN4A5QvBpb8KmPnADrZ420esdgtkjbN
+	9vn4THTjgiRxRlWYDXVIWJ0P1Scb1sMfczEIfmRoHPhAt0xCgnPYNOwO6a2HB5yYHShs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t7htg-00C2V9-8S; Sun, 03 Nov 2024 22:12:32 +0100
+Date: Sun, 3 Nov 2024 22:12:32 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: patchwork-bot+netdevbpf@kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	olteanv@gmail.com, akpm@linux-foundation.org, kuba@kernel.org,
+	krzysztof.kozlowski@linaro.org, arnd@arndb.de, bhelgaas@google.com,
+	bagasdotme@gmail.com, mpe@ellerman.id.au, yosryahmed@google.com,
+	vbabka@suse.cz, rostedt@goodmis.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2] MAINTAINERS: Remove self from DSA entry
+Message-ID: <769445b8-e9e3-4e18-93dd-983240ba0bf9@lunn.ch>
+References: <20241031173332.3858162-1-f.fainelli@gmail.com>
+ <173066763074.3253460.18226765088399170074.git-patchwork-notify@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,18 +61,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240524092349.158443-1-s-vadapalli@ti.com>
+In-Reply-To: <173066763074.3253460.18226765088399170074.git-patchwork-notify@kernel.org>
 
-Hello,
+On Sun, Nov 03, 2024 at 09:00:30PM +0000, patchwork-bot+netdevbpf@kernel.org wrote:
+> Hello:
+> 
+> This patch was applied to netdev/net.git (main)
+> by Jakub Kicinski <kuba@kernel.org>:
+> 
+> On Thu, 31 Oct 2024 10:33:29 -0700 you wrote:
+> > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> > ---
+> > Changes in v2:
+> > 
+> > - add self to CREDITS
+> > 
+> >  CREDITS     | 4 ++++
+> >  MAINTAINERS | 1 -
+> >  2 files changed, 4 insertions(+), 1 deletion(-)
 
-> TI's J722S SoC has one instance of PCIe namely PCIe0 which is a Gen3
-> single lane PCIe controller. Add support for the "ti,j722s-pcie-host"
-> compatible specific to J722S SoC.
+Hi Jakub
 
-Applied to controller/j721e, thank you!
+I could be wrong, but i thought Andrew Morten already applied this?
 
-[01/01] PCI: j721e: Add PCIe support for J722S SoC
-        https://git.kernel.org/pci/pci/c/08e835268c35
-
-	Krzysztof
+	Andrew
 
