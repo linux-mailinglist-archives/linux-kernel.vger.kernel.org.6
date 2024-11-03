@@ -1,50 +1,49 @@
-Return-Path: <linux-kernel+bounces-393796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F61A9BA556
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:02:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9E19BA558
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:02:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C621C20E1D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:02:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E4BD1C20958
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2BD165F01;
-	Sun,  3 Nov 2024 12:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CB416E895;
+	Sun,  3 Nov 2024 12:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fwyaCcN/"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GwBfeXi/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480FD7080C
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 12:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A031632DF;
+	Sun,  3 Nov 2024 12:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730635329; cv=none; b=ERAmyNf+ZINxqGHOS1mQuU19pVIJvZqO/o6mLaQPXS188jpgdhSxiXRhWR/c6MXtXx9wAqf4MeMVCLVAhZPGhHMEvlzwzKXY7YKKvRnKUHpCIQ6+gQC5rQx1wIQdVtB4SMwwHEph9Q1TVASHV8qFaIctSnLivjBs1qzquNdNXM8=
+	t=1730635345; cv=none; b=E/+alLZEo6rNGvgPZdwzKWJ0TvYGLMfgN1djCWLcV4baumEBcCjNK2nycMf22p+UP0rSDOusxS8DvEU4GxIfyIlO0vC2yy+Nvn5NccLUEBgnMDKpm1MWzrwkslz7l/eHL2JVj+u2tHDaXXtCgMZ1XwpBjuH8tayH+chJFBvkzzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730635329; c=relaxed/simple;
-	bh=GrVgJBNnLFZybQ4vAx75wVn7n6208u+31IZ43I28/h4=;
+	s=arc-20240116; t=1730635345; c=relaxed/simple;
+	bh=Y4qG3SXaAVQ+YzeZZ3XeJ6pdiwxgT2z0KZ92aiDC474=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C+47uLVERdLJanHDN5RZMR1FDi9e2ETcnBsstkD11F7g+qIaWU68dyyRy+U5R1RfPJERW4QWbAJu5gCyBoRUkS5vUGUbxePs8y93NrveOLgroGW+QOpKCaj0aCUrY84o2LgaXGdMFv89MridllECdobFCwUmwxrUb4CUXoIKDl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fwyaCcN/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E707C4CECD;
-	Sun,  3 Nov 2024 12:02:08 +0000 (UTC)
+	 Content-Disposition; b=kD5Z1xvwNoJdaZUfkcYReXMwkt48vkq8SyG9nkD01+nY7OLJ/75qLKt0IJXnHuTndfwIbqLUllW4Dx+rVl08EvXcBU17BgedbplxONfeXipzJlcg5608AZYnsWrV1D2cwICXKntfioClGrcPiCQ3oRanji99zghYkSPj/eynLiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GwBfeXi/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2E5DC4CECD;
+	Sun,  3 Nov 2024 12:02:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730635328;
-	bh=GrVgJBNnLFZybQ4vAx75wVn7n6208u+31IZ43I28/h4=;
+	s=korg; t=1730635345;
+	bh=Y4qG3SXaAVQ+YzeZZ3XeJ6pdiwxgT2z0KZ92aiDC474=;
 	h=Date:From:To:Cc:Subject:From;
-	b=fwyaCcN/HVlgYvmTqaM4GrKFbbfrzLYMVHtVrU4zXL4Pof+aGfakTA5J4rcKU3CQs
-	 GKwrRFvZsQlLNofz2+es+J88JEEiDwSCCK+rHZaWU3G8pcp7mtbIx3JLtbz0NhTIiY
-	 rO4q35GNCZxPGuwrLsRMgAL3JXx9d3Rf3sO6BrdY=
-Date: Sun, 3 Nov 2024 13:01:52 +0100
+	b=GwBfeXi/XPHHNDMheuWWCahNMr0fBVdXoYo2Jw2DP5wEhhoF1otuvwcCSXzgHfR27
+	 2ksiFISJX2KzrAcn7gaEKZJtXri07tLrJHxOReqT6d9yYI0es639Z4/Qt3gFCiFAge
+	 5YsETtcLETaYHVCW7UCDKI8Htz+UB+GpKSc9gADI=
+Date: Sun, 3 Nov 2024 13:02:09 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-	Saravana Kannan <saravanak@google.com>
-Subject: [GIT PULL] Driver core revert fix for 6.12-rc6
-Message-ID: <ZydmMMof02Mb1kNT@kroah.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB fixes for 6.12-rc6
+Message-ID: <ZydmQblqRdfE3dZ5@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,35 +53,82 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
+The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
 
-  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
+  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/driver-core-6.12-rc6
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.12-rc6
 
-for you to fetch changes up to 9a71892cbcdb9d1459c84f5a4c722b14354158a5:
+for you to fetch changes up to afb92ad8733ef0a2843cc229e4d96aead80bc429:
 
-  Revert "driver core: Fix uevent_show() vs driver detach race" (2024-10-29 01:23:43 +0100)
+  usb: typec: tcpm: restrict SNK_WAIT_CAPABILITIES_TIMEOUT transitions to non self-powered devices (2024-10-29 04:38:00 +0100)
 
 ----------------------------------------------------------------
-Driver core revert fix for 6.12-rc6
+USB / Thunderbolt fixes for 6.12-rc6
 
-Here is a single driver core revert for 6.12-rc6.  It reverts a change
-that came in -rc1 that was supposed to resolve a reported problem, but
-caused another one, so revert it for now so that we can get this all
-worked out properly in 6.13.
+Here are some small USB and Thunderbolt driver fixes for 6.12-rc6 that
+have been sitting in my tree this week.  Included in here are the
+following:
+  - thunderbolt driver fixes for reported issues
+  - USB typec driver fixes
+  - xhci driver fixes for reported problems
+  - dwc2 driver revert for a broken change
+  - usb phy driver fix
+  - usbip tool fix
 
-The revert has been in linux-next all week with no reported issues.
+All of these have been in linux-next this week with no reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Greg Kroah-Hartman (1):
-      Revert "driver core: Fix uevent_show() vs driver detach race"
+Amit Sunil Dhamne (1):
+      usb: typec: tcpm: restrict SNK_WAIT_CAPABILITIES_TIMEOUT transitions to non self-powered devices
 
- drivers/base/core.c   | 13 +++++--------
- drivers/base/module.c |  4 ----
- 2 files changed, 5 insertions(+), 12 deletions(-)
+Basavaraj Natikar (1):
+      xhci: Use pm_runtime_get to prevent RPM on unsupported systems
+
+Faisal Hassan (1):
+      xhci: Fix Link TRB DMA in command ring stopped completion event
+
+Gil Fine (1):
+      thunderbolt: Honor TMU requirements in the domain when setting TMU mode
+
+Greg Kroah-Hartman (1):
+      Merge tag 'thunderbolt-for-v6.12-rc5' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt into usb-linus
+
+Javier Carrasco (4):
+      usb: typec: qcom-pmic-typec: use fwnode_handle_put() to release fwnodes
+      usb: typec: qcom-pmic-typec: fix missing fwnode removal in error path
+      usb: typec: fix unreleased fwnode_handle in typec_port_register_altmodes()
+      usb: typec: use cleanup facility for 'altmodes_node'
+
+Mathias Nyman (1):
+      usb: acpi: fix boot hang due to early incorrect 'tunneled' USB3 device links
+
+Mika Westerberg (1):
+      thunderbolt: Fix KASAN reported stack out-of-bounds read in tb_retimer_scan()
+
+Stefan Wahren (1):
+      Revert "usb: dwc2: Skip clock gating on Broadcom SoCs"
+
+Zijun Hu (1):
+      usb: phy: Fix API devm_usb_put_phy() can not release the phy
+
+Zongmin Zhou (1):
+      usbip: tools: Fix detach_port() invalid port error path
+
+ drivers/thunderbolt/retimer.c                 |  5 +--
+ drivers/thunderbolt/tb.c                      | 48 +++++++++++++++++++++++----
+ drivers/usb/core/usb-acpi.c                   |  4 +--
+ drivers/usb/dwc2/params.c                     |  1 -
+ drivers/usb/host/xhci-pci.c                   |  6 ++--
+ drivers/usb/host/xhci-ring.c                  | 16 ++++-----
+ drivers/usb/phy/phy.c                         |  2 +-
+ drivers/usb/typec/class.c                     |  6 ++--
+ drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c | 10 +++---
+ drivers/usb/typec/tcpm/tcpm.c                 | 10 ++++--
+ tools/usb/usbip/src/usbip_detach.c            |  1 +
+ 11 files changed, 78 insertions(+), 31 deletions(-)
 
