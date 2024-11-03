@@ -1,177 +1,99 @@
-Return-Path: <linux-kernel+bounces-393880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF8E9BA6A8
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:36:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A029BA6AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:40:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FF752814F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:36:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA10281935
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3F5171088;
-	Sun,  3 Nov 2024 16:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E1A188592;
+	Sun,  3 Nov 2024 16:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nV2oc7nx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EE4AD2D
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 16:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="V/WNNszn"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53470AD2D;
+	Sun,  3 Nov 2024 16:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730651780; cv=none; b=UNUnaFCu2ANQy+77ji71Hs/CZfzrz83O/H2qEVkKtaj++p+YK10QN/RGLLmGqm7FFyoLWr5zfWaNiOI64ZndlKmgddfQvwc80CKH491cfiGU0lY0FX0BY853KNCqyUqq5Sp9GxG3hcO1Fjd8zzx4USWMWTvKy99uSyfS1FTcvQs=
+	t=1730652002; cv=none; b=lHFo1lsBakdgwAOTsTSBBMoGp9gI75hfIjMYfMJHwKzi9IYxYqS1pz+blYzSZeNq5hbxyBRg+FSCxpcO3W7jJiz903h97j261KVZZJPYrkrwEwKOEggjXFgMeI97AcgDkv+vswGbjsC6bVbOSDxXlI0/YL18lyKplvel4nzka0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730651780; c=relaxed/simple;
-	bh=pkrvlZNuIfGVO2+sT7oIj+yIVci+tgs+U3VeLQAP8T0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Yaes+7H5WoTjOr7zh8kZWSYm5uLDs9hW0qC9oo//+GoY0MhQ+mEkPq2vykoyaPrZ37B7hWxvxmFYSELD/IiH7QgDUAJZa/9QkMTnrGyFQJDpKKkwl4xUWV7baZc7jMZKHv3agsHCzLK7mjUEruxHmbU22qoulScZ3FMtuTRmuio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nV2oc7nx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E01EC4CED3;
-	Sun,  3 Nov 2024 16:36:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730651776;
-	bh=pkrvlZNuIfGVO2+sT7oIj+yIVci+tgs+U3VeLQAP8T0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nV2oc7nxq0o7G4HNOvXmD8BUZ/za6S3/fXxJMNNS2xOtlHZ9xOzL0CRjDH8WTu+9a
-	 l1NpYnMRr7EIFSyhlsughgtjRMxDsu5xUfeCzs8ebZtcPz249CMrxD9+QKt9OxA9MQ
-	 rqsximSm0q7FZv8CnjhvIeeK0xfZ82mxGrDiXiF4QUKP6h2wMYmRHgiRrh/B73XA12
-	 ZgeJVeafFlgHOLZQzGdycwxWE+Q9oAVCvP8U2Ob8zvrizZLaxn+25oB2OZqPWLsDGW
-	 xTV4gc3EXdTtsMfHXIqd3WS2Wf+qG4q94Z6fJ/I79HguGJKbK3exyrYI6zhBzazJ0y
-	 1vdVRStipds1A==
-Date: Sun, 3 Nov 2024 22:06:12 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: Generic phy subsystem fixes for v6.12
-Message-ID: <ZyemfNqanr4J/kd1@vaman>
+	s=arc-20240116; t=1730652002; c=relaxed/simple;
+	bh=B2XWJUFled52xvHd4GjxQkLraBNHHyiNbE8xycuLjoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BM4d3CxyxnK4/aABrIYFesZmdcovKDoeVUstWIQ4WxwUHpUsavMJ4OWUVKM3p088nHiCOvwFSLQpvoG1dFmi3dD/2+vr+pjAQLal1Gn1yaC5fwG9FZxtWIiGagZ4KxOfeQlEvyXTN38qywnTgcnQs38uH520SGMSlwTZanHMiek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=V/WNNszn; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=FbWwF
+	FWXwSYGZ7x6HYor0Xf23KSHwmI8qh1gVcDacTE=; b=V/WNNsznVjwztLOMmEUIn
+	rRf5CooDRTz1bjIvAcjVwCewl8YDjA7FcwBWpRDkC/MFx/y5Ln+KqUcY+qVRw3aJ
+	tTzIMdvCBdmX2fMTErbPtA2y+Opai7ldxH/axesuvXICEePF2xyCnWYfkMrnKbwm
+	vuxiWw43yNnU4TE8W+FXVg=
+Received: from 100ask.localdomain (unknown [112.10.131.71])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDXX6gupydnXah8Ew--.35873S3;
+	Mon, 04 Nov 2024 00:39:14 +0800 (CST)
+From: Wenliang <wenliang202407@163.com>
+To: linux@roeck-us.net
+Cc: book <book@100ask.localdomain>,
+	jdelvare@suse.com,
+	linux-hwmon@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH linux dev-6.11 v3 2/2] dt-bindings: Add SY24655 to ina2xx devicetree bindings
+Date: Sun,  3 Nov 2024 11:39:08 -0500
+Message-ID: <20241103163908.11890-2-wenliang202407@163.com>
+X-Mailer: git-send-email 2.47.0.229.g8f8d6eee53
+In-Reply-To: <20241103163908.11890-1-wenliang202407@163.com>
+References: <706d4821-2637-4aac-869b-822f69aebbfa@roeck-us.net>
+ <20241103163908.11890-1-wenliang202407@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aecsP4KyPr1TaTxP"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXX6gupydnXah8Ew--.35873S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XFyfWw1rtw4fCFy5GFyrXrb_yoWftrbEga
+	y7Jw1UZFZ8JFyYgr4qy3yxXFyFy3WSkF4kCr1UCrZ5Aw4rZws0ga4kG3sxAryUXrWUu3W3
+	ua1kZ3y8Xr12kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8OJ57UUUUU==
+X-CM-SenderInfo: xzhqzxhdqjjiisuqlqqrwthudrp/1tbiNQ+M02cnoLAwsQABs1
 
+From: book <book@100ask.localdomain>
 
---aecsP4KyPr1TaTxP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+SY24655 is similar to INA226. Its supply voltage and pin definitions
+are therefore the same. Compared to INA226, SY24655 has two additional
+registers for configuring and calculating average power.
 
-Hello Linus,
+Signed-off-by: book <book@100ask.localdomain>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Here is the request for phy subsystem fixes. Bunch of qcom driver fixes
-for same patter over different drivers along with other driver fixes in
-the subsystem. Though patches are bit more, but diffstat is small.
+diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+index 6ae961732e6b..05a9cb36cd82 100644
+--- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
++++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+@@ -20,6 +20,7 @@ description: |
+ properties:
+   compatible:
+     enum:
++      - silergy,sy24655
+       - ti,ina209
+       - ti,ina219
+       - ti,ina220
+-- 
+2.47.0.229.g8f8d6eee53
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git tags/phy-=
-fixes-6.12
-
-for you to fetch changes up to e70d2677ef4088d59158739d72b67ac36d1b132b:
-
-  phy: tegra: xusb: Add error pointer check in xusb.c (2024-10-21 23:34:42 =
-+0530)
-
-----------------------------------------------------------------
-phy fixes for 6.12
-
- - Bunch of Qualcomm QMP driver fixes for null deref on suspend, bogus
-   supplies fix and reset entries fix
- - BCM usb driver init array fix
- - cadence array offset fix
- - starfive link configuration fix
- - config dependency fix for rockchip driver
- - freescale reset signal fix before pll lock
- - tegra driver fix for error pointer check
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Fix X1E80100 resets ent=
-ries
-
-Bartosz Wawrzyniak (1):
-      phy: cadence: Sierra: Fix offset of DEQ open eye algorithm control re=
-gister
-
-Cristian Ciocaltea (1):
-      phy: phy-rockchip-samsung-hdptx: Depend on CONFIG_COMMON_CLK
-
-Dipendra Khadka (1):
-      phy: tegra: xusb: Add error pointer check in xusb.c
-
-Jan Kiszka (1):
-      phy: starfive: jh7110-usb: Fix link configuration to controller
-
-Johan Hovold (6):
-      dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: add missing x1e80100 pi=
-pediv2 clocks
-      phy: qcom: qmp-usb: fix NULL-deref on runtime suspend
-      phy: qcom: qmp-usb-legacy: fix NULL-deref on runtime suspend
-      phy: qcom: qmp-usbc: fix NULL-deref on runtime suspend
-      phy: qcom: qmp-combo: move driver data initialisation earlier
-      phy: qcom: qmp-pcie: drop bogus x1e80100 qref supplies
-
-Justin Chen (1):
-      phy: usb: disable COMMONONN for dual mode
-
-Richard Zhu (1):
-      phy: freescale: imx8m-pcie: Do CMN_RST just before PHY PLL lock check
-
-Sam Edwards (1):
-      phy: usb: Fix missing elements in BCM4908 USB init array
-
-Siddharth Vadapalli (1):
-      phy: ti: phy-j721e-wiz: fix usxgmii configuration
-
- .../bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml    |  5 +++--
- drivers/phy/broadcom/phy-brcm-usb-init-synopsys.c   | 12 +++++++++---
- drivers/phy/broadcom/phy-brcm-usb-init.c            |  2 ++
- drivers/phy/cadence/phy-cadence-sierra.c            | 21 +++++++++++------=
-----
- drivers/phy/freescale/phy-fsl-imx8m-pcie.c          | 10 +++++-----
- drivers/phy/qualcomm/phy-qcom-qmp-combo.c           |  3 +--
- drivers/phy/qualcomm/phy-qcom-qmp-pcie.c            |  8 ++++----
- drivers/phy/qualcomm/phy-qcom-qmp-usb-legacy.c      |  1 +
- drivers/phy/qualcomm/phy-qcom-qmp-usb.c             |  1 +
- drivers/phy/qualcomm/phy-qcom-qmp-usbc.c            |  1 +
- drivers/phy/rockchip/Kconfig                        |  1 +
- drivers/phy/starfive/phy-jh7110-usb.c               | 16 ++++++++++++++++
- drivers/phy/tegra/xusb.c                            |  2 ++
- drivers/phy/ti/phy-j721e-wiz.c                      |  4 ++--
- 14 files changed, 59 insertions(+), 28 deletions(-)
-
---=20
-~Vinod
-
---aecsP4KyPr1TaTxP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmcnpnwACgkQfBQHDyUj
-g0eTyQ//dQcr+EhrBl75uoa/UjtjXGGBd9pUI+qb7ZophjudpCbocaQ7qAhkQQ0g
-BlmuQxU9mymaGDg312EnSOhAE4M0hLSwt801NAcMWMYgh4T4VfKjstWH8Rj6iJX+
-A7bqjtW6nXBCQhLzcWOgWfPiM1qX7WA7lieLaCU0EaxmnKU1yKzuoFtF/UXLOle4
-DB4Am6nR/ayDA2t1UvoLqJsQsFg11J3Slg+jzU0igP2hP0PyQ7antGSqz5OyKh/U
-7HBfaTheHSRK5Wi8iFDEqZz8X1VJxSLTdtoZ4qtuJVFjZcbysqX/4lRYwJAuUDOv
-GvEYAQrl5HeorecwP5FrWKmbkJzAnvu84NfHmPQ2igppmkhXsYPn2W/fIljy7Vtl
-V1LuMA9KOaIF02qJnubExmZStTe5hB5DnhT9xHcNvkws7GsrAMstjT0VB/+c8s0r
-KvGApkWmHsMSYj+i/E3QNB0Bl4+yjtBXBf+gs7kMqfDIyLh6qaxQqgkmwgfE70Bw
-AHtO/NghAci0Cy8DsQen6XEPym9Mgn/Hp05e0BpCcuz68jw1beP26TvUJnqa3tuw
-5KFrZN5EC4zlKUn8BeTy9WKKIXn4yt6REPr6KZCDnca6KuX3aywCGI3DftrP/I0W
-G3yPQ29YmrelK48fRoPyneorDXvHfaFSFj/eOAZBv86GXi4Wb8I=
-=cad6
------END PGP SIGNATURE-----
-
---aecsP4KyPr1TaTxP--
 
