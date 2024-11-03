@@ -1,122 +1,96 @@
-Return-Path: <linux-kernel+bounces-393946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0F69BA7C0
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:53:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1069BA7C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861BA1F21470
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3718128175C
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACEB18A6AB;
-	Sun,  3 Nov 2024 19:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EDC18991B;
+	Sun,  3 Nov 2024 19:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+UeW6oK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfOeMl5J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F5014F9E9;
-	Sun,  3 Nov 2024 19:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0CB7C0BE
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 19:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730663592; cv=none; b=oadQcWc4rpenowsb67gRJEy0zxhncluS0ah0cOTLuy+b4zS/FEF67ZmtihXMEI6RNMSB5Mgmz63N2bxYbt4ENAkrGNwPvSvZrnNcKseuMs17NZ/pi1XDOdm5blqCGhho/UEidTyzG8PLwGuBIp2qkjOHod0+zMqj4nVZ/J30E0s=
+	t=1730663727; cv=none; b=IdUcsrAQeS2XwR+2NR0ikkYUjVXJJP/uuzkn6FhTxDHGBCo0U2dHEwuBLxSnLwzxdajgHKeDK+cOf1y8zTd7BZsp6oWWXuuxVH7b3qjlhLGAp4imDSorxyxNPIVp9V1NEjw1vGDu030gNlgO2SfnIjWmyUiDnj381dPCdMdAj0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730663592; c=relaxed/simple;
-	bh=h/lamnr7nl1eLEeIvKsQlIYXvEl0IMpMXenrPk9JjPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XDmDGTugl6heqlUzwa15UGcSFaA3JKoqH2Gk5qm4Se0uLJrgbN57jqt/Ut6+qTF+Gr1OArfRKACHAzfg1hoF1XTKw1Na3u9OM30XKPUt5+RTmm0MIYbLBexsaaOHTIAYOs8JTrGQgmaNF6ewjwekiAGrI3jBZBBWZKf9b6Wowg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+UeW6oK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F96DC4CECD;
-	Sun,  3 Nov 2024 19:53:11 +0000 (UTC)
+	s=arc-20240116; t=1730663727; c=relaxed/simple;
+	bh=+5NsxsjAx8HZ75zU5qnHDT3UHbDD0DExcjzIjgCrSPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VhuBLzuvvtBX6qH3C7wyrkByHPn5OTVOK5zhMLDqyMcv58OzcVQbdqzDYFUVzK7qRE9cX2g34Dq7H1VPNC4EM2+6Jva1VAM485xnARUlz2xpEGPm9aqicEDlm9kkITWricj/5Csbfq1qChGHiXvY6vQBwtR7uo5XAUoOH0H4sUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfOeMl5J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D521C4CECD;
+	Sun,  3 Nov 2024 19:55:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730663592;
-	bh=h/lamnr7nl1eLEeIvKsQlIYXvEl0IMpMXenrPk9JjPk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X+UeW6oKQ2i72CHEzm9mAHq6+v/yXENRcvvwt25ugoIsPgygMUG/adjuW+vazo0OP
-	 WZr3LmcBJxUw2yoNEian/vJPrHyyenRzIJkK80SKAsikKGl9GZHHksWTcT0CYInXgY
-	 PH3+0qKxT+05W20B9mJfbutBxM49cFSePPpSOhLHTELMlCKUj4RUpBmdK80gqfgZEH
-	 lUQjXy8r6sKhqwPBYYv4uPhL58TXEX3llk4LTBBnoCRGrQCjhG+/40FuDNWiUiJ11C
-	 vCEF0XBf05kam65VGMTsyA/IkAbz14UFRj4gEw+orkTQ+9kUXIevW4hQ2EI+CI9zXE
-	 BsmTR0lSmdk0Q==
-Date: Sun, 3 Nov 2024 11:53:10 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Linu Cherian <lcherian@marvell.com>
-Cc: <davem@davemloft.net>, <sgoutham@marvell.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <gakula@marvell.com>, <hkelam@marvell.com>,
- <sbhatta@marvell.com>, <jerinj@marvell.com>, <edumazet@google.com>,
- <pabeni@redhat.comi>, <jiri@resnulli.us>, <corbet@lwn.net>,
- <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v4 net-next 2/3] octeontx2-af: Knobs for NPC default
- rule counters
-Message-ID: <20241103115310.61154a0d@kernel.org>
-In-Reply-To: <20241029035739.1981839-3-lcherian@marvell.com>
-References: <20241029035739.1981839-1-lcherian@marvell.com>
-	<20241029035739.1981839-3-lcherian@marvell.com>
+	s=k20201202; t=1730663725;
+	bh=+5NsxsjAx8HZ75zU5qnHDT3UHbDD0DExcjzIjgCrSPQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rfOeMl5J63ZggCS+KGqXAL7i6ow1Q9ugTvfclv7KmUKW6GbcxTpl7aQdQ3nvxyO7D
+	 v38CLOD4aA3ByW7SHVUEhiQ6el1aMK6+J4SB04Y9nKRYM+RLQbTTp8CXZvHjLWdK90
+	 pHibD6gWHQs/IMBGZOmKXvGYtrv/7jFugqwCwpfZA9P52Ml2bKAafEYnKRNC8UfK9c
+	 xOQiRvl/c3UYLbYWidFBSV83m+QBdOssBuptqYhpHa5Ak69oPYXPa9CrbFgnorreXw
+	 9nteE+9Js0rfQTBjCt21RG2x1QVgKH5kTlnoorS8734kYyqVmp8w43x46HyhooO8nx
+	 60pArQpMk51Mw==
+Date: Sun, 3 Nov 2024 20:55:22 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch v6 17/20] signal: Queue ignored posixtimers on ignore list
+Message-ID: <ZyfVKmNIhgNBhA7q@pavilion.home>
+References: <20241031151625.361697424@linutronix.de>
+ <20241031154425.624061922@linutronix.de>
+ <ZyTj2W8Jndv0nzga@localhost.localdomain>
+ <871pzuvfzg.ffs@tglx>
+ <Zya5wy9UyVo2cRvq@pavilion.home>
+ <871pzsr6rg.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <871pzsr6rg.ffs@tglx>
 
-On Tue, 29 Oct 2024 09:27:38 +0530 Linu Cherian wrote:
-> +	struct npc_install_flow_rsp rsp = { 0 };
+Le Sun, Nov 03, 2024 at 10:44:35AM +0100, Thomas Gleixner a écrit :
+> On Sun, Nov 03 2024 at 00:46, Frederic Weisbecker wrote:
+> > And what about the other callers of flush_sigqueue_mask()? Such as SIGCONT
+> > removed when SIGSTOP arrives? And the reverse as well? This moves the pending
+> > timers signals to the ignore list until the signal is unignored, but in that
+> > case SIGCONT is not ignored? Or perhaps SIGCONT and SIGSTOP can't be set for
+> > posix timers?
+> 
+> You can set SIGSTOP/CONT on a posix timer. Whether that makes sense or
+> not is a different question :)
+> 
+> Even on current mainline the behaviour is pretty much unspecified. Some
+> combinations "work", some not. I just tried out of morbid curiousity. :)
 
-@rsp is reused in the loop, either it doesn't have to be inited at all,
-or it has to be inited before every use
+I see.
 
-> +	struct npc_mcam *mcam = &rvu->hw->mcam;
-> +	struct rvu_npc_mcam_rule *rule;
-> +	int blkaddr;
-> +
-> +	blkaddr = rvu_get_blkaddr(rvu, BLKTYPE_NPC, 0);
-> +	if (blkaddr < 0)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&mcam->lock);
-> +	list_for_each_entry(rule, &mcam->mcam_rules, list) {
-> +		if (!is_mcam_entry_enabled(rvu, mcam, blkaddr, rule->entry))
-> +			continue;
-> +		if (!rule->default_rule)
-> +			continue;
-> +		if (enable && !rule->has_cntr) { /* Alloc and map new counter */
-> +			__rvu_mcam_add_counter_to_rule(rvu, rule->owner,
-> +						       rule, &rsp);
-> +			if (rsp.counter < 0) {
-> +				dev_err(rvu->dev, "%s: Err to allocate cntr for default rule (err=%d)\n",
-> +					__func__, rsp.counter);
-> +				break;
+So probably we shouldn't care too much, right?
 
-shouldn't you "unwind" in this case? We'll leave the counter enabled
-for some rules and disabled for others
-
-> +			}
-> +			npc_map_mcam_entry_and_cntr(rvu, mcam, blkaddr,
-> +						    rule->entry, rsp.counter);
-> +		}
-> +
-> +		if (enable && rule->has_cntr) /* Reset counter before use */ {
-> +			rvu_write64(rvu, blkaddr,
-> +				    NPC_AF_MATCH_STATX(rule->cntr), 0x0);
-> +			continue;
-
-so setting to enabled while already enabled resets the value?
-If so that's neither documented, nor.. usual.
-
-> +		}
-> +
-> +		if (!enable && rule->has_cntr) /* Free and unmap counter */ {
-> +			__rvu_mcam_remove_counter_from_rule(rvu, rule->owner,
-> +							    rule);
-> +		}
-
-unnecesary parenthesis
-
-> +	}
--- 
-pw-bot: cr
+> 
+> Thanks,
+> 
+>         tglx
+> 
+> 
 
