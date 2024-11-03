@@ -1,75 +1,79 @@
-Return-Path: <linux-kernel+bounces-393706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182459BA438
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 06:58:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886639BA43A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 07:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 906CDB22F9B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 370BB1F21932
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 06:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763A113B791;
-	Sun,  3 Nov 2024 05:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7945E145FE5;
+	Sun,  3 Nov 2024 06:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NT3JSrWr"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpWNZTRp"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D682572;
-	Sun,  3 Nov 2024 05:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942C823B0;
+	Sun,  3 Nov 2024 06:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730613505; cv=none; b=K/kpNsrrm3ZzsUSxxFaVp3yMv/sG4fOBzw8I1/TuMGj1AB4+XcqLIQqzwiowHGyLxByGSY77Rnkr3cEOoRxzvS7iiz9KPxf6DTTURq5JJktyFJ4QdsPCm8svNTHTv0CDc5FkfGXaEaWRE7V8riD5b5MTKX8iMivPg30ymYrvP68=
+	t=1730613862; cv=none; b=bMYvgO8cnyCmW6FN/CJMJyPVFkF7MjQUPbU18qyyXB/x1/f2+WwYhCNTluvncs4SM4a44LSSlVqGdf1522g7hDxe/CBk87beDUdj/q8NnnxaThNMva4zra+eTMQHQWmsrxs7Z6bBrHvtnyB3h7jJ7HBhYFn3qzx67A2Loie3gMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730613505; c=relaxed/simple;
-	bh=C9GjAaOP6UztdlVEcTxHc6zkxCN2sPtijfriqpONP0U=;
+	s=arc-20240116; t=1730613862; c=relaxed/simple;
+	bh=ZLqQV5TXw93Xk2EwAtGizLmBKf9dIqO/eDTYKRh5JfU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=f2gg0Bc/FisNP6+9HIR6qu6+BRl2vevJNqtMRc8Xvje26GFn3HS3R8beSXYDNJeMCMg2ISSdyR7679WPh29thuXizW33Shd99/v5p3ox0Y0zHLh94hLqU3ApFLGhr4v+Lrj6d+iFPDPC1eU//1RTYdMeJ5Q5RAWL65gadgOP7IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NT3JSrWr; arc=none smtp.client-ip=209.85.215.178
+	 Content-Disposition:In-Reply-To; b=sR5IJ/fxMJxDAh+t9CflSEn0OHOpzXcIeib921t7P0jXY++4kljI+GpD4a+aQsMjq4yGSEj5hkP7XV/on2ZRPUKU+AyFeBXQGeZvZyNa9R3v71s7XrMUBLaO/X12Q8a7IcTevUMBBWscQk0t4pbjKimXJr8y4cmwDKAvjTKLzhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpWNZTRp; arc=none smtp.client-ip=209.85.215.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea76a12c32so2418644a12.1;
-        Sat, 02 Nov 2024 22:58:24 -0700 (PDT)
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso2164146a12.3;
+        Sat, 02 Nov 2024 23:04:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730613504; x=1731218304; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aZiZQiNeawMYZeiuugM3AEghyf/eHluaA2VKO8c6yb8=;
-        b=NT3JSrWrlRB1op3eV3bHZLn2a9Qz6Xx5KfzYF3sbGfTTBo82IPzVv3jyIVkfCkm4Vh
-         VYnbANtR6D0rizJlVBicnIA+g2hH8uRMDZEf6uDhF2ivRovf2DC1oH/FR/NMdfLX0E/u
-         j1Uk8rh/d3samgz8UjIWpCkIQwE8L1CoLvQCGo2CqWFzqybA74FTSnEGvs8c27hjYBNe
-         QmmfbMIqBye+MZnuyjrByw1YjU7z5yKRlt1XX+3xe3Dex/fYeGvC9TjXtV9W2B09zZ6U
-         OWCgJwY05nJd/dF15kZTjl9pFtsr16Mf5Q/Xrflhuwa5aJCGLMRZHH6JOUJlBIvwZq9W
-         AFXw==
+        d=gmail.com; s=20230601; t=1730613861; x=1731218661; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iu3Y4lvGLncvFqytUzaa9pzpUFFZ8eQkwS+oo1aB5E8=;
+        b=CpWNZTRpBB7acH2akcjULEvqZc702m3T/MVoPHAyI/vWy7KVvkqo08efcnMhpaP1uN
+         M8lCJG18dseWo0RAAS9nf5oWBYJ8lRwobPbhWMLyvairasFm45H5zEpZaPvOUJfiSIZO
+         q15W/1XtepCAqELJK2w+F+7XsCQvGkN8h9QLpZMcfxf1rlTgTFp6lZmevNpQQW5W6ODi
+         khenO8yFVLn1JN5vpbsT8yCwDSL60r9EOtA8T6kXGOt63qdNrRcJojx+rpizt8eydd/D
+         1HBg021ypDO4TEgGurrI7QhhfqrirdR3l8cJpcqyeAq6ZJkpXRyc1vQXVdzjbyseE0a8
+         mKnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730613504; x=1731218304;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aZiZQiNeawMYZeiuugM3AEghyf/eHluaA2VKO8c6yb8=;
-        b=wcf/ZGe3348s/eHt6tCSBH8n+FJJpJtpcM9J0zSx2kpoyrQep8UWkxlUJwwoc3Zrty
-         zVe7GqpD+d5iSEDkestWBZ/K+y517OILci3OtMLaLjB6x1xxCLXrxyssj4/GUKJbkQ1D
-         r9EXCD/e/kJnaPzamdlCaWsuVKRtwu50yENmCCrio5HjgWPxG5VUnhlTjjZytWuYk4li
-         yrbyodOr1zoB+aMCB86QaMQpBT4y62DPOE24FoExRTSQK0W1XuaGKwSY1o9OlGOhx5dH
-         tQ8dk02syJGOe6ZD7NVpLT1bpMqb2gJ2c9ZqLUzXSG1G7NsZ3fJiswFLKazOZjnTS8JB
-         LFsw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5cgfE9Xi4sTHdm+56cpE3LkYsVzgqe4rdgPciKwZ29XiGDiIXowYxeZkMacAdG6yQBi6k4GSN8OM/pA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YztzItNKpTsVg7cLluzJAQ3PNZkPP3N6jM6wtujMBZtTNeJ7M68
-	0gl3OqFFEoViLN9gCMteFBTWbnBhKZYm8kBj7IHArDB/1XPTKCBXFoHU3g==
-X-Google-Smtp-Source: AGHT+IGnzTUK7gqg6Bz6abJCuqsoQwrR+2Y3TbxUmuRP3GSO0Rzw1YALvO+xY+gOv3Oy3R0xE3m6UA==
-X-Received: by 2002:a17:90b:4ec3:b0:2e2:de72:2b76 with SMTP id 98e67ed59e1d1-2e93c14fdb4mr16581943a91.16.1730613503727;
-        Sat, 02 Nov 2024 22:58:23 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:a7f1:ec91:2b04:b29a])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93da983f9sm5244025a91.5.2024.11.02.22.58.22
+        d=1e100.net; s=20230601; t=1730613861; x=1731218661;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Iu3Y4lvGLncvFqytUzaa9pzpUFFZ8eQkwS+oo1aB5E8=;
+        b=YajTu2HRhovEVcHY4Gt3HzQMKbYW5qmeN/9sgRGv5PubKgiUNy2RzMF8i1dbAeuvZn
+         tprLkQATp3TxYWKbtCVSzsc1e/feYbv7rFgQ2BYsQlOSdJBFad/k7BP4k3pxF3Z9sWoy
+         g1ZAPAakUDVsUSiCd8obPuDn5RI7TEKQY3tIW5oySWNRwlM7v6g+O4og+j9eSLa2gJtY
+         4XJWZ6qi0pRF7ivRfC99AxkUV6oAxXobxYm7CU3Qj9pDV9q9Zph+MKe/TMI2WGC6gwmm
+         bQsXwnZ2KTYQ9QB1hzc2tIrEL3R/2P3B6MlxmrON/6rlqbZ6XPsZVpIcd8xGxLmvJQD9
+         iSGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDvz+NWf6SsWGg58aaqEV7HZPrmqy50MoeN6lHo72dM7AHLROGNEVtucMUV71toUF956HzpYSRCuTWsobO@vger.kernel.org, AJvYcCWNHkbHYb0YXh2iA9kq+pX4naY+YGnq3p7Un2dWy9q18cAipwdRSf+5DRAOlFSAyGiClM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzh13s1JAHS3UFEPc+lQjQlLLgxbZst/Hol98TdRhY3e2WBxwZ
+	UlWcv8qcU3ubBYmdC1rPySYOuQrKsLJvtvdX5/ataGbZStymA9ja
+X-Google-Smtp-Source: AGHT+IFdDQlGrUGnyn1EBjTletOl9wXHMeq+pVWX4QtOtxFAoxkNTMC3eb5rHU8s8IxD28SmNxR3dA==
+X-Received: by 2002:a17:903:24d:b0:20b:775f:506d with SMTP id d9443c01a7336-2111af8a7b8mr114374575ad.34.1730613860838;
+        Sat, 02 Nov 2024 23:04:20 -0700 (PDT)
+Received: from ub22 ([121.137.86.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a1fb1sm41795465ad.158.2024.11.02.23.04.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 22:58:23 -0700 (PDT)
-Date: Sat, 2 Nov 2024 22:58:20 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v6.12-rc5
-Message-ID: <ZycQ_DEua83lHubu@google.com>
+        Sat, 02 Nov 2024 23:04:20 -0700 (PDT)
+Date: Sun, 3 Nov 2024 06:04:15 +0000
+From: Byeonguk Jeong <jungbu2855@gmail.com>
+To: Hou Tao <houtao1@huawei.com>
+Cc: andrii@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+	Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf] selftests/bpf: Add a copyright notice to
+ lpm_trie_map_get_next_key
+Message-ID: <ZycSXwjH4UTvx-Cn@ub22>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,44 +82,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Zyb6cVpIqmMBld4U@ub22>
 
-Hi Linus,
+Hi,
 
-Please pull from:
+The selftest "verifier_bits_iter/bad words" has been failed with
+retval 115, while I did not touched anything but a comment.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.12-rc5
+Do you have any idea why it failed? I am not sure whether it indicates
+any bugs in the kernel.
 
-to receive updates for the input subsystem. You will get:
+Best,
+Byeonguk
 
-- a fix for regression in input core introduced in 6.11 preventing
-  re-registering input handlers
+On Sun, Nov 03, 2024 at 04:41:26AM +0000, bot+bpf-ci@kernel.org wrote:
+> Dear patch submitter,
+> 
+> CI has tested the following submission:
+> Status:     FAILURE
+> Name:       [bpf] selftests/bpf: Add a copyright notice to lpm_trie_map_get_next_key
+> Patchwork:  https://patchwork.kernel.org/project/netdevbpf/list/?series=905730&state=*
+> Matrix:     https://github.com/kernel-patches/bpf/actions/runs/11648453401
+> 
+> Failed jobs:
+> test_progs_no_alu32-s390x-gcc: https://github.com/kernel-patches/bpf/actions/runs/11648453401/job/32434970670
+> 
+> First test_progs failure (test_progs_no_alu32-s390x-gcc):
+> #433 verifier_bits_iter
+> tester_init:PASS:tester_log_buf 0 nsec
+> process_subtest:PASS:obj_open_mem 0 nsec
+> process_subtest:PASS:specs_alloc 0 nsec
+> #433/13 verifier_bits_iter/bad words
+> run_subtest:PASS:obj_open_mem 0 nsec
+> run_subtest:PASS:unexpected_load_failure 0 nsec
+> do_prog_test_run:PASS:bpf_prog_test_run 0 nsec
+> run_subtest:FAIL:1035 Unexpected retval: 115 != 0
+> 
+> 
+> Please note: this email is coming from an unmonitored mailbox. If you have
+> questions or feedback, please reach out to the Meta Kernel CI team at
+> kernel-ci@meta.com.
 
-- a fix for adp5588-keys driver tyring to disable interrupt 0 at suspend
-  when devices is used without interrupt
-
-- a fix for edt-ft5x06 to stop leaking regmap structure when probing
-  fails and to make sure it is not released too early on removal.
-
-Changelog:
----------
-
-Dmitry Torokhov (3):
-      Input: edt-ft5x06 - fix regmap leak when probe fails
-      Input: adp5588-keys - do not try to disable interrupt 0
-      Input: fix regression when re-registering input handlers
-
-Diffstat:
---------
-
- drivers/input/input.c                  | 134 ++++++++++++++++++---------------
- drivers/input/keyboard/adp5588-keys.c  |   6 +-
- drivers/input/touchscreen/edt-ft5x06.c |  19 ++++-
- include/linux/input.h                  |  10 ++-
- 4 files changed, 104 insertions(+), 65 deletions(-)
-
-Thanks.
-
-
--- 
-Dmitry
 
