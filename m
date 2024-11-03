@@ -1,87 +1,76 @@
-Return-Path: <linux-kernel+bounces-393938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575E29BA7A6
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:25:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B9E9BA7A7
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:27:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F0D61F21CA4
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:25:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83431281848
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A23B187877;
-	Sun,  3 Nov 2024 19:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE4218953D;
+	Sun,  3 Nov 2024 19:27:24 +0000 (UTC)
 Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B8B33FE
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 19:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9BB33FE
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 19:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730661905; cv=none; b=M1B5tk20GopYsqel+a4+nL+d2YcqRm91Kbh5C7uEM202xGJRakm3uJUv/nTd/+/DfZ45keMwQFzjGJLYUnL6TxhvcEQomnWCsARWRKyvYwWDtLS465KIQ1GiVHkj6K4lpmwLTzcIeXrAAviJvfLlOPuPyXSXjxnbb8agacTcC+o=
+	t=1730662044; cv=none; b=D08hx/C7fIJ0FIAWJBOWgQnevhjZLDb1iSw2zTlkvmUs653h3xZQM44wzffQb5nHSkzIBuYQesc1tGZufVW2FLEaT0xdspt1wFkGqkSCZKz2UnQxSh+/80mTZtiCMuaBFEsOQ8PDpLcKtoVax2Q/mO/TJpzIvCsJBO77zXVn35I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730661905; c=relaxed/simple;
-	bh=nvTsyDcgoEu/calHoRBoCTFXmfOrVAo0pwQ1p66yYlI=;
+	s=arc-20240116; t=1730662044; c=relaxed/simple;
+	bh=Iq5U1X6MbfJ35DvscDuIpd1MEtxGEfTwdAv6Yeht4vs=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ssZadgQZNN5bTk4mkFeGh9g5P1NTU6LSWCxEABHeSMNXeXnpIFXiiZd8SyUqv/HKNUZM/aCefIVgd2KZcoy3pfiXYTMaK5Rz1rocrmt1kznepeFEmPqJynqCjAcLm+g3wlpxNXBiDoYZ+A9WTe3AhSC606cFRxMtSF/B7VpC7m4=
+	 Content-Type; b=gF+Kemlol87uAkz4/SnxpwrPuctITm9kMAYDWMLktMCzG/CVUdd1mG6qLIJvNbC32z/WqjRrwyITrUySr9ZAT4nllZ/TfjOKXBkOmTu3HkeWUCjQu3NVMevd3C7vohPBW/ehU0k31SlCdq7QlbVarv9O9X5EcdyO8aHxkx0LDvw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4e41e2732so37480165ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 11:25:03 -0800 (PST)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b37c6dd4so26944675ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 11:27:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730661902; x=1731266702;
+        d=1e100.net; s=20230601; t=1730662042; x=1731266842;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KblZc6VcAIuMERdYLFiG7bVAPjvh6qjeAle0kPTQwNg=;
-        b=e9hhSIgtE6Y6hT8LD3nhaCZD/aDpLdIHBL8g3Pwq6iYYPG4G4fd9NrFNUR5l4+nMiv
-         k6GLl03fw52M/qpNHpd7Cb3su4dbFcPlZ8eDwQfr8fRaw6eA+fDjM3B7/3EKMn/JNHMq
-         A/mzBUXZfJjgjjoerEjeltO//uDTXT2MHFr5ky6tc282miJnmPsDHfsMyNvFs5BBfMj8
-         r8DIeLqn7P+lRcnphAB+Biwt2fTvEaXHrC8+qIZOLjh9Hk3cOzBTgdc7Rd3kzfgOj8zs
-         342Nq9Vx9G0oly68x5KOk69qN/IrTJWjgh03FDBLVw/TydFeCFwX9h2G3aIcQhj7FSEa
-         b3Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCX15sEOYCqEeT3Oq4n7JztvASgaHS2FiN+LwBzLfdkVnrpOCDh++wPxo8PTMpz9L+dlvCTcqa+GB166blI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjsx2DwEjKBauodm3025jnonTz5OUPaXB8WnS7a+6hGQZ8kkRj
-	p1LV8Urg1gGX6yiQedDwGhVls0wQq1tlx5LG3xZmWqtJNIBF6nL0yYB2ITinNYD+VMMnL0Lj3/M
-	o2174jltCzoITN0EVNeSXBMsy91vbjmTlLaeMkIkDV4dvb8zEfkEI2DU=
-X-Google-Smtp-Source: AGHT+IHutQpETAki9hW9AxzbVu609WpTKvTxFUSmrZ3nzVb49y/e/bVgZgJH4/oVCpplWce4p/IbL4bFaxPyOY5lHSPwSjedzmMp
+        bh=Iq5U1X6MbfJ35DvscDuIpd1MEtxGEfTwdAv6Yeht4vs=;
+        b=lsNNejdaf/8hU3flq9v226aJ6wBaca5Ut9jo0BP4OtjroL1qj8F3nR86rsg0ZnPqhM
+         raYkpDfbjOw73+TN7QoBwTUFIo344Jq6k8AZO1AuKzJnj4BLnsrAJmE/oRbb42Mvmyxu
+         St3NEfOtFKwoAx85988ro7u8eWQ6OCG606ybwJ/eJ7x1xtQwLoriTDljvzzKrTv1IviN
+         Cxsrs59MKKd1UT7QGfqJdFI3TBRn+1T3JUUcevdpHxnqdqzI4RpG0B2/Fp0frIDTwu6V
+         WZh1MUo3pEBQdQHeuhsrnPQPv/TmaznKmiq6Wr22RGo8ktJZJb3Rr+pkCk967HVbBcWF
+         NA1g==
+X-Gm-Message-State: AOJu0YxyTBCQVYFgvEr5lQE21Q43b38ruau+EtjYW9YD9/rx9dvyaT2B
+	msCuUBl3jgH9gkqkNlrKAtkWd9Mf0vG1d2CPSFv7vOJ8xshJ+51fgnjfTzCsEzzOH+YoNJxKFTx
+	pcvcTjCP5hvYb7eF0Bon/UA5G90pHoYm341kK4eyqWzO/OmroLJmVusI=
+X-Google-Smtp-Source: AGHT+IFXNpcNFqLbR0Js1Jb4NS5HqTVRkhR0+u1rZgrhFiJqRkBYDh+Efkl0C/hD+6sK9IbZq4zmu4EKi9SRmCwHD76KnUCPQSeA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:52e:b0:3a5:e3bc:c1bf with SMTP id
- e9e14a558f8ab-3a5e3bcc3ddmr144999335ab.23.1730661902543; Sun, 03 Nov 2024
- 11:25:02 -0800 (PST)
-Date: Sun, 03 Nov 2024 11:25:02 -0800
-In-Reply-To: <6727c3ac.170a0220.27f534.dc51@mx.google.com>
+X-Received: by 2002:a05:6e02:12e1:b0:3a6:ac17:13e4 with SMTP id
+ e9e14a558f8ab-3a6ac1717a2mr114886235ab.18.1730662041967; Sun, 03 Nov 2024
+ 11:27:21 -0800 (PST)
+Date: Sun, 03 Nov 2024 11:27:21 -0800
+In-Reply-To: <66f057eb.050a0220.a27de.0004.GAE@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6727ce0e.050a0220.3c8d68.0a8b.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] general protection fault in ocfs2_xa_block_wipe_namevalue
-From: syzbot <syzbot+386ce9e60fa1b18aac5b@syzkaller.appspotmail.com>
-To: andrew.kanner@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <6727ce99.050a0220.35b515.01a2.GAE@google.com>
+Subject: Re: [syzbot] test
+From: syzbot <syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+***
 
-Reported-by: syzbot+386ce9e60fa1b18aac5b@syzkaller.appspotmail.com
-Tested-by: syzbot+386ce9e60fa1b18aac5b@syzkaller.appspotmail.com
+Subject: test
+Author: danielyangkang@gmail.com
 
-Tested on:
-
-commit:         886b7e80 Merge tag 'driver-core-6.12-rc6' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=120b4587980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=35698c25466f388c
-dashboard link: https://syzkaller.appspot.com/bug?extid=386ce9e60fa1b18aac5b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=133efaa7980000
-
-Note: testing is done by a robot and is best-effort only.
+#syz test
 
