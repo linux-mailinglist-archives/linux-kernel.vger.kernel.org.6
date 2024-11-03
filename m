@@ -1,78 +1,115 @@
-Return-Path: <linux-kernel+bounces-393969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321B59BA812
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:54:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D859BA816
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:55:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2508B21093
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:54:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D148280F83
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FDD18BC1E;
-	Sun,  3 Nov 2024 20:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6H5i7f9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9FA18BC2F;
+	Sun,  3 Nov 2024 20:55:20 +0000 (UTC)
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D42683CD3;
-	Sun,  3 Nov 2024 20:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA80983CD3;
+	Sun,  3 Nov 2024 20:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730667262; cv=none; b=nVxRKxiwNnvq8Tucyafu0m3BM+6v9AMjz2Sw0AF0k/C+dKWmjY/mC+JxLNMRbFEAJaQs0QsEMSmQXU/6QYJSjUSY6zOa1UVQL0BXd+5BayBwDjyZ4ygiTicivX39cDS/z3qW70jtKSC/oltJRrofWPQ2MlvUpFTCCMrenzTjb7U=
+	t=1730667320; cv=none; b=I0jtCW91WtZP1EprTtfBaAxfb3zqbGRDKuabPP0rhy9wMxrgTIwJpETKVyasmOrdPeMIDDSnKxHW0JwUtQPLsqnqTTO+mG4Fo4dc3QXAvTVBUWSU2UqYg3SetWbHlY9n85CjACRbomVqbyBUPj7FVBcoQRM/Ex3EBtfxeYaLMY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730667262; c=relaxed/simple;
-	bh=kLbJ/mPE8oIqsXMCj/qPmq4SLkmMYSVx0tkXyQznC4Y=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jU3q3O0cSd7IfV+RTZ5n0Me/YEIjIU6rElhKfJdWXY8He+mtz8Vo0DCcV+L2VNOb6Bv3ODelMQUG0cvy4/17ABAg+IUYkQgAaOiVk+vvQi0fF/NUU0MK6Y1bK34vpNGelCcGPwM2kBEXOuX8I+N8sem+XZkt2yPUkITSbl2fPgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6H5i7f9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D287C4CECD;
-	Sun,  3 Nov 2024 20:54:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730667262;
-	bh=kLbJ/mPE8oIqsXMCj/qPmq4SLkmMYSVx0tkXyQznC4Y=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=S6H5i7f92W6DNTMpjTlB1kQ7mRJIqB6cHSyZhSNQXYHmcAOCVMx9TlvceV1lSEc1P
-	 ONK4gWmEVWkWavV/G0xkgpNjsZlfvRguXMjVYFKKu5qnbuaQLhp3vJgZlMpeLX18l+
-	 roW/J1ZMWmHqOR7rNPvjJ8BMVxbHo2O7/K9MH8v0xhJKN6i5njGk0FoarcqXrSP0D9
-	 vbmwklGF1q+zofEu0MX2QKfeKeYqV90ezTSnLVTNy4o/bMUo2upfzGMMzIWB8Su0+p
-	 brnLAiKfF3/un9/h76mKGbZD8i4LFloppCrlxLGBEjq9p6J/id7LE/9oq6C5+PVpTJ
-	 K1hrRmX1viDCw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB12838363C3;
-	Sun,  3 Nov 2024 20:54:31 +0000 (UTC)
-Subject: Re: [GIT PULL] hotfixes for 6.12-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241103105404.3c1a60806b3db3baa1519537@linux-foundation.org>
-References: <20241103105404.3c1a60806b3db3baa1519537@linux-foundation.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241103105404.3c1a60806b3db3baa1519537@linux-foundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-11-03-10-50
-X-PR-Tracked-Commit-Id: 1d4832becdc2cdb2cffe2a6050c9d9fd8ff1c58c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a8cc7432728d019a10cb412401ebc15ed7504289
-Message-Id: <173066727061.3251859.13022424773859445802.pr-tracker-bot@kernel.org>
-Date: Sun, 03 Nov 2024 20:54:30 +0000
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1730667320; c=relaxed/simple;
+	bh=169TU0I8OqVfMkV44s8qmmQuBgGmdkRGfXbq2TsNqRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cv6yYb8+h11/EUbb+wdFNwcnr6mTKGEd6A7/LMEVYh/N1q7hxFYNLIv1v5vfXlSdN5+bvHYfEmcytIeYDFQLX9oELSfTocrZ5Yb3d7du8kGuiIytMLHqUxsCJgiWyegcbQ9ScV/mYKx1FPx743akFAVm0st2MdNcpeW8uXiOG9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7203c431f93so3013314b3a.1;
+        Sun, 03 Nov 2024 12:55:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730667318; x=1731272118;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vkTm3ISUki3FFYUseRADV3hbFvsQp+6guXHl9w2tk54=;
+        b=VHFXNxu/vmUX5r/zkC3qlKngITEUXr10lCRxVWU9WXdJHRsG35cXtbsfsdzXg+W5NG
+         oRuYmjg7cLyCrpXYCc8sSRbza++RlMTI6+zf3nBoDRzdBM4ErqHm+pFy0zbV9DhbulX+
+         ojh6WqGr1HIL6qbzkda0/XVEjKUdxretYRggb4C/eGHgxPNv/dmixH2uqU/N6s6BUPl7
+         bqFOcGM/v4IJMVWliir8bnbGgFyk7Yutm1SKplZ235UfY+OSSyo0xuu6fJqEDPaVlS8V
+         QbqJibduQXowOSTGwMsgU00zty19iZzGtFX8FO415x6PxH6BZHoLOrIzKQz6Wl08EsEP
+         mU+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQdybWBL29nrac2ai8YnOjkM6PPsWOODm6C8eM4oAsXVT5ypSDiPmkavkA/bibFBDhYlBtV532YyfmItQs@vger.kernel.org, AJvYcCW+/rWBSWy30lhm/MhzWIDCkpOf3HPD9yUPx1xK86hmjZ1fhtnqdvrw/q0q2gfbXU/dT76Jjcgs6AO2aLo=@vger.kernel.org, AJvYcCXfjQsfwfSbt2wS5T4XiTrCTLEsesiZtnRlg4ZOBjXi+c7QRqWw3nkjP4s/47KGx4WieA+qdsAQhrYj@vger.kernel.org, AJvYcCXosUCX/+T/buMcL01HoHH1Dcs2e21qVj8UVy/MjIjuEwqnMuIOmyZX7vkoYWY+i+Pcbw4OyVMlgTFra96C@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvwK5UmF5qhz/ii5rkP83VEGeSdv+pmDvjMcyRDVNJk8hA/B2m
+	D1f0aZdwMHhCzB2OUu9jnASd1xnKolTkm6T8ru5lWdUbc3ckj9v1
+X-Google-Smtp-Source: AGHT+IEVUlFcuurAji9Axfc1ULN18ChO+rIWASnT5jNqDNMJTj4409fS7E5e/UYWPl+N9KVFKG0WaA==
+X-Received: by 2002:a05:6a20:a10b:b0:1db:dce8:c26f with SMTP id adf61e73a8af0-1dbdce8c29emr1170730637.33.1730667317773;
+        Sun, 03 Nov 2024 12:55:17 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2f189dsm6038978b3a.181.2024.11.03.12.55.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 12:55:17 -0800 (PST)
+Date: Mon, 4 Nov 2024 05:55:15 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: manivannan.sadhasivam@linaro.org
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Vidya Sagar <vidyas@nvidia.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 2/2] PCI: tegra194: Move controller cleanups to
+ pex_ep_event_pex_rst_deassert()
+Message-ID: <20241103205515.GH237624@rocinante>
+References: <20240817-pci-qcom-ep-cleanup-v1-0-d6b958226559@linaro.org>
+ <20240817-pci-qcom-ep-cleanup-v1-2-d6b958226559@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817-pci-qcom-ep-cleanup-v1-2-d6b958226559@linaro.org>
 
-The pull request you sent on Sun, 3 Nov 2024 10:54:04 -0800:
+Hello,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-11-03-10-50
+> Currently, the endpoint cleanup function dw_pcie_ep_cleanup() and EPF
+> deinit notify function pci_epc_deinit_notify() are called during the
+> execution of pex_ep_event_pex_rst_assert() i.e., when the host has asserted
+> PERST#. But quickly after this step, refclk will also be disabled by the
+> host.
+> 
+> All of the tegra194 endpoint SoCs supported as of now depend on the refclk
+> from the host for keeping the controller operational. Due to this
+> limitation, any access to the hardware registers in the absence of refclk
+> will result in a whole endpoint crash. Unfortunately, most of the
+> controller cleanups require accessing the hardware registers (like eDMA
+> cleanup performed in dw_pcie_ep_cleanup(), etc...). So these cleanup
+> functions can cause the crash in the endpoint SoC once host asserts PERST#.
+> 
+> One way to address this issue is by generating the refclk in the endpoint
+> itself and not depending on the host. But that is not always possible as
+> some of the endpoint designs do require the endpoint to consume refclk from
+> the host.
+> 
+> So let's fix this crash by moving the controller cleanups to the start of
+> the pex_ep_event_pex_rst_deassert() function. This function is called
+> whenever the host has deasserted PERST# and it is guaranteed that the
+> refclk would be active at this point. So at the start of this function
+> (after enabling resources) the controller cleanup can be performed. Once
+> finished, rest of the code execution for PERST# deassert can continue as
+> usual.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a8cc7432728d019a10cb412401ebc15ed7504289
+Applied to controller/tegra194, thank you!
 
-Thank you!
+[01/01] PCI: tegra194: Move controller cleanups to pex_ep_event_pex_rst_deassert()
+        https://git.kernel.org/pci/pci/c/40e2125381dc
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+	Krzysztof
 
