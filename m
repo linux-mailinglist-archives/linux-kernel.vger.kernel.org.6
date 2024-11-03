@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-393673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0CE59BA3E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:11:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3489BA3E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:11:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C921F2186A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 04:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B001C20C08
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 04:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4272E12B169;
-	Sun,  3 Nov 2024 04:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5169C13BAE2;
+	Sun,  3 Nov 2024 04:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oTo+YUjk"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="EYyrgkGP"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C304433D8
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 04:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0358713635E
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 04:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730607050; cv=none; b=YzxaXmyonYbLPHtyF5Fp5U+fyNGJHkZGQ1wWE/qFDYOJsE3FfF++b9LnsPp78UkITB/eEwzT8NrkhThxQcpAjWOykQ97e4wg+IGof9jhQxpo6d4QmWdHpJXn3m4u3ZNkkJANsYWu2873uIjdJ2bMz5r3RbaF6OHqoFePk3oNngw=
+	t=1730607054; cv=none; b=GOY9S5fCn7jPo+RJ52tp33Hs0qA1lrdqfwnqk9Xi/7/BS1e3a+ioQDKTZF1NkL/SBHQLNBnj3Fkgy+4YOc2t2Vbon7bk/g6od6AFohijqlt8c0OalxSJxqP7OLZgd1ZMtmF0NakQPW3RRwR/1EEKlaHxPEvvDXR8G7z5HAqzHbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730607050; c=relaxed/simple;
-	bh=QdzYnp5F8fwiuUX2i3TJOg2PEx99+vmk2noVhRUIqQw=;
+	s=arc-20240116; t=1730607054; c=relaxed/simple;
+	bh=xTxPw0CcizNWkYCAn8c8UgrWWW+GaQdSBsCV59pgcp8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njmyBJ5upFSFVKtnArCDjsDbNVa5N1ciSHeDqJiAhWe7rw2zMdmLUTxNnnFMftMdHP9NdiTGG9B+jZ10BwEkuOSPKs7pH5dJe5ncoluogyz74F+Mfj5/uakv/rl0d7Jv4vrtGFTffIKRfEEIARYquAQLsOSm+KB5gmsQM9Dhnpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oTo+YUjk; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539d9fffea1so3271967e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 21:10:48 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tAihuQ8OkHwspUClkosQhjYGNz8MlWRTAObVKO7wC8fZP0LtoVPNq//arMKvF3PxHID/WyN1+3/HgXavMCXwqmVt4S+I7dPje7LprGKMv8mBC5jtzwRHyjqJXMiNyZrB1+zwYxM852wW8imFlZL2KAgEAS2ZMPy/cXEFrFqbI14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=EYyrgkGP; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso2567287a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 21:10:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730607047; x=1731211847; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oKjiI7+uYVjpcP4rbI91KyK4/aPOFwXr9jwYzxTPDbI=;
-        b=oTo+YUjkLLAkP91p+oTieTb5DMabndPQkPIiZ/albjk/vy+B+R2lVXH8kgYmufdEz2
-         Hiy4a0Szrn6aK6dvnknQdd0T6/zGBRw0fY/TBAL/6YQgeOrhrCG9ClsH+PHLxjabaukE
-         +Tbnz+ytol2H3y7oj+hcJekUgmaoOCZYK9EovPVg0KgjjlRJgvdb4b8FJ7CCfRg4rgpG
-         MUWJTHdSLiSjQwVPGsHqH4iEubiRNU+kVXY9ONt/7vwe44PkPbJ94w+95EBV54e+iI13
-         vmlS+1yRBMKnhh37hk69mtLqovYKHsqjDQr3wp5rWwadQSndLZ2sg1DMeVjmLp3v4kwc
-         PypA==
+        d=fastly.com; s=google; t=1730607052; x=1731211852; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h/iCSnN/M7HQhmE74Mj4nBBH2JpYOpk0mdmCbZW6msY=;
+        b=EYyrgkGPJeKu6FZm3u1tTfIc+wTGtbVo+pRf1pLT5tC3Z/2s6pjo7kerJMyZbRt6x7
+         P0AQEQB9iKowkYBqOE2oIOKGTvt3p7Q0e5EYbaok9o9UnmCmj1rbRIqchE5AnUV+pFMA
+         CTk+T0Rm7+SWU02amGzxQrggdtK0rWC5KBwjc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730607047; x=1731211847;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1730607052; x=1731211852;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oKjiI7+uYVjpcP4rbI91KyK4/aPOFwXr9jwYzxTPDbI=;
-        b=Yd3hVCkpaanVEMr1YXSKdLi7cahJFPTBkrjlTuJuLYd+hHCuW7qbTbUx5Vf4gnlztt
-         YWLB2w+3MOzH5YuCSuAMg1pF1oKjJVbwDR9angX3ZhWjuhSF0Y4ylGDHguX2eJP4kNCG
-         3gQRQWwHHmNxnufhjjYLIikz4AdTDwaiGyHKHYq4WvfzawEtPSD8coJVzhwLONLUPps3
-         rgT382g7IkXUcFoA3HtwOONZgrov/BLemFWsVqGIt6qsRnbUEVCfDgYOB66NdEFs4f/S
-         Wisu9niRBjDLLHjGdH3Tk/GRQoFUsGFUr24rV9gG+0vDWJqYngNuAeU11TvDO+BOXRHm
-         ARKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhxPxRF0ZcuzmhWR3l79TmwDVcPDW8Rqsw3fB8qcPKac40DoNz9aWRSdNAb35/EGhCl2heu5zkghy8rKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybHDniQG+VoRqkOl2wu7TQW7Ir7RcXyLYhwOWISDt+ykwTxtZ8
-	hOQKMymKDQOVUJA/38NY9sqMt/u34XQ3JjLfEMZbFyfZsPF+Y8o50Gu74qRd4mU=
-X-Google-Smtp-Source: AGHT+IH+dE8vbDtbk0g6KIFdQcvtei8xABv2NfChEkDMcDEuOiARbNNzwR5IRL8abnQAuzmweQTt3g==
-X-Received: by 2002:a05:6512:2256:b0:539:edea:9ed9 with SMTP id 2adb3069b0e04-53b348ec028mr13441328e87.1.1730607046651;
-        Sat, 02 Nov 2024 21:10:46 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc9598dsm1155053e87.22.2024.11.02.21.10.44
+        bh=h/iCSnN/M7HQhmE74Mj4nBBH2JpYOpk0mdmCbZW6msY=;
+        b=JsGsjXUMSlGcMY5Cr0ImVyh2540sB8UCOAo+FoxrHOG6bE9vtEE+0gbtxhtwic5/ke
+         +IPn1CpeHd7z5IbmyvDZ+K4La7U/noE5YecFh0j8iVjkBSbvG3+Jgspvn9rNipPeEemZ
+         rOqWYIlJP/aMUJrs+e4DWyt5Ij8sjOlU4UPo/BrRGt8l/yHo8cKMPUmva7ZwHjTAhezO
+         uaSA/nG+7nlIQBdgYNzz4GfG0F9kjrv7sWz6Fkh+RYhuZilUa/KJFRl1UAVPvjkGuWg1
+         E1f1q6uW8qnHT7ufu8MbXq92nz7E3w25rPB09mOU/t2R2jyE/hBXTAXRgBZvhRLX/T8R
+         fn9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUA+Tl5+kAnvpfkxuwU5RDK/hK4uHXYKI+fv4Jn4P9SIk7SYP+GSm5dhckYAjOIzXZpiYUqmnGjSXCkH28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYNGIsW6PKwiW+kzMSDGvQZB3UvTCJfM58NVFeH5C4QrKFmHnU
+	6cjAtPK+GtA/2IJ0+hS2gZcWpiqkb1O3jP9iz7E4OTs6iQbAimeLRm5Jkj+uyZGQKKvS/lzznPD
+	r
+X-Google-Smtp-Source: AGHT+IEhUpctNzyB3Q/oVIYxbRXEG5RJ4wFo2uHDkY11JbH34UZ1+uPmsCEyS2zgljj0ve1XBu4tPg==
+X-Received: by 2002:a17:90a:510f:b0:2e2:cd65:de55 with SMTP id 98e67ed59e1d1-2e8f10723a7mr31449321a91.20.1730607052119;
+        Sat, 02 Nov 2024 21:10:52 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93da983f9sm5131469a91.5.2024.11.02.21.10.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 21:10:45 -0700 (PDT)
-Date: Sun, 3 Nov 2024 06:10:42 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, Simon Ser <contact@emersion.fr>, 
-	joshua@froggi.es, Xaver Hugl <xaver.hugl@gmail.com>, 
-	Daniel Stone <daniel@fooishbar.org>, ville.syrjala@linux.intel.com, kernel-dev@igalia.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
-Subject: Re: [PATCH RESEND v9 1/2] drm/atomic: Let drivers decide which
- planes to async flip
-Message-ID: <y5vxaa3mwuhhrwn4etuxdvr6xemu4vprinp6lb75ch7a4amkdf@jajgfjczii7s>
-References: <20241101-tonyk-async_flip-v9-0-681814efbfbe@igalia.com>
- <20241101-tonyk-async_flip-v9-1-681814efbfbe@igalia.com>
+        Sat, 02 Nov 2024 21:10:51 -0700 (PDT)
+Date: Sat, 2 Nov 2024 21:10:49 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: netdev@vger.kernel.org, edumazet@google.com, willy@infradead.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-kernel@vger.kernel.org, mkarsten@uwaterloo.ca,
+	sridhar.samudrala@intel.com
+Subject: Re: [PATCH net-next v4 5/7] eventpoll: Control irq suspension for
+ prefer_busy_poll
+Message-ID: <Zyb3yS6Whi5Na0lg@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Hillf Danton <hdanton@sina.com>, netdev@vger.kernel.org,
+	edumazet@google.com, willy@infradead.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-kernel@vger.kernel.org, mkarsten@uwaterloo.ca,
+	sridhar.samudrala@intel.com
+References: <20241102005214.32443-1-jdamato@fastly.com>
+ <20241102233925.2948-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241101-tonyk-async_flip-v9-1-681814efbfbe@igalia.com>
+In-Reply-To: <20241102233925.2948-1-hdanton@sina.com>
 
-On Fri, Nov 01, 2024 at 03:23:47PM -0300, André Almeida wrote:
-> Currently, DRM atomic uAPI allows only primary planes to be flipped
-> asynchronously. However, each driver might be able to perform async
-> flips in other different plane types. To enable drivers to set their own
-> restrictions on which type of plane they can or cannot flip, use the
-> existing atomic_async_check() from struct drm_plane_helper_funcs to
-> enhance this flexibility, thus allowing different plane types to be able
-> to do async flips as well.
+On Sun, Nov 03, 2024 at 07:39:25AM +0800, Hillf Danton wrote:
+> On Sat,  2 Nov 2024 00:52:01 +0000 Martin Karsten <mkarsten@uwaterloo.ca>
+> > 
+> > @@ -2005,8 +2032,10 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+> >  			 * trying again in search of more luck.
+> >  			 */
+> >  			res = ep_send_events(ep, events, maxevents);
+> > -			if (res)
+> > +			if (res) {
+> > +				ep_suspend_napi_irqs(ep);
 > 
-> In order to prevent regressions and such, we keep the current policy: we
-> skip the driver check for the primary plane, because it is always
-> allowed to do async flips on it.
-> 
-> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> ---
-> Changes from v8:
-> - Rebased on top of 6.12-rc1
-> ---
->  drivers/gpu/drm/drm_atomic_uapi.c | 39 +++++++++++++++++++++++++++++----------
->  1 file changed, 29 insertions(+), 10 deletions(-)
-> 
+> Leave napi irq intact in case of -EINTR.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+(I've added Martin and Sridhar to the CC list)
 
--- 
-With best wishes
-Dmitry
+Thanks for pointing out this inconsistency. It's not a big problem,
+because on receiving EINTR or another error code, the app either
+retries epoll_wait or, if the app is buggy somehow and doesn't retry
+epoll_wait, the timer fires and everything proceeds as normal.
+
+However, since irqs are not suspended at other points in ep_poll
+where an error code is returned, it is probably best to be
+consistent and not suspend here either. We will fix this in the next
+revision.
+
+Sridhar: Since the change is very minor I plan to retain your
+Reviewed-by, but if you'd like me to drop it, please let me know.
+
+The proposed fix will look like:
+
+if (res) {
+  if (res > 0)
+    ep_suspend_napi_irqs(ep);
+  return res;
+}
+
+
+> 
+> >  				return res;
+> > +			}
+> >  		}
+> >  
+> >  		if (timed_out)
+> > -- 
+> > 2.25.1
 
