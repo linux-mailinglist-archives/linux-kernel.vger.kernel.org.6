@@ -1,138 +1,123 @@
-Return-Path: <linux-kernel+bounces-393963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207949BA804
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:47:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8169F9BA805
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:48:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9560AB210DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:47:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DAFDB21075
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C24618BBBD;
-	Sun,  3 Nov 2024 20:47:21 +0000 (UTC)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC49B18BBB7;
+	Sun,  3 Nov 2024 20:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b="lt7iLfuH"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6D813B791;
-	Sun,  3 Nov 2024 20:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE9013B791
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 20:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730666841; cv=none; b=MV4IezJyMdLvHqvUDyPVVe00ro8VXDeD1MV458Pp/eKyacr3vxnuXyB6EyeU2NYm3EHIxNlCdvHtbi68OrxuKxlA89n33qxtRkuRS246u7CbkdPr2htHAavF7lfklJIJ2uxurS/5vATMZi1jFIgWT3wV+ybvCjIqpqVA/KKoHlU=
+	t=1730666924; cv=none; b=SUIEqOrV8LdNdJ+jh5k5cnKkoS3yNWAMNmtYgQ2KRM97X4EgcxlUYmv6TNMLCtXLKUCvUCxRCUtdX8k+ZtPKPkNyPloJiDB7aVAuDIVapkoq51dkg/hN3F5IE72C460rmFGXSWJ5/CqsUdoRsQcQ8vMEY80M/jSP8zPTIL/DQ8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730666841; c=relaxed/simple;
-	bh=B7DYdppyjVmq7o1gonHzJnUTsB2KzuZArwlo90VIdDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JMTINWNd7TinDed8NqjVEGBhrDZM3m9nHvl9itShPUq24b6RWXa5wAzaTeuzO2AkPmuZlQ69HDvSQpuhsCSQGVl74deDK22I1zAvktDWnB6GojJRXPTk1czN6hhykDJ3rR1GDRvjQr14lwN9YVmsfH2tvylA3CWW9/pu6R3EwT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20e6981ca77so36959675ad.2;
-        Sun, 03 Nov 2024 12:47:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730666839; x=1731271639;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1730666924; c=relaxed/simple;
+	bh=SaPPFw0i2Jm6LqIInQrwnloT+7hSRv+2il3t25SfqpE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GvFNiC/jJDjWkwTjuX9sKBP67JRT4a2DoA5qukjSvcHzlehuVHc9jYcC7t4V76vrlcFswxOniDS374QKLrpR9NfUlbbNsasgoocBXwqTFHtpf+r+ATwb+Xd10LE7Y4eYSY6toqgia7buExi2tX+q03aezI+0CCktHYD+2vNmjUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com; spf=pass smtp.mailfrom=engflow.com; dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b=lt7iLfuH; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engflow.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83ac817aac3so145058639f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 12:48:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=engflow.com; s=google; t=1730666920; x=1731271720; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0xBgnTjz58DPOb19bkfTurkVdZgiccAOKYI2cdjA1Pc=;
-        b=NycFpSTHB/tjtle9M4/TbexDgTA9OUqn9RgUSFLHYRD1nmannVUHAvcBRP+rwBwLF8
-         3r6jbsamNm9sCsjb2KuRq/sMtmjoQj5NAOnBXeSFYlFNHOBjR3v+SBi4XP4/BD1g3MlI
-         S2Pq/34f/Oa+5XOXS9KiFqbMoBeK6YvUzUB6YRuQfZd0KJDkBiBLDNP9cDRtE4+2Wqv9
-         zImr6M5uH22akZ4zeNrvMoDeBL9yAxis0JYevSSsHTTWzE2iyyytfj9MADSbcwY47qfB
-         xvtxaUB4JjMOojrGgZSh9OMZ8OLyh3i0YfYxnIePf9X1f6fLt3PHhjUKCq4r+Puhf8+2
-         YVcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeVCsj9u1VPasoCF8BKq92CbI2bZpYJPDC1izWA5u6OjyKWS4CS095kWwcvaIE+yEn5F4fqmDQQUJx+RU=@vger.kernel.org, AJvYcCVqyn9jxW/Ku4EonJIfjWLPWsgV+XYia8Ww+Q4q9SjrgSjauQm7zJVCrgCq/WVMbZipR+eST7v/agAq@vger.kernel.org
-X-Gm-Message-State: AOJu0YylnP6EnJy3ZspcL+ZbuDz7vwGQGk1lcDz0F+XZK/4GBomLzU1c
-	8cDmtUN/BiSBWAa7Lq5/k1KxEQTXVfUOTOMWzImySle9sgK+v8PpuBCtmRx6
-X-Google-Smtp-Source: AGHT+IEVNo61h4V8Yh6Yz8mkVGSd33hMAVRAiX8loVR6GnM8WKPqNLwl6KwgqtaoDoPy2hnRJ9SlQg==
-X-Received: by 2002:a17:902:cec9:b0:20c:872f:6963 with SMTP id d9443c01a7336-21103b1ce5amr196997705ad.33.1730666838766;
-        Sun, 03 Nov 2024 12:47:18 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056eda38sm49800595ad.48.2024.11.03.12.47.17
+        bh=mlm2PLrARUKeIopTjkk7MtdiLDlLWS0aLomBZawMdaI=;
+        b=lt7iLfuHm19mw4aHvOHsIfChsyPN4Gw3zj0/g2sFIOrSrCe6n5604A/ku3c3fmO184
+         nxt6kWqPlWOl5i3Ocn5J1OILLA7FvmbM8HoE6uoT9foM5kf95IlaYUrTQ0JCo7DtrEbr
+         RNQVRzjfpOngNHRFr1+4ehiE+/DO8h707N0Xs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730666920; x=1731271720;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mlm2PLrARUKeIopTjkk7MtdiLDlLWS0aLomBZawMdaI=;
+        b=ACYY7bIQrlJw0R9Ws5UURRFgz8Z5qk/Ne7LcM7CAUUXJlh/6qvC8FFxKkxg7Q/Ykho
+         GGogI2LTQCew/k1WZ6rgbCAFy0HbGIEu2lSXPwJKyXTqvgIcx6Q023xMjER9wTJ3QlQf
+         JvJlZFuPr5WXzmlTdmqCMcOBlvGbx0bICiDYB0g9vz4mE6HXjtSFcS1icJ88uoPqYPXf
+         armz2r722enrMIxx+5Y78mcVbKFV44IxPTNgVzL62U4ACzo+LKMrgZi2+NJk7FwK6enl
+         ycwQiIPKampSkDhV0OQcFZ5ejh36J8UHYDO8DQvuttNDyOQtNXLOs2+/xxxlbrH3CQeD
+         aluQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ5cOzSiASYAil15+xRVmHRkbkqKCEC16wjT6Nkk3eeaqXipYcqijFRTjaoxY8fG0kNka9Ze85pBu+VLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvd4iCWmv8bSN9mFptMTKWgwSayY8oaWg5SaPU4IrcGB3wOPmg
+	qEy1/k6K6/2Y2XHqvnmBUzyqiYXyuRxbQHtnzMAjFnKTgFxyK1yyY38qEPbESdk=
+X-Google-Smtp-Source: AGHT+IFmKEKqEcCrPchJyXh14BuWWrnIOqGLmqLcDn3M5t5a7ymNpnzwMlZRzh4NhnPRabIqTcXQcw==
+X-Received: by 2002:a05:6e02:3992:b0:3a6:c97e:75cb with SMTP id e9e14a558f8ab-3a6c97e76b5mr25594865ab.23.1730666920050;
+        Sun, 03 Nov 2024 12:48:40 -0800 (PST)
+Received: from benjamin-test-build-vm.us-central1-a.c.engflow-remote-execution.internal (132.155.121.34.bc.googleusercontent.com. [34.121.155.132])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de049a491csm1661468173.155.2024.11.03.12.48.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 12:47:18 -0800 (PST)
-Date: Mon, 4 Nov 2024 05:47:16 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Jian-Hong Pan <jhp@endlessos.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Johan Hovold <johan@kernel.org>,
-	David Box <david.e.box@linux.intel.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux@endlessos.org
-Subject: Re: [PATCH v12 3/3] PCI/ASPM: Make pci_save_aspm_l1ss_state save
- both child and parent's L1SS configuration
-Message-ID: <20241103204716.GE237624@rocinante>
-References: <20241001083438.10070-2-jhp@endlessos.org>
- <20241001083438.10070-8-jhp@endlessos.org>
+        Sun, 03 Nov 2024 12:48:38 -0800 (PST)
+From: Benjamin Peterson <benjamin@engflow.com>
+To: acme@kernel.org
+Cc: adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com,
+	benjamin@engflow.com,
+	howardchu95@gmail.com,
+	irogers@google.com,
+	jolsa@kernel.org,
+	kan.liang@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	mark.rutland@arm.com,
+	mingo@redhat.com,
+	namhyung@kernel.org,
+	peterz@infradead.org
+Subject: [PATCH v3] perf trace: avoid garbage when not printing a trace event's arguments
+Date: Sun,  3 Nov 2024 20:48:16 +0000
+Message-Id: <20241103204816.7834-1-benjamin@engflow.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <ZyV0a6e_46R9pmQw@x1>
+References: <ZyV0a6e_46R9pmQw@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001083438.10070-8-jhp@endlessos.org>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+trace__fprintf_tp_fields may not print any tracepoint arguments. E.g., if the
+argument values are all zero. Previously, this would result in a totally
+uninitialized buffer being passed to fprintf, which could lead to garbage on the
+console. Fix the problem by passing the number of initialized bytes fprintf.
 
-> PCI devices' parameters on the VMD bus have been programmed properly
-> originally. But, cleared after pci_reset_bus() and have not been restored
-> correctly. This leads the link's L1.2 between PCIe Root Port and child
-> device gets wrong configs.
-> 
-> Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
-> bridge and NVMe device should have the same LTR1.2_Threshold value.
-> However, they are configured as different values in this case:
-> 
-> 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
->   ...
->   Capabilities: [200 v1] L1 PM Substates
->     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
->       PortCommonModeRestoreTime=45us PortTPowerOnTime=50us
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=0us LTR1.2_Threshold=0ns
->     L1SubCtl2: T_PwrOn=0us
-> 
-> 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
->   ...
->   Capabilities: [900 v1] L1 PM Substates
->     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
->       PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=0us LTR1.2_Threshold=101376ns
->     L1SubCtl2: T_PwrOn=50us
-> 
-> Here is VMD mapped PCI device tree:
-> 
-> -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
->  | ...
->  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
->               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
-> 
-> When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
-> restores NVMe's state before and after reset. Then, when it restores the
-> NVMe's state, ASPM code restores L1SS for both the parent bridge and the
-> NVMe in pci_restore_aspm_l1ss_state(). The NVMe's L1SS is restored
-> correctly. But, the parent bridge's L1SS is restored with a wrong value 0x0
-> because the parent bridge's L1SS wasn't saved by pci_save_aspm_l1ss_state()
-> before reset.
-> 
-> So, if the PCI device has a parent, make pci_save_aspm_l1ss_state() save
-> the parent's L1SS configuration, too. This is symmetric on
-> pci_restore_aspm_l1ss_state().
+Fixes: f11b2803bb88 ("perf trace: Allow choosing how to augment the tracepoint arguments")
+Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
+Tested-by: Howard Chu <howardchu95@gmail.com>
+---
+ tools/perf/builtin-trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to aspm, thank you!
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index d3f11b90d025..5af55f4192b5 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -3087,7 +3087,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
+ 		printed += syscall_arg_fmt__scnprintf_val(arg, bf + printed, size - printed, &syscall_arg, val);
+ 	}
+ 
+-	return printed + fprintf(trace->output, "%s", bf);
++	return printed + fprintf(trace->output, "%.*s", (int)printed, bf);
+ }
+ 
+ static int trace__event_handler(struct trace *trace, struct evsel *evsel,
+-- 
+2.39.5
 
-[01/02] PCI/ASPM: Add notes about enabling PCI-PM L1SS to pci_enable_link_state(_locked)
-        https://git.kernel.org/pci/pci/c/4681da23786a
-
-[02/02] PCI/ASPM: Make pci_save_aspm_l1ss_state save both child and parent's L1SS configuration
-        https://git.kernel.org/pci/pci/c/1f37e72d586f
-
-	Krzysztof
 
