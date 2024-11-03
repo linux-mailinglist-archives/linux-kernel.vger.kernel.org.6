@@ -1,113 +1,102 @@
-Return-Path: <linux-kernel+bounces-393958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B8E9BA7F3
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:31:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 376009BA7F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:33:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A01E1F212EB
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:31:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B35C1F21802
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6916918B478;
-	Sun,  3 Nov 2024 20:31:12 +0000 (UTC)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247C018BBB7;
+	Sun,  3 Nov 2024 20:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IyeJETQX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5E770825;
-	Sun,  3 Nov 2024 20:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D0113CA81;
+	Sun,  3 Nov 2024 20:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730665872; cv=none; b=RYRNQXAj7svHKvWT/s5hN8ZgbC4p0H9sMvGH807wryWV+nmQ80S2m40+lJys6APZwp+bb1JpkoqevJe9Zx6IgXTIEkkwUByVcjam+DIUMo4CtKrdecXSk9XAy/NYD5viNcsm/KNYuj+zPXKdQm7tk6LOI7ukAtdH5rJYNENxknw=
+	t=1730665991; cv=none; b=GLPQrT3p4M/YwkcQtzg18YJNzYUqnvBgKYHwh+9WlX9X//t5JwMF7TQwa3IZhpLNFo3FUa3wq4kInYiXTkuuwM5bklaWfJ3IESqo57CZbRkI0KWMDFrs2B686Tw4gsSrC2wd6j3ITnmsk+FP5NmYINlRMefGU2RSLT25uQ7Dhlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730665872; c=relaxed/simple;
-	bh=UAry3lKNUwyj0oFCm8vVfhqS8cWkBDeEa8VZoXQ4tao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EOb3kAFkrordMRnKN786v6eTIu8ncJoT1uzjo3o+71h9h+tP/GD8hCLWrzyOSeK4nERm5Lu37XLN5ndEsZoAYAU6vB9e6VynHK8KCnPPpqOwWAsSAEAtHLGZDC6UKIIiQmn0kp0RhOFTj/dH3swnPaduyOGm27nspxvp1LdrYXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-720d5ada03cso2187397b3a.1;
-        Sun, 03 Nov 2024 12:31:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730665870; x=1731270670;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YTqpDnttes5ii45n7wC5WdRmTqBtUt0Tb3DPQNqk5so=;
-        b=b1CMJpspHfygCi6vhvU0USq6KZUu0+Y1jU+G9RISy/lvXeUP+AESu9Aas6kvR4cy5i
-         550g6gsETuOoouBi4Wey+lxLzpCNYsZdtrKyEDOYUzbliQUDcLXbMusAkPxBrRHODrul
-         HwdgyI6lhi+Hngk3aNx2DqhdGHYizf0XkuG0UNycOVKde7A4sz22XcaVN3XqYcCXZj0V
-         YdFw7JU1lR28yr0IIq8zJ9Tq+E6Q59Qp7+12B77L0c1OVOa0Egptw8MsIEcNsz28Th8J
-         pUu+tUtNlqA3fR54FjM2nJJy/dVpJgk1mC2FGySM2LlBe9EpcSqkRMspVxK4xngh3zM0
-         dfcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUS1Qivnh3WHhl5j5ws38xEuHXXaojynrLr5ZLQoMuuojWqgEN7Alrv2LRSfXpt0RaJSy+EJ8ZiEArEJR8=@vger.kernel.org, AJvYcCUzoX6bsd/h9mPH2YGSgB5ucGo9K2Bk7SWAUBIqOBf0xPyUCOdpoq+XdyDxexL+kwF50sUAEeLNhi25@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG0LgTj6KCQUXEsNh+w63tA3BJxs3RIQBOZFSBGJ+mkfZmtR6G
-	8R8cKPUqbe7TPRYtvlscocuD0b8U74XAEtgEfQHO7ar3IigEpdFCXrJMkSDA
-X-Google-Smtp-Source: AGHT+IFH8OtrcPu4u3zbiHDmGStrfT55bwXN1Fh1BJvA7tScvO1jgw1DS196nETuk4einja8hoKWaw==
-X-Received: by 2002:a05:6a00:3cc7:b0:71e:8049:4730 with SMTP id d2e1a72fcca58-720b9bb4f66mr20112733b3a.3.1730665869763;
-        Sun, 03 Nov 2024 12:31:09 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc316a79sm5985395b3a.205.2024.11.03.12.31.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 12:31:08 -0800 (PST)
-Date: Mon, 4 Nov 2024 05:31:07 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: manivannan.sadhasivam@linaro.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	stable+noautosel@kernel.org
-Subject: Re: [PATCH 0/5] PCI/pwrctl: Ensure that the pwrctl drivers are
- probed before PCI client drivers
-Message-ID: <20241103203107.GA237624@rocinante>
-References: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
+	s=arc-20240116; t=1730665991; c=relaxed/simple;
+	bh=bFxWhN5DQcon1Ev2lD9Kduq69yR0xQF46x+e2qKuI5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o4MlP4zX/A7CAGYqaiA19PjSvNR2gU6E46hXkjAF5HfjZEQbUaGz/zdNOBXCKmhnHhuTcBQZimBWTRZguSg1dNVn2h1iLPRt6pCeUxt278RYbOOOz8La8a+eX3kYtBj5Ey4kP+NeL3kisHZpNX9Co67/TcQNvajPoBfOONSpuw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IyeJETQX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72CABC4CECD;
+	Sun,  3 Nov 2024 20:33:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730665990;
+	bh=bFxWhN5DQcon1Ev2lD9Kduq69yR0xQF46x+e2qKuI5Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IyeJETQXDw2v4u2VMCRSlPx4ejbRFrKe547TUKR4nk/pPVZzT3wrYRu9J9Z7N0jCv
+	 AQGF5n0vv+L4B65NP6b3beBBaUikldjNRbjDqwQl4JTClp+fAd20Bq2y/b0huZDuXk
+	 kTq7QzfC+xbmOxMLPBZrsVpSUuXhoyB/lrdV/JR+KxLWFGe0bSvHABb4VY0He7N9TR
+	 DaymSUBNCRxlYilqHYRSo2nOIq2g/KRI9MDbvyJ/MxHDk3z/PrxMkwFYvuWnK+Te11
+	 KMu8ayMEupjtsTumKALhS7D5Y/NlltE5l7Ze32T/4MulY/zIKreEld0b9919rN7u8N
+	 gKSdF9qTyTq7A==
+Date: Sun, 3 Nov 2024 20:32:59 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <angelo@kernel-space.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dlechner@baylibre.com, Mark Brown <broonie@kernel.org>, Angelo Dureghello
+ <adureghello@baylibre.com>
+Subject: Re: [PATCH v9 7/8] iio: dac: ad3552r: add high-speed platform
+ driver
+Message-ID: <20241103203259.03e62eeb@jic23-huawei>
+In-Reply-To: <20241031212511.57ec5d6e@jic23-huawei>
+References: <20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-0-f6960b4f9719@kernel-space.org>
+	<20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-7-f6960b4f9719@kernel-space.org>
+	<20241031212511.57ec5d6e@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, 31 Oct 2024 21:25:11 +0000
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-> This series reworks the PCI/pwrctl integration to ensure that the pwrctl drivers
-> are always probed before the PCI client drivers. This series addresses a race
-> condition when both pwrctl and pwrctl/pwrseq drivers probe parallely (even when
-> the later one probes last). One such issue was reported for the Qcom X13s
-> platform with WLAN module and fixed with 'commit a9aaf1ff88a8 ("power:
-> sequencing: request the WLAN enable GPIO as-is")'.
+> On Mon, 28 Oct 2024 22:45:34 +0100
+> Angelo Dureghello <angelo@kernel-space.org> wrote:
 > 
-> Though the issue was fixed with a hack in the pwrseq driver, it was clear that
-> the issue is applicable to all pwrctl drivers. Hence, this series tries to
-> address the issue in the PCI/pwrctl integration.
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> > Add High Speed ad3552r platform driver.
+> > 
+> > The ad3552r DAC is controlled by a custom (fpga-based) DAC IP
+> > through the current AXI backend, or similar alternative IIO backend.
+> > 
+> > Compared to the existing driver (ad3552r.c), that is a simple SPI
+> > driver, this driver is coupled with a DAC IIO backend that finally
+> > controls the ad3552r by a fpga-based "QSPI+DDR" interface, to reach
+> > maximum transfer rate of 33MUPS using dma stream capabilities.
+> > 
+> > All commands involving QSPI bus read/write are delegated to the backend
+> > through the provided APIs for bus read/write.
+> > 
+> > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>  
+> Missing bitfield.h include. I added whilst applying.
+Also, needs a select IIO_BACKEND (thanks 0-day for finding that one).
 
-Applied to bwctrl, thank you!
+Added and pushed out again.
+> 
+> Jonathan
+> 
 
-[01/05] PCI/pwrctl: Use of_platform_device_create() to create pwrctl devices
-        https://git.kernel.org/pci/pci/c/d2b6619e7419
-
-[02/05] PCI/pwrctl: Create pwrctl devices only if at least one power supply is present
-        https://git.kernel.org/pci/pci/c/5f2710a4c275
-
-[03/05] PCI/pwrctl: Ensure that the pwrctl drivers are probed before the PCI client drivers
-        https://git.kernel.org/pci/pci/c/4c963d4c13b9
-
-[04/05] PCI/pwrctl: Move pwrctl device creation to its own helper function
-        https://git.kernel.org/pci/pci/c/73ae23a6af78
-
-[05/05] PCI/pwrctl: Remove pwrctl device without iterating over all children of pwrctl parent
-        https://git.kernel.org/pci/pci/c/5ccc52fd1e5a
-
-	Krzysztof
 
