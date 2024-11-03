@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-393860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F040C9BA66D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:39:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B8F9BA672
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:41:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABE6C28176F
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:39:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2690E1C20E8A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 15:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6BD187879;
-	Sun,  3 Nov 2024 15:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E6A18660A;
+	Sun,  3 Nov 2024 15:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="k89PUUnl"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8gWtwPu"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAE2170A01;
-	Sun,  3 Nov 2024 15:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6EB15D5C1;
+	Sun,  3 Nov 2024 15:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730648349; cv=none; b=kYatG+1C0PwHOfVMlaHXiL+UM94uOCcDzrEXQ5mqBaXPl0hd4ht0g01UyTnUTlNlNwB5zcEvMNK1SJfi1fLuhYkLLYu0vA7F5YQrrr5ICgXd6LRd7AaM4C5LJH2ahChTXHBgEGXNaSs6PgWvDBk6Ah/lnoHWoGBx+l+zeFCuNjU=
+	t=1730648501; cv=none; b=WHUKdj6lMzygy6CW3mb0KJT3WnaNK0P8dNaz17uhqxxCxsOz+vK1zfKwoQjw2XxjxLSvJSDq2H/XwQ+XBgVNQHdPN0BspNeGjhMQ/AyExuUdsQNig5eXrpcEckv1aZDZ8Qn6WuftHk2Ww/jqGB8+qa4XIBwUMrEwlk/xxDhgiyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730648349; c=relaxed/simple;
-	bh=/qbn+Pd3oIBgfObvF6LHb4lvvo2uaHOE6T4OTjmhW54=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Gvf60OtmwDKGymywvu4I5e+w5dAIWy2PZ/ED5gBYiTWUt2x/tQ4YhoP1sX9yeuoSHJoQkuZ976YG+RNNDg6EzhjemvtCFEmFOiW86mdtaAi4ykATEE6uaYG+scWVYhcZREkIaKSxEdRJ87VxF1CMNxS+0k1tYIf2iF0VQjm0eqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=k89PUUnl; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=lSEkuKEdaE1JdTruufXmwcarX+kHRCnCzmOMFP7aTz8=; b=k89PUUnlv18S9ZwE
-	kIs4gRND+xEGtFUiMEDT5Aiqkl/LwEivtG5dR/nz0sxQBNDjOdcoyKNdsHY0ksyypkHcj9XuclSyh
-	URlqdSXvUltOnPowDuwD0w6g9pHnUDU7HntGnM3NHh/EnoMj2zoiZfRX+CDBvmOmMT5U8VoccCIg/
-	RY9bUABHmdVgDmeQ1zYVkB/rSbnFabclJ4ktMqE52OZZknpXNdSXsqXz/sxoPdfyfQqIatyGl+mtF
-	vybUuRZNLSjRHeg++JffdnmW+GgxNvSzWGLG0ygU8fPDw+7xmNLHlPft+iz4L6hBYI7i1mEen1k77
-	s7QjAIYNHfg5Iw5CNA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1t7cgt-00FBKZ-37;
-	Sun, 03 Nov 2024 15:38:59 +0000
-From: linux@treblig.org
-To: pkshih@realtek.com,
-	kvalo@kernel.org,
-	linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 2/2] rtlwifi: Remove more unused functions
-Date: Sun,  3 Nov 2024 15:38:57 +0000
-Message-ID: <20241103153857.255450-3-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241103153857.255450-1-linux@treblig.org>
-References: <20241103153857.255450-1-linux@treblig.org>
+	s=arc-20240116; t=1730648501; c=relaxed/simple;
+	bh=GyLcRZpOkBrsPxswcDFQ0iEUVqRw2osCdv+d3ezkn04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X23r9j92JoB22pcjlje8uXyO77rz/XJ1SsHMT67mgdmG2TdEAhijzSQ2X5OSHycW98YuauvSc05u67TeS0fLebj8tBfFTNmBYFKg5IpDvdNpysGDa6NjLQXrEKQO7I5U5AUaLrcuLFXmbvTe/Rx/iPKGgYS1fVXr/1XobbKexoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8gWtwPu; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea535890e0so569868a12.2;
+        Sun, 03 Nov 2024 07:41:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730648499; x=1731253299; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9gTIZzADuASrTW+VUIVvizdFrSJXJfISDBymYqSNdUQ=;
+        b=Z8gWtwPu7XfmEoGNQBlUFUCrQCmW5d5h31r9m1m6BX7PRD2tpymsNkYmJSxz2FY9b7
+         iAYgdlMtsIWt6nYTgyscGrmnmPMQ2vpTbymKBIbDG0hWwmhw3XTRiBoDZhcmjY5nS2ii
+         PYUakRGN7wY7Qoj2ZbNBU3o4wV3Z5PdlSUpH7lgAojo+vdFlzDRevcOgK2fk90edjCTA
+         g6AY/d3OZYOZ8ATzIMd/ueYGbrUV1KWRucGZCjrEZFnhSoj0PT3NRmNeDsPK0SAsA5jY
+         961L6Th1akEn65SFroyQCGsxqHDrLnl7QKjyXilQGVyhsBsYwQzSnT0VvjAMkut9CpDh
+         RZQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730648499; x=1731253299;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9gTIZzADuASrTW+VUIVvizdFrSJXJfISDBymYqSNdUQ=;
+        b=JWiw4qv4rroARl2oIyxYxsE2Aybt9p+xV62RqOWX3qhmAjB8jwIsQtJRkWd47G1bVh
+         H5JINRZUy5nEvdWZNWqrsix7/tQTbD/VdfMEgQpgS7vorjWXBTnwcfa1RR6WhluySHxU
+         /FagwRRd+92zqohSkW7ag+zSrIoRTcLaEXds2mbVFlnmdMX8E5rTMP5JB1DUl1ozrXnV
+         qPm4ZlHAMlVq3cXh+uvUFIUws9/dYiUUOhKxwO+QGwfpPUTL43qC8SrJE/0Fwu6prNfD
+         1l26lBHF4NyoyIPGwYgfJhhgv4m06CvjgSdank91l1zFCbEslces0N/dqFE9Zg5HQY+7
+         7/WA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRjOMQvRO/Pn6bNNwUl9mw5+kyTZWFKPjelkXvbW8Yhy5jt8MgbJKlH+yG9W6Winrs/nQSDFjEQv1ZeEjoaK7n@vger.kernel.org, AJvYcCWqz054pdcvTvf1DFWUUkP9wXYyEvrKW1YnBcf+aRMFGqmMyWmlMho00PstOGCEfxUZ8/t2afULm0SOA3VWztU=@vger.kernel.org, AJvYcCXD3qsUBGPZs8tlQO+tNezVm+mVxflPZHF0pdhDsvWIITEV0xn778VvzHKWwDltvAmq9CSiQzlpEIhYqHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX1XVsBnmjgO+OOwbW41G0UUWXrx94EeKyUXXwT8wFQzpp7rxz
+	s9zriBYHh/8YMqXe4Khs2DaWJZfxFsWUtZk+DjJSWwj/rPLjsz/07C9zOKB0uqaOVT/0T//EPj1
+	HlrLXMOeXkVQHcCVUQGasj4ljdptotOiZ
+X-Google-Smtp-Source: AGHT+IEe28SlBSIrk0bjLKSCj7X8IBJqLInnAUxgkFLVSWSSYRoJ6oiVQ2ZyKKfTli7kJtAxzgUlvF/jYhozIC9fTy0=
+X-Received: by 2002:a17:903:2285:b0:207:da7:bd95 with SMTP id
+ d9443c01a7336-210c6ce5fc8mr180583105ad.13.1730648499051; Sun, 03 Nov 2024
+ 07:41:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241101064505.3820737-1-davidgow@google.com> <20241101064505.3820737-3-davidgow@google.com>
+ <ZyVKSKUq_bKH5jn_@Boquns-Mac-mini.local> <CANiq72=yhH7MEQWxVSVXGa5M5=HXudtS0Xja=w7ViU4Ph1Mpdw@mail.gmail.com>
+ <ZyVtcXTW99YpUF0o@Boquns-Mac-mini.local>
+In-Reply-To: <ZyVtcXTW99YpUF0o@Boquns-Mac-mini.local>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 3 Nov 2024 16:41:26 +0100
+Message-ID: <CANiq72mMnmgG_SfRcxmo24Wjwtmc4Q5Q+zm4GmtZg=Cr5Dd7uw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] rust: macros: add macro to easily run KUnit tests
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: David Gow <davidgow@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	=?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
+	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Sat, Nov 2, 2024 at 1:08=E2=80=AFAM Boqun Feng <boqun.feng@gmail.com> wr=
+ote:
+>
+> Hmm.. so I think clippy won't warn for a normal Rust #[test] function:
+>
+>         https://github.com/rust-lang/rust-clippy/pull/7811
 
-exhalbtc_dbg_control(), exhalbtc_stack_update_profile_info(),
-exhalbtc_set_hci_version(), and exhalbtc_set_bt_patch_version() are
-unused since their addition in 2014 by
-commit aa45a673b291 ("rtlwifi: btcoexist: Add new mini driver")
+That is a very good point. It is a bit surprising that those details
+are not documented, but we could mimic that behavior.
 
-Remove them.
+(Personally, I don't particularly enjoy exceptional/context-dependent
+cases, unless it is something used everywhere, like `use`ing the
+prelude that we have).
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- .../realtek/rtlwifi/btcoexist/halbtcoutsrc.c  | 34 -------------------
- .../realtek/rtlwifi/btcoexist/halbtcoutsrc.h  |  6 ----
- 2 files changed, 40 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-index 74c4504065c0..478cca33e5e3 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-@@ -1782,22 +1782,6 @@ void exhalbtc_periodical(struct btc_coexist *btcoexist)
- 	halbtc_normal_low_power(btcoexist);
- }
- 
--void exhalbtc_dbg_control(struct btc_coexist *btcoexist,
--			  u8 code, u8 len, u8 *data)
--{
--	if (!halbtc_is_bt_coexist_available(btcoexist))
--		return;
--	btcoexist->statistics.cnt_dbg_ctrl++;
--
--	halbtc_leave_low_power(btcoexist);
--
--	halbtc_normal_low_power(btcoexist);
--}
--
--void exhalbtc_stack_update_profile_info(void)
--{
--}
--
- void exhalbtc_update_min_bt_rssi(struct btc_coexist *btcoexist, s8 bt_rssi)
- {
- 	if (!halbtc_is_bt_coexist_available(btcoexist))
-@@ -1806,24 +1790,6 @@ void exhalbtc_update_min_bt_rssi(struct btc_coexist *btcoexist, s8 bt_rssi)
- 	btcoexist->stack_info.min_bt_rssi = bt_rssi;
- }
- 
--void exhalbtc_set_hci_version(struct btc_coexist *btcoexist, u16 hci_version)
--{
--	if (!halbtc_is_bt_coexist_available(btcoexist))
--		return;
--
--	btcoexist->stack_info.hci_version = hci_version;
--}
--
--void exhalbtc_set_bt_patch_version(struct btc_coexist *btcoexist,
--				   u16 bt_hci_version, u16 bt_patch_version)
--{
--	if (!halbtc_is_bt_coexist_available(btcoexist))
--		return;
--
--	btcoexist->bt_info.bt_real_fw_ver = bt_patch_version;
--	btcoexist->bt_info.bt_hci_ver = bt_hci_version;
--}
--
- void exhalbtc_set_chip_type(struct btc_coexist *btcoexist, u8 chip_type)
- {
- 	switch (chip_type) {
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-index 5d146fcb7852..d8d88a989806 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-@@ -766,12 +766,6 @@ void exhalbtc_bt_info_notify(struct btc_coexist *btcoexist, u8 *tmp_buf,
- void exhalbtc_halt_notify(struct btc_coexist *btcoexist);
- void exhalbtc_pnp_notify(struct btc_coexist *btcoexist, u8 pnp_state);
- void exhalbtc_periodical(struct btc_coexist *btcoexist);
--void exhalbtc_dbg_control(struct btc_coexist *btcoexist, u8 code, u8 len,
--			  u8 *data);
--void exhalbtc_stack_update_profile_info(void);
--void exhalbtc_set_hci_version(struct btc_coexist *btcoexist, u16 hci_version);
--void exhalbtc_set_bt_patch_version(struct btc_coexist *btcoexist,
--				   u16 bt_hci_version, u16 bt_patch_version);
- void exhalbtc_update_min_bt_rssi(struct btc_coexist *btcoexist, s8 bt_rssi);
- void exhalbtc_set_bt_exist(struct btc_coexist *btcoexist, bool bt_exist);
- void exhalbtc_set_chip_type(struct btc_coexist *btcoexist, u8 chip_type);
--- 
-2.47.0
-
+Cheers,
+Miguel
 
