@@ -1,114 +1,134 @@
-Return-Path: <linux-kernel+bounces-393817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D375B9BA59B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:23:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F26D69BA59F
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:34:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88C041F21879
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94F411F218D2
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEE2175D38;
-	Sun,  3 Nov 2024 13:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFDE176AA5;
+	Sun,  3 Nov 2024 13:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1W0Ul1j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XvTavTnB"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711461E52D;
-	Sun,  3 Nov 2024 13:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24745BA42;
+	Sun,  3 Nov 2024 13:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730640192; cv=none; b=mlFUWL6iQ5kcGARCq46UnrozcM3oPfz9dIUiFXVQyMgUcA89fL64qTSIQsLo6/PTUS0atXxEcn8mguMw7DTFelBel1rJj6bxxR/psThcjl5hfKszq2LC2nCAwGpa0bF00YhTx0SNVMNlKvyXNyM3QihhV9eaDGYOLWRDEBCz1l8=
+	t=1730640846; cv=none; b=HS9q5UJM4U1Z3ZwrAEGh0nv1jO6DshNsWxp4dgmbaXZyDSJbGOMoYS3bwoabZU/CTlamPshGNsVZG03Yoywt/793ceJCynhdukJFFxObje6yFrTe/rIf/UlWGQ6esEIy0y9LD1RKb03z8gj2SCshEIP2ckivpM5DcMbHDrXpGI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730640192; c=relaxed/simple;
-	bh=owxpUIA5JjJe1/GJIuWE5eHKEp3bhFDZLK8QfdI5UR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZArqvdk7RFJUHtagZkgAlkK7Nvwe2TtoXYDlUhIaxZaa1y7V625/scuIHDc7OGMjvmjAelDmD9X6GCdwFegHJVaALg8HKp5NBrY8JYuMod8DzinSrq9S9+8ZBIXTmQphDgwvJ7GQn0j8cv1wtmEn18nG/GAahRO5cshC+h4hP78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1W0Ul1j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D853EC4CED5;
-	Sun,  3 Nov 2024 13:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730640191;
-	bh=owxpUIA5JjJe1/GJIuWE5eHKEp3bhFDZLK8QfdI5UR4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=C1W0Ul1j171/CeC+sLp5WXwg3QJVkHfN7o8RA57ZdsEQLczGNhKRl1rdNKQWHrxgv
-	 DPxsUrYt5M/mFMdaei68/33Dxpt/oalXNyo/8MTBKKqn02iiTZBc2aVKTzphM+I+5q
-	 rDYl1N6iOlvONqCyOKbQg71PL7qM+jRDMLRhAlXoF7k9oVkHX9yfipZdam35qoUrW5
-	 O/OyptcdPyX3sf/wFpp66teG2QhsfnEhTtLsuRuSUBv9kLYFo7gMiiMgIul3PlYbnd
-	 Ckxa/Ou9w4qW7Yq2Y9f69TMwn9yCqT1BGtmcoa7stWa4n0KLSnfOpCv9ZgJc+a8pyD
-	 KDl82IYumz/Zg==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53b34ed38easo3232848e87.0;
-        Sun, 03 Nov 2024 05:23:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUMjJebpDfZBJHUFFiLmMPTf7tlw/y2PYb/yf0mqnoFaY1QBj1KfaafVYcdwtXG0oi/0rbg1vnLB9K4lt0D@vger.kernel.org, AJvYcCUQW7/CgQUgB+NpRQUAm639l2ZJcwceKeWrifKCI0p41sQ6RHJu6jF6xMvVBbgeh4XejmHXCPZ6HtVZlx97@vger.kernel.org, AJvYcCWNLl2yoXoMwLOVcAYyGcOINEYBTQQrH2DNbwWNQr65X70ZYHCGmbq1gn+xY+Ks3zsdIY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeITdgRunQg2tGPjTZxNNCEJ0SrddTTDeHW3qy2hRSczU/UuJC
-	44leZH66PNVX+Gf1Uf2L9jfDQECgNeZXAiPHvg55sF6n0PVJ/5T3IeWxf0lldVbkNM6GmQrcrXj
-	VVMjTTnK/q9Y6dc7RNjJCLAPeCIc=
-X-Google-Smtp-Source: AGHT+IEif4j0LPoeyuBjQdEErGyNPy2EQiFuXAV+M+x8WHwNgn5Jfb7rCZmzdfW+NcQOCRzaURku+bbfBLN2jdd1drg=
-X-Received: by 2002:a05:6512:2311:b0:539:edbe:ac86 with SMTP id
- 2adb3069b0e04-53b348b7e1dmr14809315e87.10.1730640190560; Sun, 03 Nov 2024
- 05:23:10 -0800 (PST)
+	s=arc-20240116; t=1730640846; c=relaxed/simple;
+	bh=I54X4peSj3IPI/qOlSKztxqhq18cLbGg5nqbNKX7vzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jCe1YBjvqpuvypCtMnGoF3ETs7eWvds7o+PZg9sV9x/O9BfCKsHOPKRFm2jRJXnMyMdJtiDpSJuhXkGpXxB8sj9tsutFNYeSV5SWbAQhMC28iFQ0rtO/l+d9PFETlIpNXs1DRKgP1+8wQ59iKFZI4bDsBjc4hbv41AYja/Y2WFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XvTavTnB; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A3DXuYP086682;
+	Sun, 3 Nov 2024 07:33:56 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730640836;
+	bh=gmVA7vfrv9fk4q4SW8yK7cB8cAzdiQdnrMLsiuJ7YAg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=XvTavTnB/edNGzlRMsUNVETDEG9heYT8AVt2uGxN/waty3GlDk6Q6U+sVWghm8NVm
+	 0zVtYroyGrayIwUgJJWXPOMmHY39nPqbCDd7v0z5cCA6xsBVJNJ7Gia57M1iBcAwPr
+	 W+zZh5TftXd1gdJHmaI8Di1LFokoQvi/za16rUq0=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A3DXuKx103426
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 3 Nov 2024 07:33:56 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 3
+ Nov 2024 07:33:56 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 3 Nov 2024 07:33:55 -0600
+Received: from [10.250.202.81] ([10.250.202.81])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A3DXqIa032298;
+	Sun, 3 Nov 2024 07:33:53 -0600
+Message-ID: <e2c01b4b-769e-4409-a8e7-90792b2ce2a1@ti.com>
+Date: Sun, 3 Nov 2024 15:33:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102100452.793970-1-flo@geekplace.eu> <73398de9-620c-9fb9-8414-d0f5c85ac53a@applied-asynchrony.com>
-In-Reply-To: <73398de9-620c-9fb9-8414-d0f5c85ac53a@applied-asynchrony.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 3 Nov 2024 22:22:34 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATd0UNu8KsxeD-q2mDUTxQD3ATL1wF59B9K2pxzU08OQQ@mail.gmail.com>
-Message-ID: <CAK7LNATd0UNu8KsxeD-q2mDUTxQD3ATL1wF59B9K2pxzU08OQQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild,bpf: pass make jobs' value to pahole
-To: =?UTF-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
-Cc: Florian Schmaus <flo@geekplace.eu>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/17] wifi: cc33xx: Add sdio.c, io.c, io.h
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Sabeeh Khan <sabeeh-khan@ti.com>
+References: <20241029172354.4027886-1-michael.nemanov@ti.com>
+ <20241029172354.4027886-5-michael.nemanov@ti.com>
+ <9aff2bed-bca4-482b-83ea-4cd945812817@kernel.org>
+Content-Language: en-US
+From: "Nemanov, Michael" <michael.nemanov@ti.com>
+In-Reply-To: <9aff2bed-bca4-482b-83ea-4cd945812817@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sun, Nov 3, 2024 at 9:04=E2=80=AFPM Holger Hoffst=C3=A4tte
-<holger@applied-asynchrony.com> wrote:
->
-> On 2024-11-02 11:04, Florian Schmaus wrote:
-> > Pass the value of make's -j/--jobs argument to pahole, to avoid out of
-> > memory errors and make pahole respect the "jobs" value of make.
-> >
-> > On systems with little memory but many cores, invoking pahole using -j
-> > without argument potentially creates too many pahole instances,
-> > causing an out-of-memory situation. Instead, we should pass make's
-> > "jobs" value as an argument to pahole's -j, which is likely configured
-> > to be (much) lower than the actual core count on such systems.
-> >
-> > If make was invoked without -j, either via cmdline or MAKEFLAGS, then
-> > JOBS will be simply empty, resulting in the existing behavior, as
-> > expected.
-> >
-> > Signed-off-by: Florian Schmaus <flo@geekplace.eu>
->
-> As discussed on IRC:
+On 10/29/2024 7:34 PM, Krzysztof Kozlowski wrote:
 
-Do not do this. Others do not see what was discussed.
+...
 
+>> +
+>> +void cc33xx_disable_interrupts_nosync(struct cc33xx *cc)
+>> +{
+>> +	cc->if_ops->disable_irq(cc->dev);
+>> +}
+>> +
+>> +void cc33xx_irq(void *cookie);
+> 
+> Why do you need forward declaration of non-static function? If you need
+> it, it means you had W=1 warning which you fixed incorrect way.
+> 
+> Regardless, be sure this code has 0 warnings on clang with W=1.
+> 
 
+Indeed a refactoring leftover (already moved to a header file) will fix.
 
+...
 
-I guess the right thing to do is to join the jobserver.
+>> +
+>> +static struct sdio_driver cc33xx_sdio_driver = {
+>> +	.name		= "cc33xx_sdio",
+>> +	.id_table	= cc33xx_devices,
+>> +	.probe		= sdio_cc33xx_probe,
+>> +	.remove		= sdio_cc33xx_remove,
+>> +#ifdef CONFIG_PM
+>> +	.drv = {
+>> +		.pm = &cc33xx_sdio_pm_ops,
+>> +	},
+>> +#endif /* CONFIG_PM */
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(sdio, cc33xx_devices);
+> 
+> This is always next to the table.
+> 
 
-https://www.gnu.org/software/make/manual/html_node/POSIX-Jobserver.html
+Will fix.
 
+Regards,
+Michael.
 
-
-
---=20
-Best Regards
-Masahiro Yamada
 
