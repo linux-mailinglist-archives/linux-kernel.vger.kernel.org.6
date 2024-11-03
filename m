@@ -1,123 +1,79 @@
-Return-Path: <linux-kernel+bounces-393664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813539BA3C8
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 04:35:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00CB9BA3C9
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 04:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463C628154C
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 03:35:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32FF21F215BF
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 03:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA6770815;
-	Sun,  3 Nov 2024 03:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECF670832;
+	Sun,  3 Nov 2024 03:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHnzNS48"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="beYobYYD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9723FC2;
-	Sun,  3 Nov 2024 03:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F61535DC;
+	Sun,  3 Nov 2024 03:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730604943; cv=none; b=XCZtNw7+T5tohPsfGBh4KhLYU40lOTY/GhTsco3cZyPj41kxXzMQyfG1dCxPxJL2FDJYh4TEulu0v7fFyySjuFm7ZSrfEAkD7YCb79B4DP9b6Ze2Z9ADVz9GG5/UOQorvU96ImG/NzRUOCC8D0IuVsiXR2e8QRF/7PHtk0g6acU=
+	t=1730605336; cv=none; b=St8VpDSO5o0pAU0OySMgOirBiFX5dDJhzIUOnXe1bXtsKPBpAQ4H84vHNhaN76fvJ6OdNVHk2fsr+bCdQk82ymkgni8lwRd92F6lhvNcH9hBDBOZQ7Kr9S6TY1sP0a3lM4afanTxFEd5mTX90KjYuoN7hYUix7xdDby0A1hsSH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730604943; c=relaxed/simple;
-	bh=r2zs0GDmVRBO/gdS+c9F68vUl67r+vWeXe0X9I8RsCw=;
+	s=arc-20240116; t=1730605336; c=relaxed/simple;
+	bh=V0/eOxl40RDDf32RGsY9aYQHQUntmDfjqmV8lPkvwlk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FV6AbyI3JQ2toBB0bZpfH8hzUMFE+xJrCuw3DX/CwCzUBsl94B6kkmbGHKvP3GVjMz+Om8/0oPojgodCF0ak4qQNFXePQQdIFX8sSk7dSXMIDlSPJ5a1Zyv4Sg4rgIByC7TYeRGdHqC1SUEKFKgYxhzUtnVLDQxAw/yvFH9jo+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHnzNS48; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cbcc2bd800so28720566d6.0;
-        Sat, 02 Nov 2024 20:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730604940; x=1731209740; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Urc9Z86LcjyqhCcm6H0VVQdu+SdtQEzmvHdA+i0O10=;
-        b=NHnzNS48o9pXCEBM1RAPgRcCpLDL7PC4ixH88UwZgQQYxOvtKq4dTj5RE6t4y1I7rv
-         qrlsLUi30T0GB4wAyAKk0H0tlr38m5pQGNVdX1CdX0+z+XdOx2b/FOh9pm9jUxl5lTiZ
-         0WY030Ncn5OH/6LPo7E0WNIq74LWp14RKol0do5KPb0vJ0mT0jsDlk0KgjWSkftbA2WZ
-         W8EtbNp3aB5yAY1M/ZUtjTrSvdhDkEo8fqQm0eVx+5F+8l2Hjg3bBGQVORrZdxkeF//a
-         /wxKUR0soFr58ayDMClzSAhIamVqxs+SEEg6cIkBdID3OIntuZWjQcO9/Yiz8IVnU0y3
-         3d7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730604940; x=1731209740;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Urc9Z86LcjyqhCcm6H0VVQdu+SdtQEzmvHdA+i0O10=;
-        b=cPNucgYU5/93aDa0/hsGnX4UJwpTITeJ09RHDDuxWFad/qmioj/0mJ/EgiTvkbMAKp
-         itQGxRvcLEEFRkwfKGn1Jq5WaKD3RwVwaUzWQu1dmlWB3AoRhx36cyF1eL43jk7CV1EG
-         6sfABHzqB8q/SnznzKBGxzU2/aZLr1omcH/ARyiHtpiNvZ4l9yFyxQkA9Q256q0Dt1cR
-         LwoGFyzhSyvy/egszLfkInG4/ncgU0CDORKwRr+v4olwpmOCXBHhxHKKjgAWX3SzehR1
-         Ph3mW385W9G2ScVp1wBX6qsqTsmpmVIF/m5u5xCEYB7NF+eQohSKP5G2Mc/WMae/ZYot
-         d61Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUvRpy/e7EF7G1PZnIrgkuCw84jeLwHXOzwGzvD5dhbp0zrHOkyWfuUTbqPRmoaGgjEuebwsQmCpkFK+rE=@vger.kernel.org, AJvYcCV+xCyXiCmBqIdlonojt7BnDocfQnds/JwptFYqqCPN8rspNTKUkpdZtolg2SlDlepLrLbjMXET592xuQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyEf9RfgOA84d2a4STswAEGbSq4KQO2STU7r4szzuV+RUA5OR3
-	BTPhm1iwStdJ6/44XIn9tnk+KCfVLsdFviYAfM05mXfCZtYvbBfB
-X-Google-Smtp-Source: AGHT+IEbzeGYn2+Z6MWmsVVv7YSFNBxFwFumW2eL1yqpcXinGbawh6m18jluX4ZYN/s4hgo2EShoEg==
-X-Received: by 2002:a05:6214:5d0e:b0:6d1:9f1b:b669 with SMTP id 6a1803df08f44-6d3542eddbbmr200542976d6.15.1730604939972;
-        Sat, 02 Nov 2024 20:35:39 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a718bbsm309375385a.87.2024.11.02.20.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 20:35:39 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 89A4F1200076;
-	Sat,  2 Nov 2024 23:35:38 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Sat, 02 Nov 2024 23:35:38 -0400
-X-ME-Sender: <xms:iu8mZ9g9xRAqgpSsuv468xIJ18NCxzL5b6y2mLAeCASem1XW6oZEvA>
-    <xme:iu8mZyCBofRgAjDFqnIdvWgwDOLWr8q1TJKTkNntMuO6Rz421sRc1cJjrtTxyZpdK
-    F6VeRxhHtLSoXfBzw>
-X-ME-Received: <xmr:iu8mZ9ESpwMuCl-pTWTfpIAjWjHl5PzKT0TnWmdNt3_7yz1UzzRSaeOU7hs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelvddgheekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteeh
-    uddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
-    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
-    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
-    mhgvpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghighgvrghshies
-    lhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehvsggrsghkrgesshhushgvrdgtii
-    dprhgtphhtthhopegvlhhvvghrsehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhn
-    uhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghs
-    rghnqdguvghvsehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthhopehlihhnuh
-    igqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhg
-    rdhorhhgrdgruh
-X-ME-Proxy: <xmx:iu8mZyQ1moQKIgbQ5C7gBiQUMnsFQjOHesl3UO3wY02XC8g7xxxk0A>
-    <xmx:iu8mZ6y82nLjVDUhjZjyoVrhkf_8ZVHbfL0lpUtQHFer8UTchH6fPw>
-    <xmx:iu8mZ455GwRqIxBQlyCoTo9iVl2kjeDonsPd0hBGe3_LMmoaQYz4wg>
-    <xmx:iu8mZ_zmbRQkGqS8hxvRnfLnU4jUeoU1M-MF3u4SVsW_6yH7ZMQJzg>
-    <xmx:iu8mZyiOUvEEIEqpkifvVtnQalduFxGP0MgorsiFo2_fLE7n8y_nqzZ3>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 2 Nov 2024 23:35:37 -0400 (EDT)
-Date: Sat, 2 Nov 2024 20:35:36 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	sfr@canb.auug.org.au, longman@redhat.com, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-	akpm@linux-foundation.org, Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] scftorture: Use workqueue to free scf_check
-Message-ID: <ZybviLZqjw_VYg8A@Boquns-Mac-mini.local>
-References: <ZyUxBr5Umbc9odcH@boqun-archlinux>
- <20241101195438.1658633-1-boqun.feng@gmail.com>
- <37c2ad76-37d1-44da-9532-65d67e849bba@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qDkDHeT1HqXbAK7IUpv19rR5IlKNeScOycqLbA5ss9WRVuegvc3JzZDBICrD056DnuTbobiVErSporNm6BED9usYzamVf988wUuo0PZQM+PR95UsafIj11hySJwawA9ELWUl2h/F+GwF1HkXJO5wP8AIBi1oHBYk+VghUUJYyg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=beYobYYD; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730605334; x=1762141334;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=V0/eOxl40RDDf32RGsY9aYQHQUntmDfjqmV8lPkvwlk=;
+  b=beYobYYDpdyRepQtFhhUFrHTsED4Up7ab7agk1jjnAQxpIjBd4aZMtA+
+   Fo1k1tws4x1Du7mk5Wej4q+5YTty17beYqHXW/5qMzxH2crvNRdPS01xz
+   VB/t6QcL4Ow42Sqjcf1cxWyCdvfiFFAmf4GpqQeY1Z+KZN190kWgR0IW4
+   Q3t9+GXhkOdvLRwBVjX+XhI8/64wiKoJMERJSfNwIYeQXAy0ZRUcxuOz/
+   Nwh5+ddv7H2Cc16sJ60Wv20iLOllH+7cbKUuaLa2OCZeNFhhdYw03yCXe
+   +PGNeSMf7holphHXWUebHfm2Ram69DMhSpxDVZyAInbrdpLn1N/IMqivm
+   A==;
+X-CSE-ConnectionGUID: U4qFD/euT96AVi/dtC6Ezg==
+X-CSE-MsgGUID: F5cue0BYSYS1OPVroKMVhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11244"; a="17947773"
+X-IronPort-AV: E=Sophos;i="6.11,254,1725346800"; 
+   d="scan'208";a="17947773"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2024 20:42:14 -0700
+X-CSE-ConnectionGUID: 8IiP82YTQnSyoSqruIbLPQ==
+X-CSE-MsgGUID: HEWP8l6rT8eOwHx6hyAhfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,254,1725346800"; 
+   d="scan'208";a="88463046"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 02 Nov 2024 20:42:10 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t7RVA-000jeb-0x;
+	Sun, 03 Nov 2024 03:42:08 +0000
+Date: Sun, 3 Nov 2024 11:41:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	rust-for-linux@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, daniel.almeida@collabora.com,
+	a.hindborg@kernel.org, linux-kernel@vger.kernel.org,
+	dakr@redhat.com, airlied@redhat.com,
+	miguel.ojeda.sandonis@gmail.com, wedsonaf@gmail.com,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>
+Subject: Re: [PATCH v2 2/2] rust: add dma coherent allocator abstraction.
+Message-ID: <202411031138.gvA1f2D7-lkp@intel.com>
+References: <20241101113422.2615566-3-abdiel.janulgue@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -126,113 +82,170 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <37c2ad76-37d1-44da-9532-65d67e849bba@paulmck-laptop>
+In-Reply-To: <20241101113422.2615566-3-abdiel.janulgue@gmail.com>
 
-On Fri, Nov 01, 2024 at 04:35:28PM -0700, Paul E. McKenney wrote:
-> On Fri, Nov 01, 2024 at 12:54:38PM -0700, Boqun Feng wrote:
-> > Paul reported an invalid wait context issue in scftorture catched by
-> > lockdep, and the cause of the issue is because scf_handler() may call
-> > kfree() to free the struct scf_check:
-> > 
-> > 	static void scf_handler(void *scfc_in)
-> >         {
-> >         [...]
-> >                 } else {
-> >                         kfree(scfcp);
-> >                 }
-> >         }
-> > 
-> > (call chain anlysis from Marco Elver)
-> > 
-> > This is problematic because smp_call_function() uses non-threaded
-> > interrupt and kfree() may acquire a local_lock which is a sleepable lock
-> > on RT.
-> > 
-> > The general rule is: do not alloc or free memory in non-threaded
-> > interrupt conntexts.
-> > 
-> > A quick fix is to use workqueue to defer the kfree(). However, this is
-> > OK only because scftorture is test code. In general the users of
-> > interrupts should avoid giving interrupt handlers the ownership of
-> > objects, that is, users should handle the lifetime of objects outside
-> > and interrupt handlers should only hold references to objects.
-> > 
-> > Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-> > Link: https://lore.kernel.org/lkml/41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop/
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> 
-> Thank you!
-> 
-> I was worried that putting each kfree() into a separate workqueue handler
-> would result in freeing not keeping up with allocation for asynchronous
-> testing (for example, scftorture.weight_single=1), but it seems to be
-> doing fine in early testing.
-> 
+Hi Abdiel,
 
-I shared the same worry, so it's why I added the comments before
-queue_work() saying it's only OK because it's test code, it's certainly
-not something recommended for general use.
+kernel test robot noticed the following build errors:
 
-But glad it turns out OK so far for scftorture ;-)
+[auto build test ERROR on 718c4069896cabba5c39b637cbb7205927f16ae0]
 
-Regards,
-Boqun
+url:    https://github.com/intel-lab-lkp/linux/commits/Abdiel-Janulgue/rust-error-Add-EOVERFLOW/20241101-193708
+base:   718c4069896cabba5c39b637cbb7205927f16ae0
+patch link:    https://lore.kernel.org/r/20241101113422.2615566-3-abdiel.janulgue%40gmail.com
+patch subject: [PATCH v2 2/2] rust: add dma coherent allocator abstraction.
+config: um-randconfig-r071-20241103 (https://download.01.org/0day-ci/archive/20241103/202411031138.gvA1f2D7-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241103/202411031138.gvA1f2D7-lkp@intel.com/reproduce)
 
-> So I have queued this in my -rcu tree for review and further testing.
-> 
-> 							Thanx, Paul
-> 
-> > ---
-> >  kernel/scftorture.c | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/scftorture.c b/kernel/scftorture.c
-> > index 44e83a646264..ab6dcc7c0116 100644
-> > --- a/kernel/scftorture.c
-> > +++ b/kernel/scftorture.c
-> > @@ -127,6 +127,7 @@ static unsigned long scf_sel_totweight;
-> >  
-> >  // Communicate between caller and handler.
-> >  struct scf_check {
-> > +	struct work_struct work;
-> >  	bool scfc_in;
-> >  	bool scfc_out;
-> >  	int scfc_cpu; // -1 for not _single().
-> > @@ -252,6 +253,13 @@ static struct scf_selector *scf_sel_rand(struct torture_random_state *trsp)
-> >  	return &scf_sel_array[0];
-> >  }
-> >  
-> > +static void kfree_scf_check_work(struct work_struct *w)
-> > +{
-> > +	struct scf_check *scfcp = container_of(w, struct scf_check, work);
-> > +
-> > +	kfree(scfcp);
-> > +}
-> > +
-> >  // Update statistics and occasionally burn up mass quantities of CPU time,
-> >  // if told to do so via scftorture.longwait.  Otherwise, occasionally burn
-> >  // a little bit.
-> > @@ -296,7 +304,10 @@ static void scf_handler(void *scfc_in)
-> >  		if (scfcp->scfc_rpc)
-> >  			complete(&scfcp->scfc_completion);
-> >  	} else {
-> > -		kfree(scfcp);
-> > +		// Cannot call kfree() directly, pass it to workqueue. It's OK
-> > +		// only because this is test code, avoid this in real world
-> > +		// usage.
-> > +		queue_work(system_wq, &scfcp->work);
-> >  	}
-> >  }
-> >  
-> > @@ -335,6 +346,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
-> >  			scfcp->scfc_wait = scfsp->scfs_wait;
-> >  			scfcp->scfc_out = false;
-> >  			scfcp->scfc_rpc = false;
-> > +			INIT_WORK(&scfcp->work, kfree_scf_check_work);
-> >  		}
-> >  	}
-> >  	switch (scfsp->scfs_prim) {
-> > -- 
-> > 2.45.2
-> > 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411031138.gvA1f2D7-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   |                                                   ^
+   In file included from rust/helpers/helpers.c:10:
+   In file included from rust/helpers/blk.c:3:
+   In file included from include/linux/blk-mq.h:5:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+   |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+   35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+   |                                                   ^
+   In file included from rust/helpers/helpers.c:10:
+   In file included from rust/helpers/blk.c:3:
+   In file included from include/linux/blk-mq.h:5:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   585 |         __raw_writeb(value, PCI_IOBASE + addr);
+   |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+   |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+   |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   693 |         readsb(PCI_IOBASE + addr, buffer, count);
+   |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   701 |         readsw(PCI_IOBASE + addr, buffer, count);
+   |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   709 |         readsl(PCI_IOBASE + addr, buffer, count);
+   |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   718 |         writesb(PCI_IOBASE + addr, buffer, count);
+   |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   727 |         writesw(PCI_IOBASE + addr, buffer, count);
+   |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   736 |         writesl(PCI_IOBASE + addr, buffer, count);
+   |                 ~~~~~~~~~~ ^
+   13 warnings generated.
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+>> error[E0425]: cannot find function `dma_alloc_attrs` in crate `bindings`
+   --> rust/kernel/dma.rs:58:23
+   |
+   58    |               bindings::dma_alloc_attrs(
+   |                         ^^^^^^^^^^^^^^^ help: a function with a similar name exists: `dma_alloc_pages`
+   |
+   ::: rust/bindings/bindings_generated.rs:42989:5
+   |
+   42989 | /     pub fn dma_alloc_pages(
+   42990 | |         dev: *mut device,
+   42991 | |         size: usize,
+   42992 | |         dma_handle: *mut dma_addr_t,
+   42993 | |         dir: dma_data_direction,
+   42994 | |         gfp: gfp_t,
+   42995 | |     ) -> *mut page;
+   | |__________________- similarly named function `dma_alloc_pages` defined here
+--
+>> error[E0425]: cannot find function `dma_free_attrs` in crate `bindings`
+   --> rust/kernel/dma.rs:161:28
+   |
+   161   |           unsafe { bindings::dma_free_attrs(self.dev.as_raw(), size,
+   |                              ^^^^^^^^^^^^^^ help: a function with a similar name exists: `dma_free_pages`
+   |
+   ::: rust/bindings/bindings_generated.rs:42998:5
+   |
+   42998 | /     pub fn dma_free_pages(
+   42999 | |         dev: *mut device,
+   43000 | |         size: usize,
+   43001 | |         page: *mut page,
+   43002 | |         dma_handle: dma_addr_t,
+   43003 | |         dir: dma_data_direction,
+   43004 | |     );
+   | |_____- similarly named function `dma_free_pages` defined here
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [y]:
+   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
