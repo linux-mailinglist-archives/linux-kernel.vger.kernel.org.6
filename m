@@ -1,113 +1,73 @@
-Return-Path: <linux-kernel+bounces-393874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E6749BA694
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:11:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 747E69BA696
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77CA91C210A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6D051C2156C
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA2B187FFE;
-	Sun,  3 Nov 2024 16:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF9518787C;
+	Sun,  3 Nov 2024 16:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="pLlGFQaC"
-Received: from a.peacevolution.org (a.peacevolution.org [206.189.193.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHgAGuU/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F9B17DFE4;
-	Sun,  3 Nov 2024 16:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.193.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEEA176251;
+	Sun,  3 Nov 2024 16:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730650280; cv=none; b=ff8nwkncRm652FX7GTdpW2uE1ZCbCSkRH4nsgDEelRv/C6PwPUSJWhZNqHb6YbjQ2QU6514uo+Jk9xncNrS8gZo5Qesnz87QZ/Y0v3ROnvu8JyfCSyDhxn4nYQ0ypSoVOlS0l4TY580dyZLWsBAeZVAcPz7UyBAZu5tRFngWMrs=
+	t=1730650385; cv=none; b=bkoXpb/2jGnflpoJEi21qhwzNoIkHhXWSvYacaxuXY0C/0Lt/bDrDz3LoUqtK51BrwMAlaewMYDuQf2RBQKrgMMwjv7hJLeOoRHRgVAnQNhiF3opr7qh9jxTBt/Yrm2eshT6akcgCDtLgH1qP/PBy5l4H0WhYzKC2h2G1S+dDO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730650280; c=relaxed/simple;
-	bh=NxDS9O+723j2rQWp5co1wAaa/RB6x3JY6rfjUVcqhKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+AMS2o0hjWYBqYJwP06M8A0k3O2rwqvAme5YLji3sb1r/XUB/G3n17Z3S/gbbhUiSGzc+n3n1AnTDpLr6TubGsjvFBXKs8vCE/SM19bNgirIdN8OqU95+75+JoFhHLJEq6t/yOjdEgNTk0I4IcAVZ6mqKqO+FjIZ1PUWBcje7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=pLlGFQaC; arc=none smtp.client-ip=206.189.193.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
-Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
-	by a.peacevolution.org (Postfix) with ESMTPA id B0D134C745;
-	Sun,  3 Nov 2024 16:11:15 +0000 (UTC)
-Date: Sun, 3 Nov 2024 11:11:13 -0500
-From: Aren <aren@peacevolution.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
-	Ondrej Jirman <megi@xff.cz>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v4 3/6] iio: light: stk3310: Implement vdd and leda
- supplies
-Message-ID: <cx5bvcqfabsptn37uzscooh73j73dsoqadmfaibzxrzjk3byx4@ofwu7qa6ht4f>
-References: <20241102195037.3013934-3-aren@peacevolution.org>
- <20241102195037.3013934-9-aren@peacevolution.org>
- <20241103112933.60f96f97@jic23-huawei>
+	s=arc-20240116; t=1730650385; c=relaxed/simple;
+	bh=b1yLmR8yF/0iv3UG0VPJlMsP2oyXx2Kd9hwFkxotTdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LaxtlMRahLcb3PB+efz6BzAXRvGksE0H8C9x1RfKZH6I4IHcfDRblqKT5uN916H7m5SF4IcBN2xvQjfM+XpvTl4JE0emqEkL/vG6xCWiBo+QKG+BH41KkCUYHTGXSlR6HVQDBDewZdGvXrYjUsjvbpoT7J6wH3/xZf3vOEpPlwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHgAGuU/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86AFEC4CECD;
+	Sun,  3 Nov 2024 16:13:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730650385;
+	bh=b1yLmR8yF/0iv3UG0VPJlMsP2oyXx2Kd9hwFkxotTdA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lHgAGuU/C2sjpc40OrNir1kSMrtWtusvqomxVY17ZeJfPQfvY2WqahCNl2YRHXYsp
+	 OM8sC/4E/Oqw7z8IHrwF+7/70LbtDFi5XhGEXEVtAgk6rA0zhWmY4O3Og/gPyxnnVK
+	 Glg9dpSrYD6rA3WCt4bBivlRSdAg/Qj2YnJpCRIuntKJwCtpKC6F6VWShJQgFs+C+J
+	 WG2YHAsf79GvBntphzFDo2EE7xgwECvV0PsB0zTi8d+THUNguGApxvvVd3Sz3llpae
+	 XN5g3sna16Lo8nc85r7De8Lk+QfL3yLw6Kj02HUuHniKdyeFcQBkSFhK/jgOvgoiQJ
+	 pHLPfEHBfAgcQ==
+Date: Sun, 3 Nov 2024 08:13:03 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Gan Jie <ganjie182@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ trivial@kernel.org, ganjie163@hust.edu.cn
+Subject: Re: [PATCH] Driver:net:fddi: Fix typo 'adderss'
+Message-ID: <20241103081303.492aca4b@kernel.org>
+In-Reply-To: <20241101074551.943-1-ganjie182@gmail.com>
+References: <20241101074551.943-1-ganjie182@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241103112933.60f96f97@jic23-huawei>
-X-Spamd-Bar: /
-Authentication-Results: auth=pass smtp.auth=aren@peacevolution.org smtp.mailfrom=aren@peacevolution.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
-	s=dkim; t=1730650277;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:in-reply-to:references;
-	bh=3q7IWRD1gpOW1Lskvc4rjHRf5AbTOTI6oSgYSMbB074=;
-	b=pLlGFQaC+RM79asWpic5KogsiEgd7rRKglcrwIATo9BlHDxXN1CfmqzAZDL+ATwdbmOjG5
-	pUiNx1bIU1/iU751En6NAr5vmzF7xDI64tGRkfacCUOIKoqq8QVCqJvvXKAuasXuQer4Jw
-	F9P2J+OeRh+nMCaavLqn3ENg6jl+zCc=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 03, 2024 at 11:31:03AM +0000, Jonathan Cameron wrote:
-> On Sat,  2 Nov 2024 15:50:39 -0400
-> Aren Moynihan <aren@peacevolution.org> wrote:
-> 
-> > The vdd and leda supplies must be powered on for the chip to function
-> > and can be powered off during system suspend.
-> > 
-> > This was originally based on a patch by Ondrej Jirman[1], but has been
-> > rewritten since.
-> > 
-> > 1: https://codeberg.org/megi/linux/commit/a933aff8b7a0e6e3c9cf1d832dcba07022bbfa82
-> > 
-> > Signed-off-by: Aren Moynihan <aren@peacevolution.org>
-> > ---
-> > 
-> > Notes:
-> >     Changes in v4:
-> >      - fix variable declaration order in stk3310_resume to match the rest of
-> >        the driver
-> 
-> For this Andy was asking for consistency.  Generally we don't insist on a
-> particular ordering in IIO drivers, but we do prefer them to be the same.
-> Your new ordering is inconsistent between resume and suspend.  Whilst
-> existing code may be inconsistent, you can still pick most common ordering
-> and use that for your new code.
-> 
-> If the existing driver is inconsistent then feel free to tidy that up but
-> do it in a precursor patch so there is a consistent style for you to then
-> carry on.
+On Fri,  1 Nov 2024 15:45:51 +0800 Gan Jie wrote:
+> Subject: [PATCH] Driver:net:fddi: Fix typo 'adderss'
 
-Oh right, the order of declarations in stk3310_suspend also needs to be
-flipped. Is that simple enough that you can fix it when applying this?
+The improve the subject prefix.
 
-Apparently I was being dense, I checked the rest of the driver to see
-what it did (it's consistent about putting shorter lines & ones without
-an assignment first), and fixed the case Andy pointed out to match that,
-but failed to check the rest of the patch.
+$ git log --grep="Driver:net:"
+$
 
-Thanks
- - Aren
+just "fddi: " would be best.
+-- 
+pw-bot: cr
 
