@@ -1,46 +1,57 @@
-Return-Path: <linux-kernel+bounces-393940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA1D89BA7A9
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:29:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E239BA7AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F1F1F225C7
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:29:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA975B2110A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF1C18991E;
-	Sun,  3 Nov 2024 19:29:15 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AACF33FE;
-	Sun,  3 Nov 2024 19:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E80189F37;
+	Sun,  3 Nov 2024 19:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IT/XYN0/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706B6158A36;
+	Sun,  3 Nov 2024 19:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730662155; cv=none; b=LwvV10la0qOEwA5DDMI7ACZeDI0pNxtXDidI88n2haMwKBB0FnBWIjhNvuBjWkCkpg469RNIhVN+/tnAFVHzQOUewVhJGBtQ8iA8mjmK+q4MYVccchpi50hkt4eLe3L4LKJvm08cYJJGFpWbQPpwzqtY4k/RZAObZUxHeE8uXHk=
+	t=1730662542; cv=none; b=k1RKShEz3WcduBw1Awbw8/HeKHdxDMT5zyHu5qI1RFuhbAIQjORNeWJd407AokD/h5qwWJcr4D8K5AXSj70l6IqFotL0Pe8Kzemc7HgLkAxeF2nhAzRy1Y3FGgGHAQRHNDHzJSbq781MrDAzKFWxgq2NzpIBtALjr0CYu4c4I28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730662155; c=relaxed/simple;
-	bh=Nlm0TxffIpouVwZtrr7mCEB1yb3vjJXPEeMdCZjtu6o=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nFoMcJIklqvF0JqkM1YWwnQJR4HCEfOOFciyfxNBNPC73vuAkKj3X/56C4Udo9p1Eq20gRhTCQQ+XztOOYZqjT5gm3/lJlBam98KOODz3yaGdczJGhFi0awv3k6qaP3SF3grKQ9UFpyTvJuirjUc+KLAxUJgexI89I4wxd+9GtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id DD37492009C; Sun,  3 Nov 2024 20:29:03 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id D74B392009B;
-	Sun,  3 Nov 2024 19:29:03 +0000 (GMT)
-Date: Sun, 3 Nov 2024 19:29:03 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: kernel: proc: Use str_yes_no() helper function
-In-Reply-To: <20241102220437.22480-2-thorsten.blum@linux.dev>
-Message-ID: <alpine.DEB.2.21.2411031921020.9262@angie.orcam.me.uk>
-References: <20241102220437.22480-2-thorsten.blum@linux.dev>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1730662542; c=relaxed/simple;
+	bh=3i37xFenKWA+UPTJ/JRCjAHQUph/DlCbchQdJRAm2Ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nYyEXs2H2bBMYTiw765Ugz71xBlz84+ZEWPVUMrZOLSrfc/Pone0RpR8D3vzhKJ6xOMXcr1OOzD8nw9U7mvlfzOoxAQVTXQvFPl8RqElNJzuA8dMxGVSpiNGLTsPv5VDTmfv0mldnfWbdyOHOWUxDEIVNwGLutkOr4YXfJqDuXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IT/XYN0/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42280C4CED0;
+	Sun,  3 Nov 2024 19:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730662542;
+	bh=3i37xFenKWA+UPTJ/JRCjAHQUph/DlCbchQdJRAm2Ko=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IT/XYN0/vNmWjmug2f4sIF9BgAsftD4S0acy9xQR8uujZm8AGZh1ZcYWnj2MqVQNx
+	 huxP0QL+qHId8Bt7f5mqpBl67Zq04eZF3PNprlmoUFqlVd60RXPIYXw2vNbKsOXw37
+	 14D/i2qniQHuwb9NvhJY1aFJiuYjkloiW5G0242xPNTdTgfULIq5Eo/GD276JD2D/P
+	 EP8YeOZIIGPr36oad6LDRqSlgi89+k5vrJanzDTXMOdO9b47KLspgnFAfgj/PpuNF8
+	 DRORpjSwYFEhJYh+W3pv9aYVNW+x1K3LAjHW5k+Fxs445cR3PTvs286mwTGDX2qfbG
+	 ERaFUcY5j72LA==
+Date: Sun, 3 Nov 2024 11:35:39 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, Julian.FRIEDRICH@frequentis.com,
+ f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ upstream+netdev@sigma-star.at
+Subject: Re: [PATCH] net: dsa: mv88e6xxx: properly shutdown PPU re-enable
+ timer on destroy
+Message-ID: <20241103113539.7b44e4f3@kernel.org>
+In-Reply-To: <20241029124332.51008-1-david.oberhollenzer@sigma-star.at>
+References: <20241029124332.51008-1-david.oberhollenzer@sigma-star.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,35 +59,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, 2 Nov 2024, Thorsten Blum wrote:
+On Tue, 29 Oct 2024 13:42:45 +0100 David Oberhollenzer wrote:
+> The mv88e6xxx has an internal PPU that polls PHY state. If we want to
+> access the internal PHYs, we need to disable it. Because enable/disable
+> of the PPU is a slow operation, a 10ms timer is used to re-enable it,
+> canceled with every access, so bulk operations effectively only disable
+> it once and re-enable it some 10ms after the last access.
+> 
+> If a PHY is accessed and then the mv88e6xxx module is removed before
+> the 10ms are up, the PPU re-enable ends up accessing a dangling pointer.
+> 
+> This is easily triggered by deferred probing during boot-up. MDIO bus
+> and PHY registration may succeed, but switch registration fails later
+> on, because the CPU port depends on a very slow device. In this case,
+> probe() fails, but the MDIO subsystem may already have accessed bus
+> or the PHYs, arming timer.
+> 
+> This is fixed as follows:
+>  - If probe fails after mv88e6xxx_phy_init(), make sure we also call
+>    mv88e6xxx_phy_destroy() before returning
+>  - In mv88e6xxx_phy_destroy(), grab the ppu_mutex to make sure the work
+>    function either has already exited, or (should it run) cannot do
+>    anything, fails to grab the mutex and returns.
+>  - In addition to destroying the timer, also destroy the work item, in
+>    case the timer has already fired.
+>  - Do all of this synchronously, to make sure timer & work item are
+>    destroyed and none of the callbacks are running.
 
-> diff --git a/arch/mips/kernel/proc.c b/arch/mips/kernel/proc.c
-> index 8eba5a1ed664..3e4be48bab02 100644
-> --- a/arch/mips/kernel/proc.c
-> +++ b/arch/mips/kernel/proc.c
-> @@ -66,12 +66,12 @@ static int show_cpuinfo(struct seq_file *m, void *v)
->  	seq_printf(m, "BogoMIPS\t\t: %u.%02u\n",
->  		      cpu_data[n].udelay_val / (500000/HZ),
->  		      (cpu_data[n].udelay_val / (5000/HZ)) % 100);
-> -	seq_printf(m, "wait instruction\t: %s\n", cpu_wait ? "yes" : "no");
-> +	seq_printf(m, "wait instruction\t: %s\n", str_yes_no(cpu_wait));
->  	seq_printf(m, "microsecond timers\t: %s\n",
-> -		      cpu_has_counter ? "yes" : "no");
-> +		      str_yes_no(cpu_has_counter));
->  	seq_printf(m, "tlb_entries\t\t: %d\n", cpu_data[n].tlbsize);
->  	seq_printf(m, "extra interrupt vector\t: %s\n",
-> -		      cpu_has_divec ? "yes" : "no");
-> +		      str_yes_no(cpu_has_divec));
->  	seq_printf(m, "hardware watchpoint\t: %s",
->  		      cpu_has_watch ? "yes, " : "no\n");
->  	if (cpu_has_watch) {
-
- I like this cleanup, but now that it matters I suggest restructuring code 
-such that the latter `seq_printf' is converted as well.
-
- NB I think there is no need to split the patch into two for such a minor 
-change, even though technically these would be two independent updates.
-
-  Maciej
+Looks good, AFAICT. Could you repost with a Fixes tag added?
+To make the job of the stable team easier?
 
