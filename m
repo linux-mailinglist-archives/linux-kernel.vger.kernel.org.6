@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-393702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2789A9BA432
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 06:41:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40FC79BA435
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 06:42:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D29591F21989
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:41:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 730091C20D76
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 05:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DA016130C;
-	Sun,  3 Nov 2024 05:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A631494B3;
+	Sun,  3 Nov 2024 05:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZhOnLPsc"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C7uD+miH"
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3BC158D9C
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 05:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8732816849F
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 05:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730612448; cv=none; b=n34IJL7P/6SCmmKmvkV0+76ANdYopBElOBGEecn3BA5nrq+RGxYcvMr/V0fkMNuWLLHJyxM14XeyfaJ8T0bRvxp3N65bgQRodAsXkBKbvS67kprI8XQYJnjN5k8EDavQYGgR7QT9c+LbUisJzolNCvgSnuFZphT/CXI6pw0MdM0=
+	t=1730612454; cv=none; b=dli43MTVtLZCjg00UFRFO4xmrVCv9UYAp7rKt8f8Nl15xu83UFJrGPGnFLjHyPJynMtq9eStM4fe+uYoaDd15Nu9LbLU4RaLPUuaXsOevduFhSzzO/b43DWpozzGQVuRNcyIybeUDz1j2E7NVlGKCqAZj6BLPKbKzI0Q7VbydEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730612448; c=relaxed/simple;
-	bh=Ox3/MnuN2bbw3l9r0WFnjX55/uhhh1VM1mDuKtnilfQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OLCcSEiLptnV9LxF33lPT4IZ/x6HuhjlACahbokOmjw5f+skcK+rtvv6p0yOhGWxcAQRMCYPe7mBb+YJJmxn46LpjMJDEmrKu4c3YzRPx3zk1KPEUWiJxwFEXz2zFfz/VBzYgygajNVR8+JAwYoBO4upJwonDMXjZUaa4IGuTts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZhOnLPsc; arc=none smtp.client-ip=90.155.92.199
+	s=arc-20240116; t=1730612454; c=relaxed/simple;
+	bh=lxdlDTIKoz0IVHJ/XpoozLbAx51ZVaHrnOahKZMN/9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z5o1MTJHL16+3xgKa5UWzRNTgbbj9ID61RAJepS/u3CLD6mVRsftObXpIc6TxQECcUZMKvXr0qn4hGwoIdmZ/11mM7UrpHjjs/v7ELhAX+88C8xPgE1FTFQyie/1bzgnMt3i6/krYscqiqV2vWnAIMJAeKU8OTsdC1kevSjJJ1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C7uD+miH; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=00LBfdePtVjoMz5Goiqj3TfM6d1ERcfKYUF+vI7ZIfk=; b=ZhOnLPscHbI4A3YfoBJDDqT7L5
-	LiKex09k9Y8n51FyefJ4Wh87pP9OJJVORyZW3FPqmqttlNCZc44eKYAgpC0lf6ZTwyOUfWlEGc27c
-	1x0vrOfb2MOOAuqh7/9x8cgOd5GpYbjMVP0QNuTc9oqQM4Tvagkpwj+hzr61o84NLVtvsTR+YykFT
-	CCioXSDzqcEdqhLp6G1DUHnTRxaNFF61Lp8DKrYTclRGFlQ1hKyuk+50C8lAqvmotZVSZMsCvKh6D
-	LcPGX4VuTZviCLqEQw4mzBn4HbD6uToP8v7/onJ9Fqh65abb7vlZRLSj/GYw9w9GmmW8bGaiKDNhA
-	/h8dAFsQ==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=ZdZ+nlAayZckzp2Spz6rpIxa9MO+4/e+5j0I1vjYVzw=; b=C7uD+miHpdzhuY8kUB3Jx01O1r
+	yAObd9yToflETXCD8JZVihND7D94qZx3ypGkLw4xgVPaICWvF5pfN3Wlf7ASg+NPiQDmO6N0QDplJ
+	+WYz2QC1k+JQLhsKeCx1L78DSaHCbcBfvE9LjFDESocunEi68Lm3u6dPit8ZRsm6q+8K3tvefWxQC
+	RzCTbUSDTB9TErCocvuHGJ3Oo7vc43UbVExPx++YTG25Lc/7nICWtIRIoRlgugRRszoBSSEJ7f9bJ
+	e8/3pSQNIX2ULMdzcc8F0sydMW/q/c/j3HS51E8hp1pAtzOrbK+yd1SV7hpvQW9DTPRk+/pUcmXVA
+	qHmfjxCA==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
 	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t7TLb-0000000B4NT-41Fo;
-	Sun, 03 Nov 2024 05:40:28 +0000
+	id 1t7TLb-0000000B4NU-46Mw;
+	Sun, 03 Nov 2024 05:40:38 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1t7TLa-0000000FvL6-2v0A;
+	id 1t7TLa-0000000FvL9-3Dh7;
 	Sun, 03 Nov 2024 05:40:22 +0000
 From: David Woodhouse <dwmw2@infradead.org>
 To: kexec@lists.infradead.org
@@ -60,10 +61,12 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Nikolay Borisov <nik.borisov@suse.com>,
 	linux-kernel@vger.kernel.org,
 	Simon Horman <horms@kernel.org>
-Subject: [RFC PATCH 0/7] x86/kexec: Add exception handling for relocate_kernel
-Date: Sun,  3 Nov 2024 05:35:25 +0000
-Message-ID: <20241103054019.3795299-1-dwmw2@infradead.org>
+Subject: [RFC PATCH 1/7] x86/kexec: Clean up and document register use in relocate_kernel_64.S
+Date: Sun,  3 Nov 2024 05:35:26 +0000
+Message-ID: <20241103054019.3795299-2-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20241103054019.3795299-1-dwmw2@infradead.org>
+References: <20241103054019.3795299-1-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,25 +77,72 @@ Content-Transfer-Encoding: 8bit
 Sender: David Woodhouse <dwmw2@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-Page faults in relocate_kernel() are extremely painful to debug. Provide a
-basic exception handler which will just dump the exception information and
-registers to a serial port.
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-It's disabled by default and has to be enabled with #define DEBUG.
+Add more comments explaining what each register contains, and save the
+preserve_context flag to a non-clobbered register sooner, to keep things
+simpler.
 
-While I was at it, I also stopped swap_pages from actually swapping pages
-in the case of a plain kexec without preserve_context. Unless I'm missing
-something, that's just a pointless waste of time.
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+---
+ arch/x86/kernel/relocate_kernel_64.S | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-David Woodhouse (7):
-      x86/kexec: Clean up and document register use in relocate_kernel_64.S
-      x86/kexec: Use named labels in swap_pages in relocate_kernel_64.S
-      x86/kexec: Only swap pages for preserve_context mode
-      x86/kexec: Debugging support: load a GDT
-      x86/kexec: Debugging support: Load an IDT and basic exception entry points
-      x86/kexec: Debugging support: Dump registers on exception
-
- arch/x86/kernel/relocate_kernel_64.S | 265 ++++++++++++++++++++++++++++++++---
- 1 file changed, 246 insertions(+), 19 deletions(-)
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index e9e88c342f75..c065806884f8 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -100,6 +100,9 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
+ 	movq	%r10, CP_PA_SWAP_PAGE(%r11)
+ 	movq	%rdi, CP_PA_BACKUP_PAGES_MAP(%r11)
+ 
++	/* Save the preserve_context to %r11 as swap_pages clobbers %rcx. */
++	movq	%rcx, %r11
++
+ 	/* Switch to the identity mapped page tables */
+ 	movq	%r9, %cr3
+ 
+@@ -116,6 +119,13 @@ SYM_CODE_END(relocate_kernel)
+ 
+ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	UNWIND_HINT_END_OF_STACK
++	/*
++	 * %rdi	indirection page
++	 * %rdx start address
++	 * %r11 preserve_context
++	 * %r12 host_mem_enc_active
++	 */
++
+ 	/* set return address to 0 if not preserving context */
+ 	pushq	$0
+ 	/* store the start address on the stack */
+@@ -170,8 +180,6 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	wbinvd
+ .Lsme_off:
+ 
+-	/* Save the preserve_context to %r11 as swap_pages clobbers %rcx. */
+-	movq	%rcx, %r11
+ 	call	swap_pages
+ 
+ 	/*
+@@ -183,13 +191,14 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	movq	%cr3, %rax
+ 	movq	%rax, %cr3
+ 
++	testq	%r11, %r11	/* preserve_context */
++	jnz .Lrelocate
++
+ 	/*
+ 	 * set all of the registers to known values
+ 	 * leave %rsp alone
+ 	 */
+ 
+-	testq	%r11, %r11
+-	jnz .Lrelocate
+ 	xorl	%eax, %eax
+ 	xorl	%ebx, %ebx
+ 	xorl    %ecx, %ecx
+-- 
+2.44.0
 
 
