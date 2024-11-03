@@ -1,122 +1,140 @@
-Return-Path: <linux-kernel+bounces-393885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A729BA6B8
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:51:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC99A9BA6BB
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:53:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A28E281B38
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:51:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA29E2819B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8E0188907;
-	Sun,  3 Nov 2024 16:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD41189917;
+	Sun,  3 Nov 2024 16:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PjQtmZjI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHQhVkK+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34817DE15
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 16:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FE3165EE8;
+	Sun,  3 Nov 2024 16:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730652678; cv=none; b=R3/8hlOv3pwVubNxsrfc6s7RKWfwbTuhlU6w1BgfEhqC9uHrGj16yjmWQ1PxU7KBO4Wy0Ns3BKGVL/HM9HvNO4yRgjA2TltWuPa92wOSI8aLYpvI1SvY3fifihaPtiitWBxSiOXMh3msg9mdEC2/B1xT3+7V6sKrkP/e1+NyBc0=
+	t=1730652787; cv=none; b=CV5bfcTtvJJ48C8xl31pJ2oyeMT0upSFZIrnyDq/dFi4Ryq0AiZQ17XJ5pTrwiAXA6KdMaCKVmGhtyFwYoNP0TaLHOnqCw8YSJufC0JhNbKmMWOBIdwf6Kd6x8ZCcOjaFXKr/LhMLyFcDrmIubULV5VWvQFu0uLmhPc/pCNXaW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730652678; c=relaxed/simple;
-	bh=ZsSNw+9icvvVr1pjTy3qhV4A/3FHQpPNRzqxjXLdzes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YY6SoU6GcpWsLevgzsf70HEXFuG8AIGndewbgeab/4+Osd6d0JHPvh7P0qc/bM4sJaqdi6/TqVvB7CaXo4+yezqhMUm1NjcCELKaRQmv/FTAF3KQnY/Iju48AFAr30kiiRln/s4Wc2WV04nlCA/Qe76CUxaMzgzoKa4lTi84RwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PjQtmZjI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730652675;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ypFPoKgiYqq9zLFDMM1v1jWtbkTfe/etxTifSjr94PA=;
-	b=PjQtmZjIvO1hNPvL5gJ/wTPSQ1NoZbFYjpUCTzbarYDvmG/86AxJ7PTGhfhZakBcaXNf1q
-	q6+qg2jk3R/DUggdhexDSzKGHgYs7LBg01L2IcL+ropxjL2F7q0Lf7dOLCyOWGkaUKkzWe
-	Qdj8Def17XPQufJgBvXV9sHB9MXpmj8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-491-XVBUbNQ2PpClkvWU62iKzQ-1; Sun,
- 03 Nov 2024 11:51:12 -0500
-X-MC-Unique: XVBUbNQ2PpClkvWU62iKzQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A513A19560B1;
-	Sun,  3 Nov 2024 16:51:10 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.49])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A6B4C19560A2;
-	Sun,  3 Nov 2024 16:51:07 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  3 Nov 2024 17:50:53 +0100 (CET)
-Date: Sun, 3 Nov 2024 17:50:49 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: Andrei Vagin <avagin@google.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] signal: restore the override_rlimit logic
-Message-ID: <20241103165048.GA11668@redhat.com>
-References: <20241031200438.2951287-1-roman.gushchin@linux.dev>
- <87zfmi3f8b.fsf@email.froward.int.ebiederm.org>
- <ZyU8UNKLNfAi-U8F@google.com>
- <87o72y3c4g.fsf@email.froward.int.ebiederm.org>
- <CAEWA0a4Kz9exk04Wgx9UZ9YFfURnS-=50TWyhPHm3i-N-D_8DA@mail.gmail.com>
- <ZyZSotlacLgzWxUl@example.org>
+	s=arc-20240116; t=1730652787; c=relaxed/simple;
+	bh=30Muez/0nExhgoUAUaGN96nrhiWuGG/8YAypO7DPpts=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TsZ/kOLQFD6hZ4iDJTPWrYHK1W+GLVY62sWbJF9gSUJAw2x3VeuhfXTIoS6OLcdX6Eyw8pEjdSrkp8UFSGATDjrPYr/IrkSPEKxR6ACitHK5S0KbBQMjC3kZX+tvFrbq7BAAKi/m2Zbl9xa3OAXh1x1DM+HVWEoAv4rjR4dgAlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHQhVkK+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95794C4CECD;
+	Sun,  3 Nov 2024 16:53:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730652787;
+	bh=30Muez/0nExhgoUAUaGN96nrhiWuGG/8YAypO7DPpts=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=sHQhVkK+20ANNW4CjMlxF91Boukf4uIz/VytTpnEBEW922TIpsUC6sRsGz+OxFpQY
+	 E+Ayax4g6AGuZ1UEKv8vmC52ejr5OrYaCKvksLEflB/nJd5YB9fnG9/JWzjympn9fv
+	 zzFXDiwSj7NVTGjYMWxekZZPoDY4wbGAZTET0KWw5iKJByZBwQ57aR39j2Dksx/oV0
+	 teXQA8SKPwp1CyMUwFPtaUKHyA4knV5Tqrdv5nx1KIzvAxX7644abeShdefaqzhkdt
+	 aSsCBZRBAaZHQOLSzQcbTWawUARdrEYe7ORTbmVr/DyacHQR1ixEEvWIS+UDlmVFav
+	 iwQ5Gg2Dmi+Gg==
+Message-ID: <b2d1e4cf-b068-4bab-9735-d9d4ff449a09@kernel.org>
+Date: Sun, 3 Nov 2024 17:52:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyZSotlacLgzWxUl@example.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH linux dev-6.11 v3 2/2] dt-bindings: Add SY24655 to ina2xx
+ devicetree bindings
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wenliang <wenliang202407@163.com>, linux@roeck-us.net
+Cc: book <book@100ask.localdomain>, jdelvare@suse.com,
+ linux-hwmon@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+References: <706d4821-2637-4aac-869b-822f69aebbfa@roeck-us.net>
+ <20241103163908.11890-1-wenliang202407@163.com>
+ <20241103163908.11890-2-wenliang202407@163.com>
+ <f5188173-21c4-4921-b7c8-5685c661a157@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f5188173-21c4-4921-b7c8-5685c661a157@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/02, Alexey Gladkov wrote:
->
-> +Cc Oleg Nesterov.
+On 03/11/2024 17:46, Krzysztof Kozlowski wrote:
+> On 03/11/2024 17:39, Wenliang wrote:
+>> From: book <book@100ask.localdomain>
+>>
+>> SY24655 is similar to INA226. Its supply voltage and pin definitions
+>> are therefore the same. Compared to INA226, SY24655 has two additional
+>> registers for configuring and calculating average power.
+>>
+>> Signed-off-by: book <book@100ask.localdomain>
+>> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> 
+> NAK, this never happened. If you think otherwise: provide proof, please.
 
-Well, I tend to agree with Roman and his patch looks good to me.
+Hm, now I found previous v3, so ack happened, but patch still has
+incorrect author.
 
-But it seems that the change in inc_rlimit_get_ucounts() can be
-a bit simpler and more readable, see below.
+Please really carefully read submitting patches document, especially
+parts about sending new versions, changelogs, subjects.
 
-Oleg.
----
 
---- a/kernel/ucount.c
-+++ b/kernel/ucount.c
-@@ -307,7 +307,8 @@ void dec_rlimit_put_ucounts(struct ucounts *ucounts, enum rlimit_type type)
- 	do_dec_rlimit_put_ucounts(ucounts, NULL, type);
- }
- 
--long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
-+long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type,
-+			    bool override_rlimit)
- {
- 	/* Caller must hold a reference to ucounts */
- 	struct ucounts *iter;
-@@ -320,7 +321,8 @@ long inc_rlimit_get_ucounts(struct ucounts *ucounts, enum rlimit_type type)
- 			goto unwind;
- 		if (iter == ucounts)
- 			ret = new;
--		max = get_userns_rlimit_max(iter->ns, type);
-+		if (!override_rlimit)
-+			max = get_userns_rlimit_max(iter->ns, type);
- 		/*
- 		 * Grab an extra ucount reference for the caller when
- 		 * the rlimit count was previously 0.
+> 
+> Nothing improved in this binding, actually it got even worse with fake
+> email and probably name as well.
+
+
+Best regards,
+Krzysztof
 
 
