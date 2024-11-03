@@ -1,93 +1,90 @@
-Return-Path: <linux-kernel+bounces-394044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C829BA99C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 00:42:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9EB9BA9A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 00:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F81C281A02
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 23:42:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C571C20F92
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 23:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B7218C326;
-	Sun,  3 Nov 2024 23:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BACF18C03C;
+	Sun,  3 Nov 2024 23:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="N+3+qozj"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kmc0Hjy7"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ADB189B95
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 23:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6A218BBA3
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 23:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730677360; cv=none; b=nFdEXRnYFqLxQiJHtR1A04gnseydbsEE58GFVamK3aqZwcmWP8chA/OPctCwMUBM3kWMqgol0+Msvh0zxalcV0dIYwxhhUnXaOqpmwGmz31aRREmyp+dHZ3mP0PGjW/39UKFuOGFNtwF4qAiEHdhwmu+Zwj1Pqpj/LU7d5xaxDw=
+	t=1730677523; cv=none; b=A4J2LseMG6BsVSzIJT+5O1eZnISoJbr/SWGJ3fFzFhZeeasVnTyrACkinU+u39FJ/cJh5g1QIapAQuklJK+Q7DmmMUrqZOn4pGiU01mbDiOIfpTPTLi7enDUjFqRmxjhaozOfeTpPSPj5qK/AmMWs4HG/YVA3Aw0zjTnKbua2Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730677360; c=relaxed/simple;
-	bh=WhLdeIds1wS0OngDEx9iIrmQofTtrBBGKlu6GqYnUas=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oNd/0TM+BOSAbgnOAsGxt5KRuEHEzA6ZWEbNT+UFe1K8O+wN0ckDdeodkhanlmG22lMt9dC6u8SAJ1KnINdE2npcWZX/K77bIe84qTSqH98JNdsi/ib9ghHfJu4963tYasz9HzEVSzBzjgvuPGDjuzl/kXfrUK8HQlYayncIisQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=N+3+qozj; arc=none smtp.client-ip=95.215.58.182
+	s=arc-20240116; t=1730677523; c=relaxed/simple;
+	bh=Et/TCAEMJ6jDbiN63WbZVCcGd36zA/mhhw/lCJ7ZaSM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qsppk9cJWlf9JckWHvrDXmukRFybkd6neIPdds8eSwqfeTWdMivOTYxz46ZF4VB8njEv4vR/y5BLYs/5FnRP1Ii+00ZkiN0mUaLDaT7Mule8SpEEUE/ZZUabHGzXGvw+KUez5J5RFSTH80WpS0FVc+PFn1j8ZnuLvTig2Jjz+0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kmc0Hjy7; arc=none smtp.client-ip=91.218.175.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730677355;
+	t=1730677517;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=wO9F05OjFTEM/HcQCrt4botr5JYhab2ML8z74ip7l5A=;
-	b=N+3+qozjVdsl1wDd+yLCd/KUZv8YJzPR088pGpuhUtQaLuEuTFrKDFZkRaU0Erq/+j9e7y
-	tGyoO9US6hmQgMateHisEd7q8wBA+9toHwhoU/rMXVxuOSfWV6/am9pqOV0JNNjjWKvtzg
-	DiHMbBGEKXg15taTq98oHW7nswIqSUM=
+	bh=WA3TnPACWY+URs7RqNz//gfcsatHrX5uRuzHMJzNGT0=;
+	b=kmc0Hjy7KtoOQx68O0w8mM8noLDH3IBguj4ggLUZt88q578mwQHLMjjQbVabPPxiTxWbxP
+	6PZaSo8rTTDjYII2b7iw8kzCKG39J0iGtvhBGSk26pUOhNiArod1sfbu8uTO6197xnFtlT
+	AC09fveizbB83W+NOnhawNYkX4uO5Jg=
 From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	"Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alex Elder <elder@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Matt Ranostay <matt@ranostay.sg>,
+	Quentin Monnet <qmo@kernel.org>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>
 Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Mathieu Othacehe <m.othacehe@gmail.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/apic: Use str_disabled_enabled() helper in print_ipi_mode()
-Date: Mon,  4 Nov 2024 00:42:13 +0100
-Message-ID: <20241103234216.2373-1-thorsten.blum@linux.dev>
+Subject: [PATCH] mailmap: Add entry for Thorsten Blum
+Date: Mon,  4 Nov 2024 00:44:09 +0100
+Message-ID: <20241103234411.2522-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Remove hard-coded strings by using the str_disabled_enabled() helper.
+Map my previously used email address to my @linux.dev address.
 
 Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- arch/x86/kernel/apic/ipi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .mailmap | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/kernel/apic/ipi.c b/arch/x86/kernel/apic/ipi.c
-index 5da693d633b7..942168da7195 100644
---- a/arch/x86/kernel/apic/ipi.c
-+++ b/arch/x86/kernel/apic/ipi.c
-@@ -3,6 +3,7 @@
- #include <linux/cpumask.h>
- #include <linux/delay.h>
- #include <linux/smp.h>
-+#include <linux/string_choices.h>
- 
- #include <asm/io_apic.h>
- 
-@@ -23,7 +24,7 @@ __setup("no_ipi_broadcast=", apic_ipi_shorthand);
- static int __init print_ipi_mode(void)
- {
- 	pr_info("IPI shorthand broadcast: %s\n",
--		apic_ipi_shorthand_off ? "disabled" : "enabled");
-+		str_disabled_enabled(apic_ipi_shorthand_off));
- 	return 0;
- }
- late_initcall(print_ipi_mode);
+diff --git a/.mailmap b/.mailmap
+index 9a94c514e32c..55f780402f0b 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -664,6 +664,7 @@ Tomeu Vizoso <tomeu@tomeuvizoso.net> <tomeu.vizoso@collabora.com>
+ Thomas Graf <tgraf@suug.ch>
+ Thomas Körper <socketcan@esd.eu> <thomas.koerper@esd.eu>
+ Thomas Pedersen <twp@codeaurora.org>
++Thorsten Blum <thorsten.blum@linux.dev> <thorsten.blum@toblux.com>
+ Tiezhu Yang <yangtiezhu@loongson.cn> <kernelpatch@126.com>
+ Tingwei Zhang <quic_tingwei@quicinc.com> <tingwei@codeaurora.org>
+ Tirupathi Reddy <quic_tirupath@quicinc.com> <tirupath@codeaurora.org>
 -- 
 2.47.0
 
