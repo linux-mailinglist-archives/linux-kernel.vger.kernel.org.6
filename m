@@ -1,134 +1,138 @@
-Return-Path: <linux-kernel+bounces-394005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C009BA878
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 23:09:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0433A9BA87A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 23:10:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4B34B20FBE
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8901F20D38
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D583B18C32C;
-	Sun,  3 Nov 2024 22:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B018218C326;
+	Sun,  3 Nov 2024 22:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IziPJNGL"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Vht3JLKE"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A71189BA0;
-	Sun,  3 Nov 2024 22:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6344D18C02B
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 22:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730671783; cv=none; b=Q+l9v8fKLQo9goNyJcMPppsBixbkXQwfmYNfEWp7TxYNN6rCB3FEI8pIqDteCl3Vy2bUakfrlCT4XRDmqLLTvOY6gsmojoDEV4nChQWrmClSaTMRvYbuyQlmf8P8FDBmx95U12zal5Zao2lftB0+PC8ciU3i5eVS6QBe98rSd5U=
+	t=1730671819; cv=none; b=s7QbAwFuHUcaZDGp8cbykeXeOrjFlxwGnuOa3LOU6apP+PgzcdkAmcwg2MBY1yrjptLT48083+W0eQN/bhrKwE4/qGS6tNW0Wz0ACFZ49hW5emUes7OljnuY5RsrS55nUTpkWufuZUOKkwj6ZtK1m5HG2H6Il7qdFSPCcE6nQMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730671783; c=relaxed/simple;
-	bh=WkYHzjB1FsobEK55AqhBuGNO8OPLcecCjyT36wwY6Lc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYdXo7IOwJ7q8JO64PgRit4NqxVOauD9rsIeZnyS+p4NZ81SFbvY4odDwck2/Ewa1eH0u03pgwELXL57PorGeUtyWiVVmHhkiAVHZVFNMKeX9aEKhm3ufwL4BjdX5TTPYBV69tzR/N/ZFf+BSLdXfSks8WDktfR5mUYCyCnuH/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IziPJNGL; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7206304f93aso3456965b3a.0;
-        Sun, 03 Nov 2024 14:09:40 -0800 (PST)
+	s=arc-20240116; t=1730671819; c=relaxed/simple;
+	bh=YfV5iYFCey8uL8RvVFXKpCmMrpkP6Yn7Yg2LpgeM26E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HEYiP0U8610qDSoXeS5EFz/o0XqX4CSPd51iXRWQJ/CPDcJ25hd8v5rwd0j0jb/EQr+HMcHPPJh4H4T6dyZAMwSa1i0+PgvaSnJFP0vkgoLEKTokKQ5d3lnYFYgrAUuFADzmhXst1ScYM+8fhCUvjtE3EddXrH702f8Xm4foEZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Vht3JLKE; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-71811707775so1890622a34.3
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 14:10:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730671780; x=1731276580; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/rHJELaF04JBRi0aLmrWuxoS3tWtyUhwmRJRrDNiPz8=;
-        b=IziPJNGLtz56KgxCv8Fn6ziU+UMUMlzwizoWlz45bCIqRzhldvhiwqRhl9JAU7u3ri
-         bjnyf0RrPzPxeeGdPbQUulRBbIgW+hG8dStFaP3UW603klM1pZuyR19dWuPw6rxBzC7r
-         9jwTDOBlThdKilsQrHGd8LtLG42MfFiG3vnKhxz7ZsnYcHyYOlqhHpQC59w5++EWv7JM
-         g+VGVYKAgRKy/Pc5ZSoLqcQy0kSAk8vs10ReVrs+QjFgggxFPhpxqcwIz7nYP3g8fO1k
-         vYbdMyiuIovi1FrO+XmIoY0JDkSdpQoSeTnheyFDe743yrST6iPzmLOB6e0FV9pTlUh4
-         tc3A==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730671814; x=1731276614; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jUWYuqtR3aHLEhG7mg7lZrCRFDuphm1pLOvMuWzILNI=;
+        b=Vht3JLKEVK758BtpHL1BLTVtaBpG2uF4Q3UG8skuu2U+kfcId35eHe7kNkDf6n0ZQY
+         kudwvrbw6wVGJICEhd9mrurgYwJ1ViZNYV/JLUQmtxtsman9BFUuBOrWWtXomGo5cwzs
+         adjrXDgzmCWLuO/8/WpicVXxPxz/q++jKMHrcbYNjsXunavpJpKv8mQbMxHJl3TzQ2O/
+         GfaaS5lWHtYtk8KowIifsY8ikWNC7jrx3VkEohZSuiNoroUANGklvt5VfkwjOyaLj44R
+         Ph09aImoZQUFrZkKxKK6ogyVNJJr7Tw4Tm086A2bEJr9JSaDFrvzN1RC0/LkExSZg9OH
+         TeIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730671780; x=1731276580;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/rHJELaF04JBRi0aLmrWuxoS3tWtyUhwmRJRrDNiPz8=;
-        b=bkLYNfhnNgv0mgaTKivGL/rEkxf6Rk6jBwxYalxyQA/g01kJ0TWdEr8HUENQolkxOT
-         zrizqeU7LC3sC0AgjePUUYwl+q7u13VDXqc8880cuFewULaw8WOKcsRPLnZF7CwPskgx
-         DYvMOKiHyEPaCSoqtAlKWNuPkd8M9c94X5ofBx/fDr968Jh1gbkbgErWG+8OqOLgsSxW
-         Itnc9BZqIFc0EjMdzH9VaFbLzyss9A4ALIAxTKVCClhlUF4h5TACS6R6FodDt3qP6Ran
-         34vUsF3z7Aywdg8Qdt5nmwd0L3+0wpzQItpB+op5XbXbACNdw84pD6CXGNX1NmqreFK+
-         mb7w==
-X-Forwarded-Encrypted: i=1; AJvYcCV5/x6hqJTm+626GB7+ug56IHO9F4bsRAj/POXGpAr9Yf9zD7+f7KtNpO+IqR3UdPk3sxDF5BoA@vger.kernel.org, AJvYcCVEjNVCH2jro4pL5vgb+Jo0iU/M5Luq5H9KJ8gXzhGC9b11vtVA+4WTbula6NAxOrGwdhuTNNB4IGVtoBZ/@vger.kernel.org, AJvYcCXeTabEGgC2F3rRHEluaeYNnihIdJqd2xrbzTYg5gkM/Rjm+KV5y4uLHzwa33ai2Ft1MCjKAx099iho@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhPZpx6SIFsxKUxUOL8m00xw4+i40+LlklU3H9/ScnMIujiKN8
-	X0KTmmH9lk4pUfVlJ+RnwexD+VZkf12DnVH1Rp/veXQN+Qqj5SAd
-X-Google-Smtp-Source: AGHT+IFKyJJZHHJG1xrvYibWpBIs/FS0N3kdjWrsxFMjWgEPFe5BpYTq3ei0lG/0AXdt3oOlAP3xDg==
-X-Received: by 2002:a05:6a20:e605:b0:1d9:dfd:93c0 with SMTP id adf61e73a8af0-1dba556fdc2mr13977660637.49.1730671780063;
-        Sun, 03 Nov 2024 14:09:40 -0800 (PST)
-Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ba033sm6074536b3a.34.2024.11.03.14.09.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 14:09:38 -0800 (PST)
-Date: Sun, 3 Nov 2024 14:09:37 -0800
-From: Drew Fustini <pdp7pdp7@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Drew Fustini <dfustini@tenstorrent.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Drew Fustini <drew@pdp7.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH net-next v7 0/2] Add the dwmac driver support for T-HEAD
- TH1520 SoC
-Message-ID: <Zyf0oVGk6FiVrPsB@x1>
-References: <20241103-th1520-gmac-v7-0-ef094a30169c@tenstorrent.com>
- <662a8258-291d-4cfc-b21a-f3c92f9588f2@lunn.ch>
+        d=1e100.net; s=20230601; t=1730671814; x=1731276614;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jUWYuqtR3aHLEhG7mg7lZrCRFDuphm1pLOvMuWzILNI=;
+        b=eJ0H+4zs61ADwli0pQHgocDsTuAZaVS0R2xZ++/iJUVKmNeAUNFZ3azZ20oRGs0L3b
+         /Al7YdOYmvYfikklTl8DbHyW5sQmvlZnCn4ankWFMAIWf/GtS/wRWGz336jsXbYB2aAl
+         OVGZzO1yVgwrNseJYS6KUCWSdyDeFmNTNMihomkcygMPOFC7AkHJ+4W8RY428ikhFcAm
+         XogKVIBdyxVZdhVRZxThivVszf/GQSXbC9aE9gTbtT5Bd/jTwgBrELqnCxNSQYV6FjRM
+         tbDcYomQJfZWx/SwkDoBI4HPNX3FLHTYQYckrR18xR4cyfXr2VPU95XxyImxgNTFVsxT
+         zo6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXcHg13RsSzGZzcDI9cUroOkMM42/QFmIoqTw3a5JAREd3entCYpobEHSC1NJtO1fCtOReiTOhwXYfn4cA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAk6qMwqOS163bNL4PAUFkovRciKiZfwfc+zf51ZQ7S3mcjRTd
+	5dEJADtpqd88BzJ1mQS48GnCia2u4gSKAdFZecyHDy9AGzwbET0KLkithxuKXB0=
+X-Google-Smtp-Source: AGHT+IGMfVh9LXk0iaYFioOzlB6HVEvHUV0T09OtRUqjTerOH+6ZJQ5jtvM98lKCEUKMBpdWBa6SFw==
+X-Received: by 2002:a05:6830:310b:b0:718:118d:2be8 with SMTP id 46e09a7af769-719ca25bdd4mr6851108a34.28.1730671814414;
+        Sun, 03 Nov 2024 14:10:14 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7189ccb15c0sm1745498a34.60.2024.11.03.14.10.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Nov 2024 14:10:13 -0800 (PST)
+Message-ID: <88b1e5a4-a962-4ef3-abff-724af2f6c09e@baylibre.com>
+Date: Sun, 3 Nov 2024 16:10:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <662a8258-291d-4cfc-b21a-f3c92f9588f2@lunn.ch>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] iio: adc: ad7606: finish pwm_get_state_hw() TODO
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: kernel test robot <lkp@intel.com>, Jonathan Cameron <jic23@kernel.org>,
+ Guillaume Stols <gstols@baylibre.com>, oe-kbuild-all@lists.linux.dev,
+ Michael Hennerich <Michael.Hennerich@analog.com>, linux-pwm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+References: <20241029-pwm-export-pwm_get_state_hw-v2-2-03ba063a3230@baylibre.com>
+ <202411020101.5Hs6MkwQ-lkp@intel.com>
+ <d44ab5s73kmochmwis3buhd6ci7ff4rwd7kgh47aqar6xeyqna@f4plwf6qbvlm>
+ <awpjqzq2ksbqvlfkbh4xnpwqxrnf4np6amifdweasrh52v3jl3@lz3md7ydyhji>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <awpjqzq2ksbqvlfkbh4xnpwqxrnf4np6amifdweasrh52v3jl3@lz3md7ydyhji>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 03, 2024 at 07:12:24PM +0100, Andrew Lunn wrote:
-> On Sun, Nov 03, 2024 at 08:57:58AM -0800, Drew Fustini wrote:
-> > This series adds support for dwmac gigabit ethernet in the T-Head TH1520
-> > RISC-V SoC used on boards like BeagleV Ahead and the LicheePi 4A.
-> > 
-> > The gigabit ethernet on these boards does need pinctrl support to mux
-> > the necessary pads. The pinctrl-th1520 driver, pinctrl binding, and
-> > related dts patches are in linux-next. However, they are not yet in
-> > net-next/main.
-> > 
-> > Therefore, I am dropping the dts patch for v5 as it will not build on
-> > net-next/main due to the lack of the padctrl0_apsys pin controller node
-> > in next-next/main version th1520.dtsi.
+On 11/3/24 2:20 PM, Uwe Kleine-König wrote:
+> On Sun, Nov 03, 2024 at 03:00:14PM +0100, Uwe Kleine-König wrote:
+>> Hello David,
+>>
+>> On Sat, Nov 02, 2024 at 01:50:35AM +0800, kernel test robot wrote:
+>>> kernel test robot noticed the following build errors:
+>>>
+>>> [auto build test ERROR on 6fb2fa9805c501d9ade047fc511961f3273cdcb5]
+>>>
+>>> url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/pwm-core-export-pwm_get_state_hw/20241030-052134
+>>> base:   6fb2fa9805c501d9ade047fc511961f3273cdcb5
+>>> patch link:    https://lore.kernel.org/r/20241029-pwm-export-pwm_get_state_hw-v2-2-03ba063a3230%40baylibre.com
+>>> patch subject: [PATCH v2 2/2] iio: adc: ad7606: finish pwm_get_state_hw() TODO
+>>> config: i386-randconfig-141-20241101 (https://download.01.org/0day-ci/archive/20241102/202411020101.5Hs6MkwQ-lkp@intel.com/config)
+>>> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+>>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241102/202411020101.5Hs6MkwQ-lkp@intel.com/reproduce)
+>>>
+>>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>>> the same patch/commit), kindly add following tags
+>>> | Reported-by: kernel test robot <lkp@intel.com>
+>>> | Closes: https://lore.kernel.org/oe-kbuild-all/202411020101.5Hs6MkwQ-lkp@intel.com/
+>>>
+>>> All errors (new ones prefixed by >>):
+>>>
+>>>    drivers/iio/adc/ad7606.c: In function 'ad7606_read_raw':
+>>>>> drivers/iio/adc/ad7606.c:765:23: error: implicit declaration of function 'pwm_get_state_hw'; did you mean 'pwm_get_state'? [-Werror=implicit-function-declaration]
+>>>      765 |                 ret = pwm_get_state_hw(st->cnvst_pwm, &cnvst_pwm_state);
+>>>          |                       ^~~~~~~~~~~~~~~~
+>>>          |                       pwm_get_state
+>>>    cc1: some warnings being treated as errors
+>>
+>> The problem here is that there is no declaration (and implementation) of
+>> pwm_get_state_hw() with CONFIG_PWM=n. Does it make sense to enable the
+>> ad7606 driver without enabling PWM support? If yes, we should add a
+>> dummy implementation of pwm_get_state_hw(), if not, a depends on PWM
+>> should be introduced.
 > 
-> You should send the .dts patch to the Maintainer responsible for
-> merging all the RISC-V DT patches, maybe via a sub Maintainer. All the
-> different parts will then meet up in linux-next.
+> Looking at the driver, the PWM is optional. So I rewrote the commit from
+> patch 1/2 in this series and added a dummy.
 > 
-> 	Andrew
+> Best regards
+> Uwe
 
-I am the maintainer for arch/riscv/boot/dts/thead. I'm planning to apply
-the dts patch to my for-next branch once this series with the binding
-and driver are applied to net-next.
-
-Thanks,
-Drew
+Thanks!
 
