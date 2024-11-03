@@ -1,87 +1,139 @@
-Return-Path: <linux-kernel+bounces-393793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859D39BA545
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:32:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1D99BA53F
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A16281D6E
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:32:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97A601C20FC2
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC4516DEAC;
-	Sun,  3 Nov 2024 11:32:10 +0000 (UTC)
-Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2268D16F824;
+	Sun,  3 Nov 2024 11:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMuhZ73R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631901CAAC;
-	Sun,  3 Nov 2024 11:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.165.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BCB156C40;
+	Sun,  3 Nov 2024 11:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730633529; cv=none; b=aDdWLqd+F1r6hkqkzlX/6F8L256I7c0S7Yjum01dKEDLgeIV3J2ijwsAy9D5kzZs93xF/VeqwaZyH9ExhU5UKlmJobYKNrXdPy284kRZ+s/d7cPUsRoKoHCi/Zz7uLW+Xmb9NoK9HjZp8dGfAZZGJf57h61hD5TN5ucybjFT4Sc=
+	t=1730632943; cv=none; b=LyWu8bWIZykURiP42dyZxev/QXcVe1PxyTm06JXp6RciYv1yX64FiMlQRGfm1vcnTSCo26jbUlvA3W2bJpRoABwcHDoHA+ssaeklMEWxAy/YBmoYip+ZieRHIlxKQxe3jNvycnoSJtwbBkfONuczelenhldTRDAPx461sqXTH14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730633529; c=relaxed/simple;
-	bh=Nj2Rh2bwcsMvT5lD+use1WRg/EWD6d7w6x6XdOrxecM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kG9Vcua/mnMM8jUh3Y71AHOjD8ZXtBd/+cCx5GB7rbQzcg9gcYF7ZQADeEtZySqX8CbpPLFmd2zRdX2CKKyBeHOUCDmsdMvpuaVSjDA1gGCSI2hcFSYfCv90dZe8X0YHxIruLPrsqGoGppq6f5u90lHvwWlGR/HehuzeDphqFBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr; spf=pass smtp.mailfrom=skole.hr; arc=none smtp.client-ip=161.53.165.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skole.hr
-Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-	by mx.skole.hr (mx.skole.hr) with ESMTP id B569481641;
-	Sun,  3 Nov 2024 12:22:22 +0100 (CET)
-From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje.mihanovic@skole.hr>
-To: linux-kernel@vger.kernel.org,
- Raymond Hackley <raymondhackley@protonmail.com>
-Cc: pavel@ucw.cz, lee@kernel.org, krzysztof.kozlowski@linaro.org,
- daniel.thompson@linaro.org, linus.walleij@linaro.org,
- u.kleine-koenig@baylibre.com, linux-leds@vger.kernel.org
-Subject: Re: [PATCH] leds: ktd2692: Set missing timing
-Date: Sun, 03 Nov 2024 12:21:13 +0100
-Message-ID: <12557112.O9o76ZdvQC@radijator>
-In-Reply-To: <20241103083505.49648-1-raymondhackley@protonmail.com>
-References: <20241103083505.49648-1-raymondhackley@protonmail.com>
+	s=arc-20240116; t=1730632943; c=relaxed/simple;
+	bh=rojxZqDQYmo7DcaabxpY+qtg25SoBSbQIlcnA6osyJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rCyb0FbrTshCmqxOX6Fv2q9bDUBoJjVJMQmBy/GKEmf32KNwGOEgs+BmUU5MDPYB5GVklI+CqTR+cTpI9aRKuSYvhpwqwTf5D2LXZCD2V9LnAOHHVecum4fj+imefkkpZaoWQUm3C1iGC09XI1E5PvanFZK6v81e+XMVSQxGaQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMuhZ73R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68023C4CECD;
+	Sun,  3 Nov 2024 11:22:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730632942;
+	bh=rojxZqDQYmo7DcaabxpY+qtg25SoBSbQIlcnA6osyJw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SMuhZ73RSbfxkOVpJ71Fpb2kdzTjWQp4utVDK1cYMBga+Y9ldKNQNO6JdoVCpiUzi
+	 ldZxXWejGjuoh/mttBC91vjRPBeD5CaLuxzqUXg5WNZYRg3LGw7WUhZlnEDQ3IOgWp
+	 t0YArjF1QmzwZJ9QErSzlQEe9RdJFLi5l30Yp1ikl2yu8lwJe8R+X/2PtfgtGvJiD6
+	 47FfeL33TwgYT1D0YZT/jKVQY3rcRqNJZiPV990lXtONr/brsrv90vrnsiFZs3vS4x
+	 CXSYmBxelswPO8yaIDyHklTeDtkona74buBXRZyAW6uti9etKk3CWqAZZtdGGhwGqn
+	 XKSVTianPzfMQ==
+Date: Sun, 3 Nov 2024 11:22:08 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Aren Moynihan <aren@peacevolution.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Kaustabh
+ Chakraborty <kauschluss@disroot.org>, =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?=
+ <trabarni@gmail.com>, Ondrej Jirman <megi@xff.cz>, Uwe =?UTF-8?B?S2xlaW5l?=
+ =?UTF-8?B?LUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
+ phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 2/6] iio: light: stk3310: handle all remove logic
+ with devm callbacks
+Message-ID: <20241103112208.233f7180@jic23-huawei>
+In-Reply-To: <20241102195037.3013934-7-aren@peacevolution.org>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+	<20241102195037.3013934-7-aren@peacevolution.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Autocrypt: addr=duje.mihanovic@skole.hr;
- keydata=
- mDMEZokhzhYJKwYBBAHaRw8BAQdAWJZ0hsI/ytTqHGFV8x6tzd5sB596cTeeDB4CQsTf+wC0KER
- 1amUgTWloYW5vdmnEhyA8ZHVqZUBkdWplbWloYW5vdmljLnh5ej6ImQQTFgoAQRYhBG3/QdYN8x
- S1t2umMK0xk1JFj60DBQJmiSHOAhsDBQkJZgGABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAA
- AoJEK0xk1JFj60D1GABAJVSorZdMOlrp/oQtCSH/G53NE56x/JHA8VX+ZQBd/H3AP4/EcUf6eef
- DUxVMh2bdkmuQKsVZGgOGiXpMksrVntWBrQpRHVqZSBNaWhhbm92acSHIDxkdWplLm1paGFub3Z
- pY0Bza29sZS5ocj6ImQQTFgoAQRYhBG3/QdYN8xS1t2umMK0xk1JFj60DBQJmiSH/AhsDBQkJZg
- GABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEK0xk1JFj60Dlw8A/i4lPOL7NaYoYePDq
- l8MaJaR9qoUi+D+HtD3t0Koi7ztAQCdizXbuqP3AVNxy5Gpb1ozgp9Xqh2MRcNmJCHA1YhWAbg4
- BGaJIc4SCisGAQQBl1UBBQEBB0DEc9JeA55OlZfWKgvmRgw6a/EpBQ8mDl6nQTBmnd1XHAMBCAe
- IfgQYFgoAJhYhBG3/QdYN8xS1t2umMK0xk1JFj60DBQJmiSHOAhsMBQkJZgGAAAoJEK0xk1JFj6
- 0DG5MA/iuo4l2GDEZ1Zf+XaS//8FwdXDO9nHkfbV2MHjF4NZXwAQDroMzBdMcqVvc8GABFlTTgG
- j7KrRDz2HwWNyF8ZeprAQ==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sunday, November 3, 2024 9:35:16=E2=80=AFAM Central European Standard Ti=
-me Raymond=20
-Hackley wrote:
-> props.timing is not set after b5a8c50e5c18. Set it with ktd2692_timing.
->=20
-> Fixes: b5a8c50e5c18 ("leds: ktd2692: Convert to use ExpressWire library")
-> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
-> ---
->  drivers/leds/flash/leds-ktd2692.c | 1 +
->  1 file changed, 1 insertion(+)
+Hi Aren,
 
-Acked-by: Duje Mihanovi=C4=87 <duje.mihanovic@skole.hr>
+> @@ -624,7 +640,7 @@ static int stk3310_probe(struct i2c_client *client)
+>  	device_property_read_u32(&client->dev, "proximity-near-level",
+>  				 &data->ps_near_level);
+>  
+> -	mutex_init(&data->lock);
+> +	devm_mutex_init(&client->dev, &data->lock);
+ret = devm_mutex_init()
+if (ret)
+	return ret;
 
-Best regards,
-=2D-
-Duje
+It is very unlikely to fail but technically it can.  Andy has been fixing
+this up across the kernel (including IIO) so let's not introduce another
+case that doesn't check it!
 
+If nothing else comes up I can probably tidy that up whilst applying.
 
+Jonathan
+
+>  
+>  	ret = stk3310_regmap_init(data);
+>  	if (ret < 0)
+> @@ -650,29 +666,17 @@ static int stk3310_probe(struct i2c_client *client)
+>  		if (ret < 0) {
+>  			dev_err(&client->dev, "request irq %d failed\n",
+>  				client->irq);
+> -			goto err_standby;
+> +			return ret;
+>  		}
+>  	}
+>  
+> -	ret = iio_device_register(indio_dev);
+> +	ret = devm_iio_device_register(&client->dev, indio_dev);
+>  	if (ret < 0) {
+>  		dev_err(&client->dev, "device_register failed\n");
+> -		goto err_standby;
+> +		return ret;
+>  	}
+>  
+>  	return 0;
+> -
+> -err_standby:
+> -	stk3310_set_state(data, STK3310_STATE_STANDBY);
+> -	return ret;
+> -}
+> -
+> -static void stk3310_remove(struct i2c_client *client)
+> -{
+> -	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+> -
+> -	iio_device_unregister(indio_dev);
+> -	stk3310_set_state(iio_priv(indio_dev), STK3310_STATE_STANDBY);
+>  }
+>  
+>  static int stk3310_suspend(struct device *dev)
+> @@ -736,7 +740,6 @@ static struct i2c_driver stk3310_driver = {
+>  		.acpi_match_table = stk3310_acpi_id,
+>  	},
+>  	.probe =        stk3310_probe,
+> -	.remove =           stk3310_remove,
+>  	.id_table =         stk3310_i2c_id,
+>  };
+>  
 
 
