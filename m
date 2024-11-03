@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-393737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517089BA49D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:15:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D63A9BA49E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8386C1C20C8E
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 08:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C062D281526
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 08:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AD01632C6;
-	Sun,  3 Nov 2024 08:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6560D1632EC;
+	Sun,  3 Nov 2024 08:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdvTciC7"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SVG4BueB"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B75913AD1C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF27215AAD9
 	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 08:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730621696; cv=none; b=YJDpQiEafCW6ei810wQWbumU2xfxz2B64bE6wB4hXGFDEmk/9Vu6777UYK7xCZtKtEKdH+n3I9QldpLwKSeFDsxWD0MbS5+29KsrG7HiywzaITNCeqVg8RHJ8zlCHcpSHLDVgu3eV9m++DGKtSGokW9nKhuaf1dh1oyYb20w+ic=
+	t=1730621696; cv=none; b=ddmNQRdVTGKE2zratp3Jwq1s2JPE2noDQ87JggiWu4q1bEWjo8yeDB9QNcBtt2wOH6XGqfUOokY1xEmhk/NjvxQRFvZ5X7EkRvkn/Mx2cjmdfR0+b1PPAnIeF66/cVg42pWtDvsbsEENs1myRp0+APKeOCZofnksh20/NZavR1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730621696; c=relaxed/simple;
-	bh=qv7bUIiaq2d6hSz6mAsLCXekBE2vtahVMxlhVFAYAWo=;
+	bh=sJQBtHHCyUD4fx57VPvGK7t1PMtZgvKNa+0f3DpKnsI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CQg9aE3pIbH6AFw7FSJZ8IvMJ3oSlESe5CejoGLUqMbzAaa6zqoF/o/6fPWoSgkfMSQyhSzViGaqTjoXDXRAF14ur5JvBrE/f2uqeIe59+q6wTZLPgFL/2WJHkF//pSMBUMU4ao9naPkGURP1+yZyeO4j0yP59jOt66f8R05soI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdvTciC7; arc=none smtp.client-ip=209.85.208.43
+	 MIME-Version; b=hKN55XS5+h803kPZloemkLoUJod0Y9/uhUzFMLeqwG5/kZ9vVrws4aTqCf8oUJuXqwb0hPeZRHfd7nWB7r4dCS6a7hzZ+iCfsw8X0hNSGjQcvbnAlfV8qW4Fwng/JFeIgADG8dRG3wyPLLFVa/Y/gTVAjcBaiBIO/WaRRHeDBmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SVG4BueB; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so4719063a12.0
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5ced6a3f246so65795a12.3
         for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 01:14:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1730621693; x=1731226493; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dxXy904MrrPlMw4v+3cBS52GXFzaVx4wVG0zuSO1/wM=;
-        b=IdvTciC77S4kB8rfi0QrD/24q/Vv5n4s6Qu/ifsLQXHM/XBu7pNCaMTL4gRMm0XJRL
-         yEuQFSp3EKzUYI23drRbyd/1mJDV5ora/xSxLjy6f6T8LEEAl1vW7lfROmYgwy+vjTwT
-         awZNjLZ00qoLfehWmeQ+DVpInG4kK9rl3azGkfxiPVZYI4EAUN+P14lae0SWd5UjsOkw
-         NjcnpfQbqW2meUinhlRjBehKLXoyIPApSCt3x9S5Ghw7WpMTKhzFi4mkFAGLChR+FX9z
-         HE3X5Qu8donNE6K09nucufAygBbrr5zHRq5aVK0tS8m36QsviLyEKxJoad43LwLqtvvq
-         7T2g==
+        bh=SKRocKMvsGz4cOULrqNXkHoL0rqs+NrAAxU47zmH+UY=;
+        b=SVG4BueBKTF+Pf0z3RfrfWDx10J9gM1ZPzJLTg9WxQiVS+Z13HjixJirTbU2LiHxwy
+         TsJGdyQkqKkA2VkHdOOOGtGe6Cs73+jNWqRKhGj+LfwjVdIAIMWZFt4vQJf0QDRl9nIX
+         RLKIeE6VFxsOwU8H95Et4F1LBI+69yNhlitU1aQBp/5gAwzEwkYF2yhQDxaRGx3RGr9K
+         lQFUwA939vmgZtmGiNZ14aowocmKQ5VQ9BOn/kS7r+bwfqEkDRSXNRrzcdKWn4gvry39
+         QPC69Ebrk/OBcQu7dSewpdXwvlMYH5lrW1kpTgwDKD5ToZUynTsDOvnMq4ZUl5AfVaqp
+         YRvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1730621693; x=1731226493;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dxXy904MrrPlMw4v+3cBS52GXFzaVx4wVG0zuSO1/wM=;
-        b=orvtPsTnv9KYWWbX1502+MWqpBWbUX58RHOvFRhctxyg3TR9h6+hUjKuCoxbJpGjdE
-         SOfzXh90HzTNFhEJq74N4KeTo8jf6Z/PpQhERvjyhDVCOQTyx6RQcuFpsUVBQFEXvTty
-         LcBu15Dm2sF795hHzOpv7yhqC864rtZa6NEFcO5k2fIByravCAPtDLnEWMyohdMtIQsA
-         VpdenveigOCIzcgKrxHiJZA3ut6u1KNoEBqzriNqj+qO39DTfw8wBscJlvFb8mC65NA6
-         mJh9o/71JC0zgXUy/WpdH2d103a8xn+4JsHpxt6bReOE4GKw1PKN+9zIfBwFlZN5TCDL
-         H8FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIawTOyw+sTQcOitVM4HFGAuLLqvDDXcq0JG9HE+X2UC+4z5TjH3YIakCmSm/VLAJtt+oWWcwJbzAQfbQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsgZTsRWsnlmeA+dqvyh0qlDH2/ldRPtDYjeriDc+onAYqBunn
-	XEUqcoFJDozqvf4/jrDZ1Bydr3UWXXitcsKXNyEvBcQYVkqrkfcn
-X-Google-Smtp-Source: AGHT+IF4nZRc+yG/Id2cJXxcIpm90HTJ+ULR7N6gzEr5j8Dy5NfJSFtPsiTljl4GcW76fwZlRV2gCg==
-X-Received: by 2002:a17:907:7e8c:b0:a9a:29a9:70bb with SMTP id a640c23a62f3a-a9e3a59d563mr1707138366b.14.1730621692286;
+        bh=SKRocKMvsGz4cOULrqNXkHoL0rqs+NrAAxU47zmH+UY=;
+        b=gdGDfZ9mnubEjJkoHL24kTaKyqYQO+W4XU+l77uzK+lFbJz31YzP2JG6ClGGUe5RmC
+         UVLGhkcyhypKj5lKfEuuvJRK1jiTts1dvMkBFnPCuB5IojHGIqgz6A5M3+bk2/ZeOt0Y
+         jzFDe6FpcSzxBnMubTL2ZfKAk2zHNerPn+MgqP/PBJ7KcINpFi0frVeBOfOTmXjecgKW
+         LfqZyy41Gd5GHTk+5Y19S/BGV1+mPHkZZx+O/siiyscZRRsUPrhlcGZfvzCNy0baGXGi
+         oU1fA55+MUHC/sktcC1ACaVpDNci4TjE+c4vxcYPDRyRGR3V/4DDytSKcSTlEDNnTlIK
+         47/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUBZZPgou5AVpbNpHVj5xBe0NyXRbN1Pp1Mc3IeHtIA7jp1FSTtFfF4TwFxB4RMTRe7TXWo9m5WRubnK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkfdfE744vkkjke4ystvt+JKQ9lWvhkM6GeOrl31keUznUJC6k
+	5gdTu1Y7CFd/wDHSo8pTWy9zJujEhEMfbe4Y0Nuss87bBFbTiRl7
+X-Google-Smtp-Source: AGHT+IEUdwUv9MdZb3kct+QldHfpcsuY/9p0YeIRb0fwCu+mPP3498mIgN9ACUM2AetSDqcm1a3iow==
+X-Received: by 2002:a05:6402:2114:b0:5ce:d028:e11 with SMTP id 4fb4d7f45d1cf-5ced0280e56mr2014148a12.17.1730621692863;
         Sun, 03 Nov 2024 01:14:52 -0700 (PDT)
 Received: from kernel-710.speedport.ip (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac789152sm3097882a12.43.2024.11.03.01.14.51
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac789152sm3097882a12.43.2024.11.03.01.14.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 01:14:51 -0700 (PDT)
+        Sun, 03 Nov 2024 01:14:52 -0700 (PDT)
 From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Subject: [PATCH 01/13] staging: rtl8723bs: Replace function thread_enter
-Date: Sun,  3 Nov 2024 09:14:22 +0100
-Message-ID: <6946fae41575fffff1d4718cb3a96cd53f655416.1730619982.git.philipp.g.hortmann@gmail.com>
+Subject: [PATCH 02/13] staging: rtl8723bs: Remove #if 1 in function hal_EfusePartialWriteCheck
+Date: Sun,  3 Nov 2024 09:14:23 +0100
+Message-ID: <2eea90fbdc2ef0ef5c8a224330558ccdefdfdf5b.1730619982.git.philipp.g.hortmann@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1730619982.git.philipp.g.hortmann@gmail.com>
 References: <cover.1730619982.git.philipp.g.hortmann@gmail.com>
@@ -85,80 +85,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace function thread_enter with its only called function allow_signal
-to increase readability. Remove resulting unused local variable
-thread_name as well.
+Remove #if 1 in function hal_EfusePartialWriteCheck to shorten code.
 
 Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_cmd.c          | 2 +-
- drivers/staging/rtl8723bs/core/rtw_xmit.c         | 2 +-
- drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c    | 4 +---
- drivers/staging/rtl8723bs/include/osdep_service.h | 5 -----
- 4 files changed, 3 insertions(+), 10 deletions(-)
+ .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 53 -------------------
+ 1 file changed, 53 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-index 68b5d8ca900f..64ce33c6fba1 100644
---- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-@@ -382,7 +382,7 @@ int rtw_cmd_thread(void *context)
- 	struct cmd_priv *pcmdpriv = &padapter->cmdpriv;
- 	struct drvextra_cmd_parm *extra_parm = NULL;
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+index be4cc8fc5696..2659999404a3 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+@@ -1327,61 +1327,8 @@ static u8 hal_EfusePartialWriteCheck(
+ 		}
  
--	thread_enter("RTW_CMD_THREAD");
-+	allow_signal(SIGTERM);
- 
- 	pcmdbuf = pcmdpriv->cmd_buf;
- 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index 3e88f14e3bf7..699cff7b0ac9 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -2489,7 +2489,7 @@ int rtw_xmit_thread(void *context)
- 	err = _SUCCESS;
- 	padapter = context;
- 
--	thread_enter("RTW_XMIT_THREAD");
-+	allow_signal(SIGTERM);
- 
- 	do {
- 		err = rtw_hal_xmit_thread_handler(padapter);
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
-index 78298e63edce..5dc1c12fe03e 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
-@@ -411,14 +411,12 @@ int rtl8723bs_xmit_thread(void *context)
- 	s32 ret;
- 	struct adapter *padapter;
- 	struct xmit_priv *pxmitpriv;
--	u8 thread_name[20];
- 
- 	ret = _SUCCESS;
- 	padapter = context;
- 	pxmitpriv = &padapter->xmitpriv;
- 
--	rtw_sprintf(thread_name, 20, "RTWHALXT-%s", ADPT_ARG(padapter));
--	thread_enter(thread_name);
-+	allow_signal(SIGTERM);
- 
- 	do {
- 		ret = rtl8723bs_xmit_handler(padapter);
-diff --git a/drivers/staging/rtl8723bs/include/osdep_service.h b/drivers/staging/rtl8723bs/include/osdep_service.h
-index b21267d7ef72..8b1634f4091e 100644
---- a/drivers/staging/rtl8723bs/include/osdep_service.h
-+++ b/drivers/staging/rtl8723bs/include/osdep_service.h
-@@ -73,11 +73,6 @@ int _rtw_netif_rx(struct net_device *ndev, struct sk_buff *skb);
- 
- extern void _rtw_init_queue(struct __queue	*pqueue);
- 
--static inline void thread_enter(char *name)
--{
--	allow_signal(SIGTERM);
--}
+ 		if (efuse_OneByteRead(padapter, startAddr, &efuse_data, bPseudoTest) && (efuse_data != 0xFF)) {
+-#if 1
+ 			bRet = false;
+ 			break;
+-#else
+-			if (EXT_HEADER(efuse_data)) {
+-				cur_header = efuse_data;
+-				startAddr++;
+-				efuse_OneByteRead(padapter, startAddr, &efuse_data, bPseudoTest);
+-				if (ALL_WORDS_DISABLED(efuse_data)) {
+-					bRet = false;
+-					break;
+-				} else {
+-					curPkt.offset = ((cur_header & 0xE0) >> 5) | ((efuse_data & 0xF0) >> 1);
+-					curPkt.word_en = efuse_data & 0x0F;
+-				}
+-			} else {
+-				cur_header  =  efuse_data;
+-				curPkt.offset = (cur_header>>4) & 0x0F;
+-				curPkt.word_en = cur_header & 0x0F;
+-			}
 -
- static inline void flush_signals_thread(void)
- {
- 	if (signal_pending(current))
+-			curPkt.word_cnts = Efuse_CalculateWordCnts(curPkt.word_en);
+-			/*  if same header is found but no data followed */
+-			/*  write some part of data followed by the header. */
+-			if (
+-				(curPkt.offset == pTargetPkt->offset) &&
+-				(hal_EfuseCheckIfDatafollowed(padapter, curPkt.word_cnts, startAddr+1, bPseudoTest) == false) &&
+-				wordEnMatched(pTargetPkt, &curPkt, &matched_wden) == true
+-			) {
+-				/*  Here to write partial data */
+-				badworden = Efuse_WordEnableDataWrite(padapter, startAddr+1, matched_wden, pTargetPkt->data, bPseudoTest);
+-				if (badworden != 0x0F) {
+-					u32 PgWriteSuccess = 0;
+-					/*  if write fail on some words, write these bad words again */
+-					if (efuseType == EFUSE_WIFI)
+-						PgWriteSuccess = Efuse_PgPacketWrite(padapter, pTargetPkt->offset, badworden, pTargetPkt->data, bPseudoTest);
+-					else
+-						PgWriteSuccess = Efuse_PgPacketWrite_BT(padapter, pTargetPkt->offset, badworden, pTargetPkt->data, bPseudoTest);
+-
+-					if (!PgWriteSuccess) {
+-						bRet = false;	/*  write fail, return */
+-						break;
+-					}
+-				}
+-				/*  partial write ok, update the target packet for later use */
+-				for (i = 0; i < 4; i++) {
+-					if ((matched_wden & (0x1<<i)) == 0) { /*  this word has been written */
+-						pTargetPkt->word_en |= (0x1<<i);	/*  disable the word */
+-					}
+-				}
+-				pTargetPkt->word_cnts = Efuse_CalculateWordCnts(pTargetPkt->word_en);
+-			}
+-			/*  read from next header */
+-			startAddr = startAddr + (curPkt.word_cnts*2) + 1;
+-#endif
+ 		} else {
+ 			/*  not used header, 0xff */
+ 			*pAddr = startAddr;
 -- 
 2.43.0
 
