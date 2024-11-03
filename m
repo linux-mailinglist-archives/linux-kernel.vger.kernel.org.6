@@ -1,147 +1,80 @@
-Return-Path: <linux-kernel+bounces-393776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AFBF9BA515
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:26:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94ECF9BA513
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B4A1F21985
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 10:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C21BE1C20E7D
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 10:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A578166F06;
-	Sun,  3 Nov 2024 10:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723D5166F17;
+	Sun,  3 Nov 2024 10:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rn5LNRbK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6M74uVe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD1815ADAB;
-	Sun,  3 Nov 2024 10:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FBF1CAAC;
+	Sun,  3 Nov 2024 10:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730629589; cv=none; b=qHG/NrbY44FTw8aj6pYsDLDjQ3PMfCiGR95bp2HYEXOyERozofQkIYuh4vx5ryOW/lPRVAdbnz5XTZIOcXxal4fT4kO7lOE2qnwUwA0RN6BUJObgt/7cNW2Y+r7Di5hLlaInQjxAwiOfXhXPGl1SOtTiNtS9eR6w48m4LYV/X+4=
+	t=1730629544; cv=none; b=nQZ+XGpojHbYSezK1CtRDW2j5tfwCT3yKVGEnNrji6isR00dCp7SN3s7VNwu4iA0+R9ADsHPlnWekzvHDEz/oUdWNagWaPieLSkNQyWHjgjqKMW4tNc2zd0SbAxsvir55tuh7Iz9kojwlaePFMzafP3//27rW9eehUOqWAKkNO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730629589; c=relaxed/simple;
-	bh=hggU8iw//CKWMghqP+CFbgGJoQIsXzMO3FH4JN14718=;
+	s=arc-20240116; t=1730629544; c=relaxed/simple;
+	bh=4+oDp5riCTK1E9T+awQaMakgpH6I+3uJmpa9ETSVdgU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tEW8aEXa4jx75FCj4GfrAy2OsKQI/eGyuRfSrGSklkAlUamId4GgAbjK+2uSQkwRdb5MIvG33t8s9M7RrBgL1lmmiGmlt2tDDIJlFIDGcTW2OEYLuCrj2oLLQTe1DnqGMszY8jNjmpQcr9tAAs7PonUGhsxAQBINmtjxbfI+qMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rn5LNRbK; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730629588; x=1762165588;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hggU8iw//CKWMghqP+CFbgGJoQIsXzMO3FH4JN14718=;
-  b=Rn5LNRbKuRGEqZmAfqcPUNwRUwYFBs8n5Shx462MRfmMs2w/Rda2hWE6
-   pgiYilTds3Qt+K0V9cC5Rhb9UVzRWP7w2DQuDYYNBIvq5FGT1xaWw9g+q
-   Si4rdnUiWCy0cph+3C3CN7hIOCylNC/7ifZF+6kOh36D+1h8YSaTmdbuX
-   11ANGvsB3jscNq1xvDM7zIn1boZk32YMVuHCjdY6E1zsfdYYzl7ofvgzL
-   SpKL+RPcJJSFoUDQrWqTTY4YHGhpL6KuVXLj6tLP1eDmtDakzEKDSR9fP
-   +NTyf97/dq/KIA97wp26TY3pu/mFXZaOG08K0yU/JzamzcBjXLDiqoBTF
-   A==;
-X-CSE-ConnectionGUID: 4Lr3wGJ1TGel+yCZaI8d0A==
-X-CSE-MsgGUID: ZkUJ1lCWSouqcIrGl/0yzw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11244"; a="29769890"
-X-IronPort-AV: E=Sophos;i="6.11,255,1725346800"; 
-   d="scan'208";a="29769890"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 02:26:27 -0800
-X-CSE-ConnectionGUID: wab9ZlgNSEG10qGLoNGLWA==
-X-CSE-MsgGUID: Y3rFFxGJScS6dt1WZG/4kQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,255,1725346800"; 
-   d="scan'208";a="87969312"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 03 Nov 2024 02:26:22 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t7XoJ-000jt7-1h;
-	Sun, 03 Nov 2024 10:26:19 +0000
-Date: Sun, 3 Nov 2024 18:25:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	hannes@cmpxchg.org, yosryahmed@google.com, nphamcs@gmail.com,
-	chengming.zhou@linux.dev, usamaarif642@gmail.com,
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
-	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
-	surenb@google.com, kristen.c.accardi@intel.com, zanussi@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: Re: [PATCH v2 12/13] mm: Add sysctl vm.compress-batching switch for
- compress batching during swapout.
-Message-ID: <202411031803.xNibgI5N-lkp@intel.com>
-References: <20241103032111.333282-13-kanchana.p.sridhar@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NJzrRees0FvA3khgwsrRt0FO00atcY4nBue84vapn+p2oQZgU0Nd+j/iAh6ZFSh0sMTjEa7ksx/FvMLm5nPnVaVJGbTDry4t5pVV0B2mb0eepvpSg4XMP91CMlRFTzvkwV/XbSVfb2qusxkrhrCqMKEqR1t1PayW587Roh/dmNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6M74uVe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2B70C4CECD;
+	Sun,  3 Nov 2024 10:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730629544;
+	bh=4+oDp5riCTK1E9T+awQaMakgpH6I+3uJmpa9ETSVdgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U6M74uVeHPcgDfPSldZzD/JzPkNsJ1ynprUDxJNpPfrnn4b/nEuFoMXgTgNQ1hceU
+	 f28LDi0Upl5La5WlmUWkLuAgrDwzcgFJjAGQR1T/cTm+Dz58dyjhjVTi7wsbfjadP8
+	 3oUPlwQgNGyjOu2cr3tGS65UFV9Aef8BBKtanmCzNAjH8zvRzpCkZffC3ad65b4tZ8
+	 TujvtBKZ9+PcW4IBoJgP+qIqdMVKddxOT2gXcCNfkIw0VEpQ1IjDUrcaGCmHZj8fLo
+	 wYPHz8vCKhBG21AXNK3qNHwON3k8b7JFjDm6Z3VIBU1hp0KHujGrNg/Pgnu8XA6UUw
+	 77Lk/wUuIQmcw==
+Date: Sun, 3 Nov 2024 11:25:41 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] dt-bindings: net: snps,dwmac: Fix "snps,kbbe"
+ type
+Message-ID: <uouqxrfqwziaxsq5c2gwyqmahyd2qrumr2at5vxmir5esyii5y@nnrpvwcrddcz>
+References: <20241101211331.24605-2-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241103032111.333282-13-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20241101211331.24605-2-robh@kernel.org>
 
-Hi Kanchana,
+On Fri, Nov 01, 2024 at 04:13:31PM -0500, Rob Herring (Arm) wrote:
+> The driver and description indicate "snps,kbbe" is a boolean, not an
+> uint32.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-kernel test robot noticed the following build errors:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-[auto build test ERROR on 5c4cf96cd70230100b5d396d45a5c9a332539d19]
+Best regards,
+Krzysztof
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kanchana-P-Sridhar/crypto-acomp-Define-two-new-interfaces-for-compress-decompress-batching/20241103-112337
-base:   5c4cf96cd70230100b5d396d45a5c9a332539d19
-patch link:    https://lore.kernel.org/r/20241103032111.333282-13-kanchana.p.sridhar%40intel.com
-patch subject: [PATCH v2 12/13] mm: Add sysctl vm.compress-batching switch for compress batching during swapout.
-config: i386-buildonly-randconfig-002-20241103 (https://download.01.org/0day-ci/archive/20241103/202411031803.xNibgI5N-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241103/202411031803.xNibgI5N-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411031803.xNibgI5N-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from mm/swap.c:17:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from mm/swap.c:26:
-   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
-         |                                    ~~~~~~~~~~~ ^ ~~~
-   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
-         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
->> mm/swap.c:51:14: error: expected identifier or '('
-      51 | unsigned int compress_batching;
-         |              ^
-   include/linux/mm.h:88:27: note: expanded from macro 'compress_batching'
-      88 | #define compress_batching 0
-         |                           ^
->> mm/swap.c:1082:20: error: expression is not assignable
-    1082 |         compress_batching = 0;
-         |         ~~~~~~~~~~~~~~~~~ ^
-   3 warnings and 2 errors generated.
-
-
-vim +51 mm/swap.c
-
-    49	
-    50	/* Enable/disable compress batching during swapout. */
-  > 51	unsigned int compress_batching;
-    52	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
