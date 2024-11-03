@@ -1,65 +1,49 @@
-Return-Path: <linux-kernel+bounces-393943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8630D9BA7B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:42:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D6FD9BA7BB
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:50:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E3E41C20A99
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C40F1F21367
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D84B189F37;
-	Sun,  3 Nov 2024 19:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42D118A6DC;
+	Sun,  3 Nov 2024 19:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="kD1e3IaZ"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KM7PbOwT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03911CAB8;
-	Sun,  3 Nov 2024 19:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C27D14F9E9;
+	Sun,  3 Nov 2024 19:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730662921; cv=none; b=FyMrxLhKyTll0x5XIKhXmAh2OvgooPeGaEaOk0HA6+uGb/czYLG0wbuTvs5OlTiwAVL+n6Ertif14nMnGFAjwgXjiuMaDE7iz+tT2eZRzDQOfszz8okMbQHTzIlCx8aVSl1pAJWCDvd81N8D2KRlPrZNqi+ZsBpDZ2nNUzHz6to=
+	t=1730663428; cv=none; b=iBQMFm2rXiIML8JEO4K9YA5PR4CVbsUS7F0JXH9/4rlP1DHZgkpnHFiq83sHwaYcywdgCtN0LK1XUpzn377Rmj+YRWGG8F6bTmbR7L93YdZs06Q56Kd660zPtsp9LJIOzG57kLgHrtE/bM5hmn7peXqS/sY61x6LslJVh7S3fu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730662921; c=relaxed/simple;
-	bh=o0Pc2R9wuW7omPMTf/RTnyMCsJapsJt8yRyVB1HTJes=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WqfRtxNez4pSblOoEu9goXolP84AstvhFu8EuAG2nQArG90uQzl8Hq4WyDubIoOTrYoaccFL0sQAIY272untlKDxY6++YWrUOFPiyEiE9dPqFLjL7ulvaN0kkOcuqTrI0ibC7rn0glMdTakbXbHOqe6h6zFTNshy62O7zx3GD/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=kD1e3IaZ; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=fRIwc7I4KZcMP8rRONzc1mtVgIvo9wZ3VmVmgqHtqpI=; b=kD1e3IaZv+7HZNRB
-	sbaDSIh/tPOBs4Dk/ws2rNpjiRuAUQV11xiBG//7ysrNU0Qqo/yJJCRjWscExjM2o/kfRD2zLdeiO
-	6XzfOVGTi4p7ZxbAz4JupK4pXeD2RjzcxPRwD8848yPTxeC4QvgmqHq8SdtaL3yUS/Pmf51tG2KD0
-	lt8nK/Ow9mgRC0/PQndCiLyi4Q0nE5SOJjh/mQfMCeYI292RxG899PflTMufbFxglwYYi/Dod5NZQ
-	GglSbpXyaA+kH74A3jDrUqlIQ89kmsrSIZDgX+PFR2r0PraWuKiPTI+t5furVQNu+Gbp/2SXAT3XY
-	3VqkI7O7XEmuQygKcA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1t7gTu-00FCCo-0z;
-	Sun, 03 Nov 2024 19:41:50 +0000
-From: linux@treblig.org
-To: shayagr@amazon.com,
-	akiyano@amazon.com,
-	darinzon@amazon.com,
-	ndagan@amazon.com,
-	saeedb@amazon.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH net-next] net: ena: Remove autopolling mode
-Date: Sun,  3 Nov 2024 19:41:49 +0000
-Message-ID: <20241103194149.293456-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730663428; c=relaxed/simple;
+	bh=DwXnLqlGXWdhz7snuRCrc4GmO/s5ftOnkWrDN4a4hd8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=At9RrnUaYwOFqO88RIwulULty1b7DY+M2PrBWVo8FLhIKcmpLxHNJ2jknQLjpy8MjZlFGuj4XDjcWvMDFzW3bOV2w4Qe/7rmkI0rhfH7JZ4MQspDjAXiKdluTcbhAucuyQWo3PLbeDw0ILaQt60EDexKvfs6dnYxmrZcmDHJn9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KM7PbOwT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F971C4CECD;
+	Sun,  3 Nov 2024 19:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730663425;
+	bh=DwXnLqlGXWdhz7snuRCrc4GmO/s5ftOnkWrDN4a4hd8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=KM7PbOwTnKg1Uhuuv3ofs4QxYo0b1ZhhMaSF6QlOvALaI40/PiqKT4zLkG4CVZEW+
+	 GIPl6Pq4cW9gRQW51dr3Z5PeYU3accyTHW39ynULxn4ocECZeGrBS5auByOgtnKmho
+	 gN4rCsV7PxCM+9mdOOzOx3ZrW58dD0aaQrg/6rgLA9z67FyCm0aEEi5E9flvIJvkhc
+	 jvpvqObqeLNvX2owqMuhX7R99KQya/XztLArRHcA0BVenSdQaspKQ/GIRQ3etQbN90
+	 zPkWBAzZ2hLvZMJhzthzWSf5LeyTe7mj4vLb2ABZq6WfmhUOnSGQSwW7YPxty31Ula
+	 s+wogwN6S2+Vw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33ADD38363C3;
+	Sun,  3 Nov 2024 19:50:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,106 +51,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 0/2] selftest: netconsole: Enhance selftest to
+ validate userdata transmission
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173066343373.3240688.8461037491221753272.git-patchwork-notify@kernel.org>
+Date: Sun, 03 Nov 2024 19:50:33 +0000
+References: <20241029090030.1793551-1-leitao@debian.org>
+In-Reply-To: <20241029090030.1793551-1-leitao@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: kuba@kernel.org, horms@kernel.org, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, matttbe@kernel.org,
+ thepacketgeek@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, davej@codemonkey.org.uk, vlad.wing@gmail.com,
+ max@kutsevol.com, kernel-team@meta.com, aehkn@xenhub.one
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hello:
 
-This manually reverts
-commit a4e262cde3cd ("net: ena: allow automatic fallback to polling mode")
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-which is unused.
+On Tue, 29 Oct 2024 02:00:27 -0700 you wrote:
+> The netconsole selftest has been extended to cover userdata, a
+> significant subsystem within netconsole. This patch introduces support
+> for testing userdata by appending a key-value pair and verifying its
+> successful transmission via netconsole/netpoll.
+> 
+> Additionally, this patchseries addresses a pending change in the subnet
+> configuration for the selftest.
+> 
+> [...]
 
-(I did it manually because there are other minor comment
-and function changes surrounding it).
-Build tested only.
+Here is the summary with links:
+  - [net-next,v2,1/2] net: netconsole: selftests: Change the IP subnet
+    https://git.kernel.org/netdev/net-next/c/d051cd72dcb7
+  - [net-next,v2,2/2] net: netconsole: selftests: Add userdata validation
+    https://git.kernel.org/netdev/net-next/c/afa4ceb0fb64
 
-Suggested-by: David Arinzon <darinzon@amazon.com>
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/net/ethernet/amazon/ena/ena_com.c | 25 +++++------------------
- drivers/net/ethernet/amazon/ena/ena_com.h | 14 -------------
- 2 files changed, 5 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
-index bc23b8fa7a37..66445617fbfb 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -763,25 +763,16 @@ static int ena_com_wait_and_process_admin_cq_interrupts(struct ena_comp_ctx *com
- 
- 		if (comp_ctx->status == ENA_CMD_COMPLETED) {
- 			netdev_err(admin_queue->ena_dev->net_device,
--				   "The ena device sent a completion but the driver didn't receive a MSI-X interrupt (cmd %d), autopolling mode is %s\n",
--				   comp_ctx->cmd_opcode, admin_queue->auto_polling ? "ON" : "OFF");
--			/* Check if fallback to polling is enabled */
--			if (admin_queue->auto_polling)
--				admin_queue->polling = true;
-+				   "The ena device sent a completion but the driver didn't receive a MSI-X interrupt (cmd %d)\n",
-+				   comp_ctx->cmd_opcode);
- 		} else {
- 			netdev_err(admin_queue->ena_dev->net_device,
- 				   "The ena device didn't send a completion for the admin cmd %d status %d\n",
- 				   comp_ctx->cmd_opcode, comp_ctx->status);
- 		}
--		/* Check if shifted to polling mode.
--		 * This will happen if there is a completion without an interrupt
--		 * and autopolling mode is enabled. Continuing normal execution in such case
--		 */
--		if (!admin_queue->polling) {
--			admin_queue->running_state = false;
--			ret = -ETIME;
--			goto err;
--		}
-+		admin_queue->running_state = false;
-+		ret = -ETIME;
-+		goto err;
- 	}
- 
- 	ret = ena_com_comp_status_to_errno(admin_queue, comp_ctx->comp_status);
-@@ -1650,12 +1641,6 @@ void ena_com_set_admin_polling_mode(struct ena_com_dev *ena_dev, bool polling)
- 	ena_dev->admin_queue.polling = polling;
- }
- 
--void ena_com_set_admin_auto_polling_mode(struct ena_com_dev *ena_dev,
--					 bool polling)
--{
--	ena_dev->admin_queue.auto_polling = polling;
--}
--
- int ena_com_mmio_reg_read_request_init(struct ena_com_dev *ena_dev)
- {
- 	struct ena_com_mmio_read *mmio_read = &ena_dev->mmio_read;
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.h b/drivers/net/ethernet/amazon/ena/ena_com.h
-index 20e1529adf3b..9414e93d107b 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.h
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.h
-@@ -224,9 +224,6 @@ struct ena_com_admin_queue {
- 	/* Indicate if the admin queue should poll for completion */
- 	bool polling;
- 
--	/* Define if fallback to polling mode should occur */
--	bool auto_polling;
--
- 	u16 curr_cmd_id;
- 
- 	/* Indicate that the ena was initialized and can
-@@ -493,17 +490,6 @@ bool ena_com_get_admin_running_state(struct ena_com_dev *ena_dev);
-  */
- void ena_com_set_admin_polling_mode(struct ena_com_dev *ena_dev, bool polling);
- 
--/* ena_com_set_admin_auto_polling_mode - Enable autoswitch to polling mode
-- * @ena_dev: ENA communication layer struct
-- * @polling: Enable/Disable polling mode
-- *
-- * Set the autopolling mode.
-- * If autopolling is on:
-- * In case of missing interrupt when data is available switch to polling.
-- */
--void ena_com_set_admin_auto_polling_mode(struct ena_com_dev *ena_dev,
--					 bool polling);
--
- /* ena_com_admin_q_comp_intr_handler - admin queue interrupt handler
-  * @ena_dev: ENA communication layer struct
-  *
+You are awesome, thank you!
 -- 
-2.47.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
