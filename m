@@ -1,65 +1,67 @@
-Return-Path: <linux-kernel+bounces-393736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ED6E9BA49C
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:15:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517089BA49D
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 09:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0369E1F210AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 08:15:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8386C1C20C8E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 08:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B756915B992;
-	Sun,  3 Nov 2024 08:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AD01632C6;
+	Sun,  3 Nov 2024 08:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YB+7CW8g"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdvTciC7"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8729612D1F1
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 08:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B75913AD1C
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 08:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730621695; cv=none; b=hTxrIGPb/foC2WnvYoo60EvhUVFIaFBIOpmRCL+ceoxjsbEIKANyc4Gv3e8Ss4KW9+CqR/AdsiquKS6OoVVzrJ2i3UZ1MJleX8Z9m8OAFYHrZkgVMyE3td68QBAhGssOky5HMfVkxfY/VRKAYCUy2bQdpNp5NQuyCNnWL5iXTwg=
+	t=1730621696; cv=none; b=YJDpQiEafCW6ei810wQWbumU2xfxz2B64bE6wB4hXGFDEmk/9Vu6777UYK7xCZtKtEKdH+n3I9QldpLwKSeFDsxWD0MbS5+29KsrG7HiywzaITNCeqVg8RHJ8zlCHcpSHLDVgu3eV9m++DGKtSGokW9nKhuaf1dh1oyYb20w+ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730621695; c=relaxed/simple;
-	bh=tGyWjiAJbZxq/gN0M7wjwAgXTCkZu7rn9lglOUWEvDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GUQS5JW4mSeYAg9E4M+EjClC6d8dtEuuGVX8ZHP+gZT4wWQZUzPk3Z3+QENXhuOScuawarau+BWuJnWppzayuQHh/oPw8gKhaL1kavcPfVR36BXyJLywrfWwufV6fKgYMzKv/zRTr1T12EqObGJ0S0tVd4okblh21XQhbAXfskk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YB+7CW8g; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1730621696; c=relaxed/simple;
+	bh=qv7bUIiaq2d6hSz6mAsLCXekBE2vtahVMxlhVFAYAWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CQg9aE3pIbH6AFw7FSJZ8IvMJ3oSlESe5CejoGLUqMbzAaa6zqoF/o/6fPWoSgkfMSQyhSzViGaqTjoXDXRAF14ur5JvBrE/f2uqeIe59+q6wTZLPgFL/2WJHkF//pSMBUMU4ao9naPkGURP1+yZyeO4j0yP59jOt66f8R05soI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdvTciC7; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a0c40849cso554280466b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 01:14:53 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so4719063a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 01:14:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730621692; x=1731226492; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g6htMrnylFQ5DMO55G9HZDuKW8oHvcVuvmDwZaXk8jY=;
-        b=YB+7CW8gLCu2AikjIYY8CgCADyZVi88i+xNtpdLQM6rN+OaRfdfYQNhl0YrVEkGIeL
-         0QltVRDamTGNdx8ZG8N3ulqkrg9fccf+rcwz/Qrpy4dXQ7+ZbFdPm1d1h8QgR3lAMZnI
-         y/aZKVUy9RRUyYlVvps2nCJZrDEFM4Fm13W3gLqIsKz88FURheHZTQXtfnQTWbrl1ghL
-         +ORNd6INdTVjbzJqLfBzj5ldpnlaW3fXT1lPWEMrYSG44+ZCwn53EHzFdW54yCZ6OkdB
-         TCV7+t/6dxyZ367L0X/8cQe1j2ehfqPNdD284eEUpp4l8LLE1Q8F8RCMZxJj8t2uF96u
-         iM3g==
+        d=gmail.com; s=20230601; t=1730621693; x=1731226493; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dxXy904MrrPlMw4v+3cBS52GXFzaVx4wVG0zuSO1/wM=;
+        b=IdvTciC77S4kB8rfi0QrD/24q/Vv5n4s6Qu/ifsLQXHM/XBu7pNCaMTL4gRMm0XJRL
+         yEuQFSp3EKzUYI23drRbyd/1mJDV5ora/xSxLjy6f6T8LEEAl1vW7lfROmYgwy+vjTwT
+         awZNjLZ00qoLfehWmeQ+DVpInG4kK9rl3azGkfxiPVZYI4EAUN+P14lae0SWd5UjsOkw
+         NjcnpfQbqW2meUinhlRjBehKLXoyIPApSCt3x9S5Ghw7WpMTKhzFi4mkFAGLChR+FX9z
+         HE3X5Qu8donNE6K09nucufAygBbrr5zHRq5aVK0tS8m36QsviLyEKxJoad43LwLqtvvq
+         7T2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730621692; x=1731226492;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g6htMrnylFQ5DMO55G9HZDuKW8oHvcVuvmDwZaXk8jY=;
-        b=TPzbxD6tIRadtam33H0ZpVQoAORlZ+iEM6Uw4MvutIpvDUs5FuFcamukRhgZvQSNDK
-         1R/fuOys6n31lIZNgL8Ztdcf0FBJVJ+cltCY6x02aVJV0qWMvUp3zlZG0QtwUu2pQRyR
-         7pFS2mg102/OtG4KRaoYx1V7zBYBw4zfBfGo2dRQw/p4fbDppGWfEemSvMm/jqjsEH68
-         GFgNHJL59ylXvW9HivuLy+/4zRxHKFjRtYFy+V4b/9oKPJim/1aPUTsCk+ePhJVjKvS5
-         +l/NqBXIhtbua2CHYHv9mgRcPNHQSU8XA4fQGJEXueVQCn4tCkGT9+5mTW0UjufKdLkm
-         z4Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrK8AssI4pnS5a+TDOup7dyDKU/Y2PS1W2/pRgeqefw0jUJEClGlivcKetQI78b0RS2h5We1YbwBgi6AE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN19a2CsO72T9mPAgVtgShfVY2a0sAXWS1tuHdCeLHYOOOOunV
-	88iOzGTz9Fi1103VP89t5nvKMCO0ARGLIqmVbMi3Qtz5Jx50iXotpfg0+A==
-X-Google-Smtp-Source: AGHT+IHtGFMxr/aiUCl4Ra72qgRMg0tYZtDJrt/wjc8HKWPsenfaF9Vcb1xKm8oQkVne20M6McdNCA==
-X-Received: by 2002:a17:907:7292:b0:a8a:6c5d:63b2 with SMTP id a640c23a62f3a-a9e3a5a049emr1654792266b.18.1730621691688;
-        Sun, 03 Nov 2024 01:14:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730621693; x=1731226493;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dxXy904MrrPlMw4v+3cBS52GXFzaVx4wVG0zuSO1/wM=;
+        b=orvtPsTnv9KYWWbX1502+MWqpBWbUX58RHOvFRhctxyg3TR9h6+hUjKuCoxbJpGjdE
+         SOfzXh90HzTNFhEJq74N4KeTo8jf6Z/PpQhERvjyhDVCOQTyx6RQcuFpsUVBQFEXvTty
+         LcBu15Dm2sF795hHzOpv7yhqC864rtZa6NEFcO5k2fIByravCAPtDLnEWMyohdMtIQsA
+         VpdenveigOCIzcgKrxHiJZA3ut6u1KNoEBqzriNqj+qO39DTfw8wBscJlvFb8mC65NA6
+         mJh9o/71JC0zgXUy/WpdH2d103a8xn+4JsHpxt6bReOE4GKw1PKN+9zIfBwFlZN5TCDL
+         H8FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIawTOyw+sTQcOitVM4HFGAuLLqvDDXcq0JG9HE+X2UC+4z5TjH3YIakCmSm/VLAJtt+oWWcwJbzAQfbQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsgZTsRWsnlmeA+dqvyh0qlDH2/ldRPtDYjeriDc+onAYqBunn
+	XEUqcoFJDozqvf4/jrDZ1Bydr3UWXXitcsKXNyEvBcQYVkqrkfcn
+X-Google-Smtp-Source: AGHT+IF4nZRc+yG/Id2cJXxcIpm90HTJ+ULR7N6gzEr5j8Dy5NfJSFtPsiTljl4GcW76fwZlRV2gCg==
+X-Received: by 2002:a17:907:7e8c:b0:a9a:29a9:70bb with SMTP id a640c23a62f3a-a9e3a59d563mr1707138366b.14.1730621692286;
+        Sun, 03 Nov 2024 01:14:52 -0700 (PDT)
 Received: from kernel-710.speedport.ip (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac789152sm3097882a12.43.2024.11.03.01.14.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -69,10 +71,12 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Subject: [PATCH 00/13] staging: rtl8723bs: Replace function pointers and #if 1
-Date: Sun,  3 Nov 2024 09:14:21 +0100
-Message-ID: <cover.1730619982.git.philipp.g.hortmann@gmail.com>
+Subject: [PATCH 01/13] staging: rtl8723bs: Replace function thread_enter
+Date: Sun,  3 Nov 2024 09:14:22 +0100
+Message-ID: <6946fae41575fffff1d4718cb3a96cd53f655416.1730619982.git.philipp.g.hortmann@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1730619982.git.philipp.g.hortmann@gmail.com>
+References: <cover.1730619982.git.philipp.g.hortmann@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,41 +85,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace function pointers with functions to increase readability.
-Remove dead code resulting from #if 1.
-Replace one function that just contains one line to increase readability.
+Replace function thread_enter with its only called function allow_signal
+to increase readability. Remove resulting unused local variable
+thread_name as well.
 
-Tested with rtl8723bs in ODYS Trendbook Next 14
+Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_cmd.c          | 2 +-
+ drivers/staging/rtl8723bs/core/rtw_xmit.c         | 2 +-
+ drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c    | 4 +---
+ drivers/staging/rtl8723bs/include/osdep_service.h | 5 -----
+ 4 files changed, 3 insertions(+), 10 deletions(-)
 
-Philipp Hortmann (13):
-  staging: rtl8723bs: Replace function thread_enter
-  staging: rtl8723bs: Remove #if 1 in function
-    hal_EfusePartialWriteCheck
-  staging: rtl8723bs: Remove #if 1 in function
-    hal_EfuseGetCurrentSize_BT
-  staging: rtl8723bs: Remove #if 1 in function ReadChipVersion8723B
-  staging: rtl8723bs: Remove function pointer check_ips_status
-  staging: rtl8723bs: Remove function pointer SetHwRegHandler
-  staging: rtl8723bs: Remove function pointer GetHwRegHandler
-  staging: rtl8723bs: Remove function pointer SetHwRegHandlerWithBuf
-  staging: rtl8723bs: Remove function pointer GetHalDefVarHandler
-  staging: rtl8723bs: Remove function pointer SetHalDefVarHandler
-  staging: rtl8723bs: Remove function pointer hal_xmit
-  staging: rtl8723bs: Remove function pointer mgnt_xmit
-  staging: rtl8723bs: Remove function pointer hal_xmitframe_enqueue
-
- drivers/staging/rtl8723bs/core/rtw_cmd.c      |  2 +-
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  2 +-
- .../staging/rtl8723bs/core/rtw_wlan_util.c    |  4 +-
- drivers/staging/rtl8723bs/core/rtw_xmit.c     |  2 +-
- drivers/staging/rtl8723bs/hal/hal_intf.c      | 40 ++-------
- .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 85 +------------------
- .../staging/rtl8723bs/hal/rtl8723bs_xmit.c    |  4 +-
- drivers/staging/rtl8723bs/hal/sdio_halinit.c  | 21 ++---
- drivers/staging/rtl8723bs/include/hal_intf.h  | 22 ++---
- .../staging/rtl8723bs/include/osdep_service.h |  5 --
- 10 files changed, 27 insertions(+), 160 deletions(-)
-
+diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+index 68b5d8ca900f..64ce33c6fba1 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
++++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
+@@ -382,7 +382,7 @@ int rtw_cmd_thread(void *context)
+ 	struct cmd_priv *pcmdpriv = &padapter->cmdpriv;
+ 	struct drvextra_cmd_parm *extra_parm = NULL;
+ 
+-	thread_enter("RTW_CMD_THREAD");
++	allow_signal(SIGTERM);
+ 
+ 	pcmdbuf = pcmdpriv->cmd_buf;
+ 
+diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+index 3e88f14e3bf7..699cff7b0ac9 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
++++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+@@ -2489,7 +2489,7 @@ int rtw_xmit_thread(void *context)
+ 	err = _SUCCESS;
+ 	padapter = context;
+ 
+-	thread_enter("RTW_XMIT_THREAD");
++	allow_signal(SIGTERM);
+ 
+ 	do {
+ 		err = rtw_hal_xmit_thread_handler(padapter);
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
+index 78298e63edce..5dc1c12fe03e 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
+@@ -411,14 +411,12 @@ int rtl8723bs_xmit_thread(void *context)
+ 	s32 ret;
+ 	struct adapter *padapter;
+ 	struct xmit_priv *pxmitpriv;
+-	u8 thread_name[20];
+ 
+ 	ret = _SUCCESS;
+ 	padapter = context;
+ 	pxmitpriv = &padapter->xmitpriv;
+ 
+-	rtw_sprintf(thread_name, 20, "RTWHALXT-%s", ADPT_ARG(padapter));
+-	thread_enter(thread_name);
++	allow_signal(SIGTERM);
+ 
+ 	do {
+ 		ret = rtl8723bs_xmit_handler(padapter);
+diff --git a/drivers/staging/rtl8723bs/include/osdep_service.h b/drivers/staging/rtl8723bs/include/osdep_service.h
+index b21267d7ef72..8b1634f4091e 100644
+--- a/drivers/staging/rtl8723bs/include/osdep_service.h
++++ b/drivers/staging/rtl8723bs/include/osdep_service.h
+@@ -73,11 +73,6 @@ int _rtw_netif_rx(struct net_device *ndev, struct sk_buff *skb);
+ 
+ extern void _rtw_init_queue(struct __queue	*pqueue);
+ 
+-static inline void thread_enter(char *name)
+-{
+-	allow_signal(SIGTERM);
+-}
+-
+ static inline void flush_signals_thread(void)
+ {
+ 	if (signal_pending(current))
 -- 
 2.43.0
 
