@@ -1,175 +1,137 @@
-Return-Path: <linux-kernel+bounces-394040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F8E9BA993
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 00:33:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E169BA995
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 00:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D84661C20D9D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 23:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3539281992
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 23:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7D418C034;
-	Sun,  3 Nov 2024 23:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F1F18BBA3;
+	Sun,  3 Nov 2024 23:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HfJhyw37"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MGcFqUSc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4F67083B
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 23:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D46015B13C
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 23:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730676785; cv=none; b=bB/kfRMMjMQEBfslyg+XCEKpAtpnLrUk6jk70Hl8JP4t2J91KNLCQ+t+NNMNN/EUApFOEuPCbUjjt+h2cEFEwGQAUQ5XYCTbdh3HqmlNcnfzhS6ekWO7Y2pa3fWNUI2A0W8ijICqfgK84yFANDYZRMV3uHoUkAZ2dlXJC6TuaOs=
+	t=1730677203; cv=none; b=UGO3KxVMrZBnDQ0Q/jh+XdOxBi7F8SwapHb5ySnjJ34neOJerPC22jNWcIgAOOVXiWA3sZsb8beiglHHVoqEbrg5Rg/p+SchAGM3PR9eP9YsJOrbbKh8UKWjGik6YCVjL/uGpaa3JJQ6EjfagpBaZI5+PLCWGh9uNtmzXsZbfuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730676785; c=relaxed/simple;
-	bh=aRMlHF38CgRP8yr9oPnoK/NA6cE/l4b2werExZJOuRc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=q4gDDfkwkwVQDWJ1ru6wNj7KS6d8G79U/93asUqJoX8XNmQukSszAqNy6UxwhHGND41iFVH0cUUkKydcWtmK/sAKJCNnnp/KDps+I+R/dIK+26m4drNffFjtIlZJG8942j4OBfpB7e3KZQ4/7+o+cZE2L/S4QvEC4lGShULa2hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HfJhyw37; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730676782;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2bindCkDXpRRg/nRYUpBwCleyN9XpvX9N5bEM4bQSDs=;
-	b=HfJhyw37HiQcXjCn6i5xPiX42HCZX6vvpxTHtulFlTOYg8LAPFSEWsihW4SDQEjUboBxgE
-	4+4mguAObi3n6kSuDIC0IukRfZ/D2hlKPwNiIdP10DFtY9EYWFYKrQsu+nHMnry94cLeul
-	odoESQ2Zh/QnyuJS9+zCakmuRcOPdwE=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-496-7BwTc5HIM36NycGQsEOAWQ-1; Sun, 03 Nov 2024 18:33:00 -0500
-X-MC-Unique: 7BwTc5HIM36NycGQsEOAWQ-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d366683f4aso32720396d6.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 15:33:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730676780; x=1731281580;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2bindCkDXpRRg/nRYUpBwCleyN9XpvX9N5bEM4bQSDs=;
-        b=J3ZeOn9QmknRgap9kNe/rKfK9FD38xlapHhQ8xCAYSGll1WoZiJPJbzxP/vAwYn8mZ
-         dbmsuuq0/iDa9+ECThl286L707LQuRXXd+PpOf2CTeGHbjw/cmR8otq9UjYXXbuiX9k6
-         ltwsTwjWZ4jpFGgY1MYR1idAfQ9gyL6tgRzpKVuBdfJzk/ZuXAz5PHj+9Dt8J8exbS1T
-         CLj5ok4blViD6llK2RlI3OCVaXrkdLg2r61Xg/5BZmM4JUXpsijl+Zg3OWubV1t0LlTY
-         0kJrdWY3fJJtvYtOgyLrdSJniKgMOl3HTEJiqf6HHV7As09QUZxMwjsa0ZDnRVR1zUcA
-         b8ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVVC4SztQfUTMzhCwP0ONDDRyImC9E+Lw3o+AO73AJ3WeLMGt2L0KS97cpNmHKFRFlW0iqhwMvhl5/Msfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMjuFIYX98dcvYsz/NYca4hrr8147csfTNxFLTXCrgFtUwAmyg
-	PU7LrDiEvGs3Pyhw2ETb2teLmkIj3a9bO8ykfLk0TRGXsL/DphDwxUlGdcDB8Naas2jrgk7cDPI
-	0GOaHH/k7pj2txJxwPYGM5EbE2jY2WcNp5/gkF7P/obpE0/zQs5YDl6V2GWWmZGAyeO3xww==
-X-Received: by 2002:a05:6214:53ca:b0:6ce:233c:1d5d with SMTP id 6a1803df08f44-6d35c18958cmr194281096d6.38.1730676780103;
-        Sun, 03 Nov 2024 15:33:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHyubI4rjwUG5eNtfks/Kffu91OVSAu7mglAq+5BIBmLSqgeS27yg7f7xc5/QVZegw7s6a3Cw==
-X-Received: by 2002:a05:6214:53ca:b0:6ce:233c:1d5d with SMTP id 6a1803df08f44-6d35c18958cmr194280656d6.38.1730676779483;
-        Sun, 03 Nov 2024 15:32:59 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:760d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353fef918sm42103556d6.73.2024.11.03.15.32.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 15:32:59 -0800 (PST)
-Message-ID: <948408887cbe83cbcf05452a53d33fb5aaf79524.camel@redhat.com>
-Subject: Re: vmx_pmu_caps_test fails on Skylake based CPUS due to read only
- LBRs
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sun, 03 Nov 2024 18:32:58 -0500
-In-Reply-To: <Zx-z5sRKCXAXysqv@google.com>
-References: <c9d8269bff69f6359731d758e3b1135dedd7cc61.camel@redhat.com>
-	 <Zx-z5sRKCXAXysqv@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1730677203; c=relaxed/simple;
+	bh=AgMAytFD6mOfZ8EleKgFBj8q4jKZfEy7E5l5B7tI+oU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=khBSWjY2dEXbmTUjFWAYtAYI+t+5dGZxGvF7z7D2S5dpl0ZMieZfO4+/P2nGVrPoLMRyfFu6khSYyJnRpwjzmDfsPjOniIUKCoMEEjHftSo4exrD2UnJPZrw7bakMhTL/LM6Xm+adOFvcO+CMvmsLaskur3Be1nWdE3NNWTMyWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MGcFqUSc; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730677201; x=1762213201;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=AgMAytFD6mOfZ8EleKgFBj8q4jKZfEy7E5l5B7tI+oU=;
+  b=MGcFqUSc2YRG9TqSNd15rE9dIYhCr2WrUKwy56+hJ18rK5+vyCNtnZ3J
+   5a1gsC1zc5HTHofwFGAU9XGJF+TUbN0eFRU0m5riQJdRI+RIUtyMSDGBG
+   liguC5C5x01df52m2rpIBGQzKr4DJh3Mw9SVZ2l8Scp5VBw2q3Z2xil6j
+   YMsGccgY7s1CllDa0XlBs7Vr8hJ518HIjIJMqKlaxZg85GZ57QCDe43Fk
+   3mQzU2JqKfBtaRFHTB+cNijbwtlQwFXxUpYzol3oojC+oswVRTyoAHl3g
+   DDACJRrB1UPGBa22xj0/ZJ8C/g8RAiCQm5Lwm+ivj6TFR8aJH1V+qS+UH
+   A==;
+X-CSE-ConnectionGUID: wRaJfRplTKae+ideVv4hEw==
+X-CSE-MsgGUID: 6dGKfH5PTvWLyN/o9OdcxQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30525340"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30525340"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 15:40:01 -0800
+X-CSE-ConnectionGUID: f0ptDYsFTtyysaQ2xZ19Pg==
+X-CSE-MsgGUID: fvKMrsloTcCT9ACbcEdW5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="83933616"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 03 Nov 2024 15:39:59 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t7kCK-000kI1-2w;
+	Sun, 03 Nov 2024 23:39:56 +0000
+Date: Mon, 4 Nov 2024 07:39:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jian Shen <shenjian15@huawei.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peiyang Wang <wangpeiyang1@huawei.com>,
+	Jijie Shao <shaojijie@huawei.com>
+Subject: drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:395:21: error:
+ 'struct iommu_iotlb_gather' has no member named 'start'
+Message-ID: <202411040704.UsG2WLc7-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 2024-10-28 at 08:55 -0700, Sean Christopherson wrote:
-> On Fri, Oct 18, 2024, Maxim Levitsky wrote:
-> > Hi,
-> > 
-> > Our CI found another issue, this time with vmx_pmu_caps_test.
-> > 
-> > On 'Intel(R) Xeon(R) Gold 6328HL CPU' I see that all LBR msrs (from/to and
-> > TOS), are always read only - even when LBR is disabled - once I disable the
-> > feature in DEBUG_CTL, all LBR msrs reset to 0, and you can't change their
-> > value manually.  Freeze LBRS on PMI seems not to affect this behavior.
-> > 
-> > I don't know if this is how the hardware is supposed to work (Intel's manual
-> > doesn't mention anything about this), or if it is something platform
-> > specific, because this system also was found to have LBRs enabled
-> > (IA32_DEBUGCTL.LBR == 1) after a fresh boot, as if BIOS left them enabled - I
-> > don't have an idea on why.
-> > 
-> > The problem is that vmx_pmu_caps_test writes 0 to LBR_TOS via KVM_SET_MSRS,
-> > and KVM actually passes this write to actual hardware msr (this is somewhat
-> > wierd),
-> 
-> When the "virtual" LBR event is active in host perf, the LBR MSRs are passed
-> through to the guest, and so KVM needs to propagate the guest values into hardware.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   a8cc7432728d019a10cb412401ebc15ed7504289
+commit: f2c14899caba76da93ff3fff46b4d5a8f43ce07e net: hns3: add sync command to sync io-pgtable
+date:   4 days ago
+config: sparc64-randconfig-002-20241104 (https://download.01.org/0day-ci/archive/20241104/202411040704.UsG2WLc7-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241104/202411040704.UsG2WLc7-lkp@intel.com/reproduce)
 
-Yes, but usually KVM_SET_MSRS doesn't touch hardware directly, even for registers/msrs
-that are passed through, but rather the relevant values are loaded when the guest vCPU
-is loaded and/or when the guest is entered.
-I don't know the details though.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411040704.UsG2WLc7-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/net/ethernet/hisilicon/hns3/hns3_enet.c: In function 'hns3_dma_map_sync':
+>> drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:395:21: error: 'struct iommu_iotlb_gather' has no member named 'start'
+     395 |         iotlb_gather.start = iova;
+         |                     ^
+>> drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:396:21: error: 'struct iommu_iotlb_gather' has no member named 'end'
+     396 |         iotlb_gather.end = iova + granule - 1;
+         |                     ^
+>> drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:397:21: error: 'struct iommu_iotlb_gather' has no member named 'pgsize'
+     397 |         iotlb_gather.pgsize = granule;
+         |                     ^
 
 
-> 
-> > and since the MSR is not writable and silently drops writes instead,
-> > once the test tries to read it, it gets some random value instead.
-> 
-> This just showed up in our testing too (delayed backport on our end).  I haven't
-> (yet) tried debugging our setup, but is there any chance Intel PT is interfering?
-> 
->   33.3.1.2 Model Specific Capability Restrictions
->   Some processor generations impose restrictions that prevent use of
->   LBRs/BTS/BTM/LERs when software has enabled tracing with Intel Processor Trace.
->   On these processors, when TraceEn is set, updates of LBR, BTS, BTM, LERs are
->   suspended but the states of the corresponding IA32_DEBUGCTL control fields
->   remained unchanged as if it were still enabled. When TraceEn is cleared, the
->   LBR array is reset, and LBR/BTS/BTM/LERs updates will resume.
->   Further, reads of these registers will return 0, and writes will be dropped.
-> 
->   The list of MSRs whose updates/accesses are restricted follows.
->   
->     • MSR_LASTBRANCH_x_TO_IP, MSR_LASTBRANCH_x_FROM_IP, MSR_LBR_INFO_x, MSR_LASTBRANCH_TOS
->     • MSR_LER_FROM_LIP, MSR_LER_TO_LIP
->     • MSR_LBR_SELECT
->   
->   For processors with CPUID DisplayFamily_DisplayModel signatures of 06_3DH,
->   06_47H, 06_4EH, 06_4FH, 06_56H, and 06_5EH, the use of Intel PT and LBRs are
->   mutually exclusive.
-> 
-> If Intel PT is NOT responsible, i.e. the behavior really is due to DEBUG_CTL.LBR=0,
-> then I don't see how KVM can sanely virtualize LBRs.
-> 
+vim +395 drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
 
-Hi!
+   380	
+   381	#define HNS3_INVALID_PTYPE \
+   382			ARRAY_SIZE(hns3_rx_ptype_tbl)
+   383	
+   384	static void hns3_dma_map_sync(struct device *dev, unsigned long iova)
+   385	{
+   386		struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
+   387		struct iommu_iotlb_gather iotlb_gather;
+   388		size_t granule;
+   389	
+   390		if (!domain || !iommu_is_dma_domain(domain))
+   391			return;
+   392	
+   393		granule = 1 << __ffs(domain->pgsize_bitmap);
+   394		iova = ALIGN_DOWN(iova, granule);
+ > 395		iotlb_gather.start = iova;
+ > 396		iotlb_gather.end = iova + granule - 1;
+ > 397		iotlb_gather.pgsize = granule;
+   398	
+   399		iommu_iotlb_sync(domain, &iotlb_gather);
+   400	}
+   401	
 
-
-I will check PT influence soon, but to me it looks like the hardware implementation has changed. 
-It is just too consistent:
-
-When DEBUG_CTL.LBR=1, the LBRs do work, I see all the registers update, although
-TOS does seem to be stuck at one value, but it does change sometimes, and it's non zero.
-
-The FROM/TO do show healthy amount of updates 
-
-Note that I read all msrs using 'rdmsr' userspace tool.
-
-However as soon as I disable DEBUG_CTL.LBR, all these MSRs reset to 0, and can't be changed.
-
-I'll check this on another Skylake based machine and see if I see the same thing.
-
-Best regards,
-	Maxim Levitsky
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
