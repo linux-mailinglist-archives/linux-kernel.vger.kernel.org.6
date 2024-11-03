@@ -1,123 +1,220 @@
-Return-Path: <linux-kernel+bounces-393813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A2C9BA587
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:04:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F9A9BA590
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 14:09:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CD1F1C20F96
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:04:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F44F28194E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B55F175D44;
-	Sun,  3 Nov 2024 13:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BA3175D38;
+	Sun,  3 Nov 2024 13:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Q3Ikl0D6"
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="luModrrd"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8A917333D;
-	Sun,  3 Nov 2024 13:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27F823774;
+	Sun,  3 Nov 2024 13:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730639068; cv=none; b=aVUv76g8bzfXGj/50So1zI92S+yDOMW+TFgbtd+BX3zvcad2EymRTBs1ZAnM2FhJ+AFgzUrB+ZVCI/LxQtBDvRM39ko54gg2BHFoXG9DXtPZ7EeEMaTU7vodh1c1+kKhN570E+2kyGa5x+1wsgavLtIoP/KrAcHUqIh/VQswDLQ=
+	t=1730639364; cv=none; b=UhMd1xh7NQD9vcgH3yMDb11wf02GVbdISaxWp/d68Gi0B+X0YB7kVZi2nTGXML8082y1NCRG5buUjQAq7brwd4YLw3PNgaTlURh07g0Rortenwte2+5H9z3jaI4yvmhDYOodJO2NzI0AKkiwFy0SOPohn9FB7jpyvgv/+mRdON8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730639068; c=relaxed/simple;
-	bh=ODJroqZj1uoighLdkdsPQQeYCsIVdSL6P/2DhfeKrS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jtdabaX400lJf7nge1FiPJ+oGktPaPzXF0kbFOa9BYcnj4yVDPuJUgCHirc29UqRffVGbxj1hd3MiXKQGB2f8WPPy8Nw8LwZDSRV/yypm2vgd/4mAxd408zrE31G5ga7KOBO2NBvDD8Ia5hvKXERzZA0fXUFnViyPAJrL8AT4gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Q3Ikl0D6; arc=none smtp.client-ip=43.154.197.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1730638914;
-	bh=uRk01ZwI+/XBmQqQYE25XRQ/hWGGUvmspCgkKFpABU0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Q3Ikl0D6X3z0kc/MdUDq6Fa7mN1/W2DPER6AJe+ArF+VEmew3m/3gi43dZQTRM4D8
-	 gNgTSs6ggSgluhttvrMQfRaDjN5SV0o+7nlPhWOdOtMLFFlnPHzGe9NyCxATQE67jY
-	 df+JTa0pq668fE0Xkm/iz3UXlCPXgD0AyBPtwFUY=
-X-QQ-mid: bizesmtpip4t1730638859trvs6a5
-X-QQ-Originating-IP: y9tNHnU1Lp8NnZXvgBoRGehnl20jiKdBdFrs5GtSrik=
-Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 03 Nov 2024 21:00:58 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7277173148730909127
-From: WangYuli <wangyuli@uniontech.com>
-To: tsbogend@alpha.franken.de,
-	wangyuli@uniontech.com,
-	dhowells@redhat.com,
-	jlayton@kernel.org
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	jiaxun.yang@flygoat.com,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com,
-	xuerpeng@uniontech.com,
-	maqianga@uniontech.com,
-	baimingcong@uniontech.com
-Subject: [PATCH 2/2] MIPS: loongson3_defconfig: Enable blk_dev_nvme by default
-Date: Sun,  3 Nov 2024 21:00:05 +0800
-Message-ID: <F56016A1645609BF+5d1de4afc8ee6bacf8878461b848de72b556c85f.1730638429.git.wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1730638429.git.wangyuli@uniontech.com>
-References: <cover.1730638429.git.wangyuli@uniontech.com>
+	s=arc-20240116; t=1730639364; c=relaxed/simple;
+	bh=guXELeytpG22NADybLXxugiStFOd+DdhkkVWeTpYpvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EiwtcaNoNqmxMoFJskMf0DwQwq+5qK9GXPI0ZNFA+zE628nAYbGBqymYciNmhnmIVe/CU7RXlaOsPeqQRFNwUU2N7XLuZNwq7VQyfQg52MIEA1lz3Nz+yOsL3XgL2xmzsLEmUnfojX3OWaUriOo7PUINhfXnHQCJL1xpxbgOWws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=luModrrd; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 7aLrtuVZGGfMn7aLrt2ZJd; Sun, 03 Nov 2024 14:09:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1730639353;
+	bh=pHCYMRyEhUD58GA3IYCTR1CfQUuJWA0GVifKU3o2xlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=luModrrdwcGEIRjb4I/DgierMEI21v2l9+D4OLiHpFiQ/o5mxJZNY5ktBocmR2DxI
+	 HF53OlIc+M5352fldvfSHl04LKpI7WpYAq1qQ3HyETKnHfTj1fVvqR/44FRTvnhC43
+	 /cXUW4MEuF4/lUqHIs4npnWFJJGMHOg9/5EMw+orXtbbLHi0nA1dw+Uisv/OWT7KUS
+	 h6S4slSIV1G/0gMAl6/vfcyw4Kv1Y7uVupPr6ADHCcGP0mni5PY6Gxy+vZnp+pe8Mi
+	 4k5nr7vZgwmq+mt3mMSVwCq4OCbW7aMxNzW7PTqOksalYlmKCyhgChkKdMTiTgqi9o
+	 KB2RORauQAwyA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 03 Nov 2024 14:09:13 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <96938e54-70cf-4e81-9072-8af48883a769@wanadoo.fr>
+Date: Sun, 3 Nov 2024 14:09:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
+To: Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Heiko Stuebner <heiko@sntech.de>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, YiFeng Zhao <zyf@rock-chips.com>,
+ Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
+ <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NDNaZgy3Og6A0GzPyTs2JGuO1Po2hiZtI1fZRMiWkK38wG8V5gNBXI3d
-	P8wVLZ6iuSMhx6fA7WVN5zFe2le/bMUtXvbTSZtEoK1LzlrXOeFTFqut7QyGfIHn0ovr5ih
-	RNLWjWY2E/5vUwdDgUTvt4k0gatn3yDxraJZYDRJEjyxlphlDLL8Y3vTucaaBTCUIIOA0c3
-	JH2p/UqbQ5ilLqn9yTMKI9S/19bUbVtUy3Yxmbw9G9E3Rrlx8Ht91VQ2OLziidCbIy3pXB9
-	7ZXzplGJhucCy78+WuWYwNDrVbW9cM7mUsFTDLrR+1dJkYmpMRlHWFI1TJ+qiB9WA1HjvHd
-	oAIG1VKWtbJMBXUZUZHU8vxgrd0DEv6cq5ETGPsursesJ3JPCElhYxSm++9avsaMRPE9nEa
-	JV39esNHkfD4QPHOuwSQ7X6/eZYtKcgGMbtRWpf6HQ9b5rsfR6GYjjXSIWxoJ6LptYdDZNO
-	J4K0Obvcj9Xr/6GIHAAGizi8lsjQDfpMvJL5pUoZDHOsVHISml2UQcTC0lG95iMc64RWI5U
-	WO6NBW9dYZv5WbtkF9mVR+P8V2fsYh3NMpHDwSM5wsE6XlaPBKF5J5LcPeO2iEouS8FHA3i
-	rADJIwExyHHtOtaiJCn4y0ldPSp99h3o83lCMKbaG3q3qHIvYhl9yZhVdAGjqMq5L68mtdP
-	MXZk5QRie0vNjcfBU25nhkR3gch9EVZId7TlYbpw71rNhajq2G2b9TzZdU9+fjDsRrgxC91
-	kOcGhmU79eB8x4aSZblZqWtZfqlpgvei2ngqN/IhqusBnjOsGaIO+Dvd04XFk+zataxJaSu
-	BEObPs0XpKGCTSjLow0SpJmISTFCqMEgYN8mHXgdqAiZZVK8CewfPtB6n3AsftJ7Sv6RhuM
-	xxtdZVX5mR7er7mJ9iQCuPuM2p2tsUhQrK7n09+GDLDSOx6YzK7/Spz/8iyE6jhPOEuE8pu
-	k7e9k6N2yROd0u32DeTiHaxYfGgo/vOY2W+dDanVdEtgi1iX2nHEhfhBshK3+cCP0ci/aYA
-	LjfNH5KRWQJtMh1Mn+jE0YqtDZFOPldWkiVi+FKQOC1H48nVYDVoln76kPCDCT1KI75SApC
-	g==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
 
-A significant number of 3A4000 machines come with NVMe drives
-pre-installed, so we should support it in its defconfig.
+Le 08/10/2024 à 08:15, Shawn Lin a écrit :
+> RK3576 SoC contains a UFS controller, add initial support fot it.
 
-Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
-Tested-by: Qiang Ma <maqianga@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/mips/configs/loongson3_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+s/fot/for/
 
-diff --git a/arch/mips/configs/loongson3_defconfig b/arch/mips/configs/loongson3_defconfig
-index 30837f3b6acd..98844b457b7f 100644
---- a/arch/mips/configs/loongson3_defconfig
-+++ b/arch/mips/configs/loongson3_defconfig
-@@ -141,6 +141,7 @@ CONFIG_BLK_DEV_LOOP=y
- CONFIG_BLK_DEV_RAM=y
- CONFIG_BLK_DEV_RAM_SIZE=8192
- CONFIG_VIRTIO_BLK=y
-+CONFIG_BLK_DEV_NVME=m
- CONFIG_RAID_ATTRS=m
- CONFIG_BLK_DEV_SD=y
- CONFIG_BLK_DEV_SR=y
--- 
-2.45.2
+> The features are:
+> (1) support UFS 2.0 features
+> (2) High speed up to HS-G3
+> (3) 2RX-2TX lanes
+> (4) auto H8 entry and exit
+> 
+> Software limitation:
+> (1) HCE procedure: enbale controller->enbale intr->dme_reset->dme_enable
 
+s/enbale/enable/ 	x 2
+
+> (2) disable unipro timeout values before power mode change
+> 
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> 
+
+No need for an extra empty line
+
+> ---
+
+...
+
+> +static int ufs_rockchip_common_init(struct ufs_hba *hba)
+> +{
+> +	struct device *dev = hba->dev;
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct ufs_rockchip_host *host;
+> +	int err;
+> +
+> +	host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
+> +	if (!host)
+> +		return -ENOMEM;
+> +
+> +	/* system control register for hci */
+> +	host->ufs_sys_ctrl = devm_platform_ioremap_resource_byname(pdev, "hci_grf");
+> +	if (IS_ERR(host->ufs_sys_ctrl))
+> +		return dev_err_probe(dev, PTR_ERR(host->ufs_sys_ctrl),
+> +					"cannot ioremap for hci system control register\n");
+> +
+> +	/* system control register for mphy */
+> +	host->ufs_phy_ctrl = devm_platform_ioremap_resource_byname(pdev, "mphy_grf");
+> +	if (IS_ERR(host->ufs_phy_ctrl))
+> +		return dev_err_probe(dev, PTR_ERR(host->ufs_phy_ctrl),
+> +				"cannot ioremap for mphy system control register\n");
+> +
+> +	/* mphy base register */
+> +	host->mphy_base = devm_platform_ioremap_resource_byname(pdev, "mphy");
+> +	if (IS_ERR(host->mphy_base))
+> +		return dev_err_probe(dev, PTR_ERR(host->mphy_base),
+> +				"cannot ioremap for mphy base register\n");
+> +
+> +	host->rst = devm_reset_control_array_get_exclusive(dev);
+> +	if (IS_ERR(host->rst))
+> +		return dev_err_probe(dev, PTR_ERR(host->rst),
+> +				"failed to get reset control\n");
+> +
+> +	reset_control_assert(host->rst);
+> +	usleep_range(1, 2);
+> +	reset_control_deassert(host->rst);
+> +
+> +	host->ref_out_clk = devm_clk_get_enabled(dev, "ref_out");
+> +	if (IS_ERR(host->ref_out_clk))
+> +		return dev_err_probe(dev, PTR_ERR(host->ref_out_clk),
+> +				"ref_out unavailable\n");
+> +
+> +	host->rst_gpio = devm_gpiod_get(&pdev->dev, "reset", GPIOD_OUT_LOW);
+> +	if (IS_ERR(host->rst_gpio))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(host->rst_gpio),
+> +				"invalid reset-gpios property in node\n");
+> +
+> +	host->clks[0].id = "core";
+> +	host->clks[1].id = "pclk";
+> +	host->clks[2].id = "pclk_mphy";
+> +	err = devm_clk_bulk_get_optional(dev, UFS_MAX_CLKS, host->clks);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "failed to get clocks\n");
+> +
+> +	err = clk_bulk_prepare_enable(UFS_MAX_CLKS, host->clks);
+
+This has to be undone somewhere, likely at the end of ufs_rockchip_remove().
+
+> +	if (err)
+> +		return dev_err_probe(dev, err, "failed to enable clocks\n");
+> +
+> +	host->hba = hba;
+> +
+> +	ufshcd_set_variant(hba, host);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static const struct ufs_hba_variant_ops ufs_hba_rk3576_vops = {
+> +	.name = "rk3576",
+> +	.init = ufs_rockchip_rk3576_init,
+> +	.device_reset = ufs_rockchip_device_reset,
+> +	.hce_enable_notify = ufs_rockchip_hce_enable_notify,
+> +	.phy_initialization = ufs_rockchip_rk3576_phy_init,
+> +};
+> +
+> +static const struct of_device_id ufs_rockchip_of_match[] = {
+> +	{ .compatible = "rockchip,rk3576-ufshc", .data = &ufs_hba_rk3576_vops},
+
+Missing space before ending }
+
+> +	{},
+
+No need for an extra , here.
+
+> +};
+> +MODULE_DEVICE_TABLE(of, ufs_rockchip_of_match);
+
+...
+
+> +static void ufs_rockchip_remove(struct platform_device *pdev)
+> +{
+> +	struct ufs_hba *hba = platform_get_drvdata(pdev);
+> +	struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+> +
+> +	pm_runtime_forbid(&pdev->dev);
+> +	pm_runtime_get_noresume(&pdev->dev);
+> +	ufshcd_remove(hba);
+> +	ufshcd_dealloc_host(hba);
+> +	clk_disable_unprepare(host->ref_out_clk);
+
+No need for clk_disable_unprepare(), ref_out_clk comes from 
+devm_clk_get_enabled(), so the framework will already call 
+clk_disable_unprepare().
+
+> +}
+
+...
+
+CJ
 
