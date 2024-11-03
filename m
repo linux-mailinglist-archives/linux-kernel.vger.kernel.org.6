@@ -1,114 +1,147 @@
-Return-Path: <linux-kernel+bounces-393774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E3B9BA510
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:24:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFBF9BA515
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 11:26:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0385281DE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 10:24:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B4A1F21985
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 10:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C61165F17;
-	Sun,  3 Nov 2024 10:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A578166F06;
+	Sun,  3 Nov 2024 10:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QlieeP4c"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rn5LNRbK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1405D1CAAC;
-	Sun,  3 Nov 2024 10:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD1815ADAB;
+	Sun,  3 Nov 2024 10:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730629471; cv=none; b=r8K/PHavTLoSrIHxpgqpbz/mo4yfzJRc8UpyytI7KDw/T2J/XI9Rn1Rygfjatqg1UIVTt+9chd8250M2OP4VpljwMgFPx5ea0uwjvuUxixgqY25Ga69VsqzTGlRDyUCxBS4uXU5nPXT6NT+/6dyH//pnQh7MUoiLSLK4iZWFCTc=
+	t=1730629589; cv=none; b=qHG/NrbY44FTw8aj6pYsDLDjQ3PMfCiGR95bp2HYEXOyERozofQkIYuh4vx5ryOW/lPRVAdbnz5XTZIOcXxal4fT4kO7lOE2qnwUwA0RN6BUJObgt/7cNW2Y+r7Di5hLlaInQjxAwiOfXhXPGl1SOtTiNtS9eR6w48m4LYV/X+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730629471; c=relaxed/simple;
-	bh=Ku5BtKeUZNyRHZSUd3FpR5AUjLENrpqztyFma2f4nQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OS6b/t+ZodOpwLEarwKXrZ7ugSpbgbyOh9dGkBVNBCIY5DIiLuXpgnyOvQaFDJU6Ydfyi9yuJ0W+tlxK7+IMq6oVHC4UZQFKgYWltJyED+FDXxznqYU82t6Zt9c6134faJHfMzbZLBohoN+JxJnG8/rxIWBUaEs2MbLpoefItxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QlieeP4c; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e309d50f194so3121448276.3;
-        Sun, 03 Nov 2024 02:24:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730629469; x=1731234269; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SGx9S07xRmQ63rZyuxZmRETlbDg20eNMskqV2EUe2cM=;
-        b=QlieeP4cR036KwS9Kc7YuSKNh7rksMD5r4WsH3msO6qAWGAWplUMXdE/ZxPrbZhotp
-         KzsXwojenBF5rm1qMENv6ZKLXVTHRQBqwBEfDBr2oTu+OpAjeOq6hRzg8SEzN3SpZdf6
-         q3kkuwNDf2IVPZH54t+YusZ0lwO0xfownWTbCuNDNBNbMraotZyrS4EDTfG5aLK+3sHa
-         N+EMQgGtrJVFznMmK8prLLGhRf/uUbNxLdnUoh3PE4JD6BFIwH9C3WqnqsV9RnaeWOnH
-         AABKBTHXXlqfQOzIKQrAenUrqgJTOXzOIadUaOgofeaClMoL1jsXCMQgioUkZ9G7NdKD
-         9B8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730629469; x=1731234269;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SGx9S07xRmQ63rZyuxZmRETlbDg20eNMskqV2EUe2cM=;
-        b=hCSi5TbrHOiS9nVluMggw336Ui6JQvGMyx/MCoadvjE6l7JhpvQ3mIguQIaeFeCxHh
-         KPoW1XudGj/yIuNOfSe5T3BqrPfiM+k3Yyqn8Qqnon5henZLxadYs6nzPCT5FwEVOF6O
-         twoadtZS3spHsfVJKZKjpK5OH0AhV0Egsis+EDKIL47cZ8hJX1BLul6JE/h0k2kHDO+5
-         t52+ARQT074rYhp4FMalBsI7U8HvGgw8rImTvpCCdVcFK5Bwfaa2KdUjgfmF+ut3fy1Q
-         i10s4ETyD++2ikuzOT89mG4Jf1mtTZPR70wpo52pdudY3aAUlx2aidZchApAJskaAIf0
-         vFZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw1hTrEnE9cDLrUn5YZd3jIxP3EG+w5DZUEJ8yRXXXTq9kD8YPYjzAPalzVhoE4xjZStjwLKjY9Ny/S3Q=@vger.kernel.org, AJvYcCW1HMCMHCE0Al72NmptkN1sX3yWKe+YNCkVPtinysX3fejymvjowkS5z9p2GpRAmBE+HbQ8zAe0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCsluQZVzc6t3XeJp/Vu5+YnoEqtAfq0WASj6ndpoSBM97nENu
-	vP25QmWkr3ocyGCqV+h579DLswfrwr2GL2KQ3VWnVOyV4rOui6ovob4TxY9bAgc6yx+6I7rC7FX
-	C1EieS7oFlWcfjl7qqKY2QZxQnUA=
-X-Google-Smtp-Source: AGHT+IHtEvdKdumNzx/7GPnqZM0BnHRRIe1Z5mZzuIBMpnbGxmRx0WOysHIOqHLntkSq3JJuP4yUiFZbg2k+BjKmh68=
-X-Received: by 2002:a05:6902:2384:b0:e2b:d505:86a9 with SMTP id
- 3f1490d57ef6-e30cf3e5b5cmr14822299276.4.1730629468958; Sun, 03 Nov 2024
- 02:24:28 -0800 (PST)
+	s=arc-20240116; t=1730629589; c=relaxed/simple;
+	bh=hggU8iw//CKWMghqP+CFbgGJoQIsXzMO3FH4JN14718=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tEW8aEXa4jx75FCj4GfrAy2OsKQI/eGyuRfSrGSklkAlUamId4GgAbjK+2uSQkwRdb5MIvG33t8s9M7RrBgL1lmmiGmlt2tDDIJlFIDGcTW2OEYLuCrj2oLLQTe1DnqGMszY8jNjmpQcr9tAAs7PonUGhsxAQBINmtjxbfI+qMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rn5LNRbK; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730629588; x=1762165588;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hggU8iw//CKWMghqP+CFbgGJoQIsXzMO3FH4JN14718=;
+  b=Rn5LNRbKuRGEqZmAfqcPUNwRUwYFBs8n5Shx462MRfmMs2w/Rda2hWE6
+   pgiYilTds3Qt+K0V9cC5Rhb9UVzRWP7w2DQuDYYNBIvq5FGT1xaWw9g+q
+   Si4rdnUiWCy0cph+3C3CN7hIOCylNC/7ifZF+6kOh36D+1h8YSaTmdbuX
+   11ANGvsB3jscNq1xvDM7zIn1boZk32YMVuHCjdY6E1zsfdYYzl7ofvgzL
+   SpKL+RPcJJSFoUDQrWqTTY4YHGhpL6KuVXLj6tLP1eDmtDakzEKDSR9fP
+   +NTyf97/dq/KIA97wp26TY3pu/mFXZaOG08K0yU/JzamzcBjXLDiqoBTF
+   A==;
+X-CSE-ConnectionGUID: 4Lr3wGJ1TGel+yCZaI8d0A==
+X-CSE-MsgGUID: ZkUJ1lCWSouqcIrGl/0yzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11244"; a="29769890"
+X-IronPort-AV: E=Sophos;i="6.11,255,1725346800"; 
+   d="scan'208";a="29769890"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 02:26:27 -0800
+X-CSE-ConnectionGUID: wab9ZlgNSEG10qGLoNGLWA==
+X-CSE-MsgGUID: Y3rFFxGJScS6dt1WZG/4kQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,255,1725346800"; 
+   d="scan'208";a="87969312"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 03 Nov 2024 02:26:22 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t7XoJ-000jt7-1h;
+	Sun, 03 Nov 2024 10:26:19 +0000
+Date: Sun, 3 Nov 2024 18:25:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	hannes@cmpxchg.org, yosryahmed@google.com, nphamcs@gmail.com,
+	chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
+	surenb@google.com, kristen.c.accardi@intel.com, zanussi@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: Re: [PATCH v2 12/13] mm: Add sysctl vm.compress-batching switch for
+ compress batching during swapout.
+Message-ID: <202411031803.xNibgI5N-lkp@intel.com>
+References: <20241103032111.333282-13-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102151504.811306-1-paissilva@ld-100007.ds1.internal> <900d2449-ff88-45ea-9b29-da145541d42b@lunn.ch>
-In-Reply-To: <900d2449-ff88-45ea-9b29-da145541d42b@lunn.ch>
-From: Diogo Silva <diogompaissilva@gmail.com>
-Date: Sun, 3 Nov 2024 11:24:18 +0100
-Message-ID: <CAJpoHp60o9UWEsCurnWJ4Phn9=SzyhovTp9vXCDAHeB5YhTm1A@mail.gmail.com>
-Subject: Re: [PATCH] net: phy: ti: add PHY_RST_AFTER_CLK_EN flag
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, marex@denx.de, 
-	tolvupostur@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241103032111.333282-13-kanchana.p.sridhar@intel.com>
 
-Hi Andrew,
+Hi Kanchana,
 
-I assume "TI DP83848C" and "NS DP83848C" are the same device, just
-rebranded after Texas Instruments acquired National Semiconductors.
-For both TLK10X and DP83620, both their datasheets have the same power
-up timing sequence as the DP83848C (as far as clock and reset goes)
-[1][2].
+kernel test robot noticed the following build errors:
 
-Best regards,
-Diogo Silva
+[auto build test ERROR on 5c4cf96cd70230100b5d396d45a5c9a332539d19]
 
-[1] https://www.ti.com/lit/ds/symlink/tlk105.pdf (section 9.10.1 -
-Power Up Timing)
-[2] https://www.ti.com/lit/ds/symlink/dp83620.pdf (section 4.5 - Power
-Up Timing)
+url:    https://github.com/intel-lab-lkp/linux/commits/Kanchana-P-Sridhar/crypto-acomp-Define-two-new-interfaces-for-compress-decompress-batching/20241103-112337
+base:   5c4cf96cd70230100b5d396d45a5c9a332539d19
+patch link:    https://lore.kernel.org/r/20241103032111.333282-13-kanchana.p.sridhar%40intel.com
+patch subject: [PATCH v2 12/13] mm: Add sysctl vm.compress-batching switch for compress batching during swapout.
+config: i386-buildonly-randconfig-002-20241103 (https://download.01.org/0day-ci/archive/20241103/202411031803.xNibgI5N-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241103/202411031803.xNibgI5N-lkp@intel.com/reproduce)
 
-On Sat, 2 Nov 2024 at 18:03, Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Sat, Nov 02, 2024 at 04:15:05PM +0100, Diogo Silva wrote:
-> > From: Diogo Silva <diogompaissilva@gmail.com>
-> >
-> > DP83848       datasheet (section 4.7.2) indicates that the reset pin should be
-> > toggled after the clocks are running. Add the PHY_RST_AFTER_CLK_EN to
-> > make sure that this indication is respected.
->
-> Do you have the datasheets for the other three devices this driver
-> supports? Do they all require this flag?
->
->         Andrew
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411031803.xNibgI5N-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from mm/swap.c:17:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/swap.c:26:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+>> mm/swap.c:51:14: error: expected identifier or '('
+      51 | unsigned int compress_batching;
+         |              ^
+   include/linux/mm.h:88:27: note: expanded from macro 'compress_batching'
+      88 | #define compress_batching 0
+         |                           ^
+>> mm/swap.c:1082:20: error: expression is not assignable
+    1082 |         compress_batching = 0;
+         |         ~~~~~~~~~~~~~~~~~ ^
+   3 warnings and 2 errors generated.
+
+
+vim +51 mm/swap.c
+
+    49	
+    50	/* Enable/disable compress batching during swapout. */
+  > 51	unsigned int compress_batching;
+    52	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
