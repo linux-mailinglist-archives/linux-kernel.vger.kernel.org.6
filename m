@@ -1,88 +1,84 @@
-Return-Path: <linux-kernel+bounces-393800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3EA9BA565
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:14:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFDC19BA567
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 13:18:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13266B21733
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:14:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F2B1F217D6
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 12:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88E41714CB;
-	Sun,  3 Nov 2024 12:14:36 +0000 (UTC)
-Received: from mail.itouring.de (mail.itouring.de [85.10.202.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8951A1632DB;
+	Sun,  3 Nov 2024 12:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PSlF0CDo"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1B015C13E;
-	Sun,  3 Nov 2024 12:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.202.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73BA23B0
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 12:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730636076; cv=none; b=pLvO9oTs6St24X1Y8mVDYU7P+p7C/IkSvFOzwvAhfD70+0KCsipGUierhpnVuIfUYCgqLmGVcuPJ/bxUUXd39YgXJF73r+znUcB4NZXGbZ1Bpu1UKi9JQt2sC0yHCLjJMGI79e1CjfFNuRHj4kHNuKJfj12Bu8SKgNi+4yL6N5E=
+	t=1730636324; cv=none; b=lTNx+KGuvZu6WDyoWDm+GpBFXQioJzP6ikNuNmR2Dqgnwv9vRP98YFU2bhuRRS7UbB6+RmNye5+YD2UEKpNMJM8pDG1jgVsrUU7llH96MLrPfzqTQGsjQzTjHDgCPpwJAUBKujchEBBh/FEyH6oWCwBenPxIZAaflJ8n90BUuEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730636076; c=relaxed/simple;
-	bh=UA7zSDxtVIfDvpTFsZ/8xJLe88GTW4vWB1ZVQYG6XyU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=drZP75XS0190Gc+5s/XEZGm3CDgsBxliXKsloqm9lXaWnc7VnsERuF3O0zruOaTcy9XcDjH4tiTGMQpAo5NTgmSxsb7o2fVg7W+D8DDXM5Bn1G0P74FSXi2pqjB0fTVLbFfzQKf+u7mZ5dvYsKIbq/EI2eku/cBhNoPk7AzmOhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com; spf=pass smtp.mailfrom=applied-asynchrony.com; arc=none smtp.client-ip=85.10.202.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=applied-asynchrony.com
-Received: from tux.applied-asynchrony.com (p5ddd7b29.dip0.t-ipconnect.de [93.221.123.41])
-	by mail.itouring.de (Postfix) with ESMTPSA id 03E34C5B1;
-	Sun, 03 Nov 2024 13:04:36 +0100 (CET)
-Received: from [192.168.100.221] (hho.applied-asynchrony.com [192.168.100.221])
-	by tux.applied-asynchrony.com (Postfix) with ESMTP id 5AC226018938E;
-	Sun, 03 Nov 2024 13:04:35 +0100 (CET)
-Subject: Re: [PATCH] kbuild,bpf: pass make jobs' value to pahole
-To: Florian Schmaus <flo@geekplace.eu>, Masahiro Yamada
- <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas@fjasle.eu>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241102100452.793970-1-flo@geekplace.eu>
-From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
-Organization: Applied Asynchrony, Inc.
-Message-ID: <73398de9-620c-9fb9-8414-d0f5c85ac53a@applied-asynchrony.com>
-Date: Sun, 3 Nov 2024 13:04:35 +0100
+	s=arc-20240116; t=1730636324; c=relaxed/simple;
+	bh=JBR5OYH6HGg/nV5dE4xfZ8tnOwX8Q8ZrEz65y0CMjeg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Eo9llP335D0nQYDHYhPjRurwQelyZkqS/wCYfwSXhMtsX2EGVLxJIVpckTBDKF9caVmrIsgMuFRYCSmaQEf9bcmifEKlBFFqW1Qc+72HA4fRQCkstxAYpd+tNkGSpVI17knPgQEaDn1k8KA8ueHEIZBBnv6COaMHNdPbMtyGD54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PSlF0CDo; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730636318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NyBn8heEe2xkvBGW5DCMbPyQa9qZDQbub0DgJexbKCs=;
+	b=PSlF0CDofKfBxlvP+aoNL49ohrb6cDn6esGcuRPUqBJ4bwIpp+2ij0OUGAB3ZHIxv7L8u6
+	rsl28sasHfc4m9jt+AAAFxrlg9OtT5g4h2hwWbryuyzGTd4CIRMVGCLnQuHvli+H6/8aO3
+	J3zBX42O94CAiEZrSWf/+JSU6A7U2LM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] freevxfs: Replace one-element array with flexible array member
+Date: Sun,  3 Nov 2024 13:17:09 +0100
+Message-ID: <20241103121707.102838-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241102100452.793970-1-flo@geekplace.eu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2024-11-02 11:04, Florian Schmaus wrote:
-> Pass the value of make's -j/--jobs argument to pahole, to avoid out of
-> memory errors and make pahole respect the "jobs" value of make.
-> 
-> On systems with little memory but many cores, invoking pahole using -j
-> without argument potentially creates too many pahole instances,
-> causing an out-of-memory situation. Instead, we should pass make's
-> "jobs" value as an argument to pahole's -j, which is likely configured
-> to be (much) lower than the actual core count on such systems.
-> 
-> If make was invoked without -j, either via cmdline or MAKEFLAGS, then
-> JOBS will be simply empty, resulting in the existing behavior, as
-> expected.
-> 
-> Signed-off-by: Florian Schmaus <flo@geekplace.eu>
+Replace the deprecated one-element array with a modern flexible array
+member in the struct vxfs_dirblk.
 
-As discussed on IRC:
+Link: https://github.com/KSPP/linux/issues/79
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/freevxfs/vxfs_dir.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+diff --git a/fs/freevxfs/vxfs_dir.h b/fs/freevxfs/vxfs_dir.h
+index fbcd603365ad..8c67627f2a3d 100644
+--- a/fs/freevxfs/vxfs_dir.h
++++ b/fs/freevxfs/vxfs_dir.h
+@@ -25,7 +25,7 @@
+ struct vxfs_dirblk {
+ 	__fs16		d_free;		/* free space in dirblock */
+ 	__fs16		d_nhash;	/* no of hash chains */
+-	__fs16		d_hash[1];	/* hash chain */
++	__fs16		d_hash[];	/* hash chain */
+ };
+ 
+ /*
+-- 
+2.47.0
 
-Thanks!
-Holger
 
