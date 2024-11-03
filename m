@@ -1,99 +1,128 @@
-Return-Path: <linux-kernel+bounces-393881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A029BA6AE
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:40:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D319BA6B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:44:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA10281935
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:40:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6AB1C21498
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E1A188592;
-	Sun,  3 Nov 2024 16:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213CD187FEC;
+	Sun,  3 Nov 2024 16:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="V/WNNszn"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53470AD2D;
-	Sun,  3 Nov 2024 16:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3k86+EP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8DC187877;
+	Sun,  3 Nov 2024 16:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730652002; cv=none; b=lHFo1lsBakdgwAOTsTSBBMoGp9gI75hfIjMYfMJHwKzi9IYxYqS1pz+blYzSZeNq5hbxyBRg+FSCxpcO3W7jJiz903h97j261KVZZJPYrkrwEwKOEggjXFgMeI97AcgDkv+vswGbjsC6bVbOSDxXlI0/YL18lyKplvel4nzka0k=
+	t=1730652258; cv=none; b=oA8vy1DYSlV9Ji4pZQPFHmJTfO090ZMQ65JdeSnNi8ya3FOs424NaY+ZmgyLwVZwruvMCPVP+TGm8Jck5ZAirAV5iuD6m1ngHNF4fP9nASKz3nz8vecqf7Z1isNNmteKN3eeWr/xuUOdJ0KISyIC9zBeFrvk3KzwBeJtbpiO5a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730652002; c=relaxed/simple;
-	bh=B2XWJUFled52xvHd4GjxQkLraBNHHyiNbE8xycuLjoI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BM4d3CxyxnK4/aABrIYFesZmdcovKDoeVUstWIQ4WxwUHpUsavMJ4OWUVKM3p088nHiCOvwFSLQpvoG1dFmi3dD/2+vr+pjAQLal1Gn1yaC5fwG9FZxtWIiGagZ4KxOfeQlEvyXTN38qywnTgcnQs38uH520SGMSlwTZanHMiek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=V/WNNszn; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=FbWwF
-	FWXwSYGZ7x6HYor0Xf23KSHwmI8qh1gVcDacTE=; b=V/WNNsznVjwztLOMmEUIn
-	rRf5CooDRTz1bjIvAcjVwCewl8YDjA7FcwBWpRDkC/MFx/y5Ln+KqUcY+qVRw3aJ
-	tTzIMdvCBdmX2fMTErbPtA2y+Opai7ldxH/axesuvXICEePF2xyCnWYfkMrnKbwm
-	vuxiWw43yNnU4TE8W+FXVg=
-Received: from 100ask.localdomain (unknown [112.10.131.71])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDXX6gupydnXah8Ew--.35873S3;
-	Mon, 04 Nov 2024 00:39:14 +0800 (CST)
-From: Wenliang <wenliang202407@163.com>
-To: linux@roeck-us.net
-Cc: book <book@100ask.localdomain>,
-	jdelvare@suse.com,
-	linux-hwmon@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH linux dev-6.11 v3 2/2] dt-bindings: Add SY24655 to ina2xx devicetree bindings
-Date: Sun,  3 Nov 2024 11:39:08 -0500
-Message-ID: <20241103163908.11890-2-wenliang202407@163.com>
-X-Mailer: git-send-email 2.47.0.229.g8f8d6eee53
-In-Reply-To: <20241103163908.11890-1-wenliang202407@163.com>
-References: <706d4821-2637-4aac-869b-822f69aebbfa@roeck-us.net>
- <20241103163908.11890-1-wenliang202407@163.com>
+	s=arc-20240116; t=1730652258; c=relaxed/simple;
+	bh=S3SbpYTjUrmRX4cB+QgzTc9m7Ue1CQcbJkvEY61S0Xs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hI/22TuRLcEFjR90gj+Bo9vXXmk0QMpGKfcTa2ugdXb599l3t6I0+5Qc8i7NLDmPYyksGh/rcsDcN0ZcViA1tHDRQpfdk7BcdXcaV9E7EHsRZAvV8M8Hqn8VQ4kH0Ej0nvRJUierFolucNFFYb79r4hR7xDxitMZTPYepr6o/Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3k86+EP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9736C4CECD;
+	Sun,  3 Nov 2024 16:44:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730652257;
+	bh=S3SbpYTjUrmRX4cB+QgzTc9m7Ue1CQcbJkvEY61S0Xs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z3k86+EPxR2AKeg8PVY9B7ZpZh3pI9ZFtf/5G5SmIoidwr1EyJl7OeBsedCg/YXU6
+	 20FtEAYOADWm+CC+MZrVmOjctDW9MC6AE4FKmQagrabprK1iPw9XCLzF2s/LbRXNNu
+	 DbsKzhQfTK3oIxOtgfD18MzwfPJWHkHW6l9ieyK3AkEffbis8Nr8lbHDL7z8NHE0Ww
+	 l7W1zOGlQP4VfiSUk7nOtDGzTwvqhmeJyEtU4RC6qj6i8rzUYLGXCJhlQuaM2cVPhh
+	 6kDZ0o8+VqIWVc20sHASV9s6itPp5M5wNAtSfUqeC7K3xLxDVureejnufe/REkPEEi
+	 d0MJuDV7bLmcw==
+Message-ID: <ae2479fa-6a39-46b2-8712-2e33f2e0d53a@kernel.org>
+Date: Sun, 3 Nov 2024 17:44:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXX6gupydnXah8Ew--.35873S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XFyfWw1rtw4fCFy5GFyrXrb_yoWftrbEga
-	y7Jw1UZFZ8JFyYgr4qy3yxXFyFy3WSkF4kCr1UCrZ5Aw4rZws0ga4kG3sxAryUXrWUu3W3
-	ua1kZ3y8Xr12kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8OJ57UUUUU==
-X-CM-SenderInfo: xzhqzxhdqjjiisuqlqqrwthudrp/1tbiNQ+M02cnoLAwsQABs1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] MIPS: loongson3_defconfig: Enable blk_dev_nvme by
+ default
+To: WangYuli <wangyuli@uniontech.com>, tsbogend@alpha.franken.de,
+ dhowells@redhat.com, jlayton@kernel.org
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chenhuacai@kernel.org, kernel@xen0n.name, jiaxun.yang@flygoat.com,
+ guanwentao@uniontech.com, zhanjun@uniontech.com, xuerpeng@uniontech.com,
+ maqianga@uniontech.com, baimingcong@uniontech.com
+References: <cover.1730638429.git.wangyuli@uniontech.com>
+ <F56016A1645609BF+5d1de4afc8ee6bacf8878461b848de72b556c85f.1730638429.git.wangyuli@uniontech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <F56016A1645609BF+5d1de4afc8ee6bacf8878461b848de72b556c85f.1730638429.git.wangyuli@uniontech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: book <book@100ask.localdomain>
+On 03/11/2024 14:00, WangYuli wrote:
+> A significant number of 3A4000 machines come with NVMe drives
+> pre-installed, so we should support it in its defconfig.
+> 
+> Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
+> Tested-by: Qiang Ma <maqianga@uniontech.com>
 
-SY24655 is similar to INA226. Its supply voltage and pin definitions
-are therefore the same. Compared to INA226, SY24655 has two additional
-registers for configuring and calculating average power.
+I am sorry, but what exactly did you test here? This is defconfig, so
+you checked whether after building kernel there is such module? This is
+not testing.
 
-Signed-off-by: book <book@100ask.localdomain>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
- Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 1 +
- 1 file changed, 1 insertion(+)
+...
 
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-index 6ae961732e6b..05a9cb36cd82 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-@@ -20,6 +20,7 @@ description: |
- properties:
-   compatible:
-     enum:
-+      - silergy,sy24655
-       - ti,ina209
-       - ti,ina219
-       - ti,ina220
--- 
-2.47.0.229.g8f8d6eee53
+> +CONFIG_BLK_DEV_NVME=m
+Best regards,
+Krzysztof
 
 
