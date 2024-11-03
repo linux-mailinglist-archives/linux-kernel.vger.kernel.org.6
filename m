@@ -1,181 +1,106 @@
-Return-Path: <linux-kernel+bounces-393713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F53E9BA44B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 07:37:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 069189BA452
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 07:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33F2828215F
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 06:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA5B2820E9
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 06:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618291531CB;
-	Sun,  3 Nov 2024 06:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04116154C08;
+	Sun,  3 Nov 2024 06:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kode54.net header.i=@kode54.net header.b="T1WIDIig"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XhlX8Cb9"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FDB3F9D5
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 06:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CE413A3F2
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 06:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730615827; cv=none; b=kYDiB+RLbpAHs2SOJYY37McmE5JQD2SDS7pMXNom7jIPsI4PNZCxZNMkBtRCAf9hQXmlQ+LaEcBm/S/kZFwBTjEZ/8c6JD/pN6Oy3ZMa05/J4jM3jgtPP+SxWs06tTGHXI4Raz5wTOWtf0ujh4YZYv7fKlEg5bdGapA6FWbA72o=
+	t=1730617078; cv=none; b=aYSVE1WrVHTlTnQbdADkpzPcqE6//fguCPbeMhhY/pWp9kLDg59wp2WCvHoNcUMB8fNejq/ELfll+Mluh4IdytrQGu1/gVVeyAPQvnWCZjsiRpB70/j5nIdoWKFvKhDBbbEy3gBlBVRHtSZDjs1ldDZ1WukWQLA9WuvQHsiWz0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730615827; c=relaxed/simple;
-	bh=GwgtCshqBBdn4aVHaFfxpYnFyhjtwDUZ/9No6s5ZkLo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=guALjLhF9ZdkD4Bot8XvHsBodkFsYOOtkMQCSE3zvpnkZ7lOeLVFNltELbVoU0JQHqI8lGUDuwoVQEZInkuHs29YqvirQ53HTZiA5R6SRILNCBHSBHVK3CqrJpJ3CIAZl80Qr+8rWiP9G/fblXJvcInRKrpt8vpdayFp4vgWO+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kode54.net; spf=pass smtp.mailfrom=kode54.net; dkim=pass (2048-bit key) header.d=kode54.net header.i=@kode54.net header.b=T1WIDIig; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kode54.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kode54.net
+	s=arc-20240116; t=1730617078; c=relaxed/simple;
+	bh=7np/I76LHj5RuluQ3/YJmSLHvUBqTcAuqIlQuP1knkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tru/umcUrSqhffo6FSfKhiQ+MlFo8Gr2hg7kpkD/Uz29f/7HfehQtOzzcuJexavaxg7Wm2nAx0SzFWEMECDqlj4qQ404uRvpVBHbKDqzvyxrEOkUAha8eF1V48aEZWdR2D6eZTzey+i9Fo6KwZUgoWkWe1JSmH887jHrgN/qNJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XhlX8Cb9; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-290ff24354dso1437312fac.0
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Nov 2024 23:57:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730617076; x=1731221876; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fS1npImPfHb20Sl7e7er9IvRC0E477hQsJ+7VA0CBuE=;
+        b=XhlX8Cb9hPa+D2zxSnv7jpB3Tl2BKh1SKouaL2nLzFZTxeKhPmqhId+PkOctHfayQ8
+         ESxGOk6Jg6Td5ZdA2qjJYEk11i1wOeOuw+7px3B4MQ/BkMYYgA5McHeHSbyIPFwDd+Fl
+         mvvrmgPTSYuebUCSC/daNHojBdNUDFpKbNkaFUQU8yRF9IWcCpQ7Y8aGJ55KYcySH487
+         dK1Scwzhx5yYDmLPU6m9KQPW567lxShgFRuET3krYxbYWCOZnYQI6UX7n/l2PAk5XCZH
+         g1ccHc+tfnnHBhgpIcNBft0bgB/IcdKf6IvNjOzGENu1HypNWxMYfKobXxF0HBAiqTav
+         x1WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730617076; x=1731221876;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fS1npImPfHb20Sl7e7er9IvRC0E477hQsJ+7VA0CBuE=;
+        b=tlJ5dQdg5HD7RGGTjh1boER7TTI3iwi9uSuNv515cFoQGPcqrUhNCHkJEfX0HjusY3
+         XYNhZ/EL5vI5NM+6zpnn30Sj2MykdBjrX8C3D79rdVcV/1dizeUtf9UnDX3+4KMEQ3wR
+         dj1zcp6rTNpfx8WbLbShUUHIKrX9/fa8xkEBKc5y4969ZDL8riIZ8Z8+q9kQbOxsbEbl
+         Y+oCQ8hTDOV05lpt+o4HQLS5V4zoYJvmKcOXl6MrdS+CR3DyJVhwljT7dmTnSbmugsv9
+         SyLRzRV6eHvjkCvByXOjU2Dxh2OGxDBHbBdOIxQbeOLOuJx8HPRLaBV76CKBiPULAv3M
+         5YGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyPo1le/4bcdbLSMerqeOqS+cAGe/kkPG0DLpHViQsYPVp/zEOVfPY45U4beMcFJsIiylBRjIFt2UKrjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9P+UmDVjXRERyKGjfQqYJXUChQVS9K/oiwoquX9WZFzHp7BBy
+	ft1pQquV5pNiQzip+5h1xjWG91jzQ9ATh1u+rtpxxmH3VY8EKknGSq87pDLoLUs3HySdcyIgidf
+	/Qhv9/UQrx0d/xGgxjfAaf9RcEXRcVVaY3a6u5Q==
+X-Google-Smtp-Source: AGHT+IE+q1rK+3oCKtp9SkJcnFzCrL9vfkFECGy5BIRlaiafb9OMt6z17EkSsb1RPUubkyZ3F6wWlfWwl558mwfUioY=
+X-Received: by 2002:a05:6871:c707:b0:28f:329e:9f23 with SMTP id
+ 586e51a60fabf-2949f07cb9emr7517716fac.42.1730617075872; Sat, 02 Nov 2024
+ 23:57:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kode54.net; s=key1;
-	t=1730615821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hJsyO0aiVH3itRUzolMLYpvP9PbwpY9rZpdqz0+ihJA=;
-	b=T1WIDIigSHP17EtdK4FALDzhmvpQd8rzVLraMfaT/1WCbTNUBsUGlUJUNsV+8iB6kczUDZ
-	jB998dJNI2W4sbRjcObHGSuJyY1iG/f6NYW49aSsls+vQFfHamgMZ9Zb53seD06BOh/n3F
-	xd64lSMWvHueJcYVwNzk/+6L5o8qJmMmY3g16bnWqFAdeDe8TPnd2faD8fCtkI+LTkn1fN
-	q2M9ChhpfPwhFz89/T+AEgiOpCU81OxPYxVq5pYfnVWKOmcO8SWEmwi1vMr952hHSbNb+m
-	+V44B1xFxspHdGyMqCIH/hN7r59h9szNQT2vmegOjwpIBjFc2Xnk7sFScpSmFw==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 02 Nov 2024 23:36:55 -0700
-Message-Id: <D5CC3U00B7CG.IGKCIES8PC2J@kode54.net>
-Cc: <kernel-dev@igalia.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>
-Subject: Re: [PATCH RESEND v9 1/2] drm/atomic: Let drivers decide which
- planes to async flip
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Christopher Snowhill" <chris@kode54.net>
-To: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Harry
- Wentland" <harry.wentland@amd.com>, "Leo Li" <sunpeng.li@amd.com>, "Rodrigo
- Siqueira" <Rodrigo.Siqueira@amd.com>, "Alex Deucher"
- <alexander.deucher@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, "Xinhui Pan" <Xinhui.Pan@amd.com>,
- <dmitry.baryshkov@linaro.org>, "Simon Ser" <contact@emersion.fr>,
- <joshua@froggi.es>, "Xaver Hugl" <xaver.hugl@gmail.com>, "Daniel Stone"
- <daniel@fooishbar.org>, <ville.syrjala@linux.intel.com>
-References: <20241101-tonyk-async_flip-v9-0-681814efbfbe@igalia.com>
- <20241101-tonyk-async_flip-v9-1-681814efbfbe@igalia.com>
-In-Reply-To: <20241101-tonyk-async_flip-v9-1-681814efbfbe@igalia.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+References: <20241031150033.3440894-1-peter.griffin@linaro.org> <yq1wmhl6rp8.fsf@ca-mkp.ca.oracle.com>
+In-Reply-To: <yq1wmhl6rp8.fsf@ca-mkp.ca.oracle.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Sun, 3 Nov 2024 06:57:45 +0000
+Message-ID: <CADrjBPp9-ucYgztdRNP81FfY0h+1s7N=LEPS2Ny=D2Vh2HsWYw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/14] UFS cleanups and enhancements to ufs-exynos for gs101
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com, 
+	avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org, 
+	tudor.ambarus@linaro.org, ebiggers@kernel.org, andre.draszik@linaro.org, 
+	kernel-team@android.com, willmcvicker@google.com, linux-scsi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri Nov 1, 2024 at 11:23 AM PDT, Andr=C3=A9 Almeida wrote:
-> Currently, DRM atomic uAPI allows only primary planes to be flipped
-> asynchronously. However, each driver might be able to perform async
-> flips in other different plane types. To enable drivers to set their own
-> restrictions on which type of plane they can or cannot flip, use the
-> existing atomic_async_check() from struct drm_plane_helper_funcs to
-> enhance this flexibility, thus allowing different plane types to be able
-> to do async flips as well.
+Hi Martin,
+
+On Sun, 3 Nov 2024 at 01:36, Martin K. Petersen
+<martin.petersen@oracle.com> wrote:
 >
-> In order to prevent regressions and such, we keep the current policy: we
-> skip the driver check for the primary plane, because it is always
-> allowed to do async flips on it.
 >
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-
-Should I do a R-b too? The changes looked sound enough for me to feel
-like testing it as well. Tested Borderlands Game of the Year Enhanced on
-my RX 7700 XT at maximum settings at 1080p165, and the tearing support in
-labwc allowed it to reach over 700fps. No problems from the hardware
-cursor.
-
-Tested-by: Christopher Snowhill <chris@kode54.net>
-
-> ---
-> Changes from v8:
-> - Rebased on top of 6.12-rc1
-> ---
->  drivers/gpu/drm/drm_atomic_uapi.c | 39 +++++++++++++++++++++++++++++----=
-------
->  1 file changed, 29 insertions(+), 10 deletions(-)
+> Peter,
 >
-> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atom=
-ic_uapi.c
-> index 370dc676e3aa543c9827b50df20df78f02b738c9..a0120df4b63e6b3419b53eb3d=
-3673882559501c6 100644
-> --- a/drivers/gpu/drm/drm_atomic_uapi.c
-> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
-> @@ -27,8 +27,9 @@
->   * Daniel Vetter <daniel.vetter@ffwll.ch>
->   */
-> =20
-> -#include <drm/drm_atomic_uapi.h>
->  #include <drm/drm_atomic.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_atomic_uapi.h>
->  #include <drm/drm_framebuffer.h>
->  #include <drm/drm_print.h>
->  #include <drm/drm_drv.h>
-> @@ -1063,6 +1064,7 @@ int drm_atomic_set_property(struct drm_atomic_state=
- *state,
->  		struct drm_plane *plane =3D obj_to_plane(obj);
->  		struct drm_plane_state *plane_state;
->  		struct drm_mode_config *config =3D &plane->dev->mode_config;
-> +		const struct drm_plane_helper_funcs *plane_funcs =3D plane->helper_pri=
-vate;
-> =20
->  		plane_state =3D drm_atomic_get_plane_state(state, plane);
->  		if (IS_ERR(plane_state)) {
-> @@ -1070,15 +1072,32 @@ int drm_atomic_set_property(struct drm_atomic_sta=
-te *state,
->  			break;
->  		}
-> =20
-> -		if (async_flip &&
-> -		    (plane_state->plane->type !=3D DRM_PLANE_TYPE_PRIMARY ||
-> -		     (prop !=3D config->prop_fb_id &&
-> -		      prop !=3D config->prop_in_fence_fd &&
-> -		      prop !=3D config->prop_fb_damage_clips))) {
-> -			ret =3D drm_atomic_plane_get_property(plane, plane_state,
-> -							    prop, &old_val);
-> -			ret =3D drm_atomic_check_prop_changes(ret, old_val, prop_value, prop)=
-;
-> -			break;
-> +		if (async_flip) {
-> +			/* check if the prop does a nop change */
-> +			if ((plane_state->plane->type !=3D DRM_PLANE_TYPE_PRIMARY) ||
-> +			    (prop !=3D config->prop_fb_id &&
-> +			     prop !=3D config->prop_in_fence_fd &&
-> +			     prop !=3D config->prop_fb_damage_clips)) {
-> +				ret =3D drm_atomic_plane_get_property(plane, plane_state,
-> +								    prop, &old_val);
-> +				ret =3D drm_atomic_check_prop_changes(ret, old_val, prop_value, prop=
-);
-> +				break;
-> +			}
-> +
-> +			/* ask the driver if this non-primary plane is supported */
-> +			if (plane->type !=3D DRM_PLANE_TYPE_PRIMARY) {
-> +				ret =3D -EINVAL;
-> +
-> +				if (plane_funcs && plane_funcs->atomic_async_check)
-> +					ret =3D plane_funcs->atomic_async_check(plane, state);
-> +
-> +				if (ret) {
-> +					drm_dbg_atomic(prop->dev,
-> +						       "[PLANE:%d] does not support async flips\n",
-> +						       obj->id);
-> +					break;
-> +				}
-> +			}
->  		}
-> =20
->  		ret =3D drm_atomic_plane_set_property(plane,
+> > This series provides a few cleanups, bug fixes and feature
+> > enhancements for the ufs-exynos driver, particularly for gs101 SoC.
+>
+> Patches 1 and 2 were missing your SoB tags. I took the liberty of adding
+> these instead of having you resubmit. Please acknowledge that these two
+> patches should have your SoB.
 
+Yes those 2 patches should have my SoB, that was an oversight on my
+part.  Thanks for fixing it :)
+
+Peter
 
