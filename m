@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-393934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC009BA79C
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:20:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E2E9BA79F
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:20:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51B41C20AD7
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:20:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3FB28167F
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F8418A6D9;
-	Sun,  3 Nov 2024 19:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BDC18B49F;
+	Sun,  3 Nov 2024 19:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q13aoZBS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOnEPC4F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44501189F48;
-	Sun,  3 Nov 2024 19:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7877A18A95B;
+	Sun,  3 Nov 2024 19:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730661622; cv=none; b=A6gFHuR9T+Le5nb/Pd20cdpqpcLfZwhV8bB0tSAVU5vdRpYtbKnlTA/wNzHr8IZN0WM6qpuOXNzhV9ShHRQE3zU4OPlJy3P1uhxF10ml1ryEICNwX/MW4XU9oCc3OsO97VsYV9AQ+kzSLHhTlf783Dvek48tQR8pzTnsEBTe/lE=
+	t=1730661623; cv=none; b=PajshxF2t7PPWjRRJnsedl9aP7Mo4o/RepReIq4xKA84DoHRqX5ZQGB76qoCifAJq7wr2ktrrmfnxDovnunCYfcPzRl0SmPJQbE7krZ59/JsdnPxXdObQgkqoHs3LqmIzlU55AitYXqOkoQjUYUAdwAIihfhEfBacQqJtxYSJK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730661622; c=relaxed/simple;
-	bh=+SzG39M2jVZpdLMuDmKwxnI/V/yP9sxbrZFvVZCLlTs=;
+	s=arc-20240116; t=1730661623; c=relaxed/simple;
+	bh=guA4XfWxKeUR5/wa7WoZlY8S7+D9ddGQ1ON0NdFMaow=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ayDgTCieGoEI4YKxzjW1bAV1byJNx7XSr1XzTpYvMJtLFEkciXWM/bpfzQ5OYEO7tDvsEwtEGtumEX20D++eiGp6dZTGmNhNtkVvMQ2FT1ZjQcm+p0U52ywuJfbEweET34vOhvd0Q6awGi29nT2XZRNQbkVnie7101tUeABBaOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q13aoZBS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFF32C4AF09;
-	Sun,  3 Nov 2024 19:20:21 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=UNogrgTCDIOJssnCUOHJ1WCo8Qo35qpsmsYwOrsePdf+lyeO3fQ6pkDzyyBAFZzT6jSSKQxnHHzWEiZptA7d8i2UvyonJwgrPog5JWaRX4HQVLFxEhnj/+madGGBquZn8xE3amzcdTJIYohPjFe7wqbCiSj1oGwW4K0LPTpxQmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOnEPC4F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08A77C4CECD;
+	Sun,  3 Nov 2024 19:20:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730661621;
-	bh=+SzG39M2jVZpdLMuDmKwxnI/V/yP9sxbrZFvVZCLlTs=;
+	s=k20201202; t=1730661623;
+	bh=guA4XfWxKeUR5/wa7WoZlY8S7+D9ddGQ1ON0NdFMaow=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=q13aoZBS9AGtdfuBbyo8Q+abhoZ4nd8Q9FG2Rde4ggC4i7c6XaWGXYV45OOYYXbUp
-	 pdgVM3ltO59GjVGVVhm67WYCulVa9T95KHeZsDoDoRwps5XlyJlpjTKo2HFRBBFP1O
-	 4Z1ZA9GYfk3bGEwJiTKsU+OjNfgrTIVRRdd+sVb4i2qLfE24Sq2oGuyqKI6D8zegRa
-	 iB1AaUxAPRs4bvqRud4BAN/lPXJUwST0+AAVgRgTipVk2exzFWVJxqnuiCmxHM6kmu
-	 hdGhay11Fv6Kk+7+s+/y7gGAg9/qDGMyKvFJ5Ph0s8GQ7q6jkERnnvfppXKu8mTX2a
-	 vcxNA/EgvqAHg==
+	b=gOnEPC4Fv1p3ZCOTEHjp7eudQW7oaTS82aLRYFcn5j+/2vjsJU8BMvVCCxWcYtlUo
+	 2esI1saTtOKp6PoLxkcA2r0/A8FFoSVLU214e1iIZlGukbHNnUHgn/OqmJ24xqYD/s
+	 5xWoncZOmyuQ2YLCtBflwqU0Gb5bPxeCZo6qJONANmxV5KklvcB2+pr7SKp2Q+GcG5
+	 63ByRyRPJx/70mAaNmErimZHZtFXBZZ7DJZHpQouOCTrCoeZ/S2t7EPd10w8aoZwiP
+	 GpyWIzjoWF6gDJ5BtAB1OI8B9pgjoyxfZY+9G7f8BebMUByJhfX9zQUTHe+8Rw2Bfa
+	 WHsMbc+T7a1kQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E4138363C3;
-	Sun,  3 Nov 2024 19:20:31 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADED338363C3;
+	Sun,  3 Nov 2024 19:20:32 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,46 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/2][next] UAPI: net/ethtool: Avoid thousands of
- -Wflex-array-member-not-at-end warnings
+Subject: Re: [PATCH net-next] net: phy: use ethtool string helpers
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173066163000.3236514.15893944925080913506.git-patchwork-notify@kernel.org>
-Date: Sun, 03 Nov 2024 19:20:30 +0000
-References: <cover.1730238285.git.gustavoars@kernel.org>
-In-Reply-To: <cover.1730238285.git.gustavoars@kernel.org>
-To: Gustavo A. R. Silva <gustavoars@kernel.org>
-Cc: michael.chan@broadcom.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, bharat@chelsio.com,
- benve@cisco.com, satishkh@cisco.com, manishc@marvell.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
+ <173066163149.3236514.2076673237259299128.git-patchwork-notify@kernel.org>
+Date: Sun, 03 Nov 2024 19:20:31 +0000
+References: <20241029234641.11448-1-rosenp@gmail.com>
+In-Reply-To: <20241029234641.11448-1-rosenp@gmail.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, michael.hennerich@analog.com, andrew@lunn.ch,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrei.botila@oss.nxp.com, ansuelsmth@gmail.com,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 29 Oct 2024 15:55:02 -0600 you wrote:
-> Small patch series aimed at fixing thousands of -Wflex-array-member-not-at-end
-> warnings by creating a new tagged struct within a flexible structure. We then
-> use this new struct type to fix problematic middle-flex-array declarations in
-> multiple composite structs, as well as to update the type of some variables in
-> various functions.
+On Tue, 29 Oct 2024 16:46:41 -0700 you wrote:
+> These are the preferred way to copy ethtool strings.
 > 
-> Changes in v2:
->  - Update changelog text in patch 2/2 to better reflect the changes
->    made. (Jakub)
->  - Adjust variable declarations to follow the reverse xmas tree
->    convention. (Jakub)
+> Avoids incrementing pointers all over the place.
 > 
-> [...]
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/phy/adin.c            |  6 ++----
+>  drivers/net/phy/icplus.c          |  3 +--
+>  drivers/net/phy/marvell.c         | 12 ++++--------
+>  drivers/net/phy/micrel.c          |  6 ++----
+>  drivers/net/phy/mscc/mscc_main.c  |  3 +--
+>  drivers/net/phy/nxp-c45-tja11xx.c |  6 ++----
+>  drivers/net/phy/nxp-cbtx.c        |  2 +-
+>  drivers/net/phy/qcom/qca83xx.c    |  6 ++----
+>  8 files changed, 15 insertions(+), 29 deletions(-)
 
 Here is the summary with links:
-  - [v2,1/2,next] UAPI: ethtool: Use __struct_group() in struct ethtool_link_settings
-    https://git.kernel.org/netdev/net-next/c/43d3487035e9
-  - [v2,2/2,next] net: ethtool: Avoid thousands of -Wflex-array-member-not-at-end warnings
-    https://git.kernel.org/netdev/net-next/c/3bd9b9abdf15
+  - [net-next] net: phy: use ethtool string helpers
+    https://git.kernel.org/netdev/net-next/c/1441df3a37ec
 
 You are awesome, thank you!
 -- 
