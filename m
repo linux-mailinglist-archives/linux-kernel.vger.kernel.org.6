@@ -1,158 +1,148 @@
-Return-Path: <linux-kernel+bounces-393950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9CF9BA7D3
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:02:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D26C29BA7DD
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:18:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444711F219ED
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:02:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52D89B218B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4234718A95B;
-	Sun,  3 Nov 2024 20:02:08 +0000 (UTC)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273A918BB84;
+	Sun,  3 Nov 2024 20:18:16 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10976132111;
-	Sun,  3 Nov 2024 20:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5617C0BE;
+	Sun,  3 Nov 2024 20:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730664127; cv=none; b=m9XNN9uIeH3wFF2SiWDPB8FqaR6EiyGIqvFI0Pe3/Xls/q4JygNzAb7VZ8o3I9OUqL3cl8NdHLAs/iiRlGvlzhqNhHTsHu9lmxxYVrSDuHH79xt4QOU8POr6Su8Gd0ceC0iai7fZK+Aaa9pfbBFwdNrSYGZQ/qOhulVp/07M8U0=
+	t=1730665095; cv=none; b=pkLMwWzULmX7qYNdRiwx/RN/h5gb3PDz5JYDhDadxh1Kd90kyLnTYfKVPADsS3gm91b5Ma+bn+o5IdtS/HI2pzeRJf5EsFsUwW1breIl4hgqJWc92/qFBnLX3PXL2uzLF1Y2mHsIEP0f7qkZs0oJSzyK7Vg26xuY+WpxCyGWFmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730664127; c=relaxed/simple;
-	bh=YCxOz70oKZPnlhnu6GEg/6POCPYTvT8YTEVBtqasbrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o2Bg7vtIv3wNmrwlfZQn6AmE3naVeo3xfSKcSkw6JCbrVOubDiiPaYh8H7EedOOgWqXDa+NO4JH0/MdXcp84aQZIrhYCdFnrePida98lSHCjtrhYGIsy+U7H0cglZXAb1LzFtptjOja8ylnK5w9rWEubRxyP4665rR0NH3hOLIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c77459558so29336925ad.0;
-        Sun, 03 Nov 2024 12:02:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730664125; x=1731268925;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VjfQvqCHHfDeXG4GMQuNHaE4bkPmkI1XqjnN8lstP2Q=;
-        b=uGNrOMQ4dm9xp8MXpGlSUQamVoEooXFN7G02PbfeGG2k4/JbwrSyAFG8llLYW/AI70
-         12VJtLI5rMsoG8nyJflvflK7fM7xUd+IhiNDCx1vWpQFHiOvVojtWjiTzhbVQIbr3AWb
-         /Lbr1OqE7xH7Ou9oXZWY2RoD8IjHaG2Y/te2CaQJMiHgWNfiRYLsKuodcH/vY/ylzOzb
-         V39lYxBIGpgdLKmgzpe8e/eV7Baojb9kHegdJ1dF+VRHtE6eCkPT/hqbOhKz424DLVyz
-         fhdrNqSuL9aQZF/Ii5+hZXAY5LQV9gfrp/BcaItT3htOiE7GVeSqgR6kMNaorc1Wm5ie
-         qpzA==
-X-Forwarded-Encrypted: i=1; AJvYcCULdh4JZgZuh5035UOKN9OZ1MsmCSRrkUJPlLZL+uwgJDOowoC0pX+5IgQICRt7nLdPKCQoZNnKh13y@vger.kernel.org, AJvYcCUswTde0e/egC+9qrxz96rx1ILEABTB9jPtZWALCmObFrpwrP5iN8RyGegAXVACyePm252JZ0C5+ox0@vger.kernel.org, AJvYcCV8Vqg8InVLhSJnbZYFrhQSQMNDOGBQlCvSxshUWrXwsXZ5CFvoJ3G7pSDOcUPHad0gQjiIAE63Del5eksI@vger.kernel.org, AJvYcCVKRu7AneUDlA57t+H71T3KBzAe0pIrAd4CnuyDskr4LPPBetSS10OfdCd84YNQzYUP5SgWO7ZAAs5G@vger.kernel.org, AJvYcCVSL46z1oNyvyLgmMkzkBKy9Jt5G2HWGTDFeddLZwFrhW1c6EQd35OxbS8zTcDhwVG12TgMBguAYT0Tjwp5@vger.kernel.org, AJvYcCVe3yYfQ8GevQ1ThBqjH2I55xKIJc6V5X1YvUV+gtza5yUnM5qghUFba0tEXNrM6ekSkC6JZe7eLnCS5w==@vger.kernel.org, AJvYcCVgMYcQkTUPKdZchDiTeIQEgQ8dM+g3I8v96shUb7ndXm3DrPQS8hvRSVbIGidWiI8WWPxgJW8AAZYzlw==@vger.kernel.org, AJvYcCWh9kT9Qzxpe/fk7wWsF2SGPZxK33nc6dhdXOGK8Odg/Tdp3untVhYPQPL2Xf8sz7H3Al0CS4vyT77asqwBCVzDCtVNOA==@vger.kernel.org, AJvYcCXE39eYUIQOgiUJVRiIjT1dywG5i46BCaHSck4Cn06pRT/XaGk2IJ9f2yp7lwY72/fGJlxbqxNXzcD/kg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXURua6melP2zZ3r6eag/I7r5Lu6F9TuaiZjk5/zMRig8YJIeC
-	T9CiGGBfuQL8sJuAxC1rupDVdDFg8KNje1WbXWBwt14ZAMx8f0V1
-X-Google-Smtp-Source: AGHT+IHAS+v1ffLBb+GI+ZNM4/mlV92TQI2AYHoaDbWsFSd1zPZgooqCqKQWbVDQVnW3KjMuxbyzsA==
-X-Received: by 2002:a17:902:ce91:b0:20b:6624:70b2 with SMTP id d9443c01a7336-210f75154e9mr256357005ad.19.1730664125219;
-        Sun, 03 Nov 2024 12:02:05 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21105707059sm49877745ad.81.2024.11.03.12.02.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 12:02:04 -0800 (PST)
-Date: Mon, 4 Nov 2024 05:02:03 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-cxl@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-	linux-mtd@lists.infradead.org, platform-driver-x86@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] sysfs: constify struct bin_attribute (Part 1)
-Message-ID: <20241103200203.GA183945@rocinante>
-References: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
+	s=arc-20240116; t=1730665095; c=relaxed/simple;
+	bh=/ciKSopirvkv3bpu9Z0N61Ak7iL4yGd4OdLlW/MVWjs=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZFE5EPICQowrVQ4GRp8A++cJ52HbRmNoF3zkQY3dAESTz1VS1nBqion4yJsk/ehq8BqM2yLvBQifRiHYFqdfyVNEE3UWzf8DdWlYbsiXSBh7jHAZJE/Bb3AhbNg/Bo4QdiDsDzCfGTUqcLHcBLJd1r2/mrSGXTJKFV+ZEpuWoys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XhQnt4N8Jz6K5x0;
+	Mon,  4 Nov 2024 04:15:30 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3FE02140B39;
+	Mon,  4 Nov 2024 04:18:09 +0800 (CST)
+Received: from GurSIX1 (10.204.106.27) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sun, 3 Nov
+ 2024 21:17:57 +0100
+From: Gur Stavi <gur.stavi@huawei.com>
+To: 'Andrew Lunn' <andrew@lunn.ch>
+CC: 'Jakub Kicinski' <kuba@kernel.org>, "Gongfan (Eric, Chip)"
+	<gongfan1@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Cai Huoqing
+	<cai.huoqing@linux.dev>, "Guoxin (D)" <guoxin09@huawei.com>, shenchenyang
+	<shenchenyang1@hisilicon.com>, "zhoushuai (A)" <zhoushuai28@huawei.com>,
+	"Wulike (Collin)" <wulike1@huawei.com>, "shijing (A)" <shijing34@huawei.com>,
+	Meny Yossefi <meny.yossefi@huawei.com>
+References: <cover.1730290527.git.gur.stavi@huawei.com> <ebb0fefe47c29ffed5af21d6bd39d19c2bcddd9c.1730290527.git.gur.stavi@huawei.com> <20241031193523.09f63a7e@kernel.org> <000001db2dec$10d92680$328b7380$@huawei.com> <661620c5-acdd-43df-8316-da01b0d2f2b3@lunn.ch>
+In-Reply-To: <661620c5-acdd-43df-8316-da01b0d2f2b3@lunn.ch>
+Subject: RE: [RFC net-next v01 1/1] net: hinic3: Add a driver for Huawei 3rd gen NIC
+Date: Sun, 3 Nov 2024 22:17:55 +0200
+Message-ID: <000201db2e2d$82ad67d0$88083770$@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHbKsTa0xys0oGhWkSQIdOtZx32g7KhpxmAgARHMWOAAA4WcA==
+Content-Language: en-us
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-Hello,
+> On Sun, Nov 03, 2024 at 02:29:27PM +0200, Gur Stavi wrote:
+> > > On Wed, 30 Oct 2024 14:25:47 +0200 Gur Stavi wrote:
+> > > >  50 files changed, 18058 insertions(+)
+> > >
+> > > 4kLoC is the right ballpark to target for the initial submission.
+> > > Please cut this down and submit a minimal driver, then add the
+> > > features.
+> >
+> > Ack.
+> > There is indeed code which is not critical to basic Ethernet
+> functionality
+> > that can be postponed to later.
+> >
+> > Our HW management infrastructure is rather large and contains 2
+> separate
+> > mechanisms (cmdq+mbox). While I hope we can trim the driver to a VF-
+> only
+> > version with no ethtool support that will fit the 10KLoC ballpark, the
+> 4KLoC
+> > goal is probably unrealistic for a functional driver.
+> 
+> It is really all about making you code attractive to reviewers. No
+> reviewer is likely to have time to review a single 10KLoc patch. A
 
-> struct bin_attribute contains a bunch of pointer members, which when
-> overwritten by accident or malice can lead to system instability and
-> security problems.
-> Moving the definitions of struct bin_attribute to read-only memory
-> makes these modifications impossible.
-> The same change has been performed for many other structures in the
-> past. (struct class, struct ctl_table...)
-> 
-> For the structure definitions throughout the core to be moved to
-> read-only memory the following steps are necessary.
-> 
-> 1) Change all callbacks invoked from the sysfs core to only pass const
->    pointers
-> 2) Adapt the sysfs core to only work in terms of const pointers
-> 3) Adapt the sysfs core APIs to allow const pointers
-> 4) Change all structure definitions through the core to const
-> 
-> This series provides the foundation for step 1) above.
-> It converts some callbacks in a single step to const and provides a
-> foundation for those callbacks where a single step is not possible.
-> 
-> Patches 1-5 change the bin_attribute callbacks of 'struct
-> attribute_group'. The remaining ones touch 'struct bin_attribute' itself.
-> 
-> The techniques employed by this series can later be reused for the
-> same change for other sysfs attributes.
-> 
-> This series is intended to be merged through the driver core tree.
+The minimal work for a functional Ethernet driver when responding to
+probe is:
+1. Initialize device management
+2. Create IO queues using device management
+3. Register interrupts
+4. Create netdev on top of the io queues
+5. Handle TX+RX
 
-This is very nice.  Thank you!
+At the moment, just our TX+RX code is ~4KLoC.
 
-For PCI changes:
-  Acked-by: Krzysztof Wilczyński <kw@linux.com>
+> reviewer is more likely to look at the code if it is broken up into 15
+> smaller patches, each one which can be reviewed in a coffee break
 
-This reminded me of an old discussions with Greg and Bjorn about how to set
-size correctly for our ROM and BAR sysfs objects.  Nice to see a very nice
-approach here, indeed.
+We can obviously break a larger submission into multiple patches if
+requested.
+But when researching we saw a comment from David that indicated that there
+is no advantage in that for initial submissions.
+https://lore.kernel.org/netdev/20170817.220343.905568389038615738.davem@dave
+mloft.net/
+Quote:
+"And this is a fine way to add a huge new driver (although not my
+personal preference)."
 
-	Krzysztof
+Breaking a 10KLoC submission into a few 4KLcC (or less) patches helps to
+review specific patches (and ignore other patches) but all lines still need
+to be approved at once so someone must review them.
+
+Breaking 10KLoC into multiple submissions is easier to review and approve
+(in parts), but merged code will be non-functional until the last
+submission.
+It will compile fine, do no harm, and nobody will pick it except for allyes
+builds.
+
+> etc. Also, reviewers have interests. I personally have no interest in
+> mailbox APIs, actually moving frames around, etc. I want to easily
+> find the ethtool code, have you got pause wrong like nearly everybody
+> does, are the statistics correctly broken up into the standard groups,
+
+To properly review (error prone) pause it would be better to remove it from
+initial submission and add it in a later dedicated submission.
+
+> are you abusing debugfs? Having little patches with good subject lines
+> will draw me towards the patches i want to review.
+> 
+> 10KLoC is still on the large size. Can you throw VF out, it is just a
+> plain borring single function device, like the good old e1000e?
+
+VF driver is just like good old e1000e NIC. It is a driver that registers
+A single PCI vid:did, "unaware" that its part of SRIOV, and performs the
+initialization sequence described above when probed.
+
+> 
+> 	Andrew
+
 
