@@ -1,82 +1,65 @@
-Return-Path: <linux-kernel+bounces-393942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1109BA7B0
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:39:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8630D9BA7B2
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:42:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E4ADB20BE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:39:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E3E41C20A99
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 19:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF49189BBA;
-	Sun,  3 Nov 2024 19:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D84B189F37;
+	Sun,  3 Nov 2024 19:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYZAjIRC"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="kD1e3IaZ"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AB3136358;
-	Sun,  3 Nov 2024 19:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03911CAB8;
+	Sun,  3 Nov 2024 19:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730662733; cv=none; b=onDwd/ubrAttPP4uL5l0uscHeq+NTPglT4AO0TeL7LMaZbEqIuNkYr2PcOWRj2ZwYsLHbWuxkNraAefX0l+NtvHJGVRrpA2cJylGddb9ndNdcJ0ozuhdutwIw8R3/pcCTNPqrTGKr397wHyJxUpDrJ0xXl2kceEd2uAdOwNpYFY=
+	t=1730662921; cv=none; b=FyMrxLhKyTll0x5XIKhXmAh2OvgooPeGaEaOk0HA6+uGb/czYLG0wbuTvs5OlTiwAVL+n6Ertif14nMnGFAjwgXjiuMaDE7iz+tT2eZRzDQOfszz8okMbQHTzIlCx8aVSl1pAJWCDvd81N8D2KRlPrZNqi+ZsBpDZ2nNUzHz6to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730662733; c=relaxed/simple;
-	bh=sM9GzluozgQPIg5Vs5SoQTDViRP22kkDSOQI1XA113Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pChAouJkA/+E6K9fzrkvASYDNRxM6in5PyWcif0K9FdJy+3gIUzZNkqdLwCT/s9K8gLmlUh4khNlXSSfGgovLqQyiDuY7Inmh4sxCdVXvYv2wXzcsZOYJc4h9bU9jbxm/AbmmR/SEhCMOMNgTq5TgOanyXIX9HNSdc1WGWDBddo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DYZAjIRC; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-431ac30d379so28913035e9.1;
-        Sun, 03 Nov 2024 11:38:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730662730; x=1731267530; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0la0sxqzxsLHUVj5b4t1hec1mDb/IwBoSRs+TYmwypw=;
-        b=DYZAjIRCDiKq7AiFHPHLVLyUL/s3dCeHmmpMwxhYY7aE2eP8w57zyzXmmMSHmDFsTp
-         gC8hgEWg9Ymv9GLEbaEdTEysZLGBs++my6DWJI24CUUCbhiIRsGH9Lm2diIt69B2jp6i
-         TCFZrGj978Eaimkda+OhBkMqvB/pVkF1iS6fUOH5mdR1ODT7QvRdP7NtItW/8KeLQfhA
-         XgyAUGJFzLHaELtmM1SIDJjblvO5RtPZ1zIoWw+wzi30QXC+hGLjVjUihE0F8YNOwUKQ
-         DJMwOJprZyl7mjOI4L58PRmVudZV3PEqtiqgYmHfiY6m3mFseVt0sa/Gbjau02wChRpv
-         FQIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730662730; x=1731267530;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0la0sxqzxsLHUVj5b4t1hec1mDb/IwBoSRs+TYmwypw=;
-        b=I1Q6cocOLReGxN9PVQVHaryLmiCSOYiJlGLzK+QLNZTvdVU86KDTayIm8g9T1rKK2I
-         KqvRBycMwRIU+cWl+95LkSWybVYq6SU7tpTLtN4QUyOtVcQlple5LYvgSf0e8a9dWEV0
-         /WSgO7AEYfgBwGhc15jPpRoV1KYxAL1nzspg4HS+i/tUDbkwuoUl5VfjXRASehRlA3Kq
-         iPqt4lkDRN1tf481fMpltzBX8NslWIYBnjsJS1bxPqBbHde61ROd9+5rZNVnAapfVVZq
-         VF8UeY48P7DgeZFF9U3ml5+vy1XGVAlyzOVwZhz9AsUDqpp9H885VXYUFqEqrkOCJDqL
-         2VWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLWWO15a48ooa+rTYEl52JPhmSM0M32OUEy1M/P1+X9JT59n7jsKnq2crGKS10TPDrTlhInKWK@vger.kernel.org, AJvYcCWvNdnvUTGnhwENhkaiq/RYjlCHjuZ1c/tk1PnwW7VzUkNGSiYVifGUkuJE2qetMg49RWYoo/W6/EXWa4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVI0q7bwwytAzyv48bgYBYE2dFCLJyizha3E+oPJLGZ96G180k
-	4QaoKBOMf1Xe4YhCGN/5BBNEo0do66e5imIahaEUiuTgTwxlZyr12mwAlO/4ctw=
-X-Google-Smtp-Source: AGHT+IHQpQ5MNy8oH8DdhfDZP6iuVsNji2bUgccCrZZ5BsDM/DcexIYeciCpQFEqimnM/5PEZj0WaQ==
-X-Received: by 2002:a05:600c:5118:b0:42c:b995:2100 with SMTP id 5b1f17b1804b1-4319ac75a0amr229764275e9.6.1730662729505;
-        Sun, 03 Nov 2024 11:38:49 -0800 (PST)
-Received: from dev7.kernelcare.com ([2a01:4f8:201:23::2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5c65absm129759615e9.16.2024.11.03.11.38.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 11:38:49 -0800 (PST)
-From: Andrew Kanner <andrew.kanner@gmail.com>
-To: mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com
-Cc: ocfs2-devel@lists.linux.dev,
+	s=arc-20240116; t=1730662921; c=relaxed/simple;
+	bh=o0Pc2R9wuW7omPMTf/RTnyMCsJapsJt8yRyVB1HTJes=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WqfRtxNez4pSblOoEu9goXolP84AstvhFu8EuAG2nQArG90uQzl8Hq4WyDubIoOTrYoaccFL0sQAIY272untlKDxY6++YWrUOFPiyEiE9dPqFLjL7ulvaN0kkOcuqTrI0ibC7rn0glMdTakbXbHOqe6h6zFTNshy62O7zx3GD/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=kD1e3IaZ; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=fRIwc7I4KZcMP8rRONzc1mtVgIvo9wZ3VmVmgqHtqpI=; b=kD1e3IaZv+7HZNRB
+	sbaDSIh/tPOBs4Dk/ws2rNpjiRuAUQV11xiBG//7ysrNU0Qqo/yJJCRjWscExjM2o/kfRD2zLdeiO
+	6XzfOVGTi4p7ZxbAz4JupK4pXeD2RjzcxPRwD8848yPTxeC4QvgmqHq8SdtaL3yUS/Pmf51tG2KD0
+	lt8nK/Ow9mgRC0/PQndCiLyi4Q0nE5SOJjh/mQfMCeYI292RxG899PflTMufbFxglwYYi/Dod5NZQ
+	GglSbpXyaA+kH74A3jDrUqlIQ89kmsrSIZDgX+PFR2r0PraWuKiPTI+t5furVQNu+Gbp/2SXAT3XY
+	3VqkI7O7XEmuQygKcA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1t7gTu-00FCCo-0z;
+	Sun, 03 Nov 2024 19:41:50 +0000
+From: linux@treblig.org
+To: shayagr@amazon.com,
+	akiyano@amazon.com,
+	darinzon@amazon.com,
+	ndagan@amazon.com,
+	saeedb@amazon.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Andrew Kanner <andrew.kanner@gmail.com>,
-	stable@vger.kernel.org,
-	syzbot+386ce9e60fa1b18aac5b@syzkaller.appspotmail.com
-Subject: [PATCH v2] ocfs2: remove entry once instead of null-ptr-dereference in ocfs2_xa_remove()
-Date: Sun,  3 Nov 2024 20:38:45 +0100
-Message-ID: <20241103193845.2940988-1-andrew.kanner@gmail.com>
-X-Mailer: git-send-email 2.43.5
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH net-next] net: ena: Remove autopolling mode
+Date: Sun,  3 Nov 2024 19:41:49 +0000
+Message-ID: <20241103194149.293456-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,87 +68,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Syzkaller is able to provoke null-ptr-dereference in ocfs2_xa_remove():
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-[   57.319872] (a.out,1161,7):ocfs2_xa_remove:2028 ERROR: status = -12
-[   57.320420] (a.out,1161,7):ocfs2_xa_cleanup_value_truncate:1999 ERROR: Partial truncate while removing xattr overlay.upper.  Leaking 1 clusters and removing the entry
-[   57.321727] BUG: kernel NULL pointer dereference, address: 0000000000000004
-[...]
-[   57.325727] RIP: 0010:ocfs2_xa_block_wipe_namevalue+0x2a/0xc0
-[...]
-[   57.331328] Call Trace:
-[   57.331477]  <TASK>
-[...]
-[   57.333511]  ? do_user_addr_fault+0x3e5/0x740
-[   57.333778]  ? exc_page_fault+0x70/0x170
-[   57.334016]  ? asm_exc_page_fault+0x2b/0x30
-[   57.334263]  ? __pfx_ocfs2_xa_block_wipe_namevalue+0x10/0x10
-[   57.334596]  ? ocfs2_xa_block_wipe_namevalue+0x2a/0xc0
-[   57.334913]  ocfs2_xa_remove_entry+0x23/0xc0
-[   57.335164]  ocfs2_xa_set+0x704/0xcf0
-[   57.335381]  ? _raw_spin_unlock+0x1a/0x40
-[   57.335620]  ? ocfs2_inode_cache_unlock+0x16/0x20
-[   57.335915]  ? trace_preempt_on+0x1e/0x70
-[   57.336153]  ? start_this_handle+0x16c/0x500
-[   57.336410]  ? preempt_count_sub+0x50/0x80
-[   57.336656]  ? _raw_read_unlock+0x20/0x40
-[   57.336906]  ? start_this_handle+0x16c/0x500
-[   57.337162]  ocfs2_xattr_block_set+0xa6/0x1e0
-[   57.337424]  __ocfs2_xattr_set_handle+0x1fd/0x5d0
-[   57.337706]  ? ocfs2_start_trans+0x13d/0x290
-[   57.337971]  ocfs2_xattr_set+0xb13/0xfb0
-[   57.338207]  ? dput+0x46/0x1c0
-[   57.338393]  ocfs2_xattr_trusted_set+0x28/0x30
-[   57.338665]  ? ocfs2_xattr_trusted_set+0x28/0x30
-[   57.338948]  __vfs_removexattr+0x92/0xc0
-[   57.339182]  __vfs_removexattr_locked+0xd5/0x190
-[   57.339456]  ? preempt_count_sub+0x50/0x80
-[   57.339705]  vfs_removexattr+0x5f/0x100
-[...]
+This manually reverts
+commit a4e262cde3cd ("net: ena: allow automatic fallback to polling mode")
 
-Reproducer uses faultinject facility to fail ocfs2_xa_remove() ->
-ocfs2_xa_value_truncate() with -ENOMEM.
+which is unused.
 
-In this case the comment mentions that we can return 0 if
-ocfs2_xa_cleanup_value_truncate() is going to wipe the entry
-anyway. But the following 'rc' check is wrong and execution flow do
-'ocfs2_xa_remove_entry(loc);' twice:
-* 1st: in ocfs2_xa_cleanup_value_truncate();
-* 2nd: returning back to ocfs2_xa_remove() instead of going to 'out'.
+(I did it manually because there are other minor comment
+and function changes surrounding it).
+Build tested only.
 
-Fix this by skipping the 2nd removal of the same entry and making
-syzkaller repro happy.
-
-Cc: stable@vger.kernel.org
-Fixes: 399ff3a748cf ("ocfs2: Handle errors while setting external xattr values.")
-Reported-by: syzbot+386ce9e60fa1b18aac5b@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/671e13ab.050a0220.2b8c0f.01d0.GAE@google.com/T/
-Tested-by: syzbot+386ce9e60fa1b18aac5b@syzkaller.appspotmail.com
-Signed-off-by: Andrew Kanner <andrew.kanner@gmail.com>
+Suggested-by: David Arinzon <darinzon@amazon.com>
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
+ drivers/net/ethernet/amazon/ena/ena_com.c | 25 +++++------------------
+ drivers/net/ethernet/amazon/ena/ena_com.h | 14 -------------
+ 2 files changed, 5 insertions(+), 34 deletions(-)
 
-Notes (akanner):
-    v2: remove rc check completely, suggested by Joseph Qi <joseph.qi@linux.alibaba.com>
-    v1: https://lore.kernel.org/all/20241029224304.2169092-2-andrew.kanner@gmail.com/T/
-
- fs/ocfs2/xattr.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-index dd0a05365e79..73a6f6fd8a8e 100644
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -2036,8 +2036,7 @@ static int ocfs2_xa_remove(struct ocfs2_xa_loc *loc,
- 				rc = 0;
- 			ocfs2_xa_cleanup_value_truncate(loc, "removing",
- 							orig_clusters);
--			if (rc)
--				goto out;
-+			goto out;
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
+index bc23b8fa7a37..66445617fbfb 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -763,25 +763,16 @@ static int ena_com_wait_and_process_admin_cq_interrupts(struct ena_comp_ctx *com
+ 
+ 		if (comp_ctx->status == ENA_CMD_COMPLETED) {
+ 			netdev_err(admin_queue->ena_dev->net_device,
+-				   "The ena device sent a completion but the driver didn't receive a MSI-X interrupt (cmd %d), autopolling mode is %s\n",
+-				   comp_ctx->cmd_opcode, admin_queue->auto_polling ? "ON" : "OFF");
+-			/* Check if fallback to polling is enabled */
+-			if (admin_queue->auto_polling)
+-				admin_queue->polling = true;
++				   "The ena device sent a completion but the driver didn't receive a MSI-X interrupt (cmd %d)\n",
++				   comp_ctx->cmd_opcode);
+ 		} else {
+ 			netdev_err(admin_queue->ena_dev->net_device,
+ 				   "The ena device didn't send a completion for the admin cmd %d status %d\n",
+ 				   comp_ctx->cmd_opcode, comp_ctx->status);
  		}
+-		/* Check if shifted to polling mode.
+-		 * This will happen if there is a completion without an interrupt
+-		 * and autopolling mode is enabled. Continuing normal execution in such case
+-		 */
+-		if (!admin_queue->polling) {
+-			admin_queue->running_state = false;
+-			ret = -ETIME;
+-			goto err;
+-		}
++		admin_queue->running_state = false;
++		ret = -ETIME;
++		goto err;
  	}
  
+ 	ret = ena_com_comp_status_to_errno(admin_queue, comp_ctx->comp_status);
+@@ -1650,12 +1641,6 @@ void ena_com_set_admin_polling_mode(struct ena_com_dev *ena_dev, bool polling)
+ 	ena_dev->admin_queue.polling = polling;
+ }
+ 
+-void ena_com_set_admin_auto_polling_mode(struct ena_com_dev *ena_dev,
+-					 bool polling)
+-{
+-	ena_dev->admin_queue.auto_polling = polling;
+-}
+-
+ int ena_com_mmio_reg_read_request_init(struct ena_com_dev *ena_dev)
+ {
+ 	struct ena_com_mmio_read *mmio_read = &ena_dev->mmio_read;
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.h b/drivers/net/ethernet/amazon/ena/ena_com.h
+index 20e1529adf3b..9414e93d107b 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.h
++++ b/drivers/net/ethernet/amazon/ena/ena_com.h
+@@ -224,9 +224,6 @@ struct ena_com_admin_queue {
+ 	/* Indicate if the admin queue should poll for completion */
+ 	bool polling;
+ 
+-	/* Define if fallback to polling mode should occur */
+-	bool auto_polling;
+-
+ 	u16 curr_cmd_id;
+ 
+ 	/* Indicate that the ena was initialized and can
+@@ -493,17 +490,6 @@ bool ena_com_get_admin_running_state(struct ena_com_dev *ena_dev);
+  */
+ void ena_com_set_admin_polling_mode(struct ena_com_dev *ena_dev, bool polling);
+ 
+-/* ena_com_set_admin_auto_polling_mode - Enable autoswitch to polling mode
+- * @ena_dev: ENA communication layer struct
+- * @polling: Enable/Disable polling mode
+- *
+- * Set the autopolling mode.
+- * If autopolling is on:
+- * In case of missing interrupt when data is available switch to polling.
+- */
+-void ena_com_set_admin_auto_polling_mode(struct ena_com_dev *ena_dev,
+-					 bool polling);
+-
+ /* ena_com_admin_q_comp_intr_handler - admin queue interrupt handler
+  * @ena_dev: ENA communication layer struct
+  *
 -- 
-2.43.5
+2.47.0
 
 
