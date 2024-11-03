@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-393882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D319BA6B1
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:44:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF949BA6B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6AB1C21498
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:44:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023ED1F22214
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 16:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213CD187FEC;
-	Sun,  3 Nov 2024 16:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DF11885A0;
+	Sun,  3 Nov 2024 16:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3k86+EP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxgcZQyS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8DC187877;
-	Sun,  3 Nov 2024 16:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2635082D98;
+	Sun,  3 Nov 2024 16:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730652258; cv=none; b=oA8vy1DYSlV9Ji4pZQPFHmJTfO090ZMQ65JdeSnNi8ya3FOs424NaY+ZmgyLwVZwruvMCPVP+TGm8Jck5ZAirAV5iuD6m1ngHNF4fP9nASKz3nz8vecqf7Z1isNNmteKN3eeWr/xuUOdJ0KISyIC9zBeFrvk3KzwBeJtbpiO5a8=
+	t=1730652407; cv=none; b=RqbOT6FRqlBdygDPhkRBcnwsWm0wRe0UPfUXZ8+APQgj4UNgY/+AvnrCzNX8FMq7+miHSnLhIBZE4kSQlfHwKCtYV5bDc4aeifMarMPxMxAkZBA8lk7dKRVSRBybfLbh1DOYq4Ii9MfmmXOdRn5GiD+wuY+P4z3+YVTxHvq2VQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730652258; c=relaxed/simple;
-	bh=S3SbpYTjUrmRX4cB+QgzTc9m7Ue1CQcbJkvEY61S0Xs=;
+	s=arc-20240116; t=1730652407; c=relaxed/simple;
+	bh=h4FJ2Qo3AzoyJwS9J1Xjg2cFdI4TxMdY0L6w3I+W9oM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hI/22TuRLcEFjR90gj+Bo9vXXmk0QMpGKfcTa2ugdXb599l3t6I0+5Qc8i7NLDmPYyksGh/rcsDcN0ZcViA1tHDRQpfdk7BcdXcaV9E7EHsRZAvV8M8Hqn8VQ4kH0Ej0nvRJUierFolucNFFYb79r4hR7xDxitMZTPYepr6o/Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3k86+EP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9736C4CECD;
-	Sun,  3 Nov 2024 16:44:12 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=PIavSUM0tghny9rKPeWtOnNgV5gVvuiarvv8eING2Bt4J8+ju6IRrMOSmAkK9br1arFuiVQPNXbkvS6LgmszF5TUCiNO/LPcun/SKTKrAAV+/JQrZGnAylw2kPQp0K2SSNiuOFhhzRZqhjlxNu333Y4SCWYeLSGav3jp7Ob+P/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxgcZQyS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D5BEC4CECD;
+	Sun,  3 Nov 2024 16:46:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730652257;
-	bh=S3SbpYTjUrmRX4cB+QgzTc9m7Ue1CQcbJkvEY61S0Xs=;
+	s=k20201202; t=1730652406;
+	bh=h4FJ2Qo3AzoyJwS9J1Xjg2cFdI4TxMdY0L6w3I+W9oM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z3k86+EPxR2AKeg8PVY9B7ZpZh3pI9ZFtf/5G5SmIoidwr1EyJl7OeBsedCg/YXU6
-	 20FtEAYOADWm+CC+MZrVmOjctDW9MC6AE4FKmQagrabprK1iPw9XCLzF2s/LbRXNNu
-	 DbsKzhQfTK3oIxOtgfD18MzwfPJWHkHW6l9ieyK3AkEffbis8Nr8lbHDL7z8NHE0Ww
-	 l7W1zOGlQP4VfiSUk7nOtDGzTwvqhmeJyEtU4RC6qj6i8rzUYLGXCJhlQuaM2cVPhh
-	 6kDZ0o8+VqIWVc20sHASV9s6itPp5M5wNAtSfUqeC7K3xLxDVureejnufe/REkPEEi
-	 d0MJuDV7bLmcw==
-Message-ID: <ae2479fa-6a39-46b2-8712-2e33f2e0d53a@kernel.org>
-Date: Sun, 3 Nov 2024 17:44:09 +0100
+	b=KxgcZQySbsDwz51ae6uP+7b+bLArTlFnstmNNi3TALroTifK4zS6e2Xh5gXB3tBnG
+	 oMLd0I1R1UmOkVUKXoWgzc+ZegOy1U5hNKFXtJgXenOZ+JP+9kEzSYP1yjKoZzJ9bx
+	 kg+fMXzbte9wzQULVvx+oAPGZ9GCv5Hp+2MCLg7jyEWzGsc5EfUlrLg1ZWCwnastwg
+	 TAMtHuieivZwViO5NsACZdJu5d3qJnTIK3AVrE1CIiAWA5rdEqj0t3xAOYfILAoccg
+	 UXIb9t9d/ped7hanaSFo2QmzTKyd6HBMLaZneK3zosky+oa/gXhzXkp08XzqDzc6PH
+	 6tYWbo5FnCNXA==
+Message-ID: <f5188173-21c4-4921-b7c8-5685c661a157@kernel.org>
+Date: Sun, 3 Nov 2024 17:46:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] MIPS: loongson3_defconfig: Enable blk_dev_nvme by
- default
-To: WangYuli <wangyuli@uniontech.com>, tsbogend@alpha.franken.de,
- dhowells@redhat.com, jlayton@kernel.org
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
- chenhuacai@kernel.org, kernel@xen0n.name, jiaxun.yang@flygoat.com,
- guanwentao@uniontech.com, zhanjun@uniontech.com, xuerpeng@uniontech.com,
- maqianga@uniontech.com, baimingcong@uniontech.com
-References: <cover.1730638429.git.wangyuli@uniontech.com>
- <F56016A1645609BF+5d1de4afc8ee6bacf8878461b848de72b556c85f.1730638429.git.wangyuli@uniontech.com>
+Subject: Re: [PATCH linux dev-6.11 v3 2/2] dt-bindings: Add SY24655 to ina2xx
+ devicetree bindings
+To: Wenliang <wenliang202407@163.com>, linux@roeck-us.net
+Cc: book <book@100ask.localdomain>, jdelvare@suse.com,
+ linux-hwmon@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+References: <706d4821-2637-4aac-869b-822f69aebbfa@roeck-us.net>
+ <20241103163908.11890-1-wenliang202407@163.com>
+ <20241103163908.11890-2-wenliang202407@163.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,24 +104,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <F56016A1645609BF+5d1de4afc8ee6bacf8878461b848de72b556c85f.1730638429.git.wangyuli@uniontech.com>
+In-Reply-To: <20241103163908.11890-2-wenliang202407@163.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/11/2024 14:00, WangYuli wrote:
-> A significant number of 3A4000 machines come with NVMe drives
-> pre-installed, so we should support it in its defconfig.
+On 03/11/2024 17:39, Wenliang wrote:
+> From: book <book@100ask.localdomain>
 > 
-> Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
-> Tested-by: Qiang Ma <maqianga@uniontech.com>
+> SY24655 is similar to INA226. Its supply voltage and pin definitions
+> are therefore the same. Compared to INA226, SY24655 has two additional
+> registers for configuring and calculating average power.
+> 
+> Signed-off-by: book <book@100ask.localdomain>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-I am sorry, but what exactly did you test here? This is defconfig, so
-you checked whether after building kernel there is such module? This is
-not testing.
+NAK, this never happened. If you think otherwise: provide proof, please.
 
-...
+Nothing improved in this binding, actually it got even worse with fake
+email and probably name as well.
 
-> +CONFIG_BLK_DEV_NVME=m
 Best regards,
 Krzysztof
 
