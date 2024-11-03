@@ -1,123 +1,83 @@
-Return-Path: <linux-kernel+bounces-393964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8169F9BA805
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:48:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DA79BA807
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 21:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DAFDB21075
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:48:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E067E1F218E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 20:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC49B18BBB7;
-	Sun,  3 Nov 2024 20:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8D018BC1E;
+	Sun,  3 Nov 2024 20:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b="lt7iLfuH"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmqL4GR+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE9013B791
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 20:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A5283CD3;
+	Sun,  3 Nov 2024 20:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730666924; cv=none; b=SUIEqOrV8LdNdJ+jh5k5cnKkoS3yNWAMNmtYgQ2KRM97X4EgcxlUYmv6TNMLCtXLKUCvUCxRCUtdX8k+ZtPKPkNyPloJiDB7aVAuDIVapkoq51dkg/hN3F5IE72C460rmFGXSWJ5/CqsUdoRsQcQ8vMEY80M/jSP8zPTIL/DQ8c=
+	t=1730667036; cv=none; b=FdpAev7162OqkDtVdEiAIsCyALQ91CZt3Ldcufon+JQcTiYrw+MKbQ0LkQ85jRDASKLnicRclIjONW2Io6hpKedi+aY8XCOEZTWlhgNCP3nVIrND5jjtWgvFyyh5m1uMCCz2qwtaLb3uv62MNy4YIjskuP09ZDY15nq6ICC49Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730666924; c=relaxed/simple;
-	bh=SaPPFw0i2Jm6LqIInQrwnloT+7hSRv+2il3t25SfqpE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GvFNiC/jJDjWkwTjuX9sKBP67JRT4a2DoA5qukjSvcHzlehuVHc9jYcC7t4V76vrlcFswxOniDS374QKLrpR9NfUlbbNsasgoocBXwqTFHtpf+r+ATwb+Xd10LE7Y4eYSY6toqgia7buExi2tX+q03aezI+0CCktHYD+2vNmjUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com; spf=pass smtp.mailfrom=engflow.com; dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b=lt7iLfuH; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engflow.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83ac817aac3so145058639f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 12:48:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=engflow.com; s=google; t=1730666920; x=1731271720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mlm2PLrARUKeIopTjkk7MtdiLDlLWS0aLomBZawMdaI=;
-        b=lt7iLfuHm19mw4aHvOHsIfChsyPN4Gw3zj0/g2sFIOrSrCe6n5604A/ku3c3fmO184
-         nxt6kWqPlWOl5i3Ocn5J1OILLA7FvmbM8HoE6uoT9foM5kf95IlaYUrTQ0JCo7DtrEbr
-         RNQVRzjfpOngNHRFr1+4ehiE+/DO8h707N0Xs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730666920; x=1731271720;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mlm2PLrARUKeIopTjkk7MtdiLDlLWS0aLomBZawMdaI=;
-        b=ACYY7bIQrlJw0R9Ws5UURRFgz8Z5qk/Ne7LcM7CAUUXJlh/6qvC8FFxKkxg7Q/Ykho
-         GGogI2LTQCew/k1WZ6rgbCAFy0HbGIEu2lSXPwJKyXTqvgIcx6Q023xMjER9wTJ3QlQf
-         JvJlZFuPr5WXzmlTdmqCMcOBlvGbx0bICiDYB0g9vz4mE6HXjtSFcS1icJ88uoPqYPXf
-         armz2r722enrMIxx+5Y78mcVbKFV44IxPTNgVzL62U4ACzo+LKMrgZi2+NJk7FwK6enl
-         ycwQiIPKampSkDhV0OQcFZ5ejh36J8UHYDO8DQvuttNDyOQtNXLOs2+/xxxlbrH3CQeD
-         aluQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ5cOzSiASYAil15+xRVmHRkbkqKCEC16wjT6Nkk3eeaqXipYcqijFRTjaoxY8fG0kNka9Ze85pBu+VLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvd4iCWmv8bSN9mFptMTKWgwSayY8oaWg5SaPU4IrcGB3wOPmg
-	qEy1/k6K6/2Y2XHqvnmBUzyqiYXyuRxbQHtnzMAjFnKTgFxyK1yyY38qEPbESdk=
-X-Google-Smtp-Source: AGHT+IFmKEKqEcCrPchJyXh14BuWWrnIOqGLmqLcDn3M5t5a7ymNpnzwMlZRzh4NhnPRabIqTcXQcw==
-X-Received: by 2002:a05:6e02:3992:b0:3a6:c97e:75cb with SMTP id e9e14a558f8ab-3a6c97e76b5mr25594865ab.23.1730666920050;
-        Sun, 03 Nov 2024 12:48:40 -0800 (PST)
-Received: from benjamin-test-build-vm.us-central1-a.c.engflow-remote-execution.internal (132.155.121.34.bc.googleusercontent.com. [34.121.155.132])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de049a491csm1661468173.155.2024.11.03.12.48.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 12:48:38 -0800 (PST)
-From: Benjamin Peterson <benjamin@engflow.com>
-To: acme@kernel.org
-Cc: adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com,
-	benjamin@engflow.com,
-	howardchu95@gmail.com,
-	irogers@google.com,
-	jolsa@kernel.org,
-	kan.liang@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	mark.rutland@arm.com,
-	mingo@redhat.com,
-	namhyung@kernel.org,
-	peterz@infradead.org
-Subject: [PATCH v3] perf trace: avoid garbage when not printing a trace event's arguments
-Date: Sun,  3 Nov 2024 20:48:16 +0000
-Message-Id: <20241103204816.7834-1-benjamin@engflow.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <ZyV0a6e_46R9pmQw@x1>
-References: <ZyV0a6e_46R9pmQw@x1>
+	s=arc-20240116; t=1730667036; c=relaxed/simple;
+	bh=0XUV0VbcIRK0revMTo8r7QUXU3/XHGnvm9TNClNnFVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qXdtP6Bqzcrny8/2ocNtgO2hsPZhOhGSo7Gj5ZoBUyYlRORbzKNOclDckI50Tstnkwl6loeRK4VOfP4nRoElx7+oZ9rNc/s8Cgkyb/6NUhaT0rKtFm+iUwYb+McYWCwyEXPddFKx1HQdgTv+kcIFGO+m7poa+aEHMBLj6uAx5Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmqL4GR+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B821EC4CECD;
+	Sun,  3 Nov 2024 20:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730667036;
+	bh=0XUV0VbcIRK0revMTo8r7QUXU3/XHGnvm9TNClNnFVg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QmqL4GR+ldvCw/9MNJqu6/DT/SoZWrP8wJtwZKrQNZPeadrGkpWCjdZvBRDEmh+m4
+	 GjdCEmjtqQD64NuswLMN+UzIxO+1H8iz6k4CjEXZEmEArR4cox+9ykhra4hIzkAUe8
+	 AUEbmq35eMBGKuGtz4k0RKw2+r+6AraeolDcHWD+4X8LL0zmilX9C6nuZK+5ceMKQ6
+	 VLR+PKogOtin4UdjnDHWFWmPKhSNrL8fooG4pI3QO1bB3vz6LheKN1g/ATTW5teqwC
+	 MafoEnhLYDxhIpP/qEIiDFnw6CqDbBtlMy2fU05MPcaQ7QpEL0x0ufaew1de9EJ/e5
+	 IruML2peqXoTA==
+Date: Sun, 3 Nov 2024 12:50:34 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH net 0/2] Fix issues when PF sets MAC address for VF
+Message-ID: <20241103125034.27c43c51@kernel.org>
+In-Reply-To: <20241031060247.1290941-1-wei.fang@nxp.com>
+References: <20241031060247.1290941-1-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-trace__fprintf_tp_fields may not print any tracepoint arguments. E.g., if the
-argument values are all zero. Previously, this would result in a totally
-uninitialized buffer being passed to fprintf, which could lead to garbage on the
-console. Fix the problem by passing the number of initialized bytes fprintf.
+On Thu, 31 Oct 2024 14:02:45 +0800 Wei Fang wrote:
+>   net: enetc: allocate vf_state during PF probes
+>   net: enetc: prevent PF from configuring MAC address for an enabled VF
 
-Fixes: f11b2803bb88 ("perf trace: Allow choosing how to augment the tracepoint arguments")
-Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
-Tested-by: Howard Chu <howardchu95@gmail.com>
----
- tools/perf/builtin-trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This combination of changes would imply that nobody sets the MAC
+address on VFs via this driver, correct? Patch 1 fixes a crash
+if address is set before VFs are enabled, patch 2 forces setting
+the MAC before VFs are enabled (which would previously crash).
+Which leads me to believe this will cause regressions to all users,
+if such users exist.
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index d3f11b90d025..5af55f4192b5 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3087,7 +3087,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
- 		printed += syscall_arg_fmt__scnprintf_val(arg, bf + printed, size - printed, &syscall_arg, val);
- 	}
- 
--	return printed + fprintf(trace->output, "%s", bf);
-+	return printed + fprintf(trace->output, "%.*s", (int)printed, bf);
- }
- 
- static int trace__event_handler(struct trace *trace, struct evsel *evsel,
--- 
-2.39.5
+The fact that the MAC address is not picked up by a running VM is
+normal, I'd say even maybe expected. IIUC hypervisor will enable 
+SRIOV at the start of day, then allocate, configure and assign VFs
+to VMs. It will FLR the VF after configuration.
 
+Your change will make it impossible to reconfigure VF with a MAC
+of a new VM, if any other VF is in use.
+
+Long story short, I don't believe the patch 2 is necessary at all,
+maybe you can print a warning to the logs, if you really want.
 
