@@ -1,122 +1,142 @@
-Return-Path: <linux-kernel+bounces-394033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4D79BA95E
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 23:50:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D2D9BA967
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 23:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C18091C20E49
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:50:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D0C6B216D7
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 22:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AD818DF89;
-	Sun,  3 Nov 2024 22:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B451118C93B;
+	Sun,  3 Nov 2024 22:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjP++LQx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Rb1aC6CS"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1552189BA0;
-	Sun,  3 Nov 2024 22:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B82F18C010
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 22:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730674229; cv=none; b=SEc6ubW+DDAvM0DNcOnDDHXktaRrSIXXwew2eSM3ZqqbAAZ2GfiR4glmiRgaVD01/Jcrs9OMK0hLwr8AS9VkowPfL3hPXKCoO2lObgox3u0wO7gUY/HQkH6L1eUUmjnIVZZX20ErfzR8IQK95pLubAuxnENQrtftaq4Q2XsIZmI=
+	t=1730674262; cv=none; b=GcU0PJelfeEQBWX05N6F4yrHB7i9Flm8JvQQ5arDCaRmeaZ0kXUO2YphvX2ogiDl9UP2WLpTwRv+nOn1qrQCsBR3ImfilT6SEG3bAg3jTEGQxEB4ZV/Wtcd+9craLNxqDC44lfbvcIfBowdcX1LE4On2NIDtN43hHoo+59sPdHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730674229; c=relaxed/simple;
-	bh=azUdsJeLA1jzLVm2gM8E42xvwq0Ytk/yQai/Spgu5ok=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Hr2qjIFvntln86//0w8ARkzuaGN3So3fp1n3AOPNH19YODKn/66Ioc3zGSleraFREX3V4MNMCaRrFpNu/soeL9V1sLTVik8I0x06XTV4ULhcpAucpiSOYt1fT0DdzBtp9r0n0AcB+mn4NN6ktNYHR0jPG2F3wTcJOctVH0C0U7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjP++LQx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAE5C4CED3;
-	Sun,  3 Nov 2024 22:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730674228;
-	bh=azUdsJeLA1jzLVm2gM8E42xvwq0Ytk/yQai/Spgu5ok=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pjP++LQxtji39IW8pm5wWw5ICcN+bQ7p/gvmis48EA1Eflbb3njFx1CiSb8k9C8h2
-	 GBHrxmKz2VbvE32UvjliGzmvWHw85YMpmkBWbZz8jXN9h9M/deIwe+f6vSLuMC47p0
-	 P+SJSNKPHyXWlT7q4TuS9qDAEia2iWD6fKTqLEi9xhKAI+27aZVXZMyI6n5WKtJA5A
-	 Es1k50QXteSQIyHuGg1yuPX2xSrj0Wxslu9ih720kjSNuK/KvL3O/eb0EDV0uC+Ixv
-	 Gd59k9evH8avp98bvTotW1O9KwaLx+LmE9TqYi269gyoUjseOP4H1fFezWYiAMALpa
-	 vD0T5Yyie+1Hg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0E438363C3;
-	Sun,  3 Nov 2024 22:50:37 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730674262; c=relaxed/simple;
+	bh=vbZ+uzGqdW4hX03Xi3d7fgtT2grFuBySNiXCV4fiIF8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SQLIknzNItp7a5Hc3A1O/aOQhVv5YC0H4yYP12QGyux8A5Ggz2l6naWy41U9A7p67+zExJ8yLdNoOYee3auO02LT8CnbzjWDhAh2fvfB6tlZzKDzhrhcOLL4H5WLREwKtA9xkKwxoyRZdEHJ08K8hpn73+q/NK2Q/6BJR8A1Iyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Rb1aC6CS; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2b4110341so354470a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 14:51:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1730674259; x=1731279059; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vbZ+uzGqdW4hX03Xi3d7fgtT2grFuBySNiXCV4fiIF8=;
+        b=Rb1aC6CS0PoihxDfK82nfYdLZkQuf6gn8jYryWsOdwASBB0xPeuLVj//7tKWMvJJLj
+         ewAHrYvotvyz+9jrWzjp2a6QHGfB0WXQB2E53jRg9HiZub8t96s5rlJuOmG3QF8seMhx
+         iPHOTAhkRE3eoP3Bz574YzrDAyfmePP7xdyqYX2vNe1k3e0sGtVQSSm/M+YWGZlgm1w1
+         jpXnSQTqtenPU8MyKukvT9n3qAyZXWeKOJlWnGQDebRFlig1HpppsN4GO/Yx/ChtURb5
+         duH12G3Ols5gbtlQOef6mqxikCjXEFXFnLU0IiCp0MGGPjMdWowrcbeNCjNBDMM0rXLL
+         4i9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730674259; x=1731279059;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vbZ+uzGqdW4hX03Xi3d7fgtT2grFuBySNiXCV4fiIF8=;
+        b=hoGo5XyVDXVpnxGwW9hsZTHEHTdmxXcNjF98fqd19faYRQQODKrxyR+8mZfhS4vuHr
+         mg7annYiNQbPyGMjtCSk7JGuBgXvHmX0wDcqiybUJbg7BJHndPZ8wULjUYHHwNTtW9ZC
+         7Ov+KpE8O9r7eMZrtZYDK/3Iah+Z6JnsLR+doDh4yanbse4G1Fikzbbdv+4g9YIVTvOp
+         A5uVCgVgO7oy3OTOQZXSKY0fQEg+89biURShcbqA01HZxWMB8mMTjMgHRhOK9LctpSPX
+         JFBfUvtnqYGwflltf4PKThLefl0fglg856DNmSpU/3sUFTU8NwnpRSfL/cf8txkjNyrb
+         JR6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQebSLrgPhxeJrziaK8aRwm1JVJnOAq/L9K+qCPmnjn20vLny/WBc9kozPX4e3+ctiwQMEq7ZPE9wC0pQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygyHz3BiR8qxxUN/5YEgNMEG7Ap+8UGPTrvFzkMkl+WI8mu/QA
+	Dehxd3RsQPq0OnwBbC4ypg2lQ9sg3TvaqQU/2nbt0zEjjXKKakaKZ8/pBZ6DsvJ9OLeg8eI0Zyn
+	8SHE1t21+hiehP8N/mtly/6nRCqvXO7COWqeETw==
+X-Google-Smtp-Source: AGHT+IFUl1GCcoqWHoZYbz+qEG71KEMvn1Im+9ZYr+neR/oxPoOmgzFQQqZYN0kcHlFEkQf/7jeXNqXwpJVr9GMXuU8=
+X-Received: by 2002:a17:90a:e511:b0:2e2:e139:447d with SMTP id
+ 98e67ed59e1d1-2e8f0d62425mr14589494a91.0.1730674259424; Sun, 03 Nov 2024
+ 14:50:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 00/12] ibm: emac: cleanup modules to use devm 
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173067423633.3271988.11469025588601425929.git-patchwork-notify@kernel.org>
-Date: Sun, 03 Nov 2024 22:50:36 +0000
-References: <20241030203727.6039-1-rosenp@gmail.com>
-In-Reply-To: <20241030203727.6039-1-rosenp@gmail.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, leitao@debian.org,
- u.kleine-koenig@baylibre.com, linux-kernel@vger.kernel.org
+References: <20241031002326.3426181-1-csander@purestorage.com>
+ <20241031002326.3426181-2-csander@purestorage.com> <20241103122138.6d0d62f6@kernel.org>
+In-Reply-To: <20241103122138.6d0d62f6@kernel.org>
+From: Caleb Sander <csander@purestorage.com>
+Date: Sun, 3 Nov 2024 14:50:48 -0800
+Message-ID: <CADUfDZpBfwGJwhUHCZk8AgZDY0QP3j2dEUHZfC1VkR+75jj2WA@mail.gmail.com>
+Subject: Re: [resend PATCH 2/2] dim: pass dim_sample to net_dim() by reference
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Arthur Kiyanovski <akiyano@amazon.com>, Brett Creeley <brett.creeley@amd.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Claudiu Manoil <claudiu.manoil@nxp.com>, 
+	David Arinzon <darinzon@amazon.com>, "David S. Miller" <davem@davemloft.net>, 
+	Doug Berger <opendmb@gmail.com>, Eric Dumazet <edumazet@google.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Felix Fietkau <nbd@nbd.name>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Geetha sowjanya <gakula@marvell.com>, hariprasad <hkelam@marvell.com>, 
+	Jason Wang <jasowang@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Leon Romanovsky <leon@kernel.org>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Louis Peens <louis.peens@corigine.com>, 
+	Mark Lee <Mark-MC.Lee@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Michael Chan <michael.chan@broadcom.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Noam Dagan <ndagan@amazon.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Roy Pledge <Roy.Pledge@nxp.com>, 
+	Saeed Bishara <saeedb@amazon.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Shannon Nelson <shannon.nelson@amd.com>, 
+	Shay Agroskin <shayagr@amazon.com>, Simon Horman <horms@kernel.org>, 
+	Subbaraya Sundeep <sbhatta@marvell.com>, Sunil Goutham <sgoutham@marvell.com>, 
+	Tal Gilboa <talgi@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, 
+	Tony Nguyen <anthony.l.nguyen@intel.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, intel-wired-lan@lists.osuosl.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-rdma@vger.kernel.org, 
+	netdev@vger.kernel.org, oss-drivers@corigine.com, 
+	virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Sun, Nov 3, 2024 at 12:21=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Wed, 30 Oct 2024 18:23:26 -0600 Caleb Sander Mateos wrote:
+> > In a heavy TCP workload, mlx5e_handle_rx_dim() consumes 3% of CPU time,
+> > 94% of which is attributed to the first push instruction to copy
+> > dim_sample on the stack for the call to net_dim():
+>
+> Change itself looks fine, so we can apply, but this seems surprising.
+> Are you sure this is not just some measurement problem?
+> Do you see 3% higher PPS with this change applied?
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Agreed, this bottleneck surprised me too. But the CPU profiles clearly
+point to this push instruction in mlx5e_handle_rx_dim() being very
+hot. My best explanation is that the 2- and 4-byte stores followed
+immediately by 8-byte loads from the same addresses cannot be
+pipelined effectively. The loads must wait for the stores to complete
+before reading back the values they wrote. Ideally the compiler would
+recognize that the struct dim_sample local variable is only used to
+pass to net_dim() and avoid duplicating it. I guess passing large
+structs by value in C is not very common, so there probably isn't as
+much effort put into optimizing it.
+With the patches applied, the CPU time spent in mlx5e_handle_rx_dim()
+(excluding children) drops from 3.14% to 0.08%. Unfortunately, there
+are other bottlenecks in the system and 1% variation in the throughput
+is typical, so the patches don't translate into a clear 3% increase in
+throughput.
 
-On Wed, 30 Oct 2024 13:37:15 -0700 you wrote:
-> simplifies probe and removes remove functions. These drivers are small.
-> 
-> Rosen Penev (12):
->   net: ibm: emac: tah: use devm for kzalloc
->   net: ibm: emac: tah: use devm for mutex_init
->   net: ibm: emac: tah: devm_platform_get_resources
->   net: ibm: emac: rgmii: use devm for kzalloc
->   net: ibm: emac: rgmii: use devm for mutex_init
->   net: ibm: emac: rgmii: devm_platform_get_resource
->   net: ibm: emac: zmii: use devm for kzalloc
->   net: ibm: emac: zmii: use devm for mutex_init
->   net: ibm: emac: zmii: devm_platform_get_resource
->   net: ibm: emac: mal: use devm for kzalloc
->   net: ibm: emac: mal: use devm for request_irq
->   net: ibm: emac: mal: move irq maps down
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,01/12] net: ibm: emac: tah: use devm for kzalloc
-    https://git.kernel.org/netdev/net-next/c/96111f1ec6bf
-  - [net-next,02/12] net: ibm: emac: tah: use devm for mutex_init
-    https://git.kernel.org/netdev/net-next/c/18082a84a7f0
-  - [net-next,03/12] net: ibm: emac: tah: devm_platform_get_resources
-    https://git.kernel.org/netdev/net-next/c/9f3ea8d70d6c
-  - [net-next,04/12] net: ibm: emac: rgmii: use devm for kzalloc
-    https://git.kernel.org/netdev/net-next/c/070239c07ac1
-  - [net-next,05/12] net: ibm: emac: rgmii: use devm for mutex_init
-    https://git.kernel.org/netdev/net-next/c/01902fe2bdd7
-  - [net-next,06/12] net: ibm: emac: rgmii: devm_platform_get_resource
-    https://git.kernel.org/netdev/net-next/c/9fb40aeeb521
-  - [net-next,07/12] net: ibm: emac: zmii: use devm for kzalloc
-    https://git.kernel.org/netdev/net-next/c/e2da0216e55e
-  - [net-next,08/12] net: ibm: emac: zmii: use devm for mutex_init
-    https://git.kernel.org/netdev/net-next/c/3fb5272de034
-  - [net-next,09/12] net: ibm: emac: zmii: devm_platform_get_resource
-    https://git.kernel.org/netdev/net-next/c/c2744ab3ce28
-  - [net-next,10/12] net: ibm: emac: mal: use devm for kzalloc
-    https://git.kernel.org/netdev/net-next/c/3f55d1655549
-  - [net-next,11/12] net: ibm: emac: mal: use devm for request_irq
-    https://git.kernel.org/netdev/net-next/c/14f59154ff0b
-  - [net-next,12/12] net: ibm: emac: mal: move irq maps down
-    https://git.kernel.org/netdev/net-next/c/c4f5d0454cab
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Best,
+Caleb
 
