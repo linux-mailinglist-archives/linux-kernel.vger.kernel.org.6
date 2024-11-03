@@ -1,179 +1,117 @@
-Return-Path: <linux-kernel+bounces-393903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-393904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5E89BA747
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:45:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3619BA749
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 18:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D9431C211B5
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:45:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B924B21A97
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Nov 2024 17:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E832C1885BB;
-	Sun,  3 Nov 2024 17:45:32 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805A917BB1A;
+	Sun,  3 Nov 2024 17:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLCcVtXC"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46127E792
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 17:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CF77080F
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Nov 2024 17:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730655932; cv=none; b=tIKvZysiiDqMFmdWMARRI82AGXqsQUCFRnKfKxSZczY8xH3YEfjWNutHCW9pWQfrbG2SftLoDgzUEwsQRymUCBmDGSYS4MXYO6ImCLm+kDDwmKd30UVjCOxTAteGH668r+BroWKe77e3pjIZ+jMrD9ffjN1lGcSGaDemI9ety8M=
+	t=1730656229; cv=none; b=Ek08jlRZCd6avH674werUzBwRtSZj0ysd32cpcT7+zc4KgJSZQZCXfm3Kv/lyAkVMD4n0LxBCc3SKeeBHF2GDJP7r/M1hqHYIJPOmAe+Xub4bvrTCSZZgY/JK6o6qPWTMdOntqCNoOlqT+KPOTjYw3ojAedAh9/zZt4yPVKxXJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730655932; c=relaxed/simple;
-	bh=bNHjq4hqEeUwpZW6WB2K4s4lAHIZ2hdxg/z5487B9po=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bR+JRCwfQL0n1UesO1j1m6soZfsrT3SqcmHXNBqjZwcCnyVp9Kw7jX01pp6faFl7MPBs/pQ7WXaqOQZmI81ihnXMKLa7qfgdcE+w/k3xoHW5P0a1yI7l6RfI+UC/llF4avjyp6aGr6unhwQBGvOiJUC+tDeBgtWHOuI2jWhE260=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6c355b3f5so12635455ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 09:45:30 -0800 (PST)
+	s=arc-20240116; t=1730656229; c=relaxed/simple;
+	bh=rV8Dw31hL8PJUzAzId38ufghwsRz51LOwUvKyOAp6xA=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFEaNyQIYOSD5tQ05tpDkxg+nZHICVKB7CfCaPWbyPDQWFECD6UlZO0hLFhDrRi/tnS4V794oJe6DBBC3y2qmj+PqE0uzc351unJNY4ZXQy0xamzdM2tNoNBV+nwjlaWQorgXFrJmd1CPegWDB+BfxZkJNHoHF3UfslyE93BAf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RLCcVtXC; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso618928866b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 09:50:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730656226; x=1731261026; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ltbmxni4Ig6VIv7g8rtjq19v+cbmckPc/oW9ZpyR8L0=;
+        b=RLCcVtXCAKJsLW884lAbrTWXMDc94Rf8suat/1+hJAugVvU++vm7bDsJK0u9ZAA9jU
+         pPD+gBYwNmSDXLIYWxKvdotWem8i8Q4dMfCfOMYVayWa6fiitiG3bbqvc0GqGLJzVtSL
+         lxR3Qc7AN8Dio+9I2XjeP0NJ4tF6eB3kl07PciFuHoB1hOYZJpYlIYnYBsZlEJkhwhtQ
+         worj/GkVuuGTFEaHZF/M7pwZeVoKynSSxJ7glaMkSSJLZxbdAyDPdiheiQn+GRMAg+oU
+         wu1f4q6dpqMTthY0PeHKRby7tGqWFDj60KWEd/cl7cq1lLHZ3FDO2nlnHNGla7JLkFk1
+         OulA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730655930; x=1731260730;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ggPpEWZ5w7hyjg6y386Je0Mz/Rmt1xeaQKikWb+y5Cg=;
-        b=w+ATkAWvzF3nOiijYkD7eXjmC3YHUDPthUy2u4Q1c6n7U0AiBnpc7t/BrMdE8Pxy3M
-         OXlfIpppyUSS9mfkvQjl9pbu1tNQYbQcDCzyQORZl5B2gBbXLKV7n8UchYH6IGtOPFqL
-         a0APftbGD/g20CWjdo/LznY/1obMkdUImNoVugqHF9Av0GhC8Pu1ORm6jKVDJYjYt+9y
-         mIWH0yjiEdWfN92j4EvPspZSNWIXsbXPzD1clssU/6Vsrm2DmorzZyzhWiAppRP1SI4i
-         Qn/yzGIH/WMCGFKZ5bLRVAPb0rgRCNcKK5jWOxbJqydujEN0rBc/TfU74V3wf4GLKHEP
-         8SUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUmr1QpFWwsPiNJ0SX3APV/autEjUhBC1buxIMGWZQ9xvjXhzx1Do+McjTj1rwyE4DUXzSsiKnh7OHiR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9rKhrFlSOHlK46yObMw+lHn+Sq6ZPdHyVvFN5KO8IN0Lpehe1
-	JaKRJViNksf+nOa3Nns1ZkIXB/UopnsXORJBm0iCTYDyySN4De3gMERqkeW8rnyiz/+Rvv1ZmIM
-	Rdchrcp7dJ+//VyaflbThRoXA1WNbvNNOiJr3im+v0269jsFxl0xe8PM=
-X-Google-Smtp-Source: AGHT+IHFsmLZ4dyVXuYuMYTNkysQAQk1WYpJXMQsqqmy+vFQygvQCZb+Tb5mjlmfmmcS/+1pLEfE9NYSobPczvb9iySW8b2kRuKG
+        d=1e100.net; s=20230601; t=1730656226; x=1731261026;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ltbmxni4Ig6VIv7g8rtjq19v+cbmckPc/oW9ZpyR8L0=;
+        b=O+UjM5qpmfvHaMgwA+rQmBHsnNpXjWi1ZDcPJVWJ57afSeUALvc3ibemvPBI34coNK
+         TaHpTxx9rSU7vtjHsQbdg+/If+C/OFKqway3iZ5wCz6xsMa/XnmgY6oYkAb2ogAiV6yf
+         D+WFBnqNztWWvPYjtYUGVwagop5ZUc8zsuVDNBXPbu/b1T/UTlzlXeDV4DGhXcbL4Sau
+         wRPgzXtfu3oRIvL6yDJjkQ+tic3JahTlxv+cjA16lP8bUzpdGkXtKoxH2Pq6SfvMMuOW
+         ZG2PjDbnpxJZ+4H/NfElo1BGx726iQro+QgOqPfuC4+IB/MV1rp+f8tq2fbSaTsDTW9B
+         bB8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXyKkpF+DYK+A7Vk7pNjxQqleOc/FyCTcgsfHv7f1MhQyrwMgz6AWzy5rVhm9d3e8dFu2G4+w3sVqfGj1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ6wrGwsLoaSq9ydV7EpkqFuFKGklq1n1GujJx9t/D1ZcG1hQW
+	CRuRvq+q5z+yCVCU54hzKtSgafBoMRfVxbbAbO6ozlv98xfOjTlOBeDcgx7XEIg=
+X-Google-Smtp-Source: AGHT+IENCImvfO2QCr1lf+/YLNCq2Ar5y9VgTYTz+UawvMnJepxeEvYadyyXZrISn1tbPDhGiTomxw==
+X-Received: by 2002:a17:906:c10e:b0:a99:f183:ea8a with SMTP id a640c23a62f3a-a9e3a61d7cfmr1748975066b.28.1730656225357;
+        Sun, 03 Nov 2024 09:50:25 -0800 (PST)
+Received: from akanner-flex. ([79.140.148.216])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565ea53dsm446538666b.114.2024.11.03.09.50.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 09:50:24 -0800 (PST)
+Message-ID: <6727b7e0.170a0220.294c3c.d58a@mx.google.com>
+X-Google-Original-Message-ID: <Zye34hCwhRI9vwu/@akanner-flex.>
+Date: Sun, 3 Nov 2024 18:50:26 +0100
+From: Andrew Kanner <andrew.kanner@gmail.com>
+To: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: mark@fasheh.com, jlbec@evilplan.org, ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	syzbot+386ce9e60fa1b18aac5b@syzkaller.appspotmail.com
+Subject: Re: [PATCH] ocfs2: remove entry once instead of null-ptr-dereference
+ in ocfs2_xa_remove()
+References: <20241029224304.2169092-2-andrew.kanner@gmail.com>
+ <cfd351ed-01d5-42e6-a764-2d915bd3adeb@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c4e:b0:3a2:7651:9878 with SMTP id
- e9e14a558f8ab-3a4ed2aff10mr280972875ab.12.1730655929918; Sun, 03 Nov 2024
- 09:45:29 -0800 (PST)
-Date: Sun, 03 Nov 2024 09:45:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6727b6b9.050a0220.3c8d68.0a7c.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in default_idle
-From: syzbot <syzbot+36755e283802b29119ba@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cfd351ed-01d5-42e6-a764-2d915bd3adeb@linux.alibaba.com>
 
-Hello,
+On Fri, Nov 01, 2024 at 08:53:18PM +0800, Joseph Qi wrote:
+> [...]
+> > --- a/fs/ocfs2/xattr.c
+> > +++ b/fs/ocfs2/xattr.c
+> > @@ -2036,7 +2036,7 @@ static int ocfs2_xa_remove(struct ocfs2_xa_loc *loc,
+> >  				rc = 0;
+> >  			ocfs2_xa_cleanup_value_truncate(loc, "removing",
+> >  							orig_clusters);
+> > -			if (rc)
+> > +			if (rc == 0)
+> 
+> Seems in this case, we have to ignore rc and directly goto out?
+> 
+> Thanks,
+> Joseph
 
-syzbot found the following issue on:
+It looks so. After ocfs2_xa_value_truncate(loc, 0, ctxt) we might have
+ocfs2_xa_value_clusters(loc) <= orig_clusters.
 
-HEAD commit:    c1e939a21eb1 Merge tag 'cgroup-for-6.12-rc5-fixes' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17e7e540580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4340261e4e9f37fc
-dashboard link: https://syzkaller.appspot.com/bug?extid=36755e283802b29119ba
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+But we already do everything we should for '<' case in the following
+ocfs2_xa_cleanup_value_truncate(). And probably should just return
+error code for '=' case.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I'll send v2 with your suggestion. Thanks.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c1e939a2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5f1b9c52b9e0/vmlinux-c1e939a2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8f31f28c172e/bzImage-c1e939a2.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+36755e283802b29119ba@syzkaller.appspotmail.com
-
-Oct 30 17:43:36 syzkaller daemon.err dhcpcd[5660]: libudev: received NULL device
-Oct 30 17:43:36 syzkaller daemon.err dhcpcd[5660]: libudev: received NULL device
-Oct 30 17:43:36 syzkaller daemon.err dhcpcd[5660]: libudev: received NULL device
-Oct 30 17:43:3[  261.176510][    C3] ------------[ cut here ]------------
-6 syzkaller daem[  261.180206][    C3] WARNING: CPU: 3 PID: 0 at net/mac80211/tx.c:5038 __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5038 [inline]
-6 syzkaller daem[  261.180206][    C3] WARNING: CPU: 3 PID: 0 at net/mac80211/tx.c:5038 __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5033 [inline]
-6 syzkaller daem[  261.180206][    C3] WARNING: CPU: 3 PID: 0 at net/mac80211/tx.c:5038 __ieee80211_beacon_get+0x14ac/0x16b0 net/mac80211/tx.c:5467
-on.err dhcpcd[5660]: libudev: re[  261.183587][    C3] Modules linked in:
-ceived NULL devi[  261.183630][    C3] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-ce
-Oct 30 17:43[  261.183675][    C3] Code: 00 89 df 44 89 e6 e8 43 79 f2 f6 44 38 e3 72 a1 e8 19 78 f2 f6 48 89 ef e8 d1 42 49 f7 31 ed e9 9c fe ff ff e8 05 78 f2 f6 90 <0f> 0b 90 e9 86 f6 ff ff 48 89 c6 48 c7 c7 20 6d 2d 90 48 89 04 24
-:36 syzkaller da[  261.183695][    C3] RSP: 0018:ffffc90000908b88 EFLAGS: 00010246
-emon.err dhcpcd[[  261.207866][    C3] RDX: ffff88801dab2440 RSI: ffffffff8a9b047b RDI: 0000000000000001
-5660]: libudev: [  261.210356][    C3] RBP: ffffc90000908c38 R08: 0000000000000001 R09: 0000000000000000
-Oct 30 17:43:36 [  261.213020][    C3] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888027df4c00
-syzkaller daemon[  261.217781][    C3] FS:  0000000000000000(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-.err dhcpcd[5660[  261.221066][    C3] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-]: libudev: rece[  261.223464][    C3] CR2: 000055792776b028 CR3: 0000000032186000 CR4: 0000000000352ef0
-ived NULL device[  261.223475][    C3] DR0: 0000000000000000 DR1: 000000000000000a DR2: 0000000000000000
-
-Oct 30 17:43:3[  261.223490][    C3] Call Trace:
-6 syzkaller daem[  261.223495][    C3]  <IRQ>
-on.err dhcpcd[56[  261.223536][    C3]  ? __report_bug lib/bug.c:199 [inline]
-on.err dhcpcd[56[  261.223536][    C3]  ? report_bug+0x3c0/0x580 lib/bug.c:219
-60]: libudev: re[  261.223564][    C3]  ? exc_invalid_op+0x17/0x50 arch/x86/kernel/traps.c:309
-ceived NULL devi[  261.223574][    C3]  ? asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
-ce
-Oct 30 17:43[  261.223606][    C3]  ? __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5038 [inline]
-Oct 30 17:43[  261.223606][    C3]  ? __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5033 [inline]
-Oct 30 17:43[  261.223606][    C3]  ? __ieee80211_beacon_get+0x14ab/0x16b0 net/mac80211/tx.c:5467
-:36 syzkaller da[  261.248479][    C3]  ? __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5038 [inline]
-:36 syzkaller da[  261.248479][    C3]  ? __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5033 [inline]
-:36 syzkaller da[  261.248479][    C3]  ? __ieee80211_beacon_get+0x14ac/0x16b0 net/mac80211/tx.c:5467
-emon.err dhcpcd[[  261.248552][    C3]  ieee80211_beacon_get_tim+0xa7/0x280 net/mac80211/tx.c:5594
-5660]: libudev: [  261.257020][    C3]  ieee80211_beacon_get include/net/mac80211.h:5607 [inline]
-5660]: libudev: [  261.257020][    C3]  mac80211_hwsim_beacon_tx+0x4ea/0xa00 drivers/net/wireless/virtual/mac80211_hwsim.c:2311
-received NULL de[  261.259403][    C3]  ? rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
-received NULL de[  261.259403][    C3]  ? rcu_is_watching+0x12/0xc0 kernel/rcu/tree.c:737
-vice
-Oct 30 17:[  261.261143][    C3]  ? trace_lock_acquire+0x14a/0x1d0 include/trace/events/lock.h:24
-43:36 syzkaller [  261.261177][    C3]  ? __pfx_mac80211_hwsim_beacon_tx+0x10/0x10 drivers/net/wireless/virtual/mac80211_hwsim.c:2254
-daemon.err dhcpc[  261.268131][    C3]  ? __pfx_mac80211_hwsim_beacon+0x10/0x10 drivers/net/wireless/virtual/mac80211_hwsim.c:3161
-d[5660]: libudev[  261.270390][    C3]  ieee80211_iterate_active_interfaces_atomic+0x71/0x1b0 net/mac80211/util.c:810
-: received NULL [  261.273431][    C3]  mac80211_hwsim_beacon+0x105/0x200 drivers/net/wireless/virtual/mac80211_hwsim.c:2345
-device
-Oct 30 1[  261.273508][    C3]  ? __pfx___hrtimer_run_queues+0x10/0x10 kernel/time/hrtimer.c:650
-7:43:36 syzkaller daemon.err dhc[  261.279142][    C3]  ? ktime_get_update_offsets_now+0x201/0x310 kernel/time/timekeeping.c:2465
-pcd[5660]: libud[  261.281860][    C3]  hrtimer_run_softirq+0x17d/0x350 kernel/time/hrtimer.c:1772
-ev: received NUL[  261.281907][    C3]  ? __pfx_handle_softirqs+0x10/0x10 include/trace/events/irq.h:142
-L device
-Oct 30[  261.288599][    C3]  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
-Oct 30[  261.288599][    C3]  sysvec_apic_timer_interrupt+0xa4/0xc0 arch/x86/kernel/apic/apic.c:1049
- 17:43:36 syzkal[  261.291551][    C3]  <TASK>
-ler daemon.err d[  261.292990][    C3]  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-hcpcd[5660]: lib[  261.295430][    C3] RIP: 0010:native_irq_disable arch/x86/include/asm/irqflags.h:37 [inline]
-hcpcd[5660]: lib[  261.295430][    C3] RIP: 0010:arch_local_irq_disable arch/x86/include/asm/irqflags.h:92 [inline]
-hcpcd[5660]: lib[  261.295430][    C3] RIP: 0010:default_idle+0xf/0x20 arch/x86/kernel/process.c:743
-udev: received N[  261.302680][    C3] RSP: 0018:ffffc900001a7e08 EFLAGS: 00000202
-ULL device
-Oct [  261.308915][    C3] RBP: ffffed1003b56488 R08: 0000000000000001 R09: ffffed100d527025
-30 17:43:36 syzk[  261.311500][    C3] R10: ffff88806a93812b R11: 0000000000000000 R12: 0000000000000003
-aller daemon.err[  261.314814][    C3] R13: ffff88801dab2440 R14: ffffffff905f5208 R15: 0000000000000000
- dhcpcd[5660]: l[  261.314855][    C3]  default_idle_call+0x6d/0xb0 kernel/sched/idle.c:117
-ibudev: received[  261.314883][    C3]  ? __pfx_do_idle+0x10/0x10 kernel/sched/idle.c:82
- NULL device
-Oc[  261.314915][    C3]  start_secondary+0x222/0x2b0 arch/x86/kernel/smpboot.c:314
-t 30 17:43:36 sy[  261.326571][    C3]  ? __pfx_start_secondary+0x10/0x10 arch/x86/include/asm/smp.h:147
-zkall[e r  2d6ae1m.o3n2.8e441][    C3]  common_startup_64+0x13e/0x148
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Andrew Kanner
 
