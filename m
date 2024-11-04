@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-394536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB639BB0B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:12:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C83A9BB0B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B9CB280BED
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:12:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B83A3B236EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F101B0F07;
-	Mon,  4 Nov 2024 10:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B1A1AF4F6;
+	Mon,  4 Nov 2024 10:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wi8LMHyF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mn9niZHu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEAA18BC0E;
-	Mon,  4 Nov 2024 10:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD151AF0D9
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730715127; cv=none; b=EEXG0xV7CGthEnV7Y9ttaBdxxlL4pXfSZs6UImrOGplhHuNoJmWcQDTF8NtQCDXQVBO87ZYuTq1CmgCvEf6NV4lsEVZmCxTkKo55J3jDHOiIswoSnNdKDvmoYPHABuR8lcughb3zXPvf++bf/76rjAPe7eqlvMe71Ihf97CAWXM=
+	t=1730715223; cv=none; b=eTCOpEnDtheSIST6+CcCZbIJrV7Bmv6n23nMYzYBaxY7tSmrw/9agCrfCukgHu7O6c/2sMV7/WF1cUnjBDi19GDoXQM4FOA+8nV4LlhPitSGtslwvwLkCe2pnNM0iUhhGCw/iONf0I8IeGeCnQH+WJT+gwEuCTb0FAw85GJNW4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730715127; c=relaxed/simple;
-	bh=fMBrJ+ivi3ALTf8YCQpNicGCOTy9OFqS86iASws5tcM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NGkq9m0oxGDUjmu5aLv1sOLrdEDGkVGDsfagMOR26wo/N0ntlWWV8vXRrpW4JrtQvKH/2oVdH22QgTgJCroqwgGmxZuBO2ItyAKp+BPFw1TcKNAYVFAo9BKHwMqviZGaxjyarkoyvKhFQ3VXVOHdIEnpQbCY7r6aLP0p7eJzgTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wi8LMHyF; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730715125; x=1762251125;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=fMBrJ+ivi3ALTf8YCQpNicGCOTy9OFqS86iASws5tcM=;
-  b=Wi8LMHyFLb7+hW6/YlrqVzkhop6NT2Rwvg52Ul3H/IiIEEKpODSMIwym
-   Mxa4r3hnAoRgFiPpS13Z6r2splRJBOGZDvbc7salyKRc3HNzWF02GuMX+
-   2mxp/cbUw+yqhi5c8NcQzzfDLYmg6MNn61H4CYACScfiaPHC7TpW1qABq
-   ud2jCCkwZJmV7UsO0bCQCPdNkH4dhWvIjkDMMyKjo1Wnt+uz41jFZLu+O
-   p+mM/+H2lfZC0QNuluj4PPV7bgbR0DeVLA3OgHv7qFT9hVwp6yMQZRQeM
-   QrtDDEptavN9iIrNdPyYkumkQ9BT4QlIZu1h8DNcjUWo6hd0urS3x8RyS
-   Q==;
-X-CSE-ConnectionGUID: dfAsZ8KVQjCEuwMXN48+BQ==
-X-CSE-MsgGUID: SXLxa4SJQFqx5aCEugnXLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="29832191"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="29832191"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 02:12:04 -0800
-X-CSE-ConnectionGUID: cgqXwjL9QR+kmFyCZNdqIQ==
-X-CSE-MsgGUID: Qjmd+TnCRs25GjKf0TAP8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="88124969"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 02:11:56 -0800
-Message-ID: <0b073156-dbf4-420e-b6e2-98d404ba38f1@intel.com>
-Date: Mon, 4 Nov 2024 12:11:51 +0200
+	s=arc-20240116; t=1730715223; c=relaxed/simple;
+	bh=PTgox4e9FSSerGJRrnB4bOuIWsvK3BVoF5lju/xszuQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EB/xOtxX4lrMSEmmqGdUPVD0tj+6qISE/knhcvX111DFJNFwSz385e64SjF9E4m2DAaWFxCNCNyR5yNcwdg6FwEt/YZFXRmdgtHfo2VlanANdNaRQjPy6G9eStjimywhGTBoXkTTX4n7LvCG0bA4II84r+huz40iinVYEOa3pg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mn9niZHu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730715220;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yGJ0ZAsOD6ODggfUDM3kNDHwIHDU79YqayeKJjeKiv8=;
+	b=Mn9niZHu6DkNESHJKU5+0Oe7ow3XZcBmhPVyGZVuW0S45SBqDbjZ5CARYtXLsgd30A24F9
+	kaRJ0KfXOwzQ/3gPjc28FsI848FYduSm6JCYgEBdjZA03T3sRHgTevV631CsTi3B5uG1tr
+	fhjC8NevEbvkbxwzCQ8ap5Mcgnd0iHA=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-586-Badu_ilsPo-BbjJM2yE6jA-1; Mon, 04 Nov 2024 05:13:39 -0500
+X-MC-Unique: Badu_ilsPo-BbjJM2yE6jA-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a1b872d8bso291126066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:13:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730715218; x=1731320018;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yGJ0ZAsOD6ODggfUDM3kNDHwIHDU79YqayeKJjeKiv8=;
+        b=CaSEkPd8SNoMYkouoURb5TuUJvCZLTdiff6WDOGtFuYqw7PqXp8fwPWZXr5v8JzDXd
+         mHHPrQFR9x7AVlVDbJuWJ9Rh1kiTtGXgwhW3w+8eCBxiWkqQHr1dI1pYWRfT0B53iKd2
+         nECllcqclZY7UoaWlrAOIGX/44C3ZMxQlJj6L1C0wfPU26IlJk5i/aiFTsvZAA04fQFW
+         2E+W+3qRUgmqgVytKxxMBmU0gdnC4Te+PlaA9NDapgNGpQ7u4h1OUXdMnbOUuHowLpjF
+         MVHSeD2io0NOnz/HkP6MkqC7c4EWFhoxSuRjX4km4KaqIYJzdZHgihZgnANjiWXUiFXd
+         xNvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkChkFlbfsGWZq/ViWqb9RnP+eID3wVXJAHcJGamY4mfiXT6+i6i8O0rGRk+vxlXzqbvPFM0xgrekJXw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKNCqnOp3wu3Na7kan3VyfFjOvYjXO7gxVrpl7XCWjGxCIZlwk
+	nEeHMHVECaermr5/yjh5gHXv0UIxI1eDG5szhBRAFmFx70JJNzoPqF+jef+I/6lro+ccFRQUSb3
+	yF2jA4JkzN0SlxqGsC6beQZfAdXlk1T1BvRlfF56h2EuRtWrzHQTw4KC1fhPVvg==
+X-Received: by 2002:a17:907:6e94:b0:a9a:67aa:31f5 with SMTP id a640c23a62f3a-a9e508aaa56mr1498409566b.10.1730715218346;
+        Mon, 04 Nov 2024 02:13:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEOmlFQ0C8DWcquNm6+JN7DJdW4bYk/a7WmMMRlzVpP2U9cmDUiA6/Y87bCbHqpOWtgvnyTMg==
+X-Received: by 2002:a17:907:6e94:b0:a9a:67aa:31f5 with SMTP id a640c23a62f3a-a9e508aaa56mr1498406466b.10.1730715217668;
+        Mon, 04 Nov 2024 02:13:37 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c574asm536889466b.60.2024.11.04.02.13.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 02:13:37 -0800 (PST)
+Message-ID: <4dc23457-e70a-4dfa-880b-ca1c3f6c362b@redhat.com>
+Date: Mon, 4 Nov 2024 11:13:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,328 +81,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V14 00/11] perf/core: Add ability for an event to "pause"
- or "resume" AUX area tracing
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Hendrik Brueckner <brueckner@linux.ibm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
- <will@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- H Peter Anvin <hpa@zytor.com>, Kan Liang <kan.liang@linux.intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20241022155920.17511-1-adrian.hunter@intel.com>
- <7bacbe72-c283-453b-bf1f-6ba05b68cac8@intel.com>
+Subject: Re: [PATCH v2 1/2] dell-smbios-base: Extends support to Alienware
+ products
+To: Kurt Borja <kuurtb@gmail.com>
+Cc: Dell.Client.Kernel@dell.com, ilpo.jarvinen@linux.intel.com,
+ linux-kernel@vger.kernel.org, pali@kernel.org,
+ platform-driver-x86@vger.kernel.org, w_armin@gmx.de
+References: <20241031154023.6149-2-kuurtb@gmail.com>
 Content-Language: en-US
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <7bacbe72-c283-453b-bf1f-6ba05b68cac8@intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241031154023.6149-2-kuurtb@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 30/10/24 15:16, Adrian Hunter wrote:
-> On 22/10/24 18:59, Adrian Hunter wrote:
->> Hi
->>
->> Note for V14:
->> 	KVM patches dropped.
-> 
-> ping
+Hi,
 
-ping
+On 31-Oct-24 4:40 PM, Kurt Borja wrote:
+> Fixes the following error:
+> 
+> dell_smbios: Unable to run on non-Dell system
+> 
+> Which is triggered after dell-wmi driver fails to initialize on
+> Alienware systems, as it depends on dell-smbios.
+> 
+> This effectively extends dell-wmi, dell-smbios and dcdbas support to
+> Alienware devices, that might share some features of the SMBIOS intereface
+> calling interface with other Dell products.
+> 
+> Tested on an Alienware X15 R1.
+> 
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 
+Thank you for your patches, I've applied both patches to
+my review-hans branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note they will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+I will include these patches in my next fixes pull-req to Linus
+for the current kernel development cycle.
+
+Regards,
+
+Hans
+
+>
+> ---
+> v2:
+>  - Commit message reflects Alienware devices may not necessarily support
+>    the SMBIOS interface
+>  - Commit message now has "Tested on"
+> ---
+>  drivers/platform/x86/dell/dell-smbios-base.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
->>
->> Note for V12:
->> 	There was a small conflict between the Intel PT changes in
->> 	"KVM: x86: Fix Intel PT Host/Guest mode when host tracing" and the
->> 	changes in this patch set, so I have put the patch sets together,
->> 	along with outstanding fix "perf/x86/intel/pt: Fix buffer full but
->> 	size is 0 case"
->>
->> 	Cover letter for KVM changes (patches 2 to 4):
->>
->> 	There is a long-standing problem whereby running Intel PT on host and guest
->> 	in Host/Guest mode, causes VM-Entry failure.
->>
->> 	The motivation for this patch set is to provide a fix for stable kernels
->> 	prior to the advent of the "Mediated Passthrough vPMU" patch set:
->>
->> 		https://lore.kernel.org/kvm/20240801045907.4010984-1-mizhang@google.com/
->>
->> 	which would render a large part of the fix unnecessary but likely not be
->> 	suitable for backport to stable due to its size and complexity.
->>
->> 	Ideally, this patch set would be applied before "Mediated Passthrough vPMU"
->>
->> 	Note that the fix does not conflict with "Mediated Passthrough vPMU", it
->> 	is just that "Mediated Passthrough vPMU" will make the code to stop and
->> 	restart Intel PT unnecessary.
->>
->> Note for V11:
->> 	Moving aux_paused into a union within struct hw_perf_event caused
->> 	a regression because aux_paused was being written unconditionally
->> 	even though it is valid only for AUX (e.g. Intel PT) PMUs.
->> 	That is fixed in V11.
->>
->> Hardware traces, such as instruction traces, can produce a vast amount of
->> trace data, so being able to reduce tracing to more specific circumstances
->> can be useful.
->>
->> The ability to pause or resume tracing when another event happens, can do
->> that.
->>
->> These patches add such a facilty and show how it would work for Intel
->> Processor Trace.
->>
->> Maintainers of other AUX area tracing implementations are requested to
->> consider if this is something they might employ and then whether or not
->> the ABI would work for them.  Note, thank you to James Clark (ARM) for
->> evaluating the API for Coresight.  Suzuki K Poulose (ARM) also responded
->> positively to the RFC.
->>
->> Changes to perf tools are now (since V4) fleshed out.
->>
->> Please note, Intel® Architecture Instruction Set Extensions and Future
->> Features Programming Reference March 2024 319433-052, currently:
->>
->> 	https://cdrdv2.intel.com/v1/dl/getContent/671368
->>
->> introduces hardware pause / resume for Intel PT in a feature named
->> Intel PT Trigger Tracing.
->>
->> For that more fields in perf_event_attr will be necessary.  The main
->> differences are:
->> 	- it can be applied not just to overflows, but optionally to
->> 	every event
->> 	- a packet is emitted into the trace, optionally with IP
->> 	information
->> 	- no PMI
->> 	- works with PMC and DR (breakpoint) events only
->>
->> Here are the proposed additions to perf_event_attr, please comment:
->>
->> diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
->> index 0c557f0a17b3..05dcc43f11bb 100644
->> --- a/tools/include/uapi/linux/perf_event.h
->> +++ b/tools/include/uapi/linux/perf_event.h
->> @@ -369,6 +369,22 @@ enum perf_event_read_format {
->>  	PERF_FORMAT_MAX = 1U << 5,		/* non-ABI */
->>  };
->>  
->> +enum {
->> +	PERF_AUX_ACTION_START_PAUSED		=   1U << 0,
->> +	PERF_AUX_ACTION_PAUSE			=   1U << 1,
->> +	PERF_AUX_ACTION_RESUME			=   1U << 2,
->> +	PERF_AUX_ACTION_EMIT			=   1U << 3,
->> +	PERF_AUX_ACTION_NR			= 0x1f << 4,
->> +	PERF_AUX_ACTION_NO_IP			=   1U << 9,
->> +	PERF_AUX_ACTION_PAUSE_ON_EVT		=   1U << 10,
->> +	PERF_AUX_ACTION_RESUME_ON_EVT		=   1U << 11,
->> +	PERF_AUX_ACTION_EMIT_ON_EVT		=   1U << 12,
->> +	PERF_AUX_ACTION_NR_ON_EVT		= 0x1f << 13,
->> +	PERF_AUX_ACTION_NO_IP_ON_EVT		=   1U << 18,
->> +	PERF_AUX_ACTION_MASK			= ~PERF_AUX_ACTION_START_PAUSED,
->> +	PERF_AUX_PAUSE_RESUME_MASK		= PERF_AUX_ACTION_PAUSE | PERF_AUX_ACTION_RESUME,
->> +};
->> +
->>  #define PERF_ATTR_SIZE_VER0	64	/* sizeof first published struct */
->>  #define PERF_ATTR_SIZE_VER1	72	/* add: config2 */
->>  #define PERF_ATTR_SIZE_VER2	80	/* add: branch_sample_type */
->> @@ -515,10 +531,19 @@ struct perf_event_attr {
->>  	union {
->>  		__u32	aux_action;
->>  		struct {
->> -			__u32	aux_start_paused :  1, /* start AUX area tracing paused */
->> -				aux_pause        :  1, /* on overflow, pause AUX area tracing */
->> -				aux_resume       :  1, /* on overflow, resume AUX area tracing */
->> -				__reserved_3     : 29;
->> +			__u32	aux_start_paused  :  1, /* start AUX area tracing paused */
->> +				aux_pause         :  1, /* on overflow, pause AUX area tracing */
->> +				aux_resume        :  1, /* on overflow, resume AUX area tracing */
->> +				aux_emit          :  1, /* generate AUX records instead of events */
->> +				aux_nr            :  5, /* AUX area tracing reference number */
->> +				aux_no_ip         :  1, /* suppress IP in AUX records */
->> +				/* Following apply to event occurrence not overflows */
->> +				aux_pause_on_evt  :  1, /* on event, pause AUX area tracing */
->> +				aux_resume_on_evt :  1, /* on event, resume AUX area tracing */
->> +				aux_emit_on_evt   :  1, /* generate AUX records instead of events */
->> +				aux_nr_on_evt     :  5, /* AUX area tracing reference number */
->> +				aux_no_ip_on_evt  :  1, /* suppress IP in AUX records */
->> +				__reserved_3      : 13;
->>  		};
->>  	};
->>
->>
->> Changes in V14:
->>       Dropped KVM patches
->>
->>       perf/x86/intel/pt: Add support for pause / resume
->> 	Set pt->handle_nmi after configuration is completed instead of during
->>
->> Changes in V13:
->>       perf/core: Add aux_pause, aux_resume, aux_start_paused
->> 	Do aux_resume at the end of __perf_event_overflow() so as to trace
->> 	less of perf itself
->>
->>       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
->> 	Add error message also in EOPNOTSUPP case (Leo)
->>
->> Changes in V12:
->> 	Add previously sent patch "perf/x86/intel/pt: Fix buffer full
->> 	but size is 0 case"
->>
->> 	Add previously sent patch set "KVM: x86: Fix Intel PT Host/Guest
->> 	mode when host tracing"
->>
->> 	Rebase on current tip plus patch set "KVM: x86: Fix Intel PT Host/Guest
->> 	mode when host tracing"
->>
->> Changes in V11:
->>       perf/core: Add aux_pause, aux_resume, aux_start_paused
->> 	Make assignment to event->hw.aux_paused conditional on
->> 	(pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE).
->>
->>       perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
->> 	Remove definition of has_aux_action() because it has
->> 	already been added as an inline function.
->>
->>       perf/x86/intel/pt: Fix sampling synchronization
->>       perf tools: Enable evsel__is_aux_event() to work for ARM/ARM64
->>       perf tools: Enable evsel__is_aux_event() to work for S390_CPUMSF
->> 	Dropped because they have already been applied
->>
->> Changes in V10:
->>       perf/core: Add aux_pause, aux_resume, aux_start_paused
->> 	Move aux_paused into a union within struct hw_perf_event.
->> 	Additional comment wrt PERF_EF_PAUSE/PERF_EF_RESUME.
->> 	Factor out has_aux_action() as an inline function.
->> 	Use scoped_guard for irqsave.
->> 	Move calls of perf_event_aux_pause() from __perf_event_output()
->> 	to __perf_event_overflow().
->>
->> Changes in V9:
->>       perf/x86/intel/pt: Fix sampling synchronization
->> 	New patch
->>
->>       perf/core: Add aux_pause, aux_resume, aux_start_paused
->> 	Move aux_paused to struct hw_perf_event
->>
->>       perf/x86/intel/pt: Add support for pause / resume
->> 	Add more comments and barriers for resume_allowed and
->> 	pause_allowed
->> 	Always use WRITE_ONCE with resume_allowed
->>
->>
->> Changes in V8:
->>
->>       perf tools: Parse aux-action
->> 	Fix clang warning:
->> 	     util/auxtrace.c:821:7: error: missing field 'aux_action' initializer [-Werror,-Wmissing-field-initializers]
->> 	     821 |         {NULL},
->> 	         |              ^
->>
->> Changes in V7:
->>
->> 	Add Andi's Reviewed-by for patches 2-12
->> 	Re-base
->>
->> Changes in V6:
->>
->>       perf/core: Add aux_pause, aux_resume, aux_start_paused
->> 	Removed READ/WRITE_ONCE from __perf_event_aux_pause()
->> 	Expanded comment about guarding against NMI
->>
->> Changes in V5:
->>
->>     perf/core: Add aux_pause, aux_resume, aux_start_paused
->> 	Added James' Ack
->>
->>     perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
->> 	New patch
->>
->>     perf tools
->> 	Added Ian's Ack
->>
->> Changes in V4:
->>
->>     perf/core: Add aux_pause, aux_resume, aux_start_paused
->> 	Rename aux_output_cfg -> aux_action
->> 	Reorder aux_action bits from:
->> 		aux_pause, aux_resume, aux_start_paused
->> 	to:
->> 		aux_start_paused, aux_pause, aux_resume
->> 	Fix aux_action bits __u64 -> __u32
->>
->>     coresight: Have a stab at support for pause / resume
->> 	Dropped
->>
->>     perf tools
->> 	All new patches
->>
->> Changes in RFC V3:
->>
->>     coresight: Have a stab at support for pause / resume
->> 	'mode' -> 'flags' so it at least compiles
->>
->> Changes in RFC V2:
->>
->> 	Use ->stop() / ->start() instead of ->pause_resume()
->> 	Move aux_start_paused bit into aux_output_cfg
->> 	Tighten up when Intel PT pause / resume is allowed
->> 	Add an example of how it might work for CoreSight
->>
->>
->> Adrian Hunter (11):
->>       perf/x86/intel/pt: Fix buffer full but size is 0 case
->>       perf/core: Add aux_pause, aux_resume, aux_start_paused
->>       perf/x86/intel/pt: Add support for pause / resume
->>       perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
->>       perf tools: Add aux_start_paused, aux_pause and aux_resume
->>       perf tools: Add aux-action config term
->>       perf tools: Parse aux-action
->>       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
->>       perf intel-pt: Improve man page format
->>       perf intel-pt: Add documentation for pause / resume
->>       perf intel-pt: Add a test for pause / resume
->>
->>  arch/x86/events/intel/core.c               |   4 +-
->>  arch/x86/events/intel/pt.c                 |  84 +++-
->>  arch/x86/events/intel/pt.h                 |   6 +
->>  include/linux/perf_event.h                 |  28 ++
->>  include/uapi/linux/perf_event.h            |  11 +-
->>  kernel/events/core.c                       |  75 +++-
->>  kernel/events/internal.h                   |   1 +
->>  tools/include/uapi/linux/perf_event.h      |  11 +-
->>  tools/perf/Documentation/perf-intel-pt.txt | 596 ++++++++++++++++++-----------
->>  tools/perf/Documentation/perf-record.txt   |   4 +
->>  tools/perf/builtin-record.c                |   4 +-
->>  tools/perf/tests/shell/test_intel_pt.sh    |  28 ++
->>  tools/perf/util/auxtrace.c                 |  67 +++-
->>  tools/perf/util/auxtrace.h                 |   6 +-
->>  tools/perf/util/evsel.c                    |  15 +
->>  tools/perf/util/evsel.h                    |   1 +
->>  tools/perf/util/evsel_config.h             |   1 +
->>  tools/perf/util/parse-events.c             |  10 +
->>  tools/perf/util/parse-events.h             |   1 +
->>  tools/perf/util/parse-events.l             |   1 +
->>  tools/perf/util/perf_event_attr_fprintf.c  |   3 +
->>  tools/perf/util/pmu.c                      |   1 +
->>  22 files changed, 716 insertions(+), 242 deletions(-)
->>
->>
->> Regards
->> Adrian
-> 
+> diff --git a/drivers/platform/x86/dell/dell-smbios-base.c b/drivers/platform/x86/dell/dell-smbios-base.c
+> index 73e41eb69..01c72b91a 100644
+> --- a/drivers/platform/x86/dell/dell-smbios-base.c
+> +++ b/drivers/platform/x86/dell/dell-smbios-base.c
+> @@ -576,6 +576,7 @@ static int __init dell_smbios_init(void)
+>  	int ret, wmi, smm;
+>  
+>  	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
+> +	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Alienware", NULL) &&
+>  	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
+>  		pr_err("Unable to run on non-Dell system\n");
+>  		return -ENODEV;
 
 
