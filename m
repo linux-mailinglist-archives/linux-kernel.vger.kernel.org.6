@@ -1,176 +1,108 @@
-Return-Path: <linux-kernel+bounces-394779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B559BB3CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:47:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1A29BB3CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77AF11F20FD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:47:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40D5D1C216EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDDE1B5EBC;
-	Mon,  4 Nov 2024 11:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8A51B4F11;
+	Mon,  4 Nov 2024 11:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmB1wf01"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eX6aRPOy"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA6F1B4F29;
-	Mon,  4 Nov 2024 11:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950361AF0A0;
+	Mon,  4 Nov 2024 11:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730720842; cv=none; b=cEmeC3aPe2f84WQlAd2jLK7GZxmE8OIPF1pSs+r1jQ+Fx22vVSR4deIIu7Zo3D5mfecqBJpTgdRuVpF2K4K9JEVYHz10uv4FjLMVDREuinmneUYSxgbVUoq5gP5Qvn61z0G1oMUla8vjvPZUFeWD/OkHjCj8JSHlO2Nf8eaPnq0=
+	t=1730720868; cv=none; b=UIeQU4ayn5w1xCRl4y8Rsra0uNQ/YpjRFA7VYeMWEtxcF6okjGOUoclUSxoKgBqx4ZB6EgnDfBZVfT96cA8NAdu1dTja1FCAVcrdmfOX976fhFecUHC7lAri1owzNM5JJ1/j6otzL66Z/D71uBQTQl2s7OoNsQMNbdWXMeEuKvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730720842; c=relaxed/simple;
-	bh=e1nzHk0cpcCIC/llfwkEOi5lrvUtOPMV7NJH5JG9+0k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eoRNnIYCRS6Vu40tz017rdLEBsm5l+vM/ESjzFmJbH65fPwq1q43gs7QZwJ9JhdBnlJ2hKlcPXeC8GpXEcjBFZP/KXToLIWEgD2a//6PsSee4hGNGvkJPBh+zPiBXwO0qLF1FyfQ+YvcRDliva/qFU2a+W8g5WnqPGh91HferPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmB1wf01; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7683CC4CECE;
-	Mon,  4 Nov 2024 11:47:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730720842;
-	bh=e1nzHk0cpcCIC/llfwkEOi5lrvUtOPMV7NJH5JG9+0k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mmB1wf01Pp6MR+T1Qs6Fb2/RhTQSvLDCOVKV9u+3AzczWUn7PpPA3NXh4IEnpFc4q
-	 mWH758J4t0LsSS0P2evQFY5lWwnpnH5z15/D9u1u5kIUlsWaQ+mtqY9w7AqZ1z9b0N
-	 Oel+V21OuqdUt5OWfWmp9YgffnXG6We0wFcTfEZ4Zvd/Wb/EkEli+NLuU67VfVo+CY
-	 jY+YHwpJimq/AXWBa5YCZh2oH3y24qFYfnKMGHPhDYv8WVRc/CWgOXcTDp2tGjDrjZ
-	 NMVLxEKZ7mAqG82nIEyXjaucK6osBJsk7gAzOC5UL43ctJrf3Y0brQx6OPX4PtYNuZ
-	 spq3GGEnX40Eg==
-Message-ID: <62e24ed4-3579-46ff-a77a-c5733125012c@kernel.org>
-Date: Mon, 4 Nov 2024 12:47:16 +0100
+	s=arc-20240116; t=1730720868; c=relaxed/simple;
+	bh=psPIY7Sng851pKS/3767nhrEFkWBcdFak70DiKUQAaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hchIjp76GMCyJmYpRxM1UPdp/a5JNGWILTUwskDOWBlgoVSudNSztau4OQ1v83TfrpRqXndMdsNhEOzFdQE3jQK9czywxqwdq0tUCS1Ox6Iq9A3H9i+ivmJtGz5yFkgEbNKZd5cHSHNv1uK0xF6Q55+kgtY0KltZk0miqzAa5sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eX6aRPOy; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xA1XZPA7ROpkAWO42tjuiUPyY5dJ4CkrP0Yv74uKLYE=; b=eX6aRPOyNRtCJ8XY4us2x8FSBC
+	fJZCOC+0l8fNsbvxB3DAkntZ5h0qHqfI8Qr47zKwMMhwzCOwARnKGtyVYHyJZvvX/YsmquFfisqYw
+	h9VWHztKViX9J7KJYjSM9qTuXbLyHXk+u5DN53x0uhMhydwM2pIMjG6w06iiNuz+9emYKT+MO3JFq
+	0wnHlEc7JnbTU3YJsax6FxzyJxFpm2sf5XSnJsW/YgshQRTQRBDGzTK67rf7KoOeKALEG1ryudurQ
+	JYrFo0+/BDVsuP8P0chDrEgDC+0NEMHnZ608/J5ma0YHZ2nO9qXRmdjvoZBJjiOIX2m2Zos+kqWnC
+	IsLDgQ1A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t7vYM-0000000BJRc-2PoW;
+	Mon, 04 Nov 2024 11:47:26 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3837C300324; Mon,  4 Nov 2024 12:47:26 +0100 (CET)
+Date: Mon, 4 Nov 2024 12:47:26 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>,
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org,
+	jannh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com, syzkaller-bugs@googlegroups.com,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	kasan-dev <kasan-dev@googlegroups.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Waiman Long <longman@redhat.com>, dvyukov@google.com,
+	vincenzo.frascino@arm.com, paulmck@kernel.org, frederic@kernel.org,
+	neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
+	josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, tj@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, rcu@vger.kernel.org
+Subject: Re: [syzbot] [mm?] WARNING: locking bug in __rmqueue_pcplist
+Message-ID: <20241104114726.GD24862@noisy.programming.kicks-ass.net>
+References: <67275485.050a0220.3c8d68.0a37.GAE@google.com>
+ <ee48b6e9-3f7a-49aa-ae5b-058b5ada2172@suse.cz>
+ <b9a674c1-860c-4448-aeb2-bf07a78c6fbf@suse.cz>
+ <20241104114506.GC24862@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: hwmon: pwm-fan: add
- retain-state-shutdown property
-To: Billy Tsai <billy_tsai@aspeedtech.com>,
- Akinobu Mita <akinobu.mita@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-References: <20241026080535.444903-1-akinobu.mita@gmail.com>
- <20241026080535.444903-3-akinobu.mita@gmail.com>
- <ijdk5uuurnfd2shnwwj2nm64bno6lmrhdyqp42pzjc3i2e5cyh@v5ljkrsgo6ac>
- <CAC5umyitFp7oGR-eYXMVaS8bY1AGe3QwEuSPoEz3DxWwH=dUsA@mail.gmail.com>
- <e29e2c9e-60c1-4f32-ab71-e74f331e1921@kernel.org>
- <CAC5umyhCw+62Y+h3Jvh3=0Ocs8XJsSu_vaiPpO_g=65Jo4vUFg@mail.gmail.com>
- <e4985609-0642-4ff4-b074-8c5a34f88a24@kernel.org>
- <CAC5umyhrNCA4BHqC_k_tSaSOANcvP_vt485650xtFTPwJ+6snQ@mail.gmail.com>
- <OSQPR06MB72525057883A59578441E0988B512@OSQPR06MB7252.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <OSQPR06MB72525057883A59578441E0988B512@OSQPR06MB7252.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104114506.GC24862@noisy.programming.kicks-ass.net>
 
-On 04/11/2024 08:45, Billy Tsai wrote:
->>>
->>> On 28/10/2024 15:57, Akinobu Mita wrote:
->>>>>>>
->>>>>>> You described the desired Linux feature or behavior, not the actual
->>>>>>> hardware. The bindings are about the latter, so instead you need to
->>>>>>> rephrase the property and its description to match actual hardware
->>>>>>> capabilities/features/configuration etc.
->>>>>>
->>>>>> Is this description okay?
->>>>>> (Reused the description of retain-state-shutdown in leds-gpio.yaml)
->>>>>>
->>>>>> description:
->>>>>>   Retain the state of the PWM on shutdown. Useful in BMC systems, for
->>>>>>   example, when the BMC is rebooted while the host remains up, the fan
->>>>>>   will not stop.
->>>>>
->>>>> Nothing improved in the property. You still say what the system should
->>>>> do. This is user-space choice, not DT.
->>>>
->>>> It seems better to implement it as a device attribute.
->>>
->>> I don't know about that. To repeat: if you say what system is supposed
->>> to be doing, it is a policy. Describe the hardware and its configuration
->>> and maybe this would be suitable for DT.
-> 
->> Billy, could you please write a proper description for this property?
->> I'm not the right person for this.
-> 
-> In our hardware, if the system reboots and power remains on the PWM controller
-> will retain its original settings. However, the pwm-fan.c driver currently disables
-> the PWM controller during a system reboot. I need this property to prevent pwm-fan.c
+On Mon, Nov 04, 2024 at 12:45:06PM +0100, Peter Zijlstra wrote:
+> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> index 6310a180278b..ac9f6682bb2f 100644
+> --- a/mm/kasan/generic.c
+> +++ b/mm/kasan/generic.c
+> @@ -521,12 +521,12 @@ size_t kasan_metadata_size(struct kmem_cache *cache, bool in_object)
+>  			sizeof(struct kasan_free_meta) : 0);
+>  }
+>  
+> -static void __kasan_record_aux_stack(void *addr, depot_flags_t depot_flags)
+> +void kasan_record_aux_stack(void *addr)
+>  {
+>  	struct slab *slab = kasan_addr_to_slab(addr);
+>  	struct kmem_cache *cache;
+>  	struct kasan_alloc_meta *alloc_meta;
+> -	void *object;
+> +	void *object
 
-If we change the PWM core not to disable it, then we have to change
-bindings?
-
-How is this binding applicable on system (e.g. on *BSD) which does not
-disable PWM on reboot?
-
-> from disabling the PWM when the system reboots.
-> In my point of view, the description can be:
-> Retain the state of the PWM on shutdown. Some platforms (e.g., BMC) will maintain
-> the PWM status after the system reboot. Add this property to prevent the PWM from being
-> disabled during the system reboot.
-
-You again describe what OS should do. First and last sentences are the same.
-
-Probably what you want to say is that fan is some critical component
-which should not be turned off or left unattended. Or that this hardware
-keeps last state of register on reset, so some boards might want to use
-it? If the first, then probably different property name. If the second,
-current seems fine, just choose some description describing actual hardware.
-
-Best regards,
-Krzysztof
-
+Clearly I'm still struggling to type ... *sigh*
 
