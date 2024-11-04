@@ -1,148 +1,174 @@
-Return-Path: <linux-kernel+bounces-395210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D2E9BBA54
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:26:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7754C9BBA57
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:27:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1963F28586E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:26:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04F2CB22488
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946F71C2324;
-	Mon,  4 Nov 2024 16:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A6F1C3034;
+	Mon,  4 Nov 2024 16:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGGdLSe7"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dNQN7FN9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9130D4A08;
-	Mon,  4 Nov 2024 16:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EE84A08;
+	Mon,  4 Nov 2024 16:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737600; cv=none; b=W9CTUcinGyy/+Tc4VZ7h3GBOoOA9b+2d9fZQ8N/3e3VVZMs6dGOPoXw1fWufqvft2tM59CUEIOFIjLKKRk9moNwO8rueuigTKY4LSY15qLwiHMN0GH5Z8o8ax01y9QfgCGM0ptumjY3PzQ1z4JEJwMhyVTBmAwvsOklorULFn+E=
+	t=1730737608; cv=none; b=rhRIu5GTDSAavPb/jWxYo+sLNj5qeHgqeezxPovx/mAz+hiPZFLJC2SqPJHJ8tebBsulkjXMs3mPnzhtK5cPYp7PQaIvYUXr2w0sJQfvP1tIryIfn2ceX6BtCtmkflG7e/ETxFSZtC3Ex42uVzWKebIYpgeCE9xESUi6R01hE5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737600; c=relaxed/simple;
-	bh=7R3Dk2gJ543VSNlT8vmuLD0jP6XJIEys+cP5iYmfBfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WiDULc9p/JHz91XIrSaheyv7FtXFX5BRTDxA5rfOUyK8LCVN0vcaNXfVEC/xiMuRO7FFXNif17Si++hvHH7nQ6EF1P/xzW1p1eOKOySIOrMYvw1LnDGor/7eSkbqOeScTAS/5KCnJwb5f5XL1W4ugiqZ+y8abZi/CkAiOEuHtbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGGdLSe7; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cb7139d9dso39608785ad.1;
-        Mon, 04 Nov 2024 08:26:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730737598; x=1731342398; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0z6VRhmL+riFADmXem2uFU7dggIvvunuyK9Zh9Vgkqw=;
-        b=HGGdLSe7rlpHfAofstRzW380umdd/rkMQTyj4+j566I1VegCgV8cYeWUE2cZXILnq8
-         ZUN19C97wc7HyDRmpOM/qfqHB3cU+gAJbxDAvCx4gMmfEA+8Mv6TyXesGxd1L7FkgYmc
-         ufYT82YoLX9OhQWVuW6pj1mcvw+K4b3ZPF3yz2Sz3YWNJD56cHXJUr112dWN03BzX6Tr
-         3CONSTPZOV13DkDUAs1T5Ux8atjZ+kBN4hJVXpsnG56t+RZD1nbLmTcCRAaxWdgNcg/5
-         HsTP3e6lgSSHL5jEiDS6AAvysB2P86ElxZEGFnEgSkW4TgzfILHCev5uWGOGfEtQNN2s
-         cr/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730737598; x=1731342398;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0z6VRhmL+riFADmXem2uFU7dggIvvunuyK9Zh9Vgkqw=;
-        b=L6MnxlFUyl7vVsu6ZWE8IjEpRcPxWG2yyErjIE3QtzRZMHYCM5bhVycNY0IeXGIWma
-         VRUntdZuxn8CiBZqjprhPbirXhmbAkaC7fJrTHQVgzJtUdNOUrKe5Azttr1oMHhc16T5
-         OqiR4aUtN6y6qIgsUWijg+d4wB6YKF4HpXCLuy+9dSyzw8hdFPrYVvbfd8JgjRfZ5Q+S
-         hFaAPB0RebXhEsprwwBkqvc3uPgJ4UXO5oxmVK0PGiKgf+SWe7xMHA6dCvzFUsSp5nMr
-         xMrPcqqLELxbEacJ/s48kyOFDag+XHiWhPhXU5uIHJ4Zvd/ApV/WrN2+VakiRb2xauwk
-         E0mw==
-X-Forwarded-Encrypted: i=1; AJvYcCUy033TEZXe4VCyaWvk+RpKlGCfXX3cbLQxzkHYbO/jeWWST+xSN2Q+swmshRpU/6j37BL0sfPpA460MJQF@vger.kernel.org, AJvYcCWr34lVUuWwuG2ZFOxlAtzms9CbasdzlAIQ9kL8/ZO3VHAMn2T4bREsXqxmcweLpwRfxAfILP/RBm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSAh66oD5Nqs1dSNLSSQKRuvasY1UPqIrpbjPgrHSx3psBXtGo
-	VpNqLyO2+EzogTTLlOc8ZcYNvNX0HVM8jFq9ZrVRbYkt/f2NXT3yDz6R8mYlbEY=
-X-Google-Smtp-Source: AGHT+IHl1idgZsKyhWYsf7s0AoATg2Jw6nH4qo4UBXojQLFOxileExNRi8STmwbVY73p2VdWdA6GJA==
-X-Received: by 2002:a17:902:d4c2:b0:20e:590f:58af with SMTP id d9443c01a7336-210c6877322mr435198045ad.1.1730737597584;
-        Mon, 04 Nov 2024 08:26:37 -0800 (PST)
-Received: from Emma ([2401:4900:1c97:5a7:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21131de4918sm39213525ad.5.2024.11.04.08.26.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 08:26:37 -0800 (PST)
-Date: Mon, 4 Nov 2024 16:26:31 +0000
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, 
-	Anup <anupnewsmail@gmail.com>
-Subject: Re: [PATCH] iio: invensense: fix integer overflow while
- multiplication
-Message-ID: <clo3nj5fokr47vheikv7nozr2exzha3rwkyfqq7n3s6vqyglzr@g6eu2ycy6gzo>
-References: <20241103-coverity1586045integeroverflow-v1-1-43ea37a3f3cd@gmail.com>
- <20241103111827.0894a40a@jic23-huawei>
+	s=arc-20240116; t=1730737608; c=relaxed/simple;
+	bh=iVHZaWIxb1vbiCD6AvV5gqbVLV2k3/LS/b1t9CjFQZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kEqqW42HzwUu8njmTq5v06tVpoUH4pNEOEkMtZTeZb/cIty8RDXhXKVnHP0oygkXnK3JDBXh4UrAdlDrPWt4khQEwdW72WFlsDNx/u6BddIXF+Tz7Pvp6ar6DyJtKzqSJbS0FH9wctpnJh0KMm58fkp5PcntUq6YlnuKECuvejA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dNQN7FN9; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730737607; x=1762273607;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=iVHZaWIxb1vbiCD6AvV5gqbVLV2k3/LS/b1t9CjFQZ4=;
+  b=dNQN7FN9PpoIn20p1YbTqbiBEDVn+IEnP8Icgou4mPD7Ix/e9EmF6847
+   BfdD7xIg1e6csk4LtJh7c/zqIjJWG4TiUvT8G+pb7HzIFKC3NYoMeuC0k
+   wqlLLmgxy1Wy0jvvwlLFry64W02K1wk8OJHen8TfsbvsWsafpE4qjQltJ
+   URpXAAenyyB22a7lsnvy2aIuKTpBhmUn5TLFERojwWyBGpyL4vcLE5mwv
+   vP1E9mwhsz1/w4cWH1zH1BP6DeBn3dsFwApF+LfTEOnchD1NaMCS8WAHB
+   8sbrUcxoMlTBrBuXS2GLTeM1UW3Qn0BRSaXJ1GZ+WxtsL9iBw965zqCLi
+   g==;
+X-CSE-ConnectionGUID: VUHqm79tTvK7tLON3qaW/g==
+X-CSE-MsgGUID: Y3UyqmeAQ6a6vxXfLCXbEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41549021"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41549021"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 08:26:46 -0800
+X-CSE-ConnectionGUID: ILa6z2FFSoeyqMIr75+u2g==
+X-CSE-MsgGUID: coYb8hJuTomn81C6XwiwAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="84049655"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.221.97]) ([10.124.221.97])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 08:26:45 -0800
+Message-ID: <53c918b4-2e03-4f68-b3f3-d18f62d5805c@intel.com>
+Date: Mon, 4 Nov 2024 08:26:44 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241103111827.0894a40a@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] x86: cpu/bugs: add support for AMD ERAPS feature
+To: "Shah, Amit" <Amit.Shah@amd.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: "corbet@lwn.net" <corbet@lwn.net>,
+ "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+ "kai.huang@intel.com" <kai.huang@intel.com>,
+ "pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
+ "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
+ "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+ "seanjc@google.com" <seanjc@google.com>, "mingo@redhat.com"
+ <mingo@redhat.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "Moger, Babu"
+ <Babu.Moger@amd.com>, "Das1, Sandipan" <Sandipan.Das@amd.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
+ <peterz@infradead.org>, "bp@alien8.de" <bp@alien8.de>,
+ "Kaplan, David" <David.Kaplan@amd.com>
+References: <20241031153925.36216-1-amit@kernel.org>
+ <20241031153925.36216-2-amit@kernel.org>
+ <05c12dec-3f39-4811-8e15-82cfd229b66a@intel.com>
+ <4b23d73d450d284bbefc4f23d8a7f0798517e24e.camel@amd.com>
+ <bb90dce4-8963-476a-900b-40c3c00d8aac@intel.com>
+ <b79c02aab50080cc8bee132eb5a0b12c42c4be06.camel@amd.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <b79c02aab50080cc8bee132eb5a0b12c42c4be06.camel@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 03, 2024 at 11:18:27AM +0000, Jonathan Cameron wrote:
-> On Sun, 03 Nov 2024 08:43:14 +0000
-> Karan Sanghavi <karansanghvi98@gmail.com> wrote:
-> 
-> Hi Karan,
-> 
-> > Typecast a variable to int64_t for 64-bit arithmetic multiplication
-> 
-> The path to actually triggering this is non obvious as these
-> inputs are the result of rather complex code paths and per chip
-> constraints.  Have you identified a particular combination that overflows
-> or is this just based on the type?  I have no problem with applying this
-> as hardening against future uses but unless we have a path to trigger
-> it today it isn't a fix.
-> 
-> If you do have a path, this description should state what it is.
->
+On 11/4/24 08:13, Shah, Amit wrote:
+> I want to justify that not setting X86_FEATURE_RSB_CTXSW is still doing
+> the right thing, albeit in hardware.
 
-The above issue is discovered by Coverity with CID 1586045 and 1586044.
-Link: https://scan7.scan.coverity.com/#/project-view/51946/11354?selectedIssue=1586045
+Let's back up a bit.
 
-Should I mention this path in the commit short message?
+In the kernel, we have security concerns if RSB contents remain across
+context switches.  If process A's RSB entries are left and then process
+B uses them, there's a problem.
 
-> > 
-> > Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-> If it's a real bug, needs a Fixes tag so we know how far to backport it.
-> 
+Today, we mitigate that issue with manual kernel RSB state zapping on
+context switches (X86_FEATURE_RSB_CTXSW).
 
-What kind of Fixes tag should I provide here. 
+You're saying that this fancy new ERAPS feature includes a new mechanism
+to zap RSB state.  But that only triggers "each time a TLB flush happens".
 
-> > ---
-> >  drivers/iio/common/inv_sensors/inv_sensors_timestamp.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> > index f44458c380d9..d1d11d0b2458 100644
-> > --- a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> > +++ b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
-> > @@ -105,8 +105,8 @@ static bool inv_update_chip_period(struct inv_sensors_timestamp *ts,
-> >  
-> >  static void inv_align_timestamp_it(struct inv_sensors_timestamp *ts)
-> >  {
-> > -	const int64_t period_min = ts->min_period * ts->mult;
-> > -	const int64_t period_max = ts->max_period * ts->mult;
-> > +	const int64_t period_min = (int64_t)ts->min_period * ts->mult;
-> > +	const int64_t period_max = (int64_t)ts->max_period * ts->mult;
-> >  	int64_t add_max, sub_max;
-> >  	int64_t delta, jitter;
-> >  	int64_t adjust;
-> > 
-> > ---
-> > base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
-> > change-id: 20241102-coverity1586045integeroverflow-cbbf357475d9
-> > 
-> > Best regards,
->
+So what you're saying above is that you are concerned about RSB contents
+sticking around across context switches.  But instead of using
+X86_FEATURE_RSB_CTXSW, you believe that the new TLB-flush-triggered
+ERAPS flush can be used instead.
 
-Thank you,
-Karan.
+Are we all on the same page so far?
+
+I think you're wrong.  We can't depend on ERAPS for this.  Linux doesn't
+flush the TLB on context switches when PCIDs are in play.  Thus, ERAPS
+won't flush the RSB and will leave bad state in there and will leave the
+system vulnerable.
+
+Or what am I missing?
 
