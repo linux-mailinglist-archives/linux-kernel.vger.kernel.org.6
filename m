@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-394973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3269BB6BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:52:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C06859BB6C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:53:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A03C1C23265
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:52:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EC54B23FF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA00383CD3;
-	Mon,  4 Nov 2024 13:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D84913CA93;
+	Mon,  4 Nov 2024 13:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TNddlwN/"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="WK1qZUBl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N3mxGdu7"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1A48BEE
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 13:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590B88BEE;
+	Mon,  4 Nov 2024 13:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730728352; cv=none; b=JQ0Y/aKiEAgc7nNLgoGLmeHwVxy/aLrSZgU7onSTCCk3YZUeEMmIEmnjusX6VG5XE78C4xbb6Rjj8jQl/y6TFCjSX5PoLPU4C9fbBgiEU7P1IbkRwtnVlZHGgBVjD+kkFOf04qHgwiraGX5bEsFZ8BDzhyjbC90+k2qtDaR9aJI=
+	t=1730728361; cv=none; b=TIYkhlEziDW+bRhVTZXFkHNChkScaEXbtAiWMyupb3zrtxD8Zc385xOAX8J9ArIMYkV3t3BHNbuPHzDvVwCBfdLhB9Ca3Wjz3ybQn+bQVhnEKi0nrcxdS9F0ScO/itc9TjRgfFgXxJhU8gImNgkIoxKLW6tNtkT/rrEtC76lDwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730728352; c=relaxed/simple;
-	bh=va+mJ8jqYuF1m2DMlIh3VClRv2mNCKxpQOuHse15mgE=;
+	s=arc-20240116; t=1730728361; c=relaxed/simple;
+	bh=J22m2dLEM2JGyWrp4WebPPffap8OOMB8riKgDP5fgac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hUzDmfl93mNex8efFzQLdwCyOv8vd8bqutsIsj2MTo4L119Ll9SLdG2QZriRZU5ZaYSIxv7hwRVEnIPH4CxlSFFNjQkaeh8xZGW6J1zhJG+uwKb8HLz1i/wxA0TDW1UVNsWDwXJaFOGPfQiPOM6T/imBfzvMKvxSXCBdGGV3RN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=TNddlwN/; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-84fc7b58d4dso1157411241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 05:52:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1730728349; x=1731333149; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EkBaJUaQmNlDT9UG7F3IUEDB61PJd1lepS1O8vS2Df4=;
-        b=TNddlwN/cQFlt9b9NOt4ygwx4ZmhdBnD7UfEqeL0yjQxKSL4n2gd4M6UaUGP4tOFL4
-         YuDG5FuzEu7aQQ4U2Ak4kTWSWSL7pEIowGcwnpuKcdxz16CGtbmzPEAdyt83jXZqbfGU
-         IHojgiML0TF/a44/SfqOP53DqR1P2zxpRF3cqXyECVvQJEEUaz8xBPf+Yp6osgB1tMJU
-         rPHo7yuMB7lCs2OKBGFOnWom33RdUE0FUwr9oQmPO/dbhu9U7RL+i8Nn+eAJmmU7tgLx
-         l2ps9Leuc9AuGigcaoqZgKVPB8n0g4AMAloCHCsvocu84DwwJaEhLIdxm1s5/3di0NL2
-         eonQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730728349; x=1731333149;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EkBaJUaQmNlDT9UG7F3IUEDB61PJd1lepS1O8vS2Df4=;
-        b=nUbS0lJnLH54enCo3CzRwvDquvs/mTDuDNiBbi668/ku3eJil4RZCbQpoFaXZjEkws
-         WvLET5r8YDe8LbYbbc+kau45XbdpLWSSTUrkZxRgtf87P40McgLAqfYXpQS/z64hkZHJ
-         7EC4yWU46hDnHChLtKJT2ikZE+3KzNPi6ds9zvUyxVc9jKaYa6PagELrzjUzyA4RwFF2
-         V41OA2Ga2Rol5xeBxtFci41y14cnbLvsScBCD5LVYDJOO/sFnr5NGnwa6sZzsiNF16nP
-         kxlR+LsNUHrMFQk+FVqS3ODwAq3kBjucqzYSAmK+/juAXrAYU7vauA8l0ujiQazKDWOq
-         YMHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxL4kvqFV2Pg8utj/cruiDDpwWB+5ism2i48Ndc3jubN7yDbkPJ/781ljBQ2WwIJK7TMMDBdDY+PbkloY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPYGIzCr3U2d8uS5bK7vej/8438j7AjkrMyKce8rMT/uXBqox9
-	Ciwa35QaGASOqHtegifpsO7EB+7nHIiG/03QNrtc46kVPLviCc/iomWtychioC0=
-X-Google-Smtp-Source: AGHT+IFmlPTEulo8PrBSa4hLGepjHWucd1eo0mnO56qT1Ydh9XheeGVoeKHcAHFWhX+avIDDQrBpSQ==
-X-Received: by 2002:a05:6102:3753:b0:4a4:8756:d899 with SMTP id ada2fe7eead31-4a9543ece24mr15248394137.29.1730728348895;
-        Mon, 04 Nov 2024 05:52:28 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad0adffesm47192441cf.32.2024.11.04.05.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 05:52:28 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1t7xVL-00000000hsn-2kgO;
-	Mon, 04 Nov 2024 09:52:27 -0400
-Date: Mon, 4 Nov 2024 09:52:27 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hiWMUe81NojejeUGgwKxMmVod8+OVGaMkqC2ZOCYNQGVasfqOZrX2pIHEmg1v5iL6MV0s3okAtQ0eIrUABNb2y9VpsZNhZ8UPJmD8gCG0CPcs4ufDeyOwUQYkggxdoo0e9vY3Yb7gmWVyJqIzgv2FAskxBnfVogdAIzPB3Sz3+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=WK1qZUBl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N3mxGdu7; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D37E72540128;
+	Mon,  4 Nov 2024 08:52:36 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Mon, 04 Nov 2024 08:52:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1730728356;
+	 x=1730814756; bh=t3hv5FyYoK/FoE76EWjkfZ5QNQpmqNitzCQSghPf7Po=; b=
+	WK1qZUBleEqrByBVM2YO0riZGuhv+1GED5ZkKXYTREoXL+g43LbiiS6/N0Rek1eK
+	lFSuIGmdmsVbRbSqbE8/+kv/uH0rLfNyuGU8Vwl21B6PMhxsM2OLYQyT6V3GSAI/
+	ZDputWGo4CqLvuSqMSP/spsg1n2gH9ETVO2pliw6z9MPGwWop3vrvlE5hDFn3RRs
+	aNeJqn6R5XMbUQMUdqdnpcy9a+m/YCarhc6GZHMdYysTAG+QWLWk1JvqhtSgXi/G
+	i3lm05S24HQ/SNaGd5UtYcvOULYJimcCei2n7rlUU4Jyw7bFGHqosyRB2qVFLiVN
+	u4MJYnOUJVm8im08of8wIA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730728356; x=
+	1730814756; bh=t3hv5FyYoK/FoE76EWjkfZ5QNQpmqNitzCQSghPf7Po=; b=N
+	3mxGdu7IQMmiAbUQXBUHYOXWTNHqk3OqKkWWKEZgwMtYUdWcf3GEpantFguCx7Vp
+	fZzdshJLWwnM1Hz1It9DwAR/gr+iUEw90pB51UvDYyVBTGMTn2YVaKRKcNthYfuR
+	RtAKdGaYezcfzZAnKpuBo0EQQDDtaLfvJSgjFd6trjKPt9urm4OnAynggKbaMZTF
+	VGAsKtBabRelp9oCYUfU1kRcFng6eFfYhApZDYQDFqGxQV0p64Hnq3h4IsaxhmkC
+	TXBJEe5XBmwcskT0uS1YZbN0Xl7g9198f29dRhfBzqKm8TS4jYpI+I9tLtEMjqP5
+	Daq+Ix4NEQAUo390egWtg==
+X-ME-Sender: <xms:o9EoZzzojBFRkjS0Z5uTvL7liO38I1TTH8axlDIt75ONdtDTe_PfBQ>
+    <xme:o9EoZ7Tl6ni9am858tfZEkDnAHXY2zFnecTXSAPASX82kFsUcsCPR9QDU8O_PrgKc
+    8LqwBKr89OvFAXlfhA>
+X-ME-Received: <xmr:o9EoZ9Xds1dc2b20h0Enl1ulrS1N2VQhTeiU5vf3m4Ugcq2AfMDHDcMEO81AedBKobRWiWmvyuMDMMzX-2t80XjK7QRew_jf7Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedgheeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
+    necuhfhrohhmpefpihhklhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhoug
+    gvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrght
+    thgvrhhnpeefhfellefhffejgfefudfggeejlefhveehieekhfeulefgtdefueehffdtvd
+    elieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehn
+    ihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrsh
+    gvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+    ghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepghhrvghgkhhhse
+    hlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepphgruhhlrdgsrghr
+    khgvrhdrtghtsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtthhopegtlhgruhguih
+    hurdgsvgiinhgvrgdruhhjsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtthhopeih
+    ohhshhhihhhirhhordhshhhimhhouggrrdhuhhesrhgvnhgvshgrshdrtghomhdprhgtph
+    htthhopehjrghmvghsrdgsohhtthhomhhlvgihsehhrghnshgvnhhprghrthhnvghrshhh
+    ihhprdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhope
+    hsvghrghgvihdrshhhthihlhihohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhi
+    nhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:o9EoZ9g9Imy5zpkaamTBldUakMTK9wCE6gASpAUZ_fXyxRsybZ5eLQ>
+    <xmx:o9EoZ1ApiF35blTJnIZoLcnBj_c3EPYAPAXThN8yGfcnew1hhQ77bA>
+    <xmx:o9EoZ2ITvh6v8O-2-cESy9qn_KOFWKllHtuY2ny9bee8wu792-DLIg>
+    <xmx:o9EoZ0DeTSmHvNTkWJwuxgfP9LkcEhaPxEYD13hh6kyDcGB3_Z0tTw>
+    <xmx:pNEoZ_T-8K6bRs6tP-ccbwflyo9rJ3qmfyRmmQQG73je8WJcvre1J90T>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 4 Nov 2024 08:52:35 -0500 (EST)
+Date: Mon, 4 Nov 2024 14:52:33 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-cxl@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-	linux-mtd@lists.infradead.org, platform-driver-x86@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] sysfs: treewide: constify attribute callback of
- bin_is_visible()
-Message-ID: <20241104135227.GE35848@ziepe.ca>
-References: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
- <20241103-sysfs-const-bin_attr-v2-5-71110628844c@weissschuh.net>
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH/RFC v2] MAINTAINERS: Re-add cancelled Renesas driver
+ sections
+Message-ID: <20241104135232.GB1412590@ragnatech.se>
+References: <90447fa332b6f73bffcb486ccfe2515c59546253.1730717649.git.geert+renesas@glider.be>
+ <20241104114007.GA1412590@ragnatech.se>
+ <CAMuHMdW49dFp=-HDC4w8peQA+8phbJOsJZLE1OJtJ6tpTmAuLA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -132,33 +120,77 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241103-sysfs-const-bin_attr-v2-5-71110628844c@weissschuh.net>
+In-Reply-To: <CAMuHMdW49dFp=-HDC4w8peQA+8phbJOsJZLE1OJtJ6tpTmAuLA@mail.gmail.com>
 
-On Sun, Nov 03, 2024 at 05:03:34PM +0000, Thomas Weißschuh wrote:
-> The is_bin_visible() callbacks should not modify the struct
-> bin_attribute passed as argument.
-> Enforce this by marking the argument as const.
+Hi Geert,
+
+On 2024-11-04 14:33:59 +0100, Geert Uytterhoeven wrote:
+> Hi Niklas,
 > 
-> As there are not many callback implementers perform this change
-> throughout the tree at once.
+> On Mon, Nov 4, 2024 at 12:40 PM Niklas Söderlund
+> <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > On 2024-11-04 12:05:07 +0100, Geert Uytterhoeven wrote:
+> > > Removing full driver sections also removed mailing list entries, causing
+> > > submitters of future patches to forget CCing these mailing lists.
+> > >
+> > > Hence re-add the sections for the Renesas Ethernet AVB, R-Car SATA, and
+> > > SuperH Ethernet drivers.  Add people who volunteered to maintain these
+> > > drivers (thanks a lot!).
+> > >
+> > > Fixes: 6e90b675cf942e50 ("MAINTAINERS: Remove some entries due to various compliance requirements.")
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Reviewed-by: Simon Horman <horms@kernel.org>
+> > > Acked-by: Niklas Cassel <cassel@kernel.org>
+> > > ---
+> > > To be applied to renesas-fixes for v6.12 after v6.12-rc7, unless a
+> > > better solution is found.
+> > >
+> > > v2:
+> > >   - Add Acked-by, Reviewed-by,
+> > >   - Add M:-entries.
+> > > ---
+> > >  MAINTAINERS | 28 ++++++++++++++++++++++++++++
+> > >  1 file changed, 28 insertions(+)
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 13f4c23281f89332..b04d678240e80ec9 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -19578,6 +19578,16 @@ S:   Supported
+> > >  F:   Documentation/devicetree/bindings/i2c/renesas,iic-emev2.yaml
+> > >  F:   drivers/i2c/busses/i2c-emev2.c
+> > >
+> > > +RENESAS ETHERNET AVB DRIVER
+> > > +M:   Paul Barker <paul.barker.ct@bp.renesas.com>
+> > > +M:   Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> >
+> > I'm happy to look after the RAVB driver together with Paul. However
+> > please don't add my +renesas tag email for new entries in the
+> > MAINTAINERS file.
+> >
+> > With this fixed for RAVB and SUPERH ETHERNET,
+> >
+> > Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 > 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
->  drivers/cxl/port.c                      |  2 +-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c |  2 +-
->  drivers/infiniband/hw/qib/qib_sysfs.c   |  2 +-
->  drivers/mtd/spi-nor/sysfs.c             |  2 +-
->  drivers/nvmem/core.c                    |  3 ++-
->  drivers/pci/pci-sysfs.c                 |  2 +-
->  drivers/pci/vpd.c                       |  2 +-
->  drivers/platform/x86/amd/hsmp.c         |  2 +-
->  drivers/platform/x86/intel/sdsi.c       |  2 +-
->  drivers/scsi/scsi_sysfs.c               |  2 +-
->  drivers/usb/core/sysfs.c                |  2 +-
->  include/linux/sysfs.h                   | 30 +++++++++++++++---------------
->  12 files changed, 27 insertions(+), 26 deletions(-)
+> Thank you, I will make that change.
+> Are you OK with marking both entries "S: Supported"?
 
-For infiniband:
+Sure, no problem.
 
-Acked-by: Jason Gunthorpe <jgg@nvidia.com>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
+-- 
+Kind Regards,
+Niklas Söderlund
 
