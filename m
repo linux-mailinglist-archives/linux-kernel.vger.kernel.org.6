@@ -1,133 +1,100 @@
-Return-Path: <linux-kernel+bounces-395434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DBE9BBDD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:14:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D699BBDD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869D81C23579
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:14:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336701F23080
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEFD1CDA1C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7846D1CCEC9;
 	Mon,  4 Nov 2024 19:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Fwaadoqw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="v73xZXuw"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD31F1C729B;
-	Mon,  4 Nov 2024 19:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F4A18C926;
+	Mon,  4 Nov 2024 19:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730747672; cv=none; b=h40TvwQTK3kBPX6w1F79IaKO2JepBZTM0RwHIeQ2D7F6poTXssH6N3Jfhj9c17SWHjjTKAAfG2EC7jgFOMkX2xzf+97zC96Cvks0RNTLanit/wh4RDRVWsiAHiajdqLCb1tE45+tMkUMMmrCriINv8zY+nibJd2mMSq7EcEbfsE=
+	t=1730747671; cv=none; b=YcFKPp5mkBy0xcQ3raiZT0/2LVxllOXxjCT9TRST4h6KWyGlyNGj0w0Z5w4fWqGEu9xkDV35F48xvmw20grOMHjRT5VF0PjXdFHCZ1wZpo531z7oI01jUCZCKQ/hlTUM/tCb3MKTaGGARiFoN8ydjZiw9uR5kda6NF5B4nNTyjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730747672; c=relaxed/simple;
-	bh=gZCJH7ZGSAzYm+eKqghuoVLgmX5A+zETD4M0CdcwgF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uaCGqFyQ71peleZDniA6pry+R3cc9boJrQzPy7kxWxEDwfRypnSuf8f+3oJPiwe4rNa335Nj5F+Dz3rI7W6GnJ1H7aDsOYKFdCE2TrMOXGB3G+0nM9b102ICdNL/EwF1uc0HMJDYHZC4xW0e3qip0xEiQA+C4/0qmcsidKzhu7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Fwaadoqw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4BjhB0005210;
-	Mon, 4 Nov 2024 19:14:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PQ3afCaiuQvlRFSZynJOm+joZ9Z2v4N/aCEb5qLkRjw=; b=FwaadoqwbP9lTleJ
-	w81v46T/hdV8DX8lAGNpwPY3hWV0A/+Y/t51eE/nIlcbHh1CGQMWwVbI4lABaiVY
-	R+FNk/U4k2Y8wu06ETL5xbS4PknVgkjsioetlq0r3vsGuuyWMQvewMkTipUO1fzt
-	CIPrySRvHuRTq0yonOfKgqgDvzIoNg3jBQM6JHpvtA2Vdbtv6nCg9P/LDIkWBlEk
-	mw1lxILdU9W0i5PicjgCz77mjU39rFwqBFK+dmzJuNFqdHKQSGAYM0uf49Y2Rhfg
-	XFVEYtmNVG0Vut1xNxbF2bV5XBQV9dCwmePmuoyFYzGZ92FbrTDzhuGxaUozBXL3
-	Ci1Akw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd2s5928-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 19:14:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A4JE9WH014497
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 4 Nov 2024 19:14:09 GMT
-Received: from [10.110.96.174] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 4 Nov 2024
- 11:14:06 -0800
-Message-ID: <3052ea5b-5226-4c0b-a4c3-1d4185ae9726@quicinc.com>
-Date: Mon, 4 Nov 2024 11:14:04 -0800
+	s=arc-20240116; t=1730747671; c=relaxed/simple;
+	bh=o4Q21EUOtQ5gP8TVU/SzyX8KbHV1rScUhI+UDQ2yHfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MyFbNLI1CCZSRKTz2USS98tZP4rO4qUnPmHFwS1ZGp9+G/Pre40ho3KcMe6E1tOPH1CVlUQs62CQnyg5VuBf7Ft2hjmFjMh/b+yb/6tCsQ6zJAGTWixDcwedNgKVwi4JO662Us2bKF+erQBV0fllFayinmTbP5H00FIAiK61JE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=v73xZXuw; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=PljaPNPt6R2nYVku9vBFHgDoW/TWpHwXI6NoLjiVHnU=; b=v73xZXuwTsYAUpHnxPLfsov4D0
+	1OOd+L5YITYru9ut7DOvY9bNkEc2XKaSf730FSo76TcYGoTYxqFv1T5YFDB1kcL3H0UF2ELxgIwzv
+	fnXHRRoq7N5FvXRLQMQLF8YAEH+Zgd/vw/GSi3qALx+dLNqUWFiLtODMcq/vBL/RrItgZPQG3oPfe
+	nCTzMv4VJxUAmstFs6PFFgy2nsEZmKHIWqfrpa/qXakPaGxCWBrlXtWAR0nG4QYnza+Mbq/7wEXM0
+	8AZtOpmiiVrV0mnVj0YGmfalBdDjKNRUqQsN825VsP9zLVZiijB5DFoTaH+FP+6DpS8mzPP0Pknyd
+	RpYRZI/g==;
+Date: Mon, 4 Nov 2024 20:14:24 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Kevin Hilman <khilman@kernel.org>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, zhipeng.wang_1@nxp.com,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: fix using cpufreq-dt as module
+Message-ID: <20241104201424.2a42efdd@akair>
+In-Reply-To: <7httcmonip.fsf@baylibre.com>
+References: <20241103210251.762050-1-andreas@kemnade.info>
+	<7httcmonip.fsf@baylibre.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: Use of_property_present() for non-boolean properties
-To: "Rob Herring (Arm)" <robh@kernel.org>, Phong LE <ple@baylibre.com>,
-        "Neil
- Armstrong" <neil.armstrong@linaro.org>,
-        Andrzej Hajda
-	<andrzej.hajda@intel.com>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        "Jernej
- Skrabec" <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>
-References: <20241104190636.274926-1-robh@kernel.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241104190636.274926-1-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ll936qEETZvQHfpUSt8tw8iNQ9tUEa5I
-X-Proofpoint-GUID: ll936qEETZvQHfpUSt8tw8iNQ9tUEa5I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=943 clxscore=1011 suspectscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
- spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411040157
 
+Am Mon, 04 Nov 2024 10:35:26 -0800
+schrieb Kevin Hilman <khilman@kernel.org>:
 
-
-On 11/4/2024 11:06 AM, Rob Herring (Arm) wrote:
-> The use of of_property_read_bool() for non-boolean properties is
-> deprecated in favor of of_property_present() when testing for property
-> presence.
+> Andreas Kemnade <andreas@kemnade.info> writes:
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->   drivers/gpu/drm/bridge/ite-it66121.c | 2 +-
->   drivers/gpu/drm/bridge/sii902x.c     | 2 +-
->   drivers/gpu/drm/drm_panel.c          | 2 +-
->   drivers/gpu/drm/msm/dsi/dsi_host.c   | 2 +-
->   4 files changed, 4 insertions(+), 4 deletions(-)
+> > E.g. omap2plus_defconfig compiles cpufreq-dt as module. As there is
+> > no module alias nor a module_init(), cpufreq-dt-platdev will not be
+> > used and therefore on several omap platforms there is no cpufreq.
+> >
+> > Enforce builtin compile of cpufreq-dt-platdev to make it effective.
+> >
+> > Fixes: 3b062a086984 ("cpufreq: dt-platdev: Support building as
+> > module") Cc: stable@vger.kernel.org
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>  
 > 
+> I'd much rather see this fixed to work as a module.  You already
+> hinted at the right way to do that, so please do that instead.
+> 
+no clear idea how. What aliases should I add? The cpufreq-dt-platdev is
+not a real driver, so I could not create mod_devicetable aliases to
+match a given device. It constructs a device under certain conditions
+depending on the board compatible, so no simple list of compatibles, it
+contains allow and blocklists.
 
-For MSM part,
+cpufreq-dt then binds to that device and that one can be built as a
+module (which then made cpufreq-dt-platdev also a module, causing the
+trouble). I do not see any benefit from having cpufreq-dt-platdev as a
+module. ti-cpufreq has a similar role and is also just builtin.
+It does itself no real work but provides a device cpufreq-dt then binds
+to.
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Handling module removal would probably need to be added and tested. I
+feel not comfortable having such as a regression fix and for stable.
+
+Regards,
+Andreas
 
