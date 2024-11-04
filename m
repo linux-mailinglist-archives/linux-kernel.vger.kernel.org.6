@@ -1,220 +1,245 @@
-Return-Path: <linux-kernel+bounces-394768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F73A9BB3A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:40:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F28BB9BB3AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:43:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994A21F22B5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:40:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7836E1F21FA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55691B2186;
-	Mon,  4 Nov 2024 11:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB181B219A;
+	Mon,  4 Nov 2024 11:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="ZfRTK+nS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ngpzT2Ro"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvbkpayy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29894430;
-	Mon,  4 Nov 2024 11:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245281B1D65
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730720419; cv=none; b=HE27RnomprWI+RPfqfuQ7ejOOsJ50uP9+3ejQHYAb6V3MedtrrTvQ8wkUxzenzAadANlr+ObyZsK4Kr2W//C4cI0oIfdZkvZzdthtZhIU4nKg9FrP/jgPodOyb2i2KrA62M1MNBxWW10yK2I44wyZm37LrPWTg9m6gZtjvpnrGw=
+	t=1730720541; cv=none; b=Wtwr+AuYmE7wRlt7EibWtViYZcYN3yc6MsM+f5l4z8d3KO/GS1Yhwcwb0soP8wG62JN0JRAJiKSIhY5X38BMSiLHlRCKwi4vPqDwXQ4wtI7keSOKpALQGIKX0t9tF96l1CCqz8OW6PmYaCYQey0qng9pA4qGpUrfTLiiTmEkurc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730720419; c=relaxed/simple;
-	bh=oP6HlThFxLs4XFbw1JoNa2rJAAq8xNotdQDdTtnEFns=;
+	s=arc-20240116; t=1730720541; c=relaxed/simple;
+	bh=k7s6V58otnDEuhtjSFw6L4603p3fuSbZMj5LDWuXBO8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LboYw5V2xzw31ztTlp3GZbx6aoaPH6yDvPkPU0X4NGlqhTsd/z7rSEnF1+ERLSPUhda7IZP5KIGbgGasvwo+451RpR3psNJNS7nlKlpHxjaT0mGUlH+A9kln1MCXj/WCTfstk/Zu8ETdv7YJu0ME+Ur2oiVHcg78A7b32pdPoAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=ZfRTK+nS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ngpzT2Ro; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id E67941380245;
-	Mon,  4 Nov 2024 06:40:15 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Mon, 04 Nov 2024 06:40:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1730720415;
-	 x=1730806815; bh=9NvuvEGu3Y4fTmutyF3/3Q9gfOSQU+11sjoTRbXFud0=; b=
-	ZfRTK+nSkeMx3RXf2XQuFpxvYZRGie/5Yhg+B5CtJfTucY3IJkVu3Kr3mhGseIkt
-	TixKhMIb86u0Rab4gw0osHZhrsLu0QAVUbCIWlK+n2Cqb77OeCMf3zzFTrZc4Usy
-	1fxqVFs6X2dp7GRLu+0LyCNiXyy2vzu7t4n/m3qZ16e9MqXfT3NImd36OHUbvcer
-	ervWrXQJz2ojyenuEon0CPfootIEDLAvM1rNbvjajiCPVTB8RD/4RxsMu3zCp36h
-	eDFFr21BUtciOS6b4jFVve97URoOgoBFreaIqxMgOVTuob9xcdQiyoa7H8KDZAR0
-	UgTbh3HkiYaZD859+Yszmw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730720415; x=
-	1730806815; bh=9NvuvEGu3Y4fTmutyF3/3Q9gfOSQU+11sjoTRbXFud0=; b=n
-	gpzT2RoN5LgOBPo4CP6HmzwHuBuDrljq7eAbe8iGsFgP5F/rKfKarrPoQoUBqnp3
-	ldpWdKOE9tvXclshdKIfnUTQ7ixVUW5aDmB8vum5TbhbEhZxuUFX1zrivLIWI4Zh
-	6JfclzyyagDG6yp3NYoeJ0jnW8KjtiNVx4giaCIKHUDuETs7SL0XoJao9msFNZPZ
-	13gUptKidOuSRYyqD7wlmSLTkensrV3hsVPRW1Fg+Q3uz6dYCuSLK/CM2zmy6jWZ
-	awE2NIPRkZFHrWr//tAf7DgJGrwK6E/C9syrKXGf06h8+P5XEM1bJ7ow6n97mlbA
-	fw9I0a4klDEYZvYE4NBPA==
-X-ME-Sender: <xms:nrIoZ7d4JISUqqkav6FmE-wqB6wSDq6F22AkNIry-Qf-OaZoaeVkUQ>
-    <xme:nrIoZxPspUrmFkH5lK1zsoF0oMbWrS2swMWew6Rm7iHV-Eh3nabzNsO82553Fdph_
-    xpLhsdXEnsNfIeWtpE>
-X-ME-Received: <xmr:nrIoZ0juou1mKZgcYByeqTTIhcNp_h5JcNcDcuC41Fsxq1y9c0_KtLGbCljgJac2qeDnqPNYWy-H2Bbf9yMkvfoCvcbYQlyfBA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedgvdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
-    necuhfhrohhmpefpihhklhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhoug
-    gvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrght
-    thgvrhhnpeefhfellefhffejgfefudfggeejlefhveehieekhfeulefgtdefueehffdtvd
-    elieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehn
-    ihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrsh
-    gvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
-    ghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopehgrhgvgh
-    hkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehprghulhdr
-    sggrrhhkvghrrdgtthessghprdhrvghnvghsrghsrdgtohhmpdhrtghpthhtoheptghlrg
-    huughiuhdrsggviihnvggrrdhujhessghprdhrvghnvghsrghsrdgtohhmpdhrtghpthht
-    ohephihoshhhihhhihhrohdrshhhihhmohgurgdruhhhsehrvghnvghsrghsrdgtohhmpd
-    hrtghpthhtohepjhgrmhgvshdrsghothhtohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgv
-    rhhshhhiphdrtghomhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpth
-    htohepshgvrhhgvghirdhshhhthihlhihovhesghhmrghilhdrtghomhdprhgtphhtthho
-    pehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:nrIoZ8-Qt--vfk6ocNKhaE2m9iIqgy5Or-xTJcI4Znqw0g397x1SqA>
-    <xmx:nrIoZ3tmWjpoifNQagnMtALxGSF5h3PFQmtMem72VRrb-VbocTltHQ>
-    <xmx:nrIoZ7HA2rTC_fVIIfShUX_HS6JENNCo51ydAAyh6BB2t8t-a2mfkQ>
-    <xmx:nrIoZ-OiDB4x6VOq20qOMa4w5I1eMB4pyV6G2od5Pxii6fyddHANVA>
-    <xmx:n7IoZ_Mf5HCqw0hwfyhdJXRFB_Djjzp0i-u8Arfxko5kdqc4I9okRsf9>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 4 Nov 2024 06:40:14 -0500 (EST)
-Date: Mon, 4 Nov 2024 12:40:07 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>
-Subject: Re: [PATCH/RFC v2] MAINTAINERS: Re-add cancelled Renesas driver
- sections
-Message-ID: <20241104114007.GA1412590@ragnatech.se>
-References: <90447fa332b6f73bffcb486ccfe2515c59546253.1730717649.git.geert+renesas@glider.be>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O3UExpFtkhi/6wDibUhlJ/PqO50FC7kOQq3NqbkSDp9iBKYkiVl5Wya9DuA3c8jwbXj22J4KNlx7tGjCZyqeZLMXUEGwpODcMakjCUMPS2XxTHc86RUXtP6AI/ItCxsej5N5rKm/b/ZYeDIi3UqnsMFP+23jwKalnx/E9QEZLq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvbkpayy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D8BDC4CECE;
+	Mon,  4 Nov 2024 11:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730720539;
+	bh=k7s6V58otnDEuhtjSFw6L4603p3fuSbZMj5LDWuXBO8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mvbkpayyYq7LU2I//JKbbzr9JZeFkU+cZq8Jul+vPQrZinyCnCg4f4xOV+ZhCSvBZ
+	 Nmdvs8FSBJYdGMGubw8Xqi2zMvgyvCDcYzprh+kPui0etnC16jnsFFbXsgExeEdxeN
+	 irWj0VfRxsHxsUIVAIDFXIdYdRTmhMd0A7zMdNVk7PZfaCtkUn0dqq6NjrNOLDcgk6
+	 8n/plYKofcJIcLdcUwMajDAtoewOhswLfqnaZn89H8fOt1tmdwoqxIqNdttrvpyUw5
+	 WmWKC90IQaxXU5kU0vZ9Tjgp3Nso3fPsJIkwhzfCGbu5TlOJy6S8Ox1XHvoNqn81C3
+	 yeOw71sWEaoOQ==
+Date: Mon, 4 Nov 2024 12:42:16 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch v6.1 17/20] signal: Queue ignored posixtimers on ignore
+ list
+Message-ID: <ZyizGM4-3FmPDtGj@localhost.localdomain>
+References: <20241031151625.361697424@linutronix.de>
+ <20241031154425.624061922@linutronix.de>
+ <8734k9qrcr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <90447fa332b6f73bffcb486ccfe2515c59546253.1730717649.git.geert+renesas@glider.be>
+In-Reply-To: <8734k9qrcr.ffs@tglx>
 
-Hi Geert,
-
-Thanks for sorting this out.
-
-On 2024-11-04 12:05:07 +0100, Geert Uytterhoeven wrote:
-> Removing full driver sections also removed mailing list entries, causing
-> submitters of future patches to forget CCing these mailing lists.
+Le Sat, Nov 02, 2024 at 10:05:08PM +0100, Thomas Gleixner a �crit :
+> Queue posixtimers which have their signal ignored on the ignored list:
 > 
-> Hence re-add the sections for the Renesas Ethernet AVB, R-Car SATA, and
-> SuperH Ethernet drivers.  Add people who volunteered to maintain these
-> drivers (thanks a lot!).
+>    1) When the timer fires and the signal has SIG_IGN set
 > 
-> Fixes: 6e90b675cf942e50 ("MAINTAINERS: Remove some entries due to various compliance requirements.")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Acked-by: Niklas Cassel <cassel@kernel.org>
+>    2) When SIG_IGN is installed via sigaction() and a timer signal
+>       is already queued
+> 
+> This completes the SIG_IGN handling and such timers are not longer self
+> rearmed which avoids pointless wakeups.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
-> To be applied to renesas-fixes for v6.12 after v6.12-rc7, unless a
-> better solution is found.
-> 
-> v2:
->   - Add Acked-by, Reviewed-by,
->   - Add M:-entries.
+> V6.1: Handle oneshot timer expiry or transitioning from periodic to
+>       oneshot after a rearming correctly. - Frederic
 > ---
->  MAINTAINERS | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+>  kernel/signal.c |   70 ++++++++++++++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 65 insertions(+), 5 deletions(-)
+> ---
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 13f4c23281f89332..b04d678240e80ec9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19578,6 +19578,16 @@ S:	Supported
->  F:	Documentation/devicetree/bindings/i2c/renesas,iic-emev2.yaml
->  F:	drivers/i2c/busses/i2c-emev2.c
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -731,6 +731,16 @@ void signal_wake_up_state(struct task_st
+>  		kick_process(t);
+>  }
 >  
-> +RENESAS ETHERNET AVB DRIVER
-> +M:	Paul Barker <paul.barker.ct@bp.renesas.com>
-> +M:	Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-I'm happy to look after the RAVB driver together with Paul. However 
-please don't add my +renesas tag email for new entries in the 
-MAINTAINERS file.
-
-With this fixed for RAVB and SUPERH ETHERNET,
-
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> +L:	netdev@vger.kernel.org
-> +L:	linux-renesas-soc@vger.kernel.org
-> +F:	Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-> +F:	drivers/net/ethernet/renesas/Kconfig
-> +F:	drivers/net/ethernet/renesas/Makefile
-> +F:	drivers/net/ethernet/renesas/ravb*
+> +static inline void posixtimer_sig_ignore(struct task_struct *tsk, struct sigqueue *q);
 > +
->  RENESAS ETHERNET SWITCH DRIVER
->  R:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->  L:	netdev@vger.kernel.org
-> @@ -19627,6 +19637,14 @@ F:	Documentation/devicetree/bindings/i2c/renesas,rmobile-iic.yaml
->  F:	drivers/i2c/busses/i2c-rcar.c
->  F:	drivers/i2c/busses/i2c-sh_mobile.c
+> +static void sigqueue_free_ignored(struct task_struct *tsk, struct sigqueue *q)
+> +{
+> +	if (likely(!(q->flags & SIGQUEUE_PREALLOC) || q->info.si_code != SI_TIMER))
+> +		__sigqueue_free(q);
+> +	else
+> +		posixtimer_sig_ignore(tsk, q);
+> +}
+> +
+>  /* Remove signals in mask from the pending set and queue. */
+>  static void flush_sigqueue_mask(struct task_struct *p, sigset_t *mask, struct sigpending *s)
+>  {
+> @@ -747,7 +757,7 @@ static void flush_sigqueue_mask(struct t
+>  	list_for_each_entry_safe(q, n, &s->list, list) {
+>  		if (sigismember(mask, q->info.si_signo)) {
+>  			list_del_init(&q->list);
+> -			__sigqueue_free(q);
+> +			sigqueue_free_ignored(p, q);
+>  		}
+>  	}
+>  }
+> @@ -1964,7 +1974,7 @@ int posixtimer_send_sigqueue(struct k_it
+>  	int sig = q->info.si_signo;
+>  	struct task_struct *t;
+>  	unsigned long flags;
+> -	int ret, result;
+> +	int result;
 >  
-> +RENESAS R-CAR SATA DRIVER
-> +M:	Geert Uytterhoeven <geert+renesas@glider.be>
-> +L:	linux-ide@vger.kernel.org
-> +L:	linux-renesas-soc@vger.kernel.org
-> +S:	Supported
-> +F:	Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
-> +F:	drivers/ata/sata_rcar.c
-> +
->  RENESAS R-CAR THERMAL DRIVERS
->  M:	Niklas Söderlund <niklas.soderlund@ragnatech.se>
->  L:	linux-renesas-soc@vger.kernel.org
-> @@ -19702,6 +19720,16 @@ S:	Supported
->  F:	Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
->  F:	drivers/i2c/busses/i2c-rzv2m.c
+>  	guard(rcu)();
 >  
-> +RENESAS SUPERH ETHERNET DRIVER
-> +M:	Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> +L:	netdev@vger.kernel.org
-> +L:	linux-renesas-soc@vger.kernel.org
-> +F:	Documentation/devicetree/bindings/net/renesas,ether.yaml
-> +F:	drivers/net/ethernet/renesas/Kconfig
-> +F:	drivers/net/ethernet/renesas/Makefile
-> +F:	drivers/net/ethernet/renesas/sh_eth*
-> +F:	include/linux/sh_eth.h
+> @@ -1981,13 +1991,48 @@ int posixtimer_send_sigqueue(struct k_it
+>  	 */
+>  	tmr->it_sigqueue_seq = tmr->it_signal_seq;
+>  
+> -	ret = 1; /* the signal is ignored */
+>  	if (!prepare_signal(sig, t, false)) {
+>  		result = TRACE_SIGNAL_IGNORED;
 > +
->  RENESAS USB PHY DRIVER
->  M:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->  L:	linux-renesas-soc@vger.kernel.org
-> -- 
-> 2.34.1
-> 
+> +		/* Paranoia check. Try to survive. */
+> +		if (WARN_ON_ONCE(!list_empty(&q->list)))
+> +			goto out;
+> +
+> +		/* Periodic timers with SIG_IGN are queued on the ignored list */
+> +		if (tmr->it_status == POSIX_TIMER_REQUEUE_PENDING) {
+> +			/*
+> +			 * Already queued means the timer was rearmed after
+> +			 * the previous expiry got it on the ignore list.
+> +			 * Nothing to do for that case.
+> +			 */
+> +			if (hlist_unhashed(&tmr->ignored_list)) {
+> +				/*
+> +				 * Take a signal reference and queue it on
+> +				 * the ignored list.
+> +				 */
+> +				posixtimer_sigqueue_getref(q);
+> +				posixtimer_sig_ignore(t, tmr);
+> +			}
+> +		} else if (!hlist_unhashed(&tmr->ignored_list)) {
+> +			/*
+> +			 * Covers the case where a timer was periodic and
+> +			 * then signal was ignored. Then it was rearmed as
+> +			 * oneshot timer. The previous signal is invalid
+> +			 * now, and the oneshot signal has to be dropped.
+> +			 * Remove it from the ignored list and drop the
+> +			 * reference count as the signal is not longer
+> +			 * queued.
+> +			 */
+> +			hlist_del_init(&tmr->ignored_list);
+> +			posixtimer_putref(tmr);
+> +		}
+>  		goto out;
+>  	}
+>  
+> -	ret = 0;
+> +	/* This should never happen and leaks a reference count */
+> +	if (WARN_ON_ONCE(!hlist_unhashed(&tmr->ignored_list)))
+> +		hlist_del_init(&tmr->ignored_list);
+> +
+>  	if (unlikely(!list_empty(&q->list))) {
+>  		/* This holds a reference count already */
+>  		result = TRACE_SIGNAL_ALREADY_PENDING;
+> @@ -2000,7 +2045,21 @@ int posixtimer_send_sigqueue(struct k_it
+>  out:
+>  	trace_signal_generate(sig, &q->info, t, tmr->it_pid_type != PIDTYPE_PID, result);
+>  	unlock_task_sighand(t, &flags);
+> -	return ret;
+> +	return 0;
+> +}
+> +
+> +static inline void posixtimer_sig_ignore(struct task_struct *tsk, struct sigqueue *q)
+> +{
+> +	struct k_itimer *tmr = container_of(q, struct k_itimer, sigq);
+> +
+> +	/*
+> +	 * Only enqueue periodic timer signals to the ignored list. For
+> +	 * oneshot timers, drop the reference count.
+> +	 */
+> +	if (tmr->it_status == POSIX_TIMER_REQUEUE_PENDING)
 
--- 
-Kind Regards,
-Niklas Söderlund
+This is read locklessly against timer lock. So it only makes sure that
+the last write to POSIX_TIMER_REQUEUE_PENDING will be visible due to the
+sighand locking. However it may or may not see the other states written after.
+Which looks ok because if the timer is concurrently armed / disarmed / or even
+requeue pending again, then either the signal is dropped and it's fine or the
+signal is moved to the ignored list and the seq will take care of the validity
+upon delivery.
+
+Still this may need a WRITE_ONCE() / READ_ONCE().
+
+But there is something more problematic against the delete() path:
+                                   
+Thread within                  Signal target             Timer target
+signal target group
+--------------------           -------------             -------------
+                                                         timr->it_status = POSIX_TIMER_REQUEUE_PENDING
+                                                         posixtimer_send_sigqueue();
+                                                         do_exit();
+timer_delete()
+    posix_cpu_timer_del()
+        // return NULL
+        cpu_timer_task_rcu()
+        // timer->it_status NOT set
+        // to POSIX_TIMER_DISARMED
+    hlist_del(&timer->list);
+    posix_timer_cleanup_ignored()
+
+
+                               do_sigaction(SIG_IGN...)
+                               flush_sigqueue_mask()
+                                  sigqueue_free_ignored()
+                                      posixtimer_sig_ignore()
+                                          // Observe POSIX_TIMER_REQUEUE_PENDING
+                                          hlist_add_head(...ignored_posix_timers)
+                               do_exit()
+                                   exit_itimers()
+                                   if (hlist_empty(&tsk->signal->posix_timers))
+                                       return;
+                                   // leaked timer queued to migrate list
+                                   
+
+
+> +		hlist_add_head(&tmr->ignored_list, &tsk->signal->ignored_posix_timers);
+> +	else
+> +		posixtimer_putref(tmr);
+>  }
+
+Thanks.
 
