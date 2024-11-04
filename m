@@ -1,165 +1,147 @@
-Return-Path: <linux-kernel+bounces-394538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44619BB0B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:14:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09D49BB0BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:15:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7241F212E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:14:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667BB281B9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F841B0F19;
-	Mon,  4 Nov 2024 10:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E7C1B0F27;
+	Mon,  4 Nov 2024 10:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JBdTG2CD"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bc2GFbbO"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64DA1B0F02
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28E01B0F12;
+	Mon,  4 Nov 2024 10:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730715251; cv=none; b=hOFX5p1brI/+Kdphvmx6AFh7dwSGhvj07wQ8N7C8zTKvyDX+vm8plE/GHQR3b1ySuueeBgcn4JUyLJ7RjimWVJAPY+74nDzhxkOmYMLLlowFgw3rMDzFjXjEnusDIiLxfpRY6c+pW8Za6t/pOOSTmqY5EzL9JYshy3gW9uC0kdc=
+	t=1730715305; cv=none; b=bcmQXn4Anc+44k1EhSNY4oas2+pR0Rrm7OQ6+28djHc7E5/3v4QywhrqBkdiCCxK0j66NT7fkdKxedbaSlPxOTUciFZGA5PJeRuU340eoX0aG6F1INdj73gucxkuiKRGolZxT4KTgCvOu6j1pywAEqlDscv0vvVDiSZDSoK7mEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730715251; c=relaxed/simple;
-	bh=1ZD8l+C1EuzgucsrrDGFXbeA8HL3duQOdkk9LUjOOuY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AZDI924aMUingp8ogFrFNy0UfkvqVrdjkIb/kIeNUCocEXMGD8urrMIC8TGemsSHjLWJnkQH98c6U6F4HSY5I4cEO5NR22l21D5dqeN3ybKand0TTzLE4dGhX6FL18Qwtx2RQUG/LC34fP+INSYXZ6iKrd4dXmjxyOo0OFPKijc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JBdTG2CD; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e7e73740so1468611e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:14:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730715246; x=1731320046; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4c7jIDPXYCos97zH52V3Rx0a/Pe9j9klHJ/m3x5c878=;
-        b=JBdTG2CDsTk3bs7k7oFyMLdFf3h6mEPrlfvF8A+EXatQWii5XOEqByNOKFyzpNXT7A
-         gUc9w104s2pnumvfOHiGIz75TL/gkko1HsQT1BM/+uKKoIThYAg3eezlW7C4aqmgm+5O
-         YvqUaxNq5wTbcdLXVT3Cg0TKrZtZqnNyO+04V+TuwFLDr451GZ1xtm9MP6IpwWnXsqZq
-         I5cnC26we+v3aXyQ2613FQEoPfnMlBtwjnnZGAl/OGSjD8jdN19wuyYqeeWJ4dGKU+x/
-         eEpTHJNfuq+tTdJ3gUf2gqg/BG6AgbNanpmapup9zElD/2Doz3bbECi2eT0x1jo+nOKY
-         1usg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730715246; x=1731320046;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4c7jIDPXYCos97zH52V3Rx0a/Pe9j9klHJ/m3x5c878=;
-        b=gRGLsmr+uZTjP9hMTmeYX/AVP9JGb0zCsyplUVWQ8VrDHT/3dtbP9MmD5pdzI9xtg9
-         v3BgtdTyWZPYHWyAycUHuNfChmTQoCz8zZdbZv+pGgYj5YC8u4Fc3TRYZXdPAU2OOnG2
-         TUhFXZK2PI26JP/CgJt3EzppJlI725AibUgaiwBXHTsWrXv0idkJSZi5Pyf/LM0uMwMm
-         FalVF1SWa51a0hjpl9HKsERRQ2DRW+5alYJnJpyIPBPRAxxqa6VSD+OcW8EPAtzASt6b
-         Qu31SC4McGsGY87vKsMwz0br9KuI6do3GWnEbevIInSBm5hsaBBdX6oMUu5/JmOXgt7Z
-         FoTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHYDjL8rgQbpTpfVqtoio6vHWNshiX39CYoD7N1h79ePuUnyKDPmbQLbAMKs9UJ2hpO9X2A5gAhghA7KM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqIVAAY3TDKm7ZilnYrIvaZV17jBGz/6CQX+nqBrj1VkHLFEJ4
-	+IwqkO3WflC4mr5bqFZRaM9JC5tqPs9vUTVj4zHXeIUGyTyfByDN+RfDzuBbVtNq5Z26uXEDVJC
-	dq935ZIYpl9B6OlGpR+3KgXWDZf//va9sLvGj
-X-Google-Smtp-Source: AGHT+IF3YrSYDNpUh7K6DP1BrHft72F43XaFavJhNPR1z+HcVXMbGOoX4JuofOBYs8pgr4OQ7WmvjdXbt+mvTRqeQfM=
-X-Received: by 2002:a05:6512:3041:b0:539:e6bf:ca97 with SMTP id
- 2adb3069b0e04-53b7ecf28d7mr10644101e87.32.1730715245823; Mon, 04 Nov 2024
- 02:14:05 -0800 (PST)
+	s=arc-20240116; t=1730715305; c=relaxed/simple;
+	bh=mcIce5Fq/hEFHVI7AkWHxaRExFRL0bAcIhE1CoWgubY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ec4fFsLVD50VTD1VUuhLiunct51+9GZFzfboSzX9Ujz/olBAUfg7Q3HhwZbhbOBAEnFSB+kKo8QxoBxCvWzkMQqHkpg0UIXsRhSRhnr9VpD084G03RQY/UnuUvKDqnqRNWTZUNOEybFGLF0iI+DyzKr1SHzIU25b9s3k4RGtIpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bc2GFbbO; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4AAXVT016625;
+	Mon, 4 Nov 2024 10:14:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=0pvu1h2wXjRKNrgWewAcE0S2SfJqBR
+	QG0tc62qAKP1Q=; b=bc2GFbbOrUg75hb8XWifBlNgNziOkjtTBeEn/bsEhj4I45
+	ELj+3HePqnGj2/YkyqgACqS+hWhpOjncwtFu1Mlc5bvFDsKSnBB8ye+hFW3l8f1d
+	dK0IITttHJwU6DpIWhHFXYZEUGSKf3f2X6Os52VbjyqfVaJGUGWUUI3Qyya+mAx9
+	/jCPOJhhfall7WT56KGgt6yqFTtbDbMZS+WZMcv/PDrUpUBy1f4653UbX4DqF7uZ
+	zeu12fyHgh9mTOyV6AsonE3drxfFpXk+w+51ESoCVhgd+Gdl+k5lpnbaWKrvhQQq
+	OVWrjYn8ABEmtULhfmBxnsiCdQrSvBJCAcyBdm5A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42pv9b80e5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 10:14:54 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A4ABm80018784;
+	Mon, 4 Nov 2024 10:14:53 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42pv9b80e1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 10:14:53 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A49iji3008453;
+	Mon, 4 Nov 2024 10:14:53 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nywk3mwx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 10:14:53 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A4AEn4J35062488
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Nov 2024 10:14:49 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 15E3B20076;
+	Mon,  4 Nov 2024 10:14:49 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DA99820073;
+	Mon,  4 Nov 2024 10:14:47 +0000 (GMT)
+Received: from osiris (unknown [9.171.95.25])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  4 Nov 2024 10:14:47 +0000 (GMT)
+Date: Mon, 4 Nov 2024 11:14:46 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v3 0/7] virtio-mem: s390 support
+Message-ID: <20241104101446.9483-B-hca@linux.ibm.com>
+References: <20241025141453.1210600-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030-tracepoint-v12-3-eec7f0f8ad22@google.com> <202411021421.jZ0FSDq6-lkp@intel.com>
-In-Reply-To: <202411021421.jZ0FSDq6-lkp@intel.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 4 Nov 2024 11:13:53 +0100
-Message-ID: <CAH5fLgjOxfKR+HE9KZRCuBGVW26adM=r4AxSCJ2B-G2eG_4FzA@mail.gmail.com>
-Subject: Re: [PATCH v12 3/5] rust: samples: add tracepoint to Rust sample
-To: kernel test robot <lkp@intel.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	oe-kbuild-all@lists.linux.dev, linux-trace-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025141453.1210600-1-david@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: VHeFIyuzTNW6zfc61Cu-HEnOAgIKsDwU
+X-Proofpoint-ORIG-GUID: sEYZz5grUf9yUrSKVVfQ3jI2KcH0p6Ka
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 mlxlogscore=647 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040089
 
-On Sat, Nov 2, 2024 at 8:08=E2=80=AFAM kernel test robot <lkp@intel.com> wr=
-ote:
->
-> Hi Alice,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on eb887c4567d1b0e7684c026fe7df44afa96589e6]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Alice-Ryhl/rust-ad=
-d-static_branch_unlikely-for-static_key_false/20241031-000709
-> base:   eb887c4567d1b0e7684c026fe7df44afa96589e6
-> patch link:    https://lore.kernel.org/r/20241030-tracepoint-v12-3-eec7f0=
-f8ad22%40google.com
-> patch subject: [PATCH v12 3/5] rust: samples: add tracepoint to Rust samp=
-le
-> config: x86_64-randconfig-103-20241101 (https://download.01.org/0day-ci/a=
-rchive/20241102/202411021421.jZ0FSDq6-lkp@intel.com/config)
-> compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51=
-eccf88f5321e7c60591c5546b254b6afab99)
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20241102/202411021421.jZ0FSDq6-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202411021421.jZ0FSDq6-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
-> >> error[E0425]: cannot find value `__tracepoint_rust_sample_loaded` in c=
-rate `$crate::bindings`
->    --> samples/rust/rust_print.rs:87:5
->    |
->    87 | /     kernel::declare_trace! {
->    88 | |         /// # Safety
->    89 | |         ///
->    90 | |         /// Always safe to call.
->    91 | |         unsafe fn rust_sample_loaded(magic: c_int);
->    92 | |     }
->    | |_____^ not found in `$crate::bindings`
->    |
->    =3D note: this error originates in the macro `kernel::declare_trace` (=
-in Nightly builds, run with -Z macro-backtrace for more info)
-> --
-> >> error[E0425]: cannot find function `rust_do_trace_rust_sample_loaded` =
-in crate `$crate::bindings`
->    --> samples/rust/rust_print.rs:87:5
->    |
->    87 | /     kernel::declare_trace! {
->    88 | |         /// # Safety
->    89 | |         ///
->    90 | |         /// Always safe to call.
->    91 | |         unsafe fn rust_sample_loaded(magic: c_int);
->    92 | |     }
->    | |_____^ not found in `$crate::bindings`
->    |
->    =3D note: this error originates in the macro `kernel::declare_trace` (=
-in Nightly builds, run with -Z macro-backtrace for more info)
+On Fri, Oct 25, 2024 at 04:14:45PM +0200, David Hildenbrand wrote:
+> Let's finally add s390 support for virtio-mem; my last RFC was sent
+> 4 years ago, and a lot changed in the meantime.
 
-This bot is using a buggy bindgen. Please see
-https://lore.kernel.org/all/20241030-bindgen-libclang-warn-v1-1-3a7ba9fedcf=
-e@google.com/
-which was also mentioned in the cover letter.
+...
 
-Alice
+> David Hildenbrand (7):
+>   Documentation: s390-diag.rst: make diag500 a generic KVM hypercall
+>   Documentation: s390-diag.rst: document diag500(STORAGE LIMIT)
+>     subfunction
+>   s390/physmem_info: query diag500(STORAGE LIMIT) to support QEMU/KVM
+>     memory devices
+>   virtio-mem: s390 support
+>   lib/Kconfig.debug: default STRICT_DEVMEM to "y" on s390
+>   s390/sparsemem: reduce section size to 128 MiB
+>   s390/sparsemem: provide memory_add_physaddr_to_nid() with CONFIG_NUMA
+> 
+>  Documentation/virt/kvm/s390/s390-diag.rst | 35 +++++++++++++----
+>  arch/s390/boot/physmem_info.c             | 47 ++++++++++++++++++++++-
+>  arch/s390/boot/startup.c                  |  7 +++-
+>  arch/s390/include/asm/physmem_info.h      |  3 ++
+>  arch/s390/include/asm/sparsemem.h         | 10 ++++-
+>  drivers/virtio/Kconfig                    | 12 +++---
+>  lib/Kconfig.debug                         |  2 +-
+>  7 files changed, 98 insertions(+), 18 deletions(-)
+
+Series applied. Thanks a lot!
 
