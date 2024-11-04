@@ -1,149 +1,132 @@
-Return-Path: <linux-kernel+bounces-394850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3F39BB4D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:42:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90E69BB4E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021471F21662
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:42:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7B01C2147B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463FB1B0F3E;
-	Mon,  4 Nov 2024 12:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DD31B6D0F;
+	Mon,  4 Nov 2024 12:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="d9qLtqC5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aGU92Whb"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIpai+nc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B559F1EEE6
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284901B0F3E;
+	Mon,  4 Nov 2024 12:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730724167; cv=none; b=uNX0W4pYloiOoUm6ecZbdx0BkMvEp223BrQ5cpRI6bP365Di+NyR5s2H+GZOYRRDBP7stn5+igtciVOcxCYiAF+E1tsw2YAyD2z2jB7AG7hzhvCo0VfLt9Jsej97Pg1foykWJCxjTOZVxvdAkanpqvu7mSpU2RsIkhzHPosRtzk=
+	t=1730724246; cv=none; b=IPlEx2s2ptLUMF4gVOpQiwPESRidTa9S69z6vgom7/HaACZLy/lgT/JTYb3NFsPkilCiyHLrZ3r7D5hTUpCnfmbcKu0XONkKJUDoiV3y8BSUhia0e8GD/Un3yVpNMVKSzx0Idu7d4HKI7z6UnK0MjU2b2cJoeA2d4O3Oz2d2zUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730724167; c=relaxed/simple;
-	bh=ReObtWfwm7n6+iCviS4UXGLJDkj5Hx5F/AuLwIPl2SI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=HJqD0GIWiDj8sHwJdRSSI/7ShcBJc8RYVw1rvSL6JbOTZIkrhkm3G+CNVpJNvXRV/TYnF/zp6Zlk7YDPuqY3lyERn36YJGnKSH9YrdpVjvBg1mbEAtqIRWK7ixjkv8a7eiLGRh/KZybHSAcEbP3wyjquNZy1uaiQdbZqKj4ghd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=d9qLtqC5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aGU92Whb; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 5A82B114010A;
-	Mon,  4 Nov 2024 07:42:43 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 04 Nov 2024 07:42:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1730724163;
-	 x=1730810563; bh=v587H4AT/xkyw5xEGYTsDbmep2Q/ZXljfom78DGKkPk=; b=
-	d9qLtqC5l0hBlxErLDVhQYk7t/MRDXtfzk1oI96W6p5rVsLl8nY9+v/qphyy2hvH
-	rLAo36N+brlXs1xl8GgTlVq16YV6AxcLCPMyCWvOPDtvyQ21Z+G9yEIrvUrzdL0h
-	3IIDvyg5YzwepQfQkCIAqAriiKi8XobI4iMPdpRuPouJ7HtAXD3sUjKHuq/k0u03
-	RN9Ip4+sM3xDGvzbak5Zb5G8ufUHkfJODa4ALST/14vo9PHLvhcNHrOPWI4khyhR
-	TnHz0XA2kYVSeeG2P52WfODNmwzZU9aqmhhqYx+jWxCkcEHeCK188ojYcjG7gj4B
-	KAntiVZKDp7TsOviD+BZOQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730724163; x=
-	1730810563; bh=v587H4AT/xkyw5xEGYTsDbmep2Q/ZXljfom78DGKkPk=; b=a
-	GU92Whb2QY0NHFcgFhQI4HTXF9gYjzK0fcztD55fcgjeST7ZY8J8iqFT+t0S6yKB
-	hP7TA18gZZdC3twKtb1drwdPRJmAin+SqMt+wI5fhzDmIG8u4ynsqlNpW1/c1QiP
-	1kImbxH8QpDykCZv5LTUt3xplS7BalIO/Z4r/b/LiIK3nkUAH2cjtnEuAb0y2dUS
-	4oVaUdqFbhogiU3UuajROUDC1nz/qSsEFy/KVKw5wuksdpCNPTkmmSQqW+J6mS7B
-	/xa5jjPqhoT65N+QJ1jPb1FNmtzm7u8fflroWUq2H2+auqYvrbMCXUWM0SJy3YGf
-	DhCZhUGCiHhInJouplz8A==
-X-ME-Sender: <xms:QsEoZ4SUHYlk_XCkwwl29CeKo8JFYtZHUJr-O1zXM2fWcR_VXv_3tg>
-    <xme:QsEoZ1zwrJ4WUSXpw1c3eONX8heNWIR03HweklQxnJPHZPjBRQZkOuP1_Yq82uCA4
-    nXd5XyocZ78yJo5tio>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedggedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudel
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
-    hhpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehf
-    vghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopegumhhith
-    hrhidrsggrrhihshhhkhhovheslhhinhgrrhhordhorhhgpdhrtghpthhtohepmhgrrghr
-    thgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtth
-    hopehvihhllhgvrdhshihrjhgrlhgrsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:QsEoZ11XxUNsFEyXAGgXYjlepuRSzArr5-7LOdQqNzlK5seUEEFZuA>
-    <xmx:QsEoZ8AsI5zybqXaKdo16RUETP_zhWH6vmy-wAB1LHNWv0FoGMSZzw>
-    <xmx:QsEoZxhSchLa9tkfxqj27_SJNgD0QKi6XpXcu1KL1KVsEDo3g8NA5Q>
-    <xmx:QsEoZ4ogdY9mULhAyeQR4tUN9idY0nOgIgCF4qRzn0Y7Q6Nk_gNtnQ>
-    <xmx:Q8EoZ6YyjU_EjNPNSoL5tL8GZRoepVzNsOns-NnLuRpqOeFgKOOy3rhu>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 281A72220072; Mon,  4 Nov 2024 07:42:42 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730724246; c=relaxed/simple;
+	bh=lXtPD88/DLwgONUoZ+tzULrPtqdUA7Jgmsh/kJjJ43w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Lg0/zNcSqhe4wcM4OeDOjw/6/6kt8tHMDMCK1uEXpqKaALgGb8lBm7lNGzBItPMY4VYiHP/OMZBKHmaJhQJD9KptX0ci44Qgdg1y7QnKQR0bGpn9Eu7G42tzcapYha4Tp5YOBelcxpKCfksK6YhC1hDkrnHnnZ6idirKoV7BAbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIpai+nc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6278CC4CECE;
+	Mon,  4 Nov 2024 12:44:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730724245;
+	bh=lXtPD88/DLwgONUoZ+tzULrPtqdUA7Jgmsh/kJjJ43w=;
+	h=From:Date:Subject:To:Cc:From;
+	b=FIpai+ncM6rfCSAP5JEy1GXo8SHGD2paXxiCvFoIvTkcPy/a1vU3K3qslEsgcqi9f
+	 35bYZzNjytnC8lpK63OMl+7comQpLFmqf2UiUEqvewLv6fP8iMQ135iRlJg4KWRj5c
+	 qO+RZB56pdja1stgPoiMOKD1ufSmpFIInlnV2Pg5txBdaDxk/ioNYd2n6c/cAH2gP0
+	 coIIK/QUPCDv2Fn2eyr7kWNxIUpu4cRhu1LsQMyT0hT7/Mf6rOP04wT4E90CFMQr5f
+	 xy3GUcVn1y9W28WdMD4XNFrMQhHpAqaDygRViYSpcFMQ5WCSXndVS/AgQ+v2n0U7ON
+	 Rw4K/fZC06f8Q==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Date: Mon, 04 Nov 2024 13:43:47 +0100
+Subject: [PATCH net-next v2] mptcp: remove unneeded lock when listing
+ scheds
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 04 Nov 2024 13:42:21 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
- "Laurentiu Palcu" <laurentiu.palcu@oss.nxp.com>
-Cc: "Arnd Bergmann" <arnd@kernel.org>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- =?UTF-8?Q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
- "Lucas Stach" <l.stach@pengutronix.de>, "Dave Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Shawn Guo" <shawnguo@kernel.org>,
- "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Fabio Estevam" <festevam@gmail.com>,
- "Javier Martinez Canillas" <javierm@redhat.com>,
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-Id: <cc09326a-2d76-4783-a6b9-fcfa9a704cec@app.fastmail.com>
-In-Reply-To: 
- <ix34xln3tl6l2h3jt7t4bhrydxfmh2m53dkl5rugxj335p7hgb@kfauvwrusipr>
-References: <20241028163527.2425783-1-arnd@kernel.org>
- <2byo7263izup45hcdyoxr57sh2dzdasnwotpfqnayqe6znvzjt@adou6qmyhq6y>
- <ix34xln3tl6l2h3jt7t4bhrydxfmh2m53dkl5rugxj335p7hgb@kfauvwrusipr>
-Subject: Re: [PATCH] drm/imx/dcss: include drm/drm_bridge.h header
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241104-net-next-mptcp-sched-unneeded-lock-v2-1-2ccc1e0c750c@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAILBKGcC/zWNwQrCMBBEf6Xs2YU0lor+inhoN1Mb1G1IohRK/
+ 91F8DAw7/BmNirIEYUuzUYZn1jiogb+0JDMg97BMRiTd75rW9exolrWyq9UJXGRGYHfqkCw8lz
+ kwc71GI+TnPvxRDaUMqa4/k6u9Pfptu9fb5aZhH4AAAA=
+X-Change-ID: 20241104-net-next-mptcp-sched-unneeded-lock-006eb3fc96b7
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1732; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=lXtPD88/DLwgONUoZ+tzULrPtqdUA7Jgmsh/kJjJ43w=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnKMGSxj8Sm8hkaENq4Ru4DFL4kUK4Tj+SKRnUH
+ nnjiQLbiJ2JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZyjBkgAKCRD2t4JPQmmg
+ c7scEACi+dZ/s9sji/LSCzCoqAVndbIEp/ojB7M+cui38Sj7+iTXIpUBKkkMM6yfedvTFqWaECv
+ 8+CW0C4OrsY7VekuaYjde3skbWTCGWF+ziyqtMA/lk8Ee/TvZyy5dHxZ6VNEL924SN2pDQ3zrI1
+ 1/RzVzdWJClcgRZ0bEhk//3uL6xrYhvJHUGJhjTJ0meuqUsOVjbOE0aVuDa9fbGAjTnXTHisTv2
+ sHiS9Fh4Rf9IQf9pwA2YNddrTldLXVcXIXqhbutcK+PDdVi/7EDd13KF5nedHzrC24LydQAmAfP
+ nYZQ36OYQ9mew1qjTPay+X0Zdbk3kvz20lrYBoGmwwD6PruIXqJXQjDoo0+/lJVd7OTqcNNeZZh
+ kad+3xFRGFswXheabAv7DP20K9511AgHfexMgnO+hPIICZh3SElLPbG0lpPxaweFH6iPQ487ztT
+ 7uLqK2viN5KTtv1OUofUpumgW5VEDWGk/gE6VpskMqyA5/xpiIiKRmNPxlEnq7XaDGJRd+ViIEG
+ rTqKOe3HgUB0kt+ikXSkxg0YysAGBf7oM1si6qdaAksRErGJUPk/m3n+KNQ23R9/erTzwfe33BF
+ M54o5hNNqhzWAQ+cVibUxwqx5bmdrixQVMnJoL6+ywTEUZc4PMRoHJD66nPMXDKUgkIeJNm+8fC
+ ZMlQ2RIRj0iFyYg==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Mon, Nov 4, 2024, at 13:24, Dmitry Baryshkov wrote:
-> On Mon, Nov 04, 2024 at 02:10:54PM +0200, Laurentiu Palcu wrote:
->> On Mon, Oct 28, 2024 at 04:35:07PM +0000, Arnd Bergmann wrote:
->>> Fixes: 004555a18d57 ("drm/imx/dcss: Allow build with COMPILE_TEST=y")
->>
-> I can pick it up.
->
-> However I think it is:
->
-> Fixes: e7033bdfd43b ("drm/imx/dcss: use drm_bridge_connector API")
+mptcp_get_available_schedulers() needs to iterate over the schedulers'
+list only to read the names: it doesn't modify anything there.
 
-It's probably both commits. My randconfig builds showed it only
-failing on x86, which means that it was still working by
-accident on all builds that include ARCH_MXC && ARM64, between
-the two commits. The commit you pointed out should have added
-the #include, but that seems to come indirectly from
-include/drm/drm_of on all arm64 builds.
+In this case, it is enough to hold the RCU read lock, no need to combine
+this with the associated spin lock as it was done since its introduction
+in commit 73c900aa3660 ("mptcp: add net.mptcp.available_schedulers").
 
-> With that
->
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Suggested-by: Paolo Abeni <pabeni@redhat.com>
+Reviewed-by: Geliang Tang <geliang@kernel.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+v2:
+ - Rebased on top of net-next instead of net, same code.
+ - Removed the 'Fixes' tag, add Simon's RvB tag.
+ - Link to v1: https://lore.kernel.org/20241021-net-mptcp-sched-lock-v1-2-637759cf061c@kernel.org
+---
+ net/mptcp/sched.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
+diff --git a/net/mptcp/sched.c b/net/mptcp/sched.c
+index 78ed508ebc1b8dd9f0e020cca1bdd86f24f0afeb..df7dbcfa3b71370cc4d7e4e4f16cc1e41a50dddf 100644
+--- a/net/mptcp/sched.c
++++ b/net/mptcp/sched.c
+@@ -60,7 +60,6 @@ void mptcp_get_available_schedulers(char *buf, size_t maxlen)
+ 	size_t offs = 0;
+ 
+ 	rcu_read_lock();
+-	spin_lock(&mptcp_sched_list_lock);
+ 	list_for_each_entry_rcu(sched, &mptcp_sched_list, list) {
+ 		offs += snprintf(buf + offs, maxlen - offs,
+ 				 "%s%s",
+@@ -69,7 +68,6 @@ void mptcp_get_available_schedulers(char *buf, size_t maxlen)
+ 		if (WARN_ON_ONCE(offs >= maxlen))
+ 			break;
+ 	}
+-	spin_unlock(&mptcp_sched_list_lock);
+ 	rcu_read_unlock();
+ }
+ 
 
-      Arnd
+---
+base-commit: ecf99864ea6b1843773589a935bb026951bf12dd
+change-id: 20241104-net-next-mptcp-sched-unneeded-lock-006eb3fc96b7
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
