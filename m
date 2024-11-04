@@ -1,61 +1,81 @@
-Return-Path: <linux-kernel+bounces-395174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8379BB9DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:10:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE229BB9E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:11:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD461F226F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:10:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A384E1F22626
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E8C1C1753;
-	Mon,  4 Nov 2024 16:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463001C1ABC;
+	Mon,  4 Nov 2024 16:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JPxIZ3Qw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NJv5c9rP"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE601B393D;
-	Mon,  4 Nov 2024 16:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD3A1C07F7
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730736636; cv=none; b=HEN2n1bVqyYeh+rh9L7IU6PHKyOk71GsgoYm94RxuDfGSMTGJucJjWRkJ0OEFidVBNudTus6T36IGn2K/A8F/ZWrD5bgEPfeuua2DDv/GSZgWlD7947Tlg8REWb7psV0QICz17du+jVHVkYm0AFX8xBvdngrGcLZ117h6hVR8VQ=
+	t=1730736665; cv=none; b=U5B9P7pDtlqSDO9xgSVCdQWunaPhsZeVAdwbnUnvWL6xgJoQAM/CUgHUq9/YpepIVA/4vtteaXapUcVhh2BP6GQIccb/P3ZbGqVkMg7AIH3aL7M4UrpyxRMqG7bK3Pp43Bgb361frko2Gee+S5RPDpd0xhXdBx/EHBSY4X8kyAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730736636; c=relaxed/simple;
-	bh=0qhEJZGgBMV6CikmD2WWDctceX83RuUixIjHqPp7U24=;
+	s=arc-20240116; t=1730736665; c=relaxed/simple;
+	bh=oq0MHL3CLJd8/YsJe7HnPmPURjUl2rwEZGr/iD/Sj00=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MbtyiynPsJwEHNq6u8CMezbvwEWmsfbKGIm2VMJI9ueiyIB5p8IQeeACzXocSGl2pUqj5Yz3JBc8muuMJmjXz7rBnG7+ZitcOn3iYHVTBZ+eX4XLOMObS7D2R/IXBpx0HiAD5vRcs296VgCve5lKRQ8uzm+HGi4xpFzuL8gRzsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JPxIZ3Qw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1213AC4CECE;
-	Mon,  4 Nov 2024 16:10:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730736635;
-	bh=0qhEJZGgBMV6CikmD2WWDctceX83RuUixIjHqPp7U24=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JPxIZ3QwvJh+65TMIwfy4GdFk81DJ9KrimR4ViFDAskoDigd3PRvjcLuYB2jmDq8y
-	 xLir3jkJbDkkjSWRmYm2bg4hfoklCgmkkTyoeUcrE84z5XaUMOoqC3kpD//5jgb372
-	 8V0+DcSUMbRUx8K1kGSCDYXPtgOwCmS2SIry89FjRcFRigg5OWxg16JS4a+jzHwUXd
-	 9sh6znm45Tns6eXRAhF5rWOKXV/upOD9nfCTOJZ2asMqayQ+bBXndUEEY0vqX8jL/p
-	 kBkUs8RAcBdPyVN0IBnJ9AO1LFAa23OGahENaBMuT3CEaQwBVaRy8P/bjYvqorHP2f
-	 D6gASLB+FuGgg==
-Date: Mon, 4 Nov 2024 10:10:33 -0600
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	andriy.shevchenko@linux.intel.com, anshulusr@gmail.com,
-	gustavograzs@gmail.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/7] dt-bindings: iio: bosch,bme680: Add supply
- properties
-Message-ID: <20241104161033.GA228709-robh@kernel.org>
-References: <20241102131311.36210-1-vassilisamir@gmail.com>
- <20241102131311.36210-6-vassilisamir@gmail.com>
- <20241102153315.2175fd5b@jic23-huawei>
- <6sucdv4k5jdovqgtaemeer4cnluvnl3xgyn57mo3elgwdmojrx@phu4gowaqtuv>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kc4s7/0Y6za0KewnyAV76Gob0PaG/qrTe+/5AbtJC4i3eSHlSIWzlUUf4sdjgiA85hJQBZ0SPUwfadvvpEinIweRYazUKhKD2VAo+sk5RkN2TEGigSzfu9pwhJI6EvvhmIiZiVHIT3jXaRUH+dhxfeF6BFfPRlcy4UlHg3XQg0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NJv5c9rP; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431616c23b5so26491085e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:11:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730736662; x=1731341462; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LK0NvUMhsScOGKvQngx/j866I5wUItHfVHUyQMoJ0LQ=;
+        b=NJv5c9rPLVSBNwT7lgzB/7q4ZYyXHkobjwlZSEBwIix9qeXDjHcLBfrbx1wTwn6Rmp
+         cGnxZGCuBqK75uzjWl1BP+O3V5/cPVuGgKr/p0J6TF01fca/hdwily0jjJugZ4XOoY29
+         rvZybd4XP4LS1COe5+rpqrPNjk8vlmEB7nxI+qkVfPqRFVOdLBaw25lndVRl1zyt4aRS
+         UHtFsKyBwl5xt+DLrha7j8UiPad9FUUydWDafprWIUCvyKWeFp0XBgnnqiAclPrualsi
+         X4JZL1jyZXvrE3LKnZ/cc8lqKUENXM29I5bd69VWkqaH2/trH6cR9aC+jbHIcvGM7hdK
+         Rqag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730736662; x=1731341462;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LK0NvUMhsScOGKvQngx/j866I5wUItHfVHUyQMoJ0LQ=;
+        b=wo/bO2a3VGByq+tHDk5PMJHEYVGwlYt36GOYCb+bV1+u3m92Uc3jKjTCEUeyPvHfmL
+         1acfwIicR+ziiAchB6kQfodwTbTJU6ATMZy6q4+4BdGbaC72T13L3faYapkaJ1THwzoQ
+         IyGzARC7PR1U1xEKmXzAsW2uf4Ml2q7jfJibj2AuKD7eAnh5jLZCLA+X5bAiXA3HYcIi
+         tRyMV75351oRk89CQnPGs3I0ho1DkjNd/7XT+2yRv0ehR8N1YV6kwg3fUhIxrgKDuctd
+         nLb1NNpmrie7Uddg1aZbh3ofrt6CFt1F9lUtTBJA+4iCG9T1FjVmeFL48hpZJ4LKlsRk
+         SI3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUWjLk75ESxM3WicsB+RcfztNMqoWVbJuGGijG6lpO5tC6n86IuTvwYf0w56rhST01R5ZS6UkAQsOpQTBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYOfFR/4/E1crPmcVXN2hVBQU2zosvYLMyAJ+aV7G+H010flIV
+	dyiQ5BPrEkfsNVhXuMZojb4wc50KGre0lMXIGtJRVd/jx+IDbaGEncK+XEck+Q==
+X-Google-Smtp-Source: AGHT+IFnfTERJ8sNYvRifaDxUJfUUFgMpJHz/8Iah/3cnyDZADJ91EdK72UhuSobXEs2DURC6NERzA==
+X-Received: by 2002:a05:600c:35c1:b0:42c:b826:a26c with SMTP id 5b1f17b1804b1-43282ff61d5mr100582645e9.8.1730736662302;
+        Mon, 04 Nov 2024 08:11:02 -0800 (PST)
+Received: from localhost (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd910902sm191391705e9.14.2024.11.04.08.11.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 08:11:02 -0800 (PST)
+Date: Mon, 4 Nov 2024 16:10:58 +0000
+From: Aleksei Vetrov <vvvvvv@google.com>
+To: Johannes Berg <johannes@sipsolutions.net>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Dmitry Antipov <dmantipov@yandex.ru>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] wifi: nl80211: fix bounds checker error in
+ nl80211_parse_sched_scan
+Message-ID: <ZyjyEl4kzFXz7tTB@google.com>
+References: <20241029-nl80211_parse_sched_scan-bounds-checker-fix-v2-1-c804b787341f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,54 +84,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6sucdv4k5jdovqgtaemeer4cnluvnl3xgyn57mo3elgwdmojrx@phu4gowaqtuv>
+In-Reply-To: <20241029-nl80211_parse_sched_scan-bounds-checker-fix-v2-1-c804b787341f@google.com>
 
-On Sun, Nov 03, 2024 at 10:46:46AM +0100, Krzysztof Kozlowski wrote:
-> On Sat, Nov 02, 2024 at 03:33:15PM +0000, Jonathan Cameron wrote:
-> > On Sat,  2 Nov 2024 14:13:09 +0100
-> > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> > 
-> > > Extend dt-binding for BME680 gas sensor device. The device incorporates
-> > > as well temperature, pressure and relative humidity sensors.
-> > This description should make it clear it is moving from trivial-devices.yaml
-> > 
-> > dt-bindings: iio: bosch,bme680: Move from trivial-bindings and add missing supplies.
-> > 
-> > Then say a little more on why you are moving it.
-> > 
-> > > 
-> > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > 
-> > There was an open question on the previous version about
-> > setting the supplies as required (which I see you've removed).
-> > My understanding previously was that it is fine to make that change
-> > in a binding if it reflects supplies that are required to be enabled
-> > for the device to function at all.  If there were previously missing
-> > that's a binding bug we should fix.
-> > 
-> > I'd like a clarification from the DT binding maintainers on that.
-> > Obviously doesn't work for other users of dt bindings but in
-> > Linux this would be fine as they were already on for any board
-> > that worked and the regulator framework will through us a fake
-> > regulator for cases like this.
-> > 
-> > https://lore.kernel.org/all/20241022182451.00007ac0@Huawei.com/
-> > 
-> > Jonathan
+Hello everyone,
+
+On Tue, Oct 29, 2024 at 01:22:11PM +0000, Aleksei Vetrov wrote:
+> The channels array in the cfg80211_scan_request has a __counted_by
+> attribute attached to it, which points to the n_channels variable. This
+> attribute is used in bounds checking, and if it is not set before the
+> array is filled, then the bounds sanitizer will issue a warning or a
+> kernel panic if CONFIG_UBSAN_TRAP is set.
 > 
-> That was Rob's objection so I will leave it to him, but putting my two
-> cents in for Linux it is not an ABI break because missing regulator
-> supplies are substituted with dummy ones. Unless something changed...
+> This patch sets the size of allocated memory as the initial value for
+> n_channels. It is updated with the actual number of added elements after
+> the array is filled.
+> 
+> Fixes: aa4ec06c455d ("wifi: cfg80211: use __counted_by where appropriate")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Aleksei Vetrov <vvvvvv@google.com>
+> ---
+> Changes in v2:
+> - Added Fixes tag and added stable to CC
+> - Link to v1: https://lore.kernel.org/r/20241028-nl80211_parse_sched_scan-bounds-checker-fix-v1-1-bb640be0ebb7@google.com
 
-Shrug. I don't think we're entirely consistent on this. If we're saying 
-supplies are always required, then every device in trivial-devices.yaml 
-is wrong. Since Linux handles them missing, you can also argue that 
-supplies are never required.
+I would really appreciate it if someone take a look at this single line
+patch. It looks like v2 of this patch has slipped through the cracks...
 
-I'd prefer not to special case regulators as an exception I have to 
-remember. I have some rudimentary ABI checking I'm working on that 
-checks for things like new required properties. Though it wouldn't catch 
-this particular change given it moves the schema.
-
-Rob
+Best regards,
+---
+Aleksei Vetrov
 
