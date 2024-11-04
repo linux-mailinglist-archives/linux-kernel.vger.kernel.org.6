@@ -1,83 +1,61 @@
-Return-Path: <linux-kernel+bounces-395385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE73C9BBD34
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:21:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A385D9BBD37
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:21:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C030D1F240C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:21:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D51451C22AFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD581CB530;
-	Mon,  4 Nov 2024 18:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528E61CACEE;
+	Mon,  4 Nov 2024 18:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kBWwq264"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JTPx3l1d"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA241C9B81
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 18:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C3F1C9B81
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 18:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730744464; cv=none; b=P6faJK5y2Oy1kbBdmGCde+bPqUKCSA7l0xplHNnCyuRrmnuT+3aONVX6IxwHfEH+igtmjLfRVhbL1gFfhWqnjnXor5veH9Sa7wR/Atq+nnTJD/wVMLE0pwL5/aGr7d6Yb31IUxsIiQbCztZMMz0KksBPg6sl4n8lhEkUSMkEW0o=
+	t=1730744486; cv=none; b=RMZ4uBaPW3PLqAzztK43SSDvN02gf9zmSZnSos3F9dS27f9b1bY3foVZjLVTwgSPfGdevKF0InjQUIMvIdxXU/02bZ4InHGIFqHQiSmV93ikFpCwNODv+Sx1d2PaPojT0tTLqSROEp0zjGVcQNteW1dhrSbi0GnybF+vePGi2gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730744464; c=relaxed/simple;
-	bh=M6xDzNAKcs36VWJmqh7kjILMTWmZO9OGbW4mqT6HmyQ=;
+	s=arc-20240116; t=1730744486; c=relaxed/simple;
+	bh=psda6WZ1bBDxqXSARndeShzdtueMUbDrCIxmrU6wCE4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ANXxve2sQmLU4Jj60COSoUf2kJAZm6f/Fd1ECN28LhQuZ+59QrR2HYz5naVczhv+PfQxKZMeWuU3rociMxlWzulMvMjPsaVNxbf1yGzJp/4z4zVn72kDHK2QVN9K/poyXKTTUyj/L7pajOLOF2ye0FfEcWortLv+Oar1psi0TIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kBWwq264; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431616c23b5so28076205e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 10:21:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730744461; x=1731349261; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HvgKojtjxMMS6cqT1h35DY7bZCxI4idU/B1S0RQ7cd4=;
-        b=kBWwq264szWaphLKiF9s/eMuSNA6tvH37jOs/B4TBl0RQzxPmKzZu4iIgfXEDqj0VA
-         G/LZ0wi9JpyPtN9tIY9orcifFYVpXCs/rxRhPtGypf/CTWso/LZlpUJde/EjzZN77SKr
-         qjbyewRA32ztUzEUzTMGwCj9jC7DMtvFe5bEjB9faQPrUMmcIiLWEyWae2N3tNDPUAtO
-         oOXjHeUnwiUl3csBUYxMQtHTgOSKmy1eX+XwSRAbBQ3I4mZRJ7HqNryhA7fEf7lgLVtf
-         Hj5q72WFEL4lhxNT+FEWJ8jdhQ8LAZ4+tBoLTyF6DHogJhlRSejlrxD7WLhykz0IScT3
-         DsSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730744461; x=1731349261;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HvgKojtjxMMS6cqT1h35DY7bZCxI4idU/B1S0RQ7cd4=;
-        b=uB0powEXahyADsYkCPQCSeyjQCrybdGS4bt3XuZjhsEOXBuqckppyrqoM/z9HgwQ24
-         5g6GYXljmO2dlNvp0za3De6nwMxNuouUzRWPHAgyMhy8XFabtB0HZfDAtnzAJ4+ToAcz
-         NiB5ePCd38UQE9tYO+JPZR7n3gss22G7pYSJvy6SCS9poVotNJbhcbBeR+M3nYwwad7q
-         JPTkGYjKXOlLc7dH7XY4KVq8VX3KDt/GnZ7XZK7HYdBg/Bi39ydxdq7nFeNg6TYgatYA
-         obk3i/Z3wckQDmpADJlpicbGWw37pDraDXmO8UUdSjmoMbOQb3HW2spE3zUbRScWf0Qf
-         ytvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtrzeWuMNfgRbYJMN1NXkOwbIhd7doXANM8KLQW1OU2nZ4U/vd8jpx8f2bdqB/wD3RZkZWGMbj9CR/41Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydBCQ6NifoAdt4yN6jDCaxXQogkidQ7+2e0adEnKYV34TlPrB3
-	UmAFJ+Fk9PArj1XfIIM4f6sQ/dJoX6ncP1wbIZopJkTXMpgc2SvPObNTF9bcbg==
-X-Google-Smtp-Source: AGHT+IGCf2kXxmfohJmBXmuH3j8pJHDrbqFMRzviLHJM7ILP9HJYPdAB1K5kN0pfn2Myr89luXLdlQ==
-X-Received: by 2002:a05:600c:4449:b0:42c:ae4e:a96c with SMTP id 5b1f17b1804b1-4327dac7732mr131855855e9.16.1730744460604;
-        Mon, 04 Nov 2024 10:21:00 -0800 (PST)
-Received: from localhost (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7e2dsm13835508f8f.11.2024.11.04.10.21.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 10:21:00 -0800 (PST)
-Date: Mon, 4 Nov 2024 18:20:57 +0000
-From: Aleksei Vetrov <vvvvvv@google.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Dmitry Antipov <dmantipov@yandex.ru>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] wifi: nl80211: fix bounds checker error in
- nl80211_parse_sched_scan
-Message-ID: <ZykQiY0jvxKqrCIb@google.com>
-References: <20241029-nl80211_parse_sched_scan-bounds-checker-fix-v2-1-c804b787341f@google.com>
- <0bc2e4b0-4dad-4341-a41e-a98fbc4b1658@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CHXy8Kak98Q55EVIrfot8eDWbUle93rFPzKX4zJRihgt4kj9tejBhq0Q9gZMosrlo5tLLyQin6VW8PMOmFxL0bG4bOm5/IDhgMHcBdgIu10fcsU0ujwSoyxMw+gwobLFLPcXtevOpZeWZjZEEqhjaQsiuP6/vquIZG8bYannQ/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JTPx3l1d; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 4 Nov 2024 18:21:18 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730744482;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fRQZ1b4+YzN47zBQE0OhZW60GzonoSgG9kJ9tuC58Z0=;
+	b=JTPx3l1d7ph/0YpLYRHb25UqZvpCwpxyzKx8JW6t5Jcpn2hrGkRinjAZkObAsDENFP/XqG
+	SJiZ4OTf9raPwg1llQeWxlb7AArJ+obj4/o/ba7F2pTnRArw0p+oybu/CIIX0VFGqfxzfk
+	Zg38nTaWMmO88Fi0j7emw8wM1U1zsjg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexey Gladkov <legion@kernel.org>, Andrei Vagin <avagin@google.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] signal: restore the override_rlimit logic
+Message-ID: <ZykQnp9mINnsPTg2@google.com>
+References: <20241031200438.2951287-1-roman.gushchin@linux.dev>
+ <87zfmi3f8b.fsf@email.froward.int.ebiederm.org>
+ <ZyU8UNKLNfAi-U8F@google.com>
+ <87o72y3c4g.fsf@email.froward.int.ebiederm.org>
+ <CAEWA0a4Kz9exk04Wgx9UZ9YFfURnS-=50TWyhPHm3i-N-D_8DA@mail.gmail.com>
+ <ZyZSotlacLgzWxUl@example.org>
+ <20241103165048.GA11668@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,27 +64,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0bc2e4b0-4dad-4341-a41e-a98fbc4b1658@quicinc.com>
+In-Reply-To: <20241103165048.GA11668@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 04, 2024 at 09:12:09AM -0800, Jeff Johnson wrote:
-> Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On Sun, Nov 03, 2024 at 05:50:49PM +0100, Oleg Nesterov wrote:
+> On 11/02, Alexey Gladkov wrote:
+> >
+> > +Cc Oleg Nesterov.
 > 
-> And it is exactly this kind of issue why I'm not accepting any __counted_by()
-> changes in ath.git without actually testing the code that is modified.
+> Well, I tend to agree with Roman and his patch looks good to me.
 
-However, I was really lucky that my setup used nl80211_parse_sched_scan
-during normal operations and triggered bound sanitizer. After the patch
-was developed, I accidently wiped my device and couldn't reproduce the
-bug again normally, so I had to use iw tool to trigger
-nl80211_parse_sched_scan manually to test it properly.
+Thanks, Oleg!
 
-I looked for some tests that cover this function and that I can run on
-the device, but couldn't find any. It would be nice if you know about
-such tests, so I can check if there are any other places where bound
-sanitizer may be triggered. I only know syzkaller tool that may be used
-to get more kernel coverage in general.
+> 
+> But it seems that the change in inc_rlimit_get_ucounts() can be
+> a bit simpler and more readable, see below.
 
-Best regards,
---
-Aleksei Vetrov
+Eric suggested the same approach earlier in this thread. I personally
+don't have a strong preference here or actually I slightly prefer my
+own version because this comparison to LONG_MAX looks confusing to me.
+But if you have a strong preference, I'm happy to send out v2. Please,
+let me know.
+
+Thanks!
 
