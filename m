@@ -1,341 +1,261 @@
-Return-Path: <linux-kernel+bounces-395499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404299BBEC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:27:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DE99BBECC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0628A282551
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2144F1C21C6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98E51E5735;
-	Mon,  4 Nov 2024 20:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE201E5027;
+	Mon,  4 Nov 2024 20:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCQaniXB"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="erapmm2D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BF41C876D;
-	Mon,  4 Nov 2024 20:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FF618EB1
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 20:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730752031; cv=none; b=PpY1YNVVS2ihh9KLSwYOs5Rk9L+ur6RNCmkeVPEdLiWmzq80N77TzeMnJx0m9dhAwj5irS5/U64doBRIAbfr+dMO8LgZp1SD7aICgLt20PeEdlk7GlCeiUI4rcKmWxygiIN5qNr/wx5fmk6vindYVnxdlNQK8uT5zStCE+UIj5I=
+	t=1730752154; cv=none; b=mvni85aPTT7J9ZCVoeYJpVsZuyO39usNIJi7CZ/MirPbTSUg1rbSbcs4FRzYl5aILYVhBI/gyQ00Gc3YPT6ruOyQ+Ke42xx094QiY374Ej8FBgg7F6Y/HG7v/fEOBaIoHd0TBP08mX1MOs7AVpvvVaQ+29qZxSFTKvZr2Kdh6bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730752031; c=relaxed/simple;
-	bh=zNFhcFpEP65NUzbAtTkXf545aP3mOPVQlH7TWQL+oVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f9hya3KuGmjDabWyybYLzFCn1hUpId3GVkhf4dgG6JB9gS/VEapTltpvTEwuJ8jvHi4ZsC7STt00ls89hqeNKobEkM0aaUM7CPskHRA4I/ZpzpwNbqLinelloio95oy/+D1ju7qVQ2vei746F0B7YCqq90AFQptQ9JgxIB0wV0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCQaniXB; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c693b68f5so49832345ad.1;
-        Mon, 04 Nov 2024 12:27:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730752029; x=1731356829; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RHtMBfQecyyKv9bmAtAYemSSyWK9CXs7Ly84qsFf5U8=;
-        b=jCQaniXBwpLOtbgAm8+k5Ttu+/9MfIEemRaPNfqaqUy12DoCPut3MMa/ujisdDYXmQ
-         bVyTmLhLocIN63QcUomWaEgGH80iXHtCgI2KSAvDUOML/eb1S5W0cxLidep+swtyyMbc
-         Uq2GZfH9P9LDvXUbuYFjOaoiMeMKxTH5wU8p12kmv7sNULv5ErAepBwo++t3sJeVcmRA
-         0TKeCuzjPRW2LoJUpM/EMF7kp55tUYEGfPqGwALjTVs18sM5s+U4W+ePOcApfmzMIP/x
-         BiMGrQrb2lJe7l+j9ltF+4VdL6+dH/YMUaNHvZ4JFSXHvDuckpKpoh58ZtfDwjxfuH0D
-         6Tww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730752029; x=1731356829;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RHtMBfQecyyKv9bmAtAYemSSyWK9CXs7Ly84qsFf5U8=;
-        b=Dsor7MRM7GbZg5WrCjCFFMPShvQFabXnwUAUD3C2fYbaB0ToVtAyYu2S4wcUtL3843
-         TsMaKlVKbonh4S4s4kgPx1ZxRZMhIPiGN7D8ejU3K0N+mq54O4tbeC7sinnkyI1Yi03l
-         fLS3KUuhcqEbOgsiFH/9lgh/Pwpswo153eQ4Q8LGvvVixL7zQPJOZu9Uhqo71l4kDgor
-         45GIgTLnMdGjFUyFVB/h5YTuxzOxX0LoBFru2jSKqA85hgxT4h5XD5FF0yzKxVvozwtM
-         Sx7qH4yKdT0M5YAP4Obsa7z6//+3myobVFdBu4LO3lLpwHs4rRPslu4v5a5+B8tXvVS1
-         mM/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW3bJRRYGvK72m6ouOEmAgK38OQxoazg/4VE7NhAeYXU1FwmTmT2AQ6RSGtm94bb+z0RPo=@vger.kernel.org, AJvYcCXvx6KxdfSBfpovkiqEtUnjd1WI1JeZAHMXINplqkpwh3BqtZCjKTtTJk6qRZKNbJYe1ON+edz2orAdZLNf@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf8+e2FyzDFr8ZCDSE9AbeUaVcYpWeBBfCK5yO4VNC6ncxR/6X
-	HPjzFp8v7AFQtBlCEi93xviYDTtzsCo9OI/gsZzUe+WxKMJD8fgAmrIcb6SP
-X-Google-Smtp-Source: AGHT+IGwx4SmI9ceRF/57XXFL+jnLXt/f43mLfRRmWIi1TEpIz9VSsTQSeK140PRBYiXCKNFROOojg==
-X-Received: by 2002:a17:902:ea0a:b0:20c:b876:b4eb with SMTP id d9443c01a7336-21103ca9ebemr256880845ad.59.1730752028558;
-        Mon, 04 Nov 2024 12:27:08 -0800 (PST)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d5326sm63976945ad.278.2024.11.04.12.27.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 12:27:08 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Edward Cree <ecree.xilinx@gmail.com>,
-	Martin Habets <habetsm.xilinx@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	linux-net-drivers@amd.com (open list:SFC NETWORK DRIVER),
-	linux-kernel@vger.kernel.org (open list),
-	bpf@vger.kernel.org (open list:XDP (eXpress Data Path):Keyword:(?:\b|_)xdp(?:\b|_))
-Subject: [PATCH net-next] net: sfc: use ethtool string helpers
-Date: Mon,  4 Nov 2024 12:27:05 -0800
-Message-ID: <20241104202705.120939-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730752154; c=relaxed/simple;
+	bh=Pi4KsuclGDnuuQ1HSilJDslmkD/MTGD/k1I3Biy6IYc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mMb/GbYHaBu3fvyApQBhqqxFYySPSqonX/cUJ+zI5ChkZxoiH6FWhnuWQzpx886DIR2AHpoweDEWjwcLEvKbrtlypTT9oT7jlEAXlLts1aOZD5+mgoE1aBn6zxZvJGg/Bsj0Qm1LvyV3wafvxYjblsj1MKrZhzWT2inGyDB9flo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=erapmm2D; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730752152; x=1762288152;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=Pi4KsuclGDnuuQ1HSilJDslmkD/MTGD/k1I3Biy6IYc=;
+  b=erapmm2DHMDjJTSHclOY335MDcSEj5FhGjH0x7VIPAydutm6lZURsCuH
+   ni6TksV1tSqAtKyEl5dSIe7zzkWcYMgVLPNX4xXYXICnJPmWzE+DaLXVF
+   rYpNvhniw4aKo7Ych5whQMuwN1NK1N6qOSCvFm635iLKiw4FPGAzygg9q
+   YohXSTJMfmDTsruriou91Abpi0Qz9p/NyD7ytJ+x4zCrbNX5piJpetoBN
+   8jO3zSBh9dFXGfODCEsE6xJprT3inKpa4v8DlL0T1jMUn1dibHY7nXJYB
+   wtQSMusGX7LaP989uRVMSdi26new5uEfGwMJlRL6GC6fOvfBAPN1HEsC3
+   Q==;
+X-CSE-ConnectionGUID: zJNAdj2RTEmgKGc0bmTbXA==
+X-CSE-MsgGUID: 6FKqwBi/RhSQe6Bea70JuA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="55872620"
+X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
+   d="scan'208";a="55872620"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 12:29:11 -0800
+X-CSE-ConnectionGUID: rRrv1VTJSaSWyqK/TgFeVQ==
+X-CSE-MsgGUID: TlRRJ5R+T0Kzvb3apV/L5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
+   d="scan'208";a="114547324"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 12:29:11 -0800
+Received: from [10.212.67.175] (kliang2-mobl1.ccr.corp.intel.com [10.212.67.175])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 7116220B5703;
+	Mon,  4 Nov 2024 12:29:10 -0800 (PST)
+Message-ID: <25c7236e-d888-4cdc-be19-5e582220097d@linux.intel.com>
+Date: Mon, 4 Nov 2024 15:29:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH V4] perf/x86/intel: Support RDPMC metrics clear
+ mode
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+To: peterz@infradead.org, mingo@kernel.org, acme@kernel.org,
+ namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+ linux-kernel@vger.kernel.org
+Cc: eranian@google.com, Andi Kleen <ak@linux.intel.com>
+References: <20240926184558.3797290-1-kan.liang@linux.intel.com>
+ <c6b2fd89-5f68-46cc-a249-0c354d8d391f@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <c6b2fd89-5f68-46cc-a249-0c354d8d391f@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The latter is the preferred way to copy ethtool strings.
+Hi Peter,
 
-Avoids manually incrementing the pointer. Cleans up the code quite well.
+Ping. Could you please let me know if you have any comments.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/sfc/ethtool_common.c     | 34 +++++++------------
- drivers/net/ethernet/sfc/falcon/ethtool.c     | 24 +++++--------
- drivers/net/ethernet/sfc/falcon/nic.c         |  7 ++--
- drivers/net/ethernet/sfc/nic.c                |  7 ++--
- .../net/ethernet/sfc/siena/ethtool_common.c   | 34 +++++++------------
- drivers/net/ethernet/sfc/siena/nic.c          |  7 ++--
- 6 files changed, 40 insertions(+), 73 deletions(-)
+Thanks,
+Kan
 
-diff --git a/drivers/net/ethernet/sfc/ethtool_common.c b/drivers/net/ethernet/sfc/ethtool_common.c
-index ae32e08540fa..d46972f45ec1 100644
---- a/drivers/net/ethernet/sfc/ethtool_common.c
-+++ b/drivers/net/ethernet/sfc/ethtool_common.c
-@@ -403,24 +403,19 @@ static size_t efx_describe_per_queue_stats(struct efx_nic *efx, u8 *strings)
- 	efx_for_each_channel(channel, efx) {
- 		if (efx_channel_has_tx_queues(channel)) {
- 			n_stats++;
--			if (strings != NULL) {
--				snprintf(strings, ETH_GSTRING_LEN,
--					 "tx-%u.tx_packets",
--					 channel->tx_queue[0].queue /
--					 EFX_MAX_TXQ_PER_CHANNEL);
--
--				strings += ETH_GSTRING_LEN;
--			}
-+			if (strings)
-+				ethtool_sprintf(
-+					&strings, "tx-%u.tx_packets",
-+					channel->tx_queue[0].queue /
-+						EFX_MAX_TXQ_PER_CHANNEL);
- 		}
- 	}
- 	efx_for_each_channel(channel, efx) {
- 		if (efx_channel_has_rx_queue(channel)) {
- 			n_stats++;
--			if (strings != NULL) {
--				snprintf(strings, ETH_GSTRING_LEN,
--					 "rx-%d.rx_packets", channel->channel);
--				strings += ETH_GSTRING_LEN;
--			}
-+			if (strings)
-+				ethtool_sprintf(&strings, "rx-%d.rx_packets",
-+						channel->channel);
- 		}
- 	}
- 	if (efx->xdp_tx_queue_count && efx->xdp_tx_queues) {
-@@ -428,11 +423,10 @@ static size_t efx_describe_per_queue_stats(struct efx_nic *efx, u8 *strings)
- 
- 		for (xdp = 0; xdp < efx->xdp_tx_queue_count; xdp++) {
- 			n_stats++;
--			if (strings) {
--				snprintf(strings, ETH_GSTRING_LEN,
--					 "tx-xdp-cpu-%hu.tx_packets", xdp);
--				strings += ETH_GSTRING_LEN;
--			}
-+			if (strings)
-+				ethtool_sprintf(&strings,
-+						"tx-xdp-cpu-%hu.tx_packets",
-+						xdp);
- 		}
- 	}
- 
-@@ -467,9 +461,7 @@ void efx_ethtool_get_strings(struct net_device *net_dev,
- 		strings += (efx->type->describe_stats(efx, strings) *
- 			    ETH_GSTRING_LEN);
- 		for (i = 0; i < EFX_ETHTOOL_SW_STAT_COUNT; i++)
--			strscpy(strings + i * ETH_GSTRING_LEN,
--				efx_sw_stat_desc[i].name, ETH_GSTRING_LEN);
--		strings += EFX_ETHTOOL_SW_STAT_COUNT * ETH_GSTRING_LEN;
-+			ethtool_puts(&strings, efx_sw_stat_desc[i].name);
- 		strings += (efx_describe_per_queue_stats(efx, strings) *
- 			    ETH_GSTRING_LEN);
- 		efx_ptp_describe_stats(efx, strings);
-diff --git a/drivers/net/ethernet/sfc/falcon/ethtool.c b/drivers/net/ethernet/sfc/falcon/ethtool.c
-index f4db683b80f7..41bd63d0c40c 100644
---- a/drivers/net/ethernet/sfc/falcon/ethtool.c
-+++ b/drivers/net/ethernet/sfc/falcon/ethtool.c
-@@ -361,24 +361,18 @@ static size_t ef4_describe_per_queue_stats(struct ef4_nic *efx, u8 *strings)
- 	ef4_for_each_channel(channel, efx) {
- 		if (ef4_channel_has_tx_queues(channel)) {
- 			n_stats++;
--			if (strings != NULL) {
--				snprintf(strings, ETH_GSTRING_LEN,
--					 "tx-%u.tx_packets",
--					 channel->tx_queue[0].queue /
--					 EF4_TXQ_TYPES);
--
--				strings += ETH_GSTRING_LEN;
--			}
-+			if (strings)
-+				ethtool_sprintf(&strings, "tx-%u.tx_packets",
-+						channel->tx_queue[0].queue /
-+							EF4_TXQ_TYPES);
- 		}
- 	}
- 	ef4_for_each_channel(channel, efx) {
- 		if (ef4_channel_has_rx_queue(channel)) {
- 			n_stats++;
--			if (strings != NULL) {
--				snprintf(strings, ETH_GSTRING_LEN,
--					 "rx-%d.rx_packets", channel->channel);
--				strings += ETH_GSTRING_LEN;
--			}
-+			if (strings)
-+				ethtool_sprintf(&strings, "rx-%d.rx_packets",
-+						channel->channel);
- 		}
- 	}
- 	return n_stats;
-@@ -412,9 +406,7 @@ static void ef4_ethtool_get_strings(struct net_device *net_dev,
- 		strings += (efx->type->describe_stats(efx, strings) *
- 			    ETH_GSTRING_LEN);
- 		for (i = 0; i < EF4_ETHTOOL_SW_STAT_COUNT; i++)
--			strscpy(strings + i * ETH_GSTRING_LEN,
--				ef4_sw_stat_desc[i].name, ETH_GSTRING_LEN);
--		strings += EF4_ETHTOOL_SW_STAT_COUNT * ETH_GSTRING_LEN;
-+			ethtool_puts(&strings, ef4_sw_stat_desc[i].name);
- 		strings += (ef4_describe_per_queue_stats(efx, strings) *
- 			    ETH_GSTRING_LEN);
- 		break;
-diff --git a/drivers/net/ethernet/sfc/falcon/nic.c b/drivers/net/ethernet/sfc/falcon/nic.c
-index 78c851b5a56f..a7f0caa8710f 100644
---- a/drivers/net/ethernet/sfc/falcon/nic.c
-+++ b/drivers/net/ethernet/sfc/falcon/nic.c
-@@ -451,11 +451,8 @@ size_t ef4_nic_describe_stats(const struct ef4_hw_stat_desc *desc, size_t count,
- 
- 	for_each_set_bit(index, mask, count) {
- 		if (desc[index].name) {
--			if (names) {
--				strscpy(names, desc[index].name,
--					ETH_GSTRING_LEN);
--				names += ETH_GSTRING_LEN;
--			}
-+			if (names)
-+				ethtool_puts(&names, desc[index].name);
- 			++visible;
- 		}
- 	}
-diff --git a/drivers/net/ethernet/sfc/nic.c b/drivers/net/ethernet/sfc/nic.c
-index a33ed473cc8a..51c975cff4fe 100644
---- a/drivers/net/ethernet/sfc/nic.c
-+++ b/drivers/net/ethernet/sfc/nic.c
-@@ -306,11 +306,8 @@ size_t efx_nic_describe_stats(const struct efx_hw_stat_desc *desc, size_t count,
- 
- 	for_each_set_bit(index, mask, count) {
- 		if (desc[index].name) {
--			if (names) {
--				strscpy(names, desc[index].name,
--					ETH_GSTRING_LEN);
--				names += ETH_GSTRING_LEN;
--			}
-+			if (names)
-+				ethtool_puts(&names, desc[index].name);
- 			++visible;
- 		}
- 	}
-diff --git a/drivers/net/ethernet/sfc/siena/ethtool_common.c b/drivers/net/ethernet/sfc/siena/ethtool_common.c
-index 075fef64de68..53b1cdf872d8 100644
---- a/drivers/net/ethernet/sfc/siena/ethtool_common.c
-+++ b/drivers/net/ethernet/sfc/siena/ethtool_common.c
-@@ -403,24 +403,19 @@ static size_t efx_describe_per_queue_stats(struct efx_nic *efx, u8 *strings)
- 	efx_for_each_channel(channel, efx) {
- 		if (efx_channel_has_tx_queues(channel)) {
- 			n_stats++;
--			if (strings != NULL) {
--				snprintf(strings, ETH_GSTRING_LEN,
--					 "tx-%u.tx_packets",
--					 channel->tx_queue[0].queue /
--					 EFX_MAX_TXQ_PER_CHANNEL);
--
--				strings += ETH_GSTRING_LEN;
--			}
-+			if (strings)
-+				ethtool_sprintf(
-+					&strings, "tx-%u.tx_packets",
-+					channel->tx_queue[0].queue /
-+						EFX_MAX_TXQ_PER_CHANNEL);
- 		}
- 	}
- 	efx_for_each_channel(channel, efx) {
- 		if (efx_channel_has_rx_queue(channel)) {
- 			n_stats++;
--			if (strings != NULL) {
--				snprintf(strings, ETH_GSTRING_LEN,
--					 "rx-%d.rx_packets", channel->channel);
--				strings += ETH_GSTRING_LEN;
--			}
-+			if (strings)
-+				ethtool_sprintf(&strings, "rx-%d.rx_packets",
-+						channel->channel);
- 		}
- 	}
- 	if (efx->xdp_tx_queue_count && efx->xdp_tx_queues) {
-@@ -428,11 +423,10 @@ static size_t efx_describe_per_queue_stats(struct efx_nic *efx, u8 *strings)
- 
- 		for (xdp = 0; xdp < efx->xdp_tx_queue_count; xdp++) {
- 			n_stats++;
--			if (strings) {
--				snprintf(strings, ETH_GSTRING_LEN,
--					 "tx-xdp-cpu-%hu.tx_packets", xdp);
--				strings += ETH_GSTRING_LEN;
--			}
-+			if (strings)
-+				ethtool_sprintf(&strings,
-+						"tx-xdp-cpu-%hu.tx_packets",
-+						xdp);
- 		}
- 	}
- 
-@@ -467,9 +461,7 @@ void efx_siena_ethtool_get_strings(struct net_device *net_dev,
- 		strings += (efx->type->describe_stats(efx, strings) *
- 			    ETH_GSTRING_LEN);
- 		for (i = 0; i < EFX_ETHTOOL_SW_STAT_COUNT; i++)
--			strscpy(strings + i * ETH_GSTRING_LEN,
--				efx_sw_stat_desc[i].name, ETH_GSTRING_LEN);
--		strings += EFX_ETHTOOL_SW_STAT_COUNT * ETH_GSTRING_LEN;
-+			ethtool_puts(&strings, efx_sw_stat_desc[i].name);
- 		strings += (efx_describe_per_queue_stats(efx, strings) *
- 			    ETH_GSTRING_LEN);
- 		efx_siena_ptp_describe_stats(efx, strings);
-diff --git a/drivers/net/ethernet/sfc/siena/nic.c b/drivers/net/ethernet/sfc/siena/nic.c
-index 0ea0433a6230..06b97218b490 100644
---- a/drivers/net/ethernet/sfc/siena/nic.c
-+++ b/drivers/net/ethernet/sfc/siena/nic.c
-@@ -457,11 +457,8 @@ size_t efx_siena_describe_stats(const struct efx_hw_stat_desc *desc, size_t coun
- 
- 	for_each_set_bit(index, mask, count) {
- 		if (desc[index].name) {
--			if (names) {
--				strscpy(names, desc[index].name,
--					ETH_GSTRING_LEN);
--				names += ETH_GSTRING_LEN;
--			}
-+			if (names)
-+				ethtool_puts(&names, desc[index].name);
- 			++visible;
- 		}
- 	}
--- 
-2.47.0
+On 2024-10-09 3:31 p.m., Liang, Kan wrote:
+> Hi Peter,
+> 
+> Gentle ping. Please let me know if you have any comments.
+> 
+> Thanks,
+> Kan
+> 
+> On 2024-09-26 2:45 p.m., kan.liang@linux.intel.com wrote:
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> The new RDPMC enhancement, metrics clear mode, is to clear the
+>> PERF_METRICS-related resources as well as the fixed-function performance
+>> monitoring counter 3 after the read is performed. It is available for
+>> ring 3. The feature is enumerated by the
+>> IA32_PERF_CAPABILITIES.RDPMC_CLEAR_METRICS[bit 19]. To enable the
+>> feature, the IA32_FIXED_CTR_CTRL.METRICS_CLEAR_EN[bit 14] must be set.
+>>
+>> Two ways were considered to enable the feature.
+>> - Expose a knob in the sysfs globally. One user may affect the
+>>   measurement of other users when changing the knob. The solution is
+>>   dropped.
+>> - Introduce a new event format, metrics_clear, for the slots event to
+>>   disable/enable the feature only for the current process. Users can
+>>   utilize the feature as needed.
+>> The latter solution is implemented in the patch.
+>>
+>> The current KVM doesn't support the perf metrics yet. For
+>> virtualization, the feature can be enabled later separately.
+>>
+>> Update the document of perf metrics.
+>>
+>> Suggested-by: Andi Kleen <ak@linux.intel.com>
+>> Reviewed-by: Andi Kleen <ak@linux.intel.com>
+>> Reviewed-by: Ian Rogers <irogers@google.com>
+>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>> ---
+>>
+>> The original V4 can be found at
+>> https://lore.kernel.org/lkml/20240731143835.771618-6-kan.liang@linux.intel.com/
+>>
+>> The patch was one of the PMU features in the LNL enabling patch set.
+>> The other feature is now blocked. Send the patch separately.
+>>
+>>  arch/x86/events/intel/core.c         | 20 +++++++++++++++++++-
+>>  arch/x86/events/perf_event.h         |  1 +
+>>  arch/x86/include/asm/perf_event.h    |  4 ++++
+>>  tools/perf/Documentation/topdown.txt |  9 +++++++--
+>>  4 files changed, 31 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+>> index 5182075e111b..342f8b1a2f93 100644
+>> --- a/arch/x86/events/intel/core.c
+>> +++ b/arch/x86/events/intel/core.c
+>> @@ -2816,6 +2816,9 @@ static void intel_pmu_enable_fixed(struct perf_event *event)
+>>  			return;
+>>  
+>>  		idx = INTEL_PMC_IDX_FIXED_SLOTS;
+>> +
+>> +		if (event->attr.config1 & INTEL_TD_CFG_METRIC_CLEAR)
+>> +			bits |= INTEL_FIXED_3_METRICS_CLEAR;
+>>  	}
+>>  
+>>  	intel_set_masks(event, idx);
+>> @@ -4067,7 +4070,12 @@ static int intel_pmu_hw_config(struct perf_event *event)
+>>  	 * is used in a metrics group, it too cannot support sampling.
+>>  	 */
+>>  	if (intel_pmu_has_cap(event, PERF_CAP_METRICS_IDX) && is_topdown_event(event)) {
+>> -		if (event->attr.config1 || event->attr.config2)
+>> +		/* The metrics_clear can only be set for the slots event */
+>> +		if (event->attr.config1 &&
+>> +		    (!is_slots_event(event) || (event->attr.config1 & ~INTEL_TD_CFG_METRIC_CLEAR)))
+>> +			return -EINVAL;
+>> +
+>> +		if (event->attr.config2)
+>>  			return -EINVAL;
+>>  
+>>  		/*
+>> @@ -4676,6 +4684,8 @@ PMU_FORMAT_ATTR(in_tx,  "config:32"	);
+>>  PMU_FORMAT_ATTR(in_tx_cp, "config:33"	);
+>>  PMU_FORMAT_ATTR(eq,	"config:36"	); /* v6 + */
+>>  
+>> +PMU_FORMAT_ATTR(metrics_clear,	"config1:0"); /* PERF_CAPABILITIES.RDPMC_METRICS_CLEAR */
+>> +
+>>  static ssize_t umask2_show(struct device *dev,
+>>  			   struct device_attribute *attr,
+>>  			   char *page)
+>> @@ -4695,6 +4705,7 @@ static struct device_attribute format_attr_umask2  =
+>>  static struct attribute *format_evtsel_ext_attrs[] = {
+>>  	&format_attr_umask2.attr,
+>>  	&format_attr_eq.attr,
+>> +	&format_attr_metrics_clear.attr,
+>>  	NULL
+>>  };
+>>  
+>> @@ -4719,6 +4730,13 @@ evtsel_ext_is_visible(struct kobject *kobj, struct attribute *attr, int i)
+>>  	if (i == 1)
+>>  		return (mask & ARCH_PERFMON_EVENTSEL_EQ) ? attr->mode : 0;
+>>  
+>> +	/* PERF_CAPABILITIES.RDPMC_METRICS_CLEAR */
+>> +	if (i == 2) {
+>> +		union perf_capabilities intel_cap = hybrid(dev_get_drvdata(dev), intel_cap);
+>> +
+>> +		return intel_cap.rdpmc_metrics_clear ? attr->mode : 0;
+>> +	}
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+>> index 82c6f45ce975..31c2771545a6 100644
+>> --- a/arch/x86/events/perf_event.h
+>> +++ b/arch/x86/events/perf_event.h
+>> @@ -624,6 +624,7 @@ union perf_capabilities {
+>>  		u64	pebs_output_pt_available:1;
+>>  		u64	pebs_timing_info:1;
+>>  		u64	anythread_deprecated:1;
+>> +		u64	rdpmc_metrics_clear:1;
+>>  	};
+>>  	u64	capabilities;
+>>  };
+>> diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+>> index 91b73571412f..e3b5e8e96fb3 100644
+>> --- a/arch/x86/include/asm/perf_event.h
+>> +++ b/arch/x86/include/asm/perf_event.h
+>> @@ -41,6 +41,7 @@
+>>  #define INTEL_FIXED_0_USER				(1ULL << 1)
+>>  #define INTEL_FIXED_0_ANYTHREAD			(1ULL << 2)
+>>  #define INTEL_FIXED_0_ENABLE_PMI			(1ULL << 3)
+>> +#define INTEL_FIXED_3_METRICS_CLEAR			(1ULL << 2)
+>>  
+>>  #define HSW_IN_TX					(1ULL << 32)
+>>  #define HSW_IN_TX_CHECKPOINTED				(1ULL << 33)
+>> @@ -372,6 +373,9 @@ static inline bool use_fixed_pseudo_encoding(u64 code)
+>>  #define INTEL_TD_METRIC_MAX			INTEL_TD_METRIC_MEM_BOUND
+>>  #define INTEL_TD_METRIC_NUM			8
+>>  
+>> +#define INTEL_TD_CFG_METRIC_CLEAR_BIT		0
+>> +#define INTEL_TD_CFG_METRIC_CLEAR		BIT_ULL(INTEL_TD_CFG_METRIC_CLEAR_BIT)
+>> +
+>>  static inline bool is_metric_idx(int idx)
+>>  {
+>>  	return (unsigned)(idx - INTEL_PMC_IDX_METRIC_BASE) < INTEL_TD_METRIC_NUM;
+>> diff --git a/tools/perf/Documentation/topdown.txt b/tools/perf/Documentation/topdown.txt
+>> index ae0aee86844f..f36c8ca1dc53 100644
+>> --- a/tools/perf/Documentation/topdown.txt
+>> +++ b/tools/perf/Documentation/topdown.txt
+>> @@ -280,8 +280,13 @@ with no longer interval than a few seconds
+>>  
+>>  	perf stat -I 1000 --topdown ...
+>>  
+>> -For user programs using RDPMC directly the counter can
+>> -be reset explicitly using ioctl:
+>> +Starting from the Lunar Lake p-core, a RDPMC metrics clear mode is
+>> +introduced. The metrics and the fixed counter 3 are automatically
+>> +cleared after the read is performed. It is recommended to always enable
+>> +the mode. To enable the mode, the config1 of slots event is set to 1.
+>> +
+>> +On the previous platforms, for user programs using RDPMC directly, the
+>> +counter has to be reset explicitly using ioctl:
+>>  
+>>  	ioctl(perf_fd, PERF_EVENT_IOC_RESET, 0);
+>>  
+> 
 
 
