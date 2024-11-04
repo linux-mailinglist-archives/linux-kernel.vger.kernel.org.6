@@ -1,140 +1,156 @@
-Return-Path: <linux-kernel+bounces-394574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014249BB14E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:39:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA899BB13A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7FE1F23012
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:39:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E605B2406F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7F91B6CE4;
-	Mon,  4 Nov 2024 10:38:38 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0701B394C;
-	Mon,  4 Nov 2024 10:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14F11B2191;
+	Mon,  4 Nov 2024 10:36:27 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB8D155392
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730716717; cv=none; b=RIPxT81VOgu9O99Qi82D0hI2DLAcsw2c0JT4VuDiG2rnQ+alDS7YIQPxd63F3gcU2U4eAUPtIa9f7aatf01JkB2Sl1TKx6bbZYLgJ1o2HD8SkfGa6C8y6rTDiKrqnyVSkXHypRZ+2S1hZxv9sjBot3E4ZWPHKdgYHkYni/NvadU=
+	t=1730716587; cv=none; b=QH/pyuo2CBofw5Q4ixebMy93oepXZn/f9qBUUoIFY2SBIystczlNp+Y06iZhoe+3IJkWvjhirtRXJaF3xH4qlXqSHhv8uY3IV6n9ExEsBT+XjBbKlZoBUS0nZNHhy/J5Vu+cjp7uWqMLdjrW5ksh1UyI11sNByG87nz0AGFKkBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730716717; c=relaxed/simple;
-	bh=HGPGB0Mg253q0yrFI7BDnmDh/7TP1a+ibRRnqp9yLT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YoEXvYmS9rQ26lQ7JmVBsbM7iqO9oBjitB5ZXt0o1t7hokT/0iEIR1YYoDf6GdT+9F+kS3kCJ25TlJqrpC5kw1XznK/4eGzaMWx+zufI6IfUKJ7zTmiQzkAVXQOv0DnKtLIEUzAtQcOdFf6WRyNGaE9mHek2WGALHrS2xywpikY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 4A4AaIGG013804;
-	Mon, 4 Nov 2024 04:36:18 -0600
-Received: (from segher@localhost)
-	by gate.crashing.org (8.14.1/8.14.1/Submit) id 4A4AaGdn013795;
-	Mon, 4 Nov 2024 04:36:16 -0600
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Mon, 4 Nov 2024 04:36:15 -0600
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Hari Bathini <hbathini@linux.ibm.com>
-Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        "Naveen N. Rao" <naveen@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-trace-kernel@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] selftests/ftrace: update kprobe syntax error test for ppc64le
-Message-ID: <20241104103615.GZ29862@gate.crashing.org>
-References: <20241101191925.1550493-1-hbathini@linux.ibm.com> <20241101205948.GW29862@gate.crashing.org> <1916cb5c-cb3d-427c-bcf0-2c1b905fd6d1@linux.ibm.com> <20241104094431.GY29862@gate.crashing.org> <245fed6f-5fb4-4925-ba0a-fb2f32e650d0@linux.ibm.com>
+	s=arc-20240116; t=1730716587; c=relaxed/simple;
+	bh=OeXcuUqLK9bYzAA1BHzDEgYwPgFv19Wfs0jvrMvUS8Y=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oSt2tCA9IVm1J0mD6OSmD5V+ChyVf+htBcF3ylhAU2yrznh+M5frPWYxpHMSYe78s/KO8ebske40yuvZVroNiPWANCav0eB2Jh10JORZ7LArqjNXmQVBMH+iyqTLY673FsBY7GybPimTrFQPuT9HVBXz4iUBNkTXaSIWjJPu7vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6c1907eeaso19273745ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:36:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730716585; x=1731321385;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=45MKnYCR0HjR6EAdmcVBnlWYHf7EelS6cbO1gpSSq88=;
+        b=l8S/0HQe0YHDVX/UIh34xx0ZBYZosbuflmpOwOBgRB6HYgZdiB0BAw386gVJeYqoqh
+         CrnjhMRJunrMe+72fd8YPQe+rPfVOkiz1PXs/Ut60rcWnvBIaI3F9QxmavUVRWP298jc
+         Cym3an85VrID/Bnrb23Q8DIzf6K6mpb3nAu8EsMGcWSxIC9/O7Lm11nDrw4rcZjN32LX
+         Gm1h3O1HXN3W7OyHqppqZJIn7u8lqSh0z21Ts+hH4G1UsqzsU70kSLy8+/ju8bKXrGG4
+         Wk5BU//ehK3Viwff2SFR3u3KLf3J1HbFpQ/H1KjoSZIBF/hSLv6F8Nf/jwQusBCBOzUm
+         Wz6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXNXoOTK5cLbnHHILt8HcJVB7BGeP2ws9Uea/EjoXBO8+orBbbInENYE6o4VYtblG6J7Q7NX5UCTIjQTFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVd2ZJAza8wsRGNfOrU8WAxbOSDo979QHyyAASrlO6elMyilOK
+	v5IL8H+9D0MzwQe8YW5H++1+2SP9nBhc3VZFAE+1solvuJme2w2vk3CbbAu44LjphtXxSz9DqTw
+	2Q7GgLB4Jr49ikuFM7rtwmNFtRyKAlp0dt0k+Ixo+S0bmB7hrnKRt/Es=
+X-Google-Smtp-Source: AGHT+IHoGvGypx3NhStEVQDjdPhANng44DlnJGQ1DlDnMH5qtrMfgbn8AVZHdpkDjoLrjHec5/EDNltbCvS8IJcFrguYOE7jSkvp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <245fed6f-5fb4-4925-ba0a-fb2f32e650d0@linux.ibm.com>
-User-Agent: Mutt/1.4.2.3i
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:13a5:b0:3a0:98b2:8f3b with SMTP id
+ e9e14a558f8ab-3a6b026372fmr121545735ab.7.1730716583498; Mon, 04 Nov 2024
+ 02:36:23 -0800 (PST)
+Date: Mon, 04 Nov 2024 02:36:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6728a3a7.050a0220.35b515.01b9.GAE@google.com>
+Subject: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
+From: syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi!
+Hello,
 
-On Mon, Nov 04, 2024 at 03:40:26PM +0530, Hari Bathini wrote:
-> On 04/11/24 3:14 pm, Segher Boessenkool wrote:
-> >On Mon, Nov 04, 2024 at 02:51:57PM +0530, Hari Bathini wrote:
-> >>On 02/11/24 2:29 am, Segher Boessenkool wrote:
-> >>>On Sat, Nov 02, 2024 at 12:49:25AM +0530, Hari Bathini wrote:
-> >>>>For ppc64le, depending on the kernel configuration used, offset 16
-> >>>>from function start address can also be considered function entry.
-> >>>>Update the test case to accommodate such configurations.
-> >>>
-> >>>(This is true for all ELfv2, not just LE.  For the kernel that is about
-> >>>the same).
-> >>>
-> >>>The LEP and GEP can differ by zero, one, two, four, eight, or sixteen
-> >>>insns (where an insn is four bytes).  Four insns is common, yes, but
-> >>>maybe you can support all?  See the function symbol's st_other field
-> >>>to see what the offset is:
-> >>>0, 1: zero insns, zero bytes
-> >>>N = 2..6: 1 << (N-2) insns, i.e. 1<<N bytes
-> >>>7: reserved
-> >>>
-> >>>(This is the top 3 bits of st_other, the other bits have other meanings).
-> >>>
-> >>>Four insns is common, yes, but by no means the only possibility.
-> >>
-> >>Hi Segher,
-> >>
-> >>Querying for function arguments is supported on kprobes only at function
-> >>entry. This is a negative test case where the offset is intentionally
-> >>set beyond function entry while querying for function arguments.
-> >>I guess, simply setting the offset to 20 (vfs_read is anyway
-> >>going to be beyond 5 instructions) instead of 8 for powerpc would
-> >>make all platforms and ABI variants happy?
-> >
-> >I have no idea.  What is this "offset" anyway?
-> 
-> offset (in bytes) from function start address..
+syzbot found the following issue on:
 
-But what is there?
+HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14c04740580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
+dashboard link: https://syzkaller.appspot.com/bug?extid=e333341d3d985e5173b2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ec06a7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c04740580000
 
-> >This is just the ELFv2 ABI.  No platform can make up its own thing at
-> >all (well, none decided to be gratuitously incompatible, so far).  And
-> >there are no "ABI variants"!
-> 
-> The test case applies for ABIv1 & ABIv2. All ppc32 & ppc64 platforms..
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/760a8c88d0c3/disk-c88416ba.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/46e4b0a851a2/vmlinux-c88416ba.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/428e2c784b75/bzImage-c88416ba.xz
 
-Hrm.  So you allow essentially random entry points on other ABIs to
-work?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com
 
-> >You're just making assumptions here that are based on nothing else but
-> >observations of what is done most of the time.  That might work for a
-> >while -- maybe a long while even! -- but it can easily break down.
-> 
-> Hmmm.. I understand that you want the test case to read st_other field
-> but would you rather suggest an offset of 64?
-
-I have no idea what "offset" means here.
-
-> Is a GEP of 8/16 instructions going to be true anytime soon or is it
-> true already for some cases? The reason I ask that is some kprobe/ftrace
-> code in the kernel might need a bit of re-look if that is the case.
-
-An entry point has no instructions at all.  Oh, you mean the code at
-the GEP.
-
-The LEP can already be all the allowed distances after the GEP.  And
-the .localentry GAS directive already supports all those distances
-always.  Not a lot of code written in assembler does use that, and
-certainly GCC does not use a lot of the freedom it has here, but it
-could (and so could assembler programmers).  Typically people will want
-to make the code here as short as possible, and there are restrictions
-on what is *allowed* to be done here anyway (ld, the link editor, can
-change this code after all!), so it is not too likely you will ever see
-big code at the GEP often, but times change, etc.
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 3508 at io_uring/io_uring.h:142 io_lockdep_assert_cq_locked io_uring/io_uring.h:142 [inline]
+WARNING: CPU: 1 PID: 3508 at io_uring/io_uring.h:142 io_get_cqe_overflow+0x43f/0x590 io_uring/io_uring.h:166
+Modules linked in:
+CPU: 1 UID: 0 PID: 3508 Comm: kworker/u8:8 Not tainted 6.12.0-rc5-next-20241101-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: iou_exit io_ring_exit_work
+RIP: 0010:io_lockdep_assert_cq_locked io_uring/io_uring.h:142 [inline]
+RIP: 0010:io_get_cqe_overflow+0x43f/0x590 io_uring/io_uring.h:166
+Code: 0f 0b 90 e9 62 fc ff ff e8 fe 43 ec fc 90 0f 0b 90 e9 90 fe ff ff e8 f0 43 ec fc 90 0f 0b 90 e9 82 fe ff ff e8 e2 43 ec fc 90 <0f> 0b 90 e9 74 fe ff ff e8 d4 43 ec fc 90 0f 0b 90 e9 66 fe ff ff
+RSP: 0018:ffffc9000d0df810 EFLAGS: 00010293
+RAX: ffffffff84a97a1e RBX: ffff888034e58000 RCX: ffff888032328000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000001 R08: ffffffff84a97821 R09: fffff52001a1befc
+R10: dffffc0000000000 R11: fffff52001a1befc R12: 0000000000000000
+R13: dffffc0000000000 R14: dffffc0000000000 R15: ffffc9000d0df8a0
+FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd6dd6c11f0 CR3: 000000004b8ac000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ io_get_cqe io_uring/io_uring.h:182 [inline]
+ io_fill_cqe_aux io_uring/io_uring.c:822 [inline]
+ __io_post_aux_cqe io_uring/io_uring.c:843 [inline]
+ io_post_aux_cqe+0xe5/0x420 io_uring/io_uring.c:855
+ io_free_rsrc_node+0xe3/0x220 io_uring/rsrc.c:453
+ io_put_rsrc_node io_uring/rsrc.h:81 [inline]
+ io_rsrc_data_free+0xf2/0x200 io_uring/rsrc.c:140
+ io_free_file_tables+0x23/0x70 io_uring/filetable.c:52
+ io_sqe_files_unregister+0x53/0x140 io_uring/rsrc.c:477
+ io_ring_ctx_free+0x49/0xdb0 io_uring/io_uring.c:2715
+ io_ring_exit_work+0x80f/0x8a0 io_uring/io_uring.c:2952
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
-Segher
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
