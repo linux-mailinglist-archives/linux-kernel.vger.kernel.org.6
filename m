@@ -1,98 +1,81 @@
-Return-Path: <linux-kernel+bounces-395365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DCF9BBCF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:11:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38CE9BBCF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96265B231E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D551D1C21E88
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3B01CACE8;
-	Mon,  4 Nov 2024 18:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1136C1CACDE;
+	Mon,  4 Nov 2024 18:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GoAXcQvP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axsiRI6G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61FA179958;
-	Mon,  4 Nov 2024 18:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E9B179958;
+	Mon,  4 Nov 2024 18:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730743872; cv=none; b=hmpFqjH+eNxc3JH2RSkcwValnMeAmDT/1bD4coui9Z1PU2y8OY5pVL4Y8k1I2EFTf23vj/AaIb3QDvPusrLI/P5qPduM5ReZNnSvE10yOaIHwhSwwK7Tet2Y96ynffUYQdVB31RDa2YdzL/kwfrUZHoypBJNM7QAUeWGI5zdPLs=
+	t=1730743933; cv=none; b=ef4xahCzBEUQ82UG+BWwGh3BSvTGkJZz5peFla15UwEQjEklj8BRZmX6CDN0dU7FAs80g/0ipUzKYtlsri0KGjuhtxB90/wBApMWyGKkTRe3vL1mkKE73HFoLqymE9Zr56aVAB2+5C/Omx+fa6I8U5keH8NQl1e9n8rjq2AO4X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730743872; c=relaxed/simple;
-	bh=HpXkPm9qvdf59T8q9QZvC5hh7+fSw6dkLREN82WrOhc=;
+	s=arc-20240116; t=1730743933; c=relaxed/simple;
+	bh=jNHzsEQJ6takp/T2Ap12pPreG5TEo6oWXCrXZGdFvrw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CpSn+fj1OZj2UQKNIHf5sKolh2wVhJCaSsMEFh1oUj20VYNzBaGTgBq71eHKhOuZgpnGfVSwfOI9LV/Xz2KAZIwdiAP7A/tQFgYHX/Q7hOpKkS1bcO4E0ctlUmE/MWbgfduOos6VK5oc3qkrMvB+DDNQNgLMzdpLKSBcXBCY4us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GoAXcQvP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E828C4CECE;
-	Mon,  4 Nov 2024 18:11:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TrLboWXWriJWYwA4w7X48n/TO5xBf16rXhPNTmEpmZ8RQdXb5XlEto52ZW8u/lw4FUy7q9S3w6cxLYB114aEa4+lcQF2WvHa9bk5Kd3ptCii5JX493hgnogiiAtywW9wed3wu0HcXnBtNn1D2jhs/06x4RLp/WANiwWZ3tFE7pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axsiRI6G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC9D9C4CECE;
+	Mon,  4 Nov 2024 18:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730743871;
-	bh=HpXkPm9qvdf59T8q9QZvC5hh7+fSw6dkLREN82WrOhc=;
+	s=k20201202; t=1730743933;
+	bh=jNHzsEQJ6takp/T2Ap12pPreG5TEo6oWXCrXZGdFvrw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GoAXcQvPE7wr8e6IuVwJ/ualDULnPM1gpz8wG/Yp+JuTxbeG5Dj8Cjoot1xwhyM6c
-	 A3v8jalXmjHm1XHQItiFSBylWd5TopK7nKhtzLws/gh857Sd9eS4wnmSWiiifCLcxQ
-	 ap/4qkALS/uU4L0m7hda1HiJZ/IrIRyzzKeaoywQFLdCzdxLMgYT14ftyq0H54meh+
-	 6qFlxciJLqZtnofvOODREF7Gz3Z3rzqBlzm8aTXvAXL3ayMXRNr42sU2t8wkdNL/Hj
-	 jq2+pzI+1wJ1kZKa3q/5ujN1LD1WeSMxaOj0vYDJX4VkBdv1FG3RXoEYQRjX5PJkeT
-	 1u8Yfj5qXVgzQ==
-Date: Mon, 4 Nov 2024 10:11:09 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, jslaby@suse.cz,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the perf tree with Linus' tree
-Message-ID: <ZykOPecMKbqirUZV@google.com>
-References: <20241101103345.45340b53@canb.auug.org.au>
+	b=axsiRI6GFC3Im3RaDQgFOZhqiV6hnNCLtl8LNHxkvfhPVsVzZZlAicKT/BtG8BY53
+	 jmWHbEe6hMbmsgakfCPGGY2mcLhAn59bPUsTSwnwF1XED2C6CHsG1wYMP9XBE/SmpB
+	 6e36dfEulXQqT73EMa38mv0RX0vz6FypH7WGUACBkaz75xL9mqpTh61T/Z4PXYm5xI
+	 +sPfTDYWpm2f+A1w6t5vl4lS5tgS1zwSbFUDCgW26SBMOx9nVCbI8x0jxGkyWJWgmh
+	 AkR1txKtA8MzMT5itlHeGJy6JahpiE4mZyGzlwurpQMKerkr2vHZzndPYamJUSM5V2
+	 wNL9gqjwfIOlQ==
+Date: Mon, 4 Nov 2024 08:12:12 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Muchun Song <songmuchun@bytedance.com>
+Cc: hannes@cmpxchg.org, mkoutny@suse.com, longman@redhat.com,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Zefan Li <lizf.kern@gmail.com>, Zefan Li <lizefan.x@bytedance.com>
+Subject: Re: [PATCH] MAINTAINERS: remove Zefan Li
+Message-ID: <ZykOfDWLjEB5Sc8G@slm.duckdns.org>
+References: <20241101095409.56794-1-songmuchun@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241101103345.45340b53@canb.auug.org.au>
+In-Reply-To: <20241101095409.56794-1-songmuchun@bytedance.com>
 
 Hello,
 
-On Fri, Nov 01, 2024 at 10:33:45AM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Fri, Nov 01, 2024 at 05:54:09PM +0800, Muchun Song wrote:
+> From: Zefan Li <lizf.kern@gmail.com>
 > 
-> Today's linux-next merge of the perf tree got a conflict in:
+> Not active for a long time, so remove myself from MAINTAINERS.
 > 
->   tools/perf/util/syscalltbl.c
-> 
-> between commit:
-> 
->   5d35634ecc2d ("perf trace: Fix non-listed archs in the syscalltbl routines")
-> 
-> from Linus' tree and commit:
-> 
->   8c0d1202bad3 ("perf, riscv: Wire up perf trace support for RISC-V")
-> 
-> from the perf tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> Cc: Zefan Li <lizefan.x@bytedance.com>
+> Signed-off-by: Zefan Li <lizf.kern@gmail.com>
 
-Thanks for reporting this.  I expected the conflict when I applied the
-RISC-V change and now I've merged the perf-tools branch into the
-perf-tools-next with the resolution like yours.  So it won't hit the
-mainline tree.
+As Zefan hasn't been active for a while, removing makes sense. However, the
+S-O-B chain above doesn't work - if the original patch is from Zefan and
+Muchun is forwarding it, it should also have Muchun's S-O-B at the end. Can
+Zefan send the patch himself?
 
-Thanks,
-Namhyung
+Thanks.
+
+-- 
+tejun
 
