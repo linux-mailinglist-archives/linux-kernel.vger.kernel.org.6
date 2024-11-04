@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-395003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDA29BB6FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:01:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF8B9BB701
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:02:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 480C6B20E1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:01:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 547D11F22F91
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5387B13A3F7;
-	Mon,  4 Nov 2024 14:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9011304B0;
+	Mon,  4 Nov 2024 14:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c98vcCDI"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QojIpzP+"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5741A8BEE;
-	Mon,  4 Nov 2024 14:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C04E8BEE
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730728874; cv=none; b=tQvEfM0xGBm9vsEKK3hsAarsr8M92+2UcA9I5QTnvn5C6TvPWySMFcs6VoAOI1uze8BCWcZyJB4CbsHw2vqBmNzNJwb2pqZYSzEV4Gd4BZ8osJSXLdqJkD5gk8IdZ+JTlzo8FlCXzZan6y3EUsCvbxFgP0rZy2bqeeGCn1P6UGk=
+	t=1730728954; cv=none; b=qiT5eAINOKOUmnlemtZ66ihAlXlI3ZxJc3KhlD89XrfjE+nWLXEKWfqZCCCt0Q00HvGG3ulVaMuw5pSvZNTmMUOK+F/1pdy3GYmRRUIQbmycGMQtu4igomFRdqhAyOKXiRBUd59k1H6DPrI2fmR/glFJguiEFOvYLrDoxAAdCdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730728874; c=relaxed/simple;
-	bh=hYwWE6NSgcNV54B1JYLg3MC+AgkpywJBzoMNETV4gyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZXSukgcYABOQPpaWwrxhS4N4OzJEIQRKihDQDO3CU3ipZUcKyR2fDwCYj6UUe+EvCUds6mvXiQBbhMMuVY5ACGB23+FociLlrwZkFNkNe9Znnv/K5gfcab57CSvBkKqJCD0ArvdKcYgb1AAoUXNp5XjPQZGrTNHVeJCXMYsaIrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c98vcCDI; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/9WKCT0vx39Ceviq8KsWhLeea2L5rBVepa8c56heqKo=; b=c98vcCDIrWnXOfKLZO0yXX66AJ
-	yVyjghqAnlZKmkWjAC6ruTsEfVlkBhuN8dcgk3DQ77wMlvu2DrlsivAN+m7VaCOdn2QTfLUvqeUPo
-	jHDZu4NmjLEcKKwFd1bOzbs2TwVzv4nkhWcnYp/Q6uB7kTdT8kN8N+AyqRfxwxt5JBHDuXx8Ci7N8
-	b/ha1C0ttMvCMCGMDtbrpay4gt3eoGL6pDW+gobvM86CmUtVEOvzOVJqnR94TJaO3Vhkk86Q18MKB
-	Et5RcE3YOJoHzhuJ+Er3YFRq8C8+cGVxdnNG4L7kcT6j2k42F931LK6hGOOI6N+XuCm91c8sY88h3
-	Jla4Knig==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t7xdi-0000000BLB4-34O0;
-	Mon, 04 Nov 2024 14:01:07 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6121030042E; Mon,  4 Nov 2024 15:01:06 +0100 (CET)
-Date: Mon, 4 Nov 2024 15:01:06 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>, megi@xff.cz,
-	jic23@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20241104140106.GF24862@noisy.programming.kicks-ass.net>
-References: <20241028165336.7b46ce25@canb.auug.org.au>
- <20241101141952.4990f238@canb.auug.org.au>
- <dd740dda-a03e-4f3a-bb46-e551f0799c50@intel.com>
+	s=arc-20240116; t=1730728954; c=relaxed/simple;
+	bh=yOBXWoJhGmMMi+ASyzGvTB+XNlvI3lLoqdX8FGIcD2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fCH1U7NCN7kcubYQHY+wG69VfR1m7lFGxsmqbnEth4DFSenasXn+j14XscvSOMo78vKwHjSuHSkTCn3bDdnC05rApS8+8IN/vCwpSD0eNUP8dbrihyDEqIFFJJD+nMylNCWEQAylSNHEvUhaRm5sp4LYgoalMu37giDdVlQxYi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QojIpzP+; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d63a79bb6so2828055f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 06:02:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730728951; x=1731333751; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l47cezxUWKYUnDwz81zm1LlwzjMrDQ9sTPrEy9RpQS0=;
+        b=QojIpzP+3e0uQT9erWjLunhvYitCTwn/pMWtVPm53qA+X0ZlIROIXcaKwNguuY7jNH
+         eKC5cyzwgq/I77SBKlErX/VgUtqWplsiv6330zffmoewDfN/XhT/CSXyMSZnL1wdQn38
+         drttf76LRfw5ivAbLqwDxcrhlvF1av/keixlqpfRYxwOeR757cQO9gk00yaBgmJ1cahc
+         oJI+8HKZsRO6Io7A/xfxulidWEu1+rtof5nQH9EJG79WEoKagv7PGY82tGdf9OxVaNAs
+         Vsg5oVerKPUnpix1wwtFojpU0qujhPc95N3lkZ1wT6N1aXvLMRNitJoayd/pht1lakKl
+         +QNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730728951; x=1731333751;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l47cezxUWKYUnDwz81zm1LlwzjMrDQ9sTPrEy9RpQS0=;
+        b=QaygyVJBIb+TKR/LSkSPLYfIoMJihorhE2e2hgcqjG1nIQ6SaAt4OloTGHDbw7Neaq
+         bwIPp0YCKjtnMs0jnw+86U24o+N2nS+lJIRTbxRv8xySgUxnLWDGUezPNhKo9bXcR5Xb
+         jxN61A/S7+gROgtV9TBsA9/CzwyecMaPUtu8zvZDMV8DFk7wvBn9ws4AxA+M0hRdh+NN
+         abrt+XMqbSvvnK3CC1OsGpnD5WOFCGJpQER8n+uI0ld2Qwm/CfYI0p+bcdeQJgYmiqL2
+         SvqgaU/KE9KwFLKu7U6frFXBTffOdUcr5ZE4yZ0HoAmWzastYsD5R/Vvb0XrjnibFWmK
+         3tdw==
+X-Gm-Message-State: AOJu0YyO+QekK3rnBjY637fFP41Jv2qurmwBAcWnESyC4pGM5ZelCw1c
+	vE2cikwrvrecec9AQAOS4ciDg044MVABMEBNOKq10L3GsX5IhefOxft68d6RIfg=
+X-Google-Smtp-Source: AGHT+IF6lOtCx/+WZfbTcNvwOSZMIH2PwfCQYGb3bIroLE69OAyACQz4QIii2CX6Xq1JQ3cBHH7kGA==
+X-Received: by 2002:a05:6000:2a8a:b0:37d:47b3:7b82 with SMTP id ffacd0b85a97d-381bea27d6amr13187154f8f.57.1730728950426;
+        Mon, 04 Nov 2024 06:02:30 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381c116ae82sm13284355f8f.93.2024.11.04.06.02.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 06:02:29 -0800 (PST)
+Message-ID: <33458feb-0a05-4714-a7a3-08a9880891d3@linaro.org>
+Date: Mon, 4 Nov 2024 15:02:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dd740dda-a03e-4f3a-bb46-e551f0799c50@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] clocksource/drivers/timer-ti-dm: fix child node
+ refcount handling
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Tony Lindgren <tony@atomide.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20241031-timer-ti-dm-systimer-of_node_put-v3-1-063ee822b73a@gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20241031-timer-ti-dm-systimer-of_node_put-v3-1-063ee822b73a@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-It might help if we put the relevant maintainers on Cc?
-
-On Mon, Nov 04, 2024 at 02:37:57PM +0100, Przemek Kitszel wrote:
-> On 11/1/24 04:19, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > On Mon, 28 Oct 2024 16:53:36 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > 
-> > > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> > > failed like this:
-> > > 
-> > > drivers/iio/magnetometer/af8133j.c: In function 'af8133j_set_scale':
-> > > drivers/iio/magnetometer/af8133j.c:315:12: error: suggest explicit braces to avoid ambiguous 'else' [-Werror=dangling-else]
-> > >    315 |         if (!pm_runtime_status_suspended(dev))
-> > >        |            ^
-> > > cc1: all warnings being treated as errors
-> > > 
-> > > Probably caused by commit
-> > > 
-> > >    fcc22ac5baf0 ("cleanup: Adjust scoped_guard() macros to avoid potential warning")
-> > > 
-> > > I have applied the following for today but I wonder if there may be
-> > > others.
-> > > 
-> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Date: Mon, 28 Oct 2024 16:01:15 +1100
-> > > Subject: [PATCH] fix up for "cleanup: Adjust scoped_guard() macros to avoid
-> > >   potential warning"
-> > > 
-> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > ---
-> > >   drivers/iio/magnetometer/af8133j.c | 3 ++-
-> > >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/iio/magnetometer/af8133j.c b/drivers/iio/magnetometer/af8133j.c
-> > > index d81d89af6283..acd291f3e792 100644
-> > > --- a/drivers/iio/magnetometer/af8133j.c
-> > > +++ b/drivers/iio/magnetometer/af8133j.c
-> > > @@ -312,10 +312,11 @@ static int af8133j_set_scale(struct af8133j_data *data,
-> > >   	 * When suspended, just store the new range to data->range to be
-> > >   	 * applied later during power up.
-> > >   	 */
-> > > -	if (!pm_runtime_status_suspended(dev))
-> > > +	if (!pm_runtime_status_suspended(dev)) {
-> > >   		scoped_guard(mutex, &data->mutex)
-> > >   			ret = regmap_write(data->regmap,
-> > >   					   AF8133J_REG_RANGE, range);
-> > > +	}
-> > >   	pm_runtime_enable(dev);
-> > 
-> > I am still applying this patch.
-> > 
+On 31/10/2024 13:54, Javier Carrasco wrote:
+> of_find_compatible_node() increments the node's refcount, and it must be
+> decremented again with a call to of_node_put() when the pointer is no
+> longer required to avoid leaking the resource.
 > 
-> This patch of yours is necessary, could you make it permanent?
+> Instead of adding the missing calls to of_node_put() in all execution
+> paths, use the cleanup attribute for 'arm_timer' by means of the
+> __free() macro, which automatically calls of_node_put() when the
+> variable goes out of scope.
 > 
-> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+> Fixes: 25de4ce5ed02 ("clocksource/drivers/timer-ti-dm: Handle dra7 timer wrap errata i940")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+
+Applied, thanks
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
