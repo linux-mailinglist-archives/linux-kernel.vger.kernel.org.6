@@ -1,132 +1,108 @@
-Return-Path: <linux-kernel+bounces-395643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3CD9BC0EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:29:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E41839BC0ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:29:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294251F22C18
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:29:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9640282D70
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC291FE10E;
-	Mon,  4 Nov 2024 22:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3771FEFA4;
+	Mon,  4 Nov 2024 22:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1RWd7Bvv"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IK+qHm7v"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE091FE0F4
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC1C1FE11E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730759298; cv=none; b=GMMBEX0Vzco6V1YuZRH/kByyYanRyBtV5bacWDuUfqDEqB2MSRyiuZABaXgTb/oRselQslPlKfYLvPTHY6GeEndjAYtnE8up5r4QECjkYObp9KKFCPqqQaCMy49ubmQbW/VVVoVo9ZFYcKWbL3iZEPI/NxFC2/Tfyrwmp4+0c9A=
+	t=1730759299; cv=none; b=S4cB6u7AeT3mwPw0xtjtMXawac7xzGtw0zRpqGqkhe5q4RI2NTvmLUtrA/HE7qcDk5+zu8RqQ0nE3jKBJlfPlg2fC+o7KSSnYnznj95CJZrfoW247w32QunjWHG5bVSPuf3PltrSqForSl8ZLZZoKsz7fJu8gEx8uyeZG+CNaRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730759298; c=relaxed/simple;
-	bh=jS3VhDQe0RHXucAy7fChPZMlDpJINb08hArPK+wtgmU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NoF64uEdGhhbMlaiRutZkz/4nKUFliCeNtxXEvcm0lAkWwHE4vo4RjNx8cjGE0OQ/DJvyPRz8e7vRgY0F3Wpw7kHmewwfD4tlYQPWKRoK9y+MSPRDipdt5sLoDQWN1n8zqr7UGCUxa5eg8Ks7V/DQJ9sYtV7GYqi1h4NZzkbtww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kerensun.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1RWd7Bvv; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kerensun.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e9d6636498so92887367b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 14:28:16 -0800 (PST)
+	s=arc-20240116; t=1730759299; c=relaxed/simple;
+	bh=dbJRgW5uebXlKtcBol1ClLLvP2/tGNM0XYC93P0716c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lZcmIMSg15QmbubSuD781f15TTF4Fl5+ufgqd/YliCcriRtlIXgM6QeR/+6GPlOLU0L4Iu5tDR1/Ire8SFJws4MV0EtoX0tVu9hVuwDdSnhd8tVClg9x+M35VfSBTB7/LGfyIjGd0udmbLIkEdjURLwPC8IHmMagsAfr3wEhQyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IK+qHm7v; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-83a9cd37a11so187160839f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 14:28:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730759296; x=1731364096; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y1YSqDn0sbFO9SXEJcmAUmq+AuYyNB6VQvHAGKw4UO8=;
-        b=1RWd7Bvvundou4AKtP3w4KX4AnJF8pVzjJVliEC9YSRGHDjeWLkeIEvfd8Hcn9bS/A
-         MtGwsRfSkIrDT1cIOvzks70dr5M6kQoF09O3epxCRzVmZFQSNRf7iS+I2HUaO8mUSlcE
-         cfGFi8UPMKFPWBXmbvfp18g+ueZ1hF9eWsMWAdC6d/u+hG/x3cEFtDTJ1twnqgZ1SNNU
-         t13uWSlaG8Rnw5OMa+hzs2xqbrGRZ/2L+G2uU8YUfXI8Br67pZeLfct2EXAup1FgRl7W
-         Ux4d+80gbICiMzZ6uAmW1XIoPcocX4bYVZjavMccepPY/m40eyYCng9XdbT5Kbaf/pFo
-         xP2w==
+        d=linuxfoundation.org; s=google; t=1730759297; x=1731364097; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0PpHaAepvBwCmmRuTSYTtbzJ2tDagh2UIfBmzCGWWKk=;
+        b=IK+qHm7voMcNvSYXcERGg25agZY6N2NaJo54JydavwX052wR/Z2x4zoF/o2C492GT+
+         dddCGY1TuH3q2yMhlvfizRASR8ZOYUu30XyjdHFtP6fIuhvw3RrrJRSxziQ+N8NZLY2c
+         XVQobCJTeVCBUe5505roPTy//dsV0b4LkJTFU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730759296; x=1731364096;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y1YSqDn0sbFO9SXEJcmAUmq+AuYyNB6VQvHAGKw4UO8=;
-        b=CVEiMrXDmjJLKiuAM6zpA7OZOSGzP46dNxL7xqF66bPDVZA4bGpmSQP6UF5FUHhBFA
-         oVCdzHCpcvp84pAQhZabi2qRJda7EzllD0TMKzpY1so4CDTrDdQE0L4Yx179PfgwKDWs
-         KIrrvrekMZlIs+fWh6FngboHm/9Hn8cU49Ckw00IL4M3e1qUkacs+l7kfimYXs0uZAVz
-         d5/IT+S5fLPFCZnASnwxOs94taj3yqb+Bl7qHzezHL/P8fosxyVdTSz6PNgRnxAIv6ri
-         kPTRdoq7jPOOlyCpwSaetXoud2cmSmpKlOYvXop3jdkkMXvyix2zP1qdRvTUPdhmzQUY
-         yNLw==
-X-Forwarded-Encrypted: i=1; AJvYcCURoIdmxqTN2hH10zzW8tcgWycbr2lMqUEpZePvdhYemERUzg43az/kAHZ+xAtqSCTFdyl7/IdIkfm3Nqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhCShra7yLyyA5l669BRQr2j2CqGEKiTuTRr9SjgGH7Fqz2eFM
-	gLbBGXsEP8RfFztR+hOWJl82Ox9wb5iERSQAPfsrbQokdjWIYstiy4s5L3yTeftSMeYJmAdN39w
-	j+jJyLaywDA==
-X-Google-Smtp-Source: AGHT+IEwJ6XoH9jYvE9XepfbYW66gSHe6pDYBUEJ6j7mRhsOIIUs4LZTeXXSxAJhVRpRqXv6MfH+lzcIHJo1EQ==
-X-Received: from kerensun.svl.corp.google.com ([2620:15c:2c5:11:2520:b863:90ba:85bc])
- (user=kerensun job=sendgmr) by 2002:a05:690c:802:b0:6ea:1f5b:1f5e with SMTP
- id 00721157ae682-6ea52518ac3mr273147b3.4.1730759295937; Mon, 04 Nov 2024
- 14:28:15 -0800 (PST)
-Date: Mon,  4 Nov 2024 14:27:37 -0800
-In-Reply-To: <20241104222737.298130-1-kerensun@google.com>
+        d=1e100.net; s=20230601; t=1730759297; x=1731364097;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0PpHaAepvBwCmmRuTSYTtbzJ2tDagh2UIfBmzCGWWKk=;
+        b=NhXqOwlo6+12RSLHqHlLLbO+TMh3w5/qAHWRBS3c13I4BwGXJ/cjDnllnzmMAUHVC3
+         T1PFf7NX3KhA0hQDzUAyma8qmJLKDlsz0Tn/zVRgFaxelZXqfewCSR6hQCCalp0LwGKK
+         62bDS0c2pON7QG2tPDYO9IhUt6gxD7K3Ri5m2wMXudLmE3Qr3P10w5S6K18+61PZsjQ2
+         9yJAz4REFNtrMBJnD2Xk4oDRFBlT6oa0uQuAmessdja62yyR41uaJCLDSubKa7rgRYvA
+         Uvr0uEsRK9tP0ZaGqpOH4KTB/LA3zQy4CCy+jHTeGss1jf/BhDDQinRJA18AfAl+RzVp
+         F5kA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMfP5qhMPOFffSNkdfoTpCzRdQCCjE0zLkBSIeuUsFIJIfH6EraT+V8UpGRbkOP4Vt5lcSSaeiGpRDrWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOplcUwOC53WCjLdrdK3xII5RIppKGQK8LLn1sez/w0dXk/Sxh
+	QAomckSVhq+JN5FDutTbXq7CgTJsluhTAkAyj9qiIF5QRsNLet9mSEyIST/pjkU=
+X-Google-Smtp-Source: AGHT+IHvvadZZAWAqd0cl7rveBR/vWFq3SR2vE7sVfhYTUcxMLumTtQzoTJVjt60yl6N+DWew9ZiZQ==
+X-Received: by 2002:a05:6602:29c2:b0:83a:71c6:26f4 with SMTP id ca18e2360f4ac-83b1c5ee442mr3519890339f.16.1730759297088;
+        Mon, 04 Nov 2024 14:28:17 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de04977c73sm2077086173.91.2024.11.04.14.28.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 14:28:16 -0800 (PST)
+Message-ID: <3ba7cd24-a68b-4996-8b36-dbf3164db8f0@linuxfoundation.org>
+Date: Mon, 4 Nov 2024 15:28:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241104222737.298130-1-kerensun@google.com>
-X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
-Message-ID: <20241104222737.298130-5-kerensun@google.com>
-Subject: [PATCH 4/4] mm: Replace simple_strtoul() with kstrtoul()
-From: Keren Sun <kerensun@google.com>
-To: akpm@linux-foundation.org
-Cc: roman.gushchin@linux.dev, hannes@cmpxchg.org, mhocko@kernel.org, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Keren Sun <kerensun@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 00/15] selftests/resctrl: Support diverse platforms
+ with MBM and MBA tests
+To: Reinette Chatre <reinette.chatre@intel.com>, fenghua.yu@intel.com,
+ shuah@kernel.org, tony.luck@intel.com, peternewman@google.com,
+ babu.moger@amd.com, ilpo.jarvinen@linux.intel.com
+Cc: maciej.wieczor-retman@intel.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <cover.1729804024.git.reinette.chatre@intel.com>
+ <aa643c9b-8ce5-4cb1-98f6-645224aafdf8@linuxfoundation.org>
+ <5b2b54b8-77fa-4ef9-aa08-549cab91eb32@intel.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <5b2b54b8-77fa-4ef9-aa08-549cab91eb32@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-simple_strtoul() has caveat and is obsolete, use kstrtoul() instead in mmcg.
+On 11/4/24 15:16, Reinette Chatre wrote:
+> Hi Shuah,
+> 
+> On 10/24/24 3:36 PM, Shuah Khan wrote:
+>> On 10/24/24 15:18, Reinette Chatre wrote:
+>>
+>> Is this patch series ready to be applied?
+>>
+> 
+> It is now ready after receiving anticipated tags. Could you please consider it for inclusion?
+> 
 
-Signed-off-by: Keren Sun <kerensun@google.com>
----
- mm/memcontrol-v1.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+yes. I will apply the series for the next release.
 
-diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index 5e1854623824..260b356cea5a 100644
---- a/mm/memcontrol-v1.c
-+++ b/mm/memcontrol-v1.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- 
-+#include "linux/kstrtox.h"
- #include <linux/memcontrol.h>
- #include <linux/swap.h>
- #include <linux/mm_inline.h>
-@@ -1922,17 +1923,15 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 
- 	buf = strstrip(buf);
- 
--	efd = simple_strtoul(buf, &endp, 10);
--	if (*endp != ' ')
-+	kstrtoul(buf, 10, efd);
-+	if (*buf != ' ')
- 		return -EINVAL;
--	buf = endp + 1;
-+	buf++;
- 
--	cfd = simple_strtoul(buf, &endp, 10);
--	if (*endp == '\0')
--		buf = endp;
--	else if (*endp == ' ')
--		buf = endp + 1;
--	else
-+	kstrtoul(buf, 10, cfd);
-+	if (*buf == ' ')
-+		buf++;
-+	else if (*buf != '\0')
- 		return -EINVAL;
- 
- 	event = kzalloc(sizeof(*event), GFP_KERNEL);
--- 
-2.47.0.163.g1226f6d8fa-goog
+thanks,
+-- Shuah
 
 
