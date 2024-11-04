@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-395146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD2E9BB925
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:41:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC3B9BB93D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:43:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6038B2831A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:41:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6A91F22ACC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EDA1C07C8;
-	Mon,  4 Nov 2024 15:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF551C0DE2;
+	Mon,  4 Nov 2024 15:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNSBI6QC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B48UBxn8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A204C1BF81B;
-	Mon,  4 Nov 2024 15:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF791C07D7;
+	Mon,  4 Nov 2024 15:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730734862; cv=none; b=pIUvlkA5djpdKKRG7RB1rWnbobdqqqNsKoyl6455Qv6QAWBkLcbeGGLzEYVKLKiR2zx5DxdSuE64JscRbxJpXUzw6USKPRCFL8dbpu33RYPqCTq+p5EvqkIrE56p5UqbiCxCo0Iif+fz+LVcLRIzOwsFr8V3Xqj5T1a62NB0aZA=
+	t=1730734993; cv=none; b=KNksEqZ9K0ouoZjWylxhJpN0eeQ1jqc88Qzow4Mz2ipIq6lnvJyJ5uXA9b6oNjXZQSB0p7Iepg5vB4kT35r5kdKyAU77Uf8IGQBnIapR9cvO73jSx6to/uIwx6OtL0hyZOs4LLrY2QWSfxN0XfDIYnhqcOSgf4lEWPwOYKzy9+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730734862; c=relaxed/simple;
-	bh=3d1pXGBz/YADEkiDdLoMWwcVJksBRigwDmvlvnVgbM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XMyNLoXI8S1JXfgkLlnKlWBbCr/jW38sTzS9dISmvbHpL0ISndwfV6XWaB0Cih3H43jsYWz3V5T86XnsmtRZcDl425BVs/mQP6FRdzayxSqIaUSFzCn0aQ1qqSdcqOk+pm0h9MKqGzu7bx4CZr6BGGWxlUpC269TBJdEWdDjd44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNSBI6QC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79E42C4CECE;
-	Mon,  4 Nov 2024 15:41:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730734861;
-	bh=3d1pXGBz/YADEkiDdLoMWwcVJksBRigwDmvlvnVgbM8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dNSBI6QCWpughxQI/tuKAPexFYL8fgVC7ansduqnEAqN0hAfCHLSTeqFHfS4cUVF/
-	 wJmmau02ES6KQ6ZGVNbmiQtbl7tYlF56gfT+EfX9E0Mxi08FfeOU8OnToI3PseHsgp
-	 VRjp+VDexwro8QJ6809N/0J76S00daZ8Q9ScDSV04JzC70SM/O5E6WO8HppmcfzAAo
-	 HK9yvTSJ5Ujgoq6+GzOR+fMhiFvqA8K7OyxQ1y6HRZEcoAYY2FP/P2vgUETyuEOZ+M
-	 ubyIOqNGMCawOHLoMrjBkvrh9Z79ee75Ic2SLB/W9EvNH8wNexoC0kNBfJfriHYsCO
-	 DQkIXszZAnuEg==
-Date: Mon, 4 Nov 2024 09:40:59 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Guido =?iso-8859-1?Q?G=FAnther?= <agx@sigxcpu.org>,
-	Robert Chiras <robert.chiras@nxp.com>,
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: display: nwl-dsi: Allow 'data-lanes'
- property for port@1
-Message-ID: <20241104154059.GA203243-robh@kernel.org>
-References: <20241031194714.2398527-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1730734993; c=relaxed/simple;
+	bh=Se1F6MgZpmXOAauCRrSlWdimqdGEP7AiETjcgYOBfHQ=;
+	h=From:To:CC:In-Reply-To:References:Subject:Message-ID:Date:
+	 MIME-Version:Content-Type; b=kD4EM3xfnXS6JWiAkrp8RWm8MQAGWbWwDkjvHe4jBU4oMgsVOnEuIFVmHt8JUAUSfW78Buq/FcruAtWV9eceWyXEUeapbhF1PFgoafyqJSsRexxamc62ER2hu1w0FDi+01YRMo0TzkgFBPd6ns9q8z7B1Njf61NvP6h/R7JFZ5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B48UBxn8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4Bu4sG028042;
+	Mon, 4 Nov 2024 15:43:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9gzKW2w6+lRVDrV6jRlI+WcrN4vRWHQhDRGxfD3GANQ=; b=B48UBxn8aIn6lTv6
+	43V170guUdvTYyE0xoHReFldTwMQzEaH2eJGsL8e7kiSbDpG90CDpnpJQ29SLdnv
+	RftV6PbwWApiSqJlH4HAqGPE4qv419F1OvcuoMjVDyiHtt6em6mEQFP/19tR51ft
+	kU8eNODOwzpgaKD9oKO0foqr2xtSBvzEsB81C0Stu89d5YPgDIMMj9pXHIkGRZll
+	8FDX/Zb6ZRqyvjUi8bWo1mWTwsFrS62LpzuUM50ANQRLD10Og0OVVNg6pA72+mh9
+	xJ1NYHJ9ShNLo9Y5EoNXylZ9PFTy1sjFEumSU9UPEwzQNxvcINV7aHIIVkIT2NlW
+	W4yYTQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42p5ye2tmj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 15:43:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A4Fh4sH011730
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Nov 2024 15:43:04 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 4 Nov 2024
+ 07:43:03 -0800
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+To: <ath12k-devel-internal@qti.qualcomm.com>, Kalle Valo <kvalo@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, Arnd Bergmann <arnd@kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
+In-Reply-To: <20241028-ath12k_qmi_driver_event_work-v1-1-0d532eb593fa@quicinc.com>
+References: <20241028-ath12k_qmi_driver_event_work-v1-1-0d532eb593fa@quicinc.com>
+Subject: Re: [PATCH] wifi: ath12k: mark QMI driver event helpers as
+ noinline
+Message-ID: <173073498362.2435998.11227075604686826531.b4-ty@quicinc.com>
+Date: Mon, 4 Nov 2024 07:43:03 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031194714.2398527-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Dx6AFyszWS8nBwhUKUyivxqrNZZ1WWdv
+X-Proofpoint-GUID: Dx6AFyszWS8nBwhUKUyivxqrNZZ1WWdv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ mlxscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
+ suspectscore=0 priorityscore=1501 clxscore=1015 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040135
 
-On Thu, Oct 31, 2024 at 03:47:14PM -0400, Frank Li wrote:
-> Change $ref of port@1 from 'port' to 'port-base' and add 'endpoint'
-> property referencing video-interfaces.yaml. Allow 'data-lanes' values
-> 1, 2, 3, and 4 for port@1.
 
-Describe "why", not what the changes are. I can read the diff. Why is 
-the IP has a configurable number of lanes...
+On Mon, 28 Oct 2024 07:08:40 -0700, Jeff Johnson wrote:
+> As described in [1], compiling the ath12k driver using clang with
+> KASAN enabled warns about some functions with excessive stack usage,
+> with the worst case being:
+> 
+> drivers/net/wireless/ath/ath12k/qmi.c:3546:13: warning: stack frame size (2456) exceeds limit (1024) in 'ath12k_qmi_driver_event_work' [-Wframe-larger-than]
+> 
+> Nathan [2] highlighted work done by Arnd [3] to address similar
+> issues in other portions of the kernel.
+> 
+> [...]
 
-> 
-> Fix below CHECK_DTB warnings:
-> arch/arm64/boot/dts/freescale/imx8mq-tqma8mq-mba8mx-lvds-tm070jvhg33.dtb:
->  dsi@30a00000: ports:port@1:endpoint: Unevaluated properties are not allowed ('data-lanes' was unexpected)
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/display/bridge/nwl-dsi.yaml       | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> index 350fb8f400f02..5952e6448ed47 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> @@ -111,11 +111,27 @@ properties:
->          unevaluatedProperties: false
->  
->        port@1:
-> -        $ref: /schemas/graph.yaml#/properties/port
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
->          description:
->            DSI output port node to the panel or the next bridge
->            in the chain
->  
-> +        properties:
-> +          endpoint:
-> +            $ref: /schemas/media/video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                description: array of physical DSI data lane indexes.
-> +                minItems: 1
-> +                items:
-> +                  - const: 1
-> +                  - const: 2
-> +                  - const: 3
-> +                  - const: 4
-> +
->      required:
->        - port@0
->        - port@1
-> -- 
-> 2.34.1
-> 
+Applied, thanks!
+
+[1/1] wifi: ath12k: mark QMI driver event helpers as noinline
+      commit: 07826419700d4e7429523bbb4e936df6bca19c5e
+
+Best regards,
+-- 
+Jeff Johnson <quic_jjohnson@quicinc.com>
+
 
