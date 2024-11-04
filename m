@@ -1,98 +1,118 @@
-Return-Path: <linux-kernel+bounces-394359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3189BADEB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:21:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BBF9BADED
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:21:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 565351F228BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:21:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C94C1F2291B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46AD1AAE10;
-	Mon,  4 Nov 2024 08:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D801AAE1D;
+	Mon,  4 Nov 2024 08:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CGXv0AkY"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRJXQAXX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0A518FC7C;
-	Mon,  4 Nov 2024 08:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123C4165F04;
+	Mon,  4 Nov 2024 08:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730708481; cv=none; b=ICmVq8zJ+BsezONiEiW4hSuwkPjxSv/wazctN52PjDwP0anUe3dhiVvla/iZ7VHvqA2GZLvXGnaHahhI9FNLRcmKrdfEkhHJ7JVcXHNSGk6SwuhgSSxah8dllEDnSarQ+wmoMBWBnr31FKKkjW1qCfQGJp5x9mRyn0lXJ/jw3rc=
+	t=1730708496; cv=none; b=gYOQPk05vYcjxYQfWuAh2C55CVR4KPg4VMqXTLQSaVzO7t6riwDtxqgJlKwJK/kl7PzqCbR2gxd0uyl+BGmxdfBtpeLYXgkJqoVu5HGpgUNlxvJO02aeLkGZ+6g32AsrObdTudbvbuib1GX14TnGK+BwJdIT5mlxR3HJPNnA2BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730708481; c=relaxed/simple;
-	bh=/NHMSmiKagh8k4QI2PD8QCbsekeNsMzZplddfeOLh/c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ANGxhwjwryD3YBTFQj2OwRSsCskF/c2SmZL3WipiApUKWYWcPB+Z01NY0j2D6RXwMWjzGUrEJLIJFQI7Tynso4iXrHvbSiGVmjKi6rx2jnmQ65eTv0k+RFVRCJ+8F5A+dJRtylkxV2RJv3sDu0kpc+hqmznBHmq1LapwHPED9aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CGXv0AkY; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730708475; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=OevIAV73VFpELMkDuAHgCh1n+i8KBe/1HDt6dlqIi5g=;
-	b=CGXv0AkYBXQ5LpeGx52UMX4/M5m+gdiYcY+IKy7aONUYuv4wNevREHCSns4Y2fuol2sTbX10/9+Syk6zg0neBZRuhHHsTxhGyK5fpGyfkyyF3OxYiyqqnaWe7WlcbEqH4gQtvtCbfi6LoLRE7Mo/EvKiKkXcslaByFZl8vaf8D0=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WIdgWGI_1730708470 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 04 Nov 2024 16:21:15 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: chuck.lever@oracle.com
-Cc: jlayton@kernel.org,
-	neilb@suse.de,
-	okorniev@redhat.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] fs/nfsd: Remove the unused variable sb
-Date: Mon,  4 Nov 2024 16:21:09 +0800
-Message-Id: <20241104082109.49986-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1730708496; c=relaxed/simple;
+	bh=Uo6h7Rc21fEod+/+f108Uoio6Mmq+r3xbgnntl6Rrz0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wr6jF593968DmpRHONn/7yqmoUyN24PIpMirkyOdCt1WG1e+YA9vaADjVYWyrTvTJHn9sKTr81GQ0qt3m/wWHtXz8Apg7y+2DXOZp8rJZH3acbltYLUqsrqg/F0BkCj2GH6mOD/Zn8nA6/HySKAmLuI6PiUf1anCGJsnhUSMueQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRJXQAXX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B584C4CECE;
+	Mon,  4 Nov 2024 08:21:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730708494;
+	bh=Uo6h7Rc21fEod+/+f108Uoio6Mmq+r3xbgnntl6Rrz0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jRJXQAXX1XKUiToBETTNS2k7JcMMk2yFiG2PVdgKsiXPy1yZQWXAxhWvHj94JUrHR
+	 LMj6P8+4Ky/9nL/aXLUqRE5FDJoOY0SlfPKWf3io50m4eg8E+3BMokCrfLKmlQgwob
+	 47MbHKApiUSYLlxfE56blPt7cx9EB84eMHtFRSsLCjp8/U4Ppl/0GtMFoQXvCLKLYg
+	 rLzZ/lRDnALZu4/4fP5ZYDh+bP33b08lUPKoJkV9/BpjK2lPJ1/60axykwUVbkMXXM
+	 2K/Wjda1SnbAj7EYu2U36rC7moJJrOvAyrBwiASXQzz/zidK1MV99Rz9R0t0UxeVLU
+	 wIr1lFyvDoIYQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Jian Shen <shenjian15@huawei.com>,
+	Salil Mehta <salil.mehta@huawei.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Will Deacon <will@kernel.org>,
+	Joerg Roedel <jroedel@suse.de>,
+	Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jijie Shao <shaojijie@huawei.com>,
+	Peiyang Wang <wangpeiyang1@huawei.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [net-next] net: hns3: add IOMMU_SUPPORT dependency
+Date: Mon,  4 Nov 2024 09:21:21 +0100
+Message-Id: <20241104082129.3142694-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Variable sb is not effectively used, so delete it.
+From: Arnd Bergmann <arnd@arndb.de>
 
-fs/nfsd/nfs4state.c:7988:22: warning: variable ‘sb’ set but not used.
+The hns3 driver started filling iommu_iotlb_gather structures itself,
+which requires CONFIG_IOMMU_SUPPORT is enabled:
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11648
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+drivers/net/ethernet/hisilicon/hns3/hns3_enet.c: In function 'hns3_dma_map_sync':
+drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:395:14: error: 'struct iommu_iotlb_gather' has no member named 'start'
+  395 |  iotlb_gather.start = iova;
+      |              ^
+drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:396:14: error: 'struct iommu_iotlb_gather' has no member named 'end'
+  396 |  iotlb_gather.end = iova + granule - 1;
+      |              ^
+drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:397:14: error: 'struct iommu_iotlb_gather' has no member named 'pgsize'
+  397 |  iotlb_gather.pgsize = granule;
+      |              ^
+
+Add a Kconfig dependency to make it build in random configurations.
+
+Cc: Will Deacon <will@kernel.org>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux.dev
+Fixes: f2c14899caba ("net: hns3: add sync command to sync io-pgtable")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/nfsd/nfs4state.c | 2 --
- 1 file changed, 2 deletions(-)
+I noticed that no other driver does this, so it would be good to
+have a confirmation from the iommu maintainers that this is how
+the interface and the dependency is intended to be used.
+---
+ drivers/net/ethernet/hisilicon/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 5d47a28ef62d..45e487bf0582 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -7986,7 +7986,6 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	struct nfsd4_blocked_lock *nbl = NULL;
- 	struct file_lock *file_lock = NULL;
- 	struct file_lock *conflock = NULL;
--	struct super_block *sb;
- 	__be32 status = 0;
- 	int lkflg;
- 	int err;
-@@ -8006,7 +8005,6 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	status = fh_verify(rqstp, &cstate->current_fh, S_IFREG, 0);
- 	if (status != nfs_ok)
- 		return status;
--	sb = cstate->current_fh.fh_dentry->d_sb;
- 
- 	if (lock->lk_is_new) {
- 		if (nfsd4_has_session(cstate))
+diff --git a/drivers/net/ethernet/hisilicon/Kconfig b/drivers/net/ethernet/hisilicon/Kconfig
+index 65302c41bfb1..790efc8d2de6 100644
+--- a/drivers/net/ethernet/hisilicon/Kconfig
++++ b/drivers/net/ethernet/hisilicon/Kconfig
+@@ -91,6 +91,7 @@ config HNS_ENET
+ config HNS3
+ 	tristate "Hisilicon Network Subsystem Support HNS3 (Framework)"
+ 	depends on PCI
++	depends on IOMMU_SUPPORT
+ 	select NET_DEVLINK
+ 	select PAGE_POOL
+ 	help
 -- 
-2.32.0.3.g01195cf9f
+2.39.5
 
 
