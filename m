@@ -1,134 +1,113 @@
-Return-Path: <linux-kernel+bounces-394580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC7D9BB164
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:41:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA799BB168
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1710E1F232E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:41:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2093B223BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CF01B21A0;
-	Mon,  4 Nov 2024 10:40:59 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6861B21B4;
+	Mon,  4 Nov 2024 10:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E/ae7tAo"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6881B218D;
-	Mon,  4 Nov 2024 10:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C6F1AC458
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730716858; cv=none; b=Lkr8mzowOqAC/aQOotoYmg5xeVPqqAx5Qkz8j8W5LHudW3kmvaP9tq1/22wCDknEQUmyDHL6aJpIf2qf2rEqpdG1qO+2Z11TAMU3uLPF3QJjGzLQnC69TmoOL89jLbwp6x2Yeaw8dwa+t3qtfu+y2mSTip7SGXW2j40Dj4I7p2o=
+	t=1730716928; cv=none; b=ch8t6rMZ9xOoEPDOC3dac/9Uxe9bFPR638RW+bDBP32kCrFHXwIPscdp8GbIUSNMPfNiYST2j/kKP3sVhg4dDAN5zvqJAcddtF4Qo1cn7yi/f/BRFM8tAtrrk4CgLZnC3JaGLTe6Jk9HhEGwKI107fiVAuDm7cmYi++LHoHfmfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730716858; c=relaxed/simple;
-	bh=m6opQSBcWWbuVEdYYZk/8Nf7W4rLK+/ozTtoizYvE0w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OR517a00Y/VNEj2f6g1oxl9Vyu6Pwtjzf8uaxcKwYb9sYlyme+XvEO8WFofZgyfinItdD+IacB53QITjOQr6NDp3Q1HN9kw4bqSKRGiq8Tlk5AYPlG2vCTv2secZHaURiHS+vu8u1n+brnMi6p4BKGuAYUpBkGI8evcHF7ELjwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xhnv62zP0z1JB6K;
-	Mon,  4 Nov 2024 18:36:18 +0800 (CST)
-Received: from kwepemk500014.china.huawei.com (unknown [7.202.194.99])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5A50F1A0188;
-	Mon,  4 Nov 2024 18:40:52 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- kwepemk500014.china.huawei.com (7.202.194.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 4 Nov 2024 18:40:51 +0800
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Mon, 4 Nov 2024 11:40:49 +0100
-From: Salil Mehta <salil.mehta@huawei.com>
-To: Robin Murphy <robin.murphy@arm.com>, Arnd Bergmann <arnd@kernel.org>,
-	"shenjian (K)" <shenjian15@huawei.com>
-CC: Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>, Joerg Roedel
-	<jroedel@suse.de>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>, "Andrew
- Lunn" <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, shaojijie <shaojijie@huawei.com>, wangpeiyang
-	<wangpeiyang1@huawei.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] [net-next] net: hns3: add IOMMU_SUPPORT dependency
-Thread-Topic: [PATCH] [net-next] net: hns3: add IOMMU_SUPPORT dependency
-Thread-Index: AQHbLpKYY9Lsz1VxeUenvFuoDgyBFLKm2vEAgAASuSA=
-Date: Mon, 4 Nov 2024 10:40:49 +0000
-Message-ID: <96df804b6d9d467391fda27d90b5227c@huawei.com>
-References: <20241104082129.3142694-1-arnd@kernel.org>
- <069c9838-b781-4012-934a-d2626fa78212@arm.com>
-In-Reply-To: <069c9838-b781-4012-934a-d2626fa78212@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1730716928; c=relaxed/simple;
+	bh=Z647jXU0dS+SnMytYB8lAXfsaI5ENPQcmnOoauyJQUA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OwjhZ9NvHhfUfsCmYXTtXYBnRsEMaYdZxaAuhgWmoXoRcSkwiIBdUk6M08Znrk9xtRcGRw3K4VG8cwSK10Y4SCWLugsILr9ZMCLbMtdmDgHZD9upNWyJF3GvgLxdpB2JvjqPplWxdwdzlyf/F6H/RjAg08mC6aVxQvXyboxqg0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E/ae7tAo; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e30cef4ac5dso3584595276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:42:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730716924; x=1731321724; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ShfIvpaQ9LTHGoEs8YYBNIijVddSU0+GArnr30PCRRs=;
+        b=E/ae7tAoLU9J+e4aQEfqzQRD+klZHBDEEV+0QSF0BjqJaU8ZGX7BiNBXPQttNv4yNc
+         q2x6uiBIAIQ3AUBjmduGx1RDsQuNOaIr2n+N0JFr4CkLoa1UR/rNfPmJToIJRv/KpTZg
+         L+0qOkjKgh1u/amDgZe6dc40wfKPLvvDquU/4olC1Oen182C+OI/q6K8QxwP0HKbS4QY
+         IoqTSKPc2jAsTHIqO0cFeeakPtft/UTkkdIkWHBSs7TKNPqvRzuJnD3hw/wZCCDEOg5W
+         mii4fihLlfhz+L+l+4EzINd3UP+MPQ5HK586TNsqVR2LgCN1xnJJVxMcV9vM02hKmgFw
+         F9tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730716924; x=1731321724;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ShfIvpaQ9LTHGoEs8YYBNIijVddSU0+GArnr30PCRRs=;
+        b=T4LnE6KkrHjdV7fw6vI0/laSGTdWjc+cTmETo6Nd+xs/bnWBbL8lht7pvnc2DGA7Vr
+         +xfXpWk6/ODDsPgzgwA09IWmRhtgcq/DuSSXzwGudFZAeOVw0dFYqBCbT5RWdl4gln6F
+         8NODWLf4Xfj83MfzwwiFNgojtwxfDVhN/z3wY3SoK+N+X8xu8nOUZc1ZBXTz1vbQBXX2
+         IYCBQcJvZzXJTOTJ8hjr6xq0xEi4U5PhTp5XFF733MK79QXqD7kLteKk7Dx5Te/wxcjk
+         K/qJQ2Hb8RZPoLHZrfN1xSRrPyXVGe6Zc7QUhH2/JqKnxXRRoXXTZQGbJwPBsL3QgYF7
+         VYzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvDGzAd/wYPaQE81jxYSvx7NX4gG5MD+TdHxaHQ3JtTVtOGdKB31S/gkNCZXdNSG74ohZMV0K1uvbSfxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx52pnz1ZEVaF/jGHn6uceBEr2avnydO3qtSM77lEii9Ez4AtLo
+	HJFcpbmQCizGZ/cOO2yrJaaHIPKEREmFctafKf57yP7kjj+qLFQAHZTOzJC5FrZsA23SyySc6lk
+	YdJHRoHzReTl7KrtLCtPXiBREyu10Ulvy5NTP1CKdjLlihByOlnirZg==
+X-Google-Smtp-Source: AGHT+IH+YgpZN11wcgktvcVPO77JYSvdveawjqJ3QCFGns8tPyeyiEiVzTVe/qr9NJZ94QECOQ1arMRrm2nem6SVygY=
+X-Received: by 2002:a05:690c:445:b0:6ea:9bca:9fdc with SMTP id
+ 00721157ae682-6ea9bcaa343mr23295447b3.34.1730716924387; Mon, 04 Nov 2024
+ 02:42:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241017-sar2130p-usb-v1-1-21e01264b70e@linaro.org>
+ <gohuncowxxud4rilmr23q3zc6rnkoqpbkl6v4puiexegvzr3fm@2zt4olzo64bu> <2024110458-seclusion-impatient-a4ee@gregkh>
+In-Reply-To: <2024110458-seclusion-impatient-a4ee@gregkh>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 4 Nov 2024 10:41:53 +0000
+Message-ID: <CAA8EJprVitnOubd3wqzgRf1-BeQqM=pVfOHp8xu-MY-wi7=aPQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: usb: qcom,dwc3: Add SAR2130P compatible
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-SEkgUm9iaW4sDQoNCj4gIEZyb206IFJvYmluIE11cnBoeSA8cm9iaW4ubXVycGh5QGFybS5jb20+
-DQo+ICBTZW50OiBNb25kYXksIE5vdmVtYmVyIDQsIDIwMjQgMTA6MjkgQU0NCj4gIFRvOiBBcm5k
-IEJlcmdtYW5uIDxhcm5kQGtlcm5lbC5vcmc+OyBzaGVuamlhbiAoSykNCj4gIDxzaGVuamlhbjE1
-QGh1YXdlaS5jb20+OyBTYWxpbCBNZWh0YSA8c2FsaWwubWVodGFAaHVhd2VpLmNvbT4NCj4gIENj
-OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPjsgV2lsbCBEZWFjb24gPHdpbGxAa2VybmVs
-Lm9yZz47DQo+ICBKb2VyZyBSb2VkZWwgPGpyb2VkZWxAc3VzZS5kZT47IGlvbW11QGxpc3RzLmxp
-bnV4LmRldjsgQW5kcmV3IEx1bm4NCj4gIDxhbmRyZXcrbmV0ZGV2QGx1bm4uY2g+OyBEYXZpZCBT
-LiBNaWxsZXIgPGRhdmVtQGRhdmVtbG9mdC5uZXQ+OyBFcmljDQo+ICBEdW1hemV0IDxlZHVtYXpl
-dEBnb29nbGUuY29tPjsgSmFrdWIgS2ljaW5za2kgPGt1YmFAa2VybmVsLm9yZz47DQo+ICBQYW9s
-byBBYmVuaSA8cGFiZW5pQHJlZGhhdC5jb20+OyBzaGFvamlqaWUgPHNoYW9qaWppZUBodWF3ZWku
-Y29tPjsNCj4gIHdhbmdwZWl5YW5nIDx3YW5ncGVpeWFuZzFAaHVhd2VpLmNvbT47IG5ldGRldkB2
-Z2VyLmtlcm5lbC5vcmc7DQo+ICBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+ICBTdWJq
-ZWN0OiBSZTogW1BBVENIXSBbbmV0LW5leHRdIG5ldDogaG5zMzogYWRkIElPTU1VX1NVUFBPUlQN
-Cj4gIGRlcGVuZGVuY3kNCj4gIA0KPiAgT24gMjAyNC0xMS0wNCA4OjIxIGFtLCBBcm5kIEJlcmdt
-YW5uIHdyb3RlOg0KPiAgPiBGcm9tOiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPg0KPiAg
-Pg0KPiAgPiBUaGUgaG5zMyBkcml2ZXIgc3RhcnRlZCBmaWxsaW5nIGlvbW11X2lvdGxiX2dhdGhl
-ciBzdHJ1Y3R1cmVzIGl0c2VsZiwNCj4gID4gd2hpY2ggcmVxdWlyZXMgQ09ORklHX0lPTU1VX1NV
-UFBPUlQgaXMgZW5hYmxlZDoNCj4gID4NCj4gID4gZHJpdmVycy9uZXQvZXRoZXJuZXQvaGlzaWxp
-Y29uL2huczMvaG5zM19lbmV0LmM6IEluIGZ1bmN0aW9uDQo+ICAnaG5zM19kbWFfbWFwX3N5bmMn
-Og0KPiAgPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9oaXNpbGljb24vaG5zMy9obnMzX2VuZXQuYzoz
-OTU6MTQ6IGVycm9yOiAnc3RydWN0DQo+ICBpb21tdV9pb3RsYl9nYXRoZXInIGhhcyBubyBtZW1i
-ZXIgbmFtZWQgJ3N0YXJ0Jw0KPiAgPiAgICAzOTUgfCAgaW90bGJfZ2F0aGVyLnN0YXJ0ID0gaW92
-YTsNCj4gID4gICAgICAgIHwgICAgICAgICAgICAgIF4NCj4gID4gZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvaGlzaWxpY29uL2huczMvaG5zM19lbmV0LmM6Mzk2OjE0OiBlcnJvcjogJ3N0cnVjdA0KPiAg
-aW9tbXVfaW90bGJfZ2F0aGVyJyBoYXMgbm8gbWVtYmVyIG5hbWVkICdlbmQnDQo+ICA+ICAgIDM5
-NiB8ICBpb3RsYl9nYXRoZXIuZW5kID0gaW92YSArIGdyYW51bGUgLSAxOw0KPiAgPiAgICAgICAg
-fCAgICAgICAgICAgICAgXg0KPiAgPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9oaXNpbGljb24vaG5z
-My9obnMzX2VuZXQuYzozOTc6MTQ6IGVycm9yOiAnc3RydWN0DQo+ICBpb21tdV9pb3RsYl9nYXRo
-ZXInIGhhcyBubyBtZW1iZXIgbmFtZWQgJ3Bnc2l6ZScNCj4gID4gICAgMzk3IHwgIGlvdGxiX2dh
-dGhlci5wZ3NpemUgPSBncmFudWxlOw0KPiAgPiAgICAgICAgfCAgICAgICAgICAgICAgXg0KPiAg
-Pg0KPiAgPiBBZGQgYSBLY29uZmlnIGRlcGVuZGVuY3kgdG8gbWFrZSBpdCBidWlsZCBpbiByYW5k
-b20gY29uZmlndXJhdGlvbnMuDQo+ICA+DQo+ICA+IENjOiBXaWxsIERlYWNvbiA8d2lsbEBrZXJu
-ZWwub3JnPg0KPiAgPiBDYzogSm9lcmcgUm9lZGVsIDxqcm9lZGVsQHN1c2UuZGU+DQo+ICA+IENj
-OiBSb2JpbiBNdXJwaHkgPHJvYmluLm11cnBoeUBhcm0uY29tPg0KPiAgPiBDYzogaW9tbXVAbGlz
-dHMubGludXguZGV2DQo+ICA+IEZpeGVzOiBmMmMxNDg5OWNhYmEgKCJuZXQ6IGhuczM6IGFkZCBz
-eW5jIGNvbW1hbmQgdG8gc3luYyBpby1wZ3RhYmxlIikNCj4gID4gU2lnbmVkLW9mZi1ieTogQXJu
-ZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4NCj4gID4gLS0tDQo+ICA+IEkgbm90aWNlZCB0aGF0
-IG5vIG90aGVyIGRyaXZlciBkb2VzIHRoaXMsIHNvIGl0IHdvdWxkIGJlIGdvb2QgdG8gaGF2ZQ0K
-PiAgPiBhIGNvbmZpcm1hdGlvbiBmcm9tIHRoZSBpb21tdSBtYWludGFpbmVycyB0aGF0IHRoaXMg
-aXMgaG93IHRoZQ0KPiAgPiBpbnRlcmZhY2UgYW5kIHRoZSBkZXBlbmRlbmN5IGlzIGludGVuZGVk
-IHRvIGJlIHVzZWQuDQo+ICANCj4gIFdURiBpcyB0aGF0IHBhdGNoIGRvaW5nIT8gTm8sIHJhbmRv
-bSBkZXZpY2UgZHJpdmVycyBzaG91bGQgYWJzb2x1dGVseSBub3QNCj4gIGJlIHBva2luZyBpbnRv
-IElPTU1VIGRyaXZlciBpbnRlcm5hbHMsIHRoaXMgaXMgZWdyZWdpb3VzbHkgd3JvbmcgYW5kIHRo
-ZQ0KPiAgY29ycmVjdCBhY3Rpb24gaXMgdG8gZHJvcCBpdCBlbnRpcmVseS4NCg0KDQpBYnNvbHV0
-ZWx5IGFncmVlIHdpdGggaXQuIFNvcnJ5IEkgaGF2ZW4ndCBiZWVuIGluIHRvdWNoIGZvciBxdWl0
-ZSBzb21lIHRpbWUuIExldA0KbWUgY2F0Y2ggdGhlIHdob2xlIHN0b3J5LiAgRmVlbCBmcmVlIHRv
-IGRyb3AgdGhpcyBwYXRjaC4NCg0KVGhhbmtzDQpTYWxpbC4NCg0KPiAgDQo+ICBUaGFua3MsDQo+
-ICBSb2Jpbi4NCj4gIA0KPiAgPiAtLS0NCj4gID4gICBkcml2ZXJzL25ldC9ldGhlcm5ldC9oaXNp
-bGljb24vS2NvbmZpZyB8IDEgKw0KPiAgPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigr
-KQ0KPiAgPg0KPiAgPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvaGlzaWxpY29u
-L0tjb25maWcNCj4gID4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9oaXNpbGljb24vS2NvbmZpZw0K
-PiAgPiBpbmRleCA2NTMwMmM0MWJmYjEuLjc5MGVmYzhkMmRlNiAxMDA2NDQNCj4gID4gLS0tIGEv
-ZHJpdmVycy9uZXQvZXRoZXJuZXQvaGlzaWxpY29uL0tjb25maWcNCj4gID4gKysrIGIvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvaGlzaWxpY29uL0tjb25maWcNCj4gID4gQEAgLTkxLDYgKzkxLDcgQEAg
-Y29uZmlnIEhOU19FTkVUDQo+ICA+ICAgY29uZmlnIEhOUzMNCj4gID4gICAJdHJpc3RhdGUgIkhp
-c2lsaWNvbiBOZXR3b3JrIFN1YnN5c3RlbSBTdXBwb3J0IEhOUzMgKEZyYW1ld29yaykiDQo+ICA+
-ICAgCWRlcGVuZHMgb24gUENJDQo+ICA+ICsJZGVwZW5kcyBvbiBJT01NVV9TVVBQT1JUDQo+ICA+
-ICAgCXNlbGVjdCBORVRfREVWTElOSw0KPiAgPiAgIAlzZWxlY3QgUEFHRV9QT09MDQo+ICA+ICAg
-CWhlbHANCj4gIA0KDQo=
+On Mon, 4 Nov 2024 at 05:46, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Oct 31, 2024 at 07:37:43PM +0200, Dmitry Baryshkov wrote:
+> > On Thu, Oct 17, 2024 at 09:16:38PM +0300, Dmitry Baryshkov wrote:
+> > > Document compatible for the Synopsys DWC3 USB Controller on SAR2130P
+> > > platform.
+> > >
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> >
+> > Gracious ping, the patch has been acked by DT maintainers, but is still
+> > not present in linux-next and got no other reviews.
+>
+> I don't see the ack here, where am I missing it?
+
+I'm not sure, here is an email from Krzysztof:
+
+https://lore.kernel.org/linux-arm-msm/shzy24hayj6ee72pwc5lxk7yflzawx5f3uaqql4fwb55idbxci@qgi2fr7pvb5m/
+
+
+-- 
+With best wishes
+Dmitry
 
