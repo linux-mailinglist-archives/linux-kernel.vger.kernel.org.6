@@ -1,104 +1,128 @@
-Return-Path: <linux-kernel+bounces-395417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0579BBDAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:06:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF119BBDA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDDBE1C21C4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:06:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 079291C219BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDF91CBE85;
-	Mon,  4 Nov 2024 19:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6954F1CC899;
+	Mon,  4 Nov 2024 19:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikmH/Waf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lO1yJ8Uu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EC41CBE82
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 19:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CA61CB9F4;
+	Mon,  4 Nov 2024 19:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730747186; cv=none; b=Kb2hJNEA+LBEBw0ddr/XwzD6BYeZBHuRXbEHJRqdXrz4a1yYak8qEkLbelFgAmJNs/adKqkeNLB5hwuZo0p5u5+s0Y3c8f4vi72M93jzB82KraD0rjDd4SuQl521lmJMDwjtweHoje5M7Hyt6F0isHgQgKCpUO7pkbgYDtuOE4s=
+	t=1730747172; cv=none; b=QQFR6b3ACF/+y+07HrWrZIv9g6fXvqBRRuzXx3zzXk1Wn9soGwgYU4La6HN5//JGOzDUB42BwzVIyhFKTPZGJKPRFHGJaiNOJXPD21JdQZ8v1regMDe412Md1j0OTw7oUG4l5mOiPYQkgWThLPWSTdezE8L6JUnvuP2X0BJYwWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730747186; c=relaxed/simple;
-	bh=wMGuXVghL+bQd4b7q/UhbB4pOglwKLk0XTn4dCQA4jA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W4ZT/XYkbRkhMq9DBZVK+gtMwQRPddlcIj794HqhkFx4xaACqjU6nCMI+eavCik/yUssC3/iC5lu8+eZgYGRg7rFR0889z5GIdr3P0hGb1KXFBQKSLnQgOu9XuJJSpZpMh/bTuyhOCe0ftaZtwcukp+LYY8M/cM89h12HnFqRQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikmH/Waf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D51BC4CECE;
-	Mon,  4 Nov 2024 19:06:25 +0000 (UTC)
+	s=arc-20240116; t=1730747172; c=relaxed/simple;
+	bh=JBVrtATskCzv7INVkabkiMcc6JE0MwYvfyVsJYvZhrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TLLYkB2JFI/WKKCk6fmU8kT8I9qG9XgqNNWuLnwH6efl8FyYW+GRCmD4VujjntM66upSbnmvjVD7727k++mLm10WmrriyrLKbgntROgxWW29wYKr+mz2Hv5QQzY0uS/EubHkaxINGXiMX190yDE1W4caVYcP4IWRC9YjtSekVWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lO1yJ8Uu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDFE1C4CECE;
+	Mon,  4 Nov 2024 19:06:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730747185;
-	bh=wMGuXVghL+bQd4b7q/UhbB4pOglwKLk0XTn4dCQA4jA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ikmH/Wafqqp/NoIKBlkRHVfaRHzrw3vGSly8hlCNwdqk0x9QZUldb7kfdRkLsdpUG
-	 P1vqv4hv2lICBkPn9vRKJXsiYuQ3XJbqFf++EHJW47uCS2nlTtLLeMCJCTEclYHZEp
-	 z2gsgkxg48IykI3mkKVKMTVSQ7QhLfh61SfSYc8tXETcklhwi0hDnB2GhfrZRFbR+w
-	 twCl+Jh+4S1LOYsWULZa3yYnROMMnBi6n6sNYrAl9HYBVdZH068VE1E9Qp67pvNq7d
-	 eHjgwpVPSN7O3ebrm+o2FT3ZEUEIvlQAP4UAAdVv8Cyj95KrcHgL+PS4/FBazY46Ha
-	 U+Tj9dVeS8lvg==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
+	s=k20201202; t=1730747172;
+	bh=JBVrtATskCzv7INVkabkiMcc6JE0MwYvfyVsJYvZhrw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lO1yJ8UuWs0hm/pLJA1PQGiG6WtNqyGjrC1KOOawFuZqT3AFTwBnyz4uTWAFMfOY8
+	 730X+VFRdGcYuBMiE+xXlWuPwpjyv/GNDy4MQ3uA0z5IhJcUk+ht/sRoHe9Xtgu3Fo
+	 3MD8FUbcj6WydEa8FxVTkLjWUaLq/ZuPG4YDEdcRf0nNnz8B9JQwFdK4pAvhCTUgyY
+	 QpYrv7CJOSap1So3T7TxUlYj9ZdO9Wh8fKSE6Jki4xTU9CtmTGQWQ+Vr9g/L4X0Lhu
+	 WnVil/tv/Lb+eQPkVd4279pQYiMRY5/B6sZ/dL/WQKwI6AeWQjzjnRUju8U4rzTJO5
+	 FQ2hRII61InnQ==
+Date: Mon, 4 Nov 2024 19:06:08 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] clocksource/drivers/arm_arch_timer: Use of_property_present() for non-boolean properties
-Date: Mon,  4 Nov 2024 13:05:06 -0600
-Message-ID: <20241104190505.272805-2-robh@kernel.org>
-X-Mailer: git-send-email 2.45.2
+Subject: Re: [PATCH RESEND] dt-bindings: rtc: mpfs-rtc: remove Lewis from
+ maintainers
+Message-ID: <20241104-immodest-finishing-354430b8e386@spud>
+References: <20241015-surcharge-caucasian-095d1fd2fa27@wendy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="e/KpZXvkrNTSFxzZ"
+Content-Disposition: inline
+In-Reply-To: <20241015-surcharge-caucasian-095d1fd2fa27@wendy>
 
-The use of of_property_read_bool() for non-boolean properties is
-deprecated in favor of of_property_present() when testing for property
-presence.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- drivers/clocksource/arm_arch_timer.c       | 2 +-
- drivers/clocksource/timer-ti-dm-systimer.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+--e/KpZXvkrNTSFxzZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index 03733101e231..7bd099f728a9 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -1430,7 +1430,7 @@ static int __init arch_timer_of_init(struct device_node *np)
- 
- 	arch_timers_present |= ARCH_TIMER_TYPE_CP15;
- 
--	has_names = of_property_read_bool(np, "interrupt-names");
-+	has_names = of_property_present(np, "interrupt-names");
- 
- 	for (i = ARCH_TIMER_PHYS_SECURE_PPI; i < ARCH_TIMER_MAX_TIMER_PPI; i++) {
- 		if (has_names)
-diff --git a/drivers/clocksource/timer-ti-dm-systimer.c b/drivers/clocksource/timer-ti-dm-systimer.c
-index c2dcd8d68e45..c33c3b5e0e07 100644
---- a/drivers/clocksource/timer-ti-dm-systimer.c
-+++ b/drivers/clocksource/timer-ti-dm-systimer.c
-@@ -202,10 +202,10 @@ static bool __init dmtimer_is_preferred(struct device_node *np)
- 
- 	/* Secure gptimer12 is always clocked with a fixed source */
- 	if (!of_property_read_bool(np, "ti,timer-secure")) {
--		if (!of_property_read_bool(np, "assigned-clocks"))
-+		if (!of_property_present(np, "assigned-clocks"))
- 			return false;
- 
--		if (!of_property_read_bool(np, "assigned-clock-parents"))
-+		if (!of_property_present(np, "assigned-clock-parents"))
- 			return false;
- 	}
- 
--- 
-2.45.2
+On Tue, Oct 15, 2024 at 07:52:05AM +0100, Conor Dooley wrote:
+> Lewis hasn't worked at Microchip for a while, and IIRC never actually
+> worked on the RTC in the first place. Remove him from the maintainers
+> list in the binding, leaving Daire.
+>=20
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> Noticed him in the CC list of your resend, figured it was worth removing
+> him.
 
+Could you pick this up Alexandre? I've got no contact info for Lewis, so
+I doubt you'll see an ack from him...
+
+> CC: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> CC: Rob Herring <robh@kernel.org>
+> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> CC: Conor Dooley <conor+dt@kernel.org>
+> CC: Daire McNamara <daire.mcnamara@microchip.com>
+> CC: linux-rtc@vger.kernel.org
+> CC: devicetree@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yam=
+l b/Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml
+> index 7742465b93839..59919a3e1c46c 100644
+> --- a/Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml
+> @@ -12,7 +12,6 @@ allOf:
+> =20
+>  maintainers:
+>    - Daire McNamara <daire.mcnamara@microchip.com>
+> -  - Lewis Hanly <lewis.hanly@microchip.com>
+> =20
+>  properties:
+>    compatible:
+> --=20
+> 2.43.2
+>=20
+
+--e/KpZXvkrNTSFxzZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZykbIAAKCRB4tDGHoIJi
+0gQEAP9cbgDskQtU7bxwDBs12edEA33t0ckQLMPgWrOIJTXflwD/QJ8mrvzGxFkN
+lBJWxJdHecJtGwvyj4JVcbSb1ZVFKgs=
+=QbOs
+-----END PGP SIGNATURE-----
+
+--e/KpZXvkrNTSFxzZ--
 
