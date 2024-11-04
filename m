@@ -1,133 +1,139 @@
-Return-Path: <linux-kernel+bounces-394905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A599BB5BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5429BB5BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:20:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DECA283196
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7588A28345F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AA02AF0B;
-	Mon,  4 Nov 2024 13:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257BB2231C;
+	Mon,  4 Nov 2024 13:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="cnvNVFxq"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jdqx5P3z"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6F7C147;
-	Mon,  4 Nov 2024 13:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A62AD5E;
+	Mon,  4 Nov 2024 13:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730726367; cv=none; b=Pxb7f/1k8awF91llcBJ0G5AOP5XYuy8AlvC/hPtx/kAIdbBgrTUZdhRRJ1Kxmyl9vJErHr+FO2hMGxtjIMxrstKm2QtGosTfAmowzTHer6Vl2Gt8jTsKls3POne4KHm74azrmFzVmkrLou7Km6lygJbuzKCXO7ZiCVWhto8B2VM=
+	t=1730726353; cv=none; b=TH28NDzazq+6g9qly3/YZQNjldyeQutBQS0oWZ2O5qWt6ApqymKM3rS0wmwj9Zwx+TXUOzbfAuLWYJFQO2fF811mh0kOdXzlQXjFutH5e+zZqzBYyxB9mJPefnH8X72Wdi7taJ4wAGaTYUs3J+Q/fAA4iO0/df7e/LYX9uHF5Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730726367; c=relaxed/simple;
-	bh=LgxM5kKiuJVH380x9xQZPbZVK2R4UXZj0OIKNXudn3Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FJBF5dArPBu/rOjl1MupjoBzjXegOEjpQ6EjwfgQDavydvw/Pc6OaZe47ASJif5i9iGghjvojajDgcLOChtGFOKl5f5doKIRq/8m9qrhUjoSXMwZjTy/I6IzKynX03F3+/TFWV9sy7wLsvqbL1KrZysJCq3DJzHgKvT69fKejeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=cnvNVFxq; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 65d14dea9aaf11efbd192953cf12861f-20241104
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=uyuQl4If6PgIXdcSHju38Abi0PGTAXYJUn1ddS+07qs=;
-	b=cnvNVFxqszDb7vpYT31CDZITLuRJ8Ust555nqiTq9oA0Y73R/S3IGcRw7KRpe5n+sjGftQdd0qdFMFQOBaNa+nfTDEQGyMD9mrz7Jh0P1k0nZAQM6oU1XcL3mB3eimT8S+4KkxS4/x/LJjZrxK1v5Q/NYfCO8EdJxs7ft6pKpLw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:d1398b46-b7a5-45c9-97fc-105d23ee6de4,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:ccad8407-7990-429c-b1a0-768435f03014,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 65d14dea9aaf11efbd192953cf12861f-20241104
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <jiande.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1169929036; Mon, 04 Nov 2024 21:19:18 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 4 Nov 2024 05:19:17 -0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 4 Nov 2024 21:19:17 +0800
-From: Jiande Lu <jiande.lu@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
-CC: Sean Wang <sean.wang@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
-	Deren Wu <deren.Wu@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, Steve
- Lee <steve.lee@mediatek.com>, linux-bluetooth
-	<linux-bluetooth@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mediatek
-	<linux-mediatek@lists.infradead.org>, Jiande Lu <jiande.lu@mediatek.com>
-Subject: [PATCH] Bluetooth: btusb: Add new HWIDs for MT7925
-Date: Mon, 4 Nov 2024 21:19:04 +0800
-Message-ID: <20241104131904.30447-1-jiande.lu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1730726353; c=relaxed/simple;
+	bh=1PkamZZykZ77sMp0GI5lTUolLioO7jIOn5iTrhpoK+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tVXW993pPk4ayay2Gh/rrrryt7tXlUqxJiuEEZZIaJRZDI8zYanS6KfdKtoESjkPZbNphHfDeWq71ROn1gb/iAOLIydSUdxVMad2/M+cB7pJ0S5KILV6gZ+aKAs5SKCYN9h8aGM0NUHLIWJgaxu99aDbtQZXF2m9jCmD7B65y0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jdqx5P3z; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730726349;
+	bh=1PkamZZykZ77sMp0GI5lTUolLioO7jIOn5iTrhpoK+g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jdqx5P3z8eit/2sxGG3RKvQuELfZyqNVAmJ7fow9TZRN9AIX0RMG/E9y64pnky2kz
+	 H9BPYhVUzu9yxTT9gD0Mmwi7kFvfSBVmHjFSYn/A5MaLdiwybosLQkNEPRVfiEvNSC
+	 R0LJ9BmPla8JVosjXDLfoPIi+Z/sODWMcmZNYyHsb5llDoYdWITCoihpyGtafxo4yD
+	 mKOA1yMsivY5G9X4wOiOcfCui9dtRPGalZn2aMYXUiuw2I+WHbyZRRmye9/QCWIS15
+	 /C7ijWHXG/e6+mPTti8Zqy+EGF+pW3lzQYumh8S8GgojldzfQr1LRVEPf1RAHYPgn8
+	 vhJFq/8IKXUlQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 642C217E3620;
+	Mon,  4 Nov 2024 14:19:09 +0100 (CET)
+Message-ID: <bbaa0c8f-9702-4252-a674-e46fb51f0a2a@collabora.com>
+Date: Mon, 4 Nov 2024 14:19:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] arm64: dts: mediatek: mt8183-kukui-jacuzzi: Drop
+ pp3300_panel voltage settings
+To: Chen-Yu Tsai <wenst@chromium.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241030070224.1006331-1-wenst@chromium.org>
+ <20241030070224.1006331-2-wenst@chromium.org>
+ <CAGXv+5HVy41qee6kwVUeLV_DfA0=wk2X77kv81rBKAZDGE6mww@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAGXv+5HVy41qee6kwVUeLV_DfA0=wk2X77kv81rBKAZDGE6mww@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add below HWIDs for MediaTek MT7925 USB Bluetooth chip.
-VID 0x0489, PID 0xe14f
-VID 0x0489, PID 0xe150
-VID 0x0489, PID 0xe151
+Il 04/11/24 14:00, Chen-Yu Tsai ha scritto:
+> On Wed, Oct 30, 2024 at 3:02 PM Chen-Yu Tsai <wenst@chromium.org> wrote:
+>>
+>> The pp3300_panel fixed regulator is just a load switch. It does not have
+>> any regulating capabilities. Thus having voltage constraints on it is
+>> wrong.
+>>
+>> Remove the voltage constraints.
+>>
+>> Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
+>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> 
+> I see that the other three patches were merged and included in the pull
+> request, but not this one. Were there any concerns?
+> 
 
-Patch has been tested successfully and controller is recognized
-device pair successfully.
+Sorry I forgot to actually provide an explanation for that - yes, I do have some
+comment about this one.
 
-MT7925 module bring up message as below.
-Bluetooth: Core ver 2.22
-Bluetooth: HCI device and connection manager initialized
-Bluetooth: HCI socket layer initialized
-Bluetooth: L2CAP socket layer initialized
-Bluetooth: SCO socket layer initialized
-Bluetooth: hci0: HW/SW Version: 0x00000000, Build Time: 20240816133202
-Bluetooth: hci0: Device setup in 286558 usecs
-Bluetooth: hci0: HCI Enhanced Setup Synchronous
-Connection command is advertised, but not supported.
-Bluetooth: hci0: AOSP extensions version v1.00
-Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-Bluetooth: BNEP filters: protocol multicast
-Bluetooth: BNEP socket layer initialized
-Bluetooth: MGMT ver 1.22
-Bluetooth: RFCOMM TTY layer initialized
-Bluetooth: RFCOMM socket layer initialized
-Bluetooth: RFCOMM ver 1.11
+Despite this being a load switch, it's still switching power from regulator A to
+target device X, so this is technically still providing 3.3V to device X.
 
-Signed-off-by: Jiande Lu <jiande.lu@mediatek.com>
----
- drivers/bluetooth/btusb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Think about how a "regular" full-fledged regulator works: you can (sometimes) set
+a voltage, and then you can ENABLE the VOUT for said regulator (/rail): this kind
+of "load switch" does exactly the same as the ENABLE switch for a full-fledged
+regulator.
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 6dc5a7e76558..77b8500f8e9b 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -658,6 +658,12 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe139), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe14f), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe150), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe151), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x13d3, 0x3602), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x13d3, 0x3603), .driver_info = BTUSB_MEDIATEK |
--- 
-2.45.2
+So, this is switching on and off a power rail that is derived from a source rail,
+practically creating... well, a "new" rail, with...
+
+  VIN=somewhere-3.3v,
+  VOUT=somewhere-still-3.3v
+
+Any objections/doubts/etc? :-)
+
+P.S.: I'm writing fast, sorry if anything appears unclear, feel free to shoot more
+       questions in case :-)
+
+Cheers,
+Angelo
+
+> 
+> ChenYu
+> 
+>> ---
+>>   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
+>> index 783c333107bc..7bbafe926558 100644
+>> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
+>> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
+>> @@ -35,8 +35,6 @@ pp1800_mipibrdg: pp1800-mipibrdg {
+>>          pp3300_panel: pp3300-panel {
+>>                  compatible = "regulator-fixed";
+>>                  regulator-name = "pp3300_panel";
+>> -               regulator-min-microvolt = <3300000>;
+>> -               regulator-max-microvolt = <3300000>;
+>>                  pinctrl-names = "default";
+>>                  pinctrl-0 = <&pp3300_panel_pins>;
+>>
+>> --
+>> 2.47.0.163.g1226f6d8fa-goog
+>>
 
 
