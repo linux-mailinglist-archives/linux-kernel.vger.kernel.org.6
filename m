@@ -1,110 +1,81 @@
-Return-Path: <linux-kernel+bounces-395008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24AD29BB70F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:04:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E72D49BB711
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5521B1C22107
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:04:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB75B28485E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27B213CA81;
-	Mon,  4 Nov 2024 14:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC32B146A69;
+	Mon,  4 Nov 2024 14:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOrNaQdR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gmfDpAFP"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147C779FD;
-	Mon,  4 Nov 2024 14:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C2313D53B;
+	Mon,  4 Nov 2024 14:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730729041; cv=none; b=X2+AnQFt32d42tfBdrmXLp8qjCOeSl7KasQGkjisdZAXjo6F9lOnV0jnyAPsZ++yGHCvmER8vUtXTZhFksphbsN9/nzQsnWXBWPJ0w8U1NmO/sFmndJShcvpvMgk4Z8FOO+dVEPCVLGepUk48QaJiaJz3iVOWoTlMJizSRc3Ids=
+	t=1730729053; cv=none; b=gam/Hj2Uv+0v1tG/RumS3MTuKiP4m4hJUNCGm4VffO/qV+Vs3oYJuKqHHzAYXdlQIKAeRYZ8c3cn5VEwquoj/2OWzSfIoXgZzJDaf8ChUhFjS79rHqLECfs/NCpx78mvMgdJuw1cOiwhh03YBbGW3A2wmiSEnCwB+nujVropY4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730729041; c=relaxed/simple;
-	bh=0BjiMv0VjBbA0wKoTP1NVXNesF4nWLPu+2GtxIbUMuw=;
+	s=arc-20240116; t=1730729053; c=relaxed/simple;
+	bh=LyMFx2QKI0twBLmeqWtpdBmRiO9HVWv9pkWWBjxTsGo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LceNXRD4MSKX5/7EwJabZxG72GJDfhd8g0wOzruM07VL2MTK+RxtGwZpA46JXbNmlnBq0UYuHM9g0vA1ZNB4xzbDpLtynCa7e7hBvLqVcwkUo8T0RH+J1ITZDuoGS1hSuXm45SrBRzDoWSNTLA24J09PuDrO+lAicUe6A0ESje4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOrNaQdR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 541ACC4CECE;
-	Mon,  4 Nov 2024 14:03:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730729039;
-	bh=0BjiMv0VjBbA0wKoTP1NVXNesF4nWLPu+2GtxIbUMuw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pOrNaQdR2NgTs0W4BXgN6H2uFywY5sWWlwpRj5WaK1/LoOwNAsrBu8LWq8/PRLvnk
-	 xFidrFgaI9OFHM9ovVO1s4l6c5BpZT1DO5tt5rsGOwFWgMS5ZZLUkih2OWItsT31RI
-	 WY0Ytb2rpppwmr6nyzW0gc3g6VLrIAfwIs1esPqLl1PKFKJtinzFijBCCRwIyto4IP
-	 vrCbUReZXVN4rF1odjkj/vkP42pXLBO/9O6M2/TtpnB38NehLYwRek0o2aUPygojuq
-	 5SgRRAMBEST+ag5bZBqSmWOEH5H1Yyw9IKOBh5f1HiEC7UaUUG30B6VLu1ktw8S3e+
-	 Lkpb8d39cryVQ==
-Date: Mon, 4 Nov 2024 14:03:54 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Ki-Seok Jo <kiseok.jo@irondevice.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] ASoC: sma1307: Add driver for Iron Device SMA1307
-Message-ID: <45c69c35-cc52-4fa2-9212-821a7f841b61@sirena.org.uk>
-References: <20241104-irondevice-sma1307-v3-0-4bbe79895f54@irondevice.com>
- <20241104-irondevice-sma1307-v3-2-4bbe79895f54@irondevice.com>
- <SL2P216MB2337F87E4E884158CCE77DA38C512@SL2P216MB2337.KORP216.PROD.OUTLOOK.COM>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QWXsk61YxPYUxf37j036NsbXBNmqkXxZMtqzvndMeypT7NC+OHeQInvEXfZVlyH2kuzwEHP4b9dkF5Os6nmYp6cIbFJr0UfNXp1BCjqD7/oZxTLCc4NGJkumvVMoNH6FDPE8L6q7EW/jE/DR9Nz3IvipWVQLprDLl6ay7JqFUYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gmfDpAFP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=3lIsEGZ1nidjl2PfS5R09QT9r8royoyR/R2u635wXKs=; b=gmfDpAFP8UwJrfs8/+DO4LrWcv
+	U4x6uQ22ZzJA6asWTdukM8dDp2PfelScuy4soFxslRGDvXfo7f+Lkr5ehwtayYz0KgEF+Yod/aTSL
+	1LmBEuD9uCFrgVlxafsTV4FDiA8DA8g2+6IFHGSAxy2cU8VntTtceh4lybQwt03AeiKo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t7xgY-00C6t8-3p; Mon, 04 Nov 2024 15:04:02 +0100
+Date: Mon, 4 Nov 2024 15:04:02 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Divya Koppera <divya.koppera@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	richardcochran@gmail.com
+Subject: Re: [PATCH net-next 5/5] net: phy: microchip_t1 : Add initialization
+ of ptp for lan887x
+Message-ID: <8c585168-20b0-4abe-b4f2-0d0949627bfe@lunn.ch>
+References: <20241104090750.12942-1-divya.koppera@microchip.com>
+ <20241104090750.12942-6-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7C2n8T4N/M0aFJ1I"
-Content-Disposition: inline
-In-Reply-To: <SL2P216MB2337F87E4E884158CCE77DA38C512@SL2P216MB2337.KORP216.PROD.OUTLOOK.COM>
-X-Cookie: The meek are contesting the will.
-
-
---7C2n8T4N/M0aFJ1I
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241104090750.12942-6-divya.koppera@microchip.com>
 
-On Mon, Nov 04, 2024 at 07:33:50AM +0000, Ki-Seok Jo wrote:
->=20
-> The Iron Device SMA1307 is a boosted digital speaker amplifier
->=20
-> v2 -> v3
-> 	- Use BIT() macro
-> 	- Changed the value in sizeof
+>  static int lan937x_dsp_workaround(struct phy_device *phydev, u16 ereg, u8 bank)
+> @@ -1472,6 +1478,12 @@ static int lan887x_probe(struct phy_device *phydev)
+>  
+>  	phydev->priv = priv;
+>  
+> +	priv->clock = mchp_ptp_probe(phydev, MDIO_MMD_VEND1,
+> +				     MCHP_PTP_LTC_BASE_ADDR,
+> +				     MCHP_PTP_PORT_BASE_ADDR);
 
-The changelog should go after the --- so the tools automatically drop
-it.
+In general, PHY interrupts are optional, since phylib will poll the
+PHY once per second for changes in link etc. Does mchp_ptp_probe() do
+the right thing if the PHY does not have an interrupt?
 
-> ---
->  To                         |    0
-
-This looks like it got in by mistake.  Other than that things look good,
-I've fixed this up manually.
-
---7C2n8T4N/M0aFJ1I
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmco1EkACgkQJNaLcl1U
-h9Ay7gf8DdtxLYVBqRNpwQOU/2HkpA+8Z088OKG1BdvWv/fMqBrJHWqA8u9Hp/xR
-H5053JBVGnyurnri4P/0B9jvtEg0EVu27lNzJ9tRdqzGJW+0Qhi/L25DMMSf4o9y
-+DfZfQPq7GzEJODXwwXN3FTOL+xgNn+F3054Yh67Zp6jaglOoxzlq1xRXSgOX6l/
-X+uImrMZXBcz+rJRmib5ilWnvstvHk4UIV3Pcbslarl/8eYJ9BznMqWJlpY2eh0Q
-f/MQKpse3+he2tO5gtXj0hPkyMqGy+Ys9oXcLjOC5dsgUY1hziWrsH0QC82PBJw7
-R54cnxCQCEjGl8OEi/g2T5rrT3J5oQ==
-=Tlvq
------END PGP SIGNATURE-----
-
---7C2n8T4N/M0aFJ1I--
+	Andrew
 
