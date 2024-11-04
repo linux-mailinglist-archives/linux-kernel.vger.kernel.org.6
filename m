@@ -1,283 +1,222 @@
-Return-Path: <linux-kernel+bounces-395548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190159BBFA7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:11:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044D99BBF47
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:07:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D4301C21C7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:11:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27B7B1C204F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F061FAC5A;
-	Mon,  4 Nov 2024 21:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FA21FAEE3;
+	Mon,  4 Nov 2024 21:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="M2aK+0jc"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ecA/RaIY"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FD71FCC4D
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789861FAC2E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730754443; cv=none; b=SPfghN78HRa2/C82a3qdtrmPF0El4er0+8AG9sWJh/Xd5r0dFTfK4munqHlnpIb1r1wiWr47NexKLiIy79k48gGiO4E9KIdPKKdKIF03ng/Pc9o3/aViZchu1jLdwfw/sXnz4HYZbwAVZ1k2cotE+FJNgam8O4nlMjIzttofpgU=
+	t=1730754409; cv=none; b=ZG8gBhBLL6JzjGOlMnTrCDmpNU3Dcj4pkSsqLFFifZNonBuSpB+oKDtn5+kbh2q3d511a2Ht75jeafvXIvJ+sEmczyZhjI4VXjMy3Ce5p/NRqEaNWNRi5SMpMzM++NFeyVAr45hud/KNY2bEQBvhuy5hcwXjFnfFAXtA3K/9H0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730754443; c=relaxed/simple;
-	bh=3BnA2k7gkDMKMTp7NPvukg06UCPVaXeoGTtH/OJ/1cQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Rpq2BEdiez5hsd1woFQdomllN8dp4HmfGkrry0D1i7IYgvFEGSASmWNbojZ6mfThTFccdVAozqsF5TV+8J7U9BulWcOUwLP5KZ8WNLqm2/9E+1s0/hWPbEaSZeGimRufsPrEyBVDTmlDZ8PWBDoh9yfoNcUb2xVyHs4TVaPnRwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=M2aK+0jc; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e5130832aso3762813b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:07:21 -0800 (PST)
+	s=arc-20240116; t=1730754409; c=relaxed/simple;
+	bh=p4I8egqMIvs9Mt1ZgPAste4N0lCFUZnjOnGlLdeA+l4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Se9iMUb+bMo1AsYR986AEwEzUb//Yo0GLQSFzgTMgdo92QG2G5pcp325M8H+7acvSvJTv1l4dCj9n9Oh6ChkYRsqPeCvfa7ZfbvfRtk4sAp/qMifVBPrpb15jA1Yorcz23cM8ctt9iS455jWgtrrTS9G8wLCAQ++tXUgqAp32eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ecA/RaIY; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a6c3bdbebcso21795ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:06:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730754441; x=1731359241; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JceIE0zrf58fmEOS9+xUBHWK5Sd1H2RuLbeR0zDJDpc=;
-        b=M2aK+0jcOtSH0w9RqjcSFEMn/E9jQxxLlK4VqYZBQh2R7cNR3YawJbupQ0WEyHWET/
-         3EOmZiwSoS4osCOu2Tbunj887pMvoVzgzL1d94Yky/iHRGjGmQF78TxTtNDIv24OpwbD
-         CjxCLGf97JrFHZW09Jp0bjcAy0qRanKz6yum/meGorjf8lh2cJSGERubaqEp1Gx0J05v
-         Gel+M6owTTZEWvbp5+TQLLon3PxKZkaC5t+PU6NzGfgqnrNSiYdfJPhxmcxWFyoFmmKf
-         zSh+jLmeDWIP1BOF4M30PWsbKp0sMMGpPxePh+pyZr6wKhT/gCIQUh8ZCXiX2Zi+oTgU
-         7cRg==
+        d=google.com; s=20230601; t=1730754407; x=1731359207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7X8h3w9ARspwQBdqBvA6URma1cvCX4zBiK/RBU29C0g=;
+        b=ecA/RaIYxU0GjAJNjzCWNvFTz2nsdog1ue3KyWkiPXMoo3mIx764LL2h+TjaF/+yVs
+         5uw05noJWpimMPbHqTVwx5LGW4ggHqiFeEA+uc420bsl+NRbVhSvw+5FY4Sryn661GYl
+         qfTKPjLZeU2RNjMEMMhlHOvz/WCcPvb70ArosIslkRxTKOyMYgmAsV8jxIi0Qr8Z4ufI
+         Lg0l8MzZMmqpj2ClYLFEcW2jeoVVzbg/lVmeocJV9K9972PkLFtQ96ppzgVJs7ypcDf1
+         bqwwVlz4/Ag794dc5eTW2/po4j0Bs+yzNNXOTgo8UFIgfW7tXcW0U9eyyrMiuHHQG4gg
+         gsKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730754441; x=1731359241;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730754407; x=1731359207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JceIE0zrf58fmEOS9+xUBHWK5Sd1H2RuLbeR0zDJDpc=;
-        b=uy7sMmHzVSYyaX7H4RK4hxp8zH0Zw7Fh2rvrLJ4DscjSIePc9vo8G4Njvpo0W75WxM
-         yPIOf/Qq7+kS81B9/hpCjcsTuqKdcRiTi3kKyubOIH1KrB0Z4Z1XcnWF/Dml85QUKzue
-         2wtpP9IG1MRUmsFwsi0H2/yZ8wCrRYWgQJ7YMqCMk7Tr2OSB64HkEFB9cnjOCdkgDLoz
-         vLGH2RKzzM9fMkNgG1t8EzcY8Cd21leNYAtBTPxkLqwTyClvBSEwpqfKnImGAyau4rpB
-         HYnHud9VQ0HLMY1dQuwQ3eiEXiljaanS/R2X8i1jL4yl9zS9agj1DjE8D/+v5itc7dbk
-         vh4w==
-X-Gm-Message-State: AOJu0YxzjviQUaRZwhzOGCnnbVgYeEaKG14NBRKV/qFIceI1XwE4ZliD
-	WK9ZlHf8QdUocw9m6iEtwk32VWzYjOx25WBitG6gMj0RzGAil1w9aEUbKmqZZEs=
-X-Google-Smtp-Source: AGHT+IFQh+GxxxAKRDhDa8or6sZPZxmg7pp2kYRv51ug1lDNjfcreoKjasCE7BI4FfknScr9biAvQw==
-X-Received: by 2002:a05:6a21:7894:b0:1db:e917:5755 with SMTP id adf61e73a8af0-1dbe91771e6mr3106349637.30.1730754440784;
-        Mon, 04 Nov 2024 13:07:20 -0800 (PST)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee490e08f4sm7248293a12.40.2024.11.04.13.07.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 13:07:19 -0800 (PST)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Mon, 04 Nov 2024 13:06:14 -0800
-Subject: [PATCH RFT 12/16] perf tools: loongarch: Use syscall table
+        bh=7X8h3w9ARspwQBdqBvA6URma1cvCX4zBiK/RBU29C0g=;
+        b=OWxNPhNkBXHmYCNPEIfjmZHaS6b3MN20+SSSfZ4H4nSLc2S2IM/vMDWC/qt9J2uuq/
+         T1ylulZ8eWrg1fKPuOMPRe3SkjVv9mC1Duwnaj9O/K+mh8gTSgHZvqCSqJUFfyyqOlx7
+         vFq0ObLOEd6HnkDCksqAKQJ+gsIJVSvHBp999JgNN1VRBlM0vaMa8KHER43/kVMz9nUg
+         4haXMI//nmR7xuhb1yWboiDV9tJQB0jYb+/4YUeooxtUbUZCba7uX+BY0zwrXaecp0vS
+         VYWg2KkTn/zfhULcJQjTu3bOROeCDjd3W5IEhMl7/yMAX5CO27Xswb+gsN6mppR8k+7G
+         Ybpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBBMv3Wnym0CE5XqVGmk1rcWi812rFOPLDsdqF6IpC9+qg1k/uL1MDXCbfU8Kthx9V/rTYLH6rg7uUTfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS8Pw32BQfPkWYIIgCXBSx6BYESA8CjzCH0Eg2f2i8rGFc7/fz
+	E2qRMWqL7w6G9W7S/uPMXQOkMO7Ftb7J1M+EHLi+/+l8pH2io1Ajcnmt/SHseIBt2AS866gnywN
+	s18duPPxcubUPxOgGyeh0q1CGmypzjSgWxyCb
+X-Gm-Gg: ASbGncv1X8o/8yad08JqUu5vf7VY2JMk//gA/oWHO395QB5y3U46XW4Jie9VHsjVUsO
+	6xTokZ+Sb/Ozlzv7MtnKUSB/5+XKpau5AsKo+njvXKKG23m/wr4KCnUfri3bVX4w=
+X-Google-Smtp-Source: AGHT+IF/DUYBoiOfozUGmZtvuCTaqwIGsVuJkSkhvnEO8q4dU3jkpIXU2foqX4/8PGuJz7DzFpbk+Mu1jhtW49HcMkA=
+X-Received: by 2002:a05:6e02:1aa5:b0:3a0:9ffd:2b7a with SMTP id
+ e9e14a558f8ab-3a6daa96453mr755235ab.9.1730754406481; Mon, 04 Nov 2024
+ 13:06:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241104-perf_syscalltbl-v1-12-9adae5c761ef@rivosinc.com>
-References: <20241104-perf_syscalltbl-v1-0-9adae5c761ef@rivosinc.com>
-In-Reply-To: <20241104-perf_syscalltbl-v1-0-9adae5c761ef@rivosinc.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
- Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>, 
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
- James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
- Leo Yan <leo.yan@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
- Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
- bpf@vger.kernel.org, linux-csky@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6179; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=3BnA2k7gkDMKMTp7NPvukg06UCPVaXeoGTtH/OJ/1cQ=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ7qmeRy3JYP4tTdnEtU4RD9e0Qi3fnDtS4hjbKxbt4dzZ
- 7HXnJKOUhYGMQ4GWTFFFp5rDcytd/TLjoqWTYCZw8oEMoSBi1MAJrKhl+GfqUKttabNK19z/70H
- vDLOvE8TNG89f52PvVbqaG+ToUE2wz8Ltr7V/7wWMjf538y5bLXvpeen+b1/Ou8XffeRbPnwxYc
- dAA==
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+References: <20241031014252.753588-1-irogers@google.com> <20241031014252.753588-7-irogers@google.com>
+ <ZyPX7ayIO4teziDX@x1> <CAP-5=fVgJu8BJWFVUkCy1Zsi3piTPdV-GXL1bTpWZeO=nm=jrg@mail.gmail.com>
+ <Zykk2MJ4REGCaqVw@google.com> <CAP-5=fXQpej43wxEtMYFbxdofHtUi98X68W4AaR9UCfsbDir5A@mail.gmail.com>
+ <ZykxD41c6gWQoIrQ@x1> <CAP-5=fWf8guTgqwfrrct3AGYDC=Lb1Oxo7kXU_x1yEr5urFSkQ@mail.gmail.com>
+ <Zyk19KgzI7ybPkQ4@google.com>
+In-Reply-To: <Zyk19KgzI7ybPkQ4@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 4 Nov 2024 13:06:35 -0800
+Message-ID: <CAP-5=fXj1-wqt+Bs-0ZypRsaZw2VP0qyKdeeRHpjUD5BwO9OBg@mail.gmail.com>
+Subject: Re: [PATCH v5 06/21] perf script: Move find_scripts to browser/scripts.c
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Michael Petlan <mpetlan@redhat.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-loongarch uses a syscall table, use that in perf instead of using unistd.h.
+On Mon, Nov 4, 2024 at 1:00=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> On Mon, Nov 04, 2024 at 12:48:01PM -0800, Ian Rogers wrote:
+> > On Mon, Nov 4, 2024 at 12:39=E2=80=AFPM Arnaldo Carvalho de Melo
+> > <acme@kernel.org> wrote:
+> > >
+> > > On Mon, Nov 04, 2024 at 12:34:47PM -0800, Ian Rogers wrote:
+> > > > On Mon, Nov 4, 2024 at 11:47=E2=80=AFAM Namhyung Kim <namhyung@kern=
+el.org> wrote:
+> > > > >
+> > > > > On Thu, Oct 31, 2024 at 01:51:36PM -0700, Ian Rogers wrote:
+> > > > > > On Thu, Oct 31, 2024 at 12:18=E2=80=AFPM Arnaldo Carvalho de Me=
+lo
+> > > > > > <acme@kernel.org> wrote:
+> > > > > > >
+> > > > > > > On Wed, Oct 30, 2024 at 06:42:37PM -0700, Ian Rogers wrote:
+> > > > > > > > The only use of find_scripts is in browser/scripts.c but th=
+e
+> > > > > > > > definition in builtin causes linking problems requiring a s=
+tub in
+> > > > > > > > python.c. Move the function to allow the stub to be removed=
+.
+> > > > > > > >
+> > > > > > > > Rewrite the directory iteration to use openat so that large=
+ character
+> > > > > > > > arrays aren't needed. The arrays are warned about potential=
+ buffer
+> > > > > > > > overflows by GCC now that all the code exists in a single C=
+ file.
+> > > > > > >
+> > > > > > > Introducing is_directory_at() should be done as a prep patch,=
+ as the
+> > > > > > > rest of the patch below could end up being reverted after som=
+e other
+> > > > > > > patch used it, making the process more difficult.
+> > > > > > >
+> > > > > > > I mentioned cases like this in the past, so doing it again ju=
+st for the
+> > > > > > > record.
+> > > > > >
+> > > > > > This is highlighted in the commit message:
+> > > > > > ```
+> > > > > > Rewrite the directory iteration to use openat so that large cha=
+racter
+> > > > > > arrays aren't needed. The arrays are warned about potential buf=
+fer
+> > > > > > overflows by GCC now that all the code exists in a single C fil=
+e.
+> > > > > > ```
+> > > > > > so without the change the code wouldn't build. The new is_direc=
+tory_at
+> > > > > > function is effectively 2 statements fstatat and S_ISDIR on the
+> > > > > > result, it is put next to is_directory for consistency but coul=
+d have
+> > > > > > been a static function in the only C file to use it.
+> > > > > >
+> > > > > > For the record, patches introducing 2 line long functions can b=
+e
+> > > > > > excessively noisy, especially in a 21 patch series. There is al=
+ways
+> > > > > > the declared but not used build error to worry about - here thi=
+ngs
+> > > > > > couldn't just be simply moved due to triggering a different bui=
+ld
+> > > > > > error. Given the simplicity of the function here I made a decis=
+ion not
+> > > > > > to split up the work - the commit message would likely be longe=
+r than
+> > > > > > the function. The work never intended to introduce is_directory=
+_at but
+> > > > > > was forced into it through a desire not to disable compiler war=
+nings.
+> > > > >
+> > > > > This patch does more than just moving the code which can be easy =
+to miss
+> > > > > something in the middle.  I think you can move the code as is wit=
+hout
+> > > > > introducing build errors and then add new changes like using open=
+at() on
+> > > > > top (you may separate the change out of this series).  I think it=
+'s
+> > > > > ok to have a small change if it clearly has different semantics.
+> > > >
+> > > > If you are trying to bisect to find something that broke a build,
+> > > > having commits that knowingly break the build will cause the bisect=
+ to
+> > > > fail. The bisect will falsely fail on the known to be broken commit=
+.
+> > >
+> > > I'm not understanding, AFAIK nobody is advocating for breaking
+> > > bisection, just to first instroduce a function, then use it to avoid:
+> > >
+> > > 1) Introduce function foo() and use it for feature bar()
+> > > 2) Somebody else uses function foo()
+> > > 3) We find a justification to revert 1) but can't, since it will brea=
+k
+> > >    2) so we need to add 4) that removes bar() from 1).
+> >
+> > Namhyung was asking that the c&p of code be 1 patch then "add new
+> > changes like using openat() on top". That is:
+> >
+> > patch 1: add is_directory_at - introduce the 2 line helper function
+> > patch 2: move the code
+> > patch 3: update the code to use is_directory_at
+> >
+> > patch 2 is known broken as patch 3 is fixing it.
+> >
+> > Hopefully this is clear.
+>
+> Actually I don't care about the patch ordering.  My request is not
+> to break build and just to separate different changes out. :)
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
- tools/perf/Makefile.config                         |  4 +-
- tools/perf/Makefile.perf                           |  2 +-
- tools/perf/arch/loongarch/Makefile                 | 22 -----------
- tools/perf/arch/loongarch/entry/syscalls/Kbuild    |  2 +
- .../loongarch/entry/syscalls/Makefile.syscalls     |  3 ++
- .../arch/loongarch/entry/syscalls/mksyscalltbl     | 45 ----------------------
- tools/perf/arch/loongarch/include/syscall_table.h  |  2 +
- tools/perf/util/syscalltbl.c                       |  4 --
- 8 files changed, 10 insertions(+), 74 deletions(-)
+So, patch 2 can't be separated from patch 3 - are we agreed? So we
+squash patch 2 with patch 3. Patch 1 is trivial and fails to meet the
+bar of a meaningful change, so we squash that. We end up with this
+patch. If there's a later revert and a dependence of the 2 liner, just
+don't revert that part of the change. We've never had such a revert so
+it is hard to see why we need to generate so much churn because of it.
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 1da374873514..2cf45e3f2659 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -31,12 +31,12 @@ $(call detected_var,SRCARCH)
- ifneq ($(NO_SYSCALL_TABLE),1)
-   NO_SYSCALL_TABLE := 1
- 
--  ifeq ($(SRCARCH),$(filter $(SRCARCH),powerpc s390 mips loongarch))
-+  ifeq ($(SRCARCH),$(filter $(SRCARCH),powerpc s390 mips))
-     NO_SYSCALL_TABLE := 0
-   endif
- 
-   # architectures that use the generic syscall table scripts
--  ifeq ($(SRCARCH),$(filter $(SRCARCH),riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64))
-+  ifeq ($(SRCARCH),$(filter $(SRCARCH),riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch))
-     NO_SYSCALL_TABLE := 0
-     CFLAGS += -DGENERIC_SYSCALL_TABLE
-     CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index ced8dc312b20..ce2c4e1c0623 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -311,7 +311,7 @@ FEATURE_TESTS := all
- endif
- endif
- # architectures that use the generic syscall table
--ifeq ($(SRCARCH),$(filter $(SRCARCH),riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64))
-+ifeq ($(SRCARCH),$(filter $(SRCARCH),riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch))
- include $(srctree)/tools/perf/scripts/Makefile.syscalls
- endif
- include Makefile.config
-diff --git a/tools/perf/arch/loongarch/Makefile b/tools/perf/arch/loongarch/Makefile
-index c89d6bb6b184..a2fa918e548c 100644
---- a/tools/perf/arch/loongarch/Makefile
-+++ b/tools/perf/arch/loongarch/Makefile
-@@ -5,25 +5,3 @@ endif
- PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
- PERF_HAVE_JITDUMP := 1
- HAVE_KVM_STAT_SUPPORT := 1
--
--#
--# Syscall table generation for perf
--#
--
--out    := $(OUTPUT)arch/loongarch/include/generated/asm
--header := $(out)/syscalls.c
--incpath := $(srctree)/tools
--sysdef := $(srctree)/tools/arch/loongarch/include/uapi/asm/unistd.h
--sysprf := $(srctree)/tools/perf/arch/loongarch/entry/syscalls/
--systbl := $(sysprf)/mksyscalltbl
--
--# Create output directory if not already present
--$(shell [ -d '$(out)' ] || mkdir -p '$(out)')
--
--$(header): $(sysdef) $(systbl)
--	$(Q)$(SHELL) '$(systbl)' '$(CC)' '$(HOSTCC)' $(incpath) $(sysdef) > $@
--
--clean::
--	$(call QUIET_CLEAN, loongarch) $(RM) $(header)
--
--archheaders: $(header)
-diff --git a/tools/perf/arch/loongarch/entry/syscalls/Kbuild b/tools/perf/arch/loongarch/entry/syscalls/Kbuild
-new file mode 100644
-index 000000000000..9a41e3572c3a
---- /dev/null
-+++ b/tools/perf/arch/loongarch/entry/syscalls/Kbuild
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+syscall-y += syscalls_64.h
-diff --git a/tools/perf/arch/loongarch/entry/syscalls/Makefile.syscalls b/tools/perf/arch/loongarch/entry/syscalls/Makefile.syscalls
-new file mode 100644
-index 000000000000..47d32da2aed8
---- /dev/null
-+++ b/tools/perf/arch/loongarch/entry/syscalls/Makefile.syscalls
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+syscall_abis_64 +=
-diff --git a/tools/perf/arch/loongarch/entry/syscalls/mksyscalltbl b/tools/perf/arch/loongarch/entry/syscalls/mksyscalltbl
-deleted file mode 100755
-index c10ad3580aef..000000000000
---- a/tools/perf/arch/loongarch/entry/syscalls/mksyscalltbl
-+++ /dev/null
-@@ -1,45 +0,0 @@
--#!/bin/sh
--# SPDX-License-Identifier: GPL-2.0
--#
--# Generate system call table for perf. Derived from
--# powerpc script.
--#
--# Author(s):  Ming Wang <wangming01@loongson.cn>
--# Author(s):  Huacai Chen <chenhuacai@loongson.cn>
--# Copyright (C) 2020-2023 Loongson Technology Corporation Limited
--
--gcc=$1
--hostcc=$2
--incpath=$3
--input=$4
--
--if ! test -r $input; then
--	echo "Could not read input file" >&2
--	exit 1
--fi
--
--create_sc_table()
--{
--	local sc nr max_nr
--
--	while read sc nr; do
--		printf "%s\n" "	[$nr] = \"$sc\","
--		max_nr=$nr
--	done
--
--	echo "#define SYSCALLTBL_LOONGARCH_MAX_ID $max_nr"
--}
--
--create_table()
--{
--	echo "#include \"$input\""
--	echo "static const char *const syscalltbl_loongarch[] = {"
--	create_sc_table
--	echo "};"
--}
--
--$gcc -E -dM -x c -I $incpath/include/uapi $input \
--	|awk '$2 ~ "__NR" && $3 !~ "__NR3264_" {
--		sub("^#define __NR(3264)?_", "");
--		print | "sort -k2 -n"}' \
--	|create_table
-diff --git a/tools/perf/arch/loongarch/include/syscall_table.h b/tools/perf/arch/loongarch/include/syscall_table.h
-new file mode 100644
-index 000000000000..9d0646d3455c
---- /dev/null
-+++ b/tools/perf/arch/loongarch/include/syscall_table.h
-@@ -0,0 +1,2 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <asm/syscall_table_64.h>
-diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
-index 0bd49247e486..7c8550ef0d7b 100644
---- a/tools/perf/util/syscalltbl.c
-+++ b/tools/perf/util/syscalltbl.c
-@@ -29,10 +29,6 @@ static const char *const *syscalltbl_native = syscalltbl_powerpc_32;
- #include <asm/syscalls_n64.c>
- const int syscalltbl_native_max_id = SYSCALLTBL_MIPS_N64_MAX_ID;
- static const char *const *syscalltbl_native = syscalltbl_mips_n64;
--#elif defined(__loongarch__)
--#include <asm/syscalls.c>
--const int syscalltbl_native_max_id = SYSCALLTBL_LOONGARCH_MAX_ID;
--static const char *const *syscalltbl_native = syscalltbl_loongarch;
- #elif defined(GENERIC_SYSCALL_TABLE)
- #include <syscall_table.h>
- const int syscalltbl_native_max_id = SYSCALLTBL_MAX_ID;
-
--- 
-2.34.1
-
+Thanks,
+Ian
 
