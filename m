@@ -1,156 +1,189 @@
-Return-Path: <linux-kernel+bounces-394679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0419BB2AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:14:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C309BB2AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 244A0B25CF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ABEA1F217EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971071CACE9;
-	Mon,  4 Nov 2024 10:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568E81C4A28;
+	Mon,  4 Nov 2024 10:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="GIIdlh5w"
-Received: from sender4-of-o51.zoho.com (sender4-of-o51.zoho.com [136.143.188.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="08jLTSmG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fo0ezgy4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="08jLTSmG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fo0ezgy4"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17621B372C;
-	Mon,  4 Nov 2024 10:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717852; cv=pass; b=gIFLeMWqaK9dSCVudhMP0U1nJpDlfrm0w+8SRW/noI4Fi8tqj/D2axd0qnRQfUN0SQswD3y/HFv9jfW7AJNijYZyGrEsywoLjUhJKMGnOqF6NGncTjEjMGN3bMH6ubQWyJVpfLgZ2PzB78kfjmcGSskc+vEVLJQ3Rih/B/8iPXI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717852; c=relaxed/simple;
-	bh=fOpkG52q1A+HtoIJfAJXCeTIHRMQs3xXp9NhZVlXvBU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=r52sT4yMwk8wqkURbsIfZ6yplUTjEbiLJU82gNQ8bQIXcK/J/SokM1+cNTisZ/fsWtxPVfmZBa87K46xWDRKLjMFVDijBdgSMHhVlu3NbYT7UzVrNL8naXqOEqs9BGLQH2GFQqd6JbTbGe6N0sO2N5kLR1cPYp4pBzc92171Z0w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=GIIdlh5w; arc=pass smtp.client-ip=136.143.188.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730717831; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WoxPHBCaNZsN1PY8VHPMdaSTmp0IMj5cvLoFQLiAI5qJ4BBGbczBnqxh3Z2mPLEW7+io+aEhtsqwbr/RjjZX1yMlxqfzBqanemwJ/063J/UC0SSPLyRokWC/wfMoY3ysSzUcuOrDWUs2fSpjGLqigr7ky719ANCjs4dizuxGNFU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1730717831; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NCYgbbjvLSlIO5KLUNVwElkEFTf5UhLG5MjWOWtA/BM=; 
-	b=dKsvtcyVHJ9/D7wfPZ1iqk3YFjDgvdoUkcxXwulzhP5uLYeARLEY8SmkQbPwceQhVmjeJe2+632e2hLoQfuxoQxwpxYBlf9tr5TH1/hJfiAvnI/2roLChg1qPEmpQMyk8uUxpEs+06b9yKHd/SHHSkBW2Q2gd2c7Abi2qN4p010=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=apertussolutions.com;
-	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
-	dmarc=pass header.from=<dpsmith@apertussolutions.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730717831;
-	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
-	h=Message-ID:Date:Date:MIME-Version:From:From:Subject:Subject:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=NCYgbbjvLSlIO5KLUNVwElkEFTf5UhLG5MjWOWtA/BM=;
-	b=GIIdlh5wirXlKagVoJfCMGEKO+314eFkR70UHRm+iBDyI8RLB4WFavmAvSsr3qc9
-	RsUKu+zOlxOCn/SQ7HMOSi6fVGtOhF5/9RgqA8AMy6d8rH40onYH5QCHbrCBssANph1
-	Gh5TmacJR4b/iaPS2XblexVQX4CZT0Kzrfb6eNsw=
-Received: by mx.zohomail.com with SMTPS id 1730717828500465.26295474390076;
-	Mon, 4 Nov 2024 02:57:08 -0800 (PST)
-Message-ID: <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com>
-Date: Mon, 4 Nov 2024 05:57:01 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944E01B6CF5;
+	Mon,  4 Nov 2024 10:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730717835; cv=none; b=qBPAo3tKbPfeMnNox6XQxW2ZbcQk1YFV+LbStDLX3yuIP1+8P4h1gmPZwe7GsAr6GgTiwyHFFiAm2Euw2huTkQGMvXzX4cg8sCmOY9+DmDJ3P7JVcPlLp4s0f7y6LGp4sz6hE/zwGP1dtMUO/WdR4iXYq7YrM78mtoQ6ymkmKhg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730717835; c=relaxed/simple;
+	bh=UPzlo2d9vGTBJpHoau13kgCUyWgH1napUQb+/vB/Dcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OoP58j4lHyOHb2oIMers2LTY1GBOgrCbewc3+RYI/aDYtI4dIar9Jfg7fNuPqWEwhwMUZnArYfFMHCzS7Ay37QYkdZME4qLByryb4dSQNFhntDLOi9dZRrXci3OMEZahBBB0mAu4/8/IhVw/R3plE2qbEPIWfy0GOEnJqrZLw30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=08jLTSmG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fo0ezgy4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=08jLTSmG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fo0ezgy4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C8F5F1F45F;
+	Mon,  4 Nov 2024 10:57:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730717831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IYRQrdsu06X+bjARk5dkS+tv7CJXY6E5nc3x053oWO0=;
+	b=08jLTSmGyqORhZ1ZZxcaE4ZOS8tqlHEW5TeUVQrGc6Kr/1a15fJY2tyWnPX6KKr2JVOEa+
+	S3CBQ0P5ulmUUAJbmahNS0Y+aGmdU1h/1UKW7cXaPw1wwq62gWHBjPB06gzaHPAXyGqXmP
+	F7jLtX6e/B6son4umaU/bsKMvtc946Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730717831;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IYRQrdsu06X+bjARk5dkS+tv7CJXY6E5nc3x053oWO0=;
+	b=Fo0ezgy4tRYrOrY/8CD3r1r8knyd2MEdiFENBvHKadCaE/FbmB8OpSO2esg+niHceiTmpW
+	m2xPlayNP7F1vbBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730717831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IYRQrdsu06X+bjARk5dkS+tv7CJXY6E5nc3x053oWO0=;
+	b=08jLTSmGyqORhZ1ZZxcaE4ZOS8tqlHEW5TeUVQrGc6Kr/1a15fJY2tyWnPX6KKr2JVOEa+
+	S3CBQ0P5ulmUUAJbmahNS0Y+aGmdU1h/1UKW7cXaPw1wwq62gWHBjPB06gzaHPAXyGqXmP
+	F7jLtX6e/B6son4umaU/bsKMvtc946Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730717831;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IYRQrdsu06X+bjARk5dkS+tv7CJXY6E5nc3x053oWO0=;
+	b=Fo0ezgy4tRYrOrY/8CD3r1r8knyd2MEdiFENBvHKadCaE/FbmB8OpSO2esg+niHceiTmpW
+	m2xPlayNP7F1vbBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BB3D213736;
+	Mon,  4 Nov 2024 10:57:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id e9WvLYeoKGdCOgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 04 Nov 2024 10:57:11 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6A564A0AFB; Mon,  4 Nov 2024 11:57:11 +0100 (CET)
+Date: Mon, 4 Nov 2024 11:57:11 +0100
+From: Jan Kara <jack@suse.cz>
+To: Asahi Lina <lina@asahilina.net>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Sergio Lopez Pascual <slp@redhat.com>,
+	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
+Message-ID: <20241104105711.mqk4of6frmsllarn@quack3>
+References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
-Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: x86@kernel.org, Ross Philipson <ross.philipson@oracle.com>,
- Ard Biesheuvel <ardb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
- "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241102152226.2593598-1-jarkko@kernel.org>
- <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
-Content-Language: en-US
-In-Reply-To: <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On 11/2/24 14:00, Jarkko Sakkinen wrote:
-> On Sat Nov 2, 2024 at 5:22 PM EET, Jarkko Sakkinen wrote:
->> It is not really my problem but I'm also wondering how the
->> initialization order is managed. What if e.g. IMA happens to
->> initialize before slmodule?
+On Fri 01-11-24 21:22:31, Asahi Lina wrote:
+> For virtio-dax, the file/FS blocksize is irrelevant. FUSE always uses
+> large DAX blocks (2MiB), which will work with all host page sizes. Since
+> we are mapping files into the DAX window on the host, the underlying
+> block size of the filesystem and its block device (if any) are
+> meaningless.
 > 
-> The first obvious observation from Trenchboot implementation is that it
-> is 9/10 times worst idea ever to have splitted root of trust. Here it
-> is realized by an LKM for slmodule.
+> For real devices with DAX, the only requirement should be that the FS
+> block size is *at least* as large as PAGE_SIZE, to ensure that at least
+> whole pages can be mapped out of the device contiguously.
+> 
+> Fixes warning when using virtio-dax on a 4K guest with a 16K host,
+> backed by tmpfs (which sets blksz == PAGE_SIZE on the host).
+> 
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> ---
+>  fs/dax.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-First, there is no conflict between IMA and slmodule. With your change 
-to make locality switching a one shot, the only issue would be if IMA 
-were to run first and issue a locality switch to Locality 0, thus 
-blocking slmodule from switching to Locality 2. As for PCR usage, IMA 
-uses the SRTM PCRs, which are completely accessible under Locality 2.
+Well, I don't quite understand how just relaxing the check is enough. I
+guess it may work with virtiofs (I don't know enough about virtiofs to
+really tell either way) but for ordinary DAX filesystem it would be
+seriously wrong if DAX was used with blocksize > pagesize as multiple
+mapping entries could be pointing to the same PFN which is going to have
+weird results. If virtiofs can actually map 4k subpages out of 16k page on
+host (and generally perform 4k granular tracking etc.), it would seem more
+appropriate if virtiofs actually exposed the filesystem 4k block size instead
+of 16k blocksize? Or am I missing something?
 
-The RoT for DRTM is the CPU/microcode, and that is not split. I am going 
-to assume that you are speaking about the delay between the time of 
-collecting measurement to the time of storing measurement? As a 
-refresher, an RTM trust chain is constructed using the transitive 
-trust[1] process. As noted in the definition, the Linux kernel in this 
-case is considered a group of functions that were all evaluated and 
-considered functions to be equally part of the TCB. This means you are 
-trusting actions at time interval M equally to an action taken at time 
-interval N. If one attempts to construct an argument that claims this is 
-invalid, that would mean all RTM trust chains constructed in this manner 
-are invalidated, including SRTM aka SecureBoot. This means as long as 
-the measurements are recorded before the TCB is extended again, then it 
-does not matter if it is done at time M or time N.
+								Honza
 
-Bringing this back to SecureLaunch, there would only be an issue if 
-slmodule could be built as an external loadable module, thus not being 
-part of the "group of functions" measured and executed by the SINIT ACM. 
-AFAICT, slmodule can only either be compiled in or out, not as a 
-loadable module. If there is a path we missed that allows it to be built 
-as a loadable module, then that needs correcting. Due to this comment, I 
-went testing KCONFIG options and could not come up with a way for this 
-to occur. I did see that we probably should change CONFIG_SECURE_LAUNCH 
-dependency from TCG_TPM to TPM_TIS and TCG_CRB. Just to avoid an invalid 
-configuration where the necessary interfaces were not present, leading 
-to triggering a TXT reset of the platform.
-
-[1] Transitive trust (TCG D-RTM Architecture - Version 1.0.0)
-Also known as "inductive trust." In this process, the Root of Trust 
-gives a trustworthy description of a second group of functions. Based on 
-this description, an interested entity can determine the trust it is to 
-place in this second group of functions. If the interested entity 
-determines that the trust level of the second group of functions is 
-acceptable, the trust boundary is extended from the Root of Trust to
-include the second group of functions. In this case, the process can be
-iterated. The second group of functions can give a trustworthy 
-description of the third group of functions, etc. Transitive trust is 
-used to provide a trustworthy description of platform characteristics.
-
-> So based on that usually a literal and unquestionable truth, when it
-> comes to securing platforms, the next question is how to make a single
-> atomic root of trust for Trenchboot.
-As mentioned above, there is no split currently.
-
-> There is really only one answer I think of for this it to make slmodule
-> part of the tpm_tis_core and also init order will be sorted out.
-
-Only if your assertion that it was split, which it is not.
-
-> I'll describe the steps forward.
-
-Honestly, a better path forward would be to revisit the issue that is
-driving most of that logic existing, which is the lack of a TPM
-interface code in the setup kernel. As a reminder, this issue is due to
-the TPM maintainers position that the only TPM code in the kernel can be
-the mainline driver. Which, unless something has changed, is impossible
-to compile into the setup kernel due to its use of mainline kernel
-constructs not present in the setup kernel.
-
-v/r,
-dps
-
-
+> diff --git a/fs/dax.c b/fs/dax.c
+> index c62acd2812f8d4981aaba82acfeaf972f555362a..406fb75bdbe9d17a6e4bf3d4cb92683e90f05910 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -1032,7 +1032,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+>  	int ret = 0;
+>  	unsigned int scanned = 0;
+>  
+> -	if (WARN_ON_ONCE(inode->i_blkbits != PAGE_SHIFT))
+> +	if (WARN_ON_ONCE(inode->i_blkbits < PAGE_SHIFT))
+>  		return -EIO;
+>  
+>  	if (mapping_empty(mapping) || wbc->sync_mode != WB_SYNC_ALL)
+> 
+> ---
+> base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+> change-id: 20241101-dax-page-size-83a1073b4e1b
+> 
+> Cheers,
+> ~~ Lina
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
