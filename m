@@ -1,157 +1,126 @@
-Return-Path: <linux-kernel+bounces-395617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D1E9BC09B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:09:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A945D9BC09D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:09:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A5E1F22A08
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17924282987
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A191FDF84;
-	Mon,  4 Nov 2024 22:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9751FCF69;
+	Mon,  4 Nov 2024 22:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uSLckBCh"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfRF+nbt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBC41CC896
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1051AAE27;
+	Mon,  4 Nov 2024 22:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730758130; cv=none; b=VfVz6iQGSPrh8W4MLprKCRn9C2dFBa8HWl7H2s3VmlMxsyR/MwV9peqBaTCqMArzlartTZ8sP/vsNmuhowMw9gKubgQQK4yBoIEf68IktuUEVjT2Glx1P7oN0tusLtm2W0AavuucL+0anMLtD3BvHlJzf83U0c2+gE3jefoCyeU=
+	t=1730758184; cv=none; b=aQ4Kf9d0J0m8Uj0muqv+ymyT1/tubA1qTE2PqUZzvSj6BX7J5n4Gtzp+iVFtdpGvlXTxxXoNAklCRG+FlPn1J4o1Kng3iIMU4Y06sygQ6SvbrzuVM3BLQkcGySrt+rwq7PY/o5+MI4cpT1PjLt3TvRsEX2EbRlxzAyzvytlp2pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730758130; c=relaxed/simple;
-	bh=9yjeDW7FoGcBbhm0devgQq4gJaurLSzw3WjNMqN4Dig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lBKm2h8Rb3SWAe4ZI0KyuysqQQgqxpLi64AkFSnlHMcQUp+coXlaWckrDv4jbwLeteTNpDbPWQiujoHO6QRMHDVQjSlYMefEq3y/HperFjhYs80spLj4tXaIePjvLqfxBapYmJ0iq9zHlMwNfJBSZw5aiHMk2HAl+QWTVohOwzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uSLckBCh; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-71815313303so2341276a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 14:08:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730758127; x=1731362927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RZeJLhuGWwBpR2tgn/q1fig0IFTgvv0Juwu0EbDl2cM=;
-        b=uSLckBChR4CZ8NkFOf1nqPO2CHNER3OOygaKDRVqNGI/tJY4BKAa0mSQFMk8wxDWSB
-         dwyv4NE/cnoJXExoJGNyMn+NJGdgl5ybRDbMR6KTWbVqTl/IyZVm4V5k7gkzhqRr2rRf
-         xUceynD4sniCFgI1dThsELe9pb4QHfGBZ9s+AbZxOWDvbDqfatPrE2y04NZMuD1xesG7
-         nlbhfm5zm/evzmaZNTVY0QilLB76DoxcRKGLTVsokzz/1bRLG3SzoTmxIF1pvtGbLkPk
-         Jt6VaDAJajmmnEe870TxtCoRryRic9MDfZi+YAfBy/guqVZ12Ktb36DLrwmWdFpl6vbj
-         9oRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730758127; x=1731362927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RZeJLhuGWwBpR2tgn/q1fig0IFTgvv0Juwu0EbDl2cM=;
-        b=cITOeglNxZk20hPsrr4KgPYQZBckAqvxcTRKXLx3Pew1zvJoOLXzqqA6Z1QzMuoxFP
-         mokLa4sOfIW/4rjDPydko8i3BnvoqyOBhoeQltwweRv5yd2SAYpe0CKYHeaahuDQV3gH
-         xVohFcH7IzID49NHZtWvgYWl/ZoY7tM+oP9KpD2w1IzR3JxU3ZIowjj4bvrB6i2QFZKf
-         W0Ksr4mh/S10ZSTdRuXGTmGII4DIZahuxCp17dIeaimkZGsQDYrnnNmkQheisz4GoKO/
-         89D8+8ATFZ8wC6O9BonIp0z0q97AN3UkxdEYJbd82fubzPAmi+8Ypz2l/ERIck/Bum1U
-         xfGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVF16KzJG6oTSEItBq7Q3GlgvVNS6D/oexF9PPRqkUUkW8zQE2wmCjQN5SfdfRP549bpzAcJEs07pxUtKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBCSDxKIsZG6VdWVqG4/TtD9gOukyOpsR+14WVdaZAkR1Btn6e
-	kP4K+1i7Bc8/OdtBOK1i7msZVf7B3RXcwS4EZfR18+xSwA8Sv5273cWUukylW+2IDT2Z9uosNSg
-	9l3yiyP/cotb4OUFYh1MB/znjaVUfy8VL/bqQ
-X-Google-Smtp-Source: AGHT+IFln5ARziviEZ5W8gZPhQEpbPGFJcy1tmyEkI9GsLY6a3qE2HayVDbKUpLBXHlxdIKA1VRIzX1NSAfBlC47kKc=
-X-Received: by 2002:a05:6358:7254:b0:1ad:10eb:cd39 with SMTP id
- e5c5f4694b2df-1c3f9f7979amr1643843155d.26.1730758126978; Mon, 04 Nov 2024
- 14:08:46 -0800 (PST)
+	s=arc-20240116; t=1730758184; c=relaxed/simple;
+	bh=Hd/GX4rs/QFp7jmf45XPlXgJZu+CdI3P4iDkuE5QVMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nwMWp/slQjEeFVGBiYTideBiaUQF95dZlxrdGfPNJ2ibsf8qplXc3DTAxxvpov1sOrDSZT6e8FLVcFmY2GeAn6cd19HBnGatbReCLlMcKWhiUYkvG07cCe6SUD7NV1H6fkJVnwQN87rz71iIQSCIP+ev4KzaH/GzYKaCPmjRTN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfRF+nbt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0026BC4CECE;
+	Mon,  4 Nov 2024 22:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730758183;
+	bh=Hd/GX4rs/QFp7jmf45XPlXgJZu+CdI3P4iDkuE5QVMg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MfRF+nbt5tPvE+BClZDGgRrksornQrxb8nU0LGUXjEB8funSyWG7zYErrKnhfY/mt
+	 MxhJZdKEnfmejkxjkP3x6sEB+EMJomO2Okcb6+W9YkrvQ4ayRf9RQ3ikiRl6ARIZ5/
+	 W4XMq9rcP+TFyu6e8VuQnpCPJZyBZugwULMmDSED4SxORju4o7S7EGsF66baqqgJzy
+	 iCkQBFtq5lj341w9qhdpqzhOHY9t7RgXENemJ2S6zmxFjXcnh7cTB2CpAueAInrCIz
+	 +aLPNAe/xVKraFeMdMcZs0SBzdDs6NKn+iHuzvmIKZf3sLO8m6AIBNVeSwzDAsr3GH
+	 Usd/9JbHMShJA==
+Date: Mon, 4 Nov 2024 14:09:40 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 06/21] perf script: Move find_scripts to
+ browser/scripts.c
+Message-ID: <ZylGJF7Ux3JdJllo@google.com>
+References: <20241031014252.753588-1-irogers@google.com>
+ <20241031014252.753588-7-irogers@google.com>
+ <ZyPX7ayIO4teziDX@x1>
+ <CAP-5=fVgJu8BJWFVUkCy1Zsi3piTPdV-GXL1bTpWZeO=nm=jrg@mail.gmail.com>
+ <Zykk2MJ4REGCaqVw@google.com>
+ <CAP-5=fXQpej43wxEtMYFbxdofHtUi98X68W4AaR9UCfsbDir5A@mail.gmail.com>
+ <ZykxD41c6gWQoIrQ@x1>
+ <CAP-5=fWf8guTgqwfrrct3AGYDC=Lb1Oxo7kXU_x1yEr5urFSkQ@mail.gmail.com>
+ <Zyk19KgzI7ybPkQ4@google.com>
+ <CAP-5=fXj1-wqt+Bs-0ZypRsaZw2VP0qyKdeeRHpjUD5BwO9OBg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025012304.2473312-1-shakeel.butt@linux.dev>
- <20241025012304.2473312-6-shakeel.butt@linux.dev> <iwmabnye3nl4merealrawt3bdvfii2pwavwrddrqpraoveet7h@ezrsdhjwwej7>
- <CAOUHufZexpg-m5rqJXUvkCh5nS6RqJYcaS9b=xra--pVnHctPA@mail.gmail.com>
- <ZykEtcHrQRq-KrBC@google.com> <20241104133834.e0e138038a111c2b0d20bdde@linux-foundation.org>
- <CAOUHufbA6GN=k3baYdvLN_xSQvX0UgA7OCeqT8TsWLEW7o=y9w@mail.gmail.com>
-In-Reply-To: <CAOUHufbA6GN=k3baYdvLN_xSQvX0UgA7OCeqT8TsWLEW7o=y9w@mail.gmail.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Mon, 4 Nov 2024 15:08:09 -0700
-Message-ID: <CAOUHufZ=SMN=GWMjvpDxiXxyMAvDDc4eEzYvAWP4=7atT7SX7g@mail.gmail.com>
-Subject: Re: [PATCH v1 5/6] memcg-v1: no need for memcg locking for MGLRU
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXj1-wqt+Bs-0ZypRsaZw2VP0qyKdeeRHpjUD5BwO9OBg@mail.gmail.com>
 
-On Mon, Nov 4, 2024 at 3:04=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote:
->
-> On Mon, Nov 4, 2024 at 2:38=E2=80=AFPM Andrew Morton <akpm@linux-foundati=
-on.org> wrote:
+On Mon, Nov 04, 2024 at 01:06:35PM -0800, Ian Rogers wrote:
+> On Mon, Nov 4, 2024 at 1:00 PM Namhyung Kim <namhyung@kernel.org> wrote:
 > >
-> > On Mon, 4 Nov 2024 10:30:29 -0700 Yu Zhao <yuzhao@google.com> wrote:
+> > On Mon, Nov 04, 2024 at 12:48:01PM -0800, Ian Rogers wrote:
+> > > Namhyung was asking that the c&p of code be 1 patch then "add new
+> > > changes like using openat() on top". That is:
+> > >
+> > > patch 1: add is_directory_at - introduce the 2 line helper function
+> > > patch 2: move the code
+> > > patch 3: update the code to use is_directory_at
+> > >
+> > > patch 2 is known broken as patch 3 is fixing it.
+> > >
+> > > Hopefully this is clear.
 > >
-> > > On Sat, Oct 26, 2024 at 09:26:04AM -0600, Yu Zhao wrote:
-> > > > On Sat, Oct 26, 2024 at 12:34=E2=80=AFAM Shakeel Butt <shakeel.butt=
-@linux.dev> wrote:
-> > > > >
-> > > > > On Thu, Oct 24, 2024 at 06:23:02PM GMT, Shakeel Butt wrote:
-> > > > > > While updating the generation of the folios, MGLRU requires tha=
-t the
-> > > > > > folio's memcg association remains stable. With the charge migra=
-tion
-> > > > > > deprecated, there is no need for MGLRU to acquire locks to keep=
- the
-> > > > > > folio and memcg association stable.
-> > > > > >
-> > > > > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > > > >
-> > > > > Andrew, can you please apply the following fix to this patch afte=
-r your
-> > > > > unused fixup?
-> > > >
-> > > > Thanks!
-> > >
-> > > syzbot caught the following:
-> > >
-> > >   WARNING: CPU: 0 PID: 85 at mm/vmscan.c:3140 folio_update_gen+0x23d/=
-0x250 mm/vmscan.c:3140
-> > >   ...
-> > >
-> > > Andrew, can you please fix this in place?
-> >
-> > OK, but...
-> >
-> > > --- a/mm/vmscan.c
-> > > +++ b/mm/vmscan.c
-> > > @@ -3138,7 +3138,6 @@ static int folio_update_gen(struct folio *folio=
-, int gen)
-> > >       unsigned long new_flags, old_flags =3D READ_ONCE(folio->flags);
-> > >
-> > >       VM_WARN_ON_ONCE(gen >=3D MAX_NR_GENS);
-> > > -     VM_WARN_ON_ONCE(!rcu_read_lock_held());
-> > >
-> > >       do {
-> > >               /* lru_gen_del_folio() has isolated this page? */
-> >
-> > it would be good to know why this assertion is considered incorrect?
->
-> The assertion was caused by the patch in this thread. It used to
-> assert that a folio must be protected from charge migration. Charge
-> migration is removed by this series, and as part of the effort, this
-> patch removes the RCU lock.
->
-> > And a link to the sysbot report?
->
-> https://syzkaller.appspot.com/bug?extid=3D24f45b8beab9788e467e
+> > Actually I don't care about the patch ordering.  My request is not
+> > to break build and just to separate different changes out. :)
+> 
+> So, patch 2 can't be separated from patch 3 - are we agreed? So we
+> squash patch 2 with patch 3. Patch 1 is trivial and fails to meet the
+> bar of a meaningful change, so we squash that. We end up with this
+> patch. If there's a later revert and a dependence of the 2 liner, just
+> don't revert that part of the change. We've never had such a revert so
+> it is hard to see why we need to generate so much churn because of it.
 
-Or this link would work better:
+As I said the patch 1 should be the c&p and no need to introduce
+is_directory_at() before that.  Why not doing
 
-https://lore.kernel.org/lkml/67294349.050a0220.701a.0010.GAE@google.com/
+ patch1: move the code
+ patch2: add and use is_directory_at() + openat()
+
+?
+
+Thanks,
+Namhyung
+
 
