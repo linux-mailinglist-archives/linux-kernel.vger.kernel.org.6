@@ -1,257 +1,131 @@
-Return-Path: <linux-kernel+bounces-395162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390FF9BB9A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:59:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B149BB9AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:01:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C07A1C20442
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:59:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A21FB212EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBCF1C1753;
-	Mon,  4 Nov 2024 15:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B661C07E2;
+	Mon,  4 Nov 2024 16:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+r634Er"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="se6gMMNQ"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAE670816;
-	Mon,  4 Nov 2024 15:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ABA208A7
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730735942; cv=none; b=YUSkITEI5yVp0C3vD9K3CaZ6Wc42jhaWi1MSpnuxLux2D5BVC9e4Cb+Z4T7NTmkjgclxeIHZ2bK8v7gPWIS/ZmtGz4FzctB2PfuPZLApPQjVsj0Eps7BBEZLU6Fhp65bq65DkyRcu+GXqNdYRcuquZCgBmoNyIQgo2oHi1d6bvw=
+	t=1730736071; cv=none; b=WIkF+RVhHCWZtUsfeiDjGgv9sRAGbtYgjEvnAirL3uxcJARraS4jfJrqxhCTZ1arOytieeEsi3Zs66avM1uv1G6IMzTKksiXSAIPUhhBFDc/jyX/DogOQji6mA6yATNY0TfHl9ERzrtVPuw7jpXtbeBApgLAOb+0d8LsTvmJqME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730735942; c=relaxed/simple;
-	bh=nfbYyjxKn/6I7KeeEZRpVU1jWeaAip9FWL9OkYwgvck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYa8muGXkI7K/f8Nx2E+bFKIWkUPPfpKxnp3q99I91dzvcm/tJjqrXHjWrI6t5Zd3t5/22hdolyul8EZHw6xYbYT9fhmHX1rQXr2HpujF6VrkuAngUmokXCfv3EEyC06KVwdcD4F6bsJUDGEzlemv3s41zD168ezRWmT7Lrcin8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+r634Er; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93956C4CECE;
-	Mon,  4 Nov 2024 15:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730735941;
-	bh=nfbYyjxKn/6I7KeeEZRpVU1jWeaAip9FWL9OkYwgvck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L+r634Erl+WncXlEz4rsmMXCY8pHbVcHBzX48fyrMeKPL0TKRWGO+wiqFNNk2+bG3
-	 +EpXJQRdYvygLy9/3ELIAb/8ofnXplEM6wi31doRQhPpma9mFRpzKmtc8jteqnIuuQ
-	 y2hUCBnfM2JitLA7URtD/EpPbu2C3HrK6XK+ZsPGzQczgr5Ywo4JZ4LkH1xj3Rlsvd
-	 cnObx/9CHx2OljMMP4/ygK8PuiYs7OjnWWXkoHfXClw6C6fM35CEVlbxx3SdrDa+kG
-	 mKkn8iOJFfd3EOnWuF6R5QB2V6M0bDB2CQXbwqP5lD5+gYZVgejmFCy0JGPvPxHlu1
-	 YJOPQwrbsGUyg==
-Date: Mon, 4 Nov 2024 07:59:00 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v3 15/18] ext4: switch to using the crc32c library
-Message-ID: <20241104155900.GH21832@frogsfrogsfrogs>
-References: <20241103223154.136127-1-ebiggers@kernel.org>
- <20241103223154.136127-16-ebiggers@kernel.org>
+	s=arc-20240116; t=1730736071; c=relaxed/simple;
+	bh=uGJ0bYEml/HrRXHxK5WrIBHnMo9oiduhoM1OOTxFknw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MEZa7AzVodrR7nJQnTzqQv6Vozfn5wOEy1rQ1b+NtK98q6DHVAFh9WVTEYPYX0ZnzgzXeDv6psnGARaV5ipEaFvli7wmduwJBGBZhcgWJiODtChFJpj0XtvhIOuKgUUpS0YhBF+f1txtzTodjhAIlGYguSx+XKyYwaC5askYjWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=se6gMMNQ; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e333af0f528so891211276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:01:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1730736068; x=1731340868; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=r32SkwEDEGyM8KRubZcTgZf56txRY/08O0Oc/h8gpfM=;
+        b=se6gMMNQf3UBYkZrZsqnjiQtS5Bt4nycaON/Tf8A1WoyxDqknLmRtMWLVFvpsbfsnF
+         21mH2BauDz0IGG9VZbJx5caC1qX43nf8XY67XA4ijipeBqK5lXOKp/6+Y8g8w/ssFQtQ
+         Ct26BMxgnd6/JAl5EhiB9s8tss+o+hHxz9O0Ml242NVSHv9xKkr9jv/hHLvZa3qiXkv1
+         b2k78sU3jqRDUHN6Ktb9PrVv+h+jq4cZaWqVtSlCGr0XgwQ5s6XFAGgZh3hBDkHxMH3/
+         SJ6WtbJDlIhRpUlwW4E08tti0FppJWB6JDe74LUrvummwWosGJYELtygpy85qG/Abqzm
+         EEqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730736068; x=1731340868;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r32SkwEDEGyM8KRubZcTgZf56txRY/08O0Oc/h8gpfM=;
+        b=MFoBH1l98pA2ACzv/cIaf7kgADNdOZI0pXjpQjBpSS4CyXJunhqqUJFECPqC5jIJwr
+         CfsxCc3WWJXxsdOAQjJu9SXT+DTMl+pXPkCo79bIi6iFD3LHXGzI0NN2Fpr2L8y50agc
+         uwhAfAICE39MtbByB12TQqRyCoMZDjAcfAKfrH9aV+OWz9ryDihsarUD9rVUQ5RBRKoo
+         K2O4nBLbEZXcBAGb2mNIdiFUkxg7/yv/R2Y8PwfQwpSz2aHL+t+OsFNUMU6CtCX0mCGa
+         B4yXyjWiUX0SYMNHtdA2mtgEX0oY3gmtAUgdR0Ue8lln8cldTlPDI+wzLMh9pw6vKk3S
+         9POg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Ps5ncQMj4Qilk5XIYVE86A2oh6wtZsJO6bJGGEd32pB4g0q1bA2GhvVWa6yqlZwkwPiDHif5xIz68OM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFILVk3wAPbqDW9kQBlME43UnTFtLeufNPS/NFumla7aa5klFg
+	ojJJRWeSFpQHZRYRyY+omxiePbGluX7BPJjQtN26JYmYdGLTNUFF4MZWXqj8Y+psSEwF/0yBwdr
+	rKUaqyKadt1AtKgDROCQd1rfzuQZ6QVhjWmulMQ==
+X-Google-Smtp-Source: AGHT+IFujurUNdBIc2jhl5l4ausb7S50k/V0Wx+SJ0D+7ItaEAYASme79PTW2iU/NqOUarwZskVPOJUg2kPhSceaIIM=
+X-Received: by 2002:a05:690c:9c10:b0:6ea:4e1f:2b40 with SMTP id
+ 00721157ae682-6ea4e1f3d77mr171184117b3.9.1730736067813; Mon, 04 Nov 2024
+ 08:01:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241103223154.136127-16-ebiggers@kernel.org>
+References: <20241101-hdmi-mode-valid-v2-0-a6478fd20fa6@linaro.org> <20241101-hdmi-mode-valid-v2-3-a6478fd20fa6@linaro.org>
+In-Reply-To: <20241101-hdmi-mode-valid-v2-3-a6478fd20fa6@linaro.org>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Mon, 4 Nov 2024 16:00:51 +0000
+Message-ID: <CAPY8ntCyg7P2gZ9QpLFUQxZY52e4-MSA=6PM1ZfVBKWwgoxXjw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] drm/vc4: use drm_hdmi_connector_mode_valid()
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Nov 03, 2024 at 02:31:51PM -0800, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Now that the crc32c() library function directly takes advantage of
-> architecture-specific optimizations, it is unnecessary to go through the
-> crypto API.  Just use crc32c().  This is much simpler, and it improves
-> performance due to eliminating the crypto API overhead.
-> 
-> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Fri, 1 Nov 2024 at 00:25, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> Use new drm_hdmi_connector_mode_valid() helper instead of a
+> module-specific copy.
+>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+
 > ---
->  fs/ext4/Kconfig |  3 +--
->  fs/ext4/ext4.h  | 25 +++----------------------
->  fs/ext4/super.c | 15 ---------------
->  3 files changed, 4 insertions(+), 39 deletions(-)
-> 
-> diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
-> index e20d59221fc0..c9ca41d91a6c 100644
-> --- a/fs/ext4/Kconfig
-> +++ b/fs/ext4/Kconfig
-> @@ -29,12 +29,11 @@ config EXT3_FS_SECURITY
->  config EXT4_FS
->  	tristate "The Extended 4 (ext4) filesystem"
->  	select BUFFER_HEAD
->  	select JBD2
->  	select CRC16
-> -	select CRYPTO
-> -	select CRYPTO_CRC32C
-> +	select CRC32
-
-Hmm.  Looking at your git branch (which was quite helpful to link to!) I
-think for XFS we don't need to change the crc32c() calls, and the only
-porting work that needs to be done is mirroring this Kconfig change?
-And that doesn't even need to be done until someone wants to get rid of
-CONFIG_LIBCRC32C, right?
-
->  	select FS_IOMAP
->  	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
->  	help
->  	  This is the next generation of the ext3 filesystem.
->  
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 44b0d418143c..99aa512a7de1 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -31,11 +31,11 @@
->  #include <linux/wait.h>
->  #include <linux/sched/signal.h>
->  #include <linux/blockgroup_lock.h>
->  #include <linux/percpu_counter.h>
->  #include <linux/ratelimit.h>
-> -#include <crypto/hash.h>
-> +#include <linux/crc32c.h>
->  #include <linux/falloc.h>
->  #include <linux/percpu-rwsem.h>
->  #include <linux/fiemap.h>
->  #ifdef __KERNEL__
->  #include <linux/compat.h>
-> @@ -1660,13 +1660,10 @@ struct ext4_sb_info {
->  	struct task_struct *s_mmp_tsk;
->  
->  	/* record the last minlen when FITRIM is called. */
->  	unsigned long s_last_trim_minblks;
->  
-> -	/* Reference to checksum algorithm driver via cryptoapi */
-> -	struct crypto_shash *s_chksum_driver;
-> -
->  	/* Precomputed FS UUID checksum for seeding other checksums */
->  	__u32 s_csum_seed;
->  
->  	/* Reclaim extents from extent status tree */
->  	struct shrinker *s_es_shrinker;
-> @@ -2465,23 +2462,11 @@ static inline __le16 ext4_rec_len_to_disk(unsigned len, unsigned blocksize)
->  #define DX_HASH_LAST 			DX_HASH_SIPHASH
->  
->  static inline u32 ext4_chksum(struct ext4_sb_info *sbi, u32 crc,
->  			      const void *address, unsigned int length)
+>  drivers/gpu/drm/vc4/vc4_hdmi.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> index 62b82b1eeb3694d1685969c49b2760cbbddc840e..486e513b898d7f761e8615f2afc193ca44b23200 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> @@ -1752,7 +1752,6 @@ vc4_hdmi_encoder_mode_valid(struct drm_encoder *encoder,
+>                             const struct drm_display_mode *mode)
 >  {
-> -	struct {
-> -		struct shash_desc shash;
-> -		char ctx[4];
-> -	} desc;
-> -
-> -	BUG_ON(crypto_shash_descsize(sbi->s_chksum_driver)!=sizeof(desc.ctx));
-> -
-> -	desc.shash.tfm = sbi->s_chksum_driver;
-> -	*(u32 *)desc.ctx = crc;
-> -
-> -	BUG_ON(crypto_shash_update(&desc.shash, address, length));
-> -
-> -	return *(u32 *)desc.ctx;
-> +	return crc32c(crc, address, length);
+>         struct vc4_hdmi *vc4_hdmi = encoder_to_vc4_hdmi(encoder);
+> -       unsigned long long rate;
+>
+>         if (vc4_hdmi->variant->unsupported_odd_h_timings &&
+>             !(mode->flags & DRM_MODE_FLAG_DBLCLK) &&
+> @@ -1760,8 +1759,7 @@ vc4_hdmi_encoder_mode_valid(struct drm_encoder *encoder,
+>              (mode->hsync_end % 2) || (mode->htotal % 2)))
+>                 return MODE_H_ILLEGAL;
+>
+> -       rate = drm_hdmi_compute_mode_clock(mode, 8, HDMI_COLORSPACE_RGB);
+> -       return vc4_hdmi_connector_clock_valid(&vc4_hdmi->connector, mode, rate);
+> +       return drm_hdmi_connector_mode_valid(&vc4_hdmi->connector, mode);
 >  }
->  
->  #ifdef __KERNEL__
->  
->  /* hash info structure used by the directory hash */
-> @@ -3278,15 +3263,11 @@ extern void ext4_group_desc_csum_set(struct super_block *sb, __u32 group,
->  extern int ext4_register_li_request(struct super_block *sb,
->  				    ext4_group_t first_not_zeroed);
->  
->  static inline int ext4_has_metadata_csum(struct super_block *sb)
->  {
-> -	WARN_ON_ONCE(ext4_has_feature_metadata_csum(sb) &&
-> -		     !EXT4_SB(sb)->s_chksum_driver);
-> -
-> -	return ext4_has_feature_metadata_csum(sb) &&
-> -	       (EXT4_SB(sb)->s_chksum_driver != NULL);
-> +	return ext4_has_feature_metadata_csum(sb);
->  }
-
-Nit: Someone might want to
-s/ext4_has_metadata_csum/ext4_has_feature_metadata_csum/ here to get rid
-of the confusingly named trivial helper.
-
-Otherwise this logic looks ok to me, so
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-
->  
->  static inline int ext4_has_group_desc_csum(struct super_block *sb)
->  {
->  	return ext4_has_feature_gdt_csum(sb) || ext4_has_metadata_csum(sb);
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 16a4ce704460..1a821093cc0d 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1371,12 +1371,10 @@ static void ext4_put_super(struct super_block *sb)
->  	 * Now that we are completely done shutting down the
->  	 * superblock, we need to actually destroy the kobject.
->  	 */
->  	kobject_put(&sbi->s_kobj);
->  	wait_for_completion(&sbi->s_kobj_unregister);
-> -	if (sbi->s_chksum_driver)
-> -		crypto_free_shash(sbi->s_chksum_driver);
->  	kfree(sbi->s_blockgroup_lock);
->  	fs_put_dax(sbi->s_daxdev, NULL);
->  	fscrypt_free_dummy_policy(&sbi->s_dummy_enc_policy);
->  #if IS_ENABLED(CONFIG_UNICODE)
->  	utf8_unload(sb->s_encoding);
-> @@ -4586,19 +4584,10 @@ static int ext4_init_metadata_csum(struct super_block *sb, struct ext4_super_blo
->  		return -EINVAL;
->  	}
->  	ext4_setup_csum_trigger(sb, EXT4_JTR_ORPHAN_FILE,
->  				ext4_orphan_file_block_trigger);
->  
-> -	/* Load the checksum driver */
-> -	sbi->s_chksum_driver = crypto_alloc_shash("crc32c", 0, 0);
-> -	if (IS_ERR(sbi->s_chksum_driver)) {
-> -		int ret = PTR_ERR(sbi->s_chksum_driver);
-> -		ext4_msg(sb, KERN_ERR, "Cannot load crc32c driver.");
-> -		sbi->s_chksum_driver = NULL;
-> -		return ret;
-> -	}
-> -
->  	/* Check superblock checksum */
->  	if (!ext4_superblock_csum_verify(sb, es)) {
->  		ext4_msg(sb, KERN_ERR, "VFS: Found ext4 filesystem with "
->  			 "invalid superblock checksum.  Run e2fsck?");
->  		return -EFSBADCRC;
-> @@ -5638,13 +5627,10 @@ failed_mount8: __maybe_unused
->  	flush_work(&sbi->s_sb_upd_work);
->  	ext4_stop_mmpd(sbi);
->  	del_timer_sync(&sbi->s_err_report);
->  	ext4_group_desc_free(sbi);
->  failed_mount:
-> -	if (sbi->s_chksum_driver)
-> -		crypto_free_shash(sbi->s_chksum_driver);
-> -
->  #if IS_ENABLED(CONFIG_UNICODE)
->  	utf8_unload(sb->s_encoding);
->  #endif
->  
->  #ifdef CONFIG_QUOTA
-> @@ -7433,8 +7419,7 @@ static void __exit ext4_exit_fs(void)
->  }
->  
->  MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
->  MODULE_DESCRIPTION("Fourth Extended Filesystem");
->  MODULE_LICENSE("GPL");
-> -MODULE_SOFTDEP("pre: crc32c");
->  module_init(ext4_init_fs)
->  module_exit(ext4_exit_fs)
-> -- 
-> 2.47.0
-> 
-> 
+>
+>  static const struct drm_encoder_helper_funcs vc4_hdmi_encoder_helper_funcs = {
+>
+> --
+> 2.39.5
+>
 
