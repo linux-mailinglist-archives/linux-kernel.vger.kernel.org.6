@@ -1,242 +1,148 @@
-Return-Path: <linux-kernel+bounces-395438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C37639BBDE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:18:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F229BBDDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDBDB21C18
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200951F22D1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BA11CC178;
-	Mon,  4 Nov 2024 19:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0AA18DF89;
+	Mon,  4 Nov 2024 19:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="gjfcICvJ"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbzx6VrD"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFDF18CC1B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 19:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C563AD2D;
+	Mon,  4 Nov 2024 19:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730747913; cv=none; b=YuJK/aG+VICQf2fA+z7M/icVgg3+sCy++zSLZ+pNYNSTK9uXx30P6MFGNaxz3NoDLG4aV4QVJfWQaom6O8iCqUF3HUIwmaSojO/umXFBjn1I92pHP1jvmgtAHMIC4U+PBiBfXtd7aVvvldG+Vsa5LgBvm51f6z9fNVMmYaMVLeA=
+	t=1730747910; cv=none; b=VcfcyBZb4PtJTpVYCdARa7y9sTkq13Z8c2CDoWaOTu3p1Taqrg4i1AnKtN8YH60M7HpAJr6udeJzgA52QwZ8sMb2RFebksUh7pZrNZSFX3RreBhim6IL2Q9TV62ANZYYW2dYobMKKieiqf6HX6K0sBxOSQ2ML7EIm6pOUFljHZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730747913; c=relaxed/simple;
-	bh=o4c7ros9DYn+xK2HPnkqBz3dofFrgKI/jqYMkYox99k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lDJ5csTkSC8NyuLrcZP0LZy8FgNrflL2KbiW4k8Y5yIjqRq/OcIOq9ZGW5aPRVbNVQgjbCDIvrHjpui0tclLAqgWhhScIPjyG2ypKHmoD30OoUMonZc/TAWFIJVX9nHeql81ArqMPVdenWEwKngvgiQyL2LtMPov3xrkELjMpnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=gjfcICvJ; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7eb0448693eso311955a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 11:18:30 -0800 (PST)
+	s=arc-20240116; t=1730747910; c=relaxed/simple;
+	bh=S9jUQmg8h331e2Pj63NU2N83tcF8B984es3Wedsa/lk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oVP0PvzK44ugSEm1T5opmSbDdXBUj52Mg4n72o3P45t+RN4trgnVyuManLP8lI6ZjMxHW6TZJrdVGnK+rl7LFQ1oNGRFdlhwAhJXl7LAtYZd7vpDdxEd4rWY5906JbccILZSWFa2RJGETLaDdXoW5StEoUuIU4Qbk9+3+vdTHJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbzx6VrD; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460ad98b043so36536091cf.1;
+        Mon, 04 Nov 2024 11:18:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1730747910; x=1731352710; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o4c7ros9DYn+xK2HPnkqBz3dofFrgKI/jqYMkYox99k=;
-        b=gjfcICvJB0Y/4kv8TpLTq8p1M5wkuOpWb1bn9hdtMkHmGl8VepkIVNgZF6Pu1o/dTT
-         gA9ednJQ8MnGzgFUoLZKsn/wos5XhU+inNJ0CQRWXIOWOXV20B4mJktFGXSYb4Tlis6n
-         kDcvwNs8+nVdGMFTAuV3tDwaTzESVpJa88B+aVlw3Uvt2+3XUU64Ln3VGM6vn3hzuzJz
-         ti6IqG4m5o/h2XjdRju1VhOlLCsr9p5frv7yD3vZMaPr875d0kdtgn8q9TvixA0DcgHG
-         KgmGZqxWoFC/h3D49tZUTZvIMb+ZMeVc3pqItnrurVTSJuUu56TeFZwoeqLdLrnzhtU7
-         3Rbg==
+        d=gmail.com; s=20230601; t=1730747908; x=1731352708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=unJ9b+rts3y1hb3/PAxKDJbTMcuKEtEuGFYI5bvW40k=;
+        b=bbzx6VrDTBD/vh/ksEzbQb8gmhPgQDM5rgjkjg3tMgc7IBR2agJqmEVgd6qK3z1W+Z
+         Si8O8bKsaWwczBBssLAAI2ntckkgF51MSgUJj9Unh9ZkWVBSmbOt61lbUzWrSNZqEqRO
+         YycCHfnH24T/qJkKgfUduEm2/mhethQkn/tX855M0kVTYXFMYP+xgMZOua69An+XSEHe
+         2AQgidJcYuyv8kVndgLXzn+qr8Doo38jspi5R1sWjfir0fYJJQ2McEyP1hFZiShAikig
+         +InsMAfa9blE6deAuQ2lB614bNlnL54sVC+vB32DfAqVQs7Iw6pvLwLV7qYZe2LoyYCJ
+         n4ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730747910; x=1731352710;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o4c7ros9DYn+xK2HPnkqBz3dofFrgKI/jqYMkYox99k=;
-        b=LomSoRUJ1KOtwvr5rosLvQQRh4kT+RTeQJuvdBYS8qCXKbZ/uuZCylzRAfzOo5qGqL
-         36bLBpJZIC0Pd5qjloYz+pdnUuKyCmZ0Ctg/T22oN2he/vgsFKtzGRF5qWD+7EHI620Z
-         v5xqBvmp5BHuuR/jhXN0oXW9EYePsxg7Z2pdLGaTqqsYKzkkuFpFAT0Cwx+gkgl+vBTv
-         cYkC6RxOub31kzjvWt6AhBvybQc3meFfI/zP5EptIHJaVoBolvRYtHr+y3NT2G+hdFPy
-         yRZ1l2SnNlj6jsyB87mZUD2FF5aL4/jTxPsIa7aTe+qvurYPaklTUFznESsQx+M61yF1
-         kTyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZobysTOfwnB8Txn3ZTN4rQ8l5yqyHIcGQKqM54eW2ira4+I/cpaR4Iet7cic7c1qvxd7I+z6wTFKyzng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMM7H8hSBr2xQcUNcoXLwe/zGv+JwKFfkxPxeOhrcDD2vqZX3J
-	/eFj0KmyVeFVPUOltBmFOtJpSkeVdla5Yv2MJRqhGvZ1yTgA/Ede3zP1Rw5Fv46dW6LYCAu/E8o
-	8gWh5qXNecJI1pyo18DeeJMbr18LJCLvvlRAJ9g==
-X-Google-Smtp-Source: AGHT+IHaIPQ+nBMH8dexfN2lNpEIdnQn8/hMcRrxlt8l5wRwbDjd8ZCjdB5A1VVt5iHAa8KssU7wpEsM+wpcZAQTSdo=
-X-Received: by 2002:a17:90a:b014:b0:2e2:ebce:c412 with SMTP id
- 98e67ed59e1d1-2e8f0f4ce84mr16036218a91.2.1730747910349; Mon, 04 Nov 2024
- 11:18:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730747908; x=1731352708;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=unJ9b+rts3y1hb3/PAxKDJbTMcuKEtEuGFYI5bvW40k=;
+        b=icbmxweGA+G8kZwAArArHj5mxujgP5FqSqbDT266ucn59sduJrNAWeGeQmQnNF/2SU
+         t9I3I9OrmJGu/qJpmVeUGRPM+yi66U//xoZL81TVrOC9RnN58ckmMxWaF2P4Oi4RPhw3
+         M6tbHjZ/lI2hrJrCx1Wi8v2jq9QNbXR9AwJ+hojGG/1m8hiOS5zZT346YNBrqTYrs8aT
+         0+LUE1ZjE8loa33Vqe9S8daK6HRwqRGnpBzAHcvZf3zZU5DntcScL+MuAAvXEDl/BDhJ
+         WIZ2Fj8NSltoI/Wu4RnkvPjPM/BZNahACE8Z3qzEcK8g30TQXlWazNSl0G/7LtvHrdsy
+         25Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWsl1XX3Am2BePaz4skbYh+UCTtc4gqGH+mNtEN4+5dVScZcDSEe5DMgpxSrIwOSPMoqAFZUqRmAoCtUU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTIgk+3qBUOOAbG8MgkGHUYR/cmVa/3n9b+KL6i0N1iImzZdaV
+	Dnj+ReNOjX+yS3lkGBwXpVhB98e0YSuyMxZlEC9E0N6pF8AkhESd
+X-Google-Smtp-Source: AGHT+IELakiFzr59EudtKLiMCMHPt484NaNIT6Kjz/ZSDX/NpW9fjmCjoWrs7c/vQ4eTZTNX7i2z4g==
+X-Received: by 2002:ac8:58ce:0:b0:44f:fb6d:4b2f with SMTP id d75a77b69052e-462b6e83130mr228655931cf.23.1730747908255;
+        Mon, 04 Nov 2024 11:18:28 -0800 (PST)
+Received: from newman.cs.purdue.edu ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad086e55sm50174351cf.7.2024.11.04.11.18.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 11:18:28 -0800 (PST)
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+To: wbg@kernel.org,
+	fabrice.gasnier@foss.st.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	Jonathan.Cameron@huawei.com,
+	benjamin.gaignard@st.com,
+	gregkh@linuxfoundation.org
+Cc: linux-iio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH v2] counter: stm32-timer-cnt: Add check for clk_enable()
+Date: Mon,  4 Nov 2024 19:18:25 +0000
+Message-Id: <20241104191825.40155-1-jiashengjiangcool@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029182703.2698171-1-csander@purestorage.com>
- <CANn89iLx-4dTB9fFgfrsXQ8oA0Z+TpBWNk4b91PPS1o=oypuBQ@mail.gmail.com>
- <CADUfDZrSUNu7nym9dC1_yFUqhC8tUPYjv-ZKHofU9Q8Uv4Jvhw@mail.gmail.com>
- <CANn89iKQ3g2+nSWaV3BWarpbneRCSoGSXdGP90PF7ScDu4ULEQ@mail.gmail.com>
- <CADUfDZpeudTGP5UZt6QqbrYkA+Twei7gGQa6hJ+iYwuZfyp9gw@mail.gmail.com>
- <CADUfDZqcd_2+409_4GGhbRwW8gYHtZSU1vE1eNuE=jycoNMMJA@mail.gmail.com> <CANn89iJEL7=q_tYXPbwUGF4MoX=W0AOoevMg31Y=nH7WyofaiA@mail.gmail.com>
-In-Reply-To: <CANn89iJEL7=q_tYXPbwUGF4MoX=W0AOoevMg31Y=nH7WyofaiA@mail.gmail.com>
-From: Caleb Sander <csander@purestorage.com>
-Date: Mon, 4 Nov 2024 11:18:18 -0800
-Message-ID: <CADUfDZr-xuruCjJwebWk2SUAq9-pCDLDQ1HHpQTOPnK3BAXg=g@mail.gmail.com>
-Subject: Re: [PATCH] net: skip RPS if packet is already on target CPU
-To: Eric Dumazet <edumazet@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 4, 2024 at 10:58=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
-wrote:
->
-> On Mon, Nov 4, 2024 at 7:42=E2=80=AFPM Caleb Sander <csander@purestorage.=
-com> wrote:
-> >
-> > On Wed, Oct 30, 2024 at 1:26=E2=80=AFPM Caleb Sander <csander@purestora=
-ge.com> wrote:
-> > >
-> > > On Wed, Oct 30, 2024 at 5:55=E2=80=AFAM Eric Dumazet <edumazet@google=
-.com> wrote:
-> > > >
-> > > > On Tue, Oct 29, 2024 at 9:38=E2=80=AFPM Caleb Sander <csander@pures=
-torage.com> wrote:
-> > > > >
-> > > > > On Tue, Oct 29, 2024 at 12:02=E2=80=AFPM Eric Dumazet <edumazet@g=
-oogle.com> wrote:
-> > > > > >
-> > > > > > On Tue, Oct 29, 2024 at 7:27=E2=80=AFPM Caleb Sander Mateos
-> > > > > > <csander@purestorage.com> wrote:
-> > > > > > >
-> > > > > > > If RPS is enabled, all packets with a CPU flow hint are enque=
-ued to the
-> > > > > > > target CPU's input_pkt_queue and process_backlog() is schedul=
-ed on that
-> > > > > > > CPU to dequeue and process the packets. If ARFS has already s=
-teered the
-> > > > > > > packets to the correct CPU, this additional queuing is unnece=
-ssary and
-> > > > > > > the spinlocks involved incur significant CPU overhead.
-> > > > > > >
-> > > > > > > In netif_receive_skb_internal() and netif_receive_skb_list_in=
-ternal(),
-> > > > > > > check if the CPU flow hint get_rps_cpu() returns is the curre=
-nt CPU. If
-> > > > > > > so, bypass input_pkt_queue and immediately process the packet=
-(s) on the
-> > > > > > > current CPU.
-> > > > > > >
-> > > > > > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > > > > >
-> > > > > > Current implementation was a conscious choice. This has been di=
-scussed
-> > > > > > several times.
-> > > > > >
-> > > > > > By processing packets inline, you are actually increasing laten=
-cies of
-> > > > > > packets queued to other cpus.
-> > > > >
-> > > > > Sorry, I wasn't aware of these prior discussions. I take it you a=
-re
-> > > > > referring to threads like
-> > > > > https://lore.kernel.org/netdev/20230322072142.32751-1-xu.xin16@zt=
-e.com.cn/T/
-> > > > > ? I see what you mean about the latency penalty for packets that =
-do
-> > > > > require cross-CPU steering.
-> > > > >
-> > > > > Do you have an alternate suggestion for how to avoid the overhead=
- of
-> > > > > acquiring a spinlock for every packet? The atomic instruction in
-> > > > > rps_lock_irq_disable() called from process_backlog() is consuming=
- 5%
-> > > > > of our CPU time. For our use case, we don't really want software =
-RPS;
-> > > > > we are expecting ARFS to steer all high-bandwidth traffic to the
-> > > > > desired CPUs. We would happily turn off software RPS entirely if =
-we
-> > > > > could, which seems like it would avoid the concerns about higher
-> > > > > latency for packets that need to be steering to a different CPU. =
-But
-> > > > > my understanding is that using ARFS requires RPS to be enabled
-> > > > > (rps_sock_flow_entries set globally and rps_flow_cnt set on each
-> > > > > queue), which enables these rps_needed static branches. Is that
-> > > > > correct? If so, would you be open to adding a sysctl that disable=
-s
-> > > > > software RPS and relies upon ARFS to do the packet steering?
-> > > >
-> > > > A sysctl will not avoid the fundamental issue.
-> > >
-> > > Sorry if my suggestion was unclear. I mean that we would ideally like
-> > > to use only hardware ARFS for packet steering, and disable software
-> > > RPS.
-> > > In our testing, ARFS reliably steers packets to the desired CPUs. (Ou=
-r
-> > > application has long-lived TCP sockets, each processed on a single
-> > > thread affinitized to one of the interrupt CPUs for the Ethernet
-> > > device.) In the off chance that ARFS doesn't steer the packet to the
-> > > correct CPU, we would rather just process it on the CPU that receives
-> > > it instead of going through the RPS queues. If software RPS is never
-> > > used, then there wouldn't be any concerns about higher latency for
-> > > RPS-steered vs. non-RPS-steered packets, right? The get_rps_cpu()
-> > > computation is also not cheap, so it would be nice to skip it too.
-> > > Basically, we want to program ARFS but skip these
-> > > static_branch_unlikely(&rps_needed) branches. But I'm not aware of a
-> > > way to do that currently. (Please let me know if it's already possibl=
-e
-> > > to do that.)
-> >
-> > I see now that get_rps_cpu() still needs to be called even if software
-> > RPS isn't going to be used, because it's also responsible for calling
-> > set_rps_cpu() to program ARFS. So looks like avoiding the calls to
-> > get_rps_cpu() entirely is not possible.
->
-> Yes, this is the reason. Things would be different if ARFS was done at
-> dev_queue_xmit() time.
->
-> >
-> > > > Why not instead address the past feedback ?
-> > > > Can you test the following ?
-> > >
-> > > Sure, I will test the performance on our setup with this patch. Still=
-,
-> > > we would prefer to skip the get_rps_cpu() computation and these extra
-> > > checks, and just process the packets on the CPUs they arrive on.
-> >
-> > Hi Eric,
-> > I tried out your patch and it seems to work equally well at
-> > eliminating the process_backlog() -> _raw_spin_lock_irq() hotspot. The
-> > added checks contribute a bit of overhead in
-> > netif_receive_skb_list_internal(): it has increased from 0.15% to
-> > 0.28% of CPU time. But that's definitely worth it to remove the 5%
-> > hotspot acquiring the RPS spinlock.
-> >
-> > Feel free to add:
-> > Tested-by: Caleb Sander Mateos <csander@purestorage.com>
-> >
-> > Some minor comments on the patch:
-> > - Probably should be using either skb_queue_len_lockless() or
-> > skb_queue_empty_lockless() to check input_pkt_queue.qlen !=3D 0 because
-> > the RPS lock is not held at this point
->
-> this_cpu_read() has implicit READ_ONCE() semantic.
+Add check for the return value of clk_enable() in order to catch the
+potential exception.
 
-Okay. Seems like it would be nicer not to reach into the sk_buff_head
-internals, but up to you.
+Fixes: c5b8425514da ("counter: stm32-timer-cnt: add power management support")
+Fixes: ad29937e206f ("counter: Add STM32 Timer quadrature encoder")
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+Changelog:
 
->
-> > - Could consolidate the 2 this_cpu_read(softnet_data...) lookups into
-> > a single this_cpu_ptr(&softnet_data) call
->
-> Double check the generated assembly first :)
->
-> this_cpu_read() is faster than going through
-> this_cpu_ptr(&softnet_data), at least on x86,
-> thanks to %gs: prefix.
->
-> No temporary register is needed to compute and hold this_cpu_ptr(&softnet=
-_data).
+v1 -> v2:
 
-Got it, thanks.
+1. Add dev_err() to indicate the reason for the error code.
+---
+ drivers/counter/stm32-timer-cnt.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
+index 186e73d6ccb4..9c188d9edd89 100644
+--- a/drivers/counter/stm32-timer-cnt.c
++++ b/drivers/counter/stm32-timer-cnt.c
+@@ -214,11 +214,17 @@ static int stm32_count_enable_write(struct counter_device *counter,
+ {
+ 	struct stm32_timer_cnt *const priv = counter_priv(counter);
+ 	u32 cr1;
++	int ret;
+ 
+ 	if (enable) {
+ 		regmap_read(priv->regmap, TIM_CR1, &cr1);
+-		if (!(cr1 & TIM_CR1_CEN))
+-			clk_enable(priv->clk);
++		if (!(cr1 & TIM_CR1_CEN)) {
++			ret = clk_enable(priv->clk);
++			if (ret) {
++				dev_err(counter->parent, "Cannot enable clock %d\n", ret);
++				return ret;
++			}
++		}
+ 
+ 		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN,
+ 				   TIM_CR1_CEN);
+@@ -816,7 +822,11 @@ static int __maybe_unused stm32_timer_cnt_resume(struct device *dev)
+ 		return ret;
+ 
+ 	if (priv->enabled) {
+-		clk_enable(priv->clk);
++		ret = clk_enable(priv->clk);
++		if (ret) {
++			dev_err(dev, "Cannot enable clock %d\n", ret);
++			return ret;
++		}
+ 
+ 		/* Restore registers that may have been lost */
+ 		regmap_write(priv->regmap, TIM_SMCR, priv->bak.smcr);
+-- 
+2.25.1
+
 
