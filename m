@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-394612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B124D9BB1D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:57:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 476AC9BB18D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6617C1F214A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:57:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77EE31C21314
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734041CBE8A;
-	Mon,  4 Nov 2024 10:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03B01B3930;
+	Mon,  4 Nov 2024 10:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOrLiBsz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSkHWPz/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA26A1CB53A;
-	Mon,  4 Nov 2024 10:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239781AF4EE;
+	Mon,  4 Nov 2024 10:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717524; cv=none; b=n3aRtM6b3D9ULQoN4XKRG21m3KrVmsi2Hbf8pvjalaPojWspXP8Xgc5PIZpLcGy0n++85xa0e2qWEC+YAoj95gHe/jKnv3rOZuKhHnHXWw1QLg4UsjAy+ue3kwXNDQzbpM5ZhcD+dhy/2QENgbbY3mbLZlZEOAd2KQcjD979tn8=
+	t=1730717451; cv=none; b=tMlIq6q7iwUW2OFmHBJlQpXUei/ujscEFwv0JYUtTzWw+XXCuSpc9ufMcQgTVikxIYVhcY4fezyteu1bJnOiFcHbM9FADO8b9jeqR5EH9KXD8jdOVj+Ctb9jBDv/gOT8jqOxV1KQ650zcrZ2uPyoTX0VRl7cgaDknIBFkfgOQrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717524; c=relaxed/simple;
-	bh=gVFvhx02Zz3L6ndxfFvbk0IQyrrritUS0mptzTG0vsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oa3Grq7IUIVmmvz2DCZjxTTBwx8m6zfz6epDNdx6aiv+zp0QaPhcwTFKa3Qj8dKidvPIf8nc5T2caRE7b76j9LF9H8+ah+BqLEA6A0KhvBKrrtqfcQFXewfMSZ2cWdwg9ySzqm3Jq95AleGyHcm1llGqwdeAHWaGv0Cu3O8fmQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOrLiBsz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9149C4AF15;
-	Mon,  4 Nov 2024 10:51:58 +0000 (UTC)
+	s=arc-20240116; t=1730717451; c=relaxed/simple;
+	bh=lBZrhWvoMj/p4OEHr1GE4XcXt2E0PBbM75G1Kg5ZRs8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VbPPlXbdjDFR+ss3eACbUaqE3OmaS1qF1SKYcxgRWOsfWDhllokHS4v2VYVK2jDgLhT0KF+zK+p647Mh2c45vgxcCND4VfRhNE1F2f5woIHnQ/O4A0YUWP5mbYWXWalQRS0iukhHKU2+YbB2dfOpkjgGkXQm5txqOWUugCyEmDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSkHWPz/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C67ABC4CECE;
+	Mon,  4 Nov 2024 10:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730717524;
-	bh=gVFvhx02Zz3L6ndxfFvbk0IQyrrritUS0mptzTG0vsM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qOrLiBszEKx/23biOQZk87zRhMJbA40mNWdnFLnvO+6ASmNShr9lvrPB+EI3DS62T
-	 kSZVlihQi0B68GKMKPm4eItVYiIhxR0DqlCmT2g3IYfQVBqd/rtv+tqpP5+t+jPE8M
-	 yZYA4wdBbqmg2Qdlt5h+t2T+Qq+zy/Olf7wXwxtq1sIktHqX3a8nkb5sPcz86WnYrr
-	 BF9v34oINbsMKvRkxwf7EPwtkvT9CHBNz3Fjuqv0FmTXyTDprtgrUyhhAr1U0Vx6gJ
-	 33c2QO8hhrYsdMupxmk47+Kx1dS8UI5koZTpjb/6I5veUv/KKsdonu4flrgeluQDa5
-	 uolC1xPwyoy7w==
-Date: Mon, 4 Nov 2024 12:49:24 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "Gowans, James" <jgowans@amazon.com>,
-	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"Durrant, Paul" <pdurrant@amazon.co.uk>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>,
-	"Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"Graf (AWS), Alexander" <graf@amazon.de>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
-Message-ID: <ZyimtM-sQSmRblpm@kernel.org>
-References: <20240805093245.889357-1-jgowans@amazon.com>
- <20240805093245.889357-6-jgowans@amazon.com>
- <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
- <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
- <20241031160635.GA35848@ziepe.ca>
- <fe4dd4d2f5eb2209f0190d547fe29370554ceca8.camel@amazon.com>
- <20241101134202.GB35848@ziepe.ca>
+	s=k20201202; t=1730717450;
+	bh=lBZrhWvoMj/p4OEHr1GE4XcXt2E0PBbM75G1Kg5ZRs8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NSkHWPz/tsM81HD9DF3xccUUMlL8uASNWXVN3t77I+VagjEyUC0v/jVA1lDOqObdc
+	 BOrisI1PG5KKzuEP3Y51nWo85M5HaBjiYEn2sD0mtIlRreJg22fwO+hYe5Rxx/lSGt
+	 XNRqIgKaUdzVge8DFqiUWBheX35yJNM9RNsyRFKYQ+b2Yq43dzmTc5bmbrjq+K0Zeg
+	 46la4FarOVaDpJycm2n+FT4ks8ZoFIBQ/o3XqGzbITrzFUhe1WDZk0UIVSTUePgU2j
+	 eKUZRhgZfWVxedpZiLZ5E4c6DDV4D27cx/qpFuAd/2MlCIp/LoVFDJLBpysVFxob4C
+	 M/uMDLBSEv7ZA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Ben Greear <greearb@candelatech.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Sasha Levin <sashal@kernel.org>,
+	johannes@sipsolutions.net,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.11 01/21] wifi: mac80211: Fix setting txpower with emulate_chanctx
+Date: Mon,  4 Nov 2024 05:49:37 -0500
+Message-ID: <20241104105048.96444-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101134202.GB35848@ziepe.ca>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.11.6
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 01, 2024 at 10:42:02AM -0300, Jason Gunthorpe wrote:
-> On Fri, Nov 01, 2024 at 01:01:00PM +0000, Gowans, James wrote:
-> 
-> > Thanks Jason, that sounds perfect. I'll work on the next rev which will:
-> > - expose a filesystem which owns reserved/persistent memory, just like
-> > this patch.
-> 
-> Is this step needed?
-> 
-> If the guest memfd is already told to get 1G pages in some normal way,
-> why do we need a dedicated pool just for the KHO filesystem?
-> 
-> Back to my suggestion, can't KHO simply freeze the guest memfd and
-> then extract the memory layout, and just use the normal allocator?
-> 
-> Or do you have a hard requirement that only KHO allocated memory can
-> be preserved across kexec?
+From: Ben Greear <greearb@candelatech.com>
 
-KHO does not allocate memory, it gets the ranges to preserve, makes sure
-they are not overwritten during kexec and can be retrieved by the second
-kernel.
-For KHO it does not matter if the memory comes from a normal or a special
-allocator.
+[ Upstream commit 8dd0498983eef524a8d104eb8abb32ec4c595bec ]
+
+Propagate hw conf into the driver when txpower changes
+and driver is emulating channel contexts.
+
+Signed-off-by: Ben Greear <greearb@candelatech.com>
+Link: https://patch.msgid.link/20240924011325.1509103-1-greearb@candelatech.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/mac80211/cfg.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index b02b84ce21307..c4f4300c81c16 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -3046,6 +3046,7 @@ static int ieee80211_set_tx_power(struct wiphy *wiphy,
+ 	enum nl80211_tx_power_setting txp_type = type;
+ 	bool update_txp_type = false;
+ 	bool has_monitor = false;
++	int old_power = local->user_power_level;
  
-> Jason
-
+ 	lockdep_assert_wiphy(local->hw.wiphy);
+ 
+@@ -3128,6 +3129,10 @@ static int ieee80211_set_tx_power(struct wiphy *wiphy,
+ 		}
+ 	}
+ 
++	if (local->emulate_chanctx &&
++	    (old_power != local->user_power_level))
++		ieee80211_hw_conf_chan(local);
++
+ 	return 0;
+ }
+ 
 -- 
-Sincerely yours,
-Mike.
+2.43.0
+
 
