@@ -1,163 +1,180 @@
-Return-Path: <linux-kernel+bounces-394549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3909BB0FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:24:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BF39BB10A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:26:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D06441C215E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9327F282906
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90B41B0F1C;
-	Mon,  4 Nov 2024 10:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB151B0F19;
+	Mon,  4 Nov 2024 10:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oUVx9LPZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="551VEPYU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oUVx9LPZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="551VEPYU"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K5wuGBtZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FEA1ABEBD;
-	Mon,  4 Nov 2024 10:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E221B0F03
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730715873; cv=none; b=Sp4UP7uKl87Qs/qsMiFwPbOETaNv0rmVoGF1klxXlwiPzx0yQ0W0Tb4wQVt0FFZgwUDxNgQZCMGos8y3tGFOVG0JWQ24ZlSNfTNtXAcmVhox8b8KqLnhmt20ZFYV5myMZsWGilfg59+0sttF0sfuEJssDiHHmeWD5e5aKb0aoHM=
+	t=1730715949; cv=none; b=g2+mq8KFwGgYbIfTVfuzyPoPUfZujwADBpnAE47XdWhjYZlem0A9sg1wMvV4N2IfnSgitzyEkKimOl0TfWWAzptIQvYUcA3DzWEPL3h7ENq3FWzXOuMICOKK68g/Oz827NnclHe5CIPpy3GUHzrOLG6Q+WeJxz37LRs0tbD36bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730715873; c=relaxed/simple;
-	bh=UhC1xihM0yyX3J7pEDwPom1OrSC8tmiwc5UbVvLh4+A=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N4e8thU0Z1IPREHRaKICH7vzUlOdu2MBLhCAMZh1eHA8X4iVrU12wdxAgQx4ie/FRPdpmOrNaCY1LfoUCmEjaA+JT3EX+iMZfmMKc3qj/8Upd0a/W8CKkOMTSIoD8eFwb4mx14Xc8hhTgxu0l5Jzx9XodBnI5+qMspjfQBFpoOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oUVx9LPZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=551VEPYU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oUVx9LPZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=551VEPYU; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4ADAB1FDD4;
-	Mon,  4 Nov 2024 10:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730715869; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QONVyxe8S/T0cD5/iGzh2jvCjZgjKOX2yaCeq/joY70=;
-	b=oUVx9LPZiJdZv9JySK+DzXtr/cMPUK+LAsV6ZHllZFZDMcKVIZdkIOGnxVXz/llxl68SBx
-	9oBt4Dk9tE12tNyUdtbZlwFOF9XvqBgqlVEO706g86YeX1wYGpvirmQ/BfLSSmKFS2UAGz
-	lFmYVSEkWvMqMtKYUynCP3+QIxq5HTU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730715869;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QONVyxe8S/T0cD5/iGzh2jvCjZgjKOX2yaCeq/joY70=;
-	b=551VEPYUjiNMnRPkrslgYNW5G4jRdUCV5lntS3n8g+43d+YG9t2BxoTxCIDURl+u/P4UHd
-	Ck9RrBtMdKvlToDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=oUVx9LPZ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=551VEPYU
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730715869; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QONVyxe8S/T0cD5/iGzh2jvCjZgjKOX2yaCeq/joY70=;
-	b=oUVx9LPZiJdZv9JySK+DzXtr/cMPUK+LAsV6ZHllZFZDMcKVIZdkIOGnxVXz/llxl68SBx
-	9oBt4Dk9tE12tNyUdtbZlwFOF9XvqBgqlVEO706g86YeX1wYGpvirmQ/BfLSSmKFS2UAGz
-	lFmYVSEkWvMqMtKYUynCP3+QIxq5HTU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730715869;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QONVyxe8S/T0cD5/iGzh2jvCjZgjKOX2yaCeq/joY70=;
-	b=551VEPYUjiNMnRPkrslgYNW5G4jRdUCV5lntS3n8g+43d+YG9t2BxoTxCIDURl+u/P4UHd
-	Ck9RrBtMdKvlToDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 151E813736;
-	Mon,  4 Nov 2024 10:24:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BEgFBN2gKGfFLwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 04 Nov 2024 10:24:29 +0000
-Date: Mon, 04 Nov 2024 11:25:34 +0100
-Message-ID: <871pzrcn35.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Murad Masimov <m.masimov@maxima.ru>
-Cc: Clemens Ladisch <clemens@ladisch.de>,
-	Takashi Sakamoto
-	<o-takashi@sakamocchi.jp>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai
-	<tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: Re: [PATCH] ALSA: firewire-lib: fix return value on fail in amdtp_tscm_init()
-In-Reply-To: <20241101185517.1819-1-m.masimov@maxima.ru>
-References: <20241101185517.1819-1-m.masimov@maxima.ru>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1730715949; c=relaxed/simple;
+	bh=+gCuWEJn0C1lgXokyEhrPg1H1XcdYRJBgjY4pcDSDh0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lcewehK26EYByb4ESL8m6LyXiSAGuNcHDuKziAhPWDdDuYkXJz2PHmv/Daz5Cle6pNJ69a7yFjDYmoZJqhMZhHWHwOTaMOS3jB14wOhdRcRpgg/aors47jeh8tvJHBMqEx2OXokfIA79M1F1tNnw77ASXoxSyK8HuvAVqzphS5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K5wuGBtZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3NcaBZ022984
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 10:25:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hFnvzZQahOtP+3FXIo1AE2b7BsvHwLPdNBWNlcuhJog=; b=K5wuGBtZbXxdrE0X
+	sbhgZ0Owv1dWxHvYRra1vJG3UHfUyuImX6IMoWAoe0RXWTfV06pCr9rWmO6I7mRV
+	h6JetzoCN6bBB8RjjQAT1gI0HDmqrRVHRI+bkirEITkyS/S+s8/G59+NwtGr64C2
+	1PJ67WsajhHk2PcXypjh0Jg6no2pC+2QgBv+WPxlYfNa2OmCvoumhAG+1E2Qh6Gx
+	Dj2SCeH6fIaSSFloczeR7vDCWfMY6omXnVnXPkX+agMnkpZfBykYe9K9jObsa2Tp
+	WctPgYr5hLV9RPqBWv9RTlp6kznB6tyESyGSAwKdDbmhb9IQUHi3agbuHAZMlwny
+	hNZTDg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd2s3uax-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 10:25:45 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-460f924d8bcso9507891cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:25:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730715945; x=1731320745;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hFnvzZQahOtP+3FXIo1AE2b7BsvHwLPdNBWNlcuhJog=;
+        b=X+jDOLNeqJ3C8ADvihWcN/we4EmE0kolJsAvdfaTy6s8qBD1Ye5ZpOlHRZZ9Qk/8XX
+         l6CDAS3BGDlz4kPptNprBPgTPhcPcAmlN61d60+BiKkl3yGC21v25UbxPRFIDGdqtRWq
+         en/xy6JWLwaQk34zhAkdsH96YoXoykalrV9SZw7/6kZ2HM45scngKWw0Cyxei06s8eDT
+         zy2+uZ+ChFnJ8e9i9kgY9kObGcPgNSceY8GCVmugEL7wc5FzmyaopFB5wsaBZHinjhl4
+         byXQffo8qZq8QcnFNuPRXyEXzTPVgw+hJw4NaOcmmjA7UNbYOlggLf+JmEGeh1+y+Eqn
+         WsqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVNmMBpbHqVjdNECM6tg3kZMGowxP7JjTUty5Qi3tXzJdAwBe58C0zVgmQ2VOf0jdqYoMoavlGzDqf0DU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk1re41d4yvk/H1Zkq6xoPlNhQL9qWlHy/cViGyAF2hpzlP5Qn
+	41lR5qH3DIaRuJopJLL+3z391YBEnGym/PK/hsv8tKn/rfC/A3+vwnr6Of9G0n4U2qGXHcvEO4Q
+	TDZ2so9uhc+UgvWOCM2+IKNOjMSZ9RoqpOdHJb0uXsMB941SWK3bOH9V1g/4n8CA=
+X-Received: by 2002:a05:620a:1a1f:b0:7b1:e0f:bf97 with SMTP id af79cd13be357-7b193f5a54fmr2156645285a.13.1730715944636;
+        Mon, 04 Nov 2024 02:25:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHlUBFsv9IaGC6aIZhFfXyhX/0CySFI52XzinWd8aV3WzEGmCAoMoEBpKx9e/Qe+aZFYis8wQ==
+X-Received: by 2002:a05:620a:1a1f:b0:7b1:e0f:bf97 with SMTP id af79cd13be357-7b193f5a54fmr2156643785a.13.1730715944293;
+        Mon, 04 Nov 2024 02:25:44 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e5649454csm533238766b.8.2024.11.04.02.25.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 02:25:43 -0800 (PST)
+Message-ID: <ef1d1796-b45a-4b1b-bb61-4a3c63d3c718@oss.qualcomm.com>
+Date: Mon, 4 Nov 2024 11:25:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: *
-X-Spamd-Result: default: False [1.36 / 50.00];
-	RSPAMD_URIBL(4.50)[maxima.ru:email];
-	BAYES_HAM(-2.93)[99.68%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	BAD_REP_POLICIES(0.10)[];
-	MX_GOOD(-0.01)[];
-	R_DKIM_ALLOW(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Score: 1.36
-X-Spamd-Bar: +
-X-Rspamd-Queue-Id: 4ADAB1FDD4
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spam-Flag: NO
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] usb: typec: Add support for Parade PS8830 Type-C
+ Retimer
+To: Abel Vesa <abel.vesa@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>, Johan Hovold <johan@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241101-x1e80100-ps8830-v4-0-f0f7518b263e@linaro.org>
+ <20241101-x1e80100-ps8830-v4-2-f0f7518b263e@linaro.org>
+ <ed0c77bd-770c-406d-851f-8589e53cde8b@oss.qualcomm.com>
+ <ZyifBejZtb7x0Vyc@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <ZyifBejZtb7x0Vyc@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: A1WJjjH-cqpkoQbBNS42hFBDxr1wMhkL
+X-Proofpoint-GUID: A1WJjjH-cqpkoQbBNS42hFBDxr1wMhkL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=815 clxscore=1015 suspectscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411040092
 
-On Fri, 01 Nov 2024 19:55:13 +0100,
-Murad Masimov wrote:
+On 4.11.2024 11:16 AM, Abel Vesa wrote:
+> On 24-11-02 10:17:56, Konrad Dybcio wrote:
+>> On 1.11.2024 5:29 PM, Abel Vesa wrote:
+>>> The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
+>>> controlled over I2C. It usually sits between a USB/DisplayPort PHY
+>>> and the Type-C connector, and provides orientation and altmode handling.
+>>>
+>>> The boards that use this retimer are the ones featuring the Qualcomm
+>>> Snapdragon X Elite SoCs.
+>>>
+>>> Add a driver with support for the following modes:
+>>>  - DisplayPort 4-lanes
+>>>  - DisplayPort 2-lanes + USB3
+>>>  - USB3
+>>>
+>>> There is another variant of this retimer which is called PS8833. It seems
+>>> to be really similar to the PS8830, so future-proof this driver by
+>>> naming it ps883x.
+>>>
+>>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+>>> ---
+>>
+>> [...]
+>>
+>>> +static void ps883x_configure(struct ps883x_retimer *retimer, int cfg0, int cfg1, int cfg2)
+>>> +{
+>>> +	regmap_write(retimer->regmap, 0x0, cfg0);
+>>> +	regmap_write(retimer->regmap, 0x1, cfg1);
+>>> +	regmap_write(retimer->regmap, 0x2, cfg2);
+>>> +}
+>>
+>> Somewhere between introducing regcache and dropping it, you removed
+>> muxing to a safe mode during _configure()
 > 
-> If amdtp_stream_init() fails in amdtp_tscm_init(), the latter returns zero,
-> though it's supposed to return error code, which is checked inside
-> init_stream() in file tascam-stream.c.
+> Oh, yeah, I forgot to mention that in the change log, it seems.
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> Configuring to safe mode is not needed since we always do that on 
+> unplug anyway.
 > 
-> Fixes: 47faeea25ef3 ("ALSA: firewire-tascam: add data block processing layer")
-> Signed-off-by: Murad Masimov <m.masimov@maxima.ru>
+>>
+>> [...]
+>>
+>>> +	/* skip resetting if already configured */
+>>> +	if (regmap_test_bits(retimer->regmap, 0x00, BIT(0)))
+>>> +		return 0;
+>>
+>> What is that register and what does BIT(0) mean?
+> 
+> Looking at the documentation, the first register is
+> REG_USB_PORT_CONN_STATUS and spans over the first 4 bytes.
+> 
+> But it doesn't really help here.
+> 
+> BIT(0) doesn't really have a name, it just says "Connection present".
 
-Applied now.  Thanks.
+Please define both then. STATUS_CONNECTION_PRESENT sounds good for the bit.
 
-
-Takashi
+Konrad
 
