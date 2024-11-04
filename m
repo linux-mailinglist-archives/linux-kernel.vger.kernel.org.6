@@ -1,152 +1,282 @@
-Return-Path: <linux-kernel+bounces-395611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D465D9BC080
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:59:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6989BC084
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 806231F22A91
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:59:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE69282CF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5343B1FDFA5;
-	Mon,  4 Nov 2024 21:57:32 +0000 (UTC)
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com [209.85.210.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B981FCC6D;
+	Mon,  4 Nov 2024 22:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmpJGA6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8461FCF68
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9987D158522;
+	Mon,  4 Nov 2024 22:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730757451; cv=none; b=WGgOY492gl/H4rS9f3tJNPeYhDwn5jraTuz43mh7p0uHE4LnOrSxpVq23y6MNouOPuT0ueUQlk4WMAtMrqBS75TajqvdyMNrB7uhOwLg/VqQj9OTm60d9HG3wj9WC4ZnNGNSQeWD9FQRIxmJSWloQxn8spb58gtGads9pZDeTxk=
+	t=1730757754; cv=none; b=T5oCnMCSJUXHc8/UaTHPgEkSApcQLIhJoaI1xmThDMsMmw7xjpBU32Jlf3ULP9oVKsxf9KgK2bmAfLb+V/qPh309jG9BD3R8qA5R60F3Y2oNWquQgSMWjPGqnDpePb/iKITapoyGKo+5TClxgcS1PJbeYF0RBCXgstEIKz/9Rwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730757451; c=relaxed/simple;
-	bh=BP6dM1u/QxuoZfkGqHfSI4KuCY1NkXDn1oXGb0K+0uE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=h95keje6cvW0FSPh8QppIN5pwNL3yC0f/MtOads+uOCUZXLoosn4GCdhwfVDJKXpfU3grRliBTRyYuJtZchZoRWSXqgs0a9HRjj4eybYnln9lqrYeoP+S4VKtlCbDCO1+nqYoevfPDUypI/rnJR928TqGYu/O8RGqTsV9SJMcMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-7180ab6e01dso3951960a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:57:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730757449; x=1731362249;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tEYQ6Z8+FOvPGNiS0LpLO+B5sk3bgXloGhKuZU8+LRo=;
-        b=FvOn1iPh++g/u5uiXUd7zYO8h/F8oPYx2TZIfmuKlWvd+gMpctTfP3tPUq34G8g/jr
-         5a4MAidxLX7uqOWsOhSVBZNlYZI42BebAR9vVpkhBFM4c8evHr761MElO9FNSgueyWoH
-         tayhLv9L4DkZzSbLWk9V/36+XwjHGl5LByiGjmv3RCnL1ys3cHiZfsU69clLIiTAYL4N
-         +Uelk16J89aynJHSwNyOSNW2+6mS7cD1ztAV+sjW8IfyScE7T3vds2LkaGrSTOeQLT13
-         jm51LiQsXZW9g8+BsRfK2KJg62Phg9/2zXPWuWKuF0KbDsBp/wQ5BXwY30UuyhBw7Psg
-         YoWw==
-X-Forwarded-Encrypted: i=1; AJvYcCU913cS3NwcqgHjMYtCLBHLVkz254b3yggZSlO4chh49k1sqp/xi8PCql7t2sn9N4jNCgGRZ59N70bOS98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ1UpkK9j7ncL8rioa71XNClC8STogq9pXyaAPL2izSQ7+woHw
-	Gm/0WW0Bp+hpOhlhvy60FeV+HLPWHkJH6ncAnvcBGOKnYxG+b9fgVkXeCQvRS7/BeLlLLX9hzbt
-	NiGT81AmgJNCsV6oXpgjaQgBs7XTmVVwMereTAzi+H2OBLtD9jDGx7ZQ=
-X-Google-Smtp-Source: AGHT+IH6GWMMyRYCUrmFuvKHAyTX70xzSTKMUta55MqNs9/wSLc1NSz8PEwuhlHwVaf7/xHeMfwzFGGMZvOEWpjWSnYoXYf22loH
+	s=arc-20240116; t=1730757754; c=relaxed/simple;
+	bh=7QIifIssVUmVPesl7ylU2g2JqAzCifBzBoPBx2zV8n8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iofc5KD1sCF2fN7ICkEJE/WP6gFm4SL3m3V8rq4czZEsuSeg+ZtD7csURTTL4rVzvSf9G5rbvXMbkVAfdMCoLMDaTjPxJdYFHWcGzODgh3Quae4fjFqhzvOKY+8AqvsTmf3ChB6Itb9+UaPxAAw9wz+hRjrAl1VGn+ejeGvEYD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmpJGA6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12BECC4CECE;
+	Mon,  4 Nov 2024 22:02:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730757754;
+	bh=7QIifIssVUmVPesl7ylU2g2JqAzCifBzBoPBx2zV8n8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bmpJGA6XY4d+1a042eUWC/fe9vHMkD8M506B00CQVFijTXVx9A+mM2dywCp6t5Yk0
+	 jHiKm62uOyNv7PKVyJ1Hb3WPKMmguLAjECO+sUeRYmhNAFMD/YRnAtQDXE8jBDALqP
+	 ZvJcoV4w/Hn+Ws8RVShiymDbTd1+Dhcscr68yoqMC3g+y7ipFv/ulcOPm+K7N1ljFj
+	 0YYiugARaLfJ52qKDrGbJWx8fQwu4zpXHygxLq8ETNEo+n9p7H6djjibNCv15+LtZS
+	 LpbA026wK9pBwXGCSgmoynGGUck89Rp951kjI8HXypHZ1vnfbEG8G9ZXAX8dRoy1Vu
+	 3Y9n4ekf7jcdw==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5ebc0dbc566so2377763eaf.3;
+        Mon, 04 Nov 2024 14:02:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUXgowsM+P87OLQtfz2NXFtCq+MCYmv/hSkm7bCnwcxOj8bFyYnMFEHRwUMbMeP51HF7Ehw3iheCg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7lkHErNAksyiBgYmTnHDBm/q5Z+DLvGb9vRV/veWin9pdew4n
+	76DuEdMhfxd8JB++WUWo6sqSuukpOwUnzJChfJobmlxjK2HGxUE/bP5ltUJ4oWzxvkFEVenflxi
+	UfM0q6vD19UtfLpltKa2ttjwbxAI=
+X-Google-Smtp-Source: AGHT+IF7OgK5DkrXYX6V8ZPi7SK75DYbhSrAGlARSEhx+S1zP/RJOCbCTW7jpP8xvwV3uCs0xPmMgiwe55OmjZ0z68M=
+X-Received: by 2002:a05:6820:f05:b0:5ee:a5b:d172 with SMTP id
+ 006d021491bc7-5ee0a5bd5bdmr4172827eaf.5.1730757753286; Mon, 04 Nov 2024
+ 14:02:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6830:442b:b0:713:6f24:39b8 with SMTP id
- 46e09a7af769-719ca1d3facmr9788600a34.19.1730757449275; Mon, 04 Nov 2024
- 13:57:29 -0800 (PST)
-Date: Mon, 04 Nov 2024 13:57:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67294349.050a0220.701a.0010.GAE@google.com>
-Subject: [syzbot] [mm?] WARNING in folio_update_gen
-From: syzbot <syzbot+e5a74963d40b07387bdf@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+References: <20241030164126.1263793-1-lukasz.luba@arm.com> <20241030164126.1263793-2-lukasz.luba@arm.com>
+In-Reply-To: <20241030164126.1263793-2-lukasz.luba@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 4 Nov 2024 23:02:21 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iRQ4fZ0xOeLkwvg80nuB7cAM02mj1resEBVvAqr3PQ-Q@mail.gmail.com>
+Message-ID: <CAJZ5v0iRQ4fZ0xOeLkwvg80nuB7cAM02mj1resEBVvAqr3PQ-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] PM: EM: Add min/max available performance state limits
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	dietmar.eggemann@arm.com, rafael@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Oct 30, 2024 at 5:40=E2=80=AFPM Lukasz Luba <lukasz.luba@arm.com> w=
+rote:
+>
+> On some devices there are HW dependencies for shared frequency and voltag=
+e
+> between devices. It will impact Energy Aware Scheduler (EAS) decision,
+> where CPUs share the voltage & frequency domain with other CPUs or device=
+s
+> e.g.
+> - Mid CPUs + Big CPU
+> - Little CPU + L3 cache in DSU
+> - some other device + Little CPUs
+>
+> Detailed explanation of one example:
+> When the L3 cache frequency is increased, the affected Little CPUs might
+> run at higher voltage and frequency. That higher voltage causes higher CP=
+U
+> power and thus more energy is used for running the tasks. This is
+> important for background running tasks, which try to run on energy
+> efficient CPUs.
+>
+> Therefore, add performance state limits which are applied for the device
+> (in this case CPU). This is important on SoCs with HW dependencies
+> mentioned above so that the Energy Aware Scheduler (EAS) does not use
+> performance states outside the valid min-max range for energy calculation=
+.
+>
+> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+> ---
+>  include/linux/energy_model.h | 29 ++++++++++++++------
+>  kernel/power/energy_model.c  | 52 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 73 insertions(+), 8 deletions(-)
+>
+> diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
+> index 1ff52020cf757..752e0b2975820 100644
+> --- a/include/linux/energy_model.h
+> +++ b/include/linux/energy_model.h
+> @@ -55,6 +55,8 @@ struct em_perf_table {
+>   * struct em_perf_domain - Performance domain
+>   * @em_table:          Pointer to the runtime modifiable em_perf_table
+>   * @nr_perf_states:    Number of performance states
+> + * @min_perf_state:    Minimum allowed Performance State index
+> + * @max_perf_state:    Maximum allowed Performance State index
+>   * @flags:             See "em_perf_domain flags"
+>   * @cpus:              Cpumask covering the CPUs of the domain. It's her=
+e
+>   *                     for performance reasons to avoid potential cache
+> @@ -70,6 +72,8 @@ struct em_perf_table {
+>  struct em_perf_domain {
+>         struct em_perf_table __rcu *em_table;
+>         int nr_perf_states;
+> +       int min_perf_state;
+> +       int max_perf_state;
+>         unsigned long flags;
+>         unsigned long cpus[];
+>  };
+> @@ -173,13 +177,14 @@ void em_table_free(struct em_perf_table __rcu *tabl=
+e);
+>  int em_dev_compute_costs(struct device *dev, struct em_perf_state *table=
+,
+>                          int nr_states);
+>  int em_dev_update_chip_binning(struct device *dev);
+> +int em_update_performance_limits(struct em_perf_domain *pd,
+> +               unsigned long freq_min_khz, unsigned long freq_max_khz);
+>
+>  /**
+>   * em_pd_get_efficient_state() - Get an efficient performance state from=
+ the EM
+>   * @table:             List of performance states, in ascending order
+> - * @nr_perf_states:    Number of performance states
+> + * @pd:                        performance domain for which this must be=
+ done
+>   * @max_util:          Max utilization to map with the EM
+> - * @pd_flags:          Performance Domain flags
+>   *
+>   * It is called from the scheduler code quite frequently and as a conseq=
+uence
+>   * doesn't implement any check.
+> @@ -188,13 +193,16 @@ int em_dev_update_chip_binning(struct device *dev);
+>   * requirement.
+>   */
+>  static inline int
+> -em_pd_get_efficient_state(struct em_perf_state *table, int nr_perf_state=
+s,
+> -                         unsigned long max_util, unsigned long pd_flags)
+> +em_pd_get_efficient_state(struct em_perf_state *table,
+> +                         struct em_perf_domain *pd, unsigned long max_ut=
+il)
+>  {
+> +       unsigned long pd_flags =3D pd->flags;
+> +       int min_ps =3D pd->min_perf_state;
+> +       int max_ps =3D pd->max_perf_state;
+>         struct em_perf_state *ps;
+>         int i;
+>
+> -       for (i =3D 0; i < nr_perf_states; i++) {
+> +       for (i =3D min_ps; i <=3D max_ps; i++) {
+>                 ps =3D &table[i];
+>                 if (ps->performance >=3D max_util) {
+>                         if (pd_flags & EM_PERF_DOMAIN_SKIP_INEFFICIENCIES=
+ &&
+> @@ -204,7 +212,7 @@ em_pd_get_efficient_state(struct em_perf_state *table=
+, int nr_perf_states,
+>                 }
+>         }
+>
+> -       return nr_perf_states - 1;
+> +       return max_ps;
+>  }
+>
+>  /**
+> @@ -253,8 +261,7 @@ static inline unsigned long em_cpu_energy(struct em_p=
+erf_domain *pd,
+>          * requested performance.
+>          */
+>         em_table =3D rcu_dereference(pd->em_table);
+> -       i =3D em_pd_get_efficient_state(em_table->state, pd->nr_perf_stat=
+es,
+> -                                     max_util, pd->flags);
+> +       i =3D em_pd_get_efficient_state(em_table->state, pd, max_util);
+>         ps =3D &em_table->state[i];
+>
+>         /*
+> @@ -391,6 +398,12 @@ static inline int em_dev_update_chip_binning(struct =
+device *dev)
+>  {
+>         return -EINVAL;
+>  }
+> +static inline
+> +int em_update_performance_limits(struct em_perf_domain *pd,
+> +               unsigned long freq_min_khz, unsigned long freq_max_khz)
+> +{
+> +       return -EINVAL;
+> +}
+>  #endif
+>
+>  #endif
+> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+> index 927cc55ba0b3d..d07faf42eace6 100644
+> --- a/kernel/power/energy_model.c
+> +++ b/kernel/power/energy_model.c
+> @@ -628,6 +628,8 @@ int em_dev_register_perf_domain(struct device *dev, u=
+nsigned int nr_states,
+>                 goto unlock;
+>
+>         dev->em_pd->flags |=3D flags;
+> +       dev->em_pd->min_perf_state =3D 0;
+> +       dev->em_pd->max_perf_state =3D nr_states - 1;
+>
+>         em_cpufreq_update_efficiencies(dev, dev->em_pd->em_table->state);
+>
+> @@ -856,3 +858,53 @@ int em_dev_update_chip_binning(struct device *dev)
+>         return em_recalc_and_update(dev, pd, em_table);
+>  }
+>  EXPORT_SYMBOL_GPL(em_dev_update_chip_binning);
+> +
+> +
+> +/**
+> + * em_update_performance_limits() - Update Energy Model with performance
+> + *                             limits information.
+> + * @pd                 : Performance Domain with EM that has to be updat=
+ed.
+> + * @freq_min_khz       : New minimum allowed frequency for this device.
+> + * @freq_max_khz       : New maximum allowed frequency for this device.
+> + *
+> + * This function allows to update the EM with information about availabl=
+e
+> + * performance levels. It takes the minimum and maximum frequency in kHz
+> + * and does internal translation to performance levels.
+> + * Returns 0 on success or -EINVAL when failed.
+> + */
+> +int em_update_performance_limits(struct em_perf_domain *pd,
+> +               unsigned long freq_min_khz, unsigned long freq_max_khz)
+> +{
+> +       struct em_perf_state *table;
+> +       int min_ps =3D -1;
+> +       int max_ps =3D -1;
+> +       int i;
+> +
+> +       if (!pd)
+> +               return -EINVAL;
+> +
+> +       rcu_read_lock();
+> +       table =3D em_perf_state_from_pd(pd);
+> +
+> +       for (i =3D 0; i < pd->nr_perf_states; i++) {
+> +               if (freq_min_khz =3D=3D table[i].frequency)
+> +                       min_ps =3D i;
+> +               if (freq_max_khz =3D=3D table[i].frequency)
+> +                       max_ps =3D i;
+> +       }
+> +       rcu_read_unlock();
+> +
+> +       /* Only update when both are found and sane */
+> +       if (min_ps < 0 || max_ps < 0 || max_ps < min_ps)
+> +               return -EINVAL;
+> +
+> +
+> +       /* Guard simultaneous updates and make them atomic */
+> +       mutex_lock(&em_pd_mutex);
+> +       pd->min_perf_state =3D min_ps;
+> +       pd->max_perf_state =3D max_ps;
+> +       mutex_unlock(&em_pd_mutex);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(em_update_performance_limits);
+> --
 
-syzbot found the following issue on:
-
-HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12634587980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
-dashboard link: https://syzkaller.appspot.com/bug?extid=e5a74963d40b07387bdf
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/760a8c88d0c3/disk-c88416ba.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/46e4b0a851a2/vmlinux-c88416ba.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/428e2c784b75/bzImage-c88416ba.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e5a74963d40b07387bdf@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 85 at mm/vmscan.c:3140 folio_update_gen+0x23d/0x250 mm/vmscan.c:3140
-Modules linked in:
-CPU: 0 UID: 0 PID: 85 Comm: kswapd0 Not tainted 6.12.0-rc5-next-20241101-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:folio_update_gen+0x23d/0x250 mm/vmscan.c:3140
-Code: 00 48 3b 4c 24 60 75 2a 48 c1 e8 29 83 e0 07 ff c8 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 74 c0 bf ff 90 <0f> 0b 90 e9 91 fe ff ff e8 46 9f ee 09 66 0f 1f 44 00 00 90 90 90
-RSP: 0018:ffffc900020deb40 EFLAGS: 00010293
-RAX: ffffffff81d5fd8c RBX: 0000000000000000 RCX: ffff88801cbb8000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc900020dec00 R08: ffffffff81d5fc19 R09: 1ffff1100d562d00
-R10: dffffc0000000000 R11: ffffed100d562d01 R12: 0000000000000003
-R13: 1ffff9200041bd70 R14: ffffc900020deb80 R15: ffffea0001308000
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7fecc34866 CR3: 00000000223a2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- walk_pmd_range_locked+0x92b/0xf90 mm/vmscan.c:3514
- walk_pmd_range mm/vmscan.c:3594 [inline]
- walk_pud_range+0x1f16/0x2310 mm/vmscan.c:3621
- walk_p4d_range mm/pagewalk.c:259 [inline]
- walk_pgd_range+0x4a9/0x17e0 mm/pagewalk.c:305
- __walk_page_range+0x15f/0x700 mm/pagewalk.c:412
- walk_page_range_mm+0x58f/0x7c0 mm/pagewalk.c:505
- walk_mm mm/vmscan.c:3665 [inline]
- try_to_inc_max_seq+0xdd9/0x13b0 mm/vmscan.c:3902
- get_nr_to_scan mm/vmscan.c:4740 [inline]
- try_to_shrink_lruvec+0xb30/0xc70 mm/vmscan.c:4783
- shrink_one+0x3b9/0x850 mm/vmscan.c:4832
- shrink_many mm/vmscan.c:4895 [inline]
- lru_gen_shrink_node mm/vmscan.c:4973 [inline]
- shrink_node+0x37cd/0x3e60 mm/vmscan.c:5954
- kswapd_shrink_node mm/vmscan.c:6783 [inline]
- balance_pgdat mm/vmscan.c:6975 [inline]
- kswapd+0x1ca9/0x3700 mm/vmscan.c:7244
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Applied as 6.13 material, thanks!
 
