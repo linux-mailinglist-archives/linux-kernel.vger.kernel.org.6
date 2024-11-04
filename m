@@ -1,136 +1,309 @@
-Return-Path: <linux-kernel+bounces-395022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EAB9BB742
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:13:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372859BB744
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 777371F2356F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB26C28375E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDE313C9DE;
-	Mon,  4 Nov 2024 14:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3BB13D246;
+	Mon,  4 Nov 2024 14:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YrZCVPbx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Eg2tRJUF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWV/ppQZ"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1438C69959;
-	Mon,  4 Nov 2024 14:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDED2AE90;
+	Mon,  4 Nov 2024 14:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730729602; cv=none; b=Zrzh13M/H8I5WpHT/eLvCtkLFjEzAbUYs78EP34SAx71fx6zij+RnAvA3uHv8L4IotF9AbTyO/cybPiEzmoOrN3u1anapcW5LLGxtjSqB/7MS4486PXD5Pc+ofqsOSbrdikhhyum2UcCb8tq95D/rdwHfi9y4dsGk/bQrwGnZ64=
+	t=1730729682; cv=none; b=H8dZPmIf4HvH0Q0yvYJRwHzFnI3oH+Bc5SD1jcax8ePx4gO/RMCjkcHIJ+c1LoBM+dPJ4wcyi2j7/XHglBF+AQJHQ2OPUA39UZ4XkjIg1Ih+bj9zdYAwJesKTVL0MLFRBzBDX9ONu1Q/zuAakDPboiX0xZy1erb6UhS3K89Gvmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730729602; c=relaxed/simple;
-	bh=zHZVpDEghPumhbDxWCNP3qmyYu9XbrEXe58YCAISpz8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YVAU0ktpfW2FHZX+6KzGMvBbcCZgQ7K4aHpgt4A6Rodkrmd7mBVoz5Pb/0v4er+ifdAHZgEKERyi+NVjfMBBWEEBMC+EpdoxoudD7MM7Lhr/cIohE4GKKaKRdpJmBE1R+7sLTELQOEvfQ9FG8zYS8dUFiF3qvf4oFbT61tLxWgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YrZCVPbx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Eg2tRJUF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730729598;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aqMpvBzTXhahVtCTdWYroVOEmQxKU/0HvPqDIkQqPYg=;
-	b=YrZCVPbxwyd7YMzXWCMHJRIWA9gNIsiyQakRirV3nUDuvwGm0no4RpZO0zJ5teat4Fox9Y
-	wpgJ1T8zZBWOdTcCIyU0WlgYUeDV/jLOEbGMd0h3QBfeL06NJo+iDI9myExtU1cpE1eiqR
-	RU65G3BX+2JalZySA7SYWtai2x+C9DLuo/2pX7JsINGsFmO8bpCKjPiqcj1RYY6UIkqAZF
-	AiT4epWC+giaTMkg2g7ObFbgse8v6C3oE/l+IgsMVi2LIKs+cwr9kiuSwq6gzcfE/Q1xQX
-	aTqLiiJOWLN1xdEpmr7i9/Coi8qaCMqDN+/5dtlnPUQ7QzxW95987nTT/Kd9Cg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730729598;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aqMpvBzTXhahVtCTdWYroVOEmQxKU/0HvPqDIkQqPYg=;
-	b=Eg2tRJUFLV5qxkREtuvMrNqi402ioDqX/dNJC+8Qct3UVeWZ1a8LrRSAqKpZuFiMCRDBdD
-	VRZ5ndWFZC10YcBA==
-To: Jiri Slaby <jirislaby@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Petr Mladek
- <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, Steven
- Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, Esben
- Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Rengarajan S
- <rengarajan.s@microchip.com>, Jeff Johnson <quic_jjohnson@quicinc.com>,
- Serge Semin <fancer.lancer@gmail.com>, Lino Sanfilippo
- <l.sanfilippo@kunbus.com>, Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for
- FIFO mode
-In-Reply-To: <2fab2ef8-d0d6-4b94-90b6-7c16641a2f68@kernel.org>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-2-john.ogness@linutronix.de>
- <837a7ecd-be29-4865-9543-cb6f7e7e46e7@kernel.org>
- <alpine.DEB.2.21.2410310349450.40463@angie.orcam.me.uk>
- <2fab2ef8-d0d6-4b94-90b6-7c16641a2f68@kernel.org>
-Date: Mon, 04 Nov 2024 15:19:18 +0106
-Message-ID: <84ldxzccjl.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1730729682; c=relaxed/simple;
+	bh=22IkpLsTJ3lJP8P21zcOPBy6UAX1xZrcihsucCCaPlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MZuncB4kq6R7bLrSDteRq56vydqamK3ybN4kEoBNT6z5joAlQKGjJePc0RXcRUzhOO6El5vey6pe93nyLy0gRn54pFZsNhwbwMbftuSIqZrw5oIpOIidAsQt0CsuSlE35Ei61CW7n/aP2GprhbHLsxb0zCb0THPMMghX1N1746k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWV/ppQZ; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e3fca72a41so3505945a91.1;
+        Mon, 04 Nov 2024 06:14:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730729680; x=1731334480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=edAMo1PY72zkfTpbMxA+qP1Jihl1VWVJ/LFLScOHZxs=;
+        b=NWV/ppQZPq1od17fFWqrgKK+lBUUN5JsZPZwLPixef7DEaGHl642KHOUmUU8OaFw7A
+         0y7dBuTRKAYropKFnC7pNiUM9vFHyHWBn/5GthgjhB+L/BsbfnMJP9BL4beaf7zATToN
+         OCqsZnAaV4yHTH3Cfz+pEhW83jsw7m4EeKUsOABNqJ9FuGgm9+TepOU7HUv8uuO2xw8y
+         QtJnCMWPtszW9qj4vyDqYVkOivR/rOM+MIESi+uZfl1ZQYoak4rrmyGDwnFir2ekrxNW
+         bDmVj1/mm1KGS1x6JMED3kcSyUJMNm/Op0Ye6N2RjZzOfKz4eVvl00Kf1SR22s+wXZv5
+         92VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730729680; x=1731334480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=edAMo1PY72zkfTpbMxA+qP1Jihl1VWVJ/LFLScOHZxs=;
+        b=vDqgZK4JPKQfOHiFbYbWz+gTADdiP8jD/oB9tyJda2iZk+gp5vmppmP65mqBQ1N0hu
+         1pG9XIJzhgzUiRxwSXya/mqUlqE8nw0XMViaViTCbYyUSdlGdhTV10QWU/AGrYarhVEM
+         mJvg4ZL82yJ6MzEW1GMVpojZNx6MmCccyzExIDY58O1EgFsi5Cq2DVo19zM8YNsOV5sc
+         FxLQNkO1OHtfAjcliWaCtrTwd2ch4V+H9ZfUoBGm6/cy9ZEZVfhNk3kvgSbBajrg99aB
+         na3LGsaxYNpX2NozgfGaUTiOlCikzkhCGkeSm7GKGKaip0DZZrJnsfppsZnEjNpNmvJp
+         fMiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3XRNon+o1EKH+o4MwU0125cj3LtmJiK6oNrX2TAW6qhWWziYPfJVcUx2tQDvixwZOZ3K9rTeZ@vger.kernel.org, AJvYcCWKdyChPf62ThqR6Z8oFFPpkuV+4MzJrXLDxxaB3NrdP1WKjyAwcg+T716/rZfLlfdGCqnnCncd53W/+lI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz8huRM3cEbCooF6BEe+l+THcLaIQlRYl6Vz+agD6PZv+OGLPz
+	VOdzWPxYm0FMuZjTXZwzT1LKfEsPy9s67sbrA1HZSsPJG17C1AIv3rrVne1t/3c7+yyfVfP32ui
+	OxaRYFJ897r6XkS70MyuUe388VBc=
+X-Google-Smtp-Source: AGHT+IEmoWv2BQyjgSKvNZTyFnFU/aFLKu2M11dcp+q5xS3jkjmpk2PvhiOnId+cOj9tdQGGbgL5byubxkd+rHQu7UM=
+X-Received: by 2002:a17:90b:2dcc:b0:2e2:7f8f:3ad7 with SMTP id
+ 98e67ed59e1d1-2e93c1595b5mr21780271a91.7.1730729679934; Mon, 04 Nov 2024
+ 06:14:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241021155241.943665-1-Frank.Li@nxp.com> <DU2PR04MB86770FFB0CAEEBE95B91F5FC8C4C2@DU2PR04MB8677.eurprd04.prod.outlook.com>
+ <CAHCN7xJya+XjAP+kn5MePdrqNxaLnkYag23UaNatoh09ize+AA@mail.gmail.com> <AS8PR04MB8676D33E00DE6B0B961B5EB58C512@AS8PR04MB8676.eurprd04.prod.outlook.com>
+In-Reply-To: <AS8PR04MB8676D33E00DE6B0B961B5EB58C512@AS8PR04MB8676.eurprd04.prod.outlook.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Mon, 4 Nov 2024 08:14:28 -0600
+Message-ID: <CAHCN7xKj9XYnsaTjFfE_jn7rsN86wv0bxKq3o83WNkamrqeU1g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] phy: freescale: imx8m-pcie: Do CMN_RST just before
+ PHY PLL lock check
+To: Hongxing Zhu <hongxing.zhu@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>, "vkoul@kernel.org" <vkoul@kernel.org>, 
+	"festevam@gmail.com" <festevam@gmail.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "kishon@kernel.org" <kishon@kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, 
+	Marcel Ziswiler <marcel.ziswiler@toradex.com>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-11-04, Jiri Slaby <jirislaby@kernel.org> wrote:
-> Instead of looping fifosize multiplied by random timeout, can we
-> re-use port->frame_time?
-
-Rather than 10k loops, we could loop
-
-	(port->frame_time * some_scaled_padding) / 1000
-
-times. The padding is important because we should not timeout in the
-normal scenario. Perhaps using ~2 as @some_padding. Something like:
-
-	port->frame_time >> 9
-
-?
-
->>   The difference between THRE and TEMT is the state of the shift register
->> only[2]:
->> 
->> "In the FIFO mode, TEMT is set when the transmitter FIFO and shift
->> register are both empty."
+On Sun, Nov 3, 2024 at 11:19=E2=80=AFPM Hongxing Zhu <hongxing.zhu@nxp.com>=
+ wrote:
 >
-> But what's the purpose of spinning _here_? The kernel can run and
-> FIFO too. Without the kernel waiting for the FIFO.
+> > -----Original Message-----
+> > From: Adam Ford <aford173@gmail.com>
+> > Sent: 2024=E5=B9=B411=E6=9C=882=E6=97=A5 3:53
+> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
+> > Cc: Frank Li <frank.li@nxp.com>; vkoul@kernel.org; festevam@gmail.com;
+> > imx@lists.linux.dev; kernel@pengutronix.de; kishon@kernel.org;
+> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+> > linux-phy@lists.infradead.org; Marcel Ziswiler <marcel.ziswiler@toradex=
+.com>;
+> > s.hauer@pengutronix.de; shawnguo@kernel.org; stable@vger.kernel.org
+> > Subject: Re: [PATCH v2 1/1] phy: freescale: imx8m-pcie: Do CMN_RST just=
+ before
+> > PHY PLL lock check
+> >
+> > On Mon, Oct 21, 2024 at 11:06=E2=80=AFPM Hongxing Zhu <hongxing.zhu@nxp=
+.com>
+> > wrote:
+> > >
+> > > > -----Original Message-----
+> > > > From: Frank Li <frank.li@nxp.com>
+> > > > Sent: 2024=E5=B9=B410=E6=9C=8821=E6=97=A5 23:53
+> > > > To: vkoul@kernel.org
+> > > > Cc: Frank Li <frank.li@nxp.com>; festevam@gmail.com; Hongxing Zhu
+> > > > <hongxing.zhu@nxp.com>; imx@lists.linux.dev; kernel@pengutronix.de;
+> > > > kishon@kernel.org; linux-arm-kernel@lists.infradead.org;
+> > > > linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org; Marcel
+> > > > Ziswiler <marcel.ziswiler@toradex.com>; s.hauer@pengutronix.de;
+> > > > shawnguo@kernel.org; stable@vger.kernel.org
+> > > > Subject: [PATCH v2 1/1] phy: freescale: imx8m-pcie: Do CMN_RST just
+> > > > before PHY PLL lock check
+> > > >
+> > > > From: Richard Zhu <hongxing.zhu@nxp.com>
+> > > >
+> > > > When enable initcall_debug together with higher debug level below.
+> > > > CONFIG_CONSOLE_LOGLEVEL_DEFAULT=3D9
+> > > > CONFIG_CONSOLE_LOGLEVEL_QUIET=3D9
+> > > > CONFIG_MESSAGE_LOGLEVEL_DEFAULT=3D7
+> > > >
+> > > > The initialization of i.MX8MP PCIe PHY might be timeout failed rand=
+omly.
+> > > > To fix this issue, adjust the sequence of the resets refer to the
+> > > > power up sequence listed below.
+> > > >
+> > > > i.MX8MP PCIe PHY power up sequence:
+> > > >                           /----------------------------------------=
+-----
+> > > > 1.8v supply     ---------/
+> > > >                     /----------------------------------------------=
+-----
+> > > > 0.8v supply     ---/
+> > > >
+> > > >                 ---\ /---------------------------------------------=
+-----
+> > > >                     X        REFCLK Valid
+> > > > Reference Clock ---/ \---------------------------------------------=
+-----
+> > > >                              --------------------------------------=
+-----
+> > > >                              |
+> > > > i_init_restn    --------------
+> > > >                                     -------------------------------=
+-----
+> > > >                                     |
+> > > > i_cmn_rstn      ---------------------
+> > > >                                          --------------------------=
+-----
+> > > >                                          | o_pll_lock_done
+> > > > --------------------------
+> > > >
+> > > > Logs:
+> > > > imx6q-pcie 33800000.pcie: host bridge /soc@0/pcie@33800000 ranges:
+> > > > imx6q-pcie 33800000.pcie:       IO 0x001ff80000..0x001ff8ffff ->
+> > > > 0x0000000000
+> > > > imx6q-pcie 33800000.pcie:      MEM 0x0018000000..0x001fefffff ->
+> > > > 0x0018000000
+> > > > probe of clk_imx8mp_audiomix.reset.0 returned 0 after 1052 usecs
+> > > > probe of 30e20000.clock-controller returned 0 after 32971 usecs phy
+> > > > phy-32f00000.pcie-phy.4: phy poweron failed --> -110 probe of
+> > > > 30e10000.dma-controller returned 0 after 10235 usecs imx6q-pcie
+> > > > 33800000.pcie: waiting for PHY ready timeout!
+> > > > dwhdmi-imx 32fd8000.hdmi: Detected HDMI TX controller v2.13a with
+> > > > HDCP
+> > > > (samsung_dw_hdmi_phy2) imx6q-pcie 33800000.pcie: probe with driver
+> > > > imx6q-pcie failed with error -110
+> > > >
+> > > > Fixes: dce9edff16ee ("phy: freescale: imx8m-pcie: Add i.MX8MP PCIe
+> > > > PHY
+> > > > support")
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > >
+> > > > v2 changes:
+> > > > - Rebase to latest fixes branch of linux-phy git repo.
+> > > > - Richard's environment have problem and can't sent out patch. So I
+> > > > help post this fix patch.
+> >
+> > Even with this patch, I am still seeing an occasional timeout on 8MP.
+> > I looked at some logs on a similarly functioning 8MM and I can't get th=
+is error to
+> > appear on Mini that I see on Plus.
+> >
+> > The TRM doesn't document the timing of the startup sequence, like this =
+e-mail
+> > patch did nor does it state how long a reasonable timeout should take. =
+So, I
+> > started looking through the code and I noticed that the Mini asserts th=
+e reset at
+> > the beginning, then makes all the changes, and de-asserts the resets to=
+ward the
+> > end.  Is there any reason we should not assert one or both of the reset=
+s on
+> > 8MP before setting up the reset of the registers like the way Mini does=
+ it?
+> Yes, I had the similar confusions when I try to bring up i.MX8MP PCIe.
+> i.MX8MP PCIe resets have the different designs but I don't know the reaso=
+n and
+> the details. These resets shouldn't be asserted/de-asserted as Mini does =
+during
+>  the initialization.
 >
-> If we want to wait for fifo to empty, why not *also* the TSR. Meaning:
+> On i.MX8MP, these resets should be configured one-shot. I used to toggle =
+them
+> in my own experiments. Unfortunately, the PCIe PHY wouldn't be functional=
+.
+
+I started testing adding the resets before I asked, because it appears
+to be working ok, but if you're suggesting it's a bad idea, I won't
+continue down that path.  Do you have any other suggestions on how to
+eliminate the occasional timeout error?  I still see it at times on a
+cold-boot even with this latest patch applied.
+
+thanks
+
+adam
+
 >
-> Did you want UART_LSR_TEMT?
-
-Let us assume we have a line with 640 characters and a FIFO of 64
-bytes. For this line, we must wait for the FIFO to empty 10 times. It is
-enough to wait for THRE for each of the 64-byte blocks because we are
-only interested in refilling the FIFO at this point. Only at the very
-end (in the caller...  serial8250_console_write()) do we need to wait
-for everything to flush to the wire (TEMT).
-
-By waiting on TEMT for each of the 64-byte blocks, we are waiting longer
-than necessary. This creates a small window where the FIFO is empty and
-there is nothing being transmitted.
-
-I did a simple test on my beaglebone-black hardware, sending 100 lines
-of 924 bytes at 9600 bps. Since my hardware uses a 64-byte FIFO, each
-line would have 14 such windows.
-
-And indeed, waiting for TEMT rather than only THRE for the 64-byte
-blocks resulted in an extra 30ms total transfer for all 92400
-bytes. That is about 20us lost in each window by unnecessarily waiting
-for TEMT.
-
-Of course, we are only talking about console output, which is horribly
-inefficient on system resources. But I would argue, if we do not care
-about unnecessary waiting, then why even have the FIFO optimization in
-the first place?
-
-John
+> Best Regards
+> Richard Zhu
+> >
+> > adam
+> >
+> > > > ---
+> > > Hi Frank:
+> > > Thanks a lot for your kindly help.
+> > > Since my server is down, I can't send out this v2 in the past days.
+> > >
+> > > Hi Vinod:
+> > > Sorry for the late reply, and bring you inconvenience.
+> > >
+> > > Best Regards
+> > > Richard Zhu
+> > >
+> > > >  drivers/phy/freescale/phy-fsl-imx8m-pcie.c | 10 +++++-----
+> > > >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
+> > > > b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
+> > > > index 11fcb1867118c..e98361dcdeadf 100644
+> > > > --- a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
+> > > > +++ b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
+> > > > @@ -141,11 +141,6 @@ static int imx8_pcie_phy_power_on(struct phy
+> > > > *phy)
+> > > >                          IMX8MM_GPR_PCIE_REF_CLK_PLL);
+> > > >       usleep_range(100, 200);
+> > > >
+> > > > -     /* Do the PHY common block reset */
+> > > > -     regmap_update_bits(imx8_phy->iomuxc_gpr, IOMUXC_GPR14,
+> > > > -                        IMX8MM_GPR_PCIE_CMN_RST,
+> > > > -                        IMX8MM_GPR_PCIE_CMN_RST);
+> > > > -
+> > > >       switch (imx8_phy->drvdata->variant) {
+> > > >       case IMX8MP:
+> > > >               reset_control_deassert(imx8_phy->perst);
+> > > > @@ -156,6 +151,11 @@ static int imx8_pcie_phy_power_on(struct phy
+> > > > *phy)
+> > > >               break;
+> > > >       }
+> > > >
+> > > > +     /* Do the PHY common block reset */
+> > > > +     regmap_update_bits(imx8_phy->iomuxc_gpr, IOMUXC_GPR14,
+> > > > +                        IMX8MM_GPR_PCIE_CMN_RST,
+> > > > +                        IMX8MM_GPR_PCIE_CMN_RST);
+> > > > +
+> > > >       /* Polling to check the phy is ready or not. */
+> > > >       ret =3D readl_poll_timeout(imx8_phy->base +
+> > > > IMX8MM_PCIE_PHY_CMN_REG075,
+> > > >                                val, val =3D=3D ANA_PLL_DONE, 10,
+> > 20000);
+> > > > --
+> > > > 2.34.1
+> > >
+> > > --
+> > > linux-phy mailing list
+> > > linux-phy@lists.infradead.org
+> > > https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fl=
+ist
+> > >
+> > s.infradead.org%2Fmailman%2Flistinfo%2Flinux-phy&data=3D05%7C02%7Chongx=
+i
+> > >
+> > ng.zhu%40nxp.com%7C666c8968b3094147ed4408dcfaaec631%7C686ea1d3bc
+> > 2b4c6f
+> > >
+> > a92cd99c5c301635%7C0%7C0%7C638660875771545687%7CUnknown%7CTWF
+> > pbGZsb3d8
+> > >
+> > eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%
+> > 7C0
+> > > %7C%7C%7C&sdata=3D3Mg4SqcaA%2FlbScveriGBBMOq1YOTt3okydgHmjmdLps
+> > %3D&reser
+> > > ved=3D0
 
