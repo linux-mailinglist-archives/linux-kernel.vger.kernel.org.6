@@ -1,142 +1,160 @@
-Return-Path: <linux-kernel+bounces-394958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BFA9BB680
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:42:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D29109BB683
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:42:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC1841C21F7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:42:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0249F1C21DA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8F225776;
-	Mon,  4 Nov 2024 13:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6C9433A4;
+	Mon,  4 Nov 2024 13:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ajIXj+uL"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJB9QF2a"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7908BEE
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 13:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D1A70813;
+	Mon,  4 Nov 2024 13:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730727719; cv=none; b=t+Tq7fXZvyzxJs+XmWRyAi513Q+bElOr0bg0dAaRaCazXtKJ6kvuGBvyoxQCn7DlaZKG9Z14ER5bhe1PnAdxc5a6g7JB0+OmlZAifUOMylQ54iHGE2WMQaK5PSH2mTYBNdbOy2W6lOMlKn0xsNy3zBXCNxk33jTg6yMfl6lNfL8=
+	t=1730727749; cv=none; b=K7UrS/RZZ37xO681NxSkpxuIzmqckvQ8lOYeCRd5dXVlkkOTL1a4EWwm0i2A5oZ4ANW8YQOXGMQcxUQJYCjdNsMSVv3Ta3Eb08kSRN9EgWtq+2vv3k98mciOfIZZl8VhpwSisTClhinlmsbDJcc8BR4en6/rnbqcBe0rwSj/4xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730727719; c=relaxed/simple;
-	bh=HXZuZel12bVsiYfz0H601Bs/k+63sw8yp3si4WDZxQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BmtW0LrIzkrO4FagS7UPxQzx+2JPUqzQHQt0/6Zbf6eHfquw1OHVY6b9iymMjA8DcKsP90S3UMc5qAZiQGahymjFeIfCOiLGW2+WVPtNahyRgEGGnsc7DjdRyrvLU9DcjdR/gOmn+0n7W3zaajiThL9mD/nJc5a/j//VBs0xYYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ajIXj+uL; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730727715;
-	bh=HXZuZel12bVsiYfz0H601Bs/k+63sw8yp3si4WDZxQo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ajIXj+uLHLbds8I7uNKG/L/ug3xj013bMhPApnxuz17nP4JI//LM1Cw6HG2X6qezA
-	 2xjJbHYvILqMwsh9OB8ZJKyjapNO3d+USbG2yJFP+FE9uS0yw1SVjbHgSj2jRSUA1N
-	 wV6wMJzbbTedxUXqdluW/g3Ve172VZeZh7uM/sekM7MLHAMOfM3cn/LkbdgCuXpOQg
-	 OOJiBLBH9RBySAS1a6pUqCydZGnzxR0XCLHmzp3OjKoyScIa/heW8R6TlgDqhlTPtP
-	 xGc7z/pH1C2PS2FCI4sqjNJqBrUSoecFVkD0fxmYi75RJ1pzniDVHflYoP+uv0Mo7P
-	 geth8KaP/KpPA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 553E917E3638;
-	Mon,  4 Nov 2024 14:41:55 +0100 (CET)
-Date: Mon, 4 Nov 2024 14:41:50 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Akash Goel <akash.goel@arm.com>
-Cc: liviu.dudau@arm.com, steven.price@arm.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- mihail.atanassov@arm.com, ketil.johnsen@arm.com, florent.tomasin@arm.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
-Subject: Re: [PATCH 3/3] drm/panthor: Prevent potential overwrite of buffer
- objects
-Message-ID: <20241104144150.65c6887c@collabora.com>
-In-Reply-To: <ca33d9b9-683d-4c09-951a-1bc48287bdde@arm.com>
-References: <20241024145432.934086-1-akash.goel@arm.com>
-	<20241024145432.934086-4-akash.goel@arm.com>
-	<20241024173935.6430159e@collabora.com>
-	<40c9a0a3-81e4-4ecc-b9a0-d55523f5f594@arm.com>
-	<20241104121646.687cae93@collabora.com>
-	<ca33d9b9-683d-4c09-951a-1bc48287bdde@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1730727749; c=relaxed/simple;
+	bh=sH/RYgeT8EV6l4e9LfxJpQHUCGusAJN0EsCrw0aDSNk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oy2eY2dj0tN2zcfip89hKf9aIHBTQmDlQL6z9PKqT68lTpmD0cUVdKr4gQZ2jZNp5t5DXDHdsU7EmbYRL3/8bZNJwahaCbOb0EeWVRGOkujsytg4Ae2bSVnzMqsP0VA0K0iVnYCDl+OxVRzKObcgBic4VyVtBLWUVlvZTY8FQi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJB9QF2a; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f7606199so1788162e87.0;
+        Mon, 04 Nov 2024 05:42:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730727744; x=1731332544; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z1kfPDrOQyOjZE2CymA0VUU4ashq3llSWs9vw5Q1LzQ=;
+        b=KJB9QF2aVrq2cWgJm5ac08UHpSZG6C1QcpOqArBw7tM/Hrf9Vb9qoJUezmJ0dtjWCA
+         ozShjOVFqdU/7yraSsoxEDA4UUzKGdC5G9IOq4jfmOV5qrZw9yU4uTOOzdX7U5Vhk9nc
+         mdEfa2Xr0dXXZj2c+373PDKl7EljCQSY14gbWGiud6ziO+g3wGmNgemt5r54DVIfdpoR
+         c01DXdGTYbQUgdCPyEw2xG299fU34MtmvFhVXdhqwclvWq2jAAMSj023R08rUbXIWEVa
+         HJWdbynKWQB75xleGwysN4oXJ9YSJJxu1yno+vGo1RCYGRZNYgdlsgcz5Q+TinZmLO7T
+         3M9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730727744; x=1731332544;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z1kfPDrOQyOjZE2CymA0VUU4ashq3llSWs9vw5Q1LzQ=;
+        b=bQOn2QAtLp3STI+fPWRy8itdJT1/AqO06/DjZ5ZmYVPLfbjFxX2BH1Nr+qn9q2t32C
+         l8WZRrjaWX6iaEYRvAH21a3MUCwmnx0cC18KIwL8J8yUMLwnaT0m2qooxxaMjf+7gFIn
+         YWsntp7PuJ2tWTyyWxR1oyH39V4Ub62VLcq1uLHVrYCcaNlzUJ5NQxYvh+cMVLYe5JN2
+         6vtMEx43fQqXX90KZFgTS0TsJTA0xdGQZmCbaMWxr4v1by6a7lVnq2OpMllGC/1lL4C9
+         WkAFR1dKbYagS5OB1oidUphShAW0Nc67/wvCDwuI3/KOWL4e6Kt+kqzbVdmy3l5wDQ/l
+         66lA==
+X-Forwarded-Encrypted: i=1; AJvYcCWj3AwAm4nZmTCQgya5k/dhDiwyLqwmoWv2LTP3fnjr+Ia0W1gYlQfd4kMph/AFn2szvdedvNOr2G8HxR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSORwSeuX4etnNx1P63j1D7tdP9azX7vwdDa79f8EpvVEnjpX+
+	mvJheThH+7OywNuXP8JsgVwb5dYxC/R/Qg5RzKKx6GnxmVZl6o2/
+X-Google-Smtp-Source: AGHT+IECPa3DlQD5Iey9jB7c3gpwS3dR3RcsFO/RMA/6PkAa50BWJysHhcMvZGpSwJGpmiofiY5/CQ==
+X-Received: by 2002:a05:6512:3b25:b0:539:ed5e:e224 with SMTP id 2adb3069b0e04-53b7ecd57efmr9330990e87.7.1730727743820;
+        Mon, 04 Nov 2024 05:42:23 -0800 (PST)
+Received: from localhost.localdomain (h-79-136-102-249.A137.corp.bahnhof.se. [79.136.102.249])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bcce4e4sm1699521e87.175.2024.11.04.05.42.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 05:42:22 -0800 (PST)
+From: Daniel Swanemar <d.swanemar@gmail.com>
+To: johan@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Swanemar <d.swanemar@gmail.com>
+Subject: [PATCH 1/1] Add TCL IK512 MBIM & ECM
+Date: Mon,  4 Nov 2024 14:42:17 +0100
+Message-ID: <20241104134217.3838-1-d.swanemar@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 4 Nov 2024 12:49:56 +0000
-Akash Goel <akash.goel@arm.com> wrote:
+Add the following TCL IK512 compositions:
 
-> On 11/4/24 11:16, Boris Brezillon wrote:
-> > Hi Akash,
-> > 
-> > On Thu, 31 Oct 2024 21:42:27 +0000
-> > Akash Goel <akash.goel@arm.com> wrote:
-> >   
-> >> I assume you also reckon that there is a potential problem here for arm64.  
-> > 
-> > It impacts any system that's not IO-coherent I would say, and this
-> > comment seems to prove this is a known issue [3].
-> >   
-> 
-> Thanks for confirming.
-> 
-> Actually I had tried to check with Daniel Vetter about [3], as it was 
-> not clear to me that how that code exactly helped in x86 case.
-> As far as I understand, [3] updates the attribute of direct kernel 
-> mapping of the shmem pages to WC, so as to be consistent with the 
-> Userspace mapping of the pages or their vmapping inside the kernel.
-> But didn't get how that alignment actually helped in cleaning the dirty 
-> cache lines.
+0x0530: Modem + Diag + AT + MBIM
+T:  Bus=04 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  3 Spd=10000 MxCh= 0
+D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
+P:  Vendor=1bbb ProdID=0530 Rev=05.04
+S:  Manufacturer=TCL
+S:  Product=TCL 5G USB Dongle
+S:  SerialNumber=3136b91a
+C:  #Ifs= 5 Cfg#= 1 Atr=80 MxPwr=896mA
+I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=82(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+I:  If#= 3 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
+E:  Ad=86(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+I:  If#= 4 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
 
-Yeah, I was not referring to the code but rather the fact that x86,
-with its IO coherency model, is a special case here, and that other
-archs probably need explicit flushes in a few places.
+0x0640: ECM + Modem + Diag + AT
+T:  Bus=04 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  4 Spd=10000 MxCh= 0
+D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
+P:  Vendor=1bbb ProdID=0640 Rev=05.04
+S:  Manufacturer=TCL
+S:  Product=TCL 5G USB Dongle
+S:  SerialNumber=3136b91a
+C:  #Ifs= 5 Cfg#= 1 Atr=80 MxPwr=896mA
+I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=32ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
+E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+I:  If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
 
-> >>
-> >> shmem calls 'flush_dcache_folio()' after clearing the pages but that
-> >> just clears the 'PG_dcache_clean' bit and CPU cache is not cleaned
-> >> immediately.
-> >>
-> >> I realize that this patch is not foolproof, as Userspace can try to
-> >> populate the BO from CPU side before mapping it on the GPU side.
-> >>
-> >> Not sure if we also need to consider the case when shmem pages are
-> >> swapped out. Don't know if there could be a similar situation of dirty
-> >> cachelines after the swap in.  
-> > 
-> > I think we do. We basically need to flush CPU caches any time
-> > pages are [re]allocated, because the shmem layer will either zero-out
-> > (first allocation) or populate (swap-in) in that path, and in both
-> > cases, it involves a CPU copy to a cached mapping.
-> >   
-> 
-> Thanks for confirming.
-> 
-> I think we may have to do cache flush page by page.
-> Not all pages might get swapped out and the initial allocation of all 
-> pages may not happen at the same time.
+Signed-off-by: Daniel Swanemar <d.swanemar@gmail.com>
+---
+ drivers/usb/serial/option.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-If the pages are mapped GPU-side, it's always all pages at a time (at
-least until we add support for lazy page allocation, AKA growing/heap
-buffers). You're right that GPU buffers that have only been mapped
-CPU-side with mmap() get their pages lazily allocated, though I'm not
-really sure we care about optimizing that case just yet.
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 4f18f189f309..11b180c07bac 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -2379,6 +2379,10 @@ static const struct usb_device_id option_ids[] = {
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x30) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x40) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x60) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x1bbb, 0x0530, 0xff),			/* TCL IK512 MBIM */
++	  .driver_info = NCTRL(1) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x1bbb, 0x0640, 0xff),			/* TCL IK512 ECM */
++	  .driver_info = NCTRL(3) },
+ 	{ } /* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, option_ids);
+-- 
+2.43.0
 
-> Please correct me if my understanding is wrong.
-
-Eviction should be rare enough that we can probably pay the price of a
-flush on the entire BO range.
 
