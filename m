@@ -1,160 +1,138 @@
-Return-Path: <linux-kernel+bounces-394959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29109BB683
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:42:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 464CE9BB690
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0249F1C21DA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:42:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2441C21FB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6C9433A4;
-	Mon,  4 Nov 2024 13:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9388873501;
+	Mon,  4 Nov 2024 13:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJB9QF2a"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pu7BHzmW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D1A70813;
-	Mon,  4 Nov 2024 13:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB68224F6;
+	Mon,  4 Nov 2024 13:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730727749; cv=none; b=K7UrS/RZZ37xO681NxSkpxuIzmqckvQ8lOYeCRd5dXVlkkOTL1a4EWwm0i2A5oZ4ANW8YQOXGMQcxUQJYCjdNsMSVv3Ta3Eb08kSRN9EgWtq+2vv3k98mciOfIZZl8VhpwSisTClhinlmsbDJcc8BR4en6/rnbqcBe0rwSj/4xg=
+	t=1730727799; cv=none; b=BDmtCZpMFjPekRdl+Q13MP8gBaQh/oxNG7/6Ms3DekaFqdaet5Byv6tYGlyHivWdZHw36rWGjSXucsXPzokF6IEIcPCUOLse9ookkaTsz8vPnq+CfAsocRfGl/UtE70lHA+0WQVheHtigU4lS9N6Svkzz8uH/P5ciVCmbJxCd9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730727749; c=relaxed/simple;
-	bh=sH/RYgeT8EV6l4e9LfxJpQHUCGusAJN0EsCrw0aDSNk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oy2eY2dj0tN2zcfip89hKf9aIHBTQmDlQL6z9PKqT68lTpmD0cUVdKr4gQZ2jZNp5t5DXDHdsU7EmbYRL3/8bZNJwahaCbOb0EeWVRGOkujsytg4Ae2bSVnzMqsP0VA0K0iVnYCDl+OxVRzKObcgBic4VyVtBLWUVlvZTY8FQi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJB9QF2a; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f7606199so1788162e87.0;
-        Mon, 04 Nov 2024 05:42:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730727744; x=1731332544; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1kfPDrOQyOjZE2CymA0VUU4ashq3llSWs9vw5Q1LzQ=;
-        b=KJB9QF2aVrq2cWgJm5ac08UHpSZG6C1QcpOqArBw7tM/Hrf9Vb9qoJUezmJ0dtjWCA
-         ozShjOVFqdU/7yraSsoxEDA4UUzKGdC5G9IOq4jfmOV5qrZw9yU4uTOOzdX7U5Vhk9nc
-         mdEfa2Xr0dXXZj2c+373PDKl7EljCQSY14gbWGiud6ziO+g3wGmNgemt5r54DVIfdpoR
-         c01DXdGTYbQUgdCPyEw2xG299fU34MtmvFhVXdhqwclvWq2jAAMSj023R08rUbXIWEVa
-         HJWdbynKWQB75xleGwysN4oXJ9YSJJxu1yno+vGo1RCYGRZNYgdlsgcz5Q+TinZmLO7T
-         3M9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730727744; x=1731332544;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z1kfPDrOQyOjZE2CymA0VUU4ashq3llSWs9vw5Q1LzQ=;
-        b=bQOn2QAtLp3STI+fPWRy8itdJT1/AqO06/DjZ5ZmYVPLfbjFxX2BH1Nr+qn9q2t32C
-         l8WZRrjaWX6iaEYRvAH21a3MUCwmnx0cC18KIwL8J8yUMLwnaT0m2qooxxaMjf+7gFIn
-         YWsntp7PuJ2tWTyyWxR1oyH39V4Ub62VLcq1uLHVrYCcaNlzUJ5NQxYvh+cMVLYe5JN2
-         6vtMEx43fQqXX90KZFgTS0TsJTA0xdGQZmCbaMWxr4v1by6a7lVnq2OpMllGC/1lL4C9
-         WkAFR1dKbYagS5OB1oidUphShAW0Nc67/wvCDwuI3/KOWL4e6Kt+kqzbVdmy3l5wDQ/l
-         66lA==
-X-Forwarded-Encrypted: i=1; AJvYcCWj3AwAm4nZmTCQgya5k/dhDiwyLqwmoWv2LTP3fnjr+Ia0W1gYlQfd4kMph/AFn2szvdedvNOr2G8HxR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSORwSeuX4etnNx1P63j1D7tdP9azX7vwdDa79f8EpvVEnjpX+
-	mvJheThH+7OywNuXP8JsgVwb5dYxC/R/Qg5RzKKx6GnxmVZl6o2/
-X-Google-Smtp-Source: AGHT+IECPa3DlQD5Iey9jB7c3gpwS3dR3RcsFO/RMA/6PkAa50BWJysHhcMvZGpSwJGpmiofiY5/CQ==
-X-Received: by 2002:a05:6512:3b25:b0:539:ed5e:e224 with SMTP id 2adb3069b0e04-53b7ecd57efmr9330990e87.7.1730727743820;
-        Mon, 04 Nov 2024 05:42:23 -0800 (PST)
-Received: from localhost.localdomain (h-79-136-102-249.A137.corp.bahnhof.se. [79.136.102.249])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bcce4e4sm1699521e87.175.2024.11.04.05.42.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 05:42:22 -0800 (PST)
-From: Daniel Swanemar <d.swanemar@gmail.com>
-To: johan@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Daniel Swanemar <d.swanemar@gmail.com>
-Subject: [PATCH 1/1] Add TCL IK512 MBIM & ECM
-Date: Mon,  4 Nov 2024 14:42:17 +0100
-Message-ID: <20241104134217.3838-1-d.swanemar@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730727799; c=relaxed/simple;
+	bh=pfdLiPHWAnRK8GzYwwj/H0Doi1Poy7yrH+c1hhjKyKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NoWBdkd6qMkTht7GOcHCd0FTm1STN+S5H08lyjHX2gvvpoSkucdG7ZSbJw0of/0ugQgG3Ov3ErT6sqnUFQx6ak2xBO39Bq9zn3YE9Cjq7eLSikbuRulfNfhlewDNM+O4zpSefaewrNDTohXCiyUTOxJjtU6RUghicBw9JNHUudg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pu7BHzmW; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730727797; x=1762263797;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pfdLiPHWAnRK8GzYwwj/H0Doi1Poy7yrH+c1hhjKyKY=;
+  b=Pu7BHzmWw09b6iho+waKzqw5GjtM2GXduUPXXxboPG4LI6Z3bPhlT35j
+   Dbmq06UZg1AXxgM6JYwz2GkUK4MNDE6ctEFbOF4JN5JemBwMmMoaCAo+Y
+   w3Bl00rp3yQ1PWgir21hWA89YaTiIv+YA/3kWW628sTYivrMDULXuMlOd
+   Fz77Bu5FtwdarU5oXWqnP67FxA5gKOd7nyLdWlojcxTl2RnytLQPDeSHT
+   Sj90luAv/yWQjsmrVmqWc1KuZHE/X4NK0kmwLL6j9nWE7MJ8egfS0J0xL
+   +4Cb3DTMh1Rl8V7q6mMP6Uk03B76TeskuhDCdN23Jf+piThHNcV8r3To7
+   Q==;
+X-CSE-ConnectionGUID: Zs8pT3+FRl+5EP89JTNcgw==
+X-CSE-MsgGUID: dl9/WXkeSn2NXvidIJzEhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30277541"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30277541"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 05:43:17 -0800
+X-CSE-ConnectionGUID: oGMnb9OtSJe8Y/GlKwE3PQ==
+X-CSE-MsgGUID: jU7S/xEYSwCy9/t5rk1LUA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="83544510"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 04 Nov 2024 05:43:15 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t7xMN-000krB-30;
+	Mon, 04 Nov 2024 13:43:11 +0000
+Date: Mon, 4 Nov 2024 21:42:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alistair Francis <alistair23@gmail.com>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux@armlinux.org.uk,
+	hkallweit1@gmail.com, andrew@lunn.ch, alistair23@gmail.com,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH] include: mdio: Guard inline function with CONFIG_MDIO
+Message-ID: <202411042121.OYNPibb0-lkp@intel.com>
+References: <20241104070950.502719-1-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104070950.502719-1-alistair.francis@wdc.com>
 
-Add the following TCL IK512 compositions:
+Hi Alistair,
 
-0x0530: Modem + Diag + AT + MBIM
-T:  Bus=04 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  3 Spd=10000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=1bbb ProdID=0530 Rev=05.04
-S:  Manufacturer=TCL
-S:  Product=TCL 5G USB Dongle
-S:  SerialNumber=3136b91a
-C:  #Ifs= 5 Cfg#= 1 Atr=80 MxPwr=896mA
-I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=82(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 3 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-E:  Ad=86(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-I:  If#= 4 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+kernel test robot noticed the following build errors:
 
-0x0640: ECM + Modem + Diag + AT
-T:  Bus=04 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  4 Spd=10000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=1bbb ProdID=0640 Rev=05.04
-S:  Manufacturer=TCL
-S:  Product=TCL 5G USB Dongle
-S:  SerialNumber=3136b91a
-C:  #Ifs= 5 Cfg#= 1 Atr=80 MxPwr=896mA
-I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=32ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+[auto build test ERROR on linus/master]
+[also build test ERROR on horms-ipvs/master v6.12-rc6 next-20241104]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Daniel Swanemar <d.swanemar@gmail.com>
----
- drivers/usb/serial/option.c | 4 ++++
- 1 file changed, 4 insertions(+)
+url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Francis/include-mdio-Guard-inline-function-with-CONFIG_MDIO/20241104-151211
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241104070950.502719-1-alistair.francis%40wdc.com
+patch subject: [PATCH] include: mdio: Guard inline function with CONFIG_MDIO
+config: parisc-allmodconfig (https://download.01.org/0day-ci/archive/20241104/202411042121.OYNPibb0-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241104/202411042121.OYNPibb0-lkp@intel.com/reproduce)
 
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index 4f18f189f309..11b180c07bac 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -2379,6 +2379,10 @@ static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x30) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x40) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x60) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x1bbb, 0x0530, 0xff),			/* TCL IK512 MBIM */
-+	  .driver_info = NCTRL(1) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x1bbb, 0x0640, 0xff),			/* TCL IK512 ECM */
-+	  .driver_info = NCTRL(3) },
- 	{ } /* Terminating entry */
- };
- MODULE_DEVICE_TABLE(usb, option_ids);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411042121.OYNPibb0-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/net/ethernet/sfc/falcon/qt202x_phy.c: In function 'qt202x_phy_get_link_ksettings':
+>> drivers/net/ethernet/sfc/falcon/qt202x_phy.c:440:9: error: implicit declaration of function 'mdio45_ethtool_ksettings_get' [-Wimplicit-function-declaration]
+     440 |         mdio45_ethtool_ksettings_get(&efx->mdio, cmd);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+   drivers/net/ethernet/sfc/falcon/tenxpress.c: In function 'tenxpress_get_link_ksettings':
+>> drivers/net/ethernet/sfc/falcon/tenxpress.c:453:9: error: implicit declaration of function 'mdio45_ethtool_ksettings_get_npage' [-Wimplicit-function-declaration]
+     453 |         mdio45_ethtool_ksettings_get_npage(&efx->mdio, cmd, adv, lpa);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+   drivers/net/ethernet/sfc/falcon/txc43128_phy.c: In function 'txc43128_get_link_ksettings':
+>> drivers/net/ethernet/sfc/falcon/txc43128_phy.c:543:9: error: implicit declaration of function 'mdio45_ethtool_ksettings_get' [-Wimplicit-function-declaration]
+     543 |         mdio45_ethtool_ksettings_get(&efx->mdio, cmd);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/mdio45_ethtool_ksettings_get +440 drivers/net/ethernet/sfc/falcon/qt202x_phy.c
+
+8ceee660aacb29 drivers/net/sfc/xfp_phy.c                    Ben Hutchings   2008-04-27  436  
+e938ed150f1ed9 drivers/net/ethernet/sfc/falcon/qt202x_phy.c Philippe Reynes 2017-01-01  437  static void qt202x_phy_get_link_ksettings(struct ef4_nic *efx,
+e938ed150f1ed9 drivers/net/ethernet/sfc/falcon/qt202x_phy.c Philippe Reynes 2017-01-01  438  					  struct ethtool_link_ksettings *cmd)
+68e7f45e118f98 drivers/net/sfc/xfp_phy.c                    Ben Hutchings   2009-04-29  439  {
+e938ed150f1ed9 drivers/net/ethernet/sfc/falcon/qt202x_phy.c Philippe Reynes 2017-01-01 @440  	mdio45_ethtool_ksettings_get(&efx->mdio, cmd);
+68e7f45e118f98 drivers/net/sfc/xfp_phy.c                    Ben Hutchings   2009-04-29  441  }
+8ceee660aacb29 drivers/net/sfc/xfp_phy.c                    Ben Hutchings   2008-04-27  442  
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
