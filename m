@@ -1,164 +1,133 @@
-Return-Path: <linux-kernel+bounces-395465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E453D9BBE38
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:45:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EBD39BBE3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:47:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99FB01F2273F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:45:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB37CB21820
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92961CCB23;
-	Mon,  4 Nov 2024 19:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99121CBE84;
+	Mon,  4 Nov 2024 19:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLz5OuVk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udHXCplV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEEA192D7D;
-	Mon,  4 Nov 2024 19:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE8723A6;
+	Mon,  4 Nov 2024 19:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730749499; cv=none; b=jblBmS4AzRqjhHpBLT20bl3mlCZf/GkVtBASzFKWjKuSDJFDacF9g2EnZ3mwPiY5UMpKpT/qG4KHvUHnTaoVnX8pXu8YPzEnrhGYnWrMuDbVS/XrnUmRrgzb8EkMMVxnPIzFDdarsv5Q0hLBstvOxQnmtspGE7ZUre+6MX1EMx8=
+	t=1730749659; cv=none; b=RZnrPvz7ITbvz14XqgPaeiIaQkGUXuSmZvyF4DePa1xGoHblHzwesHdJA7WkfkN9Qr/pY/C5UzOKXR71cRGvncIcZaUnY5P1tlbYxSjlGFLQfMBYfImS8WmbOE7bT5u0997gl679Zl9rZsRWDT9Mosy9Y7HriKh1bCXJ3pmCad4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730749499; c=relaxed/simple;
-	bh=F5TDY0edd5TOHVsa9nkfCI0QHkRWt0Z3g03kUM0+sNk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E19btv7SlLMYhXcZ6aeJRBeWMkVtcAlDRrB691tzhjMo1/b2vvXZzRKRHEO+uid7Uo+gOxiss6n0txyffFRCqftqx1aA1FikDfADYOj3O/mAS8DFEx6HzrLD6OQvhPlLtOQK/+tMc92lCd4OmX+ov9bi3+QVYLBQRFKiV5Pmnjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLz5OuVk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EC41C4CECE;
-	Mon,  4 Nov 2024 19:44:58 +0000 (UTC)
+	s=arc-20240116; t=1730749659; c=relaxed/simple;
+	bh=i17H9M/iiBGemD1DQucLp1BewH56A334xN5xMh6KFes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jakyMdXBYjIE+SbDRhWvzX8i2FqdyI6hQvQNP+1SBZjKOtA90Y33qgVtJJY/rVo9iDD2vsjqEwvvCIcvZ7TChToPI86gFVBv2V0LZN11U+WUzW6CApct9/1GgWt0IZnPtnhbi3N4elPPY7TlX3AJaQFMzGwo+FSLb0T4V3y///c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udHXCplV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C60BC4CECE;
+	Mon,  4 Nov 2024 19:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730749498;
-	bh=F5TDY0edd5TOHVsa9nkfCI0QHkRWt0Z3g03kUM0+sNk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RLz5OuVkuX++yabdrw8OTb4uivH8QsfN8MtSBZHD/UmXGolQzm9oaF8mAWREN1ReF
-	 lUavWhmSllSFtUf4kUiA7qITxyI8NWuN6Zv3yr5Kf/xYa3heQv+yQ5zy/NItKasbWo
-	 caJ7EaHbaemuliRdYu9yYe1la2ev1lpOZaeaE8NCVbFEdVRR2sPT6Qaicv6R5yjtfa
-	 tTuemsKzoUBFNenXGj1oCHY64MS7sddDZQD1E4tdBsEKzui8MvxFH8XG2EYMBrQD5l
-	 YAjNIXGifj9fCvvlle477Iabq93ni1tZzQzLJUzeG9J2lCU7bFXFbBsxOcCDTR9xlg
-	 gSc0e7Oh6IVSQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH] pinctrl: Use of_property_present() for non-boolean properties
-Date: Mon,  4 Nov 2024 13:44:36 -0600
-Message-ID: <20241104194437.327430-1-robh@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=k20201202; t=1730749659;
+	bh=i17H9M/iiBGemD1DQucLp1BewH56A334xN5xMh6KFes=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=udHXCplVtZYX7NAbj3+fqN6B/yqhEpflhqyanCizCxbJJpRvy2kDQd93ScwrcqHYo
+	 StUReLRnAIkXWYOJ+rOv1Cp6cXHubJ8/BI3SKiRWP77XSsCUxJaq4b8E7YA+7jO7yW
+	 FtWtzLgqCEbvwaPV8/2ohw6cpCA8ouy/pt29o53n/0l7VJtMDhS8kwHdsc6aMwJYsB
+	 FVVFRzYMGYGL1g4VG67TwPCLFcpnV+xvNxT7tALastQC9uOWK2AlMWkq1J4lMSc88p
+	 FpodFIm9+wdoXVAc/ZQv+ShHOHFWnuAtlzSribP1qX8LTwb7cFCWeTPGRkpmRFpvAS
+	 t/mWzBsP6cmNA==
+Date: Mon, 4 Nov 2024 11:47:36 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 06/21] perf script: Move find_scripts to
+ browser/scripts.c
+Message-ID: <Zykk2MJ4REGCaqVw@google.com>
+References: <20241031014252.753588-1-irogers@google.com>
+ <20241031014252.753588-7-irogers@google.com>
+ <ZyPX7ayIO4teziDX@x1>
+ <CAP-5=fVgJu8BJWFVUkCy1Zsi3piTPdV-GXL1bTpWZeO=nm=jrg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fVgJu8BJWFVUkCy1Zsi3piTPdV-GXL1bTpWZeO=nm=jrg@mail.gmail.com>
 
-The use of of_property_read_bool() for non-boolean properties is
-deprecated in favor of of_property_present() when testing for property
-presence.
+On Thu, Oct 31, 2024 at 01:51:36PM -0700, Ian Rogers wrote:
+> On Thu, Oct 31, 2024 at 12:18 PM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Wed, Oct 30, 2024 at 06:42:37PM -0700, Ian Rogers wrote:
+> > > The only use of find_scripts is in browser/scripts.c but the
+> > > definition in builtin causes linking problems requiring a stub in
+> > > python.c. Move the function to allow the stub to be removed.
+> > >
+> > > Rewrite the directory iteration to use openat so that large character
+> > > arrays aren't needed. The arrays are warned about potential buffer
+> > > overflows by GCC now that all the code exists in a single C file.
+> >
+> > Introducing is_directory_at() should be done as a prep patch, as the
+> > rest of the patch below could end up being reverted after some other
+> > patch used it, making the process more difficult.
+> >
+> > I mentioned cases like this in the past, so doing it again just for the
+> > record.
+> 
+> This is highlighted in the commit message:
+> ```
+> Rewrite the directory iteration to use openat so that large character
+> arrays aren't needed. The arrays are warned about potential buffer
+> overflows by GCC now that all the code exists in a single C file.
+> ```
+> so without the change the code wouldn't build. The new is_directory_at
+> function is effectively 2 statements fstatat and S_ISDIR on the
+> result, it is put next to is_directory for consistency but could have
+> been a static function in the only C file to use it.
+> 
+> For the record, patches introducing 2 line long functions can be
+> excessively noisy, especially in a 21 patch series. There is always
+> the declared but not used build error to worry about - here things
+> couldn't just be simply moved due to triggering a different build
+> error. Given the simplicity of the function here I made a decision not
+> to split up the work - the commit message would likely be longer than
+> the function. The work never intended to introduce is_directory_at but
+> was forced into it through a desire not to disable compiler warnings.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- drivers/pinctrl/freescale/pinctrl-imx.c  | 6 +++---
- drivers/pinctrl/pinctrl-xway.c           | 2 +-
- drivers/pinctrl/qcom/pinctrl-msm.c       | 2 +-
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 2 +-
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 2 +-
- 5 files changed, 7 insertions(+), 7 deletions(-)
+This patch does more than just moving the code which can be easy to miss
+something in the middle.  I think you can move the code as is without
+introducing build errors and then add new changes like using openat() on
+top (you may separate the change out of this series).  I think it's
+ok to have a small change if it clearly has different semantics.
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index d05c2c478e79..842a1e6cbfc4 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -633,11 +633,11 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
- static bool imx_pinctrl_dt_is_flat_functions(struct device_node *np)
- {
- 	for_each_child_of_node_scoped(np, function_np) {
--		if (of_property_read_bool(function_np, "fsl,pins"))
-+		if (of_property_present(function_np, "fsl,pins"))
- 			return true;
- 
- 		for_each_child_of_node_scoped(function_np, pinctrl_np) {
--			if (of_property_read_bool(pinctrl_np, "fsl,pins"))
-+			if (of_property_present(pinctrl_np, "fsl,pins"))
- 				return false;
- 		}
- 	}
-@@ -746,7 +746,7 @@ int imx_pinctrl_probe(struct platform_device *pdev,
- 		if (IS_ERR(ipctl->base))
- 			return PTR_ERR(ipctl->base);
- 
--		if (of_property_read_bool(dev_np, "fsl,input-sel")) {
-+		if (of_property_present(dev_np, "fsl,input-sel")) {
- 			np = of_parse_phandle(dev_np, "fsl,input-sel", 0);
- 			if (!np) {
- 				dev_err(&pdev->dev, "iomuxc fsl,input-sel property not found\n");
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index f4256a918165..48f8aabf3bfa 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -1524,7 +1524,7 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 	 * files which don't set the "gpio-ranges" property or systems that
- 	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
- 	 */
--	if (!of_property_read_bool(pdev->dev.of_node, "gpio-ranges")) {
-+	if (!of_property_present(pdev->dev.of_node, "gpio-ranges")) {
- 		/* finish with registering the gpio range in pinctrl */
- 		xway_gpio_range.npins = xway_chip.ngpio;
- 		xway_gpio_range.base = xway_chip.base;
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index aeaf0d1958f5..ec913c2e200f 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1457,7 +1457,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	 * files which don't set the "gpio-ranges" property or systems that
- 	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
- 	 */
--	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
-+	if (!of_property_present(pctrl->dev->of_node, "gpio-ranges")) {
- 		ret = gpiochip_add_pin_range(&pctrl->chip,
- 			dev_name(pctrl->dev), 0, 0, chip->ngpio);
- 		if (ret) {
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index d2dd66769aa8..33384f52f55a 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -1169,7 +1169,7 @@ static int pmic_gpio_probe(struct platform_device *pdev)
- 	 * files which don't set the "gpio-ranges" property or systems that
- 	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
- 	 */
--	if (!of_property_read_bool(dev->of_node, "gpio-ranges")) {
-+	if (!of_property_present(dev->of_node, "gpio-ranges")) {
- 		ret = gpiochip_add_pin_range(&state->chip, dev_name(dev), 0, 0,
- 					     npins);
- 		if (ret) {
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-index 9cd5247ea574..87301a2445ac 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -832,7 +832,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- 	 * files which don't set the "gpio-ranges" property or systems that
- 	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
- 	 */
--	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
-+	if (!of_property_present(pctrl->dev->of_node, "gpio-ranges")) {
- 		ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
- 					     0, 0, pctrl->chip.ngpio);
- 		if (ret) {
--- 
-2.45.2
+Thanks,
+Namhyung
 
 
