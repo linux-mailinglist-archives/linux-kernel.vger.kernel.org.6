@@ -1,122 +1,134 @@
-Return-Path: <linux-kernel+bounces-394880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF3E9BB544
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:02:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C349BB53F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:01:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8AC1F2213C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D859282AFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CDA1BBBC4;
-	Mon,  4 Nov 2024 13:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93871B85D7;
+	Mon,  4 Nov 2024 13:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QV3cviAv"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4458B1B85D7;
-	Mon,  4 Nov 2024 13:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZIxjfnp"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC66418A6B6;
+	Mon,  4 Nov 2024 13:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730725325; cv=none; b=tTxsAFIiq7BPgfxNivINsdMSWJGXjORUqm6UzNKOx21TgLUcs8Pl9l/prqRuSv531uM+jilNr6aNlwrbpn7/XBVOMhBQ6N0oAGXRsKKn5yLi0n7B3iExQlzwq0/F4QOTwzEAdBGLSoizz8lb61xdHkK+X7Rfxh2wPIyhI44i4Vc=
+	t=1730725311; cv=none; b=bVYLiAc7RrdnIEdEjrcypr6Yw0qAMSVF8cNR+dTdsmgi1BlN8lg7Hl9DcW50kKVMU/DMa0gFoPhfOsrWGIKwfmV0rOZyv6doOm430FWZiI9DrGwl6zPtUncgsoyIjTlVcFdc7/LQFhemBvUibttTpRdamGtFffQlFQk8KEVOLQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730725325; c=relaxed/simple;
-	bh=kmYoxaAaiXAIj7/EBZuGyiZPPJS/LqE7N5G+nG9H11M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PGUNb9l6ywfw8Xg4E6DYEjG15xz96ZX5KIlEBHVWUD+1omi74585z0ghUumXPnnoy8dlPOhT2USoSHvGAl9E52cSakhURuTZOlki6KtkVv0IBSDWCd8FnKL/CHaXgP+SISaZwOIJNBkTDSaRULR2rB8crSZYmWctVlXeSRlEt5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QV3cviAv; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=Msi5U
-	O0XeHyxPfT+8A8tLnfNN4KZV4Ysxbt0ioo0v5w=; b=QV3cviAvkozH2Z3U9/TOF
-	ysVBmP+yt9POoVC45E+ZLfQbX7vpN0KFKIxj134wr1AXTzR7Vl8yLSuT0iUaen73
-	PBIl3ejHEK0dvXn0MfZXsI9xAZsq7yk6PXdgJ/uB/X7EskrHt1NsRlt3yn68Cf8b
-	p3jrFFGDnsh56UbcugkqKo=
-Received: from ProDesk.. (unknown [58.22.7.114])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3H6e8xShnPaEoFA--.33421S4;
-	Mon, 04 Nov 2024 21:01:53 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: andrew+netdev@lunn.ch
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	david.wu@rock-chips.com,
-	Johan Jonker <jbx6244@gmail.com>,
-	Andy Yan <andyshrk@163.com>,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v2 2/2] net: arc: rockchip: fix emac mdio node support
-Date: Mon,  4 Nov 2024 21:01:39 +0800
-Message-ID: <20241104130147.440125-3-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104130147.440125-1-andyshrk@163.com>
-References: <20241104130147.440125-1-andyshrk@163.com>
+	s=arc-20240116; t=1730725311; c=relaxed/simple;
+	bh=J44/JPvySgw2nxSBKZizSV9MaJ7OyvkzhgCNOwdau6A=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DLE40T4YFO+gm6CZpqZOqglux+8+MYKsSyuq0uTp9oSYlZqfdY3+X/f/qrKv9DhiC9CSN3Embx7tQ0i+CAw1WZSkYrxrj+qLeovbFJhWev9D8qrva8O3/GzQmgFLOB7L+XyEWsmxdijxZcekI2ePKW/YA4kR3aANapJ//rKl+rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZIxjfnp; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20cf3e36a76so43533525ad.0;
+        Mon, 04 Nov 2024 05:01:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730725309; x=1731330109; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:cc:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bggMuP0j8I4Cl2VFvczgvzqyg/UZ6DBjAMKce4D1IhA=;
+        b=HZIxjfnpFNa+5EjF+1JkohlduuLCo8aBlnvWJPIofBO3IuAENx5eqXoPaMtw6cUI8U
+         Z1NzeVwjhOvPuEjW8ggOzAK0dc4HzMIcE5Z1OmZ8Da+MU8RVjhWc3jST7XK57l/Cur3c
+         QkxmYBj+C4NfTETXavqK88I3CeDlLvy6a9lU6E9sRhbBiqIiI3fXArYbf9o7YP9EPkiP
+         1BlSFyv7M+zNkTslWA/KUiPEmlKOhryEcgY4YVSSRJdjlfWRz3MmGlS4+zd5NJQ3twsG
+         yJRR2FAk7VNiEQT0IAVGtgRF/9lGqjkYibSuXX1hGgP43jIkJUYqM6OrIZdTgH35w726
+         4peQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730725309; x=1731330109;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:cc:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bggMuP0j8I4Cl2VFvczgvzqyg/UZ6DBjAMKce4D1IhA=;
+        b=CedWo112Az9HMaW5sx3NLKCRNG6UP024VGaKslLOQxrcY09NI37fyxKNbPlOUqptQ9
+         k5/m0jHN9aUat00nnpwS8E/VjiruFjF6T47/G0YLuX/Vy0DSsdSy/Zdiqxtp4EDTLHg8
+         DmiLDM/ph4MvDMsCKbwF0Xs+qZJTUQ87V85ic3asXrZqZw3BECCmLL8X14YczTo97yN/
+         aKR3gXzVecUtSJceg2Kq17ZJRirVhqAO/FH69Q+hIswblrGoT51Fbo/cOAyMeCftisNF
+         FUR+BqUcJZJkv3mZyX7eZrhyb7xl22578dr5rExT2+EePYE4fwgIGEBYFS82WufuorFZ
+         K8bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYxrNdFBQcJW2o0zH89C0VoGFSuI+8AI/hc7ipXm3XnmY3aY/rl+1xau/cLXbO0R+yAyltg3R4czMC@vger.kernel.org, AJvYcCVPzBKlKFrX3uatQ+xn/ABOxgHmlFvQRjICqJu4o3zzUq8jwchWHLq068gq+2lIN0OPB6Hufu8eQmhd@vger.kernel.org, AJvYcCWVeonLdsLh3a5g1UBHdUjSEUPee59VRKiDMx85OEHF1Ic6Z2kgDbLPc4tz9fVr7r/2OQCcDDpBkTCkFYUu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnC9GLhHRzbUB5sueD38xGTQ90mzBQC0qVVxg81Uu5OuIhm814
+	TfVpgd3QDhiYVP+0FLyzbeQUmGlWkoV4DRuVOA+NOnns85ydCMII
+X-Google-Smtp-Source: AGHT+IGp9W2hxadwgRNmNykF2kMJxHkLvqXSziQp7OTyn0xuMYqTlQh0Q/87CZjhUI3SSdhNoev0dw==
+X-Received: by 2002:a17:902:ecc3:b0:20c:ee48:94f3 with SMTP id d9443c01a7336-21103accfbbmr208730745ad.14.1730725308712;
+        Mon, 04 Nov 2024 05:01:48 -0800 (PST)
+Received: from [127.0.0.1] ([2602:f919:106::1b8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a2bf7sm60238765ad.173.2024.11.04.05.01.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 05:01:48 -0800 (PST)
+Message-ID: <6cce463e-25cc-4a07-971f-6260347cb581@gmail.com>
+Date: Mon, 4 Nov 2024 21:01:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3H6e8xShnPaEoFA--.33421S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFyxXr48XFyUGrWrAF15CFg_yoW8CFWUpa
-	yDurZ8CrykXr4Sgw4vyrW0vryaqw48GrWj9F12kanYqFn8JryxJry2gFyUur1qkFWqka1a
-	q3yDZFyruayDJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UO0edUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0haNXmcow9UdaQAAs6
+User-Agent: Mozilla Thunderbird
+Cc: troymitchell988@gmail.com, andi.shyti@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
+ <20241028053220.346283-2-TroyMitchell988@gmail.com>
+ <6zx3tqdc5bma2vutexwigzlir6nr6adp7arg4qwl5ieyd3avbu@5yyhv57ttwcl>
+ <dbeea869-54cd-43fe-9021-783d641f1278@gmail.com>
+ <ariqiukhztgziwwgaauqy6q3pghflnoeuwtag4izwkfmtvi2kh@gnlq4d7jsaw4>
+Content-Language: en-US
+From: Troy Mitchell <troymitchell988@gmail.com>
+In-Reply-To: <ariqiukhztgziwwgaauqy6q3pghflnoeuwtag4izwkfmtvi2kh@gnlq4d7jsaw4>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Johan Jonker <jbx6244@gmail.com>
 
-The binding emac_rockchip.txt is converted to YAML.
-Changed against the original binding is an added MDIO subnode.
-This make the driver failed to find the PHY, and given the 'mdio
-has invalid PHY address' it is probably looking in the wrong node.
-Fix emac_mdio.c so that it can handle both old and new
-device trees.
+On 2024/10/31 16:00, Krzysztof Kozlowski wrote:
+> On Tue, Oct 29, 2024 at 04:36:00PM +0800, Troy Mitchell wrote:
+>> On 2024/10/28 15:38, Krzysztof Kozlowski wrote:
+>>> On Mon, Oct 28, 2024 at 01:32:19PM +0800, Troy Mitchell wrote:
+>>>> The I2C of K1 supports fast-speed-mode and high-speed-mode,
+>>>> and supports FIFO transmission.
+>>>>
+>>>> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+>>>> ---
+Change in v2:
+ - Change the maxItems of reg from 1 to 2 in properties
+ - Change 'i2c' to 'I2C' in the commit message.
+ - Drop fifo-disable property
+ - Drop alias in dts example
+ - Move `unevaluatedProperties` after `required:` block
 
-Fixes: 1dabb74971b3 ("ARM: dts: rockchip: restyle emac nodes")
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-Tested-by: Andy Yan <andyshrk@163.com>
-Link: https://lore.kernel.org/r/20220603163539.537-3-jbx6244@gmail.com
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+>>>
+>>> Where is the changelog? Nothing here, nothing in cover letter.
+>>>
+>>> I asked for several changes, so now I don't know if you implemented
+>>> them.
+>>
+>> I deleted the FIFO property because I believe your suggestion is correct.
+>> this should be decided by the driver, even though the FIFO is provided
+>> by the hardware.
+>>
+>> Apologies for missing the changelog. To correct this, should I send a v3 
+>> version with the changelog or resend v2?
+> 
+> Reply now with changelog. Your binding has some other unrelated and
+> incorrect changes, which I do not understand.
+> 
+> Best regards,
+> Krzysztof
+> 
 
----
-
-Changes in v2:
-- Add fix tag.
-- Add more detail explaination.
-
- drivers/net/ethernet/arc/emac_mdio.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/arc/emac_mdio.c b/drivers/net/ethernet/arc/emac_mdio.c
-index 87f40c2ba9040..078b1a72c1613 100644
---- a/drivers/net/ethernet/arc/emac_mdio.c
-+++ b/drivers/net/ethernet/arc/emac_mdio.c
-@@ -133,6 +133,7 @@ int arc_mdio_probe(struct arc_emac_priv *priv)
- 	struct arc_emac_mdio_bus_data *data = &priv->bus_data;
- 	struct device_node *np = priv->dev->of_node;
- 	const char *name = "Synopsys MII Bus";
-+	struct device_node *mdio_node;
- 	struct mii_bus *bus;
- 	int error;
- 
-@@ -164,7 +165,13 @@ int arc_mdio_probe(struct arc_emac_priv *priv)
- 
- 	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", bus->name);
- 
--	error = of_mdiobus_register(bus, priv->dev->of_node);
-+	/* Backwards compatibility for EMAC nodes without MDIO subnode. */
-+	mdio_node = of_get_child_by_name(np, "mdio");
-+	if (!mdio_node)
-+		mdio_node = of_node_get(np);
-+
-+	error = of_mdiobus_register(bus, mdio_node);
-+	of_node_put(mdio_node);
- 	if (error) {
- 		mdiobus_free(bus);
- 		return dev_err_probe(priv->dev, error,
 -- 
-2.34.1
-
+Troy Mitchell
 
