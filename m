@@ -1,192 +1,196 @@
-Return-Path: <linux-kernel+bounces-394918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7659BB603
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:27:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BCF9BB60A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:28:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5431F22989
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:27:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D687528333E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF59D1B6D04;
-	Mon,  4 Nov 2024 13:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19497083E;
+	Mon,  4 Nov 2024 13:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V6M9zpgg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="heEWASTd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4D0111A8;
-	Mon,  4 Nov 2024 13:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E2F42A9E;
+	Mon,  4 Nov 2024 13:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730726738; cv=none; b=oyJTY1LRLkUKznARzWSc/xodL+lgQd3ogPyvJy4boX52eli9svNlbgZuG4Qim8A7b7wpKPZPEP8nHmyYcM519tqWeS+V+9gKTC7EolY3WulvkqkiuI9Z8hadKimzqig5IJyYl45igL2t0o/Q9ellCAyvr49JfMpPCu8MwLA8Nec=
+	t=1730726784; cv=none; b=RETu6fnZuuyG83M4DAX3yVXYvAEOfkdGT9X+8jQECgN7V0gnWu8kzorK4prR7u+RPCbLxy8IXGvRNd4PBuoer+FGg8MGIoD4kZT2Xdp6gf5t0cmwZGYOtbvY0OOK8HmFhjyoZcZ78Rq8tpDnvl4XnSKOYClSmrsLojar0LKQnRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730726738; c=relaxed/simple;
-	bh=oPBklUbvKL8bSKRIlaEBq6Ena9N6JHRIUOBA6mqrZ6c=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Ms9sUT3HFzOAlu6wH76v4GIo5JPQx0XTjONKbQ47BlriN2pLIMwJAo5252ZIX2Ppql95twB+dvHHo0JbJtqCgjcyX2H3UlIYI1BKJrU7RHPRHEftWLATKG1jY16RiPjfo+n8+4AEr7sGFKHHVOmY3+hnC+TMt2bINuK6GPmhicI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V6M9zpgg; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730726736; x=1762262736;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=oPBklUbvKL8bSKRIlaEBq6Ena9N6JHRIUOBA6mqrZ6c=;
-  b=V6M9zpgg7MJtwljFRnQo2x+DXoviRvspP0NVDmRyAtFeIj1U6uUBzGB6
-   q7dNJz0Mm05awQeWH8RA0JBJ3xtkyAbcFrqW9EEV304wTBZGFMtiITI3O
-   jwn4ciqJCJu3V5LPn0sWATTqONxaNJs3BWl/sJ6S/8fUL5bIcvGYGqivl
-   /uATz2ZiJN8IG4KzLVgHrDm3hJHXWeT+ZFOZK2sISMZ49yW53xM/tz2jb
-   UG2dFYBlKmezQ9IrfIzt6ks+mBSCGwhXg+5rLE8axKJ6g70k/yaZpkdB3
-   JgUxVFXUX+CYe0er6i/JI7A100P/ObQ3VrnZh2f0Ov104dcp7n3gAI7Qv
-   Q==;
-X-CSE-ConnectionGUID: r5aOVlEITJe0ReUEquHbsQ==
-X-CSE-MsgGUID: DbG8CzipQOGfdLFcg6HSdQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30275394"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30275394"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 05:25:32 -0800
-X-CSE-ConnectionGUID: v9JmlMoUQFaNhWF7H45gGQ==
-X-CSE-MsgGUID: 4K1oV5FuTuelLKT3nBONXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
-   d="scan'208";a="83542204"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.33])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 05:25:17 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 4 Nov 2024 15:25:13 +0200 (EET)
-To: =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-    Davidlohr Bueso <dave@stgolabs.net>, 
-    Jonathan Cameron <jonathan.cameron@huawei.com>, 
-    Dave Jiang <dave.jiang@intel.com>, 
-    Alison Schofield <alison.schofield@intel.com>, 
-    Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-    Alex Deucher <alexander.deucher@amd.com>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, 
-    Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>, 
-    Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
-    Tudor Ambarus <tudor.ambarus@linaro.org>, 
-    Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
-    Miquel Raynal <miquel.raynal@bootlin.com>, 
-    Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-    Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>, 
-    Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-    "David E. Box" <david.e.box@linux.intel.com>, 
-    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
-    "Martin K. Petersen" <martin.petersen@oracle.com>, 
-    Richard Henderson <richard.henderson@linaro.org>, 
-    Matt Turner <mattst88@gmail.com>, Frederic Barrat <fbarrat@linux.ibm.com>, 
-    Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, 
-    Logan Gunthorpe <logang@deltatee.com>, 
-    "K. Y. Srinivasan" <kys@microsoft.com>, 
-    Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-    Dexuan Cui <decui@microsoft.com>, Dan Williams <dan.j.williams@intel.com>, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org, 
-    linux-cxl@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
-    dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org, 
-    linux-mtd@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
-    linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, 
-    linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-    linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] sysfs: treewide: constify attribute callback
- of bin_is_visible()
-In-Reply-To: <20241103-sysfs-const-bin_attr-v2-5-71110628844c@weissschuh.net>
-Message-ID: <65f4dc4e-3b48-2baa-a13b-3cc34dd51ce1@linux.intel.com>
-References: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net> <20241103-sysfs-const-bin_attr-v2-5-71110628844c@weissschuh.net>
+	s=arc-20240116; t=1730726784; c=relaxed/simple;
+	bh=2npuqEnFVOpXdcm9SyHNNBtDUbAK48QR2TgxQxgOq6A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YtTAmTRFmXOI18e57iRfGef7SVMFSqyf0uV/6H9LUWTgwSRAjf9TGCzivs2SQbNxG+3brFWNIMR8Gqc0jCgXeKZtI9lSJ4krebF1gMPihC7B4qEwJfH5h9Krhbc7lF/naHZKlW4INhK77SuwmPzzYAlD4G3lHzb/bfVJUaLhEXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=heEWASTd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3F88C4AF0B;
+	Mon,  4 Nov 2024 13:26:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730726783;
+	bh=2npuqEnFVOpXdcm9SyHNNBtDUbAK48QR2TgxQxgOq6A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=heEWASTdPKalH4KWz6yWC0fw1k0Hvpx4eSRAXXtfjQI2Ta4s3XfORXm6PMlDu9obR
+	 5soBOxU1UXpU7WVp/8xuac0DzXiOeSEuRe0yBN4MFfO5XztMmqqVybcxOaHdMEBvK2
+	 jJZUDpcvNBMX2jlP3APzItgOrYUKyNdv1afZX1fmY01q9shp/7llhziS0c2YUvBDiC
+	 CoLMCaCeU5MStfCSKmcBzLBWbhtJ28OPmtK4UH7xt68368RTedY2fa3UxfBzO1g4/K
+	 3EToh1KPh6HSJV8WGgSzTzTioRs9xA7WIknyUTzoKl6Zd6N65XBn8XipMVGSPNsAan
+	 GspCFnxOWaEug==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-288d70788d6so1919841fac.1;
+        Mon, 04 Nov 2024 05:26:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVRZ8rnnMLpMj7z58qsACeHyHVDQGCMz93J0skCDUAbai+XjcRODLSBAfM2rr1b9SIn79WEsCZkDXQ=@vger.kernel.org, AJvYcCX+fi1tD2d0lCN1OhGABOzMdhMUWEFOXfr8O3JlARK3Q4LfX/UCpElQNDoyKhpPnaKJmsowUew3FvS/4rE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk0koEdDysbGLYmNHm1qQYu9L8bGNT7B3TuuuB4J120/CIIcMa
+	IHoep7QqmL+mtwwxgQDXMsGFVkjUe+pyqwA/f6OP3ayavGfKlOf9gqu3eKHpwB70JlhQeXyAEzr
+	v8C0O3OpjowUztZmyNAX5cVwGyyU=
+X-Google-Smtp-Source: AGHT+IEwFMFBr+iB4p24SxLNYDDx9k2+p4Ugv/iXpHNmlITDGQD35niXPFjoyq6b6OZ+jyJiLBzBOtQjvO8fTG5dhZE=
+X-Received: by 2002:a05:6870:d203:b0:261:2072:7b5d with SMTP id
+ 586e51a60fabf-29051d77f8cmr26903985fac.29.1730726782995; Mon, 04 Nov 2024
+ 05:26:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-559502379-1730726713=:989"
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <20240913132944.1880703-2-beata.michalska@arm.com> <20241029070429.m7q5dkumitoyqxq2@vireshk-i7>
+ <CAJZ5v0i2KUPXfeAKhkimetOMpx+5opgt26URJF8cstnZsaeZwA@mail.gmail.com> <Zyh_PG1lAEC4Q3Hr@arm.com>
+In-Reply-To: <Zyh_PG1lAEC4Q3Hr@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 4 Nov 2024 14:26:04 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gCRKzaFrwkoBpLHQUxoP_+jAyhMiCkLQaBUpduk9yxtA@mail.gmail.com>
+Message-ID: <CAJZ5v0gCRKzaFrwkoBpLHQUxoP_+jAyhMiCkLQaBUpduk9yxtA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
+ sysfs entry
+To: Beata Michalska <beata.michalska@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org, ionela.voinescu@arm.com, sudeep.holla@arm.com, 
+	will@kernel.org, catalin.marinas@arm.com, sumitg@nvidia.com, 
+	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com, 
+	lihuisong@huawei.com, zhanjie9@hisilicon.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Nov 4, 2024 at 9:01=E2=80=AFAM Beata Michalska <beata.michalska@arm=
+.com> wrote:
+>
+> On Tue, Oct 29, 2024 at 12:31:11PM +0100, Rafael J. Wysocki wrote:
+> > On Tue, Oct 29, 2024 at 8:04=E2=80=AFAM Viresh Kumar <viresh.kumar@lina=
+ro.org> wrote:
+> > >
+> > > Apologies for the delay from my side. September was mostly holidays
+> > > for me and then I was stuck with other stuff plus email backlog and
+> > > this series was always a painful point to return to :(
+> > >
+> > > On 13-09-24, 14:29, Beata Michalska wrote:
+> > > > Currently the CPUFreq core exposes two sysfs attributes that can be=
+ used
+> > > > to query current frequency of a given CPU(s): namely cpuinfo_cur_fr=
+eq
+> > > > and scaling_cur_freq. Both provide slightly different view on the
+> > > > subject and they do come with their own drawbacks.
+> > > >
+> > > > cpuinfo_cur_freq provides higher precision though at a cost of bein=
+g
+> > > > rather expensive. Moreover, the information retrieved via this attr=
+ibute
+> > > > is somewhat short lived as frequency can change at any point of tim=
+e
+> > > > making it difficult to reason from.
+> > > >
+> > > > scaling_cur_freq, on the other hand, tends to be less accurate but =
+then
+> > > > the actual level of precision (and source of information) varies be=
+tween
+> > > > architectures making it a bit ambiguous.
+> > > >
+> > > > The new attribute, cpuinfo_avg_freq, is intended to provide more st=
+able,
+> > > > distinct interface, exposing an average frequency of a given CPU(s)=
+, as
+> > > > reported by the hardware, over a time frame spanning no more than a=
+ few
+> > > > milliseconds. As it requires appropriate hardware support, this
+> > > > interface is optional.
+> > >
+> > > From what I recall, the plan is to:
+> > > - keep cpuinfo_cur_freq as it is, not expose for x86 and call ->get()
+> > >   for ARM.
+> >
+> > Yes.
+> That one indeed remains unchanged.
+> >
+> > > - introduce cpuinfo_avg_freq() and make it return frequency from hw
+> > >   counters for both ARM and Intel and others who provide the API.
+> >
+> > Yes.
+> Will add changes for Intel as well.
+> >
+> > > - update scaling_cur_freq() to only return the requested frequency or
+> > >   error in case of X86
+> >
+> > Yes.
+> >
+> > Preferably, -ENOTSUPP for "setpolicy" drivers without the .get() callba=
+ck.
+> Right, my impression was that we want to leave that one as is.
 
---8323328-559502379-1730726713=:989
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+For now, yes please.
 
-On Sun, 3 Nov 2024, Thomas Wei=C3=9Fschuh wrote:
+> Will add appropriate changes.
 
-> The is_bin_visible() callbacks should not modify the struct
-> bin_attribute passed as argument.
-> Enforce this by marking the argument as const.
->=20
-> As there are not many callback implementers perform this change
-> throughout the tree at once.
->=20
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
->  drivers/cxl/port.c                      |  2 +-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c |  2 +-
->  drivers/infiniband/hw/qib/qib_sysfs.c   |  2 +-
->  drivers/mtd/spi-nor/sysfs.c             |  2 +-
->  drivers/nvmem/core.c                    |  3 ++-
->  drivers/pci/pci-sysfs.c                 |  2 +-
->  drivers/pci/vpd.c                       |  2 +-
->  drivers/platform/x86/amd/hsmp.c         |  2 +-
->  drivers/platform/x86/intel/sdsi.c       |  2 +-
->  drivers/scsi/scsi_sysfs.c               |  2 +-
->  drivers/usb/core/sysfs.c                |  2 +-
->  include/linux/sysfs.h                   | 30 +++++++++++++++------------=
----
->  12 files changed, 27 insertions(+), 26 deletions(-)
+In the future.
 
-> diff --git a/drivers/platform/x86/amd/hsmp.c b/drivers/platform/x86/amd/h=
-smp.c
-> index 8fcf38eed7f00ee01aade6e3e55e20402458d5aa..8f00850c139fa8d419bc1c140=
-c1832bf84b2c3bd 100644
-> --- a/drivers/platform/x86/amd/hsmp.c
-> +++ b/drivers/platform/x86/amd/hsmp.c
-> @@ -620,7 +620,7 @@ static int hsmp_get_tbl_dram_base(u16 sock_ind)
->  }
-> =20
->  static umode_t hsmp_is_sock_attr_visible(struct kobject *kobj,
-> -=09=09=09=09=09 struct bin_attribute *battr, int id)
-> +=09=09=09=09=09 const struct bin_attribute *battr, int id)
+> > >   and update documentation to reflect the same.
+> > >   Right now or after some time ? How much time ?
+> >
+> > After some time, I think at least two cycles, so people have the time
+> > to switch over, but much more may be necessary if someone is stuck
+> > with RHEL or similar user space.
+> >
+> > Anyway, x86 will be the only one affected and there may be a Kconfig
+> > option even to allow it to be changed at the kernel build time.
+> >
+> So just for my clarification we want a config switch to control what
+> scaling_cur_freq is to actually provide.
 
-Hi Thomas,
+Something like:
 
-This driver is reworked in pdx86/for-next.
+    if (IS_ENABLED(CONFIG_CPUFREQ_CUR_FREQ_FROM_ARCH))) {
+        freq =3D arch_freq_get_on_cpu(policy->cpu);
+        if (freq)
+            return sysfs_emit(buf, "%u\n", freq);
+    }
 
---=20
- i.
+    if (cpufreq_driver->setpolicy) {
+        if (cpufreq_driver->get))
+            return sysfs_emit(buf, "%u\n", cpufreq_driver->get(policy->cpu)=
+);
 
+        return -ENOTSUPP;
+    }
 
->  {
->  =09if (plat_dev.proto_ver =3D=3D HSMP_PROTO_VER6)
->  =09=09return battr->attr.mode;
-> diff --git a/drivers/platform/x86/intel/sdsi.c b/drivers/platform/x86/int=
-el/sdsi.c
-> index 9d137621f0e6e7a23be0e0bbc6175c51c403169f..33f33b1070fdc949c1373251c=
-3bca4234d9da119 100644
-> --- a/drivers/platform/x86/intel/sdsi.c
-> +++ b/drivers/platform/x86/intel/sdsi.c
-> @@ -541,7 +541,7 @@ static struct bin_attribute *sdsi_bin_attrs[] =3D {
->  };
-> =20
->  static umode_t
-> -sdsi_battr_is_visible(struct kobject *kobj, struct bin_attribute *attr, =
-int n)
-> +sdsi_battr_is_visible(struct kobject *kobj, const struct bin_attribute *=
-attr, int n)
->  {
->  =09struct device *dev =3D kobj_to_dev(kobj);
->  =09struct sdsi_priv *priv =3D dev_get_drvdata(dev);
+    return sysfs_emit(buf, "%u\n", policy->cur);
 
---8323328-559502379-1730726713=:989--
+And select CONFIG_CPUFREQ_CUR_FREQ_FROM_ARCH on x86 for now.
+
+> It will keep the current behaviour as
+> default until we are ready to flip it and ultimately drop that temporary =
+config
+> option ?
+
+Yes.
+
+> > The documentation for cpuinfo_avg_freq() needs to be added along with i=
+t.
+> That one is already provided unless you have smth else on mind ?
+> Like updating scaling_cur_freq to reference the new sysfs attribute ?
+
+I haven't checked super-thoroughly, but generally all documentation
+needs to be consistent.
 
