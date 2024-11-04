@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-395641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2709BC0E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:28:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57859BC0E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19548281D89
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:28:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5159DB224BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92DA1FCC78;
-	Mon,  4 Nov 2024 22:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB9E1FDFB2;
+	Mon,  4 Nov 2024 22:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vtp3rzdW"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NiBxjYn0"
 Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26221FDFBE
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FEC1FE0F5
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730759291; cv=none; b=isXD4+UDSVxQQDxU8MY0qv3TLKk8bv1qZDRXeqmeqaiW6KCo73Y5ObWsmd4UzpinmEolcYDQ4NM33ndWTHHhx36CJwCL+RyJyfL4iRojGsfdGRlRQSSFX+KJDnBuA2q2W+0V0Wqz9FCg+UeR2eNaLNJn0bvY7SdwV8rSPZeaYl4=
+	t=1730759294; cv=none; b=DzRbni4KafiyFqci8cjY8Nx1zwn1uAzBaJZv1sXQ9XGCKl5K5H7ls04avwUx0lvwUYYwRwBQ9FlkbHktUaOkBw0KMubefQHuHxVT6tomgEChguqWjTWuxw+D9z/M2OV7ive/OuJ8rGchudStixzPNOJpjA/ajDkF957J2kPf/xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730759291; c=relaxed/simple;
-	bh=2ulKgS1WJ4dbuBnCKxnqeyIGe4MyeNcFUS3/7Qh/Yto=;
+	s=arc-20240116; t=1730759294; c=relaxed/simple;
+	bh=+iOvuRNiKIbq55ASUVdH3ADxYemn89V9ikEUEtAXEBE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hL36ekdnf2PKed74fdhNgmGPOfXEBY5SLIuWCRKXyLn5NHDDqGRQ/ZwLlXHwa/LxnFD0AaLNKsXDv+ACwpLeBlBA24JaRSGLZMDt3u4hmkhoLpU8hSk3TAD2zrZHQTiBVcKYGYOcgOAqaYVA2aKsyaZT7bR+oiIl9/s1KlFNIzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kerensun.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vtp3rzdW; arc=none smtp.client-ip=209.85.219.202
+	 To:Cc:Content-Type; b=Ktt6SSoeKEHJ1JjGfk+BbV9EzbklI77TTpT3u0BAnNMY4d3WQ40e4PvX2QbNiJJKunAnMUc3E304Tr0D7vPCnybEBgSyPCygc6uHOF5t6DXkuLjKgt6r5MjL8b2cglwAn6Hm+xYhtKuJpmi72/8OxRBCC9OIqIh1ivppAcu2YW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kerensun.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NiBxjYn0; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kerensun.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02fff66a83so7475582276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 14:28:09 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e2e3321aae0so7389434276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 14:28:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730759288; x=1731364088; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730759291; x=1731364091; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=15O9ca4pVZTESzuvBdGrLRHe530YHW6qwFu9Oe4DO8I=;
-        b=vtp3rzdWidZf3C/8B8T5T36g2m2yAh4UzT7nJvtEPnSY1lLbPDQXkifhZRVSCgupIH
-         +V0Ow/e0ohARg8vr9kBTLgTxvul/BQv3PsFkszxG8bMmS2K3mQiayERZZrKqunanQnOK
-         jxhw+p1VBXc50MpOscDDSWYYyaYIQGhtLIy6vG1ylJRf1bk8aZJ1fcYTJRguMZCBIlHx
-         NJwSrmEyHnO9UDgAwG56Sl5nW0p1+cjXpQ3HIgacTKHM6kHi9tvE7mfJoy8jOmoUDo0W
-         JufZVYykULhG6q0SEB1+X8UbgRWcB7pUE08DSO/uYU7hjKhRRiKkwyPlfzBaxC9jCM2H
-         bDOg==
+        bh=FJTHsOFb69amuDKNp+L1s7mL9nLva+h50iWgGzl+suk=;
+        b=NiBxjYn0/STNuIFzwHHaweSoLJezHWzij53EBAd6b/qUv3WprGZFbdbWvNoDY4werM
+         0lhx2CyhhvyXe1/LiKPzRLF8VdlnMYwKFS3D/EcEaYsMhd0LPhEMQT4lhbuZJEyCSpsN
+         JcsLVCow60KskstofdSTyW04cEfI9ELfIq3h32Tdsdx5aV9hL57bgOpQxpyHQFIWsZiP
+         duvjlurRshcor24TwKZlcGEovMBTny+0rQ/Xz13S4sWA9D+g9888M27thrCxA5VMS4pZ
+         kYfq1YSsRA7vztJssAUPj1YJOPx8MKfUmjN+pCl3C9cCms29GiRcVXMY1z6TR8+LCZDQ
+         HcSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730759288; x=1731364088;
+        d=1e100.net; s=20230601; t=1730759291; x=1731364091;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=15O9ca4pVZTESzuvBdGrLRHe530YHW6qwFu9Oe4DO8I=;
-        b=qW6xTXOzsYYnIl+JhMG2XMKopopxfaL/dCCxd+fwwfSugQ9y0JYv/NLRG8aUhqCzwU
-         mKWRDvkqqO3IsXh1g+fjE/tpqpn/HLfVB8x2ZtPiuQyP6zkHiuILlXpco/6IKL4lGdNE
-         vaKX31c58BsCGbtBkaKxjBUJQM8DqzkSTB63Acgp4VWOpCcZR7/dEuroE1W7uRbD1i1h
-         +AcMXeRCRsp56igerhWZu7P4UXe7IzLYs21RUA3c/9LzOeGyHDljeV13hAKNK6zoAyrw
-         v6haLRBVIidqIdE8MYS3OqAIYN2g9ZqLVqt8FrIJJKjvqyeeGkSujLXXUcgZlIuO7qcr
-         gNQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9vnz8HV6gwTojQu9WF9MLkVQ8BDFDdTUDTd4DdbOHQ84Yy/KoVYVamPG9VVLudTahbKoryJ9KaBCf7WI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdLGBzJ4sjQAuXGMUJyewCrq8zXC5JMAG38yqLlGRL1QyDR/H3
-	ma+lllMEeEAVXuwW+00B1C7g/KrQChG4MIECYei2l0JaLI1mUnaxNwfdaBrkZpgD+RcLxptfO3r
-	N4W2ZL1srkA==
-X-Google-Smtp-Source: AGHT+IEpn3Ozfl3bEakiUcys3vke1g1CcEk4jHzka3T3PWfF9UiVOWvD6xNRzVdmFNyJHcOxgC4N0YzCvE4knA==
+        bh=FJTHsOFb69amuDKNp+L1s7mL9nLva+h50iWgGzl+suk=;
+        b=lwmkAuDRUiYzzYWlHp16ySyo7I+ZoHhIv4+2VM7a82GAd82/w8DkiLz1Ss+NArwuBH
+         Hito/qOSTXkpw68G7kiuiBT0C+N2EJtxZVUchNSJtVTqTGPvgA+3Mg/WKHvKCToMs6RW
+         Y8uouS99Rjo8fnscnsg2bwCo9FfdEez+atfjKnBJifLJztzOzDCTQdSrlT28WdMlDs5Z
+         rc4UW9v4OhgQVDijWqRIkdd8Cktn6t619HY+mRQ5c42Y971jHtePYQRPUFBB0S18SnEX
+         IYgyhhXyj9Zfgkxy826BnnAvaXn6pvpj1bg5Xaltnmemvr0l7YFvcrzgB/sOLOjkQrcT
+         Knkg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0Hfzq+NoThWGc57e3LCB87rjW+QDzVmNQFnOMv9YPoMW84sGIXhGDG5Oi9mui9fBNtqP68rLfyQCbunU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcCUc9Js1Pm3jrwOZPSqP6oiFhes3pVcdu+DwxI69/iV5NvPM5
+	KSa2hjF3g9OQH1bnOYwVpf1Ai27L/W9rd6ug9ceGG5eURhrAlG60QJyW261dMz+WFMykDICi9Jv
+	fh5bMeYpkSw==
+X-Google-Smtp-Source: AGHT+IEg/gpZS2Wwa740IUzym+/kFOc+iN2HO8l3hmsWV/sKpXe65l+xXYWOwxm8vBrp8FmpwtXAU3uOAkOjqA==
 X-Received: from kerensun.svl.corp.google.com ([2620:15c:2c5:11:2520:b863:90ba:85bc])
- (user=kerensun job=sendgmr) by 2002:a25:b411:0:b0:e2b:da82:f695 with SMTP id
- 3f1490d57ef6-e30e5b0f56amr10735276.6.1730759288333; Mon, 04 Nov 2024 14:28:08
- -0800 (PST)
-Date: Mon,  4 Nov 2024 14:27:35 -0800
+ (user=kerensun job=sendgmr) by 2002:a05:6902:1d1:b0:e2e:3031:3f0c with SMTP
+ id 3f1490d57ef6-e30e5b0ee45mr11671276.7.1730759291389; Mon, 04 Nov 2024
+ 14:28:11 -0800 (PST)
+Date: Mon,  4 Nov 2024 14:27:36 -0800
 In-Reply-To: <20241104222737.298130-1-kerensun@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241104222737.298130-1-kerensun@google.com>
 X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
-Message-ID: <20241104222737.298130-3-kerensun@google.com>
-Subject: [PATCH 2/4] mm: Fix minor formatting issues for mm control
+Message-ID: <20241104222737.298130-4-kerensun@google.com>
+Subject: [PATCH 3/4] mm: Prefer 'unsigned int' to bare use of 'unsigned'
 From: Keren Sun <kerensun@google.com>
 To: akpm@linux-foundation.org
 Cc: roman.gushchin@linux.dev, hannes@cmpxchg.org, mhocko@kernel.org, 
@@ -83,47 +83,46 @@ Cc: roman.gushchin@linux.dev, hannes@cmpxchg.org, mhocko@kernel.org,
 	Keren Sun <kerensun@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add a line after declaration as it's missing after DEFINE_WAIT(),
-replace the spaces with tabs for indent, and remove the non-useful else
-after a break in a if statement.
+Change the param 'mode' from type 'unsigned' to 'unsigned int' in
+memcg_event_wake() and memcg_oom_wake_function(), and for the param
+'nid' in VM_BUG_ON().
 
 Signed-off-by: Keren Sun <kerensun@google.com>
 ---
- mm/memcontrol-v1.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ mm/memcontrol-v1.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index 3951538bd73f..5f9d3d6d443c 100644
+index 5f9d3d6d443c..5e1854623824 100644
 --- a/mm/memcontrol-v1.c
 +++ b/mm/memcontrol-v1.c
-@@ -460,6 +460,7 @@ bool memcg1_wait_acct_move(struct mem_cgroup *memcg)
- 	if (mc.moving_task && current != mc.moving_task) {
- 		if (mem_cgroup_under_move(memcg)) {
- 			DEFINE_WAIT(wait);
-+
- 			prepare_to_wait(&mc.waitq, &wait, TASK_INTERRUPTIBLE);
- 			/* moving charge context might have finished. */
- 			if (mc.moving_task)
-@@ -490,7 +491,7 @@ void folio_memcg_lock(struct folio *folio)
- 	 * The RCU lock is held throughout the transaction.  The fast
- 	 * path can get away without acquiring the memcg->move_lock
- 	 * because page moving starts with an RCU grace period.
--         */
-+	 */
- 	rcu_read_lock();
+@@ -1851,7 +1851,7 @@ static void memcg_event_remove(struct work_struct *work)
+  *
+  * Called with wqh->lock held and interrupts disabled.
+  */
+-static int memcg_event_wake(wait_queue_entry_t *wait, unsigned mode,
++static int memcg_event_wake(wait_queue_entry_t *wait, unsigned int mode,
+ 			    int sync, void *key)
+ {
+ 	struct mem_cgroup_event *event =
+@@ -2165,7 +2165,7 @@ struct oom_wait_info {
+ };
  
- 	if (mem_cgroup_disabled())
-@@ -2096,8 +2097,8 @@ static bool mem_cgroup_oom_trylock(struct mem_cgroup *memcg)
- 			failed = iter;
- 			mem_cgroup_iter_break(memcg, iter);
- 			break;
--		} else
--			iter->oom_lock = true;
-+		}
-+		iter->oom_lock = true;
- 	}
+ static int memcg_oom_wake_function(wait_queue_entry_t *wait,
+-	unsigned mode, int sync, void *arg)
++	unsigned int mode, int sync, void *arg)
+ {
+ 	struct mem_cgroup *wake_memcg = (struct mem_cgroup *)arg;
+ 	struct mem_cgroup *oom_wait_memcg;
+@@ -2598,7 +2598,7 @@ static unsigned long mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
+ 	unsigned long nr = 0;
+ 	enum lru_list lru;
  
- 	if (failed) {
+-	VM_BUG_ON((unsigned)nid >= nr_node_ids);
++	VM_BUG_ON((unsigned int)nid >= nr_node_ids);
+ 
+ 	for_each_lru(lru) {
+ 		if (!(BIT(lru) & lru_mask))
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
