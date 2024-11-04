@@ -1,92 +1,98 @@
-Return-Path: <linux-kernel+bounces-395440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF65E9BBDE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:21:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF949BBDE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D981C21E8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:21:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B424A2821CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D936D1C3054;
-	Mon,  4 Nov 2024 19:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0867E1C4A18;
+	Mon,  4 Nov 2024 19:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="hZFjAXBH"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvbYbRDY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62126AD2D;
-	Mon,  4 Nov 2024 19:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD52AD2D;
+	Mon,  4 Nov 2024 19:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730748067; cv=none; b=WSQ0n+i2CnFBH+2WzjY5VRgYtqr2yOITXoYqEeXRNQfT1dJtoWgKXlDmKMlb5wwzM37AirQW9bGJmdPPC3FUund8L/JlEYrVzaL/vgtdb6DnkNpWReEk3YXGDNcVR9e7iY4RwykyfK+hcTGcqLo9K/zAK7KDMGUVT6bGJJQ8Ugc=
+	t=1730748089; cv=none; b=se0vov4aV+fIjmF/D3rzoB24qQYKrMyG72U3DGssiDyhznsD2Go75b4aKjndRR9lfmTQb2BDHvFcQcglC5kgnj8YXOLbKXvq8bsttMmbYnnTTCcEJlpojvmvtlrMjNcF0O2MTb2FxBIoCbZ2WzK7zSwjKdqOvdXfmAM+7p5iy68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730748067; c=relaxed/simple;
-	bh=bPs8vWXRfovlBDcvuDYft3ukyZM8GmaXzcnOrYc4MEo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tPqNqvYFEMIs/dPHtJzXjfEEWjypeDfHcjppQnt41mS5bOw5uiVk06m1nIkuSshgU+hrc+2yhppj530axZtrEW+i7sb6VMjxj3RpxjMj87Bujmei26VKQkjjqgqoT6LFYB2uMTJguoc5Z0C/CpoiE+XMsWipisD2MpVXUANb9Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=hZFjAXBH; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3789142C30
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1730748063; bh=bPs8vWXRfovlBDcvuDYft3ukyZM8GmaXzcnOrYc4MEo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=hZFjAXBHt2/cR2cVoaeLE5fVQsusYt7acjFaBp2QBrZVOWXQ7PakL4wXycQgxCJ/n
-	 RBnY11+mz+iBUcL15rDGmjt3awo4jKCEwiDs5gS/6i30NZ11PG/xsi2+xrcSkMnpzW
-	 y8Rij4iK8mreajiaMseUH/0Xx95O2q9SwMth/ACCEaJiPb+trk2/+n2zhof/zEWO+l
-	 syHX9y5wGojIVzXXuONFCM24bvaRW/r874q1z2dbcHYUmPAwSpBHl5hvHLiJh6H5pw
-	 0HIvUP52DawvQXWIpmcmueyGvKrPP/9r4hSsuR0ocJIjd5ETHhECx807aVseOEWV95
-	 v8BA8Zfi5FmNw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 3789142C30;
-	Mon,  4 Nov 2024 19:21:03 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Joe Damato <jdamato@fastly.com>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, netdev@vger.kernel.org,
- hdanton@sina.com, pabeni@redhat.com, namangulati@google.com,
- edumazet@google.com, amritha.nambiar@intel.com,
- sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
- m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
- willy@infradead.org, willemdebruijn.kernel@gmail.com, skhawaja@google.com,
- kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>, "David S. Miller"
- <davem@davemloft.net>, Simon Horman <horms@kernel.org>, Linux
- Documentation <linux-doc@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux BPF <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next v5 7/7] docs: networking: Describe irq suspension
-In-Reply-To: <ZykXnG8M7qXsQcYq@LQ3V64L9R2>
-References: <20241103052421.518856-1-jdamato@fastly.com>
- <20241103052421.518856-8-jdamato@fastly.com> <ZyinhIlMIrK58ABF@archie.me>
- <ZykRdK6WgfR_4p5X@LQ3V64L9R2> <87v7x296wq.fsf@trenco.lwn.net>
- <ZykXnG8M7qXsQcYq@LQ3V64L9R2>
-Date: Mon, 04 Nov 2024 12:21:02 -0700
-Message-ID: <87msie955t.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1730748089; c=relaxed/simple;
+	bh=srsnEmNy8EqgMWWSao2qd7ZIE1/ia9oFgHAob0jN4H0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d5w14LV0AbqTuknL9gZbnfjqmyb9ZFDJASILnRMQd5uNp8fH66GSHidixA2anyRYwZPPc/PxKOqx4xkuQm4BNwR/54z/FKdp6S1MEwpnSHnTDnucCfY0r/4ZhtBio1yRryBRLidXM8osZfku1NVIvLN204Y0cMyXEdhH9ICe+h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvbYbRDY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF103C4CECE;
+	Mon,  4 Nov 2024 19:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730748088;
+	bh=srsnEmNy8EqgMWWSao2qd7ZIE1/ia9oFgHAob0jN4H0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pvbYbRDYTVEtjkRIfobR7lI+Lm0UsV7fRe5dpaxwKiy7kgbsn0ZAwDe/XWxTT/4/N
+	 8qr405SaAlQwnh5gYtSTw8kbgAWU3EZeNTvV2LQDvZkcppMCyaFOsg+bib37lH+ahU
+	 wvhKtmGeSSgzrSG+G26Z0ADcuKkZCGpHtdj8DGmJHas5Ly01H3VIglgN1QfKGZElnF
+	 BEXlwydzHJYTgA2ucPLTwyIC05Drz/ZV7vYvDAtfCFoSDjj6ETBX+if2yc4CF1Hukg
+	 GDW5czFAZu90rmOewRpVmGTXcmn6HTRufTV2DBQfpwIAmVNtxuv9o4KH+8ssVoHCsr
+	 B12eapXcbatLw==
+From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
+To: Will Deacon <will@kernel.org>,
+	Julien Thierry <julien.thierry.kdev@gmail.com>,
+	Anup Patel <anup@brainfault.org>,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org
+Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH kvmtool] riscv: Pass correct size to snprintf()
+Date: Mon,  4 Nov 2024 20:21:19 +0100
+Message-ID: <20241104192120.75841-1-bjorn@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Joe Damato <jdamato@fastly.com> writes:
+From: Björn Töpel <bjorn@rivosinc.com>
 
-> Thanks for the feedback. I had been preparing a v6 based on Bagas'
-> comments below where you snipped about in the documentation, etc.
->
-> Should I continue to prepare a v6? It would only contain
-> documentation changes in this patch; I can't really tell if a v6 is
-> necessary or not.
+The snprintf() function does not get the correct size argument passed,
+when the FDT ISA string is built. Instead of adjusting the size for
+each extension, the full size is passed for every iteration. Doing so
+will make __snprinf_chk() bail out on glibc.
 
-Look at the generated docs and be sure that results are what you expect;
-the enumerated-list change may be necessary.
+Adjust size for each iteration.
 
-Thanks,
+Fixes: 8aff29e1dafe ("riscv: Append ISA extensions to the device tree")
+Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+---
+ riscv/fdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-jon
+diff --git a/riscv/fdt.c b/riscv/fdt.c
+index 8189601f46de..85c8f95604f6 100644
+--- a/riscv/fdt.c
++++ b/riscv/fdt.c
+@@ -157,7 +157,7 @@ static void generate_cpu_nodes(void *fdt, struct kvm *kvm)
+ 					   isa_info_arr[i].name);
+ 				break;
+ 			}
+-			pos += snprintf(cpu_isa + pos, CPU_ISA_MAX_LEN, "_%s",
++			pos += snprintf(cpu_isa + pos, CPU_ISA_MAX_LEN - pos, "_%s",
+ 					isa_info_arr[i].name);
+ 		}
+ 		cpu_isa[pos] = '\0';
+
+base-commit: 3040b298156e4e2a82b27ac8db5bd63a72b3785b
+-- 
+2.43.0
+
 
