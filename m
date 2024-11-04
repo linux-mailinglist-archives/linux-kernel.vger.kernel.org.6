@@ -1,170 +1,124 @@
-Return-Path: <linux-kernel+bounces-395224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13049BBA82
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:43:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8549B9BBA89
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:46:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B2B2825C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:43:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B714F1C21742
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5088B1C302C;
-	Mon,  4 Nov 2024 16:43:31 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD781C2DA1;
+	Mon,  4 Nov 2024 16:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JOk2/8JC"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F882BB04
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC7942056;
+	Mon,  4 Nov 2024 16:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730738610; cv=none; b=IODBkH+eWgqk/WBwM7Wo8JMtxd2VhAgnwWp9Xelqf71Fq1mVsNIVh4eFGOOYhlb3Y8u3bSePNVcekxhdJcWiKFbVu8VfSMqLDm4l7GzLrkL4bsxFllH1PzL/UErTAmmkZ/buzWIJ2m6lP7c9yk5X2u+CKdVxItuthDIaJaTwcXs=
+	t=1730738776; cv=none; b=BqjnYqe+6SDzG/g8GWE3MZueshi+blsW/7X/u5iq1xpQMPFUoPzlUpUJsQmv5ZX2UganNvjxM0L0j2xHMEBzcpNlHWCV/wtsLsPb0VBRiakOMMlYQUXhCAJ0PA13fPrKk8GYdgKtJa6eFP0Hd62WnV9uYnnSUdv5m90c3Lk0XqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730738610; c=relaxed/simple;
-	bh=63xFusTRsY1L/nYoLVzTZYDCcu+dflkbrtHdaafc8Ow=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TTKm0i4atwwYh3w89TVz0aZsG5lALdPOW0aCQBWy2iqmHPIggfI4BkEvb0mszuFC2MAxAIeKptFdQuIHTPZr/HgMDQPiUqTI8cuhHwyzq7mZJCesoUM2hEsW1AzmQVphg1htuTLw7qtd1GEiKBTObd8bTeFwtqWeGITDjvah+XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t80An-0005FW-P2
-	for linux-kernel@vger.kernel.org; Mon, 04 Nov 2024 17:43:25 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t80An-0020pv-1r
-	for linux-kernel@vger.kernel.org;
-	Mon, 04 Nov 2024 17:43:25 +0100
-Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id 404AE367DF8
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 16:43:25 +0000 (UTC)
-Received: from hardanger.blackshift.org (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id 834B7367DF1;
-	Mon, 04 Nov 2024 16:43:23 +0000 (UTC)
-Received: from [172.20.34.65] (localhost [::1])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id e44711e1;
-	Mon, 4 Nov 2024 16:43:22 +0000 (UTC)
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Mon, 04 Nov 2024 17:42:40 +0100
-Subject: [PATCH can v3] can: mcp251xfd: mcp251xfd_get_tef_len(): fix length
- calculation
+	s=arc-20240116; t=1730738776; c=relaxed/simple;
+	bh=DGrRE7TUEKaaDw37a+FHzO+nzWDrspEHgHtffr+CQGI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=bpErXFlOIvo4oKq6erRnBzMl9h+myHoOzldg1KTUu8TZQo37Zw+0H/YXP9kAtmGTnwvKbMgNQLNfAxv0/e/RpI1Qn0jjTsS9WDa2FtbRjEnzkMxV20lFeB0jPOtKw4vTujlm1kPr97e+0Z1BkJ+yFhPjkRGP+h52YN/c1AO86bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JOk2/8JC; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C8C3E2000D;
+	Mon,  4 Nov 2024 16:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730738771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TK/3OnrOZfeWPKLNUkcYsUToqQO4kgM2GP8iJaKUbjY=;
+	b=JOk2/8JCqilJlJUfCvY4uRlTxlIp9ji8Qy1ngcdkwnygCzCyejzCgVMiRSaTFs9FFJDn8L
+	zV1x+ih0Gkk/qUZCv5sdT61fI1vEU+O/BjB73mPc8uoRCyM9KgaYdurfjD9fOSxMTWO90C
+	celi03gusvUFIczQAXKPUpoHig5vrFrnmhHY0OZVffXsEEsSrjJrxzoUUqvBSOdaYebHxF
+	vA3a1Fyno2B1Jd+fU6PRBwiydlj8yI4eAk6TdghaZfng6k3eDH/odGft/I/7lBgEQnAZgV
+	psQ0M2X/GNgV6qIjy3UOBxDnghEGd39eq45MFbMKvfkweDnJCvYd6olMILoDPw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241104-mcp251xfd-fix-length-calculation-v3-1-608b6e7e2197@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIAH/5KGcC/42Nyw6DIBBFf8WwLg1Q8dFV/6PpgseoJBYNILEx/
- nsnrpp04/LO3HvORiIEB5Hci40EyC66yWO4XQpiBuV7oM5iJoKJkjPG6dvMQvK1s7RzKx3B92m
- gRo1mGVXCMWWtrozhTIFmBDFzAGweiicxypMXHgcX0xQ+hzbz43XekDnlVLaNLivJGlvxx4ylJ
- YXJu/Vq4TBk8UMV8gRVIBWUtLquG91K9kfd9/0LHtUS8zABAAA=
-X-Change-ID: 20241001-mcp251xfd-fix-length-calculation-09b6cc10aeb0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Thomas Kopp <thomas.kopp@microchip.com>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- Sven Schuchmann <schuchmann@schleissheimer.de>
-Cc: linux-can@vger.kernel.org, kernel@pengutronix.de, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2880; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=63xFusTRsY1L/nYoLVzTZYDCcu+dflkbrtHdaafc8Ow=;
- b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBnKPmFN0MvQy+Sg3vSdfw3tywkkT9FJrkcQEQqe
- gWP0ISUzWeJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZyj5hQAKCRAoOKI+ei28
- b/aTB/4tiMmTguV9zreuyT/rwm10dGSiYkqN2vMEjs770WOwPNxh+zX+pYyqt1llpm+U367uovF
- 59sgNZoY0x7CuT3xjrDOAuAyVB9ZsAf7rs+KgLPfu364rItSGUb+ByYWU3JwZKCfgc45MWtF6Xl
- b6o4+ZouLKt7QSRvwjL3N1OhZOxrbiGISx8sWgz6JYcCmIK6yxMr1bRU4kmP7Zw9vtxIw1kuj6k
- AVtwo9PjNtt66ZJcomC0rtRcLdMcQ7IPojctlSI9hyMHkt08agL/i9Zrvkfn7v4r8mM6aYLWNcG
- G2lQ7WeqcfzTeXaEFoRHJuJaxFTkLT1Im7GF9WKkkIexVrii
-X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
- fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 04 Nov 2024 17:46:10 +0100
+Message-Id: <D5DJOUV9NPY4.22MIOBKLAYGA3@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH 01/13] dt-bindings: soc: mobileye: set `#clock-cells =
+ <1>` for all compatibles
+Cc: "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Rob Herring" <robh@kernel.org>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
+ <20241031-mbly-clk-v1-1-89d8b28e3006@bootlin.com>
+ <20241104153727.GA192461-robh@kernel.org>
+In-Reply-To: <20241104153727.GA192461-robh@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Commit b8e0ddd36ce9 ("can: mcp251xfd: tef: prepare to workaround
-broken TEF FIFO tail index erratum") introduced
-mcp251xfd_get_tef_len() to get the number of unhandled transmit events
-from the Transmit Event FIFO (TEF).
+On Mon Nov 4, 2024 at 4:37 PM CET, Rob Herring wrote:
+> On Thu, Oct 31, 2024 at 04:52:51PM +0100, Th=C3=A9o Lebrun wrote:
+> > Some compatibles expose a single clock. For those, we used to let them
+> > using `#clock-cells =3D <0>` (ie <&olb> reference rather than <&olb 0>)=
+.
+> >=20
+> > Switch away from that: enforce a cell for all compatibles. This is more
+> > straight forward, and avoids devicetree changes whenever a compatible
+> > goes from exposing a single clock to multiple ones.
+>
+> Your reasoning is flawed. Changing #clock-cells is an ABI break. So you=
+=20
+> should only be changing this if it was just wrong. And if it's not wrong=
+=20
+> in some cases, you shouldn't be changing those. The h/w either has 1=20
+> clock or multiple and #clocks-cells should match.
 
-As the TEF has no head pointer, the driver uses the TX FIFO's tail
-pointer instead, assuming that send frames are completed. However the
-check for the TEF being full was not correct. This leads to the driver
-stop working if the TEF is full.
+I see your reasoning, and I agree that changing #clock-cells is an ABI
+break. However, there are two things to take into account:
 
-Fix the TEF full check by assuming that if, from the driver's point of
-view, there are no free TX buffers in the chip and the TX FIFO is
-empty, all messages must have been sent and the TEF must therefore be
-full.
+ - We do not (yet?) have an omniscient view of the hardware. We do not
+   know what every single register in those memory regions do.
 
-Reported-by: Sven Schuchmann <schuchmann@schleissheimer.de>
-Closes: https://patch.msgid.link/FR3P281MB155216711EFF900AD9791B7ED9692@FR3P281MB1552.DEUP281.PROD.OUTLOOK.COM
-Fixes: b8e0ddd36ce9 ("can: mcp251xfd: tef: prepare to workaround broken TEF FIFO tail index erratum")
-Tested-by: Sven Schuchmann <schuchmann@schleissheimer.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
-Changes in v3:
-- add proper patch description
-- added Sven's Tested-by
-- Link to v2: https://patch.msgid.link/20241025-mcp251xfd-fix-length-calculation-v2-1-ea5db778b950@pengutronix.de
+   Some clocks might be lurking in the shadows, especially as we don't
+   support many HW capabilities yet.
 
-Changes in v2:
-- mcp251xfd_tx_fifo_sta_empty(): fix check if TX-FIFO is empty
-- Link to RFC: https://patch.msgid.link/20241001-mcp251xfd-fix-length-calculation-v1-1-598b46508d61@pengutronix.de
----
- drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ - The earlier the better. If we discover later down the road that,
+   indeed, some more clocks were hiding, we'll have to do an ABI break.
 
-diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
-index f732556d233a7be3b43f6f08e0b8f25732190104..d3ac865933fdf6c4ecdd80ad4d7accbff51eb0f8 100644
---- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
-+++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
-@@ -16,9 +16,9 @@
- 
- #include "mcp251xfd.h"
- 
--static inline bool mcp251xfd_tx_fifo_sta_full(u32 fifo_sta)
-+static inline bool mcp251xfd_tx_fifo_sta_empty(u32 fifo_sta)
- {
--	return !(fifo_sta & MCP251XFD_REG_FIFOSTA_TFNRFNIF);
-+	return fifo_sta & MCP251XFD_REG_FIFOSTA_TFERFFIF;
- }
- 
- static inline int
-@@ -122,7 +122,11 @@ mcp251xfd_get_tef_len(struct mcp251xfd_priv *priv, u8 *len_p)
- 	if (err)
- 		return err;
- 
--	if (mcp251xfd_tx_fifo_sta_full(fifo_sta)) {
-+	/* If the chip says the TX-FIFO is empty, but there are no TX
-+	 * buffers free in the ring, we assume all have been sent.
-+	 */
-+	if (mcp251xfd_tx_fifo_sta_empty(fifo_sta) &&
-+	    mcp251xfd_get_tx_free(tx_ring) == 0) {
- 		*len_p = tx_ring->obj_num;
- 		return 0;
- 	}
+   At that point, some people might actually be using the platform.
+   Seeing what we currently have supported upstream versus the amount
+   of HW blocks available in the SoC, I cannot imagine anyone using the
+   platform with an upstream kernel.
 
----
-base-commit: 5ccdcdf186aec6b9111845fd37e1757e9b413e2f
-change-id: 20241001-mcp251xfd-fix-length-calculation-09b6cc10aeb0
+So the choice is:
+ - potential ABI break in the future, once people use the platform, or,
+ - guaranteed ABI break now, when no one is using it.
 
-Best regards,
--- 
-Marc Kleine-Budde <mkl@pengutronix.de>
+I pick option two! Do you agree with the thought process?
 
+Thanks Rob,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
