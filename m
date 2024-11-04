@@ -1,336 +1,495 @@
-Return-Path: <linux-kernel+bounces-395569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B959F9BBFEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:22:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8A49BBFEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:22:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE711F211D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:22:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E9632822E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEC51FEFCB;
-	Mon,  4 Nov 2024 21:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A8F1FCC75;
+	Mon,  4 Nov 2024 21:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2SJRzNi"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RE/Hv1vO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989F81FEFAC;
-	Mon,  4 Nov 2024 21:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730755251; cv=none; b=dGqQBu8mhcL4HF2Jk0pl8dyqebCkoUeUrc4N7Lw9V9KeplUVKYNXQfaLagOl12/iS3TRQZGryL1zzDg+tyZGHKWA5Y0vvIb5RDPOPryksdInHvs7czpPaTh5SSmzSmCi5zlP+rB6WD5ZI38/8R4XDMuMruX6Rwp+kikICmpLCww=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730755251; c=relaxed/simple;
-	bh=f3MKNdusBU+qI++nsu6jkpiNIt8+1NpPzHrMQRx7A2U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=quflKZc/D4B8foHGKBbKhKWMIdMridhf43X6va6VOBlWZjh1gm0qy31zxfWQzPR6HPDM//rOIdCFbtSBSOlg9GR1OvgT/jG+kRjSKTJ3UrmLKC+++ELx7Hgzi/iJvYnwveBVxnIQtnvvNwIp7IRQy4Tb5u3crL01R9wX/wYOb2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2SJRzNi; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e28fe3b02ffso4088801276.3;
-        Mon, 04 Nov 2024 13:20:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730755248; x=1731360048; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vDLscm5IVmeNMDAedQjw2Ix2zCFH6FABN7zMEqlV7Uc=;
-        b=H2SJRzNiyqYMrKYK+UF3X+lcdnSdOA7Rq8x4mXzb5CQgSQWQLUcDdXKOazFeP5zNNU
-         Dwa5YU2WeCi7hW7nVeeJ4ihmxyOqfT/YQjV3uV3ywDzsyXtj9Z3MECq/BBY5JJM8yuR3
-         J5GeF//aXrvINdCoMzFn4Z1uPzHpUamRhDqWjvG/sfC4uvUWZwDO33RCOhC1gO5s2jME
-         0ph8byyHT10O9H8iHTwT1HP33ahcQR91iTb/UQQsdxWRemslQzXvTp2LwCKDNu8nB9tW
-         xSVfEgPmZaNhhwqodXMqU/r6ikNWJau/zkmh99J+Dt1kpdAUONBoPTauYIcv/8U/zEhl
-         Wy7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730755248; x=1731360048;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vDLscm5IVmeNMDAedQjw2Ix2zCFH6FABN7zMEqlV7Uc=;
-        b=K80BOrTPVdRUPJ2FSAAb2WKj46VoEw2Va71UKb2FKyETVOSRejxX181KFLzL3LObt/
-         uRtl4LHsAeR28Q9RKLx4/3U5Y5C03j5IkUtgOl5s+LWkyaCASVJrKaT1b5m+TbkniUU4
-         de2/8pCDPFwJS8XoaCCk+yVEjbuYUiHUEvoKfj942WLfdSIz9gStQYadetY0hGQqQLES
-         SynB1Hbt/8PQ71aP+f7YtfuYztZzZ8L9TjnT/I48BsEhheFZPLyyT6YkUDZkTnI4Z6k9
-         QIkoomqr8tO4/1Ue7LeYTuKSQ5+RRAFx1UhSAj2Wdk59F/HEYYrGSmggmcmXEctLq4zy
-         jBBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpdSDepf+AzAOlmCtq0ZADkuDsZYLkzlGTaNdwM+Q9qhgPtPAtaf0wAhRNWPuge8p79cQ1R7NgZX0rkus=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhhPrf9qY6FOIjuaEHbVn7cgr5BfyqNuSxc/l/pFYIzqQCa2G/
-	UkI+S3KY/VCGb2fw3FIQkcZgTRe/bZoccKjOiDEC7g5rw3UmUMyn
-X-Google-Smtp-Source: AGHT+IHlJDWGbNKg/6rLSRDtR0vIz6P0lPq4F4HQ7af1kEE8IpA3r9j3oYK8eJauW2F7A0fA0RcO3g==
-X-Received: by 2002:a05:690c:4b09:b0:6ea:258f:a4a9 with SMTP id 00721157ae682-6ea523215d3mr179730057b3.9.1730755248372;
-        Mon, 04 Nov 2024 13:20:48 -0800 (PST)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([102.129.152.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea55b1ed29sm19555817b3.53.2024.11.04.13.20.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 13:20:47 -0800 (PST)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 04 Nov 2024 17:20:32 -0400
-Subject: [PATCH v2 6/6] rust: add improved version of
- `ForeignOwnable::borrow_mut`
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA891FCC69
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730755355; cv=fail; b=PgWfzkQKl+xva7eCQRnvTXwTteUGpH+VkJrMDD8Vw0XUwF7hGLXG4AVN69EicpBaSGL50EI3oFXxb5esy1QAhXWcEjdT35UsH564qggHCKX+Pklx/o0lJzQfSdXkTwpTc/SwB9m/1PxHBtUbkfYAPSUiZoWuVmz5dgci0YI5Fhk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730755355; c=relaxed/simple;
+	bh=LsX3pcpAKU+IJo9+reqpD45ZhXoMjSq72Ur4xSQJ1wQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=m1aC8efjKFpx5JUCyQJ3oTxT+Po3RSSBwIye8cSh67SKiVd9QoOiE5CZxijIpoYpJqnclklp5u9d+fJFKwG62gVVS3j3RU70TbXWZz66MDdG5xwNQw0zmOH/xTewwvoQIrukQ8cc4FP8kQLd94IOf4ndBd1cHV5OygjBqySQ21M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RE/Hv1vO; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730755353; x=1762291353;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=LsX3pcpAKU+IJo9+reqpD45ZhXoMjSq72Ur4xSQJ1wQ=;
+  b=RE/Hv1vOrxZo56Js0vEifm/GDcbU+noQDbxBhrwIgO1F8XgbJ98wHk32
+   xCjjXCtDamG/vGqZqpw5P4CT70NBpPCc0uMnPRUHbPr3DHFcqOxkpZqrq
+   Y81tizzcopEetD9LrskRPmmeyeydPf6vy6asyziECMV6LgJ7H5Z4UMumb
+   kl3jlNxUOV5iyKStYJofPYZal/Hkq5C3e9iviZfILsla7veesOo26B27/
+   lfwSLI0W+ZB0nC1iVLehrcqoFruDCoW0lqxsjt0W3ozOCVNF0Sps7g2z6
+   tJjeUxiXBXvaKt2zf4zfthxwBxs6BY2yYtcC5yQgo1ocVLAMCFb+p6S3W
+   Q==;
+X-CSE-ConnectionGUID: K51w5LYaTLijMSbYZNytcw==
+X-CSE-MsgGUID: LpKyQ4MaTfiPJcAJO4CRvA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="34260263"
+X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
+   d="scan'208";a="34260263"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 13:22:33 -0800
+X-CSE-ConnectionGUID: uPzpZF4ISM+Yw70bZTAc3w==
+X-CSE-MsgGUID: 7xVOV/cKQdaMko9TaGnOFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
+   d="scan'208";a="83867819"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Nov 2024 13:22:32 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 4 Nov 2024 13:22:31 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 4 Nov 2024 13:22:31 -0800
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.177)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 4 Nov 2024 13:22:30 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n+w8rQksuSHfkNMKdS9Irj/jcr2yKS1uPfD6snLHi+6y1c6VjD8rnpKnBiyiFwqLMJVmGe2QD4N+aOci070enJoJ2Z7Q1vDSmPxB3o/t8RoUaLKkGtPDLFdaxAgW4ssnjj7+yfirI7ru4H1w+beW2bWkqRx47pnE7wGTcGonF+haPqTQMk8HHGPVPAo5C43PEbDp+N7SDU0cuvzwmFuuV+0YN4CKQyikT68feojdHcLmZGK5E4WDpQjU9ZC3OYrhte5J7aiWqAZfXZ/NBjqBqzg0V2FRCYEsqTqSkFogelNUaNduPfcwVUSsc1PZEMt8kOFNT8qt9+J3RqVmDqJBsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WOwo0brVllK1fULWnmAGsd7YRnixMybsjk7QKmNKwV4=;
+ b=fvSxJWD/eCRUeaf86CMx6aSRHXDypdHiASgLG/X4WZvR+smgb2dEe0vK2Mc7O/kwuoeq2nS+ZEok7ri/9gJNAQLqTQGjXNJlqB28Q8vlXNrJB9ATuRf+qBE36nYE3Q6mnhjUeqMzhKJUYt8y9UU/UmNKf00kgbeFeJaa2yOFx9s0nlnVj5WC6p6WkvxbahkknK2Zj76Ax6mN1jOxXjOFP61ek8ZEN7M+qzycJhj91X/EOtcH7Eun3SliEuIvp5Zz2hnA/CaFQKUq6c3P0Z2D7QNi0RDyxMMQSC+Z/4v03IIiYB/FCmhOjy8e/nXxsIuTgtywVNeQAExYsqakcm/n5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com (2603:10b6:a02:c9::12)
+ by PH0PR11MB7471.namprd11.prod.outlook.com (2603:10b6:510:28a::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
+ 2024 21:22:27 +0000
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42]) by BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42%7]) with mapi id 15.20.8114.020; Mon, 4 Nov 2024
+ 21:22:27 +0000
+Date: Mon, 4 Nov 2024 16:22:20 -0500
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Alexander Usyskin <alexander.usyskin@intel.com>
+CC: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
+	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, Thomas =?iso-8859-1?Q?Hellstr=F6m?=
+	<thomas.hellstrom@linux.intel.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
+	<tursulin@ursulin.net>, Oren Weil <oren.jer.weil@intel.com>,
+	<linux-mtd@lists.infradead.org>, <dri-devel@lists.freedesktop.org>,
+	<intel-gfx@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/10] drm/xe/nvm: add on-die non-volatile memory device
+Message-ID: <Zyk7DOdTiYpeWb-7@intel.com>
+References: <20241022104119.3149051-1-alexander.usyskin@intel.com>
+ <20241022104119.3149051-10-alexander.usyskin@intel.com>
+ <Zx-kUAlr0CVVtJXT@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Zx-kUAlr0CVVtJXT@intel.com>
+X-ClientProxiedBy: MW2PR2101CA0030.namprd21.prod.outlook.com
+ (2603:10b6:302:1::43) To BYAPR11MB2854.namprd11.prod.outlook.com
+ (2603:10b6:a02:c9::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241104-borrow-mut-v2-6-de650678648d@gmail.com>
-References: <20241104-borrow-mut-v2-0-de650678648d@gmail.com>
-In-Reply-To: <20241104-borrow-mut-v2-0-de650678648d@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tamir Duberstein <tamird@gmail.com>, 
- Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-X-Mailer: b4 0.15-dev
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB2854:EE_|PH0PR11MB7471:EE_
+X-MS-Office365-Filtering-Correlation-Id: 73a23b82-ba45-47fe-6ed3-08dcfd16c81f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+zr3QwsKkWWb/cWzrvcHiBCs3/CvNakwKmLVWHBl3lfuMe5DhNOkw+sJE8Sq?=
+ =?us-ascii?Q?88Ns17z21jO1KqpPkmXgqWgcbfuVL8zZF8W6XlqRQSWAPQtzYm51hUFADTfN?=
+ =?us-ascii?Q?3EnCRklcPtlDoMan1tDDyLMS0uyMWw3GZzrL0dz1BeJoZbW3oA3lknZS3aLH?=
+ =?us-ascii?Q?UinUN+kYi/HXYzkmSd7uEh+dWfI3HeJSelK2gRlPSDaroGeTZ2lyCdgzH+FA?=
+ =?us-ascii?Q?caMoMO2bntzAIf/FG+gG6jM6tfeR2UV4TLgMM4BLRvbwxi8Lv7Xxnlp+584N?=
+ =?us-ascii?Q?d0ZWdvdJCQSpNg1UeRv7tr6arQyNnwIOod5lzIlzgi2DppgIRLsBR3sCsT1G?=
+ =?us-ascii?Q?Iolu/eWkU5egX7+MoNBuSAZ1/Re5UwEDKfHj6OilGQTe4YSInvUUwk/hUbpX?=
+ =?us-ascii?Q?U2wb44Shaon2jIT/vsyjREz15uus+nY6PDYr/RA7ZfBpq6kccRlw6jIghAvo?=
+ =?us-ascii?Q?dDiXlipQIvf4wcTbsrEL5DSP8wvhp/bzi2oVVyWBobx9nFA3f76aQqNT/m2b?=
+ =?us-ascii?Q?4QKdOhiJqDdisX481isD5qKjlli79Bkcwd+bYXr0sB607Uxr8xRm8X6Z9Rb9?=
+ =?us-ascii?Q?3EGu/riQYPoOSkvcxNhh0raGY6p7V+BKLCPVVoR3KlVZWZ8kZdKgXIijoGAZ?=
+ =?us-ascii?Q?561Emuq3W8vpy2LjTACpZOshl+yzTSBurZ9+Tb91FdtPwOlCyfw3geo2w6le?=
+ =?us-ascii?Q?1rhZ47lcfQ+tR0QoysIgyptIhqkzKaT9awZ1+LSGScJ5lRyoKErfYkc5AVY2?=
+ =?us-ascii?Q?4SE9rbywT6QDxHY8PAGoh4Uk9cLTvq9FgDng3Yg0yOcx+5WBKsJbio0FUmWb?=
+ =?us-ascii?Q?X0zr7cSjQlE3Vr9B6zxQc7xkneljAiwRwBaBYlFXiuuYQNktpgRlN0c8it+b?=
+ =?us-ascii?Q?c1BjVxjpc/DgHgAQPc3UXyKXA3DdQc9Jxe3vczb7p/oyuHHDhoGXWHDc8T6Q?=
+ =?us-ascii?Q?NI3JpkcuE2kdKmgRnEKpwhD/25gCnTqWTgyPsXecicoPRO8aInvRKHgoiaFQ?=
+ =?us-ascii?Q?G2WCkD00/O/CKb7nGwr+dhSIwg8wXEjqYmFDx/MXwz9EIgVQlimjcKNzh/jb?=
+ =?us-ascii?Q?gmWf+8+WhqlXwf1vK/dIAuZGwVkdfFmFDp65k99pBM5VpUT+sPOQOPT6Sh0F?=
+ =?us-ascii?Q?Z01r0SaGu/H7bOGzBFz5F3RKRVZKOTZxVnRWDWtGWDSQtHITDrChUGwVKmUP?=
+ =?us-ascii?Q?AVzU2soKlhy3hekctvsW/npqY2qsYX4DqHivoypUAodYVbBS9Nnj3KnIvjZo?=
+ =?us-ascii?Q?X/IoWj9ohqJEbqrRAcZc5nM8j3kS+8Nsd+BMOY6b4lyiz4iEGFmy+RLtr+ij?=
+ =?us-ascii?Q?9dw=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2854.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NvNuPKFGbLRjAerlrYVSsq2dYbCgi3kjkcPjSdkRv504b3R9iH3CBgTvfn0a?=
+ =?us-ascii?Q?mxWdOFapsH7Jab8p5hu8VeZnnstypYyddTmuEWhqPzEQhUBdvLZ8t3pvKN5w?=
+ =?us-ascii?Q?bHrx64eSC3yEaCp8VTU4kFbOoWuusr3eHbRFZoP2zCWizP8gDIopZsIu8u7f?=
+ =?us-ascii?Q?nGCH13ap0NiqUNbODboIYihvm641hD2smOMz9UVyi01pe1OYMXVVK2xxTSH6?=
+ =?us-ascii?Q?L9yGRr8U5OU0SUiGuOyp473/a8WgVzWklxqI1UVZUhxsHqJKMjilSllkOJXE?=
+ =?us-ascii?Q?kKwsSxF7vfi22LtO1OZ8YR/PPNFU4eJ7aCrcxv4GhIqqWkMgLQn9yT3Wq+GY?=
+ =?us-ascii?Q?oiCeO506U5/SsXW7egFHamCJWFf/8J8dYMGRR9YVvrYwdvi95YFrh9DUa8sb?=
+ =?us-ascii?Q?VsdrQqDut4wWXb8WOxEk/8vqsXzTdnsObH5zlq1B4EWndsUjs8dqOCAzJ/V8?=
+ =?us-ascii?Q?8YMgyNcoUNkSc+btqqSz8ke6Ta/RNYUhpiAPgiQSFY99C9IUpYcWTqzJbejv?=
+ =?us-ascii?Q?0Ln/weBb9hBVnntSoLb1GKyq02EmJLUZFv/FDfv4Yhjj3R31lpVvcumuEuDx?=
+ =?us-ascii?Q?K96i7A3NpxQ3MJ0ncGsuZldzZlXGyC/+UVumNwjAegoiJLAAji1MRUwrbJ4i?=
+ =?us-ascii?Q?8r/ZkLo+a+0K1cot5gtJhwEyj6PANJez0D/IhEBOl2EXwiVWsQDavPU/D9Jm?=
+ =?us-ascii?Q?LmVXy1/Am1xo3XNR+4wOa5yOgdUk420Cgp2Xq9E12Dk8vHlQ96ChuoNJEXWv?=
+ =?us-ascii?Q?P29z/DgyxI2jZ3wo5PFgpYOJHqTL+zFTB/IXBGfwkzTTLoXcipG/nSmyEgSm?=
+ =?us-ascii?Q?QnIc2aeKPifDfbWrvwXfSlxWq+b8DmrJiWA08MYP1bNRO86/7SHuuKjk9Mxg?=
+ =?us-ascii?Q?zIWpbVRl38uKsl6x7HCBjvisUqBUbtZAAfeqGD10HeXfGQmabrYoi3zNPSqO?=
+ =?us-ascii?Q?F5Ry7YdbzwsNp+OsbN7SE5S6/qdlGPUCX3ByPIByEg+5+o+jFflbwnJ8dFtc?=
+ =?us-ascii?Q?lO40aMYCpd+T8cQ327iLWhKd046FbLGYLaAltZW6c6t5rSRQf5E/ddkW9WXi?=
+ =?us-ascii?Q?TvQ6TQeihlcWJN+pzl8KSVhsmA807VbBccXpuoqrEwI1lXpxWji3oxleKTLg?=
+ =?us-ascii?Q?IFxZsdk+Gk/aPKq0CfbQDTM7KidngXfolbaBUf92FghKrKx/Mkhb/qgcIum+?=
+ =?us-ascii?Q?htTSPnrnVYcwO846s/pA4T7FOkv7nv5zcVWQnswWjxHiGAppNLQAVeXZHXOH?=
+ =?us-ascii?Q?lvahUkGk4iPl5/8TMlVnvHFnga+pw1ghHJX8vfywMQ+4l5yPxaF118dhidBl?=
+ =?us-ascii?Q?7jz/ZGfcPb6mVJpa9ST4nQgFM8ij17dJ5pJAXJGUvO/C4EEbGb6Ziv4pA8bF?=
+ =?us-ascii?Q?Bzfky2An6hMelgLD/oYvhyyNK8JE+kqiRCnQgDK4AMEYnZwOJwKmGX6AB8Oi?=
+ =?us-ascii?Q?C2UH0kpG3m2tMVcq5MIXLQfi7Q2DiM9JgAGi0997f/bO0CKyKQ3mlSz2RnlN?=
+ =?us-ascii?Q?I+Crnfs4FU0R86KvHGNKlk+Ek23BZJbdsjAER0iXW4FrerzGcrOo6mjbgJYL?=
+ =?us-ascii?Q?3FB9+mfYfRMRbqelBs6nRDwEShpnxQJnWMlTqr7JXx7t+N9eMY5h/3D9WGZw?=
+ =?us-ascii?Q?CQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73a23b82-ba45-47fe-6ed3-08dcfd16c81f
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2854.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 21:22:27.1955
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xiWJpbYhFKq6zTaO8UINDC0HuQbbjlZsATGwJu9vev8+IG+lUyQzUk5Rev2Ao3hPV2ivK1cWPGJtEbp02Z/PqQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7471
+X-OriginatorOrg: intel.com
 
-From: Alice Ryhl <aliceryhl@google.com>
+On Mon, Oct 28, 2024 at 10:48:48AM -0400, Rodrigo Vivi wrote:
+> On Tue, Oct 22, 2024 at 01:41:18PM +0300, Alexander Usyskin wrote:
+> > Enable access to internal non-volatile memory on DGFX
+> > with GSC/CSC devices via a child device.
+> > The nvm child device is exposed via auxiliary bus.
+> 
+> I looked at all of the i915 and xe patches here and everything looks right.
+> Just a few common doubts before I put my rv-b here below...
+> 
+> 
+> Starting with the one from the other patch. Could you please share some doc
+> where I could confirm
+> HECI_FW_STATUS_2_NVM_ACCESS_MODE bit?
+> 
+> more below...
+> 
+> > 
+> > Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> > ---
+> >  drivers/gpu/drm/xe/Makefile          |   1 +
+> >  drivers/gpu/drm/xe/xe_device.c       |   3 +
+> >  drivers/gpu/drm/xe/xe_device_types.h |   8 +++
+> >  drivers/gpu/drm/xe/xe_nvm.c          | 100 +++++++++++++++++++++++++++
+> >  drivers/gpu/drm/xe/xe_nvm.h          |  15 ++++
+> >  drivers/gpu/drm/xe/xe_pci.c          |   5 ++
+> >  6 files changed, 132 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/xe/xe_nvm.c
+> >  create mode 100644 drivers/gpu/drm/xe/xe_nvm.h
+> > 
+> > diff --git a/drivers/gpu/drm/xe/Makefile b/drivers/gpu/drm/xe/Makefile
+> > index cb6c625bdef0..4225a654a937 100644
+> > --- a/drivers/gpu/drm/xe/Makefile
+> > +++ b/drivers/gpu/drm/xe/Makefile
+> > @@ -94,6 +94,7 @@ xe-y += xe_bb.o \
+> >  	xe_ring_ops.o \
+> >  	xe_sa.o \
+> >  	xe_sched_job.o \
+> > +	xe_nvm.o \
+> >  	xe_step.o \
+> >  	xe_sync.o \
+> >  	xe_tile.o \
+> > diff --git a/drivers/gpu/drm/xe/xe_device.c b/drivers/gpu/drm/xe/xe_device.c
+> > index 962751c966d1..844697f79eee 100644
+> > --- a/drivers/gpu/drm/xe/xe_device.c
+> > +++ b/drivers/gpu/drm/xe/xe_device.c
+> > @@ -49,6 +49,7 @@
+> >  #include "xe_pcode.h"
+> >  #include "xe_pm.h"
+> >  #include "xe_query.h"
+> > +#include "xe_nvm.h"
+> >  #include "xe_sriov.h"
+> >  #include "xe_tile.h"
+> >  #include "xe_ttm_stolen_mgr.h"
+> > @@ -743,6 +744,7 @@ int xe_device_probe(struct xe_device *xe)
+> >  			goto err_fini_gt;
+> >  	}
+> >  
+> > +	xe_nvm_init(xe);
+> >  	xe_heci_gsc_init(xe);
+> >  
+> >  	err = xe_oa_init(xe);
+> > @@ -811,6 +813,7 @@ void xe_device_remove(struct xe_device *xe)
+> >  	xe_oa_fini(xe);
+> >  
+> >  	xe_heci_gsc_fini(xe);
+> > +	xe_nvm_fini(xe);
+> >  
+> >  	for_each_gt(gt, xe, id)
+> >  		xe_gt_remove(gt);
+> > diff --git a/drivers/gpu/drm/xe/xe_device_types.h b/drivers/gpu/drm/xe/xe_device_types.h
+> > index 85bede4dd646..ec3d82f05519 100644
+> > --- a/drivers/gpu/drm/xe/xe_device_types.h
+> > +++ b/drivers/gpu/drm/xe/xe_device_types.h
+> > @@ -35,6 +35,8 @@
+> >  struct xe_ggtt;
+> >  struct xe_pat_ops;
+> >  
+> > +struct intel_dg_nvm_dev;
+> > +
+> >  #define XE_BO_INVALID_OFFSET	LONG_MAX
+> >  
+> >  #define GRAPHICS_VER(xe) ((xe)->info.graphics_verx100 / 100)
+> > @@ -44,6 +46,7 @@ struct xe_pat_ops;
+> >  #define IS_DGFX(xe) ((xe)->info.is_dgfx)
+> >  #define HAS_HECI_GSCFI(xe) ((xe)->info.has_heci_gscfi)
+> >  #define HAS_HECI_CSCFI(xe) ((xe)->info.has_heci_cscfi)
+> > +#define HAS_GSC_NVM(xe) ((xe)->info.has_gsc_nvm)
+> >  
+> >  #define XE_VRAM_FLAGS_NEED64K		BIT(0)
+> >  
+> > @@ -331,6 +334,8 @@ struct xe_device {
+> >  		u8 has_heci_gscfi:1;
+> >  		/** @info.has_heci_cscfi: device has heci cscfi */
+> >  		u8 has_heci_cscfi:1;
+> > +		/** @info.has_gsc_nvm: device has gsc non-volatile memory */
+> > +		u8 has_gsc_nvm:1;
+> >  		/** @info.skip_guc_pc: Skip GuC based PM feature init */
+> >  		u8 skip_guc_pc:1;
+> >  		/** @info.has_atomic_enable_pte_bit: Device has atomic enable PTE bit */
+> > @@ -502,6 +507,9 @@ struct xe_device {
+> >  	/** @heci_gsc: graphics security controller */
+> >  	struct xe_heci_gsc heci_gsc;
+> >  
+> > +	/** @nvm: discrete graphics non-volatile memory */
+> > +	struct intel_dg_nvm_dev *nvm;
+> > +
+> >  	/** @oa: oa observation subsystem */
+> >  	struct xe_oa oa;
+> >  
+> > diff --git a/drivers/gpu/drm/xe/xe_nvm.c b/drivers/gpu/drm/xe/xe_nvm.c
+> > new file mode 100644
+> > index 000000000000..ce56bff1268b
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/xe/xe_nvm.c
+> > @@ -0,0 +1,100 @@
+> > +// SPDX-License-Identifier: MIT
+> > +/*
+> > + * Copyright(c) 2019-2024, Intel Corporation. All rights reserved.
+> > + */
+> > +
+> > +#include <linux/intel_dg_nvm_aux.h>
+> > +#include <linux/pci.h>
+> > +#include "xe_device_types.h"
+> > +#include "xe_nvm.h"
+> > +#include "xe_sriov.h"
+> > +
+> > +#define GEN12_GUNIT_NVM_BASE 0x00102040
+> > +#define GEN12_GUNIT_NVM_SIZE 0x80
+> > +#define HECI_FW_STATUS_2_NVM_ACCESS_MODE BIT(3)
+> > +
+> > +static const struct intel_dg_nvm_region regions[INTEL_DG_NVM_REGIONS] = {
+> > +	[0] = { .name = "DESCRIPTOR", },
+> > +	[2] = { .name = "GSC", },
+> > +	[11] = { .name = "OptionROM", },
+> > +	[12] = { .name = "DAM", },
+> 
+> Could you please give some pointers to confirm this base and these regions?
+> 
+> > +};
+> > +
+> > +static void xe_nvm_release_dev(struct device *dev)
+> > +{
+> > +}
+> > +
+> > +void xe_nvm_init(struct xe_device *xe)
+> > +{
+> > +	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
+> > +	struct intel_dg_nvm_dev *nvm;
+> > +	struct auxiliary_device *aux_dev;
+> > +	int ret;
+> > +
+> > +	if (!HAS_GSC_NVM(xe))
+> > +		return;
+> > +
+> > +	/* No access to internal NVM from VFs */
+> > +	if (IS_SRIOV_VF(xe))
+> > +		return;
+> > +
+> > +	/* Nvm pointer should be NULL here */
+> > +	if (WARN_ON(xe->nvm))
+> > +		return;
+> > +
+> > +	xe->nvm = kzalloc(sizeof(*nvm), GFP_KERNEL);
+> > +	if (!xe->nvm)
+> > +		return;
+> > +
+> > +	nvm = xe->nvm;
+> > +
+> > +	nvm->writeable_override = false;
+> > +	nvm->bar.parent = &pdev->resource[0];
+> > +	nvm->bar.start = GEN12_GUNIT_NVM_BASE + pdev->resource[0].start;
+> > +	nvm->bar.end = nvm->bar.start + GEN12_GUNIT_NVM_SIZE - 1;
+> > +	nvm->bar.flags = IORESOURCE_MEM;
+> > +	nvm->bar.desc = IORES_DESC_NONE;
+> > +	nvm->regions = regions;
+> > +
+> > +	aux_dev = &nvm->aux_dev;
+> > +
+> > +	aux_dev->name = "nvm";
+> > +	aux_dev->id = (pci_domain_nr(pdev->bus) << 16) |
+> > +		       PCI_DEVID(pdev->bus->number, pdev->devfn);
+> > +	aux_dev->dev.parent = &pdev->dev;
+> > +	aux_dev->dev.release = xe_nvm_release_dev;
+> > +
+> > +	ret = auxiliary_device_init(aux_dev);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev, "xe-nvm aux init failed %d\n", ret);
+> 
+> Since these are inside the i915 and xe and you have our drm private device,
+> I believe it would be better if we would use the drm_err and other drm debug
+> variants here, below and also in the i915 patch.
 
-Previously, the `ForeignOwnable` trait had a method called `borrow_mut`
-that was intended to provide mutable access to the inner value. However,
-the method accidentally made it possible to change the address of the
-object being modified, which usually isn't what we want. (And when we
-want that, it can be done by calling `from_foreign` and `into_foreign`,
-like how the old `borrow_mut` was implemented.)
+Thanks for the confirmation of the offsets and regions.
+With these dev_err changed towards the drm_err, feel free to use
 
-In this patch, we introduce an alternate definition of `borrow_mut` that
-solves the previous problem. Conceptually, given a pointer type `P` that
-implements `ForeignOwnable`, the `borrow_mut` method gives you the same
-kind of access as an `&mut P` would, except that it does not let you
-change the pointer `P` itself.
+Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-This is analogous to how the existing `borrow` method provides the same
-kind of access to the inner value as an `&P`.
-
-Note that for types like `Arc`, having an `&mut Arc<T>` only gives you
-immutable access to the inner `T`. This is because mutable references
-assume exclusive access, but there might be other handles to the same
-reference counted value, so the access isn't exclusive. The `Arc` type
-implements this by making `borrow_mut` return the same type as `borrow`.
-
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- rust/kernel/alloc/kbox.rs | 21 ++++++++++++++
- rust/kernel/sync/arc.rs   |  7 +++++
- rust/kernel/types.rs      | 71 ++++++++++++++++++++++++++++++++++++++---------
- 3 files changed, 86 insertions(+), 13 deletions(-)
-
-diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-index 99d0fc0148bb8779e5a769a6e74291ef8101bf77..c7edcd970fe6abe2afce5364a5f6c565452da85e 100644
---- a/rust/kernel/alloc/kbox.rs
-+++ b/rust/kernel/alloc/kbox.rs
-@@ -354,6 +354,7 @@ impl<T: 'static, A> ForeignOwnable for Box<T, A>
-     A: Allocator,
- {
-     type Borrowed<'a> = &'a T;
-+    type BorrowedMut<'a> = &'a mut T;
- 
-     fn into_foreign(self) -> *mut core::ffi::c_void {
-         Box::into_raw(self).cast()
-@@ -370,6 +371,13 @@ unsafe fn borrow<'a>(ptr: *mut core::ffi::c_void) -> &'a T {
-         // immutable for the duration of 'a.
-         unsafe { &*ptr.cast() }
-     }
-+
-+    unsafe fn borrow_mut<'a>(ptr: *mut core::ffi::c_void) -> &'a mut T {
-+        let ptr = ptr.cast();
-+        // SAFETY: The safety requirements of this method ensure that the pointer is valid and that
-+        // nothing else will access the value for the duration of 'a.
-+        unsafe { &mut *ptr }
-+    }
- }
- 
- impl<T: 'static, A> ForeignOwnable for Pin<Box<T, A>>
-@@ -377,6 +385,7 @@ impl<T: 'static, A> ForeignOwnable for Pin<Box<T, A>>
-     A: Allocator,
- {
-     type Borrowed<'a> = Pin<&'a T>;
-+    type BorrowedMut<'a> = Pin<&'a mut T>;
- 
-     fn into_foreign(self) -> *mut core::ffi::c_void {
-         // SAFETY: We are still treating the box as pinned.
-@@ -399,6 +408,18 @@ unsafe fn borrow<'a>(ptr: *mut core::ffi::c_void) -> Pin<&'a T> {
-         // SAFETY: This pointer originates from a `Pin<Box<T>>`.
-         unsafe { Pin::new_unchecked(r) }
-     }
-+
-+    unsafe fn borrow_mut<'a>(ptr: *mut core::ffi::c_void) -> Pin<&'a mut T> {
-+        let ptr = ptr.cast();
-+        // SAFETY: The safety requirements for this function ensure that the object is still alive,
-+        // so it is safe to dereference the raw pointer.
-+        // The safety requirements of `from_foreign` also ensure that the object remains alive for
-+        // the lifetime of the returned value.
-+        let r = unsafe { &mut *ptr };
-+
-+        // SAFETY: This pointer originates from a `Pin<Box<T>>`.
-+        unsafe { Pin::new_unchecked(r) }
-+    }
- }
- 
- impl<T, A> Deref for Box<T, A>
-diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-index 3c779b343aa8c396d2d4b7efdbc0f1ef524a0f1c..8a0f44da8f732afca6009a078e90bd7a14034240 100644
---- a/rust/kernel/sync/arc.rs
-+++ b/rust/kernel/sync/arc.rs
-@@ -332,6 +332,7 @@ pub fn into_unique_or_drop(self) -> Option<Pin<UniqueArc<T>>> {
- 
- impl<T: 'static> ForeignOwnable for Arc<T> {
-     type Borrowed<'a> = ArcBorrow<'a, T>;
-+    type BorrowedMut<'a> = Self::Borrowed<'a>;
- 
-     fn into_foreign(self) -> *mut core::ffi::c_void {
-         ManuallyDrop::new(self).ptr.as_ptr().cast()
-@@ -357,6 +358,12 @@ unsafe fn borrow<'a>(ptr: *mut core::ffi::c_void) -> ArcBorrow<'a, T> {
-         // for the lifetime of the returned value.
-         unsafe { ArcBorrow::new(inner) }
-     }
-+
-+    unsafe fn borrow_mut<'a>(ptr: *mut core::ffi::c_void) -> ArcBorrow<'a, T> {
-+        // SAFETY: The safety requirements for `borrow_mut` are a superset of the safety
-+        // requirements for `borrow`.
-+        unsafe { Self::borrow(ptr) }
-+    }
- }
- 
- impl<T: ?Sized> Deref for Arc<T> {
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index b8f3594737401a3df841f30a20c4bd85743853ef..c74223579111fe36c7c7cd135ba95f25f0b33fab 100644
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -19,26 +19,33 @@
- /// This trait is meant to be used in cases when Rust objects are stored in C objects and
- /// eventually "freed" back to Rust.
- pub trait ForeignOwnable: Sized {
--    /// Type of values borrowed between calls to [`ForeignOwnable::into_foreign`] and
--    /// [`ForeignOwnable::from_foreign`].
-+    /// Type used to immutably borrow a value that is currently foreign-owned.
-     type Borrowed<'a>;
- 
-+    /// Type used to mutably borrow a value that is currently foreign-owned.
-+    type BorrowedMut<'a>;
-+
-     /// Converts a Rust-owned object to a foreign-owned one.
-     ///
-     /// The foreign representation is a pointer to void. There are no guarantees for this pointer.
-     /// For example, it might be invalid, dangling or pointing to uninitialized memory. Using it in
--    /// any way except for [`ForeignOwnable::from_foreign`], [`ForeignOwnable::borrow`],
--    /// [`ForeignOwnable::try_from_foreign`] can result in undefined behavior.
-+    /// any way except for [`from_foreign`], [`try_from_foreign`], [`borrow`], or [`borrow_mut`] can
-+    /// result in undefined behavior.
-+    ///
-+    /// [`from_foreign`]: Self::from_foreign
-+    /// [`try_from_foreign`]: Self::try_from_foreign
-+    /// [`borrow`]: Self::borrow
-+    /// [`borrow_mut`]: Self::borrow_mut
-     fn into_foreign(self) -> *mut core::ffi::c_void;
- 
-     /// Converts a foreign-owned object back to a Rust-owned one.
-     ///
-     /// # Safety
-     ///
--    /// `ptr` must have been returned by a previous call to [`ForeignOwnable::into_foreign`] for
--    /// which a previous matching [`ForeignOwnable::from_foreign`] hasn't been called yet.
--    /// Additionally, all instances (if any) of values returned by [`ForeignOwnable::borrow`] for
--    /// this object must have been dropped.
-+    /// The provided pointer must have been returned by a previous call to [`into_foreign`], and it
-+    /// must not be passed to `from_foreign` more than once.
-+    ///
-+    /// [`into_foreign`]: Self::into_foreign
-     unsafe fn from_foreign(ptr: *mut core::ffi::c_void) -> Self;
- 
-     /// Tries to convert a foreign-owned object back to a Rust-owned one.
-@@ -48,8 +55,9 @@ pub trait ForeignOwnable: Sized {
-     ///
-     /// # Safety
-     ///
--    /// `ptr` must either be null or satisfy the safety requirements for
--    /// [`ForeignOwnable::from_foreign`].
-+    /// `ptr` must either be null or satisfy the safety requirements for [`from_foreign`].
-+    ///
-+    /// [`from_foreign`]: Self::from_foreign
-     unsafe fn try_from_foreign(ptr: *mut core::ffi::c_void) -> Option<Self> {
-         if ptr.is_null() {
-             None
-@@ -60,17 +68,53 @@ unsafe fn try_from_foreign(ptr: *mut core::ffi::c_void) -> Option<Self> {
-         }
-     }
- 
--    /// Borrows a foreign-owned object.
-+    /// Borrows a foreign-owned object immutably.
-+    ///
-+    /// This method provides a way to access a foreign-owned value from Rust immutably. It provides
-+    /// you with exactly the same abilities as an `&Self` when the value is Rust-owned.
-     ///
-     /// # Safety
-     ///
--    /// `ptr` must have been returned by a previous call to [`ForeignOwnable::into_foreign`] for
--    /// which a previous matching [`ForeignOwnable::from_foreign`] hasn't been called yet.
-+    /// The provided pointer must have been returned by a previous call to [`into_foreign`], and if
-+    /// the pointer is ever passed to [`from_foreign`], then that call must happen after the end of
-+    /// the lifetime 'a.
-+    ///
-+    /// [`into_foreign`]: Self::into_foreign
-+    /// [`from_foreign`]: Self::from_foreign
-     unsafe fn borrow<'a>(ptr: *mut core::ffi::c_void) -> Self::Borrowed<'a>;
-+
-+    /// Borrows a foreign-owned object mutably.
-+    ///
-+    /// This method provides a way to access a foreign-owned value from Rust mutably. It provides
-+    /// you with exactly the same abilities as an `&mut Self` when the value is Rust-owned, except
-+    /// that the address of the object must not be changed.
-+    ///
-+    /// Note that for types like [`Arc`], an `&mut Arc<T>` only gives you immutable access to the
-+    /// inner value, so this method also only provides immutable access in that case.
-+    ///
-+    /// In the case of `Box<T>`, this method gives you the ability to modify the inner `T`, but it
-+    /// does not let you change the box itself. That is, you cannot change which allocation the box
-+    /// points at.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The provided pointer must have been returned by a previous call to [`into_foreign`], and if
-+    /// the pointer is ever passed to [`from_foreign`], then that call must happen after the end of
-+    /// the lifetime 'a.
-+    ///
-+    /// The lifetime 'a must not overlap with the lifetime of any other call to [`borrow`] or
-+    /// `borrow_mut` on the same object.
-+    ///
-+    /// [`into_foreign`]: Self::into_foreign
-+    /// [`from_foreign`]: Self::from_foreign
-+    /// [`borrow`]: Self::borrow
-+    /// [`Arc`]: crate::sync::Arc
-+    unsafe fn borrow_mut<'a>(ptr: *mut core::ffi::c_void) -> Self::BorrowedMut<'a>;
- }
- 
- impl ForeignOwnable for () {
-     type Borrowed<'a> = ();
-+    type BorrowedMut<'a> = ();
- 
-     fn into_foreign(self) -> *mut core::ffi::c_void {
-         core::ptr::NonNull::dangling().as_ptr()
-@@ -79,6 +123,7 @@ fn into_foreign(self) -> *mut core::ffi::c_void {
-     unsafe fn from_foreign(_: *mut core::ffi::c_void) -> Self {}
- 
-     unsafe fn borrow<'a>(_: *mut core::ffi::c_void) -> Self::Borrowed<'a> {}
-+    unsafe fn borrow_mut<'a>(_: *mut core::ffi::c_void) -> Self::BorrowedMut<'a> {}
- }
- 
- /// Runs a cleanup function/closure when dropped.
-
--- 
-2.47.0
-
+> 
+> Thank you so much,
+> Rodrigo.
+> 
+> > +		return;
+> > +	}
+> > +
+> > +	ret = auxiliary_device_add(aux_dev);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev, "xe-nvm aux add failed %d\n", ret);
+> > +		auxiliary_device_uninit(aux_dev);
+> > +		return;
+> > +	}
+> > +}
+> > +
+> > +void xe_nvm_fini(struct xe_device *xe)
+> > +{
+> > +	struct intel_dg_nvm_dev *nvm = xe->nvm;
+> > +
+> > +	if (!HAS_GSC_NVM(xe))
+> > +		return;
+> > +
+> > +	/* No access to internal NVM from VFs */
+> > +	if (IS_SRIOV_VF(xe))
+> > +		return;
+> > +
+> > +	/* Nvm pointer should not be NULL here */
+> > +	if (WARN_ON(!nvm))
+> > +		return;
+> > +
+> > +	auxiliary_device_delete(&nvm->aux_dev);
+> > +	auxiliary_device_uninit(&nvm->aux_dev);
+> > +	kfree(nvm);
+> > +	xe->nvm = NULL;
+> > +}
+> > diff --git a/drivers/gpu/drm/xe/xe_nvm.h b/drivers/gpu/drm/xe/xe_nvm.h
+> > new file mode 100644
+> > index 000000000000..068695447913
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/xe/xe_nvm.h
+> > @@ -0,0 +1,15 @@
+> > +/* SPDX-License-Identifier: MIT */
+> > +/*
+> > + * Copyright(c) 2019-2024 Intel Corporation. All rights reserved.
+> > + */
+> > +
+> > +#ifndef __XE_NVM_H__
+> > +#define __XE_NVM_H__
+> > +
+> > +struct xe_device;
+> > +
+> > +void xe_nvm_init(struct xe_device *xe);
+> > +
+> > +void xe_nvm_fini(struct xe_device *xe);
+> > +
+> > +#endif /* __XE_NVM_H__ */
+> > diff --git a/drivers/gpu/drm/xe/xe_pci.c b/drivers/gpu/drm/xe/xe_pci.c
+> > index 64a8336ca437..85c419eea710 100644
+> > --- a/drivers/gpu/drm/xe/xe_pci.c
+> > +++ b/drivers/gpu/drm/xe/xe_pci.c
+> > @@ -60,6 +60,7 @@ struct xe_device_desc {
+> >  	u8 has_display:1;
+> >  	u8 has_heci_gscfi:1;
+> >  	u8 has_heci_cscfi:1;
+> > +	u8 has_gsc_nvm:1;
+> >  	u8 has_llc:1;
+> >  	u8 has_mmio_ext:1;
+> >  	u8 has_sriov:1;
+> > @@ -282,6 +283,7 @@ static const struct xe_device_desc dg1_desc = {
+> >  	PLATFORM(DG1),
+> >  	.has_display = true,
+> >  	.has_heci_gscfi = 1,
+> > +	.has_gsc_nvm = 1,
+> >  	.require_force_probe = true,
+> >  };
+> >  
+> > @@ -293,6 +295,7 @@ static const u16 dg2_g12_ids[] = { XE_DG2_G12_IDS(NOP), 0 };
+> >  	DGFX_FEATURES, \
+> >  	PLATFORM(DG2), \
+> >  	.has_heci_gscfi = 1, \
+> > +	.has_gsc_nvm = 1, \
+> >  	.subplatforms = (const struct xe_subplatform_desc[]) { \
+> >  		{ XE_SUBPLATFORM_DG2_G10, "G10", dg2_g10_ids }, \
+> >  		{ XE_SUBPLATFORM_DG2_G11, "G11", dg2_g11_ids }, \
+> > @@ -324,6 +327,7 @@ static const __maybe_unused struct xe_device_desc pvc_desc = {
+> >  	PLATFORM(PVC),
+> >  	.has_display = false,
+> >  	.has_heci_gscfi = 1,
+> > +	.has_gsc_nvm = 1,
+> >  	.require_force_probe = true,
+> >  };
+> >  
+> > @@ -623,6 +627,7 @@ static int xe_info_init_early(struct xe_device *xe,
+> >  	xe->info.is_dgfx = desc->is_dgfx;
+> >  	xe->info.has_heci_gscfi = desc->has_heci_gscfi;
+> >  	xe->info.has_heci_cscfi = desc->has_heci_cscfi;
+> > +	xe->info.has_gsc_nvm = desc->has_gsc_nvm;
+> >  	xe->info.has_llc = desc->has_llc;
+> >  	xe->info.has_mmio_ext = desc->has_mmio_ext;
+> >  	xe->info.has_sriov = desc->has_sriov;
+> > -- 
+> > 2.43.0
+> > 
 
