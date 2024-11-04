@@ -1,1793 +1,375 @@
-Return-Path: <linux-kernel+bounces-394752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EAF9BB3D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:49:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D209BB303
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:21:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FDCEB24BAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:34:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787F11C20DF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7D01B395E;
-	Mon,  4 Nov 2024 11:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2219B1D414B;
+	Mon,  4 Nov 2024 11:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="u/xT7iS0"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zX0lljsI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yIiOdmro";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zX0lljsI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yIiOdmro"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC70E1CDA1C;
-	Mon,  4 Nov 2024 11:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC811D3590
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719785; cv=none; b=Sd2XhwG5OCJ0UImh7uUP5o3XEr6PdgDvtISGjolySTMhAqQfIkfl56sxIKvdNh1M6QzZVFwsTRTbLDNAJUE5IoSfiMGZYTiIdYlwL7doz+aXJ1P/iMrqBtYQpFeUTVGJGrgv2iF2DkI7m//XzJkP1GnpBl1QVQpJnXnyjeGvw18=
+	t=1730718687; cv=none; b=k88LCCblfd8x2HM6HLuFP9Yt6qdnKV9ROR6FrQwVQy0uyQIyAMT+2FJUPNcatcRIJ+z5EdIhD3RXYa/bivTIiqf5AvDqx8PyN6Lwj5e24FEJQWrJlx1guyCXsSfv2ApQqOGTq58/U6QazdrKLaXe6Fyf2/tIvCk9ojZEKHIq44Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719785; c=relaxed/simple;
-	bh=2D6O+Yvgo0/9Nga5D7okJA8M0emYqrLeGt3KTm0hHTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kD6rouNLt8Doovjq+nOnPBg/eZwDVBM9x+3xCFb9nonZJmI2hVhD9r9YK0MMCxDOLcEx0prXPxMx/cirmqrA3EarBrZygwWv8tvG5Xx15l8UcmDqWICQLM2VhFH8dpkGSO7dMN2aDvyk2OkVF27SQbVQ8hHPWyOsDvOEgbP3E34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=u/xT7iS0; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dvqWptXLgrEhqvEfPmClK8RvjN4XRCzME2fg8cYaIMQ=; b=u/xT7iS09LYutJOsL6wRE9b54j
-	VnF8qEKRJKSE6o0QbNhjPc9u5FUIw0fxcB3CZ4o+HzbGeomxwbr/uWaHJ7/A1Xg3x03BvjKHfVTtf
-	ibb0wR9/UxTnxiWfurfJZWpRr5E0L60SzpvAtwgR7xEI1djNOLbcRUBl6PmStXnWlWuSvCpWhl+D/
-	5P2+aCTs78OuzYycsFmRobXmPdj8ErvXLxutuqPT8n4DiIgNmVo2SLi1r0GizsE1ndXLJLFZggt1z
-	EqPxtnwLNLLL4PIHMlPAJoZnaI7cK30eNtenExFVJ4pBwESnIJ/qPAF1p6EYbO5mu5dgc6j4Tc9Sl
-	HpoAT1tQ==;
-Received: from i5e860cc9.versanet.de ([94.134.12.201] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t7uzz-0008Vi-DQ; Mon, 04 Nov 2024 12:11:55 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: vkoul@kernel.org,
-	kishon@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	quentin.schulz@cherry.de,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	heiko@sntech.de,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH v2 2/2] phy: rockchip: Add Samsung CSI/DSI Combo DCPHY driver
-Date: Mon,  4 Nov 2024 12:11:16 +0100
-Message-ID: <20241104111121.99274-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241104111121.99274-1-heiko@sntech.de>
-References: <20241104111121.99274-1-heiko@sntech.de>
+	s=arc-20240116; t=1730718687; c=relaxed/simple;
+	bh=C9ms3oZFJTgmdk/v5kDkO1/USJFb4WanG/Kk3iDrqpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=u14USv7K36x6EfzXhFinolznistfh3QAj6sJfQw31/qlSGgv4ujYVVyNZ4FwY9yNDEcVi0y/IXZx72/yHe+aXsNzjelzC96NfYHoIcj+hyS4LpoMGfF+Inmf3oclAFd22RaUGNfnOdUd7Qt4N0KZZynaYj2UNlABr72vwOFe33U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zX0lljsI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yIiOdmro; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zX0lljsI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yIiOdmro; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C202621B84;
+	Mon,  4 Nov 2024 11:11:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730718682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+4yhzs5jViImr82BdwEGFsWSG/IPe6FPIrk4KX77kao=;
+	b=zX0lljsIWleNTZEz1RZSuH21WUW9IZI01RY3Tthff7XJpF6UT4k1EO7G1MhJ+RrxgytOF+
+	A8BXUlvT4HjZPVgPSfpqiBoeAROZhj/Ql/gIWurz2QTOE1izLHDB8RzAbX6a/oBPlfe9tb
+	chB4SaA/bu8nrRUvg5kpne0DTroMbvI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730718682;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+4yhzs5jViImr82BdwEGFsWSG/IPe6FPIrk4KX77kao=;
+	b=yIiOdmroRvwwpA5bJd3DrkM3gns/1S12Lsu+ZJChBgfex8Ar5bUAj19HTOg9Z435SEfjdP
+	F0dJ7qzh8pXimtAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730718682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+4yhzs5jViImr82BdwEGFsWSG/IPe6FPIrk4KX77kao=;
+	b=zX0lljsIWleNTZEz1RZSuH21WUW9IZI01RY3Tthff7XJpF6UT4k1EO7G1MhJ+RrxgytOF+
+	A8BXUlvT4HjZPVgPSfpqiBoeAROZhj/Ql/gIWurz2QTOE1izLHDB8RzAbX6a/oBPlfe9tb
+	chB4SaA/bu8nrRUvg5kpne0DTroMbvI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730718682;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+4yhzs5jViImr82BdwEGFsWSG/IPe6FPIrk4KX77kao=;
+	b=yIiOdmroRvwwpA5bJd3DrkM3gns/1S12Lsu+ZJChBgfex8Ar5bUAj19HTOg9Z435SEfjdP
+	F0dJ7qzh8pXimtAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D9E11373E;
+	Mon,  4 Nov 2024 11:11:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fNMNJtqrKGfIPgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 04 Nov 2024 11:11:22 +0000
+Message-ID: <ee48b6e9-3f7a-49aa-ae5b-058b5ada2172@suse.cz>
+Date: Mon, 4 Nov 2024 12:11:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [mm?] WARNING: locking bug in __rmqueue_pcplist
+Content-Language: en-US
+To: syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>,
+ Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, syzkaller-bugs@googlegroups.com,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Marco Elver <elver@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ kasan-dev <kasan-dev@googlegroups.com>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Alexander Potapenko <glider@google.com>,
+ Peter Zijlstra <peterz@infradead.org>, Waiman Long <longman@redhat.com>
+References: <67275485.050a0220.3c8d68.0a37.GAE@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <67275485.050a0220.3c8d68.0a37.GAE@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[39f85d612b7c20d8db48];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[syzkaller.appspotmail.com,oracle.com,linux-foundation.org,google.com,vger.kernel.org,kvack.org,googlegroups.com,linutronix.de,gmail.com,infradead.org,redhat.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Score: -1.80
+X-Spam-Flag: NO
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
+On 11/3/24 11:46, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1648155f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=39f85d612b7c20d8db48
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16806e87980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com
+> 
+> =============================
+> [ BUG: Invalid wait context ]
+> 6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
+> -----------------------------
+> syz.0.49/6178 is trying to lock:
+> ffff88813fffc298 (&zone->lock){-.-.}-{3:3}, at: rmqueue_bulk mm/page_alloc.c:2328 [inline]
+> ffff88813fffc298 (&zone->lock){-.-.}-{3:3}, at: __rmqueue_pcplist+0x4c6/0x2b70 mm/page_alloc.c:3022
+> other info that might help us debug this:
+> context-{2:2}
 
-Add phy driver needed to drive either a MIPI DSI output to a DSI display
-or MIPI CSI input from a camera on rk3588.
+Seems like another fallout of
+560af5dc839e ("lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING")
 
-Right now only the DSI portion is implemented as the whole camera part
-needs more work in general.
+> 4 locks held by syz.0.49/6178:
+>  #0: ffff888031745be0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_lock include/linux/mmap_lock.h:189 [inline]
+>  #0: ffff888031745be0 (&mm->mmap_lock){++++}-{4:4}, at: exit_mmap+0x165/0xcb0 mm/mmap.c:1677
+>  #1: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+>  #1: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+>  #1: ffffffff8e939f20 (rcu_read_lock){....}-{1:3}, at: __pte_offset_map+0x82/0x380 mm/pgtable-generic.c:287
+>  #2: ffff88803007c978 (ptlock_ptr(ptdesc)#2){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
+>  #2: ffff88803007c978 (ptlock_ptr(ptdesc)#2){+.+.}-{3:3}, at: __pte_offset_map_lock+0x1ba/0x300 mm/pgtable-generic.c:402
+>  #3: ffff8880b8744618 (&pcp->lock){+.+.}-{3:3}, at: spin_trylock include/linux/spinlock.h:361 [inline]
+>  #3: ffff8880b8744618 (&pcp->lock){+.+.}-{3:3}, at: rmqueue_pcplist mm/page_alloc.c:3051 [inline]
+>  #3: ffff8880b8744618 (&pcp->lock){+.+.}-{3:3}, at: rmqueue mm/page_alloc.c:3095 [inline]
+>  #3: ffff8880b8744618 (&pcp->lock){+.+.}-{3:3}, at: get_page_from_freelist+0x7e2/0x3870 mm/page_alloc.c:3492
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 6178 Comm: syz.0.49 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
+>  check_wait_context kernel/locking/lockdep.c:4898 [inline]
+>  __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
+>  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>  _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+>  rmqueue_bulk mm/page_alloc.c:2328 [inline]
+>  __rmqueue_pcplist+0x4c6/0x2b70 mm/page_alloc.c:3022
+>  rmqueue_pcplist mm/page_alloc.c:3064 [inline]
+>  rmqueue mm/page_alloc.c:3095 [inline]
+>  get_page_from_freelist+0x895/0x3870 mm/page_alloc.c:3492
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4771
+>  alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+>  stack_depot_save_flags+0x666/0x830 lib/stackdepot.c:627
+>  save_stack+0x109/0x1f0 mm/page_owner.c:157
+>  __set_page_owner+0x92/0x800 mm/page_owner.c:320
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1541
+>  prep_new_page mm/page_alloc.c:1549 [inline]
+>  get_page_from_freelist+0x3725/0x3870 mm/page_alloc.c:3495
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4771
+>  alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+>  stack_depot_save_flags+0x666/0x830 lib/stackdepot.c:627
+>  kasan_save_stack+0x4f/0x60 mm/kasan/common.c:48
+>  __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
+>  task_work_add+0xd9/0x490 kernel/task_work.c:77
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
----
- drivers/phy/rockchip/Kconfig                  |   12 +
- drivers/phy/rockchip/Makefile                 |    1 +
- .../phy/rockchip/phy-rockchip-samsung-dcphy.c | 1654 +++++++++++++++++
- 3 files changed, 1667 insertions(+)
- create mode 100644 drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
+It seems the decision if stack depot is allowed to allocate here depends on
+TWAF_NO_ALLOC added only recently. So does it mean it doesn't work as intended?
 
-diff --git a/drivers/phy/rockchip/Kconfig b/drivers/phy/rockchip/Kconfig
-index 2f7a05f21dc5..2bfb42996503 100644
---- a/drivers/phy/rockchip/Kconfig
-+++ b/drivers/phy/rockchip/Kconfig
-@@ -83,6 +83,18 @@ config PHY_ROCKCHIP_PCIE
- 	help
- 	  Enable this to support the Rockchip PCIe PHY.
- 
-+config PHY_ROCKCHIP_SAMSUNG_DCPHY
-+	tristate "Rockchip Samsung MIPI DCPHY driver"
-+	depends on (ARCH_ROCKCHIP || COMPILE_TEST)
-+	select GENERIC_PHY
-+	select GENERIC_PHY_MIPI_DPHY
-+	help
-+	  Enable this to support the Rockchip MIPI DCPHY with
-+	  Samsung IP block.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called phy-rockchip-samsung-dcphy
-+
- config PHY_ROCKCHIP_SAMSUNG_HDPTX
- 	tristate "Rockchip Samsung HDMI/eDP Combo PHY driver"
- 	depends on (ARCH_ROCKCHIP || COMPILE_TEST) && OF
-diff --git a/drivers/phy/rockchip/Makefile b/drivers/phy/rockchip/Makefile
-index 010a824e32ce..117aaffd037d 100644
---- a/drivers/phy/rockchip/Makefile
-+++ b/drivers/phy/rockchip/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_PHY_ROCKCHIP_INNO_HDMI)	+= phy-rockchip-inno-hdmi.o
- obj-$(CONFIG_PHY_ROCKCHIP_INNO_USB2)	+= phy-rockchip-inno-usb2.o
- obj-$(CONFIG_PHY_ROCKCHIP_NANENG_COMBO_PHY)	+= phy-rockchip-naneng-combphy.o
- obj-$(CONFIG_PHY_ROCKCHIP_PCIE)		+= phy-rockchip-pcie.o
-+obj-$(CONFIG_PHY_ROCKCHIP_SAMSUNG_DCPHY)	+= phy-rockchip-samsung-dcphy.o
- obj-$(CONFIG_PHY_ROCKCHIP_SAMSUNG_HDPTX)	+= phy-rockchip-samsung-hdptx.o
- obj-$(CONFIG_PHY_ROCKCHIP_SNPS_PCIE3)	+= phy-rockchip-snps-pcie3.o
- obj-$(CONFIG_PHY_ROCKCHIP_TYPEC)	+= phy-rockchip-typec.o
-diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c b/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
-new file mode 100644
-index 000000000000..a2f897fa5516
---- /dev/null
-+++ b/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
-@@ -0,0 +1,1654 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) Rockchip Electronics Co.Ltd
-+ * Author:
-+ *      Guochun Huang <hero.huang@rock-chips.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
-+
-+#define UPDATE(x, h, l)	(((x) << (l)) & GENMASK((h), (l)))
-+#define HIWORD_UPDATE(v, h, l)	(((v) << (l)) | (GENMASK((h), (l)) << 16))
-+
-+#define BIAS_CON0		0x0000
-+#define BIAS_CON1		0x0004
-+#define BIAS_CON2		0x0008
-+#define BIAS_CON4		0x0010
-+#define I_MUX_SEL_MASK		GENMASK(6, 5)
-+#define I_MUX_SEL(x)		UPDATE(x, 6, 5)
-+#define I_MUX_SEL_400MV		I_MUX_SEL(0)
-+#define I_MUX_SEL_200MV		I_MUX_SEL(1)
-+#define I_MUX_SEL_530MV		I_MUX_SEL(2)
-+
-+#define PLL_CON0		0x0100
-+#define PLL_EN			BIT(12)
-+#define S_MASK			GENMASK(10, 8)
-+#define S(x)			UPDATE(x, 10, 8)
-+#define P_MASK			GENMASK(5, 0)
-+#define P(x)			UPDATE(x, 5, 0)
-+#define PLL_CON1		0x0104
-+#define PLL_CON2		0x0108
-+#define M_MASK			GENMASK(9, 0)
-+#define M(x)			UPDATE(x, 9, 0)
-+#define PLL_CON3		0x010c
-+#define MRR_MASK		GENMASK(13, 8)
-+#define MRR(x)			UPDATE(x, 13, 8)
-+#define MFR_MASK                GENMASK(7, 0)
-+#define MFR(x)			UPDATE(x, 7, 0)
-+#define PLL_CON4		0x0110
-+#define SSCG_EN			BIT(11)
-+#define PLL_CON5		0x0114
-+#define RESET_N_SEL		BIT(10)
-+#define PLL_ENABLE_SEL		BIT(8)
-+#define PLL_CON6		0x0118
-+#define PLL_CON7		0x011c
-+#define PLL_LOCK_CNT(x)		UPDATE(x, 15, 0)
-+#define PLL_CON8		0x0120
-+#define PLL_STB_CNT(x)		UPDATE(x, 15, 0)
-+#define PLL_STAT0		0x0140
-+#define PLL_LOCK		BIT(0)
-+
-+#define DPHY_MC_GNR_CON0	0x0300
-+#define PHY_READY		BIT(1)
-+#define PHY_ENABLE		BIT(0)
-+#define DPHY_MC_GNR_CON1	0x0304
-+#define T_PHY_READY(x)		UPDATE(x, 15, 0)
-+#define DPHY_MC_ANA_CON0	0x0308
-+#define EDGE_CON(x)		UPDATE(x, 14, 12)
-+#define EDGE_CON_DIR(x)		UPDATE(x, 9, 9)
-+#define EDGE_CON_EN		BIT(8)
-+#define RES_UP(x)		UPDATE(x, 7, 4)
-+#define RES_DN(x)		UPDATE(x, 3, 0)
-+#define DPHY_MC_ANA_CON1	0x030c
-+#define DPHY_MC_ANA_CON2	0x0310
-+#define HS_VREG_AMP_ICON(x)	UPDATE(x, 1, 0)
-+#define DPHY_MC_TIME_CON0	0x0330
-+#define HSTX_CLK_SEL		BIT(12)
-+#define T_LPX(x)		UPDATE(x, 11, 4)
-+#define DPHY_MC_TIME_CON1	0x0334
-+#define T_CLK_ZERO(x)		UPDATE(x, 15, 8)
-+#define T_CLK_PREPARE(x)	UPDATE(x, 7, 0)
-+#define DPHY_MC_TIME_CON2	0x0338
-+#define T_HS_EXIT(x)		UPDATE(x, 15, 8)
-+#define T_CLK_TRAIL(x)		UPDATE(x, 7, 0)
-+#define DPHY_MC_TIME_CON3	0x033c
-+#define T_CLK_POST(x)		UPDATE(x, 7, 0)
-+#define DPHY_MC_TIME_CON4	0x0340
-+#define T_ULPS_EXIT(x)		UPDATE(x, 9, 0)
-+#define DPHY_MC_DESKEW_CON0	0x0350
-+#define SKEW_CAL_RUN_TIME(x)	UPDATE(x, 15, 12)
-+
-+#define SKEW_CAL_INIT_RUN_TIME(x)	UPDATE(x, 11, 8)
-+#define SKEW_CAL_INIT_WAIT_TIME(x)	UPDATE(x, 7, 4)
-+#define SKEW_CAL_EN			BIT(0)
-+
-+#define COMBO_MD0_GNR_CON0	0x0400
-+#define COMBO_MD0_GNR_CON1	0x0404
-+#define COMBO_MD0_ANA_CON0	0x0408
-+#define COMBO_MD0_ANA_CON1      0x040C
-+#define COMBO_MD0_ANA_CON2	0x0410
-+
-+#define COMBO_MD0_TIME_CON0	0x0430
-+#define COMBO_MD0_TIME_CON1	0x0434
-+#define COMBO_MD0_TIME_CON2	0x0438
-+#define COMBO_MD0_TIME_CON3	0x043C
-+#define COMBO_MD0_TIME_CON4	0x0440
-+#define COMBO_MD0_DATA_CON0	0x0444
-+
-+#define COMBO_MD1_GNR_CON0	0x0500
-+#define COMBO_MD1_GNR_CON1	0x0504
-+#define COMBO_MD1_ANA_CON0	0x0508
-+#define COMBO_MD1_ANA_CON1	0x050c
-+#define COMBO_MD1_ANA_CON2	0x0510
-+#define COMBO_MD1_TIME_CON0	0x0530
-+#define COMBO_MD1_TIME_CON1	0x0534
-+#define COMBO_MD1_TIME_CON2	0x0538
-+#define COMBO_MD1_TIME_CON3	0x053C
-+#define COMBO_MD1_TIME_CON4	0x0540
-+#define COMBO_MD1_DATA_CON0	0x0544
-+
-+#define COMBO_MD2_GNR_CON0	0x0600
-+#define COMBO_MD2_GNR_CON1	0x0604
-+#define COMBO_MD2_ANA_CON0	0X0608
-+#define COMBO_MD2_ANA_CON1	0X060C
-+#define COMBO_MD2_ANA_CON2	0X0610
-+#define COMBO_MD2_TIME_CON0	0x0630
-+#define COMBO_MD2_TIME_CON1	0x0634
-+#define COMBO_MD2_TIME_CON2	0x0638
-+#define COMBO_MD2_TIME_CON3	0x063C
-+#define COMBO_MD2_TIME_CON4	0x0640
-+#define COMBO_MD2_DATA_CON0	0x0644
-+
-+#define DPHY_MD3_GNR_CON0	0x0700
-+#define DPHY_MD3_GNR_CON1	0x0704
-+#define DPHY_MD3_ANA_CON0	0X0708
-+#define DPHY_MD3_ANA_CON1	0X070C
-+#define DPHY_MD3_ANA_CON2	0X0710
-+#define DPHY_MD3_TIME_CON0	0x0730
-+#define DPHY_MD3_TIME_CON1	0x0734
-+#define DPHY_MD3_TIME_CON2	0x0738
-+#define DPHY_MD3_TIME_CON3	0x073C
-+#define DPHY_MD3_TIME_CON4	0x0740
-+#define DPHY_MD3_DATA_CON0	0x0744
-+
-+#define T_LP_EXIT_SKEW(x)	UPDATE(x, 3, 2)
-+#define T_LP_ENTRY_SKEW(x)	UPDATE(x, 1, 0)
-+#define T_HS_ZERO(x)		UPDATE(x, 15, 8)
-+#define T_HS_PREPARE(x)		UPDATE(x, 7, 0)
-+#define T_HS_EXIT(x)		UPDATE(x, 15, 8)
-+#define T_HS_TRAIL(x)		UPDATE(x, 7, 0)
-+#define T_TA_GET(x)		UPDATE(x, 7, 4)
-+#define T_TA_GO(x)		UPDATE(x, 3, 0)
-+
-+/* MIPI_CDPHY_GRF registers */
-+#define MIPI_DCPHY_GRF_CON0	0x0000
-+#define S_CPHY_MODE		HIWORD_UPDATE(1, 3, 3)
-+#define M_CPHY_MODE		HIWORD_UPDATE(1, 0, 0)
-+
-+#define RX_CLK_THS_SETTLE		(0xb30)
-+#define RX_LANE0_THS_SETTLE		(0xC30)
-+#define RX_LANE0_ERR_SOT_SYNC		(0xC34)
-+#define RX_LANE1_THS_SETTLE		(0xD30)
-+#define RX_LANE1_ERR_SOT_SYNC		(0xD34)
-+#define RX_LANE2_THS_SETTLE		(0xE30)
-+#define RX_LANE2_ERR_SOT_SYNC		(0xE34)
-+#define RX_LANE3_THS_SETTLE		(0xF30)
-+#define RX_LANE3_ERR_SOT_SYNC		(0xF34)
-+#define RX_CLK_LANE_ENABLE		(0xB00)
-+#define RX_DATA_LANE0_ENABLE		(0xC00)
-+#define RX_DATA_LANE1_ENABLE		(0xD00)
-+#define RX_DATA_LANE2_ENABLE		(0xE00)
-+#define RX_DATA_LANE3_ENABLE		(0xF00)
-+
-+#define RX_S0C_GNR_CON1			(0xB04)
-+#define RX_S0C_ANA_CON1			(0xB0c)
-+#define RX_S0C_ANA_CON2			(0xB10)
-+#define RX_S0C_ANA_CON3			(0xB14)
-+#define RX_COMBO_S0D0_GNR_CON1		(0xC04)
-+#define RX_COMBO_S0D0_ANA_CON1		(0xC0c)
-+#define RX_COMBO_S0D0_ANA_CON2		(0xC10)
-+#define RX_COMBO_S0D0_ANA_CON3		(0xC14)
-+#define RX_COMBO_S0D0_ANA_CON6		(0xC20)
-+#define RX_COMBO_S0D0_ANA_CON7		(0xC24)
-+#define RX_COMBO_S0D0_DESKEW_CON0	(0xC40)
-+#define RX_COMBO_S0D0_DESKEW_CON2	(0xC48)
-+#define RX_COMBO_S0D0_DESKEW_CON4	(0xC50)
-+#define RX_COMBO_S0D0_CRC_CON1		(0xC64)
-+#define RX_COMBO_S0D0_CRC_CON2		(0xC68)
-+#define RX_COMBO_S0D1_GNR_CON1		(0xD04)
-+#define RX_COMBO_S0D1_ANA_CON1		(0xD0c)
-+#define RX_COMBO_S0D1_ANA_CON2		(0xD10)
-+#define RX_COMBO_S0D1_ANA_CON3		(0xD14)
-+#define RX_COMBO_S0D1_ANA_CON6		(0xD20)
-+#define RX_COMBO_S0D1_ANA_CON7		(0xD24)
-+#define RX_COMBO_S0D1_DESKEW_CON0	(0xD40)
-+#define RX_COMBO_S0D1_DESKEW_CON2	(0xD48)
-+#define RX_COMBO_S0D1_DESKEW_CON4	(0xD50)
-+#define RX_COMBO_S0D1_CRC_CON1		(0xD64)
-+#define RX_COMBO_S0D1_CRC_CON2		(0xD68)
-+#define RX_COMBO_S0D2_GNR_CON1		(0xE04)
-+#define RX_COMBO_S0D2_ANA_CON1		(0xE0c)
-+#define RX_COMBO_S0D2_ANA_CON2		(0xE10)
-+#define RX_COMBO_S0D2_ANA_CON3		(0xE14)
-+#define RX_COMBO_S0D2_ANA_CON6		(0xE20)
-+#define RX_COMBO_S0D2_ANA_CON7		(0xE24)
-+#define RX_COMBO_S0D2_DESKEW_CON0	(0xE40)
-+#define RX_COMBO_S0D2_DESKEW_CON2	(0xE48)
-+#define RX_COMBO_S0D2_DESKEW_CON4	(0xE50)
-+#define RX_COMBO_S0D2_CRC_CON1		(0xE64)
-+#define RX_COMBO_S0D2_CRC_CON2		(0xE68)
-+#define RX_S0D3_GNR_CON1		(0xF04)
-+#define RX_S0D3_ANA_CON1		(0xF0c)
-+#define RX_S0D3_ANA_CON2		(0xF10)
-+#define RX_S0D3_ANA_CON3		(0xF14)
-+#define RX_S0D3_DESKEW_CON0		(0xF40)
-+#define RX_S0D3_DESKEW_CON2		(0xF48)
-+#define RX_S0D3_DESKEW_CON4		(0xF50)
-+
-+enum hs_drv_res_ohm {
-+	STRENGTH_30_OHM = 0x8,
-+	STRENGTH_31_2_OHM,
-+	STRENGTH_32_5_OHM,
-+	STRENGTH_34_OHM,
-+	STRENGTH_35_5_OHM,
-+	STRENGTH_37_OHM,
-+	STRENGTH_39_OHM,
-+	STRENGTH_41_OHM,
-+	STRENGTH_43_OHM = 0x0,
-+	STRENGTH_46_OHM,
-+	STRENGTH_49_OHM,
-+	STRENGTH_52_OHM,
-+	STRENGTH_56_OHM,
-+	STRENGTH_60_OHM,
-+	STRENGTH_66_OHM,
-+	STRENGTH_73_OHM,
-+};
-+
-+struct hs_drv_res_cfg {
-+	enum hs_drv_res_ohm clk_hs_drv_up_ohm;
-+	enum hs_drv_res_ohm clk_hs_drv_down_ohm;
-+	enum hs_drv_res_ohm data_hs_drv_up_ohm;
-+	enum hs_drv_res_ohm data_hs_drv_down_ohm;
-+};
-+
-+struct samsung_mipi_dcphy_plat_data {
-+	const struct hs_drv_res_cfg *dphy_hs_drv_res_cfg;
-+	u32 dphy_tx_max_lane_kbps;
-+};
-+
-+struct samsung_mipi_dcphy {
-+	struct device *dev;
-+	struct clk *ref_clk;
-+	struct clk *pclk;
-+	struct regmap *regmap;
-+	struct regmap *grf_regmap;
-+	struct reset_control *m_phy_rst;
-+	struct reset_control *s_phy_rst;
-+	struct reset_control *apb_rst;
-+	struct reset_control *grf_apb_rst;
-+	unsigned int lanes;
-+
-+	const struct samsung_mipi_dcphy_plat_data *pdata;
-+	struct {
-+		unsigned long long rate;
-+		u8 prediv;
-+		u16 fbdiv;
-+		long dsm;
-+		u8 scaler;
-+
-+		bool ssc_en;
-+		u8 mfr;
-+		u8 mrr;
-+	} pll;
-+};
-+
-+struct samsung_mipi_dphy_timing {
-+	unsigned int max_lane_mbps;
-+	u8 clk_prepare;
-+	u8 clk_zero;
-+	u8 clk_post;
-+	u8 clk_trail_eot;
-+	u8 hs_prepare;
-+	u8 hs_zero;
-+	u8 hs_trail_eot;
-+	u8 lpx;
-+	u8 hs_exit;
-+	u8 hs_settle;
-+};
-+
-+static const
-+struct samsung_mipi_dphy_timing samsung_mipi_dphy_timing_table[] = {
-+	{6500, 32, 117, 31, 28, 30, 56, 27, 24, 44, 37},
-+	{6490, 32, 116, 31, 28, 30, 56, 27, 24, 44, 37},
-+	{6480, 32, 116, 31, 28, 30, 56, 27, 24, 44, 37},
-+	{6470, 32, 116, 31, 28, 30, 56, 27, 24, 44, 37},
-+	{6460, 32, 116, 31, 28, 30, 56, 27, 24, 44, 37},
-+	{6450, 32, 115, 31, 28, 30, 56, 27, 24, 44, 37},
-+	{6440, 32, 115, 31, 28, 30, 56, 27, 24, 44, 37},
-+	{6430, 31, 116, 31, 28, 30, 55, 27, 24, 44, 37},
-+	{6420, 31, 116, 31, 28, 30, 55, 27, 24, 44, 37},
-+	{6410, 31, 116, 31, 27, 30, 55, 27, 24, 44, 37},
-+	{6400, 31, 115, 30, 27, 30, 55, 27, 23, 43, 36},
-+	{6390, 31, 115, 30, 27, 30, 55, 27, 23, 43, 36},
-+	{6380, 31, 115, 30, 27, 30, 55, 27, 23, 43, 36},
-+	{6370, 31, 115, 30, 27, 30, 55, 26, 23, 43, 36},
-+	{6360, 31, 114, 30, 27, 30, 54, 26, 23, 43, 36},
-+	{6350, 31, 114, 30, 27, 30, 54, 26, 23, 43, 36},
-+	{6340, 31, 114, 30, 27, 30, 54, 26, 23, 43, 36},
-+	{6330, 31, 114, 30, 27, 30, 54, 26, 23, 43, 36},
-+	{6320, 31, 113, 30, 27, 30, 54, 26, 23, 43, 36},
-+	{6310, 31, 113, 30, 27, 30, 54, 26, 23, 43, 36},
-+	{6300, 31, 113, 30, 27, 30, 54, 26, 23, 43, 36},
-+	{6290, 31, 113, 30, 27, 29, 54, 26, 23, 43, 36},
-+	{6280, 31, 112, 30, 27, 29, 54, 26, 23, 43, 36},
-+	{6270, 31, 112, 30, 27, 29, 54, 26, 23, 43, 36},
-+	{6260, 31, 112, 30, 27, 29, 54, 26, 23, 43, 36},
-+	{6250, 31, 112, 30, 27, 29, 54, 26, 23, 42, 36},
-+	{6240, 30, 113, 30, 27, 29, 54, 26, 23, 42, 36},
-+	{6230, 30, 112, 30, 27, 29, 54, 26, 23, 42, 35},
-+	{6220, 30, 112, 30, 27, 29, 53, 26, 23, 42, 35},
-+	{6210, 30, 112, 30, 27, 29, 53, 26, 23, 42, 35},
-+	{6200, 30, 112, 29, 27, 29, 53, 26, 23, 42, 35},
-+	{6190, 30, 111, 29, 27, 29, 53, 26, 23, 42, 35},
-+	{6180, 30, 111, 29, 27, 29, 53, 26, 23, 42, 35},
-+	{6170, 30, 111, 29, 26, 29, 53, 26, 23, 42, 35},
-+	{6160, 30, 111, 29, 26, 29, 53, 26, 23, 42, 35},
-+	{6150, 30, 110, 29, 26, 29, 53, 26, 23, 42, 35},
-+	{6140, 30, 110, 29, 26, 29, 52, 26, 23, 42, 35},
-+	{6130, 30, 110, 29, 26, 29, 52, 25, 22, 42, 35},
-+	{6120, 30, 110, 29, 26, 29, 52, 25, 22, 42, 35},
-+	{6110, 30, 110, 29, 26, 29, 52, 25, 22, 42, 35},
-+	{6100, 30, 109, 29, 26, 29, 52, 25, 22, 41, 35},
-+	{6090, 30, 109, 29, 26, 29, 52, 25, 22, 41, 35},
-+	{6080, 30, 109, 29, 26, 28, 53, 25, 22, 41, 35},
-+	{6070, 30, 109, 29, 26, 28, 52, 25, 22, 41, 34},
-+	{6060, 30, 108, 29, 26, 28, 52, 25, 22, 41, 34},
-+	{6050, 30, 108, 29, 26, 28, 52, 25, 22, 41, 34},
-+	{6040, 29, 109, 29, 26, 28, 52, 25, 22, 41, 34},
-+	{6030, 29, 109, 29, 26, 28, 52, 25, 22, 41, 34},
-+	{6020, 29, 108, 29, 26, 28, 52, 25, 22, 41, 34},
-+	{6010, 29, 108, 29, 26, 28, 52, 25, 22, 41, 34},
-+	{6000, 29, 108, 28, 26, 28, 51, 25, 22, 41, 34},
-+	{5990, 29, 108, 28, 26, 28, 51, 25, 22, 41, 34},
-+	{5980, 29, 107, 28, 26, 28, 51, 25, 22, 41, 34},
-+	{5970, 29, 107, 28, 26, 28, 51, 25, 22, 41, 34},
-+	{5960, 29, 107, 28, 26, 28, 51, 25, 22, 40, 34},
-+	{5950, 29, 107, 28, 26, 28, 51, 25, 22, 40, 34},
-+	{5940, 29, 107, 28, 25, 28, 51, 25, 22, 40, 34},
-+	{5930, 29, 106, 28, 25, 28, 50, 25, 22, 40, 34},
-+	{5920, 29, 106, 28, 25, 28, 50, 25, 22, 40, 34},
-+	{5910, 29, 106, 28, 25, 28, 50, 25, 22, 40, 34},
-+	{5900, 29, 106, 28, 25, 28, 50, 24, 22, 40, 33},
-+	{5890, 29, 105, 28, 25, 28, 50, 24, 22, 40, 33},
-+	{5880, 29, 105, 28, 25, 28, 50, 24, 22, 40, 33},
-+	{5870, 29, 105, 28, 25, 27, 51, 24, 22, 40, 33},
-+	{5860, 29, 105, 28, 25, 27, 51, 24, 21, 40, 33},
-+	{5850, 29, 104, 28, 25, 27, 50, 24, 21, 40, 33},
-+	{5840, 28, 105, 28, 25, 27, 50, 24, 21, 40, 33},
-+	{5830, 28, 105, 28, 25, 27, 50, 24, 21, 40, 33},
-+	{5820, 28, 105, 28, 25, 27, 50, 24, 21, 40, 33},
-+	{5810, 28, 104, 28, 25, 27, 50, 24, 21, 39, 33},
-+	{5800, 28, 104, 27, 25, 27, 50, 24, 21, 39, 33},
-+	{5790, 28, 104, 27, 25, 27, 50, 24, 21, 39, 33},
-+	{5780, 28, 104, 27, 25, 27, 49, 24, 21, 39, 33},
-+	{5770, 28, 104, 27, 25, 27, 49, 24, 21, 39, 33},
-+	{5760, 28, 103, 27, 25, 27, 49, 24, 21, 39, 33},
-+	{5750, 28, 103, 27, 25, 27, 49, 24, 21, 39, 33},
-+	{5740, 28, 103, 27, 25, 27, 49, 24, 21, 39, 33},
-+	{5730, 28, 103, 27, 25, 27, 49, 24, 21, 39, 32},
-+	{5720, 28, 102, 27, 25, 27, 49, 24, 21, 39, 32},
-+	{5710, 28, 102, 27, 25, 27, 48, 24, 21, 39, 32},
-+	{5700, 28, 102, 27, 24, 27, 48, 24, 21, 39, 32},
-+	{5690, 28, 102, 27, 24, 27, 48, 24, 21, 39, 32},
-+	{5680, 28, 101, 27, 24, 27, 48, 24, 21, 39, 32},
-+	{5670, 28, 101, 27, 24, 27, 48, 23, 21, 38, 32},
-+	{5660, 28, 101, 27, 24, 26, 49, 23, 21, 38, 32},
-+	{5650, 28, 101, 27, 24, 26, 49, 23, 21, 38, 32},
-+	{5640, 27, 101, 27, 24, 26, 48, 23, 21, 38, 32},
-+	{5630, 27, 101, 27, 24, 26, 48, 23, 21, 38, 32},
-+	{5620, 27, 101, 27, 24, 26, 48, 23, 21, 38, 32},
-+	{5610, 27, 101, 27, 24, 26, 48, 23, 21, 38, 32},
-+	{5600, 27, 101, 26, 24, 26, 48, 23, 20, 38, 32},
-+	{5590, 27, 100, 26, 24, 26, 48, 23, 20, 38, 32},
-+	{5580, 27, 100, 26, 24, 26, 48, 23, 20, 38, 32},
-+	{5570, 27, 100, 26, 24, 26, 48, 23, 20, 38, 31},
-+	{5560, 27, 100, 26, 24, 26, 47, 23, 20, 38, 31},
-+	{5550, 27,  99, 26, 24, 26, 47, 23, 20, 38, 31},
-+	{5540, 27,  99, 26, 24, 26, 47, 23, 20, 38, 31},
-+	{5530, 27,  99, 26, 24, 26, 47, 23, 20, 38, 31},
-+	{5520, 27,  99, 26, 24, 26, 47, 23, 20, 37, 31},
-+	{5510, 27,  98, 26, 24, 26, 47, 23, 20, 37, 31},
-+	{5500, 27,  98, 26, 24, 26, 47, 23, 20, 37, 31},
-+	{5490, 27,  98, 26, 24, 26, 46, 23, 20, 37, 31},
-+	{5480, 27,  98, 26, 24, 26, 46, 23, 20, 37, 31},
-+	{5470, 27,  97, 26, 23, 26, 46, 23, 20, 37, 31},
-+	{5460, 27,  97, 26, 23, 26, 46, 23, 20, 37, 31},
-+	{5450, 27,  97, 26, 23, 25, 47, 23, 20, 37, 31},
-+	{5440, 26,  98, 26, 23, 25, 47, 23, 20, 37, 31},
-+	{5430, 26,  98, 26, 23, 25, 47, 22, 20, 37, 31},
-+	{5420, 26,  97, 26, 23, 25, 46, 22, 20, 37, 31},
-+	{5410, 26,  97, 26, 23, 25, 46, 22, 20, 37, 31},
-+	{5400, 26,  97, 25, 23, 25, 46, 22, 20, 37, 30},
-+	{5390, 26,  97, 25, 23, 25, 46, 22, 20, 37, 30},
-+	{5380, 26,  96, 25, 23, 25, 46, 22, 20, 36, 30},
-+	{5370, 26,  96, 25, 23, 25, 46, 22, 20, 36, 30},
-+	{5360, 26,  96, 25, 23, 25, 46, 22, 20, 36, 30},
-+	{5350, 26,  96, 25, 23, 25, 46, 22, 20, 36, 30},
-+	{5340, 26,  95, 25, 23, 25, 45, 22, 20, 36, 30},
-+	{5330, 26,  95, 25, 23, 25, 45, 22, 19, 36, 30},
-+	{5320, 26,  95, 25, 23, 25, 45, 22, 19, 36, 30},
-+	{5310, 26,  95, 25, 23, 25, 45, 22, 19, 36, 30},
-+	{5300, 26,  95, 25, 23, 25, 45, 22, 19, 36, 30},
-+	{5290, 26,  94, 25, 23, 25, 45, 22, 19, 36, 30},
-+	{5280, 26,  94, 25, 23, 25, 45, 22, 19, 36, 30},
-+	{5270, 26,  94, 25, 23, 25, 44, 22, 19, 36, 30},
-+	{5260, 26,  94, 25, 23, 25, 44, 22, 19, 36, 30},
-+	{5250, 25,  94, 25, 23, 24, 45, 22, 19, 36, 30},
-+	{5240, 25,  94, 25, 23, 24, 45, 22, 19, 36, 29},
-+	{5230, 25,  94, 25, 22, 24, 45, 22, 19, 35, 29},
-+	{5220, 25,  94, 25, 22, 24, 45, 22, 19, 35, 29},
-+	{5210, 25,  93, 25, 22, 24, 45, 22, 19, 35, 29},
-+	{5200, 25,  93, 24, 22, 24, 44, 21, 19, 35, 29},
-+	{5190, 25,  93, 24, 22, 24, 44, 21, 19, 35, 29},
-+	{5180, 25,  93, 24, 22, 24, 44, 21, 19, 35, 29},
-+	{5170, 25,  92, 24, 22, 24, 44, 21, 19, 35, 29},
-+	{5160, 25,  92, 24, 22, 24, 44, 21, 19, 35, 29},
-+	{5150, 25,  92, 24, 22, 24, 44, 21, 19, 35, 29},
-+	{5140, 25,  92, 24, 22, 24, 44, 21, 19, 35, 29},
-+	{5130, 25,  92, 24, 22, 24, 43, 21, 19, 35, 29},
-+	{5120, 25,  91, 24, 22, 24, 43, 21, 19, 35, 29},
-+	{5110, 25,  91, 24, 22, 24, 43, 21, 19, 35, 29},
-+	{5100, 25,  91, 24, 22, 24, 43, 21, 19, 35, 29},
-+	{5090, 25,  91, 24, 22, 24, 43, 21, 19, 34, 29},
-+	{5080, 25,  90, 24, 22, 24, 43, 21, 19, 34, 29},
-+	{5070, 25,  90, 24, 22, 24, 43, 21, 19, 34, 28},
-+	{5060, 25,  90, 24, 22, 24, 43, 21, 18, 34, 28},
-+	{5050, 24,  91, 24, 22, 24, 42, 21, 18, 34, 28},
-+	{5040, 24,  90, 24, 22, 23, 43, 21, 18, 34, 28},
-+	{5030, 24,  90, 24, 22, 23, 43, 21, 18, 34, 28},
-+	{5020, 24,  90, 24, 22, 23, 43, 21, 18, 34, 28},
-+	{5010, 24,  90, 24, 22, 23, 43, 21, 18, 34, 28},
-+	{5000, 24,  89, 23, 21, 23, 43, 21, 18, 34, 28},
-+	{4990, 24,  89, 23, 21, 23, 43, 21, 18, 34, 28},
-+	{4980, 24,  89, 23, 21, 23, 42, 21, 18, 34, 28},
-+	{4970, 24,  89, 23, 21, 23, 42, 21, 18, 34, 28},
-+	{4960, 24,  89, 23, 21, 23, 42, 20, 18, 34, 28},
-+	{4950, 24,  88, 23, 21, 23, 42, 20, 18, 34, 28},
-+	{4940, 24,  88, 23, 21, 23, 42, 20, 18, 33, 28},
-+	{4930, 24,  88, 23, 21, 23, 42, 20, 18, 33, 28},
-+	{4920, 24,  88, 23, 21, 23, 42, 20, 18, 33, 28},
-+	{4910, 24,  87, 23, 21, 23, 41, 20, 18, 33, 28},
-+	{4900, 24,  87, 23, 21, 23, 41, 20, 18, 33, 27},
-+	{4890, 24,  87, 23, 21, 23, 41, 20, 18, 33, 27},
-+	{4880, 24,  87, 23, 21, 23, 41, 20, 18, 33, 27},
-+	{4870, 24,  86, 23, 21, 23, 41, 20, 18, 33, 27},
-+	{4860, 24,  86, 23, 21, 23, 41, 20, 18, 33, 27},
-+	{4850, 23,  87, 23, 21, 23, 41, 20, 18, 33, 27},
-+	{4840, 23,  87, 23, 21, 23, 40, 20, 18, 33, 27},
-+	{4830, 23,  86, 23, 21, 22, 41, 20, 18, 33, 27},
-+	{4820, 23,  86, 23, 21, 22, 41, 20, 18, 33, 27},
-+	{4810, 23,  86, 23, 21, 22, 41, 20, 18, 33, 27},
-+	{4800, 23,  86, 22, 21, 22, 41, 20, 17, 32, 27},
-+	{4790, 23,  86, 22, 21, 22, 41, 20, 17, 32, 27},
-+	{4780, 23,  85, 22, 21, 22, 41, 20, 17, 32, 27},
-+	{4770, 23,  85, 22, 21, 22, 41, 20, 17, 32, 27},
-+	{4760, 23,  85, 22, 20, 22, 40, 20, 17, 32, 27},
-+	{4750, 23,  85, 22, 20, 22, 40, 20, 17, 32, 27},
-+	{4740, 23,  84, 22, 20, 22, 40, 20, 17, 32, 26},
-+	{4730, 23,  84, 22, 20, 22, 40, 19, 17, 32, 26},
-+	{4720, 23,  84, 22, 20, 22, 40, 19, 17, 32, 26},
-+	{4710, 23,  84, 22, 20, 22, 40, 19, 17, 32, 26},
-+	{4700, 23,  83, 22, 20, 22, 40, 19, 17, 32, 26},
-+	{4690, 23,  83, 22, 20, 22, 39, 19, 17, 32, 26},
-+	{4680, 23,  83, 22, 20, 22, 39, 19, 17, 32, 26},
-+	{4670, 23,  83, 22, 20, 22, 39, 19, 17, 32, 26},
-+	{4660, 23,  82, 22, 20, 22, 39, 19, 17, 32, 26},
-+	{4650, 22,  83, 22, 20, 22, 39, 19, 17, 31, 26},
-+	{4640, 22,  83, 22, 20, 22, 39, 19, 17, 31, 26},
-+	{4630, 22,  83, 22, 20, 22, 39, 19, 17, 31, 26},
-+	{4620, 22,  83, 22, 20, 21, 39, 19, 17, 31, 26},
-+	{4610, 22,  82, 22, 20, 21, 39, 19, 17, 31, 26},
-+	{4600, 22,  82, 21, 20, 21, 39, 19, 17, 31, 26},
-+	{4590, 22,  82, 21, 20, 21, 39, 19, 17, 31, 26},
-+	{4580, 22,  82, 21, 20, 21, 39, 19, 17, 31, 26},
-+	{4570, 22,  81, 21, 20, 21, 39, 19, 17, 31, 25},
-+	{4560, 22,  81, 21, 20, 21, 39, 19, 17, 31, 25},
-+	{4550, 22,  81, 21, 20, 21, 38, 19, 17, 31, 25},
-+	{4540, 22,  81, 21, 20, 21, 38, 19, 17, 31, 25},
-+	{4530, 22,  80, 21, 19, 21, 38, 19, 16, 31, 25},
-+	{4520, 22,  80, 21, 19, 21, 38, 19, 16, 31, 25},
-+	{4510, 22,  80, 21, 19, 21, 38, 19, 16, 31, 25},
-+	{4500, 22,  80, 21, 19, 21, 38, 19, 16, 30, 25},
-+	{4490, 22,  80, 21, 19, 21, 38, 18, 16, 30, 25},
-+	{4480, 22,  79, 21, 19, 21, 38, 18, 16, 30, 25},
-+	{4470, 22,  79, 21, 19, 21, 37, 18, 16, 30, 25},
-+	{4460, 22,  79, 21, 19, 21, 37, 18, 16, 30, 25},
-+	{4450, 21,  80, 21, 19, 21, 37, 18, 16, 30, 25},
-+	{4440, 21,  79, 21, 19, 21, 37, 18, 16, 30, 25},
-+	{4430, 21,  79, 21, 19, 21, 37, 18, 16, 30, 25},
-+	{4420, 21,  79, 21, 19, 21, 37, 18, 16, 30, 25},
-+	{4410, 21,  79, 21, 19, 20, 38, 18, 16, 30, 25},
-+	{4400, 21,  78, 20, 19, 20, 37, 18, 16, 30, 24},
-+	{4390, 21,  78, 20, 19, 20, 37, 18, 16, 30, 24},
-+	{4380, 21,  78, 20, 19, 20, 37, 18, 16, 30, 24},
-+	{4370, 21,  78, 20, 19, 20, 37, 18, 16, 30, 24},
-+	{4360, 21,  77, 20, 19, 20, 37, 18, 16, 29, 24},
-+	{4350, 21,  77, 20, 19, 20, 37, 18, 16, 29, 24},
-+	{4340, 21,  77, 20, 19, 20, 37, 18, 16, 29, 24},
-+	{4330, 21,  77, 20, 19, 20, 36, 18, 16, 29, 24},
-+	{4320, 21,  77, 20, 19, 20, 36, 18, 16, 29, 24},
-+	{4310, 21,  76, 20, 19, 20, 36, 18, 16, 29, 24},
-+	{4300, 21,  76, 20, 18, 20, 36, 18, 16, 29, 24},
-+	{4290, 21,  76, 20, 18, 20, 36, 18, 16, 29, 24},
-+	{4280, 21,  76, 20, 18, 20, 36, 18, 16, 29, 24},
-+	{4270, 21,  75, 20, 18, 20, 36, 18, 16, 29, 24},
-+	{4260, 21,  75, 20, 18, 20, 35, 17, 15, 29, 24},
-+	{4250, 20,  76, 20, 18, 20, 35, 17, 15, 29, 24},
-+	{4240, 20,  76, 20, 18, 20, 35, 17, 15, 29, 23},
-+	{4230, 20,  75, 20, 18, 20, 35, 17, 15, 29, 23},
-+	{4220, 20,  75, 20, 18, 20, 35, 17, 15, 29, 23},
-+	{4210, 20,  75, 20, 18, 20, 35, 17, 15, 28, 23},
-+	{4200, 20,  75, 19, 18, 19, 36, 17, 15, 28, 23},
-+	{4190, 20,  74, 19, 18, 19, 36, 17, 15, 28, 23},
-+	{4180, 20,  74, 19, 18, 19, 35, 17, 15, 28, 23},
-+	{4170, 20,  74, 19, 18, 19, 35, 17, 15, 28, 23},
-+	{4160, 20,  74, 19, 18, 19, 35, 17, 15, 28, 23},
-+	{4150, 20,  74, 19, 18, 19, 35, 17, 15, 28, 23},
-+	{4140, 20,  73, 19, 18, 19, 35, 17, 15, 28, 23},
-+	{4130, 20,  73, 19, 18, 19, 35, 17, 15, 28, 23},
-+	{4120, 20,  73, 19, 18, 19, 35, 17, 15, 28, 23},
-+	{4110, 20,  73, 19, 18, 19, 34, 17, 15, 28, 23},
-+	{4100, 20,  72, 19, 18, 19, 34, 17, 15, 28, 23},
-+	{4090, 20,  72, 19, 18, 19, 34, 17, 15, 28, 23},
-+	{4080, 20,  72, 19, 18, 19, 34, 17, 15, 28, 23},
-+	{4070, 20,  72, 19, 18, 19, 34, 17, 15, 27, 22},
-+	{4060, 19,  72, 19, 17, 19, 34, 17, 15, 27, 22},
-+	{4050, 19,  72, 19, 17, 19, 34, 17, 15, 27, 22},
-+	{4040, 19,  72, 19, 17, 19, 33, 17, 15, 27, 22},
-+	{4030, 19,  72, 19, 17, 19, 33, 17, 15, 27, 22},
-+	{4020, 19,  71, 19, 17, 19, 33, 16, 15, 27, 22},
-+	{4010, 19,  71, 19, 17, 19, 33, 16, 15, 27, 22},
-+	{4000, 19,  71, 18, 17, 19, 33, 16, 14, 27, 22},
-+	{3990, 19,  71, 18, 17, 18, 34, 16, 14, 27, 22},
-+	{3980, 19,  71, 18, 17, 18, 34, 16, 14, 27, 22},
-+	{3970, 19,  70, 18, 17, 18, 33, 16, 14, 27, 22},
-+	{3960, 19,  70, 18, 17, 18, 33, 16, 14, 27, 22},
-+	{3950, 19,  70, 18, 17, 18, 33, 16, 14, 27, 22},
-+	{3940, 19,  70, 18, 17, 18, 33, 16, 14, 27, 22},
-+	{3930, 19,  69, 18, 17, 18, 33, 16, 14, 27, 22},
-+	{3920, 19,  69, 18, 17, 18, 33, 16, 14, 26, 22},
-+	{3910, 19,  69, 18, 17, 18, 33, 16, 14, 26, 22},
-+	{3900, 19,  69, 18, 17, 18, 33, 16, 14, 26, 21},
-+	{3890, 19,  68, 18, 17, 18, 32, 16, 14, 26, 21},
-+	{3880, 19,  68, 18, 17, 18, 32, 16, 14, 26, 21},
-+	{3870, 19,  68, 18, 17, 18, 32, 16, 14, 26, 21},
-+	{3860, 18,  69, 18, 17, 18, 32, 16, 14, 26, 21},
-+	{3850, 18,  68, 18, 17, 18, 32, 16, 14, 26, 21},
-+	{3840, 18,  68, 18, 17, 18, 32, 16, 14, 26, 21},
-+	{3830, 18,  68, 18, 16, 18, 32, 16, 14, 26, 21},
-+	{3820, 18,  68, 18, 16, 18, 31, 16, 14, 26, 21},
-+	{3810, 18,  68, 18, 16, 18, 31, 16, 14, 26, 21},
-+	{3800, 18,  67, 17, 16, 18, 31, 16, 14, 26, 21},
-+	{3790, 18,  67, 17, 16, 17, 32, 15, 14, 26, 21},
-+	{3780, 18,  67, 17, 16, 17, 32, 15, 14, 25, 21},
-+	{3770, 18,  67, 17, 16, 17, 32, 15, 14, 25, 21},
-+	{3760, 18,  66, 17, 16, 17, 32, 15, 14, 25, 21},
-+	{3750, 18,  66, 17, 16, 17, 31, 15, 14, 25, 21},
-+	{3740, 18,  66, 17, 16, 17, 31, 15, 14, 25, 20},
-+	{3730, 18,  66, 17, 16, 17, 31, 15, 13, 25, 20},
-+	{3720, 18,  65, 17, 16, 17, 31, 15, 13, 25, 20},
-+	{3710, 18,  65, 17, 16, 17, 31, 15, 13, 25, 20},
-+	{3700, 18,  65, 17, 16, 17, 31, 15, 13, 25, 20},
-+	{3690, 18,  65, 17, 16, 17, 31, 15, 13, 25, 20},
-+	{3680, 18,  64, 17, 16, 17, 31, 15, 13, 25, 20},
-+	{3670, 18,  64, 17, 16, 17, 30, 15, 13, 25, 20},
-+	{3660, 17,  65, 17, 16, 17, 30, 15, 13, 25, 20},
-+	{3650, 17,  65, 17, 16, 17, 30, 15, 13, 25, 20},
-+	{3640, 17,  65, 17, 16, 17, 30, 15, 13, 25, 20},
-+	{3630, 17,  64, 17, 16, 17, 30, 15, 13, 24, 20},
-+	{3620, 17,  64, 17, 16, 17, 30, 15, 13, 24, 20},
-+	{3610, 17,  64, 17, 16, 17, 30, 15, 13, 24, 20},
-+	{3600, 17,  64, 16, 16, 17, 29, 15, 13, 24, 20},
-+	{3590, 17,  63, 16, 15, 17, 29, 15, 13, 24, 20},
-+	{3580, 17,  63, 16, 15, 16, 30, 15, 13, 24, 20},
-+	{3570, 17,  63, 16, 15, 16, 30, 15, 13, 24, 19},
-+	{3560, 17,  63, 16, 15, 16, 30, 14, 13, 24, 19},
-+	{3550, 17,  62, 16, 15, 16, 30, 14, 13, 24, 19},
-+	{3540, 17,  62, 16, 15, 16, 30, 14, 13, 24, 19},
-+	{3530, 17,  62, 16, 15, 16, 29, 14, 13, 24, 19},
-+	{3520, 17,  62, 16, 15, 16, 29, 14, 13, 24, 19},
-+	{3510, 17,  62, 16, 15, 16, 29, 14, 13, 24, 19},
-+	{3500, 17,  61, 16, 15, 16, 29, 14, 13, 24, 19},
-+	{3490, 17,  61, 16, 15, 16, 29, 14, 13, 23, 19},
-+	{3480, 17,  61, 16, 15, 16, 29, 14, 13, 23, 19},
-+	{3470, 17,  61, 16, 15, 16, 29, 14, 13, 23, 19},
-+	{3460, 16,  61, 16, 15, 16, 28, 14, 12, 23, 19},
-+	{3450, 16,  61, 16, 15, 16, 28, 14, 12, 23, 19},
-+	{3440, 16,  61, 16, 15, 16, 28, 14, 12, 23, 19},
-+	{3430, 16,  61, 16, 15, 16, 28, 14, 12, 23, 19},
-+	{3420, 16,  60, 16, 15, 16, 28, 14, 12, 23, 19},
-+	{3410, 16,  60, 16, 15, 16, 28, 14, 12, 23, 18},
-+	{3400, 16,  60, 15, 15, 16, 28, 14, 12, 23, 18},
-+	{3390, 16,  60, 15, 15, 16, 28, 14, 12, 23, 18},
-+	{3380, 16,  59, 15, 15, 16, 27, 14, 12, 23, 18},
-+	{3370, 16,  59, 15, 15, 15, 28, 14, 12, 23, 18},
-+	{3360, 16,  59, 15, 14, 15, 28, 14, 12, 23, 18},
-+	{3350, 16,  59, 15, 14, 15, 28, 14, 12, 23, 18},
-+	{3340, 16,  59, 15, 14, 15, 28, 14, 12, 22, 18},
-+	{3330, 16,  58, 15, 14, 15, 28, 14, 12, 22, 18},
-+	{3320, 16,  58, 15, 14, 15, 28, 13, 12, 22, 18},
-+	{3310, 16,  58, 15, 14, 15, 27, 13, 12, 22, 18},
-+	{3300, 16,  58, 15, 14, 15, 27, 13, 12, 22, 18},
-+	{3290, 16,  57, 15, 14, 15, 27, 13, 12, 22, 18},
-+	{3280, 16,  57, 15, 14, 15, 27, 13, 12, 22, 18},
-+	{3270, 16,  57, 15, 14, 15, 27, 13, 12, 22, 18},
-+	{3260, 15,  58, 15, 14, 15, 27, 13, 12, 22, 18},
-+	{3250, 15,  57, 15, 14, 15, 27, 13, 12, 22, 18},
-+	{3240, 15,  57, 15, 14, 15, 26, 13, 12, 22, 17},
-+	{3230, 15,  57, 15, 14, 15, 26, 13, 12, 22, 17},
-+	{3220, 15,  57, 15, 14, 15, 26, 13, 12, 22, 17},
-+	{3210, 15,  56, 15, 14, 15, 26, 13, 12, 22, 17},
-+	{3200, 15,  56, 14, 14, 15, 26, 13, 11, 21, 17},
-+	{3190, 15,  56, 14, 14, 15, 26, 13, 11, 21, 17},
-+	{3180, 15,  56, 14, 14, 15, 26, 13, 11, 21, 17},
-+	{3170, 15,  56, 14, 14, 15, 25, 13, 11, 21, 17},
-+	{3160, 15,  55, 14, 14, 14, 26, 13, 11, 21, 17},
-+	{3150, 15,  55, 14, 14, 14, 26, 13, 11, 21, 17},
-+	{3140, 15,  55, 14, 14, 14, 26, 13, 11, 21, 17},
-+	{3130, 15,  55, 14, 14, 14, 26, 13, 11, 21, 17},
-+	{3120, 15,  54, 14, 13, 14, 26, 13, 11, 21, 17},
-+	{3110, 15,  54, 14, 13, 14, 26, 13, 11, 21, 17},
-+	{3100, 15,  54, 14, 13, 14, 26, 13, 11, 21, 17},
-+	{3090, 15,  54, 14, 13, 14, 25, 12, 11, 21, 17},
-+	{3080, 15,  53, 14, 13, 14, 25, 12, 11, 21, 17},
-+	{3070, 14,  54, 14, 13, 14, 25, 12, 11, 21, 16},
-+	{3060, 14,  54, 14, 13, 14, 25, 12, 11, 21, 16},
-+	{3050, 14,  54, 14, 13, 14, 25, 12, 11, 20, 16},
-+	{3040, 14,  53, 14, 13, 14, 25, 12, 11, 20, 16},
-+	{3030, 14,  53, 14, 13, 14, 25, 12, 11, 20, 16},
-+	{3020, 14,  53, 14, 13, 14, 24, 12, 11, 20, 16},
-+	{3010, 14,  53, 14, 13, 14, 24, 12, 11, 20, 16},
-+	{3000, 14,  53, 13, 13, 14, 24, 12, 11, 20, 16},
-+	{2990, 14,  52, 13, 13, 14, 24, 12, 11, 20, 16},
-+	{2980, 14,  52, 13, 13, 14, 24, 12, 11, 20, 16},
-+	{2970, 14,  52, 13, 13, 14, 24, 12, 11, 20, 16},
-+	{2960, 14,  52, 13, 13, 14, 24, 12, 11, 20, 16},
-+	{2950, 14,  51, 13, 13, 13, 24, 12, 11, 20, 16},
-+	{2940, 14,  51, 13, 13, 13, 24, 12, 11, 20, 16},
-+	{2930, 14,  51, 13, 13, 13, 24, 12, 10, 20, 16},
-+	{2920, 14,  51, 13, 13, 13, 24, 12, 10, 20, 16},
-+	{2910, 14,  50, 13, 13, 13, 24, 12, 10, 20, 15},
-+	{2900, 14,  50, 13, 13, 13, 24, 12, 10, 19, 15},
-+	{2890, 14,  50, 13, 12, 13, 24, 12, 10, 19, 15},
-+	{2880, 14,  50, 13, 12, 13, 23, 12, 10, 19, 15},
-+	{2870, 13,  50, 13, 12, 13, 23, 12, 10, 19, 15},
-+	{2860, 13,  50, 13, 12, 13, 23, 12, 10, 19, 15},
-+	{2850, 13,  50, 13, 12, 13, 23, 11, 10, 19, 15},
-+	{2840, 13,  50, 13, 12, 13, 23, 11, 10, 19, 15},
-+	{2830, 13,  50, 13, 12, 13, 23, 11, 10, 19, 15},
-+	{2820, 13,  49, 13, 12, 13, 23, 11, 10, 19, 15},
-+	{2810, 13,  49, 13, 12, 13, 23, 11, 10, 19, 15},
-+	{2800, 13,  49, 12, 12, 13, 22, 11, 10, 19, 15},
-+	{2790, 13,  49, 12, 12, 13, 22, 11, 10, 19, 15},
-+	{2780, 13,  48, 12, 12, 13, 22, 11, 10, 19, 15},
-+	{2770, 13,  48, 12, 12, 13, 22, 11, 10, 19, 15},
-+	{2760, 13,  48, 12, 12, 13, 22, 11, 10, 18, 15},
-+	{2750, 13,  48, 12, 12, 13, 22, 11, 10, 18, 15},
-+	{2740, 13,  47, 12, 12, 12, 23, 11, 10, 18, 14},
-+	{2730, 13,  47, 12, 12, 12, 22, 11, 10, 18, 14},
-+	{2720, 13,  47, 12, 12, 12, 22, 11, 10, 18, 14},
-+	{2710, 13,  47, 12, 12, 12, 22, 11, 10, 18, 14},
-+	{2700, 13,  47, 12, 12, 12, 22, 11, 10, 18, 14},
-+	{2690, 13,  46, 12, 12, 12, 22, 11, 10, 18, 14},
-+	{2680, 13,  46, 12, 12, 12, 22, 11, 10, 18, 14},
-+	{2670, 12,  47, 12, 12, 12, 22, 11, 10, 18, 14},
-+	{2660, 12,  47, 12, 12, 12, 21, 11,  9, 18, 14},
-+	{2650, 12,  46, 12, 11, 12, 21, 11,  9, 18, 14},
-+	{2640, 12,  46, 12, 11, 12, 21, 11,  9, 18, 14},
-+	{2630, 12,  46, 12, 11, 12, 21, 11,  9, 18, 14},
-+	{2620, 12,  46, 12, 11, 12, 21, 10,  9, 18, 14},
-+	{2610, 12,  45, 12, 11, 12, 21, 10,  9, 17, 14},
-+	{2600, 12,  45, 11, 11, 12, 21, 10,  9, 17, 14},
-+	{2590, 12,  45, 11, 11, 12, 20, 10,  9, 17, 14},
-+	{2580, 12,  45, 11, 11, 12, 20, 10,  9, 17, 14},
-+	{2570, 12,  44, 11, 11, 12, 20, 10,  9, 17, 13},
-+	{2560, 12,  44, 11, 11, 12, 20, 10,  9, 17, 13},
-+	{2550, 12,  44, 11, 11, 12, 20, 10,  9, 17, 13},
-+	{2540, 12,  44, 11, 11, 11, 21, 10,  9, 17, 13},
-+	{2530, 12,  44, 11, 11, 11, 21, 10,  9, 17, 13},
-+	{2520, 12,  43, 11, 11, 11, 21, 10,  9, 17, 13},
-+	{2510, 12,  43, 11, 11, 11, 20, 10,  9, 17, 13},
-+	{2500, 12,  43, 11, 11, 11, 20, 10,  9, 17, 13},
-+	{2490, 12,  43, 11, 11, 11, 20, 10,  9, 17, 13},
-+	{2480, 12,  42, 11, 11, 11, 20, 10,  9, 17, 13},
-+	{2470, 11,  43, 11, 11, 11, 20, 10,  9, 16, 13},
-+	{2460, 11,  43, 11, 11, 11, 20, 10,  9, 16, 13},
-+	{2450, 11,  43, 11, 11, 11, 20, 10,  9, 16, 13},
-+	{2440, 11,  42, 11, 11, 11, 19, 10,  9, 16, 13},
-+	{2430, 11,  42, 11, 11, 11, 19, 10,  9, 16, 13},
-+	{2420, 11,  42, 11, 10, 11, 19, 10,  9, 16, 13},
-+	{2410, 11,  42, 11, 10, 11, 19, 10,  9, 16, 12},
-+	{2400, 11,  41, 10, 10, 11, 19, 10,  8, 16, 12},
-+	{2390, 11,  41, 10, 10, 11, 19, 10,  8, 16, 12},
-+	{2380, 11,  41, 10, 10, 11, 19,  9,  8, 16, 12},
-+	{2370, 11,  41, 10, 10, 11, 18,  9,  8, 16, 12},
-+	{2360, 11,  41, 10, 10, 11, 18,  9,  8, 16, 12},
-+	{2350, 11,  40, 10, 10, 11, 18,  9,  8, 16, 12},
-+	{2340, 11,  40, 10, 10, 11, 18,  9,  8, 16, 12},
-+	{2330, 11,  40, 10, 10, 10, 19,  9,  8, 16, 12},
-+	{2320, 11,  40, 10, 10, 10, 19,  9,  8, 15, 12},
-+	{2310, 11,  39, 10, 10, 10, 19,  9,  8, 15, 12},
-+	{2300, 11,  39, 10, 10, 10, 18,  9,  8, 15, 12},
-+	{2290, 11,  39, 10, 10, 10, 18,  9,  8, 15, 12},
-+	{2280, 11,  39, 10, 10, 10, 18,  9,  8, 15, 12},
-+	{2270, 10,  39, 10, 10, 10, 18,  9,  8, 15, 12},
-+	{2260, 10,  39, 10, 10, 10, 18,  9,  8, 15, 12},
-+	{2250, 10,  39, 10, 10, 10, 18,  9,  8, 15, 12},
-+	{2240, 10,  39, 10, 10, 10, 18,  9,  8, 15, 11},
-+	{2230, 10,  38, 10, 10, 10, 18,  9,  8, 15, 11},
-+	{2220, 10,  38, 10, 10, 10, 17,  9,  8, 15, 11},
-+	{2210, 10,  38, 10, 10, 10, 17,  9,  8, 15, 11},
-+	{2200, 10,  38,  9, 10, 10, 17,  9,  8, 15, 11},
-+	{2190, 10,  38,  9,  9, 10, 17,  9,  8, 15, 11},
-+	{2180, 10,  37,  9,  9, 10, 17,  9,  8, 14, 11},
-+	{2170, 10,  37,  9,  9, 10, 17,  9,  8, 14, 11},
-+	{2160, 10,  37,  9,  9, 10, 17,  9,  8, 14, 11},
-+	{2150, 10,  37,  9,  9, 10, 16,  8,  8, 14, 11},
-+	{2140, 10,  36,  9,  9, 10, 16,  8,  8, 14, 11},
-+	{2130, 10,  36,  9,  9, 10, 16,  8,  7, 14, 11},
-+	{2120, 10,  36,  9,  9,  9, 17,  8,  7, 14, 11},
-+	{2110, 10,  36,  9,  9,  9, 17,  8,  7, 14, 11},
-+	{2100, 10,  35,  9,  9,  9, 17,  8,  7, 14, 11},
-+	{2090, 10,  35,  9,  9,  9, 17,  8,  7, 14, 11},
-+	{2080,  9,  36,  9,  9,  9, 16,  8,  7, 14, 11},
-+	{2070,  9,  36,  9,  9,  9, 16,  8,  7, 14, 10},
-+	{2060,  9,  35,  9,  9,  9, 16,  8,  7, 14, 10},
-+	{2050,  9,  35,  9,  9,  9, 16,  8,  7, 14, 10},
-+	{2040,  9,  35,  9,  9,  9, 16,  8,  7, 14, 10},
-+	{2030,  9,  35,  9,  9,  9, 16,  8,  7, 13, 10},
-+	{2020,  9,  35,  9,  9,  9, 16,  8,  7, 13, 10},
-+	{2010,  9,  34,  9,  9,  9, 15,  8,  7, 13, 10},
-+	{2000,  9,  34,  8,  9,  9, 15,  8,  7, 13, 10},
-+	{1990,  9,  34,  8,  9,  9, 15,  8,  7, 13, 10},
-+	{1980,  9,  34,  8,  9,  9, 15,  8,  7, 13, 10},
-+	{1970,  9,  33,  8,  9,  9, 15,  8,  7, 13, 10},
-+	{1960,  9,  33,  8,  9,  9, 15,  8,  7, 13, 10},
-+	{1950,  9,  33,  8,  8,  9, 15,  8,  7, 13, 10},
-+	{1940,  9,  33,  8,  8,  9, 15,  8,  7, 13, 10},
-+	{1930,  9,  32,  8,  8,  9, 14,  8,  7, 13, 10},
-+	{1920,  9,  32,  8,  8,  9, 14,  8,  7, 13, 10},
-+	{1910,  9,  32,  8,  8,  8, 15,  7,  7, 13,  9},
-+	{1900,  9,  32,  8,  8,  8, 15,  7,  7, 13,  9},
-+	{1890,  9,  31,  8,  8,  8, 15,  7,  7, 12,  9},
-+	{1880,  8,  32,  8,  8,  8, 15,  7,  7, 12,  9},
-+	{1870,  8,  32,  8,  8,  8, 15,  7,  7, 12,  9},
-+	{1860,  8,  32,  8,  8,  8, 14,  7,  6, 12,  9},
-+	{1850,  8,  32,  8,  8,  8, 14,  7,  6, 12,  9},
-+	{1840,  8,  31,  8,  8,  8, 14,  7,  6, 12,  9},
-+	{1830,  8,  31,  8,  8,  8, 14,  7,  6, 12,  9},
-+	{1820,  8,  31,  8,  8,  8, 14,  7,  6, 12,  9},
-+	{1810,  8,  31,  8,  8,  8, 14,  7,  6, 12,  9},
-+	{1800,  8,  30,  7,  8,  8, 14,  7,  6, 12,  9},
-+	{1790,  8,  30,  7,  8,  8, 13,  7,  6, 12,  9},
-+	{1780,  8,  30,  7,  8,  8, 13,  7,  6, 12,  9},
-+	{1770,  8,  30,  7,  8,  8, 13,  7,  6, 12,  9},
-+	{1760,  8,  29,  7,  8,  8, 13,  7,  6, 12,  9},
-+	{1750,  8,  29,  7,  8,  8, 13,  7,  6, 12,  9},
-+	{1740,  8,  29,  7,  8,  8, 13,  7,  6, 11,  8},
-+	{1730,  8,  29,  7,  8,  8, 13,  7,  6, 11,  8},
-+	{1720,  8,  29,  7,  7,  8, 13,  7,  6, 11,  8},
-+	{1710,  8,  28,  7,  7,  8, 12,  7,  6, 11,  8},
-+	{1700,  8,  28,  7,  7,  7, 13,  7,  6, 11,  8},
-+	{1690,  8,  28,  7,  7,  7, 13,  7,  6, 11,  8},
-+	{1680,  7,  29,  7,  7,  7, 13,  6,  6, 11,  8},
-+	{1670,  7,  28,  7,  7,  7, 13,  6,  6, 11,  8},
-+	{1660,  7,  28,  7,  7,  7, 13,  6,  6, 11,  8},
-+	{1650,  7,  28,  7,  7,  7, 13,  6,  6, 11,  8},
-+	{1640,  7,  28,  7,  7,  7, 12,  6,  6, 11,  8},
-+	{1630,  7,  27,  7,  7,  7, 12,  6,  6, 11,  8},
-+	{1620,  7,  27,  7,  7,  7, 12,  6,  6, 11,  8},
-+	{1610,  7,  27,  7,  7,  7, 12,  6,  6, 11,  8},
-+	{1600,  7,  27,  6,  7,  7, 12,  6,  5, 10,  8},
-+	{1590,  7,  26,  6,  7,  7, 12,  6,  5, 10,  8},
-+	{1580,  7,  26,  6,  7,  7, 12,  6,  5, 10,  7},
-+	{1570,  7,  26,  6,  7,  7, 11,  6,  5, 10,  7},
-+	{1560,  7,  26,  6,  7,  7, 11,  6,  5, 10,  7},
-+	{1550,  7,  26,  6,  7,  7, 11,  6,  5, 10,  7},
-+	{1540,  7,  25,  6,  7,  7, 11,  6,  5, 10,  7},
-+	{1530,  7,  25,  6,  7,  7, 11,  6,  5, 10,  7},
-+	{1520,  7,  25,  6,  7,  7, 11,  6,  5, 10,  7},
-+	{1510,  7,  25,  6,  7,  7, 11,  6,  5, 10,  7},
-+	{1500,  7,  24,  6,  7,  7, 10,  6,  5, 10,  7},
-+	{1490, 59,  25,  6, 77, 59, 10, 70, 44,  9, 73},
-+	{1480, 59,  24,  6, 76, 58, 10, 70, 44,  9, 73},
-+	{1470, 58,  24,  6, 76, 58, 10, 69, 44,  9, 72},
-+	{1460, 58,  24,  6, 76, 58, 10, 69, 43,  9, 72},
-+	{1450, 58,  24,  6, 75, 57, 10, 68, 43,  9, 71},
-+	{1440, 57,  24,  6, 75, 57, 10, 68, 43,  9, 71},
-+	{1430, 57,  23,  6, 75, 57, 10, 68, 43,  8, 70},
-+	{1420, 56,  23,  6, 74, 57,  9, 67, 43,  8, 70},
-+	{1410, 56,  23,  6, 74, 57,  9, 67, 43,  8, 69},
-+	{1400, 56,  23,  5, 74, 55,  9, 67, 41,  8, 69},
-+	{1390, 55,  23,  5, 73, 55,  9, 66, 41,  8, 68},
-+	{1380, 55,  23,  5, 73, 54,  9, 66, 41,  8, 68},
-+	{1370, 54,  22,  5, 72, 54,  9, 66, 41,  8, 67},
-+	{1360, 54,  22,  5, 72, 54,  9, 65, 40,  8, 67},
-+	{1350, 54,  22,  5, 72, 53,  9, 65, 40,  8, 66},
-+	{1340, 53,  22,  5, 71, 53,  9, 65, 40,  8, 66},
-+	{1330, 53,  22,  5, 71, 53,  9, 64, 39,  8, 65},
-+	{1320, 52,  22,  5, 71, 53,  8, 64, 40,  8, 65},
-+	{1310, 52,  21,  5, 70, 53,  8, 64, 40,  8, 64},
-+	{1300, 51,  21,  5, 70, 51,  8, 63, 38,  8, 64},
-+	{1290, 51,  21,  5, 70, 51,  8, 63, 38,  7, 64},
-+	{1280, 51,  21,  5, 69, 51,  8, 63, 38,  7, 63},
-+	{1270, 50,  21,  5, 69, 50,  8, 62, 38,  7, 63},
-+	{1260, 50,  20,  5, 69, 50,  8, 62, 37,  7, 62},
-+	{1250, 49,  20,  5, 68, 49,  8, 62, 37,  7, 62},
-+	{1240, 49,  20,  5, 68, 49,  8, 61, 37,  7, 61},
-+	{1230, 49,  20,  5, 68, 49,  8, 61, 36,  7, 61},
-+	{1220, 48,  20,  5, 67, 48,  8, 61, 36,  7, 60},
-+	{1210, 48,  19,  5, 67, 48,  7, 60, 36,  7, 60},
-+	{1200, 49,  19,  4, 67, 49,  7, 60, 36,  7, 59},
-+	{1190, 48,  19,  4, 66, 48,  7, 60, 36,  7, 59},
-+	{1180, 48,  19,  4, 66, 48,  7, 59, 36,  7, 58},
-+	{1170, 46,  19,  4, 66, 46,  7, 59, 35,  7, 58},
-+	{1160, 46,  18,  4, 65, 46,  7, 59, 34,  7, 57},
-+	{1150, 45,  18,  4, 65, 46,  7, 58, 34,  7, 57},
-+	{1140, 45,  18,  4, 65, 45,  7, 58, 34,  6, 56},
-+	{1130, 45,  18,  4, 64, 45,  7, 58, 33,  6, 56},
-+	{1120, 44,  18,  4, 64, 44,  7, 57, 33,  6, 55},
-+	{1110, 44,  18,  4, 64, 44,  7, 57, 33,  6, 55},
-+	{1100, 43,  17,  4, 63, 44,  6, 57, 32,  6, 54},
-+	{1090, 43,  17,  4, 63, 44,  6, 56, 33,  6, 54},
-+	{1080, 43,  17,  4, 63, 44,  6, 56, 33,  6, 53},
-+	{1070, 42,  17,  4, 62, 44,  6, 56, 33,  6, 53},
-+	{1060, 42,  17,  4, 62, 42,  6, 55, 31,  6, 52},
-+	{1050, 41,  17,  4, 62, 42,  6, 55, 31,  6, 52},
-+	{1040, 41,  16,  4, 61, 41,  6, 54, 31,  6, 52},
-+	{1030, 41,  16,  4, 61, 41,  6, 54, 30,  6, 51},
-+	{1020, 40,  16,  4, 61, 41,  6, 54, 30,  6, 51},
-+	{1010, 40,  16,  4, 60, 40,  6, 53, 30,  6, 50},
-+	{1000, 39,  16,  3, 60, 40,  6, 53, 29,  5, 50},
-+	{ 990, 39,  15,  3, 60, 39,  6, 53, 29,  5, 49},
-+	{ 980, 39,  15,  3, 59, 39,  5, 52, 29,  5, 49},
-+	{ 970, 38,  15,  3, 59, 39,  5, 52, 29,  5, 48},
-+	{ 960, 38,  15,  3, 59, 39,  5, 52, 29,  5, 48},
-+	{ 950, 37,  15,  3, 58, 39,  5, 51, 29,  5, 47},
-+	{ 940, 37,  14,  3, 58, 39,  5, 51, 29,  5, 47},
-+	{ 930, 37,  14,  3, 57, 37,  5, 51, 27,  5, 46},
-+	{ 920, 36,  14,  3, 57, 37,  5, 50, 27,  5, 46},
-+	{ 910, 36,  14,  3, 57, 36,  5, 50, 27,  5, 45},
-+	{ 900, 35,  14,  3, 56, 36,  5, 50, 26,  5, 45},
-+	{ 890, 35,  14,  3, 56, 36,  5, 49, 26,  5, 44},
-+	{ 880, 35,  13,  3, 56, 35,  5, 49, 26,  5, 44},
-+	{ 870, 34,  13,  3, 55, 35,  4, 49, 26,  5, 43},
-+	{ 860, 34,  13,  3, 55, 35,  4, 48, 25,  5, 43},
-+	{ 850, 33,  13,  3, 55, 35,  4, 48, 26,  4, 42},
-+	{ 840, 33,  13,  3, 54, 35,  4, 48, 26,  4, 42},
-+	{ 830, 33,  12,  3, 54, 33,  4, 47, 24,  4, 41},
-+	{ 820, 32,  12,  3, 54, 33,  4, 47, 24,  4, 41},
-+	{ 810, 32,  12,  3, 53, 33,  4, 47, 24,  4, 40},
-+	{ 800, 31,  12,  2, 53, 32,  4, 46, 23,  4, 40},
-+	{ 790, 31,  12,  2, 53, 32,  4, 46, 23,  4, 39},
-+	{ 780, 30,  12,  2, 52, 31,  4, 46, 23,  4, 39},
-+	{ 770, 30,  11,  2, 52, 31,  4, 45, 23,  4, 39},
-+	{ 760, 30,  11,  2, 52, 31,  3, 45, 22,  4, 38},
-+	{ 750, 29,  11,  2, 51, 30,  3, 45, 22,  4, 38},
-+	{ 740, 29,  11,  2, 51, 30,  3, 44, 22,  4, 37},
-+	{ 730, 28,  11,  2, 51, 31,  3, 44, 22,  4, 37},
-+	{ 720, 28,  10,  2, 50, 30,  3, 44, 22,  4, 36},
-+	{ 710, 28,  10,  2, 50, 30,  3, 43, 22,  4, 36},
-+	{ 700, 27,  10,  2, 50, 28,  3, 43, 20,  3, 35},
-+	{ 690, 27,  10,  2, 49, 28,  3, 43, 20,  3, 35},
-+	{ 680, 26,  10,  2, 49, 28,  3, 42, 20,  3, 34},
-+	{ 670, 26,  10,  2, 49, 27,  3, 42, 20,  3, 34},
-+	{ 660, 26,   9,  2, 48, 27,  3, 42, 19,  3, 33},
-+	{ 650, 25,   9,  2, 48, 26,  3, 41, 19,  3, 33},
-+	{ 640, 25,   9,  2, 48, 26,  2, 41, 19,  3, 32},
-+	{ 630, 24,   9,  2, 47, 26,  2, 40, 18,  3, 32},
-+	{ 620, 24,   9,  2, 47, 26,  2, 40, 19,  3, 31},
-+	{ 610, 24,   8,  2, 47, 26,  2, 40, 19,  3, 31},
-+	{ 600, 23,   8,  1, 46, 26,  2, 39, 18,  3, 30},
-+	{ 590, 23,   8,  1, 46, 24,  2, 39, 17,  3, 30},
-+	{ 580, 22,   8,  1, 46, 24,  2, 39, 17,  3, 29},
-+	{ 570, 22,   8,  1, 45, 23,  2, 38, 17,  3, 29},
-+	{ 560, 22,   7,  1, 45, 23,  2, 38, 16,  2, 28},
-+	{ 550, 21,   7,  1, 45, 23,  2, 38, 16,  2, 28},
-+	{ 540, 21,   7,  1, 44, 22,  2, 37, 16,  2, 27},
-+	{ 530, 20,   7,  1, 44, 22,  1, 37, 15,  2, 27},
-+	{ 520, 20,   7,  1, 43, 21,  1, 37, 15,  2, 27},
-+	{ 510, 20,   6,  1, 43, 21,  1, 36, 15,  2, 26},
-+	{ 500, 19,   6,  1, 43, 22,  1, 36, 15,  2, 26},
-+	{ 490, 19,   6,  1, 42, 21,  1, 36, 15,  2, 25},
-+	{ 480, 18,   6,  1, 42, 21,  1, 35, 15,  2, 25},
-+	{ 470, 18,   6,  1, 42, 21,  1, 35, 15,  2, 24},
-+	{ 460, 18,   6,  1, 41, 19,  1, 35, 13,  2, 24},
-+	{ 450, 17,   5,  1, 41, 19,  1, 34, 13,  2, 23},
-+	{ 440, 17,   5,  1, 41, 18,  1, 34, 13,  2, 23},
-+	{ 430, 16,   5,  1, 40, 18,  0, 34, 12,  2, 22},
-+	{ 420, 16,   5,  1, 40, 18,  0, 33, 12,  2, 22},
-+	{ 410, 16,   5,  1, 40, 17,  0, 33, 12,  1, 21},
-+	{ 400, 15,   5,  0, 39, 17,  0, 33, 11,  1, 21},
-+	{ 390, 15,   4,  0, 39, 17,  0, 32, 12,  1, 20},
-+	{ 380, 14,   4,  0, 39, 17,  0, 32, 12,  1, 20},
-+	{ 370, 14,   4,  0, 38, 17,  0, 32, 12,  1, 19},
-+	{ 360, 14,   4,  0, 38, 15,  0, 31, 10,  1, 19},
-+	{ 350, 13,   4,  0, 38, 15,  0, 31, 10,  1, 18},
-+	{ 340, 13,   3,  0, 37, 15,  0, 31, 10,  1, 18},
-+	{ 330, 12,   3,  0, 37, 14,  0, 30,  9,  1, 17},
-+	{ 320, 12,   3,  0, 37, 14,  0, 30,  9,  1, 17},
-+	{ 310, 12,   3,  0, 36, 13,  0, 30,  9,  1, 16},
-+	{ 300, 11,   3,  0, 36, 13,  0, 29,  8,  1, 16},
-+	{ 290, 11,   2,  0, 36, 13,  0, 29,  8,  1, 15},
-+	{ 280, 10,   2,  0, 35, 12,  0, 29,  8,  1, 15},
-+	{ 270, 10,   2,  0, 35, 12,  0, 28,  8,  0, 14},
-+	{ 260,  9,   2,  0, 35, 12,  0, 28,  8,  0, 14},
-+	{ 250,  9,   2,  0, 34, 12,  0, 28,  8,  0, 14},
-+	{ 240,  9,   2,  0, 34, 12,  0, 27,  8,  0, 13},
-+	{ 230,  8,   1,  0, 34, 10,  0, 27,  6,  0, 13},
-+	{ 220,  8,   1,  0, 33, 10,  0, 27,  6,  0, 12},
-+	{ 210,  7,   1,  0, 33, 10,  0, 26,  6,  0, 12},
-+	{ 200,  7,   1,  0, 33,  9,  0, 26,  5,  0, 11},
-+	{ 190,  7,   1,  0, 32,  9,  0, 25,  5,  0, 11},
-+	{ 180,  6,   1,  0, 32,  8,  0, 25,  5,  0, 10},
-+	{ 170,  6,   0,  0, 32,  8,  0, 25,  5,  0, 10},
-+	{ 160,  5,   0,  0, 31,  8,  0, 24,  4,  0,  9},
-+	{ 150,  5,   0,  0, 31,  8,  0, 24,  5,  0,  9},
-+	{ 140,  5,   0,  0, 31,  8,  0, 24,  5,  0,  8},
-+	{ 130,  4,   0,  0, 30,  6,  0, 23,  3,  0,  8},
-+	{ 120,  4,   0,  0, 30,  6,  0, 23,  3,  0,  7},
-+	{ 110,  3,   0,  0, 30,  6,  0, 23,  3,  0,  7},
-+	{ 100,  3,   0,  0, 29,  5,  0, 22,  2,  0,  6},
-+	{  90,  3,   0,  0, 29,  5,  0, 22,  2,  0,  6},
-+	{  80,  2,   0,  0, 28,  5,  0, 22,  2,  0,  5},
-+};
-+
-+static void samsung_mipi_dcphy_bias_block_enable(struct samsung_mipi_dcphy *samsung)
-+{
-+	u32 bias_con2 = 0x3223;
-+
-+	regmap_write(samsung->regmap, BIAS_CON0, 0x0010);
-+	regmap_write(samsung->regmap, BIAS_CON1, 0x0110);
-+	regmap_write(samsung->regmap, BIAS_CON2, bias_con2);
-+
-+	/* default output voltage select:
-+	 * dphy: 400mv
-+	 * cphy: 530mv
-+	 */
-+	regmap_update_bits(samsung->regmap, BIAS_CON4,
-+			   I_MUX_SEL_MASK, I_MUX_SEL_400MV);
-+}
-+
-+static void samsung_mipi_dcphy_bias_block_disable(struct samsung_mipi_dcphy *samsung)
-+{
-+}
-+
-+static void samsung_mipi_dphy_lane_enable(struct samsung_mipi_dcphy *samsung)
-+{
-+	regmap_write(samsung->regmap, DPHY_MC_GNR_CON1, T_PHY_READY(0x2000));
-+	regmap_update_bits(samsung->regmap, DPHY_MC_GNR_CON0,
-+			   PHY_ENABLE, PHY_ENABLE);
-+
-+	switch (samsung->lanes) {
-+	case 4:
-+		regmap_write(samsung->regmap, DPHY_MD3_GNR_CON1,
-+			     T_PHY_READY(0x2000));
-+		regmap_update_bits(samsung->regmap, DPHY_MD3_GNR_CON0,
-+				   PHY_ENABLE, PHY_ENABLE);
-+		fallthrough;
-+	case 3:
-+		regmap_write(samsung->regmap, COMBO_MD2_GNR_CON1,
-+			     T_PHY_READY(0x2000));
-+		regmap_update_bits(samsung->regmap, COMBO_MD2_GNR_CON0,
-+				   PHY_ENABLE, PHY_ENABLE);
-+		fallthrough;
-+	case 2:
-+		regmap_write(samsung->regmap, COMBO_MD1_GNR_CON1,
-+			     T_PHY_READY(0x2000));
-+		regmap_update_bits(samsung->regmap, COMBO_MD1_GNR_CON0,
-+				   PHY_ENABLE, PHY_ENABLE);
-+		fallthrough;
-+	case 1:
-+	default:
-+		regmap_write(samsung->regmap, COMBO_MD0_GNR_CON1,
-+			     T_PHY_READY(0x2000));
-+		regmap_update_bits(samsung->regmap, COMBO_MD0_GNR_CON0,
-+				   PHY_ENABLE, PHY_ENABLE);
-+		break;
-+	}
-+}
-+
-+static void samsung_mipi_dphy_lane_disable(struct samsung_mipi_dcphy *samsung)
-+{
-+	regmap_update_bits(samsung->regmap, DPHY_MC_GNR_CON0, PHY_ENABLE, 0);
-+	regmap_update_bits(samsung->regmap, COMBO_MD0_GNR_CON0, PHY_ENABLE, 0);
-+	regmap_update_bits(samsung->regmap, COMBO_MD1_GNR_CON0, PHY_ENABLE, 0);
-+	regmap_update_bits(samsung->regmap, COMBO_MD2_GNR_CON0, PHY_ENABLE, 0);
-+	regmap_update_bits(samsung->regmap, DPHY_MD3_GNR_CON0, PHY_ENABLE, 0);
-+}
-+
-+static void samsung_mipi_dcphy_pll_configure(struct samsung_mipi_dcphy *samsung)
-+{
-+	regmap_update_bits(samsung->regmap, PLL_CON0, S_MASK | P_MASK,
-+			   S(samsung->pll.scaler) | P(samsung->pll.prediv));
-+
-+	if (samsung->pll.dsm < 0) {
-+		u16 dsm_tmp;
-+
-+		/* Using opposite number subtraction to find complement */
-+		dsm_tmp = abs(samsung->pll.dsm);
-+		dsm_tmp = dsm_tmp - 1;
-+		dsm_tmp ^= 0xffff;
-+		regmap_write(samsung->regmap, PLL_CON1, dsm_tmp);
-+	} else {
-+		regmap_write(samsung->regmap, PLL_CON1, samsung->pll.dsm);
-+	}
-+
-+	regmap_update_bits(samsung->regmap, PLL_CON2,
-+			   M_MASK, M(samsung->pll.fbdiv));
-+
-+	if (samsung->pll.ssc_en) {
-+		regmap_write(samsung->regmap, PLL_CON3,
-+			     MRR(samsung->pll.mrr) | MFR(samsung->pll.mfr));
-+		regmap_update_bits(samsung->regmap, PLL_CON4, SSCG_EN, SSCG_EN);
-+	}
-+
-+	regmap_write(samsung->regmap, PLL_CON5, RESET_N_SEL | PLL_ENABLE_SEL);
-+	regmap_write(samsung->regmap, PLL_CON7, PLL_LOCK_CNT(0xf000));
-+	regmap_write(samsung->regmap, PLL_CON8, PLL_STB_CNT(0xf000));
-+}
-+
-+static int samsung_mipi_dcphy_pll_enable(struct samsung_mipi_dcphy *samsung)
-+{
-+	u32 sts;
-+	int ret;
-+
-+	regmap_update_bits(samsung->regmap, PLL_CON0, PLL_EN, PLL_EN);
-+
-+	ret = regmap_read_poll_timeout(samsung->regmap, PLL_STAT0,
-+				       sts, (sts & PLL_LOCK), 1000, 20000);
-+	if (ret < 0)
-+		dev_err(samsung->dev, "DC-PHY pll failed to lock\n");
-+
-+	return ret;
-+}
-+
-+static void samsung_mipi_dcphy_pll_disable(struct samsung_mipi_dcphy *samsung)
-+{
-+	regmap_update_bits(samsung->regmap, PLL_CON0, PLL_EN, 0);
-+}
-+
-+static const struct samsung_mipi_dphy_timing *
-+samsung_mipi_dphy_get_timing(struct samsung_mipi_dcphy *samsung)
-+{
-+	const struct samsung_mipi_dphy_timing *timings;
-+	unsigned int num_timings;
-+	unsigned int lane_mbps = div64_ul(samsung->pll.rate, USEC_PER_SEC);
-+	unsigned int i;
-+
-+	timings = samsung_mipi_dphy_timing_table;
-+	num_timings = ARRAY_SIZE(samsung_mipi_dphy_timing_table);
-+
-+	for (i = num_timings; i > 0; i--)
-+		if (lane_mbps <= timings[i - 1].max_lane_mbps)
-+			break;
-+
-+	if (i == 0)
-+		++i;
-+
-+	return &timings[i - 1];
-+}
-+
-+static unsigned long
-+samsung_mipi_dcphy_pll_round_rate(struct samsung_mipi_dcphy *samsung,
-+				  unsigned long prate, unsigned long rate,
-+				  u8 *prediv, u16 *fbdiv, int *dsm, u8 *scaler)
-+{
-+	u32 max_fout = samsung->pdata->dphy_tx_max_lane_kbps;
-+	u64 best_freq = 0;
-+	u64 fin, fvco, fout;
-+	u8 min_prediv, max_prediv;
-+	u8 _prediv, best_prediv = 1;
-+	u16 _fbdiv, best_fbdiv = 1;
-+	u8 _scaler, best_scaler = 0;
-+	u32 min_delta = UINT_MAX;
-+	long _dsm, best_dsm = 0;
-+
-+	if (!prate) {
-+		dev_err(samsung->dev, "parent rate of PLL can not be zero\n");
-+		return 0;
-+	}
-+
-+	/*
-+	 * The PLL output frequency can be calculated using a simple formula:
-+	 * Fvco = ((m+k/65536) x 2 x Fin) / p
-+	 * Fout = ((m+k/65536) x 2 x Fin) / (p x 2^s)
-+	 */
-+	fin = div64_ul(prate, MSEC_PER_SEC);
-+
-+	while (!best_freq) {
-+		fout = div64_ul(rate, MSEC_PER_SEC);
-+		if (fout > max_fout)
-+			fout = max_fout;
-+
-+		/* 0 ≤ S[2:0] ≤ 6 */
-+		for (_scaler = 0; _scaler < 7; _scaler++) {
-+			fvco = fout << _scaler;
-+
-+			/*
-+			 * 2600MHz ≤ FVCO ≤ 6600MHz
-+			 */
-+			if (fvco < 2600 * MSEC_PER_SEC || fvco > 6600 * MSEC_PER_SEC)
-+				continue;
-+
-+			/* 6MHz ≤ Fref(Fin / p) ≤ 30MHz */
-+			min_prediv = DIV_ROUND_UP_ULL(fin, 30 * MSEC_PER_SEC);
-+			max_prediv = DIV_ROUND_CLOSEST_ULL(fin, 6 * MSEC_PER_SEC);
-+
-+			for (_prediv = min_prediv; _prediv <= max_prediv; _prediv++) {
-+				u64 delta, tmp;
-+
-+				_fbdiv = DIV_ROUND_CLOSEST_ULL(fvco * _prediv, 2 * fin);
-+
-+				 /* 64 ≤ M[9:0] ≤ 1023 */
-+				if (_fbdiv < 64 || _fbdiv > 1023)
-+					continue;
-+
-+				/* -32767 ≤ K[15:0] ≤ 32767 */
-+				_dsm = ((_prediv * fvco) - (2 * _fbdiv * fin));
-+				_dsm = DIV_ROUND_UP_ULL(_dsm << 15, fin);
-+				if (abs(_dsm) > 32767)
-+					continue;
-+
-+				tmp = DIV_ROUND_CLOSEST_ULL((_fbdiv * fin * 2 * 1000), _prediv);
-+				tmp += DIV_ROUND_CLOSEST_ULL((_dsm * fin * 1000), _prediv << 15);
-+
-+				delta = abs(fvco * MSEC_PER_SEC - tmp);
-+				if (delta < min_delta) {
-+					best_prediv = _prediv;
-+					best_fbdiv = _fbdiv;
-+					best_dsm = _dsm;
-+					best_scaler = _scaler;
-+					min_delta = delta;
-+					best_freq = DIV_ROUND_CLOSEST_ULL(tmp, 1000) * MSEC_PER_SEC;
-+				}
-+			}
-+		}
-+
-+		rate += 100 * MSEC_PER_SEC;
-+	}
-+
-+	*prediv = best_prediv;
-+	*fbdiv = best_fbdiv;
-+	*dsm = (int)best_dsm & 0xffff;
-+	*scaler = best_scaler;
-+	dev_dbg(samsung->dev, "p: %d, m: %d, dsm:%ld, scaler: %d\n",
-+		best_prediv, best_fbdiv, best_dsm, best_scaler);
-+
-+	return best_freq >> best_scaler;
-+}
-+
-+static void
-+samsung_mipi_dphy_clk_lane_timing_init(struct samsung_mipi_dcphy *samsung)
-+{
-+	const struct samsung_mipi_dphy_timing *timing;
-+	unsigned int lane_hs_rate = div64_ul(samsung->pll.rate, USEC_PER_SEC);
-+	u32 val, res_up, res_down;
-+
-+	timing = samsung_mipi_dphy_get_timing(samsung);
-+	regmap_write(samsung->regmap, DPHY_MC_GNR_CON0, 0xf000);
-+
-+	/*
-+	 * The Drive-Strength / Voltage-Amplitude is adjusted by setting
-+	 * the Driver-Up Resistor and Driver-Down Resistor.
-+	 */
-+	res_up = samsung->pdata->dphy_hs_drv_res_cfg->clk_hs_drv_up_ohm;
-+	res_down = samsung->pdata->dphy_hs_drv_res_cfg->clk_hs_drv_down_ohm;
-+	val = EDGE_CON(7) | EDGE_CON_DIR(0) | EDGE_CON_EN |
-+	      RES_UP(res_up) | RES_DN(res_down);
-+	regmap_write(samsung->regmap, DPHY_MC_ANA_CON0, val);
-+
-+	if (lane_hs_rate >= 4500)
-+		regmap_write(samsung->regmap, DPHY_MC_ANA_CON1, 0x0001);
-+
-+	val = 0;
-+	/*
-+	 * Divide-by-2 Clock from Serial Clock. Use this when data rate is under
-+	 * 1500Mbps, otherwise divide-by-16 Clock from Serial Clock
-+	 */
-+	if (lane_hs_rate < 1500)
-+		val = HSTX_CLK_SEL;
-+
-+	val |= T_LPX(timing->lpx);
-+	/*  T_LP_EXIT_SKEW/T_LP_ENTRY_SKEW unconfig */
-+	regmap_write(samsung->regmap, DPHY_MC_TIME_CON0, val);
-+
-+	val = T_CLK_ZERO(timing->clk_zero) | T_CLK_PREPARE(timing->clk_prepare);
-+	regmap_write(samsung->regmap, DPHY_MC_TIME_CON1, val);
-+
-+	val = T_HS_EXIT(timing->hs_exit) | T_CLK_TRAIL(timing->clk_trail_eot);
-+	regmap_write(samsung->regmap, DPHY_MC_TIME_CON2, val);
-+
-+	val = T_CLK_POST(timing->clk_post);
-+	regmap_write(samsung->regmap, DPHY_MC_TIME_CON3, val);
-+
-+	/* Escape Clock is 20.00MHz */
-+	regmap_write(samsung->regmap, DPHY_MC_TIME_CON4, 0x1f4);
-+
-+	/*
-+	 * skew calibration should be off, if the operation data rate is
-+	 * under 1.5Gbps or equal to 1.5Gbps.
-+	 */
-+	if (lane_hs_rate > 1500)
-+		regmap_write(samsung->regmap, DPHY_MC_DESKEW_CON0, 0x9cb1);
-+}
-+
-+static void
-+samsung_mipi_dphy_data_lane_timing_init(struct samsung_mipi_dcphy *samsung)
-+{
-+	const struct samsung_mipi_dphy_timing *timing;
-+	unsigned int lane_hs_rate = div64_ul(samsung->pll.rate, USEC_PER_SEC);
-+	u32 val, res_up, res_down;
-+
-+	timing = samsung_mipi_dphy_get_timing(samsung);
-+
-+	/*
-+	 * The Drive-Strength / Voltage-Amplitude is adjusted by adjusting the
-+	 *  Driver-Up Resistor and Driver-Down Resistor.
-+	 */
-+	res_up = samsung->pdata->dphy_hs_drv_res_cfg->data_hs_drv_up_ohm;
-+	res_down = samsung->pdata->dphy_hs_drv_res_cfg->data_hs_drv_down_ohm;
-+	val = EDGE_CON(7) | EDGE_CON_DIR(0) | EDGE_CON_EN |
-+	      RES_UP(res_up) | RES_DN(res_down);
-+	regmap_write(samsung->regmap, COMBO_MD0_ANA_CON0, val);
-+	regmap_write(samsung->regmap, COMBO_MD1_ANA_CON0, val);
-+	regmap_write(samsung->regmap, COMBO_MD2_ANA_CON0, val);
-+	regmap_write(samsung->regmap, DPHY_MD3_ANA_CON0, val);
-+
-+	if (lane_hs_rate >= 4500) {
-+		regmap_write(samsung->regmap, COMBO_MD0_ANA_CON1, 0x0001);
-+		regmap_write(samsung->regmap, COMBO_MD1_ANA_CON1, 0x0001);
-+		regmap_write(samsung->regmap, COMBO_MD2_ANA_CON1, 0x0001);
-+		regmap_write(samsung->regmap, DPHY_MD3_ANA_CON1, 0x0001);
-+	}
-+
-+	val = 0;
-+	/*
-+	 * Divide-by-2 Clock from Serial Clock. Use this when data rate is under
-+	 * 1500Mbps, otherwise divide-by-16 Clock from Serial Clock
-+	 */
-+	if (lane_hs_rate < 1500)
-+		val = HSTX_CLK_SEL;
-+
-+	val |= T_LPX(timing->lpx);
-+	/*  T_LP_EXIT_SKEW/T_LP_ENTRY_SKEW unconfig */
-+	regmap_write(samsung->regmap, COMBO_MD0_TIME_CON0, val);
-+	regmap_write(samsung->regmap, COMBO_MD1_TIME_CON0, val);
-+	regmap_write(samsung->regmap, COMBO_MD2_TIME_CON0, val);
-+	regmap_write(samsung->regmap, DPHY_MD3_TIME_CON0, val);
-+
-+	val = T_HS_ZERO(timing->hs_zero) | T_HS_PREPARE(timing->hs_prepare);
-+	regmap_write(samsung->regmap, COMBO_MD0_TIME_CON1, val);
-+	regmap_write(samsung->regmap, COMBO_MD1_TIME_CON1, val);
-+	regmap_write(samsung->regmap, COMBO_MD2_TIME_CON1, val);
-+	regmap_write(samsung->regmap, DPHY_MD3_TIME_CON1, val);
-+
-+	val = T_HS_EXIT(timing->hs_exit) | T_HS_TRAIL(timing->hs_trail_eot);
-+	regmap_write(samsung->regmap, COMBO_MD0_TIME_CON2, val);
-+	regmap_write(samsung->regmap, COMBO_MD1_TIME_CON2, val);
-+	regmap_write(samsung->regmap, COMBO_MD2_TIME_CON2, val);
-+	regmap_write(samsung->regmap, DPHY_MD3_TIME_CON2, val);
-+
-+	/* TTA-GET/TTA-GO Timing Counter register use default value */
-+	val = T_TA_GET(0x3) | T_TA_GO(0x0);
-+	regmap_write(samsung->regmap, COMBO_MD0_TIME_CON3, val);
-+	regmap_write(samsung->regmap, COMBO_MD1_TIME_CON3, val);
-+	regmap_write(samsung->regmap, COMBO_MD2_TIME_CON3, val);
-+	regmap_write(samsung->regmap, DPHY_MD3_TIME_CON3, val);
-+
-+	/* Escape Clock is 20.00MHz */
-+	regmap_write(samsung->regmap, COMBO_MD0_TIME_CON4, 0x1f4);
-+	regmap_write(samsung->regmap, COMBO_MD1_TIME_CON4, 0x1f4);
-+	regmap_write(samsung->regmap, COMBO_MD2_TIME_CON4, 0x1f4);
-+	regmap_write(samsung->regmap, DPHY_MD3_TIME_CON4, 0x1f4);
-+}
-+
-+static int samsung_mipi_dphy_power_on(struct samsung_mipi_dcphy *samsung)
-+{
-+	int ret;
-+
-+	reset_control_assert(samsung->m_phy_rst);
-+
-+	samsung_mipi_dcphy_bias_block_enable(samsung);
-+	samsung_mipi_dcphy_pll_configure(samsung);
-+	samsung_mipi_dphy_clk_lane_timing_init(samsung);
-+	samsung_mipi_dphy_data_lane_timing_init(samsung);
-+	ret = samsung_mipi_dcphy_pll_enable(samsung);
-+	if (ret < 0) {
-+		samsung_mipi_dcphy_bias_block_disable(samsung);
-+		return ret;
-+	}
-+
-+	samsung_mipi_dphy_lane_enable(samsung);
-+
-+	reset_control_deassert(samsung->m_phy_rst);
-+
-+	/* The TSKEWCAL maximum is 100 µsec
-+	 * at initial calibration.
-+	 */
-+	usleep_range(100, 110);
-+
-+	return 0;
-+}
-+
-+static int samsung_mipi_dcphy_power_on(struct phy *phy)
-+{
-+	struct samsung_mipi_dcphy *samsung = phy_get_drvdata(phy);
-+	enum phy_mode mode = phy_get_mode(phy);
-+
-+	pm_runtime_get_sync(samsung->dev);
-+	reset_control_assert(samsung->apb_rst);
-+	udelay(1);
-+	reset_control_deassert(samsung->apb_rst);
-+
-+	switch (mode) {
-+	case PHY_MODE_MIPI_DPHY:
-+		return samsung_mipi_dphy_power_on(samsung);
-+	default:
-+		/* CSI cphy part to be implemented later */
-+		return -EOPNOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
-+static int samsung_mipi_dcphy_power_off(struct phy *phy)
-+{
-+	struct samsung_mipi_dcphy *samsung = phy_get_drvdata(phy);
-+	enum phy_mode mode = phy_get_mode(phy);
-+
-+	switch (mode) {
-+	case PHY_MODE_MIPI_DPHY:
-+		samsung_mipi_dphy_lane_disable(samsung);
-+		break;
-+	default:
-+		/* CSI cphy part to be implemented later */
-+		return -EOPNOTSUPP;
-+	}
-+
-+	samsung_mipi_dcphy_pll_disable(samsung);
-+	samsung_mipi_dcphy_bias_block_disable(samsung);
-+
-+	pm_runtime_put(samsung->dev);
-+
-+	return 0;
-+}
-+
-+static int samsung_mipi_dcphy_set_mode(struct phy *phy, enum phy_mode mode,
-+				       int submode)
-+{
-+	return 0;
-+}
-+
-+static int
-+samsung_mipi_dcphy_pll_ssc_modulation_calc(struct samsung_mipi_dcphy *samsung,
-+					   u8 *mfr, u8 *mrr)
-+{
-+	unsigned long fin = div64_ul(clk_get_rate(samsung->ref_clk), MSEC_PER_SEC);
-+	u16 prediv = samsung->pll.prediv;
-+	u16 fbdiv = samsung->pll.fbdiv;
-+	u16 min_mfr, max_mfr;
-+	u16 _mfr, best_mfr = 0;
-+	u16 mr, _mrr, best_mrr = 0;
-+
-+	/* 20KHz ≤ MF ≤ 150KHz */
-+	max_mfr = DIV_ROUND_UP(fin, (20 * prediv) << 5);
-+	min_mfr = div64_ul(fin, ((150 * prediv) << 5));
-+	/*0 ≤ mfr ≤ 255 */
-+	if (max_mfr > 256)
-+		max_mfr = 256;
-+
-+	for (_mfr = min_mfr; _mfr < max_mfr; _mfr++) {
-+		/* 1 ≤ mrr ≤ 31 */
-+		for (_mrr = 1; _mrr < 32; _mrr++) {
-+			mr = DIV_ROUND_UP(_mfr * _mrr * 100, fbdiv << 6);
-+			/* 0 ≤ MR ≤ 5% */
-+			if (mr > 5)
-+				continue;
-+
-+			if (_mfr * _mrr < 513) {
-+				best_mfr = _mfr;
-+				best_mrr = _mrr;
-+				break;
-+			}
-+		}
-+	}
-+
-+	if (best_mrr) {
-+		*mfr = best_mfr & 0xff;
-+		*mrr = best_mrr & 0x3f;
-+	} else {
-+		dev_err(samsung->dev, "failed to calc ssc parameter mfr and mrr\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static void
-+samsung_mipi_dcphy_pll_calc_rate(struct samsung_mipi_dcphy *samsung,
-+				 unsigned long long rate)
-+{
-+	unsigned long prate = clk_get_rate(samsung->ref_clk);
-+	unsigned long fout;
-+	u8 scaler = 0, mfr = 0, mrr = 0;
-+	u16 fbdiv = 0;
-+	u8 prediv = 1;
-+	int dsm = 0;
-+	int ret;
-+
-+	fout = samsung_mipi_dcphy_pll_round_rate(samsung, prate, rate,
-+						 &prediv, &fbdiv, &dsm,
-+						 &scaler);
-+
-+	dev_dbg(samsung->dev, "%s: fin=%lu, req_rate=%llu\n",
-+		__func__, prate, rate);
-+	dev_dbg(samsung->dev, "%s: fout=%lu, prediv=%u, fbdiv=%u\n",
-+		__func__, fout, prediv, fbdiv);
-+
-+	samsung->pll.prediv = prediv;
-+	samsung->pll.fbdiv = fbdiv;
-+	samsung->pll.dsm = dsm;
-+	samsung->pll.scaler = scaler;
-+	samsung->pll.rate = fout;
-+
-+	/*
-+	 * All DPHY 2.0 compliant Transmitters shall support SSC operating above
-+	 * 2.5 Gbps
-+	 */
-+	if (fout > 2500000000LL) {
-+		ret = samsung_mipi_dcphy_pll_ssc_modulation_calc(samsung,
-+								 &mfr, &mrr);
-+		if (!ret) {
-+			samsung->pll.ssc_en = true;
-+			samsung->pll.mfr = mfr;
-+			samsung->pll.mrr = mrr;
-+		}
-+	}
-+}
-+
-+static int samsung_mipi_dcphy_configure(struct phy *phy,
-+					union phy_configure_opts *opts)
-+{
-+	struct samsung_mipi_dcphy *samsung = phy_get_drvdata(phy);
-+	unsigned long long target_rate = opts->mipi_dphy.hs_clk_rate;
-+
-+	samsung->lanes = opts->mipi_dphy.lanes > 4 ? 4 : opts->mipi_dphy.lanes;
-+
-+	samsung_mipi_dcphy_pll_calc_rate(samsung, target_rate);
-+	opts->mipi_dphy.hs_clk_rate = samsung->pll.rate;
-+
-+	return 0;
-+}
-+
-+static int samsung_mipi_dcphy_init(struct phy *phy)
-+{
-+	struct samsung_mipi_dcphy *samsung = phy_get_drvdata(phy);
-+
-+	pm_runtime_get_sync(samsung->dev);
-+
-+	return 0;
-+}
-+
-+static int samsung_mipi_dcphy_exit(struct phy *phy)
-+{
-+	struct samsung_mipi_dcphy *samsung = phy_get_drvdata(phy);
-+
-+	pm_runtime_put(samsung->dev);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops samsung_mipi_dcphy_ops = {
-+	.configure = samsung_mipi_dcphy_configure,
-+	.set_mode = samsung_mipi_dcphy_set_mode,
-+	.power_on  = samsung_mipi_dcphy_power_on,
-+	.power_off = samsung_mipi_dcphy_power_off,
-+	.init = samsung_mipi_dcphy_init,
-+	.exit = samsung_mipi_dcphy_exit,
-+	.owner	   = THIS_MODULE,
-+};
-+
-+static const struct regmap_config samsung_mipi_dcphy_regmap_config = {
-+	.name = "dcphy",
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.max_register = 0x10000,
-+};
-+
-+static int samsung_mipi_dcphy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct samsung_mipi_dcphy *samsung;
-+	struct phy_provider *phy_provider;
-+	struct phy *phy;
-+	struct resource *res;
-+	void __iomem *regs;
-+	int ret;
-+
-+	samsung = devm_kzalloc(dev, sizeof(*samsung), GFP_KERNEL);
-+	if (!samsung)
-+		return -ENOMEM;
-+
-+	samsung->dev = dev;
-+	samsung->pdata = device_get_match_data(dev);
-+	platform_set_drvdata(pdev, samsung);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	regs = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(regs))
-+		return PTR_ERR(regs);
-+
-+	samsung->regmap = devm_regmap_init_mmio(dev, regs,
-+						&samsung_mipi_dcphy_regmap_config);
-+	if (IS_ERR(samsung->regmap))
-+		return dev_err_probe(dev, PTR_ERR(samsung->regmap), "Failed to init regmap\n");
-+
-+	samsung->grf_regmap = syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
-+	if (IS_ERR(samsung->grf_regmap))
-+		return dev_err_probe(dev, PTR_ERR(samsung->grf_regmap),
-+				     "Unable to get rockchip,grf\n");
-+
-+	samsung->ref_clk = devm_clk_get(dev, "ref");
-+	if (IS_ERR(samsung->ref_clk))
-+		return dev_err_probe(dev, PTR_ERR(samsung->ref_clk),
-+				     "Failed to get reference clock\n");
-+
-+	samsung->pclk = devm_clk_get(dev, "pclk");
-+	if (IS_ERR(samsung->pclk))
-+		return dev_err_probe(dev, PTR_ERR(samsung->pclk), "Failed to get pclk\n");
-+
-+	samsung->m_phy_rst = devm_reset_control_get(dev, "m_phy");
-+	if (IS_ERR(samsung->m_phy_rst))
-+		return dev_err_probe(dev, PTR_ERR(samsung->m_phy_rst),
-+				     "Failed to get system m_phy_rst control\n");
-+
-+	samsung->s_phy_rst = devm_reset_control_get(dev, "s_phy");
-+	if (IS_ERR(samsung->s_phy_rst))
-+		return dev_err_probe(dev, PTR_ERR(samsung->s_phy_rst),
-+				     "Failed to get system s_phy_rst control\n");
-+
-+	samsung->apb_rst = devm_reset_control_get(dev, "apb");
-+	if (IS_ERR(samsung->apb_rst))
-+		return dev_err_probe(dev, PTR_ERR(samsung->apb_rst),
-+				     "Failed to get system apb_rst control\n");
-+
-+	samsung->grf_apb_rst = devm_reset_control_get(dev, "grf");
-+	if (IS_ERR(samsung->grf_apb_rst))
-+		return dev_err_probe(dev, PTR_ERR(samsung->grf_apb_rst),
-+				     "Failed to get system grf_apb_rst control\n");
-+
-+	phy = devm_phy_create(dev, NULL, &samsung_mipi_dcphy_ops);
-+	if (IS_ERR(phy))
-+		return dev_err_probe(dev, PTR_ERR(phy), "Failed to create MIPI DC-PHY\n");
-+
-+	phy_set_drvdata(phy, samsung);
-+
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
-+
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	if (IS_ERR(phy_provider))
-+		return dev_err_probe(dev, PTR_ERR(phy_provider),
-+				     "Failed to register phy provider\n");
-+
-+	return 0;
-+}
-+
-+static __maybe_unused int samsung_mipi_dcphy_runtime_suspend(struct device *dev)
-+{
-+	struct samsung_mipi_dcphy *samsung = dev_get_drvdata(dev);
-+
-+	clk_disable_unprepare(samsung->pclk);
-+	clk_disable_unprepare(samsung->ref_clk);
-+
-+	return 0;
-+}
-+
-+static __maybe_unused int samsung_mipi_dcphy_runtime_resume(struct device *dev)
-+{
-+	struct samsung_mipi_dcphy *samsung = dev_get_drvdata(dev);
-+
-+	clk_prepare_enable(samsung->pclk);
-+	clk_prepare_enable(samsung->ref_clk);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops samsung_mipi_dcphy_pm_ops = {
-+	SET_RUNTIME_PM_OPS(samsung_mipi_dcphy_runtime_suspend,
-+			   samsung_mipi_dcphy_runtime_resume, NULL)
-+};
-+
-+static const struct hs_drv_res_cfg rk3576_dphy_hs_drv_res_cfg = {
-+	.clk_hs_drv_up_ohm = STRENGTH_52_OHM,
-+	.clk_hs_drv_down_ohm = STRENGTH_52_OHM,
-+	.data_hs_drv_up_ohm = STRENGTH_39_OHM,
-+	.data_hs_drv_down_ohm = STRENGTH_39_OHM,
-+};
-+
-+static const struct hs_drv_res_cfg rk3588_dphy_hs_drv_res_cfg = {
-+	.clk_hs_drv_up_ohm = STRENGTH_34_OHM,
-+	.clk_hs_drv_down_ohm = STRENGTH_34_OHM,
-+	.data_hs_drv_up_ohm = STRENGTH_43_OHM,
-+	.data_hs_drv_down_ohm = STRENGTH_43_OHM,
-+};
-+
-+static const struct samsung_mipi_dcphy_plat_data rk3576_samsung_mipi_dcphy_plat_data = {
-+	.dphy_hs_drv_res_cfg = &rk3576_dphy_hs_drv_res_cfg,
-+	.dphy_tx_max_lane_kbps = 2500000L,
-+};
-+
-+static const struct samsung_mipi_dcphy_plat_data rk3588_samsung_mipi_dcphy_plat_data = {
-+	.dphy_hs_drv_res_cfg = &rk3588_dphy_hs_drv_res_cfg,
-+	.dphy_tx_max_lane_kbps = 4500000L,
-+};
-+
-+static const struct of_device_id samsung_mipi_dcphy_of_match[] = {
-+	{
-+		.compatible = "rockchip,rk3576-mipi-dcphy",
-+		.data = &rk3576_samsung_mipi_dcphy_plat_data,
-+	}, {
-+		.compatible = "rockchip,rk3588-mipi-dcphy",
-+		.data = &rk3588_samsung_mipi_dcphy_plat_data,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, samsung_mipi_dcphy_of_match);
-+
-+static struct platform_driver samsung_mipi_dcphy_driver = {
-+	.driver = {
-+		.name = "samsung-mipi-dcphy",
-+		.of_match_table	= of_match_ptr(samsung_mipi_dcphy_of_match),
-+		.pm = &samsung_mipi_dcphy_pm_ops,
-+	},
-+	.probe	= samsung_mipi_dcphy_probe,
-+};
-+module_platform_driver(samsung_mipi_dcphy_driver);
-+
-+MODULE_AUTHOR("Guochun Huang<hero.huang@rock-chips.com>");
-+MODULE_DESCRIPTION("Samsung MIPI DCPHY Driver");
-+MODULE_LICENSE("GPL");
--- 
-2.45.2
+>  __run_posix_cpu_timers kernel/time/posix-cpu-timers.c:1219 [inline]
+>  run_posix_cpu_timers+0x6ac/0x810 kernel/time/posix-cpu-timers.c:1418
+>  tick_sched_handle kernel/time/tick-sched.c:276 [inline]
+>  tick_nohz_handler+0x37c/0x500 kernel/time/tick-sched.c:297
+>  __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
+>  __hrtimer_run_queues+0x551/0xd50 kernel/time/hrtimer.c:1755
+>  hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1817
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
+>  __sysvec_apic_timer_interrupt+0x110/0x420 arch/x86/kernel/apic/apic.c:1055
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+>  sysvec_apic_timer_interrupt+0x52/0xc0 arch/x86/kernel/apic/apic.c:1049
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> RIP: 0010:variable_ffs arch/x86/include/asm/bitops.h:321 [inline]
+> RIP: 0010:handle_softirqs+0x1e3/0x980 kernel/softirq.c:542
+> Code: 7c 24 70 45 0f b7 e4 48 c7 c7 20 c5 09 8c e8 c4 6c 6c 0a 65 66 c7 05 32 53 ac 7e 00 00 e8 05 67 45 00 fb 49 c7 c6 c0 a0 60 8e <b8> ff ff ff ff 41 0f bc c4 41 89 c7 41 ff c7 0f 84 eb 03 00 00 44
+> RSP: 0018:ffffc90000a18e40 EFLAGS: 00000286
+> RAX: 959a1636e72c7c00 RBX: ffffc90000a18ee0 RCX: ffffffff8170c69a
+> RDX: dffffc0000000000 RSI: ffffffff8c0ad3a0 RDI: ffffffff8c604dc0
+> RBP: ffffc90000a18f50 R08: ffffffff942cd847 R09: 1ffffffff2859b08
+> R10: dffffc0000000000 R11: fffffbfff2859b09 R12: 0000000000000010
+> R13: 0000000000000000 R14: ffffffff8e60a0c0 R15: 1ffff11003cec000
+>  __do_softirq kernel/softirq.c:588 [inline]
+>  invoke_softirq kernel/softirq.c:428 [inline]
+>  __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+>  irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+>  common_interrupt+0xb9/0xd0 arch/x86/kernel/irq.c:278
+>  </IRQ>
+>  <TASK>
+>  asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+> RIP: 0010:zap_pmd_range mm/memory.c:1753 [inline]
+> RIP: 0010:zap_pud_range mm/memory.c:1782 [inline]
+> RIP: 0010:zap_p4d_range mm/memory.c:1803 [inline]
+> RIP: 0010:unmap_page_range+0x1ffd/0x4230 mm/memory.c:1824
+> Code: 02 00 00 4c 8d bc 24 c0 02 00 00 48 8b 44 24 48 48 98 48 89 c1 48 c1 e1 0c 49 01 cd 4c 3b ac 24 98 00 00 00 0f 84 44 14 00 00 <4c> 89 6c 24 28 48 8b 5c 24 38 48 8d 1c c3 e8 50 01 b2 ff e9 ec e9
+> RSP: 0018:ffffc9000303f560 EFLAGS: 00000287
+> RAX: 0000000000000001 RBX: ffff88803023b5c8 RCX: 0000000000001000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: ffffc9000303f890 R08: ffffffff81e30b9c R09: 1ffffd4000333df6
+> R10: dffffc0000000000 R11: fffff94000333df7 R12: dffffc0000000000
+> R13: 00000000200ba000 R14: ffffc9000303f7e0 R15: ffffc9000303f820
+>  unmap_vmas+0x3cc/0x5f0 mm/memory.c:1914
+>  exit_mmap+0x292/0xcb0 mm/mmap.c:1693
+>  __mmput+0x115/0x390 kernel/fork.c:1344
+>  exit_mm+0x220/0x310 kernel/exit.c:570
+>  do_exit+0x9b2/0x28e0 kernel/exit.c:925
+>  do_group_exit+0x207/0x2c0 kernel/exit.c:1087
+>  __do_sys_exit_group kernel/exit.c:1098 [inline]
+>  __se_sys_exit_group kernel/exit.c:1096 [inline]
+>  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1096
+>  x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7faae5f7e719
+> Code: Unable to access opcode bytes at 0x7faae5f7e6ef.
+> RSP: 002b:00007ffc97dbc998 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007faae5f7e719
+> RDX: 0000000000000064 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 00007ffc97dbc9ec R08: 00007ffc97dbca7f R09: 0000000000013547
+> R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000032
+> R13: 0000000000013547 R14: 0000000000013547 R15: 00007ffc97dbca40
+>  </TASK>
+> ----------------
+> Code disassembly (best guess):
+>    0:	7c 24                	jl     0x26
+>    2:	70 45                	jo     0x49
+>    4:	0f b7 e4             	movzwl %sp,%esp
+>    7:	48 c7 c7 20 c5 09 8c 	mov    $0xffffffff8c09c520,%rdi
+>    e:	e8 c4 6c 6c 0a       	call   0xa6c6cd7
+>   13:	65 66 c7 05 32 53 ac 	movw   $0x0,%gs:0x7eac5332(%rip)        # 0x7eac534f
+>   1a:	7e 00 00
+>   1d:	e8 05 67 45 00       	call   0x456727
+>   22:	fb                   	sti
+>   23:	49 c7 c6 c0 a0 60 8e 	mov    $0xffffffff8e60a0c0,%r14
+> * 2a:	b8 ff ff ff ff       	mov    $0xffffffff,%eax <-- trapping instruction
+>   2f:	41 0f bc c4          	bsf    %r12d,%eax
+>   33:	41 89 c7             	mov    %eax,%r15d
+>   36:	41 ff c7             	inc    %r15d
+>   39:	0f 84 eb 03 00 00    	je     0x42a
+>   3f:	44                   	rex.R
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
 
