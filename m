@@ -1,170 +1,146 @@
-Return-Path: <linux-kernel+bounces-395098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605279BB87D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:04:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E609BB889
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:05:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C551F2860DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:04:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A92C1C21D59
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE511BBBFC;
-	Mon,  4 Nov 2024 15:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07DC2B9A2;
+	Mon,  4 Nov 2024 15:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Le5ArvP7"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wm3oX3AK"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C17033997
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6831509B6
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730732687; cv=none; b=LrZ1hvl4vorvS7kNVsUIVM7AvBcslEMevpRWE60YtoZYdvSmAWxM8Xr4zmohP+Hx46mwPT4a2gR5bbWIUkknVJvIHTpBoMgNAxBOCOHKvByA4NW4VWAKBsjFtMgtZvMZnpxZ8BmCZ4eO4oG8Kx4TEW1QggueNcdsNh94qHjxMRs=
+	t=1730732738; cv=none; b=gd46xUYL+3mqh5saqZfT8sia2NmHUCJQGsaA6otVrB59xRdQjrmfs9AITOaQNiRwlLltcJN177Bj2W8JPHMdRIsktlErUeHL4612zMQ8sxbp0keU4GbXWE/wS75LLmybHnS9spkC8A0vyd1Di+J2PilRFkFjcmMXR92eqjd5qgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730732687; c=relaxed/simple;
-	bh=b64hH3uC6UTPYvdLtiLvWZgQcvOdjgEny/RklsbEraA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=tOE2tfHTDxilsfdNeQUk0zqPe/ZALFkggVTSUNoLApTF78brZjEdYQrjgNjHixjdo0C6adSzArv7UCsWRy2Ubu+HMhfFL492v/LYW8TMFa8tWDr2o7xx6Qb7dHc/OBoOriWBILEK0BOgV4Jhw+EJ8w33diV4jJ9PteIa3HtFppc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Le5ArvP7; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1730732738; c=relaxed/simple;
+	bh=vwnO7mrvpAHG7NGEK9mdrycdBVkMEz+YCEyQYM188fE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZePGxi0O8yk9qD+RwRGNATqxPywTeRQ9vPmixB8Kl8xruPF5ZecGTq13Qe/Q5YMH2E+pEcOP+2i8F+VaF/HhXkuyrOivvDCWxvuR0IBvRVTWNwnlREnrmZWD9Z4f4lZ67cY+zpG8Y/d592owJZ0kbiP0AnmGQsB0bbPsAlriqys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wm3oX3AK; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so38420455e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 07:04:45 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c693b68f5so45999375ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 07:05:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730732683; x=1731337483; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PkHezRVB5IW8ZGwe7184Mv0JG0GlE7Z/SJRIUFUBnn4=;
-        b=Le5ArvP74jvJdKXH90AxXv6HvPiJv+vL2wfquIhu1fWYK1HNCsoq7GHVmz3g0r2oIu
-         rIT3jbdTc6Cd2IUg+/Z+8ppvunX6rXQ8uPAkC5c9TGhgZIM2Gh4UxAF2Z+NRg7TqYG1f
-         rF+a1JyCW0mSXsiNqFOU+9wp0vXzAo0GW+ceJMCnjnWzQQWHNHUuEVHnDKtBSp87egL3
-         g5n8eY6g/o+QP9gnrOEmpp93I07W9yBWi040j88HD6kGiFWp9KURYbJS1ymgb5qGdOKG
-         WLBEnn2sWQe8r1k1vAPyve/QOKHRN+IJPBg5UL2buYpcuSQFceBkDXV7/nsuEL2s0VIq
-         kdwA==
+        d=linaro.org; s=google; t=1730732736; x=1731337536; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ofU3iDgizx6YzKehUMFHWoGtFbTl4IysRdu8b/3youA=;
+        b=Wm3oX3AKCnkoCJDzIJVR6fE/XriNzR8eyxqjhEETE3ltjsybeA9cOelQY4IgvdXZKD
+         Jt/PRvs9k3YfqrnGCZS3gY7xxR9GgWJYUuZsHhOtcjWEEBTzF9hHcink9NRsCJQEw6bJ
+         MCvX2e/BrYTdS8yBg/a1212aAmM+DLXH/vL/RKhEsUlVT4TTYiL/sDK07PZj+Yug0wT6
+         TS7Gn3vc6u9rzUZZzW+mBEKrPh25Ozcv4a46iQ0gXfQOZNneDMaBtJ4ShQqqvzekZ8Ob
+         YjeurR+SMViRYzzVGO7zSbXxJWA5afr65q0mefzxW3GOxZ1myijOokkcRI2Rw0bnKyHg
+         Xkww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730732683; x=1731337483;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PkHezRVB5IW8ZGwe7184Mv0JG0GlE7Z/SJRIUFUBnn4=;
-        b=tEei4o9RxSiP6v2twtkmNW+9PHG5GeUahS1XAgZlXIQbWSd6pI5KPDhtIMMKq9f7az
-         oI9EKgT1rOp762jGcemZfctE2QQjCIvIuiQ4iY0vfIrsqVTXbG79DZ3D9Su5wf9x2ti/
-         thiJcb2u2uKtMgo00egFhMFpyzs7iYzsClcxOqp35uxuTzcXFNFIxXARh+9pcFFIpEom
-         9ssSoxfpRNsNH8xSDh3avmMfCs9A6YxaImWqK0LP4ezFLjjnv/iikHo6BnN9+UxpHYRx
-         3oZMlqhH//Yssa6QivuAZ9aIkvt99BBxZr3iwGMuNpSHDWFg2sRhfLAIiw7r1GiKeROE
-         spDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVywteNhEATQFS4m2Sg4HjbpMj99OytGsjEbI9WcE87+7VuW2vnT2eAsEglw5yHmOlYLrb/D5c4Q8n3JUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTRANdM5dnpO+1zpK8oS0elqr9dz6YwyI/5382ANfjrznYYiIC
-	UvA4CFU1C72zyhJ8Yd21epl1zO0HD4/uoZtxXu+9ykDohDh/t/ohe2L7GCYzkdU=
-X-Google-Smtp-Source: AGHT+IHjmYRuVPaZFPEnmcnbEfj6qAKFYzc9mqwaUK54XQYXITaiaYcy6kaXUXlkJ5ui5oryxUMDYQ==
-X-Received: by 2002:a05:600c:46cf:b0:431:58bc:ad5e with SMTP id 5b1f17b1804b1-4327b80c8bamr122885355e9.28.1730732683356;
-        Mon, 04 Nov 2024 07:04:43 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:5b00:c640:4c96:8a97? ([2a01:e0a:982:cbb0:5b00:c640:4c96:8a97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5c6623sm154916145e9.20.2024.11.04.07.04.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 07:04:42 -0800 (PST)
-Message-ID: <8d7ab244-ca34-4b90-9d9f-39217d3335b5@linaro.org>
-Date: Mon, 4 Nov 2024 16:04:41 +0100
+        d=1e100.net; s=20230601; t=1730732736; x=1731337536;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ofU3iDgizx6YzKehUMFHWoGtFbTl4IysRdu8b/3youA=;
+        b=NNNdFHCQPbwQyseS83RYyx9DWqTplWq7Nl30GfI0QowQYOPayvZ/s1/T2MlFDFTJC1
+         nUCPuvAfYhhnc0ZSxi9YtEGM9GQ3WtUz2VUQSdV4EDa0HNm+z99RNSQLgfRY/D5HWK4j
+         9AftR+WcLVALGgSrN7vmZeODWPj2Srw0eqAU6EZhGYPFSRP0fzz5K4LO7bQtIYx02OvL
+         EUU3KhgAHTgTNhr1yejsu9HXw7ZAjN9sXGuxHI0GgTUCf1S2PBzgGdxAzFUcSwKXpZk/
+         SBdOBJrqZIKseo1OxQBKpV1k5dooowoq2NrRi5ddWzXZLDDke0lGXeHuf7Jtz90sAyNw
+         v/CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVn5PMObvW8bpFkZaLW7WYWsBHNGgJP4y+xzq15INCEtn+cgF74qk2I6wd4d7HCcqVSRBzlqX34FqKtd+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7haqZ561w0FlFReCOnmIctO2stml7Y0TMoM/RCvnqf7mkqq/y
+	TeGXlPaG+R9c8RE/oNnMAc7gMFME7gF41f0E9Al1DwX1BO50enuitGoTe9ldzA==
+X-Google-Smtp-Source: AGHT+IEl021krn6b1t/Wx5zX8WUa7/rO/gAFqJnTZVCNoxsul5bGUWlMYoB+HQZUJuohLeUfjZctig==
+X-Received: by 2002:a17:903:943:b0:205:68a4:b2d8 with SMTP id d9443c01a7336-21103aaa063mr240018155ad.11.1730732736068;
+        Mon, 04 Nov 2024 07:05:36 -0800 (PST)
+Received: from thinkpad ([2409:40f4:3049:1cc7:217b:63a:40ce:2e01])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee5da842absm4782828a12.17.2024.11.04.07.05.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 07:05:35 -0800 (PST)
+Date: Mon, 4 Nov 2024 20:35:21 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 05/12] PCI: of_property: Assign PCI instead of CPU bus
+ address to dynamic bridge nodes
+Message-ID: <20241104150521.r4hbsurw4dbzlxpg@thinkpad>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <f6b445b764312fd8ab96745fe4e97fb22f91ae4c.1730123575.git.andrea.porta@suse.com>
+ <20241102170908.fa5n6pz5ldxb66zk@thinkpad>
+ <ZyiL4RnRC1z907Ly@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] arm64: dts: qcom: sm8650: Fix CDSP context banks unit
- addresses
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ling Xu <quic_lxu5@quicinc.com>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241104144204.114279-1-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241104144204.114279-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZyiL4RnRC1z907Ly@apocalypse>
 
-On 04/11/2024 15:42, Krzysztof Kozlowski wrote:
-> There is a mismatch between 'reg' property and unit address for last
-> there CDSP compute context banks.  Current values were taken as-is from
-> downstream source.  Considering that 'reg' is used by Linux driver as
-> SID of context bank and that least significant bytes of IOMMU value
-> match the 'reg', assume the unit-address is wrong and needs fixing.
-> This also won't have any practical impact, except adhering to Devicetree
-> spec.
+On Mon, Nov 04, 2024 at 09:54:57AM +0100, Andrea della Porta wrote:
+> Hi Manivannan,
 > 
-> Fixes: dae8cdb0a9e1 ("arm64: dts: qcom: sm8650: Add three missing fastrpc-compute-cb nodes")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   arch/arm64/boot/dts/qcom/sm8650.dtsi | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+> On 22:39 Sat 02 Nov     , Manivannan Sadhasivam wrote:
+> > On Mon, Oct 28, 2024 at 03:07:22PM +0100, Andrea della Porta wrote:
+> > > When populating "ranges" property for a PCI bridge, of_pci_prop_ranges()
+> > > incorrectly use the CPU bus address of the resource. Since this is a PCI-PCI
+> > > bridge, the window should instead be in PCI address space. Call
+> > > pci_bus_address() on the resource in order to obtain the PCI bus
+> > > address.
+> > > 
+> > 
+> > of_pci_prop_ranges() could be called for PCI devices also (not just PCI
+> > bridges), right?
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> index 3d8a807a81c9..367fdd090768 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> @@ -5622,7 +5622,7 @@ compute-cb@8 {
->   
->   					/* note: secure cb9 in downstream */
->   
-> -					compute-cb@10 {
-> +					compute-cb@12 {
->   						compatible = "qcom,fastrpc-compute-cb";
->   						reg = <12>;
->   
-> @@ -5632,7 +5632,7 @@ compute-cb@10 {
->   						dma-coherent;
->   					};
->   
-> -					compute-cb@11 {
-> +					compute-cb@13 {
->   						compatible = "qcom,fastrpc-compute-cb";
->   						reg = <13>;
->   
-> @@ -5642,7 +5642,7 @@ compute-cb@11 {
->   						dma-coherent;
->   					};
->   
-> -					compute-cb@12 {
-> +					compute-cb@14 {
->   						compatible = "qcom,fastrpc-compute-cb";
->   						reg = <14>;
->   
+> Correct. Please note however that while the PCI-PCI bridge has the parent
+> address in CPU space, an endpoint device has it in PCI space: here we're
+> focusing on the bridge part. It probably used to work before since in many
+> cases the CPU and PCI address are the same, but it breaks down when they
+> differ.
+> 
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+When you say 'focusing', you are specifically referring to the bridge part of
+this API I believe. But I don't see a check for the bridge in your change, which
+is what concerning me. Am I missing something?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
