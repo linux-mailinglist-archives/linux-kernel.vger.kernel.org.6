@@ -1,311 +1,138 @@
-Return-Path: <linux-kernel+bounces-394280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7B199BACD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:47:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AA69BACD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:48:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F96282017
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C11281767
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AA118D63C;
-	Mon,  4 Nov 2024 06:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D15C18C342;
+	Mon,  4 Nov 2024 06:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="V4OidpIG"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3WyJhmn"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D9F2CA8
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FB62CA8;
+	Mon,  4 Nov 2024 06:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730702825; cv=none; b=dr1i4KNAGW0YGC//sybeVjTzb/0Sn3rmLx1bu644Pp9znd8LhS3+m0qTy0gWHVqJU98yZrRpth4CFK7uBLKrc4/bHi/SsCJCEGBzR19auuPZcoOKnUexT/PvvkSYdaTU/U+C2Ut/6v1qpsBBsJJVayeRxyOFUElg3mq8tXHY5iA=
+	t=1730702900; cv=none; b=RpOsZhk/gb3AnZaP2ex/CngJc4ax6ECQrVk9uAzFRrPqQJYTsN0ezaxqmuu8/xMX+5Zkq1pvELRwgCJGkvMc+qQjtOWVdGPpLddprzHwX/sDGEKsLyRoS+2gvzn7GLGMmowEWSGqvFY5sF4w2fN7HtoF95FUk6td9XmGf0wbiKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730702825; c=relaxed/simple;
-	bh=QuoOFd8I0O91IyHHYYbLVeeFKUGtvwexJyPQTlJsxKA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gV3Z1qbfPT3hisWvcjsIqSAtDHAe0YkiN/sPtqqZtxJQLSiyYqflkFq6P9Fas36VCJuH9J+aS7ER2ER6XwN+VSBrG6ecgeNq5rj735zp+QAvOEsjIyKHww3gKCpkIdn0ffd5UOuN0dSrXZBp3DXR/A1JMady/lGPBJVGLGGzVz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=V4OidpIG; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a5f555cfbso298269366b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 22:47:00 -0800 (PST)
+	s=arc-20240116; t=1730702900; c=relaxed/simple;
+	bh=jlfO/UikiZs9hQJpMwu5V3TVRejUWA79MBHRzI7bCh0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nc/baZ0iX37Yhd3iN7HfYJNPkCyX5i4If8TwD+ZTrC3IhObJXlsK+Drsv46VxOcdKm0mz47jO4qMMpeWQpqvZXIuDlAMsmxO8E2s0QY7nm3YYY59GhvU7r7s6t1hoeDag+zRzmfRxqXEYO6solB8VhVS9MoAaYjNkggWUJDzZdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3WyJhmn; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ebc04d4777so1885573eaf.2;
+        Sun, 03 Nov 2024 22:48:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730702819; x=1731307619; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcL58p8mF5Zl49nS7NSGvMtz/EmRjz2p/naj2ImhMnk=;
-        b=V4OidpIGWUx6Dt8CTFiWzdw5FBf9aPdAlQywiyPBIiMH0F4YXMzI46fgEsnDJMiP45
-         gpJiZGcgUtdPIfcSsf4u/yBWzkZYfauM5Nw1blWjyve6anyA0v/7c/HFfhJaxXUQe5tP
-         rKh60sJ0N/zetnD2QCzRcxOxOLcC6W1BdL+soks+l1a17O0KkKqtbqiR4zGXnJ9v6ffx
-         wivVmECFkGwEdBRqu1fj1lbeIKMSybNCUIgOdvgmmRZodhlMbjRqKL99+PBj3VPhiqPg
-         xqxRxMrtZcryhqB6p3EI+caWHj2/3IKuUTEx3pKoafIv8MaISmeWgb6L72frpGPKG5CW
-         USbg==
+        d=gmail.com; s=20230601; t=1730702898; x=1731307698; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AoFFRDhx7P8Vjncyt+RKO34ZfvsUqWh2Ai+071gCkzA=;
+        b=V3WyJhmnjSoE6Evhj7QNRWQ7TCFjpraSyOVs8A+7afPqVbSuyYoGvJBdH6BTkU41uA
+         Pnek7GHdohXODgT7oI2ftre7YH2F8F5NepBe9FqcSCG+RBKRxaFDCc9nWBtGtZ7ACN1X
+         nOkFog/R87ospyGStzsli4pNOJLK1M6UF+SA2n7fA1KLv6n5dUiRK+WerJ1q16Qp1S5i
+         ItN5BWqv8l0A2YvctGIKOMUU+RGKUasxR+zsWHkrdNF8SckyiSPdbYTo3eUO2BMWqNmp
+         OPwJhYNZC2hWxJO5OYJjs+O+/8nzpxXRvk4TnWBY+jYgzTPWfkmg5NdiffvjZeNA71LX
+         1xUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730702819; x=1731307619;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZcL58p8mF5Zl49nS7NSGvMtz/EmRjz2p/naj2ImhMnk=;
-        b=mVgBEJOjUFpygqj8YWzVpNbe6tFQFP3oovmHym5ezC27nJYMDaoFdlsYJ/jn9vp+yB
-         aXNl6fn2VHAZ3UC/Gzw1KVVX3bIGFyhBYUzL34hBCu27oYLzpXW2QuVnAYanNdmZEHtu
-         +ctNyS3uLuBBdhIrD7wO+CMdzIWEl/8xAoN+QsHPX1Q8/TzAALSP4jOBZsRpa/lYitZG
-         ogaMkMHzCPfDFOvngc/uNDc/y4tIkPW8NpMFdKrsMHvzZw0VPRHENUhrqCQN+YvdXXXq
-         qinILaJxoz5WWj3XRIdGBBfFUq8WS4j6zEdBYqg9TgA/2DDNbY01B+nvvWEiVFjogI0O
-         74og==
-X-Forwarded-Encrypted: i=1; AJvYcCUR9n1ewWx6Zn0sqF/OTq0HC4HRjQaq/NMEKJACxqnjF3vkU4zZuVlS1dBZ+aRttjuIMjwcvMHf8KF/CdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDQ7Gx36CaDbMvOi290sjMG3iCSOrGTJcFSYOYPXYUuqVJs9gb
-	VTS/Xxtid2wyr4w+KSJZxnoA95/mYJ0rjIGXXrarb8Jhqqrt9XqrvpFlLoJREX4=
-X-Google-Smtp-Source: AGHT+IFowEnMiDO/pTu4Oi8MLHthjGUPLyPZfFAjymH1tOvJMXm1s7ycGi2CQBqddOThNxzPIZCpmQ==
-X-Received: by 2002:a05:6402:524b:b0:5ce:afba:f48a with SMTP id 4fb4d7f45d1cf-5ceb935bbc3mr15128807a12.27.1730702819312;
-        Sun, 03 Nov 2024 22:46:59 -0800 (PST)
-Received: from localhost ([2a02:8071:b783:6940:6752:e162:c76c:a99b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565ef55bsm509953566b.137.2024.11.03.22.46.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 22:46:58 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>
-Cc: Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Tomasz Jeznach <tjeznach@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Michael Shavit <mshavit@google.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Georgi Djakov <quic_c_gdjako@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH] iommu: Switch back to struct platform_driver::remove()
-Date: Mon,  4 Nov 2024 07:46:50 +0100
-Message-ID: <20241104064650.799122-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1730702898; x=1731307698;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AoFFRDhx7P8Vjncyt+RKO34ZfvsUqWh2Ai+071gCkzA=;
+        b=aRVTT4LeKD1AM8F3GvpgJTVgwjXjgYkBk+a87J897CeZ23C4e2SmuwoTQ5LLuulbDZ
+         24kpWzr1RxinrhCpvHIy+XLCtEp29a0X/eLGa5ey2JbH1Is1hp/hM5XdgnZp7nlO7gbO
+         JUv8gRtPi3MwHDpukvP7/rF1VHgdZRYXJgQ7v5rbPSY4Fg8hf4H9uFijvGdoj9iMm1Cl
+         acf9LvoKLVXJBFKO4HUvWZJ7PryF0E9W/eFhWip+g5teD0/l7LkIZ4owILAFVOaPDsht
+         8xg8dSI4mNDLIm+0ymr2e8HiVgLso6fuD8eTQj/Y3pB27lddfqrQ2za2qeOSAoYrs4CC
+         WSgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPn8SyiCOT0jBO42eTUNrPUgOrP6efnTVisAHcgQRYWy+4xD4aaVbBgTNy3ZudN1y2RQbSyeeySjCHaMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmIk8ZR2phoNmkaVkVJ5Vj2g+TvvyM9aeKBRZvgy0/FMPgwOnU
+	Tohp+O0kCk0X/mNQmaTpSQ/PlezMR/pq5MuqjEWD9m9c7X6JsOX43BLxrY3dSitxlWz1uenaExk
+	CeudFS9pSRVTSE6hPTT0kfQ/wZPyIvw==
+X-Google-Smtp-Source: AGHT+IFAu7cciozCRJztsew2CmEuJHN5eOvT64Hy1mT2HOzMA7Jtg0n6/YzNVPREoGGGjsknmB3pBOk5A19eeHHV6GE=
+X-Received: by 2002:a05:6820:1ca6:b0:5e5:c073:9ea5 with SMTP id
+ 006d021491bc7-5ec5ec942e3mr10980119eaf.6.1730702898198; Sun, 03 Nov 2024
+ 22:48:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7687; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=QuoOFd8I0O91IyHHYYbLVeeFKUGtvwexJyPQTlJsxKA=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnKG3bdCqjD+kFfznlIAVOFLi0hJACxdKIJdHQs d8zimMeLKiJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZyht2wAKCRCPgPtYfRL+ TgZmCAC7iVNHyJXfgq1NuwUsLEKQCs0OdbK3FGJTFb087AzN3L8qoZWNQ/7naPMqAa/iO/4+GLC A2oKxi5X2YXXvN/Kvagsv2AIKk6AJIWZRiPsBFWj+Ps3gBnDLZgJ06lC7qiV+1i1/uGlT8iiVLZ vs03Vk0J5Z4QLsasSAI4jMdHc1DWGQ36eUKWoCE7UlpS9fKMTuh/6l7xI0DRyMSQbZ5jne7oyV6 iVuUCy8OTrl+hiJM3OKc27D8c5vO2QwVNuS2BuC/pmSLLBWDQ8MYAT0JekQ3ByC2urzrPcTq7QI fMrzr4D5inlV9p1UPCJQFs7/4VeLVbptwDWaOxKfcLSVvoUj
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+References: <20240910044024.120009-1-sergio.paracuellos@gmail.com> <CAMhs-H9M+ZW1c7Wrdc0ff_hD=hrbq_S-KqzzjH7ux97sZO4mHA@mail.gmail.com>
+In-Reply-To: <CAMhs-H9M+ZW1c7Wrdc0ff_hD=hrbq_S-KqzzjH7ux97sZO4mHA@mail.gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Mon, 4 Nov 2024 07:48:06 +0100
+Message-ID: <CAMhs-H-Fy6d4q6dQzG9Gik4jj10tXUHcE8BXZW5iRpbYDW638w@mail.gmail.com>
+Subject: Re: [PATCH 0/3] clk: ralink: mtmips: some fixes and sdhc clock support
+To: linux-clk@vger.kernel.org
+Cc: sboyd@kernel.org, mturquette@baylibre.com, tsbogend@alpha.franken.de, 
+	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-return void") .remove() is (again) the right callback to implement for
-platform drivers.
+On Thu, Oct 17, 2024 at 8:41=E2=80=AFAM Sergio Paracuellos
+<sergio.paracuellos@gmail.com> wrote:
+>
+> On Tue, Sep 10, 2024 at 6:40=E2=80=AFAM Sergio Paracuellos
+> <sergio.paracuellos@gmail.com> wrote:
+> >
+> > Hi Stephen,
+> >
+> > The following first two patches contains several fixes for having a cor=
+rect
+> > clock plan from the beggining in old ralink SoCs that could not be test=
+ed
+> > when the driver was mainlained due to the lack of users. Now some issue=
+s
+> > have been reported regarding RT3883 in openWRT[0] so I am addressing an=
+d
+> > fixing them here.
+> >
+> > The last patch adds new clocks to properly support sdhc 48 MHz clock fo=
+r
+> > Mt7620, Mt7628 and Mt7688 SoCs. OpenWRT people updated to use SDHC upst=
+ream
+> > driver so they were forced to add a not desired fixed dts node[1] to ma=
+ke it
+> > works. The correct thing to do is just support it in mtmips driver. Hen=
+ce
+> > we have add it here.
+> >
+> > Thanks in advance for your time.
+> >
+> > Best regards,
+> >     Sergio Paracuellos
+> >
+> > [0]: https://github.com/openwrt/openwrt/issues/16054
+> > [1]: https://github.com/openwrt/openwrt/pull/15896/files
+> >
+> > Sergio Paracuellos (3):
+> >   clk: ralink: mtmips: fix clock plan for Ralink SoC RT3883
+> >   clk: ralink: mtmips: fix clocks probe order in oldest ralink SoCs
+> >   clk: ralink: mtmips: add mmc related clocks for SoCs MT7620, MT7628
+> >     and MT7688
+> >
+> >  drivers/clk/ralink/clk-mtmips.c | 56 ++++++++++++++++++++++++---------
+> >  1 file changed, 41 insertions(+), 15 deletions(-)
+>
+> Gentle ping on this series :-)
 
-Convert all platform drivers below drivers/iommu to use .remove(), with
-the eventual goal to drop struct platform_driver::remove_new(). As
-.remove() and .remove_new() have the same prototypes, conversion is done
-by just changing the structure member name in the driver initializer.
+Another gentle ping on this series :-)
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
-Hello,
+Thanks in advance for your time.
 
-I did a single patch for all of drivers/iommu. While I usually prefer to
-do one logical change per patch, this seems to be overengineering here
-as the individual changes are really trivial and shouldn't be much in
-the way for stable backports. But I'll happily split the patch if you
-prefer it split.
-
-This is based on today's next, if conflicts arise when you apply it at
-some later time and don't want to resolve them, feel free to just drop
-the changes to the conflicting files. I'll notice and followup at a
-later time then. Or ask me for a fixed resend. (Having said that, I
-recommend b4 am -3 + git am -3 which should resolve most conflicts just
-fine.)
-
-Best regards
-Uwe
-
- drivers/iommu/apple-dart.c                  | 2 +-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
- drivers/iommu/arm/arm-smmu/arm-smmu.c       | 2 +-
- drivers/iommu/arm/arm-smmu/qcom_iommu.c     | 4 ++--
- drivers/iommu/ipmmu-vmsa.c                  | 2 +-
- drivers/iommu/msm_iommu.c                   | 2 +-
- drivers/iommu/mtk_iommu.c                   | 2 +-
- drivers/iommu/mtk_iommu_v1.c                | 2 +-
- drivers/iommu/omap-iommu.c                  | 2 +-
- drivers/iommu/riscv/iommu-platform.c        | 2 +-
- drivers/iommu/sprd-iommu.c                  | 2 +-
- 11 files changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
-index eb1e62cd499a..c5bde50d1c42 100644
---- a/drivers/iommu/apple-dart.c
-+++ b/drivers/iommu/apple-dart.c
-@@ -1352,7 +1352,7 @@ static struct platform_driver apple_dart_driver = {
- 		.pm			= pm_sleep_ptr(&apple_dart_pm_ops),
- 	},
- 	.probe	= apple_dart_probe,
--	.remove_new = apple_dart_remove,
-+	.remove	= apple_dart_remove,
- };
- 
- module_platform_driver(apple_dart_driver);
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 826db8894fb7..efbc78bffd33 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -4679,7 +4679,7 @@ static struct platform_driver arm_smmu_driver = {
- 		.suppress_bind_attrs	= true,
- 	},
- 	.probe	= arm_smmu_device_probe,
--	.remove_new = arm_smmu_device_remove,
-+	.remove	= arm_smmu_device_remove,
- 	.shutdown = arm_smmu_device_shutdown,
- };
- module_driver(arm_smmu_driver, platform_driver_register,
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-index 8321962b3714..4e9bb9f4c4bd 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-@@ -2372,7 +2372,7 @@ static struct platform_driver arm_smmu_driver = {
- 		.suppress_bind_attrs    = true,
- 	},
- 	.probe	= arm_smmu_device_probe,
--	.remove_new = arm_smmu_device_remove,
-+	.remove = arm_smmu_device_remove,
- 	.shutdown = arm_smmu_device_shutdown,
- };
- module_platform_driver(arm_smmu_driver);
-diff --git a/drivers/iommu/arm/arm-smmu/qcom_iommu.c b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-index b98a7a598b89..9ce2fe50b22c 100644
---- a/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-+++ b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-@@ -759,7 +759,7 @@ static struct platform_driver qcom_iommu_ctx_driver = {
- 		.of_match_table	= ctx_of_match,
- 	},
- 	.probe	= qcom_iommu_ctx_probe,
--	.remove_new = qcom_iommu_ctx_remove,
-+	.remove	= qcom_iommu_ctx_remove,
- };
- 
- static bool qcom_iommu_has_secure_context(struct qcom_iommu_dev *qcom_iommu)
-@@ -931,7 +931,7 @@ static struct platform_driver qcom_iommu_driver = {
- 		.pm		= &qcom_iommu_pm_ops,
- 	},
- 	.probe	= qcom_iommu_device_probe,
--	.remove_new = qcom_iommu_device_remove,
-+	.remove	= qcom_iommu_device_remove,
- };
- 
- static int __init qcom_iommu_init(void)
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index ff55b8c30712..074daf1aac4e 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -1159,6 +1159,6 @@ static struct platform_driver ipmmu_driver = {
- 		.pm = pm_sleep_ptr(&ipmmu_pm),
- 	},
- 	.probe = ipmmu_probe,
--	.remove_new = ipmmu_remove,
-+	.remove = ipmmu_remove,
- };
- builtin_platform_driver(ipmmu_driver);
-diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-index 989e0869d805..ce40f0a419ea 100644
---- a/drivers/iommu/msm_iommu.c
-+++ b/drivers/iommu/msm_iommu.c
-@@ -838,6 +838,6 @@ static struct platform_driver msm_iommu_driver = {
- 		.of_match_table = msm_iommu_dt_match,
- 	},
- 	.probe		= msm_iommu_probe,
--	.remove_new	= msm_iommu_remove,
-+	.remove		= msm_iommu_remove,
- };
- builtin_platform_driver(msm_iommu_driver);
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index c45313c43b9e..72b68d037b95 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -1794,7 +1794,7 @@ MODULE_DEVICE_TABLE(of, mtk_iommu_of_ids);
- 
- static struct platform_driver mtk_iommu_driver = {
- 	.probe	= mtk_iommu_probe,
--	.remove_new = mtk_iommu_remove,
-+	.remove	= mtk_iommu_remove,
- 	.driver	= {
- 		.name = "mtk-iommu",
- 		.of_match_table = mtk_iommu_of_ids,
-diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
-index ee4e55b6b190..480e57ea6635 100644
---- a/drivers/iommu/mtk_iommu_v1.c
-+++ b/drivers/iommu/mtk_iommu_v1.c
-@@ -745,7 +745,7 @@ static const struct dev_pm_ops mtk_iommu_v1_pm_ops = {
- 
- static struct platform_driver mtk_iommu_v1_driver = {
- 	.probe	= mtk_iommu_v1_probe,
--	.remove_new = mtk_iommu_v1_remove,
-+	.remove	= mtk_iommu_v1_remove,
- 	.driver	= {
- 		.name = "mtk-iommu-v1",
- 		.of_match_table = mtk_iommu_v1_of_ids,
-diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-index 3f72aef8bd5b..b8ced5d0581c 100644
---- a/drivers/iommu/omap-iommu.c
-+++ b/drivers/iommu/omap-iommu.c
-@@ -1285,7 +1285,7 @@ static const struct of_device_id omap_iommu_of_match[] = {
- 
- static struct platform_driver omap_iommu_driver = {
- 	.probe	= omap_iommu_probe,
--	.remove_new = omap_iommu_remove,
-+	.remove	= omap_iommu_remove,
- 	.driver	= {
- 		.name	= "omap-iommu",
- 		.pm	= &omap_iommu_pm_ops,
-diff --git a/drivers/iommu/riscv/iommu-platform.c b/drivers/iommu/riscv/iommu-platform.c
-index da336863f152..382ba2841849 100644
---- a/drivers/iommu/riscv/iommu-platform.c
-+++ b/drivers/iommu/riscv/iommu-platform.c
-@@ -81,7 +81,7 @@ static const struct of_device_id riscv_iommu_of_match[] = {
- 
- static struct platform_driver riscv_iommu_platform_driver = {
- 	.probe = riscv_iommu_platform_probe,
--	.remove_new = riscv_iommu_platform_remove,
-+	.remove = riscv_iommu_platform_remove,
- 	.driver = {
- 		.name = "riscv,iommu",
- 		.of_match_table = riscv_iommu_of_match,
-diff --git a/drivers/iommu/sprd-iommu.c b/drivers/iommu/sprd-iommu.c
-index a2f4ffe6d949..e84806eee281 100644
---- a/drivers/iommu/sprd-iommu.c
-+++ b/drivers/iommu/sprd-iommu.c
-@@ -531,7 +531,7 @@ static struct platform_driver sprd_iommu_driver = {
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe	= sprd_iommu_probe,
--	.remove_new = sprd_iommu_remove,
-+	.remove	= sprd_iommu_remove,
- };
- module_platform_driver(sprd_iommu_driver);
- 
-base-commit: c88416ba074a8913cf6d61b789dd834bbca6681c
--- 
-2.45.2
-
+Best regards,
+     Sergio Paracuellos
 
