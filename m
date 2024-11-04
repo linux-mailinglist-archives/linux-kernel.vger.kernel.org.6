@@ -1,345 +1,273 @@
-Return-Path: <linux-kernel+bounces-395112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924429BB8B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:13:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BA59BB8B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:15:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503C2283A34
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:13:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6BE6281F5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A8F1BD039;
-	Mon,  4 Nov 2024 15:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257811607AB;
+	Mon,  4 Nov 2024 15:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLvA3odV"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="MAHwzciq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RpgEJMuh"
+Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B761BC065;
-	Mon,  4 Nov 2024 15:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EC62B9A2;
+	Mon,  4 Nov 2024 15:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730733171; cv=none; b=cmWd9Gghha6FNRXv55zXe7VDTh6aOMCLHoIH7obf+44nyGpvyfcuQxNDI8+LXHORIuXACMYLbFvyZcmFE9xJb8KHTdwpsh034nCGDINfXFySfTdWri3H0lEjarnss5a2APxaZmANICRlW9gnTkLqhq/5jz8hduJqQ+WanogBH0g=
+	t=1730733304; cv=none; b=VWcFhhIHLQlgI1DMCOQcNT+BtbkdNvRLfFnrOijJuxZ4B3OojmoaY4t824hJOLnqDE2ts+nK93ybtTichyMiRI8EwRJhjb1IlBYT1REHZ52DwTHNnkRbKimE5VJoCmG4P6eUcy1ymIPXdISEOfEFn7G2CsuCwu6r7ppOgUw9UcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730733171; c=relaxed/simple;
-	bh=BaaksXx/2rKmIPLxkZ/vHqVYo4nDym4qCUjVHlaqwsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c5EVD2Wgvl8TZrmc2HQTZM9S9kkpcC0ekgxBkQ1+o/kyxFGt8GP9gGwh2tyXyBFjow8EotM2MUEaW0/niNFGQziUla0fiHnX9EnEnwYZuqbJTEDbclwYTNNYdn7Hs1oz1NcpBdCfNGFOLSefNBD7Uqe8YOdaZJ1cpEv0n8YF/ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLvA3odV; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cbca51687so41009015ad.1;
-        Mon, 04 Nov 2024 07:12:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730733169; x=1731337969; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EsDhKeizCbh8czq6Zo7/L6Gcau/g9OV1qCvVb2b2Aa0=;
-        b=iLvA3odVlS12uLcxjChDA3H8Lo7/3akf0hVCUboCeI+hmxi4LA1+3RLCIX0I+aVVmw
-         jPN1XMToHwb0VB0sWuN6PxDeU1ClwWMw/+5jcPwOP6tl2khVVXxXppRrEC+vfAUGQ8Lm
-         p38tCTE2N4bymx4TBnx2kcqSkepN61jozqdv4+OtIR+DePlLxtCWF1agx5xg779TKVJd
-         UuKyhBjR8YLW4jie9HRTYvcXsTzGs93uKml9cmGUZy5njwNKL5d372nwgvx309qiaC58
-         VcKzbsLTAtf+w9Hm1bkvGx4cZpCznld2gCm3zeBJegViQvb+YFZycFsrXSEyL/S0B1Hf
-         iM6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730733169; x=1731337969;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EsDhKeizCbh8czq6Zo7/L6Gcau/g9OV1qCvVb2b2Aa0=;
-        b=BTtO0do6aQKUdmK8QpjAJaYGhmxIBMipOJ15wZpXQ2EZEr6ehDzCga8axTh8AGIRYf
-         TlriMR16XY3gwaRLq3JOE7a2PXqbSQVsml20lEPG+Gv1klx6qup/7WIgfcb0EFAWeYdn
-         HbBftUTu/XuyJAU+QRGbuHNp0uRR/okAO4bzqgBg4REHh9TGsS5O9yOJS/j9MvJM4+cE
-         N7LRAj/qDMuwXsJqbhJjnejVAeybXKmpR8TrG0Ddcjwh8LdqCvXqiUOmBCq+bLxTXUg6
-         I0gLeENljmaOOi7r4sDO/4w4hq3ozMy08zcW1sYHfgQ1lslB8M7eOA6P0Gq8WlVhsrbu
-         QNBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXNGRptI7gAAMyPO7thIfyHmTOGs/H445Rn2hZSunasgfGarEHtrPKbNq9AD24wTLR5yESocVlch0dzrI=@vger.kernel.org, AJvYcCXrXrENF7TSFPz1BFwBZbGLpl9Z3k/tNy9I425kcRogQ1GI/6m6BOyppeLOUc35FFoMBFmZAv7X@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2+3CSzX6F63W7FLfkaES7Hpeye7gzo12vIeM+bhfkm0IgaA4w
-	QYYKnVIKMUW/aywZQP52SBR9L2M8CQUgwW9Gv6lSlv84rKnkJuxLT1qzxufe
-X-Google-Smtp-Source: AGHT+IHO0Y6csBSOm2+izvcly7LZuH8t5FbKjibToAXpCUmAGh9pzMbEGtKoUY9GTmnEsIJdJ3h36A==
-X-Received: by 2002:a17:902:d4c2:b0:20b:bd8d:427c with SMTP id d9443c01a7336-2111aef288amr178931625ad.23.1730733168579;
-        Mon, 04 Nov 2024 07:12:48 -0800 (PST)
-Received: from z790sl.. ([240f:74:7be:1:3d77:36dd:b1e9:70a2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056eee7bsm62143955ad.61.2024.11.04.07.12.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 07:12:48 -0800 (PST)
-From: Koichiro Den <koichiro.den@gmail.com>
-To: vbabka@suse.cz
-Cc: cl@linux.com,
-	penberg@kernel.org,
-	rientjes@google.com,
-	iamjoonsoo.kim@lge.com,
-	akpm@linux-foundation.org,
-	roman.gushchin@linux.dev,
-	42.hyeyoo@gmail.com,
-	kees@kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	koichiro.den@gmail.com
-Subject: [PATCH] mm/slab: fix warning caused by duplicate kmem_cache creation in kmem_buckets_create
-Date: Tue,  5 Nov 2024 00:08:37 +0900
-Message-ID: <20241104150837.2756047-1-koichiro.den@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730733304; c=relaxed/simple;
+	bh=kTYnw999nI/JqFsVK3bbbPIO4nM5nyfIH9Mdw+awRCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kNcDMgkgw86K0QwV/NaafKYkdKEqnCmhRZw5qcJlaC3X0qjNR3utVEWH+90HE1hvrgWS0g2hTzr9F6j6SiE3ONYyIrVW6X7y1YQ2dgKzyRpVkxzMhh+lJHSkuOkSiBhYTZyxXaUQMSQQNCVmIhiEMoF40u34ya/gnLKrlVWPf4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=MAHwzciq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RpgEJMuh; arc=none smtp.client-ip=202.12.124.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailflow.stl.internal (Postfix) with ESMTP id 4282A1D40250;
+	Mon,  4 Nov 2024 10:14:58 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-08.internal (MEProxy); Mon, 04 Nov 2024 10:14:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1730733298; x=
+	1730736898; bh=3t9S8lMLsxZ1l3HwamcmToJ6jU6n7DJ3ZQs7SNN8Hic=; b=M
+	AHwzciqVjMKKlxsMroKfrWYj5+RS/+kjkeRxP22cj4OLrn6yPV4r2GTyrZepKjFa
+	1QXM9SqJpzab0QJqVkgKeZZr7Gwjo4pYd+L5zIfE7uJHS+7Hif64oewXF3xhHDSn
+	rHO51dzAxxxVepdMHWjPch871rwu1dkmW9bp0U6rgMtANZfI2itHG2qyVMvzbO9u
+	T9ssSyhQ7UYU2A5ngyApd81WGxo+V3nFKJC64qeU7uEHU0coHxvvoRAnibr3nLFz
+	4buop86n2YKIFKB0Ae4gyeE2EGGrxE/nckXCKBPpVmSzLa+kKbBU5AFZzRz3+Ws5
+	P/3wBGJ03FPdsSVOzMoVg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730733298; x=1730736898; bh=3t9S8lMLsxZ1l3HwamcmToJ6jU6n7DJ3ZQs
+	7SNN8Hic=; b=RpgEJMuhNjKezwpkkFC9FefBRL4pCAvhaljD6qj6LsTWeeE5J7n
+	lhxLHm2O2q0FO+x9oso698a+cXrD1kCfW92TIA6jswsAcXkjQ/OGZVQq//meigEk
+	kt9AOrnVjw5OlMVFp+0FO0q8M18Gs8loPY6nG7HvDE/vfMDkbv/ab0LFtobU5sOk
+	g0wWprw3oWfXmAYTYnKBXhoR4vApKoGKa77Gn57mQLfcGzVspWJoKTJCoirwbvZG
+	0kmQTO7cYmyJ4VOFEB5N5d5R1eEdb17ye6cf/277l4SryE1QEMbXyKjX1FObU5kl
+	cP72/m8V+qdNFA19dptUOaNZ1uW32239qDw==
+X-ME-Sender: <xms:8eQoZ_LQsKsq3EqKMGVb7qr5lVLUqJGmIVERuS04WjM8YeOt6soKtg>
+    <xme:8eQoZzJ_ELm3eCWgOtnDhPcyqnycdV5RuIstPhqfJKOPFpkFqDFcjaw00kqZOnbuI
+    cRyGwd5jQDxDSp2Ses>
+X-ME-Received: <xmr:8eQoZ3tsxTPHIYnlVEz93_C0ft-JIOKRMYrUCXhftEk6Lru8oN1rqBWSSjuw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedgjedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
+    ucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrg
+    hilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfek
+    geetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggp
+    rhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnthhonh
+    hiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhg
+    lhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhh
+    uhhnthgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdp
+    rhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehnvghtuggvvh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:8eQoZ4YezVoEN7itU2VG_p2WoaN59K977P6RyrNVbXfE4zB01eiUyw>
+    <xmx:8eQoZ2YnjobwfIBfKcYrHYS0ZetYmM1GDE92pV90O8UE_oJm4UA-Ag>
+    <xmx:8eQoZ8AG20jetaub2NhxzGIgym1DE9NDr4zp4XY59mkU_X-tEfUnNA>
+    <xmx:8eQoZ0bx7_hf0EqTNLcQ5YUG5SlMJcinK4lbyxsUau4bueTCTbTIxg>
+    <xmx:8eQoZ8NpZC-2xPS8DPENXui-NuvkzcESRUmoB-dcrDYthvLLW0pFlWpd>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 4 Nov 2024 10:14:57 -0500 (EST)
+Date: Mon, 4 Nov 2024 16:14:55 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v11 18/23] ovpn: implement peer
+ add/get/dump/delete via netlink
+Message-ID: <Zyjk781vOqV4kXhJ@hog>
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net>
 
-Commit b035f5a6d852 ("mm: slab: reduce the kmalloc() minimum alignment
-if DMA bouncing possible") reduced ARCH_KMALLOC_MINALIGN to 8 on arm64.
-However, with KASAN_HW_TAGS enabled, arch_slab_minalign() becomes 16.
-This causes kmalloc_caches[*][8] to be aliased to kmalloc_caches[*][16],
-resulting in kmem_buckets_create() attempting to create a kmem_cache for
-size 16 twice. This duplication triggers warnings on boot:
+2024-10-29, 11:47:31 +0100, Antonio Quartulli wrote:
+> +static int ovpn_nl_peer_precheck(struct ovpn_struct *ovpn,
+> +				 struct genl_info *info,
+> +				 struct nlattr **attrs)
+> +{
+> +	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_PEER], attrs,
+> +			      OVPN_A_PEER_ID))
+> +		return -EINVAL;
+> +
+> +	if (attrs[OVPN_A_PEER_REMOTE_IPV4] && attrs[OVPN_A_PEER_REMOTE_IPV6]) {
+> +		NL_SET_ERR_MSG_MOD(info->extack,
+> +				   "cannot specify both remote IPv4 or IPv6 address");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!attrs[OVPN_A_PEER_REMOTE_IPV4] &&
+> +	    !attrs[OVPN_A_PEER_REMOTE_IPV6] && attrs[OVPN_A_PEER_REMOTE_PORT]) {
+> +		NL_SET_ERR_MSG_MOD(info->extack,
+> +				   "cannot specify remote port without IP address");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!attrs[OVPN_A_PEER_REMOTE_IPV4] &&
+> +	    attrs[OVPN_A_PEER_LOCAL_IPV4]) {
+> +		NL_SET_ERR_MSG_MOD(info->extack,
+> +				   "cannot specify local IPv4 address without remote");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!attrs[OVPN_A_PEER_REMOTE_IPV6] &&
+> +	    attrs[OVPN_A_PEER_LOCAL_IPV6]) {
 
-[    2.325108] ------------[ cut here ]------------
-[    2.325135] kmem_cache of name 'memdup_user-16' already exists
-[    2.325783] WARNING: CPU: 0 PID: 1 at mm/slab_common.c:107 __kmem_cache_create_args+0xb8/0x3b0
-[    2.327957] Modules linked in:
-[    2.328550] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc5mm-unstable-arm64+ #12
-[    2.328683] Hardware name: QEMU QEMU Virtual Machine, BIOS 2024.02-2 03/11/2024
-[    2.328790] pstate: 61000009 (nZCv daif -PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-[    2.328911] pc : __kmem_cache_create_args+0xb8/0x3b0
-[    2.328930] lr : __kmem_cache_create_args+0xb8/0x3b0
-[    2.328942] sp : ffff800083d6fc50
-[    2.328961] x29: ffff800083d6fc50 x28: f2ff0000c1674410 x27: ffff8000820b0598
-[    2.329061] x26: 000000007fffffff x25: 0000000000000010 x24: 0000000000002000
-[    2.329101] x23: ffff800083d6fce8 x22: ffff8000832222e8 x21: ffff800083222388
-[    2.329118] x20: f2ff0000c1674410 x19: f5ff0000c16364c0 x18: ffff800083d80030
-[    2.329135] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-[    2.329152] x14: 0000000000000000 x13: 0a73747369786520 x12: 79646165726c6120
-[    2.329169] x11: 656820747563205b x10: 2d2d2d2d2d2d2d2d x9 : 0000000000000000
-[    2.329194] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-[    2.329210] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-[    2.329226] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-[    2.329291] Call trace:
-[    2.329407]  __kmem_cache_create_args+0xb8/0x3b0
-[    2.329499]  kmem_buckets_create+0xfc/0x320
-[    2.329526]  init_user_buckets+0x34/0x78
-[    2.329540]  do_one_initcall+0x64/0x3c8
-[    2.329550]  kernel_init_freeable+0x26c/0x578
-[    2.329562]  kernel_init+0x3c/0x258
-[    2.329574]  ret_from_fork+0x10/0x20
-[    2.329698] ---[ end trace 0000000000000000 ]---
+I think these consistency checks should account for v4mapped
+addresses. With remote=v4mapped and local=v6 we'll end up with an
+incorrect ipv4 "local" address (taken out of the ipv6 address's first
+4B by ovpn_peer_reset_sockaddr). With remote=ipv6 and local=v4mapped,
+we'll pass the last 4B of OVPN_A_PEER_LOCAL_IPV6 to
+ovpn_peer_reset_sockaddr and try to read 16B (the full ipv6 address)
+out of that.
 
-[    2.403704] ------------[ cut here ]------------
-[    2.404716] kmem_cache of name 'msg_msg-16' already exists
-[    2.404801] WARNING: CPU: 2 PID: 1 at mm/slab_common.c:107 __kmem_cache_create_args+0xb8/0x3b0
-[    2.404842] Modules linked in:
-[    2.404971] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.12.0-rc5mm-unstable-arm64+ #12
-[    2.405026] Tainted: [W]=WARN
-[    2.405043] Hardware name: QEMU QEMU Virtual Machine, BIOS 2024.02-2 03/11/2024
-[    2.405057] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    2.405079] pc : __kmem_cache_create_args+0xb8/0x3b0
-[    2.405100] lr : __kmem_cache_create_args+0xb8/0x3b0
-[    2.405111] sp : ffff800083d6fc50
-[    2.405115] x29: ffff800083d6fc50 x28: fbff0000c1674410 x27: ffff8000820b0598
-[    2.405135] x26: 000000000000ffd0 x25: 0000000000000010 x24: 0000000000006000
-[    2.405153] x23: ffff800083d6fce8 x22: ffff8000832222e8 x21: ffff800083222388
-[    2.405169] x20: fbff0000c1674410 x19: fdff0000c163d6c0 x18: ffff800083d80030
-[    2.405185] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-[    2.405201] x14: 0000000000000000 x13: 0a73747369786520 x12: 79646165726c6120
-[    2.405217] x11: 656820747563205b x10: 2d2d2d2d2d2d2d2d x9 : 0000000000000000
-[    2.405233] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-[    2.405248] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-[    2.405271] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-[    2.405287] Call trace:
-[    2.405293]  __kmem_cache_create_args+0xb8/0x3b0
-[    2.405305]  kmem_buckets_create+0xfc/0x320
-[    2.405315]  init_msg_buckets+0x34/0x78
-[    2.405326]  do_one_initcall+0x64/0x3c8
-[    2.405337]  kernel_init_freeable+0x26c/0x578
-[    2.405348]  kernel_init+0x3c/0x258
-[    2.405360]  ret_from_fork+0x10/0x20
-[    2.405370] ---[ end trace 0000000000000000 ]---
+> +		NL_SET_ERR_MSG_MOD(info->extack,
+> +				   "cannot specify local IPV6 address without remote");
+> +		return -EINVAL;
+> +	}
 
-To address this, alias kmem_cache for sizes smaller than min alignment
-to the aligned sized kmem_cache, as done with the default system kmalloc
-bucket.
 
-Cc: <stable@vger.kernel.org> # 6.11.x
-Fixes: b32801d1255b ("mm/slab: Introduce kmem_buckets_create() and family")
-Signed-off-by: Koichiro Den <koichiro.den@gmail.com>
----
- mm/slab_common.c | 102 ++++++++++++++++++++++++++++-------------------
- 1 file changed, 62 insertions(+), 40 deletions(-)
+[...]
+>  int ovpn_nl_peer_set_doit(struct sk_buff *skb, struct genl_info *info)
+>  {
+[...]
+> +	ret = ovpn_nl_peer_modify(peer, info, attrs);
+> +	if (ret < 0) {
+> +		ovpn_peer_put(peer);
+> +		return ret;
+> +	}
+> +
+> +	/* ret == 1 means that VPN IPv4/6 has been modified and rehashing
+> +	 * is required
+> +	 */
+> +	if (ret > 0) {
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 3d26c257ed8b..64140561dd0e 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -354,6 +354,38 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
- }
- EXPORT_SYMBOL(__kmem_cache_create_args);
- 
-+static unsigned int __kmalloc_minalign(void)
-+{
-+	unsigned int minalign = dma_get_cache_alignment();
-+
-+	if (IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) &&
-+	    is_swiotlb_allocated())
-+		minalign = ARCH_KMALLOC_MINALIGN;
-+
-+	return max(minalign, arch_slab_minalign());
-+}
-+
-+static unsigned int __kmalloc_aligned_size(unsigned int idx)
-+{
-+	unsigned int aligned_size = kmalloc_info[idx].size;
-+	unsigned int minalign = __kmalloc_minalign();
-+
-+	if (minalign > ARCH_KMALLOC_MINALIGN)
-+		aligned_size = ALIGN(aligned_size, minalign);
-+
-+	return aligned_size;
-+}
-+
-+static unsigned int __kmalloc_aligned_idx(unsigned int idx)
-+{
-+	unsigned int minalign = __kmalloc_minalign();
-+
-+	if (minalign > ARCH_KMALLOC_MINALIGN)
-+		return __kmalloc_index(__kmalloc_aligned_size(idx), false);
-+
-+	return idx;
-+}
-+
- static struct kmem_cache *kmem_buckets_cache __ro_after_init;
- 
- /**
-@@ -381,7 +413,10 @@ kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
- 				  void (*ctor)(void *))
- {
- 	kmem_buckets *b;
--	int idx;
-+	unsigned int idx;
-+	unsigned long mask = 0;
-+
-+	BUILD_BUG_ON(ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]) > BITS_PER_LONG);
- 
- 	/*
- 	 * When the separate buckets API is not built in, just return
-@@ -402,43 +437,47 @@ kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
- 
- 	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++) {
- 		char *short_size, *cache_name;
-+		unsigned int aligned_size = __kmalloc_aligned_size(idx);
-+		unsigned int aligned_idx = __kmalloc_aligned_idx(idx);
- 		unsigned int cache_useroffset, cache_usersize;
--		unsigned int size;
- 
-+		/* this might be an aliased kmem_cache */
- 		if (!kmalloc_caches[KMALLOC_NORMAL][idx])
- 			continue;
- 
--		size = kmalloc_caches[KMALLOC_NORMAL][idx]->object_size;
--		if (!size)
--			continue;
--
- 		short_size = strchr(kmalloc_caches[KMALLOC_NORMAL][idx]->name, '-');
- 		if (WARN_ON(!short_size))
- 			goto fail;
- 
--		cache_name = kasprintf(GFP_KERNEL, "%s-%s", name, short_size + 1);
--		if (WARN_ON(!cache_name))
--			goto fail;
--
--		if (useroffset >= size) {
-+		if (useroffset >= aligned_size) {
- 			cache_useroffset = 0;
- 			cache_usersize = 0;
- 		} else {
- 			cache_useroffset = useroffset;
--			cache_usersize = min(size - cache_useroffset, usersize);
-+			cache_usersize = min(aligned_size - cache_useroffset, usersize);
- 		}
--		(*b)[idx] = kmem_cache_create_usercopy(cache_name, size,
--					0, flags, cache_useroffset,
--					cache_usersize, ctor);
--		kfree(cache_name);
--		if (WARN_ON(!(*b)[idx]))
--			goto fail;
-+
-+		if (!(*b)[aligned_idx]) {
-+			cache_name = kasprintf(GFP_KERNEL, "%s-%s", name, short_size + 1);
-+			if (WARN_ON(!cache_name))
-+				goto fail;
-+			(*b)[aligned_idx] = kmem_cache_create_usercopy(cache_name, aligned_size,
-+						0, flags, cache_useroffset,
-+						cache_usersize, ctor);
-+			if (WARN_ON(!(*b)[aligned_idx])) {
-+				kfree(cache_name);
-+				goto fail;
-+			}
-+			set_bit(aligned_idx, &mask);
-+		}
-+		if (idx != aligned_idx)
-+			(*b)[idx] = (*b)[aligned_idx];
- 	}
- 
- 	return b;
- 
- fail:
--	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++)
-+	for_each_set_bit(idx, &mask, ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]))
- 		kmem_cache_destroy((*b)[idx]);
- 	kmem_cache_free(kmem_buckets_cache, b);
- 
-@@ -871,24 +910,12 @@ void __init setup_kmalloc_cache_index_table(void)
- 	}
- }
- 
--static unsigned int __kmalloc_minalign(void)
--{
--	unsigned int minalign = dma_get_cache_alignment();
--
--	if (IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) &&
--	    is_swiotlb_allocated())
--		minalign = ARCH_KMALLOC_MINALIGN;
--
--	return max(minalign, arch_slab_minalign());
--}
--
- static void __init
--new_kmalloc_cache(int idx, enum kmalloc_cache_type type)
-+new_kmalloc_cache(unsigned int idx, enum kmalloc_cache_type type)
- {
- 	slab_flags_t flags = 0;
--	unsigned int minalign = __kmalloc_minalign();
--	unsigned int aligned_size = kmalloc_info[idx].size;
--	int aligned_idx = idx;
-+	unsigned int aligned_size = __kmalloc_aligned_size(idx);
-+	unsigned int aligned_idx = __kmalloc_aligned_idx(idx);
- 
- 	if ((KMALLOC_RECLAIM != KMALLOC_NORMAL) && (type == KMALLOC_RECLAIM)) {
- 		flags |= SLAB_RECLAIM_ACCOUNT;
-@@ -914,11 +941,6 @@ new_kmalloc_cache(int idx, enum kmalloc_cache_type type)
- 	if (IS_ENABLED(CONFIG_MEMCG) && (type == KMALLOC_NORMAL))
- 		flags |= SLAB_NO_MERGE;
- 
--	if (minalign > ARCH_KMALLOC_MINALIGN) {
--		aligned_size = ALIGN(aligned_size, minalign);
--		aligned_idx = __kmalloc_index(aligned_size, false);
--	}
--
- 	if (!kmalloc_caches[type][aligned_idx])
- 		kmalloc_caches[type][aligned_idx] = create_kmalloc_cache(
- 					kmalloc_info[aligned_idx].name[type],
-@@ -934,7 +956,7 @@ new_kmalloc_cache(int idx, enum kmalloc_cache_type type)
-  */
- void __init create_kmalloc_caches(void)
- {
--	int i;
-+	unsigned int i;
- 	enum kmalloc_cache_type type;
- 
- 	/*
+&& mode == MP ?
+
+I don't see ovpn_nl_peer_modify checking that before returning 1, and
+in P2P mode ovpn->peers will be NULL.
+
+> +		spin_lock_bh(&ovpn->peers->lock);
+> +		ovpn_peer_hash_vpn_ip(peer);
+> +		spin_unlock_bh(&ovpn->peers->lock);
+> +	}
+> +
+> +	ovpn_peer_put(peer);
+> +
+> +	return 0;
+> +}
+
+>  int ovpn_nl_peer_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
+>  {
+[...]
+> +	} else {
+> +		rcu_read_lock();
+> +		hash_for_each_rcu(ovpn->peers->by_id, bkt, peer,
+> +				  hash_entry_id) {
+> +			/* skip already dumped peers that were dumped by
+> +			 * previous invocations
+> +			 */
+> +			if (last_idx > 0) {
+> +				last_idx--;
+> +				continue;
+> +			}
+
+If a peer that was dumped during a previous invocation is removed in
+between, we'll miss one that's still present in the overall dump. I
+don't know how much it matters (I guses it depends on how the results
+of this dump are used by userspace), so I'll let you decide if this
+needs to be fixed immediately or if it can be ignored for now.
+
+> +
+> +			if (ovpn_nl_send_peer(skb, info, peer,
+> +					      NETLINK_CB(cb->skb).portid,
+> +					      cb->nlh->nlmsg_seq,
+> +					      NLM_F_MULTI) < 0)
+> +				break;
+> +
+> +			/* count peers being dumped during this invocation */
+> +			dumped++;
+> +		}
+> +		rcu_read_unlock();
+> +	}
+> +
+> +out:
+> +	netdev_put(ovpn->dev, &ovpn->dev_tracker);
+> +
+> +	/* sum up peers dumped in this message, so that at the next invocation
+> +	 * we can continue from where we left
+> +	 */
+> +	cb->args[1] += dumped;
+> +	return skb->len;
+>  }
+>  
+>  int ovpn_nl_peer_del_doit(struct sk_buff *skb, struct genl_info *info)
+>  {
+> -	return -EOPNOTSUPP;
+> +	struct nlattr *attrs[OVPN_A_PEER_MAX + 1];
+> +	struct ovpn_struct *ovpn = info->user_ptr[0];
+> +	struct ovpn_peer *peer;
+> +	u32 peer_id;
+> +	int ret;
+> +
+> +	if (GENL_REQ_ATTR_CHECK(info, OVPN_A_PEER))
+> +		return -EINVAL;
+> +
+> +	ret = nla_parse_nested(attrs, OVPN_A_PEER_MAX, info->attrs[OVPN_A_PEER],
+> +			       ovpn_peer_nl_policy, info->extack);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_PEER], attrs,
+> +			      OVPN_A_PEER_ID))
+> +		return -EINVAL;
+> +
+> +	peer_id = nla_get_u32(attrs[OVPN_A_PEER_ID]);
+> +
+> +	peer = ovpn_peer_get_by_id(ovpn, peer_id);
+> +	if (!peer)
+
+maybe c/p the extack from ovpn_nl_peer_get_doit?
+
+> +		return -ENOENT;
+> +
+> +	netdev_dbg(ovpn->dev, "%s: peer id=%u\n", __func__, peer->id);
+> +	ret = ovpn_peer_del(peer, OVPN_DEL_PEER_REASON_USERSPACE);
+> +	ovpn_peer_put(peer);
+> +
+> +	return ret;
+>  }
+
 -- 
-2.43.0
-
+Sabrina
 
