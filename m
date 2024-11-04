@@ -1,537 +1,280 @@
-Return-Path: <linux-kernel+bounces-395219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FD09BBA69
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:36:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB6A9BBADA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E62121F216BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:36:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22F941F22737
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF5D1C2317;
-	Mon,  4 Nov 2024 16:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F08D1CACE3;
+	Mon,  4 Nov 2024 16:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F3NuLSJT"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8jO3P99"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2B720326;
-	Mon,  4 Nov 2024 16:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403931C2DAE;
+	Mon,  4 Nov 2024 16:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730738172; cv=none; b=C73kHWPkXXwd4agImRswoQq75a74Lva2m8A8kMGyvAVF7nguKRqn8tVu7hGBNMRs6nSOdX7NtnZysN07PGGH2JMhDKkfBWnGC9a8GV50FxWkxxAw/Vmc7CCQaAtQOTbbK0wm3LU7QP5aKnmxrlyJ4IGlwb0G8x565XLGm2w60h4=
+	t=1730739544; cv=none; b=qbS2KBHu5DZN8cAnVf8Mnj9CVZDWx5s/3xRRYKBEtwPIa2R4zlXshAmCboX+oNTbxsTIYLFphncHESWn1/hHtg8wM+gZRh46HXtCdUri1vUPtMxnigL8sVq74GxiTB+/PfDd0PUIKI8LGM3eDz3TsXDsAS0TMcmnSQY8waPfeHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730738172; c=relaxed/simple;
-	bh=w9fHs86soS50gPVMGfY2/X5aYVKIuNMrM1OGvYVnWqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eX1LDxtaI84MxOoaZtKFO6tOpi21gMFZmcpDqq+Hq4hf27esZuSJ1LL9WZEAssWWrJOBUnXN4zGqBcGDVBiTcr8su6fP4ZkrEEpgGNFjuRLKZKGrSxYHzT1DBujc6c1x5URr6unqmxrXEeDgwnk9CJIiwodohWoZEh4gYStLrWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F3NuLSJT; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so3765562b3a.1;
-        Mon, 04 Nov 2024 08:36:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730738170; x=1731342970; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=TyDo5ryDU3qYgKXJqmjPMOL+tV06QHxuugNNIJtPE50=;
-        b=F3NuLSJT3tgQ6PI/gBLs7/2CSxK6D7wwYn7u7fLyoBgzdv57i7ozTb4XtB6t8+Khm0
-         8WH6oFAL4S43rKuxpWcKF2G377y3MyfmRHmpt8q3G+8SZ4tRFpl+GL+2oREUAop/jajr
-         59KUn8W1PWLZGNE3VZZ2D8mMNhwUqb5REZl6bKHCUzZUwWVSjzfhXqNYa7MSaT11vSt/
-         J8H6w0rBchVmP4gU967ZYpvmrPXM7aav2qYMfTm4nlSU1yXb9qHSumN109U2gKXy/Yu/
-         0N9Imw1TaTORNXYFGaa2IsFz4QVUox+ppGMid0RlsAH+LG9167nZFsCCW159WrWPot5v
-         9c4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730738170; x=1731342970;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TyDo5ryDU3qYgKXJqmjPMOL+tV06QHxuugNNIJtPE50=;
-        b=kOx3h7YtIHcksWEorycwT3FmSp+6ckLOUuWeuGQZ50kbOP23CvP5VnV8aO6C9xBcgr
-         CuwgVXUW/wJa+0PiRGmnuZ6tsWaZASm6Wz3R2La7H8EyW5jl0BgVaP7mY+8rSNZl9UAe
-         ZbRKWuVsp8Eh3aUZNBxWWfrQvm1/ZtJCorD9gQuLwh/vZBtQi61E5JqtNwphuCncy1Z2
-         pGovWEFneykQn60FhIhwOxnZFErBpVcKxrRsRs4TZ/xjpPmny3iEYjzBi5MymLqyhrMe
-         OJ1VRuGAJfpdPxY4Z3RzimQAyZ+mjTohaxMtTFnCkXUgQMWoJZ9CNbzDi9vrtFvcmxK+
-         uShw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdK0uOQb9hGDvOlR2ImW6vaG2Tugt/SsxgCE1/RPVVKIT/YCnXpDrHg7cMwxMkevInAaS/EwRpj3fqFA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YycVZ3Ee6KTHWS01XXBpUm4NxK2BgeDisu26a2yVHjQfyWYbg8D
-	AJ4pmov9XA0NM8fJ7MXFTM7KunqLWmFX4j3IppRZ+zQzfpOHoi2QJrIpyQ==
-X-Google-Smtp-Source: AGHT+IEbu9hy8H7c6n5pfMyQMFsf+SLLpFJY42buZfSj5aGpyG+/dOAYsXZNuOWy2Ik5/OVuwiaYog==
-X-Received: by 2002:a05:6a21:7894:b0:1db:e917:5755 with SMTP id adf61e73a8af0-1dbe91771e6mr1935510637.30.1730738169608;
-        Mon, 04 Nov 2024 08:36:09 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc315ac5sm7548487b3a.200.2024.11.04.08.36.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 08:36:08 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <d699cddc-a8ae-4094-b1b5-7af8cd7e91cd@roeck-us.net>
-Date: Mon, 4 Nov 2024 08:36:07 -0800
+	s=arc-20240116; t=1730739544; c=relaxed/simple;
+	bh=ObyYJwvBQ4sqRbbXiuOXrbfrqSv76JoQtF2aZpfvMzc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JIB6A5J2eKxBxKTJZ43iT1uz3+rSxqT1Wb1sBPsLzkM8p/cpEZDh0jbsfprQjXHGzoJntCBU6G06C3ZuAwH80GhsExEqj2vVAU6I9qR/Rvm3BN8dF2oZctSjaQXP7lxH1NYLnLlB8ZSd4AlMLQ29gUG9BUxIawJc7dsbRfsQttw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8jO3P99; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B6CE9C4CECE;
+	Mon,  4 Nov 2024 16:59:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730739543;
+	bh=ObyYJwvBQ4sqRbbXiuOXrbfrqSv76JoQtF2aZpfvMzc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=t8jO3P995ggJdzOpImNyNvHX3sQKtHo2b95by4kcp43oVjG7rBtVHPLTUSHS8Z3lx
+	 IF4HxeybGuKPg0jvsiOeI6wYvoitSr42d7cxZsTnVTQKUoNuo0q0JwFfUNQP6BtUgs
+	 1z8XTwTGLwRufGOZqolgjwbCsmx4wW3sG5RuptvLr75gHB88qNlVQ0wXx/Uj2X2vyJ
+	 p/p4zJvWZCqheVFpGE6OJTxjqK7Fm1cUOQzF4JDZvRVF7u33QB2msW/xqMmGfGG4LC
+	 PoLa8qf76h4YxjwbCi25C4DKPdtVzKW7/u6iMm65AUg0Canog31gjxHK+F95gxY9sj
+	 Ag4kK7Rjg0fvw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A220BD1BDC7;
+	Mon,  4 Nov 2024 16:59:03 +0000 (UTC)
+From: =?utf-8?q?Duje_Mihanovi=C4=87_via_B4_Relay?= <devnull+duje.mihanovic.skole.hr@kernel.org>
+Subject: [PATCH RESEND v13 00/12] Initial Marvell PXA1908 support
+Date: Mon, 04 Nov 2024 17:37:02 +0100
+Message-Id: <20241104-pxa1908-lkml-v13-0-e050609b8d6c@skole.hr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] hwmon: Add Congatec Board Controller monitoring
- driver
-To: Thomas Richard <thomas.richard@bootlin.com>,
- Jean Delvare <jdelvare@suse.com>, Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com
-References: <20241104-congatec-board-controller-hwmon-v1-0-871e4cd59d8e@bootlin.com>
- <20241104-congatec-board-controller-hwmon-v1-1-871e4cd59d8e@bootlin.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241104-congatec-board-controller-hwmon-v1-1-871e4cd59d8e@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Tony Lindgren <tony@atomide.com>, 
+ Haojian Zhuang <haojian.zhuang@linaro.org>, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+ Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8319;
+ i=duje.mihanovic@skole.hr; s=20240706; h=from:subject:message-id;
+ bh=ObyYJwvBQ4sqRbbXiuOXrbfrqSv76JoQtF2aZpfvMzc=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDOkaf0PuO5mySDsz2yinrH2wM6gw5dbCLVY/r0twszz8k
+ HjGzca0o5SFQYyLQVZMkSX3v+M13s8iW7dnLzOAmcPKBDKEgYtTACbS18vIMMdOIbTvXik/XxWf
+ 0tu/3AwRLJMv3Cxb0qDHO7GNMVP8CyPD07J/Sy707T/UeeIA08t7Xp851oZNK5zBcO7wkebI/1c
+ CmAE=
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
+X-Endpoint-Received: by B4 Relay for duje.mihanovic@skole.hr/20240706 with
+ auth_id=191
+X-Original-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Reply-To: duje.mihanovic@skole.hr
 
-On 11/4/24 07:48, Thomas Richard wrote:
-> Add support for the Congatec Board Controller. This controller exposes
-> temperature, voltage, current and fan sensors.
-> 
-> The available sensors list cannot be predicted. Some sensors can be
-> present or not, depending the system.
-> The driver has an internal list of all possible sensors, for all Congatec
-> boards. The Board Controller gives to the driver its sensors list, and
-> their status (active or not).
-> 
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-> ---
->   MAINTAINERS                |   1 +
->   drivers/hwmon/Kconfig      |   9 ++
->   drivers/hwmon/Makefile     |   1 +
->   drivers/hwmon/cgbc-hwmon.c | 287 +++++++++++++++++++++++++++++++++++++++++++++
->   4 files changed, 298 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3507df3381b1..5e96646593b1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5784,6 +5784,7 @@ CONGATEC BOARD CONTROLLER MFD DRIVER
->   M:	Thomas Richard <thomas.richard@bootlin.com>
->   S:	Maintained
->   F:	drivers/gpio/gpio-cgbc.c
-> +F:	drivers/hwmon/cgbc-hwmon.c
->   F:	drivers/i2c/busses/i2c-cgbc.c
->   F:	drivers/mfd/cgbc-core.c
->   F:	drivers/watchdog/cgbc_wdt.c
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index cfb4e9314c62..c7b6e93aeb9b 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -463,6 +463,15 @@ config SENSORS_BT1_PVT_ALARMS
->   	  the data conversion will be periodically performed and the data will be
->   	  saved in the internal driver cache.
->   
-> +config SENSORS_CGBC
-> +	tristate "Congatec Board Controller Sensors"
-> +	depends on MFD_CGBC
-> +	help
-> +	  Enables sensors support for the Congatec Board Controller.
-> +
-> +	  This driver can also be built as a module. If so, the module will be
-> +	  called cgbc-hwmon.
-> +
->   config SENSORS_CHIPCAP2
->   	tristate "Amphenol ChipCap 2 relative humidity and temperature sensor"
->   	depends on I2C
-> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-> index b827b92f2a78..318da6d8f752 100644
-> --- a/drivers/hwmon/Makefile
-> +++ b/drivers/hwmon/Makefile
-> @@ -59,6 +59,7 @@ obj-$(CONFIG_SENSORS_ASUS_ROG_RYUJIN)	+= asus_rog_ryujin.o
->   obj-$(CONFIG_SENSORS_ATXP1)	+= atxp1.o
->   obj-$(CONFIG_SENSORS_AXI_FAN_CONTROL) += axi-fan-control.o
->   obj-$(CONFIG_SENSORS_BT1_PVT)	+= bt1-pvt.o
-> +obj-$(CONFIG_SENSORS_CGBC)	+= cgbc-hwmon.o
->   obj-$(CONFIG_SENSORS_CHIPCAP2) += chipcap2.o
->   obj-$(CONFIG_SENSORS_CORETEMP)	+= coretemp.o
->   obj-$(CONFIG_SENSORS_CORSAIR_CPRO) += corsair-cpro.o
-> diff --git a/drivers/hwmon/cgbc-hwmon.c b/drivers/hwmon/cgbc-hwmon.c
-> new file mode 100644
-> index 000000000000..3234c7590acb
-> --- /dev/null
-> +++ b/drivers/hwmon/cgbc-hwmon.c
-> @@ -0,0 +1,287 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * cgbc-hwmon - Congatec Board Controller hardware monitoring driver
-> + *
-> + * Copyright (C) 2024 Thomas Richard <thomas.richard@bootlin.com>
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/device.h>
-> +#include <linux/hwmon.h>
-> +#include <linux/mfd/cgbc.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define CGBC_HWMON_TYPE_TEMP	1
-> +#define CGBC_HWMON_TYPE_IN	2
-> +#define CGBC_HWMON_TYPE_FAN	3
-> +
-> +#define CGBC_HWMON_CMD_SENSOR		0x77
-> +#define CGBC_HWMON_CMD_SENSOR_DATA_SIZE	0x05
-> +
-> +#define CGBC_HWMON_TYPE_MASK	GENMASK(6, 5)
-> +#define CGBC_HWMON_ID_MASK	GENMASK(4, 0)
-> +#define CGBC_HWMON_ACTIVE_BIT	BIT(7)
-> +#define CGBC_HWMON_DATA_HIGH	GENMASK(15, 8)
-> +#define CGBC_HWMON_DATA_LOW	GENMASK(7, 0)
-> +
-> +struct cgbc_hwmon_sensor {
-> +	enum hwmon_sensor_types type;
-> +	bool active;
-> +	u8 index;
-> +	const char *label;
-> +};
-> +
-> +struct cgbc_hwmon_data {
-> +	struct cgbc_device_data *cgbc;
-> +	u8 nb_sensors;
+Hello,
 
-FWIW, using u8 here and in struct cgbc_hwmon_sensor doesn't save any memory,
-it only makes the generated code more complex, at least on non-Intel
-architectures. The same is true for using u8 for any index variables.
-It would make much more sense to use natural data types.
+This series adds initial support for the Marvell PXA1908 SoC and
+"samsung,coreprimevelte", a smartphone using the SoC.
 
-> +	struct cgbc_hwmon_sensor *sensors;
-> +};
-> +
-> +static const char * const cgbc_hwmon_labels_temp[] = {
-> +	"CPU Temperature",
-> +	"Box Temperature",
-> +	"Ambient Temperature",
-> +	"Board Temperature",
-> +	"Carrier Temperature",
-> +	"Chipset Temperature",
-> +	"Video Temperature",
-> +	"Other Temperature",
-> +	"TOPDIM Temperature",
-> +	"BOTTOMDIM Temperature",
-> +};
-> +
-> +static const struct {
-> +	enum hwmon_sensor_types type;
-> +	const char *label;
-> +} cgbc_hwmon_labels_in[] = {
-> +	{ hwmon_in, "CPU Voltage" },
-> +	{ hwmon_in, "DC Runtime Voltage" },
-> +	{ hwmon_in, "DC Standby Voltage" },
-> +	{ hwmon_in, "CMOS Battery Voltage" },
-> +	{ hwmon_in, "Battery Voltage" },
-> +	{ hwmon_in, "AC Voltage" },
-> +	{ hwmon_in, "Other Voltage" },
-> +	{ hwmon_in, "5V Voltage" },
-> +	{ hwmon_in, "5V Standby Voltage" },
-> +	{ hwmon_in, "3V3 Voltage" },
-> +	{ hwmon_in, "3V3 Standby Voltage" },
-> +	{ hwmon_in, "VCore A Voltage" },
-> +	{ hwmon_in, "VCore B Voltage" },
-> +	{ hwmon_in, "12V Voltage" },
-> +	{ hwmon_curr, "DC Current" },
-> +	{ hwmon_curr, "5V Current" },
-> +	{ hwmon_curr, "12V Current" },
-> +};
-> +
-> +static const char * const cgbc_hwmon_labels_fan[] = {
-> +	"CPU Fan",
-> +	"Box Fan",
-> +	"Ambient Fan",
-> +	"Chipset Fan",
-> +	"Video Fan",
-> +	"Other Fan",
-> +};
-> +
-> +static int cgbc_hwmon_cmd(struct cgbc_device_data *cgbc, u8 id, u8 *data)
-> +{
-> +	u8 cmd[2] = {CGBC_HWMON_CMD_SENSOR, id};
-> +
-> +	return cgbc_command(cgbc, cmd, sizeof(cmd), data, CGBC_HWMON_CMD_SENSOR_DATA_SIZE, NULL);
-> +}
-> +
-> +static int cgbc_hwmon_probe_sensors(struct device *dev, struct cgbc_hwmon_data *hwmon)
-> +{
-> +	struct cgbc_device_data *cgbc = hwmon->cgbc;
-> +	struct cgbc_hwmon_sensor *sensor = hwmon->sensors;
-> +	u8 data[CGBC_HWMON_CMD_SENSOR_DATA_SIZE], nb_sensors, i;
-> +	int ret;
-> +
-> +	ret = cgbc_hwmon_cmd(cgbc, 0, &data[0]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	nb_sensors = data[0];
-> +
-> +	hwmon->sensors = devm_kzalloc(dev, sizeof(*hwmon->sensors) * nb_sensors, GFP_KERNEL);
-> +	sensor = hwmon->sensors;
-> +
-> +	for (i = 0; i < nb_sensors; i++) {
-> +		u8 type, id;
-> +
-> +		ret = cgbc_hwmon_cmd(cgbc, i, &data[0]);
+USB works and the phone can boot a rootfs from an SD card, but there are
+some warnings in the dmesg:
 
-For the first loop, this essentially repeats the cgbc_hwmon_cmd() from above.
-Is that how it works, i.e., that index == 0 returns both the number of sensors
-in the first byte of return data plus the data for the first sensor ?
+During SMP initialization:
+[    0.006519] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU1: 0x00000000000000
+[    0.006542] CPU features: Unsupported CPU feature variation detected.
+[    0.006589] CPU1: Booted secondary processor 0x0000000001 [0x410fd032]
+[    0.010710] Detected VIPT I-cache on CPU2
+[    0.010716] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU2: 0x00000000000000
+[    0.010758] CPU2: Booted secondary processor 0x0000000002 [0x410fd032]
+[    0.014849] Detected VIPT I-cache on CPU3
+[    0.014855] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU3: 0x00000000000000
+[    0.014895] CPU3: Booted secondary processor 0x0000000003 [0x410fd032]
 
-> +		if (ret)
-> +			return ret;
-> +
-> +		type = FIELD_GET(CGBC_HWMON_TYPE_MASK, data[1]);
-> +		id = FIELD_GET(CGBC_HWMON_ID_MASK, data[1]) - 1;
-> +
-> +		if (type == CGBC_HWMON_TYPE_TEMP && id < ARRAY_SIZE(cgbc_hwmon_labels_temp)) {
-> +			sensor->type = hwmon_temp;
-> +			sensor->label = cgbc_hwmon_labels_temp[id];
-> +		} else if (type == CGBC_HWMON_TYPE_IN && id < ARRAY_SIZE(cgbc_hwmon_labels_in)) {
-> +			/*
-> +			 * The Board Controller doesn't do differences between current and voltage
+SMMU probing fails:
+[    0.101798] arm-smmu c0010000.iommu: probing hardware configuration...
+[    0.101809] arm-smmu c0010000.iommu: SMMUv1 with:
+[    0.101816] arm-smmu c0010000.iommu:         no translation support!
 
-doesn't differentiate
+A 3.14 based Marvell tree is available on GitHub
+acorn-marvell/brillo_pxa_kernel, and a Samsung one on GitHub
+CoderCharmander/g361f-kernel.
 
-> +			 * sensors
-> +			 */
+Andreas Färber attempted to upstream support for this SoC in 2017:
+https://lore.kernel.org/lkml/20170222022929.10540-1-afaerber@suse.de/
 
-This doesn't really explain what is happening. Please add something like
-"Get the sensor type from cgbc_hwmon_labels_in[id].label instead".
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
 
-> +			sensor->type = cgbc_hwmon_labels_in[id].type;
-> +			sensor->label = cgbc_hwmon_labels_in[id].label;
-> +		} else if (type == CGBC_HWMON_TYPE_FAN && id < ARRAY_SIZE(cgbc_hwmon_labels_fan)) {
-> +			sensor->type = hwmon_fan;
-> +			sensor->label = cgbc_hwmon_labels_fan[id];
-> +		} else {
-> +			dev_warn(dev, "Board Controller returned an unknown sensor (type=%d, id=%d), ignore it",
-> +				 type, id);
-> +			continue;
-> +		}
-> +
-> +		sensor->active = FIELD_GET(CGBC_HWMON_ACTIVE_BIT, data[1]);
-> +		sensor->index = i;
-> +		sensor++;
-> +		hwmon->nb_sensors++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static struct cgbc_hwmon_sensor *cgbc_hwmon_find_sensor(struct cgbc_hwmon_data *hwmon,
-> +							enum hwmon_sensor_types type, int channel)
-> +{
-> +	struct cgbc_hwmon_sensor *sensor = NULL;
-> +	int i, cnt = 0;
-> +
-> +	for (i = 0; i < hwmon->nb_sensors; i++) {
-> +		if (hwmon->sensors[i].type == type && cnt++ == channel) {
+Changes in v13:
+- Better describe the hardware in bindings/arm commit message
+- Rebase on v6.12-rc1
+- Link to v12: https://lore.kernel.org/r/20240823-pxa1908-lkml-v12-0-cc3ada51beb0@skole.hr
 
-Isn't that a bit fragile ? It assumes that the nth reported sensor of a given type
-reflects a specific named sensor. If that is indeed the case, why bother with
-all the code in cgbc_hwmon_probe_sensors() ? The index to sensor association
-should be well defined, and the sensor type plus the channel index should always
-be a constant.
+Changes in v12:
+- Rebase on v6.11-rc4
+- Fix schmitt properties in accordance with 78d8815031fb ("dt-bindings: pinctrl: pinctrl-single: fix schmitt related properties")
+- Drop a few redundant includes in clock drivers
+- Link to v11: https://lore.kernel.org/r/20240730-pxa1908-lkml-v11-0-21dbb3e28793@skole.hr
 
-> +			sensor = &hwmon->sensors[i];
-> +			break;
-> +		}
-> +	}
-> +
-> +	return sensor;
-> +}
-> +
-> +static int cgbc_hwmon_read(struct device *dev, enum hwmon_sensor_types type, u32 attr, int channel,
-> +			   long *val)
-> +{
-> +	struct cgbc_hwmon_data *hwmon = dev_get_drvdata(dev);
-> +	struct cgbc_hwmon_sensor *sensor = cgbc_hwmon_find_sensor(hwmon, type, channel);
-> +	struct cgbc_device_data *cgbc = hwmon->cgbc;
-> +	u8 data[CGBC_HWMON_CMD_SENSOR_DATA_SIZE];
-> +	int ret;
-> +
-> +	if (!sensor)
-> +		return -ENODEV;
+Changes in v11:
+- Rebase on v6.11-rc1 (conflict with DTS Makefile), no changes
+- Link to v10: https://lore.kernel.org/r/20240424-pxa1908-lkml-v10-0-36cdfb5841f9@skole.hr
 
-How would this ever happen ? Unless I am missing something, that means
-there is a bug somewhere in the code. "No such device" is definitely
-wrong here (and elsewhere). If you don't trust your code and think
-this can happen, at least return -ENODATA.
+Changes in v10:
+- Update trailers
+- Rebase on v6.9-rc5
+- Clock driver changes:
+  - Add a couple of forgotten clocks in APBC
+    - The clocks are thermal_clk, ipc_clk, ssp0_clk, ssp2_clk and swjtag
+    - The IDs and register offsets were already present, but I forgot to
+      actually register them
+  - Split each controller block into own file
+  - Drop unneeded -of in clock driver filenames
+  - Simplify struct pxa1908_clk_unit
+  - Convert to platform driver
+  - Add module metadata
+- DTS changes:
+  - Properly name pinctrl nodes
+  - Drop pinctrl #size-cells, #address-cells, ranges and #gpio-size-cells
+  - Fix pinctrl input-schmitt configuration
+- Link to v9: https://lore.kernel.org/20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr
 
-> +
-> +	ret = cgbc_hwmon_cmd(cgbc, sensor->index, &data[0]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*val = FIELD_PREP(CGBC_HWMON_DATA_HIGH, data[3]) | FIELD_PREP(CGBC_HWMON_DATA_LOW, data[2]);
-> +
+Changes in v9:
+- Update trailers and rebase on v6.9-rc2, no changes
+- Link to v8: https://lore.kernel.org/20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr
 
-That is a pretty complex way of writing
-	*val = (data[3] << 8) | data[2];
-I'd say that is close to obfuscation, but that is your call.
+Changes in v8:
+- Drop SSPA patch
+- Drop broken-cd from eMMC node
+- Specify S-Boot hardcoded initramfs location in device tree
+- Add ARM PMU node
+- Correct inverted modem memory base and size
+- Update trailers
+- Rebase on next-20240110
+- Link to v7: https://lore.kernel.org/20231102-pxa1908-lkml-v7-0-cabb1a0cb52b@skole.hr
+  and https://lore.kernel.org/20231102152033.5511-1-duje.mihanovic@skole.hr
 
-> +	/* For the Board Controller 1lsb = 0.1 degree centigrade */
+Changes in v7:
+- Suppress SND_MMP_SOC_SSPA on ARM64
+- Update trailers
+- Rebase on v6.6-rc7
+- Link to v6: https://lore.kernel.org/r/20231010-pxa1908-lkml-v6-0-b2fe09240cf8@skole.hr
 
-All other units are as expected (mV, mA, rpm) ?
+Changes in v6:
+- Address maintainer comments:
+  - Add "marvell,pxa1908-padconf" binding to pinctrl-single driver
+- Drop GPIO patch as it's been pulled
+- Update trailers
+- Rebase on v6.6-rc5
+- Link to v5: https://lore.kernel.org/r/20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr
 
-> +	if (sensor->type == hwmon_temp)
-> +		*val *= 100;
-> +
-> +	return 0;
-> +}
-> +
-> +static umode_t cgbc_hwmon_is_visible(const void *_data, enum hwmon_sensor_types type, u32 attr,
-> +				     int channel)
-> +{
-> +	struct cgbc_hwmon_data *data = (struct cgbc_hwmon_data *)_data;
-> +	struct cgbc_hwmon_sensor *sensor;
-> +
-> +	sensor = cgbc_hwmon_find_sensor(data, type, channel);
-> +	if (!sensor)
-> +		return 0;
-> +
-> +	return sensor->active ? 0444 : 0;
-> +}
-> +
-> +static int cgbc_hwmon_read_string(struct device *dev, enum hwmon_sensor_types type, u32 attr,
-> +				  int channel, const char **str)
-> +{
-> +	struct cgbc_hwmon_data *hwmon = dev_get_drvdata(dev);
-> +	struct cgbc_hwmon_sensor *sensor = cgbc_hwmon_find_sensor(hwmon, type, channel);
-> +
-> +	if (!sensor)
-> +		return -ENODEV;
-> +
-> +	*str = sensor->label;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct hwmon_channel_info * const cgbc_hwmon_info[] = {
-> +	HWMON_CHANNEL_INFO(temp,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL, HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL, HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL, HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL, HWMON_T_INPUT | HWMON_T_LABEL,
-> +			   HWMON_T_INPUT | HWMON_T_LABEL, HWMON_T_INPUT | HWMON_T_LABEL),
-> +	HWMON_CHANNEL_INFO(in,
-> +			   HWMON_I_INPUT | HWMON_I_LABEL, HWMON_I_INPUT | HWMON_I_LABEL,
-> +			   HWMON_I_INPUT | HWMON_I_LABEL, HWMON_I_INPUT | HWMON_I_LABEL,
-> +			   HWMON_I_INPUT | HWMON_I_LABEL, HWMON_I_INPUT | HWMON_I_LABEL,
-> +			   HWMON_I_INPUT | HWMON_I_LABEL, HWMON_I_INPUT | HWMON_I_LABEL,
-> +			   HWMON_I_INPUT | HWMON_I_LABEL, HWMON_I_INPUT | HWMON_I_LABEL,
-> +			   HWMON_I_INPUT | HWMON_I_LABEL, HWMON_I_INPUT | HWMON_I_LABEL,
-> +			   HWMON_I_INPUT | HWMON_I_LABEL, HWMON_I_INPUT | HWMON_I_LABEL),
-> +	HWMON_CHANNEL_INFO(curr,
-> +			   HWMON_C_INPUT | HWMON_C_LABEL, HWMON_C_INPUT | HWMON_C_LABEL,
-> +			   HWMON_C_INPUT | HWMON_C_LABEL),
-> +	HWMON_CHANNEL_INFO(fan,
-> +			   HWMON_F_INPUT | HWMON_F_LABEL, HWMON_F_INPUT | HWMON_F_LABEL,
-> +			   HWMON_F_INPUT | HWMON_F_LABEL, HWMON_F_INPUT | HWMON_F_LABEL,
-> +			   HWMON_F_INPUT | HWMON_F_LABEL, HWMON_F_INPUT | HWMON_F_LABEL),
-> +	NULL
-> +};
-> +
-> +static const struct hwmon_ops cgbc_hwmon_ops = {
-> +	.is_visible = cgbc_hwmon_is_visible,
-> +	.read = cgbc_hwmon_read,
-> +	.read_string = cgbc_hwmon_read_string,
-> +};
-> +
-> +static const struct hwmon_chip_info cgbc_chip_info = {
-> +	.ops = &cgbc_hwmon_ops,
-> +	.info = cgbc_hwmon_info,
-> +};
-> +
-> +static int cgbc_hwmon_probe(struct platform_device *pdev)
-> +{
-> +	struct cgbc_device_data *cgbc = dev_get_drvdata(pdev->dev.parent);
-> +	struct device *dev = &pdev->dev;
-> +	struct cgbc_hwmon_data *data;
-> +	struct device *hwmon_dev;
-> +	int ret;
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->cgbc = cgbc;
-> +
-> +	platform_set_drvdata(pdev, data);
+Changes in v5:
+- Address maintainer comments:
+  - Move *_NR_CLKS to clock driver from dt binding file
+- Allocate correct number of clocks for each block instead of blindly
+  allocating 50 for each
+- Link to v4: https://lore.kernel.org/r/20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr
 
-What is this used for ? There are no suspend/resume functions,
-so I don't see the use case.
+Changes in v4:
+- Address maintainer comments:
+  - Relicense clock binding file to BSD-2
+- Add pinctrl-names to SD card node
+- Add vgic registers to GIC node
+- Rebase on v6.5-rc5
+- Link to v3: https://lore.kernel.org/r/20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr
 
-> +
-> +	ret = cgbc_hwmon_probe_sensors(dev, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to probe sensors");
-> +
-> +	hwmon_dev = devm_hwmon_device_register_with_info(dev, "cgbc_hwmon", data, &cgbc_chip_info,
-> +							 NULL);
-> +	return PTR_ERR_OR_ZERO(hwmon_dev);
-> +}
-> +
-> +static struct platform_driver cgbc_hwmon_driver = {
-> +	.driver = {
-> +		.name = "cgbc-hwmon",
-> +	},
-> +	.probe = cgbc_hwmon_probe,
-> +};
-> +
-> +module_platform_driver(cgbc_hwmon_driver);
-> +
-> +MODULE_AUTHOR("Thomas Richard <thomas.richard@bootlin.com>");
-> +MODULE_DESCRIPTION("Congatec Board Controller Hardware Monitoring Driver");
-> +MODULE_LICENSE("GPL");
-> 
+Changes in v3:
+- Address maintainer comments:
+  - Drop GPIO dynamic allocation patch
+  - Move clock register offsets into driver (instead of bindings file)
+  - Add missing Tested-by trailer to u32_fract patch
+  - Move SoC binding to arm/mrvl/mrvl.yaml
+- Add serial0 alias and stdout-path to board dts to enable UART
+  debugging
+- Rebase on v6.5-rc4
+- Link to v2: https://lore.kernel.org/r/20230727162909.6031-1-duje.mihanovic@skole.hr
+
+Changes in v2:
+- Remove earlycon patch as it's been merged into tty-next
+- Address maintainer comments:
+  - Clarify GPIO regressions on older PXA platforms
+  - Add Fixes tag to commit disabling GPIO pinctrl calls for this SoC
+  - Add missing includes to clock driver
+  - Clock driver uses HZ_PER_MHZ, u32_fract and GENMASK
+  - Dual license clock bindings
+  - Change clock IDs to decimal
+  - Fix underscores in dt node names
+  - Move chosen node to top of board dts
+  - Clean up documentation
+  - Reorder commits
+  - Drop pxa,rev-id
+- Rename muic-i2c to i2c-muic
+- Reword some commits
+- Move framebuffer node to chosen
+- Add aliases for mmc nodes
+- Rebase on v6.5-rc3
+- Link to v1: https://lore.kernel.org/r/20230721210042.21535-1-duje.mihanovic@skole.hr
+
+---
+Andy Shevchenko (1):
+      clk: mmp: Switch to use struct u32_fract instead of custom one
+
+Duje Mihanović (11):
+      dt-bindings: pinctrl: pinctrl-single: add marvell,pxa1908-padconf compatible
+      pinctrl: single: add marvell,pxa1908-padconf compatible
+      dt-bindings: clock: Add Marvell PXA1908 clock bindings
+      clk: mmp: Add Marvell PXA1908 APBC driver
+      clk: mmp: Add Marvell PXA1908 APBCP driver
+      clk: mmp: Add Marvell PXA1908 APMU driver
+      clk: mmp: Add Marvell PXA1908 MPMU driver
+      dt-bindings: marvell: Document PXA1908 SoC and samsung,coreprimevelte
+      arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+      arm64: dts: Add DTS for Marvell PXA1908 and samsung,coreprimevelte
+      MAINTAINERS: add myself as Marvell PXA1908 maintainer
+
+ .../devicetree/bindings/arm/mrvl/mrvl.yaml         |   5 +
+ .../devicetree/bindings/clock/marvell,pxa1908.yaml |  48 +++
+ .../bindings/pinctrl/pinctrl-single.yaml           |   4 +
+ MAINTAINERS                                        |   9 +
+ arch/arm64/Kconfig.platforms                       |   8 +
+ arch/arm64/boot/dts/marvell/Makefile               |   3 +
+ .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 336 +++++++++++++++++++++
+ arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 300 ++++++++++++++++++
+ drivers/clk/mmp/Makefile                           |   2 +-
+ drivers/clk/mmp/clk-frac.c                         |  57 ++--
+ drivers/clk/mmp/clk-of-mmp2.c                      |  26 +-
+ drivers/clk/mmp/clk-of-pxa168.c                    |   4 +-
+ drivers/clk/mmp/clk-of-pxa1928.c                   |   6 +-
+ drivers/clk/mmp/clk-of-pxa910.c                    |   4 +-
+ drivers/clk/mmp/clk-pxa1908-apbc.c                 | 130 ++++++++
+ drivers/clk/mmp/clk-pxa1908-apbcp.c                |  82 +++++
+ drivers/clk/mmp/clk-pxa1908-apmu.c                 | 121 ++++++++
+ drivers/clk/mmp/clk-pxa1908-mpmu.c                 | 112 +++++++
+ drivers/clk/mmp/clk.h                              |  10 +-
+ drivers/pinctrl/pinctrl-single.c                   |   1 +
+ include/dt-bindings/clock/marvell,pxa1908.h        |  88 ++++++
+ 21 files changed, 1299 insertions(+), 57 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20230803-pxa1908-lkml-6830e8da45c7
+
+Best regards,
+-- 
+Duje Mihanović <duje.mihanovic@skole.hr>
+
 
 
