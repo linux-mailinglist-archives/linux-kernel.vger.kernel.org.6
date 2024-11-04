@@ -1,192 +1,114 @@
-Return-Path: <linux-kernel+bounces-395043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BDF9BB7B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:26:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647059BB7BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:28:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2944A1F247EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:26:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C69282C92
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7401B3945;
-	Mon,  4 Nov 2024 14:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="V+ZUwnRH"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6FE1AC43A;
+	Mon,  4 Nov 2024 14:27:54 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E504C62E;
-	Mon,  4 Nov 2024 14:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A300E25776
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730730354; cv=none; b=SH6UFQiXkuV3orwt/fQ7g4LwalzITb66qNABPeSbxHAq+JfKRdUaC9mlx7oAjnxrGa1ODvlgaAeGcbyC1zqUEXQYzS4+ofn4ys2vLA63hx2FUvwsBjHG08+kdnekYvOteIUs+Azj8hsRpmWLUwDYO5t1pv3viqDc6Lnm6MXmblU=
+	t=1730730474; cv=none; b=MMKOxWGxr9xCEb8+wC/Nr7H6NinFc8AR4KIPZVBJlr4Zf3YKVJ1tAiNOfDJQriSEhXOdEFfoP1JoTtKoNZHUMeSv5uulHtoGopUeam4knKneqzGBEy7z58I25cquv+UE/r0BbI3KkTY3U3OQzZjSvkJJadzgWCxt+UOVXruYyTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730730354; c=relaxed/simple;
-	bh=sS+G9PWl/JXj24MraEyWFce8g/yj3gwYkmWyEtoo900=;
+	s=arc-20240116; t=1730730474; c=relaxed/simple;
+	bh=BzrJ6N3QNuHRcVk8wm/vmgY/RU26zYQ9LyG6vqWlqlA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCYjJSTcgY0NKawaZ2JNIPlvlWGkFRztmyEE2M99dewcvWLLGsv2rI3/+YxZ8oDW0gex6tdCUECcDfS7XW++wAgACHtS4I/+ZcAw2yDC1g8vM16KYUqagiyRIxWKUomVSLEVwUtAObc3kiU2KWwK+DRRsvm32J1Bl+A1GcEvfec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=V+ZUwnRH; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0500A526;
-	Mon,  4 Nov 2024 15:25:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730730343;
-	bh=sS+G9PWl/JXj24MraEyWFce8g/yj3gwYkmWyEtoo900=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V+ZUwnRHC/hy0Ov6BRoQoKRSvNMpcnL5GBt4RiJsvQDOMgx/0Po+U/YFDznhNAJNR
-	 OKWEMk5Pj8JoOB7rh7YprV6nSAod6XAl70Zv+fFMAUJZ0vRNAOPRX9wwu+F8SMGsPP
-	 6wOxkoK7TQLz0O5rUb+PUwYgMcNm3UxqZtbpnTWA=
-Date: Mon, 4 Nov 2024 16:25:43 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Mirela Rabulea <mirela.rabulea@nxp.com>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, mchehab@kernel.org,
-	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
-	laurentiu.palcu@nxp.com, robert.chiras@nxp.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com,
-	hdegoede@redhat.com, dave.stevenson@raspberrypi.com,
-	mike.rudenko@gmail.com, alain.volmat@foss.st.com,
-	julien.vuillaumier@nxp.com, alice.yuan@nxp.com
-Subject: Re: [EXT] Re: [PATCH 1/5] dt-bindings: media: i2c: Add bindings for
- OX05B1S sensor driver
-Message-ID: <20241104142543.GA27775@pendragon.ideasonboard.com>
-References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
- <20241028190628.257249-2-mirela.rabulea@nxp.com>
- <c32439a5-4230-4ca5-8d46-fb00d25072e5@linaro.org>
- <20241029115747.GL22600@pendragon.ideasonboard.com>
- <7cee3358-bf8c-4ae5-a688-12ff18d4b7e0@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a/Iev9+hUoCI3XWdJIS0jkO99o7esSKMBfU12s6UDto9FxTCBJ46ixVLhWzExn+sg+peEL0zKPH73BOc9YUuWhLNgepp0QWejS24b6s7apJCqtKe/bU6OlNv06r6aAwQsGZ+n3U2YWFplOiumgovHu4Wos25hoOoa/+/Twx5JXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9acafdb745so746307366b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 06:27:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730730471; x=1731335271;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=isN9Ps/gLnEyDuQpgnADyJxf1zJtoLZcMM+6E1KR1JY=;
+        b=BoE71RWtkmkDu6FTq4fn6NXI2oDg/yqdoaTtRUND1i4gKHMD5ESmohXcfJ9L8/2V8q
+         06a63Q6kzrlrWSzfLex/AxhwuKgaLRogp61LeZFOrKFinWux6dw7hQ/fNRTclqJG1BKT
+         PZIMrGlPpD9nfCstSrEYy0ZHep3Gug8Dneym+X4vIdRR15uzEWJp/g4yahVdOSQr2Zri
+         9gObHdWWh6CuRTusqxqj+k8r9BpAwDWSs67YgI50dKt557rxD+78M46WfWmKFEyiWtAA
+         A1pblSAuY+afCfCdLlm5VBwlo+xyx+oI5Zki4bnpH1Kif1/ej/ieWjjgCD4nwQxiTo+q
+         AGTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyPYsyv8bzh7yUW7+NR3XBxV+beQ6f7dm8BgLMLJ1Ebr9pw41w7Uz2j49Hit9aJhjTW4CFSl6el9F3g60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWFfNC9mn7JTDNOCo94eF2T6SsPejNUqFQI4C+MSgkk4bIaWZF
+	QgVRcBXHdc5irMVWIhjG9YyU4V0MVw2CrAYM9khaARjhYUoKjeU9
+X-Google-Smtp-Source: AGHT+IHORFWIN4tYcghfdXF6lQTuclCRRHh4TUUMvwA3JlRxkrLnaSTwD7zeFUNFURKiQxsS7Jx2yg==
+X-Received: by 2002:a17:907:d27:b0:a9a:f19:8c47 with SMTP id a640c23a62f3a-a9e55a6fc0fmr1552692266b.13.1730730469107;
+        Mon, 04 Nov 2024 06:27:49 -0800 (PST)
+Received: from gmail.com (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564e9ceasm558811666b.96.2024.11.04.06.27.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 06:27:48 -0800 (PST)
+Date: Mon, 4 Nov 2024 06:27:46 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Qinglang Miao <miaoqinglang@huawei.com>
+Cc: Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	openipmi-developer@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipmi: msghandler: Suppress suspicious RCU usage warning
+Message-ID: <20241104-jasper-chameleon-of-weather-59bcea@leitao>
+References: <20201119070839.381-1-miaoqinglang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7cee3358-bf8c-4ae5-a688-12ff18d4b7e0@nxp.com>
+In-Reply-To: <20201119070839.381-1-miaoqinglang@huawei.com>
 
-Hello Mirela,
+On Thu, Nov 19, 2020 at 03:08:39PM +0800, Qinglang Miao wrote:
+> while running ipmi, ipmi_smi_watcher_register() caused
+> a suspicious RCU usage warning.
+> 
+> -----
+> 
+> =============================
+> WARNING: suspicious RCU usage
+> 5.10.0-rc3+ #1 Not tainted
+> -----------------------------
+> drivers/char/ipmi/ipmi_msghandler.c:750 RCU-list traversed in non-reader section!!
+> other info that might help us debug this:
+> rcu_scheduler_active = 2, debug_locks = 1
+> 2 locks held by syz-executor.0/4254:
+> stack backtrace:
+> CPU: 0 PID: 4254 Comm: syz-executor.0 Not tainted 5.10.0-rc3+ #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1 04/ 01/2014
+> Call Trace:
+> dump_stack+0x19d/0x200
+> ipmi_smi_watcher_register+0x2d3/0x340 [ipmi_msghandler]
+> acpi_ipmi_init+0xb1/0x1000 [acpi_ipmi]
+> do_one_initcall+0x149/0x7e0
+> do_init_module+0x1ef/0x700
+> load_module+0x3467/0x4140
+> __do_sys_finit_module+0x10d/0x1a0
+> do_syscall_64+0x34/0x80
+> entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> RIP: 0033:0x468ded
+> 
+> -----
+> 
+> It is safe because smi_watchers_mutex is locked and srcu_read_lock
+> has been used, so simply pass lockdep_is_held() to the
+> list_for_each_entry_rcu() to suppress this warning.
 
-On Wed, Oct 30, 2024 at 08:02:44AM +0200, Mirela Rabulea wrote:
-> On 29.10.2024 13:57, Laurent Pinchart wrote:
-> >>> +
-> >>> +  orientation: true
-> >>> +  rotation: true
-> >>
-> >> I think you can drop both of these too.
-> >
-> > Aren't they needed given that the binding ends with
-> >
-> > additionalProperties: false
-> >
-> > ?
->
-> I added orientation & rotation properties in order to support 
-> orientation and rotation controls, libcamera warns about those (optional 
-> requirements last time I checked).
+You probably should use list_for_each_entry_srcu() instead of the
+list_for_each_entry_rcu().
 
-The orientation and rotation properties should certainly be specified in
-DT sources. They are standardized in video-interface-devices.yaml which
-Bryan pointed out you should reference. If you're not familiar yet with
-with how the YAML schemas used for DT bindings reference core schemas,
-now would be a good time to have a look at it :-)
-
-In a nutshell, you'll find that all properties need to be properly
-defined with appropriate constraints, and properties shared by multiple
-devices have constraints defined in core schemas. Some are included
-automatically and are applied based on property names, other need a
-manual $ref. You can have a look at
-https://github.com/devicetree-org/dt-schema.git to see core schemas that
-get automatically selected, they specify "select: true". For example the
-schemas defining the reg or clocks properties don't have to be manually
-referenced.
-
-Bryan's comment about dropping the orientation and rotation properties
-was related to the fact that the video-interface-devices.yaml schema
-defines them already. With "unevaluatedProperties: false", you won't
-need to specify "orientation: true". With "additionalProperties: false",
-you will. It's a good idea to learn about the difference between those
-two and how they really work.
-
-> >>> +
-> >>> +required:
-> >>> +  - compatible
-> >>> +  - reg
-> >
-> > The device requires a clock, shouldn't the clocks property be required ?
-> 
-> I intentionally left the clock optional, because NXP has a converter 
-> board which supports both ox05b1s and os08a20 sensor, and the converter 
-> board has an oscillator, and we are using that, not the SOC clock.
-
-That's fine, you can have a fixed clock node in DT to model that. DT
-bindings describe the intrinsic needs of a particular device. If the
-sensor requires a clock, I think it should be mandatory. If the sensor
-itself could operate without an external clock (i.e. if it had an
-internal oscillator) then the property could be optional.
-
-> Here is how the module looks like for os08a20 for imx8mp:
-> 
-> https://docs.nxp.com/bundle/AN13712/page/topics/os08a20_sensor_module.html
-> 
-> There's a newer revision for the converter board for imx95, sorry but I 
-> do not have a link for that.
-> 
-> For imx8mp, we used in the past the clock from the SOC, then switched to 
-> the external clock (from the converter board).
-> 
-> I think Omnivision has their own module.
-> 
-> So, I thought leaving the clock as optional allows for more flexibility.
-> 
-> >>> +  - port
-> >>> +
-> >>> +additionalProperties: false
-> >>> +
-> >>> +examples:
-> >>> +  - |
-> >>> +    #include <dt-bindings/gpio/gpio.h>
-> >>> +
-> >>> +    i2c {
-> >>> +        #address-cells = <1>;
-> >>> +        #size-cells = <0>;
-> >>> +
-> >>> +        ox05b1s: ox05b1s@36 {
-> >>> +            compatible = "ovti,ox05b1s";
-> >>> +            reg = <0x36>;
-> >>> +            reset-gpios = <&i2c3_gpio_expander_20 2 GPIO_ACTIVE_LOW>;
-> >
-> > This isn't specified in the bindings. Does the example validate ?
-> 
-> Apparently yes, I mean dt_binding_check passed:
-> 
-> $ rm Documentation/devicetree/bindings/media/i2c/ovti,ox05b1s.example.dtb
-> 
-> $ make dt_binding_check DT_CHECKER_FLAGS=-m 
-> DT_SCHEMA_FILES=ovti,ox05b1s.yaml
->    DTC [C] 
-> Documentation/devicetree/bindings/media/i2c/ovti,ox05b1s.example.dtb
-> 
-> I have dtschema-2024.10.dev6+g12c3cd5.
-> 
-> 
-> The "reset-gpios" is described in this binding, as the GPIO connected to 
-> the XSHUTDOWN pin.
-
-Ah sorry, Bryan dropped that part from his reply, so I didn't notice it.
-
-> The <&i2c3_gpio_expander_20 2 GPIO_ACTIVE_LOW> is what works for imx95 
-> ("nxp,pcal6408"), for imx8mp this works:
-> 
-> reset-gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
-
--- 
-Regards,
-
-Laurent Pinchart
+This problem is still happening in 6.12-rc5.
 
