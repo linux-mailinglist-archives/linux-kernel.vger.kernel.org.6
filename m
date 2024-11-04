@@ -1,104 +1,168 @@
-Return-Path: <linux-kernel+bounces-395667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9CD9BC165
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:27:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CD99BC173
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40212B215F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9913C1F22A90
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE1C1FDFAA;
-	Mon,  4 Nov 2024 23:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501D11FDFB0;
+	Mon,  4 Nov 2024 23:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7qlqngr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eCZsCDBL"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AD33C6BA;
-	Mon,  4 Nov 2024 23:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DD21E571C
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 23:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730762865; cv=none; b=Z1Qp4x0P7nK1CJ7gMcR9lklc4rvPTF+sW3joHTegwBXHIgPV3RWuve6Ga3nKPRNt72xHBubaXwg4yJctlVPrJ0uqBA6dfc1OLUGbvxU6ZGbWqJ+2sQSGLIjHx56uFIJopwxriURLop1DMmZV8U9RCqbkuZUg5ioIY5CbUX3ddxE=
+	t=1730762909; cv=none; b=rIbXLJBzqU/vK15lYIEwioa0rED923dn88xx5sXQBLfTomm5yYqPsfgvrALAKHJhkkyAF5DD/1pcSdsdygxD1bfSqhhb2lIWm/dU1pgSIlw0XKptDMO24YUvp/yIzHv8Z7mzH66D/FBFSVi0hVat+21uo+uUwxrO3bujvDzc4CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730762865; c=relaxed/simple;
-	bh=eJE0p80D+T3UvwAPfjYdm4dQfV/JHA4oN4J3eSvWb3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ddKXS20tDuyvwhIDHxUPWveWe9bZv09n9klp8E/T8pfNAszjHBp/G61jII09F+d5CjqI7JIHy8nQZOR+Teg0DWu21TC1iOEoj8NKY77shoVmvXtjirUaaFGjxmJxYnAoDJmeYmV7jqFtoh90x/nt49kraZLpP1zWd0qNLDYbDMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7qlqngr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B829BC4CED1;
-	Mon,  4 Nov 2024 23:27:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730762865;
-	bh=eJE0p80D+T3UvwAPfjYdm4dQfV/JHA4oN4J3eSvWb3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D7qlqngrtdkOAwNOIsMxxe+dYaUBO2X5GMoy+pVhG+R3rnds/8XURvZShUEMjNu1N
-	 6aBFNnuMzgEerGxRWNOdbnZ/osDjgsCsaYl4am8bVABUBxfHanMAlfDk99xqNFaXuH
-	 EcsIH1tmxXmCVkGYcBjv2Dp1USX5M2Bnwxy9BbdGI38lfilA+uyTc5+3ugjPrYK9mi
-	 K7VZLFnWEwFYtGPUZoZZhMJEGl8KnvOvistMuWyaACYyt/mTf5s42DAMyB9ZcrZjiS
-	 NsnMmPMc+wfiZM9FLg76cMOzX92SvDpy+l6hmQPBAYPEeTR+etvH1vFyDPLG25QxiP
-	 vNyBGZGudvFew==
-Date: Tue, 5 Nov 2024 00:27:42 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, kernel test robot <oliver.sang@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH rcu 08/15] srcu: Add srcu_read_lock_lite() and
- srcu_read_unlock_lite()
-Message-ID: <ZylYbsU7uE7jX5Yd@pavilion.home>
-References: <ddf64299-de71-41a2-b575-56ec173faf75@paulmck-laptop>
- <20241015161112.442758-8-paulmck@kernel.org>
+	s=arc-20240116; t=1730762909; c=relaxed/simple;
+	bh=dDP/NcYHYVzwgB6/qwfzH0/kwTnP0CjIbHa19u5/gSs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lY+5jcVfnHtRTRX+2VrsMxP4ekGVW8lC4QTv4SDvy9GgF62haGNpv1r+uL74yEJhz+Tm+7l6srD7LFWifdy3Gk1f6UHl7bDxKTRpp34qNEYQkHul6FXX9W9P3PKKT2dvhJ4lKSxtLIpJg7G/KCmUzQFEJ4xTQFTy+H2l4UbfFME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eCZsCDBL; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a4e54d3cefso91605ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 15:28:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730762907; x=1731367707; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ipfdo1mYYQpBcI/ihqsP7TQB8/rEiwuOzHyfqYH/3/Q=;
+        b=eCZsCDBLOdZ2G5kWxzFtw1qE9LG68JWIYefdoimqDDJVRHxr1PjNff8r7Txsu4m5Tb
+         lJPaDnj4DqQ3N88VdBzSO4mfW3acnN0FnQHTb7xi+svDW3CHA8sX1gLYwjRtVgxHAw2c
+         3ILjvtFefmkzYe5Z0j4YTSwRZVh3/0KWqZWvcsL6EtssyK01o/Wd6YOy+fkkeBnpRbyc
+         dxKhnJ6ZLmebC8n+g9Ali4UIJI4IiWzr0LeAKGz41GYcYttcsGiUATz7hNClDngNkhZI
+         ZVnm5w1tK3FV5WIvin3xK4YBERC+JjoSa5FCH7ljXB2p2mTtTI1Hbfm8+9Hrh88R+QnF
+         gBSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730762907; x=1731367707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ipfdo1mYYQpBcI/ihqsP7TQB8/rEiwuOzHyfqYH/3/Q=;
+        b=Z/wPnb0zLf4GRHLoDV1FZeBwBU9qf1iIIEoMQxQdA7wDeQHkktONJkFkIHEs308ZcE
+         2hTt0d4xg9ttt0Xil7n/YuZR1a0kL9FVy8KzVquFcL1GVwj77UFSpePVZu8VApb8XqbD
+         qa/sPRVBax/+Cs31ZrfedBbiFonW5kUYus/MLgzsK/aUKDWfMJL915jKpZzcn2wXk8jD
+         9M1f78Ou4Nx5EzX6vZUdQEwtNk22G0D4j1lkeR17kxIlBtgzRoL28QZL04av1U1tfqO3
+         WH8MgO0mH9aNp6dsYi2PM44UCpmlIfBoXnPuFY2mLh/3t0OJpqSczQxl4C0RmoxSrzlR
+         /Mgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ+qP+p/rDAsSc8a67wKIs3IvZ/LH9CbszDW4chmPivF1Pga5+qczRVjZrTfmAWG/oFPSAtrYYJDX5YLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxjWnUISPvhk0V7uPn001NQv7SXrBk6KN1HRJ4EbTapqLk4/RF
+	izBOR4uvHLtrSZDZBJUq2UVOKVIKcrisNEtwuRkt7YVdBxesX259crYnQYv3teIXJcCqQzwzEux
+	/jCzFQNaJqatVmxsoXdqCjfEsSYahrg/luIgt
+X-Gm-Gg: ASbGnctGSNEqvUomqOpQbF2UC2RaTwo8eSKqGww1Ub0XSuLDggKqKghJG0e2TRAGMFB
+	NDyby5EhwPOOaX0ksRqjFBQRaEOATgDtfgAv/S618t/0DwJ23I0G+8GBKh4SmAw==
+X-Google-Smtp-Source: AGHT+IFb8IkolnKD36l6Cd9fk/Fqpq5akK4SZSiXKY4jygU0PdHfHbgLRskpxQpAz6+lShB2PuYvpjh5XEwdbUeRt0M=
+X-Received: by 2002:a05:6e02:219a:b0:3a0:9f85:d768 with SMTP id
+ e9e14a558f8ab-3a6dba4cb86mr427145ab.11.1730762907070; Mon, 04 Nov 2024
+ 15:28:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241015161112.442758-8-paulmck@kernel.org>
+References: <ZyPX7ayIO4teziDX@x1> <CAP-5=fVgJu8BJWFVUkCy1Zsi3piTPdV-GXL1bTpWZeO=nm=jrg@mail.gmail.com>
+ <Zykk2MJ4REGCaqVw@google.com> <CAP-5=fXQpej43wxEtMYFbxdofHtUi98X68W4AaR9UCfsbDir5A@mail.gmail.com>
+ <ZykxD41c6gWQoIrQ@x1> <CAP-5=fWf8guTgqwfrrct3AGYDC=Lb1Oxo7kXU_x1yEr5urFSkQ@mail.gmail.com>
+ <Zyk19KgzI7ybPkQ4@google.com> <CAP-5=fXj1-wqt+Bs-0ZypRsaZw2VP0qyKdeeRHpjUD5BwO9OBg@mail.gmail.com>
+ <ZylGJF7Ux3JdJllo@google.com> <CAP-5=fUz_LSJ4v4aaAWoLMQRXAtsqeQSjcyRun2kBVXUHTzvUA@mail.gmail.com>
+ <ZylXI4zj7Hs8Uvov@google.com>
+In-Reply-To: <ZylXI4zj7Hs8Uvov@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 4 Nov 2024 15:28:15 -0800
+Message-ID: <CAP-5=fVK96t3-TKwqRQ1bfH2sOJHLhtVvDdJQ9U539Z1rd3kfg@mail.gmail.com>
+Subject: Re: [PATCH v5 06/21] perf script: Move find_scripts to browser/scripts.c
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Michael Petlan <mpetlan@redhat.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Tue, Oct 15, 2024 at 09:11:05AM -0700, Paul E. McKenney a écrit :
-> This patch adds srcu_read_lock_lite() and srcu_read_unlock_lite(), which
-> dispense with the read-side smp_mb() but also are restricted to code
-> regions that RCU is watching.  If a given srcu_struct structure uses
-> srcu_read_lock_lite() and srcu_read_unlock_lite(), it is not permitted
-> to use any other SRCU read-side marker, before, during, or after.
-> 
-> Another price of light-weight readers is heavier weight grace periods.
-> Such readers mean that SRCU grace periods on srcu_struct structures
-> used by light-weight readers will incur at least two calls to
-> synchronize_rcu().  In addition, normal SRCU grace periods for
-> light-weight-reader srcu_struct structures never auto-expedite.
-> Note that expedited SRCU grace periods for light-weight-reader
-> srcu_struct structures still invoke synchronize_rcu(), not
-> synchronize_srcu_expedited().  Something about wishing to keep
-> the IPIs down to a dull roar.
-> 
-> The srcu_read_lock_lite() and srcu_read_unlock_lite() functions may not
-> (repeat, *not*) be used from NMI handlers, but if this is needed, an
-> additional flavor of SRCU reader can be added by some future commit.
-> 
-> [ paulmck: Apply Alexei Starovoitov expediting feedback. ]
-> [ paulmck: Apply kernel test robot feedback. ]
-> 
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Tested-by: kernel test robot <oliver.sang@intel.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrii Nakryiko <andrii@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> Cc: <bpf@vger.kernel.org>
+On Mon, Nov 4, 2024 at 3:22=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> On Mon, Nov 04, 2024 at 02:20:30PM -0800, Ian Rogers wrote:
+> > On Mon, Nov 4, 2024 at 2:09=E2=80=AFPM Namhyung Kim <namhyung@kernel.or=
+g> wrote:
+> > >
+> > > On Mon, Nov 04, 2024 at 01:06:35PM -0800, Ian Rogers wrote:
+> > > > On Mon, Nov 4, 2024 at 1:00=E2=80=AFPM Namhyung Kim <namhyung@kerne=
+l.org> wrote:
+> > > > >
+> > > > > On Mon, Nov 04, 2024 at 12:48:01PM -0800, Ian Rogers wrote:
+> > > > > > Namhyung was asking that the c&p of code be 1 patch then "add n=
+ew
+> > > > > > changes like using openat() on top". That is:
+> > > > > >
+> > > > > > patch 1: add is_directory_at - introduce the 2 line helper func=
+tion
+> > > > > > patch 2: move the code
+> > > > > > patch 3: update the code to use is_directory_at
+> > > > > >
+> > > > > > patch 2 is known broken as patch 3 is fixing it.
+> > > > > >
+> > > > > > Hopefully this is clear.
+> > > > >
+> > > > > Actually I don't care about the patch ordering.  My request is no=
+t
+> > > > > to break build and just to separate different changes out. :)
+> > > >
+> > > > So, patch 2 can't be separated from patch 3 - are we agreed? So we
+> > > > squash patch 2 with patch 3. Patch 1 is trivial and fails to meet t=
+he
+> > > > bar of a meaningful change, so we squash that. We end up with this
+> > > > patch. If there's a later revert and a dependence of the 2 liner, j=
+ust
+> > > > don't revert that part of the change. We've never had such a revert=
+ so
+> > > > it is hard to see why we need to generate so much churn because of =
+it.
+> > >
+> > > As I said the patch 1 should be the c&p and no need to introduce
+> > > is_directory_at() before that.  Why not doing
+> > >
+> > >  patch1: move the code
+> > >  patch2: add and use is_directory_at() + openat()
+> > >
+> > > ?
+> >
+> > Because placing all the code in 1 file expands GCC's analysis and the
+> > build fails. In the commit message I describe this:
+> > "The arrays are warned about potential buffer overflows by GCC now
+> > that all the code exists in a single C file."
+> > A standard unsound workaround to this is to change "sizeof(...)" to
+> > "sizeof(...) - 1", as it is ugly I added is_directory_at to not suffer
+> > the problem as the arrays are gone.
+>
+> Ok, it's strange that this type of analysis depends on the placement.
+> Anyway it seems there's a problem in the code already.  Then we can fix
+> it first and then move.  How about this?
+>
+>  patch1: add and use is_directory_at() + openat()
+>  patch2: move the code
 
-This might be a dump question but I have to ask. Could this replace
-RCU-TASKS-TRACE?
+I'm happy if the maintainers do that.
 
-Thanks.
+Thanks,
+Ian
 
