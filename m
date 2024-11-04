@@ -1,143 +1,145 @@
-Return-Path: <linux-kernel+bounces-395681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E3F9BC197
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:46:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF3D9BC19E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:48:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C191F22BD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6319E1F22B1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BECA1B3951;
-	Mon,  4 Nov 2024 23:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D338B1C8FB5;
+	Mon,  4 Nov 2024 23:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="OxtsjyOV"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3WO+zhJo"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC2E139CFF
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 23:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE30F139CFF
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 23:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730763995; cv=none; b=vCM/bOw5xVGjbh2XrBvl5xRCZPlkwQLcBZ2g7kYvSDvPrtXW23f+oWrKFJkAleIQAsgSQlaJfXkmYIxf3h3MrKzJlU9kW89wWVCwEQeioGpgGdHFt5tbdA+wAYcXBKhtNSsVGwGq/HxEso9Thyp3SY0vL5RxLyv7Bjsx3khcLFk=
+	t=1730764075; cv=none; b=AAVzptMyXc9AP53ekmINL0UkB3Qx0p9bgz3clWHikqpeI62ZhuVWjDmYk6EF9GPCLlGokmyN1Gq755CIQKUaADnG47EHw7uyURBQ+XCBRg2sosZHByGDZnHz1S2AgEY9nBXNlwy2tfIaqYsQJPH/SmcVUjBz1/5vB5gYbxPfHAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730763995; c=relaxed/simple;
-	bh=f0FMisOvkvuPmdlTVpM9CHX8yGQwfrT6YBA8JhhRgbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OVlOSpRAMY/4QS4HX6wzSb+winfJ4ETpU7hyqKSXVNB31TtphBFF7mYIEGCTcbaaueFO0CDLITQOTLi3YjrMvp9QJDcJp67lWI555knpy6BmWjHsUxQ4QepGyHwl4NXLrzIJ/gjwFrhGuHTmWkJmNV28/dEcPXU1GcchrBefc4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=OxtsjyOV; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720d01caa66so3115401b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 15:46:33 -0800 (PST)
+	s=arc-20240116; t=1730764075; c=relaxed/simple;
+	bh=VuTrEz6B0CL5GysxR1XqZO55nsdBJCTkuJOlegC2ybk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YdLlWnVgNTK5JYaFsf8/xap2lWp2FNLyR6uohCdMj9RYtSIi2iAuXT47/mntzMSSD8lUm8ENK/PqzpYwF15PJnjOmqPn4s9kFfSwiTb81KYW12ap8Yhj4Fiw5hUm8cp3DniSktFBhu3DBUsZzbH8GgAJD2rxgnJe3AfYwpm5prs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3WO+zhJo; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e30df208cadso6453248276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 15:47:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730763993; x=1731368793; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pQRWEXSlNd7mP98l4zwWQnMAdZ6BcDjt4sBruKE3xGE=;
-        b=OxtsjyOVbjRHd+7mjDIoVzHsd1M3Hp3Tt+3HssnevgD89K1V14KDBXXV6g07pt4Min
-         3x+HTIvZJbwN7xcU0TnALI6kxZapdb0AB0Rcuce0LSQRGEgaPAVnFpg1GIbXuiwFFRMh
-         xyOxX+ZuZMFD+FXofwzq/hdr5rpYsgBfpiHYI=
+        d=google.com; s=20230601; t=1730764073; x=1731368873; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xLgb93E3IdFKE55fub5g3LbNpslMgv2LsluELOEVe/A=;
+        b=3WO+zhJoclvtWAwEuQ9gGryZ6B2GmLqkMaPgo12KNa3GYoHwy7vIbfhk5UXI8qTXx/
+         5TJ2z5pZ2ruaBg7UShQrq1/G0uu8hQOdGnISD2LDqWZGXJH6MSkGFzsj8238j7GHb6yD
+         vO3Pg5DOCezcrg4+WVohCDlX6vLetQThQC4lOXJp0NAuO/CHQ3+NWrf3rYDut5Pzamqd
+         n0dNetfzOwlfHDTC8x4YOBdQVzO/YuUT5I9zvgaYkxmtAKAQ47JhD9sVwDi3ln7h5N41
+         dOohCH+xcV2v6Gn7aW639ecTqX4vywYqzrwrlXePkiqmndKwDCior/V3XMfRW2f+RB1B
+         lZww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730763993; x=1731368793;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pQRWEXSlNd7mP98l4zwWQnMAdZ6BcDjt4sBruKE3xGE=;
-        b=p9HR7M8314blxqUHhEmw+QzjVF7dNvcNxcWNYJEPg87Uk0fjdtqTfyp5b0BsjdpwgW
-         sZrnLCA9H5HNjF+RKlun5zKsK8zav6joisVo0brlMmjf3kMlaKyYDcvUH8o7Kwsc7BeZ
-         3y6PmdAhGVVUfz4l2el3VcazYA19izKXXGLhm7J3nEtZj5doB1v1FJkoHWF2Gbs9StlL
-         WPm57rqGw61sUribK/7+taIIReuY7rZ9HI6Nbk5SU6Ov2S6r9ebvHYRtdmughi7g9wDA
-         61Pp5iFuXM5RO+5r1KZwag2ATYfsSSpMsbhPY6Tj0U1mc/W2ORqJoIfWgJujGetfEgzl
-         nFYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwkbBziAItcF33bbFXACzz/9rJUUNfd/X5uy4M8rr/nDrV0KtDY2tRH2Hdr0sJ8esiXYto5m7s8/vjfWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvK7T/qMVJVIefeSEo7N5kwhUN4wmdy7XV1FjrSMCZTZ0EPVof
-	eOTIpeznx0MsqZCT3mjg2B1ruUzjl72qFD9jVBZxkfdBp1JfnibD1OVjI1HWo59sRs19bZFb0Ga
-	0
-X-Google-Smtp-Source: AGHT+IEUc8c3n4qvcko7rjt+K9aBujY+y1Tu/ceBOoi/9V9J/fIILp0bl9s2cwSenMhY+qqOT0MGVA==
-X-Received: by 2002:a05:6a00:cc3:b0:71e:744a:3fbc with SMTP id d2e1a72fcca58-720b9d9490fmr24339143b3a.21.1730763992930;
-        Mon, 04 Nov 2024 15:46:32 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ba244sm8456783b3a.19.2024.11.04.15.46.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 15:46:32 -0800 (PST)
-Date: Mon, 4 Nov 2024 15:46:29 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
-	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
-	willemb@google.com, petrm@nvidia.com
-Subject: Re: [PATCH net-next v7 03/12] selftests: ncdevmem: Unify error
- handling
-Message-ID: <Zylc1dKzubaa0yWQ@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
-	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
-	willemb@google.com, petrm@nvidia.com
-References: <20241104181430.228682-1-sdf@fomichev.me>
- <20241104181430.228682-4-sdf@fomichev.me>
+        d=1e100.net; s=20230601; t=1730764073; x=1731368873;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xLgb93E3IdFKE55fub5g3LbNpslMgv2LsluELOEVe/A=;
+        b=tmzT0wVzbqvJc+D4O8jJJG61ukw7xtzuPOwKN/SNyA/wgKuIUFS8UU8tZeiiiwMBSO
+         4jG04KBOE3Agf1vkDZykyNob2bHkO1DphZSFrytkkuAFcUREg2RWDgBJPEnFGbHwftwm
+         4HPBarD9ZPeuccthfATqD12RwXjQ2tbKE8AZepSjwVER/XT2jeqKMd4rtI9800fP5g/G
+         iVyBINMF+0woR3vUMSrFUSAIKWKDjXMEIvjUVieM6GmTgk7FI3n3WiwyDCIi+L8FnpbO
+         YC/6zqTK9AL7IgIk7jW4ZeS7r9c2Qj4WTk+lXVDPVjxUTVZoaYV+9d7MaDVy3YFfUrQi
+         nj+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXgMCgOf0zwqnZ0q6GpoNh/RrkF0kmVoqkLKfwWB73dPeSwe+DUXPvgI68m8ru+rijFu681atv7/qRRZJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuHfBc23xyleckB3tpRzVz1soI8K9IPUpHsRUw8ZzYByZr52vX
+	lzX2bBmYh1QYAWs4e1LVfJlVmpwPc4uZYp9005ozVddDbnCQL2fSndhC72e/n6oeBtD0bB8tohh
+	/Qg==
+X-Google-Smtp-Source: AGHT+IGlEaEwGXJLOuGe7dS/h+aYhSdJnamUhYbSPbu0dExqPSuu9RSvVN/ohcjekyhnvf4uwfUmNaCQo2Q=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:3617:0:b0:e30:d5cf:775a with SMTP id
+ 3f1490d57ef6-e30e8dbf785mr36896276.6.1730764072761; Mon, 04 Nov 2024 15:47:52
+ -0800 (PST)
+Date: Mon, 4 Nov 2024 15:47:51 -0800
+In-Reply-To: <99e64d8e-2d10-41c7-8b7e-cd059c7e7f29@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104181430.228682-4-sdf@fomichev.me>
+Mime-Version: 1.0
+References: <Zw2fW2AJU-_Yi5U6@google.com> <4984cba7-427a-4065-9fcc-97b9f67163ed@amd.com>
+ <Zx_QJJ1iAYewvP-k@google.com> <71f0fb41-d5a7-450b-ba47-ad6c39dce586@amd.com>
+ <ZyI4cRLsaTQ3FMk7@google.com> <de2a6758-a906-4dc0-b481-6ce73aba24b9@amd.com>
+ <ZyJzcOCPJstrumbE@google.com> <11787a92-66ed-41ef-9623-d6c7220fb861@amd.com>
+ <ZyOv5US9u22lAiPU@google.com> <99e64d8e-2d10-41c7-8b7e-cd059c7e7f29@amd.com>
+Message-ID: <ZyldJ_ociCLg-b9a@google.com>
+Subject: Re: [PATCH v3 2/9] KVM: selftests: Add a basic SNP smoke test
+From: Sean Christopherson <seanjc@google.com>
+To: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, pgonda@google.com, 
+	thomas.lendacky@amd.com, michael.roth@amd.com, shuah@kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Nov 04, 2024 at 10:14:21AM -0800, Stanislav Fomichev wrote:
-> There is a bunch of places where error() calls look out of place.
-> Use the same error(1, errno, ...) pattern everywhere.
+On Mon, Nov 04, 2024, Pratik R. Sampat wrote:
 > 
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
-> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
-> ---
->  tools/testing/selftests/net/ncdevmem.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/net/ncdevmem.c b/tools/testing/selftests/net/ncdevmem.c
-> index 3e7ef2eedd60..4733d1a0aab5 100644
-> --- a/tools/testing/selftests/net/ncdevmem.c
-> +++ b/tools/testing/selftests/net/ncdevmem.c
-> @@ -339,33 +339,33 @@ int do_server(struct memory_buffer *mem)
->  	server_sin.sin_port = htons(atoi(port));
->  
->  	ret = inet_pton(server_sin.sin_family, server_ip, &server_sin.sin_addr);
-> -	if (socket < 0)
-> -		error(79, 0, "%s: [FAIL, create socket]\n", TEST_PREFIX);
-> +	if (ret < 0)
-> +		error(1, errno, "%s: [FAIL, create socket]\n", TEST_PREFIX);
->  
->  	socket_fd = socket(server_sin.sin_family, SOCK_STREAM, 0);
-> -	if (socket < 0)
-> -		error(errno, errno, "%s: [FAIL, create socket]\n", TEST_PREFIX);
-> +	if (socket_fd < 0)
-> +		error(1, errno, "%s: [FAIL, create socket]\n", TEST_PREFIX);
->  
->  	ret = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEPORT, &opt,
->  			 sizeof(opt));
->  	if (ret)
-> -		error(errno, errno, "%s: [FAIL, set sock opt]\n", TEST_PREFIX);
-> +		error(1, errno, "%s: [FAIL, set sock opt]\n", TEST_PREFIX);
->  
->  	ret = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt,
->  			 sizeof(opt));
->  	if (ret)
-> -		error(errno, errno, "%s: [FAIL, set sock opt]\n", TEST_PREFIX);
-> +		error(1, errno, "%s: [FAIL, set sock opt]\n", TEST_PREFIX);
+> On 10/31/2024 11:27 AM, Sean Christopherson wrote:
+> > On Thu, Oct 31, 2024, Pratik R. Sampat wrote:
+> >> Hi Sean,
+> >>
+> >> On 10/30/2024 12:57 PM, Sean Christopherson wrote:
+> >>> On Wed, Oct 30, 2024, Pratik R. Sampat wrote:
+> >>>> On 10/30/2024 8:46 AM, Sean Christopherson wrote:
+> >>>>> +/* Minimum firmware version required for the SEV-SNP support */
+> >>>>> +#define SNP_FW_REQ_VER_MAJOR   1
+> >>>>> +#define SNP_FW_REQ_VER_MINOR   51
+> >>>>>
+> >>>>> Side topic, why are these hardcoded?  And where did they come from?  If they're
+> >>>>> arbitrary KVM selftests values, make that super duper clear.
+> >>>>
+> >>>> Well, it's not entirely arbitrary. This was the version that SNP GA'd
+> >>>> with first so that kind of became the minimum required version needed.
+> >>>>
+> >>>> I think the only place we've documented this is here -
+> >>>> https://github.com/AMDESE/AMDSEV/tree/snp-latest?tab=readme-ov-file#upgrade-sev-firmware.
+> >>>>
+> >>>> Maybe, I can modify the comment above to say something like -
+> >>>> Minimum general availability release firmware required for SEV-SNP support.
+> >>>
+> >>> Hmm, so if AMD says SNP is only supported for firmware version >= 1.51, why on
+> >>> earth is that not checked and enforced by the kernel?  Relying on userspace to
+> >>> not crash the host (or worse) because of unsupported firmware is not a winning
+> >>> strategy.
+> >>
+> >> We do check against the firmware level 1.51 while setting things up
+> >> first (drivers/crypto/ccp/sev-dev.c:__sev_snp_init_locked()) and we bail
+> >> out if it's otherwise. From the userspace, calls to KVM_SEV_INIT2 or any
+> >> other corresponding SNP calls should fail cleanly without any adverse
+> >> effects to the host.
+> > 
+> > And I'm saying, that's not good enough.  If the platform doesn't support SNP,
+> > the KVM *must not* advertise support for SNP.
+> > 
+> 
+> Sure, fair to expect this. Currently, if the FW check fails, SNP is not
+> setup and there is nothing that indicates in the KVM capabilities (apart
+> from one dmesg error) that the support does not exist.
+> 
+> One thing I could do (as an independent patch) is to introduce a CC API
+> that abstracts the FW version check made by the CCP module. Since sev
+> platform status can be gotten before INIT to extract the major and minor
+> version numbers, KVM can also call into this API and use that to decide
+> if the KVM capabilities for SNP must be set or not.
 
-A minor nit (definitely not worth re-sending for this on its own):
-it might be helpful to add which of the sockopts failed to the error
-message REUSEADDR or REUSEPORT.
+Why is CC_ATTR_HOST_SEV_SNP set if hardware/firmware can't actually support SNP?
+KVM shouldn't have to care about some arbitrary firmware API version, the whole
+point of a driver is so that KVM doesn't have to deal with such details.
 
-Reviewed-by: Joe Damato <jdamato@fastly.com>
+I'm a-ok with a KVM selftest *asserting* that the kernel isn't broken, but KVM
+itself shouldn't need to manually check the firmware version.
 
