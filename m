@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-395424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778859BBDB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:07:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683A99BBDBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:08:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E93E1F22F11
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6521C220B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CC21CEE90;
-	Mon,  4 Nov 2024 19:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8AF1D0438;
+	Mon,  4 Nov 2024 19:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEHxkBXJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLF06kRE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AECC1CCB23;
-	Mon,  4 Nov 2024 19:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F111CF296;
+	Mon,  4 Nov 2024 19:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730747232; cv=none; b=GgAikgw6W3UFqEPFuPOF/ISXIYgZW4+AFioclL9pV5vM1zcjoYlqTMEDAGnFrLEJQNqTL/fXvcexmOqoAbSs1EkSzqB6xX+tDt9+XbhteRiLryuF++tJWfotIA0jZjhBR1ech34kEIkLJVQDCbfF/Gdulub5+6AS5f9sjISpx3E=
+	t=1730747237; cv=none; b=hjpDdQyMq8ceT3K0+dyoRQ890Jlc6SS4riLYPIekDeYlS1WREArNQ336Mj4otJZ3qxZblJxY5lpTcV2kdTzhKdMG7mb9hB75sDeif7UriVctfoKk1W8VO21kCeSNrdlEa7nWuidwfCNiPUNntUQB0/aI8+ZVSRaXIAluibIXUbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730747232; c=relaxed/simple;
-	bh=GpppFndmxOiMWcsj4cKxdFdIF2ODqAfHC96A/9l0Ga4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VWybhmPux/h7zYpz/BClMjWj8Gx5aEjOD0phBrbo4p0qrXTa2YTvhbx57oG61nXkeAK30396j6Kh9RKeX2EQ3EWxxKV5Q625ArWdeFR8WPni+SpcpUmD9uJfRCnk9HW+zPUi7z6QFRYM3os638m+D/rLBd0pSeeztozmtL5yNUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEHxkBXJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1DCC4CECE;
-	Mon,  4 Nov 2024 19:07:11 +0000 (UTC)
+	s=arc-20240116; t=1730747237; c=relaxed/simple;
+	bh=HMpcHdTgNyxjOcX+7+u9IM4pPnNl7eacK/bkdyriNjA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H1NLc6JmD/ih93ccAr1YuLu3ol0uJw2dBnrRgmWujFRB0GmnSLRTZ3ZFvTutposfMgUVWBUmWoe3XyqRGZ8u+2MbXYPT+2132FUXuIm7HhsekuvMp4vWoUQtaY6mVrZyPVsG1mNq9lAI5ou8+pr1qq5KF86Iuqew4FZVbq+6+mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLF06kRE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF812C4CECE;
+	Mon,  4 Nov 2024 19:07:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730747232;
-	bh=GpppFndmxOiMWcsj4cKxdFdIF2ODqAfHC96A/9l0Ga4=;
+	s=k20201202; t=1730747236;
+	bh=HMpcHdTgNyxjOcX+7+u9IM4pPnNl7eacK/bkdyriNjA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=OEHxkBXJGNeLH3YX6LKaxeQhDMJ+EUjYKIR+lrLbq5gmRMES/xm+GJXWrhF1MaT7C
-	 KIcs18j1Uq8G/xp8uSsf13UWuxmHhtFxoDmcXl8xNexu/2U5zSTgSqKkEimTEKR8XD
-	 F3AIWCCB1fPS690o2sHYPFB0/1G6yEXuY/TY+OOkQWV9uOm9GjyKpU6ABgXB7vsIA+
-	 pZjoYEkJksasKivOPSnMU2m1+0VwSLDOrSBOYHcudIDMnS7vKjJCBEDFTkSlLqd9xO
-	 FrRItjUDWlaic/7GAL0EmnW8sU2pbnOTDAIhbGjVzFZTvmuOJp+MEjvf7SkAJwq7c/
-	 CJW1cvlwhDT1Q==
+	b=mLF06kRE3r0kk9oLvfJPPrsVzlTd1NMxZtFxqpJVV/n+EWhXnumt9+bnLKuf1GMDg
+	 HxcfcbK2UQScBHcOFoznWjiU/O2X3bxNzavmm+jmg7/os/xl+kxfWzjfq2pNc8jiR1
+	 ErKnKB9U6ThywDjH6hp2Q0ZU7gTBnXsO2tbk3VCIdMLCDOxPfPyYhY+R8LAUDPwqhf
+	 ezJCvrb9kOLkINlge6KzQU202T7ei4NnLFFC+fngt+8HYfq/eJg/mntg+ArR2oW+pE
+	 E3TWfkBZst899M2mdpkNPnlzBmr607Yju2JCwVftJHoN2mRPugTKMtepVwMXaM+4Lx
+	 QNzo4GgSLYOig==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Haibo Chen <haibo.chen@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	s32@nxp.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] mmc: Use of_property_present() for non-boolean properties
-Date: Mon,  4 Nov 2024 13:07:06 -0600
-Message-ID: <20241104190707.275758-1-robh@kernel.org>
+To: Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: dwc: Use of_property_present() for non-boolean properties
+Date: Mon,  4 Nov 2024 13:07:13 -0600
+Message-ID: <20241104190714.275977-1-robh@kernel.org>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,40 +65,24 @@ presence.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/mmc/host/mxcmmc.c          | 6 +++---
- drivers/mmc/host/sdhci-esdhc-imx.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware-host.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
-index 1edf65291354..dcb1a7336029 100644
---- a/drivers/mmc/host/mxcmmc.c
-+++ b/drivers/mmc/host/mxcmmc.c
-@@ -1048,9 +1048,9 @@ static int mxcmci_probe(struct platform_device *pdev)
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 3e41865c7290..d2291c3ceb8b 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -474,8 +474,8 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
  
- 	if (pdata)
- 		dat3_card_detect = pdata->dat3_card_detect;
--	else if (mmc_card_is_removable(mmc)
--			&& !of_property_read_bool(pdev->dev.of_node, "cd-gpios"))
--		dat3_card_detect = true;
-+	else
-+		dat3_card_detect = mmc_card_is_removable(mmc) &&
-+			!of_property_present(pdev->dev.of_node, "cd-gpios");
+ 	if (pci_msi_enabled()) {
+ 		pp->has_msi_ctrl = !(pp->ops->msi_init ||
+-				     of_property_read_bool(np, "msi-parent") ||
+-				     of_property_read_bool(np, "msi-map"));
++				     of_property_present(np, "msi-parent") ||
++				     of_property_present(np, "msi-map"));
  
- 	ret = mmc_regulator_get_supply(mmc);
- 	if (ret)
-diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-index 8f0bc6dca2b0..cda1872769e0 100644
---- a/drivers/mmc/host/sdhci-esdhc-imx.c
-+++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-@@ -1629,7 +1629,7 @@ sdhci_esdhc_imx_probe_dt(struct platform_device *pdev,
- 	 * Retrieveing and requesting the actual WP GPIO will happen
- 	 * in the call to mmc_of_parse().
- 	 */
--	if (of_property_read_bool(np, "wp-gpios"))
-+	if (of_property_present(np, "wp-gpios"))
- 		boarddata->wp_type = ESDHC_WP_GPIO;
- 
- 	of_property_read_u32(np, "fsl,tuning-step", &boarddata->tuning_step);
+ 		/*
+ 		 * For the has_msi_ctrl case the default assignment is handled
 -- 
 2.45.2
 
