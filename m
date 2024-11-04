@@ -1,112 +1,165 @@
-Return-Path: <linux-kernel+bounces-394320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6253D9BAD5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:42:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8779BAD62
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:45:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2C28B20AD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:42:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 643111C20DF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE34D199E8D;
-	Mon,  4 Nov 2024 07:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8391719DFB4;
+	Mon,  4 Nov 2024 07:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="UjAozkVg"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lmHbUCcj"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8999B1917C4;
-	Mon,  4 Nov 2024 07:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6533818C91D;
+	Mon,  4 Nov 2024 07:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730706130; cv=none; b=lomGJM31zczkZYsbjIHg5588wMjh7WO4g3Wq5kZWvyvqJLnJpm9Etu9sfbaspmFTgnoTL3YtLla/nXaMMkLGY5i/N5MDpkMZbHxX/8w+OM1LB2LyfWvYJNCJDUxTTV4pxlV5n465dpFkC4CBKM3coRJbFXVIKzAz3XbgN2TX6Iw=
+	t=1730706300; cv=none; b=FADVhJ8shT2xRV/QQ72Amc7dOi74HCrNosDy0VbXO1hdPYUPLOugvJ7BWjSs4dSHTEJRsb6xoF8EmZyi3aSdT2qvXSJgGoaAFPgOt0/di3VBZ4zjSuoCYGU7fEMNZ4bvvAzaa7gcIbTjX6xIznAxUxqcofn5JiUjGXNIDq0E8Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730706130; c=relaxed/simple;
-	bh=qMok5bTyC6I0n09Kq6tGo/rOCJ3udHa3x/VGuqvBrUs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dfceEqqG2mWAAfkvaUL3LDwywFl11vYEfsaKXCQvf7FUo2RtlNin2xyv7dmSafkUpccx5hr2rEJjiUEtr2pBaF1xY5LBwYesIMyu/rcHWiEIcCwqZBe+HE0AaSTC+94YIaclIWwONt4W4DQvpvKIbM6ghuxRCj8rSIJeL8jZuUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=UjAozkVg; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 9F2F4A03A7;
-	Mon,  4 Nov 2024 08:41:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=xv5bUFMxs4KAHpxzUJns
-	OpeLi4TFFl07AzHMQZEr5RI=; b=UjAozkVggqW7Pn76P3FQKyuO1H3QhUzKCKYG
-	MXPGw/eeO+RT3nzUhFoQww6cJYUhECAu0iFRc66fHZG2pPfoMgFHWfRR7mAkgnd6
-	tqvzdWluQ2BCtaPBInFwCA3LQ9cXcMpBFo1hv92cARW8sIYOz3OZPfWKrOOGRbR1
-	OLbxrn0RJhp7yVl5QJuBtUk/Ao7uu4hrRHFXsFONq93aMs2l2JPikLZG3/EKPQSa
-	tiSG6Oaoctb86Fnea2mE8+8+broZ1SdCvqRUBf/+cRLC/M1/QKhT3H3WacZyCU48
-	ViPwCTZKybSK/WEVoiBB2QZykK4UDM6pAIpanlaPl/5bjSDbfNrURQiYSg6xBJLG
-	ui1lCNRghhAk8JDqkxhZT7vUu+WazarSDyZcpIIXuNhkTPOKG8EVLjY/p14yukJ4
-	0zpZ5ILtEC0U4oneBRww62WoFibPhvK1Ky/hOERdtKazEBfFZ6O2FXJpwd8I8Nrs
-	TYKb0iKDMIxX8CtcmdiFfoQQNISwAg06LyBJOOqsLvlukQ6zoY3bbaN0CoXhl95H
-	dXhwlmsx14UbGUp7II0uUk9kwf6yr39SjAjR2b3dPgEWQbsnid1r+D3Y/rS3ILic
-	qb8inFrxASzV4CRmz1hldWWRMBvXcBIR8LWvWQGaAa2OSvcbKYizEv45MOUO88g8
-	uZiOEJ4=
-Message-ID: <656fab96-b326-4721-9b55-2b5e3d652703@prolan.hu>
-Date: Mon, 4 Nov 2024 08:41:56 +0100
+	s=arc-20240116; t=1730706300; c=relaxed/simple;
+	bh=sXlF1I6gJMnXOR2kcQblYeKBKy9K5X1HlVpDHibIC8w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fkZPQEnN2YWffa8cc6N0ng2ct4LUIfJfhjTviQt1Gi1EMZJgEkxr1zaMlGEd4ii9t/mfVv4L9GNVs+q3Kn3E+/i/pmO1H/QnulPl03Zryp2hYdOLHAJiPb2ZjFi/bNE5KmkkyxGGN9AR7vD/7OIRZaCNHdvDrHwuiTD2IKZX7yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lmHbUCcj; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A47iPJM075574;
+	Mon, 4 Nov 2024 01:44:25 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730706265;
+	bh=RBpswuLRxOZxNXlnIrevuU+zJUadRtGK4fTa3G3D7Cs=;
+	h=From:To:CC:Subject:Date;
+	b=lmHbUCcjSgY9hRjxgEpM8GRznC74D1elqB7AoasARInL54BaRHmUY4sGSOZSQwPe/
+	 1bNijh5yvg+YXTmJVH0Zuokrs3Q09Oxp2tzYVhWpPt+ZsJYM8cGesb/0cQ+vUXhYXS
+	 mfLCxPDjDHfA9o9PQVTZ8wJb39n/RcBWDGQmbvF8=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A47iPqx117294
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 4 Nov 2024 01:44:25 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 4
+ Nov 2024 01:44:25 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 4 Nov 2024 01:44:25 -0600
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A47iKNV076611;
+	Mon, 4 Nov 2024 01:44:21 -0600
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <robh@kernel.org>, <vigneshr@ti.com>,
+        <manivannan.sadhasivam@linaro.org>, <kishon@kernel.org>,
+        <thomas.richard@bootlin.com>
+CC: <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, <s-vadapalli@ti.com>
+Subject: [PATCH v2] PCI: j721e: Deassert PERST# after a delay of PCIE_T_PVPERL_MS ms
+Date: Mon, 4 Nov 2024 13:14:20 +0530
+Message-ID: <20241104074420.1862932-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/5] dma-engine: sun4i: Add has_reset option to quirk
-To: Andre Przywara <andre.przywara@arm.com>
-CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Mesih Kilinc
-	<mesihkilinc@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul
-	<vkoul@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, "Philipp
- Zabel" <p.zabel@pengutronix.de>
-References: <20241102093140.2625230-1-csokas.bence@prolan.hu>
- <20241102093140.2625230-3-csokas.bence@prolan.hu>
- <20241102174516.02d124d6@minigeek.lan>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20241102174516.02d124d6@minigeek.lan>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855667261
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi!
+According to Section 2.2 of the PCI Express Card Electromechanical
+Specification (Revision 5.1), in order to ensure that the power and the
+reference clock are stable, PERST# has to be deasserted after a delay of
+100 milliseconds (TPVPERL). Currently, it is being assumed that the power
+is already stable, which is not necessarily true. Hence, change the delay
+to PCIE_T_PVPERL_MS to guarantee that power and reference clock are stable.
 
-On 2024. 11. 02. 18:45, Andre Przywara wrote:
-> On Sat, 2 Nov 2024 10:31:41 +0100
-> "Csókás, Bence" <csokas.bence@prolan.hu> wrote:
-> 
-> Hi,
-> 
->> From: Mesih Kilinc <mesihkilinc@gmail.com>
->>
->>   static struct sun4i_dma_dev *to_sun4i_dma_dev(struct dma_device *dev)
->> @@ -1215,6 +1218,13 @@ static int sun4i_dma_probe(struct platform_device *pdev)
->>   		return PTR_ERR(priv->clk);
->>   	}
->>   
->> +	if (priv->cfg->has_reset) {
->> +		priv->rst = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-> 
-> Can't we use devm_reset_control_get_optional_exclusive(), and then save
-> this whole has_reset bit?
+Fixes: f3e25911a430 ("PCI: j721e: Add TI J721E PCIe driver")
+Fixes: f96b69713733 ("PCI: j721e: Use T_PERST_CLK_US macro")
+Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+---
 
-For suniv, reset is REQUIRED. For sun4i, reset DOES NOT EXIST.
+Hello,
 
-has_reset does not mean that whether this instance has a reset control 
-or not, that is handled by checking priv->rst for NULL. has_reset means 
-whether reset is REQUIRED by this type of DMA, specified by the DT match 
-data.
+This patch is based on commit
+59b723cd2adb Linux 6.12-rc6
+of Mainline Linux.
 
-Bence
+v1:
+https://lore.kernel.org/r/20241022083147.2773123-1-s-vadapalli@ti.com/
+Changes since v1:
+- Rebased patch on Linux 6.12-rc6
+- Based on Krzysztof's feedback at:
+  https://lore.kernel.org/r/20241102141914.GA3440781@rocinante/
+  PCIE_T_PERST_CLK_US has been replaced with PCIE_T_PVPERL_MS in
+  j721e_pcie_probe() as well.
+- Added Fixes tag corresponding to the above change in the commit
+  message.
+
+Regards,
+Siddharth.
+
+ drivers/pci/controller/cadence/pci-j721e.c | 26 ++++++++++------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+index 284f2e0e4d26..e091c3e55b5c 100644
+--- a/drivers/pci/controller/cadence/pci-j721e.c
++++ b/drivers/pci/controller/cadence/pci-j721e.c
+@@ -572,15 +572,14 @@ static int j721e_pcie_probe(struct platform_device *pdev)
+ 		pcie->refclk = clk;
+ 
+ 		/*
+-		 * The "Power Sequencing and Reset Signal Timings" table of the
+-		 * PCI Express Card Electromechanical Specification, Revision
+-		 * 5.1, Section 2.9.2, Symbol "T_PERST-CLK", indicates PERST#
+-		 * should be deasserted after minimum of 100us once REFCLK is
+-		 * stable. The REFCLK to the connector in RC mode is selected
+-		 * while enabling the PHY. So deassert PERST# after 100 us.
++		 * Section 2.2 of the PCI Express Card Electromechanical
++		 * Specification (Revision 5.1) mandates that the deassertion
++		 * of the PERST# signal should be delayed by 100 ms (TPVPERL).
++		 * This shall ensure that the power and the reference clock
++		 * are stable.
+ 		 */
+ 		if (gpiod) {
+-			fsleep(PCIE_T_PERST_CLK_US);
++			msleep(PCIE_T_PVPERL_MS);
+ 			gpiod_set_value_cansleep(gpiod, 1);
+ 		}
+ 
+@@ -671,15 +670,14 @@ static int j721e_pcie_resume_noirq(struct device *dev)
+ 			return ret;
+ 
+ 		/*
+-		 * The "Power Sequencing and Reset Signal Timings" table of the
+-		 * PCI Express Card Electromechanical Specification, Revision
+-		 * 5.1, Section 2.9.2, Symbol "T_PERST-CLK", indicates PERST#
+-		 * should be deasserted after minimum of 100us once REFCLK is
+-		 * stable. The REFCLK to the connector in RC mode is selected
+-		 * while enabling the PHY. So deassert PERST# after 100 us.
++		 * Section 2.2 of the PCI Express Card Electromechanical
++		 * Specification (Revision 5.1) mandates that the deassertion
++		 * of the PERST# signal should be delayed by 100 ms (TPVPERL).
++		 * This shall ensure that the power and the reference clock
++		 * are stable.
+ 		 */
+ 		if (pcie->reset_gpio) {
+-			fsleep(PCIE_T_PERST_CLK_US);
++			msleep(PCIE_T_PVPERL_MS);
+ 			gpiod_set_value_cansleep(pcie->reset_gpio, 1);
+ 		}
+ 
+-- 
+2.40.1
 
 
