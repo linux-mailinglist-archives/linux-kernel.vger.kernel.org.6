@@ -1,230 +1,152 @@
-Return-Path: <linux-kernel+bounces-395594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF119BC041
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:43:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D199BC045
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51197282AFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:43:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D211F22972
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830C21FDFAF;
-	Mon,  4 Nov 2024 21:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4B91FCF4B;
+	Mon,  4 Nov 2024 21:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rrsfwb9l"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LgMdpxRN"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4877E1FDF88;
-	Mon,  4 Nov 2024 21:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5722B1E5725;
+	Mon,  4 Nov 2024 21:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730756599; cv=none; b=NkgqHxVB40JF09FJBgirz7lTnqyizXwUWxcfnHPF/LAZj1xWJu4ipTvp1lKZ/Loc1+FvZbZzKhawgPNEMiWb73M9Qb7kfZf94maEmU1XhjwPC2Do8uwA6KyV8wqa1YP9OL2rA5WeqB2Esrhtz3mPmXZlr0mNTgUFvanjGroH4YE=
+	t=1730756670; cv=none; b=k7uCytwwzoggl/zvbYBsBOL4RqWPmCmwhAzAWvIKKt6sEWY4OVyEg4SClQs737K2SUDjbtn6khw+123H+0S82F3hiGUwIO7P4oP10w70ZNCvejM9NaME/Aub5egMmQGLwpaf2aI4wh1AW/kTSXcwmSgxjoyVPOxIaj7sxBoYF/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730756599; c=relaxed/simple;
-	bh=bpKFPPtC1GStj4J3pND2QCsA8ppdzq3JzH/A/uLN4i8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c2dQWu/I5Ow58v/SJtm1uNZbeQrpm1AiVZN168Wzu5Oim4CHEBluS9wPvc5aMfBg9DjK//K/MkCksIJq5mROXCCLPzdQQSM8Sg/xU6DTQJUjl55ElraOWHCYzvbrmSiRaDVJkBOdJS+FXYe3alIZek7MEt5u0wZ0k/YP8ajelBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rrsfwb9l; arc=none smtp.client-ip=209.85.219.50
+	s=arc-20240116; t=1730756670; c=relaxed/simple;
+	bh=cnQt85/IBBjwFUEOwDLccd6pQoT2o7PdYi5GvmXKs3s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nWhm0oDaIKD4sC4TFcdDzcUguQC7GXEiZIsJ8SiFChjLI7vCLuTpe+mPkUhyBxb1znrFAlw+6aRBVXfX7KwcO3qHG/yKsEeLeB3lfny6fDPtC+iXWS+U01/AKDviZr6QGMS+dUAxZMoT74jJ32IQTkx6k64i/yQfe5llq87bHP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LgMdpxRN; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cbcc2bd7fcso31966156d6.1;
-        Mon, 04 Nov 2024 13:43:18 -0800 (PST)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cbe68f787dso30791036d6.2;
+        Mon, 04 Nov 2024 13:44:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730756597; x=1731361397; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1730756668; x=1731361468; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gpEshnq6i6G+Np3ZVcF5ef21yjGyMRFFgjDXZD1qG8A=;
-        b=Rrsfwb9lZzgj9op302JbXmVOnY/1IrettQ1r0gkhdHz59QYUFmwLwsWzBW37dI9crx
-         JNln9N4TR1K/wO+6lizrw/HwjZfFuXg8XkpbfulvWqQeRW6GA84mG5pu/zDEk1NxNMJb
-         udn+6vWhOTgQDFCOCB5y44VsSTHjA0WeDXY3/ilxQHmi4cksd1wB9A85ZoQMXNCkrsFS
-         uaKbh7ButvmSNgaiSr8fjIhdHoss43tlPI5VSz+amJvhjn/VVk0Ns2ymkj24UlS8F1g8
-         h7IKepUPQL8vNpjSRFPTSvnAA/eL5Ekj3NZcPjynRURQ05FCPsMSHGAJMVw8vqdR4sgd
-         sOrg==
+        bh=4NrEfQGqdrHPbmwDeN85eCwuLpMlJMeWTmlrYTmvJPA=;
+        b=LgMdpxRNQ7RVW5NonateG0PLfR3LYS1J9rx6VLFUPXNfJHz650nqbGgkLzzhVAJaRM
+         bJ2MEuNnWG04a3LoHT0scjdCS/VIZCcWnjwKzPKzR0E7V09NwKVnUd6bA9LH6UoJ+LIY
+         pQTmrZBsFzg91z2Vmxb9xYw1kP1w0x2YIgykLosnzklRN1BWOtvzllIt/YZyge6AeZ/i
+         j5aXJuFyv6jqDSRg1YHWM1jvnrl4vD2hI7qPH0T0gf+tGu95CMV7/O+lh5Apktl5rI6v
+         0hj1vBq++YmQsu+A7u0L4f0y7V+G8XUAZBjYIOu8TTd5EoFKEjm+fq/renNALdFQR2CZ
+         JMLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730756597; x=1731361397;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730756668; x=1731361468;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gpEshnq6i6G+Np3ZVcF5ef21yjGyMRFFgjDXZD1qG8A=;
-        b=e8tF7PYE+is+wvq6hHs7iAIJxRZyJST4+e7vD5ecAyC3tl/nadZAsEThgwYU2vaLN3
-         Yzky9BJ+UtWdONaIEDeAr/1Uv8mm1dUCYPKvB1iF4qyc0LnFx6MXEWThtfz1UrWy3S2p
-         tZjJ55tHIcfYG3nTftZiZ5eDM3jMx3u7Z1HM00raxwSt+KnsIvS8PQnUv9poDiLuBvI7
-         OZDuXdV+xy51rD+HrSrxHXYF2vkbdiqGNdv9clvygmih0acoCel6OVYjlDH16GAKzhZC
-         9L7j8/bVslVz0VglIfWyf4X8y5UcNIihsU/N+KiBtocyVtipx1FQTr+TZBY96JB/FxpS
-         UYLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcKWeASx9zAAmMC09e6sFsDOqc48AEXeygf5thGiI3M9mGR4FyiaD6sFd7CIP7K3vPUssEc3QvGLw=@vger.kernel.org, AJvYcCXvbtyiKOT4xjTlCkO9AHjGiWJi2JJEu2durEgZh9oQl/2+6FhHdkIWCKGkeUNDYr6EDvd/sL05rgcPR730@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzeeLmCzV0MFcebKXCFJaUq1MyTQjhQWRKQJ5krOTluYLhjhzE
-	RRH2IDkhtoaijVVcBDmbnW1BzpbK0Xq+hf8SBP5PYdW8zFLXN9l+
-X-Google-Smtp-Source: AGHT+IES5Vzl7DJKtNHPJ7UmtrOwkZwfCRkFo15pFheXgrIEAUHkNDpzR2YA54jau7pQhc5lYfGEsQ==
-X-Received: by 2002:a05:6214:5f01:b0:6d1:7854:ab49 with SMTP id 6a1803df08f44-6d351a8f23bmr277872066d6.11.1730756597159;
-        Mon, 04 Nov 2024 13:43:17 -0800 (PST)
-Received: from newman.cs.purdue.edu ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d35415b1edsm52553916d6.75.2024.11.04.13.43.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 13:43:16 -0800 (PST)
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-To: rmk@dyn-67.arm.linux.org.uk,
-	max.schwarz@online.de,
-	dianders@chromium.org,
-	david.wu@rock-chips.com,
-	heiko@sntech.de,
-	vz@mleia.com,
-	andi.shyti@kernel.org,
-	wsa@kernel.org,
-	manabian@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH 3/3] i2c: rk3x: Add check for clk_enable()
-Date: Mon,  4 Nov 2024 21:43:10 +0000
-Message-Id: <20241104214310.6048-3-jiashengjiangcool@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241104214310.6048-1-jiashengjiangcool@gmail.com>
-References: <20241104214310.6048-1-jiashengjiangcool@gmail.com>
+        bh=4NrEfQGqdrHPbmwDeN85eCwuLpMlJMeWTmlrYTmvJPA=;
+        b=Pby/K0s0w6u6AcbxVYEteRZ1ftndkiH4SOqcn71Pq7g3/q8ECJVVRxnoIbVwymd4Ry
+         BvHSbVE4u2/szXTrN2XbRI5HVip0DT7DCcxlN3B8wIjOgw93SNt48jwP97tSWNfKT9KA
+         s0qNVg50zgdmgkTu09wQJEm/vxBKiEmEWWBHwKuD/w3t+nKTz4Obo7j0DcfASteLVJyR
+         ZxUyyh75ZmGirPMoe8xjRqSHxfy5cEo33q7yPd2W3VsCDSEAeIBs801YTLXNbxaAqav3
+         ytqIQW0J7JFoAatU5jSawYLznoFV5JrEDJloTK9AbeCyv769hTb81YCB9spLURI5d+XH
+         1lHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvu9n05yL1qqDtukk1MBfRcO8+dZdlroch0Fw9W5zVuQW8jHFJafcb4edL+4uaDXEUmz2z1lE2ehXqGXnF@vger.kernel.org, AJvYcCUzJmJy4sw1+TL9IsL4+pZp2+vM4BxEk3yvaYH4FR7GIQQMpWah6c8D5mgXzBlsAALSrD1u4lxCxkxEM3mdIA==@vger.kernel.org, AJvYcCX4TYQ/kBg6fHJJ9Sa+zJYTP+A7oeWm6MaA8yzypvxITEzuvCkKjcz0un9L/rwgSo1QaMWMQiFTaaiWS81Ekg==@vger.kernel.org, AJvYcCXVYtM0hnPN8rxffEsLW+QPtwnlgO1CqZOVdXBgnNhKLD4RkSbh6V89GA4LKugLE+isxKkrYVld2A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGeJsGe4F8+5Or4OX3tbgW0DdvG7MGImzNlP0h00KfZSH1kC0x
+	zRzXUK1buASOcmvmslEctyvy9j7IElKB5DAVRfdfUWyq9FG4qm7KXd4gZ3D/1/AuL0Ezrxhz8GI
+	PWTXxh7ZbcDX6R95AXrcIhXIIsvs=
+X-Google-Smtp-Source: AGHT+IGUFOPlyVXz4TURnYNHRRXYYClMhXlW/+8Anj3bhex8lDTJ8z08cF0ehG+/GQ4N2CEdR9n0zVynl0gKAOkyanw=
+X-Received: by 2002:a05:6214:498b:b0:6ce:348e:a8c4 with SMTP id
+ 6a1803df08f44-6d351b19112mr220444216d6.48.1730756668134; Mon, 04 Nov 2024
+ 13:44:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com> <20241101213025.GP1350452@ZenIV>
+In-Reply-To: <20241101213025.GP1350452@ZenIV>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 4 Nov 2024 22:44:17 +0100
+Message-ID: <CAOQ4uxj4kBULWFt53rqM_Q-pfR8dWyMyraUWjHxo=0C09_XMkA@mail.gmail.com>
+Subject: Re: [PATCH] fs: Simplify getattr interface function checking
+ AT_GETATTR_NOSEC flag
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org, 
+	Stefan Berger <stefanb@linux.ibm.com>, Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add check for the return value of clk_enable() in order to catch the
-potential exception. Moreover, convert the return type of
-rk3x_i2c_adapt_div() into int and add the check.
+On Fri, Nov 1, 2024 at 10:30=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Fri, Nov 01, 2024 at 03:37:03PM -0400, Stefan Berger wrote:
+> > From: Stefan Berger <stefanb@linux.ibm.com>
+> >
+> > Commit 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interfa=
+ce
+> > function")' introduced the AT_GETATTR_NOSEC flag to ensure that the
+> > call paths only call vfs_getattr_nosec if it is set instead of vfs_geta=
+ttr.
+> > Now, simplify the getattr interface functions of filesystems where the =
+flag
+> > AT_GETATTR_NOSEC is checked.
+> >
+> > There is only a single caller of inode_operations getattr function and =
+it
+> > is located in fs/stat.c in vfs_getattr_nosec. The caller there is the o=
+nly
+> > one from which the AT_GETATTR_NOSEC flag is passed from.
+> >
+> > Two filesystems are checking this flag in .getattr and the flag is alwa=
+ys
+> > passed to them unconditionally from only vfs_getattr_nosec:
+> >
+> > - ecryptfs:  Simplify by always calling vfs_getattr_nosec in
+> >              ecryptfs_getattr. From there the flag is passed to no othe=
+r
+> >              function and this function is not called otherwise.
+> >
+> > - overlayfs: Simplify by always calling vfs_getattr_nosec in
+> >              ovl_getattr. From there the flag is passed to no other
+> >              function and this function is not called otherwise.
+> >
+> > The query_flags in vfs_getattr_nosec will mask-out AT_GETATTR_NOSEC fro=
+m
+> > any caller using AT_STATX_SYNC_TYPE as mask so that the flag is not
+> > important inside this function. Also, since no filesystem is checking t=
+he
+> > flag anymore, remove the flag entirely now, including the BUG_ON check =
+that
+> > never triggered.
+> >
+> > The net change of the changes here combined with the originan commit is
+> > that ecryptfs and overlayfs do not call vfs_getattr but only
+> > vfs_getattr_nosec.
+> >
+> > Fixes: 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interfa=
+ce function")
+> > Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> > Closes: https://lore.kernel.org/linux-fsdevel/20241101011724.GN1350452@=
+ZenIV/T/#u
+> > Cc: Tyler Hicks <code@tyhicks.com>
+> > Cc: ecryptfs@vger.kernel.org
+> > Cc: Miklos Szeredi <miklos@szeredi.hu>
+> > Cc: Amir Goldstein <amir73il@gmail.com>
+> > Cc: linux-unionfs@vger.kernel.org
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>
+> Applied (viro/vfs.git#work.statx2)
 
-Fixes: 7e086c3fc2df ("i2c: rk3x: add i2c support for rk3399 soc")
-Fixes: 249051f49907 ("i2c: rk3x: handle dynamic clock rate changes correctly")
-Fixes: c41aa3ce938b ("i2c: rk3x: add driver for Rockchip RK3xxx SoC I2C adapter")
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
- drivers/i2c/busses/i2c-rk3x.c | 55 ++++++++++++++++++++++++++---------
- 1 file changed, 41 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-rk3x.c b/drivers/i2c/busses/i2c-rk3x.c
-index 4ef9bad77b85..a4662b0dbd8c 100644
---- a/drivers/i2c/busses/i2c-rk3x.c
-+++ b/drivers/i2c/busses/i2c-rk3x.c
-@@ -871,7 +871,7 @@ static int rk3x_i2c_v1_calc_timings(unsigned long clk_rate,
- 	return ret;
- }
- 
--static void rk3x_i2c_adapt_div(struct rk3x_i2c *i2c, unsigned long clk_rate)
-+static int rk3x_i2c_adapt_div(struct rk3x_i2c *i2c, unsigned long clk_rate)
- {
- 	struct i2c_timings *t = &i2c->t;
- 	struct rk3x_i2c_calced_timings calc;
-@@ -883,7 +883,11 @@ static void rk3x_i2c_adapt_div(struct rk3x_i2c *i2c, unsigned long clk_rate)
- 	ret = i2c->soc_data->calc_timings(clk_rate, t, &calc);
- 	WARN_ONCE(ret != 0, "Could not reach SCL freq %u", t->bus_freq_hz);
- 
--	clk_enable(i2c->pclk);
-+	ret = clk_enable(i2c->pclk);
-+	if (ret) {
-+		dev_err(i2c->dev, "Can't enable bus clk for rk3399: %d\n", ret);
-+		return ret;
-+	}
- 
- 	spin_lock_irqsave(&i2c->lock, flags);
- 	val = i2c_readl(i2c, REG_CON);
-@@ -904,6 +908,8 @@ static void rk3x_i2c_adapt_div(struct rk3x_i2c *i2c, unsigned long clk_rate)
- 		clk_rate / 1000,
- 		1000000000 / t->bus_freq_hz,
- 		t_low_ns, t_high_ns);
-+
-+	return 0;
- }
- 
- /**
-@@ -942,19 +948,27 @@ static int rk3x_i2c_clk_notifier_cb(struct notifier_block *nb, unsigned long
- 			return NOTIFY_STOP;
- 
- 		/* scale up */
--		if (ndata->new_rate > ndata->old_rate)
--			rk3x_i2c_adapt_div(i2c, ndata->new_rate);
-+		if (ndata->new_rate > ndata->old_rate) {
-+			if (rk3x_i2c_adapt_div(i2c, ndata->new_rate))
-+				return NOTIFY_STOP;
-+		}
- 
- 		return NOTIFY_OK;
- 	case POST_RATE_CHANGE:
- 		/* scale down */
--		if (ndata->new_rate < ndata->old_rate)
--			rk3x_i2c_adapt_div(i2c, ndata->new_rate);
-+		if (ndata->new_rate < ndata->old_rate) {
-+			if (rk3x_i2c_adapt_div(i2c, ndata->new_rate))
-+				return NOTIFY_STOP;
-+		}
-+
- 		return NOTIFY_OK;
- 	case ABORT_RATE_CHANGE:
- 		/* scale up */
--		if (ndata->new_rate > ndata->old_rate)
--			rk3x_i2c_adapt_div(i2c, ndata->old_rate);
-+		if (ndata->new_rate > ndata->old_rate) {
-+			if (rk3x_i2c_adapt_div(i2c, ndata->old_rate))
-+				return NOTIFY_STOP;
-+		}
-+
- 		return NOTIFY_OK;
- 	default:
- 		return NOTIFY_DONE;
-@@ -1068,8 +1082,20 @@ static int rk3x_i2c_xfer_common(struct i2c_adapter *adap,
- 
- 	spin_lock_irqsave(&i2c->lock, flags);
- 
--	clk_enable(i2c->clk);
--	clk_enable(i2c->pclk);
-+	ret = clk_enable(i2c->clk);
-+	if (ret) {
-+		dev_err(i2c->dev, "Can't enable bus clk: %d\n", ret);
-+		spin_unlock_irqrestore(&i2c->lock, flags);
-+		return ret;
-+	}
-+
-+	ret = clk_enable(i2c->pclk);
-+	if (ret) {
-+		dev_err(i2c->dev, "Can't enable bus clk for rk3399: %d\n", ret);
-+		clk_disable(i2c->clk);
-+		spin_unlock_irqrestore(&i2c->lock, flags);
-+		return ret;
-+	}
- 
- 	i2c->is_last_msg = false;
- 
-@@ -1149,9 +1175,7 @@ static __maybe_unused int rk3x_i2c_resume(struct device *dev)
- {
- 	struct rk3x_i2c *i2c = dev_get_drvdata(dev);
- 
--	rk3x_i2c_adapt_div(i2c, clk_get_rate(i2c->clk));
--
--	return 0;
-+	return rk3x_i2c_adapt_div(i2c, clk_get_rate(i2c->clk));
- }
- 
- static u32 rk3x_i2c_func(struct i2c_adapter *adap)
-@@ -1365,9 +1389,12 @@ static int rk3x_i2c_probe(struct platform_device *pdev)
- 	}
- 
- 	clk_rate = clk_get_rate(i2c->clk);
--	rk3x_i2c_adapt_div(i2c, clk_rate);
-+	ret = rk3x_i2c_adapt_div(i2c, clk_rate);
- 	clk_disable(i2c->clk);
- 
-+	if (ret)
-+		goto err_clk_notifier;
-+
- 	ret = i2c_add_adapter(&i2c->adap);
- 	if (ret < 0)
- 		goto err_clk_notifier;
--- 
-2.25.1
-
+Acked-by: Amir Goldstein <amir73il@gmail.com>
 
