@@ -1,196 +1,88 @@
-Return-Path: <linux-kernel+bounces-394816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ED69BB461
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:14:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DF49BB46B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:15:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36E5CB23139
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:14:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455A31C21C90
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001E41B85DB;
-	Mon,  4 Nov 2024 12:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612FC1B652C;
+	Mon,  4 Nov 2024 12:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eJJqf0TI"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oqBMt3eE"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896C21B652B;
-	Mon,  4 Nov 2024 12:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A4A1B3939
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730722440; cv=none; b=JtIOgBpJiUn8rTb/AZqdVXxMF7wX52Ogh1CDYJ2Zf5xs9V0zpEn442BZhGsopYTNqSYRFIKFWpe+68fhiMcxF0m9UjkgLLANJJ6mk4Rr5NVo8/F4H1cbuiQojXX0ZhGX6ruZha4rlyWyRIvXUEpZW+qHDExYsbqaM4m7pOK3Usc=
+	t=1730722491; cv=none; b=bVJCJoE2XXCA8G0/uIx5oY/R7ejR35rYekLZm0CCh0gRC5q2t8icwkZ9s1l9Z87uS9kL5xWRNN7oQPZDkQxtNfPxq6YtmU1u33+kWOjZA5XhAX7HjBkCmH0Ca/yUh3XQMEt9PWMdmG5jEZfHLi5G456ux3IU2TCJTn2oYVGztlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730722440; c=relaxed/simple;
-	bh=+FgPmna2yZYdpj3UFinnNH2q5GuuHS84mHOrxv7TxxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uR4m53kN5gNXlwySb0TkerQCF8xDF2oFiWLlgw6JaSONzM9DZPtzbLmprqNDLNYlzzOHBPwKGYlHddBNqxYiuC1wzzqrUcIX0IbsEwlFYXQ7nAorqBnvtAoNJn5hQpCpO9tS4i/5n4UgXolag2MnY+Uk8z2+d6dU1nRJEjhenP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eJJqf0TI; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e13375d3so4154478e87.3;
-        Mon, 04 Nov 2024 04:13:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730722437; x=1731327237; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FYskZ8T2jr5T8EblrfJJEhdK6BsHIwyTYKsdEZJGC9g=;
-        b=eJJqf0TIkl8oal7cuwK+ijQFIXcW00ywgxq7L6UlJIltcUV0LZnVuPdMWOgSD634J2
-         nIGMjp1PGoVwNIXgqWVtTNB5roFwvhdcBUxWD+kbW26ylsj0saQA8UirUq6LJ/mcEWBP
-         nZkBvmXlhlNdEOhkWH6usubp1B+oach/Hu/6psfdKdowoOTbrlbcjXdKs+pGfZKdP9AV
-         QYf9+nAph09MPjTt2P5t/18cIyqe30mX70Lope7gxZqhzYAoDzS7hYe+Xrl9U3xbyV7K
-         E63Tvdb28Gb+a8FQklx2b4pgxH1iAGpJIOB4QC8YV+x0tojhSmaRdRfsG0gi8piWGGM7
-         vGNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730722437; x=1731327237;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FYskZ8T2jr5T8EblrfJJEhdK6BsHIwyTYKsdEZJGC9g=;
-        b=o6K1LZC+OF2O2pNIqnQkz8iU/ZS9aXSI4cbX419nVEBgzxm9nBSbJVzc5wqb/4o8O1
-         SXvVBC9e5J0KUiifm3uxjs3dm5ggcCFS4IzYevsDwAExogsaNc32ZpyIoXPxYfEcpBew
-         Pid+jBwfA0bxMcmsF9zfyNN2WPQGNEIgroOXoedVKCkzt08YVevIx9yUEFJKK9ogNIdY
-         XtTT2ezGdGmJ0tBdWL2LY39kuilXAkXxrUehveeEwBfZTNh2mQ9CWQ4DrDQArQUHhQRQ
-         VGzxiB4zPrYp8W/vV55IdjqOuQa5c5wJ0JncnsZPchn/qHIP+cUe3pOulfJU9GhYioQS
-         rVYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyZ3Sz1xDXUMEbQb92t3Qo6j+Eg5w1btmJ+YgTcxFJZnAPDHdm4HDGnU7Ly2oSCtUqy53OGea9oP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz72GxfeDJh7zCnbaL1wAyLkvvYeJAsBbCvenCuge6hdATG8v0I
-	qHyP/8tyL91BZv3EdY3183Gf+aJcLRXfdB61gUB9ZWziDiX1LTgZPG5xFHMw
-X-Google-Smtp-Source: AGHT+IFbNToplnnRUfn1KF9Fr4torBzIilIwgS+jtoCykgAETFELOGlixWAh20O2s93UKXwn7sRtWw==
-X-Received: by 2002:a05:6512:1595:b0:539:e2cc:d380 with SMTP id 2adb3069b0e04-53c79e494ebmr7420697e87.27.1730722436375;
-        Mon, 04 Nov 2024 04:13:56 -0800 (PST)
-Received: from grain.localdomain ([5.18.251.97])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bde3265sm1666224e87.278.2024.11.04.04.13.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 04:13:56 -0800 (PST)
-Received: by grain.localdomain (Postfix, from userid 1000)
-	id 6CF475A0127; Mon,  4 Nov 2024 15:13:55 +0300 (MSK)
-Date: Mon, 4 Nov 2024 15:13:55 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: LKML <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v2] efi: Fix memory leak in efivar_ssdt_load
-Message-ID: <Zyi6g8W0OqKcng6S@grain>
-References: <ZyizcvscUWIyZYdE@grain>
- <Zyi11v-6V_ivKS5x@grain>
+	s=arc-20240116; t=1730722491; c=relaxed/simple;
+	bh=zXobr+wLjITccdiMJwRpLysNcXSms37c/CwXW2IswxM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AtzwQqPRDvi5ruFwsOHk9wVpd2MIcrM30DLxry74jjaK1jztL0LEQh5YzL/BRsl77m/Hdjy0QE9b7DKf96ENVWIzuVoL5RAjQAWYejvF5rSqtpUez96cIRCAM1apOxwaNr5AWdDJrkLj+lCXli8k+za4N5Hp0cMB5Wty1YsJzAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oqBMt3eE; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730722487; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=VkKNIW90OY3KSksPsL1rZn4kF/ZEyKigIUPGYiOqaZM=;
+	b=oqBMt3eE+dAJZQX4lpBcCvVB3OILC83NP8+R+3fA9qoUXMy59imwrPSlR+fUsifB8ML9WOUQwI6KCnyvOawkTbhUsLg+7RNgA+VFEV+xdP5ZzmzePoYd2CWgL5mVjNUma7y1tlzlhHcCTRqAXL6zm6X2p1+wmLguzQ2mrDzh/74=
+Received: from localhost.localdomain(mailfrom:yaoma@linux.alibaba.com fp:SMTPD_---0WIgnIWp_1730722485 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 04 Nov 2024 20:14:46 +0800
+From: Bitao Hu <yaoma@linux.alibaba.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org
+Cc: linux-kernel@vger.kernel.org,
+	yaoma@linux.alibaba.com
+Subject: [PATCH] sched: Remove unnecessary initialization in init_cfs_bandwidth() function
+Date: Mon,  4 Nov 2024 20:14:43 +0800
+Message-ID: <20241104121443.86468-1-yaoma@linux.alibaba.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zyi11v-6V_ivKS5x@grain>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
 
-When we load ssdt from efi variable (specified with efivar_ssdt=something
-boot command line argument) a name for the variable is allocated
-dynamically because we traverse all efi variables. Unlike an acpi table
-data, which is later used by acpi engine, the name is no longer needed
-once traverse is complete -- don't forget to free this memory.
+The root task group is statically defined, and non-root task groups
+are allocated memory using kmem_cache_alloc() with the __GFP_ZERO
+flag. In both cases, the corresponding 'struct cfs_bandwidth' is a
+block of all-zero memory. Therefore, it is unnecessary to explicitly
+set zeros in the init_cfs_bandwidth() function.
 
-Same time we silently ignore any errors happened here lets print
-a message if something went wrong (but do not exit since this is
-not a critical error and the system should continue to boot).
-
-Also while here -- add a note why we keep ssdt table on success.
-
-Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Bitao Hu <yaoma@linux.alibaba.com>
 ---
-It is still unclear for me why we don't exit with error if acpi_load_table
-failed but continue to iterate keys and don't report a caller with error
-instead. I didn't change this logic for backward compatibility sake but
-still looks suspicious.
+ kernel/sched/fair.c | 2 --
+ 1 file changed, 2 deletions(-)
 
- drivers/firmware/efi/efi.c |   41 ++++++++++++++++++++++++++++-------------
- 1 file changed, 28 insertions(+), 13 deletions(-)
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 2d16c8545c71..2fd96641164f 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6573,10 +6573,8 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
+ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent)
+ {
+ 	raw_spin_lock_init(&cfs_b->lock);
+-	cfs_b->runtime = 0;
+ 	cfs_b->quota = RUNTIME_INF;
+ 	cfs_b->period = ns_to_ktime(default_cfs_period());
+-	cfs_b->burst = 0;
+ 	cfs_b->hierarchical_quota = parent ? parent->hierarchical_quota : RUNTIME_INF;
+ 
+ 	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
+-- 
+2.46.0
 
-Index: linux-tip.git/drivers/firmware/efi/efi.c
-===================================================================
---- linux-tip.git.orig/drivers/firmware/efi/efi.c
-+++ linux-tip.git/drivers/firmware/efi/efi.c
-@@ -273,6 +273,7 @@ static __init int efivar_ssdt_load(void)
- 	efi_char16_t *name = NULL;
- 	efi_status_t status;
- 	efi_guid_t guid;
-+	int ret = 0;
- 
- 	if (!efivar_ssdt[0])
- 		return 0;
-@@ -294,8 +295,8 @@ static __init int efivar_ssdt_load(void)
- 			efi_char16_t *name_tmp =
- 				krealloc(name, name_size, GFP_KERNEL);
- 			if (!name_tmp) {
--				kfree(name);
--				return -ENOMEM;
-+				ret = -ENOMEM;
-+				goto out;
- 			}
- 			name = name_tmp;
- 			continue;
-@@ -309,26 +310,38 @@ static __init int efivar_ssdt_load(void)
- 		pr_info("loading SSDT from variable %s-%pUl\n", efivar_ssdt, &guid);
- 
- 		status = efi.get_variable(name, &guid, NULL, &data_size, NULL);
--		if (status != EFI_BUFFER_TOO_SMALL || !data_size)
--			return -EIO;
-+		if (status != EFI_BUFFER_TOO_SMALL || !data_size) {
-+			ret = -EIO;
-+			goto out;
-+		}
- 
- 		data = kmalloc(data_size, GFP_KERNEL);
--		if (!data)
--			return -ENOMEM;
-+		if (!data) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
- 
- 		status = efi.get_variable(name, &guid, NULL, &data_size, data);
- 		if (status == EFI_SUCCESS) {
--			acpi_status ret = acpi_load_table(data, NULL);
--			if (ret)
--				pr_err("failed to load table: %u\n", ret);
--			else
-+			acpi_status acpi_ret = acpi_load_table(data, NULL);
-+			if (ACPI_FAILURE(acpi_ret)) {
-+				pr_err("efivar_ssdt: failed to load table: %u\n",
-+				       acpi_ret);
-+			} else {
-+				/*
-+				 * The @data will be in use by ACPI engine,
-+				 * do not free it!
-+				 */
- 				continue;
-+			}
- 		} else {
--			pr_err("failed to get var data: 0x%lx\n", status);
-+			pr_err("efivar_ssdt: failed to get var data: 0x%lx\n", status);
- 		}
- 		kfree(data);
- 	}
--	return 0;
-+out:
-+	kfree(name);
-+	return ret;
- }
- #else
- static inline int efivar_ssdt_load(void) { return 0; }
-@@ -433,7 +446,9 @@ static int __init efisubsys_init(void)
- 		error = generic_ops_register();
- 		if (error)
- 			goto err_put;
--		efivar_ssdt_load();
-+		error = efivar_ssdt_load();
-+		if (error)
-+			pr_err("efi: failed to load SSDT, error %d.\n", error);
- 		platform_device_register_simple("efivars", 0, NULL, 0);
- 	}
- 
 
