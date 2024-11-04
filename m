@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-395605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F429BC070
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:57:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0247B9BC072
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:57:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5799282C44
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 881A11F229BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C741FDF80;
-	Mon,  4 Nov 2024 21:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD1B1FE10E;
+	Mon,  4 Nov 2024 21:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="hqrlQdJV"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="taWpFtIV"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E651FDFAD
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30CB1FDF84
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730757412; cv=none; b=bWuJlqReJ9JH+9ft5tT26AxgfXZ3t6wjRB1/NPZHXLv+nfFEzrQN2OWY45/xAmkrc5Z4ym2vkKlti2OPkDpyMurLCLBCV77zkXhF7gt87AvCE+uomGvSIEzR59xCarI1hppIDCnFxQpyugBYbAPD7sQir8nqw2aeBZwf9JWUhaY=
+	t=1730757417; cv=none; b=W/FYzMceSL6AJqhs/EjI5SpwAYoQUzSlTcsl4aD4d0pgilUGOtzYu1qxFiTqPJA2IxKmev5AmqNapv2yfxAZiwO3Sc2fVqQcIhqjRXrvn2YIwQyV41CvKxToyyk4g+httLfkzHEBMbxJBvNb9XNKHj7YMXDRshKa34/Qz0nrhuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730757412; c=relaxed/simple;
-	bh=OodwMsu6GphoAslfKl1LgS8kToCLyqz2m3IDnGDSc7U=;
+	s=arc-20240116; t=1730757417; c=relaxed/simple;
+	bh=tXmbRF7JGULYsZzWA5kM9IZCbzo0EHRzhvKrW+Ho9eI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oqBr30Jvfbrlstj97VGKCLnUDbz3YL/rbLAOfI3Tt1FAMlAPDK1ByzZAe5mQvo5OxLm8UfKPGEKJ1iCsFVSR8QBoimSQvTVbyw2k6fHHi2C3r7argrdZazL/IZqHPo+NeofXwvntLa1mGtHmXDGacKYVeP+rWXb930lHEZNN1fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=hqrlQdJV; arc=none smtp.client-ip=209.85.210.169
+	 MIME-Version; b=O3ljH4nYfTp2+I20fDbaZNHigetDMOtzlrUPiOKnxLo9WRAvormoS1+xVChJLvqhEyGRRNTGp5rqUjS2+kbPH6p2DULvZh67JwI//Vr3wAuua/yWPpyYA9kQ8Z77naJxj8SpnFIq0J+sEftTcY968gk82w1gkhBoPgAvz8xpqyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=taWpFtIV; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-720c2db824eso4377892b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:56:50 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c803787abso37047235ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:56:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730757410; x=1731362210; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1730757415; x=1731362215; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JHTcnyI8OB/3G3DumGaoUFWEu1m3gZBmE22QPK1+GKg=;
-        b=hqrlQdJV6trD6ujHD6ghldu3Q6uC7Ck2VP2rEAuizhaifU4FHhii9z1C3+9VvovZSe
-         nSb/1EHSEJxPAN/a9JB+LtfHerPF3m4ZkLBk4YM6LsxA9ooTqs3x/IQg846s+X2i99Oz
-         UmeGe1bv4Y/bPt+bbeAHHRKPvAE2n6edVxg3U=
+        bh=fHqyHgTj8Yctl5o5QmypsxoBptb79nPdd8vssXFP5EA=;
+        b=taWpFtIVh6mcztJdhULO0QDu6BTez/MOWY9vy7xVqQAPVUzMubsH/rlDwag4wqJsQU
+         jdZfbx1Qf5uyJib/X2jd7m86nIok1dvac0uqaqkESDGQSYEZJD4l0eVKVXufngJfegUe
+         NBY7L9c57Y4GICN2wDYVcdo2PxvFAOfg8G/jk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730757410; x=1731362210;
+        d=1e100.net; s=20230601; t=1730757415; x=1731362215;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JHTcnyI8OB/3G3DumGaoUFWEu1m3gZBmE22QPK1+GKg=;
-        b=Zk0IzZyqOUE/teCHp7t5F+NDX/siDClQaegUzFJ0Cw5ycavCCRdfQ0xQxUO+W0OuKx
-         u8R5AWORXulm7sATSwZkUYX+LlINffsnZlIP8y6i6F+E8XHlYKFLnqBwHNC6HV/73lF2
-         JDtaI4oPZV1uL2e6TefxXxB2QgDs11wCOEMTMC1uV/rUM4KxM0iRL42+K0CLMEbzpg2r
-         XUJblXINUwoF7yrTin4tYjrmEn+kr6FAAiwt6Y1scNLpMdh3BMpYhyyuBrbUcSTTsOCK
-         CMmPx6kntEabUx5NZ0/TMdqz4YE+gNHPzda/bRHy5bSiNyKvANbcL0ETcN4DAGOXRnxI
-         eftQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnf1xt1uWgedUvV7p40ZZE1Qe9h01c0nC1WFNa/LmRPuyVPPqxVApFS9YW2jGDY/PVhoCwOZ1mLKFC3RQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDhbWUxTn1E2rgSP8L932DYl0yRoa4NdD6EfM76lAY6ybGftDc
-	98Vcrg0oeqJ2sE6zbqNmOuaxgfyjygVYhPuc0K4jfH0uOVS5crY+jr9D9GASXfU=
-X-Google-Smtp-Source: AGHT+IHzwf6vbF478BWj4+FrE88DtdyBD7kSBvF5CWlyGuwguVJXVL9Rzcja4x7spau6sxINfeFGlQ==
-X-Received: by 2002:a17:902:ea03:b0:210:f6ba:a8c9 with SMTP id d9443c01a7336-210f6bab1d9mr277568575ad.17.1730757410095;
-        Mon, 04 Nov 2024 13:56:50 -0800 (PST)
+        bh=fHqyHgTj8Yctl5o5QmypsxoBptb79nPdd8vssXFP5EA=;
+        b=WlLLFCAOk1RDH/WKkGOxP9qAcxyeZrHbh7iXY7orX1qt4TCj6BK6FijwXaKQlCaNRJ
+         SzJIa0mWHOnAK62aIo6LjDVZgSdHinp0QK87BrY8Q00Iv5FiGWxdPEP9BFV/c1MUrWpw
+         MY4bz1rf5jpTWJWQxT3OAOtmFrkFHu+upypXyauluQadR2xR0w84G/E034gwKDMPMyi3
+         U6Fu/QD/Q5o6PysKoiehZIPl+4+sn6+ytWQIhHd7nMsY6q51H9/JXvlOmvJBeyZtPLaX
+         hIySVrWW4onMbBxKK55nR2qYWcP1rFkdQ36Ya3CVYsoMYsXhr3F0UmomeELG3JlJtGhw
+         MOEw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaWIlBes/GmqfDjJ6xHuV1D5/xe9KWb5V6dvXj0p5aw9Jnjqrmfrix/2VsGF7If68XL/tvDMYGU+7ue1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyzlIBJaQiP5sdpRpbFoAAvd+HvgpZ9T5C9qv3uMY+Vp0TXnsD
+	Pygxt3dnlHgxeat6qJGEhVEGUzV1WQqCK1CzkJsa6OMY3uU87XtBTGbI36F2FKY=
+X-Google-Smtp-Source: AGHT+IG4On17GabDHBC3yACoyI+WQMOVq40oxy4XmgSoW7mjsUhDj5n65cNYrCv07168lAziXYJmbw==
+X-Received: by 2002:a17:902:ccd2:b0:20c:9026:93a with SMTP id d9443c01a7336-2111946831emr232382795ad.19.1730757413554;
+        Mon, 04 Nov 2024 13:56:53 -0800 (PST)
 Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057062b8sm65860255ad.63.2024.11.04.13.56.48
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057062b8sm65860255ad.63.2024.11.04.13.56.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 13:56:49 -0800 (PST)
+        Mon, 04 Nov 2024 13:56:53 -0800 (PST)
 From: Joe Damato <jdamato@fastly.com>
 To: netdev@vger.kernel.org
 Cc: corbet@lwn.net,
@@ -91,9 +91,9 @@ Cc: corbet@lwn.net,
 	Lorenzo Bianconi <lorenzo@kernel.org>,
 	Alexander Lobakin <aleksander.lobakin@intel.com>,
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next v6 2/7] net: Suspend softirq when prefer_busy_poll is set
-Date: Mon,  4 Nov 2024 21:55:26 +0000
-Message-Id: <20241104215542.215919-3-jdamato@fastly.com>
+Subject: [PATCH net-next v6 3/7] net: Add control functions for irq suspension
+Date: Mon,  4 Nov 2024 21:55:27 +0000
+Message-Id: <20241104215542.215919-4-jdamato@fastly.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241104215542.215919-1-jdamato@fastly.com>
 References: <20241104215542.215919-1-jdamato@fastly.com>
@@ -107,16 +107,11 @@ Content-Transfer-Encoding: 8bit
 
 From: Martin Karsten <mkarsten@uwaterloo.ca>
 
-When NAPI_F_PREFER_BUSY_POLL is set during busy_poll_stop and the
-irq_suspend_timeout is nonzero, this timeout is used to defer softirq
-scheduling, potentially longer than gro_flush_timeout. This can be used
-to effectively suspend softirq processing during the time it takes for
-an application to process data and return to the next busy-poll.
+The napi_suspend_irqs routine bootstraps irq suspension by elongating
+the defer timeout to irq_suspend_timeout.
 
-The call to napi->poll in busy_poll_stop might lead to an invocation of
-napi_complete_done, but the prefer-busy flag is still set at that time,
-so the same logic is used to defer softirq scheduling for
-irq_suspend_timeout.
+The napi_resume_irqs routine effectively cancels irq suspension by
+forcing the napi to be scheduled immediately.
 
 Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
 Co-developed-by: Joe Damato <jdamato@fastly.com>
@@ -126,48 +121,77 @@ Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
 Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 Reviewed-by: Sridhar Samudrala <sridhar.samudrala@intel.com>
 ---
- v3:
-   - Removed reference to non-existent sysfs parameter from commit
-     message. No functional/code changes.
+ v1 -> v2:
+   - Added a comment to napi_resume_irqs.
 
- net/core/dev.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ include/net/busy_poll.h |  3 +++
+ net/core/dev.c          | 39 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
 
+diff --git a/include/net/busy_poll.h b/include/net/busy_poll.h
+index f03040baaefd..c858270141bc 100644
+--- a/include/net/busy_poll.h
++++ b/include/net/busy_poll.h
+@@ -52,6 +52,9 @@ void napi_busy_loop_rcu(unsigned int napi_id,
+ 			bool (*loop_end)(void *, unsigned long),
+ 			void *loop_end_arg, bool prefer_busy_poll, u16 budget);
+ 
++void napi_suspend_irqs(unsigned int napi_id);
++void napi_resume_irqs(unsigned int napi_id);
++
+ #else /* CONFIG_NET_RX_BUSY_POLL */
+ static inline unsigned long net_busy_loop_on(void)
+ {
 diff --git a/net/core/dev.c b/net/core/dev.c
-index 4d910872963f..51d88f758e2e 100644
+index 51d88f758e2e..9d903ce0c2b0 100644
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -6239,7 +6239,12 @@ bool napi_complete_done(struct napi_struct *n, int work_done)
- 			timeout = napi_get_gro_flush_timeout(n);
- 		n->defer_hard_irqs_count = napi_get_defer_hard_irqs(n);
- 	}
--	if (n->defer_hard_irqs_count > 0) {
-+	if (napi_prefer_busy_poll(n)) {
-+		timeout = napi_get_irq_suspend_timeout(n);
-+		if (timeout)
-+			ret = false;
-+	}
-+	if (ret && n->defer_hard_irqs_count > 0) {
- 		n->defer_hard_irqs_count--;
- 		timeout = napi_get_gro_flush_timeout(n);
- 		if (timeout)
-@@ -6375,9 +6380,13 @@ static void busy_poll_stop(struct napi_struct *napi, void *have_poll_lock,
- 	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+@@ -6516,6 +6516,45 @@ void napi_busy_loop(unsigned int napi_id,
+ }
+ EXPORT_SYMBOL(napi_busy_loop);
  
- 	if (flags & NAPI_F_PREFER_BUSY_POLL) {
--		napi->defer_hard_irqs_count = napi_get_defer_hard_irqs(napi);
--		timeout = napi_get_gro_flush_timeout(napi);
--		if (napi->defer_hard_irqs_count && timeout) {
-+		timeout = napi_get_irq_suspend_timeout(napi);
-+		if (!timeout) {
-+			napi->defer_hard_irqs_count = napi_get_defer_hard_irqs(napi);
-+			if (napi->defer_hard_irqs_count)
-+				timeout = napi_get_gro_flush_timeout(napi);
++void napi_suspend_irqs(unsigned int napi_id)
++{
++	struct napi_struct *napi;
++
++	rcu_read_lock();
++	napi = napi_by_id(napi_id);
++	if (napi) {
++		unsigned long timeout = napi_get_irq_suspend_timeout(napi);
++
++		if (timeout)
++			hrtimer_start(&napi->timer, ns_to_ktime(timeout),
++				      HRTIMER_MODE_REL_PINNED);
++	}
++	rcu_read_unlock();
++}
++EXPORT_SYMBOL(napi_suspend_irqs);
++
++void napi_resume_irqs(unsigned int napi_id)
++{
++	struct napi_struct *napi;
++
++	rcu_read_lock();
++	napi = napi_by_id(napi_id);
++	if (napi) {
++		/* If irq_suspend_timeout is set to 0 between the call to
++		 * napi_suspend_irqs and now, the original value still
++		 * determines the safety timeout as intended and napi_watchdog
++		 * will resume irq processing.
++		 */
++		if (napi_get_irq_suspend_timeout(napi)) {
++			local_bh_disable();
++			napi_schedule(napi);
++			local_bh_enable();
 +		}
-+		if (timeout) {
- 			hrtimer_start(&napi->timer, ns_to_ktime(timeout), HRTIMER_MODE_REL_PINNED);
- 			skip_schedule = true;
- 		}
++	}
++	rcu_read_unlock();
++}
++EXPORT_SYMBOL(napi_resume_irqs);
++
+ #endif /* CONFIG_NET_RX_BUSY_POLL */
+ 
+ static void __napi_hash_add_with_id(struct napi_struct *napi,
 -- 
 2.25.1
 
