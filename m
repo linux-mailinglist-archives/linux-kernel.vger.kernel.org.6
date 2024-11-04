@@ -1,118 +1,127 @@
-Return-Path: <linux-kernel+bounces-395673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C549BC17D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:33:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287AA9BC181
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E861C21E68
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30C81F22A84
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCD61FE0F2;
-	Mon,  4 Nov 2024 23:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381601E5723;
+	Mon,  4 Nov 2024 23:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEYyyhcA"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bk2WE9bR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421561ABEBA;
-	Mon,  4 Nov 2024 23:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9166C1ABEBA;
+	Mon,  4 Nov 2024 23:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730763198; cv=none; b=l5kbQJQW+kYaJyhXKtlYl0uaK0z301kpZHifUX66uNHw8UK9pnES7lrn3wqjKqtXyC8zeGS6qTnhfZjx3UMxSgn3YDKM/WZpvqaabA655Kl45F0izL1AiD7oeC6oMoPXHUbssbF7LpTjkgSLidWq5WkkLR7E9lnezEd6aKN0iPc=
+	t=1730763281; cv=none; b=sXLZX/0FPl8O/YjElJiXz2JIe+SIium/TIzrp692EqWeDYgkaMJEMgAcNmgqPsPYYA65SDgTy+rqcTPc7o6dJGGh2rVYz3SFJ5pCGFPPXribnT5zzlSsbP5uI0oQfcboFHyfFoeDBZFXCwLyUM5Gj5VSycCETbn2eJw//YdVVKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730763198; c=relaxed/simple;
-	bh=Fj2bYG6FcMCww0Ge+minjrzZfzDdtI57/INSV+aooZ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u45K/uoYZp44yWSJMU1SJmsxhzyO6SpU52hg7YF3pOI+IBYRIk5tq2UiN+MR1YO8Wof/9jspukn0Lx3l0Em/cIlo+VvoE8tQWPmIuYK/bzGPF691ozObdHmR4oRvCPppBormivqsots0rAFI/0efSA/y1wYAchluYqz2sRdQSpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TEYyyhcA; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-50d487a93a5so1517214e0c.3;
-        Mon, 04 Nov 2024 15:33:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730763196; x=1731367996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fj2bYG6FcMCww0Ge+minjrzZfzDdtI57/INSV+aooZ4=;
-        b=TEYyyhcA2vQFH76VBY3SwO+mG2Ux7mxTYwZRMjvbsfSijPbFcN+HV7DrbEkBiDnuwO
-         MdgBMeiZLqIjLK25hqBjCsL9AKU4n7je+oZdv+1dfBOGNU4LCDKgDbhaVwSp9TNCKfKn
-         TImI+jmRVmvEwlBYaWylW2Zf1AkqABUVSh1lb+nbmjcJfy9C0dsFxN3TfhFgUWPC/Aid
-         aH+6FepwiHsCY1ZFpuAOr2ocRk7wi6UrIJjVppkr46Bi2ynDp1XlkBRqhcfhJXx6Mvop
-         6Qb5uDBwUl/TsolE9PT7xtYXZinEHBN+eTFxZOb/yBQIQ7LGZMFBMkVQGrJhqvFduwSx
-         6BnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730763196; x=1731367996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fj2bYG6FcMCww0Ge+minjrzZfzDdtI57/INSV+aooZ4=;
-        b=G8HYYTpx2D7WZQbM++m0sWZpfAqNjqvQQFx0pWCOCvVD0zoUvMBxbwZ8xlaBjkkmbc
-         YZ9sZZxZhU+KKW1+AKcvPJ2ntts61FyFmRxt0VV5jJh6x6xhefEF+fh/nc8YT9bBjZLG
-         Ah6/GBbRp1m9PdQrkHCU6hIcMX/4kgqBDl0vdJ0gFwenfyoE9ByLE+Y/1kWH5erDxaT2
-         6I8EndE7cP/KbtwZjVLZMp3ZY4wkcgymQ5w3K+3tFffvy3cZ0AE5tc6B1qISPjppE4Nt
-         SSA+1XWtpS7JgMAEwa0I+nkbodE63l8nrz0xOzKMXF3LMArT4dKjTUQJqQfWJfGaFdv0
-         6MFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUV5b1bWYX/hKBstLowz3swL7xrqMGotIfiVDB9CwwCnxeOPH89STOxm7yZ4jXqLyCX9czGnH3qWgsoYSg=@vger.kernel.org, AJvYcCX3SZX2h5vrSV2RoX5neboXVwfN8SRtu73lSYkyOjTO6YKUFzaEDt94KMsl2Zd24CJFMOZOnMgalc4xPGM=@vger.kernel.org, AJvYcCXkYU+PtNdGKK5TEK5A9S59MVjDSn236OBRjziIuP8V4VTAioHjXmRe5zNMQT3Du+ApUTeeCdZ6OIu0WLmR0q/8Rgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIX32DdCLpXmIWcziP84WbSIhC1VxLlr4J+Ue32SKE2wjvt9rJ
-	iG6XzG0r/a69ylgMuHzqie3X6NRoOJzyLvqUF4N6mnpDNzmjzavGuh3Hhht4wprjKBY3Qw7WwZ0
-	MoHtZ/clAbcqohDKQCsuHHbpopgxQng==
-X-Google-Smtp-Source: AGHT+IFvgNkqZGYasJTkQj8pzA6zOGykr1Pkw+CulQ8YFpPlste9cs800OBg9wnXKilsGNgu4lKYyCa1wNafUlQNICw=
-X-Received: by 2002:a05:6122:a18:b0:50d:3ec1:1531 with SMTP id
- 71dfb90a1353d-510150e1e84mr31312275e0c.8.1730763195970; Mon, 04 Nov 2024
- 15:33:15 -0800 (PST)
+	s=arc-20240116; t=1730763281; c=relaxed/simple;
+	bh=88TYumyhWbfjVMyfSLi2/8DI4JnQwU62uhhbbbI3EPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yj9tANpXxwYx0kslX3PhSF7smrVsE4agwDFo9q13yIgEK6PCG86KQtF0gA9i9OyCG/6EMSBr6M423cmhTAGJJ30+o1sS4O6d66rVm2/4XOGsvMqJd+tctCRzm+QiQ1opYxzElNKdXKjw3CPW3/46KAnF4oNu4EETEmdY04FpjkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bk2WE9bR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5FDCC4CED1;
+	Mon,  4 Nov 2024 23:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730763280;
+	bh=88TYumyhWbfjVMyfSLi2/8DI4JnQwU62uhhbbbI3EPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bk2WE9bRtabX0pG/dgRccsTHBgk3EKcHrehNbj5h74YnMHZlwsGo6fKaH2m0wXp3k
+	 iE6KH+DZpT5uYmvB2VIz1m03obmFmHmkhfyYiwZ9rYD07lTh4eW+BFFwppXdOKnxLt
+	 5AnTsWLqxlW1sjxaiQ8JU638m/VdU11GB5DrKh6pj3QWgeZrDKj7zTtosRmTxpy0Fy
+	 RIIeVGYc3DP2GIRJ5xeOZKGa0f8VmGlLKgwWlLZIuOCYhlTNFUbX1WimsV/6oNZ/r+
+	 MdytaQ1+UQix5E25D6/Hi6ryDchy3Fwhno1axOeFEVqRn2b4Iho2RoLkO1OSUKNbe4
+	 uWTSuW+7cv2jw==
+Date: Mon, 4 Nov 2024 15:34:38 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf test: Fix LBR test by adding indirect calls
+Message-ID: <ZylaDu6NjJIq6rUf@google.com>
+References: <20241103002414.2281869-1-namhyung@kernel.org>
+ <CAP-5=fUg-DFKM4SQa7P2fWRd62y7kDiP+qP2kP-TiZMy2EX7mQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018153230.235647-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241020223923.GB14328@pendragon.ideasonboard.com> <CA+V-a8uwWb982N71vRarPZ1VyeuY58=cWpSREmVc2cFccKzZaw@mail.gmail.com>
-In-Reply-To: <CA+V-a8uwWb982N71vRarPZ1VyeuY58=cWpSREmVc2cFccKzZaw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 4 Nov 2024 23:32:50 +0000
-Message-ID: <CA+V-a8utuzW62wopTyvmbOZ06wcMU4R8sw8Bmq1wsSu1F9BARg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] media: ov5645: Add support for streams
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUg-DFKM4SQa7P2fWRd62y7kDiP+qP2kP-TiZMy2EX7mQ@mail.gmail.com>
 
-Hi Sakari,
+On Sat, Nov 02, 2024 at 09:58:03PM -0700, Ian Rogers wrote:
+> On Sat, Nov 2, 2024 at 5:24 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > I've noticed sometimes perf record LBR tests failed on indirect call
+> > test because it has empty branch stacks more than expected.
+> >
+> > The test workload (thloop) spawns a thread and calls a loop function for
+> > 1 second both from the main thread and the new thread.  However neither
+> > of them has indirect calls in the body so it ended up with empty branch
+> > stacks.
+> >
+> >   LBR any indirect call test
+> >   [ perf record: Woken up 21 times to write data ]
+> >   [ perf record: Captured and wrote 5.607 MB /tmp/__perf_test.perf.data.pujKd (7924 samples) ]
+> >   LBR any indirect call test: 7924 samples
+> >   LBR any indirect call test [Failed empty br stack ratio exceed 2%: 3%]
+> >
+> > Refactor the test workload to call the test_loop() both directly and
+> > indirectly.  Now expectation of indirect call is 50% but let's add some
+> > margin for startup and finish routines.
+> >
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/tests/shell/record_lbr.sh | 2 +-
+> >  tools/perf/tests/workloads/thloop.c  | 9 ++++++---
+> >  2 files changed, 7 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/tools/perf/tests/shell/record_lbr.sh b/tools/perf/tests/shell/record_lbr.sh
+> > index 8d750ee631f877fd..7a23b2095be8acba 100755
+> > --- a/tools/perf/tests/shell/record_lbr.sh
+> > +++ b/tools/perf/tests/shell/record_lbr.sh
+> > @@ -121,7 +121,7 @@ lbr_test "-j any_ret" "any ret" 2
+> >  lbr_test "-j ind_call" "any indirect call" 2
+> >  lbr_test "-j ind_jmp" "any indirect jump" 100
+> >  lbr_test "-j call" "direct calls" 2
+> > -lbr_test "-j ind_call,u" "any indirect user call" 100
+> > +lbr_test "-j ind_call,u" "any indirect user call" 52
+> >  lbr_test "-a -b" "system wide any branch" 2
+> >  lbr_test "-a -j any_call" "system wide any call" 2
+> >
+> > diff --git a/tools/perf/tests/workloads/thloop.c b/tools/perf/tests/workloads/thloop.c
+> > index 457b29f91c3ee277..fa5547939882cf6c 100644
+> > --- a/tools/perf/tests/workloads/thloop.c
+> > +++ b/tools/perf/tests/workloads/thloop.c
+> > @@ -18,14 +18,16 @@ static void sighandler(int sig __maybe_unused)
+> >
+> >  noinline void test_loop(void)
+> >  {
+> > -       while (!done);
+> > +       for (volatile int i = 0; i < 10000; i++)
+> 
+> I don't think the volatile here will stop a sufficiently eager
+> optimizing compiler. I think it may need to be static as well.
 
-On Mon, Oct 21, 2024 at 9:06=E2=80=AFAM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
->
-> Hi Laurent,
->
-> On Sun, Oct 20, 2024 at 11:39=E2=80=AFPM Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-> >
-> > Hi Prabhakar,
-> >
-> > Thank you for the patches.
-> >
-> > I think patch 01/10 should be dropped in favour of
-> > https://lore.kernel.org/r/20241020164354.GG7770@pendragon.ideasonboard.=
-com
-> > ("[PATCH v2] media: v4l2-subdev: Refactor events"). Patches 02/10 to
-> > 08/10 seem ready, should we merge them without waiting for 09/10 and
-> > 10/10 ?
-> >
-> Agreed, for patch 9/10 and 10/10 I'll give a nudge when the
-> appropriate core patches have been merged in.
->
-Gentle ping.
+Ok, probably we can disbale optimizations in this code like others
+in the test workloads.
 
-Cheers,
-Prabhakar
+Thanks for your review!
+Namhyung
+
 
