@@ -1,157 +1,156 @@
-Return-Path: <linux-kernel+bounces-394576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094959BB155
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:40:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C769BB158
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A85BA1F21756
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:40:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A616F1C215AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1403C1B3936;
-	Mon,  4 Nov 2024 10:39:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221EB1B395F;
+	Mon,  4 Nov 2024 10:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JCpLU4iR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7171B21A6
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F385F1B21BB;
+	Mon,  4 Nov 2024 10:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730716758; cv=none; b=nGlsMYRCs5cezcpuZy2j8EALfqrE1OYPSBwP9uFec6HKYHabR/GKyGIaKIaTxKFhosqpQGt1CDgmnrnBeYHrQlT4WXHsCiF6V9153rOEaBckfpZ0A2SMAAEcTdlC1BCpx3tr/nZhkzClo8b7Btv/nbm23qIdbp60IIerp7vZ53I=
+	t=1730716780; cv=none; b=Cv/wbMHaiSwufHmeG7NWXQUxM92nzVza3XTaekIKI4kbj29Otf0q63mo52Oh1ioRvmrrHdSJ/nA8Vl+q/2+d0omEQwrXuWtxEQuishi/ZgYPw4fbu3fR7VSNhz5ePiO8U4jhRPB6qlvZjy499h1TsnpZ0HV0s8YF6brNITpkZOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730716758; c=relaxed/simple;
-	bh=N3f8zM9BaHy1ub8djA4SwrgJt0GPZwBjTTRE/BIVDd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ti0sCGGYfe8q3aFcIxX3ee96Am3KCePp2QikpDghZ2ah0eDtJnYFxI9I2jWeWH+61/LXtC/n84qvjnsuN1a2zjZ4iyCd0qTAp6VwyLY0oC31jhZb1ItAcgZOGlC2tV7AHAHzErkj3lYRRGTU7nlinI3ouWiI1F+TxQWPXxWYgvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t7uUF-0005Px-81; Mon, 04 Nov 2024 11:39:07 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t7uUD-001xqC-02;
-	Mon, 04 Nov 2024 11:39:05 +0100
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id AA96F36791A;
-	Mon, 04 Nov 2024 10:39:04 +0000 (UTC)
-Date: Mon, 4 Nov 2024 11:39:04 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: "baozhu.liu" <lucas.liu@siengine.com>, wg@grandegger.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] can: flexcan: simplify the calculation of priv->mb_count
-Message-ID: <20241104-graceful-slug-of-growth-0ee47f-mkl@pengutronix.de>
-References: <20241104084705.5005-1-lucas.liu@siengine.com>
- <CAMZ6RqJ-O6PcwUrA9azJHq8vJ4_2GEFcqU-8_epHyAoBmeeEuA@mail.gmail.com>
+	s=arc-20240116; t=1730716780; c=relaxed/simple;
+	bh=fBXzj1gE+DIjX126NLyVI6qZpeF/TV60Xeo+GRcG8dw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lIAxVSnJlQPztI6RMRYwxAmjgyTUGs5dsWb1UoJVwJi9tH44TL0B/9gB4oTfwikOLZsxvhKnzpJbgaT5830lgiPhy6EBhFEn+eulVTudFKXyQ2UNndFGVmOx8SfhzAz8mNPBnnKysM3mVs0ADolTFE7nMOhBuJHi9ieKzXHvreI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JCpLU4iR; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730716779; x=1762252779;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fBXzj1gE+DIjX126NLyVI6qZpeF/TV60Xeo+GRcG8dw=;
+  b=JCpLU4iRQBW0gOnQnm+9BoB7wAwtbO35Br4lvgLvHhD1Imeig5E3pafi
+   n5FqZ/NLQBsLrVQWZTgFu8Sd7uw9zwT/85WXhGtDHR9CbhdN4MllmQDVs
+   s3tVQ1ylgbajIsVwyNJPOmPuKRgL01UM8U3USBeRzxPs4qZW+qQstAIpV
+   OmJGxYV4c4knqd82YUmrIP+57yEdwWgRI4v2hinILyuQgT1uPrlUiBfFf
+   DVdzXRuNkq4CF0T2Cd86GF5iV64LOC5a6bD4ZEVIQqKec3/q+wIPMCv02
+   22H0x4YNsenWg8L8FuUDZoXqeMVpw6T1UO+Bebdbu49h0h4KRRNuLpkGv
+   g==;
+X-CSE-ConnectionGUID: tEJc9ze1ShaGpvb+T2KETQ==
+X-CSE-MsgGUID: VLN31vOtQiKAuS1/efkT8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="34194931"
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="34194931"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 02:39:38 -0800
+X-CSE-ConnectionGUID: pjyZ02n3TEK0bbmyU/dEFw==
+X-CSE-MsgGUID: uZlUolr7SASwuURFFkGckQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="83291663"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 04 Nov 2024 02:39:36 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 912811C4; Mon, 04 Nov 2024 12:39:35 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] i2c: busses: Use *-y instead of *-objs in Makefile
+Date: Mon,  4 Nov 2024 12:39:14 +0200
+Message-ID: <20241104103935.195988-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rvghoukwx3snbpoh"
-Content-Disposition: inline
-In-Reply-To: <CAMZ6RqJ-O6PcwUrA9azJHq8vJ4_2GEFcqU-8_epHyAoBmeeEuA@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+*-objs suffix is reserved rather for (user-space) host programs while
+usually *-y suffix is used for kernel drivers (although *-objs works
+for that purpose for now).
 
---rvghoukwx3snbpoh
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: flexcan: simplify the calculation of priv->mb_count
-MIME-Version: 1.0
+Let's correct the old usages of *-objs in Makefiles.
 
-On 04.11.2024 19:31:30, Vincent Mailhol wrote:
-> On Mon. 4 Nov. 2024 at 18:05, baozhu.liu <lucas.liu@siengine.com> wrote:
-> > Since mb is a fixed-size two-dimensional array (u8 mb[2][512]),
-> > "priv->mb_count =3D sizeof(priv->regs->mb)/priv->mb_size;",
-> > this expression calculates mb_count correctly and is more concise.
->=20
-> When using integers,
->=20
->   (a1 / q) + (a2 / q)
->=20
-> is not necessarily equal to
->=20
->   (a1 + a2) / q.
->=20
->=20
-> If the decimal place of
->=20
->   sizeof(priv->regs->mb[0]) / priv->mb_size
->=20
-> were to be greater than or equal to 0.5, the result would have changed
-> because of the rounding.
->=20
-> This is illustrated in https://godbolt.org/z/bfnhKcKPo.
->=20
-> Here, luckily enough, the two valid results are, for CAN CC:
->=20
->   sizeof(priv->regs->mb[0]) / priv->mb_size =3D 512 / 16
->                                             =3D 64
->=20
-> and for CAN FD:
->=20
->   sizeof(priv->regs->mb[0]) / priv->mb_size =3D 512 / 72
->                                             =3D 14.22
->=20
-> and both of these have no rounding issues.
->=20
-> I am not sure if we should take this patch. It is correct at the end
-> because you "won a coin flip", but the current code is doing the
-> correct logical calculation which would always yield the correct
-> result regardless of the rounding.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: I2C_AT91_SLAVE_EXPERIMENTAL has to be boolean (LKP)
+ drivers/i2c/busses/Kconfig  |  4 ++--
+ drivers/i2c/busses/Makefile | 12 +++++-------
+ 2 files changed, 7 insertions(+), 9 deletions(-)
 
-Wow, that's an elaborative answer. Thanks Vincent!
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index bf79628a789d..20a8c88e854a 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -431,7 +431,7 @@ config I2C_AT91
+ 	  are facing this situation, use the i2c-gpio driver.
+ 
+ config I2C_AT91_SLAVE_EXPERIMENTAL
+-	tristate "Microchip AT91 I2C experimental slave mode"
++	bool "Microchip AT91 I2C experimental slave mode"
+ 	depends on I2C_AT91
+ 	select I2C_SLAVE
+ 	help
+@@ -440,7 +440,7 @@ config I2C_AT91_SLAVE_EXPERIMENTAL
+ 	  been tested in a heavy way, help wanted.
+ 	  There are known bugs:
+ 	    - It can hang, on a SAMA5D4, after several transfers.
+-	    - There are some mismtaches with a SAMA5D4 as slave and a SAMA5D2 as
++	    - There are some mismatches with a SAMA5D4 as slave and a SAMA5D2 as
+ 	    master.
+ 
+ config I2C_AU1550
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index 613ec59502c8..bf2d76e055c5 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -39,10 +39,8 @@ obj-$(CONFIG_I2C_AMD_MP2)	+= i2c-amd-mp2-pci.o i2c-amd-mp2-plat.o
+ obj-$(CONFIG_I2C_AMD_ASF)	+= i2c-amd-asf-plat.o
+ obj-$(CONFIG_I2C_ASPEED)	+= i2c-aspeed.o
+ obj-$(CONFIG_I2C_AT91)		+= i2c-at91.o
+-i2c-at91-objs			:= i2c-at91-core.o i2c-at91-master.o
+-ifeq ($(CONFIG_I2C_AT91_SLAVE_EXPERIMENTAL),y)
+-	i2c-at91-objs		+= i2c-at91-slave.o
+-endif
++i2c-at91-y			:= i2c-at91-core.o i2c-at91-master.o
++i2c-at91-$(CONFIG_I2C_AT91_SLAVE_EXPERIMENTAL)	+= i2c-at91-slave.o
+ obj-$(CONFIG_I2C_AU1550)	+= i2c-au1550.o
+ obj-$(CONFIG_I2C_AXXIA)		+= i2c-axxia.o
+ obj-$(CONFIG_I2C_BCM2835)	+= i2c-bcm2835.o
+@@ -111,8 +109,8 @@ obj-$(CONFIG_I2C_SIMTEC)	+= i2c-simtec.o
+ obj-$(CONFIG_I2C_SPRD)		+= i2c-sprd.o
+ obj-$(CONFIG_I2C_ST)		+= i2c-st.o
+ obj-$(CONFIG_I2C_STM32F4)	+= i2c-stm32f4.o
+-i2c-stm32f7-drv-objs := i2c-stm32f7.o i2c-stm32.o
+ obj-$(CONFIG_I2C_STM32F7)	+= i2c-stm32f7-drv.o
++i2c-stm32f7-drv-y		:= i2c-stm32f7.o i2c-stm32.o
+ obj-$(CONFIG_I2C_SUN6I_P2WI)	+= i2c-sun6i-p2wi.o
+ obj-$(CONFIG_I2C_SYNQUACER)	+= i2c-synquacer.o
+ obj-$(CONFIG_I2C_TEGRA)		+= i2c-tegra.o
+@@ -121,10 +119,10 @@ obj-$(CONFIG_I2C_UNIPHIER)	+= i2c-uniphier.o
+ obj-$(CONFIG_I2C_UNIPHIER_F)	+= i2c-uniphier-f.o
+ obj-$(CONFIG_I2C_VERSATILE)	+= i2c-versatile.o
+ obj-$(CONFIG_I2C_WMT)		+= i2c-viai2c-wmt.o i2c-viai2c-common.o
+-i2c-octeon-objs := i2c-octeon-core.o i2c-octeon-platdrv.o
+ obj-$(CONFIG_I2C_OCTEON)	+= i2c-octeon.o
+-i2c-thunderx-objs := i2c-octeon-core.o i2c-thunderx-pcidrv.o
++i2c-octeon-y			:= i2c-octeon-core.o i2c-octeon-platdrv.o
+ obj-$(CONFIG_I2C_THUNDERX)	+= i2c-thunderx.o
++i2c-thunderx-y			:= i2c-octeon-core.o i2c-thunderx-pcidrv.o
+ obj-$(CONFIG_I2C_XILINX)	+= i2c-xiic.o
+ obj-$(CONFIG_I2C_XLP9XX)	+= i2c-xlp9xx.o
+ obj-$(CONFIG_I2C_RCAR)		+= i2c-rcar.o
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-And yes the current code does the correct logical calculation because of
-the underlying restrictions of the hardware. A CAN-CC/FD frame cannot
-cross the boundary between the 2 memory areas.
-
-If you want to improve something, feel free to add a comment explaining
-the reasoning for the existing calculation.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---rvghoukwx3snbpoh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcopEUACgkQKDiiPnot
-vG+ScAf/a7XypquJYiAv/hBRV51RnhSryuYsfRlSSS8wb3UCeVb6nADSf+6UVerW
-AjAy6H5MciVX9UvCdZRaL6NBzi+Qy3qbSTJY0YoYvaTSX9TuHOF9FAJnVoQoEp3k
-yWswClGqDLk9+3U51jUbJYKxIE1VQ8ea3vejo42n2hZx7DQnw3jhTtoeGktykAwD
-xGAedlkIzGtqhnWXAcGP/DbAafSpzZTCghA7Bemahn/aax2Jy/W3+9EbNPOU92rz
-yuj7qCrDV0pVOvmvqWl1A1URXXMvuyeJmN/spg2LFp2oHJwQJMPZeOZJ/wzuHOMK
-DEn1fqnjxL71ZQXcVyU8sSmLZPxAOQ==
-=e0L2
------END PGP SIGNATURE-----
-
---rvghoukwx3snbpoh--
 
