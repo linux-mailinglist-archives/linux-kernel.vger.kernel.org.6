@@ -1,63 +1,146 @@
-Return-Path: <linux-kernel+bounces-395688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB2E9BC1AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:51:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D189BC1B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:53:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87FE28167D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:51:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C737B218ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76D21FE0E5;
-	Mon,  4 Nov 2024 23:51:10 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B784718C015;
-	Mon,  4 Nov 2024 23:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD53E1FE0F7;
+	Mon,  4 Nov 2024 23:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hWG3qRuB"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571FD1A76A4
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 23:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730764270; cv=none; b=RiINk7GFMP4GsAkFz8KLCZY2PtGa0mtGPAXtsNmkjQO5tcTLGz2Y2aNnMDDs/QRVTfRoTpCk2CSduRf1Evuqm1VE/AHcbJxX3tD4lOWe4VU+ORPfIgd0a4gfbtZ9HZt8qs26yl2onIJQ9+jjL17R6+W1BvwBHXwyXt4PvL1L3G4=
+	t=1730764366; cv=none; b=MsOUgJg9PLPAvkkHXTP+DFkX96hSseprBYi+otVMTMvVe3fyXuM9hWA3ir/BJOjZFKErOI6CP/KrVDFInUmZ72ETIuoo43cMRzhYnPKIlJr64Hq4gEgeZjlJ1UvghsSnt+Uf5J+AVTTIuRhf/hlPJ3pDtUeEE6OtbDkTVOxbSA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730764270; c=relaxed/simple;
-	bh=hzURyC9DN4sSJq8RqKFggFrKsbsIfB5dN0tDIK/DqNo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KvzbgeXTlNN1WHXaRZiG5OZDWvXrlXkj/Qu7AbH6YfbtiuE2CC7XRkfKjNwUPFF4NMl8o1eMk6EaE+GHvsnERPCfBwqFtyS6UOa/Hy27+p4eIwadlygvlnwsC8zaN+ynBh+s6SuAkeL49Jl5t7tzGBv+UmcbSOXtYG4iSPZkcbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id EA6F992009C; Tue,  5 Nov 2024 00:51:05 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id E34FF92009B;
-	Mon,  4 Nov 2024 23:51:05 +0000 (GMT)
-Date: Mon, 4 Nov 2024 23:51:05 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: kernel: proc: Use str_yes_no() helper function
-In-Reply-To: <F2FC5695-440E-4A29-B683-4335452F6FAB@linux.dev>
-Message-ID: <alpine.DEB.2.21.2411042349440.9262@angie.orcam.me.uk>
-References: <20241102220437.22480-2-thorsten.blum@linux.dev> <alpine.DEB.2.21.2411031921020.9262@angie.orcam.me.uk> <F2FC5695-440E-4A29-B683-4335452F6FAB@linux.dev>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1730764366; c=relaxed/simple;
+	bh=vhixG5RkH/oO6VwQ6rk9kIDqw46MdIK3xuQrk3w/0Ww=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=oMQF4nEVWoeUeMliqqVG3zJ8AWH57qpEwFnzWK7E0kxv+fJ0Sf+9Rop7iu32F9rlbDJcsYMuQ9gg4dGBfFhC87VFgWSjCN1H55vEVn8jHzK6HYKYntT9Ft/qXmXQQVXqZ3//uf436bJFF1OqRNCDRidTdCyn3P1/HXViRMNZUQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hWG3qRuB; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30df208cadso6456582276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 15:52:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730764362; x=1731369162; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dj23aIP/JSlzkiKGKNR2PyMEMROM4uZwVNVsTv50L30=;
+        b=hWG3qRuB1VCSizpcD3lG+tM0VcyPRmF4h7GSxtMEJkhwdsy7j4Qev9sqv92Nh0oNV7
+         53yNPtjd6QNEo4cBOP/H2ndn1K9MqPnOcuue/V61EQmfFfQ3MpsXQ2hyCWML5wkuJBsE
+         HBXjAf5/1dnJF3B5ikrd27qqZ0nV3Hf7y3R6pdlJGGsBG4mSaFquyTprsuOVSvU4sWa4
+         a/9ZZPT58CBIdxcZ276XSO/G/r1np/wpXHch4NlLjKkUP4977oec02KNTRoC5IBjtvJI
+         Bp1ojRxKtWR/XxT96DDvUXfAT8kL2TJuGWyL3P7984dVjt9zKFfjByCVq6bZyRutHGPw
+         D0hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730764362; x=1731369162;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dj23aIP/JSlzkiKGKNR2PyMEMROM4uZwVNVsTv50L30=;
+        b=Luid4BDBcnn/jO3Yvy9fD925jo8HROlY1DXYFC25kAVhlLHYlohU9M+IILpglf8Jxq
+         utJBsWLEgczRrT8tgvndV2X/GbC9oJNpnkJv/6v38ld2DnsmyrsG7NVAUUZCXTKd6+e/
+         EB31O40a0yYGnGmyJWdu9OqXN5CFL4Dh3WR/JVi8J8+1Q61ENaYGqge3vJySv7YBJE7O
+         p1mQ0vra2OUpC8vG/dwzOapbyHuOcVQJuxABvUKYnrCr21fyvo53au2qRgn64EETSgtu
+         nUw/CMIffixPB2U1xPUysqpXzlfK2hBgB9O4TbUrBs3xax6sEbr9XNw6F4FNuveVET3r
+         hKyw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/CN9AxqBpvVo8gIFuPK99N0uAoG5GCx/jf9o4qWXB9ZcTrzkuKJWmazjFy+AAPf4lgNBVfotDZNy34NI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcLf9WauPJX7T3/X7DOXKp47haNaYuucWOUa7ECvRNrf/QwpWV
+	731B7RALwqc5Avpfn2KSLWCY3dDA5liuzkxcYjawkAWHZ+/zbTH2b3BzbuilebWxLqTgO3XiUZk
+	fow==
+X-Google-Smtp-Source: AGHT+IHrIdGXd9K5Yl/THI445Wq8aFuSCT311ij4DHUoz7wGUVdZx7bT/V66YVO5ki4f3zA0D2pKFU1DJCc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1801:b0:e30:b89f:e3d with SMTP id
+ 3f1490d57ef6-e3328a15f4emr24094276.1.1730764362268; Mon, 04 Nov 2024 15:52:42
+ -0800 (PST)
+Date: Mon, 4 Nov 2024 15:52:40 -0800
+In-Reply-To: <448c8367-9f54-4ab1-80c3-bb13c9ac4664@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+References: <20241101185031.1799556-1-seanjc@google.com> <20241101185031.1799556-2-seanjc@google.com>
+ <448c8367-9f54-4ab1-80c3-bb13c9ac4664@intel.com>
+Message-ID: <ZyleSDssLCYRPzTb@google.com>
+Subject: Re: [PATCH 1/2] KVM: VMX: Bury Intel PT virtualization (guest/host
+ mode) behind CONFIG_BROKEN
+From: Sean Christopherson <seanjc@google.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 5 Nov 2024, Thorsten Blum wrote:
-
-> > I like this cleanup, but now that it matters I suggest restructuring code 
-> > such that the latter `seq_printf' is converted as well.
+On Mon, Nov 04, 2024, Adrian Hunter wrote:
+> On 1/11/24 20:50, Sean Christopherson wrote:
+> > Hide KVM's pt_mode module param behind CONFIG_BROKEN, i.e. disable support
+> > for virtualizing Intel PT via guest/host mode unless BROKEN=y.  There are
+> > myriad bugs in the implementation, some of which are fatal to the guest,
+> > and others which put the stability and health of the host at risk.
+> > 
+> > For guest fatalities, the most glaring issue is that KVM fails to ensure
+> > tracing is disabled, and *stays* disabled prior to VM-Enter, which is
+> > necessary as hardware disallows loading (the guest's) RTIT_CTL if tracing
+> > is enabled (enforced via a VMX consistency check).  Per the SDM:
+> > 
+> >   If the logical processor is operating with Intel PT enabled (if
+> >   IA32_RTIT_CTL.TraceEn = 1) at the time of VM entry, the "load
+> >   IA32_RTIT_CTL" VM-entry control must be 0.
+> > 
+> > On the host side, KVM doesn't validate the guest CPUID configuration
+> > provided by userspace, and even worse, uses the guest configuration to
+> > decide what MSRs to save/load at VM-Enter and VM-Exit.  E.g. configuring
+> > guest CPUID to enumerate more address ranges than are supported in hardware
+> > will result in KVM trying to passthrough, save, and load non-existent MSRs,
+> > which generates a variety of WARNs, ToPA ERRORs in the host, a potential
+> > deadlock, etc.
+> > 
+> > Fixes: f99e3daf94ff ("KVM: x86: Add Intel PT virtualization work mode")
+> > Cc: stable@vger.kernel.org
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >  arch/x86/kvm/vmx/vmx.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index 6ed801ffe33f..087504fb1589 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -217,9 +217,11 @@ module_param(ple_window_shrink, uint, 0444);
+> >  static unsigned int ple_window_max        = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
+> >  module_param(ple_window_max, uint, 0444);
+> >  
+> > -/* Default is SYSTEM mode, 1 for host-guest mode */
+> > +/* Default is SYSTEM mode, 1 for host-guest mode (which is BROKEN) */
+> >  int __read_mostly pt_mode = PT_MODE_SYSTEM;
+> > +#ifdef CONFIG_BROKEN
+> >  module_param(pt_mode, int, S_IRUGO);
+> > +#endif
 > 
-> What about the comma and newline? Using str_yes_no() would remove them.
+> Side effects are:
+> 1. If pt_mode is passed via modprobe, there will be a warning in kernel messages:
+> 	kvm_intel: unknown parameter 'pt_mode' ignored
 
- This is why a minor code restructuring is needed so that the comma and 
-the new line are produced elsewhere (arguably a cleaner structure anyway).
+This is more of a feature in this case, as it's a non-fatal way of alerting the
+user that trying to enable PT virtualization won't work.
 
-  Maciej
+> 2. The sysfs module parameter file pt_mode will be gone:
+> 	# cat /sys/module/kvm_intel/parameters/pt_mode
+> 	cat: /sys/module/kvm_intel/parameters/pt_mode: No such file or directory
+
+Hrm, this could be slightly more problematic, e.g. if userspace were asserting on
+the state of the parameter.  But AFAIK, module params aren't considered ABI.
+
+Paolo, any thoughts on how best to handle this?
 
