@@ -1,148 +1,93 @@
-Return-Path: <linux-kernel+bounces-394207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306DA9BABE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:52:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04EE9BABE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:58:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E93BB2178E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:52:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AF5281AF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A33189503;
-	Mon,  4 Nov 2024 04:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n0Lq0biJ"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6F1290F;
-	Mon,  4 Nov 2024 04:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA0E18B494;
+	Mon,  4 Nov 2024 04:58:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0DB185B72
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 04:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730695962; cv=none; b=u+drKDb7TKIBmWjYI6l0gH7Ue17LqdCkS7GxIHuabW8VGhbWU2pRqLXUVs0svOoXz9QE6E1HJGllp6uzmR0upmCknblm5wMtH4oq5cUSMwJuS5/G18xEbFkuV40ypMh/wIJQEtM6oglYl6nNiYLh6o5pMhLy57bcmcZvjPDi27U=
+	t=1730696324; cv=none; b=faKH3q4gElfr1Q4vtS2nDeVE5m85kOA5oBZBRKrSxm9887QgnnjDOwGur4zDOmTG0ySYsxF79sg54Mc/UzVkCbkHZe33dZZ5cZgz+kbIqRtm+xGV+s0AITHfcX49KFm7ZbbPrqD06V1LEnS0QfWDUDcJ6VaDzgJPNJdUun8UFbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730695962; c=relaxed/simple;
-	bh=hD5Ds+9z7GbWDKil7XA8fTLgvOAuEk8OiI3nOJgmWxY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p+fGfXVgyDz3uKNRPYrIazstM0G/apppkX42z/mXtTS7oGrM2TH1SuVlBH9CphjJXwKKn7VegyMvQOyoXCF6CrCZXPJaVyeQMWLKDzfB6Mw7dmptXyVrcGwvQo9ALgn5n5C1PTlW4SUEZu0cR77mkyEGqsRDX5TKbe7TguHS6pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=n0Lq0biJ; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A44qStB092545;
-	Sun, 3 Nov 2024 22:52:28 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730695949;
-	bh=plZaN47/UeZAG1fxbybtFuEI5NnJRqWIxgjxXp4yRZg=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=n0Lq0biJsxO+8yz4XUCUtpbLeeuRsFwX4XQs8CjBwyZLlY//OqALPaqBvwc/aoKjO
-	 1LppbZ5DTJIhVicdgkPytK64ZiHZJRnUKrGMvBJIk4yIXaQ6sGpEdRzesUHOjmxlEl
-	 RBtWJRvFEwyA2O78NlAVdP6kEU9Q/au9fhOrH4cY=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A44qSI8011227
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 3 Nov 2024 22:52:28 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 3
- Nov 2024 22:52:28 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 3 Nov 2024 22:52:28 -0600
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A44qR35090094;
-	Sun, 3 Nov 2024 22:52:28 -0600
-Date: Mon, 4 Nov 2024 10:22:27 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>, Bryan Brattlof <bb@ti.com>,
-        Wadim
- Egorov <w.egorov@phytec.de>
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-am62: use opp_efuse_table for
- opp-table syscon
-Message-ID: <20241104045227.2tzm2lcwi7kqee5r@lcpd911>
-References: <20241030044553.3225383-1-d-gole@ti.com>
- <e3c4f895-71a1-481f-86d4-dfab1b61715c@ti.com>
+	s=arc-20240116; t=1730696324; c=relaxed/simple;
+	bh=GP8NFJZ9Vc2NhQ5c1RdXbTOwE62fCpa0BEN8uXl0+cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J2rG3m92htp8XzLus4Zzgggm48rtMWelY40lV/KFZHNe4eJdX5mLDkCjM69XOV7+74o04ruwqhUNLxbGFwTkUZhSEPWmqbPj6f2C/3PwJMsxeAoGApodiUUmpyp2NPJ6FjLXnxQud46xgnzKTEvnfZA+fb082TvS4UIf5KCx7I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B741FEC;
+	Sun,  3 Nov 2024 20:59:10 -0800 (PST)
+Received: from [10.162.16.84] (a077893.blr.arm.com [10.162.16.84])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F2D93F66E;
+	Sun,  3 Nov 2024 20:58:38 -0800 (PST)
+Message-ID: <1a724b58-d61b-443d-9f3d-aebcd35e9610@arm.com>
+Date: Mon, 4 Nov 2024 10:28:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <e3c4f895-71a1-481f-86d4-dfab1b61715c@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/mm: Re-organize arch_make_huge_pte()
+To: Catalin Marinas <catalin.marinas@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+ linux-kernel@vger.kernel.org
+References: <20241029044529.2624785-1-anshuman.khandual@arm.com>
+ <173048223682.1108539.16990086073905192650.b4-ty@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <173048223682.1108539.16990086073905192650.b4-ty@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Oct 30, 2024 at 11:17:16 +0530, Vignesh Raghavendra wrote:
-> Hi
+
+
+On 11/1/24 23:05, Catalin Marinas wrote:
+> On Tue, 29 Oct 2024 10:15:29 +0530, Anshuman Khandual wrote:
+>> Core HugeTLB defines a fallback definition for arch_make_huge_pte(), which
+>> calls platform provided pte_mkhuge(). But if any platform already provides
+>> an override for arch_make_huge_pte(), then it does not need to provide the
+>> helper pte_mkhuge().
+>>
+>> arm64 override for arch_make_huge_pte() calls pte_mkhuge() internally, thus
+>> creating an impression, that both of these callbacks are being used in core
+>> HugeTLB and hence required to be defined. This drops off pte_mkhuge() which
+>> was never required to begin with as there could not be any section mappings
+>> at the PTE level. Re-organize arch_make_huge_pte() based on requested page
+>> size and create the entry for the applicable page table level as needed. It
+>> also removes a redundancy of clearing PTE_TABLE_BIT bit followed by setting
+>> both PTE_TABLE_BIT and PTE_VALID bits (via PTE_TYPE_MASK) in the pte, while
+>> creating CONT_PTE_SIZE size entries.
+>>
+>> [...]
 > 
-> On 30/10/24 10:15, Dhruva Gole wrote:
-> > Add another entry in the wkup_conf for the syscon node, and then use
-> > that for the syscon in opp-table.
-> > 
-> > Marking entire wkup_conf as "syscon", "simple-mfd" is wrong and needs to
-> > be addressed similar to how other child-nodes in wkup_conf are implemented
-> > in the same file.
-> > 
-> > Signed-off-by: Dhruva Gole <d-gole@ti.com>
-> > ---
-> > 
-> > Since the driver fixes for ti-cpufreq.c have made it in -next [1],
-> > The DT fixes for SK-AM62x can be supported with support for legacy
-> > style DT as well. This has been tested on SK-AM62x [2]
-> > 
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/cpufreq/ti-cpufreq.c?id=1724ae88efcbcd0daeb203ffeb4a2c0e59f2ddf7
-> > [2] https://gist.github.com/DhruvaG2000/40b80cc04a9ac90c86445d6e67ece4cb
-> > 
-> > Changelog:
-> > 
-> > Changes in v2:
-> > - Deleted PATCH to Make the AM625 efuse_offset 0, because with [1] we no
-> >   longer break backward compatibility and hence need to preserve the old
-> >   offset.
-> > - Link to v1:
-> >   https://lore.kernel.org/linux-arm-kernel/20240902093222.2828345-3-d-gole@ti.com/
-> > 
-> > ---
-> >  arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi | 7 ++++++-
-> >  arch/arm64/boot/dts/ti/k3-am625.dtsi       | 2 +-
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-> > index e0afafd532a5..b2b65e31c7cf 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-> > +++ b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-> > @@ -10,7 +10,7 @@
-> >  &cbass_wakeup {
-> >  	wkup_conf: syscon@43000000 {
+> Applied to arm64 (for-next/misc), thanks!
 > 
-> Now that the compatible is updated, this needs to be bus@addr
-> dtbs_check should catch such errors.
-
-Oh yes, I'll update this. Good catch.
-
+> [1/1] arm64/mm: Re-organize arch_make_huge_pte()
+>       https://git.kernel.org/arm64/c/f8192813dcbe
 > 
-> >  		bootph-all;
-> > -		compatible = "syscon", "simple-mfd";
-> > +		compatible = "simple-bus";
-> 
-> Did you also check U-Boot and make sure no regression/update needed?
-> 
+> I think we can now get pte_mkcont() to only set PTE_CONT without
+> touching PTE_TYPE_PAGE. Previously it wasn't possible because
+> pte_mkhuge() was clearing the PTE_TABLE_BIT and we added it back via
+> pte_mkcont(). Give it a try and send an additional patch cleaning up
+> pte_mkcont() if this works. Thanks.
 
-No, I can do a quick sanity boot till kernel with this DTB in U-boot to
-check for regressions.
+Yes, it does indeed work. Sent the following patch for the same.
 
-Thanks for the review.
-
--- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+https://lore.kernel.org/all/20241104041617.3804617-1-anshuman.khandual@arm.com/
 
