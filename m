@@ -1,249 +1,340 @@
-Return-Path: <linux-kernel+bounces-394224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968389BAC1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:40:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D179BAC21
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:43:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46893281854
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:40:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18BC51C20CA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE9118B464;
-	Mon,  4 Nov 2024 05:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E24918BC1C;
+	Mon,  4 Nov 2024 05:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lZRbTCx/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A4PwGi1I"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VP0iF9D2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EFB1779BD;
-	Mon,  4 Nov 2024 05:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730698824; cv=none; b=Kbhu1oRCE/weql+1Vs4C7YYIDcxJxdPLNX71QttGHAVjtPcdrOcwHQgLRs8xkY+vqnNbKiVNiIogEs/vGiuUcPH4+kKhV6RvGn1CwdaxWsJ1i8KVD2F+U38nI9pSaPzE0vu1RkFo4FwNrDwEzR31CDUcgALqCQHYWNbO7e+h1VE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730698824; c=relaxed/simple;
-	bh=KR3PQ1hYXaS7jDeoBA75bjUYrAAWwODED2bivmxQgNg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=jK06Ovft5sS2/DeZR1MELeqx66+biR7MQ4SD9pGxhqtweIt3NmpEvBOCZr6ZxFiw0j8KMnjZSWjZ09vDAGhYlT3/1i4cMSCPPKdSKiPYtyYBqaCzmFbKlWkZSCpFtEJFn65X9IoA03364OYNWhUm6KzL0zF1IHggJkWjOOQFsSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lZRbTCx/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A4PwGi1I; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 04 Nov 2024 05:40:18 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730698820;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9X7WElvH6uzhk8b0xGpReGyr1ofvhfFT05PZr2JJCIc=;
-	b=lZRbTCx/elkhAdD0rnT1DgbawKxZdHNyHLskYlm7QnQIL+6vJvp70t0wrILPndYzTmD21V
-	U/M1v23CDdIiAp1AAg02SkQBnrYCicFs56a6Ff0uV/OWqcilGVPNqbTKhba7R0Oyuks6tH
-	3RP+o9uUT/9u0SKS4GFQGuzfatBsaJj/ANwy3xzVY5az0hEbnP4/IyH6aeMLUNhawXV7U1
-	93pkRU8KAjfGt1jVF8FnrjNSteznZs9lp0/N7v5+RcXfUZbqnwjyUtV7VTOGDoh+D5T9sq
-	+PMAz/TOzZZkBfcIK21Kt+5lqxOUs4O3AP6kkRAr86JWc3hT2FG2KWK9Z0sosg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730698820;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9X7WElvH6uzhk8b0xGpReGyr1ofvhfFT05PZr2JJCIc=;
-	b=A4PwGi1Iq1ZEbiWFHKvlQ1KNoTbJS6URefO4XNfqt5dDAmmdD75SUpE8cFYMlnAdg62Rm1
-	YN+x/L+IqeaVh1BA==
-From: "tip-bot2 for Amit Shah" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/bugs: Add support for AMD ERAPS feature
-Cc: Amit Shah <amit.shah@amd.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241031153925.36216-2-amit@kernel.org>
-References: <20241031153925.36216-2-amit@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A390B1779BD;
+	Mon,  4 Nov 2024 05:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730698978; cv=fail; b=Zx774hQCUTg0oXCQmZ5udt5z/xp4fbWVXRVVrgq70ynYUppulmQTKbSi5EGxiULianzIlD2pnVN/CrSYDlHkFeydnpUCmTqP91hWBunx2+73jEJZanPrFxY0TzEqN6E1e2fJ7Za0FCO+CgkHa7ZIKOXBVisFibH+6WtKqVBnVek=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730698978; c=relaxed/simple;
+	bh=Q1g7su0TNDpjG997xXMTF9jXl/S/+2dPUS9fX6C7aIk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZrBnF+NyYwmOZl3xudz7cIigZHCIuqK/eUwMUbMbW6T5nTf0Sp14BMsnf/llVmciUywEMsHs2xsNsZkvSwVF9Z1nzVdIBt30wL35A1tTy6ZgQwXcgOn7hJt1S56ueU7ZzE0zY4MhGBoZIcLKYB2cTxqqJXM/D7lRSkC6M3dLRPc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VP0iF9D2; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730698976; x=1762234976;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Q1g7su0TNDpjG997xXMTF9jXl/S/+2dPUS9fX6C7aIk=;
+  b=VP0iF9D2MHgYa7Vi4+DugjOQyr+vNY5+RbDAI3Lrmx8qtiPf64e7w+U+
+   36pz7k7SYJs2NUWGbQhaCxJdPlMpv4v6oToW+ECT6EuYHXl0DEVcnPIL7
+   GkHQk3zJe655kOG6v9wVHy6oq1KHLs8JkDy6M4M0yvMloOgjTr8ySMM9N
+   3mU2UoYPTUQD8fMYw5xLYunm+Gm82OW8Qtl72+6CbA4AYODGFlTD0Bp51
+   00PFF8Fe7vke1LhfVKUV91P0AfTLcLUqeZL4takqBxnrb6mPcfDdx6Oe4
+   sqbSWWJAjAC5q2n9he8xLU7EJFF/CzTUNrIleYJubLFpR2J5g5J4Yk6/i
+   A==;
+X-CSE-ConnectionGUID: aTd6x7+dTd2VUlV1jDk/0A==
+X-CSE-MsgGUID: F7EQtLmTS8+pSi9jyCtuMQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30559098"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30559098"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 21:42:55 -0800
+X-CSE-ConnectionGUID: qC1jThQcQem6GFFO2PVvZg==
+X-CSE-MsgGUID: mOWfJcKMR3WoP93n0b/VBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="84359118"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Nov 2024 21:42:54 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sun, 3 Nov 2024 21:42:54 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Sun, 3 Nov 2024 21:42:54 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.48) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sun, 3 Nov 2024 21:42:54 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UXLhW6i8zAY0tdi9eoILjWsM7jhu7vSHoFJ0D2xgzA0EPFgYQ2OFGs2xeoA9PbthPPjlIGB3h23rt/lLfUq7Rw5og65v4eKmPpNAg/A6DWgtCmOjuk+EmPva/NtlruYZx+x6PzIsOSo272hMP0tCns7lH02ePCv7sXAGQ8hHy74VtN1njAKd9lpbQ8+/6HZqv3d71fVALyuaRRZKLaOPoQmD2gFr3AlQ74gqoglVtjQR5OV2SLRtPS23/qXrrTqTV3d32jesogIs9NwmWJZWu4EmMuK99KU/LZU29KaebOKvJhf+36/qUV6E6/en/HpjR89gx5der5hXo15EgvzQuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8glZJldve0DQTxmrMjC7NWwPCjnMCvUgF80pGfUV0O0=;
+ b=xTVcc6RDzl6FkGcZUTLPl+QTWWe/eRyMW6foV1aWw+M1qkWxeL2RSxPTmv4XvhE/ybtXHOq0BL7eVagmEYv9GzFH90uL3Mg64A8DwZTLyKc1IBbSoVxTUM1D/lkforyktzr98f55ptMNwJ0rJZJu6lT7ZhIPVZAuyboBbQld4OmNkQlTrClFINSQUV5YBx32+BDcU2O+3cQdA18takAMrNxc+dx+owiRiEaxOtRDsmHrwdrCVJzT2TguondnX11wtFsTnJkLX3c9mGmKOgu2wDWW6FmnlZy7nDq+II6pxWaZRwqO7QeXkn7P03bxH997KVtKAI0c2YYPHG+NEr/KQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA0PR11MB8419.namprd11.prod.outlook.com (2603:10b6:208:48b::22)
+ by DM4PR11MB7279.namprd11.prod.outlook.com (2603:10b6:8:109::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
+ 2024 05:42:45 +0000
+Received: from IA0PR11MB8419.namprd11.prod.outlook.com
+ ([fe80::f1cb:2c2f:e082:c0d]) by IA0PR11MB8419.namprd11.prod.outlook.com
+ ([fe80::f1cb:2c2f:e082:c0d%2]) with mapi id 15.20.8114.028; Mon, 4 Nov 2024
+ 05:42:45 +0000
+From: "Pucha, HimasekharX Reddy" <himasekharx.reddy.pucha@intel.com>
+To: "Damato, Joe" <jdamato@fastly.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>
+CC: "Damato, Joe" <jdamato@fastly.com>, "Nguyen, Anthony L"
+	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "moderated
+ list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [PATCH intel-next] ice: Add support for
+ persistent NAPI config
+Thread-Topic: [Intel-wired-lan] [PATCH intel-next] ice: Add support for
+ persistent NAPI config
+Thread-Index: AQHbJAmkDhWGOD6U3k+eTTF5bGjATbKmr20A
+Date: Mon, 4 Nov 2024 05:42:45 +0000
+Message-ID: <IA0PR11MB8419CB331AECAA4FBC593C13BD512@IA0PR11MB8419.namprd11.prod.outlook.com>
+References: <20241021223551.508030-1-jdamato@fastly.com>
+In-Reply-To: <20241021223551.508030-1-jdamato@fastly.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR11MB8419:EE_|DM4PR11MB7279:EE_
+x-ms-office365-filtering-correlation-id: 4ab9c644-d6bb-47e6-e11a-08dcfc938255
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Wu7IttC4a6M8w5TZz94+f2QJ88yMq88EtZ3enBMmbIju6aOXZkDWNUQaZT3c?=
+ =?us-ascii?Q?8ZSntRBo4YOPVuADBu4p3yFz1gCFdGjl5VJa+SJF3BHbdSs/crTiToZ92tKm?=
+ =?us-ascii?Q?a/eHuV+bBsX1QID2bPQLivTWjkxUA9XrjZsYM6AeYIZSaNn95+dBUr6CYYkx?=
+ =?us-ascii?Q?JUIRIeAAjfJOqCou7M0H52r/ZIcZ67dpJGafn27uzUqfr1Evx9kVpLS5BYVa?=
+ =?us-ascii?Q?HNjeSXhQxp+EWZMmA9NRQ7Xz5U17q7B2+83l5EuEgLuyDuNNveIQGUCtewJJ?=
+ =?us-ascii?Q?kMowWRJoVVbNkFx/WvuGRMZnLUWzBiNhlztTyLPSHgIvUULI+BVmYopTu2zy?=
+ =?us-ascii?Q?/vO45fzYmBmcHR3wRFzlj/0FUzkMmZVjtWzOpocloORX4OMpk5yugIo/ftha?=
+ =?us-ascii?Q?9bdKmSF37nS30l3tbGcyrOYtvCvBw8y988b80ejozc7Zq7garEWa3sNQ5cGf?=
+ =?us-ascii?Q?D4UqqU7ci/JSMV4ZkiC5nNmgLy2S4dq/nCerdXOlkNChUF4nfE+jDUJD5Ocm?=
+ =?us-ascii?Q?gUirj8Y3VJI0duxev88JLXN6vkMgC3WnBN8fJGs2PfG/f7KKE8/0cgIkd8mU?=
+ =?us-ascii?Q?u8u1mJpfae/r6shHxH5AGDC/jAJgkqlNx6mB+kJqYfnVr6XPUvnbblK2Vg3p?=
+ =?us-ascii?Q?2bTlw6RJUXv4fkCb22sjITVG3dvgPk2W+E/dNu9vvwYGwt2kjMtI20k9d8Nw?=
+ =?us-ascii?Q?/oSJyWaLvaityuFVfEiqFOuJ/iL/eCNd7xHeN3ec9nC1f3gCfBV7R7rcBcAz?=
+ =?us-ascii?Q?eqZtWwqZPziVJv7UMnUT/PnexpHSAUoilDK/jdvDylkggUjLCSCAYFBOwpVb?=
+ =?us-ascii?Q?hdPopC2keiWoMUJQRdoS2rsaS4rgSCpbN5pynCa+OJX9nvDMVbUxzCKDL3C6?=
+ =?us-ascii?Q?zbcAsY0p4p6XrL9O1t52sjVqnyBdReRqBSnhXgTJg8wRD1TW+ThZnXjy2NHb?=
+ =?us-ascii?Q?W3DgBgt9IEOurvHt26tS5h9BcvEtsjnSZK0wA3s+SaayU3yo82oO84W2S2sZ?=
+ =?us-ascii?Q?BqHJZZWr0d2yR+1IdJcBteNNfRsQ1sqCjiv52pxyxmvWbq1jWRCAuFI39ACu?=
+ =?us-ascii?Q?Yw9k3VsyMx3dkAR0G7DlBo37a4tIt7lXZbbQeeNs77j64qKwxFhzx+8rGmiN?=
+ =?us-ascii?Q?xiCDvs7F9MpuQrD2S1ARJgl7cpuWyfcQ+Mq7VQOBiJwnj6pR8c2v5DzMDPCF?=
+ =?us-ascii?Q?FVqK7hvAk9x85OzQYrzPJdtmOMaW6eokBJaFqKvZOVCVVOLZQ3LygMMBC5+n?=
+ =?us-ascii?Q?XszTd7WcSivCBRN94N5SIAcxyEEO5rIklcrD5SrGhgp0L2Ul1K1smjMb6cme?=
+ =?us-ascii?Q?ncps3IKfSGpSjFWHKcHk9WX5BYspLHRE0HU0mUgNn3oidJQdBeIcR3NHx8xF?=
+ =?us-ascii?Q?tZ+cBOk=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB8419.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?6rOYWdVVH/gSM38jyiZfF/uzx1f5Y3/AYxnt5qbRLX+hj3gVJmh0n5sHcg6s?=
+ =?us-ascii?Q?VZv4IIZXGEK+Jp4QtbWpwHehe+XVthtQVTI2xjd1Ynt6fkcLdORrimGTHukt?=
+ =?us-ascii?Q?PPr27hM92LjlidbiJoKCYjlo1OP5TkmGEvOavHC+0uK9QyDqLWHkJ+u6gxI4?=
+ =?us-ascii?Q?zTgxWuiDpqt4n/2x6CcgicKn8RitdpyFdFuLy+1hmQ6da3fEDXEJtIIBTsz+?=
+ =?us-ascii?Q?+RWd/QUoeK2pdMHoKCbY0IWqh47P5SM7wji/dfXOe4NrV3bpMDiq7E5KMOad?=
+ =?us-ascii?Q?4gV76mz/izbY/IXWGDsjr0KdmVQJaTcIoidCuePDMUQMCoYA5wcSl9xOwYcS?=
+ =?us-ascii?Q?udHpqmr+AqXbSTjdlWHW15bK1IDhdNcT6v8LnfMMgyAdk+NaXytdQoKoX8FQ?=
+ =?us-ascii?Q?QXHtYdfPJlgpYyEPCxypD1qRsMe2HE6B02jzU/AN8cFsKDT3cHHz4ZCkLEcD?=
+ =?us-ascii?Q?5v+J5Ksnz97phourB+vRMjFIh8QFe3GyBTy42n62fcOCYek4PihJ/Npo4yiJ?=
+ =?us-ascii?Q?Mop1bSoeNPR0wxBCTaIf9LccW3+lwKsP5tzxeahag4TZmbo/eEPZe1+YfSjN?=
+ =?us-ascii?Q?D2E+fWv4vsqFffseHPwZcdT6Da4kIJj9EGuLfHIhVjDK6EccZBqj/n4OC9Wi?=
+ =?us-ascii?Q?qMe4JEDLI3jFYVLAOwhUzC33R7leZF30WFsNafzrHpOPVUn0eBzPthFTQ5/+?=
+ =?us-ascii?Q?dGSqSzlvPCMk6SfjXl+3jZ2eVgN/Si2cVR2vYN7l8fy/ygvOZRnjyOT1+TjB?=
+ =?us-ascii?Q?UPsj4K5xqktstpvw2gu2zh3S7ASiKqEkSuW8deYaI6WR9eCjEoqebOGzzWcR?=
+ =?us-ascii?Q?v+yYA5smbZWkD39ne9npny/8YogpSbZxbnW3Qo0/SVldvh0L74NxW8LVrYRS?=
+ =?us-ascii?Q?ZXhos/EMY/QnC0d8+Ljois9TKiFFMykgwxns34gCmeDbpZtBigDperce6loR?=
+ =?us-ascii?Q?pJI/Il8ITjkVEmKHGAcZDSAHYn+SsZu8Qsr4HEHOG4CBvRYNolAZK4q1SkjS?=
+ =?us-ascii?Q?HTL5l5KeMeN6qogMeIgjDZKdouVU3KzXEs3vK5M/mXQHFRPE65Z+Ks0tOiql?=
+ =?us-ascii?Q?+LwNckOVyPwTDy842/SW7jctMMjX3oFUWxYaHRSqVsowID5fwW7kasuRUoz5?=
+ =?us-ascii?Q?ltZAffUoApvbrzPzYn8I1lFf+IOzNNPQ5upVNRb7r7M8KSW8WrZcWSC9vAmR?=
+ =?us-ascii?Q?EAr0ldkNgNDkmGBNdgR5Do7SRJ7Uac+5ZkS0BYEmBSnqwf91spjpRl2aX6a1?=
+ =?us-ascii?Q?HIqL34y1UzA74OhXS2gHOnI6bn5NL8FVymOblbc2+3Z5wsjVkoeVvOk6T98D?=
+ =?us-ascii?Q?PAcnRt0tYuXmUtFMdGZmL0v7co3TaL9/L5+61Ig6xaO7dOaG/FNgpzR1mu8c?=
+ =?us-ascii?Q?uKGpkPkBXXuuGZF/xWvP8qacbvm19Ua2zK1LX91u+1cG0Mq+ss8sZ9Cg7TMg?=
+ =?us-ascii?Q?YWVR1LtAVTOBRdCvLNIekdlI2Z0CiaXi6nXJJUzI3APHAqqLDUMwURA3Ez+i?=
+ =?us-ascii?Q?kSo9Xi2lXSfcQAq6YTtKEvqPqO1xXsIqsOaLuwJ2S1+/RBks8gEW+j95KugT?=
+ =?us-ascii?Q?Fg64MpezlBdsIsj/iynR/Fox0yBq/K/PAsU8I4jo05A2KkZJvmWp3Uy7P2cz?=
+ =?us-ascii?Q?4A=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173069881888.32228.13884134276696863606.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB8419.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ab9c644-d6bb-47e6-e11a-08dcfc938255
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2024 05:42:45.6196
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aLkq1lAj/6G2sMnSLtQlVt9sX3VN+lARwYin37ktebYuu0dG/Wc9/nbNtx5DYki6Er7uRxK7yRWGgDKUxr7NhNJ0ESIlDToy6UeWrVZaK5POdbkeqhfHQvS43TGS6qHR
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7279
+X-OriginatorOrg: intel.com
 
-The following commit has been merged into the x86/cpu branch of tip:
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of J=
+oe Damato
+> Sent: 22 October 2024 04:06
+> To: netdev@vger.kernel.org
+> Cc: Damato, Joe <jdamato@fastly.com>; Nguyen, Anthony L <anthony.l.nguyen=
+@intel.com>; Kitszel, Przemyslaw <przemyslaw.kitszel@intel.com>; Andrew Lun=
+n <andrew+netdev@lunn.ch>; David S. Miller <davem@davemloft.net>; Eric Duma=
+zet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <p=
+abeni@redhat.com>; moderated list:INTEL ETHERNET DRIVERS <intel-wired-lan@l=
+ists.osuosl.org>; open list <linux-kernel@vger.kernel.org>
+> Subject: [Intel-wired-lan] [PATCH intel-next] ice: Add support for persis=
+tent NAPI config
+>
+> Use netif_napi_add_config to assign persistent per-NAPI config when initi=
+alizing NAPIs. This preserves NAPI config settings when queue counts are ad=
+justed.
+>
+> Tested with an E810-2CQDA2 NIC.
+>
+> Begin by setting the queue count to 4:
+>
+> $ sudo ethtool -L eth4 combined 4
+>
+> Check the queue settings:
+>
+> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+>                          --dump napi-get --json=3D'{"ifindex": 4}'
+> [{'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8452,
+>   'ifindex': 4,
+>   'irq': 2782},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8451,
+>   'ifindex': 4,
+>   'irq': 2781},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8450,
+>   'ifindex': 4,
+>   'irq': 2780},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8449,
+>   'ifindex': 4,
+>   'irq': 2779}]
+>
+> Now, set the queue with NAPI ID 8451 to have a gro-flush-timeout of
+> 1111:
+>
+> $ sudo ./tools/net/ynl/cli.py \
+>             --spec Documentation/netlink/specs/netdev.yaml \
+>             --do napi-set --json=3D'{"id": 8451, "gro-flush-timeout": 111=
+1}'
+> None
+>
+> Check that worked:
+>
+> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+>                          --dump napi-get --json=3D'{"ifindex": 4}'
+> [{'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8452,
+>   'ifindex': 4,
+>   'irq': 2782},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 1111,
+>   'id': 8451,
+>   'ifindex': 4,
+>   'irq': 2781},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8450,
+>   'ifindex': 4,
+>   'irq': 2780},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8449,
+>   'ifindex': 4,
+>   'irq': 2779}]
+>
+> Now reduce the queue count to 2, which would destroy the queue with NAPI =
+ID 8451:
+>
+> $ sudo ethtool -L eth4 combined 2
+>
+> Check the queue settings, noting that NAPI ID 8451 is gone:
+>
+> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+>                         --dump napi-get --json=3D'{"ifindex": 4}'
+> [{'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8450,
+>   'ifindex': 4,
+>   'irq': 2780},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8449,
+>   'ifindex': 4,
+>   'irq': 2779}]
+>
+> Now, increase the number of queues back to 4:
+>
+> $ sudo ethtool -L eth4 combined 4
+>
+> Dump the settings, expecting to see the same NAPI IDs as above and for NA=
+PI ID 8451 to have its gro-flush-timeout set to 1111:
+>=20
+> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+>                          --dump napi-get --json=3D'{"ifindex": 4}'
+> [{'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8452,
+>   'ifindex': 4,
+>   'irq': 2782},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 1111,
+>   'id': 8451,
+>   'ifindex': 4,
+>   'irq': 2781},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8450,
+>   'ifindex': 4,
+>   'irq': 2780},
+>  {'defer-hard-irqs': 0,
+>   'gro-flush-timeout': 0,
+>   'id': 8449,
+>   'ifindex': 4,
+>   'irq': 2779}]
+>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
+>  drivers/net/ethernet/intel/ice/ice_base.c | 3 ++-  drivers/net/ethernet/=
+intel/ice/ice_lib.c  | 6 ++++--
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+>
 
-Commit-ID:     b5cbd5ff79a06395a17f8f524f6f8e90dcfe42d1
-Gitweb:        https://git.kernel.org/tip/b5cbd5ff79a06395a17f8f524f6f8e90dcfe42d1
-Author:        Amit Shah <amit.shah@amd.com>
-AuthorDate:    Thu, 31 Oct 2024 16:39:24 +01:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 04 Nov 2024 06:20:22 +01:00
+Tested-by: Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com> (A Co=
+ntingent worker at Intel)
 
-x86/bugs: Add support for AMD ERAPS feature
-
-Remove explicit RET stuffing / filling on VMEXITs and context switches
-on AMD CPUs with the ERAPS feature (Zen5).
-
-With the Enhanced Return Address Prediction Security feature,  any
-hardware TLB flush results in flushing of the RSB (aka RAP in AMD spec).
-This guarantees an RSB flush across context switches.  The feature also
-explicitly tags host and guest addresses - eliminating the need for
-explicit flushing of the RSB on VMEXIT.
-
-The BTC_NO feature in AMD CPUs ensures RET predictions do not speculate
-from outside the RSB. Together, the BTC_NO and ERAPS features ensure no
-flushing or stuffing of the RSB is necessary anymore.
-
-Feature documented in AMD PPR 57238.
-
-  [ bp: Massage commit message. ]
-
-Signed-off-by: Amit Shah <amit.shah@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20241031153925.36216-2-amit@kernel.org
----
- Documentation/admin-guide/hw-vuln/spectre.rst |  5 +--
- arch/x86/include/asm/cpufeatures.h            |  1 +-
- arch/x86/include/asm/nospec-branch.h          | 11 ++++++-
- arch/x86/kernel/cpu/bugs.c                    | 36 ++++++++++++------
- 4 files changed, 40 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/admin-guide/hw-vuln/spectre.rst b/Documentation/admin-guide/hw-vuln/spectre.rst
-index 132e0bc..647c10c 100644
---- a/Documentation/admin-guide/hw-vuln/spectre.rst
-+++ b/Documentation/admin-guide/hw-vuln/spectre.rst
-@@ -417,9 +417,10 @@ The possible values in this file are:
- 
-   - Return stack buffer (RSB) protection status:
- 
--  =============   ===========================================
-+  =============   ========================================================
-   'RSB filling'   Protection of RSB on context switch enabled
--  =============   ===========================================
-+  'ERAPS'         Hardware RSB flush on context switches + guest/host tags
-+  =============   ========================================================
- 
-   - EIBRS Post-barrier Return Stack Buffer (PBRSB) protection status:
- 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 05e985c..7f78212 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -457,6 +457,7 @@
- #define X86_FEATURE_AUTOIBRS		(20*32+ 8) /* Automatic IBRS */
- #define X86_FEATURE_NO_SMM_CTL_MSR	(20*32+ 9) /* SMM_CTL MSR is not present */
- 
-+#define X86_FEATURE_ERAPS		(20*32+24) /* Enhanced RAP / RSB / RAS Security */
- #define X86_FEATURE_SBPB		(20*32+27) /* Selective Branch Prediction Barrier */
- #define X86_FEATURE_IBPB_BRTYPE		(20*32+28) /* MSR_PRED_CMD[IBPB] flushes all branch type predictions */
- #define X86_FEATURE_SRSO_NO		(20*32+29) /* CPU is not affected by SRSO */
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index ff5f1ec..d7587b4 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -117,6 +117,17 @@
-  * We define a CPP macro such that it can be used from both .S files and
-  * inline assembly. It's possible to do a .macro and then include that
-  * from C via asm(".include <asm/nospec-branch.h>") but let's not go there.
-+ *
-+ * AMD CPUs with the ERAPS feature may have a larger default RSB.  These CPUs
-+ * use the default number of entries on a host, and can optionally (based on
-+ * hypervisor setup) use 32 (old) or the new default in a guest.  The number
-+ * of default entries is reflected in CPUID 8000_0021:EBX[23:16].
-+ *
-+ * With the ERAPS feature, RSB filling is not necessary anymore: the RSB is
-+ * auto-cleared on a TLB flush (i.e. a context switch).  Adapting the value of
-+ * RSB_CLEAR_LOOPS below for ERAPS would change it to a runtime variable
-+ * instead of the current compile-time constant, so leave it as-is, as this
-+ * works for both older CPUs, as well as newer ones with ERAPS.
-  */
- 
- #define RETPOLINE_THUNK_SIZE	32
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index d191542..3825779 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1811,9 +1811,6 @@ static void __init spectre_v2_select_mitigation(void)
- 	 *    speculated return targets may come from the branch predictor,
- 	 *    which could have a user-poisoned BTB or BHB entry.
- 	 *
--	 *    AMD has it even worse: *all* returns are speculated from the BTB,
--	 *    regardless of the state of the RSB.
--	 *
- 	 *    When IBRS or eIBRS is enabled, the "user -> kernel" attack
- 	 *    scenario is mitigated by the IBRS branch prediction isolation
- 	 *    properties, so the RSB buffer filling wouldn't be necessary to
-@@ -1821,6 +1818,15 @@ static void __init spectre_v2_select_mitigation(void)
- 	 *
- 	 *    The "user -> user" attack scenario is mitigated by RSB filling.
- 	 *
-+	 *    AMD CPUs without the BTC_NO bit may speculate return targets
-+	 *    from the BTB. CPUs with BTC_NO do not speculate return targets
-+	 *    from the BTB, even on RSB underflow.
-+	 *
-+	 *    The ERAPS CPU feature (which implies the presence of BTC_NO)
-+	 *    adds an RSB flush each time a TLB flush happens (i.e., on every
-+	 *    context switch).  So, RSB filling is not necessary for this
-+	 *    attack type with ERAPS present.
-+	 *
- 	 * 2) Poisoned RSB entry
- 	 *
- 	 *    If the 'next' in-kernel return stack is shorter than 'prev',
-@@ -1831,17 +1837,24 @@ static void __init spectre_v2_select_mitigation(void)
- 	 *    eIBRS.
- 	 *
- 	 *    The "user -> user" scenario, also known as SpectreBHB, requires
--	 *    RSB clearing.
-+	 *    RSB clearing on processors without ERAPS.
- 	 *
- 	 * So to mitigate all cases, unconditionally fill RSB on context
--	 * switches.
--	 *
--	 * FIXME: Is this pointless for retbleed-affected AMD?
-+	 * switches when ERAPS is not present.
- 	 */
--	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
--	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
-+	if (!boot_cpu_has(X86_FEATURE_ERAPS)) {
-+		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
-+		pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
- 
--	spectre_v2_determine_rsb_fill_type_at_vmexit(mode);
-+		/*
-+		 * For guest -> host (or vice versa) RSB poisoning scenarios,
-+		 * determine the mitigation mode here.  With ERAPS, RSB
-+		 * entries are tagged as host or guest - ensuring that neither
-+		 * the host nor the guest have to clear or fill RSB entries to
-+		 * avoid poisoning, skip RSB filling at VMEXIT in that case.
-+		 */
-+		spectre_v2_determine_rsb_fill_type_at_vmexit(mode);
-+	}
- 
- 	/*
- 	 * Retpoline protects the kernel, but doesn't protect firmware.  IBRS
-@@ -2839,7 +2852,7 @@ static ssize_t spectre_v2_show_state(char *buf)
- 	    spectre_v2_enabled == SPECTRE_V2_EIBRS_LFENCE)
- 		return sysfs_emit(buf, "Vulnerable: eIBRS+LFENCE with unprivileged eBPF and SMT\n");
- 
--	return sysfs_emit(buf, "%s%s%s%s%s%s%s%s\n",
-+	return sysfs_emit(buf, "%s%s%s%s%s%s%s%s%s\n",
- 			  spectre_v2_strings[spectre_v2_enabled],
- 			  ibpb_state(),
- 			  boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? "; IBRS_FW" : "",
-@@ -2847,6 +2860,7 @@ static ssize_t spectre_v2_show_state(char *buf)
- 			  boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? "; RSB filling" : "",
- 			  pbrsb_eibrs_state(),
- 			  spectre_bhi_state(),
-+			  boot_cpu_has(X86_FEATURE_ERAPS) ? "; ERAPS hardware RSB flush" : "",
- 			  /* this should always be at the end */
- 			  spectre_v2_module_string());
- }
 
