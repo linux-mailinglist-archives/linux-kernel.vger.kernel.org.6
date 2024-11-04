@@ -1,104 +1,230 @@
-Return-Path: <linux-kernel+bounces-394475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89819BAFAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:32:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F469BAFAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ED0E1F22228
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:32:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AE65B228D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8C71AD3F6;
-	Mon,  4 Nov 2024 09:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730291AD3E1;
+	Mon,  4 Nov 2024 09:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TnIhb1zK"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LmAnGfsA"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615CC189F43
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C022019CC32
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730712725; cv=none; b=PZTMq/F48untbOWRZK9RxjRwqY4xKEp8f/lBhXTlS1GyUMEo025oxuODohq5IgJRRoafolgEB+hOrIxhQUSM1/SdxxsZg47TkGcHkMGd/85MFtuqQDDQSS1lQ+xZSN+9Hcyqw2VcUOJDrZmM/e2WgY4ErFwrXTO7Kv7WGPkHpoU=
+	t=1730712732; cv=none; b=jN/250sRD2cZb/bDMza2aEbtiS+BkhrR3EDMa94oYd2QVZfP1RHJR098Rh2Fzo4fWMLsgPhmGg0QdPa2V1wpOIVfJVsWCF82jLZTDhfzMck75tGgB32NDPew7f/Bh+9+FIJyhtfwtXR5/ZhxIVGacMN//bWvUYcxVrJ6dWDXTbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730712725; c=relaxed/simple;
-	bh=Zd4qV11Jk9xXewqHJBWt6C2AQwLiXmL4QYVrO7l6gWs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FRyxZvnwzM2y4puPzRoAjOvDAOp1hpagLnq/9WYO305VL0t/xH56wsOtuOBqlgB5eQMMVrd40mnC10Tzpd834YRvepCXxX5e110o3E41llaRJuF2bnr8mylyzW0tKmZ8trhvh7NYKYpBFWjW/q1PwA03yARD+/FRyX/wFfUCOY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TnIhb1zK; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d518f9abcso2723259f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:32:03 -0800 (PST)
+	s=arc-20240116; t=1730712732; c=relaxed/simple;
+	bh=TEkDXrS8YIglkAk6IOTynHBlviIaMox5IezVFdA6KO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AUNNxs/7lIWgd4LEGkqSuH7mjTv6WUQ+xHjVr35pMbgAzTa1Gq/h5FxHx9PYqftTxrzxIHoLB9PYDJ4f3AVR6C6yOMCp7bm8Ocaa+29iSNDUvpPsHMmHf2KgON9UMGrQasmc91HUpIbI+HSclaq1GJAfXn0cn6IbPkRROtnEHBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LmAnGfsA; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99e3b3a411so771771266b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:32:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730712722; x=1731317522; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zd4qV11Jk9xXewqHJBWt6C2AQwLiXmL4QYVrO7l6gWs=;
-        b=TnIhb1zKp6bdaFo3DqOwqBgLkM55xA2r12xXVbzNnGu/8k8R5EQjODfyy6Q5w9CL4N
-         DNwRxJQ+88HxxyfynmzHJKFsxcspTrIvVDLOHkg/MKXrw+qIDWbYOfDLZoaFmA4yjcSV
-         b36AzaZJHfOoP78NcFP8D35OJFNyDBmrqSsuL0/q5yjw9DcvXncRyUbCqy2c7CYh7fcA
-         xOjGmWk0SBrntEkq2ggWDLpE/UhUchBJ0WLIP0hg5mjQ4DYnPPR0dtYB0XJux6PjOpwG
-         REhoSjaDsUH+WQAezJaociwVtlbNGes9ilXa+mqdR2KFUW55dfaFcCpyryfGwiqbHDMf
-         8MEw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730712728; x=1731317528; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gBT4omu7lVco4BMm5XUNG7vIgR1mZZtpzsVwZM90Y7U=;
+        b=LmAnGfsAbFLPvy20FN7ubJ8Cjl9BaH7TqBYYtj7EIOrhVzRS9bAQIhuQJxbQHpeeQZ
+         W99U5yF1FRD/NNo5Jxyezfh6TSrHE/qsTkXIsyURT7WR66YEWLNypPM9EGzgtlOhBWwT
+         iALgR1HikB21AYOWXm+jV47U/IEnHm9B+TjG+pjMjtjnqNNnnHZ8RNorNnKmML4ksAx+
+         kTYsi2wpXpVYpCKJsW8+6CT1JbdGCOlgKWxe91vQoOf7Yw2yPbJdwmFSOFdvwfaDnDB+
+         3Wh1o6WKXS8+r/3jP5lN+/fLa7sCHbEARuSHyXiDDZ3uxT4DiH719LsetluZW/oUZrjy
+         h4xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730712722; x=1731317522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zd4qV11Jk9xXewqHJBWt6C2AQwLiXmL4QYVrO7l6gWs=;
-        b=m43hyREuR3WQ+nIvE2AIyHcevZSE1Buz7OGy8pDg0d22v6nwvLVRSVZNM2s6pZ4GoZ
-         cjTLGugfmnJGXDnBJJ81YSBHLQ+1+9dE8d4qR529XpKMereQvOGGxnDtUwvTFTxDQ0wJ
-         u/tSQ+zzqywcqNQ5EyXh3OXPTcJc+dPgv7uROH0rI8nIGXZtPwZ9ClA6/iBPPX6N2bpO
-         pskfsT5mhffKAavWHmC9w6eCTL3FrTM9im2yK9PoCOfWoOe4PKRF/7XydtYb43+GPKDy
-         0dyUApFkLAHT3hNvpflEJsVFqbRmJsCxGzJDuKr2NPNTCW552Q4qvryDk1blyuG718wb
-         89Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCWM0Hfsd1WJhQzeMJSiClg7unv9jQ2c9q0YeQiFkM0a/x1k6mAH7cF+RVwzJNkKJ3RsoMwyJVsdvSAs0IE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyGqu6YhjheeCCG9/dxOKNhtd5BRuNguCFEnopxJRJIeAosGng
-	0i53ZoIB8XVmIs3SkQbbaSN+I0zgLebA2ksJKfXrU36NjtuFSuu81iwXhNJAnrwwead7laSsjkx
-	o+8mHUshI2rE9/EWRFw9hFeUbMf03UwRTa5SW
-X-Google-Smtp-Source: AGHT+IGgxxwstMlD8rP6BtbqQAqXim42VUhtM2Svr5NTrUM6RIhgQvhkHKl6VRlqR1gRR7oPbOCGY14lUUmtslJl1S4=
-X-Received: by 2002:a5d:614f:0:b0:37d:398f:44f9 with SMTP id
- ffacd0b85a97d-3806115ae92mr21368232f8f.32.1730712721670; Mon, 04 Nov 2024
- 01:32:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730712728; x=1731317528;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gBT4omu7lVco4BMm5XUNG7vIgR1mZZtpzsVwZM90Y7U=;
+        b=bx2VGXY8luNYQvbyW72aiI7ez3tez8gG0VwqiFKrFrWacmeVdlWQ5ycm8nyFAGry8u
+         LPvgh4pMyXGwiGnmkCnCfuX2+soUdegsQD4nylRqMVZFoAYCdYPJYnXRPktK8s8JmA4D
+         Yu1n7qGG5G+eTYKQFIBraW6Z5PLTT9QeyHQsxE9oFaD4oRpNjCh7jMKcv3F4vHuRV7F9
+         LPE7fw50LsvBDu7UgeU4/AmQJYy6FAyeRK58rUzAUEHDmZI5tspkwjJPPW+MPAdGm1wl
+         2BYZm+rbz0DH78JJ/1V2Va+r57wSeF1xtvSacSTfMrZVD8y6T85761GCri/JETuVejl3
+         khYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9HyigN4iEzpS+GZbF7kVUQuk8KfxWdxSOuUJurbnHpbf+tZBfgB2kSyGcYUcaOyhft4Xj5KeaZ5r6feM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi41IEuTDmddiIowlks4brb+pkGn2G6fMs7wL8Zvftmuscep5G
+	DopvM4ZVOjOIBmBhaOvX319phkRjGkD97V20v70Zfudbd0cmfHq8f8ZmBydtmFI=
+X-Google-Smtp-Source: AGHT+IFP7uDPMOtcJPWpn+z+rM3OxxIslWfpFco2yog0FSQmlxVhhiL3Isz0ruKyu2Q9v3QrVvfTVw==
+X-Received: by 2002:a17:907:86a6:b0:a9a:bbd1:aa5 with SMTP id a640c23a62f3a-a9e65499cdfmr911473866b.31.1730712728095;
+        Mon, 04 Nov 2024 01:32:08 -0800 (PST)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c53d6sm530652866b.68.2024.11.04.01.32.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 01:32:07 -0800 (PST)
+Date: Mon, 4 Nov 2024 10:32:06 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: George Stark <gnstark@salutedevices.com>
+Cc: neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com, 
+	martin.blumenstingl@googlemail.com, linux-pwm@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@salutedevices.com
+Subject: Re: [PATCH v2 2/4] pwm: meson: Support constant and polarity bits
+Message-ID: <w3igi2jmva6mfa7anlieyp3iiwfzhsvi3t37wwcqqtzdy42fqn@btmdsfsmpw7r>
+References: <20241016152553.2321992-1-gnstark@salutedevices.com>
+ <20241016152553.2321992-3-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104090711.3000818-1-abdiel.janulgue@gmail.com> <20241104090711.3000818-3-abdiel.janulgue@gmail.com>
-In-Reply-To: <20241104090711.3000818-3-abdiel.janulgue@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 4 Nov 2024 10:31:49 +0100
-Message-ID: <CAH5fLgisLyW-d9rsHJ8Vp8HpWh7PZxtkXooVQyMTxs445Ah4GQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] rust: add dma coherent allocator abstraction.
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, daniel.almeida@collabora.com, 
-	a.hindborg@kernel.org, linux-kernel@vger.kernel.org, dakr@redhat.com, 
-	airlied@redhat.com, miguel.ojeda.sandonis@gmail.com, wedsonaf@gmail.com, 
-	Andreas Hindborg <a.hindborg@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3rn6i6zl2o5dcpxg"
+Content-Disposition: inline
+In-Reply-To: <20241016152553.2321992-3-gnstark@salutedevices.com>
+
+
+--3rn6i6zl2o5dcpxg
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/4] pwm: meson: Support constant and polarity bits
+MIME-Version: 1.0
 
-On Mon, Nov 4, 2024 at 10:07=E2=80=AFAM Abdiel Janulgue
-<abdiel.janulgue@gmail.com> wrote:
-> +/// Abstraction of dma_alloc_coherent
-> +///
-> +/// # Invariants
-> +///
-> +/// For the lifetime of an instance of CoherentAllocation, the cpu addre=
-ss is a valid pointer
-> +/// to an allocated region of consistent memory and we hold a reference =
-to the device.
-> +pub struct CoherentAllocation<T: Add> {
+Hello George,
 
-Requiring `T: Add` is very unusual. Why?
+there are two minor things I dislike in this patch/driver. But I'm not
+sure the alternatives are objectively considerably better. See below and
+judge yourself.
 
-I don't even see any additions anywhere.
+On Wed, Oct 16, 2024 at 06:25:51PM +0300, George Stark wrote:
+> Newer meson PWM IPs support constant and polarity bits. Support them to
+> correctly implement constant and inverted output levels.
+>=20
+> Using constant bit allows to have truly stable low or high output level.
+> Since hi and low regs internally increment its values by 1 just writing
+> zero to any of them gives 1 clock count impulse. If constant bit is set
+> zero value in hi and low regs is not incremented.
+>=20
+> Using polarity bit instead of swapping hi and low reg values allows to
+> correctly identify inversion in .get_state().
+>=20
+> Signed-off-by: George Stark <gnstark@salutedevices.com>
+> ---
+>  drivers/pwm/pwm-meson.c | 63 ++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 56 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+> index 2ef632caebcc..974c3c74768c 100644
+> --- a/drivers/pwm/pwm-meson.c
+> +++ b/drivers/pwm/pwm-meson.c
+> @@ -6,7 +6,7 @@
+>   * PWM output is achieved by calculating a clock that permits calculating
+>   * two periods (low and high). The counter then has to be set to switch =
+after
+>   * N cycles for the first half period.
+> - * The hardware has no "polarity" setting. This driver reverses the peri=
+od
+> + * Partly the hardware has no "polarity" setting. This driver reverses t=
+he period
+>   * cycles (the low length is inverted with the high length) for
+>   * PWM_POLARITY_INVERSED. This means that .get_state cannot read the pol=
+arity
+>   * from the hardware.
+> @@ -56,6 +56,10 @@
+>  #define MISC_B_CLK_SEL_SHIFT	6
+>  #define MISC_A_CLK_SEL_SHIFT	4
+>  #define MISC_CLK_SEL_MASK	0x3
+> +#define MISC_B_CONSTANT_EN	BIT(29)
+> +#define MISC_A_CONSTANT_EN	BIT(28)
+> +#define MISC_B_INVERT_EN	BIT(27)
+> +#define MISC_A_INVERT_EN	BIT(26)
+>  #define MISC_B_EN		BIT(1)
+>  #define MISC_A_EN		BIT(0)
+> =20
+> @@ -68,6 +72,8 @@ static struct meson_pwm_channel_data {
+>  	u8		clk_div_shift;
+>  	u8		clk_en_shift;
+>  	u32		pwm_en_mask;
+> +	u32		const_en_mask;
+> +	u32		inv_en_mask;
+>  } meson_pwm_per_channel_data[MESON_NUM_PWMS] =3D {
+>  	{
+>  		.reg_offset	=3D REG_PWM_A,
+> @@ -75,6 +81,8 @@ static struct meson_pwm_channel_data {
+>  		.clk_div_shift	=3D MISC_A_CLK_DIV_SHIFT,
+>  		.clk_en_shift	=3D MISC_A_CLK_EN_SHIFT,
+>  		.pwm_en_mask	=3D MISC_A_EN,
+> +		.const_en_mask	=3D MISC_A_CONSTANT_EN,
+> +		.inv_en_mask	=3D MISC_A_INVERT_EN,
+>  	},
+>  	{
+>  		.reg_offset	=3D REG_PWM_B,
+> @@ -82,6 +90,8 @@ static struct meson_pwm_channel_data {
+>  		.clk_div_shift	=3D MISC_B_CLK_DIV_SHIFT,
+>  		.clk_en_shift	=3D MISC_B_CLK_EN_SHIFT,
+>  		.pwm_en_mask	=3D MISC_B_EN,
+> +		.const_en_mask	=3D MISC_B_CONSTANT_EN,
+> +		.inv_en_mask	=3D MISC_B_INVERT_EN,
+>  	}
+>  };
 
-Alice
+So the generic register description describes the const and invert bits,
+but it doesn't apply to all IPs. Thinking about that, I wonder why this
+struct exists at all. I would have done this as follows:
+
+	#define MESON_PWM_REG_PWM(chan)		(0 + 4 * (chan))
+
+	#define MESON_PWM_REG_MISC		(8)
+	#define MESON_PWM_REG_MISC_EN(chan)		BIT(chan)
+	#define MESON_PWM_REG_MISC_CLK_SEL(chan)	GENMASK(5 + 2 * (chan), 4 + 2 * (=
+chan))
+	....
+
+and then use these constants directly (with pwm->hwpwm as parameter if
+needed) in the code. I would expect this to result in more efficient and
+smaller code.
+
+> @@ -227,6 +252,15 @@ static void meson_pwm_enable(struct pwm_chip *chip, =
+struct pwm_device *pwm)
+> =20
+>  	value =3D readl(meson->base + REG_MISC_AB);
+>  	value |=3D channel_data->pwm_en_mask;
+> +
+> +	if (meson->data->has_constant)
+> +		meson_pwm_assign_bit(&value, channel_data->const_en_mask,
+> +				     channel->constant);
+
+Personally I'd prefer:
+
+	value &=3D ~MESON_PWM_REG_MISC_CONST_EN(pwm->hwpwm);
+	if (meson->data->has_constant && channel->constant)
+		value |=3D MESON_PWM_REG_MISC_CONST_EN(pwm->hwpwm);
+
+even though your variant only mentions the mask once. While it has this
+repetition, it's clear what happens without having to know what
+meson_pwm_assign_bit() does. Maybe that's subjective?
+
+Best regards
+Uwe
+
+--3rn6i6zl2o5dcpxg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcolJMACgkQj4D7WH0S
+/k5SmQf5AVHb+2560do8K6cpJeSamFxUb+0mKHgotG6R/mQStG7hRiLWlR3PAVOF
+iYSCZjorNJU44x/PBKG/mxlUJB5WiIy00ONqhivhr7Gh6n+KtyJBWMCcVZHiVktp
+6NcUGOCN/j7e1VjzGgL3oVaMk+eir+so5qsQ5Ptg7bD20YGkv1zQAAAF/Z/MkVBP
+CtV24+C5MHYn2a2BLcKcJ6+d6t+JAK6t4LQszmhYSaCq+cutcQ58rfXtx2zGLa10
+jBmyA3FYtcsQsv5gVLQxi5RxZSCuF+BwyMt0tdVubF3PF0Ba+3Mi5LgRIE2MdLW1
+r5YAWOH6z+iQA7gJhobnVcBh0QSpsQ==
+=217M
+-----END PGP SIGNATURE-----
+
+--3rn6i6zl2o5dcpxg--
 
