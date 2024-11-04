@@ -1,155 +1,152 @@
-Return-Path: <linux-kernel+bounces-394790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B04B9BB3EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:55:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8389BB3F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:55:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAB361F21B80
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:55:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25B31C2116E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F7C1B3936;
-	Mon,  4 Nov 2024 11:55:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932781B392B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14ACA1B3937;
+	Mon,  4 Nov 2024 11:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9TchSO2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D334430;
+	Mon,  4 Nov 2024 11:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730721324; cv=none; b=eorvXn3kvc+32MfDu1jWZ4ouWdBoNPGO1lGiX8zHTFkkbIiZfnXXR2zhVKasfUY1DFG8qYq4GBVw2D1trPnKFkUXREgXCcCX14dlzo9ORHpbvUYeIluwN1xyqEebOP2G2XogqiyEuaIIFcPCRE/EhaO3WZbudjb3ONbAQOg2+3o=
+	t=1730721331; cv=none; b=YjfoZOMiCv6LshEzXVjHXE4CsoJfwYMKo+Z2vbRbYHagu1QXVJQFj8hYMv1/nCFqp/tbUYxi0nNSBxwKb8G3t4zO6JNcPbsLqIyfvCJVtFq54Wj9P+51I/ZOETNosQuMtMxWp7y6O8VamCFbEtpYM40W+6F7xOI8xxM3MIWxbbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730721324; c=relaxed/simple;
-	bh=z1Rs3oIzWXpJJEB7tixIBqfCMIPqqY3WEg3jAc8FD+8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Cul/1lWFLvwvwyStvKB426xeUgUd+3MR7irer45HqLQuxnOCaHoW7cYijFm4T8ReUvuMvb87GbGu0CV4RNp+BL1EQW2nCxngg3uhWyl6Cj7EuxOIZQNCrjZWGzmv5ZwoJ6qRfoLNJ0fA3T/QiLED7nNZburPsL7MK5NCR6Ux62Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B48A5FEC;
-	Mon,  4 Nov 2024 03:55:50 -0800 (PST)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B7C43F6A8;
-	Mon,  4 Nov 2024 03:55:18 -0800 (PST)
-Message-ID: <425cb94a-96b3-4863-8bbb-78e18d5a4939@arm.com>
-Date: Mon, 4 Nov 2024 12:55:00 +0100
+	s=arc-20240116; t=1730721331; c=relaxed/simple;
+	bh=dSvQG2gdzCgovIp1SHu/ZXST84or/Z8UQImA0c+6RSo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PT0UjWBaVOUZVBo1/VO5FIrFyHYMAMGdx9Fbzv/rdM3v2HbOWkQHCIHTZtQ3BKgXDxMzQXiAHe39hMTT6l6fkL3kmI0AmZpYSdL3QqxiP8WfxIfY6LoDVDujlruhFVOQvz6mN7Gimczc53sluqKkZfXxc9LxbSw2OiKRLhbavYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9TchSO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F169EC4CED7;
+	Mon,  4 Nov 2024 11:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730721331;
+	bh=dSvQG2gdzCgovIp1SHu/ZXST84or/Z8UQImA0c+6RSo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Z9TchSO2UHJQ3yUH/sJK/2qP6ZVzbwA/1OacZC0bMtWpsuVBJR7yHmXDUakGq1Bmd
+	 yLdot0+LveoyHfLKN7Zw0oBw4wqKf7Vx79Qj12nJ2r77BboJjhTDBtqG7PEM8tcPhI
+	 Xthuq5LsnRja3j4s4hH1uKlOVSjJ5jOc6CYsCC0q1ZTmvEItuN9+CKGhgIOGOhTP1m
+	 6ysmw2utTZi7WIWhIRmFM17BcihOdkW2uOkgauimFBI0wNnCsFTKPeh9K/McQNnKY4
+	 sHf6Mme91LQAVp9GZZFw+8SnC4wBNoxbHMKttMUC+gwQVORoanEpqZLM0uv9dFBbu1
+	 7y0H5uyErPDkg==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb599aac99so34205381fa.1;
+        Mon, 04 Nov 2024 03:55:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWY2ADCYQi/TCNwdGpgaKKMjmayg515V/PolJh1qIpBpObW5PEZhSUCgJU7n9t7RH2qPH1e7mH7442QHVi4@vger.kernel.org, AJvYcCXS+FeD8L8h7D0S3JYrdtWDYeMUraM45HoeP08AeUM6GTe4c8FaCHW4fIsauEIgL4szWyzS6YVDz13HqlNtIDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJThTWMr/dXv91taPdp46qFwHTz+J6hg0/SMkcWtH3ojL81a4+
+	dATXDlWHdT/2wDB1b5KR5vLbXSR/imq8RJPjlIXXLzg7vt/YTyWN8eZIoxOSiKRC0Dt1KVjyzWw
+	y08usoJykARmh5agetUehtp4Sz+0=
+X-Google-Smtp-Source: AGHT+IGrVfNMKT4eiJ9enlaTFPJYd4xEefhHhklhSnDylaakCVK1O+Ad9dgJHMb5IsefHr8JaEq26sQU7EDdMqX4g54=
+X-Received: by 2002:a2e:b8c5:0:b0:2fc:9afe:1157 with SMTP id
+ 38308e7fff4ca-2fedb794dc0mr51085401fa.2.1730721329211; Mon, 04 Nov 2024
+ 03:55:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-To: Phil Auld <pauld@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
- wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de,
- efault@gmx.de, Christian Loehle <christian.loehle@arm.com>
-References: <20240727102732.960974693@infradead.org>
- <20240727105030.226163742@infradead.org>
- <20241101124715.GA689589@pauld.westford.csb>
- <ed46d844-e0b0-46fd-a164-9bfad538a7a9@arm.com>
-Content-Language: en-US
-In-Reply-To: <ed46d844-e0b0-46fd-a164-9bfad538a7a9@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241102152226.2593598-1-jarkko@kernel.org> <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
+ <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com>
+ <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org> <CAMj1kXGd5KAXiFr3rEq3cQK=_970b=eRT4X6YKVSj2PhN6ACrw@mail.gmail.com>
+ <97d4e1a0-d86e-48a9-ad31-7e53d6885a96@apertussolutions.com>
+In-Reply-To: <97d4e1a0-d86e-48a9-ad31-7e53d6885a96@apertussolutions.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 4 Nov 2024 12:55:17 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFEJYVs7p6QLEAU-T+xfoWhkFi=PE9QpJ4Oo4oh3eM38Q@mail.gmail.com>
+Message-ID: <CAMj1kXFEJYVs7p6QLEAU-T+xfoWhkFi=PE9QpJ4Oo4oh3eM38Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
+To: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, x86@kernel.org, 
+	Ross Philipson <ross.philipson@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	trenchboot-devel@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-+cc Christian Loehle <christian.loehle@arm.com>
+On Mon, 4 Nov 2024 at 12:52, Daniel P. Smith
+<dpsmith@apertussolutions.com> wrote:
+>
+> On 11/4/24 06:27, Ard Biesheuvel wrote:
+> > On Mon, 4 Nov 2024 at 12:18, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >>
+> >> On Mon Nov 4, 2024 at 12:57 PM EET, Daniel P. Smith wrote:
+> >>> On 11/2/24 14:00, Jarkko Sakkinen wrote:
+> >>>> On Sat Nov 2, 2024 at 5:22 PM EET, Jarkko Sakkinen wrote:
+> >>>>> It is not really my problem but I'm also wondering how the
+> >>>>> initialization order is managed. What if e.g. IMA happens to
+> >>>>> initialize before slmodule?
+> >>>>
+> >>>> The first obvious observation from Trenchboot implementation is that it
+> >>>> is 9/10 times worst idea ever to have splitted root of trust. Here it
+> >>>> is realized by an LKM for slmodule.
+> >>>
+> >>> First, there is no conflict between IMA and slmodule. With your change
+> >>> to make locality switching a one shot, the only issue would be if IMA
+> >>> were to run first and issue a locality switch to Locality 0, thus
+> >>> blocking slmodule from switching to Locality 2. As for PCR usage, IMA
+> >>> uses the SRTM PCRs, which are completely accessible under Locality 2.
+> >>
+> >> Just pointing out a possible problem (e.g. with  TPM2_PolicyLocality).
+> >>
+> >>> Honestly, a better path forward would be to revisit the issue that is
+> >>> driving most of that logic existing, which is the lack of a TPM
+> >>> interface code in the setup kernel. As a reminder, this issue is due to
+> >>> the TPM maintainers position that the only TPM code in the kernel can be
+> >>> the mainline driver. Which, unless something has changed, is impossible
+> >>> to compile into the setup kernel due to its use of mainline kernel
+> >>> constructs not present in the setup kernel.
+> >>
+> >> I don't categorically reject adding some code to early setup. We have
+> >> some shared code EFI stub but you have to explain your changes
+> >> proeprly. Getting rejection in some early version to some approach,
+> >> and being still pissed about that years forward is not really way
+> >> to go IMHO.
+> >>
+> >
+> > Daniel has been nothing but courteous and patient, and you've waited
+> > 11 revision to come up with some bikeshedding patches that don't
+> > materially improve anything.
+> >
+> > So commenting on Daniel's approach here is uncalled for.
+> >
+> > Can we please converge on this?
+> >
+> > Daniel - if no component can be built as a module, there should be no
+> > reason for the set_default_locality() hook to be exported to modules
+> > right? And do we even need a sysfs node to expose this information?
+>
+> Hi Ard,
+>
+> The only reason off the top of my head of why it was exported was to
+> support the fact that the tpm module itself could be built as a module,
+> not that we were looking for it to be done so.
+>
 
-On 04/11/2024 10:28, Dietmar Eggemann wrote:
-> Hi Phil,
-> 
-> On 01/11/2024 13:47, Phil Auld wrote:
->>
->> Hi Peterm
->>
->> On Sat, Jul 27, 2024 at 12:27:49PM +0200 Peter Zijlstra wrote:
->>> Extend / fix 86bfbb7ce4f6 ("sched/fair: Add lag based placement") by
->>> noting that lag is fundamentally a temporal measure. It should not be
->>> carried around indefinitely.
->>>
->>> OTOH it should also not be instantly discarded, doing so will allow a
->>> task to game the system by purposefully (micro) sleeping at the end of
->>> its time quantum.
->>>
->>> Since lag is intimately tied to the virtual time base, a wall-time
->>> based decay is also insufficient, notably competition is required for
->>> any of this to make sense.
->>>
->>> Instead, delay the dequeue and keep the 'tasks' on the runqueue,
->>> competing until they are eligible.
->>>
->>> Strictly speaking, we only care about keeping them until the 0-lag
->>> point, but that is a difficult proposition, instead carry them around
->>> until they get picked again, and dequeue them at that point.
->>
->> This one is causing a 10-20% performance hit on our filesystem tests.
->>
->> On 6.12-rc5 (so with the latest follow ons) we get:
->>
->> with DELAY_DEQUEUE the bandwidth is 510 MB/s
->> with NO_DELAY_DEQUEUE the bandwidth is 590 MB/s
->>
->> The test is fio, something like this:
->>
->> taskset -c 1,2,3,4,5,6,7,8 fio --rw randwrite --bs 4k --runtime 1m --fsync 0 --iodepth 32 --direct 1 --ioengine libaio --numjobs 8 --size 30g --nrfiles 1 --loops 1 --name default --randrepeat 1 --time_based --group_reporting --directory /testfs
-> 
-> I'm not seeing this on my i7-13700K running tip sched/core (1a6151017ee5
-> - sched: psi: pass enqueue/dequeue flags to psi callbacks directly
-> (2024-10-26 Johannes Weiner)) (6.12.0-rc4 - based)
-> 
-> Using 'taskset 0xaaaaa' avoiding SMT and running only on P-cores.
-                 ^^^^^^^
-> 
-> vanilla features: 990MB/s (mean out of 5 runs, σ:  9.38)
-> NO_DELAY_DEQUEUE: 992MB/s (mean out of 5 runs, σ: 10.61)
+But the inclusion of the secure launch module will force the TPM
+module to be builtin too, surely.
 
-Christian Loehle just told me that my cpumask looks odd. Should be
-0xaaaa instead.
+> As to sysfs, there is the TXT register content that we would like to
+> have exposed, and they should be readonly. For context to contrast with,
+> tboot user space utility txt-stat worked by trying to read the TXT
+> register address space via /dev/mem, think enough is said there. The
+> other purpose we used sysfs was management of the DRTM log. We used it
+> to provide a means to ensure the DRTM eventlog is extended when
+> measurements are sent to the DRTM PCRs and then to be able to retrieve
+> the final log.
+>
 
-Retested:
-
-vanilla features: 954MB/s (mean out of 5 runs, σ: 30.83)
-NO_DELAY_DEQUEUE: 932MB/s (mean out of 5 runs, σ: 28.10)
-
-Now there are only 8 CPUs (instead of 10) for the 8 (+2) fio tasks. σ
-went up probably because of more wakeup/preemption latency.
-
-> 
-> # sudo lshw -class disk -class storage
->   *-nvme                    
->        description: NVMe device
->        product: GIGABYTE GP-ASM2NE6500GTTD
->        vendor: Phison Electronics Corporation
->        physical id: 0
->        bus info: pci@0000:01:00.0
->        logical name: /dev/nvme0
->        version: EGFM13.2
->        ...
->        capabilities: nvme pciexpress msix msi pm nvm_express bus_master cap_list
->        configuration: driver=nvme latency=0 nqn=nqn.2014.08.org.nvmexpress:19871987SN215108954872 GIGABYTE GP-ASM2NE6500GTTD state=live
->        resources: irq:16 memory:70800000-70803fff
-> 
-> # mount | grep ^/dev/nvme0
-> /dev/nvme0n1p2 on / type ext4 (rw,relatime,errors=remount-ro)
-> 
-> Which disk device you're using?
-> 
->>
->> In this case it's ext4, but I'm not sure it will be FS specific.
->>
->> I should have the machine and setup next week to poke further but I wanted
->> to mention it now just in case any one has an "aha" moment.
->>
->> It seems to only effect these FS loads. Other perf tests are not showing any
->> issues that I am aware of.
-> 
-> [...]
-> 
-> 
-
+I was referring specifically to the read-write sysfs node that permits
+user space to update the default TPM locality. Does it need to be
+writable? And does it need to exist at all?
 
