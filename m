@@ -1,114 +1,120 @@
-Return-Path: <linux-kernel+bounces-395046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647059BB7BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:28:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EFE9BB7BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:28:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C69282C92
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:27:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 204D41C22D56
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6FE1AC43A;
-	Mon,  4 Nov 2024 14:27:54 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E8C1AE018;
+	Mon,  4 Nov 2024 14:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXbLCapV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A300E25776
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471672AEFE;
+	Mon,  4 Nov 2024 14:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730730474; cv=none; b=MMKOxWGxr9xCEb8+wC/Nr7H6NinFc8AR4KIPZVBJlr4Zf3YKVJ1tAiNOfDJQriSEhXOdEFfoP1JoTtKoNZHUMeSv5uulHtoGopUeam4knKneqzGBEy7z58I25cquv+UE/r0BbI3KkTY3U3OQzZjSvkJJadzgWCxt+UOVXruYyTQ=
+	t=1730730505; cv=none; b=DAOFcomgCU/K+gFaJpg+wqAqcHaK8PIX9iXv5gBYBPbVVsvqGo7zhlAaP0KGRLhJ7dSP495cW6UZIlSBMebfh4OKvkyEgX2J6bgL446qNY5ikJM9OEZ1A17Ug+Gs2CDPZHyCV+0iwo1wUd7iDteio3KUUy6KG+1k4j8VX3Zri30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730730474; c=relaxed/simple;
-	bh=BzrJ6N3QNuHRcVk8wm/vmgY/RU26zYQ9LyG6vqWlqlA=;
+	s=arc-20240116; t=1730730505; c=relaxed/simple;
+	bh=+RvpvKPAHbAWetHfa4i1WFNeuH1qBy1J2yJHuYrSv5Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/Iev9+hUoCI3XWdJIS0jkO99o7esSKMBfU12s6UDto9FxTCBJ46ixVLhWzExn+sg+peEL0zKPH73BOc9YUuWhLNgepp0QWejS24b6s7apJCqtKe/bU6OlNv06r6aAwQsGZ+n3U2YWFplOiumgovHu4Wos25hoOoa/+/Twx5JXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9acafdb745so746307366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 06:27:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730730471; x=1731335271;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=isN9Ps/gLnEyDuQpgnADyJxf1zJtoLZcMM+6E1KR1JY=;
-        b=BoE71RWtkmkDu6FTq4fn6NXI2oDg/yqdoaTtRUND1i4gKHMD5ESmohXcfJ9L8/2V8q
-         06a63Q6kzrlrWSzfLex/AxhwuKgaLRogp61LeZFOrKFinWux6dw7hQ/fNRTclqJG1BKT
-         PZIMrGlPpD9nfCstSrEYy0ZHep3Gug8Dneym+X4vIdRR15uzEWJp/g4yahVdOSQr2Zri
-         9gObHdWWh6CuRTusqxqj+k8r9BpAwDWSs67YgI50dKt557rxD+78M46WfWmKFEyiWtAA
-         A1pblSAuY+afCfCdLlm5VBwlo+xyx+oI5Zki4bnpH1Kif1/ej/ieWjjgCD4nwQxiTo+q
-         AGTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyPYsyv8bzh7yUW7+NR3XBxV+beQ6f7dm8BgLMLJ1Ebr9pw41w7Uz2j49Hit9aJhjTW4CFSl6el9F3g60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWFfNC9mn7JTDNOCo94eF2T6SsPejNUqFQI4C+MSgkk4bIaWZF
-	QgVRcBXHdc5irMVWIhjG9YyU4V0MVw2CrAYM9khaARjhYUoKjeU9
-X-Google-Smtp-Source: AGHT+IHORFWIN4tYcghfdXF6lQTuclCRRHh4TUUMvwA3JlRxkrLnaSTwD7zeFUNFURKiQxsS7Jx2yg==
-X-Received: by 2002:a17:907:d27:b0:a9a:f19:8c47 with SMTP id a640c23a62f3a-a9e55a6fc0fmr1552692266b.13.1730730469107;
-        Mon, 04 Nov 2024 06:27:49 -0800 (PST)
-Received: from gmail.com (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564e9ceasm558811666b.96.2024.11.04.06.27.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 06:27:48 -0800 (PST)
-Date: Mon, 4 Nov 2024 06:27:46 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Qinglang Miao <miaoqinglang@huawei.com>
-Cc: Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	openipmi-developer@lists.sourceforge.net,
+	 Content-Type:Content-Disposition:In-Reply-To; b=GOWWn2Qi1E9LD3ij0KfmHWwbMJnbd8SVsiQWczdBQHFWXBl090dwStoFqSUKJr8QOktGWrtRx3sLszHqUl6u5p8QJqZFfWizf9Z9gAbGAbcRLjAZEtJd+REYFLlnT6f6BTDWRhKcKZRSOkqaarfVzDehL6gygoQCNx6YIE8bbI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXbLCapV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7021DC4CECE;
+	Mon,  4 Nov 2024 14:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730730504;
+	bh=+RvpvKPAHbAWetHfa4i1WFNeuH1qBy1J2yJHuYrSv5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZXbLCapVEzR0c3KczRPp4oermNy07DIC3TT7hKC5QbeHEFIWSOHIopXZv5r7hYcMq
+	 XOmR0X13sgNgOTiHQjQcbN0bd+Tjs0rHEvAHjEd1VrGw0HaJDs0p6g9Z4aZ79eg/so
+	 ZPA7uWo2eVXDTHeaxZDMdMmT/GdCnvAke6/j3iCnhVLumCfh6ZxHwIavmojiYBzSjz
+	 HlZy/M3nFJzH234/+gPB0Ocr2r5wKBoOSuXGGAFd5kQ8Fq0T/oHqRdKzIM9HYwsfzN
+	 vqUAjU7VhyjUMuLI4bWp51O32TByo/iYaNgdtIac20EYbttW0ab2N7L4kYiDjaLO+x
+	 SmZs6t8LYRJLA==
+Date: Mon, 4 Nov 2024 23:28:20 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Cc: vigneshr@ti.com, jpanis@baylibre.com, gregkh@linuxfoundation.org,
+	linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipmi: msghandler: Suppress suspicious RCU usage warning
-Message-ID: <20241104-jasper-chameleon-of-weather-59bcea@leitao>
-References: <20201119070839.381-1-miaoqinglang@huawei.com>
+Subject: Re: [PATCH] counter: ti-ecap-capture: Add check for clk_enable()
+Message-ID: <ZyjaBMgVVKvc8Kdb@ishi>
+References: <20241103213910.31976-1-jiashengjiangcool@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="W2oGqzCZLTycLuKz"
+Content-Disposition: inline
+In-Reply-To: <20241103213910.31976-1-jiashengjiangcool@gmail.com>
+
+
+--W2oGqzCZLTycLuKz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201119070839.381-1-miaoqinglang@huawei.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 19, 2020 at 03:08:39PM +0800, Qinglang Miao wrote:
-> while running ipmi, ipmi_smi_watcher_register() caused
-> a suspicious RCU usage warning.
-> 
-> -----
-> 
-> =============================
-> WARNING: suspicious RCU usage
-> 5.10.0-rc3+ #1 Not tainted
-> -----------------------------
-> drivers/char/ipmi/ipmi_msghandler.c:750 RCU-list traversed in non-reader section!!
-> other info that might help us debug this:
-> rcu_scheduler_active = 2, debug_locks = 1
-> 2 locks held by syz-executor.0/4254:
-> stack backtrace:
-> CPU: 0 PID: 4254 Comm: syz-executor.0 Not tainted 5.10.0-rc3+ #1
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1 04/ 01/2014
-> Call Trace:
-> dump_stack+0x19d/0x200
-> ipmi_smi_watcher_register+0x2d3/0x340 [ipmi_msghandler]
-> acpi_ipmi_init+0xb1/0x1000 [acpi_ipmi]
-> do_one_initcall+0x149/0x7e0
-> do_init_module+0x1ef/0x700
-> load_module+0x3467/0x4140
-> __do_sys_finit_module+0x10d/0x1a0
-> do_syscall_64+0x34/0x80
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x468ded
-> 
-> -----
-> 
-> It is safe because smi_watchers_mutex is locked and srcu_read_lock
-> has been used, so simply pass lockdep_is_held() to the
-> list_for_each_entry_rcu() to suppress this warning.
+On Sun, Nov 03, 2024 at 09:39:10PM +0000, Jiasheng Jiang wrote:
+> Add check for the return value of clk_enable() in order to catch the
+> potential exception.
+>=20
+> Fixes: 4e2f42aa00b6 ("counter: ti-ecap-capture: capture driver support fo=
+r ECAP")
+> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+> ---
+>  drivers/counter/ti-ecap-capture.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-=
+capture.c
+> index 675447315caf..30a269fa5da0 100644
+> --- a/drivers/counter/ti-ecap-capture.c
+> +++ b/drivers/counter/ti-ecap-capture.c
+> @@ -574,8 +574,11 @@ static int ecap_cnt_resume(struct device *dev)
+>  {
+>  	struct counter_device *counter_dev =3D dev_get_drvdata(dev);
+>  	struct ecap_cnt_dev *ecap_dev =3D counter_priv(counter_dev);
+> +	int ret;
+> =20
+> -	clk_enable(ecap_dev->clk);
+> +	ret =3D clk_enable(ecap_dev->clk);
+> +	if (ret)
+> +		return ret;
+> =20
+>  	ecap_cnt_capture_set_evmode(counter_dev, ecap_dev->pm_ctx.ev_mode);
+> =20
+> --=20
+> 2.25.1
 
-You probably should use list_for_each_entry_srcu() instead of the
-list_for_each_entry_rcu().
+Similar to the stm32-timer-cnt patch comment: it's not necessarily clear
+that an error in the cnt_resume() callback is due to a clk_enable()
+failure, so you should call dev_err() before returning to indicate the
+reason for the error code.
 
-This problem is still happening in 6.12-rc5.
+William Breathitt Gray
+
+--W2oGqzCZLTycLuKz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZyjaBAAKCRC1SFbKvhIj
+K0pDAP9QHP7AC57PDlkPDoU6P7z0kuhaTVJ/f6c77VHBju/4pgD/V890BRoIB0A5
++wk2gE1Mx4zVquZ2a0NtFHr9zonduwo=
+=/a3w
+-----END PGP SIGNATURE-----
+
+--W2oGqzCZLTycLuKz--
 
