@@ -1,91 +1,119 @@
-Return-Path: <linux-kernel+bounces-395156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A599BB95A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:47:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3B19BB960
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E505B233B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:47:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E9D28274C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09136376E0;
-	Mon,  4 Nov 2024 15:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CF51C07F7;
+	Mon,  4 Nov 2024 15:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVmran2L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lP7A4nP9"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CC913D246;
-	Mon,  4 Nov 2024 15:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E3A1B6D14;
+	Mon,  4 Nov 2024 15:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730735256; cv=none; b=AEx2CO9a8MUpeh3bGVLoPhT976MQCjYViPUkC8P/uHU/DlSTGQylqYRXo0LJN/nKOl8JW96QU1WoiEORvkEttycQaqkHBkrzqeWQPGfY4cBipOK7tosuL3fGgaU6de6vuouO9SRScrb9tVol8epWd+/06BUnrB8vG8hfWgBsOx8=
+	t=1730735310; cv=none; b=BYzzePKMQOe2U7NsZ8YSwyP+hCtwLRB831F6wjikmgNDSpRBlmFxEr1g7PfFdt6IOt/2bpuuFU54ddgk0JtPee0ZZO/ldktqpmJ7l057hGCLH4D2Zr0hP0A0BiWc6bDh/+H1i/KYROQp5Bhlo7a3/C3h8gXmPqld/OxqsWn/wig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730735256; c=relaxed/simple;
-	bh=thCjFnNDPilh94gVyOhCKzVXMSGdfN2FgGarlKfx91U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F34VdVWaD0NbGCU4DS5Y/4WC3G1Vr8GCD1juMaLJjww0GzDOmHvXONozXMxJ1R7878FeNtJa+EP3TriU8r20S/aFFiP/9y1xwhPZK85r09SPHNIbmNI7CqMtHNO3Dc6+PpFjzRSCO2p75yZBbq9FsXmFhXADy+4+PG8dNsd2Al0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVmran2L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B13BCC4CECE;
-	Mon,  4 Nov 2024 15:47:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730735255;
-	bh=thCjFnNDPilh94gVyOhCKzVXMSGdfN2FgGarlKfx91U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hVmran2Lb0MC3j0jbuh7IiZSvCSx2oUjTLOShp9l7mY3Gm3NNPsWVmDxX6bsR9xeh
-	 bnWRB4Yfa9b42e6FwM9qWPmIJbod44dFIn529DW97Y0d0Y6AmMklSwhR270YhPNVpg
-	 G7o7tSjVwvqBIhKPgsIQqGPEOYkdRw9fmt46n4Mf5FoGHY3R7MMR7s1NjmwQEXDcWO
-	 608mNNQrlkBztgNI7160NhdyYVXsRBdA+8qIgn8o1WgZtrkE1c/wOnWhkr0vyC0nF4
-	 I+o0m75a9c9buHv00I9gU/C8qVxK+vC9IfPDYUJ7a3vHPcIfI8nNiYkuvdKyYehjeU
-	 SF6DLNPJTDQ9Q==
-Date: Mon, 4 Nov 2024 09:47:33 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Melody Olvera <quic_molvera@quicinc.com>, linux-kernel@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	devicetree@vger.kernel.org,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,sm8550-pas: Add SM8750 ADSP
-Message-ID: <173073525333.217463.16399518132776024798.robh@kernel.org>
-References: <20241101170309.382782-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1730735310; c=relaxed/simple;
+	bh=hQqSZ7cfwDEOEEaQ/NdKYXoQZOu7iupl3J11XYIqgew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cF7X3ZJaboSMiD5iHupvvV9T3HssGxCfoCWIPrJbvkDsVo2a8NgH7qxta0M3JD8GVgX1yZQzF2rDV94T/pKiWWMuFyd+jqIY+VKgxHEaiSlO8fkW3zp4uoMEZfqpQUpf9xRu+BlsNz6TSz4MBtmRoQlfpRwH5snDmdgnqw+nOZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lP7A4nP9; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 16FEA60003;
+	Mon,  4 Nov 2024 15:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730735299;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ldUcfsMlAUslWYr57Hg0qmqkNkmmS4wsI7qb1CM8FB8=;
+	b=lP7A4nP9NeLGXcYbmk4LXtHE36j0zfESbglRs4QjIUFSVXLUPDTJFavJvXK1wUr6FIGoHZ
+	6ziAgsuYQ/ahQuf2NIAuD25D6yXSlDyC00ydrq9JZ3aD5LI/KqSLwoUL7QpdOF4UiYskhw
+	wrfcl38IdDqesRF7amBKsRcuPfVrAkJ9VV/2/V/obMpKgaBUtRI3ipImsHs5S1IsW5ZMva
+	hJBM7saxTAHiR4qSpHx9+mBIrR0yHoN0+Qme1N1pzgE1hbDzmwp4ljzdMxPPYGovZ+Tw+Q
+	b0Q19QiaHbtRU/2NDix8scRov7CuOXiKaHN9zRZQ638rFSMdvgvaLZNl8KcItg==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Subject: [PATCH 0/2] Enable sensors support for the Congatec Board
+ Controller
+Date: Mon, 04 Nov 2024 16:48:06 +0100
+Message-Id: <20241104-congatec-board-controller-hwmon-v1-0-871e4cd59d8e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101170309.382782-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALbsKGcC/yWNyw6DIBBFf8XMuiQoitJfaVzgMCiJQgv0kRj/v
+ bTu7rmLc3ZIFB0luFY7RHq55IIvUF8qwEX7mZgzhaHhTcsHrhgGP+tMyKago/lhjmFdKbLlvQX
+ PSJEURnW9EQKK5R7Jus+/cBtPjvR4llA+T5h0ouLZNpdL2FpCPnSyt20jdY2dEsTFgNqgrCeDZ
+ U6t7GE8ji8fLZQFvQAAAA==
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: thomas.richard@bootlin.com
 
+The Congatec Board Controller has some voltage, current, temperature
+and fan sensors.
+This series adds an hwmon driver to enable the support.
 
-On Fri, 01 Nov 2024 18:03:09 +0100, Krzysztof Kozlowski wrote:
-> Document compatible for Qualcomm SM8750 SoC ADSP PAS which looks fully
-> compatible with SM8550 variant.  The only difference from bindings point
-> of view is one more interrupt ("shutdown-ack").  Marking devices as
-> compatible, using SM8550 ADSP PAS fallback, requires changing some of
-> the conditionals in "if:then:" to "contains".
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Cc: Melody Olvera <quic_molvera@quicinc.com>
-> Cc: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  .../bindings/remoteproc/qcom,sm8550-pas.yaml  | 48 +++++++++++++------
->  1 file changed, 34 insertions(+), 14 deletions(-)
-> 
+This series is based on linux-next (commit
+1ffec08567f426a1c593e038cadc61bdc38cb467) as the MFD driver is not yet
+available in the main tree.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+The sensors support has been tested on the conga-SA7 board with a
+conga-SEVAL board.
+
+Note that the Board Controller returns two unknown sensors, which causes
+two warnings. These unknown sensors are not defined in the driver provided
+by Congatec.
+
+cgbc-hwmon cgbc-hwmon: Board Controller returned an unknown sensor (type=2, id=17), ignore it
+cgbc-hwmon cgbc-hwmon: Board Controller returned an unknown sensor (type=1, id=10), ignore it
+
+Best Regards,
+
+Thomas
+
+$ sensors
+cgbc_hwmon-isa-0000
+Adapter: ISA adapter
+DC Runtime Voltage:    4.93 V
+Chipset Temperature:  +48.0 C
+Board Temperature:    +44.0 C
+
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+Thomas Richard (2):
+      hwmon: Add Congatec Board Controller monitoring driver
+      mfd: cgbc: add a hwmon cell
+
+ MAINTAINERS                |   1 +
+ drivers/hwmon/Kconfig      |   9 ++
+ drivers/hwmon/Makefile     |   1 +
+ drivers/hwmon/cgbc-hwmon.c | 287 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/mfd/cgbc-core.c    |   1 +
+ 5 files changed, 299 insertions(+)
+---
+base-commit: 1ffec08567f426a1c593e038cadc61bdc38cb467
+change-id: 20240809-congatec-board-controller-hwmon-e9e63d957d33
+
+Best regards,
+-- 
+Thomas Richard <thomas.richard@bootlin.com>
 
 
