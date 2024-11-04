@@ -1,148 +1,111 @@
-Return-Path: <linux-kernel+bounces-395437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F229BBDDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:18:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740A79BBDE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200951F22D1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50591C21E6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0AA18DF89;
-	Mon,  4 Nov 2024 19:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EC718DF8F;
+	Mon,  4 Nov 2024 19:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbzx6VrD"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="GSqPSLPZ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C563AD2D;
-	Mon,  4 Nov 2024 19:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730747910; cv=none; b=VcfcyBZb4PtJTpVYCdARa7y9sTkq13Z8c2CDoWaOTu3p1Taqrg4i1AnKtN8YH60M7HpAJr6udeJzgA52QwZ8sMb2RFebksUh7pZrNZSFX3RreBhim6IL2Q9TV62ANZYYW2dYobMKKieiqf6HX6K0sBxOSQ2ML7EIm6pOUFljHZU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730747910; c=relaxed/simple;
-	bh=S9jUQmg8h331e2Pj63NU2N83tcF8B984es3Wedsa/lk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oVP0PvzK44ugSEm1T5opmSbDdXBUj52Mg4n72o3P45t+RN4trgnVyuManLP8lI6ZjMxHW6TZJrdVGnK+rl7LFQ1oNGRFdlhwAhJXl7LAtYZd7vpDdxEd4rWY5906JbccILZSWFa2RJGETLaDdXoW5StEoUuIU4Qbk9+3+vdTHJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bbzx6VrD; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460ad98b043so36536091cf.1;
-        Mon, 04 Nov 2024 11:18:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730747908; x=1731352708; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=unJ9b+rts3y1hb3/PAxKDJbTMcuKEtEuGFYI5bvW40k=;
-        b=bbzx6VrDTBD/vh/ksEzbQb8gmhPgQDM5rgjkjg3tMgc7IBR2agJqmEVgd6qK3z1W+Z
-         Si8O8bKsaWwczBBssLAAI2ntckkgF51MSgUJj9Unh9ZkWVBSmbOt61lbUzWrSNZqEqRO
-         YycCHfnH24T/qJkKgfUduEm2/mhethQkn/tX855M0kVTYXFMYP+xgMZOua69An+XSEHe
-         2AQgidJcYuyv8kVndgLXzn+qr8Doo38jspi5R1sWjfir0fYJJQ2McEyP1hFZiShAikig
-         +InsMAfa9blE6deAuQ2lB614bNlnL54sVC+vB32DfAqVQs7Iw6pvLwLV7qYZe2LoyYCJ
-         n4ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730747908; x=1731352708;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=unJ9b+rts3y1hb3/PAxKDJbTMcuKEtEuGFYI5bvW40k=;
-        b=icbmxweGA+G8kZwAArArHj5mxujgP5FqSqbDT266ucn59sduJrNAWeGeQmQnNF/2SU
-         t9I3I9OrmJGu/qJpmVeUGRPM+yi66U//xoZL81TVrOC9RnN58ckmMxWaF2P4Oi4RPhw3
-         M6tbHjZ/lI2hrJrCx1Wi8v2jq9QNbXR9AwJ+hojGG/1m8hiOS5zZT346YNBrqTYrs8aT
-         0+LUE1ZjE8loa33Vqe9S8daK6HRwqRGnpBzAHcvZf3zZU5DntcScL+MuAAvXEDl/BDhJ
-         WIZ2Fj8NSltoI/Wu4RnkvPjPM/BZNahACE8Z3qzEcK8g30TQXlWazNSl0G/7LtvHrdsy
-         25Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsl1XX3Am2BePaz4skbYh+UCTtc4gqGH+mNtEN4+5dVScZcDSEe5DMgpxSrIwOSPMoqAFZUqRmAoCtUU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTIgk+3qBUOOAbG8MgkGHUYR/cmVa/3n9b+KL6i0N1iImzZdaV
-	Dnj+ReNOjX+yS3lkGBwXpVhB98e0YSuyMxZlEC9E0N6pF8AkhESd
-X-Google-Smtp-Source: AGHT+IELakiFzr59EudtKLiMCMHPt484NaNIT6Kjz/ZSDX/NpW9fjmCjoWrs7c/vQ4eTZTNX7i2z4g==
-X-Received: by 2002:ac8:58ce:0:b0:44f:fb6d:4b2f with SMTP id d75a77b69052e-462b6e83130mr228655931cf.23.1730747908255;
-        Mon, 04 Nov 2024 11:18:28 -0800 (PST)
-Received: from newman.cs.purdue.edu ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad086e55sm50174351cf.7.2024.11.04.11.18.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 11:18:28 -0800 (PST)
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-To: wbg@kernel.org,
-	fabrice.gasnier@foss.st.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	Jonathan.Cameron@huawei.com,
-	benjamin.gaignard@st.com,
-	gregkh@linuxfoundation.org
-Cc: linux-iio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH v2] counter: stm32-timer-cnt: Add check for clk_enable()
-Date: Mon,  4 Nov 2024 19:18:25 +0000
-Message-Id: <20241104191825.40155-1-jiashengjiangcool@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22B4AD2D;
+	Mon,  4 Nov 2024 19:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730747997; cv=pass; b=JtdIe/VDNXco1aZye9cn+4wsAURHZbMHn//T8wlIMeFAzdAZo5eUuEQhLVx4y3uhOmKuvXzwIb1I5H9YnmvdtPlj34E0C2lFFoQXEn7yXfQJqFToOUbBuinb4W2qZpAIPPwDFcchCoOdGRVOvuQ1ra+LsmuV11bxyBexRJZpO/k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730747997; c=relaxed/simple;
+	bh=zbNYl5RY5/49ulL2/Ro5OEqk2Qd270rdKotK9zKL22Y=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=iymzzAAW7pnwpVZ138xlU5GupJV1y8yDqPyBOuSa0f+X/RKV2vuFM3MgMp/f3ts4jGjRAa2Gqb6rGdp279C2cQkCjjixFUe4jfeQ5IHPF/z3xvwaRsz311CnBWcGMXTW+NqnD5FX3WiRHBw1H7yPvuKd1gEbQ04dNLxIQoz1UJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=GSqPSLPZ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1730747981; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YAICD64OoN8Pc21yQvw+tGpyKyfTqhyZ4pXFZ0KjgoBaS7FDnWi6SE20HiyYXHqHh8DwtRVLnxsSKk03RVCXeYZJgZ0c1yBnXOjgJxOgYwqz6/PX26ZcQZ/ch+FrcBluIOSFHs/dSWKhpmfbUqhW8rNb97xy/2qgy/4BfJpfBAQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1730747981; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zbNYl5RY5/49ulL2/Ro5OEqk2Qd270rdKotK9zKL22Y=; 
+	b=YEdlHIiYCsbStUMX7DxdneuaxjTEOJ1rkJZWbJrvjgYb8hJkpUsOA0WbPkSe9LSDp1XXjwcQCkh3wy/621kgiiLE4i0kCHfTMGURgeeTy2CqPhleIYWPnshqS18eYZWtTfDnPB/Te5nt629K/9P6zVtIGBXRJlars1mCdXIzzJA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730747981;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=zbNYl5RY5/49ulL2/Ro5OEqk2Qd270rdKotK9zKL22Y=;
+	b=GSqPSLPZog18hHwrB4G04pY2YrzAEOR3yfB2qn9Z9l97I22oXxhjPA2t+tpYgDqO
+	g9Ook03lkYk/IEgIgiG6RtbSjelF1hEDkdvD7NGR14Py9s7zx97I+evhBQoSA9ltV+t
+	Sh794x5mR9IH3i1s95zC5QOFbdwH0rrujbvruXi0=
+Received: by mx.zohomail.com with SMTPS id 1730747979393312.83221910305576;
+	Mon, 4 Nov 2024 11:19:39 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH] rust: irq: add support for request_irq()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAH5fLgjmfzTU_88H4mGiv++CbBj0xB5AoiimULCEx_b0wsMmMw@mail.gmail.com>
+Date: Mon, 4 Nov 2024 16:19:23 -0300
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D72CA8B1-E71E-410C-AD7E-D7A81CC3F807@collabora.com>
+References: <20241024-topic-panthor-rs-request_irq-v1-1-7cbc51c182ca@collabora.com>
+ <CAH5fLgjmfzTU_88H4mGiv++CbBj0xB5AoiimULCEx_b0wsMmMw@mail.gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-Add check for the return value of clk_enable() in order to catch the
-potential exception.
+Hi Alice,
 
-Fixes: c5b8425514da ("counter: stm32-timer-cnt: add power management support")
-Fixes: ad29937e206f ("counter: Add STM32 Timer quadrature encoder")
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
-Changelog:
 
-v1 -> v2:
+> On 29 Oct 2024, at 08:59, Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> On Thu, Oct 24, 2024 at 4:20=E2=80=AFPM Daniel Almeida
+> <daniel.almeida@collabora.com> wrote:
+>>=20
+>> Both regular and threaded versions are supported.
+>>=20
+>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+>=20
+> Why implement request_irq over devm_request_irq?
+>=20
+> Alice
+>=20
 
-1. Add dev_err() to indicate the reason for the error code.
----
- drivers/counter/stm32-timer-cnt.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+As we spoke earlier, and for the record, devm will automate the
+lifetime of a resource, taking care to relinquish it when the driver
+is unloaded.
 
-diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
-index 186e73d6ccb4..9c188d9edd89 100644
---- a/drivers/counter/stm32-timer-cnt.c
-+++ b/drivers/counter/stm32-timer-cnt.c
-@@ -214,11 +214,17 @@ static int stm32_count_enable_write(struct counter_device *counter,
- {
- 	struct stm32_timer_cnt *const priv = counter_priv(counter);
- 	u32 cr1;
-+	int ret;
- 
- 	if (enable) {
- 		regmap_read(priv->regmap, TIM_CR1, &cr1);
--		if (!(cr1 & TIM_CR1_CEN))
--			clk_enable(priv->clk);
-+		if (!(cr1 & TIM_CR1_CEN)) {
-+			ret = clk_enable(priv->clk);
-+			if (ret) {
-+				dev_err(counter->parent, "Cannot enable clock %d\n", ret);
-+				return ret;
-+			}
-+		}
- 
- 		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN,
- 				   TIM_CR1_CEN);
-@@ -816,7 +822,11 @@ static int __maybe_unused stm32_timer_cnt_resume(struct device *dev)
- 		return ret;
- 
- 	if (priv->enabled) {
--		clk_enable(priv->clk);
-+		ret = clk_enable(priv->clk);
-+		if (ret) {
-+			dev_err(dev, "Cannot enable clock %d\n", ret);
-+			return ret;
-+		}
- 
- 		/* Restore registers that may have been lost */
- 		regmap_write(priv->regmap, TIM_SMCR, priv->bak.smcr);
--- 
-2.25.1
+I feel better with an explicit `Drop` implementation, which is why
+the devm versions were not chosen. IMHO, the problem it was
+designed to solve often simply does not apply to Rust code.
+
+=E2=80=94 Daniel
 
 
