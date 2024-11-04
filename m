@@ -1,70 +1,54 @@
-Return-Path: <linux-kernel+bounces-394895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79609BB57A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:10:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2119C9BB573
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54F85B2426F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:10:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A1A1B22490
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BC11BD03B;
-	Mon,  4 Nov 2024 13:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1351BBBCC;
+	Mon,  4 Nov 2024 13:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="QoTIF90w"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GbGCE6C8"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D74A1BCA0A;
-	Mon,  4 Nov 2024 13:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D691B6CFB;
+	Mon,  4 Nov 2024 13:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730725836; cv=none; b=SdxEWwYhFu8XBOMhS+FwFcSwwEavDKuGVEaTJndb1gzXetXPc1yPtRtSnG6akP0GL+QTWEXZoXw2EYmNCkPEB8WZ7rpb9MQq9fNGgDBnl6F9FQHezWeZrryGDWuFhGAaLgHkTM5gLyomPNWjCEsikg0u86n6B9hTLCxYMu70Qwo=
+	t=1730725829; cv=none; b=lyRnO+PT8WZtCSBYf2MPL8bFS31D4D5+RJjT8KDoBJs64YPauR/jnpYW6X0VRgmt16YwBDufQhaWdA5W2fgDmXNCGix1KrMnsu5hZz21ksTlT2R5S6bBPN2xa1CKU5oby60BqCHdtitWXm7fTpQCA2RHCoQa9nqjDI843ZgDti0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730725836; c=relaxed/simple;
-	bh=Z2mbvpWFAdMTDdYcO4ugyL1b/eLURJbnO0cdjQkMi0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aTxoXK6YzjHYIwg2lvQYUZlpXg8hVxTYtoup7yFB898d4uH9CKQhu3ayW/XbG4C0p0MYk3l6EVkjU88+++ctvWubTJI//rnpjv5UV2SR8NkFvHvOgxCQthGQPsjg8qYssd3W2bOp39AuryeopnRBPhwAGT9Lg/HqfFeRKbihgF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=QoTIF90w; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1730725835; x=1762261835;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1btoMBa04UyDS7nxAQeta6RxSxmw/jW1eQwuNLcFWgs=;
-  b=QoTIF90wZ8QEM6c9ZU1c6D0fCy/devysZRUFiMxBNaDETFcCS5TF0buN
-   ySxxtWnlKlPf32IA5bfYodyMaJudiRTQRBTDk+pHfQX1kDo9YrHYf+PEz
-   nip4s4G7eE/JK5iAUVs1d1cAILUXF5mKVrE/AHe/DprZ0wqumiJEKW/CR
-   s=;
-X-IronPort-AV: E=Sophos;i="6.11,257,1725321600"; 
-   d="scan'208";a="1844949"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 13:10:06 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.10.100:54379]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.22.75:2525] with esmtp (Farcaster)
- id 22e5bca5-2878-4e31-8cc8-18fdd76ac967; Mon, 4 Nov 2024 13:10:04 +0000 (UTC)
-X-Farcaster-Flow-ID: 22e5bca5-2878-4e31-8cc8-18fdd76ac967
-Received: from EX19D022EUA002.ant.amazon.com (10.252.50.201) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 4 Nov 2024 13:09:59 +0000
-Received: from EX19MTAUEC002.ant.amazon.com (10.252.135.146) by
- EX19D022EUA002.ant.amazon.com (10.252.50.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 4 Nov 2024 13:09:59 +0000
-Received: from email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com
- (10.43.8.6) by mail-relay.amazon.com (10.252.135.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Mon, 4 Nov 2024 13:09:59 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com (Postfix) with ESMTPS id 238228042B;
-	Mon,  4 Nov 2024 13:09:54 +0000 (UTC)
-Message-ID: <90c9d8c0-814e-4c86-86ef-439cb5552cb6@amazon.co.uk>
-Date: Mon, 4 Nov 2024 13:09:53 +0000
+	s=arc-20240116; t=1730725829; c=relaxed/simple;
+	bh=9HrB0hRfb9MPWXWPeZXQEXRRgtlF7QfDTCZF/aQwKS8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NfrIXc+jXmpZcP9PJlqG4nbXQa6in6pJdUYw2He6RzDFi/GEKJeRKVSRQcFbYBRmoxrII/8Q5mlTfyiKsPkbfUa58Rm+rh29H6VMMt3WJvTvNsoa06MVLr91ThuxKZf3gRO/4+UsBoSoS0PmAYw5b3DwHi5udKgjQ/e8V6B9ikQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GbGCE6C8; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730725823;
+	bh=9HrB0hRfb9MPWXWPeZXQEXRRgtlF7QfDTCZF/aQwKS8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GbGCE6C8wudOGBSfu79muvMfKAR2yVIJY6fKZ3raaCqVJIaEX6fTCGnObJv5S9xT/
+	 LVcV69AQ/8Ic/fjsFUkOGpfUa3ye/hkVUzvgxHf635JfVvPj5givJN5R5OfiwMp2og
+	 oaMIEKQMW9AhQOWlVCztjeRseIPGGqaMZNn1ZUxi0LSKrqvvhbl+PFidY8kbPL9EkL
+	 gzC73UaJQr/1jJgT+Q1E8BDKjvymTZgHsGT1U2WBKNzN2cyPugLZUWGYIekG3XEJFQ
+	 Ni+VH9w3FQR2vuUZVrhyehfa3m76omIpOFcT3SmARcIwp93kKL4J75Yj1VI9Y74iFI
+	 1uM9UR5RxPozA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3BBBB17E3630;
+	Mon,  4 Nov 2024 14:10:23 +0100 (CET)
+Message-ID: <f8ca0f82-2851-40d9-983b-2a143b44263a@collabora.com>
+Date: Mon, 4 Nov 2024 14:10:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,185 +56,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
-To: David Hildenbrand <david@redhat.com>, <tabba@google.com>,
-	<quic_eberman@quicinc.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<jthoughton@google.com>, <ackerleytng@google.com>, <vannapurve@google.com>,
-	<rppt@kernel.org>
-CC: <graf@amazon.com>, <jgowans@amazon.com>, <derekmn@amazon.com>,
-	<kalyazin@amazon.com>, <xmarcalx@amazon.com>, <linux-mm@kvack.org>,
-	<corbet@lwn.net>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<chenhuacai@kernel.org>, <kernel@xen0n.name>, <paul.walmsley@sifive.com>,
-	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <hca@linux.ibm.com>,
-	<gor@linux.ibm.com>, <agordeev@linux.ibm.com>, <borntraeger@linux.ibm.com>,
-	<svens@linux.ibm.com>, <gerald.schaefer@linux.ibm.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <luto@kernel.org>, <peterz@infradead.org>,
-	<rostedt@goodmis.org>, <mhiramat@kernel.org>,
-	<mathieu.desnoyers@efficios.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <loongarch@lists.linux.dev>,
-	<linux-riscv@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-References: <20241030134912.515725-1-roypat@amazon.co.uk>
- <4aa0ccf4-ebbe-4244-bc85-8bc8dcd14e74@redhat.com>
- <27646c08-f724-49f7-9f45-d03bad500219@amazon.co.uk>
- <d1a69eb7-85d5-4ffa-88e2-f4841713c1d7@redhat.com>
-From: Patrick Roy <roypat@amazon.co.uk>
+Subject: Re: [PATCH v4 1/2] PCI: mediatek-gen3: Add support for setting
+ max-link-speed limit
+To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ linux-pci@vger.kernel.org
+Cc: ryder.lee@mediatek.com, jianjun.wang@mediatek.com, lpieralisi@kernel.org,
+ robh@kernel.org, bhelgaas@google.com, matthias.bgg@gmail.com,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+ fshao@chromium.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20241104114935.172908-1-angelogioacchino.delregno@collabora.com>
+ <20241104114935.172908-2-angelogioacchino.delregno@collabora.com>
+ <D5DF0QIO2UZQ.29U999LYCC05M@rocinante>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <d1a69eb7-85d5-4ffa-88e2-f4841713c1d7@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <D5DF0QIO2UZQ.29U999LYCC05M@rocinante>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-Hi David,
-
-On 11/4/24 12:18, David Hildenbrand wrote:
-> On 31.10.24 11:42, Patrick Roy wrote:
->> On Thu, 2024-10-31 at 09:50 +0000, David Hildenbrand wrote:
->>> On 30.10.24 14:49, Patrick Roy wrote:
->>>> Unmapping virtual machine guest memory from the host kernel's direct map
->>>> is a successful mitigation against Spectre-style transient execution
->>>> issues: If the kernel page tables do not contain entries pointing to
->>>> guest memory, then any attempted speculative read through the direct map
->>>> will necessarily be blocked by the MMU before any observable
->>>> microarchitectural side-effects happen. This means that Spectre-gadgets
->>>> and similar cannot be used to target virtual machine memory. Roughly 60%
->>>> of speculative execution issues fall into this category [1, Table 1].
->>>>
->>>> This patch series extends guest_memfd with the ability to remove its
->>>> memory from the host kernel's direct map, to be able to attain the above
->>>> protection for KVM guests running inside guest_memfd.
->>>>
->>>> === Changes to v2 ===
->>>>
->>>> - Handle direct map removal for physically contiguous pages in arch code
->>>>     (Mike R.)
->>>> - Track the direct map state in guest_memfd itself instead of at the
->>>>     folio level, to prepare for huge pages support (Sean C.)
->>>> - Allow configuring direct map state of not-yet faulted in memory
->>>>     (Vishal A.)
->>>> - Pay attention to alignment in ftrace structs (Steven R.)
->>>>
->>>> Most significantly, I've reduced the patch series to focus only on
->>>> direct map removal for guest_memfd for now, leaving the whole "how to do
->>>> non-CoCo VMs in guest_memfd" for later. If this separation is
->>>> acceptable, then I think I can drop the RFC tag in the next revision
->>>> (I've mainly kept it here because I'm not entirely sure what to do with
->>>> patches 3 and 4).
->>>
->>> Hi,
->>>
->>> keeping upcoming "shared and private memory in guest_memfd" in mind, I
->>> assume the focus would be to only remove the direct map for private memory?
->>>
->>> So in the current upstream state, you would only be removing the direct
->>> map for private memory, currently translating to "encrypted"/"protected"
->>> memory that is inaccessible either way already.
->>>
->>> Correct?
->>
->> Yea, with the upcomming "shared and private" stuff, I would expect the
->> the shared<->private conversions would call the routines from patch 3 to
->> restore direct map entries on private->shared, and zap them on
->> shared->private.
+Il 04/11/24 14:06, Krzysztof Wilczyński ha scritto:
+> Hello,
 > 
-> I wanted to follow-up to the discussion we had in the bi-weekly call.
-
-Thanks for summarizing!
-
-> We talked about shared (faultable) vs. private (unfaultable), and how it
-> would interact with the directmap patches here.
+>> +	if (err > 0) {
 > 
-> As discussed, having private (unfaultable) memory with the direct-map
-> removed and shared (faultable) memory with the direct-mapping can make
-> sense for non-TDX/AMD-SEV/... non-CoCo use cases. Not sure about CoCo,
-> the discussion here seems to indicate that it might currently not be
-> required.
->
-> So one thing we could do is that shared (faultable) will have a direct
-> mapping and be gup-able and private (unfaultable) memory will not have a
-> direct mapping and is, by design, not gup-able.> 
-> Maybe it could make sense to not have a direct map for all guest_memfd
-> memory, making it behave like secretmem (and it would be easy to
-> implement)? But I'm not sure if that is really desirable in VM context.
-
-This would work for us (in this scenario, the swiotlb areas would be
-"traditional" memory, e.g. set to shared via mem attributes instead of
-"shared" inside KVM), it's kinda what I had prototyped in my v1 of this
-series (well, we'd need to figure out how to get the mappings of gmem
-back into KVM, since in this setup, short-circuiting it into
-userspace_addr wouldn't work, unless we banish swiotlb into a different
-memslot altogether somehow). But I don't think it'd work for pKVM, iirc
-they need GUP on gmem, and also want direct map removal (... but maybe,
-the gmem VMA for non-CoCo usecase and the gmem VMA for pKVM could be
-behave differently?  non-CoCo gets essentially memfd_secret, pKVM gets
-GUP+no faults of private mem).
-
-> Having a mixture of "has directmap" and "has no directmap" for shared
-> (faultable) memory should not be done. Similarly, private memory really
-> should stay "unfaultable".
-
-You've convinced me that having both GUP-able and non GUP-able
-memory in the same VMA will be tricky. However, I'm less convinced on
-why private memory should stay unfaultable; only that it shouldn't be
-faultable into a VMA that also allows GUP. Can we have two VMAs? One
-that disallows GUP, but allows userspace access to shared and private,
-and one that allows GUP, but disallows accessing private memory? Maybe
-via some `PROT_NOGUP` flag to `mmap`? I guess this is a slightly
-different spin of the above idea.
-
-> I think one of the points raised during the bi-weekly call was that
-> using a viommu/swiotlb might be the right call, such that all memory can
-> be considered private (unfaultable) that is not explicitly
-> shared/expected to be modified by the hypervisor (-> faultable, ->
-> GUP-able).
+> You could drop > 0 here.
 > 
-> Further, I think Sean had some good points why we should explore that
-> direction, but I recall that there were some issue to be sorted out
-> (interpreted instructions requiring direct map when accessing "private"
-> memory?), not sure if that is already working/can be made working in KVM.
 
-Yeah, the big one is MMIO instruction emulation on x86, which does guest
-page table walks and instruction fetch (and particularly the latter
-cannot be known ahead-of-time by the guest, aka cannot be explicitly
-"shared"). That's what the majority of my v2 series was about. For
-traditional memslots, KVM handles these via get_user and friends, but if
-we don't have a VMA that allows faulting all of gmem, then that's
-impossible, and we're in "temporarily restore direct map" land. Which
-comes with significantly performance penalties due to TLB flushes.
+I have no strong opinions about that, would be fine for me.
 
-> What's your opinion after the call and the next step for use cases like
-> you have in mind (IIRC firecracker, which wants to not have the
-> direct-map for guest memory where it can be avoided)?
-
-Yea, the usecase is for Firecracker to not have direct map entries for
-guest memory, unless needed for I/O (-> swiotlb).
-
-As for next steps, let's determine once and for all if we can do the
-KVM-internal guest memory accesses for MMIO emulation through userspace
-mappings (although if we can't I'll have some serious soul-searching to
-do, because all other solutions we talked about so far also have fairly
-big drawbacks; on-demand direct map reinsertion has terrible
-performance, protection keys would limit us to 15 VMs on the host, and
-the page table swapping runs into problems with NMIs if I understood
-Sean correctly last Thursday :( ).
-
-> -- 
-> Cheers,
+>> +		/* Get the maximum speed supported by the controller */
+>> +		max_speed = mtk_pcie_get_controller_max_link_speed(pcie);
+>> +
+>> +		/* Set max_link_speed only if the controller supports it */
+>> +		if (max_speed >= 0 && max_speed <= err) {
+>> +			pcie->max_link_speed = err;
+>> +			dev_dbg(pcie->dev,
+>> +				"Max controller link speed Gen%d, override to Gen%u",
+>> +				max_speed, pcie->max_link_speed);
+>> +		}
+>> +	}
 > 
-> David / dhildenb
+> I wonder if this debug message would be better served as a warning to let
+> the user know that the speed has been overridden due to the platform
+> limitation.  Thoughts?
+> 
+> Also, there is no need to sent a new series if you fine with the
+> suggestions.  I will mend the code on the branch when applying.
+> 
 
-Best, 
-Patrick
+A warning seems to be a bit too much and would appear like something to worry
+about (or something unintended)...
+
+Perhaps a dev_info() would work better here?
+
+Thanks,
+Angelo
+
+> 	Krzysztof
+
+
+
 
