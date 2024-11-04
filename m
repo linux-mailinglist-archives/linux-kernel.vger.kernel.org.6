@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-394875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2899BB532
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:58:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D82BF9BB52E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 911F31C21954
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:58:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165161C213A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F0B1B81DC;
-	Mon,  4 Nov 2024 12:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="lGAyvPRP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z+HAnSzw"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C75F1B6D12
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEC21B85C2;
+	Mon,  4 Nov 2024 12:57:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78906188700;
+	Mon,  4 Nov 2024 12:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730725092; cv=none; b=VxM1C4cTPo5fGVdD9sj4KvEJXDRo1MFCdgI6WkaXOL2gLXhMmDgCjs56zsQZBITHYEWLwjrO8ksubwBgtFup/SarE4rwyVFMdoPZy7YGGjr785NfCuvYRuC4gFvQ4VHL7MUIdX/wJ/eeplsDXawosY8C532oHweCzj4fkQmcUxQ=
+	t=1730725065; cv=none; b=jFMYr5/yY6jxqD9I8/QayEkZV4ygCSCHkclmZtUPPqvWcn0AR7pKTQemzoXM1KJmjUyc1EWN8F0Oo9g61x1GkT73gGB9YeGSSWNsIV3vUo5JPcdMvKuI3s7TdD8QQ4ByAC2wM5MO7+sTil11+WPJUfqJ2vRbrvkQGoiqw2dJ4QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730725092; c=relaxed/simple;
-	bh=C2xRbI9V5MYjIz5A1aAq/gGsd1LQ3A7YRt5msHdu3Dw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FVA0btZyOlXbgxZGzsEipe358ik5lTqLMgGo8YVD8hbiPufsuqmvs9dsOmTuDSLf0mtJD0AL//eqz8m9W/pojPYg2q/M+xnwhg42TdyThHdHCLnZWi/YHMJAijEd0NqFvA89buLUSK3myhVqj/lprpPzuObpl8aaI0GfaCQS0Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=lGAyvPRP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z+HAnSzw; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1CC6B114005B;
-	Mon,  4 Nov 2024 07:58:09 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Mon, 04 Nov 2024 07:58:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730725089; x=
-	1730811489; bh=flUlqnY+cqQPccGICvx+n07RoS4HpYpLSSI0Fr9s0BE=; b=l
-	GAyvPRP674npP7skf4FYdAOxDdPcWsfm2YxNdHnw0Ikn3KtpRaNcrp8OPDtoVT7C
-	I7z5aw+4C/Rl3ahGATrG1EiDSGjGbcORsEStVH2zLMzn2XMnV52sQ5rwDwXdjGjJ
-	pkXn/1BaNiP4Cii4wiAhPAGCw/odXKVCzfla4BVFH9rPV+S5f34jKt8jYKi+Wajx
-	9awXYpB/YiYw0HGDlW3iquA01+TLyG8sFmkx8z71H9E+zRYctvYH2f01X16neh+v
-	k9/hUeGUS5jq+eFxnR6shM5MO9ve3O4G2F0tu6jHXKcHisBCK2ewlQkVQ4otKJ7m
-	YvE8hhnaT7i/6R4mP8XCA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730725089; x=1730811489; bh=flUlqnY+cqQPccGICvx+n07RoS4HpYpLSSI
-	0Fr9s0BE=; b=Z+HAnSzwE89uHYCqI5eAM/jN6Y2OVlW+h+p/sH/noLh0ODsrYfc
-	gvk5f4rpyLCZcyobBIBa8cRNnbe+edv0KKXWeD7TB28I6fKtQ80VQz8VyCJpeqJV
-	rUNUfgZ/1/P7Cu55Z7fXapXufb9b7DjWhkZJ45yPXx9kFVJFnihokzqnysT76KPN
-	Ub5I63O6qoLIhINwfPqnfuNZdG36yOJ5ST9fJB0uJt5HHIA13xYmZlngpGjkgbuM
-	0aV6SEb9zFpif57YeGBgwx0zk4H2jzEJ+MgtF3o8fFBRXjHbIY0AJC9Uqct8eDGM
-	VPpt4iT9WvK4VB4Q17PpYDb1pHi4iRuCodg==
-X-ME-Sender: <xms:4MQoZ-DCu7NA2Kd1HKPxhQ23zmm08TE4grzBDdQrQ2Tuyjx45-_sQA>
-    <xme:4MQoZ4hVfWYReIa_rH0vKLf4qjLHBTbv0bZSHvD7dsSDvqTQJnbmA_TS26uB1jLiH
-    i5ZgfxaP4aEU_PVSBA>
-X-ME-Received: <xmr:4MQoZxnz9f4Lfp-UYLmBIApF4RIze3ieTjuSjpmh30ZTeWqgoCte3Cn7rmGK7OD21RSNxA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedggeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
-    fukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpedfmfhirhhilhhlucetrdcuufhh
-    uhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrf
-    grthhtvghrnhepveeifeekheelhfduffekueegtdeuhffgkeegteeihfeltdevgedvveeg
-    fefhheehnecuffhomhgrihhnpehshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhi
-    lhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeegpdhmohguvgepsh
-    hmthhpohhuthdprhgtphhtthhopehshiiisghothdolhhishhtkeeirggtiegtkeefgegs
-    rgelvddtvgeljeejrgelsehshiiikhgrlhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtoh
-    hmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoh
-    epshihiihkrghllhgvrhdqsghughhssehgohhoghhlvghgrhhouhhpshdrtghomh
-X-ME-Proxy: <xmx:4MQoZ8xjEJXBqjr8d83Qy25mY_2Mgba5sM1M7arLzfdJv9BUznNUcQ>
-    <xmx:4MQoZzSK91UaIjO3rUg3Mo6wRtftK3SqUwfVoaboGumoxJudL9L6JA>
-    <xmx:4MQoZ3YsZwF-qAYJKro6giLKgGgW6YgW1Hiltwf6zvLTtE8QD67B6g>
-    <xmx:4MQoZ8SDRQ5aEiJCQecqGT-ahFVUMX0ji_orqn3mwhssiZJ7J-PHmw>
-    <xmx:4cQoZxNHEiA8bG-POs_np-1EscNTmewByD3rzoC-JnEq8HorkBPioBNo>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 4 Nov 2024 07:58:06 -0500 (EST)
-Date: Mon, 4 Nov 2024 14:58:01 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: syzbot <syzbot+list86ac6c834ba920e977a9@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] Monthly mm report (Nov 2024)
-Message-ID: <nkwl63smriaeqf4vdappijzlhbs7t6c46eyxt3vh7a63h6rtn2@pwjdhhwi6cua>
-References: <6728b185.050a0220.35b515.01bd.GAE@google.com>
+	s=arc-20240116; t=1730725065; c=relaxed/simple;
+	bh=WakpZ45SAoJYuFrodrj3caj9Ni7wC0ApyJa4QVHu6x0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pQocQHvAqdKGUciDYw4AiT9/Jx7SEPT9eqt/5sns4XiQLRVWWkgylCDPFz6WWsOAbkzahGyUmeRSgEQ9bwtWloJqSa4BflHqoUExPGm3m63pOHsPGMUy2ogfGkueFkuuCAnt/Jpo6LGb7XjmIwob1qgJ6OagvMjLly8INRPHmI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56B4AFEC;
+	Mon,  4 Nov 2024 04:58:12 -0800 (PST)
+Received: from [10.57.56.89] (unknown [10.57.56.89])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C91BD3F6A8;
+	Mon,  4 Nov 2024 04:57:40 -0800 (PST)
+Message-ID: <9f7a33a6-ac69-4fac-946a-ccb90060d243@arm.com>
+Date: Mon, 4 Nov 2024 12:58:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6728b185.050a0220.35b515.01bd.GAE@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] PM: EM: Fix wrong return value in
+ mtk_cpufreq_get_cpu_power()
+To: Jinjie Ruan <ruanjinjie@huawei.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, hector.yuan@mediatek.com,
+ qperret@google.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20241104113615.1397410-1-ruanjinjie@huawei.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20241104113615.1397410-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 04, 2024 at 03:35:33AM -0800, syzbot wrote:
-> <3>  6624    Yes   possible deadlock in lock_mm_and_find_vma (2)
->                    https://syzkaller.appspot.com/bug?extid=b02bbe0ff80a09a08c1b
 
-This one is fixed by 58a039e679fe ("mm: split critical region in
-remap_file_pages() and invoke LSMs in between")
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+On 11/4/24 11:36, Jinjie Ruan wrote:
+> mtk_cpufreq_get_cpu_power() return 0 if the policy is NULL. Then in
+> em_create_perf_table(), the later zero check for power is not invalid
+> as power is uninitialized. As Lukasz suggested, it must return -EINVAL when
+> the 'policy' is not found. So return -EINVAL to fix it.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 4855e26bcf4d ("cpufreq: mediatek-hw: Add support for CPUFREQ HW")
+> Suggested-by: Lukasz Luba <lukasz.luba@arm.com>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+> v2:
+> - Fix the driver instead of em_create_perf_table() as suggested.
+> - Update the commit message.
+> - Add Suggested-by.
+> ---
+>   drivers/cpufreq/mediatek-cpufreq-hw.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/mediatek-cpufreq-hw.c b/drivers/cpufreq/mediatek-cpufreq-hw.c
+> index 8925e096d5b9..aeb5e6304542 100644
+> --- a/drivers/cpufreq/mediatek-cpufreq-hw.c
+> +++ b/drivers/cpufreq/mediatek-cpufreq-hw.c
+> @@ -62,7 +62,7 @@ mtk_cpufreq_get_cpu_power(struct device *cpu_dev, unsigned long *uW,
+>   
+>   	policy = cpufreq_cpu_get_raw(cpu_dev->id);
+>   	if (!policy)
+> -		return 0;
+> +		return -EINVAL;
+>   
+>   	data = policy->driver_data;
+>   
+
+LGTM,
+
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
