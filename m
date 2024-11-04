@@ -1,62 +1,55 @@
-Return-Path: <linux-kernel+bounces-394312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4129BAD41
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:37:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D359F9BAD47
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:39:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0501F21CFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10CD21C20969
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8C8199FD0;
-	Mon,  4 Nov 2024 07:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238BE19A2B0;
+	Mon,  4 Nov 2024 07:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LrsqHYkn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="T6BGzjR9"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C0118B491;
-	Mon,  4 Nov 2024 07:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB8E19882C;
+	Mon,  4 Nov 2024 07:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730705818; cv=none; b=hlVy8YTVBCxpyVNcemdrUEs1WVOR2zqUjznXBealhnKtrzjq/2X1u6BwZrsstkYfiInLm1OzzW/duXaLy4BACJYJfc3ngkrP2rhLqbciNujJz4qd8FK6PeCoZOhUOkvDLLH9nbr3OQALgxgsF/58cjW3jQosn+1Iz265v++5E4c=
+	t=1730705950; cv=none; b=P6sK23yQl13N1e3QdzezAn4K0lmqgvvJ3GhjUmTJicn8FF+x62jyY7pjUz2NCS6bYmgnJTdGrqJOpJvVUUNKZcxtk/GGnMnhuO3YQdTbEeRkCy/Sgz825a5tpSj2UumZ9BXtiZ5VjtHOPYcwSjA+ke/uit1pglNtZg3LbLKVMdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730705818; c=relaxed/simple;
-	bh=auNA8MkWp8sQM+YeiVKdMRcHsOps+0KZMwdImRb35js=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rTlr1RPhZ/0cylkTJi7d0ljGQH1hXyGxUEdQGOJPdxolZG0P+Dx3uiNdJs0ZRp0Z/uqlHdO1ijqtAJ+dvla4VWEZXCPS5GCGpZc6Apj9j+ubyW3CPa+EpCDUV1intHOB1gC4FjtsSLmG9LKnnvAI4gvt16vv1ntpCB2JLhQYze4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LrsqHYkn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3KQKvK024363;
-	Mon, 4 Nov 2024 07:36:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8ek0qXHBnqGmsGf7Rks9NEKL9OwAJA9BT04q474lpaM=; b=LrsqHYknObWMjRkJ
-	dquhM5HRswZI2nqcstG7DB1NCqxyhC8A6Z0cMJldWcxzzr44WTYnqTPLectxL1vQ
-	eJAN0pndkdbwrjuw7kTPDTBeUjD8TB2zSjCThfLAnO1b62hkGIwZLO85lwJRF5lD
-	tY1zKVLW07CynH4HBlqc9l2UZNndCBIahkhmU5183Zvw4sbogcQEE6+waa8M1R5O
-	Mm0LbNHx6ndPWZdZgHp5RCPdRGEXmNKmcEa5/I8V+zXr+b/Km75Fti7xcDY3fYV2
-	QRPOaJmoSa/mi1gBjbEmZKPib7kcmDtB+0ala6xA0J1u9CTjaPV/6LwtlIXPq6o3
-	Ob4jCw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd8hbag0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 07:36:44 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A47ahqx023749
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 4 Nov 2024 07:36:43 GMT
-Received: from [10.239.132.41] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 3 Nov 2024
- 23:36:39 -0800
-Message-ID: <234d5fba-928d-480c-a9bf-1a8c5fc6f58d@quicinc.com>
-Date: Mon, 4 Nov 2024 15:36:37 +0800
+	s=arc-20240116; t=1730705950; c=relaxed/simple;
+	bh=dIgNhzZFyb1tXkgTHvIdpDIM02zQr2IiVDUJNky1d/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uiyW/nt6w/up9YFhlg5hnM7NIO+ENWJqSA8cMuO7HCP3yVwFrYM9Ar+I829CUxmLy/nAqW6RFl3znZqHMk194u/yItc4SBtRHk8nFbY0bnVXiiAqwBMkDJzHWPqkP6dkposk9AP7h6meSWpAKz0ljQUX8u20xO7znDoOegDCzNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=T6BGzjR9; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1730705914; x=1731310714; i=markus.elfring@web.de;
+	bh=dIgNhzZFyb1tXkgTHvIdpDIM02zQr2IiVDUJNky1d/w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=T6BGzjR9qHpHgAiSuapqTrEoCeH2muA5KZvtfw4WveK+c/L8Lj6CRg/k9+ykopay
+	 lQFrZkN7Tpef0vCOVZVnX7xIjcg3AABrpjMSaaOddF0k0N1DqnqxwrVpHBFg06hia
+	 cSHMebibM6BYPzxsnvLXGYRFcFaZqE8j/Mcz6KVTVMqrzA5Z8jteKD4NS07iiU/e+
+	 NMGlBxo7+rLxfhQ1l0VhMClYDI+cudRROQ/+qbeT8FWoC3lCAlV/OzzqQkd1OGN/G
+	 UnufZOK5ukfEmJyL7mVFrPk0/Vr0Yy1c5lCcTRWNWVy5aH4uoGen13aLpYiJxbnsR
+	 iM7yPxDkn6j962hfHA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVaYw-1tHfHJ38I0-00MHDG; Mon, 04
+ Nov 2024 08:38:33 +0100
+Message-ID: <8e0f08e3-c1a8-4143-b204-f4f3d4c944d0@web.de>
+Date: Mon, 4 Nov 2024 08:38:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,84 +57,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: qcs615: add the SCM node
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <robimarko@gmail.com>,
-        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-References: <20241025030732.29743-1-quic_qqzhou@quicinc.com>
- <20241025030732.29743-4-quic_qqzhou@quicinc.com>
- <flk7n534gfqyivlbl72qco4k5d3c6ravevumjfoh6464pe3qg4@r7ns6zr2i3bv>
- <645c9887-4df2-4ab2-a048-ba79a97b8d2f@quicinc.com>
- <vuz5mvmi4srbwdopivu543cdndybjy5cswc3zmukztldyv22ql@27les6xz7r74>
-From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-In-Reply-To: <vuz5mvmi4srbwdopivu543cdndybjy5cswc3zmukztldyv22ql@27les6xz7r74>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wxHepGIGJXqG9UYfwGj5GH1YSK5dNwuj
-X-Proofpoint-GUID: wxHepGIGJXqG9UYfwGj5GH1YSK5dNwuj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- priorityscore=1501 phishscore=0 clxscore=1015 mlxscore=0 impostorscore=0
- bulkscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411040067
+Subject: Re: netlink: Fix off-by-one error in netlink_proto_init()
+To: Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Jinjie Ruan <ruanjinjie@huawei.com>,
+ Jiri Pirko <jiri@resnulli.us>, Juntong Deng <juntong.deng@outlook.com>,
+ Nikolay Aleksandrov <razor@blackwall.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Thomas Graf <tgraf@suug.ch>
+References: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
+ <20241103173133.96629-1-kuniyu@amazon.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241103173133.96629-1-kuniyu@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FWtIKQ7c0Cwrs4FPnWy8DKm3sh5ESkKIxeAU8qkiAf3WHjUN3lx
+ YcH29QVaV/VMK9EFuzFjJ9Mz+zZkMXxMYwgqx4KLtUhMucPcF2f/A5OgwiTG0ZPd1Lfy1B4
+ bKN2A8SnA9dkbXhDtoKZfRDtrX6F13LNYl1/pGfuVFEAYDoA65DNaRfT+gDiLFDGM0CDqZR
+ xBqtXXO8zid9X/amSB8eA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PVYWG6k8Mp0=;kBSwYs89OCNIhYO0Aiji6oDDsP5
+ +yQ/1a9mfn4F0Mt3cGU18c3MjjGyGKPndUEoCitNam1dhbf0wAXOM5qc9LQvyiCAUK5Ffhgde
+ xOPvetRVjPIdazWu36PtyvwteHmEXPtuL1KL76qhVuWMBwIGJC//G+Q9J0JbBjQsOnlTH78hO
+ k0m19/jJO58AsMO+ypO6Ubi+mptkK6tVwnqa3e9hU/bDWzau7DfvQvz7rCztVVboR8mqW0X+H
+ z2taCszAMrHm97MiCJW0G9VxszmrJ4Uj7YLujWaVqok8W9SeEyJPDTtNZIZgu9VXLm/3dk4sD
+ rYke6xtmObgaPI+6sK4pQQGsynf3S0Uy0YiflM25n3fPmSIIx3qFz7j45Al5sKOu4or/PkNA8
+ ydePFy/pDU9Dq5sw//2pLgAeD85eLjHnzfuPhj9jXLXV7ZI6nDhtdbl1v+ibEcP7c/lHSqMBz
+ 7EvmhnkVCyAySYlDpxgGsjxv646K7iJiDNUPraYgC6jWWJZjnpVdjuqHw6INDAffi1AJDavFm
+ IQxpuafvM8Zl0ZNVa+7FVelXcAxxLV/wdDI5YLm9h85/2O5gTRstjgAyHpi0qDaTm1F3TqOdO
+ seFJMM+XKNE/72jk0/MMnEhrT2dKjdr5nPjHMxWoDX400gwD7DxteXg/+beIjU+aNTYwSH830
+ C0zj6TGExN+EwHbg1Fmcf4atWLB2hFCPyw/HoVt/0aXhg5XTwHkBHHBM5bgVoszVnQF2sNQZs
+ QKNcaVPsyEY+7EjOWs/sraMkxeeOjrXHfLjc97I88KHPVh4VVCusD9IjcpYiCXV2csWbg9zrt
+ dRZL9KMOcYC75wKvJ/vNiGkg==
 
+=E2=80=A6
+>> Thus use the comparison operator =E2=80=9C>=3D=E2=80=9D instead for the=
+ affected while loop.
+>
+> This patch is already applied to net-next.
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/comm=
+it/?id=3Dbc74d329ceba
 
+Thanks for your reminder on the commit bc74d329ceba23f998ead4f716266da5afe=
+319f7
+("netlink: Remove the dead code in netlink_proto_init()") from 2024-10-31
+for another contribution by Jinjie Ruan (also according to your suggestion=
+).
 
-在 11/1/2024 2:59 AM, Dmitry Baryshkov 写道:
-> On Wed, Oct 30, 2024 at 04:42:19PM +0800, Qingqing Zhou wrote:
->>
->>
->> 在 10/25/2024 2:02 PM, Dmitry Baryshkov 写道:
->>> On Fri, Oct 25, 2024 at 08:37:31AM +0530, Qingqing Zhou wrote:
->>>> Add the SCM node for QCS615 platform. It is an interface to
->>>> communicate to the secure firmware.
->>>>
->>>> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
->>>> ---
->>>>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 7 +++++++
->>>>  1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>>> index ac4c4c751da1..027c5125f36b 100644
->>>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>>> @@ -278,6 +278,13 @@
->>>>  		reg = <0 0x80000000 0 0>;
->>>>  	};
->>>>  
->>>> +	firmware {
->>>> +		scm {
->>>> +			compatible = "qcom,scm-qcs615", "qcom,scm";
->>>> +			qcom,dload-mode = <&tcsr 0x13000>;
->>>
->>> No CRYPTO clock?
->> NO, response from Qualcomm clock team is "the current QCS615 RPMH code does not have the clock support for CE clock", so we don't configure clocks here.
-> 
-> Is this going to change in future?
-NO, from Qualcomm clock team, the clock/BW is handled internally in our trustzone and do not see any requirement change going forward to move the clocks/BW vote to HLOS driver.
-> 
->>>
->>>> +		};
->>>> +	};
->>>> +
->>>>  	camnoc_virt: interconnect-0 {
->>>>  		compatible = "qcom,qcs615-camnoc-virt";
->>>>  		#interconnect-cells = <2>;
->>>> -- 
->>>> 2.17.1
->>>>
->>>
->>
-> 
+See also:
+https://lore.kernel.org/linux-kernel/20241028182421.6692-1-kuniyu@amazon.c=
+om/
+https://lore.kernel.org/linux-kernel/20241030012147.357400-1-ruanjinjie@hu=
+awei.com/
 
+Regards,
+Markus
 
