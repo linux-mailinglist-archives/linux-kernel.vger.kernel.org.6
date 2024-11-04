@@ -1,135 +1,111 @@
-Return-Path: <linux-kernel+bounces-394487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F199BAFDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:37:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393A09BAFBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:36:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3E781F22C9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:37:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AF821C21AB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550AC1B392A;
-	Mon,  4 Nov 2024 09:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9401ADFFB;
+	Mon,  4 Nov 2024 09:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PdCINBMY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="d9FQ15s9"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9719B1AF0B2;
-	Mon,  4 Nov 2024 09:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE2C1AAE27;
+	Mon,  4 Nov 2024 09:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730712986; cv=none; b=RxtPXvfuzU+SL6COgLUE+r1Q9ZWAFsqZkyEul+W3eJDQnWRsumyQ5D1MmNDmZOSaDaX4UIGtLc9uMAs3odLpf7fr/ztzHiyIzV1D4vYEzifWeRavmsLm4qI8UadBq0ZGSSLgpLMq/86+AM17ysHQfCFMsxqzoT7k8M6FWvysrKs=
+	t=1730712969; cv=none; b=hXJMplEW9hye3yhA0n0rsFjiJQgAzEPuo3nS15T2izx3XsbJQ9OX1VHKc3Z5+O+Ad3R0ztI/9+Z8ZHvuSBAuaLm2OWekhMNOBdzzInqQB+dVcgITfAcCAoCscESEDU36PbS/rWDqVrLd6eOaZnM+uuAzT9k9BDH9kXWSIpctGIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730712986; c=relaxed/simple;
-	bh=hwe/b3t0fRSiOwM5LgSXyqtmSdkws0uscP6ALDCp0/s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lH0FCKYZx2ifyo+uofDJv7qmKBZztHMo+s9MZGOOST5/CZqVooOWpFztERoDR0RN8H+0BJDPoN7YiAdYeK9ajGuehi+tQfShxgJGwjx6blM1zlrEjWtl6/H3Au76+q52CvgrSBsihv3nKMwrP06+yW+i/5Pbf1nMLVR4z/aj+o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PdCINBMY; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730712983; x=1762248983;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hwe/b3t0fRSiOwM5LgSXyqtmSdkws0uscP6ALDCp0/s=;
-  b=PdCINBMYVI5gsHEukFi79h89KZ4q5sfxSQWC4iTVuzAjfrmhMqHdBaEa
-   9o2UEwAk+Y4SAjN4YdgsJO1LPhhkqce/SS97xa3czwWB3p2lzF306eGfk
-   96UAvk589wJIQmmPaluOVqcOQ5Xl0eYQPTxtfrs497EtQtQgBtQHUpb0b
-   fNuNakDhvMMLR1OKi68Wtvet10kVK384xTTQMyFKt7L2SC0vOBXYfUFFh
-   vHmgA1SUoIOxyY9aYOVW8DktHHrqwVXFNaOdaTbQgEfNo9Q/WOL/TDYkQ
-   Pc2NDeXzAotOM78J7bE0a0+O6g+TYdVoliAdav4svENT82UR2guiq7yjW
-   Q==;
-X-CSE-ConnectionGUID: 1BqkHAM0RROpjq5Vh/RHcQ==
-X-CSE-MsgGUID: bJXvU7QpSCmIAdLEjJivpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="30278788"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="30278788"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 01:36:21 -0800
-X-CSE-ConnectionGUID: s9rewHwKS8eXCZpHso+clw==
-X-CSE-MsgGUID: nJ4vzYBeTXunQESoKPaApw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="83481194"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 04 Nov 2024 01:36:17 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id DEBD7740; Mon, 04 Nov 2024 11:36:10 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Lee Jones <lee@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-usb@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pavel Machek <pavel@ucw.cz>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v1 6/6] gpio: Get rid of GPIOF_ACTIVE_LOW
-Date: Mon,  4 Nov 2024 11:34:24 +0200
-Message-ID: <20241104093609.156059-7-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com>
-References: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1730712969; c=relaxed/simple;
+	bh=OZU7EisROitQm9UKkAKn6cyUaMVFwrs2M+6wFnp01/Q=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=N0ZJZ9GILjisRovJHWf2dYqaDn5/ExNQa8HA523tsSUHb9CTU3/Zwp1B2BQUlIynlG7tPipQh9Pgy+FqHafiIq2RJWSUrD/QreNyO/auSWpfRQAptuNh0+PyVN6s9NhFQepc1cCUcU7pdrYdLH5NNgApNftvtW4wAgiy4cr5ccc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=d9FQ15s9; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1730712935; x=1731317735; i=markus.elfring@web.de;
+	bh=OZU7EisROitQm9UKkAKn6cyUaMVFwrs2M+6wFnp01/Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=d9FQ15s9wCk8mgTbgGwrPDKx6h2mFTz4PtwupuQRPe5CFu1bnsQLJTo4WzFuhf1U
+	 u5wGWUwDsDA1n1w3C2gaC8RtwNNCSgxqgmC2GNTIrZ+/GYNj0EKNdFsT/RVKmbsPl
+	 WZg4kJfggvkkCTUf6RP7xAU0svK94SAnubVKwBdE8wTCTLjRJm9RtXWIdooWYfrTJ
+	 ZBIBvrD8Ql/I6q7RYxILXTxzAvWNbG8PTjvZ0kuWId872VN0ZbB5BQVjKR17IhOio
+	 KFo/5y0mYE6cDHhFHgJcpOqxKtIYpRtCD7yFXtQYrQT8020OywEHrUnKN2wLInnxP
+	 Uk6YILANqF16QUbEvw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGgNU-1t440L0IOQ-0043na; Mon, 04
+ Nov 2024 10:35:35 +0100
+Message-ID: <e1ac11b3-b746-4564-8daa-3527aa13e348@web.de>
+Date: Mon, 4 Nov 2024 10:35:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+ linux-sound@vger.kernel.org, alsa-devel@alsa-project.org,
+ Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Basavaraj Hiregoudar <Basavaraj.Hiregoudar@amd.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Emil Velikov <emil.velikov@collabora.com>, Jaroslav Kysela <perex@perex.cz>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Sunil-kumar Dommati <Sunil-kumar.Dommati@amd.com>,
+ syed saba kareem <ssabakar@amd.com>, Takashi Iwai <tiwai@suse.com>,
+ Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+References: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
+Subject: Re: [PATCH] ASoC: amd: acp: Fix for ACP SOF dmic tplg component load
+ failure
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:t147qZrJLa7AZUH9g3WArVAjME+fFuU5SLNNeXrUy5CyR7KC/0q
+ 13dGdV5l3Wtxp+pBeckAoYriBuRraampOJgd+09FsuQtzRUR7imp5sNBY7p5MU9oqkeiGnn
+ WmyFVQxZQ5ZJz5MdnP1BjyVgCbQVmHeBZnF+CICS1961SVTjojfC+PYqDFI9/c1KHxWZo6r
+ FB2rCuDCo9NEjQzWh/0Dg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Iea/YmE1kSY=;gVxxXN+WQbtUWzm8KB/OPkIBUzQ
+ IsoFhOMRzEP/cbXJV3hbF6DxZjnbAzJTZ++yN3kNrIu67qXHS/cZmc+H6pbFzNbGx535rUm1W
+ lH/tRWVlntQff5dy42GrJsplSgDTni2+t6aFxRjR108EeDGUXLJiCY+Eol5bg8fZcw0CqoSFZ
+ gkcd37r1mjS2CX+gfAi50nqUoMCUCod3ujsC9G7VnbUwU8zWQZKaXG+Zmpc8Eh0tmr+tjWinz
+ Bshafa3Xd2KAf7ZaUL4Y/jdk3YWEXmmPDJKEZpJICTPAqVTxf7YnLrAcIZZqP2QXkRN27grAp
+ 1A25LkSO/Jg17ROCFe9HQNlj8K5LgNaC/NJOthP8YSmUpKnJTSnCjhZmRut3kLO3V07In4xUH
+ Z7YMwc4q3rWdC/pr+poef2amGE3OvIAepHueCI7ICjtAkS3Mh+jhozbW9Cqj5E/7TGwRunyUH
+ iWSohZNcqeRfrYHBPZEyJFvU1PaGempmw01PhwPHCuP0UP05LSQ1/VxlIY7rOZEgSiMbjh45N
+ nAweqyt7L1cZPoVHTUmw9F6X7OUFtvJPX8p6V5WVN4n6cW1F69DNZRJDXIVcTLt/tsEco1K2r
+ FZQoNg2Qa0TRAfPpS27o1KfJdHW34QPN4xiGI6RNpcwW3JG1/af00njjT3x4SL9lgMpKTKoDS
+ RDJwIRivSc6UKLFehoF58XacEGtend7WTXk5UUv7KRvAW8yWiyFFZSA5TkigZjLI3HuLCZXnG
+ 0ZF13E4tAGE7GLwM8GdAy6cLpTfnaeCndgEfgHRcEPOowlEyx/hFqbNaUFK24BYHeyF00eooG
+ rd9UZS1R9n56omaiWcytNLbw==
 
-No more users.
+=E2=80=A6
+> As SOF framework assigns dailink->stream name, overriding stream name
+> other than link name causes SOF dmic component load failure.
+=E2=80=A6
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-legacy.c | 3 ---
- include/linux/gpio.h          | 3 ---
- 2 files changed, 6 deletions(-)
+Will another imperative wording be helpful for an improved change descript=
+ion?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.12-rc5#n94
 
-diff --git a/drivers/gpio/gpiolib-legacy.c b/drivers/gpio/gpiolib-legacy.c
-index 28f1046fb670..aeae6df8bec9 100644
---- a/drivers/gpio/gpiolib-legacy.c
-+++ b/drivers/gpio/gpiolib-legacy.c
-@@ -46,9 +46,6 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
- 	if (err)
- 		return err;
- 
--	if (flags & GPIOF_ACTIVE_LOW)
--		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
--
- 	if (flags & GPIOF_IN)
- 		err = gpiod_direction_input(desc);
- 	else
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 2d105be7bbc3..6270150f4e29 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -21,9 +21,6 @@ struct device;
- #define GPIOF_OUT_INIT_LOW	((0 << 0) | (0 << 1))
- #define GPIOF_OUT_INIT_HIGH	((0 << 0) | (1 << 1))
- 
--/* Gpio pin is active-low */
--#define GPIOF_ACTIVE_LOW        (1 << 2)
--
- /**
-  * struct gpio - a structure describing a GPIO with configuration
-  * @gpio:	the GPIO number
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+Regards,
+Markus
 
