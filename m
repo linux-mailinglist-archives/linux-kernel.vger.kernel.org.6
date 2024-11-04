@@ -1,92 +1,112 @@
-Return-Path: <linux-kernel+bounces-395384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20F89BBD31
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:20:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE73C9BBD34
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:21:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9771F240B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:20:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C030D1F240C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D7C1CACE9;
-	Mon,  4 Nov 2024 18:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD581CB530;
+	Mon,  4 Nov 2024 18:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/+cmR3q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kBWwq264"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562D118622;
-	Mon,  4 Nov 2024 18:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA241C9B81
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 18:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730744421; cv=none; b=SFsrF3x/XVLsgJpgsRFkDXO2mMBeB9Js1z018SqpXxvM2yGBwNiFDpfI7k88KwKdrDduxd2pXX+TyaY4mugj8JOGwWOYse1YTY5dfLIboynv5gG62fgRU7Pv7OnmiLvzVjjJE9OTYMh820vo7pQxk8xxg3by94YxhHoTIcYwrUM=
+	t=1730744464; cv=none; b=P6faJK5y2Oy1kbBdmGCde+bPqUKCSA7l0xplHNnCyuRrmnuT+3aONVX6IxwHfEH+igtmjLfRVhbL1gFfhWqnjnXor5veH9Sa7wR/Atq+nnTJD/wVMLE0pwL5/aGr7d6Yb31IUxsIiQbCztZMMz0KksBPg6sl4n8lhEkUSMkEW0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730744421; c=relaxed/simple;
-	bh=F8uElrZ+VNqFVI4ghXyedghQ3+1P4dRl46TdxjZcbsI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=nC/uBcovsiLfh7vmALKu04F/uyH38yYoi0uyvm3lrCcJcXT5p7uoF1cIddNTOwoYFKZV/z0SGHMuZ3BdB5Wa/fzY7WXfg798hioA0XO7KdtsWHPYL+CzBlILYtckchNzXIhhO9o5LesKirnE1TJpwdg94vvgYXYQoCyKeT0ZLCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/+cmR3q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 223E2C4CED0;
-	Mon,  4 Nov 2024 18:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730744421;
-	bh=F8uElrZ+VNqFVI4ghXyedghQ3+1P4dRl46TdxjZcbsI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=C/+cmR3qfr07UOvk1RRZItg58ksIHU0Y+B6ZU6/7aMIVclTDUwsFNH5jxa0WqD6cW
-	 ZMtAKbXuVpp1uZ7fqk7NwRRtm0025nUrxHDyvl0g0zv1zKQYK18sAQXGgQWUc49k31
-	 naDd1Fv9SEN4imQeEe8Egs9goCpH3hQG9JvU1xmCeK59skyd71lFt/KR1UOJDneneJ
-	 rbfaa6dkzZ0AkHl0iut39Y658+VQN6X9LyW3by8kSBc8a6a+ETpuxsW0aJihRe/PIP
-	 oNXSuZwRTAuppVQh/OoB+w+DOkDhyFOYgPlZ4UOX8z+oj7/hkOvNC/BYRlSYU9HK/w
-	 IXz49mHSglSTQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EC1B13805CC0;
-	Mon,  4 Nov 2024 18:20:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730744464; c=relaxed/simple;
+	bh=M6xDzNAKcs36VWJmqh7kjILMTWmZO9OGbW4mqT6HmyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ANXxve2sQmLU4Jj60COSoUf2kJAZm6f/Fd1ECN28LhQuZ+59QrR2HYz5naVczhv+PfQxKZMeWuU3rociMxlWzulMvMjPsaVNxbf1yGzJp/4z4zVn72kDHK2QVN9K/poyXKTTUyj/L7pajOLOF2ye0FfEcWortLv+Oar1psi0TIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kBWwq264; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431616c23b5so28076205e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 10:21:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730744461; x=1731349261; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HvgKojtjxMMS6cqT1h35DY7bZCxI4idU/B1S0RQ7cd4=;
+        b=kBWwq264szWaphLKiF9s/eMuSNA6tvH37jOs/B4TBl0RQzxPmKzZu4iIgfXEDqj0VA
+         G/LZ0wi9JpyPtN9tIY9orcifFYVpXCs/rxRhPtGypf/CTWso/LZlpUJde/EjzZN77SKr
+         qjbyewRA32ztUzEUzTMGwCj9jC7DMtvFe5bEjB9faQPrUMmcIiLWEyWae2N3tNDPUAtO
+         oOXjHeUnwiUl3csBUYxMQtHTgOSKmy1eX+XwSRAbBQ3I4mZRJ7HqNryhA7fEf7lgLVtf
+         Hj5q72WFEL4lhxNT+FEWJ8jdhQ8LAZ4+tBoLTyF6DHogJhlRSejlrxD7WLhykz0IScT3
+         DsSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730744461; x=1731349261;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HvgKojtjxMMS6cqT1h35DY7bZCxI4idU/B1S0RQ7cd4=;
+        b=uB0powEXahyADsYkCPQCSeyjQCrybdGS4bt3XuZjhsEOXBuqckppyrqoM/z9HgwQ24
+         5g6GYXljmO2dlNvp0za3De6nwMxNuouUzRWPHAgyMhy8XFabtB0HZfDAtnzAJ4+ToAcz
+         NiB5ePCd38UQE9tYO+JPZR7n3gss22G7pYSJvy6SCS9poVotNJbhcbBeR+M3nYwwad7q
+         JPTkGYjKXOlLc7dH7XY4KVq8VX3KDt/GnZ7XZK7HYdBg/Bi39ydxdq7nFeNg6TYgatYA
+         obk3i/Z3wckQDmpADJlpicbGWw37pDraDXmO8UUdSjmoMbOQb3HW2spE3zUbRScWf0Qf
+         ytvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtrzeWuMNfgRbYJMN1NXkOwbIhd7doXANM8KLQW1OU2nZ4U/vd8jpx8f2bdqB/wD3RZkZWGMbj9CR/41Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydBCQ6NifoAdt4yN6jDCaxXQogkidQ7+2e0adEnKYV34TlPrB3
+	UmAFJ+Fk9PArj1XfIIM4f6sQ/dJoX6ncP1wbIZopJkTXMpgc2SvPObNTF9bcbg==
+X-Google-Smtp-Source: AGHT+IGCf2kXxmfohJmBXmuH3j8pJHDrbqFMRzviLHJM7ILP9HJYPdAB1K5kN0pfn2Myr89luXLdlQ==
+X-Received: by 2002:a05:600c:4449:b0:42c:ae4e:a96c with SMTP id 5b1f17b1804b1-4327dac7732mr131855855e9.16.1730744460604;
+        Mon, 04 Nov 2024 10:21:00 -0800 (PST)
+Received: from localhost (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7e2dsm13835508f8f.11.2024.11.04.10.21.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 10:21:00 -0800 (PST)
+Date: Mon, 4 Nov 2024 18:20:57 +0000
+From: Aleksei Vetrov <vvvvvv@google.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] wifi: nl80211: fix bounds checker error in
+ nl80211_parse_sched_scan
+Message-ID: <ZykQiY0jvxKqrCIb@google.com>
+References: <20241029-nl80211_parse_sched_scan-bounds-checker-fix-v2-1-c804b787341f@google.com>
+ <0bc2e4b0-4dad-4341-a41e-a98fbc4b1658@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] include: btf: Guard inline function with CONFIG_BPF_SYSCALL
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173074442976.4161292.16386221719545154098.git-patchwork-notify@kernel.org>
-Date: Mon, 04 Nov 2024 18:20:29 +0000
-References: <20241104060300.421403-1-alistair.francis@wdc.com>
-In-Reply-To: <20241104060300.421403-1-alistair.francis@wdc.com>
-To: Alistair Francis <alistair23@gmail.com>
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, jolsa@kernel.org,
- haoluo@google.com, sdf@fomichev.me, kpsingh@kernel.org,
- john.fastabend@gmail.com, yonghong.song@linux.dev, alistair.francis@wdc.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0bc2e4b0-4dad-4341-a41e-a98fbc4b1658@quicinc.com>
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
-
-On Mon,  4 Nov 2024 16:03:00 +1000 you wrote:
-> The static inline btf_type_is_struct_ptr() function calls
-> btf_type_skip_modifiers() which is guarded by CONFIG_BPF_SYSCALL.
-> btf_type_is_struct_ptr() is also only called by CONFIG_BPF_SYSCALL
-> ifdef code, so let's only expose btf_type_is_struct_ptr() if
-> CONFIG_BPF_SYSCALL is defined.
+On Mon, Nov 04, 2024 at 09:12:09AM -0800, Jeff Johnson wrote:
+> Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > 
-> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> 
-> [...]
+> And it is exactly this kind of issue why I'm not accepting any __counted_by()
+> changes in ath.git without actually testing the code that is modified.
 
-Here is the summary with links:
-  - include: btf: Guard inline function with CONFIG_BPF_SYSCALL
-    https://git.kernel.org/bpf/bpf-next/c/9a783139614f
+However, I was really lucky that my setup used nl80211_parse_sched_scan
+during normal operations and triggered bound sanitizer. After the patch
+was developed, I accidently wiped my device and couldn't reproduce the
+bug again normally, so I had to use iw tool to trigger
+nl80211_parse_sched_scan manually to test it properly.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+I looked for some tests that cover this function and that I can run on
+the device, but couldn't find any. It would be nice if you know about
+such tests, so I can check if there are any other places where bound
+sanitizer may be triggered. I only know syzkaller tool that may be used
+to get more kernel coverage in general.
 
-
+Best regards,
+--
+Aleksei Vetrov
 
