@@ -1,132 +1,145 @@
-Return-Path: <linux-kernel+bounces-394613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B11CB9BB1DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:57:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E029BB186
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:50:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32334B219E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04FA2284119
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886181CBE9E;
-	Mon,  4 Nov 2024 10:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q55sOiak"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B911F1B21B5;
+	Mon,  4 Nov 2024 10:50:44 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D683A1CB9E6;
-	Mon,  4 Nov 2024 10:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD2F1AF4EE;
+	Mon,  4 Nov 2024 10:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717525; cv=none; b=Y1lJOFop4En5JjAfyTjmC4FTKSIdFAVXVB6Cfz+4ETvAZa+380/1w1PfVk67/ggfBOgXrOmQVKlIXSzaTXjoj4W9BOB4wCCM6rwC1E8sRt/COkn1q1yL5r+ERNAGtisCpdTg0AjXq7h7k0W6HG6LWboAko1mnweDGSRjA0IbJxM=
+	t=1730717444; cv=none; b=cIfCF5gVZnIuCBQe1QfcEiqW/y/8f7fMn1tnUPGpOwlSEmVwIFh2FX30aSf59JTkAEorNXF+MzHpL3XOoCn8KxYzu7u7hisixqFjwKzOl8ahXJDwld5NxIfuDdW2Nx3I1w3dhpYAwaoGm402qFQ20IWarQ8OrPhcq99CDMKxdaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717525; c=relaxed/simple;
-	bh=ez3ybG9RAzSWFeVBXfQweu7UfNk9VPhHgxcNT2L36yM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YIRIXRq7O3FiOkG46G2EInL1md6RaQB00MOi/yK+c6yTCJaUl8vPrrAmiy/Pqd9BC6Y5AHhTpDr6nNTNNDSJWvncLVwIhRyGjJe/oYFljhizIeMgkxe0RrZXexAQvjrSoTTgR/4bW5IJXbEB1lLDskFT33CrdnTz9Bqgvg1C7Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q55sOiak; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00525C4CECE;
-	Mon,  4 Nov 2024 10:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730717524;
-	bh=ez3ybG9RAzSWFeVBXfQweu7UfNk9VPhHgxcNT2L36yM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q55sOiakZlBUoIam1oLHThU8r+FrbN1odo+KoBjNAa82yQJfPKLNkKWOV6J35531G
-	 ODyECDYJL050rndgH+rSjhp8XEVZ735USk85/LNo0cDd6HxmYoCEeSYKKg5tSVVdri
-	 5+MCx5yrFdEio2Id0BuLexmoEOuqoDmCxiB/ETkbpvrCCUtDBt2xb2UZ2nfsyOviFS
-	 6GrTxiKFdeOJ+RbQr34jHn2kYWSjl76tYu5wJ6eUUlc7XbacTzZUsIYlWbBD+mqoHN
-	 rmyzdedXYW+9tkV4wQyW4l6n73Vtbi84gpivGbyDVB20UsnpeSvFCMol7+EG0Nk8tD
-	 8xJpGeSWwXXow==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: =?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>,
-	Simon Horman <horms@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	bjorn@mork.no,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.11 21/21] net: usb: qmi_wwan: add Quectel RG650V
-Date: Mon,  4 Nov 2024 05:49:57 -0500
-Message-ID: <20241104105048.96444-21-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104105048.96444-1-sashal@kernel.org>
-References: <20241104105048.96444-1-sashal@kernel.org>
+	s=arc-20240116; t=1730717444; c=relaxed/simple;
+	bh=tDUPqFlzUQ349uAn3DvY3us+uvn8X20tEegN8qRe5OI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ddh2aG+6TaZvjhQ+SGTMX3bKn8jcVoGj3USzCI6iEum/2lS7k6RwYkIfnEaZM8aGbbKRt3hVk/Py92HQqtERqPa6uaw3oS6Zw2oi9/iv2Boufitf688ViglmxX08hAlOPD/fb1CBMNJ7Y5VIP3JTA5eMWo/IoMi/HeySAHR4V8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xhp8Z3CZ3z6K69D;
+	Mon,  4 Nov 2024 18:47:58 +0800 (CST)
+Received: from frapeml100006.china.huawei.com (unknown [7.182.85.201])
+	by mail.maildlp.com (Postfix) with ESMTPS id 08D1E140AB8;
+	Mon,  4 Nov 2024 18:50:39 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100006.china.huawei.com (7.182.85.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 4 Nov 2024 11:50:38 +0100
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Mon, 4 Nov 2024 11:50:38 +0100
+From: Salil Mehta <salil.mehta@huawei.com>
+To: Salil Mehta <salil.mehta@huawei.com>, Robin Murphy <robin.murphy@arm.com>,
+	Arnd Bergmann <arnd@kernel.org>, "shenjian (K)" <shenjian15@huawei.com>
+CC: Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>, Joerg Roedel
+	<jroedel@suse.de>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>, "Andrew
+ Lunn" <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, shaojijie <shaojijie@huawei.com>, wangpeiyang
+	<wangpeiyang1@huawei.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] [net-next] net: hns3: add IOMMU_SUPPORT dependency
+Thread-Topic: [PATCH] [net-next] net: hns3: add IOMMU_SUPPORT dependency
+Thread-Index: AQHbLpKYY9Lsz1VxeUenvFuoDgyBFLKm2vEAgAASuSCAAANu4A==
+Date: Mon, 4 Nov 2024 10:50:38 +0000
+Message-ID: <a94f95bd661c4978bb843c8a1af73818@huawei.com>
+References: <20241104082129.3142694-1-arnd@kernel.org>
+	<069c9838-b781-4012-934a-d2626fa78212@arm.com>
+ <96df804b6d9d467391fda27d90b5227c@huawei.com>
+In-Reply-To: <96df804b6d9d467391fda27d90b5227c@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.11.6
-Content-Transfer-Encoding: 8bit
 
-From: Benoît Monin <benoit.monin@gmx.fr>
-
-[ Upstream commit 6b3f18a76be6bbd237c7594cf0bf2912b68084fe ]
-
-Add support for Quectel RG650V which is based on Qualcomm SDX65 chip.
-The composition is DIAG / NMEA / AT / AT / QMI.
-
-T: Bus=02 Lev=01 Prnt=01 Port=03 Cnt=01 Dev#=  4 Spd=5000 MxCh= 0
-D: Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P: Vendor=2c7c ProdID=0122 Rev=05.15
-S: Manufacturer=Quectel
-S: Product=RG650V-EU
-S: SerialNumber=xxxxxxx
-C: #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=896mA
-I: If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E: Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I: If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I: If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
-I: If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
-I: If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-E: Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=88(I) Atr=03(Int.) MxPS=   8 Ivl=9ms
-
-Signed-off-by: Benoît Monin <benoit.monin@gmx.fr>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Link: https://patch.msgid.link/20241024151113.53203-1-benoit.monin@gmx.fr
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/usb/qmi_wwan.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index 4823dbdf54656..2b84d7211b131 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1076,6 +1076,7 @@ static const struct usb_device_id products[] = {
- 		USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x581d, USB_CLASS_VENDOR_SPEC, 1, 7),
- 		.driver_info = (unsigned long)&qmi_wwan_info,
- 	},
-+	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0122)},	/* Quectel RG650V */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0125)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0306)},	/* Quectel EP06/EG06/EM06 */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0512)},	/* Quectel EG12/EM12 */
--- 
-2.43.0
-
+PiAgRnJvbTogU2FsaWwgTWVodGEgPHNhbGlsLm1laHRhQGh1YXdlaS5jb20+DQo+ICBTZW50OiBN
+b25kYXksIE5vdmVtYmVyIDQsIDIwMjQgMTA6NDEgQU0NCj4gIFRvOiBSb2JpbiBNdXJwaHkgPHJv
+YmluLm11cnBoeUBhcm0uY29tPjsgQXJuZCBCZXJnbWFubg0KPiAgPGFybmRAa2VybmVsLm9yZz47
+IHNoZW5qaWFuIChLKSA8c2hlbmppYW4xNUBodWF3ZWkuY29tPg0KPiAgDQo+ICBISSBSb2JpbiwN
+Cj4gIA0KPiAgPiAgRnJvbTogUm9iaW4gTXVycGh5IDxyb2Jpbi5tdXJwaHlAYXJtLmNvbT4NCj4g
+ID4gIFNlbnQ6IE1vbmRheSwgTm92ZW1iZXIgNCwgMjAyNCAxMDoyOSBBTQ0KPiAgPiAgVG86IEFy
+bmQgQmVyZ21hbm4gPGFybmRAa2VybmVsLm9yZz47IHNoZW5qaWFuIChLKQ0KPiAgPiA8c2hlbmpp
+YW4xNUBodWF3ZWkuY29tPjsgU2FsaWwgTWVodGEgPHNhbGlsLm1laHRhQGh1YXdlaS5jb20+DQo+
+ICA+ICBDYzogQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT47IFdpbGwgRGVhY29uIDx3aWxs
+QGtlcm5lbC5vcmc+Ow0KPiAgPiBKb2VyZyBSb2VkZWwgPGpyb2VkZWxAc3VzZS5kZT47IGlvbW11
+QGxpc3RzLmxpbnV4LmRldjsgQW5kcmV3IEx1bm4NCj4gID4gPGFuZHJldytuZXRkZXZAbHVubi5j
+aD47IERhdmlkIFMuIE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47DQo+ICBFcmljDQo+ICA+
+IER1bWF6ZXQgPGVkdW1hemV0QGdvb2dsZS5jb20+OyBKYWt1YiBLaWNpbnNraSA8a3ViYUBrZXJu
+ZWwub3JnPjsNCj4gID4gUGFvbG8gQWJlbmkgPHBhYmVuaUByZWRoYXQuY29tPjsgc2hhb2ppamll
+IDxzaGFvamlqaWVAaHVhd2VpLmNvbT47DQo+ICA+IHdhbmdwZWl5YW5nIDx3YW5ncGVpeWFuZzFA
+aHVhd2VpLmNvbT47IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7DQo+ICA+IGxpbnV4LWtlcm5lbEB2
+Z2VyLmtlcm5lbC5vcmcNCj4gID4gIFN1YmplY3Q6IFJlOiBbUEFUQ0hdIFtuZXQtbmV4dF0gbmV0
+OiBobnMzOiBhZGQgSU9NTVVfU1VQUE9SVA0KPiAgPiBkZXBlbmRlbmN5DQo+ICA+DQo+ICA+ICBP
+biAyMDI0LTExLTA0IDg6MjEgYW0sIEFybmQgQmVyZ21hbm4gd3JvdGU6DQo+ICA+ICA+IEZyb206
+IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+ICA+ICA+IFRoZSBobnMzIGRyaXZlciBzdGFy
+dGVkDQo+ICA+IGZpbGxpbmcgaW9tbXVfaW90bGJfZ2F0aGVyIHN0cnVjdHVyZXMgaXRzZWxmLCAg
+PiB3aGljaCByZXF1aXJlcw0KPiAgPiBDT05GSUdfSU9NTVVfU1VQUE9SVCBpcyBlbmFibGVkOg0K
+PiAgPiAgPg0KPiAgPiAgPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9oaXNpbGljb24vaG5zMy9obnMz
+X2VuZXQuYzogSW4gZnVuY3Rpb24NCj4gID4gICdobnMzX2RtYV9tYXBfc3luYyc6DQo+ICA+ICA+
+IGRyaXZlcnMvbmV0L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNfZW5ldC5jOjM5NToxNDog
+ZXJyb3I6DQo+ICA+ICdzdHJ1Y3QgIGlvbW11X2lvdGxiX2dhdGhlcicgaGFzIG5vIG1lbWJlciBu
+YW1lZCAnc3RhcnQnDQo+ICA+ICA+ICAgIDM5NSB8ICBpb3RsYl9nYXRoZXIuc3RhcnQgPSBpb3Zh
+Ow0KPiAgPiAgPiAgICAgICAgfCAgICAgICAgICAgICAgXg0KPiAgPiAgPiBkcml2ZXJzL25ldC9l
+dGhlcm5ldC9oaXNpbGljb24vaG5zMy9obnMzX2VuZXQuYzozOTY6MTQ6IGVycm9yOg0KPiAgPiAn
+c3RydWN0ICBpb21tdV9pb3RsYl9nYXRoZXInIGhhcyBubyBtZW1iZXIgbmFtZWQgJ2VuZCcNCj4g
+ID4gID4gICAgMzk2IHwgIGlvdGxiX2dhdGhlci5lbmQgPSBpb3ZhICsgZ3JhbnVsZSAtIDE7DQo+
+ICA+ICA+ICAgICAgICB8ICAgICAgICAgICAgICBeDQo+ICA+ICA+IGRyaXZlcnMvbmV0L2V0aGVy
+bmV0L2hpc2lsaWNvbi9obnMzL2huczNfZW5ldC5jOjM5NzoxNDogZXJyb3I6DQo+ICA+ICdzdHJ1
+Y3QgIGlvbW11X2lvdGxiX2dhdGhlcicgaGFzIG5vIG1lbWJlciBuYW1lZCAncGdzaXplJw0KPiAg
+PiAgPiAgICAzOTcgfCAgaW90bGJfZ2F0aGVyLnBnc2l6ZSA9IGdyYW51bGU7DQo+ICA+ICA+ICAg
+ICAgICB8ICAgICAgICAgICAgICBeDQo+ICA+ICA+DQo+ICA+ICA+IEFkZCBhIEtjb25maWcgZGVw
+ZW5kZW5jeSB0byBtYWtlIGl0IGJ1aWxkIGluIHJhbmRvbSBjb25maWd1cmF0aW9ucy4NCj4gID4g
+ID4NCj4gID4gID4gQ2M6IFdpbGwgRGVhY29uIDx3aWxsQGtlcm5lbC5vcmc+DQo+ICA+ICA+IENj
+OiBKb2VyZyBSb2VkZWwgPGpyb2VkZWxAc3VzZS5kZT4NCj4gID4gID4gQ2M6IFJvYmluIE11cnBo
+eSA8cm9iaW4ubXVycGh5QGFybS5jb20+ICA+IENjOg0KPiAgPiBpb21tdUBsaXN0cy5saW51eC5k
+ZXYgID4gRml4ZXM6IGYyYzE0ODk5Y2FiYSAoIm5ldDogaG5zMzogYWRkIHN5bmMNCj4gID4gY29t
+bWFuZCB0byBzeW5jIGlvLXBndGFibGUiKSAgPiBTaWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5u
+DQo+ICA+IDxhcm5kQGFybmRiLmRlPiAgPiAtLS0gID4gSSBub3RpY2VkIHRoYXQgbm8gb3RoZXIg
+ZHJpdmVyIGRvZXMgdGhpcywgc28NCj4gID4gaXQgd291bGQgYmUgZ29vZCB0byBoYXZlICA+IGEg
+Y29uZmlybWF0aW9uIGZyb20gdGhlIGlvbW11IG1haW50YWluZXJzDQo+ICA+IHRoYXQgdGhpcyBp
+cyBob3cgdGhlICA+IGludGVyZmFjZSBhbmQgdGhlIGRlcGVuZGVuY3kgaXMgaW50ZW5kZWQgdG8g
+YmUNCj4gID4gdXNlZC4NCj4gID4NCj4gID4gIFdURiBpcyB0aGF0IHBhdGNoIGRvaW5nIT8gTm8s
+IHJhbmRvbSBkZXZpY2UgZHJpdmVycyBzaG91bGQgYWJzb2x1dGVseQ0KPiAgPiBub3QgIGJlIHBv
+a2luZyBpbnRvIElPTU1VIGRyaXZlciBpbnRlcm5hbHMsIHRoaXMgaXMgZWdyZWdpb3VzbHkgd3Jv
+bmcNCj4gID4gYW5kIHRoZSAgY29ycmVjdCBhY3Rpb24gaXMgdG8gZHJvcCBpdCBlbnRpcmVseS4N
+Cj4gIA0KPiAgDQo+ICBBYnNvbHV0ZWx5IGFncmVlIHdpdGggaXQuIFNvcnJ5IEkgaGF2ZW4ndCBi
+ZWVuIGluIHRvdWNoIGZvciBxdWl0ZSBzb21lIHRpbWUuDQo+ICBMZXQgbWUgY2F0Y2ggdGhlIHdo
+b2xlIHN0b3J5LiAgRmVlbCBmcmVlIHRvIGRyb3AgdGhpcyBwYXRjaC4NCg0KDQpKdXN0IHRvIG1h
+a2UgaXQgY2xlYXIgSSBtZWFudCB0aGUgY3VscHJpdCBwYXRjaDoNCmh0dHBzOi8vbG9yZS5rZXJu
+ZWwub3JnL25ldGRldi8yMDI0MTAyNTA5MjkzOC4yOTEyOTU4LTMtc2hhb2ppamllQGh1YXdlaS5j
+b20vDQoNCg0KPiAgDQo+ICBUaGFua3MNCj4gIFNhbGlsLg0KPiAgDQo+ICA+DQo+ICA+ICBUaGFu
+a3MsDQo+ICA+ICBSb2Jpbi4NCj4gID4NCj4gID4gID4gLS0tDQo+ICA+ICA+ICAgZHJpdmVycy9u
+ZXQvZXRoZXJuZXQvaGlzaWxpY29uL0tjb25maWcgfCAxICsNCj4gID4gID4gICAxIGZpbGUgY2hh
+bmdlZCwgMSBpbnNlcnRpb24oKykNCj4gID4gID4NCj4gID4gID4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvbmV0L2V0aGVybmV0L2hpc2lsaWNvbi9LY29uZmlnDQo+ICA+ICA+IGIvZHJpdmVycy9uZXQv
+ZXRoZXJuZXQvaGlzaWxpY29uL0tjb25maWcNCj4gID4gID4gaW5kZXggNjUzMDJjNDFiZmIxLi43
+OTBlZmM4ZDJkZTYgMTAwNjQ0ICA+IC0tLQ0KPiAgPiBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2hp
+c2lsaWNvbi9LY29uZmlnDQo+ICA+ICA+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2hpc2ls
+aWNvbi9LY29uZmlnDQo+ICA+ICA+IEBAIC05MSw2ICs5MSw3IEBAIGNvbmZpZyBITlNfRU5FVA0K
+PiAgPiAgPiAgIGNvbmZpZyBITlMzDQo+ICA+ICA+ICAgCXRyaXN0YXRlICJIaXNpbGljb24gTmV0
+d29yayBTdWJzeXN0ZW0gU3VwcG9ydCBITlMzIChGcmFtZXdvcmspIg0KPiAgPiAgPiAgIAlkZXBl
+bmRzIG9uIFBDSQ0KPiAgPiAgPiArCWRlcGVuZHMgb24gSU9NTVVfU1VQUE9SVA0KPiAgPiAgPiAg
+IAlzZWxlY3QgTkVUX0RFVkxJTksNCj4gID4gID4gICAJc2VsZWN0IFBBR0VfUE9PTA0KPiAgPiAg
+PiAgIAloZWxwDQo+ICA+DQoNCg==
 
