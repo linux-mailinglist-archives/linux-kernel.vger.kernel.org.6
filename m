@@ -1,146 +1,219 @@
-Return-Path: <linux-kernel+bounces-394726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EDAC9BB339
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:27:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249B89BB33A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 628831C211DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:27:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5193C1C21D95
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4CA1C0DF0;
-	Mon,  4 Nov 2024 11:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XS5i/5yS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBEE1C2339;
+	Mon,  4 Nov 2024 11:19:50 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264341B4F24
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B9F1B394E;
+	Mon,  4 Nov 2024 11:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719149; cv=none; b=YowvJGj0Iqr9KWUXFyfZ9Ct9xkWOw19z2leAS83RehL9SLMarO8X0eraHb1CSNv3ZAiN8lPkHrE9g1G5R+6qmsnjtRxWGzLYzUBYAazkbbtDz1Gw+MMRtDAZthj8pYPze5uRUrCjNzs5gS5+vxxCMw9T+aLZWHka2PJwuKipnqY=
+	t=1730719189; cv=none; b=LTw8FF0c6eDB340xjygTPtnOSaVDgkBxa3ocEXaYx3wrhtCvg9aew7pwxqDnH0ipvz6SGkrXF+YhkWLoXvbr3JEx1znXrGmrt3eJOYN8+egtchk18OWWOQigM1/C+nJII8Zou6on23495nEMvIN/OOwMgMO3eLq+RAWk9KPSBIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719149; c=relaxed/simple;
-	bh=JgGFqZMz2Caxo/bqJtXtplmuZg+Kq0OfABkegunbOdc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QnJFZXmxUS8o924y6WLVcRddarb3D0AFf1lcJtyui+DJHd9wGq9dgw8BkxNSQfpwQ6bNHyGVLrMCjaxTh4ieeSfMXa/4KXBKu894XzDqNhp3eLfKYQG7d6BJH3IEYDrv409ULki4YN7JzUzsfoxeoosg4fdWlQ3w3HQtrs7dyy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XS5i/5yS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3NlkDI027342
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 11:19:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A2oqrkGjzA/cLsOTZU66EH16Yp67C8bgxn8gSXmYQkc=; b=XS5i/5ySL9/dX/ot
-	PaFTZCwraJhzf8Z8uQxKTavoDl709y+gKABp/+cdX0BjDp01PZ8HSu/opEETfVQc
-	yF7f+FZUFbJfG+pDvSLXa0w7zHSPbaXVdW+r0sC9aZLJj/H1dxVRtvWvVMzoGYWF
-	5q1a0I3IlN59SHkSQpjT/LTVNYEjLgb6MdK7raUqOeGhUqJal974T6jLZnQz45LW
-	y5QMWSQzwWSDYPzIm2b61uTT7RNBCnf1eqAu8OKsjbFKRH6di/SKPosSNwk4XU4H
-	DTwJGb6ejJUj3hpKPhDAhkL50vm3n5uoZkd1uVI92SxauoH1eR3kIqyDpL0zthe6
-	lYdH7g==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ncyxuyae-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 11:19:06 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b148e9776bso28462585a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:19:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730719146; x=1731323946;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A2oqrkGjzA/cLsOTZU66EH16Yp67C8bgxn8gSXmYQkc=;
-        b=V9yVzSWGKNw3Q9fdXRyNKut5cgwwmUoMQDpPEPLWPF7XEuYUpEh75LawS9sZKPc4qY
-         i6CEXXNT+rx3r2km9FmdzHbZAjk9+0iLtmvuVEPr9FLzyBs4FyANYDUc36L75KmthOVu
-         VCVQJGhNMb/1evwSpwmySoo+pBGprjPpHQVDEYI7AToe4IMGt2iKilG24cXL41F4JkSo
-         muXBVJRamREEnETJunDC8up4QRY2IkqlsNTrAF1UYdHZqML/CvD75DQo2nZloqmrfCPO
-         0n2Jdw3BJWe5vCdC9rnNvojD+lCaQqdaK7mnW++263WmkXCJfYypHQrMeZuARscER61o
-         mP/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVOzpFeufPEWyteeJJ9T8En9YkCu5gDRpnis2J/wkok1ysG9RBxJWnnCTD7tpjJRWV1aa082/a/vBbkvSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx9eMJgyVLO4KiIsaL/GKIdwdeMLZzdTrZLCpLJsVORnOOHTUC
-	QQXaBc+RD4bNgEYHrg635CCLMM4bjIM00BfewOcUbtIsdhE617ZVn18d/IHNxt48XseRJ1+mPQc
-	u6wTMgg//jLucFBb+OW0Hq5r4+UgGBpq5DW1RpVQ6ktjZD1qJ4pm5eGcaCaOpptc=
-X-Received: by 2002:a05:620a:3181:b0:7b1:2242:e3e0 with SMTP id af79cd13be357-7b193ef409amr1999302785a.4.1730719146244;
-        Mon, 04 Nov 2024 03:19:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFYmjI7Jslj3eJ0wFw7ek9WtoDBg7hvIWPiFS3CeTaEvgboxht0RJg92uZc82vxdJNXaDmrMg==
-X-Received: by 2002:a05:620a:3181:b0:7b1:2242:e3e0 with SMTP id af79cd13be357-7b193ef409amr1999300485a.4.1730719145792;
-        Mon, 04 Nov 2024 03:19:05 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565df949sm540724366b.121.2024.11.04.03.19.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 03:19:05 -0800 (PST)
-Message-ID: <33174321-d81d-472a-b267-ed2cdd691b74@oss.qualcomm.com>
-Date: Mon, 4 Nov 2024 12:19:02 +0100
+	s=arc-20240116; t=1730719189; c=relaxed/simple;
+	bh=w4DhfcqhD35OLZhCD/yjFqQsPzQFGG5lrGkMuG3Ix1U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DlaWkAshJNQPZc0+aAHJ18kzzp649qN62+ki7aWWWUOimlhHAXwkSfMEMfQjszkuaSQLpeeYn/XeypJ524hyYvPNH+Ugfm7T2CgNhbbISCUTvJehjINCg66h6yvJ9Pz7taWDFjYaIJpV7FOeTbGODacvo8K4y+eOOLqzhaWbocg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 966C9C4CECE;
+	Mon,  4 Nov 2024 11:19:47 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: iommu@lists.linux.dev,
+	linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	Ido Schimmel <idosch@idosch.org>,
+	Ido Schimmel <idosch@nvidia.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] kmemleak: iommu/iova: Fix transient kmemleak false positive
+Date: Mon,  4 Nov 2024 11:19:44 +0000
+Message-Id: <20241104111944.2207155-1-catalin.marinas@arm.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 10/10] ASoC: qcom: sm8250: force single channel via
- RX_1 output
-To: Alexey Klimov <alexey.klimov@linaro.org>, broonie@kernel.org,
-        konradybcio@kernel.org, konrad.dybcio@oss.qualcomm.com,
-        andersson@kernel.org, srinivas.kandagatla@linaro.org
-Cc: tiwai@suse.com, lgirdwood@gmail.com, perex@perex.cz, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, dmitry.baryshkov@linaro.org,
-        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241101053154.497550-1-alexey.klimov@linaro.org>
- <20241101053154.497550-11-alexey.klimov@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241101053154.497550-11-alexey.klimov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: A0hR_DDLAn6p8CPphtQSp3TQTRaEsQgT
-X-Proofpoint-GUID: A0hR_DDLAn6p8CPphtQSp3TQTRaEsQgT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 mlxlogscore=999
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040100
+Content-Transfer-Encoding: 8bit
 
-On 1.11.2024 6:31 AM, Alexey Klimov wrote:
-> In case of mono configurations we need to enforce single channel
-> output. This is required for audio playback on QRB4210 RB2 board.
-> 
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  sound/soc/qcom/sm8250.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/sound/soc/qcom/sm8250.c b/sound/soc/qcom/sm8250.c
-> index 45e0c33fc3f3..7994488d7998 100644
-> --- a/sound/soc/qcom/sm8250.c
-> +++ b/sound/soc/qcom/sm8250.c
-> @@ -39,10 +39,20 @@ static int sm8250_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
->  					SNDRV_PCM_HW_PARAM_RATE);
->  	struct snd_interval *channels = hw_param_interval(params,
->  					SNDRV_PCM_HW_PARAM_CHANNELS);
-> +	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
->  
->  	rate->min = rate->max = 48000;
->  	channels->min = channels->max = 2;
->  
-> +	/* Maybe should be moved to driver data variant */
-> +	switch (cpu_dai->id) {
-> +	case RX_CODEC_DMA_RX_1:
-> +		channels->min = channels->max = 1;
-> +		break;
+The introduction of iova_depot_pop() in 911aa1245da8 ("iommu/iova: Make
+the rcache depot scale better") confused kmemleak by moving a struct
+iova_magazine object from a singly linked list to rcache->depot and
+resetting the 'next' pointer referencing it. Unlike doubly linked lists,
+the content of the object being referred is never changed on removal
+from a singly linked list and the kmemleak checksum heuristics do not
+detect such scenario. This leads to false positives like:
 
-This doesn't seem to be specific to either 8250 or 6115. It looks like
-this is board specific.
+unreferenced object 0xffff8881a5301000 (size 1024):
+  comm "softirq", pid 0, jiffies 4306297099 (age 462.991s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 e7 7d 05 00 00 00 00 00  .........}......
+    0f b4 05 00 00 00 00 00 b4 96 05 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff819f5f08>] __kmem_cache_alloc_node+0x1e8/0x320
+    [<ffffffff818a239a>] kmalloc_trace+0x2a/0x60
+    [<ffffffff8231d31e>] free_iova_fast+0x28e/0x4e0
+    [<ffffffff82310860>] fq_ring_free_locked+0x1b0/0x310
+    [<ffffffff8231225d>] fq_flush_timeout+0x19d/0x2e0
+    [<ffffffff813e95ba>] call_timer_fn+0x19a/0x5c0
+    [<ffffffff813ea16b>] __run_timers+0x78b/0xb80
+    [<ffffffff813ea5bd>] run_timer_softirq+0x5d/0xd0
+    [<ffffffff82f1d915>] __do_softirq+0x205/0x8b5
 
-Konrad
+Introduce kmemleak_transient_leak() which resets the object checksum
+requiring another scan pass before it is reported (if still
+unreferenced). Call this new API in iova_depot_pop().
+
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Reported-by: Ido Schimmel <idosch@idosch.org>
+Tested-by: Ido Schimmel <idosch@nvidia.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Link: https://lore.kernel.org/r/ZY1osaGLyT-sdKE8@shredder/
+---
+
+This could be two patches but I thought the rationale for a new kmemleak
+API goes better with its use in the iova code. Happy to move the 6 lines
+iova change to a separate patch but they should still go in together.
+Given that there are more line under mm/, I'd say it better goes in via
+the mm tree with the relevant acks from the iommu folk.
+
+Thanks.
+
+ Documentation/dev-tools/kmemleak.rst |  1 +
+ drivers/iommu/iova.c                 |  6 +++++
+ include/linux/kmemleak.h             |  4 +++
+ mm/kmemleak.c                        | 39 ++++++++++++++++++++++++++++
+ 4 files changed, 50 insertions(+)
+
+diff --git a/Documentation/dev-tools/kmemleak.rst b/Documentation/dev-tools/kmemleak.rst
+index 2cb00b53339f..7d784e03f3f9 100644
+--- a/Documentation/dev-tools/kmemleak.rst
++++ b/Documentation/dev-tools/kmemleak.rst
+@@ -161,6 +161,7 @@ See the include/linux/kmemleak.h header for the functions prototype.
+ - ``kmemleak_free_percpu``	 - notify of a percpu memory block freeing
+ - ``kmemleak_update_trace``	 - update object allocation stack trace
+ - ``kmemleak_not_leak``	 - mark an object as not a leak
++- ``kmemleak_transient_leak``	 - mark an object as a transient leak
+ - ``kmemleak_ignore``		 - do not scan or report an object as leak
+ - ``kmemleak_scan_area``	 - add scan areas inside a memory block
+ - ``kmemleak_no_scan``	 - do not scan a memory block
+diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+index 16c6adff3eb7..5b5400efb657 100644
+--- a/drivers/iommu/iova.c
++++ b/drivers/iommu/iova.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/iova.h>
++#include <linux/kmemleak.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/smp.h>
+@@ -673,6 +674,11 @@ static struct iova_magazine *iova_depot_pop(struct iova_rcache *rcache)
+ {
+ 	struct iova_magazine *mag = rcache->depot;
+ 
++	/*
++	 * As the mag->next pointer is moved to rcache->depot and reset via
++	 * the mag->size assignment, mark it as a transient false positive.
++	 */
++	kmemleak_transient_leak(mag->next);
+ 	rcache->depot = mag->next;
+ 	mag->size = IOVA_MAG_SIZE;
+ 	rcache->depot_size--;
+diff --git a/include/linux/kmemleak.h b/include/linux/kmemleak.h
+index 6a3cd1bf4680..93a73c076d16 100644
+--- a/include/linux/kmemleak.h
++++ b/include/linux/kmemleak.h
+@@ -26,6 +26,7 @@ extern void kmemleak_free_part(const void *ptr, size_t size) __ref;
+ extern void kmemleak_free_percpu(const void __percpu *ptr) __ref;
+ extern void kmemleak_update_trace(const void *ptr) __ref;
+ extern void kmemleak_not_leak(const void *ptr) __ref;
++extern void kmemleak_transient_leak(const void *ptr) __ref;
+ extern void kmemleak_ignore(const void *ptr) __ref;
+ extern void kmemleak_scan_area(const void *ptr, size_t size, gfp_t gfp) __ref;
+ extern void kmemleak_no_scan(const void *ptr) __ref;
+@@ -93,6 +94,9 @@ static inline void kmemleak_update_trace(const void *ptr)
+ static inline void kmemleak_not_leak(const void *ptr)
+ {
+ }
++static inline void kmemleak_transient_leak(const void *ptr)
++{
++}
+ static inline void kmemleak_ignore(const void *ptr)
+ {
+ }
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 0400f5e8ac60..72e09ac9140b 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -934,6 +934,28 @@ static void make_black_object(unsigned long ptr, unsigned int objflags)
+ 	paint_ptr(ptr, KMEMLEAK_BLACK, objflags);
+ }
+ 
++/*
++ * Reset the checksum of an object. The immediate effect is that it will not
++ * be reported as a leak during the next scan until its checksum is updated.
++ */
++static void reset_checksum(unsigned long ptr)
++{
++	unsigned long flags;
++	struct kmemleak_object *object;
++
++	object = find_and_get_object(ptr, 0);
++	if (!object) {
++		kmemleak_warn("Not resetting the checksum of an unknown object at 0x%08lx\n",
++			      ptr);
++		return;
++	}
++
++	raw_spin_lock_irqsave(&object->lock, flags);
++	object->checksum = 0;
++	raw_spin_unlock_irqrestore(&object->lock, flags);
++	put_object(object);
++}
++
+ /*
+  * Add a scanning area to the object. If at least one such area is added,
+  * kmemleak will only scan these ranges rather than the whole memory block.
+@@ -1202,6 +1224,23 @@ void __ref kmemleak_not_leak(const void *ptr)
+ }
+ EXPORT_SYMBOL(kmemleak_not_leak);
+ 
++/**
++ * kmemleak_transient_leak - mark an allocated object as transient false positive
++ * @ptr:	pointer to beginning of the object
++ *
++ * Calling this function on an object will cause the memory block to not be
++ * reported as a leak temporarily. This may happen, for example, if the object
++ * is part of a singly linked list and the ->next reference to it is changed.
++ */
++void __ref kmemleak_transient_leak(const void *ptr)
++{
++	pr_debug("%s(0x%px)\n", __func__, ptr);
++
++	if (kmemleak_enabled && ptr && !IS_ERR(ptr))
++		reset_checksum((unsigned long)ptr);
++}
++EXPORT_SYMBOL(kmemleak_transient_leak);
++
+ /**
+  * kmemleak_ignore - ignore an allocated object
+  * @ptr:	pointer to beginning of the object
 
