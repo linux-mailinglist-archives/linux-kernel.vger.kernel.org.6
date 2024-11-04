@@ -1,88 +1,116 @@
-Return-Path: <linux-kernel+bounces-395187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A72F9BBA0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:18:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE78D9BBA03
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:17:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0F31C22B49
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:18:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C94DB21975
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530DD1C232D;
-	Mon,  4 Nov 2024 16:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54F21C1AB1;
+	Mon,  4 Nov 2024 16:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="B0Gfw9hb"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ErPOQQuf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EC11C233E
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5241C07CF;
+	Mon,  4 Nov 2024 16:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737096; cv=none; b=Llzz8sXNyA2mhn9Xad+/K/ghVY0+lstulFsBz+Q4h+rGlHyRb17iQ4t6IjvfnoEHllqIqaf7kQ7dJiG9Vu7f37QU6Bb6GBIvUt/NHD8rno9uKE/lJkanSmYsXV9G//NXZIuWaQrXn0pFlaieClvILEXfSFzZCRFwju84mRLUoRI=
+	t=1730737042; cv=none; b=btsFOjvUfsPtHGiES6RTZBtC8UvRqsv22Ua+VgAESjw7lqo2TbWT5g6jEZid7IYSY3Gfvzx9jdA+rrG1P0EIkqt+GIpk6d26oUu8hPwgnwrh67gNJXx4LCooLQ8EJYjKG9BmpF3wcUPM0ueAsuZmSOvaUkRsBRHaD8YGgsonTxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737096; c=relaxed/simple;
-	bh=sk6U4/K3R+jeus2MgsDXnr8zNq7ciOtwdtktA7ckUVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FmXmVMps91cWN73eLK/rOyxpnvnOea8wBsRCFuVMifFACQBsWdD/ocHMQdnlkWKDpsrGfa6IEeCvGIF42DRRJOauFjJpqcNtd5M4MwgZsbh9Twusr4JIJ0ClxfhZqyNKNqPOLaJGbOuIXFw/w2UMn9iAKBmXvMOn9YcgqCBefsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=B0Gfw9hb; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-115-131.bstnma.fios.verizon.net [173.48.115.131])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4A4GHDZq005094
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 4 Nov 2024 11:17:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1730737037; bh=MfBLldae6HpVT/J0uH6IxgYAl1BDd58WeCFp8bpuhVM=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=B0Gfw9hby54Mawf3nVtoZfShOFAGukbl6ZTbcBRlBYtaOGsQCDtF0qrCRjYcyueMN
-	 kV3YMqvlfKnXp0p4fCWynaSg163bApSkqyhJqyYAnlJGmGsBqD0LP+xC7Ub8B3AkMW
-	 fCaW+bTFL4V+NDN7Mwtj3eK4pBVhp1exceawLgFrmz6mC17UMOrLmM35q5gxC4WiPa
-	 dU/am5SfTEXUCGkYocIUCIDjggZimNzSIcTYzrac8AXMHympLwlrhdp6OGCVFYpanm
-	 7zZxGz70mRgKnWKu+qePBhSgO7AcPnfmUhE92pXrgqBwyRWdRGP2hoQHMO6YFDD2gt
-	 W9K47pAC0MkrA==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 8C6D915C02FA; Mon, 04 Nov 2024 11:17:13 -0500 (EST)
-Date: Mon, 4 Nov 2024 11:17:13 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v3 15/18] ext4: switch to using the crc32c library
-Message-ID: <20241104161713.GA43869@mit.edu>
-References: <20241103223154.136127-1-ebiggers@kernel.org>
- <20241103223154.136127-16-ebiggers@kernel.org>
+	s=arc-20240116; t=1730737042; c=relaxed/simple;
+	bh=eb4OfohM415xwWSX2GTo7qtBT4UuudlHKe11OO6YLzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dJhrw5rTYsVapr/XWEAOnijJ2bWOWwn0zdJlpqG1+T9mHsJ2denyXL4R6vBLPGoJqkk/X/KTJ0uyQDgprBmJAlBCQSImZ6mWToNOAqImzzrcsvab4WrBg5fJ54XP2BhcZHbGKRYGCGGP1vFDQjFHZ8wvwHC06l5UIb7TuzR1FDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ErPOQQuf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B08C4CECE;
+	Mon,  4 Nov 2024 16:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730737041;
+	bh=eb4OfohM415xwWSX2GTo7qtBT4UuudlHKe11OO6YLzw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ErPOQQuftN/PNxxttrpC21fgyOuxkFmUo7C8V23N0jTh8XpHeMoGiYdMpdvrJXMSh
+	 xKBAXHbnSBHLFDxnVIuU5y1buyAgcRvDPiZBhcN41kkPD3OiR1m90nXPAPygMfli54
+	 qwhaZ2CR7LF43VJLnrlbBr03Yi0575mSkYP7f4laFWHyNeXdI72T7wC0kpLbVckQZ+
+	 4FydJ+jWY10aV3a8JOKbEcWipgG4A/unAOva63klUpyUPyN08zRmVq3AtxiwCSbEdT
+	 B5fJyEmEGO9xyCODginjhReOaw1ZWXRL7NJABa/1oOI6pk9mII3gGHv442cR6L1AqM
+	 XgAWaR1CVWr3w==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Dima Kogan <dima@secretsauce.net>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] perf-probe: Fix to ignore escaped characters in --lines option
+Date: Tue,  5 Nov 2024 01:17:18 +0900
+Message-ID:  <173073703801.2098439.2570890674739658493.stgit@mhiramat.roam.corp.google.com>
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+In-Reply-To:  <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
+References:  <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241103223154.136127-16-ebiggers@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 03, 2024 at 02:31:51PM -0800, Eric Biggers wrote:
-> Now that the crc32c() library function directly takes advantage of
-> architecture-specific optimizations, it is unnecessary to go through the
-> crypto API.  Just use crc32c().  This is much simpler, and it improves
-> performance due to eliminating the crypto API overhead.
-> 
-> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Acked-by: Theodore Ts'o <tytso@mit.edu>
+Use strbprk_esc() and strdup_esc() to ignore escaped characters in
+--lines option. This has been done for other options, but only --lines
+option doesn't.
 
-Thanks for the cleanup!
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ tools/perf/util/probe-event.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index a17c9b8a7a79..665dcce482e1 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -1355,7 +1355,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+ 	lr->start = 0;
+ 	lr->end = INT_MAX;
+ 
+-	range = strchr(name, ':');
++	range = strpbrk_esc(name, ":");
+ 	if (range) {
+ 		*range++ = '\0';
+ 
+@@ -1396,16 +1396,16 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+ 		}
+ 	}
+ 
+-	file = strchr(name, '@');
++	file = strpbrk_esc(name, "@");
+ 	if (file) {
+ 		*file = '\0';
+-		lr->file = strdup(++file);
++		lr->file = strdup_esc(++file);
+ 		if (lr->file == NULL) {
+ 			err = -ENOMEM;
+ 			goto err;
+ 		}
+ 		lr->function = name;
+-	} else if (strchr(name, '/') || strchr(name, '.'))
++	} else if (strpbrk_esc(name, "/."))
+ 		lr->file = name;
+ 	else if (is_c_func_name(name))/* We reuse it for checking funcname */
+ 		lr->function = name;
 
 
