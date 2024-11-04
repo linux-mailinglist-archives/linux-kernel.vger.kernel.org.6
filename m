@@ -1,289 +1,205 @@
-Return-Path: <linux-kernel+bounces-394406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2467C9BAE9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:52:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AE59BAE9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:53:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DF821F21A3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B54A1F21B36
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABF11AB6EA;
-	Mon,  4 Nov 2024 08:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7F41AB507;
+	Mon,  4 Nov 2024 08:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AWgL7uxw"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="w64F1RmQ"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EE81494B1;
-	Mon,  4 Nov 2024 08:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C961918E364
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730710369; cv=none; b=JpmVBYA3FZDRJPpfIHVGG3Ka9VhzjC45MkJNPLRZQDY0Z0hQKdS6rCoQPWWaO2m31tUx2bO6wlbtlT+DHe7BLtDvUyr1ly1QJW/JXZpoLAR0LtwIWNHVSKtzDPqy7jBn5d4crGfJhi3OuVPm94POoMwUODVZBgJA9eUYa4qgvK4=
+	t=1730710376; cv=none; b=hDWQhTp5Vjt2tn56tvT2PcTd0LlRNdTM7OjycFmzhv3eDQAVL8ePt+tEfaCLVi6YEVNDAjxT+WPNety6wlzDjCSdWnjKG5mdi4Cz6P32D/1ifxXMu7jCaPAyV2GLUoUim35HCWJUu8a24i8qZwYBIRTJZYaVtCOWukCwoQ39X9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730710369; c=relaxed/simple;
-	bh=funQs4EDoySiJq5gzNvq7YbPyZwqvugQA91BmnGPvoM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BG6HijL9rlWYBpvp5WdVXl/+rfBLF5fQKKcik9joBfZqi5MxsQHPrCwKQtsfyNqiXp+EbG+BoBFw+8MfxtwY66h+S1t4KB5YNEw3mR/dF+LnYA454r4CAdq4nVcFcQVKgmer6KGRVgLrZW7BZTwXeZvPD511YVOXIn9zJzcSA1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AWgL7uxw; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 283BB1C0003;
-	Mon,  4 Nov 2024 08:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730710358;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=s8mFq+jqyFYDthvaTeb5O0lvVCgm26reIbUNCvntJdU=;
-	b=AWgL7uxwlMKi7FSWHbloGyVvKSn2hcX98NVRLl6ToKXcm7RUTCvHt7f/DgpiKey724Sseq
-	qWmj/12sTOeOl33YnfirVopM8ZjBvbfNSKjnRsOHUphtsNEfqQ9j4J5UjKfI50mz/fHO1W
-	qNgvJwBCzPqAF8ol2WES/SZh1KSzM+MSkYj2ON3EUA2kykkUcOPY/CXjUlXYYR/qDx8weR
-	3DJy/BjHctB42XmuoyL5J8EBgSH/q/e5uTiAUsZCilcqBsfyrUg5afEBjrsvEQglNsn4dx
-	grX+uXvp57h+sYLPw8agOH6LhzeIOEJYJ8tPQHKp3HgnRJOb10rG+byCAPcjwQ==
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Mon, 04 Nov 2024 09:52:32 +0100
-Subject: [PATCH net v2] net: phy: dp83869: fix status reporting for
- 1000base-x autonegotiation
+	s=arc-20240116; t=1730710376; c=relaxed/simple;
+	bh=+dg7+/oeLYejz4vf4EdmY/yPLTxLAvK5rCpl1BLgxkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKKetOdY1bpBomVljfuL7MARXqykRoosv8VYdZcQvJLUhNMr+itQiYZQ574H+FEQNEaCT2ijIl0YPa7eVAketlVdbgW05rivnEw5dKwG/utzU3pLCoFXVr71xduZKtt7AmHTjebE/wB6oMnV/5CpJ0lcyMX/uDnrkM9Mo0n7xuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=w64F1RmQ; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4a5ecc44so2500937f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:52:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730710373; x=1731315173; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GT4c1xxWFNvifykBes4pG2L4vTvH31piGgiV/8RPSmM=;
+        b=w64F1RmQtIfoN34isRu5saJ8zOa6E3eAiE5lCu3XwCK2MDp4sjwXaLcBdTr/E7FY6s
+         /nZ+sW0svioXgsEchplLMGYbxiXKurYaTJ8dCIzPcWGrQebc/A+2mGHieCwa+LhIZlHN
+         gktKfRz58cOB06E+/OW/oUC+eNEZf6hzfPRHt3qM4wBa7P8Frn4b8FGjMCt59dHBoRz9
+         jx6xip8iwrE1QLruV8+BFzZazPKrSATdA2UAByZfylleld6VHLrWO8kffE1BW4Hykt5C
+         BSiMoBsO0c0dEArO7PUIIF6zxQ1Tg8Fg2StN9thI5oTlMHskywLrOh4iVh4pbGbb5DFQ
+         4ONA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730710373; x=1731315173;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GT4c1xxWFNvifykBes4pG2L4vTvH31piGgiV/8RPSmM=;
+        b=SsvafNOi7l6hfVTHN4UcWLXHUPlCzi09P7TnePL/vKQwFEOksG5QSsWJPzRRPWNDSG
+         yxXPTrG+JRU9N3d2Co+tsjdOMnnWNEKmtlV+XpufdJ6NEwU+NbYwbHQKyugvmHm7L/fu
+         GjB/6yVeEVttaFQonYdJ3Xm2xrneuDc8flU1tr1aNrXSJ2kk4dFw6xPl9UqYGyYZwhzp
+         7TfPeRvwVChtqU9jMWHs1mLLR+Z44M/mU29nWK2WATdBqHSsw3IhzMv2Ju4jAS7ZxZWA
+         OcPBG9aaH981aWrsWTrkHrqrYqm4JqJ+yvYYoNHUcs9QU4NgdZElCbj987vfhWdmuvG+
+         NMiw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3QzOcZkcuV/uk6CU+duOG1cEdvnNpFQgwZCHhZEm6PltieslasTOXYMPrJCdiMYsK7t1sGu6ZzK2R3A8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw/qKXUAZScnkn0dVUbvIfMF+MGKfosFelNbuHMV8w2pjl6O17
+	TqwG0d0tn1vmfiZ4EfqpuXQ0zwJvpbqBiWAQNCI+zBdhPbbtc44UsrJVtkC9osk=
+X-Google-Smtp-Source: AGHT+IH46ZjGucmxl6PTqFcmfDahpKMeLn2vnjDdJTD5YAvlDVhF2bkLjwJIb/MKH9YMOw8OMO2PEA==
+X-Received: by 2002:a5d:4fc4:0:b0:37d:393a:97c5 with SMTP id ffacd0b85a97d-3806115a0d7mr20711375f8f.28.1730710373108;
+        Mon, 04 Nov 2024 00:52:53 -0800 (PST)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7d20sm12734573f8f.7.2024.11.04.00.52.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 00:52:52 -0800 (PST)
+Date: Mon, 4 Nov 2024 09:52:51 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] pwm: add support for NXPs high-side switch
+ MC33XS2410
+Message-ID: <dy5abepkqhkmbgirwjkblbmw6vwb56vaqgazluyt675qflzioz@glp4djy6fhuo>
+References: <20240927125745.38367-1-dima.fedrau@gmail.com>
+ <20240927125745.38367-3-dima.fedrau@gmail.com>
+ <oppdnsda4tqjcpsb26j5ew62t4bkkmtxuu7e2fpinnazubk5ky@tmz76o5xdrlj>
+ <20241023125221.GA197308@debian>
+ <eyom32milbbqp6floun4r5bpozuewbe5kk2htvhp5cmcytj2oy@bpcrd2aiwk6m>
+ <20241103190709.GA466098@debian>
+ <atkj7wnhl4n6frl5swjwrto6r6dhofjtnqisqrn5z6w3cmfl3h@dgqgdxovrqb4>
+ <20241103205215.GA509903@debian>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241104-dp83869-1000base-x-v2-1-f97e39a778bf@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAE+LKGcC/22NzQqDMBCEX0X23C2b+Bd76nsUD4luaqBNJBGxi
- O/eID32+M0w3+yQODpOcCt2iLy65ILPIC8FDJP2T0Y3ZgZJshIkaxxnVaqmQ0FERifGDcmSbkQ
- r61ZVkIdzZOu2U/oAzwv0OZxcWkL8nEerOKufs/vnXAUKtIO2XDZkxk7dTQjLy/nrEN7QH8fxB
- R3NsuW7AAAA
-X-Change-ID: 20241025-dp83869-1000base-x-0f0a61725784
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Dan Murphy <dmurphy@ti.com>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Romain Gantois <romain.gantois@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ydvmgz6gd4xioeih"
+Content-Disposition: inline
+In-Reply-To: <20241103205215.GA509903@debian>
 
-The DP83869 PHY transceiver supports converting from RGMII to 1000base-x.
-In this operation mode, autonegotiation can be performed, as described in
-IEEE802.3.
 
-The DP83869 has a set of fiber-specific registers located at offset 0xc00.
-When the transceiver is configured in RGMII-to-1000base-x mode, these
-registers are mapped onto offset 0, which should, in theory, make reading
-the autonegotiation status transparent.
+--ydvmgz6gd4xioeih
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 2/2] pwm: add support for NXPs high-side switch
+ MC33XS2410
+MIME-Version: 1.0
 
-However, the fiber registers at offset 0xc04 and 0xc05 do not follow the
-bit layout of their standard counterparts. Thus, genphy_read_status()
-doesn't properly read the capabilities advertised by the link partner,
-resulting in incorrect link parameters.
+On Sun, Nov 03, 2024 at 09:52:15PM +0100, Dimitri Fedrau wrote:
+> Hello Uwe,
+>=20
+> Am Sun, Nov 03, 2024 at 09:19:36PM +0100 schrieb Uwe Kleine-K=F6nig:
+> > Hello Dimitri,
+> >=20
+> > On Sun, Nov 03, 2024 at 08:07:09PM +0100, Dimitri Fedrau wrote:
+> > > Am Thu, Oct 24, 2024 at 11:19:16PM +0200 schrieb Uwe Kleine-K=F6nig:
+> > > > What breaks if you drop the check for state->enabled?
+> > > > =20
+> > > The device is unable to generate a 0% duty cycle, to support this you
+> > > proposed in an earlier review to disable the output. Without checking=
+ if
+> > > the output is disabled, the mc33xs2410_pwm_get_state function returns=
+ the
+> > > wrong duty cycle for a previously setted 0% duty cycle. A "0" value i=
+n the
+> > > MC33XS2410_PWM_DC register means that the relative duty cylce is 1/25=
+6. As
+> > > a result there are complaints if PWM_DEBUG is enabled.
+> >=20
+> > I fail to follow. If .enabled=3Dtrue + .duty_cycle=3D0 is requested you
+> > disable. That's fine. However it shouldn't be necessary to use
+> > state->enabled in .get_state(). I didn't look at the actual code, but if
+> > you provide a sequence of writes to /sys that trigger a PWM_DEBUG
+> > output, I'll take another look.
+> >=20
+> Apply 0% duty cycle: .enabled=3Dfalse + .duty_cycle=3D0
+> Below some writes triggering PWM_DEBUG output:
+>=20
+> # echo 488282 > /sys/class/pwm/pwmchip3/pwm0/period
+> # echo 244140 > /sys/class/pwm/pwmchip3/pwm0/duty_cycle
+> # echo 0 > /sys/class/pwm/pwmchip3/pwm0/duty_cycle
+> [   91.813513] mc33xs2410-pwm spi0.0: .apply is supposed to round down du=
+ty_cycle (requested: 0/488282, applied: 1908/488282)
 
-Similarly, genphy_config_aneg() doesn't properly write advertised
-capabilities.
+I don't understand that. We're talking about=20
 
-Fix the 1000base-x autonegotiation procedure by replacing
-genphy_read_status() and genphy_config_aneg() with driver-specific
-functions which take into account the nonstandard bit layout of the DP83869
-registers in 1000base-x mode.
-
-Fixes: a29de52ba2a1 ("net: dp83869: Add ability to advertise Fiber connection")
-Cc: stable@vger.kernel.org
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
----
-Changes in v2:
-- Fixed an uninitialized use.
-- Link to v1: https://lore.kernel.org/r/20241029-dp83869-1000base-x-v1-1-fcafe360bd98@bootlin.com
----
- drivers/net/phy/dp83869.c | 130 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 127 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
-index 5f056d7db83eed23f1cab42365fdc566a0d8e47f..ca1c247d478ced890a3c7ae97b855f20056eb916 100644
---- a/drivers/net/phy/dp83869.c
-+++ b/drivers/net/phy/dp83869.c
-@@ -41,6 +41,8 @@
- #define DP83869_IO_MUX_CFG	0x0170
- #define DP83869_OP_MODE		0x01df
- #define DP83869_FX_CTRL		0x0c00
-+#define DP83869_FX_ANADV        0x0c04
-+#define DP83869_FX_LPABL        0x0c05
- 
- #define DP83869_SW_RESET	BIT(15)
- #define DP83869_SW_RESTART	BIT(14)
-@@ -135,6 +137,17 @@
- #define DP83869_DOWNSHIFT_4_COUNT	4
- #define DP83869_DOWNSHIFT_8_COUNT	8
- 
-+/* FX_ANADV bits */
-+#define DP83869_BP_FULL_DUPLEX       BIT(5)
-+#define DP83869_BP_PAUSE             BIT(7)
-+#define DP83869_BP_ASYMMETRIC_PAUSE  BIT(8)
-+
-+/* FX_LPABL bits */
-+#define DP83869_LPA_1000FULL   BIT(5)
-+#define DP83869_LPA_PAUSE_CAP  BIT(7)
-+#define DP83869_LPA_PAUSE_ASYM BIT(8)
-+#define DP83869_LPA_LPACK      BIT(14)
-+
- enum {
- 	DP83869_PORT_MIRRORING_KEEP,
- 	DP83869_PORT_MIRRORING_EN,
-@@ -153,19 +166,129 @@ struct dp83869_private {
- 	int mode;
- };
- 
-+static int dp83869_config_aneg(struct phy_device *phydev)
-+{
-+	struct dp83869_private *dp83869 = phydev->priv;
-+	unsigned long *advertising;
-+	int err, changed = false;
-+	u32 adv = 0;
-+
-+	if (dp83869->mode != DP83869_RGMII_1000_BASE)
-+		return genphy_config_aneg(phydev);
-+
-+	/* Forcing speed or duplex isn't supported in 1000base-x mode */
-+	if (phydev->autoneg != AUTONEG_ENABLE)
-+		return 0;
-+
-+	/* In fiber modes, register locations 0xc0... get mapped to offset 0.
-+	 * Unfortunately, the fiber-specific autonegotiation advertisement
-+	 * register at address 0xc04 does not have the same bit layout as the
-+	 * corresponding standard MII_ADVERTISE register. Thus, functions such
-+	 * as genphy_config_advert() will write the advertisement register
-+	 * incorrectly.
-+	 */
-+	advertising = phydev->advertising;
-+
-+	/* Only allow advertising what this PHY supports */
-+	linkmode_and(advertising, advertising,
-+		     phydev->supported);
-+
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT, advertising))
-+		adv |= DP83869_BP_FULL_DUPLEX;
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT, advertising))
-+		adv |= DP83869_BP_PAUSE;
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, advertising))
-+		adv |= DP83869_BP_ASYMMETRIC_PAUSE;
-+
-+	err = phy_modify_changed(phydev, DP83869_FX_ANADV,
-+				 DP83869_BP_FULL_DUPLEX | DP83869_BP_PAUSE |
-+				 DP83869_BP_ASYMMETRIC_PAUSE,
-+				 adv);
-+
-+	if (err < 0)
-+		return err;
-+	else if (err)
-+		changed = true;
-+
-+	return genphy_check_and_restart_aneg(phydev, changed);
-+}
-+
-+static int dp83869_read_status_fiber(struct phy_device *phydev)
-+{
-+	int err, lpa, old_link = phydev->link;
-+	unsigned long *lp_advertising;
-+
-+	err = genphy_update_link(phydev);
-+	if (err)
-+		return err;
-+
-+	if (phydev->autoneg == AUTONEG_ENABLE && old_link && phydev->link)
-+		return 0;
-+
-+	phydev->speed = SPEED_UNKNOWN;
-+	phydev->duplex = DUPLEX_UNKNOWN;
-+	phydev->pause = 0;
-+	phydev->asym_pause = 0;
-+
-+	lp_advertising = phydev->lp_advertising;
-+
-+	if (phydev->autoneg != AUTONEG_ENABLE) {
-+		linkmode_zero(lp_advertising);
-+
-+		phydev->duplex = DUPLEX_FULL;
-+		phydev->speed = SPEED_1000;
-+
-+		return 0;
-+	}
-+
-+	if (!phydev->autoneg_complete) {
-+		linkmode_zero(lp_advertising);
-+		return 0;
-+	}
-+
-+	/* In fiber modes, register locations 0xc0... get mapped to offset 0.
-+	 * Unfortunately, the fiber-specific link partner capabilities register
-+	 * at address 0xc05 does not have the same bit layout as the
-+	 * corresponding standard MII_LPA register. Thus, functions such as
-+	 * genphy_read_lpa() will read autonegotiation results incorrectly.
-+	 */
-+
-+	lpa = phy_read(phydev, DP83869_FX_LPABL);
-+	if (lpa < 0)
-+		return lpa;
-+
-+	linkmode_mod_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
-+			 lp_advertising, lpa & DP83869_LPA_1000FULL);
-+
-+	linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT, lp_advertising,
-+			 lpa & DP83869_LPA_PAUSE_CAP);
-+
-+	linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, lp_advertising,
-+			 lpa & DP83869_LPA_PAUSE_ASYM);
-+
-+	linkmode_mod_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
-+			 lp_advertising, lpa & DP83869_LPA_LPACK);
-+
-+	phy_resolve_aneg_linkmode(phydev);
-+
-+	return 0;
-+}
-+
- static int dp83869_read_status(struct phy_device *phydev)
+diff --git a/drivers/pwm/pwm-mc33xs2410.c b/drivers/pwm/pwm-mc33xs2410.c
+index f9a334a5e69b..14f5f7312d0a 100644
+--- a/drivers/pwm/pwm-mc33xs2410.c
++++ b/drivers/pwm/pwm-mc33xs2410.c
+@@ -244,15 +244,6 @@ static int mc33xs2410_pwm_get_relative_duty_cycle(u64 =
+period, u64 duty_cycle)
+ 	return duty_cycle - 1;
+ }
+=20
+-static void mc33xs2410_pwm_set_relative_duty_cycle(struct pwm_state *state,
+-						   u16 duty_cycle)
+-{
+-	if (!state->enabled)
+-		state->duty_cycle =3D 0;
+-	else
+-		state->duty_cycle =3D DIV_ROUND_UP_ULL((duty_cycle + 1) * state->period,=
+ 256);
+-}
+-
+ static int mc33xs2410_pwm_apply(struct pwm_chip *chip, struct pwm_device *=
+pwm,
+ 				const struct pwm_state *state)
  {
- 	struct dp83869_private *dp83869 = phydev->priv;
- 	int ret;
- 
-+	if (dp83869->mode == DP83869_RGMII_1000_BASE)
-+		return dp83869_read_status_fiber(phydev);
-+
- 	ret = genphy_read_status(phydev);
- 	if (ret)
- 		return ret;
- 
--	if (linkmode_test_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->supported)) {
-+	if (dp83869->mode == DP83869_RGMII_100_BASE) {
- 		if (phydev->link) {
--			if (dp83869->mode == DP83869_RGMII_100_BASE)
--				phydev->speed = SPEED_100;
-+			phydev->speed = SPEED_100;
- 		} else {
- 			phydev->speed = SPEED_UNKNOWN;
- 			phydev->duplex = DUPLEX_UNKNOWN;
-@@ -898,6 +1021,7 @@ static int dp83869_phy_reset(struct phy_device *phydev)
- 	.soft_reset	= dp83869_phy_reset,			\
- 	.config_intr	= dp83869_config_intr,			\
- 	.handle_interrupt = dp83869_handle_interrupt,		\
-+	.config_aneg    = dp83869_config_aneg,                  \
- 	.read_status	= dp83869_read_status,			\
- 	.get_tunable	= dp83869_get_tunable,			\
- 	.set_tunable	= dp83869_set_tunable,			\
+@@ -325,7 +316,7 @@ static int mc33xs2410_pwm_get_state(struct pwm_chip *ch=
+ip,
+ 	state->polarity =3D (val[2] & MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm)) ?
+ 			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
+ 	state->enabled =3D !!(val[3] & MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm));
+-	mc33xs2410_pwm_set_relative_duty_cycle(state, val[1]);
++	state->duty_cycle =3D DIV_ROUND_UP_ULL((duty_cycle + 1) * state->period, =
+256);
+ 	return 0;
+ }
+=20
+on top of your patch, right?
 
----
-base-commit: 5ccdcdf186aec6b9111845fd37e1757e9b413e2f
-change-id: 20241025-dp83869-1000base-x-0f0a61725784
+`echo 0 > /sys/class/pwm/pwmchip3/pwm0/duty_cycle` should result in
+MC33XS2410_PWM_CTRL3 having MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm) cleared.
+When mc33xs2410_pwm_get_state() is called then it returns state->enabled
+=3D false and in that case the above mentioned warning doesn't trigger.
 
-Best regards,
--- 
-Romain Gantois <romain.gantois@bootlin.com>
+Where is the misunderstanding?
 
+Best regards
+Uwe
+
+--ydvmgz6gd4xioeih
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcoi2AACgkQj4D7WH0S
+/k66+gf9EIyiCWwLCtdADfq3OdF4WI+Bfhcss7xk3MUTxyx4vcgWqEg2309SYLZw
+0117CRb6WsbnRyNo5Vj5GGkBn7eITd+k7b1TuEN+Aw0DNH24EwWNabO6DMKzUkQu
+AxFy9WXsyVr6IVHvSFK8xtiz0qexTwFSkmTI6o8cm0rAy/wyMY4dLu20WbLkZTZp
+zID7f047BkLo8T3o8k0fWmfD2s8OLT87+EDipK+D/VfosMf2BZ0Sb7/pr3tPZSMy
+loMLKgaMEGiWb5EZJ2nBeuUnGM4dimWdWI+B1JC6YeaN5/OW795ljIwyyGDELldu
+uCGcWdCXc/xONQsetMa5Mn9+tyoxrQ==
+=Ek8Z
+-----END PGP SIGNATURE-----
+
+--ydvmgz6gd4xioeih--
 
