@@ -1,358 +1,194 @@
-Return-Path: <linux-kernel+bounces-395292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C7C9BBBCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:22:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFFFA9BBBCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:22:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D370B2314C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC6B31C22809
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD95F1CEEB4;
-	Mon,  4 Nov 2024 17:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9F71C4A30;
+	Mon,  4 Nov 2024 17:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Xia/Y4cV"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Az/41v10"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2D31CACFD;
-	Mon,  4 Nov 2024 17:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6591C4A13
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 17:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730740817; cv=none; b=IvrUMAO8O7qrD7NoaMj1nmZhLWDccaIQKqGFofod6akbqiW0Laa1WFCsnY+KlaYcpCC4tFoR3C5HlhjfCsMLAWLWPLHlnrzdbHxYOfENaUXYIDq1cDwlL5XSBlnM/ipIQjsmwWBMmVUjbgCOYuEu0NiJcWj6GhwGsZphUJzVzHs=
+	t=1730740932; cv=none; b=G4wbo7qSS5lEKnP6XIbj7QcHJkiFoZRsewEPRDHxhi5Oi+lhC9Q4iFXcinPgw/Z56eId0UkxCV9pRGiCY/ZlvQoWctPpadWgkppMd+n/ciIxMVkCYMJnbut06hcvgkYzeb6ymGAvbXhrmDk5OC/BKzZToJK4RlCGBXXz2Zm5mMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730740817; c=relaxed/simple;
-	bh=NwMSCaI0b8RGS3jn4oHDmv6MAzYS4vPG0txsV1EJP0k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F7OnkHYKRjnVVAX37NR+4pwBma3hk3nV4+kI8hd+ulQwPlwWIdigATLCwREQmXaV7x7T7V7+8eSDYllCNcfz4SYT0u8DvnjbrgBQHz8ZOrNstG1SIQV/x35sNI+SP1sPpTdV+wMpnAHqlf+x803dp7m02CpN5poy9QEp8XpOgOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Xia/Y4cV; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 5DA2A1BF203;
-	Mon,  4 Nov 2024 17:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730740813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DoVk53M0b7TJweV9F3/GrYxUnWVI2icOOAP6maodiQs=;
-	b=Xia/Y4cV7NLKY2ys9yYBiAIkmGNoNlbfZrPkGqxueCmeRM1q6O4edlLLTMnc+/mt04kxzc
-	3DLnzhv8q6o/G+Vc5iREjobFBPdMkS+Fq2LQExo4krrh1QeJoXLTZhEk0v53MYHk22s5MZ
-	xD1VXL8wmASpEf0UWTFxuwUK6lQCDIyn4k+86gRTIbTnnqKKZCjFPZz08rJU+bUUtdTveD
-	QGZxXfhDQV750YyItpEj6BkGV9iiEG2nJ9OLoYhGIXKoQQu7CeJDlHbbKJDJus+QCDIf3m
-	b0YNRTT6CJ/luecHv9bmdRx7xAgR5cKyOjZOgcPh58S38ALjIR6SJ1In7p5JuA==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lizhi Hou <lizhi.hou@amd.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH 6/6] PCI: of: Create device-tree root bus node
-Date: Mon,  4 Nov 2024 18:20:00 +0100
-Message-ID: <20241104172001.165640-7-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241104172001.165640-1-herve.codina@bootlin.com>
-References: <20241104172001.165640-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1730740932; c=relaxed/simple;
+	bh=oERjB3cstIzkBtxUYOAxFlXTIF2C8tk3pOfT/YQis3o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TWpgzTdtrZ+9rumAecjjbQ9HTURAmHMrITAsyIqzVSq/npKaIRbUI/7KsnYLgvt95wuP4zBSYoLkAMBjlbFODyvEDRVCcmiEXMfzLieu5Ant+nzkdqi99/cxa0lTxx7pCty9L1KsiRECpWF9oDCQXIu8IPB8aJXCCMGRkxAJGy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Az/41v10; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d47eff9acso2879534f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 09:22:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1730740929; x=1731345729; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7vuS2C31zgd4NT1oK/IqNI/PqlfFz81BFM3bm0W9rko=;
+        b=Az/41v10mwizrBTxvw+7zHgN8wfK3jiVYMBEvUAG72pPbUc1xFb0Ukv6wm8v1Efk7I
+         gSEjJiqx7LUmUUcei4b+FJ7OnnulROp7Nqsnb9itd5NGVUR8TR68QXb8eRhQWUt2qstl
+         8Y5VL4n0YO4ZMUv8qUoAssJSqE2ikEWP7ysso=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730740929; x=1731345729;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7vuS2C31zgd4NT1oK/IqNI/PqlfFz81BFM3bm0W9rko=;
+        b=bm7wQHHB5xgpryL3FBOEfmNbaQVajPHeAM9VzQwGhPIMCa7vzewdePQmg9RBexEY/x
+         I5wKxVbQegEzTN5UWEB+KZYHJZD4J14qj0yqQwEdmBVIesKZ3nspUfTlMGdKgRbcas7L
+         ssQK+fTIa1FgU4TT9iEtgdnh8+E0HuICiRJOkNSHATrRKF8xAPtjHOaHgf793zlF1Aoi
+         /xC21ysYUOuGgT+YUebICJhjwEdZ8QvRUteR11ng5bgeLfhzh996RRfMgUXDiWG+jEug
+         4i1BhxfLAfwFG4iccfu2/7Isw4dKq8jdlpotDBQ3BH6Ltv6uFtBG+PrXHi7rc+PyBhG3
+         TsDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWi61AleCLTqLtT2KzvGRSeLAhR7/X6pPBEReLnjZP6djU09WWbF2bQCgzmh/QkWPGNgX1UAZnFDVMmixc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyvS+xiMSaMJi8q7fPOpgesnbfrMLzBfiTUTmOqZsdRutplDkC
+	7CM6KLq4Lq/aw3J75eYyAbcRH2keZfo0dcleeTXjfyM6L+g7fkiPfC5ZztzIJql8gXm7D6JG/1T
+	y42XrkdcfvmCBNzITc4iK6b9cIHhhIKxuc1EG
+X-Google-Smtp-Source: AGHT+IH6kQDuoQzLeOBrQCc+dLm9LWdCGi+7y2nxk2UoUIPdPETZ28/lyLSM2SeUVhkmGPZBjNiw9bJ9ygrqKS4/TTg=
+X-Received: by 2002:a05:6000:2109:b0:381:df72:8678 with SMTP id
+ ffacd0b85a97d-381df7286c3mr559176f8f.16.1730740929309; Mon, 04 Nov 2024
+ 09:22:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+References: <219859e674ef7a9d8af9ab4f64a9095580f04bcc.1730436983.git.dxu@dxuuu.xyz>
+ <CACKFLim3y5-XMBCpCMA-XnLe6yho6fY0Hbcu_1jbf5JKrhCH9w@mail.gmail.com> <zdshp6klnjjexwxpx6e5k62jej6xmxiubmkegkk3tixt2jk5t2@poolzxiibn3n>
+In-Reply-To: <zdshp6klnjjexwxpx6e5k62jej6xmxiubmkegkk3tixt2jk5t2@poolzxiibn3n>
+From: Michael Chan <michael.chan@broadcom.com>
+Date: Mon, 4 Nov 2024 09:21:57 -0800
+Message-ID: <CACKFLik=SE4p9gq8BZJY68W_9QB=szU6cAwd-UgsvnCxQ6yu4Q@mail.gmail.com>
+Subject: Re: [PATCH net] bnxt_en: ethtool: Fix ip[6] ntuple rule verification
+To: Daniel Xu <dxu@dxuuu.xyz>
+Cc: davem@davemloft.net, edumazet@google.com, andrew+netdev@lunn.ch, 
+	kuba@kernel.org, vikas.gupta@broadcom.com, andrew.gospodarek@broadcom.com, 
+	pabeni@redhat.com, pavan.chebbi@broadcom.com, martin.lau@linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000005141fe0626198626"
 
-PCI devices device-tree nodes can be already created. This was
-introduced by commit 407d1a51921e ("PCI: Create device tree node for
-bridge").
+--0000000000005141fe0626198626
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In order to have device-tree nodes related to PCI devices attached on
-their PCI root bus, a root bus device-tree node is needed. This root bus
-node will be used as the parent node of the first level devices scanned
-on the bus.
+On Fri, Nov 1, 2024 at 3:42=E2=80=AFPM Daniel Xu <dxu@dxuuu.xyz> wrote:
+> On Fri, Nov 01, 2024 at 12:20:44PM GMT, Michael Chan wrote:
+> > Thanks for the patch.  I think the original author Vikas intended the
+> > user to do this for ip only filters:
+> >
+> > ethtool -N eth0 flow-type ip6 dst-ip $IP6 l4_proto 0xff context 1
+> >
+> > But your patch makes sense and simplifies the usage for the user.  I
+> > just need to check that FW can accept 0 for the ip_protocol field to
+> > mean wildcard when it receives the FW message to create the filter.
+> >
+> > I will reply when I get the answer from the FW team.  If FW requires
+> > 0xff, then we just need to make a small change to your patch.
+>
+> FWIW at least my HW/FW seems to behave correctly with my patch. I did
+> some quick tracing last night w/ a UDP traffic generator running to
+> confirm redirection occurs.
+>
+The FW team has confirmed that ip_protocol 0 will work as a wild card
+on all FW supporting this feature.  So the patch will work.
 
-On non device-tree based system (such as ACPI), a device-tree node for
-the PCI root bus does not exist. Indeed, this component is not described
-in a device-tree used at boot.
+But I think I want to eliminate the l4_proto 0xff usage.  It is
+non-standard and non-intuitive.  So we should only support l4_proto to
+be TCP, UDP, ICMP, or unspecified for any protocol.  Thanks.
 
-The device-tree PCI root bus node creation needs to be done at runtime.
-This is done in the same way as for the creation of the PCI device
-nodes. I.e. node and properties are created based on computed
-information done by the PCI core.
+--0000000000005141fe0626198626
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- drivers/pci/of.c          |  85 +++++++++++++++++++++++++++++++-
- drivers/pci/of_property.c | 101 ++++++++++++++++++++++++++++++++++++++
- drivers/pci/pci.h         |   6 +++
- drivers/pci/probe.c       |   2 +
- drivers/pci/remove.c      |   2 +
- 5 files changed, 195 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 141ffbb1b3e6..46733a293c3f 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -726,7 +726,90 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
- out_free_name:
- 	kfree(name);
- }
--#endif
-+
-+void of_pci_remove_root_bus_node(struct pci_bus *bus)
-+{
-+	struct device_node *np;
-+
-+	np = pci_bus_to_OF_node(bus);
-+	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
-+		return;
-+
-+	device_remove_of_node(&bus->dev);
-+	of_changeset_revert(np->data);
-+	of_changeset_destroy(np->data);
-+	of_node_put(np);
-+}
-+
-+void of_pci_make_root_bus_node(struct pci_bus *bus)
-+{
-+	struct device_node *np = NULL;
-+	struct of_changeset *cset;
-+	const char *name;
-+	int ret;
-+
-+	/*
-+	 * If there is already a device tree node linked to this device,
-+	 * return immediately.
-+	 */
-+	if (pci_bus_to_OF_node(bus))
-+		return;
-+
-+	/* Check if there is a DT root node to attach this created node */
-+	if (!of_root) {
-+		pr_err("of_root node is NULL, cannot create PCI root bus node");
-+		return;
-+	}
-+
-+	name = kasprintf(GFP_KERNEL, "pci-root@%x,%x", pci_domain_nr(bus),
-+			 bus->number);
-+	if (!name)
-+		return;
-+
-+	cset = kmalloc(sizeof(*cset), GFP_KERNEL);
-+	if (!cset)
-+		goto out_free_name;
-+	of_changeset_init(cset);
-+
-+	np = of_changeset_create_node(cset, of_root, name);
-+	if (!np)
-+		goto out_destroy_cset;
-+
-+	ret = of_pci_add_root_bus_properties(bus, cset, np);
-+	if (ret)
-+		goto out_free_node;
-+
-+	/*
-+	 * This of_node will be added to an existing device. The of_node parent
-+	 * is the root OF node and so this node will be handled by the platform
-+	 * bus. Avoid any new device creation.
-+	 */
-+	of_node_set_flag(np, OF_POPULATED);
-+	np->fwnode.dev = &bus->dev;
-+	fwnode_dev_initialized(&np->fwnode, true);
-+
-+	ret = of_changeset_apply(cset);
-+	if (ret)
-+		goto out_free_node;
-+
-+	np->data = cset;
-+
-+	/* Add the of_node to the existing device */
-+	device_add_of_node(&bus->dev, np);
-+	kfree(name);
-+
-+	return;
-+
-+out_free_node:
-+	of_node_put(np);
-+out_destroy_cset:
-+	of_changeset_destroy(cset);
-+	kfree(cset);
-+out_free_name:
-+	kfree(name);
-+}
-+
-+#endif /* CONFIG_PCI_DYNAMIC_OF_NODES */
- 
- #endif /* CONFIG_PCI */
- 
-diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
-index e56159cc48e8..527fc51565f3 100644
---- a/drivers/pci/of_property.c
-+++ b/drivers/pci/of_property.c
-@@ -394,3 +394,104 @@ int of_pci_add_properties(struct pci_dev *pdev, struct of_changeset *ocs,
- 
- 	return 0;
- }
-+
-+static bool of_pci_is_range_resource(const struct resource *res, u32 *flags)
-+{
-+	if (!(resource_type(res) & IORESOURCE_MEM) &&
-+	    !(resource_type(res) & IORESOURCE_MEM_64))
-+		return false;
-+
-+	if (of_pci_get_addr_flags(res, flags))
-+		return false;
-+
-+	return true;
-+}
-+
-+static int of_pci_root_bus_prop_ranges(struct pci_bus *bus,
-+				       struct of_changeset *ocs,
-+				       struct device_node *np)
-+{
-+	struct pci_host_bridge *bridge = to_pci_host_bridge(bus->bridge);
-+	struct resource_entry *window;
-+	unsigned int ranges_sz = 0;
-+	unsigned int n_range = 0;
-+	struct resource *res;
-+	int n_addr_cells;
-+	u32 *ranges;
-+	u64 val64;
-+	u32 flags;
-+	int ret;
-+
-+	n_addr_cells = of_n_addr_cells(np);
-+	if (n_addr_cells <= 0 || n_addr_cells > 2)
-+		return -EINVAL;
-+
-+	resource_list_for_each_entry(window, &bridge->windows) {
-+		res = window->res;
-+		if (!of_pci_is_range_resource(res, &flags))
-+			continue;
-+		n_range++;
-+	}
-+
-+	if (!n_range)
-+		return 0;
-+
-+	ranges = kcalloc(n_range,
-+			 (OF_PCI_ADDRESS_CELLS + OF_PCI_SIZE_CELLS +
-+			  n_addr_cells) * sizeof(*ranges),
-+			 GFP_KERNEL);
-+	if (!ranges)
-+		return -ENOMEM;
-+
-+	resource_list_for_each_entry(window, &bridge->windows) {
-+		res = window->res;
-+		if (!of_pci_is_range_resource(res, &flags))
-+			continue;
-+
-+		/* PCI bus address */
-+		val64 = res->start;
-+		of_pci_set_address(NULL, &ranges[ranges_sz], val64, 0, flags, false);
-+		ranges_sz += OF_PCI_ADDRESS_CELLS;
-+
-+		/* Host bus address */
-+		if (n_addr_cells == 2)
-+			ranges[ranges_sz++] = upper_32_bits(val64);
-+		ranges[ranges_sz++] = lower_32_bits(val64);
-+
-+		/* Size */
-+		val64 = resource_size(res);
-+		ranges[ranges_sz] = upper_32_bits(val64);
-+		ranges[ranges_sz + 1] = lower_32_bits(val64);
-+		ranges_sz += OF_PCI_SIZE_CELLS;
-+	}
-+
-+	ret = of_changeset_add_prop_u32_array(ocs, np, "ranges", ranges, ranges_sz);
-+	kfree(ranges);
-+	return ret;
-+}
-+
-+int of_pci_add_root_bus_properties(struct pci_bus *bus, struct of_changeset *ocs,
-+				   struct device_node *np)
-+{
-+	int ret;
-+
-+	ret = of_changeset_add_prop_string(ocs, np, "device_type", "pci");
-+	if (ret)
-+		return ret;
-+
-+	ret = of_changeset_add_prop_u32(ocs, np, "#address-cells",
-+					OF_PCI_ADDRESS_CELLS);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_changeset_add_prop_u32(ocs, np, "#size-cells",
-+					OF_PCI_SIZE_CELLS);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_pci_root_bus_prop_ranges(bus, ocs, np);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 14d00ce45bfa..56e450807d5d 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -802,9 +802,15 @@ void of_pci_make_dev_node(struct pci_dev *pdev);
- void of_pci_remove_node(struct pci_dev *pdev);
- int of_pci_add_properties(struct pci_dev *pdev, struct of_changeset *ocs,
- 			  struct device_node *np);
-+void of_pci_make_root_bus_node(struct pci_bus *bus);
-+void of_pci_remove_root_bus_node(struct pci_bus *bus);
-+int of_pci_add_root_bus_properties(struct pci_bus *bus, struct of_changeset *ocs,
-+				   struct device_node *np);
- #else
- static inline void of_pci_make_dev_node(struct pci_dev *pdev) { }
- static inline void of_pci_remove_node(struct pci_dev *pdev) { }
-+static inline void of_pci_make_root_bus_node(struct pci_bus *bus) { }
-+static inline void of_pci_remove_root_bus_node(struct pci_bus *bus) { }
- #endif
- 
- #ifdef CONFIG_PCIEAER
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 4f68414c3086..063780bec45e 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1049,6 +1049,8 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
- 		dev_info(&bus->dev, "root bus resource %pR%s\n", res, addr);
- 	}
- 
-+	of_pci_make_root_bus_node(bus);
-+
- 	down_write(&pci_bus_sem);
- 	list_add_tail(&bus->node, &pci_root_buses);
- 	up_write(&pci_bus_sem);
-diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-index e4ce1145aa3e..80cbe02f66b2 100644
---- a/drivers/pci/remove.c
-+++ b/drivers/pci/remove.c
-@@ -160,6 +160,8 @@ void pci_stop_root_bus(struct pci_bus *bus)
- 					 &bus->devices, bus_list)
- 		pci_stop_bus_device(child);
- 
-+	of_pci_remove_root_bus_node(bus);
-+
- 	/* stop the host bridge */
- 	device_release_driver(&host_bridge->dev);
- }
--- 
-2.46.2
-
+MIIQbQYJKoZIhvcNAQcCoIIQXjCCEFoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg3EMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
+MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
+rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
+aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
+e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
+cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
+MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
+KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
+/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
+TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
+YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
+CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
+BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
+jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
+9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
+/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
+jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
+AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
+dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
+MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
+IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
+XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
+J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
+nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBUwwggQ0oAMCAQICDF5AaMOe0cZvaJpCQjANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODIxMzhaFw0yNTA5MTAwODIxMzhaMIGO
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xFTATBgNVBAMTDE1pY2hhZWwgQ2hhbjEoMCYGCSqGSIb3DQEJ
+ARYZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+ggEBALhEmG7egFWvPKcrDxuNhNcn2oHauIHc8AzGhPyJxU4S6ZUjHM/psoNo5XxlMSRpYE7g7vLx
+J4NBefU36XTEWVzbEkAuOSuJTuJkm98JE3+wjeO+aQTbNF3mG2iAe0AZbAWyqFxZulWitE8U2tIC
+9mttDjSN/wbltcwuti7P57RuR+WyZstDlPJqUMm1rJTbgDqkF2pnvufc4US2iexnfjGopunLvioc
+OnaLEot1MoQO7BIe5S9H4AcCEXXcrJJiAtMCl47ARpyHmvQFQFFTrHgUYEd9V+9bOzY7MBIGSV1N
+/JfsT1sZw6HT0lJkSQefhPGpBniAob62DJP3qr11tu8CAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
+BB0wG4EZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU31rAyTdZweIF0tJTFYwfOv2w
+L4QwDQYJKoZIhvcNAQELBQADggEBACcuyaGmk0NSZ7Kio7O7WSZ0j0f9xXcBnLbJvQXFYM7JI5uS
+kw5ozATEN5gfmNIe0AHzqwoYjAf3x8Dv2w7HgyrxWdpjTKQFv5jojxa3A5LVuM8mhPGZfR/L5jSk
+5xc3llsKqrWI4ov4JyW79p0E99gfPA6Waixoavxvv1CZBQ4Stu7N660kTu9sJrACf20E+hdKLoiU
+hd5wiQXo9B2ncm5P3jFLYLBmPltIn/uzdiYpFj+E9kS9XYDd+boBZhN1Vh0296zLQZobLfKFzClo
+E6IFyTTANonrXvCRgodKS+QJEH8Syu2jSKe023aVemkuZjzvPK7o9iU7BKkPG2pzLPgxggJtMIIC
+aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
+EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxeQGjDntHGb2iaQkIw
+DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIKQh/PwI35698dGnO6nKC0nApfj2AjcE
+Ww+86L1eVMdQMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTEw
+NDE3MjIwOVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
+ATANBgkqhkiG9w0BAQEFAASCAQBPK1S2q7DKEa7a7EoZVWB0zO1r7rfaySnF4aABXNixFSsjDMHZ
+zA3bj/d+wKM68wh9ei/dw7PgmvNZDDdlvTGlXm2xyh4/cvctD3nCUe2tBoNxBJuwD//MuSSLAr9g
+XWOWomaxAHbhhBSkAmT/QpfVpEp6WS5lWSE3B0ENMHZI236XrjFuNtARZ0sLDgK8FsWNjl5orMw9
+wYdpAF49Z5CpKkx73ckxvovyvVisGRQSVA3GfRQ5ByBK19n79xmy6mGpVDKt/BtVHWIW3BxXVUj6
+nTarTzxVFbdgoj3doHQ/IlgSV8q52qvPm5xjA8VhbWjgBAoNTO3MsWqC7BRyj4qv
+--0000000000005141fe0626198626--
 
