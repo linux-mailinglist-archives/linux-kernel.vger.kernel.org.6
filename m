@@ -1,93 +1,128 @@
-Return-Path: <linux-kernel+bounces-394913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044DB9BB5DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:23:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74ED9BB5E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:24:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3693D1C211F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:23:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E93D21C213C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BCA12DD8A;
-	Mon,  4 Nov 2024 13:22:25 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7542C171D2;
+	Mon,  4 Nov 2024 13:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b="SqN/qSjq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mWzZv09P"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB747083F;
-	Mon,  4 Nov 2024 13:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D9233FE;
+	Mon,  4 Nov 2024 13:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730726545; cv=none; b=p0yc7OTKj7cPQ3fhE2mmgKU5XoE4XzH70tAe518zZGuJLt8NrBOaUkcyCkWXyXGMc5KQVpjQhmqaadppBowOhL/F7Y0iaS9zTN9lNe0IIz+rh0GBKBTkanlObV3UCRbh98a9qWJqW7HBDT0EQTpgGE47pUW0SF5gu8ddzw2aP+c=
+	t=1730726676; cv=none; b=IPhsQ3IoeHJiZue5IPVqPdgZZ9aMv05N0qXEty0Ghf7NIIT6sm0nL7QmrEKY1kr6eMlqc14khRUjeHaj6Ps2TgGUHLNVqVrlfe6fCEKB4GIN5p1Hj9EikuEHC+k7tTis/8lGfDq+UbgzdYZ0E5TeWTroOtEvOvXMcIkV17+bvig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730726545; c=relaxed/simple;
-	bh=dVzhkYwajzOcp/k61L3BTjdvz62YtWheav4zFKEnZAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ixM1hu+L7Qq0s2+O3i7x/M1Hkzv0EWaaqkPPRX+yCOg40YUFKXVvuT1gkaiTp2F7tlwcIrXtG9G7zeZR/hwZTR/FA+mQbwq8NNMaFIdNmvEJNw0S5XXcXx5IS850e9Rtx+5ZJgWiZQ4VaD7t+iS8BjyhS33jY4yxFoDm2rg8VSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2110a622d76so31727775ad.3;
-        Mon, 04 Nov 2024 05:22:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730726543; x=1731331343;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UiVWnP7kdfguO3vKrywHszcKuT/ax89aUHhWpqrDlzU=;
-        b=ZHJ8FQr7rPQgMwo3jvx6htS35KBdjsJCKia4jjaCUONhR+y9PJ09oFdu5C2W2yqnwA
-         2P90UBpoVljN9Qe8Kh91McHrni3gCUr/JAFKGQCz1Zaq9vGEE261NcFm4+cp5RBME9MO
-         PU62nVhw9sFs1thR1/uLWlZzlEZhPJe1SzQBTy16dfgWIdwd4IUZU0PA78KMEckXEw8v
-         jP9iYQC+lHRUElc+Hn77NPSqmlULgj1jp7KZiWinHwfC5XxtvUSIgQysijlpAxiUXDOI
-         SX71hXgkdBLI7YwciS/cCDVq933y4sJrdGL7t+sar0OZhZSO+oFtjE7+4iHjX2MCqBp/
-         mYQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxVmjcLJmzrVmDIak/j36DMqHkyz0/bYSKITM90k6a+Wcy1grqPUNfUFOPsSRUOzP8C3AMggvWt1XlK8Q=@vger.kernel.org, AJvYcCWr+9BoELMbKmQyzV1YZUpGnWJLSbzb7ctbdbT2CpzeMBXq7KkVPjeUn/5DImilRU/joUV32cAcNnIddg==@vger.kernel.org, AJvYcCXqOTVREsgHR2UVuXaE/uTnC7ld5lewHgDnSuxdFPAvbo6szTaPzL5MKiDe+S/gYB0WILnj9gFeorqf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5uMMfcoAqvc+iWHnMvy6cuk9BhjKBUZMazMt7Xnv+sjOFXa0z
-	BkkciUxgQ+sw1YRWSMsfYVtSqR0r3J1Bmru7S3Zs/TUK+ytrWfsS
-X-Google-Smtp-Source: AGHT+IHpDIGv2RScWEaNKHsryqx6v1lrXJOztR/qFFp197CdN99mxwH5uovMf6w+lDn72OzEgzUsUA==
-X-Received: by 2002:a17:903:2bce:b0:20c:f27f:fbf with SMTP id d9443c01a7336-210c6ae7f15mr465977105ad.25.1730726543312;
-        Mon, 04 Nov 2024 05:22:23 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057f3dd1sm60195775ad.308.2024.11.04.05.22.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 05:22:22 -0800 (PST)
-Date: Mon, 4 Nov 2024 22:22:21 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, robh@kernel.org,
-	vigneshr@ti.com, manivannan.sadhasivam@linaro.org,
-	kishon@kernel.org, thomas.richard@bootlin.com,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	srk@ti.com
-Subject: Re: [PATCH v2] PCI: j721e: Deassert PERST# after a delay of
- PCIE_T_PVPERL_MS ms
-Message-ID: <20241104132221.GB2504924@rocinante>
-References: <20241104074420.1862932-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1730726676; c=relaxed/simple;
+	bh=0ZRHb7QOWmU+FY0rk/CTGoM4OGDQfKCt1i2t0kg/UC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KUSNXVXcIR0/ddqvvNH2eMMZpHpMFnKmaOeuHFdWsWye8xGxHrH9UOdkFEMRMqxG16L2bwmXvGpSiFgctkRlITYk2W9U5ctRPy/oy+KtxV5rjc4b/jbXEyLPfNn3Fg5s1ZyM8yIxXZSqDyg8XDbJ6Jcj5yRllgBjky0Ftx2yQ2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me; spf=pass smtp.mailfrom=bjorling.me; dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b=SqN/qSjq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mWzZv09P; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bjorling.me
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id C811E25400F7;
+	Mon,  4 Nov 2024 08:24:29 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Mon, 04 Nov 2024 08:24:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bjorling.me; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1730726669;
+	 x=1730813069; bh=zd5G+KQhPA2oZ11SlLJRE0Pg1nGRfiYB0gxmnoOiCaM=; b=
+	SqN/qSjqxc1ZN4IQaxqZjO4l/U1NciabVFwWNRk07eU3hCGixHa0eoGtEyr74L7t
+	wOBvVR1+l3r7JdMbEV+4zbGMbC2S36J3JwKJtqhQf8sYgRTIuyETudj9gZVXoKx6
+	oL/8E54bHmG7jxwLC8H5YZARKVxDpBYlUEZDjRQB5jJXsQCtUowW8SV08JXdGAq7
+	WllBVtbJ+bwVs4GcVm744D5E9MkePuXjtTF5TQXxvVgC1wDuVVnmOmheQhz8NPWP
+	pBskdhZBgANc8gbv+F4BpoB0aL8foYcK1ieiuVWtmNhTkM5er/EWOaZihBW5Ez/C
+	RGAjgHWPXNJmOg/dzqHMMA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730726669; x=
+	1730813069; bh=zd5G+KQhPA2oZ11SlLJRE0Pg1nGRfiYB0gxmnoOiCaM=; b=m
+	WzZv09PtmqA1lmDM4XYszse2986K2s860W4bBQpvgyZwnBpwHQa0rp8igkIwbzcu
+	ruOZPUdH9fSHacpFH36S03IART525AtUVnf54DdV086FlcjJEDMNwtfbqoYqCzbq
+	kEsysIJjcH6vSv8aFRJtxjCkVssMBfIcsj5LZOEF2G7tAUKC2iTv9OcL0o+bGR6v
+	TfAv9zFUwdyz5D1MFT5dwXeE9XWUjoYTHsRzKT2RWmCdCY+h6M6u07wD+nZ2PFU6
+	J8ZKBO5JaUc4d2JYgsO6izQvRYMSOj6pk8RtakzgzWsoNuJF2I7hGTgGZFpZkW9U
+	u0fTd9a6AGtz4Wz2ENT6A==
+X-ME-Sender: <xms:DMsoZ9jPPuo1sIJUOmO_9ZGTGG_Mku_4gkqrPf2ozjBejes7e3LDeg>
+    <xme:DMsoZyCrkF6DhF00NU0k1Xg_5EgzeY3s--LnxwR7oPjf5PkxSxoQtDWLNMDiPxR-K
+    Hz4UCrPvlyifD6jpqE>
+X-ME-Received: <xmr:DMsoZ9H0N7ZSOEkxfx0LdWoVkyfEw1wmVG5rb4FjWaRELJsICAfg61lcnqtIS9Jl3g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedghedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeforghtihgrshcuuehjpphrlhhinhhguceomhessghjohhrlhhinhhgrd
+    hmvgeqnecuggftrfgrthhtvghrnhepleehjefftdeijedvveeigffhgfdugeduieevudeh
+    jeefueffkeegjeffiefgheefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepmhessghjohhrlhhinhhgrdhmvgdpnhgspghrtghpthhtohepuddu
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehksghushgthheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohephhgthheslhhsthdruggvpdhrtghpthhtohepughlvghmohgr
+    lheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptggrshhsvghlsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhnvhhmvgeslhhishhtshdrihhnfhhrrgguvggr
+    ugdrohhrghdprhgtphhtthhopehlihhnuhigqdgslhhotghksehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepfigrnhhghihughhuihesvgduiedqthgvtghhrdgtoh
+    hmpdhrtghpthhtohepmhgrrhhtihhnrdhpvghtvghrshgvnhesohhrrggtlhgvrdgtohhm
+X-ME-Proxy: <xmx:DMsoZyRvVg_010fiQLJLkagoM_Owr5KHPK90BaOdHJMUB7V12xZ-bw>
+    <xmx:DMsoZ6xuGxlWKWHIjGfDOkRA0Zt6snpxdEf_hs0o1rXeI8ub0s8qOw>
+    <xmx:DMsoZ45DkwUsjr5fWCHajdT4tC8yhJcWMiICf3Ni6dnwC4SRNtOMLQ>
+    <xmx:DMsoZ_zo6otBncnbUy4TKhKTtYSCKBbTr8ezY0a5NLi7w69GYjxCfQ>
+    <xmx:DcsoZ85V2atdf81PZ9IJN_i0Bt4sVaGqlXE_RZNww3c65UdLiD_ZvAO_>
+Feedback-ID: if4314918:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 4 Nov 2024 08:24:26 -0500 (EST)
+Message-ID: <f9fd6e53-ecae-4c7d-b35c-be0d27d81173@bjorling.me>
+Date: Mon, 4 Nov 2024 14:24:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104074420.1862932-1-s-vadapalli@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3 v2] nvme: make independent ns identify default
+To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: dlemoal@kernel.org, cassel@kernel.org, linux-nvme@lists.infradead.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ wangyugui@e16-tech.com, martin.petersen@oracle.com, hare@suse.de,
+ =?UTF-8?Q?Matias_Bj=C3=B8rling?= <matias.bjorling@wdc.com>
+References: <20241010123951.1226105-1-m@bjorling.me>
+ <20241010123951.1226105-2-m@bjorling.me> <20241011081452.GA3337@lst.de>
+ <ZyVZ_T4HtnqSWTm0@kbusch-mbp.dhcp.thefacebook.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
+In-Reply-To: <ZyVZ_T4HtnqSWTm0@kbusch-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+>> FYI, I still disagree with this for the same reason as before.
+>> Assuming we're not really going to see hard drivers I'd be fine
+>> with using it by default for 2.0 (or better even 2.1) by default.
+> 
+> I've got the rest of the required logs and identifications implemented
+> in nvmet to support this. There's one more issue, though, if we do
+> restrict the identify to >= 2.0 or 2.1. nvmet reports 1.3, and I suspect
+> there's a bit more work than just changing the value of NVMET_DEFAULT_VS
+> in order to comply with claiming that version.
+> 
 
-> According to Section 2.2 of the PCI Express Card Electromechanical
-> Specification (Revision 5.1), in order to ensure that the power and the
-> reference clock are stable, PERST# has to be deasserted after a delay of
-> 100 milliseconds (TPVPERL). Currently, it is being assumed that the power
-> is already stable, which is not necessarily true. Hence, change the delay
-> to PCIE_T_PVPERL_MS to guarantee that power and reference clock are stable.
-
-Applied to controller/j721e, thank you!
-
-[01/01] PCI: j721e: Deassert PERST# after a delay of PCIE_T_PVPERL_MS milliseconds
-        https://git.kernel.org/pci/pci/c/22a9120479a4
-
-	Krzysztof
+Awesome. I'll hold off the implementation. Would you like me to take 
+your patches for a spin?
 
