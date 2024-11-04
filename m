@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-395433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D699BBDD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:14:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8519BBDD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:15:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336701F23080
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:14:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF5F51C2353B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7846D1CCEC9;
-	Mon,  4 Nov 2024 19:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CF318D65F;
+	Mon,  4 Nov 2024 19:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="v73xZXuw"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UckN6poH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F4A18C926;
-	Mon,  4 Nov 2024 19:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE8DAD2D;
+	Mon,  4 Nov 2024 19:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730747671; cv=none; b=YcFKPp5mkBy0xcQ3raiZT0/2LVxllOXxjCT9TRST4h6KWyGlyNGj0w0Z5w4fWqGEu9xkDV35F48xvmw20grOMHjRT5VF0PjXdFHCZ1wZpo531z7oI01jUCZCKQ/hlTUM/tCb3MKTaGGARiFoN8ydjZiw9uR5kda6NF5B4nNTyjU=
+	t=1730747719; cv=none; b=AjwTo7zVQwXYyIfziXODm4yeXAccVejMNLV2RIWqQ2BcXcCItQ7oVyYMAHa5vgbuuYNQGMx5ULdlCtHOz3/H4Catpkxq8qKBkcs5WYc+jIrwLfktXqbbZH2HMnwl0Ka5C+RFpPnC7ToHN9OPRk8e0VkF9adBzcPkZyL8JWAQsvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730747671; c=relaxed/simple;
-	bh=o4Q21EUOtQ5gP8TVU/SzyX8KbHV1rScUhI+UDQ2yHfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MyFbNLI1CCZSRKTz2USS98tZP4rO4qUnPmHFwS1ZGp9+G/Pre40ho3KcMe6E1tOPH1CVlUQs62CQnyg5VuBf7Ft2hjmFjMh/b+yb/6tCsQ6zJAGTWixDcwedNgKVwi4JO662Us2bKF+erQBV0fllFayinmTbP5H00FIAiK61JE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=v73xZXuw; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=PljaPNPt6R2nYVku9vBFHgDoW/TWpHwXI6NoLjiVHnU=; b=v73xZXuwTsYAUpHnxPLfsov4D0
-	1OOd+L5YITYru9ut7DOvY9bNkEc2XKaSf730FSo76TcYGoTYxqFv1T5YFDB1kcL3H0UF2ELxgIwzv
-	fnXHRRoq7N5FvXRLQMQLF8YAEH+Zgd/vw/GSi3qALx+dLNqUWFiLtODMcq/vBL/RrItgZPQG3oPfe
-	nCTzMv4VJxUAmstFs6PFFgy2nsEZmKHIWqfrpa/qXakPaGxCWBrlXtWAR0nG4QYnza+Mbq/7wEXM0
-	8AZtOpmiiVrV0mnVj0YGmfalBdDjKNRUqQsN825VsP9zLVZiijB5DFoTaH+FP+6DpS8mzPP0Pknyd
-	RpYRZI/g==;
-Date: Mon, 4 Nov 2024 20:14:24 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Kevin Hilman <khilman@kernel.org>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, zhipeng.wang_1@nxp.com,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: fix using cpufreq-dt as module
-Message-ID: <20241104201424.2a42efdd@akair>
-In-Reply-To: <7httcmonip.fsf@baylibre.com>
-References: <20241103210251.762050-1-andreas@kemnade.info>
-	<7httcmonip.fsf@baylibre.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730747719; c=relaxed/simple;
+	bh=ynCoOheYITSrvR0l1B39csTWu2Mu+AVasOWlOaMf7pE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fUEKx49SWSHf9US5wFmQ+wF2+kBox9qAvqAOhnlDgDM4mdZ0r2Fmc5VFISJFSDepdiARh2xxoi3odB/YfBQXB9dBirRmUq2T7aO/1nefXHpPtQgw33D2kAk+nVxWHxd+BnMyKZG3X4z7eCy50OmiBh32yesfWir1p0CFREXaOzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UckN6poH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A51EC4CECE;
+	Mon,  4 Nov 2024 19:15:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730747718;
+	bh=ynCoOheYITSrvR0l1B39csTWu2Mu+AVasOWlOaMf7pE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UckN6poH2bAbu2sww/PQHNDSlbChui8JoY02ti74E41RmREqtVFhEk9KW8sjW2uVB
+	 gaq0mUMB6NbOeFFIfkomR3RwnCxSkrhgLetGEO2sGj+xLFA3ncO4YFCsCaNCGTZU1T
+	 +Z0gS78hM3T0Njfvo9eDqJFrFso7XI7hOAsaiF3J440t7eEz+4CODWT2a75ZKLF7j5
+	 EhluggIvLloouuuOp0kp/DBGjLTZ6OMrC/tU+pFChydMkzsQb5G1mzn4irrSbvbdpn
+	 uRRGSvuK+xE+rJV9QKt53Yi+C5AGyMpJkH7So48HlGjLwaSnzals1PSBottuj8cc0g
+	 KZJw9kQ21AYTA==
+From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
+To: Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org
+Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] riscv: kvm: Fix out-of-bounds array access
+Date: Mon,  4 Nov 2024 20:15:01 +0100
+Message-ID: <20241104191503.74725-1-bjorn@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Am Mon, 04 Nov 2024 10:35:26 -0800
-schrieb Kevin Hilman <khilman@kernel.org>:
+From: Björn Töpel <bjorn@rivosinc.com>
 
-> Andreas Kemnade <andreas@kemnade.info> writes:
-> 
-> > E.g. omap2plus_defconfig compiles cpufreq-dt as module. As there is
-> > no module alias nor a module_init(), cpufreq-dt-platdev will not be
-> > used and therefore on several omap platforms there is no cpufreq.
-> >
-> > Enforce builtin compile of cpufreq-dt-platdev to make it effective.
-> >
-> > Fixes: 3b062a086984 ("cpufreq: dt-platdev: Support building as
-> > module") Cc: stable@vger.kernel.org
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>  
-> 
-> I'd much rather see this fixed to work as a module.  You already
-> hinted at the right way to do that, so please do that instead.
-> 
-no clear idea how. What aliases should I add? The cpufreq-dt-platdev is
-not a real driver, so I could not create mod_devicetable aliases to
-match a given device. It constructs a device under certain conditions
-depending on the board compatible, so no simple list of compatibles, it
-contains allow and blocklists.
+In kvm_riscv_vcpu_sbi_init() the entry->ext_idx can contain an
+out-of-bound index. This is used as a special marker for the base
+extensions, that cannot be disabled. However, when traversing the
+extensions, that special marker is not checked prior indexing the
+array.
 
-cpufreq-dt then binds to that device and that one can be built as a
-module (which then made cpufreq-dt-platdev also a module, causing the
-trouble). I do not see any benefit from having cpufreq-dt-platdev as a
-module. ti-cpufreq has a similar role and is also just builtin.
-It does itself no real work but provides a device cpufreq-dt then binds
-to.
+Add an out-of-bounds check to the function.
 
-Handling module removal would probably need to be added and tested. I
-feel not comfortable having such as a regression fix and for stable.
+Fixes: 56d8a385b605 ("RISC-V: KVM: Allow some SBI extensions to be disabled by default")
+Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+---
+Don't know if it matters, but I hit this when trying kvmtool.
 
-Regards,
-Andreas
+
+Björn
+---
+arch/riscv/kvm/vcpu_sbi.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+index 7de128be8db9..6e704ed86a83 100644
+--- a/arch/riscv/kvm/vcpu_sbi.c
++++ b/arch/riscv/kvm/vcpu_sbi.c
+@@ -486,19 +486,22 @@ void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu)
+ 	struct kvm_vcpu_sbi_context *scontext = &vcpu->arch.sbi_context;
+ 	const struct kvm_riscv_sbi_extension_entry *entry;
+ 	const struct kvm_vcpu_sbi_extension *ext;
+-	int i;
++	int idx, i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(sbi_ext); i++) {
+ 		entry = &sbi_ext[i];
+ 		ext = entry->ext_ptr;
++		idx = entry->ext_idx;
++
++		if (idx < 0 || idx >= ARRAY_SIZE(scontext->ext_status))
++			continue;
+ 
+ 		if (ext->probe && !ext->probe(vcpu)) {
+-			scontext->ext_status[entry->ext_idx] =
+-				KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE;
++			scontext->ext_status[idx] = KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE;
+ 			continue;
+ 		}
+ 
+-		scontext->ext_status[entry->ext_idx] = ext->default_disabled ?
++		scontext->ext_status[idx] = ext->default_disabled ?
+ 					KVM_RISCV_SBI_EXT_STATUS_DISABLED :
+ 					KVM_RISCV_SBI_EXT_STATUS_ENABLED;
+ 	}
+
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+-- 
+2.43.0
+
 
