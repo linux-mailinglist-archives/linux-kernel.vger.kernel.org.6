@@ -1,89 +1,257 @@
-Return-Path: <linux-kernel+bounces-395161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AF09BB999
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:58:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390FF9BB9A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:59:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E9331F22AB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:58:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C07A1C20442
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22C81C0DED;
-	Mon,  4 Nov 2024 15:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBCF1C1753;
+	Mon,  4 Nov 2024 15:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhkgX+5D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+r634Er"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21391BF804;
-	Mon,  4 Nov 2024 15:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAE670816;
+	Mon,  4 Nov 2024 15:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730735840; cv=none; b=EmR9DSsedWgf0FJm3DyFrQR/xzQIxxuUUt3ErDh1jDJeCsrw0f2sMDoPqOSDr3pb8TEhWDy5S3lUFm+GY5lqPisYYmGY0Rr8OKMrpmxJCkjOr+Nnv4dUDwY7OY37Thlgyx0RM0SE8oyQesEt8ogj6xzNqmlfn6uN9sejHpoGJgU=
+	t=1730735942; cv=none; b=YUSkITEI5yVp0C3vD9K3CaZ6Wc42jhaWi1MSpnuxLux2D5BVC9e4Cb+Z4T7NTmkjgclxeIHZ2bK8v7gPWIS/ZmtGz4FzctB2PfuPZLApPQjVsj0Eps7BBEZLU6Fhp65bq65DkyRcu+GXqNdYRcuquZCgBmoNyIQgo2oHi1d6bvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730735840; c=relaxed/simple;
-	bh=du3D9Ti6JlIpp3Bx+I1pxH4VeSvLJQ6Ys6/W+ho9O+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TAvTcX/dqcIVtnHY1xsWWwobKEjXECVxnPRuKXi6ieszFlb9sG5lbrFAQxNAdbTlvWLs+1zppp71djb4In2RtZ48IwiQJi3m/SqipElemU0JtcPGqH3Aa+F/WLozLv9sUH0a754cTBK2S8LttJrxpOXBrCc6H0JTUqKEO+Tcp14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhkgX+5D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9567FC4CECE;
-	Mon,  4 Nov 2024 15:57:18 +0000 (UTC)
+	s=arc-20240116; t=1730735942; c=relaxed/simple;
+	bh=nfbYyjxKn/6I7KeeEZRpVU1jWeaAip9FWL9OkYwgvck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DYa8muGXkI7K/f8Nx2E+bFKIWkUPPfpKxnp3q99I91dzvcm/tJjqrXHjWrI6t5Zd3t5/22hdolyul8EZHw6xYbYT9fhmHX1rQXr2HpujF6VrkuAngUmokXCfv3EEyC06KVwdcD4F6bsJUDGEzlemv3s41zD168ezRWmT7Lrcin8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+r634Er; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93956C4CECE;
+	Mon,  4 Nov 2024 15:59:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730735838;
-	bh=du3D9Ti6JlIpp3Bx+I1pxH4VeSvLJQ6Ys6/W+ho9O+k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WhkgX+5Dt2lESakf8onXXzW7cZ5C/VqXTnynUXelk6LMEmiXhiiS5uKvIiglYRRQd
-	 r9RgkSZwoBub61J/vu+uTCqUEU5Ysp0D09w42GTSBZWCxX1EfAehu9alRA25tch2LA
-	 f0lxhUclCAfrEgeCiP7XMk73AL1jAXLjj481hlXxCSN67ZjIMUU0zsbjfEbevIoMJ/
-	 5WrBNrm/zPmv3jByyuHyNh2s3y8gktj41YrXr6X8tTIgUsbLAz6duPWeSGogxZ43h5
-	 iX9Q6SKBCIk9tK5vr7TMzpOKsV2UaAlMIR8AmfYR6NIq/rmyqePpo/iA+7ZCt7RwqH
-	 axASATQSWEtlQ==
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e28fe07e97dso4350588276.3;
-        Mon, 04 Nov 2024 07:57:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU+ajockVYa4qSm+DAZ3DMOHSyKKIchZzwafAKVJBKdZ+d8Tb/GIhiXazyIsnXtS7oYqkpZ+rS/QkM+@vger.kernel.org, AJvYcCWBYEyUPPlUVQjRL+F6XxtiwyzU//nfg+lZxIHevxI3gHujcmZzJ6DrtkeYjJW7ObPJMaGBjdQTt3X4299F@vger.kernel.org, AJvYcCWG5fZkjSNfwgtq2jMeIhuR8zmlmW+si2gErxRA0/UIkRffkD8soBRGwHRUAOIzeU6bZDxYsIdb2rFcD2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrLbTX72UxhtMSv1sUjIpU/70lyRo7DfMEjcDdNzbS8Gf5MN1F
-	4DaZbnku/yh9nCI9m+fpmfjl7PzurQGwMqNuf+oTrclOCIT4uuW8q1mrLvrkiS+0Q4W6cM3NjBL
-	xKAlTYFPrBiLr3o0htcObQtvRZA==
-X-Google-Smtp-Source: AGHT+IFJthhkSzkBdnbiB5dDIi1s/eaCvQbG6JsPmn7TbVCmrz/zQ6MVdpFKk0iB6A/Zy7+RL9YE/wF2HoO/7hQxgz4=
-X-Received: by 2002:a05:6902:3188:b0:e33:25e2:4af6 with SMTP id
- 3f1490d57ef6-e3325e24e4amr5209097276.6.1730735837784; Mon, 04 Nov 2024
- 07:57:17 -0800 (PST)
+	s=k20201202; t=1730735941;
+	bh=nfbYyjxKn/6I7KeeEZRpVU1jWeaAip9FWL9OkYwgvck=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L+r634Erl+WncXlEz4rsmMXCY8pHbVcHBzX48fyrMeKPL0TKRWGO+wiqFNNk2+bG3
+	 +EpXJQRdYvygLy9/3ELIAb/8ofnXplEM6wi31doRQhPpma9mFRpzKmtc8jteqnIuuQ
+	 y2hUCBnfM2JitLA7URtD/EpPbu2C3HrK6XK+ZsPGzQczgr5Ywo4JZ4LkH1xj3Rlsvd
+	 cnObx/9CHx2OljMMP4/ygK8PuiYs7OjnWWXkoHfXClw6C6fM35CEVlbxx3SdrDa+kG
+	 mKkn8iOJFfd3EOnWuF6R5QB2V6M0bDB2CQXbwqP5lD5+gYZVgejmFCy0JGPvPxHlu1
+	 YJOPQwrbsGUyg==
+Date: Mon, 4 Nov 2024 07:59:00 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 15/18] ext4: switch to using the crc32c library
+Message-ID: <20241104155900.GH21832@frogsfrogsfrogs>
+References: <20241103223154.136127-1-ebiggers@kernel.org>
+ <20241103223154.136127-16-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102125712.2647325-1-csokas.bence@prolan.hu> <20241102125712.2647325-3-csokas.bence@prolan.hu>
-In-Reply-To: <20241102125712.2647325-3-csokas.bence@prolan.hu>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 4 Nov 2024 09:57:06 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+BFBTUT_VrkmCTV-XBmNvscGF0Bzfj7LEeytRea55aBg@mail.gmail.com>
-Message-ID: <CAL_Jsq+BFBTUT_VrkmCTV-XBmNvscGF0Bzfj7LEeytRea55aBg@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] dt-bindings: sound: Add Allwinner suniv F1C100s
- Audio Codec
-To: =?UTF-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>
-Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241103223154.136127-16-ebiggers@kernel.org>
 
-On Sat, Nov 2, 2024 at 8:00=E2=80=AFAM Cs=C3=B3k=C3=A1s, Bence <csokas.benc=
-e@prolan.hu> wrote:
->
-> Add compatible string for Allwinner suniv F1C100s audio codec.
->
-> [ csokas.bence: Reimplement Mesih Kilinc's binding in YAML ]
-> Signed-off-by: Cs=C3=B3k=C3=A1s, Bence <csokas.bence@prolan.hu>
+On Sun, Nov 03, 2024 at 02:31:51PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Now that the crc32c() library function directly takes advantage of
+> architecture-specific optimizations, it is unnecessary to go through the
+> crypto API.  Just use crc32c().  This is much simpler, and it improves
+> performance due to eliminating the crypto API overhead.
+> 
+> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 > ---
->  .../sound/allwinner,sun4i-a10-codec.yaml      | 31 +++++++++++++++++++
->  1 file changed, 31 insertions(+)
+>  fs/ext4/Kconfig |  3 +--
+>  fs/ext4/ext4.h  | 25 +++----------------------
+>  fs/ext4/super.c | 15 ---------------
+>  3 files changed, 4 insertions(+), 39 deletions(-)
+> 
+> diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+> index e20d59221fc0..c9ca41d91a6c 100644
+> --- a/fs/ext4/Kconfig
+> +++ b/fs/ext4/Kconfig
+> @@ -29,12 +29,11 @@ config EXT3_FS_SECURITY
+>  config EXT4_FS
+>  	tristate "The Extended 4 (ext4) filesystem"
+>  	select BUFFER_HEAD
+>  	select JBD2
+>  	select CRC16
+> -	select CRYPTO
+> -	select CRYPTO_CRC32C
+> +	select CRC32
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Hmm.  Looking at your git branch (which was quite helpful to link to!) I
+think for XFS we don't need to change the crc32c() calls, and the only
+porting work that needs to be done is mirroring this Kconfig change?
+And that doesn't even need to be done until someone wants to get rid of
+CONFIG_LIBCRC32C, right?
+
+>  	select FS_IOMAP
+>  	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
+>  	help
+>  	  This is the next generation of the ext3 filesystem.
+>  
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 44b0d418143c..99aa512a7de1 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -31,11 +31,11 @@
+>  #include <linux/wait.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/blockgroup_lock.h>
+>  #include <linux/percpu_counter.h>
+>  #include <linux/ratelimit.h>
+> -#include <crypto/hash.h>
+> +#include <linux/crc32c.h>
+>  #include <linux/falloc.h>
+>  #include <linux/percpu-rwsem.h>
+>  #include <linux/fiemap.h>
+>  #ifdef __KERNEL__
+>  #include <linux/compat.h>
+> @@ -1660,13 +1660,10 @@ struct ext4_sb_info {
+>  	struct task_struct *s_mmp_tsk;
+>  
+>  	/* record the last minlen when FITRIM is called. */
+>  	unsigned long s_last_trim_minblks;
+>  
+> -	/* Reference to checksum algorithm driver via cryptoapi */
+> -	struct crypto_shash *s_chksum_driver;
+> -
+>  	/* Precomputed FS UUID checksum for seeding other checksums */
+>  	__u32 s_csum_seed;
+>  
+>  	/* Reclaim extents from extent status tree */
+>  	struct shrinker *s_es_shrinker;
+> @@ -2465,23 +2462,11 @@ static inline __le16 ext4_rec_len_to_disk(unsigned len, unsigned blocksize)
+>  #define DX_HASH_LAST 			DX_HASH_SIPHASH
+>  
+>  static inline u32 ext4_chksum(struct ext4_sb_info *sbi, u32 crc,
+>  			      const void *address, unsigned int length)
+>  {
+> -	struct {
+> -		struct shash_desc shash;
+> -		char ctx[4];
+> -	} desc;
+> -
+> -	BUG_ON(crypto_shash_descsize(sbi->s_chksum_driver)!=sizeof(desc.ctx));
+> -
+> -	desc.shash.tfm = sbi->s_chksum_driver;
+> -	*(u32 *)desc.ctx = crc;
+> -
+> -	BUG_ON(crypto_shash_update(&desc.shash, address, length));
+> -
+> -	return *(u32 *)desc.ctx;
+> +	return crc32c(crc, address, length);
+>  }
+>  
+>  #ifdef __KERNEL__
+>  
+>  /* hash info structure used by the directory hash */
+> @@ -3278,15 +3263,11 @@ extern void ext4_group_desc_csum_set(struct super_block *sb, __u32 group,
+>  extern int ext4_register_li_request(struct super_block *sb,
+>  				    ext4_group_t first_not_zeroed);
+>  
+>  static inline int ext4_has_metadata_csum(struct super_block *sb)
+>  {
+> -	WARN_ON_ONCE(ext4_has_feature_metadata_csum(sb) &&
+> -		     !EXT4_SB(sb)->s_chksum_driver);
+> -
+> -	return ext4_has_feature_metadata_csum(sb) &&
+> -	       (EXT4_SB(sb)->s_chksum_driver != NULL);
+> +	return ext4_has_feature_metadata_csum(sb);
+>  }
+
+Nit: Someone might want to
+s/ext4_has_metadata_csum/ext4_has_feature_metadata_csum/ here to get rid
+of the confusingly named trivial helper.
+
+Otherwise this logic looks ok to me, so
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+
+>  
+>  static inline int ext4_has_group_desc_csum(struct super_block *sb)
+>  {
+>  	return ext4_has_feature_gdt_csum(sb) || ext4_has_metadata_csum(sb);
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 16a4ce704460..1a821093cc0d 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1371,12 +1371,10 @@ static void ext4_put_super(struct super_block *sb)
+>  	 * Now that we are completely done shutting down the
+>  	 * superblock, we need to actually destroy the kobject.
+>  	 */
+>  	kobject_put(&sbi->s_kobj);
+>  	wait_for_completion(&sbi->s_kobj_unregister);
+> -	if (sbi->s_chksum_driver)
+> -		crypto_free_shash(sbi->s_chksum_driver);
+>  	kfree(sbi->s_blockgroup_lock);
+>  	fs_put_dax(sbi->s_daxdev, NULL);
+>  	fscrypt_free_dummy_policy(&sbi->s_dummy_enc_policy);
+>  #if IS_ENABLED(CONFIG_UNICODE)
+>  	utf8_unload(sb->s_encoding);
+> @@ -4586,19 +4584,10 @@ static int ext4_init_metadata_csum(struct super_block *sb, struct ext4_super_blo
+>  		return -EINVAL;
+>  	}
+>  	ext4_setup_csum_trigger(sb, EXT4_JTR_ORPHAN_FILE,
+>  				ext4_orphan_file_block_trigger);
+>  
+> -	/* Load the checksum driver */
+> -	sbi->s_chksum_driver = crypto_alloc_shash("crc32c", 0, 0);
+> -	if (IS_ERR(sbi->s_chksum_driver)) {
+> -		int ret = PTR_ERR(sbi->s_chksum_driver);
+> -		ext4_msg(sb, KERN_ERR, "Cannot load crc32c driver.");
+> -		sbi->s_chksum_driver = NULL;
+> -		return ret;
+> -	}
+> -
+>  	/* Check superblock checksum */
+>  	if (!ext4_superblock_csum_verify(sb, es)) {
+>  		ext4_msg(sb, KERN_ERR, "VFS: Found ext4 filesystem with "
+>  			 "invalid superblock checksum.  Run e2fsck?");
+>  		return -EFSBADCRC;
+> @@ -5638,13 +5627,10 @@ failed_mount8: __maybe_unused
+>  	flush_work(&sbi->s_sb_upd_work);
+>  	ext4_stop_mmpd(sbi);
+>  	del_timer_sync(&sbi->s_err_report);
+>  	ext4_group_desc_free(sbi);
+>  failed_mount:
+> -	if (sbi->s_chksum_driver)
+> -		crypto_free_shash(sbi->s_chksum_driver);
+> -
+>  #if IS_ENABLED(CONFIG_UNICODE)
+>  	utf8_unload(sb->s_encoding);
+>  #endif
+>  
+>  #ifdef CONFIG_QUOTA
+> @@ -7433,8 +7419,7 @@ static void __exit ext4_exit_fs(void)
+>  }
+>  
+>  MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
+>  MODULE_DESCRIPTION("Fourth Extended Filesystem");
+>  MODULE_LICENSE("GPL");
+> -MODULE_SOFTDEP("pre: crc32c");
+>  module_init(ext4_init_fs)
+>  module_exit(ext4_exit_fs)
+> -- 
+> 2.47.0
+> 
+> 
 
