@@ -1,151 +1,214 @@
-Return-Path: <linux-kernel+bounces-394690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040FF9BB2DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:18:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363849BB2D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:17:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEBEA1F20FAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB061F22459
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77EF1D0E06;
-	Mon,  4 Nov 2024 11:05:32 +0000 (UTC)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1C71C07F6;
+	Mon,  4 Nov 2024 11:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nzhRX3ws";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2KCUJ+9o";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nzhRX3ws";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2KCUJ+9o"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AF01D095C
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DECB1B3945;
+	Mon,  4 Nov 2024 11:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730718332; cv=none; b=Oz5j57e8g+Nq9WjHJBRobIRURYdaBkN2YMMM1+sHFCft0elg7xM/b3udceVWE9DtSWaQWoeCjW0AlN7+3aPMxA7SL30OUFOsrtDzCXEt1L5jywAuxvBprxBSrkreuGaDhmNwmrpBFwfXdoMfVrj7D/FveDJP3QBehuAUr/dpC4Q=
+	t=1730718313; cv=none; b=XqwTeqa4Wy+MLjr/1Q54zeFrphiY5MUbGdDz4wXp4EJv+hEmO0ILENGhZMB3K3uJ0KeN5Ub5FFsI6k7+07zW9bQGFls9TsvBkLqKS6KZrBkWHpqbW1PTzFof+sacxUcQbBax+EV87bpLcMDxVu6hfzGQbNHUovpGIWkShK5zS18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730718332; c=relaxed/simple;
-	bh=hPLn67jJGh8npK+Nrh+oowlYDEbl4/LjLbYe7hgNHvE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=DzMxQXkTTzlMCKYLWx85/FOKLkjVmo7UtlLk1rYHsqJuTvogura0VjqTFLWBkUgX1dfV5RqHkrvbqdU0XWch6W1ixA9LGZ4QeHZdvXHnK+v4epj6SP1K0f+Y2Fpy78IuPc5+EQzD+0f0cYK5ejCfmdnGMY6oje3pnVMQpPTBYL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:cff2:a4e4:667a:351c])
-	by albert.telenet-ops.be with cmsmtp
-	id Yb5F2D0012b9NYg06b5FEf; Mon, 04 Nov 2024 12:05:22 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t7utD-006FYY-3n;
-	Mon, 04 Nov 2024 12:05:14 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t7utW-00E1Vx-Pi;
-	Mon, 04 Nov 2024 12:05:14 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>
-Subject: [PATCH/RFC v2] MAINTAINERS: Re-add cancelled Renesas driver sections
-Date: Mon,  4 Nov 2024 12:05:07 +0100
-Message-Id: <90447fa332b6f73bffcb486ccfe2515c59546253.1730717649.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730718313; c=relaxed/simple;
+	bh=f3pAOqk8IC3w0cLsAAhJK8VGcIR6Zcf9Dq7TLsqk0nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GytNh/Ogj3W5ZvV0MuZP2VkxpzBiBOhqTMJS4/BMnMSUGnBffsrFIjPngZWjVDVSAD+ZmkRVnvDrq8Yeczr0PVQ25KdQ1TqkJvK3z8tfTe1quexiQ0Qq3zSkpY6XbIzoDQqdfp3pR/OZI0s/zIFs+R6m3X52vdo4+tSv9TjRLWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nzhRX3ws; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2KCUJ+9o; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nzhRX3ws; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2KCUJ+9o; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8769D1F7ED;
+	Mon,  4 Nov 2024 11:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730718309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gUgU/TTvEr4qoByuVJVnHPP7dypTWalKUMSb1hzqpog=;
+	b=nzhRX3wsiMG6k866trksWO5gBrfNGC3q69wGSBhm2zkmc9r8CUNFMaFFa8ZehCyeYNxMSK
+	ES9wPRgAUhhptI9iKhuWK5XITedXa1JnkGMwdwnj5+tYwY1/CH17ThjmCPI3jhsiiBsnTW
+	Ui0vnUIuOre5hD2i/+YGFrdmZi6n20Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730718309;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gUgU/TTvEr4qoByuVJVnHPP7dypTWalKUMSb1hzqpog=;
+	b=2KCUJ+9ogvVm6QL3rzDZg64ZTEj1hbMFcaZKjZiuUHykrg/iR62mfJXuUKdJwkmtPqCW1G
+	JKOluQFs6jSVgnDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=nzhRX3ws;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2KCUJ+9o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730718309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gUgU/TTvEr4qoByuVJVnHPP7dypTWalKUMSb1hzqpog=;
+	b=nzhRX3wsiMG6k866trksWO5gBrfNGC3q69wGSBhm2zkmc9r8CUNFMaFFa8ZehCyeYNxMSK
+	ES9wPRgAUhhptI9iKhuWK5XITedXa1JnkGMwdwnj5+tYwY1/CH17ThjmCPI3jhsiiBsnTW
+	Ui0vnUIuOre5hD2i/+YGFrdmZi6n20Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730718309;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gUgU/TTvEr4qoByuVJVnHPP7dypTWalKUMSb1hzqpog=;
+	b=2KCUJ+9ogvVm6QL3rzDZg64ZTEj1hbMFcaZKjZiuUHykrg/iR62mfJXuUKdJwkmtPqCW1G
+	JKOluQFs6jSVgnDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 74FF213736;
+	Mon,  4 Nov 2024 11:05:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LqlEHGWqKGfCPAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 04 Nov 2024 11:05:09 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 15CAEA0AFB; Mon,  4 Nov 2024 12:05:09 +0100 (CET)
+Date: Mon, 4 Nov 2024 12:05:09 +0100
+From: Jan Kara <jack@suse.cz>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2][next] jbd2: Avoid dozens of
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <20241104110509.4ioef4oqzvlg7u6e@quack3>
+References: <ZyU94w0IALVhc9Jy@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyU94w0IALVhc9Jy@kspp>
+X-Rspamd-Queue-Id: 8769D1F7ED
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Removing full driver sections also removed mailing list entries, causing
-submitters of future patches to forget CCing these mailing lists.
+On Fri 01-11-24 14:45:23, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we
+> are getting ready to enable it, globally.
+> 
+> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+> a flexible structure (`struct shash_desc`) where the size of the
+> flexible-array member (`__ctx`) is known at compile-time, and
+> refactor the rest of the code, accordingly.
+> 
+> So, with this, fix 77 of the following warnings:
+> 
+> include/linux/jbd2.h:1800:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-Hence re-add the sections for the Renesas Ethernet AVB, R-Car SATA, and
-SuperH Ethernet drivers.  Add people who volunteered to maintain these
-drivers (thanks a lot!).
+Looks good. Feel free to add:
 
-Fixes: 6e90b675cf942e50 ("MAINTAINERS: Remove some entries due to various compliance requirements.")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Acked-by: Niklas Cassel <cassel@kernel.org>
----
-To be applied to renesas-fixes for v6.12 after v6.12-rc7, unless a
-better solution is found.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-v2:
-  - Add Acked-by, Reviewed-by,
-  - Add M:-entries.
----
- MAINTAINERS | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+								Honza
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 13f4c23281f89332..b04d678240e80ec9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19578,6 +19578,16 @@ S:	Supported
- F:	Documentation/devicetree/bindings/i2c/renesas,iic-emev2.yaml
- F:	drivers/i2c/busses/i2c-emev2.c
- 
-+RENESAS ETHERNET AVB DRIVER
-+M:	Paul Barker <paul.barker.ct@bp.renesas.com>
-+M:	Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-+L:	netdev@vger.kernel.org
-+L:	linux-renesas-soc@vger.kernel.org
-+F:	Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-+F:	drivers/net/ethernet/renesas/Kconfig
-+F:	drivers/net/ethernet/renesas/Makefile
-+F:	drivers/net/ethernet/renesas/ravb*
-+
- RENESAS ETHERNET SWITCH DRIVER
- R:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
- L:	netdev@vger.kernel.org
-@@ -19627,6 +19637,14 @@ F:	Documentation/devicetree/bindings/i2c/renesas,rmobile-iic.yaml
- F:	drivers/i2c/busses/i2c-rcar.c
- F:	drivers/i2c/busses/i2c-sh_mobile.c
- 
-+RENESAS R-CAR SATA DRIVER
-+M:	Geert Uytterhoeven <geert+renesas@glider.be>
-+L:	linux-ide@vger.kernel.org
-+L:	linux-renesas-soc@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
-+F:	drivers/ata/sata_rcar.c
-+
- RENESAS R-CAR THERMAL DRIVERS
- M:	Niklas Söderlund <niklas.soderlund@ragnatech.se>
- L:	linux-renesas-soc@vger.kernel.org
-@@ -19702,6 +19720,16 @@ S:	Supported
- F:	Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
- F:	drivers/i2c/busses/i2c-rzv2m.c
- 
-+RENESAS SUPERH ETHERNET DRIVER
-+M:	Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-+L:	netdev@vger.kernel.org
-+L:	linux-renesas-soc@vger.kernel.org
-+F:	Documentation/devicetree/bindings/net/renesas,ether.yaml
-+F:	drivers/net/ethernet/renesas/Kconfig
-+F:	drivers/net/ethernet/renesas/Makefile
-+F:	drivers/net/ethernet/renesas/sh_eth*
-+F:	include/linux/sh_eth.h
-+
- RENESAS USB PHY DRIVER
- M:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
- L:	linux-renesas-soc@vger.kernel.org
+> ---
+> Changes in v2:
+>  - Use DIV_ROUND_UP() to compute the number of elements for the flex
+>    array. (Jan Kara)
+> 
+> v1:
+>  - Link: https://lore.kernel.org/linux-hardening/ZxvyavDjXDaV9cNg@kspp/
+> 
+>  include/linux/jbd2.h | 15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+> index 8aef9bb6ad57..50f7ea8714bf 100644
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -1796,22 +1796,21 @@ static inline unsigned long jbd2_log_space_left(journal_t *journal)
+>  static inline u32 jbd2_chksum(journal_t *journal, u32 crc,
+>  			      const void *address, unsigned int length)
+>  {
+> -	struct {
+> -		struct shash_desc shash;
+> -		char ctx[JBD_MAX_CHECKSUM_SIZE];
+> -	} desc;
+> +	DEFINE_RAW_FLEX(struct shash_desc, desc, __ctx,
+> +		DIV_ROUND_UP(JBD_MAX_CHECKSUM_SIZE,
+> +			     sizeof(*((struct shash_desc *)0)->__ctx)));
+>  	int err;
+>  
+>  	BUG_ON(crypto_shash_descsize(journal->j_chksum_driver) >
+>  		JBD_MAX_CHECKSUM_SIZE);
+>  
+> -	desc.shash.tfm = journal->j_chksum_driver;
+> -	*(u32 *)desc.ctx = crc;
+> +	desc->tfm = journal->j_chksum_driver;
+> +	*(u32 *)desc->__ctx = crc;
+>  
+> -	err = crypto_shash_update(&desc.shash, address, length);
+> +	err = crypto_shash_update(desc, address, length);
+>  	BUG_ON(err);
+>  
+> -	return *(u32 *)desc.ctx;
+> +	return *(u32 *)desc->__ctx;
+>  }
+>  
+>  /* Return most recent uncommitted transaction */
+> -- 
+> 2.43.0
+> 
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
