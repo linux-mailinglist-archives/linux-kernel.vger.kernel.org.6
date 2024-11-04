@@ -1,125 +1,125 @@
-Return-Path: <linux-kernel+bounces-394708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CB99BB30D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:23:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D739BB311
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:23:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0752F1C21D5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:23:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53D3284037
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668301D5162;
-	Mon,  4 Nov 2024 11:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A511B4F3D;
+	Mon,  4 Nov 2024 11:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cxVVPBqX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="gApjbdud";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="c04IgRFQ"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC9C1C6F6D
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2C41B0F2A
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730718775; cv=none; b=hCmeAC7L0gelZiLCzpuSHUeogpGl9UH7DZxuR/80Ol1fSlEQKCKuaYGb/djYUJHwezPSC9OaEp6kF5WJhk4ZvNMuUwLd5eIMeZdXeklXC1Ys7vhB0bbOjdDXBTYVIi9t9twp1ylnZDUvMBC1FyM++Sk9FkC6aaoYX1kgb0RJsGY=
+	t=1730718848; cv=none; b=BSuZkxD44MqMsEm1i+GMKwOUTux9D5i57tgdqbC5yH3R8jZJH6vC17Ws8ZTeaeVVtBEPYDG2q1xY6n5BdnI88pJjAFhZEYGU8mmjVRdL8hqqsTmuDnfFevPz2X+xPIjcfdGB1XjGLgyRcQ2X+kOb5MYV49xEsXoNNoDOdiZDzSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730718775; c=relaxed/simple;
-	bh=GfTqS8OGtgvdq4CghxVn86HK6W2OBHBs1c4oIr7MYHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G5pG3yWyGkJX8cuWCs5dSTv5UCCpBmzsz9MEzfvGe39MKU8GpZX9dDvQD9K5PZo09cmUZGLZvSspPzLEf6aJj/5wWtt9oaSts6UVBk40Y0Ht5GAdOHq56tVHpVihaQKY5b4lJCH1+we8AnWhAAIaYY+GajB0EiNgIKDqCrzlQY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cxVVPBqX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3Nj8dq022012
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 11:12:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FkrN5aPzH8cFJEUSM1S5b0+HOoTa6/UxeCk1GA3RQ9E=; b=cxVVPBqXDuq7NWL+
-	K0ZmgTrC/lj+ijuwzxBWw59YbYsxfcyXoO4/cpsxY6E5KqxeqJV6REBqI1dMCVj0
-	nyIBbRafDqPM7sopTLCJJcryagtohr8oQ+QT059X6poX5vCs+ngT09h+DW4JIyRu
-	tFXrnb1xPulcBuYOK9ZRd9BPeljahCv1uFUEeofR7hidLsF7tdrzB6I/gZAKMs3c
-	pRZsV3ERVhL4vcYbk76TP0LIz486cGWKUU5vuTVZwyCsmBsSHl5Vj1H+pivihBCY
-	0dRGCUrzvWqbI3YnM50T3U1gIodUQzMIPpk0LQgtvhP/9R8DH+sP+n7fB0sKhrVP
-	6RGZYA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ncyxuxtt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 11:12:53 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6cbe944435fso11828666d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:12:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730718773; x=1731323573;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FkrN5aPzH8cFJEUSM1S5b0+HOoTa6/UxeCk1GA3RQ9E=;
-        b=bY1E5yZkwr8UEkgPwSM0oZJ98fbQOfqNlKIPQ/ieD2Msr/5B/vAle5qLLAUE2W1NVc
-         d9V+Q98VlW6CE62/tLIaAoVB3n4bL/aRlR3pIxhVLxFgeNKuQTIVKa0lq3bO5fvU3a7p
-         0s648NpYAoR1Q1OMUPtbNY4fROiNGzT6KZMPVMZ9fprJ4a/czHvzbvG5DK0sfwbvwOh5
-         gNodKUS8wCZLO2T//OXLZKgA/tbkRqDT3taiP8eENb6OcKBYaur2qiwjeo/LVEGoUzmj
-         Ss2s95Xj7QqDe2oyhtJ/o5+VYGvxf5YYVMRmTIGDUwvpXnYpDWn2UKwf6Nr1TsVCYDgf
-         GJjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaHKeyzjpJondVe/1e2TtM75oMm4mWXD9Tt4q/DFHYYwhIw/mC9L4/6zSbrfS74OWag56o0f4cmI1eNSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5mcb0FbKiA12xnoX/sniygcNRKSlvKddr5Ysod3HtyD7DhxNU
-	DHTX3TZMDfLTFjvqIKK2J6vRFr5DkvXIBRX2sEjrwqafbxeFd4XqnQbCChBQFR8sO9+1lBjGk1R
-	WCgzSIM/os4/PjE1Upw29qY7mh0uyQxwETsVttrQbryaCr71bhhgSaxz4a5AxME8=
-X-Received: by 2002:a05:620a:17ab:b0:7b1:43b3:8189 with SMTP id af79cd13be357-7b193f68cf5mr2130262985a.12.1730718772732;
-        Mon, 04 Nov 2024 03:12:52 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE1kLsLhTw1eCaFhwc75OEkkLjLtmAZaNU8WNIlpyHgnRFt+2XGunT7R8lTybD+GT5231O6HQ==
-X-Received: by 2002:a05:620a:17ab:b0:7b1:43b3:8189 with SMTP id af79cd13be357-7b193f68cf5mr2130260885a.12.1730718772318;
-        Mon, 04 Nov 2024 03:12:52 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565e08d0sm536708066b.115.2024.11.04.03.12.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 03:12:51 -0800 (PST)
-Message-ID: <e9d5e5fb-a656-46f4-9f5e-c6092729709c@oss.qualcomm.com>
-Date: Mon, 4 Nov 2024 12:12:49 +0100
+	s=arc-20240116; t=1730718848; c=relaxed/simple;
+	bh=Ol1y8mi/oPDooyhIzj0dh+kbkXTzlG5y30295I0aBZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y9yyNVF/NuQWP5acVfujQWF3DYLz/lTKc0fLcplqJ1vkia26kH5jTGYTFpyCt346VjdzuKhBAZ3RlemGFq7M/fgigmj9mQvTFHhvw43ym0ya+GSaaIFp1OqJGSFDp4IGbsj9goexBdqWYbu1EugjsT65bwl49v9ly10BbqUqnAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=gApjbdud; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=c04IgRFQ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1730718844; x=1762254844;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=L/Uc2z43dnHV83Mvg+6SBN8Ls2mY+7tY2PtsECwrTxs=;
+  b=gApjbdudDPgTilhTJyuu9gHBBt402mvHzvlflRG80Je0nKCVg932jNUP
+   ejj6UtPvvFkmMcJrOYaddGHTpdM3tGi7F3sDbVgoxM4EcTOF74mRn8hoj
+   HyU78oSvjfox41rHmzZKn8GuOezLi5f9YNEoXEz+cV0xk9vPjTJHOTRWh
+   2jiHGnPK9U6MevTcwzpA19/gEOfsHy7npJBpi1zRMtIy8dQuH6t7++Yjo
+   YGEpXckyn/CYPwLDwE3wmJs9PskUtSXRcMdXbpFrv59zKBWsMZW78E3vX
+   8vysLgWdWq2w1dYMVPjk4ape75FbEcQv21khvjWMGHrxcXFdsDw7Ki5/Y
+   w==;
+X-CSE-ConnectionGUID: Zr2THyCWRmG3584bJQuy6w==
+X-CSE-MsgGUID: FngT7AkQSpKZZre3APNMvA==
+X-IronPort-AV: E=Sophos;i="6.11,256,1725314400"; 
+   d="scan'208";a="39829935"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 04 Nov 2024 12:14:01 +0100
+X-CheckPoint: {6728AC79-16-5736D786-D50827BE}
+X-MAIL-CPID: B2CB541A2DB8849C714D5A63816521A4_2
+X-Control-Analysis: str=0001.0A682F28.6728AC79.00AD,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F2FC0167D2F;
+	Mon,  4 Nov 2024 12:13:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1730718837;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=L/Uc2z43dnHV83Mvg+6SBN8Ls2mY+7tY2PtsECwrTxs=;
+	b=c04IgRFQm12eSfB3CYuzfSAKd2XGAv4VQovAZwmn9gvpOabUV/UhL5MBgAP09DuiFJAVuo
+	Kge069nzFrDFgMqhLQafllDU5co4IatnFS8u08RATy/vEdnfe3BmQArMeOXS4czP06sRIf
+	At1G5L4rLBgPpWhKAZkXBpL4xnI+KYjyDZsTxotdruIdRn9TUQmFj/CNfJ1qQ8oXMEMhNp
+	qgx2QnvD7b5NIKtwqa0DaIh2tOIg/mAuGQVa/rE8pha5UJcGKLkoiTBfUZEHsX2TrdNgql
+	zFUOhEgM/oMNAr7WsJpX6ZTHfqzBSef337ziNfimvEqlr8ZIexIK4GYtS91xAg==
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux@ew.tq-group.com,
+	linux-kernel@vger.kernel.org,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH v6 0/5] mfd: tqmx86: new hardware and GPIO/I2C IRQ improvements/additions
+Date: Mon,  4 Nov 2024 12:13:28 +0100
+Message-ID: <cover.1730717841.git.matthias.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] arm64: dts: qcom: sm6115: add apr and its services
-To: Alexey Klimov <alexey.klimov@linaro.org>, linux-sound@vger.kernel.org,
-        srinivas.kandagatla@linaro.org, broonie@kernel.org
-Cc: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        perex@perex.cz, tiwai@suse.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org,
-        krzysztof.kozlowski@linaro.org, caleb.connolly@linaro.org,
-        linux-kernel@vger.kernel.org, a39.skl@gmail.com
-References: <20241101005925.186696-1-alexey.klimov@linaro.org>
- <20241101005925.186696-3-alexey.klimov@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241101005925.186696-3-alexey.klimov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: sikDtWJxO1kW6569H9BpbQaBjAKk6WsP
-X-Proofpoint-GUID: sikDtWJxO1kW6569H9BpbQaBjAKk6WsP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 mlxlogscore=514
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040099
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 1.11.2024 1:59 AM, Alexey Klimov wrote:
-> Add apr (asynchronous packet router) node and its associated services
-> required to enable audio on QRB4210 RB2 platform.
-> 
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
+Patch 1 adds support for 3 new TQMx86 COMs. GPIO support on SMARC
+modules is currently limited (not all GPIOs can be controlled, pins use
+incorrect default directions, IRQ configuration is handled incorrectly),
+however this is a preexisting issue also effecting the TQMxE39S and
+TQMxE40S, not only the new TQMxE41S. This will be addressed by a future
+patch series involving both the TQMx86 MFD and GPIO drivers.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Patches 2-5 improve module parameter description and error handling of
+GPIO IRQ configuration and add support for configuring an IRQ for the
+TQMx86's OpenCores I2C controller in the same way.
 
-Konrad
+Changelog:
+
+v2: improve module parameter description (new patch 2, adjusted patch 5)
+v3: replace IRQ 0 resource entries with empty placeholders to simplify
+    error handling (patches 4 and 5)
+v4: remove tqmx86_irq_to_irq_cfg() function (patch 3)
+v5: move placeholders to the end of the resource arrays, use defines for
+    index (patches 4 and 5)
+v6: remove obsolete comment; refer to I2C controller as I2C1 (patch 5)
+
+Gregor Herburger (1):
+  mfd: tqmx86: add I2C IRQ support
+
+Matthias Schiffer (4):
+  mfd: tqmx86: add board definitions for TQMx120UC, TQMx130UC and
+    TQMxE41S
+  mfd: tqmx86: improve gpio_irq module parameter description
+  mfd: tqmx86: refactor GPIO IRQ setup
+  mfd: tqmx86: make IRQ setup errors non-fatal
+
+ drivers/mfd/tqmx86.c | 105 +++++++++++++++++++++++++++++--------------
+ 1 file changed, 71 insertions(+), 34 deletions(-)
+
+-- 
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
+
 
