@@ -1,105 +1,143 @@
-Return-Path: <linux-kernel+bounces-395233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF4B9BBAA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:55:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74CCF9BBAA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:55:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 413BF1C22838
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39CDE28295E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716E21C4A04;
-	Mon,  4 Nov 2024 16:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0rYMgms"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBF41C2450;
+	Mon,  4 Nov 2024 16:55:01 +0000 (UTC)
+Received: from www.kot-begemot.co.uk (ns1.kot-begemot.co.uk [217.160.28.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762AB1369B6;
-	Mon,  4 Nov 2024 16:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168831369B6;
+	Mon,  4 Nov 2024 16:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.160.28.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730739305; cv=none; b=iDwSmD2/HQYTsjX+Hky3OXhrC+G8tqZ9E1IQuU8u5ZDFS9XbGir1+vJkVch29lNp4Lya3YATi6VlkkxVdynsCjgVvMNcpUaOQpZq3nU1e/hCwcOdmftm6jVudeshiAslCGApFb00ol2dRsa06Ir1c2wpe2ame4xT8PnHzs5JDR4=
+	t=1730739301; cv=none; b=ZGrvn/HMwNLE7QXEJEnUKzvEMhUGq/xc8k8K4xlFTGwFKJAIurccld7Kv/2asP5OYAe4xERv7NXF7ZLyprIK5JrzbGAwwV7bxw12lsGT3DxlzXWPuBnLeiyCjDWt3L8zp8PLQ4U4xiYM8sjgtoPcskxK5RdFytuOLDzfKDsdH+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730739305; c=relaxed/simple;
-	bh=Q418ja8tsDXOC77mCOfPiqTbO2OPtGirjJ5OAUF3zK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kxui2FFzp3Y/gRnaILcFJ5TXmkO2P2cf+fuokPLjgBIWaxe3xfOVU7HDbLTlEV7i25Y4wzHYdLZckUBcnvYNQrDVC8qlAp3HpQ1SLTmmM+8E3vtIFnocGr/tydW2l7J8pYMG98wRQzx+juR8S4/JvnPC0y7Elgt9+Z3uxjbILds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0rYMgms; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e2e2baf1087so4088118276.2;
-        Mon, 04 Nov 2024 08:55:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730739303; x=1731344103; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5XUR73A1EB/lY4KCXHBgQkAI6e2s9ail780Z/58ik38=;
-        b=P0rYMgmsHK66YDMRRBhA3So7Zc4EyqYpfGx7QNlji5S/vCHoI8JpUoJji2zvDTWW7c
-         TVogSbCuGyw23pWyjU/SKt6tiGU0hNV36Kn/Dt+AU135YdroJ/pDIjRepNMmcJxfJkrq
-         e+O5uJvwEKtWsWzqfUHsO5z5jRkw/SAl+QgxLzgSQxSK2XiAmIbfoxNYg27+9+6pXCOG
-         Mg+WRJyf8pJ5BRpWUWwMvfLWIIedNhSZoDTpyEN/dHAt7Ve4Fw/tBSGw4h7QQ1Cm9vuc
-         xS8yp7SgGvRuIg6HSmnITUir4T22JiEaK6ssxm+QzRXuAzvenFzaXEhenFVLKPHi+CBG
-         1XBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730739303; x=1731344103;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5XUR73A1EB/lY4KCXHBgQkAI6e2s9ail780Z/58ik38=;
-        b=gcoDBETKnZSpXLPwO4vqSUybjHiTDCsh5DsmzIrkNNbeNDMTP5oijReX0dxPVQZSSl
-         VGdYEXgjgqpQfHbw99xHzCcvvfdpAZyZgWTANzg/zl7jFpKJ2+iwJaqcMyoSLe0yr1mZ
-         jg/4c5zsU4nLYF8XZNpAjK2ASwalGmv56xIM7j1vzH5kleElQvwXv+TiXt+NnUAcBWyN
-         WRznCJ3rSQt8pvPCLPM0hcBrQNk7ttuHfLPzg8rI/VGDS9y3X/FnwfOoKapP1f3qXbXe
-         7/UvADcFT/QiQ5aY44H3ZE06bNTskLIxdBCMbcMy+lzDmJa9pfJkbaOFeRqmKpx3+qUE
-         ljmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4HlUPV1NLKKYJNKXWB0C8U9cCKcDzK7Ux1KGY4a0Amd4WPIyz2Y63foFfgKEKXyI7f0yiqDeePHlseZMR@vger.kernel.org, AJvYcCUW0/e8mEf8BqpdaiVOCJYmtUDES8Wv4E1hYtUlL+E9xTzlFgUaK+O/tqfU3wfNc7DFjoemyxOQfUw7QSlY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ0h/6VoVWc6gG71cNDnQGW81UK1/Qpp+0MN78pjFN/JlRs0e3
-	/qMHgokMcJTXSjrpbWuwhQFRrgZV+t4SqDZ40vZ0svrolmm7eI9ATieTdbIBbMOLnC9Zs0fjr9r
-	oGO8Xni1D8IRC0aUGJKq7hLhb97c=
-X-Google-Smtp-Source: AGHT+IFgabJY3MlOmUkApTX3tWXYiMzEsG7DXQ/HOHo3g9GdH/NAinuHn7PyooNEfFQpKUj0Nkzm7FZ9+4at9ONwxwE=
-X-Received: by 2002:a05:690c:690c:b0:6e2:a129:1623 with SMTP id
- 00721157ae682-6ea64be680dmr130287777b3.38.1730739303448; Mon, 04 Nov 2024
- 08:55:03 -0800 (PST)
+	s=arc-20240116; t=1730739301; c=relaxed/simple;
+	bh=mABaa3vW6dCeP4mFUxmlF4lPXp0GY4zZWRcQ64jP/2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NnAhcx7zc2GblhnQdEM945sTLULoTB6PbsFWhfPiNdWPP94IQrYTslfDBmpZpmSUU2/1pE/kgk414NoLcAgnW2darIa10bzxTs7J9zDDUFGyxEaBGJS14ArpG8y15FX2WxUxskixYY8k+cZtvGmrwEwjeEgFYK8CTaGV3CIUaJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com; spf=pass smtp.mailfrom=cambridgegreys.com; arc=none smtp.client-ip=217.160.28.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cambridgegreys.com
+Received: from [192.168.17.6] (helo=jain.kot-begemot.co.uk)
+	by www.kot-begemot.co.uk with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <anton.ivanov@cambridgegreys.com>)
+	id 1t80Ln-00Dwhk-QZ; Mon, 04 Nov 2024 16:54:47 +0000
+Received: from jain.kot-begemot.co.uk ([192.168.3.3])
+	by jain.kot-begemot.co.uk with esmtp (Exim 4.96)
+	(envelope-from <anton.ivanov@cambridgegreys.com>)
+	id 1t80Ll-00C1Sz-0H;
+	Mon, 04 Nov 2024 16:54:47 +0000
+Message-ID: <a764ef90-ca34-443b-978b-3af20dc76015@cambridgegreys.com>
+Date: Mon, 4 Nov 2024 16:54:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104084240.301877-1-danielyangkang@gmail.com> <20241104120615.ggsn7g2gblw73c5l@quack3>
-In-Reply-To: <20241104120615.ggsn7g2gblw73c5l@quack3>
-From: Daniel Yang <danielyangkang@gmail.com>
-Date: Mon, 4 Nov 2024 08:54:27 -0800
-Message-ID: <CAGiJo8RrxaUfLhk1LWPk_iDB+XJc0=gMoKXcxAS02qyqHVxJ_Q@mail.gmail.com>
-Subject: Re: [PATCH] fix: general protection fault in iter_file_splice_write
-To: Jan Kara <jack@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] um: ubd: Do not use drvdata in release
+To: Tiwei Bie <tiwei.btw@antgroup.com>, richard@nod.at,
+ johannes@sipsolutions.net
+Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241104163203.435515-1-tiwei.btw@antgroup.com>
+ <20241104163203.435515-3-tiwei.btw@antgroup.com>
+Content-Language: en-US
+From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+In-Reply-To: <20241104163203.435515-3-tiwei.btw@antgroup.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -1.0
+X-Spam-Score: -1.0
+X-Clacks-Overhead: GNU Terry Pratchett
 
-> > -                             pipe_buf_release(pipe, buf);
-> > +                             if (buf->ops)
-> > +                                     pipe_buf_release(pipe, buf);
->
-> Umm, already released pipe buf? How would it get here?
 
-If you're talking about the pipe_buf_release before the if statement,
-that line is a - not a + so I basically just added the if statement
-before release to check that buf->ops does not get deterrences in
-pipe_buf_release while null. It's the same two lines as when pipe is
-released in splice_direct_to_actor.
 
-> We have filled the
-> buffers shortly before so IMHO it indicates some deeper problem. Can you
-> please explain a bit more?
+On 04/11/2024 16:32, Tiwei Bie wrote:
+> The drvdata is not available in release. Let's just use container_of()
+> to get the ubd instance. Otherwise, removing a ubd device will result
+> in a crash:
+> 
+> RIP: 0033:blk_mq_free_tag_set+0x1f/0xba
+> RSP: 00000000e2083bf0  EFLAGS: 00010246
+> RAX: 000000006021463a RBX: 0000000000000348 RCX: 0000000062604d00
+> RDX: 0000000004208060 RSI: 00000000605241a0 RDI: 0000000000000348
+> RBP: 00000000e2083c10 R08: 0000000062414010 R09: 00000000601603f7
+> R10: 000000000000133a R11: 000000006038c4bd R12: 0000000000000000
+> R13: 0000000060213a5c R14: 0000000062405d20 R15: 00000000604f7aa0
+> Kernel panic - not syncing: Segfault with no mm
+> CPU: 0 PID: 17 Comm: kworker/0:1 Not tainted 6.8.0-rc3-00107-gba3f67c11638 #1
+> Workqueue: events mc_work_proc
+> Stack:
+>   00000000 604f7ef0 62c5d000 62405d20
+>   e2083c30 6002c776 6002c755 600e47ff
+>   e2083c60 6025ffe3 04208060 603d36e0
+> Call Trace:
+>   [<6002c776>] ubd_device_release+0x21/0x55
+>   [<6002c755>] ? ubd_device_release+0x0/0x55
+>   [<600e47ff>] ? kfree+0x0/0x100
+>   [<6025ffe3>] device_release+0x70/0xba
+>   [<60381d6a>] kobject_put+0xb5/0xe2
+>   [<6026027b>] put_device+0x19/0x1c
+>   [<6026a036>] platform_device_put+0x26/0x29
+>   [<6026ac5a>] platform_device_unregister+0x2c/0x2e
+>   [<6002c52e>] ubd_remove+0xb8/0xd6
+>   [<6002bb74>] ? mconsole_reply+0x0/0x50
+>   [<6002b926>] mconsole_remove+0x160/0x1cc
+>   [<6002bbbc>] ? mconsole_reply+0x48/0x50
+>   [<6003379c>] ? um_set_signals+0x3b/0x43
+>   [<60061c55>] ? update_min_vruntime+0x14/0x70
+>   [<6006251f>] ? dequeue_task_fair+0x164/0x235
+>   [<600620aa>] ? update_cfs_group+0x0/0x40
+>   [<603a0e77>] ? __schedule+0x0/0x3ed
+>   [<60033761>] ? um_set_signals+0x0/0x43
+>   [<6002af6a>] mc_work_proc+0x77/0x91
+>   [<600520b4>] process_scheduled_works+0x1af/0x2c3
+>   [<6004ede3>] ? assign_work+0x0/0x58
+>   [<600527a1>] worker_thread+0x2f7/0x37a
+>   [<6004ee3b>] ? set_pf_worker+0x0/0x64
+>   [<6005765d>] ? arch_local_irq_save+0x0/0x2d
+>   [<60058e07>] ? kthread_exit+0x0/0x3a
+>   [<600524aa>] ? worker_thread+0x0/0x37a
+>   [<60058f9f>] kthread+0x130/0x135
+>   [<6002068e>] new_thread_handler+0x85/0xb6
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
+> ---
+>   arch/um/drivers/ubd_kern.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
+> index f19173da64d8..66c1a8835e36 100644
+> --- a/arch/um/drivers/ubd_kern.c
+> +++ b/arch/um/drivers/ubd_kern.c
+> @@ -779,7 +779,7 @@ static int ubd_open_dev(struct ubd *ubd_dev)
+>   
+>   static void ubd_device_release(struct device *dev)
+>   {
+> -	struct ubd *ubd_dev = dev_get_drvdata(dev);
+> +	struct ubd *ubd_dev = container_of(dev, struct ubd, pdev.dev);
+>   
+>   	blk_mq_free_tag_set(&ubd_dev->tag_set);
+>   	*ubd_dev = ((struct ubd) DEFAULT_UBD);
 
-I just worked off of this crash log:
-https://syzkaller.appspot.com/text?tag=CrashReport&x=16adfaa7980000
+Acked-By: Anton Ivanov <anton.ivanov@cambridgegreys.com>
 
-If the buffer is filled before, does that mean the issue would be in
-do_send_file or do_splice_direct?
+-- 
+Anton R. Ivanov
+Cambridgegreys Limited. Registered in England. Company Number 10273661
+https://www.cambridgegreys.com/
 
