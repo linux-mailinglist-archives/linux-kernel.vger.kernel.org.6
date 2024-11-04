@@ -1,139 +1,172 @@
-Return-Path: <linux-kernel+bounces-394904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF5429BB5BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:20:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC579BB5C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:20:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7588A28345F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:20:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7338B1C21320
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257BB2231C;
-	Mon,  4 Nov 2024 13:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD7D42A91;
+	Mon,  4 Nov 2024 13:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jdqx5P3z"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="RHM0y5Ap"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A62AD5E;
-	Mon,  4 Nov 2024 13:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BD82AF0E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 13:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730726353; cv=none; b=TH28NDzazq+6g9qly3/YZQNjldyeQutBQS0oWZ2O5qWt6ApqymKM3rS0wmwj9Zwx+TXUOzbfAuLWYJFQO2fF811mh0kOdXzlQXjFutH5e+zZqzBYyxB9mJPefnH8X72Wdi7taJ4wAGaTYUs3J+Q/fAA4iO0/df7e/LYX9uHF5Lk=
+	t=1730726369; cv=none; b=K9JYNzpLoqpe4gHaGGFMM20e7bfC2RwD3RvrjPiEmTgkNKEiiL+8/1biDcBDv4ZKVERaWgDxS/jF+nO00AByCAaz/RiLU+jctSjtAzeCb6Ro2mtguC0naQRcTEdQLnnitrux6Q7Juh6GPkPxJYF7AkWNtx5G0p140qz67vE7CME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730726353; c=relaxed/simple;
-	bh=1PkamZZykZ77sMp0GI5lTUolLioO7jIOn5iTrhpoK+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tVXW993pPk4ayay2Gh/rrrryt7tXlUqxJiuEEZZIaJRZDI8zYanS6KfdKtoESjkPZbNphHfDeWq71ROn1gb/iAOLIydSUdxVMad2/M+cB7pJ0S5KILV6gZ+aKAs5SKCYN9h8aGM0NUHLIWJgaxu99aDbtQZXF2m9jCmD7B65y0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jdqx5P3z; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730726349;
-	bh=1PkamZZykZ77sMp0GI5lTUolLioO7jIOn5iTrhpoK+g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jdqx5P3z8eit/2sxGG3RKvQuELfZyqNVAmJ7fow9TZRN9AIX0RMG/E9y64pnky2kz
-	 H9BPYhVUzu9yxTT9gD0Mmwi7kFvfSBVmHjFSYn/A5MaLdiwybosLQkNEPRVfiEvNSC
-	 R0LJ9BmPla8JVosjXDLfoPIi+Z/sODWMcmZNYyHsb5llDoYdWITCoihpyGtafxo4yD
-	 mKOA1yMsivY5G9X4wOiOcfCui9dtRPGalZn2aMYXUiuw2I+WHbyZRRmye9/QCWIS15
-	 /C7ijWHXG/e6+mPTti8Zqy+EGF+pW3lzQYumh8S8GgojldzfQr1LRVEPf1RAHYPgn8
-	 vhJFq/8IKXUlQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 642C217E3620;
-	Mon,  4 Nov 2024 14:19:09 +0100 (CET)
-Message-ID: <bbaa0c8f-9702-4252-a674-e46fb51f0a2a@collabora.com>
-Date: Mon, 4 Nov 2024 14:19:09 +0100
+	s=arc-20240116; t=1730726369; c=relaxed/simple;
+	bh=scUb7SAwqAl5EEyO2kXhSL71Qki0G03FL4CcVLoFIho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sTwBdX6jgl/S1EbErvCpBQ64WvAPt5dTZvkNCycRDj9Wgl9X2qtLKvFv12kd19/X7/vPclgpXUuPCM6c4bFF6xtR6b3IvE/UX02FL13Fd0P+ZdH9FHIRqj4+7c/vwveotFyP2zd7GKJr8v1y+mZcP2vp7HYYaBkbqW6JqmmOEn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=RHM0y5Ap; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so49960331fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 05:19:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1730726366; x=1731331166; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lARrYvZxE2uyY6URVf+ZDkFNyhIinmek/ei9ImL8GSc=;
+        b=RHM0y5ApaBLTa21bykgZ6lN+4MQOatomuHvR+RMSHUhjOqiYpJCjsdWRsXsufSj7yK
+         iJlYte9fdREFH6ZVkEDsQPl5ldwWnZHJ/FQLGU4BUpbIHjbyc+Qzm/etMXvN+j5RdsAy
+         2rpdvhnVemZQa/1NOafqAJ6R/k0qbCtzRVgT9ohc6S2C6MeLhmA+0kBt/cYiMnA40sUI
+         yKTTABYAborJ2FJt49TKuD2DaDJP5UCZItvIoVPnY7euIxJiJLTynx1CtX0aeWdaSDfI
+         3Hjv3Q6/4X+uPu/rAw9rAA0awE9lhVWma5/QlTkXgNtR4Ln9FbXUIe+/xBgBB62CSkXD
+         l9nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730726366; x=1731331166;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lARrYvZxE2uyY6URVf+ZDkFNyhIinmek/ei9ImL8GSc=;
+        b=a4Qb/a9p6aJE4+eCZLKGK9LO1wfg3CQbzsF21fUgN4lJVSXn2THM8pY4rLyXfN+TiZ
+         jGwriVbG7SRNAFijET9n++d2xFhxwOSQMzvNLzNGIgrmPcsU108OH8nmtE8zU5qPZpLp
+         0UXl7ZL3LMG/vmJfkxVE7Z3bFtFjv7EXWp+2eqtBOi3foVsKZHayVDMRry4COpcb8AA1
+         HB1YUF1tE/o3HzVgo2QFXYEqXi/Vfpp31k4BupKws8Ahb8M2nFHZYY1NNKtXyWbMd2zq
+         TfkkCDrsSgkF9Zyu+gEoSph8tlOHdRldD8M9aeSQNEX9oJoQnmCaFRevBrm0hZioTKco
+         gcFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGEyxw3rTNaTm0dGgW7qEi32hRHWYTGrsMxh4imlg2plcf/IFCce6FY4e+ms7BTJ0ZQB8UaguKqhxYUjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx26LPlfeSeVqbLYYaPC7MFdyRtBnTAlLZnbgj3jRls7I4ap1iV
+	r4VkliJWVyOUUG7sa8ROCZQMrXW4in8Dv9bku6hV2nYLmakZmFdQNymekxmVdYImDy1wXNhth1e
+	lxLyKB+1DWqFix8sTIZnNurHzTnMTdvY8w4WkSA==
+X-Google-Smtp-Source: AGHT+IGhPab8jh+uf869h58p1p0BRB4pFjO0xN4TR4JkldBqulhRLCRm6iMFCtQY3hH8h2hEmFSyTlBKp0y/jc43UKM=
+X-Received: by 2002:a2e:a908:0:b0:2fa:d464:32d3 with SMTP id
+ 38308e7fff4ca-2fedb488ad0mr44010011fa.20.1730726365811; Mon, 04 Nov 2024
+ 05:19:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] arm64: dts: mediatek: mt8183-kukui-jacuzzi: Drop
- pp3300_panel voltage settings
-To: Chen-Yu Tsai <wenst@chromium.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241030070224.1006331-1-wenst@chromium.org>
- <20241030070224.1006331-2-wenst@chromium.org>
- <CAGXv+5HVy41qee6kwVUeLV_DfA0=wk2X77kv81rBKAZDGE6mww@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5HVy41qee6kwVUeLV_DfA0=wk2X77kv81rBKAZDGE6mww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240927-dev-maxh-svukte-rebase-2-v2-0-9afe57c33aee@sifive.com>
+ <20240927-dev-maxh-svukte-rebase-2-v2-3-9afe57c33aee@sifive.com>
+ <CAAhSdy0ncLTAjEE1s-GWL95sscxwQFsKn1rXyA1_VVfk1bQBiw@mail.gmail.com> <CAHibDywpKUE7r4UfcudDSBZCM=JAC5s40uf+PwQE+oMvZy4aVA@mail.gmail.com>
+In-Reply-To: <CAHibDywpKUE7r4UfcudDSBZCM=JAC5s40uf+PwQE+oMvZy4aVA@mail.gmail.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Mon, 4 Nov 2024 18:49:15 +0530
+Message-ID: <CAK9=C2WEU53TD+tnWRLC1iLRf+j607s=bZXevkogTnr-cmhPGw@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 3/3] riscv: KVM: Add Svukte extension support for Guest/VM
+To: Max Hsu <max.hsu@sifive.com>
+Cc: Anup Patel <anup@brainfault.org>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Atish Patra <atishp@atishpatra.org>, Palmer Dabbelt <palmer@sifive.com>, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 04/11/24 14:00, Chen-Yu Tsai ha scritto:
-> On Wed, Oct 30, 2024 at 3:02 PM Chen-Yu Tsai <wenst@chromium.org> wrote:
->>
->> The pp3300_panel fixed regulator is just a load switch. It does not have
->> any regulating capabilities. Thus having voltage constraints on it is
->> wrong.
->>
->> Remove the voltage constraints.
->>
->> Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
->> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> 
-> I see that the other three patches were merged and included in the pull
-> request, but not this one. Were there any concerns?
-> 
+On Mon, Nov 4, 2024 at 1:14=E2=80=AFPM Max Hsu <max.hsu@sifive.com> wrote:
+>
+> Hi Anup,
+>
+> Thank you for the suggestion.
+>
+> I=E2=80=99m not entirely sure if I fully understand it, but I believe the
+> hypervisor should be able to disable the Svukte extension.
+>
+> Inside the switch-case of kvm_riscv_vcpu_isa_disable_allowed(),
+> the default case breaks and returns true.
+>
+> So that means when the KVM_RISCV_ISA_EXT_SVUKTE passed into
+> kvm_riscv_vcpu_isa_disable_allowed() it will return true.
+>
+> If I've misunderstood, please let me know.
 
-Sorry I forgot to actually provide an explanation for that - yes, I do have some
-comment about this one.
+I don't see any code in this patch which disables/enables Svukte for
+Guest based on KVM ONE_REG interface.
 
-Despite this being a load switch, it's still switching power from regulator A to
-target device X, so this is technically still providing 3.3V to device X.
+Regards,
+Anup
 
-Think about how a "regular" full-fledged regulator works: you can (sometimes) set
-a voltage, and then you can ENABLE the VOUT for said regulator (/rail): this kind
-of "load switch" does exactly the same as the ENABLE switch for a full-fledged
-regulator.
-
-So, this is switching on and off a power rail that is derived from a source rail,
-practically creating... well, a "new" rail, with...
-
-  VIN=somewhere-3.3v,
-  VOUT=somewhere-still-3.3v
-
-Any objections/doubts/etc? :-)
-
-P.S.: I'm writing fast, sorry if anything appears unclear, feel free to shoot more
-       questions in case :-)
-
-Cheers,
-Angelo
-
-> 
-> ChenYu
-> 
->> ---
->>   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
->> index 783c333107bc..7bbafe926558 100644
->> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
->> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
->> @@ -35,8 +35,6 @@ pp1800_mipibrdg: pp1800-mipibrdg {
->>          pp3300_panel: pp3300-panel {
->>                  compatible = "regulator-fixed";
->>                  regulator-name = "pp3300_panel";
->> -               regulator-min-microvolt = <3300000>;
->> -               regulator-max-microvolt = <3300000>;
->>                  pinctrl-names = "default";
->>                  pinctrl-0 = <&pp3300_panel_pins>;
->>
->> --
->> 2.47.0.163.g1226f6d8fa-goog
->>
-
+>
+> Best regards,
+> Max Hsu
+>
+> On Fri, Oct 25, 2024 at 3:17=E2=80=AFAM Anup Patel <anup@brainfault.org> =
+wrote:
+> >
+> > On Fri, Sep 27, 2024 at 7:12=E2=80=AFPM Max Hsu <max.hsu@sifive.com> wr=
+ote:
+> > >
+> > > Add KVM ISA extension ONE_REG interface to allow VMM tools to
+> > > detect and enable Svukte extension for Guest/VM.
+> > >
+> > > Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> > > Signed-off-by: Max Hsu <max.hsu@sifive.com>
+> > > ---
+> > >  arch/riscv/include/uapi/asm/kvm.h | 1 +
+> > >  arch/riscv/kvm/vcpu_onereg.c      | 1 +
+> > >  2 files changed, 2 insertions(+)
+> > >
+> > > diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/u=
+api/asm/kvm.h
+> > > index e97db3296456e19f79ca02e4c4f70ae1b4abb48b..41b466b7ffaec421e8389=
+d3f5b178580091a2c98 100644
+> > > --- a/arch/riscv/include/uapi/asm/kvm.h
+> > > +++ b/arch/riscv/include/uapi/asm/kvm.h
+> > > @@ -175,6 +175,7 @@ enum KVM_RISCV_ISA_EXT_ID {
+> > >         KVM_RISCV_ISA_EXT_ZCF,
+> > >         KVM_RISCV_ISA_EXT_ZCMOP,
+> > >         KVM_RISCV_ISA_EXT_ZAWRS,
+> > > +       KVM_RISCV_ISA_EXT_SVUKTE,
+> > >         KVM_RISCV_ISA_EXT_MAX,
+> > >  };
+> > >
+> > > diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onere=
+g.c
+> > > index b319c4c13c54ce22d2a7552f4c9f256a0c50780e..67237d6e53882a9fcd2cf=
+265aa1704f25cc4a701 100644
+> > > --- a/arch/riscv/kvm/vcpu_onereg.c
+> > > +++ b/arch/riscv/kvm/vcpu_onereg.c
+> > > @@ -41,6 +41,7 @@ static const unsigned long kvm_isa_ext_arr[] =3D {
+> > >         KVM_ISA_EXT_ARR(SVINVAL),
+> > >         KVM_ISA_EXT_ARR(SVNAPOT),
+> > >         KVM_ISA_EXT_ARR(SVPBMT),
+> > > +       KVM_ISA_EXT_ARR(SVUKTE),
+> > >         KVM_ISA_EXT_ARR(ZACAS),
+> > >         KVM_ISA_EXT_ARR(ZAWRS),
+> > >         KVM_ISA_EXT_ARR(ZBA),
+> >
+> > The KVM_RISCV_ISA_EXT_SVUKTE should be added to the
+> > switch-case in kvm_riscv_vcpu_isa_disable_allowed() because
+> > hypervisor seems to have no way to disable Svukte for the Guest
+> > when it's available on the Host.
+> >
+> > Regards,
+> > Anup
+>
 
