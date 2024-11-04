@@ -1,115 +1,91 @@
-Return-Path: <linux-kernel+bounces-394111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFCA9BAAAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:58:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA379BAAAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:02:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11EC1C209CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 01:58:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A59628277F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9B41632C2;
-	Mon,  4 Nov 2024 01:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97541632D2;
+	Mon,  4 Nov 2024 02:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mFp8x5/1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpCnwXt1"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925646FD5;
-	Mon,  4 Nov 2024 01:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C109733F6;
+	Mon,  4 Nov 2024 02:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730685484; cv=none; b=q3kcH54L9hDotr8eLwqlCDqZtqnmcHqfL3W52cHKmK4MGfKmnp1f2bjpry5+uj1XLAXh3d956vl2LuvSKHDROIK4J2wY5XQ3PBENKWBnu+gLKAq1HxL9sezAoc+PwPlUw5219TvRQmAXd540D3DA4NRjmGYtSYaBcJ2aTyUr4FI=
+	t=1730685759; cv=none; b=qehR5hMZF2+t2SIFy7qAHtzaOpTob9ElE83SjGsItJlumWI/geDtGTeRZ5s6NxjgFzJ3ViRSONjZpoAida7PeuRm8kh/l3Zp2RgpoUj58bLcVEwzqz0DpztlTbu8pHj+tGCkSypFu+JsFqlzLfAScp6UO6FYobUaGkQLMG6wcag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730685484; c=relaxed/simple;
-	bh=RKYYmz04I/gjRRUcjLHhCjZfiVF/e/LPA2rPuzFUwgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s07zgmsF8T7Gyi+T5f9q5CXzqZYET4z8wfdk7dpB92Te4mWwrgVhK/JzSsve67d3N2vkX8tneikjFIVtoN8jXhZz+0C2it7wd3CUz7RsAVbduy0/WJbfap0v6f2Zabv/allybpEZ9V1dzYcoMcOgsz41e6ZcwBmnsLIT6YW++zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mFp8x5/1; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730685483; x=1762221483;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RKYYmz04I/gjRRUcjLHhCjZfiVF/e/LPA2rPuzFUwgI=;
-  b=mFp8x5/10BePu25ZyXBM4JURPRCz8IHuWBAHZiXz6Qerj0YbVj5VyJeO
-   WK2t1w/QgYvtvbdhibk4Bqb2iKghSO5cRFUn8k5Z1XCicODOwDl8VGz+w
-   lDRyPHM3X9dNfBuw89+ZqLugRVHPWdVMImkuvrzw87WqbwQrbJD+Zluto
-   xhNxQBMcPgMtbe+B74QpUVP3NLtZMQ2NBqaUVYR2ClOZ3dxaKK8knuHYA
-   5Bex9mb0mpcb1wRF+V83yu/+isgUXYULZu26qrRQynZx9RYDVIj08VFpH
-   y8gonHsEoRf+qoB+JB38qLM5esIEpMaDWOsu6lwXoyWZ+PFlTkeWXGaQM
-   A==;
-X-CSE-ConnectionGUID: WfD0kT/NSMWgV56vznBGYQ==
-X-CSE-MsgGUID: PI/GawB9Ry+mgl74fKG2xw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="41743390"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="41743390"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 17:58:02 -0800
-X-CSE-ConnectionGUID: PymJpey5TLqZme9yjp6kAw==
-X-CSE-MsgGUID: t0lghpvKT/SnWIg+sSy81A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="106857727"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 17:57:59 -0800
-Message-ID: <57e322e8-f486-4276-b9d5-4dc6c1e6e914@intel.com>
-Date: Mon, 4 Nov 2024 09:57:56 +0800
+	s=arc-20240116; t=1730685759; c=relaxed/simple;
+	bh=Vlf3tX58PlgJGwd0FWGFhEROPkOfNoB19VMjuTM1rk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7V5ToatRpcV0dWJtJTW8NxHBSzIX1KMj5ftbtTt7NsmmF/ptH9N3jVePF61VDgKY8ZZERZ/+Gp09OzEnPms8D2lskml2qVlDty3FWE6RquwU+XZFOM8Q6zgQ8zILP7yynitW2nvjz8icQHfHi1FUhTFeDSMHkWUxsdfuA/u0zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WpCnwXt1; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2113da91b53so5127125ad.3;
+        Sun, 03 Nov 2024 18:02:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730685757; x=1731290557; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vlf3tX58PlgJGwd0FWGFhEROPkOfNoB19VMjuTM1rk8=;
+        b=WpCnwXt1xHX+gqXL4tTk6mtmO0o6YiUU/6ZXQGvi4bknabBmguAZcfWeSQTajYlEjx
+         JkPIeYVBb192t7Ts2GPTANZJ0T/JsU/WeDReHrb7zamPUFkDm2uBj+D0qDfubkbvwc7U
+         nrcfO3bj63V15yJAe+kXMLwdZ9AGnfddzNDvMEIIuYrpsaM0c2OMabeVbF94kqbVbBQO
+         CfV42Vp6JhW0jKqxOlfbKXz9omAkicy4j4VKxlqIjd2+nYNN5pFPXCAWZKwRWYdlMk49
+         DwRRbDz+Y9unVOUdJQ67BNETf7nPbcdqxWKkeqj9vYpiOJNcfjExcs4hI8AAOkZg1Eo7
+         af4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730685757; x=1731290557;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vlf3tX58PlgJGwd0FWGFhEROPkOfNoB19VMjuTM1rk8=;
+        b=Z0NpqUxjXGgOae3ewhO4t38YqbS2s7VHJZLeL3XKlGSV59kCpdqqNlJu+ZzhXpd4aE
+         a44ZSjhGWQP6HS2zLB4ugwzHFgLdjwqpJHJG91mjsV7Ya38h6bFo6F050sPaRAmLIye1
+         Xj9Ad59hrRnOL8QPWbzrBqunrD38RxbHXPpKSVVPD44N0dY5+u3dYYIkxDDL7KmIOqmW
+         7emcRULDo1p1tNzoKYSUNSObqvrWWIgzACvQIWPvNBT4CrQHKUppP5+rwhz+LUKzSRYD
+         BkckKpRPAXw/GHnlcaarkjcUitV3VI6dPK7C7VkciJYNTJ3fktWt3G2EWnRyRAzJ79dw
+         SVNg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4CNIUL2aYPQ1HYgZ2VUPbC/eMPdpZ8tHCrh1spI7GA6IfBDyeFBKVqyc+JrvUYw17EzkWWzGU0rvesJix@vger.kernel.org, AJvYcCWj0WnpDK0CDc3zVs2BMQIn/rq/8cwzWfujBWWCuaODUEuS/sIpJ76lzoxqIqahNFqrBE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyrk7BfslbL3Vgl+56zYfdmp7j6nm15cRSVK/ZPSyOskisecpt
+	oPh6rbKyCIOgCEdYiJpf2ZrhyEd7Ry9uoNKddPvItLGCPKSCbDEc
+X-Google-Smtp-Source: AGHT+IHmnJIhfE2wNFtFx7dCBi79OOZ755sG8tQ2pQaY9t6b0rtSlaQeQye5un9/ZB23EXef4Muxdw==
+X-Received: by 2002:a17:902:eb81:b0:20c:e65c:8c81 with SMTP id d9443c01a7336-210c68c9527mr439693845ad.20.1730685756987;
+        Sun, 03 Nov 2024 18:02:36 -0800 (PST)
+Received: from byeonguk.jeong ([210.205.14.5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ee490sm52033375ad.18.2024.11.03.18.02.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 18:02:36 -0800 (PST)
+Date: Mon, 4 Nov 2024 11:02:30 +0900
+From: Byeonguk Jeong <jungbu2855@gmail.com>
+To: Hou Tao <houtao@huaweicloud.com>
+Cc: Ilya Leoshkevich <iii@linux.ibm.com>, andrii@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev,
+	Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf] selftests/bpf: Add a copyright notice to
+ lpm_trie_map_get_next_key
+Message-ID: <ZygrNkfNVUmc74ZG@byeonguk.jeong>
+References: <ZycSXwjH4UTvx-Cn@ub22>
+ <925cb852-df24-81b6-318a-ee6a628d43c7@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] KVM: VMX: Allow toggling bits in MSR_IA32_RTIT_CTL
- when enable bit is cleared
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>
-References: <20241101185031.1799556-1-seanjc@google.com>
- <20241101185031.1799556-3-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20241101185031.1799556-3-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <925cb852-df24-81b6-318a-ee6a628d43c7@huaweicloud.com>
 
-On 11/2/2024 2:50 AM, Sean Christopherson wrote:
-> From: Adrian Hunter <adrian.hunter@intel.com>
-> 
-> Allow toggling other bits in MSR_IA32_RTIT_CTL if the enable bit is being
-> cleared, the existing logic simply ignores the enable bit.  E.g. KVM will
-> incorrectly reject a write of '0' to stop tracing.
-
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-
-> Fixes: bf8c55d8dc09 ("KVM: x86: Implement Intel PT MSRs read/write emulation")
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> [sean: rework changelog, drop stable@]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/kvm/vmx/vmx.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 087504fb1589..9b9d115c4824 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1636,7 +1636,8 @@ static int vmx_rtit_ctl_check(struct kvm_vcpu *vcpu, u64 data)
->   	 * result in a #GP unless the same write also clears TraceEn.
->   	 */
->   	if ((vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) &&
-> -		((vmx->pt_desc.guest.ctl ^ data) & ~RTIT_CTL_TRACEEN))
-> +	    (data & RTIT_CTL_TRACEEN) &&
-> +	    data != vmx->pt_desc.guest.ctl)
->   		return 1;
->   
->   	/*
-
+Okay, then do I need to resend this patch or it would be accepted anyway?
 
