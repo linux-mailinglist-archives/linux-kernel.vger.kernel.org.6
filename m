@@ -1,210 +1,116 @@
-Return-Path: <linux-kernel+bounces-394845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131B89BB4C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:37:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1129BB4C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B6A1C20909
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:37:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D3261C21B7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635EC1B6D04;
-	Mon,  4 Nov 2024 12:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78571B1D65;
+	Mon,  4 Nov 2024 12:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSJVuqhy"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhzBv4Qw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5A61EEE6;
-	Mon,  4 Nov 2024 12:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1811EEE6;
+	Mon,  4 Nov 2024 12:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730723863; cv=none; b=MI4yKi2g9mRdtOtUG0FrsgQ/4bJo6aTwdhhDSb4BKfh6vdqKLCH5vn26CuyU1tBu/Du0aS12/BiQrO2+eSPI5eOANTVMnj6HNTfYrNtfjOKzy1vEsh+3hsAWSdoY2pU6FbcsYyPhtWXNe0k2tH8ObSX61cK+OaI0zlKnQIsY0mo=
+	t=1730723948; cv=none; b=dyTklsvuqy9dkp9hiU7hRADCwqfhqraWB+UHAkuOUJu7hZA/5VukgyPLeHI7VWxiRIDqPR4tVIztBohZ56/7CvkZNaLaC1aTjRvO7uD61bTUXeAwLfMk6mkkZfRcoiucyoimx763yFBugEhz2Ig7grycTKZzZ4ZgoDrvtBV2YZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730723863; c=relaxed/simple;
-	bh=lD9EhOkqky8/x13fa1vyaCFKqUOmfHFsFsgUO9CC2B0=;
+	s=arc-20240116; t=1730723948; c=relaxed/simple;
+	bh=3sKt0pKQ7l+ewl3dj/n8AiM7yxbEFq3qr76uue5LlSQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HI6KVC3fG4PcUvSEcSaA7zzFl9xYsV7Gr4wuAnXRmUKj6qg3oXewzUMGbW+m5mxrGr35F6q+wkfAU9TQSaLROhnG4x1yX1cJOzRM8XZNQ5RwbafmUQ0CILlkgp8vxbZWk0u6FQ+MXAi4CAs3gZvZ36vYM/l91PRty+GRgzz5wVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lSJVuqhy; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb587d0436so43711441fa.2;
-        Mon, 04 Nov 2024 04:37:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730723860; x=1731328660; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vvlWvnMnzqiKZJ0eLOHxGLNTRWNJbjSMZIkx7cs7dhQ=;
-        b=lSJVuqhyYgR0YP0hjgjZxwy9ZMGvO7G9pjhG9MNCtm5LyS8xhV2xeUfUtqkk4IVAGx
-         5UqK0z0DJ/WWpZPOQOlnY7krEY0aWxKo5wSszSkYzMNEl/D86AccsNTHICtGh4rzuBHl
-         scs+di48v8MMsWKq6mx3Ps+Uy3E60tC76lSWmYyDOKIgkZ+dx7vFsuzHhM9qPR8TeeMj
-         Xu+JmxlzxzTxULhkJpigRWXAmJRXBmKn+NF7cfx3XGcLYV57ZsGsBfEk4oCp2/it2ldb
-         ZTplMfm+WFi53i78ugrXa10CFI0ogm8YHoWhpJoTCLzXXYdt8iWz7B/KesiN2u3kiLQg
-         YdOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730723860; x=1731328660;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vvlWvnMnzqiKZJ0eLOHxGLNTRWNJbjSMZIkx7cs7dhQ=;
-        b=dXuMk+0BmdDLlc+ZAeaP3nbs1rBE9hp4hMemScx31VWIKOa76Evg4M7wdGRC1udbv3
-         3sCpqKO9jIGd0ZtPK5yjSatbZTSYnIPlYqyInRhJw1nZNYd3pxnZlku7xipNKQ7OY0ID
-         ZqaEWPsfI0APAMHprgZDsPCMWm5xFeOcnXDfgBTqT7jKonkxGm7pUgJpMgE09iQyZ4KK
-         xYqYW46Rk2fCsXY3dOivvKiHDS8YxAkiH9tJF0QjgTh0DzVWsXe3dv2O1FZQSbGh8L3U
-         tw8wE9EXQoBgYBDHlwkbADiCqs2+DSBDKPYFDGHetpt+FXw9D/qLbF4FEj09QiI0dpsi
-         tbJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYqkcuXCl7YKdr5hXsQOj67z2gGfXWWHeZYqfB+oq7twUqxxb4AJUwtr2XwEgtAhr7HlhOguf44sCiyTh6@vger.kernel.org, AJvYcCUqsAb77IGwKdQNAdHPzwTtdQ8JkyZxsTEYz0saPb0Cfnd/iE505SHT+yyTyEJH7W/uKPQ=@vger.kernel.org, AJvYcCW+fOqMzRIsCFZrOnFHkV52SOA4kXXVV+YAHMac3vHq0LLfDjmvVSMrrayt8Rd5ZoYv5IOhcNYR+vCtTpGH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg4iRM3F7hyP7n7Af3fnc20D3QBLk8fXMKPyg+dXDmj1Akakri
-	uRgS6Ng5s0cbHf2jExraOOCuvc4Af8STZDDSBqh5jW/GT3jXgbUk3VkndGPHxpeowpk4yrdxZTk
-	ZgBZqr2Uy8kMnB4YiF09V6vrmFj8=
-X-Google-Smtp-Source: AGHT+IF1RiXoyxgWmaSDQWv/gU9IJuYmxxoR7wwdAcMzImzUEknB17ZKd23IyyNvy5r7UGlBU/ED0Z+2NFA1GNF3Ya0=
-X-Received: by 2002:a2e:bd15:0:b0:2fb:34dc:7beb with SMTP id
- 38308e7fff4ca-2fedb7a2114mr61252401fa.12.1730723859326; Mon, 04 Nov 2024
- 04:37:39 -0800 (PST)
+	 To:Cc:Content-Type; b=hHUgiH+VTwWFLSO3cAxUSSHOn9fds5wLsFVsVnHA37MdAPrOnTI2Qwh/ttVzqnEFD1gfxnNdlCjU6JcFJp/8c7ZdubS17LOreKCSx7fwEw/1gqZg90o8oAZxxrI3QbsJ8bnHhP4V8TLMVMxKnv6LZFeb6XlgyEvwHNN5pKaLllA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhzBv4Qw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A88A1C4CED7;
+	Mon,  4 Nov 2024 12:39:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730723947;
+	bh=3sKt0pKQ7l+ewl3dj/n8AiM7yxbEFq3qr76uue5LlSQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DhzBv4Qw/jRz2kLqJWnrL9AmrJDBvFX8zXP/vfElrDZdHWrzLB/ZnpbWxlmcKkDe8
+	 ZQYaMAjrvvMq4vAHlEoZs022vT3TInz6dt/Ha+fkPV1iOa6yaZ0RovvTDIYKdgWjDx
+	 QViQePlDTW1N/RBNcbcIHAmITMxXQPLWesx6udR4quGbaHqHaAujho6HgX5NqZMV9b
+	 ohjRnGyzc4v+5QWxcxBRmmJIkNYYDjUxwwtvNpWp88nJSzzGnlbL+ReLlYXdOi9ebv
+	 IF3Id1AaO29eVzPmbJLeG1znJzo03xDRBcbe7yhG3z0QPhIug1IVlHZkottVQvcYhu
+	 ubk3a/LfbDVRQ==
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ea7ad1e01fso2852470a12.0;
+        Mon, 04 Nov 2024 04:39:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUQ1r7p3gkTWjfR/RwJgAhp8/we5OISuAdlfgdhJespfeWdufnWRLGXhUFvSYLmrczJSO/skC38eHsOgsU=@vger.kernel.org, AJvYcCUcRSev6rzwvyM8YbdHjpQ2+NzqSTOubG/bPnYsUK4I6txnze/XOj1JolPLTPdy7tIsS0ZMnfQs@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE6Y3tZ/pMWGCCX9zOaIRhiQZm8nytpaV3/RuiFx7V+Xnbrcz6
+	paO9HUmRQmB5eEMX50Q5BZ4FitIqNAnP0doMWJh/J/jcbrBD8E7Ns+Snu3MBOlNHaGimIFNB9mp
+	wYQGUJ7LWD7mG7eYYRdQpMqHUfw==
+X-Google-Smtp-Source: AGHT+IGp3PoghnDPsbTvX2ld6cnOJBapqXb+5hbUeZVa3jcTQkcnfw8QcLHobq/Oeep5/JnK90IvUmtv0dEY2fr3tnQ=
+X-Received: by 2002:a17:90b:38ca:b0:2d8:3f7a:edf2 with SMTP id
+ 98e67ed59e1d1-2e94bdfdeadmr19464472a91.12.1730723947190; Mon, 04 Nov 2024
+ 04:39:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <309549cafdcfe50c4fceac3263220cc3d8b109b2.1730337435.git.jpoimboe@kernel.org>
- <87bjz0k17c.fsf@prevas.dk> <20241031114210.GA593548@coredump.intra.peff.net>
- <20241031122456.GB593548@coredump.intra.peff.net> <20241031144351.GA1720940@coredump.intra.peff.net>
-In-Reply-To: <20241031144351.GA1720940@coredump.intra.peff.net>
-From: Benno Evers <benno.martin.evers@gmail.com>
-Date: Mon, 4 Nov 2024 13:37:27 +0100
-Message-ID: <CAEQVFRFWT02QTL7PTf84p6AAferijHx8L_Tu6ON1H7U=iEdb3A@mail.gmail.com>
-Subject: Re: [PATCH] setlocalversion: Add workaround for "git describe"
- performance issue
-To: Jeff King <peff@peff.net>
-Cc: Rasmus Villemoes <ravi@prevas.dk>, Benno Evers <benno@bmevers.de>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, git@vger.kernel.org
+References: <20241011-mtk_drm_drv_memleak-v1-0-2b40c74c8d75@gmail.com>
+In-Reply-To: <20241011-mtk_drm_drv_memleak-v1-0-2b40c74c8d75@gmail.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Mon, 4 Nov 2024 20:39:30 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_8Vf3_BCOd6t2G=e-rU-cKZTdGbqEChPi5vipY6yR02eg@mail.gmail.com>
+Message-ID: <CAAOTY_8Vf3_BCOd6t2G=e-rU-cKZTdGbqEChPi5vipY6yR02eg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] drm/mediatek: Fix child node refcount handling and
+ use scoped macro
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Alexandre Mergnat <amergnat@baylibre.com>, CK Hu <ck.hu@mediatek.com>, 
+	"Jason-JH.Lin" <jason-jh.lin@mediatek.com>, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi, Javier:
 
-I'm afraid I can't offer much wisdom, but a few thoughts:
+Javier Carrasco <javier.carrasco.cruz@gmail.com> =E6=96=BC 2024=E5=B9=B410=
+=E6=9C=8812=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=883:22=E5=AF=AB=E9=
+=81=93=EF=BC=9A
+>
+> This series fixes a wrong handling of the child node within the
+> for_each_child_of_node() by adding the missing call to of_node_put() to
+> make it compatible with stable kernels that don't provide the scoped
+> variant of the macro, which is more secure and was introduced early this
+> year.
 
-In the testcase, the difference between A-3 and B-4 looks very
-academic, but on a real repo the results are more obviously wrong. For
-example, if I put the test setup on top of the current git repo:
+For this series, applied to mediatek-drm-next [1], thanks.
 
-    benno@bourbaki:~/src/git/tmp-test$ git describe HEAD
-    A-3-ga53f69dfb5
-    benno@bourbaki:~/src/git/tmp-test$ git describe --candidates=2 HEAD
-    B-75205-ga53f69dfb5
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-next
 
-When writing the patch I thought that it might be a good idea to
-change the definition of `describe` to favor the tag with the shortest
-first-parent distance to the described tag and print A-2 in the test
-scenario, to me that seems the most intuitive description. But that's
-a change in behavior, and it's not even clear that most people would
-agree A-2 is better, so I discarded the idea.
+Regards,
+Chun-Kuang.
 
-Other than that, the only way I can see to implement the behavior
-exactly as described would be add the same condition when breaking for
-reaching the max number of candidates, ie. to stop adding new
-candidates but to delay the break from the loop until all disjoint
-paths are unified. No idea how much of a performance hit that would be
-in practice, I guess it depends on average branch lengths.
-
-Best regards,
-Benno
-
-Am Do., 31. Okt. 2024 um 15:43 Uhr schrieb Jeff King <peff@peff.net>:
 >
-> On Thu, Oct 31, 2024 at 08:24:56AM -0400, Jeff King wrote:
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+> Javier Carrasco (2):
+>       drm/mediatek: Fix child node refcount handling in early exit
+>       drm/mediatek: Switch to for_each_child_of_node_scoped()
 >
-> > We have to feed at least one commit with the "within" flag into the
-> > traversal so that it can let us end things. But I don't think it really
-> > matters if that commit is the one we found, or if it's a parent of one
-> > that we happened to pass "within" bits down to.
-> >
-> > So I think we can just set "gave_up_on" to the final element we found
-> > (whether from max_candidates or from finding every possible name). I.e.,
-> > what I showed earlier, or what you were proposing.
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> ---
+> base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+> change-id: 20241011-mtk_drm_drv_memleak-5e8b8e45ed1c
 >
-> Hmph. So I don't think this is quite true, but now I'm puzzled again.
+> Best regards,
+> --
+> Javier Carrasco <javier.carrasco.cruz@gmail.com>
 >
-> It is accurate to say that we must make sure _some_ commit with the
-> those flag bits set remains in "list". And I don't think it matters if
-> it's the candidate we found, or its parent.
->
-> But there's other stuff happening in that loop, after we process that
-> max candidate (where we'd proposed to break) but before we hit the next
-> possible candidate. Stuff like adding onto the depth of the other
-> candidates. Josh's example doesn't show that because it only has one
-> candidate, but I could imagine a case where it does matter (though I
-> didn't construct one).
->
-> So I'd have thought that this:
->
-> diff --git a/builtin/describe.c b/builtin/describe.c
-> index 7330a77b38..b0f645c41d 100644
-> --- a/builtin/describe.c
-> +++ b/builtin/describe.c
-> @@ -366,6 +366,12 @@ static void describe_commit(struct object_id *oid, struct strbuf *dst)
->                 struct commit_name **slot;
->
->                 seen_commits++;
-> +
-> +               if (match_cnt == max_candidates) {
-> +                       gave_up_on = c;
-> +                       break;
-> +               }
-> +
->                 slot = commit_names_peek(&commit_names, c);
->                 n = slot ? *slot : NULL;
->                 if (n) {
-> @@ -381,10 +387,6 @@ static void describe_commit(struct object_id *oid, struct strbuf *dst)
->                                 if (n->prio == 2)
->                                         annotated_cnt++;
->                         }
-> -                       else {
-> -                               gave_up_on = c;
-> -                               break;
-> -                       }
->                 }
->                 for (cur_match = 0; cur_match < match_cnt; cur_match++) {
->                         struct possible_tag *t = &all_matches[cur_match];
->
-> would do it, by just finishing out the loop iteration and bailing on the
-> next commit. After all, that commit _could_ be a candidate itself. But
-> it causes a test in t6120 to fail. We have a disjoint history like this:
->
->                  B
->                  o
->                   \
->     o-----o---o----x
->           A
->
-> and we expect that "x" is described as "A-3" (because we are including
-> the disjoint B). But after the patch above and with --candidates=2
-> (since there are only two tags and part of our goal is to limit
-> candidates to the number of tags), we find "B-4". Which is worse (at
-> least by some metrics).
->
-> I think this comes from 30b1c7ad9d (describe: don't abort too early when
-> searching tags, 2020-02-26). And given the problem description there, I
-> can see how quitting early in a disjoint history will give you worse
-> answers. But the patch above is triggering a case that already _could_
-> trigger.
->
-> So it feels like 30b1c7ad9d is incomplete. Without any patches, if I
-> limit it to --candidates=2 but make A^ a tag, then it gets the same
-> wrong answer (for the exact same reason). And I don't see a way to make
-> it correct without losing the ability to break out of the traversal
-> early when we hit max_candidates (which is obviously a very important
-> optimization in general). But maybe I'm missing something.
->
-> I do think my patch above is not introducing a new problem that wasn't
-> already there. It's just that the toy repo, having so few tags, means
-> any logic to reduce max_candidates will trigger there.
->
-> +cc the author of 30b1c7ad9d for any wisdom
->
-> -Peff
 
