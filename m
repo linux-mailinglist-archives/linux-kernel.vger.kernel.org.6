@@ -1,149 +1,145 @@
-Return-Path: <linux-kernel+bounces-395267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20969BBB1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:07:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768D89BBB1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:07:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F36A11C21B9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:07:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02460B216D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52B81C6F55;
-	Mon,  4 Nov 2024 17:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416361C75EB;
+	Mon,  4 Nov 2024 17:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2angS7fu"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BwmS2Vsn"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6BF1C4A20
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 17:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DACA1CACFA
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 17:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730739904; cv=none; b=lC1hpqh74njA+acPVgsnjqz6Mvhs9/uW6nTEuuz3nNL+rGqEU1GIUFhpZLlMnSw1t0vSPLiBvd6ZLTuQNOOoWAp+I+9bLF/NNDDQc8fNlWh8GXmra2zegLA/bYrpTrD+wSlsjc8SMdjalUxYOpp/eZhfAramfzoyg0oYOvbuMvY=
+	t=1730739939; cv=none; b=IJI/T+4TfEc1iNRnFnGoMR3aFksSd+D8N2pK2a7sVREqGXUa6ELLeDcQSuFPy7IyH1sp0cKZb47HksYQAep0MfCUh53u2hhGxlNk8BIs355SYUR1MzZrtAfRqvidqvDeIDth861Z2WPBr/mnjXR6fzOHGDDHI00LVzBYaiusUIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730739904; c=relaxed/simple;
-	bh=SBprbF+thfNudBulYx85f3tHQG80wL5QbnVmT1icmrM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=Hp3CImiXQg7wJqLjI4UFmhYP9k/INxPPLgvhTViSd/DunHmoAzw5EnwCiNnC/u9R3nofcVwzT/gDu9PRd3rmDVVeoH+5RbtCGd4Wh4f2WVm/hGyc9ryHhuYYiEPFm6Dor/dv6UtwNZYu7h05Z6tubwxF0xr0zzyxJqkKMuuetD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2angS7fu; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-83ab21c26e5so181526439f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 09:05:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730739902; x=1731344702; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=28+oDC929/gx3MlAbHQkCFCwUgoQ1mRmzoS7ykK2U7o=;
-        b=2angS7fukj+cM8KmRyhs9koiw+2S8vj4h4sFaMsYYmYUqUninJDHdN9pK3PZrHV/iu
-         I5NatSX5s8Bt8XmTGbh5BwhXe0sArPO2oWbuHENDE1dayixCT9L/1vn7Lt1VBdi4qEL3
-         3ckgUvv3FNGtqRy+AJqhB5rryO2CRTOc/a9jdsHDg1i7FoqISzLN73qfHoJ7jb/hZHfX
-         73Ea3jB46Kdg/nxMAv2uL1lLB3lu2MjzGQ/aInSVrZDVjkCD4j2J9rzs/PpAXHkux5Cv
-         w51mYS+Ga44Y/U9WEPtt3O8TVY6RZKUI6wDCaZNxSU+J3pPQnFp6PZbthfJAp/rtu9/R
-         BqGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730739902; x=1731344702;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=28+oDC929/gx3MlAbHQkCFCwUgoQ1mRmzoS7ykK2U7o=;
-        b=nCHLwQ9r9ire2fB4fRtOLDi0dc7VflBU81ng63ccB1YBQSKAUbfl26eTJkj1brb+He
-         UBwSD4TugrI920uKmoyZiuKMPubJvTghH+mcChdJ+xC+/Hj4yRWiiG1l9A3fYZrBkvZe
-         T8VvoOqiCgrb5Ob5R0XaKBkKplmq3wrPfWOBggfZvc2UI6EwcbC3FNOVdG1dJP9BH19J
-         jCaZXGXb+qGeUyR0UCO2fZaZeLWXJ5tIW5ErNhbFP8M8BV443YC8bEkjVoXeJqjTNBFo
-         UU4ql0UvY4AO0nftpoDa5nKuSEa+0QefJ+cPZZ7fTA+6b0lBeLjiQOaARa8Sa1rXI/xA
-         YsLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUspYdyeHk05v8xAw9q+j/zS1o9nzgAAlArQjffeTcOvIxWLq08INWTWDxWvsoFM2ZFi86LnNKzevh0jMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4cZA+D6bikF9pEmQbTkkpFd3sRoFJJQVeG3Kfd6a4nFjghlKr
-	7xYsHm6s6x2vWjQwY+q/k1glNJymhEwMIY6Vj/0ZRUem2+nywCAiCsTgEXbqVOM=
-X-Google-Smtp-Source: AGHT+IF1Ml8l7LoOFMzfYhbpbmyH2xStToziU318v1oV1GGo627mI9IEhqRYGD9lLx3WRRfjK00Utw==
-X-Received: by 2002:a05:6602:3414:b0:83a:acba:887a with SMTP id ca18e2360f4ac-83b1bcf420dmr3516982539f.0.1730739901791;
-        Mon, 04 Nov 2024 09:05:01 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de049c8187sm1996311173.160.2024.11.04.09.05.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 09:05:01 -0800 (PST)
-Message-ID: <74004a91-2753-45fc-88b4-8b2103f9a155@kernel.dk>
-Date: Mon, 4 Nov 2024 10:05:00 -0700
+	s=arc-20240116; t=1730739939; c=relaxed/simple;
+	bh=rr0gjl/zeI9759khqd9Lt6RZPFSFYdYcYkjuXIAlCew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zz97C1CIidMoEWpKdmt98jk8UivwkclE30oPUA2jw7xYqvk9O8FJMzKPMAgUm0sfoyZzxpN8bJSOJ0YqkbqZBF6vcZlMhIN0O+RdjuTGpKlfDpZxvfPTXhi7cSX9caSztZ18RGX/8J/GrOPbaOFxsTV4sCQU+Msxutx3xV11hL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BwmS2Vsn; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E042340E0263;
+	Mon,  4 Nov 2024 17:05:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1XKyvydwzMCk; Mon,  4 Nov 2024 17:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730739931; bh=qqNHkIL2k+cgA6wP4Uz3BLFmBZ8wL8ZGhObDzsbBBys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BwmS2VsnVcQ5X8EYroc3fA++8+E9Gv2im6dnUtttJvhmujMutB5sBQ+ARdxE+UiNF
+	 Zb2fS8Eg/SA1oYfdCUmAit0IpH1qTaznhWJzHYECMk6jjiddusBn7ucemznyjoN4/t
+	 C24S/CQ/d6btoAVeFYaE6hXievojNG8TqBRCYDIF2/uoKZ3EzbNDrglpslQlMPFvz9
+	 1h6WsOqrQzD3kEHW6u+JFLxtUuoSgpUZf6IDm8ykVo2aUruc79FmazhI26fOD/utJZ
+	 z2GiLu8QwlTLzROSjCe5VFjsOr7N8tA5YeE0mIGSXg3P38APEb1WWIyBGqVRKHbIpv
+	 rPdKufxXxt0dPO/wshBMBNDurT8pRYdXzzNo5SxzdoqNgwdtuW5uO8weFCM9jaV58y
+	 Pj8bc7ScWyWYx7gWi1rO6GpHlpYHzb/oZ4/w7qiSYSq5OWnNXicwe4OY+qK7Q1/v85
+	 mDh36Bu4t4IA09W2+8ZtKbSKH6+CaPymkMxlzt0M6A4z9lzDmRfJmumHYRxOWALiR0
+	 zwXBI2/XzCTIpLzWsLwpS3VtX/xZ+bTrp7UmC7m5VS1+QUX7CzoQBauvlKrluyMI4e
+	 pQos21UHn5+9ydb/KHILqyeJaT+5C2QD+24Q2pOJrtNDghJIuKOTnl1Hgumn/l3KnL
+	 catWM+44s4ElLTRhMwsKhp6Q=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C9C9840E0163;
+	Mon,  4 Nov 2024 17:05:20 +0000 (UTC)
+Date: Mon, 4 Nov 2024 18:05:14 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Subject: Re: [PATCH v5 6/8] x86/sev: Treat the contiguous RMP table as a
+ single RMP segment
+Message-ID: <20241104170514.GGZyj-yvIHo8Y-eKpj@fat_crate.local>
+References: <cover.1730143962.git.thomas.lendacky@amd.com>
+ <6118c46de2b2260b72dd3ed4421e5e08713fd47a.1730143962.git.thomas.lendacky@amd.com>
+ <20241104103353.GQZyijEalUocS_yG5r@fat_crate.local>
+ <79be2e29-6487-dd60-9b6f-3daa48a2e93f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>,
- syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <6728b077.050a0220.35b515.01ba.GAE@google.com>
- <13da163a-d088-4b4d-8ad1-dbf609b03228@gmail.com>
- <b29d2635-d640-4b8e-ad43-1aa25c20d7c8@kernel.dk>
- <965a473d-596a-4cf4-8ec2-a8626c4c73f6@gmail.com>
- <16f43422-91aa-4c6d-b36c-3e9cb52b1ff2@gmail.com>
- <e003c787-71b5-4373-ac53-c98b6b260e04@kernel.dk>
- <09b7008b-b8c1-4368-9d04-a3bdb96ab26d@gmail.com>
- <0daae856-a3c6-4eff-95cc-e39674f24d41@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <0daae856-a3c6-4eff-95cc-e39674f24d41@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <79be2e29-6487-dd60-9b6f-3daa48a2e93f@amd.com>
 
-On 11/4/24 10:03 AM, Jens Axboe wrote:
-> On 11/4/24 9:54 AM, Pavel Begunkov wrote:
->> On 11/4/24 15:43, Jens Axboe wrote:
->>> On 11/4/24 8:34 AM, Pavel Begunkov wrote:
->>>> On 11/4/24 15:27, Pavel Begunkov wrote:
->> ...
->>>> Regardless, the rule with sth like that should be simpler,
->>>> i.e. a ctx is getting killed => everything is run from fallback/kthread.
->>>
->>> I like it, and now there's another reason to do it. Can you out the
->>> patch?
->>
->> Let's see if it works, hopefully will try today.
+On Mon, Nov 04, 2024 at 10:03:22AM -0600, Tom Lendacky wrote:
+> >> +static u64 rmp_segment_size_max;
+> > 
+> > This one is used in a single function. Generate it there pls.
 > 
-> I already tried it here fwiw, does fix the issue (as expected) and it
-> passes the full testing too.
+> It's used in two functions, alloc_rmp_segment_desc() and
+> set_rmp_segment_info().
 
-Forgot to include the basic reproducer I wrote for this report, it's
-below.
+You can always lift it up later if it is needed more than now:
 
-#include <stdio.h>
-#include <inttypes.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <liburing.h>
-
-int main(int argc, char *argv[])
-{
-	struct io_uring ring;
-	int fds[2], ret;
-	__u64 tags[2];
-
-	if (pipe(fds) < 0) {
-		perror("pipe");
-		return 1;
-	}
-
-	tags[0] = 1;
-	tags[1] = 2;
-
-	io_uring_queue_init(4, &ring, IORING_SETUP_SINGLE_ISSUER|IORING_SETUP_DEFER_TASKRUN);
-	io_uring_register_files_tags(&ring, fds, tags, 2);
-	io_uring_queue_exit(&ring);
-
-	sleep(1);
-
-	return 0;
-}
+diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
+index 37ff4f98e8d1..77bdf4d6a8f4 100644
+--- a/arch/x86/virt/svm/sev.c
++++ b/arch/x86/virt/svm/sev.c
+@@ -103,7 +103,6 @@ struct rmp_segment_desc {
+ static struct rmp_segment_desc **rmp_segment_table __ro_after_init;
+ static unsigned int rst_max_index __ro_after_init = 512;
+ 
+-static u64 rmp_segment_size_max;
+ static unsigned int rmp_segment_coverage_shift;
+ static u64 rmp_segment_coverage_size;
+ static u64 rmp_segment_coverage_mask;
+@@ -223,9 +222,13 @@ static bool __init init_rmptable_bookkeeping(void)
+ 
+ static bool __init alloc_rmp_segment_desc(u64 segment_pa, u64 segment_size, u64 pa)
+ {
++	u64 rst_index, rmp_segment_size_max;
+ 	struct rmp_segment_desc *desc;
+ 	void *rmp_segment;
+-	u64 rst_index;
++
++	/* Calculate the maximum size an RMP can be (16 bytes/page mapped) */
++	rmp_segment_size_max = PHYS_PFN(rmp_segment_coverage_size);
++	rmp_segment_size_max <<= 4;
+ 
+ 	/* Validate the RMP segment size */
+ 	if (segment_size > rmp_segment_size_max) {
+@@ -415,10 +418,6 @@ static void set_rmp_segment_info(unsigned int segment_shift)
+ 	rmp_segment_coverage_shift = segment_shift;
+ 	rmp_segment_coverage_size  = 1ULL << rmp_segment_coverage_shift;
+ 	rmp_segment_coverage_mask  = rmp_segment_coverage_size - 1;
+-
+-	/* Calculate the maximum size an RMP can be (16 bytes/page mapped) */
+-	rmp_segment_size_max = PHYS_PFN(rmp_segment_coverage_size);
+-	rmp_segment_size_max <<= 4;
+ }
+ 
+ #define RMP_ADDR_MASK GENMASK_ULL(51, 13)
 
 
 -- 
-Jens Axboe
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
