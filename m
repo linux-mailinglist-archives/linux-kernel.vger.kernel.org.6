@@ -1,132 +1,97 @@
-Return-Path: <linux-kernel+bounces-394662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D019BB273
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:10:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3569BB274
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B3FBB21F6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:09:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9CF71C21E39
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5000F1F1303;
-	Mon,  4 Nov 2024 10:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B426A1F472B;
+	Mon,  4 Nov 2024 10:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKrLumwB"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ve4SD335"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25F91EF92E;
-	Mon,  4 Nov 2024 10:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87F91F427B;
+	Mon,  4 Nov 2024 10:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717710; cv=none; b=or3gmtNs/R70ptgJY4Z7InmTuUXFal4aAAlWn5z8kc5BaZ6WMIIE1DGSOcGI6diiwYx0+zauiHhWEOZVbbfmi50VwbG0wtYfccUTfQMKpz6DdfHiEyOooYQAHdsW0Jsm8rpeTYm0rkyrGmq8Ar4HlHla09Csf51m7sotrx+DIOQ=
+	t=1730717712; cv=none; b=SHgUFaFnQDAWPiXqWcm/cxh0a6vj3UG3bv43h9kOaIMIPFGA/LG3m7g0HufFIX4y2BcvO+l2y4MIlqhJmp+LCVyjiqBnZD+OtDg/8ShnAZaxJ3Ui0QD81Qn4h5GbJO/syDjU6VD11GVhxurlDzyk6byGqIbu6JEoDMDTtYR+8zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717710; c=relaxed/simple;
-	bh=K3xXlD695qVxJ/coy5U4wHBEdKm/mtLoxIMCf7/o/RY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hIowXX54QqOVNcP3J9G7qcUFAeKCW+tSQJyn9fiam5ed6zfNN8elf1gIFWjdi5xSqYi6cDFcVV+amzX2oDNIzgGL/G7Kbklf7Oze9Dn4/ONy27gpYbgVitwNOgIXX4tmwxLUuIAb4DXiWhJjOhWbe5RvMnLVcOVxG04oi0k3ySs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKrLumwB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3120C4CED1;
-	Mon,  4 Nov 2024 10:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730717710;
-	bh=K3xXlD695qVxJ/coy5U4wHBEdKm/mtLoxIMCf7/o/RY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QKrLumwBwAvQkyRpiURLwWEwS573x4q04eFrULUGQe2UEv/gKua0xuULiF4SMQw/u
-	 qMcnKU2Iz/HRA1wjbFVVtMW+7kB7v8PaaNbFuWEn3O4A58Gmv/0+fs86voXngZ2xF6
-	 XxJsFmqr3wM+hZlbWjyBwuJWUbM0IHk4Z6yTG41RglRmMb4lWb027N/raItc1pNZ9u
-	 mK2Wb7Ny0Iz2HPQavs5U1CxBBylYwsajAq0UL0Yg4El89hwtXhpoVKwzwb31UX/PzF
-	 irfS3ZRF1zenRhaRbiu37QWHO+aZtRjBzq63h+8B7bRjr0ObdqPK4cU3TTFD6W6zS9
-	 wWSYfwQGz1vxw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: =?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>,
-	Simon Horman <horms@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	bjorn@mork.no,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 6/6] net: usb: qmi_wwan: add Quectel RG650V
-Date: Mon,  4 Nov 2024 05:54:47 -0500
-Message-ID: <20241104105454.97918-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104105454.97918-1-sashal@kernel.org>
-References: <20241104105454.97918-1-sashal@kernel.org>
+	s=arc-20240116; t=1730717712; c=relaxed/simple;
+	bh=xXMIAfIX2Epoxbu+Ed52JjHAGo50jerj0V0oSVXTFmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lGBNwPNRbiMALjkqagTDuuMoo/lUqspRQQTZEFBiKROWDXF648PvZNg4b79UhN17YS2TfgJttT8fmv5p3iU4vFs3sMR7MuFdoUaGy4Vgd6ZiQu8SNZGY4npr6hajJxLYrJNxlSEoFeR4pALG3YrFpEp/GBNMc/IZzvZmUCWoAk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ve4SD335; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09746C4CECE;
+	Mon,  4 Nov 2024 10:55:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730717711;
+	bh=xXMIAfIX2Epoxbu+Ed52JjHAGo50jerj0V0oSVXTFmk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ve4SD335ip/cv4JsiOPII6reVBDEbb5fzAWFn5utmhv6c0FAUvNDUY/fGB4E45/HW
+	 TY08iHWrwx4qtppFKXsy2nAULA6Ay98rMu/S751o92lts8ctxOM3Ymt8ZgQJjOMfid
+	 BsGhapKziHk8yOFYj/rYpTagQcxALcwzpWwmohbc=
+Date: Mon, 4 Nov 2024 11:54:54 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Li Huafei <lihuafei1@huawei.com>, linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev, Alan Cox <alan@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v2] media: atomisp: Add check for rgby_data memory
+ allocation failure
+Message-ID: <2024110448-liqueur-length-2abc@gregkh>
+References: <20241104145051.3088231-1-lihuafei1@huawei.com>
+ <621ad79f-8a8f-460e-92df-c3164f30e46a@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.228
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <621ad79f-8a8f-460e-92df-c3164f30e46a@web.de>
 
-From: Benoît Monin <benoit.monin@gmx.fr>
+On Mon, Nov 04, 2024 at 11:15:21AM +0100, Markus Elfring wrote:
+> …
+> > ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
+> 
+> Please choose an imperative wording for an improved change description.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.12-rc5#n94
+> 
+> Regards,
+> Markus
+> 
 
-[ Upstream commit 6b3f18a76be6bbd237c7594cf0bf2912b68084fe ]
+Hi,
 
-Add support for Quectel RG650V which is based on Qualcomm SDX65 chip.
-The composition is DIAG / NMEA / AT / AT / QMI.
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-T: Bus=02 Lev=01 Prnt=01 Port=03 Cnt=01 Dev#=  4 Spd=5000 MxCh= 0
-D: Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P: Vendor=2c7c ProdID=0122 Rev=05.15
-S: Manufacturer=Quectel
-S: Product=RG650V-EU
-S: SerialNumber=xxxxxxx
-C: #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=896mA
-I: If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E: Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I: If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I: If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
-I: If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
-I: If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-E: Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=88(I) Atr=03(Int.) MxPS=   8 Ivl=9ms
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
 
-Signed-off-by: Benoît Monin <benoit.monin@gmx.fr>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Link: https://patch.msgid.link/20241024151113.53203-1-benoit.monin@gmx.fr
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/usb/qmi_wwan.c | 1 +
- 1 file changed, 1 insertion(+)
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
 
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index 0a1ab8c30a003..0f82bec1c5602 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1020,6 +1020,7 @@ static const struct usb_device_id products[] = {
- 		USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x581d, USB_CLASS_VENDOR_SPEC, 1, 7),
- 		.driver_info = (unsigned long)&qmi_wwan_info,
- 	},
-+	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0122)},	/* Quectel RG650V */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0125)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0306)},	/* Quectel EP06/EG06/EM06 */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0512)},	/* Quectel EG12/EM12 */
--- 
-2.43.0
+thanks,
 
+greg k-h's patch email bot
 
