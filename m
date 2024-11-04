@@ -1,146 +1,113 @@
-Return-Path: <linux-kernel+bounces-394147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601149BAB24
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:18:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF8B9BAB32
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91DFA1C20F63
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:18:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 757031C20CEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547A416D9AA;
-	Mon,  4 Nov 2024 03:18:10 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AA416E892;
+	Mon,  4 Nov 2024 03:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ty2VZ5jp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D091F949;
-	Mon,  4 Nov 2024 03:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255B41F949;
+	Mon,  4 Nov 2024 03:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730690290; cv=none; b=APZBq9yajUWiujqlRgktCpVC+ZNtlwbVIHSH1QTgMBa4YDPQb7sYMmffvIUH5SbYv1GWPyJnqMCMd5yUJjvuLXxXzq4Uxmg3l5xn2Z82tB+XaHC2YAoPh7HupnDvcXYHDJNpy4qPRnUpaCPZvsKsgbka7pFHVIxWzm+uhnQdm+E=
+	t=1730690637; cv=none; b=KqchYyUpF/hOpUlzgzULkmqVLDH7iiOQ/o9Jv9yPoT4S771b8U8f8KtsKCThsnkTqvxqwxdB+dXNe+KwPbMvRAVPXADehvzFONawW1UOxsZj6oj50k6f4YW0VgVYwMlOjl7tZbDH3acaPx+eV4W0/NEv/H/DCGm1Mv0jbjOJgts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730690290; c=relaxed/simple;
-	bh=ktRwMUiWtoX4QngdqRoJavXr5TZT203Nm+zrwkYu8fk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u4RLd3ajgPtlOrrXcoQ3U6+fToId29SeF7uwSOQR38k0h3TV81zQscXrWy+RISyw/YEmfiWS+FlPwFMQlenO78+pyjPkl8OzfzL77Gg0/DW4+8piFFk+oirAN0iSrO4/3kjup+SRyZhBKq0AjqcbxvX4C2OWWkbuHQU1OFoipWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Xhc8B0f90z20rVB;
-	Mon,  4 Nov 2024 11:16:58 +0800 (CST)
-Received: from dggemv703-chm.china.huawei.com (unknown [10.3.19.46])
-	by mail.maildlp.com (Postfix) with ESMTPS id 823641402E0;
-	Mon,  4 Nov 2024 11:18:02 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 4 Nov 2024 11:18:02 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 4 Nov
- 2024 11:18:01 +0800
-Message-ID: <6eba7c8b-000f-7be0-4a8a-53bf8d6dc25f@huawei.com>
-Date: Mon, 4 Nov 2024 11:17:44 +0800
+	s=arc-20240116; t=1730690637; c=relaxed/simple;
+	bh=F5IiQMJxODFTMhtdPbad+JgCVM72TL40/B3O/2mB5f8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EE2jJrbqWdooj4BPDlfT3ndvqeoj9OAQSJSo3AXoH+5jKfRAZ4SDeujtzHnNnwTPdrc16fOIBCzj9rwyjSjfYETrb3Qhs9hZz/Gc+80epa0mPb06nwy/D4SMD2cyLyviG0ljznQJxza1Mx0ui19QXFhhpzJf4vqe8d5UyAiopaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ty2VZ5jp; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730690636; x=1762226636;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=F5IiQMJxODFTMhtdPbad+JgCVM72TL40/B3O/2mB5f8=;
+  b=Ty2VZ5jpqTFEUKSbcxOrFYrosOs4NIgToWmK5XNGqkf2DJj5Vpq3opaW
+   9Mf1bbr+raHxzlSkWkfAilptCKGnWIpYWANLY8i/qJkdQV3DsjdBEzOoh
+   yejZNGVZfdhvGAdTCTq1XOs6HnlIaW8kqtNqhU7lbPw1+oFajukbeById
+   zLpB8iGIUT4PJ3NX8p8oK53p+FQN/H3N+papnlT9SLz72Uvdarq2axram
+   Upch61yu0sYZwUo/fsqE4zq8BGlsj+KUcRNa+LcMyW3Po99QvtZboWhxb
+   6rHauy9hKWgjNpluFGqkWtUNais4EmZBR2LBcBh9l94OD7jF0nJcQx8dL
+   g==;
+X-CSE-ConnectionGUID: noYtTfMsT6iT3O6f4ElWug==
+X-CSE-MsgGUID: 3c4HxUu+RQuTKwm2h87HvQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="30594262"
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="30594262"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 19:23:55 -0800
+X-CSE-ConnectionGUID: NSR1HZ0bTmyug3S1Sp2cVg==
+X-CSE-MsgGUID: 7qANL+CdQ76ltkWVWy7zJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="114331783"
+Received: from yungchua-ws.ostc.intel.com (HELO yungchua-ws.intel.com) ([10.54.69.90])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 19:23:55 -0800
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: linux-sound@vger.kernel.org,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
+	linux-kernel@vger.kernel.org,
+	pierre-louis.bossart@linux.dev,
+	bard.liao@intel.com
+Subject: [PATCH 00/12] soundwire: add multi-lane support
+Date: Mon,  4 Nov 2024 03:23:46 +0000
+Message-Id: <20241104032358.669705-1-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v6 1/2] mctp pcc: Check before sending MCTP PCC response
- ACK
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>,
-	<admiyo@os.amperecomputing.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Jeremy Kerr
-	<jk@codeconstruct.com.au>, Matt Johnston <matt@codeconstruct.com.au>, "David
- S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Len
- Brown" <lenb@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Robert Moore <robert.moore@intel.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Jonathan Cameron
-	<Jonathan.Cameron@huawei.com>, Jassi Brar <jassisinghbrar@gmail.com>, "Sudeep
- Holla" <sudeep.holla@arm.com>
-References: <20241029165414.58746-1-admiyo@os.amperecomputing.com>
- <20241029165414.58746-2-admiyo@os.amperecomputing.com>
- <a05fd200-c1ea-dff6-8cfa-43077c6b4a99@huawei.com>
- <38fab0d5-8a31-41be-8426-6f180e6d4203@amperemail.onmicrosoft.com>
- <f44f9b12-5cb1-af1d-5e2f-9a06ad648347@huawei.com>
- <d9969244-8f4c-4f66-9ab1-064be665495d@amperemail.onmicrosoft.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <d9969244-8f4c-4f66-9ab1-064be665495d@amperemail.onmicrosoft.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemn100009.china.huawei.com (7.202.194.112)
 
+This series adds multi-lane support for SoundWire. We will get the lane
+connection information from ACPI and use multiple lanes if the bandwidth
+is not enough.
 
-在 2024/11/2 23:34, Adam Young 写道:
->
-> On 10/31/24 21:30, lihuisong (C) wrote:
->>>
->>> On 10/30/24 05:45, lihuisong (C) wrote:
->>>>> + check_and_ack(pchan, chan);
->>>>>       pchan->chan_in_use = false;
->>>>>         return IRQ_HANDLED;
->>>>> @@ -352,6 +368,9 @@ pcc_mbox_request_channel(struct mbox_client 
->>>>> *cl, int subspace_id)
->>>>>       if (rc)
->>>>>           return ERR_PTR(rc);
->>>>>   +    pchan->shmem_base_addr = devm_ioremap(chan->mbox->dev,
->>>>> +                          pchan->chan.shmem_base_addr,
->>>>> +                          pchan->chan.shmem_size);
->>>> Currently, the PCC mbox client does ioremap after requesting PCC 
->>>> channel.
->>>> Thus all current clients will ioremap twice. This is not good to me.
->>>> How about add a new interface and give the type4 client the right 
->>>> to decide whether to reply in rx_callback?
->>>
->>>
->>> I do agree that is a cleaner implementation, but I don't have a way 
->>> of testing the other drivers, and did not want to break them. I 
->>> think your driver is the only that makes use of it, so we can 
->>> certainly come up with a common approach.
->> I understand what you are concerned about.
->> But this duplicate ioremap also works for all PCC clients no matter 
->> which type they used. It has very wide influence.
->> My driver just uses type3 instead of type4. What's more, AFAICS, it 
->> doesn't seem there is type4 client driver in linux.
->> Therefore, determining whether type4 client driver needs to reply to 
->> platform has the minimum or even no impact in their rx_callback. 
->
->  I can move the place where we hold on to the shmem from struct 
-> pcc_chan_info in pcc.c, where it is local to the file, to struct 
-> pcc_mbox_chan in  include/acpi/pcc.h where it will be visible from 
-> both files.  With that change, we only need ioremap once for the segment.
->
-> I don't like adding the callback decision in the driver:  it is part 
-> of the protocol, and should be enforced  by the pcc layer. If we do it 
-> in the driver, the logic will be duplicated by each driver.
-Yes
->
-> I could make a further  change and allow the driver to request the 
-> remapped memory segment from the pcc layer, and couple  to the 
-> memory-remap to the client/channel.  It seems like that code, too, 
-> should be in the common layer.  However most drivers would not know to 
-> use  this function yet, so the mechanism would have to be optional, 
-> and only clean up if called this way.
-I agree this method.
-Don't remap twice for one shared memory.
-This remaping is reasonable in PCC layer. We can let PCC client to 
-decide if PCC layer does remap and then they use it directly.
-For new driver like the driver you are uploading, driver can give PCC 
-one flag to tell PCC layer remap when request channel.
-For old PCC client driver, do not send this flag, PPC layer do not 
-remap. So no any impact on them.
->
->
->
->
->
->
-> .
+Bard Liao (10):
+  soundwire: add lane field in sdw_port_runtime
+  soundwire: mipi_disco: read lane mapping properties from ACPI
+  soundwire: add lane_used_bandwidth in struct sdw_bus
+  Soundwire: add sdw_slave_get_scale_index helper
+  Soundwire: stream: program BUSCLOCK_SCALE
+  Soundwire: generic_bandwidth_allocation: set frame shape on fly
+  soundwire: generic_bandwidth_allocation: correct clk_freq check in
+    sdw_select_row_col
+  soundwire: generic_bandwidth_allocation: check required freq
+    accurately
+  soundwire: generic_bandwidth_allocation: select data lane
+  soundwire: generic_bandwidth_allocation: add lane in sdw_group_params
+
+Pierre-Louis Bossart (2):
+  soundwire: stream: set DEPREPARED state earlier
+  soundwire: generic_bandwidth_allocation: skip DEPREPARED streams
+
+ drivers/soundwire/amd_manager.c               |   2 +-
+ drivers/soundwire/bus.c                       |  65 ++--
+ drivers/soundwire/bus.h                       |   3 +
+ .../soundwire/generic_bandwidth_allocation.c  | 294 +++++++++++++++---
+ drivers/soundwire/mipi_disco.c                |  40 ++-
+ drivers/soundwire/stream.c                    |  63 +++-
+ include/linux/soundwire/sdw.h                 |  10 +
+ 7 files changed, 405 insertions(+), 72 deletions(-)
+
+-- 
+2.34.1
+
 
