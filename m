@@ -1,117 +1,131 @@
-Return-Path: <linux-kernel+bounces-395252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769A19BBAF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:03:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8909BBAFA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:03:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DF811F210AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:03:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1071C21944
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59851C9B87;
-	Mon,  4 Nov 2024 17:02:33 +0000 (UTC)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8DF1C4A19;
+	Mon,  4 Nov 2024 17:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L1WCxFcA"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE941C8315;
-	Mon,  4 Nov 2024 17:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B0419DF8B;
+	Mon,  4 Nov 2024 17:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730739753; cv=none; b=AyWoE0p+sfjupNTotlcO4LEEW1D6/59tLapG23pFKkq3hcsD7RcOlPuRiAzgwxSoMcpcveKF1hKeRvAASzbDZZ6DO3qzuwg7y4MZa2sHwnj1t+lBx+1iMwxIqnanec1H4WysITh5P1PGxfxIIE+nmWd+whU00N7zgthWpz/b6VM=
+	t=1730739779; cv=none; b=sPzhISy9lwBHjMZ1Ogx2POETJ8QpdFhxrvtdYH2XRaSTPkTwblurSdSCvT1wBtrD9YtPwLtY37+HDQtd/Awna7lrSyrWWOwjn3LCxJ9rGpoa/TnklK+Z98Iy4/BuvtlrtKJ6WsZUY+B3L0pUEKbnUN12epRRiLrErGEggGVPwjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730739753; c=relaxed/simple;
-	bh=FUAmzJQokXIilKtGylKNmbl49NYmqnYgsB1F30UCmMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j754qKYFCGWd4xLHquDx88xdRLa+lm4a1Sbty3Pk7BuOS9dR4j0qCqGdRTvNCjXxijJRNfNpo9A1Gpel77mwfkpCuLi2XOs2UYMVYCrVxdpjF+8j38cfM17mecGO88ETFsueAlRFcMpWNVrJ8AkvfLwoAzagQmbQE6vPAqRY/o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20bb39d97d1so41525765ad.2;
-        Mon, 04 Nov 2024 09:02:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730739751; x=1731344551;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GUaqYPQBom3i3u/a7qeeh7UaJt4FVAg2tfUFfji99rs=;
-        b=QP6h52npDgKf6Hv7UAzMbfNKcVm3oUe0L9hSoRtxUeBn5hZ+n88UiyA5lytgHKdBI1
-         5ZmIVGJCbBYUhcDwbZioheAf8wYrc1yzZWrvcB56Dmy1sxWDSDxv4qTXr/7icP38whd/
-         lwwA7eP9Pca7m3qa9xVmlOOIxeaUUg++f0AFuzQWQzDZw4X+OhEUW+0XFSjAxniSh3fQ
-         Z8V+m/gSDJhRsj/DZdDzHR05DU1TrM775ED0f+CMRcljW/Mdjyex3IMNYpftChDibiUC
-         TYWV44Ou765YSJm+5FwlVqD5DiWKIRCZn2DMhSgP3OCQ2ghOjzOOmJQSxTzuVgURD7JT
-         q+rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSGt29fZBu7RzcdnqCRylUT+PDonQ/5OA/OzV0xzzY3WtauwIYssM3JoaXk7ttFx3q9AY0k3SMaGcYRWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX67SBCUIk2leIcqc9pH7Cu+FGbKWBRBAm6kH8CDPChXt+5xPE
-	k9ThKh8s2qXdeH58LoN5inm7tdq54yQhh/4pxPrYVLgxcW1uY+jB
-X-Google-Smtp-Source: AGHT+IFb59G7c0c6LtAW+eFwRHDEioTFdbtbcVJx/y76Cx5c5DKoXHLI8G5B+DhlD1xdKyYaLYMoBA==
-X-Received: by 2002:a17:902:db05:b0:20b:8a93:eeff with SMTP id d9443c01a7336-210f76d6845mr260100015ad.37.1730739750977;
-        Mon, 04 Nov 2024 09:02:30 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d3bb8sm63610785ad.246.2024.11.04.09.02.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 09:02:29 -0800 (PST)
-Date: Tue, 5 Nov 2024 02:02:28 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-pci@vger.kernel.org, ryder.lee@mediatek.com,
-	jianjun.wang@mediatek.com, lpieralisi@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, matthias.bgg@gmail.com,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
-	fshao@chromium.org
-Subject: Re: [PATCH v4 0/2] PCI: mediatek-gen3: Support limiting link speed
- and width
-Message-ID: <20241104170228.GB4055778@rocinante>
-References: <20241104114935.172908-1-angelogioacchino.delregno@collabora.com>
- <20241104170005.GA4055778@rocinante>
+	s=arc-20240116; t=1730739779; c=relaxed/simple;
+	bh=Wkd9xXMOcBoBgVklyUcoGvu9VG7On+8GRcrLnyYucc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rieA94ZJOp0yIHR2/IP+gIwXrYaYiTAlkwG363tVlJKvhwNHyUJi9MXbb4kUkkyAEs8YVO/rjJbIlDZQKlcHZ6ehx8WWkGWUhE6S3VckIAgmsjl6E8JuhuUbTlyanIHe6DtEely2bznFYWM4Ewwhx1j2N011NXz8kjEcCmeCuwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L1WCxFcA; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F00EE60005;
+	Mon,  4 Nov 2024 17:02:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730739775;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oI5s8asFDWE8LgW78P2vcd6xNJ1YtBMsqU066l+ZeeQ=;
+	b=L1WCxFcACUgATE0tjjEcTfaN33vuYwaz+WIrUnD5/83xyUJMVJiiyB7T/3nRmy9hOVxJ9B
+	hVo1p8HAmVCdN6DRXx/EDJ1s9G+aTazR3Us24cKKrUsndash/oD28BRxLPslTIBglFL78p
+	pk/Pr4sBRU07vYMX8orosVcWpBCfowNfyeLVrN88s6Mk39d2ka/lDkNQDWvYnodP2JlTIu
+	IN4c+TMmuAH0Lr/tUzdrCwKdJVA0zFfnTojebSCnxGYi01DT/k0+TyRBtzokMkRZW0WZjt
+	u+138GZMj6GP4WFGAdN3NqkdSZPDzgkUYErLjFsa8TWfu33HC8w8T/fGbP6KIA==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 0/9] Support external snapshots on dwmac1000
+Date: Mon,  4 Nov 2024 18:02:40 +0100
+Message-ID: <20241104170251.2202270-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104170005.GA4055778@rocinante>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hello,
+Hi,
 
-> > Changes in v4:
-> >  - Addressed comments from Jianjun Wang's review on v3
-> > 
-> > Changes in v3:
-> >  - Addressed comments from Fei Shao's review on v2
-> > 
-> > Changes in v2:
-> >  - Rebased on next-20240917
-> > 
-> > This series adds support for limiting the PCI-Express link speed
-> > (or PCIe gen restriction) and link width (number of lanes) in the
-> > pcie-mediatek-gen3 driver.
-> > 
-> > The maximum supported pcie gen is read from the controller itself,
-> > so defining a max gen through platform data for each SoC is avoided.
-> > 
-> > Both are done by adding support for the standard devicetree properties
-> > `max-link-speed` and `num-lanes`.
-> > 
-> > Please note that changing the bindings is not required, as those do
-> > already allow specifying those properties for this controller.
-> 
-> Applied to controller/mediatek, thank you!
-> 
-> [01/02] PCI: mediatek-gen3: Add support for setting max-link-speed limit
->         https://git.kernel.org/pci/pci/c/ade7da14954a
-> 
-> [02/02] PCI: mediatek-gen3: Add support for restricting link width
->         https://git.kernel.org/pci/pci/c/6e73c5898973
+This series is another take on the pervious work [1] done by
+Alexis Lothoré, that fixes the support for external snapshots
+timestamping in GMAC3-based devices.
 
-Angelo,
+Details on why this is needed are mentionned on the cover [2] from V1.
 
-I made some small changes to the code, per the suggestions.  Let me know if
-you are fine with these, or not.  Thank you!
+This V2 addresses multiple issues found in V1 :
 
-	Krzysztof
+ - The PTP_TCR register is configured from multiple places, as reported
+   by Alexis, so we need to make sure that the extts configuration
+   doesn't interfere with the hwtstamp configuration.
+
+ - The interrupt management in V1 was incomplete, as the interrupt
+   wasn't correctly acked.
+
+ - This series also makes so that we only enable the extts interrupt
+   when necessary.
+
+[1]: https://lore.kernel.org/netdev/20230616100409.164583-1-alexis.lothore@bootlin.com/
+[2]: https://lore.kernel.org/netdev/20241029115419.1160201-1-maxime.chevallier@bootlin.com/
+
+Thanks Alexis for laying the groundwork for this,
+
+Best regards,
+
+Maxime
+
+Link to V1: https://lore.kernel.org/netdev/20241029115419.1160201-1-maxime.chevallier@bootlin.com/
+
+Maxime Chevallier (9):
+  net: stmmac: Don't modify the global ptp ops directly
+  net: stmmac: Use per-hw ptp clock ops
+  net: stmmac: Only update the auto-discovered PTP clock features
+  net: stmmac: Introduce dwmac1000 ptp_clock_info and operations
+  net: stmmac: Introduce dwmac1000 timestamping operations
+  net: stmmac: Enable timestamping interrupt on dwmac1000
+  net: stmmac: Don't include dwmac4 definitions in stmmac_ptp
+  net: stmmac: Configure only the relevant bits for timestamping setup
+  net: stmmac: dwmac_socfpga: This platform has GMAC
+
+ drivers/net/ethernet/stmicro/stmmac/common.h  |   4 +
+ .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac1000.h   |  12 +++
+ .../ethernet/stmicro/stmmac/dwmac1000_core.c  | 101 ++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |  15 ++-
+ .../ethernet/stmicro/stmmac/stmmac_hwtstamp.c |  26 ++++-
+ .../net/ethernet/stmicro/stmmac/stmmac_ptp.c  |  38 +++++--
+ .../net/ethernet/stmicro/stmmac/stmmac_ptp.h  |  10 ++
+ 8 files changed, 196 insertions(+), 11 deletions(-)
+
+-- 
+2.47.0
+
 
