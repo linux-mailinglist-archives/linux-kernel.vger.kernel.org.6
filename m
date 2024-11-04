@@ -1,193 +1,130 @@
-Return-Path: <linux-kernel+bounces-394471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDFE9BAF9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:27:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB9639BAF9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:27:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A111F22614
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:27:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 477D1B223EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901FE1ADFE4;
-	Mon,  4 Nov 2024 09:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFEB1AE01E;
+	Mon,  4 Nov 2024 09:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P4oTpQDT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hgfgmMG3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED371ABECD
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F94D6FC5;
+	Mon,  4 Nov 2024 09:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730712429; cv=none; b=XiHXrLoiuWfLH6F8OJFFNB62/dp3dBgagwfZqI3w72VeetOBQPocRWbiHGyhOVNtAqu/wf1Gdoj+zdeo45Xi8l1iZO8w46arQB8dBT9KWIIEXnS/drc8y3Elrni3bCLkUBH+7VB+8o/KaLe3gSSyipD5cKBd9FsfIVnt/s1KbWQ=
+	t=1730712422; cv=none; b=g9zcEyrxhG3EoFLXHMRJtw8AmCwtNPDhZkRPo5cyiPB3t3d2d/pDWDkhulg0XbITpVjCtxJSu0Nhu5h/mpSSNoAc+XodmXG4202hTKB0YY/HirQOQ/uYIDbEAVY3J+7SVNzkpBy22rtzcNZxBIOBElVFO+yvNRvtLYsAhLwZbzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730712429; c=relaxed/simple;
-	bh=M7ueN/LQ529FLGouL/3BXVgrjx8tY87847WIrlhrom4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Mq4eGQFM6tGNNLZfjC3MaAfCrzoGbC4a8sTcxflkgGmOHsvYlECk4jY9duX55S8X4+sNQKNmpmSxXwuMxfCDC5MpLr+M1gUnU4qeUfYn+NKZ3vvUQIoKzmqeLSX+7VO7F8xr5BLNs4S3Edu/v7ki5cBnYDFJC1yXy7zvFkEdv/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P4oTpQDT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730712427;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M7ueN/LQ529FLGouL/3BXVgrjx8tY87847WIrlhrom4=;
-	b=P4oTpQDT3SUDo7PLT3J+OqKSEdeXl1oHmENBGzFs7E2+l9ujudNdadnwEd57RX2AVAVVqL
-	rRA77ZsIVR3oqyJuvY3dpmItA+Bm0auhyqzRShm/rfBACh5k15p49CspwMayaEdEDZmoPN
-	mV+slHht4hl+pLtsRcvg+g6BCHbCcjk=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-OLbh-abZNz-zve1MU4kJfw-1; Mon, 04 Nov 2024 04:27:06 -0500
-X-MC-Unique: OLbh-abZNz-zve1MU4kJfw-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d4922d8c7so2090077f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:27:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730712425; x=1731317225;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M7ueN/LQ529FLGouL/3BXVgrjx8tY87847WIrlhrom4=;
-        b=asx2wzqF23PbsV67U/X0X8/17FRDN9koLocWkI8qdhBlbjYyf4j8SaF4Iz4M2LiJr9
-         RN9yQigx2/TF2Zif6F93baQXgMZNg/RJ43PCcImufqGGUeD+C3H/hONWflIvPKBLzhO4
-         JVLxAt7Gv36nG8a0y6naVMaIXHgAklymRHDzEo4Kaeofcikt/2lUT9aF7sykonVz/e90
-         tOXs/fIhzQLj+NTvMFKyFB7kQfIofqXpp9GyWtgRQIugh4bpRJvqvDCtOD6WVTLwDzqR
-         RtNWt+8iwJIS/NKk3uxJn2yeEBHkKkLRuYN0mXKTQdojvu5ufb9eZ3C1rjiTOrNXnobp
-         CYnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqpgcipMHjnsBmfoncGuS1Ly/Idl8kWZv0GcOGZS1Wf1edzIZl8J7RhGo1s4MdLM0+Xam7YLczkvCfO1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3kB2haAzurDS+hZbvnbsmSpmntH1C4SQRobNQUmuLdSrkOz4y
-	pVwdwCMiaczDPtDCd1vBh8VlWZC4qIpBEVP3znWmtR+eZW/9jyhmk+AlWwRzP3mjjexp7P0AV57
-	tW2PeHLUcTIzZIoZmJnW+nGvALlqWG0F3NI+x/UEXqlCS5q2I+e0gjAiV1ZPBLg==
-X-Received: by 2002:a5d:5f54:0:b0:37d:373c:ed24 with SMTP id ffacd0b85a97d-381c7a3a49cmr8192702f8f.4.1730712414720;
-        Mon, 04 Nov 2024 01:26:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHUG4i3r4RT/0mDz+U1cY7m40dZcu2ijC6eEouX1uNQBldOHTZd5hoduIq2TUsnjYO3wLrnew==
-X-Received: by 2002:a5d:5f54:0:b0:37d:373c:ed24 with SMTP id ffacd0b85a97d-381c7a3a49cmr8192628f8f.4.1730712414212;
-        Mon, 04 Nov 2024 01:26:54 -0800 (PST)
-Received: from ?IPv6:2001:16b8:2d7f:e400:7f8:722c:bb2e:bb7f? (200116b82d7fe40007f8722cbb2ebb7f.dip.versatel-1u1.de. [2001:16b8:2d7f:e400:7f8:722c:bb2e:bb7f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7d20sm12817150f8f.7.2024.11.04.01.26.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 01:26:53 -0800 (PST)
-Message-ID: <a8d9f32f60f55c58d79943c4409b8b94535ff853.camel@redhat.com>
-Subject: Re: [PATCH 01/13] PCI: Prepare removing devres from pci_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Damien Le Moal
- <dlemoal@kernel.org>,  Niklas Cassel <cassel@kernel.org>, Sergey Shtylyov
- <s.shtylyov@omp.ru>, Basavaraj Natikar <basavaraj.natikar@amd.com>, Jiri
- Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alex Dubov <oakad@yahoo.com>, Sudarsana Kalluru <skalluru@marvell.com>,
- Manish Chopra <manishc@marvell.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rasesh Mody
- <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko
- <imitsyanko@quantenna.com>, Sergey Matyukevich <geomatsi@gmail.com>, Kalle
- Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar
- S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, Chen Ni <nichen@iscas.ac.cn>, Mario Limonciello
- <mario.limonciello@amd.com>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>, Kevin Tian
- <kevin.tian@intel.com>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Mostafa Saleh <smostafa@google.com>, 
- Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Christian
- Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>, Eric Auger
- <eric.auger@redhat.com>, Reinette Chatre <reinette.chatre@intel.com>, Ye
- Bin <yebin10@huawei.com>, Marek =?ISO-8859-1?Q?Marczykowski-G=F3recki?=
- <marmarek@invisiblethingslab.com>, Pierre-Louis Bossart
- <pierre-louis.bossart@linux.dev>, Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Kai Vehmanen
- <kai.vehmanen@linux.intel.com>,  Rui Salvaterra <rsalvaterra@gmail.com>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-input@vger.kernel.org, netdev@vger.kernel.org, 
- linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
- linux-pci@vger.kernel.org,  kvm@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
-Date: Mon, 04 Nov 2024 10:26:51 +0100
-In-Reply-To: <87cyjgwfmo.ffs@tglx>
-References: <20241015185124.64726-1-pstanner@redhat.com>
-	 <20241015185124.64726-2-pstanner@redhat.com> <87cyjgwfmo.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1730712422; c=relaxed/simple;
+	bh=Sx5KjvKZ4csWvVy9wH3IjtRV3od9fJK+XxTSO1IYTjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u6GpRVdH3DgJ2OqTRgMp5a6Ta5KVzppAZrdpQb4YLhxNIiQBgTziPph23/OujjXzmvIaMck8CuliURVMYOYGC1+xbj8sIvXaoEB0PimVFkUYOfsbOjZhGDG0T7JSR66/ZcmBuwKzemv/UjvMyE+oLpoyiE70Ex3bAhtKSTi5/10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hgfgmMG3; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730712421; x=1762248421;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Sx5KjvKZ4csWvVy9wH3IjtRV3od9fJK+XxTSO1IYTjc=;
+  b=hgfgmMG3KWnRbNz8K1OoKj/2iJxg2jYLpt0xVVGD9kAGZcE5FXvHECLD
+   6QpMwJ5AR1o5+pwhlqL44+VXMCK08rapDBqYsmhD6BhSxa1p/AiFWTatJ
+   mCvC45BV2ocfCThS8hQ9ISiWN1iyJV3V1UPRjRxl0gru2u1O8CJFnsbl2
+   D6ryBIGlfB5m/AMDckNibviJBnHPFWE208rMlz2IDiVdjKghsgOzl4ORz
+   nfMHPHsOMgNzWJdXMBFIqJ0t7QUYPDkeH0ToNQPfp7DbWv59RSVnVQ7F/
+   1eQvPBb0uLdE0YKPpdFjXLymqG9Ttib5B21T0ld9eOGqbAT1ZrhN/rjh2
+   A==;
+X-CSE-ConnectionGUID: ZyjohGY7SlOpcTnHN9rQHQ==
+X-CSE-MsgGUID: Uxf9v32lR+6C6aOKk4DZ6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="30502788"
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="30502788"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 01:27:00 -0800
+X-CSE-ConnectionGUID: 9wRJx7qtSf2a1DC+yCrjhg==
+X-CSE-MsgGUID: T+MAZZ9zSVKEgdhd5gz+WQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="88414155"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 04 Nov 2024 01:26:57 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 153D21C4; Mon, 04 Nov 2024 11:26:55 +0200 (EET)
+Date: Mon, 4 Nov 2024 11:26:55 +0200
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Baoquan He <bhe@redhat.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Sean Christopherson <seanjc@google.com>, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Kai Huang <kai.huang@intel.com>
+Subject: Re: [PATCHv4, REBASED 1/4] x86/mm/ident_map: Fix virtual address
+ wrap to zero
+Message-ID: <qz42rystorh4q2fpk5kpgjnycorfjmjypjgj3dmi4hhfznlzdx@eaertxsby5st>
+References: <20241016111458.846228-1-kirill.shutemov@linux.intel.com>
+ <20241016111458.846228-2-kirill.shutemov@linux.intel.com>
+ <20241030114712.GCZyIcwF9MyQacmRf1@fat_crate.local>
+ <3rmdms6czfsa4hwfx5egcf5rheojpwhdhwq2gxkn2ffvvymfir@dv7x4cmby6sz>
+ <20241031135916.GDZyONNENEDAViMSOZ@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031135916.GDZyONNENEDAViMSOZ@fat_crate.local>
 
-On Thu, 2024-10-31 at 14:45 +0100, Thomas Gleixner wrote:
-> On Tue, Oct 15 2024 at 20:51, Philipp Stanner wrote:
-> > +/**
-> > + * pci_intx - enables/disables PCI INTx for device dev, unmanaged
-> > version
->=20
-> mismatch vs. actual function name.
+On Thu, Oct 31, 2024 at 02:59:16PM +0100, Borislav Petkov wrote:
+> On Thu, Oct 31, 2024 at 12:11:52PM +0200, Kirill A. Shutemov wrote:
+> > Do we have magic words for that?
+> 
+> No clue.
+> 
+> > I tried to express that in the second paragraph: "no such users in the
+> > upstream".
+> 
+> Right, so perhaps better to spell it out explicitly:
+> 
+> "Backporter's note:
+> 
+> This fixes a theoretical issue only and there's no need to backport it to
+> stable."
+> 
+> at the end of the commit message.
 
-ACK, will fix
+Okay.
 
->=20
-> > + * @pdev: the PCI device to operate on
-> > + * @enable: boolean: whether to enable or disable PCI INTx
-> > + *
-> > + * Enables/disables PCI INTx for device @pdev
-> > + *
-> > + * This function behavios identically to pci_intx(), but is never
-> > managed with
-> > + * devres.
-> > + */
-> > +void pci_intx_unmanaged(struct pci_dev *pdev, int enable)
->=20
-> This is a misnomer. The function controls the INTX_DISABLE bit of a
-> PCI device. Something like this:
->=20
-> void __pci_intx_control()
-> {
-> }
->=20
-> static inline void pci_intx_enable(d)
-> {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __pci_intx_control(d, true);
-> }
->=20
-> .....
->=20
-> makes it entirely clear what this is about.
+> 
+> > > And which commit is it fixing?
+> > > 
+> > > aece27851d44 ("x86, 64bit, mm: Add generic kernel/ident mapping helper")
+> > > perhaps?
+> > 
+> > This one is closer:
+> > 
+> > e4630fdd4763 ("x86/power/64: Always create temporary identity mapping correctly")
+> > 
+> > It adds x86_mapping_info::offset.
+> 
+> But aece27851d44 has the faulty check...
 
-Well, I would agree if it were about writing a 'real' new function. But
-this is actually about creating a _temporary_ function which is added
-here and removed again in patch 12 of this same series.
+It cannot be triggered without 'offset'.
 
-It wouldn't even be needed; the only reason why it exists is to make it
-easy for the driver maintainers concerned by patches 2-11 to review the
-change and understand what's going on. Hence it is
-"pci_intx_unmanaged()" =3D=3D "Attention, we take automatic management away
-from your driver"
+I'll put both.
 
-pci_intx() is then fully restored after patch 12 and it keeps its old
-name.
-
-Gr=C3=BC=C3=9Fe,
-Philipp
-
-
->=20
-> Hmm?
->=20
-> Thanks,
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tglx
->=20
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
