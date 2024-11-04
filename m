@@ -1,88 +1,99 @@
-Return-Path: <linux-kernel+bounces-394397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CC39BAE71
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:47:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1289BAEE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B643F283BCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:47:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEB301F22982
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E761AAE27;
-	Mon,  4 Nov 2024 08:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCWswPVc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5321ABED7;
+	Mon,  4 Nov 2024 08:59:53 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E59BA34;
-	Mon,  4 Nov 2024 08:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3291494B1
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730710015; cv=none; b=s3nB9GmgbBrH0PIa3Jf+XghQ1104CSK+CqisN8Rvk9Vxy6YWbMVVK095MXze/xALchOyy1x+ZwTyBUyyHmBXsSZy3Ds7eAMTIo5YDy4GixMcqGI6bYG0zlzkE9rM7NFbb53RKDrOEut2dPgpAPSwrlxox/WrSdUGHaz5zECOTQY=
+	t=1730710792; cv=none; b=A8ezOe3pT1obpRsYBFWgZ+itdwGYN6Pp9O/I9xHEZ0ttRyNFL7Nj9W41Pbwo//4WiASaotAP83mG8gsod2OVo4v9yNFhOCrAX+xkP0Sa+z4zWLJfwzGyhsLnv8ZK2q/cWqU8CxEKYuMUBA+CDSAsmHbrh/7UHa4mXZ2RtaGgvCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730710015; c=relaxed/simple;
-	bh=GXUklmKKu5s09QAYZKFDn2kAW2f8F22953+p7jkBS8w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pHNqD+QHEYjxmIx/gXJQDdBeWyjrSYwn24Y18cdSPbpPWZAVomvf2FCR+WcU/1VWrF/pLAXVUk7xyRPtMMcqfDF1iZOiwoyPmiOydvVuslpFnu8c9xfYqzOU+qhCcYk3AOzgBkFSH+L83iifiyX3hPDtrniWRDJY9oBhALVVwA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCWswPVc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7295C4CECE;
-	Mon,  4 Nov 2024 08:46:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730710014;
-	bh=GXUklmKKu5s09QAYZKFDn2kAW2f8F22953+p7jkBS8w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=SCWswPVcjza1xnej+IbAV4kFTwdU5Vxat3o1UbThR6quBeJ9qfolUFpmwnMJ1O5Zg
-	 MciYBrgCC9ML4BTE0/J8G/pUIHqthjVzoJOrkLAXFEnyql3DERndXZHJTZGxQsyznb
-	 9IIXNpDBjcz98TrNO4v9uIHDbudPJnuBSoJRIut1KskGP+kASUNGpwekzkutQGo+cB
-	 owfPTtFgQsEWrhuEfDEQAwPvw3cXTqFp16Kx97q4juL6BnOraoKShU6JnYMmj2ORFr
-	 HqEgdR7J7d3n0thiRZnxjDsoyIn7ss221nDyeG/eypH0Eltap3gCANZj9nrcv+7XFz
-	 BXCnnKGaWIhgA==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
- Patrisious Haddad <phaddad@nvidia.com>
-In-Reply-To: <cover.1730373303.git.leon@kernel.org>
-References: <cover.1730373303.git.leon@kernel.org>
-Subject: Re: [PATCH rdma-next 0/3] Allow parallel cleanup of HW objects
-Message-Id: <173071001099.156548.3866842119477677232.b4-ty@kernel.org>
-Date: Mon, 04 Nov 2024 03:46:50 -0500
+	s=arc-20240116; t=1730710792; c=relaxed/simple;
+	bh=LL47etnmzWJJki/OsiG0tCx1tTBob14vUbzMkhMrRNk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I3cu90xnAEzTDo2cg0PfKVBxQIws/LL5h/6CNoblL4keahykvaYgs9glOpdTsQj8dYDxAeaanu3ak5pySiMPI857ZcagMptz1eSfCxzGrflfb4P6qSLU+TFOhXNvkylYi0/qYoWBGt+iX6WlUUE1APrp5Pcvb84FGCxVfj5hiGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from mail03.siengine.com (localhost [127.0.0.2] (may be forged))
+	by mail03.siengine.com with ESMTP id 4A48lTbI027511
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 16:47:29 +0800 (+08)
+	(envelope-from lucas.liu@siengine.com)
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 4A48lApu027481
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 4 Nov 2024 16:47:10 +0800 (+08)
+	(envelope-from lucas.liu@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4XhlT93YMLz7ZMvT;
+	Mon,  4 Nov 2024 16:47:09 +0800 (CST)
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Mon, 4 Nov 2024 16:47:09 +0800
+Received: from localhost (10.12.6.21) by SEEXMB03-2019.siengine.com
+ (10.8.1.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.2.1544.11 via Frontend
+ Transport; Mon, 4 Nov 2024 16:47:09 +0800
+From: "baozhu.liu" <lucas.liu@siengine.com>
+To: <mkl@pengutronix.de>
+CC: <wg@grandegger.com>, <davem@davemloft.net>, <edumazet@google.com>,
+        <kuba@kernel.org>, <linux-can@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        "baozhu.liu"
+	<lucas.liu@siengine.com>
+Subject: [PATCH] can: flexcan: simplify the calculation of priv->mb_count
+Date: Mon, 4 Nov 2024 16:47:05 +0800
+Message-ID: <20241104084705.5005-1-lucas.liu@siengine.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 4A48lTbI027511
 
+Since mb is a fixed-size two-dimensional array (u8 mb[2][512]),
+"priv->mb_count = sizeof(priv->regs->mb)/priv->mb_size;",
+this expression calculates mb_count correctly and is more concise.
 
-On Thu, 31 Oct 2024 13:22:50 +0200, Leon Romanovsky wrote:
-> This series from Patrisious adds a new device operation to allow the
-> driver to cleanup HW objects in parallel to the ufile cleanup. This is
-> useful for drivers that have HW objects that are not associated with a
-> kernel structures and doesn't have any dependencies on other objects.
-> 
-> In mlx5 case, we are using this new operation to cleanup DEVX QP
-> objects, which are independent from the rest verbs objects (like PD, CQ,
-> e.t.c).
-> 
-> [...]
+Signed-off-by: baozhu.liu <lucas.liu@siengine.com>
+---
+ drivers/net/can/flexcan/flexcan-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Applied, thanks!
-
-[1/3] RDMA/core: Add device ufile cleanup operation
-      https://git.kernel.org/rdma/rdma/c/e18f73a885df74
-[2/3] RDMA/core: Move ib_uverbs_file struct to uverbs_types.h
-      https://git.kernel.org/rdma/rdma/c/1e1faa6232cf05
-[3/3] RDMA/mlx5: Add implementation for ufile_hw_cleanup device operation
-      https://git.kernel.org/rdma/rdma/c/6c2af7e3ebe6b5
-
-Best regards,
+diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/flexcan/flexcan-core.c
+index 6d638c939..e3a8bad21 100644
+--- a/drivers/net/can/flexcan/flexcan-core.c
++++ b/drivers/net/can/flexcan/flexcan-core.c
+@@ -1371,8 +1371,7 @@ static int flexcan_rx_offload_setup(struct net_device *dev)
+ 	if (priv->devtype_data.quirks & FLEXCAN_QUIRK_NR_MB_16)
+ 		priv->mb_count = 16;
+ 	else
+-		priv->mb_count = (sizeof(priv->regs->mb[0]) / priv->mb_size) +
+-				 (sizeof(priv->regs->mb[1]) / priv->mb_size);
++		priv->mb_count = sizeof(priv->regs->mb) / priv->mb_size;
+ 
+ 	if (priv->devtype_data.quirks & FLEXCAN_QUIRK_USE_RX_MAILBOX)
+ 		priv->tx_mb_reserved =
 -- 
-Leon Romanovsky <leon@kernel.org>
+2.17.1
 
 
