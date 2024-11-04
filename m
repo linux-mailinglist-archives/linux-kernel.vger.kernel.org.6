@@ -1,110 +1,134 @@
-Return-Path: <linux-kernel+bounces-395090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE579BB855
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:57:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 080D39BB868
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9D81F22B2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:57:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A955A1F22C9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5006D1BC062;
-	Mon,  4 Nov 2024 14:57:08 +0000 (UTC)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C23C1BFE00;
+	Mon,  4 Nov 2024 14:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="cbKUqh6w"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC05469D;
-	Mon,  4 Nov 2024 14:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0271B85D3;
+	Mon,  4 Nov 2024 14:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730732227; cv=none; b=Ljd/gGpB/3K1kZ6m3lK0cLWnth0YjBa6XMWY06Pl+uWZNVVuZflItLyUz8KxGYzHzPlzWZyvRJY21Q8XvNxB4ZIY37rFOGchH0P+uf+liHQahTifkpCw4eHWSWwYE1U25ScJnnSxv9kSrFXYIcq9gOBBvQadg/hb+VqxtVGQ73I=
+	t=1730732390; cv=none; b=TjAuQlrKrrr3OHuo31ZrDeoo6tV9aV4Apx8gQ4WMHk3WdGV9korvv/3Qp8W32BINenFq6rkJbqrmg6S3e8w0cN43qVjRxEvO3536j7E0pR8F1+PMMRnaxhL6KQlVq1cu+IEj+AHAvmp4i3tcRRUt1BZ/1FdpIRvRLNq21az3vE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730732227; c=relaxed/simple;
-	bh=RpCsSPbF9hPLxFknEQeCKjaWyspggWrBLgvsrjR4QVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rIydfXI0fa/MvSdvVTw6sgMktnjNYp4ti/AyiuxUoKQeb35V5iSA6wVcY76vXpEdA3+QbGpthyLBmY1YtxPT5RIX+iGmUkM5ThoS77JHr4iPMCKy8ryMN4rCsQ2ANZpKYGdN5pf4tYehwlQI3KMsJxI9IaxrgsDoGPGdN8LMsNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso2956390a12.0;
-        Mon, 04 Nov 2024 06:57:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730732225; x=1731337025;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I82zg0d+bkgUiX2hBjnFGtZo3rhclu02If6kmZ3e1WY=;
-        b=FMBM+Ul/CT98agBN7YvkdMLT4xYNCfcRET1fMiA4lJ3F08SuXZCZy+UXtVesjpIZ1m
-         Sr1KTmA+S01pNfrRw0tl2GstY5JaihsK5Vp/VVBTnVCAgbQCc9tlA9cdFJCCFcXm7uBC
-         xr3qcdWySnWayar6Umuec9RRh8wiTzC07YPualOghoAiDmZlqIyHm552CqLkqsYhrK40
-         up5a1dVhq1MOcQ3pIXeSFNGpWyD78i/MqZBc8ufYZnW6JJc08Iletp7+tGYx3EReaaxK
-         fo1UloLQvuLKDFC7vn+Zua1Biq7dBLict5mhsFzPaYg4is3cFp/z2UugBlVlsVckrMlH
-         T8rw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1hQ6xkKKEMZUeu0MzoFVBwiZOrwgNo2RxBROkEUY/W3qz9REHzTLdYvgffU/+tFXDOecEzJYDfuiDYqJFmg==@vger.kernel.org, AJvYcCXD8uWlaohnRgY1xc8ZxlWpBLy4qQTIlDlgYamhZDSEzTkO/JKfOpct8GildQEwWEgVsCro7dJ348QT@vger.kernel.org, AJvYcCXSIZ7wG3ewNuQUUv20HUWpJpiS4iGJ0+iDO5VTV0AcwpwqLbJUjHAtC6lj7GSwmfyoqqaT+OaWfbXK@vger.kernel.org, AJvYcCXUptw8K0Hc5PgEe+q7vJlf4WYAcrLv2pYGd+0nkx5vTcGoCYjQrOCzQlpHH1WgilPUlgEp0/W4nCprTbBN@vger.kernel.org, AJvYcCXY4uPYhHSTub+Ggg8UPBL9wLqJzbzFBLUDq6/Ni/p+aLRlEo/wpPHqxHT2Oe7GPU7/dboVNwJcm3JE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmmZ0oXdhyEKwAxMMsXP7DWPwPPqDFGE+hbKiWJ5jqvpeMjSjN
-	wLhc+ghErU53jf/1VaySW8Qj5fKYI56ADlOh8Sc7ulJ14j+aBT3n
-X-Google-Smtp-Source: AGHT+IG3+xbG1bGzU9fXWzq5gkcZkhfNYx/bQR3aEaPasmlEwVSOmKYE5BbIW0BlHnhDq7GVCfPmTg==
-X-Received: by 2002:a05:6a20:6a21:b0:1db:db2f:f3a5 with SMTP id adf61e73a8af0-1dbdb3025c0mr5103280637.21.1730732225497;
-        Mon, 04 Nov 2024 06:57:05 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c3996sm7532967b3a.106.2024.11.04.06.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 06:57:05 -0800 (PST)
-Date: Mon, 4 Nov 2024 23:57:03 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Qiang Yu <quic_qianyu@quicinc.com>, manivannan.sadhasivam@linaro.org,
-	vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
-	lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	johan+linaro@kernel.org
-Subject: Re: [PATCH v8 3/5] PCI: qcom: Remove BDF2SID mapping config for
- SC8280X family SoC
-Message-ID: <20241104145703.GA3230448@rocinante>
-References: <20241101030902.579789-1-quic_qianyu@quicinc.com>
- <20241101030902.579789-4-quic_qianyu@quicinc.com>
- <ZyjZE-U_7YZhScfG@hovoldconsulting.com>
+	s=arc-20240116; t=1730732390; c=relaxed/simple;
+	bh=oeNmNK0dYc8t6V2/25L14+/mBAwWJ1xGyC99VvNsU7Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dS72gswWTaOAiQpRSPPI0n4WJeeZzTsXnThHBe4aSkff6fdUgeMyEyJuPLVotbVM9mQ2l9TlKMiF7I2iWjTswnCyefIe/0oYO1f5F4mVE+XAj3zfMPGSisg81uCnHljZrS+W/TPBdkCVvGe1fPogqbrK5N/rHUTo/q/iCpG1UVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=cbKUqh6w; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 6b25ba669abd11efbd192953cf12861f-20241104
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=wL3aJ4YgoHQx51/oO0lGR3G+JG5M0wbwEKmePjrNr0E=;
+	b=cbKUqh6wHVcmGDUj+JHwde/5LZhQiB8xCZ/93fvsrpFB2c7k5v4aaXuPDRZnaUEYEZSxyYraqO9nxJPke+Xo2YjZyu1Hmx3RpN6h1hfy3D5kC/EnVf6K+BaYd2cjK/6jkZDRw69o/vKxe7A2fUoozREa7wkNETJagFEKK6o4cEc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:f7508108-1d00-41f3-b7f7-8727afb3e824,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:c26e8507-7990-429c-b1a0-768435f03014,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 6b25ba669abd11efbd192953cf12861f-20241104
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <jiande.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 540822242; Mon, 04 Nov 2024 22:59:40 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 4 Nov 2024 22:59:39 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 4 Nov 2024 22:59:39 +0800
+From: Jiande Lu <jiande.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
+	Deren Wu <deren.Wu@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, Steve
+ Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Jiande Lu <jiande.lu@mediatek.com>
+Subject: [PATCH v2] Bluetooth: btusb: Add 3 HWIDs for MT7925
+Date: Mon, 4 Nov 2024 22:59:31 +0800
+Message-ID: <20241104145931.5019-1-jiande.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyjZE-U_7YZhScfG@hovoldconsulting.com>
+Content-Type: text/plain
+X-MTK: N
 
-Hello,
+Add below HWIDs for MediaTek MT7925 USB Bluetooth chip.
+VID 0x0489, PID 0xe14f
+VID 0x0489, PID 0xe150
+VID 0x0489, PID 0xe151
 
-[...]
-> Would have been good to say something about why there are no 'iommu-map'
-> properties on sc8280xp (e.g. since it uses an SMMUv3) as Bjorn
-> suggested.
+Patch has been tested successfully and controller is recognized
+device pair successfully.
 
-Happy to update the commit log directly if there is a consensus about how
-the final wording should look like.
+MT7925 module bring up message as below.
+Bluetooth: Core ver 2.22
+Bluetooth: HCI device and connection manager initialized
+Bluetooth: HCI socket layer initialized
+Bluetooth: L2CAP socket layer initialized
+Bluetooth: SCO socket layer initialized
+Bluetooth: hci0: HW/SW Version: 0x00000000, Build Time: 20240816133202
+Bluetooth: hci0: Device setup in 286558 usecs
+Bluetooth: hci0: HCI Enhanced Setup Synchronous Connection command is advertised, but not supported.
+Bluetooth: hci0: AOSP extensions version v1.00
+Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+Bluetooth: BNEP filters: protocol multicast
+Bluetooth: BNEP socket layer initialized
+Bluetooth: MGMT ver 1.22
+Bluetooth: RFCOMM TTY layer initialized
+Bluetooth: RFCOMM socket layer initialized
+Bluetooth: RFCOMM ver 1.11
 
-> > struct, namely ops_1_21_0 which is same as ops_1_9_0 except that it
-> > doesn't have config_sid() callback to clean it up.
-> > 
-> > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> I see that this patch has been picked up now. The above is already much
-> better and I guess this is good enough for now:
-> 
-> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+v2: update commit message.
 
-Added.  Thank you!
+Signed-off-by: Jiande Lu <jiande.lu@mediatek.com>
+---
+ drivers/bluetooth/btusb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-	Krzysztof
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 6dc5a7e76558..77b8500f8e9b 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -658,6 +658,12 @@ static const struct usb_device_id quirks_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x0489, 0xe139), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x0489, 0xe14f), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x0489, 0xe150), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x0489, 0xe151), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3602), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3603), .driver_info = BTUSB_MEDIATEK |
+-- 
+2.45.2
+
 
