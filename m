@@ -1,136 +1,178 @@
-Return-Path: <linux-kernel+bounces-394668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6310E9BB288
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:11:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 660209BB27F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F0472825F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:11:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB678B25FC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694071F6690;
-	Mon,  4 Nov 2024 10:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D3E1F4FD9;
+	Mon,  4 Nov 2024 10:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCBnJ2A5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mluckDeM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C392B1C5793;
-	Mon,  4 Nov 2024 10:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17F41C4A2B;
+	Mon,  4 Nov 2024 10:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717728; cv=none; b=Sy2ZL+axJ25C7VxjrM/jYZWltPpS9LwOOvCDNRvW37zGKLNeZoNLAml+dKb87rHUlOGuXd2fIz3yzejVKYDjoXFy4hixBfTAEiM2Oq+dG6pWCAkN7hWcikB2GZ6SGrKI9icrhykhq3bHbpc5uP59ZgqbXodmoZ+GfAerzaDTl3M=
+	t=1730717721; cv=none; b=JTqpQa6XLglfAdaqFNuDad1Wjb9oQPuk4FkQfxryqZIDdy3guZNg0/BRl5ygQJj+XwTKTYApZ/8g8BgWWxRCQa7BkdprdKRDfV+gVHoWTnbssAr281uKgQJfULB0T5pyEWgQ3m22zyxTUKEzUdzAnNtTEEowyb4e+Oa3pWHSPkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717728; c=relaxed/simple;
-	bh=4Ru6zxLH6BwlLgie7qa+UbF8wklbCv931KY1f6xBmJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t7hEPATlz05U2DaGah0MkjeU4rlAuxorzUy4hDtuA3xa0NY1kFoE5VxL4fcHIcWAD6S498Z/IESLBq9ZwwbCZKwCosU0J5RS4etWP+VKgE3hALjY3+FA6WGVjmKwYRTxdoMAHSEcwmx8YyhjrN+zk/oea6kGYkJZEHf4abjEosQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCBnJ2A5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AE4BC4CECE;
-	Mon,  4 Nov 2024 10:55:27 +0000 (UTC)
+	s=arc-20240116; t=1730717721; c=relaxed/simple;
+	bh=Xsd60VaJMVJJJZwPYCiMbYDsq4aVLjYnOCS09bBiIXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g6cL5fvZBv+zmEffI+XQ3SiFEXtxoxZeMTm6smTG4nIFRjTEtbLpBZzIvO3phr5YWn0rbeePDIpl5C5bPcvZfD7f1CvvvfWbY8csiTiIFhPtj3b3Au7z8P3nVos0RfxGUyCKja/wVBDBlNXCXTJCd5k7fJFuqNtR4dYqfsBTk4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mluckDeM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 810BDC4CED5;
+	Mon,  4 Nov 2024 10:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730717728;
-	bh=4Ru6zxLH6BwlLgie7qa+UbF8wklbCv931KY1f6xBmJ4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YCBnJ2A5LuefKh/hCDClXWtcMtNctSrRLec7WL6wvi7ysLHUcOA5dvgpk1BpuThTk
-	 Ro2L/adV5VJhzsFTvtwS/FCmX+lIq21cG5zVuxOdjRfm1v0FxzIs+kJTeLz9wFCIBS
-	 dCv6/yI51KDTWpABKN/vyurzgVp+F+oT0QU06k9LPMyhWcW2/nXZYRs3sn2iWRSq5e
-	 S6POPM2maKStqaLThXXeVfhlEPEN24QVrRsoNBSrYvVSGJWpf48zAbF7UH4A2Op0Gl
-	 lRvamLIPHTMQ3scED46Ht+l+HCWkoUVKhLQag8FFHje6peKQCk1jP90KvCtR5rVpcC
-	 cvufzyTHi6JwA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Piyush Raj Chouhan <piyushchouhan1598@gmail.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	Sasha Levin <sashal@kernel.org>,
-	perex@perex.cz,
-	tiwai@suse.com,
-	kailang@realtek.com,
-	sbinding@opensource.cirrus.com,
-	simont@opensource.cirrus.com,
-	josh@joshuagrisham.com,
-	rf@opensource.cirrus.com,
-	linux-sound@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 4/6] ALSA: hda/realtek: Add subwoofer quirk for Infinix ZERO BOOK 13
-Date: Mon,  4 Nov 2024 05:55:08 -0500
-Message-ID: <20241104105517.98071-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104105517.98071-1-sashal@kernel.org>
-References: <20241104105517.98071-1-sashal@kernel.org>
+	s=k20201202; t=1730717721;
+	bh=Xsd60VaJMVJJJZwPYCiMbYDsq4aVLjYnOCS09bBiIXw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mluckDeMk6i5aN2XBOA1zfp0B5xurNz8wOuuO6UKYkZqld8M1vPhMjikatVUxYIq1
+	 o/o2n4QC5unxoa1BCq0QEJuuUGosOaiWVlAfms7oPabM1IPV7T5QCnjD432LtwU6jM
+	 qNyRNziXoq7Y5K909RLvlKf7uf+1MvZd6Ak8eCwV7pk3wdhybH+DxGdKIZqFxDiZgi
+	 /iQnjicc1WrBfd1q+/hj/6yterw6uw+CgPyujA3SNAenk3a2+tEKgLA1Q7vvvsnEYL
+	 Fa4fRc5HTw91i3Ikfsm6UaVHVMpdSHGkU3B2sp1paNLh1UwprUskCBwrZH7BP89RDz
+	 Po3mKNTx8CmzQ==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso57807281fa.2;
+        Mon, 04 Nov 2024 02:55:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCURVbc2V3WeKxNTxTfQFbEMkq1xfReT+d82xiZRYFOVzGscoxL5kQYU8Xe3hmjZHl5jP5GLvJJYh/2l@vger.kernel.org, AJvYcCUT5e5bWXiA/hasTRnbN9yoMGIp4rjtAcLlgvssbentTzExdf/H/tm5ooTxYywucWJZXJymlu0Cvt2U9RVk@vger.kernel.org, AJvYcCUmoSWHgbYQWkM3VMkFWHiB3AZ+c40UTNM/L3hYlfgK5xJNccHdAKLABJn03xbOyBccVWSXAcyftgzFRA==@vger.kernel.org, AJvYcCVdoz444u4Zp09JQs1amMQhMK7cWsgqAb7BU7DYtywuVTjBiA//aB38Vyvighbi9S8OSydLuOEOOdFWvw==@vger.kernel.org, AJvYcCW+sJwmGrCaq51A6hWw2r9N4LIXoaMTpeNgJC+RPXiJsIRvX/WHj3lB/H/hCz9sst9J+jRxDI1vl0O+xQ==@vger.kernel.org, AJvYcCX8bEV+Po7jr8aaIUfUl5SAxaz3E9cO0OvSEEYDVMhmn2Jw8pFtV+R9MF7qi75izZn4lqRPsHpRAEXeQQ==@vger.kernel.org, AJvYcCXk7Grx4/0vPFia4ry3ko9yt0F7VPMAegRT1le+uRHvBTn8+tHmsNeKVd7U4twO6A0PygmjnthqHV2DLQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTCMDGCtYWO/2MwvIBQ8Miy4LrGMRLVO6/bo1v8iXKd5MiJ3CQ
+	KSACdsfpQ7l6tULbNeiBQFWTWA5blxRl/D4BJ/UV97GahtJgF2rpG8oaRl5BwDhERorQ0s5UfrV
+	NW6UmA4g4j2poQN/q5T85S5aC0xc=
+X-Google-Smtp-Source: AGHT+IFk0/CXdpRr9EA2xNrpgIcdFsD8CEdy30mzTFb0ZlXY/QnyWMuejDDml1MTkf5LmjGORWJ2C6sLEZMa+NCqqXc=
+X-Received: by 2002:a2e:be9f:0:b0:2fb:8c9a:fe3f with SMTP id
+ 38308e7fff4ca-2fedb7c8904mr72976731fa.22.1730717719875; Mon, 04 Nov 2024
+ 02:55:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.284
-Content-Transfer-Encoding: 8bit
+References: <20241103223154.136127-1-ebiggers@kernel.org> <20241103223154.136127-4-ebiggers@kernel.org>
+In-Reply-To: <20241103223154.136127-4-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 4 Nov 2024 11:55:08 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXErAGvJ+ZK1SMQQKVbbZVhjxaWzn0gmV-xxtsoWSuwT9g@mail.gmail.com>
+Message-ID: <CAMj1kXErAGvJ+ZK1SMQQKVbbZVhjxaWzn0gmV-xxtsoWSuwT9g@mail.gmail.com>
+Subject: Re: [PATCH v3 03/18] lib/crc32: expose whether the lib is really
+ optimized at runtime
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
+	sparclinux@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Piyush Raj Chouhan <piyushchouhan1598@gmail.com>
+On Sun, 3 Nov 2024 at 23:34, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Make the CRC32 library export a function crc32_optimizations() which
+> returns flags that indicate which CRC32 functions are actually executing
+> optimized code at runtime.
+>
+> This will be used to determine whether the crc32[c]-$arch shash
+> algorithms should be registered in the crypto API.  btrfs could also
+> start using these flags instead of the hack that it currently uses where
+> it parses the crypto_shash_driver_name.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit ef5fbdf732a158ec27eeba69d8be851351f29f73 ]
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 
-Infinix ZERO BOOK 13 has a 2+2 speaker system which isn't probed correctly.
-This patch adds a quirk with the proper pin connections.
-Also The mic in this laptop suffers too high gain resulting in mostly
-fan noise being recorded,
-This patch Also limit mic boost.
-
-HW Probe for device; https://linux-hardware.org/?probe=a2e892c47b
-
-Test: All 4 speaker works, Mic has low noise.
-
-Signed-off-by: Piyush Raj Chouhan <piyushchouhan1598@gmail.com>
-Link: https://patch.msgid.link/20241028155516.15552-1-piyuschouhan1598@gmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/pci/hda/patch_realtek.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index dddf3f55cb13b..24cf491ceb4a3 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6405,6 +6405,7 @@ enum {
- 	ALC290_FIXUP_SUBWOOFER_HSJACK,
- 	ALC269_FIXUP_THINKPAD_ACPI,
- 	ALC269_FIXUP_DMIC_THINKPAD_ACPI,
-+	ALC269VB_FIXUP_INFINIX_ZERO_BOOK_13,
- 	ALC269VB_FIXUP_CHUWI_COREBOOK_XPRO,
- 	ALC255_FIXUP_ACER_MIC_NO_PRESENCE,
- 	ALC255_FIXUP_ASUS_MIC_NO_PRESENCE,
-@@ -6653,6 +6654,16 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc269_fixup_pincfg_U7x7_headset_mic,
- 	},
-+	[ALC269VB_FIXUP_INFINIX_ZERO_BOOK_13] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x14, 0x90170151 }, /* use as internal speaker (LFE) */
-+			{ 0x1b, 0x90170152 }, /* use as internal speaker (back) */
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC269_FIXUP_LIMIT_INT_MIC_BOOST
-+	},
- 	[ALC269VB_FIXUP_CHUWI_COREBOOK_XPRO] = {
- 		.type = HDA_FIXUP_PINS,
- 		.v.pins = (const struct hda_pintbl[]) {
-@@ -8500,6 +8511,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1d72, 0x1945, "Redmi G", ALC256_FIXUP_ASUS_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1d72, 0x1947, "RedmiBook Air", ALC255_FIXUP_XIAOMI_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x2782, 0x0214, "VAIO VJFE-CL", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
-+	SND_PCI_QUIRK(0x2782, 0x0228, "Infinix ZERO BOOK 13", ALC269VB_FIXUP_INFINIX_ZERO_BOOK_13),
- 	SND_PCI_QUIRK(0x2782, 0x0232, "CHUWI CoreBook XPro", ALC269VB_FIXUP_CHUWI_COREBOOK_XPRO),
- 	SND_PCI_QUIRK(0x2782, 0x1707, "Vaio VJFE-ADL", ALC298_FIXUP_SPK_VOLUME),
- 	SND_PCI_QUIRK(0x8086, 0x2074, "Intel NUC 8", ALC233_FIXUP_INTEL_NUC8_DMIC),
--- 
-2.43.0
-
+> ---
+>  arch/arm64/lib/crc32-glue.c  | 10 ++++++++++
+>  arch/riscv/lib/crc32-riscv.c | 10 ++++++++++
+>  include/linux/crc32.h        | 15 +++++++++++++++
+>  3 files changed, 35 insertions(+)
+>
+> diff --git a/arch/arm64/lib/crc32-glue.c b/arch/arm64/lib/crc32-glue.c
+> index d7f6e1cbf0d2..15c4c9db573e 100644
+> --- a/arch/arm64/lib/crc32-glue.c
+> +++ b/arch/arm64/lib/crc32-glue.c
+> @@ -83,7 +83,17 @@ u32 __pure crc32_be_arch(u32 crc, const u8 *p, size_t len)
+>
+>         return crc32_be_arm64(crc, p, len);
+>  }
+>  EXPORT_SYMBOL(crc32_be_arch);
+>
+> +u32 crc32_optimizations(void)
+> +{
+> +       if (alternative_has_cap_likely(ARM64_HAS_CRC32))
+> +               return CRC32_LE_OPTIMIZATION |
+> +                      CRC32_BE_OPTIMIZATION |
+> +                      CRC32C_OPTIMIZATION;
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(crc32_optimizations);
+> +
+>  MODULE_LICENSE("GPL");
+>  MODULE_DESCRIPTION("arm64-optimized CRC32 functions");
+> diff --git a/arch/riscv/lib/crc32-riscv.c b/arch/riscv/lib/crc32-riscv.c
+> index a3ff7db2a1ce..53d56ab422c7 100644
+> --- a/arch/riscv/lib/crc32-riscv.c
+> +++ b/arch/riscv/lib/crc32-riscv.c
+> @@ -295,7 +295,17 @@ u32 __pure crc32_be_arch(u32 crc, const u8 *p, size_t len)
+>  legacy:
+>         return crc32_be_base(crc, p, len);
+>  }
+>  EXPORT_SYMBOL(crc32_be_arch);
+>
+> +u32 crc32_optimizations(void)
+> +{
+> +       if (riscv_has_extension_likely(RISCV_ISA_EXT_ZBC))
+> +               return CRC32_LE_OPTIMIZATION |
+> +                      CRC32_BE_OPTIMIZATION |
+> +                      CRC32C_OPTIMIZATION;
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(crc32_optimizations);
+> +
+>  MODULE_LICENSE("GPL");
+>  MODULE_DESCRIPTION("Accelerated CRC32 implementation with Zbc extension");
+> diff --git a/include/linux/crc32.h b/include/linux/crc32.h
+> index 58c632533b08..e9bd40056687 100644
+> --- a/include/linux/crc32.h
+> +++ b/include/linux/crc32.h
+> @@ -35,10 +35,25 @@ static inline u32 __pure __crc32c_le(u32 crc, const u8 *p, size_t len)
+>         if (IS_ENABLED(CONFIG_CRC32_ARCH))
+>                 return crc32c_le_arch(crc, p, len);
+>         return crc32c_le_base(crc, p, len);
+>  }
+>
+> +/*
+> + * crc32_optimizations() returns flags that indicate which CRC32 library
+> + * functions are using architecture-specific optimizations.  Unlike
+> + * IS_ENABLED(CONFIG_CRC32_ARCH) it takes into account the different CRC32
+> + * variants and also whether any needed CPU features are available at runtime.
+> + */
+> +#define CRC32_LE_OPTIMIZATION  BIT(0) /* crc32_le() is optimized */
+> +#define CRC32_BE_OPTIMIZATION  BIT(1) /* crc32_be() is optimized */
+> +#define CRC32C_OPTIMIZATION    BIT(2) /* __crc32c_le() is optimized */
+> +#if IS_ENABLED(CONFIG_CRC32_ARCH)
+> +u32 crc32_optimizations(void);
+> +#else
+> +static inline u32 crc32_optimizations(void) { return 0; }
+> +#endif
+> +
+>  /**
+>   * crc32_le_combine - Combine two crc32 check values into one. For two
+>   *                   sequences of bytes, seq1 and seq2 with lengths len1
+>   *                   and len2, crc32_le() check values were calculated
+>   *                   for each, crc1 and crc2.
+> --
+> 2.47.0
+>
+>
 
