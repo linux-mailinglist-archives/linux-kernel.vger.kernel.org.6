@@ -1,55 +1,64 @@
-Return-Path: <linux-kernel+bounces-395087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836639BB845
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:50:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544499BB7E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472E02836D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:50:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBA0DB21860
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0D81B85CA;
-	Mon,  4 Nov 2024 14:50:05 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F0F1AE018;
+	Mon,  4 Nov 2024 14:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZYFePSk+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA1D469D;
-	Mon,  4 Nov 2024 14:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD30BAD2F
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730731805; cv=none; b=CSyleboOvpZwyfVn3mj9fTbSUxBAdcnncOIC8WUhl62UnjE8TyDZa1cDahAWDe0sh0vKFtrGt3E/DefVMJ35gUouiVscixODncoza9qz0v8bSzIyITlN1lgBkcnT0RhxSnDqG9S77vsptYckG+ilkMgp1Uw28UwnjtyyWE/NU84=
+	t=1730730866; cv=none; b=YBM9btiY0ZGX5eIRBDeJ4MJnRdiRLq6A1zmcmSm1RlPv+BzkqDb1T21y2BvZqRS+OMH9g6+ubOOOpqSUt3OerGtxjVtO6U6DX5q7CgLOoQRXI2sKDgfaTHNXyIBKEHJ3J61feyjfOUdh1BfyUwqIKjgE3ivQUpjNOEdMYanyMzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730731805; c=relaxed/simple;
-	bh=4Vv+jv+4Oi8uyoG6jRMsYWTy2VoFnc8oaLa2+MimbdE=;
+	s=arc-20240116; t=1730730866; c=relaxed/simple;
+	bh=iiXH8mVQOPTOV4xvUPLOj4H0pAr4u/wT1KnOxicTZBA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DEJ7OwMeru536pcyCYLAJ32iWQxrE3v5EP8x9mhVd6ihiGl1ifxJbSZqKS9OVDvySHz/iAb1M0sO//ThWkndXS2UdIXDK2af2TY3hxrHNUqLit2+abnjJTnfDyMs78R95O32aolbYlh75QxvnLQ/Q/HmSWznT/jp+f3OXiZFTog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Xhv8J72RNz9sSR;
-	Mon,  4 Nov 2024 15:33:04 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id bWfhLmnpm9tF; Mon,  4 Nov 2024 15:33:04 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Xhv8J6736z9sSN;
-	Mon,  4 Nov 2024 15:33:04 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B3EE88B770;
-	Mon,  4 Nov 2024 15:33:04 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id X3XWHlYHgmaK; Mon,  4 Nov 2024 15:33:04 +0100 (CET)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 811948B763;
-	Mon,  4 Nov 2024 15:33:04 +0100 (CET)
-Message-ID: <34c972b7-ba53-46ba-ada9-df741bc21e47@csgroup.eu>
-Date: Mon, 4 Nov 2024 15:33:03 +0100
+	 In-Reply-To:Content-Type; b=hJUTF4qBC4tjCX5zpYZmSK784SAAYgfBMba6z0JPL54RusasCiUyOY30Mp0+td9+PAmr5/64V8YOHHr4bd76fc7DxtF9IkxkVXtVN46f7Ww/0NBjQHVZARTjwVzq3sylVnAhgVpMTNs99002fJNTZM1lq+3g62CLQRQ8bn45Uqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZYFePSk+; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730730864; x=1762266864;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=iiXH8mVQOPTOV4xvUPLOj4H0pAr4u/wT1KnOxicTZBA=;
+  b=ZYFePSk+GnFB2lCqVxjMBPeV9k3/WdrtodY5KethV7EIs8ESmp+DGJu8
+   xgmC6wIG24bjcf1OELLV5bArq/bm+kJLeNdXzb8KoV1DZ3YowxYLAbnz1
+   9OnlYYiV/o9Ct3tl4fldaOrQU98J/Sj0qOhap6K5+KOgvSqJxf+62Pn+L
+   HoOS9TdsuicKTrV1xsUJSGPlHI3ZwZOmE2OSgZaIziB3Lnlm6cFzP2vUd
+   TH6zWbIQbNIRE7SknDp0Hyb5SCtWM5jKp/u8ikoRHvH8HT6BI+axY0m+L
+   EZWhjdujIssppesFhAEHPM4WRbEmUZlRJCMAskqwVpAvYZ8xAn+Vvfw61
+   w==;
+X-CSE-ConnectionGUID: NQSN9UFzQCiQP2iOdtNRmQ==
+X-CSE-MsgGUID: aZwlHQ8LRryOMKQCa6MLag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="55830601"
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="55830601"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 06:34:24 -0800
+X-CSE-ConnectionGUID: zOEtbfMsRMeYGNQCerqapg==
+X-CSE-MsgGUID: Ys8cFRB+TLydmix+5rO7ww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="83351296"
+Received: from mylly.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP; 04 Nov 2024 06:34:23 -0800
+Message-ID: <9eb7c88a-c448-45cc-aeaa-88ab59cdadc5@linux.intel.com>
+Date: Mon, 4 Nov 2024 16:34:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,69 +66,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/3] soc: fsl_qbman: use be16_to_cpu() in
- qm_sg_entry_get_off()
-To: Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Breno Leitao <leitao@debian.org>,
- Madalin Bucur <madalin.bucur@nxp.com>, Ioana Ciornei
- <ioana.ciornei@nxp.com>, Radu Bulie <radu-andrei.bulie@nxp.com>,
- Sean Anderson <sean.anderson@linux.dev>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-References: <20241029164317.50182-1-vladimir.oltean@nxp.com>
- <20241029164317.50182-2-vladimir.oltean@nxp.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241029164317.50182-2-vladimir.oltean@nxp.com>
+Subject: Re: [PATCH v2 2/6] i3c: dw: Use IRQF_SHARED flag for dw-i3c-master
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241023055118.1400286-1-Shyam-sundar.S-k@amd.com>
+ <20241023055118.1400286-3-Shyam-sundar.S-k@amd.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20241023055118.1400286-3-Shyam-sundar.S-k@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-Le 29/10/2024 à 17:43, Vladimir Oltean a écrit :
-> struct qm_sg_entry :: offset is a 13-bit field, declared as __be16.
+On 10/23/24 8:51 AM, Shyam Sundar S K wrote:
+> On AMD platforms, the IRQ lines are shared between two instances of I3C.
+> Add IRQF_SHARED flag during the interrupt registration process.
 > 
-> When using be32_to_cpu(), a wrong value will be calculated on little
-> endian systems (Arm), because type promotion from 16-bit to 32-bit,
-> which is done before the byte swap and always in the CPU native
-> endianness, changes the value of the scatter/gather list entry offset in
-> big-endian interpretation (adds two zero bytes in the LSB interpretation).
-> The result of the byte swap is ANDed with GENMASK(12, 0), so the result
-> is always zero, because only those bytes added by type promotion remain
-> after the application of the bit mask.
-> 
-> The impact of the bug is that scatter/gather frames with a non-zero
-> offset into the buffer are treated by the driver as if they had a zero
-> offset. This is all in theory, because in practice, qm_sg_entry_get_off()
-> has a single caller, where the bug is inconsequential, because at that
-> call site the buffer offset will always be zero, as will be explained in
-> the subsequent change.
-> 
-> Flagged by sparse:
-> 
-> warning: cast to restricted __be32
-> warning: cast from restricted __be16
-> 
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-
-Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
+> Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com>
+> Signed-off-by: Sanket Goswami <Sanket.Goswami@amd.com>
+> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
 > ---
->   include/soc/fsl/qman.h | 2 +-
+>   drivers/i3c/master/dw-i3c-master.c | 2 +-
 >   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/include/soc/fsl/qman.h b/include/soc/fsl/qman.h
-> index 0d3d6beb7fdb..7f7a4932d7f1 100644
-> --- a/include/soc/fsl/qman.h
-> +++ b/include/soc/fsl/qman.h
-> @@ -242,7 +242,7 @@ static inline void qm_sg_entry_set_f(struct qm_sg_entry *sg, int len)
->   
->   static inline int qm_sg_entry_get_off(const struct qm_sg_entry *sg)
->   {
-> -	return be32_to_cpu(sg->offset) & QM_SG_OFF_MASK;
-> +	return be16_to_cpu(sg->offset) & QM_SG_OFF_MASK;
->   }
->   
->   /* "Frame Dequeue Response" */
+> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+> index 1a7c300b6d45..fd58a95ae1c3 100644
+> --- a/drivers/i3c/master/dw-i3c-master.c
+> +++ b/drivers/i3c/master/dw-i3c-master.c
+> @@ -1578,7 +1578,7 @@ int dw_i3c_common_probe(struct dw_i3c_master *master,
+>   	writel(INTR_ALL, master->regs + INTR_STATUS);
+>   	irq = platform_get_irq(pdev, 0);
+>   	ret = devm_request_irq(&pdev->dev, irq,
+> -			       dw_i3c_master_irq_handler, 0,
+> +			       dw_i3c_master_irq_handler, IRQF_SHARED,
+>   			       dev_name(&pdev->dev), master);
+
+dw_i3c_master_irq_handler() seems to be otherwise ready for shared 
+interrupts but reminded me it might have a similar issue than 
+drivers/i2c/busses/i2c-designware-master.c had [1] because both are 
+runtime PM managed.
+
+To me it looks dw_i3c_master_irq_handler() may incorrectly process 
+interrupt from other device if register reads return all bits one when 
+device is suspended. Worth to check.
+
+1. Commit cdbd2f169bf1 ("i2c: designware: Do not process interrupt when 
+device is suspended")
 
