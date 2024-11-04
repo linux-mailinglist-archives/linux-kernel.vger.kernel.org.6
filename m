@@ -1,116 +1,117 @@
-Return-Path: <linux-kernel+bounces-394871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E509BB528
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:55:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2379BB52A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:56:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3504B23709
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:55:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C539BB25E70
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB3F1B81DC;
-	Mon,  4 Nov 2024 12:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D511B6D12;
+	Mon,  4 Nov 2024 12:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F+PLu82O"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="WYe/PbbB"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015881AF4F6
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE420433AB;
+	Mon,  4 Nov 2024 12:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730724931; cv=none; b=eb81mqarqwPwLG0kjJDXgKO3xP1bD/Z++x1vXVcVcqRTdc9f6qL4X/CGKFipWDXhi+3/Sc4VxCB3Y5PVGDvwbCtgfZ8PAGEoa76PT6Ef8pwPs15+3vIpNE4nr6PMAYHJaJb3VxfLjSDRIT9nbOdRZhON0FY4YTLIGifxFyrbGCE=
+	t=1730725008; cv=none; b=EpNLGGVTzlu5zDpKTz2v6dbTeW+ixDwez1MCBpJVEESI9zj79Of9kX7vns2MXuMIdiuX4CwcREXuD/X1MZBcZ0h7FDY3Y8QpZFJmB4RHYRqGto5zsEx5ZMYcfhbCeK/w49n4ha/D4Tal7SCIB+dXXsVsuq8/tg8cECfgve5tVIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730724931; c=relaxed/simple;
-	bh=wMQqOv2i9jpSD1GCk+gH/LpMZLCzxoID0qLFQkTCEzk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=MCPGi62YDqlt1ZsY+xEmm7JW3YusVqU8VbrxBDZUM62EMR/9xS2THlr4cfi/5htl3Xm8zzTRyJrPTBB92gTjNxXrM0p5ExPB2+epqiZEl8Ss3VwOISN0IYr0K5HhUJ5axBGTFaHYnGrXo6wdZ4tNh+ZQs7r6e1OdEWt1xeLdByA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=F+PLu82O; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2b9480617so3251925a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 04:55:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730724929; x=1731329729; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FUT2MUhoOe9iu2p2kd8BI2aLF+LB/mKyYJdsiPsn1AE=;
-        b=F+PLu82OP47bO09itx5AP22edIU1Pni/VSHyOAmh4lTu7XJI2KA/KVrR+qzouMlhtf
-         TESqMGIPmox/7IZ+0H9Nv/dJ1du6MOQ/4PlGIx08H8t9zFyFC9MAqztfFj83TwAn+LYD
-         cbi5pFnCqpkBNka4xVN3pJ5gslmF7bMkXtjTU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730724929; x=1731329729;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FUT2MUhoOe9iu2p2kd8BI2aLF+LB/mKyYJdsiPsn1AE=;
-        b=TR6coFAzHdTllizKeDp5RQbg38aawefc2yYN0+X3wjnBj1xcAkC+WkhPz6LCaZMLmq
-         EV6Cie6AIp1w9wbFr1mVd/Y/oVsHyzOur0l478nfYu48moe4mvNzpZkbd+3x5dH2VnMV
-         ImbvVr/BaisYV+c2PLNF6uk5zcypvumFZlPMXby9dzH/tHAOBrZRaSkM2nPIKrnPvGNo
-         9NpR2zX9okL5KR93kmRiJ8z8NhFGEmpjWtfbu4qpYfIt8DuXJv11t97DcOVhi3dVVoG0
-         lobEly6FmndVYrIbVO0G5/fDunGwqsYDK7NgiSWxkjxqts7EMgxJ+lYEfTlj8an2R61X
-         C2gA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0bI7gPoU4kGZSS3jVmjUOzxiA0gINmUMxf5YWxQEJN74pJPBiZbR1sq3PsWY41N1KQVd9ol8JpXii1UM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO1YEy1Xjd1SUCJy4oj/2t2MJnXOihZ6RruU5hKGvnwBlz+ljs
-	zTA+9HEosT72FM3DOSAIrH9OJduwSGBhi+fG0+CVIOtfm2wT6iPNfSCnX2SKiw==
-X-Google-Smtp-Source: AGHT+IGw2My2dH4dIXYJt5UAfh9QheTuaxvz/yW07aa/c8zRoSfhpBhW/1Yv0E1txryL8w9UJYPxAg==
-X-Received: by 2002:a17:90b:250a:b0:2e9:5e21:24f7 with SMTP id 98e67ed59e1d1-2e95e21257cmr10927134a91.38.1730724929339;
-        Mon, 04 Nov 2024 04:55:29 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:f5f8:ffa1:d9e0:6eab])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93daacb4dsm7534611a91.24.2024.11.04.04.55.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 04:55:28 -0800 (PST)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- stable@vger.kernel.org
-In-Reply-To: <20241029095411.657616-1-wenst@chromium.org>
-References: <20241029095411.657616-1-wenst@chromium.org>
-Subject: Re: [PATCH] drm/bridge: it6505: Fix inverted reset polarity
-Message-Id: <173072492636.262894.11094550143215575349.b4-ty@chromium.org>
-Date: Mon, 04 Nov 2024 20:55:26 +0800
+	s=arc-20240116; t=1730725008; c=relaxed/simple;
+	bh=gsAM6xvDAkDsKSf2kB2mFqYvNCWWdupMPv1OLEGLJpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QDtLDkL5nXZ4QrfxuHoUtAZ2kBdh2nW8yPSDxvUR2TUbC8V9upYRu4cyJThflUmNyFCHYSyRutlYaQnmO3GKTkvoViIefILzKmHRgGj4Mx6rfqKdS2eP0Ln+DUcUZ/iydqbmRodZOLKk3nJd4pnuYLFUU6Yb9aSbI5IBdP1K0Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=WYe/PbbB; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 3BA58A03F3;
+	Mon,  4 Nov 2024 13:56:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:content-transfer-encoding:content-type:content-type:date:from
+	:from:in-reply-to:message-id:mime-version:references:reply-to
+	:subject:subject:to:to; s=mail; bh=ZgJ5BTpIJ76vDQhoFyd1Z9xzbY8ER
+	zsZQHOdaJr4nBE=; b=WYe/PbbB4ax4WTjf5h1/XMavmEchdcOLxZLN+8EWnhgUn
+	DueBvAgkhickNU7PF0+4Ia6fY7E4i+Uoj/aNithZYWyMrD3uWzle+WjmiqohWp7v
+	3mdQP7M01Fvv2WfIXbnAbsDUnlKt9vVfnBFFQcVZdPHZymknOxkUlNN75ynMVSIi
+	t0CbUTjwRxZUjUoJeHEM1PFziOAg9yVIrJySx9tBcS/XLv3D7U918I5BJpESyBuU
+	puIfXJY/Iba216Kg+HKtLI6i19fPj6GOypDDCVFRPe0/sGAAxBJP95TBMW9Zvbij
+	1fWopBSIs6QB4MlIlm5cWnuWSlCCIS1gEExzEHQZgEzxGXx07J0kBQFlB28OtMhR
+	uMvA0MKeduvvJMRhPxh1brpu/etGNM0HDZq7PldPj4zi4pRJSGas8Exf8a4u7kWc
+	JUQHXL2K73LeiE+06dJuRkfkXGIKw/3hq/+6dmdU1BVGbVpxROEczfxffqtDy6ry
+	LEU4hNdR2lgum0WDVlFVH3uEyovBewMXq4QmJf0FIS2crhMiEg3OtICIczSRdFev
+	YxxtwWltqpxgl/LGEIWjUr6Rc8sXEEzxPBIKsGDAShdejkO2GE0e599N8cQjcDzh
+	d5jwH0GaI9Rv4YJFDELMecBTOvubUS9+U9UdaUPzN7C0bBhaLOcdU5ZhLuAKzw=
+Message-ID: <ad585127-9e3c-414a-84c2-c4ea3e6d3c7d@prolan.hu>
+Date: Mon, 4 Nov 2024 13:56:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] spi: atmel-quadspi: Create `atmel_qspi_ops` to support
+ newer SoC families
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, <linux-spi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Varshini Rajendran <varshini.rajendran@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Mark Brown <broonie@kernel.org>, "Claudiu
+ Beznea" <claudiu.beznea@tuxon.dev>
+References: <20241030084445.2438750-1-csokas.bence@prolan.hu>
+ <7cc95e52-7509-44eb-8e30-d518283e7d87@linaro.org>
+ <2b310b54-c215-40fa-b6d4-81faf75a8c9e@prolan.hu>
+ <20241104-vanilla-operating-de19b033f0a8@thorsis.com>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <20241104-vanilla-operating-de19b033f0a8@thorsis.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855667267
 
+Hi!
 
-On Tue, 29 Oct 2024 17:54:10 +0800, Chen-Yu Tsai wrote:
-> The IT6505 bridge chip has a active low reset line. Since it is a
-> "reset" and not an "enable" line, the GPIO should be asserted to
-> put it in reset and deasserted to bring it out of reset during
-> the power on sequence.
+On 2024. 11. 04. 13:48, Alexander Dahl wrote:
+> Hi,
 > 
-> The polarity was inverted when the driver was first introduced, likely
-> because the device family that was targeted had an inverting level
-> shifter on the reset line.
+> Am Wed, Oct 30, 2024 at 01:37:52PM +0100 schrieb Csókás Bence:
+>> Hi,
+>>
+>> On 2024. 10. 30. 12:09, Tudor Ambarus wrote:
+>>> I think it's fine to split sama7g5 addition in smaller steps. But please
+>>> add the sama7g5 support in the same patch set, otherwise this patch
+>>> doesn't make sense on its own.
+>>
+>> Well, actually, we're using SAMA5D2. My goal was just to somewhat harmonize
+>> upstream with the vendor kernel so that we may contribute other patches that
+>> we have made on top of the latter, or in the future, take patches from
+>> upstream and apply it to our vendor kernel-based tree. This patch was only
+>> meant to lay the groundworks for future SAMA7G5 support. I can of course
+>> send the "other half" of the original patch if needed, but I wouldn't want
+>> it to hold up this refactor.
 > 
-> [...]
+> It would actually be better if vendor would bring their stuff
+> upstream, so there's no need for a vendor kernel.  Did you talk to
+> Microchip about their upstreaming efforts?  What was the answer?
+> 
+> Greets
+> Alex
 
-Applied, thanks!
+Agreed. Though in this case, the original patch *was* submitted by 
+Microchip (by Tudor, originally) for upstream inclusion, but it was not 
+merged. Hence this forward-port.
+Link: 
+https://lore.kernel.org/linux-spi/20211214133404.121739-1-tudor.ambarus@microchip.com/
 
-[1/1] drm/bridge: it6505: Fix inverted reset polarity
-      commit: c5f3f21728b069412e8072b8b1d0a3d9d3ab0265
-
-Best regards,
--- 
-Chen-Yu Tsai <wenst@chromium.org>
+Bence
 
 
