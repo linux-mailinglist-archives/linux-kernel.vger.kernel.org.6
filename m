@@ -1,61 +1,90 @@
-Return-Path: <linux-kernel+bounces-394296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2EA9BAD06
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:14:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA8C9BAD04
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A3A828221B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:14:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B6E51C20E2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D00192B8E;
-	Mon,  4 Nov 2024 07:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA195193089;
+	Mon,  4 Nov 2024 07:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="XvRRJCLJ"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D077F16190C;
-	Mon,  4 Nov 2024 07:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mo9Ub8eH"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB5A16190C;
+	Mon,  4 Nov 2024 07:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730704452; cv=none; b=Ljk9m31GiPYHCxj4n5VdQdpNcW/07BhoH/uzt0Gx+B8iHx37jOGSefMRgvi60SKKNFxL5YCU4Hjtd2peUtmw66mMA//X/KApkKaBwOgPzNYTIDW+f5wBnIf31+3PZZaLfUG70AU6FCGQ4cMJRzSUlGgc74mVf1cpoRalkbQjHQw=
+	t=1730704410; cv=none; b=mO+E5wP9pUZRuGqCWHO1CAI6FNwk+gyAPMN70PFhVyOvO/VV4OySGxUavXrjrSUELoj66H3bvdBV+DoYY8DlHVKf4IZqk1RHgylacrxaqRQiz0RWrYrXiOP2FLk359K+AvS0xyg5G7SAdob8568HsNvMN0XwENex8esvBL7T8eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730704452; c=relaxed/simple;
-	bh=Hd5MJEoVYGIKCtNh88punDf+sxA5yRWSbiMnnBIi/Yo=;
+	s=arc-20240116; t=1730704410; c=relaxed/simple;
+	bh=DN/aF0Rx4q9nI31XFvXVTZjHeGK8s9mBhUmgHGiPmzg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o3Bb0lia0lTWpqkuEoQkQr+NE/3/e6gDP56NMBLuxHfpstq0RzYg2DajsZEQNLqQFch8mcGE000/m9UTuH1t0wgI8MACXSn+1B2KJ/Ei25SBFJsz9cO5YG0vLARA3/zkvt6BKIOsZcqHKfzEF2uz9qoAsy7v5pXR1UQOuMDLqn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=XvRRJCLJ; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=N38imsf5cp7S0lOP1h1HxtPzgaChkTFKnOWU1LwG/Rs=;
-	b=XvRRJCLJT1VocPWDAzaWvfoBMjG1x9on01zL9kQTaoVWwzGsWLafs9dbh4QiYQ
-	Li46IFRSLI1DJ10+ktYsSiU+1lR6xgAE6wCnjl6WiEGgpokbAbHmDI+YFSmgqHhT
-	ECC2K9DDyQemrK/Gs7MuccKaS72iLXGCbr5q8je04Onik=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDHCagCdChnUC2mAQ--.16752S3;
-	Mon, 04 Nov 2024 15:13:08 +0800 (CST)
-Date: Mon, 4 Nov 2024 15:13:06 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Heiko Schocher <hs@denx.de>
-Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=guhqgMAx5k4bw1WaSa/SW4cg6bMmhDG1su8IAD8O+/V2nTvgDdde0HTF3I6QQ//9rJZLL40XHCDnJmESMVuIiHdKjlf+4DjLloFWRb8Nqk1RSYzp5TzBk0HtttHMU3GQ6+lg1aC1bLI4vWNhCxR0oFi7cZuff3p2AJnl5dmF3Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mo9Ub8eH; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so643404366b.0;
+        Sun, 03 Nov 2024 23:13:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730704405; x=1731309205; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oImu3BDF6/CvLBQLJIYfDXK8FedxePSyT6Ukp32htEU=;
+        b=mo9Ub8eHYdATvuFWLQr5hn53hxa1f9PiBuG1DD3fcQizsui8pbGSzDR/b+ZQdGOwha
+         Xkvk0rksu66TehULO60rnGJwrnN9dtLpCpuT1nDXXA39NKtrZjTSJQaOv6H6vxal4Q1v
+         egm4/L7MzxpwS2mokRvEPscGHjEw3XcPLPw3W5MJEHheY5FkEjwFTAoiGk5AYDKYPhNw
+         nmf1eiLE19PnZBM8qKd6UaMArJLHJftFliOK54VZu7AeaubT7V9Qyp+hQOEWgVFZan3t
+         D1hxqnZuFY/cbHBAAk8PdhS2sjpTmQNIL0C3VUjjHW8BBwsAxJfa02byYvabwRfJZcGl
+         o1LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730704405; x=1731309205;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oImu3BDF6/CvLBQLJIYfDXK8FedxePSyT6Ukp32htEU=;
+        b=s8ASBoAemmBHRkfFf0bM7fZCNCgVE/ifcWMmUBjQl/rmXDHLOEaYrxJ8KJJOhHfQ4y
+         MSh8okNk8B9zw01c6nFGJiVYb5ydNflGZvWIejGLjA2LY8L21nN2wCMv+mcklM1gMnUK
+         O1BCd0IfrCxKuJUuB8kt7rz89+dKkkEkvemPVG9oBl3hj67qlp5kn2EyGv9dWqdlQAOo
+         dKpgUFZOO24TyI0soIGYYhMrFS4ou8zxgb0q8ZuOdU8lD+XHScxPlwtGwySj4iJB29HE
+         Q7kfbSp+kw1HW9ZJ593kuBC2CZGzZGAdJj14RhphVvfY5H2QcvX6r3zXqQFOWxUKbgV/
+         kYhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVo/5Gt7wxuWF6QVpQjskVjzz/PemGJHOdyroAGD+b1GxQaJpno1djLrMORIX4pITmwuNM7f2FXuI/uOJJv@vger.kernel.org, AJvYcCWeIVfCQ3w2WS/gltI76TzvPQKuVK2S13VkdMM/MjmCtZdd+H766RMsyolFX1zN4Io3/IRvCJWXJcU1@vger.kernel.org, AJvYcCXUh7rO896DaGbdUu8Y8BOKvTPN5VgOTG2hENbWKXId7vQGpr1s5QrXJJ/HN0BkoxuHgCL7B9y+l+XH6A==@vger.kernel.org, AJvYcCXXOISnPkXWicRVtPb3mgJ+wl4B5VGRj0P30dY/3/6mdCmdbxP+OS5TT2BLjiTcb31Z4xta+s30tha7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5CviZLtf81oLFCPehM97rlrHzQ3rAa6TwDjpMHYe/P6azLvlU
+	dLMaFenQH9olONfYZ01k8IFoIUxb4GQ1SChHmZar55qdpbTd6x0r
+X-Google-Smtp-Source: AGHT+IFYIQZXhx+OysSO0fTZLSwThb7s3X8HqjAw+0oYmWSu9pnc41l1DW5ZVPldKXfAb5lkarCoEQ==
+X-Received: by 2002:a17:907:9815:b0:a9a:9b1:f972 with SMTP id a640c23a62f3a-a9de61cf153mr2820354366b.40.1730704404610;
+        Sun, 03 Nov 2024 23:13:24 -0800 (PST)
+Received: from andrea ([2a01:5a8:300:22d3:2aa3:fe1f:17f7:f982])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565e09bcsm513885466b.126.2024.11.03.23.13.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 23:13:24 -0800 (PST)
+Date: Mon, 4 Nov 2024 09:13:19 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
 	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] arm64: dts: imx8mp: add aristainetos3 board
- support
-Message-ID: <Zyh0AgJZh1//17Te@dragon>
-References: <20241031151238.67753-1-hs@denx.de>
- <20241031151238.67753-4-hs@denx.de>
- <ZydFO6b6oe9widaa@dragon>
- <5340fb82-bda0-d22f-23df-de620c8d61c3@denx.de>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v6 00/13] Zacas/Zabha support and qspinlocks
+Message-ID: <Zyh0D9N8SgQd_zne@andrea>
+References: <20241103145153.105097-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,31 +93,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5340fb82-bda0-d22f-23df-de620c8d61c3@denx.de>
-X-CM-TRANSID:Mc8vCgDHCagCdChnUC2mAQ--.16752S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUc89NDUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBCNZWcoXw4+BAAAsY
+In-Reply-To: <20241103145153.105097-1-alexghiti@rivosinc.com>
 
-On Mon, Nov 04, 2024 at 06:33:55AM +0100, Heiko Schocher wrote:
-> > > +
-> > > +		semtech,probe-reset;
-> > > +		gpio-controller;
-> > > +		interrupt-controller;
-> > > +
-> > > +		interrupt-parent = <&gpio1>;
-> > > +		interrupts = <12 IRQ_TYPE_EDGE_FALLING>;
-> > > +	};
+> Alexandre Ghiti (11):
+>   riscv: Move cpufeature.h macros into their own header
+>   riscv: Do not fail to build on byte/halfword operations with Zawrs
+>   riscv: Implement cmpxchg32/64() using Zacas
+>   dt-bindings: riscv: Add Zabha ISA extension description
+>   riscv: Implement cmpxchg8/16() using Zabha
+>   riscv: Improve zacas fully-ordered cmpxchg()
+>   riscv: Implement arch_cmpxchg128() using Zacas
+>   riscv: Implement xchg8/16() using Zabha
+>   riscv: Add ISA extension parsing for Ziccrse
+>   dt-bindings: riscv: Add Ziccrse ISA extension description
+>   riscv: Add qspinlock support
 > 
-> Should I remove newlines here too?... but looking into the example from
-> 
-> Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
-> 
-> there are this newlines ... so I let this lines in... or?
+> Guo Ren (2):
+>   asm-generic: ticket-lock: Reuse arch_spinlock_t of qspinlock
+>   asm-generic: ticket-lock: Add separate ticket-lock.h
 
-Not having newlines in middle of property list is just a style that
-I prefer for IMX device trees.
+For the series,
 
-Shawn
+Reviewed-by: Andrea Parri <parri.andrea@gmail.com>
 
+  Andrea
 
