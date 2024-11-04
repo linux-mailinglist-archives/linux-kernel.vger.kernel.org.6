@@ -1,838 +1,269 @@
-Return-Path: <linux-kernel+bounces-394840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 729CB9BB4BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:33:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C58199BB4BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:33:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964631C21FAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E83A91C21E81
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D733B1B6D00;
-	Mon,  4 Nov 2024 12:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6871B6D1F;
+	Mon,  4 Nov 2024 12:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JS/AI1PD"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AOXbqgB5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2C11E4B0
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2AD1B6D0F
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730723578; cv=none; b=C30SnUjZzTm28Lgi4a6vUbaQXEAn5tx5UosSfsZ0TtVz2jN4/FFC6y2wt/fOX742Y5amJaLUDlSPDvIoz8xNm5fxQRkF74J3LnuvQqsLQNXStwdhGekUKNbCz5Am9kGkEA+0OZs6tLyn6uf4UGkV2UP2i5QpQv1A0iRJSH/oyvw=
+	t=1730723585; cv=none; b=kJG0E5TZvyABW55gSCiatzT8IqEiN6ABpr13t953/H64yqp1yAVPBlCVEpiA9+Pwd2J15aSnmT6OIk8plZCZpLSJlv4/EdHcLI6uAYMQBed/WHFSPRTIO+2lpWkKtmUu+6CR6GXwOTWUoVH3DfiBtPiL80Dc2J5AIKvjkrx5S9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730723578; c=relaxed/simple;
-	bh=PZZWS7eN5mW9JGmZGVLxTJy4ZuK4lwHpQ3Sc50J3nmU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KTMttDn5PZAD0oZKx4PkpMOpKztZZp+1wgwU79Env6zAijjvN7XK9s/0SdppbOQ+Pt19nBD8VRgCAhFMIz8F+woOiPWYBiEK/mARUPbrxp2mI7oc4w+I3PAxkAEk6+638U4D7Onxa1fP/9kBAfn0kervc5DQrop7ZJijqp6UC5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JS/AI1PD; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f2162f3f-81f1-4142-bfc2-89cb3612d088@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730723572;
+	s=arc-20240116; t=1730723585; c=relaxed/simple;
+	bh=lJJr/i4BHuNdSJVtWoxwuGtowymnuCLFCsxqfCF6wCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jOUeegWy5Y+jMKFec+qdekCKpfBqCqQZl/0pBpvRJDKrKW4ZbeXhGLn7vJqa/5l9UNwNLEDGMhFUq0G11/Or4laUE2W+Nw7RcFfyosGNmKCtC27aU5UV08W10x9hJ8IjwblqkQGTNWfiR/Lvlz3tzVWQ+4UM2RywkFwW1RN8gQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AOXbqgB5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730723580;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m/I/fBj69sncpBHFDOxBvE3Ew6WSNG9QAH7YtFGAat0=;
-	b=JS/AI1PD0yfj7pPxDxC0wjSXgRacTFZop1T7fjh1ArWPq/XQ9gsUosovjI4WhteSAOnyzq
-	PEhU2vP2Avy3My/IE3v8gMqDRG5F6XAcdCkbj5/GQCn5k6+JmUw2W9lVB77SKo0aXIDYZ/
-	y+ib2U7B+gDBrf9Z2lB2HquuFz9m4Oo=
-Date: Mon, 4 Nov 2024 12:32:43 +0000
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wYU1bYFt4awhT4ggXN0pyIL2cYzKGeU0iBusjO1/9ro=;
+	b=AOXbqgB5Hdu3YXyQIqFk2wDN7/Sr+/0Fb1qHUqiIzBCUUZElrqfqpVqPQwhmCQLM93N0EU
+	lRKvhnpuJ/CCKDr2IgsOthaII74Dg8+b8/3KX+bO5XJJeC1Cz6jBCWAzTEPblb/vm5uGSb
+	K57KwbEONFU2TmFmAznl8+Kmvpm0Qds=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-516-xIJPPbRTNCOf4lAKQPEdEQ-1; Mon, 04 Nov 2024 07:32:59 -0500
+X-MC-Unique: xIJPPbRTNCOf4lAKQPEdEQ-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-539e03bfd4aso2601315e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 04:32:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730723577; x=1731328377;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wYU1bYFt4awhT4ggXN0pyIL2cYzKGeU0iBusjO1/9ro=;
+        b=YW4fhUOhTFH7syGhfy+pcuiDzmcF6JzyXRee1AGxJg1Wirb6Ctk7pFTqcm3r4YdB1B
+         MyJ0RKuTFKmledxS59oVFMH7YeQm346FVfK6TcpEGlaJZ5KvEBgToEVJNLgz7WyBFsxG
+         Ze97ifC9UvwyHa2BQExUCH4amvB8MOjlzWyp7HHYJSCFh0/4U739iOlGS9BPr+TKSFEg
+         I4oV978LmpxuzqzuJnFGX54QfuHjGfSBii8TFDrreOp2O9XPlXMoS0/HVukHUiFEJB9D
+         gbZ6RBl4lEecRf+PgEzSCgT67k/UjryRAbw1INQzntJyyZYC8B9HdUoN+TdehloqAE9D
+         k6mA==
+X-Forwarded-Encrypted: i=1; AJvYcCWy9UFswywd/IdBBvfxG+V5d31G1CYyb2gj3qJebSqFrdC4NaVO9YHm+ciORNE66/NEwM0O2sh9uV/cutk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu1PppgyR6zlISxRVdj4EtyZPjKXqYhfVBdE5mc4dO3HSlEFcc
+	mERwsIEk6OyfOQHh0Uli5/oCJZeL+/Yv4bYHuVnA/n+f/TI4ZT21XevIPuyTqzz9zUgeXnfkO5u
+	/CUM1ZIpnhhp7wKvusEX16l2zpeVTg4HJOGFD/JX4WvFYAO1/TZzs/iUMay+U+Q==
+X-Received: by 2002:a05:6512:1082:b0:539:fcf9:6332 with SMTP id 2adb3069b0e04-53b348e554bmr16047675e87.33.1730723577507;
+        Mon, 04 Nov 2024 04:32:57 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH+NlEYont2hkA0etOwQQnOUMeCONRWX8ce5tieOWvFRFKDsYCyyTxer9KqxMybhZxsN093GQ==
+X-Received: by 2002:a05:6512:1082:b0:539:fcf9:6332 with SMTP id 2adb3069b0e04-53b348e554bmr16047659e87.33.1730723576937;
+        Mon, 04 Nov 2024 04:32:56 -0800 (PST)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5c6623sm151386035e9.20.2024.11.04.04.32.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 04:32:56 -0800 (PST)
+Message-ID: <3f943f72-59d6-4124-96b2-e0bb8d7a5ebd@redhat.com>
+Date: Mon, 4 Nov 2024 13:32:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next 2/5] net: phy: microchip_ptp : Add ptp library
- for Microchip phys
-To: Divya Koppera <divya.koppera@microchip.com>, andrew@lunn.ch,
- arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
- hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- richardcochran@gmail.com
-References: <20241104090750.12942-1-divya.koppera@microchip.com>
- <20241104090750.12942-3-divya.koppera@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and swapin
+To: Barry Song <21cnbao@gmail.com>, Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Andi Kleen <ak@linux.intel.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
+ "Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>,
+ Ryan Roberts <ryan.roberts@arm.com>
+References: <20241102101240.35072-1-21cnbao@gmail.com>
+ <6c14ab2c-7917-489b-b51e-401d208067f3@gmail.com>
+ <CAGsJ_4wpdf6Fky7jj8O6OuLc0WTBjKXTfEqxE0cXiUjxxuLgZA@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20241104090750.12942-3-divya.koppera@microchip.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAGsJ_4wpdf6Fky7jj8O6OuLc0WTBjKXTfEqxE0cXiUjxxuLgZA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 04/11/2024 09:07, Divya Koppera wrote:
-> Add ptp library for Microchip phys
-> 1-step and 2-step modes are supported, over Ethernet and UDP(ipv4, ipv6)
+On 02.11.24 13:59, Barry Song wrote:
+> On Sat, Nov 2, 2024 at 8:32 PM Usama Arif <usamaarif642@gmail.com> wrote:
+>>
+>>
+>>
+>> On 02/11/2024 10:12, Barry Song wrote:
+>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>
+>>> When the proportion of folios from the zero map is small, missing their
+>>> accounting may not significantly impact profiling. However, it’s easy
+>>> to construct a scenario where this becomes an issue—for example,
+>>> allocating 1 GB of memory, writing zeros from userspace, followed by
+>>> MADV_PAGEOUT, and then swapping it back in. In this case, the swap-out
+>>> and swap-in counts seem to vanish into a black hole, potentially
+>>> causing semantic ambiguity.
+>>>
+>>> We have two ways to address this:
+>>>
+>>> 1. Add a separate counter specifically for the zero map.
+>>> 2. Continue using the current accounting, treating the zero map like
+>>> a normal backend. (This aligns with the current behavior of zRAM
+>>> when supporting same-page fills at the device level.)
+>>>
+>>> This patch adopts option 1 as pswpin/pswpout counters are that they
+>>> only apply to IO done directly to the backend device (as noted by
+>>> Nhat Pham).
+>>>
+>>> We can find these counters from /proc/vmstat (counters for the whole
+>>> system) and memcg's memory.stat (counters for the interested memcg).
+>>>
+>>> For example:
+>>>
+>>> $ grep -E 'swpin_zero|swpout_zero' /proc/vmstat
+>>> swpin_zero 1648
+>>> swpout_zero 33536
+>>>
+>>> $ grep -E 'swpin_zero|swpout_zero' /sys/fs/cgroup/system.slice/memory.stat
+>>> swpin_zero 3905
+>>> swpout_zero 3985
+>>>
+>>> Fixes: 0ca0c24e3211 ("mm: store zero pages to be swapped out in a bitmap")
+>> I don't think its a hotfix (or even a fix). It was discussed in the initial
+>> series to add these as a follow up and Joshua was going to do this soon.
+>> Its not fixing any bug in the initial series.
 > 
-> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
-> ---
->   drivers/net/phy/microchip_ptp.c | 990 ++++++++++++++++++++++++++++++++
->   1 file changed, 990 insertions(+)
->   create mode 100644 drivers/net/phy/microchip_ptp.c
+> I would prefer that all kernel versions with zeromap include this
+> counter; otherwise,
+> it could be confusing to determine where swap-in and swap-out have occurred,
+> as shown by the small program below:
 > 
-> diff --git a/drivers/net/phy/microchip_ptp.c b/drivers/net/phy/microchip_ptp.c
-> new file mode 100644
-> index 000000000000..45000984858e
-> --- /dev/null
-> +++ b/drivers/net/phy/microchip_ptp.c
-> @@ -0,0 +1,990 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2024 Microchip Technology
-> +
-> +#include "microchip_ptp.h"
-> +
-> +static int mchp_ptp_flush_fifo(struct mchp_ptp_clock *ptp_clock,
-> +			       enum ptp_fifo_dir dir)
-> +{
-> +	struct phy_device *phydev = ptp_clock->phydev;
-> +	int rc;
-> +
-> +	for (int i = 0; i < MCHP_PTP_FIFO_SIZE; ++i) {
-> +		rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +				  dir == PTP_EGRESS_FIFO ?
-> +				  MCHP_PTP_TX_MSG_HEADER2(BASE_PORT(ptp_clock)) :
-> +				  MCHP_PTP_RX_MSG_HEADER2(BASE_PORT(ptp_clock)));
-> +		if (rc < 0)
-> +			return rc;
-> +	}
-> +	return phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			    MCHP_PTP_INT_STS(BASE_PORT(ptp_clock)));
-> +}
-> +
-> +static int mchp_ptp_config_intr(struct mchp_ptp_clock *ptp_clock,
-> +				bool enable)
-> +{
-> +	struct phy_device *phydev = ptp_clock->phydev;
-> +
-> +	/* Enable  or disable ptp interrupts */
-> +	return phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			     MCHP_PTP_INT_EN(BASE_PORT(ptp_clock)),
-> +			     enable ? MCHP_PTP_INT_ALL_MSK : 0);
-> +}
-> +
-> +static void mchp_ptp_txtstamp(struct mii_timestamper *mii_ts,
-> +			      struct sk_buff *skb, int type)
-> +{
-> +	struct mchp_ptp_clock *ptp_clock = container_of(mii_ts,
-> +						      struct mchp_ptp_clock,
-> +						      mii_ts);
-> +
-> +	switch (ptp_clock->hwts_tx_type) {
-> +	case HWTSTAMP_TX_ONESTEP_SYNC:
-> +		if (ptp_msg_is_sync(skb, type)) {
-> +			kfree_skb(skb);
-> +			return;
-> +		}
-> +		fallthrough;
-> +	case HWTSTAMP_TX_ON:
-> +		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
-> +		skb_queue_tail(&ptp_clock->tx_queue, skb);
-> +		break;
-> +	case HWTSTAMP_TX_OFF:
-> +	default:
-> +		kfree_skb(skb);
-> +		break;
-> +	}
-> +}
-> +
-> +static bool mchp_ptp_get_sig_rx(struct sk_buff *skb, u16 *sig)
-> +{
-> +	struct ptp_header *ptp_header;
-> +	int type;
-> +
-> +	skb_push(skb, ETH_HLEN);
-> +	type = ptp_classify_raw(skb);
-> +	if (type == PTP_CLASS_NONE)
-> +		return false;
-> +
-> +	ptp_header = ptp_parse_header(skb, type);
-> +	if (!ptp_header)
-> +		return false;
-> +
-> +	skb_pull_inline(skb, ETH_HLEN);
-> +
-> +	*sig = ntohs(ptp_header->sequence_id);
-> +
-> +	return true;
-> +}
-> +
-> +static bool mchp_ptp_match_skb(struct mchp_ptp_clock *ptp_clock,
-> +			       struct mchp_ptp_rx_ts *rx_ts)
-> +{
-> +	struct skb_shared_hwtstamps *shhwtstamps;
-> +	struct sk_buff *skb, *skb_tmp;
-> +	unsigned long flags;
-> +	bool rc = false;
-> +	u16 skb_sig;
-> +
-> +	spin_lock_irqsave(&ptp_clock->rx_queue.lock, flags);
-> +	skb_queue_walk_safe(&ptp_clock->rx_queue, skb, skb_tmp) {
-> +		if (!mchp_ptp_get_sig_rx(skb, &skb_sig))
-> +			continue;
-> +
-> +		if (memcmp(&skb_sig, &rx_ts->seq_id, sizeof(rx_ts->seq_id)))
-> +			continue;
+> p =malloc(1g);
+> write p to zero
+> madvise_pageout
+> read p;
+> 
+> Previously, there was 1GB of swap-in and swap-out activity reported, but
+> now nothing is shown.
+> 
+> I don't mean to suggest that there's a bug in the zeromap code; rather,
+> having this counter would help clear up any confusion.
+> 
+> I didn't realize Joshua was handling it. Is he still planning to? If
+> so, I can leave it
+> with Joshua if that was the plan :-)
+> 
+>>
+>>> Cc: Usama Arif <usamaarif642@gmail.com>
+>>> Cc: Chengming Zhou <chengming.zhou@linux.dev>
+>>> Cc: Yosry Ahmed <yosryahmed@google.com>
+>>> Cc: Nhat Pham <nphamcs@gmail.com>
+>>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>>> Cc: David Hildenbrand <david@redhat.com>
+>>> Cc: Hugh Dickins <hughd@google.com>
+>>> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+>>> Cc: Shakeel Butt <shakeel.butt@linux.dev>
+>>> Cc: Andi Kleen <ak@linux.intel.com>
+>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>> Cc: Chris Li <chrisl@kernel.org>
+>>> Cc: "Huang, Ying" <ying.huang@intel.com>
+>>> Cc: Kairui Song <kasong@tencent.com>
+>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+>>> ---
+>>>   -v2:
+>>>   * add separate counters rather than using pswpin/out; thanks
+>>>   for the comments from Usama, David, Yosry and Nhat;
+>>>   * Usama also suggested a new counter like swapped_zero, I
+>>>   prefer that one be separated as an enhancement patch not
+>>>   a hotfix. will probably handle it later on.
+>>>
+>> I dont think either of them would be a hotfix.
+> 
+> As mentioned above, this isn't about fixing a bug; it's simply to ensure
+> that swap-related metrics don't disappear.
 
-why do you use memcmp() instead of simple u16 comparison? It will be
-optimized anyway, but still, why? The same question goes to other
-comparisons futher in the file.
+Documentation/process/submitting-patches.rst:
 
-> +
-> +		__skb_unlink(skb, &ptp_clock->rx_queue);
-> +
-> +		rc = true;
-> +		break;
-> +	}
-> +	spin_unlock_irqrestore(&ptp_clock->rx_queue.lock, flags);
-> +
-> +	if (rc) {
-> +		shhwtstamps = skb_hwtstamps(skb);
-> +		memset(shhwtstamps, 0, sizeof(*shhwtstamps));
+"A Fixes: tag indicates that the patch fixes an issue in a previous 
+commit. It is used to make it easy to determine where a bug originated, 
+which can help review a bug fix."
 
-I don't think this memset is needed. hwtstamp is fully overwritten on
-on the next line.
+If there is no BUG, I'm afraid you are abusing that tag.
 
-> +		shhwtstamps->hwtstamp = ktime_set(rx_ts->seconds, rx_ts->nsec);
-> +		netif_rx(skb);
-> +	}
-> +
-> +	return rc;
-> +}
-> +
-> +static void mchp_ptp_match_rx_ts(struct mchp_ptp_clock *ptp_clock,
-> +				 struct mchp_ptp_rx_ts *rx_ts)
-> +{
-> +	unsigned long flags;
-> +
-> +	/* If we failed to match the skb add it to the queue for when
-> +	 * the frame will come
-> +	 */
-> +	if (!mchp_ptp_match_skb(ptp_clock, rx_ts)) {
-> +		spin_lock_irqsave(&ptp_clock->rx_ts_lock, flags);
-> +		list_add(&rx_ts->list, &ptp_clock->rx_ts_list);
-> +		spin_unlock_irqrestore(&ptp_clock->rx_ts_lock, flags);
-> +	} else {
-> +		kfree(rx_ts);
-> +	}
-> +}
-> +
-> +static void mchp_ptp_match_rx_skb(struct mchp_ptp_clock *ptp_clock,
-> +				  struct sk_buff *skb)
-> +{
-> +	struct skb_shared_hwtstamps *shhwtstamps;
-> +	struct mchp_ptp_rx_ts *rx_ts, *tmp;
-> +	unsigned long flags;
-> +	bool match = false;
-> +	u16 skb_sig;
-> +
-> +	if (!mchp_ptp_get_sig_rx(skb, &skb_sig))
-> +		return;
-> +
-> +	/* Iterate over all RX timestamps and match it with the received skbs */
-> +	spin_lock_irqsave(&ptp_clock->rx_ts_lock, flags);
-> +	list_for_each_entry_safe(rx_ts, tmp, &ptp_clock->rx_ts_list, list) {
-> +		/* Check if we found the signature we were looking for. */
-> +		if (memcmp(&skb_sig, &rx_ts->seq_id, sizeof(rx_ts->seq_id)))
-> +			continue;
-> +
-> +		shhwtstamps = skb_hwtstamps(skb);
-> +		memset(shhwtstamps, 0, sizeof(*shhwtstamps));
+Also, I don't really understand the problem? We added an optimization, 
+great. Who will be complaining about that?
 
-and again - memset is useless here
+Above you write "it could be confusing to determine where swap-in and 
+swap-out have occurred" -- when is that confusion supposed to happen in 
+practice? How will the confused individuals know that they must take a 
+look at that new metric, even if it is in place?
 
-> +		shhwtstamps->hwtstamp = ktime_set(rx_ts->seconds,
-> +						  rx_ts->nsec);
-> +		netif_rx(skb);
-> +
-> +		list_del(&rx_ts->list);
-> +		kfree(rx_ts);
+I think we should just add the new stats and call it a day.
 
-kfree can be done outside of spinlock as well as all other timestamp
-manipulations to reduce spinlock scope.
-> +
-> +		match = true;
-> +		break;
-> +	}
-> +	spin_unlock_irqrestore(&ptp_clock->rx_ts_lock, flags);
+-- 
+Cheers,
 
-it's a good idea to think about RCU implementaton of the ts list as this
-spinlock may become pretty hot on high packet rate.
+David / dhildenb
 
-> +
-> +	if (!match)
-> +		skb_queue_tail(&ptp_clock->rx_queue, skb);
-> +}
-> +
-> +static bool mchp_ptp_rxtstamp(struct mii_timestamper *mii_ts,
-> +			      struct sk_buff *skb, int type)
-> +{
-> +	struct mchp_ptp_clock *ptp_clock = container_of(mii_ts,
-> +							struct mchp_ptp_clock,
-> +							mii_ts);
-> +
-> +	if (ptp_clock->rx_filter == HWTSTAMP_FILTER_NONE ||
-> +	    type == PTP_CLASS_NONE)
-> +		return false;
-> +
-> +	if ((type & ptp_clock->version) == 0 || (type & ptp_clock->layer) == 0)
-> +		return false;
-> +
-> +	/* Here if match occurs skb is sent to application, If not skb is added
-> +	 * to queue and sending skb to application will get handled when
-> +	 * interrupt occurs i.e., it get handles in interrupt handler. By
-> +	 * any means skb will reach the application so we should not return
-> +	 * false here if skb doesn't matches.
-> +	 */
-> +	mchp_ptp_match_rx_skb(ptp_clock, skb);
-> +
-> +	return true;
-> +}
-> +
-> +static int mchp_ptp_hwtstamp(struct mii_timestamper *mii_ts,
-> +			     struct kernel_hwtstamp_config *config,
-> +			     struct netlink_ext_ack *extack)
-> +{
-> +	struct mchp_ptp_clock *ptp_clock =
-> +				container_of(mii_ts, struct mchp_ptp_clock,
-> +					     mii_ts);
-> +	struct phy_device *phydev = ptp_clock->phydev;
-> +	struct mchp_ptp_rx_ts *rx_ts, *tmp;
-> +	int txcfg = 0, rxcfg = 0;
-> +	int rc;
-> +
-> +	ptp_clock->hwts_tx_type = config->tx_type;
-> +	ptp_clock->rx_filter = config->rx_filter;
-> +
-> +	switch (config->rx_filter) {
-> +	case HWTSTAMP_FILTER_NONE:
-> +		ptp_clock->layer = 0;
-> +		ptp_clock->version = 0;
-> +		break;
-> +	case HWTSTAMP_FILTER_PTP_V2_L4_EVENT:
-> +	case HWTSTAMP_FILTER_PTP_V2_L4_SYNC:
-> +	case HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ:
-> +		ptp_clock->layer = PTP_CLASS_L4;
-> +		ptp_clock->version = PTP_CLASS_V2;
-> +		break;
-> +	case HWTSTAMP_FILTER_PTP_V2_L2_EVENT:
-> +	case HWTSTAMP_FILTER_PTP_V2_L2_SYNC:
-> +	case HWTSTAMP_FILTER_PTP_V2_L2_DELAY_REQ:
-> +		ptp_clock->layer = PTP_CLASS_L2;
-> +		ptp_clock->version = PTP_CLASS_V2;
-> +		break;
-> +	case HWTSTAMP_FILTER_PTP_V2_EVENT:
-> +	case HWTSTAMP_FILTER_PTP_V2_SYNC:
-> +	case HWTSTAMP_FILTER_PTP_V2_DELAY_REQ:
-> +		ptp_clock->layer = PTP_CLASS_L4 | PTP_CLASS_L2;
-> +		ptp_clock->version = PTP_CLASS_V2;
-> +		break;
-> +	default:
-> +		return -ERANGE;
-> +	}
-> +
-> +	/* Setup parsing of the frames and enable the timestamping for ptp
-> +	 * frames
-> +	 */
-> +	if (ptp_clock->layer & PTP_CLASS_L2) {
-> +		rxcfg = MCHP_PTP_PARSE_CONFIG_LAYER2_EN;
-> +		txcfg = MCHP_PTP_PARSE_CONFIG_LAYER2_EN;
-> +	}
-> +	if (ptp_clock->layer & PTP_CLASS_L4) {
-> +		rxcfg |= MCHP_PTP_PARSE_CONFIG_IPV4_EN |
-> +			 MCHP_PTP_PARSE_CONFIG_IPV6_EN;
-> +		txcfg |= MCHP_PTP_PARSE_CONFIG_IPV4_EN |
-> +			 MCHP_PTP_PARSE_CONFIG_IPV6_EN;
-> +	}
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_RX_PARSE_CONFIG(BASE_PORT(ptp_clock)),
-> +			   rxcfg);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_TX_PARSE_CONFIG(BASE_PORT(ptp_clock)),
-> +			   txcfg);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_RX_TIMESTAMP_EN(BASE_PORT(ptp_clock)),
-> +			   MCHP_PTP_TIMESTAMP_EN_ALL);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_TX_TIMESTAMP_EN(BASE_PORT(ptp_clock)),
-> +			   MCHP_PTP_TIMESTAMP_EN_ALL);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	if (ptp_clock->hwts_tx_type == HWTSTAMP_TX_ONESTEP_SYNC)
-> +		/* Enable / disable of the TX timestamp in the SYNC frames */
-> +		rc = phy_modify_mmd(phydev, PTP_MMD(ptp_clock),
-> +				    MCHP_PTP_TX_MOD(BASE_PORT(ptp_clock)),
-> +				    MCHP_PTP_TX_MOD_PTP_SYNC_TS_INSERT,
-> +				    MCHP_PTP_TX_MOD_PTP_SYNC_TS_INSERT);
-> +	else
-> +		rc = phy_modify_mmd(phydev, PTP_MMD(ptp_clock),
-> +				    MCHP_PTP_TX_MOD(BASE_PORT(ptp_clock)),
-> +				    MCHP_PTP_TX_MOD_PTP_SYNC_TS_INSERT,
-> +				    (u16)~MCHP_PTP_TX_MOD_PTP_SYNC_TS_INSERT);
-> +
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	/* Now enable the timestamping interrupts */
-> +	rc = mchp_ptp_config_intr(ptp_clock,
-> +				  config->rx_filter != HWTSTAMP_FILTER_NONE);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	/* In case of multiple starts and stops, these needs to be cleared */
-> +	list_for_each_entry_safe(rx_ts, tmp, &ptp_clock->rx_ts_list, list) {
-> +		list_del(&rx_ts->list);
-> +		kfree(rx_ts);
-> +	}
-
-I think this list clearing should be done under spinlock too.
-
-> +	skb_queue_purge(&ptp_clock->rx_queue);
-> +	skb_queue_purge(&ptp_clock->tx_queue);
-> +
-> +	rc = mchp_ptp_flush_fifo(ptp_clock, PTP_INGRESS_FIFO);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	rc = mchp_ptp_flush_fifo(ptp_clock, PTP_EGRESS_FIFO);
-> +
-> +	return rc < 0 ? rc : 0;
-> +}
-> +
-> +static int mchp_ptp_ts_info(struct mii_timestamper *mii_ts,
-> +			    struct kernel_ethtool_ts_info *info)
-> +{
-> +	struct mchp_ptp_clock *ptp_clock = container_of(mii_ts,
-> +							struct mchp_ptp_clock,
-> +							mii_ts);
-> +
-> +	info->phc_index =
-> +		ptp_clock->ptp_clock ? ptp_clock_index(ptp_clock->ptp_clock) : -1;
-> +	if (info->phc_index == -1)
-> +		return 0;
-> +
-> +	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
-> +				SOF_TIMESTAMPING_RX_HARDWARE |
-> +				SOF_TIMESTAMPING_RAW_HARDWARE;
-> +
-> +	info->tx_types = BIT(HWTSTAMP_TX_OFF) | BIT(HWTSTAMP_TX_ON) |
-> +			 BIT(HWTSTAMP_TX_ONESTEP_SYNC);
-> +
-> +	info->rx_filters = BIT(HWTSTAMP_FILTER_NONE) |
-> +			   BIT(HWTSTAMP_FILTER_PTP_V2_L4_EVENT) |
-> +			   BIT(HWTSTAMP_FILTER_PTP_V2_L2_EVENT) |
-> +			   BIT(HWTSTAMP_FILTER_PTP_V2_EVENT);
-> +
-> +	return 0;
-> +}
-> +
-> +static int mchp_ptp_ltc_adjtime(struct ptp_clock_info *info, s64 delta)
-> +{
-> +	struct mchp_ptp_clock *ptp_clock = container_of(info,
-> +							struct mchp_ptp_clock,
-> +							caps);
-> +	struct phy_device *phydev = ptp_clock->phydev;
-> +	struct timespec64 ts;
-> +	bool add = true;
-> +	int rc = 0;
-> +	u32 nsec;
-> +	s32 sec;
-> +
-> +	/* The HW allows up to 15 sec to adjust the time, but here we limit to
-> +	 * 10 sec the adjustment. The reason is, in case the adjustment is 14
-> +	 * sec and 999999999 nsec, then we add 8ns to compensate the actual
-> +	 * increment so the value can be bigger than 15 sec. Therefore limit the
-> +	 * possible adjustments so we will not have these corner cases
-> +	 */
-> +	if (delta > 10000000000LL || delta < -10000000000LL) {
-> +		/* The timeadjustment is too big, so fall back using set time */
-> +		u64 now;
-> +
-> +		info->gettime64(info, &ts);
-> +
-> +		now = ktime_to_ns(timespec64_to_ktime(ts));
-> +		ts = ns_to_timespec64(now + delta);
-> +
-> +		info->settime64(info, &ts);
-> +		return 0;
-> +	}
-> +	sec = div_u64_rem(abs(delta), NSEC_PER_SEC, &nsec);
-> +	if (delta < 0 && nsec != 0) {
-> +		/* It is not allowed to adjust low the nsec part, therefore
-> +		 * subtract more from second part and add to nanosecond such
-> +		 * that would roll over, so the second part will increase
-> +		 */
-> +		sec--;
-> +		nsec = NSEC_PER_SEC - nsec;
-> +	}
-> +
-> +	/* Calculate the adjustments and the direction */
-> +	if (delta < 0)
-> +		add = false;
-> +
-> +	if (nsec > 0) {
-> +		/* add 8 ns to cover the likely normal increment */
-> +		nsec += 8;
-> +
-> +		if (nsec >= NSEC_PER_SEC) {
-> +			/* carry into seconds */
-> +			sec++;
-> +			nsec -= NSEC_PER_SEC;
-> +		}
-> +	}
-> +
-> +	mutex_lock(&ptp_clock->ptp_lock);
-> +	if (sec) {
-> +		sec = abs(sec);
-> +
-> +		rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +				   MCHP_PTP_LTC_STEP_ADJ_LO(BASE_CLK(ptp_clock)),
-> +				   sec);
-> +		if (rc < 0)
-> +			goto out_unlock;
-> +		rc = phy_set_bits_mmd(phydev, PTP_MMD(ptp_clock),
-> +				      MCHP_PTP_LTC_STEP_ADJ_HI(BASE_CLK(ptp_clock)),
-> +				      ((add ? MCHP_PTP_LTC_STEP_ADJ_HI_DIR :
-> +					0) | ((sec >> 16) & GENMASK(13, 0))));
-> +		if (rc < 0)
-> +			goto out_unlock;
-> +		rc = phy_set_bits_mmd(phydev, PTP_MMD(ptp_clock),
-> +				      MCHP_PTP_CMD_CTL(BASE_CLK(ptp_clock)),
-> +				      MCHP_PTP_CMD_CTL_LTC_STEP_SEC);
-> +		if (rc < 0)
-> +			goto out_unlock;
-> +	}
-> +
-> +	if (nsec) {
-> +		rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +				   MCHP_PTP_LTC_STEP_ADJ_LO(BASE_CLK(ptp_clock)),
-> +				   nsec & GENMASK(15, 0));
-> +		if (rc < 0)
-> +			goto out_unlock;
-> +		rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +				   MCHP_PTP_LTC_STEP_ADJ_HI(BASE_CLK(ptp_clock)),
-> +				   (nsec >> 16) & GENMASK(13, 0));
-> +		if (rc < 0)
-> +			goto out_unlock;
-> +		rc = phy_set_bits_mmd(phydev, PTP_MMD(ptp_clock),
-> +				      MCHP_PTP_CMD_CTL(BASE_CLK(ptp_clock)),
-> +				      MCHP_PTP_CMD_CTL_LTC_STEP_NSEC);
-> +	}
-> +
-> +out_unlock:
-> +	mutex_unlock(&ptp_clock->ptp_lock);
-> +
-> +	return rc;
-> +}
-> +
-> +static int mchp_ptp_ltc_adjfine(struct ptp_clock_info *info, long scaled_ppm)
-> +{
-> +	struct mchp_ptp_clock *ptp_clock = container_of(info,
-> +							struct mchp_ptp_clock,
-> +							caps);
-> +	struct phy_device *phydev = ptp_clock->phydev;
-> +	u16 rate_lo, rate_hi;
-> +	bool faster = true;
-> +	u32 rate;
-> +	int rc;
-> +
-> +	if (!scaled_ppm)
-> +		return 0;
-> +
-> +	if (scaled_ppm < 0) {
-> +		scaled_ppm = -scaled_ppm;
-> +		faster = false;
-> +	}
-> +
-> +	rate = MCHP_PTP_1PPM_FORMAT * (upper_16_bits(scaled_ppm));
-> +	rate += (MCHP_PTP_1PPM_FORMAT * (lower_16_bits(scaled_ppm))) >> 16;
-> +
-> +	rate_lo = rate & GENMASK(15, 0);
-> +	rate_hi = (rate >> 16) & GENMASK(13, 0);
-> +
-> +	if (faster)
-> +		rate_hi |= MCHP_PTP_LTC_RATE_ADJ_HI_DIR;
-> +
-> +	mutex_lock(&ptp_clock->ptp_lock);
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_LTC_RATE_ADJ_HI(BASE_CLK(ptp_clock)),
-> +			   rate_hi);
-> +	if (rc < 0)
-> +		goto error;
-> +
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_LTC_RATE_ADJ_LO(BASE_CLK(ptp_clock)),
-> +			   rate_lo);
-> +	if (rc > 0)
-> +		rc = 0;
-> +error:
-> +	mutex_unlock(&ptp_clock->ptp_lock);
-> +
-> +	return rc;
-> +}
-> +
-> +static int mchp_ptp_ltc_gettime64(struct ptp_clock_info *info,
-> +				  struct timespec64 *ts)
-> +{
-> +	struct mchp_ptp_clock *ptp_clock = container_of(info,
-> +							struct mchp_ptp_clock,
-> +							caps);
-> +	struct phy_device *phydev = ptp_clock->phydev;
-> +	time64_t secs;
-> +	int rc = 0;
-> +	s64 nsecs;
-> +
-> +	mutex_lock(&ptp_clock->ptp_lock);
-> +	/* Set read bit to 1 to save current values of 1588 local time counter
-> +	 * into PTP LTC seconds and nanoseconds registers.
-> +	 */
-> +	rc = phy_set_bits_mmd(phydev, PTP_MMD(ptp_clock),
-> +			      MCHP_PTP_CMD_CTL(BASE_CLK(ptp_clock)),
-> +			      MCHP_PTP_CMD_CTL_CLOCK_READ);
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +
-> +	/* Get LTC clock values */
-> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			  MCHP_PTP_LTC_READ_SEC_HI(BASE_CLK(ptp_clock)));
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +	secs = rc << 16;
-> +
-> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			  MCHP_PTP_LTC_READ_SEC_MID(BASE_CLK(ptp_clock)));
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +	secs |= rc;
-> +	secs <<= 16;
-> +
-> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			  MCHP_PTP_LTC_READ_SEC_LO(BASE_CLK(ptp_clock)));
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +	secs |= rc;
-> +
-> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			  MCHP_PTP_LTC_READ_NS_HI(BASE_CLK(ptp_clock)));
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +	nsecs = (rc & GENMASK(13, 0));
-> +	nsecs <<= 16;
-> +
-> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			  MCHP_PTP_LTC_READ_NS_LO(BASE_CLK(ptp_clock)));
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +	nsecs |= rc;
-> +
-> +	set_normalized_timespec64(ts, secs, nsecs);
-> +
-> +	if (rc > 0)
-> +		rc = 0;
-> +out_unlock:
-> +	mutex_unlock(&ptp_clock->ptp_lock);
-
-That's interesting, but could the overwrapping happen to seconds counter
-while reading nanoseconds? Usually high bits reading is wrapped into 
-while() loop to advoid such cases.
-
-> +
-> +	return rc;
-> +}
-> +
-> +static int mchp_ptp_ltc_settime64(struct ptp_clock_info *info,
-> +				  const struct timespec64 *ts)
-> +{
-> +	struct mchp_ptp_clock *ptp_clock = container_of(info,
-> +							struct mchp_ptp_clock,
-> +							caps);
-> +	struct phy_device *phydev = ptp_clock->phydev;
-> +	int rc;
-> +
-> +	mutex_lock(&ptp_clock->ptp_lock);
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_LTC_SEC_LO(BASE_CLK(ptp_clock)),
-> +			   lower_16_bits(ts->tv_sec));
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_LTC_SEC_MID(BASE_CLK(ptp_clock)),
-> +			   upper_16_bits(ts->tv_sec));
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_LTC_SEC_HI(BASE_CLK(ptp_clock)),
-> +			   upper_32_bits(ts->tv_sec) & GENMASK(15, 0));
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_LTC_NS_LO(BASE_CLK(ptp_clock)),
-> +			   lower_16_bits(ts->tv_nsec));
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +
-> +	rc = phy_write_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_LTC_NS_HI(BASE_CLK(ptp_clock)),
-> +			   upper_16_bits(ts->tv_nsec) & GENMASK(13, 0));
-> +	if (rc < 0)
-> +		goto out_unlock;
-> +
-> +	/* Set load bit to 1 to write PTP LTC seconds and nanoseconds
-> +	 * registers to 1588 local time counter.
-> +	 */
-> +	rc = phy_set_bits_mmd(phydev, PTP_MMD(ptp_clock),
-> +			      MCHP_PTP_CMD_CTL(BASE_CLK(ptp_clock)),
-> +			      MCHP_PTP_CMD_CTL_CLOCK_LOAD);
-> +	if (rc > 0)
-> +		rc = 0;
-> +out_unlock:
-> +	mutex_unlock(&ptp_clock->ptp_lock);
-> +
-> +	return rc;
-> +}
-> +
-> +static bool mchp_ptp_get_sig_tx(struct sk_buff *skb, u16 *sig)
-> +{
-> +	struct ptp_header *ptp_header;
-> +	int type;
-> +
-> +	type = ptp_classify_raw(skb);
-> +	if (type == PTP_CLASS_NONE)
-> +		return false;
-> +
-> +	ptp_header = ptp_parse_header(skb, type);
-> +	if (!ptp_header)
-> +		return false;
-> +
-> +	*sig = htons(ptp_header->sequence_id);
-> +
-> +	return true;
-> +}
-> +
-> +static void mchp_ptp_match_tx_skb(struct mchp_ptp_clock *ptp_clock,
-> +				  u32 seconds, u32 nsec, u16 seq_id)
-> +{
-> +	struct skb_shared_hwtstamps shhwtstamps;
-> +	struct sk_buff *skb, *skb_tmp;
-> +	unsigned long flags;
-> +	bool rc = false;
-> +	u16 skb_sig;
-> +
-> +	spin_lock_irqsave(&ptp_clock->tx_queue.lock, flags);
-> +	skb_queue_walk_safe(&ptp_clock->tx_queue, skb, skb_tmp) {
-> +		if (!mchp_ptp_get_sig_tx(skb, &skb_sig))
-> +			continue;
-> +
-> +		if (memcmp(&skb_sig, &seq_id, sizeof(seq_id)))
-> +			continue;
-> +
-> +		__skb_unlink(skb, &ptp_clock->tx_queue);
-> +		rc = true;
-> +		break;
-> +	}
-> +	spin_unlock_irqrestore(&ptp_clock->tx_queue.lock, flags);
-> +
-> +	if (rc) {
-> +		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
-> +		shhwtstamps.hwtstamp = ktime_set(seconds, nsec);
-> +		skb_complete_tx_timestamp(skb, &shhwtstamps);
-> +	}
-> +}
-> +
-> +static struct mchp_ptp_rx_ts *mchp_ptp_get_rx_ts(struct mchp_ptp_clock *ptp_clock)
-> +{
-> +	struct phy_device *phydev = ptp_clock->phydev;
-> +	struct mchp_ptp_rx_ts *rx_ts = NULL;
-> +	u32 sec, nsec;
-> +	u16 seq;
-> +	int rc;
-> +
-> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			  MCHP_PTP_RX_INGRESS_NS_HI(BASE_PORT(ptp_clock)));
-> +	if (rc < 0)
-> +		goto error;
-> +	if (!(rc & MCHP_PTP_RX_INGRESS_NS_HI_TS_VALID)) {
-> +		phydev_err(phydev, "RX Timestamp is not valid!\n");
-> +		goto error;
-> +	}
-> +	nsec = (rc & GENMASK(13, 0)) << 16;
-> +
-> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			  MCHP_PTP_RX_INGRESS_NS_LO(BASE_PORT(ptp_clock)));
-> +	if (rc < 0)
-> +		goto error;
-> +	nsec |= rc;
-> +
-> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			  MCHP_PTP_RX_INGRESS_SEC_HI(BASE_PORT(ptp_clock)));
-> +	if (rc < 0)
-> +		goto error;
-> +	sec = rc << 16;
-> +
-> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			  MCHP_PTP_RX_INGRESS_SEC_LO(BASE_PORT(ptp_clock)));
-> +	if (rc < 0)
-> +		goto error;
-> +	sec |= rc;
-> +
-> +	seq = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +			   MCHP_PTP_RX_MSG_HEADER2(BASE_PORT(ptp_clock)));
-> +	if (seq < 0)
-> +		goto error;
-> +
-> +	rx_ts = kzalloc(sizeof(*rx_ts), GFP_KERNEL);
-
-why zero out allocation? all fields of this structure are rewritten
-unconditionally later (list_add happens in mchp_ptp_match_rx_ts) ...
-
-> +	if (!rx_ts)
-> +		return NULL;
-> +
-> +	rx_ts->seconds = sec;
-> +	rx_ts->nsec = nsec;
-> +	rx_ts->seq_id = seq;
-> +
-> +error:
-> +	return rx_ts;
-> +}
-> +
-> +static void mchp_ptp_process_rx_ts(struct mchp_ptp_clock *ptp_clock)
-> +{
-> +	struct phy_device *phydev = ptp_clock->phydev;
-> +	int caps;
-> +
-> +	do {
-> +		struct mchp_ptp_rx_ts *rx_ts;
-> +
-> +		rx_ts = mchp_ptp_get_rx_ts(ptp_clock);
-> +		if (rx_ts)
-> +			mchp_ptp_match_rx_ts(ptp_clock, rx_ts);
-> +
-> +		caps = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
-> +				    MCHP_PTP_CAP_INFO(BASE_PORT(ptp_clock)));
-> +		if (caps < 0)
-> +			return;
-> +	} while (MCHP_PTP_RX_TS_CNT(caps) > 0);
-> +}
-> +
-
-[ ... ]
 
