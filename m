@@ -1,171 +1,121 @@
-Return-Path: <linux-kernel+bounces-394740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B679BB39D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:38:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D295F9BB35D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:32:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98FD5B2A267
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1311F23107
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D9E1BD00A;
-	Mon,  4 Nov 2024 11:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5501BD508;
+	Mon,  4 Nov 2024 11:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="zvb5TYGP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WjWFaF3h"
-Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBCU5f19"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C20A1AF0A6;
-	Mon,  4 Nov 2024 11:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6771B21AF;
+	Mon,  4 Nov 2024 11:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719611; cv=none; b=tR/azD6pMFRoyXANkdfINl5L3MmGEFyGxc/9gGoDAqkdlnG6WXKKGUwyOAsYdbh9uZVltj8mVR3ulXuBhUlVUvx45Mt0ls61iO5+gXR5JeTBnBWJ+1p6m8UOv2OhJcoKZs90aLh7lNkKW9a4py6pY6/0BuWHAlgJbYJNO9xfWtg=
+	t=1730719660; cv=none; b=VDEkcNAKIJ858PJWbxwjqWNI155wnnokGnxd/Qpt9GrA0w3rB1FZNn0V8dp4lJPJaiTv//YbAuu9xSVuLSAe94ruQjjUPXSusdwTwYX62CxYNKZw64Qzg2sQCtAHGZTIOohPnyKSJOHlaURSZIrgdW1fc+xaiGC4MP9WWMdV6sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719611; c=relaxed/simple;
-	bh=kAYEPRitsOzAY6hbeb25oEHVLMhVT9X/0ELkJOdJuLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iRadixvyHVI6BvmQVeG88WG+ui2OAuuQ9pJZvL8rFQ5cOpUXvGsmk93BxI+BAaxgODz7PilGkoP6ykv9PjzS+bF9fCtnc4EFhwn9hT0k4huilEeSWlqAi+MCYHrAtMtpwY28dyLpK87hmUXxOxJ+KYQuSLJwa9EkBdhB5GXvOlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=zvb5TYGP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WjWFaF3h; arc=none smtp.client-ip=202.12.124.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailflow.stl.internal (Postfix) with ESMTP id DE0471D401C1;
-	Mon,  4 Nov 2024 06:26:48 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Mon, 04 Nov 2024 06:26:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730719608; x=
-	1730723208; bh=Vyghno5J9c7YrXB31VGHCX520h4RHsgzGudOGYt30G8=; b=z
-	vb5TYGPMLV7KHhDY/fNiPfYjDm234CydkuuYe+gzy9kAN3DyzRqamRcM+CyGDBQh
-	cMLM05BQ6ZVNpegl+664Ll3oKyTHlT5mvEnia3M7nGCY6TyjxcR9dLizxgScTxYR
-	zUklS4CjbfwOfifqMHhMNRixQT5QgTK1Ay3GtladkaLH7WauRk21+txvN8Yk4VSA
-	4Y5RyPzRqxi3289LEYb26buDRU5HFDW/eU2snhTfa2nCMlO8G6PhXmWp/gBWoz6S
-	HU3ZHF8JOwLkmm2xazFIo2AaSPOVB/n2IBxSsYqOQkMAv/irvJOSt3OzWZQ3uszm
-	eq/Rw/1KizkKaz9DUB1ng==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730719608; x=1730723208; bh=Vyghno5J9c7YrXB31VGHCX520h4RHsgzGud
-	OGYt30G8=; b=WjWFaF3h55/o8OHp34oaaJVjdmttdYt7/wuWi1eA4zeBcBiFbjG
-	1EYkJVBb1Qt3Ysox0T+qN+k0mg/GoQ9Jrx8kKHvJp8p1hqnHs2yG8aKp10FWZKzI
-	+TsqGhylWaROH2zdC800tTIVXJnqvz2Wu02BGT5zM9pN8VrGp+KoLesSCkjMHLFr
-	9AYBbmIN2vWirEypT8lS10IdUqWGvKRuJeCNez6Ojc14yXHqu4u35IhJe0sS29MM
-	DxAHUbBdSzACXenzSZDg1va10+OL6lAWA2PMVvv8nrk6xP92seHywLmtD0fsz0us
-	87oH7T6IoRaoa6yUzHgzgZ0cik7kynYQ0fA==
-X-ME-Sender: <xms:eK8oZ6TGrv3g1sLJ5lGlXNJA69Y5AgLgzg9W3K4-CeLAYB5SqODpfA>
-    <xme:eK8oZ_wHCKmFhlOg5rp7uROdtMDIPtqqKwl2OroysEw_yOA73PCBgV0lK1keCygha
-    VSKeIhrDcSU_ENVCMc>
-X-ME-Received: <xmr:eK8oZ30mSAsGtHcvqKengwmWFANAyYGxkJGtdtoVWo-LRUmYmoF4OHb2WzVt>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedgvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
-    ucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrg
-    hilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfek
-    geetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggp
-    rhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnthhonh
-    hiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhg
-    lhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhh
-    uhhnthgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdp
-    rhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehnvghtuggvvh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:eK8oZ2AdbMYuI8BHolH1pD55qvHE9OZFHExO-_uu_BYlgW8KSYzP4A>
-    <xmx:eK8oZziGMC929EjOnaeC630j8U9QTLgU5Vpnu8_cd21gOXEXPlG3EA>
-    <xmx:eK8oZyoSxny7nP6a8Ah6xxateTxdGpb7DgMOmvcHUNWcs0W8h1irSA>
-    <xmx:eK8oZ2gJ_bG84sLYvdPLicpD7IVPlayDPV_u20O9C17siB0a7tIobw>
-    <xmx:eK8oZ0Wo8fVjCfBj5M0j3_irYxf91wQjIF3P5wKrN2MJ0L5PoREuhfau>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 4 Nov 2024 06:26:48 -0500 (EST)
-Date: Mon, 4 Nov 2024 12:26:46 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v11 14/23] ovpn: implement peer lookup logic
-Message-ID: <ZyivdrpZhx4WpMbn@hog>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-14-de4698c73a25@openvpn.net>
+	s=arc-20240116; t=1730719660; c=relaxed/simple;
+	bh=Q0oHyC5HFwQtHnr3tahD/Xozp4rdR/kHqgtAU1qaQwo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sTULC/dcR7HonxT+FtvLyJhfBarIHXckrv8I2HQFgPsTAmwN+J6UhgplrDGp9YsU2ip+sSHbcUdwlqp5AJDAesn/7rKrg38WjGyydGzlBSZH4qiCHDTFsscIGNpOnknaKD6GQC9Ywbh9Ezxgjy9EwWYC0OvsQlQTKOZ09kAbVK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBCU5f19; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE546C4CED1;
+	Mon,  4 Nov 2024 11:27:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730719659;
+	bh=Q0oHyC5HFwQtHnr3tahD/Xozp4rdR/kHqgtAU1qaQwo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kBCU5f19ECTzy9hRq7MsIYZ0NJ5jvwWoDRQTrjY88d3uIHkQD3/ut4jBUcLFOKHLq
+	 P+7+G5UzPPG0pTZj6e/ofteRdgCepmDKEeKve/6rEgmdK64ulCrvcfKhSqnoJoNpUW
+	 kbkNlycqs9IADd3hC8BGXajQsaB9LxIt9U3NgEXcoMZHHD4YdRNHdDSnWKMac7DAcP
+	 jm0eAnMhxI6Dx4vqK4N/v7mIzPR6fqR+2XsGDywF9jh6nWzOa980V6AFt4RChT9hCk
+	 xNeXlHSIlIYBrlM3AYxfSdxdR8XCwlliFlIkH7j2nfevLYtZnCigkcrqSkpnO7BtOD
+	 Od4oBqnfeWu/A==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so5251923e87.0;
+        Mon, 04 Nov 2024 03:27:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW4oTvSMZ1dbujtzc/MUBc03JiLoZ8+uYcEgqnG2MH2kqiLv6XEwH7TiZUk9C4U2u4a4CghuKk5eRfqzG1c@vger.kernel.org, AJvYcCWUc5yMctT/lTxpPXLYupstr3jZP1u54Y0aK1VIYTP7nA9rWmysKtb2uPuvTz03nyN8RiJgss9ahDBqHp1QkrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzudnN87zFGf1VOZuvToo6CGFvcC2m0Z95E0bgqj0RDsbT6LY+y
+	pRYvIdx5X6nivuZ5f3JWj4u0wCGqEJJBM5muDsPdsLChHQ5lzq36npkTpLOPlzJmw8IGDREQbhH
+	f1cQ/hPTVBGX0U/HrB1tlob7+8Eo=
+X-Google-Smtp-Source: AGHT+IFdvw0jqvwZDocTHlobM+8JX4jnwc2ccfnmUN8Bw+DRPfsZrTSFKld5E8msl1vzuiUzbFwWqAbSrpxMn8zwp1M=
+X-Received: by 2002:a05:6512:15a5:b0:539:f7de:df84 with SMTP id
+ 2adb3069b0e04-53c79e15806mr7101954e87.10.1730719658212; Mon, 04 Nov 2024
+ 03:27:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241029-b4-ovpn-v11-14-de4698c73a25@openvpn.net>
+References: <20241102152226.2593598-1-jarkko@kernel.org> <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
+ <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com> <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
+In-Reply-To: <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 4 Nov 2024 12:27:26 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGd5KAXiFr3rEq3cQK=_970b=eRT4X6YKVSj2PhN6ACrw@mail.gmail.com>
+Message-ID: <CAMj1kXGd5KAXiFr3rEq3cQK=_970b=eRT4X6YKVSj2PhN6ACrw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: "Daniel P. Smith" <dpsmith@apertussolutions.com>, x86@kernel.org, 
+	Ross Philipson <ross.philipson@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-2024-10-29, 11:47:27 +0100, Antonio Quartulli wrote:
->  struct ovpn_peer *ovpn_peer_get_by_transp_addr(struct ovpn_struct *ovpn,
->  					       struct sk_buff *skb)
->  {
-> -	struct ovpn_peer *peer = NULL;
-> +	struct ovpn_peer *tmp, *peer = NULL;
->  	struct sockaddr_storage ss = { 0 };
-> +	struct hlist_nulls_head *nhead;
-> +	struct hlist_nulls_node *ntmp;
-> +	size_t sa_len;
->  
->  	if (unlikely(!ovpn_peer_skb_to_sockaddr(skb, &ss)))
->  		return NULL;
->  
->  	if (ovpn->mode == OVPN_MODE_P2P)
-> -		peer = ovpn_peer_get_by_transp_addr_p2p(ovpn, &ss);
-> +		return ovpn_peer_get_by_transp_addr_p2p(ovpn, &ss);
-> +
-> +	switch (ss.ss_family) {
-> +	case AF_INET:
-> +		sa_len = sizeof(struct sockaddr_in);
-> +		break;
-> +	case AF_INET6:
-> +		sa_len = sizeof(struct sockaddr_in6);
-> +		break;
-> +	default:
-> +		return NULL;
-> +	}
+On Mon, 4 Nov 2024 at 12:18, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+>
+> On Mon Nov 4, 2024 at 12:57 PM EET, Daniel P. Smith wrote:
+> > On 11/2/24 14:00, Jarkko Sakkinen wrote:
+> > > On Sat Nov 2, 2024 at 5:22 PM EET, Jarkko Sakkinen wrote:
+> > >> It is not really my problem but I'm also wondering how the
+> > >> initialization order is managed. What if e.g. IMA happens to
+> > >> initialize before slmodule?
+> > >
+> > > The first obvious observation from Trenchboot implementation is that it
+> > > is 9/10 times worst idea ever to have splitted root of trust. Here it
+> > > is realized by an LKM for slmodule.
+> >
+> > First, there is no conflict between IMA and slmodule. With your change
+> > to make locality switching a one shot, the only issue would be if IMA
+> > were to run first and issue a locality switch to Locality 0, thus
+> > blocking slmodule from switching to Locality 2. As for PCR usage, IMA
+> > uses the SRTM PCRs, which are completely accessible under Locality 2.
+>
+> Just pointing out a possible problem (e.g. with  TPM2_PolicyLocality).
+>
+> > Honestly, a better path forward would be to revisit the issue that is
+> > driving most of that logic existing, which is the lack of a TPM
+> > interface code in the setup kernel. As a reminder, this issue is due to
+> > the TPM maintainers position that the only TPM code in the kernel can be
+> > the mainline driver. Which, unless something has changed, is impossible
+> > to compile into the setup kernel due to its use of mainline kernel
+> > constructs not present in the setup kernel.
+>
+> I don't categorically reject adding some code to early setup. We have
+> some shared code EFI stub but you have to explain your changes
+> proeprly. Getting rejection in some early version to some approach,
+> and being still pissed about that years forward is not really way
+> to go IMHO.
+>
 
-You could get rid of that switch by having ovpn_peer_skb_to_sockaddr
-also set sa_len (or return 0/the size).
+Daniel has been nothing but courteous and patient, and you've waited
+11 revision to come up with some bikeshedding patches that don't
+materially improve anything.
 
-> +
-> +	nhead = ovpn_get_hash_head(ovpn->peers->by_transp_addr, &ss, sa_len);
-> +
-> +	rcu_read_lock();
-> +	hlist_nulls_for_each_entry_rcu(tmp, ntmp, nhead,
-> +				       hash_entry_transp_addr) {
+So commenting on Daniel's approach here is uncalled for.
 
-I think that's missing the retry in case we ended up in the wrong
-bucket due to a peer rehash?
+Can we please converge on this?
 
-> +		if (!ovpn_peer_transp_match(tmp, &ss))
-> +			continue;
-> +
-> +		if (!ovpn_peer_hold(tmp))
-> +			continue;
-> +
-> +		peer = tmp;
-> +		break;
-> +	}
-> +	rcu_read_unlock();
->  
->  	return peer;
->  }
-
--- 
-Sabrina
+Daniel - if no component can be built as a module, there should be no
+reason for the set_default_locality() hook to be exported to modules
+right? And do we even need a sysfs node to expose this information?
 
