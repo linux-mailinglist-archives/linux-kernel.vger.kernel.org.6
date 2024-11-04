@@ -1,168 +1,159 @@
-Return-Path: <linux-kernel+bounces-395185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2E39BBA06
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:18:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803EC9BBA0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:18:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00C3C282B60
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:18:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C7181F22A93
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22F61C3052;
-	Mon,  4 Nov 2024 16:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52A71C4A07;
+	Mon,  4 Nov 2024 16:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XEynCGUn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELeHiV4v"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073461C0DF3;
-	Mon,  4 Nov 2024 16:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2245F1C302B;
+	Mon,  4 Nov 2024 16:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737069; cv=none; b=tBoJSjs/WNff5UGKk0Qe1esMNYGQJTAzGMJzcdg6zCIX+SCDksILk9zrvLL6ecO6hejpuwYuyLG9hutRQGHKwFC9SwnTBLcqHiA0Aladejcs4XFoOr1jokyjDpPUhD5hHlY6lA5b4vpKG5JZDzl+uVT4B2/UF+lB4TqZYL+ySys=
+	t=1730737074; cv=none; b=R/hPJ/Vcc1lZb1VpOIsWNaTnTXUB6uawf09w3z9t18MktotYa6Cnq01fP2FkQJN6/bBa505rnKpg6B6zIQ9/zhxiWqvDLCwEhl8Hcx7XuOCZ8bJO803NZpnfy66vHAW1tyUiYDk9jQYkSCFbpAHwMJlVFXSN7MvToNlT8oWVjMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737069; c=relaxed/simple;
-	bh=s0rFQsc8Fk5VmusC9Ynn6fQiZSmTBCPyClyZxGlMnzY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tswkbrrHlznd0rTpVzU6v25fWNDOKp2i862BUuBX/vKLtMJ8yk/GNByOhLqWWlD54F4alYsrnl2pxrlbBIc+BCUp7CTHVbw5jgPYY0YPjh85k4+cQVgPTr3B0BbMUVrA2ZFB8SyEDBv3dsSndGqDXETtS77ofzWFOWfmU8RrVLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XEynCGUn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E06D1C4CED2;
-	Mon,  4 Nov 2024 16:17:46 +0000 (UTC)
+	s=arc-20240116; t=1730737074; c=relaxed/simple;
+	bh=bfAsiSNijIbn9dA6dCEoAJCNnIpUVnYgwURSK8OS4ug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQobsu5VIIO0CwXbww039kEDHa0/CXJdYHHK64Cdfdwlp+dlQuyk9aHYM5wgHRstQ5aj4N5sROgIm+YRmg5eW+oDsYexrLYOGK3RiNyX1esar8OlBdstoNlH3TaaI4uI2RaskbtNzdVYc2xssA3PRlYSObUAbcpPpDZt2M5bX+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELeHiV4v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E502C4CECE;
+	Mon,  4 Nov 2024 16:17:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730737068;
-	bh=s0rFQsc8Fk5VmusC9Ynn6fQiZSmTBCPyClyZxGlMnzY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XEynCGUnA4Y/vTns4NqC81E4gprYs/74nrDaG1zbUwn4nKGqhWFrpl35jg3IAs3pR
-	 nLoVg0vSqWwo7utrDHrkwiTfkH1rwhvcVhTvk9+hD2QAxPxVKobpqUxA1PGRp5LZZL
-	 oHzaNeIFy+4AeZfRLFYruSORzQhLWjuw23lsjBQSk5UrlB7C/FjsWK0Gmmna1qNQQC
-	 GhLG8uQafukfasJ5nY+2mO0polTH4olOliT3Yg1apI2BoBOdLENcCcXzXLKLNZ26lR
-	 w9qa7aC1NKoSIFzRANnHQIPsPpa4jsgbonChQiYJEbpVpKseH8brPkqLlJkdxliPzr
-	 g0A3jv3ZgzVsg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] perf-probe: Replace unacceptable characters when generating event name
-Date: Tue,  5 Nov 2024 01:17:44 +0900
-Message-ID:  <173073706473.2098439.14379969075482451249.stgit@mhiramat.roam.corp.google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-In-Reply-To:  <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
-References:  <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
-User-Agent: StGit/0.19
+	s=k20201202; t=1730737073;
+	bh=bfAsiSNijIbn9dA6dCEoAJCNnIpUVnYgwURSK8OS4ug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ELeHiV4vJKBVJKglPnNwM4FU9h4OgvTXusWR8lAPnMYQkdfviOs8EYxwcL7BFbdiL
+	 2RVJSf42kx/VHzzyjb4XTns0+4vRba32OT2rKvpm8SOwYAx5UdrChcvvsSZ2CEFndf
+	 daO4CLeyWE5Lbh8G7KVLF5o9n7K3VsPFRKrVV44BpsC97egsW8iREvcfqojKpnzwj1
+	 03GkPzA0xMlNzY9F/Q3KiNX+Iqyda+V0dAPhUZYMyiihT49jsH9JICKfJKpendetVR
+	 cx3TENatm5/RUWWRx9XlsjY818EJGeRDOmYYG69p1JW1AKCDsHHhDGMSFgkG2nm4P1
+	 lv2vYvcLarrcw==
+Date: Mon, 4 Nov 2024 10:17:51 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ki-Seok Jo <kiseok.jo@irondevice.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] ASoC: dt-bindings: irondevice,sma1307: Add
+ initial DT binding
+Message-ID: <20241104161751.GA320514-robh@kernel.org>
+References: <20241104-irondevice-sma1307-v3-0-4bbe79895f54@irondevice.com>
+ <20241104-irondevice-sma1307-v3-1-4bbe79895f54@irondevice.com>
+ <SL2P216MB23377A60BEC4396ADFA78A6A8C512@SL2P216MB2337.KORP216.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SL2P216MB23377A60BEC4396ADFA78A6A8C512@SL2P216MB2337.KORP216.PROD.OUTLOOK.COM>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Mon, Nov 04, 2024 at 07:33:47AM +0000, Ki-Seok Jo wrote:
+> 
 
-Replace unacceptable characters with '_' when generating event name from
-the probing function name. This is not for C program. For the C program,
-it will continue to remove suffixes.
+I don't see the rest of the series (I fetch from lore). That means your 
+threading is broken.
 
-For example.
+> This adds the schema binding for the Iron Device SMA1307 Amp
+> 
+> Signed-off-by: Kiseok Jo <kiseok.jo@irondevice.com>
+> ---
 
-$ ./perf probe -x cro3 -D \"cro3::cmd::servo::run_show\"
-p:probe_cro3/cro3_cmd_servo_run_show /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3:0x197530
+v3, but where is the revision history?
 
-$ ./perf probe -x /work/go/example/outyet/main -D 'main.(*Server).poll'
-p:probe_main/main_Server_poll /work/go/example/outyet/main:0x353040
+>  .../bindings/sound/irondevice,sma1307.yaml         | 54 ++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/irondevice,sma1307.yaml b/Documentation/devicetree/bindings/sound/irondevice,sma1307.yaml
+> new file mode 100644
+> index 000000000..0bb4ee664
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/irondevice,sma1307.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- tools/perf/util/probe-event.c |   37 ++++++++++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 7 deletions(-)
+"%YAML 1.2" goes on the 2nd line.
 
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index bcba8273204d..27698b9a8c95 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -2729,7 +2729,7 @@ int show_perf_probe_events(struct strfilter *filter)
- 
- static int get_new_event_name(char *buf, size_t len, const char *base,
- 			      struct strlist *namelist, bool ret_event,
--			      bool allow_suffix)
-+			      bool allow_suffix, bool is_C_symname)
- {
- 	int i, ret;
- 	char *p, *nbase;
-@@ -2740,10 +2740,24 @@ static int get_new_event_name(char *buf, size_t len, const char *base,
- 	if (!nbase)
- 		return -ENOMEM;
- 
--	/* Cut off the dot suffixes (e.g. .const, .isra) and version suffixes */
--	p = strpbrk(nbase, ".@");
--	if (p && p != nbase)
--		*p = '\0';
-+	if (is_C_symname) {
-+		/* Cut off the dot suffixes (e.g. .const, .isra) and version suffixes */
-+		p = strpbrk(nbase, ".@");
-+		if (p && p != nbase)
-+			*p = '\0';
-+	} else {
-+		/* Replace non-alnum with '_' */
-+		char *s, *d;
-+
-+		s = d = nbase;
-+		do {
-+			if (*s && !isalnum(*s)) {
-+				if (d != nbase && *(d - 1) != '_')
-+					*d++ = '_';
-+			} else
-+				*d++ = *s;
-+		} while (*s++);
-+	}
- 
- 	/* Try no suffix number */
- 	ret = e_snprintf(buf, len, "%s%s", nbase, ret_event ? "__return" : "");
-@@ -2832,6 +2846,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
- 				       bool allow_suffix)
- {
- 	const char *event, *group;
-+	bool is_C_symname = false;
- 	char buf[64];
- 	int ret;
- 
-@@ -2846,8 +2861,16 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
- 			(strncmp(pev->point.function, "0x", 2) != 0) &&
- 			!strisglob(pev->point.function))
- 			event = pev->point.function;
--		else
-+		else {
- 			event = tev->point.realname;
-+			/*
-+			 * `realname` comes from real symbol, which can have a suffix.
-+			 * However, if we see some glab-like wildcard in the symbol, it
-+			 * might not be a C program.
-+			 */
-+			if (!strisglob(event))
-+				is_C_symname = true;
-+		}
- 	}
- 	if (pev->group && !pev->sdt)
- 		group = pev->group;
-@@ -2858,7 +2881,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
- 
- 	/* Get an unused new event name */
- 	ret = get_new_event_name(buf, sizeof(buf), event, namelist,
--				 tev->point.retprobe, allow_suffix);
-+				 tev->point.retprobe, allow_suffix, is_C_symname);
- 	if (ret < 0)
- 		return ret;
- 
+> +---
+> +$id: http://devicetree.org/schemas/sound/irondevice,sma1307.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Iron Device SMA1307 Audio Amplifier
+> +
+> +maintainers:
+> +  - Kiseok Jo <kiseok.jo@irondevice.com>
+> +
+> +description:
+> +  SMA1307 boosted digital speaker amplifier
+> +  with feedback-loop.
 
+Wrap lines at 80 char.
+
+> +
+> +allOf:
+> +  - $ref: dai-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - irondevice,sma1307a
+> +      - irondevice,sma1307aq
+> +    description:
+> +      If a 'q' is added, it indicated the product is AEC-Q100
+> +      qualified for automotive applications. SMA1307A supports
+> +      both WLCSP and QFN packages. However, SMA1307AQ only
+> +      supports the QFN package.
+
+Is this difference visible to software? The package is not, so that part 
+is irrelevant.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#sound-dai-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#sound-dai-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        amplifier@1e {
+> +            compatible = "irondevice,sma1307a";
+> +            reg = <0x1e>;
+> +            #sound-dai-cells = <1>;
+> +        };
+> +    };
+> 
+> --
+> 2.39.2
+> 
 
