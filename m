@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-395686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ACAA9BC1A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:50:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 989DD9BC1A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:49:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03EC1B219BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:49:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F1C0B218C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FA71FE10C;
-	Mon,  4 Nov 2024 23:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3EC1FE0F4;
+	Mon,  4 Nov 2024 23:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DWxFe4/S"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ntrz21As"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED147139CFF
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 23:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D951A76A4;
+	Mon,  4 Nov 2024 23:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730764181; cv=none; b=LtyP7sUBYQfDp8Xzsm8JaF+uhUB5RvWlxykFT2TLcMwLRBODbedWfHYq+iJRUby7pcdq1e62McOjExb4/kssLRriWQENPGAHif8QYwqPSnm6Dpfdq0K2hJcq0je0Mjo7ymNlDd87GYW6twEaC+9cri8PJbmHgG2+HLmzialvJt0=
+	t=1730764179; cv=none; b=T8nCAooRoyNh4SaIYLHu9fjvc4C9FdX01UycZUE3NXpg+1OUC2rFzzHnCkV7OXI072P4T/PlGE3wIOTLthzU1n1OGqWA0oA9CC2uCyS28m6L0FIs/liFoY4uoFxrFUPBJysOfyqwaw6nCm7iSRc05qX/d+hi+jb7jEBHI5gty2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730764181; c=relaxed/simple;
-	bh=muS5YqxBg1X4aKFuoG3dKehUBVF2a3t+rvoZaz64Fy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a1A+BtB823z1w309GLuzKawC4wppgwZVHRs0owvy+xT8hfA1623HTrjEVDJJTgadEy1DKbiR63OhZmX+30jpjSoH8dAK+Sc6C1FP7sq9ufoD8DME45i65K9MfXs72INL2PqvKIf66k47E6S3Pr5CrRNDDf7iLnTqKMRanuIZ3Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DWxFe4/S; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730764176;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0hPGUSawC3wfWVUaw8imv0OPqbrEwJlGlsqYQZ9dtME=;
-	b=DWxFe4/SamXPkpSpTjT8KXjtcYlNwJTOz1l0MC+jKO+bmvJoEJJvVZaWCbnB4JXmLO1v6T
-	E0CYwjupD9t7w7aihgpW6RRi6JuwQ5jst7/OJN4Bw5XOrcp8IRETK9bwCnTAdSaxYRGT86
-	unr3BNhHeHb6v5UWjJhoc73w3H5xAwk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] jffs2: Use str_yes_no() helper function
-Date: Tue,  5 Nov 2024 00:48:59 +0100
-Message-ID: <20241104234900.8305-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1730764179; c=relaxed/simple;
+	bh=iYZ8xQtA17SG7eVmEIV4S/I2ob0ny1CVlXDrXQZre+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=HvRLr7gyLwB8yAJdeSBCXmOCgza8bI7d9wGxH/EIzxjyu44IGecOC9dc6HYkcQXMlnMGeOJjZK1GQbOTm7r4E7fClABPCaH8sSZCEOHBeE0gImlfp2pITKWTIGOfRL1pl57d30Sq1EZ/qro5JJg6uEWZON9GrEZfpyNgKPzoowI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ntrz21As; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA3E8C4CECE;
+	Mon,  4 Nov 2024 23:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730764178;
+	bh=iYZ8xQtA17SG7eVmEIV4S/I2ob0ny1CVlXDrXQZre+c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Ntrz21As60vacLFu5p1uAmxmcX96c07NNHqwAPllOOJB9RJXakyrOXNdt4fbBnjUm
+	 DV1PpoHYRCz1U5qcb4iU4W17QW/fCzR0CO/c+y6/IZYExhQq+wESmOvX3jZyHl72DG
+	 wxwE5FARzswPmdhMRSY+monukJehqVG7Et9RHSf3aO0Qwy1N1ppG8tSBMV3PkZbqms
+	 2ZZqYtYByX9TfJTPlUtGAes7++oKDqQVSGVDp7m0JWypWvGw8UHnrPwduSWpiBhj2o
+	 EN1anG73X1epeNiI1zoJE7//PnviSJH5pFTTFJ5hYGwgsPutn7QyP3uBWPS03aAmzh
+	 lVNPTZyXfzscQ==
+Date: Mon, 4 Nov 2024 17:49:37 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 05/12] PCI: of_property: Assign PCI instead of CPU bus
+ address to dynamic bridge nodes
+Message-ID: <20241104234937.GA1446920@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104150521.r4hbsurw4dbzlxpg@thinkpad>
 
-Remove hard-coded strings by using the str_yes_no() helper function.
+On Mon, Nov 04, 2024 at 08:35:21PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Nov 04, 2024 at 09:54:57AM +0100, Andrea della Porta wrote:
+> > On 22:39 Sat 02 Nov     , Manivannan Sadhasivam wrote:
+> > > On Mon, Oct 28, 2024 at 03:07:22PM +0100, Andrea della Porta wrote:
+> > > > When populating "ranges" property for a PCI bridge, of_pci_prop_ranges()
+> > > > incorrectly use the CPU bus address of the resource. Since this is a PCI-PCI
+> > > > bridge, the window should instead be in PCI address space. Call
+> > > > pci_bus_address() on the resource in order to obtain the PCI bus
+> > > > address.
+> > > 
+> > > of_pci_prop_ranges() could be called for PCI devices also (not just PCI
+> > > bridges), right?
+> > 
+> > Correct. Please note however that while the PCI-PCI bridge has the parent
+> > address in CPU space, an endpoint device has it in PCI space: here we're
+> > focusing on the bridge part. It probably used to work before since in many
+> > cases the CPU and PCI address are the same, but it breaks down when they
+> > differ.
+> 
+> When you say 'focusing', you are specifically referring to the
+> bridge part of this API I believe. But I don't see a check for the
+> bridge in your change, which is what concerning me. Am I missing
+> something?
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- fs/jffs2/nodemgmt.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+I think we want this change for all devices in the PCI address
+domain, including PCI-PCI bridges and endpoints, don't we?  All those
+"ranges" addresses should be in the PCI domain.
 
-diff --git a/fs/jffs2/nodemgmt.c b/fs/jffs2/nodemgmt.c
-index bbab2bdc71b6..69569864630e 100644
---- a/fs/jffs2/nodemgmt.c
-+++ b/fs/jffs2/nodemgmt.c
-@@ -15,6 +15,7 @@
- #include <linux/mtd/mtd.h>
- #include <linux/compiler.h>
- #include <linux/sched/signal.h>
-+#include <linux/string_choices.h>
- #include "nodelist.h"
- #include "debug.h"
- 
-@@ -317,9 +318,9 @@ static int jffs2_find_nextblock(struct jffs2_sb_info *c)
- 			   And there's no space left. At all. */
- 			pr_crit("Argh. No free space left for GC. nr_erasing_blocks is %d. nr_free_blocks is %d. (erasableempty: %s, erasingempty: %s, erasependingempty: %s)\n",
- 				c->nr_erasing_blocks, c->nr_free_blocks,
--				list_empty(&c->erasable_list) ? "yes" : "no",
--				list_empty(&c->erasing_list) ? "yes" : "no",
--				list_empty(&c->erase_pending_list) ? "yes" : "no");
-+				str_yes_no(list_empty(&c->erasable_list)),
-+				str_yes_no(list_empty(&c->erasing_list)),
-+				str_yes_no(list_empty(&c->erase_pending_list)));
- 			return -ENOSPC;
- 		}
- 
-@@ -883,7 +884,7 @@ int jffs2_thread_should_wake(struct jffs2_sb_info *c)
- 
- 	jffs2_dbg(1, "%s(): nr_free_blocks %d, nr_erasing_blocks %d, dirty_size 0x%x, vdirty_blocks %d: %s\n",
- 		  __func__, c->nr_free_blocks, c->nr_erasing_blocks,
--		  c->dirty_size, nr_very_dirty, ret ? "yes" : "no");
-+		  c->dirty_size, nr_very_dirty, str_yes_no(ret));
- 
- 	return ret;
- }
--- 
-2.47.0
-
+Bjorn
 
