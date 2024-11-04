@@ -1,107 +1,128 @@
-Return-Path: <linux-kernel+bounces-394887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F5B9BB55B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:04:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84729BB557
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:04:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6431F21C60
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:04:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE77282D50
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FA91BBBD7;
-	Mon,  4 Nov 2024 13:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB4A1BB6B8;
+	Mon,  4 Nov 2024 13:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ch2XakdP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWLnauoj"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FB91B6CFB;
-	Mon,  4 Nov 2024 13:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113C31B6CFB;
+	Mon,  4 Nov 2024 13:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730725486; cv=none; b=UDYSYHvGZboCMqVW9CAxlXInFLZQt1Jtll6hpB90ji1Ah2hn2FgveiwyJPxgdeJtLE7hXW8fE4BgMdZiamKaUpPR1Kl3nGhG60NJJInxwjyQvpboSCXqeEnVJmdPpJR4vDJ9ad342+745Tbf0PoFqi/u8m4rZ+i/I55painMZd8=
+	t=1730725472; cv=none; b=IQ3j+tT6C+Qo6AUsw2eKrxDSpIFPXvNwFeeXSokljh2jG/nPZJDRTW4x/XiAbXE1JJnNt9nk+GYRK6Uy0nRAueppPnvJwC3TDH99lzStrlWjhWWvdoFekx0HdL+1V2pqeK/0kcv3q/mPi32YUZwekQ0WOsX+Mi8JX1n9QnkufYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730725486; c=relaxed/simple;
-	bh=nefS9y62W+X91RKHUNkgHd12LtP4HJ+GhKwwmgnAOgE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WG+Aw4Ex4zyu8Nzk1ewb9b20Q0k66f4qwaUJCFJIkzaYo+IxtP8Udvn63xXKh6L0oIm4IsyTgsnQk9m9pQDYvh1Z6YBGQAEm/kTS7/zUzDSJ/599p4AG8ZpAf1FszklvP/Cg2wxnZAy4U+ujRrszB/m9IEJAdI/C/ykF8en1grc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ch2XakdP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A092BC4CED4;
-	Mon,  4 Nov 2024 13:04:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730725485;
-	bh=nefS9y62W+X91RKHUNkgHd12LtP4HJ+GhKwwmgnAOgE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ch2XakdPeyVjhVz+nE8nY23yzmQaM5+ySnORQ/Aq2DFApEkCrOkMhgZyoABfk19tI
-	 v6gDfVRbwi5ErHBb8lrSju8xJ4jVvwRnAbxCNo3bT9voNlcFjBRtBjHu76IHwml+wA
-	 tue5NvjBFp0hlIka/KReEocBN38Pdqc90lepjDyrFxXUezzl8zP2z2xHaTp4bPhJDK
-	 P3AdBE4pKIGf4a6BtN0lG38cWt84t9TGmPs6JDm/GUN/k1etSHjo8w6WpTNIuGWa7j
-	 +DUhVFxJkGm2qWby9vH1IzxIsVan9f3axPCAzIiAyoGpfyYp26KztYjjVnJIUoPYa6
-	 BXvnvQRPd4VIw==
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3e60f6ea262so1918480b6e.1;
-        Mon, 04 Nov 2024 05:04:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUqTd7eAiFSrcoJqLrva1sceQxNykJ4tjoVRQ/UGmZFlj3D2GxrtWE+BCripTETCVGcfe8T+4HiKO78w50y@vger.kernel.org, AJvYcCWgwIixYogqitRUPbAyToQkH7SztDFXiVEvkH0SlxxtGgtBZ04HhRKMNcqlI/HD4daf98TarLXec6Kd@vger.kernel.org, AJvYcCXp+86d0Ecp7MvKddU9Yi39cHu//kYlY8pHYArOSDk5U4VBj6z63Bmjj2xnyQVO1/or0sAQcHqNrs2z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8Mo+sTMUrDvSTGrMDbKGzBo4yjsq+XMhoBiY90B7Q6X1jcBBo
-	lYo6vkNwbZQ8tB5ob2CarKuAVpi/7Z/da3cWy3vgKQEKWHrOFaat33Qc8h6EcVJifEkONSl1g6B
-	okjVInL/6t2SjO/n1K/FV6iAyZQk=
-X-Google-Smtp-Source: AGHT+IGOpn/fxAkEtZRYWFwcsACtEWWadliXEDT24vXzBv3UAKaTQJxrW8AHoWUiJ9mhufbyX9TpyX4gbFfj3BLxPuM=
-X-Received: by 2002:a05:6870:9686:b0:277:7633:f50b with SMTP id
- 586e51a60fabf-29051b6ba29mr27146515fac.16.1730725484980; Mon, 04 Nov 2024
- 05:04:44 -0800 (PST)
+	s=arc-20240116; t=1730725472; c=relaxed/simple;
+	bh=EnvJIgbrMjwMBPDF+0kk8UDfBVexM71BFeuD0mBFBzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNiZ+LtaFIT3WDk03udw/51knCAn0KID+qA+GkL8X6Rq0IB6VXf7YwPGK9hmm3RKjpnmHHzVKYVgw33bmhscfxLyNXn2+DIVTIBmS/fk4dF5+jtp8+Trff2TnMqrftN+6JHijuX60Ap2CPyAM0gP/FyKspRce2RFdGXsIstgo30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWLnauoj; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a6b4ca29bso537243866b.3;
+        Mon, 04 Nov 2024 05:04:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730725469; x=1731330269; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=POZxJKBo9A+l/bBN4assLUemMcT00Dlq2lvLnr0+PpY=;
+        b=gWLnauojvkBJa5ENBhbTLl41NErmyUwhpdqvlP+QGaJbUxX7FPRqQ82lDnMGtUV6nK
+         Zltye3DunOELdV1ExwN6zmPLAiGvai4SnV2shsKh6w68Lp9cpzPb9hTt0s0v4pcjXlCs
+         KW/e0h2a5o2B0nQRxdB4lvnavfisrMLwFcROVPJIBOILYdvYZmGfF7VKnXSy2Xqvx8OL
+         Z5tF/MqO9LT5koU4pKx+EBoHns+UpYmTfnj+e+bL6i4BMa4YvYproUirzQweXXSqy2wc
+         qDskhKuvdb78fm789zS0pF+ipI0zA2MXhuupbhWlWPF72QSqLZAlZG+2VK+O/qVfLB3r
+         Tj5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730725469; x=1731330269;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=POZxJKBo9A+l/bBN4assLUemMcT00Dlq2lvLnr0+PpY=;
+        b=IcZViZHOLoG+jIlCz6VWd5Z2MPmwFrH8VRlyPQv/F3/Q4NGEcZ06DLZzhsAmhFj9Tm
+         3Jpj1zzduwjNyEe0A87jN+SCKqPlV6wMq+qh8UzsRPVW5QHhEQuJ1EDvvfTpRliwyKlK
+         yueWbSS3Sa7MtrIOs8YLlvHKCv2xqFxpGd1daaGj/xCinjhbFogrVH5qTN08DFVBgQxV
+         AoeSRQ4ziWIahQsaCUpRJ555KA5kzCHwPj4bKYS9FHZKz4oBMP3/xRZ/YQqMFUiNUlsj
+         6/BXVhKA0CAadNhQQRdd9OU7ltJc6fwRqntUa5PUj2YULuzr8bEvskAMhOTCKaYCvRTH
+         fCrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSqzktFwIt+PLl7C/Ins1mndUEl+SeZMKt4I69XIrt2t5aq8RvZ23RecdK2Mp+mNw4URsGIbh2Y0SE16S5@vger.kernel.org, AJvYcCUiP346Uv7VGav6n1TLfimbe4aTc9hAzMnr8ibEngOn7oXhA2g0ySoCaUf1Xw7Zfwn+9WPpn3+3Af+H@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjUhrya1opovs15R0PiG/16Z3qKhrk1Va47V8Ye4jzChPUDtsZ
+	01DrGXA5kBXX7Bo/xZLznJQGYJwstAXHmBCwidcJJ6wOGxDmfjBF
+X-Google-Smtp-Source: AGHT+IH0wK3KKymt+GJn5Qaz1847qgcdfS+1VGhJ6bZwNBSYDLK4FH5wRl0QQimVTAB92pob+YcmhQ==
+X-Received: by 2002:a17:907:3e06:b0:a9a:80bd:2920 with SMTP id a640c23a62f3a-a9e50b9e39dmr1445068266b.53.1730725469092;
+        Mon, 04 Nov 2024 05:04:29 -0800 (PST)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565e08b7sm550089266b.133.2024.11.04.05.04.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 05:04:28 -0800 (PST)
+Date: Mon, 4 Nov 2024 14:04:27 +0100
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/3] power: supply: sc27xx: Fix battery detect GPIO probe
+Message-ID: <ca28b2f2037929c0011fc5c779c332c1d1ad5308.1730720720.git.stano.jakubek@gmail.com>
+References: <cover.1730720720.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104061342.106865-1-zhoushengqing@ttyinfo.com>
-In-Reply-To: <20241104061342.106865-1-zhoushengqing@ttyinfo.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 4 Nov 2024 14:04:25 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gQ6Y5d5uieaM0FwnKO9yrRKpwZp=YsX5Qn7_4W5_+-eA@mail.gmail.com>
-Message-ID: <CAJZ5v0gQ6Y5d5uieaM0FwnKO9yrRKpwZp=YsX5Qn7_4W5_+-eA@mail.gmail.com>
-Subject: Re: [PATCH] PRESERVE_BOOT_CONFIG function rev id doesn't match with spec.
-To: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1730720720.git.stano.jakubek@gmail.com>
 
-On Mon, Nov 4, 2024 at 7:14=E2=80=AFAM Zhou Shengqing <zhoushengqing@ttyinf=
-o.com> wrote:
->
-> Per PCI Firmware Specification Revision 3.3 Table 4-7 _DSM Definitions
-> for PCI. Preserve PCI Boot Configuration Initial Revision ID is 2. But
-> the code is 1.
->
-> Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
+The DT bindings specify the property as 'battery-detect-gpios', add
+handling for it. Keep fallback to the deprecated 'bat-detect-gpio' property
+to keep compatibility with older DTS.
 
-I think there should be a Fixes tag?
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+Changes in V2:
+- new patch
 
-> ---
->  drivers/pci/pci-acpi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index af370628e583..7a4cad0c1f00 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -132,7 +132,7 @@ bool pci_acpi_preserve_config(struct pci_host_bridge =
-*host_bridge)
->                  */
->                 obj =3D acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge-=
->dev),
->                                               &pci_acpi_dsm_guid,
-> -                                             1, DSM_PCI_PRESERVE_BOOT_CO=
-NFIG,
-> +                                             2, DSM_PCI_PRESERVE_BOOT_CO=
-NFIG,
->                                               NULL, ACPI_TYPE_INTEGER);
->                 if (obj && obj->integer.value =3D=3D 0)
->                         return true;
-> --
-> 2.39.2
->
+ drivers/power/supply/sc27xx_fuel_gauge.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/power/supply/sc27xx_fuel_gauge.c b/drivers/power/supply/sc27xx_fuel_gauge.c
+index 426d423b935b..f36edc2ba708 100644
+--- a/drivers/power/supply/sc27xx_fuel_gauge.c
++++ b/drivers/power/supply/sc27xx_fuel_gauge.c
+@@ -1183,10 +1183,14 @@ static int sc27xx_fgu_probe(struct platform_device *pdev)
+ 		return PTR_ERR(data->charge_chan);
+ 	}
+ 
+-	data->gpiod = devm_gpiod_get(dev, "bat-detect", GPIOD_IN);
++	data->gpiod = devm_gpiod_get(dev, "battery-detect", GPIOD_IN);
+ 	if (IS_ERR(data->gpiod)) {
+-		dev_err(dev, "failed to get battery detection GPIO\n");
+-		return PTR_ERR(data->gpiod);
++		data->gpiod = devm_gpiod_get(dev, "bat-detect", GPIOD_IN);
++		if (IS_ERR(data->gpiod)) {
++			dev_err(dev, "failed to get battery detection GPIO\n");
++			return PTR_ERR(data->gpiod);
++		}
++		dev_warn(dev, "bat-detect is deprecated, please use battery-detect\n");
+ 	}
+ 
+ 	ret = gpiod_get_value_cansleep(data->gpiod);
+-- 
+2.43.0
+
 
