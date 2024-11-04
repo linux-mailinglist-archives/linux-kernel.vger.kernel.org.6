@@ -1,145 +1,218 @@
-Return-Path: <linux-kernel+bounces-395586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53909BC025
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:33:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DA39BC02F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36DE71F22758
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0834D282956
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363801FCC72;
-	Mon,  4 Nov 2024 21:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDB61FCC7F;
+	Mon,  4 Nov 2024 21:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="uKqG2jrk"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkXOin3e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F41199935
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC2B70816;
+	Mon,  4 Nov 2024 21:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730755979; cv=none; b=J8P08XCzWqsbBAUbF7/yS4JvAedhed5Qe8o5pDsUfbqC8O2AGOCSZiv7gebbEEJ6GhkaQbo7lWNSqd3xxd3VPW04K9FIYSK+X6BHzZQHsS0gomYUIkvZoiuYe71/DHRI9ywymnGEgpw53ROT7PU2qxml2bzc/R2DDDgeofWAHBo=
+	t=1730756246; cv=none; b=XKvrru5Vz2hDL/qx1kGmfcnDZH7LGQlkPt4jSXcW1aJTdp6ycHmF6F4TYRn7kDyM97UfHu3EkvXM8Rk70qTTikRXaj587dTykyTlJlOHCu3HsPMWQsjH529kg0zFxkhYFKBe/uAmgaY7UX5TYJlApqV2Xc3jFCtIdcPvnjG9a2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730755979; c=relaxed/simple;
-	bh=fdBVewMiYACcHTkjuVH8eoAcByaa4rdMJHtffZ8NRzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CirRnbjRuj+EmxV+3d4meLQAPm7pEpHoRjeuDf0v6Oqr206qEzWox9SK2mHT35k72wIh9Pof5LkCUMcFoGn56Ac+z9o75LdG443dTPuv4EUM/LpUGf96erkXPEVHX4oWVqAlhJsXTi/aNTZGxQnMnvM970z5tuCMCLJd0be9LEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=uKqG2jrk; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-720be27db27so3767363b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:32:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730755977; x=1731360777; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EzIIL5jV51s8QxZDArUoUfDkcHu/NNqV1EZULNrSbms=;
-        b=uKqG2jrkpUbqp9onmjHwE05Gj/mClK5YVTKtwVC640w8OrdgAtBYJhzbhQ+BndMu5j
-         qMcRQfAtI/EgCWGBZhLufrqBlbWL57fGQXTh624wUksdZHq9Mp3unmS7p8RHhT/rFPAS
-         En20N+I9K4R2J0+bJ/ofplkIffJjBNNLpzqq8a4E1G3r3aQ0IKG9uBF50TGzax9RFBhf
-         ZmyERaLGBfwetqYNL7vLn6PJ2O0rgqgPDtDeItioJ5bXCGhgmJXoG0Li/6AktWNwj39P
-         TJfCH3emoc/2U0mowVBjsGTXg+gyAcXCbPENsK1OmLyNfPDzpNhpaEt/4WxLg3k4bxpt
-         tvdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730755977; x=1731360777;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EzIIL5jV51s8QxZDArUoUfDkcHu/NNqV1EZULNrSbms=;
-        b=lLHodlP7VIr+O9HR64kdZkg22mcw2XToUWtX2wwbR6NB2clbYojVp3kJ8Lri79hrJ0
-         QntCmJMerTtW9jixOaUB2NtxoFprFYNSjQbyYUo3V2C8wocI7G8FtTed4HYMu7xn0gpr
-         z+1AmvnrnffV+7k/rXL8SKkfZUf3EiOLhVU8gjmRmRZCp4/IAYygm0VDiV6tbK8q15Pb
-         /M+wraZGL3K4ydyYb57xMZdFLbeRTA3bIMsi51x7bsDoYo7PxsLE/kwOb3zTS31KwM7g
-         O0bd5tjM5X3Qybbwg4oypzDsdu+4iLQXCa6RBM8xqvGzJ9wvd3YQznjKCU9aibCASEKm
-         t4aA==
-X-Forwarded-Encrypted: i=1; AJvYcCWI5gG1cAF9559hsOsYN9p6rMz4tLqTy4h8Jo6+Tfs4q9Ed40+xG77WB3Q2Idrj7sXepr6EcfrkJX+OPSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznLc6nsSYcSxtg1fVuRDouGPurQ4iBFUONpDlLLTGnQOyCITK/
-	uOTc2uh8/npVQO+svBJbYvcOfXqU6f98KuPBzD9n/KL1eFiJI7sBn+CwTrSMly0=
-X-Google-Smtp-Source: AGHT+IE1gCnZHDhbNSzOxIsLAwqp2zm4KQPfqsRjT/TyxizeRL+Gzx/ZXVxE+GJ5uzuO8nBhG5XzOQ==
-X-Received: by 2002:a05:6a21:9993:b0:1db:d8df:8c4e with SMTP id adf61e73a8af0-1dbd8dfc276mr7417523637.12.1730755977373;
-        Mon, 04 Nov 2024 13:32:57 -0800 (PST)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ef7d9sm8114469b3a.83.2024.11.04.13.32.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 13:32:56 -0800 (PST)
-Date: Mon, 4 Nov 2024 13:32:53 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Christian Brauner <brauner@kernel.org>, guoren <guoren@kernel.org>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH RFT 00/16] perf tools: Use generic syscall scripts for
- all archs
-Message-ID: <Zyk9hX8CB_2rbWsi@ghost>
-References: <20241104-perf_syscalltbl-v1-0-9adae5c761ef@rivosinc.com>
- <3b56fc50-4c6c-4520-adba-461797a3b5ec@app.fastmail.com>
+	s=arc-20240116; t=1730756246; c=relaxed/simple;
+	bh=sE4FbiIUhyhzwgB2znaex+Airlfm0HvtGl+pHgItpbA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DEI2xyo/Lrhgr8OTTkk+6Sl8xRBGDzGgMhGmS1T6yT4wrrIUU7FuARMu4EavFa+vB/dWRZ3VdQWCs/UTuq6l4VjMU7j+nSZ92NjAHpviNWhFYmSbtyFsyVIPhmOzUu82Pf+hrEFufg0pdgL3HhrObi69zTJqK/wzDTjXMVtpLl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkXOin3e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA680C4CED9;
+	Mon,  4 Nov 2024 21:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730756245;
+	bh=sE4FbiIUhyhzwgB2znaex+Airlfm0HvtGl+pHgItpbA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SkXOin3elmbnU2GcAdVrakJZ7sUalR0kYi0ToKZshDdcuWx4SQ8/nbCXfmc03YXGy
+	 sO85wb3ahYSL5c0YP2/TXESWtzd2HBzPvmhUiW7m0hcdNhvToWZBmJiDQH3g0J8Zi7
+	 cPI7Q4DOzNoqY7gS0pnalal5cRX1fV68mRei/nODvaspbj5Bmz4erglgGaMYyw65ae
+	 fkG5X0r20yQaJqayBdgfOkJ1kMIjIQtAlTYbo6bJ7Tiy85LO3jBtcnr592qhnABeCE
+	 FPTeQwjlbwQilVPbjeR+OjgLPSF2fUAs8/plaZOM99pxm43BB8qpuaLwXBx0uNZVEA
+	 2qV1okcVvabQw==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5ebc0dbc65dso2704743eaf.1;
+        Mon, 04 Nov 2024 13:37:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW3H7RiUTaaSx9gVa7TydAYaXWqAbjA3OlQ0/mzeKgN5EzRwYVlFRHoMv1ROrR4QKYqsYHaGuU/Nwv4@vger.kernel.org, AJvYcCWpxZ7GYxun6sFGzBwIgN7FDPlRynI/F23LbEQzKYRNflv+HmJFh1ilKwGyFoT6q1gdRmIDUpiML1ImLj8r@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRS6vA6yAdELMkCwF9N7DUaWxxhCrK3vfnB11hzLmQKNkV+akY
+	7H0w7fgNOU+1cIqHulf9TxaU3UxX7H68cDUOrtw9Q17pVX/zswYmdqikTY3PucvNwGJO2C6SAzI
+	Fawf68NQdvPy9oBidMizZqJuo0Z8=
+X-Google-Smtp-Source: AGHT+IHw6N6oxx7+JdN3NxJHW0dBEPHADkEijAQNnW7uGiscmEKavjgipJwIFSt5wMUsESYxWNEbL7CySMqzYKCguMs=
+X-Received: by 2002:a05:6870:200c:b0:277:e6bc:330c with SMTP id
+ 586e51a60fabf-29051d3cb86mr28744118fac.29.1730756245052; Mon, 04 Nov 2024
+ 13:37:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b56fc50-4c6c-4520-adba-461797a3b5ec@app.fastmail.com>
+References: <20241104205446.3874509-1-superm1@kernel.org> <CAJZ5v0jGTzRNgA7HM-r=TuhHyy0gvMuNEgz5wZ2hPkqwyFa6og@mail.gmail.com>
+ <814adf82-99ec-44f8-83d0-6540f2cccbcb@kernel.org>
+In-Reply-To: <814adf82-99ec-44f8-83d0-6540f2cccbcb@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 4 Nov 2024 22:37:13 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gCcZ81MtiGVM6PVUFyYVPWcfQ81AOmsrAh+svbLZVCtg@mail.gmail.com>
+Message-ID: <CAJZ5v0gCcZ81MtiGVM6PVUFyYVPWcfQ81AOmsrAh+svbLZVCtg@mail.gmail.com>
+Subject: Re: [PATCH v3] ACPI: processor: Move arch_init_invariance_cppc() call later
+To: Mario Limonciello <superm1@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Mario Limonciello <mario.limonciello@amd.com>, 
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, 
+	"open list:ACPI" <linux-acpi@vger.kernel.org>, Ivan Shapovalov <intelfx@intelfx.name>, 
+	Oleksandr Natalenko <oleksandr@natalenko.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 04, 2024 at 10:13:18PM +0100, Arnd Bergmann wrote:
-> On Mon, Nov 4, 2024, at 22:06, Charlie Jenkins wrote:
-> > Standardize the generation of syscall headers around syscall tables.
-> > Previously each architecture independently selected how syscall headers
-> > would be generated, or would not define a way and fallback onto
-> > libaudit. Convert all architectures to use a standard syscall header
-> > generation script and allow each architecture to override the syscall
-> > table to use if they do not use the generic table.
+On Mon, Nov 4, 2024 at 10:14=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
+rg> wrote:
+>
+> On 11/4/2024 15:10, Rafael J. Wysocki wrote:
+> > On Mon, Nov 4, 2024 at 9:54=E2=80=AFPM Mario Limonciello <superm1@kerne=
+l.org> wrote:
+> >>
+> >> From: Mario Limonciello <mario.limonciello@amd.com>
+> >>
+> >> arch_init_invariance_cppc() is called at the end of
+> >> acpi_cppc_processor_probe() in order to configure frequency invariance
+> >> based upon the values from _CPC.
+> >>
+> >> This however doesn't work on AMD CPPC shared memory designs that have
+> >> AMD preferred cores enabled because _CPC needs to be analyzed from all
+> >> cores to judge if preferred cores are enabled.
+> >>
+> >> This issue manifests to users as a warning since commit 21fb59ab4b97
+> >> ("ACPI: CPPC: Adjust debug messages in amd_set_max_freq_ratio() to war=
+n"):
+> >> ```
+> >> Could not retrieve highest performance (-19)
+> >> ```
+> >>
+> >> However the warning isn't the cause of this, it was actually
+> >> commit 279f838a61f9 ("x86/amd: Detect preferred cores in
+> >> amd_get_boost_ratio_numerator()") which exposed the issue.
+> >>
+> >> To fix this problem, change arch_init_invariance_cppc() into a new wea=
+k
+> >> symbol that is called at the end of acpi_processor_driver_init().
+> >> Each architecture that supports it can declare the symbol to override
+> >> the weak one.
+> >>
+> >> Fixes: 279f838a61f9 ("x86/amd: Detect preferred cores in amd_get_boost=
+_ratio_numerator()")
+> >> Reported-by: Ivan Shapovalov <intelfx@intelfx.name>
+> >> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219431
+> >> Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> >> ---
+> >> v3:
+> >>   * Weak symbol instead of macro to help riscv build failure
+> >>   * Update commit message
+> >>   * Add comment
+> >> ---
+> >>   arch/arm64/include/asm/topology.h | 2 +-
+> >>   arch/x86/include/asm/topology.h   | 2 +-
+> >>   drivers/acpi/cppc_acpi.c          | 6 ------
+> >>   drivers/acpi/processor_driver.c   | 9 +++++++++
+> >>   include/acpi/processor.h          | 2 ++
+> >>   5 files changed, 13 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/include/asm/topology.h b/arch/arm64/include/as=
+m/topology.h
+> >> index 5fc3af9f8f29b..8a1860877967e 100644
+> >> --- a/arch/arm64/include/asm/topology.h
+> >> +++ b/arch/arm64/include/asm/topology.h
+> >> @@ -27,7 +27,7 @@ void update_freq_counters_refs(void);
+> >>   #define arch_scale_freq_ref topology_get_freq_ref
+> >>
+> >>   #ifdef CONFIG_ACPI_CPPC_LIB
+> >> -#define arch_init_invariance_cppc topology_init_cpu_capacity_cppc
+> >> +#define acpi_processor_init_invariance_cppc topology_init_cpu_capacit=
+y_cppc
+> >>   #endif
+> >>
+> >>   /* Replace task scheduler's default cpu-invariant accounting */
+> >> diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/to=
+pology.h
+> >> index aef70336d6247..0fb705524aeaa 100644
+> >> --- a/arch/x86/include/asm/topology.h
+> >> +++ b/arch/x86/include/asm/topology.h
+> >> @@ -307,7 +307,7 @@ extern void arch_scale_freq_tick(void);
+> >>
+> >>   #ifdef CONFIG_ACPI_CPPC_LIB
+> >>   void init_freq_invariance_cppc(void);
+> >> -#define arch_init_invariance_cppc init_freq_invariance_cppc
+> >> +#define acpi_processor_init_invariance_cppc init_freq_invariance_cppc
+> >>   #endif
+> >>
+> >>   #endif /* _ASM_X86_TOPOLOGY_H */
+> >> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> >> index 1a40f0514eaa3..5c0cc7aae8726 100644
+> >> --- a/drivers/acpi/cppc_acpi.c
+> >> +++ b/drivers/acpi/cppc_acpi.c
+> >> @@ -671,10 +671,6 @@ static int pcc_data_alloc(int pcc_ss_id)
+> >>    *  )
+> >>    */
+> >>
+> >> -#ifndef arch_init_invariance_cppc
+> >> -static inline void arch_init_invariance_cppc(void) { }
+> >> -#endif
+> >> -
+> >>   /**
+> >>    * acpi_cppc_processor_probe - Search for per CPU _CPC objects.
+> >>    * @pr: Ptr to acpi_processor containing this CPU's logical ID.
+> >> @@ -905,8 +901,6 @@ int acpi_cppc_processor_probe(struct acpi_processo=
+r *pr)
+> >>                  goto out_free;
+> >>          }
+> >>
+> >> -       arch_init_invariance_cppc();
+> >> -
+> >>          kfree(output.pointer);
+> >>          return 0;
+> >>
+> >> diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_=
+driver.c
+> >> index cb52dd000b958..3b281bc1e73c3 100644
+> >> --- a/drivers/acpi/processor_driver.c
+> >> +++ b/drivers/acpi/processor_driver.c
+> >> @@ -237,6 +237,9 @@ static struct notifier_block acpi_processor_notifi=
+er_block =3D {
+> >>          .notifier_call =3D acpi_processor_notifier,
+> >>   };
+> >>
+> >> +void __weak acpi_processor_init_invariance_cppc(void)
+> >> +{ }
 > >
-> > As a result of these changes, no architecture will require libaudit, and
-> > so the fallback case of using libaudit is removed by this series.
+> > Does this actually work if acpi_processor_init_invariance_cppc is a
+> > macro?  How does the compiler know that it needs to use
+> > init_freq_invariance_cppc() instead of this?
 > >
-> > Testing:
-> >
-> > I have tested that the syscall mappings of id to name generation works
-> > as expected for every architecture, but I have only validated that perf
-> > trace compiles and runs as expected on riscv, arm64, and x86_64.
-> >
-> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> 
-> Thanks for doing this, I had plans to do this myself, but hadn't
-> completed that bit so far. I'm travelling at the moment, so I'm
-> not sure I have time to look at it in enough detail this week.
-> 
-> One problem I ran into doing this previously was the incompatible
-> format of the tables for x86 and s390, which have conflicting
-> interpretations of what the '-' character means. It's possible
-> that this is only really relevant for the in-kernel table,
-> not the version in tools.
-> 
+> > It would work if a __weak definition of init_freq_invariance_cppc() was=
+ present.
+>
+> I also wasn't sure, so I explicitly added some tracing in
+> init_freq_invariance_cppc() to make sure it got called and checked it
+> (GCC 13.2.0).
+>
+> But I'll admit it's a confusing behavior.  If you think it's too
+> confusing I'll swap it around to just axe the macros.
 
-I don't think that is an issue for this usecase because the only
-information that is taken from the syscall table is the number and the
-name of the syscall. '-' doesn't appear in either of these columns! 
+Yes, please.
 
-- Charlie
-
->      Arnd
+I'm kind of worried that different compilers may do different things
+here (say clang vs gcc) and it really is confusing.
 
