@@ -1,179 +1,133 @@
-Return-Path: <linux-kernel+bounces-394903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903D59BB597
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:17:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A599BB5BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:20:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B37941C20341
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:17:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DECA283196
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5554DC147;
-	Mon,  4 Nov 2024 13:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AA02AF0B;
+	Mon,  4 Nov 2024 13:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dnb4rwJt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="cnvNVFxq"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD8C33FE;
-	Mon,  4 Nov 2024 13:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6F7C147;
+	Mon,  4 Nov 2024 13:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730726263; cv=none; b=ssDsUZbWx2CCuYBZaJcSbMtNO/z7zRKiEFbW+seqIz3RsXf9XJ60Ur3WiJD5Rabb8ZVlKPPpNAmDFIAYp1ODTgKrX6856D7//k3w7plzOVzrQ0cuOg9SbYDK10oWo2ExTkj39puT7wDfnFVJz8jSq+DK5wOHjqnFMCbVt300Qb4=
+	t=1730726367; cv=none; b=Pxb7f/1k8awF91llcBJ0G5AOP5XYuy8AlvC/hPtx/kAIdbBgrTUZdhRRJ1Kxmyl9vJErHr+FO2hMGxtjIMxrstKm2QtGosTfAmowzTHer6Vl2Gt8jTsKls3POne4KHm74azrmFzVmkrLou7Km6lygJbuzKCXO7ZiCVWhto8B2VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730726263; c=relaxed/simple;
-	bh=LyvbPRbYAyuTTPMqfNPJqMB/Gc+IfOe8Pb1o34HAxPM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cmIqpHCXXi76kJ7BO7NSn1l/oYi8cQbaes6NyBxo2delVbU1SQAIFJpsbwZ46GuohjvVavNCCySIot177B4pPIG/DWSIdLn332H85PTqcs6OjzGNHcjHxobxvZd/Xhn1jSB3PyVfhEFdeUL2QNvV+l4lCU3DfUamEQYPCwn41wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dnb4rwJt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25DB5C4CECE;
-	Mon,  4 Nov 2024 13:17:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730726263;
-	bh=LyvbPRbYAyuTTPMqfNPJqMB/Gc+IfOe8Pb1o34HAxPM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Dnb4rwJtrrh5tbxUbG87cd9Bqv536vHFVPLqvnvXHVoDjmbJ+IRPzA0qPC6hQQ/6v
-	 9iyhpC4Cod5BNOMog21SLJG4Gch9ff4xGWNaugtTVWt/w1k/fU0m/0x7ozxhW+V7gp
-	 PxlacE0Rmdvt8CS/AXmKQBmhf1byFT/+dF89MtvRCz4zK1iKMWSJ75h6K0raBWLhjv
-	 tGyMb+eRGwd+BTn0wQxQMs4qOcTg91QnD2bhpBPc6XqTJt3MUjvNkc0H2enOglzC5G
-	 xVBZHSgH9ftMmp9LGKe2J7P6vZsrMkuNwHE5d5M13Sq35VNoQp/kVE5rtFWxl+rD9f
-	 +eqZUZ6iGfPKw==
-Message-ID: <f3623b64109a021ce6b7b732f24632f0b2782144.camel@kernel.org>
-Subject: Re: [PATCH -next] fs/nfsd: Remove the unused variable sb
-From: Jeff Layton <jlayton@kernel.org>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, chuck.lever@oracle.com
-Cc: neilb@suse.de, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Abaci Robot
-	 <abaci@linux.alibaba.com>, Mike Snitzer <snitzer@kernel.org>
-Date: Mon, 04 Nov 2024 08:17:41 -0500
-In-Reply-To: <20241104082109.49986-1-jiapeng.chong@linux.alibaba.com>
-References: <20241104082109.49986-1-jiapeng.chong@linux.alibaba.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41app1) 
+	s=arc-20240116; t=1730726367; c=relaxed/simple;
+	bh=LgxM5kKiuJVH380x9xQZPbZVK2R4UXZj0OIKNXudn3Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FJBF5dArPBu/rOjl1MupjoBzjXegOEjpQ6EjwfgQDavydvw/Pc6OaZe47ASJif5i9iGghjvojajDgcLOChtGFOKl5f5doKIRq/8m9qrhUjoSXMwZjTy/I6IzKynX03F3+/TFWV9sy7wLsvqbL1KrZysJCq3DJzHgKvT69fKejeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=cnvNVFxq; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 65d14dea9aaf11efbd192953cf12861f-20241104
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=uyuQl4If6PgIXdcSHju38Abi0PGTAXYJUn1ddS+07qs=;
+	b=cnvNVFxqszDb7vpYT31CDZITLuRJ8Ust555nqiTq9oA0Y73R/S3IGcRw7KRpe5n+sjGftQdd0qdFMFQOBaNa+nfTDEQGyMD9mrz7Jh0P1k0nZAQM6oU1XcL3mB3eimT8S+4KkxS4/x/LJjZrxK1v5Q/NYfCO8EdJxs7ft6pKpLw=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:d1398b46-b7a5-45c9-97fc-105d23ee6de4,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:ccad8407-7990-429c-b1a0-768435f03014,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 65d14dea9aaf11efbd192953cf12861f-20241104
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+	(envelope-from <jiande.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1169929036; Mon, 04 Nov 2024 21:19:18 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 4 Nov 2024 05:19:17 -0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 4 Nov 2024 21:19:17 +0800
+From: Jiande Lu <jiande.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
+	Deren Wu <deren.Wu@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, Steve
+ Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Jiande Lu <jiande.lu@mediatek.com>
+Subject: [PATCH] Bluetooth: btusb: Add new HWIDs for MT7925
+Date: Mon, 4 Nov 2024 21:19:04 +0800
+Message-ID: <20241104131904.30447-1-jiande.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK: N
 
-On Mon, 2024-11-04 at 16:21 +0800, Jiapeng Chong wrote:
-> Variable sb is not effectively used, so delete it.
->=20
-> fs/nfsd/nfs4state.c:7988:22: warning: variable =E2=80=98sb=E2=80=99 set b=
-ut not used.
->=20
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D11648
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  fs/nfsd/nfs4state.c | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index 5d47a28ef62d..45e487bf0582 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -7986,7 +7986,6 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_com=
-pound_state *cstate,
->  	struct nfsd4_blocked_lock *nbl =3D NULL;
->  	struct file_lock *file_lock =3D NULL;
->  	struct file_lock *conflock =3D NULL;
-> -	struct super_block *sb;
->  	__be32 status =3D 0;
->  	int lkflg;
->  	int err;
-> @@ -8006,7 +8005,6 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_com=
-pound_state *cstate,
->  	status =3D fh_verify(rqstp, &cstate->current_fh, S_IFREG, 0);
->  	if (status !=3D nfs_ok)
->  		return status;
-> -	sb =3D cstate->current_fh.fh_dentry->d_sb;
-> =20
->  	if (lock->lk_is_new) {
->  		if (nfsd4_has_session(cstate))
+Add below HWIDs for MediaTek MT7925 USB Bluetooth chip.
+VID 0x0489, PID 0xe14f
+VID 0x0489, PID 0xe150
+VID 0x0489, PID 0xe151
 
+Patch has been tested successfully and controller is recognized
+device pair successfully.
 
-I would be fine with this, but there are some patches queued for v6.13
-in Chuck's tree that start making use of this variable. I suggest that
-we don't take this one for now.
---=20
-Jeff Layton <jlayton@kernel.org>
+MT7925 module bring up message as below.
+Bluetooth: Core ver 2.22
+Bluetooth: HCI device and connection manager initialized
+Bluetooth: HCI socket layer initialized
+Bluetooth: L2CAP socket layer initialized
+Bluetooth: SCO socket layer initialized
+Bluetooth: hci0: HW/SW Version: 0x00000000, Build Time: 20240816133202
+Bluetooth: hci0: Device setup in 286558 usecs
+Bluetooth: hci0: HCI Enhanced Setup Synchronous
+Connection command is advertised, but not supported.
+Bluetooth: hci0: AOSP extensions version v1.00
+Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+Bluetooth: BNEP filters: protocol multicast
+Bluetooth: BNEP socket layer initialized
+Bluetooth: MGMT ver 1.22
+Bluetooth: RFCOMM TTY layer initialized
+Bluetooth: RFCOMM socket layer initialized
+Bluetooth: RFCOMM ver 1.11
+
+Signed-off-by: Jiande Lu <jiande.lu@mediatek.com>
+---
+ drivers/bluetooth/btusb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 6dc5a7e76558..77b8500f8e9b 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -658,6 +658,12 @@ static const struct usb_device_id quirks_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x0489, 0xe139), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x0489, 0xe14f), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x0489, 0xe150), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x0489, 0xe151), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3602), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3603), .driver_info = BTUSB_MEDIATEK |
+-- 
+2.45.2
+
 
