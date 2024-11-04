@@ -1,120 +1,95 @@
-Return-Path: <linux-kernel+bounces-395047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1EFE9BB7BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:28:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7A699BB7CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 204D41C22D56
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C7BA2850DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E8C1AE018;
-	Mon,  4 Nov 2024 14:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D54B1B1D65;
+	Mon,  4 Nov 2024 14:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXbLCapV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VI6LSM0r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471672AEFE;
-	Mon,  4 Nov 2024 14:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56F72AEFE;
+	Mon,  4 Nov 2024 14:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730730505; cv=none; b=DAOFcomgCU/K+gFaJpg+wqAqcHaK8PIX9iXv5gBYBPbVVsvqGo7zhlAaP0KGRLhJ7dSP495cW6UZIlSBMebfh4OKvkyEgX2J6bgL446qNY5ikJM9OEZ1A17Ug+Gs2CDPZHyCV+0iwo1wUd7iDteio3KUUy6KG+1k4j8VX3Zri30=
+	t=1730730562; cv=none; b=mhaRqLfuaz4z6RYWJOELftbD9wC6o/87QDJhYc2g9wceFENrOzUpLnWI7L6wInRzt3knR2X05+VsNJAOivMXKQx+LjUIEoZx2PcbNGJrrX4iOQvpgy+zkouzxpaE8ByXzz89TGNC3buGrw8lfvsfnU3UhGoklDTfNGr+reszbBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730730505; c=relaxed/simple;
-	bh=+RvpvKPAHbAWetHfa4i1WFNeuH1qBy1J2yJHuYrSv5Q=;
+	s=arc-20240116; t=1730730562; c=relaxed/simple;
+	bh=EXddGjljuXfiyst3teC3kH4+6NzpEAOhemaF87o1HEE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GOWWn2Qi1E9LD3ij0KfmHWwbMJnbd8SVsiQWczdBQHFWXBl090dwStoFqSUKJr8QOktGWrtRx3sLszHqUl6u5p8QJqZFfWizf9Z9gAbGAbcRLjAZEtJd+REYFLlnT6f6BTDWRhKcKZRSOkqaarfVzDehL6gygoQCNx6YIE8bbI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXbLCapV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7021DC4CECE;
-	Mon,  4 Nov 2024 14:28:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPXi1QezbWb6c5W5Q4siHcHgO6jtVmmx+cgibA4C4gQXSmsmp7UhTH/ZsHkrZKk3vqtuS/oEVvPhoBp08vMig3amzI1ghA9w6MsvG+IL282eLGFVEAyk82iBLi6xtqRiBwObBhOe69f8oizMQzvQGVapi0uyFnyWgSzUfYjSd3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VI6LSM0r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D4ADC4CECE;
+	Mon,  4 Nov 2024 14:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730730504;
-	bh=+RvpvKPAHbAWetHfa4i1WFNeuH1qBy1J2yJHuYrSv5Q=;
+	s=k20201202; t=1730730561;
+	bh=EXddGjljuXfiyst3teC3kH4+6NzpEAOhemaF87o1HEE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZXbLCapVEzR0c3KczRPp4oermNy07DIC3TT7hKC5QbeHEFIWSOHIopXZv5r7hYcMq
-	 XOmR0X13sgNgOTiHQjQcbN0bd+Tjs0rHEvAHjEd1VrGw0HaJDs0p6g9Z4aZ79eg/so
-	 ZPA7uWo2eVXDTHeaxZDMdMmT/GdCnvAke6/j3iCnhVLumCfh6ZxHwIavmojiYBzSjz
-	 HlZy/M3nFJzH234/+gPB0Ocr2r5wKBoOSuXGGAFd5kQ8Fq0T/oHqRdKzIM9HYwsfzN
-	 vqUAjU7VhyjUMuLI4bWp51O32TByo/iYaNgdtIac20EYbttW0ab2N7L4kYiDjaLO+x
-	 SmZs6t8LYRJLA==
-Date: Mon, 4 Nov 2024 23:28:20 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Cc: vigneshr@ti.com, jpanis@baylibre.com, gregkh@linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] counter: ti-ecap-capture: Add check for clk_enable()
-Message-ID: <ZyjaBMgVVKvc8Kdb@ishi>
-References: <20241103213910.31976-1-jiashengjiangcool@gmail.com>
+	b=VI6LSM0rNQv+75kEV8qCjeTF/lBf5PCB1iwVeAFYrDNCyw0yWDtIx0iBL4qJIBo25
+	 w8TW5FpmWM/N67WF8UWtQihC+CaXwAMN6/TFERLSNW50+ffDQLSKD4s+nc5CgMJWCE
+	 fjdJcsNldAlHHwXuMlD8oDawBI/9rMVrNFAbIeRh3HXKz1nophDh1nUNnpa5qvyGDe
+	 cZKn/6lsOF2ptEXxcLVlvlB7UaKemEq30MqnxxW69dH01/XdghIDGarEGGpdbsWbuH
+	 i/kg9r6SQm3BmPTTntIEvjwDmqXV1EgMeCUzvzObmLN5Tr/rxMyk2jXFsJNkjVzlZW
+	 IUuKPhAtpBUOQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t7y50-0000000087N-0Es2;
+	Mon, 04 Nov 2024 15:29:18 +0100
+Date: Mon, 4 Nov 2024 15:29:18 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
+	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
+	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	johan+linaro@kernel.org
+Subject: Re: [PATCH v8 4/5] PCI: qcom: Disable ASPM L0s for X1E80100
+Message-ID: <ZyjaPtGtRlsIO64b@hovoldconsulting.com>
+References: <20241101030902.579789-1-quic_qianyu@quicinc.com>
+ <20241101030902.579789-5-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="W2oGqzCZLTycLuKz"
-Content-Disposition: inline
-In-Reply-To: <20241103213910.31976-1-jiashengjiangcool@gmail.com>
-
-
---W2oGqzCZLTycLuKz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241101030902.579789-5-quic_qianyu@quicinc.com>
 
-On Sun, Nov 03, 2024 at 09:39:10PM +0000, Jiasheng Jiang wrote:
-> Add check for the return value of clk_enable() in order to catch the
-> potential exception.
->=20
-> Fixes: 4e2f42aa00b6 ("counter: ti-ecap-capture: capture driver support fo=
-r ECAP")
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> ---
->  drivers/counter/ti-ecap-capture.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-=
-capture.c
-> index 675447315caf..30a269fa5da0 100644
-> --- a/drivers/counter/ti-ecap-capture.c
-> +++ b/drivers/counter/ti-ecap-capture.c
-> @@ -574,8 +574,11 @@ static int ecap_cnt_resume(struct device *dev)
->  {
->  	struct counter_device *counter_dev =3D dev_get_drvdata(dev);
->  	struct ecap_cnt_dev *ecap_dev =3D counter_priv(counter_dev);
-> +	int ret;
-> =20
-> -	clk_enable(ecap_dev->clk);
-> +	ret =3D clk_enable(ecap_dev->clk);
-> +	if (ret)
-> +		return ret;
-> =20
->  	ecap_cnt_capture_set_evmode(counter_dev, ecap_dev->pm_ctx.ev_mode);
-> =20
-> --=20
-> 2.25.1
+On Thu, Oct 31, 2024 at 08:09:01PM -0700, Qiang Yu wrote:
+> Currently, the cfg_1_9_0 which is being used for X1E80100 doesn't disable
+> ASPM L0s. However, hardware team recommends to disable L0s as the PHY init
+> sequence is not tuned support L0s. Hence reuse cfg_sc8280xp for X1E80100.
+> 
+> Note that the config_sid() callback is not present in cfg_sc8280xp, don't
+> concern about this because config_sid() callback is originally a no-op
+> for X1E80100.
+> 
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Similar to the stm32-timer-cnt patch comment: it's not necessarily clear
-that an error in the cnt_resume() callback is due to a clk_enable()
-failure, so you should call dev_err() before returning to indicate the
-reason for the error code.
+This one should also have been marked for backporting:
 
-William Breathitt Gray
+Fixes: 6d0c39324c5f ("PCI: qcom: Add X1E80100 PCIe support")
+Cc: stable@vger.kernel.org	# 6.9
 
---W2oGqzCZLTycLuKz
-Content-Type: application/pgp-signature; name="signature.asc"
+Looks much better now either way:
 
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZyjaBAAKCRC1SFbKvhIj
-K0pDAP9QHP7AC57PDlkPDoU6P7z0kuhaTVJ/f6c77VHBju/4pgD/V890BRoIB0A5
-+wk2gE1Mx4zVquZ2a0NtFHr9zonduwo=
-=/a3w
------END PGP SIGNATURE-----
-
---W2oGqzCZLTycLuKz--
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
 
