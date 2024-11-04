@@ -1,132 +1,142 @@
-Return-Path: <linux-kernel+bounces-394630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369269BB212
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:01:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0719D9BB1DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:57:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4D84B24608
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:01:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B721F21228
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096AF1D47C6;
-	Mon,  4 Nov 2024 10:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7671B6D08;
+	Mon,  4 Nov 2024 10:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBpLQas+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IIfBPzUl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB811D45FE;
-	Mon,  4 Nov 2024 10:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4A318BB84;
+	Mon,  4 Nov 2024 10:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717588; cv=none; b=KvkWU0BlhyIruJBQHv1F82RMV59nMrWsx20qp26aCc93/5jYI/AC01dsLvc1s5Ojx4yatMB5CRNAPjU6ZQo9HVJrna1y5/UTQTTXnvVvTvQAATbX188JWP7pA86d6Ho79BAa/KZh+y85h/eqVx0YjzRNnAfu8qH9TcQPDknaiu8=
+	t=1730717536; cv=none; b=BRC1MJVhaUPE2N2YVhgg+jgpl/DhV6E8SuCzOLz/8mHnf+gzns5h9jZJh77Ldnucsn+xywSTAkHlMeLWV/uKPH4CkPvvgcCUnvxhMztmp5EDGvgUakqOYx2hIUQRdgWNYCUZx0DMHaIV5BiZXw4XsuaNTR3BrqyCC5b66+vyEQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717588; c=relaxed/simple;
-	bh=D2bnAICpH5w/m2F+hbXh5PJUoLd2C/twiCxDE4eGzu4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EWKyPaPx6lvCf0bHL9+hgQMiuvhzc7U91x9naW+cnUstb6ItKW8F2g+qxVVpK6DjzrcgKio38CbNHXcVr51L6BAfQvGeu+Hagkqs7HMR1NhlCg6faTqzNgac1omU/LPeLR5ZdElJDS0dI7SdFNGKHYaGivGVqy6vcogKS8l1MFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBpLQas+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2F5C4CED6;
-	Mon,  4 Nov 2024 10:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730717588;
-	bh=D2bnAICpH5w/m2F+hbXh5PJUoLd2C/twiCxDE4eGzu4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XBpLQas+tY4dWEehLVtH/rC0l5fJfUOlU+smmgkxKI7RHAM+9XkcVtvI9KEqbZEH+
-	 SBOI2Cnf7rhIDXLVc1wKKHzHzKqWv1TnQGs+2oJKpzDiLyiYtOPT6Mt0HyQDF5jmjY
-	 +1A3muiCN11KopaddMwhbpJy8lmrguUS7sHXTos62G93H8QqMDFYclvBnY62PYCuzw
-	 /e8dACw8z8ZDLQ9vz2RjdaRrFz/mKmR+ASIdr4o8gRkI+08CVI9NRwWtfxxbcuL5cf
-	 YHS+gR6HTZUg5NkoaoZZTSKVNurLTGsucU/nhAjm7WVeMPijZDP1pLLaOvhMK44/mg
-	 AtunsLqfxaLSw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: =?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>,
-	Simon Horman <horms@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	bjorn@mork.no,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 14/14] net: usb: qmi_wwan: add Quectel RG650V
-Date: Mon,  4 Nov 2024 05:52:06 -0500
-Message-ID: <20241104105228.97053-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104105228.97053-1-sashal@kernel.org>
-References: <20241104105228.97053-1-sashal@kernel.org>
+	s=arc-20240116; t=1730717536; c=relaxed/simple;
+	bh=Uk1iiLYLyoRnUhMJxOSfgzDMTCawW2FdcelKradx3Mc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UWhxwjWgdL4AfwY9z3Ld9adpGLmPEA6c1vSg/usl+GHfbQRJLgARiXOErt+Ke56SK1vZG5m18E/nEa74eeBOz5jpsLZTz1YBFDFhNWmfZ6K6ehNNr1Cpl4rlxZW+wMpkDysZAYduimw2vo+/HSvkt0WMJE+TvztHaIyj/Mb+c2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IIfBPzUl; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730717534; x=1762253534;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Uk1iiLYLyoRnUhMJxOSfgzDMTCawW2FdcelKradx3Mc=;
+  b=IIfBPzUl5phKH+sMSdN8VwBidNxVij+p/IxYsQoRHjWXsyqCvYA29fMk
+   xiswZVxm2Sioba05X7RqqfRjpy0nbBDd58rJoMTzJTo675xRCZfMu69Ga
+   PPRZ8f/MCWEhy4U/rGExQW08nQXXTXU21pt7eB+YKjs5gtQ/iZxYf05Wm
+   7ZBCFl7r0/aafgS49VzvwNjvA+pANSL5PwGv4pxQZc+9d4rrVJZ1hUr3e
+   i2WaNJEkv87qDmGlPPUGTpLTEoi8a5heiD2RdpIHLOQe57ab3VEs7mr8S
+   hFSrMCnipC/fcFBtr7UZvjLbzsd3yg4Jo7texmCS0A+x4kIsMXwPDdlVC
+   w==;
+X-CSE-ConnectionGUID: OvYyN1DoQkqkPfynM7ugPQ==
+X-CSE-MsgGUID: LKuL/y5JTgO3A6k719zqiQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="41799440"
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="41799440"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 02:52:14 -0800
+X-CSE-ConnectionGUID: aIyglxVlRzGO0AWQgMPJfg==
+X-CSE-MsgGUID: 0dpG+hToTnyY4zYBJ/Oi3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="83549794"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO [10.245.244.217]) ([10.245.244.217])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 02:52:12 -0800
+Message-ID: <09d8462d-d305-4b83-ade9-747a88aedc38@linux.intel.com>
+Date: Mon, 4 Nov 2024 12:52:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sound: fix uninit-value in
+ sof_ipc4_pcm_dai_link_fixup_rate
+To: Suraj Sonawane <surajsonawane0215@gmail.com>
+Cc: broonie@kernel.org, daniel.baluta@nxp.com, kai.vehmanen@linux.intel.com,
+ lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, perex@perex.cz, pierre-louis.bossart@linux.dev,
+ ranjani.sridharan@linux.intel.com, sound-open-firmware@alsa-project.org,
+ tiwai@suse.com, yung-chuan.liao@linux.intel.com
+References: <20241030155705.31327-1-surajsonawane0215@gmail.com>
+ <20241103113702.27673-1-surajsonawane0215@gmail.com>
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <20241103113702.27673-1-surajsonawane0215@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.59
 Content-Transfer-Encoding: 8bit
 
-From: Benoît Monin <benoit.monin@gmx.fr>
 
-[ Upstream commit 6b3f18a76be6bbd237c7594cf0bf2912b68084fe ]
 
-Add support for Quectel RG650V which is based on Qualcomm SDX65 chip.
-The composition is DIAG / NMEA / AT / AT / QMI.
+On 03/11/2024 13:37, Suraj Sonawane wrote:
+> Fix an issue detected by the Smatch tool:
+> 
+> sound/soc/sof/ipc4-pcm.c: sof_ipc4_pcm_dai_link_fixup_rate()
+> error: uninitialized symbol 'be_rate'.
+> 
+> This issue occurred because the variable 'be_rate' could remain
+> uninitialized if num_input_formats is zero. In such cases, the
+> loop that assigns a value to 'be_rate' would not execute,
+> potentially leading to undefined behavior when rate->min and
+> rate->max are set with an uninitialized 'be_rate'.
+> 
+> To resolve this, an additional check for num_input_formats > 0
+> was added before setting rate->min and rate->max with 'be_rate'.
+> This ensures that 'be_rate' is assigned only when there are valid
+> input formats, preventing any use of uninitialized data.
+> 
+> This solution maintains defined behavior for rate->min and rate->max,
+> ensuring they are only assigned when valid be_rate data is available.
+> 
+> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+> ---
+> V1: Initialize 'be_rate' to 0.
+> V2: Add conditional assignment based on num_input_formats to ensure
+> be_rate is used only when assigned.
+> 
+>  sound/soc/sof/ipc4-pcm.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/sof/ipc4-pcm.c b/sound/soc/sof/ipc4-pcm.c
+> index 4df2be3d3..d5d7ffc69 100644
+> --- a/sound/soc/sof/ipc4-pcm.c
+> +++ b/sound/soc/sof/ipc4-pcm.c
+> @@ -633,8 +633,11 @@ static int sof_ipc4_pcm_dai_link_fixup_rate(struct snd_sof_dev *sdev,
+>  			return -EINVAL;
+>  		}
+>  
+> -		rate->min = be_rate;
+> -		rate->max = rate->min;
+> +		/* Set rate only if be_rate was assigned */
+> +		if (num_input_formats > 0) {
 
-T: Bus=02 Lev=01 Prnt=01 Port=03 Cnt=01 Dev#=  4 Spd=5000 MxCh= 0
-D: Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P: Vendor=2c7c ProdID=0122 Rev=05.15
-S: Manufacturer=Quectel
-S: Product=RG650V-EU
-S: SerialNumber=xxxxxxx
-C: #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=896mA
-I: If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E: Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I: If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I: If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
-I: If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
-I: If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-E: Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=88(I) Atr=03(Int.) MxPS=   8 Ivl=9ms
+By definition the copier must have at least one input and one output
+format, this check is going to be always true.
 
-Signed-off-by: Benoît Monin <benoit.monin@gmx.fr>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Link: https://patch.msgid.link/20241024151113.53203-1-benoit.monin@gmx.fr
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/usb/qmi_wwan.c | 1 +
- 1 file changed, 1 insertion(+)
+> +			rate->min = be_rate;
+> +			rate->max = rate->min;
+> +		}
+>  	}
+>  
+>  	return 0;
 
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index 92c1500fa7c44..f88f7c972a9c0 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1084,6 +1084,7 @@ static const struct usb_device_id products[] = {
- 		USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x581d, USB_CLASS_VENDOR_SPEC, 1, 7),
- 		.driver_info = (unsigned long)&qmi_wwan_info,
- 	},
-+	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0122)},	/* Quectel RG650V */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0125)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0306)},	/* Quectel EP06/EG06/EM06 */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0512)},	/* Quectel EG12/EM12 */
 -- 
-2.43.0
+Péter
 
 
