@@ -1,54 +1,81 @@
-Return-Path: <linux-kernel+bounces-394481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393A09BAFBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:36:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D3C9BAFBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:35:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AF821C21AB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:36:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E22BB21045
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9401ADFFB;
-	Mon,  4 Nov 2024 09:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4812C1AE00B;
+	Mon,  4 Nov 2024 09:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="d9FQ15s9"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Bxm7kVvh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE2C1AAE27;
-	Mon,  4 Nov 2024 09:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5021AC448
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730712969; cv=none; b=hXJMplEW9hye3yhA0n0rsFjiJQgAzEPuo3nS15T2izx3XsbJQ9OX1VHKc3Z5+O+Ad3R0ztI/9+Z8ZHvuSBAuaLm2OWekhMNOBdzzInqQB+dVcgITfAcCAoCscESEDU36PbS/rWDqVrLd6eOaZnM+uuAzT9k9BDH9kXWSIpctGIs=
+	t=1730712944; cv=none; b=ACr6vQ8Hq+3UOnm+wB3I/emUSn05nisroSK1zfRfqJbPMPjxFNHSJkbZyQATfK1RgjNDSyvDiCrVEc+oA8YCRwLcttOBl/ceoQnt3UlWGX/J63m32YPZarG/eaDleO2ugZXa1gP700VkR3HPZEqCYywo7/yVhfv8spCmzEyVb6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730712969; c=relaxed/simple;
-	bh=OZU7EisROitQm9UKkAKn6cyUaMVFwrs2M+6wFnp01/Q=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=N0ZJZ9GILjisRovJHWf2dYqaDn5/ExNQa8HA523tsSUHb9CTU3/Zwp1B2BQUlIynlG7tPipQh9Pgy+FqHafiIq2RJWSUrD/QreNyO/auSWpfRQAptuNh0+PyVN6s9NhFQepc1cCUcU7pdrYdLH5NNgApNftvtW4wAgiy4cr5ccc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=d9FQ15s9; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730712935; x=1731317735; i=markus.elfring@web.de;
-	bh=OZU7EisROitQm9UKkAKn6cyUaMVFwrs2M+6wFnp01/Q=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=d9FQ15s9wCk8mgTbgGwrPDKx6h2mFTz4PtwupuQRPe5CFu1bnsQLJTo4WzFuhf1U
-	 u5wGWUwDsDA1n1w3C2gaC8RtwNNCSgxqgmC2GNTIrZ+/GYNj0EKNdFsT/RVKmbsPl
-	 WZg4kJfggvkkCTUf6RP7xAU0svK94SAnubVKwBdE8wTCTLjRJm9RtXWIdooWYfrTJ
-	 ZBIBvrD8Ql/I6q7RYxILXTxzAvWNbG8PTjvZ0kuWId872VN0ZbB5BQVjKR17IhOio
-	 KFo/5y0mYE6cDHhFHgJcpOqxKtIYpRtCD7yFXtQYrQT8020OywEHrUnKN2wLInnxP
-	 Uk6YILANqF16QUbEvw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGgNU-1t440L0IOQ-0043na; Mon, 04
- Nov 2024 10:35:35 +0100
-Message-ID: <e1ac11b3-b746-4564-8daa-3527aa13e348@web.de>
-Date: Mon, 4 Nov 2024 10:35:23 +0100
+	s=arc-20240116; t=1730712944; c=relaxed/simple;
+	bh=QcoTEie8FZ60+JPHif5psISMr/kD+U+xWtCc+upG3zk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JWpEFivQRehwVLOPc9HbW85hR0euvSX7DVAusuH5mXbECN+0TrjUiYOPgBggMPKb3a1qZ2qpvkCmGWlvCLaHby7t/aqPF/P7bpkJQePODmEcHg/ZNIciASxzIZKNS4ZhbRhSsiIsob7qf6VTbgoIjunvkyppxmploilDyp8tvR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Bxm7kVvh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3MZbkm028240
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 09:35:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	a7ClmRGW/Dq8E6lrvmSf+/iEncnmMhHeY3NKR0VniJk=; b=Bxm7kVvhTNC34neX
+	tREOAqsEVKHwtoztJBS4OwgmKZNd7VR0OIm99nCrKThOCj9KQv+tlYkDzudNw1an
+	gph1o1zSZPh07IexQpH26STxfQ2u9ngSY1N+sDj0fFDEgjwv2MINwWXOYUyft3tt
+	RCohAxjebOQ9P+3xEvcsxqZaYU4aQEMZiGwil5kta3GF3h0BriYfYjATjr7798wj
+	s8ExedUoN5SH06k2ro/2+aV/VJfU947lViB37P358HY6pvn8p2nI/qC44pKjcgc1
+	yvFX9cn4sTY/THkM9ouf2aVQTnTK2DNS+iFNIc5kxDnDLL4Nh+3xsJ40nwde3xkJ
+	soE0Ug==
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com [209.85.222.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd4ukppk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 09:35:41 +0000 (GMT)
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-84fca3ad0ddso62307241.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:35:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730712941; x=1731317741;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a7ClmRGW/Dq8E6lrvmSf+/iEncnmMhHeY3NKR0VniJk=;
+        b=M9OzENLbG1x8v/g6hHS/4hxAiHIjkP/eyCPf52/kdC8ZNZRw5FxlcrjN9csG8CMUln
+         PJSIaIDIo5JMHt3ovXBctZnhJPtivvBeMd2RVMj0cn/aJm3pZavWS8OaWJsFQKfosHij
+         Hno4EDkBFE2x7j80ujackBsDlZRqme3EUz4WZIdARhTzTRLwj3IGnyUmiC0mjcrauyTJ
+         MrplLr9kj6cI0NOkenedHG4YRrtL9jcm85bEy02jqdNimlQyu2U08gkOZDYQRQyLWT0V
+         Ar5luoo1UxUH32xzcvyGtWOUW0MsMiextJKTIM+Sd7zOH+X8oMpN6FvI2frdZq3PjRbi
+         UrCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxVOVg5Ag0uk7dImppXRqxt2LNjzS1j6P7ORJFlMMhgDetvOgcPuNK93rZpyJe4qw7/6RiUid9flRsIGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze4eM0dIrQgGZ8qGVrWbtQLWqWLvPVDO3YTbPGVmirMhB9kWQz
+	WEh1p1wqPpCon6zDRdvNjEsSQkkwNYaKOIYI0NodI7zsT9/v6jASXR9Sd552FaH+YKKOg5Qz2Yp
+	Ha6uMYZq67SuF9IoeJHqQvElP77nz89O1BRnWUSMyzAqLr+ebspxVU480KB598DtPOi6nSQM=
+X-Received: by 2002:a05:6102:3a0e:b0:4a5:bff5:4ee1 with SMTP id ada2fe7eead31-4a8cf9d4693mr10223873137.0.1730712940774;
+        Mon, 04 Nov 2024 01:35:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFym09hnNdijaVFukhOsYz+216T1RS1/Kf0jAwrcJdxn4xJijzfx2HMy+bQo+HqXyxcUUNhlg==
+X-Received: by 2002:a05:6102:3a0e:b0:4a5:bff5:4ee1 with SMTP id ada2fe7eead31-4a8cf9d4693mr10223860137.0.1730712940325;
+        Mon, 04 Nov 2024 01:35:40 -0800 (PST)
+Received: from [192.168.212.146] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565e08e6sm527905766b.129.2024.11.04.01.35.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 01:35:39 -0800 (PST)
+Message-ID: <925202f0-7fd1-4422-88fb-138c9027ac2c@oss.qualcomm.com>
+Date: Mon, 4 Nov 2024 10:35:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,56 +83,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
- linux-sound@vger.kernel.org, alsa-devel@alsa-project.org,
- Mark Brown <broonie@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Basavaraj Hiregoudar <Basavaraj.Hiregoudar@amd.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Emil Velikov <emil.velikov@collabora.com>, Jaroslav Kysela <perex@perex.cz>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Sunil-kumar Dommati <Sunil-kumar.Dommati@amd.com>,
- syed saba kareem <ssabakar@amd.com>, Takashi Iwai <tiwai@suse.com>,
- Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-References: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
-Subject: Re: [PATCH] ASoC: amd: acp: Fix for ACP SOF dmic tplg component load
- failure
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
+Subject: Re: [PATCH V2 1/3] dt-bindings: interconnect: Add EPSS L3 compatible
+ for SA8775P
+To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Sibi Sankar
+ <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Odelu Kukatla <quic_okukatla@quicinc.com>,
+        Mike Tipton <quic_mdtipton@quicinc.com>
+References: <20241026123058.28258-1-quic_rlaggysh@quicinc.com>
+ <20241026123058.28258-2-quic_rlaggysh@quicinc.com>
+ <7k2vnjop6xyshquqlbe22gm7o5empeluvsohfmq5ulnaas3keb@yzomhzi4w7vf>
+ <2ac4604c-a765-48b1-84b2-8979f18c29a7@quicinc.com>
+ <vljb7wwqaaqgdcm6whf5ymhnh4jbtswyibto4qpqmbgwvshudy@unh3jhbyeac6>
+ <00c9feac-722a-481a-9c57-36463fe0b3ff@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <00c9feac-722a-481a-9c57-36463fe0b3ff@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:t147qZrJLa7AZUH9g3WArVAjME+fFuU5SLNNeXrUy5CyR7KC/0q
- 13dGdV5l3Wtxp+pBeckAoYriBuRraampOJgd+09FsuQtzRUR7imp5sNBY7p5MU9oqkeiGnn
- WmyFVQxZQ5ZJz5MdnP1BjyVgCbQVmHeBZnF+CICS1961SVTjojfC+PYqDFI9/c1KHxWZo6r
- FB2rCuDCo9NEjQzWh/0Dg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Iea/YmE1kSY=;gVxxXN+WQbtUWzm8KB/OPkIBUzQ
- IsoFhOMRzEP/cbXJV3hbF6DxZjnbAzJTZ++yN3kNrIu67qXHS/cZmc+H6pbFzNbGx535rUm1W
- lH/tRWVlntQff5dy42GrJsplSgDTni2+t6aFxRjR108EeDGUXLJiCY+Eol5bg8fZcw0CqoSFZ
- gkcd37r1mjS2CX+gfAi50nqUoMCUCod3ujsC9G7VnbUwU8zWQZKaXG+Zmpc8Eh0tmr+tjWinz
- Bshafa3Xd2KAf7ZaUL4Y/jdk3YWEXmmPDJKEZpJICTPAqVTxf7YnLrAcIZZqP2QXkRN27grAp
- 1A25LkSO/Jg17ROCFe9HQNlj8K5LgNaC/NJOthP8YSmUpKnJTSnCjhZmRut3kLO3V07In4xUH
- Z7YMwc4q3rWdC/pr+poef2amGE3OvIAepHueCI7ICjtAkS3Mh+jhozbW9Cqj5E/7TGwRunyUH
- iWSohZNcqeRfrYHBPZEyJFvU1PaGempmw01PhwPHCuP0UP05LSQ1/VxlIY7rOZEgSiMbjh45N
- nAweqyt7L1cZPoVHTUmw9F6X7OUFtvJPX8p6V5WVN4n6cW1F69DNZRJDXIVcTLt/tsEco1K2r
- FZQoNg2Qa0TRAfPpS27o1KfJdHW34QPN4xiGI6RNpcwW3JG1/af00njjT3x4SL9lgMpKTKoDS
- RDJwIRivSc6UKLFehoF58XacEGtend7WTXk5UUv7KRvAW8yWiyFFZSA5TkigZjLI3HuLCZXnG
- 0ZF13E4tAGE7GLwM8GdAy6cLpTfnaeCndgEfgHRcEPOowlEyx/hFqbNaUFK24BYHeyF00eooG
- rd9UZS1R9n56omaiWcytNLbw==
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: NE7LQk1vPen-NOpnAwSE9YKsBi6cNKa2
+X-Proofpoint-ORIG-GUID: NE7LQk1vPen-NOpnAwSE9YKsBi6cNKa2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ mlxlogscore=999 impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040084
 
-=E2=80=A6
-> As SOF framework assigns dailink->stream name, overriding stream name
-> other than link name causes SOF dmic component load failure.
-=E2=80=A6
+On 4.11.2024 7:40 AM, Raviteja Laggyshetty wrote:
+> 
+> 
+> On 11/1/2024 12:26 AM, Dmitry Baryshkov wrote:
+>> On Wed, Oct 30, 2024 at 12:23:57PM +0530, Raviteja Laggyshetty wrote:
+>>>
+>>>
+>>> On 10/26/2024 8:15 PM, Dmitry Baryshkov wrote:
+>>>> On Sat, Oct 26, 2024 at 12:30:56PM +0000, Raviteja Laggyshetty wrote:
+>>>>> Add Epoch Subsystem (EPSS) L3 interconnect provider binding on
+>>>>> SA8775P SoCs.
+>>>>>
+>>>>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>>>>> ---
+>>>>>  .../devicetree/bindings/interconnect/qcom,osm-l3.yaml         | 4 ++++
+>>>>>  1 file changed, 4 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>>>>> index 21dae0b92819..042ca44c32ec 100644
+>>>>> --- a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>>>>> @@ -34,6 +34,10 @@ properties:
+>>>>>                - qcom,sm8250-epss-l3
+>>>>>                - qcom,sm8350-epss-l3
+>>>>>            - const: qcom,epss-l3
+>>>>> +      - items:
+>>>>> +          - enum:
+>>>>> +              - qcom,sa8775p-epss-l3
+>>>>> +          - const: qcom,epss-l3-perf
+>>>>
+>>>> Why is it -perf? What's so different about it?
+>>>
+>>> The EPSS instance in SA8775P uses PERF_STATE register instead of REG_L3_VOTE to scale L3 clocks.
+>>> So adding new generic compatible "qcom,epss-l3-perf" for PERF_STATE register based l3 scaling.
+>>
+>> Neither sm8250 nor sc7280 use this compatible, while they also use
+>> PERF_STATE register.
+>>
+> That is correct, both sm8250 and sc7280 use perf state register.
+> The intention for adding "qcom,epss-l3-perf" generic compatible is to use it for the chipsets which use perf state register for l3 scaling.
+> Using generic compatible avoids the need for adding chipset specific compatible in match table.
 
-Will another imperative wording be helpful for an improved change descript=
-ion?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.12-rc5#n94
+That is exactly what bindings guidelines forbid.
 
-Regards,
-Markus
+You need a SoC-specific compatible so that you can address platform-
+specific quirks that may arise in the future while keeping backwards
+compatibility with older device trees
+
+Konrad
 
