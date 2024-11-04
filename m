@@ -1,132 +1,201 @@
-Return-Path: <linux-kernel+bounces-394624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE389BB1FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:59:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE9E9BB205
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:00:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31A40B2334E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:59:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62C901C222C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9931D26F5;
-	Mon,  4 Nov 2024 10:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158E61D31B6;
+	Mon,  4 Nov 2024 10:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NZ3kVd6p"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcMGu3Za"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6F41D1E6A
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B899E1D2F5C;
+	Mon,  4 Nov 2024 10:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717576; cv=none; b=P+vBSRaPsADH7h+W+aM4gOJWP5t2xHyfNTc1Qj40sYAf0FetyWdb6ekfGIkQHWUKh0Shp03uq6hoMHDgIfuzf3TlkD4o7jYKarHCh/W353Na9omxXlvUn4D/vKlZYesadnzfXq5ziM68y3Y4S1OUyJtc6sX7xo6QeaN9Cg3knIU=
+	t=1730717581; cv=none; b=HAAhAx7QZFveKE9S0k98xxylFLodhskZbEW8bnWKXw1SImak9LjWOa6ZALtEbqHr49ZtNuhHpHfFAX/nzW2cFiU7aHYhDuykuaVOEFEo61g+eWiMtY0lBTjdUwMezePGP0D2bNkNkgb2BhCjuMjXucY18Sr/5JX6yKu5b9wmUzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717576; c=relaxed/simple;
-	bh=vKAr9hmyTddgF/WSN6iuJQ5BAfSJsnCK8GkT+tZfH0s=;
+	s=arc-20240116; t=1730717581; c=relaxed/simple;
+	bh=lHRDj1nuYu4GZzqn0i5vZMzqyCtpSIcWjY9t6tVmdr0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BLEz29UQrE4EViHqGe70LkgQ2DJQc76Dbj9/ibovkTPG+BndMUu4g7fhC05nrg7PFiIaetT/2P5+2KsJeiNhq6DpoJw4hkv7imAg+S8dJI9SbRTWt4cNXn6lzy1gnejms72WMTHT2rd0oNlImf/iWzoijbDx0xk5bT+s0EpIggo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NZ3kVd6p; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53c779ef19cso4656465e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:52:54 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjZAg8oIB74i7HLI8CEnGN6sIffAJfJseH1jbbbi48dew4stTJJ47svp9YI8k+m+cvoAuwC80wpxNm9tlGVVayHh0ufD1ysYWBqiqkyyBiR9VUZchaEymyJkcTiCGICXWRpSN0R8IFwFCTHg8+8yT3hFYnoH9sa0GKoLsENWUuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcMGu3Za; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7180c7a4e02so1895729a34.0;
+        Mon, 04 Nov 2024 02:52:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730717572; x=1731322372; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730717579; x=1731322379; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DwsIeL6KJEG07y8wl1qOjDdqNT8K9HlcyWy1sRLVSGg=;
-        b=NZ3kVd6pxU81ohNXiM8TrKnboqB8NS57DV+9kCuy0DO4k9utYuKLdpYLg4msHmqaPt
-         9nHOsl3dRq5USjDtg1D4xLj4Jz9aFQxWt+hirM8E9F8n4ctyHzO5oInE5mP8inKNnJrd
-         13efpAvjHN4ogaIgx75MwlSCMlZwN88pzXLDaXrnInenZiJOZtuR2Ep0E9wDyaSXHd/u
-         YF5CxZrWjFJxGqjcYeux2oQ1okdqycVc5jiXqAkvhYi2kx/Ye5QJYC3cH+fwhC1aEIC2
-         0AXpRancvluAdNGj0SPDF9+kV4svQ53B4GiQdl66c+CfW3CWTJxwsLZBRJkvU6om/ZJj
-         DFgw==
+        bh=DgxWGDLB6WxMe8+gbg4dTFROdUbgcSI/rTCvMQUjZ94=;
+        b=XcMGu3Zaqc51ciVywijgC6NpR92QH4jGgsL5so/ABOhw5wPGJdRBPzl9+Zq2/b2/OS
+         ZjJNHHA45MHKnioE9WW1qA9PyV4DUA4V6dUig7KyJS7GrEern0M+o917j+CEi5RrRDAq
+         T1qNEU+Uhuqluvut9xkpgRrfJNS8q2onp6rpiqShJOR34J8WN1NNoCX6XX7QZ0XDL9Of
+         lxpwYldd+lLSAY78dNnyDKI8fdXaXpvkHsao/DNZBDg5Azr7HvdSq6ncTxzJJFYBaij1
+         YURR+lCvnLQVPZbSBuH5u8s6lcK+qscMijbA8VzFjd6dX5km/fDWpHbxPeLf652iHsBR
+         YWnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730717572; x=1731322372;
+        d=1e100.net; s=20230601; t=1730717579; x=1731322379;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DwsIeL6KJEG07y8wl1qOjDdqNT8K9HlcyWy1sRLVSGg=;
-        b=e/yrOXCy9GJ1ADoeq6+STrkpQHaq/xjveDOw9QTqo/JOydrGmpwqzq5yDAWYAwIzeO
-         mxxvh6pVJ5NWf1XoYWvAVnRYlFTTZYxAynLlFItYI7IWFFbaQlWxoAxAwljD7ENQkh0j
-         7YduSor9jhJ6UUsPp0j1vI5lVmx1zo8E5Uy+K2a6lRf5j6SFUCXwC0yoKVfPBwurBIjJ
-         17eA/Wd1abIA5r0gSYPSXl2vqXtO1Wp1LZZkwmHgxs/gscIJ2szQ8DowcEm+7M7uqDh9
-         tHlIEX75Y8uPgVAPbZdyWj7UOr5uSWvLsYmfuvRG29zmCrmYOeI/0QpN39+PrcXlgJ19
-         57PA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEJZMQG0BUbN6k+vp6mp8aoqS2R6qe1jgy7bD0B3chrjaToC4SRhCYhGTsyxxbOy42rRpSas1xrqa1yAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3oM5n5q5wE5u10fto+yIGungQz6PFSJnQLJknSKFx3QK1/nF4
-	R497R/HoNAslPxBaGH6Deu2zUQbzJ/fJwfyIbP0YL5ZUt3s7qalBkdFWwDCbiN4=
-X-Google-Smtp-Source: AGHT+IGA/AaC//7xRg1rvQ3Pdaj8tMAcvK/iweU+LcWcYnfbkwdRORCk/zzuaDqXc0ND2sX86ZzRlg==
-X-Received: by 2002:a2e:1319:0:b0:2fb:4f0c:e3d8 with SMTP id 38308e7fff4ca-2fdec88b40amr51037091fa.27.1730717572530;
-        Mon, 04 Nov 2024 02:52:52 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef8a62c0sm16317631fa.75.2024.11.04.02.52.50
+        bh=DgxWGDLB6WxMe8+gbg4dTFROdUbgcSI/rTCvMQUjZ94=;
+        b=I0DIRq9IGU4R221gI2/DXPpCuDeUfVXWGXrsJxQdkrSBoTjx9FceT/ZxYUB4uYUYrH
+         Y+hsABOymsmqVTQdN3CjC6maL2fVesiDCIApfRPXzuOBDKm+uR0NNfBJUeTB5QUUrao7
+         sOPkjbYw1hgemZXJ3BPqCTXcvWkcyKQRP3UHfVjbKUDEKRI943lY2KMJtcBNHGEjy69e
+         FC72uPRSvQ02lc3xQabydLsetDbFzRNDf8JsY7gTywyQIZERRLXQmRPnDHVPPiJLO/fH
+         YP/tbizYfXZO1cMj03SuhCvf6BBIa40GFpYKFEcNKHgluxITl4cVmH7QM4Ij7T8PQHXp
+         gvSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyaki59qLvjX08t/mxxrGedkh7oF+cXvJgRrBPUThs+NlUKxYDTtU7+Clls8lwSeFzcvQn09B2Smi1WJ1A@vger.kernel.org, AJvYcCWMYvIiGWnV2RmDlDxDg8DCmohrFuo72hIs9SsembkI7tFJtUhwoQrvSHOZw57hKqKDy0JgGKWe@vger.kernel.org, AJvYcCWi6zklkvvFmnBETYH7QFtIuCl+WeN3NVrdl1i1JI7alj32RVnnoTl1Fj+MWXH0QKo57sI=@vger.kernel.org, AJvYcCXhIWliqoJfikAZYIgSQP/FAp8SW5tpljfq6yRJZiNqGoBzO46hLPCxRi0eAIntZ7t9hgDVCPA5pYy3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ14XBjBHeZi8e7ZgUXl78+9vWUA7+Z2IYXDtZgLcxQC5RfgZc
+	1D2fYPovjiHEcbo6XIdlOCjeDk1hJzYTbhTHFRFD3L486pZX/9Eh
+X-Google-Smtp-Source: AGHT+IEFrTmRt5MF02HRjrjN5v5W9Wx5TsujIt/V1xbOVd6bkPvSYe0yVcuZIf7JdbxvWbzwrvJNFA==
+X-Received: by 2002:a05:6870:b022:b0:260:e713:ae8b with SMTP id 586e51a60fabf-29051b56a9amr24502201fac.20.1730717578690;
+        Mon, 04 Nov 2024 02:52:58 -0800 (PST)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1e780fsm7162875b3a.46.2024.11.04.02.52.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 02:52:51 -0800 (PST)
-Date: Mon, 4 Nov 2024 12:52:48 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Melody Olvera <quic_molvera@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 1/4] arm64: dts: qcom: sm8750: Add IPCC, SMP2P, AOSS and
- ADSP
-Message-ID: <kxpokionrgollof5yptnqnxgsi4v3g24iwdb67mznljzjzpxab@dnts7qgvu4vo>
-References: <20241101-sm8750-audio-v1-0-730aec176459@linaro.org>
- <20241101-sm8750-audio-v1-1-730aec176459@linaro.org>
- <0782c956-361b-4109-a8a1-58b8ad396e0b@quicinc.com>
- <649f43d5-2d75-45eb-b13c-31fe88d99c8f@linaro.org>
+        Mon, 04 Nov 2024 02:52:57 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 3E9AD41AD6F2; Mon, 04 Nov 2024 17:52:53 +0700 (WIB)
+Date: Mon, 4 Nov 2024 17:52:52 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
+Cc: hdanton@sina.com, pabeni@redhat.com, namangulati@google.com,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
+	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, kuba@kernel.org,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux BPF <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 7/7] docs: networking: Describe irq suspension
+Message-ID: <ZyinhIlMIrK58ABF@archie.me>
+References: <20241103052421.518856-1-jdamato@fastly.com>
+ <20241103052421.518856-8-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iuKxU6a4r/CNFDfj"
 Content-Disposition: inline
-In-Reply-To: <649f43d5-2d75-45eb-b13c-31fe88d99c8f@linaro.org>
+In-Reply-To: <20241103052421.518856-8-jdamato@fastly.com>
 
-On Mon, Nov 04, 2024 at 09:36:46AM +0100, Krzysztof Kozlowski wrote:
-> On 01/11/2024 19:14, Melody Olvera wrote:
-> > 
-> > 
-> > On 11/1/2024 10:19 AM, Krzysztof Kozlowski wrote:
-> >> Add nodes for IPCC mailbox, SMP2P for ADSP, AOSS and the ADSP remoteproc
-> >> PAS loader (compatible with SM8550).
-> >>
-> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >> ---
-> >>   arch/arm64/boot/dts/qcom/sm8750.dtsi | 140 +++++++++++++++++++++++++++++++++++
-> >>   1 file changed, 140 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> >> index 98ab82caa007ee63c395a3ce0f517e2bbeb0aecb..eb826b154dcb2d8165426ba2225548efd7547da8 100644
-> >> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> >> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> > [...]
-> >>   
-> >> @@ -538,6 +566,17 @@ gcc: clock-controller@100000 {
-> >>   			#power-domain-cells = <1>;
-> >>   		};
-> >>   
-> >> +		ipcc: mailbox@406000 {
-> >> +			compatible = "qcom,sm8750-ipcc", "qcom,ipcc";
-> >> +			reg = <0 0x00406000 0 0x1000>;
-> > 
-> > nit: unsure, but should thse be 0x0?
-> 
-> No, all recent upstream DTSI files nodes use simplified 0, because it is
-> shorter. Maybe except few cases, but then these could be corrected instead.
 
-I think most of the files (including x1e80100.dtsi) use a mixture of 0x0
-and 0 here. I have been told several times to use 0x0 all the time.
+--iuKxU6a4r/CNFDfj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-With best wishes
-Dmitry
+On Sun, Nov 03, 2024 at 05:24:09AM +0000, Joe Damato wrote:
+> +It is important to note that choosing a large value for ``gro_flush_time=
+out``
+> +will defer IRQs to allow for better batch processing, but will induce la=
+tency
+> +when the system is not fully loaded. Choosing a small value for
+> +``gro_flush_timeout`` can cause interference of the user application whi=
+ch is
+> +attempting to busy poll by device IRQs and softirq processing. This value
+> +should be chosen carefully with these tradeoffs in mind. epoll-based busy
+> +polling applications may be able to mitigate how much user processing ha=
+ppens
+> +by choosing an appropriate value for ``maxevents``.
+> +
+> +Users may want to consider an alternate approach, IRQ suspension, to hel=
+p deal
+                                                                     to hel=
+p dealing
+> +with these tradeoffs.
+> +
+> <snipped>...
+> +There are essentially three possible loops for network processing and
+> +packet delivery:
+> +
+> +1) hardirq -> softirq=C2=A0=C2=A0 -> napi poll; basic interrupt delivery
+> +
+> +2)=C2=A0=C2=A0 timer -> softirq=C2=A0=C2=A0 -> napi poll; deferred irq p=
+rocessing
+> +
+> +3)=C2=A0=C2=A0 epoll -> busy-poll -> napi poll; busy looping
+
+The loops list are parsed inconsistently due to tabs between the
+enumerators and list items. I have to expand them into single space
+(along with number reference fix to follow the output):
+
+---- >8 ----
+diff --git a/Documentation/networking/napi.rst b/Documentation/networking/n=
+api.rst
+index bbd58bcc430fab..848cb19f0becc1 100644
+--- a/Documentation/networking/napi.rst
++++ b/Documentation/networking/napi.rst
+@@ -375,23 +375,21 @@ epoll finds no events, the setting of ``gro_flush_tim=
+eout`` and
+ There are essentially three possible loops for network processing and
+ packet delivery:
+=20
+-1) hardirq -> softirq=C2=A0=C2=A0 -> napi poll; basic interrupt delivery
++1) hardirq -> softirq=C2=A0-> napi poll; basic interrupt delivery
++2) timer -> softirq=C2=A0-> napi poll; deferred irq processing
++3) epoll -> busy-poll -> napi poll; busy looping
+=20
+-2)=C2=A0=C2=A0 timer -> softirq=C2=A0=C2=A0 -> napi poll; deferred irq pro=
+cessing
+-
+-3)=C2=A0=C2=A0 epoll -> busy-poll -> napi poll; busy looping
+-
+-Loop 2) can take control from Loop 1), if ``gro_flush_timeout`` and
++Loop 2 can take control from Loop 1, if ``gro_flush_timeout`` and
+ ``napi_defer_hard_irqs`` are set.
+=20
+-If ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` are set, Loops 2)
+-and 3) "wrestle" with each other for control.
++If ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` are set, Loops 2
++and 3 "wrestle" with each other for control.
+=20
+-During busy periods, ``irq-suspend-timeout`` is used as timer in Loop 2),
+-which essentially tilts network processing in favour of Loop 3).
++During busy periods, ``irq-suspend-timeout`` is used as timer in Loop 2,
++which essentially tilts network processing in favour of Loop 3.
+=20
+-If ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` are not set, Loop 3)
+-cannot take control from Loop 1).
++If ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` are not set, Loop 3
++cannot take control from Loop 1.
+=20
+ Therefore, setting ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` is
+ the recommended usage, because otherwise setting ``irq-suspend-timeout``
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--iuKxU6a4r/CNFDfj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZyingAAKCRD2uYlJVVFO
+o64ZAQDP3pxfWFFyMjIfi4ZGG1Nsp73evLSwCaWAqmtJ/cVfGwEA43yY1qi4t1Lq
+wpWy5WDij+Lu6fAu5J2LfoivRdtH+wA=
+=G0Aj
+-----END PGP SIGNATURE-----
+
+--iuKxU6a4r/CNFDfj--
 
