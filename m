@@ -1,166 +1,220 @@
-Return-Path: <linux-kernel+bounces-394769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E409BB3B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:43:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F73A9BB3A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 586CEB236B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:40:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994A21F22B5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3F81B21BC;
-	Mon,  4 Nov 2024 11:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55691B2186;
+	Mon,  4 Nov 2024 11:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="P27KsnWv"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="ZfRTK+nS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ngpzT2Ro"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F26A17965E;
-	Mon,  4 Nov 2024 11:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29894430;
+	Mon,  4 Nov 2024 11:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730720420; cv=none; b=syYDeOP8GpIW3LRC9Q+wxZ9WXuNIRdfHKAzPl42hjAKL/p1Y8L5RS9r1vxAkJ/Cnh8cS3xPZM6v3MsrSb68bQ3wbkeobuapZPAcF0RZZP4ZSSgIufPl78OLiziwiEMghlDmvmIMr64TmaKQisxuudxx3hqo3zBc7NDGxVVgr6zU=
+	t=1730720419; cv=none; b=HE27RnomprWI+RPfqfuQ7ejOOsJ50uP9+3ejQHYAb6V3MedtrrTvQ8wkUxzenzAadANlr+ObyZsK4Kr2W//C4cI0oIfdZkvZzdthtZhIU4nKg9FrP/jgPodOyb2i2KrA62M1MNBxWW10yK2I44wyZm37LrPWTg9m6gZtjvpnrGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730720420; c=relaxed/simple;
-	bh=c57Zoi8U0JO0A7Jhh061HUAgGo7tbiZ8WkPLhNfNZV0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ka8ewuKYL/sDLmGatuYqEN5NPh45zN9Gqepam3iNt34D0NwjduagarzjqNjonRq1benVJDQihn+0HunQk5H+Z5ddz6xwqnKo8INJ6CKURvUbPhTSBK4nMDWFXhWpNIr8FWbT5RLhWuKKzNT/QbUeCrXmVXPmMaFe2HgXHjb+CZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=P27KsnWv; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1730720381; x=1731325181; i=wahrenst@gmx.net;
-	bh=b/8Rj+ll4xmJpAgQwRFULejLJ462aBUN9BpO1b7fUiI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=P27KsnWvXb3p8seK7CdTpQwZJv+ajTYoGusu45XUUvcg9pEwFUhwLJElBwooJDvz
-	 YqlD1mGexa83y5y0vniGfg3cXSjrqtaZX9/2nFaqpNAr9C0rlMO65BultHblIM88M
-	 2zYJW5M/+NxCoRte76rJbnm6Wlcr5CuKSoD32i1Y6KX70b8wvSB5GV+r1/lLgg7tR
-	 Nj9XysPNAeUVSZ163uW7bGWeGkLKINEW6T597vAZJ3H95dOgy1DLuhzq6zWvrnxrA
-	 0n9F+raM2VBD4LNGisSzRTnMHGKQ+nu1PAmEYecR32fjCwQ9CCn79EAmE9gBB1NYJ
-	 JS3bm9TanNOG7jGSCw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.105] ([37.4.248.43]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MIMfc-1t4Ztx2DCe-001TxB; Mon, 04
- Nov 2024 12:39:41 +0100
-Message-ID: <787b45a1-9f8d-493d-8930-e1c8d396c818@gmx.net>
-Date: Mon, 4 Nov 2024 12:39:40 +0100
+	s=arc-20240116; t=1730720419; c=relaxed/simple;
+	bh=oP6HlThFxLs4XFbw1JoNa2rJAAq8xNotdQDdTtnEFns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LboYw5V2xzw31ztTlp3GZbx6aoaPH6yDvPkPU0X4NGlqhTsd/z7rSEnF1+ERLSPUhda7IZP5KIGbgGasvwo+451RpR3psNJNS7nlKlpHxjaT0mGUlH+A9kln1MCXj/WCTfstk/Zu8ETdv7YJu0ME+Ur2oiVHcg78A7b32pdPoAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=ZfRTK+nS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ngpzT2Ro; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.phl.internal (Postfix) with ESMTP id E67941380245;
+	Mon,  4 Nov 2024 06:40:15 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-08.internal (MEProxy); Mon, 04 Nov 2024 06:40:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1730720415;
+	 x=1730806815; bh=9NvuvEGu3Y4fTmutyF3/3Q9gfOSQU+11sjoTRbXFud0=; b=
+	ZfRTK+nSkeMx3RXf2XQuFpxvYZRGie/5Yhg+B5CtJfTucY3IJkVu3Kr3mhGseIkt
+	TixKhMIb86u0Rab4gw0osHZhrsLu0QAVUbCIWlK+n2Cqb77OeCMf3zzFTrZc4Usy
+	1fxqVFs6X2dp7GRLu+0LyCNiXyy2vzu7t4n/m3qZ16e9MqXfT3NImd36OHUbvcer
+	ervWrXQJz2ojyenuEon0CPfootIEDLAvM1rNbvjajiCPVTB8RD/4RxsMu3zCp36h
+	eDFFr21BUtciOS6b4jFVve97URoOgoBFreaIqxMgOVTuob9xcdQiyoa7H8KDZAR0
+	UgTbh3HkiYaZD859+Yszmw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730720415; x=
+	1730806815; bh=9NvuvEGu3Y4fTmutyF3/3Q9gfOSQU+11sjoTRbXFud0=; b=n
+	gpzT2RoN5LgOBPo4CP6HmzwHuBuDrljq7eAbe8iGsFgP5F/rKfKarrPoQoUBqnp3
+	ldpWdKOE9tvXclshdKIfnUTQ7ixVUW5aDmB8vum5TbhbEhZxuUFX1zrivLIWI4Zh
+	6JfclzyyagDG6yp3NYoeJ0jnW8KjtiNVx4giaCIKHUDuETs7SL0XoJao9msFNZPZ
+	13gUptKidOuSRYyqD7wlmSLTkensrV3hsVPRW1Fg+Q3uz6dYCuSLK/CM2zmy6jWZ
+	awE2NIPRkZFHrWr//tAf7DgJGrwK6E/C9syrKXGf06h8+P5XEM1bJ7ow6n97mlbA
+	fw9I0a4klDEYZvYE4NBPA==
+X-ME-Sender: <xms:nrIoZ7d4JISUqqkav6FmE-wqB6wSDq6F22AkNIry-Qf-OaZoaeVkUQ>
+    <xme:nrIoZxPspUrmFkH5lK1zsoF0oMbWrS2swMWew6Rm7iHV-Eh3nabzNsO82553Fdph_
+    xpLhsdXEnsNfIeWtpE>
+X-ME-Received: <xmr:nrIoZ0juou1mKZgcYByeqTTIhcNp_h5JcNcDcuC41Fsxq1y9c0_KtLGbCljgJac2qeDnqPNYWy-H2Bbf9yMkvfoCvcbYQlyfBA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedgvdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
+    necuhfhrohhmpefpihhklhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhoug
+    gvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrght
+    thgvrhhnpeefhfellefhffejgfefudfggeejlefhveehieekhfeulefgtdefueehffdtvd
+    elieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehn
+    ihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrsh
+    gvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+    ghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopehgrhgvgh
+    hkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehprghulhdr
+    sggrrhhkvghrrdgtthessghprdhrvghnvghsrghsrdgtohhmpdhrtghpthhtoheptghlrg
+    huughiuhdrsggviihnvggrrdhujhessghprdhrvghnvghsrghsrdgtohhmpdhrtghpthht
+    ohephihoshhhihhhihhrohdrshhhihhmohgurgdruhhhsehrvghnvghsrghsrdgtohhmpd
+    hrtghpthhtohepjhgrmhgvshdrsghothhtohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgv
+    rhhshhhiphdrtghomhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpth
+    htohepshgvrhhgvghirdhshhhthihlhihovhesghhmrghilhdrtghomhdprhgtphhtthho
+    pehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:nrIoZ8-Qt--vfk6ocNKhaE2m9iIqgy5Or-xTJcI4Znqw0g397x1SqA>
+    <xmx:nrIoZ3tmWjpoifNQagnMtALxGSF5h3PFQmtMem72VRrb-VbocTltHQ>
+    <xmx:nrIoZ7HA2rTC_fVIIfShUX_HS6JENNCo51ydAAyh6BB2t8t-a2mfkQ>
+    <xmx:nrIoZ-OiDB4x6VOq20qOMa4w5I1eMB4pyV6G2od5Pxii6fyddHANVA>
+    <xmx:n7IoZ_Mf5HCqw0hwfyhdJXRFB_Djjzp0i-u8Arfxko5kdqc4I9okRsf9>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 4 Nov 2024 06:40:14 -0500 (EST)
+Date: Mon, 4 Nov 2024 12:40:07 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH/RFC v2] MAINTAINERS: Re-add cancelled Renesas driver
+ sections
+Message-ID: <20241104114007.GA1412590@ragnatech.se>
+References: <90447fa332b6f73bffcb486ccfe2515c59546253.1730717649.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ARM: imx_v6_v7_defconfig: enable SND_SOC_SPDIF
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: Shawn Guo <shawnguo2@yeah.net>, linux@armlinux.org.uk,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, elinor.montmasson@savoirfairelinux.com,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- Stefan Eichenberger <stefan.eichenberger@toradex.com>
-References: <20241030122128.115000-1-eichest@gmail.com>
- <ZyXTFhEm9UCBii2c@dragon> <ZyY41nJY9ghwe-Y4@eichest-laptop>
- <065268d6-84eb-4247-b834-40a9ff32c1f4@gmx.net>
- <ZyiAMpjmXuVMi5FX@eichest-laptop>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <ZyiAMpjmXuVMi5FX@eichest-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:i/Ff28dwutGChcGoN0CcwsmrcFyQ0cuAnKhb/YZT6ZjH0zaQ0pp
- ZFZFY8D5HTEuTp8ow/BpcV9BFi6nixpw/w4wL8cj1SnGYC0Dvv08URliCvK5/1xAXKW8gX8
- ZE3aMei11B8xUEHC8ozZe0+E3Iz0tYY21P+7VRm6gFjTKxGik6fQUPJjMLjGuWyWo+wMQ7/
- v55ovpJ87i9Z5mR9jU78Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:USca7qz7HGU=;jP9qSUW+W0J7zyAKcKBoMjwUm4p
- Lo0q+L660AgjqhYFXdhddQ2G1A/003kLKpgOV6b8XklfW4yDsqRTyNfibQnc6icnJ0hakOeZJ
- ZTyEzaeLTMTqTnK85K7f/jRiL6gBELdWEeALXK7GwLH3537A04jJKDsA8h88/iNl2WRZ6y/Md
- BvLK+owpesJpme2sWT/Q+n6Uk/XShUU2AYU1wMfzu0xuL8F2oTmv+7rGmcAyPtXb+E70UtXk7
- XOQJMkzK1mT6NqeMTK+5jJYQh1St39Ug11NAZ4BxmGAq8PCOLenKmtIRddqgt3SMUITDd2pjl
- ckYs5ey92mhnqEWOaAnKVeM/ep432mQ2GsYJXL6oAa/dfuzkHYNx2OH7K+ISSw5jDiC3TfGVe
- 0fGggUjAqF1GXRmrU2XXVuYqNcMRNm432VWrua+5edvFW/Q09QIX3bsZnZJeC2b0s/g8nM3yn
- RX7Zpl/AMpmsH2jMfzBLjR3Q6zjC1LDLj6XmabduI0t8P2W6Y4xEyj0KgFg8FgxtuABRecF3g
- TpBiZw4+4LOp8S3ojfhkkxUNVzzuVyH2r2S2SojSn8L42U+5gA/tl6RlUSqoEkk+g2HNUWHDq
- hvMKPj2baCj7GB7Q3UCsW3/3LAgRMjXdgHZMxnVWNG4X6gy5l8/IweRWlxROmLaMh4QWRUx6s
- +dtQs61hNZi6hsQP/fiM1yOXHOM0ZWRa7CgQ/xI+lIErTm/NpgtHzNG/W7RPVcTIQMv6fINFY
- 5r09LJwrRikMivkWzwdD6ehWlsB6wWJ8HJgQ+2wFD4QN7lwhxPDEy6H7dSHjBwzaYN62nsMi4
- OfYLkJfNSh0o27ZWV5voGlJQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <90447fa332b6f73bffcb486ccfe2515c59546253.1730717649.git.geert+renesas@glider.be>
 
-Hi Stefan,
+Hi Geert,
 
-Am 04.11.24 um 09:05 schrieb Stefan Eichenberger:
-> Hi Stefan,
->
-> On Sat, Nov 02, 2024 at 04:35:19PM +0100, Stefan Wahren wrote:
->> Hi Stefan,
->>
->> Am 02.11.24 um 15:36 schrieb Stefan Eichenberger:
->>> Hi Shawn,
->>>
->>> On Sat, Nov 02, 2024 at 03:21:58PM +0800, Shawn Guo wrote:
->>>> On Wed, Oct 30, 2024 at 01:21:12PM +0100, Stefan Eichenberger wrote:
->>>>> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
->>>>>
->>>>> Enable SND_SOC_SPDIF in imx_v6_v7_defconfig to support SPDIF audio. =
-This
->>>>> change will fix commit d469b771afe1 ("ARM: dts: imx6: update spdif s=
-ound
->>>>> card node properties") which moves away from the old "spdif-controll=
-er"
->>>>> property to the new "audio-codec" property.
->>>>>
->>>>> Fixes: d469b771afe1 ("ARM: dts: imx6: update spdif sound card node p=
-roperties")
->>>> It doesn't look a fix to me.
->>> I agree somehow, it was just that before the referenced commit our tes=
-t
->>> succeeds with the imx_v6_v7_defconfig and after that we get the
->>> following error:
->>> [   24.165534] platform sound-spdif: deferred probe pending: fsl-asoc-=
-card: snd_soc_register_card failed
->> this error should have been in the commit message including the
->> information which platform/board is affected.
-> Okay, I will add this information to the next version. We see this error
-> on an Apalis iMX6 which has in my variant an NXP i.MX6Q SoC.
->
->>> So maybe it is not a fix in the sense of a bug, but it fixes the error
->>> message. However, I'm also fine with removing the Fixes tag.
->> But this patch doesn't look like the real approach.
->>
->> Could you please clarify the impact of the regression?
-> So the problem is that before commit d469b771afe1 ("ARM: dts: imx6:
-> update spdif sound card node properties") the audio driver was
-> using an implementation of linux,spdif-dit and linux,spdif-dir which was
-> directly inside the fsl,imx-audio-spdif compatible driver. Now with the
-> referenced commit the idea is to use the more generic linux,spdif-dir
-> and linux,spdif-dit compatible drivers. That's why this driver must be
-> enabled in the kernel configuration.
->
->> Is it just this error message and audio works fine or is audio also bro=
-ken?
-> It is not just the error message, audio is not working because the
-> driver deferes and because it is not enabled it will never succeed to
-> load. I don't know if this is called a regression, because the driver is
-> there it is just not enabled in the imx6_v7_defconfig. I thought because
-> a lot of the i.MX6 based board use the generic driver, it makes sense to
-> enable it in the imx_v6_v7_defconfig.
-okay, thanks for the clarification. From my understanding
-imx6_v7_defconfig is just an example config for testing. All possible
-users of these boards might have their own configs and stumble across
-the same issue. So I thought it would be better to add the dependency in
-the Kconfig of the FSL audio driver.
+Thanks for sorting this out.
 
-I'm not that audio driver expert and don't know how the dependency
-handling between the FSL audio driver and the required codecs like
-SND_SOC_SPDIF. So it's possible that I'm completely wrong here and your
-approach is the best we can do.
+On 2024-11-04 12:05:07 +0100, Geert Uytterhoeven wrote:
+> Removing full driver sections also removed mailing list entries, causing
+> submitters of future patches to forget CCing these mailing lists.
+> 
+> Hence re-add the sections for the Renesas Ethernet AVB, R-Car SATA, and
+> SuperH Ethernet drivers.  Add people who volunteered to maintain these
+> drivers (thanks a lot!).
+> 
+> Fixes: 6e90b675cf942e50 ("MAINTAINERS: Remove some entries due to various compliance requirements.")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> Acked-by: Niklas Cassel <cassel@kernel.org>
+> ---
+> To be applied to renesas-fixes for v6.12 after v6.12-rc7, unless a
+> better solution is found.
+> 
+> v2:
+>   - Add Acked-by, Reviewed-by,
+>   - Add M:-entries.
+> ---
+>  MAINTAINERS | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 13f4c23281f89332..b04d678240e80ec9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19578,6 +19578,16 @@ S:	Supported
+>  F:	Documentation/devicetree/bindings/i2c/renesas,iic-emev2.yaml
+>  F:	drivers/i2c/busses/i2c-emev2.c
+>  
+> +RENESAS ETHERNET AVB DRIVER
+> +M:	Paul Barker <paul.barker.ct@bp.renesas.com>
+> +M:	Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Best regards
+I'm happy to look after the RAVB driver together with Paul. However 
+please don't add my +renesas tag email for new entries in the 
+MAINTAINERS file.
+
+With this fixed for RAVB and SUPERH ETHERNET,
+
+Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> +L:	netdev@vger.kernel.org
+> +L:	linux-renesas-soc@vger.kernel.org
+> +F:	Documentation/devicetree/bindings/net/renesas,etheravb.yaml
+> +F:	drivers/net/ethernet/renesas/Kconfig
+> +F:	drivers/net/ethernet/renesas/Makefile
+> +F:	drivers/net/ethernet/renesas/ravb*
+> +
+>  RENESAS ETHERNET SWITCH DRIVER
+>  R:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>  L:	netdev@vger.kernel.org
+> @@ -19627,6 +19637,14 @@ F:	Documentation/devicetree/bindings/i2c/renesas,rmobile-iic.yaml
+>  F:	drivers/i2c/busses/i2c-rcar.c
+>  F:	drivers/i2c/busses/i2c-sh_mobile.c
+>  
+> +RENESAS R-CAR SATA DRIVER
+> +M:	Geert Uytterhoeven <geert+renesas@glider.be>
+> +L:	linux-ide@vger.kernel.org
+> +L:	linux-renesas-soc@vger.kernel.org
+> +S:	Supported
+> +F:	Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
+> +F:	drivers/ata/sata_rcar.c
+> +
+>  RENESAS R-CAR THERMAL DRIVERS
+>  M:	Niklas Söderlund <niklas.soderlund@ragnatech.se>
+>  L:	linux-renesas-soc@vger.kernel.org
+> @@ -19702,6 +19720,16 @@ S:	Supported
+>  F:	Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
+>  F:	drivers/i2c/busses/i2c-rzv2m.c
+>  
+> +RENESAS SUPERH ETHERNET DRIVER
+> +M:	Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> +L:	netdev@vger.kernel.org
+> +L:	linux-renesas-soc@vger.kernel.org
+> +F:	Documentation/devicetree/bindings/net/renesas,ether.yaml
+> +F:	drivers/net/ethernet/renesas/Kconfig
+> +F:	drivers/net/ethernet/renesas/Makefile
+> +F:	drivers/net/ethernet/renesas/sh_eth*
+> +F:	include/linux/sh_eth.h
+> +
+>  RENESAS USB PHY DRIVER
+>  M:	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>  L:	linux-renesas-soc@vger.kernel.org
+> -- 
+> 2.34.1
+> 
+
+-- 
+Kind Regards,
+Niklas Söderlund
 
