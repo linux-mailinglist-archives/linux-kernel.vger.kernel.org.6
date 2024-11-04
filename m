@@ -1,156 +1,229 @@
-Return-Path: <linux-kernel+bounces-395556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6689F9BBFD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:13:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1F29BBFDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:15:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 210C1280C24
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:13:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DD08B20DC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F521FAC21;
-	Mon,  4 Nov 2024 21:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202401FA271;
+	Mon,  4 Nov 2024 21:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HYxM/F1j";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A07LXhM+"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/9TlpmV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E601C57A5;
-	Mon,  4 Nov 2024 21:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666671C57A5;
+	Mon,  4 Nov 2024 21:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730754825; cv=none; b=q1DPpMXorLmuFv0xTI8UwXShfm5nu1aVQqc+b1niAsH/MKRZE9ROQaFBstetpUZ78ExSiX7AjqQW/LDHXMMevHrS+I7A8XTjdwCLhv+FsvOHZpgzIfjOA/nV05ab27sP60uVpKb/xnuY8xcAeNuYWB1k5RV+j9YiNpt48doMHTY=
+	t=1730754891; cv=none; b=Ra0ODbo0TNNkyIAizdrPef3wZy67alHRTHvZJTQcsKQqOXKKJYNNDacg/9K78OG4oFD/MFWBnhZSz2eUIczvklA8J96A3Qv1i3HZZcgnPPnqI5zLnCn+KeAMUCDu+8OshFvPzLvjC45YLfCd/bCD+DD9+dFsC8wGpuaYrIsIS4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730754825; c=relaxed/simple;
-	bh=TdV1m7lsJV9n+gRB4GbAabE6d/d+dG0m6q0qhV7Vk8A=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=jEF2iBUtTqbTVYSArqhuKMM/nsJMKQJqPRUzPNWrJxVyqZgUVNs0C7kFkGUfH8hJOWNLuzzy6Lcl9NOP9/JmCd6cIRLEt5DJ6LgfbVMmsbtY9l7hdNX4V7MBC343xZZufs5aYuqXPcS879hQfq3p/j/pQXKCjpuyWzx/oYGN7os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HYxM/F1j; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=A07LXhM+; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 1785425400BB;
-	Mon,  4 Nov 2024 16:13:40 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 04 Nov 2024 16:13:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1730754819;
-	 x=1730841219; bh=V0h+HnwYM6G14tqfuEBcSfoAhMcxFQIDMQETosW9jT0=; b=
-	HYxM/F1j4lMV3qcZLf2/ywYPB0bgQgPU6nQk/K+naRkovv97U83DYHb5KcZpVf0x
-	ZhuynQAg2mHgQNN0HFSmADvFhF7W9d3aHDAY+PwKB96XTDbcfrRyBU5b3+YOqxF8
-	lSs3ySfRLS5x4/W/BuRz3ksq2PI415eD9vq5HefepgZdoRPI7NKVqZlqj8whkqJ1
-	3I4g4CTkC56DDZ51egRLXec1uHz0TMxxcMYZlCULGmJsX43AipvtOXBugK4W5eWO
-	V9dYVQHJjlW64YoXXdjryU6Nn0fsAb0X86QsCIBylrRXYd8Jbr+2HBFc01Yu89Ly
-	Jgxm0YMrYBejXJTS+Cdjag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730754819; x=
-	1730841219; bh=V0h+HnwYM6G14tqfuEBcSfoAhMcxFQIDMQETosW9jT0=; b=A
-	07LXhM+Iq1HCBnCunXqpgfNDV2r2wBsNjVcaZBED84teZ5OBI84eO40xTruVaIlb
-	CTu83Z7rZQ2g8IgSY0iTyGsddlsmaSymS8tyx1YgdBNMiEIdjPhO/8NyuWBsAQ4R
-	3BFY+ngJ4zsKrv96GIyRw/02pP+F6h35hwPpRiObV2FABJLxInkhSlBx2LpvWHul
-	V+Pf7xzFnQ5C4DWgfCzFo3teifpTB3Dfy14StP7CJfAPLbaUBebJEEZic94jUVZZ
-	kSnsXvCgjRtBS8YSngsbswoTuY+AYE4lBGLlDQb7KenMqJqKtDLPMDZFaSDjBtdi
-	tlbU1kJwhvS+te9me5dNQ==
-X-ME-Sender: <xms:AjkpZ7iLwMb7LS52CjGTazhHzh1hC8c78ofVs3xc41WaM4CjDfFK9g>
-    <xme:AjkpZ4DpGENhrWdnaGR8Via9b10QYZcLhlzRZMc6gY3rzc6XU4y_y32T3mzMtaXJO
-    gQ-LbupRVMkdcAaFvQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedgudeghecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeef
-    uddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhguse
-    grrhhmrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhr
-    tghpthhtohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopegrohhusegvvg
-    gtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepghhnohgrtghksehgohhoghhl
-    vgdrtghomhdprhgtphhtthhopehirhhoghgvrhhssehgohhoghhlvgdrtghomhdprhgtph
-    htthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrughr
-    ihgrnhdrhhhunhhtvghrsehinhhtvghlrdgtohhmpdhrtghpthhtoheprggtmhgvsehkvg
-    hrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:AjkpZ7HDxCwy4I__a2KM4WoXIAT-uVa-FUNo5xAINlv6PIc3MDmN3g>
-    <xmx:AjkpZ4TEpwHRFnIZ1r1FdqqUbIpgwi0-D_DPyXW0gWwGbaQgNqoybQ>
-    <xmx:AjkpZ4wI8UxMGhZhBFFMXFGGRBq8PaJdE2Bz84HCW1PVRGBfp3N5_Q>
-    <xmx:AjkpZ-4HRRofSWplUrAHFwaw7MrOvwaTcko0TgpGFlly-Euyx3Q6Ew>
-    <xmx:AzkpZx8kPUEQuc9kjEr7jGh3aP1zGFEnrt0qIDe_xxeUuWuooZ8w3Cme>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 708CF2220071; Mon,  4 Nov 2024 16:13:38 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730754891; c=relaxed/simple;
+	bh=oNFW2dF1VkNCjCIXnbzm4F7p+aLAg6Iuh9+/LWfa//Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uPw+8tQtkrykpXcIQHTDXHcLWuqKSrVvHCY55Re1FRf1oMm8oBXqHnu4S/3l4J5dTE+K7l4A/EVjlRiZ7eO50GwAPJiKCFuqIaCguC+k4WtPyY0yvPz8wwedJwyvVSgRssGl52GIZu/kl8L20NUBDFSgZ47q8umpD1qTfsDrKDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/9TlpmV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D181EC4CECE;
+	Mon,  4 Nov 2024 21:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730754890;
+	bh=oNFW2dF1VkNCjCIXnbzm4F7p+aLAg6Iuh9+/LWfa//Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H/9TlpmVHWANaXvvBzJE6IYyjnWlxM6ca6v05P9tiVoEg6Vx6KUCuKgz9jjDXCGrv
+	 yIUTRVxULhJjLcoPZjIxw7HI8sXII6WqvZyC046o/MxNUEbWUn1N2t+VP/oZE1vg2M
+	 UZtYk14w74EPvtKSS0i3GO5MofnUTcGu8T2ve7hnMBGmIqXyI6QqWQoTja3k0lTZ9d
+	 ezocIQoWuz0/Tw/MTywixfsqwtzt21VxA91WanqF/iOhEgZwnyYYrEU0wcnFAJzns2
+	 FJ9N6Zev/Yzt+RuWzttwqNoosmkznik1iqZwwQnEtenvlrXpQ42h9gQrsG/sZQ24bE
+	 6Zl89RlndjkVg==
+Message-ID: <814adf82-99ec-44f8-83d0-6540f2cccbcb@kernel.org>
+Date: Mon, 4 Nov 2024 15:14:48 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 04 Nov 2024 22:13:18 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Charlie Jenkins" <charlie@rivosinc.com>,
- "Peter Zijlstra" <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>,
- "Arnaldo Carvalho de Melo" <acme@kernel.org>,
- "Namhyung Kim" <namhyung@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
- "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
- "Jiri Olsa" <jolsa@kernel.org>, "Ian Rogers" <irogers@google.com>,
- "Adrian Hunter" <adrian.hunter@intel.com>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- "Christian Brauner" <brauner@kernel.org>, guoren <guoren@kernel.org>,
- "John Garry" <john.g.garry@oracle.com>, "Will Deacon" <will@kernel.org>,
- "James Clark" <james.clark@linaro.org>, "Mike Leach" <mike.leach@linaro.org>,
- "Leo Yan" <leo.yan@linux.dev>, "Jonathan Corbet" <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-Message-Id: <3b56fc50-4c6c-4520-adba-461797a3b5ec@app.fastmail.com>
-In-Reply-To: <20241104-perf_syscalltbl-v1-0-9adae5c761ef@rivosinc.com>
-References: <20241104-perf_syscalltbl-v1-0-9adae5c761ef@rivosinc.com>
-Subject: Re: [PATCH RFT 00/16] perf tools: Use generic syscall scripts for all archs
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ACPI: processor: Move arch_init_invariance_cppc() call
+ later
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>, "open list:ACPI"
+ <linux-acpi@vger.kernel.org>, Ivan Shapovalov <intelfx@intelfx.name>,
+ Oleksandr Natalenko <oleksandr@natalenko.name>
+References: <20241104205446.3874509-1-superm1@kernel.org>
+ <CAJZ5v0jGTzRNgA7HM-r=TuhHyy0gvMuNEgz5wZ2hPkqwyFa6og@mail.gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <CAJZ5v0jGTzRNgA7HM-r=TuhHyy0gvMuNEgz5wZ2hPkqwyFa6og@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 4, 2024, at 22:06, Charlie Jenkins wrote:
-> Standardize the generation of syscall headers around syscall tables.
-> Previously each architecture independently selected how syscall headers
-> would be generated, or would not define a way and fallback onto
-> libaudit. Convert all architectures to use a standard syscall header
-> generation script and allow each architecture to override the syscall
-> table to use if they do not use the generic table.
->
-> As a result of these changes, no architecture will require libaudit, and
-> so the fallback case of using libaudit is removed by this series.
->
-> Testing:
->
-> I have tested that the syscall mappings of id to name generation works
-> as expected for every architecture, but I have only validated that perf
-> trace compiles and runs as expected on riscv, arm64, and x86_64.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+On 11/4/2024 15:10, Rafael J. Wysocki wrote:
+> On Mon, Nov 4, 2024 at 9:54 PM Mario Limonciello <superm1@kernel.org> wrote:
+>>
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> arch_init_invariance_cppc() is called at the end of
+>> acpi_cppc_processor_probe() in order to configure frequency invariance
+>> based upon the values from _CPC.
+>>
+>> This however doesn't work on AMD CPPC shared memory designs that have
+>> AMD preferred cores enabled because _CPC needs to be analyzed from all
+>> cores to judge if preferred cores are enabled.
+>>
+>> This issue manifests to users as a warning since commit 21fb59ab4b97
+>> ("ACPI: CPPC: Adjust debug messages in amd_set_max_freq_ratio() to warn"):
+>> ```
+>> Could not retrieve highest performance (-19)
+>> ```
+>>
+>> However the warning isn't the cause of this, it was actually
+>> commit 279f838a61f9 ("x86/amd: Detect preferred cores in
+>> amd_get_boost_ratio_numerator()") which exposed the issue.
+>>
+>> To fix this problem, change arch_init_invariance_cppc() into a new weak
+>> symbol that is called at the end of acpi_processor_driver_init().
+>> Each architecture that supports it can declare the symbol to override
+>> the weak one.
+>>
+>> Fixes: 279f838a61f9 ("x86/amd: Detect preferred cores in amd_get_boost_ratio_numerator()")
+>> Reported-by: Ivan Shapovalov <intelfx@intelfx.name>
+>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219431
+>> Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>> v3:
+>>   * Weak symbol instead of macro to help riscv build failure
+>>   * Update commit message
+>>   * Add comment
+>> ---
+>>   arch/arm64/include/asm/topology.h | 2 +-
+>>   arch/x86/include/asm/topology.h   | 2 +-
+>>   drivers/acpi/cppc_acpi.c          | 6 ------
+>>   drivers/acpi/processor_driver.c   | 9 +++++++++
+>>   include/acpi/processor.h          | 2 ++
+>>   5 files changed, 13 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/topology.h b/arch/arm64/include/asm/topology.h
+>> index 5fc3af9f8f29b..8a1860877967e 100644
+>> --- a/arch/arm64/include/asm/topology.h
+>> +++ b/arch/arm64/include/asm/topology.h
+>> @@ -27,7 +27,7 @@ void update_freq_counters_refs(void);
+>>   #define arch_scale_freq_ref topology_get_freq_ref
+>>
+>>   #ifdef CONFIG_ACPI_CPPC_LIB
+>> -#define arch_init_invariance_cppc topology_init_cpu_capacity_cppc
+>> +#define acpi_processor_init_invariance_cppc topology_init_cpu_capacity_cppc
+>>   #endif
+>>
+>>   /* Replace task scheduler's default cpu-invariant accounting */
+>> diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+>> index aef70336d6247..0fb705524aeaa 100644
+>> --- a/arch/x86/include/asm/topology.h
+>> +++ b/arch/x86/include/asm/topology.h
+>> @@ -307,7 +307,7 @@ extern void arch_scale_freq_tick(void);
+>>
+>>   #ifdef CONFIG_ACPI_CPPC_LIB
+>>   void init_freq_invariance_cppc(void);
+>> -#define arch_init_invariance_cppc init_freq_invariance_cppc
+>> +#define acpi_processor_init_invariance_cppc init_freq_invariance_cppc
+>>   #endif
+>>
+>>   #endif /* _ASM_X86_TOPOLOGY_H */
+>> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+>> index 1a40f0514eaa3..5c0cc7aae8726 100644
+>> --- a/drivers/acpi/cppc_acpi.c
+>> +++ b/drivers/acpi/cppc_acpi.c
+>> @@ -671,10 +671,6 @@ static int pcc_data_alloc(int pcc_ss_id)
+>>    *  )
+>>    */
+>>
+>> -#ifndef arch_init_invariance_cppc
+>> -static inline void arch_init_invariance_cppc(void) { }
+>> -#endif
+>> -
+>>   /**
+>>    * acpi_cppc_processor_probe - Search for per CPU _CPC objects.
+>>    * @pr: Ptr to acpi_processor containing this CPU's logical ID.
+>> @@ -905,8 +901,6 @@ int acpi_cppc_processor_probe(struct acpi_processor *pr)
+>>                  goto out_free;
+>>          }
+>>
+>> -       arch_init_invariance_cppc();
+>> -
+>>          kfree(output.pointer);
+>>          return 0;
+>>
+>> diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_driver.c
+>> index cb52dd000b958..3b281bc1e73c3 100644
+>> --- a/drivers/acpi/processor_driver.c
+>> +++ b/drivers/acpi/processor_driver.c
+>> @@ -237,6 +237,9 @@ static struct notifier_block acpi_processor_notifier_block = {
+>>          .notifier_call = acpi_processor_notifier,
+>>   };
+>>
+>> +void __weak acpi_processor_init_invariance_cppc(void)
+>> +{ }
+> 
+> Does this actually work if acpi_processor_init_invariance_cppc is a
+> macro?  How does the compiler know that it needs to use
+> init_freq_invariance_cppc() instead of this?
+> 
+> It would work if a __weak definition of init_freq_invariance_cppc() was present.
 
-Thanks for doing this, I had plans to do this myself, but hadn't
-completed that bit so far. I'm travelling at the moment, so I'm
-not sure I have time to look at it in enough detail this week.
+I also wasn't sure, so I explicitly added some tracing in 
+init_freq_invariance_cppc() to make sure it got called and checked it 
+(GCC 13.2.0).
 
-One problem I ran into doing this previously was the incompatible
-format of the tables for x86 and s390, which have conflicting
-interpretations of what the '-' character means. It's possible
-that this is only really relevant for the in-kernel table,
-not the version in tools.
+But I'll admit it's a confusing behavior.  If you think it's too 
+confusing I'll swap it around to just axe the macros.
 
-     Arnd
+> 
+>> +
+>>   /*
+>>    * We keep the driver loaded even when ACPI is not running.
+>>    * This is needed for the powernow-k8 driver, that works even without
+>> @@ -270,6 +273,12 @@ static int __init acpi_processor_driver_init(void)
+>>                                    NULL, acpi_soft_cpu_dead);
+>>
+>>          acpi_processor_throttling_init();
+>> +
+>> +       /*
+>> +        * Frequency invariance calculations on AMD platforms can't be run until
+>> +        * after acpi_cppc_processor_probe() has been called for all online CPUs.
+>> +        */
+>> +       acpi_processor_init_invariance_cppc();
+>>          return 0;
+>>   err:
+>>          driver_unregister(&acpi_processor_driver);
+>> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+>> index e6f6074eadbf3..a17e97e634a68 100644
+>> --- a/include/acpi/processor.h
+>> +++ b/include/acpi/processor.h
+>> @@ -465,4 +465,6 @@ extern int acpi_processor_ffh_lpi_probe(unsigned int cpu);
+>>   extern int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi);
+>>   #endif
+>>
+>> +void acpi_processor_init_invariance_cppc(void);
+>> +
+>>   #endif
+>>
+>> base-commit: 6db936d4ac0fe281af48b4d1ebf69b1523bbac31
+>> --
+>> 2.43.0
+>>
+
 
