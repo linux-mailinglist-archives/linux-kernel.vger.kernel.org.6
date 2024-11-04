@@ -1,270 +1,130 @@
-Return-Path: <linux-kernel+bounces-394777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D019BB3C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:47:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204E59BB40E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:00:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D01E1C210C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:47:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D510B256A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633CC1B392C;
-	Mon,  4 Nov 2024 11:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827711B4F02;
+	Mon,  4 Nov 2024 11:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nrN3fTDf"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDZHcWCC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F901AF0A0
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFB51B0F2C;
+	Mon,  4 Nov 2024 11:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730720832; cv=none; b=gQxd9W2V2t84cOXAmyic4/jgesg2JP8wcQojOaEakCGdabxTbypbkvCE5+R63/8Of+6tZc3d3TwY60snkTCBZMn6ErAQIm7klBGCxxTHzvj70oQ8eu4pfaEBvGwBoV0eAtjsekqr8D4R+CMQ4GUDy8yEs4oKkfyFm3UtksGb/gM=
+	t=1730720840; cv=none; b=P8azDktK3LIDDOnl4VAevHxYTnI7RUDGEdUpDDJFoLk9PbbvamocGBn/PHNnndbAtcPXcLObLaje/TaOECGbNBveESvgylVsOirwfbqcRB+XSxfn2NN5mOdSv9U5cpPW1AocIdwp6ulqEsbz2x0fof+u3rJiDw81V+gUa9Iwzf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730720832; c=relaxed/simple;
-	bh=PyullqZk2NrriXcY6CBFMfbW7+XiGUFm8DUyVMWaVk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U4y5dEeC/PZ8OM/pAP5mpK4+RcbOPleQfV0B0EkUGEuPmmMxOOmt5SS85kJq/WWJtVwS6S0sjq7sLAFa+V4y+/tvEsW5p3dZ+IfqpRuKwwzo8k0zu+WNia8SAlo9f8E5UcJdB+d82+FGN1DxEo6UlRInlgBsAWZhF4vgtlU2S10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nrN3fTDf; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d6ff1cbe1so2964755f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:47:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730720829; x=1731325629; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lh5+3KGOkaelrIB4Nl2tEoQoHe7RgDBZJ7Oaq3ExHpo=;
-        b=nrN3fTDfe5xoy6oP6JIY/CdvjsmXpAqHqzWB85/a4SjJlQm637V/8xI+9ywb5Iz5uc
-         tG0DrkTTUUG8Jxc6c6u/nVXa1WoCjQeG8iT6kxysRg5s8deh37Vc7ok0h81GxokMPMHe
-         1M6uZkZbjJfu5Zc5EMLO+FS5H4xn9KY897K5sC5nL6N+2cWqV5Jxo60UPrdRehjQV14Y
-         ryLi6kjkvtgKHGgd87POanMKdd1iRxtoJDCdO9B6/ky/nJsfr7vueIL6S8rzJcqjkq8A
-         85qtKpft+Pq/tfLJ7/49XODpC8qqF5Sv4f3ezK9CzkMRVo2Fi47M2UP5+Pyod6HZeGU8
-         3seg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730720829; x=1731325629;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lh5+3KGOkaelrIB4Nl2tEoQoHe7RgDBZJ7Oaq3ExHpo=;
-        b=OclVJ6YRZeTgbDIFlgFasvxcRJ5dfxAdIHGXCA2EByAuymTCeJ29+fZSPSBTQU1egi
-         1OyvuM0dVb5InDPXesGbpjyRzfnGdR2RLjHNQJCcBvC5HM5xVV/Ly2HE9RLQ+leMDamf
-         ZQmoldcO92uzaeMk7Z124doo0OJAeMSOj8UAD+32LUScYnOXptbxMmDYHsbFM4/vvk9h
-         kEenBd1eC2GPTtfavChvfhKqHNltobPslBxO99mETs7EbLUSX9xPGjYtESREqamVhnDV
-         aIEOzSy8mZtr8MIRSFrZHrGgz2vo/cuyIhP1qw+FZgn0LUwafuCx2RlDZkWyRR83KO4r
-         es6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVcdHVdex7QuEJCOZZjQW4Nx+WeGOUhhyuZei46k7/g/5qwg8BnOZFEnFEgtNwfNiUxRIig4OZI1b0aldQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFyrr1JBLKs+rkmSM6whL6lUz2rVbw2Rh51EPT2sFTQzUNWQdt
-	g9xJh78XpO81sM9Kaz45al7dAswWyWQcGDhiQ23SWQkTX+IbourH8MXG7Thn46Y=
-X-Google-Smtp-Source: AGHT+IGpbkSWgNkUv+H2MDavqFNOI/hX8U3WpCkkxEpPxrbnjPpDbaoC59i6YBF7QSDjt9Pl6iuLIA==
-X-Received: by 2002:a5d:64a1:0:b0:37d:4fe9:b6a7 with SMTP id ffacd0b85a97d-381bea1c1f4mr13084577f8f.36.1730720828889;
-        Mon, 04 Nov 2024 03:47:08 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.66.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7c13sm13193474f8f.13.2024.11.04.03.47.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 03:47:08 -0800 (PST)
-Message-ID: <ed15526d-9b1a-4204-92a3-4d319b03b790@linaro.org>
-Date: Mon, 4 Nov 2024 11:47:06 +0000
+	s=arc-20240116; t=1730720840; c=relaxed/simple;
+	bh=MrZ3jPCIRs3oxdcsqPmsna3mUN7Tl+hPWvs4gZVJGYM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=CWNBKCxAPrpVtTubaLY9NWgH9ragPQy/Q7daSv3mCOhdanLHKm3yPQttXnJsHmUJvm+Ycm2o/9/lN1AywSciHqlpvmaSiCSshGXTqPkEe5cebLqbjK34QzQQU0TLfqwYqMVsk8zLUEDgjcFQk3r2BA/5y+yO5lPWLgrO0wojils=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDZHcWCC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 518E4C4CED1;
+	Mon,  4 Nov 2024 11:47:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730720839;
+	bh=MrZ3jPCIRs3oxdcsqPmsna3mUN7Tl+hPWvs4gZVJGYM=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=dDZHcWCCdzRJUVuv0I6KxnSfG6hnWnlBT87cQ7aO5sW436myXIKmPh9Wc5yWrfE8J
+	 9fla5qD7e07y23YWg9d0OUFNEdIZvoSLD79VnmmGTQmIkGciY1YVbAIkENKBNtIRAf
+	 XK+KoV5KuvedjFkHKt2yk0kdnt6svjI70ljYOyoOGtl4+cX/PwyPdFi+yQ9TA6bhYL
+	 PTZnQKLTtuCfgAdNgGuMyj+nOM6J83qiJ4NSaHGC5MA7BElKB+pZMYPI92mZbGiCeg
+	 Y5FdQu9ehdc8pFw48fZSs3ldFIJjrTGr/qd/yl++bbspwulGm1SL+3jbfBxRp7i4vR
+	 D0QfIKG6E4M7w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] perf arm-spe: Add support for SPE Data Source
- packet on AmpereOne
-To: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Graham Woodward <graham.woodward@arm.com>
-References: <20241031213533.11148-1-ilkka@os.amperecomputing.com>
- <20241031213533.11148-3-ilkka@os.amperecomputing.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241031213533.11148-3-ilkka@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 04 Nov 2024 13:47:15 +0200
+Message-Id: <D5DDBZEIMMUR.1ZIY3TRJRMPKO@kernel.org>
+Cc: "Daniel P. Smith" <dpsmith@apertussolutions.com>, <x86@kernel.org>,
+ "Ross Philipson" <ross.philipson@oracle.com>, "Thomas Gleixner"
+ <tglx@linutronix.de>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe"
+ <jgg@ziepe.ca>, "open list:TPM DEVICE DRIVER"
+ <linux-integrity@vger.kernel.org>, "open list"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Ard Biesheuvel" <ardb@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241102152226.2593598-1-jarkko@kernel.org>
+ <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
+ <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com>
+ <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
+ <CAMj1kXGd5KAXiFr3rEq3cQK=_970b=eRT4X6YKVSj2PhN6ACrw@mail.gmail.com>
+In-Reply-To: <CAMj1kXGd5KAXiFr3rEq3cQK=_970b=eRT4X6YKVSj2PhN6ACrw@mail.gmail.com>
 
+On Mon Nov 4, 2024 at 1:27 PM EET, Ard Biesheuvel wrote:
+> On Mon, 4 Nov 2024 at 12:18, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> > On Mon Nov 4, 2024 at 12:57 PM EET, Daniel P. Smith wrote:
+> > > On 11/2/24 14:00, Jarkko Sakkinen wrote:
+> > > > On Sat Nov 2, 2024 at 5:22 PM EET, Jarkko Sakkinen wrote:
+> > > >> It is not really my problem but I'm also wondering how the
+> > > >> initialization order is managed. What if e.g. IMA happens to
+> > > >> initialize before slmodule?
+> > > >
+> > > > The first obvious observation from Trenchboot implementation is tha=
+t it
+> > > > is 9/10 times worst idea ever to have splitted root of trust. Here =
+it
+> > > > is realized by an LKM for slmodule.
+> > >
+> > > First, there is no conflict between IMA and slmodule. With your chang=
+e
+> > > to make locality switching a one shot, the only issue would be if IMA
+> > > were to run first and issue a locality switch to Locality 0, thus
+> > > blocking slmodule from switching to Locality 2. As for PCR usage, IMA
+> > > uses the SRTM PCRs, which are completely accessible under Locality 2.
+> >
+> > Just pointing out a possible problem (e.g. with  TPM2_PolicyLocality).
+> >
+> > > Honestly, a better path forward would be to revisit the issue that is
+> > > driving most of that logic existing, which is the lack of a TPM
+> > > interface code in the setup kernel. As a reminder, this issue is due =
+to
+> > > the TPM maintainers position that the only TPM code in the kernel can=
+ be
+> > > the mainline driver. Which, unless something has changed, is impossib=
+le
+> > > to compile into the setup kernel due to its use of mainline kernel
+> > > constructs not present in the setup kernel.
+> >
+> > I don't categorically reject adding some code to early setup. We have
+> > some shared code EFI stub but you have to explain your changes
+> > proeprly. Getting rejection in some early version to some approach,
+> > and being still pissed about that years forward is not really way
+> > to go IMHO.
+> >
+>
+> Daniel has been nothing but courteous and patient, and you've waited
+> 11 revision to come up with some bikeshedding patches that don't
+> materially improve anything.
+>
+> So commenting on Daniel's approach here is uncalled for.
+>
+> Can we please converge on this?
+>
+> Daniel - if no component can be built as a module, there should be no
+> reason for the set_default_locality() hook to be exported to modules
+> right? And do we even need a sysfs node to expose this information?
 
+I provided patches with my sob's and spent time on making the delta
+absolute minimal to what exists already. If those are picked, I'm
+good. They are essentially drop-in replicas to the existing patches.
 
-On 31/10/2024 9:35 pm, Ilkka Koskinen wrote:
-> Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
-> 
-> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-> ---
->   .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 +++
->   tools/perf/util/arm-spe.c                     | 65 +++++++++++++++++++
->   2 files changed, 74 insertions(+)
-> 
-> diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-> index 358c611eeddb..4bcd627e859f 100644
-> --- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-> +++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-> @@ -67,6 +67,15 @@ enum arm_spe_common_data_source {
->   	ARM_SPE_COMMON_DS_DRAM		= 0xe,
->   };
->   
-> +enum arm_spe_ampereone_data_source {
-> +	ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE    = 0x0,
-> +	ARM_SPE_AMPEREONE_SLC                           = 0x3,
-> +	ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE             = 0x5,
-> +	ARM_SPE_AMPEREONE_DDR                           = 0x7,
-> +	ARM_SPE_AMPEREONE_L1D                           = 0x8,
-> +	ARM_SPE_AMPEREONE_L2D                           = 0x9,
-> +};
-> +
->   struct arm_spe_record {
->   	enum arm_spe_sample_type type;
->   	int err;
-> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-> index 9586416be30a..700d4bc8d8ec 100644
-> --- a/tools/perf/util/arm-spe.c
-> +++ b/tools/perf/util/arm-spe.c
-> @@ -103,6 +103,30 @@ struct arm_spe_queue {
->   	u32				flags;
->   };
->   
-> +struct arm_spe_source_mapping {
-> +	u16 source;
-> +	enum arm_spe_common_data_source common_src;
-> +};
-> +
-> +#define MAP_SOURCE(src, common)				\
-> +	{						\
-> +		.source = ARM_SPE_##src,		\
-> +		.common_src = ARM_SPE_COMMON_##common,  \
-> +	}
-> +
-> +static int arm_spe__map_to_common_source(u16 source,
-> +					 struct arm_spe_source_mapping *tbl,
-> +					 int nr_sources)
-> +{
-> +	while (nr_sources--) {
-> +		if (tbl->source == source)
-> +			return tbl->common_src;
-> +		tbl++;
-> +	}
-> +
-
-Hi Ilkka,
-
-I think a simple switch statement here would be easier to follow than 
-the loop, custom macro and then having the mappings in some other place:
-
-switch(source)
-case 0x0: /* AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE */
-   return DS_PEER_CORE;
-
-etc...
-
-> +	return -1;
-
-And the default case can return 0xfff directly, which avoids the if else 
-later only to convert this -1 back into 0xfff.
-
-> +}
-> +
->   static void arm_spe_dump(struct arm_spe *spe __maybe_unused,
->   			 unsigned char *buf, size_t len)
->   {
-> @@ -443,6 +467,11 @@ static const struct midr_range common_ds_encoding_cpus[] = {
->   	{},
->   };
->   
-> +static const struct midr_range ampereone_ds_encoding_cpus[] = {
-> +	MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
-> +	{},
-> +};
-> +
->   static void arm_spe__sample_flags(struct arm_spe_queue *speq)
->   {
->   	const struct arm_spe_record *record = &speq->decoder->record;
-> @@ -532,6 +561,38 @@ static void arm_spe__synth_data_source_common(const struct arm_spe_record *recor
->   	}
->   }
->   
-> +static struct arm_spe_source_mapping ampereone_sources[] = {
-> +	MAP_SOURCE(AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE, DS_PEER_CORE),
-> +	MAP_SOURCE(AMPEREONE_SLC, DS_SYS_CACHE),
-> +	MAP_SOURCE(AMPEREONE_REMOTE_CHIP_CACHE, DS_REMOTE),
-> +	MAP_SOURCE(AMPEREONE_DDR, DS_DRAM),
-> +	MAP_SOURCE(AMPEREONE_L1D, DS_L1D),
-> +	MAP_SOURCE(AMPEREONE_L2D, DS_L2),
-> +};
-> +
-> +/*
-> + * Source is IMPDEF. Here we convert the source code used on AmpereOne cores
-> + * to the common (Neoverse, Cortex) to avoid duplicating the decoding code.
-> + */
-> +static void arm_spe__synth_data_source_ampereone(const struct arm_spe_record *record,
-> +						 union perf_mem_data_src *data_src)
-> +{
-> +	int common_src;
-> +	struct arm_spe_record common_record;
-> +
-> +	common_src = arm_spe__map_to_common_source(record->source,
-> +						   ampereone_sources,
-> +						   ARRAY_SIZE(ampereone_sources));
-> +	if (common_src < 0)
-> +		 /* Assign a bogus value that's not used for common coding */
-> +		common_record.source = 0xfff;
-> +	else
-> +		common_record.source = common_src;
-> +
-> +	common_record.op = record->op;
-> +	arm_spe__synth_data_source_common(&common_record, data_src);
-> +}
-> +
->   static void arm_spe__synth_memory_level(const struct arm_spe_record *record,
->   					union perf_mem_data_src *data_src)
->   {
-> @@ -606,6 +667,8 @@ static u64 arm_spe__synth_data_source(struct arm_spe_queue *speq,
->   	union perf_mem_data_src	data_src = { .mem_op = PERF_MEM_OP_NA };
->   	bool is_common = arm_spe__is_ds_encoding_supported(speq,
->   						common_ds_encoding_cpus);
-> +	bool is_ampereone = arm_spe__is_ds_encoding_supported(speq,
-> +						ampereone_ds_encoding_cpus);
-
-I know this probably already works, but we don't really need is_common 
-is_ampere etc, it will only grow anyway. All we need is a list of midrs 
-and function pairs. That also avoids doing is_ampereone even after we 
-already know is_common == true.
-
-static const struct data_src[] = {
-...
-	DS(MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2), common_ds),
-	DS(MIDR_ALL_VERSIONS(MIDR_AMPERE1A), ampere_ds),
-	{},
-...
-};
-
-"arm_spe__is_ds_encoding_supported" then becomes a direct call to 
-"arm_spe__synth_ds" and we can drop the is_ampereone and is_common vars. 
-Then adding new ones doesn't require changing the function anymore.
-
->   
->   	if (record->op & ARM_SPE_OP_LD)
->   		data_src.mem_op = PERF_MEM_OP_LOAD;
-> @@ -616,6 +679,8 @@ static u64 arm_spe__synth_data_source(struct arm_spe_queue *speq,
->   
->   	if (is_common)
->   		arm_spe__synth_data_source_common(record, &data_src);
-> +	else if (is_ampereone)
-> +		arm_spe__synth_data_source_ampereone(record, &data_src);
->   	else
->   		arm_spe__synth_memory_level(record, &data_src);
->   
-
+BR, Jarkko
 
