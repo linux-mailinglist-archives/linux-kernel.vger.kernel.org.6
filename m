@@ -1,121 +1,229 @@
-Return-Path: <linux-kernel+bounces-394741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D295F9BB35D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:32:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6C79BB366
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:32:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1311F23107
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:32:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFA721C20A5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5501BD508;
-	Mon,  4 Nov 2024 11:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBCU5f19"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525A61C1AAA;
+	Mon,  4 Nov 2024 11:27:59 +0000 (UTC)
+Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6771B21AF;
-	Mon,  4 Nov 2024 11:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C9A1BF81B
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719660; cv=none; b=VDEkcNAKIJ858PJWbxwjqWNI155wnnokGnxd/Qpt9GrA0w3rB1FZNn0V8dp4lJPJaiTv//YbAuu9xSVuLSAe94ruQjjUPXSusdwTwYX62CxYNKZw64Qzg2sQCtAHGZTIOohPnyKSJOHlaURSZIrgdW1fc+xaiGC4MP9WWMdV6sQ=
+	t=1730719678; cv=none; b=Era+cElk/3hi1wXgctMTnlu8HSSWDnfaFIM2T733DLuU/lJIbNLctmqABly33LxYi6bSV47DGMHR6mdYubNTXx2WBV6rGWD1hgYhxm4thxaC0oAamfRUn8udnsrRR9DQ2apBrKGO+/wIXQ0hJ1IljcR5K3Qu1ODjYrNemxDsBz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719660; c=relaxed/simple;
-	bh=Q0oHyC5HFwQtHnr3tahD/Xozp4rdR/kHqgtAU1qaQwo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sTULC/dcR7HonxT+FtvLyJhfBarIHXckrv8I2HQFgPsTAmwN+J6UhgplrDGp9YsU2ip+sSHbcUdwlqp5AJDAesn/7rKrg38WjGyydGzlBSZH4qiCHDTFsscIGNpOnknaKD6GQC9Ywbh9Ezxgjy9EwWYC0OvsQlQTKOZ09kAbVK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBCU5f19; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE546C4CED1;
-	Mon,  4 Nov 2024 11:27:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730719659;
-	bh=Q0oHyC5HFwQtHnr3tahD/Xozp4rdR/kHqgtAU1qaQwo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kBCU5f19ECTzy9hRq7MsIYZ0NJ5jvwWoDRQTrjY88d3uIHkQD3/ut4jBUcLFOKHLq
-	 P+7+G5UzPPG0pTZj6e/ofteRdgCepmDKEeKve/6rEgmdK64ulCrvcfKhSqnoJoNpUW
-	 kbkNlycqs9IADd3hC8BGXajQsaB9LxIt9U3NgEXcoMZHHD4YdRNHdDSnWKMac7DAcP
-	 jm0eAnMhxI6Dx4vqK4N/v7mIzPR6fqR+2XsGDywF9jh6nWzOa980V6AFt4RChT9hCk
-	 xNeXlHSIlIYBrlM3AYxfSdxdR8XCwlliFlIkH7j2nfevLYtZnCigkcrqSkpnO7BtOD
-	 Od4oBqnfeWu/A==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so5251923e87.0;
-        Mon, 04 Nov 2024 03:27:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW4oTvSMZ1dbujtzc/MUBc03JiLoZ8+uYcEgqnG2MH2kqiLv6XEwH7TiZUk9C4U2u4a4CghuKk5eRfqzG1c@vger.kernel.org, AJvYcCWUc5yMctT/lTxpPXLYupstr3jZP1u54Y0aK1VIYTP7nA9rWmysKtb2uPuvTz03nyN8RiJgss9ahDBqHp1QkrE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzudnN87zFGf1VOZuvToo6CGFvcC2m0Z95E0bgqj0RDsbT6LY+y
-	pRYvIdx5X6nivuZ5f3JWj4u0wCGqEJJBM5muDsPdsLChHQ5lzq36npkTpLOPlzJmw8IGDREQbhH
-	f1cQ/hPTVBGX0U/HrB1tlob7+8Eo=
-X-Google-Smtp-Source: AGHT+IFdvw0jqvwZDocTHlobM+8JX4jnwc2ccfnmUN8Bw+DRPfsZrTSFKld5E8msl1vzuiUzbFwWqAbSrpxMn8zwp1M=
-X-Received: by 2002:a05:6512:15a5:b0:539:f7de:df84 with SMTP id
- 2adb3069b0e04-53c79e15806mr7101954e87.10.1730719658212; Mon, 04 Nov 2024
- 03:27:38 -0800 (PST)
+	s=arc-20240116; t=1730719678; c=relaxed/simple;
+	bh=g0Jvq01ekc2p2fE5T0wALH3L2L59ZQq+bs14tVLItLo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VG+qFNQy7fydCrl+f3eEMYF/J5CK7C7+m+IbCHjXnscp3lX6UgCvCQPdA2sQnBeQ6VzsmvAe5G+Rf4cuLZXXqtc1LdfSHnrVPmBrEmHTvzHNtrXk4FEw0pR10azTCE/mlSUdS7yjYCu/7UM4lvArv1Llfo6qejXZb2eTg6yf3eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.64.238])
+	by sina.com (10.185.250.22) with ESMTP
+	id 6728AFAD00003B11; Mon, 4 Nov 2024 19:27:45 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9662897602657
+X-SMAIL-UIID: 8B4B0F5DD50F45A49F83C169A34A77A4-20241104-192745-1
+From: Hillf Danton <hdanton@sina.com>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: syzbot <syzbot+949ae54e95a2fab4cbb4@syzkaller.appspotmail.com>,
+	axboe@kernel.dk,
+	hch@lst.de,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [block?] possible deadlock in __submit_bio
+Date: Mon,  4 Nov 2024 19:27:32 +0800
+Message-Id: <20241104112732.3144-1-hdanton@sina.com>
+In-Reply-To: <6727f6f0.050a0220.3c8d68.0aa9.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102152226.2593598-1-jarkko@kernel.org> <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
- <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com> <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
-In-Reply-To: <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 4 Nov 2024 12:27:26 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGd5KAXiFr3rEq3cQK=_970b=eRT4X6YKVSj2PhN6ACrw@mail.gmail.com>
-Message-ID: <CAMj1kXGd5KAXiFr3rEq3cQK=_970b=eRT4X6YKVSj2PhN6ACrw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: "Daniel P. Smith" <dpsmith@apertussolutions.com>, x86@kernel.org, 
-	Ross Philipson <ross.philipson@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 4 Nov 2024 at 12:18, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->
-> On Mon Nov 4, 2024 at 12:57 PM EET, Daniel P. Smith wrote:
-> > On 11/2/24 14:00, Jarkko Sakkinen wrote:
-> > > On Sat Nov 2, 2024 at 5:22 PM EET, Jarkko Sakkinen wrote:
-> > >> It is not really my problem but I'm also wondering how the
-> > >> initialization order is managed. What if e.g. IMA happens to
-> > >> initialize before slmodule?
-> > >
-> > > The first obvious observation from Trenchboot implementation is that it
-> > > is 9/10 times worst idea ever to have splitted root of trust. Here it
-> > > is realized by an LKM for slmodule.
-> >
-> > First, there is no conflict between IMA and slmodule. With your change
-> > to make locality switching a one shot, the only issue would be if IMA
-> > were to run first and issue a locality switch to Locality 0, thus
-> > blocking slmodule from switching to Locality 2. As for PCR usage, IMA
-> > uses the SRTM PCRs, which are completely accessible under Locality 2.
->
-> Just pointing out a possible problem (e.g. with  TPM2_PolicyLocality).
->
-> > Honestly, a better path forward would be to revisit the issue that is
-> > driving most of that logic existing, which is the lack of a TPM
-> > interface code in the setup kernel. As a reminder, this issue is due to
-> > the TPM maintainers position that the only TPM code in the kernel can be
-> > the mainline driver. Which, unless something has changed, is impossible
-> > to compile into the setup kernel due to its use of mainline kernel
-> > constructs not present in the setup kernel.
->
-> I don't categorically reject adding some code to early setup. We have
-> some shared code EFI stub but you have to explain your changes
-> proeprly. Getting rejection in some early version to some approach,
-> and being still pissed about that years forward is not really way
-> to go IMHO.
->
+On Sun, 03 Nov 2024 14:19:28 -0800
+> syzbot found the following issue on:
+> 
+> HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17f26630580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=949ae54e95a2fab4cbb4
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102632a7980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16749340580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/61af3e8f2dbd/mount_0.gz
+> 
+> The issue was bisected to:
+> 
+> commit f1be1788a32e8fa63416ad4518bbd1a85a825c9d
+> Author: Ming Lei <ming.lei@redhat.com>
+> Date:   Fri Oct 25 00:37:20 2024 +0000
+> 
+>     block: model freeze & enter queue as lock for supporting lockdep
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13eafaa7980000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=101afaa7980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17eafaa7980000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+949ae54e95a2fab4cbb4@syzkaller.appspotmail.com
+> Fixes: f1be1788a32e ("block: model freeze & enter queue as lock for supporting lockdep")
+> 
+> exFAT-fs (loop0): failed to load upcase table (idx : 0x00012153, chksum : 0x822ffc2e, utbl_chksum : 0xe619d30d)
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
+> ------------------------------------------------------
+> syz-executor382/6007 is trying to acquire lock:
+> ffff8881427474e8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: __submit_bio+0x2c2/0x560 block/blk-core.c:629
+> 
+> but task is already holding lock:
+> ffff888034dd00e8 (&sbi->s_lock){+.+.}-{4:4}, at: exfat_create+0x1a2/0x5a0 fs/exfat/namei.c:553
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #2 (&sbi->s_lock){+.+.}-{4:4}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>        __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>        __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+>        exfat_lookup+0x140/0x18f0 fs/exfat/namei.c:701
+>        lookup_open fs/namei.c:3573 [inline]
+>        open_last_lookups fs/namei.c:3694 [inline]
+>        path_openat+0x11a7/0x3590 fs/namei.c:3930
+>        do_filp_open+0x235/0x490 fs/namei.c:3960
+>        do_sys_openat2+0x13e/0x1d0 fs/open.c:1419
+>        do_sys_open fs/open.c:1434 [inline]
+>        __do_sys_openat fs/open.c:1450 [inline]
+>        __se_sys_openat fs/open.c:1445 [inline]
+>        __x64_sys_openat+0x247/0x2a0 fs/open.c:1445
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #1 (&sb->s_type->i_mutex_key#15){++++}-{4:4}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>        down_write+0x99/0x220 kernel/locking/rwsem.c:1577
+>        inode_lock include/linux/fs.h:817 [inline]
+>        __generic_file_fsync+0x97/0x1a0 fs/libfs.c:1536
+>        exfat_file_fsync+0xf9/0x1d0 fs/exfat/file.c:524
+>        __loop_update_dio+0x1a4/0x500 drivers/block/loop.c:204
 
-Daniel has been nothing but courteous and patient, and you've waited
-11 revision to come up with some bikeshedding patches that don't
-materially improve anything.
+	blk_mq_freeze_queue(lo->lo_queue);
+	blk_freeze_queue_start(q);
+		percpu_ref_kill(&q->q_usage_counter);
+		blk_freeze_acquire_lock(q, false, false);
+	blk_mq_freeze_queue_wait(q);
+		wait_event(q->mq_freeze_wq, percpu_ref_is_zero(&q->q_usage_counter));
 
-So commenting on Daniel's approach here is uncalled for.
+While waiting for the q_usage_counter to drop to zero, percpu_ref_tryget is 
+allowed by the define of wait, so the acquire_read in bio_queue_enter() makes
+no sense.
 
-Can we please converge on this?
+>        loop_set_status+0x62b/0x8f0 drivers/block/loop.c:1290
+>        lo_ioctl+0xcbc/0x1f50
+>        blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+>        vfs_ioctl fs/ioctl.c:51 [inline]
+>        __do_sys_ioctl fs/ioctl.c:907 [inline]
+>        __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #0 (&q->q_usage_counter(io)#17){++++}-{0:0}:
+>        check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>        validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+>        __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
 
-Daniel - if no component can be built as a module, there should be no
-reason for the set_default_locality() hook to be exported to modules
-right? And do we even need a sysfs node to expose this information?
+static inline int bio_queue_enter(struct bio *bio)
+{
+	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
+
+	if (blk_try_enter_queue(q, false)) {
+		//
+		// q_usage_counter is not zero otherwise
+		// percpu_ref_tryget_live_rcu() failed
+		//
+		rwsem_acquire_read(&q->io_lockdep_map, 0, 0, _RET_IP_);
+		rwsem_release(&q->io_lockdep_map, _RET_IP_);
+		return 0;
+	}
+	return __bio_queue_enter(q, bio);
+}
+
+>        bio_queue_enter block/blk.h:75 [inline]
+>        blk_mq_submit_bio+0x1510/0x2490 block/blk-mq.c:3069
+>        __submit_bio+0x2c2/0x560 block/blk-core.c:629
+>        __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+>        submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+>        submit_bh fs/buffer.c:2819 [inline]
+>        __sync_dirty_buffer+0x23d/0x390 fs/buffer.c:2857
+>        exfat_set_volume_dirty+0x5d/0x80 fs/exfat/super.c:124
+>        exfat_create+0x1aa/0x5a0 fs/exfat/namei.c:554
+>        lookup_open fs/namei.c:3595 [inline]
+>        open_last_lookups fs/namei.c:3694 [inline]
+>        path_openat+0x1c03/0x3590 fs/namei.c:3930
+>        do_filp_open+0x235/0x490 fs/namei.c:3960
+>        do_sys_openat2+0x13e/0x1d0 fs/open.c:1419
+>        do_sys_open fs/open.c:1434 [inline]
+>        __do_sys_openat fs/open.c:1450 [inline]
+>        __se_sys_openat fs/open.c:1445 [inline]
+>        __x64_sys_openat+0x247/0x2a0 fs/open.c:1445
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> other info that might help us debug this:
+> 
+> Chain exists of:
+>   &q->q_usage_counter(io)#17 --> &sb->s_type->i_mutex_key#15 --> &sbi->s_lock
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&sbi->s_lock);
+>                                lock(&sb->s_type->i_mutex_key#15);
+>                                lock(&sbi->s_lock);
+>   rlock(&q->q_usage_counter(io)#17);
+> 
+>  *** DEADLOCK ***
+> 
+> 3 locks held by syz-executor382/6007:
+>  #0: ffff888034b8a420 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
+>  #1: ffff88807733e330 (&sb->s_type->i_mutex_key#15){++++}-{4:4}, at: inode_lock include/linux/fs.h:817 [inline]
+>  #1: ffff88807733e330 (&sb->s_type->i_mutex_key#15){++++}-{4:4}, at: open_last_lookups fs/namei.c:3691 [inline]
+>  #1: ffff88807733e330 (&sb->s_type->i_mutex_key#15){++++}-{4:4}, at: path_openat+0x89a/0x3590 fs/namei.c:3930
+>  #2: ffff888034dd00e8 (&sbi->s_lock){+.+.}-{4:4}, at: exfat_create+0x1a2/0x5a0 fs/exfat/namei.c:553
 
