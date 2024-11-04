@@ -1,130 +1,251 @@
-Return-Path: <linux-kernel+bounces-394470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB9639BAF9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:27:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A66A99BAFA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:27:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 477D1B223EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:27:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA74D1C21595
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFEB1AE01E;
-	Mon,  4 Nov 2024 09:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399261AF4C1;
+	Mon,  4 Nov 2024 09:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hgfgmMG3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECss2UuK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F94D6FC5;
-	Mon,  4 Nov 2024 09:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675181AF0C1;
+	Mon,  4 Nov 2024 09:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730712422; cv=none; b=g9zcEyrxhG3EoFLXHMRJtw8AmCwtNPDhZkRPo5cyiPB3t3d2d/pDWDkhulg0XbITpVjCtxJSu0Nhu5h/mpSSNoAc+XodmXG4202hTKB0YY/HirQOQ/uYIDbEAVY3J+7SVNzkpBy22rtzcNZxBIOBElVFO+yvNRvtLYsAhLwZbzE=
+	t=1730712431; cv=none; b=Zb7Ln9KI4i5OvV8F8xEQpXbhSIzCMe6zRGkQcriP4i2cMsXmlgmPetSl5egaCjGOCL52JalPS3vTaVpNQ/HHuwTydckylNUqEU1PXUDimcYcRcttlomUZVeFvkRbCStReMb3jn45WZT2zCimqjZ/Dkjor71wZDmXQr9k4Fb2SMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730712422; c=relaxed/simple;
-	bh=Sx5KjvKZ4csWvVy9wH3IjtRV3od9fJK+XxTSO1IYTjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u6GpRVdH3DgJ2OqTRgMp5a6Ta5KVzppAZrdpQb4YLhxNIiQBgTziPph23/OujjXzmvIaMck8CuliURVMYOYGC1+xbj8sIvXaoEB0PimVFkUYOfsbOjZhGDG0T7JSR66/ZcmBuwKzemv/UjvMyE+oLpoyiE70Ex3bAhtKSTi5/10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hgfgmMG3; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730712421; x=1762248421;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Sx5KjvKZ4csWvVy9wH3IjtRV3od9fJK+XxTSO1IYTjc=;
-  b=hgfgmMG3KWnRbNz8K1OoKj/2iJxg2jYLpt0xVVGD9kAGZcE5FXvHECLD
-   6QpMwJ5AR1o5+pwhlqL44+VXMCK08rapDBqYsmhD6BhSxa1p/AiFWTatJ
-   mCvC45BV2ocfCThS8hQ9ISiWN1iyJV3V1UPRjRxl0gru2u1O8CJFnsbl2
-   D6ryBIGlfB5m/AMDckNibviJBnHPFWE208rMlz2IDiVdjKghsgOzl4ORz
-   nfMHPHsOMgNzWJdXMBFIqJ0t7QUYPDkeH0ToNQPfp7DbWv59RSVnVQ7F/
-   1eQvPBb0uLdE0YKPpdFjXLymqG9Ttib5B21T0ld9eOGqbAT1ZrhN/rjh2
-   A==;
-X-CSE-ConnectionGUID: ZyjohGY7SlOpcTnHN9rQHQ==
-X-CSE-MsgGUID: Uxf9v32lR+6C6aOKk4DZ6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="30502788"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="30502788"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 01:27:00 -0800
-X-CSE-ConnectionGUID: 9wRJx7qtSf2a1DC+yCrjhg==
-X-CSE-MsgGUID: T+MAZZ9zSVKEgdhd5gz+WQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="88414155"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 04 Nov 2024 01:26:57 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 153D21C4; Mon, 04 Nov 2024 11:26:55 +0200 (EET)
-Date: Mon, 4 Nov 2024 11:26:55 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Baoquan He <bhe@redhat.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Sean Christopherson <seanjc@google.com>, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Kai Huang <kai.huang@intel.com>
-Subject: Re: [PATCHv4, REBASED 1/4] x86/mm/ident_map: Fix virtual address
- wrap to zero
-Message-ID: <qz42rystorh4q2fpk5kpgjnycorfjmjypjgj3dmi4hhfznlzdx@eaertxsby5st>
-References: <20241016111458.846228-1-kirill.shutemov@linux.intel.com>
- <20241016111458.846228-2-kirill.shutemov@linux.intel.com>
- <20241030114712.GCZyIcwF9MyQacmRf1@fat_crate.local>
- <3rmdms6czfsa4hwfx5egcf5rheojpwhdhwq2gxkn2ffvvymfir@dv7x4cmby6sz>
- <20241031135916.GDZyONNENEDAViMSOZ@fat_crate.local>
+	s=arc-20240116; t=1730712431; c=relaxed/simple;
+	bh=RmAf5WVXMgeReQ9nyzDoW0ADU9Q9iVypsXAJmIMnRSs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C55RMnIlF3aZ8rTLENcjxECDZihrm4DPo9DY84RuUFA+cXO05RGmmLl2sbyLEB+ilLnNv8VGsbQgj0yEh4O/rH6GlTnwvHdUJqNCibgldJJnEQ+pidmw690BCY4mQgbsHySWKmn6yA+XXj0IUhdjxwZmV3f3KfhtSe9lglmWcpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECss2UuK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FE4C4CECE;
+	Mon,  4 Nov 2024 09:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730712430;
+	bh=RmAf5WVXMgeReQ9nyzDoW0ADU9Q9iVypsXAJmIMnRSs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ECss2UuKA5lrpWqkg+uiOcbfQZpkwKNRZ5bjTLNWn0fHdNvgdoVuz3YFFnu1bJOGA
+	 6Vd+s/cJuRwREmdNLI9SThmlsf5KOYbQMN4H/3ZevDW6DGePtttv9MgX7Ku/I9t2Lw
+	 DfS6YM3t7A4RgwEwbciSE9h3MkuGnw5ryOF3qh5babvniyjrktmBXx0zKgYY6Rn+NS
+	 kJgrisuHbIIWlEeXEMHYasPEGiwUy0kGZaOtG69g+mvbEjOi/JZkD/gziSxx8uaDf0
+	 XJ3WnoJ2vwNWw/Yr++TvXk2T7qutTdn7puaTqnKGjKh7Mmc0EVpzdMijDQvoZuQdX2
+	 7BoZ3qgTRXbwQ==
+Message-ID: <ee47c6d7-4197-4f5d-b39e-aab70a9337d6@kernel.org>
+Date: Mon, 4 Nov 2024 10:27:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031135916.GDZyONNENEDAViMSOZ@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
+To: Sean Nyekjaer <sean@geanix.com>, Marc Kleine-Budde <mkl@pengutronix.de>,
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241104085616.469862-1-sean@geanix.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241104085616.469862-1-sean@geanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 31, 2024 at 02:59:16PM +0100, Borislav Petkov wrote:
-> On Thu, Oct 31, 2024 at 12:11:52PM +0200, Kirill A. Shutemov wrote:
-> > Do we have magic words for that?
+On 04/11/2024 09:56, Sean Nyekjaer wrote:
+> Convert binding doc tcan4x5x.txt to yaml.
 > 
-> No clue.
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
 > 
-> > I tried to express that in the second paragraph: "no such users in the
-> > upstream".
+> Can we somehow reference bosch,mram-cfg from the bosch,m_can.yaml?
+> I have searched for yaml files that tries the same, but it's usually
+> includes a whole node.
 > 
-> Right, so perhaps better to spell it out explicitly:
-> 
-> "Backporter's note:
-> 
-> This fixes a theoretical issue only and there's no need to backport it to
-> stable."
-> 
-> at the end of the commit message.
+> I have also tried:
+> $ref: /schema/bosch,m_can.yaml#/properties/bosch,mram-cfg
 
-Okay.
+Yes, this would work just with full path, so /schemas/net/can/...
+
+See:
+Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+
+But you can also just copy it. Ideally this should be moved to common
+schema or replaced with more generic property, but these do not have to
+be part of this conversion.
 
 > 
-> > > And which commit is it fixing?
-> > > 
-> > > aece27851d44 ("x86, 64bit, mm: Add generic kernel/ident mapping helper")
-> > > perhaps?
-> > 
-> > This one is closer:
-> > 
-> > e4630fdd4763 ("x86/power/64: Always create temporary identity mapping correctly")
-> > 
-> > It adds x86_mapping_info::offset.
+> Any hints to share a property?
 > 
-> But aece27851d44 has the faulty check...
+>  .../devicetree/bindings/net/can/tcan4x5x.txt  | 48 ---------
+>  .../bindings/net/can/ti,tcan4x5x.yaml         | 97 +++++++++++++++++++
+>  2 files changed, 97 insertions(+), 48 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+>  create mode 100644 Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> 
 
-It cannot be triggered without 'offset'.
+...
 
-I'll put both.
+> diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> new file mode 100644
+> index 000000000000..62c108fac6b3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> @@ -0,0 +1,97 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments TCAN4x5x CAN Controller
+> +
+> +maintainers:
+> +  - Marc Kleine-Budde <mkl@pengutronix.de>
+> +
+> +allOf:
+> +  - $ref: can-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - ti,tcan4552
+> +          - ti,tcan4553
+> +          - ti,tcan4x5x
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+That's not really what old binding said.
+
+It said for example:
+"ti,tcan4552", "ti,tcan4x5x"
+
+Which is not allowed above. You need list. Considering there are no
+in-tree users of ti,tcan4x5x alone, I would allow only lists followed by
+ti,tcan4x5x. IOW: disallow ti,tcan4x5x alone.
+
+Mention this change to the binding in the commit message.
+
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description: Regulator that powers the CAN controller.
+> +
+> +  xceiver-supply:
+> +    description: Regulator that powers the CAN transceiver.
+
+You need to mention all changes done to the binding in the commit msg.
+
+> +
+> +  reset-gpios:
+> +    description: Hardwired output GPIO. If not defined then software reset.
+> +    maxItems: 1
+> +
+> +  device-state-gpios:
+> +    description: Input GPIO that indicates if the device is in a sleep state or if the device is active.
+> +      Not available with tcan4552/4553.
+> +    maxItems: 1
+> +
+> +  device-wake-gpios:
+> +    description: Wake up GPIO to wake up the TCAN device. Not available with tcan4552/4553.
+> +    maxItems: 1
+> +
+> +  bosch,mram-cfg:
+> +    $ref: bosch,m_can.yaml#
+> +
+> +  spi-max-frequency:
+> +    description:
+> +      Must be half or less of "clocks" frequency.
+> +    maximum: 10000000
+
+Old binding said 18 MHz?
+
+> +
+> +  wakeup-source:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Enable CAN remote wakeup.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - bosch,mram-cfg
+> +
+
+Missing allOf: with $ref to spi-peripheral-props. See other SPI devices.
+
+
+> +additionalProperties: false
+
+And this becomes unevaluatedProperties: false
+
+Best regards,
+Krzysztof
+
 
