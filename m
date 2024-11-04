@@ -1,71 +1,62 @@
-Return-Path: <linux-kernel+bounces-395295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266179BBBD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:23:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 869EA9BBBE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:30:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFCCA282172
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:23:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B196282955
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A26D1C4A27;
-	Mon,  4 Nov 2024 17:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0781C4A19;
+	Mon,  4 Nov 2024 17:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pvZBfCpr"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1+njhmS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473C11CD15
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 17:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D5117583
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 17:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730740974; cv=none; b=iUB7t7ZZpaQr6JgmRyR6CBJ0YWpHBTxwTHRjCerwqPjq9gXLFdyUAGBmBjXLqkTfEwWGNW1WcU6tUzubon7r9Fq160W7MuUcIZ9CXaPuIqf8wEn/BXSjvBxGW/mSAScdNIsHsZ2VkTWIdsmNTb7zBLNC/ReHpG719Yq+mmiVrbI=
+	t=1730741393; cv=none; b=iWNAOKA4Jg5ULa3v3BfemzAyJZ/1SSPKnlbsOZVX8duQTYxRbrKSSKLCLKECkRr8q7iyp49ZQm/8hJ9LbHDBCJq9s5KTJl+jMSWzXBrSw7kS6rPTfl2iS8KEO08/1rSWOBgegw0i346JIMgjKBgEfC929INTfELGjpA29VdYfb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730740974; c=relaxed/simple;
-	bh=Gfo5O/hkO5WeEo3sSGHAAx4siLFoKSZSwF3Y2eSfynU=;
+	s=arc-20240116; t=1730741393; c=relaxed/simple;
+	bh=VIsm+vKuTiWLxy8wAD3WL4oTrYDz0+DlaUdFVPEaR6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jhdB/aTip897SAOpaIqDOS63ujJaMgiU7Yl8v2I4JGkiqd5STf3Gxf0l/V9Ee0YmALwP5CoPgnl0SqBxPzuQAH+1dFxNwL2CoBA/NfBh38WxF8ihRYzIA7PGLg94so0yPRc8N4VOLjRCSBX+KTPkNDnT5/heXFwNIxQE4RJ/hXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pvZBfCpr; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 4 Nov 2024 09:22:31 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730740969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r3wxUuDOVSIoY/BkE2V5T71bvB6+CrYMcZO4kyw5Jg8=;
-	b=pvZBfCprI5gX516necTP57cWzU1x8+NBkGeyap3VvevulahNoM6/mi79tvq1o3ALhlec+j
-	hfSp+CR+JVP6AtPo7BM/oSsJ7mt/54PXsWMxKjHIKFvcEOOUlbUhxvyFopx75lZ5U3V6sQ
-	HESNkiSWwOt1/hrYOWEnWwedgCr7h4k=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Russ Weight <russ.weight@linux.dev>
-To: Dionna Glaze <dionnaglaze@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Tianfei zhang <tianfei.zhang@intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	John Allen <john.allen@amd.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Michael Roth <michael.roth@amd.com>,
-	Russ Weight <russell.h.weight@intel.com>
-Subject: Re: [PATCH v2 2/4] firmware_loader: Move module refcounts to allow
- unloading
-Message-ID: <20241104172231.mp3kjegezjgtmft5@4VRSMR2-DT.corp.robot.car>
-References: <20241101181533.1976040-1-dionnaglaze@google.com>
- <20241101181533.1976040-3-dionnaglaze@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EEXAUzrzxDbu0gQegJ4ke5P5dxfH97c3day8Sny31Ev0RuF5prLAJztPQVKhzhm/fBj9oOjsbgr7l5cp32m10TwjSIcB2WXbysKaSO5eH3yMfKhWGbLnLXWYbq8PAJ4UHoodQOiJ7B9kzw30nfa2xkxMrYLrvs0rsS4JZC9SYrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1+njhmS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4221C4CECE;
+	Mon,  4 Nov 2024 17:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730741392;
+	bh=VIsm+vKuTiWLxy8wAD3WL4oTrYDz0+DlaUdFVPEaR6A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U1+njhmS9C1BnrW3KesZysOFKxuFALDbFR1vlBXfaD5I7h4iBZPIIkY4h1VvoQbPh
+	 cfMYVpEODRoCc08vE5388BaJKGrm1XAhcTSqvWGVtSGLCmH1mhp26WC2ALSW639Xxp
+	 EkwIVT3Ml1rrDaIS74t9EDDYEDq7Y9mS8Un2QOz9Ygg5MUEjhurM5QgTPOiVOAieN3
+	 wPulMMf+wmGO0evh0Dt4fi0fvv7Ds5JNLVpZwyQPqBmEM6ozf4oW6C2fgGkUQsB8JY
+	 mmcL1vYtMPRamsYCNVaoKKPy6lpWWuE6IfrN+qPWY2c0MSXiw/AaKXIR88x99+uWLe
+	 aClf85IRVrBPQ==
+Date: Mon, 4 Nov 2024 10:29:50 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Algea Cao <algea.cao@rock-chips.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rockchip: avoid 64-bit division
+Message-ID: <20241104172950.GA741087@thelio-3990X>
+References: <20241018151016.3496613-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,120 +65,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241101181533.1976040-3-dionnaglaze@google.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241018151016.3496613-1-arnd@kernel.org>
 
+On Fri, Oct 18, 2024 at 03:10:10PM +0000, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Dividing a 64-bit integer prevents building this for 32-bit targets:
+> 
+> ERROR: modpost: "__aeabi_uldivmod" [drivers/gpu/drm/rockchip/rockchipdrm.ko] undefined!
+> 
+> As this function is not performance criticial, just Use the div_u64() helper.
+> 
+> Fixes: 128a9bf8ace2 ("drm/rockchip: Add basic RK3588 HDMI output support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-On Fri, Nov 01, 2024 at 06:15:27PM +0000, Dionna Glaze wrote:
-> If a kernel module registers a firmware upload API ops set, then it's
-> unable to be moved due to effectively a cyclic reference that the module
-> depends on the upload which depends on the module.
-> 
-> Instead, only require the try_module_get when an upload is requested to
-> disallow unloading a module only while the upload is in progress.
-> 
-> Fixes: 97730bbb242c ("firmware_loader: Add firmware-upload support")
-> 
-> CC: Sean Christopherson <seanjc@google.com>
-> CC: Paolo Bonzini <pbonzini@redhat.com>
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: Ingo Molnar <mingo@redhat.com>
-> CC: Borislav Petkov <bp@alien8.de>
-> CC: Dave Hansen <dave.hansen@linux.intel.com>
-> CC: Ashish Kalra <ashish.kalra@amd.com>
-> CC: Tom Lendacky <thomas.lendacky@amd.com>
-> CC: John Allen <john.allen@amd.com>
-> CC: Herbert Xu <herbert@gondor.apana.org.au>
-> CC: "David S. Miller" <davem@davemloft.net>
-> CC: Michael Roth <michael.roth@amd.com>
-> CC: Luis Chamberlain <mcgrof@kernel.org>
-> CC: Russ Weight <russ.weight@linux.dev>
-> CC: Danilo Krummrich <dakr@redhat.com>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: "Rafael J. Wysocki" <rafael@kernel.org>
-> CC: Tianfei zhang <tianfei.zhang@intel.com>
-> 
-> Tested-by: Ashish Kalra <ashish.kalra@amd.com>
-> Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-Reviewed-by: Russ Weight <russ.weight@linux.dev>
+Can someone please pick this up? It is still broken in next-20241104...
+
+https://storage.tuxsuite.com/public/clangbuiltlinux/continuous-integration2/builds/2oNvJFRj8tkDieb6VfrMf4rh1Kn/build.log
 
 > ---
->  drivers/base/firmware_loader/sysfs_upload.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
+>  drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/base/firmware_loader/sysfs_upload.c b/drivers/base/firmware_loader/sysfs_upload.c
-> index 829270067d163..7d9c6aef7720a 100644
-> --- a/drivers/base/firmware_loader/sysfs_upload.c
-> +++ b/drivers/base/firmware_loader/sysfs_upload.c
-> @@ -204,6 +204,7 @@ static void fw_upload_main(struct work_struct *work)
->  		fwlp->ops->cleanup(fwl);
->  
->  putdev_exit:
-> +	module_put(fwlp->module);
->  	put_device(fw_dev->parent);
->  
->  	/*
-> @@ -239,6 +240,9 @@ int fw_upload_start(struct fw_sysfs *fw_sysfs)
+> diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+> index 9c796ee4c303..c8b362cc2b95 100644
+> --- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+> @@ -82,7 +82,7 @@ static void dw_hdmi_qp_rockchip_encoder_enable(struct drm_encoder *encoder)
+>  		 * comment in rk_hdptx_phy_power_on() from
+>  		 * drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+>  		 */
+> -		phy_set_bus_width(hdmi->phy, rate / 100);
+> +		phy_set_bus_width(hdmi->phy, div_u64(rate, 100));
 >  	}
->  
->  	fwlp = fw_sysfs->fw_upload_priv;
-> +	if (!try_module_get(fwlp->module)) /* released in fw_upload_main */
-> +		return -EFAULT;
-> +
->  	mutex_lock(&fwlp->lock);
->  
->  	/* Do not interfere with an on-going fw_upload */
-> @@ -310,13 +314,10 @@ firmware_upload_register(struct module *module, struct device *parent,
->  		return ERR_PTR(-EINVAL);
->  	}
->  
-> -	if (!try_module_get(module))
-> -		return ERR_PTR(-EFAULT);
-> -
->  	fw_upload = kzalloc(sizeof(*fw_upload), GFP_KERNEL);
->  	if (!fw_upload) {
->  		ret = -ENOMEM;
-> -		goto exit_module_put;
-> +		goto exit_err;
->  	}
->  
->  	fw_upload_priv = kzalloc(sizeof(*fw_upload_priv), GFP_KERNEL);
-> @@ -358,7 +359,7 @@ firmware_upload_register(struct module *module, struct device *parent,
->  	if (ret) {
->  		dev_err(fw_dev, "%s: device_register failed\n", __func__);
->  		put_device(fw_dev);
-> -		goto exit_module_put;
-> +		goto exit_err;
->  	}
->  
->  	return fw_upload;
-> @@ -372,8 +373,7 @@ firmware_upload_register(struct module *module, struct device *parent,
->  free_fw_upload:
->  	kfree(fw_upload);
->  
-> -exit_module_put:
-> -	module_put(module);
-> +exit_err:
->  
->  	return ERR_PTR(ret);
 >  }
-> @@ -387,7 +387,6 @@ void firmware_upload_unregister(struct fw_upload *fw_upload)
->  {
->  	struct fw_sysfs *fw_sysfs = fw_upload->priv;
->  	struct fw_upload_priv *fw_upload_priv = fw_sysfs->fw_upload_priv;
-> -	struct module *module = fw_upload_priv->module;
 >  
->  	mutex_lock(&fw_upload_priv->lock);
->  	if (fw_upload_priv->progress == FW_UPLOAD_PROG_IDLE) {
-> @@ -403,6 +402,5 @@ void firmware_upload_unregister(struct fw_upload *fw_upload)
->  
->  unregister:
->  	device_unregister(&fw_sysfs->dev);
-> -	module_put(module);
->  }
->  EXPORT_SYMBOL_GPL(firmware_upload_unregister);
 > -- 
-> 2.47.0.163.g1226f6d8fa-goog
+> 2.39.5
 > 
 
