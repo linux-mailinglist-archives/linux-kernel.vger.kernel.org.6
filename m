@@ -1,139 +1,309 @@
-Return-Path: <linux-kernel+bounces-394979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71D79BB6D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:54:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371B09BB6DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F34283DA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:54:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ADB61C234F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0501AB6F1;
-	Mon,  4 Nov 2024 13:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78CD137932;
+	Mon,  4 Nov 2024 13:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5BDM4Xi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="cf8P6HaJ"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112FF13635C;
-	Mon,  4 Nov 2024 13:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A3B42A9E;
+	Mon,  4 Nov 2024 13:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730728467; cv=none; b=RNJGeo+48g5MNp+O+7VYMciM2OchzA1kck9ahzcEo2ZUsLg59vnFuJj/7u+90/FRmgCcAyJrH4SIkSzQTwKZ8wQ/HTQyM3tuZBil+vu5EOzUXION6SOj4QBXEn9pddc5vARB6xO7POJWwlZlkcB4Dmm1UWDNwWglUD0IwTBio0Q=
+	t=1730728580; cv=none; b=i0I2qiqkOaCUU1FrYMjMTQ7Gt1vLygwQkCemuG5Sgz7Acp0KY8dE16N2TtK5KLeansz1aTGPQcAJBsruQPosCpUxLj0JKlR6g3OznIRexGZAm1X1j0nnHcFH7CNd+isEz8yEDiT8YULzwvQ1lGGn3xN6FkDv8UkHadagYnb9AT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730728467; c=relaxed/simple;
-	bh=sZurbIwzYuS4yLWi6DkfdRraXzSZGcCRAs9+v0qzfrE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KBFyaQzISKaXg6IFeptik/cdyjeCyIz5nhhSJvfdjS9XGDBk+t8ChaCOghTizF7L9Cym88DCrnSIMrMfPyod7IiNLwSotgK6KAgnffQNZ9AUSmmP75LJRWXF02qXUdBD7uTmqIQNDQJrux2+EY/ROLtFxkqKyFJPg23rUGFQNLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5BDM4Xi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25CFC4CEDB;
-	Mon,  4 Nov 2024 13:54:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730728466;
-	bh=sZurbIwzYuS4yLWi6DkfdRraXzSZGcCRAs9+v0qzfrE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Q5BDM4Xi1gOJwvFZTupaLks/gQGYzcECQMKtb1FIfjgKOhTka1GRmJOghSmpApkE0
-	 EFJJrzoY8sI0C2SiN/3TkUZEwWSa0zsJ/fStV4D4BHtp3C+ua1QWa03YjFdQm1W6pr
-	 sjaxAwpqEhYb6xm8YBtIDy/P08x3jYzLbYAV/182HZcvh+G4JXSawt5TIBJpUi3Pdh
-	 ILgi2kqTxQzGA3eqx1VLHy5LdFwJXCOtZX3+cRs4c1/RFB1uaMzobP+6RKn46xIVgC
-	 MmQk1THwQSl8VvLYoEqqbzVyLlX+CYxykHAKFYnqghs7LsRhHe61DGjbbTejdNUJBJ
-	 nQSsKoC141iaw==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso62217391fa.3;
-        Mon, 04 Nov 2024 05:54:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUqYSm1bl0Q3ryqkoMTfTIaCt8iajfUFoh4jaMtCj4DRYzg4CRB91Xrp3OvLDSQt2vwNDWVcuUBTBzgIj+0/Jnv@vger.kernel.org, AJvYcCUtyJ7f5RshiMba/X7XAFDVIkwAMymFgOdyYMo7rUzxlQW0fT+v0wFEG/ZicUDgtfZBOqr/DmPTApnk@vger.kernel.org, AJvYcCVZaij/4smfQa7FJyzJsrvEIc+HYmBuVmeUbkvgemM5ZH1+EeFS4Rh8aQtYX5b35nIK80Q=@vger.kernel.org, AJvYcCVbZkHH4xFp69CFqbGyUfCVYY+OnzQTkE7KgCJV8aFB5H1Mjq6BuoUeyQidx2hZNOW4OaBMpjcY5ic=@vger.kernel.org, AJvYcCX9PC+RbPqg7F0I+qEGKmxQd0Fi/0GsuD0s//sjHw4nAnoueb91aBGnnk4NGqegOD4eEG1N3BPd6MnTX0qo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6gX2BAMt6dFDy3Iccq22rCOgojJDLyFpVXULmqebOUnTw15Wq
-	83GG3Vup7v87Az+nHpNr3KyguRENdF3OE3Q+SjLP4ajJHLgLA8nb+ZHJ0zX/7oEttPlBm7SgurA
-	SbIFafLxpGzYOhV3S7gLQeb99Ycw=
-X-Google-Smtp-Source: AGHT+IEDPSajd0Ijul/NTdTCOsnUC5WH3yaxWxO7av85XXQJwq7H6ghrIewBObwz96ILox5H6B1VjAJt6rSncXXA+ys=
-X-Received: by 2002:a05:651c:506:b0:2fc:9869:2e0b with SMTP id
- 38308e7fff4ca-2fedb7c7dc2mr79712841fa.20.1730728464965; Mon, 04 Nov 2024
- 05:54:24 -0800 (PST)
+	s=arc-20240116; t=1730728580; c=relaxed/simple;
+	bh=LFnGHyIFnPZpnC4W0TkiCtiiQ6Tj7q5qpaFCImtsPX0=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=A75lrw3aWl5xTI8wh8d8kTFm6GI7IV9khMO5t2FGyFG8p9uWl1tHvU7C+v3Sxsk64zQDUL6ZlAHG3KPb1GreSS3LMb2R2vc116oMM3t9fGWSRvAN/nlW/7bKK9YOVN1lvBsnO1i3mnTPic3gTS4MYr+gAKeFSIHdK4WRh2YiDsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=cf8P6HaJ; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=AHIiq5Bgi/FTE/bmYNE1/BMipbYGBmIox57V0t9XEzE=; b=cf8P6HaJpBSwdOjWDt9jLXknGU
+	xbRVUw9y1lcilcRVpw7gpWcW9xvDjGY4tRMqYV5a5Dqj473gE8+fKb8momeqLs1eEjWTHIGdAGzRj
+	FemwuVr6LK5NHy2UY6O/4OKU1cvNM9dag3tCPDPgEfIlHD4slWLnYkQnbg8dO2Fk8ZSut39hphmIy
+	qC3uTAz5kwhGntFSLpeQh8oiv7owjKi2+Ilm1ZxwwvL39CgkKnD3Urd0jEfIyn5nwEB4lTQrKBOLK
+	cPYztuudPUD4if8ElH6d8ktDCoQR6XIQTJmPEQpzutQLLka4vN+FCJyaqi4I4YprF5iSIFbib4f7A
+	wNDjtSKA==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	Tero Kristo <kristo@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: ti: Convert mux.txt to json-schema
+Date: Mon,  4 Nov 2024 14:55:49 +0100
+Message-Id: <20241104135549.38486-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241019172459.2241939-1-dwmw2@infradead.org> <20241019172459.2241939-7-dwmw2@infradead.org>
- <ZyPEn4qhaYyYqrzk@lpieralisi> <ZyUUh6KawapLkj0z@lpieralisi>
-In-Reply-To: <ZyUUh6KawapLkj0z@lpieralisi>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 4 Nov 2024 14:54:12 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFma8-GqKuOs5-UAQY9asbq2p9EubSjjbywaURa4T4WnA@mail.gmail.com>
-Message-ID: <CAMj1kXFma8-GqKuOs5-UAQY9asbq2p9EubSjjbywaURa4T4WnA@mail.gmail.com>
-Subject: Re: [PATCH v6 6/6] arm64: Use SYSTEM_OFF2 PSCI call to power off for hibernate
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: David Woodhouse <dwmw2@infradead.org>, sami.mujawar@arm.com, 
-	Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Len Brown <len.brown@intel.com>, Shuah Khan <shuah@kernel.org>, 
-	David Woodhouse <dwmw@amazon.co.uk>, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-pm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, 
-	Francesco Lavra <francescolavra.fl@gmail.com>, Miguel Luis <miguel.luis@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 1 Nov 2024 at 18:49, Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
->
-> [+Ard, Sami, for EFI]
->
-> On Thu, Oct 31, 2024 at 06:55:43PM +0100, Lorenzo Pieralisi wrote:
-> > On Sat, Oct 19, 2024 at 06:15:47PM +0100, David Woodhouse wrote:
-> >
-> > [...]
-> >
-> > > +#ifdef CONFIG_HIBERNATION
-> > > +static int psci_sys_hibernate(struct sys_off_data *data)
-> > > +{
-> > > +   /*
-> > > +    * Zero is an acceptable alternative to PSCI_1_3_OFF_TYPE_HIBERNATE_OFF
-> > > +    * and is supported by hypervisors implementing an earlier version
-> > > +    * of the pSCI v1.3 spec.
-> > > +    */
-> >
-> > It is obvious but with this patch applied a host kernel would start executing
-> > SYSTEM_OFF2 too if supported in firmware to hibernate, it is not a hypervisor
-> > only code path.
-> >
-> > Related to that: is it now always safe to override
-> >
-> > commit 60c0d45a7f7a ("efi/arm64: use UEFI for system reset and poweroff")
-> >
-> > for hibernation ? It is not very clear to me why overriding PSCI for
-> > poweroff was the right thing to do - tried to follow that patch history but
-> > the question remains (it is related to UpdateCapsule() but I don't know
-> > how that applies to the hibernation use case).
->
-> RFC: It is unclear to me what happens in current mainline if we try to
-> hibernate with EFI runtime services enabled and a capsule update pending (we
-> issue EFI ResetSystem(EFI_RESET_SHUTDOWN,..) which might not be compatible
-> with the reset required by the pending capsule update request) what happens
-> in this case I don't know but at least the choice is all contained in
-> EFI firmware.
->
-> Then if in the same scenario now we are switching to PSCI SYSTEM_OFF2 for the
-> hibernate reset I suspect that what happens to the in-flight capsule
-> update requests strictly depends on what "reset" PSCI SYSTEM_OFF2 will
-> end up doing ?
->
-> I think this is just a corner case and it is unlikely it has been ever
-> tested (is it even possible ? Looking at EFI folks) - it would be good
-> to clarify it at least to make sure we understand this code path.
->
+Convert the OMAP mux clock device tree binding to json-schema.
+Specify the creator of the original binding as a maintainer.
+Choose GPL-only license because original binding was also GPL.
 
-I'm not aware of any OS that actually uses capsule update at runtime
-(both Windows and Linux queue up the capsule and call the
-UpdateCapsule() runtime service at boot time after a reboot).
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ .../bindings/clock/ti/composite.txt           |   2 +-
+ .../devicetree/bindings/clock/ti/mux.txt      |  78 -----------
+ .../bindings/clock/ti/ti,mux-clock.yaml       | 123 ++++++++++++++++++
+ 3 files changed, 124 insertions(+), 79 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/mux.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
 
-So it is unlikely that this would break anything, and I'd actually be
-inclined to disable capsule update at runtime altogether.
+diff --git a/Documentation/devicetree/bindings/clock/ti/composite.txt b/Documentation/devicetree/bindings/clock/ti/composite.txt
+index b02f22490dcb..238e6f7d74f8 100644
+--- a/Documentation/devicetree/bindings/clock/ti/composite.txt
++++ b/Documentation/devicetree/bindings/clock/ti/composite.txt
+@@ -16,7 +16,7 @@ merged to this clock. The component clocks shall be of one of the
+ "ti,*composite*-clock" types.
+ 
+ [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-[2] Documentation/devicetree/bindings/clock/ti/mux.txt
++[2] Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+ [3] Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
+ [4] Documentation/devicetree/bindings/clock/ti/gate.txt
+ 
+diff --git a/Documentation/devicetree/bindings/clock/ti/mux.txt b/Documentation/devicetree/bindings/clock/ti/mux.txt
+deleted file mode 100644
+index cd56d3c1c09f..000000000000
+--- a/Documentation/devicetree/bindings/clock/ti/mux.txt
++++ /dev/null
+@@ -1,78 +0,0 @@
+-Binding for TI mux clock.
+-
+-This binding uses the common clock binding[1].  It assumes a
+-register-mapped multiplexer with multiple input clock signals or
+-parents, one of which can be selected as output.  This clock does not
+-gate or adjust the parent rate via a divider or multiplier.
+-
+-By default the "clocks" property lists the parents in the same order
+-as they are programmed into the register.  E.g:
+-
+-	clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
+-
+-results in programming the register as follows:
+-
+-register value		selected parent clock
+-0			foo_clock
+-1			bar_clock
+-2			baz_clock
+-
+-Some clock controller IPs do not allow a value of zero to be programmed
+-into the register, instead indexing begins at 1.  The optional property
+-"index-starts-at-one" modified the scheme as follows:
+-
+-register value		selected clock parent
+-1			foo_clock
+-2			bar_clock
+-3			baz_clock
+-
+-The binding must provide the register to control the mux. Optionally
+-the number of bits to shift the control field in the register can be
+-supplied. If the shift value is missing it is the same as supplying
+-a zero shift.
+-
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-Required properties:
+-- compatible : shall be "ti,mux-clock" or "ti,composite-mux-clock".
+-- #clock-cells : from common clock binding; shall be set to 0.
+-- clocks : link phandles of parent clocks
+-- reg : register offset for register controlling adjustable mux
+-
+-Optional properties:
+-- clock-output-names : from common clock binding.
+-- ti,bit-shift : number of bits to shift the bit-mask, defaults to
+-  0 if not present
+-- ti,index-starts-at-one : valid input select programming starts at 1, not
+-  zero
+-- ti,set-rate-parent : clk_set_rate is propagated to parent clock,
+-  not supported by the composite-mux-clock subtype
+-- ti,latch-bit : latch the mux value to HW, only needed if the register
+-  access requires this. As an example, dra7x DPLL_GMAC H14 muxing
+-  implements such behavior.
+-
+-Examples:
+-
+-sys_clkin_ck: sys_clkin_ck@4a306110 {
+-	#clock-cells = <0>;
+-	compatible = "ti,mux-clock";
+-	clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>, <&virt_19200000_ck>, <&virt_26000000_ck>, <&virt_27000000_ck>, <&virt_38400000_ck>;
+-	reg = <0x0110>;
+-	ti,index-starts-at-one;
+-};
+-
+-abe_dpll_bypass_clk_mux_ck: abe_dpll_bypass_clk_mux_ck@4a306108 {
+-	#clock-cells = <0>;
+-	compatible = "ti,mux-clock";
+-	clocks = <&sys_clkin_ck>, <&sys_32k_ck>;
+-	ti,bit-shift = <24>;
+-	reg = <0x0108>;
+-};
+-
+-mcbsp5_mux_fck: mcbsp5_mux_fck {
+-	#clock-cells = <0>;
+-	compatible = "ti,composite-mux-clock";
+-	clocks = <&core_96m_fck>, <&mcbsp_clks>;
+-	ti,bit-shift = <4>;
+-	reg = <0x02d8>;
+-};
+diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+new file mode 100644
+index 000000000000..b271ab86dde1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+@@ -0,0 +1,123 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti/ti,mux-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments mux clock
++
++maintainers:
++  - Tero Kristo <kristo@kernel.org>
++
++description: |
++  This clock assumes a register-mapped multiplexer with multiple inpt clock
++  signals or parents, one of which can be selected as output. This clock does
++  not gate or adjust the parent rate via a divider or multiplier.
++
++  By default the "clocks" property lists the parents in the same order
++  as they are programmed into the register.  E.g:
++
++    clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
++
++  results in programming the register as follows:
++
++  register value   selected parent clock
++  0                foo_clock
++  1                bar_clock
++  2                baz_clock
++
++  Some clock controller IPs do not allow a value of zero to be programmed
++  into the register, instead indexing begins at 1.  The optional property
++  "index-starts-at-one" modified the scheme as follows:
++
++  register value   selected clock parent
++  1                foo_clock
++  2                bar_clock
++  3                baz_clock
++
++  The binding must provide the register to control the mux. Optionally
++  the number of bits to shift the control field in the register can be
++  supplied. If the shift value is missing it is the same as supplying
++  a zero shift.
++
++properties:
++  compatible:
++    enum:
++      - ti,mux-clock
++      - ti,composite-mux-clock
++
++  "#clock-cells":
++    const: 0
++
++  clocks: true
++
++  clock-output-names:
++    maxItems: 1
++
++  reg:
++    maxItems: 1
++
++  ti,bit-shift:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      number of bits to shift the bit-mask, defaults to 0 if not present
++    maximum: 31
++    default: 0
++
++  ti,index-starts-at-one:
++    type: boolean
++    description:
++      valid input select programming starts at 1, not zero
++
++  ti,set-rate-parent:
++    type: boolean
++    description:
++      clk_set_rate is propagated to parent clock,
++      not supported by the composite-mux-clock subtype.
++  ti,latch-bit:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      latch the mux value to HW, only needed if the register
++      access requires this. As an example, dra7x DPLL_GMAC H14 muxing
++      implements such behavior.
++
++if:
++  properties:
++    compatible:
++      contains:
++        const: ti,composite-mux-clock
++then:
++  properties:
++    ti,set-rate-parent: false
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clocks
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    bus {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      clock-controller@110 {
++        #clock-cells = <0>;
++        compatible = "ti,mux-clock";
++        clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>;
++        reg = <0x0110>;
++        ti,index-starts-at-one;
++        ti,set-rate-parent;
++      };
++
++      clock-controller@120 {
++        #clock-cells = <0>;
++        compatible = "ti,composite-mux-clock";
++        clocks = <&core_96m_fck>, <&mcbsp_clks>;
++        ti,bit-shift = <4>;
++        reg = <0x02d8>;
++      };
++    };
+-- 
+2.39.5
 
-I will also note that hibernation with EFI is flaky in general, given
-that EFI memory regions may move around
 
