@@ -1,219 +1,619 @@
-Return-Path: <linux-kernel+bounces-394140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB5DD9BAB06
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:47:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E996F9BAB0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE98F1C20B15
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:47:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7197B1F21C12
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4825916D9AA;
-	Mon,  4 Nov 2024 02:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EE817C7C6;
+	Mon,  4 Nov 2024 02:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nc+rK/xR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nlJji580"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6703E3F9FB;
-	Mon,  4 Nov 2024 02:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730688453; cv=fail; b=A6P7SJUZLW/ghqBpTYBGbzT1dI2zNg+9S1fcYDB4ptG+8QpWeHQQh7TYINEuEW4Pc+jYPEMVrnQS3EM63jTpV9ktKA36eOF6+/+O70Nxj2W+npMzZE3CRCyxco1VQ4ldKvXQywyBkrkiRYgVBWNAze31Aj7rYdDZWVNJep4AUB8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730688453; c=relaxed/simple;
-	bh=HiJp1NcP40TrHi/As89RWTpIr8f30N79hVE600QFYQs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bHE/cMmf6aLq+/TJ2GJkqJMIjz5jmbPKYQVktMP0QIJf5R0uiS3o4siQTS4caSN63ZHgmaYk5u0unX9A/V9n+6ru3x7rsGdc5R9naCeUHzl2jk7j8GbQyXjT3/Wy2Dxi7sBABAs5Xc/CTkmaoLINNPoxxsJsRfOCtT/ET7WqmS8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nc+rK/xR; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730688451; x=1762224451;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=HiJp1NcP40TrHi/As89RWTpIr8f30N79hVE600QFYQs=;
-  b=nc+rK/xRVUxxp20kkTHfYIfqT76kKpviqZ84psm1KzJQQq0M7XizeuD5
-   6jf2ScJRSuxXnKQ1mPXaKUU/ifUDfs2DIUIyAZ1Ct1Buc/veOPjQ6F9ts
-   9yq1bo75ZfVkcGHnzziCMH+xzb96ohJq7RMGasaiCF9gmLTgqYMpMiV9s
-   x9VYxYI5MXm6q4uS3mzbMrYX2e0IB571ln9PpWaeywN9qOnDa4wUuDIih
-   iYMa6/sWXWzTIVNXxO5his0qXqJoL32Ob6ewobF30LV90Cvj/uWYdh5LD
-   KGpv4L1nWEtGD2bjnn0+vo0uM3svox62HgBkuZJmib3xB0vQWwfQr9Zr/
-   A==;
-X-CSE-ConnectionGUID: kjWOXi3UQ16VnSva5Zglyw==
-X-CSE-MsgGUID: Z1TXHE/hSyOLu+WRKdgrig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="17990005"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="17990005"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 18:47:31 -0800
-X-CSE-ConnectionGUID: 9/R7FUNLRnWFipxtWz8Ciw==
-X-CSE-MsgGUID: LF+iPDnWSVSgKI0Q4yOAgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="83651320"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Nov 2024 18:47:30 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 3 Nov 2024 18:47:30 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 3 Nov 2024 18:47:30 -0800
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 3 Nov 2024 18:47:29 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T8f7EAPYd/Jt3e/M36tfiU+hZWxyAlft2W4JUkdtpv2wncwVSqHiQv5r1acjp6QAATYMdsJNj8WZa6QF611j3VIvrpOOOrFnOzCrE1x+oYMOMnTqMyTOZ0s6gThHg/eV7VZGH7eUAy1nENk92to+Hm6o+CGalWgWoMz4/8FGNDlaXQkxChsFtc46JQQQpjk9CrAi++5nxBd/hJaUFKDroDnFMPahso2I7GHWyxiuwsUTeaTAoAMM8yrlhLLFuNydQcL9u+6p4Frq0gQpOgigtb+0UFTmlTuVMy3ubdM88Hm2jtv4nSP5WfwbZuD5fLg/PyVKs0gs1oq1KBBh+7fx8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I3H3zbJivLqXcrIyjnZt+2GDuJwfSDHZ/od5YofW7lw=;
- b=Q41bXB5AJK9h9GMcBJiiUuxzpMpMOIUDT8O6xCQRBYYPbznoqKyhYFSYIrd04N/g++1hHMEYhY5tc4U4y9072mlIqfI9899y10/l0054tsCveDgIMrEMIVrcKHdSnZs0nfMgtOGEOaI0i7L4ZIldtwU99BHmKrpTSTfnLngCPQSddhfTDpZp+dUjsFvWOf3YSeFaRD8W7E+b9zufQyLtpWY35es8mlH0AFoIwOk47F8JHrbJ2o43t0/FVt00txcwjx2abk97kbk0FKS+y3ZDC3PQXIMMJYeJOKlYtUwoOmFlMPg/ZWOK8Nqr/UBhR+u9rVMUwfC92sjI/d4MzqFFQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by SJ0PR11MB4941.namprd11.prod.outlook.com (2603:10b6:a03:2d2::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
- 2024 02:47:27 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%3]) with mapi id 15.20.8114.028; Mon, 4 Nov 2024
- 02:47:27 +0000
-Date: Mon, 4 Nov 2024 10:47:18 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Like Xu <like.xu.linux@gmail.com>
-Subject: Re: [PATCH] KVM: nVMX: Treat vpid01 as current if L2 is active, but
- with VPID disabled
-Message-ID: <Zyg1tkDxNR6N16Ga@intel.com>
-References: <20241031202011.1580522-1-seanjc@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241031202011.1580522-1-seanjc@google.com>
-X-ClientProxiedBy: SG3P274CA0023.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::35)
- To CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAA517622F;
+	Mon,  4 Nov 2024 02:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730688743; cv=none; b=caq+d3j82Jg26KwmnYmAyRCrHAPRQRH8JwuOLQUcUm9c8k/w1XesPGj2/VKwahpr9TYCyfb94RNf3EECQBHNmKHgIBNlI3mE6foTVB6iYa/smk5d8fw4+WARl9ho3bU37daccTMLbgEtg0df8zU5FusfrXeOBjrKCOiV5C0Mgq4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730688743; c=relaxed/simple;
+	bh=NRHsVXVNVaD2gKDI209Jt5u1uPjGg2N82y2/VRUtxnk=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=naCf9qHJmOvX6r1t9YU/jljHGKoOzPZbAZoJVL8Mklsdi7pC3YjMFQ9dxGBUBT5q0L0yC9CJs3+bYl5s/nrGhcuDsvJS12To5GeqQVrvkELRX4eJPrA6PdevHkGVns/HWEsvhU3O1YNcz+YXn7SDWkyyccxuIiqC978gRLm9xxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nlJji580; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730688738; h=Message-ID:Subject:Date:From:To;
+	bh=wk8LyHWtMu8L87/2eeYa33MmxCMRwkuycxwL7Q1RHjk=;
+	b=nlJji580RyeDQ0V5/Jzeu4jNpkdiT3M+JZfwMietHDPXzIXQAiv8CQXkCGktLHHJbjNXVfBdKX+fGY7a6AoWLUG5oqGXKyoEkHUJBSTyQK1ttLXMlc/PrzP0/9xNLP/vAOQPHKRDFUwxPve4flUxVEKUeF+P4gXkFdcQpqTBARg=
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WIZn7Ws_1730688734 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 04 Nov 2024 10:52:15 +0800
+Message-ID: <1730688721.0028145-5-xuanzhuo@linux.alibaba.com>
+Subject: Re: [resend PATCH 2/2] dim: pass dim_sample to net_dim() by reference
+Date: Mon, 4 Nov 2024 10:52:01 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+ intel-wired-lan@lists.osuosl.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org,
+ linux-rdma@vger.kernel.org,
+ netdev@vger.kernel.org,
+ oss-drivers@corigine.com,
+ virtualization@lists.linux.dev,
+ Andrew Lunn <andrew+netdev@lunn.ch>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Arthur Kiyanovski <akiyano@amazon.com>,
+ Brett Creeley <brett.creeley@amd.com>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Claudiu Manoil <claudiu.manoil@nxp.com>,
+ David Arinzon <darinzon@amazon.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Doug Berger <opendmb@gmail.com>,
+ Eric Dumazet <edumazet@google.com>,
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Felix Fietkau <nbd@nbd.name>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Geetha sowjanya <gakula@marvell.com>,
+ hariprasad <hkelam@marvell.com>,
+ Jakub Kicinski <kuba@kernel.org>,
+ Jason Wang <jasowang@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Leon Romanovsky <leon@kernel.org>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Louis Peens <louis.peens@corigine.com>,
+ Mark Lee <Mark-MC.Lee@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Michael Chan <michael.chan@broadcom.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>,
+ Noam Dagan <ndagan@amazon.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Roy Pledge <Roy.Pledge@nxp.com>,
+ Saeed Bishara <saeedb@amazon.com>,
+ Saeed Mahameed <saeedm@nvidia.com>,
+ Sean Wang <sean.wang@mediatek.com>,
+ Shannon Nelson <shannon.nelson@amd.com>,
+ Shay Agroskin <shayagr@amazon.com>,
+ Simon Horman <horms@kernel.org>,
+ Subbaraya Sundeep <sbhatta@marvell.com>,
+ Sunil Goutham <sgoutham@marvell.com>,
+ Tal Gilboa <talgi@nvidia.com>,
+ Tariq Toukan <tariqt@nvidia.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>
+References: <20241031002326.3426181-1-csander@purestorage.com>
+ <20241031002326.3426181-2-csander@purestorage.com>
+In-Reply-To: <20241031002326.3426181-2-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SJ0PR11MB4941:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd909a03-9ef3-435b-56ad-08dcfc7b04a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?QQFkWHkiNXAcrNvhD5EPk+gP/Q4kYU5/bneOZYNWgkTin1jca0ADQjoATgTb?=
- =?us-ascii?Q?qErrZTUxPAaJM0TGfyZmmHQPaxJDsqt+ZfiaLJnGQ2EVwgpTigR61UFoNpnZ?=
- =?us-ascii?Q?3TKYc0XobaWVS5ZbA3s6o90ivtWWidQMtcBBDej+9x4LDQqesnGd4FMRCPQR?=
- =?us-ascii?Q?wrsm0f+mlytLtz7o4PRSNvNoP262yQaaU6LJPDd79uUMSYQdnD6Kj7X82WUm?=
- =?us-ascii?Q?VppA4Twn3S+nvFi3U8fCOXpo2NqL4vV9Wm4nUgsJAmpPpQYPR+vA29C5wmla?=
- =?us-ascii?Q?AXy3R+WVlYg+70ECH1JLBaTqXQQU+nGb0fbZi8uG8fVKeMtTfN8NEm8gkPdL?=
- =?us-ascii?Q?b6udQNAIzxyTuvto5tW4/xoUL1XkbfQUvamF10IvfmUtYmn+lZEkbKYH32+5?=
- =?us-ascii?Q?k/1xbnJH1gEmgf1QwwAr1VhlV/6u72fACLfQueijrfCM0R9mW/rppSpujY4d?=
- =?us-ascii?Q?BOvHPAwiQvetKgVruypZhbnrVSTS5y8lCrrorSQpkI3fWehQRcpxF+tHPoZb?=
- =?us-ascii?Q?KB1vVbQCFjuN8HjVh4uz6g239Hnu99bkFwyh/f1KOVwSlyJlfSVOHGzfZZpT?=
- =?us-ascii?Q?aaHxiglblJGQ1FTNoSUWVUTtELEGr5qzsfnpJOq9UExB5LapmktxBi8cThSO?=
- =?us-ascii?Q?PYPETyplnD6n5m1h7/yLpXdEQ0Dh9iSKmwb/K0IOp7wupPHmfG7jSVOYkWL8?=
- =?us-ascii?Q?c2AUO8I1t+nXU8ZR9z6PjW6C5idwDOa3317NqCDi87BABURBVP7f6pgjeuYv?=
- =?us-ascii?Q?UqPmRT92oZt7ll9vcOujYSfji0h4eduTcajuziJ+aoJ5xJyOKmAm5p0Y3pPM?=
- =?us-ascii?Q?n247/B/IY4ys0/mKc2TTqHQtgYKnWRnl7/kyyeC/52t0FRB7ELzwU0jMYnPe?=
- =?us-ascii?Q?GLzIi8o6FunAtj6/9W5cv4HfGssgq9I72FcOP7OGeYGtudUT0GuO0B3peMi+?=
- =?us-ascii?Q?Cnn56egaFOb7Ez6SKUxDFhve+vhPpI+zW4FKTkn8MCPfDkyJ3NyhT8OW+zgh?=
- =?us-ascii?Q?P/u7igbQpBCS9BzEztXjiWmDDa995KzBQ9l/hqNxgwYqrn5K9/Ne+5StFa1s?=
- =?us-ascii?Q?5TGk0g77puS8lBx81x67udtaC2xFG8eqyrmk+7T/03Nl5PQHsC3ungWYv/5Z?=
- =?us-ascii?Q?caEVkmVuaWM/xLSfFdSNbZ35zrzxwHztkLUDZNj5IrLtLwfhw1p1BKr+C5dk?=
- =?us-ascii?Q?zovoNjV/juW1Z8v0w7W2EspglW+5/gk/fMiSJlZtbOdYTN6k1eh62Gsy/1mr?=
- =?us-ascii?Q?J+V5TPlP87DzncbWhMHVV7BrnwjJcEIy1vPtqjcPVTM+ttyoVboC2sJC9O0j?=
- =?us-ascii?Q?zpTXHLzv3MH47q5e7gKjqWai?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZaiNA58e4MaeVt6NWd+lL/z2b4/paGK/8I6JJ6QEb8aRPQzJsQ/fkVpLhfje?=
- =?us-ascii?Q?+VyXRnZcf8FMBJzoQExl9v0yvYpQcOR2mDImYVI7LSEOS7N5eqwz8eiKL9+U?=
- =?us-ascii?Q?wDQc1EMwYeJmadkLR7DR5pxZpR4YkxMtmVGbyHC7mnaopN+C1QXT9RGqTUgk?=
- =?us-ascii?Q?yTVWSf/YESlVZDCuF3tpVEjJxV9iqjm+dbyx4HWZGCIEeBWScXl+XpvkDo+v?=
- =?us-ascii?Q?jlZbIyWoiJZFD5jdR5qTNySp/Ink4yWkmVzNLaEr2xaCavxUFrKMQFtktbGu?=
- =?us-ascii?Q?8JJviUkGNT/MkkP6eQW5XStras3e8aeFBj6h50mHbLrqKbBE7vlY3fmMh5Nf?=
- =?us-ascii?Q?AJA/+dM4SmOfdcTigq9KZyKCf7n/+q+JkjTIE44PM6h/LqT8LvYcFIfjLDX2?=
- =?us-ascii?Q?Z+iJSIKHjRGB12NCkglWvf7nN0iob9j/mQXQn/aGIclSs3Z+AQjLWO/R4zwE?=
- =?us-ascii?Q?PSfnemrYDXSgBAOLQpfya0ABmj8+k6deti8cpSyShKfb9XejRCvxnWCtoZWw?=
- =?us-ascii?Q?gRxpIeoiNPz0Q4HTMMuHjo69TNCdnXXHrWn4FjUgEWjPXszx2oVY89s+oKjd?=
- =?us-ascii?Q?eVGZWQCWPSptKZOq89fN+wLI2yaBQpUOelclZteFdaWu8tOk4nxtDEaF6WWB?=
- =?us-ascii?Q?gEO8jDai5DLfd9qBxN9Kq7hTyX46b9VdV4+ayDlmHs3gBpAM25LtgiGHk9BV?=
- =?us-ascii?Q?JmL9A+7Tf8eAiCm5hgs074W6zToqhFZ3pV8qjWqBgG9yssgc5Gg1bTcyfoxK?=
- =?us-ascii?Q?7erkAHTKu1Q3RYG7guqHWsZNEiLXEKguPv8s+CcoVVVV67JpHyVAmaKc4raD?=
- =?us-ascii?Q?aGzt7ZbWVLidDpSjMHzmDlABtHeEMcaY70kC1QvdMq72uhwhCKvttzBM5hfv?=
- =?us-ascii?Q?2zdYebos5qLWnJuq686F0imvV1BkwoDrb1giGkRkM6Qb1dsE/zfxuCNetuxk?=
- =?us-ascii?Q?CDLbVkiZxeC4jotgLICffI2m4K5k388y4oIszg19HF1ms8hqt7H/QhaCtPfn?=
- =?us-ascii?Q?++8ajeJwD6pyeobvTgek+VaYBtBIcPdQ7vg32J3AB4pabqp72lkF4neGBpFG?=
- =?us-ascii?Q?R5lWb6bDzfI6ZG/IikKdA6UzkPQHdhNL38Bl2nOXg27NUylzKoZFI0SULxan?=
- =?us-ascii?Q?zzvkSkfSb3n+I7L+1VOqxXcvDzaxmXmxp2fu0BPQaR3x0LVfjL4jMxYdinmm?=
- =?us-ascii?Q?s/pHQRNOwINsjqFIv9UOfahH9pfM8T46+dUZDB/PYVxvvI3VdnOktqcH94LN?=
- =?us-ascii?Q?GDbVcv83fF/D840+ZbNy9TKQWeChz7xhZ6bWDgr+/jj8/EgknP+u1oWEKEWZ?=
- =?us-ascii?Q?RBXfu9La2+64uPcvZurvx1+NAGcECOlL4qVxSyAOpBmFzio/aUdkdVaWnJfE?=
- =?us-ascii?Q?iGJa5NROp+AlKW/Y7Zon4uMmRPxKmRuA+0Alp5b4Lh0Oq6H3lgQIDCyZdXTB?=
- =?us-ascii?Q?92kdxGvk2ReWzGEQQct/NqqgIXrQApdw0OYDxosRq5pRFeAEw/W/RZW62K3F?=
- =?us-ascii?Q?BZWRxtQxVsjfDTfJmfz8nbsQ+xJ/wZ7eU1rFLkuX5C9VSnzBf7COQnMTJk9M?=
- =?us-ascii?Q?T+nU5y2/P1ZJ353VrhKNkdx6iogieE6oUijdh4B1?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd909a03-9ef3-435b-56ad-08dcfc7b04a1
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 02:47:27.0884
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yJYpeJLgiMWy0C8+YdNtVVdpxUUErtBcOu4EPvGiuA/58Wk8lGEvbonhj51Lr7gwexEJne97Bwro9hyGTfnQpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4941
-X-OriginatorOrg: intel.com
 
-On Thu, Oct 31, 2024 at 01:20:11PM -0700, Sean Christopherson wrote:
->When getting the current VPID, e.g. to emulate a guest TLB flush, return
->vpid01 if L2 is running but with VPID disabled, i.e. if VPID is disabled
->in vmcs12.  Architecturally, if VPID is disabled, then the guest and host
->effectively share VPID=0.  KVM emulates this behavior by using vpid01 when
->running an L2 with VPID disabled (see prepare_vmcs02_early_rare()), and so
->KVM must also treat vpid01 as the current VPID while L2 is active.
+On Wed, 30 Oct 2024 18:23:26 -0600, Caleb Sander Mateos <csander@purestorage.com> wrote:
+> net_dim() is currently passed a struct dim_sample argument by value.
+> struct dim_sample is 24 bytes. Since this is greater 16 bytes, x86-64
+> passes it on the stack. All callers have already initialized dim_sample
+> on the stack, so passing it by value requires pushing a duplicated copy
+> to the stack. Either witing to the stack and immediately reading it, or
+> perhaps dereferencing addresses relative to the stack pointer in a chain
+> of push instructions, seems to perform quite poorly.
 >
->Unconditionally treating vpid02 as the current VPID when L2 is active
->causes KVM to flush TLB entries for vpid02 instead of vpid01, which
->results in TLB entries from L1 being incorrectly preserved across nested
->VM-Enter to L2 (L2=>L1 isn't problematic, because the TLB flush after
->nested VM-Exit flushes vpid01).
+> In a heavy TCP workload, mlx5e_handle_rx_dim() consumes 3% of CPU time,
+> 94% of which is attributed to the first push instruction to copy
+> dim_sample on the stack for the call to net_dim():
+> // Call ktime_get()
+>   0.26 |4ead2:   call   4ead7 <mlx5e_handle_rx_dim+0x47>
+> // Pass the address of struct dim in %rdi
+>        |4ead7:   lea    0x3d0(%rbx),%rdi
+> // Set dim_sample.pkt_ctr
+>        |4eade:   mov    %r13d,0x8(%rsp)
+> // Set dim_sample.byte_ctr
+>        |4eae3:   mov    %r12d,0xc(%rsp)
+> // Set dim_sample.event_ctr
+>   0.15 |4eae8:   mov    %bp,0x10(%rsp)
+> // Duplicate dim_sample on the stack
+>  94.16 |4eaed:   push   0x10(%rsp)
+>   2.79 |4eaf1:   push   0x10(%rsp)
+>   0.07 |4eaf5:   push   %rax
+> // Call net_dim()
+>   0.21 |4eaf6:   call   4eafb <mlx5e_handle_rx_dim+0x6b>
 >
->The bug manifests as failures in the vmx_apicv_test KVM-Unit-Test, as KVM
->incorrectly retains TLB entries for the APIC-access page across a nested
->VM-Enter.
+> To allow the caller to reuse the struct dim_sample already on the stack,
+> pass the struct dim_sample by reference to net_dim().
 >
->Opportunisticaly add comments at various touchpoints to explain the
->architectural requirements, and also why KVM uses vpid01 instead of vpid02.
->
->All credit goes to Chao, who root caused the issue and identified the fix.
->
->Link: https://lore.kernel.org/all/ZwzczkIlYGX+QXJz@intel.com
->Fixes: 2b4a5a5d5688 ("KVM: nVMX: Flush current VPID (L1 vs. L2) for KVM_REQ_TLB_FLUSH_GUEST")
->Cc: stable@vger.kernel.org
->Cc: Like Xu <like.xu.linux@gmail.com>
->Debugged-by: Chao Gao <chao.gao@intel.com>
->Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 
-Reviewed-by: Chao Gao <chao.gao@intel.com>
 
-I also ran the vmx_apicv_test KVM-Unit-Test. All failures are gone with this
-patch applied. So,
+For virtio-net:
 
-Tested-by: Chao Gao <chao.gao@intel.com>
+Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+
+
+> ---
+>  Documentation/networking/net_dim.rst                   |  2 +-
+>  drivers/net/ethernet/amazon/ena/ena_netdev.c           |  2 +-
+>  drivers/net/ethernet/broadcom/bcmsysport.c             |  2 +-
+>  drivers/net/ethernet/broadcom/bnxt/bnxt.c              |  4 ++--
+>  drivers/net/ethernet/broadcom/genet/bcmgenet.c         |  2 +-
+>  drivers/net/ethernet/freescale/enetc/enetc.c           |  2 +-
+>  drivers/net/ethernet/hisilicon/hns3/hns3_enet.c        |  4 ++--
+>  drivers/net/ethernet/intel/ice/ice_txrx.c              |  4 ++--
+>  drivers/net/ethernet/intel/idpf/idpf_txrx.c            |  4 ++--
+>  drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c |  2 +-
+>  drivers/net/ethernet/mediatek/mtk_eth_soc.c            |  4 ++--
+>  drivers/net/ethernet/mellanox/mlx5/core/en_txrx.c      |  4 ++--
+>  drivers/net/ethernet/netronome/nfp/nfd3/dp.c           |  4 ++--
+>  drivers/net/ethernet/netronome/nfp/nfdk/dp.c           |  4 ++--
+>  drivers/net/ethernet/pensando/ionic/ionic_txrx.c       |  2 +-
+>  drivers/net/virtio_net.c                               |  2 +-
+>  drivers/soc/fsl/dpio/dpio-service.c                    |  2 +-
+>  include/linux/dim.h                                    |  2 +-
+>  lib/dim/net_dim.c                                      | 10 +++++-----
+>  19 files changed, 31 insertions(+), 31 deletions(-)
+>
+> diff --git a/Documentation/networking/net_dim.rst b/Documentation/networking/net_dim.rst
+> index 8908fd7b0a8d..4377998e6826 100644
+> --- a/Documentation/networking/net_dim.rst
+> +++ b/Documentation/networking/net_dim.rst
+> @@ -154,11 +154,11 @@ usage is not complete but it should make the outline of the usage clear.
+>  	dim_update_sample(my_entity->events,
+>  		          my_entity->packets,
+>  		          my_entity->bytes,
+>  		          &dim_sample);
+>  	/* Call net DIM */
+> -	net_dim(&my_entity->dim, dim_sample);
+> +	net_dim(&my_entity->dim, &dim_sample);
+>  	...
+>    }
+>
+>    /* My entity's initialization function (my_entity was already allocated) */
+>    int my_driver_init_my_entity(struct my_driver_entity *my_entity, ...)
+> diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> index 96df20854eb9..63c8a2328142 100644
+> --- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> +++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> @@ -1381,11 +1381,11 @@ static void ena_adjust_adaptive_rx_intr_moderation(struct ena_napi *ena_napi)
+>  	dim_update_sample(rx_ring->non_empty_napi_events,
+>  			  rx_ring->rx_stats.cnt,
+>  			  rx_ring->rx_stats.bytes,
+>  			  &dim_sample);
+>
+> -	net_dim(&ena_napi->dim, dim_sample);
+> +	net_dim(&ena_napi->dim, &dim_sample);
+>
+>  	rx_ring->per_napi_packets = 0;
+>  }
+>
+>  void ena_unmask_interrupt(struct ena_ring *tx_ring,
+> diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
+> index caff6e87a488..031e9e0cca53 100644
+> --- a/drivers/net/ethernet/broadcom/bcmsysport.c
+> +++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+> @@ -1027,11 +1027,11 @@ static int bcm_sysport_poll(struct napi_struct *napi, int budget)
+>  	}
+>
+>  	if (priv->dim.use_dim) {
+>  		dim_update_sample(priv->dim.event_ctr, priv->dim.packets,
+>  				  priv->dim.bytes, &dim_sample);
+> -		net_dim(&priv->dim.dim, dim_sample);
+> +		net_dim(&priv->dim.dim, &dim_sample);
+>  	}
+>
+>  	return work_done;
+>  }
+>
+> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> index 6dd6541d8619..ca42b81133d7 100644
+> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> @@ -3100,11 +3100,11 @@ static int bnxt_poll(struct napi_struct *napi, int budget)
+>
+>  		dim_update_sample(cpr->event_ctr,
+>  				  cpr->rx_packets,
+>  				  cpr->rx_bytes,
+>  				  &dim_sample);
+> -		net_dim(&cpr->dim, dim_sample);
+> +		net_dim(&cpr->dim, &dim_sample);
+>  	}
+>  	return work_done;
+>  }
+>
+>  static int __bnxt_poll_cqs(struct bnxt *bp, struct bnxt_napi *bnapi, int budget)
+> @@ -3231,11 +3231,11 @@ static int bnxt_poll_p5(struct napi_struct *napi, int budget)
+>
+>  		dim_update_sample(cpr->event_ctr,
+>  				  cpr_rx->rx_packets,
+>  				  cpr_rx->rx_bytes,
+>  				  &dim_sample);
+> -		net_dim(&cpr->dim, dim_sample);
+> +		net_dim(&cpr->dim, &dim_sample);
+>  	}
+>  	return work_done;
+>  }
+>
+>  static void bnxt_free_tx_skbs(struct bnxt *bp)
+> diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+> index 10966ab15373..53a949eb9180 100644
+> --- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+> +++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+> @@ -2403,11 +2403,11 @@ static int bcmgenet_rx_poll(struct napi_struct *napi, int budget)
+>  	}
+>
+>  	if (ring->dim.use_dim) {
+>  		dim_update_sample(ring->dim.event_ctr, ring->dim.packets,
+>  				  ring->dim.bytes, &dim_sample);
+> -		net_dim(&ring->dim.dim, dim_sample);
+> +		net_dim(&ring->dim.dim, &dim_sample);
+>  	}
+>
+>  	return work_done;
+>  }
+>
+> diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+> index c09370eab319..05dedea6185a 100644
+> --- a/drivers/net/ethernet/freescale/enetc/enetc.c
+> +++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+> @@ -716,11 +716,11 @@ static void enetc_rx_net_dim(struct enetc_int_vector *v)
+>
+>  	dim_update_sample(v->comp_cnt,
+>  			  v->rx_ring.stats.packets,
+>  			  v->rx_ring.stats.bytes,
+>  			  &dim_sample);
+> -	net_dim(&v->rx_dim, dim_sample);
+> +	net_dim(&v->rx_dim, &dim_sample);
+>  }
+>
+>  static int enetc_bd_ready_count(struct enetc_bdr *tx_ring, int ci)
+>  {
+>  	int pi = enetc_rd_reg_hot(tx_ring->tcir) & ENETC_TBCIR_IDX_MASK;
+> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+> index 4cbc4d069a1f..43377a7b2426 100644
+> --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+> @@ -4446,11 +4446,11 @@ static void hns3_update_rx_int_coalesce(struct hns3_enet_tqp_vector *tqp_vector)
+>  	if (!rx_group->coal.adapt_enable)
+>  		return;
+>
+>  	dim_update_sample(tqp_vector->event_cnt, rx_group->total_packets,
+>  			  rx_group->total_bytes, &sample);
+> -	net_dim(&rx_group->dim, sample);
+> +	net_dim(&rx_group->dim, &sample);
+>  }
+>
+>  static void hns3_update_tx_int_coalesce(struct hns3_enet_tqp_vector *tqp_vector)
+>  {
+>  	struct hns3_enet_ring_group *tx_group = &tqp_vector->tx_group;
+> @@ -4459,11 +4459,11 @@ static void hns3_update_tx_int_coalesce(struct hns3_enet_tqp_vector *tqp_vector)
+>  	if (!tx_group->coal.adapt_enable)
+>  		return;
+>
+>  	dim_update_sample(tqp_vector->event_cnt, tx_group->total_packets,
+>  			  tx_group->total_bytes, &sample);
+> -	net_dim(&tx_group->dim, sample);
+> +	net_dim(&tx_group->dim, &sample);
+>  }
+>
+>  static int hns3_nic_common_poll(struct napi_struct *napi, int budget)
+>  {
+>  	struct hns3_nic_priv *priv = netdev_priv(napi->dev);
+> diff --git a/drivers/net/ethernet/intel/ice/ice_txrx.c b/drivers/net/ethernet/intel/ice/ice_txrx.c
+> index 8208055d6e7f..5d2d7736fd5f 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_txrx.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_txrx.c
+> @@ -1350,18 +1350,18 @@ static void ice_net_dim(struct ice_q_vector *q_vector)
+>
+>  	if (ITR_IS_DYNAMIC(tx)) {
+>  		struct dim_sample dim_sample;
+>
+>  		__ice_update_sample(q_vector, tx, &dim_sample, true);
+> -		net_dim(&tx->dim, dim_sample);
+> +		net_dim(&tx->dim, &dim_sample);
+>  	}
+>
+>  	if (ITR_IS_DYNAMIC(rx)) {
+>  		struct dim_sample dim_sample;
+>
+>  		__ice_update_sample(q_vector, rx, &dim_sample, false);
+> -		net_dim(&rx->dim, dim_sample);
+> +		net_dim(&rx->dim, &dim_sample);
+>  	}
+>  }
+>
+>  /**
+>   * ice_buildreg_itr - build value for writing to the GLINT_DYN_CTL register
+> diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.c b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
+> index d4e6f0e10487..da2a5becf62f 100644
+> --- a/drivers/net/ethernet/intel/idpf/idpf_txrx.c
+> +++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
+> @@ -3677,11 +3677,11 @@ static void idpf_net_dim(struct idpf_q_vector *q_vector)
+>  		} while (u64_stats_fetch_retry(&txq->stats_sync, start));
+>  	}
+>
+>  	idpf_update_dim_sample(q_vector, &dim_sample, &q_vector->tx_dim,
+>  			       packets, bytes);
+> -	net_dim(&q_vector->tx_dim, dim_sample);
+> +	net_dim(&q_vector->tx_dim, &dim_sample);
+>
+>  check_rx_itr:
+>  	if (!IDPF_ITR_IS_DYNAMIC(q_vector->rx_intr_mode))
+>  		return;
+>
+> @@ -3696,11 +3696,11 @@ static void idpf_net_dim(struct idpf_q_vector *q_vector)
+>  		} while (u64_stats_fetch_retry(&rxq->stats_sync, start));
+>  	}
+>
+>  	idpf_update_dim_sample(q_vector, &dim_sample, &q_vector->rx_dim,
+>  			       packets, bytes);
+> -	net_dim(&q_vector->rx_dim, dim_sample);
+> +	net_dim(&q_vector->rx_dim, &dim_sample);
+>  }
+>
+>  /**
+>   * idpf_vport_intr_update_itr_ena_irq - Update itr and re-enable MSIX interrupt
+>   * @q_vector: q_vector for which itr is being updated and interrupt enabled
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
+> index 933e18ba2fb2..7aaf32e9aa95 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
+> @@ -525,11 +525,11 @@ static void otx2_adjust_adaptive_coalese(struct otx2_nic *pfvf, struct otx2_cq_p
+>
+>  	dim_update_sample(pfvf->napi_events,
+>  			  rx_frames + tx_frames,
+>  			  rx_bytes + tx_bytes,
+>  			  &dim_sample);
+> -	net_dim(&cq_poll->dim, dim_sample);
+> +	net_dim(&cq_poll->dim, &dim_sample);
+>  }
+>
+>  int otx2_napi_handler(struct napi_struct *napi, int budget)
+>  {
+>  	struct otx2_cq_queue *rx_cq = NULL;
+> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> index f01ceee5f02d..53485142938c 100644
+> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> @@ -2225,11 +2225,11 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
+>
+>  	eth->rx_packets += done;
+>  	eth->rx_bytes += bytes;
+>  	dim_update_sample(eth->rx_events, eth->rx_packets, eth->rx_bytes,
+>  			  &dim_sample);
+> -	net_dim(&eth->rx_dim, dim_sample);
+> +	net_dim(&eth->rx_dim, &dim_sample);
+>
+>  	if (xdp_flush)
+>  		xdp_do_flush();
+>
+>  	return done;
+> @@ -2375,11 +2375,11 @@ static int mtk_poll_tx(struct mtk_eth *eth, int budget)
+>  	if (state.txq)
+>  		netdev_tx_completed_queue(state.txq, state.done, state.bytes);
+>
+>  	dim_update_sample(eth->tx_events, eth->tx_packets, eth->tx_bytes,
+>  			  &dim_sample);
+> -	net_dim(&eth->tx_dim, dim_sample);
+> +	net_dim(&eth->tx_dim, &dim_sample);
+>
+>  	if (mtk_queue_stopped(eth) &&
+>  	    (atomic_read(&ring->free_count) > ring->thresh))
+>  		mtk_wake_queue(eth);
+>
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_txrx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_txrx.c
+> index 5873fde65c2e..417098f0b2bb 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_txrx.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_txrx.c
+> @@ -53,11 +53,11 @@ static void mlx5e_handle_tx_dim(struct mlx5e_txqsq *sq)
+>
+>  	if (unlikely(!test_bit(MLX5E_SQ_STATE_DIM, &sq->state)))
+>  		return;
+>
+>  	dim_update_sample(sq->cq.event_ctr, stats->packets, stats->bytes, &dim_sample);
+> -	net_dim(sq->dim, dim_sample);
+> +	net_dim(sq->dim, &dim_sample);
+>  }
+>
+>  static void mlx5e_handle_rx_dim(struct mlx5e_rq *rq)
+>  {
+>  	struct mlx5e_rq_stats *stats = rq->stats;
+> @@ -65,11 +65,11 @@ static void mlx5e_handle_rx_dim(struct mlx5e_rq *rq)
+>
+>  	if (unlikely(!test_bit(MLX5E_RQ_STATE_DIM, &rq->state)))
+>  		return;
+>
+>  	dim_update_sample(rq->cq.event_ctr, stats->packets, stats->bytes, &dim_sample);
+> -	net_dim(rq->dim, dim_sample);
+> +	net_dim(rq->dim, &dim_sample);
+>  }
+>
+>  void mlx5e_trigger_irq(struct mlx5e_icosq *sq)
+>  {
+>  	struct mlx5_wq_cyc *wq = &sq->wq;
+> diff --git a/drivers/net/ethernet/netronome/nfp/nfd3/dp.c b/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
+> index d215efc6cad0..f1c6c47564b1 100644
+> --- a/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
+> +++ b/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
+> @@ -1177,11 +1177,11 @@ int nfp_nfd3_poll(struct napi_struct *napi, int budget)
+>  			pkts = r_vec->rx_pkts;
+>  			bytes = r_vec->rx_bytes;
+>  		} while (u64_stats_fetch_retry(&r_vec->rx_sync, start));
+>
+>  		dim_update_sample(r_vec->event_ctr, pkts, bytes, &dim_sample);
+> -		net_dim(&r_vec->rx_dim, dim_sample);
+> +		net_dim(&r_vec->rx_dim, &dim_sample);
+>  	}
+>
+>  	if (r_vec->nfp_net->tx_coalesce_adapt_on && r_vec->tx_ring) {
+>  		struct dim_sample dim_sample = {};
+>  		unsigned int start;
+> @@ -1192,11 +1192,11 @@ int nfp_nfd3_poll(struct napi_struct *napi, int budget)
+>  			pkts = r_vec->tx_pkts;
+>  			bytes = r_vec->tx_bytes;
+>  		} while (u64_stats_fetch_retry(&r_vec->tx_sync, start));
+>
+>  		dim_update_sample(r_vec->event_ctr, pkts, bytes, &dim_sample);
+> -		net_dim(&r_vec->tx_dim, dim_sample);
+> +		net_dim(&r_vec->tx_dim, &dim_sample);
+>  	}
+>
+>  	return pkts_polled;
+>  }
+>
+> diff --git a/drivers/net/ethernet/netronome/nfp/nfdk/dp.c b/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
+> index dae5af7d1845..ebeb6ab4465c 100644
+> --- a/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
+> +++ b/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
+> @@ -1287,11 +1287,11 @@ int nfp_nfdk_poll(struct napi_struct *napi, int budget)
+>  			pkts = r_vec->rx_pkts;
+>  			bytes = r_vec->rx_bytes;
+>  		} while (u64_stats_fetch_retry(&r_vec->rx_sync, start));
+>
+>  		dim_update_sample(r_vec->event_ctr, pkts, bytes, &dim_sample);
+> -		net_dim(&r_vec->rx_dim, dim_sample);
+> +		net_dim(&r_vec->rx_dim, &dim_sample);
+>  	}
+>
+>  	if (r_vec->nfp_net->tx_coalesce_adapt_on && r_vec->tx_ring) {
+>  		struct dim_sample dim_sample = {};
+>  		unsigned int start;
+> @@ -1302,11 +1302,11 @@ int nfp_nfdk_poll(struct napi_struct *napi, int budget)
+>  			pkts = r_vec->tx_pkts;
+>  			bytes = r_vec->tx_bytes;
+>  		} while (u64_stats_fetch_retry(&r_vec->tx_sync, start));
+>
+>  		dim_update_sample(r_vec->event_ctr, pkts, bytes, &dim_sample);
+> -		net_dim(&r_vec->tx_dim, dim_sample);
+> +		net_dim(&r_vec->tx_dim, &dim_sample);
+>  	}
+>
+>  	return pkts_polled;
+>  }
+>
+> diff --git a/drivers/net/ethernet/pensando/ionic/ionic_txrx.c b/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
+> index 0eeda7e502db..2ac59564ded1 100644
+> --- a/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
+> +++ b/drivers/net/ethernet/pensando/ionic/ionic_txrx.c
+> @@ -926,11 +926,11 @@ static void ionic_dim_update(struct ionic_qcq *qcq, int napi_mode)
+>  	}
+>
+>  	dim_update_sample(qcq->cq.bound_intr->rearm_count,
+>  			  pkts, bytes, &dim_sample);
+>
+> -	net_dim(&qcq->dim, dim_sample);
+> +	net_dim(&qcq->dim, &dim_sample);
+>  }
+>
+>  int ionic_tx_napi(struct napi_struct *napi, int budget)
+>  {
+>  	struct ionic_qcq *qcq = napi_to_qcq(napi);
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 792e9eadbfc3..869586c17ffd 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -2802,11 +2802,11 @@ static void virtnet_rx_dim_update(struct virtnet_info *vi, struct receive_queue
+>  	dim_update_sample(rq->calls,
+>  			  u64_stats_read(&rq->stats.packets),
+>  			  u64_stats_read(&rq->stats.bytes),
+>  			  &cur_sample);
+>
+> -	net_dim(&rq->dim, cur_sample);
+> +	net_dim(&rq->dim, &cur_sample);
+>  	rq->packets_in_napi = 0;
+>  }
+>
+>  static int virtnet_poll(struct napi_struct *napi, int budget)
+>  {
+> diff --git a/drivers/soc/fsl/dpio/dpio-service.c b/drivers/soc/fsl/dpio/dpio-service.c
+> index b811446e0fa5..0b60ed16297c 100644
+> --- a/drivers/soc/fsl/dpio/dpio-service.c
+> +++ b/drivers/soc/fsl/dpio/dpio-service.c
+> @@ -889,10 +889,10 @@ void dpaa2_io_update_net_dim(struct dpaa2_io *d, __u64 frames, __u64 bytes)
+>
+>  	d->bytes += bytes;
+>  	d->frames += frames;
+>
+>  	dim_update_sample(d->event_ctr, d->frames, d->bytes, &dim_sample);
+> -	net_dim(&d->rx_dim, dim_sample);
+> +	net_dim(&d->rx_dim, &dim_sample);
+>
+>  	spin_unlock(&d->dim_lock);
+>  }
+>  EXPORT_SYMBOL(dpaa2_io_update_net_dim);
+> diff --git a/include/linux/dim.h b/include/linux/dim.h
+> index 84579a50ae7f..06543fd40fcc 100644
+> --- a/include/linux/dim.h
+> +++ b/include/linux/dim.h
+> @@ -423,11 +423,11 @@ struct dim_cq_moder net_dim_get_def_tx_moderation(u8 cq_period_mode);
+>   *
+>   * Called by the consumer.
+>   * This is the main logic of the algorithm, where data is processed in order
+>   * to decide on next required action.
+>   */
+> -void net_dim(struct dim *dim, struct dim_sample end_sample);
+> +void net_dim(struct dim *dim, const struct dim_sample *end_sample);
+>
+>  /* RDMA DIM */
+>
+>  /*
+>   * RDMA DIM profile:
+> diff --git a/lib/dim/net_dim.c b/lib/dim/net_dim.c
+> index d7e7028e9b19..d6aa09a979b3 100644
+> --- a/lib/dim/net_dim.c
+> +++ b/lib/dim/net_dim.c
+> @@ -345,33 +345,33 @@ static bool net_dim_decision(struct dim_stats *curr_stats, struct dim *dim)
+>  		dim->prev_stats = *curr_stats;
+>
+>  	return dim->profile_ix != prev_ix;
+>  }
+>
+> -void net_dim(struct dim *dim, struct dim_sample end_sample)
+> +void net_dim(struct dim *dim, const struct dim_sample *end_sample)
+>  {
+>  	struct dim_stats curr_stats;
+>  	u16 nevents;
+>
+>  	switch (dim->state) {
+>  	case DIM_MEASURE_IN_PROGRESS:
+>  		nevents = BIT_GAP(BITS_PER_TYPE(u16),
+> -				  end_sample.event_ctr,
+> +				  end_sample->event_ctr,
+>  				  dim->start_sample.event_ctr);
+>  		if (nevents < DIM_NEVENTS)
+>  			break;
+> -		if (!dim_calc_stats(&dim->start_sample, &end_sample, &curr_stats))
+> +		if (!dim_calc_stats(&dim->start_sample, end_sample, &curr_stats))
+>  			break;
+>  		if (net_dim_decision(&curr_stats, dim)) {
+>  			dim->state = DIM_APPLY_NEW_PROFILE;
+>  			schedule_work(&dim->work);
+>  			break;
+>  		}
+>  		fallthrough;
+>  	case DIM_START_MEASURE:
+> -		dim_update_sample(end_sample.event_ctr, end_sample.pkt_ctr,
+> -				  end_sample.byte_ctr, &dim->start_sample);
+> +		dim_update_sample(end_sample->event_ctr, end_sample->pkt_ctr,
+> +				  end_sample->byte_ctr, &dim->start_sample);
+>  		dim->state = DIM_MEASURE_IN_PROGRESS;
+>  		break;
+>  	case DIM_APPLY_NEW_PROFILE:
+>  		break;
+>  	}
+> --
+> 2.45.2
+>
 
