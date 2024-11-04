@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-395363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B57C9BBCF0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:10:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D740C9BBCE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:10:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F578283702
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:10:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E53E1F22CEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081E31CBA1F;
-	Mon,  4 Nov 2024 18:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7553C1CACDC;
+	Mon,  4 Nov 2024 18:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMfO1/O0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXQmtJMi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4260A179958;
-	Mon,  4 Nov 2024 18:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A2C179958;
+	Mon,  4 Nov 2024 18:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730743828; cv=none; b=o+pE9KC8wE/u5ao+w01qeRcXdBFDx19011Mwjc1EvczYMcCR0B27XCEQYVrfwo1SFCXuOKhzy5RSJRd/YLj8Xk6vay8WL2hRMg/K+PwowEjdwkgjA2a74F7QslAhvoJDUY5F/xheSYF2O6U3FFTKTVoMF7qG0o5JKPeMggTzgY4=
+	t=1730743824; cv=none; b=ufl2EdQkv0+NZEuzaaJ1daiPcgUEZX3Ep8pbTNKGk4OxDKh/BkCWlkypDIcVzQhIH/W9rFm5DKiQ6G//vS2pAtuhlkgZ+0EJIDSZxkoakWR1iGat8jR161M+uiqDTMNexjobwHPtH3xKiuc/Km1GRsZiAs/nbm9777s5RCbg79A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730743828; c=relaxed/simple;
-	bh=A9QEobhM0Tk66PTKUxkoy2PH75AkXVl7kAtDO3RqV40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XOV6DPlq1Mc9DQ6U52srcznqkmxy74+v00RZTkFo/+ZZj/K76iinpZ+f91xKDpp6kyqMpkn17c8/7Wra90l+b89ZmYd8Irvc3ZYRpDU9ViaByPh5FSUMaeavEdCgnQ8oaehEzFWm5+IXIo3DRmCC4QafFPSO3NusmuqF4VotuE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMfO1/O0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5F8FC4CECE;
-	Mon,  4 Nov 2024 18:10:27 +0000 (UTC)
+	s=arc-20240116; t=1730743824; c=relaxed/simple;
+	bh=8yn2FMoBBbT6Y7C0W/3NVLTfZrFDqhTmxfd9R5SOWPk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=MrtHC31BSuVofBRgNkHO6bj/HafC8CH+EHKBYpecK6xdpSFU/vin7dArZjHo0haHAFitPBsbgNa01i5LY7w4dT2mAZdumI5AsDrzypVbqP+Sz5aO94GEzQ9XfOPuFIHQUdT/LuzLFp8UMQSf9Fs+Pk1XkGXtrRpECG/BVGeZTQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXQmtJMi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59F38C4CECE;
+	Mon,  4 Nov 2024 18:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730743828;
-	bh=A9QEobhM0Tk66PTKUxkoy2PH75AkXVl7kAtDO3RqV40=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OMfO1/O0f3WTFHcevl3ZKLDtacBxMdE3BT7RFEx/b3+uCvKbbdhBTvloMt0wa0OwX
-	 n90Z5gcaPjxU3VikQM87AaL+farAbSj6GceGjTrdFooAVP1M8KvLcXwQ38fUeWBv8N
-	 nSueT0gGDtEoY8EFJAIpvIVUUWXl5Q+eF6EU53irRc2UnkG16rz8Z0sqp62Nd22MA5
-	 VHQu3uGLJaQJEr8WHqAb0R2V4++l7ByYkHuVDtoe7B8G75lQBftyc2Y6tQRfZwmKhm
-	 h8Lgj1UBc9z/xdcPqGhAJ2c/yL+WIAA6KPIsfzCpa8AVQaSz9Mv0vPpuMxziyvvJML
-	 5V3YtcPfQjK/A==
-Date: Mon, 4 Nov 2024 18:10:26 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, linux-mips@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev, sparclinux@vger.kernel.org,
-	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v3 05/18] arm/crc32: expose CRC32 functions through lib
-Message-ID: <20241104181026.GC1049313@google.com>
-References: <20241103223154.136127-1-ebiggers@kernel.org>
- <20241103223154.136127-6-ebiggers@kernel.org>
+	s=k20201202; t=1730743824;
+	bh=8yn2FMoBBbT6Y7C0W/3NVLTfZrFDqhTmxfd9R5SOWPk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=rXQmtJMiUT1yWTKXposWrBZFP6tnRvEicbEwTfYNWEOcEsZ/OT1aPjLQ03BBvH4fQ
+	 r2BWdubn1XRCd2DSi156ANbFONkTxO57M9JdDPudzhDUDV8Uv+W7BXKJ62ev2BrDHN
+	 t0/ntik3TGlSKEHsW0iVNS8kEkJtlPDCk4W+1IFlnnx6EOY6GAHPrPXBjL4uYWXB0K
+	 0OGGMOp19JLDkXkhhZMcA+gIxwYKhTg2eGLTWnvPNAt82fWKSpItpl5wbkNbXq5UKN
+	 L8T3pwiyuyJ4+FppkCmTMgRWXBsd6gDXgAR709p3krgR5tKHumKkThWNwtLk5h3bxf
+	 oyfoypnOgUKmw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 342143805CC0;
+	Mon,  4 Nov 2024 18:10:34 +0000 (UTC)
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.12-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <D5CYH0IJXX72.35A25M1YICZRP@kernel.org>
+References: <D5CYH0IJXX72.35A25M1YICZRP@kernel.org>
+X-PR-Tracked-List-Id: <keyrings.vger.kernel.org>
+X-PR-Tracked-Message-Id: <D5CYH0IJXX72.35A25M1YICZRP@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-6.12-rc7
+X-PR-Tracked-Commit-Id: 9265fed6db601ee2ec47577815387458ef4f047a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a0339404fd2753c042eb7ea11bd3288dbfc38107
+Message-Id: <173074383275.4156990.7746614523205746915.pr-tracker-bot@kernel.org>
+Date: Mon, 04 Nov 2024 18:10:32 +0000
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241103223154.136127-6-ebiggers@kernel.org>
 
-On Sun, Nov 03, 2024 at 02:31:41PM -0800, Eric Biggers wrote:
-> -static int __init crc32_pmull_mod_init(void)
-> -{
-> -	if (elf_hwcap2 & HWCAP2_PMULL) {
-> -		crc32_pmull_algs[0].update = crc32_pmull_update;
-> -		crc32_pmull_algs[1].update = crc32c_pmull_update;
-> -
-> -		if (elf_hwcap2 & HWCAP2_CRC32) {
-> -			fallback_crc32 = crc32_armv8_le;
-> -			fallback_crc32c = crc32c_armv8_le;
-> -		} else {
-> -			fallback_crc32 = crc32_le;
-> -			fallback_crc32c = __crc32c_le;
-> -		}
-> -	} else if (!(elf_hwcap2 & HWCAP2_CRC32)) {
-> -		return -ENODEV;
-> -	}
-[...]
-> +static u32 crc32_le_scalar(u32 crc, const u8 *p, size_t len)
-> +{
-> +	if (static_branch_likely(&have_crc32))
-> +		return crc32_armv8_le(crc, p, len);
-> +	return crc32_le_base(crc, p, len);
-> +}
+The pull request you sent on Mon, 04 Nov 2024 02:08:32 +0200:
 
-kernel test robot reported a build error on this patch,
-"undefined symbol: __kcfi_typeid_crc32_armv8_le".  It's because crc32-core.S
-uses SYM_TYPED_FUNC_START(crc32_armv8_le), and this patch makes crc32_armv8_le
-be called only via direct calls, not indirect calls as it was before.  I will
-fix this by replacing SYM_TYPED_FUNC_START by SYM_FUNC_START.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-6.12-rc7
 
-- Eric
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a0339404fd2753c042eb7ea11bd3288dbfc38107
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
