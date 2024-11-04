@@ -1,216 +1,140 @@
-Return-Path: <linux-kernel+bounces-395508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD8F9BBEDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:37:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D329BBEDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:38:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCF0282BCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:37:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C145B21FF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FF41CC177;
-	Mon,  4 Nov 2024 20:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4801F5852;
+	Mon,  4 Nov 2024 20:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FPUEjxTJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vHzGnAyB"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB62E1F6666
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 20:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB06E1CC177
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 20:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730752633; cv=none; b=HquRcJL+KkAiqzq+o4yTUQntTqadl1a4wVh8kHpFzl7vCeLSrLDR32gJjHMg3tsOD5GLvCEXcIVTekYrZA+wbAYng7bbnv98eJZqsfqcLFEWDUKMTWMxpQXe/daIusvcZmGGu2XU7wigZHgQBQGR17Ma/pDP9n9vlhqZ9n8cbP0=
+	t=1730752686; cv=none; b=E7tLFakUpYOBEOFB9yNe3+PLWpbAOnNfk6aKvBd0uhk0Aek7+GFt6uwpt+Q8TzxZ3gj8RoACjDy/ghccf0I1y42VnVuUKUUY6f+zxR8cOVA/UUzFPXEovzzcnIFbIqySgr0hOZU5vZ41EZTMywwpj1P3UBHdwGwc+CMBL/aC4+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730752633; c=relaxed/simple;
-	bh=Guwysl2O3tRoWL5qZmEUZDmsCr5aph8nqMI04YcoB9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kvG8QNp4bFsGxme1kMJEVqqmsdDw800lzIneuK/iliq7wyZEIb/RwM/aZGIh4mkSB5arGxTwcOJvcGRT9IHDhWE0ByCK5eYpc6/Y98o3x++wk1Fn2Iov5Eo4d9xSuRvL5CA0EvbYmRs2TDceMyhvbBIL8iZKFVgqcWOCehNqlaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FPUEjxTJ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730752632; x=1762288632;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Guwysl2O3tRoWL5qZmEUZDmsCr5aph8nqMI04YcoB9c=;
-  b=FPUEjxTJl601DUv+HqXqZ0EK/+Qq2o0Lf4sX2dpvWqettVuHEIgf2dS2
-   4Rqx4uFPtrVndlBqJWQXQNJx9vaBSS2aiptA5MPEL9tdRoNwc6bxbkcd4
-   /q3u6H9yoA1pbY+sFoF8nDu06vdEtfAofEZRIEGO2ikHjO55hPVBzGqj8
-   SFQePnnwy3l63UbwDkmdI4d6xB42ov0UI+ylPuTVIdQyC9ePenIzHgIiM
-   MTlcOek0wsBYezTUVZgoBllOxjYTCAhzRLPHeF8sqnQadaRUuwYi7rqLk
-   yJv7sOtMDDa2qMuEkBdo3fyjNa1uT5CZUMRmRh9aNg/+J0xDFMr3V08v0
-   Q==;
-X-CSE-ConnectionGUID: 1gNWUUR3QDiEYq8zJdm5Pg==
-X-CSE-MsgGUID: 8ibXk608RQS1VHwIPEoDgw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="47978159"
-X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
-   d="scan'208";a="47978159"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 12:37:11 -0800
-X-CSE-ConnectionGUID: 6s6OyJi5QdCY4bTF1fOnEg==
-X-CSE-MsgGUID: uGhsO/UwQvacQL/Uf3ZaIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
-   d="scan'208";a="121243540"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 12:37:11 -0800
-Received: from [10.212.67.175] (kliang2-mobl1.ccr.corp.intel.com [10.212.67.175])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 9E53720B5703;
-	Mon,  4 Nov 2024 12:37:09 -0800 (PST)
-Message-ID: <7fa16a12-2b31-4bab-893e-ba4fe017339b@linux.intel.com>
-Date: Mon, 4 Nov 2024 15:37:08 -0500
+	s=arc-20240116; t=1730752686; c=relaxed/simple;
+	bh=EKafFQrcHqow9XPVbJXW8QnhNB4BpZ5ghDQ4nVOgs4k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QlUwb9/mFb7JlUxcVc6CMmYG7PgVQYlWk3xycRsAkpaRMuKCdtcpE2OwW+AG50ilv+YX+7snlXb4q7COW4TwqLIxWClAIeAEp7ZAZVvDkBpFc0AetKZSqpoRgBmzDIh8ivnGzQNlOubhMfg2HX4etzF0od0iNazcPGwjkbT012Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vHzGnAyB; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a4e4776f79so31455ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 12:38:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730752684; x=1731357484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nVs9awL5pwovmY2hQCH3pAdF4ZPipMvKa1BaDejQHMc=;
+        b=vHzGnAyBAD023s+j7k7i5d/wSAnTq5UhCYwiEVwplKHYTYOXJpo/QV+olSmNIoVE4t
+         yrb7aNmfJAUTJHQmExqLl1G8XdHooN9WSn5WGnFmTIdTY/OPXay0E02/HsQ5fW6cxlIW
+         NlIf+WYIzxtt8OSdKvy1S0bzypgv+Uje3GHwZS1vwSpbbA1NidxensmejeWXvgtSUa11
+         YLFdC9u7pCC9J0SXBqKEc1XWlya5SsAXfqmEzcQaCZqv05yUfScDIlBQRZUCi47+7X1c
+         Bi/v0I/lrUSUmEI4RhQLZ52KoFo7mKiYQ7cY7m5dy5WTIvFKadWjBT8hoDH53SJAdR6c
+         vmOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730752684; x=1731357484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nVs9awL5pwovmY2hQCH3pAdF4ZPipMvKa1BaDejQHMc=;
+        b=Z7i1Ss0Bpcgd0c+AuedgzQu/NGvE9anSZzfrhICC7xJnFXIy2FwuvfzWmK9HUarzAy
+         Gno4TrDhtp55bI8tdM8peB/vGG3s6GmFHG7brus0FrIKIT7tobZkBk93zLkrltchPnLT
+         cz+H7qImykG7UwG+bURO0KGkQlG8HoDwjbWECrMIJLL25vYi/eTl1xzyFjBC/MHj14qV
+         WdTFm97YZH2eqcyaFOzX84qeF86mAnbA0/YItFPGajknpYvtAe0KTrwdAHUTh01kG5Vl
+         wgjAXtu1njc+E1P/nBL1WP4bFd5ZmzL8+XxpLULTk254Uab0e9TBzI7HSEbxmiP2SMpN
+         n2ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUSLPYmSbO6RFIG/6lmd7ioJxNfw+/kJPydLKHXivwMdibEpGV5N0WTIwmAUkvqBpwf7QayH0CH9/dx1Ps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZh+zpj73/dTK6eWu6BFzHuGWdK5kAFhk1zDNkQ5JQUFyN6XlG
+	MSxkfLHtlblj5KbJQ7nxEWWD4elUA4Wq3uwp/7osdDqgBZUA4lRh8Z1Wu2d+EUfq8qUJvlGjkYr
+	JdDWkWSLp/ES/d31LVA0e8UR7kx1+Yn1dIR6R
+X-Gm-Gg: ASbGncu6z41Gre/ubHmdPViHn0Nn3H4npGePoBs4lbjrs0l7g32yhXhY5PifoG3dmg1
+	gIzgmt/7xVVhvfxSelvtsg+Z8VeYTDs0un6jNgrA0BHkpjkxwSow/Vwf+Da/GAg==
+X-Google-Smtp-Source: AGHT+IEEd3WZqMqGwi0DOclLDdNE3GFZvePWwxu3+r9Hp4UUKKAxQnCVELnwD/+bq1Kic9iZOf6yhkkcdiQhPEr5Zrs=
+X-Received: by 2002:a05:6e02:1a0b:b0:3a6:b3b0:5696 with SMTP id
+ e9e14a558f8ab-3a6daa9633cmr605255ab.7.1730752683770; Mon, 04 Nov 2024
+ 12:38:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/3] Support auto counter reload
-To: peterz@infradead.org, mingo@kernel.org, acme@kernel.org,
- namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
- ak@linux.intel.com, linux-kernel@vger.kernel.org
-Cc: eranian@google.com, thomas.falcon@intel.com
-References: <20241010192844.1006990-1-kan.liang@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20241010192844.1006990-1-kan.liang@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <ZyjbksKYnV22zmz-@x1>
+In-Reply-To: <ZyjbksKYnV22zmz-@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 4 Nov 2024 12:37:52 -0800
+Message-ID: <CAP-5=fXNis590NMNfS=7nuJ3DoiB4ojvWtv1xvTVvnz7DFXG4Q@mail.gmail.com>
+Subject: Re: [PATCH 1/1] perf tests: Remove dangling CFLAGS for removed attr.o object
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Howard Chu <howardchu95@gmail.com>, James Clark <james.clark@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Ze Gao <zegao2021@gmail.com>, 
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Peter,
+On Mon, Nov 4, 2024 at 6:35=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> Since the C test wrapper for attr.py was removed we don't have an attr.o
+> object for that CFLAGS_attr.o to apply for, remove it.
+>
+> Fixes: 3a447031f5fc21c4 ("perf test: Remove C test wrapper for attr.py")
+> Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> Cc: Howard Chu <howardchu95@gmail.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: James Clark <james.clark@linaro.org>
+> Cc: Leo Yan <leo.yan@linux.dev>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Thomas Richter <tmricht@linux.ibm.com>
+> Cc: Veronika Molnarova <vmolnaro@redhat.com>
+> Cc: Weilin Wang <weilin.wang@intel.com>
+> Cc: Ze Gao <zegao2021@gmail.com>
+> Cc: zhaimingbing <zhaimingbing@cmss.chinamobile.com>
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Ping. Could you please let me know if you have any comments.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
 Thanks,
-Kan
+Ian
 
-On 2024-10-10 3:28 p.m., kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> Changes since V1:
-> - Add a check to the reload value which cannot exceeds the max period
-> - Avoid invoking intel_pmu_enable_acr() for the perf metrics event.
-> - Update comments explain to case which the event->attr.config2 exceeds
->   the group size
-> 
-> The relative rates among two or more events are useful for performance
-> analysis, e.g., a high branch miss rate may indicate a performance
-> issue. Usually, the samples with a relative rate that exceeds some
-> threshold are more useful. However, the traditional sampling takes
-> samples of events separately. To get the relative rates among two or
-> more events, a high sample rate is required, which can bring high
-> overhead. Many samples taken in the non-hotspot area are also dropped
-> (useless) in the post-process.
-> 
-> Auto Counter Reload (ACR) provides a means for software to specify that,
-> for each supported counter, the hardware should automatically reload the
-> counter to a specified initial value upon overflow of chosen counters.
-> This mechanism enables software to sample based on the relative rate of
-> two (or more) events, such that a sample (PMI or PEBS) is taken only if
-> the rate of one event exceeds some threshold relative to the rate of
-> another event. Taking a PMI or PEBS only when the relative rate of
-> perfmon events crosses a threshold can have significantly less
-> performance overhead than other techniques.
-> 
-> The details can be found at Intel Architecture Instruction Set
-> Extensions and Future Features (053) 8.7 AUTO COUNTER RELOAD.
-> 
-> Examples:
-> 
-> Here is the snippet of the mispredict.c. Since the array has random
-> numbers, jumps are random and often mispredicted.
-> The mispredicted rate depends on the compared value.
-> 
-> For the Loop1, ~11% of all branches are mispredicted.
-> For the Loop2, ~21% of all branches are mispredicted.
-> 
-> main()
-> {
-> ...
->         for (i = 0; i < N; i++)
->                 data[i] = rand() % 256;
-> ...
->         /* Loop 1 */
->         for (k = 0; k < 50; k++)
->                 for (i = 0; i < N; i++)
->                         if (data[i] >= 64)
->                                 sum += data[i];
-> ...
-> 
-> ...
->         /* Loop 2 */
->         for (k = 0; k < 50; k++)
->                 for (i = 0; i < N; i++)
->                         if (data[i] >= 128)
->                                 sum += data[i];
-> ...
-> }
-> 
-> Usually, a code with a high branch miss rate means a bad performance.
-> To understand the branch miss rate of the codes, the traditional method
-> usually sample both branches and branch-misses events. E.g.,
-> perf record -e "{cpu_atom/branch-misses/ppu, cpu_atom/branch-instructions/u}"
->                -c 1000000 -- ./mispredict
-> 
-> [ perf record: Woken up 4 times to write data ]
-> [ perf record: Captured and wrote 0.925 MB perf.data (5106 samples) ]
-> The 5106 samples are from both events and spread in both Loops.
-> In the post process stage, a user can know that the Loop 2 has a 21%
-> branch miss rate. Then they can focus on the samples of branch-misses
-> events for the Loop 2.
-> 
-> With this patch, the user can generate the samples only when the branch
-> miss rate > 20%.
-> perf record -e "{cpu_atom/branch-misses,period=200000,acr_mask=0x2/ppu,
->                  cpu_atom/branch-instructions,period=1000000,acr_mask=0x3/u}"
->                 -- ./mispredict
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.098 MB perf.data (2498 samples) ]
-> 
->  $perf report
-> 
-> Percent       │154:   movl    $0x0,-0x14(%rbp)
->               │     ↓ jmp     1af
->               │     for (i = j; i < N; i++)
->               │15d:   mov     -0x10(%rbp),%eax
->               │       mov     %eax,-0x18(%rbp)
->               │     ↓ jmp     1a2
->               │     if (data[i] >= 128)
->               │165:   mov     -0x18(%rbp),%eax
->               │       cltq
->               │       lea     0x0(,%rax,4),%rdx
->               │       mov     -0x8(%rbp),%rax
->               │       add     %rdx,%rax
->               │       mov     (%rax),%eax
->               │    ┌──cmp     $0x7f,%eax
-> 100.00   0.00 │    ├──jle     19e
->               │    │sum += data[i];
-> 
-> The 2498 samples are all from the branch-misses events for the Loop 2.
-> 
-> The number of samples and overhead is significantly reduced without
-> losing any information.
-> 
-> Kan Liang (3):
->   perf/x86/intel: Fix ARCH_PERFMON_NUM_COUNTER_LEAF
->   perf/x86/intel: Add the enumeration and flag for the auto counter
->     reload
->   perf/x86/intel: Support auto counter reload
-> 
->  arch/x86/events/intel/core.c       | 262 ++++++++++++++++++++++++++++-
->  arch/x86/events/perf_event.h       |  21 +++
->  arch/x86/events/perf_event_flags.h |   2 +-
->  arch/x86/include/asm/msr-index.h   |   4 +
->  arch/x86/include/asm/perf_event.h  |   4 +-
->  include/linux/perf_event.h         |   2 +
->  6 files changed, 288 insertions(+), 7 deletions(-)
-> 
-
+> ---
+>  tools/perf/tests/Build | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
+> index 03cbdf7c50a09be4..01ed9335db4dba4e 100644
+> --- a/tools/perf/tests/Build
+> +++ b/tools/perf/tests/Build
+> @@ -72,7 +72,6 @@ ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powe=
+rpc))
+>  perf-test-$(CONFIG_DWARF_UNWIND) +=3D dwarf-unwind.o
+>  endif
+>
+> -CFLAGS_attr.o         +=3D -DBINDIR=3D"BUILD_STR($(bindir_SQ))" -DPYTHON=
+=3D"BUILD_STR($(PYTHON_WORD))"
+>  CFLAGS_python-use.o   +=3D -DPYTHONPATH=3D"BUILD_STR($(OUTPUT)python)" -=
+DPYTHON=3D"BUILD_STR($(PYTHON_WORD))"
+>  CFLAGS_dwarf-unwind.o +=3D -fno-optimize-sibling-calls
+>
+> --
+> 2.47.0
+>
 
