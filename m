@@ -1,251 +1,149 @@
-Return-Path: <linux-kernel+bounces-394814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AA69BB44B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:13:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3328F9BB464
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:14:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC49E1F2497D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:13:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF1E41F249D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBDC1B652C;
-	Mon,  4 Nov 2024 12:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kdalWzpO"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDA51BC077;
+	Mon,  4 Nov 2024 12:14:08 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BB61B4F15;
-	Mon,  4 Nov 2024 12:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48FC1BB6BA;
+	Mon,  4 Nov 2024 12:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730722405; cv=none; b=NTntM5UmUJ6qzqCyO72twUuX+s8qAvrf8Lk36vCBpsNck4Ev1cmvDZOsbxUdEHEsojlW8bykw5W1zgnCDEjRo5hP/OH66Gm9p9IqP/H+iCqOc9sjCkJ20Rj6L9xETaCtVUrssMs3+15s7Usv75xk44DLG1xaE8WpbxoUZBTosUk=
+	t=1730722448; cv=none; b=M2SIB57Ig39z4vi14ZOxY/vJBCGwb8+IKwWO+BYCr22by5CtzqXeLJSv/CrklubrvuK1zioKbltHvfbqvAS7n6FazXyBKCCKCR7LcPOfEEFKCaG+18WZna8Xf8+ptWbSfGASP1j7JPTdrfemzVrTyEdjubDSMhw+HMyBag7bLxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730722405; c=relaxed/simple;
-	bh=c1+dZrjYSFCH7uQsyYckwZD/L6GG2H2kWKeJkEmFapA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nas7bqydaB/fvlrfaqhOBQIETwlQumr58iQjzy4IdA542x+4gZRNRionXlaADzEJPWvEEC59UXl3TGKFN0AJ9eRskfq+6JEuDTVjIMaXqgL54F9vYYYhygWF+zxTB+F7/uEP3pIEI/WorsohF0iHdvPeUOIryb5ETAL1HYna20E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kdalWzpO; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4BfskL012085;
-	Mon, 4 Nov 2024 12:13:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=xKXkot
-	FI4sjSkLqsBcciFLFs+T5q9Lom7epCVHqTUf8=; b=kdalWzpOEqLRUzOP3ZDmGO
-	7EFU7qnXjWKPwRnjq6h9QMfjtC4L9Tr9q2iiP85gUluE9qELZH+8Z+jsOWkezNF0
-	YXrUMWiSojVFqsfBv8yN2nezjULjzM5/uEvKRW0q55525r6dNMO1FE8+6QHFgqNw
-	kplX6wqkZ7t/Fkg0pJ3XpYtxhgXFXHeLPaJTl9wqOy/QyACeKtbnDRFZGv4cgD8N
-	S43E7rDNeLU57cRG+baJsJ4JqsH0Ote+iad6dqJdsnRv80gBLBQXNNKrOi/smJhk
-	omgdk0MDxV1XRF5hNJRVosGhuocvpLRxtGPAtuMMfcb5USVPI+/i382XsNN+oeiw
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42pwkg83vp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 12:13:21 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4BD7aI012237;
-	Mon, 4 Nov 2024 12:13:21 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p140sxw4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 12:13:20 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A4CDHfj30671578
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 4 Nov 2024 12:13:17 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3482120063;
-	Mon,  4 Nov 2024 12:13:17 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C9D8520043;
-	Mon,  4 Nov 2024 12:13:16 +0000 (GMT)
-Received: from [9.171.49.1] (unknown [9.171.49.1])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  4 Nov 2024 12:13:16 +0000 (GMT)
-Message-ID: <5bd1d878-69d0-4d27-9129-6fb8126ccb31@linux.ibm.com>
-Date: Mon, 4 Nov 2024 13:13:16 +0100
+	s=arc-20240116; t=1730722448; c=relaxed/simple;
+	bh=LlJTpzPFOcXD6rJumc2gatXqNvI8NA9EdhmLf5bd0yg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bUgq1gj602hDPdL5184xDEhDHFMya901vTJI/WpSorJdJad/EpTj+XKHKNCYV3TYlX/Jeakkw6X7xNAJFlKJ4XxxJoDQvGtrDT+HyGP56vWo73AAml3J0XlrZK3z+ygkk9Q1H2ZuLz9P99oVlNTS6SjE89bdofKnaNJaeRSOi2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a850270e2so692809366b.0;
+        Mon, 04 Nov 2024 04:14:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730722445; x=1731327245;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oLfhXe+DOk/Zvr718XsKSVZCtaQ0VoFVxnwJJzDWUIw=;
+        b=Xg6TiatSQOqTyxVXajrgVhXE5z0U+xtM8NJkwdjqJ2BJSWZTAkHn3Yxr9kVsTMZpuM
+         N57bBNIeQJ+qkw3if7tLag8cA8qf8UQ0mRYDt/5eh9vL1KibxOOzZMPKvemTJT7OjVxj
+         e4J1uhYOv7DFclbH0t703joD+1VK8YYJIoQ5oEOYpNqmyED9IZ70twyhwnlY2DlIppdF
+         rM5INUUclODH8TC7ORsh0t/zfhE0o7BFCCOSM8yVzRFnORXBF4JKGCDKf0TR29jklI2J
+         nSkTTTpKz8UzapbFGsyM2w2AHlRrajUWgc9VNrtVcmFmK1AsugJBR2MZKXXcu3c16EYt
+         5AEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSkFmNyf+FoJ29VnPdvWIk51kphP8sC5FiB6mzwPQQBSMwCUKvjfDvydS7qVJVO4O8up2VDv2wa1BGmIKn@vger.kernel.org, AJvYcCW1OQ8/zobVBwYBca8uiy9LQfI5wsClNoK8ksr5CE1B0gQWdwpbfj/ujtThH4B0cCurpfIz3XVparEVfA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyotnqNlyq+OMIeuERH5S66kxPQTiJjTWjlSA/EV9R++t+ytFl
+	Vdd56YcJH++o9RVT1HH4JBDNxIkRYw0bbax36Zuaga//jY3zh7sm
+X-Google-Smtp-Source: AGHT+IEjEmNi1Mf4Lrwzo59HZaxOA4fUhH1eR1qk3q6/SqNWYRNG9+oN+bdCXPzY4FnI+PsKaQYCmg==
+X-Received: by 2002:a17:907:2dac:b0:a9a:82e2:e8ce with SMTP id a640c23a62f3a-a9e6587e288mr1356965066b.40.1730722444776;
+        Mon, 04 Nov 2024 04:14:04 -0800 (PST)
+Received: from nuc.fritz.box (p200300f6f71fdb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71f:db00:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56494052sm543350466b.29.2024.11.04.04.14.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 04:14:04 -0800 (PST)
+From: Johannes Thumshirn <jth@kernel.org>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: linux-block@vger.kernel.org,
+	John Garry <john.g.garry@oracle.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v3] btrfs: handle bio_split() error
+Date: Mon,  4 Nov 2024 13:13:17 +0100
+Message-ID: <20241104121318.16784-1-jth@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] s390/uvdevice: Support longer secret lists
-To: Steffen Eiden <seiden@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>, borntraeger@linux.ibm.com
-References: <20241031093541.1641849-1-seiden@linux.ibm.com>
-Content-Language: en-US
-From: Janosch Frank <frankja@linux.ibm.com>
-Autocrypt: addr=frankja@linux.ibm.com; keydata=
- xsFNBFubpD4BEADX0uhkRhkj2AVn7kI4IuPY3A8xKat0ihuPDXbynUC77mNox7yvK3X5QBO6
- qLqYr+qrG3buymJJRD9xkp4mqgasHdB5WR9MhXWKH08EvtvAMkEJLnqxgbqf8td3pCQ2cEpv
- 15mH49iKSmlTcJ+PvJpGZcq/jE42u9/0YFHhozm8GfQdb9SOI/wBSsOqcXcLTUeAvbdqSBZe
- zuMRBivJQQI1esD9HuADmxdE7c4AeMlap9MvxvUtWk4ZJ/1Z3swMVCGzZb2Xg/9jZpLsyQzb
- lDbbTlEeyBACeED7DYLZI3d0SFKeJZ1SUyMmSOcr9zeSh4S4h4w8xgDDGmeDVygBQZa1HaoL
- Esb8Y4avOYIgYDhgkCh0nol7XQ5i/yKLtnNThubAcxNyryw1xSstnKlxPRoxtqTsxMAiSekk
- 0m3WJwvwd1s878HrQNK0orWd8BzzlSswzjNfQYLF466JOjHPWFOok9pzRs+ucrs6MUwDJj0S
- cITWU9Rxb04XyigY4XmZ8dywaxwi2ZVTEg+MD+sPmRrTw+5F+sU83cUstuymF3w1GmyofgsU
- Z+/ldjToHnq21MNa1wx0lCEipCCyE/8K9B9bg9pUwy5lfx7yORP3JuAUfCYb8DVSHWBPHKNj
- HTOLb2g2UT65AjZEQE95U2AY9iYm5usMqaWD39pAHfhC09/7NQARAQABzSVKYW5vc2NoIEZy
- YW5rIDxmcmFua2phQGxpbnV4LmlibS5jb20+wsF3BBMBCAAhBQJbm6Q+AhsjBQsJCAcCBhUI
- CQoLAgQWAgMBAh4BAheAAAoJEONU5rjiOLn4p9gQALjkdj5euJVI2nNT3/IAxAhQSmRhPEt0
- AmnCYnuTcHRWPujNr5kqgtyER9+EMQ0ZkX44JU2q7OWxTdSNSAN/5Z7qmOR9JySvDOf4d3mS
- bMB5zxL9d8SbnSs1uW96H9ZBTlTQnmLfsiM9TetAjSrR8nUmjGhe2YUhJLR1v1LguME+YseT
- eXnLzIzqqpu311/eYiiIGcmaOjPCE+vFjcXL5oLnGUE73qSYiujwhfPCCUK0850o1fUAYq5p
- CNBCoKT4OddZR+0itKc/cT6NwEDwdokeg0+rAhxb4Rv5oFO70lziBplEjOxu3dqgIKbHbjza
- EXTb+mr7VI9O4tTdqrwJo2q9zLqqOfDBi7NDvZFLzaCewhbdEpDYVu6/WxprAY94hY3F4trT
- rQMHJKQENtF6ZTQc9fcT5I3gAmP+OEvDE5hcTALpWm6Z6SzxO7gEYCnF+qGXqp8sJVrweMub
- UscyLqHoqdZC2UG4LQ1OJ97nzDpIRe0g6oJ9ZIYHKmfw5jjwH6rASTld5MFWajWdNsqK15k/
- RZnHAGICKVIBOBsq26m4EsBlfCdt3b/6emuBjUXR1pyjHMz2awWzCq6/6OWs5eANZ0sdosNq
- dq2v0ULYTazJz2rlCXV89qRa7ukkNwdBSZNEwsD4eEMicj1LSrqWDZMAALw50L4jxaMD7lPL
- jJbazsFNBFubpD4BEADAcUTRqXF/aY53OSH7IwIK9lFKxIm0IoFkOEh7LMfp7FGzaP7ANrZd
- cIzhZi38xyOkcaFY+npGEWvko7rlIAn0JpBO4x3hfhmhBD/WSY8LQIFQNNjEm3vzrMo7b9Jb
- JAqQxfbURY3Dql3GUzeWTG9uaJ00u+EEPlY8zcVShDltIl5PLih20e8xgTnNzx5c110lQSu0
- iZv2lAE6DM+2bJQTsMSYiwKlwTuv9LI9Chnoo6+tsN55NqyMxYqJgElk3VzlTXSr3+rtSCwf
- tq2cinETbzxc1XuhIX6pu/aCGnNfuEkM34b7G1D6CPzDMqokNFbyoO6DQ1+fW6c5gctXg/lZ
- 602iEl4C4rgcr3+EpfoPUWzKeM8JXv5Kpq4YDxhvbitr8Dm8gr38+UKFZKlWLlwhQ56r/zAU
- v6LIsm11GmFs2/cmgD1bqBTNHHcTWwWtRTLgmnqJbVisMJuYJt4KNPqphTWsPY8SEtbufIlY
- HXOJ2lqUzOReTrie2u0qcSvGAbSfec9apTFl2Xko/ddqPcZMpKhBiXmY8tJzSPk3+G4tqur4
- 6TYAm5ouitJsgAR61Cu7s+PNuq/pTLDhK+6/Njmc94NGBcRA4qTuysEGE79vYWP2oIAU4Fv6
- gqaWHZ4MEI2XTqH8wiwzPdCQPYsSE0fXWiYu7ObeErT6iLSTZGx4rQARAQABwsFfBBgBCAAJ
- BQJbm6Q+AhsMAAoJEONU5rjiOLn4DDEP/RuyckW65SZcPG4cMfNgWxZF8rVjeVl/9PBfy01K
- 8R0hajU40bWtXSMiby7j0/dMjz99jN6L+AJHJvrLz4qYRzn2Ys843W+RfXj62Zde4YNBE5SL
- jJweRCbMWKaJLj6499fctxTyeb9+AMLQS4yRSwHuAZLmAb5AyCW1gBcTWZb8ON5BmWnRqeGm
- IgC1EvCnHy++aBnHTn0m+zV89BhTLTUal35tcjUFwluBY39R2ux/HNlBO1GY3Z+WYXhBvq7q
- katThLjaQSmnOrMhzqYmdShP1leFTVbzXUUIYv/GbynO/YrL2gaQpaP1bEUEi8lUAfXJbEWG
- dnHFkciryi092E8/9j89DJg4mmZqOau7TtUxjRMlBcIliXkzSLUk+QvD4LK1kWievJse4mte
- FBdkWHfP4BH/+8DxapRcG1UAheSnSRQ5LiO50annOB7oXF+vgKIaie2TBfZxQNGAs3RQ+bga
- DchCqFm5adiSP5+OT4NjkKUeGpBe/aRyQSle/RropTgCi85pje/juYEn2P9UAgkfBJrOHvQ9
- Z+2Sva8FRd61NJLkCJ4LFumRn9wQlX2icFbi8UDV3do0hXJRRYTWCxrHscMhkrFWLhYiPF4i
- phX7UNdOWBQ90qpHyAxHmDazdo27gEjfvsgYMdveKknEOTEb5phwxWgg7BcIDoJf9UMC
-In-Reply-To: <20241031093541.1641849-1-seiden@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Fl6xkvTP2rwac-ftxcpgEA9kmfHyQdOw
-X-Proofpoint-GUID: Fl6xkvTP2rwac-ftxcpgEA9kmfHyQdOw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- priorityscore=1501 adultscore=0 malwarescore=0 clxscore=1015 spamscore=0
- phishscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040106
+Content-Transfer-Encoding: 8bit
 
-On 10/31/24 10:35 AM, Steffen Eiden wrote:
-> Enable the list IOCTL to provide lists longer than on page (85 entries).
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-s/on/one/
+Now that bio_split() can return errors, add error handling for it in
+btrfs_split_bio() and ultimately btrfs_submit_chunk().
 
-> The list IOCTL accepts argument length up to 8 pages in page granularity
-> and will fill the argument up to this length with entries until the list
-> ends. User space unaware of this enhancement will still receive one page
-> of data and an uv_rc 0x0100.
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
 
-Once the length check is fixed I'll be happy with this patch.
+This is based on top of John Garry's series "bio_split() error handling
+rework" explicitly on the patch titled "block: Rework bio_split() return
+value", which are as of now (Tue Oct 29 10:02:16 2024) not yet merged into
+any tree.
 
-> 
-> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
-> ---
-> Reworked the whole list-creation loop. Hardened+simplified the implementation.
-> Now, only the actual data filled by the CP is copied to userspace.
-> 
->   arch/s390/include/uapi/asm/uvdevice.h |  1 +
->   drivers/s390/char/uvdevice.c          | 72 ++++++++++++++++++++-------
->   2 files changed, 54 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/s390/include/uapi/asm/uvdevice.h b/arch/s390/include/uapi/asm/uvdevice.h
-> index 4947f26ad9fb..c584250d4a35 100644
-> --- a/arch/s390/include/uapi/asm/uvdevice.h
-> +++ b/arch/s390/include/uapi/asm/uvdevice.h
-> @@ -71,6 +71,7 @@ struct uvio_uvdev_info {
->   #define UVIO_ATT_ADDITIONAL_MAX_LEN	0x8000
->   #define UVIO_ADD_SECRET_MAX_LEN		0x100000
->   #define UVIO_LIST_SECRETS_LEN		0x1000
-> +#define UVIO_LIST_SECRETS_MAX_LEN	0x8000
+Changes to v2:
+- assign the split bbio to a new variable, so we can keep the old error
+  paths and end the original bbio
 
-Since we're only ever allocating a page in the kernel it doesn't really 
-make sense to arbitrarily limit this IMHO.
+Changes to v1:
+- convert ERR_PTR to blk_status_t
+- correctly fail already split bbios
+---
+ fs/btrfs/bio.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-A check for 0 and page alignment should be enough.
-
->   #define UVIO_RETR_SECRET_MAX_LEN	0x2000
->   
->   #define UVIO_DEVICE_NAME "uv"
-> diff --git a/drivers/s390/char/uvdevice.c b/drivers/s390/char/uvdevice.c
-> index 1f90976293e8..667d573e54b0 100644
-> --- a/drivers/s390/char/uvdevice.c
-> +++ b/drivers/s390/char/uvdevice.c
-> @@ -297,6 +297,43 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
->   	return ret;
->   }
->   
-> +/*
-> + * Do the actual secret list creation. Calls the list-UVC until there is no more
-
-list secrets UVC
-
-> + * space in the user buffer, or the list ends.
-> + */
-> +static int uvio_get_list(void *zpage, struct uvio_ioctl_cb *uv_ioctl)
-> +{
-> +	const size_t data_off = offsetof(struct uv_secret_list, secrets);
-> +	u8 __user *user_buf = (u8 __user *)uv_ioctl->argument_addr;
-> +	struct uv_secret_list *list = zpage;
-> +	u16 num_secrets_stored = 0;
-> +	size_t user_off = data_off;
-> +	size_t copy_len;
-> +
-> +	do {
-> +		uv_list_secrets(list, list->next_secret_idx, &uv_ioctl->uv_rc,
-> +				&uv_ioctl->uv_rrc);
-> +		if (uv_ioctl->uv_rc != UVC_RC_EXECUTED &&
-> +		    uv_ioctl->uv_rc != UVC_RC_MORE_DATA)
-> +			break;
-> +
-> +		copy_len = sizeof(list->secrets[0]) * list->num_secr_stored;
-> +		WARN_ON(copy_len > sizeof(list->secrets));
-> +
-> +		if (copy_to_user(user_buf + user_off, list->secrets, copy_len))
-> +			return -EFAULT;
-> +
-> +		user_off += copy_len;
-> +		num_secrets_stored += list->num_secr_stored;
-> +	} while (uv_ioctl->uv_rc == UVC_RC_MORE_DATA &&
-> +		 user_off + sizeof(*list) <= uv_ioctl->argument_len);
-> +
-> +	list->num_secr_stored = num_secrets_stored;
-> +	if (copy_to_user(user_buf, list, data_off))
-> +		return -EFAULT;
-> +	return 0;
-> +}
-> +
->   /** uvio_list_secrets() - perform a List Secret UVC
->    * @uv_ioctl: ioctl control block
->    *
-> @@ -308,6 +345,12 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
->    *
->    * The argument specifies the location for the result of the UV-Call.
->    *
-> + * Argument len must be a multiple of a page; 1-8 pages allowed.
-
-Fix comment when adjusting len check.
-
-> + * The list secrets IOCTL will call the list UVC multiple times and fill
-> + * the provided user-buffer with list elements until either the list ends or
-> + * the buffer is full. The list header is merged over all list header from the
-> + * individual UVCs.
-> + *
-
+diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
+index 1f216d07eff6..7a0998d0abe3 100644
+--- a/fs/btrfs/bio.c
++++ b/fs/btrfs/bio.c
+@@ -81,6 +81,9 @@ static struct btrfs_bio *btrfs_split_bio(struct btrfs_fs_info *fs_info,
+ 
+ 	bio = bio_split(&orig_bbio->bio, map_length >> SECTOR_SHIFT, GFP_NOFS,
+ 			&btrfs_clone_bioset);
++	if (IS_ERR(bio))
++		return ERR_CAST(bio);
++
+ 	bbio = btrfs_bio(bio);
+ 	btrfs_bio_init(bbio, fs_info, NULL, orig_bbio);
+ 	bbio->inode = orig_bbio->inode;
+@@ -678,7 +681,7 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
+ 				&bioc, &smap, &mirror_num);
+ 	if (error) {
+ 		ret = errno_to_blk_status(error);
+-		goto fail;
++		goto end_bbio;
+ 	}
+ 
+ 	map_length = min(map_length, length);
+@@ -686,7 +689,14 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
+ 		map_length = btrfs_append_map_length(bbio, map_length);
+ 
+ 	if (map_length < length) {
+-		bbio = btrfs_split_bio(fs_info, bbio, map_length);
++		struct btrfs_bio *split;
++
++		split = btrfs_split_bio(fs_info, bbio, map_length);
++		if (IS_ERR(split)) {
++			ret = errno_to_blk_status(PTR_ERR(split));
++			goto end_bbio;
++		}
++		bbio = split;
+ 		bio = &bbio->bio;
+ 	}
+ 
+@@ -760,6 +770,7 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
+ 
+ 		btrfs_bio_end_io(remaining, ret);
+ 	}
++end_bbio:
+ 	btrfs_bio_end_io(bbio, ret);
+ 	/* Do not submit another chunk */
+ 	return true;
+-- 
+2.43.0
 
 
