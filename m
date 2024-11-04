@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-395328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2829BBC63
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:52:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA569BBC64
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:52:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B27282A4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:52:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B813282A6E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2871D0490;
-	Mon,  4 Nov 2024 17:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA4E1D0E11;
+	Mon,  4 Nov 2024 17:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BzQ9ndBM"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNlEqa+P"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BB51CACD9
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 17:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520BA1CACDE
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 17:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730742640; cv=none; b=n8omSZ7FyHcLgNmz4Dtt6XtLDSdubqBZPrGhpB2y4+uhefKWjzj+xEkJLjZf2Wqz95PbaCT9dl6NBlrQQxDd68gWMb7rQx84Ak+1y8s6Oa12q3hJ54TmPIgPOIwSHpC5EHL81BhAqliQKnd0exNw6rZo4wgl3tu95QwpjasO+f4=
+	t=1730742642; cv=none; b=Rei2lfn1w7IJa13eYyghHdIHkEsVI6/clxE4sdndAjYnVYtfUgBz2QVywRRuQdwYcQR4VfszGwSq34Ize/i1fspbsh8Mvps+o1Coci1pfaTax0zKyrwE4KvyZDiE64UPT5OPpiuHeYz0DnwrNJWZBTs1i0IZr0GWsmVMxCffYPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730742640; c=relaxed/simple;
-	bh=23ngUTksLpTkGw0aoSlNw3ryYZyvaCsuu0KwcDUyKbQ=;
+	s=arc-20240116; t=1730742642; c=relaxed/simple;
+	bh=r8oDawuzwrCTjMJNkuzF+kmtf/cLqFGhI9bi3b/8YqQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f5d7wgcdrJkkvQtwAfLVYZ9NI7j4JgnPOGeXG/ar1DNIIDXr1YOKHZRO2xndRvXwditjP9MZuA024orYmi7PmVB6SlVQhy5oD/WiIEnVx5IpSSDK9nqAXipyj0ovo8SJjML68ahzKVJhrMq8YbMwtY/nwF822IWFmoANxV+e36k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BzQ9ndBM; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version; b=Xzp4phsYZsZawQ0CHw9anufl8Hp5+1hF26iKd1Fll5a24YZ+udzoWM+EIxWVHAt1Gi8Mt1ByKAuz14/DO2VXLgCxLprciUdsGGaVthvFnfcST6kwzXaHtDATMuLdPqHQeheFji6pcsBAhtAoUJOr5HS20/sIHmiyf909OLDb8wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNlEqa+P; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43155afca99so33657585e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 09:50:38 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso38513115e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 09:50:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730742637; x=1731347437; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730742639; x=1731347439; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3bZW2vMqumbONmM6bkNUy1UefcqeQAO43C3ir03Pf+8=;
-        b=BzQ9ndBMA91Ax5xAMyKb9ex8DGTuepbE4rqvN48vdikzEyPQZ1Ky1/Zr9zCPMQ0aPJ
-         Q0CsB4EJgtn2hhyBoPPGGHpEXi9F2WOzFIdYW5RmZ5FA5c7+jsbll2gCCpqq0giax0M9
-         ZNH1Z98MHFeZ8Cj15VigahzEYb5yJ9s0DnOZ2WtXffHdqaeUWx1uNj2YwehrOgxXWT8c
-         B/Ua3wuBf4JuzLaWo0h6RT9FPy33JNixGVUAmvPwaNVlxV5xtMwCsoG8HyQxMrWRUiAp
-         DTQnaFL2U3nm+uyTdMhF652E6b9jKK6w9XrshYxbhIe5+71pAYZsgfo81E9cI4SGs3B4
-         E1Gg==
+        bh=OnCRniz6rwW4FxyVUqUDwT3HfYK1tMoSQehysVO/b1w=;
+        b=gNlEqa+P5NOuKVN7sXJbQwKNfj/qQsZKODWyR0YQUQN5UnoX1YfevjDdMpGcpK+Wtg
+         tHniFlskkquH5aELCAGiymKjG38WWyZVzczvCtZKA0IpKNzUBeSZzfh0d/hkDAjyeTTC
+         l3UDzdqopC2SUWNyMRyH5xkPs0vt/Nt/qM2+9kgGxpT01N4esiKTFhFv3LZ8POKaSnb4
+         cJsRdWgwB+mzzAGGbSBhPaSDl49yVCrIFRWKcCU3sPbzs8ytWQm0+7mHWX+MyKUr3zMp
+         +6tHmQlz5BjpxCMfpzvFlT66N1zw45qSIfRZtRjbpDy1boUZBAIPeqc4BWi8osRMBZEo
+         pn3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730742637; x=1731347437;
+        d=1e100.net; s=20230601; t=1730742639; x=1731347439;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3bZW2vMqumbONmM6bkNUy1UefcqeQAO43C3ir03Pf+8=;
-        b=Jtn9bT/7+6tmvntron4msmGn3KdLHAW62+Jnj6++odDHVhTlL3gG4WofgOk1+blyy7
-         0S7VFx9jsb0dNs8qtIeLUaoklU76D1LrcxmdnPlrJCVpQRbQl6Hp4qOydxTb3bhfbedm
-         5oX5nm/rq7Ihm2k/LrIyYFBo3W7FHLd4zCNh3ElPn2mrEh25q+ncmTC7z4XeLhv85AQV
-         pLFDdJsLdRWfSR0xWJKWScopcoiD6aO9Yv9AcCXGdcLsTeVN7zOnAtiXg4d1b8duHqpm
-         bn6Fk7M2Sv/jSZEMKDHgj3fQdWzK5I2cRHikfPLRnZC9wc1ex+ngNnyUtqPmL974j2/a
-         cvSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHjmthoaX6PE0Ro88u7hc+xLtQo4fPZnGx8eqJ02+DICu7xWdMK1di8d+cnW9PTeZYbrDBttlNr2V7JTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG3I9DgqOBnMKYlTT5Gz/FPP+RTnkjbLZzhsL0wsfEVpKok4un
-	cZYqYyfGWweDQX6yVTgiDFx8xUUXc6OWB7CGlwrJOxBdxe6qJvUO
-X-Google-Smtp-Source: AGHT+IED9koMHdtoigV1IUNLC0Lf8hQjcXzlL4YR2SQSl38kHBY6wovIRGamZetZgT8dKXARQicxow==
-X-Received: by 2002:a05:6000:178b:b0:37c:c9bc:1be6 with SMTP id ffacd0b85a97d-381c79bb817mr9913699f8f.16.1730742637254;
-        Mon, 04 Nov 2024 09:50:37 -0800 (PST)
+        bh=OnCRniz6rwW4FxyVUqUDwT3HfYK1tMoSQehysVO/b1w=;
+        b=lD1MOj2Q+oT0hmCa3kfw42W3haIz1DdPBNdbXjWE7SwWXIlxCxceVhq0AmXa7uuQI6
+         46tPZVw7VKkZdkXrbDdaZXsyhlBkcnH5NTNhjCLQh4BjVCxGRBz4SLM6j0VjfXt5OMK+
+         VhYKtuMRtHV1vws0iT7FNLyeCtsSKU3OnvDkRFFbTHX64SOSaeMlHVflPiIBQMelMKXR
+         5oCWmphuoOtH+GHqxo2WJngz9rQJVAef09Dl3lmct5ZetMtnD38rF1DmbtEceZfUSKTs
+         9WrnXQaYeaUsXJUBrhRcnXpUfrPdQ+CAQnGqtlnM23D0E7tBfRMLRokFS7q3YRj8x+eH
+         DMlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtQtdb1E0G3dP1//WeIZY8GwkEy5kxiJdquOCVd0GV0sOL8vYWu+Y78DNCbHO95nz/K+DQqMr3wMMf2JI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwroZ6mWl4T1zj2Yve4fFuyngzIXnfemiaJUIVrq6pKn2y8M0yt
+	cwsTjCp82o/UOu+Dbs5LQzKQExgaKEYYm/fZU9phKqKfjmfdIKz3XVkRurf5
+X-Google-Smtp-Source: AGHT+IGNRKQXMXIFktTsqSu5Cqzlhbz5LhgCV8zs8OBKycVfuNRvFw3mF9TjCqlV/c3pcFyFe6H3dw==
+X-Received: by 2002:a05:600c:3587:b0:42c:c401:6d67 with SMTP id 5b1f17b1804b1-4327b6f464amr133648605e9.6.1730742638570;
+        Mon, 04 Nov 2024 09:50:38 -0800 (PST)
 Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7f80sm13839821f8f.20.2024.11.04.09.50.35
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7f80sm13839821f8f.20.2024.11.04.09.50.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 09:50:36 -0800 (PST)
+        Mon, 04 Nov 2024 09:50:37 -0800 (PST)
 From: Dave Penkler <dpenkler@gmail.com>
 To: gregkh@linuxfoundation.org,
 	linux-staging@lists.linux.dev,
@@ -74,9 +74,9 @@ Cc: skhan@linuxfoundation.org,
 	arnd@arndb.de,
 	dan.carpenter@linaro.org,
 	Dave Penkler <dpenkler@gmail.com>
-Subject: [PATCH v3 11/12] staging: gpib: Re-order the lookup tables
-Date: Mon,  4 Nov 2024 18:50:12 +0100
-Message-ID: <20241104175014.12317-12-dpenkler@gmail.com>
+Subject: [PATCH v3 12/12] staging: gpib: Correct check for max secondary address
+Date: Mon,  4 Nov 2024 18:50:13 +0100
+Message-ID: <20241104175014.12317-13-dpenkler@gmail.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241104175014.12317-1-dpenkler@gmail.com>
 References: <20241104175014.12317-1-dpenkler@gmail.com>
@@ -88,46 +88,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Re-order the tables so that the bcm27xx table is used first
-as these devices are more popular and numerous than the older ones.
-This is slightly more efficient for the later pi3 and subsequent models
-but should not be noticable in practice for all users.
+GPIB secondary addresses can be between 0 and 31 inclusive
+unlike primary addresses where address 31 is not a valid device
+address.  When 31 is used as a primary talk address it
+forms the UNT (Untalk) command and when used as a listener address it
+forms the UNL (Unlisten) commmand.
+The library was incorrectly not allowing a secondary address
+with a value of 31 to be used.
 
+Fixes: 9dde4559e939 ("staging: gpib: Add GPIB common core driver")
 Signed-off-by: Dave Penkler <dpenkler@gmail.com>
 ---
- drivers/staging/gpib/gpio/gpib_bitbang.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/gpib/common/gpib_os.c | 4 +---
+ drivers/staging/gpib/common/iblib.c   | 6 +++---
+ drivers/staging/gpib/common/ibsys.h   | 3 +++
+ 3 files changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/gpib/gpio/gpib_bitbang.c b/drivers/staging/gpib/gpio/gpib_bitbang.c
-index 78032af5061c..a2d562cbd65b 100644
---- a/drivers/staging/gpib/gpio/gpib_bitbang.c
-+++ b/drivers/staging/gpib/gpio/gpib_bitbang.c
-@@ -202,7 +202,7 @@ int gpios_vector[] = {
+diff --git a/drivers/staging/gpib/common/gpib_os.c b/drivers/staging/gpib/common/gpib_os.c
+index e84097ac8f69..0285180ae1f0 100644
+--- a/drivers/staging/gpib/common/gpib_os.c
++++ b/drivers/staging/gpib/common/gpib_os.c
+@@ -525,8 +525,6 @@ int serial_poll_all(gpib_board_t *board, unsigned int usec_timeout)
+  * SPD and UNT are sent at the completion of the poll.
+  */
  
- /* Lookup table for general GPIOs */
+-static const int gpib_addr_max = 30;	/* max address for primary/secondary gpib addresses */
+-
+ int dvrsp(gpib_board_t *board, unsigned int pad, int sad,
+ 	  unsigned int usec_timeout, uint8_t *result)
+ {
+@@ -538,7 +536,7 @@ int dvrsp(gpib_board_t *board, unsigned int pad, int sad,
+ 		return -1;
+ 	}
  
--static struct gpiod_lookup_table gpib_gpio_table_0 = {
-+static struct gpiod_lookup_table gpib_gpio_table_1 = {
- 	// for bcm2835/6
- 	.dev_id = "",	 // device id of board device
- 	.table = {
-@@ -232,7 +232,7 @@ static struct gpiod_lookup_table gpib_gpio_table_0 = {
- 	},
- };
+-	if (pad > gpib_addr_max || sad > gpib_addr_max) {
++	if (pad > MAX_GPIB_PRIMARY_ADDRESS || sad > MAX_GPIB_SECONDARY_ADDRESS) {
+ 		pr_err("gpib: bad address for serial poll");
+ 		return -1;
+ 	}
+diff --git a/drivers/staging/gpib/common/iblib.c b/drivers/staging/gpib/common/iblib.c
+index fc57e760c144..db1911cc1b26 100644
+--- a/drivers/staging/gpib/common/iblib.c
++++ b/drivers/staging/gpib/common/iblib.c
+@@ -479,7 +479,7 @@ int ibsre(gpib_board_t *board, int enable)
+  */
+ int ibpad(gpib_board_t *board, unsigned int addr)
+ {
+-	if (addr > 30) {
++	if (addr > MAX_GPIB_PRIMARY_ADDRESS) {
+ 		pr_err("gpib: invalid primary address %u\n", addr);
+ 		return -1;
+ 	}
+@@ -498,8 +498,8 @@ int ibpad(gpib_board_t *board, unsigned int addr)
+  */
+ int ibsad(gpib_board_t *board, int addr)
+ {
+-	if (addr > 30) {
+-		pr_err("gpib: invalid secondary address %i, must be 0-30\n", addr);
++	if (addr > MAX_GPIB_SECONDARY_ADDRESS) {
++		pr_err("gpib: invalid secondary address %i\n", addr);
+ 		return -1;
+ 	}
+ 	board->sad = addr;
+diff --git a/drivers/staging/gpib/common/ibsys.h b/drivers/staging/gpib/common/ibsys.h
+index b78ca5ea4da1..da20971e9c7e 100644
+--- a/drivers/staging/gpib/common/ibsys.h
++++ b/drivers/staging/gpib/common/ibsys.h
+@@ -16,6 +16,9 @@
+ #include <asm/irq.h>
+ #include <asm/dma.h>
  
--static struct gpiod_lookup_table gpib_gpio_table_2 = {
-+static struct gpiod_lookup_table gpib_gpio_table_0 = {
- 	.dev_id = "",	 // device id of board device
- 	.table = {
- 		// for bcm27xx based pis (b b+ 2b 3b 3b+ 4 5)
-@@ -264,7 +264,7 @@ static struct gpiod_lookup_table gpib_gpio_table_2 = {
- 
- static struct gpiod_lookup_table *lookup_tables[] = {
- 	&gpib_gpio_table_0,
--	&gpib_gpio_table_2,
-+	&gpib_gpio_table_1,
- 	0
- };
++#define MAX_GPIB_PRIMARY_ADDRESS 30
++#define MAX_GPIB_SECONDARY_ADDRESS 31
++
+ int gpib_allocate_board(gpib_board_t *board);
+ void gpib_deallocate_board(gpib_board_t *board);
  
 -- 
 2.46.2
