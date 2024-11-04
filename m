@@ -1,115 +1,136 @@
-Return-Path: <linux-kernel+bounces-395400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7489BBD72
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:45:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C819BBD6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC1F91F2101F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:45:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E227B1C219E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F181CEEB8;
-	Mon,  4 Nov 2024 18:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921A31CBA1C;
+	Mon,  4 Nov 2024 18:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SUj4yhCy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbiDShIR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4F71C2325
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 18:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DE518622;
+	Mon,  4 Nov 2024 18:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730745911; cv=none; b=uXsFJJlDL6c3WDF2kTqLHFmIkOcXP9+oicaNdb5iXoKI6W61lhGTyK2kjqOoW29Wtx1+gwJOqnJ/IMAbgECPDIzXV7kk0m+Ohp359fJ6KvYJtccH0u36Asl9uee5A712GOHOywHkiLe6HlnzWHJX+jAiOKxXWXnGg6/uSN6b6xk=
+	t=1730745894; cv=none; b=Se1AIt1hmDzOUaBw3KtzpDB4DnjJfYIkFZk4QtbdPFZ6UrGoN29lr35eOwruPlT6bjGNQdU0yJySZc0AWf97Kwg3DrWkWUwEEkWl8xvnhv1U0GY49H+evvuGizwDFqQnQH8cj8B301pW0ai5bOYJFQTYyc9eiZV7oyHAAo3cjQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730745911; c=relaxed/simple;
-	bh=LSYHL84k60O4Bp6oUKPEDc5h1hYdJevPt+gcIoulWwo=;
+	s=arc-20240116; t=1730745894; c=relaxed/simple;
+	bh=NyVQlMFDaeFVbSuBOFcWlKWF0LNcMOH+vquUoGrumDM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjXQqqy5foCIp32OvUa/eN7ntVVSJMCjAtmISXC0RO8uZ1eNgxyxi7MZ6UnHTIu3dJMsUxDl4rpVOd29dmo8AkySrkGPbkhILSB9+2fawvN/msspBLe/sD0uyxcbaOOh6rMSdgbkErj0tkNGmj4WP2/754xpX+WRDV5vKPL9O9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SUj4yhCy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730745909;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LSYHL84k60O4Bp6oUKPEDc5h1hYdJevPt+gcIoulWwo=;
-	b=SUj4yhCyDFb9bPgGEsglYkaKFcDBn3B0rwT2x3VE2ETL5lFTwHyViYN/fPrQCcQpidWoAb
-	RwAitHyJ7DJL+nGj1rSww/hXyoMMxmbYsvtiF95amY2gpih88Yi6NSNIKDD9qmlNzNXOQ8
-	ciG0Ie8fIzdxuR9V+EYAxQa76mA4ZJo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-609-kAF9FGTcO6yIawLiTPvJTA-1; Mon,
- 04 Nov 2024 13:45:06 -0500
-X-MC-Unique: kAF9FGTcO6yIawLiTPvJTA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB5661956069;
-	Mon,  4 Nov 2024 18:45:04 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.168])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DFE5D1956086;
-	Mon,  4 Nov 2024 18:45:01 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon,  4 Nov 2024 19:44:47 +0100 (CET)
-Date: Mon, 4 Nov 2024 19:44:43 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Alexey Gladkov <legion@kernel.org>, Andrei Vagin <avagin@google.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] signal: restore the override_rlimit logic
-Message-ID: <20241104184442.GA26235@redhat.com>
-References: <20241031200438.2951287-1-roman.gushchin@linux.dev>
- <87zfmi3f8b.fsf@email.froward.int.ebiederm.org>
- <ZyU8UNKLNfAi-U8F@google.com>
- <87o72y3c4g.fsf@email.froward.int.ebiederm.org>
- <CAEWA0a4Kz9exk04Wgx9UZ9YFfURnS-=50TWyhPHm3i-N-D_8DA@mail.gmail.com>
- <ZyZSotlacLgzWxUl@example.org>
- <20241103165048.GA11668@redhat.com>
- <ZykQnp9mINnsPTg2@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n40tpWE8P3pq0/l0PzcG+bVlfdhhO8+RLhqzkcLclljrRa37deX9e9m+iWViHvc2j+oHFp0fZe0RSPbMDjYLKyYlvAzShGmKiPqZ/4ceTyJO6PTuPIQOV0qc/uyRJdDNsj2ky/rE2pSLftrwy5ymEMlr+U4Us5dGu6Mm+Xfo+B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbiDShIR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC926C4CECE;
+	Mon,  4 Nov 2024 18:44:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730745893;
+	bh=NyVQlMFDaeFVbSuBOFcWlKWF0LNcMOH+vquUoGrumDM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rbiDShIR362g7b/18qH1G6xpiy7jgylY+yFf0pA7MeeuWV7naItK3k4+IhwF4DbvM
+	 y17iUtC3psiV61j7uMn20AUoUfVfo5jGYrmaCN/z1Bbl5KatvKCXXlhAHIx2m6QZb+
+	 S7ZOL+Zhb+uPev7uH19R/bs0USYAfsCrWexUcD7qyD3rUEQcJ5odd/8KNj1xoZJi9d
+	 /CBGTz/rcMyeZrOaogTAMm5LDPVjqvRyOesFK8gZ9BnNls2T5nvdW8YhyHP7v3tz9/
+	 M6JWacSXYF1rv+AjRFW6+KSz8IQ+GSaVgT/i635DP8gahleh9xu9ugnVWKdARtLboK
+	 G37IguSXP/jMw==
+Date: Mon, 4 Nov 2024 18:44:47 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>
+Subject: Re: [PATCH 1/2] dt-bindings: i2c: imx: add SoC specific compatible
+ strings for S32G
+Message-ID: <20241104-stifling-remake-f5abdc8d82bc@spud>
+References: <20241104100044.3634076-1-ciprianmarian.costea@oss.nxp.com>
+ <20241104100044.3634076-2-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="v9eOVK6j83W6+2yi"
+Content-Disposition: inline
+In-Reply-To: <20241104100044.3634076-2-ciprianmarian.costea@oss.nxp.com>
+
+
+--v9eOVK6j83W6+2yi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZykQnp9mINnsPTg2@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: quoted-printable
 
-On 11/04, Roman Gushchin wrote:
->
-> On Sun, Nov 03, 2024 at 05:50:49PM +0100, Oleg Nesterov wrote:
-> >
-> > But it seems that the change in inc_rlimit_get_ucounts() can be
-> > a bit simpler and more readable, see below.
->
-> Eric suggested the same approach earlier in this thread.
+On Mon, Nov 04, 2024 at 12:00:43PM +0200, Ciprian Costea wrote:
+> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+>=20
+> S32G2 and S32G3 SoCs use the same I2C controller as i.MX.
+> But there are small differences such as specific
+> <clock divider, register value> pairs.
+> So add new compatible strings 'nxp,s32g2-i2c'and 'nxp,s32g3-i2c'
+> for S32G2/S32G3 Socs.
 
-Ah, good, I didn't know ;)
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> I personally
-> don't have a strong preference here or actually I slightly prefer my
-> own version because this comparison to LONG_MAX looks confusing to me.
-> But if you have a strong preference, I'm happy to send out v2. Please,
-> let me know.
+>=20
+> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-imx.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-imx.yaml b/Documen=
+tation/devicetree/bindings/i2c/i2c-imx.yaml
+> index 85ee1282d6d2..0682a5a10d41 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-imx.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-imx.yaml
+> @@ -18,6 +18,7 @@ properties:
+>        - const: fsl,imx1-i2c
+>        - const: fsl,imx21-i2c
+>        - const: fsl,vf610-i2c
+> +      - const: nxp,s32g2-i2c
+>        - items:
+>            - enum:
+>                - fsl,ls1012a-i2c
+> @@ -54,6 +55,9 @@ properties:
+>                - fsl,imx8mn-i2c
+>                - fsl,imx8mp-i2c
+>            - const: fsl,imx21-i2c
+> +      - items:
+> +          - const: nxp,s32g3-i2c
+> +          - const: nxp,s32g2-i2c
+> =20
+>    reg:
+>      maxItems: 1
+> --=20
+> 2.45.2
+>=20
 
-Well, I won't insist.
+--v9eOVK6j83W6+2yi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-To me the change proposed by Eric and me looks much more readable, but
-of course this is subjective.
+-----BEGIN PGP SIGNATURE-----
 
-But you know, you can safely ignore me. Alexey and Eric understand this
-code much better, so I leave this to you/Alexey/Eric.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZykWDQAKCRB4tDGHoIJi
+0v8DAP9XNX1ulct9ojS/foqv8ALtBOLXzFnt7aMuq3U19E2PBAEA/KdNUxINJJt1
+gfRtCEPII6vTAjZsDFZkIl1RvT4MFQA=
+=eMVA
+-----END PGP SIGNATURE-----
 
-Oleg.
-
+--v9eOVK6j83W6+2yi--
 
