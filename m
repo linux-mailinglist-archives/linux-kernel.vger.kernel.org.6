@@ -1,149 +1,254 @@
-Return-Path: <linux-kernel+bounces-394817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3328F9BB464
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:14:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6ED69BB44D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:13:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF1E41F249D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:14:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D02C1F24990
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDA51BC077;
-	Mon,  4 Nov 2024 12:14:08 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096611B6CFF;
+	Mon,  4 Nov 2024 12:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d60U2+qB"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48FC1BB6BA;
-	Mon,  4 Nov 2024 12:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF921B6CE2
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730722448; cv=none; b=M2SIB57Ig39z4vi14ZOxY/vJBCGwb8+IKwWO+BYCr22by5CtzqXeLJSv/CrklubrvuK1zioKbltHvfbqvAS7n6FazXyBKCCKCR7LcPOfEEFKCaG+18WZna8Xf8+ptWbSfGASP1j7JPTdrfemzVrTyEdjubDSMhw+HMyBag7bLxM=
+	t=1730722408; cv=none; b=Tx5gaTLl0AgOIRlVmWruinD8+fBFWfdra7a7o5z26sGvKkH7quX8WydYNkJZ455ecDm5v/Q6Kf9+1rFVlMpmCfMaETOPob3kAo0u3aceg4ZH1xlLTL0JtuxozQPtlZ+Lib6a1hyNR89jae9NZ9yAtROXxVo6aQfbIoAyOUYRMyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730722448; c=relaxed/simple;
-	bh=LlJTpzPFOcXD6rJumc2gatXqNvI8NA9EdhmLf5bd0yg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bUgq1gj602hDPdL5184xDEhDHFMya901vTJI/WpSorJdJad/EpTj+XKHKNCYV3TYlX/Jeakkw6X7xNAJFlKJ4XxxJoDQvGtrDT+HyGP56vWo73AAml3J0XlrZK3z+ygkk9Q1H2ZuLz9P99oVlNTS6SjE89bdofKnaNJaeRSOi2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+	s=arc-20240116; t=1730722408; c=relaxed/simple;
+	bh=bW4fWPSQpMD46o+ViPF/dX8EbYjK1xzM+VKw3kA6Cxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rV2XzEA33IIIUCNZYZOt+JHLd2zd2hFMgafC0vleJ+7vSN/Fg+z8CWU0V7YbJRojfWssV730khA6gTWXCHBkMEhlN1dooD9SH9AVlQFpsvBvDD0Vcvkk7FxcuY646487mj9wgMpJcAb9FfQM1EESnYEOtGsrmo1X0+ngYIkwocM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d60U2+qB; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a850270e2so692809366b.0;
-        Mon, 04 Nov 2024 04:14:06 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso60329761fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 04:13:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730722404; x=1731327204; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bOJk7OfXsT+Xw5K8e1e2bLMEk9P7tYgMnLJCrbfvplY=;
+        b=d60U2+qBXzoSFSmPUnMap4Z6+V4q1/FX3hUB7Zeo8YtUmG4UWWeROVzyayShgZlD+5
+         kKMd4khixNSXDyVQ7wXSv3FTPntu0A7Uoi2k/onf1B+fc7YMVcO0D19PGXsa+VEmfjx5
+         KaxqbWK/2dh+javNYDh0XJnq1x3a5DFcLx49h9w9iQdf/YnZL4HJY6gSKfo0laS0ECeY
+         apIGY+JxbS7NDLwczKPD3gw4dQOS1m1vi1CiLHpqPH4ZkrRc86Gm3f1dybkAbSMEB/6a
+         DF5w9pWxIT9BDGB7VYoCaIisJpUvcZPTOfgkPvenSp0s20VKCXEiV+SgAuuWx2R4D/F0
+         QKJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730722445; x=1731327245;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oLfhXe+DOk/Zvr718XsKSVZCtaQ0VoFVxnwJJzDWUIw=;
-        b=Xg6TiatSQOqTyxVXajrgVhXE5z0U+xtM8NJkwdjqJ2BJSWZTAkHn3Yxr9kVsTMZpuM
-         N57bBNIeQJ+qkw3if7tLag8cA8qf8UQ0mRYDt/5eh9vL1KibxOOzZMPKvemTJT7OjVxj
-         e4J1uhYOv7DFclbH0t703joD+1VK8YYJIoQ5oEOYpNqmyED9IZ70twyhwnlY2DlIppdF
-         rM5INUUclODH8TC7ORsh0t/zfhE0o7BFCCOSM8yVzRFnORXBF4JKGCDKf0TR29jklI2J
-         nSkTTTpKz8UzapbFGsyM2w2AHlRrajUWgc9VNrtVcmFmK1AsugJBR2MZKXXcu3c16EYt
-         5AEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSkFmNyf+FoJ29VnPdvWIk51kphP8sC5FiB6mzwPQQBSMwCUKvjfDvydS7qVJVO4O8up2VDv2wa1BGmIKn@vger.kernel.org, AJvYcCW1OQ8/zobVBwYBca8uiy9LQfI5wsClNoK8ksr5CE1B0gQWdwpbfj/ujtThH4B0cCurpfIz3XVparEVfA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyotnqNlyq+OMIeuERH5S66kxPQTiJjTWjlSA/EV9R++t+ytFl
-	Vdd56YcJH++o9RVT1HH4JBDNxIkRYw0bbax36Zuaga//jY3zh7sm
-X-Google-Smtp-Source: AGHT+IEjEmNi1Mf4Lrwzo59HZaxOA4fUhH1eR1qk3q6/SqNWYRNG9+oN+bdCXPzY4FnI+PsKaQYCmg==
-X-Received: by 2002:a17:907:2dac:b0:a9a:82e2:e8ce with SMTP id a640c23a62f3a-a9e6587e288mr1356965066b.40.1730722444776;
-        Mon, 04 Nov 2024 04:14:04 -0800 (PST)
-Received: from nuc.fritz.box (p200300f6f71fdb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71f:db00:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56494052sm543350466b.29.2024.11.04.04.14.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 04:14:04 -0800 (PST)
-From: Johannes Thumshirn <jth@kernel.org>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: linux-block@vger.kernel.org,
-	John Garry <john.g.garry@oracle.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v3] btrfs: handle bio_split() error
-Date: Mon,  4 Nov 2024 13:13:17 +0100
-Message-ID: <20241104121318.16784-1-jth@kernel.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1730722404; x=1731327204;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bOJk7OfXsT+Xw5K8e1e2bLMEk9P7tYgMnLJCrbfvplY=;
+        b=mMXq9ZTJ3Szo/cg3IidMiG3c3DF1PhOlvFOgop4E57j0UDJrv2OFP96TulNplaWksr
+         6XMRXnrW9SoBo6aJr/BbsPDNw/7au/9ZJ0gXFa7l+5uKC4TmMos6du4owEdGs+mgk2IU
+         LIXsOfZy5AOV1tj9mYk/ycK/8Kv0B7QVuoTuQQnEBkNlSXgJjepqHKGeNRbB1LCGjwsc
+         HOCR9aErMrwDH5BFQXBrvik5JbDYUAo7fXtFjD07Qw28naYmdijg6vT+MPw0yqUCh1UT
+         nee5BAF3//GZpywlXAXKwmDp/593GWw/j7nvzoKDqmP76HIMV6ZpNfH+vfyFmCOMhxlM
+         ALVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+NRGAot4LMOdllnDtwFNyF4IS1h8/Utp0d7F+leIS1HVDnacfmaPpTZPZxBQE1yy7wmPX4kqPlE2xSzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWTsY1TmAjvdXgYHak37FKEC8naezFebZgC2JpmKoUjcfVyqob
+	Py576qSZCZNPkSIR3+17gUOFJzKCqEFDwRvBlWcxDuu+y0q7kOnW
+X-Google-Smtp-Source: AGHT+IFKs7aDMWR5bYmRZraqFa5M5X+Gd4nCdqEynWIk2yfgXDEdIi5TtwnA+VsCByPQsjSqfCK3eg==
+X-Received: by 2002:a05:651c:2123:b0:2fa:c0c2:d311 with SMTP id 38308e7fff4ca-2fedb794b2dmr86293771fa.5.1730722404011;
+        Mon, 04 Nov 2024 04:13:24 -0800 (PST)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::5:76d9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56641249sm545170566b.156.2024.11.04.04.13.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 04:13:23 -0800 (PST)
+Message-ID: <3f684183-c6df-4f2f-9e33-91ce43c791eb@gmail.com>
+Date: Mon, 4 Nov 2024 12:13:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] mm: mitigate large folios usage and swap thrashing
+ for nearly full memcg
+To: "Huang, Ying" <ying.huang@intel.com>, Johannes Weiner
+ <hannes@cmpxchg.org>, Barry Song <21cnbao@gmail.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Barry Song <v-songbaohua@oppo.com>,
+ Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+ David Hildenbrand <david@redhat.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
+ Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>
+References: <20241027001444.3233-1-21cnbao@gmail.com>
+ <33c5d5ca-7bc4-49dc-b1c7-39f814962ae0@gmail.com>
+ <CAGsJ_4wdgptMK0dDTC5g66OE9WDxFDt7ixDQaFCjuHdTyTEGiA@mail.gmail.com>
+ <e8c6d46c-b8cf-4369-aa61-9e1b36b83fe3@gmail.com>
+ <CAJD7tkZ60ROeHek92jgO0z7LsEfgPbfXN9naUC5j7QjRQxpoKw@mail.gmail.com>
+ <852211c6-0b55-4bdd-8799-90e1f0c002c1@gmail.com>
+ <CAJD7tkaXL_vMsgYET9yjYQW5pM2c60fD_7r_z4vkMPcqferS8A@mail.gmail.com>
+ <c76635d7-f382-433a-8900-72bca644cdaa@gmail.com>
+ <CAJD7tkYSRCjtEwP=o_n_ZhdfO8nga-z-a=RirvcKL7AYO76XJw@mail.gmail.com>
+ <20241031153830.GA799903@cmpxchg.org>
+ <87a5ef8ppq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <87a5ef8ppq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Now that bio_split() can return errors, add error handling for it in
-btrfs_split_bio() and ultimately btrfs_submit_chunk().
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
+On 04/11/2024 06:42, Huang, Ying wrote:
+> Johannes Weiner <hannes@cmpxchg.org> writes:
+> 
+>> On Wed, Oct 30, 2024 at 02:18:09PM -0700, Yosry Ahmed wrote:
+>>> On Wed, Oct 30, 2024 at 2:13 PM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>> On 30/10/2024 21:01, Yosry Ahmed wrote:
+>>>>> On Wed, Oct 30, 2024 at 1:25 PM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>>>>>> I am not sure that the approach we are trying in this patch is the right way:
+>>>>>>>> - This patch makes it a memcg issue, but you could have memcg disabled and
+>>>>>>>> then the mitigation being tried here wont apply.
+>>>>>>>
+>>>>>>> Is the problem reproducible without memcg? I imagine only if the
+>>>>>>> entire system is under memory pressure. I guess we would want the same
+>>>>>>> "mitigation" either way.
+>>>>>>>
+>>>>>> What would be a good open source benchmark/workload to test without limiting memory
+>>>>>> in memcg?
+>>>>>> For the kernel build test, I can only get zswap activity to happen if I build
+>>>>>> in cgroup and limit memory.max.
+>>>>>
+>>>>> You mean a benchmark that puts the entire system under memory
+>>>>> pressure? I am not sure, it ultimately depends on the size of memory
+>>>>> you have, among other factors.
+>>>>>
+>>>>> What if you run the kernel build test in a VM? Then you can limit is
+>>>>> size like a memcg, although you'd probably need to leave more room
+>>>>> because the entire guest OS will also subject to the same limit.
+>>>>>
+>>>>
+>>>> I had tried this, but the variance in time/zswap numbers was very high.
+>>>> Much higher than the AMD numbers I posted in reply to Barry. So found
+>>>> it very difficult to make comparison.
+>>>
+>>> Hmm yeah maybe more factors come into play with global memory
+>>> pressure. I am honestly not sure how to test this scenario, and I
+>>> suspect variance will be high anyway.
+>>>
+>>> We can just try to use whatever technique we use for the memcg limit
+>>> though, if possible, right?
+>>
+>> You can boot a physical machine with mem=1G on the commandline, which
+>> restricts the physical range of memory that will be initialized.
+>> Double check /proc/meminfo after boot, because part of that physical
+>> range might not be usable RAM.
+>>
+>> I do this quite often to test physical memory pressure with workloads
+>> that don't scale up easily, like kernel builds.
+>>
+>>>>>>>> - Instead of this being a large folio swapin issue, is it more of a readahead
+>>>>>>>> issue? If we zswap (without the large folio swapin series) and change the window
+>>>>>>>> to 1 in swap_vma_readahead, we might see an improvement in linux kernel build time
+>>>>>>>> when cgroup memory is limited as readahead would probably cause swap thrashing as
+>>>>>>>> well.
+>>
+>> +1
+>>
+>> I also think there is too much focus on cgroup alone. The bigger issue
+>> seems to be how much optimistic volume we swap in when we're under
+>> pressure already. This applies to large folios and readahead; global
+>> memory availability and cgroup limits.
+> 
+> The current swap readahead logic is something like,
+> 
+> 1. try readahead some pages for sequential access pattern, mark them as
+>    readahead
+> 
+> 2. if these readahead pages get accessed before swapped out again,
+>    increase 'hits' counter
+> 
+> 3. for next swap in, try readahead 'hits' pages and clear 'hits'.
+> 
+> So, if there's heavy memory pressure, the readaheaded pages will not be
+> accessed before being swapped out again (in 2 above), the readahead
+> pages will be minimal.
+> 
+> IMHO, mTHP swap-in is kind of swap readahead in effect.  That is, in
+> addition to the pages accessed are swapped in, the adjacent pages are
+> swapped in (swap readahead) too.  If these readahead pages are not
+> accessed before swapped out again, system runs into more severe
+> thrashing.  This is because we lack the swap readahead window scaling
+> mechanism as above.  And, this is why I suggested to combine the swap
+> readahead mechanism and mTHP swap-in by default before.  That is, when
+> kernel swaps in a page, it checks current swap readahead window, and
+> decides mTHP order according to window size.  So, if there are heavy
+> memory pressure, so that the nearby pages will not be accessed before
+> being swapped out again, the mTHP swap-in order can be adjusted
+> automatically.
 
-This is based on top of John Garry's series "bio_split() error handling
-rework" explicitly on the patch titled "block: Rework bio_split() return
-value", which are as of now (Tue Oct 29 10:02:16 2024) not yet merged into
-any tree.
+This is a good idea to do, but I think the issue is that readahead
+is a folio flag and not a page flag, so only works when folio size is 1.
 
-Changes to v2:
-- assign the split bbio to a new variable, so we can keep the old error
-  paths and end the original bbio
+In the swapin_readahead swapcache path, the current implementation decides
+the ra_window based on hits, which is incremented in swap_cache_get_folio
+if it has not been gotten from swapcache before.
+The problem would be that we need information on how many distinct pages in
+a large folio that has been swapped in have been accessed to decide the
+hits/window size, which I don't think is possible. As once the entire large
+folio has been swapped in, we won't get a fault.
 
-Changes to v1:
-- convert ERR_PTR to blk_status_t
-- correctly fail already split bbios
----
- fs/btrfs/bio.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-index 1f216d07eff6..7a0998d0abe3 100644
---- a/fs/btrfs/bio.c
-+++ b/fs/btrfs/bio.c
-@@ -81,6 +81,9 @@ static struct btrfs_bio *btrfs_split_bio(struct btrfs_fs_info *fs_info,
- 
- 	bio = bio_split(&orig_bbio->bio, map_length >> SECTOR_SHIFT, GFP_NOFS,
- 			&btrfs_clone_bioset);
-+	if (IS_ERR(bio))
-+		return ERR_CAST(bio);
-+
- 	bbio = btrfs_bio(bio);
- 	btrfs_bio_init(bbio, fs_info, NULL, orig_bbio);
- 	bbio->inode = orig_bbio->inode;
-@@ -678,7 +681,7 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
- 				&bioc, &smap, &mirror_num);
- 	if (error) {
- 		ret = errno_to_blk_status(error);
--		goto fail;
-+		goto end_bbio;
- 	}
- 
- 	map_length = min(map_length, length);
-@@ -686,7 +689,14 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
- 		map_length = btrfs_append_map_length(bbio, map_length);
- 
- 	if (map_length < length) {
--		bbio = btrfs_split_bio(fs_info, bbio, map_length);
-+		struct btrfs_bio *split;
-+
-+		split = btrfs_split_bio(fs_info, bbio, map_length);
-+		if (IS_ERR(split)) {
-+			ret = errno_to_blk_status(PTR_ERR(split));
-+			goto end_bbio;
-+		}
-+		bbio = split;
- 		bio = &bbio->bio;
- 	}
- 
-@@ -760,6 +770,7 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
- 
- 		btrfs_bio_end_io(remaining, ret);
- 	}
-+end_bbio:
- 	btrfs_bio_end_io(bbio, ret);
- 	/* Do not submit another chunk */
- 	return true;
--- 
-2.43.0
+> 
+>> It happens to manifest with THP in cgroups because that's what you
+>> guys are testing. But IMO, any solution to this problem should
+>> consider the wider scope.
+>>
+>>>>>>> I think large folio swapin would make the problem worse anyway. I am
+>>>>>>> also not sure if the readahead window adjusts on memory pressure or
+>>>>>>> not.
+>>>>>>>
+>>>>>> readahead window doesnt look at memory pressure. So maybe the same thing is being
+>>>>>> seen here as there would be in swapin_readahead?
+>>>>>
+>>>>> Maybe readahead is not as aggressive in general as large folio
+>>>>> swapins? Looking at swap_vma_ra_win(), it seems like the maximum order
+>>>>> of the window is the smaller of page_cluster (2 or 3) and
+>>>>> SWAP_RA_ORDER_CEILING (5).
+>>>> Yes, I was seeing 8 pages swapin (order 3) when testing. So might
+>>>> be similar to enabling 32K mTHP?
+>>>
+>>> Not quite.
+>>
+>> Actually, I would expect it to be...
+> 
+> Me too.
+> 
+>>>>> Also readahead will swapin 4k folios AFAICT, so we don't need a
+>>>>> contiguous allocation like large folio swapin. So that could be
+>>>>> another factor why readahead may not reproduce the problem.
+>>>
+>>> Because of this ^.
+>>
+>> ...this matters for the physical allocation, which might require more
+>> reclaim and compaction to produce the 32k. But an earlier version of
+>> Barry's patch did the cgroup margin fallback after the THP was already
+>> physically allocated, and it still helped.
+>>
+>> So the issue in this test scenario seems to be mostly about cgroup
+>> volume. And then 8 4k charges should be equivalent to a singular 32k
+>> charge when it comes to cgroup pressure.
+> 
+> --
+> Best Regards,
+> Huang, Ying
 
 
