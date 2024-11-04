@@ -1,88 +1,77 @@
-Return-Path: <linux-kernel+bounces-394379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A159BAE33
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:36:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081699BAE36
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:36:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2192C1F22F03
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF80B28312F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D006618C039;
-	Mon,  4 Nov 2024 08:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF471AB50B;
+	Mon,  4 Nov 2024 08:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WEwscpW2"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d40mDmHt"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F0B3214;
-	Mon,  4 Nov 2024 08:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADDF3214
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730709352; cv=none; b=JwZas6TyljbOEzu+t/hCKRIfmnWwMktVvKsKfmBNTKY/urwhd0BK3Kc9ekFxwywMBYSiqg4MdSUr/63I6/NxOCaFkOhcU/fPyg/xcCrlPDUH0TUohDytqM+tb79XJrK6MoPmEPldU50pS3mVn+31EctwGGQFL286nwbH9vQ2Zuk=
+	t=1730709358; cv=none; b=fvsirvcFpoj/ad+9YenU5UTGX06JEaXVeKHjsYO00tCvcModb/Vxke5fvKJFaPmjlctugPnyPECwFP+b5f8f4Fk4TcR8CMUHevoXCKXjunDNluv51NAasI63g2v30bxVelTw7QRRGlmVgS2dQPVh1BnM3Bj1cwagYUcP3Jp4nF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730709352; c=relaxed/simple;
-	bh=wbnG3byYpMqq7suN0oey1RV3b6DeAMAFl852jccRA8M=;
+	s=arc-20240116; t=1730709358; c=relaxed/simple;
+	bh=kyIazxcsnD1piSdyaQzAEKNQGTi5kMoAlbZhxGC4Hsc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ErcfV6We/jGCVuMdJfQQHHCTCCLushe32wj0P0ivheSM595IXQm9xfyG3ACH+LHhAA6roFvolYZEQx8hpJxke9l3rdjVdILZQPRyBMehsg51RQHbSQTCVTKvnrrN1IuFVJeTzRJmlDaNpkIbXo9iMBwVYaaFulSF01eJ/eMg0KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WEwscpW2; arc=none smtp.client-ip=198.175.65.13
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwfbBeG3S/zqCS2C+zpPKuQGa9nPeAuQAYt711tsnAA4EhzVupTAAJS3PynczWzOxe3ADYjr1+Q0K8GrDx2dqoVHLuWI+wB4PaJgXU8wEPDYlQI0ZiKr/PiqcKmn8sLcZ2QKl9Uu6IzA/WSsXmnVpKW9/mLTqKgZ1jG4Vv2sChs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d40mDmHt; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730709351; x=1762245351;
+  t=1730709357; x=1762245357;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=wbnG3byYpMqq7suN0oey1RV3b6DeAMAFl852jccRA8M=;
-  b=WEwscpW2ObfQqM5tdKT6yTqMVNld8/kzXXaPquHXH4qwa6mR3IB4TJ6j
-   IOqatU+8jcRwNhG/9+n3aKGVKVD/sWJpx0U+v1+VG2OnUX4zTonwkoYWX
-   Az6RJIsKvgAdDRvYB39U5f76bhKrY8IRxMgylFqk1MtKPUaOkXw/I8fD7
-   7SgARxO9ZGjAcfzMEFcGbjz8Mq9aXFgb440Z78Nzg/Z8DBXp/h+yNoiwL
-   GjUN1PkO5oItlnxHLl0+6zYuCkb+oPyGYBiEc6o0nNQL+mzDeYOfDW/yY
-   HIHaRIvOyYzaztGhg9KgvKE7Tl9zPdFjbq9Rgoi/IUlgV0MOFxIcArP2I
-   w==;
-X-CSE-ConnectionGUID: iCq12IiHQ5qFXpNvk13t5g==
-X-CSE-MsgGUID: s/yRKkWjQkWuC6oy87j3kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41501572"
+  bh=kyIazxcsnD1piSdyaQzAEKNQGTi5kMoAlbZhxGC4Hsc=;
+  b=d40mDmHtM2qDWsyjuJqB/aXncgPCMba1ajm0YURECELStfFWs8LtXuJ8
+   KXOwaZnCuJsOavPb7Ecfcnx4I8H2tCMfaUv2AklKTOHmXvPLbZSyxjJui
+   gZwHflKtM7QDadp8uuATHqaVbKexNsaQ83H/Fqyf43baKK1xzHqVe3UPv
+   2RFAwAUDGgCXWrI2Z+lvsJ3EQBXxUItwvMmoS4BC3Vu0Nb+K47eholyvJ
+   feCSq1fe0dlzqm9BWuJQ9/588dVFkmRJVDaS4iKxRNEQGJsPoVC/Yy+L+
+   V0ZehQMbVsCJCDCGfzLaUi07c6MfYX3nzmspscSxCDLvoMNOgiX9kwyGh
+   g==;
+X-CSE-ConnectionGUID: 02N+d2ymQmyEhFcD2wuR/A==
+X-CSE-MsgGUID: O25c2zBuT8efEZy2D/jIjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41501593"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41501572"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:35:51 -0800
-X-CSE-ConnectionGUID: vsYC28+jRu676hKNhfTnag==
-X-CSE-MsgGUID: E9Ezl5rPTHGFjB7sqcjLtg==
+   d="scan'208";a="41501593"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:35:57 -0800
+X-CSE-ConnectionGUID: /GZTW6eHQ72wu5JQUTGKsA==
+X-CSE-MsgGUID: NQ0MhvZzR7mR/WXC6VUHpg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="88165220"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:35:46 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t7sYo-0000000Az2S-3O3j;
-	Mon, 04 Nov 2024 10:35:42 +0200
-Date: Mon, 4 Nov 2024 10:35:42 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Aren Moynihan <aren@peacevolution.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Kaustabh Chakraborty <kauschluss@disroot.org>,
-	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
-	Ondrej Jirman <megi@xff.cz>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH v4 3/6] iio: light: stk3310: Implement vdd and leda
- supplies
-Message-ID: <ZyiHXl0mRIvM4Qa0@smile.fi.intel.com>
-References: <20241102195037.3013934-3-aren@peacevolution.org>
- <20241102195037.3013934-9-aren@peacevolution.org>
+   d="scan'208";a="84031503"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 04 Nov 2024 00:35:55 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id DD1824A3; Mon, 04 Nov 2024 10:35:53 +0200 (EET)
+Date: Mon, 4 Nov 2024 10:35:53 +0200
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-coco@lists.linux.dev, x86@kernel.org, rick.p.edgecombe@intel.com
+Subject: Re: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
+Message-ID: <ktwgnbsni5pt2cznxj2g6qyb3xwkhjrciym6lpk3uvsxgi4324@tllciap26vb5>
+References: <20241021034553.18824-1-yan.y.zhao@intel.com>
+ <87frop8r0y.fsf@email.froward.int.ebiederm.org>
+ <tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
+ <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
+ <ihzvi5pwn5hrn4ky2ehjqztjxoixaiaby4igmeihqfehy2vrii@tsg6j5qvmyrm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,77 +80,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241102195037.3013934-9-aren@peacevolution.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <ihzvi5pwn5hrn4ky2ehjqztjxoixaiaby4igmeihqfehy2vrii@tsg6j5qvmyrm>
 
-On Sat, Nov 02, 2024 at 03:50:39PM -0400, Aren Moynihan wrote:
-> The vdd and leda supplies must be powered on for the chip to function
-> and can be powered off during system suspend.
+On Fri, Oct 25, 2024 at 04:56:41PM +0300, Kirill A. Shutemov wrote:
+> On Wed, Oct 23, 2024 at 10:44:11AM -0500, Eric W. Biederman wrote:
+> > "Kirill A. Shutemov" <kirill@shutemov.name> writes:
+> > 
+> > > Waiting minutes to get VM booted to shell is not feasible for most
+> > > deployments. Lazy is sane default to me.
+> > 
+> > Huh?
+> > 
+> > Unless my guesses about what is happening are wrong lazy is hiding
+> > a serious implementation deficiency.  From all hardware I have seen
+> > taking minutes is absolutely ridiculous.
+> > 
+> > Does writing to all of memory at full speed take minutes?  How can such
+> > a system be functional?
 > 
-> This was originally based on a patch by Ondrej Jirman[1], but has been
-> rewritten since.
+> It is not only memory write (to encrypt the memory), but also TDCALL which
+> is TD-exit on every page. That is costly in TDX case.
 > 
-> 1: https://codeberg.org/megi/linux/commit/a933aff8b7a0e6e3c9cf1d832dcba07022bbfa82
-
-Make it a Link tag...
-
+> On single vCPU it takes about a minute to accept 90GiB of memory.
 > 
+> It improves a bit with number of vCPUs. It is 40 seconds with 4 vCPU, but
+> it doesn't scale past that in my setup.
+> 
+> But it is all rather pathological: VMM doesn't support huge pages yet and
+> all memory is accepted in 4K chunks. Bringing 2M support would cut number
+> of TDCALLs by 512.
+> 
+> Once memory accepted, memory access cost is comparable to bare metal minus
+> usual virtualisation tax on page walk.
+> 
+> I don't know what the picture looks like in AMD case.
+> j
+> > If you don't actually have to write to the pages and it is just some
+> > accounting function it is even more ridiculous.
+> > 
+> > 
+> > I had previously thought that accept_memory was the firmware call.
+> > Now that I see that it is just a wrapper for some hardware specific
+> > calls I am even more perplexed.
+> 
+> It is hypercall basically. The feature is only used in guests so far.
 
-...here
-
-Link: https://codeberg.org/megi/linux/commit/a933aff8b7a0e6e3c9cf1d832dcba07022bbfa82 [1]
-> Signed-off-by: Aren Moynihan <aren@peacevolution.org>
-
-...
-
-> +	ret = devm_regulator_bulk_get(&client->dev, ARRAY_SIZE(data->supplies),
-> +				      data->supplies);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret, "get regulators failed\n");
-
-With previously introduced temporary 'dev' variable these become:
-
-	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(data->supplies), data->supplies);
-	if (ret)
-		return dev_err_probe(dev, ret, "get regulators failed\n");
-
-...
-
-> +	ret = stk3310_regulators_enable(data);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +				     "regulator enable failed\n");
-> +
-> +	ret = devm_add_action_or_reset(&client->dev, stk3310_regulators_disable, data);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +				     "failed to register regulator cleanup\n");
-
-So do these...
-
-...
-
-> +	ret = regulator_bulk_disable(ARRAY_SIZE(data->supplies), data->supplies);
-
-Is array_size.h included?
-
-> +	if (ret) {
-> +		dev_err(dev, "failed to disable regulators: %d\n", ret);
-> +		return ret;
-> +	}
-
-...
-
-> -	u8 state = 0;
-> +	int ret;
->  	struct stk3310_data *data;
-> +	u8 state = 0;
-
-Can we try to make it RCT ordered?
+Eric, can we get the patch applied? It fixes a crash.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
