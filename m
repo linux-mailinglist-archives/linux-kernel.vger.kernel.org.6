@@ -1,188 +1,184 @@
-Return-Path: <linux-kernel+bounces-394455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED729BAF59
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:13:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7109BAF58
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B67E3B23A52
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E76201F210C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB5D1AB6F1;
-	Mon,  4 Nov 2024 09:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17161ADFE0;
+	Mon,  4 Nov 2024 09:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QnmO26VV"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2060.outbound.protection.outlook.com [40.107.223.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I6I02Yb8"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E04B1AC8AE;
-	Mon,  4 Nov 2024 09:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730711611; cv=fail; b=R0SxH5gJkCKBpEsyI1HI/z5z3W9Q+ScEXJCcz2PZUOAMNUXn0n/YJRof340PlfsRWre+wgBFyKFLR9wx4J+nT5n0RIL8TyVbZl1VMWe/Xes7BRxyaVXb1YpGjUKe+MksWHypVbBxK1ZnY8Eg6SF4M83zny5r0sKC5CfZjiSyor4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730711611; c=relaxed/simple;
-	bh=s/ttbCKYGCQAyBg3k8aAJ8YN3CnoFMqeymrKJHMbdKQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NvCOv4t9bSWkHpymnohzvKf0hmwFLVot9WuY5rqlucUPE3WBjBQUzNPIgRt8I3HJTGVlqJYUGIqZ7uJ6KdBRBlT6+0bg9KxJ6t0if7m7D3Ok1M6UhY8G4xP9AfzA8AUbTvVh/fei8GCpyBRyxXX3/RvMLR7INFNRmgbbuyHXi/0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QnmO26VV; arc=fail smtp.client-ip=40.107.223.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NRpu+8kNT0+zVxdMnCwERxqBph+mIJ697wktfo12YACaAxftpEcDW0L2VNlTTFZvfHXMFOsvenfI+zEIQgVJDkPaJuaudGw0b2ZZTGquv4Uy7TuBTNXw/EOJOxdeGY5ykDK4eB5735RSTZmZPAv4gA0rFwv+AEEhjlx4MjPkRgj6qGV95y52paTvBMpjmfC8zFM5gFtoc5vVkC4kyN7/MvhZQvyP+ttKvyqMgwVxxckKW/w1Ec229UA/znuFF8yyb58AXjfjvjnzfSyDJjSY8+3hkFXptHJYs6B2l4vDhofQuhQN3+QnGBCaCF3R4Kb+VKd8K0657SVPSu1lAefo4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H3XTEcGdcJdq740imtppkEgkuDroXgp5hq4UxzUuc64=;
- b=FqHu6Q5OwT87hjQ3TX7C4A2/BEjPaC8VjDfkKaVH70gIL79+JxZncJCiS2j9cClBzdM9Y1rLn4ijP4lyeVhA/4q/YnTzPhjlsdb+5V00aJrXbayHv72XcktxM2ut7aAM1v9fS8zHoDqVnvVx2FPEubEkduUGXxjf1cWwfqF7oJcZHQQQf4zBC/QUTqo01938kB67k4uAJjb4siLC3DWTkTYRactyW+SuKMGe5SpGc5p/y17euxqjDbWwD9k3uGk9djYV4g18bTZed706c8kJp54tutN+HsyNgiKWueDHInbEhzbLmF+Sl5Tj5SHFBiPpajEKXhQx9GGQFhF3r/LyeQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H3XTEcGdcJdq740imtppkEgkuDroXgp5hq4UxzUuc64=;
- b=QnmO26VVByeHWETT05EZMGvU12EOvsg67vVwKQ9VnMzwSwUO2MpGRQKsw2qaKUCQNFtNqTQ37VECn5KM2s3jxTRDiN7ERia0DAJxo9vczgooeP6whx4U3gPhoj12VZcFz2ahNVetopx/CSBoXr+UVmN+MmB3vADwK6GwDE671dk=
-Received: from SJ0PR03CA0229.namprd03.prod.outlook.com (2603:10b6:a03:39f::24)
- by DM4PR12MB6062.namprd12.prod.outlook.com (2603:10b6:8:b2::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8114.30; Mon, 4 Nov 2024 09:13:27 +0000
-Received: from SJ1PEPF00002311.namprd03.prod.outlook.com
- (2603:10b6:a03:39f:cafe::c3) by SJ0PR03CA0229.outlook.office365.com
- (2603:10b6:a03:39f::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30 via Frontend
- Transport; Mon, 4 Nov 2024 09:13:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00002311.mail.protection.outlook.com (10.167.242.165) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8137.17 via Frontend Transport; Mon, 4 Nov 2024 09:13:27 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 4 Nov
- 2024 03:13:23 -0600
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 4 Nov
- 2024 03:13:22 -0600
-Received: from prasad-lnx-mach.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 4 Nov 2024 03:13:18 -0600
-From: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
-To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>
-CC: <mario.limonciello@amd.com>, <Vijendar.Mukunda@amd.com>,
-	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
-	<ssabakar@amd.com>, Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Cristian Ciocaltea
-	<cristian.ciocaltea@collabora.com>, Emil Velikov
-	<emil.velikov@collabora.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>, "open list:SOUND - SOC LAYER / DYNAMIC
- AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] ASoC: amd: acp: Fix for ACP SOF dmic tplg component load failure
-Date: Mon, 4 Nov 2024 14:43:10 +0530
-Message-ID: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F82E1AD3E1;
+	Mon,  4 Nov 2024 09:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730711610; cv=none; b=N2BqE2IYGlOYfp117lvCZynCreMaz7jfa8wjNckeEMVBOZU1biTuKECUZjXVMMfWnGBLwj2DmEWxZvyztGXfxU4YMQgd30pJZQeb0tmgESbvr9sMM8/0/wBgRhoi69LUT5GdmoucZou7XcwXsl+v3EfZvBwFmEAWLpqpqGvCgcY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730711610; c=relaxed/simple;
+	bh=hOjkAJ5SCB6kTsK3AmNEPFiSQj/wTUWWKnVCS6ZPCc8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PbXJyy+8pm9M1C7HM9yMGtpayV49bnHQZXgi/Qw1RsCnlVO3vbmmKkCyI3hgWVEb9db7haPnaCouYoWH66hf/z2p/gizXmvxjz9hcs3uGWN7ui+vC+F9i52VqBUTRLPptN30RnrUbscNCYZYYSo1QM24HKuUXqFpNuggi2VUZJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I6I02Yb8; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a628b68a7so633500666b.2;
+        Mon, 04 Nov 2024 01:13:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730711606; x=1731316406; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZsyqYVJ5/bVxaZHofzYlbCWudDklkcbSgz9H2bcDlZk=;
+        b=I6I02Yb8xUF4bvtZJee6xeJvGj2MaP5FFo0kazcEFNh8aTBYkQjdwmpXI8Ple7CB29
+         oebWQPBCgE5syuOZLzKawToGtKTtip0JgcdNX0/DId6dbYAxFnJupyMzucMwEzXogBbw
+         WRNcsBQl4LzFqsiPtorvG9c2uWHX3/BOGj0xqoSQ51PkwjEYB9FX1i1vsXbKtmXNIFuE
+         pIkK50rQhjS8Fd1qCLIB9/iu5g+XGAoiMP+ml5VbRqj56yoTkqFmt9Z5wLHlXBooQeVi
+         ivUtsR9B6GemAHdUS3LL1EM6Yw7mWJ3AFnGMC5e5N4FxkiMIns06/E0wBzQWe1QhLS5S
+         mduQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730711606; x=1731316406;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZsyqYVJ5/bVxaZHofzYlbCWudDklkcbSgz9H2bcDlZk=;
+        b=ApuR4toODZq6YXXnS499IIOQHnRKuc1vbuevKWtLJ4X/MShVsGn3Q8PNAx1UnIjl8d
+         b0snMRwogyTswyHhVkJl1Dwz/YM+d3Vul1Wmr97CcoItj2ZOu2tksRq2XghxuziBvKqC
+         cz3Vzv1R0qc7j5PYBUDQHdOX8Q3d2A/3nLqYYmZrEZ/LI9/OHDEk749WfSpSGB2qBQ4v
+         CSBynRzSyMdl1YzNqBQm7p2jVbdnpros902deQaQI1szpN3wdgsK0H8LpB2jmFf8VbTK
+         LExlLIXbkWCMiMRVwxjq0T22c1QWmeCEstrnHdfbtrtOvd/umISS1Z7/jP2F6/tZtzup
+         GX/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUX1Nf+o5fbfGXzabZUIUNL/7RIvhiXMUokeQTuny2G6Blpw2zWE2UbBiKONc+3lcyVFkmamq0DKBN8TbQ1@vger.kernel.org, AJvYcCV+8Swu1eaYmAhjkXQ6OPTrKfMRzJIt4uYKN6GygsryNJ3uQY2Y04jYylO/nX+09sxKjwr8K+bDYqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/2Hl79uADbgOiNCL8OWbl/dPCGCOQap6J7xyEfhs/CZG8zid/
+	nNVeaoT9TtX+4UeznJm6RlvfPcA1AB9WqDC41JaVle0AAmfz0L1g
+X-Google-Smtp-Source: AGHT+IHKyIxhG50uCvmxgG42SM/8gWqwGCkeMI2XnTBb3rbM0dKMmYxMg6IWDWtFHr32FJpraqjcRQ==
+X-Received: by 2002:a17:907:97c6:b0:a99:2ab0:d973 with SMTP id a640c23a62f3a-a9e657fd76dmr1092897966b.55.1730711606239;
+        Mon, 04 Nov 2024 01:13:26 -0800 (PST)
+Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564942c8sm527500266b.28.2024.11.04.01.13.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 01:13:25 -0800 (PST)
+Message-ID: <4ed54857ed03779ee07d0dce66d6cd9c25c481e6.camel@gmail.com>
+Subject: Re: [PATCH v2] iio: adc: ad7923: Fix buffer overflow for tx_buf and
+ ring_xfer
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Zicheng Qu <quzicheng@huawei.com>, nuno.sa@analog.com, lars@metafoo.de, 
+ Michael.Hennerich@analog.com, djunho@gmail.com,
+ alexandru.ardelean@analog.com,  linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tanghui20@huawei.com, 
+ zhangqiao22@huawei.com, judy.chenhui@huawei.com
+Date: Mon, 04 Nov 2024 10:13:25 +0100
+In-Reply-To: <20241031210501.3da82113@jic23-huawei>
+References: <20241028142357.1032380-1-quzicheng@huawei.com>
+	 <20241029134637.2261336-1-quzicheng@huawei.com>
+	 <4760ad42ae34ea53ffb98995d65c5f1d6a6b3f9e.camel@gmail.com>
+	 <20241031210501.3da82113@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: venkataprasad.potturu@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002311:EE_|DM4PR12MB6062:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3452061f-21b1-464d-6598-08dcfcb0f18f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xcez+bzxBA6JbyKIKIYJ4bbQfbenEpcV13FOGskoFriTcssYG9NiwCDZ6tTZ?=
- =?us-ascii?Q?obH+GhfjAhM1jF9aienidVWA0oB59Jy8ExFh2u/ZBtCqf01qtzYjkwovyy5L?=
- =?us-ascii?Q?yad8E6QLNCIJnFFHiiJkwn6gZHWzE+kIlTu/bnGnCTTAWh029tZ63Q4zVZWM?=
- =?us-ascii?Q?O84VDA54moiYKG9abVeZPjKV3a4MXw/086aythQagt8kuDJIrQTj5PmaFB6/?=
- =?us-ascii?Q?IQMAlnwGqwoDJisQwZKwCNuUXxsZCt2rIR8ifSFQxG5qOl1MtYQtDUfS7LMt?=
- =?us-ascii?Q?5Fjd9BFCpD0Sv9B+REAXtAAZ2SEbxFwqz+gFGAGjXMHejS/EWVp3UUDOGBVT?=
- =?us-ascii?Q?rfCQN8+j0RlfDYeI26Wug5WmeDq3e78iu1HKgt4V+4kkl8HwQnU6vK/H4JPL?=
- =?us-ascii?Q?QAA8gEkh5uoT5gMy/WQ+v2SVovovpHJjwH/LH0EQDvdCZvAmZYk+2S/SArgE?=
- =?us-ascii?Q?KzhXUEH/c8lhw5Y45njmW6kJ/BXf9WnpNT5zdBvRSLfH5eRyitOwDjLVS2kU?=
- =?us-ascii?Q?CumE8aAmqsyd5gV54IyDw2m6/6WoSjJ+7kelpAMQEInjgE8jeyZemQfrwcey?=
- =?us-ascii?Q?TFKt+Iv2438QrjU/MrqdOvOZi+2ZRJ5HkNNBiQnIY2i6zMZcTTE2Fw9acarR?=
- =?us-ascii?Q?iu95fzECAZTgbqGoGdiQ71W5b1mTtiRVcGcz2A7PjUfPWiWbQZNv0ONmsqj1?=
- =?us-ascii?Q?ZD8f6bp7P4TBOoaHr8kz3iRP1Ur/+B/jhVVWxlAqtMd+02hWGDuYh6AgF3UX?=
- =?us-ascii?Q?/QsXruQSphVPokJksdqpGzml4KYfRfhGRn1GlLGmN7lEHA1UpxpFUB289fSE?=
- =?us-ascii?Q?GmZWinVmGx2wwwIZOcsusFado4RsG6ytPLfX4zennoGVmpe0B4naVaGvfN+F?=
- =?us-ascii?Q?m6vaRbW/buocs7n7XMazEFdgsPvsKh62OX5Dh4t0W+8oIj1xKZRNkpJzX3ce?=
- =?us-ascii?Q?rtGWOe3zWJRKwa043wd7j2CwHUYgB9WEysmKcEWpgvdTOy3jQFYd9RNcR4le?=
- =?us-ascii?Q?l46/15k8E3Q5iMgGLg2gre1kp8Z6VJrl4V/gOMbCopG6iX+d7v5sQMsif+am?=
- =?us-ascii?Q?bJ+kJznfr++DjdUupihZwHHdGANp4d1zapzb9xNucuw0vdd5Y6exhJoCjhPI?=
- =?us-ascii?Q?9vX5lI6Ft5QKVW8vWZW+oY/Vom/PA+QgANORIFOPN8s5sHgGX61UnPSOZsI3?=
- =?us-ascii?Q?UkQUiIBghC4RT990lxtBZ+JjTBWyUTQN0Gqj6HTJ3D/+JpqnjfoXqH1I05gN?=
- =?us-ascii?Q?6Iku1YI7M3qRxWG9o7ZT7B0PIk8FOeoTcfVeHEyiK3ItHYGxZe0WN54Md3Ti?=
- =?us-ascii?Q?oXU9gUGML5YRVvdag8E+DVWmCO5w28J+w3zrWdou4Ju7Vnik+GgVnN4R2HQm?=
- =?us-ascii?Q?FSWXiCzydJkqpwum4tZrH3dW+umA2zHqH+K+NfE4FVjs2fjBaQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 09:13:27.5355
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3452061f-21b1-464d-6598-08dcfcb0f18f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002311.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6062
 
-Stream name mismatch with topology file causes tplg load failure.
+On Thu, 2024-10-31 at 21:05 +0000, Jonathan Cameron wrote:
+> On Thu, 31 Oct 2024 15:20:24 +0100
+> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+>=20
+> > On Tue, 2024-10-29 at 13:46 +0000, Zicheng Qu wrote:
+> > > The AD7923 was updated to support devices with 8 channels, but the si=
+ze
+> > > of tx_buf and ring_xfer was not increased accordingly, leading to a
+> > > potential buffer overflow in ad7923_update_scan_mode().
+> > >=20
+> > > Fixes: 851644a60d20 ("iio: adc: ad7923: Add support for the
+> > > ad7908/ad7918/ad7928")
+> > > Cc: <stable@vger.kernel.org>
+> > > Signed-off-by: Nuno S=C3=A1 <noname.nuno@gmail.com>
+> > > Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+> > > ---=C2=A0=20
+> >=20
+> > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> >=20
+>=20
+> Confusing one. I'll fix the authorship up for your analog address
+>=20
+> Zicheng, usually a Suggested-by after checking with the author if it's
+> a patch in a review thread.
+>=20
+> You can't really give someone elses' SoB without them explicitly sending =
+it.
+> If Nuno let you know that was fine off the list, then just mention that u=
+nder
+> ---
+>=20
+> This time I'm going to take Nuno's RB as fine to indicate no objection
+> to the SoB. Nuno, feel free to shout if you want to handle this different=
+ly.
+>=20
 
-As SOF framework assigns dailink->stream name, overriding stream name
-other than link name causes SOF dmic component load failure.
+Oh, TBH, I did not realized by SOB tag was there. I'm fine with it even tho=
+ugh I
+agree a Suggested-by would likely make more sense.
 
-[   35.474995] snd_sof_amd_acp70 0000:c4:00.5: error: can't connect DAI ACPDMIC0.IN stream acp-dmic-codec
-[   35.475001] snd_sof_amd_acp70 0000:c4:00.5: failed to add widget type 28 name : ACPDMIC0.IN stream acp-dmic-codec
-[   35.475013] sof_mach acp70-dsp: ASoC: failed to load widget ACPDMIC0.IN
-[   35.475018] sof_mach acp70-dsp: ASoC: topology: could not load header: -22
-[   35.475072] snd_sof_amd_acp70 0000:c4:00.5: error: tplg component load failed -22
-[   35.475083] snd_sof_amd_acp70 0000:c4:00.5: error: failed to load DSP topology -22
-[   35.475090] snd_sof_amd_acp70 0000:c4:00.5: ASoC: error at snd_soc_component_probe on 0000:c4:00.5: -22
-[   35.475117] sof_mach acp70-dsp: ASoC: failed to instantiate card -22
-[   35.475254] sof_mach acp70-dsp: error -EINVAL: Failed to register card(sof-acp70-dsp)
-[   35.475261] sof_mach acp70-dsp: probe with driver sof_mach failed with error -22
-
-Fixes: b2385de2ae11 ("ASoC: amd: acp: Add stream name to ACP PDM DMIC devices")
-
-Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
----
- sound/soc/amd/acp/acp-mach-common.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/sound/soc/amd/acp/acp-mach-common.c b/sound/soc/amd/acp/acp-mach-common.c
-index 67aa0ad83486..d314253207d5 100644
---- a/sound/soc/amd/acp/acp-mach-common.c
-+++ b/sound/soc/amd/acp/acp-mach-common.c
-@@ -1561,7 +1561,6 @@ int acp_sofdsp_dai_links_create(struct snd_soc_card *card)
- 
- 	if (drv_data->dmic_cpu_id == DMIC) {
- 		links[i].name = "acp-dmic-codec";
--		links[i].stream_name = "DMIC capture";
- 		links[i].id = DMIC_BE_ID;
- 		links[i].codecs = dmic_codec;
- 		links[i].num_codecs = ARRAY_SIZE(dmic_codec);
--- 
-2.39.2
+- Nuno S=C3=A1
+ =20
+> Applied.
+>=20
+> Jonathan
+>=20
+>=20
+> > > v2:
+> > > - Fixed: Addressed buffer overflow in ad7923_update_scan_mode() due t=
+o=20
+> > > insufficient tx_buf and ring_xfer size for 8-channel devices.
+> > > - Issue: Original patch attempted to fix the overflow by limiting the=
+=20
+> > > length, but did not address the root cause of buffer size mismatch.
+> > > - Solution: Increased tx_buf and ring_xfer sizes recommended by Nuno =
+to=20
+> > > support all 8 channels, ensuring adequate buffer capacity.
+> > > - Previous patch link:=20
+> > > https://lore.kernel.org/linux-iio/20241028142357.1032380-1-quzicheng@=
+huawei.com/T/#u
+> > > =C2=A0drivers/iio/adc/ad7923.c | 4 ++--
+> > > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> > >=20
+> > > diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
+> > > index 09680015a7ab..acc44cb34f82 100644
+> > > --- a/drivers/iio/adc/ad7923.c
+> > > +++ b/drivers/iio/adc/ad7923.c
+> > > @@ -48,7 +48,7 @@
+> > > =C2=A0
+> > > =C2=A0struct ad7923_state {
+> > > =C2=A0	struct spi_device		*spi;
+> > > -	struct spi_transfer		ring_xfer[5];
+> > > +	struct spi_transfer		ring_xfer[9];
+> > > =C2=A0	struct spi_transfer		scan_single_xfer[2];
+> > > =C2=A0	struct spi_message		ring_msg;
+> > > =C2=A0	struct spi_message		scan_single_msg;
+> > > @@ -64,7 +64,7 @@ struct ad7923_state {
+> > > =C2=A0	 * Length =3D 8 channels + 4 extra for 8 byte timestamp
+> > > =C2=A0	 */
+> > > =C2=A0	__be16				rx_buf[12]
+> > > __aligned(IIO_DMA_MINALIGN);
+> > > -	__be16				tx_buf[4];
+> > > +	__be16				tx_buf[8];
+> > > =C2=A0};
+> > > =C2=A0
+> > > =C2=A0struct ad7923_chip_info {=C2=A0=20
+> >=20
+>=20
 
 
