@@ -1,145 +1,127 @@
-Return-Path: <linux-kernel+bounces-395451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AAA9BBE07
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:31:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7DB9BBE0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F14C1F2271D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:31:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9118AB210C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0C31CC8A6;
-	Mon,  4 Nov 2024 19:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1DC1CBA01;
+	Mon,  4 Nov 2024 19:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCJtqDV9"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTqkaU6b"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5EA1CC881;
-	Mon,  4 Nov 2024 19:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277AE18DF72;
+	Mon,  4 Nov 2024 19:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730748654; cv=none; b=VEgw7NfxW8OWyj30ASKRcgBehvNHoz78752NcXwYLE7Q1xy9CoF2943pwPY0C+3beprpnaOJq7cNAgmvANXT2izzLadxseJ/knQxXCXT3B68wBXWXnTcMNLPeBDOomq4y2ChbFWPzbv6ZelyLh3bqsLgMq3EHqJL8g18t7LH0k8=
+	t=1730748693; cv=none; b=g7TK/J9LXPcTUyXsTysfejvHe2+/TnrVzbjcvEcxSs94CWza+UipKsf/gTks54/uI5S904Gknfrz9d6YDH3V901BAm9eyLBUUTkwrh/6KYaaaZFrulgv2zPt6+UIBEfu3MRQVHjKH4TShBjihIXIqOUEHe3B9/RRQj2f7vfABf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730748654; c=relaxed/simple;
-	bh=Fo60uWswFcnSmzVpKdk+u0eNERCEyxQs200F0GCVyJw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uu4beA3iUjLyi2gTi8Ec3l+SndUl0czNugs3Mw4mv9N9/imqSBSXJpGUXsAgbEgeQ87QP8wvkqgKDrm+hO3yUavmQjM4B/zzd3SYHcn499zLlXsycdQ5LFfQW2KuM0UOJaGXlyK+4TEoDKS5oTIvD+9zjKWFgiU2e0RDAW10MHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dCJtqDV9; arc=none smtp.client-ip=209.85.219.46
+	s=arc-20240116; t=1730748693; c=relaxed/simple;
+	bh=3bP3Qi/CQ5I6xaip1H8pfODV4gY33wAcd5kNSSVSc2w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qtUKcX1M6a9+ORKTcv6AvJnnspu1pIlhjiOftpfby55W/S9MGfaZc7+JvxgmEt4JdqJlSsmmz2W0W7T3b5DFSS8sH742Cbo3CKpPGehh5W715Cs9z7AABKqI6XCdYFpwsDgajKUwOcdR3SG5/tZbIclvOJbMQxy7WYUJVmT98x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WTqkaU6b; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d36f7cf765so18011976d6.0;
-        Mon, 04 Nov 2024 11:30:53 -0800 (PST)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6ce3fc4e58bso28106416d6.0;
+        Mon, 04 Nov 2024 11:31:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730748652; x=1731353452; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aMEsUOUwX1QVPl2y9CeAdxcmUznBmp9LvekDGjDQcDs=;
-        b=dCJtqDV9Cg07sG3pGcZ6ye8SN2dcudGYH3XrpTT0sRnZ3+/d5A00sypTXr4g/e5uIv
-         SFoZrh8x+PGJliClZEzRV4wO5h9kVqA+WGvDH1rvMJdmMvZQsG+DdWTCDf4w6QAYjfzi
-         VSylvJ/gaVJfcW/a9AYJfETOVVCrlW8YWufoSQweykak61OZd2ehS8IW7bx1RjO6x3Hg
-         +KrtAbbj1hLNDGR5R4hm0dEStYTvQVzJPYLLL63qWbVec7Al1VMJdXIMEP+8MNn/J7vB
-         8r8eZYH4+bEqckzC8Rq4rr6/1hglntkcTpKF2NmH6eCEI6F2mzGhxD+Liym7X2JprAt2
-         3AAw==
+        d=gmail.com; s=20230601; t=1730748691; x=1731353491; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bijSGqS0V/CqMGiSyPwWXdTb7/8nL6yldt4oUdDJBSc=;
+        b=WTqkaU6byBzyIN9YNk88NGR7y6UHe+Jz/lP0CGfXeri916zT27JW3BJbt1MNV1b4dq
+         UsSmGUtfAT/Z1WUIM9v/pbsrtc03mPSEUgv+tDDaiqbi/zKjVfadd7sil9dV+dZPkOtR
+         YEkTzp3vfegTZhpt5Yiw+F/gzs/hn/d1HLqjAxmml5JlgZZAK/AWaGiIQlQFurIKEW0F
+         3Q1o5mIkngYg/hJKtm6YPcvOQNwK3hPKJnpnYSVW5ShXL9Bu0SrDtI+Hv/+Ttvwmqs/f
+         OHuhmB7v9UQjnNT/9B8SQd0L/MVi2WpvMcAQXoIeXtqgenHNAYYXILhW8MdlvelMH6/o
+         FoQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730748652; x=1731353452;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aMEsUOUwX1QVPl2y9CeAdxcmUznBmp9LvekDGjDQcDs=;
-        b=Mksf75hlWxIwDDDBKLoQs3t1ounu3yRrVscBKmyyvYJLzCXOVusbvDpn2oR4/VwAAy
-         A9MWMM3RwxUcrrSyvFrv8zY0izdPYKZ1O5KSQuIPfIwcpAMLElIjdyCwkfj4IZjnq59g
-         c3VjJLieQo8HnNiRuGF1wGSWxXX1a5TBY1vlcSFYAoKYVwQCpQ7M77aE7BUq/ZkJjqQs
-         +i8ocZE6RGd4Ap3EBjfVWaWVbVySquoTasZ3xLqkE8WDYPQNJv8zcjaopWD5O7XyYCuu
-         +i3sWuccVqF4Lm2+AhUwdohpamGTkCJBILpyzzo9wnsv4PyKW92kRM6yn2ub5gS8EqoY
-         qFCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSdyvw3RuifpHtdib10P6AUueox/AmzzBmKK6DeH5IIaGIjk2sVeEe4FcBzKWx7VHaiA/1sy0+TJJBtH4=@vger.kernel.org, AJvYcCXNn+H0trzrjvTN/tr0Gz6jL3Hrv0t1Z8I2omIqMudkkTBIs1DjqceJfm0Y2nVYFgTUaxiojMSgLh0ejLj3cA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVR7R6HSMwcS5G1JZ8SaU93osQ2Q3xa6ozzzBGgMqCNlkpxUBJ
-	fq7KY9HURAVwM3HwuGdxyDqHarSDBnkFEtfOTrZaX/jTSuMBl6ORj46hfxUtSox/mzMndy7JcYl
-	JrOF+TNlpnuGnxXI9+yB9QJc9VEtEQX1g23M=
-X-Google-Smtp-Source: AGHT+IHjDExevzcVEqh6dylFKl0DUThxz+Syms9Ht8lS/L10WWwnnFGLfT+vDD8lmI0PGVk41Nc7fAV/B0Usdgdk97c=
-X-Received: by 2002:a05:6214:3bc5:b0:6ce:26d0:c7b4 with SMTP id
- 6a1803df08f44-6d35c19bf44mr200872936d6.44.1730748652032; Mon, 04 Nov 2024
- 11:30:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730748691; x=1731353491;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bijSGqS0V/CqMGiSyPwWXdTb7/8nL6yldt4oUdDJBSc=;
+        b=YK+kk5WWofevpuEZTPQuz49jbZDBfX55EGj2pB2r2ng4CQgx0BMdx1BNCzh2JPrTg9
+         S8BRSddT5Hg1y57vI+MQcs0FC+zO+KsbKvIux5EQkKpVe1ZRH0A0bdOn6B9u0CZedgzZ
+         hz7kwnwFWt3yMq8AxmHGhjR6OD2epHBPWImdmLMTWx0ADOpTcpHaFdJs+zlFI2SkRnVQ
+         hHEkoZjXCK/mDwBkoy49JsWGSaakkI98MadZ6HU/xvq0YhC9IVOuyQ7Hpi5z8kdyh+s3
+         uAsHfrQksM74sI02bx7EUhy1tc7yAS+Cz7cUGTKU3XrI9I8xRIYdIHUwndbsOnUdfS3d
+         2v/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUhuo5WTsuSBC8aT3iL+zE9uQEdqz1kWlXsAHpng6D3/6eFEN5WuVtloaK1BtC3RP0eC6WQFNwX7e4g1gY=@vger.kernel.org, AJvYcCWZiB8IaO+RP4gSP2/kQ0oNBQxXf9DG44MIZe6mZtsegFe8nHDVrxQrIB5JnJdJ40wxCwwdCuokLVyWOQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7pf9OUanRhTI5sVPHlGMEmM97jlBHWM13KWuAa9YhhZdjjQBK
+	FPwGrJXqNbxrRk/ksU9Fca4Q0xslDqOEsRvdEXjSyFgmamtcGmga
+X-Google-Smtp-Source: AGHT+IEcYubjvbNgxzZeMVraonxGDhXuv0kvdYzgHH1Wxp0npJOmSz9ZbtTTbbPQ7+ToZVAGW21gxw==
+X-Received: by 2002:a05:6214:3bc4:b0:6cc:a17:ba65 with SMTP id 6a1803df08f44-6d351af4758mr286893156d6.39.1730748690982;
+        Mon, 04 Nov 2024 11:31:30 -0800 (PST)
+Received: from newman.cs.purdue.edu ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d354178071sm51852956d6.116.2024.11.04.11.31.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 11:31:30 -0800 (PST)
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+To: wbg@kernel.org,
+	vigneshr@ti.com,
+	jpanis@baylibre.com,
+	gregkh@linuxfoundation.org
+Cc: linux-iio@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: Re: [PATCH] counter: ti-ecap-capture: Add check for clk_enable()
+Date: Mon,  4 Nov 2024 19:31:28 +0000
+Message-Id: <20241104193128.41871-1-jiashengjiangcool@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <671fd40c.050a0220.4735a.024f.GAE@google.com> <tencent_93E0C66D49BEAEDE6ECA0C9FA7C786D2D206@qq.com>
-In-Reply-To: <tencent_93E0C66D49BEAEDE6ECA0C9FA7C786D2D206@qq.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 4 Nov 2024 20:30:41 +0100
-Message-ID: <CAOQ4uxi36iUbYa27c81pNpO7T0vR=rY63b7KACJLP6b4HTJGXQ@mail.gmail.com>
-Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_encode_real_fh
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 11:32=E2=80=AFAM Edward Adam Davis <eadavis@qq.com>=
- wrote:
+On Mon, Nov 04, 2024 at 09:28:00AM -0500, William Breathitt Gray wrote:
+> On Sun, Nov 03, 2024 at 09:39:10PM +0000, Jiasheng Jiang wrote:
+>	Add check for the return value of clk_enable() in order to catch the
+>	potential exception.
 >
-> When the memory is insufficient, the allocation of fh fails, which causes
-> the failure to obtain the dentry fid, and finally causes the dentry encod=
-ing
-> to fail.
-> Retry is used to avoid the failure of fh allocation caused by temporary
-> insufficient memory.
+>	Fixes: 4e2f42aa00b6 ("counter: ti-ecap-capture: capture driver support for ECAP")
+>	Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+>	---
+>	drivers/counter/ti-ecap-capture.c | 5 ++++-
+>	1 file changed, 4 insertions(+), 1 deletion(-)
 >
-> #syz test
+>	diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-capture.c
+>	index 675447315caf..30a269fa5da0 100644
+>	--- a/drivers/counter/ti-ecap-capture.c
+>	+++ b/drivers/counter/ti-ecap-capture.c
+>	@@ -574,8 +574,11 @@ static int ecap_cnt_resume(struct device *dev)
+>	{
+>		struct counter_device *counter_dev = dev_get_drvdata(dev);
+>		struct ecap_cnt_dev *ecap_dev = counter_priv(counter_dev);
+>	+	int ret;
 >
-> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> index 2ed6ad641a20..1e027a3cf084 100644
-> --- a/fs/overlayfs/copy_up.c
-> +++ b/fs/overlayfs/copy_up.c
-> @@ -423,15 +423,22 @@ struct ovl_fh *ovl_encode_real_fh(struct ovl_fs *of=
-s, struct dentry *real,
->         int fh_type, dwords;
->         int buflen =3D MAX_HANDLE_SZ;
->         uuid_t *uuid =3D &real->d_sb->s_uuid;
-> -       int err;
-> +       int err, rtt =3D 0;
+>	-	clk_enable(ecap_dev->clk);
+>	+	ret = clk_enable(ecap_dev->clk);
+>	+	if (ret)
+>	+		return ret;
 >
->         /* Make sure the real fid stays 32bit aligned */
->         BUILD_BUG_ON(OVL_FH_FID_OFFSET % 4);
->         BUILD_BUG_ON(MAX_HANDLE_SZ + OVL_FH_FID_OFFSET > 255);
+>		ecap_cnt_capture_set_evmode(counter_dev, ecap_dev->pm_ctx.ev_mode);
 >
-> +retry:
->         fh =3D kzalloc(buflen + OVL_FH_FID_OFFSET, GFP_KERNEL);
-> -       if (!fh)
-> +       if (!fh) {
-> +               if (!rtt) {
-> +                       cond_resched();
-> +                       rtt++;
-> +                       goto retry;
-> +               }
->                 return ERR_PTR(-ENOMEM);
-> +       }
+>	--
+>	2.25.1
 >
->         /*
->          * We encode a non-connectable file handle for non-dir, because w=
-e
->
+> Similar to the stm32-timer-cnt patch comment: it's not necessarily clear
+> that an error in the cnt_resume() callback is due to a clk_enable()
+> failure, so you should call dev_err() before returning to indicate the
+> reason for the error code.
 
-This endless loop is out of the question and anyway, syzbot reported
-a WARN_ON in line 448:
-            WARN_ON(fh_type =3D=3D FILEID_INVALID))
+Thanks, I will add dev_err() in my v2 patches.
 
-How does that have to do with memory allocation failure?
-What am I missing?
-
-Probably this WARN_ON as well as the one in line 446 should be
-relaxed because it is perfectly possible for fs to return negative or
-FILEID_INVALID for encoding a file handle even if fs supports encoding
-file handles.
-
-Thanks,
-Amir.
+-Jiasheng Jiang
 
