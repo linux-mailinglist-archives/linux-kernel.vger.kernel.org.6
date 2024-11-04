@@ -1,258 +1,121 @@
-Return-Path: <linux-kernel+bounces-394765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECBC9BB398
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:38:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4B99BB39A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:38:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B95211F23182
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:38:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3E7428420A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3371B3949;
-	Mon,  4 Nov 2024 11:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A955C1B0F2B;
+	Mon,  4 Nov 2024 11:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjYy3U1A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OuhQkevM"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08AA185B4D;
-	Mon,  4 Nov 2024 11:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F041AF0B3;
+	Mon,  4 Nov 2024 11:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730720253; cv=none; b=ChZAH+98QLq9Rqo5ZmUSrBbtrX9tsuyDb+UtXQx5Osp68rCBLDp8bDIGWKmmdcOV/mv44PEInPbJQjzTTYpwr8Ic6uORzecgsm/XPZoQBp2VFtn5F++XKvEVGSszjhC8OOAmn+L9t3jUFmiJXkrkiRPnUZo8OlAeBuby9Ts8my8=
+	t=1730720274; cv=none; b=dgSfhNvUAnCEDO/9DxF6NgLRDbTT1/cccmAeamtKgq+1itfx5Y3Q/uvvoBX10YXDnlNBIhzfWAQB+EmYiJBuQMcqzIsH3TqWCnkhlNwCFpqosgIrJf2oDCXTfeOVDOJZ9xw4YhicX11Xr+S2nVXHl4ZxIuUrTKN6/7W5q5zrwmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730720253; c=relaxed/simple;
-	bh=r0F7WWieVy3G1VNWPIWM2T4e1JEAK4pK6vQsE3LT8/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ICz+ZuixrW3cP6Pjsjj3/HleLwiJwCn6NqCtGheW+ErDs8WGGn0SQlZYef9BNbIxhQcn0Sdnma6VAwGM7OotwoI52YsEYn3/M0GgExDD+gdln9J2eJbQ575Utx/1jfil/UXr0NSu6+JTjWUFhWpBcPjCiviM/0WJnZeurnl52Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjYy3U1A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8F67C4CECE;
-	Mon,  4 Nov 2024 11:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730720252;
-	bh=r0F7WWieVy3G1VNWPIWM2T4e1JEAK4pK6vQsE3LT8/g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WjYy3U1AobPrUtwdAIEqkg0GLwohYbqHHLLiXv53qNDF1oik49YeZmX9T9naY3H2s
-	 AsHCzYY2Ld/iRPoOcVGt1I4QvsweQZqnDDPRjmrDg3ysXuZS+jTAEU6lo/la0zecLt
-	 6iuPYlPtY0GoVff5TGjm712paAM61lqNRs8WIrfcC9LI3//pWHFWeEQ8Mz8lkq4BHo
-	 bYKqxtMSL86VC/Nr81+YaFNaxhoWo0HBSIufAFXHq/yPPp1LB9Bz9qpVp47grgE5Ij
-	 KzVM8PhfXg4V9UTUPSPvwxoX0Ot6sfYvbmYvBV0yNoy5Fvp0F5mYPsECmym5UZEpJk
-	 4qMDnFLMGPTWg==
-Message-ID: <ff191ee3-bacc-48ed-86a8-2e60ebecc391@kernel.org>
-Date: Mon, 4 Nov 2024 12:37:24 +0100
+	s=arc-20240116; t=1730720274; c=relaxed/simple;
+	bh=lx77u/gDFh72VpnCCaSNEYGR1kfowZD+gXLyxcawzxU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rh3Am0rOQxOUP4pwFmCbcmDicx2j6RR2NoBMcxsrVU94m3SBgJU0WCElszqxtm0d5U+zNCrqhTq9YGkijrAmwbRDKA/9tYce54vyG3eYQCQcQ3XWbeKpld43op2XIQBgZNYAoPYu+EY8DBPsdTk8RnC2hvyKSUhPH4PMXbzaenA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OuhQkevM; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-288d70788d6so1865148fac.1;
+        Mon, 04 Nov 2024 03:37:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730720271; x=1731325071; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5SX/xXj43PUOgFpyn0Un3MyTb/tedyX32wA9jp1y7WM=;
+        b=OuhQkevMKcb91AOxnpB4PkRwFAQ1vswYVqL87gxYJPt4AkWiPev5gjrLmLB03jN/XY
+         e8gOTxobbJXTWxvJ1/raEkY4us2jIcdc3eXpR4MmhqRYc3JoYH67Sh6mIFdNFQlzx9G1
+         xw14D7un5KSuxKxQX+UcZdJflDYelFy76MWcbjnzQwiaG98e9UgZBmfXQnPYac/ZKkVl
+         reX25FWHp6mYGlFblKnFbC5YEuA4gDbekaG5Kc+bCTNSziiMVH4hHYIhW5vOhAHlmaUP
+         7YzC+pBhXUD+uN35E9U2VZX3g6Pfhn7fJQ9kdQ/DdgxReiYJBQEnVS5Sxypy9I8q6KaQ
+         3Rlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730720271; x=1731325071;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5SX/xXj43PUOgFpyn0Un3MyTb/tedyX32wA9jp1y7WM=;
+        b=ZOpaWTGbO93pGSIjZuWqFUBJHHeyR6jkuK/h1QQM3OV/QZKyu9ppNcmLnBCfbZkwGC
+         t9KpOJuM56El6dvUG2kKFbAwznYy7N4Q/jXqcpnMXsAMkoLwBpDZBUc6N4Kd7cxdsmD5
+         WKaTLZUfxQpgZnUax8o0Z+ZtJb2tdpP7a5IctAMA1Ddi+8sUqfoh20D9tsIrkIP4O+DH
+         XiSK4rwcbTXdxJuGep0eYXuQYxqjaSY5wP2tnsU5ZSbrwk9Sd2cSJjIuV0G3U74xuAfg
+         y/nGKfSvGUPH5Z3wWjEGyGkgQG+ctOpLg2HvPjGsjGMB/bv+JzYsKD0Cg3bImwOgIDCf
+         KHZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULGjHbznQDa4nip+2Uq8/mttk5KJ/eWlivrHHJ0jO6SecnXvNvazs7QAyNNjH11r3oZYQWNvJPak/padg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEkAIBkECkWfyUKP3I261Mtj5alJbHlpo7gKApL4QygdDszASF
+	OcGe1RxyA9Haqp/tt6dGNytZSrR8/RuJgaMnjm5R8bxt74DKtTXD
+X-Google-Smtp-Source: AGHT+IExgD+swM8YyDjIhA/y95jVAxvHIhtfjWOHz37OrhpHT02SP1aNF9kaDkS0iAvKJJecbW6mOA==
+X-Received: by 2002:a05:6871:3a0b:b0:270:1884:9db1 with SMTP id 586e51a60fabf-29051af2919mr24065200fac.7.1730720271529;
+        Mon, 04 Nov 2024 03:37:51 -0800 (PST)
+Received: from localhost.localdomain ([202.119.23.198])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b87e0sm7216526b3a.36.2024.11.04.03.37.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 03:37:51 -0800 (PST)
+From: Zilin Guan <zilinguan811@gmail.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zilin Guan <zilinguan811@gmail.com>
+Subject: [PATCH] block: Use WRITE_ONCE for cache->nr_irq update
+Date: Mon,  4 Nov 2024 11:37:45 +0000
+Message-Id: <20241104113745.3099644-1-zilinguan811@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241104085616.469862-1-sean@geanix.com>
- <ee47c6d7-4197-4f5d-b39e-aab70a9337d6@kernel.org>
- <2mx3fpwo5miho3tdhfbt7ogwnifnhe7qlvjs3zjb2y2iifgjwo@23mxoxvwsogy>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2mx3fpwo5miho3tdhfbt7ogwnifnhe7qlvjs3zjb2y2iifgjwo@23mxoxvwsogy>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/11/2024 11:54, Sean Nyekjaer wrote:
-> 
-> diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-> index 9ff52b8b3063..0fc37b10e899 100644
-> --- a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-> @@ -50,7 +50,7 @@ properties:
->      maxItems: 1
-> 
->    bosch,mram-cfg:
-> -    $ref: bosch,m_can.yaml#
-> +    $ref: /schemas/net/can/bosch,m_can.yaml#/properties/bosch,mram-cfg
-> 
->    spi-max-frequency:
->      description:
-> 
-> Still results in:
-> % make dt_binding_check DT_SCHEMA_FILES=ti,tcan4x5x.yaml
->   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->   CHKDT   Documentation/devicetree/bindings
-> Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml: properties:bosch,mram-cfg: 'anyOf' conditional failed, one must be fixed:
->         'description' is a dependency of '$ref'
->         '/schemas/net/can/bosch,m_can.yaml#/properties/bosch,mram-cfg' does not match 'types.yaml#/definitions/'
->                 hint: A vendor property needs a $ref to types.yaml
->         '/schemas/net/can/bosch,m_can.yaml#/properties/bosch,mram-cfg' does not match '^#/(definitions|\\$defs)/'
->                 hint: A vendor property can have a $ref to a a $defs schema
->         hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
->         from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+In function bio_put_percpu_cache(), cache->nr_irq is read indirectly
+in line 776 using READ_ONCE(). This ensures safe access in a
+multi-threaded environment.
 
-Yeah, probably not much benefits of referencing other schema. Just copy
-the property.
+776     if (READ_ONCE(cache->nr_irq) + cache->nr > ALLOC_CACHE_MAX)
+777             goto out_free;
 
-> 
->>
->>>
->>> Any hints to share a property?
->>>
->>>  .../devicetree/bindings/net/can/tcan4x5x.txt  | 48 ---------
->>>  .../bindings/net/can/ti,tcan4x5x.yaml         | 97 +++++++++++++++++++
->>>  2 files changed, 97 insertions(+), 48 deletions(-)
->>>  delete mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
->>>  create mode 100644 Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
->>>
->>
->> ...
->>
->>> diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
->>> new file mode 100644
->>> index 000000000000..62c108fac6b3
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
->>> @@ -0,0 +1,97 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Texas Instruments TCAN4x5x CAN Controller
->>> +
->>> +maintainers:
->>> +  - Marc Kleine-Budde <mkl@pengutronix.de>
->>> +
->>> +allOf:
->>> +  - $ref: can-controller.yaml#
->>> +
->>> +properties:
->>> +  compatible:
->>> +    oneOf:
->>> +      - enum:
->>> +          - ti,tcan4552
->>> +          - ti,tcan4553
->>> +          - ti,tcan4x5x
->>
->> That's not really what old binding said.
->>
->> It said for example:
->> "ti,tcan4552", "ti,tcan4x5x"
->>
->> Which is not allowed above. You need list. Considering there are no
->> in-tree users of ti,tcan4x5x alone, I would allow only lists followed by
->> ti,tcan4x5x. IOW: disallow ti,tcan4x5x alone.
->>
->> Mention this change to the binding in the commit message.
->>
->>
-> 
-> I would prefer to not change anything other that doing the conversion to
-> DT schema.
+However, the increment operation is performed directly in line 792 without
+using WRITE_ONCE(), which can lead to potential inconsistencies in a
+multi-threaded context.
 
-Well, above you changed a lot :/, but fine - wildcard can stay. But
-anyway compatible list has to be fixed.
+792     cache->nr_irq++;
 
-> 
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  clocks:
->>> +    maxItems: 1
->>> +
->>> +  vdd-supply:
->>> +    description: Regulator that powers the CAN controller.
->>> +
->>> +  xceiver-supply:
->>> +    description: Regulator that powers the CAN transceiver.
->>
->> You need to mention all changes done to the binding in the commit msg.
->>
-> Is this a change? It existed in the old doc aswell...
+To ensure consistent protection against data races, this update
+should utilize WRITE_ONCE.
 
-Where? I pointed out that this is a change. I cannot find it. If you
-disagree, please point to the patch. And it's tricky for me to prove my
-point - to show that such thing did not exist...
+Signed-off-by: Zilin Guan <zilinguan811@gmail.com>
+---
+ block/bio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Two more comments below:
-
-> 
->>> +
->>> +  reset-gpios:
->>> +    description: Hardwired output GPIO. If not defined then software reset.
->>> +    maxItems: 1
->>> +
->>> +  device-state-gpios:
->>> +    description: Input GPIO that indicates if the device is in a sleep state or if the device is active.
-
-Please wrap code according to coding style (checkpatch is not a coding
-style description, but only a tool).
-
-
->>> +      Not available with tcan4552/4553.
-
-Then you need if:then: inside allOf: block disallowing it for this variant.
-https://elixir.bootlin.com/linux/v5.19/source/Documentation/devicetree/bindings/example-schema.yaml#L223
-
-
-
-Best regards,
-Krzysztof
+diff --git a/block/bio.c b/block/bio.c
+index ac4d77c88932..e2648ba71bac 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -789,7 +789,7 @@ static inline void bio_put_percpu_cache(struct bio *bio)
+ 		bio_uninit(bio);
+ 		bio->bi_next = cache->free_list_irq;
+ 		cache->free_list_irq = bio;
+-		cache->nr_irq++;
++		WRITE_ONCE(cache->nr_irq, cache->nr_irq + 1);
+ 	} else {
+ 		goto out_free;
+ 	}
+-- 
+2.34.1
 
 
