@@ -1,78 +1,55 @@
-Return-Path: <linux-kernel+bounces-394366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2997C9BAE04
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:26:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AEB9BAE08
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:27:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A7331C212B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:26:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB7C1F22E2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B0A1AAE30;
-	Mon,  4 Nov 2024 08:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C694F1AB51F;
+	Mon,  4 Nov 2024 08:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpTF6SiK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8z6Nl+J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7838A18BC0E;
-	Mon,  4 Nov 2024 08:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D3B18BC0E;
+	Mon,  4 Nov 2024 08:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730708766; cv=none; b=GOeV2+qahgfE5TBiKTLbS1uB3LIiNFTgVkjxNBa7AAmUV588r5EL3mOQ7t5kK/7SmtEW0/cFaO8Bu4+URn6z9rJ3OgShbkP4Qbh7yHsDDNs2Ea7EXZF7miBM7jf2IuEd6UU1vqxX9APwuYiZRaYiV5In65dNPxLB/9QdHJI/uNk=
+	t=1730708839; cv=none; b=d8umCQ+bneNQjM/tFN5x9ZgfE6zyNJzOaWt4LosP+YsHxjuFukI16IDjsmX0bOIqgcBYHtC3Cef1T/B2hlEi3+ASXjn+MkdP1KkwkXFbtxXAxK/ZZYBPdf3LCj1DNWEuujhK7S+DumO+J40IF0MNfQ+RJ98Z4wsGhpAdf+g+EHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730708766; c=relaxed/simple;
-	bh=5n26+7Eb9Ctuhh6z7GrE22CUnNft0rCMOTsCtn4nm8Q=;
+	s=arc-20240116; t=1730708839; c=relaxed/simple;
+	bh=OTtLPqoJ6FCGvPLO0Kk2ILGo2IyH9hAY+6Hic5r0rYQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bA365vNf7ap0YjZUHauYnvaOI5Ujy8sCiWi6ykUmayvgzw4OXZihqWtHDr9OqFPQdDQdK7xBGvEOyk8g3dTDtgV4JgoLakMvc1zyhavAfNNvhwRJTRQiF1csfi3F+kZE1TviqmKcJS8yI/BnJccaVlYVn6CYLTWfhQs11IOeMXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpTF6SiK; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730708764; x=1762244764;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5n26+7Eb9Ctuhh6z7GrE22CUnNft0rCMOTsCtn4nm8Q=;
-  b=mpTF6SiKTfRFCqVIqjrgweT1QbCgZcLUc9i6y2oL3IZibXQH+Rs1f9YP
-   K2G/COVVCJjUv0duM9kZ3yJ9OsvmhvBLkFqLN4npqUgu4VVkpLroR4rxX
-   ypSlMO7KCw5gsw6IMcXYAGuut3UIpxaI+VJhRpqZAdgUicPlMt5rdgDvw
-   PCGOx/7w++5GJnhGa0Hthl6QjdXq7tvI/SUuWezVGBo9L9cKAzet6jcng
-   cqqXDjV5gYiVzrQinbvlYiRP56naiLjUmv+lNbIn+mzIphq8zu7XmuyE/
-   wIBR/7aAGd9HH5+jYOXtChxgGzjmClnPGXrYyAGjZG4NwuIeDjCx9UnqQ
-   w==;
-X-CSE-ConnectionGUID: hS3fnjORStmOdU+OBxo/EA==
-X-CSE-MsgGUID: kis/nuPgS0KTSvu4RjmosQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="52954095"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="52954095"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:26:03 -0800
-X-CSE-ConnectionGUID: Rn0qklN4SCCXK8pukA8nmw==
-X-CSE-MsgGUID: rQRhzDZiR32i6hqrr4yMBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="106927565"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:26:01 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t7sPO-0000000AytU-1dpi;
-	Mon, 04 Nov 2024 10:25:58 +0200
-Date: Mon, 4 Nov 2024 10:25:58 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Li Huafei <lihuafei1@huawei.com>
-Cc: mchehab@kernel.org, alan@linux.intel.com, hdegoede@redhat.com,
-	sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: atomisp: Add check for rgby_data memory
- allocation failure
-Message-ID: <ZyiFFr1fbEn2JkWq@smile.fi.intel.com>
-References: <20241104145051.3088231-1-lihuafei1@huawei.com>
- <ZyiEXYWU1Yt03UNc@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iaI7O9uc6ollNs/m8dRFBub7/Lr9BmymH6URlYR8UHKAVbbMVqd9Z17SwIatcoxU8CG4xi/foGqiLHNubkkdvqytDDVQiueOKLQxZpG6MpA3eBy8iuOBZejsXbIY8nSpK0lJS8/Ti4sZcl+76O5tShlZ+Ifygv27KhU85kMAjwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8z6Nl+J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE584C4CECE;
+	Mon,  4 Nov 2024 08:27:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730708838;
+	bh=OTtLPqoJ6FCGvPLO0Kk2ILGo2IyH9hAY+6Hic5r0rYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N8z6Nl+JJkVg59R6R97DmusBAZrpSl8nx4bhv2nOAtnH9HnlhB7ewO77Z4AQhry2M
+	 wFQ43vPU+pVPEhqMmjpYPC4vd7ShQ6f8SFhIyUoSFlIBpwlTHg8uu4A3YVdBd2FDn+
+	 XH4OyMc7TMsLBbSgyp4K7JfcC4SCKFATIRfzVIDYXcv+vqLN/0VK7bDGVjeLS8u3jh
+	 By4IsSQZLL9deCMnjJh3XXQ7TOC1Ly1ITMyGX4c2Cwbh0OCbXYVstllhrXqAVwroCK
+	 iYy/4Wi8vpJmP80uh/JVMQyLk/RogYise5789tzWty611Ya8WY6klI24aO+Ko0roRv
+	 LaYmMGOzx5Thw==
+Date: Mon, 4 Nov 2024 10:27:10 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>
+Cc: Edward Srouji <edwards@nvidia.com>, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>, Yishai Hadas <yishaih@nvidia.com>
+Subject: Re: [PATCH rdma-next 0/2] Introduce mlx5 data direct placement (DDP)
+Message-ID: <20241104082710.GB99170@unreal>
+References: <cover.1725362773.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,39 +58,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZyiEXYWU1Yt03UNc@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <cover.1725362773.git.leon@kernel.org>
 
-On Mon, Nov 04, 2024 at 10:22:53AM +0200, Andy Shevchenko wrote:
-> On Mon, Nov 04, 2024 at 10:50:51PM +0800, Li Huafei wrote:
-> > In ia_css_3a_statistics_allocate(), there is no check on the allocation
-> > result of the rgby_data memory. If rgby_data is not successfully
-> > allocated, it may trigger the assert(host_stats->rgby_data) assertion in
-> > ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
-
-...
-
-> > --- a/drivers/staging/media/atomisp/pci/sh_css_params.c
-> > +++ b/drivers/staging/media/atomisp/pci/sh_css_params.c
-> > @@ -4181,6 +4181,8 @@ ia_css_3a_statistics_allocate(const struct ia_css_3a_grid_info *grid)
-> >  		goto err;
-> >  	/* No weighted histogram, no structure, treat the histogram data as a byte dump in a byte array */
-> >  	me->rgby_data = kvmalloc(sizeof_hmem(HMEM0_ID), GFP_KERNEL);
-> > +	if (!me->rgby_data)
-> > +		goto err;
+On Tue, Sep 03, 2024 at 02:37:50PM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
 > 
-> Which kernel version are you patching?
+> Hi,
 > 
-> The problem, you have reported here was fixed ~4.5 years ago.
+> This series from Edward introduces mlx5 data direct placement (DDP)
+> feature. 
+> 
+> This feature allows WRs on the receiver side of the QP to be consumed
+> out of order, permitting the sender side to transmit messages without
+> guaranteeing arrival order on the receiver side.
+> 
+> When enabled, the completion ordering of WRs remains in-order,
+> regardless of the Receive WRs consumption order.
+> 
+> RDMA Read and RDMA Atomic operations on the responder side continue to
+> be executed in-order, while the ordering of data placement for RDMA
+> Write and Send operations is not guaranteed.
+> 
+> Thanks
+> 
+> Edward Srouji (2):
+>   net/mlx5: Introduce data placement ordering bits
 
-Ah, sorry, I misread the line. Indeed, this one is still present in the current
-code base.
+Jakub,
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+We applied this series to RDMA and first patch generates merge conflicts
+in include/linux/mlx5/mlx5_ifc.h between netdev and RDMA trees.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Can you please pull shared mlx5-next branch to avoid it?
+
+Thanks
 
 
+>   RDMA/mlx5: Support OOO RX WQE consumption
+> 
+>  drivers/infiniband/hw/mlx5/main.c    |  8 +++++
+>  drivers/infiniband/hw/mlx5/mlx5_ib.h |  1 +
+>  drivers/infiniband/hw/mlx5/qp.c      | 51 +++++++++++++++++++++++++---
+>  include/linux/mlx5/mlx5_ifc.h        | 24 +++++++++----
+>  include/uapi/rdma/mlx5-abi.h         |  5 +++
+>  5 files changed, 78 insertions(+), 11 deletions(-)
+> 
+> -- 
+> 2.46.0
+> 
+> 
 
