@@ -1,132 +1,109 @@
-Return-Path: <linux-kernel+bounces-394717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B407C9BB320
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:25:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CC3C9BB322
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 456A61F20FF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:25:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FFC72843E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E751BA86C;
-	Mon,  4 Nov 2024 11:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B721B6D0B;
+	Mon,  4 Nov 2024 11:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oA1POmll"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPT1GkV2"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB7C1ABEC1
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A711AF0DD;
+	Mon,  4 Nov 2024 11:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730718930; cv=none; b=DxxidJQODIshKBLYvb5rO7nZvciIzaltyfKuP7E2obzwi0oIXN/b3lnYkuR2yFkCKIUx02s3P5snkmWN8/bS4d/OSuKNZTSVZaSqXVkMEy/gkjxQr1mY3hrW5I+0TxR2HrIpP+Ovxdy9RwnBDUmHXoJx+4xTQWtqshmkJIqOn/s=
+	t=1730718970; cv=none; b=ONFkNp8PfO6cmTosB5hhwxn4FIkEu9v2pwnRKVDBvq8piNWJmAxos66oHdg1nrGSy4H8Ay+cQ/LQkVaRcRbbxxgVkYRRBZcPHuwf/I457ZhX512BwusruHDWSjV4Yriy7QNc0J8aZQ0r32sMk3Q7OFN5u/6Elt7DiYYQUTagkzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730718930; c=relaxed/simple;
-	bh=d6QO4QYGlvPGTr3r5FY1HMjPPe70qv93K1mDlNdwVkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OJEAwG/TLsCFo+nhV9FlZvsps0BZVYR0pgHVNNwwIImJQXo6QdPzdkcXahNjUW4IeoQvVSkAjGSPm7VVjCstmDR0o6L1Ke/Ulj6tr+NhKglfGBZTwzAAgj0DtTVXUpPSSsythZQ6dInAEDYYzcl+pSjZ0WF6yuU1zrPjP/GLqos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oA1POmll; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3NurxJ021787
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 11:15:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jPm7hWUkTfuXs3mmy+IMG+HxOet17xzog7upRSLJQWI=; b=oA1POmll81HyLt/k
-	S79/7kfcPtAq4IAVwPIC3XFeTx6gut752f9caP4jI7qZObi9tyeBIvAkCE8oDPFy
-	jDfSSZR+zjYTaZVc2jX8RGRN4mGkOl6JROGsIGk2DrVhhOjD+ET514NDsnlyOmug
-	fnfWLRc/LfEd8QV8wY5tswsqv9j3rE4uefLiaqEni2duOvIQO1WRFiUul2J3hGKP
-	hKBh6shaBsauPoUdK8RdXF4Hv8xxdcg5lAAuYGS+qhO7iwMUQCT00bFXs5PvQo5u
-	fJ67c7cKTNktDtTlPDlndwpqiF3vvqg3Nhgm15E4DWQJYw5L0qnq4EA43etMOZt4
-	LkS9FQ==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd28405e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 11:15:28 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cbd0a3f253so12741376d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:15:28 -0800 (PST)
+	s=arc-20240116; t=1730718970; c=relaxed/simple;
+	bh=6lPauIiTscqKMOQTLUHijuI2aQyYBb6lw3dYwjsi6bM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HVueEZXo/PIM1aIGkTNCssJ27r2SJ2mbYThNAAzRIvCMYtMcNUWrEk7CBFHDuIPksQt6bzqH4rXS5+1qLhL+HJ8q9C44wwbodokeigSuHxLQKK2n7HZ516mfKsAnp9e1hCs5tz5MpAeo2cOF/o29FbFfTf7GJ7BvEOQCPR1EFow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPT1GkV2; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb49510250so40521801fa.0;
+        Mon, 04 Nov 2024 03:16:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730718967; x=1731323767; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6SMwMlud9VpFJug/GEuyhyAfU63OEE3p7Bt9+6mizC0=;
+        b=IPT1GkV2HfLgpH4LzzOO9VABJlll4PxLa3gyXXXXOLStHoUgab8ORuqK2mSAqqGIUo
+         PYgQosr9fhKGfKKZhW+0m8aLJWICBvhtaoQfkPs1OyPz6IWGb3GtWMh8vxGH+7FS5HRh
+         rEmeTqd8G7ZSajcvZE6NODVQIleKiTZR3+rEIGrpnumhVRxEf2sN//2nZcx2CJUHaw+z
+         ltNGxcwDJgTQEROb8ZOmcsbMc4hMfMrr/KHaVIkiR9S4SvEDba/9lbFk0o5gVyjKHYPf
+         iCVAQlHY+NUbThk/O04TR9EsndlYdoWH6a+ZVExWgUaMKSMeXLbcslebIxd9hcXy5mvK
+         AjYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730718927; x=1731323727;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jPm7hWUkTfuXs3mmy+IMG+HxOet17xzog7upRSLJQWI=;
-        b=pCq9Skg6cpr5cH4MSh6vWIBrlrEXpYuTvsnlFNC6Mfwz9GwH1ACN3O9Hz4V0PfwQqu
-         Nk7M0hsw9RXi+e/EFQGBQgILU3I2FyARkt9FhNAd5VwNOAQsliZLLAFaZk1QEseO8dx4
-         cdKTelUcwTMIgZbaClidHmE+aMhHntHt6i9RelcOXGnkAerv2Atw2UwYt6f9yMCb2kqE
-         c1MvPJpXOxZLDPdT99LtwcpyqbGi3/zbX4Dtzt0mRjZA0hwRJC8t/rTJc94i0Q56azY2
-         x2duX3ixX++uSdV64U2DQc2E4T4dDdVaCicvVuxx8Hdz6vxnU7Sm67m4OJk8iApGOmJ+
-         tWFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCCtqxXlO7TX7+bAONxV+rSBfj66GqlbUyyTTpZrLBLTAV6haWS4e2GyJ6e+JIEzpDZTHMea+Lh7+3umw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB2JKacIwIQ1XaSM0MqzwD2CAgVOYklieoxn5/uW5uERq9Pz9T
-	sogz5agaAxkQeNu30Jbj/8e9PRw2hnxW/jqJ/K3YUTmiv7iniTy1frK2sEj8S1aXDLTfujqeGDf
-	uclYEYdxFoCIkl+Ugmqjyv7i+9T/Ya03w6eO6FhtVl+BPf9BfkPdMI7kLprg/juc=
-X-Received: by 2002:a05:620a:1a02:b0:7af:cdd7:d6d8 with SMTP id af79cd13be357-7b193edb1aamr2141058185a.2.1730718927565;
-        Mon, 04 Nov 2024 03:15:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEEEocoupBY994SVKYmDQBEraVYB+dHfuiTwu9QnqVdzOdt1qQkKGFmvRV/Wq0sw8U7MpaTMA==
-X-Received: by 2002:a05:620a:1a02:b0:7af:cdd7:d6d8 with SMTP id af79cd13be357-7b193edb1aamr2141056885a.2.1730718927195;
-        Mon, 04 Nov 2024 03:15:27 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56494470sm537633666b.2.2024.11.04.03.15.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 03:15:26 -0800 (PST)
-Message-ID: <731413b1-b660-47d5-96e0-719afb786865@oss.qualcomm.com>
-Date: Mon, 4 Nov 2024 12:15:24 +0100
+        d=1e100.net; s=20230601; t=1730718967; x=1731323767;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6SMwMlud9VpFJug/GEuyhyAfU63OEE3p7Bt9+6mizC0=;
+        b=bdi5bALx09Eeygo+yJjNLZ5+SUXgPRRp8A4hpZfLeHDYbrXZx97mLHVKz0QjxDcPYo
+         JF7sIMLXWJfIuKs18HMxZgGIp2xy8heN/WAPtq6wbRRqChphGHL1c1Lr/U6y5/zHHF0C
+         fXg1H82l+9h6g0Q6cNS6co3WZHLpvvHCc08lGSPhBXFFlL1eVFRiLreBXqZRYzkgiZof
+         1wJemqyrGQiiXVn7DmPeoO/8ULhxiz1N+EEUMSSi24HHu3JMAiR9W4Q7hPJXe9E1yXXD
+         IDo0QrwHlDhh/7A0mxbO6jEmlXKs1BBRvg+zhyegr/HGQmapAVE99qJ+EsAiUaWpYq7J
+         lbfA==
+X-Forwarded-Encrypted: i=1; AJvYcCU14i62Sf5NcqQwgtmvZjlvUmQGympcNOKtCCTWPr+J26pSwSCACS07rNFGCS0rjvGo/Ypm3UtwiXE3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYEFzzogC+W6CrKoBQs+FDtwlFoGaNHlq6IIP+BUGeQytphGb9
+	SbPnI3senTKoZDIwCOBBBp8/O06vFDM7sMZ8wAYrJDKNEyTHuI65Qmu/bnwO5Pb+zZECtUBk05Z
+	Ef6MNY88gXs3M9mYtrgiEHJ88SGw=
+X-Google-Smtp-Source: AGHT+IEzN70NkrF6BWT0VQctKNPsc9mfubq6riSTtLOV3QRjwhMFt9r3TqokctCja3a9zuoI92aSnDqOznprk9dMpPU=
+X-Received: by 2002:a2e:bc18:0:b0:2ef:2490:46fb with SMTP id
+ 38308e7fff4ca-2fdecc2f714mr74133011fa.37.1730718967005; Mon, 04 Nov 2024
+ 03:16:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] arm64: dts: qcom: qrb4210-rb2: add HDMI audio
- playback support
-To: Alexey Klimov <alexey.klimov@linaro.org>, linux-sound@vger.kernel.org,
-        srinivas.kandagatla@linaro.org, broonie@kernel.org
-Cc: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        perex@perex.cz, tiwai@suse.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org,
-        krzysztof.kozlowski@linaro.org, caleb.connolly@linaro.org,
-        linux-kernel@vger.kernel.org, a39.skl@gmail.com
-References: <20241101005925.186696-1-alexey.klimov@linaro.org>
- <20241101005925.186696-6-alexey.klimov@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241101005925.186696-6-alexey.klimov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: p21LFQDJpZ_sYZCN4Gi-CQxflv2ryoYj
-X-Proofpoint-GUID: p21LFQDJpZ_sYZCN4Gi-CQxflv2ryoYj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=940
- clxscore=1015 lowpriorityscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 phishscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040099
+References: <20241031151238.67753-1-hs@denx.de> <20241031151238.67753-4-hs@denx.de>
+In-Reply-To: <20241031151238.67753-4-hs@denx.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 4 Nov 2024 08:15:55 -0300
+Message-ID: <CAOMZO5ACMGbhySUbR8r1UUimc53YDaRbfEObyUrf0GLYZcQfjg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: imx8mp: add aristainetos3 board support
+To: Heiko Schocher <hs@denx.de>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 1.11.2024 1:59 AM, Alexey Klimov wrote:
-> Add sound node and dsp-related piece to enable HDMI audio
-> playback support on Qualcomm QRB4210 RB2 board. That is the
-> only sound output supported for now.
-> 
-> The audio playback is verified using the following commands:
-> 
-> amixer -c0 cset iface=MIXER,name='SEC_MI2S_RX Audio Mixer MultiMedia1' 1
-> aplay -D hw:0,0 /usr/share/sounds/alsa/Front_Center.wav
-> 
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
+Hi Heiko,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Thu, Oct 31, 2024 at 12:12=E2=80=AFPM Heiko Schocher <hs@denx.de> wrote:
 
-Konrad
+> +               brightness-levels =3D < 0  1  2  3  4  5  6  7  8  9
+> +                                    10 11 12 13 14 15 16 17 18 19
+> +                                    20 21 22 23 24 25 26 27 28 29
+> +                                    30 31 32 33 34 35 36 37 38 39
+> +                                    40 41 42 43 44 45 46 47 48 49
+> +                                    50 51 52 53 54 55 56 57 58 59
+> +                                    60 61 62 63 64 65 66 67 68 69
+> +                                    70 71 72 73 74 75 76 77 78 79
+> +                                    80 81 82 83 84 85 86 87 88 89
+> +                                    90 91 92 93 94 95 96 97 98 99
+> +                                   100>;
+> +               default-brightness-level =3D <80>;
+
+One suggestion: a more succinct way to represent this would be:
+
+brightness-levels =3D <0 100>;
+num-interpolated-steps =3D <100>;
 
