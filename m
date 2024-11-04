@@ -1,55 +1,50 @@
-Return-Path: <linux-kernel+bounces-394235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3262B9BAC3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:49:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2319BAC3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:49:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F62CB21175
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:48:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC831F236C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F140918C341;
-	Mon,  4 Nov 2024 05:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3592018D626;
+	Mon,  4 Nov 2024 05:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0l2PahRp"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OioPP0zi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E4718BC2C;
-	Mon,  4 Nov 2024 05:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C2F18C039
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 05:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730699321; cv=none; b=tTHwBw8BA7OHSvnLsw7nPzWrfSTraDsc41rSQ4kCvDYUDvxqWe3YpON1IQe2oCPBxvZf07i3Zu+nS17tveHuleN3oYG0KLnlNPUTaxo8gTVSkMzcFPNSFPchX+orPI+7YrokjPKOyCwsnH/mLHM22d+b0lNebV2reZy+m5y4JBs=
+	t=1730699323; cv=none; b=g0aCY9ZbMlkqxrhv+vgLjYI3N3MvdETzi+ggBCXTmuWUrEupI6XkCcktZdloDz6xAKaJMrcRrSvdy3MOSaof5VQU5kV/OP7W6p/9Xhi1gDegdEhevA5HfbITMT+h0oSSzQLikncPW4fMU7NePFR5M+oqFfQ0pYeaO4Jlr6zIrAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730699321; c=relaxed/simple;
-	bh=5fy6xKs7vhmUZBinU8ERiLTywxLCmF+rAnpbE/Um2aQ=;
+	s=arc-20240116; t=1730699323; c=relaxed/simple;
+	bh=wAyPzvyusi75sGKuPvls1PsCSRlhQvbCpG1vQQEFI1c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aIqyFLaiZRRkIXtvBQCXGbdTQPoGoeUFkk39vA3uKe+zmAvoHrHx36RhhD5xi8hsvBGw1MA98cYjIJA5QOu+hO3Jc3k9EI0Hcp9l4tkgh8b234PdsJXj5C7eY3lSB33xFS9VxE7fowVENyZdqh7wV6HiBxRbhJr5yY79M4o6C7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0l2PahRp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57BD5C4CECE;
-	Mon,  4 Nov 2024 05:48:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7nAJyTdTkfdKEa6GNFhpV3wEc8QhE+TFs59AjfmZJVbHCuWwFqy/9E40hGp6xcEu8tR3tBQMaSqiw+Ok89by4CdEcOGJ452vGF+1j+TYs4Ww+KHX+9Es3EESknq2/UDPnqf7KW1gdm575wQuJbBJblzH2p4onYMpvWmr5ssq1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OioPP0zi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03C54C4CED0;
+	Mon,  4 Nov 2024 05:48:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730699320;
-	bh=5fy6xKs7vhmUZBinU8ERiLTywxLCmF+rAnpbE/Um2aQ=;
+	s=korg; t=1730699323;
+	bh=wAyPzvyusi75sGKuPvls1PsCSRlhQvbCpG1vQQEFI1c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0l2PahRptpiEAyN4wodVq4nyyBKrG2iT6AhSssgSZs12x9aXjOxFaAP3N0pwTcizi
-	 0hjt3vxUg4eg/t6fBn4ehlSbmIKddGTVTRJHCIzG8Xp/Y9VybmzsMblzQ7dGLO4WKI
-	 QD7fOU4iUdeofngSjTc8KUEXUZUkpAG2PYLruDZQ=
-Date: Mon, 4 Nov 2024 01:34:19 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH/RFC] MAINTAINERS: Re-add cancelled Renesas driver sections
-Message-ID: <2024110457-enhance-arrive-b781@gregkh>
-References: <0a189e2c4090a1b308e18005d2552e335bac354f.1729511337.git.geert+renesas@glider.be>
+	b=OioPP0zi/0nBg+lUhuNBa7rxFW1Lzc3R36tLJ4BJWv067IjqUCKXhel4qWAIeLDqv
+	 z2YJac0n3tzcHmI2qSntf/sMSEYOOeKM21YCTEsm1nkhzA2bkc9Vc82mrzUeR7D8e6
+	 iUCK/zujDNl74HfEA1Ds76Q5+ZKUHoQp6Kg3X/vQ=
+Date: Mon, 4 Nov 2024 01:43:45 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Abhijit Gangurde <abhijit.gangurde@amd.com>
+Cc: linux-kernel@vger.kernel.org, git@amd.com, michal.simek@amd.com,
+	Nipun.Gupta@amd.com, nikhil.agarwal@amd.com
+Subject: Re: [PATCH 1/1] cdx: register shutdown callback for cdx controller
+Message-ID: <2024110422-gambling-serve-0504@gregkh>
+References: <20241017103216.316114-1-abhijit.gangurde@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,15 +53,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0a189e2c4090a1b308e18005d2552e335bac354f.1729511337.git.geert+renesas@glider.be>
+In-Reply-To: <20241017103216.316114-1-abhijit.gangurde@amd.com>
 
-On Mon, Oct 21, 2024 at 01:56:51PM +0200, Geert Uytterhoeven wrote:
-> +RENESAS R-CAR SATA DRIVER
-> +L:	linux-ide@vger.kernel.org
-> +L:	linux-renesas-soc@vger.kernel.org
-> +S:	Supported
-> +F:	Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
-> +F:	drivers/ata/sata_rcar.c
+On Thu, Oct 17, 2024 at 04:02:16PM +0530, Abhijit Gangurde wrote:
+> register shutdown callback for cdx controller platform device
+> to handle graceful connection closure of rpmsg transport.
+> Also, handle shutdown of cdx bus device by disabling the bus.
 
-You can't have a "Supported" entry with no person assigned to it :(
+When you say "also" that implies it should be a separate patch, right?
+
+And why send this to me and not to the cdx maintainers?
+
+thanks,
+
+greg k-h
 
