@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-395488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764E09BBE9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:11:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC079BBEA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23B9B1F226F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:11:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08311C21BD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7401D54E1;
-	Mon,  4 Nov 2024 20:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95871D63E1;
+	Mon,  4 Nov 2024 20:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ouht3fVM"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nnM6j3fz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0387C1C1AA9;
-	Mon,  4 Nov 2024 20:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC811D63C1;
+	Mon,  4 Nov 2024 20:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730751059; cv=none; b=flFuUXJralkZdUShrcT+zRPyaFRCJshu79GIQdj1pOmPx8u1eSV6GLIAzciSNhJ4ExzX3fO7K9iVUM7HtWyRCBs4/4P2lYRcJO97YcS9ywX7XQCUpxFM6OKpSUL8kQlMIGYLMIN/Key8gCe+Fm1ktnrSFtrLgKrOt2qB6wl0+Yc=
+	t=1730751310; cv=none; b=Sq/c2jeFbo56rvPtWpNgNj/fA8eVeN8yBdKKUM4nqxutAYuoCG5HiGMjbOhdiq4mhWCqWVwGJwY9XUINDdmQEt2z88yT5ZOdAI9TyNTGe+YCHgzhpA3ERVF+c4TcgBwWdnbB3NNw+NbK41dTfh1q5yZJ9+RjWmIfZ3uywfb3Ci8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730751059; c=relaxed/simple;
-	bh=ngtHXfYhTqO9WiWoFpwC+aWrB7shybz8no7qCBbIJOw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Nzx8mK8kHNzExMlCmVG4jGJxcD7EyVRUHGsVLk5JBNqVCSMk2jV7zxtZgROWriv5zMO0iEFiAz2bFbgPMFqELISwqekITAvGQUXy7hNn/RaHUY0hxNb60QOg2TQze4MCCovdJkvfk0vxqR78Mi2KH2jKh4/nMTmXfO7aRxTzuZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ouht3fVM; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 11C2E42C18
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1730751057; bh=Tfp2pZtZSHTgLpvOTtkRdSzW/fo5uyhD/e3kfEXfm7E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ouht3fVMiSYbF32XQ6ppx4UBq8x4nDu3alVJXQlBz/B/i+aGKcSeDtuc8DU1/ALr0
-	 qibOFNCmC11rnlRs92OgeeBRfSYZzmhT2Fv7b4HX9RPn2vWQDJeGmw+gToeaOOBsq8
-	 8wUYhy+9lQzzuwWxkjXdCClGuqARePDddc5i7XWXF3tlOoxq4eVqh9dhA5xN1Bg+Bw
-	 VHOgLBG8QqOA9seXEUnN517sR0dewkipY2LU2ufv82ViT/oZDfwDUCV57o+SsOL9j9
-	 SYOeHcLS+WOZb1RW/R7uXrJNQ7cGXv/dVIvRjN1hlCvXpXSqnS291KK15cIhmNOcb8
-	 MWODFy/eOw3iw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 11C2E42C18;
-	Mon,  4 Nov 2024 20:10:57 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Nir Lichtman <nir@lichtman.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: Fix incorrect paths/magic in magic
- numbers rst
-In-Reply-To: <20241104200328.GA73996@lichtman.org>
-References: <20241025135128.GA879576@lichtman.org>
- <871pzq94hp.fsf@trenco.lwn.net> <20241104200328.GA73996@lichtman.org>
-Date: Mon, 04 Nov 2024 13:10:56 -0700
-Message-ID: <87jzdi7oa7.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1730751310; c=relaxed/simple;
+	bh=epYdnbJKU5FFn0DdbqGPLAEbaoHaijlXYQL/Bm7Cau8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RyLceI+s3rXfoaTrSb7C7MOprKJgPJKHY43gvqiaSQFElQiqkUB1tprBNI1b/75L9PMcUiB/RVq9n0qlzJ/Qm6nYVJz89eGl1xaIZSQPfbuyztiOkJ6nuwEIKx5HLJwBEOrsQdoWU4XRf/XFWBMHPPyta4GWds8Z1uqdkHkoVj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nnM6j3fz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B4DFC4CED0;
+	Mon,  4 Nov 2024 20:15:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730751309;
+	bh=epYdnbJKU5FFn0DdbqGPLAEbaoHaijlXYQL/Bm7Cau8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nnM6j3fzhItRQO5T1tU17ntZzU8f5Tc6ZU6O1wzMJOULCAzSrHhQfJExxf2QzBZK3
+	 wEXua2Zi4E3XxZSYkJaIVrF5sHuOHiuzpTDVXF4J9xxAbWxON06jLeUBiBMthPGesA
+	 aaCmujVHtM1VTcDe95Wid6c6I9XNqpNzeZV8FxCWUU1JlHl62j17YSDlemuOShJRaO
+	 0Rv7wMspOakg8qVM2sqT/tRPhXqQp7u59QMIOYMyb3thmDxv9z1pgXNuQnJpEk7724
+	 1zsj+lRXjuHyGxybLtREvi8sK4taD/LXU4iOmclFdMQglsjorc1hhO9AUWYTpLec7m
+	 gA96o9JSLKW6w==
+Date: Mon, 4 Nov 2024 14:15:07 -0600
+From: Rob Herring <robh@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 0/6] Add support for the root PCI bus device-tree node
+ creation.
+Message-ID: <20241104201507.GA361448-robh@kernel.org>
+References: <20241104172001.165640-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104172001.165640-1-herve.codina@bootlin.com>
 
-Nir Lichtman <nir@lichtman.org> writes:
+On Mon, Nov 04, 2024 at 06:19:54PM +0100, Herve Codina wrote:
+> Hi,
+> 
+> This series adds support for creating a device-tree node for a root PCI
+> bus on non device-tree based system.
+> 
+> Creating device-tree nodes for PCI devices already exists upstream. It
+> was added in commit 407d1a51921e ("PCI: Create device tree node for
+> bridge"). Created device-tree nodes need a parent node to be attached
+> to. For the first level devices, on device-tree based system, this
+> parent node (i.e. the root PCI bus) is described in the base device-tree
+> (PCI controller).
+> 
+> The LAN966x PCI device driver was recently accepted [1] and relies on
+> this feature.
+> 
+> On system where the base hardware is not described by a device-tree, the
+> root PCI bus node to which first level created PCI devices need to be
+> attach to does not exist. This is the case for instance on ACPI
+> described systems such as x86.
+> 
+> This series goal is to handle this case.
+> 
+> In order to have the root PCI bus device-tree node available even on
+> x86, this top level node is created (if not already present) based on
+> information computed by the PCI core. It follows the same mechanism as
+> the one used for PCI devices device-tree node creation.
+> 
+> In order to have this feature available, a number of changes are needed:
+>   - Patch 1 and 2: Introduce and use device_{add,remove}_of_node().
+>     This function will also be used in the root PCI bus node creation.
+> 
+>   - Patch 3 and 4: Improve existing functions to reuse them in the root
+>     PCI bus node creation.
+> 
+>   - Patch 5: Update the default value used when #address-cells is not
+>     available in the device-tree root node.
+> 
+>   - Patch 6: The root PCI bus device-tree node creation itself.
+> 
+> With those modifications, the LAN966x PCI device is working on x86 systems.
 
-> On Mon, Nov 04, 2024 at 12:35:30PM -0700, Jonathan Corbet wrote:
->> Nir Lichtman <nir@lichtman.org> writes:
->> 
->> > Fix some no longer true header/c file paths and correct the BAYCOM_MAGIC
->> > value to be decimal as in the source instead of incorrectly hexadecimal
->> >
->> > Signed-off-by: Nir Lichtman <nir@lichtman.org>
->> > ---
->> >  Documentation/staging/magic-number.rst | 6 +++---
->> >  1 file changed, 3 insertions(+), 3 deletions(-)
->> 
->> I've applied this, thanks.  I do continue to wonder about the value of
->> this file in general, though...
->
-> Agreed, it feels pretty much like abandoned book keeping that gives minimal
-> value since the chance of magics colliding is slim, but I think the general tip
-> before the table of magics is pretty good.
->
-> What is your opinion about integrating the tip in a different page and deleting
-> this page entirely?
+That's nice, but I don't have a LAN966x device nor do I want one. We 
+already have the QEMU PCI test device working with the existing PCI 
+support. Please ensure this series works with it as well.
 
-Well, that's part of my reasoning, actually.  I assume you're talking
-about this:
-
-> It is a **very** good idea to protect kernel data structures with magic
-> numbers.  This allows you to check at run time whether (a) a structure
-> has been clobbered, or (b) you've passed the wrong structure to a
-> routine. 
-
-The thing is, that's really not a guideline that anybody has followed
-for many years.  I dug into this a while back:
-
-  https://lwn.net/Articles/915163/
-
-There was a series to remove all of this cruft a couple of years ago
-that the author eventually gave up on:
-
-  https://lore.kernel.org/lkml/cover.1668128257.git.nabijaczleweli@nabijaczleweli.xyz/
-
-Honestly, I think the best thing to do is to simply remove the file.
-
-Thanks,
-
-jon
+Rob
 
