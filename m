@@ -1,110 +1,144 @@
-Return-Path: <linux-kernel+bounces-394287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026F69BACE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:56:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C0EA9BACE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:57:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8FF28214C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03315282149
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC2B18E050;
-	Mon,  4 Nov 2024 06:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+uqmhDn"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F7D18E056;
+	Mon,  4 Nov 2024 06:57:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C464118562F;
-	Mon,  4 Nov 2024 06:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9B318C91D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730703361; cv=none; b=ZEUKe2Xrq7nbw49sDnVXB7DUTDKm1zvJxTEEpc962SmiUTP1tIDr/guxKeOvKKDLELVVFkJCmtkoXbH6ChiYgYxY2Ij/rDp7tYgvfrATCj1sA271kq+6qPU+fwENuozyZrKuOcRIIOIpdBhwGjtZS67KcNT9slB04L5sghSdAoA=
+	t=1730703426; cv=none; b=mWhRFHF24UQO9COQpyp2VUIwAKmswt2eR6GaqxdeP/Tw9hIq8myZD0btJ1pBjcwaC20H3kvz5fdriqL4S9HI4xP5Jre0CjemlkiJkAzB+NplpjZEi3ZwV93DxEV9f///fp95z+9nRWLYFl/tZ10JZf6NvwUHGLxNteZnfRRebw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730703361; c=relaxed/simple;
-	bh=KnTOP1y0mwLLmktmDUuLS9+1x78AkvSs2dKxz3+1fZc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uiUELYOVrUdLpAgwIhrthG4F2bmTNWqQYE/iUh5l/Ij9uBmRS9DexTMm7VBnHZ6IGM01eYAF5aAt5jFDsVcqVHvwJKrai5k5CHe0i0ItA5NOXs8VoJEpXbBOdGeyfNuiRUS3sjk70prk5oceHOXRLKZ7aK97PPWiMsqLtkjwU6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F+uqmhDn; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460b2e4c50fso28992141cf.0;
-        Sun, 03 Nov 2024 22:55:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730703358; x=1731308158; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KnTOP1y0mwLLmktmDUuLS9+1x78AkvSs2dKxz3+1fZc=;
-        b=F+uqmhDnnzHJqYG3EC2NuDpgEae0OLAbyYy0291mlMeHowC54EV5W8a7mKxYQSMBIW
-         LpZ+dsQrdHqnpOWdo2pIgxLdcEBxls1SPTDX56OamnPYMEMU1r6I0uhKrGgwHA3LPY/9
-         s96QF6Y/lBxaFnp/LR8zt7x59ncHDFFkGgr44uN0aRj4Ai3dtHV3vVA/ciBLe4J21kxG
-         wRhOTEBbF2pxEJRX5M/ea5V/+/D4Z62N9FGHYCIvO2/GapSixOu7tHtRDtC9jxZANaFI
-         U1Cug83OxqBYPx8Q46rvDS+thLuPQaAlQhrE0h5aHgOg6MBi/ibUpTAvvCMu0XUEJz4P
-         yaSg==
+	s=arc-20240116; t=1730703426; c=relaxed/simple;
+	bh=7u3PVP7XeLnXBb7y0pIyLPAOxq6idjR9oXlLVtoMRWk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DN6d0+N0XHivwuf7hg8O89jya/qBu/hvCjGvuCoXPARKhkjKMXNY+/itDoLw///Rnfilc6pX6eIx4eRkk2koaxolJn10klyMsClpBIsj2g9bgUVsRrOoFFgiQu2ZSwG5QzYJA85Yl8HmovEBxltwdr2WZSUljpbKHLJduMxEGm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abf68e7ffso426254339f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 22:57:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730703358; x=1731308158;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KnTOP1y0mwLLmktmDUuLS9+1x78AkvSs2dKxz3+1fZc=;
-        b=LpqjUg18JG7XNNhtwnvtBR2qLqIuu5CMUph7Qxtzm9vhUW44r7m1JQeAhF8ngh4p8H
-         crYE4z6ZDHfFLfSXBqhr+aJ85loVwrl6DM53jgSb3jHH3kvG3GwsmiUOzv0gy+Bi6Wzf
-         dSV1jQAhShU5eZsSKjRiU3cctXWnO4vB0LapkGCbtBfI3VLyVEUPy+AxvZe+AsHZfb9z
-         3n6uVgetgKRAPMsHAE77bC7j+AZ/nThFYeXTReRKqFlOni9eBJjKgTpdy1BjXdj9rQ3c
-         4fVRAjS+ksv29L2ekdqXzjdE8MyfQJd2yi3i5xhnBRS/tx5df3IHf1cpB7Wp3WT9r60+
-         dUGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUADFFLcdwxGYE+mElXLSz4qPz8WEo07V9Cede3CtP/byAfa/oEO+Gc/mvYwLTxQc6yiXcEbQ0us1uD@vger.kernel.org, AJvYcCVWN5r8fzZV9JBmh2IKDi4LV+mtQYM86wjL16D8+wKIIUAE5f79PUiVgpXT0911h1li9mohJFSUgHVgTIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkqFJ+DkPludxu3ksKc6wEBX9goT9+uAOgZHOU4NN+0rXhdnbg
-	Ft1k6Hb25ucEJ/oXTk00XVeD+R6rQu1Q/KW2J6+vR8nmk5h1b/Y3Jyh87nqygP5/sQ1VF5kZWrm
-	PGO/sj7bHo2AdY96H2Lntml+y7F8=
-X-Google-Smtp-Source: AGHT+IF97gXJ5LGCjJTks8AH4z0TUnSkkLJFAHat/Lf228B3dkZvcLaj9nfLYuwamNsr5k6g30A15LrUWlBnUOv+79c=
-X-Received: by 2002:a05:622a:609:b0:462:a7b3:985b with SMTP id
- d75a77b69052e-462a7b3a2d7mr277828281cf.59.1730703358632; Sun, 03 Nov 2024
- 22:55:58 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730703423; x=1731308223;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cS56byKtsj1CuaOp8CMIOFr+yZjq6JATOWy1qBHCB3Y=;
+        b=EfiVOjJbId+rQAVL+b62MPK4YSYxiDBV04DkkFosm+0KhUlrMHG1d7Fs1dbpTWgy6z
+         LIc5EWt5CWDKUHpiszveGUkiBZgtaliRktc9o1HCsnyzKKs1whZixHHLTt48anGC9zpa
+         HXT+Dq2X6jpB30Nxy83/EyNfpH6zhbTPUPJ9FQMhgby5DgKYNCSVzZGl+p9kB7Q5IjLN
+         /f8xCX5VjR0+zDapE8WginUIoz4KimPyjnGhmhjiPNLD+uoZcjKo08RT/NGcypsXzYF6
+         X213AojdfXLr/yGsDHs+jylXHG+7/3uOZJDsJhnyrCWKVo1W8CLoVi1X/52NIxVjh/Mc
+         EnPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXK/Xtps/TrH36G6s7t6aJu+mL6E5I6mJsV7JJYSFNWpV9+xzueugJzj2i+asJHZ3VvXiEpbcU/CHPqNpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDPVpzUcmxjVmJ6/2N4+oQAv7mxcV2ec7hcZAcADBXWnnV5clG
+	7t4+JQ1Vh5Dy5+tDL6MvJ9nrefRwHzojLFKEjxadyJy3WlrG2wIx0nYNq19h2nrn7AtWkBD8Kyx
+	OcKPyklzQ6N1GvzNTtzE88I16n3hDKeoPCH+hZjohisupavK9utnwA1k=
+X-Google-Smtp-Source: AGHT+IF9NRi1wtC75+dFdmgUK+o3W5wazJccOcbwGFbyTRSX9gytRCMUlAFpjg5r+pEv3KgtFTrVdfHpgSJ+4xyJSfyYTUEE8Yeo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104014439.3786609-1-zhangshida@kylinos.cn>
- <CANubcdWwg3OB_YV4CteC7ZZBaQXOuvFG1oS7uN+TpabS=Z=Z2Q@mail.gmail.com> <ZyhAyrateNQPz3Hw@dread.disaster.area>
-In-Reply-To: <ZyhAyrateNQPz3Hw@dread.disaster.area>
-From: Stephen Zhang <starzhangzsd@gmail.com>
-Date: Mon, 4 Nov 2024 14:55:22 +0800
-Message-ID: <CANubcdWdk+STqOYPO=24f4MSXe1sBvLmk5hJZS_KX+qk1bTpgg@mail.gmail.com>
-Subject: Re: [PATCH 0/5] *** Introduce new space allocation algorithm ***
-To: Dave Chinner <david@fromorbit.com>
-Cc: djwong@kernel.org, dchinner@redhat.com, leo.lilong@huawei.com, 
-	wozizhi@huawei.com, osandov@fb.com, xiang@kernel.org, 
-	zhangjiachen.jaycee@bytedance.com, linux-xfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
+X-Received: by 2002:a05:6e02:164d:b0:3a3:4122:b56e with SMTP id
+ e9e14a558f8ab-3a4ed31449emr296904625ab.26.1730703423648; Sun, 03 Nov 2024
+ 22:57:03 -0800 (PST)
+Date: Sun, 03 Nov 2024 22:57:03 -0800
+In-Reply-To: <3c01986b19c041931fe7bb542b1b00069b2e458a.camel@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6728703f.050a0220.35b515.01b1.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] VFS: Busy inodes after unmount (use-after-free)
+From: syzbot <syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=884=E6=97=
-=A5=E5=91=A8=E4=B8=80 11:34=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Mon, Nov 04, 2024 at 09:49:32AM +0800, Stephen Zhang wrote:
-> > Hi all,
-> >
-> > I just send the scripts to test these series here.
->
+Hello,
 
-Okay, I've resend them in these series.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+VFS: Busy inodes after unmount (use-after-free)
 
-Cheers,
-Shida
+ocfs2: Unmounting device (7,0) on (node local)
+VFS: Busy inodes after unmount of loop0 (ocfs2)
+------------[ cut here ]------------
+kernel BUG at fs/super.c:652!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 6441 Comm: syz-executor Not tainted 6.12.0-rc6-syzkaller-g59b723cd2adb #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:generic_shutdown_super+0x2ca/0x2d0 fs/super.c:650
+Code: 1b 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 f9 23 ed ff 48 8b 13 48 c7 c7 80 be 18 8c 4c 89 e6 e8 87 3f ad 09 90 <0f> 0b 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000354fd20 EFLAGS: 00010246
+RAX: 000000000000002f RBX: ffffffff8ee531e0 RCX: e6b6b127fe74ba00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 1ffff1100f467cf0 R08: ffffffff8174a12c R09: fffffbfff1cf9fd0
+R10: dffffc0000000000 R11: fffffbfff1cf9fd0 R12: ffff88807a33e668
+R13: dffffc0000000000 R14: ffffffff8c49f718 R15: ffff88807a33e780
+FS:  0000555593ff6500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c00221c000 CR3: 0000000060ea2000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ kill_block_super+0x44/0x90 fs/super.c:1710
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x24f/0x310 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8ed837fa47
+Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffcdc5c5528 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f8ed837fa47
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffcdc5c55e0
+RBP: 00007ffcdc5c55e0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffcdc5c6660
+R13: 00007f8ed83f11cc R14: 000000000001b0d9 R15: 00007ffcdc5c66a0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:generic_shutdown_super+0x2ca/0x2d0 fs/super.c:650
+Code: 1b 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 f9 23 ed ff 48 8b 13 48 c7 c7 80 be 18 8c 4c 89 e6 e8 87 3f ad 09 90 <0f> 0b 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000354fd20 EFLAGS: 00010246
+RAX: 000000000000002f RBX: ffffffff8ee531e0 RCX: e6b6b127fe74ba00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 1ffff1100f467cf0 R08: ffffffff8174a12c R09: fffffbfff1cf9fd0
+R10: dffffc0000000000 R11: fffffbfff1cf9fd0 R12: ffff88807a33e668
+R13: dffffc0000000000 R14: ffffffff8c49f718 R15: ffff88807a33e780
+FS:  0000555593ff6500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000563a27431950 CR3: 0000000060ea2000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-> Please include the scripts as in line text like is done for patches
-> - base64 encoded attachments are not quotable nor readable in
-> archives.
->
-> -Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+
+Tested on:
+
+commit:         59b723cd Linux 6.12-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10202d5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dc23b43a0f2f7cf7
+dashboard link: https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
