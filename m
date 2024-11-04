@@ -1,187 +1,89 @@
-Return-Path: <linux-kernel+bounces-395160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381759BB993
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:57:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2AF09BB999
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9214BB2196A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:57:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E9331F22AB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F8A1C729B;
-	Mon,  4 Nov 2024 15:56:31 +0000 (UTC)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22C81C0DED;
+	Mon,  4 Nov 2024 15:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhkgX+5D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5153C1C07D3;
-	Mon,  4 Nov 2024 15:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21391BF804;
+	Mon,  4 Nov 2024 15:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730735791; cv=none; b=eSjsUMZV9gD/HlRDxprHMYw5bnHXsmzXJbVPuS4UdfcdXW6klljQkROkxyn+gHCHdHZOYY+SYecPFm43uo1LKNMnVUuQqCDl49udOdMv0G5Koe5lKTBuaNkEnm2gXV8kzsX/w2rg8xKUiZ/SmbpwWaD6R8Nz1LVdgKuSfVZiGTA=
+	t=1730735840; cv=none; b=EmR9DSsedWgf0FJm3DyFrQR/xzQIxxuUUt3ErDh1jDJeCsrw0f2sMDoPqOSDr3pb8TEhWDy5S3lUFm+GY5lqPisYYmGY0Rr8OKMrpmxJCkjOr+Nnv4dUDwY7OY37Thlgyx0RM0SE8oyQesEt8ogj6xzNqmlfn6uN9sejHpoGJgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730735791; c=relaxed/simple;
-	bh=STHL/UYDRFzYRey1JBPZ+/lKEezCeXNr3q6DL5WVntQ=;
+	s=arc-20240116; t=1730735840; c=relaxed/simple;
+	bh=du3D9Ti6JlIpp3Bx+I1pxH4VeSvLJQ6Ys6/W+ho9O+k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lqZa9zVTwpSISS+u8zB2bzZwNsYCjjmLkxnzitHd03yNHDLedoXyacUgLapyA8o4HgU7tzkiD3/5WRtdGi4SF+2CGSXA4wRNMxPEQCpYBAaQZ28KE+OyZsJk2JVMGTqYxFOguZBw/pwP+99rn7nmmwQgngwvdXT490PC/srlhCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e30eca40c44so3772881276.2;
-        Mon, 04 Nov 2024 07:56:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730735787; x=1731340587;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z81NMGbuxUOa9XkPxAV+A5iia8KegJSMZSCO1E8CyfU=;
-        b=paj1P4aJfNcYJHN21Okifhlfkg4AH8klSVdF8QFGTcAc2l6EG/7VOvx1Zkst9MQpLE
-         pR0K1M6mGOgQ2gGS8xvt653bIZhDJoQPI46XB5H9SKlBfKzM6ydNR7JRqtHlPypwwov6
-         BSQlBm6rwiFJi9gsdDo27dJFPmJ7urh+49Dz6ZWMx8sqQJ0EneVfvgrLXyrH2416kQp3
-         +NIpBuUi5p5Irr+Sw6mmtoaH3/ZZqTVqpKiAV1Xv/eHeRsUQO8SwcODn2wNsT+fe1yMH
-         dZSMkr9of1ksd0F5jUT5HbbH0RPtYTQmBD2BO4W48cZbP+ZWG99+IrgvuUHE2oLjf7y2
-         Psaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVI0My0m88NX4pkh6TI9aEGVxNOtfJ5DjzW/tfW28mP1GwWKzxGAzU4NF31SDHacYXLDRL8aFLx7uku@vger.kernel.org, AJvYcCVmNFf5s1JozrKR10cukxglmVTqMJTRHqIIlKPsaW1QYNqY58KU4yf6bwpg/fGhfuZe6eFPjNEYUyfBQi3w@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVdh0dwwAPKpN1aRnItZiDowzhJav4fRcMDlGsWqwUzZn0m4kC
-	EqqhYLd9KKk0qqiBNvWnxQmuDXguvEW68D1TPaVd9Z5qJUpKNZf6DgdOulbp
-X-Google-Smtp-Source: AGHT+IFwSrQ0uzX1RfXS5Z0Oq4kWSl0NEuCb4zGG37yYYyKkTdDDMQNaXzE6bQPS4U8cHSK++DX9yA==
-X-Received: by 2002:a05:690c:102:b0:6db:4536:8591 with SMTP id 00721157ae682-6e9d8acb491mr258198487b3.28.1730735787346;
-        Mon, 04 Nov 2024 07:56:27 -0800 (PST)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea55ac9a22sm18419747b3.8.2024.11.04.07.56.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 07:56:26 -0800 (PST)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ea8419a57eso16211807b3.1;
-        Mon, 04 Nov 2024 07:56:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVk03SGr96EwWue4n59jPpe1/WOFGH2Ew8BbIG64B0wT+8WYMuj1RprQXPL2aOuLtuJkMc0ahhrBQafqy+Z@vger.kernel.org, AJvYcCXub+uVY1ptFZed2zPN4Ziuh6ECNU79jWNLq64wYljV6wMShZHfQo+TeGo5ATTsVJs1f3yWCvAC0MoY@vger.kernel.org
-X-Received: by 2002:a05:690c:2d85:b0:6e3:12a3:bd36 with SMTP id
- 00721157ae682-6e9d8b171cbmr233704207b3.43.1730735786661; Mon, 04 Nov 2024
- 07:56:26 -0800 (PST)
+	 To:Cc:Content-Type; b=TAvTcX/dqcIVtnHY1xsWWwobKEjXECVxnPRuKXi6ieszFlb9sG5lbrFAQxNAdbTlvWLs+1zppp71djb4In2RtZ48IwiQJi3m/SqipElemU0JtcPGqH3Aa+F/WLozLv9sUH0a754cTBK2S8LttJrxpOXBrCc6H0JTUqKEO+Tcp14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhkgX+5D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9567FC4CECE;
+	Mon,  4 Nov 2024 15:57:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730735838;
+	bh=du3D9Ti6JlIpp3Bx+I1pxH4VeSvLJQ6Ys6/W+ho9O+k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WhkgX+5Dt2lESakf8onXXzW7cZ5C/VqXTnynUXelk6LMEmiXhiiS5uKvIiglYRRQd
+	 r9RgkSZwoBub61J/vu+uTCqUEU5Ysp0D09w42GTSBZWCxX1EfAehu9alRA25tch2LA
+	 f0lxhUclCAfrEgeCiP7XMk73AL1jAXLjj481hlXxCSN67ZjIMUU0zsbjfEbevIoMJ/
+	 5WrBNrm/zPmv3jByyuHyNh2s3y8gktj41YrXr6X8tTIgUsbLAz6duPWeSGogxZ43h5
+	 iX9Q6SKBCIk9tK5vr7TMzpOKsV2UaAlMIR8AmfYR6NIq/rmyqePpo/iA+7ZCt7RwqH
+	 axASATQSWEtlQ==
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e28fe07e97dso4350588276.3;
+        Mon, 04 Nov 2024 07:57:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU+ajockVYa4qSm+DAZ3DMOHSyKKIchZzwafAKVJBKdZ+d8Tb/GIhiXazyIsnXtS7oYqkpZ+rS/QkM+@vger.kernel.org, AJvYcCWBYEyUPPlUVQjRL+F6XxtiwyzU//nfg+lZxIHevxI3gHujcmZzJ6DrtkeYjJW7ObPJMaGBjdQTt3X4299F@vger.kernel.org, AJvYcCWG5fZkjSNfwgtq2jMeIhuR8zmlmW+si2gErxRA0/UIkRffkD8soBRGwHRUAOIzeU6bZDxYsIdb2rFcD2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrLbTX72UxhtMSv1sUjIpU/70lyRo7DfMEjcDdNzbS8Gf5MN1F
+	4DaZbnku/yh9nCI9m+fpmfjl7PzurQGwMqNuf+oTrclOCIT4uuW8q1mrLvrkiS+0Q4W6cM3NjBL
+	xKAlTYFPrBiLr3o0htcObQtvRZA==
+X-Google-Smtp-Source: AGHT+IFJthhkSzkBdnbiB5dDIi1s/eaCvQbG6JsPmn7TbVCmrz/zQ6MVdpFKk0iB6A/Zy7+RL9YE/wF2HoO/7hQxgz4=
+X-Received: by 2002:a05:6902:3188:b0:e33:25e2:4af6 with SMTP id
+ 3f1490d57ef6-e3325e24e4amr5209097276.6.1730735837784; Mon, 04 Nov 2024
+ 07:57:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240219-add-am64-som-v7-0-0e6e95b0a05d@solid-run.com>
- <20240219-add-am64-som-v7-4-0e6e95b0a05d@solid-run.com> <CAMuHMdXTgpTnJ9U7egC2XjFXXNZ5uiY1O+WxNd6LPJW5Rs5KTw@mail.gmail.com>
- <a65e17e9-0055-4e5a-902f-8ee2807a86df@ti.com> <299b6b75-beef-46aa-9203-b96009226677@solid-run.com>
- <cd02e760-54c6-4a92-af4e-e786d80cfbbd@ti.com> <533c54e5-d024-4fd0-b92d-0f320f25999f@solid-run.com>
-In-Reply-To: <533c54e5-d024-4fd0-b92d-0f320f25999f@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Nov 2024 16:56:14 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWY0J7uooeRbUGwjkeCLd2UVyN9dtDWUkg5pJ3sAULdsQ@mail.gmail.com>
-Message-ID: <CAMuHMdWY0J7uooeRbUGwjkeCLd2UVyN9dtDWUkg5pJ3sAULdsQ@mail.gmail.com>
-Subject: Re: [PATCH v7 4/4] arm64: dts: ti: hummingboard-t: add overlays for
- m.2 pci-e and usb-3
-To: Josua Mayer <josua@solid-run.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241102125712.2647325-1-csokas.bence@prolan.hu> <20241102125712.2647325-3-csokas.bence@prolan.hu>
+In-Reply-To: <20241102125712.2647325-3-csokas.bence@prolan.hu>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 4 Nov 2024 09:57:06 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+BFBTUT_VrkmCTV-XBmNvscGF0Bzfj7LEeytRea55aBg@mail.gmail.com>
+Message-ID: <CAL_Jsq+BFBTUT_VrkmCTV-XBmNvscGF0Bzfj7LEeytRea55aBg@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] dt-bindings: sound: Add Allwinner suniv F1C100s
+ Audio Codec
+To: =?UTF-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>
+Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Josua,
+On Sat, Nov 2, 2024 at 8:00=E2=80=AFAM Cs=C3=B3k=C3=A1s, Bence <csokas.benc=
+e@prolan.hu> wrote:
+>
+> Add compatible string for Allwinner suniv F1C100s audio codec.
+>
+> [ csokas.bence: Reimplement Mesih Kilinc's binding in YAML ]
+> Signed-off-by: Cs=C3=B3k=C3=A1s, Bence <csokas.bence@prolan.hu>
+> ---
+>  .../sound/allwinner,sun4i-a10-codec.yaml      | 31 +++++++++++++++++++
+>  1 file changed, 31 insertions(+)
 
-On Wed, Oct 30, 2024 at 1:18=E2=80=AFPM Josua Mayer <josua@solid-run.com> w=
-rote:
-> Am 28.10.24 um 19:44 schrieb Vignesh Raghavendra:
-> > On 28/10/24 22:49, Josua Mayer wrote:
-> >> Am 28.10.24 um 16:31 schrieb Vignesh Raghavendra:
-> >>> On 25/10/24 19:27, Geert Uytterhoeven wrote:
-> >>>> On Mon, Feb 19, 2024 at 4:05=E2=80=AFPM Josua Mayer <josua@solid-run=
-.com> wrote:
-> >>>>> HummingBoard-T features two M.2 connectors labeled "M1" and "M2".
-> >>>>> The single SerDes lane of the SoC can be routed to either M1 pci-e
-> >>>>> signals, or M2 usb-3 signals by a gpio-controlled mux.
-> >>>>>
-> >>>>> Add overlays for each configuration.
-> >>>>>
-> >>>>> Signed-off-by: Josua Mayer <josua@solid-run.com>
-
-> >>>>> --- /dev/null
-> >>>>> +++ b/arch/arm64/boot/dts/ti/k3-am642-hummingboard-t-usb3.dtso
-
-> >>>>> +&usbss0 {
-> >>>>> +       /delete-property/ ti,usb2-only;
-> >>>> /delete-property/ (and /delete-node/) to delete something in the bas=
-e DTS
-> >>>> does not work.
-> >> My understanding is that flags are equivalent to boolean, i.e:
-> >>
-> >> ti,usb2-only =3D <true>;
-> >> ti,usb2-only;
-> >>
-> >> are equivalent.
-> >>
-> >> If so, can we assign <false> within the overlay?
-
-> Is there any chance of reassigning <false> and making an argument
-> that this should be fixed?
-
-In theory, it can be done, if (1) all code that checks boolean
-properties would use of_property_read_bool() instead of
-of_property_present(), and (2) of_property_read_bool() would be changed
-to actually read the boolean value instead of just checking for the
-presence of the property.  And of course we have to do that in all
-software that uses DT (i.e. not just Linux).
-See [1][2][3] below for caveats.
-
-Using a similar solution for /delete-node/ is more complex, but still
-feasible, by setting its "status" property to "disabled" . I think
-that can be made to work if all DT core code that looks up nodes would
-just ignore any node that has a disabled status. I.e. callers would
-no longer see disabled nodes at all.
-
-> I find it frustrating that overlays can't override boolean properties,
-> and for consistency reasons I would otherwise change both
-> pcie and usb3 overlays to standalone dts.
-
-OK.
-
-[1] The example in Documentation/devicetree/bindings/sound/rt5651.txt has:
-
-        realtek,dmic-en =3D "true";
-        realtek,in2-diff =3D "false";
-
-    Obviously the second line doesn't really work with the current
-    code, but fortunately there are no actual users of that (in
-    upstream DTS).
-    Note: "realtek,in2-diff" is a typo for "realtek,in2-differential".
-
-[2] The example in Documentation/devicetree/bindings/sound/pcm3060.txt has:
-
-        ti,out-single-ended =3D "true";
-
-    Again, this is an open invitation for replacing "true" by "false".
-    Fortunately there are no such users (in upstream DTS).
-
-[3] arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi has:
-
-        gpmc,device-nand =3D "true";
-
-    But "gpmc,device-nand" does not exist. Oh, it is under removal:
-    https://lore.kernel.org/all/20241009-gpmc-omap-dtbx-v2-2-fc68124a090a@k=
-ernel.org/
-
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
