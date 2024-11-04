@@ -1,263 +1,164 @@
-Return-Path: <linux-kernel+bounces-395079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248CC9BB82B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:43:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F449BB82D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:44:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47E4D1C22651
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:43:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4F251C221C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A626B1B6D02;
-	Mon,  4 Nov 2024 14:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E311B6D03;
+	Mon,  4 Nov 2024 14:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="lXS/O6AD"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=ptr1337.dev header.i=@ptr1337.dev header.b="JTqRjBC1"
+Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD7433FE;
-	Mon,  4 Nov 2024 14:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48731369B6;
+	Mon,  4 Nov 2024 14:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730731423; cv=none; b=Gv6FA2GVYB4MqhCGjUbXgrBhi0zM8yYdeal83BZ2upbwQoG3Astoy/jatNhZOplaVr/Ar2s/07yPqknXp8OBDhx4xyWStgzkD1el0znz4/AjYtmzrcElJQ9N0RKrjhAz98l78DrI3MTLJT7tv7chqBbp+LQ01HTO0lDpS0oI1Kw=
+	t=1730731457; cv=none; b=m6MmKpCfjFIk9oOlqzYbD3PmWgNSeyeAtFjILrINgE61fbpGlM7zGWLvTA2xk/EoS9CPWsOnnr8V+TltsXBGQ4V+ZWpcwSTy0x39IiavXyisf3YfgFCN7YE/nlJfo/s8EpOUe/1xBH/8NFhA1mII1N+AdX/QK6NQahpfsbOq1PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730731423; c=relaxed/simple;
-	bh=ijgQU0+eO0qXU44b40w/VCG1UuGwEIvODuM/LYdJkAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X/Efy8ucUW1uusnT9nxPpc9dBhjEll7fqo0SQaKO1uH/+dm3O8XeJTdRX2ETHTfpHKin5t0PqQCQJCbCHPQDHezxSGGDCAtu9izMfbVWiEjJmNvOa1frKKCzieg3ongruVebi/fve/MtFP3VEJNUOEBkS/F+uQIg4JLvnIKuVUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=lXS/O6AD; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=v9p+fDPULefYeYR05M2yrJxg/cfLTDU/hHtfl2JV4pU=; b=lXS/O6ADZI1vTbEZ
-	dGn2EHwrgUKEyprPd53V2NXhU86SZIGkuDVBts3V+p/pWzWXtgkqhV3Sw3vrcIa51W3CMIDzt8bFn
-	GNIOGI0wGRTNut3Cp3tJImC+h5VxEHWpFKNmyOF9n/zGdsZlN9mb1l2TW7QSKSvGq+ydeyo1e+GzV
-	AFpRM1UciWPBbtjFKtGgnA7IgB1Bzc/jPMbpBuweLumJV78eqLmUFkYNzXnHRV2zbovA0ba3iKkhC
-	YBBwf/RiWgUW+h60+/i6QETtAPmJTAD7AU4id437TwJsH9u83QsSVD4lQHBEHPVrksR8dQlkLFqqY
-	zxAH+XwzDIAnfohWeA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1t7yIn-00FLmY-0e;
-	Mon, 04 Nov 2024 14:43:33 +0000
-From: linux@treblig.org
-To: pkshih@realtek.com,
-	kvalo@kernel.org,
-	linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH v2] wifi: rtlwifi: Remove some exhalbtc deadcode
-Date: Mon,  4 Nov 2024 14:43:31 +0000
-Message-ID: <20241104144331.29262-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730731457; c=relaxed/simple;
+	bh=1dB37Cc49m8JjFGCFvSOY5+g5lvy/roy/zoGscLJP3w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zt4HWNK4fM9PuC41KI6RAfUE1edlFpzj/MgXRvvZOr+QRhqHelKyF20kAAHHnCO9nv3q1ctKmYqfjnfOk0NmypK+BpCyjBYVL3H5ffgsZWTUtBCzw1k+BLUOTeXnPtCBNemmnsdc3ihlufAbgLxFCDvt6ryDwX2q9ptx2ZmBcwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ptr1337.dev; spf=pass smtp.mailfrom=ptr1337.dev; dkim=pass (2048-bit key) header.d=ptr1337.dev header.i=@ptr1337.dev header.b=JTqRjBC1; arc=none smtp.client-ip=202.61.224.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ptr1337.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ptr1337.dev
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7429F2805A2;
+	Mon,  4 Nov 2024 15:44:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ptr1337.dev; s=dkim;
+	t=1730731447; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
+	bh=2lEoLjVmg2x1tyqnCSNq6wpXarqIH33FEICWMKbfM3E=;
+	b=JTqRjBC16vhOyZkQxUA6j6P67qF3d29SAcp8bISeSSnIl1wGbzEoVqGHJlxnYYxl4ItfV6
+	VKhYd3chIFsJQDUmj/5r3H98j668GR7LJILcBhxnFGs7Ag3T9BTU2CMSW5qRDi2BFdWWw2
+	hverlXdzUyqCAsKalgcES+x0rhDbZ6wxHa5GYUpwEusePhYJYnB4oj43kDUAuWBtagK9Y/
+	WunxAQNZ4y4Hv8uw9GtYJoaZ8lyC+dyJRUCWf2sMgkWqBFlIAr6eD9sripXpYDwlNOlmJ/
+	H7O3v/6GnlxLuaWtRF0Mjbl08Yu/heoTtdPsw4gvwSZMCTkDjvyQBXcjA/Bl1A==
+Message-ID: <b5c2bf57-c051-40e3-a4a6-ccd38b728752@ptr1337.dev>
+Date: Mon, 4 Nov 2024 15:44:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kbuild: add resolve_btfids to pacman PKGBUILD
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: jose.fernandez@linux.dev, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>, Christian Heusel <christian@heusel.eu>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20241102120533.1592277-1-admin@ptr1337.dev>
+ <CAK7LNAQ=sCsTXB_O58W=AH=k8Vqzoi+hh6-BKhEjZYh-+xCvBQ@mail.gmail.com>
+Content-Language: en-US
+From: Peter Jung <admin@ptr1337.dev>
+Autocrypt: addr=admin@ptr1337.dev; keydata=
+ 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
+ gOKqiuxfQT4ByeLKUXhQY5ciKpjPTg==
+In-Reply-To: <CAK7LNAQ=sCsTXB_O58W=AH=k8Vqzoi+hh6-BKhEjZYh-+xCvBQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-exhalbtc_rf_status_notify(), exhalbtc_coex_dm_switch() and
-exhalbtc_antenna_detection() are unused since they were added in 2017's
-commit 7937f02d1953 ("rtlwifi: btcoex: hook external functions for newer
-chips")
+On 03.11.24 10:47, Masahiro Yamada wrote:
+> On Sat, Nov 2, 2024 at 9:06 PM Peter Jung<admin@ptr1337.dev> wrote:
+>> If the config is using DEBUG_INFO_BTF, it is required to,
+>> package resolve_btfids with.
+>> Compiling dkms modules will fail otherwise.
+>>
+>> Add a check, if resolve_btfids is present and then package it, if required.
+>>
+>> Signed-off-by: Peter Jung<admin@ptr1337.dev>
+>> ---
+>>   scripts/package/PKGBUILD | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+>> index f83493838cf9..4010899652b8 100644
+>> --- a/scripts/package/PKGBUILD
+>> +++ b/scripts/package/PKGBUILD
+>> @@ -91,6 +91,11 @@ _package-headers() {
+>>                  "${srctree}/scripts/package/install-extmod-build" "${builddir}"
+>>          fi
+>>
+>> +       # required when DEBUG_INFO_BTF_MODULES is enabled
+>> +       if [ -f tools/bpf/resolve_btfids/resolve_btfids ]; then
+>> +               install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+>> +       fi
+>> +
+> This is not the right place.
+>
+> scripts/package/install-extmod-build is a script to set up
+> the build environment to build external modules.
+> It is shared by rpm-pkg, deb-pkg, and pacman-pkg.
+>
+>
+> https://github.com/torvalds/linux/blob/v6.12-rc5/scripts/package/install-extmod-build#L34
+>
+> You will see how objtool is copied.
+>
+>
+>
+>
+> (Anyway, it depends on your urgency.
+> My hope is to support objtool and resolve_btfids in more generic ways.)
+>
 
-Remove them.
+Thanks Masahiro for the suggestion. I will look into and likely bring a v2.
+I did not know about other distribution/package managers, if this is 
+also a problem at them.
 
-This leaves ex_btc8723b1ant_coex_dm_reset() unused.
+At archlinux we have included this since a while already in the 
+PKGBUILD, see here:
+https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/blob/main/PKGBUILD?ref_type=heads#L151-152
 
-Remove it.
+I will also make the change to grep for DEBUG_INFO_BTF in the config 
+with the is_enabled function, instead of checking the path
 
-exhalbtc_dbg_control(), exhalbtc_stack_update_profile_info(),
-exhalbtc_set_hci_version(), and exhalbtc_set_bt_patch_version() are
-unused since their addition in 2014 by
-commit aa45a673b291 ("rtlwifi: btcoexist: Add new mini driver")
 
-Remove them.
+Regards,
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- .../rtlwifi/btcoexist/halbtc8723b1ant.c       | 11 ---
- .../rtlwifi/btcoexist/halbtc8723b1ant.h       |  1 -
- .../realtek/rtlwifi/btcoexist/halbtcoutsrc.c  | 79 -------------------
- .../realtek/rtlwifi/btcoexist/halbtcoutsrc.h  | 10 ---
- 4 files changed, 101 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c
-index 039bbedb41c2..379193b24428 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c
-@@ -3409,17 +3409,6 @@ void ex_btc8723b1ant_pnp_notify(struct btc_coexist *btcoexist, u8 pnp_state)
- 	}
- }
- 
--void ex_btc8723b1ant_coex_dm_reset(struct btc_coexist *btcoexist)
--{
--	struct rtl_priv *rtlpriv = btcoexist->adapter;
--
--	rtl_dbg(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
--		"[BTCoex], *****************Coex DM Reset****************\n");
--
--	halbtc8723b1ant_init_hw_config(btcoexist, false, false);
--	halbtc8723b1ant_init_coex_dm(btcoexist);
--}
--
- void ex_btc8723b1ant_periodical(struct btc_coexist *btcoexist)
- {
- 	struct rtl_priv *rtlpriv = btcoexist->adapter;
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.h b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.h
-index 9d41e11388ad..a4506d838dc7 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.h
-@@ -197,7 +197,6 @@ void ex_btc8723b1ant_rf_status_notify(struct btc_coexist *btcoexist,
- 				      u8 type);
- void ex_btc8723b1ant_halt_notify(struct btc_coexist *btcoexist);
- void ex_btc8723b1ant_pnp_notify(struct btc_coexist *btcoexist, u8 pnpstate);
--void ex_btc8723b1ant_coex_dm_reset(struct btc_coexist *btcoexist);
- void ex_btc8723b1ant_periodical(struct btc_coexist *btcoexist);
- void ex_btc8723b1ant_display_coex_info(struct btc_coexist *btcoexist,
- 				       struct seq_file *m);
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-index be4c0e60d44d..478cca33e5e3 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-@@ -1708,19 +1708,6 @@ void exhalbtc_bt_info_notify(struct btc_coexist *btcoexist,
- 	halbtc_normal_low_power(btcoexist);
- }
- 
--void exhalbtc_rf_status_notify(struct btc_coexist *btcoexist, u8 type)
--{
--	if (!halbtc_is_bt_coexist_available(btcoexist))
--		return;
--
--	if (IS_HARDWARE_TYPE_8821(btcoexist->adapter)) {
--	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_rf_status_notify(btcoexist, type);
--	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
--	}
--}
--
- void exhalbtc_halt_notify(struct btc_coexist *btcoexist)
- {
- 	if (!halbtc_is_bt_coexist_available(btcoexist))
-@@ -1768,31 +1755,6 @@ void exhalbtc_pnp_notify(struct btc_coexist *btcoexist, u8 pnp_state)
- 	}
- }
- 
--void exhalbtc_coex_dm_switch(struct btc_coexist *btcoexist)
--{
--	struct rtl_priv *rtlpriv = btcoexist->adapter;
--
--	if (!halbtc_is_bt_coexist_available(btcoexist))
--		return;
--	btcoexist->statistics.cnt_coex_dm_switch++;
--
--	halbtc_leave_low_power(btcoexist);
--
--	if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 1) {
--			btcoexist->stop_coex_dm = true;
--			ex_btc8723b1ant_coex_dm_reset(btcoexist);
--			exhalbtc_set_ant_num(rtlpriv,
--					     BT_COEX_ANT_TYPE_DETECTED, 2);
--			ex_btc8723b2ant_init_hwconfig(btcoexist);
--			ex_btc8723b2ant_init_coex_dm(btcoexist);
--			btcoexist->stop_coex_dm = false;
--		}
--	}
--
--	halbtc_normal_low_power(btcoexist);
--}
--
- void exhalbtc_periodical(struct btc_coexist *btcoexist)
- {
- 	if (!halbtc_is_bt_coexist_available(btcoexist))
-@@ -1820,29 +1782,6 @@ void exhalbtc_periodical(struct btc_coexist *btcoexist)
- 	halbtc_normal_low_power(btcoexist);
- }
- 
--void exhalbtc_dbg_control(struct btc_coexist *btcoexist,
--			  u8 code, u8 len, u8 *data)
--{
--	if (!halbtc_is_bt_coexist_available(btcoexist))
--		return;
--	btcoexist->statistics.cnt_dbg_ctrl++;
--
--	halbtc_leave_low_power(btcoexist);
--
--	halbtc_normal_low_power(btcoexist);
--}
--
--void exhalbtc_antenna_detection(struct btc_coexist *btcoexist, u32 cent_freq,
--				u32 offset, u32 span, u32 seconds)
--{
--	if (!halbtc_is_bt_coexist_available(btcoexist))
--		return;
--}
--
--void exhalbtc_stack_update_profile_info(void)
--{
--}
--
- void exhalbtc_update_min_bt_rssi(struct btc_coexist *btcoexist, s8 bt_rssi)
- {
- 	if (!halbtc_is_bt_coexist_available(btcoexist))
-@@ -1851,24 +1790,6 @@ void exhalbtc_update_min_bt_rssi(struct btc_coexist *btcoexist, s8 bt_rssi)
- 	btcoexist->stack_info.min_bt_rssi = bt_rssi;
- }
- 
--void exhalbtc_set_hci_version(struct btc_coexist *btcoexist, u16 hci_version)
--{
--	if (!halbtc_is_bt_coexist_available(btcoexist))
--		return;
--
--	btcoexist->stack_info.hci_version = hci_version;
--}
--
--void exhalbtc_set_bt_patch_version(struct btc_coexist *btcoexist,
--				   u16 bt_hci_version, u16 bt_patch_version)
--{
--	if (!halbtc_is_bt_coexist_available(btcoexist))
--		return;
--
--	btcoexist->bt_info.bt_real_fw_ver = bt_patch_version;
--	btcoexist->bt_info.bt_hci_ver = bt_hci_version;
--}
--
- void exhalbtc_set_chip_type(struct btc_coexist *btcoexist, u8 chip_type)
- {
- 	switch (chip_type) {
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-index a96a995dd850..d8d88a989806 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-@@ -763,19 +763,9 @@ void exhalbtc_mediastatus_notify(struct btc_coexist *btcoexist,
- void exhalbtc_special_packet_notify(struct btc_coexist *btcoexist, u8 pkt_type);
- void exhalbtc_bt_info_notify(struct btc_coexist *btcoexist, u8 *tmp_buf,
- 			     u8 length);
--void exhalbtc_rf_status_notify(struct btc_coexist *btcoexist, u8 type);
- void exhalbtc_halt_notify(struct btc_coexist *btcoexist);
- void exhalbtc_pnp_notify(struct btc_coexist *btcoexist, u8 pnp_state);
--void exhalbtc_coex_dm_switch(struct btc_coexist *btcoexist);
- void exhalbtc_periodical(struct btc_coexist *btcoexist);
--void exhalbtc_dbg_control(struct btc_coexist *btcoexist, u8 code, u8 len,
--			  u8 *data);
--void exhalbtc_antenna_detection(struct btc_coexist *btcoexist, u32 cent_freq,
--				u32 offset, u32 span, u32 seconds);
--void exhalbtc_stack_update_profile_info(void);
--void exhalbtc_set_hci_version(struct btc_coexist *btcoexist, u16 hci_version);
--void exhalbtc_set_bt_patch_version(struct btc_coexist *btcoexist,
--				   u16 bt_hci_version, u16 bt_patch_version);
- void exhalbtc_update_min_bt_rssi(struct btc_coexist *btcoexist, s8 bt_rssi);
- void exhalbtc_set_bt_exist(struct btc_coexist *btcoexist, bool bt_exist);
- void exhalbtc_set_chip_type(struct btc_coexist *btcoexist, u8 chip_type);
--- 
-2.47.0
+Peter
 
 
