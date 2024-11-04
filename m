@@ -1,173 +1,130 @@
-Return-Path: <linux-kernel+bounces-395214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576E89BBA5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:32:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C75FF9BBB11
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB8011F23777
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:32:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E9D21F21A80
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7691C07F6;
-	Mon,  4 Nov 2024 16:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57431CBA01;
+	Mon,  4 Nov 2024 17:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="dqioo0hv"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="jOH3dmFq"
+Received: from out0-220.mail.aliyun.com (out0-220.mail.aliyun.com [140.205.0.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBEA2BB04
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439481C82E3;
+	Mon,  4 Nov 2024 17:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737937; cv=none; b=ilJo0FK/r1EA6Vy273HEVMQ92E6/iGr/D3Mcj3Q/2/kOfKvo0+mB2YfkO3SMHEdCX3mvYH08BIb1YFYYmpyk0nExNBH6RVxAMSYiNvSlJ313ftpIw5VwO7YvI0TE5Gd48UdYVnXftF5DMQz6VAKmlg1VjPvHScb0WZVAFGwlG+s=
+	t=1730739799; cv=none; b=JBki0jogcnlW4rHdWm3z37I4aRWpip3nC6if9CKtdsrgVLMuRGNxaBWhFsT+W5G2zqxFPfesJsz+Xj7pK4KvKvBLc0BwZw30LfgzTfB+zTsmIJExUKV/7T2r/aUsm7e4LlO8J6QIRYDMjugNwSNxH9VsdlkY1XBKyrfPgIP6hmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737937; c=relaxed/simple;
-	bh=sGi3fK0LjnVxIOV1LLmeuJSH/YuBzL60e0cJVML6LeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=POYnASnXJ+v0DsnOc9h9EWbPZx1cIKRXT+YuEPTBpSI1jsuLiId+7DEbKl0mIRGWjTpMisW/77WCaF3L/saGgT0iEu2vEnz9E4XLugbZybPey2+1MMmfnUSAI60wFmbBjQRsVt2oHMqDWxXnpih8JyWdYxkp7MYRI2HWKqcbhbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=dqioo0hv; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e291f1d659aso3988799276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:32:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1730737934; x=1731342734; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9NvqcwznYJEbOfJTrxk1An08MpWkBKh12Fm23xyda6E=;
-        b=dqioo0hvkrSZm+QpHe4XHQmTbNXK0x5VoI4sMIwCUK0S6Cx+TwjHeQa5TdnAZ9l6WK
-         LZzkgGvCKlOSJq8CZSADfHwQOz3ypjcLuzvQl6t7IxXfEM2vJ3kGCECM2ghhEB6+vRFp
-         rVMS/712CSyLptalqhv6koGUpnZoY3KshwFR4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730737934; x=1731342734;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9NvqcwznYJEbOfJTrxk1An08MpWkBKh12Fm23xyda6E=;
-        b=XEIn9pGBhg3VQ4GydU53R2Yp4jOBFyaH2vnj4PObWohzICyO5Uk8ypJ/UYHhYpOakK
-         MKctSQxQK0rWujovKOLmXegGHHl25DdRpw1GJxHp7kfDrPXfaYQaL6Q25b06qK0ID1HV
-         iIQe8q5YTsVLEddKCFExzouRqgDFOPNibPRHZem4AkjaeHbPcs8BN+GylZj1v0ywLeaA
-         DOvyzDziSPewBi9V/P7V24DgFwGNay8Rt54Vdh7FzdpzVj/2WXg6JEo6z+Muo/5xNTjC
-         D40TVrgYvZwHa72tVMK1ilwjSWWt8HW7zmFem7kyBLggaof/aeMqGhCWZGUp7uNmYS8n
-         Do1w==
-X-Gm-Message-State: AOJu0YwAbZXyDQPrzjq6ZMCeQTCdqg3166XsM93S6BwhiwvNbQo8QTWA
-	bi14lWpW7rdPecCXh5NtqrMByw5aYHy+KKG2yPAUzv16R82CrBvFKTuzHcPZMgOPPZWiUO3Ll/a
-	RQgn02SyL29wU99dpisRODoYkHEZR2B8e6xc3qg==
-X-Google-Smtp-Source: AGHT+IELYvUmczkoinr/h7h4D5wovUbn46OmYDOIs9EuWMuur0hSgIUPkzT189bHxP5gqhspJGZhWZ+bvDCtj3+rRX0=
-X-Received: by 2002:a05:6902:10c3:b0:e2b:d610:9d67 with SMTP id
- 3f1490d57ef6-e330254f5ebmr11392789276.9.1730737933890; Mon, 04 Nov 2024
- 08:32:13 -0800 (PST)
+	s=arc-20240116; t=1730739799; c=relaxed/simple;
+	bh=RD6ACfGQMfkzmvPFOmFJqfSuqq5hmkgyOO7L+g/02OI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pI+SVqT7TYZRpgUvAD6Ft/9N+lY/1OpNpqXiVfNe5VNCyPqlrz9k5+1USN29FgWHgL2HYJAIHwrzFLEDDD1E5Iup8ksv+NJf6EpzY69t1M7BTCkh+ObE+YGezVXdsYM1ZAZeTs7AS9e7p+vwqTslYp519O16hk/F7QevKpTP3VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=jOH3dmFq; arc=none smtp.client-ip=140.205.0.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1730739793; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=McKha1hmKH1clDOz2fCI8A4BsEcNH5WhtqM/+Bq5yME=;
+	b=jOH3dmFqM+Ir+b5ZM1Pk/gUNuPjx1bADUL2Pd9QgPe0or5WpJkABnpraMB659wQvwL234/DWRaCYKl/X6FAv2E7qqT6xLweAm5Nnvh8JCjDW+R9uItwvLetOCCuHoYb1kpnvqEGgP/nd0MoPK5MJBkrGGjXU8f7xjNHBb770tOc=
+Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.a0U4bET_1730737936 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Tue, 05 Nov 2024 00:32:17 +0800
+From: "Tiwei Bie" <tiwei.btw@antgroup.com>
+To: richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net
+Cc:  <linux-um@lists.infradead.org>,
+   <linux-kernel@vger.kernel.org>,
+  "Tiwei Bie" <tiwei.btw@antgroup.com>,
+   <stable@vger.kernel.org>
+Subject: [PATCH 4/4] um: vector: Do not use drvdata in release
+Date: Tue, 05 Nov 2024 00:32:03 +0800
+Message-Id: <20241104163203.435515-5-tiwei.btw@antgroup.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241104163203.435515-1-tiwei.btw@antgroup.com>
+References: <20241104163203.435515-1-tiwei.btw@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028102559.1451383-1-dario.binacchi@amarulasolutions.com>
- <20241028102559.1451383-2-dario.binacchi@amarulasolutions.com> <20241101173914.GA3786619-robh@kernel.org>
-In-Reply-To: <20241101173914.GA3786619-robh@kernel.org>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Mon, 4 Nov 2024 17:32:03 +0100
-Message-ID: <CABGWkvrC6N4ujWfJSVyktyyAODUM5TTucFneqsX1H4PQK+nbvg@mail.gmail.com>
-Subject: Re: [RFC PATCH 01/10] dt-bindings: soc: imx-blk-ctrl: add
- 'fsl,power-domains-boot-on' property
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lucas Stach <l.stach@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hello Rob,
+The drvdata is not available in release. Let's just use container_of()
+to get the vector_device instance. Otherwise, removing a vector device
+will result in a crash:
 
-On Fri, Nov 1, 2024 at 6:39=E2=80=AFPM Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, Oct 28, 2024 at 11:25:24AM +0100, Dario Binacchi wrote:
-> > This property lists the state of the power domains, indicating whether
-> > they have been left on or off by the bootloader/firmware.
-> > This information becomes relevant, for example, in the case of supporti=
-ng
-> > the simple framebuffer.
-> >
-> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> > ---
-> >
-> >  .../bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml       | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-=
-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-b=
-lk-ctrl.yaml
-> > index eeec9965b091..00aa0b8d8ea9 100644
-> > --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-blk-ctr=
-l.yaml
-> > +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-blk-ctr=
-l.yaml
-> > @@ -56,6 +56,15 @@ properties:
-> >        - const: csi-aclk
-> >        - const: csi-pclk
-> >
-> > +  fsl,power-domains-boot-on:
-> > +    description: |
-> > +      Provide the on/off (1/0) status of the power domains. It allows
-> > +      specifying whether one or more power domains have already been
-> > +      initialized and left powered on by the bootloader.
->
-> Sounds like a common problem *if* we wanted to fix it in DT.
->
-> Why can't you just read the h/w registers to see which domains are
-> powered on? Perhaps because some are on, but you want to turn them off.
+RIP: 0033:vector_device_release+0xf/0x50
+RSP: 00000000e187bc40  EFLAGS: 00010202
+RAX: 0000000060028f61 RBX: 00000000600f1baf RCX: 00000000620074e0
+RDX: 000000006220b9c0 RSI: 0000000060551c80 RDI: 0000000000000000
+RBP: 00000000e187bc50 R08: 00000000603ad594 R09: 00000000e187bb70
+R10: 000000000000135a R11: 00000000603ad422 R12: 00000000623ae028
+R13: 000000006287a200 R14: 0000000062006d30 R15: 00000000623700b6
+Kernel panic - not syncing: Segfault with no mm
+CPU: 0 UID: 0 PID: 16 Comm: kworker/0:1 Not tainted 6.12.0-rc6-g59b723cd2adb #1
+Workqueue: events mc_work_proc
+Stack:
+ 60028f61 623ae028 e187bc80 60276fcd
+ 6220b9c0 603f5820 623ae028 00000000
+ e187bcb0 603a2bcd 623ae000 62370010
+Call Trace:
+ [<60028f61>] ? vector_device_release+0x0/0x50
+ [<60276fcd>] device_release+0x70/0xba
+ [<603a2bcd>] kobject_put+0xba/0xe7
+ [<60277265>] put_device+0x19/0x1c
+ [<60281266>] platform_device_put+0x26/0x29
+ [<60281e5f>] platform_device_unregister+0x2c/0x2e
+ [<60029422>] vector_remove+0x52/0x58
+ [<60031316>] ? mconsole_reply+0x0/0x50
+ [<600310c8>] mconsole_remove+0x160/0x1cc
+ [<603b19f4>] ? strlen+0x0/0x15
+ [<60066611>] ? __dequeue_entity+0x1a9/0x206
+ [<600666a7>] ? set_next_entity+0x39/0x63
+ [<6006666e>] ? set_next_entity+0x0/0x63
+ [<60038fa6>] ? um_set_signals+0x0/0x43
+ [<6003070c>] mc_work_proc+0x77/0x91
+ [<60057664>] process_scheduled_works+0x1b3/0x2dd
+ [<60055f32>] ? assign_work+0x0/0x58
+ [<60057f0a>] worker_thread+0x1e9/0x293
+ [<6005406f>] ? set_pf_worker+0x0/0x64
+ [<6005d65d>] ? arch_local_irq_save+0x0/0x2d
+ [<6005d748>] ? kthread_exit+0x0/0x3a
+ [<60057d21>] ? worker_thread+0x0/0x293
+ [<6005dbf1>] kthread+0x126/0x12b
+ [<600219c5>] new_thread_handler+0x85/0xb6
 
-I checked, but there is no register on this platform that indicates
-the on/off status
-of the power domain. So, I cannot readout the power domain state.
+Cc: stable@vger.kernel.org
+Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
+---
+ arch/um/drivers/vector_kern.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->
-> Also, for simple-framebuffer, I think you can list the power-domains to
-> keep on.
+diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
+index c992da83268d..64c09db392c1 100644
+--- a/arch/um/drivers/vector_kern.c
++++ b/arch/um/drivers/vector_kern.c
+@@ -815,7 +815,8 @@ static struct platform_driver uml_net_driver = {
+ 
+ static void vector_device_release(struct device *dev)
+ {
+-	struct vector_device *device = dev_get_drvdata(dev);
++	struct vector_device *device =
++		container_of(dev, struct vector_device, pdev.dev);
+ 	struct net_device *netdev = device->dev;
+ 
+ 	list_del(&device->list);
+-- 
+2.34.1
 
-I did it; I added the power domains in the simple-framebuffer node, but thi=
-s
-doesn=E2=80=99t prevent the genpd.power_on() callback from being called. An=
-d when
-this callback is called, the power domain is re-initialized, which does not
-maintain the persistence of the image on the display. Adding this DTS prope=
-rty
-prevents re-initialization that has already been performed by the bootloade=
-r.
-
-Thanks and regards,
-Dario
-
->
-> Rob
->
->
-
-
---=20
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
 
