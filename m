@@ -1,163 +1,182 @@
-Return-Path: <linux-kernel+bounces-394784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66F49BB3DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:50:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6AB79BB3D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D800F1C2196B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:50:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 685392831CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E561B6CEF;
-	Mon,  4 Nov 2024 11:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B171B3942;
+	Mon,  4 Nov 2024 11:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="b9dhOiFL"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTWqpI5B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE581AF0A0;
-	Mon,  4 Nov 2024 11:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C60618A6B5;
+	Mon,  4 Nov 2024 11:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730721016; cv=none; b=UHWSpl9R7wAAOQolb6xHnbvLW1Rk8U3MzUZFPEWtY8lxceB+ZXINYG6J/aEe9AYajvVJbW3XtSt5YXfeSUSB2sCa+ASkFnQqZQR97CkrbfMoYxwz7VRff6f8CXc8RJDtuYQwI4gVyPK0qufc1AqNLHq5/fhMvv7WP9QgO8Ch6WQ=
+	t=1730721009; cv=none; b=BPDgiIX1OfAJm4PDD1dsLCV3p7SNDnryGemci2Vlnu8mT+xPo381c86rY+TfNlcr3RpGLbAW3QAoSVJUYEk8eLr8a7wv+c463AaCEoXprySYKacr+027vTb+YGkAvdd3xRv73b89fnYTaJepx2UD73Y5enyTdDs4w9ID/79hg6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730721016; c=relaxed/simple;
-	bh=nj/c1dA8VqkoUIukvT2VQyD6AGQGr8wLOJTvFTd9PVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m2hqzHxivypGvZJe8HPmCnOrnLGRm9TE2CWz2vW2pa7z2rruYu8tWT/gMWi/7wjpLJcchmlViNR/imR1d7pKv2ZliHGBIQxwjGHS6RwRLodqvgwhUMT78CSTiFJnn62QRhEESJDPJnqLgI26Vsyl0JdO2qUdWTASMkcjeS8h6sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=b9dhOiFL; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730721012;
-	bh=nj/c1dA8VqkoUIukvT2VQyD6AGQGr8wLOJTvFTd9PVk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b9dhOiFLDvAr4phSZu89cBgulvoYky2FpUx0AgHB+pchjTFQmc5nY6amU+KeicdYk
-	 H41oKSWZ7M8o25NRO9xwHueultYm6K4vW+i5eOInbOCAQf4d7ErpTWcUqoS5W4Yoir
-	 oNomBqtpxOqGC34t/JL+SxwY5DJNUxslsvq9v1W40jioEroDA7Xq/E/nyXYrma4psr
-	 xGGN7QK9AUslY7vFXrpBcCIrOdIvwa7wBoooIubphmJEjO+ensbOG73ZVD8X6//B4n
-	 bxDjWyU6OhKQiiYffJyFe93MnrvEG9Oi+l45H+27G39U8xaf7zt6T6bsR/XcIX4Yg2
-	 Fg5ccoehzA4lQ==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E4C0D17E3613;
-	Mon,  4 Nov 2024 12:50:11 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: linux-pci@vger.kernel.org
-Cc: ryder.lee@mediatek.com,
-	jianjun.wang@mediatek.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com,
-	fshao@chromium.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 2/2] PCI: mediatek-gen3: Add support for restricting link width
-Date: Mon,  4 Nov 2024 12:49:35 +0100
-Message-ID: <20241104114935.172908-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241104114935.172908-1-angelogioacchino.delregno@collabora.com>
-References: <20241104114935.172908-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1730721009; c=relaxed/simple;
+	bh=7bAXGSIMkDmiiArsenU5Ko1NFwTmYvJcvE7RrpL1XVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=olMnjII0yHoKYZXL5XLMfHbUeHSjRaN0MNM1a/53dMvRJYag8ul6cZdopQKUwny6WNadyccGcExPc49p5tQYtfaofaiaBlnHTLZ2SUMtEmdasdpA9Nn+Cm4ELXhtY256oSizQy+fjHRsp46OhDMb0+IM0HNZ/Jru4LZqNFxTj1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTWqpI5B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C34C4CECE;
+	Mon,  4 Nov 2024 11:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730721008;
+	bh=7bAXGSIMkDmiiArsenU5Ko1NFwTmYvJcvE7RrpL1XVo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZTWqpI5BAjfaPnVDNQPwae5G5vgeb83Sgz22Qw8kSaHF3mvvIw7lMuZQpshUbHmKd
+	 zIpAorhnt7H0r7MQgS+z2E48aJPOMUGPg8utBDy55yUqcNcLeVjGK09lRjhNNgPVFO
+	 DRR+/YdNtvmpcf/ShPy3Gkod++4MJmRpzW4PkRIWfoYQyBnIhsiT2ZTPY96Jj/F/0i
+	 qgwgzXuoIZnuQ2lq4G0Vx1fIP4zpTU5N60LyFU6+kjJA3MLp8+8JrniMiHhk3pYiH4
+	 yWhlGla8muTvIkfNlqFhLHHq3+D+EexV4Mn8hftA6sCNWI3JPaKAya/lfDCDP38Odu
+	 vbsGBQssmUR6w==
+Date: Mon, 4 Nov 2024 11:50:04 +0000
+From: Simon Horman <horms@kernel.org>
+To: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+Cc: Qingfang Deng <dqfext@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ppp@vger.kernel.org
+Subject: Re: [RFC PATCH net-next] net: ppp: convert to IFF_NO_QUEUE
+Message-ID: <20241104115004.GC2118587@kernel.org>
+References: <20241029103656.2151-1-dqfext@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029103656.2151-1-dqfext@gmail.com>
 
-Add support for restricting the port's link width by specifying
-the num-lanes devicetree property in the PCIe node.
++ Toke
 
-The setting is done in the GEN_SETTINGS register (in the driver
-named as PCIE_SETTING_REG), where each set bit in [11:8] activates
-a set of lanes (from bits 11 to 8 respectively, x16/x8/x4/x2).
+On Tue, Oct 29, 2024 at 06:36:56PM +0800, Qingfang Deng wrote:
+> When testing the parallel TX performance of a single PPPoE interface
+> over a 2.5GbE link with multiple hardware queues, the throughput could
+> not exceed 1.9Gbps, even with low CPU usage.
+> 
+> This issue arises because the PPP interface is registered with a single
+> queue and a tx_queue_len of 3. This default behavior dates back to Linux
+> 2.3.13, which was suitable for slower serial ports. However, in modern
+> devices with multiple processors and hardware queues, this configuration
+> can lead to congestion.
+> 
+> For PPPoE/PPTP, the lower interface should handle qdisc, so we need to
+> set IFF_NO_QUEUE. For PPP over a serial port, we don't benefit from a
+> qdisc with such a short TX queue, so handling TX queueing in the driver
+> and setting IFF_NO_QUEUE is more effective.
+> 
+> With this change, PPPoE interfaces can now fully saturate a 2.5GbE link.
+> 
+> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
 
-Reviewed-by: Fei Shao <fshao@chromium.org>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/pci/controller/pcie-mediatek-gen3.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Hi Toke,
 
-diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-index c27beef75079..fa7f36a0284d 100644
---- a/drivers/pci/controller/pcie-mediatek-gen3.c
-+++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-@@ -32,6 +32,7 @@
- #define PCIE_BASE_CFG_SPEED		GENMASK(15, 8)
- 
- #define PCIE_SETTING_REG		0x80
-+#define PCIE_SETTING_LINK_WIDTH		GENMASK(11, 8)
- #define PCIE_SETTING_GEN_SUPPORT	GENMASK(14, 12)
- #define PCIE_PCI_IDS_1			0x9c
- #define PCI_CLASS(class)		(class << 8)
-@@ -168,6 +169,7 @@ struct mtk_msi_set {
-  * @clks: PCIe clocks
-  * @num_clks: PCIe clocks count for this port
-  * @max_link_speed: Maximum link speed (PCIe Gen) for this port
-+ * @num_lanes: Number of PCIe lanes for this port
-  * @irq: PCIe controller interrupt number
-  * @saved_irq_state: IRQ enable state saved at suspend time
-  * @irq_lock: lock protecting IRQ register access
-@@ -189,6 +191,7 @@ struct mtk_gen3_pcie {
- 	struct clk_bulk_data *clks;
- 	int num_clks;
- 	u8 max_link_speed;
-+	u8 num_lanes;
- 
- 	int irq;
- 	u32 saved_irq_state;
-@@ -401,6 +404,14 @@ static int mtk_pcie_startup_port(struct mtk_gen3_pcie *pcie)
- 			val |= FIELD_PREP(PCIE_SETTING_GEN_SUPPORT,
- 					  GENMASK(pcie->max_link_speed - 2, 0));
- 	}
-+	if (pcie->num_lanes) {
-+		val &= ~PCIE_SETTING_LINK_WIDTH;
-+
-+		/* Zero means one lane, each bit activates x2/x4/x8/x16 */
-+		if (pcie->num_lanes > 1)
-+			val |= FIELD_PREP(PCIE_SETTING_LINK_WIDTH,
-+					  GENMASK(fls(pcie->num_lanes >> 2), 0));
-+	};
- 	writel_relaxed(val, pcie->base + PCIE_SETTING_REG);
- 
- 	/* Set Link Control 2 (LNKCTL2) speed restriction, if any */
-@@ -838,6 +849,7 @@ static int mtk_pcie_parse_port(struct mtk_gen3_pcie *pcie)
- 	struct device *dev = pcie->dev;
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct resource *regs;
-+	u32 num_lanes;
- 
- 	regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pcie-mac");
- 	if (!regs)
-@@ -883,6 +895,14 @@ static int mtk_pcie_parse_port(struct mtk_gen3_pcie *pcie)
- 		return pcie->num_clks;
- 	}
- 
-+	ret = of_property_read_u32(dev->of_node, "num-lanes", &num_lanes);
-+	if (ret == 0) {
-+		if (num_lanes == 0 || num_lanes > 16 || (num_lanes != 1 && num_lanes % 2))
-+			dev_warn(dev, "Invalid num-lanes, using controller defaults\n");
-+		else
-+			pcie->num_lanes = num_lanes;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.46.1
+I'm wondering if you could offer an opinion on this.
 
+> ---
+>  drivers/net/ppp/ppp_generic.c | 27 ++++++++++++---------------
+>  1 file changed, 12 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+> index 4b2971e2bf48..5470e0fe1f9b 100644
+> --- a/drivers/net/ppp/ppp_generic.c
+> +++ b/drivers/net/ppp/ppp_generic.c
+> @@ -236,8 +236,8 @@ struct ppp_net {
+>  /* Get the PPP protocol number from a skb */
+>  #define PPP_PROTO(skb)	get_unaligned_be16((skb)->data)
+>  
+> -/* We limit the length of ppp->file.rq to this (arbitrary) value */
+> -#define PPP_MAX_RQLEN	32
+> +/* We limit the length of ppp->file.rq/xq to this (arbitrary) value */
+> +#define PPP_MAX_QLEN	32
+>  
+>  /*
+>   * Maximum number of multilink fragments queued up.
+> @@ -920,8 +920,6 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  				break;
+>  		} else {
+>  			ppp->npmode[i] = npi.mode;
+> -			/* we may be able to transmit more packets now (??) */
+> -			netif_wake_queue(ppp->dev);
+>  		}
+>  		err = 0;
+>  		break;
+> @@ -1639,6 +1637,7 @@ static void ppp_setup(struct net_device *dev)
+>  	dev->tx_queue_len = 3;
+>  	dev->type = ARPHRD_PPP;
+>  	dev->flags = IFF_POINTOPOINT | IFF_NOARP | IFF_MULTICAST;
+> +	dev->priv_flags |= IFF_NO_QUEUE;
+>  	dev->priv_destructor = ppp_dev_priv_destructor;
+>  	netif_keep_dst(dev);
+>  }
+> @@ -1654,17 +1653,15 @@ static void __ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb)
+>  	if (!ppp->closing) {
+>  		ppp_push(ppp);
+>  
+> -		if (skb)
+> -			skb_queue_tail(&ppp->file.xq, skb);
+> +		if (skb) {
+> +			if (ppp->file.xq.qlen > PPP_MAX_QLEN)
+> +				kfree_skb(skb);
+> +			else
+> +				skb_queue_tail(&ppp->file.xq, skb);
+> +		}
+>  		while (!ppp->xmit_pending &&
+>  		       (skb = skb_dequeue(&ppp->file.xq)))
+>  			ppp_send_frame(ppp, skb);
+> -		/* If there's no work left to do, tell the core net
+> -		   code that we can accept some more. */
+> -		if (!ppp->xmit_pending && !skb_peek(&ppp->file.xq))
+> -			netif_wake_queue(ppp->dev);
+> -		else
+> -			netif_stop_queue(ppp->dev);
+>  	} else {
+>  		kfree_skb(skb);
+>  	}
+> @@ -1850,7 +1847,7 @@ ppp_send_frame(struct ppp *ppp, struct sk_buff *skb)
+>  	 * queue it up for pppd to receive.
+>  	 */
+>  	if (ppp->flags & SC_LOOP_TRAFFIC) {
+> -		if (ppp->file.rq.qlen > PPP_MAX_RQLEN)
+> +		if (ppp->file.rq.qlen > PPP_MAX_QLEN)
+>  			goto drop;
+>  		skb_queue_tail(&ppp->file.rq, skb);
+>  		wake_up_interruptible(&ppp->file.rwait);
+> @@ -2319,7 +2316,7 @@ ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
+>  		/* put it on the channel queue */
+>  		skb_queue_tail(&pch->file.rq, skb);
+>  		/* drop old frames if queue too long */
+> -		while (pch->file.rq.qlen > PPP_MAX_RQLEN &&
+> +		while (pch->file.rq.qlen > PPP_MAX_QLEN &&
+>  		       (skb = skb_dequeue(&pch->file.rq)))
+>  			kfree_skb(skb);
+>  		wake_up_interruptible(&pch->file.rwait);
+> @@ -2472,7 +2469,7 @@ ppp_receive_nonmp_frame(struct ppp *ppp, struct sk_buff *skb)
+>  		/* control or unknown frame - pass it to pppd */
+>  		skb_queue_tail(&ppp->file.rq, skb);
+>  		/* limit queue length by dropping old frames */
+> -		while (ppp->file.rq.qlen > PPP_MAX_RQLEN &&
+> +		while (ppp->file.rq.qlen > PPP_MAX_QLEN &&
+>  		       (skb = skb_dequeue(&ppp->file.rq)))
+>  			kfree_skb(skb);
+>  		/* wake up any process polling or blocking on read */
+> -- 
+> 2.34.1
+> 
+> 
 
