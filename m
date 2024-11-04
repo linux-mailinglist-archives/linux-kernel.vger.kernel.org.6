@@ -1,216 +1,257 @@
-Return-Path: <linux-kernel+bounces-394205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8874A9BABD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:31:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396AB9BABDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AAE8281952
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:31:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E697B21586
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABD018308A;
-	Mon,  4 Nov 2024 04:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FA1187321;
+	Mon,  4 Nov 2024 04:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RMmwFLoV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SWgK+I07"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAEF290F;
-	Mon,  4 Nov 2024 04:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F07C2C9A
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 04:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730694685; cv=none; b=G8q+k83gSpuAIJYjzpyPWhsMcTcy1025HmeQdUPa2MPUlN7XuB/rIc6j7td/6U4mi9AuF1B4sFiGo39UhR5EFJVtHvIQEEidgpV/ARm/ZpRf+BE3dpup1vkTV+sb6BKzpEHQinZWzJpwpoN6sOXZ3nQtO1z1R1pIWUH0UbzfG00=
+	t=1730695824; cv=none; b=bblNDIyGvzh6umf5K082sFkZuZops8c06rpa0I5zsi9vzmb0ph8M28X8TiFGkpaae8eOgiJYrDushAaVkqDhwWAJZZ68UguV3HGolxxnR3OA75N/qkK2HoyQViORffHvP8YD7Y6ufLUOMahA8svRY33NH0AVSmOhVdEVH0sBBVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730694685; c=relaxed/simple;
-	bh=vbigO1/0tmqLCH75w1yvEiA/jHXipTAk41obguiX2g8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BXT9x1YdtyLRTx7szwSEwGRkpOhPuQv3I2ObAUJ0oILiXz0kM1TwdXBdBhjjAVARlt4hv+Eb5mm4ks9kBkBRI8cIa/55qZiZrbkoCAmELLoT/By561JIKN8uBq3dkFvnsDZapIU/ampSX44L1IU4zrSOcYbysMFQTKdbpthUdjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RMmwFLoV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A40E0d7025188;
-	Mon, 4 Nov 2024 04:31:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+w9BUqc9qTS5lo096IW4hBuKmzwChCj8VIAFc+Sqiv0=; b=RMmwFLoVTDAHi7CC
-	3agB+E+g4fy27QsspWVAL7xMDc9ksKhleSE8GBtyu+7wvL4RenuzrwMibadlU5Di
-	fC5Qrpz9V8ctHkT1QT4l0pGuFNY1RRdwRHVRyNezcUkjiosH8medTgirqXLf31wa
-	65H9BQXWIGOboMtmgKOgFn33/1g8KdZqvz0HQT7mxpJ80iV2EH3I6uumQdhI1XVN
-	NiyOuZK3cmSu5/L2sAFvcmv7Htqvh85QY2ho26kHScexybBZ24QMHaUtVOt1R8SM
-	QtK5tJhgRrdjBsIrWch0D/iN5SxniyxRuwmJEZurwF6BXsqpzM7EGO3gBEds5V9r
-	sBgw9Q==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd2r30nv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 04:31:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A44V9Dh016816
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 4 Nov 2024 04:31:09 GMT
-Received: from [10.216.1.91] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 3 Nov 2024
- 20:31:06 -0800
-Message-ID: <945f3eae-0a68-4738-af07-74e228039508@quicinc.com>
-Date: Mon, 4 Nov 2024 10:01:03 +0530
+	s=arc-20240116; t=1730695824; c=relaxed/simple;
+	bh=yHLwBvRcDmvZBD3Q2o8biW6+ZyYq54VMM35NculsqtI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jsSz1pZ6Om4DEMRoq+cx1zNlz3XClme4Um9u0DTqmXnrr8nKzcpzoXyHjq/QaFoq2meIkOlo/MFWdXG9oVggecZdAMGZe7U+B91Lbb1CkPwIlpsGKKsvlLCHTeR9lo0+ve/DxUCOldKECS0/3uQDyqQxIi36xE0W6BYznF5QHbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SWgK+I07; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6cbcc2bd7fcso27196786d6.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 20:50:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730695821; x=1731300621; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xelsbw4CYPm0pAy0Wg832CMC7u06eSjN58hX3diMwfk=;
+        b=SWgK+I07yOYt0VMvJrp8V1tWatT7l0GZGHvUcbfFY9XOrEXrq29WOiiFoOERhxojIC
+         vks7mAumVQkjv0etl6NtH9QgA3nHzr3EcWjPDBIzQts8L2PeXmtqUdCN0s2t1Ao4RDpr
+         cTtQjhO33lFRuSpQcehH06OqZ8rzqDJHurPKE28JyMM807KVP4C60ZgAfSAjN+zx0VC0
+         sfK6tA/wQr506Nu9oGGZK9gk0lTe98EswrunX7o1rZp6chwbJooQsZwd3QqsFziW0TwG
+         KrnCLqTRNDFoi8EAkPCuWP2Jf386Du4pS/VT/6qrsT6jY+mpHrWRUY7IinHF1RsKZEXs
+         ftVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730695821; x=1731300621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xelsbw4CYPm0pAy0Wg832CMC7u06eSjN58hX3diMwfk=;
+        b=p2yON9e9WGHyyHJOqqbB2pc48L7y/YY4CIhNtHPmHjwfAO55NFqEK2T+WMl/rdjIAl
+         oOJANZ8Bx9EsilmUeQ8pgFhd91Ka+FmlbgqgGO9Q2o5MRu9GeZAkPCwfwB6GSAC8DBwx
+         vd4w+peVOGHoeStYmf27CHaytGpS/fYbSRTEpf0e/+qhXhzQeSQtjolb7zLLhPEqcBJ2
+         bM+hzJUw5z/78RXjvAlM7M++qcnY3iUm2dHMe3zliJDwfSg8o9jpR65D24y4MKCZ+8sd
+         UVdbXbojz4MIisbbebXw6nU7HOxw6WV/4UEWoMJSQMcdolPw8UnOkqNFU8WYGDe8MeO1
+         sv8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVOiril3uJ/xnLI426PzHLuVxtpA4BGUZSxNdZUyPUxCl1UWFoaJPUT8Mz8Hdzb4bKuH/ORdrhPfA4GNVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXABZSe5dkc24jnkOd0bs7r2x7WyBYChpKpERZOfhywJC2Yt8M
+	cV8KcXWGRKnCg7ZWpRiap9sBcXF6p6llHLC57xNKNIJSB3KWq893cUaARqisjZTQntdem2wN1oQ
+	/0hjzY6DrLcqY2NiyFsrWL1oQJhrJMmNNBO3V
+X-Google-Smtp-Source: AGHT+IF2tDFS5vlJFQGEA8PSXd+4TNc7lauPgQRDf2fcZBAWgQ+PxfptvywKq5K3S+F5pPhyHSNjQzY8mD3d0dhW7vA=
+X-Received: by 2002:a05:6214:5508:b0:6ce:2519:5dd7 with SMTP id
+ 6a1803df08f44-6d351af4ccdmr195294736d6.35.1730695820784; Sun, 03 Nov 2024
+ 20:50:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
- definition for WDK2023
-To: <jens.glathe@oldschoolsolutions.biz>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Merck Hung <merckhung@gmail.com>,
-        Kalle Valo
-	<kvalo@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>
-References: <20241101-jg-blackrock-for-upstream-v7-0-8295e9f545d9@oldschoolsolutions.biz>
- <20241101-jg-blackrock-for-upstream-v7-3-8295e9f545d9@oldschoolsolutions.biz>
-Content-Language: en-US
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-In-Reply-To: <20241101-jg-blackrock-for-upstream-v7-3-8295e9f545d9@oldschoolsolutions.biz>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Ug9g8cPQUpCHaczIpV-yad96zKYoMhPb
-X-Proofpoint-GUID: Ug9g8cPQUpCHaczIpV-yad96zKYoMhPb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 priorityscore=1501 malwarescore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 clxscore=1015 phishscore=0 spamscore=0
- mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040039
+References: <20241102175115.1769468-1-xur@google.com> <20241102175115.1769468-2-xur@google.com>
+ <09349180-027a-4b29-a40c-9dc3425e592c@cachyos.org> <3183ab86-8f1f-4624-9175-31e77d773699@cachyos.org>
+In-Reply-To: <3183ab86-8f1f-4624-9175-31e77d773699@cachyos.org>
+From: Han Shen <shenhan@google.com>
+Date: Sun, 3 Nov 2024 20:50:07 -0800
+Message-ID: <CACkGtrgOw8inYCD96ot_w9VwzoFvvgCReAx0P-=Rxxqj2FT4_A@mail.gmail.com>
+Subject: Re: [PATCH v7 1/7] Add AutoFDO support for Clang build
+To: Peter Jung <ptr1337@cachyos.org>
+Cc: Rong Xu <xur@google.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>, 
+	Brian Gerst <brgerst@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	David Li <davidxl@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>, 
+	workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	Yabin Cui <yabinc@google.com>, Krzysztof Pszeniczny <kpszeniczny@google.com>, 
+	Sriraman Tallam <tmsriram@google.com>, Stephane Eranian <eranian@google.com>, x86@kernel.org, 
+	linux-arch@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Peter, thanks for reporting the issue. I am trying to reproduce it
+in the up-to-date archlinux environment. Below is what I have:
+  0. pacman -Syu
+  1. cloned archlinux build files from
+https://aur.archlinux.org/linux-mainline.git the newest mainline
+version is 6.12rc5-1.
+  2. changed the PKGBUILD file to include the patches series
+  3. changed the "config" to turn on clang autofdo
+  4. collected afdo profiles
+  5. MAKEFLAGS=3D"-j48 V=3D1 LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D$(pwd)/perf.a=
+fdo" \
+        makepkg -s --skipinteg --skippgp
+  6. install and reboot
+The above steps succeeded.
+You mentioned the error happens at "module_install", can you instruct
+me how to execute the "module_install" step?
 
+Thanks,
+Han
 
-On 11/1/2024 11:56 PM, Jens Glathe via B4 Relay wrote:
-> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> 
-> Device tree for the Microsoft Windows Dev Kit 2023. This work
-> is based on the initial work of Merck Hung <merckhung@gmail.com>.
-> 
-> Original work: https://github.com/merckhung/linux_ms_dev_kit/blob/ms-dev-kit-2023-v6.3.0/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-dev-kit-2023.dts
-> 
-> The Windows Dev Kit 2023 is a nice little desktop based on sc8280xp.
-> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
-> 
-> Supported features:
-> - USB type-c and type-a ports
-> - minidp connector
-> - built-in r8152 Ethernet adapter
-> - PCIe devices
-> - nvme
-> - ath11k WiFi (WCN6855)
-> - WCN6855 Bluetooth
-> - A690 GPU
-> - ADSP and CDSP
-> - GPIO keys
-> - Audio definition (works via USB)
-> 
-> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> ---
-
-[...]
-
-> +&usb_2 {
-> +	pinctrl-0 = <&usb2_en_state>;
-> +	pinctrl-names = "default";
-> +
-
-On the blackrock platform, for this controller, are there all 4 ports 
-given out for use or only one ?
-
-Because if all 4 are there, you might need to give all 4 pinctrls (one 
-for each TS3USB221A mux select) here for usb_2 node. If only one port is 
-given out for use on the platform, then only one phy (of the 4 activated 
-below) needs to be marked as active.
-
-In my case, in [1] on the ADP platform, I marked them as always on for 
-all gpios on multiport controller since driver had no support added yet.
-
-[1]: 
-https://lore.kernel.org/all/20240707085624.3411961-1-quic_kriskura@quicinc.com/
-
-> +	status = "okay";
-> +};
-> +
-> +&usb_2_hsphy0 {
-> +	vdda-pll-supply = <&vreg_l1b>;
-> +	vdda18-supply = <&vreg_l1c>;
-> +	vdda33-supply = <&vreg_l7d>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_2_hsphy1 {
-> +	vdda-pll-supply = <&vreg_l8d>;
-> +	vdda18-supply = <&vreg_l1c>;
-> +	vdda33-supply = <&vreg_l7d>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_2_hsphy2 {
-> +	vdda-pll-supply = <&vreg_l10d>;
-> +	vdda18-supply = <&vreg_l8c>;
-> +	vdda33-supply = <&vreg_l2d>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_2_hsphy3 {
-> +	vdda-pll-supply = <&vreg_l10d>;
-> +	vdda18-supply = <&vreg_l8c>;
-> +	vdda33-supply = <&vreg_l2d>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_2_qmpphy0 {
-> +	vdda-phy-supply = <&vreg_l1b>;
-> +	vdda-pll-supply = <&vreg_l4d>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_2_qmpphy1 {
-> +	vdda-phy-supply = <&vreg_l8d>;
-> +	vdda-pll-supply = <&vreg_l4d>;
-> +
-> +	status = "okay";
-> +};
-> +
-
-[...]
-
-> +	usb2_en_state: usb2-en-state {
-> +		/* TS3USB221A USB2.0 mux select */
-> +		pins = "gpio24";
-> +		function = "gpio";
-> +		drive-strength = <2>;
-> +		bias-disable;
-> +		output-low;
-> +	};
-> +
-
-Regards,
-Krishna,
+On Sat, Nov 2, 2024 at 12:53=E2=80=AFPM Peter Jung <ptr1337@cachyos.org> wr=
+ote:
+>
+>
+>
+> On 02.11.24 20:46, Peter Jung wrote:
+> >
+> >
+> > On 02.11.24 18:51, Rong Xu wrote:
+> >> Add the build support for using Clang's AutoFDO. Building the kernel
+> >> with AutoFDO does not reduce the optimization level from the
+> >> compiler. AutoFDO uses hardware sampling to gather information about
+> >> the frequency of execution of different code paths within a binary.
+> >> This information is then used to guide the compiler's optimization
+> >> decisions, resulting in a more efficient binary. Experiments
+> >> showed that the kernel can improve up to 10% in latency.
+> >>
+> >> The support requires a Clang compiler after LLVM 17. This submission
+> >> is limited to x86 platforms that support PMU features like LBR on
+> >> Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
+> >>   and BRBE on ARM 1 is part of planned future work.
+> >>
+> >> Here is an example workflow for AutoFDO kernel:
+> >>
+> >> 1) Build the kernel on the host machine with LLVM enabled, for example=
+,
+> >>         $ make menuconfig LLVM=3D1
+> >>      Turn on AutoFDO build config:
+> >>        CONFIG_AUTOFDO_CLANG=3Dy
+> >>      With a configuration that has LLVM enabled, use the following
+> >>      command:
+> >>         scripts/config -e AUTOFDO_CLANG
+> >>      After getting the config, build with
+> >>        $ make LLVM=3D1
+> >>
+> >> 2) Install the kernel on the test machine.
+> >>
+> >> 3) Run the load tests. The '-c' option in perf specifies the sample
+> >>     event period. We suggest     using a suitable prime number,
+> >>     like 500009, for this purpose.
+> >>     For Intel platforms:
+> >>        $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c
+> >> <count> \
+> >>          -o <perf_file> -- <loadtest>
+> >>     For AMD platforms:
+> >>        The supported system are: Zen3 with BRS, or Zen4 with amd_lbr_v=
+2
+> >>       For Zen3:
+> >>        $ cat proc/cpuinfo | grep " brs"
+> >>        For Zen4:
+> >>        $ cat proc/cpuinfo | grep amd_lbr_v2
+> >>        $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k
+> >> -a \
+> >>          -N -b -c <count> -o <perf_file> -- <loadtest>
+> >>
+> >> 4) (Optional) Download the raw perf file to the host machine.
+> >>
+> >> 5) To generate an AutoFDO profile, two offline tools are available:
+> >>     create_llvm_prof and llvm_profgen. The create_llvm_prof tool is pa=
+rt
+> >>     of the AutoFDO project and can be found on GitHub
+> >>     (https://github.com/google/autofdo), version v0.30.1 or later. The
+> >>     llvm_profgen tool is included in the LLVM compiler itself. It's
+> >>     important to note that the version of llvm_profgen doesn't need to
+> >>     match the version of Clang. It needs to be the LLVM 19 release or
+> >>     later, or from the LLVM trunk.
+> >>        $ llvm-profgen --kernel --binary=3D<vmlinux> --
+> >> perfdata=3D<perf_file> \
+> >>          -o <profile_file>
+> >>     or
+> >>        $ create_llvm_prof --binary=3D<vmlinux> --profile=3D<perf_file>=
+ \
+> >>          --format=3Dextbinary --out=3D<profile_file>
+> >>
+> >>     Note that multiple AutoFDO profile files can be merged into one vi=
+a:
+> >>        $ llvm-profdata merge -o <profile_file>  <profile_1> ...
+> >> <profile_n>
+> >>
+> >> 6) Rebuild the kernel using the AutoFDO profile file with the same con=
+fig
+> >>     as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
+> >>        $ make LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D<profile_file>
+> >>
+> >> Co-developed-by: Han Shen<shenhan@google.com>
+> >> Signed-off-by: Han Shen<shenhan@google.com>
+> >> Signed-off-by: Rong Xu<xur@google.com>
+> >> Suggested-by: Sriraman Tallam<tmsriram@google.com>
+> >> Suggested-by: Krzysztof Pszeniczny<kpszeniczny@google.com>
+> >> Suggested-by: Nick Desaulniers<ndesaulniers@google.com>
+> >> Suggested-by: Stephane Eranian<eranian@google.com>
+> >> Tested-by: Yonghong Song<yonghong.song@linux.dev>
+> >> Tested-by: Yabin Cui<yabinc@google.com>
+> >> Tested-by: Nathan Chancellor<nathan@kernel.org>
+> >> Reviewed-by: Kees Cook<kees@kernel.org>
+> >
+> > Tested-by: Peter Jung <ptr1337@cachyos.org>
+> >
+>
+> The compilations and testing with the "make pacman-pkg" function from
+> the kernel worked fine.
+>
+> One problem I do face:
+> When I apply a AutoFDO profile together with the PKGBUILD [1] from
+> archlinux im running into issues at "module_install" at the packaging.
+>
+> See following log:
+> ```
+> make[2]: *** [scripts/Makefile.modinst:125:
+> /tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr/li=
+b/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/arch/x86/kvm/kvm.ko]
+> Error 1
+> make[2]: *** Deleting file
+> '/tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr/l=
+ib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/arch/x86/kvm/kvm.ko'
+>    INSTALL
+> /tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr/li=
+b/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/crypto/cryptd.ko
+> make[2]: *** Waiting for unfinished jobs....
+> ```
+>
+>
+> This can be fixed with removed "INSTALL_MOD_STRIP=3D1" to the passed
+> parameters of module_install.
+>
+> This explicitly only happens, if a profile is passed - otherwise the
+> packaging works without problems.
+>
+> Regards,
+>
+> Peter Jung
+>
 
