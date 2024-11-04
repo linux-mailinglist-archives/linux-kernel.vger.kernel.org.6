@@ -1,225 +1,216 @@
-Return-Path: <linux-kernel+bounces-395506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAB99BBEDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:37:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD8F9BBEDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E33282B78
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:37:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCF0282BCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B849C1F666D;
-	Mon,  4 Nov 2024 20:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FF41CC177;
+	Mon,  4 Nov 2024 20:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sjFO3h9C"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FPUEjxTJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606531F5847
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 20:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB62E1F6666
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 20:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730752623; cv=none; b=NFtltkz8w+xG2Dj4S/ToCEHVKQ17cNE1GGNz43+hBrSwBR66R++CMULlNn4xREBZNrqLkHBmpEjTxZepcx7rnG9Er628//0RvMVH5wbzB1xc5FtHN7om85h9bgaECznL9s6vBm2SjuUT7ZbTIbQ7zFSIv4BVCPX4POWALahAuwM=
+	t=1730752633; cv=none; b=HquRcJL+KkAiqzq+o4yTUQntTqadl1a4wVh8kHpFzl7vCeLSrLDR32gJjHMg3tsOD5GLvCEXcIVTekYrZA+wbAYng7bbnv98eJZqsfqcLFEWDUKMTWMxpQXe/daIusvcZmGGu2XU7wigZHgQBQGR17Ma/pDP9n9vlhqZ9n8cbP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730752623; c=relaxed/simple;
-	bh=4nBRmUtbA108cfLj2oSnAsY8P82ZupaRNwnNsR+3/5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D/Va+qW40OpupiXCuHVFnG8+h8Qebfyoc64Q7boVOXxZUcY/HyKzYB7FupyNokVCvZJpzusEScyAsJ+DkVzseWTv9n8boBxlGCavu0rrgSNHm1FwRmqEJnt38T+v3FDFY6MBXZah00pJwwzcVaxx+o0qYMEl7OOzgI8/WCd8EG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sjFO3h9C; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a4e54d3cefso44505ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 12:37:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730752619; x=1731357419; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YjVDRx6oH+xeW6jQUK0g6WGli8hpIwXPydX3YYIiQho=;
-        b=sjFO3h9C7KSRCegTLvegsh3crfCEKRTKKwRus67oxBcpkeXH6EZf0tC5Kh1MmcRb7E
-         msju2noJhhfVkKXf3nAKfQFN1cmJjX2fBn5mtkr00HUOSpWry81lStqWvkamzyqUMI+X
-         ckSWUyHARLYy2/KNo3/gGni+ccdnLI/qIxJsLccJy8SWAYbxZNXyslud4+FKwlCN8JNM
-         LwLCGbg9+E+IOFI32P+MQwKVhsTow0NbYrJaWjuTut4xVqcYr6CtZthbb4ktei4Z1jlE
-         pI0V974ncjNVsssOBJ2DlLghhoRe4ec5DJ2EdNs5ni4su5wRwGH1aNINe5FxHxdAu1Tz
-         /nww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730752619; x=1731357419;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YjVDRx6oH+xeW6jQUK0g6WGli8hpIwXPydX3YYIiQho=;
-        b=l88RgYaNEbSVg49FSJ5dmH5uP+L3Yu8a8ZA6N5ShL1e4yES3NlAPUmVy7RolBjH2D6
-         CJoCiTmEhcw0Id1le1Vq4OTJ1LBB/jyUXcblw8PVVUrTLV7AUDJLQCswuFFVpXEjjx8z
-         7nZDP2jYl8hqemv0BETjMAcggG1t4Cskxy2MwqwqiJaWFyQEtQXE0WfyQgG2IeJKQjDb
-         jzAS605nJK3P0+PTCHxN30mSvAcyQyfXq88T8VdkxRgtd2JXTf10nndNgWumegdCX5yE
-         dTBbWChP/hRLOHtO0Mls5oU8+s0CcJcadrki1y9nitmGmqQf4b3ylIQcutnmdOvqI7bI
-         Xn7A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3eX+AsLLZpeOTJ0yHYCZUziFaNh5FcpmUxdoHDH45DeOXkDtk6gbcN4/+MgfIqEKz8y2zoEMaGc2oPlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzdrxBsdi+ZOTcKeuRp3XejbWCtws6PzeLihApcFQyU4R1XXjf
-	Ic9SVq90JBtOvP87CvngBOiOTXDuM6a/K3Xj/Fuy8KzqnmZaYOyToV/8Var9G3axRZK81jM1JxK
-	XJg8y0gkC0py3UR1LDEhA1Zl17zG306xekhqW
-X-Gm-Gg: ASbGncvilbsOrwpDfnP/CF1LeDXu0sP5PiQFG+mQ/gqfCGa4c2s1funceDhd7/DanwJ
-	7HWZ1T1MtocOpF5IVSgSOycavVTg4vVLYeYT/igYA8JWjSXtnSNzIM99wMcZ8Kg==
-X-Google-Smtp-Source: AGHT+IESkicvZoSSZrcJAJpL2CY40Vg5qDWTWVmcUyR/sBcGeJfCyGZQrc40LU+36/ln0l+5dHy3kQgKyy9BNSbN0Bg=
-X-Received: by 2002:a05:6e02:12b4:b0:3a6:b318:3b99 with SMTP id
- e9e14a558f8ab-3a6daa9e751mr627685ab.27.1730752619348; Mon, 04 Nov 2024
- 12:36:59 -0800 (PST)
+	s=arc-20240116; t=1730752633; c=relaxed/simple;
+	bh=Guwysl2O3tRoWL5qZmEUZDmsCr5aph8nqMI04YcoB9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kvG8QNp4bFsGxme1kMJEVqqmsdDw800lzIneuK/iliq7wyZEIb/RwM/aZGIh4mkSB5arGxTwcOJvcGRT9IHDhWE0ByCK5eYpc6/Y98o3x++wk1Fn2Iov5Eo4d9xSuRvL5CA0EvbYmRs2TDceMyhvbBIL8iZKFVgqcWOCehNqlaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FPUEjxTJ; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730752632; x=1762288632;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Guwysl2O3tRoWL5qZmEUZDmsCr5aph8nqMI04YcoB9c=;
+  b=FPUEjxTJl601DUv+HqXqZ0EK/+Qq2o0Lf4sX2dpvWqettVuHEIgf2dS2
+   4Rqx4uFPtrVndlBqJWQXQNJx9vaBSS2aiptA5MPEL9tdRoNwc6bxbkcd4
+   /q3u6H9yoA1pbY+sFoF8nDu06vdEtfAofEZRIEGO2ikHjO55hPVBzGqj8
+   SFQePnnwy3l63UbwDkmdI4d6xB42ov0UI+ylPuTVIdQyC9ePenIzHgIiM
+   MTlcOek0wsBYezTUVZgoBllOxjYTCAhzRLPHeF8sqnQadaRUuwYi7rqLk
+   yJv7sOtMDDa2qMuEkBdo3fyjNa1uT5CZUMRmRh9aNg/+J0xDFMr3V08v0
+   Q==;
+X-CSE-ConnectionGUID: 1gNWUUR3QDiEYq8zJdm5Pg==
+X-CSE-MsgGUID: 8ibXk608RQS1VHwIPEoDgw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="47978159"
+X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
+   d="scan'208";a="47978159"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 12:37:11 -0800
+X-CSE-ConnectionGUID: 6s6OyJi5QdCY4bTF1fOnEg==
+X-CSE-MsgGUID: uGhsO/UwQvacQL/Uf3ZaIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
+   d="scan'208";a="121243540"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 12:37:11 -0800
+Received: from [10.212.67.175] (kliang2-mobl1.ccr.corp.intel.com [10.212.67.175])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 9E53720B5703;
+	Mon,  4 Nov 2024 12:37:09 -0800 (PST)
+Message-ID: <7fa16a12-2b31-4bab-893e-ba4fe017339b@linux.intel.com>
+Date: Mon, 4 Nov 2024 15:37:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241103142302.230370-1-linux@treblig.org>
-In-Reply-To: <20241103142302.230370-1-linux@treblig.org>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 4 Nov 2024 12:36:48 -0800
-Message-ID: <CAP-5=fXNJ_QbEA20eusx7EDqp=pQgVdW_+-w1T=vsrzH4BGjpw@mail.gmail.com>
-Subject: Re: [PATCH] perf: event: Remove deadcode
-To: linux@treblig.org
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/3] Support auto counter reload
+To: peterz@infradead.org, mingo@kernel.org, acme@kernel.org,
+ namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+ ak@linux.intel.com, linux-kernel@vger.kernel.org
+Cc: eranian@google.com, thomas.falcon@intel.com
+References: <20241010192844.1006990-1-kan.liang@linux.intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20241010192844.1006990-1-kan.liang@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 3, 2024 at 6:23=E2=80=AFAM <linux@treblig.org> wrote:
->
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> event_format__print() last use was removed by 2017's
-> commit 894f3f1732cb ("perf script: Use event_format__fprintf()")
->
-> evlist__find_tracepoint_by_id() last use was removed by 2012's
-> commit e60fc847cefa ("perf evlist: Remove some unused methods")
->
-> evlist__set_tp_filter_pid() last use was removed by 2017's
-> commit dd1a50377c92 ("perf trace: Introduce filter_loop_pids()")
->
-> Remove them.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Hi Peter,
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+Ping. Could you please let me know if you have any comments.
 
 Thanks,
-Ian
+Kan
 
-> ---
->  tools/perf/util/evlist.c            | 18 ------------------
->  tools/perf/util/evlist.h            |  2 --
->  tools/perf/util/trace-event-parse.c |  6 ------
->  tools/perf/util/trace-event.h       |  3 ---
->  4 files changed, 29 deletions(-)
->
-> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-> index f14b7e6ff1dc..4b992a3f2985 100644
-> --- a/tools/perf/util/evlist.c
-> +++ b/tools/perf/util/evlist.c
-> @@ -362,19 +362,6 @@ __weak int arch_evlist__add_default_attrs(struct evl=
-ist *evlist,
->         return __evlist__add_default_attrs(evlist, attrs, nr_attrs);
->  }
->
-> -struct evsel *evlist__find_tracepoint_by_id(struct evlist *evlist, int i=
-d)
-> -{
-> -       struct evsel *evsel;
-> -
-> -       evlist__for_each_entry(evlist, evsel) {
-> -               if (evsel->core.attr.type   =3D=3D PERF_TYPE_TRACEPOINT &=
-&
-> -                   (int)evsel->core.attr.config =3D=3D id)
-> -                       return evsel;
-> -       }
-> -
-> -       return NULL;
-> -}
-> -
->  struct evsel *evlist__find_tracepoint_by_name(struct evlist *evlist, con=
-st char *name)
->  {
->         struct evsel *evsel;
-> @@ -1199,11 +1186,6 @@ int evlist__set_tp_filter_pids(struct evlist *evli=
-st, size_t npids, pid_t *pids)
->         return ret;
->  }
->
-> -int evlist__set_tp_filter_pid(struct evlist *evlist, pid_t pid)
-> -{
-> -       return evlist__set_tp_filter_pids(evlist, 1, &pid);
-> -}
-> -
->  int evlist__append_tp_filter_pids(struct evlist *evlist, size_t npids, p=
-id_t *pids)
->  {
->         char *filter =3D asprintf__tp_filter_pids(npids, pids);
-> diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-> index bcc1c6984bb5..ff73908e2178 100644
-> --- a/tools/perf/util/evlist.h
-> +++ b/tools/perf/util/evlist.h
-> @@ -144,7 +144,6 @@ int __evlist__set_tracepoints_handlers(struct evlist =
-*evlist,
->         __evlist__set_tracepoints_handlers(evlist, array, ARRAY_SIZE(arra=
-y))
->
->  int evlist__set_tp_filter(struct evlist *evlist, const char *filter);
-> -int evlist__set_tp_filter_pid(struct evlist *evlist, pid_t pid);
->  int evlist__set_tp_filter_pids(struct evlist *evlist, size_t npids, pid_=
-t *pids);
->
->  int evlist__append_tp_filter(struct evlist *evlist, const char *filter);
-> @@ -152,7 +151,6 @@ int evlist__append_tp_filter(struct evlist *evlist, c=
-onst char *filter);
->  int evlist__append_tp_filter_pid(struct evlist *evlist, pid_t pid);
->  int evlist__append_tp_filter_pids(struct evlist *evlist, size_t npids, p=
-id_t *pids);
->
-> -struct evsel *evlist__find_tracepoint_by_id(struct evlist *evlist, int i=
-d);
->  struct evsel *evlist__find_tracepoint_by_name(struct evlist *evlist, con=
-st char *name);
->
->  int evlist__add_pollfd(struct evlist *evlist, int fd);
-> diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-=
-event-parse.c
-> index f0332bd3a501..d97830cdbd7e 100644
-> --- a/tools/perf/util/trace-event-parse.c
-> +++ b/tools/perf/util/trace-event-parse.c
-> @@ -116,12 +116,6 @@ void event_format__fprintf(struct tep_event *event,
->         trace_seq_destroy(&s);
->  }
->
-> -void event_format__print(struct tep_event *event,
-> -                        int cpu, void *data, int size)
-> -{
-> -       return event_format__fprintf(event, cpu, data, size, stdout);
-> -}
-> -
->  /*
->   * prev_state is of size long, which is 32 bits on 32 bit architectures.
->   * As it needs to have the same bits for both 32 bit and 64 bit architec=
-tures
-> diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.=
-h
-> index bbf8b26bc8da..0e5133f1b910 100644
-> --- a/tools/perf/util/trace-event.h
-> +++ b/tools/perf/util/trace-event.h
-> @@ -42,9 +42,6 @@ struct tep_event *trace_event__tp_format_id(int id);
->  void event_format__fprintf(struct tep_event *event,
->                            int cpu, void *data, int size, FILE *fp);
->
-> -void event_format__print(struct tep_event *event,
-> -                        int cpu, void *data, int size);
-> -
->  int parse_ftrace_file(struct tep_handle *pevent, char *buf, unsigned lon=
-g size);
->  int parse_event_file(struct tep_handle *pevent,
->                      char *buf, unsigned long size, char *sys);
-> --
-> 2.47.0
->
+On 2024-10-10 3:28 p.m., kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> Changes since V1:
+> - Add a check to the reload value which cannot exceeds the max period
+> - Avoid invoking intel_pmu_enable_acr() for the perf metrics event.
+> - Update comments explain to case which the event->attr.config2 exceeds
+>   the group size
+> 
+> The relative rates among two or more events are useful for performance
+> analysis, e.g., a high branch miss rate may indicate a performance
+> issue. Usually, the samples with a relative rate that exceeds some
+> threshold are more useful. However, the traditional sampling takes
+> samples of events separately. To get the relative rates among two or
+> more events, a high sample rate is required, which can bring high
+> overhead. Many samples taken in the non-hotspot area are also dropped
+> (useless) in the post-process.
+> 
+> Auto Counter Reload (ACR) provides a means for software to specify that,
+> for each supported counter, the hardware should automatically reload the
+> counter to a specified initial value upon overflow of chosen counters.
+> This mechanism enables software to sample based on the relative rate of
+> two (or more) events, such that a sample (PMI or PEBS) is taken only if
+> the rate of one event exceeds some threshold relative to the rate of
+> another event. Taking a PMI or PEBS only when the relative rate of
+> perfmon events crosses a threshold can have significantly less
+> performance overhead than other techniques.
+> 
+> The details can be found at Intel Architecture Instruction Set
+> Extensions and Future Features (053) 8.7 AUTO COUNTER RELOAD.
+> 
+> Examples:
+> 
+> Here is the snippet of the mispredict.c. Since the array has random
+> numbers, jumps are random and often mispredicted.
+> The mispredicted rate depends on the compared value.
+> 
+> For the Loop1, ~11% of all branches are mispredicted.
+> For the Loop2, ~21% of all branches are mispredicted.
+> 
+> main()
+> {
+> ...
+>         for (i = 0; i < N; i++)
+>                 data[i] = rand() % 256;
+> ...
+>         /* Loop 1 */
+>         for (k = 0; k < 50; k++)
+>                 for (i = 0; i < N; i++)
+>                         if (data[i] >= 64)
+>                                 sum += data[i];
+> ...
+> 
+> ...
+>         /* Loop 2 */
+>         for (k = 0; k < 50; k++)
+>                 for (i = 0; i < N; i++)
+>                         if (data[i] >= 128)
+>                                 sum += data[i];
+> ...
+> }
+> 
+> Usually, a code with a high branch miss rate means a bad performance.
+> To understand the branch miss rate of the codes, the traditional method
+> usually sample both branches and branch-misses events. E.g.,
+> perf record -e "{cpu_atom/branch-misses/ppu, cpu_atom/branch-instructions/u}"
+>                -c 1000000 -- ./mispredict
+> 
+> [ perf record: Woken up 4 times to write data ]
+> [ perf record: Captured and wrote 0.925 MB perf.data (5106 samples) ]
+> The 5106 samples are from both events and spread in both Loops.
+> In the post process stage, a user can know that the Loop 2 has a 21%
+> branch miss rate. Then they can focus on the samples of branch-misses
+> events for the Loop 2.
+> 
+> With this patch, the user can generate the samples only when the branch
+> miss rate > 20%.
+> perf record -e "{cpu_atom/branch-misses,period=200000,acr_mask=0x2/ppu,
+>                  cpu_atom/branch-instructions,period=1000000,acr_mask=0x3/u}"
+>                 -- ./mispredict
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.098 MB perf.data (2498 samples) ]
+> 
+>  $perf report
+> 
+> Percent       │154:   movl    $0x0,-0x14(%rbp)
+>               │     ↓ jmp     1af
+>               │     for (i = j; i < N; i++)
+>               │15d:   mov     -0x10(%rbp),%eax
+>               │       mov     %eax,-0x18(%rbp)
+>               │     ↓ jmp     1a2
+>               │     if (data[i] >= 128)
+>               │165:   mov     -0x18(%rbp),%eax
+>               │       cltq
+>               │       lea     0x0(,%rax,4),%rdx
+>               │       mov     -0x8(%rbp),%rax
+>               │       add     %rdx,%rax
+>               │       mov     (%rax),%eax
+>               │    ┌──cmp     $0x7f,%eax
+> 100.00   0.00 │    ├──jle     19e
+>               │    │sum += data[i];
+> 
+> The 2498 samples are all from the branch-misses events for the Loop 2.
+> 
+> The number of samples and overhead is significantly reduced without
+> losing any information.
+> 
+> Kan Liang (3):
+>   perf/x86/intel: Fix ARCH_PERFMON_NUM_COUNTER_LEAF
+>   perf/x86/intel: Add the enumeration and flag for the auto counter
+>     reload
+>   perf/x86/intel: Support auto counter reload
+> 
+>  arch/x86/events/intel/core.c       | 262 ++++++++++++++++++++++++++++-
+>  arch/x86/events/perf_event.h       |  21 +++
+>  arch/x86/events/perf_event_flags.h |   2 +-
+>  arch/x86/include/asm/msr-index.h   |   4 +
+>  arch/x86/include/asm/perf_event.h  |   4 +-
+>  include/linux/perf_event.h         |   2 +
+>  6 files changed, 288 insertions(+), 7 deletions(-)
+> 
+
 
