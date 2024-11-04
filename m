@@ -1,107 +1,109 @@
-Return-Path: <linux-kernel+bounces-394689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265E99BB2D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:18:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4949BB2E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:18:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D30951F21347
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814F3282782
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC821C1AA9;
-	Mon,  4 Nov 2024 11:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eWxKHeCk"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AA41D14F3;
+	Mon,  4 Nov 2024 11:06:13 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC75E1C1738
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EE91C2301;
+	Mon,  4 Nov 2024 11:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730718325; cv=none; b=d3oWY0+uKJVneibm3npCkiUm4kXuqIdlLBD+NZ+fTDxxR7OeFqKMpoGUERBv80P3RCWf3CBNmyLpxgOdpZlsNc08ACW/xmbf7CM59o5KVorpT1SKaWNoZ546pJGKJKsuJ+0aamkHF2o7hANlVk3ZWW22+Hv1VdnmYM90BoNGVfw=
+	t=1730718373; cv=none; b=oGs0vktp4PcvooaJs0yj+D6Bywc5IckaSwJPRV3ue5fLOL/HRQZajjLtu3C52uIn6LuXIZU9216A4JoVq8YyqJeFZ2/9jWIM00+BsWhIWQDnmVTbNooVxR1LcA3j6abrb/hJcLnNNwD5qRwKsRdMXpDJUaWjxOHLe5Rr5h7r0PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730718325; c=relaxed/simple;
-	bh=HLZTxuDKcTSWRhLOVogHEiv0xG+ZhmnkPGgVJfuIEcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EPk9fcAqG6pRfZsN3fpOJCM1zWAcMkVYWwrtlcx577VAVfVYqQh2+yGW5eOtM5kUqJaWPFp2MTkjK8G0NSYhvEGNfR8g/mdk6+MYtxGlBbnKWtNnxVgH11O8/f4BvrnJonNE6xJ4C1oVrHZJ6zXroq6ZEkAJdv/5Wr+1DVCw1EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eWxKHeCk; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=HLZT
-	xuDKcTSWRhLOVogHEiv0xG+ZhmnkPGgVJfuIEcY=; b=eWxKHeCkY77RR0Rqyu/g
-	YVfvBhckfgXoSLroHnNhsFuL3RAChbMy+i5fTMxjOr/7EHDSf4r+IsaxefXyf4Hn
-	ZCAbStdgemuwng4/jtCMZfPHBAQkjhHd38TpN4ij+JHD0WyTPa0sEgcemBku3XQ3
-	bcG8pbU6v3Jw6dCGHbeK/F51GfwMQ4CFoUOtthNxObNoFjNCpRJye1NJ4oadsD1m
-	CgUMFUJR2qeYshQKDHUUi7yurNQuYRtOopkGIN/4vteEga1c2zigD7EceyN6eZ+Q
-	lVGFX+6Nch4qLOqWP94VNpIZg9hP9wcQjchh7YAZU4oD4MQAb8ZD/FBMQDOawC6l
-	YQ==
-Received: (qmail 357771 invoked from network); 4 Nov 2024 12:05:21 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Nov 2024 12:05:21 +0100
-X-UD-Smtp-Session: l3s3148p1@nXu2QhQm3bbVHA60
-Date: Mon, 4 Nov 2024 13:05:20 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] i2c: Use *-y instead of *-objs in Makefile
-Message-ID: <ZyiqcHFJFFnBYmTN@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20241018150337.2182181-1-andriy.shevchenko@linux.intel.com>
- <ZyTIf8l1ghcyzJUH@smile.fi.intel.com>
- <ZyTNA34Y1BRxMhhn@shikoro>
- <ZyTSZTcNU63F2GjY@smile.fi.intel.com>
- <ZyTTs8gFx5r_N5Pi@smile.fi.intel.com>
+	s=arc-20240116; t=1730718373; c=relaxed/simple;
+	bh=DQI9ribUuzYxsPXv9bLf/P2Hl2+pfQA1g2mUfCgOhL8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=JaVphZmJbGfEA9eZH3+2vtJYGIyA2zEA1RnSdWXvdrA8YoFoeVf2ynFsUcGx5xNRs3g4YByVmna3t6pE/euKpd0tvKdbdGsryIRVpQiqsxazFnmEFYs/1Js1ovspsEIL4k5S6JdkBCmFdwbxMUwCnPVsFZWQcO5x73ju8+SfLng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XhpY60JSJz4f3p10;
+	Mon,  4 Nov 2024 19:05:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C2DC21A0196;
+	Mon,  4 Nov 2024 19:06:04 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCHYoaaqihnTOZLAw--.24045S3;
+	Mon, 04 Nov 2024 19:06:04 +0800 (CST)
+Subject: Re: [PATCH v3 3/5] md/raid0: Atomic write support
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
+ hch@lst.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241101144616.497602-1-john.g.garry@oracle.com>
+ <20241101144616.497602-4-john.g.garry@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <77b69ea0-6a09-efdf-b251-cd4fa75d71c0@huaweicloud.com>
+Date: Mon, 4 Nov 2024 19:06:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GK1lTicwtQxLICc7"
-Content-Disposition: inline
-In-Reply-To: <ZyTTs8gFx5r_N5Pi@smile.fi.intel.com>
+In-Reply-To: <20241101144616.497602-4-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHYoaaqihnTOZLAw--.24045S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr1xJryfZryxurWxCF1kAFb_yoWkGwc_Ka
+	1ru3ZIvrnF9F1Ivw10v3WxCrWY9w18Wan7ZFWfKrsxJF1rXFnY9Fyv93y5X3WjyrWYqryq
+	yrs7W3WFyr1kXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v2
+	6r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsU
+	UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+ÔÚ 2024/11/01 22:46, John Garry Ð´µÀ:
+> Set BLK_FEAT_ATOMIC_WRITES_STACKED to enable atomic writes. All other
+> stacked device request queue limits should automatically be set properly.
+> With regards to atomic write max bytes limit, this will be set at
+> hw_max_sectors and this is limited by the stripe width, which we want.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>   drivers/md/raid0.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
---GK1lTicwtQxLICc7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+> index baaf5f8b80ae..7049ec7fb8eb 100644
+> --- a/drivers/md/raid0.c
+> +++ b/drivers/md/raid0.c
+> @@ -384,6 +384,7 @@ static int raid0_set_limits(struct mddev *mddev)
+>   	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
+>   	lim.io_min = mddev->chunk_sectors << 9;
+>   	lim.io_opt = lim.io_min * mddev->raid_disks;
+> +	lim.features |= BLK_FEAT_ATOMIC_WRITES_STACKED;
+>   	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+>   	if (err) {
+>   		queue_limits_cancel_update(mddev->gendisk->queue);
+> 
 
-
-> > Shouldn't be separated commit anyway?
-
-Can be argued.
-
-This patch applied to for-next, thanks!
-
-
---GK1lTicwtQxLICc7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcoqnAACgkQFA3kzBSg
-KbafSA/+LaGlv4SQ8VxzztX7srLwTaz5pikyI96vBH/j3GVKBLkCJo0+t/Os2noK
-OMRDHmP4DyL0TirE4RyNCniFRN4VZsd3lap7JKy5Q6U3Eu0sDA9Ft1xsbmlPjZ0C
-lnVyANnie6nNTlUkdLhJUaqGSyKUtiLLtLHgupuR9/twWJ7FYDEU7CVxF7tRVhGL
-8Vuz25dgfiHyYszJeLkah7BKmD+RmGk4Q4nkdBiMi2jMdsJ6KZxBi+ajLnHpfp58
-8ZaVjQ2cnZyqSe/it9uwJIU+wZyFAZ5l4XhYB9egvdXXB6cslqr2JV2Cavxd4m7u
-Rk5ljBxAd5QayCs18E1jajZOdua7ibPisqcezQtYTxsy5Nretbbrrgv1hTtts7xQ
-qGM9x8apurVXrPJax6pPRxfOaDJlWV0nBTeNRSwOu8T/yHhux+l9x5yUyEpCGTPj
-QKg/53BqcLk/DGWKxUyVx+jO05HpwLwmlJxAi6WgpMAPi9w9PYIwChAoN6NQPBBH
-h4Fv5YrDRTz6jbDFnpCDKVK7kTORVnKiJKH8mw1CrrGEFjww75iD6+9HfMdw/yTX
-dzK0i/tPVq/S3GGlqHliSPeCPFsTkUPvGGGpBKeQ3Kx47B2cBWdqjOUl3xuam8h8
-kJEGfvTt9Sd5KmuWmHUWsIkKJSAufPaLEJ/xHfbUVbKUwtor4yU=
-=320b
------END PGP SIGNATURE-----
-
---GK1lTicwtQxLICc7--
 
