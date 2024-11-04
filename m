@@ -1,223 +1,302 @@
-Return-Path: <linux-kernel+bounces-395496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B809BBEBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:23:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 577779BBEC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:24:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 744311C21656
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:23:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174C62827FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCF11E5712;
-	Mon,  4 Nov 2024 20:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A35A1E5718;
+	Mon,  4 Nov 2024 20:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PG1TYxxF"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L4WxrH0u"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75A11CC178;
-	Mon,  4 Nov 2024 20:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171861CACD0
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 20:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730751811; cv=none; b=FgIczvtGim/jh+lHdM4iaAXgLx2ukasBKJgsKsyIQPV561moVxquyZ4zm78tzdb4OglZauJA9IiJjlQtEuKlMnINaFG7p4InpDKH0HQvN//E9jLh1GPcDsjnoTtMRX6+je3Jej4FA7TdUQWIiUfPRG6kpjJsbg9hxj6FHyikkQg=
+	t=1730751889; cv=none; b=mFRu2TYI7SzpUVjIrg4auXT8vutKKVXiGTncdyU1/y3N/fMI1BpupPr37SnO24/Hjkq/FDIdZaIWeVpyzEFqQmaxrj4TW9WRsRIL532Q3IVRI3mG3KqPNnuJ4y1lmy5QClgsX3kCn+tap4NwY9rNld89t1bUqIGlXQIx4Fgi4Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730751811; c=relaxed/simple;
-	bh=bVRTVkdVLpt3k2Sz3dR1IgaViZm9u/+auAbXEsHZa5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EMhz5WuFcW0a+vxCni66RF1Yarx/h9KEwfd/BZTMEaaTS9Blyd5+o3isvZ6s5uHoF/tcN93kqlGg+ou0Eyd+AFzXN93JX0hYwSpwtJektVnKhEl4IH08XykNx5cQQPU67IbdT4JrxtRkPYZMBRfODVgnoEYO6txsk4jjSYtdz/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PG1TYxxF; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c8c50fdd9so37538245ad.0;
-        Mon, 04 Nov 2024 12:23:29 -0800 (PST)
+	s=arc-20240116; t=1730751889; c=relaxed/simple;
+	bh=67y70xaii5XM8g7k6nlqO2Sz7xsbmRTKi3nk9lApgZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NI5RaEDGoQv2MdpFu0FXdewAM3HBMwO5PtAjUO7Own/3+fmcpgyHDJOOvwHCq/MW8BTdJ359Mr1XLW+SdUB33CGnvL9xC4M7BTcwgK69mAJ/tFgyJ+aReyVib1lwoyCAs7bn2rtKOI3GJc6OjiDbKs/8jZeThICnnQUme3Pi/U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L4WxrH0u; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cbf0769512so30806246d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 12:24:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730751809; x=1731356609; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M+5x6kMVU1G6KEqc3nr1gaq6PpBkuKcx3+eLAbZss6k=;
-        b=PG1TYxxF1R3eg7RfTAjHo8JcIa1CkJzDHt9j48SDpzzE923MsFrYW+FoO2Vb6iYzvs
-         6NXvuykDkb89MzGqrdZtLMtPtuOAmgnRywweXvjPc/4OeJXg9843roF5BAA0A73q38R/
-         sSRsxw40/FPk6vZRbBiIzX9cAjkVjPVa5BU1zbKQWphQEBqfOchznQthAzUobVdA7LN+
-         7S71stdmKoNA9SOSot/K6rPyaH4vya4h7KAxxYXuuLBcyafZFhJIJ9gcU0T7fig2qzuD
-         OFxX9LSNiavdFOXS0B4fn47yabRcOv5LJQ4EeakbY8MT3cGo0viOC8wOksGI7B468KCm
-         AjDA==
+        d=google.com; s=20230601; t=1730751885; x=1731356685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pMAD4dMvrggttxV8M69ZLvHtnrpB33PuIkwveI53NKI=;
+        b=L4WxrH0uZhubZfi6BY9kROcKxdJD1fi+NeGQ/lyRT17PpLldrqe59R0aivGfmsyRIk
+         YV3vtC4X90oh4sXn5llGV14QH6DyDr3ljEVl0Tuz2+tPnzxFGP4VGetC2EDJg17r2n7P
+         O3Ju9grbe06+r2av0tONNsNQGzMSE/2hbQeGddTehw+V8NDuUhaYbIQGfVblUUA8vTIf
+         AO8Njcwn9uwMl0i7zSYc2pONYKOQOuOJQ7QI7rup1buJn/TXF/PlZ/dk5qxstKvI6pSr
+         yiF7BI/b/ZammF6rtl4mOKeIzQcsrTu68MHP0qKyMmWeS8SGKwYe8V/5/6VPdrzeraXw
+         xdoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730751809; x=1731356609;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M+5x6kMVU1G6KEqc3nr1gaq6PpBkuKcx3+eLAbZss6k=;
-        b=D0r0WrrypNscnvdOBQNcdSHPc5ZsnyK7eosdGlp4Pfh9+FAeGuQ5swCdaAbVyy9guw
-         vY7ewPaY46n7gQY7DF26QwtKTrWUvwYF/ozUgPt55BO+lCz9r5b4wPd1pV8mMeUB5peg
-         g0ujQHTeGorfH6bnGyRsmvIRTZ8Day0O8gInAqO6+dtNSEVEhUDynDFT3Qae7SM9/R7p
-         vNp/EV4Cnv5vaiGdeNmq6ISmRyYdQsFT56gD+capkvLtRht/J6yEHdm4CAD5w4i3feba
-         mrIml+1dveoPVm60EBTeEXj7Z7GE6Hq4z/441TkED18T93alsfR7R1hghOYcR3HbrdMy
-         JNig==
-X-Forwarded-Encrypted: i=1; AJvYcCU+1YQYdKWCHXf46b6IQuK7PWkNfvX/7VczUUaoh3s9gFUAWbXlaDs8QrWGA0C4PZfxFFxeNdnAAu6h1YA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA6DFw90Neqrsi73u10TFheGKL1cxhu6FaZKrT6jDt4YKAHP7O
-	UoieiIoOuQO9U6hQBFNarUdOHADMAyiLM5K0Cemhq5QJDnvYoxjrsrgv+w==
-X-Google-Smtp-Source: AGHT+IFie9ycNzrKoyUya76A8gnuPRJNJn/rr1vkTgiP7mo1hOVSdwoxYiZl+CB9V9WHImDp12W3tQ==
-X-Received: by 2002:a17:90b:4ac7:b0:2e9:20d8:414c with SMTP id 98e67ed59e1d1-2e94bcdcb02mr22005352a91.5.1730751808955;
-        Mon, 04 Nov 2024 12:23:28 -0800 (PST)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa57cc3sm10315054a91.32.2024.11.04.12.23.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 12:23:28 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Sudarsana Kalluru <skalluru@marvell.com>,
-	Manish Chopra <manishc@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv2 net-next] net: bnx2x: use ethtool string helpers
-Date: Mon,  4 Nov 2024 12:23:26 -0800
-Message-ID: <20241104202326.78418-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1730751885; x=1731356685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pMAD4dMvrggttxV8M69ZLvHtnrpB33PuIkwveI53NKI=;
+        b=jFsrLRn1QSMMvEsk0DkICXgQdnYEPnHGkfXO7zOnb7/GyFSGlmE10C8ySY35LKR1BC
+         oxsDtFN1FRi9PPY/uHh6n05Vmt4xraX0GBVhtFo86t6fz0I5DaSbzcw9DvxcyXnuIeXr
+         KXyvcz23HLW9eXwVOJGAw43ZL1YIudelSCGv2HR8RokVe9zhP/lSVBjiAJPMqIZPQhxP
+         5JukosNKdvgMgTifgwMwGYGjZEskQesTxDv+S4IiX8+iJyfTp+bSMkdIemfqPMrrru5H
+         yoYa+cpYokMPomSyRp4LpEUHrB69xSsu3gHqskrKqjSCzEm2CLAdzWTklOSkkOew2zaX
+         wYjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvRLxPonsYBR+LM6JFTtkomC1lsqlR56qHFfSbSGxjfBR3EgQ1tq6RK5HFgnMazXfoqcwCsAaCuDXSqZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC6lZtkXJjYzhN8gP/3FSJbihWxKxl2W1rGHQ6a7bpf7inpV/Q
+	qdRmImVzjdXNB9UL/txOfD21OiNObCybo08Gvj9ErPonRXLVte6Z8aSJdh1xBd5bArfR0RLDQgb
+	ECv95KrONQ+53iFyJ/PeKTmmSYnPs7vF17r0z
+X-Google-Smtp-Source: AGHT+IHYwEpMyGlK9DOHyJMnwe42enHazr4mglbcxXxObxPF+Ii3w3TsZ72VmrnN6P90z6NOVOpNUA9yHGlz3tNrg7Q=
+X-Received: by 2002:a05:6214:390c:b0:6cb:aa7b:b8cc with SMTP id
+ 6a1803df08f44-6d351aa3f45mr211213366d6.16.1730751884546; Mon, 04 Nov 2024
+ 12:24:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241102175115.1769468-1-xur@google.com> <20241102175115.1769468-2-xur@google.com>
+ <09349180-027a-4b29-a40c-9dc3425e592c@cachyos.org> <3183ab86-8f1f-4624-9175-31e77d773699@cachyos.org>
+ <CACkGtrgOw8inYCD96ot_w9VwzoFvvgCReAx0P-=Rxxqj2FT4_A@mail.gmail.com> <67c07d2f-fb1f-4b7d-96e2-fb5ceb8fc692@cachyos.org>
+In-Reply-To: <67c07d2f-fb1f-4b7d-96e2-fb5ceb8fc692@cachyos.org>
+From: Han Shen <shenhan@google.com>
+Date: Mon, 4 Nov 2024 12:24:29 -0800
+Message-ID: <CACkGtrgJHtG5pXR1z=6G4XR6ffT5jEi3jZQo=UhYj091naBhsA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/7] Add AutoFDO support for Clang build
+To: Peter Jung <ptr1337@cachyos.org>
+Cc: Rong Xu <xur@google.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>, 
+	Brian Gerst <brgerst@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	David Li <davidxl@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>, 
+	workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	Yabin Cui <yabinc@google.com>, Krzysztof Pszeniczny <kpszeniczny@google.com>, 
+	Sriraman Tallam <tmsriram@google.com>, Stephane Eranian <eranian@google.com>, x86@kernel.org, 
+	linux-arch@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The latter is the preferred way to copy ethtool strings.
+Hi Peter,
+Thanks for providing the detailed reproduce.
+Now I can see the error (after I synced to 6.12.0-rc6, I was using rc5).
+I'll look into that and report back.
 
-Avoids manually incrementing the pointer. Cleans up the code quite well.
+> I have tested your provided method, but the AutoFDO profile (lld does
+not get lto-sample-profile=3D$pathtoprofile passed)
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v2: handle IS_VF
- v1: split off from main broadcom patch.
- .../ethernet/broadcom/bnx2x/bnx2x_ethtool.c   | 68 +++++++++----------
- 1 file changed, 31 insertions(+), 37 deletions(-)
+I see. You also turned on ThinLTO, which I didn't, so the profile was
+only used during compilation, not passed to lld.
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-index adf7b6b94941..44199855ebfb 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-@@ -39,34 +39,34 @@ static const struct {
- 	int size;
- 	char string[ETH_GSTRING_LEN];
- } bnx2x_q_stats_arr[] = {
--/* 1 */	{ Q_STATS_OFFSET32(total_bytes_received_hi), 8, "[%s]: rx_bytes" },
-+/* 1 */	{ Q_STATS_OFFSET32(total_bytes_received_hi), 8, "[%d]: rx_bytes" },
- 	{ Q_STATS_OFFSET32(total_unicast_packets_received_hi),
--						8, "[%s]: rx_ucast_packets" },
-+						8, "[%d]: rx_ucast_packets" },
- 	{ Q_STATS_OFFSET32(total_multicast_packets_received_hi),
--						8, "[%s]: rx_mcast_packets" },
-+						8, "[%d]: rx_mcast_packets" },
- 	{ Q_STATS_OFFSET32(total_broadcast_packets_received_hi),
--						8, "[%s]: rx_bcast_packets" },
--	{ Q_STATS_OFFSET32(no_buff_discard_hi),	8, "[%s]: rx_discards" },
-+						8, "[%d]: rx_bcast_packets" },
-+	{ Q_STATS_OFFSET32(no_buff_discard_hi),	8, "[%d]: rx_discards" },
- 	{ Q_STATS_OFFSET32(rx_err_discard_pkt),
--					 4, "[%s]: rx_phy_ip_err_discards"},
-+					 4, "[%d]: rx_phy_ip_err_discards"},
- 	{ Q_STATS_OFFSET32(rx_skb_alloc_failed),
--					 4, "[%s]: rx_skb_alloc_discard" },
--	{ Q_STATS_OFFSET32(hw_csum_err), 4, "[%s]: rx_csum_offload_errors" },
--	{ Q_STATS_OFFSET32(driver_xoff), 4, "[%s]: tx_exhaustion_events" },
--	{ Q_STATS_OFFSET32(total_bytes_transmitted_hi),	8, "[%s]: tx_bytes" },
-+					 4, "[%d]: rx_skb_alloc_discard" },
-+	{ Q_STATS_OFFSET32(hw_csum_err), 4, "[%d]: rx_csum_offload_errors" },
-+	{ Q_STATS_OFFSET32(driver_xoff), 4, "[%d]: tx_exhaustion_events" },
-+	{ Q_STATS_OFFSET32(total_bytes_transmitted_hi),	8, "[%d]: tx_bytes" },
- /* 10 */{ Q_STATS_OFFSET32(total_unicast_packets_transmitted_hi),
--						8, "[%s]: tx_ucast_packets" },
-+						8, "[%d]: tx_ucast_packets" },
- 	{ Q_STATS_OFFSET32(total_multicast_packets_transmitted_hi),
--						8, "[%s]: tx_mcast_packets" },
-+						8, "[%d]: tx_mcast_packets" },
- 	{ Q_STATS_OFFSET32(total_broadcast_packets_transmitted_hi),
--						8, "[%s]: tx_bcast_packets" },
-+						8, "[%d]: tx_bcast_packets" },
- 	{ Q_STATS_OFFSET32(total_tpa_aggregations_hi),
--						8, "[%s]: tpa_aggregations" },
-+						8, "[%d]: tpa_aggregations" },
- 	{ Q_STATS_OFFSET32(total_tpa_aggregated_frames_hi),
--					8, "[%s]: tpa_aggregated_frames"},
--	{ Q_STATS_OFFSET32(total_tpa_bytes_hi),	8, "[%s]: tpa_bytes"},
-+					8, "[%d]: tpa_aggregated_frames"},
-+	{ Q_STATS_OFFSET32(total_tpa_bytes_hi),	8, "[%d]: tpa_bytes"},
- 	{ Q_STATS_OFFSET32(driver_filtered_tx_pkt),
--					4, "[%s]: driver_filtered_tx_pkt" }
-+					4, "[%d]: driver_filtered_tx_pkt" }
- };
- 
- #define BNX2X_NUM_Q_STATS ARRAY_SIZE(bnx2x_q_stats_arr)
-@@ -3184,49 +3184,43 @@ static u32 bnx2x_get_private_flags(struct net_device *dev)
- static void bnx2x_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
- {
- 	struct bnx2x *bp = netdev_priv(dev);
--	int i, j, k, start;
--	char queue_name[MAX_QUEUE_NAME_LEN+1];
-+	const char *str;
-+	int i, j, start;
- 
- 	switch (stringset) {
- 	case ETH_SS_STATS:
--		k = 0;
- 		if (is_multi(bp)) {
- 			for_each_eth_queue(bp, i) {
--				memset(queue_name, 0, sizeof(queue_name));
--				snprintf(queue_name, sizeof(queue_name),
--					 "%d", i);
--				for (j = 0; j < BNX2X_NUM_Q_STATS; j++)
--					snprintf(buf + (k + j)*ETH_GSTRING_LEN,
--						ETH_GSTRING_LEN,
--						bnx2x_q_stats_arr[j].string,
--						queue_name);
--				k += BNX2X_NUM_Q_STATS;
-+				for (j = 0; j < BNX2X_NUM_Q_STATS; j++) {
-+					str = bnx2x_q_stats_arr[j].string;
-+					ethtool_sprintf(&buf, str, i);
-+				}
- 			}
- 		}
- 
--		for (i = 0, j = 0; i < BNX2X_NUM_STATS; i++) {
-+		for (i = 0; i < BNX2X_NUM_STATS; i++) {
- 			if (HIDE_PORT_STAT(bp) && IS_PORT_STAT(i))
- 				continue;
--			strcpy(buf + (k + j)*ETH_GSTRING_LEN,
--				   bnx2x_stats_arr[i].string);
--			j++;
-+			ethtool_puts(&buf, bnx2x_stats_arr[i].string);
- 		}
- 
- 		break;
- 
- 	case ETH_SS_TEST:
-+		if (IS_VF(bp))
-+			break;
- 		/* First 4 tests cannot be done in MF mode */
- 		if (!IS_MF(bp))
- 			start = 0;
- 		else
- 			start = 4;
--		memcpy(buf, bnx2x_tests_str_arr + start,
--		       ETH_GSTRING_LEN * BNX2X_NUM_TESTS(bp));
-+		for (i = start; i < BNX2X_NUM_TESTS_SF; i++)
-+			ethtool_puts(&buf, bnx2x_tests_str_arr[i]);
- 		break;
- 
- 	case ETH_SS_PRIV_FLAGS:
--		memcpy(buf, bnx2x_private_arr,
--		       ETH_GSTRING_LEN * BNX2X_PRI_FLAG_LEN);
-+		for (i = 0; i < BNX2X_PRI_FLAG_LEN; i++)
-+			ethtool_puts(&buf, bnx2x_private_arr[i]);
- 		break;
- 	}
- }
--- 
-2.47.0
+Thanks,
+Han
 
+On Mon, Nov 4, 2024 at 9:31=E2=80=AFAM Peter Jung <ptr1337@cachyos.org> wro=
+te:
+>
+> Hi Han,
+>
+> I have tested your provided method, but the AutoFDO profile (lld does
+> not get lto-sample-profile=3D$pathtoprofile passed)  nor Clang as compile=
+r
+> gets used.
+> Please replace following PKGBUILD and config from linux-mainline with
+> the provided one in the gist. The patch is also included there.
+>
+> https://gist.github.com/ptr1337/c92728bb273f7dbc2817db75eedec9ed
+>
+> The main change I am doing here, is passing following to the build array
+> and replacing "make all":
+>
+> make LLVM=3D1 LLVM_IAS=3D1 CLANG_AUTOFDO_PROFILE=3D${srcdir}/perf.afdo al=
+l
+>
+> When compiling the kernel with makepkg, this results at the packaging to
+> following issue and can be reliable reproduced.
+>
+> Regards,
+>
+> Peter
+>
+>
+> On 04.11.24 05:50, Han Shen wrote:
+> > Hi Peter, thanks for reporting the issue. I am trying to reproduce it
+> > in the up-to-date archlinux environment. Below is what I have:
+> >    0. pacman -Syu
+> >    1. cloned archlinux build files from
+> > https://aur.archlinux.org/linux-mainline.git the newest mainline
+> > version is 6.12rc5-1.
+> >    2. changed the PKGBUILD file to include the patches series
+> >    3. changed the "config" to turn on clang autofdo
+> >    4. collected afdo profiles
+> >    5. MAKEFLAGS=3D"-j48 V=3D1 LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D$(pwd)/p=
+erf.afdo" \
+> >          makepkg -s --skipinteg --skippgp
+> >    6. install and reboot
+> > The above steps succeeded.
+> > You mentioned the error happens at "module_install", can you instruct
+> > me how to execute the "module_install" step?
+> >
+> > Thanks,
+> > Han
+> >
+> > On Sat, Nov 2, 2024 at 12:53=E2=80=AFPM Peter Jung<ptr1337@cachyos.org>=
+ wrote:
+> >>
+> >>
+> >> On 02.11.24 20:46, Peter Jung wrote:
+> >>>
+> >>> On 02.11.24 18:51, Rong Xu wrote:
+> >>>> Add the build support for using Clang's AutoFDO. Building the kernel
+> >>>> with AutoFDO does not reduce the optimization level from the
+> >>>> compiler. AutoFDO uses hardware sampling to gather information about
+> >>>> the frequency of execution of different code paths within a binary.
+> >>>> This information is then used to guide the compiler's optimization
+> >>>> decisions, resulting in a more efficient binary. Experiments
+> >>>> showed that the kernel can improve up to 10% in latency.
+> >>>>
+> >>>> The support requires a Clang compiler after LLVM 17. This submission
+> >>>> is limited to x86 platforms that support PMU features like LBR on
+> >>>> Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
+> >>>>    and BRBE on ARM 1 is part of planned future work.
+> >>>>
+> >>>> Here is an example workflow for AutoFDO kernel:
+> >>>>
+> >>>> 1) Build the kernel on the host machine with LLVM enabled, for examp=
+le,
+> >>>>          $ make menuconfig LLVM=3D1
+> >>>>       Turn on AutoFDO build config:
+> >>>>         CONFIG_AUTOFDO_CLANG=3Dy
+> >>>>       With a configuration that has LLVM enabled, use the following
+> >>>>       command:
+> >>>>          scripts/config -e AUTOFDO_CLANG
+> >>>>       After getting the config, build with
+> >>>>         $ make LLVM=3D1
+> >>>>
+> >>>> 2) Install the kernel on the test machine.
+> >>>>
+> >>>> 3) Run the load tests. The '-c' option in perf specifies the sample
+> >>>>      event period. We suggest     using a suitable prime number,
+> >>>>      like 500009, for this purpose.
+> >>>>      For Intel platforms:
+> >>>>         $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c
+> >>>> <count> \
+> >>>>           -o <perf_file> -- <loadtest>
+> >>>>      For AMD platforms:
+> >>>>         The supported system are: Zen3 with BRS, or Zen4 with amd_lb=
+r_v2
+> >>>>        For Zen3:
+> >>>>         $ cat proc/cpuinfo | grep " brs"
+> >>>>         For Zen4:
+> >>>>         $ cat proc/cpuinfo | grep amd_lbr_v2
+> >>>>         $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS=
+:k
+> >>>> -a \
+> >>>>           -N -b -c <count> -o <perf_file> -- <loadtest>
+> >>>>
+> >>>> 4) (Optional) Download the raw perf file to the host machine.
+> >>>>
+> >>>> 5) To generate an AutoFDO profile, two offline tools are available:
+> >>>>      create_llvm_prof and llvm_profgen. The create_llvm_prof tool is=
+ part
+> >>>>      of the AutoFDO project and can be found on GitHub
+> >>>>      (https://github.com/google/autofdo), version v0.30.1 or later. =
+The
+> >>>>      llvm_profgen tool is included in the LLVM compiler itself. It's
+> >>>>      important to note that the version of llvm_profgen doesn't need=
+ to
+> >>>>      match the version of Clang. It needs to be the LLVM 19 release =
+or
+> >>>>      later, or from the LLVM trunk.
+> >>>>         $ llvm-profgen --kernel --binary=3D<vmlinux> --
+> >>>> perfdata=3D<perf_file> \
+> >>>>           -o <profile_file>
+> >>>>      or
+> >>>>         $ create_llvm_prof --binary=3D<vmlinux> --profile=3D<perf_fi=
+le> \
+> >>>>           --format=3Dextbinary --out=3D<profile_file>
+> >>>>
+> >>>>      Note that multiple AutoFDO profile files can be merged into one=
+ via:
+> >>>>         $ llvm-profdata merge -o <profile_file>  <profile_1> ...
+> >>>> <profile_n>
+> >>>>
+> >>>> 6) Rebuild the kernel using the AutoFDO profile file with the same c=
+onfig
+> >>>>      as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
+> >>>>         $ make LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D<profile_file>
+> >>>>
+> >>>> Co-developed-by: Han Shen<shenhan@google.com>
+> >>>> Signed-off-by: Han Shen<shenhan@google.com>
+> >>>> Signed-off-by: Rong Xu<xur@google.com>
+> >>>> Suggested-by: Sriraman Tallam<tmsriram@google.com>
+> >>>> Suggested-by: Krzysztof Pszeniczny<kpszeniczny@google.com>
+> >>>> Suggested-by: Nick Desaulniers<ndesaulniers@google.com>
+> >>>> Suggested-by: Stephane Eranian<eranian@google.com>
+> >>>> Tested-by: Yonghong Song<yonghong.song@linux.dev>
+> >>>> Tested-by: Yabin Cui<yabinc@google.com>
+> >>>> Tested-by: Nathan Chancellor<nathan@kernel.org>
+> >>>> Reviewed-by: Kees Cook<kees@kernel.org>
+> >>> Tested-by: Peter Jung<ptr1337@cachyos.org>
+> >>>
+> >> The compilations and testing with the "make pacman-pkg" function from
+> >> the kernel worked fine.
+> >>
+> >> One problem I do face:
+> >> When I apply a AutoFDO profile together with the PKGBUILD [1] from
+> >> archlinux im running into issues at "module_install" at the packaging.
+> >>
+> >> See following log:
+> >> ```
+> >> make[2]: *** [scripts/Makefile.modinst:125:
+> >> /tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr=
+/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/arch/x86/kvm/kvm.ko]
+> >> Error 1
+> >> make[2]: *** Deleting file
+> >> '/tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/us=
+r/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/arch/x86/kvm/kvm.ko'
+> >>     INSTALL
+> >> /tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr=
+/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/crypto/cryptd.ko
+> >> make[2]: *** Waiting for unfinished jobs....
+> >> ```
+> >>
+> >>
+> >> This can be fixed with removed "INSTALL_MOD_STRIP=3D1" to the passed
+> >> parameters of module_install.
+> >>
+> >> This explicitly only happens, if a profile is passed - otherwise the
+> >> packaging works without problems.
+> >>
+> >> Regards,
+> >>
+> >> Peter Jung
+> >>
+>
 
