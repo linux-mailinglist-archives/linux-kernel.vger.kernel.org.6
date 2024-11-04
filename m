@@ -1,254 +1,304 @@
-Return-Path: <linux-kernel+bounces-395057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBB99BB7E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:35:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCC39BB7D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23482824A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:35:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39CBB1F225AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D49B1BD004;
-	Mon,  4 Nov 2024 14:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C78B1B0F12;
+	Mon,  4 Nov 2024 14:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X0oLp2kL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TOyMxrmL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE857178CDE;
-	Mon,  4 Nov 2024 14:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730730878; cv=fail; b=gScRsmZ+aaI9tNQJLukD8vyBHMN50j/mhxam4loCKkj2Uz8qnOjDG5EIHjlZ3YqSlIBvdZ9CEtkyGih8Az4kgllLVNtfimzXDa/yNcweFlr2cEtwr3ih8+Zfybx3QfnqbWFe0alv5VVbFpDT5ulU6nUYQFl0oIflZKGoWlWCE54=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730730878; c=relaxed/simple;
-	bh=c0//5GC+LJCIB3eM9x+zZHOQj2k1YzncqNf7fq8Ie1w=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FpQTNRzYyoaV7RO5E4g/utd1aHCSWHY1ZVGp55lgv58EFHixB2zkChn7Mw0zxWYiRigl3NaucMv8KRyZ4cGZx0KPrRlRpiqXGEAsKwDXYdwsg0QQRPszUPOxAwHkisOUpomF65GkMVS4v9fsr0JN6yF0u6+ckJcrFub8/l6R/Dg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X0oLp2kL; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3110AD2F;
+	Mon,  4 Nov 2024 14:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730730749; cv=none; b=AWPuBAwG5ex1oEKijLsJRgam2PW2vcrp8yXJm0GfGLxQ+seQUODqffGgZEE5wxpe25s8hvWkueJ0TlXpCE/dd0rz9EwTxGDAPLRpxY7v1nC8R1At+yIqrgoCeLV+rk+AqepYaaBcs9j1XGs/EbIw/awtwESno/DwEmhYlYqfT6Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730730749; c=relaxed/simple;
+	bh=nwR9aONzVYrPtaCPM/rCOoBU/juFbUwDxewR2+ECA4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QmbcEbfS97ADmAA8oGX6prSzHq1V233cOFu0/0GiZaGwh8m12+3GjyjdOY2KxIlPKzXrPvMX6S7iCetqgkOnOoeFN7xxV1kW8gApuz8eRKQUV1ekyZWPEQWdDHAI8cO9b9Smc504KyDrRaftumVAzIUnU6mS0sy7lUr5HyCYPls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TOyMxrmL; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730730876; x=1762266876;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=c0//5GC+LJCIB3eM9x+zZHOQj2k1YzncqNf7fq8Ie1w=;
-  b=X0oLp2kLHOvdI0DU2NjKGW2fZSgDnGigU8jhibR9ffXiBTytu/YldmQL
-   txzRLJRhrDYg9ssGS8+crJOzgBokiry+2UNH9IK02Ln6TzT403nzAgnQS
-   fifCjKuFKSKHmE/r90sFnOhELDk20ln0Li8Ok4/ydz6UaohkKRk7ZicGV
-   mf3FmFJQb7Ia70p6BvIRG9OOuoi+pbVBHFG9SP+guV6pGVdKgV8MH0ihl
-   4LK4TxRZFzxkVYKqb3b/b/Hf0xjR8PtuPoj65SQc86Le+kqGdQGzrUM+R
-   7jDFzxR96FiJdzDsr2rEXghyHgylTPTb9iRNGF2he9JiHrKj0xBMvRUGS
+  t=1730730748; x=1762266748;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=nwR9aONzVYrPtaCPM/rCOoBU/juFbUwDxewR2+ECA4U=;
+  b=TOyMxrmLkq8ruBr4S1hkOLfjljKS7pCTKFWujh+ylsWkQtdohTJ2nLr5
+   D93oTKaMEGyJ5mPeNCrVWgmHTBxzlue/sqmB3gkfI7gw8G1UySalfmgwb
+   vDPcF/5xdCwHB2WOjvFBb9w/oERgK5E6QXCxTRyj82YLqjLe2JIBbMNzi
+   MpmDsRO9GSY1ySz2e42IlYCHiIKCEBwzqhCEvOvuAH3d66K2u2GBQTJea
+   BcHsKyY0BlpEIBGuacvT89txWGsXut2e2IuiHOO7uHjYumXci4/YYWU/K
+   rGDsWa0SNyq0suFWz4Vlc96IG3l8yuuaze6y2ERM8YjhUJ7Ckdm3OcwEn
    w==;
-X-CSE-ConnectionGUID: fVjcthQnRHC4bapqelNpGw==
-X-CSE-MsgGUID: ksQbhn+NQ+CMNLmEkV1a2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="30313101"
+X-CSE-ConnectionGUID: 4VRZYnqfSgymHwCnazGktA==
+X-CSE-MsgGUID: u1DEyacWRM+IUXBRmEZnDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="55829949"
 X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
-   d="scan'208";a="30313101"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 06:34:35 -0800
-X-CSE-ConnectionGUID: iNR5l2tqSiKh+LE/IgbFbQ==
-X-CSE-MsgGUID: gv3b108SQ/mhYksXXouDCQ==
+   d="scan'208";a="55829949"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 06:32:27 -0800
+X-CSE-ConnectionGUID: FSB9NkaeQmGj5FxJ0bo+7A==
+X-CSE-MsgGUID: 6hQy1VRTT1+GCJSPUFSNQg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
-   d="scan'208";a="84497105"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Nov 2024 06:34:36 -0800
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 4 Nov 2024 06:34:34 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 4 Nov 2024 06:34:34 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.174)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 4 Nov 2024 06:34:34 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gOVp5RvfjKIYtFX8EtXDkS8wLvkK1EWvENrw6QhOj4DLUX5uguNq88RlbIvgiQwEr/wnnC1NxSLb/jVTIXR+JnkjoQR9Bz0ZDxm3u/W45DAE9bDiNTDUC2LTZ5tcheKboLVBqBpbXmCGS0N/6o//r6f577gJvvjuEoZZqbAgdJYUsCG9gQufpNMK0BusNOEU22mPS/biMkIxTvu63IL9Y/XtTHFrlMlaDZeJqIhenW4nrmFTZJm24MZKIAsbNxGX+en9mnXq5PP7U5oWiQBS1sfV+riqVI4iW6YGESJik6zydalNJhHwCr4jSSE04RfgeadFgj7WD4MQJ43frncf3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N0d3NAKygFfmD5WacbbxfMpEv7VwI/012JLM43t9WJc=;
- b=yfx7+tMxExI/2JC39nXENkIhDtQgqlWT8rPkvMZsYI3JAUY7+G1WoyZk1zxUZ1ml8F+FO98NYSPP0nw1zkfliFC2DhCTAj/3002hONVUHONDSCMuIKANB6p47mr32qum8s3wRsUj/SLWPeFbpTE/bSn3UZUtM9wzpRZArmF/yjA87Ax7ffFUkGSpLYdckV1+WyFeC/EO19cthlGulQMp7AGZu7l3LHqhV8/ST1ftp2I+2bH/W8tedX2tNiezgkvNP74gTFfz3g+Yqe8XSmWrRykEurQ48isk99YKK1rRBruYuPIaJhdTTr+ZnFKVafRb7HqBbjUQU7Koo2t+cGFvag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
- by CH3PR11MB7820.namprd11.prod.outlook.com (2603:10b6:610:120::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
- 2024 14:34:31 +0000
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.8114.028; Mon, 4 Nov 2024
- 14:34:31 +0000
-Message-ID: <1c32ebcd-ae94-42fb-9b18-726da532161f@intel.com>
-Date: Mon, 4 Nov 2024 15:32:20 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 09/18] page_pool: allow mixing PPs within one
- bulk
-To: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, "Andrii
- Nakryiko" <andrii@kernel.org>, Maciej Fijalkowski
-	<maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>, "Magnus
- Karlsson" <magnus.karlsson@intel.com>,
-	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <bpf@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241030165201.442301-1-aleksander.lobakin@intel.com>
- <20241030165201.442301-10-aleksander.lobakin@intel.com>
- <87ldy39k2g.fsf@toke.dk>
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-Content-Language: en-US
-In-Reply-To: <87ldy39k2g.fsf@toke.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MI1P293CA0023.ITAP293.PROD.OUTLOOK.COM (2603:10a6:290:3::9)
- To DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="88434652"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa003.jf.intel.com with SMTP; 04 Nov 2024 06:32:22 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 04 Nov 2024 16:32:21 +0200
+Date: Mon, 4 Nov 2024 16:32:21 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev, dmitry.baryshkov@linaro.org,
+	jthies@google.com, akuchynski@google.com, pmalani@chromium.org,
+	Benson Leung <bleung@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] usb: typec: Add driver for Thunderbolt 3
+ Alternate Mode
+Message-ID: <Zyja9b2Xt-BEc-mx@kuha.fi.intel.com>
+References: <20241030212854.998318-1-abhishekpandit@chromium.org>
+ <20241030142833.v2.1.I3080b036e8de0b9957c57c1c3059db7149c5e549@changeid>
+ <ZyOQJmF-PcFHgmeq@kuha.fi.intel.com>
+ <CANFp7mXhwMMwyqbKqxe=SgCRPUyXVhKnsJwf0xgJ2LefOvrtjg@mail.gmail.com>
+ <ZyTUsOg7cd6xSDhn@kuha.fi.intel.com>
+ <CANFp7mVC1RVLF=OPD-jiv5cQeYaA8uqNA0xB5os3iAKo2DFWoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|CH3PR11MB7820:EE_
-X-MS-Office365-Filtering-Correlation-Id: 165f8f19-a6ce-4fa4-8789-08dcfcddcb37
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZG9WWFhWMzN6V0hPUnRSdGxManhOamtQaFNhSVVoQ3pocWV2R0F5QkUrLzRr?=
- =?utf-8?B?UitPS1AwaDUvYlI0Njhjd0J5RW9MMStwTGJGOTVIbFJrUWF6V3BTcklTSHlr?=
- =?utf-8?B?am4yYVVoSDdBUTJ2S0JvUkVnMXduNHJwODhrNERLTzhHZUVhMFZqWHpkN05t?=
- =?utf-8?B?MHJDZDFLN3hybXBiNW5BZ0xab0NrQUJNTUg4azZFbXlYQkVjSk5ROC9xcHRI?=
- =?utf-8?B?R2xHQy9LQUFJS2Q4OWxGRDlwdVdkTVFQNUVuQUlPYTBUSzVGS3c3SUlPYXhS?=
- =?utf-8?B?VUxBTCtPeEZsSUdyUko5TGJ6L3dBQ1hHaGdVdXB4V2x0RVZtdVpXaWRmcVBP?=
- =?utf-8?B?YjhDTE54ZW9ZckpuM0I2ODJMTmJOTXFzdEEvNk5wR0Q1OU90TUhXNUZxNmxV?=
- =?utf-8?B?VHloY0JTSXVZSFhWNm5nSE9za1NxQ0pSaTVPblJuYVdHR21tSVBSYTZvUzRQ?=
- =?utf-8?B?NUNGd3RhNFU0WGhWNlNITzhIcStabk90NEsxWjc3YUZpcXVrM2M3MjNIaW02?=
- =?utf-8?B?N2xvWDJjOXp4NFVXVEJzL28rYnVDRkVySkMxZC9YUkFaQVprUTVibVNaQmRE?=
- =?utf-8?B?ZFlJWWZCZzJTVTRXMnEzNVpvb2o3U3NzOGlWM0dIZkFETzFHdEtLdDVQMlNp?=
- =?utf-8?B?ekhVekFKc3NTYTZWUEJ4T1M3UkFlRFRTdHNaMFJjejMya3htM2VoamJrZU9O?=
- =?utf-8?B?SENVa3dCdnVaRHRETkxqWUZZQVpJOHFJdHlqWE11YTF3clhnZ1hGa09aSVRF?=
- =?utf-8?B?Wm5yblArQzNOc3dIYndFeGFYM0RodjRUUDUwQ0YrVFlDeDMxNlJZNVNBUWEy?=
- =?utf-8?B?K3pTbFNwTU9aUVR1UUk4NWpneTc2Qm45Z0w5bDRVd21FQlk4NnM3emFZR3dB?=
- =?utf-8?B?a1JjSk1EOEo0b3NQMTVJLzJGRlBRdlhGSUp4NHd0WTBNOCtJWDBRZWw1aEt2?=
- =?utf-8?B?a0RzRk11dWF5Rk14VFNwMWhqd2ZiNUVtZXF0MkdDUXY5SW9GWEZTNmUzWkRn?=
- =?utf-8?B?cHJidExqc05OUjM2UVU5eU5WczNhb1NraTF4enhQVXNEMFBXZ3JYU0FFVkM0?=
- =?utf-8?B?elJiMVZWbDdFa1hoU2F6aWFJa043NEpSNmpid1kyczc1TGJJdjVaWndKTW9H?=
- =?utf-8?B?ZENEQVlhUk1uNEFpUDJmUENXK3VTcXpPNTN0TVBNQVRoTzYybEpHd0gzUFQ2?=
- =?utf-8?B?SWNaMTJESjVrMHgwYmF2ZjBsdXdXREJXT3ZlSkpPOW1QL2oyUTB0cks5cmJN?=
- =?utf-8?B?blJoRlJvN2Q1RUZpK3BHUU85ME9rdmZPb2dnTU90Y3NLanBEZW9abzl2QVZD?=
- =?utf-8?B?NDlOTWtPeWlEUGNEUnFMMjBmOEpvWkcwbmdMbzA5V1NnY09pZndYQ01tTTFR?=
- =?utf-8?B?YWVjZVd6VS9naUprVkUrZ1NBYWsxZ1RDYXkrWi8rUzFjVUp0QWpST3hYMzh5?=
- =?utf-8?B?QXpUNE9GdTJQSlZhMStIRUUvSUU1S2MwWFVPQmF0Q0hZL1I1aEZqbGg5ajhv?=
- =?utf-8?B?MkwyakovdC9YM241T3dNN2I3RXVtUFl3UXVDM2VZNmZmQmlvS0NxL2FEVWFn?=
- =?utf-8?B?R3pxTFNBSEhwQ3MyMEVGOXZiUktmZDFWTkZHZ0JLdVlZaW9Oc01CbjMxb28v?=
- =?utf-8?B?eEprZlBhWWdKM3RqNHRMYXgrNUdnb0doekIycFFXcnJXeVc5VXB3VzJRSXh5?=
- =?utf-8?B?NHZzcEIvOW5SUURyRmxVdzgxaGZBdlZtbmRjY2VyaVRHNWFKdUhheXQ3cFln?=
- =?utf-8?Q?rnpKSDa7pbsJxcXKl8sx1/zVvwhHGUDsm2AxTae?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SUprWHVqMkNSbWthWW9QSFMzNzJvT3A0cXFkK1JGRkFIL1BCczFqT2xUVWVY?=
- =?utf-8?B?eWtJSkI3VVZWY2d6MW90SDI4c0VTU3BOblY2UjRUTjhyV0laZ3E2ck8yTnRH?=
- =?utf-8?B?bFFJUko4R0lpL25LWHNYK1IweVYxTmpZTnltbGYwRXFwUWw2MXNUanY5SVlI?=
- =?utf-8?B?T1VpK0hyS0pIL2VJL0Erc0pUQ01ycUVYcFl5MXA5SUZmWnZnQnl5Y0d0d2RK?=
- =?utf-8?B?ZE5GcThxZEFUcE1saDlFWWp6TmdKREtIcTgxSkV5blJSbXJEdGVKM2JCcUJr?=
- =?utf-8?B?OUNrWURTQU4zWFZGcHZzWDArSkxuZDRHU3Z3UVd6aHN6RW9PcmVCdTRscGpS?=
- =?utf-8?B?a3R6eEFHZlYrUHpFVDVUMVl2V0N3SjRsRzhoOFIrd3dhZjFBMHNYc2RJV1hi?=
- =?utf-8?B?YU9SSXZoSmx2NytwSjFtREIvY1hwNE5YTEdoemUxQW51N3RsbDFqSFpma0ND?=
- =?utf-8?B?bWt0NlRQbVRhK1VlY3NSMWk5cENiVTZsbEJ3RUNXNDZHNkhVcmp0eGlUamo4?=
- =?utf-8?B?YU04dVJyWXd5cHVrampwR3Y1b1pmNm9EWnU1eEJ5V0tjbWF2VmNBWkdONm12?=
- =?utf-8?B?R3BLL1YxVG1HWXBPUFpiTkgwOFNBV3hYbjFNekVFQmNsWDRORjNBVzgwTWdR?=
- =?utf-8?B?RGI3NnNMZkptY0lqNUpOTHBqZjZWNDFGMk5BMXJJK01VRElMSkVEa0syZ1Qx?=
- =?utf-8?B?ckNyQVVOR2xLVGJqeHg1V2NpV0RCMnB2a2d1UVQ3SURHWXFKV3dpZ2RRSTlY?=
- =?utf-8?B?Z2k3SCt6aWlFVG9nZW5xTVFSUUlvb2poVGd6STFxbmxNOWhRR3hJb2VFYW1E?=
- =?utf-8?B?YjRiSEJqOFBkK3VpYldjMlhPb2JlS0FIdlNxK0RHdXdQSDgybiticFZkRUVa?=
- =?utf-8?B?S2pYTjlJNUNoMUJ3MG9CZ0ZVL1VONDFRVEZOa2I5ZnU4RFVOL2k3N0FMNXlO?=
- =?utf-8?B?OGpJRkZhWkV1TzN5WFVXdzJVOS9OancxV00rZ0h3SjVKMHpMQWpKd3RGU0Jp?=
- =?utf-8?B?d3poTkNMRzNIMmpxcFlTOWZYUVZMZmhWSlExVm5tVGovN29FVDNuTUk3N3Zm?=
- =?utf-8?B?WWZJaUl4TnlwWEtQNkVjTEx0eE9yN252Zy9XS0dCM2R2ekthdGtZeEtKbzFa?=
- =?utf-8?B?S0o3dTc0Mnc3KzdDOGQvdVkyelowTTcvcytEeSs5eE4wcjMxWUFjc0tJYUNR?=
- =?utf-8?B?aE1uYS9lVEpOUjRmWEF5RGsrSC93d2Z2bHEwakV4MDlKSlNDUTdDS055MGc5?=
- =?utf-8?B?NXE4M0xBT1dSd3JWNDIwQ1NNR0ZDS0s2ai9qR2lXVXJQSTZ6M0JTTkkrTDNm?=
- =?utf-8?B?ZE9iQzl3MHVVc0pTeU8wSjBlWFhiSUhtb3B0RjlUTWpIVURtQVpTTk85Unk0?=
- =?utf-8?B?TTRiNWxVNW9pVWRiazQxWXRVVWZtM2M4c1hWV25BUEtPM0EwTjIrMkd5ODFz?=
- =?utf-8?B?TzJGQ3JoU2VxN2dnTUpSa1hHdmlJb0c4dnRaRUpUbVphRUxZMHh2UU1hYXV2?=
- =?utf-8?B?c2YvbHR1cEJBL1d4T2QyWWlDa21Mdkc5Z21uaFdNNFdYQlJwQzRBUExYNUJx?=
- =?utf-8?B?N1llaytrUHgybkVSQ09hc1c4K3FJQU5jUzRraWFKcnlNMEpndTYrZDQvVldP?=
- =?utf-8?B?TzlTSERpTFl0a1hqbUsxOXdPdzZXWGpKY29KR2tUMTdwNnlUS3hXUG1LUXVU?=
- =?utf-8?B?cENkUTVwUzdrVWgyeVVjTUpJL2xwZGYwUlJoRlBGWGhxNjFhRUVSTlhqNUlK?=
- =?utf-8?B?RzcrMC9Eb2d3TEdBV1FPMXlVOWpzUnJRdkxGYjZVY0dHVDJncFVoWktYQ2hI?=
- =?utf-8?B?ZHpaNzVSWk8zTFRlbzJ2UUpFcFNtR2VGK1drbUppcFo3bzhsa1BUdFVGQjdR?=
- =?utf-8?B?WFVKMFl2OGdjSmZtd2paTnBmRFNmTWphbUlUU0IrRmR3K2xlQjdScVBXaEFj?=
- =?utf-8?B?QU1OTENzdUVWbU9YcTdFUUs4M01rVE1lMUg4ei9DNUlDR2pXS0kvWlQ1dDlH?=
- =?utf-8?B?UW5RTFdHSW4yTVUwWHBPVzB6NUJZSzgzL2VSQVBaRmdvekJ5ZnNyckdJbm0r?=
- =?utf-8?B?WmxFeFJzTHhkY1pPdXNFVWQ3NHk5bkRxU0trbVF1cTZjT2YxUjBvTVNScCt5?=
- =?utf-8?B?bm4vUzNpMEwwM1l5SmJpVjE4aC9yTnRRcnp0MG01Q0lKQmIyZTRzOE1MVDZJ?=
- =?utf-8?B?Mnc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 165f8f19-a6ce-4fa4-8789-08dcfcddcb37
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 14:34:31.1029
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 67nb2vHLWY0+ZpfpiURMACY/NjoMnV0W46mED2+E5bOsT2FfS/zNtriOGH9TncRT6mMqBntWjJ73ZEWtvaHPdN+PAWCR8KtA37dNFQRRbLQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7820
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANFp7mVC1RVLF=OPD-jiv5cQeYaA8uqNA0xB5os3iAKo2DFWoA@mail.gmail.com>
 
-From: Toke Høiland-Jørgensen <toke@redhat.com>
-Date: Fri, 01 Nov 2024 14:09:59 +0100
-
-> Alexander Lobakin <aleksander.lobakin@intel.com> writes:
+On Fri, Nov 01, 2024 at 11:48:07AM -0700, Abhishek Pandit-Subedi wrote:
+> On Fri, Nov 1, 2024 at 6:16 AM Heikki Krogerus
+> <heikki.krogerus@linux.intel.com> wrote:
+> >
+> > On Thu, Oct 31, 2024 at 04:02:22PM -0700, Abhishek Pandit-Subedi wrote:
+> > > On Thu, Oct 31, 2024 at 7:11 AM Heikki Krogerus
+> > > <heikki.krogerus@linux.intel.com> wrote:
+> > > >
+> > > > Hi Abhishek,
+> > > >
+> > > > On Wed, Oct 30, 2024 at 02:28:32PM -0700, Abhishek Pandit-Subedi wrote:
+> > > > > From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > > > >
+> > > > > Thunderbolt 3 Alternate Mode entry flow is described in
+> > > > > USB Type-C Specification Release 2.0.
+> > > > >
+> > > > > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > > > > Co-developed-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> > > > > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> > > > > ---
+> > > > >
+> > > > > Changes:
+> > > > > * Delay cable + plug checks so that the module doesn't fail to probe
+> > > > >   if cable + plug information isn't available by the time the partner
+> > > > >   altmode is registered.
+> > > > > * Remove unncessary brace after if (IS_ERR(plug))
+> > > > >
+> > > > > The rest of this patch should be the same as Heikki's original RFC.
+> > > > >
+> > > > >
+> > > > > Changes in v2:
+> > > > > - Use <linux/usb/typec_tbt.h> and add missing TBT_CABLE_ROUNDED
+> > > > > - Pass struct typec_thunderbolt_data to typec_altmode_notify
+> > > > > - Rename TYPEC_TBT_MODE to USB_TYPEC_TBT_MODE
+> > > > > - Use USB_TYPEC_TBT_SID and USB_TYPEC_TBT_MODE for device id
+> > > > > - Change module license to GPL due to checkpatch warning
+> > > > >
+> > > > >  drivers/platform/chrome/cros_ec_typec.c  |   2 +-
+> > > > >  drivers/usb/typec/altmodes/Kconfig       |   9 +
+> > > > >  drivers/usb/typec/altmodes/Makefile      |   2 +
+> > > > >  drivers/usb/typec/altmodes/thunderbolt.c | 308 +++++++++++++++++++++++
+> > > > >  include/linux/usb/typec_tbt.h            |   3 +-
+> > > > >  5 files changed, 322 insertions(+), 2 deletions(-)
+> > > > >  create mode 100644 drivers/usb/typec/altmodes/thunderbolt.c
+> > > > >
+> > > > > diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
+> > > > > index c7781aea0b88..53d93baa36a8 100644
+> > > > > --- a/drivers/platform/chrome/cros_ec_typec.c
+> > > > > +++ b/drivers/platform/chrome/cros_ec_typec.c
+> > > > > @@ -499,7 +499,7 @@ static int cros_typec_enable_tbt(struct cros_typec_data *typec,
+> > > > >       }
+> > > > >
+> > > > >       port->state.data = &data;
+> > > > > -     port->state.mode = TYPEC_TBT_MODE;
+> > > > > +     port->state.mode = USB_TYPEC_TBT_MODE;
+> > > > >
+> > > > >       return typec_mux_set(port->mux, &port->state);
+> > > > >  }
+> > > >
+> > > > The definition should be changed in a separate patch.
+> > >
+> > > Ack -- will pull the rename out into its own patch.
+> > >
+> > > >
+> > > > > +static const struct typec_device_id tbt_typec_id[] = {
+> > > > > +     { USB_TYPEC_TBT_SID, USB_TYPEC_TBT_MODE },
+> > > > > +     { }
+> > > > > +};
+> > > > > +MODULE_DEVICE_TABLE(typec, tbt_typec_id);
+> > > >
+> > > > Now the mode would be the same thing as connector state, which is not
+> > > > true. The connector state is supposed to reflect the pin assignment,
+> > > > and the mode is the mode index used with the actual VDMs. For example,
+> > > > DP alt mode has several different states, but only one mode.
+> > > >
+> > > > The TBT3 altmode driver will not work with this patch alone, it will
+> > > > never bind to the partner TBT3 alt mode because the mode does not
+> > > > match.
+> > > >
+> > > > Can you reorganise this series so that the patch 2/7 comes before this
+> > > > one? Then I think you can just use the SVID unless I'm mistaken:
+> > > >
+> > > >         static const struct typec_device_id tbt_typec_id[] = {
+> > > >                 { USB_TYPEC_TBT_SID },
+> > > >                 { }
+> > > >         };
+> > > >         MODULE_DEVICE_TABLE(typec, tbt_typec_id);
+> > > >
+> > > > Alternatively, just leave it to TYPEC_ANY_MODE for now.
+> > > >
+> > >
+> > > Sure, I'll re-order the patches and get rid of the mode. I'm actually
+> > > a bit confused as to how mode is supposed to be used since typec_dp.h
+> > > defines USB_TYPEC_DP_MODE=1, typec_tbt.h defines
+> > > USB_TYPEC_TBT_MODE=TYPEC_STATE_MODAL and it looks like USB state also
+> > > starts from TYPEC_STATE_MODAL and continues.
+> > >
+> > > Is this documented in the spec somewhere? How should this mode value
+> > > be used and shared between USB and various alt-modes? At least the DP
+> > > case seems clear because as you said it describes different pin
+> > > assignments. However, the term "mode" seems to be overloaded since
+> > > it's used in other areas.
+> >
+> > Well, this is confusing, I admit. One problem is that the term "mode"
+> > really means different things depending on the spec. In DP alt mode
+> > specification for example, "mode" basically means the same as pin
+> > assignment, so not the object position like it does in USB PD and
+> > Type-C specifications.
+> >
+> > But the alt modes are in any case meant to be differentiated from the
+> > common USB and accessory modes simply by checking if there is struct
+> > altmode or not.
+> >
+> > So the mux drivers for example can use the "alt" member in struct
+> > typec_mux_state to check is the connector meant to enter alt mode, or
+> > USB or accessory mode.
+> >
+> > I.e. if the "alt" member is there, then it's alt mode, and the "mode"
+> > member value matches whatever is defined for that specific alt mode.
+> >
+> > If "alt" is NULL, then connector is in USB mode or accessory mode, and
+> > the "mode" member is one of the common modes:
+> >
+> > enum {
+> >         TYPEC_MODE_USB2 = TYPEC_STATE_MODAL,    /* USB 2.0 mode */
+> >         TYPEC_MODE_USB3,                        /* USB 3.2 mode */
+> >         TYPEC_MODE_USB4,                        /* USB4 mode */
+> >         TYPEC_MODE_AUDIO,                       /* Audio Accessory */
+> >         TYPEC_MODE_DEBUG,                       /* Debug Accessory */
+> > }
+> >
+> > I hope this answers your question. Maybe this needs to be clarified in
+> > this document:
+> > https://docs.kernel.org/driver-api/usb/typec.html#multiplexer-demultiplexer-switches
+> >
+> > ..and the code obviously. Maybe the "mode" member struct
+> > typec_mux_state should be renamed to "state"? Though, I'm not sure
+> > that improves the situation.
+> >
 > 
->> The main reason for this change was to allow mixing pages from different
->> &page_pools within one &xdp_buff/&xdp_frame. Why not?
->> Adjust xdp_return_frame_bulk() and page_pool_put_page_bulk(), so that
->> they won't be tied to a particular pool. Let the latter create a
->> separate bulk of pages which's PP is different and flush it recursively.
->> This greatly optimizes xdp_return_frame_bulk(): no more hashtable
->> lookups. Also make xdp_flush_frame_bulk() inline, as it's just one if +
->> function call + one u32 read, not worth extending the call ladder.
->>
->> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> This does make things clearer -- thank you. Based on the various
+> meanings of mode vs state, I think the following will make things
+> clearer:
 > 
-> Neat idea, but one comment, see below:
+> Let's change |mode| to |mode_index| in `struct typec_altmode_desc`.
+> Looking at the Discover SVIDs and Discover Modes response in PD 3.2
+> spec, the value we are passing here is actually the mode_index since
+> that's what's necessary in the VDM to identify which mode we are
+> trying to enter.
 
-[...]
+Yes, mode_index sounds better.
 
->> +	if (sub.count)
->> +		page_pool_put_page_bulk(sub.q, sub.count, true);
->> +
+> |USB_TYPEC_DP_MODE| needs to change to |USB_TYPEC_DP_MODE_INDEX| in typec_dp.h
+> |USB_TYPEC_TBT_MODE| should also be |USB_TYPEC_TBT_MODE_INDEX| with a
+> value of 1 and we should define a new |TYPEC_TBT_STATE| as an enum
+> with base value of TYPEC_STATE_MODAL.
 > 
-> In the worst case here, this function can recursively call itself
-> XDP_BULK_QUEUE_SIZE (=16) times. Which will blow ~2.5k of stack size,
-> and lots of function call overhead. I'm not saying this level of
-> recursion is likely to happen today, but who knows about future uses? So
-> why not make it iterative instead of recursive (same basic idea, but
-> some kind of 'goto begin', or loop, instead of the recursive call)?
+> Getting rid of the mode index for altmode matching makes sense for DP
+> and TBT (since both have spec defined standard values) but for
+> non-standard modes which might return >1 modes in Discover Modes the
+> driver will match for all modes and not just the specific mode like it
+> was prior to patch 2 in this series. Do we want to retain that and
+> change the TBT driver to only match on mode_index = 1 instead. I have
+> no examples of non-standard mode behavior to decide which is the
+> better option here.
 
-Oh, great idea!
-I was also unsure about the recursion here. Initially, I wanted header
-split frames, which usually have linear/header part from one PP and
-frag/payload part from second PP, to be efficiently recycled in bulks.
-Currently, it's not possible, as a bulk will look like [1, 2, 1, 2, ...]
-IOW will be flush every frame.
-But I realize the recursion is not really optimal here, just the first
-that came to my mind. I'll give you Suggested-by here (or
-Co-developed-by?), really liked your approach :>
+Let's drop it for now. We can always add it back.
 
-Thanks,
-Olek
+thanks,
+
+> > > > > +static struct typec_altmode_driver tbt_altmode_driver = {
+> > > > > +     .id_table = tbt_typec_id,
+> > > > > +     .probe = tbt_altmode_probe,
+> > > > > +     .remove = tbt_altmode_remove,
+> > > > > +     .driver = {
+> > > > > +             .name = "typec-thunderbolt",
+> > > > > +             .owner = THIS_MODULE,
+> > > > > +     }
+> > > > > +};
+> > > > > +module_typec_altmode_driver(tbt_altmode_driver);
+> > > > > +
+> > > > > +MODULE_AUTHOR("Heikki Krogerus <heikki.krogerus@linux.intel.com>");
+> > > > > +MODULE_LICENSE("GPL");
+> > > > > +MODULE_DESCRIPTION("Thunderbolt3 USB Type-C Alternate Mode");
+> > > > > diff --git a/include/linux/usb/typec_tbt.h b/include/linux/usb/typec_tbt.h
+> > > > > index fa97d7e00f5c..3ff82641f6a0 100644
+> > > > > --- a/include/linux/usb/typec_tbt.h
+> > > > > +++ b/include/linux/usb/typec_tbt.h
+> > > > > @@ -10,7 +10,7 @@
+> > > > >  #define USB_TYPEC_TBT_SID            USB_TYPEC_VENDOR_INTEL
+> > > > >
+> > > > >  /* Connector state for Thunderbolt3 */
+> > > > > -#define TYPEC_TBT_MODE                       TYPEC_STATE_MODAL
+> > > > > +#define USB_TYPEC_TBT_MODE           TYPEC_STATE_MODAL
+> > > >
+> > > > I think USB_TYPEC_STATE_TBT would be better. But please change this in
+> > > > a separate patch in any case.
+> > >
+> > > Same question as above about mode vs state :)
+> >
+> > Well, I was thinking that maybe we should use the term "state" here
+> > with the idea that "state" would be something purely kernel specific,
+> > and "mode" would then be something defined in a specification... But
+> > now I'm not so sure (I don't think it's always clear).
+> >
+> > Maybe USB_TYPEC_TBT_MODE after all. I'll leave the decision to you.
+> >
+> > cheers,
+> >
+> > --
+> > heikki
+
+-- 
+heikki
 
