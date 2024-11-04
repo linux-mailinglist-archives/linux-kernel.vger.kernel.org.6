@@ -1,239 +1,156 @@
-Return-Path: <linux-kernel+bounces-394540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9859BB0BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:15:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2589BB0C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:16:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CCEA1F211B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:15:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD191C203C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823DB1AF0B8;
-	Mon,  4 Nov 2024 10:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423BA1B0F03;
+	Mon,  4 Nov 2024 10:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHFm9Fly"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kEc+KOto"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32B120ED;
-	Mon,  4 Nov 2024 10:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EBF18BBB6
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730715348; cv=none; b=V1gRVtfWoBL1AZ0rYaS34UxOL7a/k5T7d4dYs0AVSPE9Urtyv5DWFvXYDgOljfuSC/Xqv3rWPElDatvKrmOss9GBDwGSL+jpvRdmjIAixZApqRcnIcOPHzYprMdDtSyERxuWtMXqVXCYQ4V8F6xw8Nz3mVmTPmtsW/O+HBkA9Vc=
+	t=1730715403; cv=none; b=Lw0UKEhqPPT1bNXdrsA80eCfm0RMCyS2idr67jtWKd7DvN+HArVPGvU7pPxiyh3AayAHe9kG2K/xo2MvVVnNEeitwdV7K+CjNGHfUCm6Sv6hGZpciePPQ+V37DiQ3Ubb5Vv1fqIGGUi+HM/KIxRQGXniRs1wVMPfHfpbdmE9pzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730715348; c=relaxed/simple;
-	bh=InWUU3D2Dk79W7Gl9bItAteAnFGljFzsGKpkdweMKHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qLBSSlDiOgkAjzE0pvqaakKwZ/Mf1EEV8jbksaLUbhxyka+o3/uAxoex2jqDhWe8DXRunT+DSuigh5fbky4Ss0xwXeGaiYz4fTGwmXls/xwQS5MDpNO9ubMmBYu6a5Y17RgzvRc/6cEAam5ATo1wh17cKOKPMzvkV6vQ0BqS1Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EHFm9Fly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA24CC4CECE;
-	Mon,  4 Nov 2024 10:15:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730715348;
-	bh=InWUU3D2Dk79W7Gl9bItAteAnFGljFzsGKpkdweMKHY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EHFm9FlyAD2DFhNZT2J0RbMcZoapYZ2+aOcmOxGsdi67+47XT64Qi+Av8s7/MzsE+
-	 F4Z/WUczB7PISowE3ja8a83AFgLl/q1gGnL1cD5+Len9SQY3VrsxeT93jL6n8RhlUi
-	 4BzhV4nhkeR5LExaV8M17SbLJW8OfUnHBnPwBotvZn9N2CBLppQVz5c8beqzyZe/n5
-	 cjw1xtsmne12YIdNpcrog7cdF8eIEzbdnRBhRKt4bLP3mEcqMUEFNjIM2A10TUaSrE
-	 hVmzFsDbiPLBnjHR5NkU3hDLCl0ssFDEGREA6N1v+n/ZpJzsr9uOt+TuKUDEpGygI4
-	 68xVBJ5GfeFgQ==
-From: Borislav Petkov <bp@kernel.org>
-To: X86 ML <x86@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	kvm@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
-Date: Mon,  4 Nov 2024 11:15:43 +0100
-Message-ID: <20241104101543.31885-1-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730715403; c=relaxed/simple;
+	bh=MFYm2GRmaUQp2/58mK5nGraJsS/gP/S9kgUwW7wae7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ad4L2on0LPiPrBVcs/G3m4In8Dz2pgzAY+++NkQbYwNYvKk6qFevvO+u7/al8tRAo7AmVK6xGDt0gBRvUJ1KIH5hmCYQZ8SwZf8+d6PGyeLtcxZTEzNPF5bP9M8gEjPBlvP+oHE6Ds+qhIjieLKo/b1M8UYHaMdW+FxSEYgs6qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kEc+KOto; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4314b316495so34003865e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:16:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730715400; x=1731320200; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qWd3s2txJjKIcGqSsEzcZhgewqAr7nI1yjXYF52OaVo=;
+        b=kEc+KOtofhsAInMhOEU+F/FD2EwL+vAyt/fZQCSdfZpBQ1RmDTuBDDuiTopS1eLP0n
+         2qLgKF5AclTtYzqOc/CiTUz2Yx/Yo8m+KM6ZhWevCBuF7Yc0HDn1u8KaGMMAKWNsP3n0
+         qWV+hT+vW5h3m7wouAyUTTeKgP8XOMhb0qkieTqNU1BgDvvkwHg5+RNmYz6iNGKVuXZ5
+         6vFGHLhp5N/58bBjphvLXqkpe2ecWXDakyxK8+Og0+2cE9XftPUOZhEy0gJ2Zd35DdD/
+         SXElWXeIrkds9eOG6+fnpgNgvC+opf8DXvb4eROVVxxZmY0iO1sXR+10vK4NCMEBqm3v
+         t3aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730715400; x=1731320200;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qWd3s2txJjKIcGqSsEzcZhgewqAr7nI1yjXYF52OaVo=;
+        b=sPEB3sT8MiK59hENMyyTMKtHAJT5IRaI5BIfClDjuMWj4AOTYRq8ZptIz+fIrzGVIQ
+         6zqhDrZnqEQhpI+VV5RV1QpJsH2N0K8Ll659SNwe/wDuAClH5MGhGOtw2fcui08hSprg
+         DdLCUPARLW5xdrHxa3w7K6DgQBayI6LsDcZcEB+zsOeatpvdZtHIGN5ka6neBJN3ldxf
+         vdiNl3JBA1vaBojy9Zk+bHsKv4DsEeUJufaA4drl4urSRbanN8HgGBrYAXSr7nuYaw04
+         ksu9fJ9fN4YsmsAHCGGLpHhDw9194pSvlMOjQKcrZNNHiAizgka/vs9HKcwB3a8ayNpm
+         ysKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYOfh7DCg/Gt3jpKkFv6nD84mm9Sq14m1Br0B28zXALmpIr/XD32usMwbHWHYxytJUNVt1OwoF82ArKPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwECRMwjPaOwJejxXSBxk8sa0uuTSMIJKpLISfIwj3eiNGafnl5
+	dQjm8627TGroef3rdCaEAw270qC51+flYTwHiH3sPmAVPBYwP2jhZvZkx8TN+ak=
+X-Google-Smtp-Source: AGHT+IFDt2BrLBERph12kJZnQ8qLb/mhirfwAnqIBiRvvP7cAKfzV040B2ULebp4Q7UF7nG800Bryw==
+X-Received: by 2002:a05:600c:4688:b0:431:5957:27e8 with SMTP id 5b1f17b1804b1-4327b7ea52dmr117711305e9.28.1730715399974;
+        Mon, 04 Nov 2024 02:16:39 -0800 (PST)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d6983f6sm152688085e9.45.2024.11.04.02.16.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 02:16:39 -0800 (PST)
+Date: Mon, 4 Nov 2024 12:16:37 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] usb: typec: Add support for Parade PS8830 Type-C
+ Retimer
+Message-ID: <ZyifBejZtb7x0Vyc@linaro.org>
+References: <20241101-x1e80100-ps8830-v4-0-f0f7518b263e@linaro.org>
+ <20241101-x1e80100-ps8830-v4-2-f0f7518b263e@linaro.org>
+ <ed0c77bd-770c-406d-851f-8589e53cde8b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ed0c77bd-770c-406d-851f-8589e53cde8b@oss.qualcomm.com>
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On 24-11-02 10:17:56, Konrad Dybcio wrote:
+> On 1.11.2024 5:29 PM, Abel Vesa wrote:
+> > The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
+> > controlled over I2C. It usually sits between a USB/DisplayPort PHY
+> > and the Type-C connector, and provides orientation and altmode handling.
+> > 
+> > The boards that use this retimer are the ones featuring the Qualcomm
+> > Snapdragon X Elite SoCs.
+> > 
+> > Add a driver with support for the following modes:
+> >  - DisplayPort 4-lanes
+> >  - DisplayPort 2-lanes + USB3
+> >  - USB3
+> > 
+> > There is another variant of this retimer which is called PS8833. It seems
+> > to be really similar to the PS8830, so future-proof this driver by
+> > naming it ps883x.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> 
+> [...]
+> 
+> > +static void ps883x_configure(struct ps883x_retimer *retimer, int cfg0, int cfg1, int cfg2)
+> > +{
+> > +	regmap_write(retimer->regmap, 0x0, cfg0);
+> > +	regmap_write(retimer->regmap, 0x1, cfg1);
+> > +	regmap_write(retimer->regmap, 0x2, cfg2);
+> > +}
+> 
+> Somewhere between introducing regcache and dropping it, you removed
+> muxing to a safe mode during _configure()
 
-If the machine has:
+Oh, yeah, I forgot to mention that in the change log, it seems.
 
-  CPUID Fn8000_0021_EAX[30] (SRSO_USER_KERNEL_NO) -- If this bit is 1, it
-  indicates the CPU is not subject to the SRSO vulnerability across
-  user/kernel boundaries.
+Configuring to safe mode is not needed since we always do that on 
+unplug anyway.
 
-have it fall back to IBPB on VMEXIT only, in the case it is going to run
-VMs:
+> 
+> [...]
+> 
+> > +	/* skip resetting if already configured */
+> > +	if (regmap_test_bits(retimer->regmap, 0x00, BIT(0)))
+> > +		return 0;
+> 
+> What is that register and what does BIT(0) mean?
 
-  Speculative Return Stack Overflow: CPU user/kernel transitions protected, falling back to IBPB-on-VMEXIT
-  Speculative Return Stack Overflow: Mitigation: IBPB on VMEXIT only
+Looking at the documentation, the first register is
+REG_USB_PORT_CONN_STATUS and spans over the first 4 bytes.
 
-Then, upon KVM module load and in case the machine has
+But it doesn't really help here.
 
-  CPUID Fn8000_0021_EAX[31] (SRSO_MSR_FIX). If this bit is 1, it indicates
-  that software may use MSR BP_CFG[BpSpecReduce] to mitigate SRSO.
+BIT(0) doesn't really have a name, it just says "Connection present".
 
-enable this BpSpecReduce bit to mitigate SRSO across guest/host
-boundaries.
-
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/include/asm/cpufeatures.h |  2 ++
- arch/x86/include/asm/msr-index.h   |  1 +
- arch/x86/kernel/cpu/bugs.c         | 16 +++++++++++++++-
- arch/x86/kernel/cpu/common.c       |  1 +
- arch/x86/kvm/cpuid.c               |  1 +
- arch/x86/kvm/svm/svm.c             |  6 ++++++
- arch/x86/lib/msr.c                 |  2 ++
- 7 files changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 924f530129d7..9d71f06e09a4 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -462,6 +462,8 @@
- #define X86_FEATURE_SBPB		(20*32+27) /* Selective Branch Prediction Barrier */
- #define X86_FEATURE_IBPB_BRTYPE		(20*32+28) /* MSR_PRED_CMD[IBPB] flushes all branch type predictions */
- #define X86_FEATURE_SRSO_NO		(20*32+29) /* CPU is not affected by SRSO */
-+#define X86_FEATURE_SRSO_USER_KERNEL_NO	(20*32+30) /* CPU is not affected by SRSO across user/kernel boundaries */
-+#define X86_FEATURE_SRSO_MSR_FIX	(20*32+31) /* MSR BP_CFG[BpSpecReduce] can be used to mitigate SRSO */
- 
- /*
-  * Extended auxiliary flags: Linux defined - for features scattered in various
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 3ae84c3b8e6d..1372a569fb58 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -717,6 +717,7 @@
- 
- /* Zen4 */
- #define MSR_ZEN4_BP_CFG                 0xc001102e
-+#define MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT 4
- #define MSR_ZEN4_BP_CFG_SHARED_BTB_FIX_BIT 5
- 
- /* Fam 19h MSRs */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 83b34a522dd7..5dffd1e679da 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2536,6 +2536,7 @@ enum srso_mitigation {
- 	SRSO_MITIGATION_SAFE_RET,
- 	SRSO_MITIGATION_IBPB,
- 	SRSO_MITIGATION_IBPB_ON_VMEXIT,
-+	SRSO_MITIGATION_BP_SPEC_REDUCE,
- };
- 
- enum srso_mitigation_cmd {
-@@ -2553,7 +2554,8 @@ static const char * const srso_strings[] = {
- 	[SRSO_MITIGATION_MICROCODE]		= "Vulnerable: Microcode, no safe RET",
- 	[SRSO_MITIGATION_SAFE_RET]		= "Mitigation: Safe RET",
- 	[SRSO_MITIGATION_IBPB]			= "Mitigation: IBPB",
--	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only"
-+	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only",
-+	[SRSO_MITIGATION_BP_SPEC_REDUCE]	= "Mitigation: Reduced Speculation"
- };
- 
- static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_NONE;
-@@ -2628,6 +2630,11 @@ static void __init srso_select_mitigation(void)
- 		break;
- 
- 	case SRSO_CMD_SAFE_RET:
-+		if (boot_cpu_has(X86_FEATURE_SRSO_USER_KERNEL_NO)) {
-+			pr_notice("CPU user/kernel transitions protected, falling back to IBPB-on-VMEXIT\n");
-+			goto ibpb_on_vmexit;
-+		}
-+
- 		if (IS_ENABLED(CONFIG_MITIGATION_SRSO)) {
- 			/*
- 			 * Enable the return thunk for generated code
-@@ -2671,7 +2678,14 @@ static void __init srso_select_mitigation(void)
- 		}
- 		break;
- 
-+ibpb_on_vmexit:
- 	case SRSO_CMD_IBPB_ON_VMEXIT:
-+		if (boot_cpu_has(X86_FEATURE_SRSO_MSR_FIX)) {
-+			pr_notice("Reducing speculation to address VM/HV SRSO attack vector.\n");
-+			srso_mitigation = SRSO_MITIGATION_BP_SPEC_REDUCE;
-+			break;
-+		}
-+
- 		if (IS_ENABLED(CONFIG_MITIGATION_SRSO)) {
- 			if (!boot_cpu_has(X86_FEATURE_ENTRY_IBPB) && has_microcode) {
- 				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 8f41ab219cf1..ca3b588b51aa 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1273,6 +1273,7 @@ static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
- 	VULNBL_AMD(0x17, RETBLEED | SMT_RSB | SRSO),
- 	VULNBL_HYGON(0x18, RETBLEED | SMT_RSB | SRSO),
- 	VULNBL_AMD(0x19, SRSO),
-+	VULNBL_AMD(0x1a, SRSO),
- 	{}
- };
- 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 41786b834b16..d54cd67c8c50 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -799,6 +799,7 @@ void kvm_set_cpu_caps(void)
- 
- 	kvm_cpu_cap_check_and_set(X86_FEATURE_SBPB);
- 	kvm_cpu_cap_check_and_set(X86_FEATURE_IBPB_BRTYPE);
-+	kvm_cpu_cap_check_and_set(X86_FEATURE_SRSO_USER_KERNEL_NO);
- 	kvm_cpu_cap_check_and_set(X86_FEATURE_SRSO_NO);
- 
- 	kvm_cpu_cap_init_kvm_defined(CPUID_8000_0022_EAX,
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 9df3e1e5ae81..03f29912a638 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -608,6 +608,9 @@ static void svm_disable_virtualization_cpu(void)
- 	kvm_cpu_svm_disable();
- 
- 	amd_pmu_disable_virt();
-+
-+	if (cpu_feature_enabled(X86_FEATURE_SRSO_MSR_FIX))
-+		msr_clear_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT);
- }
- 
- static int svm_enable_virtualization_cpu(void)
-@@ -685,6 +688,9 @@ static int svm_enable_virtualization_cpu(void)
- 		rdmsr(MSR_TSC_AUX, sev_es_host_save_area(sd)->tsc_aux, msr_hi);
- 	}
- 
-+	if (cpu_feature_enabled(X86_FEATURE_SRSO_MSR_FIX))
-+		msr_set_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_BP_SPEC_REDUCE_BIT);
-+
- 	return 0;
- }
- 
-diff --git a/arch/x86/lib/msr.c b/arch/x86/lib/msr.c
-index 4bf4fad5b148..5a18ecc04a6c 100644
---- a/arch/x86/lib/msr.c
-+++ b/arch/x86/lib/msr.c
-@@ -103,6 +103,7 @@ int msr_set_bit(u32 msr, u8 bit)
- {
- 	return __flip_bit(msr, bit, true);
- }
-+EXPORT_SYMBOL_GPL(msr_set_bit);
- 
- /**
-  * msr_clear_bit - Clear @bit in a MSR @msr.
-@@ -118,6 +119,7 @@ int msr_clear_bit(u32 msr, u8 bit)
- {
- 	return __flip_bit(msr, bit, false);
- }
-+EXPORT_SYMBOL_GPL(msr_clear_bit);
- 
- #ifdef CONFIG_TRACEPOINTS
- void do_trace_write_msr(unsigned int msr, u64 val, int failed)
--- 
-2.43.0
-
+> 
+> Konrad
 
