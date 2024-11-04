@@ -1,226 +1,109 @@
-Return-Path: <linux-kernel+bounces-395035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A0849BB790
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:22:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3108C9BB79C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:24:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E4AA1C2250A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D13DE1F234A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9021534E6;
-	Mon,  4 Nov 2024 14:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCCE189909;
+	Mon,  4 Nov 2024 14:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="R+zw+RK7"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2051.outbound.protection.outlook.com [40.107.94.51])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BTprzF+H"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F252AD0C;
-	Mon,  4 Nov 2024 14:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730730157; cv=fail; b=uDTtqJIVt0CqBoXN8fFlP3Ovk3W/Sag7I7H0f6MuhJCQlLjPpta2weiK1NbL1LpyjA45NwG5LuBT4KlMLwuLPseHrUu3k4aIfNRgUMVvDXID73h5jz7zjIlxAWcjl+2T0+9bVUHoyhjOsf4QzrRrzc8H8FloxVnIFkz1QCanjS8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730730157; c=relaxed/simple;
-	bh=ZeSoW3eZ0X98VzGzRHvjCEFIl+piNjbcaEW8MZ9Jhu4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=M4+QJqZLc2mm95ZfzAZw94p7oXQXO/6fuAwJ1Ir47SK+hlVjWvz/WF073ZAaFKTpjQW+k2sRlEWsPKUuR4dUSrtLZoHJUvEEhbupfEnPfFwSntCj+r3sAzIZ9csNiWHcGN/Tkg50L7XiYSPTWqlwrD5y+iWPnpW/rZbxKLzcu2w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=R+zw+RK7; arc=fail smtp.client-ip=40.107.94.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pAd6DimT1zBEkrhzdJKiwM+sMl2kntnmXMjN+lssd0hoCHSYSsBxl2Vc8AOm3jPFUbaFU7CjydJo2VbTMxSJuQTQuFzzor3lMKjUdRE30HWpzUEzeWocEK6fBE4YSCnDhxSus/xwReHkCBht/de8WcpgYTtusbtf3qU+FmPw7LDa9fyhS+TJBXVP3nxWkvrjm2451uTyQvZBII04zoaTeu1+owWn5VVsp04b1+ULfUvBUsPpvlKhLrfi5yGl92pMeaXq2lfob0+ARuiuFB6UJZB+/zbhZNJ+veE2EaHEH+9WPYPxer7Jw4PKGR5Or5jkj2GX8TkuHAA0BwfSLoKFQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2kBZ/g1FWJm7IpzzwhzUYr4OSVAxSMYdcH/RPgLHT3s=;
- b=DRqXpz/LQcUAzg+OjQxhht1mOHflaHIAZet3HhFe2B4ffGOFX4y1vQ3Xa5RLUMQpreVJ8jw4LdTMo1EUZ2tw961yiw+H9lC3cP9XoOffqY6xqsmvrFjDLEEDdglmpIIB2AtpooekxthJiJhv6Cz2eV8+syUEWXr6a1BdvygQuUxiLX9yIoRUG3iZftp3iYS8renZDgty958nNLlsHE7yQP6Ywde/E++jaj4Xifg6/BPrEZCIuohs2ru8WAnRXKJMAoGEqx1HW6pEuEGwv3M5iNv2UJ9erbiLF1OON0eSoufy77yCyMRkg906xd07wWEP+6fptO+rF0can9TJv/8+ew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2kBZ/g1FWJm7IpzzwhzUYr4OSVAxSMYdcH/RPgLHT3s=;
- b=R+zw+RK7YgGPxJaH4/roKEc88gfg1ySFX0boe69oC/hJMunxhgHSnXFpGRA05PMcHWbIwB3W5koNJOZLA7AzFpC57+TpHUFYdU5fmsN0xWkKqaUzXO5UanXhSrTJgo/z8ArU3hrszVJQpOZcD5Qd67r8T4ksohRoAvRLmE90jUs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by IA1PR12MB6483.namprd12.prod.outlook.com (2603:10b6:208:3a8::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
- 2024 14:22:31 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8114.028; Mon, 4 Nov 2024
- 14:22:31 +0000
-Message-ID: <36b9646b-8c70-4c7e-8398-ba22331e0004@amd.com>
-Date: Mon, 4 Nov 2024 08:22:28 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: amd: acp: Fix for ACP SOF dmic tplg component load
- failure
-To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
- broonie@kernel.org, alsa-devel@alsa-project.org
-Cc: Vijendar.Mukunda@amd.com, Basavaraj.Hiregoudar@amd.com,
- Sunil-kumar.Dommati@amd.com, ssabakar@amd.com,
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Emil Velikov <emil.velikov@collabora.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
- <linux-sound@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR12CA0019.namprd12.prod.outlook.com
- (2603:10b6:806:6f::24) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E122AD0C;
+	Mon,  4 Nov 2024 14:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730730247; cv=none; b=OuVd0DF47yHbIgwzE0epvtqX4FF89LZn+iue7S4TrVKprO9BVfagZCRR3+C6qZq/GtXarx4CodXBHjd77SZDmumDMT8X1ZmFnt2VET/9yRdmngkeeSgZXrKSOWXhNQmhAUUHetJvDEkK1J/qV37aty89kEuCEM5pXu/k9kF684w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730730247; c=relaxed/simple;
+	bh=dFWMHWo1n5jFkTLEUAVg6+FBsVNcLtsbTmw+hxSsSmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qXJsFON9L8kU7MODZmhl17W8rKTRaCZx8+2XqdQg4FkMc98IUXP53nmhJeZTWwWT4DyPCrcYKCa82J832fq2GCG4/OB8OgrJaLUS0/xM5EwuNLLCq8/qLMTGkeGnk9//Jhy0u4uFlQW5Aa9kacxXENLhBxKEGcb5awfkIdww3qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BTprzF+H; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1BA5F40E0220;
+	Mon,  4 Nov 2024 14:24:02 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zjlq6e9v7tSE; Mon,  4 Nov 2024 14:23:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730730238; bh=mi5Jlho0Cd1trC6Apgms9J9UjhU9YxE55TxITVhcGDA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BTprzF+H/KnxeUjxe1V78yt8x8Ryu4cvLGuCPnpk+JGrHPkEXSqLx6EEZF13dmWln
+	 NHSkRWUtZrgtdLfDeKaQIVncgUONUMoIJw52ez6QyjCvAEYgTl54RRRr6eRRWFEosC
+	 VKu6KpzpG3Gaa2m6DeL0a+M0Y1lJKDdmhdBSt5SWffUY3WoEW9nTRmOw/5iNpTtSmv
+	 leAmMYbWarYLpTnHVjGrgype7jNesZMufPPEGs/f/m1mUC4upRvOeT9pRMxkHUh8l8
+	 4EioiWaUPHhLZHlG3GsXPHl10CnZIPMt5VvbpLZH+Nlj/P4aihVQY1UZ8lYn5FkkvP
+	 sxvNgL3WWRppFFKtmQuh+qaggjTddCs3iOYHE63n4CFwn6WPgQrirxJ6eHJFcMh3Gi
+	 HOMxSAWjZUQyyDzgmJHAe9odawbSO8InmDefynhdfPjUl0CsBtb/6BJJd8QI6YNk/B
+	 lIc0N6v5Ufd9Mjh4f2uxOCVLpkSG/tlGYNH5iDmfzi2EiVvgpuFcYBWiz4+jbVnEG/
+	 scJwf7RvgTS9Aq9ntzLleKwQj2tb+Jth8N/2IIXZL4PnZhtryBRIFBn3i1geFe6kWj
+	 kyKH4DtrwCrkyyejgU2wZD8wTfyIRwDMZ4nZjoyx0f37c3tRCLD03lwANyepVPt9JC
+	 zGtah/pJ2TkxdJwUxegzuCNA=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D191540E0163;
+	Mon,  4 Nov 2024 14:23:36 +0000 (UTC)
+Date: Mon, 4 Nov 2024 15:23:29 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com,
+	Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com,
+	linux@roeck-us.net, clemens@ladisch.de, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
+Subject: Re: [PATCH 09/16] x86/amd_nb, x86/amd_node: Simplify
+ amd_pci_dev_to_node_id()
+Message-ID: <20241104142329.GUZyjY4Zwb6WyB2JYv@fat_crate.local>
+References: <20241023172150.659002-1-yazen.ghannam@amd.com>
+ <20241023172150.659002-10-yazen.ghannam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|IA1PR12MB6483:EE_
-X-MS-Office365-Filtering-Correlation-Id: 90d15357-5022-49dc-bed8-08dcfcdc1e6a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TGxFNU9CM1k2a2VFYVRjdm9acnRDK0N5Wkl3eDZsYjJPZzBNM3VrV2lZZzl4?=
- =?utf-8?B?dmpxOENVdTZsUzJEcE41QysvN2N3SFBaQ2xsNmpUVHQ4YmVoZTV6QlhwbHRE?=
- =?utf-8?B?ckxMZ3ZXZFg5VzBPL1kzVGRQSENOZFRGdjJtdkhpbWJUS3lQTlRkWkZ6cFNy?=
- =?utf-8?B?NHJrNGgra25DVXZnVk1TSHdjRmhvajYzY3NhRFJyajF3V0d1dDh5ODNSdUxv?=
- =?utf-8?B?QzA2MitCTXdCbjhUUC9tSEhRNDJuZHFoMUY2VUgybnZFa3FGbkhIUHJleURB?=
- =?utf-8?B?S2M1eSs5bFVld3kxb2l0WUZYVzRteGN5R2htRDdnVk1nRzJYYy94cWlCZkxB?=
- =?utf-8?B?RVJSU2Y5Z1VqczQrS2ZUOS9DS2pqaVBPdDg5d3ZVN2x0SlJlT2xHZTV5WnpE?=
- =?utf-8?B?SlZ3WWY4c3liNjkzTksxdktZbk1QMUtpUllranNYalFmeGF1Q3ZXRE5lUklM?=
- =?utf-8?B?eEUxaHVyOWRJa3BvblIyUitpZ29WU25HYW5aSHpiT3paRzJhWmxPckhpelBw?=
- =?utf-8?B?azRORFc1WjJvWXNTeFRFTUd3M0VkQm9tOGw2Q0R6MzQycDVRZTREaXNBWUw1?=
- =?utf-8?B?Q1l6dTN3L0I1Q01Sc08yemNjeFdod29UZ1dXMTc1N21sRE90VE1iNWRRWXR3?=
- =?utf-8?B?WmdHR1hLNXozYTZqVjFaZmYzeWNTZFV2OFppeUVzczRPcXlSdlRqUDJmUzkw?=
- =?utf-8?B?VDZNRGNMZzl5cmNaa3Zic0RZNFhqMmVscFQ0dnRVTmlXNStLVGlYYnd4SHdy?=
- =?utf-8?B?NDFHdkhlemU5bU01bHZrdEhpWHcwT3F3RSsybitkbG9qUVJYL1VnNjBVejdz?=
- =?utf-8?B?VkVESGg3eUxJYjN2OTNjY2xyUWtjcUNDNjFwcjlHTFBwdFhkSW9hcUpVUXlU?=
- =?utf-8?B?d2l5aHlsSDhwOG9JOFpCSU9VZENrL21JUUZDQ3UrZTRRV0labVBnZklVd2dQ?=
- =?utf-8?B?TmVzVXFJRjkyLzRYVGtpc0VBVHdocmc2dm9TSzRxdll0NU10K3hMd0FqZG91?=
- =?utf-8?B?OENQYTVzVTh2d2ZsK095eFpQc0JhUlhtWHhQZHVLNnpmL2sveCtXZ3QzWUxo?=
- =?utf-8?B?TUJhTStlVTZFTW9saVlRU3lHSTg3a1R6RzNIS2dHY20wL2VmSU9KT2J6c2N4?=
- =?utf-8?B?ak5qOGpEWlVNL05QanhFK1E1WDZvVFh5RFN1SkdYLzdQcWhWQjZLRWwvekUy?=
- =?utf-8?B?OGtOOXFSS1U1cllxbkRMSGxhUElRaDNnTWRxUjUyckZ3cFhiZG1VOTJoN0ND?=
- =?utf-8?B?QkV5NEthYVpIUTJDRnc3WTgzNmtsL1VNdW9lNUlNZy9UWWtNZWhoSUR6bnBz?=
- =?utf-8?B?WU4waXQ2dUd1Ny84N2dPNnJVTVh2ZG05a1ZCejdnWGZTcEJLd1R6YWJ3K29i?=
- =?utf-8?B?RkJnRGFQT21sZU4yVG9haW1QU01wNjVpVEZrZUlZWU14amZCdG1rUmtYR0Ju?=
- =?utf-8?B?eXh3OUNibHJES0NJckNMcWllYU9BaWVEQm95UWkzRDRsbTBmOWZpSkcrbTBF?=
- =?utf-8?B?aHlqYjFFQ3oyNDZ2MmFHWU4vRXFrOG43ZFRvYktYbXkwcVJvQVBxNkR1eTl6?=
- =?utf-8?B?QTl2anZ5RlkrMHNRVWlvcEc1Y1grc2VoaU85RzFtdFFhSEh5R3B0YjlBWkFL?=
- =?utf-8?B?U2N3WHB3MVR4TEF0ZS92N0x4Ni9NcTVnbDE0cDEzM0xoZGFjcXduajMvVlhy?=
- =?utf-8?B?SGx2ZEhod0prY0ZDS1BCV0lYYktCMUFRTmJiYThLM3dEeEgvdzI5UHhpWlhz?=
- =?utf-8?Q?ySDGGm8SVzeYTMQxJy+cO8NY0ZlOVHi8p46d+DW?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bzI1eWlMRC83Z0w1NThyME1ScGdqd0FQRDIwNW5BN2ZidGZPb2ovOUhMcklW?=
- =?utf-8?B?aU9iT2JRMVNLaGRlNzNubFVwQkdWc3ZOYmZtQTR5R0RaRGR1NzhsZG91Q01n?=
- =?utf-8?B?QzQ1NTFNT3g4LytsZm1aZmtTS0F5em9XYmY5SHROcnJuTHo0SEJNdXgyWFVO?=
- =?utf-8?B?MHJQZHVyQmJyMUNPR29SSkwvTVRBTUFXRkM1MlhJREpQL3JVMGorSnRBWCt2?=
- =?utf-8?B?N3dhZllEMmw1SXZuOTFtdmVKRy84YStIa213OVVXRlBlL3Q5R2M3QWVudENu?=
- =?utf-8?B?UHhGQzE3VVkrT1MwWnpNckRYOGswc2JDTDB3RGJKdm42QUQ5UUszZUtDdmRZ?=
- =?utf-8?B?R3BydDNzVnRvUUowRVJIczZLVlhuV1UzWktaS3ExTDYxYUJlLzM5ciswL1pW?=
- =?utf-8?B?Zjh4TENVZXFvVWZUNmhuenFIa2x5N1JRVC9sbVJ0TXVLNk5XS1NwNkUxTFhm?=
- =?utf-8?B?akpzcy9LN29yaENxR01YMisyVDlxWGFoQkd0ZGlrMGNtd0NhQ0o0Z2c2MXVD?=
- =?utf-8?B?RERlOU9uakNaVHpjM29SVitSRWhoam1ERWJEc2MxSkROL3UvblNuOVBDSDE4?=
- =?utf-8?B?a2ZhdHpmR1dUdzNCS3NuRENkcDFhc0h0NGR5bzl4WVh3VmllMWxWaGRsbkFT?=
- =?utf-8?B?YlNJeVJ2d3dGcnU2UDVJUEhDTFRHdmY0b0h2V1JWK2txcjB6K28zcVJKN0tV?=
- =?utf-8?B?dEIwYnVJc1dFYXJ5WitWYnZYdzZWTnI5MDlWSS80bmJZL21BZVZQWXowV2I0?=
- =?utf-8?B?NzcrNy9aYjVPeHBTWEhmcnBTQUs3Z1UyVlpkdjNGY1MxS1NWTUVhVG1OUHZ4?=
- =?utf-8?B?alZxRFhxM0xWVVZieDVpUjkxd25Oc0x3V1I3bGdCbHFkU3hPVkN1WnNFN2Vi?=
- =?utf-8?B?QWhiWVFYUDBEL2wzYWZYM2pTNndwdEpBckdweHJlNjJCYUEzRlVjMGp3TWdv?=
- =?utf-8?B?MjJTVDRyRlBycUp4dDFhK1E2a3RGKzVBL3ozSWdYZDhvSzlWaS9CbXdFUEEv?=
- =?utf-8?B?SVYrVy91VG1mMDc4aGJlWXYwYS83eUJneWxMa2VJMm90QitmeVhTbEFlTHpG?=
- =?utf-8?B?R1U1QXhTVkQ0OFovOFphKzJPZklrQ1ZtOXlJTEtCcFQvRnFTSm9Fbkt4UUhw?=
- =?utf-8?B?UC9vQ2djZDE3Mk04Nkt2L09kaFk1bjMveWJKQ1pGTzcvbmZsZFZRKy9ERXZE?=
- =?utf-8?B?NzZ4c3dYVXJoUWo2T3RteVNnK3NqQzZtdmdhWi9XU0RWZGVpRmJTRHllNGtH?=
- =?utf-8?B?eThWRW1DVFIxMkVCdjJDckNjbFVIbmVpSVlWajlKcmZEbFJmVXdqL1poaHRQ?=
- =?utf-8?B?OU9reFhVc3BiTG9vMUZkSGNsRm9hZDZkVms0cGdMYk9BN0Uwb2x4MlVzQ3ho?=
- =?utf-8?B?V0JxY25jakI3YzdMejZGR1dWa2FTZTJua3Z0MVRyaEYyVDE2dENYZkttTjAx?=
- =?utf-8?B?cksvZGZZUTlJdnE0REhwaFZMd2U5cDZzRTh2WkVOMGxPc3JxTEZRQ09rWkVr?=
- =?utf-8?B?Q2QvdFp4M3JqZXg1RTl0TzRqYnRGS1g3bWFDYjJHVkI1NDJmM2FmRVZWdjdG?=
- =?utf-8?B?L1lNekhwdXl5ZVZhdzRHbjdBbmI1Z1c0Sm9aR2orYm5Obi9WY1Y2Sm1NZ3Nh?=
- =?utf-8?B?TEJESEZUQTkrcXB2aUhtM2lhOEU5SmYrR1h0NFVhSmFvcVlMUXZHdXdPR0w2?=
- =?utf-8?B?UEIvRmhRajFUNkZHSFdIY3RkODNUZ01YdC9NbElOTXZBQ09XSml1bGVWZlp3?=
- =?utf-8?B?YTJMNEJ0NFNzUDU5ZmhsbGI2V0hlM2d6bGZINkd3OHpyUVA4MzBIaFJMUEdF?=
- =?utf-8?B?VDM5aVFoUEs3aXZvbEt3K2tmR3NiVlJVTFZWU0tibm5HTC85ZytjZ0p4dDZn?=
- =?utf-8?B?Z1ROSE1KV1NNdUIrWkJ0QTZNUjR3bjhxais0QUJNcGhwWjlteHJKMERKSGdn?=
- =?utf-8?B?TVpDT2pYVjdNVzlQeUlPMFdsejI0Y2xCUUpTNDZNRGVHZGNMVVVCRlRVcElF?=
- =?utf-8?B?ak95QVJhbXpPWkgrb0UzcGRublBnekplTjhjNTk2MjR1bjRpY0N0cWZOVVJM?=
- =?utf-8?B?UWM1RmVkUlVLVDk0Skx4Y0xMa3BDb2RKc2NQSmdyT3R1TVVSZ3lobUN5NVhl?=
- =?utf-8?Q?UjXqeAuyjzXT5ts49LJXXFdJ/?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90d15357-5022-49dc-bed8-08dcfcdc1e6a
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 14:22:31.4943
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pn80iAMjFfWx6sUN7VlVt3xLfP918C5GE92Oebr0oJ+sW+M9r9OQj0N/sdTBrgSlpw3aXVEFFtXIu5j58qYtTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6483
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241023172150.659002-10-yazen.ghannam@amd.com>
 
-On 11/4/2024 03:13, Venkata Prasad Potturu wrote:
-> Stream name mismatch with topology file causes tplg load failure.
-> 
-> As SOF framework assigns dailink->stream name, overriding stream name
-> other than link name causes SOF dmic component load failure.
-> 
-> [   35.474995] snd_sof_amd_acp70 0000:c4:00.5: error: can't connect DAI ACPDMIC0.IN stream acp-dmic-codec
-> [   35.475001] snd_sof_amd_acp70 0000:c4:00.5: failed to add widget type 28 name : ACPDMIC0.IN stream acp-dmic-codec
-> [   35.475013] sof_mach acp70-dsp: ASoC: failed to load widget ACPDMIC0.IN
-> [   35.475018] sof_mach acp70-dsp: ASoC: topology: could not load header: -22
-> [   35.475072] snd_sof_amd_acp70 0000:c4:00.5: error: tplg component load failed -22
-> [   35.475083] snd_sof_amd_acp70 0000:c4:00.5: error: failed to load DSP topology -22
-> [   35.475090] snd_sof_amd_acp70 0000:c4:00.5: ASoC: error at snd_soc_component_probe on 0000:c4:00.5: -22
-> [   35.475117] sof_mach acp70-dsp: ASoC: failed to instantiate card -22
-> [   35.475254] sof_mach acp70-dsp: error -EINVAL: Failed to register card(sof-acp70-dsp)
-> [   35.475261] sof_mach acp70-dsp: probe with driver sof_mach failed with error -22
-> 
-> Fixes: b2385de2ae11 ("ASoC: amd: acp: Add stream name to ACP PDM DMIC devices")
-> 
-> Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+On Wed, Oct 23, 2024 at 05:21:43PM +0000, Yazen Ghannam wrote:
+> diff --git a/arch/x86/include/asm/amd_node.h b/arch/x86/include/asm/amd_node.h
+> index 419a0ad13ef2..8e473a293706 100644
+> --- a/arch/x86/include/asm/amd_node.h
+> +++ b/arch/x86/include/asm/amd_node.h
+> @@ -30,4 +30,10 @@ static inline u16 amd_num_nodes(void)
+>  	return topology_amd_nodes_per_pkg() * topology_max_packages();
+>  }
+>  
+> +/* Caller must ensure the input is an AMD node device. */
 
-Thanks. I was aiming to sort out (null) from `arecord -l` but 
-functionality is more important.
+You can ensure that yourself by checking the PCI vendor in the PCI device,
+right?
 
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+IOW, pdev->vendor...
 
-Mark,
+-- 
+Regards/Gruss,
+    Boris.
 
-Up to you but alternatively, you can also drop my existing patch and 
-force push your for-next branch.
-
-> ---
->   sound/soc/amd/acp/acp-mach-common.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/sound/soc/amd/acp/acp-mach-common.c b/sound/soc/amd/acp/acp-mach-common.c
-> index 67aa0ad83486..d314253207d5 100644
-> --- a/sound/soc/amd/acp/acp-mach-common.c
-> +++ b/sound/soc/amd/acp/acp-mach-common.c
-> @@ -1561,7 +1561,6 @@ int acp_sofdsp_dai_links_create(struct snd_soc_card *card)
->   
->   	if (drv_data->dmic_cpu_id == DMIC) {
->   		links[i].name = "acp-dmic-codec";
-> -		links[i].stream_name = "DMIC capture";
->   		links[i].id = DMIC_BE_ID;
->   		links[i].codecs = dmic_codec;
->   		links[i].num_codecs = ARRAY_SIZE(dmic_codec);
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
