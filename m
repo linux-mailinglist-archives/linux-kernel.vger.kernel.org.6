@@ -1,137 +1,105 @@
-Return-Path: <linux-kernel+bounces-395231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36A89BBAA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:54:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF4B9BBAA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:55:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98CDC282B49
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:54:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 413BF1C22838
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB761C2DB0;
-	Mon,  4 Nov 2024 16:54:44 +0000 (UTC)
-Received: from www.kot-begemot.co.uk (ns1.kot-begemot.co.uk [217.160.28.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716E21C4A04;
+	Mon,  4 Nov 2024 16:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0rYMgms"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA111C07EA;
-	Mon,  4 Nov 2024 16:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.160.28.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762AB1369B6;
+	Mon,  4 Nov 2024 16:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730739283; cv=none; b=tc4fvTeI2h97+rHMUXmUZ0bexAxTKYIJDyy6NruYTwZH1P/scWVFAt90kXwXuu4kKsaQxpukHkU34JJddMOqRkQssFPbXRopz+xrZjoIid/AzzCh6I3JqDeUAyRI5OdaYzNbvHPzc8OB9Qkj0f7LpQG6QeDHDkM9krvvdNpir9c=
+	t=1730739305; cv=none; b=iDwSmD2/HQYTsjX+Hky3OXhrC+G8tqZ9E1IQuU8u5ZDFS9XbGir1+vJkVch29lNp4Lya3YATi6VlkkxVdynsCjgVvMNcpUaOQpZq3nU1e/hCwcOdmftm6jVudeshiAslCGApFb00ol2dRsa06Ir1c2wpe2ame4xT8PnHzs5JDR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730739283; c=relaxed/simple;
-	bh=xsxDHFnbfImmtC2rlnjfXAj+o2HkYwfXIviVbt9W8xM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Plfm7Anq+FokeoetrF5e2k6eT5L5yF+AFRhRSBweYr0YsTBEuNhQ2Pf7UZC6lqkwuktchJj051h/9j0trJKlcgpVazcjr4SlxUkkVzUgsW66EAqYhYoOGysXWy04v14Gb+E4tUdQSH2poHe2AFMbi8VIrFK2bY7+5jwsV2BThLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com; spf=pass smtp.mailfrom=cambridgegreys.com; arc=none smtp.client-ip=217.160.28.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cambridgegreys.com
-Received: from [192.168.17.6] (helo=jain.kot-begemot.co.uk)
-	by www.kot-begemot.co.uk with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <anton.ivanov@cambridgegreys.com>)
-	id 1t80LU-00Dwha-O1; Mon, 04 Nov 2024 16:54:28 +0000
-Received: from jain.kot-begemot.co.uk ([192.168.3.3])
-	by jain.kot-begemot.co.uk with esmtp (Exim 4.96)
-	(envelope-from <anton.ivanov@cambridgegreys.com>)
-	id 1t80LR-00C1Rg-2Z;
-	Mon, 04 Nov 2024 16:54:28 +0000
-Message-ID: <54288e93-c389-444c-afe4-bd099523bfab@cambridgegreys.com>
-Date: Mon, 4 Nov 2024 16:54:25 +0000
+	s=arc-20240116; t=1730739305; c=relaxed/simple;
+	bh=Q418ja8tsDXOC77mCOfPiqTbO2OPtGirjJ5OAUF3zK0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kxui2FFzp3Y/gRnaILcFJ5TXmkO2P2cf+fuokPLjgBIWaxe3xfOVU7HDbLTlEV7i25Y4wzHYdLZckUBcnvYNQrDVC8qlAp3HpQ1SLTmmM+8E3vtIFnocGr/tydW2l7J8pYMG98wRQzx+juR8S4/JvnPC0y7Elgt9+Z3uxjbILds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0rYMgms; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e2e2baf1087so4088118276.2;
+        Mon, 04 Nov 2024 08:55:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730739303; x=1731344103; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5XUR73A1EB/lY4KCXHBgQkAI6e2s9ail780Z/58ik38=;
+        b=P0rYMgmsHK66YDMRRBhA3So7Zc4EyqYpfGx7QNlji5S/vCHoI8JpUoJji2zvDTWW7c
+         TVogSbCuGyw23pWyjU/SKt6tiGU0hNV36Kn/Dt+AU135YdroJ/pDIjRepNMmcJxfJkrq
+         e+O5uJvwEKtWsWzqfUHsO5z5jRkw/SAl+QgxLzgSQxSK2XiAmIbfoxNYg27+9+6pXCOG
+         Mg+WRJyf8pJ5BRpWUWwMvfLWIIedNhSZoDTpyEN/dHAt7Ve4Fw/tBSGw4h7QQ1Cm9vuc
+         xS8yp7SgGvRuIg6HSmnITUir4T22JiEaK6ssxm+QzRXuAzvenFzaXEhenFVLKPHi+CBG
+         1XBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730739303; x=1731344103;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5XUR73A1EB/lY4KCXHBgQkAI6e2s9ail780Z/58ik38=;
+        b=gcoDBETKnZSpXLPwO4vqSUybjHiTDCsh5DsmzIrkNNbeNDMTP5oijReX0dxPVQZSSl
+         VGdYEXgjgqpQfHbw99xHzCcvvfdpAZyZgWTANzg/zl7jFpKJ2+iwJaqcMyoSLe0yr1mZ
+         jg/4c5zsU4nLYF8XZNpAjK2ASwalGmv56xIM7j1vzH5kleElQvwXv+TiXt+NnUAcBWyN
+         WRznCJ3rSQt8pvPCLPM0hcBrQNk7ttuHfLPzg8rI/VGDS9y3X/FnwfOoKapP1f3qXbXe
+         7/UvADcFT/QiQ5aY44H3ZE06bNTskLIxdBCMbcMy+lzDmJa9pfJkbaOFeRqmKpx3+qUE
+         ljmA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4HlUPV1NLKKYJNKXWB0C8U9cCKcDzK7Ux1KGY4a0Amd4WPIyz2Y63foFfgKEKXyI7f0yiqDeePHlseZMR@vger.kernel.org, AJvYcCUW0/e8mEf8BqpdaiVOCJYmtUDES8Wv4E1hYtUlL+E9xTzlFgUaK+O/tqfU3wfNc7DFjoemyxOQfUw7QSlY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ0h/6VoVWc6gG71cNDnQGW81UK1/Qpp+0MN78pjFN/JlRs0e3
+	/qMHgokMcJTXSjrpbWuwhQFRrgZV+t4SqDZ40vZ0svrolmm7eI9ATieTdbIBbMOLnC9Zs0fjr9r
+	oGO8Xni1D8IRC0aUGJKq7hLhb97c=
+X-Google-Smtp-Source: AGHT+IFgabJY3MlOmUkApTX3tWXYiMzEsG7DXQ/HOHo3g9GdH/NAinuHn7PyooNEfFQpKUj0Nkzm7FZ9+4at9ONwxwE=
+X-Received: by 2002:a05:690c:690c:b0:6e2:a129:1623 with SMTP id
+ 00721157ae682-6ea64be680dmr130287777b3.38.1730739303448; Mon, 04 Nov 2024
+ 08:55:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] um: net: Do not use drvdata in release
-To: Tiwei Bie <tiwei.btw@antgroup.com>, richard@nod.at,
- johannes@sipsolutions.net
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241104163203.435515-1-tiwei.btw@antgroup.com>
- <20241104163203.435515-4-tiwei.btw@antgroup.com>
-Content-Language: en-US
-From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-In-Reply-To: <20241104163203.435515-4-tiwei.btw@antgroup.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -1.0
-X-Spam-Score: -1.0
-X-Clacks-Overhead: GNU Terry Pratchett
+References: <20241104084240.301877-1-danielyangkang@gmail.com> <20241104120615.ggsn7g2gblw73c5l@quack3>
+In-Reply-To: <20241104120615.ggsn7g2gblw73c5l@quack3>
+From: Daniel Yang <danielyangkang@gmail.com>
+Date: Mon, 4 Nov 2024 08:54:27 -0800
+Message-ID: <CAGiJo8RrxaUfLhk1LWPk_iDB+XJc0=gMoKXcxAS02qyqHVxJ_Q@mail.gmail.com>
+Subject: Re: [PATCH] fix: general protection fault in iter_file_splice_write
+To: Jan Kara <jack@suse.cz>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
+> > -                             pipe_buf_release(pipe, buf);
+> > +                             if (buf->ops)
+> > +                                     pipe_buf_release(pipe, buf);
+>
+> Umm, already released pipe buf? How would it get here?
 
+If you're talking about the pipe_buf_release before the if statement,
+that line is a - not a + so I basically just added the if statement
+before release to check that buf->ops does not get deterrences in
+pipe_buf_release while null. It's the same two lines as when pipe is
+released in splice_direct_to_actor.
 
-On 04/11/2024 16:32, Tiwei Bie wrote:
-> The drvdata is not available in release. Let's just use container_of()
-> to get the uml_net instance. Otherwise, removing a network device will
-> result in a crash:
-> 
-> RIP: 0033:net_device_release+0x10/0x6f
-> RSP: 00000000e20c7c40  EFLAGS: 00010206
-> RAX: 000000006002e4e7 RBX: 00000000600f1baf RCX: 00000000624074e0
-> RDX: 0000000062778000 RSI: 0000000060551c80 RDI: 00000000627af028
-> RBP: 00000000e20c7c50 R08: 00000000603ad594 R09: 00000000e20c7b70
-> R10: 000000000000135a R11: 00000000603ad422 R12: 0000000000000000
-> R13: 0000000062c7af00 R14: 0000000062406d60 R15: 00000000627700b6
-> Kernel panic - not syncing: Segfault with no mm
-> CPU: 0 UID: 0 PID: 29 Comm: kworker/0:2 Not tainted 6.12.0-rc6-g59b723cd2adb #1
-> Workqueue: events mc_work_proc
-> Stack:
->   627af028 62c7af00 e20c7c80 60276fcd
->   62778000 603f5820 627af028 00000000
->   e20c7cb0 603a2bcd 627af000 62770010
-> Call Trace:
->   [<60276fcd>] device_release+0x70/0xba
->   [<603a2bcd>] kobject_put+0xba/0xe7
->   [<60277265>] put_device+0x19/0x1c
->   [<60281266>] platform_device_put+0x26/0x29
->   [<60281e5f>] platform_device_unregister+0x2c/0x2e
->   [<6002ec9c>] net_remove+0x63/0x69
->   [<60031316>] ? mconsole_reply+0x0/0x50
->   [<600310c8>] mconsole_remove+0x160/0x1cc
->   [<60087d40>] ? __remove_hrtimer+0x38/0x74
->   [<60087ff8>] ? hrtimer_try_to_cancel+0x8c/0x98
->   [<6006b3cf>] ? dl_server_stop+0x3f/0x48
->   [<6006b390>] ? dl_server_stop+0x0/0x48
->   [<600672e8>] ? dequeue_entities+0x327/0x390
->   [<60038fa6>] ? um_set_signals+0x0/0x43
->   [<6003070c>] mc_work_proc+0x77/0x91
->   [<60057664>] process_scheduled_works+0x1b3/0x2dd
->   [<60055f32>] ? assign_work+0x0/0x58
->   [<60057f0a>] worker_thread+0x1e9/0x293
->   [<6005406f>] ? set_pf_worker+0x0/0x64
->   [<6005d65d>] ? arch_local_irq_save+0x0/0x2d
->   [<6005d748>] ? kthread_exit+0x0/0x3a
->   [<60057d21>] ? worker_thread+0x0/0x293
->   [<6005dbf1>] kthread+0x126/0x12b
->   [<600219c5>] new_thread_handler+0x85/0xb6
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
-> ---
->   arch/um/drivers/net_kern.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/um/drivers/net_kern.c b/arch/um/drivers/net_kern.c
-> index 77c4afb8ab90..75d04fb4994a 100644
-> --- a/arch/um/drivers/net_kern.c
-> +++ b/arch/um/drivers/net_kern.c
-> @@ -336,7 +336,7 @@ static struct platform_driver uml_net_driver = {
->   
->   static void net_device_release(struct device *dev)
->   {
-> -	struct uml_net *device = dev_get_drvdata(dev);
-> +	struct uml_net *device = container_of(dev, struct uml_net, pdev.dev);
->   	struct net_device *netdev = device->dev;
->   	struct uml_net_private *lp = netdev_priv(netdev);
->   
-Acked-By: Anton Ivanov <anton.ivanov@cambridgegreys.com>
--- 
-Anton R. Ivanov
-Cambridgegreys Limited. Registered in England. Company Number 10273661
-https://www.cambridgegreys.com/
+> We have filled the
+> buffers shortly before so IMHO it indicates some deeper problem. Can you
+> please explain a bit more?
+
+I just worked off of this crash log:
+https://syzkaller.appspot.com/text?tag=CrashReport&x=16adfaa7980000
+
+If the buffer is filled before, does that mean the issue would be in
+do_send_file or do_splice_direct?
 
